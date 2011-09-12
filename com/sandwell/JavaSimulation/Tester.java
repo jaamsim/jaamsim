@@ -595,4 +595,15 @@ public class Tester {
 		}
 		return true;
 	}
+
+
+	public static double min( double... values ) {
+
+		double min = Double.POSITIVE_INFINITY;
+
+		for( double each : values ) {
+			min = Math.min(min, each);
+		}
+		return min;
+	}
 }

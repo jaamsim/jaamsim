@@ -434,6 +434,16 @@ public class Entity {
 		return eventTime / Simulation.getSimTimeFactor();
 	}
 
+	public double calculateEventTimeBefore(double waitLength) {
+		long eventTime = Process.currentTime() + (long)Math.floor(waitLength * Simulation.getSimTimeFactor());
+		return eventTime / Simulation.getSimTimeFactor();
+	}
+
+	public double calculateEventTimeAfter(double waitLength) {
+		long eventTime = Process.currentTime() + (long)Math.ceil(waitLength * Simulation.getSimTimeFactor());
+		return eventTime / Simulation.getSimTimeFactor();
+	}
+
 	public final void startProcess(String methodName, Object... args) {
 		Process.start(this, methodName, args);
 	}
@@ -454,6 +464,21 @@ public class Entity {
 	 */
 	public final void scheduleWait(double duration) {
 		long waitLength = calculateDelayLength(duration);
+		getEventManager().scheduleWait(waitLength, EventManager.PRIO_DEFAULT, this);
+	}
+
+	public final void scheduleWaitBefore(double duration) {
+		long waitLength = (long)Math.floor(duration * Simulation.getSimTimeFactor());
+		getEventManager().scheduleWait(waitLength, EventManager.PRIO_DEFAULT, this);
+	}
+
+	public final void scheduleWaitBefore(double duration, int priority) {
+		long waitLength = (long)Math.floor(duration * Simulation.getSimTimeFactor());
+		getEventManager().scheduleWait(waitLength, priority, this);
+	}
+
+	public final void scheduleWaitAfter(double duration) {
+		long waitLength = (long)Math.ceil(duration * Simulation.getSimTimeFactor());
 		getEventManager().scheduleWait(waitLength, EventManager.PRIO_DEFAULT, this);
 	}
 
@@ -498,6 +523,10 @@ public class Entity {
 	 */
 	public final void scheduleWaitOneTick() {
 		getEventManager().scheduleWait(1, EventManager.PRIO_DEFAULT, this);
+	}
+
+	public final void scheduleWaitOneTick( int priority ) {
+		getEventManager().scheduleWait(1, priority, this);
 	}
 
 	public final void interruptThread(Process thread) {
