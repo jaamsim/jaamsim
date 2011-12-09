@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <authoring_tool>Converted by the PolyTrans Collada export converter from Okino Computer Graphics, Inc. http://www.okino.com. Toronto, Canada</authoring_tool>
+    </contributor>
+    <created>2011-10-05T13:04:44Z</created>
+    <modified>2011-10-05T13:04:44Z</modified>
+    <unit meter="0.025400" name="inches"/>
+    <up_axis>Y_UP</up_axis>
+  </asset>
+  <library_materials>
+    <material id="default" name="default_1">
+      <instance_effect url="#default-fx"/>
+    </material>
+    <material id="_02_-_Default" name="_02_-_Default_1">
+      <instance_effect url="#_02_-_Default-fx"/>
+    </material>
+  </library_materials>
+  <library_effects>
+    <effect id="default-fx" name="default_2">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color>0.000000 0.000000 0.000000 1</color>
+            </emission>
+            <ambient>
+              <color>0.300000 0.300000 0.300000 1</color>
+            </ambient>
+            <diffuse>
+              <color>0.400000 0.400000 0.400000 1</color>
+            </diffuse>
+            <specular>
+              <color>0.700000 0.700000 0.700000 1</color>
+            </specular>
+            <shininess>
+              <float>16.000000</float>
+            </shininess>
+            <reflective>
+              <color>0.000000 0.000000 0.000000 1</color>
+            </reflective>
+            <reflectivity>
+              <float>0.000000</float>
+            </reflectivity>
+            <transparent opaque="A_ONE">
+              <color>1.000000 1.000000 1.000000 1</color>
+            </transparent>
+            <transparency>
+              <float>1.000000</float>
+            </transparency>
+            <index_of_refraction>
+              <float>1.000000</float>
+            </index_of_refraction>
+          </phong>
+          <extra>
+            <technique profile="OKINO">
+              <filter_color>
+                <color>1.000000 1.000000 1.000000 1</color>
+              </filter_color>
+              <phong>
+                <shininess>32</shininess>
+                <metal>0.000000</metal>
+              </phong>
+              <shading_coefficients>
+                <ambient>0.300000</ambient>
+                <diffuse>0.400000</diffuse>
+                <specular>0.700000</specular>
+                <luminous>0.000000</luminous>
+                <reflect>0.000000</reflect>
+                <filter>1.000000</filter>
+              </shading_coefficients>
+              <opacity>
+                <face>1.000000</face>
+                <reflect>1.000000</reflect>
+                <edge>1.000000</edge>
+                <edge_exponent>1.000000</edge_exponent>
+                <edge_enable>0</edge_enable>
+              </opacity>
+            </technique>
+          </extra>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="_02_-_Default-fx" name="_02_-_Default_2">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color>0.000000 0.000000 0.000000 1</color>
+            </emission>
+            <ambient>
+              <color>0.300000 0.279208 0.219802 1</color>
+            </ambient>
+            <diffuse>
+              <color>0.396078 0.368627 0.290196 1</color>
+            </diffuse>
+            <specular>
+              <color>0.000000 0.000000 0.000000 1</color>
+            </specular>
+            <shininess>
+              <float>7.500000</float>
+            </shininess>
+            <reflective>
+              <color>0.000000 0.000000 0.000000 1</color>
+            </reflective>
+            <reflectivity>
+              <float>0.000000</float>
+            </reflectivity>
+            <transparent opaque="A_ONE">
+              <color>1.000000 1.000000 1.000000 1</color>
+            </transparent>
+            <transparency>
+              <float>1.000000</float>
+            </transparency>
+            <index_of_refraction>
+              <float>1.500000</float>
+            </index_of_refraction>
+          </phong>
+          <extra>
+            <technique profile="OKINO">
+              <filter_color>
+                <color>1.000000 1.000000 1.000000 1</color>
+              </filter_color>
+              <phong>
+                <shininess>3</shininess>
+                <metal>0.890000</metal>
+              </phong>
+              <shading_coefficients>
+                <ambient>0.300000</ambient>
+                <diffuse>0.396078</diffuse>
+                <specular>0.000000</specular>
+                <luminous>0.000000</luminous>
+                <reflect>0.000000</reflect>
+                <filter>1.000000</filter>
+              </shading_coefficients>
+              <opacity>
+                <face>1.000000</face>
+                <reflect>1.000000</reflect>
+                <edge>1.000000</edge>
+                <edge_exponent>1.000000</edge_exponent>
+                <edge_enable>0</edge_enable>
+              </opacity>
+            </technique>
+          </extra>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_cameras>
+    <camera id="default-camera" name="default_3">
+      <optics>
+        <technique_common>
+          <perspective>
+            <xfov>28.072487</xfov>
+            <yfov>28.072487</yfov>
+            <znear>0.010000</znear>
+            <zfar>1000000.000000</zfar>
+          </perspective>
+        </technique_common>
+      </optics>
+      <extra>
+        <technique profile="OKINO">
+          <interestdist>32.015621</interestdist>
+        </technique>
+        <technique profile="XSI">
+          <XSI_Camera>
+            <xsi_param sid="interestdist">32.015621</xsi_param>
+          </XSI_Camera>
+        </technique>
+      </extra>
+    </camera>
+  </library_cameras>
+  <library_lights>
+    <light id="Sunlight__Front-Upper-Left-light" name="Sunlight__Front-Upper-Left">
+      <technique_common>
+        <directional>
+          <color>1.000000 1.000000 1.000000</color>
+        </directional>
+      </technique_common>
+    </light>
+    <light id="Sunlight__Front-Upper-Right-light" name="Sunlight__Front-Upper-Right">
+      <technique_common>
+        <directional>
+          <color>1.000000 1.000000 1.000000</color>
+        </directional>
+      </technique_common>
+    </light>
+    <light id="defaultambient-light" name="defaultambient">
+      <technique_common>
+        <ambient>
+          <color>0.000000 0.000000 0.000000</color>
+        </ambient>
+      </technique_common>
+    </light>
+  </library_lights>
+  <library_geometries>
+    <geometry id="Box001-mesh" name="Box001_1">
+      <mesh>
+        <source id="Box001-mesh-positions">
+          <float_array id="Box001-mesh-positions-array" count="24">-19.685040 0.000000 19.685040 19.685040 0.000000 19.685040 -19.685040 0.000000 -19.685040 19.685040 0.000000 -19.685040 -19.685040 39.370079 19.685040 19.685040 39.370079 19.685040 -19.685040 39.370079 -19.685040 19.685040 39.370079 -19.685040</float_array>
+          <technique_common>
+            <accessor source="#Box001-mesh-positions-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Box001-mesh-normals">
+          <float_array id="Box001-mesh-normals-array" count="18">-1.000000 0.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 0.000000 0.000000</float_array>
+          <technique_common>
+            <accessor source="#Box001-mesh-normals-array" count="6" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Box001-mesh-map-channel1">
+          <float_array id="Box001-mesh-map-channel1-array" count="24">0.000000 0.000000 39.370079 0.000000 0.000000 39.370079 39.370079 39.370079 0.000000 0.000000 39.370079 0.000000 0.000000 39.370079 39.370079 39.370079 0.000000 0.000000 39.370079 0.000000 0.000000 39.370079 39.370079 39.370079</float_array>
+          <technique_common>
+            <accessor source="#Box001-mesh-map-channel1-array" count="12" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Box001-mesh-vertices">
+          <input semantic="POSITION" source="#Box001-mesh-positions"/>
+        </vertices>
+        <polylist material="NUGRAF___SPECIAL_INHERITED_SURFACE_MARKER" count="12">
+          <input semantic="VERTEX" source="#Box001-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Box001-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Box001-mesh-map-channel1" offset="2" set="1"/>
+          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
+          <p>0 1 9 2 1 11 3 1 10 3 1 10 1 1 8 0 1 9 4 4 8 5 4 9 7 4 11 7 4 11 6 4 10 4 4 8 0 3 4 1 3 5 5 3 7 5 3 7 4 3 6 0 3 4 1 5 0 3 5 1 7 5 3 7 5 3 5 5 2 1 5 0 3 2 4 2 2 5 6 2 7 6 2 7 7 2 6 3 2 4 2 0 0 0 0 1 4 0 3 4 0 3 6 0 2 2 0 0 </p>
+        </polylist>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="RootNode" name="RootNode">
+      <node id="default-node" name="default_3" type="NODE">
+        <translate>20.000000 15.000000 20.000000</translate>
+        <rotate>-0.503521 0.838431 0.208565 52.581881</rotate>
+        <scale>1.000000 1.000000 1.000000</scale>
+        <instance_camera url="#default-camera"/>
+      </node>
+      <node id="Sunlight__Front-Upper-Left-node" name="Sunlight__Front-Upper-Left" type="NODE">
+        <translate>-1.000000 1.000000 1.000000</translate>
+        <rotate>-0.769274 -0.590285 0.244504 56.600268</rotate>
+        <scale>1.000000 1.000000 1.000000</scale>
+        <instance_light url="#Sunlight__Front-Upper-Left-light"/>
+      </node>
+      <node id="Sunlight__Front-Upper-Right-node" name="Sunlight__Front-Upper-Right" type="NODE">
+        <translate>1.000000 1.000000 1.000000</translate>
+        <rotate>-0.769274 0.590285 -0.244504 56.600268</rotate>
+        <scale>1.000000 1.000000 1.000000</scale>
+        <instance_light url="#Sunlight__Front-Upper-Right-light"/>
+      </node>
+      <node id="defaultambient-node" name="defaultambient" type="NODE">
+        <instance_light url="#defaultambient-light"/>
+      </node>
+      <node id="Box001-node" name="Box001" type="NODE">
+        <instance_geometry url="#Box001-mesh">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="NUGRAF___SPECIAL_INHERITED_SURFACE_MARKER" target="#_02_-_Default">
+                <bind_vertex_input semantic="uv0" input_semantic="TEXCOORD" input_set="1"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <extra>
+        <technique profile="OKINO">
+          <scene_bounding_min>-19.685040 0.000000 -19.685040</scene_bounding_min>
+          <scene_bounding_max>19.685040 39.370079 19.685040</scene_bounding_max>
+        </technique>
+        <technique profile="MAX3D">
+          <frame_rate>30</frame_rate>
+        </technique>
+        <technique profile="XSI">
+          <SI_Scene>
+            <xsi_param sid="frameRate">30</xsi_param>
+            <xsi_param sid="start">0.000000</xsi_param>
+            <xsi_param sid="end">3.333333</xsi_param>
+            <xsi_param sid="timing">"SECONDS"</xsi_param>
+          </SI_Scene>
+          <SI_Ambience>
+            <xsi_param sid="red">0.000000</xsi_param>
+            <xsi_param sid="green">0.000000</xsi_param>
+            <xsi_param sid="blue">0.000000</xsi_param>
+          </SI_Ambience>
+        </technique>
+        <technique profile="FCOLLADA">
+          <start_time>0.000000</start_time>
+          <end_time>3.333333</end_time>
+        </technique>
+      </extra>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#RootNode"/>
+  </scene>
+</COLLADA>
