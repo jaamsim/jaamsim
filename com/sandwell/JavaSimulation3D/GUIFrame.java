@@ -1110,8 +1110,9 @@ public class GUIFrame extends JFrame {
 		return iconImage;
 	}
 
-	public void copyLoacationToClipBoard() {
-		StringSelection stringSelection = new StringSelection( locatorPos.getText() );
+	public void copyLocationToClipBoard(Vector3d pos) {
+		String data = String.format("(%.3f, %.3f, %.3f)", pos.x, pos.y, pos.z);
+		StringSelection stringSelection = new StringSelection(data);
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clipboard.setContents( stringSelection, null );
 	}

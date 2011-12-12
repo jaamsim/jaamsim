@@ -185,9 +185,6 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 	}
 
 	protected void processMouseEvent( final MouseEvent evt ) {
-		if(evt.getClickCount() >= 2) {
-			DisplayEntity.simulation.getGUIFrame().copyLoacationToClipBoard();
-		}
 		if (evt.getID() == MouseEvent.MOUSE_WHEEL) {
 			orbitRadius *= Math.pow(0.9d, -((MouseWheelEvent)evt).getWheelRotation());
 			// Cap the radius to a minimum value
@@ -218,6 +215,14 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 		}
 
 		Vector3d currentMousePosition = getUniversePointFromMouseLoc(evt.getX(), evt.getY(), Plane.XY_PLANE, 0.0d);
+
+		if(evt.getClickCount() >= 2) {
+			// Just catch everything and move on
+			try {
+				DisplayEntity.simulation.getGUIFrame().copyLocationToClipBoard(currentMousePosition);
+			}
+			catch (Throwable e) {}
+		}
 
 		// calculate and display the position in the UI
 		if (positionMode)
