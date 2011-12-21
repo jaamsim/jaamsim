@@ -19,6 +19,7 @@ import java.util.Arrays;
 import javax.media.j3d.ColoringAttributes;
 import javax.vecmath.Vector3d;
 
+import com.sandwell.JavaSimulation3D.InputAgent;
 import com.sandwell.JavaSimulation3D.util.Shape;
 
 public abstract class Input<T> {
@@ -265,6 +266,9 @@ public abstract class Input<T> {
 			else {
 				// Parse the values
 				value = Input.parseDouble(data.get( data.size()-1 ), minValue, maxValue);
+
+				if( units.length() > 0 )
+					InputAgent.logWarning( "Missing units.  Assuming %s.", units );
 			}
 			return aClass.cast(value);
 		}
@@ -293,6 +297,9 @@ public abstract class Input<T> {
 			else {
 				// Parse the values
 				value = Input.parseDoubleVector(data.subString(0,data.size()-1), minValue, maxValue);
+
+				if( units.length() > 0 )
+					InputAgent.logWarning( "Missing units.  Assuming %s.", units );
 			}
 			return aClass.cast( value );
 		}

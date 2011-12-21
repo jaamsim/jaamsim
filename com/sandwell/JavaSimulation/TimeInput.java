@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.sandwell.JavaSimulation3D.InputAgent;
+
 public class TimeInput extends Input<Double> {
 	private double minValue;
 	private double maxValue;
@@ -53,6 +55,9 @@ public class TimeInput extends Input<Double> {
 		else {
 			// Parse the value
 			value = Double.valueOf(Input.parseTime(input.get(0), minValue, maxValue));
+
+			if( unitString.length() > 0 )
+				InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
 		}
 	}
 

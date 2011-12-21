@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.sandwell.JavaSimulation3D.InputAgent;
+
 public class DoubleListInput extends ListInput<DoubleVector> {
 	protected double minValue = Double.NEGATIVE_INFINITY;
 	protected double maxValue = Double.POSITIVE_INFINITY;
@@ -53,6 +55,9 @@ public class DoubleListInput extends ListInput<DoubleVector> {
 			// Parse the values
 			Input.assertCount(input, validCounts);
 			temp = Input.parseDoubleVector(input, minValue, maxValue);
+
+			if( unitString.length() > 0 )
+				InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
 		}
 
 		if( ! Double.isNaN(sumValue) ) {

@@ -23,7 +23,6 @@ public abstract class Unit extends Entity {
 	{
 		conversionFactorToSI = new DoubleListInput( "ConversionFactorToSI", "Key Inputs", null );
 		conversionFactorToSI.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
-		conversionFactorToSI.setUnits( "(SI units)/unit" );
 		conversionFactorToSI.setValidCountRange( 1, 2 );
 		this.addInput( conversionFactorToSI, true );
 

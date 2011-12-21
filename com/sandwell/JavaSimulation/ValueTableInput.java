@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 import com.sandwell.JavaSimulation.ValueTable;
+import com.sandwell.JavaSimulation3D.InputAgent;
 
 public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 
@@ -64,6 +65,9 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 			else {
 				// Parse the values
 				defTime = Input.parseTimeValue(input, minValue, maxValue);
+
+				if( unitString.length() > 0 )
+					InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
 			}
 			value.setDefault( defTime );
 			return;
@@ -96,6 +100,9 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 			// Parse the values
 			StringVector temp = input.subString(1,input.size()-1);
 			val = Input.parseTimeValue(temp, minValue, maxValue);
+
+			if( unitString.length() > 0 )
+				InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
 		}
 
 		for( T each : list ) {
