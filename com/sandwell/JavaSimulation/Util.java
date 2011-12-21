@@ -35,7 +35,6 @@ public class Util {
 
 	private static String cargoUnits = "";
 	private static String fuelUnits = "";
-	private static String distanceUnits = "";
 	private static String speedUnits = "";
 
 	public static final Comparator<Entity> nameSort = new Comparator<Entity>() {
@@ -58,14 +57,6 @@ public class Util {
 
 	public static void setFuelUnits(String units) {
 		fuelUnits = units;
-	}
-
-	public static String getDistanceUnits() {
-		return distanceUnits;
-	}
-
-	public static void setDistanceUnits(String units) {
-		distanceUnits = units;
 	}
 
 	public static String getSpeedUnits() {

@@ -240,8 +240,7 @@ public abstract class Simulation extends Entity {
 			return;
 		}
 		if( "DistanceUnits".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			Util.setDistanceUnits(data.get(0));
+			InputAgent.logWarning( "The keyword DistanceUnits is no longer required." );
 			return;
 		}
 		if( "SpeedUnits".equalsIgnoreCase( keyword ) ) {
