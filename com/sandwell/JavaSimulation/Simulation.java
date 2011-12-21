@@ -159,7 +159,6 @@ public abstract class Simulation extends Entity {
 		this.addInput( portTimeStep, true );
 
 		addEditableKeyword( "CargoUnits",          "",        		"",               false, "Optional" );
-		addEditableKeyword( "VolumetricUnits",     "",        		"",               false, "Optional" );
 		addEditableKeyword( "FuelUnits",           "",       		"",               false, "Optional" );
 		addEditableKeyword( "DistanceUnits",       "",        		"",               false, "Optional" );
 		addEditableKeyword( "SpeedUnits",          "",        		"",               false, "Optional" );
@@ -233,11 +232,6 @@ public abstract class Simulation extends Entity {
 		if( "CargoUnits".equalsIgnoreCase( keyword ) ) {
 			Input.assertCount(data, 1);
 			Util.setCargoUnits(data.get(0));
-			return;
-		}
-		if( "VolumetricUnits".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			Util.setVolumetricUnits(data.get(0));
 			return;
 		}
 		if( "FuelUnits".equalsIgnoreCase( keyword ) ) {

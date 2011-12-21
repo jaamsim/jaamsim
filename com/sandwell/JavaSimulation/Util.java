@@ -34,7 +34,6 @@ public class Util {
 	private static final java.text.DecimalFormat exponentFormat = new java.text.DecimalFormat( "0.###E0" );
 
 	private static String cargoUnits = "";
-	private static String volumetricUnits = "";
 	private static String fuelUnits = "";
 	private static String distanceUnits = "";
 	private static String speedUnits = "";
@@ -51,14 +50,6 @@ public class Util {
 
 	public static void setCargoUnits(String units) {
 		cargoUnits = units;
-	}
-
-	public static String getVolumetricUnits() {
-		return volumetricUnits;
-	}
-
-	public static void setVolumetricUnits(String units) {
-		volumetricUnits = units;
 	}
 
 	public static String getFuelUnits() {
