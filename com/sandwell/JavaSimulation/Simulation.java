@@ -244,8 +244,7 @@ public abstract class Simulation extends Entity {
 			return;
 		}
 		if( "SpeedUnits".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			Util.setSpeedUnits(data.get(0));
+			InputAgent.logWarning( "The keyword SpeedUnits is no longer required." );
 			return;
 		}
 		if ("DEFINEEVENTMANAGER".equalsIgnoreCase(keyword)) {
