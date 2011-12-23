@@ -26,16 +26,16 @@ public class Queue extends DisplayEntity {
 	private final BooleanInput printReportInput;
 
 	protected int maxQueued;
-	protected Vector itemList; //  No Comment Given
+	protected Vector itemList;
 	protected Vector3d end;
-	protected int maxPerLine; // maximum items per sub lineup of queue
+	protected int maxPerLine; // maximum items per sub line-up of queue
 
 //	Report
 	protected String reportFileName; //  File name of the report
-	protected FileEntity reportFile; //  No Comment Given
+	protected FileEntity reportFile;
 
 //	Statistics
-	protected double minElements; //  This is from CargoQueue
+	protected double minElements;
 	protected int maxElements;
 	protected double avgElements;
 
@@ -49,15 +49,15 @@ public class Queue extends DisplayEntity {
 
 	public Queue() {
 		itemList = new Vector( 1, 1 );
-		minElements = 1E10;  //  from CargoQueue
-		maxElements = 0;     //  from CargoQueue
+		minElements = 1E10;
+		maxElements = 0;
 		avgElements = 0.0;
 		end = null;
 		maxPerLine = 0;
 
 		//Report
 		reportFileName = "";
-		reportFile = null; // No Comment Given
+		reportFile = null;
 	}
 
 	// ******************************************************************************************************
@@ -86,7 +86,7 @@ public class Queue extends DisplayEntity {
 		}
 		itemList.clear();
 
-		//  Initialeze reports
+		//  Initialize reports
 		this.closeReports();
 
 		//  Report Variables
@@ -98,7 +98,7 @@ public class Queue extends DisplayEntity {
 	// ******************************************************************************************************
 
 	/**
-     * Returns the position for a new element at the end of the queue.
+     * Returns the position for a new entity at the end of the queue.
      */
     public Vector3d getEndVector3dFor( DisplayEntity perf ) {
 
@@ -124,7 +124,7 @@ public class Queue extends DisplayEntity {
     }
 
 	/**
-	 * Add a performer to the queue
+	 * Add an entity to the queue
 	 */
 	public void addLast( DisplayEntity perf ) {
 		itemList.addElement( perf );
@@ -132,7 +132,7 @@ public class Queue extends DisplayEntity {
 	}
 
 	/**
-	 * Add a performer to the queue
+	 * Add an entity to the queue
 	 */
 	public void addLastWithoutUpdateGraphic( DisplayEntity perf ) {
 		itemList.addElement( perf );
@@ -143,7 +143,7 @@ public class Queue extends DisplayEntity {
 	}
 
 	/**
-	 * Removes the specified performer from the queue
+	 * Removes the specified entity from the queue
 	 */
 	public void remove( DisplayEntity perf ) {
 		if( itemList.contains( perf ) ) {
@@ -156,16 +156,14 @@ public class Queue extends DisplayEntity {
 	}
 
     /**
-     * Removes the first performer from the queue
+     * Removes the first entity from the queue
      */
     public DisplayEntity removeFirst() {
         DisplayEntity out;
 
         if( itemList.size() != 0 ) {
-            //this.updateStatistics( ( eventManager.getCurrentTime() - timeList.get( 0 ) ) );
             out = (DisplayEntity)itemList.firstElement();
             itemList.removeElementAt( 0 );
-            //timeList.removeElementAt( 0 );
             this.updateGraphics();
 
             return out;
@@ -176,7 +174,7 @@ public class Queue extends DisplayEntity {
     }
 
     /**
-     * Removes the first performer from the queue
+     * Removes the first entity from the queue
      */
     public DisplayEntity removeFirstProgressiveUpdate( double speed ) {
     	DisplayEntity out;
@@ -194,7 +192,7 @@ public class Queue extends DisplayEntity {
     }
 
     /**
-     * Removes the first performer from the queue whitout updating
+     * Removes the first entity from the queue without updating
      */
     public DisplayEntity removeFirstProgressiveItem( double speed ) {
     	DisplayEntity out;
@@ -212,16 +210,14 @@ public class Queue extends DisplayEntity {
 
 
     /**
-     * Removes the last performer from the queue
+     * Removes the last entity from the queue
      */
     public DisplayEntity removeLast() {
         DisplayEntity out;
 
         if( itemList.size() != 0 ) {
-            //this.updateStatistics( ( eventManager.getCurrentTime() - timeList.lastElement() ) );
             out = (DisplayEntity)itemList.lastElement();
             itemList.removeElementAt( itemList.size() - 1 );
-            //timeList.removeElementAt( itemList.size() - 1 );
             this.updateGraphics();
 
             return out;
@@ -244,8 +240,8 @@ public class Queue extends DisplayEntity {
 	// ******************************************************************************************************
 
 	/**
-	 * Update the position of all Transporters in the queue.
-	 * ASSUME that Transporters will line up to the left of the queue.
+	 * Update the position of all entities in the queue.
+	 * ASSUME that entities will line up according to the orientation of the queue.
 	 */
 	public void updateGraphics() {
 
@@ -299,8 +295,8 @@ public class Queue extends DisplayEntity {
 	}
 
 	/**
-	 * Update the position of all Transporters in the queue.
-	 * ASSUME that Transporters will line up to the left of the queue.
+	 * Update the position of all entities in the queue.
+	 * ASSUME that entities will line up according to the orientation of the queue.
 	 */
 	public void updateGraphicsAtSpeed( double speed ) {
 		Double maxTime = new Double( 0.0d );
@@ -365,7 +361,7 @@ public class Queue extends DisplayEntity {
 	// *******************************************************************************************************
 
 	/**
-	 * No Comments Given.
+	 * Clear queue statistics
 	 */
 	public void clearStatistics() {
 		minElements = 10E10;
