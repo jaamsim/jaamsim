@@ -129,9 +129,9 @@ public class PropertyLabel extends TextLabel  {
 			// run target method and return its value
 			Object value = targetMethod.invoke(targetEntity.getValue(), params);
 			if (value instanceof Double)
-				this.setText(String.format(doubleFmt, ((Double)value).doubleValue() * multiplier.getValue()));
+				EditBox.processEntity_Keyword_Value(this, "Text", String.format(doubleFmt, ((Double)value).doubleValue() * multiplier.getValue()) );
 			else
-				this.setText(String.format(fmt, value));
+				EditBox.processEntity_Keyword_Value(this, "Text", String.format(fmt, value) );
 
 		}
 		catch (Throwable e) {}

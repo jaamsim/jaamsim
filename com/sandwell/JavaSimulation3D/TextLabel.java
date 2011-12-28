@@ -22,35 +22,39 @@ import javax.vecmath.Vector3d;
 
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
+import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation3D.util.LabelShape;
 import com.sandwell.JavaSimulation3D.util.Shape;
 
 public class TextLabel extends DisplayEntity  {
 	private String renderText;
-	private String text;
+	private final StringInput text;
 	protected double textHeight;
-	protected String fontName;
+	private final StringInput fontName;
 	protected int fontStyle;
 	protected ColoringAttributes fontColor = Shape.getPresetColor(Shape.COLOR_BLACK);
 
 	protected LabelShape reference;
 
 	{
-		addEditableKeyword( "Text",             "", "abc", false, "Graphics", "Label");
+		text = new StringInput("Text", "Graphics", "abc");
+		this.addInput(text, true, "Label");
+
 		addEditableKeyword( "TextHeight",       "", "",    false, "Graphics" );
-		addEditableKeyword( "FontName",         "", "",    false, "Graphics" );
+
+		fontName = new StringInput("FontName", "Graphics", "Verdana");
+		this.addInput(fontName, true);
+
 		addEditableKeyword( "FontColour",       "", "",    false, "Graphics", "FontColor" );
 		addEditableKeyword( "FontStyle",        "", "",    false, "Graphics" );
 	}
 
 	public TextLabel() {
-		text = "abc";
 		textHeight = 0.3;
-		fontName = "Verdana";
 		fontStyle = Font.TRUETYPE_FONT + Font.PLAIN;
 
-		reference = new LabelShape(text, Shape.getPresetColor(Shape.COLOR_WHITE));
+		reference = new LabelShape(text.getValue(), Shape.getPresetColor(Shape.COLOR_WHITE));
 		this.getModel().addChild( reference );
 	}
 
@@ -62,25 +66,10 @@ public class TextLabel extends DisplayEntity  {
 
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
-		if ("Text".equalsIgnoreCase(keyword)) {
-			Input.assertCount(data, 0, 1);
-			if (data.size() == 0)
-				this.setText("");
-			else
-				this.setText(data.get(0));
-
-			return;
-		}
 
 		if( "TextHeight".equalsIgnoreCase( keyword ) ) {
 			double size = Input.parseDouble(data.get(0), 0.0d, Double.POSITIVE_INFINITY);
 			this.setTextHeight(size);
-			return;
-		}
-		if( "FontName".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 0, 1);
-			if (data.size() != 0)
-				fontName = data.get(0);
 			return;
 		}
 		if( "FontStyle".equalsIgnoreCase( keyword ) ) {
@@ -108,18 +97,13 @@ public class TextLabel extends DisplayEntity  {
 		super.readData_ForKeyword( data, keyword, syntaxOnly, isCfgInput );
 	}
 
-	public void setText(String str) {
-		if (!text.equals(str))
-			text = str;
-	}
-
 	public void render(double time) {
-		if (text != renderText) {
+		if (text.getValue() != renderText) {
 			reference.setHeight(textHeight);
 			reference.setFillColor(fontColor);
-			reference.setFont(fontName, fontStyle, 1);
-			reference.setText(text);
-			renderText = text;
+			reference.setFont(fontName.getValue(), fontStyle, 1);
+			reference.setText(text.getValue());
+			renderText = text.getValue();
 
 			Point2d labSize = reference.getSize();
 			Vector3d tmp = new Vector3d(labSize.x, labSize.y, 0.0d);
