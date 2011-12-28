@@ -16,10 +16,10 @@ package com.sandwell.JavaSimulation3D;
 
 import java.awt.Font;
 
-import javax.media.j3d.ColoringAttributes;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector3d;
 
+import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -34,7 +34,7 @@ public class TextLabel extends DisplayEntity  {
 	private final DoubleInput textHeight;
 	private final StringInput fontName;
 	protected int fontStyle;
-	protected ColoringAttributes fontColor = Shape.getPresetColor(Shape.COLOR_BLACK);
+	private final ColourInput fontColor;
 
 	protected LabelShape reference;
 
@@ -48,14 +48,16 @@ public class TextLabel extends DisplayEntity  {
 		fontName = new StringInput("FontName", "Graphics", "Verdana");
 		this.addInput(fontName, true);
 
-		addEditableKeyword( "FontColour",       "", "",    false, "Graphics", "FontColor" );
+		fontColor = new ColourInput("FontColour", "Graphics", Shape.getPresetColor(Shape.COLOR_BLACK));
+		this.addInput(fontColor, true, "FontColor");
+
 		addEditableKeyword( "FontStyle",        "", "",    false, "Graphics" );
 	}
 
 	public TextLabel() {
 		fontStyle = Font.TRUETYPE_FONT + Font.PLAIN;
 
-		reference = new LabelShape(text.getValue(), Shape.getPresetColor(Shape.COLOR_WHITE));
+		reference = new LabelShape(text.getValue(), fontColor.getValue());
 		this.getModel().addChild( reference );
 	}
 
@@ -85,10 +87,6 @@ public class TextLabel extends DisplayEntity  {
 
 			return;
 		}
-		if ("FontColour".equalsIgnoreCase(keyword)) {
-			fontColor = Input.parseColour(data);
-			return;
-		}
 
 		super.readData_ForKeyword( data, keyword, syntaxOnly, isCfgInput );
 	}
@@ -96,7 +94,7 @@ public class TextLabel extends DisplayEntity  {
 	public void render(double time) {
 		if (text.getValue() != renderText) {
 			reference.setHeight(textHeight.getValue());
-			reference.setFillColor(fontColor);
+			reference.setFillColor(fontColor.getValue());
 			reference.setFont(fontName.getValue(), fontStyle, 1);
 			reference.setText(text.getValue());
 			renderText = text.getValue();
