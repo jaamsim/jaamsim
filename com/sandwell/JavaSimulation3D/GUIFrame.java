@@ -337,7 +337,7 @@ public class GUIFrame extends JFrame {
 		viewMenu = new JMenu( "View" );
 		viewMenu.setMnemonic( 'V' );
 
-		JMenuItem objectPalletMenuItem = new JMenuItem( "Object Pallet" );
+		JMenuItem objectPalletMenuItem = new JMenuItem( "Model Builder" );
 		objectPalletMenuItem.setMnemonic( 'O' );
 		objectPalletMenuItem.addActionListener( new ActionListener() {
 
