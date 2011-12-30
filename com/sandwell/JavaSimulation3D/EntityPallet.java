@@ -51,6 +51,8 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
 
 		tree = new JTree();
+		tree.setRootVisible(false);
+		tree.setShowsRootHandles(true);
 		DragSource dragSource = new DragSource();
 		dragSource.createDefaultDragGestureRecognizer(tree, DnDConstants.ACTION_COPY, this);
 
@@ -101,7 +103,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 	private static DefaultMutableTreeNode createTree() {
 
 		// Create a tree that allows one selection at a time
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode( Util.fileShortName( InputAgent.getConfigFileName() ) );
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
 		for (Package p : Package.getAll()) {
 			DefaultMutableTreeNode packNode = new DefaultMutableTreeNode(p.getName(), true);
