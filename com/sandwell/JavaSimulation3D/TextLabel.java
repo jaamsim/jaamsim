@@ -51,11 +51,11 @@ public class TextLabel extends DisplayEntity  {
 		fontColor = new ColourInput("FontColour", "Graphics", Shape.getPresetColor(Shape.COLOR_BLACK));
 		this.addInput(fontColor, true, "FontColor");
 
-		addEditableKeyword( "FontStyle",        "", "",    false, "Graphics" );
+		addEditableKeyword( "FontStyle",        "", "Plain",    false, "Graphics" );
 	}
 
 	public TextLabel() {
-		fontStyle = Font.TRUETYPE_FONT + Font.PLAIN;
+		fontStyle = Font.PLAIN;
 
 		reference = new LabelShape(text.getValue(), fontColor.getValue());
 		this.getModel().addChild( reference );
@@ -79,9 +79,6 @@ public class TextLabel extends DisplayEntity  {
 				}
 				if (data.get(i).equalsIgnoreCase("Italic")) {
 					fontStyle += Font.ITALIC;
-				}
-				if (data.get(i).equalsIgnoreCase("TrueType")) {
-					fontStyle += Font.TRUETYPE_FONT;
 				}
 			}
 
