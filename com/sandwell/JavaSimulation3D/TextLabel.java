@@ -29,7 +29,6 @@ import com.sandwell.JavaSimulation3D.util.LabelShape;
 import com.sandwell.JavaSimulation3D.util.Shape;
 
 public class TextLabel extends DisplayEntity  {
-	private String renderText;
 	private final StringInput text;
 	private final DoubleInput textHeight;
 	private final StringInput fontName;
@@ -57,7 +56,7 @@ public class TextLabel extends DisplayEntity  {
 	public TextLabel() {
 		fontStyle = Font.PLAIN;
 
-		reference = new LabelShape(text.getValue(), fontColor.getValue());
+		reference = new LabelShape("", fontColor.getValue());
 		this.getModel().addChild( reference );
 	}
 
@@ -89,12 +88,16 @@ public class TextLabel extends DisplayEntity  {
 	}
 
 	public void render(double time) {
-		if (text.getValue() != renderText) {
+		if (text.getValue() != reference.getText() ||
+			reference.getTextHeight() != textHeight.getValue() ||
+			reference.getFillColor() != fontColor.getValue() ||
+			reference.getFontName() != fontName.getValue() ||
+			reference.getFontStyle() != fontStyle) {
+
 			reference.setHeight(textHeight.getValue());
 			reference.setFillColor(fontColor.getValue());
 			reference.setFont(fontName.getValue(), fontStyle, 1);
 			reference.setText(text.getValue());
-			renderText = text.getValue();
 
 			Point2d labSize = reference.getSize();
 			Vector3d tmp = new Vector3d(labSize.x, labSize.y, 0.0d);

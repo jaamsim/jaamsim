@@ -206,6 +206,14 @@ public class LabelShape extends Shape2D {
 		this.setText( myText );
 	}
 
+	public String getFontName() {
+		return myText3D.getFont3D().getFont().getName();
+	}
+
+	public int getFontStyle() {
+		return myText3D.getFont3D().getFont().getStyle();
+	}
+
 	public Point2d getSize() {
 		return new Point2d( myWidth, myHeight );
 	}
