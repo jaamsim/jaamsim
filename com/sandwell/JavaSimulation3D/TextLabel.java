@@ -20,6 +20,7 @@ import javax.media.j3d.ColoringAttributes;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector3d;
 
+import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringInput;
@@ -30,7 +31,7 @@ import com.sandwell.JavaSimulation3D.util.Shape;
 public class TextLabel extends DisplayEntity  {
 	private String renderText;
 	private final StringInput text;
-	protected double textHeight;
+	private final DoubleInput textHeight;
 	private final StringInput fontName;
 	protected int fontStyle;
 	protected ColoringAttributes fontColor = Shape.getPresetColor(Shape.COLOR_BLACK);
@@ -41,7 +42,8 @@ public class TextLabel extends DisplayEntity  {
 		text = new StringInput("Text", "Graphics", "abc");
 		this.addInput(text, true, "Label");
 
-		addEditableKeyword( "TextHeight",       "", "",    false, "Graphics" );
+		textHeight = new DoubleInput("TextHeight", "Graphics", 0.3d, 0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(textHeight, true);
 
 		fontName = new StringInput("FontName", "Graphics", "Verdana");
 		this.addInput(fontName, true);
@@ -51,7 +53,6 @@ public class TextLabel extends DisplayEntity  {
 	}
 
 	public TextLabel() {
-		textHeight = 0.3;
 		fontStyle = Font.TRUETYPE_FONT + Font.PLAIN;
 
 		reference = new LabelShape(text.getValue(), Shape.getPresetColor(Shape.COLOR_WHITE));
@@ -67,11 +68,6 @@ public class TextLabel extends DisplayEntity  {
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
 
-		if( "TextHeight".equalsIgnoreCase( keyword ) ) {
-			double size = Input.parseDouble(data.get(0), 0.0d, Double.POSITIVE_INFINITY);
-			this.setTextHeight(size);
-			return;
-		}
 		if( "FontStyle".equalsIgnoreCase( keyword ) ) {
 			Input.assertCount(data, 0, 1, 2, 3);
 			fontStyle = Font.PLAIN;
@@ -99,7 +95,7 @@ public class TextLabel extends DisplayEntity  {
 
 	public void render(double time) {
 		if (text.getValue() != renderText) {
-			reference.setHeight(textHeight);
+			reference.setHeight(textHeight.getValue());
 			reference.setFillColor(fontColor);
 			reference.setFont(fontName.getValue(), fontStyle, 1);
 			reference.setText(text.getValue());
@@ -111,10 +107,6 @@ public class TextLabel extends DisplayEntity  {
 		}
 
 		super.render(time);
-	}
-
-	public void setTextHeight( double h ) {
-		textHeight = h;
 	}
 
 	// Textlabel draws itself without a scale, never set it.
