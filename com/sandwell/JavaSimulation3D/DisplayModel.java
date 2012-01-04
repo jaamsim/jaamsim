@@ -181,6 +181,7 @@ public class DisplayModel extends Entity {
 		this.addInput( shape, true);
 
 		orientation = new Vector3dInput("Orientation", "DisplayModel", new Vector3d(0, 0, 0));
+		orientation.setUnits("rad");
 		this.addInput(orientation, true);
 
 		enableCulling = new BooleanInput("EnableCulling", "DisplayModel", true);
