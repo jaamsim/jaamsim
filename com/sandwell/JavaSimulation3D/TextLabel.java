@@ -75,8 +75,11 @@ public class TextLabel extends DisplayEntity  {
 				if (data.get(i).equalsIgnoreCase("Bold")) {
 					fontStyle += Font.BOLD;
 				}
-				if (data.get(i).equalsIgnoreCase("Italic")) {
+				else if (data.get(i).equalsIgnoreCase("Italic")) {
 					fontStyle += Font.ITALIC;
+				}
+				else if (! data.get(i).equalsIgnoreCase("Plain")) {
+					throw new InputErrorException("%s is not a valid option; allowed options are: Bold, Italic and Plain", data.get(i));
 				}
 			}
 
