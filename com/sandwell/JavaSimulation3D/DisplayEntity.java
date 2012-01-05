@@ -131,6 +131,7 @@ public class DisplayEntity extends Entity {
 
 	private boolean needsRender = true;
 	private final Vector3dInput positionInput;
+	private final Vector3dInput sizeInput;
 
 	private final Vector3d position = new Vector3d();
 	private final Vector3d size = new Vector3d(1.0d, 1.0d, 1.0d);
@@ -194,7 +195,11 @@ public class DisplayEntity extends Entity {
 		this.addInput(positionInput, true);
 
 		addEditableKeyword( "Alignment",        "", "0.000  0.000  0.000",           false, "Graphics" );
-		addEditableKeyword( "Size",             "", "1.000  1.000  1.000",           false, "Graphics" );
+
+		sizeInput = new Vector3dInput("Size", "Graphics", new Vector3d(1.0d,1.0d,1.0d));
+		sizeInput.setUnits("m");
+		this.addInput(sizeInput, true);
+
 		addEditableKeyword( "Orientation",      "", "0.000  0.000  0.000",           false, "Graphics" );
 		addEditableKeyword( "Region",           "", "ModelStage",                    false, "Graphics" );
 
@@ -1029,11 +1034,6 @@ public class DisplayEntity extends Entity {
 			this.setAlignment(temp);
 			return;
 		}
-		if ("SIZE".equalsIgnoreCase(keyword)) {
-			Vector3d val = Input.parseVector3d(data);
-			setSize(val);
-			return;
-		}
 		if( "ORIENTATION".equalsIgnoreCase( keyword ) ) {
 			Vector3d val = Input.parseVector3d(data);
 			this.setOrientation(val);
@@ -1487,7 +1487,7 @@ public class DisplayEntity extends Entity {
 	 */
 	public void updateInputSize() {
 		Vector3d vec = this.getSize();
-		EditBox.processEntity_Keyword_Value(this, "Size", String.format( "%.3f %.3f %.3f", vec.x, vec.y, vec.z ));
+		EditBox.processEntity_Keyword_Value(this, sizeInput.getKeyword(), String.format( "%.3f %.3f %.3f %s", vec.x, vec.y, vec.z, sizeInput.getUnits() ));
 		InputAgent.addEditedEntity(this);
 		FrameBox.valueUpdate();
 	}
@@ -1584,8 +1584,9 @@ public class DisplayEntity extends Entity {
 			this.warning("validate()", "Relative Entities should not be defined in a circular loop", "");
 		}
 
-		// Set property from input
+		// Set properties from input
 		// Technically, this is not validation, but it should be done before earlyInit
 		this.setPosition(  positionInput.getValue() );
+		this.setSize( sizeInput.getValue() );
 	}
 }
