@@ -132,6 +132,7 @@ public class DisplayEntity extends Entity {
 	private boolean needsRender = true;
 	private final Vector3dInput positionInput;
 	private final Vector3dInput sizeInput;
+	private final Vector3dInput orientationInput;
 
 	private final Vector3d position = new Vector3d();
 	private final Vector3d size = new Vector3d(1.0d, 1.0d, 1.0d);
@@ -200,7 +201,10 @@ public class DisplayEntity extends Entity {
 		sizeInput.setUnits("m");
 		this.addInput(sizeInput, true);
 
-		addEditableKeyword( "Orientation",      "", "0.000  0.000  0.000",           false, "Graphics" );
+		orientationInput = new Vector3dInput("Orientation", "Graphics", new Vector3d());
+		orientationInput.setUnits("rad");
+		this.addInput(orientationInput, true);
+
 		addEditableKeyword( "Region",           "", "ModelStage",                    false, "Graphics" );
 
 		showToolTip = new BooleanInput("ToolTip", "Graphics", true);
@@ -1034,12 +1038,6 @@ public class DisplayEntity extends Entity {
 			this.setAlignment(temp);
 			return;
 		}
-		if( "ORIENTATION".equalsIgnoreCase( keyword ) ) {
-			Vector3d val = Input.parseVector3d(data);
-			this.setOrientation(val);
-			return;
-		}
-
 		if( "Label".equalsIgnoreCase( keyword ) ) {
 			InputAgent.logWarning("The keyword Label no longer has any effect");
 			return;
@@ -1499,7 +1497,7 @@ public class DisplayEntity extends Entity {
 	 */
 	public void updateInputOrientation() {
 		Vector3d vec = this.getOrientation();
-		EditBox.processEntity_Keyword_Value(this, "Orientation", String.format( "%.3f %.3f %.3f", vec.x, vec.y, vec.z ));
+		EditBox.processEntity_Keyword_Value(this, orientationInput.getKeyword(), String.format( "%.3f %.3f %.3f %s", vec.x, vec.y, vec.z, orientationInput.getUnits() ));
 		InputAgent.addEditedEntity(this);
 		FrameBox.valueUpdate();
 	}
@@ -1588,5 +1586,6 @@ public class DisplayEntity extends Entity {
 		// Technically, this is not validation, but it should be done before earlyInit
 		this.setPosition(  positionInput.getValue() );
 		this.setSize( sizeInput.getValue() );
+		this.setOrientation( orientationInput.getValue() );
 	}
 }
