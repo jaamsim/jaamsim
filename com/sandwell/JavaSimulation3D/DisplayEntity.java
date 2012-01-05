@@ -27,9 +27,11 @@ import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Vector;
+import com.sandwell.JavaSimulation.Vector3dInput;
 import com.sandwell.JavaSimulation3D.util.Circle;
 import com.sandwell.JavaSimulation3D.util.Cube;
 import com.sandwell.JavaSimulation3D.util.Shape;
+
 import javax.media.j3d.Node;
 
 import java.awt.event.ActionEvent;
@@ -128,6 +130,8 @@ public class DisplayEntity extends Entity {
 	private final OrderedGroup displayNode; // container for DisplayEntity's specific model
 
 	private boolean needsRender = true;
+	private final Vector3dInput positionInput;
+
 	private final Vector3d position = new Vector3d();
 	private final Vector3d size = new Vector3d(1.0d, 1.0d, 1.0d);
 	private final Vector3d orient = new Vector3d();
@@ -185,8 +189,10 @@ public class DisplayEntity extends Entity {
 	}
 
 	{
-		// Add editable keywords for size and position
-		addEditableKeyword( "Position",         "", "0.000  0.000  0.000",           false, "Graphics" );
+		positionInput = new Vector3dInput("Position", "Graphics", new Vector3d());
+		positionInput.setUnits("m");
+		this.addInput(positionInput, true);
+
 		addEditableKeyword( "Alignment",        "", "0.000  0.000  0.000",           false, "Graphics" );
 		addEditableKeyword( "Size",             "", "1.000  1.000  1.000",           false, "Graphics" );
 		addEditableKeyword( "Orientation",      "", "0.000  0.000  0.000",           false, "Graphics" );
@@ -1018,11 +1024,6 @@ public class DisplayEntity extends Entity {
 
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
-		if ("POSITION".equalsIgnoreCase(keyword)) {
-			Vector3d temp = Input.parseVector3d(data);
-			this.setPosition(temp);
-			return;
-		}
 		if ("ALIGNMENT".equalsIgnoreCase(keyword)) {
 			Vector3d temp = Input.parseVector3d(data);
 			this.setAlignment(temp);
@@ -1474,7 +1475,7 @@ public class DisplayEntity extends Entity {
 	 */
 	public void updateInputPosition() {
 		Vector3d vec = this.getPosition();
-		EditBox.processEntity_Keyword_Value(this, "Position", String.format( "%.3f %.3f %.3f", vec.x, vec.y, vec.z ));
+		EditBox.processEntity_Keyword_Value(this, positionInput.getKeyword(), String.format( "%.3f %.3f %.3f %s", vec.x, vec.y, vec.z, positionInput.getUnits() ));
 		InputAgent.addEditedEntity(this);
 		FrameBox.valueUpdate();
 	}
@@ -1582,5 +1583,9 @@ public class DisplayEntity extends Entity {
 		if(getRelativeEntity() == this) {
 			this.warning("validate()", "Relative Entities should not be defined in a circular loop", "");
 		}
+
+		// Set property from input
+		// Technically, this is not validation, but it should be done before earlyInit
+		this.setPosition(  positionInput.getValue() );
 	}
 }
