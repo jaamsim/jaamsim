@@ -89,7 +89,7 @@ public class ProbabilityDistribution extends Entity {
 
 	}
 
-	public static ArrayList<ProbabilityDistribution> getAll() {
+	public static ArrayList<? extends ProbabilityDistribution> getAll() {
 		return allInstances;
 	}
 
