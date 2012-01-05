@@ -133,6 +133,7 @@ public class DisplayEntity extends Entity {
 	private final Vector3dInput positionInput;
 	private final Vector3dInput sizeInput;
 	private final Vector3dInput orientationInput;
+	private final Vector3dInput alignmentInput;
 
 	private final Vector3d position = new Vector3d();
 	private final Vector3d size = new Vector3d(1.0d, 1.0d, 1.0d);
@@ -195,7 +196,8 @@ public class DisplayEntity extends Entity {
 		positionInput.setUnits("m");
 		this.addInput(positionInput, true);
 
-		addEditableKeyword( "Alignment",        "", "0.000  0.000  0.000",           false, "Graphics" );
+		alignmentInput = new Vector3dInput("Alignment", "Graphics", new Vector3d());
+		this.addInput(alignmentInput, true);
 
 		sizeInput = new Vector3dInput("Size", "Graphics", new Vector3d(1.0d,1.0d,1.0d));
 		sizeInput.setUnits("m");
@@ -1033,11 +1035,6 @@ public class DisplayEntity extends Entity {
 
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
-		if ("ALIGNMENT".equalsIgnoreCase(keyword)) {
-			Vector3d temp = Input.parseVector3d(data);
-			this.setAlignment(temp);
-			return;
-		}
 		if( "Label".equalsIgnoreCase( keyword ) ) {
 			InputAgent.logWarning("The keyword Label no longer has any effect");
 			return;
@@ -1504,7 +1501,7 @@ public class DisplayEntity extends Entity {
 
 	public void updateInputAlignment() {
 		Vector3d vec = this.getAlignment();
-		EditBox.processEntity_Keyword_Value(this, "Alignment", String.format( "%.3f %.3f %.3f", vec.x, vec.y, vec.z ));
+		EditBox.processEntity_Keyword_Value(this, alignmentInput.getKeyword(), String.format( "%.3f %.3f %.3f", vec.x, vec.y, vec.z ));
 		InputAgent.addEditedEntity(this);
 		FrameBox.valueUpdate();
 	}
@@ -1587,5 +1584,6 @@ public class DisplayEntity extends Entity {
 		this.setPosition(  positionInput.getValue() );
 		this.setSize( sizeInput.getValue() );
 		this.setOrientation( orientationInput.getValue() );
+		this.setAlignment( alignmentInput.getValue() );
 	}
 }
