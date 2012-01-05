@@ -416,6 +416,9 @@ public class FileEntity {
 							parseForSubStrings[i] = parseForSubStrings[i].replaceAll( ",", "@COMMACHAR@" );
 							parseForSubStrings[i] = parseForSubStrings[i].replaceAll( " ", "@SPACECHAR@" );
 							parseForSubStrings[i] = parseForSubStrings[i].replaceAll( "\t", "@TABCHAR@" );
+							if(parseForSubStrings[i].isEmpty()) {
+								parseForSubStrings[i] = "@EMPTY@";
+							}
 
 							// If it is a number, then add a comma so readData_ForKeyword don't see it as a number. This comma should be ignored in that method
 							if( Tester.isDouble( parseForSubStrings[i] ) ) {
@@ -455,6 +458,7 @@ public class FileEntity {
 				lineOfFile = lineOfFile.replaceAll( "@CLOSEBRACKETCHAR@", "]" );
 				lineOfFile = lineOfFile.replaceAll( "@COMMACHAR@", ","  );
 				lineOfFile = lineOfFile.replaceAll( "@SPACECHAR@", " "  );
+				lineOfFile = lineOfFile.replaceAll( "@EMPTY@", ""  );
 
 				// Split the record and return it
 				String[] record = lineOfFile.split( "\t" );
