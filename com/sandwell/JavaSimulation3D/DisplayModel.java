@@ -262,7 +262,10 @@ public class DisplayModel extends Entity {
 
 					// Load the collada file
 					scene = collada.load ( url );
-					conversionFactorToMeters = DAELoader.meter;
+					Object unitMeter = scene.getNamedObjects().remove("JaamSim-UnitMeter");
+					if (unitMeter instanceof Double) {
+						conversionFactorToMeters = ((Double)unitMeter).doubleValue();
+					}
 				}
 				catch (Exception ex){
 					scene = null;

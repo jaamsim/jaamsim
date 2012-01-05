@@ -90,8 +90,6 @@ import com.sun.j3d.utils.image.TextureLoader;
  * @author apptaro (bug fixes)
  */
 public class DAELoader extends LoaderBase implements Loader {
-    public static double meter;
-
    /**
    * Returns the scene described in the given DAE file.
    */
@@ -466,7 +464,7 @@ public class DAELoader extends LoaderBase implements Loader {
             });
         }
       } else if("unit".equals(name)) {
-	  meter = Double.parseDouble(attributes.getValue("meter"));
+    	  scene.addNamedObject("JaamSim-UnitMeter", Double.parseDouble(attributes.getValue("meter")));
       }
       this.parentElements.push(name);
     }
