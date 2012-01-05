@@ -132,9 +132,9 @@ public class ModelEntity extends DisplayEntity {
 	private double timeOfLastPrintedState = 0; // The time that the last state printed in the trace state file
 
 	// Graphics
-	protected static ColoringAttributes breakdownColor; // Color of the entity in breaking down
-	protected static ColoringAttributes maintenanceColor; // Color of the entity in maintenance
-	protected static ColoringAttributes forcedMaintenanceColor; // Color of the entity in force maintenance
+	protected ColoringAttributes breakdownColor; // Color of the entity in breaking down
+	protected ColoringAttributes maintenanceColor; // Color of the entity in maintenance
+	protected ColoringAttributes forcedMaintenanceColor; // Color of the entity in force maintenance
 
 	static {
 		stateList.addElement( "Idle" );
