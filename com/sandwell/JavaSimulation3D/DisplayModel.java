@@ -558,8 +558,10 @@ public class DisplayModel extends Entity {
 		if(maxLength < modelSize.z)
 			maxLength = modelSize.z;
 
-		// Divide the scale by the longess side size
-		size.setScale(1/maxLength);
+		// Divide the scale by the longest side size
+		if(maxLength != 0.0d)
+			size.setScale(1.0d/maxLength);
+
 		TransformGroup tg = new TransformGroup(size);
 		tg.addChild(dm);
 		BranchGroup bg = new BranchGroup();
