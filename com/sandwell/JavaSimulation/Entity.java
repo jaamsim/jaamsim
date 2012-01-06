@@ -258,12 +258,18 @@ public class Entity {
 		}
 	}
 
+	/**
+	 * This method updates the Entity for changes in the given input
+	 */
+	public void updateForInput( Input<?> in ) {}
+
 	public final void readInput(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
 		Input<?> in = this.getInput(keyword);
 		if (in != null) {
 //			System.out.format("Parsing using input object:%s\n", in.getKeyword());
 			in.parse(data);
+			this.updateForInput( in );
 		} else {
 			this.readData_ForKeyword(data, keyword, syntaxOnly, isCfgInput);
 		}

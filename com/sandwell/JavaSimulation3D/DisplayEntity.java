@@ -1578,12 +1578,29 @@ public class DisplayEntity extends Entity {
 		if(getRelativeEntity() == this) {
 			this.warning("validate()", "Relative Entities should not be defined in a circular loop", "");
 		}
+	}
 
-		// Set properties from input
-		// Technically, this is not validation, but it should be done before earlyInit
-		this.setPosition(  positionInput.getValue() );
-		this.setSize( sizeInput.getValue() );
-		this.setOrientation( orientationInput.getValue() );
-		this.setAlignment( alignmentInput.getValue() );
+	/**
+	 * This method updates the DisplayEntity for changes in the given input
+	 */
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if( in == positionInput ) {
+			this.setPosition(  positionInput.getValue() );
+			return;
+		}
+		if( in == sizeInput ) {
+			this.setSize( sizeInput.getValue() );
+			return;
+		}
+		if( in == orientationInput ) {
+			this.setOrientation( orientationInput.getValue() );
+			return;
+		}
+		if( in == alignmentInput ) {
+			this.setAlignment( alignmentInput.getValue() );
+			return;
+		}
 	}
 }
