@@ -86,8 +86,12 @@ public class TextLabel extends DisplayEntity  {
 		super.readData_ForKeyword( data, keyword, syntaxOnly, isCfgInput );
 	}
 
+	String getRenderText(double time) {
+		return text.getValue();
+	}
+
 	public void render(double time) {
-		if (text.getValue() != reference.getText() ||
+		if (getRenderText(time) != reference.getText() ||
 			reference.getTextHeight() != textHeight.getValue() ||
 			reference.getFillColor() != fontColor.getValue() ||
 			reference.getFontName() != fontName.getValue() ||
@@ -96,7 +100,7 @@ public class TextLabel extends DisplayEntity  {
 			reference.setHeight(textHeight.getValue());
 			reference.setFillColor(fontColor.getValue());
 			reference.setFont(fontName.getValue(), fontStyle, 1);
-			reference.setText(text.getValue());
+			reference.setText(getRenderText(time));
 
 			Vector3d tmp = new Vector3d();
 			reference.getSize(tmp);

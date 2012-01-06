@@ -114,7 +114,7 @@ public class PropertyLabel extends TextLabel  {
 		this.enterRegion();
 	}
 
-	private void getRenderText(double time) {
+	String getRenderText(double time) {
 		Object[] params;
 		// Time is passing to the method as an argument
 		if (timeMethod.getValue()) {
@@ -129,16 +129,13 @@ public class PropertyLabel extends TextLabel  {
 			// run target method and return its value
 			Object value = targetMethod.invoke(targetEntity.getValue(), params);
 			if (value instanceof Double)
-				EditBox.processEntity_Keyword_Value(this, "Text", String.format(doubleFmt, ((Double)value).doubleValue() * multiplier.getValue()) );
+				return String.format(doubleFmt, ((Double)value).doubleValue() * multiplier.getValue());
 			else
-				EditBox.processEntity_Keyword_Value(this, "Text", String.format(fmt, value) );
+				return String.format(fmt, value);
 
 		}
-		catch (Throwable e) {}
-	}
-
-	public void render(double time) {
-		this.getRenderText(time);
-		super.render(time);
+		catch (Throwable e) {
+			return super.getRenderText(time);
+		}
 	}
 }
