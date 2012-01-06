@@ -16,7 +16,6 @@ package com.sandwell.JavaSimulation3D;
 
 import java.awt.Font;
 
-import javax.vecmath.Point2d;
 import javax.vecmath.Vector3d;
 
 import com.sandwell.JavaSimulation.ColourInput;
@@ -99,8 +98,8 @@ public class TextLabel extends DisplayEntity  {
 			reference.setFont(fontName.getValue(), fontStyle, 1);
 			reference.setText(text.getValue());
 
-			Point2d labSize = reference.getSize();
-			Vector3d tmp = new Vector3d(labSize.x, labSize.y, 0.0d);
+			Vector3d tmp = new Vector3d();
+			reference.getSize(tmp);
 			this.setSize(tmp);
 		}
 

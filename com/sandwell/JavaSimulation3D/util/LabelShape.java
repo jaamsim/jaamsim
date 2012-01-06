@@ -23,7 +23,6 @@ import javax.media.j3d.FontExtrusion;
 import javax.media.j3d.Text3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-import javax.vecmath.Point2d;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
@@ -214,8 +213,8 @@ public class LabelShape extends Shape2D {
 		return myText3D.getFont3D().getFont().getStyle();
 	}
 
-	public Point2d getSize() {
-		return new Point2d( myWidth, myHeight );
+	public void getSize(Vector3d vec) {
+		vec.set(myWidth, myHeight, 0.0d);
 	}
 
 	public void setPos( double x, double y, double z ) {
