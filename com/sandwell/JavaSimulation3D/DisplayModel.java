@@ -133,6 +133,8 @@ public class DisplayModel extends Entity {
 	private final IntegerVector geometriesTotalVertices = new IntegerVector();
 	private int	totalUniqueGeometries = 0;
 
+	private boolean hasSharedGroup=false;
+
 	static {
 		allInstances = new ArrayList<DisplayModel>();
 
@@ -266,6 +268,9 @@ public class DisplayModel extends Entity {
 					if (unitMeter instanceof Double) {
 						conversionFactorToMeters = ((Double)unitMeter).doubleValue();
 					}
+					if (Boolean.TRUE == scene.getNamedObjects().remove("JaamSim-HasSharedGroup")) {
+						hasSharedGroup = true;
+					}
 				}
 				catch (Exception ex){
 					scene = null;
@@ -376,6 +381,10 @@ public class DisplayModel extends Entity {
 		boundary.getUpper(modelSize);
 		modelSize.sub( lower );
 		modelSize.absolute();
+	}
+
+	public boolean hasSharedGroup() {
+		return hasSharedGroup;
 	}
 
 	/**

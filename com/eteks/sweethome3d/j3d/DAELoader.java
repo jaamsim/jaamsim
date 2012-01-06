@@ -421,6 +421,9 @@ public class DAELoader extends LoaderBase implements Loader {
                   instantiatedNodes.put(nodeInstanceAnchor, sharedGroup);
                 }
                 parentTransformGroup.addChild(new Link(sharedGroup));
+                if(! scene.getNamedObjects().contains("JaamSim-HasSharedGroup")) {
+                	scene.addNamedObject("JaamSim-HasSharedGroup", Boolean.TRUE);
+                }
               }
             });
         }

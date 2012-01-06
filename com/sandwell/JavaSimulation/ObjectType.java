@@ -113,7 +113,8 @@ public class ObjectType extends Entity {
 	 * print DisplayMOdel to low and high resolution png files on the JaamSim temporary folder
 	 */
 	public void printImage(){
-		BranchGroupPrinter.printBranchGroup_On(getDefaultDisplayModel().getUnitDisplayModel(), this.getName());
+		if(! getDefaultDisplayModel().hasSharedGroup() )
+			BranchGroupPrinter.printBranchGroup_On(getDefaultDisplayModel().getUnitDisplayModel(), this.getName());
 	}
 
 	public Package getPackage() {

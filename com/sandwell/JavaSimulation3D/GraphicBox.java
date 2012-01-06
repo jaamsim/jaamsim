@@ -101,8 +101,9 @@ public class GraphicBox extends JDialog {
 				try {
 
 					// Print the Icons if they are not exist already
-					if(! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + modelName + "LowRes.png") ||
-							! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + modelName + "HighRes.png") ) {
+					if(( ! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + modelName + "LowRes.png") ||
+							! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + modelName + "HighRes.png") ) &&
+							! dm.hasSharedGroup() ) {
 						BranchGroupPrinter.printBranchGroup_On(dm.getUnitDisplayModel(), modelName);
 					}
 
