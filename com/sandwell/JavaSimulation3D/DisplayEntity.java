@@ -1060,11 +1060,8 @@ public class DisplayEntity extends Entity {
 			InputAgent.logWarning("The keyword FontColour no longer has any effect");
 			return;
 		}
-
-		if( "ANGLE".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			double temp = Input.parseDouble(data.get(0));
-			setAngle(temp);
+		if( "Angle".equalsIgnoreCase( keyword ) ) {
+			InputAgent.logWarning("The keyword Angle no longer has any effect");
 			return;
 		}
 
