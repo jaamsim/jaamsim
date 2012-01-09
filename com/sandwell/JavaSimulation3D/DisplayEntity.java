@@ -135,6 +135,7 @@ public class DisplayEntity extends Entity {
 	private final Vector3dInput orientationInput;
 	private final Vector3dInput alignmentInput;
 	private final EntityInput<Region> regionInput;
+	private final Vector3dInput mouseNodesExtentInput;
 
 	private final Vector3d position = new Vector3d();
 	private final Vector3d size = new Vector3d(1.0d, 1.0d, 1.0d);
@@ -214,7 +215,9 @@ public class DisplayEntity extends Entity {
 		showToolTip = new BooleanInput("ToolTip", "Graphics", true);
 		this.addInput(showToolTip, true);
 
-		addEditableKeyword( "MouseNodesExtent",              "  -  ",   "  -  ", false, "Graphics" );
+		mouseNodesExtentInput = new Vector3dInput("MouseNodesExtent", "Graphics", new Vector3d(0.05d,0.05d,0.0d));
+		mouseNodesExtentInput.setUnits("m");
+		this.addInput(mouseNodesExtentInput, true);
 
 		relativeEntity = new EntityInput<DisplayEntity>(DisplayEntity.class, "RelativeEntity", "Graphics", null);
 		this.addInput(relativeEntity, true);
@@ -1067,12 +1070,6 @@ public class DisplayEntity extends Entity {
 			return;
 		}
 
-        if( "MOUSENODESEXTENT".equalsIgnoreCase( keyword ) ) {
-			Vector3d vec = Input.parseVector3d(data, 0.0d, Double.POSITIVE_INFINITY);
-			this.setMouseNodesSize( vec.x );
-			return;
-		}
-
 		super.readData_ForKeyword( data, keyword, syntaxOnly, isCfgInput );
 	}
 
@@ -1597,6 +1594,10 @@ public class DisplayEntity extends Entity {
 		}
 		if( in == regionInput ) {
 			this.enterRegion( regionInput.getValue() );
+			return;
+		}
+		if( in == mouseNodesExtentInput ) {
+			this.setMouseNodesSize( mouseNodesExtentInput.getValue().x );
 			return;
 		}
 	}
