@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.BooleanInput;
+import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
@@ -135,7 +136,7 @@ public class DisplayEntity extends Entity {
 	private final Vector3dInput orientationInput;
 	private final Vector3dInput alignmentInput;
 	private final EntityInput<Region> regionInput;
-	private final Vector3dInput mouseNodesExtentInput;
+	private final DoubleInput mouseNodesExtentInput;
 
 	private final Vector3d position = new Vector3d();
 	private final Vector3d size = new Vector3d(1.0d, 1.0d, 1.0d);
@@ -215,7 +216,7 @@ public class DisplayEntity extends Entity {
 		showToolTip = new BooleanInput("ToolTip", "Graphics", true);
 		this.addInput(showToolTip, true);
 
-		mouseNodesExtentInput = new Vector3dInput("MouseNodesExtent", "Graphics", new Vector3d(0.05d,0.05d,0.0d));
+		mouseNodesExtentInput = new DoubleInput("MouseNodesExtent", "Graphics", 0.05d);
 		mouseNodesExtentInput.setUnits("m");
 		this.addInput(mouseNodesExtentInput, true);
 
@@ -1597,7 +1598,7 @@ public class DisplayEntity extends Entity {
 			return;
 		}
 		if( in == mouseNodesExtentInput ) {
-			this.setMouseNodesSize( mouseNodesExtentInput.getValue().x );
+			this.setMouseNodesSize( mouseNodesExtentInput.getValue() );
 			return;
 		}
 	}
