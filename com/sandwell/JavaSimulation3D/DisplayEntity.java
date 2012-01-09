@@ -134,6 +134,7 @@ public class DisplayEntity extends Entity {
 	private final Vector3dInput sizeInput;
 	private final Vector3dInput orientationInput;
 	private final Vector3dInput alignmentInput;
+	private final EntityInput<Region> regionInput;
 
 	private final Vector3d position = new Vector3d();
 	private final Vector3d size = new Vector3d(1.0d, 1.0d, 1.0d);
@@ -207,7 +208,8 @@ public class DisplayEntity extends Entity {
 		orientationInput.setUnits("rad");
 		this.addInput(orientationInput, true);
 
-		addEditableKeyword( "Region",           "", "ModelStage",                    false, "Graphics" );
+		regionInput = new EntityInput<Region>(Region.class, "Region", "Graphics", simulation.getDefaultRegion());
+		this.addInput(regionInput, true);
 
 		showToolTip = new BooleanInput("ToolTip", "Graphics", true);
 		this.addInput(showToolTip, true);
@@ -1065,12 +1067,6 @@ public class DisplayEntity extends Entity {
 			return;
 		}
 
-		if( keyword.equalsIgnoreCase( "Region" ) ) {
-			Input.assertCount(data, 1);
-			this.setRegion(Input.parseEntity(data.get(0), Region.class));
-			return;
-		}
-
         if( "MOUSENODESEXTENT".equalsIgnoreCase( keyword ) ) {
 			Vector3d vec = Input.parseVector3d(data, 0.0d, Double.POSITIVE_INFINITY);
 			this.setMouseNodesSize( vec.x );
@@ -1597,6 +1593,10 @@ public class DisplayEntity extends Entity {
 		}
 		if( in == alignmentInput ) {
 			this.setAlignment( alignmentInput.getValue() );
+			return;
+		}
+		if( in == regionInput ) {
+			this.enterRegion( regionInput.getValue() );
 			return;
 		}
 	}
