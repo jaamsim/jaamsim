@@ -696,6 +696,12 @@ public class ModelEntity extends DisplayEntity {
 		this.updateGraphics();
 	}
 
+	public void setMaintenance( boolean bool ) {
+		maintenance = bool;
+		this.setPresentState();
+		this.updateGraphics();
+	}
+
 	public void setAssociatedBreakdown( boolean bool ) {
 		associatedBreakdown = bool;
 	}
