@@ -16,7 +16,6 @@ package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Package;
-import com.sandwell.JavaSimulation.Util;
 
 import java.awt.Cursor;
 import java.awt.dnd.DnDConstants;
