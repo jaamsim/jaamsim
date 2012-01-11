@@ -903,7 +903,7 @@ public class GUIFrame extends JFrame {
 
 	private void startSimulation() {
 		OrbitBehavior.setViewerBehaviour( OrbitBehavior.CHANGE_TRANSLATION );
-		if( DisplayEntity.simulation.getSimulationState() == Simulation.SIM_STATE_CONFIGURED ) {
+		if( DisplayEntity.simulation.getSimulationState() <= Simulation.SIM_STATE_CONFIGURED ) {
 			if (InputAgent.isSessionEdited()) {
 				InputAgent.saveAs();
 			}
@@ -963,7 +963,7 @@ public class GUIFrame extends JFrame {
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				controlRealTime.setEnabled( false );
-				controlStartResume.setEnabled( false );
+				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStop.setEnabled( false );
 				controlStop.setSelected( false );
@@ -994,7 +994,7 @@ public class GUIFrame extends JFrame {
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
 				controlRealTime.setEnabled( false );
-				controlStartResume.setEnabled( false );
+				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
