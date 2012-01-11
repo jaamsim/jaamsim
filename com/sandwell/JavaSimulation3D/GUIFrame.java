@@ -23,7 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -35,7 +34,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -57,6 +55,7 @@ import javax.swing.JToolBar;
 import javax.swing.JWindow;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
@@ -87,6 +86,7 @@ public class GUIFrame extends JFrame {
 
 	private JToggleButton controlRealTime;
 	private JSlider speedFactor;
+	JLabel speedUpLabel;
 
 	private JToggleButton controlStartResume;
 	private JToggleButton controlPause;
@@ -604,39 +604,26 @@ public class GUIFrame extends JFrame {
 
 		// End run label and run control button creation
 
-		// Create Real-Time scaling label and menu
-		JLabel speedUpLabel = new JLabel( "   Speedup:   " );
+		// Create Real-Time scaling label and logarithmic slider
+		speedUpLabel = new JLabel("1,000,000", JLabel.RIGHT);
+		speedUpLabel.setBorder(LineBorder.createGrayLineBorder());
 
-		speedFactor = new JSlider(JSlider.HORIZONTAL, 200, 600, 400);
-		Dimension dim = speedFactor.getPreferredSize();
-		dim.setSize(dim.width, dim.height*1.9);
-		speedFactor.setPreferredSize(dim);
+		// Set the preferred size to the maximum possible size of speedUpLabel (1,000,000)
+		speedUpLabel.setPreferredSize(speedUpLabel.getPreferredSize());
+		speedUpLabel.setText("10,000"); // Default value
 
-		speedFactor.setToolTipText("10000");
-
-		speedFactor.setMaximumSize( speedFactor.getPreferredSize() );
+		speedFactor = new JSlider(JSlider.HORIZONTAL, 0, 600, 400);
 		speedFactor.addChangeListener( new ChangeListener() {
 			public void stateChanged( ChangeEvent e ) {
 				int speed = (int)Math.pow(10, speedFactor.getValue() / 100.0d);
 				DisplayEntity.simulation.setRealTimeFactor(speed);
-				speedFactor.setToolTipText(String.format("%d", speed));
+				speedUpLabel.setText(String.format("%,d", speed));
 			}
 		} );
 
 		//Turn on major tick marks.
 		speedFactor.setMajorTickSpacing(100);
 		speedFactor.setPaintTicks(true);
-		speedFactor.setPaintLabels(true);
-
-		// Create sliders label
-		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-		for(int i = speedFactor.getMinimum(); i <= speedFactor.getMaximum(); i += 100) {
-			JLabel label = new JLabel(String.format("<HTML>10<sup>%d", i/100));
-			Font font = new Font("Serif", Font.PLAIN, 10);
-			label.setFont(font);
-			labelTable.put(new Integer(i), label);
-		}
-		speedFactor.setLabelTable( labelTable );
 
 		controlRealTime = new JToggleButton( " Real Time " );
 		controlRealTime.setToolTipText( "Toggle Real Time" );
@@ -652,6 +639,7 @@ public class GUIFrame extends JFrame {
 
 		mainToolBar.add( controlRealTime );
 		mainToolBar.add( speedUpLabel );
+		mainToolBar.add(new JLabel("X"));
 		mainToolBar.add( speedFactor );
 		mainToolBar.addSeparator();
 		// End creation of real-time label and menu
