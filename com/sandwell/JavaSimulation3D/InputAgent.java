@@ -540,11 +540,6 @@ public class InputAgent {
 
 		// At this point configuration file is loaded
 
-		// Initialize all the regions in the model
-		for (Region each : Region.getAll()) {
-			each.initializeLocalClock();
-		}
-
 		// Save and close the input trace file
 		if (logFile != null) {
 			if (InputAgent.numWarnings == 0 && InputAgent.numErrors == 0) {

@@ -118,7 +118,7 @@ public class Region extends DisplayEntity {
 	}
 
 	/**
-	 * Constrcutor creating a new locale in the simulation universe.
+	 * Constructor creating a new locale in the simulation universe.
 	 */
 	public Region() {
 		allInstances.add(this);
@@ -146,6 +146,17 @@ public class Region extends DisplayEntity {
 			simulation.registerGraphics( this );
 		}
 		//this.setCollapseType( SHOW_NOTHING );
+
+		// Define the status bar
+		statusBar = new JPanel();
+		statusBar.setBorder(BorderFactory.createLineBorder(Color.darkGray));
+		statusBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+		statusBar.setVisible(false);
+
+		// Define the local clock
+		localClock = new LocalClock();
+		localClock.setRegion( this );
+		localClock.enterRegion();
 	}
 
 	public static ArrayList<? extends Region> getAll() {
@@ -156,33 +167,17 @@ public class Region extends DisplayEntity {
 		super.kill();
 		allInstances.remove(this);
 		simulation.unregisterGraphics(this);
-		if( localClock != null )
-			localClock.kill();
+		localClock.kill();
 	}
 
-	public void initializeLocalClock() {
-
-		// Local clock is already defined
-		if( localClock != null ) {
-			return;
-		}
-
-		// Define the local clock and initialize it
-		localClock = new LocalClock();
-		localClock.setRegion( this );
-		localClock.enterRegion();
+	public void render(double time) {
+		super.render(time);
 
 		// show the status bar
-		if (showTime) {
-			statusBar = new JPanel();
-			statusBar.setBorder(BorderFactory.createLineBorder(Color.darkGray));
-			statusBar.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-
-			for (Display2DEntity each : Display2DEntity.getAll()) {
-				if (each.getCurrentRegion() == this)
-					statusBar.add(each.getModel());
-			}
-		}
+		if (showTime)
+			statusBar.setVisible(true);
+		else
+			statusBar.setVisible(false);
 	}
 
 	/**
