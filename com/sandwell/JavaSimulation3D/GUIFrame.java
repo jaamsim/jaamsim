@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -595,7 +596,14 @@ public class GUIFrame extends JFrame {
 			}
 		} );
 
+		// Separators have 5 pixels before and after and the preferred height of controlStartResume button
+		Dimension separatorDim = new Dimension(11, controlStartResume.getPreferredSize().height);
+
+		// dimension for 5 pixels gaps
+		Dimension gapDim = new Dimension(5, separatorDim.height);
+
 		mainToolBar.add( controlStartResume );
+		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( controlStop );
 
 		// End run label and run control button creation
@@ -621,7 +629,8 @@ public class GUIFrame extends JFrame {
 		speedFactor.setMajorTickSpacing(100);
 		speedFactor.setPaintTicks(true);
 
-		controlRealTime = new JToggleButton( " Real Time " );
+		mainToolBar.addSeparator(separatorDim);
+		controlRealTime = new JToggleButton( "Real Time" );
 		controlRealTime.setToolTipText( "Toggle Real Time" );
 		controlRealTime.setMargin( smallMargin );
 		controlRealTime.addActionListener( new ActionListener() {
@@ -634,10 +643,13 @@ public class GUIFrame extends JFrame {
 		} );
 
 		mainToolBar.add( controlRealTime );
+		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( speedUpLabel );
+		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add(new JLabel("X"));
+		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( speedFactor );
-		mainToolBar.addSeparator();
+		mainToolBar.addSeparator(separatorDim);
 		// End creation of real-time label and menu
 
 		// Create view control label and controls
@@ -657,7 +669,7 @@ public class GUIFrame extends JFrame {
 		mainToolBar.add( toolButtonTranslate );
 		mainToolBar.add( toolButtonRotate );
 		mainToolBar.add( toolButtonZoomBox );
-		mainToolBar.addSeparator();
+		mainToolBar.addSeparator(separatorDim);
 
 		// add a button to show isometric view in windows
 		toolButtonIsometric = new JButton( "Isometric" );
@@ -685,7 +697,7 @@ public class GUIFrame extends JFrame {
 		} );
 		mainToolBar.add( toolButtonXYPlane );
 
-		mainToolBar.addSeparator();
+		mainToolBar.addSeparator(separatorDim);
 
 		// add a button to undo the last step ( viewer and window )
 		toolButtonUndo = new JButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/previous.png")));
@@ -714,7 +726,7 @@ public class GUIFrame extends JFrame {
 			}
 		} );
 		mainToolBar.add( toolButtonRedo );
-		mainToolBar.addSeparator();
+		mainToolBar.addSeparator(separatorDim);
 
 		// add a button that allows mouse nodes to be added to segments
 		addNode = new JToggleButton( " Add Node " );
@@ -750,7 +762,7 @@ public class GUIFrame extends JFrame {
 			}
 		} );
 
-		mainToolBar.addSeparator();
+		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add( controlRecord );
 
 		// Add toolbar to the window
