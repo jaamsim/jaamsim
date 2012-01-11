@@ -89,7 +89,6 @@ public class GUIFrame extends JFrame {
 	JLabel speedUpLabel;
 
 	private JToggleButton controlStartResume;
-	private JToggleButton controlPause;
 	private JToggleButton controlStop;
 
 	private JLabel locatorPos;
@@ -553,24 +552,23 @@ public class GUIFrame extends JFrame {
 
 		// Create Run Label and run control buttons
 		controlStartResume = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/run.png")));
+		controlStartResume.setSelectedIcon(
+				new ImageIcon(GUIFrame.class.getResource("/resources/images/pause.png")));
 		controlStartResume.setToolTipText( "Run" );
 		controlStartResume.setMargin( noMargin );
 		controlStartResume.setEnabled( false );
 		controlStartResume.addActionListener( new ActionListener() {
 
 			public void actionPerformed( ActionEvent event ) {
-				GUIFrame.this.startSimulation();
-			}
-		} );
-
-		controlPause = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/pause.png")));
-		controlPause.setToolTipText( "Pause" );
-		controlPause.setMargin( noMargin );
-		controlPause.setEnabled( false );
-		controlPause.addActionListener( new ActionListener() {
-
-			public void actionPerformed( ActionEvent event ) {
-				GUIFrame.this.pauseSimulation();
+				JToggleButton startResume = (JToggleButton)event.getSource();
+				if(startResume.isSelected()) {
+					GUIFrame.this.startSimulation();
+					startResume.setToolTipText( "Pause" );
+				}
+				else {
+					GUIFrame.this.pauseSimulation();
+					startResume.setToolTipText( "Run" );
+				}
 			}
 		} );
 
@@ -598,9 +596,7 @@ public class GUIFrame extends JFrame {
 		} );
 
 		mainToolBar.add( controlStartResume );
-		mainToolBar.add( controlPause );
 		mainToolBar.add( controlStop );
-		mainToolBar.addSeparator();
 
 		// End run label and run control button creation
 
@@ -888,8 +884,6 @@ public class GUIFrame extends JFrame {
 	public void initialize() {
 		controlStartResume.setSelected( false );
 		controlStartResume.setEnabled( false );
-		controlPause.setSelected( false );
-		controlPause.setEnabled( false );
 		controlStop.setSelected( false );
 		controlStop.setEnabled( false );
 		clockDisplay.setText( "------.--" );
@@ -959,8 +953,6 @@ public class GUIFrame extends JFrame {
 				controlRealTime.setEnabled( false );
 				controlStartResume.setEnabled( false );
 				controlStartResume.setSelected( false );
-				controlPause.setEnabled( false );
-				controlPause.setSelected( false );
 				controlStop.setEnabled( false );
 				controlStop.setSelected( false );
 				toolButtonZoomBox.setEnabled( true );
@@ -992,8 +984,6 @@ public class GUIFrame extends JFrame {
 				controlRealTime.setEnabled( false );
 				controlStartResume.setEnabled( false );
 				controlStartResume.setSelected( false );
-				controlPause.setSelected( false );
-				controlPause.setEnabled( false );
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
 				toolButtonZoomBox.setEnabled( true );
@@ -1027,8 +1017,6 @@ public class GUIFrame extends JFrame {
 				controlRealTime.setEnabled( true );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
-				controlPause.setSelected( false );
-				controlPause.setEnabled( false );
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
 				toolButtonZoomBox.setEnabled( true );
@@ -1046,10 +1034,8 @@ public class GUIFrame extends JFrame {
 				break;
 
 			case Simulation.SIM_STATE_RUNNING:
-				controlStartResume.setEnabled( false );
+				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( true );
-				controlPause.setEnabled( true );
-				controlPause.setSelected( false );
 				controlStop.setEnabled( true );
 				controlStop.setSelected( false );
 				toolButtonZoomBox.setSelected( false );
@@ -1068,16 +1054,12 @@ public class GUIFrame extends JFrame {
 			case Simulation.SIM_STATE_PAUSED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
-				controlPause.setEnabled( false );
-				controlPause.setSelected( true );
 				controlStop.setEnabled( true );
 				controlStop.setSelected( false );
 				break;
 			case Simulation.SIM_STATE_STOPPED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
-				controlPause.setEnabled( false );
-				controlPause.setSelected( false );
 				controlStop.setEnabled( false );
 				controlStop.setSelected( false );
 				break;
