@@ -628,6 +628,7 @@ public class GUIFrame extends JFrame {
 		//Turn on major tick marks.
 		speedFactor.setMajorTickSpacing(100);
 		speedFactor.setPaintTicks(true);
+		speedFactor.setFocusable(false);
 
 		mainToolBar.addSeparator(separatorDim);
 		controlRealTime = new JToggleButton( "Real Time" );
@@ -962,7 +963,6 @@ public class GUIFrame extends JFrame {
 				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
-				controlRealTime.setEnabled( false );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStop.setEnabled( false );
@@ -993,7 +993,6 @@ public class GUIFrame extends JFrame {
 				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
-				controlRealTime.setEnabled( false );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStop.setSelected( false );
@@ -1026,7 +1025,6 @@ public class GUIFrame extends JFrame {
 				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( true );
 				remainingDisplay.setEnabled( true );
-				controlRealTime.setEnabled( true );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStop.setSelected( false );
