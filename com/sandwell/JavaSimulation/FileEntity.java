@@ -55,10 +55,10 @@ public class FileEntity {
 		// Case 1) the file exists inside the jar file
 		try {
 			// Check if the absolute file name exists
-			if( fileName.startsWith( "file:/" ) ) {
-				if(fileName.contains("com/sandwell/JavaSimulation/")) {
+			if( fileName.contains( "file:/" ) ) {
+				if(fileName.contains(".jar!")) {
 					fname = fileName.replace( "%20", " " );
-					int firstIndex = fname.indexOf( "com/sandwell/JavaSimulation/" ) + "com/sandwell/JavaSimulation/".length();
+					int firstIndex = fname.indexOf( ".jar!" ) + ".jar!".length();
 					String relativeURL = fname.substring( firstIndex );
 					InputStream inStream = this.getClass().getResourceAsStream( relativeURL );
 					inputStream = new BufferedReader( new InputStreamReader( inStream ) );
@@ -491,8 +491,8 @@ public class FileEntity {
 				inputStream.close();
 				inputStream = null;
 
-				if( fname.startsWith( "file:/" ) ) {
-					int firstIndex = fname.indexOf( "com/sandwell/JavaSimulation/" ) + "com/sandwell/JavaSimulation/".length();
+				if( fname.contains( "file:/" ) ) {
+					int firstIndex = fname.indexOf( ".jar!" ) + ".jar!".length();
 					String relativeURL = fname.substring( firstIndex );
 					InputStream inStream = this.getClass().getResourceAsStream( relativeURL );
 					inputStream = new BufferedReader( new InputStreamReader( inStream ) );
@@ -592,7 +592,7 @@ public class FileEntity {
 		// Check if the file exists inside the jar file
 		try {
 			// If the file name begins with "file:/", return true
-			if( fileName.startsWith( "file:/" ) ) {
+			if( fileName.contains( "file:/" ) ) {
 				return true;
 			}
 
