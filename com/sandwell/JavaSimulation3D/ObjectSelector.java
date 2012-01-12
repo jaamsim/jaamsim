@@ -73,52 +73,8 @@ public class ObjectSelector extends FrameBox {
 		tree.addTreeSelectionListener( new MyTreeSelectionListener() );
 		treeModel.addTreeModelListener( new MyTreeModelListener() );
 
-		tree.addMouseListener( new MouseListener() {
-			private final JPopupMenu menu= new JPopupMenu();
-
-			public void mouseClicked(MouseEvent e) {
-
-				if(e.getButton() != MouseEvent.BUTTON3)
-					return;
-
-				if(currentEntity instanceof DisplayEntity ) {
-					DisplayEntity disp = (DisplayEntity)currentEntity;
-
-					if(! disp.isMovable())
-						return;
-
-					// Right mouse click on a movable DisplayEntity
-					menu.removeAll();
-					disp.addMenuItems(menu, e.getX(), e.getY());
-					menu.show(e.getComponent(), e.getX(), e.getX());
-				}
-			}
-			public void mouseEntered(MouseEvent e) {}
-			public void mouseExited(MouseEvent e) {}
-			public void mousePressed(MouseEvent e) {}
-			public void mouseReleased(MouseEvent e) {}
-		});
-
-		tree.addKeyListener(new KeyListener() {
-			public void keyReleased(KeyEvent e) {
-
-				if (e.getKeyCode() != KeyEvent.VK_DELETE)
-					return;
-
-				if(currentEntity instanceof DisplayEntity ) {
-					DisplayEntity disp = (DisplayEntity)currentEntity;
-
-					if(! disp.isMovable())
-						return;
-
-					// Delete key was released on a movable DisplayEntity
-					disp.kill();
-					FrameBox.setSelectedEntity(null);
-				}
-			}
-			public void keyPressed(KeyEvent e) {}
-			public void keyTyped(KeyEvent e) {}
-		});
+		tree.addMouseListener(new MyMouseListener());
+		tree.addKeyListener(new MyKeyListener());
 	}
 
 	public void setEntity(Entity ent) {
@@ -326,5 +282,51 @@ public class ObjectSelector extends FrameBox {
 		public void treeNodesInserted(TreeModelEvent e) {}
 		public void treeNodesRemoved(TreeModelEvent e) {}
 		public void treeStructureChanged(TreeModelEvent e) {}
+	}
+
+	static class MyMouseListener implements MouseListener {
+		private final JPopupMenu menu= new JPopupMenu();
+
+		public void mouseClicked(MouseEvent e) {
+
+			if(e.getButton() != MouseEvent.BUTTON3)
+				return;
+
+			if(currentEntity instanceof DisplayEntity ) {
+				DisplayEntity disp = (DisplayEntity)currentEntity;
+
+				if(! disp.isMovable())
+					return;
+
+				// Right mouse click on a movable DisplayEntity
+				menu.removeAll();
+				disp.addMenuItems(menu, e.getX(), e.getY());
+				menu.show(e.getComponent(), e.getX(), e.getX());
+			}
+		}
+		public void mouseEntered(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) {}
+		public void mousePressed(MouseEvent e) {}
+		public void mouseReleased(MouseEvent e) {}
+	}
+	static class MyKeyListener implements KeyListener {
+		public void keyReleased(KeyEvent e) {
+
+			if (e.getKeyCode() != KeyEvent.VK_DELETE)
+				return;
+
+			if(currentEntity instanceof DisplayEntity ) {
+				DisplayEntity disp = (DisplayEntity)currentEntity;
+
+				if(! disp.isMovable())
+					return;
+
+				// Delete key was released on a movable DisplayEntity
+				disp.kill();
+				FrameBox.setSelectedEntity(null);
+			}
+		}
+		public void keyPressed(KeyEvent e) {}
+		public void keyTyped(KeyEvent e) {}
 	}
 }
