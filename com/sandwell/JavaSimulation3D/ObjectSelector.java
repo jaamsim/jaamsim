@@ -15,6 +15,8 @@
 package com.sandwell.JavaSimulation3D;
 
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -95,6 +97,27 @@ public class ObjectSelector extends FrameBox {
 			public void mouseExited(MouseEvent e) {}
 			public void mousePressed(MouseEvent e) {}
 			public void mouseReleased(MouseEvent e) {}
+		});
+
+		tree.addKeyListener(new KeyListener() {
+			public void keyReleased(KeyEvent e) {
+
+				if (e.getKeyCode() != KeyEvent.VK_DELETE)
+					return;
+
+				if(currentEntity instanceof DisplayEntity ) {
+					DisplayEntity disp = (DisplayEntity)currentEntity;
+
+					if(! disp.isMovable())
+						return;
+
+					// Delete key was released on a movable DisplayEntity
+					disp.kill();
+					FrameBox.setSelectedEntity(null);
+				}
+			}
+			public void keyPressed(KeyEvent e) {}
+			public void keyTyped(KeyEvent e) {}
 		});
 	}
 
