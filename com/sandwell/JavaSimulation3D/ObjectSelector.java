@@ -71,7 +71,7 @@ public class ObjectSelector extends FrameBox {
 		setLocation(0, 510);
 		setSize(220, 490);
 		tree.addTreeSelectionListener( new MyTreeSelectionListener() );
-		treeModel.addTreeModelListener( new MyTreeModelListener() );
+		treeModel.addTreeModelListener( new MyTreeModelListener(tree) );
 
 		tree.addMouseListener(new MyMouseListener());
 		tree.addKeyListener(new MyKeyListener());
@@ -248,8 +248,9 @@ public class ObjectSelector extends FrameBox {
 		return new DefaultMutableTreeNode(userObject, true);
 	}
 
-	class MyTreeSelectionListener implements TreeSelectionListener {
+	static class MyTreeSelectionListener implements TreeSelectionListener {
 		public void valueChanged( TreeSelectionEvent e ) {
+			JTree tree = (JTree) e.getSource();
 			if(tree.getLastSelectedPathComponent() == null) {
 				// This occurs when we set no selected entity (null) and then
 				// force the tree to have a null selected node
@@ -268,7 +269,13 @@ public class ObjectSelector extends FrameBox {
 		}
 	}
 
-	class MyTreeModelListener implements TreeModelListener {
+	static class MyTreeModelListener implements TreeModelListener {
+		private final JTree tree;
+
+		public MyTreeModelListener(JTree tree) {
+			this.tree = tree;
+		}
+
 		public void treeNodesChanged( TreeModelEvent e ) {
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
