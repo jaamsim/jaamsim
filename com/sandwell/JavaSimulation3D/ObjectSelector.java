@@ -15,9 +15,12 @@
 package com.sandwell.JavaSimulation3D;
 
 import java.awt.Dimension;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
@@ -67,6 +70,32 @@ public class ObjectSelector extends FrameBox {
 		setSize(220, 490);
 		tree.addTreeSelectionListener( new MyTreeSelectionListener() );
 		treeModel.addTreeModelListener( new MyTreeModelListener() );
+
+		tree.addMouseListener( new MouseListener() {
+			private final JPopupMenu menu= new JPopupMenu();
+
+			public void mouseClicked(MouseEvent e) {
+
+				if(e.getButton() != MouseEvent.BUTTON3)
+					return;
+
+				if(currentEntity instanceof DisplayEntity ) {
+					DisplayEntity disp = (DisplayEntity)currentEntity;
+
+					if(! disp.isMovable())
+						return;
+
+					// Right mouse click on a movable DisplayEntity
+					menu.removeAll();
+					disp.addMenuItems(menu, e.getX(), e.getY());
+					menu.show(e.getComponent(), e.getX(), e.getX());
+				}
+			}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {}
+			public void mousePressed(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {}
+		});
 	}
 
 	public void setEntity(Entity ent) {
