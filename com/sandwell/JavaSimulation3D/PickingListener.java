@@ -203,7 +203,7 @@ public class PickingListener implements MouseListener {
 		for( int i = 0; i < results.length; i++ ) {
 			DisplayEntity ent = this.lookupEntity(results[i].getSceneGraphPath());
 
-			if (ent != null && !entList.contains(ent))
+			if (ent != null && !entList.contains(ent) && ent.isMovable())
 				entList.add(ent);
 		}
 
