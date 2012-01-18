@@ -20,6 +20,7 @@ import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.StringInput;
@@ -87,7 +88,7 @@ public class PropertyLabel extends TextLabel  {
 		// Target method accepts input parameter
 		for (int i = 0; i < targetInputParameterNames.getValue().size(); i++) {
 			String str = targetInputParameterNames.getValue().get(i);
-			Entity ent = simulation.getEntityWithName( str );
+			Entity ent = Input.tryParseEntity(str, Entity.class);
 			if( ent != null ) {
 				targetInputParameters[ i ] = ent;
 			}

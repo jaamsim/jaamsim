@@ -777,7 +777,7 @@ public class InputAgent {
 				objectKey = item;
 			}
 
-			Entity ent = DisplayEntity.simulation.getEntityWithName( objectKey );
+			Entity ent = Input.tryParseEntity(objectKey, Entity.class);
 			if( ent != null ) {
 				InputAgent.logError(INP_ERR_DEFINEUSED, objectKey, ent.getClass().getSimpleName());
 				continue;
@@ -981,12 +981,10 @@ public class InputAgent {
 	 * braces are included
 	 */
 	public static void processData( Vector record ) {
-
-		Entity obj;
 		String item1 = ((String)record.get( 0 )).trim();
 
 		//  Checks on Entity:
-		obj = DisplayEntity.simulation.getEntityWithName(item1);
+		Entity obj = Input.tryParseEntity(item1, Entity.class);
 		if (obj == null) {
 			InputAgent.logError("Object not found: %s", item1);
 			return;
