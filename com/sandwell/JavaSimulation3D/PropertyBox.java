@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation.Vector;
@@ -77,6 +78,49 @@ public class PropertyBox extends FrameBox {
 		pack();
 	}
 
+	private static Entity getEntityWithName( String key ) {
+		Entity ent = Input.tryParseEntity(key, Entity.class);
+		if (ent != null)
+			return ent;
+
+
+		// if the object is not in the namedEntityHashMap, check the Entity List
+		String regionName = null;
+		String entName = null;
+
+		// check if region is part of name
+		if (key.indexOf("/") > -1) {
+			String[] itemArray = key.split("/");
+			regionName = itemArray[0];
+			entName = itemArray[1];
+		}
+		else {
+			entName = key;
+		}
+
+		for (int i = 0; i < Entity.getAll().size(); i++) {
+			Entity each = null;
+			try {
+				each = Entity.getAll().get(i);
+			}
+			catch (IndexOutOfBoundsException e) {}
+
+			// Check the name matches
+			if (!each.getName().equalsIgnoreCase(entName))
+				continue;
+
+			// If no region given, return the first matching name
+			if (regionName == null)
+				return each;
+
+			// Otherwise Check the region name matches
+			if (each.getCurrentRegion().getName().equalsIgnoreCase(regionName))
+				return each;
+		}
+
+		return null;
+	}
+
 	private JScrollPane getPropTable() {
 		final JTable propTable = new JTable( new javax.swing.table.DefaultTableModel( 0, 3 ) {
 
@@ -112,7 +156,7 @@ public class PropertyBox extends FrameBox {
 
 					// Remove HTML
 					name = name.replaceAll( "<html>", "").replace( "<p>", "" ).replace( "<align=top>", "" ).replace("<br>", "" ).trim();
-					Entity entity = DisplayEntity.simulation.getEntityWithName( name );
+					Entity entity = PropertyBox.getEntityWithName(name);
 
 					// An Entity Name
 					if( entity != null ) {
@@ -153,7 +197,7 @@ public class PropertyBox extends FrameBox {
 						JPopupMenu popupMenu = new JPopupMenu( );
 						ActionListener actionListener = new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
-								Entity entity = DisplayEntity.simulation.getEntityWithName( e.getActionCommand() );
+								Entity entity = PropertyBox.getEntityWithName(e.getActionCommand());
 								FrameBox.setSelectedEntity(entity);
 							}
 						};
@@ -166,7 +210,7 @@ public class PropertyBox extends FrameBox {
 							String each = items[ i ].replace( ",", "");
 							each = each.replace("[", "");
 							each = each.replace("]", "");
-							Entity entity = DisplayEntity.simulation.getEntityWithName(each);
+							Entity entity = PropertyBox.getEntityWithName(each);
 
 							// This item is an entity
 							if( entity != null ) {

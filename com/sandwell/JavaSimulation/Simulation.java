@@ -725,40 +725,6 @@ public abstract class Simulation extends Entity {
 		return defaultRegion;
 	}
 
-	/**
-	 * Returns an Entity with the given identifier in the objectMap (region/name for BTM and MTM)
-	 * @param key, the name of the object.  Format <region>/<name>
-	 * @return the Entity specified
-	 */
-	public Entity getEntityWithName( String key ) {
-		Entity anObject = getNamedEntity(key);
-
-		// if the object is not in the namedEntityHashMap, check the Entity List
-		if ( anObject == null ) {
-			String regionName = null;
-			String entName = null;
-
-			//check if region is part of name
-			if( key.indexOf( "/" ) > -1 ) {
-				String[] itemArray = key.split( "/" );
-				regionName = itemArray[0];
-				entName = itemArray[1];
-			} else {
-				entName = key;
-			}
-
-			for (Entity thisEnt : Entity.getAll()) {
-				if( thisEnt.getName().equalsIgnoreCase( entName ) ){
-					if ((regionName == null) || (thisEnt.getCurrentRegion().getName().equalsIgnoreCase(regionName))) {
-						anObject = thisEnt;
-					}
-				}
-			}
-		}
-
-		return anObject;
-	}
-
 	public void updateTime(double simTime) {}
 	public void setProgress(int percentage) {}
 	public void setProgressText(String text) {}
