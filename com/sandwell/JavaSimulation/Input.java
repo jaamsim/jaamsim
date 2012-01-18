@@ -317,6 +317,12 @@ public abstract class Input<T> {
 			return aClass.cast( value );
 		}
 
+		if( aClass == Boolean.class ) {
+			Input.assertCount(data, 1);
+			Boolean value = Boolean.valueOf(Input.parseBoolean(data.get(0)));
+			return aClass.cast(value);
+		}
+
 		// TODO - parse other classes
 //		if( aClass == Integer.class ) {
 //		}
