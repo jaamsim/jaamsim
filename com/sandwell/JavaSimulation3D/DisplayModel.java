@@ -415,6 +415,7 @@ public class DisplayModel extends Entity {
 				PointWithSize pixels = new PointWithSize(6.0f, false, "pixels" );
 				pixels = new PointWithSize(6.0f, false, "pixels" );
 				pixels.setColor(Shape.getColorWithName("black"));
+				pixels.setName(TAG_BODY);
 				bg.addChild(pixels);
 				break;
 			case MODEL_CONTENTS_PIXELS:
