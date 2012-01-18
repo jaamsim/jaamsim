@@ -457,7 +457,7 @@ public class EditBox extends FrameBox {
 
 		Vector data = new Vector(tokens.size());
 		data.addAll(tokens);
-		InputAgent.processData(data);
+		InputAgent.processData(ent, data);
 	}
 
 	class MyTableModelListener implements TableModelListener {

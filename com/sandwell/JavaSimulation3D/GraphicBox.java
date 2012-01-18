@@ -177,7 +177,7 @@ public class GraphicBox extends JDialog {
 					else {
 						data.addElement("True");
 					}
-					InputAgent.processData(data);
+					InputAgent.processData(newModel, data);
 					myInstance.refresh(); // Add the new DisplayModel to the List
 					FrameBox.valueUpdate();
 
@@ -205,7 +205,7 @@ public class GraphicBox extends JDialog {
 				data.addElement(currentEntity.getInputName());
 				data.addElement(currentEntity.getDisplayModelList().getKeyword());
 				data.addElement(dm.getName());
-				InputAgent.processData(data);
+				InputAgent.processData(currentEntity, data);
 
 				currentEntity.setupGraphics();
 

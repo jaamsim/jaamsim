@@ -812,7 +812,7 @@ public class InputAgent {
 					thisDefaultRecord.remove( 1 );
 
 					// Process data input for objects
-					InputAgent.processData(thisDefaultRecord);
+					InputAgent.processData(newObject, thisDefaultRecord);
 				}
 			}
 
@@ -975,6 +975,36 @@ public class InputAgent {
 		ent.setFlag(Entity.FLAG_EDITED);
 	}
 
+	public static void processData(Entity ent, Vector rec) {
+		if( rec.get( 1 ).toString().trim().equals( "{" ) ) {
+			InputAgent.logError("A keyword expected after: %s", ent.getName());
+		}
+		Vector multiCmds = InputAgent.splitMultipleCommands(rec);
+
+		// Process each command
+		for( int i = 0; i < multiCmds.size(); i++ ) {
+			Vector cmd = (Vector)multiCmds.get(i);
+			StringVector recordCmd = new StringVector(cmd.size() - 1);
+
+			// Omit the object name (first entry) as it is already determined
+			for (int j = 1; j < cmd.size(); j++) {
+				recordCmd.add((String)cmd.get(j));
+			}
+			// Allow old-style input to prepend the keyword if necessary
+			String keyword = recordCmd.remove(0);
+
+			// Process the record
+			InputAgent.processKeyword(ent, recordCmd, keyword);
+
+			// Extra processing: records added in the previous session as if they were
+			// edited and accepted in the current session
+			if (hasAddedRecords()) {
+				InputAgent.processAddedRecordsFromCfgFile( (Vector) multiCmds.get( i ) );
+			}
+		}
+		return;
+	}
+
 	/**
 	 * process's input data from record for use as a keyword.
 	 * format of record: <obj-name> <keyword> <data> <keyword> <data>
@@ -991,35 +1021,7 @@ public class InputAgent {
 		}
 
 		// Entity exists with name <entityName> or name <region>/<entityName>
-		else {
-			if( record.get( 1 ).toString().trim().equals( "{" ) ) {
-				InputAgent.logError("A keyword expected after: %s", obj.getName());
-			}
-			Vector multiCmds = InputAgent.splitMultipleCommands(record);
-
-			// Process each command
-			for( int i = 0; i < multiCmds.size(); i++ ) {
-				Vector cmd = (Vector)multiCmds.get(i);
-				StringVector recordCmd = new StringVector(cmd.size() - 1);
-
-				// Omit the object name (first entry) as it is already determined
-				for (int j = 1; j < cmd.size(); j++) {
-					recordCmd.add((String)cmd.get(j));
-				}
-				// Allow old-style input to prepend the keyword if necessary
-				String keyword = recordCmd.remove(0);
-
-				// Process the record
-				InputAgent.processKeyword(obj, recordCmd, keyword);
-
-				// Extra processing: records added in the previous session as if they were
-				// edited and accepted in the current session
-				if (hasAddedRecords()) {
-					InputAgent.processAddedRecordsFromCfgFile( (Vector) multiCmds.get( i ) );
-				}
-			}
-			return;
-		}
+		InputAgent.processData(obj, record);
 	}
 
 	/**
