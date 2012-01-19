@@ -310,6 +310,40 @@ public abstract class Input<T> {
 			return aClass.cast( Input.parseEntity(data.get(0), temp) );
 		}
 
+		if( aClass == TimeValue.class ) {
+
+			TimeValue value;
+			Input.assertCount(data, 1, 2, 12, 13);
+
+			// If there are 2 or 13 entries, assume the last entry is a unit
+			if( data.size() == 2 || data.size() == 13 ) {
+
+				// Determine the units
+				Unit unit = Input.parseEntity( data.get( data.size()- 1), Unit.class );
+
+				// Determine the default units
+				Unit defaultUnit = Input.tryParseEntity( units.replaceAll("[()]", "").trim(), Unit.class );
+				if( defaultUnit == null ) {
+					throw new InputErrorException( "Could not determine default units " + units );
+				}
+
+				// Determine the conversion factor to the default units
+				double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
+
+				// Parse and convert the values
+				StringVector temp = data.subString(0,data.size()-2);
+				value = Input.parseTimeValue(temp, minValue, maxValue, conversionFactor);
+			}
+			else {
+				// Parse the values
+				value = Input.parseTimeValue(data, minValue, maxValue);
+
+				if( units.length() > 0 )
+					InputAgent.logWarning( "Missing units.  Assuming %s.", units );
+			}
+			return aClass.cast( value );
+		}
+
 		// TODO - parse other classes
 //		if( aClass == Integer.class ) {
 //		}
