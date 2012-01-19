@@ -42,7 +42,13 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 	throws InputErrorException {
 
 		// If one entity key is not provided, set the default value
-		Entity ent1 = Input.tryParseEntity( input.get( 0 ), Entity.class );
+		Entity ent1 = Input.tryParseEntity( input.get( 0 ), key1Class );
+
+		// could be a group
+		if( ent1 == null ) {
+			ent1 = Input.tryParseEntity( input.get( 0 ), Group.class );
+		}
+
 		if( ent1 == null ) {
 			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue );
 			this.setDefaultValue( defValue );
@@ -56,7 +62,13 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		// If ent2 is null, assume the line is of the form <Key1> <Value>
 		// The second key was not given.  Use null as the second key.
 		int numKeys;
-		Entity ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
+		Entity ent2 = Input.tryParseEntity( input.get( 1 ), key2Class );
+
+		// could be a group
+		if( ent2 == null ) {
+			ent2 = Input.tryParseEntity( input.get( 1 ), Group.class );
+		}
+
 		if( ent2 == null ) {
 			numKeys = 1;
 			list2 = new ArrayList<K2>();
