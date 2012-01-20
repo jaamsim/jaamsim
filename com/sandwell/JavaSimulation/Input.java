@@ -304,6 +304,12 @@ public abstract class Input<T> {
 			return aClass.cast( value );
 		}
 
+		if( Entity.class.isAssignableFrom(aClass) ) {
+			Class<? extends Entity> temp = aClass.asSubclass(Entity.class);
+			Input.assertCount(data, 1, 1);
+			return aClass.cast( Input.parseEntity(data.get(0), temp) );
+		}
+
 		// TODO - parse other classes
 //		if( aClass == Integer.class ) {
 //		}

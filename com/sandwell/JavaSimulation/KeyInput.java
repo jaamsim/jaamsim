@@ -40,7 +40,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 
 		// If an entity key is not provided, set the default value
 		Entity ent = Input.tryParseEntity( input.get( 0 ), Entity.class );
-		if( ent == null ) {
+		if( ent == null || input.size() == 1 ) {
 			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue );
 			this.setDefaultValue( defValue );
 			return;
