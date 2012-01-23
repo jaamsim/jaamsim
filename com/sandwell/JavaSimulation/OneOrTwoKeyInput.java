@@ -140,4 +140,21 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 			}
 		}
 	}
+
+	/**
+	 * Return a list of all stored values in the table
+	 * @return
+	 */
+	public ArrayList<V> getAllValues() {
+
+		ArrayList<V> values = new ArrayList<V>();
+
+		for( HashMap<K2,V> each : hashMap.values() ) {
+			values.addAll( each.values() );
+		}
+
+		values.add( this.getDefaultValue() );
+
+		return values;
+	}
 }
