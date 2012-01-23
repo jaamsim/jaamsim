@@ -1653,4 +1653,21 @@ public class InputAgent {
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(errPrefix, msg);
 	}
+
+	public static void processEntity_Keyword_Value(Entity ent, Input<?> in, String value){
+		in.setEdited(true);
+
+		ArrayList<String> tokens = new ArrayList<String>();
+		InputAgent.tokenizeString(tokens, value);
+		if(! InputAgent.enclosedByBraces(tokens) ) {
+			tokens.add(0, "{");
+			tokens.add("}");
+		}
+		tokens.add(0, ent.getInputName());
+		tokens.add(1, in.getKeyword());
+
+		Vector data = new Vector(tokens.size());
+		data.addAll(tokens);
+		InputAgent.processData(ent, data);
+	}
 }

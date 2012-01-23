@@ -444,20 +444,7 @@ public class EditBox extends FrameBox {
 
 	public static void processEntity_Keyword_Value(Entity ent, String keyword, String value){
 		Input<?> in = ent.getInput( keyword );
-		in.setEdited(true);
-
-		ArrayList<String> tokens = new ArrayList<String>();
-		InputAgent.tokenizeString(tokens, value);
-		if(! InputAgent.enclosedByBraces(tokens) ) {
-			tokens.add(0, "{");
-			tokens.add("}");
-		}
-		tokens.add(0, ent.getInputName());
-		tokens.add(1, keyword);
-
-		Vector data = new Vector(tokens.size());
-		data.addAll(tokens);
-		InputAgent.processData(ent, data);
+		InputAgent.processEntity_Keyword_Value(ent, in, value);
 	}
 
 	class MyTableModelListener implements TableModelListener {
