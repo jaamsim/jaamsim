@@ -479,13 +479,14 @@ public class EditBox extends FrameBox {
 
 			try {
 
-				// Back to default value
-				if( data.toString().isEmpty() ) {
-					processEntity_Keyword_Value(currentEntity, currentKeyword, getDefaultValueStringOf(in));
+				String str = data.toString();
+
+				if( str.isEmpty() ) {
+
+					// Back to default value
+					str = getDefaultValueStringOf(in);
 				}
-				else {
-					processEntity_Keyword_Value(currentEntity, currentKeyword, data.toString());
-				}
+				InputAgent.processEntity_Keyword_Value(currentEntity, in, str);
 			} catch (InputErrorException exep) {
 
 				JOptionPane pane = new JOptionPane( String.format("%s; value will be cleared", exep.getMessage()),

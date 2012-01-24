@@ -1461,7 +1461,7 @@ public class DisplayEntity extends Entity {
 	 */
 	public void updateInputPosition() {
 		Vector3d vec = this.getPosition();
-		EditBox.processEntity_Keyword_Value(this, positionInput.getKeyword(), String.format( "%.3f %.3f %.3f %s", vec.x, vec.y, vec.z, positionInput.getUnits() ));
+		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format( "%.3f %.3f %.3f %s", vec.x, vec.y, vec.z, positionInput.getUnits() ));
 		InputAgent.addEditedEntity(this);
 		FrameBox.valueUpdate();
 	}
@@ -1473,7 +1473,7 @@ public class DisplayEntity extends Entity {
 	 */
 	public void updateInputSize() {
 		Vector3d vec = this.getSize();
-		EditBox.processEntity_Keyword_Value(this, sizeInput.getKeyword(), String.format( "%.3f %.3f %.3f %s", vec.x, vec.y, vec.z, sizeInput.getUnits() ));
+		InputAgent.processEntity_Keyword_Value(this, sizeInput, String.format( "%.3f %.3f %.3f %s", vec.x, vec.y, vec.z, sizeInput.getUnits() ));
 		InputAgent.addEditedEntity(this);
 		FrameBox.valueUpdate();
 	}
@@ -1485,14 +1485,14 @@ public class DisplayEntity extends Entity {
 	 */
 	public void updateInputOrientation() {
 		Vector3d vec = this.getOrientation();
-		EditBox.processEntity_Keyword_Value(this, orientationInput.getKeyword(), String.format( "%.3f %.3f %.3f %s", vec.x, vec.y, vec.z, orientationInput.getUnits() ));
+		InputAgent.processEntity_Keyword_Value(this, orientationInput, String.format( "%.3f %.3f %.3f %s", vec.x, vec.y, vec.z, orientationInput.getUnits() ));
 		InputAgent.addEditedEntity(this);
 		FrameBox.valueUpdate();
 	}
 
 	public void updateInputAlignment() {
 		Vector3d vec = this.getAlignment();
-		EditBox.processEntity_Keyword_Value(this, alignmentInput.getKeyword(), String.format( "%.3f %.3f %.3f", vec.x, vec.y, vec.z ));
+		InputAgent.processEntity_Keyword_Value(this, alignmentInput, String.format( "%.3f %.3f %.3f", vec.x, vec.y, vec.z ));
 		InputAgent.addEditedEntity(this);
 		FrameBox.valueUpdate();
 	}
