@@ -380,30 +380,7 @@ public class Entity {
 			Input<?> in = ent.getInput(keyword);
 
 			if (in != null) {
-				String str = data.toString();
-
-				// reformat input string to be added to keyword
-				// strip out "{}" from data to find value
-				if( data.size() > 0 ) {
-					if (!(data.get(0).equals("{"))) {
-						str = str.replaceAll("[{}]", "");
-					} else {
-						int strLength = str.length();
-						str = "{"+str.substring(3,strLength-3) + "}";
-					}
-					str = str.replaceAll( "[,]", " " );
-					str = str.trim();
-				}
-
-				if (( !in.isAppendable() ) || ( data.get(0).equals("{"))) {
-					// ent.getKeywordValuesList.setElementAt( str, keywords.indexOfString( keyword ) );
-					in.setValueString( str );
-					in.setEditedValueString(str);
-				}
-				else {
-					// Takes care of old format, displaying as new format -- appending onto end of record.
-					in.setValueString( in.getValueString() + "{ " + str + " } " );
-				}
+				InputAgent.updateStringValues(in, data);
 			}
 			// The keyword is not on the editable keyword list
 			else {
