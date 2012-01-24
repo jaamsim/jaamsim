@@ -413,10 +413,10 @@ public class DisplayEntity extends Entity {
 		label.setName(name);
 		label.setInputName(name);
 
-		EditBox.processEntity_Keyword_Value(label, "RelativeEntity", this.getInputName() );
-		EditBox.processEntity_Keyword_Value(label, "Position", "1.0, -1.0, 0.0" );
-		EditBox.processEntity_Keyword_Value(label, "Region", currentRegion.getInputName() );
-		EditBox.processEntity_Keyword_Value(label, "Text", this.getName());
+		InputAgent.processEntity_Keyword_Value(label, "RelativeEntity", this.getInputName() );
+		InputAgent.processEntity_Keyword_Value(label, "Position", "1.0, -1.0, 0.0" );
+		InputAgent.processEntity_Keyword_Value(label, "Region", currentRegion.getInputName() );
+		InputAgent.processEntity_Keyword_Value(label, "Text", this.getName());
 		label.initializeGraphics();
 		label.enterRegion();
 		FrameBox.setSelectedEntity(label);

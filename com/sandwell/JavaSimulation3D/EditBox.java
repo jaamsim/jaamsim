@@ -442,11 +442,6 @@ public class EditBox extends FrameBox {
 		return defValString;
 	}
 
-	public static void processEntity_Keyword_Value(Entity ent, String keyword, String value){
-		Input<?> in = ent.getInput( keyword );
-		InputAgent.processEntity_Keyword_Value(ent, in, value);
-	}
-
 	class MyTableModelListener implements TableModelListener {
 
 		/**

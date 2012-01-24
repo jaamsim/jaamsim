@@ -1670,4 +1670,10 @@ public class InputAgent {
 		data.addAll(tokens);
 		InputAgent.processData(ent, data);
 	}
+
+
+	public static void processEntity_Keyword_Value(Entity ent, String keyword, String value){
+		Input<?> in = ent.getInput( keyword );
+		processEntity_Keyword_Value(ent, in, value);
+	}
 }
