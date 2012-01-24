@@ -375,9 +375,13 @@ public class DisplayEntity extends Entity {
 		copiedEntity.setName(name);
 
 		// Match all the inputs
-		for(Input<?> each: getEditableInputs() ){
-			if(!each.getValueString().isEmpty())
-				EditBox.processEntity_Keyword_Value(copiedEntity, each.getKeyword(), each.getValueString());
+		for(Input<?> each: this.getEditableInputs() ){
+			String val = each.getValueString();
+			if (val.isEmpty())
+				continue;
+
+			Input<?> copiedInput = copiedEntity.getInput(each.getKeyword());
+			InputAgent.processEntity_Keyword_Value(copiedEntity, copiedInput, val);
 		}
 		Vector3d pos = copiedEntity.getPosition();
 		Vector3d offset = copiedEntity.getSize();
