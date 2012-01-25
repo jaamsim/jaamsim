@@ -706,7 +706,7 @@ public class GraphicSimulation extends Simulation {
 
 		// If the capture network is already in progress, then stop the previous network
 		if( captureThread != null ) {
-			terminateThread(captureThread);
+			Process.terminate(captureThread);
 			captureThread = null;
 		}
 

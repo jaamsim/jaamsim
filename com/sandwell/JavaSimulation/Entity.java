@@ -475,10 +475,6 @@ public class Entity {
 		Process.currentProcess().getEventManager().interrupt(thread);
 	}
 
-	public final void terminateThread(Process thread) {
-		Process.currentProcess().getEventManager().terminateThread(thread);
-	}
-
 	// ******************************************************************************************************
 	// EDIT TABLE METHODS
 	// ******************************************************************************************************

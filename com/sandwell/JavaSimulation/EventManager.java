@@ -678,10 +678,6 @@ public final class EventManager implements Runnable {
 	}
 
 	void terminateThread( Process killThread ) {
-		// Don't even look at the lists if the Thread is null
-		if (killThread == null)
-			return;
-
 		synchronized (lockObject) {
 			if (killThread.testFlag(Process.ACTIVE)) {
 				throw new ErrorException( "Cannot terminate an active thread" );

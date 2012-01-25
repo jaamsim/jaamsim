@@ -84,6 +84,14 @@ public class Process extends Thread {
 		return Process.currentProcess().getEventManager().currentTime();
 	}
 
+	public static final void terminate(Process kill) {
+		// Just return if given a null Process
+		if (kill == null)
+			return;
+
+		Process.currentProcess().getEventManager().terminateThread(kill);
+	}
+
 	/**
 	 * Run method invokes the method on the target with the given arguments.
 	 * A process loops endlessly after it is created executing the method on the
