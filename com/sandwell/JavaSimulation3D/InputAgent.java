@@ -1709,14 +1709,30 @@ public class InputAgent {
 			str = str.trim();
 		}
 
-		if (( !in.isAppendable() ) || ( data.get(0).equals("{"))) {
-			// ent.getKeywordValuesList.setElementAt( str, keywords.indexOfString( keyword ) );
-			in.setValueString( str );
+		// Takes care of old format, displaying as new format -- appending onto end of record.
+		if( in.isAppendable() && ! data.get(0).equals("{") ) {
+			if( in.isEdited() ) {
+				str = in.getEditedValueString() + "{ " + str + " } ";
+			}
+			else {
+				str = in.getValueString() + "{ " + str + " } ";
+			}
+		}
+
+		if(sessionEdited || addedRecordFound) {
 			in.setEditedValueString(str);
+
+			// Value is changed
+			if( in.getValueString().equals(in.getEditedValueString()) ) {
+				in.setEdited(true);
+			}
+			else {
+				in.setEdited(false);
+			}
+
 		}
 		else {
-			// Takes care of old format, displaying as new format -- appending onto end of record.
-			in.setValueString( in.getValueString() + "{ " + str + " } " );
+			in.setValueString(str);
 		}
 	}
 
