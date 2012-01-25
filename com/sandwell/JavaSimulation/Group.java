@@ -100,13 +100,21 @@ public class Group extends Entity {
 						Entity ent = (Entity)list.get( i );
 						for ( int j = 0; j < this.getGroupKeywordValues().size(); j++  ) {
 							String currentKeyword = this.getGroupKeywordValues().get(j).firstElement();
+							Input<?> in = ent.getInput(currentKeyword);
 							StringVector currentData = new StringVector(this.getGroupKeywordValues().get(j));
 							currentData.remove( 0 );
 
 							ArrayList<StringVector> splitData = Util.splitStringVectorByBraces( currentData );
 							for ( int k = 0; k < splitData.size(); k++ ) {
 								ent.readInput(splitData.get(k), currentKeyword, syntaxOnly, isCfgInput);
-								ent.updateKeywordValuesForEditBox( currentKeyword, splitData.get( k ) );
+								if(in != null) {
+									InputAgent.updateStringValues(in, splitData.get( k ));
+								}
+
+								// The keyword is not on the editable keyword list
+								else {
+									InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", currentKeyword);
+								}
 							}
 						}
 
