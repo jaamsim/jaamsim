@@ -1655,8 +1655,6 @@ public class InputAgent {
 	}
 
 	public static void processEntity_Keyword_Value(Entity ent, Input<?> in, String value){
-		in.setEdited(true);
-
 		ArrayList<String> tokens = new ArrayList<String>();
 		InputAgent.tokenizeString(tokens, value);
 		if(! InputAgent.enclosedByBraces(tokens) ) {
@@ -1670,6 +1668,7 @@ public class InputAgent {
 		data.addAll(tokens);
 		InputAgent.processData(ent, data);
 		InputAgent.addEditedEntity(ent);
+		in.setEdited(true);
 	}
 
 
