@@ -407,13 +407,13 @@ public final class EventManager implements Runnable {
 		traceProcess(null, null);
 		synchronized (lockObject) {
 			assertNotWaitUntil();
-			Process next = Process.currentProcess().getNextProcess();
+			Process next = Process.current().getNextProcess();
 
 			if (next != null) {
 				next.interrupt();
 			} else {
 				// TODO: check for the switching of eventmanagers
-				Process.currentProcess().getEventManager().eventManagerThread.interrupt();
+				Process.current().getEventManager().eventManagerThread.interrupt();
 			}
 		}
 	}
@@ -426,19 +426,19 @@ public final class EventManager implements Runnable {
 	// restorePreviousActiveThread()
 	private void popThread() {
 		synchronized (lockObject) {
-			Process next = Process.currentProcess().getNextProcess();
+			Process next = Process.current().getNextProcess();
 
-			Process.currentProcess().clearFlag(Process.ACTIVE);
+			Process.current().clearFlag(Process.ACTIVE);
 			if (next != null) {
-				Process.currentProcess().setNextProcess(null);
+				Process.current().setNextProcess(null);
 				switchThread(next);
 			} else {
 				// TODO: check for the switching of eventmanagers
-				switchThread(Process.currentProcess().getEventManager().eventManagerThread);
+				switchThread(Process.current().getEventManager().eventManagerThread);
 			}
-			Process.currentProcess().setFlag(Process.ACTIVE);
-			Process.currentProcess().setEventManager(this);
-			if (Process.currentProcess().testFlag(Process.TERMINATE)) {
+			Process.current().setFlag(Process.ACTIVE);
+			Process.current().setEventManager(this);
+			if (Process.current().testFlag(Process.TERMINATE)) {
 				throw new ThreadKilledException("Thread killed");
 			}
 		}
@@ -465,18 +465,18 @@ public final class EventManager implements Runnable {
 
 	private void raw_scheduleWait(long waitLength, int eventPriority, Entity caller) {
 		assertNotWaitUntil();
-		if (!Process.currentProcess().getEventManager().isParentOf(this)) {
+		if (!Process.current().getEventManager().isParentOf(this)) {
 			System.out.format("Crossing eventManager boundary dst:%s src:%s\n",
-					name, Process.currentProcess().getEventManager().name);
-			long time = Process.currentProcess().getEventManager().currentTime() + waitLength;
+					name, Process.current().getEventManager().name);
+			long time = Process.current().getEventManager().currentTime() + waitLength;
 			if (eventStack.size() > 0 && eventStack.get(0).eventTime > time)
 				System.out.format("Next Event:%d This Event:%d\n", eventStack.get(0).eventTime, time);
 		}
 
 		long nextEventTime = calculateEventTime(Process.currentTime(), waitLength);
 
-		Event temp = new Event(nextEventTime, eventPriority, caller, Process.currentProcess());
-		Process.currentProcess().getEventManager().traceEvent(temp, STATE_WAITING);
+		Event temp = new Event(nextEventTime, eventPriority, caller, Process.current());
+		Process.current().getEventManager().traceEvent(temp, STATE_WAITING);
 		addEventToStack(temp);
 		popThread();
 	}
@@ -489,7 +489,7 @@ public final class EventManager implements Runnable {
 
 		// Create an event for the new process at the present time, and place it on the event stack
 		Event newEvent = new Event(eventTime, eventPriority, caller, newProcess);
-		Process.currentProcess().getEventManager().traceSchedProcess(newEvent);
+		Process.current().getEventManager().traceSchedProcess(newEvent);
 		addEventToStack(newEvent);
 	}
 
@@ -511,7 +511,7 @@ public final class EventManager implements Runnable {
 				// if we have an exact match, do not schedule another event
 				if (each.eventTime == eventTime && each.priority == eventPriority && each.caller == caller && each.getClassMethod().endsWith(methodName)) {
 					//System.out.println("Suppressed duplicate event:" + Process.currentProcess().getEventManager().currentLongTime);
-					Process.currentProcess().getEventManager().traceSchedProcess(each);
+					Process.current().getEventManager().traceSchedProcess(each);
 					return;
 				}
 			}
@@ -611,7 +611,7 @@ public final class EventManager implements Runnable {
 	 * waitUntilEnded was missed.
 	 */
 	private void assertNotWaitUntil() {
-		Process process = Process.currentProcess();
+		Process process = Process.current();
 		if (process.testFlag(Process.COND_WAIT)) {
 			System.out.println("AUDIT - waitUntil without waitUntilEnded " + process);
 			for (StackTraceElement elem : process.getStackTrace()) {
@@ -627,10 +627,10 @@ public final class EventManager implements Runnable {
 	 */
 	void waitUntil(Entity caller) {
 		synchronized (lockObject) {
-			if (!conditionalList.contains(Process.currentProcess())) {
-				Process.currentProcess().getEventManager().traceWaitUntil(0);
-				Process.currentProcess().setFlag(Process.COND_WAIT);
-				conditionalList.add(Process.currentProcess());
+			if (!conditionalList.contains(Process.current())) {
+				Process.current().getEventManager().traceWaitUntil(0);
+				Process.current().setFlag(Process.COND_WAIT);
+				conditionalList.add(Process.current());
 			}
 		}
 		popThread();
@@ -638,13 +638,13 @@ public final class EventManager implements Runnable {
 
 	void waitUntilEnded(Entity caller) {
 		synchronized (lockObject) {
-			if (!conditionalList.remove(Process.currentProcess())) {
+			if (!conditionalList.remove(Process.current())) {
 				// Do not wait at all if we never actually were on the waitUntilStack
 				// ie. we never called waitUntil
 				return;
 			} else {
 				traceWaitUntil(1);
-				Process.currentProcess().clearFlag(Process.COND_WAIT);
+				Process.current().clearFlag(Process.COND_WAIT);
 				scheduleLastFIFO(caller);
 			}
 		}
@@ -665,7 +665,7 @@ public final class EventManager implements Runnable {
 				if (eventStack.get(i).process == intThread) {
 					Event interruptEvent = eventStack.remove(i);
 					retireEvent(interruptEvent, STATE_INTERRUPTED);
-					interruptEvent.process.setNextProcess(Process.currentProcess());
+					interruptEvent.process.setNextProcess(Process.current());
 					switchThread(interruptEvent.process);
 					return;
 				}

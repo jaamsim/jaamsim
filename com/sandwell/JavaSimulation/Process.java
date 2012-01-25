@@ -69,19 +69,17 @@ public class Process extends Thread {
 	/**
 	 * Returns the currently executing Process.
 	 */
-	public static Process currentProcess() {
-		// If the current thread is a process then return it
-		if (Thread.currentThread() instanceof Process) {
+	public static final Process current() {
+		try {
 			return (Process)Thread.currentThread();
 		}
-		// If the current thread is not a process then return a useful error message
-		else {
-			throw new ErrorException("Non-process thread called for currentProcess");
+		catch (ClassCastException e) {
+			throw new ErrorException("Non-process thread called for Process.current()");
 		}
 	}
 
 	static long currentTime() {
-		return Process.currentProcess().getEventManager().currentTime();
+		return Process.current().getEventManager().currentTime();
 	}
 
 	public static final void terminate(Process proc) {
@@ -89,7 +87,7 @@ public class Process extends Thread {
 		if (proc == null)
 			return;
 
-		Process.currentProcess().getEventManager().terminateThread(proc);
+		Process.current().getEventManager().terminateThread(proc);
 	}
 
 	public static final void interrupt(Process proc) {
@@ -97,7 +95,7 @@ public class Process extends Thread {
 		if (proc == null)
 			return;
 
-		Process.currentProcess().getEventManager().interrupt(proc);
+		Process.current().getEventManager().interrupt(proc);
 	}
 
 	/**
@@ -199,14 +197,14 @@ public class Process extends Thread {
 	static void start(Entity target, String methodName, Object[] arguments) {
 
 		// Create the new process
-		EventManager evt = Process.currentProcess().getEventManager();
+		EventManager evt = Process.current().getEventManager();
 		Process newProcess = Process.allocate(evt, target, methodName, arguments);
 		// Notify the eventManager that a new process has been started
 		evt.traceProcess(target, methodName);
 
 
 		// Transfer control to the new process
-		newProcess.setNextProcess(Process.currentProcess());
+		newProcess.setNextProcess(Process.current());
 		evt.switchThread(newProcess);
 	}
 

@@ -740,7 +740,7 @@ public class GraphicSimulation extends Simulation {
 
 			// Wait until the next time to capture a frame
 			// (priority 10 is used to allow higher priority events to complete first)
-			captureThread = Process.currentProcess();
+			captureThread = Process.current();
 			scheduleWait( this.getCaptureInterval(), 10 );
 			captureThread = null;
 		}

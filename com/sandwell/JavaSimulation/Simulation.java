@@ -568,7 +568,7 @@ public abstract class Simulation extends Entity {
 	public void doEndAt( double end ) {
 		if( (end - getCurrentTime()) > 0.0 ) {
 			Process.terminate(doEndAtThread);
-			doEndAtThread = Process.currentProcess();
+			doEndAtThread = Process.current();
 			scheduleWait( (end - getCurrentTime()) );
 			doEndAtThread = null;
 
