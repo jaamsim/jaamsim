@@ -1669,6 +1669,7 @@ public class InputAgent {
 		Vector data = new Vector(tokens.size());
 		data.addAll(tokens);
 		InputAgent.processData(ent, data);
+		InputAgent.addEditedEntity(ent);
 	}
 
 
