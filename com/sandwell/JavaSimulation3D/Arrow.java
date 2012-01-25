@@ -387,48 +387,36 @@ public class Arrow extends DisplayEntity {
 		Input<?> in = this.getInput( "Start" );
 		if ( in != null ) {
 			StringVector data = new StringVector();
-			String stringPoints = "";
 			String str = String.format( "%.3f %.3f", startCoord.getX(), startCoord.getY() );
-			stringPoints += str;
 			data.add( str );
-			in.recordEditForValue( stringPoints );
 			InputAgent.updateInput(this, in, data);
 		}
 
 		in = this.getInput( "End" );
 		if ( in != null ) {
 			StringVector data = new StringVector();
-			String stringPoints = "";
 			String str = String.format( "%.3f %.3f", endCoord.getX(), endCoord.getY() );
-			stringPoints += str;
 			data.add( str );
-			in.recordEditForValue( stringPoints );
 			InputAgent.updateInput(this, in, data);
 		}
 
 		in = this.getInput( "X" );
 		if ( in != null ) {
 			StringVector data = new StringVector();
-			String stringPoints = "";
 			for( int i = 0; i < this.getIntermediateX().size(); i++ ) {
 				String str = String.format( "%.3f ", this.getIntermediateX().get( i ) );
-				stringPoints += str + " ";
 				data.add( str );
 			}
-			in.recordEditForValue( stringPoints );
 			InputAgent.updateInput(this, in, data);
 		}
 
 		in = this.getInput( "Y" );
 		if ( in != null ) {
 			StringVector data = new StringVector();
-			String stringPoints = "";
 			for( int i = 0; i < this.getIntermediateY().size(); i++ ) {
 				String str = String.format( "%.3f ", this.getIntermediateY().get( i ) );
-				stringPoints += str + " ";
 				data.add( str );
 			}
-			in.recordEditForValue( stringPoints );
 			InputAgent.updateInput(this, in, data);
 		}
 	}

@@ -863,9 +863,6 @@ public class Region extends DisplayEntity {
 		// Update the ViewCenter input
 		Input<?> in = this.getInput( "ViewCenter" );
 		if ( in != null ) {
-			in.recordEditForValue( String.format( "%f %f %f",
-				currentCenter.x, currentCenter.y, currentCenter.z ) );
-
 			StringVector data = new StringVector( 3,1 );
 			data.add( String.format( "%f", currentCenter.x ) );
 			data.add( String.format( "%f", currentCenter.y ) );
@@ -878,9 +875,6 @@ public class Region extends DisplayEntity {
 		// Update the Viewer input
 		Input<?> in = this.getInput( "Viewer" );
 		if ( in != null ) {
-			in.recordEditForValue( String.format( "%f %f %f",
-				currentViewer.x, currentViewer.y, currentViewer.z ) );
-
 			StringVector data = new StringVector( 3,1 );
 			data.add( String.format( "%f", currentViewer.x ) );
 			data.add( String.format( "%f", currentViewer.y ) );
@@ -893,8 +887,6 @@ public class Region extends DisplayEntity {
 		// Update the FOV input
 		Input<?> in = this.getInput( "FOV" );
 		if ( in != null ) {
-			in.recordEditForValue( String.format( "%f", currentFieldOfView ) );
-
 			StringVector data = new StringVector( 1,1 );
 			data.add( String.format( "%f", currentFieldOfView ) );
 			InputAgent.updateInput(this, in, data);
