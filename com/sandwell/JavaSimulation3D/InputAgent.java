@@ -931,7 +931,36 @@ public class InputAgent {
 				entity.readInput(recordCmd, keyword, false, false);
 			}
 
-			entity.updateKeywordValuesForEditBox(keyword, recordCmd);
+			// Create a list of entities to update in the edit table
+			Vector entityList = new Vector( 1, 1 );
+			if( entity instanceof Group ) {
+
+				// Is the keyword a Group keyword?
+				if( entity.getInput( keyword ) != null ) {
+					entityList.addElement( entity );
+				}
+				else {
+					entityList = ((Group)entity).getList();
+				}
+			}
+			else {
+				entityList.addElement( entity );
+			}
+
+			// Store the keyword data for use in the edit table
+			for( int i = 0; i < entityList.size(); i++ ) {
+				Entity ent = (Entity)entityList.get( i );
+				Input<?> in = ent.getInput(keyword);
+
+				if (in != null) {
+					InputAgent.updateStringValues(in, recordCmd);
+				}
+
+				// The keyword is not on the editable keyword list
+				else {
+					InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", keyword);
+				}
+			}
 		}
 		catch ( InputErrorException e ) {
 			InputAgent.logError("Entity: %s Keyword: %s - %s", entity.getName(), keyword, e.getMessage());

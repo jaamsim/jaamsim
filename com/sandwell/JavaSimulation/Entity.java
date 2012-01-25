@@ -348,47 +348,6 @@ public class Entity {
 		throw new InputErrorException( "Invalid keyword " + keyword );
 	}
 
-
-	/**
-	 * Informs the editBox of the specified keyword with the specified data.  Is called during readData_ForKeyword cmd.  This does not
-	 * update the data in the simulation.
-	 * data -> editBox
-	 *
-	 * @param keyword
-	 * @param data
-	 */
-	public void updateKeywordValuesForEditBox( String keyword, StringVector data ) {
-		// Create a list of entities to update in the edit table
-		Vector entityList = new Vector( 1, 1 );
-		if( this instanceof Group ) {
-
-			// Is the keyword a Group keyword?
-			if( this.getInput( keyword ) != null ) {
-				entityList.addElement( this );
-			}
-			else {
-				entityList = ((Group)this).getList();
-			}
-		}
-		else {
-			entityList.addElement( this );
-		}
-
-		// Store the keyword data for use in the edit table
-		for( int i = 0; i < entityList.size(); i++ ) {
-			Entity ent = (Entity)entityList.get( i );
-			Input<?> in = ent.getInput(keyword);
-
-			if (in != null) {
-				InputAgent.updateStringValues(in, data);
-			}
-			// The keyword is not on the editable keyword list
-			else {
-				InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", keyword);
-			}
-		}
-	}
-
 	public Region getCurrentRegion() {
 		return currentRegion;
 	}
