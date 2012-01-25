@@ -310,18 +310,6 @@ public class InputAgent {
 
 		if (record.get(0).equalsIgnoreCase("DEFINE")) {
 			InputAgent.processDefineRecord(record);
-			if (hasAddedRecords()) {
-				Vector vec = new Vector();
-				vec.addAll( record );
-
-				// remove braces
-				Vector braces = new Vector( 2,1 );
-				braces.add( "{" );
-				braces.add( "}" );
-				vec.removeAll( braces );
-
-				InputAgent.processAddedRecordsFromCfgFile(vec);
-			}
 			return;
 		}
 
@@ -422,6 +410,9 @@ public class InputAgent {
 		ent = null;
 		try {
 			ent = proto.newInstance();
+			if (hasAddedRecords()) {
+				ent.setFlag(Entity.FLAG_ADDED);
+			}
 		}
 		catch (InstantiationException e) {}
 		catch (IllegalAccessException e) {}
@@ -689,9 +680,6 @@ public class InputAgent {
 				// Defaults can only be set prior to any define statements
 				defaultsCanBeSet = false;
 				InputAgent.processDefine( record );
-				if (hasAddedRecords()) {
-					InputAgent.processAddedRecordsFromCfgFile( record );
-				}
 			}
 			else if( "STOP".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
 
@@ -786,6 +774,9 @@ public class InputAgent {
 			// Create the object
 			try {
 				newObject = proto.newInstance();
+				if (hasAddedRecords()) {
+					newObject.setFlag(Entity.FLAG_ADDED);
+				}
 			}
 			catch (Throwable e) {
 				throw new ErrorException("Error instantiating a new object of type: " + proto.getName());
@@ -971,16 +962,6 @@ public class InputAgent {
 	private static void processAddedRecordsFromCfgFile( Vector record ) {
 		if (record.size() < 3)
 			return;
-
-		// Expecting record format: Define <entity-class-name> <entity-name>...
-		if ("Define".equalsIgnoreCase((String)record.get(0))) {
-			for (int i = 2; i < record.size(); i++) {
-				String entityName = (String)record.get(i);
-				Entity ent = Input.tryParseEntity(entityName, Entity.class);
-				ent.setFlag(Entity.FLAG_ADDED);
-			}
-			return;
-		}
 
 		// Process all edited appendable and non-appendable keyword values
 		// Expecting record format:
