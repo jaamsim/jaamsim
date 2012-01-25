@@ -471,10 +471,6 @@ public class Entity {
 		getEventManager().scheduleWait(1, priority, this);
 	}
 
-	public final void interruptThread(Process thread) {
-		Process.currentProcess().getEventManager().interrupt(thread);
-	}
-
 	// ******************************************************************************************************
 	// EDIT TABLE METHODS
 	// ******************************************************************************************************

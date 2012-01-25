@@ -84,12 +84,20 @@ public class Process extends Thread {
 		return Process.currentProcess().getEventManager().currentTime();
 	}
 
-	public static final void terminate(Process kill) {
+	public static final void terminate(Process proc) {
 		// Just return if given a null Process
-		if (kill == null)
+		if (proc == null)
 			return;
 
-		Process.currentProcess().getEventManager().terminateThread(kill);
+		Process.currentProcess().getEventManager().terminateThread(proc);
+	}
+
+	public static final void interrupt(Process proc) {
+		// Just return if given a null Process
+		if (proc == null)
+			return;
+
+		Process.currentProcess().getEventManager().interrupt(proc);
 	}
 
 	/**

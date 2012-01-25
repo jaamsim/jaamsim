@@ -654,9 +654,6 @@ public final class EventManager implements Runnable {
 	 *	Removes the thread from the pending list and executes it immediately
 	 */
 	void interrupt( Process intThread ) {
-		if (intThread == null)
-			return;
-
 		synchronized (lockObject) {
 			if (intThread.testFlag(Process.ACTIVE)) {
 				throw new ErrorException( "Cannot interrupt an active thread" );
