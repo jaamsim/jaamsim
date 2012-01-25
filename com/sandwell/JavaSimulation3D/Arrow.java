@@ -393,7 +393,7 @@ public class Arrow extends DisplayEntity {
 			data.add( str );
 			in.recordEditForValue( stringPoints );
 
-			this.updateKeywordValuesForEditBox( in.getKeyword(), data );
+			InputAgent.updateStringValues(in, data);
 			InputAgent.addEditedEntity(this);
 		}
 
@@ -406,7 +406,7 @@ public class Arrow extends DisplayEntity {
 			data.add( str );
 			in.recordEditForValue( stringPoints );
 
-			this.updateKeywordValuesForEditBox( in.getKeyword(), data );
+			InputAgent.updateStringValues(in, data);
 			InputAgent.addEditedEntity(this);
 		}
 
@@ -421,7 +421,7 @@ public class Arrow extends DisplayEntity {
 			}
 			in.recordEditForValue( stringPoints );
 
-			this.updateKeywordValuesForEditBox( in.getKeyword(), data );
+			InputAgent.updateStringValues(in, data);
 			InputAgent.addEditedEntity(this);
 		}
 
@@ -436,7 +436,7 @@ public class Arrow extends DisplayEntity {
 			}
 			in.recordEditForValue( stringPoints );
 
-			this.updateKeywordValuesForEditBox( in.getKeyword(), data );
+			InputAgent.updateStringValues(in, data);
 			InputAgent.addEditedEntity(this);
 		}
 	}

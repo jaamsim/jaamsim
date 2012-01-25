@@ -870,8 +870,7 @@ public class Region extends DisplayEntity {
 			data.add( String.format( "%f", currentCenter.x ) );
 			data.add( String.format( "%f", currentCenter.y ) );
 			data.add( String.format( "%f", currentCenter.z ) );
-
-			this.updateKeywordValuesForEditBox( in.getKeyword(), data );
+			InputAgent.updateStringValues(in, data);
 			InputAgent.addEditedEntity(this);
 		}
 	}
@@ -887,8 +886,7 @@ public class Region extends DisplayEntity {
 			data.add( String.format( "%f", currentViewer.x ) );
 			data.add( String.format( "%f", currentViewer.y ) );
 			data.add( String.format( "%f", currentViewer.z ) );
-
-			this.updateKeywordValuesForEditBox( in.getKeyword(), data );
+			InputAgent.updateStringValues(in, data);
 			InputAgent.addEditedEntity(this);
 		}
 	}
@@ -901,8 +899,7 @@ public class Region extends DisplayEntity {
 
 			StringVector data = new StringVector( 1,1 );
 			data.add( String.format( "%f", currentFieldOfView ) );
-
-			this.updateKeywordValuesForEditBox( in.getKeyword(), data );
+			InputAgent.updateStringValues(in, data);
 			InputAgent.addEditedEntity(this);
 		}
 	}
@@ -925,8 +922,7 @@ public class Region extends DisplayEntity {
 				StringVector data = new StringVector( 2,1 );
 				data.add( String.format( "%d", (int) currentWindowPos.getX() ) );
 				data.add( String.format( "%d", (int) currentWindowPos.getY() ) );
-
-				this.updateKeywordValuesForEditBox( in.getKeyword(), data );
+				InputAgent.updateStringValues(in, data);
 				InputAgent.addEditedEntity(this);
 			}
 		}
@@ -950,8 +946,7 @@ public class Region extends DisplayEntity {
 				StringVector data = new StringVector( 2,1 );
 				data.add( String.format( "%d", (int)currentWindowSize.getX() ) );
 				data.add( String.format( "%d", (int)currentWindowSize.getY() ) );
-
-				this.updateKeywordValuesForEditBox( in.getKeyword(), data );
+				InputAgent.updateStringValues(in, data);
 				InputAgent.addEditedEntity(this);
 			}
 		}
