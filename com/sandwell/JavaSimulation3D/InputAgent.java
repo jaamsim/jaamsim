@@ -1738,4 +1738,9 @@ public class InputAgent {
 			in.setValueString( in.getValueString() + "{ " + str + " } " );
 		}
 	}
+
+	public static void updateInput(Entity ent, Input<?> in, StringVector data) {
+		InputAgent.addEditedEntity(ent);
+		InputAgent.updateStringValues(in, data);
+	}
 }
