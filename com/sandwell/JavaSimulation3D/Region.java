@@ -905,14 +905,10 @@ public class Region extends DisplayEntity {
 
 			// Determine if the window position has changed
 			// This depends on two spaces between the x and y values in the edit box.
-			boolean changed = in.recordEditForValue( String.format( "%d  %d", (int) currentWindowPos.getX(), (int) currentWindowPos.getY() ) );
-
-			if( changed ) {
-				StringVector data = new StringVector( 2,1 );
-				data.add( String.format( "%d", (int) currentWindowPos.getX() ) );
-				data.add( String.format( "%d", (int) currentWindowPos.getY() ) );
-				InputAgent.updateInput(this, in, data);
-			}
+			StringVector data = new StringVector( 2,1 );
+			data.add( String.format( "%d", (int) currentWindowPos.getX() ) );
+			data.add( String.format( "%d", (int) currentWindowPos.getY() ) );
+			InputAgent.updateInput(this, in, data);
 		}
 	}
 
@@ -928,14 +924,10 @@ public class Region extends DisplayEntity {
 
 			// Determine if the window size has changed.
 			// This depends on two spaces between the x and y values in the edit box.
-			boolean changed = in.recordEditForValue( String.format( "%d  %d", (int)currentWindowSize.getX(), (int)currentWindowSize.getY() ) );
-
-			if( changed ) {
-				StringVector data = new StringVector( 2,1 );
-				data.add( String.format( "%d", (int)currentWindowSize.getX() ) );
-				data.add( String.format( "%d", (int)currentWindowSize.getY() ) );
-				InputAgent.updateInput(this, in, data);
-			}
+			StringVector data = new StringVector( 2,1 );
+			data.add( String.format( "%d", (int)currentWindowSize.getX() ) );
+			data.add( String.format( "%d", (int)currentWindowSize.getY() ) );
+			InputAgent.updateInput(this, in, data);
 		}
 	}
 
