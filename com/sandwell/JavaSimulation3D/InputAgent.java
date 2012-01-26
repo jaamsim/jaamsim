@@ -1345,9 +1345,6 @@ public class InputAgent {
 	private static void setSaveFile(String fileName, int saveOrLoadType) {
 		String configFilePath = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + InputAgent.getConfigFileName();
 
-		//		userOption = 0 for YES save file, userOption = 1 for NO do not save file
-		int userOption = 0;
-
 		// check ending string of filename, force cfg onto end if needed
 		if (!(fileName.endsWith(".cfg"))) {
 			fileName = fileName.concat(".cfg");
@@ -1359,7 +1356,6 @@ public class InputAgent {
 
 		// If the original configuration file is the same as the file to save, and there were no added records,
 		// then do not save the file because it would be recursive, i.e. contain "include <fileName>"
-
 
 		if( configFilePath.equalsIgnoreCase( fileName ) ) {
 			if( !InputAgent.hasAddedRecords() )  {
@@ -1397,23 +1393,20 @@ public class InputAgent {
 		// set root directory
 		FileEntity.setRootDirectory( temp.getParentFile() );
 
-		if ( userOption == 0 ) {
+		//saveFile = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
+		//simulation.printNewConfigurationFileOn( saveFile );
+		DisplayEntity.simulation.printNewConfigurationFileWithName( fileName );
+		addedRecordFound = true;
+		sessionEdited = false;
 
-			//saveFile = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
-			//simulation.printNewConfigurationFileOn( saveFile );
-			DisplayEntity.simulation.printNewConfigurationFileWithName( fileName );
-			addedRecordFound = true;
-			sessionEdited = false;
+		//TODOalan set directory of model.. ?
+		InputAgent.setConfigFileName(Util.fileShortName(fileName));
 
-			//TODOalan set directory of model.. ?
-			InputAgent.setConfigFileName(Util.fileShortName(fileName));
+		// Set the title bar to match the new run name
+		DisplayEntity.simulation.getGUIFrame().setTitle( DisplayEntity.simulation.getModelName() + " - " + InputAgent.getRunName() );
 
-			// Set the title bar to match the new run name
-			DisplayEntity.simulation.getGUIFrame().setTitle( DisplayEntity.simulation.getModelName() + " - " + InputAgent.getRunName() );
-
-			// close the window
-			//dispose();
-		}
+		// close the window
+		//dispose();
 	}
 
 	/*
