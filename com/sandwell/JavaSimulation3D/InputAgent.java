@@ -1740,8 +1740,6 @@ public class InputAgent {
 	 */
 	public static void printNewConfigurationFileWithName( String fileName ) {
 
-		String addedRecordMarker = "\" *** Added Records ***";
-
 		StringVector preAddedRecordLines = new StringVector();
 		String configFilePath = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + InputAgent.getConfigFileName();
 		if( InputAgent.hasAddedRecords() && FileEntity.fileExists( configFilePath ) ) {
