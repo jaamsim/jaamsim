@@ -1397,7 +1397,6 @@ public class InputAgent {
 		//saveFile = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
 		//simulation.printNewConfigurationFileOn( saveFile );
 		InputAgent.printNewConfigurationFileWithName( fileName );
-		addedRecordFound = true;
 		sessionEdited = false;
 
 		//TODOalan set directory of model.. ?
@@ -1782,6 +1781,7 @@ public class InputAgent {
 		}
 
 		file.format("%s\n\n", addedRecordMarker);
+		addedRecordFound = true;
 
 		// Determine all the new classes that were created
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<Class<? extends Entity>>();
