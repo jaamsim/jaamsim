@@ -61,8 +61,6 @@ import com.sun.j3d.utils.image.TextureLoader;
 
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.File;
@@ -785,116 +783,6 @@ public class GraphicSimulation extends Simulation {
 		GraphicsUpdateBehavior.simTime = simTime;
 
 		FrameBox.valueUpdate();
-	}
-
-	/**
-	 * Print out a configuration file with all the edited changes attached
-	 */
-	public void printNewConfigurationFileWithName( String fileName ) {
-
-		String addedRecordMarker = "\" *** Added Records ***";
-
-		StringVector preAddedRecordLines = new StringVector();
-		String configFilePath = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + InputAgent.getConfigFileName();
-		if( InputAgent.hasAddedRecords() && FileEntity.fileExists( configFilePath ) ) {
-			// Store the original configuration file lines up to added records
-			try {
-				BufferedReader in = new BufferedReader( new FileReader( configFilePath ) );
-
-				String line;
-				while ( ( line = in.readLine() ) != null ) {
-					if ( line.startsWith( addedRecordMarker ) ) {
-						break;
-					}
-					else {
-						preAddedRecordLines.addElement( line );
-					}
-				}
-			}
-			catch ( Exception e ) {
-				throw new ErrorException( e );
-			}
-		}
-
-		FileEntity file = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
-
-		// include the original configuration file
-		if (!InputAgent.hasAddedRecords()) {
-			file.format( "\" File: %s\n\n", file.getFileName() );
-			file.format( "include %s\n\n", InputAgent.getConfigFileName() );
-		}
-		else {
-			for( int i=0; i < preAddedRecordLines.size(); i++ ) {
-				String line = preAddedRecordLines.get( i );
-				if( line.startsWith( "\" File: " ) ) {
-					file.format( "\" File: %s\n", file.getFileName() );
-				}
-				else {
-					file.format("%s\n", line);
-				}
-			}
-		}
-
-		file.format("%s\n\n", addedRecordMarker);
-
-		// Determine all the new classes that were created
-		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<Class<? extends Entity>>();
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity ent = Entity.getAll().get(i);
-			if (!ent.testFlag(Entity.FLAG_ADDED))
-				continue;
-
-			if (!newClasses.contains(ent.getClass()))
-				newClasses.add(ent.getClass());
-		}
-
-		// Print the define statements for each new class
-		for( Class<? extends Entity> newClass : newClasses ) {
-			file.putString( "Define " + newClass.getSimpleName()+" {" );
-			for (int i = 0; i < Entity.getAll().size(); i++) {
-				Entity ent = Entity.getAll().get(i);
-				if (!ent.testFlag(Entity.FLAG_ADDED))
-					continue;
-
-				if (ent.getClass() == newClass)
-					file.format(" %s ", ent.toString());
-
-			}
-			file.format("}\n");
-		}
-
-		// List all the changes that were saved for each edited entity
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity ent = Entity.getAll().get(i);
-			if (!ent.testFlag(Entity.FLAG_EDITED))
-				continue;
-
-			file.format("\n");
-
-			// Write new configuration file for non-appendable keywords
-			//for( int j=0; j < ent.getKeywordChangedList().size(); j++ ) {
-			//	currentKeywordFlag = ent.getKeywordChangedList().get( j );
-			for( int j=0; j < ent.getEditableInputs().size(); j++ ) {
-				Input<?> in = ent.getEditableInputs().get( j );
-
-				if( in.isEdited() ) {
-
-					// Each line starts with the entity name followed by changed keyword
-					file.format("%s %s ", ent.toString(), in.getKeyword());
-
-					String value = in.getEditedValueString();
-					ArrayList<String> tokens = new ArrayList<String>();
-					InputAgent.tokenizeString(tokens, value);
-					if(! InputAgent.enclosedByBraces(tokens) ) {
-						value = String.format("{ %s }", value);
-					}
-					file.format("%s\n", value);
-				}
-			}
-		}
-
-		file.flush();
-		file.close();
 	}
 
 	public void validate()
