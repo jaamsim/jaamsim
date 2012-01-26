@@ -136,12 +136,19 @@ public class Group extends Entity {
 			// For all other keywords, apply the value to each member of the list
 			for( int i = 0; i < list.size(); i++ ) {
 				Entity ent = (Entity)list.get( i );
-				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(data);
-				if( splitData.size() == 0 )
-					splitData.add(new StringVector());
 
-				for ( int j = 0; j < splitData.size(); j++ ) {
-					ent.readInput(splitData.get(j), keyword, syntaxOnly, isCfgInput);
+				Input<?> input = ent.getInput( keyword );
+				if( input != null && input.isAppendable() ) {
+					ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(data);
+					if( splitData.size() == 0 )
+						splitData.add(new StringVector());
+
+					for ( int j = 0; j < splitData.size(); j++ ) {
+						ent.readInput(splitData.get(j), keyword, syntaxOnly, isCfgInput);
+					}
+				}
+				else {
+					ent.readInput(data, keyword, syntaxOnly, isCfgInput);
 				}
 			}
 
