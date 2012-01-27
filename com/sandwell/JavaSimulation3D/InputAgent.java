@@ -50,17 +50,11 @@ public class InputAgent {
 	// ConfigurationFile load and save variables
 	final protected static int SAVE_ONLY = 2;
 
-	// Defaults
-	private static final ArrayList<Vector> defaultRecords;		// stores the default strings
-	private static boolean defaultsCanBeSet;		// can defaults be changed?
-
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 
 	private static String reportDirectory;
 
 	static {
-		defaultRecords = new ArrayList<Vector>();
-		defaultsCanBeSet = true;
 		addedRecordFound = false;
 		sessionEdited = false;
 		endOfFileReached = false;
@@ -662,24 +656,9 @@ public class InputAgent {
 		}
 
 		try {
-			// Check for default
-			if( "DEFAULT".equalsIgnoreCase( (String)record.get( 0 ))) {
-				if ( defaultsCanBeSet ) {
-					record.remove( 0 );
-					defaultRecords.add(record);
-				} else {
-					throw new InputErrorException( "Defaults can only be set before any Define statements" );
-				}
-			} else if( "DEFINE".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
-
-				// Defaults can only be set prior to any define statements
-				defaultsCanBeSet = false;
+			if( "DEFINE".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
 				InputAgent.processDefine( record );
 			}
-			else if( "STOP".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
-
-			}
-
 			// Process other files
 			else if( "INCLUDE".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
 
@@ -782,26 +761,6 @@ public class InputAgent {
 				newObject.setRegion(region);
 			}
 			newObject.defineNewEntity();
-
-			// Set defaults
-			for ( int j = 0; j < defaultRecords.size(); j++ ) {
-				if (((String)defaultRecords.get(j).get(0)).equalsIgnoreCase( (String)record.get( 1 ) ) ) {
-					Vector thisDefaultRecord = new Vector( 1,1 );
-
-					// Add item name
-					thisDefaultRecord.add( item );
-
-					// Add defaults
-					thisDefaultRecord.addAll(1, defaultRecords.get(j));
-
-					// Remove class
-					thisDefaultRecord.remove( 1 );
-
-					// Process data input for objects
-					InputAgent.processData(newObject, thisDefaultRecord);
-				}
-			}
-
 		}
 	}
 
