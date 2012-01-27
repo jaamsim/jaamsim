@@ -657,7 +657,10 @@ public class InputAgent {
 
 		try {
 			if( "DEFINE".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
-				InputAgent.processDefine( record );
+				ArrayList<String> tempCopy = new ArrayList<String>(record.size());
+				for (int i = 0; i < record.size(); i++)
+					tempCopy.add((String)record.get(i));
+				InputAgent.processDefineRecord(tempCopy);
 			}
 			// Process other files
 			else if( "INCLUDE".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
@@ -684,83 +687,6 @@ public class InputAgent {
 			}
 		}
 		catch( InputErrorException iee ) {
-		}
-	}
-
-	/**
-	 * Process a 'Define' record from the input file.  record should already be parsed.  Will add defaults.
-	 * TODO:add to description -- parsed how?
-	 */
-	private static void processDefine( Vector record ) {
-
-		Entity newObject;
-
-		if( record.size() < 2 ) {
-			InputAgent.logError("Define record does not specify an object");
-		}
-
-		Class<? extends Entity> proto = Input.parseEntityType((String)record.get(1));
-
-		// remove braces
-		Vector braces = new Vector( 2,1 );
-		braces.add( "{" );
-		braces.add( "}" );
-		record.removeAll( braces );
-
-		// loop through object names to be created
-		for ( int i = 2; i < record.size(); i++ ) {
-
-			String item = (String)record.get( i );
-			String objectName = "";
-			String regionName = "";
-			Region region = null;
-
-			if( item.indexOf( "/" ) > -1 ) {
-				String[] itemArray = item.split( "/" );
-				regionName = itemArray[0];
-				objectName = itemArray[1];
-
-				region = Input.tryParseEntity(regionName, Region.class);
-				if ( region == null ) {
-					InputAgent.logError("Could not find region: %s", regionName);
-				}
-			}
-			else {
-				objectName = item;
-			}
-
-			// Determine the object key - include the region if it is not ModelStage
-			String objectKey;
-			if (region != null) {
-				objectKey = regionName + "/" + objectName;
-			}
-			else {
-				objectName = item;
-				objectKey = item;
-			}
-
-			Entity ent = Input.tryParseEntity(objectKey, Entity.class);
-			if( ent != null ) {
-				InputAgent.logError(INP_ERR_DEFINEUSED, objectKey, ent.getClass().getSimpleName());
-				continue;
-			}
-
-			// Create the object
-			try {
-				newObject = proto.newInstance();
-				if (hasAddedRecords()) {
-					newObject.setFlag(Entity.FLAG_ADDED);
-				}
-			}
-			catch (Throwable e) {
-				throw new ErrorException("Error instantiating a new object of type: " + proto.getName());
-			}
-			newObject.setName(objectName);
-			newObject.setInputName(item);
-			if (region != null) {
-				newObject.setRegion(region);
-			}
-			newObject.defineNewEntity();
 		}
 	}
 
