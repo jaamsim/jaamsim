@@ -406,6 +406,7 @@ public class InputAgent {
 			ent = proto.newInstance();
 			if (hasAddedRecords()) {
 				ent.setFlag(Entity.FLAG_ADDED);
+				sessionEdited = true;
 			}
 		}
 		catch (InstantiationException e) {}

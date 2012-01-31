@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModel;
+import com.sandwell.JavaSimulation3D.InputAgent;
 
 public class ObjectType extends Entity {
 	private static final ArrayList<ObjectType> allInstances;
@@ -104,6 +105,7 @@ public class ObjectType extends Entity {
 			((DisplayEntity)newEntity).getDisplayModelList().setDefaultValue(def);
 		}
 		newEntity.setFlag(Entity.FLAG_ADDED);
+		InputAgent.setSessionEdited(true);
 
 		return newEntity;
 	}
