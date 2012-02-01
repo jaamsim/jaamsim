@@ -16,17 +16,13 @@ package com.sandwell.JavaSimulation3D;
 
 import java.awt.Component;
 import java.awt.image.BufferedImage;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.ObjectType;
 
@@ -63,21 +59,6 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
 					   ! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + label.getText() + "HighRes.png") ) {
 						type.printImage();
 					}
-					try {
-
-						// Set the html tooltip with the icon image
-						Icon tooltipIcon = new ImageIcon( new URL("file:/" + BranchGroupPrinter.imageFolder  + label.getText() + "HighRes.png") );
-						label.setToolTipText("<html><center>" + label.getText()+ "<br><br>" +
-								"<img border=\"0\" src=\"" + tooltipIcon + "\" width=\"180\" height=\"180\" />"
-								+ "</center><br></html>");
-					} catch (MalformedURLException e) {
-						throw new ErrorException(e);
-					}
-				}
-
-				// ObjectType with No DisplayModel
-				else {
-					label.setToolTipText(label.getText()); // simple text
 				}
 			}
 		}
