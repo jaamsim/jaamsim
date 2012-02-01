@@ -16,7 +16,6 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
-import com.sandwell.JavaSimulation3D.BranchGroupPrinter;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModel;
 
@@ -107,14 +106,6 @@ public class ObjectType extends Entity {
 		newEntity.setFlag(Entity.FLAG_ADDED);
 
 		return newEntity;
-	}
-
-	/**
-	 * print DisplayMOdel to low and high resolution png files on the JaamSim temporary folder
-	 */
-	public void printImage(){
-		if(! getDefaultDisplayModel().hasSharedGroup() )
-			BranchGroupPrinter.printBranchGroup_On(getDefaultDisplayModel().getUnitDisplayModel(), this.getName());
 	}
 
 	public Package getPackage() {

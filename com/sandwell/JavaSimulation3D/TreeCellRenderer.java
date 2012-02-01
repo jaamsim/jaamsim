@@ -23,7 +23,6 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.ObjectType;
 
 class TreeCellRenderer extends DefaultTreeCellRenderer {
@@ -53,12 +52,6 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
 						imageIcon = new ImageIcon(image);
 					}
 					this.setIcon(imageIcon);
-
-					// Print the image files if they are not already printed
-					if(! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + label.getText() + "LowRes.png") ||
-					   ! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + label.getText() + "HighRes.png") ) {
-						type.printImage();
-					}
 				}
 			}
 		}

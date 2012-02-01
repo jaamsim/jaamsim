@@ -21,13 +21,9 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.MemoryImageSource;
-import java.io.File;
-import java.io.IOException;
 
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-import javax.imageio.ImageIO;
 import javax.media.j3d.Background;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
@@ -46,17 +42,7 @@ public class BranchGroupPrinter {
 	private final BranchGroup rootBranchGroup;
 	private final Background background;
 
-	// JaamSim folder on temporary folder for storing the printed images
-	public final static String imageFolder;
 	private static BranchGroupPrinter myInstance;
-
-	static {
-		File tempFile = new File(System.getProperty("java.io.tmpdir")+"/JaamSim/");
-		if(! tempFile.exists() ) {
-			tempFile.mkdir();
-		}
-		imageFolder = tempFile.getPath() + "/";
-	}
 
 	public BranchGroupPrinter() {
 
@@ -112,23 +98,6 @@ public class BranchGroupPrinter {
 		return myInstance;
 	}
 
-	/**
-	 * Print BranchGroup to a low resolution and a high resolution file
-	 * on  imageFolder
-	 *
-	 * @param bg
-	 * @param file
-	 */
-	public static void printBranchGroup_On(BranchGroup bg, String fileName) {
-		BranchGroupPrinter printer = BranchGroupPrinter.getInstance();
-		printer.rootBranchGroup.addChild(bg);
-
-		fileName = imageFolder + fileName;
-		printer.writeBufferedImageOnFile(printer.offScreenCanvasLowRes, fileName + "LowRes.png" );
-		printer.writeBufferedImageOnFile(printer.offScreenCanvasHighRes, fileName + "HighRes.png" );
-		printer.rootBranchGroup.removeChild(bg);
-	}
-
 	private BufferedImage renderOffsceen(Canvas3D canvas) {
 
 		// render the screen and wait for completion
@@ -182,22 +151,6 @@ public class BranchGroupPrinter {
 
 		graphic2D.dispose();
 		return transparentBackGroundBufferedImage;
-	}
-
-	/**
-	 * Write the given BufferedImage to the full path png file
-	 * @param bImage
-	 * @param file
-	 */
-	private void writeBufferedImageOnFile(Canvas3D canvas, String file){
-		BufferedImage bImage = this.getTransparentBufferedImageOf(canvas);
-		// Print the transparent bufferedImage to the file
-		try {
-			ImageIO.write(bImage, "png", new File(file));
-		} catch (IOException e) {
-			throw new ErrorException(e);
-		}
-
 	}
 
 	public static void renderBranchGroup_On(DisplayModel dm) {
