@@ -33,30 +33,30 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
 
 		super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
-		// Only leaf and if it is not already expanded
-		if(leaf && ! expanded) {
+		// If not a leaf, just return
+		if (!leaf)
+			return this;
 
-			// Make sure the leaf is ObjectType
-			if(((DefaultMutableTreeNode)value).getUserObject() instanceof ObjectType) {
-				ObjectType type = (ObjectType) ((DefaultMutableTreeNode)value).getUserObject();
+		// If we don't find an ObjectType (likely we will) just return
+		Object userObj = ((DefaultMutableTreeNode)value).getUserObject();
+		ObjectType type = null;
+		if (userObj instanceof ObjectType)
+			type = (ObjectType)userObj;
 
-				// ObjectType has a DisplayModel
-				if(type.getDefaultDisplayModel() != null) {
+		if (type == null)
+			return this;
 
-					// Set the icon image for the label
-					DisplayModel dm = type.getDefaultDisplayModel();
-					BufferedImage image = dm.getLowResImage();
+		// ObjectType has a DisplayModel
+		DisplayModel dm = type.getDefaultDisplayModel();
+		if (dm == null)
+			return this;
 
-					if(image != null) {
-						icon.setImage(image);
-						this.setIcon(icon);
-					}
-					else {
-						this.setIcon(null);
-					}
-				}
-			}
+		BufferedImage image = dm.getLowResImage();
+		if(image != null) {
+			icon.setImage(image);
+			this.setIcon(icon);
 		}
+
 		return this;
 	}
 }
