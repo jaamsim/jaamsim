@@ -25,6 +25,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import com.sandwell.JavaSimulation.ObjectType;
 
 class TreeCellRenderer extends DefaultTreeCellRenderer {
+	private final ImageIcon icon = new ImageIcon();
 
 	public Component getTreeCellRendererComponent(JTree tree,
 			Object value, boolean selected, boolean expanded,
@@ -45,11 +46,14 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
 					// Set the icon image for the label
 					DisplayModel dm = type.getDefaultDisplayModel();
 					BufferedImage image = dm.getLowResImage();
-					ImageIcon imageIcon = null;
+
 					if(image != null) {
-						imageIcon = new ImageIcon(image);
+						icon.setImage(image);
+						this.setIcon(icon);
 					}
-					this.setIcon(imageIcon);
+					else {
+						this.setIcon(null);
+					}
 				}
 			}
 		}

@@ -1586,16 +1586,17 @@ public class DisplayModel extends Entity {
 		lowResImage = low;
 	}
 
-	public void renderImages(){
-		String offscreen = System.getProperty("JaamSim.offscreen");
-		if ("FALSE".equals(offscreen))
+	private void renderImages(){
+		// If we've already rendered, just return
+		if (lowResImage != null || highResImage != null)
 			return;
 
 		// Avoid sharing problems with multiple VirtualUniverses
 		if (this.hasSharedGroup())
 			return;
 
-		if (lowResImage != null || highResImage != null)
+		String offscreen = System.getProperty("JaamSim.offscreen");
+		if ("FALSE".equals(offscreen))
 			return;
 
 		BranchGroupPrinter.renderBranchGroup_On(this);

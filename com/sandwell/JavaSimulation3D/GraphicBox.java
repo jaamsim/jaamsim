@@ -49,6 +49,7 @@ import com.sandwell.JavaSimulation.Vector;
 public class GraphicBox extends JDialog {
 	private static GraphicBox myInstance;  // only one instance allowed to be open
 	private final  JLabel previewLabel; // preview DisplayModel as a picture
+	final ImageIcon previewIcon = new ImageIcon();
 	private static DisplayEntity currentEntity;
 	private final static JList displayModelList; // All defined DisplayModels
 
@@ -93,11 +94,12 @@ public class GraphicBox extends JDialog {
 				// Selected DisplayModel
 				DisplayModel dm = (DisplayModel) ((JList)e.getSource()).getSelectedValue();
 				BufferedImage image = dm.getHighResImage();
-				ImageIcon imageIcon = null;
+				// do this unconditionally to force a repaint
+				previewLabel.setIcon(null);
 				if(image != null) {
-					imageIcon = new ImageIcon(image);
+					previewIcon.setImage(image);
+					previewLabel.setIcon(previewIcon);
 				}
-				previewLabel.setIcon(imageIcon);
 			}
 		} );
 
