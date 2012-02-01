@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation3D;
 
 import java.awt.Component;
+import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -48,16 +49,21 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
 				// ObjectType has a DisplayModel
 				if(type.getDefaultDisplayModel() != null) {
 
+					// Set the icon image for the label
+					DisplayModel dm = type.getDefaultDisplayModel();
+					BufferedImage image = dm.getLowResImage();
+					ImageIcon imageIcon = null;
+					if(image != null) {
+						imageIcon = new ImageIcon(image);
+					}
+					this.setIcon(imageIcon);
+
 					// Print the image files if they are not already printed
 					if(! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + label.getText() + "LowRes.png") ||
 					   ! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + label.getText() + "HighRes.png") ) {
 						type.printImage();
 					}
 					try {
-
-						// Set the icon image for the label
-						Icon labelIcon = new ImageIcon( new URL("file:/" + BranchGroupPrinter.imageFolder  + label.getText() + "LowRes.png") );
-						label.setIcon(labelIcon);
 
 						// Set the html tooltip with the icon image
 						Icon tooltipIcon = new ImageIcon( new URL("file:/" + BranchGroupPrinter.imageFolder  + label.getText() + "HighRes.png") );

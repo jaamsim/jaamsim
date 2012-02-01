@@ -24,10 +24,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.awt.image.BufferedImage;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -43,8 +41,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
-import com.sandwell.JavaSimulation.ErrorException;
-import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Simulation;
@@ -96,22 +92,12 @@ public class GraphicBox extends JDialog {
 
 				// Selected DisplayModel
 				DisplayModel dm = (DisplayModel) ((JList)e.getSource()).getSelectedValue();
-				String modelName = ((JList)e.getSource()).getSelectedValue().toString().trim();
-				try {
-
-					// Print the Icons if they are not exist already
-					if(( ! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + modelName + "LowRes.png") ||
-							! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + modelName + "HighRes.png") ) &&
-							! dm.hasSharedGroup() ) {
-						BranchGroupPrinter.printBranchGroup_On(dm.getUnitDisplayModel(), modelName);
-					}
-
-					Icon labelIcon = new ImageIcon( new URL("file:/" + BranchGroupPrinter.imageFolder  + modelName + "HighRes.png") );
-					previewLabel.setIcon(labelIcon);
+				BufferedImage image = dm.getHighResImage();
+				ImageIcon imageIcon = null;
+				if(image != null) {
+					imageIcon = new ImageIcon(image);
 				}
-				catch (MalformedURLException exp) {
-					throw new ErrorException(exp);
-				}
+				previewLabel.setIcon(imageIcon);
 			}
 		} );
 
