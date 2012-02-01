@@ -36,11 +36,11 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 
 	private static EntityPallet myInstance;  // only one instance allowed to be open
 
-	private JScrollPane treeView;
-	private static JTree tree;
+	private final JScrollPane treeView;
+	private final JTree tree;
 
-	private static DefaultMutableTreeNode top;
-	private static DefaultTreeModel treeModel;
+	private final DefaultMutableTreeNode top;
+	private final DefaultTreeModel treeModel;
 
 	private EntityPallet() {
 
