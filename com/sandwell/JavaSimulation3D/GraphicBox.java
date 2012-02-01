@@ -228,6 +228,7 @@ public class GraphicBox extends JDialog {
 		buttonPanel.add(importButton);
 		buttonPanel.add(acceptButton);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		this.pack();
 	}
 
 	public static GraphicBox getInstance( DisplayEntity ent, int x, int y ) {
