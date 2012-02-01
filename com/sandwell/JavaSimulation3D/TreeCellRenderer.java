@@ -18,7 +18,6 @@ import java.awt.Component;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -31,8 +30,7 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
 			Object value, boolean selected, boolean expanded,
 			boolean leaf, int row, boolean hasFocus) {
 
-		JLabel label = (JLabel)super.getTreeCellRendererComponent(
-				tree, value, selected, expanded, leaf, row, hasFocus);
+		super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
 		// Only leaf and if it is not already expanded
 		if(leaf && ! expanded) {
@@ -55,6 +53,6 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
 				}
 			}
 		}
-		return label;
+		return this;
 	}
 }
