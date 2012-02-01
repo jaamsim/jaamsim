@@ -46,8 +46,7 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
 				ObjectType type = (ObjectType) ((DefaultMutableTreeNode)value).getUserObject();
 
 				// ObjectType has a DisplayModel
-				String offscreen = System.getProperty("JaamSim.offscreen");
-				if(!"FALSE".equals(offscreen) && type.getDefaultDisplayModel() != null) {
+				if(type.getDefaultDisplayModel() != null) {
 
 					// Print the image files if they are not already printed
 					if(! FileEntity.fileExists(BranchGroupPrinter.imageFolder  + label.getText() + "LowRes.png") ||

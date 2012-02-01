@@ -91,8 +91,7 @@ public class GraphicBox extends JDialog {
 			public void valueChanged(ListSelectionEvent e) {
 
 				// Avoid null pointer exception when the list is being re-populated
-				String offscreen = System.getProperty("JaamSim.offscreen");
-				if(displayModelList.getSelectedIndex() == -1 || "FALSE".equals(offscreen))
+				if(displayModelList.getSelectedIndex() == -1)
 					return;
 
 				// Selected DisplayModel

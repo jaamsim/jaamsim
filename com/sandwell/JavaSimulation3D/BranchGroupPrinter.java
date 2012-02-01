@@ -199,4 +199,15 @@ public class BranchGroupPrinter {
 		}
 
 	}
+
+	public static void renderBranchGroup_On(DisplayModel dm) {
+		BranchGroupPrinter printer = BranchGroupPrinter.getInstance();
+		BranchGroup bg = dm.getUnitDisplayModel();
+		printer.rootBranchGroup.addChild(bg);
+		BufferedImage lowRes = printer.getTransparentBufferedImageOf(printer.offScreenCanvasLowRes);
+		BufferedImage highRes = printer.getTransparentBufferedImageOf(printer.offScreenCanvasHighRes);
+		printer.rootBranchGroup.removeChild(bg);
+		dm.setImages(lowRes, highRes);
+
+	}
 }

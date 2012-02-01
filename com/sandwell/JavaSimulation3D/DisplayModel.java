@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -134,6 +135,10 @@ public class DisplayModel extends Entity {
 	private int	totalUniqueGeometries = 0;
 
 	private boolean hasSharedGroup=false;
+
+	private BufferedImage highResImage;
+	private BufferedImage lowResImage;
+
 
 	static {
 		allInstances = new ArrayList<DisplayModel>();
@@ -1564,5 +1569,35 @@ public class DisplayModel extends Entity {
 		model2D.addChild(contents);
 		model2D.addChild(outlines);
 		return model2D;
+	}
+
+	BufferedImage getLowResImage() {
+		this.renderImages();
+		return lowResImage;
+	}
+
+	BufferedImage getHighResImage() {
+		this.renderImages();
+		return highResImage;
+	}
+
+	void setImages(BufferedImage low, BufferedImage high) {
+		highResImage = high;
+		lowResImage = low;
+	}
+
+	public void renderImages(){
+		String offscreen = System.getProperty("JaamSim.offscreen");
+		if ("FALSE".equals(offscreen))
+			return;
+
+		// Avoid sharing problems with multiple VirtualUniverses
+		if (this.hasSharedGroup())
+			return;
+
+		if (lowResImage != null || highResImage != null)
+			return;
+
+		BranchGroupPrinter.renderBranchGroup_On(this);
 	}
 }
