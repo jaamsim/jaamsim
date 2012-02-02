@@ -1424,13 +1424,7 @@ public class InputAgent {
 		processEntity_Keyword_Value(ent, in, value);
 	}
 
-	/**
-	 * This method updates stringValue and editedStringValue for the input
-	 * @param in
-	 * @param data
-	 */
-	public static void updateStringValues(Input<?> in, StringVector data)  {
-
+	public static void updateInput(Entity ent, Input<?> in, StringVector data) {
 		String str = data.toString();
 		// reformat input string to be added to keyword
 		// strip out "{}" from data to find value
@@ -1452,17 +1446,12 @@ public class InputAgent {
 
 		if(in.isEdited()) {
 			in.setEditedValueString(str);
+			ent.setFlag(Entity.FLAG_EDITED);
 		}
 		else {
 			in.setValueString(str);
 		}
-	}
 
-	public static void updateInput(Entity ent, Input<?> in, StringVector data) {
-		if(in.isEdited()) {
-			ent.setFlag(Entity.FLAG_EDITED);
-		}
-		InputAgent.updateStringValues(in, data);
 	}
 
 	/**
