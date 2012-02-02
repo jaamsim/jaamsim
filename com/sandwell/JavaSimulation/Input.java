@@ -140,15 +140,14 @@ public abstract class Input<T> {
 	}
 
 	public String getValueString() {
+		if(edited) {
+			return editedValueString;
+		}
 		return valueString;
 	}
 
 	public void setValueString(String str) {
 		valueString = str;
-	}
-
-	public String getEditedValueString() {
-		return editedValueString;
 	}
 
 	public void setEditedValueString(String str) {

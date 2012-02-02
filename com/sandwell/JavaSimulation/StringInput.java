@@ -14,6 +14,10 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.util.ArrayList;
+
+import com.sandwell.JavaSimulation3D.InputAgent;
+
 public class StringInput extends Input<String> {
 
 	public StringInput(String key, String cat, String def) {
@@ -26,13 +30,12 @@ public class StringInput extends Input<String> {
 		this.updateEditingFlags();
 	}
 	public String getValueString() {
-		if(valueString.trim().contains(" "))
-			return "'" + valueString + "'";
-		return valueString;
-	}
-	public String getEditedValueString() {
-		if( editedValueString.trim().contains(" "))
-			return "'" + editedValueString + "'";
-		return editedValueString;
+		String str = super.getValueString();
+
+		ArrayList<String> tokens = new ArrayList<String>();
+		InputAgent.tokenizeString(tokens, str);
+		if(tokens.size() > 1)
+			return String.format("'%s'", str);
+		return str;
 	}
 }

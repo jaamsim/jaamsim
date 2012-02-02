@@ -133,7 +133,7 @@ public class InputAgent {
 	/**
 	 * Break the record into individual tokens and append it to the token list
 	 */
-	static void tokenizeString(ArrayList<String> tokens, String record) {
+	public static void tokenizeString(ArrayList<String> tokens, String record) {
 		// Split the record into two pieces, the contents portion and possibly
 		// a commented portion
 		String[] contents = record.split("\"", 2);
@@ -1432,7 +1432,6 @@ public class InputAgent {
 	public static void updateStringValues(Input<?> in, StringVector data)  {
 
 		String str = data.toString();
-
 		// reformat input string to be added to keyword
 		// strip out "{}" from data to find value
 		if( data.size() > 0 ) {
@@ -1440,7 +1439,7 @@ public class InputAgent {
 				str = str.replaceAll("[{}]", "");
 			} else {
 				int strLength = str.length();
-				str = "{"+str.substring(3,strLength-3) + "}";
+				str = String.format("{%s}", str.substring(3,strLength-3));
 			}
 			str = str.replaceAll( "[,]", " " );
 			str = str.trim();
@@ -1448,12 +1447,7 @@ public class InputAgent {
 
 		// Takes care of old format, displaying as new format -- appending onto end of record.
 		if( in.isAppendable() && ! data.get(0).equals("{") ) {
-			if( in.isEdited() ) {
-				str = in.getEditedValueString() + "{ " + str + " } ";
-			}
-			else {
-				str = in.getValueString() + "{ " + str + " } ";
-			}
+			str = String.format("%s { %s }",  in.getValueString(), str );
 		}
 
 		if(in.isEdited()) {
@@ -1563,7 +1557,7 @@ public class InputAgent {
 					// Each line starts with the entity name followed by changed keyword
 					file.format("%s %s ", ent.toString(), in.getKeyword());
 
-					String value = in.getEditedValueString();
+					String value = in.getValueString();
 					ArrayList<String> tokens = new ArrayList<String>();
 					InputAgent.tokenizeString(tokens, value);
 					if(! InputAgent.enclosedByBraces(tokens) ) {
