@@ -124,7 +124,6 @@ public class InputAgent {
 
 	public static void addEditedEntity(Entity ent) {
 		ent.setFlag(Entity.FLAG_EDITED);
-		sessionEdited = true;
 	}
 
 	public static void setBatch(boolean batch) {
@@ -864,7 +863,6 @@ public class InputAgent {
 		}
 
 		Input<?> in = ent.getInput(keyword);
-		in.setEdited(true);
 		in.setEditedValueString(keyString.toString());
 		ent.setFlag(Entity.FLAG_EDITED);
 	}
@@ -1418,7 +1416,6 @@ public class InputAgent {
 		data.addAll(tokens);
 		InputAgent.processData(ent, data);
 		InputAgent.addEditedEntity(ent);
-		in.setEdited(true);
 	}
 
 
@@ -1459,17 +1456,8 @@ public class InputAgent {
 			}
 		}
 
-		if(sessionEdited || addedRecordFound) {
+		if(in.isEdited()) {
 			in.setEditedValueString(str);
-
-			// Value is changed
-			if( in.getValueString().equals(in.getEditedValueString()) ) {
-				in.setEdited(true);
-			}
-			else {
-				in.setEdited(false);
-			}
-
 		}
 		else {
 			in.setValueString(str);

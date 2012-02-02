@@ -167,7 +167,6 @@ public abstract class Input<T> {
 		// Verify that the entry actually changed
 		if( ! valueString.equals( value ) ) {
 			if( ! editedValueString.equals( value ) ) {
-				edited = true;
 				editedValueString = value;
 				return true;
 			}
