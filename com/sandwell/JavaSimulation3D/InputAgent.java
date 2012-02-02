@@ -122,10 +122,6 @@ public class InputAgent {
 		sessionEdited = bool;
 	}
 
-	public static void addEditedEntity(Entity ent) {
-		ent.setFlag(Entity.FLAG_EDITED);
-	}
-
 	public static void setBatch(boolean batch) {
 		batchRun = batch;
 	}
@@ -1391,7 +1387,6 @@ public class InputAgent {
 		Vector data = new Vector(tokens.size());
 		data.addAll(tokens);
 		InputAgent.processData(ent, data);
-		InputAgent.addEditedEntity(ent);
 	}
 
 
