@@ -154,32 +154,6 @@ public abstract class Input<T> {
 		editedValueString = str;
 	}
 
-	/**
-	 * Record a keyword value edit, returns TRUE if the value was actually changed to a new value
-	 */
-	public boolean recordEditForValue( String value ) {
-		// Remove leading and trailing spaces; an user may add spaces while editing on the
-		// EditBox
-		value = value.trim();
-		//System.out.println( "Entity.recordEditForKeyword_Value( "+index+", "+value+" )" );
-
-		// Verify that the entry actually changed
-		if( ! valueString.equals( value ) ) {
-			if( ! editedValueString.equals( value ) ) {
-				editedValueString = value;
-				return true;
-			}
-		}
-		// to handle the case when the original value of a keyword is changed and
-		// subsequently changed back to the original value.
-		else {
-			if ( !editedValueString.equals( value ) ) {
-				editedValueString = value;
-			}
-		}
-		return false;
-	}
-
 	public abstract void parse(StringVector input) throws InputErrorException;
 
 	public static void assertCount(StringVector input, int... counts)

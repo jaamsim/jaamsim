@@ -41,7 +41,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Vector;
@@ -181,12 +180,6 @@ public class GraphicBox extends JDialog {
 			public void actionPerformed( ActionEvent e ) {
 				setEnabled(false); // Don't accept any interaction
 				DisplayModel dm = (DisplayModel) displayModelList.getSelectedValue();
-
-				// Mark the input as edited
-				Input<?> in = currentEntity.getInput("DisplayModel");
-				if( in != null ) {
-					in.recordEditForValue(dm.getName());
-				}
 
 				Vector data = new Vector(3);
 				data.addElement(currentEntity.getInputName());
