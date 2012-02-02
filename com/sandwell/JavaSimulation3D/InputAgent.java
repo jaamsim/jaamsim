@@ -782,17 +782,6 @@ public class InputAgent {
 		if (entity.testFlag(Entity.FLAG_LOCKED))
 			throw new InputErrorException("Entity: %s is locked and cannot be modified", entity.getName());
 
-		// Extra processing: records added in the previous session as if they were
-		// edited and accepted in the current session
-		if (hasAddedRecords()) {
-			Vector vec = new Vector();
-			vec.add( entity.getInputName() );
-			vec.add( keyword );
-			vec.addAll( recordCmd );
-
-			InputAgent.processAddedRecordsFromCfgFile(vec);
-		}
-
 		try {
 			Input<?> input = entity.getInput( keyword );
 			if( input != null && input.isAppendable() ) {
@@ -834,6 +823,14 @@ public class InputAgent {
 				else {
 					InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", keyword);
 				}
+			}
+			if(input != null) {
+				InputAgent.updateInput(entity, input, recordCmd);
+			}
+
+			// The keyword is not on the editable keyword list
+			else {
+				InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", keyword);
 			}
 		}
 		catch ( InputErrorException e ) {
