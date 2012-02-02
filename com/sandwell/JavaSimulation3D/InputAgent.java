@@ -1459,7 +1459,9 @@ public class InputAgent {
 	}
 
 	public static void updateInput(Entity ent, Input<?> in, StringVector data) {
-		InputAgent.addEditedEntity(ent);
+		if(in.isEdited()) {
+			ent.setFlag(Entity.FLAG_EDITED);
+		}
 		InputAgent.updateStringValues(in, data);
 	}
 
