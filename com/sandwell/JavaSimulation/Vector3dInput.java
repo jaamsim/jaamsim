@@ -64,6 +64,7 @@ public class Vector3dInput extends Input<Vector3d> {
 		}
 
 		value = new Vector3d(temp.get(0), temp.get(1), temp.get(2));
+		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

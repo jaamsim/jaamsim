@@ -59,6 +59,7 @@ public class TimeInput extends Input<Double> {
 			if( unitString.length() > 0 )
 				InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
 		}
+		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

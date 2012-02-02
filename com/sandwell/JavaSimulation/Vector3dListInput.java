@@ -77,5 +77,6 @@ public class Vector3dListInput extends ListInput<ArrayList<Vector3d>> {
 		}
 
 		value = tempValue;
+		this.updateEditingFlags();
 	}
 }

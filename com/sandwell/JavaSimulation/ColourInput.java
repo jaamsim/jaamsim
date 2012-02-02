@@ -26,5 +26,6 @@ public class ColourInput extends Input<ColoringAttributes> {
 	throws InputErrorException {
 		Input.assertCount(input, 1, 3);
 		value = Input.parseColour(input);
+		this.updateEditingFlags();
 	}
 }

@@ -24,5 +24,6 @@ public class FileInput extends Input<String> {
 	throws InputErrorException {
 		Input.assertCount(input, 1);
 		value = input.get(0);
+		this.updateEditingFlags();
 	}
 }

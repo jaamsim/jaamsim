@@ -32,5 +32,6 @@ public class AliasListInput extends ListInput<StringVector> {
 		}
 
 		value = input;
+		this.updateEditingFlags();
 	}
 }

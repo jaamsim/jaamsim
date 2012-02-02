@@ -35,6 +35,7 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, input.toString());
 
 		value = Input.parseListOfEntityLists(input, entClass, unique);
+		this.updateEditingFlags();
 	}
 
 	public void setUnique(boolean unique) {

@@ -28,5 +28,6 @@ public class DoubleTableInput extends Input<ArrayList<DoubleVector>> {
 		for (StringVector each : temp) {
 			value.add(Input.parseDoubleVector(each, 0.0d, Double.POSITIVE_INFINITY));
 		}
+		this.updateEditingFlags();
 	}
 }

@@ -70,6 +70,7 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 					InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
 			}
 			value.setDefault( defTime );
+			this.updateEditingFlags();
 			return;
 		}
 
@@ -108,6 +109,7 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 		for( T each : list ) {
 			value.put( each, val );
 		}
+		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

@@ -25,5 +25,6 @@ public class CoordinateListInput extends DoubleListInput {
 		Input.assertCountRange(input, minCount, maxCount);
 
 		value = Input.parseDoubleVector(input, minValue, maxValue);
+		this.updateEditingFlags();
 	}
 }

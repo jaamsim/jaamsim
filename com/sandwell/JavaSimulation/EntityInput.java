@@ -29,5 +29,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 			value = null;
 		else
 			value = Input.parseEntity(input.get(0), entClass);
+
+		this.updateEditingFlags();
 	}
 }

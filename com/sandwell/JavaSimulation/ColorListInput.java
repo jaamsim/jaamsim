@@ -27,5 +27,6 @@ public class ColorListInput extends ListInput<ArrayList<ColoringAttributes>>  {
 	throws InputErrorException {
 		Input.assertCountRange(input, minCount, maxCount);
 		value = Input.parseColorVector(input);
+		this.updateEditingFlags();
 	}
 }

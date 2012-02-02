@@ -24,5 +24,6 @@ public class BooleanListInput extends ListInput<BooleanVector> {
 	throws InputErrorException {
 		Input.assertCountRange(input, minCount, maxCount);
 		value = Input.parseBooleanVector(input);
+		this.updateEditingFlags();
 	}
 }
