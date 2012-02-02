@@ -903,8 +903,6 @@ public class Region extends DisplayEntity {
 				return;
 			}
 
-			// Determine if the window position has changed
-			// This depends on two spaces between the x and y values in the edit box.
 			StringVector data = new StringVector( 2,1 );
 			data.add( String.format( "%d", (int) currentWindowPos.getX() ) );
 			data.add( String.format( "%d", (int) currentWindowPos.getY() ) );
@@ -922,8 +920,6 @@ public class Region extends DisplayEntity {
 				return;
 			}
 
-			// Determine if the window size has changed.
-			// This depends on two spaces between the x and y values in the edit box.
 			StringVector data = new StringVector( 2,1 );
 			data.add( String.format( "%d", (int)currentWindowSize.getX() ) );
 			data.add( String.format( "%d", (int)currentWindowSize.getY() ) );
