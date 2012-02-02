@@ -902,4 +902,14 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
 
 	}
+
+	void updateEditingFlags() {
+
+		// Keyword is edited
+		if(InputAgent.hasAddedRecords() ||
+				Entity.simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
+			this.setEdited(true);
+			InputAgent.setSessionEdited(true);
+		}
+	}
 }

@@ -118,6 +118,10 @@ public class InputAgent {
 		return sessionEdited;
 	}
 
+	public static void setSessionEdited(boolean bool) {
+		sessionEdited = bool;
+	}
+
 	public static void addEditedEntity(Entity ent) {
 		ent.setFlag(Entity.FLAG_EDITED);
 		sessionEdited = true;
