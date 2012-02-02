@@ -839,31 +839,6 @@ public class InputAgent {
 		}
 	}
 
-	private static void processAddedRecordsFromCfgFile( Vector record ) {
-		if (record.size() < 3)
-			return;
-
-		// Process all edited appendable and non-appendable keyword values
-		// Expecting record format:
-		// <entity-class-name> <entity-name> <keyword> <par> <par> ...
-		// NEW format: <entity-name> <keyword> <par> <par> ...
-		String entityName = (String)record.get(0);
-		Entity ent = Input.tryParseEntity(entityName, Entity.class);
-		String keyword = (String)record.get(1);
-
-		StringBuilder keyString = new StringBuilder();
-		if (record.size() > 2) {
-			keyString.append((String)record.get(2));
-		}
-		for (int i = 3; i < record.size(); i++) {
-			keyString.append(" ").append((String)record.get(i));
-		}
-
-		Input<?> in = ent.getInput(keyword);
-		in.setEditedValueString(keyString.toString());
-		ent.setFlag(Entity.FLAG_EDITED);
-	}
-
 	public static void processData(Entity ent, Vector rec) {
 		if( rec.get( 1 ).toString().trim().equals( "{" ) ) {
 			InputAgent.logError("A keyword expected after: %s", ent.getName());
@@ -885,10 +860,14 @@ public class InputAgent {
 			// Process the record
 			InputAgent.processKeyword(ent, recordCmd, keyword);
 
-			// Extra processing: records added in the previous session as if they were
-			// edited and accepted in the current session
-			if (hasAddedRecords()) {
-				InputAgent.processAddedRecordsFromCfgFile( (Vector) multiCmds.get( i ) );
+			Input<?> input = ent.getInput(keyword);
+			if(input != null) {
+				InputAgent.updateInput(ent, input, recordCmd);
+			}
+
+			// The keyword is not on the editable keyword list
+			else {
+				InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", keyword);
 			}
 		}
 		return;
