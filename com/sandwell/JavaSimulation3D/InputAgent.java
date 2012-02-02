@@ -827,7 +827,7 @@ public class InputAgent {
 				Input<?> in = ent.getInput(keyword);
 
 				if (in != null) {
-					InputAgent.updateStringValues(in, recordCmd);
+					InputAgent.updateInput(ent, in, recordCmd);
 				}
 
 				// The keyword is not on the editable keyword list

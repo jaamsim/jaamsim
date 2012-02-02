@@ -108,7 +108,7 @@ public class Group extends Entity {
 							for ( int k = 0; k < splitData.size(); k++ ) {
 								ent.readInput(splitData.get(k), currentKeyword, syntaxOnly, isCfgInput);
 								if(in != null) {
-									InputAgent.updateStringValues(in, splitData.get( k ));
+									InputAgent.updateInput(ent, in, splitData.get( k ));
 								}
 
 								// The keyword is not on the editable keyword list
