@@ -93,12 +93,24 @@ public class TextLabel extends DisplayEntity  {
 		return text.getValue();
 	}
 
+	/**
+	 * This method updates the DisplayEntity for changes in the given input
+	 */
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if( in == text ||
+			in == textHeight ||
+			in == fontName ||
+			in == fontColor ) {
+			modelNeedsRender = true;
+		}
+	}
+
 	public void render(double time) {
-		if (getRenderText(time) != reference.getText() ||
-			reference.getTextHeight() != textHeight.getValue() ||
-			reference.getFillColor() != fontColor.getValue() ||
-			reference.getFontName() != fontName.getValue() ||
-			reference.getFontStyle() != fontStyle) {
+		if ( getRenderText(time) != (reference.getText()) ||
+			reference.getFontStyle() != fontStyle ||
+			modelNeedsRender ) {
 
 			reference.setHeight(textHeight.getValue());
 			reference.setFillColor(fontColor.getValue());
@@ -108,6 +120,8 @@ public class TextLabel extends DisplayEntity  {
 			Vector3d tmp = new Vector3d();
 			reference.getSize(tmp);
 			this.setSize(tmp);
+
+			modelNeedsRender = false;
 		}
 
 		super.render(time);
