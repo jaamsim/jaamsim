@@ -130,6 +130,7 @@ public class DisplayEntity extends Entity {
 	private final TransformGroup scaleTransform; // provides scaling for display models
 	private final OrderedGroup displayNode; // container for DisplayEntity's specific model
 
+	protected boolean modelNeedsRender = true; // indicates if the model needs rebuilding
 	private boolean needsRender = true;
 	private final Vector3dInput positionInput;
 	private final Vector3dInput sizeInput;
