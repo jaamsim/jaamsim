@@ -881,7 +881,6 @@ public abstract class Input<T> {
 		if(InputAgent.hasAddedRecords() ||
 				Entity.simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
 			this.setEdited(true);
-			InputAgent.setSessionEdited(true);
 		}
 	}
 }
