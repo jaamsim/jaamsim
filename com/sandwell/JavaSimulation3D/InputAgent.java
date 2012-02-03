@@ -1540,5 +1540,6 @@ public class InputAgent {
 		// Read the default configuration file
 		InputAgent.readURL(InputAgent.class.getResource("/resources/inputs/default.cfg"));
 		DisplayEntity.simulation.setSkyImage();
+		sessionEdited = false;
 	}
 }
