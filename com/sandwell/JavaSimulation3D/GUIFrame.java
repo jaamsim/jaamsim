@@ -979,7 +979,7 @@ public class GUIFrame extends JFrame {
 				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
-				controlStartResume.setEnabled( true );
+				controlStartResume.setEnabled( false );
 				controlStartResume.setSelected( false );
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );

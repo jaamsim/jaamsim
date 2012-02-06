@@ -494,6 +494,7 @@ public class InputAgent {
 
 	public static void loadConfigFile(String fileName) {
 		try {
+			DisplayEntity.simulation.getGUIFrame().updateForSimulationState();
 			InputAgent.loadConfigurationFile(fileName);
 			GraphicsUpdateBehavior.forceUpdate = true;
 		}

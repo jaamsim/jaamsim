@@ -308,6 +308,7 @@ public abstract class Simulation extends Entity {
 	 *	This method may be called several times as a result of interaction with the user.
 	 */
 	public void configure(String configFileName) {
+		simState = SIM_STATE_UNCONFIGURED;
 		InputAgent.setConfigFileName(configFileName);
 		InputAgent.loadConfigFile(InputAgent.getConfigFileName());
 
