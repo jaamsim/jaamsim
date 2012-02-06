@@ -312,9 +312,6 @@ public abstract class Simulation extends Entity {
 		InputAgent.setConfigFileName(configFileName);
 		InputAgent.loadConfigFile(InputAgent.getConfigFileName());
 
-		// store the present state
-		simState = SIM_STATE_CONFIGURED;
-
 		// Validate each entity in the model
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			try {
@@ -324,6 +321,9 @@ public abstract class Simulation extends Entity {
 				throw new InputErrorException("Validation error for %s: %s", Entity.getAll().get(i).getName(), e.getMessage());
 			}
 		}
+
+		// store the present state
+		simState = SIM_STATE_CONFIGURED;
 
 		System.out.println( "Configuration File Loaded" );
 	}
