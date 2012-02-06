@@ -244,25 +244,13 @@ public class GUIFrame extends JFrame {
 					JOptionPane.YES_OPTION,
 					JOptionPane.WARNING_MESSAGE );
 
-					if (userOption == JOptionPane.YES_OPTION) {
-						clear();
-
-						// Read the default configuration file
-						InputAgent.readURL(InputAgent.class.getResource("/resources/inputs/default.cfg"));
-						DisplayEntity.simulation.setSkyImage();
-
-						displayWindows();
+					if(userOption == JOptionPane.NO_OPTION) {
+						return;
 					}
 				}
-				else {
-					clear();
-
-					// Read the default configuration file
-					InputAgent.readURL(InputAgent.class.getResource("/resources/inputs/default.cfg"));
-					DisplayEntity.simulation.setSkyImage();
-
-					displayWindows();
-				}
+				clear();
+				InputAgent.loadDefault();
+				displayWindows();
 			}
 		} );
 		fileMenu.add( newMenuItem );
@@ -283,13 +271,11 @@ public class GUIFrame extends JFrame {
 							JOptionPane.YES_OPTION,
 							JOptionPane.WARNING_MESSAGE );
 
-					// perform open only if yes
-					if (userOption == JOptionPane.YES_OPTION) {
-						InputAgent.load();
+					if (userOption == JOptionPane.NO_OPTION) {
+						return;
 					}
-				} else {
-					InputAgent.load();
 				}
+				InputAgent.load();
 			}
 		} );
 		fileMenu.add( configMenuItem );
@@ -1252,8 +1238,7 @@ public class GUIFrame extends JFrame {
 		InputAgent.readURL(InputAgent.class.getResource("/resources/inputs/autoload.cfg"));
 
 		if( configFiles.size() == 0 ) {
-			InputAgent.readURL(InputAgent.class.getResource("/resources/inputs/default.cfg"));
-			gsim.setSkyImage();
+			InputAgent.loadDefault();
 
 			if(! quiet) {
 				displayWindows();

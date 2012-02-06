@@ -1534,4 +1534,11 @@ public class InputAgent {
 		file.flush();
 		file.close();
 	}
+
+	static void loadDefault() {
+
+		// Read the default configuration file
+		InputAgent.readURL(InputAgent.class.getResource("/resources/inputs/default.cfg"));
+		DisplayEntity.simulation.setSkyImage();
+	}
 }
