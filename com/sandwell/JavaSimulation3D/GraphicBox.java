@@ -149,9 +149,7 @@ public class GraphicBox extends JDialog {
 					if(type == null)
 						return;
 
-					DisplayModel newModel = (DisplayModel)type.getNewInstance();
-					newModel.setName(entityName);
-					newModel.setInputName(entityName);
+					DisplayModel newModel = (DisplayModel)InputAgent.defineEntity(type.getJavaClass(), entityName, true);
 					Vector data = new Vector(1);
 					data.addElement(entityName);
 					data.addElement("Shape");

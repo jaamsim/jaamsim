@@ -362,8 +362,6 @@ public class DisplayEntity extends Entity {
 		if(type == null)
 			return;
 
-		DisplayEntity copiedEntity = (DisplayEntity)type.getNewInstance();
-
 		// Unique name
 		int i = 1;
 		String name = String.format("Copy_of_%s", getInputName());
@@ -372,8 +370,8 @@ public class DisplayEntity extends Entity {
 			i++;
 		}
 
-		copiedEntity.setInputName(name);
-		copiedEntity.setName(name);
+		DisplayEntity copiedEntity = (DisplayEntity)InputAgent.defineEntity(
+				type.getJavaClass(), name, true);
 
 		// Match all the inputs
 		for(Input<?> each: this.getEditableInputs() ){
@@ -402,8 +400,6 @@ public class DisplayEntity extends Entity {
 		if(type == null)
 			return;
 
-		TextLabel label = (TextLabel)type.getNewInstance();
-
 		// Unique name
 		int i = 1;
 		String name = String.format("Label_for_%s", getInputName());
@@ -411,8 +407,9 @@ public class DisplayEntity extends Entity {
 			name = String.format("Label%d_of_%s", i, getInputName());
 			i++;
 		}
-		label.setName(name);
-		label.setInputName(name);
+
+		TextLabel label = (TextLabel)InputAgent.defineEntity(
+				type.getJavaClass(), name, true);
 
 		InputAgent.processEntity_Keyword_Value(label, "RelativeEntity", this.getInputName() );
 		InputAgent.processEntity_Keyword_Value(label, "Position", "1.0, -1.0, 0.0" );
