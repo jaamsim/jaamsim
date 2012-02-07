@@ -118,10 +118,6 @@ public class InputAgent {
 		return sessionEdited;
 	}
 
-	public static void setSessionEdited(boolean bool) {
-		sessionEdited = bool;
-	}
-
 	public static void setBatch(boolean batch) {
 		batchRun = batch;
 	}
