@@ -16,9 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModel;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 public class ObjectType extends Entity {
 	private static final ArrayList<ObjectType> allInstances;
@@ -72,37 +70,6 @@ public class ObjectType extends Entity {
 
 	public Class<? extends Entity> getJavaClass() {
 		return javaClass.getValue();
-	}
-
-	/**
-	 * Returns an instance of this javaClass with a meaningful name
-	 * @return
-	 */
-	public Entity getNewInstance() {
-		Entity newEntity;
-		try {
-			newEntity = getJavaClass().newInstance();
-		} catch (InstantiationException e) {
-			throw new ErrorException(e);
-		} catch (IllegalAccessException e) {
-			throw new ErrorException(e);
-		}
-
-		// Determine the name of the entity based on its class name and
-		// the first available integer number starting from 1
-		int i = 1;
-		String name = getJavaClass().getSimpleName();
-		while (Simulation.getNamedEntity(String.format("%s%d", name, i)) != null) {
-			i++;
-		}
-		name = String.format("%s%d", name, i);
-		newEntity.setName(name);
-		newEntity.setInputName(name);
-
-		newEntity.setFlag(Entity.FLAG_ADDED);
-		InputAgent.setSessionEdited(true);
-
-		return newEntity;
 	}
 
 	public Package getPackage() {

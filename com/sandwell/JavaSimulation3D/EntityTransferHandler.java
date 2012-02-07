@@ -27,8 +27,10 @@ import javax.swing.JRootPane;
 import javax.swing.TransferHandler;
 import javax.vecmath.Vector3d;
 
+import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.ObjectType;
+import com.sandwell.JavaSimulation.Simulation;
 
 
 public class EntityTransferHandler extends TransferHandler {
@@ -61,8 +63,18 @@ public class EntityTransferHandler extends TransferHandler {
 			throw new ErrorException(e);
 		}
 
+		// Determine the name of the entity based on its class name and
+		// the first available integer number starting from 1
+		int i = 1;
+		Class<? extends Entity> proto  = type.getJavaClass();
+		String name = proto.getSimpleName();
+		while (Simulation.getNamedEntity(String.format("%s%d", name, i)) != null) {
+			i++;
+		}
+		name = String.format("%s%d", name, i);
+
 		// Create a new instance
-		DisplayEntity dEntity  = (DisplayEntity) type.getNewInstance();
+		DisplayEntity dEntity  = (DisplayEntity) InputAgent.defineEntity(proto, name, true);
 
 		// Dropped position on the window
 		Point dropLocation = destination.getMousePosition();
