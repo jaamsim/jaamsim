@@ -480,8 +480,11 @@ public class FileEntity {
 	public void toStart() {
 		if( inputStream != null ) {
 			try {
-				inputStream.reset();
-				return;
+				if( backingFileObject != null ) {
+					inputStream = new BufferedReader( new FileReader( backingFileObject ) );
+					inputStream.mark( 4096 );
+					return;
+				}
 			}
 			catch( IOException e ) {
 				// Done to re-open file reader if mark has gone too far
