@@ -373,18 +373,25 @@ public class InputAgent {
 
 		// Loop over all the new Entity names
 		for (int i = 3; i < record.size() - 1; i++) {
-			InputAgent.defineEntity(proto, record.get(i));
+			InputAgent.defineEntity(proto, record.get(i), false);
 		}
 	}
 
-	private static void defineEntity(Class<? extends Entity> proto, String key) {
+	/**
+	 * if userDefined is true then this is an entity defined by user interaction;
+	 * otherwise, it is from an input file define statement
+	 * @param proto
+	 * @param key
+	 * @param userDefined
+	 */
+	public static Entity defineEntity(Class<? extends Entity> proto, String key, boolean userDefined) {
 		Region region = null;
 		String name = key;
 
 		Entity ent = Input.tryParseEntity(key, Entity.class);
 		if (ent != null) {
 			InputAgent.logError(INP_ERR_DEFINEUSED, name, ent.getClass().getSimpleName());
-			return;
+			return null;
 		}
 
 		if (key.contains("/")) {
@@ -393,7 +400,7 @@ public class InputAgent {
 			Entity check = Input.tryParseEntity(regionName, Entity.class);
 			if (check == null) {
 				InputAgent.logError("%s not found, could not define: %s", regionName, name);
-				return;
+				return null;
 			}
 			if (check instanceof Region)
 				region = (Region)check;
@@ -404,7 +411,7 @@ public class InputAgent {
 		ent = null;
 		try {
 			ent = proto.newInstance();
-			if (hasAddedRecords()) {
+			if (hasAddedRecords() || userDefined) {
 				ent.setFlag(Entity.FLAG_ADDED);
 				sessionEdited = true;
 			}
@@ -414,7 +421,7 @@ public class InputAgent {
 		finally {
 			if (ent == null) {
 				InputAgent.logError("Could not create new Entity: %s", key);
-				return;
+				return null;
 			}
 		}
 
@@ -423,6 +430,7 @@ public class InputAgent {
 		if (region != null)
 			ent.setRegion( region );
 		ent.defineNewEntity();
+		return ent;
 	}
 
 	private static void processKeywordRecord(ArrayList<String> record) {
