@@ -99,11 +99,6 @@ public class ObjectType extends Entity {
 		newEntity.setName(name);
 		newEntity.setInputName(name);
 
-		if(newEntity instanceof DisplayEntity && this.getDefaultDisplayModel() != null) {
-			ArrayList<DisplayModel> def = new ArrayList<DisplayModel>();
-			def.add(this.getDefaultDisplayModel());
-			((DisplayEntity)newEntity).getDisplayModelList().setDefaultValue(def);
-		}
 		newEntity.setFlag(Entity.FLAG_ADDED);
 		InputAgent.setSessionEdited(true);
 
