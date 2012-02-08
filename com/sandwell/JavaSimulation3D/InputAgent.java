@@ -369,18 +369,20 @@ public class InputAgent {
 
 		// Loop over all the new Entity names
 		for (int i = 3; i < record.size() - 1; i++) {
-			InputAgent.defineEntity(proto, record.get(i), false);
+			InputAgent.defineEntity(proto, record.get(i), addedRecordFound);
 		}
 	}
 
 	/**
-	 * if userDefined is true then this is an entity defined by user interaction;
+	 * if addedEntity is true then this is an entity defined
+	 * by user interaction or after added record flag is found;
 	 * otherwise, it is from an input file define statement
+	 * before the model is configured
 	 * @param proto
 	 * @param key
-	 * @param userDefined
+	 * @param addedEntity
 	 */
-	public static Entity defineEntity(Class<? extends Entity> proto, String key, boolean userDefined) {
+	public static Entity defineEntity(Class<? extends Entity> proto, String key, boolean addedEntity) {
 		Region region = null;
 		String name = key;
 
@@ -407,7 +409,7 @@ public class InputAgent {
 		ent = null;
 		try {
 			ent = proto.newInstance();
-			if (hasAddedRecords() || userDefined) {
+			if (addedEntity) {
 				ent.setFlag(Entity.FLAG_ADDED);
 				sessionEdited = true;
 			}
