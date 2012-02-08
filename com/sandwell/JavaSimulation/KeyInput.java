@@ -77,13 +77,4 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 			return val;
 		}
 	}
-
-	public boolean containsKey( K1 k1 ) {
-		if( hashMap.get( k1 ) == null ) {
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
 }
