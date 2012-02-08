@@ -1384,6 +1384,9 @@ public class InputAgent {
 	}
 
 	public static void updateInput(Entity ent, Input<?> in, StringVector data) {
+		if(ent.testFlag(Entity.FLAG_GENERATED))
+			return;
+
 		String str = data.toString();
 		// reformat input string to be added to keyword
 		// strip out "{}" from data to find value
