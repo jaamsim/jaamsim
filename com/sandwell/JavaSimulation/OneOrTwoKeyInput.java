@@ -112,31 +112,34 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 
 	public V getValueFor( K1 k1, K2 k2 ) {
 		HashMap<K2,V> h1 = hashMap.get( k1 );
+
+		// Is k1 not in the table?
 		if( h1 == null ) {
 			return this.getDefaultValue();
 		}
 		else {
 			V val = h1.get( k2 );
-			if( val == null ) {
-				return this.getDefaultValue();
-			}
-			else {
-				return val;
-			}
-		}
-	}
 
-	public boolean containsKey( K1 k1, K2 k2 ) {
-		HashMap<K2,V> h1 = hashMap.get( k1 );
-		if( h1 == null ) {
-			return false;
-		}
-		else {
-			if( h1.get( k2 ) == null ) {
-				return false;
+			// Is k2 not in the table?
+			if( val == null ) {
+
+				// Is null not in the table?
+				V val2 = h1.get( null );
+				if( val2 == null ) {
+
+					// Return the default value
+					return this.getDefaultValue();
+				}
+				else {
+
+					// Return the value for (k1,null) i.e. when k1 is specified alone
+					return val2;
+				}
 			}
 			else {
-				return true;
+
+				// Return the value for (k1,k2)
+				return val;
 			}
 		}
 	}
