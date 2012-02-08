@@ -416,16 +416,6 @@ public class EditBox extends FrameBox {
 	}
 
 
-	private void updateGraphics() {
-		if( currentEntity instanceof DisplayEntity ) {
-			((DisplayEntity)currentEntity).enterRegion();
-			((DisplayEntity)currentEntity).initializeGraphics();
-			((DisplayEntity)currentEntity).setupGraphics();
-			((DisplayEntity)currentEntity).updateGraphics();
-			GraphicsUpdateBehavior.forceUpdate = true;
-		}
-	}
-
 	private static String getDefaultValueStringOf(Input<?> in) {
 		String defValString = "{ }";
 		Object defValue = in.getDefaultValue();
@@ -496,9 +486,7 @@ public class EditBox extends FrameBox {
 				FrameBox.valueUpdate();
 				return;
 			}
-			if (in.getCategory().equals("Graphics") ) {
-				updateGraphics();
-			}
+			GraphicsUpdateBehavior.forceUpdate = true;
 		}
 	}
 }
