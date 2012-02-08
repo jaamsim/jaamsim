@@ -102,19 +102,4 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 			}
 		}
 	}
-
-	public boolean containsKey( K1 k1, K2 k2 ) {
-		HashMap<K2,V> h1 = hashMap.get( k1 );
-		if( h1 == null ) {
-			return false;
-		}
-		else {
-			if( h1.get( k2 ) == null ) {
-				return false;
-			}
-			else {
-				return true;
-			}
-		}
-	}
 }
