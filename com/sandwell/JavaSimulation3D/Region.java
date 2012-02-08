@@ -894,7 +894,7 @@ public class Region extends DisplayEntity {
 		if ( in != null ) {
 
 			// If the window is still the default position, then do nothing
-			if( in.getValueString().length() == 0 && currentWindowPos.equals( defaultWindowPos ) ) {
+			if( currentWindowPos.equals( defaultWindowPos ) ) {
 				return;
 			}
 
@@ -910,7 +910,7 @@ public class Region extends DisplayEntity {
 		if ( in != null ) {
 
 			// If the window is still the default size, then do nothing
-			if( in.getValueString().length() == 0 && currentWindowSize.equals( defaultWindowSize ) ) {
+			if( currentWindowSize.equals( defaultWindowSize ) ) {
 				return;
 			}
 			InputAgent.processEntity_Keyword_Value(this, in,
