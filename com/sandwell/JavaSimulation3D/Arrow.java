@@ -386,38 +386,32 @@ public class Arrow extends DisplayEntity {
 
 		Input<?> in = this.getInput( "Start" );
 		if ( in != null ) {
-			StringVector data = new StringVector();
-			String str = String.format( "%.3f %.3f", startCoord.getX(), startCoord.getY() );
-			data.add( str );
-			InputAgent.updateInput(this, in, data);
+			InputAgent.processEntity_Keyword_Value(this, in,
+					String.format( "%.3f %.3f", startCoord.getX(), startCoord.getY() ) );
 		}
 
 		in = this.getInput( "End" );
 		if ( in != null ) {
-			StringVector data = new StringVector();
-			String str = String.format( "%.3f %.3f", endCoord.getX(), endCoord.getY() );
-			data.add( str );
-			InputAgent.updateInput(this, in, data);
+			InputAgent.processEntity_Keyword_Value(this, in,
+					String.format( "%.3f %.3f", endCoord.getX(), endCoord.getY() ) );
 		}
 
 		in = this.getInput( "X" );
 		if ( in != null ) {
-			StringVector data = new StringVector();
+			StringBuilder tmp = new StringBuilder();
 			for( int i = 0; i < this.getIntermediateX().size(); i++ ) {
-				String str = String.format( "%.3f ", this.getIntermediateX().get( i ) );
-				data.add( str );
+				tmp.append(String.format( "%.3f ", this.getIntermediateX().get( i ) ));
 			}
-			InputAgent.updateInput(this, in, data);
+			InputAgent.processEntity_Keyword_Value(this, in, tmp.toString());
 		}
 
 		in = this.getInput( "Y" );
 		if ( in != null ) {
-			StringVector data = new StringVector();
+			StringBuilder tmp = new StringBuilder();
 			for( int i = 0; i < this.getIntermediateY().size(); i++ ) {
-				String str = String.format( "%.3f ", this.getIntermediateY().get( i ) );
-				data.add( str );
+				tmp.append(String.format( "%.3f ", this.getIntermediateY().get( i ) ));
 			}
-			InputAgent.updateInput(this, in, data);
+			InputAgent.processEntity_Keyword_Value(this, in, tmp.toString());
 		}
 	}
 

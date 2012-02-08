@@ -863,11 +863,9 @@ public class Region extends DisplayEntity {
 		// Update the ViewCenter input
 		Input<?> in = this.getInput( "ViewCenter" );
 		if ( in != null ) {
-			StringVector data = new StringVector( 3,1 );
-			data.add( String.format( "%f", currentCenter.x ) );
-			data.add( String.format( "%f", currentCenter.y ) );
-			data.add( String.format( "%f", currentCenter.z ) );
-			InputAgent.updateInput(this, in, data);
+			InputAgent.processEntity_Keyword_Value(this, in,
+					String.format( "%f %f %f", currentCenter.x,
+							currentCenter.y, currentCenter.z ) );
 		}
 	}
 
@@ -875,11 +873,9 @@ public class Region extends DisplayEntity {
 		// Update the Viewer input
 		Input<?> in = this.getInput( "Viewer" );
 		if ( in != null ) {
-			StringVector data = new StringVector( 3,1 );
-			data.add( String.format( "%f", currentViewer.x ) );
-			data.add( String.format( "%f", currentViewer.y ) );
-			data.add( String.format( "%f", currentViewer.z ) );
-			InputAgent.updateInput(this, in, data);
+			InputAgent.processEntity_Keyword_Value(this, in,
+					String.format( "%f %f %f", currentViewer.x,
+							currentViewer.y, currentViewer.z ) );
 		}
 	}
 
@@ -887,9 +883,8 @@ public class Region extends DisplayEntity {
 		// Update the FOV input
 		Input<?> in = this.getInput( "FOV" );
 		if ( in != null ) {
-			StringVector data = new StringVector( 1,1 );
-			data.add( String.format( "%f", currentFieldOfView ) );
-			InputAgent.updateInput(this, in, data);
+			InputAgent.processEntity_Keyword_Value(this, in,
+					String.format( "%f", currentFieldOfView ));
 		}
 	}
 
@@ -903,10 +898,9 @@ public class Region extends DisplayEntity {
 				return;
 			}
 
-			StringVector data = new StringVector( 2,1 );
-			data.add( String.format( "%d", (int) currentWindowPos.getX() ) );
-			data.add( String.format( "%d", (int) currentWindowPos.getY() ) );
-			InputAgent.updateInput(this, in, data);
+			InputAgent.processEntity_Keyword_Value(this, in,
+					String.format( "%d %d", (int) currentWindowPos.getX(),
+							(int) currentWindowPos.getY() ) );
 		}
 	}
 
@@ -919,11 +913,9 @@ public class Region extends DisplayEntity {
 			if( in.getValueString().length() == 0 && currentWindowSize.equals( defaultWindowSize ) ) {
 				return;
 			}
-
-			StringVector data = new StringVector( 2,1 );
-			data.add( String.format( "%d", (int)currentWindowSize.getX() ) );
-			data.add( String.format( "%d", (int)currentWindowSize.getY() ) );
-			InputAgent.updateInput(this, in, data);
+			InputAgent.processEntity_Keyword_Value(this, in,
+					String.format( "%d %d", (int)currentWindowSize.getX(),
+							(int)currentWindowSize.getY() ) );
 		}
 	}
 
