@@ -826,14 +826,6 @@ public class InputAgent {
 					InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", keyword);
 				}
 			}
-			if(input != null) {
-				InputAgent.updateInput(entity, input, recordCmd);
-			}
-
-			// The keyword is not on the editable keyword list
-			else {
-				InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", keyword);
-			}
 		}
 		catch ( InputErrorException e ) {
 			InputAgent.logError("Entity: %s Keyword: %s - %s", entity.getName(), keyword, e.getMessage());
@@ -861,16 +853,6 @@ public class InputAgent {
 
 			// Process the record
 			InputAgent.processKeyword(ent, recordCmd, keyword);
-
-			Input<?> input = ent.getInput(keyword);
-			if(input != null) {
-				InputAgent.updateInput(ent, input, recordCmd);
-			}
-
-			// The keyword is not on the editable keyword list
-			else {
-				InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", keyword);
-			}
 		}
 		return;
 	}
