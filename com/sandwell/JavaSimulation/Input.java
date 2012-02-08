@@ -80,6 +80,7 @@ public abstract class Input<T> {
 		this.setDefaultValue( this.getDefaultValue() );
 		valueString = "";
 		editedValueString = "";
+		edited = false;
 	}
 
 	public String toString() {
