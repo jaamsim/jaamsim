@@ -45,6 +45,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Color3f;
+import javax.vecmath.Vector3d;
 
 /**
  * Class to display information about model objects. <br>
@@ -437,6 +438,9 @@ public class EditBox extends FrameBox {
 				Color3f color3f = new Color3f();
 				((ColoringAttributes)defValue).getColor(color3f);
 				defValString = color3f.toString();
+			}
+			else if(defValue instanceof Vector3d) {
+				defValString = String.format( "%.3f %.3f %.3f", ((Vector3d)defValue).x, ((Vector3d)defValue).y, ((Vector3d)defValue).z );
 			}
 		}
 		return defValString;
