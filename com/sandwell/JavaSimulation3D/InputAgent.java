@@ -1506,7 +1506,7 @@ public class InputAgent {
 				if( in.isEdited() ) {
 
 					// Each line starts with the entity name followed by changed keyword
-					file.format("%s %s ", ent.toString(), in.getKeyword());
+					file.format("%s %s ", ent.getInputName(), in.getKeyword());
 
 					String value = in.getValueString();
 					ArrayList<String> tokens = new ArrayList<String>();
