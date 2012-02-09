@@ -142,7 +142,7 @@ public class EditBox extends FrameBox {
 	}
 
 	protected void  doHelp(String keyword) {
-		if (currentEntity != null) {
+		if (currentEntity == null) {
 			Simulation.spawnHelp("", "");
 			return;
 		}
