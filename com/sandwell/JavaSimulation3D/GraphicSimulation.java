@@ -25,7 +25,6 @@ import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation.TimeInput;
 import com.sandwell.JavaSimulation.Util;
-import com.sandwell.JavaSimulation.Vector;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.StringVector;
 
@@ -104,10 +103,6 @@ public class GraphicSimulation extends Simulation {
 	private final Appearance skyAppearance;
 	private final ColourInput backgroundColour;
 
-	private FileEntity scriptFile;
-	private String scriptFileName;
-	private double scriptTime; // the time that has been read in the script
-
 	{
 		skyImage = new FileInput( "SkyImage", "Optional", "" );
 		this.addInput(skyImage, true);
@@ -124,8 +119,6 @@ public class GraphicSimulation extends Simulation {
 		captureQuality.setValidRange( 0.0d, 1.0d );
 		this.addInput( captureQuality, true );
 
-		addEditableKeyword( "Script",                "",        		"  ",          false, "Script" );
-		addEditableKeyword( "Time",                  "",        		"  ",          false, "Script" );
 		addEditableKeyword( "VideoCapture",          "",        		"  ",          false, "Script" );
 		addEditableKeyword( "RealTime"    ,          "",        		"  ",          false, "Script" );
 		addEditableKeyword( "RealTimeFactor",        "",        		"  ",          false, "Script" );
@@ -225,10 +218,6 @@ public class GraphicSimulation extends Simulation {
 		defaultRegion.showTime = true;
 		defaultRegion.setCollapseType(Region.SHOW_NOTHING);
 		setRegion(defaultRegion);
-
-		scriptFile = null;
-		scriptFileName = "";
-		scriptTime = 0.0;
 	}
 
 	public static void setupLightingForBranchGroup_WithinBounds(BranchGroup branchGroup, BoundingSphere bounds) {
@@ -271,31 +260,6 @@ public class GraphicSimulation extends Simulation {
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
 
-		//-------------------- Script --------------------
-		if ( "Script".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			String filePath = data.get( 0 );
-			Tester.checkFileExists( filePath );
-
-			if ( !syntaxOnly ) {
-
-				// Use absolute file path to avoid current directory problems
-				scriptFileName = Util.getAbsoluteFilePath( filePath );
-			}
-			return;
-		}
-
-		// --------------- Time ---------------
-		if( "Time".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			double time = Tester.parseDouble( data.get( 0 ) );
-			Tester.checkValueGreaterOrEqual( time, getCurrentTime() );
-
-			if( !syntaxOnly ) {
-				scriptTime = time;
-			}
-			return;
-		}
 		if( "VideoCapture".equalsIgnoreCase( keyword ) ) {
 			Input.assertCount(data, 1);
 			boolean bool = Input.parseBoolean(data.get(0));
@@ -412,10 +376,6 @@ public class GraphicSimulation extends Simulation {
 		defaultRegion.showTime = true;
 		defaultRegion.setCollapseType(Region.SHOW_NOTHING);
 		setRegion(defaultRegion);
-
-		scriptFile = null;
-		scriptFileName = "";
-		scriptTime = 0.0;
 	}
 
 	public void configure(String configFileName) {
@@ -797,52 +757,5 @@ public class GraphicSimulation extends Simulation {
 	public void startUp() {
 		super.startUp();
 		this.startProcess("updateRunProgress");
-	}
-
-	/**
-	 * Read the script
-	 */
-	public void doScript() {
-
-		// If there is no script file, do nothing
-		if( scriptFileName.length() == 0 ) {
-			return;
-		}
-
-		// If the script file exists, open it
-		if( FileEntity.fileExists( scriptFileName ) ) {
-			scriptFile = new FileEntity( scriptFileName, FileEntity.FILE_READ, true );
-		}
-		else {
-			throw new InputErrorException( "The script file " + scriptFileName + " was not found" );
-		}
-
-		// Read the next record
-		Vector record = scriptFile.readAndParseRecord();
-		if( record.size() > 0 ) {
-			while( ((String)record.get( 0 )).startsWith( "\"" ) ) {
-				record = scriptFile.readAndParseRecord();
-			}
-			Util.discardComment( record );
-		}
-
-		// While end of file has not been reached
-		while( record.size() > 0 ) {
-
-			// Process the record
-			InputAgent.processData( record );
-
-			// If a "Time" record was read, then wait until the time
-			if( Tester.greaterCheckTimeStep( scriptTime, getCurrentTime() ) ) {
-				scheduleWait( scriptTime - getCurrentTime() );
-			}
-
-			// Read the next record
-			record = scriptFile.readAndParseRecord();
-			while( record.size() > 0 && ((String)record.get( 0 )).startsWith( "\"" ) ) {
-				record = scriptFile.readAndParseRecord();
-			}
-			Util.discardComment( record );
-		}
 	}
 }
