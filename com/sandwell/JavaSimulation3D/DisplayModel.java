@@ -45,6 +45,7 @@ import javax.vecmath.Vector3d;
 
 import com.eteks.sweethome3d.j3d.DAELoader;
 import com.sandwell.JavaSimulation.BooleanInput;
+import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
@@ -125,6 +126,11 @@ public class DisplayModel extends Entity {
 	private final Vector3dInput orientation; // Only for imported collada models
 
 	private final BooleanInput enableCulling;
+	private final ColourInput fillColour;
+	private final ColourInput outlineColour;
+	private final BooleanInput filled;
+	private final BooleanInput dashed;
+	private final BooleanInput bold;
 
 	// Geometry information
 	private int numberOfShape3Ds;
@@ -138,7 +144,6 @@ public class DisplayModel extends Entity {
 
 	private BufferedImage highResImage;
 	private BufferedImage lowResImage;
-
 
 	static {
 		allInstances = new ArrayList<DisplayModel>();
@@ -193,6 +198,21 @@ public class DisplayModel extends Entity {
 
 		enableCulling = new BooleanInput("EnableCulling", "DisplayModel", true);
 		this.addInput(enableCulling, true);
+
+		fillColour = new ColourInput("FillColour", "DisplayModel", Shape.getPresetColor(Shape.COLOR_MED_GREY));
+		this.addInput(fillColour, true, "FillColor");
+
+		outlineColour = new ColourInput("OutlineColour", "DisplayModel", Shape.getPresetColor(Shape.COLOR_BLACK));
+		this.addInput(outlineColour, true, "OutlineColor");
+
+		filled = new BooleanInput("Filled", "DisplayModel", true);
+		this.addInput(filled, true);
+
+		dashed = new BooleanInput("Dashed", "DisplayModel", false);
+		this.addInput(dashed, true);
+
+		bold = new BooleanInput("Bold", "DisplayModel", false);
+		this.addInput(bold, true);
 	}
 
 	public DisplayModel(){
@@ -499,12 +519,7 @@ public class DisplayModel extends Entity {
 				bg.addChild(getDisplayModelForTravellingGraphics());
 				break;
 			case MODEL_CIRCLE:
-				Circle contentsCircle = new Circle(0.5, Circle.SHAPE_FILLED, "contentsCircle");
-				contentsCircle.setName(TAG_CONTENTS);
-				bg.addChild(contentsCircle);
-				Circle circle = new Circle(0.5, Circle.SHAPE_OUTLINE, "circle");
-				circle.setName(TAG_OUTLINES);
-				bg.addChild(circle);
+				bg.addChild(getDisplayModelForCircle());
 				break;
 			case MODEL_ARROW2D:
 				double [] verts = new double[] {-0.5f, 0.0f, 0.0f,
@@ -768,14 +783,55 @@ public class DisplayModel extends Entity {
 
 	private OrderedGroup getDisplayModelForRectangle() {
 		OrderedGroup model2D = new OrderedGroup();
-		Rectangle iconFillModel = new Rectangle( 1.0, 1.0, Rectangle.SHAPE_FILLED, "iconFillModel" );
-		iconFillModel.setColor(Shape.COLOR_MED_GREY);
-		iconFillModel.setName(TAG_CONTENTS);
-		model2D.addChild(iconFillModel);
+		if( filled.getValue() ) {
+			Rectangle iconFillModel = new Rectangle( 1.0, 1.0, Rectangle.SHAPE_FILLED, "iconFillModel" );
+			iconFillModel.setColor(fillColour.getValue());
+			iconFillModel.setName(TAG_CONTENTS);
+			model2D.addChild(iconFillModel);
+		}
 		Rectangle iconOutlineModel = new Rectangle( 1.0, 1.0, Rectangle.SHAPE_OUTLINE, "iconOutlineModel" );
-		iconOutlineModel.setColor(Shape.COLOR_BLACK);
+		iconOutlineModel.setColor(outlineColour.getValue());
 		iconOutlineModel.setName(TAG_OUTLINES);
+		if( dashed.getValue() ) {
+			if( bold.getValue() )
+				iconOutlineModel.setLineStyle( Shape.LINE_DASH_2PX );
+			else
+				iconOutlineModel.setLineStyle( Shape.LINE_DASH_1PX );
+		}
+		else {
+			if( bold.getValue() )
+				iconOutlineModel.setLineStyle( Shape.LINE_SOLID_2PX );
+			else
+				iconOutlineModel.setLineStyle( Shape.LINE_SOLID_1PX );
+		}
 		model2D.addChild(iconOutlineModel);
+		return model2D;
+	}
+
+	private OrderedGroup getDisplayModelForCircle() {
+		OrderedGroup model2D = new OrderedGroup();
+		if( filled.getValue() ) {
+			Circle contentsCircle = new Circle(0.5, Circle.SHAPE_FILLED, "contentsCircle");
+			contentsCircle.setColor(fillColour.getValue());
+			contentsCircle.setName(TAG_CONTENTS);
+			model2D.addChild(contentsCircle);
+		}
+		Circle circle = new Circle(0.5, Circle.SHAPE_OUTLINE, "circle");
+		circle.setColor(outlineColour.getValue());
+		circle.setName(TAG_OUTLINES);
+		if( dashed.getValue() ) {
+			if( bold.getValue() )
+				circle.setLineStyle( Shape.LINE_DASH_2PX );
+			else
+				circle.setLineStyle( Shape.LINE_DASH_1PX );
+		}
+		else {
+			if( bold.getValue() )
+				circle.setLineStyle( Shape.LINE_SOLID_2PX );
+			else
+				circle.setLineStyle( Shape.LINE_SOLID_1PX );
+		}
+		model2D.addChild(circle);
 		return model2D;
 	}
 
