@@ -65,11 +65,13 @@ import com.sandwell.JavaSimulation3D.util.Polygon;
 import com.sandwell.JavaSimulation3D.util.RectangleArray;
 import com.sandwell.JavaSimulation3D.util.Shape;
 import com.sandwell.JavaSimulation3D.util.Rectangle;
+import com.sandwell.JavaSimulation3D.util.SideBySideBars;
 import com.sandwell.JavaSimulation3D.util.StackedBar;
 import com.sun.j3d.loaders.Loader;
 import com.sun.j3d.loaders.Scene;
 
 public class DisplayModel extends Entity {
+	// IMPORTANT: If you add a tag here, make sure to add it to the validTags
 	public static final String TAG_CONTENTS = "CONTENTS";
 	public static final String TAG_OUTLINES = "OUTLINES";
 	public static final String TAG_TRACKFILL = "TRACKFILL";
@@ -78,6 +80,7 @@ public class DisplayModel extends Entity {
 
 	private static final ArrayList<DisplayModel> allInstances;
 
+	// IMPORTANT: If you add a pre-defined model here, make sure to add it to the preDefined2DTypes
 	// 1) Predefined Models
 	private static final int MODEL_PIXELS = 0;
 	private static final int MODEL_TRUCK2D = 1;
@@ -108,9 +111,10 @@ public class DisplayModel extends Entity {
 	private static final int MODEL_CONTENTS_PIXELS = 19;
 
 	private static final int MODEL_CRUSHING_PLANT2D = 20;
+	private static final int MODEL_BARGAUGE2D = 21;
 
 	// 2) Model from a file
-	private static final int MODEL_FILE = 21;
+	private static final int MODEL_FILE = 22;
 
 	protected static final ArrayList<String> validTags;
 
@@ -170,6 +174,7 @@ public class DisplayModel extends Entity {
 		validPredefined2DTypes.add("TRIANGLE");
 		validPredefined2DTypes.add("CONTENTSPIXELS");
 		validPredefined2DTypes.add("CRUSHINGPLANT2D");
+		validPredefined2DTypes.add("BARGAUGE2D");
 
 		validFileExtentions = new ArrayList<String>(6);
 		validFileExtentions.add("DAE");
@@ -559,6 +564,9 @@ public class DisplayModel extends Entity {
 			case MODEL_CRUSHING_PLANT2D:
 				bg.addChild(getDisplayModelForCrushingPlant2D());
 				break;
+			case MODEL_BARGAUGE2D:
+				bg.addChild(getDisplayModelForBarGauge2D());
+				break;
 		}
 		return bg;
 	}
@@ -832,6 +840,27 @@ public class DisplayModel extends Entity {
 				circle.setLineStyle( Shape.LINE_SOLID_1PX );
 		}
 		model2D.addChild(circle);
+		return model2D;
+	}
+
+	private OrderedGroup getDisplayModelForBarGauge2D() {
+		OrderedGroup model2D = new OrderedGroup();
+
+		Rectangle backgroundFill = new Rectangle( 1.0, 1.0, Rectangle.SHAPE_FILLED, "backgroundFill" );
+		backgroundFill.setColor(Shape.COLOR_WHITE);
+		model2D.addChild(backgroundFill);
+
+		SideBySideBars bars = new SideBySideBars();
+		bars.setDimension(new Point2d( 1.0, 1.0 ));
+		bars.setCenter(0.0, 0.0, 0.0);
+		bars.setName(TAG_CONTENTS);
+		model2D.addChild(bars);
+
+		Rectangle backgroundOutline = new Rectangle( 1.0, 1.0, Rectangle.SHAPE_OUTLINE, "backgroundOutline" );
+		backgroundOutline.setColor(outlineColour.getValue());
+		backgroundOutline.setName(TAG_OUTLINES);
+		model2D.addChild(backgroundOutline);
+
 		return model2D;
 	}
 
