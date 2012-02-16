@@ -389,23 +389,23 @@ public abstract class Shape extends BranchGroup {
 
 		lineAttributeList = new LineAttributes[9];
 		lineAttributeList[LINE_SOLID_1PX] =
-			new LineAttributes(1, LineAttributes.PATTERN_SOLID, true);
+			new LineAttributes(1, LineAttributes.PATTERN_SOLID, false);
 		lineAttributeList[LINE_DASH_1PX] =
-			new LineAttributes(1, LineAttributes.PATTERN_DASH, true);
+			new LineAttributes(1, LineAttributes.PATTERN_DASH, false);
 		lineAttributeList[LINE_DOT_1PX] =
-			new LineAttributes(1, LineAttributes.PATTERN_DOT, true);
+			new LineAttributes(1, LineAttributes.PATTERN_DOT, false);
 		lineAttributeList[LINE_SOLID_2PX] =
-			new LineAttributes(2, LineAttributes.PATTERN_SOLID, true);
+			new LineAttributes(2, LineAttributes.PATTERN_SOLID, false);
 		lineAttributeList[LINE_DASH_2PX] =
-			new LineAttributes(2, LineAttributes.PATTERN_DASH, true);
+			new LineAttributes(2, LineAttributes.PATTERN_DASH, false);
 		lineAttributeList[LINE_DOT_2PX] =
-			new LineAttributes(2, LineAttributes.PATTERN_DOT, true);
+			new LineAttributes(2, LineAttributes.PATTERN_DOT, false);
 		lineAttributeList[LINE_SOLID_3PX] =
-			new LineAttributes(3, LineAttributes.PATTERN_SOLID, true);
+			new LineAttributes(3, LineAttributes.PATTERN_SOLID, false);
 		lineAttributeList[LINE_DASH_3PX] =
-			new LineAttributes(3, LineAttributes.PATTERN_DASH, true);
+			new LineAttributes(3, LineAttributes.PATTERN_DASH, false);
 		lineAttributeList[LINE_DOT_3PX] =
-			new LineAttributes(3, LineAttributes.PATTERN_DOT, true);
+			new LineAttributes(3, LineAttributes.PATTERN_DOT, false);
 	}
 
 	/**
