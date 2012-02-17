@@ -22,14 +22,20 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 import javax.media.j3d.ColoringAttributes;
+import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -191,17 +197,37 @@ public class EditBox extends FrameBox {
 		protected void processFocusEvent( FocusEvent fe ) {
 			if ( fe.getID() == FocusEvent.FOCUS_GAINED ) {
 
-				// Select entire text string in the cell currently clicked on
+				// select entire text string in the cell currently clicked on
 				selectAll();
 			}
-			else if ( fe.getID() == FocusEvent.FOCUS_LOST  &&
-					(fe.getOppositeComponent() != propTable || propTable.getSelectedColumn() != VALUE_COLUMN) ) {
+			else if (fe.getID() == FocusEvent.FOCUS_LOST) {
+				TableCellEditor tce = ((MyJTable)propTable).getCellEditor();
 
-				// Make the input modification is applied after loosing the focus
-				DefaultCellEditor dce = (DefaultCellEditor)propTable.getDefaultEditor(Object.class);
-				dce.stopCellEditing();
+				// nothing to do
+				if(tce == null)
+					return;
 
-				// Clear selection, so when editbox looses the focus, there is no bold keyword
+				Component otherComp = fe.getOppositeComponent();
+
+				// inside the JTable
+				if(otherComp == propTable)
+					return;
+
+				// from a ColorCell to JTabbedPane
+				if(otherComp == EditBox.getInstance().getJTabbedPane() ) {
+					return;
+				}
+
+				// colorButton is pressed
+				if(otherComp != null && (tce instanceof ColorEditor &&
+					 ( this.getParent() == otherComp.getParent() )  ) ){
+					return;
+				}
+
+				// apply the input modification after loosing the focus
+				tce.stopCellEditing();
+
+				// no bold keyword when input editor looses the focus
 				propTable.clearSelection();
 			}
 			super.processFocusEvent( fe );
@@ -255,6 +281,11 @@ public class EditBox extends FrameBox {
 	Entity getCurrentEntity() {
 		return currentEntity;
 	}
+
+	public JTabbedPane getJTabbedPane() {
+		return jTabbedPane;
+	}
+
 	public void setEntity(Entity entity) {
 		if(currentEntity == entity)
 			return;
@@ -386,6 +417,7 @@ public class EditBox extends FrameBox {
 			else {
 				cell.setFont( plain ) ;
 			}
+
 			return cell;
 		}
 	}
@@ -471,6 +503,7 @@ public class EditBox extends FrameBox {
 
 	public static class MyJTable extends JTable {
 		private DefaultCellEditor dropDownEditor;
+		private ColorEditor colorEditor;
 
 		public boolean isCellEditable( int row, int column ) {
 			return ( column == VALUE_COLUMN ); // Only Value column is editable
@@ -508,8 +541,102 @@ public class EditBox extends FrameBox {
 				return new DefaultCellEditor(dropDown);
 			}
 
-			// 2) Normal text
+			// 2) Colour input
+			if(in instanceof ColourInput) {
+				if(colorEditor == null) {
+					colorEditor = new ColorEditor(this);
+				}
+				return colorEditor;
+			}
+
+			// 3) Normal text
 			return this.getDefaultEditor(Object.class);
+		}
+	}
+
+	public static class ColorEditor extends AbstractCellEditor
+	implements TableCellEditor, ActionListener {
+
+		private final JPanel jPanel;
+		private final HTextField text;
+		private final JButton colorButton;
+		private JColorChooser colorChooser;
+		private JDialog dialog;
+		private ColourInput in;
+		public JTable propTable;
+
+		public ColorEditor(JTable table) {
+			propTable = table;
+			jPanel = new JPanel(new BorderLayout());
+
+			text = new HTextField(propTable);
+			jPanel.add(text, BorderLayout.WEST);
+
+			colorButton = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/dropdown.png")));
+			colorButton.addActionListener(this);
+			colorButton.setActionCommand("button");
+			colorButton.setContentAreaFilled(false);
+			jPanel.add(colorButton, BorderLayout.EAST);
+		}
+
+		public Object getCellEditorValue() {
+			return text.getText();
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			if("button".equals(e.getActionCommand())) {
+				if(colorChooser == null || dialog == null) {
+					colorChooser = new JColorChooser();
+					dialog = JColorChooser.createDialog(jPanel,
+							"Pick a Color",
+							true,  //modal
+							colorChooser,
+							this,  //OK button listener
+							null); //no CANCEL button listener
+					dialog.setIconImage(GUIFrame.getWindowIcon());
+				}
+
+				Color3f col = new Color3f();
+				in.getValue().getColor(col);
+				colorChooser.setColor(new Color(col.x, col.y, col.z));
+				dialog.setVisible(true);
+
+				// Apply editing
+				stopCellEditing();
+
+				// Focus the cell
+				propTable.requestFocusInWindow();
+			}
+			else {
+				Color color = colorChooser.getColor();
+				text.setText( String.format("%d %d %d", color.getRed(),
+						color.getGreen(), color.getBlue() ) );
+			}
+		}
+
+		public Component getTableCellEditorComponent(JTable table,
+				Object value, boolean isSelected, int row, int column) {
+
+			// set the value
+			String keyword = ((String)table.getValueAt( row, 0 )).trim();
+			in = (ColourInput)
+					EditBox.getInstance().getCurrentEntity().getInput(keyword);
+			text.setText(
+				((String)table.getValueAt( row, VALUE_COLUMN )).trim() );
+
+			// right size for jPanel and its components
+			Dimension dim = new Dimension(
+				  table.getColumnModel().getColumn( VALUE_COLUMN ).getWidth() -
+				  table.getColumnModel().getColumnMargin(),
+				  table.getRowHeight());
+			jPanel.setPreferredSize(dim);
+			dim = new Dimension(dim.width - (dim.height), dim.height);
+			text.setPreferredSize(dim);
+			dim = new Dimension(dim.height, dim.height);
+			colorButton.setPreferredSize(dim);
+
+			return jPanel;
 		}
 	}
 }
