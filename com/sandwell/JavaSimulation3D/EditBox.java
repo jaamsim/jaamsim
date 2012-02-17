@@ -177,16 +177,14 @@ public class EditBox extends FrameBox {
 	// ========================================
 	// HTextField is for the keyword/value grid
 	// ----------------------------------------
-	class HTextField extends JTextField {
-		public EditBox editBox;
+	static class HTextField extends JTextField {
 		public JTable propTable;
 
-		public HTextField( EditBox eBox, JTable propTable ) {
+		public HTextField(JTable propTable) {
 			super();
-			editBox = eBox;
 			this.propTable = propTable;
 			propTable.clearSelection();
-			this.addKeyListener(helpKeyListener);
+			this.addKeyListener(EditBox.getInstance().getHelpKeyListener());
 		}
 
 		protected void processFocusEvent( FocusEvent fe ) {
@@ -229,7 +227,8 @@ public class EditBox extends FrameBox {
 		propTable.setRowSelectionAllowed( false );
 
 		// Set DefaultCellEditor that can process FOCUS events.
-		propTable.setDefaultEditor( Object.class, new DefaultCellEditor( new HTextField( this, propTable ) ) );
+		propTable.setDefaultEditor( Object.class, new DefaultCellEditor(
+				new HTextField(propTable ) ) );
 		DefaultCellEditor dce = (DefaultCellEditor)propTable.getDefaultEditor(Object.class);
 
 		// Set click behavior
