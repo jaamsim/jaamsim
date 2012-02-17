@@ -185,6 +185,7 @@ public class EditBox extends FrameBox {
 			this.propTable = propTable;
 			propTable.clearSelection();
 			this.addKeyListener(EditBox.getInstance().getHelpKeyListener());
+			this.setBorder(null);
 		}
 
 		protected void processFocusEvent( FocusEvent fe ) {
