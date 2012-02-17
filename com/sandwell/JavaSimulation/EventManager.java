@@ -151,6 +151,7 @@ public final class EventManager implements Runnable {
 	void basicInit() {
 		targetTime = Long.MAX_VALUE;
 		currentTime = 0;
+		traceRecord.clearLevel();
 		traceRecord.clear();
 	}
 

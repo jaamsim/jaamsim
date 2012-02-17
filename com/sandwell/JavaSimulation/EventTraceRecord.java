@@ -55,6 +55,10 @@ class EventTraceRecord extends ArrayList<String> {
 		//				  targetName, method, eventManagerName, internalTime);
 	}
 
+	void clearLevel() {
+		traceLevel = 0;
+	}
+
 	private void parse() {
 		String[] temp;
 

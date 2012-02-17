@@ -351,6 +351,22 @@ public abstract class Simulation extends Entity {
 			bufferTime = 0;
 		}
 
+		// Suppress all tracing of old model state during a restart
+		traceEnabled = false;
+		eventManager.initialize();
+
+		if( traceEventsInput.getValue() ) {
+			this.traceAllEvents(traceEventsInput.getValue());
+		}
+		else if( verifyEventsInput.getValue() ) {
+			this.verifyAllEvents(verifyEventsInput.getValue());
+		}
+
+		// Initialize each entity based on inputs only
+		for (int i = 0; i < Entity.getAll().size(); i++) {
+			Entity.getAll().get(i).earlyInit();
+		}
+
 		this.startExternalProcess("startModel");
 		resume();
 	}
@@ -513,13 +529,6 @@ public abstract class Simulation extends Entity {
 
 		simTimeScale = simTimeScaleInput.getValue();
 
-		if( traceEventsInput.getValue() ) {
-			this.traceAllEvents(traceEventsInput.getValue());
-		}
-		else if( verifyEventsInput.getValue() ) {
-			this.verifyAllEvents(verifyEventsInput.getValue());
-		}
-
 		if( startDate.getValue() != null ) {
 			Clock.getStartingDateFromString( startDate.getValue() );
 		}
@@ -539,19 +548,9 @@ public abstract class Simulation extends Entity {
 	 *	added to the EventManager before startModel();
 	 **/
 	public void startModel() {
-		// Suppress all tracing of old model state during a restart
-		boolean tempTracingEnabled = traceEnabled;
-		traceEnabled = false;
-		eventManager.initialize();
-		traceEnabled = tempTracingEnabled;
 
 		if (simState <= SIM_STATE_UNCONFIGURED)
 			throw new ErrorException( "Failed to initialize" );
-
-		// Initialize each entity based on inputs only
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity.getAll().get(i).earlyInit();
-		}
 
 		if( this.getStartTime() > 0.0 ) {
 			scheduleWait( this.getStartTime() );
