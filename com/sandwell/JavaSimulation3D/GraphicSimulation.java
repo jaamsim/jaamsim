@@ -30,7 +30,6 @@ import com.sandwell.JavaSimulation.StringVector;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Enumeration;
 
 import javax.imageio.ImageIO;
 import javax.media.j3d.AmbientLight;
@@ -90,8 +89,6 @@ public class GraphicSimulation extends Simulation {
 
 	/** list of all the active windows */
 	private ArrayList<Sim3DWindow> windowList;
-	/** graphics for the Regions in the regionList */
-	private ArrayList<BranchGroup> regionModels;
 
 	private boolean captureFlag = false;  // true when capturing is in progress
 	private final TimeInput captureInterval; // simulated time between screen captures
@@ -208,7 +205,6 @@ public class GraphicSimulation extends Simulation {
 		globalGroup.compile();
 
 		windowList = new ArrayList<Sim3DWindow>();
-		regionModels = new ArrayList<BranchGroup>();
 
 		guiFrame.updateForSimulationState();
 
@@ -216,7 +212,6 @@ public class GraphicSimulation extends Simulation {
 		defaultRegion.setName("ModelStage");
 		defaultRegion.setInputName("ModelStage");
 		defaultRegion.showTime = true;
-		defaultRegion.setCollapseType(Region.SHOW_NOTHING);
 		setRegion(defaultRegion);
 	}
 
@@ -374,7 +369,6 @@ public class GraphicSimulation extends Simulation {
 		defaultRegion.setName("ModelStage");
 		defaultRegion.setInputName("ModelStage");
 		defaultRegion.showTime = true;
-		defaultRegion.setCollapseType(Region.SHOW_NOTHING);
 		setRegion(defaultRegion);
 	}
 
@@ -450,19 +444,6 @@ public class GraphicSimulation extends Simulation {
 			// J3D Memory Leak fix - don't lose memory if we aren't looking
 			if( windowList.size() == 1 ) {
 				rootLocale.addBranchGraph(globalGroup);
-				for (BranchGroup bg : regionModels) {
-					try {
-						rootLocale.addBranchGraph( bg );
-					}
-					catch( javax.media.j3d.MultipleParentException mpe ) {
-						throw new RuntimeException( "RESETTING PARENT" );
-					}
-					catch (IndexOutOfBoundsException e) {
-						// There is a race somewhere in Java3d that can trigger here
-						// prevent it from taking down the whole gui.
-						//System.out.println("Null pointer from branchgraph attach:" + bg);
-					}
-				}
 			}
 		}
 
@@ -487,19 +468,7 @@ public class GraphicSimulation extends Simulation {
 			if (windowList.size() > 0)
 				return;
 
-			// loop until all graphs have been removed
-			while (true) {
-				if (rootLocale.numBranchGraphs() == 0)
-					break;
-
-				Enumeration<?> allGraphs = rootLocale.getAllBranchGraphs();
-				while (allGraphs.hasMoreElements()) {
-					BranchGroup group = (BranchGroup)allGraphs.nextElement();
-					synchronized (group) {
-						rootLocale.removeBranchGraph(group);
-					}
-				}
-			}
+			rootLocale.removeBranchGraph(globalGroup);
 		}
 	}
 
@@ -525,29 +494,15 @@ public class GraphicSimulation extends Simulation {
 	/** visually registers the graphics for a region
 	 *   @param region - the region to have the graphics displayed
 	 */
-	public void registerGraphics( Region region ) {
-		synchronized (windowList) {
-			// keep track of the 3D graphics in a non rendered object
-			if (!regionModels.contains(region.getBranchGroup()))
-				regionModels.add(region.getBranchGroup());
-
-			// if there are open windows, add to the graphics
-			if( windowList.size() != 0 )
-				rootLocale.addBranchGraph( region.getBranchGroup() );
-		}
+	void registerGraphics( Region region ) {
+		rootLocale.addBranchGraph( region.getBranchGroup() );
 	}
 
 	/** visually removes the regions graphics from the simulation
 	 *	@param removeRegion - the region for which graphics are removed
 	 */
-	public void unregisterGraphics( Region removeRegion ) {
-		synchronized (windowList) {
-			// remove the graphics for the region.  If there are open windoww, remove it graphically
-			BranchGroup branchGroupOfRemoveRegion = removeRegion.getBranchGroup();
-			regionModels.remove( branchGroupOfRemoveRegion );
-			if(( windowList.size() != 0 ) && (branchGroupOfRemoveRegion != null))
-				rootLocale.removeBranchGraph( branchGroupOfRemoveRegion );
-		}
+	void unregisterGraphics( Region removeRegion ) {
+		rootLocale.removeBranchGraph( removeRegion.getBranchGroup() );
 	}
 
 	/** provides a reference to the simulation User Interface controls

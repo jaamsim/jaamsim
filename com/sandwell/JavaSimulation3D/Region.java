@@ -69,12 +69,6 @@ public class Region extends DisplayEntity {
 	private Point2d bkImagePosLatLong = new Point2d( 0.0, 0.0 );
 	private Point2d bkImageSizeLatLong = new Point2d( 1.0, 1.0 );
 
-	// display behaviour when stage is collapsed
-	public static final int SHOW_ENTITIES = 0; // show model for all entities (default)
-	public static final int SHOW_NOTHING = 1; // do not show entity or region models
-	//public static final int SHOW_ICON = 2;		// do not show entities and show alternate region model collapsedModel
-	protected int collapseType = SHOW_ENTITIES;
-
 	protected boolean showTime = false; // Do not show the status bar and LocalTime
 
 	protected BranchGroup entityGroup;
@@ -134,18 +128,10 @@ public class Region extends DisplayEntity {
 		entityGroup.setCapability( BranchGroup.ALLOW_CHILDREN_EXTEND );
 		entityGroup.setCapability( BranchGroup.ALLOW_CHILDREN_READ );
 
-		if( collapseType == SHOW_ENTITIES )
-			addScaledBG(entityGroup);
-		else if( collapseType == SHOW_NOTHING )
-			removeScaledBG(entityGroup);
-		else
-			throw new ErrorException( "Invalid collapse state: " + collapseType );
+		addScaledBG(entityGroup);
 
 		// register the graphics for the region if there is not currentRegion
-		if( currentRegion == null ) {
-			simulation.registerGraphics( this );
-		}
-		//this.setCollapseType( SHOW_NOTHING );
+		simulation.registerGraphics( this );
 
 		// Define the status bar
 		statusBar = new JPanel();
@@ -215,20 +201,10 @@ public class Region extends DisplayEntity {
 
 	public void incrementWindowsAlive() {
 		numWindowsAlive++;
-
-		// if this is the first window, handle graphic changes from collapsed
-		if( numWindowsAlive == 1 )
-			if( collapseType == SHOW_NOTHING )
-				addScaledBG(entityGroup);
 	}
 
 	public void decrementWindowsAlive() {
 		numWindowsAlive--;
-
-		if( numWindowsAlive < 1 ) {
-			if( collapseType == SHOW_NOTHING )
-				removeScaledBG(entityGroup);
-		}
 	}
 
 	public void incrementWindowCount() {
@@ -274,17 +250,6 @@ public class Region extends DisplayEntity {
 
 	public void setRegion( Region newRegion ) {
 		exitRegion();
-		if( currentRegion == null ) {
-			// presently connected to locale
-			if( newRegion != null )
-				simulation.unregisterGraphics( this );
-		}
-		else {
-			// presently not connected to locale
-			if( newRegion == null )
-				simulation.registerGraphics( this );
-		}
-
 		currentRegion = newRegion;
 	}
 
@@ -494,10 +459,7 @@ public class Region extends DisplayEntity {
 	/**
 	 * Method to enter region, add self to the entities list.
 	 */
-	public void enterRegion() {
-		if( currentRegion != null )
-			currentRegion.addEntity( this );
-	}
+	public void enterRegion() {}
 
 	/**
 	 * Processes the input data corresponding to the specified keyword. If syntaxOnly is true,
@@ -823,31 +785,6 @@ public class Region extends DisplayEntity {
 
 	public Vector3d getImagePos() {
 		return bkImagePos;
-	}
-
-	public int getCollapseType() {
-		return collapseType;
-	}
-
-	public void setCollapseType( int type ) throws ErrorException {
-		switch( type ) {
-			case SHOW_ENTITIES:
-				if( collapseType == SHOW_NOTHING )
-					if( numWindowsAlive == 0 )
-						addScaledBG(entityGroup);
-				collapseType = type;
-				break;
-			case SHOW_NOTHING:
-				if( collapseType == SHOW_ENTITIES )
-					if( numWindowsAlive == 0 )
-						removeScaledBG(entityGroup);
-				collapseType = type;
-				break;
-			//case SHOW_ICON:
-			// break;
-			default:
-				throw new ErrorException( "Unknown collapse type value: " + type );
-		}
 	}
 
 	public void updatePositionViewer(Point3d centerPosition, Point3d viewerPosition, java.awt.Point position, java.awt.Dimension size, double fov) {
