@@ -38,7 +38,6 @@ import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 
 import javax.swing.event.ChangeEvent;
@@ -65,8 +64,9 @@ public class EditBox extends FrameBox {
 
 	private boolean buildingTable;	    // TRUE if the table is being populated
 
-	private int rowLastVisited;
 	private String selectedKeyword;
+
+	private final CellRenderer cellRenderer;
 
 	/**
 	 * Widths of columns in the table of keywords as modified by the user in an edit
@@ -82,6 +82,7 @@ public class EditBox extends FrameBox {
 	private EditBox() {
 
 		super( "Input Editor" );
+		cellRenderer = new CellRenderer();
 		helpKeyListener = new HelpKeyListener(this);
 
 		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
@@ -190,14 +191,6 @@ public class EditBox extends FrameBox {
 					if (val != null)
 						editBox.selectedKeyword = val.toString();
 				}
-				editBox.rowLastVisited = propTable.getEditingRow();
-
-				// Show in bold font the key string corresponding to the currently selected value
-				CellRenderer boldRenderer = editBox.new CellRenderer(true);
-				propTable.getColumnModel().getColumn( 0 ).setCellRenderer( boldRenderer ) ;
-
-				// De-select previously selected cell value, if any
-				propTable.clearSelection();
 
 				// Select entire text string in the cell currently clicked on
 				selectAll();
@@ -205,15 +198,12 @@ public class EditBox extends FrameBox {
 			else if ( fe.getID() == FocusEvent.FOCUS_LOST  &&
 					(fe.getOppositeComponent() != propTable || propTable.getSelectedColumn() != VALUE_COLUMN) ) {
 
-				// Change entire table to plain font
-				// Note: all 3 lines of code below are required
-				propTable.setFont( propTable.getFont().deriveFont( Font.PLAIN ) );
-				CellRenderer plainRenderer = editBox.new CellRenderer(false);
-				propTable.getColumnModel().getColumn( 0 ).setCellRenderer( plainRenderer ) ;
-
 				// Make the input modification is applied after loosing the focus
 				DefaultCellEditor dce = (DefaultCellEditor)propTable.getDefaultEditor(Object.class);
 				dce.stopCellEditing();
+
+				// Clear selection, so when editbox looses the focus, there is no bold keyword
+				propTable.clearSelection();
 			}
 			super.processFocusEvent( fe );
 		}
@@ -262,6 +252,8 @@ public class EditBox extends FrameBox {
 
 		// Listen for table changes
 		propTable.getModel().addTableModelListener( new MyTableModelListener() );
+
+		propTable.getColumnModel().getColumn( 0 ).setCellRenderer( cellRenderer ) ;
 
 		return propTable;
 	}
@@ -375,42 +367,28 @@ public class EditBox extends FrameBox {
 	}
 
 	public class CellRenderer extends DefaultTableCellRenderer {
-		boolean bold;
-		boolean italic;
-		boolean underline;
+		private final Font bold;
+		private final Font plain;
 
-		public CellRenderer(boolean setBold) {
-			this(setBold, false, false );
-		}
-
-		public CellRenderer(boolean setBold, boolean setItalic, boolean setUnderline ) {
-			bold      = setBold;
-			italic    = setItalic;
-			underline = setUnderline;
+		public CellRenderer() {
+			bold  = this.getFont().deriveFont(Font.BOLD);
+			plain = this.getFont().deriveFont(Font.PLAIN);
 		}
 
 		public Component getTableCellRendererComponent
 		(JTable table, Object value, boolean isSelected,
 				boolean hasFocus, int row, int column)
 		{
+
 			Component cell = super.getTableCellRendererComponent
 			(table, value, isSelected, hasFocus, row, column);
 
-			JTableHeader header = table.getTableHeader();
-			final Font boldFont = header.getFont().deriveFont(Font.BOLD);
-			final Font plainFont = header.getFont().deriveFont(Font.PLAIN);
-
-			cell.setFont( plainFont ) ; //set the font here
-
-			if ( row == EditBox.this.rowLastVisited ) {
-				if ( bold ) {
-					cell.setFont( boldFont );
-				}
-				else {
-					cell.setFont( plainFont );
-				}
+			if ( row == table.getSelectedRow() ) {
+				cell.setFont( bold );
 			}
-
+			else {
+				cell.setFont( plain ) ;
+			}
 			return cell;
 		}
 	}
