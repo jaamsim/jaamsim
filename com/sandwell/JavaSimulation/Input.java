@@ -884,4 +884,14 @@ public abstract class Input<T> {
 			this.setEdited(true);
 		}
 	}
+
+	/*
+	 * return a list of valid options if the input has limited number of
+	 * choices(e.g true or false for BooleanUinput).
+	 * if an input needs to be shown as a dropdown box  in Input Editor, it has
+	 * to override this method.
+	 */
+	public ArrayList<String> getValidOptions() {
+		return null;
+	}
 }

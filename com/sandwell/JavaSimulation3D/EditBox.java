@@ -28,6 +28,8 @@ import java.util.ArrayList;
 
 import javax.media.j3d.ColoringAttributes;
 import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -38,6 +40,7 @@ import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
 import javax.swing.event.ChangeEvent;
@@ -214,14 +217,8 @@ public class EditBox extends FrameBox {
 	 */
 	private JTable buildProbTable( int numberOfRows ) {
 
-		JTable propTable;
-		propTable = new JTable( new javax.swing.table.DefaultTableModel( numberOfRows, 3 ) {
-
-			public boolean isCellEditable( int row, int column ) {
-				return ( column == VALUE_COLUMN ); // Since the table is tabbed, all the values are editable
-			}
-
-		});
+		MyJTable propTable;
+		propTable = new MyJTable(numberOfRows, 3);
 
 		propTable.setRowHeight( ROW_HEIGHT );
 		propTable.setRowMargin( 1 );
@@ -255,6 +252,9 @@ public class EditBox extends FrameBox {
 		return propTable;
 	}
 
+	Entity getCurrentEntity() {
+		return currentEntity;
+	}
 	public void setEntity(Entity entity) {
 		if(currentEntity == entity)
 			return;
@@ -462,6 +462,48 @@ public class EditBox extends FrameBox {
 				return;
 			}
 			GraphicsUpdateBehavior.forceUpdate = true;
+		}
+	}
+
+	public static class MyJTable extends JTable {
+		private DefaultCellEditor dropDownEditor;
+
+		public boolean isCellEditable( int row, int column ) {
+			return ( column == VALUE_COLUMN ); // Only Value column is editable
+		}
+
+		public MyJTable(int column, int row) {
+			super(column, row);
+		}
+
+		public TableCellEditor getCellEditor(int row, int col) {
+
+			// Obtain the input for the keyword
+			String currentKeyword = ((String)this.getValueAt( row, 0 )).trim();
+			Input<?> in =
+			   EditBox.getInstance().getCurrentEntity().getInput(currentKeyword);
+
+			// 1) Multiple choice input
+			if(in.getValidOptions() != null) {
+				if(dropDownEditor == null) {
+					JComboBox dropDown = new JComboBox();
+					dropDown.setEditable(true);
+					dropDownEditor = new DefaultCellEditor(dropDown);
+				}
+
+				// Refresh the content of the combo box
+				JComboBox dropDown = (JComboBox) dropDownEditor.getComponent();
+				DefaultComboBoxModel model = (DefaultComboBoxModel) dropDown.getModel();
+				model.removeAllElements();
+				ArrayList<String> array = in.getValidOptions();
+				for(String each: array) {
+					model.addElement(each);
+				}
+				return new DefaultCellEditor(dropDown);
+			}
+
+			// 2) Normal text
+			return this.getDefaultEditor(Object.class);
 		}
 	}
 }
