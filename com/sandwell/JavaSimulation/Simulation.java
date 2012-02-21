@@ -729,7 +729,7 @@ public abstract class Simulation extends Entity {
 	public void setProgress(int percentage) {}
 	public void setProgressText(String text) {}
 
-	public <T extends Entity> ArrayList<? extends T> getClonesOf(Class<T> proto) {
+	public static <T extends Entity> ArrayList<? extends T> getClonesOf(Class<T> proto) {
 		ArrayList<T> cloneList = new ArrayList<T>();
 
 		for (Entity each : Entity.getAll()) {

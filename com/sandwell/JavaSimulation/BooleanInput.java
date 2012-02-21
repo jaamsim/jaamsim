@@ -14,7 +14,17 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.util.ArrayList;
+
 public class BooleanInput extends Input<Boolean> {
+
+	private static final ArrayList<String> validOptions;
+
+	static {
+		validOptions = new ArrayList<String>();
+		validOptions.add("True");
+		validOptions.add("False");
+	}
 
 	/**
 	 * Creates a new Boolean Input with the given keyword, category, units, and
@@ -29,5 +39,9 @@ public class BooleanInput extends Input<Boolean> {
 		Input.assertCount(input, 1);
 		value = Boolean.valueOf(Input.parseBoolean(input.get(0)));
 		this.updateEditingFlags();
+	}
+
+	public ArrayList<String> getValidOptions() {
+		return validOptions;
 	}
 }

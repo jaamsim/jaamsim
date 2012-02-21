@@ -14,7 +14,10 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.util.ArrayList;
+
 public class EntityInput<T extends Entity> extends Input<T> {
+
 	private Class<T> entClass;
 
 	public EntityInput(Class<T> aClass, String key, String cat, T def) {
@@ -31,5 +34,16 @@ public class EntityInput<T extends Entity> extends Input<T> {
 			value = Input.parseEntity(input.get(0), entClass);
 
 		this.updateEditingFlags();
+	}
+
+	public ArrayList<String> getValidOptions() {
+		ArrayList<String> list = new ArrayList<String>();
+		for(T each: Simulation.getClonesOf(entClass) ) {
+			if(each.testFlag(Entity.FLAG_GENERATED))
+				continue;
+
+			list.add(each.getInputName());
+		}
+		return list;
 	}
 }

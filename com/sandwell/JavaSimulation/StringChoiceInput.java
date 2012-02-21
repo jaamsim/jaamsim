@@ -47,4 +47,8 @@ public class StringChoiceInput extends IntegerInput {
 	public void setChoices(ArrayList<String> list) {
 		choices = list;
 	}
+
+	public ArrayList<String> getValidOptions() {
+		return choices;
+	}
 }
