@@ -411,6 +411,10 @@ public class EditBox extends FrameBox {
 		return defValString;
 	}
 
+	HelpKeyListener getHelpKeyListener() {
+		return helpKeyListener;
+	}
+
 	class MyTableModelListener implements TableModelListener {
 
 		/**
@@ -488,6 +492,8 @@ public class EditBox extends FrameBox {
 				if(dropDownEditor == null) {
 					JComboBox dropDown = new JComboBox();
 					dropDown.setEditable(true);
+					dropDown.getEditor().getEditorComponent().addKeyListener(
+							EditBox.getInstance().getHelpKeyListener() );
 					dropDownEditor = new DefaultCellEditor(dropDown);
 				}
 
