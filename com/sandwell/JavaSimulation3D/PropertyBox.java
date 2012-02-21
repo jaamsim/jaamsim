@@ -408,7 +408,6 @@ public class PropertyBox extends FrameBox {
 		if (myInstance == null)
 			myInstance = new PropertyBox();
 
-		myInstance.setEntity(ObjectSelector.currentEntity);
 		return myInstance;
 	}
 

@@ -101,7 +101,6 @@ public class InfoBox extends FrameBox {
 		if (myInstance == null)
 			myInstance = new InfoBox();
 
-		myInstance.setEntity(ObjectSelector.currentEntity);
 		return myInstance;
 	}
 

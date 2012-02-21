@@ -11,7 +11,8 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- */package com.sandwell.JavaSimulation3D;
+ */
+package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.*;
 import com.sandwell.JavaSimulation.Package;
@@ -170,7 +171,6 @@ public class EditBox extends FrameBox {
 		if (myInstance == null)
 			myInstance = new EditBox();
 
-		myInstance.setEntity(ObjectSelector.currentEntity);
 		return myInstance;
 	}
 
