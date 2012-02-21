@@ -64,8 +64,6 @@ public class EditBox extends FrameBox {
 
 	private boolean buildingTable;	    // TRUE if the table is being populated
 
-	private String selectedKeyword;
-
 	private final CellRenderer cellRenderer;
 
 	/**
@@ -83,7 +81,7 @@ public class EditBox extends FrameBox {
 
 		super( "Input Editor" );
 		cellRenderer = new CellRenderer();
-		helpKeyListener = new HelpKeyListener(this);
+		helpKeyListener = new HelpKeyListener();
 
 		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
 
@@ -124,23 +122,26 @@ public class EditBox extends FrameBox {
 
 
 	private static class HelpKeyListener implements KeyListener {
-		private final EditBox box;
-
-		HelpKeyListener(EditBox aBox) {
-			box = aBox;
-		}
 
 		public void keyReleased(KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_F1) {
-				box.doHelp();
-			}
+			if (e.getKeyCode() != KeyEvent.VK_F1)
+				return;
+
+			JTable propTable = ((HTextField)e.getSource()).propTable;
+
+			if (propTable.getSelectedRow() < 0)
+				return;
+
+			EditBox.getInstance().doHelp(
+					propTable.getValueAt(propTable.getSelectedRow(), 0).toString()
+					);
 		}
 
 		public void keyPressed(KeyEvent e) {}
 		public void keyTyped(KeyEvent e) {}
 	}
 
-	protected void  doHelp() {
+	protected void  doHelp(String keyword) {
 		if (currentEntity != null) {
 			Simulation.spawnHelp("", "");
 			return;
@@ -154,8 +155,10 @@ public class EditBox extends FrameBox {
 				break;
 			}
 		}
-		if (cat != null && selectedKeyword != null && cat.getHelpSection() != null) {
-			String helpName = "::" + cat.getHelpSection().trim() + "#mo_topic_" + selectedKeyword.trim();
+
+
+		if (cat != null &&  cat.getHelpSection() != null) {
+			String helpName = "::" + cat.getHelpSection().trim() + "#mo_topic_" + keyword.trim();
 			Simulation.spawnHelp(cat.getFilePrefix(), helpName);
 		}
 	}
@@ -185,12 +188,6 @@ public class EditBox extends FrameBox {
 
 		protected void processFocusEvent( FocusEvent fe ) {
 			if ( fe.getID() == FocusEvent.FOCUS_GAINED ) {
-
-				if (propTable.getSelectedRow() > -1) {
-					Object val = propTable.getValueAt(propTable.getSelectedRow(), 0);
-					if (val != null)
-						editBox.selectedKeyword = val.toString();
-				}
 
 				// Select entire text string in the cell currently clicked on
 				selectAll();
