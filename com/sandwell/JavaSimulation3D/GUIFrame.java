@@ -349,6 +349,8 @@ public class GUIFrame extends JFrame {
 
 			public void actionPerformed( ActionEvent event ) {
 				EditBox.getInstance().setVisible(true);
+				if(ObjectSelector.getInstance().isVisible())
+					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
 		} );
 		viewMenu.add( inputEditorMenuItem );
@@ -359,6 +361,8 @@ public class GUIFrame extends JFrame {
 
 			public void actionPerformed( ActionEvent event ) {
 				PropertyBox.getInstance().setVisible(true);
+				if(ObjectSelector.getInstance().isVisible())
+					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
 		} );
 		viewMenu.add( propertiesMenuItem );
@@ -369,6 +373,8 @@ public class GUIFrame extends JFrame {
 
 			public void actionPerformed( ActionEvent event ) {
 				InfoBox.getInstance().setVisible(true);
+				if(ObjectSelector.getInstance().isVisible())
+					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
 		} );
 		viewMenu.add( outputsMenuItem );
