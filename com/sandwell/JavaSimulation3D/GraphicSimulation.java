@@ -203,7 +203,7 @@ public class GraphicSimulation extends Simulation {
 
 		// Compile top-level group
 		globalGroup.compile();
-
+		rootLocale.addBranchGraph(globalGroup);
 		windowList = new ArrayList<Sim3DWindow>();
 
 		guiFrame.updateForSimulationState();
@@ -440,11 +440,6 @@ public class GraphicSimulation extends Simulation {
 		view.setParentMenu( guiFrame.getWindowList() );
 		synchronized (windowList) {
 			windowList.add( view );
-
-			// J3D Memory Leak fix - don't lose memory if we aren't looking
-			if( windowList.size() == 1 ) {
-				rootLocale.addBranchGraph(globalGroup);
-			}
 		}
 
 		view.setVisible(true);
@@ -465,10 +460,6 @@ public class GraphicSimulation extends Simulation {
 				return;
 
 			windowList.remove( view );
-			if (windowList.size() > 0)
-				return;
-
-			rootLocale.removeBranchGraph(globalGroup);
 		}
 	}
 
