@@ -100,13 +100,6 @@ public abstract class Simulation extends Entity {
 	/** model has run, but presently is stopped */
 	public static final int SIM_STATE_STOPPED = 5;
 
-	private int eventState; // state variable used to communicate with the eventManagers
-	static final int EVENTS_STOPPED = 0;
-	static final int EVENTS_RUNNING = 1;
-	static final int EVENTS_RUNONE = 2;
-	static final int EVENTS_TIMESTEP = 3;
-	static final int EVENTS_UNTILTIME = 4;
-
 	/** region Entities are placed in unless otherwise specified */
 	protected Region defaultRegion;
 	private boolean traceEnabled;
@@ -194,7 +187,6 @@ public abstract class Simulation extends Entity {
 	 */
 	protected Simulation() {
 		Simulation.simState = SIM_STATE_UNCONFIGURED;
-		eventState = EVENTS_STOPPED;
 
 		// Initialize global Entity references
 		eventManager = new EventManager(null, "DefaultEventManager");
@@ -324,14 +316,6 @@ public abstract class Simulation extends Entity {
 		Simulation.simState = SIM_STATE_CONFIGURED;
 
 		System.out.println( "Configuration File Loaded" );
-	}
-
-	void setEventState(int state) {
-		eventState = state;
-	}
-
-	int getEventState() {
-		return eventState;
 	}
 
 	/**

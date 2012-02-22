@@ -48,6 +48,13 @@ import com.sandwell.JavaSimulation3D.EventViewer;
 public final class EventManager implements Runnable {
 	static Simulation simulation; // Simulation object
 
+	private static int eventState;
+	static final int EVENTS_STOPPED = 0;
+	static final int EVENTS_RUNNING = 1;
+	static final int EVENTS_RUNONE = 2;
+	static final int EVENTS_TIMESTEP = 3;
+	static final int EVENTS_UNTILTIME = 4;
+
 	final String name;
 	private final EventManager parent;
 	private final ArrayList<EventManager> children;
@@ -98,6 +105,10 @@ public final class EventManager implements Runnable {
 	/*
 	 * Used to communicate with the eventViewer about the status of a given event
 	 */
+
+	static {
+		eventState = EVENTS_STOPPED;
+	}
 
 	/**
 	 * Allocates a new EventManager with the given parent and name
@@ -206,7 +217,7 @@ public final class EventManager implements Runnable {
 
 	private void doDebug() {
 		synchronized (lockObject) {
-			simulation.setEventState(Simulation.EVENTS_STOPPED);
+			EventManager.setEventState(EventManager.EVENTS_STOPPED);
 		}
 
 		// update the event display if there is one present
@@ -284,7 +295,7 @@ public final class EventManager implements Runnable {
 
 			// 1) Check whether the model has been paused
 			if (parent == null &&
-				simulation.getEventState() == Simulation.EVENTS_STOPPED) {
+			    EventManager.getEventState() == EventManager.EVENTS_STOPPED) {
 				synchronized (lockObject) {
 					this.threadWait();
 				}
@@ -352,13 +363,13 @@ public final class EventManager implements Runnable {
 			}
 			currentTime = nextTime;
 
-			if (simulation.getEventState() == Simulation.EVENTS_RUNONE) {
+			if (EventManager.getEventState() == EventManager.EVENTS_RUNONE) {
 				doDebug();
-			} else if (simulation.getEventState() == Simulation.EVENTS_TIMESTEP) {
+			} else if (EventManager.getEventState() == EventManager.EVENTS_TIMESTEP) {
 				if (eventStack.get(0).eventTime != debuggingTime) {
 					doDebug();
 				}
-			} else if (simulation.getEventState() == Simulation.EVENTS_UNTILTIME) {
+			} else if (EventManager.getEventState() == EventManager.EVENTS_UNTILTIME) {
 				if (eventStack.get(0).eventTime >= debuggingTime) {
 					doDebug();
 				}
@@ -802,6 +813,14 @@ public final class EventManager implements Runnable {
 		addEventToStack(newEvent);
 	}
 
+	private static synchronized int getEventState() {
+		return eventState;
+	}
+
+	private static synchronized void setEventState(int state) {
+		eventState = state;
+	}
+
 	/**
 	 * Sets the value that is tested in the doProcess loop to determine if the
 	 * next event should be executed.  If set to false, the eventManager will
@@ -810,7 +829,7 @@ public final class EventManager implements Runnable {
 	 * thread referenced in activeThread is the eventManager thread.
 	 */
 	void pause() {
-		simulation.setEventState(Simulation.EVENTS_STOPPED);
+		EventManager.setEventState(EventManager.EVENTS_STOPPED);
 	}
 
 	/**
@@ -822,7 +841,7 @@ public final class EventManager implements Runnable {
 	 */
 	void resume() {
 		previousInternalTime = -1;
-		if (simulation.getEventState() != Simulation.EVENTS_STOPPED)
+		if (EventManager.getEventState() != EventManager.EVENTS_STOPPED)
 			return;
 
 		// cannot resume if viewing events
@@ -830,14 +849,14 @@ public final class EventManager implements Runnable {
 			return;
 
 		synchronized( lockObject ) {
-			simulation.setEventState(Simulation.EVENTS_RUNNING);
+			EventManager.setEventState(EventManager.EVENTS_RUNNING);
 			eventManagerThread.interrupt();
 		}
 	}
 
 	public void registerEventViewer( EventViewer ev ) {
 		currentViewer = ev;
-		wasPaused = (simulation.getEventState() == Simulation.EVENTS_STOPPED);
+		wasPaused = (EventManager.getEventState() == EventManager.EVENTS_STOPPED);
 		pause();
 	}
 
@@ -848,13 +867,13 @@ public final class EventManager implements Runnable {
 	}
 
 	public void nextOneEvent() {
-		simulation.setEventState(Simulation.EVENTS_RUNONE);
+		EventManager.setEventState(EventManager.EVENTS_RUNONE);
 		startDebugging();
 	}
 
 	public void nextEventTime() {
 		debuggingTime = eventStack.get(0).eventTime;
-		simulation.setEventState(Simulation.EVENTS_TIMESTEP);
+		EventManager.setEventState(EventManager.EVENTS_TIMESTEP);
 		startDebugging();
 	}
 
@@ -865,7 +884,7 @@ public final class EventManager implements Runnable {
 			simulation.start();
 
 		debuggingTime = ((long)(stopTime * Simulation.getSimTimeFactor()));
-		simulation.setEventState(Simulation.EVENTS_UNTILTIME);
+		EventManager.setEventState(EventManager.EVENTS_UNTILTIME);
 		startDebugging();
 	}
 
