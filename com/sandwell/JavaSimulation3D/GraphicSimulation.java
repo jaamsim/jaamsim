@@ -442,6 +442,7 @@ public class GraphicSimulation extends Simulation {
 			windowList.add( view );
 		}
 
+		GraphicsUpdateBehavior.forceUpdate = true;
 		view.setVisible(true);
 
 		return view;

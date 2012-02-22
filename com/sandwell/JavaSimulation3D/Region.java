@@ -15,13 +15,11 @@
 package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.DoubleVector;
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation.Util;
-import com.sandwell.JavaSimulation.Vector;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -41,8 +39,6 @@ import java.awt.Point;
  */
 public class Region extends DisplayEntity {
 	private static final ArrayList<Region> allInstances;
-
-	private Vector entityList; // Vector of active entities
 
 	private Point3d defaultCenter = new Point3d( 0.0, 0.0, 0.0 ); // where the viewer is looking by default
 	private Point3d defaultViewer = new Point3d( 0.0, 0.0, 10.0 ); // where the viwer is located by default
@@ -120,7 +116,6 @@ public class Region extends DisplayEntity {
 		// Register this region in the simulation
 		numWindowsNamed = 0;
 		numWindowsAlive = 0;
-		entityList = new Vector( 1, 1 );
 
 		entityGroup = new BranchGroup();
 		entityGroup.setCapability( BranchGroup.ALLOW_DETACH );
@@ -175,28 +170,8 @@ public class Region extends DisplayEntity {
 		}
 	}
 
-	/**
-	 * Method to register DisplayEntities being active in this region.
-	 */
-	public void addEntity( DisplayEntity thisEntity ) throws RuntimeException {
-		if( thisEntity != this ) {
-			if( entityList.indexOf( thisEntity ) < 0 ) {
-				entityList.addElement( thisEntity );
-				this.addBranchGroup(thisEntity.getBranchGroup());
-			}
-		} else {
-			throw new ErrorException("Attempted to add Region %s to itself", this.getName());
-		}
-	}
-
-	/**
-	 * Method to remove entities from the entity list.
-	 */
-	public void removeEntity( DisplayEntity thisEntity ) {
-		entityList.removeElement( thisEntity );
-		synchronized (entityGroup) {
-			entityGroup.removeChild(thisEntity.getBranchGroup());
-		}
+	BranchGroup getEntGroup() {
+		return entityGroup;
 	}
 
 	public void incrementWindowsAlive() {

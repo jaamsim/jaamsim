@@ -145,6 +145,9 @@ public class DisplayEntity extends Entity {
 	private final Vector3d align = new Vector3d();
 	private final Vector3d scale = new Vector3d(1.0d, 1.0d, 1.0d);
 
+	private BranchGroup currentGrp = null;
+	private BranchGroup nextGrp = null;
+
 	private DoubleListInput levelOfDetail;
 
 	private final EntityListInput<DisplayModel> displayModelList; // DisplayModel from the input
@@ -325,17 +328,10 @@ public class DisplayEntity extends Entity {
 	 * Visually adds the entity to its currently assigned region
 	 */
 	public void enterRegion() {
-		if( currentRegion != null ) {
-			currentRegion.addEntity( this );
+		synchronized (position) {
+			nextGrp = currentRegion.getEntGroup();
+			needsRender = true;
 		}
-		else {
-			throw new RuntimeException( "Region not set" );
-		}
-
-		if (!this.getShow()) {
-			exitRegion();
-		}
-
 	}
 
 	/**
@@ -351,8 +347,9 @@ public class DisplayEntity extends Entity {
 	 * Visually removes the entity from its region.  The current region for the entity is maintained.
 	 */
 	public void exitRegion() {
-		if( currentRegion != null ) {
-			currentRegion.removeEntity( this );
+		synchronized (position) {
+			nextGrp = null;
+			needsRender = true;
 		}
 	}
 
@@ -433,6 +430,9 @@ public class DisplayEntity extends Entity {
 		allInstances.remove(this);
 		exitRegion();
 
+		branchGroup.detach();
+		nextGrp = null;
+		currentGrp = null;
 		if(OrbitBehavior.selectedEntity == this)
 			OrbitBehavior.selectedEntity = null;
 
@@ -456,6 +456,15 @@ public class DisplayEntity extends Entity {
 			if (!needsRender && relativeEntity.getValue() == null)
 				return;
 
+			if (currentGrp != nextGrp) {
+				branchGroup.detach();
+				currentGrp = null;
+				if (show.getValue() && nextGrp != null) {
+					currentGrp = nextGrp;
+					currentGrp.addChild(branchGroup);
+				}
+			}
+
 			Transform3D temp = new Transform3D();
 			temp.setEuler(orient);
 
@@ -474,6 +483,7 @@ public class DisplayEntity extends Entity {
 			if( !graphicsSetup ) {
 				this.setupGraphics();
 				graphicsSetup = true;
+				return;
 			}
 
 			if (showResize) {
@@ -784,11 +794,7 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
-	/**
-	 * Accessor to return the branchGroup of the display entity.
-	 * @return BranchGroup - the attachment point for the DisplayEntity's graphics
-	 */
-	public BranchGroup getBranchGroup() {
+	BranchGroup getBranchGroup() {
 		return branchGroup;
 	}
 
@@ -1410,7 +1416,9 @@ public class DisplayEntity extends Entity {
 		if(this.getClass() == DisplayEntity.class){
 			enterRegion();
 		}
-
+		synchronized (position) {
+			needsRender = true;
+		}
 	}
 
 	public DisplayModel getDefaultDisplayModel(){
