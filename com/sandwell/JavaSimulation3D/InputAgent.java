@@ -1339,20 +1339,23 @@ public class InputAgent {
 	}
 
 	public static void trace(int indent, Entity ent, String meth, String... text) {
+		// Create an indent string to space the lines
 		StringBuilder ind = new StringBuilder("");
 		for (int i = 0; i < indent; i++)
 			ind.append("   ");
+		String spacer = ind.toString();
 
-		if (lastTimeForTrace != ent.getCurrentTime()) {
-			System.out.println(String.format(" \nTIME = %.5f", ent.getCurrentTime()));
-			lastTimeForTrace = ent.getCurrentTime();
+		// Print a TIME header every time time has advanced
+		double traceTime = ent.getCurrentTime();
+		if (lastTimeForTrace != traceTime) {
+			System.out.format(" \nTIME = %.5f\n", traceTime);
+			lastTimeForTrace = traceTime;
 		}
 
-		System.out.print(String.format("%s%s %s\n", ind, ent.getName(), meth));
-
+		// Output the traces line(s)
+		System.out.format("%s%s %s\n", spacer, ent.getName(), meth);
 		for (String line : text) {
-			System.out.print(ind.toString());
-			System.out.println(line);
+			System.out.format("%s%s\n", spacer, line);
 		}
 
 		System.out.flush();
