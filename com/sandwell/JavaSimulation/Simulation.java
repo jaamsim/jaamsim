@@ -86,7 +86,7 @@ public abstract class Simulation extends Entity {
 	private Process doEndAtThread;
 
 	/** the current simulation state */
-	private int simState;
+	private static int simState;
 	/** model was executed, but no configuration performed */
 	public static final int SIM_STATE_LOADED = 0;
 	/** essential model elements created, no configuration performed */
@@ -193,7 +193,7 @@ public abstract class Simulation extends Entity {
 	 *  Protected makes this a 'singleton' class -- only one instance of it exists.  is instantiated through 'getSimulation()' method.
 	 */
 	protected Simulation() {
-		simState = SIM_STATE_UNCONFIGURED;
+		Simulation.simState = SIM_STATE_UNCONFIGURED;
 		eventState = EVENTS_STOPPED;
 
 		// Initialize global Entity references
@@ -217,7 +217,7 @@ public abstract class Simulation extends Entity {
 		realTimeFactor = 500.0d;
 		doEndAtThread = null;
 
-		simState = SIM_STATE_LOADED;
+		Simulation.simState = SIM_STATE_LOADED;
 	}
 
 	/**
@@ -294,7 +294,7 @@ public abstract class Simulation extends Entity {
 		realTimeFactor = 500.0d;
 		doEndAtThread = null;
 
-		simState = SIM_STATE_LOADED;
+		Simulation.simState = SIM_STATE_LOADED;
 	}
 
 	/**
@@ -306,7 +306,7 @@ public abstract class Simulation extends Entity {
 	 *	This method may be called several times as a result of interaction with the user.
 	 */
 	public void configure(String configFileName) {
-		simState = SIM_STATE_UNCONFIGURED;
+		Simulation.simState = SIM_STATE_UNCONFIGURED;
 		InputAgent.setConfigFileName(configFileName);
 		InputAgent.loadConfigFile(InputAgent.getConfigFileName());
 
@@ -321,7 +321,7 @@ public abstract class Simulation extends Entity {
 		}
 
 		// store the present state
-		simState = SIM_STATE_CONFIGURED;
+		Simulation.simState = SIM_STATE_CONFIGURED;
 
 		System.out.println( "Configuration File Loaded" );
 	}
@@ -370,7 +370,7 @@ public abstract class Simulation extends Entity {
 	}
 
 	public void restart() {
-		simState = SIM_STATE_CONFIGURED;
+		Simulation.simState = SIM_STATE_CONFIGURED;
 		this.start();
 	}
 
@@ -381,7 +381,7 @@ public abstract class Simulation extends Entity {
 		eventManager.pause();
 
 		// store the present state
-		simState = SIM_STATE_PAUSED;
+		Simulation.simState = SIM_STATE_PAUSED;
 	}
 
 	/**
@@ -391,7 +391,7 @@ public abstract class Simulation extends Entity {
 		eventManager.pause();
 
 		// store the present state
-		simState = SIM_STATE_STOPPED;
+		Simulation.simState = SIM_STATE_STOPPED;
 	}
 
 	/**
@@ -400,7 +400,7 @@ public abstract class Simulation extends Entity {
 	public void resume() {
 		eventManager.resume();
 		// store the present state
-		simState = SIM_STATE_RUNNING;
+		Simulation.simState = SIM_STATE_RUNNING;
 	}
 
 	boolean isTraceEnabled() {
@@ -547,7 +547,7 @@ public abstract class Simulation extends Entity {
 	 **/
 	public void startModel() {
 
-		if (simState <= SIM_STATE_UNCONFIGURED)
+		if (Simulation.simState <= SIM_STATE_UNCONFIGURED)
 			throw new ErrorException( "Failed to initialize" );
 
 		if( this.getStartTime() > 0.0 ) {
@@ -711,8 +711,8 @@ public abstract class Simulation extends Entity {
 	 *   SIM_STATE_PAUSED - indicates the model is currently not executing events
 	 *   @return int - current simulation state
 	 */
-	public int getSimulationState() {
-		return simState;
+	public static final int getSimulationState() {
+		return Simulation.simState;
 	}
 
 	/**

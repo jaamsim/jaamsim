@@ -572,7 +572,7 @@ public class GUIFrame extends JFrame {
 		controlStop.addActionListener( new ActionListener() {
 
 			public void actionPerformed( ActionEvent event ) {
-				if( DisplayEntity.simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING ) {
+				if( Simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING ) {
 					GUIFrame.this.pauseSimulation();
 				}
 				int userOption = JOptionPane.showConfirmDialog( null,
@@ -868,7 +868,7 @@ public class GUIFrame extends JFrame {
 		progressBar.repaint(25);
 		lastValue = val;
 
-		if (DisplayEntity.simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
+		if (Simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
 			String title = String.format("%d%% %s - %s", val, DisplayEntity.simulation.getModelName(), InputAgent.getRunName());
 			setTitle(title);
 		}
@@ -896,16 +896,16 @@ public class GUIFrame extends JFrame {
 
 	private void startSimulation() {
 		OrbitBehavior.setViewerBehaviour( OrbitBehavior.CHANGE_TRANSLATION );
-		if( DisplayEntity.simulation.getSimulationState() <= Simulation.SIM_STATE_CONFIGURED ) {
+		if( Simulation.getSimulationState() <= Simulation.SIM_STATE_CONFIGURED ) {
 			if (InputAgent.isSessionEdited()) {
 				InputAgent.saveAs();
 			}
 			DisplayEntity.simulation.start();
 		}
-		else if( DisplayEntity.simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED ) {
+		else if( Simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED ) {
 			DisplayEntity.simulation.resume();
 		}
-		else if( DisplayEntity.simulation.getSimulationState() == Simulation.SIM_STATE_STOPPED ) {
+		else if( Simulation.getSimulationState() == Simulation.SIM_STATE_STOPPED ) {
 			DisplayEntity.simulation.restart();
 		}
 		else
@@ -913,22 +913,22 @@ public class GUIFrame extends JFrame {
 	}
 
 	private void pauseSimulation() {
-		if( DisplayEntity.simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING )
+		if( Simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING )
 			DisplayEntity.simulation.pause();
 		else
 			throw new ErrorException( "Invalid Simulation State for pause" );
 	}
 
 	private void stopSimulation() {
-		if( DisplayEntity.simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING ||
-			DisplayEntity.simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED )
+		if( Simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING ||
+			Simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED )
 			DisplayEntity.simulation.stop();
 		else
 			throw new ErrorException( "Invalid Simulation State for stop" );
 	}
 
 	public void startCapture() {
-		if( DisplayEntity.simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED ) {
+		if( Simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED ) {
 			DisplayEntity.simulation.resume();
 		}
 		DisplayEntity.simulation.startExternalProcess("doCaptureNetwork");
@@ -936,13 +936,13 @@ public class GUIFrame extends JFrame {
 
 	public void stopCapture() {
 		DisplayEntity.simulation.setCaptureFlag( false );
-		if( DisplayEntity.simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING ) {
+		if( Simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING ) {
 			DisplayEntity.simulation.pause();
 		}
 	}
 
 	public void updateForSimulationState() {
-		switch( DisplayEntity.simulation.getSimulationState() ) {
+		switch( Simulation.getSimulationState() ) {
 			case Simulation.SIM_STATE_LOADED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
 					fileMenu.getItem(i).setEnabled(true);

@@ -880,7 +880,7 @@ public abstract class Input<T> {
 
 		// Keyword is edited
 		if(InputAgent.hasAddedRecords() ||
-				Entity.simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
+				Simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
 			this.setEdited(true);
 		}
 	}

@@ -861,7 +861,7 @@ public final class EventManager implements Runnable {
 	public void runToTime( double stopTime ) {
 		// This is an ugly hack to make the runtotime functionality available before
 		// the model has started....don't use this as an example
-		if (simulation.getSimulationState() == Simulation.SIM_STATE_CONFIGURED)
+		if (Simulation.getSimulationState() == Simulation.SIM_STATE_CONFIGURED)
 			simulation.start();
 
 		debuggingTime = ((long)(stopTime * Simulation.getSimTimeFactor()));
