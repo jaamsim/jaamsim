@@ -502,36 +502,28 @@ public class Entity {
 	 * Track the given subroutine.
 	 */
 	public void trace(String meth) {
-		if (traceFlag) {
-			simulation.trace(0, this, meth);
-		}
+		if (traceFlag) InputAgent.trace(0, this, meth);
 	}
 
 	/**
 	 * Track the given subroutine.
 	 */
 	public void trace(int level, String meth) {
-		if (traceFlag) {
-			simulation.trace(level, this, meth);
-		}
+		if (traceFlag) InputAgent.trace(level, this, meth);
 	}
 
 	/**
 	 * Track the given subroutine (one line of text).
 	 */
 	public void trace(String meth, String text1) {
-		if (traceFlag) {
-			simulation.trace(0, this, meth, text1);
-		}
+		if (traceFlag) InputAgent.trace(0, this, meth, text1);
 	}
 
 	/**
 	 * Track the given subroutine (two lines of text).
 	 */
 	public void trace(String meth, String text1, String text2) {
-		if (traceFlag) {
-			simulation.trace(0, this, meth, text1, text2);
-		}
+		if (traceFlag) InputAgent.trace(0, this, meth, text1, text2);
 	}
 
 	/**

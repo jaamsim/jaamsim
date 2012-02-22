@@ -80,7 +80,6 @@ public abstract class Simulation extends Entity {
 	protected double endTime;
 	/** duration of the simulation run (not including initialization) */
 	protected final DoubleInput runDuration;
-	private double lastTimeForTrace = -1.0;
 
 	private final DoubleInput simTimeScaleInput;
 	private static double simTimeScale; // Simulation timeslice (long <-> double)
@@ -751,26 +750,6 @@ public abstract class Simulation extends Entity {
 		}
 
 		return instanceList;
-	}
-
-	void trace(int indent, Entity ent, String meth, String... text) {
-		StringBuilder ind = new StringBuilder("");
-		for (int i = 0; i < indent; i++)
-			ind.append("   ");
-
-		if( lastTimeForTrace != ent.getCurrentTime() ) {
-			System.out.println(String.format(" \nTIME = %.5f", ent.getCurrentTime() ));
-			lastTimeForTrace = ent.getCurrentTime();
-		}
-
-		System.out.print( String.format( "%s%s %s\n", ind, ent.getName(), meth ) );
-
-		for (String line : text) {
-			System.out.print(ind.toString());
-			System.out.println(line);
-		}
-
-		System.out.flush();
 	}
 
 	/**

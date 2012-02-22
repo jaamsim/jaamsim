@@ -42,6 +42,8 @@ public class InputAgent {
 	private static int numWarnings = 0;
 	private static FileEntity logFile;
 
+	private static double lastTimeForTrace;
+
 	private static String configFileName;
 	private static boolean batchRun;
 	private static boolean sessionEdited;
@@ -61,6 +63,7 @@ public class InputAgent {
 		batchRun = false;
 		configFileName = "Simulation1.cfg";
 		reportDirectory = "";
+		lastTimeForTrace = -1.0d;
 	}
 
 	public static void clear() {
@@ -71,6 +74,7 @@ public class InputAgent {
 		sessionEdited = false;
 		configFileName = "Simulation1.cfg";
 		reportDirectory = "";
+		lastTimeForTrace = -1.0d;
 	}
 
 
@@ -1332,6 +1336,26 @@ public class InputAgent {
 		logFile.write(msg);
 		logFile.newLine();
 		logFile.flush();
+	}
+
+	public static void trace(int indent, Entity ent, String meth, String... text) {
+		StringBuilder ind = new StringBuilder("");
+		for (int i = 0; i < indent; i++)
+			ind.append("   ");
+
+		if (lastTimeForTrace != ent.getCurrentTime()) {
+			System.out.println(String.format(" \nTIME = %.5f", ent.getCurrentTime()));
+			lastTimeForTrace = ent.getCurrentTime();
+		}
+
+		System.out.print(String.format("%s%s %s\n", ind, ent.getName(), meth));
+
+		for (String line : text) {
+			System.out.print(ind.toString());
+			System.out.println(line);
+		}
+
+		System.out.flush();
 	}
 
 	/*
