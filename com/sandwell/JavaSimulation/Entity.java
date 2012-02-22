@@ -84,6 +84,8 @@ public class Entity {
 		return allInstances;
 	}
 
+	public void defineNewEntity() {}
+
 	public void earlyInit() {};
 
 	public void startUp() {};
@@ -553,12 +555,5 @@ public class Entity {
 		InputAgent.logWarning("Time:%.5f Entity:%s%n%s%n%s%n%s%n",
 				getCurrentTime(), getName(),
 				meth, text1, text2);
-	}
-
-	public void defineNewEntity(  ) {
-		// things that happen when any entity is defined go here
-		// overloaded for classes which need this
-
-
 	}
 }
