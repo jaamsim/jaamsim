@@ -46,7 +46,7 @@ import com.sandwell.JavaSimulation3D.EventViewer;
  * all entities will schedule themselves with the same event manager.
  */
 public final class EventManager implements Runnable {
-	private static Simulation simulation; // Simulation object
+	static Simulation simulation; // Simulation object
 
 	final String name;
 	private final EventManager parent;

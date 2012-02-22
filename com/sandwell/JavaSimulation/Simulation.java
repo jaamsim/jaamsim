@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import com.sandwell.JavaSimulation3D.Clock;
-import com.sandwell.JavaSimulation3D.ExceptionBox;
 import com.sandwell.JavaSimulation3D.InputAgent;
 import com.sandwell.JavaSimulation3D.Region;
 
@@ -813,17 +812,6 @@ public abstract class Simulation extends Entity {
 				Runtime.getRuntime().exec(new String[]{"hh", chmFile.getCanonicalPath() + suffix});
 			} catch (Throwable e) {}
 		}
-	}
-
-	/**
-	 * Create an error message box
-	 */
-	static void makeExceptionBox(Throwable e) {
-		// pause the simulation on a fatal exception
-		simulation.pause();
-
-		System.err.println("EXCEPTION AT TIME: " + simulation.getCurrentTime());
-		new ExceptionBox(e, true);
 	}
 
 	public boolean getExitAtStop() {

@@ -18,6 +18,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import com.sandwell.JavaSimulation3D.ExceptionBox;
+
 /**
  * Process is a subclass of Thread that can be managed by the discrete event
  * simulation.
@@ -177,21 +179,31 @@ public class Process extends Thread {
 			}
 			// All other errors are trapped normally
 			else {
-				Simulation.makeExceptionBox(e.getCause());
+				this.makeExceptionBox(e.getCause());
 			}
 		}
 
 		// Other exception are also possible in the case of programming errors
-		catch (IllegalAccessException e) { Simulation.makeExceptionBox(e); }
-		catch (IllegalArgumentException e) { Simulation.makeExceptionBox(e); }
-		catch (NullPointerException e) { Simulation.makeExceptionBox(e); }
-		catch (ExceptionInInitializerError e) { Simulation.makeExceptionBox(e); }
+		catch (IllegalAccessException e) { this.makeExceptionBox(e); }
+		catch (IllegalArgumentException e) { this.makeExceptionBox(e); }
+		catch (NullPointerException e) { this.makeExceptionBox(e); }
+		catch (ExceptionInInitializerError e) { this.makeExceptionBox(e); }
 		catch (Throwable e) {
 			System.err.println("Caught unknown error, exiting " + e.getClass().getName());
-			Simulation.makeExceptionBox(e);
+			this.makeExceptionBox(e);
 		}
 	}
 
+
+	/**
+	 * Create an error message box
+	 */
+	private void makeExceptionBox(Throwable e) {
+		// pause the simulation on a fatal exception
+		EventManager.simulation.pause();
+		System.err.println("EXCEPTION AT TIME: " + EventManager.simulation.getCurrentTime());
+		new ExceptionBox(e, true);
+	}
 	// Create a new process for the given entity, method, and arguments and transfer
 	// control to this process.
 	static void start(Entity target, String methodName, Object[] arguments) {
