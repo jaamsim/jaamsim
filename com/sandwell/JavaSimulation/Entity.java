@@ -34,7 +34,7 @@ public class Entity {
 	private static final HashMap<String, Entity> namedEntities;
 
 	static Simulation simulation;
-	EventManager eventManager;
+	private EventManager eventManager;
 
 	private String entityName;
 	private String entityInputName; // Name input by user
@@ -118,7 +118,7 @@ public class Entity {
 			internalTime = Process.currentTime();
 		}
 		catch (ErrorException e) {
-			internalTime = simulation.eventManager.currentTime();
+			internalTime = EventManager.rootManager.currentTime();
 		}
 		return internalTime / Simulation.getSimTimeFactor();
 	}
@@ -190,7 +190,7 @@ public class Entity {
 		if (eventManager != null)
 			return eventManager;
 
-		return simulation.eventManager;
+		return EventManager.rootManager;
 	}
 
 	/**
@@ -287,7 +287,7 @@ public class Entity {
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
 		if ("EVENTMANAGER".equalsIgnoreCase(keyword)) {
-			EventManager evt = simulation.getDefinedManager(data.get(0));
+			EventManager evt = EventManager.getDefinedManager(data.get(0));
 
 			if (evt == null) {
 				throw new InputErrorException("EventManager %s not defined", data.get(0));

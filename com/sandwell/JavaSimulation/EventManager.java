@@ -46,6 +46,9 @@ import com.sandwell.JavaSimulation3D.EventViewer;
  * all entities will schedule themselves with the same event manager.
  */
 public final class EventManager implements Runnable {
+	private static final ArrayList<EventManager> definedManagers;
+	static final EventManager rootManager;
+
 	static Simulation simulation; // Simulation object
 
 	private static int eventState;
@@ -108,6 +111,11 @@ public final class EventManager implements Runnable {
 
 	static {
 		eventState = EVENTS_STOPPED;
+		definedManagers = new ArrayList<EventManager>();
+
+		rootManager = new EventManager(null, "DefaultEventManager");
+		definedManagers.add(rootManager);
+		rootManager.start();
 	}
 
 	/**
@@ -146,6 +154,22 @@ public final class EventManager implements Runnable {
 
 	void start() {
 		eventManagerThread.start();
+	}
+
+	static void defineEventManager(String name) {
+		EventManager evt = new EventManager(rootManager, name);
+		definedManagers.add(evt);
+		evt.start();
+	}
+
+	static EventManager getDefinedManager(String name) {
+		for (EventManager each : definedManagers) {
+			if (each.name.equals(name)) {
+				return each;
+			}
+		}
+
+		return null;
 	}
 
 	static void setSimulation(Simulation sim) {

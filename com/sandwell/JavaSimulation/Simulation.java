@@ -62,9 +62,6 @@ import com.sandwell.JavaSimulation3D.Region;
  * </table>
  */
 public abstract class Simulation extends Entity {
-
-	private ArrayList<EventManager> definedManagers;
-
 	/** description of a specific simulation run */
 	protected final StringInput runDescription;
 	/** the amount of time to initialize the simulation */
@@ -189,13 +186,8 @@ public abstract class Simulation extends Entity {
 		Simulation.simState = SIM_STATE_UNCONFIGURED;
 
 		// Initialize global Entity references
-		eventManager = new EventManager(null, "DefaultEventManager");
 		Entity.setSimulation(this);
 		EventManager.setSimulation(this);
-		eventManager.start();
-
-		definedManagers = new ArrayList<EventManager>();
-		definedManagers.add(eventManager);
 
 		// Create clock
 		Clock.setStartDate(2000, 1, 1);
@@ -239,7 +231,7 @@ public abstract class Simulation extends Entity {
 		}
 		if ("DEFINEEVENTMANAGER".equalsIgnoreCase(keyword)) {
 			for (String name : data) {
-				this.defineEventManager(name);
+				EventManager.defineEventManager(name);
 			}
 
 			return;
@@ -253,24 +245,8 @@ public abstract class Simulation extends Entity {
 		}
 	}
 
-	public void defineEventManager(String name) {
-		EventManager evt = new EventManager(eventManager, name);
-		definedManagers.add(evt);
-		evt.start();
-	}
-
-	EventManager getDefinedManager(String name) {
-		for (EventManager each : definedManagers) {
-			if (each.name.equals(name)) {
-				return each;
-			}
-		}
-
-		return null;
-	}
-
 	public void clear() {
-		eventManager.initialize();
+		EventManager.rootManager.initialize();
 
 		this.resetInputs();
 
@@ -326,7 +302,7 @@ public abstract class Simulation extends Entity {
 	 */
 	public void start() {
 		// call startModel from a process so it can handle events
-		eventManager.basicInit();
+		EventManager.rootManager.basicInit();
 		if (eventVerifyFile != null) {
 			eventVerifyFile.toStart();
 			eventBuffer.clear();
@@ -335,7 +311,7 @@ public abstract class Simulation extends Entity {
 
 		// Suppress all tracing of old model state during a restart
 		traceEnabled = false;
-		eventManager.initialize();
+		EventManager.rootManager.initialize();
 
 		if( traceEventsInput.getValue() ) {
 			this.traceAllEvents(traceEventsInput.getValue());
@@ -362,7 +338,7 @@ public abstract class Simulation extends Entity {
 	 *	Requests the EventManager to stop processing events.
 	 */
 	public void pause() {
-		eventManager.pause();
+		EventManager.rootManager.pause();
 
 		// store the present state
 		Simulation.simState = SIM_STATE_PAUSED;
@@ -372,7 +348,7 @@ public abstract class Simulation extends Entity {
 	 *	Requests the EventManager to stop processing events.
 	 */
 	public void stop() {
-		eventManager.pause();
+		EventManager.rootManager.pause();
 
 		// store the present state
 		Simulation.simState = SIM_STATE_STOPPED;
@@ -382,7 +358,7 @@ public abstract class Simulation extends Entity {
 	 *	Requests the EventManager to resume processing events.
 	 */
 	public void resume() {
-		eventManager.resume();
+		EventManager.rootManager.resume();
 		// store the present state
 		Simulation.simState = SIM_STATE_RUNNING;
 	}
@@ -666,12 +642,12 @@ public abstract class Simulation extends Entity {
 
 	/** sets the simulation into real time execution mode */
 	public void setRealTimeExecution( boolean useRealTime ) {
-		eventManager.setExecuteRealTime(useRealTime);
+		EventManager.rootManager.setExecuteRealTime(useRealTime);
 	}
 
 	/** returns whether the simulation is currently executing in real time execution mode */
 	public boolean getRealTimeExecution() {
-		return eventManager.getExecuteRealtime();
+		return EventManager.rootManager.getExecuteRealtime();
 	}
 
 	/** assigns the speedup factor for real time execution mode */
@@ -679,7 +655,7 @@ public abstract class Simulation extends Entity {
 		realTimeFactor = newRealTimeFactor;
 		// Called to ensure the time datum is recalculated when the realtimefactor
 		// changes
-		eventManager.setExecuteRealTime(eventManager.getExecuteRealtime());
+		EventManager.rootManager.setExecuteRealTime(EventManager.rootManager.getExecuteRealtime());
 	}
 
 	/** retrieves the current value for speedup factor for real time execution mode */
