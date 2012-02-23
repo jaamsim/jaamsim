@@ -93,7 +93,7 @@ public class Entity {
 	}
 
 	public static long getEntitySequence() {
-		long seq = (long)Entity.getAll().size() << 32;
+		long seq = (long)allInstances.size() << 32;
 		seq += entityCount;
 		return seq;
 	}
