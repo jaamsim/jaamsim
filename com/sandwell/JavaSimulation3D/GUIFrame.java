@@ -1161,6 +1161,7 @@ public class GUIFrame extends JFrame {
 		DisplayEntity.simulation.spawnWindow( DisplayEntity.simulation.getDefaultRegion() );
 		EditBox.getInstance().setVisible(true);
 		ObjectSelector.getInstance().setVisible(true);
+		InfoBox.getInstance().setVisible(true);
 	}
 
 	// ******************************************************************************************************

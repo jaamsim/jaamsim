@@ -54,8 +54,9 @@ public class InfoBox extends FrameBox {
 		propTable.getColumnModel().getColumn( 1 ).setHeaderValue( "<html><b style=\"align=center;font-family:verdana;\">Value</b><html>" );
 
 		// Set the location of the window
-		setLocation(0, 110);
 		pack();
+		setLocation(750, 710);
+		setSize(530, 290);
 	}
 
 	public void setEntity(Entity entity) {

@@ -127,7 +127,7 @@ public class EditBox extends FrameBox {
 
 		pack();
 		setLocation(220, 710);
-		setSize(1060, 290);
+		setSize(530, 290);
 	}
 
 
