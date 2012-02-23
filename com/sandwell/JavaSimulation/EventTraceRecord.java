@@ -139,7 +139,7 @@ class EventTraceRecord extends ArrayList<String> {
 		this.append(String.format("%s\t%d\t%d\t%s\t%s\t%s",
 					eventStates[reason],
 					evt.eventTime, evt.priority, evt.caller.getName(),
-					evt.caller.getCurrentRegion().getName(), evt.getClassMethod()));
+					evt.caller.getInputName(), evt.getClassMethod()));
 
 		if (reason == 1 || reason == 2)
 			traceLevel++;
@@ -168,7 +168,7 @@ class EventTraceRecord extends ArrayList<String> {
 	synchronized void formatSchedProcessTrace(Event evt) {
 		this.append(String.format("SchedProcess\t%d\t%d\t%s\t%s\t%s",
 				evt.eventTime, evt.priority, evt.caller.getName(),
-				evt.caller.getCurrentRegion().getName(), evt.getClassMethod()));
+				evt.caller.getInputName(), evt.getClassMethod()));
 	}
 
 	boolean isDefaultEventManager() {

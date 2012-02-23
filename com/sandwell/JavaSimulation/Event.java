@@ -73,7 +73,7 @@ class Event {
 		data[1] = String.format("%15.3f", eventTime / Simulation.getSimTimeFactor());
 		data[2] = String.format("%5d", priority);
 		data[3] = String.format("%s", caller.getName());
-		data[4] = String.format("%s", caller.getCurrentRegion().getName());
+		data[4] = String.format("%s", caller.getInputName());
 		data[5] = String.format("%s", "");
 		data[6] = getClassMethod();
 		data[7] = getFileLine();
