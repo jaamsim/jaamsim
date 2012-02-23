@@ -145,6 +145,7 @@ public class DisplayEntity extends Entity {
 	private final Vector3d align = new Vector3d();
 	private final Vector3d scale = new Vector3d(1.0d, 1.0d, 1.0d);
 
+	protected Region currentRegion;
 	private BranchGroup currentGrp = null;
 	private BranchGroup nextGrp = null;
 
@@ -251,6 +252,8 @@ public class DisplayEntity extends Entity {
 	public DisplayEntity() {
 		super();
 
+		currentRegion = simulation.getDefaultRegion();
+
 		allInstances.add(this);
 		// Create a branchgroup and make it detachable.
 		branchGroup = new BranchGroup();
@@ -313,6 +316,10 @@ public class DisplayEntity extends Entity {
 	 */
 	public static void setSimulation( GraphicSimulation newSimulation ) {
 		simulation = newSimulation;
+	}
+
+	public Region getCurrentRegion() {
+		return currentRegion;
 	}
 
 	/**

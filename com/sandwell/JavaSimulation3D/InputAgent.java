@@ -429,8 +429,12 @@ public class InputAgent {
 
 		ent.setName(name);
 		ent.setInputName(key);
-		if (region != null)
-			ent.setRegion( region );
+		if (region != null) {
+			if (ent instanceof DisplayEntity)
+				((DisplayEntity)ent).setRegion(region);
+			if (ent instanceof Display2DEntity)
+				((Display2DEntity)ent).setRegion(region);
+		}
 		ent.defineNewEntity();
 		return ent;
 	}

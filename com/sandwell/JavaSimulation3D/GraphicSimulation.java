@@ -212,7 +212,6 @@ public class GraphicSimulation extends Simulation {
 		defaultRegion.setName("ModelStage");
 		defaultRegion.setInputName("ModelStage");
 		defaultRegion.showTime = true;
-		setRegion(defaultRegion);
 	}
 
 	public static void setupLightingForBranchGroup_WithinBounds(BranchGroup branchGroup, BoundingSphere bounds) {
@@ -369,7 +368,6 @@ public class GraphicSimulation extends Simulation {
 		defaultRegion.setName("ModelStage");
 		defaultRegion.setInputName("ModelStage");
 		defaultRegion.showTime = true;
-		setRegion(defaultRegion);
 	}
 
 	public void configure(String configFileName) {

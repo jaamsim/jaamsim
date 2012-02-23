@@ -35,6 +35,7 @@ import javax.swing.JComponent;
 public class Display2DEntity extends Entity {
 	private static final ArrayList<Display2DEntity> allInstances;
 
+	protected Region currentRegion;
 	protected JComponent displayModel; // Swing graphics model for the entity
 
 	static {
@@ -44,6 +45,7 @@ public class Display2DEntity extends Entity {
 		allInstances.add(this);
 		// Build the branchGraph
 		displayModel = null;
+		currentRegion = DisplayEntity.simulation.getDefaultRegion();
 	}
 
 	public static ArrayList<Display2DEntity> getAll() {
@@ -56,9 +58,13 @@ public class Display2DEntity extends Entity {
 		exitRegion();
 	}
 
+	public Region getCurrentRegion() {
+		return currentRegion;
+	}
+
 	public void setRegion( Region newRegion ) {
 		exitRegion();
-		super.setRegion(newRegion);
+		currentRegion = newRegion;
 	}
 
 	public void enterRegion() {

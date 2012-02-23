@@ -21,7 +21,6 @@ import java.util.Map.Entry;
 
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation3D.InputAgent;
-import com.sandwell.JavaSimulation3D.Region;
 
 /**
  * Abstract class that encapsulates the methods and data needed to create a
@@ -51,9 +50,6 @@ public class Entity {
 	private int flags;
 	protected boolean traceFlag = false;
 
-	/** Current region this entity is in. **/
-	protected Region currentRegion;
-
 	private final ArrayList<Input<?>> editableInputs;
 	private final HashMap<String, Input<?>> inputMap;
 
@@ -70,11 +66,6 @@ public class Entity {
 		allInstances.add(this);
 
 		flags = 0;
-
-		// Ouch, simulation as Entity hurts here
-		if (simulation != null) {
-			currentRegion = simulation.getDefaultRegion();
-		}
 
 		editableInputs = new ArrayList<Input<?>>();
 		inputMap = new HashMap<String, Input<?>>();
@@ -348,14 +339,6 @@ public class Entity {
 		}
 
 		throw new InputErrorException( "Invalid keyword " + keyword );
-	}
-
-	public Region getCurrentRegion() {
-		return currentRegion;
-	}
-
-	public void setRegion(Region newRegion) {
-		currentRegion = newRegion;
 	}
 
 	/**

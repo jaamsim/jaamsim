@@ -114,8 +114,14 @@ public class PropertyBox extends FrameBox {
 				return each;
 
 			// Otherwise Check the region name matches
-			if (each.getCurrentRegion().getName().equalsIgnoreCase(regionName))
-				return each;
+			if (each instanceof DisplayEntity) {
+				if (((DisplayEntity)each).getCurrentRegion().getName().equalsIgnoreCase(regionName))
+					return each;
+			}
+			if (each instanceof Display2DEntity) {
+				if (((Display2DEntity)each).getCurrentRegion().getName().equalsIgnoreCase(regionName))
+					return each;
+			}
 		}
 
 		return null;
