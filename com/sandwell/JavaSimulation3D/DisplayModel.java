@@ -77,6 +77,7 @@ public class DisplayModel extends Entity {
 	public static final String TAG_TRACKFILL = "TRACKFILL";
 	public static final String TAG_BODY = "BODY";
 	public static final String TAG_SERVICE = "SERVICE";
+	public static final String TAG_LINES = "LINES";
 
 	private static final ArrayList<DisplayModel> allInstances;
 
@@ -192,6 +193,7 @@ public class DisplayModel extends Entity {
 		validTags.add(TAG_TRACKFILL);
 		validTags.add(TAG_BODY);
 		validTags.add(TAG_SERVICE);
+		validTags.add(TAG_LINES);
 	}
 	{
 		shape = new StringInput( "Shape", "DisplayModel", null );
@@ -848,6 +850,7 @@ public class DisplayModel extends Entity {
 
 		Rectangle backgroundFill = new Rectangle( 1.0, 1.0, Rectangle.SHAPE_FILLED, "backgroundFill" );
 		backgroundFill.setColor(Shape.COLOR_WHITE);
+		backgroundFill.setName(TAG_BODY);
 		model2D.addChild(backgroundFill);
 
 		SideBySideBars bars = new SideBySideBars();
@@ -860,6 +863,11 @@ public class DisplayModel extends Entity {
 		backgroundOutline.setColor(outlineColour.getValue());
 		backgroundOutline.setName(TAG_OUTLINES);
 		model2D.addChild(backgroundOutline);
+
+		Line lines = new Line( -0.5, -0.5, 0.5, -0.5, "lines" );
+		lines.setColor( Shape.COLOR_BLACK );
+		lines.setName(TAG_LINES);
+		model2D.addChild( lines );
 
 		return model2D;
 	}

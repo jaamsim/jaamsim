@@ -138,6 +138,16 @@ public class DisplayModelBG extends BranchGroup {
 		}
 	}
 
+	public void setNode_Points(String name, ArrayList<Vector3d> points){
+		Node node = getNode(name);
+		if(node == null)
+			return;
+
+		if(node instanceof Shape) {
+			((Shape)node).assignPointsPairs(points);
+		}
+	}
+
 	public void setNode_LineStyle(String name, int style){
 		Node node = getNode(name);
 		if(node == null)

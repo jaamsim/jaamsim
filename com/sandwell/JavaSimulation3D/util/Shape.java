@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation3D.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.media.j3d.Appearance;
@@ -25,6 +26,7 @@ import javax.media.j3d.RenderingAttributes;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.TransparencyAttributes;
 import javax.vecmath.Point3d;
+import javax.vecmath.Vector3d;
 
 import com.sandwell.JavaSimulation.DoubleVector;
 
@@ -657,6 +659,7 @@ public abstract class Shape extends BranchGroup {
 	}
 	public void setSize(double size){}
 	public void setSize(DoubleVector sizes){}
+	public void assignPointsPairs(ArrayList<Vector3d> points){}
 	public void setColor(ColoringAttributes [] colors){
 		this.setColor(colors[0]);
 	}
