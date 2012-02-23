@@ -184,9 +184,6 @@ public abstract class Simulation extends Entity {
 	 */
 	protected Simulation() {
 		Simulation.simState = SIM_STATE_UNCONFIGURED;
-
-		// Initialize global Entity references
-		Entity.setSimulation(this);
 		EventManager.setSimulation(this);
 
 		// Create clock

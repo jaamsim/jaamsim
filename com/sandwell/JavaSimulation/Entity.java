@@ -32,7 +32,6 @@ public class Entity {
 	private static final ArrayList<Entity> allInstances;
 	private static final HashMap<String, Entity> namedEntities;
 
-	static Simulation simulation;
 	private EventManager eventManager;
 
 	private String entityName;
@@ -97,10 +96,6 @@ public class Entity {
 		long seq = (long)Entity.getAll().size() << 32;
 		seq += entityCount;
 		return seq;
-	}
-
-	static void setSimulation(Simulation sim) {
-		simulation = sim;
 	}
 
 	public final double getCurrentTime() {
