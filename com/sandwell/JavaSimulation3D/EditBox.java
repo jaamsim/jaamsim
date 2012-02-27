@@ -434,7 +434,7 @@ public class EditBox extends FrameBox {
 			else if(defValue instanceof ColoringAttributes) {
 				Color3f color3f = new Color3f();
 				((ColoringAttributes)defValue).getColor(color3f);
-				defValString = color3f.toString();
+				defValString = String.format( "%.0f %.0f %.0f", color3f.x * 255, color3f.y * 255, color3f.z * 255 );
 			}
 			else if(defValue instanceof Vector3d) {
 				defValString = String.format( "%.3f %.3f %.3f", ((Vector3d)defValue).x, ((Vector3d)defValue).y, ((Vector3d)defValue).z );
