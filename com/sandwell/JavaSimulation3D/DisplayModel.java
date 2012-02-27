@@ -78,6 +78,7 @@ public class DisplayModel extends Entity {
 	public static final String TAG_BODY = "BODY";
 	public static final String TAG_SERVICE = "SERVICE";
 	public static final String TAG_LINES = "LINES";
+	public static final String TAG_SECONDARY_LINES = "SECONDARY_LINES";
 
 	private static final ArrayList<DisplayModel> allInstances;
 
@@ -194,6 +195,7 @@ public class DisplayModel extends Entity {
 		validTags.add(TAG_BODY);
 		validTags.add(TAG_SERVICE);
 		validTags.add(TAG_LINES);
+		validTags.add(TAG_SECONDARY_LINES);
 	}
 	{
 		shape = new StringInput( "Shape", "DisplayModel", null );
@@ -868,6 +870,11 @@ public class DisplayModel extends Entity {
 		lines.setColor( Shape.COLOR_BLACK );
 		lines.setName(TAG_LINES);
 		model2D.addChild( lines );
+
+		Line secondaryLines = new Line( -0.5, -0.5, 0.5, -0.5, "lines" );
+		secondaryLines.setColor( Shape.COLOR_BLACK );
+		secondaryLines.setName(TAG_SECONDARY_LINES);
+		model2D.addChild( secondaryLines );
 
 		return model2D;
 	}
