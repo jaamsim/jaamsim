@@ -1585,12 +1585,12 @@ public class DisplayModel extends Entity {
 		outlines.setName(TAG_OUTLINES);
 
 		// Part 1
-		Rectangle contentsFill = new Rectangle( 0.0, 0.10, 0.4, 0.4, Rectangle.SHAPE_FILLED, "contentsFill" );
+		Rectangle contentsFill = new Rectangle( 0.0, -0.10, 0.4, 0.4, Rectangle.SHAPE_FILLED, "contentsFill" );
 		contentsFill.setColor( 8 );
 		contentsFill.setLayer( 4 );
 		contents.addChild(contentsFill);
 
-		Rectangle contentsOutline = new Rectangle( 0.0, 0.10, 0.4, 0.4, Rectangle.SHAPE_OUTLINE, "contentsOutline" );
+		Rectangle contentsOutline = new Rectangle( 0.0, -0.10, 0.4, 0.4, Rectangle.SHAPE_OUTLINE, "contentsOutline" );
 		contentsOutline.setColor( 1 );
 		contentsOutline.setLayer( 5 );
 		outlines.addChild(contentsOutline);
@@ -1607,12 +1607,12 @@ public class DisplayModel extends Entity {
 		model2D.addChild(trackOutline);
 
 		// Part 3
-		Rectangle endFill = new Rectangle( 0.0, 0.40, 0.2, 0.2, Rectangle.SHAPE_FILLED, "endFill" );
+		Rectangle endFill = new Rectangle( 0.0, -0.40, 0.2, 0.2, Rectangle.SHAPE_FILLED, "endFill" );
 		endFill.setColor( 8 );
 		endFill.setLayer( 4 );
 		contents.addChild(endFill);
 
-		Rectangle endOutline = new Rectangle( 0.0, 0.40, 0.2, 0.2, Rectangle.SHAPE_OUTLINE, "endOutline" );
+		Rectangle endOutline = new Rectangle( 0.0, -0.40, 0.2, 0.2, Rectangle.SHAPE_OUTLINE, "endOutline" );
 		endOutline.setColor( 1 );
 		endOutline.setLayer( 5 );
 		outlines.addChild(endOutline);
