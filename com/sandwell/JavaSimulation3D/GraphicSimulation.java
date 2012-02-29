@@ -442,41 +442,6 @@ public class GraphicSimulation extends Simulation {
 		return view;
 	}
 
-	/** removes the specified window from the simulation
-	 *	@param view - the window displaying a Region in the simulation
-	 */
-
-	public void removeWindow( Sim3DWindow view ) {
-		synchronized (Sim3DWindow.allWindows) {
-			// it appears that dispose() can be called multiple times on a window,
-			// for now, just bail out early to avoid a racing removal between the
-			// two calls
-			if (Sim3DWindow.allWindows.size() == 0)
-				return;
-
-			Sim3DWindow.allWindows.remove( view );
-		}
-	}
-
-	/**
-	 *	finds the first window for the specified region
-	 *	@param region - the region to search for
-	 *	@return Sim3DWindow - the first window for the specified region.
-	 *   null if no window was found for the specified region.
-	 */
-	public Sim3DWindow getWindowForRegion( Region region ) {
-		// go through the list of windows and return the first for the specified region
-		synchronized (Sim3DWindow.allWindows) {
-			for (Sim3DWindow win : Sim3DWindow.allWindows) {
-				if( win.getRegion() == region )
-					return win;
-			}
-		}
-
-		// none were found, signify with null
-		return null;
-	}
-
 	/** visually registers the graphics for a region
 	 *   @param region - the region to have the graphics displayed
 	 */

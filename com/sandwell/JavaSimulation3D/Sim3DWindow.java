@@ -40,7 +40,7 @@ import javax.vecmath.Tuple3d;
  * region that defines the to be displayed. Plays the role of the view.
  */
 public class Sim3DWindow extends JFrame {
-	static final ArrayList<Sim3DWindow> allWindows = new ArrayList<Sim3DWindow>();
+	static final ArrayList<Sim3DWindow> allWindows;
 	static Sim3DWindow lastActiveWindow;
 
 	/** Branchgroup holding the view information and node */
@@ -60,6 +60,7 @@ public class Sim3DWindow extends JFrame {
 	private static final FocusListener focusListener;
 
 	static {
+		allWindows = new ArrayList<Sim3DWindow>();
 		keyListener = new ControlKeyListener();
 		focusListener = new FocusListener();
 	}
@@ -177,6 +178,13 @@ public class Sim3DWindow extends JFrame {
 	}
 
 	public void dispose() {
+		synchronized (allWindows) {
+			// guard against multiple calls to dispose
+			if (!allWindows.contains(this))
+				return;
+			allWindows.remove(this);
+		}
+
 		if (lastActiveWindow == this) {
 			lastActiveWindow = null;
 
@@ -192,7 +200,6 @@ public class Sim3DWindow extends JFrame {
 		region.decrementWindowCount();
 		super.dispose();
 		parentMenu.remove( selectWindow );
-		DisplayEntity.simulation.removeWindow( this );
 		parentMenu = null;
 		selectWindow = null;
 		modelView.getCanvas3D().removeMouseListener(picker);
@@ -243,6 +250,24 @@ public class Sim3DWindow extends JFrame {
 		// Position the viewer to the XY-plane position (preserving orbit radius)
 		behavior.setOrbitAngles(0.0d, 0.0d);
 		behavior.integrateTransforms();
+	}
+
+	/**
+	 * finds the first window for the specified region
+	 * @param region the region to search for
+	 * @return Sim3DWindow the first window for the specified region. null if
+	 * no window was found for the specified region.
+	 */
+	static Sim3DWindow getFirstWindow(Region region) {
+		synchronized (allWindows) {
+			for (Sim3DWindow win : allWindows) {
+				if (win.getRegion() == region)
+					return win;
+			}
+		}
+
+		// none were found, signify with null
+		return null;
 	}
 
 	public Region getRegion() {

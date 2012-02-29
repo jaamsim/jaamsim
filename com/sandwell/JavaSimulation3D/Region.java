@@ -458,7 +458,7 @@ public class Region extends DisplayEntity {
 			DoubleVector temp = Input.parseDoubleVector(data, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 			this.setDefaultCenter(temp.get(0), temp.get(1), temp.get(2));
 
-			Sim3DWindow window = simulation.getWindowForRegion( this );
+			Sim3DWindow window = Sim3DWindow.getFirstWindow(this);
 			if (window != null) {
 				OrbitBehavior ob = window.getBehavior();
 				ob.setOrbitCenter(defaultCenter);
@@ -486,7 +486,7 @@ public class Region extends DisplayEntity {
 			DoubleVector temp = Input.parseDoubleVector(data, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 			this.setDefaultViewer(temp.get(0), temp.get(1), temp.get(2));
 
-			Sim3DWindow window = simulation.getWindowForRegion(this);
+			Sim3DWindow window = Sim3DWindow.getFirstWindow(this);
 			if (window != null) {
 				OrbitBehavior ob = window.getBehavior();
 				ob.setViewer(defaultViewer);
@@ -517,7 +517,7 @@ public class Region extends DisplayEntity {
 				throw new InputErrorException( (("The value for " + getName()) + " UPVECTOR is invalid") );
 			}
 
-			Sim3DWindow window = simulation.getWindowForRegion(this);
+			Sim3DWindow window = Sim3DWindow.getFirstWindow(this);
 			if (window != null) {
 				OrbitBehavior ob = window.getBehavior();
 				ob.setFOV(defaultFieldOfView);
@@ -551,7 +551,7 @@ public class Region extends DisplayEntity {
 			int y = Input.parseInteger(data.get(1));
 			setDefaultWindowPos(new Point(x, y));
 
-			Sim3DWindow window = simulation.getWindowForRegion(this);
+			Sim3DWindow window = Sim3DWindow.getFirstWindow(this);
 			if (window != null) {
 				window.setLocation(new Point(x, y));
 			}
@@ -564,7 +564,7 @@ public class Region extends DisplayEntity {
 			int y = Input.parseInteger(data.get(1));
 			setDefaultWindowSize(new Point(x, y));
 
-			Sim3DWindow window = simulation.getWindowForRegion(this);
+			Sim3DWindow window = Sim3DWindow.getFirstWindow(this);
 			if (window != null) {
 				window.setSize(x, y);
 			}
@@ -675,7 +675,7 @@ public class Region extends DisplayEntity {
 					}
 				}
 				else {
-					Sim3DWindow window = simulation.getWindowForRegion( this );
+					Sim3DWindow window = Sim3DWindow.getFirstWindow(this);
 					if( window != null ) {
 
 						// Close the window
@@ -695,7 +695,7 @@ public class Region extends DisplayEntity {
 		if( "MOVETOFRONT".equalsIgnoreCase( keyword ) ) {
 			Input.assertCount(data, 1);
 			boolean toFront = Input.parseBoolean(data.get(0));
-			Sim3DWindow window = simulation.getWindowForRegion( this );
+			Sim3DWindow window = Sim3DWindow.getFirstWindow(this);
 			if( window != null ) {
 				if( toFront ) {
 					window.toFront();
@@ -839,7 +839,7 @@ public class Region extends DisplayEntity {
 
 		// Is a script running?
 		if( getCurrentTime() > 0.0 ) {
-			Sim3DWindow window = simulation.getWindowForRegion( this );
+			Sim3DWindow window = Sim3DWindow.getFirstWindow(this);
 			if( window != null ) {
 				window.toFront();
 
@@ -875,7 +875,7 @@ public class Region extends DisplayEntity {
 
 		// Is a script running?
 		if( getCurrentTime() > 0.0 ) {
-			Sim3DWindow window = simulation.getWindowForRegion( this );
+			Sim3DWindow window = Sim3DWindow.getFirstWindow(this);
 			if( window != null ) {
 				window.toFront();
 
@@ -911,7 +911,7 @@ public class Region extends DisplayEntity {
 
 		// Is a script running?
 		if( getCurrentTime() > 0.0 ) {
-			Sim3DWindow window = simulation.getWindowForRegion( this );
+			Sim3DWindow window = Sim3DWindow.getFirstWindow(this);
 			if( window != null ) {
 				window.toFront();
 
