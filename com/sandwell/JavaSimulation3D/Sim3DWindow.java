@@ -52,11 +52,13 @@ public class Sim3DWindow extends JFrame {
 
 	private static final ControlKeyListener keyListener;
 	private static final FocusListener focusListener;
+	private static final CompListener compListener;
 
 	static {
 		allWindows = new ArrayList<Sim3DWindow>();
 		keyListener = new ControlKeyListener();
 		focusListener = new FocusListener();
+		compListener = new CompListener();
 	}
 
 	/** Constructor for the 3D window.  Sub-classes internalframe to add custom
@@ -114,51 +116,7 @@ public class Sim3DWindow extends JFrame {
 
 		addKeyListener(keyListener);
 		addWindowFocusListener(focusListener);
-
-		addComponentListener( new ComponentListener() {
-
-			// The window goes hidden
-			public void componentHidden( ComponentEvent e ) {}
-
-			// While the window is moving ( this should trigger after the window moved though; this is a known bug in Java )
-			public void componentMoved( ComponentEvent e ) {
-				//System.out.println( "componentMoved " );
-				if( interactiveLocationChange ) {
-					behavior.updateBehaviour();
-					behavior.storeUndoSteps();
-					region.updateWindowPosInput();
-				}
-				else {
-					interactiveLocationChange = true;
-				}
-			}
-
-			// After window is resized
-			public void componentResized( ComponentEvent e ) {
-				//System.out.println( "componentResized " );
-
-				// scale the viewer position to the aspect ratio of the window
-				// J3D uses Window width as the determiner for model scale
-				// we will apply the aspect ratio to the height to have the view
-				// work with changes to the vertical extent of the window
-
-				if( interactiveSizeChange ) {
-					behavior.updateBehaviour();
-					behavior.storeUndoSteps();
-					resizeTriggered = true;
-					region.updateWindowSizeInput();
-				}
-
-				// program changed the size of the window
-				else {
-					interactiveSizeChange = true;
-				}
-//				System.out.println( "FOV:" + behavior.getFOV() + " Viewer: " + behavior.getViewerPosition() + " Center: " + behavior.getCenterPosition() );
-			}
-
-			// Window goes visible
-			public void componentShown( ComponentEvent e ) {}
-		} );
+		addComponentListener(compListener);
 	}
 
 	public void dispose() {
@@ -181,6 +139,7 @@ public class Sim3DWindow extends JFrame {
 		removeKeyListener(keyListener);
 
 		this.getContentPane().removeAll();
+		removeComponentListener(compListener);
 		region.decrementWindowCount();
 		super.dispose();
 		modelView.getCanvas3D().removeMouseListener(picker);
@@ -358,5 +317,46 @@ public class Sim3DWindow extends JFrame {
 
 		public void keyPressed(KeyEvent e) {}
 		public void keyTyped(KeyEvent e) {}
+	}
+
+	private static class CompListener implements ComponentListener {
+		public void componentShown(ComponentEvent e) {}
+		public void componentHidden(ComponentEvent e) {}
+
+		public void componentMoved(ComponentEvent e) {
+			Sim3DWindow win = (Sim3DWindow)e.getSource();
+			//System.out.println( "componentMoved " );
+			if( win.interactiveLocationChange ) {
+				win.behavior.updateBehaviour();
+				win.behavior.storeUndoSteps();
+				win.region.updateWindowPosInput();
+			}
+			else {
+				win.interactiveLocationChange = true;
+			}
+
+		}
+
+		public void componentResized(ComponentEvent e) {
+			Sim3DWindow win = (Sim3DWindow)e.getSource();
+			//System.out.println( "componentResized " );
+
+			// scale the viewer position to the aspect ratio of the window
+			// J3D uses Window width as the determiner for model scale
+			// we will apply the aspect ratio to the height to have the view
+			// work with changes to the vertical extent of the window
+
+			if( win.interactiveSizeChange ) {
+				win.behavior.updateBehaviour();
+				win.behavior.storeUndoSteps();
+				win.resizeTriggered = true;
+				win.region.updateWindowSizeInput();
+			}
+
+			// program changed the size of the window
+			else {
+				win.interactiveSizeChange = true;
+			}
+		}
 	}
 }
