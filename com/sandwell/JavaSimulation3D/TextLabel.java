@@ -91,11 +91,6 @@ public class TextLabel extends DisplayEntity  {
 	}
 
 
-	public void earlyInit() {
-		super.earlyInit();
-		this.enterRegion();
-	}
-
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
 

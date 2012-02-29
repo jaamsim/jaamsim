@@ -330,7 +330,6 @@ public class Graph extends DisplayEntity  {
 		legendCenter= new Vector3d(0,0,0);			// TopLeft corner of the legend
 		legendSize = null;			// size of legend
 		legendMarkerSize = null;
-		this.enterRegion();
 	}
 
 	public static ArrayList<? extends Graph> getAll() {

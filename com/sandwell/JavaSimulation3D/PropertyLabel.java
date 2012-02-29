@@ -112,7 +112,6 @@ public class PropertyLabel extends TextLabel  {
 			throw new InputErrorException( "Method:" + targetEntity.getValue() + "." + targetMethodName.getValue() + " does not exist" );
 		}
 		this.initializeGraphics();
-		this.enterRegion();
 	}
 
 	String getRenderText(double time) {

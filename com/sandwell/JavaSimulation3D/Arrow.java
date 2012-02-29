@@ -86,7 +86,6 @@ public class Arrow extends DisplayEntity {
 		this.killMouseNodes();
 		this.validateStartAndEndCoords();
 		this.setGraphicsForStartPt_EndPt(startCoord, endCoord);
-		this.enterRegion();
 	}
 
 	// ******************************************************************************************************

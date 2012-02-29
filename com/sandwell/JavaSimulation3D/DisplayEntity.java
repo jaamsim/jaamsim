@@ -304,6 +304,9 @@ public class DisplayEntity extends Entity {
 			defList.add(dm);
 			displayModelList.setDefaultValue(defList);
 		}
+
+		if( currentRegion != null )
+			this.enterRegion();
 	}
 
 	public static ArrayList<? extends DisplayEntity> getAll() {
