@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation3D;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -24,13 +25,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.util.ArrayList;
 
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Locale;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.vecmath.Tuple3d;
-
-import java.awt.Point;
 
 
 /**
@@ -38,6 +40,7 @@ import java.awt.Point;
  * region that defines the to be displayed. Plays the role of the view.
  */
 public class Sim3DWindow extends JFrame {
+	static final ArrayList<Sim3DWindow> allWindows = new ArrayList<Sim3DWindow>();
 	static Sim3DWindow lastActiveWindow;
 
 	/** Branchgroup holding the view information and node */

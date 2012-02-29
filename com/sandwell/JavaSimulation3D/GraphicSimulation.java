@@ -87,9 +87,6 @@ public class GraphicSimulation extends Simulation {
 	private final BranchGroup globalGroup;
 	private final Background background;
 
-	/** list of all the active windows */
-	private ArrayList<Sim3DWindow> windowList;
-
 	private boolean captureFlag = false;  // true when capturing is in progress
 	private final TimeInput captureInterval; // simulated time between screen captures
 	private final DoubleInput captureQuality;  // jpeg quality from 0.0f to 1.0f
@@ -204,7 +201,6 @@ public class GraphicSimulation extends Simulation {
 		// Compile top-level group
 		globalGroup.compile();
 		rootLocale.addBranchGraph(globalGroup);
-		windowList = new ArrayList<Sim3DWindow>();
 
 		guiFrame.updateForSimulationState();
 
@@ -347,10 +343,10 @@ public class GraphicSimulation extends Simulation {
 		skyAppearance.setTexture( null );
 
 		// close all windows
-		while( windowList.size() > 0 ) {
-			windowList.get(0).dispose();
+		while( Sim3DWindow.allWindows.size() > 0 ) {
+			Sim3DWindow.allWindows.get(0).dispose();
 		}
-		windowList.clear();
+		Sim3DWindow.allWindows.clear();
 
 		// Kill all entities except simulation
 		while(Entity.getAll().size() > 1) {
@@ -436,8 +432,8 @@ public class GraphicSimulation extends Simulation {
 		Sim3DWindow view = new Sim3DWindow( region, rootLocale);
 
 		view.setParentMenu( guiFrame.getWindowList() );
-		synchronized (windowList) {
-			windowList.add( view );
+		synchronized (Sim3DWindow.allWindows) {
+			Sim3DWindow.allWindows.add( view );
 		}
 
 		GraphicsUpdateBehavior.forceUpdate = true;
@@ -451,14 +447,14 @@ public class GraphicSimulation extends Simulation {
 	 */
 
 	public void removeWindow( Sim3DWindow view ) {
-		synchronized (windowList) {
+		synchronized (Sim3DWindow.allWindows) {
 			// it appears that dispose() can be called multiple times on a window,
 			// for now, just bail out early to avoid a racing removal between the
 			// two calls
-			if (windowList.size() == 0)
+			if (Sim3DWindow.allWindows.size() == 0)
 				return;
 
-			windowList.remove( view );
+			Sim3DWindow.allWindows.remove( view );
 		}
 	}
 
@@ -470,8 +466,8 @@ public class GraphicSimulation extends Simulation {
 	 */
 	public Sim3DWindow getWindowForRegion( Region region ) {
 		// go through the list of windows and return the first for the specified region
-		synchronized (windowList) {
-			for (Sim3DWindow win : windowList) {
+		synchronized (Sim3DWindow.allWindows) {
+			for (Sim3DWindow win : Sim3DWindow.allWindows) {
 				if( win.getRegion() == region )
 					return win;
 			}
