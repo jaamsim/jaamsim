@@ -126,7 +126,7 @@ public class PickingListener implements MouseListener {
 
 		// Only add TextLabels from textLabels list to the results
 		for (DisplayEntity each : textLabels) {
-			if (each instanceof TextLabel)
+			if (each instanceof TextLabel && !results.contains(each))
 				results.add(each);
 		}
 
