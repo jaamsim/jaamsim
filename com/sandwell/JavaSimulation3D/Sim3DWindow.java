@@ -17,8 +17,6 @@ package com.sandwell.JavaSimulation3D;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -30,8 +28,6 @@ import java.util.ArrayList;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Locale;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.vecmath.Tuple3d;
 
 
@@ -46,8 +42,6 @@ public class Sim3DWindow extends JFrame {
 	/** Branchgroup holding the view information and node */
 	private ModelView modelView;
 	private Region region;
-	private JMenuItem selectWindow;
-	private JMenu parentMenu;
 
 	public OrbitBehavior behavior;          // maintains viewer for the window's 3D graphics
 
@@ -73,16 +67,6 @@ public class Sim3DWindow extends JFrame {
 		region = newRegion;
 
 		setIconImage(GUIFrame.getWindowIcon());
-
-		// Create a menu item for this window
-		selectWindow = new JMenuItem(this.getTitle());
-		selectWindow.addActionListener( new ActionListener() {
-
-			public void actionPerformed( ActionEvent event ) {
-				setExtendedState( JFrame.NORMAL );
-				toFront();
-			}
-		} );
 
 		if( newRegion.getStatusBar() != null )
 			getContentPane().add( newRegion.getStatusBar(), BorderLayout.SOUTH );
@@ -199,9 +183,6 @@ public class Sim3DWindow extends JFrame {
 		this.getContentPane().removeAll();
 		region.decrementWindowCount();
 		super.dispose();
-		parentMenu.remove( selectWindow );
-		parentMenu = null;
-		selectWindow = null;
 		modelView.getCanvas3D().removeMouseListener(picker);
 		picker.destroy();
 		picker = null;
@@ -225,17 +206,8 @@ public class Sim3DWindow extends JFrame {
 		//        System.out.println( "Finished dispose in: " + this.getTitle() );
 	}
 
-	public JMenuItem getSelectItem() {
-		return selectWindow;
-	}
-
 	public PickingListener getPicker() {
 		return picker;
-	}
-
-	public void setParentMenu( JMenu newParentMenu ) {
-		parentMenu = newParentMenu;
-		parentMenu.add( selectWindow );
 	}
 
 	public void setViewerToIsometric() {

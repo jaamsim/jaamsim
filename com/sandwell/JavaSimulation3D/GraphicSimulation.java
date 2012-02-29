@@ -431,7 +431,6 @@ public class GraphicSimulation extends Simulation {
 	public Sim3DWindow spawnWindow( Region region ) {
 		Sim3DWindow view = new Sim3DWindow( region, rootLocale);
 
-		view.setParentMenu( guiFrame.getWindowList() );
 		synchronized (Sim3DWindow.allWindows) {
 			Sim3DWindow.allWindows.add( view );
 		}

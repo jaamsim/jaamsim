@@ -402,7 +402,7 @@ public class GUIFrame extends JFrame {
 		windowMenu.add( regionList );
 
 		// Initialize list of windows
-		windowList = new JMenu( "Select Window" );
+		windowList = new WindowMenu("Select Window");
 		windowList.setMnemonic( 'S' );
 		windowMenu.add( windowList );
 
@@ -762,6 +762,42 @@ public class GUIFrame extends JFrame {
 		getContentPane().add( mainToolBar, BorderLayout.NORTH );
 	}
 
+private static class WindowMenu extends JMenu implements MenuListener {
+WindowMenu(String text) {
+	super(text);
+	this.addMenuListener(this);
+}
+
+public void menuCanceled(MenuEvent arg0) {}
+
+public void menuDeselected(MenuEvent arg0) {
+	this.removeAll();
+}
+
+
+public void menuSelected(MenuEvent arg0) {
+	synchronized (Sim3DWindow.allWindows) {
+		for (Sim3DWindow each : Sim3DWindow.allWindows)
+			this.add(new WindowSelector(each));
+	}
+}
+}
+
+private static class WindowSelector extends JMenuItem implements ActionListener {
+private final Sim3DWindow window;
+
+WindowSelector(Sim3DWindow win) {
+	window = win;
+	this.setText(window.getTitle());
+	this.addActionListener(this);
+}
+
+public void actionPerformed(ActionEvent e) {
+	window.setExtendedState( JFrame.NORMAL );
+	window.toFront();
+}
+}
+
 	private static class RegionMenu extends JMenu implements MenuListener {
 
 		RegionMenu(String text) {
@@ -849,11 +885,6 @@ public class GUIFrame extends JFrame {
 
 		// Add the status bar to the window
 		getContentPane().add( statusBar, BorderLayout.SOUTH );
-	}
-
-	public JMenu getWindowList() {
-
-		return windowList;
 	}
 
 	public void setClock( double clockContents ) {
