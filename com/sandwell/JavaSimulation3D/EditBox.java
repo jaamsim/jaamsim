@@ -348,10 +348,7 @@ public class EditBox extends FrameBox {
 			row++;
 		}
 
-		JPanel jp = new JPanel();
-		jp.setLayout(new BorderLayout(5,5));
-		jp.add(propTable, BorderLayout.CENTER);
-		JScrollPane jScrollPane = new JScrollPane(jp);
+		JScrollPane jScrollPane = new JScrollPane(propTable);
 		jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
 		jScrollPane.setColumnHeaderView( propTable.getTableHeader());
 		return jScrollPane;
@@ -374,7 +371,7 @@ public class EditBox extends FrameBox {
 		setTitle( String.format("Input Editor - %s", currentEntity) );
 
 		String currentCategory = jTabbedPane.getTitleAt(jTabbedPane.getSelectedIndex());
-		JTable propTable = (JTable)((JPanel)((JScrollPane)jTabbedPane.getComponentAt(presentPage)).getViewport().getComponent(0)).getComponent(0);
+		JTable propTable = (JTable)(((JScrollPane)jTabbedPane.getComponentAt(presentPage)).getViewport()).getComponent(0);
 
 		int row = 0;
 		for( Input<?> in : currentEntity.getEditableInputs() ) {
