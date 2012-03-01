@@ -679,7 +679,7 @@ public class Region extends DisplayEntity {
 					if( window != null ) {
 
 						// Close the window
-						window.dispose();
+						window.setVisible(false);
 					}
 				}
 			}

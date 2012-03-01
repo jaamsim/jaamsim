@@ -73,7 +73,7 @@ public class Sim3DWindow extends JFrame {
 		if( newRegion.getStatusBar() != null )
 			getContentPane().add( newRegion.getStatusBar(), BorderLayout.SOUTH );
 
-		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
+		setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
 		newRegion.setupViewer();
 		Point size = region.getCurrentWindowSize();
 		setSize( size.x, size.y );
@@ -125,6 +125,7 @@ public class Sim3DWindow extends JFrame {
 			if (!allWindows.contains(this))
 				return;
 			allWindows.remove(this);
+			modelView.detach();
 		}
 
 		if (lastActiveWindow == this) {
@@ -149,7 +150,6 @@ public class Sim3DWindow extends JFrame {
 		modelView.getCanvas3D().removeMouseMotionListener( behavior );
 		modelView.getCanvas3D().removeMouseWheelListener( behavior );
 		behavior.destroy();
-		modelView.detach();
 		modelView.destroy();
 		modelView = null;
 		region.setCurrentCenter( behavior.getCenterPosition() );
@@ -199,6 +199,13 @@ public class Sim3DWindow extends JFrame {
 
 		// none were found, signify with null
 		return null;
+	}
+
+	static void closeAll() {
+		synchronized (allWindows) {
+			for (Sim3DWindow each : allWindows)
+				each.setVisible(false);
+		}
 	}
 
 	public Region getRegion() {
@@ -321,7 +328,10 @@ public class Sim3DWindow extends JFrame {
 
 	private static class CompListener implements ComponentListener {
 		public void componentShown(ComponentEvent e) {}
-		public void componentHidden(ComponentEvent e) {}
+		public void componentHidden(ComponentEvent e) {
+			Sim3DWindow win = (Sim3DWindow)e.getSource();
+			win.dispose();
+		}
 
 		public void componentMoved(ComponentEvent e) {
 			Sim3DWindow win = (Sim3DWindow)e.getSource();

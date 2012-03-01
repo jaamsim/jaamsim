@@ -342,11 +342,7 @@ public class GraphicSimulation extends Simulation {
 		// remove the sky
 		skyAppearance.setTexture( null );
 
-		// close all windows
-		while( Sim3DWindow.allWindows.size() > 0 ) {
-			Sim3DWindow.allWindows.get(0).dispose();
-		}
-		Sim3DWindow.allWindows.clear();
+		Sim3DWindow.closeAll();
 
 		// Kill all entities except simulation
 		while(Entity.getAll().size() > 1) {
