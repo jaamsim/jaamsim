@@ -420,23 +420,6 @@ public class GraphicSimulation extends Simulation {
 		}
 	}
 
-	/**
-	 * Call this function to create a new view.
-	 * @param region - the Region that is the basis for the view
-	 */
-	public Sim3DWindow spawnWindow( Region region ) {
-		Sim3DWindow view = new Sim3DWindow(region);
-
-		synchronized (Sim3DWindow.allWindows) {
-			Sim3DWindow.allWindows.add( view );
-		}
-
-		GraphicsUpdateBehavior.forceUpdate = true;
-		view.setVisible(true);
-
-		return view;
-	}
-
 	/** visually registers the graphics for a region
 	 *   @param region - the region to have the graphics displayed
 	 */
@@ -538,7 +521,7 @@ public class GraphicSimulation extends Simulation {
 			each.setViewerToDefault();
 			if( each.showWindowOnStartup() )
 				if( each.getNumWindowsAlive() == 0 )
-					spawnWindow( each );
+					Sim3DWindow.spawnWindow(each);
 		}
 	}
 

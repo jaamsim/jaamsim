@@ -828,7 +828,7 @@ public void actionPerformed(ActionEvent e) {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			DisplayEntity.simulation.spawnWindow(region);
+			Sim3DWindow.spawnWindow(region);
 		}
 	}
 
@@ -1189,7 +1189,7 @@ public void actionPerformed(ActionEvent e) {
 
 	public static void displayWindows() {
 		EntityPallet.getInstance().setVisible(true);
-		DisplayEntity.simulation.spawnWindow( DisplayEntity.simulation.getDefaultRegion() );
+		Sim3DWindow.spawnWindow(DisplayEntity.simulation.getDefaultRegion());
 		EditBox.getInstance().setVisible(true);
 		ObjectSelector.getInstance().setVisible(true);
 		InfoBox.getInstance().setVisible(true);

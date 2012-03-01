@@ -669,9 +669,7 @@ public class Region extends DisplayEntity {
 			if( getCurrentTime() > 0.0 ) {
 				if( showOnStartup ) {
 					if( this.getNumWindowsAlive() == 0 ) {
-
-						// Open the window
-						simulation.spawnWindow( this );
+						Sim3DWindow.spawnWindow(this);
 					}
 				}
 				else {

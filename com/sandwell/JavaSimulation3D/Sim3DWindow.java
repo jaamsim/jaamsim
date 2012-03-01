@@ -63,7 +63,7 @@ public class Sim3DWindow extends JFrame {
 	/** Constructor for the 3D window.  Sub-classes internalframe to add custom
 	 *  constructor code to register itself with the view manager (to be added)
 	 */
-	public Sim3DWindow( Region newRegion) {
+	private Sim3DWindow(Region newRegion) {
 		super( newRegion.newWindowName() );
 		region = newRegion;
 
@@ -180,6 +180,18 @@ public class Sim3DWindow extends JFrame {
 		// Position the viewer to the XY-plane position (preserving orbit radius)
 		behavior.setOrbitAngles(0.0d, 0.0d);
 		behavior.integrateTransforms();
+	}
+
+	public static Sim3DWindow spawnWindow(Region region) {
+		Sim3DWindow view = new Sim3DWindow(region);
+		synchronized (Sim3DWindow.allWindows) {
+			Sim3DWindow.allWindows.add(view);
+		}
+		view.setVisible(true);
+
+		GraphicsUpdateBehavior.forceUpdate = true;
+
+		return view;
 	}
 
 	/**
