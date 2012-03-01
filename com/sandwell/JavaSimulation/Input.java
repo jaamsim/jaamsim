@@ -800,6 +800,21 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
 	}
 
+	public static void validateIndexedLists(DoubleVector keys, IntegerVector values, String keyName, String valueName)
+	throws InputErrorException {
+		// If no values set, no validation to be done
+		if (values == null)
+			return;
+
+		// values are set but indexed list has not
+		if (keys == null)
+			throw new InputErrorException(INP_VAL_LISTSET, valueName, keyName);
+
+		// Both are set, but of differing size
+		if (keys.size() != values.size())
+			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
+	}
+
 	public static void validateIndexedLists(DoubleVector keys, BooleanVector values, String keyName, String valueName)
 	throws InputErrorException {
 		// If no values set, no validation to be done
