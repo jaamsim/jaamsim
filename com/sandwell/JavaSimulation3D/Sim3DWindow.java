@@ -26,7 +26,6 @@ import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 
 import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Locale;
 import javax.swing.JFrame;
 import javax.vecmath.Tuple3d;
 
@@ -64,7 +63,7 @@ public class Sim3DWindow extends JFrame {
 	/** Constructor for the 3D window.  Sub-classes internalframe to add custom
 	 *  constructor code to register itself with the view manager (to be added)
 	 */
-	public Sim3DWindow( Region newRegion, Locale locale) {
+	public Sim3DWindow( Region newRegion) {
 		super( newRegion.newWindowName() );
 		region = newRegion;
 
@@ -97,7 +96,7 @@ public class Sim3DWindow extends JFrame {
 		region.addBranchGroup( modelView );
 
 		// Add picking tool
-		picker = new PickingListener(modelView.getCanvas3D(), locale);
+		picker = new PickingListener(modelView.getCanvas3D());
 		modelView.getCanvas3D().addMouseListener( picker );
 
 		// Add convas to frame

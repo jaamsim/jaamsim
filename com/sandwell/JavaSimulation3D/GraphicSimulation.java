@@ -83,7 +83,7 @@ public class GraphicSimulation extends Simulation {
 
 	// Java3d base objects
 	private final VirtualUniverse universe;
-	private final Locale rootLocale;
+	final Locale rootLocale;
 	private final BranchGroup globalGroup;
 	private final Background background;
 
@@ -425,7 +425,7 @@ public class GraphicSimulation extends Simulation {
 	 * @param region - the Region that is the basis for the view
 	 */
 	public Sim3DWindow spawnWindow( Region region ) {
-		Sim3DWindow view = new Sim3DWindow( region, rootLocale);
+		Sim3DWindow view = new Sim3DWindow(region);
 
 		synchronized (Sim3DWindow.allWindows) {
 			Sim3DWindow.allWindows.add( view );

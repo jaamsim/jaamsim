@@ -26,7 +26,6 @@ import java.awt.event.MouseListener;
 import javax.media.j3d.Link;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.CapabilityNotSetException;
-import javax.media.j3d.Locale;
 import javax.media.j3d.Node;
 import javax.media.j3d.SceneGraphPath;
 import javax.swing.JMenuItem;
@@ -44,8 +43,8 @@ public class PickingListener implements MouseListener {
 	private PickCanvas pickCanvas;
 	private final JPopupMenu menu;
 
-	public PickingListener(Canvas3D target, Locale locale) {
-		pickCanvas = new PickCanvas( target, locale );
+	public PickingListener(Canvas3D target) {
+		pickCanvas = new PickCanvas( target, DisplayEntity.simulation.rootLocale );
 		// pickCanvas.setMode( PickTool.BOUNDS ); // Pick the object based on its bounding box (Huge for objects which are at an angle)
 		// pickCanvas.setMode(PickTool.GEOMETRY); // This one works better, but still picks over too large an area
 		pickCanvas.setMode(PickTool.GEOMETRY_INTERSECT_INFO); // Pick the object based on its geometry
