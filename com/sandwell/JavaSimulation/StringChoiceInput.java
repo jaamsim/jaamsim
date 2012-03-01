@@ -44,6 +44,10 @@ public class StringChoiceInput extends IntegerInput {
 		return choices.get(value);
 	}
 
+	public String getDefaultChoice() {
+		return choices.get(defValue);
+	}
+
 	public void setChoices(ArrayList<String> list) {
 		choices = list;
 	}

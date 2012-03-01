@@ -437,6 +437,9 @@ public class EditBox extends FrameBox {
 			else if(defValue instanceof Vector3d) {
 				defValString = String.format( "%.3f %.3f %.3f", ((Vector3d)defValue).x, ((Vector3d)defValue).y, ((Vector3d)defValue).z );
 			}
+			else if(in instanceof StringChoiceInput) {
+				return ((StringChoiceInput)in).getDefaultChoice();
+			}
 		}
 		return defValString;
 	}
