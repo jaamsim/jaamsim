@@ -1402,6 +1402,7 @@ public class InputAgent {
 			tokens.add(0, "{");
 			tokens.add("}");
 		}
+		removeComments(tokens);
 		tokens.add(0, ent.getInputName());
 		tokens.add(1, in.getKeyword());
 
