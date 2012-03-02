@@ -274,6 +274,9 @@ public class EditBox extends FrameBox {
 
 		propTable.getColumnModel().getColumn( 0 ).setCellRenderer( cellRenderer ) ;
 
+		propTable.getTableHeader().setBackground(HEADER_COLOR);
+		propTable.getTableHeader().setReorderingAllowed(false);
+
 		return propTable;
 	}
 
@@ -329,7 +332,6 @@ public class EditBox extends FrameBox {
 		}
 
 		JTable propTable = this.buildProbTable( categoryCount  );
-		propTable.getTableHeader().setBackground(HEADER_COLOR);
 
 		int row = 0;
 

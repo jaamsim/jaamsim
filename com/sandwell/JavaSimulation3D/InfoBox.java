@@ -52,6 +52,7 @@ public class InfoBox extends FrameBox {
 
 		propTable.getColumnModel().getColumn( 0 ).setHeaderValue( "<html><b style=\"align=center;font-family:verdana;\">Property</b><html>" );
 		propTable.getColumnModel().getColumn( 1 ).setHeaderValue( "<html><b style=\"align=center;font-family:verdana;\">Value</b><html>" );
+		propTable.getTableHeader().setReorderingAllowed(false);
 
 		// Set the location of the window
 		pack();

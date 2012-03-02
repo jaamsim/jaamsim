@@ -145,6 +145,7 @@ public class PropertyBox extends FrameBox {
 		propTable.getColumnModel().getColumn( 2 ).setHeaderValue( "Value" );
 		propTable.getTableHeader().setBackground( HEADER_COLOR );
 		propTable.getTableHeader().setFont(propTable.getFont().deriveFont(Font.BOLD));
+		propTable.getTableHeader().setReorderingAllowed(false);
 
 		propTable.addMouseListener( new MouseInputListener() {
 			public void mouseEntered( MouseEvent e ) {
