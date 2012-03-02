@@ -250,7 +250,6 @@ public class EditBox extends FrameBox {
 		propTable.getColumnModel().setColumnMargin( 20 );
 		propTable.setSelectionBackground( Color.WHITE );
 		propTable.setSelectionForeground( Color.BLACK );
-		propTable.setAutoResizeMode( JTable.AUTO_RESIZE_NEXT_COLUMN );
 		propTable.setRowSelectionAllowed( false );
 
 		// Set DefaultCellEditor that can process FOCUS events.
@@ -263,11 +262,11 @@ public class EditBox extends FrameBox {
 
 		// Set keyword table column headers
 		propTable.getColumnModel().getColumn( 0 ).setHeaderValue( "<html> <b> Keyword </b>" );
-		propTable.getColumnModel().getColumn( 0 ).setPreferredWidth( userColWidth[ 0 ] );
+		propTable.getColumnModel().getColumn( 0 ).setWidth( userColWidth[ 0 ] );
 		propTable.getColumnModel().getColumn( 1 ).setHeaderValue( "<html> <b> Default </b>" );
-		propTable.getColumnModel().getColumn( 1 ).setPreferredWidth( userColWidth[ 1 ] );
+		propTable.getColumnModel().getColumn( 1 ).setWidth( userColWidth[ 1 ] );
 		propTable.getColumnModel().getColumn( 2 ).setHeaderValue( "<html> <b> Value </b>" );
-		propTable.getColumnModel().getColumn( 2 ).setPreferredWidth( userColWidth[ 2 ] );
+		propTable.getColumnModel().getColumn( 2 ).setWidth( userColWidth[ 2 ] );
 		propTable.addKeyListener(helpKeyListener);
 
 		// Listen for table changes
@@ -501,6 +500,18 @@ public class EditBox extends FrameBox {
 	public static class MyJTable extends JTable {
 		private DefaultCellEditor dropDownEditor;
 		private ColorEditor colorEditor;
+
+		public void doLayout() {
+			int lastColumnWidth = this.getColumnModel().getColumn(
+					EditBox.VALUE_COLUMN).getWidth();
+			int delta = this.getSize().width -
+					this.getColumnModel().getColumn(0).getWidth() -
+					this.getColumnModel().getColumn(1).getWidth() -
+					lastColumnWidth;
+			lastColumnWidth += delta;
+			this.getColumnModel().getColumn(EditBox.VALUE_COLUMN).setWidth(
+					lastColumnWidth);
+		}
 
 		public boolean isCellEditable( int row, int column ) {
 			return ( column == VALUE_COLUMN ); // Only Value column is editable
