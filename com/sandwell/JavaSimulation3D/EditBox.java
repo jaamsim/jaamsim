@@ -85,7 +85,7 @@ public class EditBox extends FrameBox {
 	 * userColWidth[ 1 ] = user modified width of column 1 (defaults units column)
 	 * userColWidth[ 2 ] = user modified width of column 2 (values column)
 	 */
-	private int[] userColWidth = { 200, 100, 500 };
+	private int[] userColWidth = { 150, 150, 150 };
 
 	private EditBox() {
 
