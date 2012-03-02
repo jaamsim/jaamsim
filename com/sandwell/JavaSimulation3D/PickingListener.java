@@ -117,13 +117,13 @@ public class PickingListener implements MouseListener {
 	 */
 	private ArrayList<DisplayEntity> getEntityList(MouseEvent e) {
 
-		// 1) All objects but TextLabels are pickable by their geometry
+		// 1) All objects but TextLabels(not selected) are pickable by their geometry
 		ArrayList<DisplayEntity> results = this.getEntityList_ForPickTool(e, PickTool.GEOMETRY_INTERSECT_INFO);
 
 		// 2) TextLabel is only pickable by its bounding box (this picks a lot more objects, but we only need the TextLabels)
 		ArrayList<DisplayEntity> textLabels = this.getEntityList_ForPickTool(e, PickTool.BOUNDS);
 
-		// Only add TextLabels from textLabels list to the results
+		// Only add non existence TextLabels from textLabels list to the results
 		for (DisplayEntity each : textLabels) {
 			if (each instanceof TextLabel && !results.contains(each))
 				results.add(each);
