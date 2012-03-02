@@ -549,6 +549,10 @@ public class EditBox extends FrameBox {
 				model.removeAllElements();
 				ArrayList<String> array = in.getValidOptions();
 				for(String each: array) {
+
+					// Space inside the font name
+					if( each.contains(" ") )
+						each = String.format("'%s'", each);
 					model.addElement(each);
 				}
 				return new DefaultCellEditor(dropDown);

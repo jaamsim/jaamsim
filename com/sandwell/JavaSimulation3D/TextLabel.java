@@ -15,6 +15,9 @@
 package com.sandwell.JavaSimulation3D;
 
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.vecmath.Vector3d;
 
@@ -22,6 +25,7 @@ import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
+import com.sandwell.JavaSimulation.StringChoiceInput;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation3D.util.LabelShape;
@@ -30,11 +34,19 @@ import com.sandwell.JavaSimulation3D.util.Shape;
 public class TextLabel extends DisplayEntity  {
 	private final StringInput text;
 	private final DoubleInput textHeight;
-	private final StringInput fontName;
+	private final StringChoiceInput fontName;
+	private static ArrayList<String> validFontNames;
 	protected int fontStyle;
 	private final ColourInput fontColor;
 
 	protected LabelShape reference;
+
+	static {
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		String[ ] fontNames = ge.getAvailableFontFamilyNames();
+		Arrays.sort(fontNames);
+		validFontNames = new ArrayList<String>(Arrays.asList(fontNames));
+	}
 
 	{
 		text = new StringInput("Text", "Graphics", "abc");
@@ -43,7 +55,11 @@ public class TextLabel extends DisplayEntity  {
 		textHeight = new DoubleInput("TextHeight", "Graphics", 0.3d, 0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(textHeight, true);
 
-		fontName = new StringInput("FontName", "Graphics", "Verdana");
+		int def = validFontNames.indexOf("Verdana");
+		if(def < 0)
+			def = 0;
+		fontName = new StringChoiceInput("FontName", "Graphics", def);
+		fontName.setChoices(validFontNames);
 		this.addInput(fontName, true);
 
 		fontColor = new ColourInput("FontColour", "Graphics", Shape.getPresetColor(Shape.COLOR_BLACK));
@@ -114,7 +130,7 @@ public class TextLabel extends DisplayEntity  {
 
 			reference.setHeight(textHeight.getValue());
 			reference.setFillColor(fontColor.getValue());
-			reference.setFont(fontName.getValue(), fontStyle, 1);
+			reference.setFont(fontName.getChoice(), fontStyle, 1);
 			reference.setText(getRenderText(time));
 
 			Vector3d tmp = new Vector3d();
