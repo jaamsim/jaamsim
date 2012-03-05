@@ -243,7 +243,7 @@ public class PropertyBox extends FrameBox {
 	}
 
 	public void setEntity( Entity entity ) {
-		if(currentEntity == entity)
+		if(currentEntity == entity || ! this.isVisible())
 			return;
 
 		// Prevent stateChanged() method of jTabbedFrame to reenter this method
@@ -319,7 +319,7 @@ public class PropertyBox extends FrameBox {
 	}
 
 	public void updateValues() {
-		if(currentEntity == null)
+		if(currentEntity == null || ! this.isVisible())
 			return;
 
 		setTitle(String.format("Property Viewer - %s", currentEntity));

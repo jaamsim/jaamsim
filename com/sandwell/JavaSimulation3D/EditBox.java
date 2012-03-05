@@ -289,7 +289,7 @@ public class EditBox extends FrameBox {
 	}
 
 	public void setEntity(Entity entity) {
-		if(currentEntity == entity)
+		if(currentEntity == entity || ! this.isVisible())
 			return;
 
 		if(entity != null && entity.testFlag(Entity.FLAG_GENERATED))
@@ -358,7 +358,7 @@ public class EditBox extends FrameBox {
 	public void updateValues() {
 
 		// table has not built yet
-		if(buildingTable)
+		if(buildingTable || ! this.isVisible())
 			return;
 
 		// no entity is selected

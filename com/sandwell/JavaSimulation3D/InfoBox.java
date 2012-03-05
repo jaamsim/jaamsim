@@ -61,7 +61,7 @@ public class InfoBox extends FrameBox {
 	}
 
 	public void setEntity(Entity entity) {
-		if(currentEntity == entity)
+		if(currentEntity == entity || ! this.isVisible())
 			return;
 
 		currentEntity = entity;
@@ -79,7 +79,7 @@ public class InfoBox extends FrameBox {
 
 	public void updateValues() {
 
-		if(currentEntity == null)
+		if(currentEntity == null || ! this.isVisible())
 			return;
 
 		Vector info = currentEntity.getInfo();

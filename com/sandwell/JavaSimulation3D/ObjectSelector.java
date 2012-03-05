@@ -78,7 +78,7 @@ public class ObjectSelector extends FrameBox {
 	}
 
 	public void setEntity(Entity ent) {
-		if(ent == currentEntity)
+		if(ent == currentEntity || ! this.isVisible())
 			return;
 
 		currentEntity = ent;
