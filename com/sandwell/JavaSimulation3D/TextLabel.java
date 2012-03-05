@@ -36,6 +36,7 @@ public class TextLabel extends DisplayEntity  {
 	private final DoubleInput textHeight;
 	private final StringChoiceInput fontName;
 	private static ArrayList<String> validFontNames;
+	private static final int defFont;
 	protected int fontStyle;
 	private final ColourInput fontColor;
 
@@ -46,6 +47,11 @@ public class TextLabel extends DisplayEntity  {
 		String[ ] fontNames = ge.getAvailableFontFamilyNames();
 		Arrays.sort(fontNames);
 		validFontNames = new ArrayList<String>(Arrays.asList(fontNames));
+		int def = validFontNames.indexOf("Verdana");
+		if (def > -1)
+			defFont = def;
+		else
+			defFont = 0;
 	}
 
 	{
@@ -55,10 +61,7 @@ public class TextLabel extends DisplayEntity  {
 		textHeight = new DoubleInput("TextHeight", "Graphics", 0.3d, 0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(textHeight, true);
 
-		int def = validFontNames.indexOf("Verdana");
-		if(def < 0)
-			def = 0;
-		fontName = new StringChoiceInput("FontName", "Graphics", def);
+		fontName = new StringChoiceInput("FontName", "Graphics", defFont);
 		fontName.setChoices(validFontNames);
 		this.addInput(fontName, true);
 
