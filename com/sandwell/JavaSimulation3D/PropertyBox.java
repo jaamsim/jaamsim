@@ -128,17 +128,12 @@ public class PropertyBox extends FrameBox {
 	}
 
 	private JScrollPane getPropTable() {
-		final JTable propTable = new JTable( new javax.swing.table.DefaultTableModel( 0, 3 ) {
-
-			public boolean isCellEditable( int row, int column ) {
-				return false;
-			}
-		} );
+		final JTable propTable = new AjustToLastColumnTable(0, 3);
 
 		int totalWidth = jTabbedFrame.getWidth();
-		propTable.getColumnModel().getColumn( 2 ).setPreferredWidth( totalWidth / 2 ); // 50%
-		propTable.getColumnModel().getColumn( 1 ).setPreferredWidth( totalWidth / 5 ); // 20%
-		propTable.getColumnModel().getColumn( 0 ).setPreferredWidth( 3 * totalWidth / 10 ); // 30%
+		propTable.getColumnModel().getColumn( 2 ).setWidth( totalWidth / 2 ); // 50%
+		propTable.getColumnModel().getColumn( 1 ).setWidth( totalWidth / 5 ); // 20%
+		propTable.getColumnModel().getColumn( 0 ).setWidth( 3 * totalWidth / 10 ); // 30%
 
 		propTable.getColumnModel().getColumn( 0 ).setHeaderValue( "Property" );
 		propTable.getColumnModel().getColumn( 1 ).setHeaderValue( "Type" );
