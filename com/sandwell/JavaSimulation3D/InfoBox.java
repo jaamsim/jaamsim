@@ -39,13 +39,7 @@ public class InfoBox extends FrameBox {
 		scroller = new JScrollPane();
 
 		// Create a table
-		propTable = new JTable( new javax.swing.table.DefaultTableModel(0, 2) {
-
-			// Table is not editable
-			public boolean isCellEditable( int row, int column ) {
-				return false;
-			}
-		} );
+		propTable = new AjustToLastColumnTable(0, 2);
 
 		scroller = new JScrollPane(propTable);
 		getContentPane().add(scroller);
@@ -53,6 +47,8 @@ public class InfoBox extends FrameBox {
 		propTable.getColumnModel().getColumn( 0 ).setHeaderValue( "<html><b style=\"align=center;font-family:verdana;\">Property</b><html>" );
 		propTable.getColumnModel().getColumn( 1 ).setHeaderValue( "<html><b style=\"align=center;font-family:verdana;\">Value</b><html>" );
 		propTable.getTableHeader().setReorderingAllowed(false);
+		propTable.getColumnModel().getColumn( 0 ).setWidth(250);
+		propTable.getColumnModel().getColumn( 1 ).setWidth(280);
 
 		// Set the location of the window
 		pack();
