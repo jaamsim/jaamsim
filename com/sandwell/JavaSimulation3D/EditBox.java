@@ -502,21 +502,9 @@ public class EditBox extends FrameBox {
 		}
 	}
 
-	public static class MyJTable extends JTable {
+	public static class MyJTable extends AjustToLastColumnTable {
 		private DefaultCellEditor dropDownEditor;
 		private ColorEditor colorEditor;
-
-		public void doLayout() {
-			int lastColumnWidth = this.getColumnModel().getColumn(
-					EditBox.VALUE_COLUMN).getWidth();
-			int delta = this.getSize().width -
-					this.getColumnModel().getColumn(0).getWidth() -
-					this.getColumnModel().getColumn(1).getWidth() -
-					lastColumnWidth;
-			lastColumnWidth += delta;
-			this.getColumnModel().getColumn(EditBox.VALUE_COLUMN).setWidth(
-					lastColumnWidth);
-		}
 
 		public boolean isCellEditable( int row, int column ) {
 			return ( column == VALUE_COLUMN ); // Only Value column is editable
