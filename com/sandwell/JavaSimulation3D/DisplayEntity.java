@@ -437,7 +437,7 @@ public class DisplayEntity extends Entity {
 		allInstances.remove(this);
 		exitRegion();
 
-		branchGroup.detach();
+		GraphicsUpdateBehavior.detachBG(branchGroup);
 		nextGrp = null;
 		currentGrp = null;
 		if(OrbitBehavior.selectedEntity == this)

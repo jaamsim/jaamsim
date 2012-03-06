@@ -124,7 +124,6 @@ public class Sim3DWindow extends JFrame {
 			if (!allWindows.contains(this))
 				return;
 			allWindows.remove(this);
-			modelView.detach();
 		}
 
 		if (lastActiveWindow == this) {
@@ -139,6 +138,7 @@ public class Sim3DWindow extends JFrame {
 		removeKeyListener(keyListener);
 
 		this.getContentPane().removeAll();
+		GraphicsUpdateBehavior.detachBG(modelView);
 		removeComponentListener(compListener);
 		region.decrementWindowCount();
 		super.dispose();

@@ -14,9 +14,11 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.media.j3d.Behavior;
+import javax.media.j3d.BranchGroup;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.media.j3d.WakeupOnElapsedTime;
 
@@ -25,6 +27,9 @@ class GraphicsUpdateBehavior extends Behavior {
 
 	static double simTime = 0.0d;
 	static boolean forceUpdate = false;
+
+	private static boolean inCallback = false;
+	private static final ArrayList<BranchGroup> bgList = new ArrayList<BranchGroup>();
 
 	private final WakeupOnElapsedFrames frameCondition;
 	private final WakeupOnElapsedTime timeCondition;
@@ -36,6 +41,18 @@ class GraphicsUpdateBehavior extends Behavior {
 
 	public void initialize() {
 		this.wakeupOn(frameCondition);
+	}
+
+	static void detachBG(BranchGroup bg) {
+		synchronized (bgList) {
+			if (!inCallback) {
+				bg.detach();
+			}
+			else {
+				bgList.add(bg);
+				forceUpdate = true;
+			}
+		}
 	}
 
 	public void processStimulus(Enumeration criteria) {
@@ -50,6 +67,10 @@ class GraphicsUpdateBehavior extends Behavior {
 		lastRenderTime = timeAtCallback;
 		forceUpdate = false;
 
+		synchronized (bgList) {
+			inCallback = true;
+		}
+
 		for (int i = 0; i < DisplayEntity.getAll().size(); i++) {
 			try {
 				DisplayEntity.getAll().get(i).render(timeAtCallback);
@@ -60,6 +81,11 @@ class GraphicsUpdateBehavior extends Behavior {
 			}
 		}
 
+		synchronized (bgList) {
+			for (BranchGroup each : bgList)
+				each.detach();
+			inCallback = false;
+		}
 		this.wakeupOn(frameCondition);
 	}
 }
