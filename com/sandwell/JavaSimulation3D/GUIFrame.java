@@ -1296,6 +1296,7 @@ public void actionPerformed(ActionEvent e) {
 			continue;
 		}
 
+		GraphicsUpdateBehavior.forceUpdate = true;
 		// Start the model if in batch mode
 		if (batch) {
 			if (InputAgent.numErrors() > 0)

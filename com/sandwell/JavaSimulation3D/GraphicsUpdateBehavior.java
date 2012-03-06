@@ -39,10 +39,6 @@ class GraphicsUpdateBehavior extends Behavior {
 	}
 
 	public void processStimulus(Enumeration criteria) {
-		while (criteria.hasMoreElements()) {
-			if (criteria.nextElement() == timeCondition)
-				forceUpdate = true;
-		}
 		// If we render again at the same model time as the previous render, wait
 		// 50ms before trying again
 		double timeAtCallback = GraphicsUpdateBehavior.simTime;
