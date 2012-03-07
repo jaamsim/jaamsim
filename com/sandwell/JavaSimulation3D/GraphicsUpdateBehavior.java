@@ -30,6 +30,7 @@ class GraphicsUpdateBehavior extends Behavior {
 
 	private static boolean inCallback = false;
 	private static final ArrayList<BranchGroup> bgList = new ArrayList<BranchGroup>();
+	private static final ArrayList<AttachGroup> atList = new ArrayList<GraphicsUpdateBehavior.AttachGroup>();
 
 	private final WakeupOnElapsedFrames frameCondition;
 	private final WakeupOnElapsedTime timeCondition;
@@ -50,6 +51,28 @@ class GraphicsUpdateBehavior extends Behavior {
 			}
 			else {
 				bgList.add(bg);
+				forceUpdate = true;
+			}
+		}
+	}
+
+	private static class AttachGroup {
+		BranchGroup parent;
+		BranchGroup child;
+
+		public AttachGroup(BranchGroup pnt, BranchGroup cld) {
+			parent = pnt;
+			child = cld;
+		}
+	}
+
+	static void attachBG(BranchGroup parent, BranchGroup child) {
+		synchronized (bgList) {
+			if (!inCallback) {
+				parent.addChild(child);
+			}
+			else {
+				atList.add(new AttachGroup(parent, child));
 				forceUpdate = true;
 			}
 		}
@@ -84,6 +107,12 @@ class GraphicsUpdateBehavior extends Behavior {
 		synchronized (bgList) {
 			for (BranchGroup each : bgList)
 				each.detach();
+			bgList.clear();
+
+			for (AttachGroup each : atList)
+				each.parent.addChild(each.child);
+			atList.clear();
+
 			inCallback = false;
 		}
 		this.wakeupOn(frameCondition);

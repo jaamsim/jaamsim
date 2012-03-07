@@ -445,8 +445,6 @@ public class DisplayEntity extends Entity {
 
 		currentRegion = null;
 
-		clearModel();
-
 		displayTrack = null;
 		displayDistanceAlongTrack = 0.0;
 		displayTrackDistanceList = null;

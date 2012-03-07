@@ -93,7 +93,7 @@ public class Sim3DWindow extends JFrame {
 
 		modelView.addChild( behavior );
 
-		region.addBranchGroup( modelView );
+		GraphicsUpdateBehavior.attachBG(region.getEntGroup(), modelView);
 
 		// Add picking tool
 		picker = new PickingListener(modelView.getCanvas3D());

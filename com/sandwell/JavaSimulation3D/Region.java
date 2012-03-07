@@ -161,15 +161,6 @@ public class Region extends DisplayEntity {
 			statusBar.setVisible(false);
 	}
 
-	/**
-	 * Method used by displayEntities to add themselves to this locale.
-	 */
-	void addBranchGroup( BranchGroup newBranchGroup ) {
-		synchronized (entityGroup) {
-			entityGroup.addChild(newBranchGroup);
-		}
-	}
-
 	BranchGroup getEntGroup() {
 		return entityGroup;
 	}
