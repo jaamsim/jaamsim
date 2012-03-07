@@ -799,6 +799,9 @@ public class Region extends DisplayEntity {
 				return;
 			}
 
+			if( numWindowsAlive > 1 )
+				return;
+
 			InputAgent.processEntity_Keyword_Value(this, in,
 					String.format( "%d %d", (int) currentWindowPos.getX(),
 							(int) currentWindowPos.getY() ) );
@@ -814,6 +817,10 @@ public class Region extends DisplayEntity {
 			if( currentWindowSize.equals( defaultWindowSize ) ) {
 				return;
 			}
+
+			if( numWindowsAlive > 1 )
+				return;
+
 			InputAgent.processEntity_Keyword_Value(this, in,
 					String.format( "%d %d", (int)currentWindowSize.getX(),
 							(int)currentWindowSize.getY() ) );
