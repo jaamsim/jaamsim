@@ -488,42 +488,6 @@ public class Util {
 		return fieldString.toString();
 	}
 
-    public static Vector getPropertiesOf( Object object ) {
-
-    	if ( object == null ) {
-    		return new Vector( 1, 1 );
-    	}
-
-    	Vector info = new Vector();
-		Class<?> myClass = object.getClass();
-
-		String name = "";
-		if( object instanceof com.sandwell.JavaSimulation.Entity ) {
-			name = ((com.sandwell.JavaSimulation.Entity) object).getName();
-		}
-		else if ( object instanceof com.sandwell.JavaSimulation3D.util.Shape ) {
-			name = ((com.sandwell.JavaSimulation3D.util.Shape) object).getName();
-		}
-		info.addElement( "Name:\t\t" + name );
-		info.addElement( "Reference:\t\t" + Integer.toHexString( object.hashCode() ) );
-		info.addElement( "Class:\t\t" + myClass.getName() );
-
-		Vector fields = getAllProperties( myClass );
-
-		for( int i = 0; i < fields.size(); i++ ) {
-			if (!(fields.get(i) instanceof java.lang.reflect.Field)) {
-				info.addElement("");
-				info.addElement("<html><pre style=\"font-family:verdana;font-size:100%;color:rgb(0,0,255);\"><b>" + ((Class<?>)fields.get(i)).getSimpleName() + ":");
-				continue;
-			}
-
-			info.addElement(getField(object, (java.lang.reflect.Field)fields.get(i)));
-		}
-
-		return info;
-
-	}
-
     /**
      * Return a list of properties for every super class
      * The first element in each row contains the name of the super class
