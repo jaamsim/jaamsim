@@ -71,8 +71,7 @@ public class Region extends DisplayEntity {
 
 	//protected BranchGroup collapsedModel;		// alternate appearance when the region is collapsed
 
-	protected int numWindowsNamed; // number of open windows named for the region
-	private int numWindowsAlive; // number of open windows for the region (including all open views of the region)
+	protected int numWindowsAlive; // number of open windows for the region
 	private String titleBarText; // Title name for the window
 
 	protected LocalClock localClock;
@@ -114,7 +113,6 @@ public class Region extends DisplayEntity {
 		allInstances.add(this);
 
 		// Register this region in the simulation
-		numWindowsNamed = 0;
 		numWindowsAlive = 0;
 
 		entityGroup = new BranchGroup();
@@ -165,34 +163,12 @@ public class Region extends DisplayEntity {
 		return entityGroup;
 	}
 
-	public void incrementWindowsAlive() {
+	public void incrementWindowCount() {
 		numWindowsAlive++;
 	}
 
-	public void decrementWindowsAlive() {
-		numWindowsAlive--;
-	}
-
-	public void incrementWindowCount() {
-		numWindowsNamed++;
-
-		if( currentRegion != null ) {
-			currentRegion.incrementWindowsAlive();
-		}
-		else {
-			this.incrementWindowsAlive();
-		}
-	}
-
 	public void decrementWindowCount() {
-		numWindowsNamed--;
-
-		if( currentRegion != null ) {
-			currentRegion.decrementWindowsAlive();
-		}
-		else {
-			this.decrementWindowsAlive();
-		}
+		numWindowsAlive--;
 	}
 
 	public String newWindowName() {
@@ -204,10 +180,10 @@ public class Region extends DisplayEntity {
 		else
 			name = this.getName();
 
-		if (numWindowsNamed == 1)
+		if (numWindowsAlive == 1)
 			return name;
 		else
-			return String.format("%s (%d)", name, numWindowsNamed);
+			return String.format("%s (%d)", name, numWindowsAlive);
 	}
 
 	public int getNumWindowsAlive() {
