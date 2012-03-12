@@ -142,6 +142,9 @@ public class PropertyBox extends FrameBox {
 		propTable.getTableHeader().setFont(propTable.getFont().deriveFont(Font.BOLD));
 		propTable.getTableHeader().setReorderingAllowed(false);
 
+		propTable.setRowMargin( 1 );
+		propTable.getColumnModel().setColumnMargin( 20 );
+
 		propTable.addMouseListener( new MouseInputListener() {
 			public void mouseEntered( MouseEvent e ) {
 

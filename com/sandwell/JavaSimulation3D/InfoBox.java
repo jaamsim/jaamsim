@@ -50,6 +50,9 @@ public class InfoBox extends FrameBox {
 		propTable.getColumnModel().getColumn( 0 ).setWidth(250);
 		propTable.getColumnModel().getColumn( 1 ).setWidth(280);
 
+		propTable.setRowMargin( 1 );
+		propTable.getColumnModel().setColumnMargin( 20 );
+
 		// Set the location of the window
 		pack();
 		setLocation(750, 710);
