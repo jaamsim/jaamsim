@@ -13,7 +13,11 @@ Define ObjectType  { TimeUnit
                      VolumeUnit
                      VolumeFlowUnit
                      AngleUnit
-                     AngularSpeedUnit }
+                     AngularSpeedUnit
+                     EnergyUnit
+                     EnergyDensityUnit
+                     SpecificEnergyUnit
+                     PowerUnit }
 
 TimeUnit         JavaClass { com.sandwell.JavaSimulation.TimeUnit         } Package { Units }
 DistanceUnit     JavaClass { com.sandwell.JavaSimulation.DistanceUnit     } Package { Units }
@@ -25,6 +29,10 @@ VolumeUnit       JavaClass { com.sandwell.JavaSimulation.VolumeUnit       } Pack
 VolumeFlowUnit   JavaClass { com.sandwell.JavaSimulation.VolumeFlowUnit   } Package { Units }
 AngleUnit        JavaClass { com.sandwell.JavaSimulation.AngleUnit        } Package { Units }
 AngularSpeedUnit JavaClass { com.sandwell.JavaSimulation.AngularSpeedUnit } Package { Units }
+EnergyUnit         JavaClass { com.sandwell.JavaSimulation.EnergyUnit         } Package { Units }
+EnergyDensityUnit  JavaClass { com.sandwell.JavaSimulation.EnergyDensityUnit  } Package { Units }
+SpecificEnergyUnit JavaClass { com.sandwell.JavaSimulation.SpecificEnergyUnit } Package { Units }
+PowerUnit          JavaClass { com.sandwell.JavaSimulation.PowerUnit          } Package { Units }
 
 Units HelpFile { 'Java Simulation Environment' }
 
@@ -163,3 +171,39 @@ rad/s ConversionFactorToSI { 1                       }
 rad/h ConversionFactorToSI { 1                3600   }
 deg/s ConversionFactorToSI { 3.14159265358979 180    }
 deg/h ConversionFactorToSI { 3.14159265358979 648000 }
+
+" ======================================================================================================================================================
+" Energy units
+" ======================================================================================================================================================
+
+Define EnergyUnit      { J kWh }
+
+kWh    ConversionFactorToSI { 3600000 }
+J      ConversionFactorToSI { 1       }
+
+" ======================================================================================================================================================
+" Energy density units
+" ======================================================================================================================================================
+
+Define EnergyDensityUnit      { J/m3 kWh/m3 }
+
+kWh/m3 ConversionFactorToSI { 3600000 }
+J/m3   ConversionFactorToSI { 1       }
+
+" ======================================================================================================================================================
+" Specific Energy units
+" ======================================================================================================================================================
+
+Define SpecificEnergyUnit      { J/kg kWh/t }
+
+kWh/t  ConversionFactorToSI { 3600000 1000 }
+J/kg   ConversionFactorToSI { 1            }
+
+" ======================================================================================================================================================
+" Power units
+" ======================================================================================================================================================
+
+Define PowerUnit      { Watt kW }
+
+kW     ConversionFactorToSI { 1000 }
+Watt   ConversionFactorToSI { 1    } Alias { W }
