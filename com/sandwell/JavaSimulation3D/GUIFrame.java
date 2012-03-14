@@ -642,11 +642,9 @@ public class GUIFrame extends JFrame {
 
 		mainToolBar.add( controlRealTime );
 		mainToolBar.add(Box.createRigidArea(gapDim));
-		mainToolBar.add(spinner);
+		mainToolBar.add(speedFactor);
 		mainToolBar.add(Box.createRigidArea(gapDim));
-		mainToolBar.add(new JLabel("X"));
-		mainToolBar.add(Box.createRigidArea(gapDim));
-		mainToolBar.add( speedFactor );
+		mainToolBar.add( spinner );
 		mainToolBar.addSeparator(separatorDim);
 		// End creation of real-time label and menu
 
