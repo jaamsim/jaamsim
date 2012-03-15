@@ -15,7 +15,6 @@
 package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.EventManager;
-import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation.Util;
 
 import java.awt.BorderLayout;
@@ -26,11 +25,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -100,38 +97,6 @@ public class EventViewer extends JFrame {
 				evtMan.nextEventTime();
 			}
 		});
-		final JTextField runToTime = new JTextField();
-		runToTime.setPreferredSize( new Dimension( 55, 16 ) );
-
-		JButton runToButton = new JButton( "Run To Time" );
-		runToButton.addActionListener( new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					if (Tester.isDate(runToTime.getText())) {
-						String[] str = runToTime.getText().split("-");
-
-						if (str.length < 3) {
-							throw new NumberFormatException("Date string must be of form yyyy-mm-dd");
-						}
-						int year = Integer.valueOf(str[0]).intValue();
-						int month = Integer.valueOf(str[1]).intValue();
-						int day = Integer.valueOf(str[2]).intValue();
-						double time = Clock.calcTimeForYear_Month_Day_Hour(year, month, day, 0.0);
-
-						int startingYear = Clock.getStartingYear();
-						int startingMonth = Clock.getStartingMonth();
-						int startingDay = Clock.getStartingDay();
-						double startingTime = Clock.calcTimeForYear_Month_Day_Hour(startingYear, startingMonth, startingDay, 0.0);
-
-						evtMan.runToTime(time - startingTime);
-					} else {
-						evtMan.runToTime(Double.parseDouble(runToTime.getText()));
-					}
-				} catch (NumberFormatException nfe) {
-					JOptionPane.showMessageDialog(null, "Invalid Event Time", "error", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
 
 		JButton clearButton = new JButton( "Clear Events" );
 		clearButton.addActionListener( new ActionListener() {
@@ -145,8 +110,6 @@ public class EventViewer extends JFrame {
 		buttonPanel.setLayout( new FlowLayout( FlowLayout.CENTER ) );
 		buttonPanel.add( nextEventButton );
 		buttonPanel.add( nextTimeButton );
-		buttonPanel.add( runToTime );
-		buttonPanel.add( runToButton );
 		buttonPanel.add( clearButton );
 		buttonPanel.add( closeButton );
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
