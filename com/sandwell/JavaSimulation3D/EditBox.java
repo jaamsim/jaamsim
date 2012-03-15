@@ -27,23 +27,29 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.media.j3d.ColoringAttributes;
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -213,14 +219,14 @@ public class EditBox extends FrameBox {
 				if(otherComp == propTable)
 					return;
 
-				// from a ColorCell to JTabbedPane
+				// from a ColorCell or ListCell to JTabbedPane
 				if(otherComp == EditBox.getInstance().getJTabbedPane() ) {
 					return;
 				}
 
-				// colorButton is pressed
-				if(otherComp != null && (tce instanceof ColorEditor &&
-					 ( this.getParent() == otherComp.getParent() )  ) ){
+				// colorButton or listButton is pressed
+				if(otherComp != null &&
+						this.getParent() == otherComp.getParent() ){
 					return;
 				}
 
@@ -505,6 +511,7 @@ public class EditBox extends FrameBox {
 	public static class MyJTable extends AjustToLastColumnTable {
 		private DefaultCellEditor dropDownEditor;
 		private ColorEditor colorEditor;
+		private ListEditor listEditor;
 
 		public boolean isCellEditable( int row, int column ) {
 			return ( column == VALUE_COLUMN ); // Only Value column is editable
@@ -521,32 +528,7 @@ public class EditBox extends FrameBox {
 			Input<?> in =
 			   EditBox.getInstance().getCurrentEntity().getInput(currentKeyword);
 
-			// 1) Multiple choice input
-			if(in.getValidOptions() != null) {
-				if(dropDownEditor == null) {
-					JComboBox dropDown = new JComboBox();
-					dropDown.setEditable(true);
-					dropDown.getEditor().getEditorComponent().addKeyListener(
-							EditBox.getInstance().getHelpKeyListener() );
-					dropDownEditor = new DefaultCellEditor(dropDown);
-				}
-
-				// Refresh the content of the combo box
-				JComboBox dropDown = (JComboBox) dropDownEditor.getComponent();
-				DefaultComboBoxModel model = (DefaultComboBoxModel) dropDown.getModel();
-				model.removeAllElements();
-				ArrayList<String> array = in.getValidOptions();
-				for(String each: array) {
-
-					// Space inside the font name
-					if( each.contains(" ") )
-						each = String.format("'%s'", each);
-					model.addElement(each);
-				}
-				return new DefaultCellEditor(dropDown);
-			}
-
-			// 2) Colour input
+			// 1) Colour input
 			if(in instanceof ColourInput) {
 				if(colorEditor == null) {
 					colorEditor = new ColorEditor(this);
@@ -554,9 +536,43 @@ public class EditBox extends FrameBox {
 				return colorEditor;
 			}
 
-			// 3) Normal text
-			return this.getDefaultEditor(Object.class);
+			// 2) Normal text
+			ArrayList<String> array = in.getValidOptions();
+			if(array == null)
+				return this.getDefaultEditor(Object.class);
+
+			// 3) Multiple selections from a List
+			if(in instanceof ListInput) {
+				if(listEditor == null) {
+					listEditor = new ListEditor(this);
+				}
+				listEditor.setListData(array);
+				return listEditor;
+			}
+
+			// 4) Single selection from a drop down box
+			if(dropDownEditor == null) {
+				JComboBox dropDown = new JComboBox();
+				dropDown.setEditable(true);
+				dropDown.getEditor().getEditorComponent().addKeyListener(
+						EditBox.getInstance().getHelpKeyListener() );
+				dropDownEditor = new DefaultCellEditor(dropDown);
+			}
+
+			// Refresh the content of the combo box
+			JComboBox dropDown = (JComboBox) dropDownEditor.getComponent();
+			DefaultComboBoxModel model = (DefaultComboBoxModel) dropDown.getModel();
+			model.removeAllElements();
+			for(String each: array) {
+
+				// Space inside the font name
+				if( each.contains(" ") )
+					each = String.format("'%s'", each);
+				model.addElement(each);
+			}
+			return new DefaultCellEditor(dropDown);
 		}
+
 	}
 
 	public static class ColorEditor extends AbstractCellEditor
@@ -642,6 +658,178 @@ public class EditBox extends FrameBox {
 			colorButton.setPreferredSize(dim);
 
 			return jPanel;
+		}
+	}
+
+	public static class ListEditor extends AbstractCellEditor
+	implements TableCellEditor, ActionListener {
+
+		private final JTable propTable;
+		private final JPanel jPanel;
+		private final HTextField text;
+		private final JButton listButton;
+		private JDialog dialog;
+		private JScrollPane jScroll;
+		private JList list;
+
+		private ArrayList<String> tokens;
+		private DefaultListModel listModel;
+		private CheckBoxMouseAdapter checkBoxMouseAdapter;
+		private int i;
+		private boolean bool;
+
+		public ListEditor(JTable table) {
+
+			propTable = table;
+			jPanel = new JPanel(new BorderLayout());
+
+			text = new HTextField(propTable);
+			jPanel.add(text, BorderLayout.WEST);
+
+			listButton = new JButton(new ImageIcon(
+				GUIFrame.class.getResource("/resources/images/dropdown.png")));
+			listButton.addActionListener(this);
+			listButton.setActionCommand("button");
+			listButton.setContentAreaFilled(false);
+			jPanel.add(listButton, BorderLayout.EAST);
+		}
+
+		public Object getCellEditorValue() {
+			return text.getText();
+		}
+
+		public void actionPerformed(ActionEvent e) {
+
+			// OK button
+			if("OK".equals(e.getActionCommand())) {
+				dialog.setVisible(false);
+				String value = "";
+				for(int i = 0; i < list.getModel().getSize(); i++) {
+					if(!((JCheckBox)list.getModel().getElementAt(i)).isSelected())
+						continue;
+					value = String.format("%s%s ", value,
+						((JCheckBox)list.getModel().getElementAt(i)).getText());
+				}
+				text.setText(String.format(" %s", value));
+			}
+
+			if(! "button".equals(e.getActionCommand())) {
+				return;
+			}
+
+			if(dialog == null) {
+				dialog = new JDialog(EditBox.getInstance(), "Select items",
+						true); // model
+				dialog.setSize(190, 300);
+				jScroll = new JScrollPane(list);
+				dialog.getContentPane().add(jScroll); // top of the JDialog
+				JButton okButton = new JButton("Ok");
+				okButton.setActionCommand("OK");
+				okButton.addActionListener(this);
+				dialog.getContentPane().add("South", okButton);
+				dialog.setIconImage(GUIFrame.getWindowIcon());
+				dialog.setAlwaysOnTop(true);
+				tokens = new ArrayList<String>();
+			}
+
+			// break the value into single options
+			tokens.clear();
+			InputAgent.tokenizeString(tokens, text.getText());
+
+			// checkmark according to the value input
+			for(i = 0; i < list.getModel().getSize(); i++) {
+				bool = false;
+				if( tokens.contains(
+					((JCheckBox)list.getModel().getElementAt(i)).getText()) ) {
+					bool = true;
+				}
+				((JCheckBox)list.getModel().getElementAt(i)).setSelected(bool);
+			}
+			dialog.setLocationRelativeTo((Component)e.getSource());
+			dialog.setVisible(true);
+
+			// Apply editing
+			stopCellEditing();
+
+			// Focus the cell
+			propTable.requestFocusInWindow();
+		}
+
+		// Set the items in the list
+		public void setListData(ArrayList<String> aList) {
+			if(list == null) {
+				listModel = new DefaultListModel();
+				list = new JList(listModel);
+
+				// render items as JCheckBox and make clicking work for them
+				list.setCellRenderer( new ListRenderer() );
+				checkBoxMouseAdapter = new CheckBoxMouseAdapter();
+				list.addMouseListener(checkBoxMouseAdapter);
+			}
+			listModel.clear();
+			for(String each: aList) {
+				JCheckBox checkBox = new JCheckBox(each);
+				listModel.addElement(checkBox);
+			}
+		}
+
+		public Component getTableCellEditorComponent(JTable table,
+				Object value, boolean isSelected, int row, int column) {
+			text.setText(
+					((String)table.getValueAt( row, VALUE_COLUMN )).trim() );
+
+			// right size for jPanel and its components in the cell
+			Dimension dim = new Dimension(
+					table.getColumnModel().getColumn( VALUE_COLUMN ).getWidth() -
+					table.getColumnModel().getColumnMargin(),
+					table.getRowHeight());
+			jPanel.setPreferredSize(dim);
+			dim = new Dimension(dim.width - (dim.height), dim.height);
+			text.setPreferredSize(dim);
+			dim = new Dimension(dim.height, dim.height);
+			listButton.setPreferredSize(dim);
+
+			return jPanel;
+		}
+	}
+
+	/*
+	 * renderer for the JList so it shows its items as JCheckBoxes
+	 */
+	public static class ListRenderer implements ListCellRenderer {
+		private JCheckBox checkBox;
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			checkBox = (JCheckBox)value;
+			if (isSelected) {
+				checkBox.setBackground(list.getSelectionBackground());
+				checkBox.setForeground(list.getSelectionForeground());
+			}
+			else {
+				checkBox.setBackground(list.getBackground());
+				checkBox.setForeground(list.getForeground());
+			}
+			return checkBox;
+		}
+	}
+
+	/*
+	 * pressing mouse in the JList should select/unselect JCheckBox
+	 */
+	public static class CheckBoxMouseAdapter extends MouseAdapter {
+		private int i;
+		private Object obj;
+		public void mousePressed(MouseEvent e) {
+			i = ((JList)e.getSource()).locationToIndex(e.getPoint());
+			if(i == -1)
+				return;
+
+			obj = ((JList)e.getSource()).getModel().getElementAt(i);
+			if (obj instanceof JCheckBox) {
+				JCheckBox checkbox = (JCheckBox) obj;
+				checkbox.setSelected(!checkbox.isSelected());
+				((JList)e.getSource()).repaint();
+			}
 		}
 	}
 }
