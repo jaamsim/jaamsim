@@ -28,6 +28,7 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringChoiceInput;
 import com.sandwell.JavaSimulation.StringInput;
+import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation3D.util.LabelShape;
 import com.sandwell.JavaSimulation3D.util.Shape;
@@ -38,7 +39,9 @@ public class TextLabel extends DisplayEntity  {
 	private final StringChoiceInput fontName;
 	private static ArrayList<String> validFontNames;
 	private static final int defFont;
-	protected int fontStyle;
+	private final StringListInput fontStyle;
+	private static ArrayList<String> validStyles;
+	private int style; // Font Style
 	private final ColourInput fontColor;
 	private final BooleanInput dropShadow;
 	private final ColourInput dropShadowColor;
@@ -56,6 +59,10 @@ public class TextLabel extends DisplayEntity  {
 			defFont = def;
 		else
 			defFont = 0;
+
+		validStyles = new ArrayList<String>();
+		validStyles.add("BOLD");
+		validStyles.add("ITALIC");
 	}
 
 	{
@@ -72,7 +79,10 @@ public class TextLabel extends DisplayEntity  {
 		fontColor = new ColourInput("FontColour", "Graphics", Shape.getPresetColor(Shape.COLOR_BLACK));
 		this.addInput(fontColor, true, "FontColor");
 
-		addEditableKeyword( "FontStyle",        "", "Plain",    false, "Graphics" );
+		fontStyle = new StringListInput("FontStyle", "Graphics", new StringVector());
+		fontStyle.setValidOptions(validStyles);
+		fontStyle.setCaseSensitive(false);
+		this.addInput(fontStyle, true);
 
 		dropShadow = new BooleanInput( "DropShadow", "Graphics", false );
 		this.addInput( dropShadow, true );
@@ -82,36 +92,15 @@ public class TextLabel extends DisplayEntity  {
 	}
 
 	public TextLabel() {
-		fontStyle = Font.PLAIN;
-
+		style = Font.PLAIN;
 		reference = new LabelShape("", fontColor.getValue());
 		shadow = new LabelShape("", dropShadowColor.getValue());
 		this.getModel().addChild( shadow );
 		this.getModel().addChild( reference );
 	}
 
-
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
-
-		if( "FontStyle".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 0, 1, 2, 3);
-			fontStyle = Font.PLAIN;
-			for (int i = 0; i < data.size(); i++) {
-				if (data.get(i).equalsIgnoreCase("Bold")) {
-					fontStyle += Font.BOLD;
-				}
-				else if (data.get(i).equalsIgnoreCase("Italic")) {
-					fontStyle += Font.ITALIC;
-				}
-				else if (! data.get(i).equalsIgnoreCase("Plain")) {
-					throw new InputErrorException("%s is not a valid option; allowed options are: Bold, Italic and Plain", data.get(i));
-				}
-			}
-
-			return;
-		}
-
 		super.readData_ForKeyword( data, keyword, syntaxOnly, isCfgInput );
 	}
 
@@ -125,30 +114,42 @@ public class TextLabel extends DisplayEntity  {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 
+		if(in == fontStyle) {
+			style = Font.PLAIN;
+			for(String each: fontStyle.getValue() ) {
+				if(each.equalsIgnoreCase("Bold") ) {
+					style += Font.BOLD;
+				}
+				else if (each.equalsIgnoreCase("Italic")) {
+					style += Font.ITALIC;
+				}
+			}
+		}
+
 		if( in == text ||
 			in == textHeight ||
 			in == fontName ||
 			in == fontColor ||
 			in == dropShadow ||
-			in == dropShadowColor ) {
+			in == dropShadowColor ||
+			in == fontStyle ) {
 			modelNeedsRender = true;
 		}
 	}
 
 	public void render(double time) {
 		if ( getRenderText(time) != (reference.getText()) ||
-			reference.getFontStyle() != fontStyle ||
 			modelNeedsRender ) {
 
 			reference.setHeight(textHeight.getValue());
 			reference.setFillColor(fontColor.getValue());
-			reference.setFont(fontName.getChoice(), fontStyle, 1);
+			reference.setFont(fontName.getChoice(), style, 1);
 			reference.setText(getRenderText(time));
 
 			if( dropShadow.getValue() ) {
 				shadow.setHeight(textHeight.getValue());
 				shadow.setFillColor(dropShadowColor.getValue());
-				shadow.setFont(fontName.getChoice(), fontStyle, 1);
+				shadow.setFont(fontName.getChoice(), style, 1);
 				shadow.setText(getRenderText(time));
 
 				// Offset the shadow by 10% of the text height
