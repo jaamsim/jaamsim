@@ -620,11 +620,13 @@ public class EditBox extends FrameBox {
 							this,  //OK button listener
 							null); //no CANCEL button listener
 					dialog.setIconImage(GUIFrame.getWindowIcon());
+					dialog.setAlwaysOnTop(true);
 				}
 
 				Color3f col = new Color3f();
 				in.getValue().getColor(col);
 				colorChooser.setColor(new Color(col.x, col.y, col.z));
+				dialog.setLocationRelativeTo((Component)e.getSource());
 				dialog.setVisible(true);
 
 				// Apply editing
