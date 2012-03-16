@@ -51,12 +51,13 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JWindow;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
@@ -86,8 +87,8 @@ public class GUIFrame extends JFrame {
 	private JLabel remainingDisplay;
 
 	private JToggleButton controlRealTime;
+	private JSpinner spinner;
 	private JSlider speedFactor;
-	JLabel speedUpLabel;
 
 	private JToggleButton controlStartResume;
 	private JToggleButton controlStop;
@@ -600,27 +601,31 @@ public class GUIFrame extends JFrame {
 
 		// End run label and run control button creation
 
-		// Create Real-Time scaling label and logarithmic slider
-		speedUpLabel = new JLabel("1,000,000", JLabel.RIGHT);
-		speedUpLabel.setBorder(LineBorder.createGrayLineBorder());
+		SpinnerNumberModel numberModel =
+				new SpinnerModel(10000, 1, 1000000, 1);
+		spinner = new JSpinner(numberModel);
 
-		// Set the preferred size to the maximum possible size of speedUpLabel (1,000,000)
-		speedUpLabel.setPreferredSize(speedUpLabel.getPreferredSize());
-		speedUpLabel.setText("10,000"); // Default value
+		// make sure spinner TextField is no wider than 9 digits
+		int diff =
+			((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().getPreferredSize().width -
+			Util.getPixelWidthOfString_ForFont("9", spinner.getFont()) * 9;
+		Dimension dim = spinner.getPreferredSize();
+		dim.width -= diff;
+		spinner.setMaximumSize(dim);
 
 		speedFactor = new JSlider(JSlider.HORIZONTAL, 0, 600, 400);
-		speedFactor.addChangeListener( new ChangeListener() {
-			public void stateChanged( ChangeEvent e ) {
-				int speed = (int)Math.pow(10, speedFactor.getValue() / 100.0d);
-				DisplayEntity.simulation.setRealTimeFactor(speed);
-				speedUpLabel.setText(String.format("%,d", speed));
-			}
-		} );
+		ChangeListener changeListener =
+				new SpeedFactorListener(spinner, speedFactor);
+		speedFactor.addChangeListener(changeListener);
+		spinner.addChangeListener(changeListener);
 
 		//Turn on major tick marks.
 		speedFactor.setMajorTickSpacing(100);
 		speedFactor.setPaintTicks(true);
 		speedFactor.setFocusable(false);
+
+		// avoid the spinner suddenly stretches more than its maximum size ??
+		speedFactor.setMaximumSize(speedFactor.getPreferredSize());
 
 		mainToolBar.addSeparator(separatorDim);
 		controlRealTime = new JToggleButton( "Real Time" );
@@ -637,7 +642,7 @@ public class GUIFrame extends JFrame {
 
 		mainToolBar.add( controlRealTime );
 		mainToolBar.add(Box.createRigidArea(gapDim));
-		mainToolBar.add( speedUpLabel );
+		mainToolBar.add(spinner);
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add(new JLabel("X"));
 		mainToolBar.add(Box.createRigidArea(gapDim));
@@ -1302,6 +1307,78 @@ public void actionPerformed(ActionEvent e) {
 			if (InputAgent.numErrors() > 0)
 				System.exit(0);
 			gsim.start();
+		}
+	}
+
+	/*
+	 * this is a listener for both the spinner and slider so if one is changed
+	 * it changes the other one as well
+	 */
+	public static class SpeedFactorListener implements ChangeListener {
+		private final JSpinner spinner;
+		private final JSlider slider;
+		private int value;
+		private boolean spinnerChanged;
+
+		public SpeedFactorListener(JSpinner spinner, JSlider slider) {
+			this.spinner = spinner;
+			this.slider = slider;
+			spinnerChanged = false;
+		}
+
+		public void stateChanged( ChangeEvent e ) {
+
+			// Avoid spinner change causes slider to change spinner again
+			// because slider has less resolution and spinner might come up
+			// with a different number than user originally entered
+			if(spinnerChanged)
+				return;
+
+			if(e.getSource() == slider) {
+				value =
+					(int) Math.round(Math.pow(10, slider.getValue() / 100.0d));
+				DisplayEntity.simulation.setRealTimeFactor(value);
+				spinner.setValue(value);
+			}
+			else {
+				spinnerChanged = true;
+				DisplayEntity.simulation.setRealTimeFactor(
+						(Integer)spinner.getValue());
+				value =
+					(int) (Math.log10((Integer)spinner.getValue()) * 100.0);
+				slider.setValue(value);
+				spinnerChanged = false;
+			}
+		}
+	}
+
+	/*
+	 * this class is created so the next value will be value * 2 and the
+	 * previous value will be value / 2
+	 */
+	public static class SpinnerModel extends SpinnerNumberModel {
+		private int value;
+		public SpinnerModel( int val, int min, int max, int stepSize) {
+			super(val, min, max, stepSize);
+		}
+		public Object getPreviousValue() {
+			value = this.getNumber().intValue() / 2;
+
+			// Avoid going beyond limit
+			if(this.getMinimum().compareTo(value) > 0 ) {
+				return this.getMinimum();
+			}
+			return value;
+		}
+
+		public Object getNextValue() {
+			value = this.getNumber().intValue() * 2;
+
+			// Avoid going beyond limit
+			if(this.getMaximum().compareTo(value) < 0 ) {
+				return this.getMaximum();
+			}
+			return value;
 		}
 	}
 }
