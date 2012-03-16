@@ -14,10 +14,18 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.util.ArrayList;
+
 public class StringListInput extends ListInput<StringVector> {
+	private ArrayList<String> validOptions;
+
+	 // If true convert all the the items to uppercase
+	private boolean caseSensitive;
 
 	public StringListInput(String key, String cat, StringVector def) {
 		super(key, cat, def);
+		validOptions = null;
+		caseSensitive = true;
 	}
 
 	public void parse(StringVector input)
@@ -25,5 +33,21 @@ public class StringListInput extends ListInput<StringVector> {
 		Input.assertCountRange(input, minCount, maxCount);
 		value = input;
 		this.updateEditingFlags();
+	}
+
+	public void setValidOptions(ArrayList<String> list) {
+		validOptions = list;
+	}
+
+	public void setCaseSensitive(boolean bool) {
+		caseSensitive = bool;
+	}
+
+	public boolean getCaseSensitive() {
+		return caseSensitive;
+	}
+
+	public ArrayList<String> getValidOptions() {
+		return validOptions;
 	}
 }

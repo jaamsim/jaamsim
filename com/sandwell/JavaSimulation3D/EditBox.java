@@ -545,6 +545,10 @@ public class EditBox extends FrameBox {
 			if(in instanceof ListInput) {
 				if(listEditor == null) {
 					listEditor = new ListEditor(this);
+					if(in instanceof StringListInput) {
+						listEditor.setCaseSensitive(
+								((StringListInput)(in)).getCaseSensitive() );
+					}
 				}
 				listEditor.setListData(array);
 				return listEditor;
@@ -677,6 +681,7 @@ public class EditBox extends FrameBox {
 		private CheckBoxMouseAdapter checkBoxMouseAdapter;
 		private int i;
 		private boolean bool;
+		private boolean caseSensitive;
 
 		public ListEditor(JTable table) {
 
@@ -692,6 +697,7 @@ public class EditBox extends FrameBox {
 			listButton.setActionCommand("button");
 			listButton.setContentAreaFilled(false);
 			jPanel.add(listButton, BorderLayout.EAST);
+			caseSensitive = true;
 		}
 
 		public Object getCellEditorValue() {
@@ -735,6 +741,11 @@ public class EditBox extends FrameBox {
 			// break the value into single options
 			tokens.clear();
 			InputAgent.tokenizeString(tokens, text.getText());
+			if( !caseSensitive ) {
+				for(i = 0; i < tokens.size(); i++ ) {
+					tokens.set(i, tokens.get(i).toUpperCase() );
+				}
+			}
 
 			// checkmark according to the value input
 			for(i = 0; i < list.getModel().getSize(); i++) {
@@ -790,6 +801,10 @@ public class EditBox extends FrameBox {
 			listButton.setPreferredSize(dim);
 
 			return jPanel;
+		}
+
+		public void setCaseSensitive(boolean bool) {
+			caseSensitive = bool;
 		}
 	}
 
