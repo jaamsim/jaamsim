@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	private Class<T> entClass;
@@ -43,5 +44,17 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	}
 	public void setEven(boolean bool) {
 		this.even = bool;
+	}
+
+	public ArrayList<String> getValidOptions() {
+		ArrayList<String> list = new ArrayList<String>();
+		for(T each: Simulation.getClonesOf(entClass) ) {
+			if(each.testFlag(Entity.FLAG_GENERATED))
+				continue;
+
+			list.add(each.getInputName());
+		}
+		Collections.sort(list);
+		return list;
 	}
 }
