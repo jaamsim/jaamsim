@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class EntityInput<T extends Entity> extends Input<T> {
 
@@ -44,6 +45,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 
 			list.add(each.getInputName());
 		}
+		Collections.sort(list);
 		return list;
 	}
 }
