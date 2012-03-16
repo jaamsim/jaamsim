@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
+import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation.Simulation;
 
@@ -30,6 +31,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
@@ -52,6 +54,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JWindow;
@@ -92,6 +95,7 @@ public class GUIFrame extends JFrame {
 
 	private JToggleButton controlStartResume;
 	private JToggleButton controlStop;
+	private JTextField pauseTime;
 
 	private JLabel locatorPos;
 	private JLabel locatorLabel;
@@ -599,7 +603,42 @@ public class GUIFrame extends JFrame {
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( controlStop );
 
-		// End run label and run control button creation
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		JLabel pauseAt = new JLabel( "Pause at:" );
+		mainToolBar.add(pauseAt);
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		pauseTime = new JTextField("2000-00-00") {
+			protected void processFocusEvent( FocusEvent fe ) {
+				if ( fe.getID() == FocusEvent.FOCUS_GAINED ) {
+					if(getText().equals(String.format("%c", 8734 ))) {
+						this.setHorizontalAlignment(JTextField.RIGHT);
+						this.setText("");
+					}
+
+					// select entire text string
+					selectAll();
+				}
+				else if (fe.getID() == FocusEvent.FOCUS_LOST) {
+					if(getText().isEmpty()) {
+						this.setText(String.format("%c", 8734 ));
+						this.setHorizontalAlignment(JTextField.CENTER);
+					}
+				}
+				super.processFocusEvent( fe );
+			}
+		};
+
+		pauseTime.setHorizontalAlignment(JTextField.RIGHT);
+
+		// avoid height increase for pauseTime
+		pauseTime.setMaximumSize(pauseTime.getPreferredSize());
+
+		// avoid stretching for puaseTime when focusing in and out
+		pauseTime.setPreferredSize(pauseTime.getPreferredSize());
+
+		mainToolBar.add(pauseTime);
+
+		pauseTime.setText(String.format("%c", 8734 )); //default-Infinity sign
 
 		SpinnerNumberModel numberModel =
 				new SpinnerModel(10000, 1, 1000000, 1);
@@ -929,7 +968,49 @@ public void actionPerformed(ActionEvent e) {
 	}
 
 	private void startSimulation() {
+
+		// pause at a time
+		double runToTime = Double.POSITIVE_INFINITY;
+		if(! pauseTime.getText().equalsIgnoreCase(String.format("%c", 8734))) {
+
+			try {
+				if (Tester.isDate(pauseTime.getText())) {
+					String[] str = pauseTime.getText().split("-");
+
+					if (str.length < 3) {
+						throw new NumberFormatException
+						("Date string must be of form yyyy-mm-dd");
+					}
+					int year = Integer.valueOf(str[0]).intValue();
+					int month = Integer.valueOf(str[1]).intValue();
+					int day = Integer.valueOf(str[2]).intValue();
+					double time =
+							Clock.calcTimeForYear_Month_Day_Hour(year, month, day, 0.0);
+
+					int startingYear = Clock.getStartingYear();
+					int startingMonth = Clock.getStartingMonth();
+					int startingDay = Clock.getStartingDay();
+					double startingTime = Clock.calcTimeForYear_Month_Day_Hour(
+							startingYear, startingMonth, startingDay, 0.0);
+
+					runToTime = time - startingTime;
+				} else {
+					runToTime = Double.parseDouble(pauseTime.getText());
+				}
+			} catch (NumberFormatException nfe) {
+				JOptionPane.showMessageDialog(this,	String.format(
+						"Invalid time \n %s", pauseTime.getText()),
+						"error", JOptionPane.ERROR_MESSAGE);
+
+				// it is not running any more
+				controlStartResume.setSelected(!
+						controlStartResume.isSelected() );
+				return;
+			}
+		}
+
 		OrbitBehavior.setViewerBehaviour( OrbitBehavior.CHANGE_TRANSLATION );
+
 		if( Simulation.getSimulationState() <= Simulation.SIM_STATE_CONFIGURED ) {
 			if (InputAgent.isSessionEdited()) {
 				InputAgent.saveAs();
@@ -937,13 +1018,21 @@ public void actionPerformed(ActionEvent e) {
 			DisplayEntity.simulation.start();
 		}
 		else if( Simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED ) {
+
+			// even if it is a run to the time, we still need to do this to
+			// set the right flag for simulation
 			DisplayEntity.simulation.resume();
+
 		}
 		else if( Simulation.getSimulationState() == Simulation.SIM_STATE_STOPPED ) {
 			DisplayEntity.simulation.restart();
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
+
+		if( ! Double.isInfinite(runToTime) ) {
+			DisplayEntity.simulation.getEventManager().runToTime(runToTime);
+		}
 	}
 
 	private void pauseSimulation() {
