@@ -30,6 +30,7 @@ import com.sandwell.JavaSimulation.StringChoiceInput;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation.StringVector;
+import com.sandwell.JavaSimulation.Vector3dInput;
 import com.sandwell.JavaSimulation3D.util.LabelShape;
 import com.sandwell.JavaSimulation3D.util.Shape;
 
@@ -45,6 +46,7 @@ public class TextLabel extends DisplayEntity  {
 	private final ColourInput fontColor;
 	private final BooleanInput dropShadow;
 	private final ColourInput dropShadowColor;
+	private final Vector3dInput dropShadowOffset;  // offset of drop shadow by fraction of text height
 
 	protected LabelShape reference;
 	protected LabelShape shadow;
@@ -89,6 +91,9 @@ public class TextLabel extends DisplayEntity  {
 
 		dropShadowColor = new ColourInput("DropShadowColour", "Graphics", Shape.getPresetColor(Shape.COLOR_BLACK));
 		this.addInput(dropShadowColor, true, "DropShadowColor");
+
+		dropShadowOffset = new Vector3dInput("DropShadowOffset", "Graphics", new Vector3d(-0.1,-0.1,0.0));
+		this.addInput(dropShadowOffset, true);
 	}
 
 	public TextLabel() {
@@ -132,6 +137,7 @@ public class TextLabel extends DisplayEntity  {
 			in == fontColor ||
 			in == dropShadow ||
 			in == dropShadowColor ||
+			in == dropShadowOffset ||
 			in == fontStyle ) {
 			modelNeedsRender = true;
 		}
@@ -152,9 +158,10 @@ public class TextLabel extends DisplayEntity  {
 				shadow.setFont(fontName.getChoice(), style, 1);
 				shadow.setText(getRenderText(time));
 
-				// Offset the shadow by 10% of the text height
-				double offset = textHeight.getValue() * 0.10;
-				shadow.setPos( -1.0 * offset, -1.0 * offset, 0.0 );
+				// Offset the shadow by fraction of text height
+				shadow.setPos( textHeight.getValue() * dropShadowOffset.getValue().getX(),
+						       textHeight.getValue() * dropShadowOffset.getValue().getY(),
+						       textHeight.getValue() * dropShadowOffset.getValue().getZ() );
 			}
 			else {
 				shadow.setText("");
