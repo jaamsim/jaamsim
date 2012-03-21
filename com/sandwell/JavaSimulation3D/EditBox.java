@@ -136,14 +136,24 @@ public class EditBox extends FrameBox {
 		setSize(530, 290);
 	}
 
-
 	private static class HelpKeyListener implements KeyListener {
 
 		public void keyReleased(KeyEvent e) {
 			if (e.getKeyCode() != KeyEvent.VK_F1)
 				return;
 
-			JTable propTable = ((HTextField)e.getSource()).propTable;
+			JTable propTable = null;
+
+			// Only proptable and HTextField have this listener
+			if(e.getSource() instanceof JTable) {
+				propTable = (JTable) e.getSource();
+			}
+			else if(e.getSource() instanceof HTextField) {
+				propTable = ((HTextField)e.getSource()).propTable;
+			}
+			else {
+				return;
+			}
 
 			if (propTable.getSelectedRow() < 0)
 				return;
