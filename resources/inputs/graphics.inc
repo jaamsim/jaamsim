@@ -1,4 +1,4 @@
-Define Package { 'Graphics Objects' }
+Define Palette { 'Graphics Objects' }
 
 Define ObjectType {
                     Arrow

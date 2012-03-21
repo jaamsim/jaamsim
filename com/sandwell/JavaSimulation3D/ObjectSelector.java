@@ -36,7 +36,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation.Package;
+import com.sandwell.JavaSimulation.Palette;
 import com.sandwell.JavaSimulation.Util;
 
 public class ObjectSelector extends FrameBox {
@@ -149,7 +149,7 @@ public class ObjectSelector extends FrameBox {
 			catch (IndexOutOfBoundsException e) {}
 		}
 
-		for (Package p : Package.getAll()) {
+		for (Palette p : Palette.getAll()) {
 			DefaultMutableTreeNode packNode = getNodeFor_In(p.getName(), top);
 			for( ObjectType type : ObjectType.getAll() ) {
 				if( type.getPackage() != p )

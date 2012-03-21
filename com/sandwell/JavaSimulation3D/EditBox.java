@@ -15,7 +15,7 @@
 package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.*;
-import com.sandwell.JavaSimulation.Package;
+import com.sandwell.JavaSimulation.Palette;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -174,7 +174,7 @@ public class EditBox extends FrameBox {
 		}
 
 		// Determine the package of the entity
-		Package cat = null;
+		Palette cat = null;
 		for( ObjectType type : ObjectType.getAll() ) {
 			if( type.getJavaClass() == currentEntity.getClass() ) {
 				cat = type.getPackage();

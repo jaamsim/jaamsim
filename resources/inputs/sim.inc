@@ -1,4 +1,4 @@
-Define Package { 'Simulation Controls' }
+Define Palette { 'Simulation Controls' }
 
 Define ObjectType {
                     Group

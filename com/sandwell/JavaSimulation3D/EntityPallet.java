@@ -15,7 +15,7 @@
 package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation.Package;
+import com.sandwell.JavaSimulation.Palette;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -109,7 +109,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		// Create a tree that allows one selection at a time
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
-		for (Package p : Package.getAll()) {
+		for (Palette p : Palette.getAll()) {
 			DefaultMutableTreeNode packNode = new DefaultMutableTreeNode(p.getName(), true);
 			for( ObjectType type : ObjectType.getAll() ) {
 				if( type.getPackage() != p || ! type.isDragAndDrop() )

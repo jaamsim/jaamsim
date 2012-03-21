@@ -2,7 +2,7 @@
 
 " Created February 9, 2011 by Stephen Wong
 
-Define Package { Units }
+Define Palette { Units }
 
 Define ObjectType  { TimeUnit
                      DistanceUnit

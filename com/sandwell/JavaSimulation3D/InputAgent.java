@@ -33,7 +33,7 @@ import java.util.Comparator;
 import javax.swing.JOptionPane;
 
 import com.sandwell.JavaSimulation.*;
-import com.sandwell.JavaSimulation.Package;
+import com.sandwell.JavaSimulation.Palette;
 
 public class InputAgent {
 	private static final String addedRecordMarker = "\" *** Added Records ***";
@@ -356,8 +356,8 @@ public class InputAgent {
 
 		Class<? extends Entity> proto = null;
 		try {
-			if( record.get( 1 ).equalsIgnoreCase( "Package" ) ) {
-				proto = Package.class;
+			if( record.get( 1 ).equalsIgnoreCase( "Palette" ) ) {
+				proto = Palette.class;
 			}
 			else if( record.get( 1 ).equalsIgnoreCase( "ObjectType" ) ) {
 				proto = ObjectType.class;

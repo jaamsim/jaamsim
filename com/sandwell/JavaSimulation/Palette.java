@@ -16,20 +16,20 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
-public class Package extends Entity {
-	private static final ArrayList<Package> allInstances;
+public class Palette extends Entity {
+	private static final ArrayList<Palette> allInstances;
 
 	private final ArrayList<Class<? extends Entity>> classList;
 
-	// Part of the name of the chm help file for the package
+	// Part of the name of the chm help file for the palette
 	private final StringInput helpFilePrefix;
 
-	// The name of the htm file containing keywords for the package.
+	// The name of the htm file containing keywords for the palette.
 	// To find the htm file, open the chm file in 7zip
 	private final StringInput helpSection;
 
 	static {
-		allInstances = new ArrayList<Package>();
+		allInstances = new ArrayList<Palette>();
 	}
 
 	{
@@ -40,12 +40,12 @@ public class Package extends Entity {
 		this.addInput(helpSection, true);
 	}
 
-	public Package() {
+	public Palette() {
 		allInstances.add(this);
 		classList = new ArrayList<Class<? extends Entity>>();
 	}
 
-	public static ArrayList<Package> getAll() {
+	public static ArrayList<Palette> getAll() {
 		return allInstances;
 	}
 
