@@ -150,9 +150,9 @@ public class ObjectSelector extends FrameBox {
 		}
 
 		for (Palette p : Palette.getAll()) {
-			DefaultMutableTreeNode packNode = getNodeFor_In(p.getName(), top);
+			DefaultMutableTreeNode palNode = getNodeFor_In(p.getName(), top);
 			for( ObjectType type : ObjectType.getAll() ) {
-				if( type.getPackage() != p )
+				if( type.getPalette() != p )
 					continue;
 
 				Class<? extends Entity> proto = type.getJavaClass();
@@ -160,7 +160,7 @@ public class ObjectSelector extends FrameBox {
 				if (!used.contains(proto))
 					continue;
 
-				DefaultMutableTreeNode classNode = getNodeFor_In(proto.getSimpleName(), packNode);
+				DefaultMutableTreeNode classNode = getNodeFor_In(proto.getSimpleName(), palNode);
 				for (int i = 0; i < Entity.getAll().size(); i++) {
 					try {
 						Entity each = Entity.getAll().get(i);
@@ -192,22 +192,22 @@ public class ObjectSelector extends FrameBox {
 				if(!classNode.isLeaf()) {
 
 					// Class node does not exist in the package node
-					if(packNode.getIndex(classNode) < 0) {
-						packNode.add(classNode);
+					if(palNode.getIndex(classNode) < 0) {
+						palNode.add(classNode);
 					}
 				}
-				else if( packNode.getIndex(classNode) >= 0) {
-					packNode.remove(classNode);
+				else if( palNode.getIndex(classNode) >= 0) {
+					palNode.remove(classNode);
 				}
 			}
 
-			// Package node is not empty
-			if(!packNode.isLeaf()) {
-				if(top.getIndex(packNode) < 0)
-					top.add(packNode);
+			// Palette node is not empty
+			if(!palNode.isLeaf()) {
+				if(top.getIndex(palNode) < 0)
+					top.add(palNode);
 			}
-			else if(top.getIndex(packNode) >= 0) {
-				top.remove(packNode);
+			else if(top.getIndex(palNode) >= 0) {
+				top.remove(palNode);
 			}
 		}
 

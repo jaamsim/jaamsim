@@ -22,7 +22,7 @@ public class ObjectType extends Entity {
 	private static final ArrayList<ObjectType> allInstances;
 
 	private final ClassInput javaClass; // the java class of the object type
-	private final EntityInput<Palette> javaPackage; // the package to which the object type belongs
+	private final EntityInput<Palette> palette; // the package to which the object type belongs
 	private final EntityInput<DisplayModel> defaultDisplayModel; // Only for DisplayEntity
 	private final BooleanInput dragAndDrop;
 
@@ -34,8 +34,8 @@ public class ObjectType extends Entity {
 		javaClass = new ClassInput( "JavaClass", "Key Inputs", null );
 		this.addInput( javaClass, true );
 
-		javaPackage = new EntityInput<Palette>( Palette.class, "Palette", "Key Inputs", null );
-		this.addInput( javaPackage, true );
+		palette = new EntityInput<Palette>( Palette.class, "Palette", "Key Inputs", null );
+		this.addInput( palette, true );
 
 		defaultDisplayModel = new EntityInput<DisplayModel>(DisplayModel.class, "DefaultDisplayModel", "Key Inputs", null);
 		this.addInput(defaultDisplayModel, true);
@@ -72,8 +72,8 @@ public class ObjectType extends Entity {
 		return javaClass.getValue();
 	}
 
-	public Palette getPackage() {
-		return javaPackage.getValue();
+	public Palette getPalette() {
+		return palette.getValue();
 	}
 
 	public DisplayModel getDefaultDisplayModel(){

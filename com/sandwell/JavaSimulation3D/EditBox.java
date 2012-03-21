@@ -177,7 +177,7 @@ public class EditBox extends FrameBox {
 		Palette cat = null;
 		for( ObjectType type : ObjectType.getAll() ) {
 			if( type.getJavaClass() == currentEntity.getClass() ) {
-				cat = type.getPackage();
+				cat = type.getPalette();
 				break;
 			}
 		}

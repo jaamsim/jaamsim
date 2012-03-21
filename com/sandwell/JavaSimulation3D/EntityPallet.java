@@ -112,7 +112,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		for (Palette p : Palette.getAll()) {
 			DefaultMutableTreeNode packNode = new DefaultMutableTreeNode(p.getName(), true);
 			for( ObjectType type : ObjectType.getAll() ) {
-				if( type.getPackage() != p || ! type.isDragAndDrop() )
+				if( type.getPalette() != p || ! type.isDragAndDrop() )
 					continue;
 
 				DefaultMutableTreeNode classNode = new DefaultMutableTreeNode(type, true);
