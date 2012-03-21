@@ -19,20 +19,20 @@ Define ObjectType  { TimeUnit
                      SpecificEnergyUnit
                      PowerUnit }
 
-TimeUnit         JavaClass { com.sandwell.JavaSimulation.TimeUnit         } Package { Units }
-DistanceUnit     JavaClass { com.sandwell.JavaSimulation.DistanceUnit     } Package { Units }
-SpeedUnit        JavaClass { com.sandwell.JavaSimulation.SpeedUnit        } Package { Units }
-AccelerationUnit JavaClass { com.sandwell.JavaSimulation.AccelerationUnit } Package { Units }
-MassUnit         JavaClass { com.sandwell.JavaSimulation.MassUnit         } Package { Units }
-MassFlowUnit     JavaClass { com.sandwell.JavaSimulation.MassFlowUnit     } Package { Units }
-VolumeUnit       JavaClass { com.sandwell.JavaSimulation.VolumeUnit       } Package { Units }
-VolumeFlowUnit   JavaClass { com.sandwell.JavaSimulation.VolumeFlowUnit   } Package { Units }
-AngleUnit        JavaClass { com.sandwell.JavaSimulation.AngleUnit        } Package { Units }
-AngularSpeedUnit JavaClass { com.sandwell.JavaSimulation.AngularSpeedUnit } Package { Units }
-EnergyUnit         JavaClass { com.sandwell.JavaSimulation.EnergyUnit         } Package { Units }
-EnergyDensityUnit  JavaClass { com.sandwell.JavaSimulation.EnergyDensityUnit  } Package { Units }
-SpecificEnergyUnit JavaClass { com.sandwell.JavaSimulation.SpecificEnergyUnit } Package { Units }
-PowerUnit          JavaClass { com.sandwell.JavaSimulation.PowerUnit          } Package { Units }
+TimeUnit         JavaClass { com.sandwell.JavaSimulation.TimeUnit         } Palette { Units }
+DistanceUnit     JavaClass { com.sandwell.JavaSimulation.DistanceUnit     } Palette { Units }
+SpeedUnit        JavaClass { com.sandwell.JavaSimulation.SpeedUnit        } Palette { Units }
+AccelerationUnit JavaClass { com.sandwell.JavaSimulation.AccelerationUnit } Palette { Units }
+MassUnit         JavaClass { com.sandwell.JavaSimulation.MassUnit         } Palette { Units }
+MassFlowUnit     JavaClass { com.sandwell.JavaSimulation.MassFlowUnit     } Palette { Units }
+VolumeUnit       JavaClass { com.sandwell.JavaSimulation.VolumeUnit       } Palette { Units }
+VolumeFlowUnit   JavaClass { com.sandwell.JavaSimulation.VolumeFlowUnit   } Palette { Units }
+AngleUnit        JavaClass { com.sandwell.JavaSimulation.AngleUnit        } Palette { Units }
+AngularSpeedUnit JavaClass { com.sandwell.JavaSimulation.AngularSpeedUnit } Palette { Units }
+EnergyUnit         JavaClass { com.sandwell.JavaSimulation.EnergyUnit         } Palette { Units }
+EnergyDensityUnit  JavaClass { com.sandwell.JavaSimulation.EnergyDensityUnit  } Palette { Units }
+SpecificEnergyUnit JavaClass { com.sandwell.JavaSimulation.SpecificEnergyUnit } Palette { Units }
+PowerUnit          JavaClass { com.sandwell.JavaSimulation.PowerUnit          } Palette { Units }
 
 Units HelpFile { 'Java Simulation Environment' }
 

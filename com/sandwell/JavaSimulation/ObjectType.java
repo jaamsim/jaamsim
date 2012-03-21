@@ -34,7 +34,7 @@ public class ObjectType extends Entity {
 		javaClass = new ClassInput( "JavaClass", "Key Inputs", null );
 		this.addInput( javaClass, true );
 
-		javaPackage = new EntityInput<Palette>( Palette.class, "Package", "Key Inputs", null );
+		javaPackage = new EntityInput<Palette>( Palette.class, "Palette", "Key Inputs", null );
 		this.addInput( javaPackage, true );
 
 		defaultDisplayModel = new EntityInput<DisplayModel>(DisplayModel.class, "DefaultDisplayModel", "Key Inputs", null);
