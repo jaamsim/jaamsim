@@ -25,7 +25,6 @@ public class Queue extends DisplayEntity {
 	private final DoubleInput spacingInput;
 	private final BooleanInput printReportInput;
 
-	protected int maxQueued;
 	protected Vector itemList;
 	protected Vector3d end;
 	protected int maxPerLine; // maximum items per sub line-up of queue
@@ -129,17 +128,6 @@ public class Queue extends DisplayEntity {
 	public void addLast( DisplayEntity perf ) {
 		itemList.addElement( perf );
 		updateGraphics();
-	}
-
-	/**
-	 * Add an entity to the queue
-	 */
-	public void addLastWithoutUpdateGraphic( DisplayEntity perf ) {
-		itemList.addElement( perf );
-	}
-
-	public void setMaxQueued( int max ) {
-		maxQueued = max;
 	}
 
 	/**
