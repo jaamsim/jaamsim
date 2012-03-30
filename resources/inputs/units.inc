@@ -52,7 +52,7 @@ Year   ConversionFactorToSI { 31536000 } Alias { Years years year Yrs yrs Yr yr 
 " Distance units
 " ======================================================================================================================================================
 
-Define DistanceUnit   { Metres Kilometres nmi Miles Feet Inches }
+Define DistanceUnit   { Metres Kilometres nmi Miles Feet Inches mm }
 
 Metres       ConversionFactorToSI { 1        } Alias { Meters m }
 Kilometres   ConversionFactorToSI { 1000     } Alias { Kilometers km }
@@ -60,6 +60,7 @@ nmi          ConversionFactorToSI { 1852     }
 Miles        ConversionFactorToSI { 1609.344 } Alias { mi }
 Feet         ConversionFactorToSI { 0.3048   } Alias { ft }
 Inches       ConversionFactorToSI { 0.0254   } Alias { in }
+mm           ConversionFactorToSI { 0.001    }
 
 " ======================================================================================================================================================
 " Speed units
