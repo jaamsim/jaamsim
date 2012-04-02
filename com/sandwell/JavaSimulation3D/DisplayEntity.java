@@ -29,8 +29,8 @@ import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Vector;
 import com.sandwell.JavaSimulation.Vector3dInput;
-import com.sandwell.JavaSimulation3D.util.Circle;
 import com.sandwell.JavaSimulation3D.util.Cube;
+import com.sandwell.JavaSimulation3D.util.PointWithSize;
 import com.sandwell.JavaSimulation3D.util.Shape;
 
 import javax.media.j3d.Node;
@@ -821,17 +821,15 @@ public class DisplayEntity extends Entity {
 	}
 
 	private void updateResizeBounds(double x, double y, double z) {
-		double radius = 0.10 * Math.min(x, y);
-
-		((Circle)rotateSizeBounds.getChild(0)).setCenterRadius(-x, 0.0, 0.0, radius);
-		((Circle)rotateSizeBounds.getChild(1)).setCenterRadius(-x/2, y/2, 0.0, radius);
-		((Circle)rotateSizeBounds.getChild(2)).setCenterRadius(x/2, y/2, 0.0, radius);
-		((Circle)rotateSizeBounds.getChild(3)).setCenterRadius(0.0, y/2, 0.0, radius);
-		((Circle)rotateSizeBounds.getChild(4)).setCenterRadius( x/2, 0.0, 0.0, radius);
-		((Circle)rotateSizeBounds.getChild(5)).setCenterRadius(-x/2, 0.0, 0.0, radius);
-		((Circle)rotateSizeBounds.getChild(6)).setCenterRadius(-x/2, -y/2, 0.0, radius);
-		((Circle)rotateSizeBounds.getChild(7)).setCenterRadius( x/2, -y/2, 0.0, radius);
-		((Circle)rotateSizeBounds.getChild(8)).setCenterRadius(0.0, -y/2, 0.0, radius);
+		((PointWithSize)rotateSizeBounds.getChild(0)).setCenter(-x, 0.0, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(1)).setCenter(-x/2, y/2, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(2)).setCenter(x/2, y/2, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(3)).setCenter(-x/2, -y/2, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(4)).setCenter( x/2, -y/2, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(5)).setCenter(0.0, y/2, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(6)).setCenter( x/2, 0.0, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(7)).setCenter(-x/2, 0.0, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(8)).setCenter(0.0, -y/2, 0.0);
 		resizeLine.setCoordinate(1, new Point3d(-x, 0.0d, 0.0d));
 		((Cube)rotateSizeBounds.getChild(10)).setSize(x, y, z);
 	}
@@ -846,8 +844,16 @@ public class DisplayEntity extends Entity {
 		resizeLine.setCoordinate(0, new Point3d(0.0, 0.0, 0.0));
 		resizeLine.setCoordinate(1, new Point3d(1.0, 0.0, 0.0));
 
+		// circle handles
+		boolean state = true;
+
 		for (int i = 0; i < 9; i++) {
-			Circle temp = new Circle(0.0, 0.0, 0.0, 0.1, 36, Circle.SHAPE_FILLED);
+
+			// square handles
+			if(i > 4)
+				state = false;
+
+			PointWithSize temp = new PointWithSize(9.0f, state, "pixels" );
 			temp.setColor(Shape.getColorWithName("darkgreen"));
 			rotateSizeBounds.addChild(temp);
 		}
