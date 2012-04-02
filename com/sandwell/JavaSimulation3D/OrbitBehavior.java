@@ -172,6 +172,8 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 	}
 
 	public static void selectEntity(Entity ent) {
+		if(ent == selectedEntity)
+			return;
 
 		// Unselect previous entity
 		resizeObjectDeselected();
