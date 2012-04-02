@@ -950,6 +950,14 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 		// opposite of selected corner location before resizing
 		Vector3d loc = ent.getPositionForAlignment( oppositeCorner );
 
+		// negative size is not accepted
+		if(selectedEntitySize.x < 0) {
+			selectedEntitySize.x  = 0;
+		}
+		if(selectedEntitySize.y < 0) {
+			selectedEntitySize.y  = 0;
+		}
+
 		ent.setSize(selectedEntitySize); // new size after dragging
 
 		// move the opposite corner to its previous location, before resizing
