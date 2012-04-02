@@ -1047,7 +1047,7 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 			return CORNER_ROTATE;
 		}
 
-		window.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		window.setCursor(new Cursor(Cursor.MOVE_CURSOR));
 		return 0;
 	}
 
