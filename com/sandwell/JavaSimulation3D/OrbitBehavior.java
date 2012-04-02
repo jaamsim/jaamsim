@@ -20,6 +20,9 @@ import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
@@ -107,6 +110,7 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 	public static final int CORNER_TOPLEFT = 7;
 	public static final int CORNER_MIDDLELEFT = 8;
 	public static final int CORNER_ROTATE = 9;
+	private Cursor rotation;
 
 	public static int resizeType = 0;
 
@@ -127,6 +131,26 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 		orbitRadius = DEFAULT_RADIUS;
 		fov = DEFAULT_FOV;
 		integrateTransforms();
+
+		Toolkit tk = Toolkit.getDefaultToolkit();
+
+		// The middle of the image is the hot spot for rotating cursor
+		Dimension dim = tk.getBestCursorSize(32, 32);
+		dim.height /= 2;
+		dim.width /= 2;
+
+		// Create rotating cursor from image
+		Image cursorImage = tk.getImage(
+				GUIFrame.class.getResource("/resources/images/rotating.png"));
+		try {
+			rotation = tk.createCustomCursor(
+				cursorImage, new Point(dim.width,dim.height), "Rotating");
+		}
+
+		// use the default cursor, do not throw an exception
+		catch(Exception exc){
+			rotation = null;
+		}
 	}
 
 	protected synchronized void processAWTEvents( final java.awt.AWTEvent[] events ) {
@@ -1028,7 +1052,7 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 
 		tmp.set(-1.0d, 0.0d, 0.0d);
 		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
-			window.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			window.setCursor(rotation);
 			return CORNER_ROTATE;
 		}
 
