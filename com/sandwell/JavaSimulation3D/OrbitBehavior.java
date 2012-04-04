@@ -265,6 +265,7 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 			// mouse moves inside the entity with resizeBounds set
 			if (selectedEntity == closest && resizeBounds) {
 					if( !(selectedEntity instanceof MouseNode) ){
+						selectedEntity.preDrag();
 						selectedStart.set(this.getUniversePointFromMouseLoc(
 								evt.getX(), evt.getY(), Plane.XY_PLANE,
 								selectedEntity.getAbsoluteCenter().z));
