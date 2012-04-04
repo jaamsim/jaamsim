@@ -854,7 +854,7 @@ public class DisplayEntity extends Entity {
 				state = false;
 
 			PointWithSize temp = new PointWithSize(9.0f, state, "pixels" );
-			temp.setColor(Shape.getColorWithName("darkgreen"));
+			temp.setColor(Shape.getColorWithName("LightBlue"));
 			rotateSizeBounds.addChild(temp);
 		}
 
