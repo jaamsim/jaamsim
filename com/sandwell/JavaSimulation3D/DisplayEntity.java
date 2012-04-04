@@ -822,7 +822,9 @@ public class DisplayEntity extends Entity {
 	}
 
 	private void updateResizeBounds() {
-		((PointWithSize)rotateSizeBounds.getChild(0)).setCenter(-size.x, 0.0, 0.0);
+		double rotatorPos = -size.x/2 -
+			Math.max(Math.max(size.x, size.y), size.z) /4;
+		((PointWithSize)rotateSizeBounds.getChild(0)).setCenter(rotatorPos, 0.0, 0.0);
 		((PointWithSize)rotateSizeBounds.getChild(1)).setCenter(-size.x/2, size.y/2, 0.0);
 		((PointWithSize)rotateSizeBounds.getChild(2)).setCenter(size.x/2, size.y/2, 0.0);
 		((PointWithSize)rotateSizeBounds.getChild(3)).setCenter(-size.x/2, -size.y/2, 0.0);
@@ -831,7 +833,7 @@ public class DisplayEntity extends Entity {
 		((PointWithSize)rotateSizeBounds.getChild(6)).setCenter( size.x/2, 0.0, 0.0);
 		((PointWithSize)rotateSizeBounds.getChild(7)).setCenter(-size.x/2, 0.0, 0.0);
 		((PointWithSize)rotateSizeBounds.getChild(8)).setCenter(0.0, -size.y/2, 0.0);
-		resizeLine.setCoordinate(1, new Point3d(-size.x, 0.0d, 0.0d));
+		resizeLine.setCoordinate(1, new Point3d(rotatorPos, 0.0d, 0.0d));
 		((Cube)rotateSizeBounds.getChild(10)).setSize(size.x, size.y, size.z);
 	}
 

@@ -992,6 +992,8 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 		// used for resizing
 		Vector3d tmp = ent.getSize();
 		double distSquare = 0.10 * Math.min(tmp.x, tmp.y);
+		double rotatorPos = -0.5 -
+				Math.max(Math.max(tmp.x, tmp.y), tmp.z)/(4*tmp.x);
 		distSquare = distSquare * distSquare;
 
 		tmp.set(-0.5d, -0.5d, 0.0d);
@@ -1042,7 +1044,7 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 			return CORNER_MIDDLELEFT;
 		}
 
-		tmp.set(-1.0d, 0.0d, 0.0d);
+		tmp.set(rotatorPos, 0.0d, 0.0d);
 		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
 			window.setCursor(rotation);
 			return CORNER_ROTATE;
