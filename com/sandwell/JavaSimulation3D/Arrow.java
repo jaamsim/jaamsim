@@ -25,6 +25,7 @@ import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringVector;
+import com.sandwell.JavaSimulation.Vector3dListInput;
 import com.sandwell.JavaSimulation3D.util.Line;
 import com.sandwell.JavaSimulation3D.util.Shape;
 import com.sandwell.JavaSimulation3D.util.Vec3dUtil;
@@ -32,6 +33,7 @@ import com.sandwell.JavaSimulation3D.util.Vec3dUtil;
 public class Arrow extends DisplayEntity {
 	private static final ArrayList<Arrow> allInstances;
 
+	protected final Vector3dListInput pointsInput;
 	protected Vector3d startCoord;         // Graphical start point
 	protected Vector3d endCoord;           // Graphical end point
 	protected DoubleVector intermediateX;  // intermediate x coordinates for bends
@@ -51,6 +53,10 @@ public class Arrow extends DisplayEntity {
 		allInstances = new ArrayList<Arrow>();
 	}
 	{
+		pointsInput = new Vector3dListInput("Points", "Graphics", null);
+		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
+		this.addInput(pointsInput, true);
+
 		addEditableKeyword( "Start",              "  -  ",   " - "     , false, "Graphics" );
 		addEditableKeyword( "End",       		  "  -  ",   " - "     , false, "Graphics" );
 		addEditableKeyword( "X",                  "  -  ",   " - "     , false, "Graphics" );
@@ -83,9 +89,10 @@ public class Arrow extends DisplayEntity {
 	}
 
 	public void initailize() {
-		this.killMouseNodes();
-		this.validateStartAndEndCoords();
-		this.setGraphicsForStartPt_EndPt(startCoord, endCoord);
+		validateStartAndEndCoords();
+		initializeScreenPoints();
+		initializeMouseNodes();
+		this.setGraphicsForStartPt_EndPt( startCoord, endCoord );
 	}
 
 	// ******************************************************************************************************
@@ -164,6 +171,10 @@ public class Arrow extends DisplayEntity {
 		return intermediateY;
 	}
 
+	public ArrayList<Vector3d> getScreenPoints() {
+		return screenPoints;
+	}
+
 	public void setGraphicsForStartPt_EndPt( Vector3d p1, Vector3d p2 ) {
 		if( p1 == null ) {
 			throw new InputErrorException( this.getName()+": Missing Start Point" );
@@ -198,82 +209,17 @@ public class Arrow extends DisplayEntity {
 			throw new InputErrorException( "Number of intermediate X and Y coordinates must be the same for segment " + this.getName() );
 		}
 
-		//setup mouseNodes if needed
-		if ( this.getMouseNodes().size() != this.getIntermediateX().size()+2 ) {
-			// initial mouseNode
-			if ( this.getMouseNodes().size() == 0 ) {
-				MouseNode startMouseNode;
-				startMouseNode = new MouseNode( this, this.getMouseNodesSize(), Shape.COLOR_GREEN );
-				startMouseNode.setRegion( this.getCurrentRegion() );
-				startMouseNode.setPosition(startCoord);
-			}
-
-			//loop through list of points
-			Vector3d nodePos = new Vector3d();
-			for( int i = 1; i < this.getIntermediateX().size()+1; i++ ) {
-				// check if mouseNode exists at this position in vector
-				if ( getMouseNodes().size() < i+1 ) {
-					MouseNode mouseNode = new MouseNode(this);
-					mouseNode.setRegion( this.getCurrentRegion() );
-					nodePos.x = getIntermediateX().get(i - 1);
-					nodePos.y = getIntermediateY().get(i - 1);
-					mouseNode.setPosition(nodePos);
-				}
-			}
-
-			// end point
-			if ( this.getMouseNodes().size() < this.getIntermediateX().size()+2 ) {
-				MouseNode endMouseNode;
-				endMouseNode = new MouseNode( this, this.getMouseNodesSize() + (int)Math.max(0.002, this.getMouseNodesSize()*0.1), Shape.COLOR_RED );
-				endMouseNode.setRegion( this.getCurrentRegion() );
-				endMouseNode.setPosition(endCoord);
-			}
-
-		}
-
 		// update x/y points from mouseNodes
-		if ( this.getMouseNodes() != null ) {
-			for ( int i = 0; i < this.getMouseNodes().size(); i++ ) {
-				MouseNode mouseNode = this.getMouseNodes().get(i);
-
-				//start point
-				if ( i == 0 ) {
-					startCoord = mouseNode.getPosition();
-				//end point
-				} else if ( i == this.getMouseNodes().size()-1 ) {
-					endCoord = mouseNode.getPosition();
-				//intermediate point
-				} else {
-					Vector3d pos = mouseNode.getPosition();
-					this.getIntermediateX().set(i - 1, pos.x);
-					this.getIntermediateY().set(i - 1, pos.y);
-					//TODO: interface with edited values here to update editbox and allow position saving
-				}
-			}
-		}
-
-
-
-		// Setup coordinate vectors
-
-
+		this.updateScreenPoints();
 
 		// Store the min and max screen coordinates
-		Vector3d minPt = Vec3dUtil.min(startCoord, endCoord);
-		Vector3d maxPt = Vec3dUtil.max(startCoord, endCoord);
+		Vector3d minPt = screenPoints.get( 0 );
+		Vector3d maxPt = screenPoints.get( 0 );
 
-		// Build the screenpoints list
-		screenPoints.clear();
-		screenPoints.add(startCoord);
-		for (int i = 0; i < intermediateX.size(); i++) {
-			Vector3d intPt = new Vector3d(intermediateX.get(i), intermediateY.get(i), 0.0);
-
-			minPt = Vec3dUtil.min( minPt, intPt );
-			maxPt = Vec3dUtil.max( maxPt, intPt );
-			screenPoints.add(intPt);
-
+		for (int i = 1; i < screenPoints.size(); i++) {
+			minPt = Vec3dUtil.min( minPt, screenPoints.get(i) );
+			maxPt = Vec3dUtil.max( maxPt, screenPoints.get(i) );
 		}
-		screenPoints.add(endCoord);
 
 		if (line == null) {
 			line = new Line(0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
@@ -302,6 +248,50 @@ public class Arrow extends DisplayEntity {
 	}
 
 	/**
+	 * create screen point from startCood, intermediateX&Y, and endCoord
+	 */
+	public void initializeScreenPoints(){
+
+		// set up screen points
+		screenPoints.clear();
+
+		// If Points were input, then use them to populate screenPoints
+		if( pointsInput.getValue() != null ) {
+			screenPoints.addAll( pointsInput.getValue() );
+		}
+		else {
+			// Otherwise, populate screen points from the start, end, and intermediate points
+			screenPoints.add( startCoord );
+
+			// intermediate points
+			for ( int i = 0; i < intermediateX.size(); i++ ) {
+				screenPoints.add( new Vector3d( intermediateX.get(i), intermediateY.get(i), 0.0	));
+			}
+
+			screenPoints.add( endCoord );
+		}
+	}
+
+	/**
+	 * initializeMouseNodes from screen points
+	 */
+	public void initializeMouseNodes(){
+
+		this.killMouseNodes();
+
+		for( Vector3d points : screenPoints ){
+			MouseNode mouse = new MouseNode( this, mouseNodesSize, Shape.COLOR_BLUE );
+			mouse.setRegion( getCurrentRegion() );
+			mouse.setPosition(points);
+		}
+
+		if( screenPoints.size() > 1){
+			getMouseNodes().get(0).setColor(Shape.getPresetColor(Shape.COLOR_GREEN));
+			getMouseNodes().get(screenPoints.size() - 1).setColor(Shape.getPresetColor(Shape.COLOR_RED));
+		}
+	}
+
+	/**
 	 * Adds a mouseNode at the given position, and create an intermediate point there
 	 * @param posn
 	 */
@@ -312,16 +302,10 @@ public class Arrow extends DisplayEntity {
 		int indexOfClosestPoint = 0;
 		int indexOfNewPoint = 0;
 		double distanceFromClosestPoint = 99.999;
-		ArrayList<Vector3d> pointList = new ArrayList<Vector3d>(this.getIntermediateX().size() + 2);
-		pointList.add( startCoord );
-		for ( int i = 0; i < this.getIntermediateX().size(); i++ ) {
-			pointList.add( new Vector3d( this.getIntermediateX().get( i ), this.getIntermediateY().get( i ), 0.0 ) );
-		}
-		pointList.add( endCoord );
 
 		// find closest point
-		for ( int i = 0; i < pointList.size(); i++ ) {
-			Vector3d each = pointList.get( i );
+		for ( int i = 0; i < screenPoints.size(); i++ ) {
+			Vector3d each = screenPoints.get( i );
 			double distance = Vec3dUtil.distance( each, posn );
 			if ( distance < distanceFromClosestPoint ) {
 				distanceFromClosestPoint = distance;
@@ -333,18 +317,18 @@ public class Arrow extends DisplayEntity {
 		// find point on Line to create
 		if ( indexOfClosestPoint > 0 ) {
 
-			Vector3d pointBefore = pointList.get(indexOfClosestPoint - 1);
+			Vector3d pointBefore = screenPoints.get( indexOfClosestPoint-1 );
 			Vector3d point1 = Vec3dUtil.getClosestPointTo_OnLineBetween( posn, pointBefore, closestPoint );
 			newPoint = point1;
 			indexOfNewPoint = indexOfClosestPoint;
 
 			// if not the end point
-			if ( indexOfClosestPoint < pointList.size()-1 ) {
-				Vector3d pointAfter = pointList.get(indexOfClosestPoint + 1);
+			if ( indexOfClosestPoint < screenPoints.size()-1 ) {
+				Vector3d pointAfter = screenPoints.get( indexOfClosestPoint+1 );
 				Vector3d point2 = Vec3dUtil.getClosestPointTo_OnLineBetween( posn, closestPoint, pointAfter );
 
 				// which point is closer to original point?
-				if ( Vec3dUtil.distance( posn, point2 ) < Vec3dUtil.distance( posn, point1) ) {
+				if ( Vec3dUtil.distance( posn, point2 ) < Vec3dUtil.distance( posn, point1 ) ) {
 						newPoint = point2;
 						indexOfNewPoint = indexOfClosestPoint + 1;
 			    }
@@ -353,16 +337,14 @@ public class Arrow extends DisplayEntity {
 		}
 		// closest point is the first point
 		else {
-			Vector3d pointAfter = pointList.get(indexOfClosestPoint + 1);
+			Vector3d pointAfter = screenPoints.get( indexOfClosestPoint+1 );
 			Vector3d point2 = Vec3dUtil.getClosestPointTo_OnLineBetween( posn, closestPoint, pointAfter );
 			newPoint = point2;
 			indexOfNewPoint = indexOfClosestPoint + 1;
 		}
 
 		// point has been found, now add to model
-		pointList.add(indexOfNewPoint, newPoint);
-		this.getIntermediateX().add((indexOfNewPoint-1), newPoint.getX());
-		this.getIntermediateY().add((indexOfNewPoint-1), newPoint.getY());
+		screenPoints.add( indexOfNewPoint, newPoint );
 
 		MouseNode newMouseNode = new MouseNode(this);
 
@@ -373,9 +355,16 @@ public class Arrow extends DisplayEntity {
 		newMouseNode.setRegion( this.getCurrentRegion() );
 		newMouseNode.setPosition(newPoint);
 		newMouseNode.enterRegion();
+	}
 
-		this.initializeGraphics();
-
+	public void updateScreenPoints(){
+		if ( this.getMouseNodes() != null ) {
+			for ( int i = 0; i < this.getMouseNodes().size(); i++ ) {
+				MouseNode mouseNode = this.getMouseNodes().get( i );
+				// screen points
+				screenPoints.set(i, mouseNode.getPosition());
+			}
+		}
 	}
 
  	/**
@@ -383,38 +372,23 @@ public class Arrow extends DisplayEntity {
 	 */
 	public void updateInputPosition() {
 
-		Input<?> in = this.getInput( "Start" );
-		if ( in != null ) {
-			InputAgent.processEntity_Keyword_Value(this, in,
-					String.format( "%.3f %.3f", startCoord.getX(), startCoord.getY() ) );
-		}
-
-		in = this.getInput( "End" );
-		if ( in != null ) {
-			InputAgent.processEntity_Keyword_Value(this, in,
-					String.format( "%.3f %.3f", endCoord.getX(), endCoord.getY() ) );
-		}
-
-		in = this.getInput( "X" );
-		if ( in != null ) {
+		Input<?> pts = this.getInput("Points");
+		if (pts != null) {
 			StringBuilder tmp = new StringBuilder();
-			for( int i = 0; i < this.getIntermediateX().size(); i++ ) {
-				tmp.append(String.format( "%.3f ", this.getIntermediateX().get( i ) ));
+			for( Vector3d point : this.getScreenPoints() ) {
+				tmp.append(String.format(" { %.3f %.3f %.3f }", point.x, point.y, point.z));
 			}
-			InputAgent.processEntity_Keyword_Value(this, in, tmp.toString());
-		}
-
-		in = this.getInput( "Y" );
-		if ( in != null ) {
-			StringBuilder tmp = new StringBuilder();
-			for( int i = 0; i < this.getIntermediateY().size(); i++ ) {
-				tmp.append(String.format( "%.3f ", this.getIntermediateY().get( i ) ));
-			}
-			InputAgent.processEntity_Keyword_Value(this, in, tmp.toString());
+			InputAgent.processEntity_Keyword_Value(this, pts, tmp.toString());
 		}
 	}
 
 	public void validateStartAndEndCoords() {
+
+		// If Points were input, then use them to set the start and end coordinates
+		if( pointsInput.getValue() != null ) {
+			this.setStartCoord( pointsInput.getValue().get( 0 ) );
+			this.setEndCoord( pointsInput.getValue().get( pointsInput.getValue().size()-1 ) );
+		}
 
 		// If Start and end points are not defined, use the first and last elements intermediate points for those points
 		if( startCoord.getX() == 0 && startCoord.getY() == 0 && endCoord.getX() == 0 && endCoord.getY() == 0 && intermediateX.size() > 1 ) {
@@ -438,6 +412,8 @@ public class Arrow extends DisplayEntity {
 
 	public void dragged(Vector3d distance) {
 		super.dragged(distance);
+
+		updateScreenPoints();
 
 		Vector3d temp = this.getPosition();
 		temp.add(arrowHeadOffset);
