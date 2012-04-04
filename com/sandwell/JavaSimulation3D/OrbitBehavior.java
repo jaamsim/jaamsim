@@ -382,7 +382,9 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 				if (selectedEntity != null) {
 
 					// Check if we are resizing
-					Vector3d dragEnd = this.getUniversePointFromMouseLoc(evt.getX(), evt.getY(), Plane.XY_PLANE, selectedEntity.getAbsoluteCenter().z);
+					Vector3d dragEnd = this.getUniversePointFromMouseLoc(
+							evt.getX(), evt.getY(), Plane.XY_PLANE,
+							selectedEntity.getAbsoluteCenter().z);
 					if (resizeBounds == true && resizeType > 0 && !zDragging) {
 						resizeObject(selectedEntity, selectedStart, dragEnd);
 					}
@@ -875,107 +877,88 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 	}
 
 	/**
-	 * resize the selected Object
+	 * resize or rotate the selected Object
 	 */
-	private void resizeObject(DisplayEntity ent, Vector3d start, Vector3d end){
+	private void resizeObject(DisplayEntity ent, Vector3d start, Vector3d end ){
 
 		if (ent == null)
 			return;
 
-		double resizeAverage = 0;			// used for corners
-		Vector3d center = ent.getAbsoluteCenter();
 		Vector3d orient = ent.getOrientation();
 
-		// get current point
-		Vector3d resizeStartRotated = ent.getCoordinatesForRotationAroundPointByAngleForPosition(center, -orient.z, start);
-		Vector3d resizeEndRotated = ent.getCoordinatesForRotationAroundPointByAngleForPosition(center, -orient.z, end);
-
-		Vector3d resizediff = new Vector3d();
-		resizediff.sub( resizeEndRotated, resizeStartRotated );
+		// calculate difference in x and y size
+		Vector3d diff = new Vector3d();
+		diff.sub(end, start); // Vector from start to end point
+		Transform3D temp = new Transform3D();
+		temp.setEuler(orient);
+		temp.invert();
+		temp.transform(diff);
 
 		Vector3d selectedEntitySize = ent.getSize();
+		Vector3d oppositeCorner = null; // opposite of selected corner
 
 		// resize the object according to which corner was selected
 		switch( resizeType ){
 		case CORNER_BOTTOMLEFT:
-			// take the average change (equal horizontal and vertical resize);
-			resizeAverage = (resizediff.x + resizediff.y);
-			selectedEntitySize.x -= resizeAverage;
-			selectedEntitySize.y -= resizeAverage;
-
-			// new size of entity is the old size + dragged amount
-			ent.setSize(selectedEntitySize);
-			ent.updateInputPosition();
-			ent.updateInputSize();
+			selectedEntitySize.x -= diff.x;
+			selectedEntitySize.y -= diff.y;
+			oppositeCorner = new Vector3d(0.5, 0.5, 0.5);
 			break;
 		case CORNER_BOTTOMCENTER:
-			// Adjust only y
-			// multiply by 2 to adjust both top and bottom
-			resizeAverage = 2 * resizediff.y;
-			selectedEntitySize.y -= resizeAverage;
-			ent.setSize(selectedEntitySize);
-			ent.updateInputPosition();
-			ent.updateInputSize();
+			selectedEntitySize.y -= diff.y;
+			oppositeCorner = new Vector3d(0.0, 0.5, 0.5);
 			break;
 		case CORNER_BOTTOMRIGHT:
-			resizeAverage = (resizediff.x - resizediff.y);
-			selectedEntitySize.x += resizeAverage;
-			selectedEntitySize.y += resizeAverage;
-			ent.setSize(selectedEntitySize);
-			ent.updateInputPosition();
-			ent.updateInputSize();
+			selectedEntitySize.x += diff.x;
+			selectedEntitySize.y -= diff.y;
+			oppositeCorner = new Vector3d(-0.5, 0.5, 0.5);
 			break;
 		case CORNER_MIDDLERIGHT:
-			resizeAverage = 2 *  resizediff.x;
-			selectedEntitySize.x += resizeAverage;
-			ent.setSize(selectedEntitySize);
-			ent.updateInputPosition();
-			ent.updateInputSize();
+			selectedEntitySize.x += diff.x;
+			oppositeCorner = new Vector3d(-0.5, 0.0, 0.5);
 			break;
 		case CORNER_TOPRIGHT:
-			resizeAverage = (resizediff.x + resizediff.y);
-			selectedEntitySize.x += resizeAverage;
-			selectedEntitySize.y += resizeAverage;
-			selectedEntitySize.add(resizediff);
-			ent.setSize(selectedEntitySize);
-			ent.updateInputPosition();
-			ent.updateInputSize();
+			selectedEntitySize.x += diff.x;
+			selectedEntitySize.y += diff.y;
+			oppositeCorner = new Vector3d(-0.5, -0.5, 0.5);
 			break;
 		case CORNER_TOPCENTER:
-			resizeAverage = 2 * resizediff.y;
-			selectedEntitySize.y += resizeAverage;
-			ent.setSize(selectedEntitySize);
-			ent.updateInputPosition();
-			ent.updateInputSize();
+			selectedEntitySize.y += diff.y;
+			oppositeCorner = new Vector3d(0.0, -0.5, 0.5);
 			break;
 		case CORNER_TOPLEFT:
-			// top left
-			resizeAverage = ( resizediff.y - resizediff.x );
-			selectedEntitySize.x += resizeAverage;
-			selectedEntitySize.y += resizeAverage;
-			ent.setSize(selectedEntitySize);
-			ent.updateInputPosition();
-			ent.updateInputSize();
+			selectedEntitySize.x -= diff.x;
+			selectedEntitySize.y += diff.y;
+			oppositeCorner = new Vector3d(0.5, -0.5, 0.5);
 			break;
 		case CORNER_MIDDLELEFT:
-			// middle left
-			resizeAverage = 2 * resizediff.x;
-			selectedEntitySize.x -= resizeAverage;
-			ent.setSize(selectedEntitySize);
-			ent.updateInputPosition();
-			ent.updateInputSize();
+			selectedEntitySize.x -= diff.x;
+			oppositeCorner = new Vector3d(0.5, 0.0, 0.5);
 			break;
 		case CORNER_ROTATE:
-			Vector3d diff = new Vector3d();
-			diff.sub(end, center);
+			diff = new Vector3d();
+			diff.sub(end, ent.getAbsoluteCenter());
 
 			 // add PI as the resize line points to the left
 			double zAngle = Math.atan2(diff.y, diff.x) + Math.PI;
 			diff.set(orient.x, orient.y, zAngle);
 			ent.setOrientation(diff);
 			ent.updateInputOrientation();
-			break;
+			return;
 		}
+
+		// opposite of selected corner location before resizing
+		Vector3d loc = ent.getPositionForAlignment( oppositeCorner );
+
+		ent.setSize(selectedEntitySize); // new size after dragging
+
+		// move the opposite corner to its previous location, before resizing
+		loc.sub(loc, ent.getPositionForAlignment(oppositeCorner));
+		loc.add(ent.getPosition());
+		ent.setPosition(loc);
+
+		ent.updateInputPosition();
+		ent.updateInputSize();
 	}
 
 	private boolean calcEdgeDistance(DisplayEntity ent, Vector3d pt, Vector3d align, double dist) {
