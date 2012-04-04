@@ -502,7 +502,7 @@ public class DisplayEntity extends Entity {
 				else {
 					if (rotateSizeBounds == null)
 						makeResizeBounds();
-					updateResizeBounds(size.x, size.y, size.z);
+					updateResizeBounds();
 				}
 			}
 			else {
@@ -821,18 +821,18 @@ public class DisplayEntity extends Entity {
 		return info;
 	}
 
-	private void updateResizeBounds(double x, double y, double z) {
-		((PointWithSize)rotateSizeBounds.getChild(0)).setCenter(-x, 0.0, 0.0);
-		((PointWithSize)rotateSizeBounds.getChild(1)).setCenter(-x/2, y/2, 0.0);
-		((PointWithSize)rotateSizeBounds.getChild(2)).setCenter(x/2, y/2, 0.0);
-		((PointWithSize)rotateSizeBounds.getChild(3)).setCenter(-x/2, -y/2, 0.0);
-		((PointWithSize)rotateSizeBounds.getChild(4)).setCenter( x/2, -y/2, 0.0);
-		((PointWithSize)rotateSizeBounds.getChild(5)).setCenter(0.0, y/2, 0.0);
-		((PointWithSize)rotateSizeBounds.getChild(6)).setCenter( x/2, 0.0, 0.0);
-		((PointWithSize)rotateSizeBounds.getChild(7)).setCenter(-x/2, 0.0, 0.0);
-		((PointWithSize)rotateSizeBounds.getChild(8)).setCenter(0.0, -y/2, 0.0);
-		resizeLine.setCoordinate(1, new Point3d(-x, 0.0d, 0.0d));
-		((Cube)rotateSizeBounds.getChild(10)).setSize(x, y, z);
+	private void updateResizeBounds() {
+		((PointWithSize)rotateSizeBounds.getChild(0)).setCenter(-size.x, 0.0, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(1)).setCenter(-size.x/2, size.y/2, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(2)).setCenter(size.x/2, size.y/2, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(3)).setCenter(-size.x/2, -size.y/2, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(4)).setCenter( size.x/2, -size.y/2, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(5)).setCenter(0.0, size.y/2, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(6)).setCenter( size.x/2, 0.0, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(7)).setCenter(-size.x/2, 0.0, 0.0);
+		((PointWithSize)rotateSizeBounds.getChild(8)).setCenter(0.0, -size.y/2, 0.0);
+		resizeLine.setCoordinate(1, new Point3d(-size.x, 0.0d, 0.0d));
+		((Cube)rotateSizeBounds.getChild(10)).setSize(size.x, size.y, size.z);
 	}
 
 	private void makeResizeBounds() {
@@ -842,7 +842,7 @@ public class DisplayEntity extends Entity {
 		resizeLine = new LineArray(2, LineArray.COORDINATES);
 		resizeLine.setCapability(LineArray.ALLOW_COORDINATE_WRITE);
 
-		resizeLine.setCoordinate(0, new Point3d(0.0, 0.0, 0.0));
+		resizeLine.setCoordinate(0, new Point3d(0.0, 0.0, 0.0)); // From center
 		resizeLine.setCoordinate(1, new Point3d(1.0, 0.0, 0.0));
 
 		// circle handles
