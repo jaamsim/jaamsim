@@ -230,10 +230,31 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 		if (positionMode)
 			DisplayEntity.simulation.getGUIFrame().showLocatorPosition(currentMousePosition, window.getRegion());
 
+		// Select the new entity
+		DisplayEntity closest = window.getPicker().getClosestEntity(evt);
+
 		// display the location of the locator when the mouse moves
 		if( evt.getID() == MouseEvent.MOUSE_MOVED ) {
 			// This is the new mousEvent for the tooltip
 			tootipEvent = evt;
+
+			// mouse moves inside the entity with resizeBounds set
+			if (selectedEntity == closest && resizeBounds) {
+					if( !(selectedEntity instanceof MouseNode) ){
+						selectedStart.set(this.getUniversePointFromMouseLoc(
+								evt.getX(), evt.getY(), Plane.XY_PLANE,
+								selectedEntity.getAbsoluteCenter().z));
+
+						// Pick the right mouse icon
+						resizeType = edgeSelected(selectedEntity, selectedStart);
+					}
+			}
+			else {
+
+				// Back to default mouse icon
+				edgeSelected(null, null);
+			}
+
 			return;
 		}
 
@@ -242,18 +263,12 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 
 		checkZDragging(evt);
 
+
 		// A) THE FIRST TIME MOUSE IS PRESSED
 		// setup the starting point
 		if( evt.getID() == MouseEvent.MOUSE_PRESSED ) {
 			this.storeUndoSteps();
 
-			window.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
-			// Select the new entity
-			DisplayEntity closest = window.getPicker().getClosestEntity(evt);
-			if (closest != null) {
-				resizeType = 0;
-			}
 			FrameBox.setSelectedEntity( closest );
 
 			mouseX = evt.getX();
@@ -278,11 +293,6 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 					// mouse clicked inside the entity with resizeBounds set
 					if (selectedEntity == closest && resizeBounds && !zDragging) {
 							selectedStart.set(this.getUniversePointFromMouseLoc(evt.getX(), evt.getY(), Plane.XY_PLANE, selectedEntity.getAbsoluteCenter().z));
-							if( !(selectedEntity instanceof MouseNode) ){
-
-								// Pick the right mouse icon
-								resizeType = edgeSelected(selectedEntity, selectedStart);
-							}
 					}
 					else if(zDragging) {
 						selectedStart.set(this.getUniversePointFromMouseLoc(mouseXForZDragging, evt.getY(), Plane.XZ_PLANE, selectedEntity.getAbsoluteCenter().y));
@@ -434,6 +444,7 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 				window.getRegion().updateFOVInput();
 			}
 		}
+
 		this.updateBehaviour();
 	}
 
