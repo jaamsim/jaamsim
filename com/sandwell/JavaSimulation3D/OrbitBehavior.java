@@ -270,14 +270,26 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 								evt.getX(), evt.getY(), Plane.XY_PLANE,
 								selectedEntity.getAbsoluteCenter().z));
 
-						// Pick the right mouse icon
-						resizeType = edgeSelected(selectedEntity, selectedStart);
+						// a point in the universe which is under the pixel
+						// that is HANDLE_DIM pixels away from the mouse loc
+						Vector3d dist = this.getUniversePointFromMouseLoc(
+							evt.getX(), evt.getY() +
+							(int)DisplayEntity.HANDLE_DIM, Plane.XY_PLANE,
+							selectedEntity.getAbsoluteCenter().z);
+
+						// length of dist is the diameter of a handle located
+						// in selectedStart
+						dist.sub(selectedStart);
+
+						// find the handle if any and set its mouse icon
+						resizeType = edgeSelected(selectedEntity, selectedStart,
+							dist.length());
 					}
 			}
 			else {
 
 				// Back to default mouse icon
-				edgeSelected(null, null);
+				edgeSelected(null, null, 0.0d);
 			}
 
 			return;
@@ -993,79 +1005,75 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 	private boolean calcEdgeDistance(DisplayEntity ent, Vector3d pt, Vector3d align, double dist) {
 		Vector3d alignPoint = ent.getAbsolutePositionForAlignment(align);
 		alignPoint.sub(pt);
-		return alignPoint.lengthSquared() < dist;
+		return alignPoint.length() < dist;
 	}
 
 	/**
-	 * Find the corner that has been selected or mouse over and change the mouse icon
-	 * to resize icon if a corner has been selected
+	 * find which handle corner of ent is within the dist of the currentPoint
+	 *
 	 * @param currentPoint
 	 * @return
 	 */
-	private int edgeSelected(DisplayEntity ent, Vector3d currentPoint) {
+	private int edgeSelected(DisplayEntity ent, Vector3d currentPoint, double dist) {
 		if (ent == null) {
 			window.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			return 0;
 		}
 
-		// the square of the radius of the circles at each corner that are
-		// used for resizing
 		Vector3d tmp = ent.getSize();
-		double distSquare = 0.10 * Math.min(tmp.x, tmp.y);
 		double rotatorPos = -0.5 -
 				Math.max(Math.max(tmp.x, tmp.y), tmp.z)/(4*tmp.x);
-		distSquare = distSquare * distSquare;
 
 		tmp.set(-0.5d, -0.5d, 0.0d);
-		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
+		if (calcEdgeDistance(ent, currentPoint, tmp, dist)) {
 			setCursor(1, ent);
 			return CORNER_BOTTOMLEFT;
 		}
 
 		tmp.set(0.0d, -0.5d, 0.0d);
-		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
+		if (calcEdgeDistance(ent, currentPoint, tmp, dist)) {
 			setCursor(2, ent);
 			return CORNER_BOTTOMCENTER;
 		}
 
 		tmp.set(0.5d, -0.5d, 0.0d);
-		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
+		if (calcEdgeDistance(ent, currentPoint, tmp, dist)) {
 			setCursor(3, ent);
 			return CORNER_BOTTOMRIGHT;
 		}
 
 		tmp.set(0.5d, 0.0d, 0.0d);
-		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
+		if (calcEdgeDistance(ent, currentPoint, tmp, dist)) {
 			setCursor(0, ent);
 			return CORNER_MIDDLERIGHT;
 		}
 
 		tmp.set(0.5d, 0.5d, 0.0d);
-		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
+		if (calcEdgeDistance(ent, currentPoint, tmp, dist)) {
 			setCursor(1, ent);
 			return CORNER_TOPRIGHT;
 		}
 
 		tmp.set(0.0d, 0.5d, 0.0d);
-		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
+		if (calcEdgeDistance(ent, currentPoint, tmp, dist)) {
 			setCursor(2, ent);
 			return CORNER_TOPCENTER;
 		}
 
 		tmp.set(-0.5d, 0.5d, 0.0d);
-		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
+		if (calcEdgeDistance(ent, currentPoint, tmp, dist)) {
 			setCursor(3, ent);
 			return CORNER_TOPLEFT;
 		}
 
 		tmp.set(-0.5d, 0.0d, 0.0d);
-		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
+		if (calcEdgeDistance(ent, currentPoint, tmp, dist)) {
 			setCursor(0, ent);
 			return CORNER_MIDDLELEFT;
 		}
 
 		tmp.set(rotatorPos, 0.0d, 0.0d);
-		if (calcEdgeDistance(ent, currentPoint, tmp, distSquare)) {
+		if (calcEdgeDistance(ent, currentPoint, tmp, dist)) {
 			window.setCursor(rotation);
 			return CORNER_ROTATE;
 		}

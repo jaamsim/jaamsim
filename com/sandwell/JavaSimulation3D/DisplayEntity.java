@@ -118,6 +118,7 @@ import javax.vecmath.Vector3d;
  *    the position on the Region of the local origin for the displayModel.<br>
  */
 public class DisplayEntity extends Entity {
+	public static final float HANDLE_DIM = 9.0f; // Diameter of handles
 	private static final ArrayList<DisplayEntity> allInstances;
 
 	// simulation properties
@@ -856,7 +857,7 @@ public class DisplayEntity extends Entity {
 			if(i > 4)
 				state = false;
 
-			PointWithSize temp = new PointWithSize(9.0f, state, "pixels" );
+			PointWithSize temp = new PointWithSize(HANDLE_DIM, state, "pixels");
 			temp.setColor(Shape.getColorWithName("darkgreen"));
 			rotateSizeBounds.addChild(temp);
 		}
