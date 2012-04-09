@@ -181,7 +181,7 @@ public class DisplayEntity extends Entity {
 	// resize and rotate listener
 	private boolean showResize = false;
 	private BranchGroup rotateSizeBounds; // holds the extent outline
-	private LineArray resizeLine; // bounding box for the entity for picking
+	private LineArray resizeLine; // line up to the rotating corner
 
 	// setup a default appearance for the default displayModel
 	private static Appearance axisLineAppearance;
@@ -196,6 +196,7 @@ public class DisplayEntity extends Entity {
 	static {
 		axisLineAppearance = new Appearance();
 		axisLineAppearance.setLineAttributes( new javax.media.j3d.LineAttributes( 2, javax.media.j3d.LineAttributes.PATTERN_SOLID, false ) );
+		axisLineAppearance.setColoringAttributes(Shape.getColorWithName("mint"));
 		allInstances = new ArrayList<DisplayEntity>(100);
 	}
 
