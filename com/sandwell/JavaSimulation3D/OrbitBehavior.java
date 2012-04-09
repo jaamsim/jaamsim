@@ -320,7 +320,10 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 							selectedStart.set(this.getUniversePointFromMouseLoc(evt.getX(), evt.getY(), Plane.XY_PLANE, selectedEntity.getAbsoluteCenter().z));
 					}
 					else if(zDragging) {
-						selectedStart.set(this.getUniversePointFromMouseLoc(mouseXForZDragging, evt.getY(), Plane.XZ_PLANE, selectedEntity.getAbsoluteCenter().y));
+						selectedStart.set(this.getUniversePointFromMouseLoc(
+							mouseXForZDragging, evt.getY(), Plane.XZ_PLANE,
+							selectedEntity.getAbsoluteCenter().y) );
+
 					}
 				}
 			} else if ( "add Node".equals(currentCreationClass) ) {
@@ -396,7 +399,13 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 
 						// z-axis dragging
 						if (zDragging) {
-							dragEnd = this.getUniversePointFromMouseLoc(mouseXForZDragging, evt.getY(), Plane.XZ_PLANE, selectedEntity.getAbsoluteCenter().y);
+							dragEnd = this.getUniversePointFromMouseLoc(
+								mouseXForZDragging, evt.getY(), Plane.XZ_PLANE,
+								selectedEntity.getAbsoluteCenter().y);
+
+							// Avoid moving in x and y direction
+							dragEnd.x = selectedStart.x;
+							dragEnd.y = selectedStart.y;
 						}
 
 						dragdist.sub(dragEnd, selectedStart);
@@ -476,23 +485,34 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 	}
 
 	private void checkZDragging(MouseEvent evt) {
-		if(selectedEntity != null) {
-			if ( (evt.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == MouseEvent.SHIFT_DOWN_MASK ) {
-
-				// The first time that shift was pressed (dragging starts in z direction)
-				if(!zDragging) {
-					mouseXForZDragging = evt.getX();
-					selectedStart.set(this.getUniversePointFromMouseLoc(mouseXForZDragging, evt.getY(), Plane.XZ_PLANE, selectedEntity.getAbsoluteCenter().y));
-					zDragging = true;
-				}
-			}
-
-			// Shift just released (dragging or resizing/rotating in xy plane)
-			else if(zDragging){
-				selectedStart.set(this.getUniversePointFromMouseLoc(evt.getX(), evt.getY(), Plane.XY_PLANE, selectedEntity.getAbsoluteCenter().z));
-				zDragging = false;
-			}
+		if(selectedEntity == null) {
+			return;
 		}
+
+		if ( (evt.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) ==
+				MouseEvent.SHIFT_DOWN_MASK ) {
+			if(zDragging)
+				return;
+
+			// first time that shift pressed (dragging starts in z direction)
+			mouseXForZDragging = evt.getX();
+			selectedStart.set(this.getUniversePointFromMouseLoc(
+				mouseXForZDragging, evt.getY(), Plane.XZ_PLANE,
+				selectedEntity.getAbsoluteCenter().y));
+
+			zDragging = true;
+			return;
+		}
+
+		if(! zDragging){
+			return;
+		}
+
+		// Shift just released (dragging or resizing/rotating in xy plane)
+		selectedStart.set(this.getUniversePointFromMouseLoc(evt.getX(),
+			evt.getY(), Plane.XY_PLANE, selectedEntity.getAbsoluteCenter().z));
+
+		zDragging = false;
 	}
 
 	protected synchronized void integrateTransforms() {
