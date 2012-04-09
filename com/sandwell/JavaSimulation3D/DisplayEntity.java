@@ -848,16 +848,8 @@ public class DisplayEntity extends Entity {
 		resizeLine.setCoordinate(0, new Point3d(0.0, 0.0, 0.0)); // From center
 		resizeLine.setCoordinate(1, new Point3d(1.0, 0.0, 0.0));
 
-		// circle handles
-		boolean state = true;
-
 		for (int i = 0; i < 9; i++) {
-
-			// square handles
-			if(i > 4)
-				state = false;
-
-			PointWithSize temp = new PointWithSize(HANDLE_DIM, state, "pixels");
+			PointWithSize temp = new PointWithSize(HANDLE_DIM, true, "pixels");
 			temp.setColor(Shape.getColorWithName("darkgreen"));
 			rotateSizeBounds.addChild(temp);
 		}
