@@ -21,7 +21,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -289,6 +288,8 @@ public class EditBox extends FrameBox {
 		propTable.getModel().addTableModelListener( new MyTableModelListener() );
 
 		propTable.getColumnModel().getColumn( 0 ).setCellRenderer( cellRenderer ) ;
+		propTable.getColumnModel().getColumn( 1 ).setCellRenderer( cellRenderer ) ;
+		propTable.getColumnModel().getColumn( 2 ).setCellRenderer( cellRenderer ) ;
 
 		propTable.getTableHeader().setBackground(HEADER_COLOR);
 		propTable.getTableHeader().setReorderingAllowed(false);
@@ -409,12 +410,12 @@ public class EditBox extends FrameBox {
 	}
 
 	public class CellRenderer extends DefaultTableCellRenderer {
-		private final Font bold;
-		private final Font plain;
+		private final Color firstCellActiveRow;
+		private final Color activeRow;
 
 		public CellRenderer() {
-			bold  = this.getFont().deriveFont(Font.BOLD);
-			plain = this.getFont().deriveFont(Font.PLAIN);
+			firstCellActiveRow  = new Color(227, 207, 87); // banana
+			activeRow = new Color(255, 250, 180); // lighter shade
 		}
 
 		public Component getTableCellRendererComponent
@@ -426,10 +427,13 @@ public class EditBox extends FrameBox {
 			(table, value, isSelected, hasFocus, row, column);
 
 			if ( row == table.getSelectedRow() ) {
-				cell.setFont( bold );
+				if(column == 0)
+					cell.setBackground(firstCellActiveRow);
+				else
+					cell.setBackground(activeRow);
 			}
 			else {
-				cell.setFont( plain ) ;
+				cell.setBackground(null);
 			}
 
 			return cell;
