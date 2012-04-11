@@ -211,6 +211,15 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 	}
 
 	protected void processMouseEvent( final MouseEvent evt ) {
+
+		// no processing if the right click menu is visible
+		if(window.getPicker().getMenu().isVisible()) {
+
+			// Back to default mouse icon
+			edgeSelected(null, null, 0.0d);
+			return;
+		}
+
 		if (evt.getID() == MouseEvent.MOUSE_WHEEL) {
 			orbitRadius *= Math.pow(0.9d, -((MouseWheelEvent)evt).getWheelRotation());
 			// Cap the radius to a minimum value
