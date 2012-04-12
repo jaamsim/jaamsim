@@ -1008,6 +1008,10 @@ public void actionPerformed(ActionEvent e) {
 			}
 		}
 
+		if(runToTime <= DisplayEntity.simulation.getCurrentTime() ) {
+			return;
+		}
+
 		OrbitBehavior.setViewerBehaviour( OrbitBehavior.CHANGE_TRANSLATION );
 
 		if( Simulation.getSimulationState() <= Simulation.SIM_STATE_CONFIGURED ) {
