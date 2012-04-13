@@ -642,4 +642,9 @@ public class GraphicSimulation extends Simulation {
 		super.startUp();
 		this.startProcess("updateRunProgress");
 	}
+
+	public void updateForSimulationState() {
+		super.updateForSimulationState();
+		guiFrame.updateForSimulationState();
+	}
 }

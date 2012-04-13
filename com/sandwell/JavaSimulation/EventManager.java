@@ -243,6 +243,8 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			EventManager.setEventState(EventManager.EVENTS_STOPPED);
 		}
+		simulation.setSimState(Simulation.SIM_STATE_PAUSED);
+		simulation.updateForSimulationState();
 
 		// update the event display if there is one present
 		if (currentViewer != null)

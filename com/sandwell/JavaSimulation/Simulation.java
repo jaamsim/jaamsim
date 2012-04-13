@@ -813,4 +813,10 @@ public abstract class Simulation extends Entity {
 	public boolean getPrintInputReport() {
 		return printInputReport.getValue();
 	}
+
+	public void setSimState(int state) {
+		simState = state;
+	}
+
+	public void updateForSimulationState() {}
 }
