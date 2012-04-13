@@ -33,7 +33,6 @@ import java.util.Comparator;
 import javax.swing.JOptionPane;
 
 import com.sandwell.JavaSimulation.*;
-import com.sandwell.JavaSimulation.Palette;
 
 public class InputAgent {
 	private static final String addedRecordMarker = "\" *** Added Records ***";
@@ -124,6 +123,22 @@ public class InputAgent {
 
 	public static void setBatch(boolean batch) {
 		batchRun = batch;
+	}
+
+	public static void initialiseGraphics() {
+		if( batchRun)
+			return;
+
+		// Initialise graphics if it is not in a batch mode
+		for (int i = 0; i < DisplayEntity.getAll().size(); i++) {
+			try {
+				DisplayEntity.getAll().get(i).render(0.0d);
+			}
+			// Catch everything so we don't screw up the behavior handling
+			catch (Throwable e) {
+				//e.printStackTrace();
+			}
+		}
 	}
 
 	/**

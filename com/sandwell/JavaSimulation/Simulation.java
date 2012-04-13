@@ -285,6 +285,8 @@ public abstract class Simulation extends Entity {
 			}
 		}
 
+		InputAgent.initialiseGraphics();
+
 		// store the present state
 		Simulation.simState = SIM_STATE_CONFIGURED;
 
