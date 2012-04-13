@@ -18,18 +18,28 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Vector;
 import com.sun.j3d.utils.behaviors.vp.ViewPlatformAWTBehavior;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.sandwell.JavaSimulation3D.util.Rectangle;
 import com.sandwell.JavaSimulation3D.util.Shape;
 
 import javax.media.j3d.Transform3D;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JWindow;
+import javax.swing.border.LineBorder;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
@@ -48,10 +58,7 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 	private static final double ORBIT_ANGLE_FACTOR = -0.01d;
 
 	// Temporary place where all the entityTooltip state will be shared
-	static MouseEvent tootipEvent = null;
-	static OrbitBehavior tooltipBehavior = null;
 	static boolean showtooltip = true;
-	static EntityToolTip entityToolTip = null;
 
 	// The enumerated mouse behavior modes
 	static final int CHANGE_PAN = 2;
@@ -114,6 +121,24 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 
 	public static int resizeType = 0;
 
+	private JWindow tooltip;
+	private JTextArea textArea; // Label inside the tooltip
+	private final StringBuilder area = new StringBuilder();
+	private static final Comparator<DisplayEntity > tooltipSorter;
+	static {
+		// Sort by classname and then by entity name in alphabetic order
+		tooltipSorter = new Comparator<DisplayEntity>() {
+			public int compare(DisplayEntity a, DisplayEntity b) {
+				if (a.getClass() != b.getClass()) {
+					// Different classes, return the ordering by classname
+					return a.getClass().getName().compareTo(b.getClass().getName());
+				} else {
+					// Same class, return the ordering by case-insensitive name compare
+					return a.getName().compareToIgnoreCase(b.getName());
+				}
+			}};
+	}
+
 	/**
 	 * Creates a new OrbitBehavior
 	 *
@@ -151,6 +176,16 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 		catch(Exception exc){
 			rotation = null;
 		}
+		tooltip = new JWindow(window);
+		tooltip.setAlwaysOnTop( true );
+		textArea = new JTextArea();
+		textArea.setFocusable(false); // avoid blinking windows
+		textArea.setEditable(false);
+		textArea.setFont(  new Font("Verdana", Font.PLAIN, 11 ) );
+		JPanel contentPane = (JPanel)tooltip.getContentPane();
+		contentPane.setBorder( new LineBorder(Color.black) );
+		tooltip.getContentPane().add(textArea, BorderLayout.CENTER);
+		tooltip.getContentPane().setBackground( new Color( 255, 255, 198 ) );
 	}
 
 	protected synchronized void processAWTEvents( final java.awt.AWTEvent[] events ) {
@@ -182,17 +217,7 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 	}
 
 	static void enableTooltip(boolean enable) {
-		if (!enable)
-			OrbitBehavior.killToolTip();
-
 		OrbitBehavior.showtooltip = enable;
-	}
-
-	static void killToolTip() {
-		if( entityToolTip != null ) {
-			entityToolTip.abort();
-			entityToolTip = null;
-		}
 	}
 
 	public static void selectEntity(Entity ent) {
@@ -217,6 +242,7 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 
 			// Back to default mouse icon
 			edgeSelected(null, null, 0.0d);
+			tooltip.setVisible(false);
 			return;
 		}
 
@@ -229,19 +255,12 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 			return;
 		}
 
-		// ToolTip belongs to this window now
 		if (evt.getID() == MouseEvent.MOUSE_ENTERED) {
-			if (OrbitBehavior.showtooltip && entityToolTip == null) {
-				entityToolTip = new EntityToolTip();
-				entityToolTip.start();
-			}
-			tooltipBehavior = this;
 			return;
 		}
 
 		if (evt.getID() == MouseEvent.MOUSE_EXITED) {
-			tooltipBehavior = null;
-			tootipEvent = null;
+			tooltip.setVisible(false);
 
 			// display nothing for the position
 			if (positionMode)
@@ -268,8 +287,6 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 
 		// display the location of the locator when the mouse moves
 		if( evt.getID() == MouseEvent.MOUSE_MOVED ) {
-			// This is the new mousEvent for the tooltip
-			tootipEvent = evt;
 
 			// mouse moves inside the entity with resizeBounds set
 			if (selectedEntity == closest && resizeBounds) {
@@ -301,14 +318,40 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 				edgeSelected(null, null, 0.0d);
 			}
 
+			if(! showtooltip)
+				return;
+
+			// No entity is under the mouse
+			ArrayList<DisplayEntity> entityList = window.getPicker().getEntityListWithToolTip(evt);
+			if (entityList == null || entityList.isEmpty()) {
+				tooltip.setVisible(false);
+				return;
+			}
+
+			Collections.sort(entityList, tooltipSorter);
+
+			area.setLength(0);
+			for (DisplayEntity each : entityList) {
+				area.append(each.getInputName()).append("\n");
+			}
+
+			// Remove the last line break
+			if (area.length() > 0) {
+				area.setLength(area.length() - 1);
+			}
+
+			textArea.setText(area.toString());
+			tooltip.pack();
+
+			// so the tip of the mouse cursor won't be on the tooltip
+			tooltip.setLocation(evt.getXOnScreen() + 1, evt.getYOnScreen()-6);
+			tooltip.setVisible(true);
 			return;
 		}
 
-		// Suppress tooltip when not a MOUSE_MOVED event
-		tootipEvent = null;
+		tooltip.setVisible(false);
 
 		checkZDragging(evt);
-
 
 		// A) THE FIRST TIME MOUSE IS PRESSED
 		// setup the starting point
