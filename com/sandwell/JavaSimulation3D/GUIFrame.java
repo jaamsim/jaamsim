@@ -561,12 +561,11 @@ public class GUIFrame extends JFrame {
 				JToggleButton startResume = (JToggleButton)event.getSource();
 				if(startResume.isSelected()) {
 					GUIFrame.this.startSimulation();
-					startResume.setToolTipText( "Pause" );
 				}
 				else {
 					GUIFrame.this.pauseSimulation();
-					startResume.setToolTipText( "Run" );
 				}
+				DisplayEntity.simulation.getGUIFrame().updateForSimulationState();
 			}
 		} );
 
@@ -1080,6 +1079,7 @@ public void actionPerformed(ActionEvent e) {
 				remainingDisplay.setEnabled( false );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
+				controlStartResume.setToolTipText( "Run" );
 				controlStop.setEnabled( false );
 				controlStop.setSelected( false );
 				toolButtonZoomBox.setEnabled( true );
@@ -1142,6 +1142,7 @@ public void actionPerformed(ActionEvent e) {
 				remainingDisplay.setEnabled( true );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
+				controlStartResume.setToolTipText( "Run" );
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
 				toolButtonZoomBox.setEnabled( true );
@@ -1161,6 +1162,7 @@ public void actionPerformed(ActionEvent e) {
 			case Simulation.SIM_STATE_RUNNING:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( true );
+				controlStartResume.setToolTipText( "Pause" );
 				controlStop.setEnabled( true );
 				controlStop.setSelected( false );
 				toolButtonZoomBox.setSelected( false );
@@ -1179,12 +1181,14 @@ public void actionPerformed(ActionEvent e) {
 			case Simulation.SIM_STATE_PAUSED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
+				controlStartResume.setToolTipText( "Run" );
 				controlStop.setEnabled( true );
 				controlStop.setSelected( false );
 				break;
 			case Simulation.SIM_STATE_STOPPED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
+				controlStartResume.setToolTipText( "Run" );
 				controlStop.setEnabled( false );
 				controlStop.setSelected( false );
 				break;
