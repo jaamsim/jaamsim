@@ -1022,10 +1022,11 @@ public void actionPerformed(ActionEvent e) {
 		}
 		else if( Simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED ) {
 
-			// even if it is a run to the time, we still need to do this to
-			// set the right flag for simulation
-			DisplayEntity.simulation.resume();
-
+			// it is not a run to time
+			if(Double.isInfinite( runToTime ) ) {
+				DisplayEntity.simulation.resume();
+				return;
+			}
 		}
 		else if( Simulation.getSimulationState() == Simulation.SIM_STATE_STOPPED ) {
 			DisplayEntity.simulation.restart();

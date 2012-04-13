@@ -906,6 +906,7 @@ public final class EventManager implements Runnable {
 	public void runToTime( double stopTime ) {
 		debuggingTime = ((long)(stopTime * Simulation.getSimTimeFactor()));
 		EventManager.setEventState(EventManager.EVENTS_UNTILTIME);
+		simulation.setSimState(Simulation.SIM_STATE_RUNNING);
 		startDebugging();
 	}
 
