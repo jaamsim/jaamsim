@@ -259,6 +259,8 @@ public class DisplayModel extends Entity {
 		if(validPredefined2DTypes.contains( shape.getValue().toUpperCase()) ){
 			modelType = validPredefined2DTypes.indexOf(shape.getValue().toUpperCase());
 			branchGroup = getPredefined2DBranchGroup();
+			modelSize.set( 1.0d, 1.0d, 0.0d );
+			return;
 		}
 
 		// 2) Model from a file
