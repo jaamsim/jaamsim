@@ -114,9 +114,10 @@ public class DisplayModel extends Entity {
 
 	private static final int MODEL_CRUSHING_PLANT2D = 20;
 	private static final int MODEL_BARGAUGE2D = 21;
+	private static final int MODEL_MINISHIP2D = 22;
 
 	// 2) Model from a file
-	private static final int MODEL_FILE = 22;
+	private static final int MODEL_FILE = 23;
 
 	protected static final ArrayList<String> validTags;
 
@@ -177,6 +178,7 @@ public class DisplayModel extends Entity {
 		validPredefined2DTypes.add("CONTENTSPIXELS");
 		validPredefined2DTypes.add("CRUSHINGPLANT2D");
 		validPredefined2DTypes.add("BARGAUGE2D");
+		validPredefined2DTypes.add("MINISHIP2D");
 
 		validFileExtentions = new ArrayList<String>(6);
 		validFileExtentions.add("DAE");
@@ -571,6 +573,17 @@ public class DisplayModel extends Entity {
 			case MODEL_BARGAUGE2D:
 				bg.addChild(getDisplayModelForBarGauge2D());
 				break;
+			case MODEL_MINISHIP2D:
+				bg.setCapability( BranchGroup.ALLOW_CHILDREN_EXTEND );
+				bg.setCapability( BranchGroup.ALLOW_CHILDREN_WRITE );
+				orderedGroup = getDisplayModelForMiniShip2D();
+				rectangleContents = new StackedBar();
+				rectangleContents.setDimension(new Point2d( 0.00650, 0.006 ));
+				rectangleContents.setCenter(-0.00225, 0.0, 0.0);
+				rectangleContents.setName(TAG_CONTENTS);
+				orderedGroup.addChild(rectangleContents);
+				bg.addChild(orderedGroup);
+				break;
 		}
 		return bg;
 	}
@@ -788,6 +801,61 @@ public class DisplayModel extends Entity {
 		Rectangle fillBackground = new Rectangle( 0.650, 0.6, Rectangle.SHAPE_FILLED, "fillBackground" );
 		fillBackground.setColor( 8 );
 		fillBackground.setCenter( 0.1, 0.0, 0.0 );
+		model2D.addChild( fillBackground );
+
+		return model2D;
+	}
+
+	private OrderedGroup getDisplayModelForMiniShip2D() {
+		OrderedGroup model2D = new OrderedGroup();
+
+		double[] hullVerts = {
+			-0.0035625d, -0.005d, 0.000d,
+			0.0035d, -0.005d, 0.000d,
+			0.0040625d, -0.0042d, 0.000d,
+			0.00459375d, -0.003d, 0.000d,
+			0.00484375d, -0.0021d, 0.000d,
+			0.005d, -0.0005d, 0.000d,
+			0.005d, 0.0005d, 0.000d,
+			0.00484375d, 0.0021d, 0.000d,
+			0.00459375d, 0.003d, 0.000d,
+			0.0040625d, 0.0042d, 0.000d,
+			0.0035d, 0.005d, 0.000d,
+			-0.0035625d, 0.005d, 0.000d,
+			-0.004109375d, 0.0045d, 0.000d,
+			-0.004515625d, 0.0036d, 0.000d,
+			-0.005d, 0.0023d, 0.000d,
+			-0.005d, -0.0023d, 0.000d,
+			-0.004515625d, -0.0036d, 0.000d,
+			-0.004109375d, -0.0045d, 0.000d,
+			-0.0035625d, -0.005d, 0.000d };
+
+		// create the hull shape
+		Polygon hull = new Polygon( hullVerts, Polygon.SHAPE_FILLED, "hull" );
+		hull.setPoints( hullVerts );
+		hull.setColor(Shape.getColorWithName("gray50"));
+		hull.setName(TAG_BODY);
+		model2D.addChild( hull );
+
+		// create the hull outline
+		Polygon hullOutline = new Polygon( hullVerts, Polygon.SHAPE_OUTLINE, "hullOutline" );
+		hullOutline.setColor( 1 );
+		model2D.addChild( hullOutline );
+
+		// Create the cabin
+		Rectangle cabin = new Rectangle( 0.00125, 0.007, Rectangle.SHAPE_FILLED, "cabin" );
+
+		//Rectangle cabin = new Rectangle( 0.125, 0.7, Rectangle.SHAPE_OUTLINE );
+		cabin.setColor( 1 );
+		cabin.setCenter( -0.00325, 0.0, 0.0 );
+		model2D.addChild( cabin );
+
+		// create the background to display the fill, make if visible above the outline
+		//FIXME losing an outline here
+		//Rectangle fillBackground = new Rectangle( 5.0, 0.7, Rectangle.SHAPE_FILLED );
+		Rectangle fillBackground = new Rectangle( 0.00650, 0.006, Rectangle.SHAPE_FILLED, "fillBackground" );
+		fillBackground.setColor( 8 );
+		fillBackground.setCenter( 0.001, 0.0, 0.0 );
 		model2D.addChild( fillBackground );
 
 		return model2D;
