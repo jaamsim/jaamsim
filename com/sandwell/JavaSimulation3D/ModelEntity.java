@@ -82,7 +82,7 @@ public class ModelEntity extends DisplayEntity {
 	protected double maintenanceStartTime; // Start time of the most recent maintenance
 	protected double maintenanceEndTime; // End time of the most recent maintenance
 	protected DoubleVector lastScheduledMaintenanceTimes;
-	protected DoubleVector deferMaintenanceLimit;                    // Amount of time after scheduled maintenance start time that deferMaintenanceLookahead is ignored
+	private final DoubleListInput deferMaintenanceLimit;                    // Amount of time after scheduled maintenance start time that deferMaintenanceLookahead is ignored
 
 	protected final DoubleInput downtimeToReleaseEquipment;  // if duration of downtime is longer than this limit, equipment will be released
 	protected final BooleanListInput releaseEquipment;       // Flag to indicate if routes/tasks are released before performing the maintenance
@@ -182,6 +182,11 @@ public class ModelEntity extends DisplayEntity {
 		skipMaintenanceIfOverlap = new BooleanListInput( "SkipMaintenanceIfOverlap", "Maintenance and Breakdown", new BooleanVector() );
 		this.addInput( skipMaintenanceIfOverlap, true );
 
+		deferMaintenanceLimit = new DoubleListInput( "DeferMaintenanceLimit", "Maintenance and Breakdown", null );
+		deferMaintenanceLimit.setValidRange( 0.0d, Double.POSITIVE_INFINITY );
+		deferMaintenanceLimit.setUnits( "h" );
+		this.addInput( deferMaintenanceLimit, true );
+
 	    addEditableKeyword( "SharedMaintenance",             "  -  ",   "  -  ", false, "Maintenance and Breakdown" );
 
 	    addEditableKeyword( "FirstForcedMaintenanceTimes",                     "  -  ",   "  -  ", false, "Maintenance and Breakdown", "FirstForcedMaintenanceTime"  );
@@ -220,7 +225,6 @@ public class ModelEntity extends DisplayEntity {
 		performMaintenanceAfterCompletingShip = false;
 		performMaintenanceAfterShipDelayPending = false;
 		lastScheduledMaintenanceTimes = new DoubleVector();
-		deferMaintenanceLimit = new DoubleVector();
 
 		// force maintenance
 		firstForcedMaintenanceTimes = new DoubleVector( 1, 1 );
@@ -586,15 +590,7 @@ public class ModelEntity extends DisplayEntity {
 			maintenancePendings.fillWithEntriesOf( firstMaintenanceTimes.getValue().size(), 0 );
 			lastScheduledMaintenanceTimes.fillWithEntriesOf( firstMaintenanceTimes.getValue().size(), Double.POSITIVE_INFINITY );
 
-			if( deferMaintenanceLimit.size() == 0 ) {
-				deferMaintenanceLimit.fillWithEntriesOf( firstMaintenanceTimes.getValue().size(), 0.0 );
-			}
-
 			this.doMaintenanceNetwork();
-		}
-
-		if( deferMaintenanceLimit.size() == 0 ) {
-			deferMaintenanceLimit.fillWithEntriesOf( firstMaintenanceTimes.getValue().size(), 0.0 );
 		}
 
 		// The 3 force maintenance Double Vectors must be the same size
@@ -1385,8 +1381,8 @@ public class ModelEntity extends DisplayEntity {
 					}
 
 					// Do a check after the limit has expired
-					if( deferMaintenanceLimit.get( index ) > 0.0 ) {
-						this.startProcess( "scheduleCheckMaintenance", deferMaintenanceLimit.get( index ) );
+					if( this.getDeferMaintenanceLimit( index ) > 0.0 ) {
+						this.startProcess( "scheduleCheckMaintenance", this.getDeferMaintenanceLimit( index ) );
 					}
 				}
 			}
@@ -1394,6 +1390,14 @@ public class ModelEntity extends DisplayEntity {
 			// Determine the next maintenance time
 			nextMaintenanceTimes.addAt( maintenanceIntervals.getValue().get( index ), index );
 		}
+	}
+
+	public double getDeferMaintenanceLimit( int index ) {
+
+		if( deferMaintenanceLimit.getValue() == null )
+			return 0.0d;
+
+		return deferMaintenanceLimit.getValue().get( index );
 	}
 
 	public void scheduleCheckMaintenance( double wait ) {
