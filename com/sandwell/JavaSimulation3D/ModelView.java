@@ -48,6 +48,7 @@ public class ModelView extends BranchGroup {
 		physicalEnvironment = new PhysicalEnvironment();
 		graphicsTemplate = new GraphicsConfigTemplate3D();
 		graphicsTemplate.setStereo(GraphicsConfigTemplate3D.UNNECESSARY);
+		graphicsTemplate.setSceneAntialiasing(GraphicsConfigTemplate3D.PREFERRED);
 		graphicsConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getBestConfiguration(graphicsTemplate);
 	}
 
@@ -58,6 +59,7 @@ public class ModelView extends BranchGroup {
 		// Create view object - distance from front to back clip planes should
 		// be no greater than a factor of 1000 for z-buffer correctness
 		view = new View();
+		view.setSceneAntialiasingEnable(true);
 		view.setBackClipPolicy(View.PHYSICAL_EYE);
 		view.setBackClipDistance(OrbitBehavior.MAX_RADIUS);
 		view.setFrontClipPolicy(View.PHYSICAL_EYE);
