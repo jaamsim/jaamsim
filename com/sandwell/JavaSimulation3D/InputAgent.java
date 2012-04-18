@@ -132,7 +132,7 @@ public class InputAgent {
 		// Initialise graphics if it is not in a batch mode
 		for (int i = 0; i < DisplayEntity.getAll().size(); i++) {
 			try {
-				DisplayEntity.getAll().get(i).render(0.0d);
+				DisplayEntity.getAll().get(i).setupGraphics();
 			}
 			// Catch everything so we don't screw up the behavior handling
 			catch (Throwable e) {
