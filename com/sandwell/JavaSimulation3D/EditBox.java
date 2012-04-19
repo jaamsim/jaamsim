@@ -469,14 +469,14 @@ public class EditBox extends FrameBox {
 	}
 
 	class MyTableModelListener implements TableModelListener {
-
+		private JDialog errorBox;
 		/**
 		 * Method for handling table edit events
 		 */
 		public void tableChanged( TableModelEvent e ) {
 
 			// Do not worry about table changes brought on by building a new table
-			if(buildingTable) {
+			if(buildingTable || (errorBox != null && errorBox.isVisible()) ) {
 				return;
 			}
 
@@ -512,7 +512,8 @@ public class EditBox extends FrameBox {
 
 				JOptionPane pane = new JOptionPane( String.format("%s; value will be cleared", exep.getMessage()),
 						JOptionPane.ERROR_MESSAGE );
-				JDialog errorBox = pane.createDialog( EditBox.this, "Input Error" );
+				if(errorBox == null)
+					errorBox = pane.createDialog( EditBox.this, "Input Error" );
 				errorBox.setModal(true);
 				errorBox.setVisible(true);
 				FrameBox.valueUpdate();
