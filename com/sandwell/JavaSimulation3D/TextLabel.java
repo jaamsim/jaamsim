@@ -25,7 +25,6 @@ import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Input;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringChoiceInput;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.StringListInput;
@@ -102,11 +101,6 @@ public class TextLabel extends DisplayEntity  {
 		shadow = new LabelShape("", dropShadowColor.getValue());
 		this.getModel().addChild( shadow );
 		this.getModel().addChild( reference );
-	}
-
-	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
-	throws InputErrorException {
-		super.readData_ForKeyword( data, keyword, syntaxOnly, isCfgInput );
 	}
 
 	String getRenderText(double time) {

@@ -26,7 +26,6 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Simulation;
-import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Vector;
 import com.sandwell.JavaSimulation.Vector3dInput;
 import com.sandwell.JavaSimulation3D.util.Cube;
@@ -1055,41 +1054,6 @@ public class DisplayEntity extends Entity {
 			}
 		} );
 		menu.add( addLabel );
-	}
-
-	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
-	throws InputErrorException {
-		if( "Label".equalsIgnoreCase( keyword ) ) {
-			InputAgent.logWarning("The keyword Label no longer has any effect");
-			return;
-		}
-		if( "LABELBOTTOMLEFT".equalsIgnoreCase( keyword ) ) {
-			InputAgent.logWarning("The keyword LABELBOTTOMLEFT no longer has any effect");
-			return;
-		}
-		if( "TextHeight".equalsIgnoreCase( keyword ) ) {
-			InputAgent.logWarning("The keyword TextHeight no longer has any effect");
-			return;
-		}
-		if( "FontName".equalsIgnoreCase( keyword ) ) {
-			InputAgent.logWarning("The keyword FontName no longer has any effect");
-			return;
-		}
-		if( "FontStyle".equalsIgnoreCase( keyword ) ) {
-			InputAgent.logWarning("The keyword FontStyle no longer has any effect");
-			return;
-		}
-		if ("FontColour".equalsIgnoreCase(keyword) ||
-		    "FontColor".equalsIgnoreCase( keyword ) ) {
-			InputAgent.logWarning("The keyword FontColour no longer has any effect");
-			return;
-		}
-		if( "Angle".equalsIgnoreCase( keyword ) ) {
-			InputAgent.logWarning("The keyword Angle no longer has any effect");
-			return;
-		}
-
-		super.readData_ForKeyword( data, keyword, syntaxOnly, isCfgInput );
 	}
 
 	/**
