@@ -52,7 +52,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
-import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -91,7 +90,6 @@ public class GUIFrame extends JFrame {
 
 	private JToggleButton controlRealTime;
 	private JSpinner spinner;
-	private JSlider speedFactor;
 
 	private JToggleButton controlStartResume;
 	private JToggleButton controlStop;
@@ -651,36 +649,15 @@ public class GUIFrame extends JFrame {
 		dim.width -= diff;
 		spinner.setMaximumSize(dim);
 
-		speedFactor = new JSlider(JSlider.HORIZONTAL, 0, 600, 400);
-		ChangeListener changeListener =
-				new SpeedFactorListener(spinner, speedFactor);
-		speedFactor.addChangeListener(changeListener);
-		spinner.addChangeListener(changeListener);
-
-		//Turn on major tick marks.
-		speedFactor.setMajorTickSpacing(100);
-		speedFactor.setPaintTicks(true);
-		speedFactor.setFocusable(false);
-
-		// avoid the spinner suddenly stretches more than its maximum size ??
-		speedFactor.setMaximumSize(speedFactor.getPreferredSize());
+		spinner.addChangeListener(new SpeedFactorListener());
 
 		mainToolBar.addSeparator(separatorDim);
 		controlRealTime = new JToggleButton( "Real Time" );
 		controlRealTime.setToolTipText( "Toggle Real Time" );
 		controlRealTime.setMargin( smallMargin );
-		controlRealTime.addActionListener( new ActionListener() {
-
-			public void actionPerformed( ActionEvent event ) {
-				boolean enableRT = ((JToggleButton)event.getSource()).isSelected();
-				DisplayEntity.simulation.setRealTimeFactor((int)Math.pow(10, speedFactor.getValue() / 100.0d));
-				DisplayEntity.simulation.setRealTimeExecution(enableRT);
-			}
-		} );
+		controlRealTime.addActionListener(new RealTimeActionListener(spinner));
 
 		mainToolBar.add( controlRealTime );
-		mainToolBar.add(Box.createRigidArea(gapDim));
-		mainToolBar.add(speedFactor);
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( spinner );
 		mainToolBar.addSeparator(separatorDim);
@@ -1406,45 +1383,11 @@ public void actionPerformed(ActionEvent e) {
 		}
 	}
 
-	/*
-	 * this is a listener for both the spinner and slider so if one is changed
-	 * it changes the other one as well
-	 */
 	public static class SpeedFactorListener implements ChangeListener {
-		private final JSpinner spinner;
-		private final JSlider slider;
-		private int value;
-		private boolean spinnerChanged;
-
-		public SpeedFactorListener(JSpinner spinner, JSlider slider) {
-			this.spinner = spinner;
-			this.slider = slider;
-			spinnerChanged = false;
-		}
 
 		public void stateChanged( ChangeEvent e ) {
-
-			// Avoid spinner change causes slider to change spinner again
-			// because slider has less resolution and spinner might come up
-			// with a different number than user originally entered
-			if(spinnerChanged)
-				return;
-
-			if(e.getSource() == slider) {
-				value =
-					(int) Math.round(Math.pow(10, slider.getValue() / 100.0d));
-				DisplayEntity.simulation.setRealTimeFactor(value);
-				spinner.setValue(value);
-			}
-			else {
-				spinnerChanged = true;
-				DisplayEntity.simulation.setRealTimeFactor(
-						(Integer)spinner.getValue());
-				value =
-					(int) (Math.log10((Integer)spinner.getValue()) * 100.0);
-				slider.setValue(value);
-				spinnerChanged = false;
-			}
+			DisplayEntity.simulation.setRealTimeFactor(
+					(Integer)((JSpinner)e.getSource()).getValue());
 		}
 	}
 
@@ -1475,6 +1418,19 @@ public void actionPerformed(ActionEvent e) {
 				return this.getMaximum();
 			}
 			return value;
+		}
+	}
+
+	public static class RealTimeActionListener implements ActionListener {
+		private JSpinner spinner;
+		public RealTimeActionListener(JSpinner spinner) {
+			this.spinner = spinner;
+		}
+		public void actionPerformed( ActionEvent event ) {
+			DisplayEntity.simulation.setRealTimeExecution(
+					((JToggleButton)event.getSource()).isSelected());
+			DisplayEntity.simulation.setRealTimeFactor(
+					(Integer)spinner.getValue());
 		}
 	}
 }
