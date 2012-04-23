@@ -176,7 +176,7 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 		catch(Exception exc){
 			rotation = null;
 		}
-		tooltip = new JWindow(window);
+		tooltip = new JWindow();
 		tooltip.setAlwaysOnTop( true );
 		textArea = new JTextArea();
 		textArea.setFocusable(false); // avoid blinking windows
