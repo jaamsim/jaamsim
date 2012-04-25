@@ -18,17 +18,20 @@ import javax.media.j3d.GeometryArray;
 import javax.media.j3d.LineArray;
 import javax.media.j3d.TriangleFanArray;
 import javax.vecmath.Point2d;
+import javax.vecmath.Vector3d;
 
 /**
  * RoundedRectangle class based on original implementation.
  */
 public class RoundedRectangle extends Shape {
 
-	protected double xRadius;
-	protected double yRadius;
-	protected double width;
-	protected double height;
-	protected int numSegments;
+	private double xRadius;
+	private double yRadius;
+	private double width;
+	private double height;
+	private double scaleX;
+	private double scaleY;
+	private int numSegments;
 
 	private GeometryArray geometry;
 	private int type;
@@ -51,6 +54,8 @@ public class RoundedRectangle extends Shape {
 		super.setCenter( x, y, z );
 		this.width = width;
 		this.height = height;
+		this.scaleX = 1.0d;
+		this.scaleY = 1.0d;
 		calcRadii();
 
 		setGeometryType( type );
@@ -151,43 +156,43 @@ public class RoundedRectangle extends Shape {
 			double coords[] = new double[totalVertices];
 
 			// Set the centre and the upper corner coordinates
-			coords[0] = centreX;
-			coords[1] = centreY;
+			coords[0] = centreX * scaleX;
+			coords[1] = centreY * scaleY;
 			coords[2] = centreZ;
-			coords[3] = rightCorner;
-			coords[4] = topCorner;
+			coords[3] = rightCorner * scaleX;
+			coords[4] = topCorner * scaleY;
 			coords[5] = centreZ;
-			coords[6] = leftCorner;
-			coords[7] = topCorner;
+			coords[6] = leftCorner * scaleX;
+			coords[7] = topCorner * scaleY;
 			coords[8] = centreZ;
 
 			// Set the last point to close the roundedRectangle
-			coords[totalVertices - 3] = rightCorner;
-			coords[totalVertices - 2] = topCorner;
+			coords[totalVertices - 3] = rightCorner * scaleX;
+			coords[totalVertices - 2] = topCorner * scaleY;
 			coords[totalVertices - 1] = centreZ;
 
 			// Fill in the intermediate points for the left rounded side
 			int startingIndex = 9;
 			for( int i = 1; i < numSideSegments; i++ ) {
-				coords[startingIndex + ((i - 1) * 3)] = leftCorner + (Math.cos( (Math.PI / 2) + (Math.PI / numSideSegments * i) ) * xRadius);
-				coords[startingIndex + ((i - 1) * 3) + 1] = centreY + (Math.sin( (Math.PI / 2) + (Math.PI / numSideSegments * i) ) * yRadius);
+				coords[startingIndex + ((i - 1) * 3)] = (leftCorner + Math.cos(Math.PI / 2 + Math.PI / numSideSegments * i) * xRadius) * scaleX;
+				coords[startingIndex + ((i - 1) * 3) + 1] = ( centreY + Math.sin(Math.PI / 2 + Math.PI / numSideSegments * i) * yRadius) * scaleY;
 				coords[startingIndex + ((i - 1) * 3) + 2] = centreZ;
 			}
 			startingIndex += (numSideSegments - 1) * 3;
 
 			//Fill in the lower left and right corners
-			coords[startingIndex] = leftCorner;
-			coords[startingIndex + 1] = bottomCorner;
+			coords[startingIndex] = leftCorner  * scaleX;
+			coords[startingIndex + 1] = bottomCorner * scaleY;
 			coords[startingIndex + 2] = centreZ;
-			coords[startingIndex + 3] = rightCorner;
-			coords[startingIndex + 4] = bottomCorner;
+			coords[startingIndex + 3] = rightCorner * scaleX;
+			coords[startingIndex + 4] = bottomCorner * scaleY;
 			coords[startingIndex + 5] = centreZ;
 			startingIndex += 6;
 
 			// Fill in the intermediate points for the right rounded side
 			for( int i = 1; i < numSideSegments; i++ ) {
-				coords[startingIndex + ((i - 1) * 3)] = rightCorner + (Math.cos( (-Math.PI / 2) + (Math.PI / numSideSegments * i) ) * xRadius);
-				coords[startingIndex + ((i - 1) * 3) + 1] = centreY + (Math.sin( (-Math.PI / 2) + (Math.PI / numSideSegments * i) ) * yRadius);
+				coords[startingIndex + ((i - 1) * 3)] = ( rightCorner + Math.cos(-Math.PI / 2 + Math.PI / numSideSegments * i) * xRadius) * scaleX;
+				coords[startingIndex + ((i - 1) * 3) + 1] = (centreY + Math.sin(-Math.PI / 2 + Math.PI / numSideSegments * i) * yRadius) * scaleY;
 				coords[startingIndex + ((i - 1) * 3) + 2] = centreZ;
 			}
 			geometry.setCoordinates( 0, coords );
@@ -197,57 +202,58 @@ public class RoundedRectangle extends Shape {
 			double coords[] = new double[totalVertices];
 
 			// Create the top flat part and the first point anchoring the rounded part
-			coords[0] = rightCorner;
-			coords[1] = topCorner;
+			coords[0] = rightCorner * scaleX;
+			coords[1] = topCorner * scaleY;
 			coords[2] = centreZ;
-			coords[3] = leftCorner;
-			coords[4] = topCorner;
+			coords[3] = leftCorner * scaleX;
+			coords[4] = topCorner * scaleY;
 			coords[5] = centreZ;
-			coords[6] = leftCorner;
-			coords[7] = topCorner;
+			coords[6] = leftCorner * scaleX;
+			coords[7] = topCorner * scaleY;
 			coords[8] = centreZ;
 
 			// Set the last point to close the roundedRectangle
-			coords[totalVertices - 3] = rightCorner;
-			coords[totalVertices - 2] = topCorner;
+			coords[totalVertices - 3] = rightCorner * scaleX;
+			coords[totalVertices - 2] = topCorner * scaleY;
 			coords[totalVertices - 1] = centreZ;
 
 			// Fill in the intermediate points for the left rounded side
 			int startingIndex = 9;
 			for( int i = 1; i < numSideSegments; i++ ) {
-				coords[startingIndex + ((i - 1) * 6)] = leftCorner + (Math.cos( (Math.PI / 2) + (Math.PI / numSideSegments * i) ) * xRadius);
-				coords[startingIndex + ((i - 1) * 6) + 1] = centreY + (Math.sin( (Math.PI / 2) + (Math.PI / numSideSegments * i) ) * yRadius);
+				coords[startingIndex + ((i - 1) * 6)] = (leftCorner + Math.cos(Math.PI / 2 + Math.PI / numSideSegments * i) * xRadius) * scaleX;
+				coords[startingIndex + ((i - 1) * 6) + 1] = (centreY + Math.sin(Math.PI / 2 + Math.PI / numSideSegments * i) * yRadius) * scaleY;
 				coords[startingIndex + ((i - 1) * 6) + 2] = centreZ;
-				coords[startingIndex + ((i - 1) * 6) + 3] = leftCorner + (Math.cos( (Math.PI / 2) + (Math.PI / numSideSegments * i) ) * xRadius);
-				coords[startingIndex + ((i - 1) * 6) + 4] = centreY + (Math.sin( (Math.PI / 2) + (Math.PI / numSideSegments * i) ) * yRadius);
+				coords[startingIndex + ((i - 1) * 6) + 3] = (leftCorner + Math.cos(Math.PI / 2 + Math.PI / numSideSegments * i) * xRadius) * scaleX;
+				coords[startingIndex + ((i - 1) * 6) + 4] = (centreY + Math.sin(Math.PI / 2 + Math.PI / numSideSegments * i) * yRadius) * scaleY;
 				coords[startingIndex + ((i - 1) * 6) + 5] = centreZ;
 			}
 			startingIndex += (numSideSegments - 1) * 6;
 
 			// Fill in the lower left and right corners
-			coords[startingIndex] = leftCorner;
-			coords[startingIndex + 1] = bottomCorner;
+			coords[startingIndex] = leftCorner * scaleX;
+			coords[startingIndex + 1] = bottomCorner * scaleY;
 			coords[startingIndex + 2] = centreZ;
-			coords[startingIndex + 3] = leftCorner;
-			coords[startingIndex + 4] = bottomCorner;
+			coords[startingIndex + 3] = leftCorner * scaleX;
+			coords[startingIndex + 4] = bottomCorner * scaleY;
 			coords[startingIndex + 5] = centreZ;
-			coords[startingIndex + 6] = rightCorner;
-			coords[startingIndex + 7] = bottomCorner;
+			coords[startingIndex + 6] = rightCorner * scaleX;
+			coords[startingIndex + 7] = bottomCorner * scaleY;
 			coords[startingIndex + 8] = centreZ;
-			coords[startingIndex + 9] = rightCorner;
-			coords[startingIndex + 10] = bottomCorner;
+			coords[startingIndex + 9] = rightCorner * scaleX;
+			coords[startingIndex + 10] = bottomCorner * scaleY;
 			coords[startingIndex + 11] = centreZ;
 			startingIndex += 12;
 
 			// Fill in the intermediate points for the right rounded side
 			for( int i = 1; i < numSideSegments; i++ ) {
-				coords[startingIndex + ((i - 1) * 6)] = rightCorner + (Math.cos( (-Math.PI / 2) + (Math.PI / numSideSegments * i) ) * xRadius);
-				coords[startingIndex + ((i - 1) * 6) + 1] = centreY + (Math.sin( (-Math.PI / 2) + (Math.PI / numSideSegments * i) ) * yRadius);
+				coords[startingIndex + ((i - 1) * 6)] = (rightCorner + Math.cos(-Math.PI / 2 + Math.PI / numSideSegments * i) * xRadius) * scaleX;
+				coords[startingIndex + ((i - 1) * 6) + 1] = (centreY + Math.sin(-Math.PI / 2 + Math.PI / numSideSegments * i) * yRadius) * scaleY;
 				coords[startingIndex + ((i - 1) * 6) + 2] = centreZ;
-				coords[startingIndex + ((i - 1) * 6) + 3] = rightCorner + (Math.cos( (-Math.PI / 2) + (Math.PI / numSideSegments * i) ) * xRadius);
-				coords[startingIndex + ((i - 1) * 6) + 4] = centreY + (Math.sin( (-Math.PI / 2) + (Math.PI / numSideSegments * i) ) * yRadius);
+				coords[startingIndex + ((i - 1) * 6) + 3] = (rightCorner + Math.cos(-Math.PI / 2 + Math.PI / numSideSegments * i) * xRadius) * scaleX;
+				coords[startingIndex + ((i - 1) * 6) + 4] = (centreY + Math.sin(-Math.PI / 2 + Math.PI / numSideSegments * i) * yRadius) * scaleY;
 				coords[startingIndex + ((i - 1) * 6) + 5] = centreZ;
 			}
+
 			geometry.setCoordinates( 0, coords );
 		}
 	}
@@ -296,13 +302,21 @@ public class RoundedRectangle extends Shape {
 
 	/**
 	 * Set a new width and height for the rectangle.
-	 *
-	 * @param width
-	 * @param height
+	 * and rescale the rectangle points to the unit model of entity.
 	 */
-	public void setSize( double width, double height ) {
+	public void setSize(double width, double height, Vector3d entSize) {
 		this.width = width;
 		this.height = height;
+
+		if(entSize.x != 0)
+			this.scaleX = 1.0d/entSize.x;
+		else
+			this.scaleX = 0.0d;
+
+		if(entSize.y != 0)
+			this.scaleY = 1.0d/entSize.y;
+		else
+			this.scaleY = 0.0d;
 
 		// Need to recalculate the xRadius and yRadius
 		calcRadii();
