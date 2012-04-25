@@ -343,8 +343,14 @@ public class OrbitBehavior extends ViewPlatformAWTBehavior {
 			textArea.setText(area.toString());
 			tooltip.pack();
 
-			// so the tip of the mouse cursor won't be on the tooltip
-			tooltip.setLocation(evt.getXOnScreen() + 1, evt.getYOnScreen()-6);
+			// put the tooltip well bellow the mouse cursor
+			if(window.getCursor().getType() == Cursor.DEFAULT_CURSOR)
+				tooltip.setLocation(
+				    evt.getXOnScreen() - 10, evt.getYOnScreen() + 20 );
+			else
+				tooltip.setLocation(
+				    evt.getXOnScreen() - 10, evt.getYOnScreen() + 12);
+
 			tooltip.setVisible(true);
 			return;
 		}
