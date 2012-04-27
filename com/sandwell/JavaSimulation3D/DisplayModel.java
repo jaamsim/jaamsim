@@ -115,6 +115,7 @@ public class DisplayModel extends Entity {
 	private static final int MODEL_BARGAUGE2D = 21;
 	private static final int MODEL_MINISHIP2D = 22;
 	private static final int MODEL_GRINDINGROLL2D = 23;
+	private static final int MODEL_SCREEN2D = 24;
 
 	protected static final ArrayList<String> validTags;
 
@@ -174,6 +175,7 @@ public class DisplayModel extends Entity {
 		definedTypes.add("BARGAUGE2D");
 		definedTypes.add("MINISHIP2D");
 		definedTypes.add("GRINDINGROLL2D");
+		definedTypes.add("SCREEN2D");
 
 		validFileExtentions = new ArrayList<String>(6);
 		validFileExtentions.add("DAE");
@@ -566,6 +568,9 @@ public class DisplayModel extends Entity {
 				break;
 			case MODEL_GRINDINGROLL2D:
 				bg.addChild(getDisplayModelForGrindingRoll2D());
+				break;
+			case MODEL_SCREEN2D:
+				bg.addChild(getDisplayModelForScreen2D());
 				break;
 		}
 		return bg;
@@ -1274,6 +1279,57 @@ public class DisplayModel extends Entity {
 		rect5Outline.setColor( Shape.COLOR_BLACK );
 		rect5Outline.setLineAttributes( la );
 		model2D.addChild( rect5Outline );
+
+		return model2D;
+	}
+
+	/**
+	 * GrindingRoll2D Graphics for MultiOutfeedHandler
+	 */
+	private  OrderedGroup getDisplayModelForScreen2D() {
+		final double[] a = {  -0.5, 0.111111111111111, 0.0,
+		                      -0.5, 0.0555555555555556, 0.0,
+		                      0.5, 0.444444444444444, 0.0,
+		                      0.5, 0.5, 0.0 };
+
+
+		final double[] b = {  -0.5, 0.0555555555555556, 0.0,
+		                      -0.5, 0, 0.0,
+		                       0.5, 0.388888888888889, 0.0,
+		                       0.5, 0.444444444444444, 0.0 };
+
+
+		final double[] c = {  -0.5, 0.0, 0.0,
+		                      -0.222222222222222, -0.5, 0.0,
+		                      0.5, 0.388888888888889, 0.0 };
+
+		OrderedGroup model2D = new OrderedGroup();
+		BranchGroup contents = new BranchGroup();
+		BranchGroup outlines = new BranchGroup();
+		contents.setName(TAG_CONTENTS);
+		outlines.setName(TAG_OUTLINES);
+
+		Polygon screenA = new Polygon( a, Polygon.SHAPE_OUTLINE, "screenA" );
+		Polygon screenAFill = new Polygon( a, Polygon.SHAPE_FILLED, "screenA" );
+		Polygon screenB = new Polygon( b, Polygon.SHAPE_OUTLINE, "screenB" );
+		Polygon screenBFill = new Polygon( b, Polygon.SHAPE_FILLED, "screenB" );
+		Polygon screenC = new Polygon( c, Polygon.SHAPE_OUTLINE, "screenC" );
+		Polygon screenCFill = new Polygon( c, Polygon.SHAPE_FILLED, "screenC" );
+		screenA.setColor( Shape.COLOR_LIGHT_GREY );
+		screenAFill.setColor( Shape.COLOR_LIGHT_GREY );
+		screenB.setColor( Shape.COLOR_LIGHT_GREY );
+		screenBFill.setColor( Shape.COLOR_LIGHT_GREY );
+		screenC.setColor( Shape.COLOR_LIGHT_GREY );
+		screenCFill.setColor( Shape.COLOR_LIGHT_GREY );
+		contents.addChild( screenAFill );
+		contents.addChild( screenBFill );
+		contents.addChild( screenCFill );
+		outlines.addChild( screenA );
+		outlines.addChild( screenB );
+		outlines.addChild( screenC );
+
+		model2D.addChild(contents);
+		model2D.addChild(outlines);
 
 		return model2D;
 	}
