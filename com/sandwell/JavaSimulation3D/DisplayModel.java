@@ -116,6 +116,7 @@ public class DisplayModel extends Entity {
 	private static final int MODEL_MINISHIP2D = 22;
 	private static final int MODEL_GRINDINGROLL2D = 23;
 	private static final int MODEL_SCREEN2D = 24;
+	private static final int MODEL_SAGMILL2D = 25;
 
 	protected static final ArrayList<String> validTags;
 
@@ -176,6 +177,7 @@ public class DisplayModel extends Entity {
 		definedTypes.add("MINISHIP2D");
 		definedTypes.add("GRINDINGROLL2D");
 		definedTypes.add("SCREEN2D");
+		definedTypes.add("SAGMILL2D");
 
 		validFileExtentions = new ArrayList<String>(6);
 		validFileExtentions.add("DAE");
@@ -571,6 +573,9 @@ public class DisplayModel extends Entity {
 				break;
 			case MODEL_SCREEN2D:
 				bg.addChild(getDisplayModelForScreen2D());
+				break;
+			case MODEL_SAGMILL2D:
+				bg.addChild(getDisplayModelForSagMill2D());
 				break;
 		}
 		return bg;
@@ -1328,6 +1333,155 @@ public class DisplayModel extends Entity {
 		outlines.addChild( screenB );
 		outlines.addChild( screenC );
 
+		model2D.addChild(contents);
+		model2D.addChild(outlines);
+
+		return model2D;
+	}
+
+	/**
+	 * SagMill2D Graphics for MultiOutfeedHandler
+	 */
+	private  OrderedGroup getDisplayModelForSagMill2D() {
+
+		final double[] SagmillA = {  -0.5, 0.4, 0.0,
+		                             -0.5, 0.12, 0.0,
+		                             -0.403846153846154, -0.12, 0.0,
+		                             -0.365384615384615, -0.12, 0.0,
+		                             -0.365384615384615, 0.15, 0.0,
+		                             -0.403846153846154, 0.2, 0.0,
+		                             -0.403846153846154, 0.4, 0.0,
+		                             -0.5, 0.4, 0.0 };
+
+		final double[] SagmillA1 = {  -0.5, 0.4, 0.0,
+		                              -0.5, 0.12, 0.0,
+		                              -0.403846153846154, 0.2, 0.0,
+		                              -0.403846153846154, 0.4, 0.0,
+		                              -0.5, 0.4, 0.0 };
+
+
+		final double[] SagmillA2 = { -0.5, 0.12, 0.0,
+		                             -0.403846153846154, -0.12, 0.0,
+		                             -0.365384615384615, -0.12, 0.0,
+		                             -0.365384615384615, 0.15, 0.0,
+		                             -0.403846153846154, 0.2, 0.0,
+		                             -0.5, 0.12, 0.0};
+
+		final double[] SagmillB = {  -0.365384615384615, 0.2, 0.0,
+		                             -0.365384615384615, -0.2, 0.0,
+		                             -0.341346153846154, -0.2, 0.0,
+		                             -0.341346153846154, 0.2, 0.0,
+		                             -0.365384615384615, 0.2, 0.0};
+
+
+		final double[] SagmillC = {  -0.341346153846154, 0.15, 0.0,
+		                             -0.341346153846154, -0.2, 0.0,
+		                             -0.269230769230769, -0.4, 0.0,
+		                             -0.269230769230769, 0.4, 0.0,
+		                             -0.341346153846154, 0.15, 0.0};
+
+
+		final double[] SagmillD = {  -0.269230769230769, 0.4, 0.0,
+		                             -0.269230769230769, -0.4, 0.0,
+		                             0.211538461538462, -0.4, 0.0,
+		                             0.211538461538462, 0.4, 0.0,
+		                             -0.269230769230769, 0.4, 0.0 };
+
+
+		final double[] SagmillE = {  0.211538461538462, 0.45, 0.0,
+		                             0.211538461538462, -0.45, 0.0,
+		                             0.235576923076923, -0.45, 0.0,
+		                             0.235576923076923, 0.45, 0.0,
+		                             0.211538461538462, 0.45, 0.0};
+
+
+		final double[] SagmillF = {  0.235576923076923, 0.37, 0.0,
+		                             0.235576923076923, -0.37, 0.0,
+		                             0.307692307692308, -0.15, 0.0,
+		                             0.307692307692308, 0.15, 0.0,
+		                             0.235576923076923, 0.37, 0.0 };
+
+
+		final double[] SagmillG = {  0.307692307692308, 0.2, 0.0,
+		                             0.307692307692308, -0.2, 0.0,
+		                             0.331730769230769, -0.2, 0.0,
+		                             0.331730769230769, 0.2, 0.0,
+		                             0.307692307692308, 0.2, 0.0 };
+
+
+		final double[] SagmillH = {  0.331730769230769, 0.1, 0.0,
+		                             0.331730769230769, -0.1, 0.0,
+		                             0.5, -0.1, 0.0,
+		                             0.5, 0.1, 0.0,
+		                             0.331730769230769, 0.1, 0.0 };
+
+		OrderedGroup model2D = new OrderedGroup();
+		BranchGroup contents = new BranchGroup();
+		BranchGroup outlines = new BranchGroup();
+		contents.setName(TAG_CONTENTS);
+		outlines.setName(TAG_OUTLINES);
+
+		Polygon sagMillShapeA = new Polygon( SagmillA, Polygon.SHAPE_OUTLINE, "sagMillShapeA" );
+		Polygon sagMillShapeA1Fill = new Polygon( SagmillA1, Polygon.SHAPE_FILLED, "sagMillShapeA1Fill" );
+		sagMillShapeA1Fill.setPoints( SagmillA1 );
+		Polygon sagMillShapeA2Fill = new Polygon( SagmillA2, Polygon.SHAPE_FILLED, "sagMillShapeA2Fill" );
+		sagMillShapeA2Fill.setPoints( SagmillA2 );
+		Polygon sagMillShapeB = new Polygon( SagmillB, Rectangle.SHAPE_OUTLINE, "sagMillShapeB" );
+		Polygon sagMillShapeBFill = new Polygon( SagmillB, Polygon.SHAPE_FILLED, "sagMillShapeBFill" );
+		sagMillShapeBFill.setPoints( SagmillB );
+		Polygon sagMillShapeC = new Polygon( SagmillC, Rectangle.SHAPE_OUTLINE, "sagMillShapeC" );
+		Polygon sagMillShapeCFill = new Polygon( SagmillC, Polygon.SHAPE_FILLED, "sagMillShapeCFill" );
+		sagMillShapeCFill.setPoints( SagmillC );
+		Polygon sagMillShapeD = new Polygon( SagmillD, Rectangle.SHAPE_OUTLINE, "sagMillShapeD" );
+		Polygon sagMillShapeDFill = new Polygon( SagmillD, Rectangle.SHAPE_FILLED, "sagMillShapeDFill" );
+		sagMillShapeDFill.setPoints( SagmillD );
+		Polygon sagMillShapeE = new Polygon( SagmillE, Rectangle.SHAPE_OUTLINE, "sagMillShapeE" );
+		Polygon sagMillShapeEFill = new Polygon( SagmillE, Polygon.SHAPE_FILLED, "sagMillShapeEFill" );
+		sagMillShapeEFill.setPoints( SagmillE );
+		Polygon sagMillShapeF = new Polygon( SagmillF, Polygon.SHAPE_OUTLINE, "sagMillShapeF" );
+		Polygon sagMillShapeFFill = new Polygon( SagmillF, Polygon.SHAPE_FILLED, "sagMillShapeFFill" );
+		sagMillShapeFFill.setPoints( SagmillF );
+		Polygon sagMillShapeG = new Polygon( SagmillG, Rectangle.SHAPE_OUTLINE, "sagMillShapeG" );
+		Polygon sagMillShapeGFill = new Polygon( SagmillG, Polygon.SHAPE_FILLED, "sagMillShapeGFill" );
+		sagMillShapeGFill.setPoints( SagmillG );
+		Polygon sagMillShapeH = new Polygon( SagmillH, Polygon.SHAPE_OUTLINE, "sagMillShapeH" );
+		Polygon sagMillShapeHFill = new Polygon( SagmillH, Polygon.SHAPE_FILLED, "sagMillShapeHFill" );
+		sagMillShapeHFill.setPoints( SagmillH );
+		sagMillShapeA.setColor( Shape.COLOR_LIGHT_GREY );
+		sagMillShapeA1Fill.setColor( Shape.COLOR_LIGHT_GREY );
+		sagMillShapeA2Fill.setColor( Shape.COLOR_LIGHT_GREY );
+		sagMillShapeB.setColor( Shape.COLOR_BLACK );
+		sagMillShapeBFill.setColor( Shape.COLOR_MED_GREY );
+		sagMillShapeC.setColor( Shape.COLOR_MED_GREY );
+		sagMillShapeCFill.setColor( Shape.COLOR_MED_GREY );
+		sagMillShapeD.setColor( Shape.COLOR_MED_GREY );
+		sagMillShapeDFill.setColor( Shape.COLOR_MED_GREY );
+		sagMillShapeE.setColor( Shape.COLOR_BLACK );
+		sagMillShapeEFill.setColor( Shape.COLOR_MED_GREY );
+		sagMillShapeF.setColor( Shape.COLOR_MED_GREY );
+		sagMillShapeFFill.setColor( Shape.COLOR_MED_GREY );
+		sagMillShapeG.setColor( Shape.COLOR_BLACK );
+		sagMillShapeGFill.setColor( Shape.COLOR_MED_GREY );
+		sagMillShapeH.setColor( Shape.COLOR_MED_GREY );
+		sagMillShapeHFill.setColor( Shape.COLOR_MED_GREY );
+		contents.addChild( sagMillShapeA1Fill );
+		contents.addChild( sagMillShapeA2Fill );
+		contents.addChild( sagMillShapeCFill );
+		contents.addChild( sagMillShapeDFill );
+		contents.addChild( sagMillShapeFFill );
+		contents.addChild( sagMillShapeHFill );
+		outlines.addChild( sagMillShapeA );
+		outlines.addChild( sagMillShapeB );
+		outlines.addChild( sagMillShapeC );
+		outlines.addChild( sagMillShapeD );
+		outlines.addChild( sagMillShapeE );
+		outlines.addChild( sagMillShapeF );
+		outlines.addChild( sagMillShapeG );
+		outlines.addChild( sagMillShapeH );
+
+		model2D.addChild(sagMillShapeBFill);
+		model2D.addChild(sagMillShapeEFill);
+		model2D.addChild(sagMillShapeGFill);
 		model2D.addChild(contents);
 		model2D.addChild(outlines);
 
