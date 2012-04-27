@@ -78,6 +78,8 @@ public class DisplayModel extends Entity {
 	public static final String TAG_SERVICE = "SERVICE";
 	public static final String TAG_LINES = "LINES";
 	public static final String TAG_SECONDARY_LINES = "SECONDARY_LINES";
+	public static final String TAG_ARROW_DOWN = "ARROWS_DOWN";
+	public static final String TAG_ARROW_UP = "ARROWS_UP";
 
 	private static final ArrayList<DisplayModel> allInstances;
 
@@ -117,6 +119,7 @@ public class DisplayModel extends Entity {
 	private static final int MODEL_GRINDINGROLL2D = 23;
 	private static final int MODEL_SCREEN2D = 24;
 	private static final int MODEL_SAGMILL2D = 25;
+	private static final int MODEL_RECTANGLE_WITH_ARROWS = 26;
 
 	protected static final ArrayList<String> validTags;
 
@@ -178,6 +181,7 @@ public class DisplayModel extends Entity {
 		definedTypes.add("GRINDINGROLL2D");
 		definedTypes.add("SCREEN2D");
 		definedTypes.add("SAGMILL2D");
+		definedTypes.add("RECTANGLEWITHARROWS");
 
 		validFileExtentions = new ArrayList<String>(6);
 		validFileExtentions.add("DAE");
@@ -197,6 +201,8 @@ public class DisplayModel extends Entity {
 		validTags.add(TAG_SERVICE);
 		validTags.add(TAG_LINES);
 		validTags.add(TAG_SECONDARY_LINES);
+		validTags.add(TAG_ARROW_DOWN);
+		validTags.add(TAG_ARROW_UP);
 	}
 	{
 		shape = new StringInput( "Shape", "DisplayModel", null );
@@ -576,6 +582,9 @@ public class DisplayModel extends Entity {
 				break;
 			case MODEL_SAGMILL2D:
 				bg.addChild(getDisplayModelForSagMill2D());
+				break;
+			case MODEL_RECTANGLE_WITH_ARROWS:
+				bg.addChild(getDisplayModelForRectangleWithArrows());
 				break;
 		}
 		return bg;
@@ -1484,6 +1493,74 @@ public class DisplayModel extends Entity {
 		model2D.addChild(sagMillShapeGFill);
 		model2D.addChild(contents);
 		model2D.addChild(outlines);
+
+		return model2D;
+	}
+
+	/**
+	 * RectangleWithArrows Graphics for MultiOutfeedHandler
+	 */
+	private  OrderedGroup getDisplayModelForRectangleWithArrows() {
+		OrderedGroup model2D = new OrderedGroup();
+		OrderedGroup upArrow = new OrderedGroup();
+		OrderedGroup downArrow = new OrderedGroup();
+		upArrow.setName(TAG_ARROW_UP);
+		downArrow.setName(TAG_ARROW_DOWN);
+
+		Rectangle fillModel = new Rectangle( 1.0, 1.0, Rectangle.SHAPE_FILLED, "fillModel" );
+		fillModel.setColor( Shape.COLOR_LIGHT_GREY );
+		fillModel.setName(TAG_CONTENTS);
+
+		Rectangle outlineModel = new Rectangle( 1.0, 1.0, Rectangle.SHAPE_OUTLINE, "outlineModel" );
+		outlineModel.setColor( Shape.COLOR_LIGHT_GREY );
+		outlineModel.setName(TAG_OUTLINES);
+
+		// Create the shape for the upstream Restriction Arrow
+		Point3f a = new Point3f( -0.5f, 0.0f, 0.0f );
+		Point3f b = new Point3f( -0.3f, -0.2f, 0.0f );
+		Point3f c = new Point3f( -0.3f, -0.1f, 0.0f );
+		Point3f d = new Point3f( -0.1f, -0.1f, 0.0f );
+		Point3f e = new Point3f( -0.1f, 0.1f, 0.0f );
+		Point3f f = new Point3f( -0.3f, 0.1f, 0.0f );
+		Point3f g = new Point3f( -0.3f, 0.2f, 0.0f );
+
+		final double verts1[] = { a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z, d.x, d.y, d.z, e.x, e.y, e.z, f.x, f.y, f.z, g.x, g.y, g.z };
+
+		// Create the arrow fill
+		Polygon upstreamArrowFillModel = new Polygon( verts1, Polygon.SHAPE_FILLED, "upstreamArrowFillModel" );
+		upstreamArrowFillModel.setColor( Shape.COLOR_YELLOW );
+		upArrow.addChild(upstreamArrowFillModel);
+
+		// Create the arrow outline
+		Polygon upstreamArrowOutlineModel = new Polygon( verts1, Polygon.SHAPE_OUTLINE, "upstreamArrowOutlineModel" );
+		upstreamArrowOutlineModel.setColor( Shape.COLOR_BLACK );
+		upArrow.addChild(upstreamArrowOutlineModel);
+
+		// Create the shape for the downstream Restriction Arrow
+		Point3f a2 = new Point3f( 0.5f, 0.0f, 0.0f );
+		Point3f b2 = new Point3f( 0.3f, 0.2f, 0.0f );
+		Point3f c2 = new Point3f( 0.3f, 0.1f, 0.0f );
+		Point3f d2 = new Point3f( 0.1f, 0.1f, 0.0f );
+		Point3f e2 = new Point3f( 0.1f, -0.1f, 0.0f );
+		Point3f f2 = new Point3f( 0.3f, -0.1f, 0.0f );
+		Point3f g2 = new Point3f( 0.3f, -0.2f, 0.0f );
+
+		final double verts2[] = { a2.x, a2.y, a2.z, b2.x, b2.y, b2.z, c2.x, c2.y, c2.z, d2.x, d2.y, d2.z, e2.x, e2.y, e2.z, f2.x, f2.y, f2.z, g2.x, g2.y, g2.z };
+
+		// Create the arrow fill
+		Polygon downstreamArrowFillModel = new Polygon( verts2, Polygon.SHAPE_FILLED, "downstreamArrowFillModel" );
+		downstreamArrowFillModel.setColor( Shape.COLOR_YELLOW );
+		downArrow.addChild(downstreamArrowFillModel);
+
+		// Create the arrow outline
+		Polygon downstreamArrowOutlineModel = new Polygon( verts2, Polygon.SHAPE_OUTLINE, "downstreamArrowOutlineModel" );
+		downstreamArrowOutlineModel.setColor( Shape.COLOR_BLACK );
+		downArrow.addChild(downstreamArrowOutlineModel);
+
+		model2D.addChild(fillModel);
+		model2D.addChild(outlineModel);
+		model2D.addChild(upArrow);
+		model2D.addChild(downArrow);
 
 		return model2D;
 	}
