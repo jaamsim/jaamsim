@@ -53,7 +53,6 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation.Vector3dInput;
 import com.sandwell.JavaSimulation3D.util.Arc;
@@ -140,12 +139,10 @@ public class DisplayModel extends Entity {
 	private final BooleanInput bold;
 
 	// Geometry information
-	private int numberOfShape3Ds;
-	private final StringVector  geometriesName = new StringVector();
+	private final ArrayList<Class<?>> geometryTypes = new ArrayList<Class<?>>(0);
 	private final IntegerVector geometriesCount = new IntegerVector();
 	private final IntegerVector geometriesTotalUniqueVertices = new IntegerVector();
 	private final IntegerVector geometriesTotalVertices = new IntegerVector();
-	private int	totalUniqueGeometries = 0;
 
 	private boolean hasSharedGroup=false;
 
@@ -338,6 +335,8 @@ public class DisplayModel extends Entity {
 					throw new ErrorException( "Could not load %s", shape.getValue() );
 				}
 				branchGroup.addChild(image);
+				modelSize.set( 1.0d, 1.0d, 0.0d );
+				return;
 			}
 			this.forceDuplicateApperanceOfValidImportedTags(branchGroup);
 
@@ -364,21 +363,19 @@ public class DisplayModel extends Entity {
 				}
 
 				// 2) Geometry information
-				numberOfShape3Ds++;
 				if(each.getGeometry() != null ) {
-					geometriesName.addLastIfNotPresent(each.getGeometry().getClass().toString());
-
-					// New geometry is added
-					if(geometriesName.size() > geometriesCount.size()) {
+					// Geometry type in each
+					int geoIndex = geometryTypes.indexOf(each.getGeometry().getClass());
+					// add new type if required
+					if (geoIndex == -1) {
+						geometryTypes.add(each.getGeometry().getClass());
+						geoIndex = geometryTypes.size() - 1;
 						geometriesCount.add(0);
 						geometriesTotalUniqueVertices.add(0);
 						geometriesTotalVertices.add(0);
 					}
 
-					// Geometry type in each
-					int index = geometriesName.indexOf(each.getGeometry().getClass().toString());
-
-					geometriesCount.addAt(each.numGeometries(), index);
+					geometriesCount.addAt(each.numGeometries(), geoIndex);
 					Enumeration<?> enumeration = each.getAllGeometries();
 
 					// Total vertices for each
@@ -390,13 +387,12 @@ public class DisplayModel extends Entity {
 						}
 						GeometryArray geometryArray = (GeometryArray) obj;
 						if(uniqueGeometries.contains(geometryArray)){
-							geometriesTotalVertices.addAt(geometryArray.getVertexCount(), index);
+							geometriesTotalVertices.addAt(geometryArray.getVertexCount(), geoIndex);
 						}
 						else {
-							totalUniqueGeometries++;
 							uniqueGeometries.add(geometryArray);
-							geometriesTotalUniqueVertices.addAt(geometryArray.getVertexCount(), index);
-							geometriesTotalVertices.addAt(geometryArray.getVertexCount(), index);
+							geometriesTotalUniqueVertices.addAt(geometryArray.getVertexCount(), geoIndex);
+							geometriesTotalVertices.addAt(geometryArray.getVertexCount(), geoIndex);
 						}
 					}
 
