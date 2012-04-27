@@ -299,7 +299,7 @@ public class DisplayEntity extends Entity {
 
 		displayModels = new ArrayList<DisplayModelBG>();
 
-		DisplayModel dm = this.getDefaultDisplayModel();
+		DisplayModel dm = DisplayModel.getDefaultDisplayModelForClass(this.getClass());
 		if(dm != null) {
 			ArrayList<DisplayModel> defList = new ArrayList<DisplayModel>();
 			defList.add(dm);
@@ -1393,10 +1393,6 @@ public class DisplayEntity extends Entity {
 		synchronized (position) {
 			needsRender = true;
 		}
-	}
-
-	public DisplayModel getDefaultDisplayModel(){
-		return DisplayModel.getDefaultDisplayModelForClass(this.getClass());
 	}
 
 	public  EntityListInput<DisplayModel> getDisplayModelList() {
