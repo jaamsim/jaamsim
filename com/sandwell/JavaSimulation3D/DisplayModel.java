@@ -81,7 +81,7 @@ public class DisplayModel extends Entity {
 
 	private static final ArrayList<DisplayModel> allInstances;
 
-	// IMPORTANT: If you add a pre-defined model here, make sure to add it to the preDefined2DTypes
+	// IMPORTANT: If you add a pre-defined model here, make sure to add it to the definedTypes list
 	// 1) Predefined Models
 	private static final int MODEL_PIXELS = 0;
 	private static final int MODEL_TRUCK2D = 1;
@@ -120,7 +120,7 @@ public class DisplayModel extends Entity {
 	protected final Point3d modelSize;
 	private double conversionFactorToMeters = 1.0d; // How many meters in one distance unit
 	private final StringInput shape;
-	private static ArrayList<String>validPredefined2DTypes;
+	private static ArrayList<String> definedTypes;
 	private static ArrayList<String>validFileExtentions;
 
 	private BranchGroup branchGroup;		// Shapes are being added to this node
@@ -148,30 +148,30 @@ public class DisplayModel extends Entity {
 	static {
 		allInstances = new ArrayList<DisplayModel>();
 
-		validPredefined2DTypes = new ArrayList<String>(1);
-		validPredefined2DTypes.add("PIXELS");
-		validPredefined2DTypes.add("TRUCK2D");
-		validPredefined2DTypes.add("SHIP2D");
-		validPredefined2DTypes.add("RECTANGLE");
-		validPredefined2DTypes.add("STACKER2D");
-		validPredefined2DTypes.add("RECLAIMER2D");
-		validPredefined2DTypes.add("BRIDGE2D");
-		validPredefined2DTypes.add("CRUSHER2D");
-		validPredefined2DTypes.add("GANTRY2D");
-		validPredefined2DTypes.add("DOZER2D");
-		validPredefined2DTypes.add("CRUSHER2ND2D");
-		validPredefined2DTypes.add("SLAVESTACKER2D");
-		validPredefined2DTypes.add("DUALQUADRANT2D");
-		validPredefined2DTypes.add("SINGLEQUADRANT2D");
-		validPredefined2DTypes.add("LINEAR2D");
-		validPredefined2DTypes.add("TRAVELLING2D");
-		validPredefined2DTypes.add("CIRCLE");
-		validPredefined2DTypes.add("ARROW2D");
-		validPredefined2DTypes.add("TRIANGLE");
-		validPredefined2DTypes.add("CONTENTSPIXELS");
-		validPredefined2DTypes.add("CRUSHINGPLANT2D");
-		validPredefined2DTypes.add("BARGAUGE2D");
-		validPredefined2DTypes.add("MINISHIP2D");
+		definedTypes = new ArrayList<String>(25);
+		definedTypes.add("PIXELS");
+		definedTypes.add("TRUCK2D");
+		definedTypes.add("SHIP2D");
+		definedTypes.add("RECTANGLE");
+		definedTypes.add("STACKER2D");
+		definedTypes.add("RECLAIMER2D");
+		definedTypes.add("BRIDGE2D");
+		definedTypes.add("CRUSHER2D");
+		definedTypes.add("GANTRY2D");
+		definedTypes.add("DOZER2D");
+		definedTypes.add("CRUSHER2ND2D");
+		definedTypes.add("SLAVESTACKER2D");
+		definedTypes.add("DUALQUADRANT2D");
+		definedTypes.add("SINGLEQUADRANT2D");
+		definedTypes.add("LINEAR2D");
+		definedTypes.add("TRAVELLING2D");
+		definedTypes.add("CIRCLE");
+		definedTypes.add("ARROW2D");
+		definedTypes.add("TRIANGLE");
+		definedTypes.add("CONTENTSPIXELS");
+		definedTypes.add("CRUSHINGPLANT2D");
+		definedTypes.add("BARGAUGE2D");
+		definedTypes.add("MINISHIP2D");
 
 		validFileExtentions = new ArrayList<String>(6);
 		validFileExtentions.add("DAE");
@@ -606,7 +606,7 @@ public class DisplayModel extends Entity {
 	}
 
 	public DisplayModelBG getDisplayModel() {
-		int predefIndex = validPredefined2DTypes.indexOf(shape.getValue().toUpperCase());
+		int predefIndex = definedTypes.indexOf(shape.getValue().toUpperCase());
 		if (branchGroup == null && predefIndex > -1) {
 			BranchGroup bg = this.getPredefined2DBranchGroup(predefIndex);
 			modelSize.set(1.0d, 1.0d, 0.0d);
@@ -668,7 +668,7 @@ public class DisplayModel extends Entity {
 		if( shape.getValue() == null ) {
 			throw new InputErrorException( "Shape is not found" );
 		}
-		if( ! validPredefined2DTypes.contains(shape.getValue().toUpperCase()) ){
+		if( ! definedTypes.contains(shape.getValue().toUpperCase()) ){
 			if( ! (FileEntity.fileExists(shape.getValue())) ) {
 				throw new InputErrorException("File \"%s\" not found", shape.getValue());
 			}
