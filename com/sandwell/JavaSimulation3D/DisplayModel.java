@@ -115,9 +115,6 @@ public class DisplayModel extends Entity {
 	private static final int MODEL_BARGAUGE2D = 21;
 	private static final int MODEL_MINISHIP2D = 22;
 
-	// 2) Model from a file
-	private static final int MODEL_FILE = 23;
-
 	protected static final ArrayList<String> validTags;
 
 	protected final Point3d modelSize;
@@ -125,7 +122,6 @@ public class DisplayModel extends Entity {
 	private final StringInput shape;
 	private static ArrayList<String>validPredefined2DTypes;
 	private static ArrayList<String>validFileExtentions;
-	private int modelType;
 
 	private BranchGroup branchGroup;		// Shapes are being added to this node
 
@@ -225,7 +221,6 @@ public class DisplayModel extends Entity {
 
 	public DisplayModel(){
 		allInstances.add(this);
-		modelType = 0;
 		modelSize = new Point3d(1.0, 1.0, 1.0);
 	}
 	public static ArrayList<? extends DisplayModel> getAll() {
@@ -245,25 +240,11 @@ public class DisplayModel extends Entity {
 		return validFileExtentions;
 	}
 
-	private void initialize() {
-
-		// Already has been initialized
-		if(branchGroup != null){
-			return;
-		}
-
-		// 1) Predefined 2D model
-		if(validPredefined2DTypes.contains( shape.getValue().toUpperCase()) ){
-			modelType = validPredefined2DTypes.indexOf(shape.getValue().toUpperCase());
-			branchGroup = getPredefined2DBranchGroup();
-			modelSize.set( 1.0d, 1.0d, 0.0d );
-			return;
-		}
+	private void initializeFromFile() {
 
 		// 2) Model from a file
-		else {
+
 			branchGroup = new BranchGroup();
-			modelType = MODEL_FILE;
 			String ext =  Util.getFileExtention(shape.getValue());
 			if( ext.equalsIgnoreCase("DAE") || ext.equalsIgnoreCase("ZIP") || ext.equalsIgnoreCase("KMZ") ){
 				Scene scene = null;
@@ -398,7 +379,6 @@ public class DisplayModel extends Entity {
 
 				}
 			}
-		}
 
 		// Compute the original modelSize
 
@@ -442,7 +422,7 @@ public class DisplayModel extends Entity {
 	/**
 	 * predefined 2D models are defined here
 	 */
-	private BranchGroup getPredefined2DBranchGroup(){
+	private BranchGroup getPredefined2DBranchGroup(int modelType){
 		BranchGroup bg = new BranchGroup();
 		switch (modelType){
 			case MODEL_PIXELS:
@@ -495,7 +475,7 @@ public class DisplayModel extends Entity {
 				break;
 			case MODEL_STACKER2D:
 			case MODEL_RECLAIMER2D:
-				bg.addChild(getDisplayModelForStakerReclaimer2D());
+				bg.addChild(getDisplayModelForStakerReclaimer2D(modelType));
 				break;
 			case MODEL_BRIDGE2D:
 				bg.addChild(getDisplaModelForBridge2D());
@@ -626,16 +606,18 @@ public class DisplayModel extends Entity {
 	}
 
 	public DisplayModelBG getDisplayModel() {
-		this.initialize();
-		BranchGroup bg;
-		if(modelType == MODEL_FILE) {
-			bg = (BranchGroup)branchGroup.cloneTree();
+		int predefIndex = validPredefined2DTypes.indexOf(shape.getValue().toUpperCase());
+		if (branchGroup == null && predefIndex > -1) {
+			BranchGroup bg = this.getPredefined2DBranchGroup(predefIndex);
+			modelSize.set(1.0d, 1.0d, 0.0d);
+			return new DisplayModelBG(bg, new Vector3d(1.0d, 1.0d, 0.0d));
 		}
-		else {
-			bg = this.getPredefined2DBranchGroup();
+
+		if (branchGroup == null) {
+			initializeFromFile();
 		}
-		DisplayModelBG displayModelBG = new DisplayModelBG(bg, new Vector3d(modelSize));
-		return displayModelBG;
+
+		return new DisplayModelBG((BranchGroup)branchGroup.cloneTree(), new Vector3d(modelSize));
 	}
 
 	public Point3d getModelSize() {
@@ -962,7 +944,7 @@ public class DisplayModel extends Entity {
 		return model2D;
 	}
 
-	private OrderedGroup getDisplayModelForStakerReclaimer2D() {
+	private OrderedGroup getDisplayModelForStakerReclaimer2D(int modelType) {
 		OrderedGroup model2D = new OrderedGroup();
 		//  calculate intermediate values.
 		double x = 1.0;
