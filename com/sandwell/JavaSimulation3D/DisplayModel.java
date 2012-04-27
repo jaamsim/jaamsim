@@ -253,144 +253,141 @@ public class DisplayModel extends Entity {
 	}
 
 	private void initializeFromFile() {
+		branchGroup = new BranchGroup();
+		String ext =  Util.getFileExtention(shape.getValue());
+		if( ext.equalsIgnoreCase("DAE") || ext.equalsIgnoreCase("ZIP") || ext.equalsIgnoreCase("KMZ") ){
+			Scene scene = null;
 
-		// 2) Model from a file
+			// Load 3d Model file
+			DAELoader collada = new DAELoader();
 
-			branchGroup = new BranchGroup();
-			String ext =  Util.getFileExtention(shape.getValue());
-			if( ext.equalsIgnoreCase("DAE") || ext.equalsIgnoreCase("ZIP") || ext.equalsIgnoreCase("KMZ") ){
-				Scene scene = null;
+			// Ask loader to ignore lights, fogs...
+			collada.setFlags(collada.getFlags() & ~(Loader.LOAD_LIGHT_NODES | Loader.LOAD_FOG_NODES
+	                | Loader.LOAD_BACKGROUND_NODES | Loader.LOAD_VIEW_GROUPS));
+			URL url=null;
+			try {
+				url = new URL(Util.getAbsoluteFilePath(shape.getValue()));
 
-				// Load 3d Model file
-				DAELoader collada = new DAELoader();
+				// Zip file or GoogleEarth file
+				if(ext.equalsIgnoreCase("ZIP") || ext.equalsIgnoreCase("KMZ")) {
 
-				// Ask loader to ignore lights, fogs...
-				collada.setFlags(collada.getFlags() & ~(Loader.LOAD_LIGHT_NODES | Loader.LOAD_FOG_NODES
-		                | Loader.LOAD_BACKGROUND_NODES | Loader.LOAD_VIEW_GROUPS));
-				URL url=null;
-				try {
-					url = new URL(Util.getAbsoluteFilePath(shape.getValue()));
+					// Open the zip file
+					ZipInputStream zipInputStream = new ZipInputStream(url.openStream());
 
-					// Zip file or GoogleEarth file
-					if(ext.equalsIgnoreCase("ZIP") || ext.equalsIgnoreCase("KMZ")) {
+					// Loop through zipEntries
+					for (ZipEntry zipEntry; (zipEntry = zipInputStream.getNextEntry()) != null; ) {
 
-						// Open the zip file
-						ZipInputStream zipInputStream = new ZipInputStream(url.openStream());
+						String entryName = zipEntry.getName();
+						if(!Util.getFileExtention(entryName).equalsIgnoreCase("DAE"))
+							continue;
 
-						// Loop through zipEntries
-						for (ZipEntry zipEntry; (zipEntry = zipInputStream.getNextEntry()) != null; ) {
-
-							String entryName = zipEntry.getName();
-							if(!Util.getFileExtention(entryName).equalsIgnoreCase("DAE"))
-								continue;
-
-							// This zipEntry is a collada file, no need to look any further
-							url = new URL("jar:" + url + "!/" + entryName );
-							break;
-						}
-					}
-
-					// Load the collada file
-					scene = collada.load ( url );
-					Object unitMeter = scene.getNamedObjects().remove("JaamSim-UnitMeter");
-					if (unitMeter instanceof Double) {
-						conversionFactorToMeters = ((Double)unitMeter).doubleValue();
-					}
-					if (Boolean.TRUE == scene.getNamedObjects().remove("JaamSim-HasSharedGroup")) {
-						hasSharedGroup = true;
-					}
-				}
-				catch (Exception ex){
-					scene = null;
-					throw new ErrorException( "%s \nCould not load %s", ex, url );
-				}
-				Transform3D rotation = new Transform3D();
-				rotation.setEuler(orientation.getValue());
-				TransformGroup tg = new TransformGroup(rotation);
-				tg.addChild(scene.getSceneGroup());
-
-				branchGroup.addChild(tg);
-				if (scene.getSceneGroup().numChildren() == 0) {
-			          throw new IllegalArgumentException("Empty model:" + url);
-			    }
-
-		        // Turn off lights because of the universal light in the region
-		        setNodeLightOff(branchGroup);
-			}
-
-			// Image file
-			else {
-				Image image;
-				try {
-					image = new Image( 1.0, 1.0, new URL(Util.getAbsoluteFilePath(shape.getValue())) );
-				}
-				catch( Exception e ) {
-					throw new ErrorException( "Could not load %s", shape.getValue() );
-				}
-				branchGroup.addChild(image);
-				modelSize.set( 1.0d, 1.0d, 0.0d );
-				return;
-			}
-			this.forceDuplicateApperanceOfValidImportedTags(branchGroup);
-
-			ArrayList<Geometry>	uniqueGeometries = new ArrayList<Geometry>();
-			ArrayList<Shape3D> shape3DList = getShape3DsBelow(branchGroup);
-			for(Shape3D each: shape3DList) {
-
-				// NO culling at all
-				if(! enableCulling.getValue()) {
-					int culling = PolygonAttributes.CULL_NONE;
-
-					Appearance appearance = each.getAppearance();
-					if(appearance != null) {
-						PolygonAttributes polygonAttributes = appearance.getPolygonAttributes();
-						if( polygonAttributes != null){
-							polygonAttributes.setCullFace(culling);
-						}
-						else {
-							polygonAttributes = new PolygonAttributes();
-							polygonAttributes.setCullFace(culling);
-							appearance.setPolygonAttributes(polygonAttributes);
-						}
+						// This zipEntry is a collada file, no need to look any further
+						url = new URL("jar:" + url + "!/" + entryName );
+						break;
 					}
 				}
 
-				// 2) Geometry information
-				if(each.getGeometry() != null ) {
-					// Geometry type in each
-					int geoIndex = geometryTypes.indexOf(each.getGeometry().getClass());
-					// add new type if required
-					if (geoIndex == -1) {
-						geometryTypes.add(each.getGeometry().getClass());
-						geoIndex = geometryTypes.size() - 1;
-						geometriesCount.add(0);
-						geometriesTotalUniqueVertices.add(0);
-						geometriesTotalVertices.add(0);
-					}
-
-					geometriesCount.addAt(each.numGeometries(), geoIndex);
-					Enumeration<?> enumeration = each.getAllGeometries();
-
-					// Total vertices for each
-					while (enumeration.hasMoreElements()) {
-						Object obj = enumeration.nextElement();
-						if(! (obj instanceof GeometryArray) ) {
-							System.out.println(obj);
-							break;
-						}
-						GeometryArray geometryArray = (GeometryArray) obj;
-						if(uniqueGeometries.contains(geometryArray)){
-							geometriesTotalVertices.addAt(geometryArray.getVertexCount(), geoIndex);
-						}
-						else {
-							uniqueGeometries.add(geometryArray);
-							geometriesTotalUniqueVertices.addAt(geometryArray.getVertexCount(), geoIndex);
-							geometriesTotalVertices.addAt(geometryArray.getVertexCount(), geoIndex);
-						}
-					}
-
+				// Load the collada file
+				scene = collada.load ( url );
+				Object unitMeter = scene.getNamedObjects().remove("JaamSim-UnitMeter");
+				if (unitMeter instanceof Double) {
+					conversionFactorToMeters = ((Double)unitMeter).doubleValue();
+				}
+				if (Boolean.TRUE == scene.getNamedObjects().remove("JaamSim-HasSharedGroup")) {
+					hasSharedGroup = true;
 				}
 			}
+			catch (Exception ex){
+				scene = null;
+				throw new ErrorException( "%s \nCould not load %s", ex, url );
+			}
+			Transform3D rotation = new Transform3D();
+			rotation.setEuler(orientation.getValue());
+			TransformGroup tg = new TransformGroup(rotation);
+			tg.addChild(scene.getSceneGroup());
+
+			branchGroup.addChild(tg);
+			if (scene.getSceneGroup().numChildren() == 0) {
+		          throw new IllegalArgumentException("Empty model:" + url);
+		    }
+
+	        // Turn off lights because of the universal light in the region
+	        setNodeLightOff(branchGroup);
+		}
+
+		// Image file
+		else {
+			Image image;
+			try {
+				image = new Image( 1.0, 1.0, new URL(Util.getAbsoluteFilePath(shape.getValue())) );
+			}
+			catch( Exception e ) {
+				throw new ErrorException( "Could not load %s", shape.getValue() );
+			}
+			branchGroup.addChild(image);
+			modelSize.set( 1.0d, 1.0d, 0.0d );
+			return;
+		}
+		this.forceDuplicateApperanceOfValidImportedTags(branchGroup);
+
+		ArrayList<Geometry>	uniqueGeometries = new ArrayList<Geometry>();
+		ArrayList<Shape3D> shape3DList = getShape3DsBelow(branchGroup);
+		for(Shape3D each: shape3DList) {
+
+			// NO culling at all
+			if(! enableCulling.getValue()) {
+				int culling = PolygonAttributes.CULL_NONE;
+
+				Appearance appearance = each.getAppearance();
+				if(appearance != null) {
+					PolygonAttributes polygonAttributes = appearance.getPolygonAttributes();
+					if( polygonAttributes != null){
+						polygonAttributes.setCullFace(culling);
+					}
+					else {
+						polygonAttributes = new PolygonAttributes();
+						polygonAttributes.setCullFace(culling);
+						appearance.setPolygonAttributes(polygonAttributes);
+					}
+				}
+			}
+
+			// 2) Geometry information
+			if(each.getGeometry() != null ) {
+				// Geometry type in each
+				int geoIndex = geometryTypes.indexOf(each.getGeometry().getClass());
+				// add new type if required
+				if (geoIndex == -1) {
+					geometryTypes.add(each.getGeometry().getClass());
+					geoIndex = geometryTypes.size() - 1;
+					geometriesCount.add(0);
+					geometriesTotalUniqueVertices.add(0);
+					geometriesTotalVertices.add(0);
+				}
+
+				geometriesCount.addAt(each.numGeometries(), geoIndex);
+				Enumeration<?> enumeration = each.getAllGeometries();
+
+				// Total vertices for each
+				while (enumeration.hasMoreElements()) {
+					Object obj = enumeration.nextElement();
+					if(! (obj instanceof GeometryArray) ) {
+						System.out.println(obj);
+						break;
+					}
+					GeometryArray geometryArray = (GeometryArray) obj;
+					if(uniqueGeometries.contains(geometryArray)){
+						geometriesTotalVertices.addAt(geometryArray.getVertexCount(), geoIndex);
+					}
+					else {
+						uniqueGeometries.add(geometryArray);
+						geometriesTotalUniqueVertices.addAt(geometryArray.getVertexCount(), geoIndex);
+						geometriesTotalVertices.addAt(geometryArray.getVertexCount(), geoIndex);
+					}
+				}
+
+			}
+		}
 
 		// Compute the original modelSize
 
@@ -437,155 +434,155 @@ public class DisplayModel extends Entity {
 	private BranchGroup getPredefined2DBranchGroup(int modelType){
 		BranchGroup bg = new BranchGroup();
 		switch (modelType){
-			case MODEL_PIXELS:
-				PointWithSize pixels = new PointWithSize(6.0f, false, "pixels" );
-				pixels = new PointWithSize(6.0f, false, "pixels" );
-				pixels.setColor(Shape.getColorWithName("black"));
-				pixels.setName(TAG_BODY);
-				bg.addChild(pixels);
-				break;
-			case MODEL_CONTENTS_PIXELS:
-				// When the contents disappears it shows a white pixel
-				OrderedGroup orderedGroup = new OrderedGroup();
-				pixels = new PointWithSize(6.0f, false, "pixels" );
-				pixels.setColor(Shape.getColorWithName("white"));
-				orderedGroup.addChild(pixels);
-				pixels = new PointWithSize(6.0f, false, "pixels" );
-				pixels.setColor(Shape.getColorWithName("black"));
-				pixels.setName(TAG_CONTENTS);
-				orderedGroup.addChild(pixels);
-				bg.addChild(orderedGroup);
-				break;
-			case MODEL_TRUCK2D:
-				orderedGroup = getDisplayModelForTruck2D();
-				Rectangle rearTruck = new Rectangle(-0.125d, 0.0d, 0.0d, 0.75d, 1.0d, Rectangle.SHAPE_FILLED);
-				rearTruck.setColor(Shape.getPresetColor(Shape.COLOR_WHITE));
-				orderedGroup.addChild(rearTruck);
-				StackedBar rectangleContents = new StackedBar();
-				rectangleContents.setDimension(new Point2d( 0.75, 1.0 ));
-				rectangleContents.setCenter(-0.5, 0.0, 0.0);
+		case MODEL_PIXELS:
+			PointWithSize pixels = new PointWithSize(6.0f, false, "pixels" );
+			pixels = new PointWithSize(6.0f, false, "pixels" );
+			pixels.setColor(Shape.getColorWithName("black"));
+			pixels.setName(TAG_BODY);
+			bg.addChild(pixels);
+			break;
+		case MODEL_CONTENTS_PIXELS:
+			// When the contents disappears it shows a white pixel
+			OrderedGroup orderedGroup = new OrderedGroup();
+			pixels = new PointWithSize(6.0f, false, "pixels" );
+			pixels.setColor(Shape.getColorWithName("white"));
+			orderedGroup.addChild(pixels);
+			pixels = new PointWithSize(6.0f, false, "pixels" );
+			pixels.setColor(Shape.getColorWithName("black"));
+			pixels.setName(TAG_CONTENTS);
+			orderedGroup.addChild(pixels);
+			bg.addChild(orderedGroup);
+			break;
+		case MODEL_TRUCK2D:
+			orderedGroup = getDisplayModelForTruck2D();
+			Rectangle rearTruck = new Rectangle(-0.125d, 0.0d, 0.0d, 0.75d, 1.0d, Rectangle.SHAPE_FILLED);
+			rearTruck.setColor(Shape.getPresetColor(Shape.COLOR_WHITE));
+			orderedGroup.addChild(rearTruck);
+			StackedBar rectangleContents = new StackedBar();
+			rectangleContents.setDimension(new Point2d( 0.75, 1.0 ));
+			rectangleContents.setCenter(-0.5, 0.0, 0.0);
 
-				// Make rectangleContents accessible
-				rectangleContents.setName(TAG_CONTENTS);
+			// Make rectangleContents accessible
+			rectangleContents.setName(TAG_CONTENTS);
 
-				orderedGroup.addChild(rectangleContents);
-				bg.addChild(orderedGroup);
-				break;
-			case MODEL_SHIP2D:
-				bg.setCapability( BranchGroup.ALLOW_CHILDREN_EXTEND );
-				bg.setCapability( BranchGroup.ALLOW_CHILDREN_WRITE );
-				orderedGroup = getDisplayModelForShip2D();
-				rectangleContents = new StackedBar();
-				rectangleContents.setDimension(new Point2d( 0.650, 0.6 ));
-				rectangleContents.setCenter(-0.225, 0.0, 0.0);
-				rectangleContents.setName(TAG_CONTENTS);
-				orderedGroup.addChild(rectangleContents);
-				bg.addChild(orderedGroup);
-				break;
-			case MODEL_RECTANGLE:
-				bg.addChild(getDisplayModelForRectangle());
-				break;
-			case MODEL_STACKER2D:
-			case MODEL_RECLAIMER2D:
-				bg.addChild(getDisplayModelForStakerReclaimer2D(modelType));
-				break;
-			case MODEL_BRIDGE2D:
-				bg.addChild(getDisplaModelForBridge2D());
-				break;
-			case MODEL_CRUSHER2D:
-				bg.addChild(getDisplayModelForCrusher2D());
-				break;
-			case MODEL_GANTRY2D:
-				bg.addChild(getDisplayModelForGantry2D());
-				break;
-			case MODEL_DOZER2D:
-				bg.addChild(getDisplayModelForDozer2D());
-				break;
-			case MODEL_CRUSHER2ND2D:
-				bg.addChild(getDisplayModelForCrusher2nd2D());
-				break;
-			case MODEL_SLAVE_STACKER2D:
-				bg.addChild(getDisplayModelForSlaveStacker2D());
-				break;
-			case MODEL_DUALQUADRANT2D:
-				bg.addChild(getDisplayModelForDualQuadrantGraphics());
-				break;
-			case MODEL_SINGLEQUADRANT2D:
-				bg.addChild(getDisplayModelForSingleQuadrantGraphics());
-				break;
-			case MODEL_LINEAR2D:
-				bg.addChild(getDisplayModelForLinearGraphics());
-				break;
-			case MODEL_TRAVELLING2D:
-				bg.addChild(getDisplayModelForTravellingGraphics());
-				break;
-			case MODEL_CIRCLE:
-				bg.addChild(getDisplayModelForCircle());
-				break;
-			case MODEL_ARROW2D:
-				double [] verts = new double[] {-0.5f, 0.0f, 0.0f,
-									  -0.1f, -0.5f, 0.0f,
-									  -0.1f, -0.2f, 0.0f,
-									  0.5f, -0.2f, 0.0f,
-									  0.5f, 0.2f, 0.0f,
-									  -0.1f, 0.2f, 0.0f,
-									  -0.1f, 0.5f, 0.0f };
+			orderedGroup.addChild(rectangleContents);
+			bg.addChild(orderedGroup);
+			break;
+		case MODEL_SHIP2D:
+			bg.setCapability( BranchGroup.ALLOW_CHILDREN_EXTEND );
+			bg.setCapability( BranchGroup.ALLOW_CHILDREN_WRITE );
+			orderedGroup = getDisplayModelForShip2D();
+			rectangleContents = new StackedBar();
+			rectangleContents.setDimension(new Point2d( 0.650, 0.6 ));
+			rectangleContents.setCenter(-0.225, 0.0, 0.0);
+			rectangleContents.setName(TAG_CONTENTS);
+			orderedGroup.addChild(rectangleContents);
+			bg.addChild(orderedGroup);
+			break;
+		case MODEL_RECTANGLE:
+			bg.addChild(getDisplayModelForRectangle());
+			break;
+		case MODEL_STACKER2D:
+		case MODEL_RECLAIMER2D:
+			bg.addChild(getDisplayModelForStakerReclaimer2D(modelType));
+			break;
+		case MODEL_BRIDGE2D:
+			bg.addChild(getDisplaModelForBridge2D());
+			break;
+		case MODEL_CRUSHER2D:
+			bg.addChild(getDisplayModelForCrusher2D());
+			break;
+		case MODEL_GANTRY2D:
+			bg.addChild(getDisplayModelForGantry2D());
+			break;
+		case MODEL_DOZER2D:
+			bg.addChild(getDisplayModelForDozer2D());
+			break;
+		case MODEL_CRUSHER2ND2D:
+			bg.addChild(getDisplayModelForCrusher2nd2D());
+			break;
+		case MODEL_SLAVE_STACKER2D:
+			bg.addChild(getDisplayModelForSlaveStacker2D());
+			break;
+		case MODEL_DUALQUADRANT2D:
+			bg.addChild(getDisplayModelForDualQuadrantGraphics());
+			break;
+		case MODEL_SINGLEQUADRANT2D:
+			bg.addChild(getDisplayModelForSingleQuadrantGraphics());
+			break;
+		case MODEL_LINEAR2D:
+			bg.addChild(getDisplayModelForLinearGraphics());
+			break;
+		case MODEL_TRAVELLING2D:
+			bg.addChild(getDisplayModelForTravellingGraphics());
+			break;
+		case MODEL_CIRCLE:
+			bg.addChild(getDisplayModelForCircle());
+			break;
+		case MODEL_ARROW2D:
+			double [] verts = new double[] {-0.5f, 0.0f, 0.0f,
+								  -0.1f, -0.5f, 0.0f,
+								  -0.1f, -0.2f, 0.0f,
+								  0.5f, -0.2f, 0.0f,
+								  0.5f, 0.2f, 0.0f,
+								  -0.1f, 0.2f, 0.0f,
+								  -0.1f, 0.5f, 0.0f };
 
-				// Create the arrow fill
-				Shape fillModel = new Polygon( verts, Polygon.SHAPE_FILLED, "fillModel" );
-				fillModel.setColor( 1 );
-				fillModel.setName(TAG_CONTENTS);
-				bg.addChild( fillModel );
+			// Create the arrow fill
+			Shape fillModel = new Polygon( verts, Polygon.SHAPE_FILLED, "fillModel" );
+			fillModel.setColor( 1 );
+			fillModel.setName(TAG_CONTENTS);
+			bg.addChild( fillModel );
 
-				// Create the arrow outline
-				Shape outlineModel = new Polygon( verts, Polygon.SHAPE_OUTLINE, "outlineModel" );
-				outlineModel.setColor( 1 );
-				outlineModel.setName(TAG_OUTLINES);
-				bg.addChild( outlineModel );
-				break;
-			case MODEL_TRIANGLE:
-				verts = new double[] {  0.5f, -0.5f, 0.0f,
-										0.5f, 0.5f, 0.0f,
-										-0.5f, 0.0f, 0.0f };
-				Polygon myFill = new Polygon( verts, Polygon.SHAPE_FILLED, "myFill" );
-				myFill.setColor( 6 );
-				myFill.setName(TAG_CONTENTS);
-				bg.addChild( myFill );
-				Polygon myOutline = new Polygon( verts, Polygon.SHAPE_OUTLINE, "myOutline" );
-				myOutline.setColor( 1 );
-				myOutline.setLayer( 1 );
-				myOutline.setName(TAG_OUTLINES);
-				bg.addChild( myOutline );
-				break;
-			case MODEL_CRUSHING_PLANT2D:
-				bg.addChild(getDisplayModelForCrushingPlant2D());
-				break;
-			case MODEL_BARGAUGE2D:
-				bg.addChild(getDisplayModelForBarGauge2D());
-				break;
-			case MODEL_MINISHIP2D:
-				bg.setCapability( BranchGroup.ALLOW_CHILDREN_EXTEND );
-				bg.setCapability( BranchGroup.ALLOW_CHILDREN_WRITE );
-				orderedGroup = getDisplayModelForMiniShip2D();
-				rectangleContents = new StackedBar();
-				rectangleContents.setDimension(new Point2d( 0.00650, 0.006 ));
-				rectangleContents.setCenter(-0.00225, 0.0, 0.0);
-				rectangleContents.setName(TAG_CONTENTS);
-				orderedGroup.addChild(rectangleContents);
-				bg.addChild(orderedGroup);
-				break;
-			case MODEL_GRINDINGROLL2D:
-				bg.addChild(getDisplayModelForGrindingRoll2D());
-				break;
-			case MODEL_SCREEN2D:
-				bg.addChild(getDisplayModelForScreen2D());
-				break;
-			case MODEL_SAGMILL2D:
-				bg.addChild(getDisplayModelForSagMill2D());
-				break;
-			case MODEL_RECTANGLE_WITH_ARROWS:
-				bg.addChild(getDisplayModelForRectangleWithArrows());
-				break;
+			// Create the arrow outline
+			Shape outlineModel = new Polygon( verts, Polygon.SHAPE_OUTLINE, "outlineModel" );
+			outlineModel.setColor( 1 );
+			outlineModel.setName(TAG_OUTLINES);
+			bg.addChild( outlineModel );
+			break;
+		case MODEL_TRIANGLE:
+			verts = new double[] {  0.5f, -0.5f, 0.0f,
+									0.5f, 0.5f, 0.0f,
+									-0.5f, 0.0f, 0.0f };
+			Polygon myFill = new Polygon( verts, Polygon.SHAPE_FILLED, "myFill" );
+			myFill.setColor( 6 );
+			myFill.setName(TAG_CONTENTS);
+			bg.addChild( myFill );
+			Polygon myOutline = new Polygon( verts, Polygon.SHAPE_OUTLINE, "myOutline" );
+			myOutline.setColor( 1 );
+			myOutline.setLayer( 1 );
+			myOutline.setName(TAG_OUTLINES);
+			bg.addChild( myOutline );
+			break;
+		case MODEL_CRUSHING_PLANT2D:
+			bg.addChild(getDisplayModelForCrushingPlant2D());
+			break;
+		case MODEL_BARGAUGE2D:
+			bg.addChild(getDisplayModelForBarGauge2D());
+			break;
+		case MODEL_MINISHIP2D:
+			bg.setCapability( BranchGroup.ALLOW_CHILDREN_EXTEND );
+			bg.setCapability( BranchGroup.ALLOW_CHILDREN_WRITE );
+			orderedGroup = getDisplayModelForMiniShip2D();
+			rectangleContents = new StackedBar();
+			rectangleContents.setDimension(new Point2d( 0.00650, 0.006 ));
+			rectangleContents.setCenter(-0.00225, 0.0, 0.0);
+			rectangleContents.setName(TAG_CONTENTS);
+			orderedGroup.addChild(rectangleContents);
+			bg.addChild(orderedGroup);
+			break;
+		case MODEL_GRINDINGROLL2D:
+			bg.addChild(getDisplayModelForGrindingRoll2D());
+			break;
+		case MODEL_SCREEN2D:
+			bg.addChild(getDisplayModelForScreen2D());
+			break;
+		case MODEL_SAGMILL2D:
+			bg.addChild(getDisplayModelForSagMill2D());
+			break;
+		case MODEL_RECTANGLE_WITH_ARROWS:
+			bg.addChild(getDisplayModelForRectangleWithArrows());
+			break;
 		}
 		return bg;
 	}
