@@ -114,6 +114,7 @@ public class DisplayModel extends Entity {
 	private static final int MODEL_CRUSHING_PLANT2D = 20;
 	private static final int MODEL_BARGAUGE2D = 21;
 	private static final int MODEL_MINISHIP2D = 22;
+	private static final int MODEL_GRINDINGROLL2D = 23;
 
 	protected static final ArrayList<String> validTags;
 
@@ -172,6 +173,7 @@ public class DisplayModel extends Entity {
 		definedTypes.add("CRUSHINGPLANT2D");
 		definedTypes.add("BARGAUGE2D");
 		definedTypes.add("MINISHIP2D");
+		definedTypes.add("GRINDINGROLL2D");
 
 		validFileExtentions = new ArrayList<String>(6);
 		validFileExtentions.add("DAE");
@@ -561,6 +563,9 @@ public class DisplayModel extends Entity {
 				rectangleContents.setName(TAG_CONTENTS);
 				orderedGroup.addChild(rectangleContents);
 				bg.addChild(orderedGroup);
+				break;
+			case MODEL_GRINDINGROLL2D:
+				bg.addChild(getDisplayModelForGrindingRoll2D());
 				break;
 		}
 		return bg;
@@ -1180,6 +1185,95 @@ public class DisplayModel extends Entity {
 		line4.setColor( Shape.COLOR_BLACK );
 		line4.setLineStyle( la );
 		model2D.addChild( line4 );
+
+		return model2D;
+	}
+
+	/**
+	 * GrindingRoll2D Graphics for MultiOutfeedHandler
+	 */
+	private  OrderedGroup getDisplayModelForGrindingRoll2D() {
+		OrderedGroup model2D = new OrderedGroup();
+
+		LineAttributes la = new LineAttributes();
+		la.setLineWidth( 2 );
+
+		// Square
+		Rectangle fillModel = new Rectangle( 0.08, 0.0, 0.84, 0.4, Rectangle.SHAPE_FILLED, "fillModel" );
+		fillModel.setColor( Shape.COLOR_LIGHT_GREY );
+		fillModel.setName(TAG_CONTENTS);
+		model2D.addChild( fillModel );
+
+		Rectangle outlineModel = new Rectangle( 0.08, 0.0, 0.84, 0.4, Rectangle.SHAPE_OUTLINE, "outlineModel" );
+		outlineModel.setColor( Shape.COLOR_LIGHT_GREY );
+		outlineModel.setLayer( 8 );
+		outlineModel.setName(TAG_OUTLINES);
+		model2D.addChild( outlineModel );
+
+		// Circles
+		Circle circle1 = new Circle( 0.3d, 0.0d, 0.0d, 0.16, 36, Circle.SHAPE_FILLED );
+		circle1.setColor( Shape.COLOR_LIGHT_GREY );
+		model2D.addChild( circle1 );
+
+		Circle circle1Outline = new Circle( 0.3d, 0.0d, 0.0d, 0.16, 36, Circle.SHAPE_OUTLINE );
+		circle1Outline.setColor( Shape.COLOR_BLACK );
+		circle1Outline.setLineAttributes( la );
+		model2D.addChild( circle1Outline );
+
+		Circle circle2 = new Circle( -0.02d, 0.0d, 0.0d, 0.16, 36, Circle.SHAPE_FILLED );
+		circle2.setColor( Shape.COLOR_LIGHT_GREY );
+		model2D.addChild( circle2 );
+
+		Circle circle2Outline = new Circle( -0.02d, 0.0d, 0.0d, 0.16, 36, Circle.SHAPE_OUTLINE );
+		circle2Outline.setColor( Shape.COLOR_BLACK );
+		circle2Outline.setLineAttributes( la );
+		model2D.addChild( circle2Outline );
+
+		// Smaller rectangles
+		Rectangle rect1 = new Rectangle( -0.21, 0.0, 0.06, 0.32, Rectangle.SHAPE_FILLED, "fillModel" );
+		rect1.setColor( Shape.COLOR_MED_GREY );
+		model2D.addChild( rect1 );
+
+		Rectangle rect1Outline = new Rectangle( -0.21, 0.0, 0.06, 0.32, Rectangle.SHAPE_OUTLINE, "fillModel" );
+		rect1Outline.setColor( Shape.COLOR_BLACK );
+		rect1Outline.setLineAttributes( la );
+		model2D.addChild( rect1Outline );
+
+		Rectangle rect2 = new Rectangle( -0.26, 0.0, 0.04, 0.02, Rectangle.SHAPE_FILLED, "fillModel" );
+		rect2.setColor( Shape.COLOR_MED_GREY );
+		model2D.addChild( rect2 );
+
+		Rectangle rect2Outline = new Rectangle( -0.26, 0.0, 0.04, 0.02, Rectangle.SHAPE_OUTLINE, "fillModel" );
+		rect2Outline.setColor( Shape.COLOR_BLACK );
+		rect2Outline.setLineAttributes( la );
+		model2D.addChild( rect2Outline );
+
+		Rectangle rect3 = new Rectangle( -0.295, 0.0, 0.03, 0.08, Rectangle.SHAPE_FILLED, "fillModel" );
+		rect3.setColor( Shape.COLOR_MED_GREY );
+		model2D.addChild( rect3 );
+
+		Rectangle rect3Outline = new Rectangle( -0.295, 0.0, 0.03, 0.08, Rectangle.SHAPE_OUTLINE, "fillModel" );
+		rect3Outline.setColor( Shape.COLOR_BLACK );
+		rect3Outline.setLineAttributes( la );
+		model2D.addChild( rect3Outline );
+
+		Rectangle rect4 = new Rectangle( -0.39, 0.0, 0.16, 0.07, Rectangle.SHAPE_FILLED, "fillModel" );
+		rect4.setColor( Shape.COLOR_MED_GREY );
+		model2D.addChild( rect4 );
+
+		Rectangle rect4Outline = new Rectangle( -0.39, 0.0, 0.16, 0.07, Rectangle.SHAPE_OUTLINE, "fillModel" );
+		rect4Outline.setColor( Shape.COLOR_BLACK );
+		rect4Outline.setLineAttributes( la );
+		model2D.addChild( rect4Outline );
+
+		Rectangle rect5 = new Rectangle( -0.485, 0.0, 0.03, 0.08, Rectangle.SHAPE_FILLED, "fillModel" );
+		rect5.setColor( Shape.COLOR_MED_GREY );
+		model2D.addChild( rect5 );
+
+		Rectangle rect5Outline = new Rectangle( -0.485, 0.0, 0.03, 0.08, Rectangle.SHAPE_OUTLINE, "fillModel" );
+		rect5Outline.setColor( Shape.COLOR_BLACK );
+		rect5Outline.setLineAttributes( la );
+		model2D.addChild( rect5Outline );
 
 		return model2D;
 	}
