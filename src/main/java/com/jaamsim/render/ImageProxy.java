@@ -1,0 +1,53 @@
+/*
+ * JaamSim Discrete Event Simulation
+ * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package com.jaamsim.render;
+
+import java.net.URL;
+import java.util.ArrayList;
+
+import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vector4d;
+
+public class ImageProxy implements RenderProxy {
+
+	private URL _imageURL;
+	private Transform _trans;
+	private Vector4d _scale;
+	private long _pickingID;
+	private boolean _isTransparent;
+	private boolean _isCompressed;
+
+	public ImageProxy(URL url, Transform trans, Vector4d scale, boolean isTransparent, boolean isCompressed, long pickingID) {
+		_imageURL = url;
+		_trans = trans;
+		_scale = scale;
+		_isTransparent = isTransparent;
+		_pickingID = pickingID;
+		_isCompressed = isCompressed;
+	}
+
+
+	@Override
+	public void collectRenderables(Renderer r, ArrayList<Renderable> outList) {
+		outList.add(new TextureView(_imageURL, _trans, _scale, _isTransparent, _isCompressed, _pickingID));
+
+	}
+
+	@Override
+	public void collectOverlayRenderables(Renderer r, ArrayList<OverlayRenderable> outList) {
+		// None
+	}
+
+}
