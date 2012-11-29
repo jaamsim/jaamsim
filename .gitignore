@@ -1,4 +1,4 @@
-build/**/*
+/build/
 build.log
 build.log.old
 *.class
