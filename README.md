@@ -33,28 +33,29 @@ be added in the next few months.
 
 # Dependencies and Installation
 
-A copy of Java3d 1.5.2 is included to make for an easy first build, simply run 
-the build.sh script from the top level to produce a functional jar 'JaamSim.jar' 
+A copy of all dependencies is shipped in the jar/ folder and are as follows:
 
-To build it in another environment, link the lib/ folder as an external 
-classpath folder, or download your own copy of Java3d from Sun. 
+vecmath - from the Java3D project, which is currently being removed as a dependency
+jogl2 - from the jogamp.org people
+
+Simply run the build.sh script from the top level to produce a functional jar 'JaamSim.jar',
+you'll need to have the above two prerequisites in you classpath.
+
+To build it in another environment, link the jar/ folder as an external 
+classpath folder, or download your own copy of JOGL2.
 
 
 # License
 
 JaamSim is GPLv3
 
-Java3d is a mix of GPLv2+CLASSPATH exception and BSD (2-clause)
-
-A dae loader from the sweethome3d project is also included which is GPL2+ (here distributed as GPL3+)
-
 # Contact
 
 For licensing and general inquiries:
-Dr. Harry King <harry.king@ausencosandwell.com>
+Dr. Harry King <harry.king@ausenco.com>
 
 If you have any problems building the source or technical inquiries:
-Harvey Harrison <harvey.harrison@ausencosandwell.com>
+Harvey Harrison <harvey.harrison@ausenco.com>
 
 # Todo
 
