@@ -1,3 +1,17 @@
+/*
+ * JaamSim Discrete Event Simulation
+ * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package com.jaamsim.collada;
 
 import java.io.IOException;
@@ -24,7 +38,9 @@ import com.jaamsim.math.Vector4d;
 import com.jaamsim.render.MeshProto;
 import com.jaamsim.render.RenderException;
 
-
+/**
+ * Inspired by the Collada loader for Sweethome3d by Emmanuel Puybaret / eTeks <info@eteks.com>.
+ */
 public class ColParser extends DefaultHandler {
 
 	public static MeshProto parse(URL asset) throws RenderException {
