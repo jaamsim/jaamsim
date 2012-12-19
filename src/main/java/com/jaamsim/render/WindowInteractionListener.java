@@ -68,7 +68,7 @@ public interface WindowInteractionListener {
 	 * @param y
 	 * @param wheelRotation - the number of mouse wheel 'ticks'
 	 */
-	public void mouseWheelMoved(int windowID, int x, int y, int wheelRotation);
+	public void mouseWheelMoved(int windowID, int x, int y, int wheelRotation, int modifiers);
 
 	/**
 	 * A click occurred, registered on mouse button release

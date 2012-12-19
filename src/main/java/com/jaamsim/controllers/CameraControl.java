@@ -15,6 +15,7 @@
 
 package com.jaamsim.controllers;
 
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Ray;
@@ -46,6 +47,8 @@ public class CameraControl implements WindowInteractionListener {
 
 	private ChangeWatcher.Tracker _viewTracker;
 
+	private Vec4d POI = new Vec4d(0, 1, 0, 1);
+
 	private static class PolarInfo {
 		double rotZ; // The spherical coordinate that rotates around Z (in radians)
 		double rotX; // Ditto for X
@@ -69,20 +72,72 @@ public class CameraControl implements WindowInteractionListener {
 			return; // Handled
 		}
 
-		if (dragInfo.controlDown()) {
-			return;
-		}
 		if (!_updateView.isMovable() || _updateView.isScripted()) {
 			return;
 		}
 
 		PolarInfo pi = getPolarCoordsFromView();
 
+		if (dragInfo.controlDown()) {
+			handleRotAroundPoint(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
+			return;
+		}
 		if (dragInfo.shiftDown()) {
 			// handle rotation
 			handleRotation(pi, dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
-		} else {
-			handlePan(pi, dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
+			updateCamTrans(pi, true);
+			return;
+		}
+
+		// this is pan then
+		handlePan(pi, dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
+		updateCamTrans(pi, true);
+
+	}
+
+	private void handleRotAroundPoint(int x, int y, int dx, int dy,
+            int button) {
+
+		Vec3d camPos = _updateView.getGlobalPosition();
+		Vec3d center = _updateView.getGlobalCenter();
+
+		PolarInfo origPi = getPolarFrom(center, camPos);
+
+		Quaternion origRot = polarToRot(origPi);
+		Vec4d origUp = new Vec4d();
+		origRot.rotateVector(Vec4d.Y_AXIS, origUp);
+
+		Vec4d rotXAxis = new Vec4d();
+		origRot.rotateVector(Vec4d.X_AXIS, rotXAxis);
+
+		Quaternion rotX = Quaternion.Rotation(-dy * ROT_SCALE_X, rotXAxis);
+		Quaternion rotZ = Quaternion.Rotation(-dx * ROT_SCALE_Z, Vec4d.Z_AXIS);
+
+		Transform rotTransX = MathUtils.rotateAroundPoint(rotX, POI);
+		Transform rotTransZ = MathUtils.rotateAroundPoint(rotZ, POI);
+
+		rotTransX.apply(camPos, camPos);
+		rotTransX.apply(center, center);
+
+		rotTransZ.apply(camPos, camPos);
+		rotTransZ.apply(center, center);
+
+		PolarInfo pi = getPolarFrom(center, camPos);
+
+		Quaternion newRot = polarToRot(pi);
+		Vec4d newUp = new Vec4d();
+		newRot.rotateVector(Vec4d.Y_AXIS, newUp);
+		double upDot = origUp.dot3(newUp);
+		if (upDot < 0) {
+			// The up angle has changed by more than 90 degrees, we probably are looking directly up or down
+			// Instead only apply the rotation around Z
+			camPos = _updateView.getGlobalPosition();
+			center = _updateView.getGlobalCenter();
+
+			rotTransZ.apply(camPos, camPos);
+			rotTransZ.apply(center, center);
+
+			pi = getPolarFrom(center, camPos);
 		}
 
 		updateCamTrans(pi, true);
@@ -136,7 +191,12 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	@Override
-	public void mouseWheelMoved(int windowID, int x, int y, int wheelRotation) {
+	public void mouseWheelMoved(int windowID, int x, int y, int wheelRotation, int modifiers) {
+
+		if ((modifiers & WindowInteractionListener.MOD_CTRL) != 0) {
+			zoomToPOI(wheelRotation);
+			return;
+		}
 
 		if (!_updateView.isMovable() || _updateView.isScripted()) {
 			return;
@@ -146,18 +206,35 @@ public class CameraControl implements WindowInteractionListener {
 
 		int rot = wheelRotation;
 
-		if (rot > 0) {
-			for (int i = 0; i < rot; ++i) {
-				pi.radius = pi.radius / ZOOM_FACTOR;
-			}
-		} else
-		{
-			rot *= -1;
-			for (int i = 0; i < rot; ++i) {
-				pi.radius = pi.radius * ZOOM_FACTOR;
-			}
+		double zoomFactor = (rot > 0) ? 1/ZOOM_FACTOR : ZOOM_FACTOR;
+
+		for (int i = 0; i < Math.abs(rot); ++i) {
+			pi.radius = pi.radius * zoomFactor;
 		}
 
+		updateCamTrans(pi, true);
+	}
+
+	private void zoomToPOI(int rot) {
+		Vec3d camPos = _updateView.getGlobalPosition();
+		Vec3d center = _updateView.getGlobalCenter();
+
+		Vec3d diff = new Vec3d();
+		diff.sub3(POI, camPos);
+
+		double scale = 1;
+		double zoomFactor = (rot > 0) ? 1/ZOOM_FACTOR : ZOOM_FACTOR;
+		for (int i = 0; i < Math.abs(rot); ++i) {
+			scale = scale * zoomFactor;
+		}
+
+		// offset is the difference from where we are to where we're going
+		diff.scale3(1 - scale);
+
+		camPos.add3(diff);
+		center.add3(diff);
+
+		PolarInfo pi = getPolarFrom(center, camPos);
 		updateCamTrans(pi, true);
 	}
 
@@ -195,12 +272,17 @@ public class CameraControl implements WindowInteractionListener {
 		}
 	}
 
+	private Quaternion polarToRot(PolarInfo pi) {
+		Quaternion rot = Quaternion.Rotation(pi.rotZ, Vec4d.Z_AXIS);
+		rot.mult(rot, Quaternion.Rotation(pi.rotX, Vec4d.X_AXIS));
+		return rot;
+	}
+
 	private void updateCamTrans(PolarInfo pi, boolean updateInputs) {
 
 		Vec4d zOffset = new Vec4d(0, 0, pi.radius, 1.0d);
 
-		Quaternion rot = Quaternion.Rotation(pi.rotZ, Vec4d.Z_AXIS);
-		rot.mult(rot, Quaternion.Rotation(pi.rotX, Vec4d.X_AXIS));
+		Quaternion rot = polarToRot(pi);
 
 		Transform finalTrans = new Transform(pi.viewCenter);
 
@@ -302,15 +384,13 @@ public class CameraControl implements WindowInteractionListener {
 		return _updateView;
 	}
 
-	private PolarInfo getPolarCoordsFromView() {
-
+	private PolarInfo getPolarFrom(Vec3d center, Vec3d pos) {
 		PolarInfo pi = new PolarInfo();
 
-		Vec3d camPos = _updateView.getGlobalPosition();
-		pi.viewCenter = _updateView.getGlobalCenter();
+		pi.viewCenter = new Vec3d(center);
 
 		Vec3d viewDiff = new Vec3d();
-		viewDiff.sub3(camPos, pi.viewCenter);
+		viewDiff.sub3(pos, pi.viewCenter);
 
 		pi.radius = viewDiff.mag3();
 
@@ -321,10 +401,15 @@ public class CameraControl implements WindowInteractionListener {
 		pi.rotX = Math.atan2(xyDist, viewDiff.z);
 
 		// If we are near vertical (within about a quarter of a degree) don't rotate around Z (take X as up)
-		if (Math.abs(pi.rotX) < 0.005) {
-			pi.rotZ = 0;
-		}
+//		if (Math.abs(pi.rotX) < 0.005) {
+//			pi.rotZ = 0;
+//		}
 		return pi;
+
+	}
+
+	private PolarInfo getPolarCoordsFromView() {
+		return getPolarFrom(_updateView.getGlobalCenter(), _updateView.getGlobalPosition());
 	}
 
 	public void checkForUpdate() {

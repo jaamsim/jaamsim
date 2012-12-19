@@ -110,4 +110,20 @@ public static Mat4d RaySpace(Ray r) {
 	return ret;
 }
 
+/**
+ * Returns a Transform representing a rotation around a non-origin point
+ * @param rot - the rotation (in world coordinates) to apply
+ * @param point - the point to rotate around
+ * @return
+ */
+public static Transform rotateAroundPoint(Quaternion rot, Vec4d point) {
+	Vec4d negPoint = new Vec4d(point);
+	negPoint.scale3(-1);
+
+	Transform ret = new Transform(point);
+	ret.merge(ret, new Transform(Vec4d.ORIGIN, rot, 1));
+	ret.merge(ret, new Transform(negPoint));
+	return ret;
+}
+
 } // class
