@@ -16,10 +16,10 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.ui.ExceptionBox;
 import com.sandwell.JavaSimulation3D.Clock;
 import com.sandwell.JavaSimulation3D.GUIFrame;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 /**
  * Class Simulation - Sandwell Discrete Event Simulation
@@ -387,6 +387,15 @@ public abstract class Simulation extends Entity {
 	}
 
 	public void restart() {
+		// kill all generated objects
+		for (int i = 0; i < Entity.getAll().size();) {
+			Entity ent = Entity.getAll().get(i);
+			if (ent.testFlag(Entity.FLAG_GENERATED))
+				ent.kill();
+			else
+				i++;
+		}
+
 		Simulation.simState = SIM_STATE_CONFIGURED;
 		this.start();
 	}
@@ -656,7 +665,7 @@ public abstract class Simulation extends Entity {
 
 	public void updateTime(double simTime) {}
 
-	public static <T extends Entity> ArrayList<? extends T> getClonesOf(Class<T> proto) {
+	public static <T extends Entity> ArrayList<T> getClonesOf(Class<T> proto) {
 		ArrayList<T> cloneList = new ArrayList<T>();
 
 		for (Entity each : Entity.getAll()) {

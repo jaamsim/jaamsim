@@ -14,8 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 public class TimeInput extends Input<Double> {
 	private double minValue;

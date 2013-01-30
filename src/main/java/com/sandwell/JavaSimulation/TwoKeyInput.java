@@ -114,4 +114,9 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		minCount = min;
 		maxCount = max;
 	}
+
+	@Override
+	public String getDefaultString() {
+		return getDefaultStringForKeyInputs();
+	}
 }

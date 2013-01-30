@@ -163,4 +163,9 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 
 		return values;
 	}
+
+	@Override
+	public String getDefaultString() {
+		return getDefaultStringForKeyInputs();
+	}
 }

@@ -19,6 +19,7 @@ import static com.sandwell.JavaSimulation.Util.formatNumber;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Color4d;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.BooleanListInput;
@@ -102,6 +103,10 @@ public class ModelEntity extends DisplayEntity {
 	protected boolean performMaintenanceAfterShipDelayPending;			// maintenance needs to be done after shipDelay
 
 	// Maintenance based on hours of operations
+
+	@Keyword(desc = "Working time for the start of the first maintenance for each maintenance cycle",
+	         example = "Object1 FirstMaintenanceOperatingHours { 1000 2500 h }")
+	private final DoubleListInput firstMaintenanceOperatingHours;
 
 	@Keyword(desc = "Working time between one maintenance event and the next for each maintenance cycle",
 	         example = "Object1 MaintenanceOperatingHoursIntervals { 2000 5000 h }")
@@ -222,6 +227,11 @@ public class ModelEntity extends DisplayEntity {
 		sharedMaintenanceList = new EntityListInput<ModelEntity>(ModelEntity.class, "SharedMaintenance", "Maintenance", new ArrayList<ModelEntity>(0));
 		this.addInput(sharedMaintenanceList, true);
 
+		firstMaintenanceOperatingHours = new DoubleListInput("FirstMaintenanceOperatingHours", "Maintenance", new DoubleVector());
+		firstMaintenanceOperatingHours.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		firstMaintenanceOperatingHours.setUnits("h");
+		this.addInput(firstMaintenanceOperatingHours, true);
+
 		maintenanceOperatingHoursDurations = new DoubleListInput("MaintenanceOperatingHoursDurations", "Maintenance", new DoubleVector());
 		maintenanceOperatingHoursDurations.setValidRange(1e-15, Double.POSITIVE_INFINITY);
 		maintenanceOperatingHoursDurations.setUnits("h");
@@ -263,7 +273,7 @@ public class ModelEntity extends DisplayEntity {
 		brokendown = false;
 		associatedBreakdown = false;
 		maintenanceStartTime = 0.0;
-		maintenanceEndTime = 0.0;
+		maintenanceEndTime = Double.POSITIVE_INFINITY;
 		maintenance = false;
 		associatedMaintenance = false;
 		workingHours = 0.0;
@@ -298,6 +308,8 @@ public class ModelEntity extends DisplayEntity {
 	throws InputErrorException {
 		super.validate();
 		this.validateMaintenance();
+		Input.validateIndexedLists(firstMaintenanceOperatingHours.getValue(), maintenanceOperatingHoursIntervals.getValue(), "FirstMaintenanceOperatingHours", "MaintenanceOperatingHoursIntervals");
+		Input.validateIndexedLists(firstMaintenanceOperatingHours.getValue(), maintenanceOperatingHoursDurations.getValue(), "FirstMaintenanceOperatingHours", "MaintenanceOperatingHoursDurations");
 
 		if( getAvailability() < 1.0 ) {
 			if( getDowntimeDurationDistribution() == null ) {
@@ -461,7 +473,7 @@ public class ModelEntity extends DisplayEntity {
 
 		// calculate hours for first operating hours breakdown
 		for ( int i = 0; i < getMaintenanceOperatingHoursIntervals().size(); i++ ) {
-			hoursForNextMaintenanceOperatingHours.add( getMaintenanceOperatingHoursIntervals().get( i ) );
+			hoursForNextMaintenanceOperatingHours.add( firstMaintenanceOperatingHours.getValue().get( i ) );
 			maintenanceOperatingHoursPendings.add( 0 );
 		}
 	}
@@ -656,7 +668,7 @@ public class ModelEntity extends DisplayEntity {
 	public void printStateTrace( String state ) {
 
 		// First state ever
-		if( finalLastState == "" ) {
+		if( finalLastState.equals("") ) {
 			finalLastState = state;
 			stateReportFile.putString(String.format("%.5f  %s.setState( \"%s\" ) dt = %s\n",
 									  0.0d, this.getName(), presentState, formatNumber(getCurrentTime())));
@@ -1458,7 +1470,7 @@ public class ModelEntity extends DisplayEntity {
 	 **/
 	public Vector getInfo() {
 		Vector info = super.getInfo();
-		if( presentState.equals( "" ) || presentState == null )
+		if( presentState == null || presentState.equals( "" ) )
 			info.addElement( "Present State\t<no state>" );
 		else
 			info.addElement( "Present State" + "\t" + presentState );

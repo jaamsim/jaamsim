@@ -107,9 +107,7 @@ public class S3TexCompressor {
 		c1 += (minG >> 2) << 5;
 		c1 += (minR >> 3);
 
-		if (c0 == c1) {
-			c0+=1;
-		} else if (c1 > c0) {
+		if (c1 > c0) {
 			// Swap the order
 			int temp = minR;
 			minR = maxR;
@@ -134,8 +132,13 @@ public class S3TexCompressor {
 		rs[0] = maxR; gs[0] = maxG; bs[0] = maxB;
 		rs[1] = minR; gs[1] = minG; bs[1] = minB;
 
-		rs[2] = (2*maxR+minR)/3; gs[2] = (2*maxG+minG)/3; bs[2] = (2*maxB+minB)/3;
-		rs[3] = (maxR+2*minR)/3; gs[3] = (maxG+2*minG)/3; bs[3] = (maxB+2*minB)/3;
+		if (c0 == c1) {
+			rs[2] = (maxR+minR)/2; gs[2] = (maxG+minG)/2; bs[2] = (maxB+minB)/2;
+			rs[3] = 0; gs[3] = 0; bs[3] = 0;
+		} else {
+			rs[2] = (2*maxR+minR)/3; gs[2] = (2*maxG+minG)/3; bs[2] = (2*maxB+minB)/3;
+			rs[3] = (maxR+2*minR)/3; gs[3] = (maxG+2*minG)/3; bs[3] = (maxB+2*minB)/3;
+		}
 
 		int numVals = 0;
 		int outByte = 0;

@@ -16,12 +16,13 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Vector3d;
-
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.math.Vec3d;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
+import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Vector;
@@ -37,9 +38,11 @@ public class Queue extends DisplayEntity {
 	        example = "Queue1 PrintReport { TRUE }")
 	private final BooleanInput printReportInput;
 
-	protected Vector itemList;
-	protected Vector3d end;
-	protected int maxPerLine; // maximum items per sub line-up of queue
+	protected ArrayList<DisplayEntity> itemList;
+
+	@Keyword(desc = "The number of queuing entities in each row.",
+			example = "Queue1 MaxPerLine { 4 }")
+	protected final IntegerInput maxPerLineInput; // maximum items per sub line-up of queue
 
 //	Report
 	protected String reportFileName; //  File name of the report
@@ -53,28 +56,38 @@ public class Queue extends DisplayEntity {
 
 	{
 		spacingInput = new DoubleInput("Spacing", "Key Inputs", 0.0d, 0.0d, Double.POSITIVE_INFINITY);
+		spacingInput.setUnits( "m" );
 		this.addInput(spacingInput, true);
+
+		maxPerLineInput = new IntegerInput("MaxPerLine", "Key Inputs", Integer.MAX_VALUE);
+		maxPerLineInput.setValidRange( 1, Integer.MAX_VALUE);
+		this.addInput(maxPerLineInput, true);
 
 		printReportInput = new BooleanInput("PrintReport", "Key Inputs", false);
 		this.addInput(printReportInput, true);
 	}
 
 	public Queue() {
-		itemList = new Vector( 1, 1 );
-		minElements = 1E10;
-		maxElements = 0;
-		avgElements = 0.0;
-		end = null;
-		maxPerLine = 0;
-
-		//Report
-		reportFileName = "";
-		reportFile = null;
+		itemList = new ArrayList<DisplayEntity>();
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
+
+		// Clear the entries in the queue
+		itemList.clear();
+
+		// Clear statistics
+		minElements = Integer.MAX_VALUE;
+		maxElements = 0;
+		avgElements = 0.0;
+
+		//  Initialize reports
+		this.closeReports();
+
+		//  Report Variables
+		reportFileName = InputAgent.getReportDirectory() + InputAgent.getRunName() + "-" + this.getName() + ".que";
 
 		recorderList = new ArrayList<QueueRecorder>();
 		for( QueueRecorder rec : Simulation.getClonesOf( QueueRecorder.class ) ) {
@@ -94,64 +107,31 @@ public class Queue extends DisplayEntity {
 		return info;
 	}
 
-	// *******************************************************************************************************
-	// INITIALIZATION
-	// *******************************************************************************************************
-
-	/**
-	 * Initialize the queue
-	 */
-	public void initialize() {
-		int doLoop = itemList.size();
-		for( int x = 0; x < doLoop; x++ ) {
-			DisplayEntity each = (DisplayEntity)itemList.get( x );
-			each.exitRegion();
-		}
-		itemList.clear();
-
-		//  Initialize reports
-		this.closeReports();
-
-		//  Report Variables
-		reportFileName = InputAgent.getReportDirectory() + InputAgent.getRunName() + "-" + this.getName() + ".que";
-	}
-
 	// ******************************************************************************************************
 	// QUEUE HANDLING METHODS
 	// ******************************************************************************************************
 
 	/**
-     * Returns the position for a new entity at the end of the queue.
-     */
-    public Vector3d getEndVector3dFor( DisplayEntity perf ) {
-
-		double locX;
-		double locY;
-		Vector3d endPosition;
-
-		if( end == null ) {
-			end = this.getPositionForAlignment(new Vector3d());
-			end.x -= this.getSize().x / 2.0d;
-			end.x += this.getSpacing();
+	 * Returns the position for a new entity at the end of the queue.
+	 */
+	public Vec3d getEndVector3dFor(DisplayEntity perf) {
+		Vec3d qSize = this.getSize();
+		double distance = 0.5d * qSize.x;
+		for (int x = 0; x < itemList.size(); x++) {
+			DisplayEntity item = itemList.get(x);
+			distance += this.getSpacing() + item.getSize().x;
 		}
-
-		Vector3d cent = this.getPositionForAlignment(new Vector3d());
-		locX = end.x - this.getSpacing() - perf.getSize().x/2;
-		locY = end.y;
-
-		endPosition = new Vector3d( end );
-		endPosition.x = cent.x + Math.cos( this.getOrientation().z ) * ( locX - cent.x ) - Math.sin( this.getOrientation().z ) * ( locY - cent.y );
-		endPosition.y = cent.y + Math.cos( this.getOrientation().z ) * ( locY - cent.y ) + Math.sin( this.getOrientation().z ) * ( locX - cent.x );
-
-		return endPosition;
-    }
+		distance += this.getSpacing() + 0.5d * perf.getSize().x;
+		Vec3d tempAlign = new Vec3d(-distance / qSize.x, 0.0d, 0.0d);
+		return this.getPositionForAlignment(tempAlign);
+	}
 
 	/**
 	 * Add an entity to the queue
 	 */
 	public void addLast( DisplayEntity perf ) {
-		itemList.addElement( perf );
-		updateGraphics();
+		itemList.add( perf );
+		setGraphicsDataDirty();
 
 		for( QueueRecorder rec : recorderList ) {
 			rec.add( perf, this );
@@ -164,7 +144,7 @@ public class Queue extends DisplayEntity {
 	 */
 	public void add( int i, DisplayEntity perf ) {
 		itemList.add( i, perf );
-		updateGraphics();
+		setGraphicsDataDirty();
 
 		for( QueueRecorder rec : recorderList ) {
 			rec.add( perf, this );
@@ -177,7 +157,7 @@ public class Queue extends DisplayEntity {
 	public void remove( DisplayEntity perf ) {
 		if( itemList.contains( perf ) ) {
 			itemList.remove( perf );
-			this.updateGraphics();
+			setGraphicsDataDirty();
 
 			for( QueueRecorder rec : recorderList ) {
 				rec.remove( perf, this );
@@ -194,10 +174,9 @@ public class Queue extends DisplayEntity {
     public DisplayEntity removeFirst() {
         DisplayEntity out;
 
-        if( itemList.size() != 0 ) {
-            out = (DisplayEntity)itemList.firstElement();
-            itemList.removeElementAt( 0 );
-            this.updateGraphics();
+        if( !itemList.isEmpty() ) {
+            out = itemList.remove( 0 );
+            setGraphicsDataDirty();
 
 			for( QueueRecorder rec : recorderList ) {
 				rec.remove( out, this );
@@ -215,10 +194,9 @@ public class Queue extends DisplayEntity {
     public DisplayEntity removeLast() {
         DisplayEntity out;
 
-        if( itemList.size() != 0 ) {
-            out = (DisplayEntity)itemList.lastElement();
-            itemList.removeElementAt( itemList.size() - 1 );
-            this.updateGraphics();
+        if( !itemList.isEmpty() ) {
+            out =   itemList.remove( itemList.size() - 1 );
+            setGraphicsDataDirty();
 
 			for( QueueRecorder rec : recorderList ) {
 				rec.remove( out, this );
@@ -241,49 +219,49 @@ public class Queue extends DisplayEntity {
 	 * Update the position of all entities in the queue. ASSUME that entities
 	 * will line up according to the orientation of the queue.
 	 */
-	public void updateGraphics() {
+	public void updateGraphics( double simTime ) {
 
-		int max = itemList.size();
+		//int max = itemList.size();
 		// If set, limit the number of items per sub-lane
-		if (maxPerLine > 0)
-			max = maxPerLine;
+		//if (maxPerLine > 0)
+		//	max = maxPerLine;
+		Vec3d queueOrientation = getOrientation();
+		Vec3d qSize = this.getSize();
+		Vec3d tmp = new Vec3d();
 
-		Vector3d queueCenter = this.getPositionForAlignment(new Vector3d());
-		Vector3d queueOrientation = getOrientation();
+		double distanceX = 0.5d * qSize.x;
+		double distanceY = 0;
+		double maxWidth = 0;
 
-		Vector3d loc = new Vector3d(queueCenter);
-		loc.x -= this.getSize().x / 2.0d;
+		// find widest vessel
+		if( itemList.size() >  maxPerLineInput.getValue()){
+			for (int j = 0; j < itemList.size(); j++) {
+				 maxWidth = Math.max(maxWidth, itemList.get(j).getSize().y);
+			 }
+		}
 		// update item locations
-		for (int x = 0; x < itemList.size(); x++) {
-			DisplayEntity item = (DisplayEntity)itemList.get(x);
+		for (int i = 0; i < itemList.size(); i++) {
+
+			// if new row is required, set reset distanceX and move distanceY up one row
+			if( i > 0 && i % maxPerLineInput.getValue() == 0 ){
+				 distanceX = 0.5d * qSize.x;
+				 distanceY += this.getSpacing() + maxWidth;
+			}
+
+			DisplayEntity item = itemList.get(i);
 			// Rotate each transporter about its center so it points to the right direction
 			item.setOrientation(queueOrientation);
-			if (x == 0) {
-				Vector3d cent = new Vector3d();
-				cent.x = loc.x - item.getSize().x / 2.0d;
-				cent.y = loc.y;
-				cent.z = item.getPositionForAlignment(new Vector3d()).z;
-				item.setPosition(cent);
-				item.setAlignment(new Vector3d());
-			}
-			else if (!loc.equals(new Vector3d(queueCenter.x + item.getSize().x / 2 + this.getSpacing(), queueCenter.y, queueCenter.z))) {
-				Vector3d cent = new Vector3d();
-				cent.x = loc.x - item.getSize().x / 2.0d - this.getSpacing();
-				cent.y = loc.y;
-				cent.z = item.getPositionForAlignment(new Vector3d()).z;
-				item.setPosition(cent);
-				item.setAlignment(new Vector3d());
-			}
-			loc.x = item.getPositionForAlignment(new Vector3d()).x - item.getSize().x / 2;
-			// Rotate each transporter about center of the queue-triangular so the line-up put in the right direction
-			item.polarTranslationAroundPointByAngle(queueCenter, queueOrientation.z);
-			item.setAlignment(new Vector3d());
-			if ((x + 1) % max == 0) {
-				loc.x = queueCenter.x - this.getSize().x / 2 + this.getSpacing();
-				loc.y += item.getSize().y * 2.0;
-			}
+			Vec3d itemSize = item.getSize();
+			distanceX += this.getSpacing() + 0.5d * itemSize.x;
+			tmp.set3(-distanceX / qSize.x, distanceY/qSize.y, 0.0d);
+
+			// increment total distance
+			distanceX += 0.5d * itemSize.x;
+
+			// Set Position
+			Vec3d itemCenter = this.getPositionForAlignment(tmp);
+			item.setPositionForAlignment(new Vec3d(), itemCenter);
 		}
-		end = loc;
 	}
 
 	// *******************************************************************************************************
@@ -302,11 +280,7 @@ public class Queue extends DisplayEntity {
 		return spacingInput.getValue();
 	}
 
-	public void setMaxPerLine( int max ) {
-		maxPerLine = max;
-	}
-
-	public Vector getItemList() {
+	public ArrayList<DisplayEntity> getItemList() {
 		return itemList;
 	}
 
@@ -315,8 +289,8 @@ public class Queue extends DisplayEntity {
 
 		length = 0.0;
 		for( int x = 0; x < itemList.size(); x++ ) {
-			DisplayEntity item = (DisplayEntity)itemList.get( x );
-			length += item.getSize().getX() + this.getSpacing();
+			DisplayEntity item = itemList.get( x );
+			length += item.getSize().x + this.getSpacing();
 		}
 		return length;
 	}

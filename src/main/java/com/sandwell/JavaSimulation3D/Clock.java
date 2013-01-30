@@ -15,7 +15,6 @@
 package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Vector;
 
 /**
  * Class to implement Audition-style clock calculations. Re-implementing the
@@ -73,38 +72,23 @@ public class Clock{
 		startingDay = day;
 	}
 
-	public static int[] calculateYearMonthDayForTime( double tim ) {
+public static class ClockTime {
+	public final int year;
+	public final int month;
+	public final int day;
+	public final double hour;
 
-		int[] result = new int[3];
-
-		// Replace negative times with zero
-		double t = Math.max( tim, 0.0 );
-
-		int lyear = (int)Math.floor( t / 8760.0 );
-
-		double remainder = t % 8760.0;
-
-		int lday = (int)Math.floor( remainder / 24.0 );
-		lday++;
-
-		// Calculate what month this is
-		int lmonth = getMonthForDay( lday );
-
-		lday -= firstDayOfMonth[lmonth - 1];
-
-		result[0] = lyear + 1;
-		result[1] = lmonth;
-		result[2] = lday + 1;
-		return result;
+	public ClockTime(int y, int m, int d, double h) {
+		year = y;
+		month = m;
+		day = d;
+		hour = h;
 	}
+}
+	public static ClockTime getClockTime(double time) {
+		int lyear = (int)Math.floor( time / 8760.0 );
 
-	public static Vector calculateYearMonthDayHourForTime( double tim ) {
-
-		Vector result = new Vector( 4, 1 );
-
-		int lyear = (int)Math.floor( tim / 8760.0 );
-
-		double remainder = tim % 8760.0;
+		double remainder = time % 8760.0;
 
 		int lday = (int)Math.floor( remainder / 24.0 );
 		lday++;
@@ -116,11 +100,7 @@ public class Clock{
 
 		lday -= firstDayOfMonth[lmonth - 1];
 
-		result.add( Integer.valueOf( lyear + 1 ) );
-		result.add( Integer.valueOf( lmonth ) );
-		result.add( Integer.valueOf( lday + 1 ) );
-		result.add( Double.valueOf( lhour ) );
-		return result;
+		return new ClockTime(lyear + 1, lmonth, lday + 1, lhour);
 	}
 
 	public static double calcTimeForYear_Month_Day_Hour( int y, int m, int d, double h ) {
@@ -223,33 +203,14 @@ public class Clock{
 		startingDay = Integer.valueOf( startingVal[2] ).intValue();
 	}
 
-	public static String formatDateString(double time) {
-		int[] multipleReturnArray = calculateYearMonthDayForTime( time );
-		int y = multipleReturnArray[0] + startingYear - 1;
-		int m = multipleReturnArray[1];
-		int d = multipleReturnArray[2];
-
-		int hr = getHourForTime( time );
-		int min = getMinuteForTime( time );
-		int sec = getSecondForTime( time );
-
-		return String.format("%04d-%s-%02d  %02d:%02d:%02d", y, monthNames[m - 1], d, hr, min, sec);
-	}
-
 	/**
 	 * Returns a formatted string to reflect the current simulation time.
 	 */
 	public static String getDateStringForTime(double time) {
+		ClockTime cTime = getClockTime(time);
+		int y = cTime.year + startingYear - 1;
 
-		int[] multipleReturnArray = calculateYearMonthDayForTime( time );
-		int y = multipleReturnArray[0] + startingYear - 1;
-		int m = multipleReturnArray[1];
-		int d = multipleReturnArray[2];
-
-		int hr = getHourForTime( time );
-		int min = getMinuteForTime( time );
-
-		return String.format("%04d-%s-%02d  %02d:%02d", y, monthNames[m - 1], d, hr, min);
+		return String.format("%04d-%s-%02d  %02d:%02d", y, monthNames[cTime.month - 1], cTime.day, getHourForTime( time ), getMinuteForTime( time ));
 	}
 
 	/**

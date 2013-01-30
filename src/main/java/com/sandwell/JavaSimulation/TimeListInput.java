@@ -14,8 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 public class TimeListInput extends ListInput<DoubleVector> {
 	protected double minValue = Double.NEGATIVE_INFINITY;
@@ -72,5 +72,27 @@ public class TimeListInput extends ListInput<DoubleVector> {
 
 	public void setValidCounts(int... list) {
 		validCounts = list;
+	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue.size() == 0)
+			return NO_VALUE;
+
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(defValue.get(0));
+		for (int i = 1; i < defValue.size(); i++) {
+			tmp.append(SEPARATOR);
+			tmp.append(defValue.get(i));
+		}
+		if (!unitString.isEmpty()) {
+			tmp.append(SEPARATOR);
+			tmp.append(unitString);
+		}
+
+		return tmp.toString();
 	}
 }

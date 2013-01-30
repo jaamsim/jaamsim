@@ -165,6 +165,36 @@ public class TimeValue {
 		return monthProbVal.toString();
 	}
 
+	public String getString() {
+		StringBuilder tmp = new StringBuilder();
+
+		if (!Double.isNaN(dVal)) {
+			tmp.append(dVal);
+			return tmp.toString();
+		}
+
+		if(probVal != null) {
+			return probVal.getInputName();
+		}
+
+		if (monthVal != null) {
+			tmp.append(monthVal.get(0));
+			for(int i = 1; i < monthVal.size(); i++) {
+				tmp.append(Input.SEPARATOR);
+				tmp.append(monthVal.get(i));
+			}
+			return tmp.toString();
+		}
+
+		tmp.append(monthProbVal.get(0).getInputName());
+		for(int i = 1; i < monthProbVal.size(); i++) {
+			tmp.append(Input.SEPARATOR);
+			tmp.append(monthProbVal.get(i).getInputName());
+		}
+
+		return tmp.toString();
+	}
+
 	public boolean isProbablity() {
 		return (probVal != null || monthProbVal != null);
 	}

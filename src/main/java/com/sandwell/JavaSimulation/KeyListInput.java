@@ -72,4 +72,20 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 			return val;
 		}
 	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue.size() == 0)
+			return NO_VALUE;
+
+		StringBuilder tmp = new StringBuilder(defValue.get(0).getInputName());
+		for (int i = 1; i < defValue.size(); i++) {
+			tmp.append(SEPARATOR);
+			tmp.append(defValue.get(i).getInputName());
+		}
+		return tmp.toString();
+	}
 }

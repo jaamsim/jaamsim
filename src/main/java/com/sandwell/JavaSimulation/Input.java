@@ -16,11 +16,10 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.vecmath.Vector3d;
-
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 public abstract class Input<T> {
 	protected static final String INP_ERR_COUNT = "Expected an input with %s value(s), received: %s";
@@ -43,6 +42,11 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_ENTCLASS = "Expected a %s, %s is a %s";
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
+
+	protected static final String NO_VALUE = "{ }";
+	protected static final String POSITIVE_INFINITY = "Infinity";
+	protected static final String NEGATIVE_INFINITY = "-Infinity";
+	protected static final String SEPARATOR = "  ";
 
 	private final String keyword; // the preferred name for the input keyword
 	private final String category;
@@ -104,6 +108,23 @@ public abstract class Input<T> {
 
 	public T getDefaultValue() {
 		return defValue;
+	}
+
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		StringBuilder tmp = new StringBuilder(defValue.toString());
+
+		if (tmp.length() == 0)
+			return NO_VALUE;
+
+		if (!unitString.isEmpty()) {
+			tmp.append(SEPARATOR);
+			tmp.append(unitString);
+		}
+
+		return tmp.toString();
 	}
 
 	public T getValue() {
@@ -349,7 +370,8 @@ public abstract class Input<T> {
 		// TODO - parse other classes
 //		if( aClass == IntegerVector.class ) {
 //		}
-		return null;
+
+		throw new InputErrorException("%s is not supported for parsing yet", aClass);
 	}
 
 	public static boolean parseBoolean(String data)
@@ -597,17 +619,17 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	public static Vector3d parseVector3d(StringVector input)
+	public static Vec3d parseVec3d(StringVector input)
 	throws InputErrorException {
-		return Input.parseVector3d(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+		return Input.parseVec3d(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 	}
 
-	public static Vector3d parseVector3d(StringVector input, double min, double max)
+	public static Vec3d parseVec3d(StringVector input, double min, double max)
 	throws InputErrorException {
 		Input.assertCountRange(input, 1, 3);
 		DoubleVector temp = Input.parseDoubleVector(input, min, max);
 
-		Vector3d ret = new Vector3d();
+		Vec3d ret = new Vec3d();
 
 		ret.x = temp.get(0);
 		if (temp.size() > 1)
@@ -787,13 +809,13 @@ public abstract class Input<T> {
 	 * @param data
 	 * @return
 	 */
-	public static ArrayList<Vector3d> parseXYList( StringVector input ) {
+	public static ArrayList<Vec3d> parseXYList( StringVector input ) {
 		Input.assertCountEven(input);
 
 		DoubleVector values = Input.parseDoubleVector( input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY );
-		ArrayList<Vector3d> xyList = new ArrayList<Vector3d>();
+		ArrayList<Vec3d> xyList = new ArrayList<Vec3d>();
 		for( int i = 0; i < input.size(); i += 2 ) {
-			xyList.add( new Vector3d( values.get( i ), values.get( i + 1 ), 0 ) );
+			xyList.add( new Vec3d( values.get( i ), values.get( i + 1 ), 0 ) );
 		}
 		return xyList;
 	}
@@ -1001,5 +1023,64 @@ public abstract class Input<T> {
 		catch(InputErrorException ex) {
 			throw new InputErrorException(String.format("Could not find a unit named: %s", str));
 		}
+	}
+
+	public boolean isInfinity(String str) {
+		return (str.equals(POSITIVE_INFINITY) || str.equals(NEGATIVE_INFINITY));
+	}
+
+	public String getDefaultStringForKeyInputs() {
+
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue.getClass() == Boolean.class) {
+			if((Boolean)defValue)
+				return "TRUE";
+
+			return "FALSE";
+		}
+
+		StringBuilder tmp = new StringBuilder();
+		if (defValue.getClass() == Double.class ||
+		   defValue.getClass() == Integer.class ||
+		   Entity.class.isAssignableFrom(Double.class)) {
+			if (defValue.equals(Integer.MAX_VALUE) || defValue.equals(Double.POSITIVE_INFINITY))
+				return POSITIVE_INFINITY;
+
+			if (defValue.equals(Integer.MIN_VALUE) || defValue.equals(Double.NEGATIVE_INFINITY))
+				return NEGATIVE_INFINITY;
+
+			tmp.append(defValue);
+		} else if (defValue.getClass() == DoubleVector.class) {
+			DoubleVector def = (DoubleVector)defValue;
+			if (def.size() == 0)
+				return NO_VALUE;
+
+			tmp.append(def.get(0));
+			for (int i = 1; i < def.size(); i++) {
+				tmp.append(SEPARATOR);
+				tmp.append(def.get(i));
+			}
+		} else if (defValue.getClass() == TimeValue.class) {
+			String val = ((TimeValue)defValue).getString();
+
+			// no need for unit if infinity
+			if (isInfinity(val))
+				return val;
+
+			tmp.append(val);
+		} else if ( Entity.class.isAssignableFrom( defValue.getClass() ) ) {
+			tmp.append(((Entity)defValue).getInputName());
+		}
+		else {
+			return "?????";
+		}
+
+		if (!unitString.isEmpty()) {
+			tmp.append(SEPARATOR);
+			tmp.append(unitString);
+		}
+		return tmp.toString();
 	}
 }

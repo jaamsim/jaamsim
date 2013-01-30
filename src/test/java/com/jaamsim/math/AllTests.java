@@ -19,15 +19,17 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ TestMath.class,
+@SuiteClasses({
                 TestQuaternion.class,
                 TestTransform.class,
                 TestPlane.class,
                 TestSphere.class,
                 TestConvex.class,
                 TestRay.class,
-                TestVec.class,
-                TestMat.class
+                TestVec2d.class,
+                TestVec3d.class,
+                TestVec4d.class,
+                TestMat4d.class,
                 })
 public class AllTests {
 

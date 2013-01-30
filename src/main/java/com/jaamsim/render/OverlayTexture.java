@@ -16,7 +16,6 @@ package com.jaamsim.render;
 
 import java.net.URL;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.media.opengl.GL2GL3;
@@ -45,16 +44,16 @@ public class OverlayTexture implements OverlayRenderable {
 	static private int hasTexVar;
 
 	private boolean _alignRight, _alignBottom;
-	private ArrayList<Integer> _visibleWindowIDs;
+	private VisibilityInfo _visInfo;
 
 	public OverlayTexture(int x, int y, int width, int height, URL imageURL, boolean transparent, boolean compressed,
-	                      boolean alignRight, boolean alignBottom, ArrayList<Integer> visibleWindowIDs) {
+	                      boolean alignRight, boolean alignBottom, VisibilityInfo visInfo) {
 		_x = x; _y = y;
 		_width = width; _height = height;
 		_imageURL = imageURL;
 		_isTransparent = transparent; _isCompressed = compressed;
 		_alignRight = alignRight; _alignBottom = alignBottom;
-		_visibleWindowIDs = visibleWindowIDs;
+		_visInfo = visInfo;
 	}
 
 	private static void initStaticBuffers(Renderer r) {
@@ -175,7 +174,8 @@ public class OverlayTexture implements OverlayRenderable {
 
 		if (_isTransparent) {
 			gl.glEnable(GL2GL3.GL_BLEND);
-			gl.glBlendFunc(GL2GL3.GL_SRC_ALPHA, GL2GL3.GL_ONE_MINUS_SRC_ALPHA);
+			gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
+			gl.glBlendFuncSeparate(GL2GL3.GL_SRC_ALPHA, GL2GL3.GL_ONE_MINUS_SRC_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
 		}
 
 		// Set the size and scale in normalized (-1, 1) coordinates
@@ -200,8 +200,9 @@ public class OverlayTexture implements OverlayRenderable {
 	}
 
 	@Override
-	public boolean renderForWindow(int windowID) {
-		return _visibleWindowIDs.contains(windowID);
+	public boolean renderForView(int viewID) {
+		if (_visInfo.viewIDs == null || _visInfo.viewIDs.size() == 0) return true; //Default to always visible
+		return _visInfo.viewIDs.contains(viewID);
 	}
 
 }

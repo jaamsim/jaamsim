@@ -32,9 +32,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.jaamsim.math.Matrix4d;
+import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.MeshProto;
 import com.jaamsim.render.RenderException;
 
@@ -101,16 +103,16 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private static class FaceSubGeo {
-		public final Vector4d[] verts;
-		public final Vector4d[] normals;
-		public final Vector4d[] texCoords;
+		public final Vec4d[] verts;
+		public final Vec4d[] normals;
+		public final Vec4d[] texCoords;
 		public String materialSymbol;
 
 		public FaceSubGeo(int size, boolean hasTex) {
-			verts = new Vector4d[size];
-			normals = new Vector4d[size];
+			verts = new Vec4d[size];
+			normals = new Vec4d[size];
 			if (hasTex) {
-				texCoords = new Vector4d[size];
+				texCoords = new Vec4d[size];
 			} else {
 				texCoords = null;
 			}
@@ -118,11 +120,11 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private static class LineSubGeo {
-		public final Vector4d[] verts;
+		public final Vec4d[] verts;
 		public String materialSymbol;
 
 		public LineSubGeo(int size) {
-			verts = new Vector4d[size];
+			verts = new Vec4d[size];
 		}
 	}
 
@@ -154,7 +156,7 @@ public class ColParser extends DefaultHandler {
 
 	private MeshProto _finalProto = new MeshProto();
 
-	private HashMap<String, Vector4d[]> _dataSources = new HashMap<String, Vector4d[]>();
+	private HashMap<String, Vec4d[]> _dataSources = new HashMap<String, Vec4d[]>();
 
 	private ColNode _rootNode;
 	private ColNode _colladaNode;
@@ -278,16 +280,21 @@ public class ColParser extends DefaultHandler {
 	 * Returns a matrix that rotates which ever axis is specified into the Z axis (as JaamSim treats Z as up)
 	 * @return
 	 */
-	private Matrix4d getGlobalRot() {
+	private Mat4d getGlobalRot() {
 		String up = getUpAxis();
+		Mat4d ret = new Mat4d();
 		if (up.equals("Z_UP")) {
-			return new Matrix4d();
+			return ret;
 		} else if (up.equals("X_UP")) {
-			Matrix4d ret = Matrix4d.RotationMatrix(Math.PI/2, Vector4d.Y_AXIS);
-			ret.mult(Matrix4d.RotationMatrix(-Math.PI/2, Vector4d.Z_AXIS), ret);
+			ret.d00 =  0; ret.d01 =  0; ret.d02 =  1;
+			ret.d10 = -1; ret.d11 =  0; ret.d12 =  0;
+			ret.d20 =  0; ret.d21 = -1; ret.d22 =  0;
 			return ret;
 		} else  { // Y_UP
-			return Matrix4d.RotationMatrix(Math.PI/2, Vector4d.X_AXIS);
+			ret.d00 =  1; ret.d01 =  0; ret.d02 =  0;
+			ret.d10 =  0; ret.d11 =  0; ret.d12 = -1;
+			ret.d20 =  0; ret.d21 =  1; ret.d22 =  0;
+			return ret;
 		}
 
 	}
@@ -301,8 +308,8 @@ public class ColParser extends DefaultHandler {
 		String vsURL = instVS.getAttrib("url");
 		assert(vsURL.charAt(0) == '#');
 
-		Matrix4d globalMat = Matrix4d.ScaleMatrix(getScaleFactor());
-		globalMat.mult(getGlobalRot(), globalMat);
+		Mat4d globalMat = getGlobalRot();
+		globalMat.scale3(getScaleFactor());
 
 		VisualScene vs = _visualScenes.get(vsURL.substring(1));
 		for (SceneNode sn : vs.nodes) {
@@ -312,12 +319,12 @@ public class ColParser extends DefaultHandler {
 		_finalProto.generateHull();
 	}
 
-	private void visitNode(SceneNode node, Matrix4d parentMat) {
+	private void visitNode(SceneNode node, Mat4d parentMat) {
 		_nodeStack.push(node);
 
 		// Update the current transform
-		Matrix4d currentMat = new Matrix4d(parentMat);
-		currentMat.mult(node.trans, currentMat);
+		Mat4d currentMat = new Mat4d(parentMat);
+		currentMat.mult4(node.trans);
 
 		for (GeoInstInfo geoInfo : node.subGeo) {
 			addGeoInst(geoInfo, currentMat);
@@ -357,7 +364,7 @@ public class ColParser extends DefaultHandler {
 		return effect;
 	}
 
-	private void addGeoInst(GeoInstInfo geoInfo, Matrix4d mat) {
+	private void addGeoInst(GeoInstInfo geoInfo, Mat4d mat) {
 		assert(geoInfo.geoName.charAt(0) == '#');
 		Geometry geo = _geos.get(geoInfo.geoName.substring(1));
 
@@ -380,10 +387,7 @@ public class ColParser extends DefaultHandler {
 				                       effect.transType, effect.transColour);
 			}
 
-			// Now load an instance
-			Matrix4d normalMat = mat.inverse();
-			normalMat.transposeLocal();
-			_finalProto.addSubMeshInstance(geoID, mat, normalMat);
+			_finalProto.addSubMeshInstance(geoID, mat);
 		}
 
 		for (LineSubGeo subGeo : geo.lineSubGeos) {
@@ -400,11 +404,7 @@ public class ColParser extends DefaultHandler {
 				_finalProto.addSubLine(subGeo.verts,
 				                       effect.diffuse.color);
 			}
-
-			// Now load an instance
-			Matrix4d normalMat = mat.inverse();
-			normalMat.transposeLocal();
-			_finalProto.addSubLineInstance(geoID, mat, normalMat);
+			_finalProto.addSubLineInstance(geoID, mat);
 
 		}
 	}
@@ -568,7 +568,7 @@ public class ColParser extends DefaultHandler {
 		ColorTex diffuseCT = null;
 		if (diffuse == null) {
 			diffuseCT = new ColorTex();
-			diffuseCT.color = new Vector4d(0, 0, 0);
+			diffuseCT.color = new Color4d();
 		} else {
 			diffuseCT = getColorTex(diffuse, paramMap);
 		}
@@ -593,22 +593,25 @@ public class ColParser extends DefaultHandler {
 			assert(floatNode != null);
 
 			double alpha = Double.parseDouble((String)floatNode.getContent());
-			effect.transColour = new Vector4d(transparentCT.color);
+			effect.transColour = new Color4d(transparentCT.color);
 			if (opaque.equals("A_ONE")) {
 				effect.transType = MeshProto.A_ONE_TRANS;
 			}
 			if (opaque.equals("RGB_ZERO")) {
 				effect.transType = MeshProto.RGB_ZERO_TRANS;
 				// Handle the weird luminance term for alpha in RGB_ZERO
-				effect.transColour.data[3] = effect.transColour.x() * 0.212671 +
-				                             effect.transColour.y() * 0.715160 +
-				                             effect.transColour.z() * 0.072169;
+				effect.transColour.a = effect.transColour.r * 0.212671 +
+				                       effect.transColour.g * 0.715160 +
+				                       effect.transColour.b * 0.072169;
 			}
 			// Bake the transparency term into the colour
-			effect.transColour.scaleLocal4(alpha);
+			effect.transColour.r *= alpha;
+			effect.transColour.g *= alpha;
+			effect.transColour.b *= alpha;
+			effect.transColour.a *= alpha;
 
-			if ((effect.transColour.w() >= 0.999 && opaque.equals("A_ONE")) ||
-			    (effect.transColour.w() <= 0.001 && opaque.equals("RGB_ZERO")) ) {
+			if ((effect.transColour.a >= 0.999 && opaque.equals("A_ONE")) ||
+			    (effect.transColour.a <= 0.001 && opaque.equals("RGB_ZERO")) ) {
 				effect.transType = MeshProto.NO_TRANS; // Some meshes are effectively not transparent despite having the information
 			}
 		} else {
@@ -632,7 +635,7 @@ public class ColParser extends DefaultHandler {
 
 			double[] colVals = (double[])valNode.getContent();
 			assert(colVals != null && colVals.length >= 4);
-			Vector4d col = new Vector4d(colVals[0], colVals[1], colVals[2], colVals[3]);
+			Color4d col = new Color4d(colVals[0], colVals[1], colVals[2], colVals[3]);
 			ret.color = col;
 			return ret;
 		}
@@ -731,7 +734,7 @@ public class ColParser extends DefaultHandler {
 		// Build up the transformation matrix for this node
 		for (ColNode child : node.children()) {
 			String childTag = child.getTag();
-			Matrix4d mat = null;
+			Mat4d mat = null;
 			if (childTag.equals("translate")) {
 				mat = transToMat(child);
 			}
@@ -745,7 +748,7 @@ public class ColParser extends DefaultHandler {
 				mat = matToMat(child);
 			}
 			if (mat != null) {
-				sn.trans.mult(mat, sn.trans);
+				sn.trans.mult4(mat);
 			}
 		}
 
@@ -791,35 +794,41 @@ public class ColParser extends DefaultHandler {
 		return instInfo;
 	}
 
-	private Matrix4d transToMat(ColNode transNode) {
+	private Mat4d transToMat(ColNode transNode) {
 		double[] vals = (double[])transNode.getContent();
 		assert(vals != null && vals.length >= 3);
-		Vector4d transVect = new Vector4d(vals[0], vals[1], vals[2]);
-		return Matrix4d.TranslationMatrix(transVect);
+		Vec3d transVect = new Vec3d(vals[0], vals[1], vals[2]);
+		Mat4d ret = new Mat4d();
+		ret.setTranslate3(transVect);
+		return ret;
 	}
 
-	private Matrix4d rotToMat(ColNode rotNode) {
+	private Mat4d rotToMat(ColNode rotNode) {
 		double[] vals = (double[])rotNode.getContent();
 		assert(vals != null && vals.length >= 4);
 
 		double rads = (float)Math.toRadians(vals[3]);
-		Vector4d axis = new Vector4d(vals[0], vals[1], vals[2]);
+		Vec4d axis = new Vec4d(vals[0], vals[1], vals[2], 1.0d);
 		Quaternion rot = Quaternion.Rotation(rads, axis);
-		return Matrix4d.RotationMatrix(rot);
+
+		Mat4d ret = new Mat4d();
+		ret.setRot3(rot);
+		return ret;
 	}
 
-	private Matrix4d scaleToMat(ColNode scaleNode) {
+	private Mat4d scaleToMat(ColNode scaleNode) {
 		double[] vals = (double[])scaleNode.getContent();
 		assert(vals != null && vals.length >= 3);
-		Vector4d scaleVect = new Vector4d(vals[0], vals[1], vals[2]);
-		return Matrix4d.ScaleMatrix(scaleVect);
+		Vec3d scaleVect = new Vec3d(vals[0], vals[1], vals[2]);
+		Mat4d ret = new Mat4d();
+		ret.scaleCols3(scaleVect);
+		return ret;
 	}
 
-	private Matrix4d matToMat(ColNode scaleNode) {
+	private Mat4d matToMat(ColNode scaleNode) {
 		double[] vals = (double[])scaleNode.getContent();
 		assert(vals != null && vals.length >= 16);
-		Matrix4d ret = new Matrix4d(vals);
-		ret.transposeLocal(); // Collada stores matrices in row major order
+		Mat4d ret = new Mat4d(vals);
 		return ret;
 	}
 
@@ -861,14 +870,14 @@ public class ColParser extends DefaultHandler {
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
 		LineSubGeo lsg = new LineSubGeo(numVerts);
 
-		Vector4d[] posData = getDataArrayFromSource(smd.posDesc.source);
+		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
 
 		lsg.materialSymbol = subGeo.getAttrib("material");
 		assert(lsg.materialSymbol != null);
 
 		for (int i = 0; i < numVerts; ++i) {
 			lsg.verts[i] = posData[smd.posDesc.indices[i]];
-			lsg.verts[i].data[3] = 1;
+			lsg.verts[i].w = 1;
 		}
 		geoData.lineSubGeos.add(lsg);
 
@@ -895,9 +904,9 @@ public class ColParser extends DefaultHandler {
 		boolean hasTexCoords = (smd.texCoordDesc != null);
 		FaceSubGeo fsg = new FaceSubGeo(numVerts, hasTexCoords);
 
-		Vector4d[] posData = getDataArrayFromSource(smd.posDesc.source);
-		Vector4d[] normData = getDataArrayFromSource(smd.normDesc.source);
-		Vector4d[] texCoordData = null;
+		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
+		Vec4d[] normData = getDataArrayFromSource(smd.normDesc.source);
+		Vec4d[] texCoordData = null;
 		if (hasTexCoords)
 			texCoordData = getDataArrayFromSource(smd.texCoordDesc.source);
 
@@ -906,10 +915,10 @@ public class ColParser extends DefaultHandler {
 
 		for (int i = 0; i < numVerts; ++i) {
 			fsg.verts[i] = posData[smd.posDesc.indices[i]];
-			fsg.verts[i].data[3] = 1;
+			fsg.verts[i].w = 1;
 
 			fsg.normals[i] = normData[smd.normDesc.indices[i]];
-			fsg.normals[i].data[3] = 0;
+			fsg.normals[i].w = 0;
 
 			if (hasTexCoords) {
 				fsg.texCoords[i] = texCoordData[smd.texCoordDesc.indices[i]];
@@ -1160,9 +1169,9 @@ public class ColParser extends DefaultHandler {
 	 * @param id
 	 * @return
 	 */
-	Vector4d[] getDataArrayFromSource(String id) {
+	Vec4d[] getDataArrayFromSource(String id) {
 		// First check the cache
-		Vector4d[] cached = _dataSources.get(id);
+		Vec4d[] cached = _dataSources.get(id);
 		if (cached != null) {
 			return cached;
 		}
@@ -1187,19 +1196,19 @@ public class ColParser extends DefaultHandler {
 
 		assert(floatCount >= count * stride);
 
-		Vector4d[] ret = new Vector4d[count];
+		Vec4d[] ret = new Vec4d[count];
 
 		int valueOffset = 0;
 		for (int i = 0; i < count; ++i) {
 			switch(stride) {
 			case 2:
-				ret[i] = new Vector4d(values[valueOffset], values[valueOffset+1], 0, 1);
+				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], 0, 1);
 				break;
 			case 3:
-				ret[i] = new Vector4d(values[valueOffset], values[valueOffset+1], values[valueOffset+2], 1);
+				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], values[valueOffset+2], 1);
 				break;
 			case 4:
-				ret[i] = new Vector4d(values[valueOffset], values[valueOffset+1], values[valueOffset+2], values[valueOffset+3]);
+				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], values[valueOffset+2], values[valueOffset+3]);
 				break;
 			}
 			valueOffset += stride;
@@ -1271,7 +1280,7 @@ public class ColParser extends DefaultHandler {
 	private static class SceneNode {
 
 		public String id;
-		public final Matrix4d trans = new Matrix4d();
+		public final Mat4d trans = new Mat4d();
 
 		public final ArrayList<SceneNode> subNodes = new ArrayList<SceneNode>();
 		public final ArrayList<String> subInstanceNames = new ArrayList<String>();
@@ -1284,7 +1293,7 @@ public class ColParser extends DefaultHandler {
 	 *
 	 */
 	private static class ColorTex {
-		public Vector4d color;
+		public Color4d color;
 		public URL texture;
 	}
 
@@ -1292,7 +1301,7 @@ public class ColParser extends DefaultHandler {
 		// Only hold diffuse colour for now
 		public ColorTex diffuse;
 		public int transType;
-		public Vector4d transColour;
+		public Color4d transColour;
 	}
 
 	private static class FaceGeoEffectPair {

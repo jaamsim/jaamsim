@@ -20,24 +20,15 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.jaamsim.math.AABB;
-import com.jaamsim.math.ConvexHull;
-import com.jaamsim.math.MathUtils;
-import com.jaamsim.math.Matrix4d;
-import com.jaamsim.math.Quaternion;
-import com.jaamsim.math.Ray;
-import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
-
 public class TestConvex {
 
 	@Test
 	public void TestConvexCube() {
 		// Create a list of points with 3 nested cubes
 
-		ArrayList<Vector4d> totalPoints = new ArrayList<Vector4d>();
-		totalPoints.addAll(getPointsForCube(1));
-		totalPoints.addAll(getPointsForCube(2));
+		ArrayList<Vec4d> totalPoints = new ArrayList<Vec4d>();
+		//totalPoints.addAll(getPointsForCube(1));
+		//totalPoints.addAll(getPointsForCube(2));
 		totalPoints.addAll(getPointsForCube(3));
 
 		ConvexHull hull = ConvexHull.TryBuildHull(totalPoints, 1);
@@ -48,54 +39,53 @@ public class TestConvex {
 
 		assertTrue(MathUtils.near(hull.getRadius(), Math.sqrt(27)));
 
-		assertTrue(hull.collides(new Vector4d(0, 0, 0), Transform.ident));
-		assertTrue(hull.collides(new Vector4d(1, 1, 1), Transform.ident));
+		assertTrue(hull.collides(new Vec4d(0, 0, 0, 1.0d), Transform.ident));
+		assertTrue(hull.collides(new Vec4d(1, 1, 1, 1.0d), Transform.ident));
 
-		assertTrue(hull.collides(new Vector4d(2, 2, 2), Transform.ident));
+		assertTrue(hull.collides(new Vec4d(2, 2, 2, 1.0d), Transform.ident));
 
-		assertTrue(!hull.collides(new Vector4d(4, 2, 2), Transform.ident));
-		assertTrue(!hull.collides(new Vector4d(-4, 2, -2), Transform.ident));
+		assertTrue(!hull.collides(new Vec4d(4, 2, 2, 1.0d), Transform.ident));
+		assertTrue(!hull.collides(new Vec4d(-4, 2, -2, 1.0d), Transform.ident));
 
 
-		Transform trans = new Transform(new Vector4d(5, 6, 7), Quaternion.ident, 1);
-		assertTrue(hull.collides(new Vector4d(5, 6, 7), trans));
-
+		Transform trans = new Transform(new Vec4d(5, 6, 7, 1.0d));
+		assertTrue(hull.collides(new Vec4d(5, 6, 7, 1.0d), trans));
 	}
 
 
 	@Test
 	public void TestConvexCubeToRay() {
-		ArrayList<Vector4d> totalPoints = new ArrayList<Vector4d>();
+		ArrayList<Vec4d> totalPoints = new ArrayList<Vec4d>();
 		totalPoints.addAll(getPointsForCube(1));
 		totalPoints.addAll(getPointsForCube(2));
 		totalPoints.addAll(getPointsForCube(3));
 
 		ConvexHull hull = ConvexHull.TryBuildHull(totalPoints, 1);
 
-		Ray r = new Ray(new Vector4d(5, 0, 0), new Vector4d(-1, 0, 0));
+		Ray r = new Ray(new Vec4d(5, 0, 0, 1.0d), new Vec4d(-1, 0, 0, 1.0d));
 		double colDist = hull.collisionDistance(r, Transform.ident);
 		assertTrue(colDist >= 0.0);
 		assertTrue(MathUtils.near(colDist, 2.0));
 
-		AABB aabb = hull.getAABB(new Matrix4d());
+		AABB aabb = hull.getAABB(new Mat4d());
 
 		double aabbDist = aabb.collisionDist(r);
 		assertTrue(aabbDist >= 0.0);
 		assertTrue(MathUtils.near(aabbDist, 2.0));
 	}
 
-	private ArrayList<Vector4d> getPointsForCube(double r) {
-		ArrayList<Vector4d> ret = new ArrayList<Vector4d>();
+	private ArrayList<Vec4d> getPointsForCube(double r) {
+		ArrayList<Vec4d> ret = new ArrayList<Vec4d>();
 
-		ret.add(new Vector4d( r,  r,  r));
-		ret.add(new Vector4d(-r,  r,  r));
-		ret.add(new Vector4d( r, -r,  r));
-		ret.add(new Vector4d(-r, -r,  r));
+		ret.add(new Vec4d( r,  r,  r, 1.0d));
+		ret.add(new Vec4d(-r,  r,  r, 1.0d));
+		ret.add(new Vec4d( r, -r,  r, 1.0d));
+		ret.add(new Vec4d(-r, -r,  r, 1.0d));
 
-		ret.add(new Vector4d( r,  r, -r));
-		ret.add(new Vector4d(-r,  r, -r));
-		ret.add(new Vector4d( r, -r, -r));
-		ret.add(new Vector4d(-r, -r, -r));
+		ret.add(new Vec4d( r,  r, -r, 1.0d));
+		ret.add(new Vec4d(-r,  r, -r, 1.0d));
+		ret.add(new Vec4d( r, -r, -r, 1.0d));
+		ret.add(new Vec4d(-r, -r, -r, 1.0d));
 
 		return ret;
 	}

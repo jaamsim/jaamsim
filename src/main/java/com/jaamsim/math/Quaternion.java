@@ -27,15 +27,6 @@ public double z;
 public double w;
 
 /**
- * The identity quaternion to avoid allocating this excessively
- */
-public static Quaternion ident;
-
-static {
-	ident = new Quaternion();
-}
-
-/**
  * Default returns an identity quaternion (real = 1, imaginary = 0)
  */
 public Quaternion() {
@@ -84,8 +75,22 @@ public void set(Quaternion q) {
  * @param axis
  * @return
  */
-public static Quaternion Rotation(double angle, Vector4d axis) {
-	Vec3d v = new Vec3d(axis.data[0], axis.data[1], axis.data[2]);
+public static Quaternion Rotation(double angle, Vec4d axis) {
+	Vec3d v = new Vec3d(axis.x, axis.y, axis.z);
+	v.normalize3();
+	v.scale3(Math.sin(angle/2.0));
+
+	return new Quaternion(v.x, v.y, v.z, Math.cos(angle / 2.0d));
+}
+
+/**
+ * Factory that creates a quaternion representing a rotation, created in axis angle representation
+ * @param angle
+ * @param axis
+ * @return
+ */
+public static Quaternion Rotation(double angle, Vec3d axis) {
+	Vec3d v = new Vec3d(axis);
 	v.normalize3();
 	v.scale3(Math.sin(angle/2.0));
 
@@ -102,10 +107,10 @@ public static Quaternion Rotation(double angle, Vector4d axis) {
  */
 public static Quaternion FromEuler(double x, double y, double z) {
 	// This will almost certainly be a performance bottleneck before too long
-	Quaternion ret = Rotation(x, Vector4d.X_AXIS);
+	Quaternion ret = Rotation(x, Vec4d.X_AXIS);
 
-	Rotation(y, Vector4d.Y_AXIS).mult(ret, ret);
-	Rotation(z, Vector4d.Z_AXIS).mult(ret, ret);
+	Rotation(y, Vec4d.Y_AXIS).mult(ret, ret);
+	Rotation(z, Vec4d.Z_AXIS).mult(ret, ret);
 	return ret;
 }
 
@@ -114,8 +119,8 @@ public static Quaternion FromEuler(double x, double y, double z) {
  * (which seems to be rotation around global x, then y, then z
  * @return
  */
-public static Quaternion FromEuler(Vector4d rot) {
-	return Quaternion.FromEuler(rot.x(), rot.y(), rot.z());
+public static Quaternion FromEuler(Vec4d rot) {
+	return Quaternion.FromEuler(rot.x, rot.y, rot.z);
 }
 
 /**
@@ -125,19 +130,19 @@ public static Quaternion FromEuler(Vector4d rot) {
  * @param to
  * @return
  */
-public static Quaternion transformVectors(Vector4d from, Vector4d to) {
+public static Quaternion transformVectors(Vec4d from, Vec4d to) {
 
-	Vector4d f = new Vector4d(from);
-	Vector4d t = new Vector4d(to);
+	Vec4d f = new Vec4d(from);
+	Vec4d t = new Vec4d(to);
 
-	f.normalizeLocal3();
-	t.normalizeLocal3();
+	f.normalize3();
+	t.normalize3();
 
-	Vector4d cross = new Vector4d();
-	f.cross(t, cross);
+	Vec4d cross = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	cross.cross3(f, t);
 
 	double angle = Math.asin(cross.mag3());
-	cross.normalizeLocal3();
+	cross.normalize3();
 
 	return Rotation(angle, cross);
 }
@@ -242,32 +247,10 @@ public boolean isNormal() {
 	return MathUtils.near(magSquared, 1.0);
 }
 
-public void toRotationMatrix(Matrix4d res) {
-	res.data[ 0] = w*w + x*x - y*y - z*z;
-	res.data[ 1] = 2*x*y + 2*w*z;
-	res.data[ 2] = 2*x*z - 2*w*y;
-	res.data[ 3] = 0;
-
-	res.data[ 4] = 2*y*x - 2*w*z;
-	res.data[ 5] = w*w - x*x + y*y - z*z;
-	res.data[ 6] = 2*y*z + 2*w*x;
-	res.data[ 7] = 0;
-
-	res.data[ 8] = 2*z*x + 2*w*y;
-	res.data[ 9] = 2*z*y - 2*w*x;
-	res.data[10] = w*w - x*x - y*y + z*z;
-	res.data[11] = 0;
-
-	res.data[12] = 0;
-	res.data[13] = 0;
-	res.data[14] = 0;
-	res.data[15] = 1;
-}
-
-public void rotateVector(Vector4d vect, Vector4d res) {
-	Matrix4d mat = new Matrix4d();
-	toRotationMatrix(mat);
-	mat.mult(vect, res);
+public void rotateVector(Vec4d vect, Vec4d res) {
+	Mat4d mat = new Mat4d();
+	mat.setRot4(this);
+	res.mult4(mat, vect);
 }
 
 public double dot(Quaternion q) {

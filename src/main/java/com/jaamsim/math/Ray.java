@@ -21,26 +21,26 @@ package com.jaamsim.math;
  */
 public class Ray {
 
-	private Vector4d _start;
-	private Vector4d _direction;
+	private Vec4d _start;
+	private Vec4d _direction;
 
 	public Ray() {
-		_start = new Vector4d(0, 0, 0);
-		_direction = new Vector4d(1, 0 ,0, 0);
+		_start = new Vec4d(0, 0, 0, 1.0d);
+		_direction = new Vec4d(1, 0 ,0, 0);
 	}
 
-	public Ray(Vector4d start, Vector4d dir) {
-		_start = new Vector4d(start);
-		_direction = new Vector4d(dir);
-		_direction.normalizeLocal3();
-		_direction.data[3] = 0; // Direction is a direction...
+	public Ray(Vec4d start, Vec4d dir) {
+		_start = new Vec4d(start);
+		_direction = new Vec4d(dir);
+		_direction.normalize3();
+		_direction.w = 0; // Direction is a direction...
 	}
 
-	public Vector4d getStartRef() {
+	public Vec4d getStartRef() {
 		return _start;
 	}
 
-	public Vector4d getDirRef() {
+	public Vec4d getDirRef() {
 		return _direction;
 	}
 
@@ -50,7 +50,7 @@ public class Ray {
 	 * @return
 	 */
 	public Ray transform(Transform trans) {
-		return transform(trans.getMatrixRef());
+		return transform(trans.getMat4dRef());
 	}
 
 	/**
@@ -58,13 +58,13 @@ public class Ray {
 	 * @param mat
 	 * @return
 	 */
-	public Ray transform(Matrix4d mat) {
-		Vector4d startTransed = new Vector4d();
-		mat.mult(_start, startTransed);
+	public Ray transform(Mat4d mat) {
+		Vec4d startTransed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		startTransed.mult4(mat, _start);
 
-		Vector4d dirTransed = new Vector4d();
-		mat.mult(_direction, dirTransed);
-		dirTransed.normalizeLocal3();
+		Vec4d dirTransed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		dirTransed.mult4(mat, _direction);
+		dirTransed.normalize3();
 
 		return new Ray(startTransed, dirTransed);
 	}
@@ -74,12 +74,25 @@ public class Ray {
 	 * @param dist
 	 * @return
 	 */
-	public Vector4d getPointAtDist(double dist) {
-		Vector4d ret = new Vector4d();
-		_direction.scale3(dist, ret);
+	public Vec4d getPointAtDist(double dist) {
+		Vec4d ret = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		ret.scale3(dist, _direction);
 		ret.add3(_start, ret);
-		return ret;
+		return new Vec4d(ret);
 	}
+
+	/**
+	 * Returns the distance along the ray to the point on the ray closest to given point, this
+	 * can be negative if the point given is effectively behind the ray
+	 * @param point
+	 * @return
+	 */
+	public double getDistAlongRay(Vec4d point) {
+		Vec4d diff = new Vec4d(point);
+		diff.sub3(_start);
+		return diff.dot3(_direction);
+	}
+
 	@Override
 	public String toString() {
 		return "Orig: " + _start.toString() + " Dir: " + _direction.toString();

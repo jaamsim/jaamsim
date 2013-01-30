@@ -15,16 +15,16 @@
 
 package com.jaamsim.controllers;
 
-import com.jaamsim.input.WindowInteractionListener;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.CameraInfo;
 import com.jaamsim.render.RenderUtils;
-import com.jaamsim.render.RenderWindow;
 import com.jaamsim.render.Renderer;
+import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.View;
 import com.jogamp.newt.event.MouseEvent;
@@ -37,29 +37,23 @@ public class CameraControl implements WindowInteractionListener {
 	private static final double ROT_SCALE_X = 0.005;
 	private static final double ROT_SCALE_Z = 0.005;
 
-
-	private final Object dataLock = new Object();
-	// The following 4 variables deterministically determine the camera position
-	private double _rotZ; // The spherical coordinate that rotates around Z (in radians)
-	private double _rotX; // Ditto for X
-	private double _radius; // The distance the camera is from the view center
-	private Vector4d _viewCenter;
-
 	private Renderer _renderer;
-	private RenderWindow _window;
+	private int _windowID;
 	private View _updateView;
 
 	private int _windowPosSetsToIgnore = 4;
 
 	private ChangeWatcher.Tracker _viewTracker;
 
+	private static class PolarInfo {
+		double rotZ; // The spherical coordinate that rotates around Z (in radians)
+		double rotX; // Ditto for X
+		double radius; // The distance the camera is from the view center
+		Vec3d viewCenter;
+	}
 
 	public CameraControl(Renderer renderer, View updateView) {
 		_renderer = renderer;
-		_viewCenter = new Vector4d();
-		_rotZ = 0;
-		_rotX = 0;
-		_radius = 10;
 		_updateView = updateView;
 
 		_viewTracker = _updateView.getChangeTracker();
@@ -68,46 +62,53 @@ public class CameraControl implements WindowInteractionListener {
 	@Override
 	public void mouseDragged(WindowInteractionListener.DragInfo dragInfo) {
 
-		synchronized(dataLock) {
-			// Give the RenderManager first crack at this
-			if (RenderManager.inst().handleDrag(dragInfo)) {
-				RenderManager.inst().queueRedraw();
-				return; // Handled
-			}
-
-			if (dragInfo.controlDown()) {
-				return;
-			}
-
-			if (dragInfo.shiftDown()) {
-				// handle rotation
-				handleRotation(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
-			} else {
-				handlePan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
-			}
-
-			updateCamTrans(true);
+		// Give the RenderManager first crack at this
+		if (RenderManager.inst().handleDrag(dragInfo)) {
+			RenderManager.inst().queueRedraw();
+			return; // Handled
 		}
+
+		if (dragInfo.controlDown()) {
+			return;
+		}
+		if (!_updateView.isMovable() || _updateView.isScripted()) {
+			return;
+		}
+
+		PolarInfo pi = getPolarCoordsFromView();
+
+		if (dragInfo.shiftDown()) {
+			// handle rotation
+			handleRotation(pi, dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
+		} else {
+			handlePan(pi, dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
+		}
+
+		updateCamTrans(pi, true);
 	}
 
-	private void handleRotation(int x, int y, int dx, int dy,
+	private void handleRotation(PolarInfo pi, int x, int y, int dx, int dy,
 	                            int button) {
 
-		_rotZ -= dx * ROT_SCALE_Z;
-		_rotX -= dy * ROT_SCALE_X;
+		pi.rotZ -= dx * ROT_SCALE_Z;
+		pi.rotX -= dy * ROT_SCALE_X;
 
-		if (_rotX < 0) _rotX = 0;
-		if (_rotX > Math.PI) _rotX = Math.PI;
+		if (pi.rotX < 0) pi.rotX = 0;
+		if (pi.rotX > Math.PI) pi.rotX = Math.PI;
 
-		if (_rotZ < 0) _rotZ += 2*Math.PI;
-		if (_rotZ > 2*Math.PI) _rotZ -= 2*Math.PI;
+		if (pi.rotZ < 0) pi.rotZ += 2*Math.PI;
+		if (pi.rotZ > 2*Math.PI) pi.rotZ -= 2*Math.PI;
 	}
 
-	private void handlePan(int x, int y, int dx, int dy,
+	private void handlePan(PolarInfo pi, int x, int y, int dx, int dy,
 	                            int button) {
 
-		Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_window.getWindowID());
+		Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_windowID);
 		if (info == null) return;
+
+		if (_updateView.isFollowing() || _updateView.isScripted()) {
+			return; // We can not pan while following an object
+		}
 
 		//Cast a ray into the XY plane both for now, and for the previous mouse position
 		Ray currRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
@@ -123,36 +124,40 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 		}
 
-		Vector4d currIntersect = currRay.getPointAtDist(currDist);
-		Vector4d prevIntersect = prevRay.getPointAtDist(prevDist);
+		Vec4d currIntersect = currRay.getPointAtDist(currDist);
+		Vec4d prevIntersect = prevRay.getPointAtDist(prevDist);
 
-		Vector4d diff = new Vector4d();
-		currIntersect.sub3(prevIntersect, diff);
+		Vec4d diff = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		diff.sub3(currIntersect, prevIntersect);
 
-		_viewCenter.subLocal3(diff);
+		pi.viewCenter.sub3(diff);
 
 	}
 
 	@Override
 	public void mouseWheelMoved(int windowID, int x, int y, int wheelRotation) {
 
-		synchronized (dataLock) {
-			int rot = wheelRotation;
-
-			if (rot > 0) {
-				for (int i = 0; i < rot; ++i) {
-					_radius = _radius / ZOOM_FACTOR;
-				}
-			} else
-			{
-				rot *= -1;
-				for (int i = 0; i < rot; ++i) {
-					_radius = _radius * ZOOM_FACTOR;
-				}
-			}
-
-			updateCamTrans(true);
+		if (!_updateView.isMovable() || _updateView.isScripted()) {
+			return;
 		}
+
+		PolarInfo pi = getPolarCoordsFromView();
+
+		int rot = wheelRotation;
+
+		if (rot > 0) {
+			for (int i = 0; i < rot; ++i) {
+				pi.radius = pi.radius / ZOOM_FACTOR;
+			}
+		} else
+		{
+			rot *= -1;
+			for (int i = 0; i < rot; ++i) {
+				pi.radius = pi.radius * ZOOM_FACTOR;
+			}
+		}
+
+		updateCamTrans(pi, true);
 	}
 
 	@Override
@@ -189,65 +194,56 @@ public class CameraControl implements WindowInteractionListener {
 		}
 	}
 
-	private void updateCamTrans(boolean updateInputs) {
-		// It is possible this gets called before the window is properly set, so just ignore the first call.
-		if (_window == null)
+	private void updateCamTrans(PolarInfo pi, boolean updateInputs) {
+
+		Vec4d zOffset = new Vec4d(0, 0, pi.radius, 1.0d);
+
+		Quaternion rot = Quaternion.Rotation(pi.rotZ, Vec4d.Z_AXIS);
+		rot.mult(Quaternion.Rotation(pi.rotX, Vec4d.X_AXIS), rot);
+
+		Transform finalTrans = new Transform(pi.viewCenter);
+
+		finalTrans.merge(new Transform(Vec4d.ORIGIN, rot, 1), finalTrans);
+		finalTrans.merge(new Transform(zOffset), finalTrans);
+
+
+		if (updateInputs) {
+			updateViewPos(finalTrans.getTransRef(), pi.viewCenter);
+		}
+
+		// Finally update the renders camera info
+		CameraInfo info = _renderer.getCameraInfo(_windowID);
+		if (info == null) {
+			// This window has not been opened yet (or is closed) force a redraw as everything will catch up
+			// and the information has been saved to the view object
+			_updateView.forceDirty();
+			RenderManager.inst().queueRedraw();
 			return;
-
-		Vector4d zOffset = new Vector4d(0, 0, _radius);
-
-		Vector4d pos = new Vector4d(_viewCenter);
-		Vector4d negCenter = new Vector4d(_viewCenter);
-		negCenter.scaleLocal3(-1);
-
-		pos.addLocal3(zOffset);
-
-		Quaternion rot = Quaternion.Rotation(_rotZ, Vector4d.Z_AXIS);
-		rot.mult(Quaternion.Rotation(_rotX, Vector4d.X_AXIS), rot);
-
-		Transform finalTrans = new Transform();
-
-		// These 3 represent a rotation around the view center (translate, rotate, negative translate)
-		finalTrans.merge(new Transform(_viewCenter), finalTrans);
-		finalTrans.merge(new Transform(Vector4d.ORIGIN, rot, 1), finalTrans);
-		finalTrans.merge(new Transform(negCenter), finalTrans);
-
-		// And set the position
-		finalTrans.merge(new Transform(pos), finalTrans);
-
-		CameraInfo info = _renderer.getCameraInfo(_window.getWindowID());
+		}
 
 		info.trans = finalTrans;
 
 		// HACK, manually set the near and far planes to keep the XY plane in view. This will be a bad thing when we go real 3D
-		info.nearDist = _radius * 0.1;
-		info.farDist = _radius * 10;
+		// TODO: not this
+		info.nearDist = pi.radius * 0.1;
+		info.farDist = pi.radius * 10;
 
-		_renderer.setCameraInfoForWindow(_window.getWindowID(), info);
-
-		if (updateInputs) {
-			updateViewPos(info.trans.getTransRef(), _viewCenter);
-		}
+		_renderer.setCameraInfoForWindow(_windowID, info);
 
 		// Queue a redraw
 		RenderManager.inst().queueRedraw();
 	}
 
 	public void setRotationAngles(double rotX, double rotZ) {
-		synchronized(dataLock) {
-			_rotX = rotX;
-			_rotZ = rotZ;
-			updateCamTrans(true);
-		}
+		PolarInfo pi = getPolarCoordsFromView();
+		pi.rotX = rotX;
+		pi.rotZ = rotZ;
+		updateCamTrans(pi, true);
 	}
 
 	@Override
-	public void setWindow(RenderWindow wind) {
-		synchronized(dataLock) {
-			_window = wind;
-
-			updateCamTrans(false);
-		}
+	public void setWindowID(int windowID) {
+		_windowID = windowID;
 	}
 
 	@Override
@@ -255,7 +251,7 @@ public class CameraControl implements WindowInteractionListener {
 		if (!RenderManager.isGood()) { return; }
 
 		RenderManager.inst().hideExistingPopups();
-		RenderManager.inst().windowClosed(_window.getWindowID());
+		RenderManager.inst().windowClosed(_windowID);
 	}
 
 	@Override
@@ -269,13 +265,13 @@ public class CameraControl implements WindowInteractionListener {
 	public void windowGainedFocus() {
 		if (!RenderManager.isGood()) { return; }
 
-		RenderManager.inst().setActiveWindow(_window.getWindowID());
+		RenderManager.inst().setActiveWindow(_windowID);
 	}
 
 	/**
 	 * Set the position information in the saved view to match this window
 	 */
-	private void updateViewPos(Vector4d viewPos, Vector4d viewCenter) {
+	private void updateViewPos(Vec3d viewPos, Vec3d viewCenter) {
 		if (_updateView == null) {
 			return;
 		}
@@ -307,36 +303,38 @@ public class CameraControl implements WindowInteractionListener {
 		return _updateView;
 	}
 
+	private PolarInfo getPolarCoordsFromView() {
+
+		PolarInfo pi = new PolarInfo();
+
+		Vec3d camPos = _updateView.getGlobalPosition();
+		pi.viewCenter = _updateView.getGlobalCenter();
+
+		Vec3d viewDiff = new Vec3d();
+		viewDiff.sub3(camPos, pi.viewCenter);
+
+		pi.radius = viewDiff.mag3();
+
+		pi.rotZ = Math.atan2(viewDiff.x, -viewDiff.y);
+
+		double xyDist = Math.hypot(viewDiff.x, viewDiff.y);
+
+		pi.rotX = Math.atan2(xyDist, viewDiff.z);
+
+		// If we are near vertical (within about a quarter of a degree) don't rotate around Z (take X as up)
+		if (Math.abs(pi.rotX) < 0.005) {
+			pi.rotZ = 0;
+		}
+		return pi;
+	}
+
 	public void checkForUpdate() {
 		if (!_viewTracker.checkAndClear()) {
 			return;
 		}
 
-		synchronized(dataLock) {
-
-			_viewCenter =_updateView.getGlobalCenter();
-
-			Vector4d camPos = _updateView.getGlobalPosition();
-
-			Vector4d viewDiff = new Vector4d();
-			camPos.sub3(_viewCenter, viewDiff);
-
-			_radius = viewDiff.mag3();
-
-			_rotZ = Math.atan2(viewDiff.x(), -viewDiff.y());
-
-			double xyDist = Math.hypot(viewDiff.x(), viewDiff.y());
-
-			_rotX = Math.atan2(xyDist, viewDiff.z());
-
-			// If we are near vertical (within about a quarter of a degree) don't rotate around Z (take X as up)
-			if (Math.abs(_rotX) < 0.005) {
-				_rotZ = 0;
-			}
-
-			updateCamTrans(false);
-
-		}
+		PolarInfo pi = getPolarCoordsFromView();
+		updateCamTrans(pi, false);
 
 	}
 }

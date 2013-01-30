@@ -16,6 +16,7 @@ package com.jaamsim.math;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,7 @@ import com.jaamsim.render.RenderUtils;
  */
 public class ConvexHull {
 
-	private ArrayList<Vector4d> _verts;
+	private ArrayList<Vec4d> _verts;
 
 	private boolean _isDegenerate = false;
 
@@ -37,8 +38,8 @@ public class ConvexHull {
 
 	private double _radius;
 
-	public static ConvexHull TryBuildHull(ArrayList<Vector4d> verts, int numAttempts) {
-		ArrayList<Vector4d> baseVerts = removeDoubles(verts);
+	public static ConvexHull TryBuildHull(ArrayList<Vec4d> verts, int numAttempts) {
+		ArrayList<Vec4d> baseVerts = removeDoubles(verts);
 
 		assert(numAttempts > 0);
 
@@ -64,7 +65,7 @@ public class ConvexHull {
 	 * Initialize this hull from the vertices provided. This is an implementation of the QuickHull algorithm (or close enough to it)
 	 * @param verts
 	 */
-	public ConvexHull(ArrayList<Vector4d> baseVerts, int seed) {
+	public ConvexHull(ArrayList<Vec4d> baseVerts, int seed) {
 
 		assert(seed >= 0);
 		assert(seed < 1);
@@ -84,15 +85,15 @@ public class ConvexHull {
 		// Create two starting faces (both use the same verts but are wound backwards to face in both directions)
 
 		int ind0 = baseVerts.size() * seed;
-		Vector4d v0 = baseVerts.get(0);
+		Vec4d v0 = baseVerts.get(0);
 		double bestDist = 0;
 		int ind1 = 0;
-		Vector4d temp = new Vector4d();
+		Vec4d temp = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		for (int i = 0; i < baseVerts.size(); ++i) {
 			if (i == ind0) continue;
 
 			// Ind1 is the furthest vertex from ind0
-			v0.sub3(baseVerts.get(i), temp);
+			temp.sub3(v0, baseVerts.get(i));
 			double dist = temp.mag3();
 			if (dist > bestDist) {
 				bestDist = dist;
@@ -101,16 +102,16 @@ public class ConvexHull {
 		}
 		// Now ind2 is the vertex furthest from the line of the above two
 		bestDist = 0;
-		Vector4d dir = new Vector4d();
-		v0.sub3(baseVerts.get(ind1), dir);
-		dir.normalizeLocal3();
+		Vec4d dir = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		dir.sub3(v0, baseVerts.get(ind1));
+		dir.normalize3();
 		int ind2 = 0;
 		for (int i = 1; i < baseVerts.size(); ++i) {
 			if (i == ind0) continue;
 			if (i == ind1) continue;
 
-			v0.sub3(baseVerts.get(i), temp);
-			dir.cross(temp, temp);
+			temp.sub3(v0, baseVerts.get(i));
+			temp.cross3(dir, temp);
 			double dist = temp.mag3();
 			if (dist > bestDist) {
 				bestDist = dist;
@@ -165,7 +166,6 @@ public class ConvexHull {
 				if (ft.points.size() != 0 && ft.furthestDist > bestDist) {
 					f = ft;
 					bestDist = ft.furthestDist;
-					break;
 				}
 			}
 			if (f == null) {
@@ -177,7 +177,7 @@ public class ConvexHull {
 			int farInd = f.furthestInd;
 
 			// Remove any faces that can see this point and orphan any points owned by these faces
-			Vector4d farVert = baseVerts.get(farInd);
+			Vec4d farVert = baseVerts.get(farInd);
 
 			ArrayList<TempHullFace> deadFaces = new ArrayList<TempHullFace>();
 
@@ -214,6 +214,7 @@ public class ConvexHull {
 			if (!scanEdges(edges, baseVerts)) {
 				// This hull diverged
 				makeDegenerate(baseVerts);
+				assert(false);
 				return;
 			}
 
@@ -262,17 +263,17 @@ public class ConvexHull {
 		_radius = 0.0;
 
 		// Now that we have all the faces we can create a real subset of points we care about
-		ArrayList<Vector4d> realVerts = new ArrayList<Vector4d>();
+		ArrayList<Vec4d> realVerts = new ArrayList<Vec4d>();
 		for (TempHullFace tf : tempFaces) {
 			HullFace realFace = new HullFace();
 			for (int i = 0; i < 3; ++i) {
 
-				Vector4d oldVert = baseVerts.get(tf.indices[i]);
+				Vec4d oldVert = baseVerts.get(tf.indices[i]);
 
 				int newInd = realVerts.size();
 
 				for (int j = 0; j < realVerts.size(); ++j) {
-					if (oldVert.equals(realVerts.get(j))) {
+					if (oldVert.equals3(realVerts.get(j))) {
 						// This vertex has already be included in the final list
 						newInd = j;
 					}
@@ -295,26 +296,64 @@ public class ConvexHull {
 
 	} // End of ConvexHull() Constructor
 
+
+/**
+ * Truncate the significand to only a few bits an compare, this is a ridiculous function
+ * that only really makes sense with the sorting comparator in order to give a
+ * reliable sorting order. This method returns a double, except it is truncated
+ * to only 4 bits of mantissa
+ *
+ * @param d
+ * @return
+ */
+private static int compareTruncate(double d0, double d1) {
+	long trunc0 = Double.doubleToLongBits(d0) & 0xFFFF000000000000L;
+	long trunc1 = Double.doubleToLongBits(d1) & 0xFFFF000000000000L;
+
+	d0 = Double.longBitsToDouble(trunc0);
+	d1 = Double.longBitsToDouble(trunc1);
+	return Double.compare(d0, d1);
+}
+
+private static final Comparator<Vec4d> COMP = new Comparator<Vec4d>() {
+	@Override
+	public int compare(Vec4d v0, Vec4d v1) {
+		int comp;
+		comp = compareTruncate(v0.x, v1.x);
+		if (comp != 0)
+			return comp;
+
+		comp = compareTruncate(v0.y, v1.y);
+		if (comp != 0)
+			return comp;
+
+		comp = compareTruncate(v0.z, v1.z);
+		if (comp != 0)
+			return comp;
+
+		return compareTruncate(v0.w, v1.w);
+	}
+};
 	/**
 	 * Remove any doubles from the list and return a new, possibly shorter list
 	 * @param orig
 	 * @return
 	 */
-	private static ArrayList<Vector4d> removeDoubles(List<Vector4d> orig) {
-		ArrayList<Vector4d> ret = new ArrayList<Vector4d>();
+	private static ArrayList<Vec4d> removeDoubles(List<Vec4d> orig) {
+		ArrayList<Vec4d> ret = new ArrayList<Vec4d>();
 		if (orig.size() == 0) {
 			return ret;
 		}
 
-		List<Vector4d> copy = new ArrayList<Vector4d>(orig);
+		List<Vec4d> copy = new ArrayList<Vec4d>(orig);
 
-		Collections.sort(copy, Vector4d.COMP);
+		Collections.sort(copy, COMP);
 
 
 		ret.add(copy.get(0));
 		int outIndex = 0; // An updated index of the last element of the returned set, this may be
 		for (int index = 1;index < copy.size(); ++index) {
-			if (!copy.get(index).equals(ret.get(outIndex))) {
+			if (!copy.get(index).equals3(ret.get(outIndex))) {
 				// We have not seen this vector before
 				ret.add(copy.get(index));
 				++outIndex;
@@ -350,19 +389,19 @@ public class ConvexHull {
 		}
 	}
 
-	private boolean scanEdges(ArrayList<HullEdge> edges, ArrayList<Vector4d> verts) {
+	private boolean scanEdges(ArrayList<HullEdge> edges, ArrayList<Vec4d> verts) {
 		ArrayList<Integer> seenIndices = new ArrayList<Integer>();
 
 		double[] edgeLengths = new double[edges.size()];
 		int i = 0;
-		Vector4d temp = new Vector4d();
+		Vec4d temp = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		for (HullEdge e : edges) {
 			if (!seenIndices.contains(e.ind0))
 				seenIndices.add(e.ind0);
 			if (!seenIndices.contains(e.ind1))
 				seenIndices.add(e.ind1);
 
-			verts.get(e.ind0).sub3(verts.get(e.ind1), temp);
+			temp.sub3(verts.get(e.ind0), verts.get(e.ind1));
 			edgeLengths[i++] = temp.mag3();
 		}
 
@@ -380,7 +419,7 @@ public class ConvexHull {
 		return _faces;
 	}
 
-	public List<Vector4d> getVertices() {
+	public List<Vec4d> getVertices() {
 
 		return _verts;
 	}
@@ -390,10 +429,10 @@ public class ConvexHull {
 		return _radius;
 	}
 
-	public boolean collides(Vector4d point, Transform trans) {
+	public boolean collides(Vec4d point, Transform trans) {
 		// Simply use the AABB formed from the points for the degenerate cases
 		if (_isDegenerate) {
-			AABB aabb = getAABB(trans.getMatrixRef());
+			AABB aabb = getAABB(trans.getMat4dRef());
 			return aabb.collides(point);
 		}
 
@@ -401,7 +440,7 @@ public class ConvexHull {
 		trans.inverse(inv);
 
 		// P is the point in hull space
-		Vector4d p = new Vector4d();
+		Vec4d p = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		inv.apply(point, p);
 
 		for (HullFace f : _faces) {
@@ -416,7 +455,7 @@ public class ConvexHull {
 	}
 
 	public double collisionDistance(Ray r, Transform trans) {
-		return collisionDistance(r, trans, Vector4d.ONES);
+		return collisionDistance(r, trans, Vec4d.ONES);
 	}
 
 	/**
@@ -425,7 +464,7 @@ public class ConvexHull {
 	 * @param trans
 	 * @return - distance to collision, or -1 if no collision
 	 */
-	public double collisionDistance(Ray r, Transform trans, Vector4d scale) {
+	public double collisionDistance(Ray r, Transform trans, Vec4d scale) {
 
 		// Simply use the AABB formed from the points for the degenerate cases
 		if (_isDegenerate) {
@@ -433,7 +472,7 @@ public class ConvexHull {
 			return aabb.collisionDist(r);
 		}
 
-		Matrix4d transMat = RenderUtils.getInverseWithScale(trans, scale);
+		Mat4d transMat = RenderUtils.getInverseWithScale(trans, scale);
 
 		// hullRay is the point in hull space
 		Ray hullRay = r.transform(transMat);
@@ -482,7 +521,7 @@ public class ConvexHull {
 		public int furthestInd = 0;
 		public ArrayList<Integer> points = new ArrayList<Integer>();
 
-		public TempHullFace(int i0, int i1, int i2, ArrayList<Vector4d> verts) {
+		public TempHullFace(int i0, int i1, int i2, ArrayList<Vec4d> verts) {
 			indices[0] = i0;
 			indices[1] = i1;
 			indices[2] = i2;
@@ -491,8 +530,8 @@ public class ConvexHull {
 			                  verts.get(indices[2]));
 
 		}
-		public void addPoint(int ind, ArrayList<Vector4d> verts) {
-			Vector4d v = verts.get(ind);
+		public void addPoint(int ind, ArrayList<Vec4d> verts) {
+			Vec4d v = verts.get(ind);
 			double dist = plane.getNormalDist(v);
 			if (dist >= furthestDist) {
 				furthestDist = dist;
@@ -529,13 +568,13 @@ public class ConvexHull {
 
 	}
 
-	private void makeDegenerate(ArrayList<Vector4d> vs) {
+	private void makeDegenerate(ArrayList<Vec4d> vs) {
 		_isDegenerate = true;
 		_verts = vs;
 		_faces = new ArrayList<HullFace>();
 		// Figure out a radius
 		_radius = 0;
-		for (Vector4d v : vs) {
+		for (Vec4d v : vs) {
 			if (v.mag3() > _radius) {
 				_radius = v.mag3();
 			}
@@ -547,7 +586,8 @@ public class ConvexHull {
 	 * @param t
 	 * @return
 	 */
-	public AABB getAABB(Matrix4d mat) {
+	public AABB getAABB(Mat4d mat) {
 		return new AABB(_verts, mat);
 	}
+
 }

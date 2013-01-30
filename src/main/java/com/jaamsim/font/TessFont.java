@@ -33,7 +33,7 @@ import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.TessFontKey;
 
@@ -57,7 +57,7 @@ private HashMap<Character, TessChar> _charMap;
 private final Font _font;
 private final TessFontKey _key;
 private final FontRenderContext _frc;
-private final ArrayList<Double> _vertices;
+private final ArrayList<double[]> _vertices;
 
 private boolean _glBufferDirty = true;
 
@@ -73,7 +73,7 @@ public TessFont(TessFontKey key) {
 	_frc = new FontRenderContext(null, true, true);
 	_font = new Font(key.getFontName(), key.getFontStyle(), 1);
 	_key = key;
-	_vertices = new ArrayList<Double>();
+	_vertices = new ArrayList<double[]>();
 
 	_charMap = new HashMap<Character, TessChar>();
 	// Originally support all the basic latin characters (will lazily add new ones as needed)
@@ -221,11 +221,11 @@ private class CharTesselator extends GLUtessellatorCallbackAdapter {
 //		Vector4d vert0 = new Vector4d(_verts.get(vertLength - 6), _verts.get(vertLength - 5), 0);
 //		Vector4d vert1 = new Vector4d(_verts.get(vertLength - 4), _verts.get(vertLength - 3), 0);
 //		Vector4d vert2 = new Vector4d(_verts.get(vertLength - 2), _verts.get(vertLength - 1), 0);
-//		Vector4d zeroToOne = new Vector4d();
-//		Vector4d oneToTwo = new Vector4d();
+//		Vector4d zeroToOne = new Vector4d(0.0d, 0.0d, 0.0d, 1.0d);
+//		Vector4d oneToTwo = new Vector4d(0.0d, 0.0d, 0.0d, 1.0d);
 //		vert1.sub3(vert0, zeroToOne);
 //		vert2.sub3(vert1, oneToTwo);
-//		Vector4d cross = new Vector4d();
+//		Vector4d cross = new Vector4d(0.0d, 0.0d, 0.0d, 1.0d);
 //		zeroToOne.cross(oneToTwo, cross);
 //		if (cross.data[2] < 0) {
 //			// This triangle is backwards wound
@@ -335,19 +335,21 @@ private void generateChar(char c) {
 	String s = "" + c;
 
 	TessOutput tessed = tesselateString(s);
+	int totalVerts = 0;
+	for (double[] ds : _vertices) {
+		totalVerts += ds.length;
+	}
 
+	assert((totalVerts % 2) == 0);
+	assert((tessed.verts.length % 2) == 0);
 	// startIndex is the index of points in the GL buffer this character starts at
-	assert((_vertices.size() % 2) == 0);
-	int startIndex = _vertices.size() / 2;
+	int startIndex = totalVerts / 2;
 
 	// numVerts is the number of vertices in the GL buffer to draw
-	assert((tessed.verts.length % 2) == 0);
 	int numVerts = tessed.verts.length / 2;
 
 	// Append the verts to the list
-	for (double d : tessed.verts) {
-		_vertices.add(d);
-	}
+	_vertices.add(tessed.verts);
 
 	TessChar tc = new TessChar(c, startIndex, numVerts, tessed.bounds.getWidth(), tessed.bounds.getHeight(), tessed.advances[0]);
 	_charMap.put(c, tc);
@@ -381,14 +383,21 @@ public synchronized int getGLBuffer(GL2GL3 gl) {
 	}
 
 	if (_glBufferDirty) {
-		FloatBuffer fb = FloatBuffer.allocate(_vertices.size()); //
-		for (double d : _vertices) {
-			fb.put((float)d);
+		int totalVerts = 0;
+		for (double[] d : _vertices) {
+			totalVerts += d.length;
+		}
+
+		FloatBuffer fb = FloatBuffer.allocate(totalVerts);
+		for (double[] ds : _vertices) {
+			for (double d : ds) {
+				fb.put((float)d);
+			}
 		}
 		fb.flip();
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _glVertBuffer);
-		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, _vertices.size() * 4, fb, GL2GL3.GL_STATIC_DRAW);
+		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, totalVerts * 4, fb, GL2GL3.GL_STATIC_DRAW);
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
 
 		_glBufferDirty = false;
@@ -403,7 +412,7 @@ public synchronized int getGLBuffer(GL2GL3 gl) {
  * @param string - the string to render
  * @return
  */
-public Vector4d getStringSize(double textHeight, String string) {
+public Vec3d getStringSize(double textHeight, String string) {
 	double scaleFactor = textHeight / getNominalHeight();
 	double width = 0;
 	for (int i = 0; i < string.length(); ++i) {
@@ -411,7 +420,7 @@ public Vector4d getStringSize(double textHeight, String string) {
 		TessChar tc = getTessChar(c);
 		width += tc.getAdvance();
 	}
-	return new Vector4d(width * scaleFactor, textHeight, 0);
+	return new Vec3d(width * scaleFactor, textHeight, 0.0d);
 }
 
 public double getNominalHeight() {

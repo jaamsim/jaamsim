@@ -17,16 +17,17 @@ package com.jaamsim.render;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.vecmath.Vector3d;
-
-import com.jaamsim.math.Matrix4d;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec2d;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec4d;
 
 /**
  * A big pile of static methods that currently don't have a better place to live. All Rendering specific
@@ -35,81 +36,85 @@ import com.jaamsim.math.Vector4d;
  */
 public class RenderUtils {
 
-	public static List<Vector4d> CIRCLE_POINTS;
-	public static List<Vector4d> RECT_POINTS;
-	public static List<Vector4d> TRIANGLE_POINTS;
+	public static List<Vec4d> CIRCLE_POINTS;
+	public static List<Vec4d> RECT_POINTS;
+	public static List<Vec4d> TRIANGLE_POINTS;
+
+	static {
+		CIRCLE_POINTS = getCirclePoints(32);
+		// Scale the points down (as JaamSim uses a 1x1 box [-0.5, 0.5] not [-1, 1]
+		for (int i = 0; i < CIRCLE_POINTS.size(); ++i) {
+			CIRCLE_POINTS.get(i).scale3(0.5);
+		}
+
+		RECT_POINTS = new ArrayList<Vec4d>();
+		RECT_POINTS.add(new Vec4d( 0.5,  0.5, 0, 1.0d));
+		RECT_POINTS.add(new Vec4d(-0.5,  0.5, 0, 1.0d));
+		RECT_POINTS.add(new Vec4d(-0.5, -0.5, 0, 1.0d));
+		RECT_POINTS.add(new Vec4d( 0.5, -0.5, 0, 1.0d));
+
+		TRIANGLE_POINTS = new ArrayList<Vec4d>();
+		TRIANGLE_POINTS.add(new Vec4d( 0.5, -0.5, 0, 1.0d));
+		TRIANGLE_POINTS.add(new Vec4d( 0.5,  0.5, 0, 1.0d));
+		TRIANGLE_POINTS.add(new Vec4d(-0.5,  0.0, 0, 1.0d));
+	}
 
 	// Transform the list of points in place
-	public static void transformPointsLocal(Transform trans, List<Vector4d> points) {
-		for (Vector4d p : points) {
+	public static void transformPointsLocal(Transform trans, List<Vec4d> points, int dummy) {
+		for (Vec4d p : points) {
 			trans.apply(p, p);
 		}
 	}
 
-	// Transform into a new list
-	public static List<Vector4d> transformPoints(Transform trans, List<Vector4d> points) {
-		List<Vector4d> ret = new ArrayList<Vector4d>();
-		for (Vector4d p : points) {
-			Vector4d v = new Vector4d();
+	public static List<Vec4d> transformPoints(Transform trans, List<Vec4d> points, int dummy) {
+		List<Vec4d> ret = new ArrayList<Vec4d>();
+		for (Vec4d p : points) {
+			Vec4d v = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			trans.apply(p, v);
 			ret.add(v);
 		}
 		return ret;
 	}
 
-	// As above, but with a matrix
-	public static void transformPointsLocal(Matrix4d mat, List<Vector4d> points) {
-		for (Vector4d p : points) {
-			mat.mult(p,  p);
-		}
-	}
-
-	public static List<Vector4d> transformPoints(Matrix4d mat, List<Vector4d> points) {
-		List<Vector4d> ret = new ArrayList<Vector4d>();
-		for (Vector4d p : points) {
-			Vector4d v = new Vector4d();
-			mat.mult(p, v);
+	public static List<Vec4d> transformPoints(Mat4d mat, List<Vec4d> points, int dummy) {
+		List<Vec4d> ret = new ArrayList<Vec4d>();
+		for (Vec4d p : points) {
+			Vec4d v = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+			v.mult4(mat, p);
 			ret.add(v);
 		}
 		return ret;
 	}
 
+static void putPointXY(FloatBuffer fb, Vec2d v) {
+	fb.put((float)v.x);
+	fb.put((float)v.y);
+}
+
+static void putPointXYZ(FloatBuffer fb, Vec3d v) {
+	fb.put((float)v.x);
+	fb.put((float)v.y);
+	fb.put((float)v.z);
+}
+
 	/**
 	 * Returns a list of points for a circle in the XY plane at the origin
 	 * @return
 	 */
-	public static ArrayList<Vector4d> getCirclePoints(int numSegments) {
+	public static ArrayList<Vec4d> getCirclePoints(int numSegments) {
 		if (numSegments < 3) {
 			return null;
 		}
-		ArrayList<Vector4d> ret = new ArrayList<Vector4d>();
+		ArrayList<Vec4d> ret = new ArrayList<Vec4d>();
 
 		double thetaStep = 2 * Math.PI / numSegments;
 		for (int i = 0; i < numSegments + 1; ++i) {
 			double theta = i * thetaStep;
 
-			ret.add(new Vector4d(Math.cos(theta), Math.sin(theta), 0));
+			ret.add(new Vec4d(Math.cos(theta), Math.sin(theta), 0, 1.0d));
 		}
 
 		return ret;
-	}
-
-	public static void init() {
-		CIRCLE_POINTS = getCirclePoints(32);
-		// Scale the points down (as JaamSim uses a 1x1 box [-0.5, 0.5] not [-1, 1]
-		transformPointsLocal(Matrix4d.ScaleMatrix(0.5), CIRCLE_POINTS);
-
-		RECT_POINTS = new ArrayList<Vector4d>();
-		RECT_POINTS.add(new Vector4d( 0.5,  0.5, 0));
-		RECT_POINTS.add(new Vector4d(-0.5,  0.5, 0));
-		RECT_POINTS.add(new Vector4d(-0.5, -0.5, 0));
-		RECT_POINTS.add(new Vector4d( 0.5, -0.5, 0));
-
-		TRIANGLE_POINTS = new ArrayList<Vector4d>();
-		TRIANGLE_POINTS.add(new Vector4d( 0.5, -0.5, 0));
-		TRIANGLE_POINTS.add(new Vector4d( 0.5,  0.5, 0));
-		TRIANGLE_POINTS.add(new Vector4d(-0.5,  0.0, 0));
-
 	}
 
 	/**
@@ -118,8 +123,8 @@ public class RenderUtils {
 	 * @param height
 	 * @return
 	 */
-	public static ArrayList<Vector4d> getRoundedRectPoints(double width, double height, int numSegments) {
-		ArrayList<Vector4d> ret = new ArrayList<Vector4d>();
+	public static ArrayList<Vec4d> getRoundedRectPoints(double width, double height, int numSegments) {
+		ArrayList<Vec4d> ret = new ArrayList<Vec4d>();
 
 
 		// Create semi circles on the ends
@@ -137,12 +142,12 @@ public class RenderUtils {
 		// +X cap
 		for (int i = 0; i < numSegments/2 + 1; ++i) {
 			double theta = i * thetaStep;
-			ret.add(new Vector4d(xScale*(radius*Math.sin(theta) + fociiPoint), -radius*Math.cos(theta), 0));
+			ret.add(new Vec4d(xScale*(radius*Math.sin(theta) + fociiPoint), -radius*Math.cos(theta), 0, 1.0d));
 		}
 		// -X cap
 		for (int i = 0; i < numSegments/2 + 1; ++i) {
 			double theta = i * thetaStep;
-			ret.add(new Vector4d(xScale*(-radius*Math.sin(theta) - fociiPoint), radius*Math.cos(theta), 0));
+			ret.add(new Vec4d(xScale*(-radius*Math.sin(theta) - fociiPoint), radius*Math.cos(theta), 0, 1.0d));
 		}
 
 
@@ -159,20 +164,20 @@ public class RenderUtils {
 	 * @param numSegments
 	 * @return
 	 */
-	public static ArrayList<Vector4d> getArcPoints(double radius, Vector4d center, double startAngle, double endAngle, int numSegments) {
+	public static ArrayList<Vec4d> getArcPoints(double radius, Vec4d center, double startAngle, double endAngle, int numSegments) {
 		if (numSegments < 3) {
 			return null;
 		}
 
-		ArrayList<Vector4d> ret = new ArrayList<Vector4d>();
+		ArrayList<Vec4d> ret = new ArrayList<Vec4d>();
 
 		double thetaStep = (startAngle - endAngle) / numSegments;
 		for (int i = 0; i < numSegments; ++i) {
 			double theta0 = i * thetaStep + startAngle;
 			double theta1 = (i+1) * thetaStep + startAngle;
 
-			ret.add(new Vector4d(radius * Math.cos(theta0) + center.x(), radius * Math.sin(theta0) + center.y(), 0));
-			ret.add(new Vector4d(radius * Math.cos(theta1) + center.x(), radius * Math.sin(theta1) + center.y(), 0));
+			ret.add(new Vec4d(radius * Math.cos(theta0) + center.x, radius * Math.sin(theta0) + center.y, 0, 1.0d));
+			ret.add(new Vec4d(radius * Math.cos(theta1) + center.x, radius * Math.sin(theta1) + center.y, 0, 1.0d));
 		}
 
 		return ret;
@@ -234,8 +239,8 @@ public class RenderUtils {
 			yScale = Math.tan(camInfo.FOV/2);
 			xScale = yScale * aspectRatio;
 		}
-		Vector4d dir = new Vector4d(x * xScale, y * yScale, -1, 0); // This will be normalized by Ray()
-		Vector4d start = new Vector4d(0, 0, 0);
+		Vec4d dir = new Vec4d(x * xScale, y * yScale, -1, 0); // This will be normalized by Ray()
+		Vec4d start = new Vec4d(0, 0, 0, 1.0d);
 
 		// Temp is the ray in eye-space
 		Ray temp = new Ray(start, dir);
@@ -251,10 +256,10 @@ public class RenderUtils {
 	 * @param scale
 	 * @return
 	 */
-	public static Matrix4d mergeTransAndScale(Transform trans, Vector4d scale) {
-		Matrix4d ret = new Matrix4d();
-		trans.getMatrix(ret);
-		ret.mult(Matrix4d.ScaleMatrix(scale), ret);
+	public static Mat4d mergeTransAndScale(Transform trans, Vec4d scale) {
+		Mat4d ret = new Mat4d();
+		trans.getMat4d(ret);
+		ret.scaleCols3(scale);
 
 		return ret;
 	}
@@ -265,18 +270,18 @@ public class RenderUtils {
 	 * @param scale
 	 * @return
 	 */
-	public static Matrix4d getInverseWithScale(Transform trans, Vector4d scale) {
+	public static Mat4d getInverseWithScale(Transform trans, Vec3d scale) {
 		Transform t = new Transform(trans);
 		t.inverse(t);
 
-		Matrix4d ret = new Matrix4d();
-		t.getMatrix(ret);
-		Vector4d s = new Vector4d(scale);
+		Mat4d ret = new Mat4d();
+		t.getMat4d(ret);
+		Vec3d s = new Vec3d(scale);
 		// Prevent dividing by zero
-		if (s.data[0] == 0) { s.data[0] = 1; }
-		if (s.data[1] == 0) { s.data[1] = 1; }
-		if (s.data[2] == 0) { s.data[2] = 1; }
-		Matrix4d.ScaleMatrix(1/s.x(), 1/s.y(), 1/s.z()).mult(ret, ret);
+		if (s.x == 0) { s.x = 1; }
+		if (s.y == 0) { s.y = 1; }
+		if (s.z == 0) { s.z = 1; }
+		ret.scaleRows3(new Vec3d(1/s.x, 1/s.y, 1/s.z));
 
 		return ret;
 
@@ -302,37 +307,37 @@ public class RenderUtils {
 	}
 
 	// Get the closest point in a line segment to a ray
-	public static Vector4d rayClosePoint(Matrix4d rayMatrix, Vector4d worldA, Vector4d worldB) {
+	public static Vec4d rayClosePoint(Mat4d rayMatrix, Vec4d worldA, Vec4d worldB) {
 
 		// Create vectors for a and b in ray space
-		Vector4d a = new Vector4d();
-		rayMatrix.mult(worldA, a);
+		Vec4d a = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		a.mult4(rayMatrix, worldA);
 
-		Vector4d b = new Vector4d();
-		rayMatrix.mult(worldB, b);
+		Vec4d b = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		b.mult4(rayMatrix, worldB);
 
-		Vector4d ab = new Vector4d(); // The line A to B
-		Vector4d negA = new Vector4d(); // -1 * A
+		Vec4d ab = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // The line A to B
 
-		b.sub3(a, ab);
-		Vector4d.ORIGIN.sub3(a, negA);
+		Vec4d negA = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // -1 * A
+		negA.sub3(a);
 
-		double dot = negA.dot2(ab)/ab.magSquared2();
+		ab.sub3(b, a);
+
+		double dot = negA.dot2(ab)/ab.magSquare2();
 		if (dot < 0) {
 			// The closest point is the A point
-			return new Vector4d(worldA);
+			return new Vec4d(worldA);
 		} else if (dot >= 1) {
 			// B is closest
-			return new Vector4d(worldB);
+			return new Vec4d(worldB);
 		} else {
 			// An intermediate point is closest
-			Vector4d worldAB = new Vector4d();
-			worldB.sub3(worldA, worldAB);
+			Vec4d worldAB = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+			worldAB.sub3(worldB, worldA);
 
-			Vector4d ret = new Vector4d();
-			worldAB.scale3(dot, ret);
-
-			ret.addLocal3(worldA);
+			Vec4d ret = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+			ret.scale3(dot, worldAB);
+			ret.add3(worldA);
 
 			return ret;
 		}
@@ -340,15 +345,15 @@ public class RenderUtils {
 
 	// Get the angle (in rads) this point is off the ray, this is useful for collision cones
 	// This will return an negative angle for points behind the start of the ray
-	public static double angleToRay(Matrix4d rayMatrix, Vector4d worldP) {
+	public static double angleToRay(Mat4d rayMatrix, Vec4d worldP) {
 
-		Vector4d p = new Vector4d();
-		rayMatrix.mult(worldP, p);
+		Vec4d p = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		p.mult4(rayMatrix, worldP);
 
-		return Math.atan(p.mag2() / p.z());
+		return Math.atan(p.mag2() / p.z);
 	}
 
-	public static Vector4d getGeometricMedian(ArrayList<Vector3d> points) {
+	public static Vec4d getGeometricMedian(ArrayList<Vec3d> points) {
 		assert(points.size() > 0);
 
 		double minX = points.get(0).x;
@@ -358,7 +363,7 @@ public class RenderUtils {
 		double minZ = points.get(0).z;
 		double maxZ = points.get(0).z;
 
-		for (Vector3d p : points) {
+		for (Vec3d p : points) {
 			if (p.x < minX) minX = p.x;
 			if (p.x > maxX) maxX = p.x;
 
@@ -369,10 +374,10 @@ public class RenderUtils {
 			if (p.z > maxZ) maxZ = p.z;
 		}
 
-		return new Vector4d((minX+maxX)/2, (minY+maxY)/2,  (minZ+maxZ)/2);
+		return new Vec4d((minX+maxX)/2, (minY+maxY)/2,  (minZ+maxZ)/2, 1.0d);
 	}
 
-	public static Vector4d getPlaneCollisionDiff(Plane p, Ray r0, Ray r1) {
+	public static Vec4d getPlaneCollisionDiff(Plane p, Ray r0, Ray r1) {
 		double r0Dist = p.collisionDist(r0);
 		double r1Dist = p.collisionDist(r1);
 
@@ -380,15 +385,50 @@ public class RenderUtils {
 		       r1Dist < 0 ||    r1Dist == Double.POSITIVE_INFINITY)
 		{
 			// The plane is parallel or behind one of the rays...
-			return new Vector4d(); // Just ignore it for now...
+			return new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // Just ignore it for now...
 		}
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
-		Vector4d r0Point = r0.getPointAtDist(r0Dist);
-		Vector4d r1Point = r1.getPointAtDist(r1Dist);
+		Vec4d r0Point = r0.getPointAtDist(r0Dist);
+		Vec4d r1Point = r1.getPointAtDist(r1Dist);
 
-		Vector4d ret = new Vector4d();
-		r0Point.sub3(r1Point, ret);
+		Vec4d ret = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		ret.sub3(r0Point, r1Point);
 		return ret;
 	}
+
+	/**
+	 * This is scratch space for matrix marshaling
+	 */
+	private static final float[] MAT_MARSHAL = new float[16];
+	/**
+	 * Marshal a Mat4d into a static scratch space, this should only be called by the render thread, but I'm not
+	 * putting a guard here for performance reasons. This returns a colum major float array
+	 * @param mat
+	 * @return
+	 */
+	public static float[] MarshalMat4d(Mat4d mat) {
+		MAT_MARSHAL[ 0] = (float)mat.d00;
+		MAT_MARSHAL[ 1] = (float)mat.d10;
+		MAT_MARSHAL[ 2] = (float)mat.d20;
+		MAT_MARSHAL[ 3] = (float)mat.d30;
+
+		MAT_MARSHAL[ 4] = (float)mat.d01;
+		MAT_MARSHAL[ 5] = (float)mat.d11;
+		MAT_MARSHAL[ 6] = (float)mat.d21;
+		MAT_MARSHAL[ 7] = (float)mat.d31;
+
+		MAT_MARSHAL[ 8] = (float)mat.d02;
+		MAT_MARSHAL[ 9] = (float)mat.d12;
+		MAT_MARSHAL[10] = (float)mat.d22;
+		MAT_MARSHAL[11] = (float)mat.d32;
+
+		MAT_MARSHAL[12] = (float)mat.d03;
+		MAT_MARSHAL[13] = (float)mat.d13;
+		MAT_MARSHAL[14] = (float)mat.d23;
+		MAT_MARSHAL[15] = (float)mat.d33;
+		return MAT_MARSHAL;
+
+	}
+
 }

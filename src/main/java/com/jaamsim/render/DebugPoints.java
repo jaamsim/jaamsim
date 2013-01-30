@@ -14,34 +14,44 @@
  */
 package com.jaamsim.render;
 
+import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Map;
 
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Ray;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 
 public class DebugPoints implements Renderable {
 
-	private List<Vector4d> _points;
+	private FloatBuffer fb;
+	private List<Vec4d> _points;
 	private final float[] _colour;
 	private final float[] _hoverColour;
 	private double _pointWidth;
 	private long _pickingID;
+	private VisibilityInfo _visInfo;
 
 	private double _collisionAngle = 0.008727; // 0.5 degrees in radians
 
 	private AABB _bounds;
 
-	public DebugPoints(List<Vector4d> points, Color4d colour, Color4d hoverColour, double pointWidth, long pickingID) {
+	public DebugPoints(List<Vec4d> points, Color4d colour, Color4d hoverColour, double pointWidth, VisibilityInfo visInfo, long pickingID) {
 		_points = points;
 		_colour = colour.toFloats();
 		_hoverColour = hoverColour.toFloats();
 		_pointWidth = pointWidth;
 		_pickingID = pickingID;
+		_visInfo = visInfo;
 
-		_bounds = new AABB(_points, 100000); // TODO, tune this fudge factor by something more real
+		_bounds = new AABB(points, 100000); // TODO, tune this fudge factor by something more real
+
+		fb = FloatBuffer.allocate(3 * points.size());
+		for (Vec4d point : points) {
+			RenderUtils.putPointXYZ(fb, point);
+		}
+		fb.flip();
 	}
 
 	@Override
@@ -52,7 +62,7 @@ public class DebugPoints implements Renderable {
 		if (pickRay != null && getCollisionDist(pickRay) > 0)
 			renderColour = _hoverColour;
 
-		DebugUtils.renderPoints(vaoMap, renderer, _points, renderColour, _pointWidth, cam);
+		DebugUtils.renderPoints(vaoMap, renderer, fb, renderColour, _pointWidth, cam);
 	}
 
 	@Override
@@ -84,13 +94,13 @@ public class DebugPoints implements Renderable {
 
 		double tan = Math.tan(_collisionAngle);
 
-		Vector4d op = new Vector4d(); // Vector from ray start to
+		Vec4d op = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // Vector from ray start to
 
 		double nearDist = Double.POSITIVE_INFINITY;
 
-		for (Vector4d p : _points) {
-			p.sub3(r.getStartRef(), op);
-			double hypot2 = op.magSquared3();
+		for (Vec4d p : _points) {
+			op.sub3(p, r.getStartRef());
+			double hypot2 = op.magSquare3();
 
 			double dot = op.dot3(r.getDirRef()); // Dot is the distance along the ray to the nearest point
 
@@ -119,9 +129,13 @@ public class DebugPoints implements Renderable {
 	}
 
 	@Override
-	public boolean renderForView(int windowID) {
-		return true;
-	}
+	public boolean renderForView(int viewID, double dist) {
+		if (dist < _visInfo.minDist || dist > _visInfo.maxDist) {
+			return false;
+		}
 
+		if (_visInfo.viewIDs == null || _visInfo.viewIDs.size() == 0) return true; //Default to always visible
+		return _visInfo.viewIDs.contains(viewID);
+	}
 
 }

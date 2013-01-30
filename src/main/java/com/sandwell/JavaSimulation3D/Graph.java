@@ -18,10 +18,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import javax.vecmath.Vector3d;
-
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec3d;
 import com.sandwell.JavaSimulation.ColorListInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
@@ -36,7 +34,7 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.Vector3dInput;
+import com.sandwell.JavaSimulation.Vec3dInput;
 
 public class Graph extends DisplayEntity  {
 	private static final ArrayList<Graph> allInstances;
@@ -167,9 +165,9 @@ public class Graph extends DisplayEntity  {
 	@Keyword(desc = "The font name for all labels, enclosed in single quotes.",
 	         example = "Graph1 LabelFontName { 'Arial' }")
 	protected final StringInput labelFontName; // For all the texts
-	protected Vector3d graphSize;   // graph size (the actual graph area)
-	protected Vector3d graphOrigin; // bottom left position of the graph
-	protected Vector3d graphCenter; // Center point of the graph
+	protected Vec3d graphSize;   // graph size (the actual graph area)
+	protected Vec3d graphOrigin; // bottom left position of the graph
+	protected Vec3d graphCenter; // Center point of the graph
 
 	// A list of the line thickness for corresponding item in targetEntityList
 
@@ -269,11 +267,11 @@ public class Graph extends DisplayEntity  {
 
 	@Keyword(desc = "Coordinates (in { x, y, z }) of the center of the legend.",
 	         example = "Graph1 LegendCenter { -10 -10 0 }")
-	private final Vector3dInput legendCenter; // TopLeft corner of the legend
+	private final Vec3dInput legendCenter; // TopLeft corner of the legend
 
 	@Keyword(desc = "Size (width and height) of the legend.",
 	         example = "Graph1 LegendSize { 7.00 4.00 }")
-	private final Vector3dInput legendSize;	  // size of legend
+	private final Vec3dInput legendSize;	  // size of legend
 
 	@Keyword(desc = "The height of the legend text.",
 	         example = "Graph1 LegendTextHeight { 0.5 }")
@@ -281,7 +279,7 @@ public class Graph extends DisplayEntity  {
 
 	@Keyword(desc = "Width and height of the legend markers.",
 	         example = "Graph1 LegendMarkerSize { 2.4 0.03 }")
-	private final Vector3dInput legendMarkerSize;	// size of the marker for each series
+	private final Vec3dInput legendMarkerSize;	// size of the marker for each series
 
 	@Keyword(desc = "The gap between the left margin of the legend and the text labels.",
 	         example = "Graph1 LegendSeriesLabelGap { 3 }")
@@ -312,15 +310,18 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 XAxisUnits { d }")
 	private final StringInput xAxisUnits; // text shown after each x-axis label
 
-	@Keyword(desc = "A numerical multiplier used to rescale the x-axis of a graph for different time units (eg. days)",
+	@Keyword(desc = "A numerical multiplier used to rescale the x-axis of a graph for different time units (eg. days)." +
+	         " Note: this only affects the display, the other inputs need to be specified in internal units",
 	         example = "Graph1 XAxisMultiplier { 0.0416667 }")
 	private final DoubleInput xAxisMultiplier; // the value to multiply each x-axis label by
 
-	@Keyword(desc = "A numerical multiplier used to rescale the y-axis of a graph for different property value units.",
+	@Keyword(desc = "A numerical multiplier used to rescale the y-axis of a graph for different property value units." +
+	         " Note: this only affects the display, the other inputs need to be specified in internal units",
 	         example = "Graph1 YAxisMultiplier { 3.28083 }")
 	private final DoubleInput yAxisMultiplier; // the value to multiply each y-axis label by
 
-	@Keyword(desc = "A numerical multiplier used to rescale the secondary y-axis of a graph for different property value units.",
+	@Keyword(desc = "A numerical multiplier used to rescale the secondary y-axis of a graph for different property value units." +
+	         " Note: this only affects the display, the other inputs need to be specified in internal units",
 	         example = "Graph1 SecondaryYAxisMultiplier { 3.28083 }")
 	private final DoubleInput secondaryYAxisMultiplier; // the value to multiply each secondary y-axis label by
 
@@ -484,14 +485,14 @@ public class Graph extends DisplayEntity  {
 		seriesLabelGap = new DoubleInput("LegendSeriesLabelGap", "Legend", 0.0);
 		this.addInput(seriesLabelGap, true);
 
-		legendCenter = new Vector3dInput("LegendCenter", "Legend", new Vector3d(0.0d, 0.0d, 0.0d));
+		legendCenter = new Vec3dInput("LegendCenter", "Legend", new Vec3d(0.0d, 0.0d, 0.0d));
 		this.addInput(legendCenter, true);
 
-		legendSize = new Vector3dInput("LegendSize", "Legend", new Vector3d(1.0d, 1.0d, 0.0d));
+		legendSize = new Vec3dInput("LegendSize", "Legend", new Vec3d(1.0d, 1.0d, 0.0d));
 		legendSize.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(legendSize, true);
 
-		legendMarkerSize = new Vector3dInput("LegendMarkerSize", "Legend", new Vector3d(0.1d, 0.1d, 0.0d));
+		legendMarkerSize = new Vec3dInput("LegendMarkerSize", "Legend", new Vec3d(0.1d, 0.1d, 0.0d));
 		legendMarkerSize.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(legendMarkerSize, true);
 
@@ -722,33 +723,33 @@ public class Graph extends DisplayEntity  {
 		return method;
 	}
 
-	public Vector4d getGraphOrigin() {
-		return new Vector4d(graphOrigin.x, graphOrigin.y,  graphOrigin.z);
+	public Vec3d getGraphOrigin() {
+		return graphOrigin;
 	}
 
-	public Vector4d getGraphSize() {
-		return new Vector4d(graphSize.x, graphSize.y,  graphSize.z);
+	public Vec3d getGraphSize() {
+		return graphSize;
 	}
 
-	public Vector4d getGraphCenter() {
-		return new Vector4d(graphCenter.x, graphCenter.y,  graphCenter.z);
+	public Vec3d getGraphCenter() {
+		return graphCenter;
 	}
 
 	@Override
 	public void updateGraphics(double time) {
 		super.updateGraphics(time);
 
-		Vector3d graphExtent = getSize();
+		Vec3d graphExtent = getSize();
 		// Draw graphic rectangle
-		graphSize = new Vector3d();
-		graphSize.setX( ( graphExtent.x - ( leftMargin.getValue() +  rightMargin.getValue() ) ) / graphExtent.x );
-		graphSize.setY( ( graphExtent.y - (  topMargin.getValue() + bottomMargin.getValue() ) ) / graphExtent.y );
+		graphSize = new Vec3d();
+		graphSize.x = ( ( graphExtent.x - ( leftMargin.getValue() +  rightMargin.getValue() ) ) / graphExtent.x );
+		graphSize.y = ( ( graphExtent.y - (  topMargin.getValue() + bottomMargin.getValue() ) ) / graphExtent.y );
 
 		// Center position of the graph
-		graphCenter = new Vector3d( ( ( leftMargin.getValue() ) / 2 -	rightMargin.getValue()/2 ) / graphExtent.x,
+		graphCenter = new Vec3d( ( ( leftMargin.getValue() ) / 2 -	rightMargin.getValue()/2 ) / graphExtent.x,
 				(( bottomMargin.getValue() ) / 2 - ( topMargin.getValue() ) / 2 ) / graphExtent.y , 0.0 );
 
-		graphOrigin = new Vector3d( graphCenter.x - graphSize.x/2, graphCenter.y - graphSize.y/2, 0.0  );
+		graphOrigin = new Vec3d( graphCenter.x - graphSize.x/2, graphCenter.y - graphSize.y/2, 0.0  );
 
 
 	}
@@ -930,14 +931,6 @@ public class Graph extends DisplayEntity  {
 		return value;
 	}
 
-	/**
-	 * Return the entity size, but in a JaamSim math vector
-	 */
-	public Vector4d getJaamMathSize() {
-		Vector3d size = getSize();
-		return new Vector4d(size.x, size.y, size.z);
-	}
-
 	public ArrayList<SeriesInfo> getPrimarySeries() {
 		return primarySeries;
 	}
@@ -1047,6 +1040,13 @@ public class Graph extends DisplayEntity  {
 		return xAxisLabelGap.getValue() / getSize().y;
 	}
 
+	public double getSecondaryYAxisInterval() {
+		return secondaryYAxisInterval.getValue();
+	}
+	public int getSecondaryYAxisPrecision() {
+		return secondaryYAxisPrecision.getValue();
+	}
+
 	public double getYAxisLabelGap() {
 		return yAxisLabelGap.getValue();
 	}
@@ -1071,16 +1071,16 @@ public class Graph extends DisplayEntity  {
 		return timeInterval.getValue();
 	}
 
-	Vector3d getLegendCenter() {
-		return legendCenter.getValue();
+	public double getXAxisMultiplier() {
+		return xAxisMultiplier.getValue();
 	}
 
-	Vector3d getLegendSize() {
-		return legendSize.getValue();
+	public double getYAxisMultiplier() {
+		return yAxisMultiplier.getValue();
 	}
 
-	Vector3d getLegendMarkerSize() {
-		return legendMarkerSize.getValue();
+	public double getSecondaryYAxisMultiplier() {
+		return secondaryYAxisMultiplier.getValue();
 	}
 
 	// ******************************************************************************************

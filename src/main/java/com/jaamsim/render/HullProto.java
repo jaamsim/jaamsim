@@ -22,8 +22,8 @@ import java.util.Map;
 import javax.media.opengl.GL2GL3;
 
 import com.jaamsim.math.ConvexHull;
-import com.jaamsim.math.Matrix4d;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.Vec4d;
 
 /**
  * A renderable prototype for a convex hull
@@ -67,11 +67,11 @@ public class HullProto {
 		_vertexBuffer = is[0];
 		_indexBuffer = is[1];
 
-		List<Vector4d> verts = _hull.getVertices();
+		List<Vec4d> verts = _hull.getVertices();
 		// Generate the vertex buffer
 		FloatBuffer fb = FloatBuffer.allocate(verts.size() * 3); //
-		for (Vector4d v : verts) {
-			fb.put(v.toFloats(), 0, 3);
+		for (Vec4d v : verts) {
+			RenderUtils.putPointXYZ(fb, v);
 		}
 		fb.flip();
 
@@ -124,7 +124,7 @@ public class HullProto {
 	}
 
 	public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
-            Matrix4d modelViewMat,
+            Mat4d modelViewMat,
             Camera cam) {
 
 		GL2GL3 gl = renderer.getGL();
@@ -139,10 +139,10 @@ public class HullProto {
 		gl.glUseProgram(_progHandle);
 
 		// Setup uniforms for this object
-		Matrix4d projMat = cam.getProjMatRef();
+		Mat4d projMat = cam.getProjMat4d();
 
-		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, modelViewMat.toFloats(), 0);
-		gl.glUniformMatrix4fv(_projMatVar, 1, false, projMat.toFloats(), 0);
+		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
 		// Actually draw it
 

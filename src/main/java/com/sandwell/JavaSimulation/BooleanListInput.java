@@ -26,4 +26,29 @@ public class BooleanListInput extends ListInput<BooleanVector> {
 		value = Input.parseBooleanVector(input);
 		this.updateEditingFlags();
 	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue.size() == 0)
+			return NO_VALUE;
+
+		StringBuilder tmp = new StringBuilder();
+		if (defValue.get(0))
+			tmp.append("TRUE");
+		else
+			tmp.append("FALSE");
+
+		for (int i = 1; i < defValue.size(); i++) {
+			tmp.append(SEPARATOR);
+
+			if (defValue.get(i))
+				tmp.append("TRUE");
+			else
+				tmp.append("FALSE");
+		}
+		return tmp.toString();
+	}
 }

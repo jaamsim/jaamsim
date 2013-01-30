@@ -51,13 +51,12 @@ import javax.media.opengl.GLProfile;
 import com.jaamsim.collada.ColParser;
 import com.jaamsim.font.OverlayString;
 import com.jaamsim.font.TessFont;
-import com.jaamsim.input.MouseHandler;
-import com.jaamsim.input.WindowInteractionListener;
 import com.jaamsim.math.AABB;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
-import com.jaamsim.math.Matrix4d;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.util.ExceptionLogger;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.event.WindowListener;
@@ -91,6 +90,7 @@ public class Renderer {
 	}
 
 	private static boolean RENDER_DEBUG_INFO = false;
+	private static boolean USE_DEBUG_GL = true;
 
 	private EnumMap<ShaderHandle, Shader> _shaders;
 
@@ -135,6 +135,7 @@ public class Renderer {
 	private ArrayList<RenderProxy> _proxyScene = new ArrayList<RenderProxy>();
 
 	private boolean _allowDelayedTextures;
+	private double _sceneTimeMS;
 
 	// This may not be the best way to cache this
 	//private GL2GL3 _currentGL = null;
@@ -454,6 +455,11 @@ public class Renderer {
 	private void createWindowImp(CreateWindowMessage message) {
 
 		RenderGLListener listener = new RenderGLListener();
+
+		// Set the listeners windowID before creating the window to ensure it never gets a callback before the
+		// ID is valid
+		message.listener.setWindowID(message.windowID);
+
 		RenderWindow window = new RenderWindow(message.x, message.y,
 		                                       message.width, message.height,
 		                                       message.title, message.name,
@@ -468,7 +474,6 @@ public class Renderer {
 		synchronized (_openWindows) {
 			_openWindows.put(message.windowID, window);
 		}
-		message.listener.setWindow(window);
 
 		GLWindowListener wl = new GLWindowListener(window.getWindowID());
 		window.getGLWindowRef().addWindowListener(wl);
@@ -644,7 +649,9 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		int res = _sharedContext.makeCurrent();
 		assert (res == GLContext.CONTEXT_CURRENT);
 
-		_sharedContext.setGL(new DebugGL2GL3(_sharedContext.getGL().getGL2GL3()));
+		if (USE_DEBUG_GL) {
+			_sharedContext.setGL(new DebugGL2GL3(_sharedContext.getGL().getGL2GL3()));
+		}
 
 		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
 		initShaders(gl);
@@ -652,7 +659,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		// Sub system specific intitializations
 		DebugUtils.init(this, gl);
 		Polygon.init(this, gl);
-		RenderUtils.init();
 		_texCache.init(gl);
 
 		_sharedContext.release();
@@ -697,8 +703,9 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		_protoCache.put(key, proto);
 
 		synchronized(_protoBounds) {
-			_protoBounds.put(key, proto.getHull().getAABB(new Matrix4d()));
+			_protoBounds.put(key, proto.getHull().getAABB(new Mat4d()));
 		}
+
 		synchronized(_protoBoundsLock) {
 			_protoBoundsLock.notifyAll();
 		}
@@ -819,6 +826,8 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	// Recreate the internal scene based on external input
 	private void updateRenderableScene() {
 		synchronized (_sceneLock) {
+			long sceneStart = System.nanoTime();
+
 			_currentScene = new ArrayList<Renderable>();
 			_currentOverlay = new ArrayList<OverlayRenderable>();
 
@@ -826,6 +835,9 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 				proxy.collectRenderables(this, _currentScene);
 				proxy.collectOverlayRenderables(this, _currentOverlay);
 			}
+
+			long sceneTime = System.nanoTime() - sceneStart;
+			_sceneTimeMS = sceneTime / 1000000.0;
 		}
 	}
 
@@ -844,7 +856,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	 * @param ray
 	 * @return
 	 */
-	public List<PickResult> pick(Ray pickRay) {
+	public List<PickResult> pick(Ray pickRay, int viewID) {
 		// Do not update the scene while a pick is underway
 		ArrayList<PickResult> ret = new ArrayList<PickResult>();
 
@@ -854,9 +866,15 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		synchronized (_sceneLock) {
 			for (Renderable r : _currentScene) {
-				double dist = r.getCollisionDist(pickRay);
-				if (dist >= 0.0) {
-					ret.add(new PickResult(dist, r.getPickingID()));
+				double rayDist = r.getCollisionDist(pickRay);
+				if (rayDist >= 0.0) {
+
+					// Also check that this is visible
+					double centerDist = pickRay.getDistAlongRay(r.getBoundsRef().getCenter());
+
+					if (r.renderForView(viewID, centerDist)) {
+						ret.add(new PickResult(rayDist, r.getPickingID()));
+					}
 				}
 			}
 			return ret;
@@ -1027,7 +1045,9 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		public void init(GLAutoDrawable drawable) {
 			synchronized (_rendererLock) {
 				// Per window initialization
-				drawable.setGL(new DebugGL2GL3(drawable.getGL().getGL2GL3()));
+				if (USE_DEBUG_GL) {
+					drawable.setGL(new DebugGL2GL3(drawable.getGL().getGL2GL3()));
+				}
 
 				GL2GL3 gl = drawable.getGL().getGL2GL3();
 
@@ -1043,8 +1063,8 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 				gl.glEnable(GL.GL_MULTISAMPLE);
 
-				gl.glBlendFunc(GL2GL3.GL_ONE, GL2GL3.GL_ONE_MINUS_SRC_ALPHA);
-				gl.glBlendEquation(GL2GL3.GL_FUNC_ADD);
+				gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
+				gl.glBlendFuncSeparate(GL2GL3.GL_SRC_ALPHA, GL2GL3.GL_ONE_MINUS_SRC_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
 
 			}
 		}
@@ -1096,17 +1116,18 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 				if (RENDER_DEBUG_INFO) {
 					// Draw a window specific performance counter
 					_drawContext = drawable.getContext();
-					double lastFrameMillis = _lastFrameNanos / 1000000.0;
-					String perfString = "Objects Culled: " + pi.objectsCulled + " Frame time (ms) :" + lastFrameMillis;
+					StringBuilder perf = new StringBuilder("Objects Culled: ").append(pi.objectsCulled);
+					perf.append(" Frame time (ms) :").append(_lastFrameNanos / 1000000.0);
+					perf.append(" SceneTime: ").append(_sceneTimeMS);
 					TessFont defFont = getTessFont(_defaultBoldFontKey);
-					OverlayString os = new OverlayString(defFont, perfString, ColourInput.BLACK,
-					                                     10, 10, 15, false, false, new ArrayList<Integer>());
+					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
+					                                     10, 10, 15, false, false, VisibilityInfo.ALWAYS);
 					os.render(_window.getVAOMap(), Renderer.this,
 					          _window.getViewableWidth(), _window.getViewableHeight());
 
 					// Also draw this window's debug string
 					os = new OverlayString(defFont, _window.getDebugString(), ColourInput.BLACK,
-					                       10, 10, 30, false, false, new ArrayList<Integer>());
+					                       10, 10, 30, false, false, VisibilityInfo.ALWAYS);
 					os.render(_window.getVAOMap(), Renderer.this,
 					          _window.getViewableWidth(), _window.getViewableHeight());
 
@@ -1511,6 +1532,11 @@ private static class TransSortable implements Comparable<TransSortable> {
 	                        Camera cam, int width, int height, Ray pickRay,
 	                        int viewID, PerfInfo perfInfo) {
 
+		final Vec4d viewDir = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		cam.getViewDir(viewDir);
+
+		final Vec4d temp = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+
 		assert (_drawContext == null);
 		_drawContext = context;
 		GL2GL3 gl = _drawContext.getGL().getGL2GL3(); // Just to clean up the code below
@@ -1527,21 +1553,19 @@ private static class TransSortable implements Comparable<TransSortable> {
 			return;
 
 		for (Renderable r : scene) {
-			if (!r.renderForView(viewID)) {
+			AABB bounds = r.getBoundsRef();
+			double dist = cam.distToBounds(bounds);
+
+			if (!r.renderForView(viewID, dist)) {
 				continue;
 			}
 
-			AABB bounds = r.getBoundsRef();
 			if (!cam.collides(bounds) || bounds.isEmpty()) {
 				++perfInfo.objectsCulled;
 				continue;
 			}
 
-			// Work out distance to the camera
-			Vector4d dist = bounds.getCenter();
-			dist.subLocal3(cam.getTransformRef().getTransRef());
-
-			double apparentSize = 2 * bounds.getRadius().mag3() / dist.mag3();
+			double apparentSize = 2 * bounds.getRadius().mag3() / Math.abs(dist);
 			if (apparentSize < unitPixelHeight) {
 				// This object is too small to draw
 				++perfInfo.objectsCulled;
@@ -1551,9 +1575,9 @@ private static class TransSortable implements Comparable<TransSortable> {
 				// Defer rendering of transparent objects
 				TransSortable ts = new TransSortable();
 				ts.r = r;
-				Vector4d diff = r.getBoundsRef().getCenter();
-				diff.subLocal3(cam.getTransformRef().getTransRef());
-				ts.dist = diff.mag3();
+				temp.set4(r.getBoundsRef().getCenter());
+				temp.sub3(cam.getTransformRef().getTransRef());
+				ts.dist = temp.dot3(viewDir);
 				transparents.add(ts);
 			}
 
@@ -1581,9 +1605,9 @@ private static class TransSortable implements Comparable<TransSortable> {
 		// Debug render AABBs
 		if (debugDrawAABBs())
 		{
-			Vector4d yellow = new Vector4d(1, 1, 0);
+			Color4d yellow = new Color4d(1, 1, 0, 1.0d);
 			for (Renderable r : scene) {
-				Vector4d aabbColor = yellow;
+				Color4d aabbColor = yellow;
 				DebugUtils.renderAABB(vaoMap, this, r.getBoundsRef(), aabbColor, cam);
 			}
 		} // for renderables
@@ -1593,7 +1617,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 		if (overlay != null) {
 			for (OverlayRenderable r : overlay) {
-				if (!r.renderForWindow(viewID)) {
+				if (!r.renderForView(viewID)) {
 					continue;
 				}
 

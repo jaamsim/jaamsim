@@ -33,4 +33,25 @@ public class IntegerInput extends Input<Integer> {
 		minValue = min;
 		maxValue = max;
 	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue.intValue() == Integer.MAX_VALUE)
+			return POSITIVE_INFINITY;
+
+		if (defValue.intValue() == Integer.MIN_VALUE)
+			return NEGATIVE_INFINITY;
+
+		StringBuilder tmp = new StringBuilder(defValue.toString());
+
+		if (!unitString.isEmpty()) {
+			tmp.append(SEPARATOR);
+			tmp.append(unitString);
+		}
+
+		return tmp.toString();
+	}
 }

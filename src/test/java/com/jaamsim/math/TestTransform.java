@@ -14,74 +14,70 @@
  */
 package com.jaamsim.math;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
-import com.jaamsim.math.Matrix4d;
-import com.jaamsim.math.Quaternion;
-import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
 
 public class TestTransform {
 
 @Test
 public void testIdentity() {
 	Transform t = new Transform();
-	Vector4d in = new Vector4d(1, 2, 3);
-	Vector4d expected = new Vector4d(in);
+	Vec4d in = new Vec4d(1, 2, 3, 1.0d);
+	Vec4d expected = new Vec4d(in);
 
-	Vector4d res = new Vector4d();
+	Vec4d res = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 	t.apply(in, res);
-	assertTrue(res.equals(expected));
+	assertTrue(res.equals4(expected));
 }
 
 @Test
 public void testTranslation() {
 	Transform t = new Transform();
-	Vector4d trans = new Vector4d(3, 4, 5);
+	Vec4d trans = new Vec4d(3, 4, 5, 1.0d);
 	t.setTrans(trans);
-	Vector4d in = new Vector4d(1, 2, 3);
+	Vec4d in = new Vec4d(1, 2, 3, 1.0d);
 
-	Vector4d expected = new Vector4d(4, 6, 8);
+	Vec4d expected = new Vec4d(4, 6, 8, 1.0d);
 
-	Vector4d res = new Vector4d();
+	Vec4d res = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 	t.apply(in, res);
-	assertTrue(res.equals(expected));
+	assertTrue(res.equals4(expected));
 }
 
 @Test
 public void testRotation() {
 	Transform t = new Transform();
-	Quaternion rot = Quaternion.Rotation(Math.PI/2, Vector4d.X_AXIS);
+	Quaternion rot = Quaternion.Rotation(Math.PI/2, Vec4d.X_AXIS);
 	t.setRot(rot);
-	Vector4d in = new Vector4d(1, 2, 3);
+	Vec4d in = new Vec4d(1, 2, 3, 1.0d);
 
-	Vector4d expected = new Vector4d(1, -3, 2);
+	Vec4d expected = new Vec4d(1, -3, 2, 1.0d);
 
-	Vector4d res = new Vector4d();
+	Vec4d res = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 	t.apply(in, res);
-	assertTrue(res.equals(expected));
+	assertTrue(res.near4(expected));
 }
 
 @Test
 public void testScale() {
 	Transform t = new Transform();
 	t.setScale(3);
-	Vector4d in = new Vector4d(1, 2, 3);
+	Vec4d in = new Vec4d(1, 2, 3, 1.0d);
 
-	Vector4d expected = new Vector4d(3, 6, 9);
+	Vec4d expected = new Vec4d(3, 6, 9, 1.0d);
 
-	Vector4d res = new Vector4d();
+	Vec4d res = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 	t.apply(in, res);
-	assertTrue(res.equals(expected));
+	assertTrue(res.near4(expected));
 }
 
 @Test
 public void testInverse()
 {
-	Vector4d trans = new Vector4d(1, 2, 3);
-	Quaternion rot = Quaternion.Rotation(Math.PI/4, Vector4d.Z_AXIS);
+	Vec4d trans = new Vec4d(1, 2, 3, 1.0d);
+	Quaternion rot = Quaternion.Rotation(Math.PI/4, Vec4d.Z_AXIS);
 	Transform t = new Transform(trans, rot, 3);
 
 	Transform invT = new Transform();
@@ -94,20 +90,43 @@ public void testInverse()
 
 	assertTrue(test.equals(ident));
 
-	Matrix4d mat = new Matrix4d();
-	Matrix4d matInv = new Matrix4d();
-	t.getMatrix(mat);
-	invT.getMatrix(matInv);
-	Matrix4d identMat = new Matrix4d();
+	Mat4d mat = new Mat4d();
+	Mat4d matInv = new Mat4d();
+	t.getMat4d(mat);
+	invT.getMat4d(matInv);
 
-	Matrix4d resMat = new Matrix4d();
+	Mat4d identMat = new Mat4d();
+	Mat4d resMat = new Mat4d();
 
-	mat.mult(matInv, resMat);
-	assertTrue(resMat.equals(identMat));
+	resMat.mult4(mat, matInv);
+	assertNear(resMat, identMat);
 
 	// Test inverse both ways
-	matInv.mult(mat, resMat);
-	assertTrue(resMat.equals(identMat));
+	resMat.mult4(matInv, mat);
+	assertNear(resMat, identMat);
+}
+
+private static final double EPS = 1e-12d;
+public static void assertNear(Mat4d m1, Mat4d m2) {
+	assertEquals(m1.d00, m2.d00, EPS);
+	assertEquals(m1.d01, m2.d01, EPS);
+	assertEquals(m1.d02, m2.d02, EPS);
+	assertEquals(m1.d03, m2.d03, EPS);
+
+	assertEquals(m1.d10, m2.d10, EPS);
+	assertEquals(m1.d11, m2.d11, EPS);
+	assertEquals(m1.d12, m2.d12, EPS);
+	assertEquals(m1.d13, m2.d13, EPS);
+
+	assertEquals(m1.d20, m2.d20, EPS);
+	assertEquals(m1.d21, m2.d21, EPS);
+	assertEquals(m1.d22, m2.d22, EPS);
+	assertEquals(m1.d23, m2.d23, EPS);
+
+	assertEquals(m1.d30, m2.d30, EPS);
+	assertEquals(m1.d31, m2.d31, EPS);
+	assertEquals(m1.d32, m2.d32, EPS);
+	assertEquals(m1.d33, m2.d33, EPS);
 }
 
 /**
@@ -115,12 +134,12 @@ public void testInverse()
  */
 @Test
 public void testSelfAssignment() {
-	Vector4d trans1 = new Vector4d(1, 2, 3);
-	Quaternion rot1 = Quaternion.Rotation(Math.PI/4, Vector4d.Z_AXIS);
+	Vec4d trans1 = new Vec4d(1, 2, 3, 1.0d);
+	Quaternion rot1 = Quaternion.Rotation(Math.PI/4, Vec4d.Z_AXIS);
 	Transform t1 = new Transform(trans1, rot1, 3);
 
-	Vector4d trans2 = new Vector4d(3, 2, 1);
-	Quaternion rot2 = Quaternion.Rotation(Math.PI/3, Vector4d.X_AXIS);
+	Vec4d trans2 = new Vec4d(3, 2, 1, 1.0d);
+	Quaternion rot2 = Quaternion.Rotation(Math.PI/3, Vec4d.X_AXIS);
 	Transform t2 = new Transform(trans2, rot2, 6);
 
 	Transform t3 = new Transform();

@@ -14,7 +14,6 @@
  */
 package com.sandwell.JavaSimulation;
 
-import javax.vecmath.Vector3d;
 
 /**
  * This custom vector class creates convenience methods needed by the Audition
@@ -95,22 +94,6 @@ public class Vector extends java.util.Vector<Object> {
 			try {
 				elementString = ((String)get( i )).toLowerCase();
 				if( elementString.equals( testString.toLowerCase() ) ) {
-					return i;
-				}
-			}
-			catch( ClassCastException e ) {
-				continue;
-			}
-		}
-		return -1;
-	}
-
-	public int indexOfVector3d( Vector3d testPoint ) {
-		Vector3d elementPoint;
-		for( int i = 0; i < size(); i++ ) {
-			try {
-				elementPoint = (Vector3d)get( i );
-				if( elementPoint.equals( testPoint ) ) {
 					return i;
 				}
 			}

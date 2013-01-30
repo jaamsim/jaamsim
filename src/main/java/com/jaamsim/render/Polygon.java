@@ -15,6 +15,7 @@
 package com.jaamsim.render;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,11 +23,11 @@ import javax.media.opengl.GL2GL3;
 
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Matrix4d;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Renderer.ShaderHandle;
 
 /**
@@ -49,33 +50,71 @@ public class Polygon implements Renderable {
 
 	private static boolean _hasInitialized;
 
-	private List<Vector4d> _points;
+	private ArrayList<Vec4d> _points;
+	private VisibilityInfo _visInfo;
 
-	// Leave these public for now, it's just easier
 	private final float[] colour;
 	private final float[] hoverColour;
-	public boolean isOutline;
-	public double lineWidth; // only meaningful if (isOutline)
-	public long pickingID;
+	private boolean isOutline;
+	private double lineWidth; // only meaningful if (isOutline)
+	private long pickingID;
 
 	private Transform trans;
 
 	private AABB _bounds;
 
-	public Polygon(List<Vector4d> points, Transform trans, Vector4d scale, Color4d colour, Color4d hoverColour, long pickingID) {
+	FloatBuffer fb;
+
+	public Polygon(List<Vec4d> points, Transform trans, Vec4d scale, Color4d colour,
+			Color4d hoverColour, VisibilityInfo visInfo, boolean isOutline, double lineWidth, long pickingID) {
 		this.colour = colour.toFloats();
 		this.hoverColour = hoverColour.toFloats();
-		this.isOutline = false;
+		this.isOutline = isOutline;
+		this.lineWidth = lineWidth;
 		this.lineWidth = 1;
 		this.pickingID = pickingID;
 		this.trans = trans;
+		this._visInfo = visInfo;
 
 		// Points includes the scale, but not the transform
-		_points = RenderUtils.transformPoints(Matrix4d.ScaleMatrix(scale), points);
+		_points = new ArrayList<Vec4d>(points.size());
+		ArrayList<Vec4d> boundsPoints = new ArrayList<Vec4d>(points.size());
+		for (Vec4d p : points) {
+			Vec4d temp = new Vec4d(p);
+			temp.mul3(scale);
+			_points.add(temp);
 
-		List<Vector4d> boundsPoints = RenderUtils.transformPoints(trans, _points);
+			Vec4d bTemp = new Vec4d();
+			trans.apply(temp, bTemp);
+			boundsPoints.add(bTemp);
+		}
 
 		_bounds = new AABB(boundsPoints);
+
+		if (this.isOutline) {
+			fb = FloatBuffer.allocate(3 * _points.size());
+			for (Vec4d vert : _points) {
+				RenderUtils.putPointXYZ(fb, vert);
+			}
+		} else {
+			// Otherwise make a triangle fan c
+			Vec4d center = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+			for (Vec4d vert : _points) {
+				center.add3(vert);
+			}
+			center.scale3(1.0/_points.size());
+
+			// The vertex list is just the closed loop of points
+			int buffSize = 3 * (_points.size() + 2);
+			fb = FloatBuffer.allocate(buffSize);
+			// Put the center to start the triangle fan
+			RenderUtils.putPointXYZ(fb, center);
+			for (Vec4d vert : _points) {
+				RenderUtils.putPointXYZ(fb, vert);
+			}
+			RenderUtils.putPointXYZ(fb, _points.get(0));
+		}
+		fb.flip();
 	}
 
 	@Override
@@ -102,15 +141,15 @@ public class Polygon implements Renderable {
 		gl.glUseProgram(_progHandle);
 
 		// Setup uniforms for this object
-		Matrix4d projMat = cam.getProjMatRef();
-		Matrix4d modelViewMat = new Matrix4d();
-		cam.getViewMatrix(modelViewMat);
+		Mat4d projMat = cam.getProjMat4d();
+		Mat4d modelViewMat = new Mat4d();
+		cam.getViewMat4d(modelViewMat);
 
-		modelViewMat.mult(trans.getMatrixRef(), modelViewMat);
+		modelViewMat.mult4(trans.getMat4dRef());
 
 
-		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, modelViewMat.toFloats(), 0);
-		gl.glUniformMatrix4fv(_projMatVar, 1, false, projMat.toFloats(), 0);
+		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
 		gl.glUniform4fv(_colorVar, 1, renderColour, 0);
 
@@ -130,16 +169,8 @@ public class Polygon implements Renderable {
 			return;
 		}
 
-		int buffSize = 3 * _points.size();
-		FloatBuffer fb = FloatBuffer.allocate(buffSize);
-		for (Vector4d vert : _points) {
-			fb.put(vert.toFloats3());
-		}
-
-		fb.flip();
-
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _vertBuffer);
-		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, buffSize * 4, fb, GL2GL3.GL_STATIC_DRAW);
+		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, fb.limit() * 4, fb, GL2GL3.GL_STATIC_DRAW);
 
 		gl.glVertexAttribPointer(_posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
 
@@ -154,27 +185,8 @@ public class Polygon implements Renderable {
 
 	private void renderFill(GL2GL3 gl) {
 
-		Vector4d center = new Vector4d();
-		for (Vector4d vert : _points) {
-			center.addLocal3(vert);
-		}
-		center.scaleLocal3(1.0/_points.size());
-
-		// The vertex list is just the closed loop of points
-		int buffSize = 3 * (_points.size() + 2);
-		FloatBuffer fb = FloatBuffer.allocate(buffSize);
-		// Put the center to start the triangle fan
-		fb.put(center.toFloats3());
-
-		for (Vector4d vert : _points) {
-			fb.put(vert.toFloats3());
-		}
-		fb.put(_points.get(0).toFloats3()); // Add the first point again to close the loop
-
-		fb.flip();
-
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _vertBuffer);
-		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, buffSize * 4, fb, GL2GL3.GL_STATIC_DRAW);
+		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, fb.limit() * 4, fb, GL2GL3.GL_STATIC_DRAW);
 
 		gl.glVertexAttribPointer(_posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
 
@@ -212,20 +224,20 @@ public class Polygon implements Renderable {
 		if (dist < 0) { return dist; } // Behind the start of the ray
 
 		// This is the potential collision point, if it's inside the polygon
-		Vector4d collisionPoint = localRay.getPointAtDist(dist);
+		Vec4d collisionPoint = localRay.getPointAtDist(dist);
 
-		Vector4d a = new Vector4d();
-		Vector4d b = new Vector4d();
-		Vector4d cross = new Vector4d();
+		Vec4d a = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Vec4d b = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Vec4d cross = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		boolean posSign = true;
 
 		for (int i = 0; i < _points.size(); ++i) {
 			// Check that the collision point is on the same winding side of all the
-			Vector4d p0 = _points.get(i);
-			Vector4d p1 = _points.get((i + 1) % _points.size() );
-			p0.sub3(collisionPoint, a);
-			p1.sub3(p0, b);
-			a.cross(b, cross); // cross is the
+			Vec4d p0 = _points.get(i);
+			Vec4d p1 = _points.get((i + 1) % _points.size());
+			a.sub3(p0, collisionPoint);
+			b.sub3(p1, p0);
+			cross.cross3(a, b);
 
 			double triple = cross.dot3(r.getDirRef());
 			// This point is inside the polygon if all triple products have the same sign
@@ -290,8 +302,14 @@ public class Polygon implements Renderable {
 	}
 
 	@Override
-	public boolean renderForView(int windowID) {
-		return true;
+	public boolean renderForView(int viewID, double dist) {
+		if (dist < _visInfo.minDist || dist > _visInfo.maxDist) {
+			return false;
+		}
+
+		if (_visInfo.viewIDs == null || _visInfo.viewIDs.size() == 0) return true; //Default to always visible
+
+		return _visInfo.viewIDs.contains(viewID);
 	}
 
 }

@@ -14,7 +14,7 @@
  */
 package com.sandwell.JavaSimulation3D;
 
-import com.sandwell.JavaSimulation3D.InputAgent;
+import com.jaamsim.input.InputAgent;
 
 /**
  * Implements a graphic interface to display Exceptions to the user

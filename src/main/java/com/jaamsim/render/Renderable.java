@@ -38,10 +38,11 @@ public boolean hasTransparent();
 
 /**
  * Returns if this renderable should be rendered for the listed window, most implementations will hard code this to true
-	 * @param windowID - the ID of the window be queried about
+	 * @param viewID - the ID of the window be queried about
+	 * @param dist - the distance this object is from the camera. This is used for LOD renderables
 	 * @return - a boolean indicating this renderable is visible on that window
  */
-public boolean renderForView(int viewID);
+public boolean renderForView(int viewID, double dist);
 
 /**
  * Test for collision with a ray in global space, return the distance to a collision,

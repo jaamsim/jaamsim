@@ -16,8 +16,6 @@ package com.sandwell.JavaSimulation;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
-
-import javax.vecmath.Vector3d;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -218,193 +216,6 @@ public class Util {
 			return formatter.format( num );
 	}
 
-	/**
-	 * This method will sort the vector objectsToSort from Largest to Smallest.  objectsToSort must be a vector of doubles.
-	 * @param objectsToSort
-	 */
-	public static void quickSort(Vector objectsToSort) {
-		DoubleVector crit1 = new DoubleVector(objectsToSort.size(), 1);
-		// create crit1
-		int objectsToSortSize = objectsToSort.size();
-		for (int i = 0; i < objectsToSortSize; i++) {
-			crit1.add( ( (Double)objectsToSort.get(i) ).doubleValue() );
-		}
-
-		quickSort(objectsToSort, crit1, crit1, crit1, crit1, crit1);
-	}
-
-	/**
-	 * This method will sort the vector objectsToSort from Largest to Smallest by crit1.  The criteria vectors are left unsorted.
-	 * @param objectsToSort
-	 * @param crit1
-	 */
-	public static void quickSort(Vector objectsToSort, DoubleVector crit1) {
-		quickSort(objectsToSort, crit1, crit1, crit1, crit1, crit1);
-	}
-
-	/**
-	 * This method will sort the vector objectsToSort from Largest to Smallest by crit1,crit2.  The criteria vectors are left unsorted.
-	 * @param objectsToSort
-	 * @param crit1
-	 * @param crit2
-	 */
-	public static void quickSort(Vector objectsToSort, DoubleVector crit1, DoubleVector crit2) {
-		quickSort(objectsToSort, crit1, crit2, crit2, crit2, crit2);
-	}
-
-	/**
-	 * This method will sort the vector objectsToSort from Largest to Smallest by crit1,crit2,crit3.  The criteria vectors are left unsorted.
-	 * @param objectsToSort
-	 * @param crit1
-	 * @param crit2
-	 * @param crit3
-	 */
-	public static void quickSort(Vector objectsToSort, DoubleVector crit1, DoubleVector crit2, DoubleVector crit3) {
-		quickSort(objectsToSort, crit1, crit2, crit3, crit3, crit3);
-	}
-
-	/**
-	 * This method will sort the vector objectsToSort from Largest to Smallest by crit1,crit2,crit3,crit4.  The criteria vectors are left unsorted.
-	 * @param objectsToSort
-	 * @param crit1
-	 * @param crit2
-	 * @param crit3
-	 * @param crit4
-	 */
-	public static void quickSort(Vector objectsToSort, DoubleVector crit1, DoubleVector crit2, DoubleVector crit3, DoubleVector crit4) {
-		quickSort(objectsToSort, crit1, crit2, crit3, crit4, crit4);
-	}
-
-	/**
-	 * This method will sort the vector objectsToSort from Largest to Smallest by crit1,crit2,crit3,crit4, crit5.  The criteria vectors are left unsorted.
-	 * @param objectsToSort
-	 * @param crit1
-	 * @param crit2
-	 * @param crit3
-	 * @param crit4
-	 * @param crit5
-	 */
-	public static void quickSort(Vector objectsToSort, DoubleVector crit1, DoubleVector crit2, DoubleVector crit3, DoubleVector crit4, DoubleVector crit5)
-	{
-		Vector combinedObjectList = new Vector( objectsToSort.size(), 1 );
-
-		int doLoop = objectsToSort.size();
-		for ( int i = 0; i < doLoop; i++ ) {
-			Vector combinedObject = new Vector(6,1);
-
-			combinedObject.add(objectsToSort.get(i));
-			combinedObject.add( new Double( crit1.get(i) ) );
-			combinedObject.add( new Double( crit2.get(i) ) );
-			combinedObject.add( new Double( crit3.get(i) ) );
-			combinedObject.add( new Double( crit4.get(i) ) );
-			combinedObject.add( new Double( crit5.get(i) ) );
-
-			combinedObjectList.add(combinedObject);
-		}
-
-		if ( combinedObjectList.size() > 0 ) {
-			qSort(combinedObjectList, 0, combinedObjectList.size() - 1);
-		}
-		doLoop = objectsToSort.size();
-		for ( int i = 0; i < doLoop; i++ ) {
-			objectsToSort.setElementAt( ( ( Vector ) combinedObjectList.get( i ) ).get( 0 ), i );
-		}
-	}
-
-	/**
-	 * This method will return true if the vector v1 is greater than v2, starting at index 1 in the list (the key is ignored)
-	 * @param v1
-	 * @param v2
-	 * @return
-	 */
-	private static boolean combinedVectorIsGreaterThan(Vector v1, Vector v2) {
-
-		( (Double)v1.get(1) ).doubleValue();
-
-		if( ( (Double)v1.get( 1 ) ).doubleValue() > ( (Double)v2.get( 1 ) ).doubleValue() ) {
-			return true;
-		}
-		if( ( (Double)v1.get( 1 ) ).doubleValue() == ( (Double)v2.get( 1 ) ).doubleValue() ) {
-			if( ( (Double)v1.get( 2 ) ).doubleValue() > ( (Double)v2.get( 2 ) ).doubleValue() ) {
-				return true;
-			}
-			if( ( (Double)v1.get( 2 ) ).doubleValue() == ( (Double)v2.get( 2 ) ).doubleValue() ) {
-				if( ( (Double)v1.get( 3 ) ).doubleValue() > ( (Double)v2.get( 3 ) ).doubleValue() ){
-					return true;
-				}
-				if( ( (Double)v1.get( 3 ) ).doubleValue() == ( (Double)v2.get( 3 ) ).doubleValue() ) {
-					if( ( (Double)v1.get( 4 ) ).doubleValue() > ( (Double)v2.get( 4 ) ).doubleValue() ){
-						return true;
-					}
-					if( ( (Double)v1.get( 4 ) ).doubleValue() == ( (Double)v2.get( 4 ) ).doubleValue() ) {
-						if( ( (Double)v1.get( 5 ) ).doubleValue() > ( (Double)v2.get( 5 ) ).doubleValue() ) {
-							return true;
-						}
-
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * list is a linked list of form list(i)(j), with j=0 being the object, j=1 being criteria1, etc.
-	 * left and right are the boundaries of the list to sort.
-	 * @param list
-	 * @param left
-	 * @param right
-	 */
-	private static void qSort(Vector list, int left, int right)
-	{
-		int l_hold = left;
-		int r_hold = right;
-		Vector pivot;
-		int pivotIndex;
-
-		// pick pivot from center of list, move to beginning of list
-		pivot = (Vector)list.get( ( ( left + right ) /2 ) ) ;
-		list.setElementAt( list.get(left), ((left+right)/2));
-		list.setElementAt( pivot , left );
-
-		pivot = (Vector)list.get(left);
-
-		// while unsorted size is greater than zero
-		while (left < right)
-		{
-			// compare right side to pivot
-			while ( (combinedVectorIsGreaterThan( pivot, (Vector)list.get(right) ) ) && (left < right) )
-				right--;
-			// move to proper side of list
-			if (left != right)
-			{
-				list.setElementAt( list.get( right ), left );
-				left++;
-			}
-			// compare left side to pivot
-			while ( (combinedVectorIsGreaterThan( (Vector)list.get(left), pivot ) ) && (left < right) )
-				left++;
-			// move to proper side of list
-			if (left != right)
-			{
-				list.setElementAt( list.get( left ), right );
-				right--;
-			}
-		}
-		// restore pivot -- it was lost with 'setElementAt'
-		list.setElementAt( pivot, left );
-		pivotIndex = left;
-		left = l_hold;
-		right = r_hold;
-		//System.out.println(list + " -- pivot = " + pivot + " left = " + left + " right = " + right);
-		// sort left and right side of list
-		if (left < pivotIndex)
-			qSort(list, left, ( pivotIndex-1 ) );
-		if (right > pivotIndex)
-			qSort(list, ( pivotIndex+1 ), right);
-	}
-
     /**
      * Return the factorial of the given number
      */
@@ -495,6 +306,15 @@ public int compareTo(CriteriaHolder u) {
 }
 }
 
+public static void mergeSort(Vector objectsToSort, DoubleVector crit1) {
+	mergeSort(objectsToSort, crit1, crit1, crit1, crit1, crit1);
+}
+
+public static void mergeSort(Vector objectsToSort, DoubleVector crit1,
+                             DoubleVector crit2) {
+	mergeSort(objectsToSort, crit1, crit2, crit2, crit2, crit2);
+}
+
 public static void mergeSort(Vector objectsToSort, DoubleVector crit1,
                              DoubleVector crit2, DoubleVector crit3,
                              DoubleVector crit4, DoubleVector crit5) {
@@ -552,31 +372,5 @@ public static void mergeSort(Vector objectsToSort, DoubleVector crit1,
 		ret.append(text);
 
 		return ret.toString();
-    }
-
-    /**
-     * write the minimum values of p1,p2 into dest. p1 or p2 can be used as dest
-     * @param p1 evaluate min value
-     * @param p2 evaluate min value
-     * @param dest overwrite dest value with min values of p1 and p2
-     *
-     */
-    public static void minElement (Vector3d p1,Vector3d p2, Vector3d dest) {
-    	dest.x = Math.min(p1.x, p2.x);
-    	dest.y = Math.min(p1.y, p2.y);
-    	dest.z = Math.min(p1.z, p2.z);
-    }
-
-    /**
-     * write the max values of p1,p2 into dest. p1 or p2 can be used as dest
-     * @param p1 evaluate min value
-     * @param p2 evaluate min value
-     * @param dest overwrite dest value with max values of p1 and p2
-     *
-     */
-    public static void maxElement (Vector3d p1,Vector3d p2, Vector3d dest) {
-    	dest.x = Math.max(p1.x, p2.x);
-    	dest.y = Math.max(p1.y, p2.y);
-    	dest.z = Math.max(p1.z, p2.z);
     }
 }

@@ -18,9 +18,9 @@ import java.util.ArrayList;
 
 /**
  * A RenderProxy is a representation of a renderable object that has no reliance on the
- * actual render state. This includes any kind of OpenGL buffer objects or textures. However,
- * a RenderProxy has enough information to be rendered. The key method is toRenderable(Renderer), which
- * when called in the render thread will create a directly Renderable representation.
+ * actual render state (eg: any kind of OpenGL buffer objects or textures). However,
+ * a RenderProxy has enough information to be rendered. The key method is collectRenderables(Renderer, ArrayList<Renderables>), which
+ * appends new renderables to a growing scene list.
  * @author Matt.Chudleigh
  *
  */
@@ -30,6 +30,7 @@ public interface RenderProxy {
 	 * Create a Renderable object with the help of the renderer. This should only be called in the
 	 * render thread.
 	 * @param r
+	 * @param outList
 	 * @return
 	 */
 	public abstract void collectRenderables(Renderer r, ArrayList<Renderable> outList);

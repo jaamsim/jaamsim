@@ -25,9 +25,10 @@ import java.util.Map;
 import javax.media.opengl.GL2GL3;
 
 import com.jaamsim.math.AABB;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
-import com.jaamsim.math.Matrix4d;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.Vec4d;
 
 /**
  * A basic wrapper around mesh data and the OpenGL calls that go with it
@@ -50,34 +51,34 @@ public final static int RGB_ZERO_TRANS = 2;
  */
 private static class SubMeshData {
 
-	public ArrayList<Vector4d> verts = new ArrayList<Vector4d>();
-	public ArrayList<Vector4d> texCoords = new ArrayList<Vector4d>();
-	public ArrayList<Vector4d> normals = new ArrayList<Vector4d>();
-	public Vector4d diffuseColor;
+	public ArrayList<Vec4d> verts = new ArrayList<Vec4d>();
+	public ArrayList<Vec4d> texCoords = new ArrayList<Vec4d>();
+	public ArrayList<Vec4d> normals = new ArrayList<Vec4d>();
+	public Color4d diffuseColor;
 	public URL colorTex;
 
 	public int numVerts;
 	public ConvexHull hull;
 	public int transType;
-	public Vector4d transColour;
+	public Color4d transColour;
 }
 
 private static class SubMeshInstance {
 	int subMeshIndex;
-	Matrix4d transform;
-	Matrix4d normalTrans;
+	Mat4d transform;
+	Mat4d normalTrans;
 }
 
 private static class SubLineData {
-	public ArrayList<Vector4d> verts = new ArrayList<Vector4d>();
-	public Vector4d diffuseColor;
+	public ArrayList<Vec4d> verts = new ArrayList<Vec4d>();
+	public Color4d diffuseColor;
 
 	public int numVerts;
 	public ConvexHull hull;
 }
 private static class SubLineInstance {
 	int subLineIndex;
-	Matrix4d transform;
+	Mat4d transform;
 }
 
 /** Sortable entry for a single transparent sub mesh before rendering
@@ -88,8 +89,8 @@ private static class SubLineInstance {
 private static class TransSortable implements Comparable<TransSortable> {
 	public SubMesh subMesh;
 	public double dist;
-	public Matrix4d modelViewMat;
-	public Matrix4d normalMat;
+	public Mat4d modelViewMat;
+	public Mat4d normalMat;
 
 	@Override
 	public int compareTo(TransSortable o) {
@@ -120,7 +121,7 @@ private class SubMesh {
 	public int _normalBuffer;
 
 	public int _texHandle;
-	public Vector4d _diffuseColor;
+	public Color4d _diffuseColor;
 
 	public int _progHandle;
 
@@ -132,9 +133,9 @@ private class SubMesh {
 	public int _useTexVar;
 
 	public int _transType;
-	public Vector4d _transColour;
+	public Color4d _transColour;
 
-	public Vector4d _center;
+	public Vec4d _center;
 
 	public int _numVerts;
 	public int _id; // The system wide asset ID
@@ -149,7 +150,7 @@ private class SubLine {
 	}
 
 	public int _vertexBuffer;
-	public Vector4d _diffuseColor;
+	public Color4d _diffuseColor;
 
 	public int _progHandle;
 
@@ -182,18 +183,22 @@ public MeshProto() {
 	_radius = 0;
 }
 
-public void addSubMeshInstance(int meshIndex, Matrix4d trans, Matrix4d normalTrans) {
+public void addSubMeshInstance(int meshIndex, Mat4d mat) {
+	Mat4d trans = new Mat4d(mat);
 	SubMeshInstance inst = new SubMeshInstance();
 	inst.subMeshIndex = meshIndex;
 	inst.transform = trans;
-	inst.normalTrans = normalTrans;
 
+	Mat4d normalMat = trans.inverse();
+	normalMat.transpose4();
+	inst.normalTrans = normalMat;
 	_subMeshInstances.add(inst);
 	_numVerts += _subMeshesData.get(meshIndex).verts.size();
 
 }
 
-public void addSubLineInstance(int lineIndex, Matrix4d trans, Matrix4d normalTrans) {
+public void addSubLineInstance(int lineIndex, Mat4d mat) {
+	Mat4d trans = new Mat4d(mat);
 	SubLineInstance inst = new SubLineInstance();
 	inst.subLineIndex = lineIndex;
 	inst.transform = trans;
@@ -201,13 +206,13 @@ public void addSubLineInstance(int lineIndex, Matrix4d trans, Matrix4d normalTra
 	_subLineInstances.add(inst);
 }
 
-public void addSubMesh(Vector4d[] vertices,
-        Vector4d[] normals,
-        Vector4d[] texCoords,
+public void addSubMesh(Vec4d[] vertices,
+		Vec4d[] normals,
+		Vec4d[] texCoords,
         URL colorTex,
-        Vector4d diffuseColor,
+        Color4d diffuseColor,
         int transType,
-        Vector4d transColour) {
+        Color4d transColour) {
 
 
 	if (colorTex == null) {
@@ -248,13 +253,13 @@ public void addSubMesh(Vector4d[] vertices,
 	sub.hull = ConvexHull.TryBuildHull(sub.verts, 5);
 }
 
-public void addSubLine(Vector4d[] vertices,
-        Vector4d diffuseColor) {
+public void addSubLine(Vec4d[] vertices,
+		Color4d diffuseColor) {
 
 	SubLineData sub = new SubLineData();
 	sub.diffuseColor = diffuseColor;
 	if (sub.diffuseColor == null) {
-		sub.diffuseColor = new Vector4d(); // Default to black
+		sub.diffuseColor = new Color4d(); // Default to black
 	}
 	_subLinesData.add(sub);
 
@@ -274,22 +279,24 @@ public boolean hasTransparent() {
 }
 
 public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
-                   Matrix4d modelMat,
-                   Matrix4d normalMat,
+                   Mat4d modelMat,
+                   Mat4d normalMat,
                    Camera cam) {
 
 	assert(_isLoadedGPU);
 
-	Matrix4d viewMat = new Matrix4d();
-	cam.getViewMatrix(viewMat);
+	Mat4d viewMat = new Mat4d();
+	cam.getViewMat4d(viewMat);
 
-	Matrix4d modelViewMat = new Matrix4d();
-	viewMat.mult(modelMat, modelViewMat);
+	Mat4d modelViewMat = new Mat4d();
+	modelViewMat.mult4(viewMat, modelMat);
 
-	Matrix4d subModelViewMat = new Matrix4d();
-	Matrix4d subModelMat = new Matrix4d();
-	Matrix4d subNormalMat = new Matrix4d();
+	Mat4d subModelViewMat = new Mat4d();
+	Mat4d subModelMat = new Mat4d();
+	Mat4d subNormalMat = new Mat4d();
 
+
+	Vec4d dist = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
 	for (SubMeshInstance subInst : _subMeshInstances) {
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
@@ -297,17 +304,17 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 			continue; // Render transparent submeshes after
 		}
 
-		modelViewMat.mult(subInst.transform, subModelViewMat);
+		subModelViewMat.mult4(modelViewMat, subInst.transform);
 
-		modelMat.mult(subInst.transform, subModelMat);
+		subModelMat.mult4(modelMat, subInst.transform);
 
 		AABB instBounds = subMesh._hull.getAABB(subModelMat);
 		if (!cam.collides(instBounds)) {
 			continue;
 		}
 		// Work out distance to the camera
-		Vector4d dist = instBounds.getCenter();
-		dist.subLocal3(cam.getTransformRef().getTransRef());
+		dist.set4(instBounds.getCenter());
+		dist.sub3(cam.getTransformRef().getTransRef());
 
 		double apparentSize = 2 * instBounds.getRadius().mag3() / dist.mag3();
 		if (apparentSize < 0.001) {
@@ -315,14 +322,14 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 			continue;
 		}
 
-		normalMat.mult(subInst.normalTrans, subNormalMat);
+		subNormalMat.mult4(normalMat, subInst.normalTrans);
 
 		renderSubMesh(subMesh, vaoMap, renderer, subModelViewMat, subNormalMat, cam);
 	}
 
 	for (SubLineInstance subInst : _subLineInstances) {
 
-		modelMat.mult(subInst.transform, subModelMat);
+		subModelMat.mult4(modelMat, subInst.transform);
 
 		SubLine subLine = _subLines.get(subInst.subLineIndex);
 
@@ -331,7 +338,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 			continue;
 		}
 
-		modelViewMat.mult(subInst.transform, subModelViewMat);
+		subModelViewMat.mult4(modelViewMat, subInst.transform);
 
 		renderSubLine(subLine, vaoMap, renderer, subModelViewMat, cam);
 	}
@@ -339,48 +346,48 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 }
 
 public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
-        Matrix4d modelMat,
-        Matrix4d normalMat,
+        Mat4d modelMat,
+        Mat4d normalMat,
         Camera cam) {
 
 
-	Matrix4d viewMat = new Matrix4d();
-	cam.getViewMatrix(viewMat);
+	Mat4d viewMat = new Mat4d();
+	cam.getViewMat4d(viewMat);
 
-	Matrix4d modelViewMat = new Matrix4d();
-	viewMat.mult(modelMat, modelViewMat);
+	Mat4d modelViewMat = new Mat4d();
+	modelViewMat.mult4(viewMat, modelMat);
 
 	ArrayList<TransSortable> transparents = new ArrayList<TransSortable>();
 	for (SubMeshInstance subInst : _subMeshInstances) {
 
-		Matrix4d subModelView = new Matrix4d();
-		Matrix4d subNormalMat = new Matrix4d();
-		Matrix4d subModelMat = new Matrix4d();
+		Mat4d subModelView = new Mat4d();
+		Mat4d subNormalMat = new Mat4d();
+		Mat4d subModelMat = new Mat4d();
 
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
 		if (subMesh._transType == NO_TRANS) {
 			continue; // Opaque sub meshes have been rendered
 		}
 
-		modelMat.mult(subInst.transform, subModelMat);
+		subModelMat.mult4(modelMat, subInst.transform);
 
 		AABB instBounds = subMesh._hull.getAABB(subModelMat);
 		if (!cam.collides(instBounds)) {
 			continue;
 		}
 
-		modelViewMat.mult(subInst.transform, subModelView);
+		subModelView.mult4(modelViewMat, subInst.transform);
 
-		normalMat.mult(subInst.normalTrans, subNormalMat);
+		subNormalMat.mult4(normalMat, subInst.normalTrans);
 
-		Vector4d eyeCenter = new Vector4d();
-		subModelView.mult(subMesh._center, eyeCenter);
+		Vec4d eyeCenter = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		eyeCenter.mult4(subModelView, subMesh._center);
 
 		TransSortable ts = new TransSortable();
 		ts.subMesh = subMesh;
 		ts.modelViewMat = subModelView;
 		ts.normalMat = subNormalMat;
-		ts.dist = eyeCenter.z();
+		ts.dist = eyeCenter.z;
 		transparents.add(ts);
 	}
 
@@ -430,8 +437,8 @@ private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Rende
 }
 
 private void renderSubMesh(SubMesh sub, Map<Integer, Integer> vaoMap,
-                           Renderer renderer, Matrix4d modelViewMat,
-                           Matrix4d normalMat, Camera cam) {
+                           Renderer renderer, Mat4d modelViewMat,
+                           Mat4d normalMat, Camera cam) {
 
 	GL2GL3 gl = renderer.getGL();
 
@@ -446,18 +453,18 @@ private void renderSubMesh(SubMesh sub, Map<Integer, Integer> vaoMap,
 	gl.glUseProgram(prog);
 
 	// Setup uniforms for this object
-	Matrix4d modelViewProjMat = new Matrix4d(modelViewMat);
+	Mat4d modelViewProjMat = new Mat4d(modelViewMat);
 
-	Matrix4d projMat = cam.getProjMatRef();
-	projMat.mult(modelViewProjMat, modelViewProjMat);
+	Mat4d projMat = cam.getProjMat4d();
+	modelViewProjMat.mult4(projMat, modelViewProjMat);
 
-	gl.glUniformMatrix4fv(sub._modelViewProjMatVar, 1, false, modelViewProjMat.toFloats(), 0);
-	gl.glUniformMatrix4fv(sub._normalMatVar, 1, false, normalMat.toFloats(), 0);
+	gl.glUniformMatrix4fv(sub._modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
+	gl.glUniformMatrix4fv(sub._normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
 
-	Vector4d lightVect = new Vector4d(-0.5f,  -0.2f, -0.5,  0);
-	lightVect.normalizeLocal3();
+	Vec4d lightVect = new Vec4d(-0.5f,  -0.2f, -0.5,  0);
+	lightVect.normalize3();
 
-	gl.glUniform4fv(sub._lightDirVar, 1, lightVect.toFloats(), 0);
+	gl.glUniform4f(sub._lightDirVar, (float)lightVect.x, (float)lightVect.y, (float)lightVect.z, (float)lightVect.w);
 
 	gl.glUniform1i(sub._useTexVar, (sub._texHandle != 0) ? 1 : 0);
 
@@ -471,18 +478,18 @@ private void renderSubMesh(SubMesh sub, Map<Integer, Integer> vaoMap,
 
 	if (sub._transType != NO_TRANS) {
 		gl.glEnable(GL2GL3.GL_BLEND);
-		gl.glBlendEquation(GL2GL3.GL_FUNC_ADD);
+		gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
 		gl.glDepthMask(false);
 
-		gl.glBlendColor((float)sub._transColour.x(),
-		                (float)sub._transColour.y(),
-		                (float)sub._transColour.z(),
-		                (float)sub._transColour.w());
+		gl.glBlendColor((float)sub._transColour.r,
+		                (float)sub._transColour.g,
+		                (float)sub._transColour.b,
+		                (float)sub._transColour.a);
 
 		if (sub._transType == A_ONE_TRANS) {
-			gl.glBlendFunc(GL2GL3.GL_CONSTANT_ALPHA, GL2GL3.GL_ONE_MINUS_CONSTANT_ALPHA);
+			gl.glBlendFuncSeparate(GL2GL3.GL_CONSTANT_ALPHA, GL2GL3.GL_ONE_MINUS_CONSTANT_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
 		} else if (sub._transType == RGB_ZERO_TRANS) {
-			gl.glBlendFunc(GL2GL3.GL_ONE_MINUS_CONSTANT_COLOR, GL2GL3.GL_CONSTANT_COLOR);
+			gl.glBlendFuncSeparate(GL2GL3.GL_ONE_MINUS_CONSTANT_COLOR, GL2GL3.GL_CONSTANT_COLOR, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
 		} else {
 			assert(false); // Unknown transparency type
 		}
@@ -530,7 +537,7 @@ private void setupVAOForSubLine(Map<Integer, Integer> vaoMap, SubLine sub, Rende
 }
 
 private void renderSubLine(SubLine sub, Map<Integer, Integer> vaoMap,
-        Renderer renderer, Matrix4d modelViewMat, Camera cam) {
+        Renderer renderer, Mat4d modelViewMat, Camera cam) {
 
 	GL2GL3 gl = renderer.getGL();
 
@@ -544,10 +551,10 @@ private void renderSubLine(SubLine sub, Map<Integer, Integer> vaoMap,
 	int prog = sub._progHandle;
 	gl.glUseProgram(prog);
 
-	Matrix4d projMat = cam.getProjMatRef();
+	Mat4d projMat = cam.getProjMat4d();
 
-	gl.glUniformMatrix4fv(sub._modelViewMatVar, 1, false, modelViewMat.toFloats(), 0);
-	gl.glUniformMatrix4fv(sub._projMatVar, 1, false, projMat.toFloats(), 0);
+	gl.glUniformMatrix4fv(sub._modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+	gl.glUniformMatrix4fv(sub._projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
 	gl.glUniform4fv(sub._colorVar, 1, sub._diffuseColor.toFloats(), 0);
 
@@ -603,14 +610,14 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, SubMeshData data) {
 
 	sub._hull = data.hull;
 
-	sub._center = data.hull.getAABB(Matrix4d.IDENT).getCenter();
+	sub._center = new Vec4d(data.hull.getAABB(new Mat4d()).getCenter());
 
 	sub._numVerts = data.verts.size();
 
 	// Init vertices
 	FloatBuffer fb = FloatBuffer.allocate(data.verts.size() * 3); //
-	for (Vector4d v : data.verts) {
-		fb.put(v.toFloats(), 0, 3);
+	for (Vec4d v : data.verts) {
+		RenderUtils.putPointXYZ(fb, v);
 	}
 	fb.flip();
 
@@ -629,10 +636,8 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, SubMeshData data) {
 	if (hasTex) {
 
 		fb = FloatBuffer.allocate(sub._numVerts * 2); //
-		for (Vector4d v : data.texCoords) {
-			float[] fs = v.toFloats();
-			fb.put(fs[0]); // x
-			fb.put(fs[1]); // y
+		for (Vec4d v : data.texCoords) {
+			RenderUtils.putPointXY(fb, v);
 		}
 		fb.flip();
 
@@ -644,13 +649,13 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, SubMeshData data) {
 	else
 	{
 		sub._texHandle = 0;
-		sub._diffuseColor = new Vector4d(data.diffuseColor);
+		sub._diffuseColor = new Color4d(data.diffuseColor);
 	}
 
 	// Init normals
 	fb = FloatBuffer.allocate(sub._numVerts * 3); //
-	for (Vector4d v : data.normals) {
-		fb.put(v.toFloats(), 0, 3);
+	for (Vec4d v : data.normals) {
+		RenderUtils.putPointXYZ(fb, v);
 	}
 	fb.flip();
 
@@ -679,8 +684,8 @@ private void loadGPUSubLine(GL2GL3 gl, Renderer renderer, SubLineData data) {
 
 	// Init vertices
 	FloatBuffer fb = FloatBuffer.allocate(data.verts.size() * 3); //
-	for (Vector4d v : data.verts) {
-		fb.put(v.toFloats(), 0, 3);
+	for (Vec4d v : data.verts) {
+		RenderUtils.putPointXYZ(fb, v);
 	}
 	fb.flip();
 
@@ -691,7 +696,7 @@ private void loadGPUSubLine(GL2GL3 gl, Renderer renderer, SubLineData data) {
 	sub._modelViewMatVar = gl.glGetUniformLocation(sub._progHandle, "modelViewMat");
 	sub._projMatVar = gl.glGetUniformLocation(sub._progHandle, "projMat");
 
-	sub._diffuseColor = new Vector4d(data.diffuseColor);
+	sub._diffuseColor = new Color4d(data.diffuseColor);
 	sub._colorVar = gl.glGetUniformLocation(sub._progHandle, "color");
 
 	_subLines.add(sub);
@@ -732,20 +737,20 @@ public ConvexHull getHull() {
  * Builds the convex hull of the current mesh based on all the existing sub meshes.
  */
 public void generateHull() {
-	ArrayList<Vector4d> totalHullPoints = new ArrayList<Vector4d>();
+	ArrayList<Vec4d> totalHullPoints = new ArrayList<Vec4d>();
 	// Collect all the points from the hulls of the individual sub meshes
 	for (SubMeshInstance subInst : _subMeshInstances) {
 
-		List<Vector4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).hull.getVertices();
-		List<Vector4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef);
+		List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).hull.getVertices();
+		List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
 
 		totalHullPoints.addAll(subPoints);
 	}
 	// And the lines
 	for (SubLineInstance subInst : _subLineInstances) {
 
-		List<Vector4d> pointsRef = _subLinesData.get(subInst.subLineIndex).hull.getVertices();
-		List<Vector4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef);
+		List<Vec4d> pointsRef = _subLinesData.get(subInst.subLineIndex).hull.getVertices();
+		List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
 
 		totalHullPoints.addAll(subPoints);
 	}

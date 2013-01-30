@@ -165,4 +165,9 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		minCount = min;
 		maxCount = max;
 	}
+
+	@Override
+	public String getDefaultString() {
+		return getDefaultStringForKeyInputs();
+	}
 }

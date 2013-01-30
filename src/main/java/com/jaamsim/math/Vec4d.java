@@ -14,12 +14,23 @@
  */
 package com.jaamsim.math;
 
+
 public class Vec4d extends Vec3d {
+
+public static Vec4d ORIGIN = new Vec4d(0, 0, 0, 1.0d);
+public static Vec4d ONES = new Vec4d(1, 1, 1, 1.0d);
+public static Vec4d X_AXIS = new Vec4d(1, 0, 0, 1.0d);
+public static Vec4d Y_AXIS = new Vec4d(0, 1, 0, 1.0d);
+public static Vec4d Z_AXIS = new Vec4d(0, 0, 1, 1.0d);
+
+public static Vec4d NEG_X_AXIS = new Vec4d(-1,  0,  0, 1.0d);
+public static Vec4d NEG_Y_AXIS = new Vec4d( 0, -1,  0, 1.0d);
+public static Vec4d NEG_Z_AXIS = new Vec4d( 0,  0, -1, 1.0d);
 
 public double w;
 
 /**
- * Construct a Vec4d initialized to (0,0,0,0);
+ * Construct a Vec4d initialized to (0,0,0,1);
  */
 public Vec4d() {
 	x = 0.0d;
@@ -52,6 +63,39 @@ public Vec4d(double x, double y, double z, double w) {
 	this.y = y;
 	this.z = z;
 	this.w = w;
+}
+
+/**
+ * Returns a string representation of this vec.
+ */
+@Override
+public String toString() {
+	StringBuilder tmp = new StringBuilder("(");
+	tmp.append(x);
+	tmp.append(", ").append(y);
+	tmp.append(", ").append(z);
+	tmp.append(", ").append(w);
+	tmp.append(")");
+	return tmp.toString();
+}
+
+/**
+ * Tests the first four components are exactly equal.
+ *
+ * This returns true if the x,y,z,w components compare as equal using the ==
+ * operator.  Note that NaN will always return false, and -0.0 and 0.0
+ * will compare as equal.
+ * @throws NullPointerException if v is null
+ */
+public boolean equals4(Vec4d v) {
+	return x == v.x && y == v.y && z == v.z && w == v.w;
+}
+
+public boolean near4(Vec4d v) {
+	return MathUtils.near(x, v.x) &&
+	       MathUtils.near(y, v.y) &&
+	       MathUtils.near(z, v.z) &&
+	       MathUtils.near(w, v.w);
 }
 
 /**
@@ -99,16 +143,6 @@ public void add4(Vec4d v1, Vec4d v2) {
 }
 
 /**
- * Returns a new Vec3d initialized to v1 + v2
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec4d getAdd4(Vec4d v1, Vec4d v2) {
-	Vec4d tmp = new Vec4d(v1);
-	tmp.add4(v2);
-	return tmp;
-}
-
-/**
  * Subtract v from this Vec4d: this = this - v
  * @throws NullPointerException if v is null
  */
@@ -128,16 +162,6 @@ public void sub4(Vec4d v1, Vec4d v2) {
 	this.y = v1.y - v2.y;
 	this.z = v1.z - v2.z;
 	this.w = v1.w - v2.w;
-}
-
-/**
- * Returns a new Vec4d initialized to v1 - v2
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec4d getSub4(Vec4d v1, Vec4d v2) {
-	Vec4d tmp = new Vec4d(v1);
-	tmp.sub4(v2);
-	return tmp;
 }
 
 /**
@@ -163,16 +187,6 @@ public void mul4(Vec4d v1, Vec4d v2) {
 }
 
 /**
- * Returns a new Vec4d initialized to v1 * v2
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec4d getMul4(Vec4d v1, Vec4d v2) {
-	Vec4d tmp = new Vec4d(v1);
-	tmp.mul4(v2);
-	return tmp;
-}
-
-/**
  * Set this Vec4d to the minimum of this and v: this = min(this, v)
  * @throws NullPointerException if v is null
  */
@@ -195,16 +209,6 @@ public void min4(Vec4d v1, Vec4d v2) {
 }
 
 /**
- * Returns a new Vec4d initialized to min(v1, v2)
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec4d getMin4(Vec4d v1, Vec4d v2) {
-	Vec4d tmp = new Vec4d(v1);
-	tmp.min4(v2);
-	return tmp;
-}
-
-/**
  * Set this Vec4d to the maximum of this and v: this = max(this, v)
  * @throws NullPointerException if v is null
  */
@@ -224,16 +228,6 @@ public void max4(Vec4d v1, Vec4d v2) {
 	this.y = Math.max(v1.y, v2.y);
 	this.z = Math.max(v1.z, v2.z);
 	this.w = Math.max(v1.w, v2.w);
-}
-
-/**
- * Returns a new Vec4d initialized to max(v1, v2)
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec4d getMax4(Vec4d v1, Vec4d v2) {
-	Vec4d tmp = new Vec4d(v1);
-	tmp.max4(v2);
-	return tmp;
 }
 
 /**
@@ -342,13 +336,15 @@ public void scale4(double scale, Vec4d v) {
 }
 
 /**
- * Returns a new Vec4d initialized to scale * v
- * @throws NullPointerException if v is null
+ * Linearly interpolate between a, b into this Vec: this = (1 - ratio) * a + ratio * b
+ * @throws NullPointerException if a or b are null
  */
-public static final Vec4d getScale4(double scale, Vec4d v) {
-	Vec4d tmp = new Vec4d(v);
-	tmp.scale4(scale);
-	return tmp;
+public void interpolate4(Vec4d a, Vec4d b, double ratio) {
+	double temp = 1.0d - ratio;
+	this.x = temp * a.x + ratio * b.x;
+	this.y = temp * a.y + ratio * b.y;
+	this.z = temp * a.z + ratio * b.z;
+	this.w = temp * a.w + ratio * b.w;
 }
 
 /**
@@ -381,5 +377,23 @@ public void mult4(Vec4d v, Mat4d m) {
 	this.y = _y;
 	this.z = _z;
 	this.w = _w;
+}
+
+public double getComp(int i) {
+	if (i == 0) return x;
+	if (i == 1) return y;
+	if (i == 2) return z;
+	if (i == 3) return w;
+	assert(false);
+	return 0;
+}
+
+public void setComp(int i, double val) {
+	if (i == 0) { x = val; return; }
+	if (i == 1) { y = val; return; }
+	if (i == 2) { z = val; return; }
+	if (i == 3) { w = val; return; }
+	assert(false);
+	return ;
 }
 }

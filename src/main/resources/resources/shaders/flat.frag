@@ -36,8 +36,10 @@ void main()
     float light = clamp(lightDotN, 0, 1)*0.5 + 0.5;
 
     if (useTex) {
-        outColour = texture2D(tex, texCoordFrag) * light;
+        outColour = texture2D(tex, texCoordFrag);
     } else {
-        outColour = diffuseColor * light;
+        outColour = diffuseColor;
     }
+    outColour.rgb *= light;
+    
 }

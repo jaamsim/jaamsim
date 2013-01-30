@@ -1,10 +1,6 @@
 package com.sandwell.JavaSimulation3D;
 
-import java.util.ArrayList;
-
-import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
@@ -14,16 +10,12 @@ import com.sandwell.JavaSimulation.StringInput;
 public class OverlayImage extends DisplayEntity {
 	@Keyword(desc = "The position of the image, from the upper left corner of the window to the upper left corner " +
 	                "of the image. Value is in pixels",
-	         example = "Logo Position { 20 20}")
+	         example = "Logo ScreenPosition { 20 20 }")
 	private final IntegerListInput screenPosition;
 
 	@Keyword(desc = "The size of the image. Value is in pixels",
-	         example = "Logo Size { 200 100}")
+	         example = "Logo ImageSize { 200 100 }")
 	private final IntegerListInput size;
-
-	@Keyword(desc = "The view objects this overlay image will be visible on",
-	         example = "Logo VisibleViews { TitleView DefaultView }")
-	private final EntityListInput<View> visibleViews;
 
 	@Keyword(desc = "If this text label should be aligned from the right edge of the window (instead of the left)",
 	         example = "Logo AlignRight { TRUE }")
@@ -58,9 +50,6 @@ public class OverlayImage extends DisplayEntity {
 		size.setValidRange(0, 2500);
 		this.addInput(size, true);
 
-		visibleViews = new EntityListInput<View>(View.class, "VisibleViews", "Key Inputs", new ArrayList<View>(0));
-		this.addInput(visibleViews, true);
-
 		alignRight = new BooleanInput("AlignRight", "Key Inputs", false);
 		this.addInput(alignRight, true);
 
@@ -89,15 +78,32 @@ public class OverlayImage extends DisplayEntity {
 
 	@Override
 	public void updateForInput( Input<?> in ) {
+		super.updateForInput(in);
+
 		setGraphicsDataDirty();
 	}
 
-	public ArrayList<View> getVisibleViews() {
-
-		if( visibleViews.getValue() == null )
-			return new ArrayList<View>();
-
-		return visibleViews.getValue();
+	public String getFileName() {
+		return filename.getValue();
 	}
 
+	public IntegerVector getScreenPos() {
+		return screenPosition.getValue();
+	}
+
+	public IntegerVector getImageSize() {
+		return size.getValue();
+	}
+
+	public boolean getAlignRight() {
+		return alignRight.getValue();
+	}
+
+	public boolean getAlignBottom() {
+		return alignBottom.getValue();
+	}
+
+	public boolean getTransparent() {
+		return transparent.getValue();
+	}
 }

@@ -89,6 +89,17 @@ public void identity() {
 }
 
 /**
+ * Set all elements of this matrix to m.
+ * @throws NullPointerException if m is null
+ */
+public void set4(Mat4d m) {
+	d00 = m.d00; d01 = m.d01; d02 = m.d02; d03 = m.d03;
+	d10 = m.d10; d11 = m.d11; d12 = m.d12; d13 = m.d13;
+	d20 = m.d20; d21 = m.d21; d22 = m.d22; d23 = m.d23;
+	d30 = m.d30; d31 = m.d31; d32 = m.d32; d33 = m.d33;
+}
+
+/**
  * Transpose this matrix in-place
  */
 public void transpose4() {
@@ -125,7 +136,7 @@ public void transpose4(Mat4d m) {
  * Sets the upper 3x3 of this matrix by multiplying m1 with m2: this = m1 x m2
  * @throws NullPointerException if m1 or m2 are null
  */
-private final void _mul3(Mat4d m1, Mat4d m2) {
+private final void _mult3(Mat4d m1, Mat4d m2) {
 	// Do everything in temp vars in case m1 or m2 == this
 	double _d00, _d01, _d02;
 	_d00 = m1.d00 * m2.d00 + m1.d01 * m2.d10 + m1.d02 * m2.d20;
@@ -151,23 +162,23 @@ private final void _mul3(Mat4d m1, Mat4d m2) {
  * Sets the upper 3x3 of this matrix by multiplying this with m: this = this x m
  * @throws NullPointerException if m is null
  */
-public void mul3(Mat4d m) {
-	_mul3(this, m);
+public void mult3(Mat4d m) {
+	_mult3(this, m);
 }
 
 /**
  * Sets the upper 3x3 of this matrix by multiplying m1 with m2: this = m1 x m2
  * @throws NullPointerException if m1 or m2 are null
  */
-public void mul3(Mat4d m1, Mat4d m2) {
-	_mul3(m1, m2);
+public void mult3(Mat4d m1, Mat4d m2) {
+	_mult3(m1, m2);
 }
 
 /**
  * Sets the matrix by multiplying m1 with m2: this = m1 x m2
  * @throws NullPointerException if m1 or m2 are null
  */
-private final void _mul4(Mat4d m1, Mat4d m2) {
+private final void _mult4(Mat4d m1, Mat4d m2) {
 	double _d00, _d01, _d02, _d03;
 	_d00 = m1.d00 * m2.d00 + m1.d01 * m2.d10 + m1.d02 * m2.d20 + m1.d03 * m2.d30;
 	_d01 = m1.d00 * m2.d01 + m1.d01 * m2.d11 + m1.d02 * m2.d21 + m1.d03 * m2.d31;
@@ -202,20 +213,20 @@ private final void _mul4(Mat4d m1, Mat4d m2) {
  * Sets the matrix by multiplying this with m: this = this x m
  * @throws NullPointerException if m is null
  */
-public void mul4(Mat4d m) {
-	_mul4(this, m);
+public void mult4(Mat4d m) {
+	_mult4(this, m);
 }
 
 /**
  * Sets the matrix by multiplying m1 with m2: this = m1 x m2
  * @throws NullPointerException if m1 or m2 are null
  */
-public void mul4(Mat4d m1, Mat4d m2) {
-	_mul4(m1, m2);
+public void mult4(Mat4d m1, Mat4d m2) {
+	_mult4(m1, m2);
 }
 
 /**
- * Fill the upper 3x3 with a rotation represented by the Quarternion q
+ * Fill the upper 3x3 with a rotation represented by the Quaternion q
  * @throws NullPointerException if q is null
  */
 private final void _rot3(Quaternion q) {
@@ -238,7 +249,7 @@ private final void _rot3(Quaternion q) {
 }
 
 /**
- * Sets the upper 3x3 the the rotation represented by the Quarternion q
+ * Sets the upper 3x3 the the rotation represented by the Quaternion q
  * @throws NullPointerException if q is null
  */
 public void setRot3(Quaternion q) {
@@ -246,7 +257,7 @@ public void setRot3(Quaternion q) {
 }
 
 /**
- * Sets the upper 3x3 the the rotation represented by the Quarternion q
+ * Sets the upper 3x3 the the rotation represented by the Quaternion q
  *
  * Clears the remaining elements to the identity matrix
  * @throws NullPointerException if q is null
@@ -259,12 +270,280 @@ public void setRot4(Quaternion q) {
 }
 
 /**
- * Sets the 3 translation components without modifying any other componenets
+ * Fill the upper 3x3 with a rotation specified as 3 independent euler
+ * rotations.
  * @throws NullPointerException if v is null
  */
-public void setTrans3(Vec3d v) {
+private final void _euler3(Vec3d v) {
+	double sinx = Math.sin(v.x);
+	double siny = Math.sin(v.y);
+	double sinz = Math.sin(v.z);
+	double cosx = Math.cos(v.x);
+	double cosy = Math.cos(v.y);
+	double cosz = Math.cos(v.z);
+
+	// Calculate a 3x3 rotation matrix
+	d00 = cosy * cosz;
+	d01 = -(cosx * sinz) + (sinx * siny * cosz);
+	d02 = (sinx * sinz) + (cosx * siny * cosz);
+
+	d10 = cosy * sinz;
+	d11 = (cosx * cosz) + (sinx * siny * sinz);
+	d12 = -(sinx * cosz) + (cosx * siny * sinz);
+
+	d20 = -siny;
+	d21 = sinx * cosy;
+	d22 = cosx * cosy;
+}
+
+/**
+ * Set the upper 3x3 with a rotation specified as 3 independent euler
+ * rotations.
+ * @throws NullPointerException if v is null
+ */
+public void setEuler3(Vec3d v) {
+	_euler3(v);
+}
+
+/**
+ * Set the upper 3x3 with a rotation specified as 3 independent euler
+ * rotations.
+ *
+ * Clears the remaining elements to the identity matrix
+ * @throws NullPointerException if v is null
+ */
+public void setEuler4(Vec3d v) {
+	_euler3(v);
+	d03 = 0.0d; d13 = 0.0d; d23 = 0.0d;
+	d30 = 0.0d; d31 = 0.0d; d32 = 0.0d;
+	d33 = 1.0d;
+}
+
+/**
+ * Sets the 3 translation components without modifying any other components
+ * @throws NullPointerException if v is null
+ */
+public void setTranslate3(Vec3d v) {
 	this.d03 = v.x;
 	this.d13 = v.y;
 	this.d23 = v.z;
 }
+
+/**
+ * Scale the upper 2x2 by the given value
+ * @throws NullPointerException if v is null
+ */
+public void scale2(double scale) {
+	d00 *= scale; d01 *= scale;
+	d10 *= scale; d11 *= scale;
+}
+
+/**
+ * Scale the upper 3x3 by the given value
+ * @throws NullPointerException if v is null
+ */
+public void scale3(double scale) {
+	d00 *= scale; d01 *= scale; d02 *= scale;
+	d10 *= scale; d11 *= scale; d12 *= scale;
+	d20 *= scale; d21 *= scale; d22 *= scale;
+}
+
+/**
+ * Scale the upper 4x4 by the given value
+ * @throws NullPointerException if v is null
+ */
+public void scale4(double scale) {
+	d00 *= scale; d01 *= scale; d02 *= scale; d03 *= scale;
+	d10 *= scale; d11 *= scale; d12 *= scale; d13 *= scale;
+	d20 *= scale; d21 *= scale; d22 *= scale; d23 *= scale;
+	d30 *= scale; d31 *= scale; d32 *= scale; d33 *= scale;
+}
+
+/**
+ * Scale the first two rows by the given vector values
+ * @throws NullPointerException if v is null
+ */
+public void scaleRows2(Vec2d v) {
+	d00 *= v.x; d01 *= v.x; d02 *= v.x; d03 *= v.x;
+	d10 *= v.y; d11 *= v.y; d12 *= v.y; d13 *= v.y;
+}
+
+/**
+ * Scale the first three rows by the given vector values
+ * @throws NullPointerException if v is null
+ */
+public void scaleRows3(Vec3d v) {
+	d00 *= v.x; d01 *= v.x; d02 *= v.x; d03 *= v.x;
+	d10 *= v.y; d11 *= v.y; d12 *= v.y; d13 *= v.y;
+	d20 *= v.z; d21 *= v.z; d22 *= v.z; d23 *= v.z;
+}
+
+/**
+ * Scale the first four rows by the given vector values
+ * @throws NullPointerException if v is null
+ */
+public void scaleRows4(Vec4d v) {
+	d00 *= v.x; d01 *= v.x; d02 *= v.x; d03 *= v.x;
+	d10 *= v.y; d11 *= v.y; d12 *= v.y; d13 *= v.y;
+	d20 *= v.z; d21 *= v.z; d22 *= v.z; d23 *= v.z;
+	d30 *= v.w; d31 *= v.w; d32 *= v.w; d33 *= v.w;
+}
+
+/**
+ * Scale the first two columns by the given vector values
+ * @throws NullPointerException if v is null
+ */
+public void scaleCols2(Vec2d v) {
+	d00 *= v.x; d01 *= v.y;
+	d10 *= v.x; d11 *= v.y;
+	d20 *= v.x; d21 *= v.y;
+	d30 *= v.x; d31 *= v.y;
+}
+
+/**
+ * Scale the first three columns by the given vector values
+ * @throws NullPointerException if v is null
+ */
+public void scaleCols3(Vec3d v) {
+	d00 *= v.x; d01 *= v.y; d02 *= v.z;
+	d10 *= v.x; d11 *= v.y; d12 *= v.z;
+	d20 *= v.x; d21 *= v.y; d22 *= v.z;
+	d30 *= v.x; d31 *= v.y; d32 *= v.z;
+}
+
+/**
+ * Scale the first four columns by the given vector values
+ * @throws NullPointerException if v is null
+ */
+public void scaleCols4(Vec4d v) {
+	d00 *= v.x; d01 *= v.y; d02 *= v.z; d03 *= v.w;
+	d10 *= v.x; d11 *= v.y; d12 *= v.z; d13 *= v.w;
+	d20 *= v.x; d21 *= v.y; d22 *= v.z; d23 *= v.w;
+	d30 *= v.x; d31 *= v.y; d32 *= v.z; d33 *= v.w;
+}
+
+/**
+ * Return the determinant of the matrix.
+ */
+public double determinant() {
+	// As the final row tends to be 0,0,0,1, calculate the cofactor
+	// expansion along that row with fastpath for zeros.
+	double det = 0.0d;
+	if (d30 != 0.0d) {
+		det -= d30*(d01*d12*d23 + d02*d13*d21 + d03*d11*d22 -
+		            d01*d13*d22 - d02*d11*d23 - d03*d12*d21);
+	}
+
+	if (d31 != 0.0d) {
+		det += d31*(d00*d12*d23 + d02*d13*d20 + d03*d10*d22 -
+		            d00*d13*d22 - d02*d10*d23 - d03*d12*d20);
+	}
+
+	if (d32 != 0.0d) {
+		det -= d32*(d00*d11*d23 + d01*d13*d20 + d03*d10*d21 -
+		            d00*d13*d21 - d01*d10*d23 - d03*d11*d20);
+	}
+
+	if (d33 != 0.0d) {
+		det += d33*(d00*d11*d22 + d01*d12*d20 + d02*d10*d21 -
+		            d00*d12*d21 - d01*d10*d22 - d02*d11*d20);
+	}
+
+	return det;
+}
+
+/**
+ * Returns the inverse of this matrix, or null if the matrix is not invertible
+ * @return
+ */
+public Mat4d inverse() {
+	double det = determinant();
+
+	if (Math.abs(det) < 0.000000000001) {
+		return null;
+	}
+
+	double invDet = 1 / det;
+
+	Mat4d ret = new Mat4d();
+	double[] data = toCMDataArray();
+	double[] scratch = new double[9];
+	ret.d00 = invDet * cofactor(0, 0, data, scratch);
+	ret.d01 = invDet * cofactor(0, 1, data, scratch);
+	ret.d02 = invDet * cofactor(0, 2, data, scratch);
+	ret.d03 = invDet * cofactor(0, 3, data, scratch);
+
+	ret.d10 = invDet * cofactor(1, 0, data, scratch);
+	ret.d11 = invDet * cofactor(1, 1, data, scratch);
+	ret.d12 = invDet * cofactor(1, 2, data, scratch);
+	ret.d13 = invDet * cofactor(1, 3, data, scratch);
+
+	ret.d20 = invDet * cofactor(2, 0, data, scratch);
+	ret.d21 = invDet * cofactor(2, 1, data, scratch);
+	ret.d22 = invDet * cofactor(2, 2, data, scratch);
+	ret.d23 = invDet * cofactor(2, 3, data, scratch);
+
+	ret.d30 = invDet * cofactor(3, 0, data, scratch);
+	ret.d31 = invDet * cofactor(3, 1, data, scratch);
+	ret.d32 = invDet * cofactor(3, 2, data, scratch);
+	ret.d33 = invDet * cofactor(3, 3, data, scratch);
+
+	return ret;
+}
+
+private double cofactor(int x, int y, double[] data, double[] sub) {
+	int nextVal = 0;
+	for (int row = 0; row < 4; ++row) {
+		if (row == x) continue;
+		for (int col = 0; col < 4; ++col) {
+			if (col == y) continue;
+
+			sub[nextVal++] = data[row*4 + col];
+		}
+	}
+	// Now determine the determinant of the submat
+	double ret = 0;
+	ret += sub[0] * sub[4] * sub[8];
+	ret += sub[1] * sub[5] * sub[6];
+	ret += sub[2] * sub[3] * sub[7];
+
+	ret -= sub[2] * sub[4] * sub[6];
+	ret -= sub[1] * sub[3] * sub[8];
+	ret -= sub[0] * sub[5] * sub[7];
+
+	if ((x+y) % 2 == 1) {
+		ret *= -1;
+	}
+	return ret;
+}
+
+/**
+ * Returns a column major (for historical reasons) array of the elements of this matrix
+ * @return
+ */
+public double[] toCMDataArray() {
+	double[] ret = new double[16];
+	ret[ 0] = d00;
+	ret[ 1] = d10;
+	ret[ 2] = d20;
+	ret[ 3] = d30;
+
+	ret[ 4] = d01;
+	ret[ 5] = d11;
+	ret[ 6] = d21;
+	ret[ 7] = d31;
+
+	ret[ 8] = d02;
+	ret[ 9] = d12;
+	ret[10] = d22;
+	ret[11] = d32;
+
+	ret[12] = d03;
+	ret[13] = d13;
+	ret[14] = d23;
+	ret[15] = d33;
+
+	return ret;
+}
+
 }

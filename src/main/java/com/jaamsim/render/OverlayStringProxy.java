@@ -28,18 +28,19 @@ public class OverlayStringProxy implements RenderProxy {
 	private double _x, _y;
 	private double _height;
 	private boolean _alignRight, _alignBottom;
-	private ArrayList<Integer> _visibleWindowIDs;
+	private VisibilityInfo _visInfo;
+	OverlayString cachedString;
 
 	public OverlayStringProxy(String cont, TessFontKey fontKey, Color4d colour,
 	                          double height, double x, double y, boolean alignRight, boolean alignBottom,
-	                          ArrayList<Integer> visibleWindowIDs) {
+	                          VisibilityInfo visInfo) {
 		_contents = cont;
 		_fontKey = fontKey;
 		_fontColour = colour;
 		_height = height;
 		_x = x; _y = y;
 		_alignRight = alignRight; _alignBottom = alignBottom;
-		_visibleWindowIDs = visibleWindowIDs;
+		_visInfo = visInfo;
 	}
 
 
@@ -51,8 +52,12 @@ public class OverlayStringProxy implements RenderProxy {
 	@Override
 	public void collectOverlayRenderables(Renderer r, ArrayList<OverlayRenderable> outList) {
 
-		TessFont tf = r.getTessFont(_fontKey);
-		outList.add(new OverlayString(tf, _contents, _fontColour, _height, _x, _y, _alignRight, _alignBottom, _visibleWindowIDs));
+		if (cachedString == null) {
+			TessFont tf = r.getTessFont(_fontKey);
+			cachedString = new OverlayString(tf, _contents, _fontColour, _height, _x, _y, _alignRight, _alignBottom, _visInfo);
+		}
+		outList.add(cachedString);
+
 	}
 
 }

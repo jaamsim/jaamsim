@@ -14,7 +14,7 @@
  */
 package com.sandwell.JavaSimulation;
 
-import com.sandwell.JavaSimulation3D.InputAgent;
+import com.jaamsim.input.InputAgent;
 
 public class DeprecatedInput extends Input<String> {
 	private boolean fatal;

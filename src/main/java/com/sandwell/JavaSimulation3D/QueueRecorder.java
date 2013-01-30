@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputAgent;
 import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Keyword;

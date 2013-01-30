@@ -17,9 +17,9 @@ package com.jaamsim.ui;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import com.jaamsim.input.InputAgent;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.EditBox;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 /**
  * Implements a graphic interface to display Exceptions to the user

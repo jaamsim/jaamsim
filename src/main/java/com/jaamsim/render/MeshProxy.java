@@ -17,31 +17,38 @@ package com.jaamsim.render;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 
 public class MeshProxy implements RenderProxy {
 
 	private MeshProtoKey _assetKey;
 	private Transform _trans;
-	private Vector4d _scale;
+	private Vec4d _scale;
 	private long _pickingID;
+	private VisibilityInfo _visInfo;
 
-	public MeshProxy(MeshProtoKey assetKey, Transform trans, long pickingID) {
-		this(assetKey, trans, new Vector4d(1, 1, 1), pickingID);
+	private Mesh cached;
+
+	public MeshProxy(MeshProtoKey assetKey, Transform trans, VisibilityInfo visInfo, long pickingID) {
+		this(assetKey, trans, new Vec4d(1, 1, 1, 1.0d), visInfo, pickingID);
 	}
 
-	public MeshProxy(MeshProtoKey assetKey, Transform trans, Vector4d scale, long pickingID) {
+	public MeshProxy(MeshProtoKey assetKey, Transform trans, Vec4d scale, VisibilityInfo visInfo, long pickingID) {
 		_assetKey = assetKey;
 		_trans = trans;
 		_scale = scale;
 		_pickingID = pickingID;
+		_visInfo = visInfo;
 	}
 
 	@Override
 	public void collectRenderables(Renderer r, ArrayList<Renderable> outList) {
-		MeshProto proto = r.getProto(_assetKey);
+		if (cached == null) {
+			MeshProto proto = r.getProto(_assetKey);
 
-		outList.add(new Mesh(_assetKey, proto, _trans, _scale, _pickingID));
+			cached = new Mesh(_assetKey, proto, _trans, _scale, _visInfo, _pickingID);
+		}
+		outList.add(cached);
 	}
 
 	@Override

@@ -16,9 +16,9 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.ValueTable;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 
@@ -127,5 +127,25 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 
 	public void setValidCounts(int... list) {
 		validCounts = list;
+	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		String def = defValue.getDefault().getString();
+
+		// no need for unit if infinity
+		if (isInfinity(def))
+			return def;
+
+		StringBuilder tmp = new StringBuilder(def);
+		if (!unitString.isEmpty()) {
+			tmp.append(SEPARATOR);
+			tmp.append(unitString);
+		}
+
+		return tmp.toString();
 	}
 }

@@ -13,7 +13,7 @@ CrossHairs			Shape				{ '/resources/shapes/CrossHairs.dae' }
 
 Define              DisplayModel		{ Cube }
 Cube                Shape               { '/resources/shapes/cube.dae' }
-DisplayEntity       DefaultDisplayModel { Cube }  DefaultObserver { DMObserver }
+DisplayEntity       DefaultDisplayModel { Cube }
 
 Define              DisplayModel		{ Sphere }
 Sphere              Shape               { '/resources/shapes/Sphere.dae' }

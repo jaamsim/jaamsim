@@ -17,10 +17,12 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.BooleanInput;
+import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityListInput;
@@ -81,6 +83,10 @@ public class GraphicSimulation extends Simulation {
 	         example = "This is placeholder example text")
 	private final IntegerListInput captureArea;
 
+	@Keyword(desc = "The background color to use for video recording",
+	         example = "This is placeholder example text")
+	private final ColourInput videoBGColor;
+
 	@Keyword(desc = "The list of views to draw in the video",
 	         example = "This is placeholder example text")
 	private final EntityListInput<View> captureViews;
@@ -89,7 +95,7 @@ public class GraphicSimulation extends Simulation {
 
 	{
 		captureStartTime = new TimeInput( "CaptureStartTime", "Key Inputs", 0.0 );
-		captureStartTime.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
+		captureStartTime.setValidRange( 0, Double.POSITIVE_INFINITY );
 		captureStartTime.setUnits( "h" );
 		this.addInput( captureStartTime, true );
 
@@ -104,8 +110,11 @@ public class GraphicSimulation extends Simulation {
 		this.addInput( captureQuality, true );
 		captureQuality.setHidden(true);
 
+		videoBGColor = new ColourInput("VideoBackgroundColor", "Key Inputs", ColourInput.WHITE);
+		this.addInput(videoBGColor, true, "Colour");
+
 		captureFrames = new IntegerInput("CaptureFrames", "Key Inputs", 0);
-		captureFrames.setValidRange(0, 10000);
+		captureFrames.setValidRange(0, 30000);
 		this.addInput(captureFrames, true);
 
 		saveImages = new BooleanInput("SaveImages", "Key Inputs", false);
@@ -362,16 +371,24 @@ public class GraphicSimulation extends Simulation {
 			RenderManager.initialize();
 		}
 
+		int width = captureArea.getValue().get(0);
+		int height = captureArea.getValue().get(1);
+
 		ArrayList<View> views = captureViews.getValue();
 
-		RenderManager.inst().resetRecorder(views, InputAgent.getRunName(), saveImages.getValue(), saveVideo.getValue());
+		RenderManager.inst().resetRecorder(views, width, height, InputAgent.getRunName(), captureFrames.getValue(),
+				saveImages.getValue(), saveVideo.getValue(), videoBGColor.getValue());
 
 		// Otherwise, start capturing
 		captureFlag = true;
-		while( captureFlag && numFramesWritten < captureFrames.getValue()) {
+		while( captureFlag) {
 
 			RenderManager.inst().blockOnScreenShot();
 			++numFramesWritten;
+
+			if (numFramesWritten == captureFrames.getValue()) {
+				break;
+			}
 
 			// Wait until the next time to capture a frame
 			// (priority 10 is used to allow higher priority events to complete first)

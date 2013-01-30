@@ -34,9 +34,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import javax.vecmath.Vector3d;
 
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
@@ -379,14 +380,11 @@ static class DuplicateMenuItem extends DEMenuItem {
 		if (copiedEntity instanceof DisplayEntity) {
 			DisplayEntity dEnt = (DisplayEntity)copiedEntity;
 
-			Vector3d pos = dEnt.getPosition();
-			Vector3d offset = dEnt.getSize();
-			offset.scale(0.5);
-			offset.setZ(0);
-			pos.add(offset);
+			Vec3d pos = dEnt.getPosition();
+			pos.x += 0.5d * dEnt.getSize().x;
+			pos.y += 0.5d * dEnt.getSize().y;
 
 			dEnt.setPosition(pos);
-			dEnt.enterRegion();
 		}
 		FrameBox.setSelectedEntity(copiedEntity);
 	}
@@ -456,7 +454,7 @@ static class LabelMenuItem extends DEMenuItem {
 		list.add(new PropertyMenuItem(ent));
 		list.add(new OutputMenuItem(ent));
 
-		if (!ent.testFlag(Entity.FLAG_ADDED))
+		if (!ent.testFlag(Entity.FLAG_GENERATED))
 			list.add(new DuplicateMenuItem(ent));
 
 		list.add(new DeleteMenuItem(ent));
@@ -480,6 +478,9 @@ static class LabelMenuItem extends DEMenuItem {
 		public void mouseClicked(MouseEvent e) {
 
 			if(e.getButton() != MouseEvent.BUTTON3)
+				return;
+
+			if(currentEntity == null)
 				return;
 
 			// Right mouse click on a movable DisplayEntity

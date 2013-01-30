@@ -48,6 +48,35 @@ public Vec2d(double x, double y) {
 }
 
 /**
+ * Returns a string representation of this vec.
+ */
+@Override
+public String toString() {
+	StringBuilder tmp = new StringBuilder("(");
+	tmp.append(x);
+	tmp.append(", ").append(y);
+	tmp.append(")");
+	return tmp.toString();
+}
+
+/**
+ * Tests the first two components are exactly equal.
+ *
+ * This returns true if the x,y components compare as equal using the ==
+ * operator.  Note that NaN will always return false, and -0.0 and 0.0
+ * will compare as equal.
+ * @throws NullPointerException if v is null
+ */
+public boolean equals2(Vec2d v) {
+	return x == v.x && y == v.y;
+}
+
+public boolean near2(Vec2d v) {
+	return MathUtils.near(x, v.x) &&
+	       MathUtils.near(y, v.y);
+}
+
+/**
  * Set this Vec2d with the values (v.x, v.y);
  * @param v the Vec2d containing the values
  * @throws NullPointerException if v is null
@@ -84,16 +113,6 @@ public void add2(Vec2d v1, Vec2d v2) {
 }
 
 /**
- * Returns a new Vec2d initialized to v1 + v2
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec2d getAdd2(Vec2d v1, Vec2d v2) {
-	Vec2d tmp = new Vec2d(v1);
-	tmp.add2(v2);
-	return tmp;
-}
-
-/**
  * Subtract v from this Vec2d: this = this - v
  * @throws NullPointerException if v is null
  */
@@ -109,16 +128,6 @@ public void sub2(Vec2d v) {
 public void sub2(Vec2d v1, Vec2d v2) {
 	this.x = v1.x - v2.x;
 	this.y = v1.y - v2.y;
-}
-
-/**
- * Returns a new Vec2d initialized to v1 - v2
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec2d getSub2(Vec2d v1, Vec2d v2) {
-	Vec2d tmp = new Vec2d(v1);
-	tmp.sub2(v2);
-	return tmp;
 }
 
 /**
@@ -140,16 +149,6 @@ public void mul2(Vec2d v1, Vec2d v2) {
 }
 
 /**
- * Returns a new Vec2d initialized to v1 * v2
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec2d getMul2(Vec2d v1, Vec2d v2) {
-	Vec2d tmp = new Vec2d(v1);
-	tmp.mul2(v2);
-	return tmp;
-}
-
-/**
  * Set this Vec2d to the minimum of this and v: this = min(this, v)
  * @throws NullPointerException if v is null
  */
@@ -168,16 +167,6 @@ public void min2(Vec2d v1, Vec2d v2) {
 }
 
 /**
- * Returns a new Vec2d initialized to min(v1, v2)
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec2d getMin2(Vec2d v1, Vec2d v2) {
-	Vec2d tmp = new Vec2d(v1);
-	tmp.min2(v2);
-	return tmp;
-}
-
-/**
  * Set this Vec2d to the maximum of this and v: this = max(this, v)
  * @throws NullPointerException if v is null
  */
@@ -193,16 +182,6 @@ public void max2(Vec2d v) {
 public void max2(Vec2d v1, Vec2d v2) {
 	this.x = Math.max(v1.x, v2.x);
 	this.y = Math.max(v1.y, v2.y);
-}
-
-/**
- * Returns a new Vec2d initialized to max(v1, v2)
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec2d getMax2(Vec2d v1, Vec2d v2) {
-	Vec2d tmp = new Vec2d(v1);
-	tmp.max2(v2);
-	return tmp;
 }
 
 /**
@@ -306,13 +285,13 @@ public void scale2(double scale, Vec2d v) {
 }
 
 /**
- * Returns a new Vec2d initialized to scale * v
- * @throws NullPointerException if v is null
+ * Linearly interpolate between a, b into this Vec: this = (1 - ratio) * a + ratio * b
+ * @throws NullPointerException if a or b are null
  */
-public static final Vec2d getScale2(double scale, Vec2d v) {
-	Vec2d tmp = new Vec2d(v);
-	tmp.scale2(scale);
-	return tmp;
+public void interpolate2(Vec2d a, Vec2d b, double ratio) {
+	double temp = 1.0d - ratio;
+	this.x = temp * a.x + ratio * b.x;
+	this.y = temp * a.y + ratio * b.y;
 }
 
 /**

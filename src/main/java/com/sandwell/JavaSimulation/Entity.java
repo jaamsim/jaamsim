@@ -19,11 +19,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import com.jaamsim.observers.NullObserverProto;
-import com.jaamsim.observers.Observer;
-import com.jaamsim.observers.ObserverProto;
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputGroup;
 import com.jaamsim.ui.FrameBox;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 /**
  * Abstract class that encapsulates the methods and data needed to create a
@@ -41,8 +39,6 @@ public class Entity {
 	private String entityInputName; // Name input by user
 	private final long entityNumber;
 
-	private Observer defaultObserver = null;
-
 	//public static final int FLAG_TRACE = 0x01; // reserved in case we want to treat tracing like the other flags
 	public static final int FLAG_TRACEREQUIRED = 0x02;
 	public static final int FLAG_TRACESTATE = 0x04;
@@ -57,6 +53,8 @@ public class Entity {
 
 	private final ArrayList<Input<?>> editableInputs;
 	private final HashMap<String, Input<?>> inputMap;
+
+	private final ArrayList<InputGroup> inputGroups;
 
 	static {
 		allInstances = new ArrayList<Entity>(100);
@@ -76,6 +74,7 @@ public class Entity {
 
 		editableInputs = new ArrayList<Input<?>>();
 		inputMap = new HashMap<String, Input<?>>();
+		inputGroups = new ArrayList<InputGroup>();
 	}
 
 	public static ArrayList<? extends Entity> getAll() {
@@ -115,7 +114,11 @@ public class Entity {
 	// This is defined for handlers only
 	public void validate() throws InputErrorException {}
 
-	public void earlyInit() {}
+	public void earlyInit() {
+		for (InputGroup grp : inputGroups) {
+			grp.earlyInit();
+		}
+	}
 
 	public void startUp() {}
 
@@ -182,8 +185,21 @@ public class Entity {
 			this.mapInput(in, each);
 	}
 
+	protected void addInputGroup(InputGroup grp) {
+
+		inputGroups.add(grp);
+
+		for (Input<?> in : grp.getInputs()) {
+			this.addInput(in, true);
+		}
+	}
+
 	public Input<?> getInput(String key) {
 		return inputMap.get(key.toUpperCase());
+	}
+
+	public ArrayList<InputGroup> getInputGroups() {
+		return inputGroups;
 	}
 
 	public void resetInputs() {
@@ -600,27 +616,4 @@ public class Entity {
 				meth, text1, text2);
 	}
 
-	/**
-	 * This is a very hacky method for now, we need a better way to determine if the
-	 * entity has had it's default observers created
-	 */
-	public void initDefaultObserver() {
-		if (defaultObserver != null) {
-			return; // Already created
-		}
-		ArrayList<ObjectType> allTypes = ObjectType.getAllCopy();
-		for( int i = 0; i < allTypes.size(); ++i) {
-			ObjectType type = allTypes.get(i);
-			if (type == null) { continue; } // The type list changed while reading. Hopefully we'll pick up the change next time
-			if(type.getJavaClass() == this.getClass()) {
-				ObserverProto proto =  type.getDefaultObserverProto();
-				if (proto == null) {
-					defaultObserver = NullObserverProto.defaultObs(this);
-				} else {
-					defaultObserver = proto.instantiate(this);
-				}
-				return;
-			}
-		}
-	}
 }

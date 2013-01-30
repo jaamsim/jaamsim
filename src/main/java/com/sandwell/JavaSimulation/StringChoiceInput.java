@@ -57,4 +57,12 @@ public class StringChoiceInput extends IntegerInput {
 	public ArrayList<String> getValidOptions() {
 		return choices;
 	}
+
+	@Override
+	public String getDefaultString() {
+		if (getDefaultChoice().isEmpty())
+			return NO_VALUE;
+
+		return String.format("%s", getDefaultChoice());
+	}
 }

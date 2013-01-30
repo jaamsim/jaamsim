@@ -93,4 +93,9 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		minCount = min;
 		maxCount = max;
 	}
+
+	@Override
+	public String getDefaultString() {
+		return getDefaultStringForKeyInputs();
+	}
 }

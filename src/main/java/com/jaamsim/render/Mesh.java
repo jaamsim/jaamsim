@@ -17,10 +17,10 @@ package com.jaamsim.render;
 import java.util.Map;
 
 import com.jaamsim.math.AABB;
-import com.jaamsim.math.Matrix4d;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 
 //import javax.media.opengl.*;
 
@@ -29,24 +29,26 @@ public class Mesh implements Renderable {
 private MeshProto _proto;
 private MeshProtoKey _key;
 private Transform _trans;
-private Vector4d _scale; // Allow for a non-uniform scale
+private Vec4d _scale; // Allow for a non-uniform scale
 
 private long _pickingID;
+private VisibilityInfo _visInfo;
 
 private AABB _bounds;
 
-public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, long pickingID) {
-	this(key, proto, trans, new Vector4d(0, 0, 0), pickingID);
+public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, VisibilityInfo visInfo, long pickingID) {
+	this(key, proto, trans, new Vec4d(0, 0, 0, 1.0d), visInfo, pickingID);
 }
 
-public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, Vector4d scale, long pickingID) {
+public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, Vec4d scale, VisibilityInfo visInfo, long pickingID) {
 
 	_trans = new Transform(trans);
 	_proto = proto;
-	_scale = new Vector4d(scale);
+	_scale = new Vec4d(scale);
 	_key = key;
+	_visInfo = visInfo;
 
-	Matrix4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
+	Mat4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
 	_bounds = _proto.getHull().getAABB(modelMat);
 
 	_pickingID = pickingID;
@@ -58,15 +60,15 @@ public AABB getBoundsRef() {
 
 @Override
 public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
-	Matrix4d modelViewMat = new Matrix4d();
-	cam.getViewMatrix(modelViewMat);
+	Mat4d modelViewMat = new Mat4d();
+	cam.getViewMat4d(modelViewMat);
 
-	Matrix4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
+	Mat4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
 
-	modelViewMat.mult(modelMat, modelViewMat);
+	modelViewMat.mult4(modelMat);
 
-	Matrix4d normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
-	normalMat.transposeLocal();
+	Mat4d normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
+	normalMat.transpose4();
 
 	_proto.render(vaoMap, renderer, modelMat, normalMat, cam);
 
@@ -104,18 +106,23 @@ public boolean hasTransparent() {
 @Override
 public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
 
-	Matrix4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
+	Mat4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
 
-	Matrix4d normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
-	normalMat.transposeLocal();
+	Mat4d normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
+	normalMat.transpose4();
 
 	_proto.renderTransparent(vaoMap, renderer, modelMat, normalMat, cam);
 
 }
 
 @Override
-public boolean renderForView(int windowID) {
-	return true;
+public boolean renderForView(int viewID, double dist) {
+	if (dist < _visInfo.minDist || dist > _visInfo.maxDist) {
+		return false;
+	}
+
+	if (_visInfo.viewIDs == null || _visInfo.viewIDs.size() == 0) return true; //Default to always visible
+	return _visInfo.viewIDs.contains(viewID);
 }
 
 }

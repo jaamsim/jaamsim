@@ -14,8 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 public class DoubleInput extends Input<Double> {
 	private double minValue;
@@ -66,5 +66,26 @@ public class DoubleInput extends Input<Double> {
 	public void setValidRange(double min, double max) {
 		minValue = min;
 		maxValue = max;
+	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue.doubleValue() == Double.POSITIVE_INFINITY)
+			return POSITIVE_INFINITY;
+
+		if (defValue.doubleValue() == Double.NEGATIVE_INFINITY)
+			return NEGATIVE_INFINITY;
+
+		StringBuilder tmp = new StringBuilder(defValue.toString());
+
+		if (!unitString.isEmpty()) {
+			tmp.append(SEPARATOR);
+			tmp.append(unitString);
+		}
+
+		return tmp.toString();
 	}
 }

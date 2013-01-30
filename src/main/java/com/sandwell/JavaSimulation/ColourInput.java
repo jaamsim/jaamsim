@@ -315,4 +315,13 @@ private static void initColors() {
 	defColor("gray2", 5, 5, 5);
 	defColor("gray1", 3, 3, 3);
 }
+
+@Override
+public String getDefaultString() {
+	if (defValue == null)
+		return NO_VALUE;
+
+	return String.format("%.0f%s%.0f%s%.0f", defValue.r * 255, SEPARATOR,
+	   defValue.g * 255, SEPARATOR, defValue.b * 255);
+}
 }

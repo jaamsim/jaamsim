@@ -16,8 +16,8 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 public class DoubleTableInput extends Input<ArrayList<DoubleVector>> {
 	protected double minValue = Double.NEGATIVE_INFINITY;
@@ -78,5 +78,44 @@ public class DoubleTableInput extends Input<ArrayList<DoubleVector>> {
 
 	public void setValidSum(double sum) {
 		sumValue = sum;
+	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue.size() == 0)
+			return NO_VALUE;
+
+		StringBuilder tmp = new StringBuilder();
+		for (DoubleVector each: defValue) {
+
+			// blank space between items
+			if (tmp.length() > 0)
+				tmp.append(SEPARATOR);
+
+			if (each == null) {
+				tmp.append(NO_VALUE);
+				continue;
+			}
+			if (each.size() == 0) {
+				tmp.append(NO_VALUE);
+				continue;
+			}
+
+			tmp.append("{");
+			tmp.append(SEPARATOR);
+			for (int i = 0; i < each.size(); i++) {
+				tmp.append(each.get(i));
+				tmp.append(SEPARATOR);
+			}
+			if (!unitString.isEmpty()) {
+				tmp.append(unitString);
+				tmp.append(SEPARATOR);
+			}
+			tmp.append("}");
+		}
+		return tmp.toString();
 	}
 }

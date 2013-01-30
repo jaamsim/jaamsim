@@ -41,4 +41,39 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 	public void setUnique(boolean unique) {
 		this.unique = unique;
 	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue.size() ==0)
+			return NO_VALUE;
+
+		StringBuilder tmp = new StringBuilder();
+		for (ArrayList<T> each: defValue) {
+
+			// blank space between elements
+			if (tmp.length() > 0)
+				tmp.append(SEPARATOR);
+
+			if (each == null) {
+				tmp.append(NO_VALUE);
+				continue;
+			}
+			if (each.isEmpty()) {
+				tmp.append(NO_VALUE);
+				continue;
+			}
+
+			tmp.append("{");
+			tmp.append(SEPARATOR);
+			for (T ent:each) {
+				tmp.append(ent.getInputName());
+				tmp.append(SEPARATOR);
+			}
+			tmp.append("}");
+		}
+		return tmp.toString();
+	}
 }

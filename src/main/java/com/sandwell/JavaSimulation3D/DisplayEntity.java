@@ -18,16 +18,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.vecmath.Vector3d;
-
+import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
-import com.jaamsim.math.Matrix4d;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec4d;
+import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.DoubleListInput;
@@ -38,68 +41,13 @@ import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
+import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation.Vector;
-import com.sandwell.JavaSimulation.Vector3dInput;
 
 /**
  * Encapsulates the methods and data needed to display a simulation object in the 3D environment.
  * Extends the basic functionality of entity in order to have access to the basic system
  * components like the eventManager.
- *
- *  <h3>Visual Heirarchy</h3>
- *
- *		GraphicsSimulation.rootLocale	(Locale)<br>
- *			-stores regionBranchGroups in the Vector: regionModels<br>
- *			-this vector corrects the J3D memory leak when the visual universe has no viewers<br>
- *<br>
- *		Region.branchGroup			(BranchGroup from DisplayEntity)<br>
- *<br>
- *		Region.rootTransform		(TransformGroup from DisplayEntity)<br>
- *<br>
- *		Region.scaleTransform		(TransformGroup from DisplayEntity)<br>
- *<br>
- *		DisplayEntity.branchGroup		(BranchGroup)<br>
- *			** allows detach, pick reporting<br>
- *			- provides the container to add and remove from a region<br>
- *			- the basis for selecting an object from the visual display<br>
- *<br>
- *		DisplayEntity.rootTransform		(TransformGroup)<br>
- *			** allows writing and extending children, changing transforms<br>
- *			- provides the basis for local transformations of position and orientation<br>
- *			- host for visual utilities bounds, name and axis<br>
- *<br>
- *		DisplayEntity.scaleTransform		(TransformGroup)<br>
- *			** allows changing transforms<br>
- *			- provides the basis for local transformation of scaling<br>
- *			- used to scale model, but not visual utilities like bounds and axis<br>
- *<br>
- *		DisplayEntity.displayModel		(BranchGroup)<br>
- *			** allows detach, reading, writing, extending children<br>
- *			- provides the container for user models to be added to the visual universe<br>
- *			- capabilities to allow manipulation of the model's components<br>
- *<br>
- *		Shape3D, BranchGroup, SharedGroup, Shape2D (Rectangle, Circle, Label, ...)	(Node)<br>
- *			- model for the DisplayEntity comprised of components of Shape3Ds<br>
- *			- may be loaded from a geometry file<br>
- *
- *
- *
- *  <h3>DisplayEntity Structure</h3>
- *
- *	DisplayEntity is defined to be compatible with Audition DisplayPerformers, as such origin and extent
- *  are provided.  Since the display of objects using Java3D is not bound to 2 dimensions nor a fixed
- *  range of pixels, some changes are required.<br>
- *<br>
- *	- extent does not provides physical visual bounds of the DisplayEntity, rather it is a convenience used
- *    to determine where the logical dimensions of the object.  It has no effect on visual display<br>
- *<br>
- *  - origin represents the bottom left (in 2D space) of the DisplayEntity.  It is calculate from the
- *    more fundamental center and is related by the extent value.  Origin can still be used for positioning
- *    but rather center should be used for future compatibility.<br>
- *<br>
- *  - center represents the position of the object in 3D space.  This is the default positioning mechanism
- *    for DisplayEntities.  Setting the origin will be translated into setting the center.  The center represents
- *    the position on the Region of the local origin for the displayModel.<br>
  */
 public class DisplayEntity extends Entity {
 	private static final ArrayList<DisplayEntity> allInstances;
@@ -111,21 +59,21 @@ public class DisplayEntity extends Entity {
 
 	@Keyword(desc = "The point in the region at which the alignment point of the object is positioned.",
 	         example = "Object1 Position { -3.922 -1.830 0.000 m }")
-	private final Vector3dInput positionInput;
+	private final Vec3dInput positionInput;
 
 	@Keyword(desc = "The size of the object in { x, y, z } coordinates. If only the x and y coordinates are given " +
 	                "then the z dimension is assumed to be zero.",
 	         example = "Object1 Size { 15 12 0 m }")
-	private final Vector3dInput sizeInput;
+	private final Vec3dInput sizeInput;
 
 	@Keyword(desc = "Euler angles defining the rotation of the object.",
 	         example = "Object1 Orientation { 0 0 90 deg }")
-	private final Vector3dInput orientationInput;
+	private final Vec3dInput orientationInput;
 
 	@Keyword(desc = "The point within the object about which its Position keyword is defined, " +
 	                "expressed with respect to a unit box centered about { 0 0 0 }.",
 	         example = "Object1 Alignment { -0.5 -0.5 0.0 }")
-	private final Vector3dInput alignmentInput;
+	private final Vec3dInput alignmentInput;
 
 	@Keyword(desc = "The name of the Region containing the object.  Applies an offset " +
 			        "to the Position of the object corresponding to the Region's " +
@@ -133,10 +81,13 @@ public class DisplayEntity extends Entity {
 	         example ="Object1 Region { Region1 }")
 	private final EntityInput<Region> regionInput;
 
-	private final Vector3d position = new Vector3d();
-	private final Vector3d size = new Vector3d(1.0d, 1.0d, 1.0d);
-	private final Vector3d orient = new Vector3d();
-	private final Vector3d align = new Vector3d();
+	@Keyword(desc = "This input is deprecated. Instead change the VisibleViews on the DisplayModel.",
+	         example = "Ship VisibleViews { TitleView DefaultView }")
+	private final EntityListInput<View> visibleViews;
+	private final Vec3d position = new Vec3d();
+	private final Vec3d size = new Vec3d(1.0d, 1.0d, 1.0d);
+	private final Vec3d orient = new Vec3d();
+	private final Vec3d align = new Vec3d();
 
 	private Region currentRegion;
 
@@ -173,6 +124,8 @@ public class DisplayEntity extends Entity {
 	         example = "Simulation ToolTip { FALSE }")
 	protected BooleanInput showToolTip;
 
+	private ArrayList<DisplayModelBinding> modelBindings;
+
 	public static class TagSet {
 		public Map<String, Color4d[]> colours = new HashMap<String, Color4d[]>();
 		public Map<String, DoubleVector> sizes = new HashMap<String, DoubleVector>();
@@ -203,18 +156,18 @@ public class DisplayEntity extends Entity {
 	}
 
 	{
-		positionInput = new Vector3dInput("Position", "Basic Graphics", new Vector3d());
+		positionInput = new Vec3dInput("Position", "Basic Graphics", new Vec3d());
 		positionInput.setUnits("m");
 		this.addInput(positionInput, true);
 
-		alignmentInput = new Vector3dInput("Alignment", "Basic Graphics", new Vector3d());
+		alignmentInput = new Vec3dInput("Alignment", "Basic Graphics", new Vec3d());
 		this.addInput(alignmentInput, true);
 
-		sizeInput = new Vector3dInput("Size", "Basic Graphics", new Vector3d(1.0d,1.0d,1.0d));
+		sizeInput = new Vec3dInput("Size", "Basic Graphics", new Vec3d(1.0d, 1.0d, 1.0d));
 		sizeInput.setUnits("m");
 		this.addInput(sizeInput, true);
 
-		orientationInput = new Vector3dInput("Orientation", "Basic Graphics", new Vector3d());
+		orientationInput = new Vec3dInput("Orientation", "Basic Graphics", new Vec3d());
 		orientationInput.setUnits("rad");
 		this.addInput(orientationInput, true);
 
@@ -244,6 +197,9 @@ public class DisplayEntity extends Entity {
 
 		showToolTip = new BooleanInput("ToolTip", "Basic Graphics", true);
 		this.addInput(showToolTip, true);
+
+		visibleViews = new EntityListInput<View>(View.class, "VisibleViews", "Basic Graphics", new ArrayList<View>(0));
+		this.addInput(visibleViews, true);
 	}
 
 	/**
@@ -274,6 +230,14 @@ public class DisplayEntity extends Entity {
 		Input.validateIndexedLists(displayModelList.getValue(), levelOfDetail.getValue(), "DisplayModel", "LevelOfDetail");
 		if(getRelativeEntity() == this) {
 			this.warning("validate()", "Relative Entities should not be defined in a circular loop", "");
+		}
+
+		if (displayModelList.getValue() != null) {
+			for (DisplayModel dm : displayModelList.getValue()) {
+				if (!dm.canDisplayEntity(this)) {
+					this.error("validate()", String.format("Invalid Display model: %s for Entity", dm.getInputName()), "");
+				}
+			}
 		}
 	}
 
@@ -309,16 +273,6 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
-	 * Visually adds the entity to its currently assigned region
-	 */
-	public void enterRegion() {}
-
-	/**
-	 * Visually removes the entity from its region.  The current region for the entity is maintained.
-	 */
-	public void exitRegion() {}
-
-	/**
 	 * Update any internal stated needed by either renderer. This is a transition method to get away from
 	 * java3D onto the new renderer.
 	 *
@@ -327,7 +281,7 @@ public class DisplayEntity extends Entity {
 	 */
 	public void updateGraphics(double simTime) {}
 
-	private void calculateEulerRotation(Vector3d val, Vector3d euler) {
+	private void calculateEulerRotation(Vec3d val, Vec3d euler) {
 		double sinx = Math.sin(euler.x);
 		double siny = Math.sin(euler.y);
 		double sinz = Math.sin(euler.z);
@@ -352,91 +306,55 @@ public class DisplayEntity extends Entity {
 		double y = m10 * val.x + m11 * val.y + m12 * val.z;
 		double z = m20 * val.x + m21 * val.y + m22 * val.z;
 
-		val.set(x, y, z);
+		val.set3(x, y, z);
 	}
 
-	public Vector3d getPositionForAlignment(Vector3d alignment) {
-		Vector3d temp = new Vector3d(alignment);
+	public Vec3d getPositionForAlignment(Vec3d alignment) {
+		Vec3d temp = new Vec3d(alignment);
 		synchronized (position) {
-			temp.sub(align);
-			temp.x *= size.x;
-			temp.y *= size.y;
-			temp.z *= size.z;
+			temp.sub3(align);
+			temp.mul3(size);
 			calculateEulerRotation(temp, orient);
-			temp.add(position);
+			temp.add3(position);
 		}
 
 		return temp;
 	}
 
-	public Vector3d getOrientation() {
+	public Vec3d getOrientation() {
 		synchronized (position) {
-			return new Vector3d(orient);
+			return new Vec3d(orient);
 		}
 	}
 
-	public void setOrientation(Vector3d orientation) {
+	public void setOrientation(Vec3d orientation) {
 		synchronized (position) {
-			orient.set(orientation);
+			if (orient.equals3(orientation)) {
+				return;
+			}
+			orient.set3(orientation);
 			setGraphicsDataDirty();
 		}
 	}
 
-    /**  Translates the object to a new position, the same distance from centerOfOrigin,
-     *   but at angle theta radians
-     *   counterclockwise
-     * @param centerOfOrigin
-     * @param Theta
-     */
-	public void polarTranslationAroundPointByAngle( Vector3d centerOfOrigin, double Theta ) {
-		Vector3d centerOfEntityRotated = new Vector3d();
-		Vector3d centerOfEntity = this.getPositionForAlignment(new Vector3d());
-		centerOfEntityRotated.x = centerOfOrigin.x + Math.cos( Theta ) * ( centerOfEntity.x - centerOfOrigin.x ) - Math.sin( Theta ) * ( centerOfEntity.y - centerOfOrigin.y );
-		centerOfEntityRotated.y = centerOfOrigin.y + Math.cos( Theta ) * ( centerOfEntity.y - centerOfOrigin.y ) + Math.sin( Theta ) * ( centerOfEntity.x - centerOfOrigin.x );
-		centerOfEntityRotated.z = centerOfOrigin.z;
-		this.setPosition(centerOfEntityRotated);
-	}
-
-    /** Get the position of the DisplayEntity if it Rotates (counterclockwise) around the centerOfOrigin by
-     *  Theta radians assuming the object centers at pos
-     *
-     * @param centerOfOrigin
-     * @param Theta
-     * @param pos
-     */
-	public Vector3d getCoordinatesForRotationAroundPointByAngleForPosition( Vector3d centerOfOrigin, double Theta, Vector3d pos ) {
-		Vector3d centerOfEntityRotated = new Vector3d();
-		centerOfEntityRotated.x = centerOfOrigin.x + Math.cos( Theta ) * ( pos.x - centerOfOrigin.x ) - Math.sin( Theta ) * ( pos.y - centerOfOrigin.y );
-		centerOfEntityRotated.y = centerOfOrigin.y + Math.cos( Theta ) * ( pos.y - centerOfOrigin.y ) + Math.sin( Theta ) * ( pos.x - centerOfOrigin.x );
-		centerOfEntityRotated.z = centerOfOrigin.z;
-		return centerOfEntityRotated;
-	}
-
-
-	public void setSize(Vector3d size) {
+	public void setSize(Vec3d size) {
 		synchronized (position) {
-			this.size.set(size);
+			if (this.size.equals3(size)) {
+				return;
+			}
+			this.size.set3(size);
 			setGraphicsDataDirty();
 		}
 	}
 
-	public Vector3d getPosition() {
+	public Vec3d getPosition() {
 		synchronized (position) {
-			return new Vector3d(position);
+			return new Vec3d(position);
 		}
 	}
 
 	DisplayEntity getRelativeEntity() {
 		return relativeEntity.getValue();
-	}
-
-	private Vector3d getOffsetToRelativeEntity() {
-		Vector3d offset = new Vector3d();
-		DisplayEntity entity = this.getRelativeEntity();
-		if(entity != null && entity != this) {
-			offset.add( entity.getPosition() );
-		}
-		return offset;
 	}
 
 	/**
@@ -450,17 +368,16 @@ public class DisplayEntity extends Entity {
 		// As size is a non-uniform scale it can not be represented by the jaamsim TRS Transform and therefore
 		// not actually included in this result, except to adjust the alignment
 
-		Transform alignTrans = new Transform(new Vector4d(align.x * size.x * -1,
+		Transform alignTrans = new Transform(new Vec4d(align.x * size.x * -1,
                                                     align.y * size.y * -1,
-                                                    align.z * size.z * -1),
-                                       Quaternion.ident, 1);
+                                                    align.z * size.z * -1, 1.0d));
 
 		Quaternion rot = Quaternion.FromEuler(orient.x, orient.y, orient.z);
 
-		Vector4d transVect = new Vector4d(position.x, position.y, position.z);
+		Vec4d transVect = new Vec4d(position.x, position.y, position.z, 1.0d);
 		DisplayEntity entity = this.getRelativeEntity();
 		if(entity != null && entity != this) {
-			transVect.addLocal3(new Vector4d(entity.position.x, entity.position.y, entity.position.z));
+			transVect.add3(entity.position);
 		}
 		Transform ret = new Transform(transVect, rot, 1);
 		ret.merge(alignTrans, ret);
@@ -479,12 +396,11 @@ public class DisplayEntity extends Entity {
 	 * Returns the global transform with scale factor all rolled into a Matrix4d
 	 * @return
 	 */
-	public Matrix4d getTransMatrix() {
+	public Mat4d getTransMatrix() {
 		Transform trans = getGlobalTrans();
-		Matrix4d ret = new Matrix4d();
-		trans.getMatrix(ret);
-		ret.mult(Matrix4d.ScaleMatrix(getJaamMathSize()), ret);
-
+		Mat4d ret = new Mat4d();
+		trans.getMat4d(ret);
+		ret.scaleCols3(getJaamMathSize(1));
 		return ret;
 	}
 
@@ -492,10 +408,8 @@ public class DisplayEntity extends Entity {
 	 * Returns the inverse global transform with scale factor all rolled into a Matrix4d
 	 * @return
 	 */
-	public Matrix4d getInvTransMatrix() {
-		Vector4d s = new Vector4d(size.x, size.y, size.z);
-
-		return RenderUtils.getInverseWithScale(getGlobalTrans(), s);
+	public Mat4d getInvTransMatrix() {
+		return RenderUtils.getInverseWithScale(getGlobalTrans(), size);
 	}
 
 
@@ -525,9 +439,7 @@ public class DisplayEntity extends Entity {
 			graphicsDirtier.addDependent(relativeEntity.getValue().getGraphicsDirtier());
 		}
 		if (displayModelList.getValue() != null) {
-			for (int i = 0; i < displayModelList.getValue().size(); ++i) {
-				DisplayModel dm = displayModelList.getValue().get(i);
-
+			for (DisplayModel dm : displayModelList.getValue()) {
 				graphicsDirtier.addDependent(dm.getGraphicsDirtier());
 			}
 		}
@@ -535,12 +447,12 @@ public class DisplayEntity extends Entity {
 
 
 	/**
-	 * just like getSize() but returns a JammSim math library Vector4d
+	 * just like getSize() but returns a JammSim math library Vec4d
 	 * @return
 	 */
-	public Vector4d getJaamMathSize() {
+	public Vec4d getJaamMathSize(double scaleFactor) {
 		synchronized (position) {
-			return new Vector4d(size.x, size.y, size.z);
+			return new Vec4d(size.x * scaleFactor, size.y * scaleFactor, size.z * scaleFactor, 1.0d);
 		}
 	}
 
@@ -548,10 +460,10 @@ public class DisplayEntity extends Entity {
 	 * Return the position in the global coordinate system
 	 * @return
 	 */
-	public Vector4d getGlobalPosition() {
-		Vector4d localPos = null;
+	public Vec4d getGlobalPosition() {
+		Vec4d localPos = null;
 		synchronized (position) {
-			localPos = new Vector4d(position.x, position.y, position.z);
+			localPos = new Vec4d(position.x, position.y, position.z, 1.0d);
 		}
 
 		if (currentRegion != null) {
@@ -565,51 +477,48 @@ public class DisplayEntity extends Entity {
 	/*
 	 * Returns the center relative to the origin
 	 */
-	public Vector3d getAbsoluteCenter() {
-		Vector3d cent = this.getPositionForAlignment(new Vector3d());
-		cent.add(getOffsetToRelativeEntity());
+	public Vec3d getAbsoluteCenter() {
+		Vec3d cent = this.getPositionForAlignment(new Vec3d());
+		DisplayEntity entity = this.getRelativeEntity();
+		if(entity != null && entity != this)
+			cent.add3(entity.getPosition());
+
 		return cent;
-	}
-
-	public Vector3d getAbsolutePositionForAlignment(Vector3d alignment) {
-		Vector3d extent = this.getSize();
-
-		alignment.x *= extent.x;
-		alignment.y *= extent.y;
-		alignment.z *= extent.z;
-		calculateEulerRotation(alignment, orient);
-
-		alignment.add(this.getAbsoluteCenter());
-
-		return alignment;
 	}
 
 	/**
 	 *  Returns the extent for the DisplayEntity
-	 *  @return Vector3d - width, height and depth of the bounds for the DisplayEntity
 	 */
-	public Vector3d getSize() {
+	public Vec3d getSize() {
 		synchronized (position) {
-			return new Vector3d(size);
+			return new Vec3d(size);
 		}
 	}
 
-	public Vector3d getAlignment() {
+	public Vec3d getAlignment() {
 		synchronized (position) {
-			return new Vector3d(align);
+			return new Vec3d(align);
 		}
 	}
 
-	public void setAlignment(Vector3d align) {
+	public void setAlignment(Vec3d align) {
 		synchronized (position) {
-			this.align.set(align);
+			if (this.align.equals3(align)) {
+				return;
+			}
+
+			this.align.set3(align);
 			setGraphicsDataDirty();
 		}
 	}
 
-	public void setPosition(Vector3d pos) {
+	public void setPosition(Vec3d pos) {
 		synchronized (position) {
-			position.set(pos);
+			if (this.position.equals3(pos)) {
+				return;
+			}
+
+			position.set3(pos);
 			setGraphicsDataDirty();
 		}
 	}
@@ -619,7 +528,7 @@ public class DisplayEntity extends Entity {
 	 * transform and sets the local position accordingly
 	 * @param pos - The new position in the global coordinate system
 	 */
-	public void setGlobalPosition(Vector4d pos) {
+	public void setGlobalPosition(Vec4d pos) {
 		Transform invReg = new Transform();
 
 		if (currentRegion != null) {
@@ -627,17 +536,29 @@ public class DisplayEntity extends Entity {
 			regionTrans.inverse(invReg);
 		}
 
-		Vector4d localPos = new Vector4d();
+		Vec4d localPos = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		invReg.apply(pos, localPos);
 
-		Vector3d j3dPos = new Vector3d();
-		j3dPos.x = localPos.x();
-		j3dPos.y = localPos.y();
-		j3dPos.z = localPos.z();
-		setPosition(j3dPos);
-		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format( "%.6f %.6f %.6f %s", j3dPos.x, j3dPos.y, j3dPos.z, positionInput.getUnits() ));
+		setPosition(localPos);
+		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format( "%.6f %.6f %.6f %s", localPos.x, localPos.y, localPos.z, positionInput.getUnits() ));
 		FrameBox.valueUpdate();
 	}
+
+	/*
+	 * move object to argument point based on alignment
+	 */
+	public void setPositionForAlignment(Vec3d alignment, Vec3d position) {
+		// Calculate the difference between the desired point and the current aligned position
+		Vec3d diff = this.getPositionForAlignment(alignment);
+		diff.sub3(position);
+		diff.scale3(-1.0d);
+
+		// add the difference to the current position and set the new position
+		diff.add3(getPosition());
+		setPosition(diff);
+	}
+
+
 
 	/**
 	 Returns a vector of strings describing the DisplayEntity.
@@ -653,17 +574,33 @@ public class DisplayEntity extends Entity {
 		return info;
 	}
 
-	public  EntityListInput<DisplayModel> getDisplayModelList() {
+	public EntityListInput<DisplayModel> getDisplayModelList() {
 		return displayModelList;
+	}
+
+	public ArrayList<DisplayModelBinding> getDisplayBindings() {
+		if (modelBindings == null) {
+			// Populate the model binding list
+			if (displayModelList.getValue() == null) {
+				modelBindings = new ArrayList<DisplayModelBinding>();
+				return modelBindings;
+			}
+			modelBindings = new ArrayList<DisplayModelBinding>(displayModelList.getValue().size());
+			for (int i = 0; i < displayModelList.getValue().size(); ++i) {
+				DisplayModel dm = displayModelList.getValue().get(i);
+				modelBindings.add(dm.getBinding(this));
+			}
+		}
+		return modelBindings;
 	}
 
 	public DoubleVector getLevelOfDetail() {
 		return levelOfDetail.getValue();
 	}
 
-	public void dragged(Vector3d distance) {
-		Vector3d newPos = this.getPosition();
-		newPos.add(distance);
+	public void dragged(Vec3d distance) {
+		Vec3d newPos = this.getPosition();
+		newPos.add3(distance);
 		this.setPosition(newPos);
 
 		// inform simulation and editBox of new positions
@@ -695,22 +632,29 @@ public class DisplayEntity extends Entity {
 
 		if( in == positionInput ) {
 			this.setPosition(  positionInput.getValue() );
+			return;
 		}
 		if( in == sizeInput ) {
 			this.setSize( sizeInput.getValue() );
+			return;
 		}
 		if( in == orientationInput ) {
 			this.setOrientation( orientationInput.getValue() );
+			return;
 		}
 		if( in == alignmentInput ) {
 			this.setAlignment( alignmentInput.getValue() );
+			return;
 		}
 		if( in == regionInput ) {
 			this.setRegion(regionInput.getValue());
 		}
 
-		if( in == relativeEntity ||
-		    in == displayModelList ) {
+		if (in == displayModelList) {
+			modelBindings = null; // Clear this on any change, and build it lazily later
+		}
+
+		if( in == relativeEntity || in == displayModelList) {
 			updateDirtyDependencies();
 		}
 		setGraphicsDataDirty();

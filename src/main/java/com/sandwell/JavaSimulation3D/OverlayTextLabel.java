@@ -1,12 +1,9 @@
 package com.sandwell.JavaSimulation3D;
 
 import java.awt.Font;
-import java.util.ArrayList;
 
-import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.IntegerListInput;
@@ -29,7 +26,7 @@ public class OverlayTextLabel extends DisplayEntity {
 
 	@Keyword(desc = "The position of the label, from the upper left corner of the window to the upper left corner " +
 	                "of the label. Value is in pixels",
-	     example = "TitleLabel Position { 20 20}")
+	     example = "TitleLabel ScreenPosition { 20 20 }")
 	private final IntegerListInput screenPosition;
 
 	@Keyword(desc = "The name of the font to be used for the label. The " +
@@ -45,10 +42,6 @@ public class OverlayTextLabel extends DisplayEntity {
 	         example = "TitleLabel FontColor { Red }")
 	private final ColourInput fontColor;
 
-	@Keyword(desc = "The view objects this overlay string will be visible on",
-	         example = "TitleLabel VisibleViews { TitleView DefaultView }")
-	private final EntityListInput<View> visibleViews;
-
 	@Keyword(desc = "If this text label should be aligned from the right edge of the window (instead of the left)",
 	         example = "TitleLabel AlignRight { TRUE }")
 	private final BooleanInput alignRight;
@@ -56,6 +49,20 @@ public class OverlayTextLabel extends DisplayEntity {
 	@Keyword(desc = "If this text label should be aligned from the bottom edge of the window (instead of the top)",
 	         example = "TitleLabel AlignBottom { TRUE }")
 	private final BooleanInput alignBottom;
+
+	@Keyword(desc = "A Boolean value.  If TRUE, then a drop shadow appears for the text label.",
+	         example = "TitleLabel  DropShadow { TRUE }")
+	private final BooleanInput dropShadow;
+
+	@Keyword(desc = "The colour for the drop shadow, defined using a colour keyword or RGB values.",
+	         example = "TitleLabel  DropShadowColour { red }")
+	private final ColourInput dropShadowColor;
+
+	@Keyword(desc = "A set of { x, y, z } numbers that define the offset in each direction of the drop shadow " +
+	         "from the OverlayTextLabel. Unit is in pixels. Direction is always down and to the right, but negative offsets " +
+	         "can be used.",
+	         example = "TitleLabel  DropShadowOffset { 5 5 }")
+	private final IntegerListInput dropShadowOffset;
 
 	private int style = 0;
 
@@ -87,14 +94,26 @@ public class OverlayTextLabel extends DisplayEntity {
 		fontStyle.setCaseSensitive(false);
 		this.addInput(fontStyle, true);
 
-		visibleViews = new EntityListInput<View>(View.class, "VisibleViews", "Key Inputs", new ArrayList<View>(0));
-		this.addInput(visibleViews, true);
-
 		alignRight = new BooleanInput("AlignRight", "Key Inputs", false);
 		this.addInput(alignRight, true);
 
 		alignBottom = new BooleanInput("AlignBottom", "Key Inputs", false);
 		this.addInput(alignBottom, true);
+
+		dropShadow = new BooleanInput("DropShadow", "Key Inputs", false);
+		this.addInput( dropShadow, true );
+
+		dropShadowColor = new ColourInput("DropShadowColour", "Key Inputs", ColourInput.MED_GREY);
+		this.addInput(dropShadowColor, true, "DropShadowColor");
+
+		IntegerVector defOffset = new IntegerVector(2);
+		defOffset.add(2);
+		defOffset.add(2);
+		dropShadowOffset = new IntegerListInput("DropShadowOffset", "Key Inputs", defOffset);
+		dropShadowOffset.setValidCount(2);
+		dropShadowOffset.setValidRange(-20, 20);
+		this.addInput(dropShadowOffset, true);
+
 
 		getInput("position").setHidden(true);
 		getInput("alignment").setHidden(true);
@@ -121,6 +140,8 @@ public class OverlayTextLabel extends DisplayEntity {
 
 	@Override
 	public void updateForInput( Input<?> in ) {
+		super.updateForInput(in);
+
 		if(in == fontStyle) {
 			style = Font.PLAIN;
 			for(String each: fontStyle.getValue() ) {
@@ -135,13 +156,8 @@ public class OverlayTextLabel extends DisplayEntity {
 		setGraphicsDataDirty();
 	}
 
-	public ArrayList<View> getVisibleViews() {
-
-		if( visibleViews.getValue() == null )
-			return new ArrayList<View>();
-
-		return visibleViews.getValue();
+	public String getText(double time) {
+		return text.getValue();
 	}
-
 
 }

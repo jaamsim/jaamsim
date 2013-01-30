@@ -19,11 +19,9 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.vecmath.Vector3d;
-
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.TessFontKey;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
@@ -34,7 +32,7 @@ import com.sandwell.JavaSimulation.StringChoiceInput;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation.StringVector;
-import com.sandwell.JavaSimulation.Vector3dInput;
+import com.sandwell.JavaSimulation.Vec3dInput;
 
 public class TextLabel extends DisplayEntity  {
 	@Keyword(desc = "The static text to be displayed.  If spaces are included, enclose the text in single quotes.",
@@ -68,7 +66,7 @@ public class TextLabel extends DisplayEntity  {
 
 	@Keyword(desc = "A set of { x, y, z } numbers that define the offset in each direction of the drop shadow from the TextLabel.",
 	         example = "TitleLabel  DropShadowOffset { 0.1 0.1 0.0 }")
-	private final Vector3dInput dropShadowOffset;
+	private final Vec3dInput dropShadowOffset;
 
 
 	// These are package-private as OverlayTextLabel is currently re-using them.
@@ -121,7 +119,7 @@ public class TextLabel extends DisplayEntity  {
 		dropShadowColor = new ColourInput("DropShadowColour", "Fixed Text", ColourInput.BLACK);
 		this.addInput(dropShadowColor, true, "DropShadowColor");
 
-		dropShadowOffset = new Vector3dInput("DropShadowOffset", "Fixed Text", new Vector3d(-0.1,-0.1,0.0));
+		dropShadowOffset = new Vec3dInput("DropShadowOffset", "Fixed Text", new Vec3d(-0.1,-0.1,0.0));
 		this.addInput(dropShadowOffset, true);
 	}
 
@@ -178,8 +176,8 @@ public class TextLabel extends DisplayEntity  {
 		if (RenderManager.isGood()) {
 
 			TessFontKey key = new TessFontKey(fontName.getChoice(), style);
-			Vector4d stringSize = RenderManager.inst().getRenderedStringSize(key, getTextHeight(), renderText);
-			setSize(new Vector3d(stringSize.x(), stringSize.y(), stringSize.z()));
+			Vec3d stringSize = RenderManager.inst().getRenderedStringSize(key, getTextHeight(), renderText);
+			setSize(stringSize);
 		}
 
 	}
@@ -210,9 +208,8 @@ public class TextLabel extends DisplayEntity  {
 	public Color4d getDropShadowColor() {
 		return dropShadowColor.getValue();
 	}
-	public Vector4d getDropShadowOffset() {
-		Vector3d v3 = dropShadowOffset.getValue();
-		return new Vector4d(v3.x, v3.y, v3.z);
+	public Vec3d getDropShadowOffset() {
+		return dropShadowOffset.getValue();
 	}
 
 }

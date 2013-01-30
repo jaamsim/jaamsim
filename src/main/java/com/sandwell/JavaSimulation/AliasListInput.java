@@ -34,4 +34,20 @@ public class AliasListInput extends ListInput<StringVector> {
 		value = input;
 		this.updateEditingFlags();
 	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue.size() == 0)
+			return NO_VALUE;
+
+		StringBuilder tmp = new StringBuilder(defValue.get(0));
+		for (int i = 1; i < defValue.size(); i++) {
+			tmp.append(SEPARATOR);
+			tmp.append(defValue.get(i));
+		}
+		return defValue.toString();
+	}
 }

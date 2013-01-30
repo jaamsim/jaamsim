@@ -24,56 +24,59 @@ package com.jaamsim.math;
 public class Transform {
 
 private Quaternion _rot;
-private Vector4d _trans;
+private Vec4d _trans;
 private double _scale;
-private Matrix4d _mat;
+private Mat4d _mat4d;
 private boolean _matrixDirty;
 
 public static final Transform ident = new Transform(); // Static Identity transform
 
 public Transform() {
-	_trans = new Vector4d(); // Zero
+	_trans = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // Zero
 	_rot = new Quaternion(); // Identity
 	_scale = 1;
-	_mat = new Matrix4d(); // Identity
+	_mat4d = new Mat4d();
 	_matrixDirty = false;
 }
 
 public Transform(Transform t) {
-	_trans = new Vector4d(t._trans);
+	_trans = new Vec4d(t._trans);
 	_rot = new Quaternion(t._rot);
 	_scale = t._scale;
 	_matrixDirty = true;
 }
 
-public Transform(Vector4d trans, Quaternion rot, double scale)
+public Transform(Vec3d trans, Quaternion rot, double scale)
 {
-	_trans = new Vector4d(trans);
-	_rot = new Quaternion(rot);
+	_trans = new Vec4d(trans.x, trans.y, trans.z, 1.0d);
+	if (rot == null)
+		_rot = new Quaternion();
+	else
+		_rot = new Quaternion(rot);
 	_scale = scale;
 	_matrixDirty = true;
 }
 
-public Transform(Vector4d trans) {
-	this(trans, Quaternion.ident, 1);
+public Transform(Vec3d trans) {
+	this(trans, null, 1.0d);
 }
 
 public void copyFrom(Transform t) {
-	_trans.copyFrom(t._trans);
+	_trans.set4(t._trans);
 	_rot.set(t._rot);
 	_scale = t._scale;
 
 	if (!t._matrixDirty) {
-		_mat.copyFrom(t._mat);
+		_mat4d.set4(t._mat4d);
 	}
 	_matrixDirty = t._matrixDirty;
 }
 
-public void setTrans(Vector4d trans) {
+public void setTrans(Vec3d trans) {
 	if (_trans.equals(trans)) {
 		return;
 	}
-	_trans.copyFrom(trans);
+	_trans = new Vec4d(trans.x, trans.y, trans.z, 1.0d);
 	_matrixDirty = true;
 }
 
@@ -101,12 +104,12 @@ public Quaternion getRotRef() {
 	return _rot;
 }
 
-public void getTrans(Vector4d out) {
-	out.copyFrom(_trans);
+public Vec4d getTransRef() {
+	return _trans;
 }
 
-public Vector4d getTransRef() {
-	return _trans;
+public void getTrans(Vec4d out) {
+	out.set4(_trans.x, _trans.y, _trans.z, 1);
 }
 
 public double getScale() {
@@ -117,34 +120,34 @@ public double getScale() {
  * Calculated the 4x4 matrix corresponding to this transform
  * @param out - the 4x4 matrix
  */
-public void getMatrix(Matrix4d out) {
+public void getMat4d(Mat4d out) {
 	if (_matrixDirty) {
 		updateMatrix();
 	}
 
-	out.copyFrom(_mat);
+	out.set4(_mat4d);
+
 }
 
-public Matrix4d getMatrixRef() {
+public Mat4d getMat4dRef() {
 	if (_matrixDirty) {
 		updateMatrix();
 	}
 
-	return _mat;
+	return _mat4d;
 }
+
 
 private void updateMatrix() {
-	if (_mat == null) {
-		_mat = new Matrix4d();
-	}
+	assert(_trans.x != Double.NaN);
+	assert(_trans.y != Double.NaN);
+	assert(_trans.z != Double.NaN);
 
-	Matrix4d scaleMat = Matrix4d.ScaleMatrix(_scale);
-	Matrix4d transMat = Matrix4d.TranslationMatrix(_trans);
-	Matrix4d rotMat = Matrix4d.RotationMatrix(_rot);
+	_mat4d = new Mat4d();
 
-	_mat.copyFrom(transMat);
-	_mat.mult(rotMat, _mat);
-	_mat.mult(scaleMat, _mat);
+	_mat4d.setTranslate3(_trans);
+	_mat4d.setRot3(_rot);
+	_mat4d.scale3(_scale);
 
 	_matrixDirty = false;
 
@@ -159,11 +162,12 @@ private void updateMatrix() {
  */
 public void merge(Transform rhs, Transform out) {
 
-	Vector4d temp = new Vector4d(_trans);
+	Vec4d temp = new Vec4d(_trans);
 
 	_rot.rotateVector(rhs._trans, out._trans);
-	out._trans.scaleLocal3(_scale);
-	out._trans.add3(temp, out._trans);
+	out._trans.scale3(_scale);
+
+	out._trans.add3(temp);
 	out._matrixDirty = true;
 
 	_rot.mult(rhs._rot, out._rot);
@@ -177,12 +181,20 @@ public void merge(Transform rhs, Transform out) {
  * @param vect - the vector to transform
  * @param out - the transformed vector
  */
-public void apply(Vector4d vect, Vector4d out) {
+public void apply(Vec4d vect, Vec4d out) {
 	if (_matrixDirty) {
 		updateMatrix();
 	}
 
-	_mat.mult(vect,  out);
+	out.mult4(_mat4d, vect);
+}
+
+public void apply(Vec3d vect, Vec3d out) {
+	if (_matrixDirty) {
+		updateMatrix();
+	}
+
+	out.multAndTrans3(_mat4d, vect);
 }
 
 /**
@@ -194,15 +206,15 @@ public void inverse(Transform out) {
 	out._scale = 1/_scale;
 	out._rot.conjugate(_rot);
 
-	out._trans.copyFrom(_trans);
-	out._trans.scaleLocal3(-out._scale);
+	out._trans.set4(_trans);
+	out._trans.scale3(-out._scale);
 	out._rot.rotateVector(out._trans, out._trans);
 
 	out._matrixDirty = true;
 }
 
 public boolean equals(Transform other) {
-	return _trans.equals(other._trans) && _rot.equals(other._rot) && MathUtils.near(_scale, other._scale);
+	return _trans.near4(other._trans) && _rot.equals(other._rot) && MathUtils.near(_scale, other._scale);
 }
 
 public String toString()

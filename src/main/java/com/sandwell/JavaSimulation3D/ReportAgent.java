@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputAgent;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.Input;

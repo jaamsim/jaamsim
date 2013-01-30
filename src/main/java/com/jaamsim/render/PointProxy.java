@@ -18,22 +18,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 
 public class PointProxy implements RenderProxy {
 
-	private List<Vector4d> _points;
+	private List<Vec4d> _points;
 	private Color4d _colour;
 	private Color4d _hoverColour;
 	private double _pointWidth;
 	private long _pickingID;
+	private VisibilityInfo _visInfo;
 
-	public PointProxy(List<Vector4d> points, Color4d colour, double pointWidth, long pickingID) {
+	private DebugPoints cached;
+
+	public PointProxy(List<Vec4d> points, Color4d colour, double pointWidth, VisibilityInfo visInfo, long pickingID) {
 		_points = points;
 		_colour = colour;
 		_hoverColour = colour;
 		_pointWidth = pointWidth;
 		_pickingID = pickingID;
+		_visInfo = visInfo;
 	}
 
 	public void setHoverColour(Color4d hoverColour) {
@@ -42,8 +46,11 @@ public class PointProxy implements RenderProxy {
 
 	@Override
 	public void collectRenderables(Renderer r, ArrayList<Renderable> outList) {
-		DebugPoints points = new DebugPoints(_points, _colour, _hoverColour, _pointWidth, _pickingID);
-		outList.add(points);
+		if (cached == null) {
+			cached = new DebugPoints(_points, _colour, _hoverColour, _pointWidth, _visInfo, _pickingID);
+		}
+
+		outList.add(cached);
 	}
 
 	@Override
@@ -51,4 +58,5 @@ public class PointProxy implements RenderProxy {
 			ArrayList<OverlayRenderable> outList) {
 		// None
 	}
+
 }

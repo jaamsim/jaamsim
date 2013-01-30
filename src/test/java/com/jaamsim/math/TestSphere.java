@@ -18,18 +18,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.jaamsim.math.MathUtils;
-import com.jaamsim.math.Plane;
-import com.jaamsim.math.Sphere;
-import com.jaamsim.math.Vector4d;
-
 public class TestSphere {
 
 @Test
 public void testSphereDistance() {
-	Sphere s0 = new Sphere(new Vector4d(0, 0, 0), 3);
+	Sphere s0 = new Sphere(new Vec4d(0, 0, 0, 1.0d), 3);
 
-	Sphere s1 = new Sphere(new Vector4d(3, 4, 0), 1);
+	Sphere s1 = new Sphere(new Vec4d(3, 4, 0, 1.0d), 1);
 
 	// sphere to sphere
 	double dist0 = s0.getDistance(s1);
@@ -39,12 +34,12 @@ public void testSphereDistance() {
 	assertTrue(MathUtils.near(dist0, 1));
 
 	// Sphere to plane
-	Plane p = new Plane(new Vector4d(0, 1, 0), 1);
+	Plane p = new Plane(new Vec4d(0, 1, 0, 1.0d), 1);
 	dist0 = s1.getDistance(p);
 	assertTrue(MathUtils.near(dist0, 2));
 
 	// Sphere to point
-	Vector4d point = new Vector4d(-3, 0, -4);
+	Vec4d point = new Vec4d(-3, 0, -4, 1.0d);
 	dist0 = s0.getDistance(point);
 	assertTrue(MathUtils.near(dist0, 2));
 

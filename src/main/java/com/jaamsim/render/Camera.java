@@ -15,12 +15,12 @@
 package com.jaamsim.render;
 
 import com.jaamsim.math.AABB;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
-import com.jaamsim.math.Matrix4d;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Sphere;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 
 /**
  * In the JaamRenderer, Camera's represent a single viewer of the world. Camera's are responsible for providing
@@ -37,8 +37,9 @@ public class Camera {
  */
 private CameraInfo _info;
 private double _aspectRatio;
+private Transform invTrans = new Transform();
 
-private Matrix4d _projMat;
+private Mat4d _projMat;
 private boolean _projMatDirty = true;
 
 /**
@@ -46,12 +47,6 @@ private boolean _projMatDirty = true;
  */
 private Plane[] _frustum;
 private boolean _frustumDirty = true;
-
-/**
- * The transform to the current camera position, should never include a scale component (although
- * I don't know for a fact that it would be a bad thing....)
- */
-//private Transform _trans;
 
 /**
  * Construct a new camera, the parameters provided are needed to determine the view frustum and the
@@ -65,6 +60,7 @@ public Camera(double FOV, double aspectRatio, double near, double far) {
 	_info = new CameraInfo(FOV, near, far, Transform.ident);
 
 	_aspectRatio = aspectRatio;
+	_info.trans.inverse(invTrans);
 
 	_frustumDirty = true;
 	_projMatDirty = true;
@@ -72,7 +68,9 @@ public Camera(double FOV, double aspectRatio, double near, double far) {
 
 public Camera(CameraInfo camInfo, double aspectRatio) {
 	_info = camInfo;
+
 	_aspectRatio = aspectRatio;
+	_info.trans.inverse(invTrans);
 
 	_frustumDirty = true;
 	_projMatDirty = true;
@@ -92,6 +90,8 @@ public Transform getTransformRef() {
 public void setTransform(Transform t) {
 	_info.trans.copyFrom(t);
 	_frustumDirty = true;
+	_info.trans.inverse(invTrans);
+
 }
 
 /**
@@ -102,6 +102,8 @@ public void setTransform(Transform t) {
 public void applyTransform(Transform t) {
 	t.merge(_info.trans, _info.trans);
 	_frustumDirty = true;
+	_info.trans.inverse(invTrans);
+
 }
 
 /**
@@ -110,7 +112,7 @@ public void applyTransform(Transform t) {
  */
 private void updateProjMat() {
 	if (_projMat == null) {
-		_projMat = new Matrix4d();
+		_projMat = new Mat4d();
 	}
 	_projMat.zero();
 
@@ -126,12 +128,11 @@ private void updateProjMat() {
 		fx = f / _aspectRatio;
 	}
 
-	// Note: the weird index is column, row indices
-	_projMat.data[0*4 + 0] = fx;
-	_projMat.data[1*4 + 1] = fy;
-	_projMat.data[2*4 + 2] = (_info.farDist + _info.nearDist) * denom;
-	_projMat.data[2*4 + 3] = -1;
-	_projMat.data[3*4 + 2] = 2*_info.nearDist*_info.farDist * denom;
+	_projMat.d00 = fx;
+	_projMat.d11 = fy;
+	_projMat.d22 = (_info.farDist + _info.nearDist) * denom;
+	_projMat.d32 = -1;
+	_projMat.d23 = 2*_info.nearDist*_info.farDist * denom;
 
 	_projMatDirty = false;
 }
@@ -140,7 +141,7 @@ private void updateProjMat() {
  * Gets a reference to the projection matrix for this camera
  * @return
  */
-public Matrix4d getProjMatRef() {
+public Mat4d getProjMat4d() {
 	if (_projMatDirty) {
 		updateProjMat();
 	}
@@ -152,15 +153,14 @@ public Matrix4d getProjMatRef() {
  * Get the view matrix for the current position (defined by the transform)
  * @param viewOut
  */
-public void getViewMatrix(Matrix4d viewOut) {
-	Transform tInv = new Transform();
-	_info.trans.inverse(tInv);
+public void getViewMat4d(Mat4d viewOut) {
 
-	tInv.getMatrix(viewOut);
+	invTrans.getMat4d(viewOut);
+
 }
 
 public void getViewTrans(Transform transOut) {
-	_info.trans.inverse(transOut);
+	transOut.copyFrom(invTrans);
 }
 
 public double getNear() {
@@ -213,8 +213,8 @@ public void setFOV(double FOV) {
  * is a perspective transform)
  * @param dirOut
  */
-public void getViewDir(Vector4d dirOut) {
-	_info.trans.apply(new Vector4d(0 ,0, -1, 0), dirOut);
+public void getViewDir(Vec4d dirOut) {
+	_info.trans.apply(new Vec4d(0 ,0, -1, 0), dirOut);
 }
 
 /**
@@ -281,20 +281,20 @@ private void updateFrustum() {
 	// Create the 6 planes that define the frustum, anything on the positive side of all 6 planes is
 	// in the frustum
 	// +Y
-	_frustum[0] = new Plane(new Vector4d(0,  cosY, -sinY), 0);
+	_frustum[0] = new Plane(new Vec4d(0,  cosY, -sinY, 1.0d), 0);
 	// -Y
-	_frustum[1] = new Plane(new Vector4d(0, -cosY, -sinY), 0);
+	_frustum[1] = new Plane(new Vec4d(0, -cosY, -sinY, 1.0d), 0);
 
 	// +X
-	_frustum[2] = new Plane(new Vector4d( cosX, 0, -sinX), 0);
+	_frustum[2] = new Plane(new Vec4d( cosX, 0, -sinX, 1.0d), 0);
 	// -X
-	_frustum[3] = new Plane(new Vector4d(-cosX, 0, -sinX), 0);
+	_frustum[3] = new Plane(new Vec4d(-cosX, 0, -sinX, 1.0d), 0);
 
 	// +Z
-	_frustum[4] = new Plane(new Vector4d(0, 0, -1), _info.nearDist);
+	_frustum[4] = new Plane(new Vec4d(0, 0, -1, 1.0d), _info.nearDist);
 
 	// -Z
-	_frustum[5] = new Plane(new Vector4d(0, 0, 1), -_info.farDist);
+	_frustum[5] = new Plane(new Vec4d(0, 0, 1, 1.0d), -_info.farDist);
 
 	// Apply the current transform to the planes. Puts the planes in world space
 	for (int i = 0; i < 6; ++i) {
@@ -307,12 +307,23 @@ public CameraInfo getInfo() {
 	return _info.getCopy();
 }
 
+
+public double distToBounds(AABB bounds) {
+	Vec4d center = new Vec4d(bounds.getCenter());
+
+	invTrans.apply(center, center);
+
+	return center.z * -1; // In camera space, Z is in the negative direction
+
+}
 /**
  * Overwrite all core camera state in one go
  */
 public void setInfo(CameraInfo newInfo) {
 	boolean dirty = !_info.isSame(newInfo);
 	_info = newInfo.getCopy();
+	_info.trans.inverse(invTrans);
+
 	_frustumDirty = dirty || _frustumDirty;
 	_projMatDirty = dirty || _projMatDirty;
 }

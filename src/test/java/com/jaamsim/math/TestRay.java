@@ -19,10 +19,6 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.jaamsim.math.MathUtils;
-import com.jaamsim.math.Matrix4d;
-import com.jaamsim.math.Ray;
-import com.jaamsim.math.Vector4d;
 import com.jaamsim.render.DebugLine;
 import com.sandwell.JavaSimulation.ColourInput;
 
@@ -30,37 +26,37 @@ public class TestRay {
 
 	@Test
 	public void TestRayMatrix() {
-		Ray r = new Ray(new Vector4d(0, 4, 3), Vector4d.X_AXIS);
+		Ray r = new Ray(new Vec4d(0, 4, 3, 1.0d), Vec4d.X_AXIS);
 
-		Matrix4d rayMat = Matrix4d.RaySpace(r);
+		Mat4d rayMat = MathUtils.RaySpace(r);
 
-		Vector4d test = new Vector4d(4, 0, 0);
-		Vector4d testRaySpace = new Vector4d();
-		rayMat.mult(test, testRaySpace);
+		Vec4d test = new Vec4d(4, 0, 0, 1.0d);
+		Vec4d testRaySpace = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		testRaySpace.mult4(rayMat, test);
 
-		assertTrue(MathUtils.near(testRaySpace.z(), 4));
+		assertTrue(MathUtils.near(testRaySpace.z, 4));
 
-		double distToRay = Math.sqrt(testRaySpace.x()*testRaySpace.x() + testRaySpace.y()*testRaySpace.y());
+		double distToRay = Math.sqrt(testRaySpace.x*testRaySpace.x + testRaySpace.y*testRaySpace.y);
 		assertTrue(MathUtils.near(distToRay, 5));
 	}
 
 	@Test
 	public void TestLineCollision() {
-		ArrayList<Vector4d> lineVerts = new ArrayList<Vector4d>(4);
-		lineVerts.add(new Vector4d(1, 1, 1));
-		lineVerts.add(new Vector4d(-1, -1, 1));
+		ArrayList<Vec4d> lineVerts = new ArrayList<Vec4d>(4);
+		lineVerts.add(new Vec4d(1, 1, 1, 1.0d));
+		lineVerts.add(new Vec4d(-1, -1, 1, 1.0d));
 
-		lineVerts.add(new Vector4d(1, 2, 0));
-		lineVerts.add(new Vector4d(8, 2, 0));
+		lineVerts.add(new Vec4d(1, 2, 0, 1.0d));
+		lineVerts.add(new Vec4d(8, 2, 0, 1.0d));
 
-		DebugLine dl = new DebugLine(lineVerts, ColourInput.BLACK, ColourInput.BLACK, 1, 1);
+		DebugLine dl = new DebugLine(lineVerts, ColourInput.BLACK, ColourInput.BLACK, 1, null,1);
 
-		Ray r0 = new Ray(Vector4d.ORIGIN, Vector4d.Z_AXIS);
+		Ray r0 = new Ray(Vec4d.ORIGIN, Vec4d.Z_AXIS);
 
 		double r0Dist = dl.getCollisionDist(r0);
 		assertTrue(MathUtils.near(r0Dist, 1)); // Should collide at (0, 0, 1)
 
-		Ray r1 = new Ray(new Vector4d(6, -3, 0), Vector4d.Y_AXIS);
+		Ray r1 = new Ray(new Vec4d(6, -3, 0, 1.0d), Vec4d.Y_AXIS);
 
 		double r1Dist = dl.getCollisionDist(r1);
 		assertTrue(MathUtils.near(r1Dist, 5)); // Should collide at (0, 0, 1)

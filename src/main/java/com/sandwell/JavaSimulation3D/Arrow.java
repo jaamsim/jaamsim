@@ -16,23 +16,22 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Vector3d;
-
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.Vector3dInput;
-import com.sandwell.JavaSimulation.Vector3dListInput;
+import com.sandwell.JavaSimulation.Vec3dInput;
+import com.sandwell.JavaSimulation.Vec3dListInput;
 
 public class Arrow extends DisplayEntity implements HasScreenPoints {
 	@Keyword(desc = "A list of points in { x, y, z } coordinates defining the line segments that" +
                     "make up the arrow.  When two coordinates are given it is assumed that z = 0." ,
 	         example = "Arrow1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
-	private final Vector3dListInput pointsInput;
+	private final Vec3dListInput pointsInput;
 
 	@Keyword(desc = "If TRUE, then a drop shadow appears for the arrow.",
 	         example = "Arrow1  DropShadow { TRUE }")
@@ -44,7 +43,7 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 
 	@Keyword(desc = "A set of { x, y, z } offsets in each direction of the drop shadow from the Arrow.",
 	         example = "Arrow1  DropShadowOffset { 0.1 0.1 0.0 m }")
-	private final Vector3dInput dropShadowOffset;
+	private final Vec3dInput dropShadowOffset;
 
 	@Keyword(desc = "The width of the Arrow line segments in pixels.",
 	         example = "Arrow1 Width { 1 }")
@@ -53,17 +52,17 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 	@Keyword(desc = "A set of { x, y, z } numbers that define the size of the arrowhead " +
 	                "in those directions at the end of the connector.",
 	         example = "Arrow1 ArrowSize { 0.165 0.130 0.0 m }")
-	private final Vector3dInput arrowHeadSize;
+	private final Vec3dInput arrowHeadSize;
 
 	@Keyword(desc = "The colour of the arrow, defined using a colour keyword or RGB values.",
 	         example = "Arrow1 Color { red }")
 	private final ColourInput color;
 
 	{
-		ArrayList<Vector3d> defPoints =  new ArrayList<Vector3d>();
-		defPoints.add(new Vector3d(0.0d, 0.0d, 0.0d));
-		defPoints.add(new Vector3d(1.0d, 0.0d, 0.0d));
-		pointsInput = new Vector3dListInput("Points", "Arrow Graphics", defPoints);
+		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
+		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
+		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
+		pointsInput = new Vec3dListInput("Points", "Arrow Graphics", defPoints);
 		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
 		pointsInput.setUnits("m");
 		this.addInput(pointsInput, true);
@@ -71,7 +70,7 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		width = new DoubleInput("Width", "Arrow Graphics", 1.0d, 0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(width, true);
 
-		arrowHeadSize = new Vector3dInput( "ArrowSize", "Arrow Graphics", new Vector3d(0.1d, 0.1d, 0.0d) );
+		arrowHeadSize = new Vec3dInput( "ArrowSize", "Arrow Graphics", new Vec3d(0.1d, 0.1d, 0.0d) );
 		arrowHeadSize.setUnits( "m" );
 		this.addInput( arrowHeadSize, true );
 
@@ -84,14 +83,14 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		dropShadowColor = new ColourInput("DropShadowColour", "Arrow Graphics", ColourInput.BLACK);
 		this.addInput(dropShadowColor, true, "DropShadowColor");
 
-		dropShadowOffset = new Vector3dInput( "DropShadowOffset", "Arrow Graphics", new Vector3d() );
+		dropShadowOffset = new Vec3dInput( "DropShadowOffset", "Arrow Graphics", new Vec3d() );
 		dropShadowOffset.setUnits( "m" );
 		this.addInput( dropShadowOffset, true );
 	}
 
 	public Arrow() {}
 
-	public ArrayList<Vector3d> getScreenPoints() {
+	public ArrayList<Vec3d> getScreenPoints() {
 		return pointsInput.getValue();
 	}
 
@@ -102,16 +101,15 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 	/**
 	 *  Inform simulation and editBox of new positions.
 	 */
-	public void dragged(Vector3d dist) {
-		ArrayList<Vector3d> vec = new ArrayList<Vector3d>(pointsInput.getValue().size());
-		for (Vector3d v : pointsInput.getValue()) {
-			Vector3d tmp = new Vector3d(v);
-			tmp.add(dist);
-			vec.add(tmp);
+	@Override
+	public void dragged(Vec3d dist) {
+		ArrayList<Vec3d> vec = new ArrayList<Vec3d>(pointsInput.getValue().size());
+		for (Vec3d v : pointsInput.getValue()) {
+			vec.add(new Vec3d(dist.x + v.x, dist.y + v.y, dist.z + v.z));
 		}
 
 		StringBuilder tmp = new StringBuilder();
-		for (Vector3d v : vec) {
+		for (Vec3d v : vec) {
 			tmp.append(String.format(" { %.3f %.3f %.3f %s }", v.x, v.y, v.z, pointsInput.getUnits()));
 		}
 		InputAgent.processEntity_Keyword_Value(this, pointsInput, tmp.toString());
@@ -132,8 +130,7 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		return ret;
 	}
 
-	public Vector4d getArrowHeadSize() {
-		Vector3d headSize = arrowHeadSize.getValue();
-		return new Vector4d(headSize.x, headSize.y, headSize.z);
+	public Vec3d getArrowHeadSize() {
+		return arrowHeadSize.getValue();
 	}
 }

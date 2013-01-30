@@ -30,4 +30,32 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 		value = Input.parseColorVector(input);
 		this.updateEditingFlags();
 	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue.size() == 0)
+			return NO_VALUE;
+
+		StringBuilder tmp = new StringBuilder();
+		for (int i = 0; i < defValue.size(); i++) {
+
+			// blank space between elements
+			if (tmp.length() > 0)
+				tmp.append(SEPARATOR);
+
+			Color4d col = defValue.get(i);
+			if (col == null) {
+				tmp.append(NO_VALUE);
+				continue;
+			}
+
+			tmp.append( String.format("{%s%.0f%s%.0f%s%.0f%s}", SEPARATOR, col.r * 255,
+			   SEPARATOR, col.g * 255, SEPARATOR, col.b * 255, SEPARATOR ));
+		}
+
+		return tmp.toString();
+	}
 }

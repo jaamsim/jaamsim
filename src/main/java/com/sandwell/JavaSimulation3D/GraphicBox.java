@@ -25,6 +25,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,14 +39,16 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.vecmath.Vector3d;
 
+import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.math.Vector4d;
-import com.jaamsim.observers.DisplayModelState;
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
+import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Vector;
 
 public class GraphicBox extends JDialog {
@@ -98,11 +101,10 @@ public class GraphicBox extends JDialog {
 
 				// Selected DisplayModel
 				DisplayModel dm = (DisplayModel) ((JList)e.getSource()).getSelectedValue();
-				DisplayModelState dms = new DisplayModelState(dm);
 
 				if (!RenderManager.isGood()) { return; }
 
-				Future<BufferedImage> fi = RenderManager.inst().getPreviewForDisplayModel(dms, null);
+				Future<BufferedImage> fi = RenderManager.inst().getPreviewForDisplayModel(dm, null);
 				fi.blockUntilDone();
 
 				if (fi.failed()) {
@@ -131,7 +133,7 @@ public class GraphicBox extends JDialog {
 
 				FileDialog chooser = new FileDialog(myInstance, "New DisplayModel", FileDialog.LOAD );
 				String validTypes ="";
-				for(String each: DisplayModel.getValidExtentions()) {
+				for(String each: DisplayModelCompat.getValidExtentions()) {
 					validTypes += "*." +each.toLowerCase()+";";
 				}
 				validTypes = validTypes.substring(0, validTypes.length()-1);
@@ -150,7 +152,7 @@ public class GraphicBox extends JDialog {
 				String entityName = fileName.substring(0, to); // File name without the extension
 				entityName = entityName.replaceAll(" ", ""); // Space is not allowed for Entity Name
 
-				DisplayModel newModel = InputAgent.defineEntityWithUniqueName(DisplayModel.class, entityName, true);
+				DisplayModel newModel = InputAgent.defineEntityWithUniqueName(DisplayModelCompat.class, entityName, true);
 
 				Vector data = new Vector(1);
 				data.addElement(entityName);
@@ -190,22 +192,27 @@ public class GraphicBox extends JDialog {
 					myInstance.close();
 				}
 
-				Vector4d modelSize = RenderManager.inst().getMeshSize(dm.getShape());
+				Vec4d modelSize = Vec4d.ONES;
+				if (dm instanceof DisplayModelCompat) {
+					DisplayModelCompat dmc = (DisplayModelCompat)dm;
+					modelSize = RenderManager.inst().getMeshSize(dmc.getShape());
+				}
 
-				Vector3d entitySize = currentEntity.getSize();
-				double longestSide = modelSize.x();
-				double ratio = dm.getConversionFactorToMeters();
+				Vec3d entitySize = currentEntity.getSize();
+				double longestSide = modelSize.x;
+				//double ratio = dm.getConversionFactorToMeters();
+				double ratio = 1;
 				if(! useModelSize.isSelected()) {
-					ratio = entitySize.x/modelSize.x();
-					if(modelSize.y() > longestSide) {
-						ratio = entitySize.y/modelSize.y();
-						longestSide = modelSize.y();
+					ratio = entitySize.x/modelSize.x;
+					if(modelSize.y > longestSide) {
+						ratio = entitySize.y/modelSize.y;
+						longestSide = modelSize.y;
 					}
-					if(modelSize.z() > longestSide) {
-						ratio = entitySize.z/modelSize.z();
+					if(modelSize.z > longestSide) {
+						ratio = entitySize.z/modelSize.z;
 					}
 				}
-				entitySize = new Vector3d(modelSize.x()*ratio, modelSize.y()*ratio, modelSize.z()*ratio);
+				entitySize = new Vec3d(modelSize.x*ratio, modelSize.y*ratio, modelSize.z*ratio);
 				InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format("%.6f %.6f %.6f m", entitySize.x, entitySize.y, entitySize.z));
 				FrameBox.valueUpdate();
 				myInstance.close();
@@ -257,11 +264,12 @@ public class GraphicBox extends JDialog {
 	private void refresh() {
 		DisplayModel entDisplayModel = currentEntity.getDisplayModelList().getValue().get(0);
 
+		ArrayList<DisplayModel> models = Simulation.getClonesOf(DisplayModel.class);
 		// Populate JList with all the DisplayModels
-		DisplayModel[ ] displayModels = new DisplayModel[DisplayModel.getAll().size()];
+		DisplayModel[] displayModels = new DisplayModel[models.size()];
 		int index = 0;
 		int i = 0;
-		for(DisplayModel each: DisplayModel.getAll()){
+		for (DisplayModel each : models) {
 			if(entDisplayModel == each) {
 				index = i;
 			}

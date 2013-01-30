@@ -14,8 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation3D.InputAgent;
 
 public class TimeValueInput extends Input<TimeValue> {
 	private double minValue;
@@ -70,5 +70,27 @@ public class TimeValueInput extends Input<TimeValue> {
 	public void setValidRange(double min, double max) {
 		minValue = min;
 		maxValue = max;
+	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		String def = defValue.getString();
+
+		// no need for unit if infinity
+		if (isInfinity(def))
+			return def;
+
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(def);
+
+		if (!unitString.isEmpty()) {
+			tmp.append(SEPARATOR);
+			tmp.append(unitString);
+		}
+
+		return tmp.toString();
 	}
 }

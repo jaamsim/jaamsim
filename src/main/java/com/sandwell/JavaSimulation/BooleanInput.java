@@ -44,4 +44,15 @@ public class BooleanInput extends Input<Boolean> {
 	public ArrayList<String> getValidOptions() {
 		return validOptions;
 	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null)
+			return NO_VALUE;
+
+		if (defValue)
+			return "TRUE";
+
+		return "FALSE";
+	}
 }

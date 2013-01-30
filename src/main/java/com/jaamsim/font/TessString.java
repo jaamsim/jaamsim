@@ -21,14 +21,16 @@ import javax.media.opengl.GL2GL3;
 
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Matrix4d;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Camera;
+import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderable;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.Shader;
+import com.jaamsim.render.VisibilityInfo;
 
 public class TessString implements Renderable {
 
@@ -42,9 +44,11 @@ private long _pickingID;
 /**
  * The transform to global space (will be gone when the scene graph is finalized)
  */
-private Matrix4d _trans;
+private Mat4d _trans;
 
 private AABB _bounds;
+
+private VisibilityInfo _visInfo;
 
 // Cached data needed to draw this string, prevents hitting the font character map
 private int[] starts;
@@ -52,23 +56,24 @@ private int[] numVerts;
 private double[] advances;
 
 public TessString(TessFont font, String contents, Color4d color,
-        Transform trans, double textHeight, long pickingID) {
+        Transform trans, double textHeight, VisibilityInfo visInfo, long pickingID) {
 
-	this(font, contents, color, trans.getMatrixRef(), textHeight, pickingID);
+	this(font, contents, color, trans.getMat4dRef(), textHeight, visInfo, pickingID);
 
 }
 
 
 public TessString(TessFont font, String contents, Color4d color,
-                  Matrix4d trans, double textHeight, long pickingID) {
+		Mat4d trans, double textHeight, VisibilityInfo visInfo, long pickingID) {
 	_font = font;
 	_color = color.toFloats();
-	_trans = new Matrix4d(trans);
+	_trans = new Mat4d(trans);
+	_visInfo = visInfo;
 
 	// Adjust the scale factor of the transform to account for the requested text height
 	double heightScale = textHeight / _font.getNominalHeight();
 
-	_trans.mult(Matrix4d.ScaleMatrix(heightScale), _trans);
+	_trans.scale3(heightScale);
 	//_trans.setScale( trans.getScale() * heightScale);
 
 	_contents = contents;
@@ -94,16 +99,16 @@ public TessString(TessFont font, String contents, Color4d color,
 
 	// As the renderer draws characters from the bottom left, but the model specifies text labels in the center,
 	// we need to offset the transform
-	Matrix4d align = Matrix4d.TranslationMatrix(new Vector4d(-width/2, -height/2, 0));
-	//Transform allignTrans = new Transform(new Vector4d(-width/2, -height/2, 0));
-	_trans.mult(align, _trans);
+	Mat4d align = new Mat4d();
+	align.setTranslate3(new Vec4d(-width/2, -height/2, 0, 1.0d));
+	_trans.mult4(align);
 
-	ArrayList<Vector4d> vs = new ArrayList<Vector4d>(4);
+	ArrayList<Vec4d> vs = new ArrayList<Vec4d>(4);
 
-	vs.add(new Vector4d( width,  height, 0));
-	vs.add(new Vector4d(     0,  height, 0));
-	vs.add(new Vector4d(     0,       0, 0));
-	vs.add(new Vector4d( width,       0, 0));
+	vs.add(new Vec4d( width,  height, 0, 1.0d));
+	vs.add(new Vec4d(     0,  height, 0, 1.0d));
+	vs.add(new Vec4d(     0,       0, 0, 1.0d));
+	vs.add(new Vec4d( width,       0, 0, 1.0d));
 
 	_bounds = new AABB(vs, _trans);
 }
@@ -127,15 +132,15 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, 
 	int prog = s.getProgramHandle();
 
 	// Setup uniforms for this object
-	Matrix4d modelViewProjMat = new Matrix4d();
-	cam.getViewMatrix(modelViewProjMat);
-	modelViewProjMat.mult(_trans, modelViewProjMat);
+	Mat4d modelViewProjMat = new Mat4d();
+	cam.getViewMat4d(modelViewProjMat);
+	modelViewProjMat.mult4(_trans);
 
-	Matrix4d projMat = cam.getProjMatRef();
-	projMat.mult(modelViewProjMat, modelViewProjMat);
+	Mat4d projMat = cam.getProjMat4d();
+	modelViewProjMat.mult4(projMat, modelViewProjMat);
 
 	int modelViewProjMatVar = gl.glGetUniformLocation(prog, "modelViewProjMat");
-	gl.glUniformMatrix4fv(modelViewProjMatVar, 1, false, modelViewProjMat.toFloats(), 0);
+	gl.glUniformMatrix4fv(modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
 
 	int colorVar = gl.glGetUniformLocation(prog, "color");
 	gl.glUniform4fv(colorVar, 1, _color, 0);
@@ -205,9 +210,15 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, C
 }
 
 @Override
-public boolean renderForView(int windowID) {
-	return true;
+public boolean renderForView(int viewID, double dist) {
+	if (dist < _visInfo.minDist || dist > _visInfo.maxDist) {
+		return false;
+	}
+
+	if (_visInfo.viewIDs == null || _visInfo.viewIDs.size() == 0) return true; //Default to always visible
+	return _visInfo.viewIDs.contains(viewID);
 }
+
 
 } // class
 

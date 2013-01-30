@@ -15,15 +15,15 @@
 package com.jaamsim.render;
 
 import java.nio.FloatBuffer;
-import java.util.List;
 import java.util.Map;
 
 import javax.media.opengl.GL2GL3;
 
 import com.jaamsim.math.AABB;
-import com.jaamsim.math.Matrix4d;
+import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Renderer.ShaderHandle;
 
 /**
@@ -145,7 +145,7 @@ public class DebugUtils {
 	}
 
 	public static void renderAABB(Map<Integer, Integer> vaoMap, Renderer renderer,
-	                              AABB aabb, Vector4d color, Camera cam) {
+	                              AABB aabb, Color4d color, Camera cam) {
 
 		if (aabb.isEmpty()) {
 			return;
@@ -163,15 +163,17 @@ public class DebugUtils {
 		gl.glUseProgram(_debugProgHandle);
 
 		// Setup uniforms for this object
-		Matrix4d projMat = cam.getProjMatRef();
-		Matrix4d modelViewMat = new Matrix4d();
-		cam.getViewMatrix(modelViewMat);
+		Mat4d projMat = cam.getProjMat4d();
+		Mat4d modelViewMat = new Mat4d();
+		cam.getViewMat4d(modelViewMat);
 
-		modelViewMat.mult(Matrix4d.TranslationMatrix(aabb.getCenter()), modelViewMat);
-		modelViewMat.mult(Matrix4d.ScaleMatrix(aabb.getRadius()), modelViewMat);
+		Mat4d aabbCenterMat = new Mat4d();
+		aabbCenterMat.setTranslate3(aabb.getCenter());
+		modelViewMat.mult4(aabbCenterMat);
+		modelViewMat.scaleCols3(aabb.getRadius());
 
-		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, modelViewMat.toFloats(), 0);
-		gl.glUniformMatrix4fv(_projMatVar, 1, false, projMat.toFloats(), 0);
+		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
 		gl.glUniform4fv(_colorVar, 1, color.toFloats(), 0);
 
@@ -186,7 +188,7 @@ public class DebugUtils {
 
 	// Render a 1*1 box in the XY plane centered at the origin
 	public static void renderBox(Map<Integer, Integer> vaoMap, Renderer renderer,
-            Transform modelTrans, Vector4d scale, Vector4d color, Camera cam) {
+            Transform modelTrans, Vec4d scale, Color4d color, Camera cam) {
 
 		GL2GL3 gl = renderer.getGL();
 
@@ -200,16 +202,15 @@ public class DebugUtils {
 		gl.glUseProgram(_debugProgHandle);
 
 		// Setup uniforms for this object
-		Matrix4d projMat = cam.getProjMatRef();
-		Matrix4d modelViewMat = new Matrix4d();
-		cam.getViewMatrix(modelViewMat);
+		Mat4d projMat = cam.getProjMat4d();
+		Mat4d modelViewMat = new Mat4d();
+		cam.getViewMat4d(modelViewMat);
 
-		modelViewMat.mult(modelTrans.getMatrixRef(), modelViewMat);
-		modelViewMat.mult(Matrix4d.ScaleMatrix(scale), modelViewMat);
+		modelViewMat.mult4(modelTrans.getMat4dRef());
+		modelViewMat.scaleCols3(scale);
 
-
-		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, modelViewMat.toFloats(), 0);
-		gl.glUniformMatrix4fv(_projMatVar, 1, false, projMat.toFloats(), 0);
+		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
 		gl.glUniform4fv(_colorVar, 1, color.toFloats(), 0);
 
@@ -230,7 +231,7 @@ public class DebugUtils {
 	 * @param cam
 	 */
 	public static void renderLine(Map<Integer, Integer> vaoMap, Renderer renderer,
-            List<Vector4d> lineSegments, float[] color, double lineWidth, Camera cam) {
+            FloatBuffer lineSegments, float[] color, double lineWidth, Camera cam) {
 
 		GL2GL3 gl = renderer.getGL();
 
@@ -244,13 +245,13 @@ public class DebugUtils {
 		gl.glUseProgram(_debugProgHandle);
 
 		// Setup uniforms for this object
-		Matrix4d projMat = cam.getProjMatRef();
-		Matrix4d modelViewMat = new Matrix4d();
-		cam.getViewMatrix(modelViewMat);
+		Mat4d projMat = cam.getProjMat4d();
+		Mat4d modelViewMat = new Mat4d();
+		cam.getViewMat4d(modelViewMat);
 
 
-		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, modelViewMat.toFloats(), 0);
-		gl.glUniformMatrix4fv(_projMatVar, 1, false, projMat.toFloats(), 0);
+		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
 		gl.glUniform4fv(_colorVar, 1, color, 0);
 
@@ -258,20 +259,14 @@ public class DebugUtils {
 
 		// Build up a float buffer to pass to GL
 
-		FloatBuffer fb = FloatBuffer.allocate(3 * lineSegments.size());
-		for (Vector4d vert : lineSegments) {
-			fb.put(vert.toFloats3());
-		}
-		fb.flip();
-
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _lineVertBuffer);
-		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, 3 * lineSegments.size() * 4, fb, GL2GL3.GL_STATIC_DRAW);
+		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, lineSegments.limit() * 4, lineSegments, GL2GL3.GL_STATIC_DRAW);
 
 		gl.glVertexAttribPointer(_posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
 
-		gl.glDrawArrays(GL2GL3.GL_LINES, 0, lineSegments.size());
+		gl.glDrawArrays(GL2GL3.GL_LINES, 0, lineSegments.limit() / 3);
 
 		gl.glLineWidth(1.0f);
 
@@ -288,7 +283,7 @@ public class DebugUtils {
 	 * @param cam
 	 */
 	public static void renderPoints(Map<Integer, Integer> vaoMap, Renderer renderer,
-            List<Vector4d> points, float[] color, double pointWidth, Camera cam) {
+            FloatBuffer points, float[] color, double pointWidth, Camera cam) {
 
 		GL2GL3 gl = renderer.getGL();
 
@@ -302,34 +297,26 @@ public class DebugUtils {
 		gl.glUseProgram(_debugProgHandle);
 
 		// Setup uniforms for this object
-		Matrix4d projMat = cam.getProjMatRef();
-		Matrix4d modelViewMat = new Matrix4d();
-		cam.getViewMatrix(modelViewMat);
+		Mat4d projMat = cam.getProjMat4d();
+		Mat4d modelViewMat = new Mat4d();
+		cam.getViewMat4d(modelViewMat);
 
 
-		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, modelViewMat.toFloats(), 0);
-		gl.glUniformMatrix4fv(_projMatVar, 1, false, projMat.toFloats(), 0);
+		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
 		gl.glUniform4fv(_colorVar, 1, color, 0);
 
 		gl.glPointSize((float)pointWidth);
 
-		// Build up a float buffer to pass to GL
-
-		FloatBuffer fb = FloatBuffer.allocate(3 * points.size());
-		for (Vector4d point : points) {
-			fb.put(point.toFloats3());
-		}
-		fb.flip();
-
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _lineVertBuffer);
-		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, 3 * points.size() * 4, fb, GL2GL3.GL_STATIC_DRAW);
+		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, points.limit() * 4, points, GL2GL3.GL_STATIC_DRAW);
 
 		gl.glVertexAttribPointer(_posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
 
-		gl.glDrawArrays(GL2GL3.GL_POINTS, 0, points.size());
+		gl.glDrawArrays(GL2GL3.GL_POINTS, 0, points.limit() / 3);
 
 		gl.glPointSize(1.0f);
 

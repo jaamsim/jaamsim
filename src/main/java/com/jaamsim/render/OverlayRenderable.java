@@ -39,6 +39,6 @@ public interface OverlayRenderable {
 	 * @param windowID - the ID of the window be queried about
 	 * @return - a boolean indicating this renderable is visible on that window
 	 */
-	public boolean renderForWindow(int windowID);
+	public boolean renderForView(int windowID);
 
 }

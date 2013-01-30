@@ -51,6 +51,37 @@ public Vec3d(double x, double y, double z) {
 }
 
 /**
+ * Returns a string representation of this vec.
+ */
+@Override
+public String toString() {
+	StringBuilder tmp = new StringBuilder("(");
+	tmp.append(x);
+	tmp.append(", ").append(y);
+	tmp.append(", ").append(z);
+	tmp.append(")");
+	return tmp.toString();
+}
+
+/**
+ * Tests the first three components are exactly equal.
+ *
+ * This returns true if the x,y,z components compare as equal using the ==
+ * operator.  Note that NaN will always return false, and -0.0 and 0.0
+ * will compare as equal.
+ * @throws NullPointerException if v is null
+ */
+public boolean equals3(Vec3d v) {
+	return x == v.x && y == v.y && z == v.z;
+}
+
+public boolean near3(Vec3d v) {
+	return MathUtils.near(x, v.x) &&
+	       MathUtils.near(y, v.y) &&
+	       MathUtils.near(z, v.z);
+}
+
+/**
  * Set this Vec3d with the values (v.x, v.y, v.z);
  * @param v the Vec3d containing the values
  * @throws NullPointerException if v is null
@@ -91,16 +122,6 @@ public void add3(Vec3d v1, Vec3d v2) {
 }
 
 /**
- * Returns a new Vec3d initialized to v1 + v2
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec3d getAdd3(Vec3d v1, Vec3d v2) {
-	Vec3d tmp = new Vec3d(v1);
-	tmp.add3(v2);
-	return tmp;
-}
-
-/**
  * Subtract v from this Vec3d: this = this - v
  * @throws NullPointerException if v is null
  */
@@ -118,16 +139,6 @@ public void sub3(Vec3d v1, Vec3d v2) {
 	this.x = v1.x - v2.x;
 	this.y = v1.y - v2.y;
 	this.z = v1.z - v2.z;
-}
-
-/**
- * Returns a new Vec3d initialized to v1 - v2
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec3d getSub3(Vec3d v1, Vec3d v2) {
-	Vec3d tmp = new Vec3d(v1);
-	tmp.sub3(v2);
-	return tmp;
 }
 
 /**
@@ -151,16 +162,6 @@ public void mul3(Vec3d v1, Vec3d v2) {
 }
 
 /**
- * Returns a new Vec3d initialized to v1 * v2
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec3d getMul3(Vec3d v1, Vec3d v2) {
-	Vec3d tmp = new Vec3d(v1);
-	tmp.mul3(v2);
-	return tmp;
-}
-
-/**
  * Set this Vec3d to the minimum of this and v: this = min(this, v)
  * @throws NullPointerException if v is null
  */
@@ -181,16 +182,6 @@ public void min3(Vec3d v1, Vec3d v2) {
 }
 
 /**
- * Returns a new Vec3d initialized to min(v1, v2)
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec3d getMin3(Vec3d v1, Vec3d v2) {
-	Vec3d tmp = new Vec3d(v1);
-	tmp.min3(v2);
-	return tmp;
-}
-
-/**
  * Set this Vec3d to the maximum of this and v: this = max(this, v)
  * @throws NullPointerException if v is null
  */
@@ -208,16 +199,6 @@ public void max3(Vec3d v1, Vec3d v2) {
 	this.x = Math.max(v1.x, v2.x);
 	this.y = Math.max(v1.y, v2.y);
 	this.z = Math.max(v1.z, v2.z);
-}
-
-/**
- * Returns a new Vec3d initialized to max(v1, v2)
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec3d getMax3(Vec3d v1, Vec3d v2) {
-	Vec3d tmp = new Vec3d(v1);
-	tmp.max3(v2);
-	return tmp;
 }
 
 /**
@@ -263,7 +244,7 @@ public double magSquare3() {
 public void normalize3() {
 	double mag = _dot3(this, this);
 	if (nonNormalMag(mag)) {
-		assert false;
+		//assert false;
 		this.x = 0.0d;
 		this.y = 0.0d;
 		this.z = 1.0d;
@@ -319,13 +300,14 @@ public void scale3(double scale, Vec3d v) {
 }
 
 /**
- * Returns a new Vec3d initialized to scale * v
- * @throws NullPointerException if v is null
+ * Linearly interpolate between a, b into this Vec: this = (1 - ratio) * a + ratio * b
+ * @throws NullPointerException if a or b are null
  */
-public static final Vec3d getScale3(double scale, Vec3d v) {
-	Vec3d tmp = new Vec3d(v);
-	tmp.scale3(scale);
-	return tmp;
+public void interpolate3(Vec3d a, Vec3d b, double ratio) {
+	double temp = 1.0d - ratio;
+	this.x = temp * a.x + ratio * b.x;
+	this.y = temp * a.y + ratio * b.y;
+	this.z = temp * a.z + ratio * b.z;
 }
 
 /**
@@ -336,6 +318,21 @@ public void mult3(Mat4d m, Vec3d v) {
 	double _x = m.d00 * v.x + m.d01 * v.y + m.d02 * v.z;
 	double _y = m.d10 * v.x + m.d11 * v.y + m.d12 * v.z;
 	double _z = m.d20 * v.x + m.d21 * v.y + m.d22 * v.z;
+
+	this.x = _x;
+	this.y = _y;
+	this.z = _z;
+}
+
+/**
+ * Like mult3 but includes an implicit w = 1 term to include the translation part of the matrix
+ * @param m
+ * @param v
+ */
+public void multAndTrans3(Mat4d m, Vec3d v) {
+	double _x = m.d00 * v.x + m.d01 * v.y + m.d02 * v.z + m.d03;
+	double _y = m.d10 * v.x + m.d11 * v.y + m.d12 * v.z + m.d13;
+	double _z = m.d20 * v.x + m.d21 * v.y + m.d22 * v.z + m.d23;
 
 	this.x = _x;
 	this.y = _y;
@@ -384,15 +381,5 @@ public void cross3(Vec3d v1, Vec3d v2) {
 	this.x = _x;
 	this.y = _y;
 	this.z = _z;
-}
-
-/**
- * Returns a new Vec3d initialized to v1 X v2
- * @throws NullPointerException if v1 or v2 are null
- */
-public static final Vec3d getCross3(Vec3d v1, Vec3d v2) {
-	Vec3d tmp = new Vec3d(v1);
-	tmp.cross3(v2);
-	return tmp;
 }
 }

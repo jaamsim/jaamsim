@@ -39,25 +39,24 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.vecmath.Vector3d;
 
+import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.font.TessFont;
-import com.jaamsim.input.WindowInteractionListener;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.AABB;
-import com.jaamsim.math.Matrix4d;
+import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
-import com.jaamsim.observers.CubeObserver;
-import com.jaamsim.observers.DisplayModelObserver;
-import com.jaamsim.observers.DisplayModelState;
-import com.jaamsim.observers.RenderObserver;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.CameraInfo;
+import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.HasScreenPoints;
-import com.jaamsim.render.MeshProto;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.OffscreenTarget;
 import com.jaamsim.render.PreviewCache;
@@ -65,6 +64,7 @@ import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.TessFontKey;
+import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.render.util.ExceptionLogger;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.View;
@@ -74,10 +74,9 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
-import com.sandwell.JavaSimulation3D.DisplayModel;
+import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 import com.sandwell.JavaSimulation3D.Graph;
-import com.sandwell.JavaSimulation3D.InputAgent;
 import com.sandwell.JavaSimulation3D.ObjectSelector;
 import com.sandwell.JavaSimulation3D.Region;
 
@@ -112,8 +111,6 @@ public class RenderManager implements DragSourceListener {
 	private final AtomicLong _lastDraw = new AtomicLong(0);
 	private final AtomicLong _scheduledDraw = new AtomicLong(0);
 
-	private final ArrayList<RenderObserver> _observers = new ArrayList<RenderObserver>();
-
 	private final ExceptionLogger _exceptionLogger;
 
 	private final static double FPS = 60;
@@ -122,8 +119,6 @@ public class RenderManager implements DragSourceListener {
 	private final HashMap<Integer, CameraControl> _windowControls = new HashMap<Integer, CameraControl>();
 	private final HashMap<Integer, View> _windowToViewMap= new HashMap<Integer, View>();
 	private int _activeWindowID = -1;
-
-	private long _lastEntitySequence = 0;
 
 	private final Object _popupLock;
 	private JPopupMenu _lastPopup;
@@ -174,8 +169,6 @@ public class RenderManager implements DragSourceListener {
 
 		_exceptionLogger = new ExceptionLogger();
 
-		createTestCubeAsset();
-
 		_managerThread = new Thread(new Runnable() {
 			public void run() {
 				renderManagerLoop();
@@ -211,18 +204,6 @@ public class RenderManager implements DragSourceListener {
 		_timer.scheduleAtFixedRate(displayTask, 0, (long) (1000 / (FPS*2)));
 
 		_popupLock = new Object();
-	}
-
-	public void registerObserver(RenderObserver obs) {
-		synchronized(_observers) {
-			_observers.add(obs);
-		}
-	}
-
-	public void deregisterObserver(RenderObserver obs) {
-		synchronized(_observers) {
-			_observers.remove(obs);
-		}
 	}
 
 	public void updateTime(double simTime) {
@@ -276,6 +257,7 @@ public class RenderManager implements DragSourceListener {
 		_windowToViewMap.put(windowID, view);
 
 		dirtyAllEntities();
+		queueRedraw();
 	}
 
 	public void closeAllWindows() {
@@ -298,6 +280,14 @@ public class RenderManager implements DragSourceListener {
 		return (s_instance != null && !s_instance._finished.get() && !s_instance._fatalError.get());
 	}
 
+	/**
+	 * Ideally, this states that it is safe to call initialize() (assuming isGood() returned false)
+	 * @return
+	 */
+	public static boolean canInitialize() {
+		return s_instance == null;
+	}
+
 	private void dirtyAllEntities() {
 		for (int i = 0; i < DisplayEntity.getAll().size(); ++i) {
 			DisplayEntity.getAll().get(i).setGraphicsDataDirty();
@@ -315,7 +305,6 @@ public class RenderManager implements DragSourceListener {
 					System.out.printf("Renderer failed with error: %s\n", _renderer.getErrorString());
 
 					// Do some basic cleanup
-					_observers.clear();
 					_windowControls.clear();
 					_previewCache.clear();
 
@@ -323,6 +312,8 @@ public class RenderManager implements DragSourceListener {
 
 					break;
 				}
+
+				_lastDraw.set(System.currentTimeMillis());
 
 				if (!_renderer.isInitialized()) {
 					// Give the renderer a chance to initialize
@@ -332,33 +323,27 @@ public class RenderManager implements DragSourceListener {
 					continue;
 				}
 
-				// Hack, check if the entity sequence has been updated, and if so force a recheck of default
-				// observers
-				if (Entity.getEntitySequence() != _lastEntitySequence) {
-					_lastEntitySequence = Entity.getEntitySequence();
-					ArrayList<? extends Entity> allEnts = Entity.getAllCopy();
-					for (int i = 0; i < allEnts.size(); ++i) {
-						Entity e = allEnts.get(i);
-						e.initDefaultObserver();
-					}
-
-					// Clear any Observers that no longer observe live entities
-					clearDeadObservers();
-				}
-
 				for (CameraControl cc : _windowControls.values()) {
 					cc.checkForUpdate();
 				}
 
-				_lastDraw.set(System.currentTimeMillis());
-
 				_cachedScene = new ArrayList<RenderProxy>();
-				DisplayModelObserver.clearCacheCounters();
+				DisplayModelBinding.clearCacheCounters();
+				DisplayModelBinding.clearCacheMissData();
 
 				long startNanos = System.nanoTime();
 
+				for (int i = 0; i < View.getAll().size(); i++) {
+					View v = View.getAll().get(i);
+					v.update(_simTime);
+				}
+
+				int numDisplayEntities = DisplayEntity.getAll().size();
+
+				ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<DisplayModelBinding>();
+
 				// Update all graphical entities in the simulation
-				for (int i = 0; i < DisplayEntity.getAll().size(); i++) {
+				for (int i = 0; i < numDisplayEntities; i++) {
 					try {
 						DisplayEntity de = DisplayEntity.getAll().get(i);
 						de.updateGraphics(_simTime);
@@ -369,24 +354,29 @@ public class RenderManager implements DragSourceListener {
 					}
 				}
 
-				for (RenderObserver obs : _observers) {
-					try {
-						obs.collectProxies(_cachedScene);
-					} catch (Throwable t) {
-						// Log the exception in the exception list
-						logException(t);
+				long updateNanos = System.nanoTime();
+
+				int totalBindings = 0;
+				for (int i = 0; i < numDisplayEntities; i++) {
+					DisplayEntity de = DisplayEntity.getAll().get(i);
+					for (DisplayModelBinding binding : de.getDisplayBindings()) {
+						try {
+							totalBindings++;
+							binding.collectProxies(_cachedScene);
+							if (binding.isBoundTo(_selectedEntity)) {
+								selectedBindings.add(binding);
+							}
+						} catch (Throwable t) {
+							// Log the exception in the exception list
+							logException(t);
+						}
 					}
 				}
 
-				// Collect selection proxies second so they always appear on top, this will need to be
-				// better thought out soon....
-				//TODO not suck here
-				for (RenderObserver obs : _observers) {
+				// Collect selection proxies second so they always appear on top
+				for (DisplayModelBinding binding : selectedBindings) {
 					try {
-						// Grab the drawable proxies if this object is selected
-						if (obs.isObserving(_selectedEntity)) {
-							obs.collectSelectionProxies(_cachedScene);
-						}
+						binding.collectSelectionProxies(_cachedScene);
 					} catch (Throwable t) {
 						// Log the exception in the exception list
 						logException(t);
@@ -397,10 +387,13 @@ public class RenderManager implements DragSourceListener {
 
 				_renderer.setScene(_cachedScene);
 
-				String cacheString = " Hits: " + DisplayModelObserver.getCacheHits() + " Misses: " + DisplayModelObserver.getCacheMisses() +
-				                     " Total: " + _observers.size();
+				String cacheString = " Hits: " + DisplayModelBinding.getCacheHits() + " Misses: " + DisplayModelBinding.getCacheMisses() +
+				                     " Total: " + totalBindings;
 
-				double gatherMS = (endNanos - startNanos) / 1000000.0;
+				double gatherMS = (endNanos - updateNanos) / 1000000.0;
+				double updateMS = (updateNanos - startNanos) / 1000000.0;
+
+				String timeString = "Gather time (ms): " + gatherMS + " Update time (ms): " + updateMS;
 
 				// Do some picking debug
 				ArrayList<Integer> windowIDs = _renderer.getOpenWindowIDs();
@@ -409,7 +402,7 @@ public class RenderManager implements DragSourceListener {
 
 					if (mouseInfo == null || !mouseInfo.mouseInWindow) {
 						// Not currently picking for this window
-						_renderer.setWindowDebugInfo(id, cacheString + " Not picking. GatherTime (ms)" + gatherMS, new ArrayList<Long>());
+						_renderer.setWindowDebugInfo(id, cacheString + " Not picking. " + timeString, new ArrayList<Long>());
 						continue;
 					}
 
@@ -424,7 +417,7 @@ public class RenderManager implements DragSourceListener {
 						debugIDs.add(pd.id);
 					}
 
-					debugString += " Gather time (ms)" + gatherMS;
+					debugString += timeString;
 
 					_renderer.setWindowDebugInfo(id, debugString, debugIDs);
 				}
@@ -440,140 +433,24 @@ public class RenderManager implements DragSourceListener {
 					takeScreenShot();
 				}
 
-				// Wait for a redraw request
-				synchronized(_redraw) {
-					while (!_redraw.get()) {
-						try {
-							_redraw.wait(30);
-						} catch (InterruptedException e) {}
-					}
-				}
 			} catch (Throwable t) {
 				// Make a note of it, but try to keep going
 				logException(t);
-				printExceptionLog();
 			}
+
+			// Wait for a redraw request
+			synchronized(_redraw) {
+				while (!_redraw.get()) {
+					try {
+						_redraw.wait(30);
+					} catch (InterruptedException e) {}
+				}
+			}
+
 		}
 
 		_exceptionLogger.printExceptionLog();
 
-	}
-
-	/**
-	 * Add a debug cube as an asset, is a cube from -0.5 to 0.5 in all 3 axis
-	 */
-	private void createTestCubeAsset() {
-		// Build up a test cube to display...
-
-		Vector4d[] verts = new Vector4d[36];
-		Vector4d[] norms = new Vector4d[36];
-
-		int i = 0;
-		// +X
-		verts[i++] = new Vector4d( 1, -1, -1 );
-		verts[i++] = new Vector4d( 1, -1,  1 );
-		verts[i++] = new Vector4d( 1,  1,  1 );
-
-		verts[i++] = new Vector4d( 1, -1, -1 );
-		verts[i++] = new Vector4d( 1,  1,  1 );
-		verts[i++] = new Vector4d( 1,  1, -1 );
-
-		// -X
-		verts[i++] = new Vector4d(-1, -1, -1 );
-		verts[i++] = new Vector4d(-1,  1, -1 );
-		verts[i++] = new Vector4d(-1,  1,  1 );
-
-		verts[i++] = new Vector4d(-1, -1, -1 );
-		verts[i++] = new Vector4d(-1,  1,  1 );
-		verts[i++] = new Vector4d(-1, -1,  1 );
-
-		// +Y
-		verts[i++] = new Vector4d(-1,  1, -1 );
-		verts[i++] = new Vector4d( 1,  1, -1 );
-		verts[i++] = new Vector4d( 1,  1,  1 );
-
-		verts[i++] = new Vector4d(-1,  1, -1 );
-		verts[i++] = new Vector4d( 1,  1,  1 );
-		verts[i++] = new Vector4d(-1,  1,  1 );
-
-		// -Y
-		verts[i++] = new Vector4d(-1, -1, -1 );
-		verts[i++] = new Vector4d(-1, -1,  1 );
-		verts[i++] = new Vector4d( 1, -1,  1 );
-
-		verts[i++] = new Vector4d(-1, -1, -1 );
-		verts[i++] = new Vector4d( 1, -1,  1 );
-		verts[i++] = new Vector4d( 1, -1, -1 );
-
-		// +Z
-		verts[i++] = new Vector4d(-1, -1,  1 );
-		verts[i++] = new Vector4d( 1, -1,  1 );
-		verts[i++] = new Vector4d( 1,  1,  1 );
-
-		verts[i++] = new Vector4d(-1, -1,  1 );
-		verts[i++] = new Vector4d( 1,  1,  1 );
-		verts[i++] = new Vector4d(-1,  1,  1 );
-
-		// -Z
-		verts[i++] = new Vector4d(-1, -1, -1 );
-		verts[i++] = new Vector4d(-1,  1, -1 );
-		verts[i++] = new Vector4d( 1,  1, -1 );
-
-		verts[i++] = new Vector4d(-1, -1, -1 );
-		verts[i++] = new Vector4d( 1,  1, -1 );
-		verts[i++] = new Vector4d( 1, -1, -1 );
-
-		i = 0;
-		// Normals
-		//+X
-		for(int j = 0; j < 6; ++j) {
-			norms[i++] = new Vector4d(1, 0, 0);
-		}
-		//-X
-		for(int j = 0; j < 6; ++j) {
-			norms[i++] = new Vector4d(-1, 0, 0);
-		}
-
-		//+Y
-		for(int j = 0; j < 6; ++j) {
-			norms[i++] = new Vector4d(0, 1, 0);
-		}
-		//-Y
-		for(int j = 0; j < 6; ++j) {
-			norms[i++] = new Vector4d(0, -1, 0);
-		}
-
-		//+Z
-		for(int j = 0; j < 6; ++j) {
-			norms[i++] = new Vector4d(0, 0, 1);
-		}
-		//-Z
-		for(int j = 0; j < 6; ++j) {
-			norms[i++] = new Vector4d(0, 0, -1);
-		}
-
-		// Scale down to a 1x1x1 box
-		Matrix4d scaleMat = Matrix4d.ScaleMatrix(0.5);
-		for (Vector4d v : verts) {
-			scaleMat.mult(v, v);
-		}
-
-		MeshProto proto = new MeshProto();
-		proto.addSubMesh(verts, norms, null, null, new Vector4d(1,0,0), MeshProto.NO_TRANS, Vector4d.ORIGIN);
-		proto.generateHull();
-
-		_renderer.takeMeshProto(CubeObserver.CUBE_KEY, proto);
-	}
-
-	private void clearDeadObservers() {
-		for (int i = 0 ; i < _observers.size();) {
-			if (!_observers.get(i).hasObservee()) {
-				// Dead observee
-				_observers.remove(i);
-			} else {
-				i++;
-			}
-		}
 	}
 
 	// Temporary dumping ground until I find a better place for this
@@ -684,14 +561,15 @@ public class RenderManager implements DragSourceListener {
 	private List<PickData> pickForMouse(int windowID) {
 		Renderer.WindowMouseInfo mouseInfo = _renderer.getMouseInfo(windowID);
 
-		if (mouseInfo == null || !mouseInfo.mouseInWindow) {
+		View view = _windowToViewMap.get(windowID);
+		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
 			// The mouse is not actually in the window, or the window was closed along the way
 			return new ArrayList<PickData>(); // empty set
 		}
 
 		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
 
-		return pickForRay(pickRay);
+		return pickForRay(pickRay, view.getID());
 	}
 
 
@@ -721,7 +599,7 @@ public class RenderManager implements DragSourceListener {
 		 */
 		public PickData(long id, DisplayEntity ent) {
 			this.id = id;
-			size= ent.getSize().length();
+			size = ent.getSize().mag3();
 
 			isEntity = true;
 		}
@@ -796,8 +674,8 @@ public class RenderManager implements DragSourceListener {
 	 * @param pickRay - the ray
 	 * @return
 	 */
-	private List<PickData> pickForRay(Ray pickRay) {
-		List<Renderer.PickResult> picks = _renderer.pick(pickRay);
+	private List<PickData> pickForRay(Ray pickRay, int viewID) {
+		List<Renderer.PickResult> picks = _renderer.pick(pickRay, viewID);
 
 		List<PickData> uniquePicks = new ArrayList<PickData>();
 
@@ -838,7 +716,7 @@ public class RenderManager implements DragSourceListener {
 		return RenderUtils.getPickRayForPosition(mouseInfo.cameraInfo, x, y, mouseInfo.width, mouseInfo.height);
 	}
 
-	public Vector4d getRenderedStringSize(TessFontKey fontKey, double textHeight, String string) {
+	public Vec3d getRenderedStringSize(TessFontKey fontKey, double textHeight, String string) {
 		TessFont font = _renderer.getTessFont(fontKey);
 
 		return font.getStringSize(textHeight, string);
@@ -852,7 +730,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void printExceptionLog() {
-		System.out.println("Exceptions from RenderManager: ");
+		System.out.println("Recoverable Exceptions from RenderManager: ");
 
 		_exceptionLogger.printExceptionLog();
 
@@ -917,9 +795,9 @@ public class RenderManager implements DragSourceListener {
 
 		Transform trans = _selectedEntity.getGlobalTrans();
 
-		Vector4d size = _selectedEntity.getJaamMathSize();
-		Matrix4d transMat = _selectedEntity.getTransMatrix();
-		Matrix4d invTransMat = _selectedEntity.getInvTransMatrix();
+		Vec4d size = _selectedEntity.getJaamMathSize(1);
+		Mat4d transMat = _selectedEntity.getTransMatrix();
+		Mat4d invTransMat = _selectedEntity.getInvTransMatrix();
 
 		Plane entityPlane = new Plane(); // Defaults to XY
 		entityPlane.transform(trans, entityPlane); // Transform the plane to world space
@@ -935,37 +813,37 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
-		Vector4d currentPoint = currentRay.getPointAtDist(currentDist);
-		Vector4d lastPoint = lastRay.getPointAtDist(lastDist);
+		Vec4d currentPoint = currentRay.getPointAtDist(currentDist);
+		Vec4d lastPoint = lastRay.getPointAtDist(lastDist);
 
-		Vector4d entSpaceCurrent = new Vector4d(); // entSpacePoint is the current point in model space
-		invTransMat.mult(currentPoint, entSpaceCurrent);
+		Vec4d entSpaceCurrent = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // entSpacePoint is the current point in model space
+		entSpaceCurrent.mult4(invTransMat, currentPoint);
 
-		Vector4d entSpaceLast = new Vector4d(); // entSpaceLast is the last point in model space
-		invTransMat.mult(lastPoint, entSpaceLast);
+		Vec4d entSpaceLast = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // entSpaceLast is the last point in model space
+		entSpaceLast.mult4(invTransMat, lastPoint);
 
-		Vector4d delta = new Vector4d();
-		currentPoint.sub3(lastPoint, delta);
+		Vec4d delta = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		delta.sub3(currentPoint, lastPoint);
 
-		Vector4d entSpaceDelta = new Vector4d();
-		entSpaceCurrent.sub3(entSpaceLast, entSpaceDelta);
+		Vec4d entSpaceDelta = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		entSpaceDelta.sub3(entSpaceCurrent, entSpaceLast);
 
 		// Handle each handle by type...
 		if (_dragHandleID == MOVE_PICK_ID) {
 			// We are dragging
 			if (dragInfo.shiftDown()) {
-				Vector4d entPos = _selectedEntity.getGlobalPosition();
+				Vec4d entPos = new Vec4d(_selectedEntity.getGlobalPosition());
 
 				double zDiff = getZDiff(entPos, currentRay, lastRay);
 
-				entPos.data[2] += zDiff;
+				entPos.z += zDiff;
 				_selectedEntity.setGlobalPosition(entPos);
 
 				return true;
 			}
 
-			Vector4d pos = _selectedEntity.getGlobalPosition();
-			pos.addLocal3(delta);
+			Vec4d pos = new Vec4d(_selectedEntity.getGlobalPosition());
+			pos.add3(delta);
 			_selectedEntity.setGlobalPosition(pos);
 			return true;
 		}
@@ -974,47 +852,47 @@ public class RenderManager implements DragSourceListener {
 		if (_dragHandleID <= RESIZE_POSX_PICK_ID &&
 		    _dragHandleID >= RESIZE_NXNY_PICK_ID) {
 
-			Vector4d pos = _selectedEntity.getGlobalPosition();
-			Vector3d scale = _selectedEntity.getSize();
-			Vector4d fixedPoint = new Vector4d();
+			Vec4d pos = new Vec4d(_selectedEntity.getGlobalPosition());
+			Vec3d scale = _selectedEntity.getSize();
+			Vec4d fixedPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
 			if (_dragHandleID == RESIZE_POSX_PICK_ID) {
 				//scale.x = 2*entSpaceCurrent.x() * size.x();
-				scale.x += entSpaceDelta.x() * size.x();
-				fixedPoint = new Vector4d(-0.5,  0.0, 0.0);
+				scale.x += entSpaceDelta.x * size.x;
+				fixedPoint = new Vec4d(-0.5,  0.0, 0.0, 1.0d);
 			}
 			if (_dragHandleID == RESIZE_POSY_PICK_ID) {
-				scale.y += entSpaceDelta.y() * size.y();
-				fixedPoint = new Vector4d( 0.0, -0.5, 0.0);
+				scale.y += entSpaceDelta.y * size.y;
+				fixedPoint = new Vec4d( 0.0, -0.5, 0.0, 1.0d);
 			}
 			if (_dragHandleID == RESIZE_NEGX_PICK_ID) {
-				scale.x -= entSpaceDelta.x() * size.x();
-				fixedPoint = new Vector4d( 0.5,  0.0, 0.0);
+				scale.x -= entSpaceDelta.x * size.x;
+				fixedPoint = new Vec4d( 0.5,  0.0, 0.0, 1.0d);
 			}
 			if (_dragHandleID == RESIZE_NEGY_PICK_ID) {
-				scale.y -= entSpaceDelta.y() * size.y();
-				fixedPoint = new Vector4d( 0.0,  0.5, 0.0);
+				scale.y -= entSpaceDelta.y * size.y;
+				fixedPoint = new Vec4d( 0.0,  0.5, 0.0, 1.0d);
 			}
 
 			if (_dragHandleID == RESIZE_PXPY_PICK_ID) {
-				scale.x += entSpaceDelta.x() * size.x();
-				scale.y += entSpaceDelta.y() * size.y();
-				fixedPoint = new Vector4d(-0.5, -0.5, 0.0);
+				scale.x += entSpaceDelta.x * size.x;
+				scale.y += entSpaceDelta.y * size.y;
+				fixedPoint = new Vec4d(-0.5, -0.5, 0.0, 1.0d);
 			}
 			if (_dragHandleID == RESIZE_PXNY_PICK_ID) {
-				scale.x += entSpaceDelta.x() * size.x();
-				scale.y -= entSpaceDelta.y() * size.y();
-				fixedPoint = new Vector4d(-0.5,  0.5, 0.0);
+				scale.x += entSpaceDelta.x * size.x;
+				scale.y -= entSpaceDelta.y * size.y;
+				fixedPoint = new Vec4d(-0.5,  0.5, 0.0, 1.0d);
 			}
 			if (_dragHandleID == RESIZE_NXPY_PICK_ID) {
-				scale.x -= entSpaceDelta.x() * size.x();
-				scale.y += entSpaceDelta.y() * size.y();
-				fixedPoint = new Vector4d( 0.5, -0.5, 0.0);
+				scale.x -= entSpaceDelta.x * size.x;
+				scale.y += entSpaceDelta.y * size.y;
+				fixedPoint = new Vec4d( 0.5, -0.5, 0.0, 1.0d);
 			}
 			if (_dragHandleID == RESIZE_NXNY_PICK_ID) {
-				scale.x -= entSpaceDelta.x() * size.x();
-				scale.y -= entSpaceDelta.y() * size.y();
-				fixedPoint = new Vector4d( 0.5,  0.5, 0.0);
+				scale.x -= entSpaceDelta.x * size.x;
+				scale.y -= entSpaceDelta.y * size.y;
+				fixedPoint = new Vec4d( 0.5,  0.5, 0.0, 1.0d);
 			}
 
 			// Handle the case where the scale is pulled through itself. Fix the scale,
@@ -1041,19 +919,21 @@ public class RenderManager implements DragSourceListener {
 				else if (_dragHandleID == RESIZE_NXNY_PICK_ID) { _dragHandleID = RESIZE_NXPY_PICK_ID; }
 			}
 
-			Vector4d oldFixed = new Vector4d();
-			transMat.mult(fixedPoint, oldFixed);
+			Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+			oldFixed.mult4(transMat, fixedPoint);
 			_selectedEntity.setSize(scale);
 			transMat = _selectedEntity.getTransMatrix(); // Get the new matrix
-			Vector4d newFixed = new Vector4d();
-			transMat.mult(fixedPoint, newFixed);
-			Vector4d posAdjust = new Vector4d();
-			oldFixed.sub3(newFixed, posAdjust); // posAdjust is how much the fixed point moved
 
-			pos.addLocal3(posAdjust);
+			Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+			newFixed.mult4(transMat, fixedPoint);
+
+			Vec4d posAdjust = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+			posAdjust.sub3(oldFixed, newFixed);
+
+			pos.add3(posAdjust);
 			_selectedEntity.setGlobalPosition(pos);
 
-			Vector3d vec = _selectedEntity.getSize();
+			Vec3d vec = _selectedEntity.getSize();
 			InputAgent.processEntity_Keyword_Value(_selectedEntity, "Size", String.format( "%.6f %.6f %.6f %s", vec.x, vec.y, vec.z, "m" ));
 			FrameBox.valueUpdate();
 			return true;
@@ -1061,23 +941,23 @@ public class RenderManager implements DragSourceListener {
 
 		if (_dragHandleID == ROTATE_PICK_ID) {
 
-			Vector3d align = _selectedEntity.getAlignment();
+			Vec3d align = _selectedEntity.getAlignment();
 
-			Vector4d rotateCenter = new Vector4d(align.x, align.y, align.z);
-			transMat.mult(rotateCenter, rotateCenter);
+			Vec4d rotateCenter = new Vec4d(align.x, align.y, align.z, 1.0d);
+			rotateCenter.mult4(transMat, rotateCenter);
 
-			Vector4d a = new Vector4d();
-			lastPoint.sub3(rotateCenter, a);
-			Vector4d b = new Vector4d();
-			currentPoint.sub3(rotateCenter, b);
+			Vec4d a = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+			a.sub3(lastPoint, rotateCenter);
+			Vec4d b = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+			b.sub3(currentPoint, rotateCenter);
 
-			Vector4d aCrossB = new Vector4d();
-			a.cross(b, aCrossB);
+			Vec4d aCrossB = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+			aCrossB.cross3(a, b);
 
-			double sinTheta = aCrossB.z() / a.mag3() / b.mag3();
+			double sinTheta = aCrossB.z / a.mag3() / b.mag3();
 			double theta = Math.asin(sinTheta);
 
-			Vector3d orient = _selectedEntity.getOrientation();
+			Vec3d orient = _selectedEntity.getOrientation();
 			orient.z += theta;
 			InputAgent.processEntity_Keyword_Value(_selectedEntity, "Orientation", String.format("%f %f %f rad", orient.x, orient.y, orient.z));
 			FrameBox.valueUpdate();
@@ -1087,15 +967,15 @@ public class RenderManager implements DragSourceListener {
 			// Dragging a line object
 
 			if (dragInfo.shiftDown()) {
-				ArrayList<Vector3d> screenPoints = null;
+				ArrayList<Vec3d> screenPoints = null;
 				if (_selectedEntity instanceof HasScreenPoints)
 					screenPoints = ((HasScreenPoints)_selectedEntity).getScreenPoints();
 				if (screenPoints == null || screenPoints.size() == 0) return true; // just ignore this
 				// Find the geometric median of the points
-				Vector4d medPoint = RenderUtils.getGeometricMedian(screenPoints);
+				Vec4d medPoint = RenderUtils.getGeometricMedian(screenPoints);
 
 				double zDiff = getZDiff(medPoint, currentRay, lastRay);
-				_selectedEntity.dragged(new Vector3d(0, 0, zDiff));
+				_selectedEntity.dragged(new Vec3d(0, 0, zDiff));
 				return true;
 			}
 
@@ -1105,16 +985,16 @@ public class RenderManager implements DragSourceListener {
 				regionInvTrans = reg.getRegionTrans(0.0d);
 				regionInvTrans.inverse(regionInvTrans);
 			}
-			Vector4d localDelta = new Vector4d();
+			Vec4d localDelta = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			regionInvTrans.apply(delta, localDelta);
 
-			_selectedEntity.dragged(new Vector3d(localDelta.x(), localDelta.y(), localDelta.z()));
+			_selectedEntity.dragged(localDelta);
 			return true;
 		}
 
 		if (_dragHandleID <= LINENODE_PICK_ID) {
 			int nodeIndex = (int)(-1*(_dragHandleID - LINENODE_PICK_ID));
-			ArrayList<Vector3d> screenPoints = null;
+			ArrayList<Vec3d> screenPoints = null;
 			if (_selectedEntity instanceof HasScreenPoints)
 				screenPoints = ((HasScreenPoints)_selectedEntity).getScreenPoints();
 
@@ -1124,16 +1004,16 @@ public class RenderManager implements DragSourceListener {
 				// huh?
 				return false;
 			}
-			Vector3d point = screenPoints.get(nodeIndex);
+			Vec3d point = screenPoints.get(nodeIndex);
 
 			if (dragInfo.shiftDown()) {
-				double zDiff = getZDiff(new Vector4d(point.x, point.y, point.z), currentRay, lastRay);
+				double zDiff = getZDiff(new Vec4d(point.x, point.y, point.z, 1.0d), currentRay, lastRay);
 				point.z += zDiff;
 			} else {
-				Plane pointPlane = new Plane(Vector4d.Z_AXIS, point.z);
-				Vector4d diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, lastRay);
-				point.x += diff.x();
-				point.y += diff.y();
+				Plane pointPlane = new Plane(Vec4d.Z_AXIS, point.z);
+				Vec4d diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, lastRay);
+				point.x += diff.x;
+				point.y += diff.y;
 				point.z += 0;
 			}
 
@@ -1149,7 +1029,7 @@ public class RenderManager implements DragSourceListener {
 			if (pointsInput.getUnits() == "")
 				pointFormatter = " { %.3f %.3f %.3f }";
 
-			for(Vector3d pt : screenPoints) {
+			for(Vec3d pt : screenPoints) {
 				sb.append(String.format(pointFormatter, pt.x, pt.y, pt.z));
 			}
 
@@ -1170,12 +1050,12 @@ public class RenderManager implements DragSourceListener {
 	 * @param lastRay
 	 * @return
 	 */
-	private double getZDiff(Vector4d centerPoint, Ray currentRay, Ray lastRay) {
+	private double getZDiff(Vec4d centerPoint, Ray currentRay, Ray lastRay) {
 
 		// Create a plane, orthogonal to the camera, but parallel to the Z axis
-		Vector4d normal = new Vector4d(currentRay.getDirRef());
-		normal.data[2] = 0; // 0 the z component
-		normal.normalizeLocal3();
+		Vec4d normal = new Vec4d(currentRay.getDirRef());
+		normal.z = 0; // 0 the z component
+		normal.normalize3();
 
 		double planeDist = centerPoint.dot3(normal);
 
@@ -1192,28 +1072,28 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
-		Vector4d currentPoint = currentRay.getPointAtDist(currentDist);
-		Vector4d lastPoint = lastRay.getPointAtDist(lastDist);
+		Vec4d currentPoint = currentRay.getPointAtDist(currentDist);
+		Vec4d lastPoint = lastRay.getPointAtDist(lastDist);
 
-		return currentPoint.z() - lastPoint.z();
+		return currentPoint.z - lastPoint.z;
 	}
 
 	private void splitLineEntity(int windowID, int x, int y) {
 		Ray currentRay = getRayForMouse(windowID, x, y);
 
-		Matrix4d rayMatrix = Matrix4d.RaySpace(currentRay);
+		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
 
 		HasScreenPoints hsp = (HasScreenPoints)_selectedEntity;
 		assert(hsp != null);
 
-		ArrayList<Vector3d> points = hsp.getScreenPoints();
+		ArrayList<Vec3d> points = hsp.getScreenPoints();
 
 		int splitInd = 0;
-		Vector4d nearPoint = null;
+		Vec4d nearPoint = null;
 		// Find a line segment we are near
 		for (;splitInd < points.size() - 1; ++splitInd) {
-			Vector4d a = new Vector4d(points.get(splitInd  ).x, points.get(splitInd  ).y, points.get(splitInd  ).z);
-			Vector4d b = new Vector4d(points.get(splitInd+1).x, points.get(splitInd+1).y, points.get(splitInd+1).z);
+			Vec4d a = new Vec4d(points.get(splitInd  ).x, points.get(splitInd  ).y, points.get(splitInd  ).z, 1.0d);
+			Vec4d b = new Vec4d(points.get(splitInd+1).x, points.get(splitInd+1).y, points.get(splitInd+1).z, 1.0d);
 
 			nearPoint = RenderUtils.rayClosePoint(rayMatrix, a, b);
 
@@ -1235,14 +1115,14 @@ public class RenderManager implements DragSourceListener {
 		String pointFormatter = " { %.3f %.3f %.3f m }";
 
 		for(int i = 0; i <= splitInd; ++i) {
-			Vector3d pt = points.get(i);
+			Vec3d pt = points.get(i);
 			sb.append(String.format(pointFormatter, pt.x, pt.y, pt.z));
 		}
 
-		sb.append(String.format(pointFormatter, nearPoint.x(), nearPoint.y(), nearPoint.z()));
+		sb.append(String.format(pointFormatter, nearPoint.x, nearPoint.y, nearPoint.z));
 
 		for (int i = splitInd+1; i < points.size(); ++i) {
-			Vector3d pt = points.get(i);
+			Vec3d pt = points.get(i);
 			sb.append(String.format(pointFormatter, pt.x, pt.y, pt.z));
 		}
 
@@ -1255,12 +1135,12 @@ public class RenderManager implements DragSourceListener {
 	private void removeLineNode(int windowID, int x, int y) {
 		Ray currentRay = getRayForMouse(windowID, x, y);
 
-		Matrix4d rayMatrix = Matrix4d.RaySpace(currentRay);
+		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
 
 		HasScreenPoints hsp = (HasScreenPoints)_selectedEntity;
 		assert(hsp != null);
 
-		ArrayList<Vector3d> points = hsp.getScreenPoints();
+		ArrayList<Vec3d> points = hsp.getScreenPoints();
 		// Find a point that is within the threshold
 
 		if (points.size() <= 2) {
@@ -1270,7 +1150,7 @@ public class RenderManager implements DragSourceListener {
 		int removeInd = 0;
 		// Find a line segment we are near
 		for ( ;removeInd < points.size(); ++removeInd) {
-			Vector4d p = new Vector4d(points.get(removeInd).x, points.get(removeInd).y, points.get(removeInd).z);
+			Vec4d p = new Vec4d(points.get(removeInd).x, points.get(removeInd).y, points.get(removeInd).z, 1.0d);
 
 			double rayAngle = RenderUtils.angleToRay(rayMatrix, p);
 
@@ -1292,7 +1172,7 @@ public class RenderManager implements DragSourceListener {
 				continue;
 			}
 
-			Vector3d pt = points.get(i);
+			Vec3d pt = points.get(i);
 			sb.append(String.format(pointFormatter, pt.x, pt.y, pt.z));
 		}
 
@@ -1333,7 +1213,12 @@ public class RenderManager implements DragSourceListener {
 
 		Ray pickRay = getRayForMouse(windowID, x, y);
 
-		List<PickData> picks = pickForRay(pickRay);
+		View view = _windowToViewMap.get(windowID);
+		if (view == null) {
+			return false;
+		}
+
+		List<PickData> picks = pickForRay(pickRay, view.getID());
 
 		Collections.sort(picks, new HandleSorter());
 
@@ -1391,9 +1276,9 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		Vector4d xyPlanePoint = currentRay.getPointAtDist(dist);
-
-		GUIFrame.instance().showLocatorPosition(new Vector3d(xyPlanePoint.x(), xyPlanePoint.y(), xyPlanePoint.z()), null);
+		Vec4d xyPlanePoint = currentRay.getPointAtDist(dist);
+		Vec3d tempPoint = new Vec3d(xyPlanePoint.x, xyPlanePoint.y, xyPlanePoint.z);
+		GUIFrame.instance().showLocatorPosition(tempPoint);
 		queueRedraw();
 	}
 
@@ -1407,7 +1292,7 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		Vector4d creationPoint = currentRay.getPointAtDist(dist);
+		Vec4d creationPoint = currentRay.getPointAtDist(dist);
 
 		// Create a new instance
 		Class<? extends Entity> proto  = _dndObjectType.getJavaClass();
@@ -1423,26 +1308,27 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		View view = _windowToViewMap.get(windowID);
-		Input<?> visibleViewInput = ent.getInput("VisibleViews");
-		if (visibleViewInput != null && view != null) {
-			InputAgent.processEntity_Keyword_Value(ent, visibleViewInput, view.getName());
-		}
-
 		DisplayEntity dEntity  = (DisplayEntity) ent;
 
 		try {
-			Vector3d v = new Vector3d(creationPoint.data);
-			dEntity.dragged(v);
+			dEntity.dragged(creationPoint);
 		}
 		catch (InputErrorException e) {}
 
 		boolean isFlat = false;
 
+		// Shudder....
 		ArrayList<DisplayModel> displayModels = dEntity.getDisplayModelList().getValue();
 		if (displayModels != null && displayModels.size() > 0) {
-			DisplayModelState dms = new DisplayModelState(displayModels.get(0));
-			isFlat = dms.isFlatModel();
+			DisplayModel dm0 = displayModels.get(0);
+			if (dm0 instanceof DisplayModelCompat) {
+				DisplayModelCompat dmc = (DisplayModelCompat)dm0;
+				String shapeString = dmc.getShape();
+				String extension = shapeString.substring(shapeString.length() - 3, shapeString.length()).toUpperCase();
+				if (!extension.equals("DAE") && !extension.equals("ZIP")) {
+					isFlat = true;
+				}
+			}
 		}
 		if (dEntity instanceof HasScreenPoints) {
 			isFlat = true;
@@ -1452,7 +1338,7 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		if (isFlat) {
-			Vector3d size = (Vector3d)dEntity.getInput("Size").getValue();
+			Vec3d size = dEntity.getSize();
 			String sizeString = String.format("%.3f %.3f 0.0 m", size.x, size.y);
 			InputAgent.processEntity_Keyword_Value(dEntity, "Size", sizeString);
 		} else {
@@ -1479,12 +1365,13 @@ public class RenderManager implements DragSourceListener {
 	@Override
 	public void dropActionChanged(DragSourceDragEvent arg0) {}
 
-	public Vector4d getMeshSize(String shapeString) {
+	public Vec4d getMeshSize(String shapeString) {
+
 		//TODO: work on meshes that have not been preloaded
-		MeshProtoKey key = DisplayModelObserver.getCachedMeshKey(shapeString);
+		MeshProtoKey key = DisplayModelCompat.getCachedMeshKey(shapeString);
 		if (key == null) {
 			// Not loaded or bad mesh
-			return new Vector4d(1, 1, 1);
+			return Vec4d.ONES;
 		}
 		AABB bounds = getMeshBounds(key, true);
 
@@ -1571,17 +1458,17 @@ public class RenderManager implements DragSourceListener {
 	 * @param target - optional target to prevent re-allocating GPU resources
 	 * @return
 	 */
-	public Future<BufferedImage> renderScreenShot(Vector4d cameraPos, int viewID, Vector4d viewCenter,
-	                                    int width, int height, OffscreenTarget target) {
+	public Future<BufferedImage> renderScreenShot(Vec3d cameraPos, Vec3d viewCenter, int viewID,
+	                                              int width, int height, OffscreenTarget target) {
 
-		Vector4d viewDiff = new Vector4d();
-		cameraPos.sub3(viewCenter, viewDiff);
+		Vec3d viewDiff = new Vec3d();
+		viewDiff.sub3(cameraPos, viewCenter);
 
-		double rotZ = Math.atan2(viewDiff.x(), -viewDiff.y());
+		double rotZ = Math.atan2(viewDiff.x, -viewDiff.y);
 
-		double xyDist = Math.hypot(viewDiff.x(), viewDiff.y());
+		double xyDist = Math.hypot(viewDiff.x, viewDiff.y);
 
-		double rotX = Math.atan2(xyDist, viewDiff.z());
+		double rotX = Math.atan2(xyDist, viewDiff.z);
 
 		if (Math.abs(rotX) < 0.005) {
 			rotZ = 0; // Don't rotate if we are looking straight up or down
@@ -1589,8 +1476,8 @@ public class RenderManager implements DragSourceListener {
 
 		double viewDist = viewDiff.mag3();
 
-		Quaternion rot = Quaternion.Rotation(rotZ, Vector4d.Z_AXIS);
-		rot.mult(Quaternion.Rotation(rotX, Vector4d.X_AXIS), rot);
+		Quaternion rot = Quaternion.Rotation(rotZ, Vec4d.Z_AXIS);
+		rot.mult(Quaternion.Rotation(rotX, Vec4d.X_AXIS), rot);
 
 		Transform trans = new Transform(cameraPos, rot, 1);
 
@@ -1599,8 +1486,8 @@ public class RenderManager implements DragSourceListener {
 		return _renderer.renderOffscreen(_cachedScene, viewID, camInfo, width, height, null, target);
 	}
 
-	public Future<BufferedImage> getPreviewForDisplayModel(DisplayModelState dms, Runnable notifier) {
-		return _previewCache.getPreview(dms, notifier);
+	public Future<BufferedImage> getPreviewForDisplayModel(DisplayModel dm, Runnable notifier) {
+		return _previewCache.getPreview(dm, notifier);
 	}
 
 	public OffscreenTarget createOffscreenTarget(int width, int height) {
@@ -1611,12 +1498,12 @@ public class RenderManager implements DragSourceListener {
 		_renderer.freeOffscreenTarget(target);
 	}
 
-	public void resetRecorder(ArrayList<View> views, String filePrefix, boolean saveImages, boolean saveVideo) {
+	public void resetRecorder(ArrayList<View> views, int width, int height, String filePrefix, int numFrames, boolean saveImages, boolean saveVideo, Color4d bgColor) {
 		if (_recorder != null) {
 			_recorder.freeResources();
 		}
 
-		_recorder = new VideoRecorder(views, filePrefix, 1500, 1000, saveImages, saveVideo);
+		_recorder = new VideoRecorder(views, filePrefix, width, height, numFrames, saveImages, saveVideo, bgColor);
 	}
 
 	public void endRecording() {

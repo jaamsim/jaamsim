@@ -58,9 +58,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import javax.vecmath.Vector3d;
 
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.View;
@@ -720,7 +721,6 @@ public class GUIFrame extends JFrame {
 
 		@Override
 		public void menuSelected(MenuEvent e) {
-			if (!RenderManager.isGood()) { return; }
 
 			for (View view : View.getAll()) {
 				this.add(new NewRenderWindowLauncher(view));
@@ -749,7 +749,14 @@ public class GUIFrame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (!RenderManager.isGood()) { return; }
+			if (!RenderManager.isGood()) {
+				if (RenderManager.canInitialize()) {
+					RenderManager.initialize();
+				} else {
+					// A fatal error has occurred, don't try to initialize again
+					return;
+				}
+			}
 
 			RenderManager.inst().createWindow(view);
 		}
@@ -763,7 +770,14 @@ public class GUIFrame extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (!RenderManager.isGood()) { return; }
+			if (!RenderManager.isGood()) {
+				if (RenderManager.canInitialize()) {
+					RenderManager.initialize();
+				} else {
+					// A fatal error has occurred, don't try to initialize again
+					return;
+				}
+			}
 
 			View tmp = InputAgent.defineEntityWithUniqueName(View.class, "View", true);
 			RenderManager.inst().createWindow(tmp);
@@ -1068,14 +1082,14 @@ public class GUIFrame extends JFrame {
 		return iconImage;
 	}
 
-	public void copyLocationToClipBoard(Vector3d pos) {
+	public void copyLocationToClipBoard(Vec3d pos) {
 		String data = String.format("(%.3f, %.3f, %.3f)", pos.x, pos.y, pos.z);
 		StringSelection stringSelection = new StringSelection(data);
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clipboard.setContents( stringSelection, null );
 	}
 
-	public void showLocatorPosition(Vector3d pos, Region region) {
+	public void showLocatorPosition(Vec3d pos) {
 		// null indicates nothing to display
 		if( pos == null ) {
 			locatorPos.setText( "(-, -, -)" );
@@ -1251,6 +1265,8 @@ public class GUIFrame extends JFrame {
 		public SpinnerModel( int val, int min, int max, int stepSize) {
 			super(val, min, max, stepSize);
 		}
+
+		@SuppressWarnings("unchecked")
 		public Object getPreviousValue() {
 			value = this.getNumber().intValue() / 2;
 
@@ -1261,6 +1277,7 @@ public class GUIFrame extends JFrame {
 			return value;
 		}
 
+		@SuppressWarnings("unchecked")
 		public Object getNextValue() {
 			value = this.getNumber().intValue() * 2;
 

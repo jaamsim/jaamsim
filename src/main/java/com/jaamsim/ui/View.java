@@ -16,8 +16,11 @@ package com.jaamsim.ui;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeyedVec3dInput;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec4d;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
@@ -28,7 +31,7 @@ import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.Vec3dInput;
-import com.sandwell.JavaSimulation3D.InputAgent;
+import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Region;
 
 public class View extends Entity {
@@ -69,7 +72,26 @@ private final StringInput titleBar;
          example = "View1 ShowWindow { FALSE }")
 private final BooleanInput showOnStartup;
 
+@Keyword(desc = "A Boolean indicating whether the view position can be moved (panned or rotated)",
+ example = "View1 Movable { FALSE }")
+private final BooleanInput movable;
+
+@Keyword(desc = "The (optional) entity for this view to follow. Setting this input makes the view ignore ViewCenter " +
+                "and interprets ViewPosition as a relative offset to this entity.",
+         example = "View1 FollowEntity { Ship1 }")
+private final EntityInput<DisplayEntity> followEntityInput;
+
+@Keyword(desc = "The (optional) scripted curve for the view position to follow.",
+ example = "View1 ScriptedViewPosition { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
+private final KeyedVec3dInput positionScriptInput;
+
+@Keyword(desc = "The (optional) scripted curve for the view center to follow.",
+example = "View1 ScriptedViewCenter { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
+private final KeyedVec3dInput centerScriptInput;
+
 private Object setLock = new Object();
+
+private double cachedSimTime = 0;
 
 private ChangeWatcher dataDirtier = new ChangeWatcher();
 
@@ -81,11 +103,11 @@ static {
 	region = new EntityInput<Region>(Region.class, "Region", "Graphics", null);
 	this.addInput(region, true);
 
-	center = new Vec3dInput("ViewCenter", "Graphics", Vector4d.ORIGIN);
+	center = new Vec3dInput("ViewCenter", "Graphics", new Vec3d());
 	center.setUnits("m");
 	this.addInput(center, true);
 
-	position = new Vec3dInput("ViewPosition", "Graphics", new Vector4d(5.0d, -5.0d, 5.0d));
+	position = new Vec3dInput("ViewPosition", "Graphics", new Vec3d(5.0d, -5.0d, 5.0d));
 	position.setUnits("m");
 	this.addInput(position, true);
 
@@ -110,6 +132,18 @@ static {
 
 	showOnStartup = new BooleanInput("ShowWindow", "Graphics", false);
 	this.addInput(showOnStartup, true);
+
+	movable = new BooleanInput("Movable", "Graphics", true);
+	this.addInput(movable, true);
+
+	followEntityInput = new EntityInput<DisplayEntity>(DisplayEntity.class, "FollowEntity", "Graphics", null);
+	this.addInput(followEntityInput, true);
+
+	positionScriptInput = new KeyedVec3dInput("ScriptedViewPosition", "Graphics", "m", "h");
+	this.addInput(positionScriptInput, true);
+
+	centerScriptInput = new KeyedVec3dInput("ScriptedViewCenter", "Graphics", "m", "h");
+	this.addInput(centerScriptInput, true);
 }
 
 public View() {
@@ -134,21 +168,37 @@ public void updateForInput( Input<?> in ) {
 		return;
 	}
 
-
-	if (in == region) {
+	// The entity inputs that this view is dependent on
+	if (in == region || in == followEntityInput) {
+		dataDirtier.clearDependents();
 		if (region.getValue() != null) {
-			dataDirtier.clearDependents();
 			dataDirtier.addDependent(region.getValue().getGraphicsDirtier());
 		}
-		else
-			dataDirtier.clearDependents();
+		if (followEntityInput.getValue() != null) {
+			dataDirtier.addDependent(followEntityInput.getValue().getGraphicsDirtier());
+		}
 		return;
 	}
 }
 
-public Vector4d getGlobalPosition() {
+public Vec3d getGlobalPosition() {
 	synchronized (setLock) {
-		Vector4d ret = new Vector4d(position.getValue());
+
+		// Check if this is following a script
+		if (positionScriptInput.hasKeys()) {
+			return positionScriptInput.getValueForTime(cachedSimTime);
+		}
+
+		// Is this view following an entity?
+		DisplayEntity follow = followEntityInput.getValue();
+		if (follow != null) {
+			Vec4d ret = new Vec4d(follow.getGlobalPosition());
+			ret.add3(position.getValue());
+			return ret;
+		}
+
+		Vec3d tmp = position.getValue();
+		Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 		if (region.getValue() != null) {
 			Transform regTrans = region.getValue().getRegionTrans(0);
 			regTrans.apply(ret, ret);
@@ -157,9 +207,21 @@ public Vector4d getGlobalPosition() {
 	}
 }
 
-public Vector4d getGlobalCenter() {
+public Vec3d getGlobalCenter() {
 	synchronized (setLock) {
-		Vector4d ret = new Vector4d(center.getValue());
+
+		// Check if this is following a script
+		if (centerScriptInput.hasKeys()) {
+			return centerScriptInput.getValueForTime(cachedSimTime);
+		}
+
+		DisplayEntity follow = followEntityInput.getValue();
+		if (follow != null) {
+			return follow.getGlobalPosition();
+		}
+
+		Vec3d tmp = center.getValue();
+		Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 		if (region.getValue() != null) {
 			Transform regTrans = region.getValue().getRegionTrans(0);
 			regTrans.apply(ret, ret);
@@ -174,10 +236,14 @@ public Vector4d getGlobalCenter() {
  * @param center - view center in world coordinates
  * @param pos - camera position in world coordinates
  */
-public void updateCenterAndPos(Vector4d center, Vector4d pos) {
+public void updateCenterAndPos(Vec3d center, Vec3d pos) {
 	synchronized (setLock){
-		Vector4d tempPos = new Vector4d(pos);
-		Vector4d tempCent = new Vector4d(center);
+
+		if (isScripted())
+			return;
+
+		Vec3d tempPos = new Vec3d(pos);
+		Vec3d tempCent = new Vec3d(center);
 
 		if (region.getValue() != null) {
 			Transform regTrans = region.getValue().getRegionTrans(0);
@@ -186,9 +252,15 @@ public void updateCenterAndPos(Vector4d center, Vector4d pos) {
 			regTrans.apply(center, tempCent);
 		}
 
-		String posVal = String.format("%f %f %f m", tempPos.x(), tempPos.y(), tempPos.z());
+		// If this is following an entity, subtract that entity's position from the camera position (as it is interpreted as relative)
+
+		if (isFollowing()) {
+			tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
+		}
+
+		String posVal = String.format("%f %f %f m", tempPos.x, tempPos.y, tempPos.z);
 		InputAgent.processEntity_Keyword_Value(this, this.position, posVal);
-		String cenVal = String.format("%f %f %f m", tempCent.x(), tempCent.y(), tempCent.z());
+		String cenVal = String.format("%f %f %f m", tempCent.x, tempCent.y, tempCent.z);
 		InputAgent.processEntity_Keyword_Value(this, this.center, cenVal);
 		dataDirtier.changed();
 	}
@@ -213,15 +285,15 @@ public void setRegion(Region reg) {
 	InputAgent.processEntity_Keyword_Value(this, this.region, reg.getInputName());
 }
 
-public void setPosition(Vector4d pos) {
-	String val = String.format("%f %f %f m", pos.x(), pos.y(), pos.z());
+public void setPosition(Vec3d pos) {
+	String val = String.format("%f %f %f m", pos.x, pos.y, pos.z);
 	InputAgent.processEntity_Keyword_Value(this, this.position, val);
 
 	dataDirtier.changed();
 }
 
-public void setCenter(Vector4d cent) {
-	String val = String.format("%f %f %f m", cent.x(), cent.y(), cent.z());
+public void setCenter(Vec3d cent) {
+	String val = String.format("%f %f %f m", cent.x, cent.y, cent.z);
 	InputAgent.processEntity_Keyword_Value(this, this.center, val);
 
 	dataDirtier.changed();
@@ -241,8 +313,34 @@ public ChangeWatcher.Tracker getChangeTracker() {
 	return dataDirtier.getTracker();
 }
 
+/**
+ * Allow an outside influence to force a dirty state
+ */
+public void forceDirty() {
+	dataDirtier.changed();
+}
+
 public int getID() {
 	return viewID;
+}
+
+public boolean isMovable() {
+	return movable.getValue();
+}
+
+public boolean isFollowing() {
+	return followEntityInput.getValue() != null;
+}
+
+public boolean isScripted() {
+	return positionScriptInput.hasKeys() || centerScriptInput.hasKeys();
+}
+
+public void update(double simTime) {
+	cachedSimTime = simTime;
+	if (isScripted()) {
+		forceDirty();
+	}
 }
 
 }

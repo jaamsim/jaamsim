@@ -22,8 +22,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.observers.DisplayModelState;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.RenderUtils;
 import com.sandwell.JavaSimulation.ObjectType;
@@ -50,22 +50,20 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
 		if (type == null)
 			return this;
 
-		// ObjectType has a DisplayModel
-		DisplayModel dm = type.getDefaultDisplayModel();
-		if (dm == null)
-			return this;
-
 		if (!RenderManager.isGood()) {
 			return this;
 		}
 
-		DisplayModelState dms = new DisplayModelState(dm);
 		Runnable notifier = new Runnable() {
 			public void run() {
 				EntityPallet.getInstance().repaint();
 			}
 		};
-		Future<BufferedImage> fi = RenderManager.inst().getPreviewForDisplayModel(dms, notifier);
+		DisplayModel dm = type.getDefaultDisplayModel();
+		if (dm == null) {
+			return this;
+		}
+		Future<BufferedImage> fi = RenderManager.inst().getPreviewForDisplayModel(dm, notifier);
 
 		BufferedImage image = null;
 

@@ -27,10 +27,21 @@ import com.sandwell.JavaSimulation.Input;
 
 public class EditBoxColumnRenderer extends DefaultTableCellRenderer {
 
-private final Border border = BorderFactory.createEmptyBorder(0, 10, 0, 0);
-private final Color compatKeyword = new Color(255, 0, 0);
+private final Border border;
+private final Border focusBorder;
+private final Color compatKeyword;
 
-public EditBoxColumnRenderer() {}
+public EditBoxColumnRenderer() {
+	border = BorderFactory.createEmptyBorder(0, 10, 0, 0);
+
+	// single pixel outline for the focused cell, require an inset with one fewer
+	// pixel due to the outline
+	Border lineBorder = BorderFactory.createLineBorder(Color.BLUE);
+	Border insetBorder = BorderFactory.createEmptyBorder(0, 9, 0, 0);
+	focusBorder = BorderFactory.createCompoundBorder(lineBorder, insetBorder);
+
+	compatKeyword = new Color(255, 0, 0);
+}
 
 public Component getTableCellRendererComponent(JTable table, Object value,
                                                boolean isSelected, boolean hasFocus,
@@ -38,20 +49,33 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 
 	Input<?> in = (Input<?>)value;
 
+	String str;
+	if (column == 0)
+		str = in.getKeyword();
+	else if (column == 1){
+		str = in.getDefaultString();
+	}
+	else {
+		str = in.getValueString();
+	}
+
 	// Pass along the keyword string, not the input itself
-	Component cell = super.getTableCellRendererComponent(table, in.getKeyword(), isSelected, hasFocus, row, column);
+	Component cell = super.getTableCellRendererComponent(table, str, isSelected, hasFocus, row, column);
 
 	if (row == table.getSelectedRow())
 		cell.setBackground(FrameBox.TABLE_SELECT);
 	else
 		cell.setBackground(null);
 
-	if (value instanceof CompatInput)
+	if (value instanceof CompatInput && column == 0)
 		cell.setForeground(compatKeyword);
 	else
 		cell.setForeground(null);
 
-	this.setBorder(border);
+	if (hasFocus)
+		this.setBorder(focusBorder);
+	else
+		this.setBorder(border);
 	return cell;
 }
 }

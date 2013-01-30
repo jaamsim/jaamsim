@@ -19,7 +19,7 @@ import java.util.List;
 
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 
 /**
  * Wrapper around a Polygon renderable
@@ -28,7 +28,7 @@ import com.jaamsim.math.Vector4d;
  */
 public class PolygonProxy implements RenderProxy {
 
-	private List<Vector4d> _points;
+	private List<Vec4d> _points;
 
 	private Color4d _colour;
 	private Color4d _hoverColour;
@@ -36,12 +36,13 @@ public class PolygonProxy implements RenderProxy {
 	private double _lineWidth; // only meaningful if (isOutline)
 	private long _pickingID;
 	private Transform _trans;
-	private Vector4d _scale;
+	private Vec4d _scale;
+	private VisibilityInfo _visInfo;
 
 	private Polygon cachedPoly;
 
-	public PolygonProxy(List<Vector4d> points, Transform trans, Vector4d scale,
-	                    Color4d colour, boolean isOutline, double lineWidth, long pickingID) {
+	public PolygonProxy(List<Vec4d> points, Transform trans, Vec4d scale,
+	                    Color4d colour, boolean isOutline, double lineWidth, VisibilityInfo visInfo, long pickingID) {
 		_colour = colour;
 		_hoverColour = colour;
 		_points = points;
@@ -50,6 +51,7 @@ public class PolygonProxy implements RenderProxy {
 		_isOutline = isOutline;
 		_lineWidth = lineWidth;
 		_pickingID = pickingID;
+		_visInfo = visInfo;
 	}
 
 	public void setHoverColour(Color4d hoverColour) {
@@ -60,9 +62,7 @@ public class PolygonProxy implements RenderProxy {
 	public void collectRenderables(Renderer r, ArrayList<Renderable> outList) {
 		if (cachedPoly == null) {
 
-			cachedPoly = new Polygon(_points, _trans, _scale, _colour, _hoverColour, _pickingID);
-			cachedPoly.isOutline = _isOutline;
-			cachedPoly.lineWidth = _lineWidth;
+			cachedPoly = new Polygon(_points, _trans, _scale, _colour, _hoverColour, _visInfo, _isOutline, _lineWidth, _pickingID);
 		}
 
 		outList.add(cachedPoly);

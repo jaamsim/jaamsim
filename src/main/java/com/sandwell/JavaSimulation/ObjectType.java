@@ -16,8 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
-import com.jaamsim.observers.ObserverProto;
-import com.sandwell.JavaSimulation3D.DisplayModel;
+import com.jaamsim.DisplayModels.DisplayModel;
 
 public class ObjectType extends Entity {
 	private static final ArrayList<ObjectType> allInstances;
@@ -33,10 +32,6 @@ public class ObjectType extends Entity {
 	@Keyword(desc = "Only for DisplayEntity",
 	         example = "This is placeholder example text")
 	private final EntityInput<DisplayModel> defaultDisplayModel;
-
-	@Keyword(desc = "The default observer for the new rendering system",
-	         example = "This is placeholder example text")
-	private final EntityInput<ObserverProto> defaultObserverProto;
 
 	@Keyword(desc = "This is placeholder description text",
 	         example = "This is placeholder example text")
@@ -55,9 +50,6 @@ public class ObjectType extends Entity {
 
 		defaultDisplayModel = new EntityInput<DisplayModel>(DisplayModel.class, "DefaultDisplayModel", "Key Inputs", null);
 		this.addInput(defaultDisplayModel, true);
-
-		defaultObserverProto = new EntityInput<ObserverProto>(ObserverProto.class, "DefaultObserver", "Key Inputs", null);
-		this.addInput(defaultObserverProto, true);
 
 		dragAndDrop = new BooleanInput("DragAndDrop", "Key inputs", true);
 		this.addInput(dragAndDrop, true);
@@ -109,10 +101,6 @@ public class ObjectType extends Entity {
 
 	public DisplayModel getDefaultDisplayModel(){
 		return defaultDisplayModel.getValue();
-	}
-
-	public ObserverProto getDefaultObserverProto() {
-		return defaultObserverProto.getValue();
 	}
 
 	public boolean isDragAndDrop() {

@@ -57,13 +57,13 @@ public class AboutBox extends FrameBox {
 		getContentPane().add( lab );
 
 		// display model info
-		lab = new JLabel("Version: 2012-47");
+		lab = new JLabel("Version: 2013-02");
 		constraints.gridy = index++;
 		constraints.insets = new Insets( 0, 75, 0, 75 );
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );
 
-		lab = new JLabel("Copyright (C) 2012 Ausenco Engineering Canada Inc.");
+		lab = new JLabel("Copyright (C) 2013 Ausenco Engineering Canada Inc.");
 		constraints.gridy = index++;
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );

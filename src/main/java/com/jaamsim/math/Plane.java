@@ -21,7 +21,7 @@ public class Plane {
 	/**
 	 * The normal direction of the plane, should always have w = 0 and be of unit length
 	 */
-private Vector4d _normal;
+private Vec4d _normal;
 /**
  * The shortest distance from the plane to the origin, by normal direction (affects sign)
  */
@@ -33,10 +33,10 @@ private double _dist;
  * @param normal
  * @param distance
  */
-public Plane(Vector4d normal, double distance) {
-	_normal = new Vector4d(normal);
-	_normal.normalizeLocal3();
-	_normal.data[3] = 0;
+public Plane(Vec4d normal, double distance) {
+	_normal = new Vec4d(normal);
+	_normal.normalize3();
+	_normal.w = 0;
 
 	_dist = distance;
 
@@ -46,7 +46,7 @@ public Plane(Vector4d normal, double distance) {
  * By default return the XY plane
  */
 public Plane() {
-	_normal = new Vector4d(0, 0, 1, 0);
+	_normal = new Vec4d(0, 0, 1, 0);
 	_dist = 0;
 }
 
@@ -56,27 +56,28 @@ public Plane() {
  * @param p1
  * @param p2
  */
-public Plane(Vector4d p0, Vector4d p1, Vector4d p2) {
-	_normal = new Vector4d();
-	Vector4d v0 = new Vector4d(p1);
-	v0.subLocal3(p0);
-	v0.normalizeLocal3();
 
-	Vector4d v1 = new Vector4d(p2);
-	v1.subLocal3(p1);
-	v1.normalizeLocal3();
+public Plane(Vec4d p0, Vec4d p1, Vec4d p2) {
+	_normal = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	Vec4d v0 = new Vec4d(p1);
+	v0.sub3(p0);
+	v0.normalize3();
 
-	v0.cross(v1, _normal);
-	_normal.normalizeLocal3();
-	_normal.data[3] = 0;
+	Vec4d v1 = new Vec4d(p2);
+	v1.sub3(p1);
+	v1.normalize3();
+
+	_normal.cross3(v0, v1);
+	_normal.normalize3();
+	_normal.w = 0;
 	_dist = _normal.dot3(p0);
 }
 
-public void getNormal(Vector4d norm) {
-	norm.copyFrom(_normal);
+public void getNormal(Vec4d norm) {
+	norm.set4(_normal);
 }
 
-public Vector4d getNormalRef() {
+public Vec4d getNormalRef() {
 	return _normal;
 }
 
@@ -89,8 +90,8 @@ public double getDist() {
  * @param point
  * @return
  */
-public double getNormalDist(Vector4d point) {
-	double dot = point.dot3(_normal);
+public double getNormalDist(Vec4d point) {
+	double dot = point.dot3(new Vec4d(_normal));
 	return dot - _dist;
 }
 
@@ -101,11 +102,11 @@ public double getNormalDist(Vector4d point) {
  */
 public void transform(Transform t, Plane out) {
 
-	Vector4d closePoint = new Vector4d(); // The point closest to the origin (need any point on the plane
-	_normal.scale3(_dist, closePoint);
+	Vec4d closePoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // The point closest to the origin (need any point on the plane
+	closePoint.scale3(_dist, _normal);
 
 	t.apply(_normal, out._normal);
-	out._normal.normalizeLocal3();
+	out._normal.normalize3();
 
 	// Now close point is the transformed point
 	t.apply(closePoint, closePoint);
@@ -114,8 +115,12 @@ public void transform(Transform t, Plane out) {
 
 }
 
+public boolean near(Plane p) {
+	return _normal.near4(p._normal) && MathUtils.near(_dist, p._dist);
+}
+
 public boolean equals(Plane p) {
-	return _normal.equals(p._normal) && MathUtils.near(_dist, p._dist);
+	return _normal.equals4(p._normal) && MathUtils.near(_dist, p._dist);
 }
 
 /**

@@ -2,13 +2,12 @@ package com.jaamsim.render;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Vector3d;
-
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Vec3d;
 
 public interface HasScreenPoints {
 
-	public ArrayList<Vector3d> getScreenPoints();
+	public ArrayList<Vec3d> getScreenPoints();
 	public Color4d getDisplayColour();
 
 	/**

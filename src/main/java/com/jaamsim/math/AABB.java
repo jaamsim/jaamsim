@@ -28,12 +28,17 @@ public class AABB {
 	/**
 	 * The most positive point (MaxX, MaxY, MaxZ)
 	 */
-	private Vector4d _posPoint;
+	private final Vec4d _posPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
 	/**
 	 * The most negative point (MinX, MinY, MinZ)
 	 */
-	private Vector4d _negPoint;
+	private final Vec4d _negPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+
+	private final Vec4d _center = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	private final Vec4d _radius = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+
+	private final Vec4d _radTemp = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
 	/**
 	 * Copy constructor for defensive copies
@@ -41,13 +46,17 @@ public class AABB {
 	 */
 	public AABB(AABB other) {
 		this._isEmpty = other._isEmpty;
-		this._negPoint = new Vector4d(other._negPoint);
-		this._posPoint = new Vector4d(other._posPoint);
+		this._negPoint.set4(other._negPoint);
+		this._posPoint.set4(other._posPoint);
+
+		updateCenterAndRadius();
 	}
 
-	public AABB(Vector4d posPoint, Vector4d negPoint) {
-		_posPoint = new Vector4d(posPoint);
-		_negPoint = new Vector4d(negPoint);
+	public AABB(Vec4d posPoint, Vec4d negPoint) {
+		_posPoint.set4(posPoint);
+		_negPoint.set4(negPoint);
+
+		updateCenterAndRadius();
 	}
 
 	/**
@@ -55,15 +64,17 @@ public class AABB {
 	 * @param points
 	 * @param expansion
 	 */
-	public AABB(List<Vector4d> points, double fudge) {
+	public AABB(List<Vec4d> points, double fudge) {
 		this(points);
-		_posPoint.data[0] += fudge;
-		_posPoint.data[1] += fudge;
-		_posPoint.data[2] += fudge;
+		_posPoint.x += fudge;
+		_posPoint.y += fudge;
+		_posPoint.z += fudge;
 
-		_negPoint.data[0] -= fudge;
-		_negPoint.data[1] -= fudge;
-		_negPoint.data[2] -= fudge;
+		_negPoint.x -= fudge;
+		_negPoint.y -= fudge;
+		_negPoint.z -= fudge;
+
+		updateCenterAndRadius();
 
 	}
 
@@ -71,49 +82,52 @@ public class AABB {
 	 * Build an AABB that contains all the supplied points
 	 * @param points
 	 */
-	public AABB(List<Vector4d> points) {
+	public AABB(List<Vec4d> points) {
 		if (points.size() == 0) {
 			_isEmpty = true;
 			return;
 		}
 
-		_posPoint = new Vector4d(points.get(0));
-		_negPoint = new Vector4d(points.get(0));
-		for (Vector4d p : points) {
-			for (int i = 0; i < 3; ++i)
-			{
-				if (p.data[i] > _posPoint.data[i]) { _posPoint.data[i] = p.data[i]; }
-				if (p.data[i] < _negPoint.data[i]) { _negPoint.data[i] = p.data[i]; }
-			}
+		_posPoint.set4(points.get(0));
+		_negPoint.set4(points.get(0));
+		for (Vec4d p : points) {
+			_posPoint.max3(p);
+			_negPoint.min3(p);
 		}
+
+		updateCenterAndRadius();
+
 	}
 
 	/**
 	 * Build an AABB that contains all the supplied points, transformed by trans
 	 * @param points
 	 */
-	public AABB(List<Vector4d> points, Matrix4d trans) {
+	/**
+	 * Build an AABB that contains all the supplied points
+	 * @param points
+	 */
+	public AABB(List<Vec4d> points, Mat4d trans) {
 		if (points.size() == 0) {
 			_isEmpty = true;
 			return;
 		}
 
-		// Initialize to the first point in the list (transformed of course)
-		Vector4d p = new Vector4d();
-		trans.mult(points.get(0), p);
+		Vec4d p = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		p.mult4(trans, points.get(0));
 
-		_posPoint = new Vector4d(p);
-		_negPoint = new Vector4d(p);
-		for (Vector4d p_orig : points) {
-			trans.mult(p_orig, p);
-
-			for (int i = 0; i < 3; ++i)
-			{
-				if (p.data[i] > _posPoint.data[i]) { _posPoint.data[i] = p.data[i]; }
-				if (p.data[i] < _negPoint.data[i]) { _negPoint.data[i] = p.data[i]; }
-			}
+		_posPoint.set4(p);
+		_negPoint.set4(p);
+		for (Vec4d p_orig : points) {
+			p.mult4(trans, p_orig);
+			_posPoint.max3(p);
+			_negPoint.min3(p);
 		}
+
+		updateCenterAndRadius();
+
 	}
+
 
 	/**
 	 * Return an AABB that contains both this and 'other'
@@ -129,15 +143,11 @@ public class AABB {
 			return new AABB(other);
 		}
 
-		Vector4d newPos = new Vector4d(
-				Math.max(_posPoint.x(), other._posPoint.x()),
-				Math.max(_posPoint.y(), other._posPoint.y()),
-				Math.max(_posPoint.z(), other._posPoint.z()));
+		Vec4d newPos = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		newPos.max3(_posPoint, other._posPoint);
 
-		Vector4d newNeg = new Vector4d(
-				Math.min(_negPoint.x(), other._negPoint.x()),
-				Math.min(_negPoint.y(), other._negPoint.y()),
-				Math.min(_negPoint.z(), other._negPoint.z()));
+		Vec4d newNeg = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		newNeg.min3(_negPoint, other._negPoint);
 
 		return new AABB(newPos, newNeg);
 	}
@@ -145,18 +155,18 @@ public class AABB {
 	/**
 	 * Check collision, but allow for a fudge factor on the AABB
 	 */
-	public boolean collides(Vector4d point, double fudge) {
+	public boolean collides(Vec4d point, double fudge) {
 		if (_isEmpty) {
 			return false;
 		}
 
-		boolean bX = point.x() > _negPoint.x() - fudge && point.x() < _posPoint.x() + fudge;
-		boolean bY = point.y() > _negPoint.y() - fudge && point.y() < _posPoint.y() + fudge;
-		boolean bZ = point.z() > _negPoint.z() - fudge && point.z() < _posPoint.z() + fudge;
+		boolean bX = point.x > _negPoint.x - fudge && point.x < _posPoint.x + fudge;
+		boolean bY = point.y > _negPoint.y - fudge && point.y < _posPoint.y + fudge;
+		boolean bZ = point.z > _negPoint.z - fudge && point.z < _posPoint.z + fudge;
 		return bX && bY && bZ;
 	}
 
-	public boolean collides(Vector4d point) {
+	public boolean collides(Vec4d point) {
 		return collides(point, 0);
 	}
 
@@ -171,9 +181,9 @@ public class AABB {
 			return false;
 		}
 
-		boolean bX = MathUtils.segOverlap(_negPoint.x(), _posPoint.x(), other._negPoint.x(), other._posPoint.x(), fudge);
-		boolean bY = MathUtils.segOverlap(_negPoint.y(), _posPoint.y(), other._negPoint.y(), other._posPoint.y(), fudge);
-		boolean bZ = MathUtils.segOverlap(_negPoint.z(), _posPoint.z(), other._negPoint.z(), other._posPoint.z(), fudge);
+		boolean bX = MathUtils.segOverlap(_negPoint.x, _posPoint.x, other._negPoint.x, other._posPoint.x, fudge);
+		boolean bY = MathUtils.segOverlap(_negPoint.y, _posPoint.y, other._negPoint.y, other._posPoint.y, fudge);
+		boolean bZ = MathUtils.segOverlap(_negPoint.z, _posPoint.z, other._negPoint.z, other._posPoint.z, fudge);
 		return bX && bY && bZ;
 	}
 
@@ -195,22 +205,22 @@ public class AABB {
 			return 0.0; // The ray starts in the AABB
 		}
 
-		Vector4d rayDir = r.getDirRef();
+		Vec4d rayDir = r.getDirRef();
 		// Iterate over the 3 axes
 		for (int axis = 0; axis < 3; ++axis) {
-			if (MathUtils.near(rayDir.data[axis], 0)) {
+			if (MathUtils.near(rayDir.getComp(axis), 0)) {
 				continue; // The ray is parallel to the box in this axis
 			}
 
-			Vector4d faceNorm = new Vector4d();
+			Vec4d faceNorm = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			double faceDist = 0;
-			if (rayDir.data[axis] > 0) {
+			if (rayDir.getComp(axis) > 0) {
 				// Collides with the negative face
-				faceNorm.data[axis] = -1;
-				faceDist = -_negPoint.data[axis] - fudge;
+				faceNorm.setComp(axis, -1);
+				faceDist = -_negPoint.getComp(axis) - fudge;
 			} else {
-				faceNorm.data[axis] = 1;
-				faceDist = _posPoint.data[axis] + fudge;
+				faceNorm.setComp(axis, 1);
+				faceDist = _posPoint.getComp(axis) + fudge;
 			}
 
 			Plane facePlane = new Plane(faceNorm, faceDist);
@@ -231,13 +241,13 @@ public class AABB {
 			int a2 = (axis + 2) % 3;
 
 			// Figure out the point of contact
-			Vector4d contactPoint = r.getPointAtDist(rayCollisionDist);
+			Vec4d contactPoint = r.getPointAtDist(rayCollisionDist);
 
-			if (contactPoint.data[a1] < _negPoint.data[a1] - fudge || contactPoint.data[a1] > _posPoint.data[a1] + fudge) {
+			if (contactPoint.getComp(a1) < _negPoint.getComp(a1) - fudge || contactPoint.getComp(a1) > _posPoint.getComp(a1) + fudge) {
 				continue; // No contact
 			}
 
-			if (contactPoint.data[a2] < _negPoint.data[a2] - fudge || contactPoint.data[a2] > _posPoint.data[a2] + fudge) {
+			if (contactPoint.getComp(a2) < _negPoint.getComp(a2) - fudge || contactPoint.getComp(a2) > _posPoint.getComp(a2) + fudge) {
 				continue; // No contact
 			}
 			// Collision!
@@ -247,15 +257,23 @@ public class AABB {
 		return -1.0;
 	}
 
+	private void updateCenterAndRadius() {
+		_center.set4(_posPoint);
+		_center.add3(_negPoint);
+		_center.scale3(0.5);
+
+		_radius.set4(_posPoint);
+		_radius.sub3(_negPoint);
+		_radius.scale3(0.5);
+
+	}
+
 	/**
 	 * Get the center point of the AABB, this is not valid for empty AABBs
 	 * @return
 	 */
-	public Vector4d getCenter() {
-		Vector4d ret = new Vector4d(_posPoint);
-		ret.addLocal3(_negPoint);
-		ret.scaleLocal3(0.5);
-		return ret;
+	public Vec4d getCenter() {
+		return _center;
 	}
 
 	/**
@@ -263,12 +281,10 @@ public class AABB {
 	 * positive most point, this is not valid for empty AABBs
 	 * @return
 	 */
-	public Vector4d getRadius() {
-		Vector4d ret = new Vector4d(_posPoint);
-		ret.subLocal3(_negPoint);
-		ret.scaleLocal3(0.5);
-		return ret;
+	public Vec4d getRadius() {
+		return _radius;
 	}
+
 
 	public boolean isEmpty() {
 		return _isEmpty;
@@ -288,13 +304,14 @@ public class AABB {
 			return PlaneTestResult.EMPTY;
 		}
 
-		Vector4d rad = getRadius();
-		Vector4d pNorm = p.getNormalRef();
+		_radTemp.set4(_radius);
+		Vec4d pNorm = p.getNormalRef();
 		// Make sure the radius points in the same direction of the normal
-		for (int i = 0; i < 3; ++i) {
-			if (pNorm.data[i] < 0) { rad.data[i] *= -1; }
-		}
-		double effectiveRadius = rad.dot3(pNorm);
+		if (pNorm.x < 0) { _radTemp.x *= -1; }
+		if (pNorm.y < 0) { _radTemp.y *= -1; }
+		if (pNorm.z < 0) { _radTemp.z *= -1; }
+
+		double effectiveRadius = _radTemp.dot3(pNorm);
 
 		double centerDist = p.getNormalDist(getCenter());
 		// If the effective radius is greater than the distance to the center, we're good

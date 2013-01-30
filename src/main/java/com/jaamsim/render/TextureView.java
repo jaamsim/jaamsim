@@ -22,10 +22,10 @@ import java.util.Map;
 import javax.media.opengl.GL2GL3;
 
 import com.jaamsim.math.AABB;
-import com.jaamsim.math.Matrix4d;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec4d;
 
 
 /**
@@ -37,13 +37,15 @@ public class TextureView implements Renderable {
 
 	private URL _imageURL;
 	private Transform _trans;
-	private Vector4d _scale;
+	private Vec4d _scale;
 	private long _pickingID;
 
 	private AABB _bounds;
 
 	private boolean _isTransparent;
 	private boolean _isCompressed;
+
+	private VisibilityInfo _visInfo;
 
 	// Initialize the very simple buffers needed to render this image
 	static private boolean staticInit = false;
@@ -60,24 +62,25 @@ public class TextureView implements Renderable {
 
 	static private int hasTexVar;
 
-
-	public TextureView(URL imageURL, Transform trans, Vector4d scale, boolean isTransparent, boolean isCompressed, long pickingID) {
+	public TextureView(URL imageURL, Transform trans, Vec4d scale, boolean isTransparent, boolean isCompressed,
+	                   VisibilityInfo visInfo, long pickingID) {
 		_imageURL = imageURL;
 		_trans = trans;
 		_scale = scale;
-		_scale.data[2] = 1; // This object can only be scaled in X, Y
+		_scale.z = 1; // This object can only be scaled in X, Y
 		_pickingID = pickingID;
 		_isTransparent = isTransparent;
 		_isCompressed = isCompressed;
+		_visInfo = visInfo;
 
 
-		Matrix4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
+		Mat4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
 
-		ArrayList<Vector4d> vs = new ArrayList<Vector4d>(4);
-		vs.add(new Vector4d( 0.5,  0.5, 0));
-		vs.add(new Vector4d(-0.5,  0.5, 0));
-		vs.add(new Vector4d(-0.5, -0.5, 0));
-		vs.add(new Vector4d( 0.5, -0.5, 0));
+		ArrayList<Vec4d> vs = new ArrayList<Vec4d>(4);
+		vs.add(new Vec4d( 0.5,  0.5, 0, 1.0d));
+		vs.add(new Vec4d(-0.5,  0.5, 0, 1.0d));
+		vs.add(new Vec4d(-0.5, -0.5, 0, 1.0d));
+		vs.add(new Vec4d( 0.5, -0.5, 0, 1.0d));
 
 		_bounds = new AABB(vs, modelMat);
 
@@ -211,34 +214,37 @@ public class TextureView implements Renderable {
 		int vao = vaoMap.get(assetID);
 		gl.glBindVertexArray(vao);
 
-		Matrix4d projMat = cam.getProjMatRef();
+		Mat4d projMat = cam.getProjMat4d();
 
-		Matrix4d modelViewProjMat = new Matrix4d();
+		Mat4d modelViewProjMat = new Mat4d();
 
-		cam.getViewMatrix(modelViewProjMat);
-		modelViewProjMat.mult(_trans.getMatrixRef(), modelViewProjMat);
-		modelViewProjMat.mult(Matrix4d.ScaleMatrix(_scale), modelViewProjMat);
+		cam.getViewMat4d(modelViewProjMat);
+		modelViewProjMat.mult4(_trans.getMat4dRef());
+		modelViewProjMat.scaleCols3(_scale);
 
-		projMat.mult(modelViewProjMat, modelViewProjMat);
+		modelViewProjMat.mult4(projMat, modelViewProjMat);
 
-		Matrix4d normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
-		normalMat.transposeLocal();
+		Mat4d normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
+		normalMat.transpose4();
 
 		//Debug
-		Vector4d transNormal = new Vector4d();
-		normalMat.mult(Vector4d.Z_AXIS, transNormal);
+		Vec4d transNormal = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		transNormal.mult4(normalMat, Vec4d.Z_AXIS);
 
 		gl.glUseProgram(progHandle);
 
-		gl.glUniformMatrix4fv(modelViewProjMatVar, 1, false, modelViewProjMat.toFloats(), 0);
-		gl.glUniformMatrix4fv(normalMatVar, 1, false, normalMat.toFloats(), 0);
+		gl.glUniformMatrix4fv(modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
+		gl.glUniformMatrix4fv(normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
 
 		gl.glUniform1i(hasTexVar, 1);
 
-		Vector4d lightVect = new Vector4d(0,  0, -1,  0);
-		lightVect.normalizeLocal3();
+		Vec4d lightVect = new Vec4d(0,  0, -1,  0);
+		lightVect.normalize3();
 
-		gl.glUniform4fv(lightDirVar, 1, lightVect.toFloats(), 0);
+		gl.glUniform4f(lightDirVar, (float)lightVect.x,
+		                            (float)lightVect.y,
+		                            (float)lightVect.z,
+		                            (float)lightVect.w);
 
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
 		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, textureID);
@@ -246,7 +252,8 @@ public class TextureView implements Renderable {
 
 		if (_isTransparent) {
 			gl.glEnable(GL2GL3.GL_BLEND);
-			gl.glBlendFunc(GL2GL3.GL_SRC_ALPHA, GL2GL3.GL_ONE_MINUS_SRC_ALPHA);
+			gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
+			gl.glBlendFuncSeparate(GL2GL3.GL_SRC_ALPHA, GL2GL3.GL_ONE_MINUS_SRC_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
 		}
 
 		// Draw
@@ -289,8 +296,13 @@ public class TextureView implements Renderable {
 	}
 
 	@Override
-	public boolean renderForView(int windowID) {
-		return true;
+	public boolean renderForView(int viewID, double dist) {
+		if (dist < _visInfo.minDist || dist > _visInfo.maxDist) {
+			return false;
+		}
+
+		if (_visInfo.viewIDs == null || _visInfo.viewIDs.size() == 0) return true; //Default to always visible
+		return _visInfo.viewIDs.contains(viewID);
 	}
 
 }

@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.input.InputAgent;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileEntity;

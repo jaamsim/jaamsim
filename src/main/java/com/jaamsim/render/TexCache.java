@@ -81,20 +81,20 @@ public class TexCache {
 
 	private Renderer _renderer;
 
-	public static URL BAD_TEXTURE;
+	public static final URL BAD_TEXTURE;
 	private int badTextureID = -1;
 
 	public static final int LOADING_TEX_ID = -2;
+
+	static {
+		BAD_TEXTURE = TexCache.class.getResource("/resources/images/bad-texture.png");
+	}
 
 	public TexCache(Renderer r) {
 		_renderer = r;
 	}
 
 	public void init(GL2GL3 gl) {
-
-		// Force load the Bad-texture image
-		BAD_TEXTURE = TexCache.class.getResource("/resources/images/bad-texture.png");
-
 		LoadingEntry badLE = launchLoadImage(gl, BAD_TEXTURE, false, false);
 		assert(badLE != null); // We should never fail to load the bad texture
 
@@ -113,17 +113,19 @@ public class TexCache {
 			LoadingEntry le = entry.getValue();
 			if (le.done.get()) {
 				loadedStrings.add(entry.getKey());
-				loadGLTexture(gl, le);
+				int glTexID = loadGLTexture(gl, le);
+				_texMap.put(le.imageURL, new TexEntry(glTexID, le.hasAlpha, le.compressed));
 			}
 		}
 		for (String s : loadedStrings) {
 			_loadingMap.remove(s);
 		}
 
-		if (_texMap.containsKey(imageURL.toString())) {
+		String imageURLKey = imageURL.toString();
+		if (_texMap.containsKey(imageURLKey)) {
 
 			// There is an entry in the cache, but let's check the other attributes
-			TexEntry entry = _texMap.get(imageURL.toString());
+			TexEntry entry = _texMap.get(imageURLKey);
 			boolean found = true;
 			if (withAlpha && !entry.hasAlpha) {
 				found = false; // This entry does not have an alpha channel
@@ -142,16 +144,17 @@ public class TexCache {
 			texIDs[0] = entry.texID;
 			gl.glDeleteTextures(1, texIDs, 0);
 
-			_texMap.remove(imageURL);
+			_texMap.remove(imageURLKey);
 		}
 
-		boolean isLoading = _loadingMap.containsKey(imageURL.toString());
+		boolean isLoading = _loadingMap.containsKey(imageURLKey);
 		LoadingEntry le = null;
 		if (!isLoading) {
 			le = launchLoadImage(gl, imageURL, withAlpha, compressed);
 
 			if (le == null) {
 				// The image could not be found
+				_texMap.put(imageURLKey, new TexEntry(badTextureID, withAlpha, compressed));
 				return badTextureID;
 			}
 		}
@@ -161,9 +164,10 @@ public class TexCache {
 		}
 
 		waitForTex(le);
-		_loadingMap.remove(imageURL.toString());
+		_loadingMap.remove(imageURLKey);
 
 		int glTexID = loadGLTexture(gl, le);
+		_texMap.put(le.imageURL, new TexEntry(glTexID, le.hasAlpha, le.compressed));
 
 		return glTexID;
 	}
@@ -173,7 +177,6 @@ public class TexCache {
 		Dimension dim = getImageDimension(imageURL);
 		if (dim == null) {
 			// Could not load image
-			_texMap.put(imageURL.toString(), new TexEntry(badTextureID, transparent, compressed));
 			return null;
 		}
 
@@ -197,9 +200,9 @@ public class TexCache {
 		}
 
 		ByteBuffer mappedBuffer = null;
-		try {
 			gl.glBindBuffer(GL2GL3.GL_PIXEL_UNPACK_BUFFER, ids[0]);
 			gl.glBufferData(GL2GL3.GL_PIXEL_UNPACK_BUFFER, bufferSize, null, GL2GL3.GL_STREAM_READ);
+		try {
 			mappedBuffer = gl.glMapBuffer(GL2GL3.GL_PIXEL_UNPACK_BUFFER, GL2GL3.GL_WRITE_ONLY);
 		} catch (GLException ex) {
 			// A GL Exception here is most likely caused by an out of memory, this is recoverable and simply use the bad texture
@@ -285,7 +288,6 @@ public class TexCache {
 	private int loadGLTexture(GL2GL3 gl, LoadingEntry le) {
 
 		if (le.failed.get()) {
-			_texMap.put(le.imageURL.toString(), new TexEntry(badTextureID, le.hasAlpha, le.compressed));
 			return badTextureID;
 		}
 
@@ -348,12 +350,17 @@ public class TexCache {
 
 		// Note we do not let openGL generate compressed mipmaps because it stalls the render thread really badly
 		// in theory it could be generated in the worker thread, but not yet
-		if (!le.compressed)
-			gl.glGenerateMipmap(GL2GL3.GL_TEXTURE_2D);
+
+		try {
+			if (!le.compressed)
+				gl.glGenerateMipmap(GL2GL3.GL_TEXTURE_2D);
+		} catch (GLException ex) {
+			// It is possible to run out of texture memory here (although it is less likely than
+			// running out above
+			return badTextureID;
+		}
 
 		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, 0);
-
-		_texMap.put(le.imageURL.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed));
 
 		gl.glBindBuffer(GL2GL3.GL_PIXEL_UNPACK_BUFFER, 0);
 		i[0] = le.bufferID;

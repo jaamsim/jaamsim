@@ -19,9 +19,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.jaamsim.math.Quaternion;
-import com.jaamsim.math.Vector4d;
-
 public class TestQuaternion {
 
 private Quaternion x_pi;
@@ -34,14 +31,14 @@ private Quaternion ident;
 
 @Before
 public void setup() {
-	x_pi = Quaternion.Rotation(Math.PI, Vector4d.X_AXIS);
-	x_halfPi = Quaternion.Rotation(Math.PI / 2.0, Vector4d.X_AXIS);
+	x_pi = Quaternion.Rotation(Math.PI, Vec4d.X_AXIS);
+	x_halfPi = Quaternion.Rotation(Math.PI / 2.0, Vec4d.X_AXIS);
 
-	y_pi = Quaternion.Rotation(Math.PI, Vector4d.Y_AXIS);
-	y_halfPi = Quaternion.Rotation(Math.PI / 2.0, Vector4d.Y_AXIS);
+	y_pi = Quaternion.Rotation(Math.PI, Vec4d.Y_AXIS);
+	y_halfPi = Quaternion.Rotation(Math.PI / 2.0, Vec4d.Y_AXIS);
 
-	z_pi = Quaternion.Rotation(Math.PI, Vector4d.Z_AXIS);
-	z_halfPi = Quaternion.Rotation(Math.PI / 2.0, Vector4d.Z_AXIS);
+	z_pi = Quaternion.Rotation(Math.PI, Vec4d.Z_AXIS);
+	z_halfPi = Quaternion.Rotation(Math.PI / 2.0, Vec4d.Z_AXIS);
 
 	ident = new Quaternion();
 }
@@ -49,24 +46,23 @@ public void setup() {
 
 @Test
 public void testSimpleQuatRotation() {
+	Vec4d res = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	z_halfPi.rotateVector(Vec4d.X_AXIS, res);
+	assertTrue(res.near4(Vec4d.Y_AXIS));
 
-	Vector4d res = new Vector4d();
-	z_halfPi.rotateVector(Vector4d.X_AXIS, res);
-	assertTrue(res.equals(Vector4d.Y_AXIS));
+	z_pi.rotateVector(Vec4d.X_AXIS, res);
+	assertTrue(res.near4(Vec4d.NEG_X_AXIS));
 
-	z_pi.rotateVector(Vector4d.X_AXIS, res);
-	assertTrue(res.equals(Vector4d.NEG_X_AXIS));
+	y_halfPi.rotateVector(Vec4d.X_AXIS, res);
+	assertTrue(res.near4(Vec4d.NEG_Z_AXIS));
 
-	y_halfPi.rotateVector(Vector4d.X_AXIS, res);
-	assertTrue(res.equals(Vector4d.NEG_Z_AXIS));
+	y_pi.rotateVector(Vec4d.X_AXIS, res);
+	assertTrue(res.near4(Vec4d.NEG_X_AXIS));
 
-	y_pi.rotateVector(Vector4d.X_AXIS, res);
-	assertTrue(res.equals(Vector4d.NEG_X_AXIS));
-
-	x_halfPi.rotateVector(Vector4d.Y_AXIS, res);
-	assertTrue(res.equals(Vector4d.Z_AXIS));
-	x_pi.rotateVector(Vector4d.Y_AXIS, res);
-	assertTrue(res.equals(Vector4d.NEG_Y_AXIS));
+	x_halfPi.rotateVector(Vec4d.Y_AXIS, res);
+	assertTrue(res.near4(Vec4d.Z_AXIS));
+	x_pi.rotateVector(Vec4d.Y_AXIS, res);
+	assertTrue(res.near4(Vec4d.NEG_Y_AXIS));
 
 }
 
@@ -78,16 +74,16 @@ public void testSlerp() {
 	Quaternion x_eighthPi = new Quaternion();
 	ident.slerp(x_halfPi, 0.25, x_eighthPi);
 
-	Vector4d res = new Vector4d();
-	Vector4d expected = new Vector4d(0, 1, 1, 1);
-	expected.normalizeLocal3();
+	Vec4d res = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	Vec4d expected = new Vec4d(0, 1, 1, 1);
+	expected.normalize3();
 
-	x_quarterPi.rotateVector(Vector4d.Y_AXIS, res);
-	assertTrue(res.equals3(expected));
+	x_quarterPi.rotateVector(Vec4d.Y_AXIS, res);
+	assertTrue(res.near3(expected));
 
-	x_eighthPi.rotateVector(Vector4d.Y_AXIS, res);
-	expected.set(0,  Math.cos(Math.PI/8), Math.sin(Math.PI/8));
-	assertTrue(res.equals3(expected));
+	x_eighthPi.rotateVector(Vec4d.Y_AXIS, res);
+	expected.set3(0,  Math.cos(Math.PI/8), Math.sin(Math.PI/8));
+	assertTrue(res.near3(expected));
 }
 
 @Test
@@ -96,14 +92,14 @@ public void testConstructor() {
 	Quaternion x_eighthPi = new Quaternion();
 	ident.slerp(x_halfPi, 0.25, x_eighthPi);
 
-	Quaternion x_eighthPi2 = Quaternion.Rotation(Math.PI/8, Vector4d.X_AXIS);
+	Quaternion x_eighthPi2 = Quaternion.Rotation(Math.PI/8, Vec4d.X_AXIS);
 
 	assertTrue(x_eighthPi.equals(x_eighthPi2));
 
 	Quaternion x_negEighthPi = new Quaternion();
 	x_negEighthPi.conjugate(x_eighthPi);
 
-	Quaternion x_negEighthPi2 = Quaternion.Rotation(-Math.PI/8, Vector4d.X_AXIS);
+	Quaternion x_negEighthPi2 = Quaternion.Rotation(-Math.PI/8, Vec4d.X_AXIS);
 	assertTrue(x_negEighthPi.equals(x_negEighthPi2));
 }
 

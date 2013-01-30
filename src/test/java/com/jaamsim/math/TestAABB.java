@@ -22,32 +22,32 @@ public class TestAABB {
 
 	@Test
 	public void  BasicCollision() {
-		AABB aabb = new AABB(new Vector4d(1, 2, 3),
-		                     new Vector4d(-1, -2, -3));
+		AABB aabb = new AABB(new Vec4d(1, 2, 3, 1.0d),
+		                     new Vec4d(-1, -2, -3, 1.0d));
 
-		assertTrue(aabb.collides(new Vector4d()));
+		assertTrue(aabb.collides(new Vec4d(0.0d, 0.0d, 0.0d, 1.0d)));
 
-		assertTrue(aabb.collides(new Vector4d(0.5, 0.5, 0.5)));
+		assertTrue(aabb.collides(new Vec4d(0.5, 0.5, 0.5, 1.0d)));
 
-		assertTrue(aabb.collides(new Vector4d(0.5, -0.5, 0.5)));
-		assertTrue(aabb.collides(new Vector4d(0.5, 0.5, -0.5)));
-		assertTrue(aabb.collides(new Vector4d(0.5, 0.5, 2.5)));
+		assertTrue(aabb.collides(new Vec4d(0.5, -0.5, 0.5, 1.0d)));
+		assertTrue(aabb.collides(new Vec4d(0.5, 0.5, -0.5, 1.0d)));
+		assertTrue(aabb.collides(new Vec4d(0.5, 0.5, 2.5, 1.0d)));
 
-		assertTrue(!aabb.collides(new Vector4d(0.5, 0.5, 3.5)));
+		assertTrue(!aabb.collides(new Vec4d(0.5, 0.5, 3.5, 1.0d)));
 
 
 	}
 
 	@Test
 	public void  AABBCollision() {
-		AABB aabb1 = new AABB(new Vector4d(1, 2, 3),
-		                      new Vector4d(-1, -2, -3));
+		AABB aabb1 = new AABB(new Vec4d(1, 2, 3, 1.0d),
+		                      new Vec4d(-1, -2, -3, 1.0d));
 
-		AABB aabb2 = new AABB(new Vector4d(3, 3, 3),
-		                      new Vector4d(2, 2, 2));
+		AABB aabb2 = new AABB(new Vec4d(3, 3, 3, 1.0d),
+		                      new Vec4d(2, 2, 2, 1.0d));
 
-		AABB aabb3 = new AABB(new Vector4d(2.5, 3, 3),
-		                      new Vector4d(2, 2, 2));
+		AABB aabb3 = new AABB(new Vec4d(2.5, 3, 3, 1.0d),
+		                      new Vec4d(2, 2, 2, 1.0d));
 
 		assertTrue(!aabb1.collides(aabb2));
 
@@ -56,23 +56,23 @@ public class TestAABB {
 
 	@Test
 	public void  AABBRayCollision() {
-		AABB aabb = new AABB(new Vector4d(1, 2, 3),
-		                      new Vector4d(-1, -2, -3));
+		AABB aabb = new AABB(new Vec4d(1, 2, 3, 1.0d),
+		                      new Vec4d(-1, -2, -3, 1.0d));
 
-		Ray r1 = new Ray(new Vector4d(-5, 0, 0),
-		                new Vector4d(1, 0, 0));
+		Ray r1 = new Ray(new Vec4d(-5, 0, 0, 1.0d),
+		                new Vec4d(1, 0, 0, 1.0d));
 
 		assertTrue(aabb.collisionDist(r1) >= 0);
 		assertTrue(MathUtils.near(aabb.collisionDist(r1), 4));
 
-		Ray r2 = new Ray(new Vector4d(3, 3, 3),
-                new Vector4d(1, 1, 1));
+		Ray r2 = new Ray(new Vec4d(3, 3, 3, 1.0d),
+                new Vec4d(1, 1, 1, 1.0d));
 
 		// Should not hit
 		assertTrue(aabb.collisionDist(r2) < 0);
 
-		Ray r3 = new Ray(new Vector4d(3, 3, 3),
-                new Vector4d(-1, -1, -1));
+		Ray r3 = new Ray(new Vec4d(3, 3, 3, 1.0d),
+                new Vec4d(-1, -1, -1, 1.0d));
 		assertTrue(aabb.collisionDist(r3) >= 0);
 
 	}

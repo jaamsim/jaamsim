@@ -34,8 +34,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.observers.DisplayModelState;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
@@ -193,27 +193,19 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 			if (!(object instanceof ObjectType)) {
 				return null;
 			}
-			DisplayModel dm = ((ObjectType)object).getDefaultDisplayModel();
 			String text = ((ObjectType)object).getName();
 
-			// Assign the highres image to the toolTip if default display model exists
-			if( dm == null ) {
-				return null;
-			}
-
-			// Make sure the renderer is initialized and has not exploded on us
-			if (!RenderManager.isGood()) {
-				return null;
-			}
-
-			DisplayModelState dms = new DisplayModelState(dm);
 			Runnable notifier = new Runnable() {
 				public void run() {
 					EntityPallet.getInstance().repaint();
 				}
 			};
 
-			Future<BufferedImage> fi = RenderManager.inst().getPreviewForDisplayModel(dms, notifier);
+			DisplayModel dm = ((ObjectType)object).getDefaultDisplayModel();
+			if (dm == null) {
+				return null;
+			}
+			Future<BufferedImage> fi = RenderManager.inst().getPreviewForDisplayModel(dm, notifier);
 
 			if (!fi.isDone()) {
 				return null;

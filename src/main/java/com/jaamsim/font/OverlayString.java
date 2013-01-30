@@ -14,16 +14,16 @@
  */
 package com.jaamsim.font;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.media.opengl.GL2GL3;
 
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Vector4d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.OverlayRenderable;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.Shader;
+import com.jaamsim.render.VisibilityInfo;
 
 public class OverlayString implements OverlayRenderable {
 
@@ -35,19 +35,19 @@ public class OverlayString implements OverlayRenderable {
 	private double _height;
 	private double _x, _y;
 	private boolean _alignRight, _alignBottom;
-	private ArrayList<Integer> _visibleWindowIDs;
+	private VisibilityInfo _visInfo;
 
 
 	public OverlayString(TessFont font, String contents, Color4d color,
 	                     double height, double x, double y,
-	                     boolean alignRight, boolean alignBottom, ArrayList<Integer> visibleWindowIDs) {
+	                     boolean alignRight, boolean alignBottom, VisibilityInfo visInfo) {
 		_font = font;
 		_contents = contents;
 		_color = color.toFloats();
 		_height = height;
 		_x = x; _y = y;
 		_alignRight = alignRight; _alignBottom = alignBottom;
-		_visibleWindowIDs = visibleWindowIDs;
+		_visInfo = visInfo;
 	}
 
 	@Override
@@ -55,14 +55,14 @@ public class OverlayString implements OverlayRenderable {
 		double windowWidth, double windowHeight) {
 
 
-		Vector4d renderedSize = _font.getStringSize(_height, _contents);
+		Vec3d renderedSize = _font.getStringSize(_height, _contents);
 		double x = _x;
 		double y = _y;
 		if (_alignRight) {
-			x = windowWidth - _x - renderedSize.x();
+			x = windowWidth - _x - renderedSize.x;
 		}
 		if (!_alignBottom) {
-			y = windowHeight - _y - renderedSize.y();
+			y = windowHeight - _y - renderedSize.y;
 		}
 
 
@@ -137,8 +137,9 @@ public class OverlayString implements OverlayRenderable {
 	}
 
 	@Override
-	public boolean renderForWindow(int windowID) {
-		return _visibleWindowIDs.contains(windowID);
+	public boolean renderForView(int viewID) {
+		if (_visInfo.viewIDs == null || _visInfo.viewIDs.size() == 0) return true; //Default to always visible
+		return _visInfo.viewIDs.contains(viewID);
 	}
 
 }
