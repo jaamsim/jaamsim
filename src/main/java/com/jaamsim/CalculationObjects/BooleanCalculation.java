@@ -1,5 +1,3 @@
-package com.jaamsim.CalculationObjects;
-
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
@@ -14,6 +12,7 @@ package com.jaamsim.CalculationObjects;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+package com.jaamsim.CalculationObjects;
 
 /**
  * BooleanCalculatoin is the super-class for all calculations that return a Boolean value.

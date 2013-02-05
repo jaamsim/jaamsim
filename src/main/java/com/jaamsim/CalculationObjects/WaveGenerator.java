@@ -68,7 +68,6 @@ public class WaveGenerator extends DoubleCalculation {
 	}
 
 	/*
-	 * MUST BE OVERWRITTEN BY EACH SUB-CLASS
 	 * Calculate the current dimensionless signal for the wave.
 	 */
 	protected double getSignal( double angle ) {

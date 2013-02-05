@@ -79,8 +79,8 @@ public class Controller extends DisplayEntity {
 		while( true ) {
 
 			// Update the last value for each entity
-			for( int i=0; i<calculationEntityList.size(); i++) {
-				calculationEntityList.get(i).update();
+			for( CalculationEntity ent : calculationEntityList ) {
+				ent.update();
 			}
 
 			// Increment the number of cycles

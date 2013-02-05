@@ -60,11 +60,9 @@ public class CalculationEntity extends DisplayEntity {
 	}
 
 	/*
-	 * MUST BE OVERWRITTEN BY EACH SUB-CLASS
 	 * Calculate the current value for this object.
 	 */
-	public void update() {
-	}
+	public void update() {}
 
 	public Controller getController() {
 		return controllerInput.getValue();

@@ -42,5 +42,4 @@ public class DoubleCalculation extends CalculationEntity {
 	protected void setValue( double val ) {
 		value = val;
 	}
-
 }
