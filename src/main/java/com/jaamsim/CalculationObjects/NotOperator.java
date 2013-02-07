@@ -14,27 +14,29 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.sandwell.JavaSimulation.EntityInput;
+import com.sandwell.JavaSimulation.Keyword;
+
 /**
- * BooleanCalculation is the super-class for all calculations that return a Boolean value.
+ * The NotOperator implements the Boolean "Not" operation.
  * @author Harry King
  *
  */
-public class BooleanCalculation extends CalculationEntity {
+public class NotOperator extends BooleanCalculation {
 
-
-	private boolean value;  // Present value for this calculation
-
-	/*
-	 * Return the present value for this calculation.
-	 */
-	public boolean getValue() {
-		return value;
+	@Keyword(desc = "The BooleanCalculation entity that is the input to this operation.",
+	         example = "OrOperator1 Entity { Bool1 }")
+	private final EntityInput<BooleanCalculation> entityInput;
+	{
+	entityInput = new EntityInput<BooleanCalculation>( BooleanCalculation.class, "Entity", "Key Inputs", null);
+		this.addInput( entityInput, true);
 	}
 
-	/*
-	 * Set the present value for this calculation.
-	 */
-	protected void setValue( boolean val ) {
-		value = val;
+	@Override
+	public void update() {
+
+		// Set the present value
+		this.setValue( ! entityInput.getValue().getValue() );
+		return;
 	}
 }

@@ -14,27 +14,30 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.sandwell.JavaSimulation.BooleanInput;
+import com.sandwell.JavaSimulation.Keyword;
+
 /**
- * BooleanCalculation is the super-class for all calculations that return a Boolean value.
+ * The BooleanConstant return a constant Boolean value.
  * @author Harry King
  *
  */
-public class BooleanCalculation extends CalculationEntity {
+public class ConstantBoolean extends BooleanCalculation {
 
+	@Keyword(desc = "The Boolean constant value to be returned by this object.",
+	         example = "ConstantBoolean1 Value { TRUE  FALSE }")
+	private final BooleanInput valueInput;
 
-	private boolean value;  // Present value for this calculation
-
-	/*
-	 * Return the present value for this calculation.
-	 */
-	public boolean getValue() {
-		return value;
+	{
+		valueInput = new BooleanInput( "Value", "Key Inputs", true);
+		this.addInput( valueInput, true);
 	}
 
-	/*
-	 * Set the present value for this calculation.
-	 */
-	protected void setValue( boolean val ) {
-		value = val;
+	@Override
+	public void update() {
+
+		// Set the present value
+		this.setValue( valueInput.getValue() );
+		return;
 	}
 }
