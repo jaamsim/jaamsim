@@ -52,10 +52,14 @@ public class Differentiator extends DoubleCalculation {
 
 		// Calculate the elapsed time
 		double dt = this.getCurrentTime() - lastUpdateTime;
-		lastUpdateTime = this.getCurrentTime();
 
 		// Set the present value
-		this.setValue( ( entityInput.getValue().getValue() - lastInputValue ) / dt );
+		if( dt > 0.0 ) {
+			this.setValue( ( entityInput.getValue().getValue() - lastInputValue ) / dt );
+		}
+
+		// Record values needed for the next update
+		lastUpdateTime = this.getCurrentTime();
 		lastInputValue = entityInput.getValue().getValue();
 		return;
 	}
