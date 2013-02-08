@@ -36,18 +36,26 @@ public class WaveGenerator extends DoubleCalculation {
 	         example = "Wave1 PhaseAngle { 45 deg }")
 	private final DoubleInput phaseAngleInput;
 
+	@Keyword(desc = "Offset added to the output of the generated wave",
+	         example = "Wave1 Offset { 2.0 }")
+	private final DoubleInput offsetInput;
+
 	{
-		amplitudeInput = new DoubleInput( "Amplitude", "Key Inputs", null);
+		amplitudeInput = new DoubleInput( "Amplitude", "Key Inputs", 1.0d);
+		amplitudeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		this.addInput( amplitudeInput, true);
 
-		periodInput = new DoubleInput( "Period", "Key Inputs", null);
+		periodInput = new DoubleInput( "Period", "Key Inputs", 1.0d);
 		periodInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		periodInput.setUnits("h");
 		this.addInput( periodInput, true);
 
-		phaseAngleInput = new DoubleInput( "PhaseAngle", "Key Inputs", null);
+		phaseAngleInput = new DoubleInput( "PhaseAngle", "Key Inputs", 0.0d);
 		phaseAngleInput.setUnits("rad");
 		this.addInput( phaseAngleInput, true);
+
+		offsetInput = new DoubleInput( "Offset", "Key Inputs", 0.0d);
+		this.addInput( offsetInput, true);
 	}
 
 	@Override
@@ -63,7 +71,7 @@ public class WaveGenerator extends DoubleCalculation {
 		double angle = 2.0 * Math.PI * this.getCurrentTime() / periodInput.getValue() + phaseAngleInput.getValue();
 
 		// Set the output value for the wave
-		this.setValue( amplitudeInput.getValue() * this.getSignal( angle ) );
+		this.setValue( amplitudeInput.getValue() * this.getSignal( angle )  +  offsetInput.getValue() );
 		return;
 	}
 
