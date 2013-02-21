@@ -365,7 +365,7 @@ public abstract class Simulation extends Entity {
 			this.verifyAllEvents(verifyEventsInput.getValue());
 		}
 
-		// Initialize each entity based on inputs only
+		// Validate each entity based on inputs only
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			try {
 				Entity.getAll().get(i).validate();
@@ -563,7 +563,7 @@ public abstract class Simulation extends Entity {
 
 		// Initialize each entity based on early initialization and start networks
 		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity.getAll().get(i).startUp();
+			Entity.getAll().get(i).startProcess("startUp");
 		}
 	}
 
@@ -663,7 +663,9 @@ public abstract class Simulation extends Entity {
 		return Simulation.simState;
 	}
 
-	public void updateTime(double simTime) {}
+	public static final void setSimulationState(int state) {
+		Simulation.simState = state;
+	}
 
 	public static <T extends Entity> ArrayList<T> getClonesOf(Class<T> proto) {
 		ArrayList<T> cloneList = new ArrayList<T>();

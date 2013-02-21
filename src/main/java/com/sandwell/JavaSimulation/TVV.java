@@ -54,6 +54,11 @@ public void set(double time, double val, double rate) {
 	datumVal = val;
 	datumRate = rate;
 	datumTime = time;
+
+	// Clear the value if it is essentially 0.0
+	if( Tester.equalCheckTolerance(datumVal, 0.0d) ) {
+		datumVal = 0.0;
+	}
 }
 
 public double getRate() {

@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation3D.EventViewer;
 
 /**
@@ -426,7 +427,7 @@ public final class EventManager implements Runnable {
 				long modelHours = (long)((currentWallTime - previousWallTime) * realTimeFact / 3600000.0d * Process.getSimTimeFactor());
 				modelHours += prevIntTime;
 				if (modelHours < nextTime)
-					simulation.updateTime(modelHours / Process.getSimTimeFactor());
+					FrameBox.timeUpdate(modelHours / Process.getSimTimeFactor());
 
 				// If realtime was disabled, break out
 				if (!this.getExecuteRealtime() || previousInternalTime == -1)
@@ -434,7 +435,7 @@ public final class EventManager implements Runnable {
 			}
 		}
 
-		simulation.updateTime(nextTime / Process.getSimTimeFactor());
+		FrameBox.timeUpdate(nextTime / Process.getSimTimeFactor());
 	}
 
 	/**

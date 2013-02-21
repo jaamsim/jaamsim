@@ -199,12 +199,12 @@ public class CameraControl implements WindowInteractionListener {
 		Vec4d zOffset = new Vec4d(0, 0, pi.radius, 1.0d);
 
 		Quaternion rot = Quaternion.Rotation(pi.rotZ, Vec4d.Z_AXIS);
-		rot.mult(Quaternion.Rotation(pi.rotX, Vec4d.X_AXIS), rot);
+		rot.mult(rot, Quaternion.Rotation(pi.rotX, Vec4d.X_AXIS));
 
 		Transform finalTrans = new Transform(pi.viewCenter);
 
-		finalTrans.merge(new Transform(Vec4d.ORIGIN, rot, 1), finalTrans);
-		finalTrans.merge(new Transform(zOffset), finalTrans);
+		finalTrans.merge(finalTrans, new Transform(Vec4d.ORIGIN, rot, 1));
+		finalTrans.merge(finalTrans, new Transform(zOffset));
 
 
 		if (updateInputs) {

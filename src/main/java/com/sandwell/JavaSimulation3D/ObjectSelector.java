@@ -43,7 +43,6 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Palette;
-import com.sandwell.JavaSimulation.Util;
 
 public class ObjectSelector extends FrameBox {
 	private static ObjectSelector myInstance;
@@ -61,7 +60,7 @@ public class ObjectSelector extends FrameBox {
 		super( "Object Selector" );
 		setDefaultCloseOperation( FrameBox.HIDE_ON_CLOSE );
 
-		top = new DefaultMutableTreeNode(Util.fileShortName(InputAgent.getConfigFileName()));
+		top = new DefaultMutableTreeNode( "Defined Objects");
 		treeModel = new DefaultTreeModel(top);
 		tree = new JTree();
 		tree.setModel(treeModel);
@@ -417,7 +416,7 @@ static class GraphicsMenuItem extends DEMenuItem {
 
 	public void action() {
 		// More than one DisplayModel(LOD) or No DisplayModel
-		if(ent.getDisplayModelList().getValue() == null)
+		if(ent.getDisplayModelList() == null)
 			return;
 
 		GraphicBox graphicBox = GraphicBox.getInstance(ent, x, y);

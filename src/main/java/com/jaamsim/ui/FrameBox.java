@@ -67,17 +67,15 @@ public class FrameBox extends JFrame {
 
 	public static final void setSelectedEntity(Entity ent) {
 		updater.scheduleUpdate(ent);
+		RenderManager.setSelection(ent);
+	}
 
-		if (!RenderManager.isGood()) { return; }
-
-		RenderManager.inst().setSelection(ent);
+	public static final void timeUpdate(double time) {
+		valueUpdater.scheduleUpdate(time);
 	}
 
 	public static final void valueUpdate() {
 		valueUpdater.scheduleUpdate();
-		if (RenderManager.isGood()) {
-			RenderManager.inst().queueRedraw();
-		}
 	}
 
 	public void setEntity(Entity ent) {}
@@ -117,6 +115,7 @@ public class FrameBox extends JFrame {
 
 	private static class FrameBoxValueUpdater implements Runnable {
 		private boolean scheduled;
+		private double simTime;
 
 		FrameBoxValueUpdater() {
 			scheduled = false;
@@ -131,10 +130,25 @@ public class FrameBox extends JFrame {
 			}
 		}
 
+		public void scheduleUpdate(double simTime) {
+			synchronized (this) {
+				if (!scheduled)
+					SwingUtilities.invokeLater(this);
+
+				scheduled = true;
+				this.simTime = simTime;
+			}
+		}
+
 		public void run() {
+			double callBackTime;
 			synchronized (this) {
 				scheduled = false;
+				callBackTime = simTime;
 			}
+
+			GUIFrame.instance().setClock(callBackTime);
+			RenderManager.updateTime(callBackTime);
 
 			for (FrameBox each : allInstances) {
 				each.updateValues();

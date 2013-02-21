@@ -128,18 +128,6 @@ public class Util {
 
 	} // discardComment
 
-
-	/**
-	 * if ( classFullName = "com.sandwell.MTM.Port" ), returns "Port"
-	 * if ( classFullName = "Port" ), returns "Port"
-	 */
-	public static String classShortName( String classFullName ) {
-		int indexLast = classFullName.lastIndexOf( '.' );
-		String className = classFullName.substring( indexLast + 1 );
-
-		return className;
-	}
-
 	/**
 	 * if ( fileFullName = "C:\Projects\A01.cfg" ), returns "A01.cfg"
 	 * if ( fileFullName = "A01.cfg" ), returns "A01.cfg"

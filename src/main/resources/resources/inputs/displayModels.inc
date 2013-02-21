@@ -1,19 +1,20 @@
 Define			DisplayModel			{ Pixels }
-Pixels			Shape					{ 'pixels' }
+Pixels			Shape					{ PIXELS }
 Define			DisplayModel			{ Rectangle }
-Rectangle		Shape					{ 'rectangle' }
+Rectangle		Shape					{ RECTANGLE }
 Define				DisplayModel		{ Circle }
-Circle				Shape				{ 'circle' }
+Circle				Shape				{ CIRCLE }
 Define				DisplayModel		{ Arrow2D }
-Arrow2D				Shape				{ 'arrow2D' }
+Arrow2D				Shape				{ ARROW2D }
 Define				DisplayModel		{ Triangle }
-Triangle			Shape				{ 'triangle' }
-Define				DisplayModel		{ CrossHairs }
-CrossHairs			Shape				{ '/resources/shapes/CrossHairs.dae' }
+Triangle			Shape				{ TRIANGLE }
 
-Define              DisplayModel		{ Cube }
-Cube                Shape               { '/resources/shapes/cube.dae' }
-DisplayEntity       DefaultDisplayModel { Cube }
+Define				ColladaModel		{ CrossHairs }
+CrossHairs			ColladaFile			{ '/resources/shapes/CrossHairs.dae' }
 
-Define              DisplayModel		{ Sphere }
-Sphere              Shape               { '/resources/shapes/Sphere.dae' }
+Define		ColladaModel	{ Cube }
+Cube		ColladaFile		{ '/resources/shapes/cube.dae' }
+DisplayEntity	DefaultDisplayModel { Cube }
+
+Define		ColladaModel	{ Sphere }
+Sphere		ColladaFile		{ '/resources/shapes/Sphere.dae' }

@@ -35,7 +35,6 @@ import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
-import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation.TimeInput;
 
 /**
@@ -47,7 +46,7 @@ import com.sandwell.JavaSimulation.TimeInput;
  * Integrates with GUIFrame and OrbitBehaviour to provide user interaction.
  */
 public class GraphicSimulation extends Simulation {
-	protected String modelName = "Ausenco JaamSim";
+	protected String modelName = "Transportation Logistics Simulator";
 
 	private boolean captureFlag = false;  // true when capturing is in progress
 	private boolean startCapturerFlag = false;
@@ -150,7 +149,6 @@ public class GraphicSimulation extends Simulation {
 
 	public void startUp() {
 		super.startUp();
-		this.startProcess("updateRunProgress");
 		if (startCapturerFlag) {
 
 			this.startProcess("doCaptureNetwork");
@@ -222,27 +220,6 @@ public class GraphicSimulation extends Simulation {
 		GUIFrame.instance().updateForSimulationState();
 	}
 
-	public void configure(GUIFrame gui, String configFileName) {
-		try {
-			gui.clear();
-			Simulation.simState = SIM_STATE_UNCONFIGURED;
-			InputAgent.setConfigFileName(configFileName);
-			InputAgent.loadConfigFile(gui, InputAgent.getConfigFileName());
-
-			// store the present state
-			Simulation.simState = SIM_STATE_CONFIGURED;
-
-			System.out.println("Configuration File Loaded");
-
-			// show the present state in the user interface
-			gui.setTitle( getModelName() + " - " + InputAgent.getRunName() );
-			gui.updateForSimulationState();
-		}
-		catch( Throwable t ) {
-			ExceptionBox.instance().setError(t);
-		}
-	}
-
 	public void start() {
 		try {
 			super.start();
@@ -280,69 +257,6 @@ public class GraphicSimulation extends Simulation {
 		}
 		catch( Throwable t ) {
 			ExceptionBox.instance().setError(t);
-		}
-	}
-
-	/**
-	 * Updates the progress bar in the status bar to show the percent completion of the run
-	 */
-	public void updateRunProgress() {
-
-		long lastSystemTime;
-		long currentSystemTime;
-		long elapsedSystemTime;
-		double lastSimulatedTime;
-		double currentSimulatedTime;
-		double elapsedSimulatedTime;
-		double remainingSimulatedTime;
-		double remainingSystemTime;
-		double speedUpFactor = 0.0;
-
-		// Determine the system starting time
-		lastSystemTime = System.currentTimeMillis();
-		lastSimulatedTime = getCurrentTime();
-
-		// Determine the number of hours in run (including initialization)
-		double duration = (this.getRunDuration() + this.getInitializationTime());
-
-		if( !(Tester.equalCheckTimeStep( duration, 0.0 )) ) {
-
-			double step = (duration / 100.0);
-			int percentComplete = 0;
-			GUIFrame.instance().setProgress( percentComplete );
-
-			while( percentComplete < 100 ) {
-
-				// Wait for 1% of the run time
-				scheduleWait( step );
-
-				currentSystemTime = System.currentTimeMillis();
-				currentSimulatedTime = getCurrentTime();
-
-				// Update the percent complete
-				percentComplete++;
-				GUIFrame.instance().setProgress(percentComplete);
-
-				// Determine the elapsed system time
-				elapsedSystemTime = currentSystemTime - lastSystemTime;
-
-				// Determine the elapsed simulated time
-				elapsedSimulatedTime = currentSimulatedTime - lastSimulatedTime;
-
-				// Determine the speed-up factor
-				speedUpFactor = (elapsedSimulatedTime * 3600.0) / (elapsedSystemTime / 1000.0);
-				GUIFrame.instance().setSpeedUp( speedUpFactor );
-
-				// Determine the remaining simulated time
-				remainingSimulatedTime = duration - currentSimulatedTime;
-
-				// Determine the remaining system time
-				remainingSystemTime = remainingSimulatedTime / speedUpFactor * 60.0;
-				GUIFrame.instance().setRemaining( remainingSystemTime );
-
-				lastSystemTime = currentSystemTime;
-				lastSimulatedTime = currentSimulatedTime;
-			}
 		}
 	}
 
@@ -398,19 +312,6 @@ public class GraphicSimulation extends Simulation {
 		}
 
 		RenderManager.inst().endRecording();
-	}
-
-	public void updateTime(double simTime) {
-		super.updateTime(simTime);
-
-		// Update the clock display
-		GUIFrame.instance().setClock(simTime);
-		if (RenderManager.isGood()) {
-			// The new renderer is initialized
-			RenderManager.inst().updateTime(simTime);
-		}
-
-		FrameBox.valueUpdate();
 	}
 
 	public void updateForSimulationState() {

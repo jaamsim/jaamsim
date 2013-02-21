@@ -17,6 +17,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.sandwell.JavaSimulation.Input;
+import com.sandwell.JavaSimulation.InputErrorException;
 
 /**
  * A top level class for input extension objects
@@ -26,5 +27,5 @@ import com.sandwell.JavaSimulation.Input;
 public abstract class InputGroup {
 	public abstract ArrayList<Input<?>> getInputs();
 	public void earlyInit() {}
-
+	public void validate() throws InputErrorException {}
 }

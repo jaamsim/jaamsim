@@ -14,6 +14,7 @@
  */
 package com.jaamsim.render;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import com.jaamsim.math.AABB;
@@ -36,6 +37,10 @@ private VisibilityInfo _visInfo;
 
 private AABB _bounds;
 
+private Mat4d _modelMat;
+private Mat4d _normalMat;
+private ArrayList<AABB> _subMeshBounds;
+
 public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, VisibilityInfo visInfo, long pickingID) {
 	this(key, proto, trans, new Vec4d(0, 0, 0, 1.0d), visInfo, pickingID);
 }
@@ -48,8 +53,14 @@ public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, Vec4d scale, Vis
 	_key = key;
 	_visInfo = visInfo;
 
-	Mat4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
-	_bounds = _proto.getHull().getAABB(modelMat);
+	_modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
+
+	_normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
+	_normalMat.transpose4();
+
+	_bounds = _proto.getHull().getAABB(_modelMat);
+
+	_subMeshBounds = _proto.getSubBounds(_modelMat);
 
 	_pickingID = pickingID;
 }
@@ -60,20 +71,16 @@ public AABB getBoundsRef() {
 
 @Override
 public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
-	Mat4d modelViewMat = new Mat4d();
-	cam.getViewMat4d(modelViewMat);
 
-	Mat4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
-
-	modelViewMat.mult4(modelMat);
-
-	Mat4d normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
-	normalMat.transpose4();
-
-	_proto.render(vaoMap, renderer, modelMat, normalMat, cam);
+	_proto.render(vaoMap, renderer, _modelMat, _normalMat, cam, _subMeshBounds);
 
 	// Debug render of the convex hull
 	if (renderer.debugDrawHulls()) {
+
+		Mat4d modelViewMat = new Mat4d();
+		cam.getViewMat4d(modelViewMat);
+		modelViewMat.mult4(_modelMat);
+
 		ConvexHullKey hullKey = new ConvexHullKey(_key);
 		HullProto hp = renderer.getHullProto(hullKey);
 		if (hp != null) {
@@ -106,12 +113,7 @@ public boolean hasTransparent() {
 @Override
 public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
 
-	Mat4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
-
-	Mat4d normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
-	normalMat.transpose4();
-
-	_proto.renderTransparent(vaoMap, renderer, modelMat, normalMat, cam);
+	_proto.renderTransparent(vaoMap, renderer, _modelMat, _normalMat, cam, _subMeshBounds);
 
 }
 

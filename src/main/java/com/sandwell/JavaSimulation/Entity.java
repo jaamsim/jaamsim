@@ -112,7 +112,11 @@ public class Entity {
 	}
 
 	// This is defined for handlers only
-	public void validate() throws InputErrorException {}
+	public void validate() throws InputErrorException {
+		for (InputGroup grp : inputGroups) {
+			grp.validate();
+		}
+	}
 
 	public void earlyInit() {
 		for (InputGroup grp : inputGroups) {

@@ -30,10 +30,9 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ChangeWatcher;
-import com.sandwell.JavaSimulation.DoubleListInput;
+import com.sandwell.JavaSimulation.DeprecatedInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
@@ -81,22 +80,12 @@ public class DisplayEntity extends Entity {
 	         example ="Object1 Region { Region1 }")
 	private final EntityInput<Region> regionInput;
 
-	@Keyword(desc = "This input is deprecated. Instead change the VisibleViews on the DisplayModel.",
-	         example = "Ship VisibleViews { TitleView DefaultView }")
-	private final EntityListInput<View> visibleViews;
 	private final Vec3d position = new Vec3d();
 	private final Vec3d size = new Vec3d(1.0d, 1.0d, 1.0d);
 	private final Vec3d orient = new Vec3d();
 	private final Vec3d align = new Vec3d();
 
 	private Region currentRegion;
-
-	@Keyword(desc = "A list of viewing distances for displaying each value in the DisplayModel keyword." +
-	                "The list is given in ascending order of viewing distance.",
-	         example = "Object1 DisplayModel  { Ship3D Ship2D Pixels }\n" +
-	                   "Object1 LevelOfDetail { 5 10 100 }")
-	private DoubleListInput levelOfDetail;
-
 
 	@Keyword(desc = "The graphic representation of the object.  Accepts a list of objects where the distances defined in " +
 	                "LevelOfDetail dictate which DisplayModel entry is used.",
@@ -106,7 +95,6 @@ public class DisplayEntity extends Entity {
 	@Keyword(desc = "The name of an object with respect to which the Position keyword is referenced.",
 	         example ="Object1Label RelativeEntity { Object1 }")
 	private final EntityInput<DisplayEntity> relativeEntity;
-
 
 	@Keyword(desc = "If TRUE, the object is displayed in the simulation view windows.",
 	         example = "Object1 Show { FALSE }")
@@ -178,10 +166,6 @@ public class DisplayEntity extends Entity {
 		relativeEntity.setInvalidEntities(this);
 		this.addInput(relativeEntity, true);
 
-		levelOfDetail = new DoubleListInput("LevelOfDetail", "Basic Graphics", null);
-		levelOfDetail.setValidRange( 0.0d, Double.POSITIVE_INFINITY );
-		this.addInput(levelOfDetail, true);
-
 		displayModelList = new EntityListInput<DisplayModel>( DisplayModel.class, "DisplayModel", "Basic Graphics", null);
 		this.addInput(displayModelList, true);
 		displayModelList.setUnique(false);
@@ -198,8 +182,13 @@ public class DisplayEntity extends Entity {
 		showToolTip = new BooleanInput("ToolTip", "Basic Graphics", true);
 		this.addInput(showToolTip, true);
 
-		visibleViews = new EntityListInput<View>(View.class, "VisibleViews", "Basic Graphics", new ArrayList<View>(0));
-		this.addInput(visibleViews, true);
+		DeprecatedInput oldLOD = new DeprecatedInput("LevelOfDetail", "Has been moved to DisplayModel");
+		oldLOD.setFatal(false);
+		this.addInput(oldLOD, false);
+
+		DeprecatedInput oldviews = new DeprecatedInput("VisibleViews", "Has been moved to DisplayModel");
+		oldviews.setFatal(false);
+		this.addInput(oldviews, false);
 	}
 
 	/**
@@ -227,13 +216,13 @@ public class DisplayEntity extends Entity {
 	public void validate()
 	throws InputErrorException {
 		super.validate();
-		Input.validateIndexedLists(displayModelList.getValue(), levelOfDetail.getValue(), "DisplayModel", "LevelOfDetail");
+
 		if(getRelativeEntity() == this) {
 			this.warning("validate()", "Relative Entities should not be defined in a circular loop", "");
 		}
 
-		if (displayModelList.getValue() != null) {
-			for (DisplayModel dm : displayModelList.getValue()) {
+		if (getDisplayModelList() != null) {
+			for (DisplayModel dm : getDisplayModelList()) {
 				if (!dm.canDisplayEntity(this)) {
 					this.error("validate()", String.format("Invalid Display model: %s for Entity", dm.getInputName()), "");
 				}
@@ -362,45 +351,54 @@ public class DisplayEntity extends Entity {
 	 * @return
 	 */
 	public Transform getGlobalTrans(double simTime) {
+		return getGlobalTransForSize(size, simTime);
+	}
+
+	/**
+	 *  This is a quirky method that returns the equivalent global transform for this entity as if 'sizeIn' where the actual
+	 *  size. This is needed for TextModels, but may be refactored soon.
+	 * @param sizeIn
+	 * @param simTime
+	 * @return
+	 */
+	public Transform getGlobalTransForSize(Vec3d sizeIn, double simTime) {
 		// Okay, this math may be hard to follow, this is effectively merging two TRS transforms,
 		// The first is a translation only transform from the alignment parameter
 		// Then a transform is built up based on position and orientation
 		// As size is a non-uniform scale it can not be represented by the jaamsim TRS Transform and therefore
 		// not actually included in this result, except to adjust the alignment
 
-		Transform alignTrans = new Transform(new Vec4d(align.x * size.x * -1,
-                                                    align.y * size.y * -1,
-                                                    align.z * size.z * -1, 1.0d));
+		Vec3d temp = new Vec3d(sizeIn);
+		temp.mul3(align);
+		temp.scale3(-1.0d);
+		Transform alignTrans = new Transform(temp);
 
 		Quaternion rot = Quaternion.FromEuler(orient.x, orient.y, orient.z);
 
-		Vec4d transVect = new Vec4d(position.x, position.y, position.z, 1.0d);
+		Vec3d transVect = new Vec3d(position);
 		DisplayEntity entity = this.getRelativeEntity();
 		if(entity != null && entity != this) {
 			transVect.add3(entity.position);
 		}
 		Transform ret = new Transform(transVect, rot, 1);
-		ret.merge(alignTrans, ret);
+		ret.merge(ret, alignTrans);
 
 		if (currentRegion != null) {
 			Transform regionTrans = currentRegion.getRegionTrans(simTime);
-			regionTrans.merge(ret, ret);
+			ret.merge(regionTrans, ret);
 		}
 		return ret;
-	}
-	public Transform getGlobalTrans() {
-		return getGlobalTrans(getCurrentTime());
 	}
 
 	/**
 	 * Returns the global transform with scale factor all rolled into a Matrix4d
 	 * @return
 	 */
-	public Mat4d getTransMatrix() {
-		Transform trans = getGlobalTrans();
+	public Mat4d getTransMatrix(double simTime) {
+		Transform trans = getGlobalTrans(simTime);
 		Mat4d ret = new Mat4d();
 		trans.getMat4d(ret);
-		ret.scaleCols3(getJaamMathSize(1));
+		ret.scaleCols3(getJaamMathSize(Vec4d.ONES));
 		return ret;
 	}
 
@@ -408,8 +406,8 @@ public class DisplayEntity extends Entity {
 	 * Returns the inverse global transform with scale factor all rolled into a Matrix4d
 	 * @return
 	 */
-	public Mat4d getInvTransMatrix() {
-		return RenderUtils.getInverseWithScale(getGlobalTrans(), size);
+	public Mat4d getInvTransMatrix(double simTime) {
+		return RenderUtils.getInverseWithScale(getGlobalTrans(simTime), size);
 	}
 
 
@@ -438,8 +436,8 @@ public class DisplayEntity extends Entity {
 		if (relativeEntity.getValue() != null) {
 			graphicsDirtier.addDependent(relativeEntity.getValue().getGraphicsDirtier());
 		}
-		if (displayModelList.getValue() != null) {
-			for (DisplayModel dm : displayModelList.getValue()) {
+		if (getDisplayModelList() != null) {
+			for (DisplayModel dm : getDisplayModelList()) {
 				graphicsDirtier.addDependent(dm.getGraphicsDirtier());
 			}
 		}
@@ -450,9 +448,9 @@ public class DisplayEntity extends Entity {
 	 * just like getSize() but returns a JammSim math library Vec4d
 	 * @return
 	 */
-	public Vec4d getJaamMathSize(double scaleFactor) {
+	public Vec4d getJaamMathSize(Vec3d scaleFactor) {
 		synchronized (position) {
-			return new Vec4d(size.x * scaleFactor, size.y * scaleFactor, size.z * scaleFactor, 1.0d);
+			return new Vec4d(size.x * scaleFactor.x, size.y * scaleFactor.y, size.z * scaleFactor.z, 1.0d);
 		}
 	}
 
@@ -574,28 +572,24 @@ public class DisplayEntity extends Entity {
 		return info;
 	}
 
-	public EntityListInput<DisplayModel> getDisplayModelList() {
-		return displayModelList;
+	public ArrayList<DisplayModel> getDisplayModelList() {
+		return displayModelList.getValue();
 	}
 
 	public ArrayList<DisplayModelBinding> getDisplayBindings() {
 		if (modelBindings == null) {
 			// Populate the model binding list
-			if (displayModelList.getValue() == null) {
+			if (getDisplayModelList() == null) {
 				modelBindings = new ArrayList<DisplayModelBinding>();
 				return modelBindings;
 			}
-			modelBindings = new ArrayList<DisplayModelBinding>(displayModelList.getValue().size());
-			for (int i = 0; i < displayModelList.getValue().size(); ++i) {
-				DisplayModel dm = displayModelList.getValue().get(i);
+			modelBindings = new ArrayList<DisplayModelBinding>(getDisplayModelList().size());
+			for (int i = 0; i < getDisplayModelList().size(); ++i) {
+				DisplayModel dm = getDisplayModelList().get(i);
 				modelBindings.add(dm.getBinding(this));
 			}
 		}
 		return modelBindings;
-	}
-
-	public DoubleVector getLevelOfDetail() {
-		return levelOfDetail.getValue();
 	}
 
 	public void dragged(Vec3d distance) {

@@ -91,7 +91,7 @@ public double getDist() {
  * @return
  */
 public double getNormalDist(Vec4d point) {
-	double dot = point.dot3(new Vec4d(_normal));
+	double dot = point.dot3(_normal);
 	return dot - _dist;
 }
 

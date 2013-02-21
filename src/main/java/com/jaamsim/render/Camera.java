@@ -100,7 +100,8 @@ public void setTransform(Transform t) {
  * @param t
  */
 public void applyTransform(Transform t) {
-	t.merge(_info.trans, _info.trans);
+	_info.trans.merge(t, _info.trans);
+
 	_frustumDirty = true;
 	_info.trans.inverse(invTrans);
 
@@ -308,12 +309,13 @@ public CameraInfo getInfo() {
 }
 
 
+private Vec4d centerTemp = new Vec4d();
+
 public double distToBounds(AABB bounds) {
-	Vec4d center = new Vec4d(bounds.getCenter());
 
-	invTrans.apply(center, center);
+	invTrans.apply(bounds.getCenter(), centerTemp);
 
-	return center.z * -1; // In camera space, Z is in the negative direction
+	return centerTemp.z * -1; // In camera space, Z is in the negative direction
 
 }
 /**

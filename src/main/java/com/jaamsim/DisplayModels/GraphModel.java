@@ -77,13 +77,13 @@ public class GraphModel extends DisplayModel {
 		}
 
 		@Override
-		public void collectProxies(ArrayList<RenderProxy> out) {
+		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
 			if (graphObservee == null || !graphObservee.getShow()) {
 				return;
 			}
 
 			if (objectTrans == null || observeeTracker.checkAndClear()) {
-				updateObjectTrans();
+				updateObjectTrans(simTime);
 			}
 
 			++_cacheMisses;
@@ -134,6 +134,7 @@ public class GraphModel extends DisplayModel {
 		                        ArrayList<RenderProxy> out) {
 
 			int numberOfPoints = graphObservee.getNumberOfPoints();
+			double zBump = 0.001;
 
 			double xInc = 1.0 / (numberOfPoints - 1.0);
 
@@ -152,8 +153,8 @@ public class GraphModel extends DisplayModel {
 
 			ArrayList<Vec4d> seriesPoints = new ArrayList<Vec4d>((series.numPoints-1)*2);
 			for (int i = 0; i < series.numPoints - 1 - series.removedPoints; i++) {
-				seriesPoints.add(new Vec4d(xVals[i  ], yVals[i  ], -0, 1.0d));
-				seriesPoints.add(new Vec4d(xVals[i+1], yVals[i+1], -0, 1.0d));
+				seriesPoints.add(new Vec4d(xVals[i  ], yVals[i  ], zBump, 1.0d));
+				seriesPoints.add(new Vec4d(xVals[i+1], yVals[i+1], zBump, 1.0d));
 			}
 
 			// Transform from graph area to world space
@@ -169,6 +170,8 @@ public class GraphModel extends DisplayModel {
 
 			double yMin= graphObservee.getYAxisStart();
 			double yMax= graphObservee.getYAxisEnd();
+
+			double graphZBump = 0.001;
 
 			double yRange = yMax - yMin;
 
@@ -186,8 +189,8 @@ public class GraphModel extends DisplayModel {
 				double yPos = (yLines.get(i) - yMin) / yRange - 0.5;
 				ArrayList<Vec4d> linePoints = new ArrayList<Vec4d>(2);
 
-				linePoints.add(new Vec4d(-0.5, yPos, 0, 1.0d));
-				linePoints.add(new Vec4d( 0.5, yPos, 0, 1.0d));
+				linePoints.add(new Vec4d(-0.5, yPos, graphZBump, 1.0d));
+				linePoints.add(new Vec4d( 0.5, yPos, graphZBump, 1.0d));
 
 				Color4d colour = ColourInput.LIGHT_GREY;
 				if (yLineColours.size() > i) {
@@ -217,8 +220,8 @@ public class GraphModel extends DisplayModel {
 
 				ArrayList<Vec4d> linePoints = new ArrayList<Vec4d>(2);
 
-				linePoints.add(new Vec4d(xPos, -0.5, 0, 1.0d));
-				linePoints.add(new Vec4d(xPos,  0.5, 0, 1.0d));
+				linePoints.add(new Vec4d(xPos, -0.5, graphZBump, 1.0d));
+				linePoints.add(new Vec4d(xPos,  0.5, graphZBump, 1.0d));
 
 				Color4d colour = ColourInput.LIGHT_GREY;
 				if (xLineColours.size() > i) {
@@ -240,9 +243,10 @@ public class GraphModel extends DisplayModel {
 			//Vector4d graphCenter = _graphObservee.getGraphCenter();
 			Vec3d graphSize = graphObservee.getGraphSize();
 			Vec3d graphOrigin = graphObservee.getGraphOrigin();
+			double decZBump = graphSize.x * 0.001;
 
 			// Title
-			Vec4d objectSize = graphObservee.getJaamMathSize(1.0d);
+			Vec4d objectSize = graphObservee.getJaamMathSize(Vec4d.ONES);
 			double titleHeight = graphObservee.getTitleHeight();
 			String titleText = graphObservee.getTitle();
 			Color4d titleColour = graphObservee.getTitleColour();
@@ -250,7 +254,7 @@ public class GraphModel extends DisplayModel {
 
 			TessFontKey fontKey = new TessFontKey(fontName);
 
-			Vec4d titleCenter = new Vec4d(0, graphOrigin.y + graphSize.y + titleHeight, 0, 1.0d);
+			Vec4d titleCenter = new Vec4d(0, graphOrigin.y + graphSize.y + titleHeight, decZBump, 1.0d);
 
 			// Compensate for the non-linear scaling in the parent object
 			double xScaleFactor = objectSize.y / objectSize.x;
@@ -307,14 +311,14 @@ public class GraphModel extends DisplayModel {
 				}
 
 				Mat4d labelTrans = new Mat4d();
-				labelTrans.setTranslate3(new Vec3d(xPos, yPos, 0));
+				labelTrans.setTranslate3(new Vec3d(xPos, yPos, decZBump));
 				labelTrans.mult4(objectTransComp, labelTrans);
 				labelTrans.scaleCols3(xScaleVec);
 
 				out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
 
-				Vec4d tickPointA = new Vec4d(graphOrigin.x            , yPos, 0, 1.0d);
-				Vec4d tickPointB = new Vec4d(graphOrigin.x - xTickSize, yPos, 0, 1.0d);
+				Vec4d tickPointA = new Vec4d(graphOrigin.x            , yPos, decZBump, 1.0d);
+				Vec4d tickPointB = new Vec4d(graphOrigin.x - xTickSize, yPos, decZBump, 1.0d);
 				tickPointA.mult4(objectTransComp, tickPointA);
 				tickPointB.mult4(objectTransComp, tickPointB);
 				tickPoints.add(tickPointA);
@@ -346,14 +350,14 @@ public class GraphModel extends DisplayModel {
 				}
 
 				Mat4d labelTrans = new Mat4d();
-				labelTrans.setTranslate3(new Vec3d(xPos, yPos, 0));
+				labelTrans.setTranslate3(new Vec3d(xPos, yPos, decZBump));
 				labelTrans.mult4(objectTransComp, labelTrans);
 				labelTrans.scaleCols3(xScaleVec);
 
 				out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
 
-				Vec4d tickPointA = new Vec4d(graphOrigin.x + graphSize.x            , yPos, 0, 1.0d);
-				Vec4d tickPointB = new Vec4d(graphOrigin.x + graphSize.x + xTickSize, yPos, 0, 1.0d);
+				Vec4d tickPointA = new Vec4d(graphOrigin.x + graphSize.x            , yPos, decZBump, 1.0d);
+				Vec4d tickPointB = new Vec4d(graphOrigin.x + graphSize.x + xTickSize, yPos, decZBump, 1.0d);
 				tickPointA.mult4(objectTransComp, tickPointA);
 				tickPointB.mult4(objectTransComp, tickPointB);
 
@@ -381,14 +385,14 @@ public class GraphModel extends DisplayModel {
 				double yPos = graphOrigin.y - xAxisLabelGap/objectScale.y - labelHeight - yTickSize;
 
 				Mat4d labelTrans = new Mat4d();
-				labelTrans.setTranslate3(new Vec3d(xPos, yPos, 0));
+				labelTrans.setTranslate3(new Vec3d(xPos, yPos, decZBump));
 				labelTrans.mult4(objectTransComp, labelTrans);
 				labelTrans.scaleCols3(xScaleVec);
 
 				out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
 
-				Vec4d tickPointA = new Vec4d(xPos, graphOrigin.y, 0, 1.0d);
-				Vec4d tickPointB = new Vec4d(xPos, graphOrigin.y - yTickSize, 0, 1.0d);
+				Vec4d tickPointA = new Vec4d(xPos, graphOrigin.y, decZBump, 1.0d);
+				Vec4d tickPointB = new Vec4d(xPos, graphOrigin.y - yTickSize, decZBump, 1.0d);
 				tickPointA.mult4(objectTransComp, tickPointA);
 				tickPointB.mult4(objectTransComp, tickPointB);
 				tickPoints.add(tickPointA);
@@ -406,7 +410,7 @@ public class GraphModel extends DisplayModel {
 			double secXPos = maxYLabelXPos + yAxisTitleGap;
 
 			Mat4d ytitleTrans = new Mat4d();
-			ytitleTrans.setTranslate3(new Vec3d(xPos, 0, 0));
+			ytitleTrans.setTranslate3(new Vec3d(xPos, 0, decZBump));
 			ytitleTrans.setEuler3(new Vec3d(0, 0, Math.PI/2));
 			ytitleTrans.mult4(objectTransComp, ytitleTrans);
 			ytitleTrans.scaleCols3(yScaleVec);
@@ -414,7 +418,7 @@ public class GraphModel extends DisplayModel {
 			out.add(new StringProxy(yAxisTitle, fontKey, titleColour, ytitleTrans, yAxisTitleHeight, getVisibilityInfo(), pickingID));
 
 			Mat4d secYtitleTrans = new Mat4d();
-			secYtitleTrans.setTranslate3(new Vec3d(secXPos, 0, 0));
+			secYtitleTrans.setTranslate3(new Vec3d(secXPos, 0, decZBump));
 			secYtitleTrans.setEuler3(new Vec3d(0, 0, Math.PI/2));
 			secYtitleTrans.mult4(objectTransComp, secYtitleTrans);
 			secYtitleTrans.scaleCols3(yScaleVec);
@@ -423,8 +427,7 @@ public class GraphModel extends DisplayModel {
 
 		}
 
-		private void updateObjectTrans() {
-			double simTime = graphObservee.getCurrentTime();
+		private void updateObjectTrans(double simTime) {
 			objectTrans = graphObservee.getGlobalTrans(simTime);
 			objectScale = graphObservee.getJaamMathSize(getModelScale());
 

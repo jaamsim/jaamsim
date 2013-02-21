@@ -257,6 +257,7 @@ public class TexCache {
 				g2.fillRect(0, 0, width, height);
 
 				g2.drawImage(img, flipper, null);
+				g2.dispose();
 				DataBufferInt ints = (DataBufferInt)bgr.getData().getDataBuffer();
 
 				if (compressed) {

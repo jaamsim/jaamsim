@@ -313,7 +313,7 @@ public class AABB {
 
 		double effectiveRadius = _radTemp.dot3(pNorm);
 
-		double centerDist = p.getNormalDist(getCenter());
+		double centerDist = p.getNormalDist(_center);
 		// If the effective radius is greater than the distance to the center, we're good
 		if (centerDist > effectiveRadius) {
 			return PlaneTestResult.POSITIVE;

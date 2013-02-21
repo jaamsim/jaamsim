@@ -86,7 +86,7 @@ public void testInverse()
 	Transform ident = new Transform();
 
 	Transform test = new Transform();
-	t.merge(invT, test);
+	test.merge(t, invT);
 
 	assertTrue(test.equals(ident));
 
@@ -143,12 +143,12 @@ public void testSelfAssignment() {
 	Transform t2 = new Transform(trans2, rot2, 6);
 
 	Transform t3 = new Transform();
-	t1.merge(t2, t3);
-	t1.merge(t2, t1);
+	t3.merge(t1, t2);
+	t1.merge(t1, t2);
 	assertTrue(t1.equals(t3));
 
-	t1.merge(t2, t3);
-	t1.merge(t2, t2);
+	t3.merge(t1, t2);
+	t2.merge(t1, t2);
 	assertTrue(t2.equals(t3));
 
 	Transform t4 = new Transform();

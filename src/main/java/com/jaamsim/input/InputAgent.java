@@ -32,6 +32,7 @@ import java.util.Comparator;
 
 import javax.swing.JOptionPane;
 
+import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
@@ -74,7 +75,7 @@ public class InputAgent {
 		sessionEdited = false;
 		endOfFileReached = false;
 		batchRun = false;
-		configFileName = "Simulation1.cfg";
+		configFileName = null;
 		reportDirectory = "";
 		lastTimeForTrace = -1.0d;
 	}
@@ -85,7 +86,7 @@ public class InputAgent {
 		numWarnings = 0;
 		addedRecordFound = false;
 		sessionEdited = false;
-		configFileName = "Simulation1.cfg";
+		configFileName = null;
 		reportDirectory = "";
 		lastTimeForTrace = -1.0d;
 	}
@@ -116,13 +117,18 @@ public class InputAgent {
 	}
 
 	public static String getRunName() {
-		int index = Util.fileShortName( InputAgent.getConfigFileName() ).indexOf( "." );
 		String runName;
-		if( index > -1 ) {
-			runName = Util.fileShortName( InputAgent.getConfigFileName() ).substring( 0, index );
+		if( InputAgent.getConfigFileName() == null ) {
+			runName = "";
 		}
 		else {
-			runName = Util.fileShortName( InputAgent.getConfigFileName() );
+			int index = Util.fileShortName( InputAgent.getConfigFileName() ).indexOf( "." );
+			if( index > -1 ) {
+				runName = Util.fileShortName( InputAgent.getConfigFileName() ).substring( 0, index );
+			}
+			else {
+				runName = Util.fileShortName( InputAgent.getConfigFileName() );
+			}
 		}
 		return runName;
 	}
@@ -518,6 +524,7 @@ public class InputAgent {
 	}
 
 	public static void loadConfigFile(GUIFrame gui, String fileName) {
+		InputAgent.setConfigFileName(fileName);
 		try {
 			gui.updateForSimulationState();
 			InputAgent.loadConfigurationFile(fileName);
@@ -550,6 +557,9 @@ public class InputAgent {
 		InputAgent.loadConfigurationFile(fileName, true);
 
 		// At this point configuration file is loaded
+
+		// The session is not considered to be edited after loading a configuration file
+		sessionEdited = false;
 
 		// Save and close the input trace file
 		if (logFile != null) {
@@ -980,7 +990,12 @@ public class InputAgent {
 
 	public static void save(GUIFrame gui) {
 		System.out.println("Saving...");
-		setSaveFile(gui, FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + InputAgent.getConfigFileName(), SAVE_ONLY );
+		if( InputAgent.getConfigFileName() != null ) {
+			setSaveFile(gui, FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + InputAgent.getConfigFileName(), SAVE_ONLY );
+		}
+		else {
+			saveAs( gui );
+		}
 	}
 
 	public static void saveAs(GUIFrame gui) {
@@ -1025,6 +1040,26 @@ public class InputAgent {
 		}
 	}
 
+	public static void configure(GUIFrame gui, String configFileName) {
+		try {
+			gui.clear();
+			Simulation.setSimulationState(Simulation.SIM_STATE_UNCONFIGURED);
+			InputAgent.loadConfigFile(gui, configFileName);
+
+			// store the present state
+			Simulation.setSimulationState(Simulation.SIM_STATE_CONFIGURED);
+
+			System.out.println("Configuration File Loaded");
+
+			// show the present state in the user interface
+			gui.setTitle( DisplayEntity.simulation.getModelName() + " - " + InputAgent.getRunName() );
+			gui.updateForSimulationState();
+		}
+		catch( Throwable t ) {
+			ExceptionBox.instance().setError(t);
+		}
+	}
+
 	/**
 	 *  Loads configuration file , calls GraphicSimulation.configure() method
 	 */
@@ -1036,10 +1071,10 @@ public class InputAgent {
 
 				if( temp.isAbsolute() ) {
 					FileEntity.setRootDirectory( temp.getParentFile() );
-					DisplayEntity.simulation.configure(gui, temp.getName());
+					InputAgent.configure(gui, temp.getName());
 				}
 				else {
-					DisplayEntity.simulation.configure(gui, chosenFileName);
+					InputAgent.configure(gui, chosenFileName);
 				}
 				GUIFrame.displayWindows(true);
 				FrameBox.valueUpdate();
@@ -1289,8 +1324,8 @@ public class InputAgent {
 
 		if (numErrors ==0 && numWarnings == 0) {
 			logFile.delete();
-			logFile = null;
 		}
+		logFile = null;
 	}
 
 	private static final String errPrefix = "*** ERROR *** %s%n";

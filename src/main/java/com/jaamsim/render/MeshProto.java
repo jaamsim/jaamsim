@@ -173,6 +173,8 @@ private ArrayList<SubLine> _subLines;
 private double _radius;
 private boolean _isLoadedGPU = false;
 
+public long subHullAccum;
+
 public MeshProto() {
 	_subMeshes = new ArrayList<SubMesh>();
 	_subMeshesData = new ArrayList<SubMeshData>();
@@ -250,7 +252,9 @@ public void addSubMesh(Vec4d[] vertices,
 	sub.verts.addAll(Arrays.asList(vertices));
 	sub.normals.addAll(Arrays.asList(normals));
 
+	long subHullStart = System.nanoTime();
 	sub.hull = ConvexHull.TryBuildHull(sub.verts, 5);
+	subHullAccum += System.nanoTime() - subHullStart;
 }
 
 public void addSubLine(Vec4d[] vertices,
@@ -281,7 +285,7 @@ public boolean hasTransparent() {
 public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
                    Mat4d modelMat,
                    Mat4d normalMat,
-                   Camera cam) {
+                   Camera cam, ArrayList<AABB> subInstBounds) {
 
 	assert(_isLoadedGPU);
 
@@ -298,7 +302,9 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 	Vec4d dist = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
-	for (SubMeshInstance subInst : _subMeshInstances) {
+	for (int i = 0; i < _subMeshInstances.size(); ++i) {
+		SubMeshInstance subInst = _subMeshInstances.get(i);
+
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
 		if (subMesh._transType != NO_TRANS) {
 			continue; // Render transparent submeshes after
@@ -308,10 +314,11 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 		subModelMat.mult4(modelMat, subInst.transform);
 
-		AABB instBounds = subMesh._hull.getAABB(subModelMat);
+		AABB instBounds = subInstBounds.get(i);
 		if (!cam.collides(instBounds)) {
 			continue;
 		}
+
 		// Work out distance to the camera
 		dist.set4(instBounds.getCenter());
 		dist.sub3(cam.getTransformRef().getTransRef());
@@ -348,7 +355,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
         Mat4d modelMat,
         Mat4d normalMat,
-        Camera cam) {
+        Camera cam, ArrayList<AABB> subInstBounds) {
 
 
 	Mat4d viewMat = new Mat4d();
@@ -358,7 +365,8 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 	modelViewMat.mult4(viewMat, modelMat);
 
 	ArrayList<TransSortable> transparents = new ArrayList<TransSortable>();
-	for (SubMeshInstance subInst : _subMeshInstances) {
+	for (int i = 0; i < _subMeshInstances.size(); ++i) {
+		SubMeshInstance subInst = _subMeshInstances.get(i);
 
 		Mat4d subModelView = new Mat4d();
 		Mat4d subNormalMat = new Mat4d();
@@ -371,7 +379,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 		subModelMat.mult4(modelMat, subInst.transform);
 
-		AABB instBounds = subMesh._hull.getAABB(subModelMat);
+		AABB instBounds = subInstBounds.get(i);
 		if (!cam.collides(instBounds)) {
 			continue;
 		}
@@ -581,6 +589,10 @@ public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 		loadGPUSubLine(gl, renderer, data);
 	}
 
+	// The data has been loaded on the GPU, there is no need to keep it in RAM
+	_subMeshesData = null;
+	_subLinesData = null;
+
 	_isLoadedGPU = true;
 }
 
@@ -610,7 +622,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, SubMeshData data) {
 
 	sub._hull = data.hull;
 
-	sub._center = new Vec4d(data.hull.getAABB(new Mat4d()).getCenter());
+	sub._center = data.hull.getAABB(Mat4d.IDENTITY).getCenter();
 
 	sub._numVerts = data.verts.size();
 
@@ -758,6 +770,23 @@ public void generateHull() {
 	_hull = ConvexHull.TryBuildHull(totalHullPoints, 5);
 
 	_radius = _hull.getRadius();
+}
+
+public ArrayList<AABB> getSubBounds(Mat4d modelMat) {
+
+	Mat4d subModelMat = new Mat4d();
+
+	ArrayList<AABB> ret = new ArrayList<AABB>(_subMeshInstances.size());
+
+	for (SubMeshInstance subInst : _subMeshInstances) {
+
+		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
+		subModelMat.mult4(modelMat, subInst.transform);
+		AABB instBounds = subMesh._hull.getAABB(subModelMat);
+		ret.add(instBounds);
+	}
+
+	return ret;
 }
 
 } // class MeshProto

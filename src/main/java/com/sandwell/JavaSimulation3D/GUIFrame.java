@@ -18,8 +18,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -157,7 +159,6 @@ public class GUIFrame extends JFrame {
 		controlStartResume.setEnabled( false );
 		controlStop.setSelected( false );
 		controlStop.setEnabled( false );
-		clockDisplay.setText( "------.--" );
 		setProgress( 0 );
 		ToolTipManager.sharedInstance().setLightWeightPopupEnabled( false );
 		JPopupMenu.setDefaultLightWeightPopupEnabled( false );
@@ -216,12 +217,12 @@ public class GUIFrame extends JFrame {
 
 		// Clear the simulation
 		DisplayEntity.simulation.clear();
+		FrameBox.timeUpdate(0.0d);
 
 		// Clear the title bar
 		setTitle(DisplayEntity.simulation.getModelName());
 
 		// Clear the status bar
-		clockDisplay.setText( "------.--" );
 		setProgress( 0 );
 		speedUpDisplay.setText("------");
 		remainingDisplay.setText("------");
@@ -529,6 +530,7 @@ public class GUIFrame extends JFrame {
 				// stop only if yes
 				if (userOption == JOptionPane.YES_OPTION) {
 					GUIFrame.this.stopSimulation();
+					FrameBox.timeUpdate(0.0d);
 				}
 			}
 		} );
@@ -840,8 +842,32 @@ public class GUIFrame extends JFrame {
 		getContentPane().add( statusBar, BorderLayout.SOUTH );
 	}
 
+	private long lastSystemTime = System.currentTimeMillis();
+	private double lastSimTimeHours = 0.0d;
+
 	public void setClock( double clockContents ) {
 		clockDisplay.setText(String.format("%.2f", clockContents));
+
+		long cTime = System.currentTimeMillis();
+		Simulation sim = DisplayEntity.simulation;
+		double duration = sim.getRunDuration() + sim.getInitializationTime();
+		int progress = (int)(clockContents * 100.0d / duration);
+		this.setProgress(progress);
+		if (cTime - lastSystemTime > 5000) {
+			long elapsedMillis = cTime - lastSystemTime;
+			double elapsedSimHours = clockContents - lastSimTimeHours;
+
+			// Determine the speed-up factor
+			double speedUp = (elapsedSimHours * 3600000.0d) / elapsedMillis;
+			setSpeedUp(speedUp);
+
+			double remainingSimTime = duration - clockContents;
+			double remainingMinutes = (remainingSimTime * 60.0d) / speedUp;
+			setRemaining(remainingMinutes);
+
+			lastSystemTime = cTime;
+			lastSimTimeHours = clockContents;
+		}
 	}
 
 	public void setProgress( int val ) {
@@ -1119,10 +1145,28 @@ public class GUIFrame extends JFrame {
 
 		if (viewOnly)
 			return;
+
+		Dimension guiSize = GUIFrame.instance().getSize();
+		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+
+		int halfHeight = (winSize.height - guiSize.height) / 2;
 		EntityPallet.getInstance().setVisible(true);
-		EditBox.getInstance().setVisible(true);
+		EntityPallet.getInstance().setLocation(0, guiSize.height);
+		EntityPallet.getInstance().setSize(220, halfHeight);
+
 		ObjectSelector.getInstance().setVisible(true);
+		ObjectSelector.getInstance().setLocation(0, guiSize.height + halfHeight);
+		ObjectSelector.getInstance().setSize(220, halfHeight);
+
+		int thirdHeight = (winSize.height - guiSize.height) / 3;
+		int halfWidth = (winSize.width - 220) / 2;
+		EditBox.getInstance().setVisible(true);
+		EditBox.getInstance().setLocation(220, guiSize.height + thirdHeight * 2);
+		EditBox.getInstance().setSize(halfWidth, thirdHeight);
+
 		InfoBox.getInstance().setVisible(true);
+		InfoBox.getInstance().setLocation(220 + halfWidth, guiSize.height + thirdHeight * 2);
+		InfoBox.getInstance().setSize(halfWidth, thirdHeight);
 	}
 
 	// ******************************************************************************************************
@@ -1221,7 +1265,7 @@ public class GUIFrame extends JFrame {
 		// Process any config files passed on command line
 		for (int i = 0; i < configFiles.size(); i++) {
 			// Consume regular configuration files
-			gsim.configure(gui, configFiles.get(i));
+			InputAgent.configure(gui, configFiles.get(i));
 			continue;
 		}
 

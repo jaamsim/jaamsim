@@ -5,7 +5,6 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.StringInput;
 
 public class OverlayImage extends DisplayEntity {
 	@Keyword(desc = "The position of the image, from the upper left corner of the window to the upper left corner " +
@@ -24,14 +23,6 @@ public class OverlayImage extends DisplayEntity {
 	@Keyword(desc = "If this text label should be aligned from the bottom edge of the window (instead of the top)",
 	         example = "Logo AlignBottom { TRUE }")
 	private final BooleanInput alignBottom;
-
-	@Keyword(desc = "Indicates the loaded image has an alpha channel (transparency information) that should be used.",
-	         example = "Logo Transparent { TRUE }")
-	private final BooleanInput transparent;
-
-	@Keyword(desc = "File to be displayed. If spaces are included, enclose the text in single quotes.",
-	         example = "Logo FileName { '../Images/logo.png' }")
-	private final StringInput filename;
 
 	{
 		IntegerVector defPos = new IntegerVector(2);
@@ -56,20 +47,12 @@ public class OverlayImage extends DisplayEntity {
 		alignBottom = new BooleanInput("AlignBottom", "Key Inputs", false);
 		this.addInput(alignBottom, true);
 
-		transparent = new BooleanInput("Transparent", "Key Inputs", false);
-		this.addInput(transparent, true);
-
-		filename = new StringInput( "File", "Key Inputs", null );
-		this.addInput( filename, true);
-
 		getInput("position").setHidden(true);
 		getInput("alignment").setHidden(true);
 		getInput("size").setHidden(true);
 		getInput("orientation").setHidden(true);
 		getInput("region").setHidden(true);
 		getInput("relativeentity").setHidden(true);
-		getInput("levelofdetail").setHidden(true);
-		getInput("displaymodel").setHidden(true);
 		getInput("active").setHidden(true);
 		getInput("show").setHidden(true);
 		getInput("movable").setHidden(true);
@@ -81,10 +64,6 @@ public class OverlayImage extends DisplayEntity {
 		super.updateForInput(in);
 
 		setGraphicsDataDirty();
-	}
-
-	public String getFileName() {
-		return filename.getValue();
 	}
 
 	public IntegerVector getScreenPos() {
@@ -101,9 +80,5 @@ public class OverlayImage extends DisplayEntity {
 
 	public boolean getAlignBottom() {
 		return alignBottom.getValue();
-	}
-
-	public boolean getTransparent() {
-		return transparent.getValue();
 	}
 }

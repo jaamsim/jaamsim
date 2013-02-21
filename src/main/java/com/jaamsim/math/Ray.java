@@ -78,7 +78,7 @@ public class Ray {
 		Vec4d ret = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		ret.scale3(dist, _direction);
 		ret.add3(_start, ret);
-		return new Vec4d(ret);
+		return ret;
 	}
 
 	/**

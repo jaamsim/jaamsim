@@ -16,6 +16,8 @@ package com.jaamsim.math;
 
 public class Mat4d {
 
+public static Mat4d IDENTITY = new Mat4d();
+
 public double d00, d01, d02, d03;
 public double d10, d11, d12, d13;
 public double d20, d21, d22, d23;

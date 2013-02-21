@@ -24,7 +24,6 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
-import com.jaamsim.render.RenderUtils;
 import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.Arrow;
@@ -53,8 +52,10 @@ public class ArrowModel extends ScreenPointsModel {
 
 		private Arrow arrowObservee;
 		private ChangeWatcher.Tracker observeeTracker;
+		private ChangeWatcher.Tracker dmTracker;
 
-		private List<Vec4d> headPoints = null;
+
+		private ArrayList<Vec4d> headPoints = null;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
@@ -67,10 +68,12 @@ public class ArrowModel extends ScreenPointsModel {
 				// The observee is not a display entity
 				arrowObservee = null;
 			}
+			dmTracker = dm.getGraphicsChangeTracker();
 		}
 
 		private void updateHead() {
-			if (headPoints != null && observeeTracker != null && !observeeTracker.checkAndClear()) {
+			if (headPoints != null && observeeTracker != null && !observeeTracker.checkAndClear()
+			    && !dmTracker.checkAndClear()) {
 				// up to date
 				return;
 			}
@@ -81,37 +84,37 @@ public class ArrowModel extends ScreenPointsModel {
 			}
 
 			Vec4d startPoint = points.get(points.size() - 1);
-
-			// dir is the direction of the arrow
 			Vec4d fromPoint = points.get(points.size() - 2);
 
-			Vec4d dir = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			dir.sub3(fromPoint, startPoint);
-			dir.normalize3();
-
-			double theta = Math.atan2(dir.y, dir.x);
-
-			Vec3d scale = arrowObservee.getArrowHeadSize();
+			// Calculate a z-rotation in the XY-plane
+			Vec3d zRot = new Vec3d();
+			zRot.sub3(fromPoint, startPoint);
+			zRot.set3(0.0d, 0.0d, Math.atan2(zRot.y, zRot.x));
 
 			Mat4d trans = new Mat4d();
-			trans.setEuler3(new Vec3d(0, 0, theta));
-			trans.scaleCols3(scale);
+			trans.setEuler3(zRot);
+			trans.scaleCols3(arrowObservee.getArrowHeadSize());
 			trans.setTranslate3(startPoint);
 
-			headPoints = RenderUtils.transformPoints(trans, arrowHeadVerts, 0);
+			headPoints = new ArrayList<Vec4d>(arrowHeadVerts.size());
+			for (Vec4d v : arrowHeadVerts) {
+				Vec4d tmp = new Vec4d();
+				tmp.mult4(trans, v);
+				headPoints.add(tmp);
+			}
 		}
 
 		@Override
-		public void collectProxies(ArrayList<RenderProxy> out) {
+		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
 
 			if (arrowObservee == null || !arrowObservee.getShow()) {
 				return;
 			}
 
-			updatePoints();
+			updatePoints(simTime);
 			updateHead();
 
-			super.collectProxies(out);
+			super.collectProxies(simTime, out);
 
 			out.add(new PolygonProxy(headPoints, Transform.ident, Vec4d.ONES,
 			        screenPointObservee.getDisplayColour(),

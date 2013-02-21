@@ -48,7 +48,11 @@ public Transform(Transform t) {
 
 public Transform(Vec3d trans, Quaternion rot, double scale)
 {
-	_trans = new Vec4d(trans.x, trans.y, trans.z, 1.0d);
+	if (trans == null)
+		_trans = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	else
+		_trans = new Vec4d(trans.x, trans.y, trans.z, 1.0d);
+
 	if (rot == null)
 		_rot = new Quaternion();
 	else
@@ -160,19 +164,19 @@ private void updateMatrix() {
  * @param rhs - the right hand matrix to merge with
  * @param out
  */
-public void merge(Transform rhs, Transform out) {
+public void merge(Transform a, Transform b) {
 
-	Vec4d temp = new Vec4d(_trans);
+	Vec4d temp = new Vec4d(a._trans);
 
-	_rot.rotateVector(rhs._trans, out._trans);
-	out._trans.scale3(_scale);
+	a._rot.rotateVector(b._trans, _trans);
+	_trans.scale3(a._scale);
 
-	out._trans.add3(temp);
-	out._matrixDirty = true;
+	_trans.add3(temp);
+	_matrixDirty = true;
 
-	_rot.mult(rhs._rot, out._rot);
+	_rot.mult(a._rot, b._rot);
 
-	out._scale = _scale * rhs._scale;
+	_scale = a._scale * b._scale;
 
 }
 

@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec3d;
@@ -44,6 +45,10 @@ import com.jaamsim.render.RenderException;
  * Inspired by the Collada loader for Sweethome3d by Emmanuel Puybaret / eTeks <info@eteks.com>.
  */
 public class ColParser extends DefaultHandler {
+
+	private static final boolean COL_DEBUG = false;
+
+	static long callbackTime;
 
 	public static MeshProto parse(URL asset) throws RenderException {
 		InputStream in;
@@ -57,12 +62,28 @@ public class ColParser extends DefaultHandler {
 		factory.setValidating(false);
 
 		try {
+			long startTime = System.nanoTime();
 			SAXParser saxParser = factory.newSAXParser();
 			ColParser handler = new ColParser(asset);
 
+			callbackTime = 0;
+
 			saxParser.parse(in, handler);
 
+			long parseEndTime = System.nanoTime();
+
 			handler.processContent();
+
+			long endTime = System.nanoTime();
+			double parseTimeMS = (parseEndTime - startTime) / 1000000.0;
+			double processTimeMS = (endTime - parseEndTime) / 1000000.0;
+			double doubleParseTime = handler.arrayAccum / 1000000.0;
+			double callbackTimeMS = callbackTime / 1000000.0;
+
+			if (COL_DEBUG) {
+				System.out.printf("Collada timing for \"%s\" - parse: %f (callbacks: %f)(arrays %f), process: %f, hull %f\n", asset.toString(), parseTimeMS, callbackTimeMS, doubleParseTime, processTimeMS, handler.hullTimeMS);
+			}
+
 			return handler.getProto();
 
 		} catch (Exception e) {
@@ -128,7 +149,7 @@ public class ColParser extends DefaultHandler {
 		}
 	}
 
-	private class VisualScene {
+	private static class VisualScene {
 		public final ArrayList<SceneNode> nodes = new ArrayList<SceneNode>();
 	}
 
@@ -138,6 +159,10 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private final URL _contextURL;
+
+	private double hullTimeMS;
+	private long arrayAccum;
+	private long subMeshAccum;
 
 	private final HashMap<String, Geometry> _geos = new HashMap<String, Geometry>();
 	private final HashMap<String, String> _images = new HashMap<String, String>(); // Maps image names to files
@@ -166,7 +191,7 @@ public class ColParser extends DefaultHandler {
 	// The _nodeIDMap is a mapping of fragment IDs to nodes to make data analysis easier
 	private HashMap<String, ColNode> _nodeIDMap = new HashMap<String, ColNode>();
 
-	private StringBuilder _contentBuilder;
+	private StringBuilder _contentBuilder = new StringBuilder();
 
 	public ColParser(URL context) {
 		_contextURL = context;
@@ -176,6 +201,8 @@ public class ColParser extends DefaultHandler {
 
 	@Override
 	public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
+
+		long cbStart = System.nanoTime();
 
 		int IDIndex = attributes.getIndex("id");
 		String fragID = null;
@@ -195,17 +222,25 @@ public class ColParser extends DefaultHandler {
 		if (IDIndex != -1) {
 			_nodeIDMap.put(fragID, node);
 		}
-		_contentBuilder = new StringBuilder();
+		_contentBuilder.setLength(0);
+
+		callbackTime += System.nanoTime() - cbStart;
 	}
 
 	@Override
 	public void characters(char [] ch, int start, int length) throws SAXException {
+		long cbStart = System.nanoTime();
+
 		_contentBuilder.append(ch, start, length);
+
+		callbackTime += System.nanoTime() - cbStart;
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String name) throws SAXException {
 		// Handle the contents type based on the current nodes tag
+		long cbStart = System.nanoTime();
+
 		Object contents;
 		if (DOUBLE_ARRAY_TAGS.contains(name)) {
 			contents = parseDoubleArray();
@@ -221,7 +256,9 @@ public class ColParser extends DefaultHandler {
 
 		_currentNode.setContent(contents);
 		_currentNode = _currentNode.getParent();
-		_contentBuilder = new StringBuilder(); //
+		_contentBuilder.setLength(0);
+
+		callbackTime += System.nanoTime() - cbStart;
 	}
 
 	private ColNode getNodeFromID(String fragID) {
@@ -237,7 +274,9 @@ public class ColParser extends DefaultHandler {
 		_colladaNode = _rootNode.findChildTag("COLLADA", false);
 		assert(_colladaNode != null);
 
+		long geoStart = System.nanoTime();
 		processGeos();
+		double geoTime = (System.nanoTime() - geoStart) / 1000000.0;
 		processImages();
 		processMaterials();
 		processEffects();
@@ -245,7 +284,21 @@ public class ColParser extends DefaultHandler {
 
 		processVisualScenes();
 
+		ConvexHull.buildTime = 0; ConvexHull.filterTime = 0; ConvexHull.finalizeTime = 0; ConvexHull.sortTime = 0;
+
+		long sceneStart = System.nanoTime();
 		processScene();
+		double sceneTime = (System.nanoTime() - sceneStart) / 1000000.0;
+
+		if (COL_DEBUG) {
+			System.out.printf("Process times - Geo: %f, Scene: %f (subMeshes %f, subHulls %f)\n", geoTime, sceneTime, subMeshAccum / 1000000.0, _finalProto.subHullAccum / 1000000.0);
+			System.out.printf("Convex Times - Filter: %f, Sort: %f, Build %f, Finalize: %f\n",
+			                  ConvexHull.filterTime / 1000000.0,
+			                  ConvexHull.sortTime / 1000000.0,
+			                  ConvexHull.buildTime / 1000000.0,
+			                  ConvexHull.finalizeTime / 1000000.0);
+
+		}
 	}
 
 	private double getScaleFactor() {
@@ -316,7 +369,9 @@ public class ColParser extends DefaultHandler {
 			visitNode(sn, globalMat);
 		}
 
+		long hullStart = System.nanoTime();
 		_finalProto.generateHull();
+		hullTimeMS = (System.nanoTime()  - hullStart) / 1000000;
 	}
 
 	private void visitNode(SceneNode node, Mat4d parentMat) {
@@ -379,12 +434,14 @@ public class ColParser extends DefaultHandler {
 			} else {
 				geoID = _loadedFaceGeos.size();
 				_loadedFaceGeos.add(ge);
+				long subMeshStart = System.nanoTime();
 				_finalProto.addSubMesh(subGeo.verts,
 				                       subGeo.normals,
 				                       subGeo.texCoords,
 				                       effect.diffuse.texture,
 				                       effect.diffuse.color,
 				                       effect.transType, effect.transColour);
+				subMeshAccum += System.nanoTime() - subMeshStart;
 			}
 
 			_finalProto.addSubMeshInstance(geoID, mat);
@@ -1132,35 +1189,41 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private double[] parseDoubleArray() {
-		String[] strings = contentsToStringArray();
+		long arrayStart = System.nanoTime();
+		ArrayList<String> strings = contentsToStringArray();
 
-		double[] ret = new double[strings.length];
+		double[] ret = new double[strings.size()];
 		int index = 0;
 		for (String s : strings) {
 			ret[index++] = Double.parseDouble(s);
 		}
+		arrayAccum += System.nanoTime() - arrayStart;
 		return ret;
 	}
 
 	private int[] parseIntArray() {
-		String[] strings = contentsToStringArray();
+		long arrayStart = System.nanoTime();
+		ArrayList<String> strings = contentsToStringArray();
 
-		int[] ret = new int[strings.length];
+		int[] ret = new int[strings.size()];
 		int index = 0;
 		for (String s : strings) {
 			ret[index++] = Integer.parseInt(s);
 		}
+		arrayAccum += System.nanoTime() - arrayStart;
 		return ret;
 	}
 
 	private boolean[] parseBooleanArray() {
-		String[] strings = contentsToStringArray();
+		long arrayStart = System.nanoTime();
+		ArrayList<String> strings = contentsToStringArray();
 
-		boolean[] ret = new boolean[strings.length];
+		boolean[] ret = new boolean[strings.size()];
 		int index = 0;
 		for (String s : strings) {
 			ret[index++] = Boolean.parseBoolean(s);
 		}
+		arrayAccum += System.nanoTime() - arrayStart;
 		return ret;
 	}
 
@@ -1219,20 +1282,22 @@ public class ColParser extends DefaultHandler {
 		return ret;
 	}
 
-	private String[] contentsToStringArray() {
-		String[] temp = _contentBuilder.toString().split("\\s+");
-
-		// Annoyingly, split sometimes returns blank strings, so manually filter those out
-		// (there is probably a much more elegant way of doing this)
-		int numStrings = 0;
-		for (String s : temp) {
-			if (s.length() > 0) ++ numStrings;
+	private ArrayList<String> contentsToStringArray() {
+		ArrayList<String> ret = new ArrayList<String>();
+		StringBuilder val = new StringBuilder();
+		for (int i = 0; i < _contentBuilder.length(); ++i) {
+			char c = _contentBuilder.charAt(i);
+			if (c == ' ' || c == '\t' || c == '\n') {
+				if (val.length() != 0) {
+					ret.add(val.toString());
+					val.setLength(0);
+				}
+			} else {
+				val.append(c);
+			}
 		}
-		String[] ret = new String[numStrings];
-		int nextIdx = 0;
-		for (String s : temp) {
-			if (s.length() > 0)
-				ret[nextIdx++] = s;
+		if (val.length() != 0) {
+			ret.add(val.toString());
 		}
 		return ret;
 	}

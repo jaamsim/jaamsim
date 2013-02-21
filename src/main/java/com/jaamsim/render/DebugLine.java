@@ -106,7 +106,7 @@ public class DebugLine implements Renderable {
 		double shortDist = Double.POSITIVE_INFINITY;
 
 		for (int i = 0; i < _lineSegments.size(); i+=2) {
-			Vec4d nearPoint = RenderUtils.rayClosePoint(rayMatrix, new Vec4d(_lineSegments.get(i)), new Vec4d(_lineSegments.get(i+1)));
+			Vec4d nearPoint = RenderUtils.rayClosePoint(rayMatrix, _lineSegments.get(i), _lineSegments.get(i+1));
 
 			double angle = RenderUtils.angleToRay(rayMatrix, nearPoint);
 			if (angle < 0) {

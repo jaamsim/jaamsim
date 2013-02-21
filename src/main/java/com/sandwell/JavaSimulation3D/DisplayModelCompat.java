@@ -14,43 +14,27 @@
  */
 package com.sandwell.JavaSimulation3D;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import com.jaamsim.DisplayModels.DisplayModel;
-import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
-import com.jaamsim.render.ImageProxy;
 import com.jaamsim.render.LineProxy;
-import com.jaamsim.render.MeshProtoKey;
-import com.jaamsim.render.MeshProxy;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
-import com.jaamsim.render.TexCache;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation.InputErrorException;
+import com.sandwell.JavaSimulation.EnumInput;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.Util;
-import com.sandwell.JavaSimulation.Vec3dInput;
 
 public class DisplayModelCompat extends DisplayModel {
 	// IMPORTANT: If you add a tag here, make sure to add it to the validTags
@@ -66,27 +50,40 @@ public class DisplayModelCompat extends DisplayModel {
 
 	protected static final ArrayList<String> validTags;
 
-	private double conversionFactorToMeters = 1.0d; // How many meters in one distance unit
-
+	enum ValidShapes {
+		PIXELS,
+		TRUCK2D,
+		SHIP2D,
+		RECTANGLE,
+		STACKER2D,
+		RECLAIMER2D,
+		BRIDGE2D,
+		CRUSHER2D,
+		GANTRY2D,
+		DOZER2D,
+		CRUSHER2ND2D,
+		SLAVESTACKER2D,
+		DUALQUADRANT2D,
+		SINGLEQUADRANT2D,
+		LINEAR2D,
+		TRAVELLING2D,
+		CIRCLE,
+		ARROW2D,
+		TRIANGLE,
+		CONTENTSPIXELS,
+		CRUSHINGPLANT2D,
+		BARGAUGE2D,
+		MINISHIP2D,
+		GRINDINGROLL2D,
+		SCREEN2D,
+		SAGMILL2D,
+		RECTANGLEWITHARROWS,
+	}
 	@Keyword(desc = "The shape of a display model determines the appearance of the display model. The shape may be " +
 	                "one of the following: Pixels (for a square of 6x6 pixels), Truck2D, Ship2D, Icon (for a rectangle), " +
-	                "Circle.  A graphics file name with one of the following file extensions: DAE (for a collada version " +
-	                "1.4.1 3D model file), BMP, JPG, PNG, PCX, GIF.",
-	         example = "Ship3DModel Shape { ..\\3DModels\\Ship3D.dae }")
-	private final StringInput shape;
-	private static ArrayList<String> definedTypes;
-	private static ArrayList<String> validFileExtentions;
-
-	@Keyword(desc = "Euler angles in radians defining the rotation of the display model." +
-	                "Only for imported collada models.",
-	         example = "Ship3DModel Orientation { 0 0 1.5707963 }")
-	private final Vec3dInput orientation;
-
-
-	@Keyword(desc = "If the value is TRUE, then load the collada file as it is. Otherwise, ignore all the culling in " +
-	                "the model",
-	         example = "Ship3DModel EnableCulling { FALSE }")
-	private final BooleanInput enableCulling;
+	                "Circle.",
+	         example = "Ship3DModel Shape { CIRCLE }")
+	private final EnumInput<ValidShapes> shape;
 
 	@Keyword(desc = "The colour for the filled part of the display model.",
 	         example = "Product2D FillColour { red }")
@@ -111,56 +108,7 @@ public class DisplayModelCompat extends DisplayModel {
 	         example = "Berth2D Bold { TRUE }")
 	private final BooleanInput bold;
 
-	@Keyword(desc = "Indicates the loaded image has an alpha channel (transparency information) that should be used " +
-            "(this only affects image DisplayModels).",
-     example = "CompanyLogo Transparent { TRUE }")
-	private final BooleanInput transparent;
-	@Keyword(desc = "Indicates the loaded image should use texture compression in video memory " +
-	                "(this only affects image DisplayModels).",
-	         example = "WorldMap CompressedTexture { TRUE }")
-	private final BooleanInput compressedTexture;
-
-
 	static {
-		definedTypes = new ArrayList<String>();
-		definedTypes.add("PIXELS");
-		definedTypes.add("TRUCK2D");
-		definedTypes.add("SHIP2D");
-		definedTypes.add("RECTANGLE");
-		definedTypes.add("STACKER2D");
-		definedTypes.add("RECLAIMER2D");
-		definedTypes.add("BRIDGE2D");
-		definedTypes.add("CRUSHER2D");
-		definedTypes.add("GANTRY2D");
-		definedTypes.add("DOZER2D");
-		definedTypes.add("CRUSHER2ND2D");
-		definedTypes.add("SLAVESTACKER2D");
-		definedTypes.add("DUALQUADRANT2D");
-		definedTypes.add("SINGLEQUADRANT2D");
-		definedTypes.add("LINEAR2D");
-		definedTypes.add("TRAVELLING2D");
-		definedTypes.add("CIRCLE");
-		definedTypes.add("ARROW2D");
-		definedTypes.add("TRIANGLE");
-		definedTypes.add("CONTENTSPIXELS");
-		definedTypes.add("CRUSHINGPLANT2D");
-		definedTypes.add("BARGAUGE2D");
-		definedTypes.add("MINISHIP2D");
-		definedTypes.add("GRINDINGROLL2D");
-		definedTypes.add("SCREEN2D");
-		definedTypes.add("SAGMILL2D");
-		definedTypes.add("RECTANGLEWITHARROWS");
-
-		validFileExtentions = new ArrayList<String>();
-		validFileExtentions.add("DAE");
-		validFileExtentions.add("ZIP");
-		validFileExtentions.add("KMZ");
-		validFileExtentions.add("BMP");
-		validFileExtentions.add("JPG");
-		validFileExtentions.add("PNG");
-		validFileExtentions.add("PCX");
-		validFileExtentions.add("GIF");
-
 		validTags = new ArrayList<String>();
 		validTags.add(TAG_CONTENTS);
 		validTags.add(TAG_OUTLINES);
@@ -174,15 +122,8 @@ public class DisplayModelCompat extends DisplayModel {
 	}
 
 	{
-		shape = new StringInput( "Shape", "DisplayModel", null );
-		this.addInput( shape, true);
-
-		orientation = new Vec3dInput("Orientation", "DisplayModel", new Vec3d(0, 0, 0));
-		orientation.setUnits("rad");
-		this.addInput(orientation, true);
-
-		enableCulling = new BooleanInput("EnableCulling", "DisplayModel", true);
-		this.addInput(enableCulling, true);
+		shape = new EnumInput<ValidShapes>(ValidShapes.class, "Shape", "DisplayModel", ValidShapes.CIRCLE);
+		this.addInput(shape, true);
 
 		fillColour = new ColourInput("FillColour", "DisplayModel", ColourInput.MED_GREY);
 		this.addInput(fillColour, true, "FillColor");
@@ -198,69 +139,12 @@ public class DisplayModelCompat extends DisplayModel {
 
 		bold = new BooleanInput("Bold", "DisplayModel", false);
 		this.addInput(bold, true);
-
-		transparent = new BooleanInput("Transparent", "DisplayModel", false);
-		this.addInput(transparent, true);
-
-		compressedTexture = new BooleanInput("CompressedTexture", "DisplayModel", false);
-		this.addInput(compressedTexture, true);
 	}
 
 	public DisplayModelCompat() {}
 
-	public void validate()
-	throws InputErrorException {
-		super.validate();
-		if( shape.getValue() == null ) {
-			throw new InputErrorException( "Shape is not found" );
-		}
-		if( ! definedTypes.contains(shape.getValue().toUpperCase()) ){
-			if( ! (FileEntity.fileExists(shape.getValue())) ) {
-				throw new InputErrorException("File \"%s\" not found", shape.getValue());
-			}
-			else{
-				String ext = Util.getFileExtention(shape.getValue());
-				if(! validFileExtentions.contains(ext)){
-					throw new InputErrorException("Invalid file format \"%s\"", shape.getValue());
-				}
-			}
-		}
-	}
-
-	public static ArrayList<String> getValidExtentions() {
-		return validFileExtentions;
-	}
-
-	public double getConversionFactorToMeters() {
-		return conversionFactorToMeters;
-	}
-
-	public String getShape() {
-		return shape.getValue();
-	}
-
-	public Color4d getFillColor() {
-		return fillColour.getValue();
-	}
-
-	public Color4d getOutlineColor() {
-		return outlineColour.getValue();
-	}
-
-	public boolean isFilled() {
-		return filled.getValue();
-	}
-
-	public boolean isBold() {
-		return bold.getValue();
-	}
-
-	public boolean isTransparent() {
-		return transparent.getValue();
-	}
-
-	public boolean useCompressedTexture() {
-		return compressedTexture.getValue();
+	public String getShapeName() {
+		return shape.getValue().name();
 	}
 
 	@Override
@@ -277,6 +161,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 		private ArrayList<RenderProxy> cachedProxies;
 		private ChangeWatcher.Tracker observeeTracker;
+		private ChangeWatcher.Tracker dmTracker;
 
 		private DisplayEntity dispEnt;
 
@@ -287,10 +172,12 @@ public class DisplayModelCompat extends DisplayModel {
 			if (dispEnt != null) {
 				observeeTracker = dispEnt.getGraphicsChangeTracker();
 			}
+			dmTracker = dm.getGraphicsChangeTracker();
 		}
 
-		private void updateCache() {
-			if (cachedProxies != null && observeeTracker != null && !observeeTracker.checkAndClear()) {
+		private void updateCache(double simTime) {
+			if (cachedProxies != null && observeeTracker != null && !observeeTracker.checkAndClear() &&
+			    !dmTracker.checkAndClear()) {
 				// Nothing changed
 				++_cacheHits;
 				return;
@@ -301,75 +188,65 @@ public class DisplayModelCompat extends DisplayModel {
 
 			cachedProxies = new ArrayList<RenderProxy>();
 
-			String shapeString = shape.getValue().toUpperCase();
-
-			if (shapeString.equals("SHIP2D")) {
-				addShipProxies();
-				return;
-			}
-			if (shapeString.equals("TRUCK2D")) {
-				addTruckProxies();
-				return;
-			}
-			if (shapeString.equals("BARGAUGE2D")) {
-				addBarGaugeProxies();
-				return;
-			}
-			if (shapeString.equals("CRUSHINGPLANT2D")) {
-				addCrushingPlantProxies();
-				return;
-			}
-			if (shapeString.equals("ARROW2D")) {
-				addArrowProxies();
-				return;
-			}
-			if (shapeString.equals("SINGLEQUADRANT2D")) {
-				addSingleQuadProxies();
-				return;
-			}
-			if (shapeString.equals("DUALQUADRANT2D")) {
-				addDualQuadProxies();
-				return;
-			}
-			if (shapeString.equals("TRAVELLING2D")) {
-				addTravellingProxies();
-				return;
-			}
-
-			if (shapeString.equals("STACKER2D") ||
-			    shapeString.equals("RECLAIMER2D") ) {
-				addStackerProxies();
-				return;
-				}
-
 			List<Vec4d> points = null;
-			if (shapeString.equals("CIRCLE")) {
+			switch (shape.getValue()) {
+			case SHIP2D:
+				addShipProxies(simTime);
+				return;
+			case TRUCK2D:
+				addTruckProxies(simTime);
+				return;
+			case BARGAUGE2D:
+				addBarGaugeProxies(simTime);
+				return;
+			case CRUSHINGPLANT2D:
+				addCrushingPlantProxies(simTime);
+				return;
+			case ARROW2D:
+				addArrowProxies(simTime);
+				return;
+			case SINGLEQUADRANT2D:
+				addSingleQuadProxies(simTime);
+				return;
+			case DUALQUADRANT2D:
+				addDualQuadProxies(simTime);
+				return;
+			case TRAVELLING2D:
+				addTravellingProxies(simTime);
+				return;
+			case STACKER2D:
+			case RECLAIMER2D:
+				addStackerProxies(simTime);
+				return;
+			case CIRCLE:
 				points = RenderUtils.CIRCLE_POINTS;
-			}
-			if (shapeString.equals("RECTANGLE")) {
+				break;
+			case RECTANGLE:
 				points = RenderUtils.RECT_POINTS;
-			}
-			if (shapeString.equals("TRIANGLE")) {
+				break;
+			case TRIANGLE:
 				points = RenderUtils.TRIANGLE_POINTS;
-			}
-
-			if (points == null || points.size() == 0) {
-				// Not a known shape, try to find an extension we recognize
-				if (shapeString.length() <= 4) { return; } // can not be a filename
-
-				String ext = shapeString.substring(shapeString.length() - 4, shapeString.length());
-
-				if (imageExtensions.contains(ext.toUpperCase())) {
-					addImageProxy(shape.getValue());
-				}
-				if (modelExtensions.contains(ext.toUpperCase())) {
-					addModelProxy(shape.getValue());
-				}
+				break;
+			case BRIDGE2D:
+			case CONTENTSPIXELS:
+			case CRUSHER2D:
+			case CRUSHER2ND2D:
+			case DOZER2D:
+			case GANTRY2D:
+			case GRINDINGROLL2D:
+			case LINEAR2D:
+			case MINISHIP2D:
+			case PIXELS:
+			case RECTANGLEWITHARROWS:
+			case SAGMILL2D:
+			case SCREEN2D:
+			case SLAVESTACKER2D:
+				// these are currently not implemented
 				return;
 			}
 
 			// Gather some inputs
-			Transform trans = getTransform();
+			Transform trans = getTransform(simTime);
 			Vec4d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
@@ -388,22 +265,22 @@ public class DisplayModelCompat extends DisplayModel {
 		}
 
 		@Override
-		public void collectProxies(ArrayList<RenderProxy> out) {
+		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
 			// This is slightly quirky behaviour, as a null entity will be shown because we use that for previews
-			if (dispEnt != null && !dispEnt.getShow()) {
+			if (dispEnt == null || !dispEnt.getShow()) {
 				return;
 			}
 
-			updateCache();
+			updateCache(simTime);
 
 			out.addAll(cachedProxies);
 		}
 
-		private Transform getTransform() {
+		private Transform getTransform(double simTime) {
 			if (dispEnt == null) {
 				return Transform.ident;
 			}
-			return dispEnt.getGlobalTrans();
+			return dispEnt.getGlobalTrans(simTime);
 		}
 		private Vec4d getScale() {
 			if (dispEnt == null) {
@@ -425,9 +302,9 @@ public class DisplayModelCompat extends DisplayModel {
 			return dispEnt.getTagSet();
 		}
 
-		private void addArrowProxies() {
+		private void addArrowProxies(double simTime) {
 			// Gather some inputs
-			Transform trans = getTransform();
+			Transform trans = getTransform(simTime);
 			Vec4d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
@@ -442,10 +319,10 @@ public class DisplayModelCompat extends DisplayModel {
 
 		}
 
-		private void addShipProxies() {
+		private void addShipProxies(double simTime) {
 
 			// Gather some inputs
-			Transform trans = getTransform();
+			Transform trans = getTransform(simTime);
 			Vec4d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
@@ -470,10 +347,10 @@ public class DisplayModelCompat extends DisplayModel {
 			cachedProxies.addAll(buildContents(sizes, colours, shipContentsTrans, trans, scale, pickingID));
 		}
 
-		private void addTruckProxies() {
+		private void addTruckProxies(double simTime) {
 
 			// Gather some inputs
-			Transform trans = getTransform();
+			Transform trans = getTransform(simTime);
 			Vec4d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
@@ -487,10 +364,10 @@ public class DisplayModelCompat extends DisplayModel {
 			cachedProxies.addAll(buildContents(sizes, colours, truckContentsTrans, trans, scale, pickingID));
 		}
 
-		private void addBarGaugeProxies() {
+		private void addBarGaugeProxies(double simTime) {
 
 			// Gather some inputs
-			Transform trans = getTransform();
+			Transform trans = getTransform(simTime);
 			Vec4d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
@@ -542,15 +419,15 @@ public class DisplayModelCompat extends DisplayModel {
 				contentsPoints.add(new Vec4d(startX,   endY, 0, 1.0d));
 				contentsPoints.add(new Vec4d(startX, startY, 0, 1.0d));
 
-				cachedProxies.add(new PolygonProxy(contentsPoints, trans, scale, colours[0], false, 1, getVisibilityInfo(), pickingID));
+				cachedProxies.add(new PolygonProxy(contentsPoints, trans, scale, colours[i], false, 1, getVisibilityInfo(), pickingID));
 
 			}
 		}
 
-		private void addCrushingPlantProxies() {
+		private void addCrushingPlantProxies(double simTime) {
 
 			// Gather some inputs
-			Transform trans = getTransform();
+			Transform trans = getTransform(simTime);
 			Vec4d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
@@ -567,10 +444,10 @@ public class DisplayModelCompat extends DisplayModel {
 			cachedProxies.add(new PolygonProxy(crushingPlantBotVerts, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
 		}
 
-		private void addSingleQuadProxies() {
+		private void addSingleQuadProxies(double simTime) {
 
 			// Gather some inputs
-			Transform trans = getTransform();
+			Transform trans = getTransform(simTime);
 			Vec4d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
@@ -590,9 +467,9 @@ public class DisplayModelCompat extends DisplayModel {
 		}
 
 
-		private void addDualQuadProxies() {
+		private void addDualQuadProxies(double simTime) {
 			// Gather some inputs
-			Transform trans = getTransform();
+			Transform trans = getTransform(simTime);
 			Vec4d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
@@ -615,10 +492,10 @@ public class DisplayModelCompat extends DisplayModel {
 
 		}
 
-		private void addTravellingProxies() {
+		private void addTravellingProxies(double simTime) {
 
 			// Gather some inputs
-			Transform trans = getTransform();
+			Transform trans = getTransform(simTime);
 			Vec4d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
@@ -638,10 +515,10 @@ public class DisplayModelCompat extends DisplayModel {
 			cachedProxies.add(new PolygonProxy(travellingRect2Verts, trans, scale, trackColour, true, 1, getVisibilityInfo(), pickingID));
 		}
 
-		private void addStackerProxies() {
+		private void addStackerProxies(double simTime) {
 
 			// Gather some inputs
-			Transform trans = getTransform();
+			Transform trans = getTransform(simTime);
 			Vec4d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
@@ -661,99 +538,6 @@ public class DisplayModelCompat extends DisplayModel {
 			cachedProxies.add(new PolygonProxy(stackerRect2Verts, trans, fixedScale, contentsColour, false, 1, getVisibilityInfo(), pickingID));
 			cachedProxies.add(new PolygonProxy(stackerRect2Verts, trans, fixedScale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
 
-		}
-
-		private void addImageProxy(String filename) {
-			// Gather some inputs
-			Transform trans = getTransform();
-			Vec4d scale = getScale();
-			long pickingID = getPickingID();
-
-			try {
-				cachedProxies.add(new ImageProxy(new URL(Util.getAbsoluteFilePath(filename)), trans,
-				                       scale, transparent.getValue(), compressedTexture.getValue(), getVisibilityInfo(), pickingID));
-			} catch (MalformedURLException e) {
-				cachedProxies.add(new ImageProxy(TexCache.BAD_TEXTURE, trans, scale,
-				                                 transparent.getValue(), compressedTexture.getValue(), getVisibilityInfo(), pickingID));
-			}
-		}
-
-		private void addModelProxy(String filename) {
-			MeshProtoKey meshKey = _cachedKeys.get(filename);
-
-			// We have not loaded this file before, cache the mesh proto key so
-			// we don't dig through a zip file every render
-			if (meshKey == null) {
-				try {
-					URL meshURL = new URL(Util.getAbsoluteFilePath(filename));
-
-					String ext = filename.substring(filename.length() - 4,
-							filename.length());
-
-					if (ext.toUpperCase().equals(".ZIP")) {
-						// This is a zip, use a zip stream to actually pull out
-						// the .dae file
-						ZipInputStream zipInputStream = new ZipInputStream(
-								meshURL.openStream());
-
-						// Loop through zipEntries
-						for (ZipEntry zipEntry; (zipEntry = zipInputStream
-								.getNextEntry()) != null;) {
-
-							String entryName = zipEntry.getName();
-							if (!Util.getFileExtention(entryName)
-									.equalsIgnoreCase("DAE"))
-								continue;
-
-							// This zipEntry is a collada file, no need to look
-							// any further
-							meshURL = new URL("jar:" + meshURL + "!/"
-									+ entryName);
-							break;
-						}
-					}
-
-					meshKey = new MeshProtoKey(meshURL);
-					_cachedKeys.put(filename, meshKey);
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-					assert (false);
-				} catch (IOException e) {
-					assert (false);
-				}
-			}
-
-			AABB bounds = RenderManager.inst().getMeshBounds(meshKey, true);
-			if (bounds == null) {
-				// This mesh has not been loaded yet, try again next time
-				return;
-			}
-
-			Transform trans = getTransform();
-			Vec4d scale = getScale();
-			long pickingID = getPickingID();
-
-			// Tweak the transform and scale to adjust for the bounds of the
-			// loaded model
-			Vec4d offset = new Vec4d(bounds.getCenter());
-			Vec4d boundsRad = new Vec4d(bounds.getRadius());
-			if (boundsRad.z == 0) {
-				boundsRad.z = 1;
-			}
-
-			Vec4d fixedScale = new Vec4d(0.5 * scale.x
-					/ boundsRad.x, 0.5 * scale.y / boundsRad.y, 0.5
-					* scale.z / boundsRad.z, 1.0d);
-
-			offset.x *= -1 * fixedScale.x;
-			offset.y *= -1 * fixedScale.y;
-			offset.z *= -1 * fixedScale.z;
-
-			Transform fixedTrans = new Transform(trans);
-			fixedTrans.merge(new Transform(offset), fixedTrans);
-
-			cachedProxies.add(new MeshProxy(meshKey, fixedTrans, fixedScale, getVisibilityInfo(),
-					pickingID));
 		}
 
 		// A disturbingly deep helper to allow trucks and ships to share contents building code
@@ -805,12 +589,6 @@ public class DisplayModelCompat extends DisplayModel {
 
 	}
 
-	private static HashMap<String, MeshProtoKey> _cachedKeys = new HashMap<String, MeshProtoKey>();
-
-	public static MeshProtoKey getCachedMeshKey(String shapeString) {
-		return _cachedKeys.get(shapeString);
-	}
-
 	private DisplayEntity.TagSet emptyTagSet = new DisplayEntity.TagSet();
 
 	// Begin static data
@@ -844,10 +622,6 @@ public class DisplayModelCompat extends DisplayModel {
 	private static List<Vec4d> shipCabinVerts;
 	private static Mat4d shipContentsTrans;
 	private static Mat4d truckContentsTrans;
-
-	private static ArrayList<String> imageExtensions;
-
-	private static ArrayList<String> modelExtensions;
 
 	static {
 		hullVerts = new ArrayList<Vec4d>(20);
@@ -1021,15 +795,5 @@ public class DisplayModelCompat extends DisplayModel {
 		stackerRect2Verts.add(new Vec4d(-0.1, -0.5, 0.1, 1.0d));
 		stackerRect2Verts.add(new Vec4d( 0.1, -0.5, 0.1, 1.0d));
 		stackerRect2Verts.add(new Vec4d( 0.1,  0.0, 0.1, 1.0d));
-
-		imageExtensions = new ArrayList<String>();
-		imageExtensions.add(".PNG");
-		imageExtensions.add(".JPG");
-		imageExtensions.add(".BMP");
-		imageExtensions.add(".GIF");
-
-		modelExtensions = new ArrayList<String>();
-		modelExtensions.add(".DAE");
-		modelExtensions.add(".ZIP");
 	}
 }

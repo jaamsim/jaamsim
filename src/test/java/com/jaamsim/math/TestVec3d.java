@@ -332,6 +332,29 @@ public void testMult() {
 }
 
 @Test
+public void testMultAndTrans() {
+	Vec3d vec = new Vec3d();
+	Vec3d expected = new Vec3d();
+
+	Mat4d transMat= new Mat4d( 1, 0, 0, 5,
+                               0, 2, 0, 6,
+                               0, 0, 3, 8,
+                               0, 0, 0, 1 );
+
+	vec.set3(1, 2, 3);
+	expected.set3(6, 10, 17);
+
+	vec.multAndTrans3(transMat, vec);
+	assertNear(vec, expected);
+
+	vec.set3(2, 4, 6);
+	expected.set3(7, 14, 26);
+
+	vec.multAndTrans3(transMat, vec);
+	assertNear(vec, expected);
+}
+
+@Test
 public void testNormDegen() {
 	Vec3d vec;
 

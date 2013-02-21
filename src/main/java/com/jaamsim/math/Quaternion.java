@@ -109,8 +109,8 @@ public static Quaternion FromEuler(double x, double y, double z) {
 	// This will almost certainly be a performance bottleneck before too long
 	Quaternion ret = Rotation(x, Vec4d.X_AXIS);
 
-	Rotation(y, Vec4d.Y_AXIS).mult(ret, ret);
-	Rotation(z, Vec4d.Z_AXIS).mult(ret, ret);
+	ret.mult(Rotation(y, Vec4d.Y_AXIS), ret);
+	ret.mult(Rotation(z, Vec4d.Z_AXIS), ret);
 	return ret;
 }
 
@@ -226,20 +226,21 @@ public void conjugate(Quaternion q) {
 }
 
 /**
- * Quaternion multiplication, mathematically equivalent to applying both rotations in order
+ * Quaternion multiplication, mathematically equivalent to applying both rotations in order.
+ * Sets this to a*b
  * @param q
  * @param res
  */
-public void mult(Quaternion rhs, Quaternion res) {
-	double _x = w*rhs.x + x*rhs.w + y*rhs.z - z*rhs.y;
-	double _y = w*rhs.y + y*rhs.w + z*rhs.x - x*rhs.z;
-	double _z = w*rhs.z + z*rhs.w + x*rhs.y - y*rhs.x;
-	double _w = w*rhs.w - x*rhs.x - y*rhs.y - z*rhs.z;
+public void mult(Quaternion a, Quaternion b) {
+	double _x = a.w*b.x + a.x*b.w + a.y*b.z - a.z*b.y;
+	double _y = a.w*b.y + a.y*b.w + a.z*b.x - a.x*b.z;
+	double _z = a.w*b.z + a.z*b.w + a.x*b.y - a.y*b.x;
+	double _w = a.w*b.w - a.x*b.x - a.y*b.y - a.z*b.z;
 
-	res.x = _x;
-	res.y = _y;
-	res.z = _z;
-	res.w = _w;
+	x = _x;
+	y = _y;
+	z = _z;
+	w = _w;
 }
 
 public boolean isNormal() {

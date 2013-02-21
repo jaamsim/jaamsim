@@ -31,7 +31,7 @@ public final class BoolEncoder {
 	BoolEncoder() {
 		range = 255;
 		bottom = 0;
-		data = new byte[1 << 21]; // 2 MiB buffer for now
+		data = new byte[1 << 25]; // 32 MiB buffer for now
 		count = 0;
 	}
 

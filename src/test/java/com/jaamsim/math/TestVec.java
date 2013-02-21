@@ -162,6 +162,12 @@ public static void assertNear(Vec4d v, Vec4d v4) {
 	assertNear(v.w, v4.w);
 }
 
+public static void assertNear(Vec3d v, Vec3d v4) {
+	assertNear(v.x, v4.x);
+	assertNear(v.y, v4.y);
+	assertNear(v.z, v4.z);
+}
+
 public void printVec(Vec4d vec) {
 	System.out.format("%.20f %.20f %.20f %.20f%n", vec.x, vec.y, vec.z, vec.w);
 }

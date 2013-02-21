@@ -37,7 +37,6 @@ import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.Vec3dInput;
 
 public class Graph extends DisplayEntity  {
-	private static final ArrayList<Graph> allInstances;
 
 	/**
 	 * A struct containing all the information pertaining to a specific series
@@ -90,6 +89,11 @@ public class Graph extends DisplayEntity  {
 	         example ="Graph1 YLines { 0 0.5 1 1.5 2 2.5 3 }")
 	private final DoubleListInput yLines; // Horizontal lines
 
+	@Keyword(desc = "The colour of the horizontal gridlines (or a list corresponding to the colour of each " +
+                    "gridline defined in YLines), defined using a colour keyword or RGB values.",
+	         example = "Graph1 YLinesColor { gray76 }")
+	private final ColorListInput yLinesColor;
+
 	@Keyword(desc = "The minimum value for the secondary y-axis.",
 	         example = "Graph1 SecondaryYAxisStart { 0 }")
 	private final DoubleInput secondaryYAxisStart;
@@ -101,11 +105,6 @@ public class Graph extends DisplayEntity  {
 	@Keyword(desc = "The interval between secondary y-axis labels.",
 	         example = "Graph1 SecondaryYAxisInterval { 1 }")
 	private final DoubleInput secondaryYAxisInterval;
-
-	@Keyword(desc = "The colour of the horizontal gridlines (or a list corresponding to the colour of each " +
-                    "gridline defined in YLines), defined using a colour keyword or RGB values.",
-	         example = "Graph1 YLinesColor { gray76 }")
-	private final ColorListInput yLinesColor;
 
 	@Keyword(desc = "A list of time values between StartTime and EndTime where vertical gridlines are inserted.",
 	         example = "Graph1 XLines { -48 -40 -32 -24 -16 -8 0 }")
@@ -325,9 +324,6 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 SecondaryYAxisMultiplier { 3.28083 }")
 	private final DoubleInput secondaryYAxisMultiplier; // the value to multiply each secondary y-axis label by
 
-	static {
-		allInstances = new ArrayList<Graph>();
-	}
 	{
 		targetEntityList = new EntityListInput<Entity>(Entity.class, "TargetEntity", "Data", new ArrayList<Entity>(0));
 		targetEntityList.setUnique(false);
@@ -382,7 +378,7 @@ public class Graph extends DisplayEntity  {
 		yLines = new DoubleListInput("YLines", "Y Axis", new DoubleVector());
 		this.addInput(yLines, true);
 
-		yLinesColor = new ColorListInput("YLinesColor", "Y Lines", new ArrayList<Color4d>(0));
+		yLinesColor = new ColorListInput("YLinesColor", "Y Axis", new ArrayList<Color4d>(0));
 		this.addInput(yLinesColor, true, "YLinesColour");
 
 		secondaryYAxisStart = new DoubleInput("SecondaryYAxisStart", "Y Axis", 0.0);
@@ -519,17 +515,13 @@ public class Graph extends DisplayEntity  {
 	}
 
 	public Graph() {
-		allInstances.add(this);
 
 		primarySeries = new ArrayList<SeriesInfo>();
 		secondarySeries = new ArrayList<SeriesInfo>();
 
 	}
 
-	public static ArrayList<? extends Graph> getAll() {
-		return allInstances;
-	}
-
+	@Override
 	public void validate()
 	throws InputErrorException {
 		super.validate();
@@ -579,17 +571,16 @@ public class Graph extends DisplayEntity  {
 		}
 	}
 
+	@Override
 	public void earlyInit(){
 		super.earlyInit();
+
+		primarySeries.clear();
+		secondarySeries.clear();
 
 		// Populate the primary series data structures
 		populateSeriesInfo(primarySeries, targetEntityList, targetInputParameters);
 		populateSeriesInfo(secondarySeries, secondaryTargetEntityList, secondaryTargetInputParameters);
-	}
-
-	public void kill() {
-		super.kill();
-		allInstances.remove(this);
 	}
 
 	private void populateSeriesInfo(ArrayList<SeriesInfo> infos, EntityListInput<Entity> targets, EntityListListInput<Entity> params) {
@@ -744,6 +735,7 @@ public class Graph extends DisplayEntity  {
 		graphSize = new Vec3d();
 		graphSize.x = ( ( graphExtent.x - ( leftMargin.getValue() +  rightMargin.getValue() ) ) / graphExtent.x );
 		graphSize.y = ( ( graphExtent.y - (  topMargin.getValue() + bottomMargin.getValue() ) ) / graphExtent.y );
+		graphSize.z = 1;
 
 		// Center position of the graph
 		graphCenter = new Vec3d( ( ( leftMargin.getValue() ) / 2 -	rightMargin.getValue()/2 ) / graphExtent.x,
@@ -754,7 +746,9 @@ public class Graph extends DisplayEntity  {
 
 	}
 
-	public void startGraph() {
+	@Override
+	public void startUp() {
+		super.startUp();
 		extraStartGraph();
 
 		targetMethod = targetMethodForYAxis("Primary");

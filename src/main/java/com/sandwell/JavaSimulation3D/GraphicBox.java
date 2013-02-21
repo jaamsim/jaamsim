@@ -40,6 +40,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
@@ -131,13 +132,18 @@ public class GraphicBox extends JDialog {
 					return;
 				}
 
+				StringBuilder validString = new StringBuilder(45);
+				validString.append("*.dae;");
+				validString.append("*.zip;");
+				validString.append("*.kmz;");
+				validString.append("*.bmp;");
+				validString.append("*.jpg;");
+				validString.append("*.png;");
+				validString.append("*.pcx;");
+				validString.append("*.gif");
+
 				FileDialog chooser = new FileDialog(myInstance, "New DisplayModel", FileDialog.LOAD );
-				String validTypes ="";
-				for(String each: DisplayModelCompat.getValidExtentions()) {
-					validTypes += "*." +each.toLowerCase()+";";
-				}
-				validTypes = validTypes.substring(0, validTypes.length()-1);
-				chooser.setFile(validTypes);
+				chooser.setFile(validString.toString());
 				chooser.setVisible(true);
 
 				// A file has not been selected
@@ -152,19 +158,13 @@ public class GraphicBox extends JDialog {
 				String entityName = fileName.substring(0, to); // File name without the extension
 				entityName = entityName.replaceAll(" ", ""); // Space is not allowed for Entity Name
 
-				DisplayModel newModel = InputAgent.defineEntityWithUniqueName(DisplayModelCompat.class, entityName, true);
+				DisplayModel newModel = InputAgent.defineEntityWithUniqueName(ColladaModel.class, entityName, true);
 
 				Vector data = new Vector(1);
 				data.addElement(entityName);
-				data.addElement("Shape");
+				data.addElement("ColladaFile");
 				data.addElement(chosenFileName);
-				data.addElement("EnableCulling");
-				if(!enabledCulling.isSelected()) {
-					data.addElement("FALSE");
-				}
-				else {
-					data.addElement("TRUE");
-				}
+
 				InputAgent.processData(newModel, data);
 				myInstance.refresh(); // Add the new DisplayModel to the List
 				FrameBox.valueUpdate();
@@ -184,7 +184,7 @@ public class GraphicBox extends JDialog {
 
 				Vector data = new Vector(3);
 				data.addElement(currentEntity.getInputName());
-				data.addElement(currentEntity.getDisplayModelList().getKeyword());
+				data.addElement("DisplayModel");
 				data.addElement(dm.getName());
 				InputAgent.processData(currentEntity, data);
 
@@ -193,9 +193,9 @@ public class GraphicBox extends JDialog {
 				}
 
 				Vec4d modelSize = Vec4d.ONES;
-				if (dm instanceof DisplayModelCompat) {
-					DisplayModelCompat dmc = (DisplayModelCompat)dm;
-					modelSize = RenderManager.inst().getMeshSize(dmc.getShape());
+				if (dm instanceof ColladaModel) {
+					ColladaModel dmc = (ColladaModel)dm;
+					modelSize = RenderManager.inst().getMeshSize(dmc.getColladaFile());
 				}
 
 				Vec3d entitySize = currentEntity.getSize();
@@ -262,7 +262,7 @@ public class GraphicBox extends JDialog {
 	}
 
 	private void refresh() {
-		DisplayModel entDisplayModel = currentEntity.getDisplayModelList().getValue().get(0);
+		DisplayModel entDisplayModel = currentEntity.getDisplayModelList().get(0);
 
 		ArrayList<DisplayModel> models = Simulation.getClonesOf(DisplayModel.class);
 		// Populate JList with all the DisplayModels

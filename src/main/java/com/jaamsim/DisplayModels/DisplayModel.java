@@ -16,11 +16,11 @@ package com.jaamsim.DisplayModels;
 
 import java.util.ArrayList;
 
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.ChangeWatcher;
-import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
@@ -28,6 +28,7 @@ import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.ObjectType;
+import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public abstract class DisplayModel extends Entity {
@@ -43,10 +44,10 @@ public abstract class DisplayModel extends Entity {
 	         example = "ShipModel DrawRange { 0 100 m }")
 	private final DoubleListInput drawRange;
 
-	@Keyword(desc = "ModelScale scales the resulting visualization by this factor. Warning!! Resizing an entity with this set " +
+	@Keyword(desc = "ModelScale scales the resulting visualization by this vector. Warning!! Resizing an entity with this set " +
 	         "to a value that is not 1 is very unintuitive.",
-	         example = "ShipModel ModelScale { 5 }")
-	private final DoubleInput modelScale;
+	         example = "ShipModel ModelScale { 5 5 5 }")
+	private final Vec3dInput modelScale;
 
 	{
 		visibleViews = new EntityListInput<View>(View.class, "VisibleViews", "Basic Graphics", new ArrayList<View>());
@@ -60,7 +61,7 @@ public abstract class DisplayModel extends Entity {
 		drawRange.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(drawRange, true);
 
-		modelScale = new DoubleInput( "ModelScale", "Basic Graphics", 1.0d);
+		modelScale = new Vec3dInput( "ModelScale", "Basic Graphics", new Vec3d(1, 1, 1));
 		modelScale.setValidRange( 0.0001, 10000);
 		this.addInput( modelScale, true);
 
@@ -121,7 +122,7 @@ public abstract class DisplayModel extends Entity {
 		return visInfo;
 	}
 
-	public double getModelScale() {
+	public Vec3d getModelScale() {
 		return modelScale.getValue();
 	}
 }

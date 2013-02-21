@@ -53,6 +53,7 @@ public class ScreenPointsModel extends DisplayModel {
 		protected HasScreenPoints screenPointObservee;
 		protected DisplayEntity displayObservee;
 		private ChangeWatcher.Tracker observeeTracker;
+		private ChangeWatcher.Tracker dmTracker;
 
 		protected ArrayList<Vec4d> points = null;
 		private ArrayList<Vec4d> nodePoints = null;
@@ -72,15 +73,17 @@ public class ScreenPointsModel extends DisplayModel {
 				screenPointObservee = null;
 				displayObservee = null;
 			}
+			dmTracker = dm.getGraphicsChangeTracker();
 
 		}
 
 		/**
 		 * Update the cached Points list
 		 */
-		protected void updatePoints() {
+		protected void updatePoints(double simTime) {
 
-			if (points != null && observeeTracker != null && !observeeTracker.checkAndClear()) {
+			if (points != null && observeeTracker != null && !observeeTracker.checkAndClear()
+			    && !dmTracker.checkAndClear()) {
 				// up to date
 				_cacheHits++;
 				return;
@@ -109,8 +112,6 @@ public class ScreenPointsModel extends DisplayModel {
 				nodePoints.add(new Vec4d(p.x, p.y, p.z, 1.0d));
 			}
 
-			double simTime = displayObservee.getCurrentTime();
-
 			if (displayObservee.getCurrentRegion() != null) {
 				Transform regionTrans = displayObservee.getCurrentRegion().getRegionTrans(simTime);
 				RenderUtils.transformPointsLocal(regionTrans, points, 0);
@@ -122,13 +123,13 @@ public class ScreenPointsModel extends DisplayModel {
 		}
 
 		@Override
-		public void collectProxies(ArrayList<RenderProxy> out) {
+		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
 
 			if (displayObservee == null || screenPointObservee == null ||!displayObservee.getShow()) {
 				return;
 			}
 
-			updatePoints();
+			updatePoints(simTime);
 
 			if (points.size() == 0) {
 				return;
@@ -139,7 +140,7 @@ public class ScreenPointsModel extends DisplayModel {
 		}
 
 		@Override
-		public void collectSelectionProxies(ArrayList<RenderProxy> out) {
+		public void collectSelectionProxies(double simTime, ArrayList<RenderProxy> out) {
 
 			if (displayObservee == null ||
 			    screenPointObservee == null ||
@@ -148,7 +149,7 @@ public class ScreenPointsModel extends DisplayModel {
 				return;
 			}
 
-			updatePoints();
+			updatePoints(simTime);
 
 			if (points.size() == 0) {
 				return;

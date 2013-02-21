@@ -109,13 +109,13 @@ public void testSelfAssignment() {
 	Quaternion q2 = new Quaternion(z_pi);
 
 	Quaternion q3 = new Quaternion();
-	q1.mult(q2, q3);
-	q1.mult(q2, q1);
+	q3.mult(q1, q2);
+	q1.mult(q1, q2);
 
 	assertTrue(q1.equals(q3));
 
-	q1.mult(q2, q3);
-	q1.mult(q2, q2);
+	q3.mult(q1, q2);
+	q2.mult(q1, q2);
 
 	assertTrue(q2.equals(q3));
 }

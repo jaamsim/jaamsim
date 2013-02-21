@@ -17,7 +17,6 @@ package com.sandwell.JavaSimulation3D;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.math.Vec4d;
 import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
@@ -70,14 +69,10 @@ private final Vec3dInput orientationInput;
 	public Transform getRegionTrans(double simTime) {
 		Quaternion rot = null;
 		Vec3d temp = orientationInput.getValue();
-		if (orientationInput.getValue() != null)
+		if (temp != null)
 			rot = Quaternion.FromEuler(temp.x, temp.y, temp.z);
 
 		temp = originInput.getValue();
-		Vec4d org = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		if (temp != null)
-			org.set3(temp.x, temp.y, temp.z);
-
-		return new Transform(org, rot, 1.0d);
+		return new Transform(temp, rot, 1.0d);
 	}
 }

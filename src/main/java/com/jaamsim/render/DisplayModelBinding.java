@@ -91,13 +91,13 @@ public abstract class DisplayModelBinding {
 		}
 	}
 
-	public abstract void collectProxies(ArrayList<RenderProxy> out);
+	public abstract void collectProxies(double simTime, ArrayList<RenderProxy> out);
 
 	public boolean isBoundTo(Entity ent) {
 		return ent == observee;
 	}
 
-	private void updatePoints() {
+	private void updatePoints(double simTime) {
 
 		if (!(observee instanceof DisplayEntity))
 		{
@@ -105,7 +105,6 @@ public abstract class DisplayModelBinding {
 		}
 		DisplayEntity de = (DisplayEntity)observee;
 		// Convert the points to world space
-		double simTime = de.getCurrentTime();
 
 		Transform trans = de.getGlobalTrans(simTime);
 		Vec4d scale = de.getJaamMathSize(dm.getModelScale());
@@ -119,13 +118,13 @@ public abstract class DisplayModelBinding {
 	}
 
 	// Collect the proxies for the selection box
-	public void collectSelectionProxies(ArrayList<RenderProxy> out) {
-		collectSelectionBox(out);
+	public void collectSelectionProxies(double simTime, ArrayList<RenderProxy> out) {
+		collectSelectionBox(simTime, out);
 	}
 
 	// This is exposed differently than above, because of the weird type heirarchy around
 	// ScreenPointsObservers. This can't just be overloaded, because sometime we want it back....
-	protected void collectSelectionBox(ArrayList<RenderProxy> out) {
+	protected void collectSelectionBox(double simTime, ArrayList<RenderProxy> out) {
 
 		if (!(observee instanceof DisplayEntity))
 		{
@@ -133,7 +132,6 @@ public abstract class DisplayModelBinding {
 		}
 
 		DisplayEntity de = (DisplayEntity)observee;
-		double simTime = de.getCurrentTime();
 		Transform trans = de.getGlobalTrans(simTime);
 		Vec4d scale = de.getJaamMathSize(dm.getModelScale());
 
@@ -144,7 +142,7 @@ public abstract class DisplayModelBinding {
 		out.add(outline);
 
 		if (handlePoints == null || _selectionTracker.checkAndClear()) {
-			updatePoints();
+			updatePoints(simTime);
 		}
 
 		for (int i = 0; i < 8; ++i) {

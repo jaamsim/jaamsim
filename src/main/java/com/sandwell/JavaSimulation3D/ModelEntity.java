@@ -157,15 +157,36 @@ public class ModelEntity extends DisplayEntity {
 
 	// States
 	protected static Vector stateList = new Vector( 11, 1 ); // List of valid states
-	protected HashMap<String, Integer> stateMap; // map of states and state list index
+	private final HashMap<String, StateRecord> stateMap;
 	protected double workingHours;                    // Accumulated working time spent in working states
 	protected DoubleVector hoursPerState;             // Elapsed time to date for each state
+
+private static class StateRecord {
+	String stateName;
+	int index;
+
+	public StateRecord(String state, int i) {
+		stateName = state;
+		index = i;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public String toString() {
+		return getStateName();
+	}
+}
 	protected double lastHistogramUpdateTime;   // Last time at which a histogram was updated for this entity
 	protected double secondToLastHistogramUpdateTime;   // Second to last time at which a histogram was updated for this entity
 	protected DoubleVector lastStartTimePerState;     // Last time at which the state changed from some other state to each state
 	protected DoubleVector secondToLastStartTimePerState;     // The second to last time at which the state changed from some other state to each state
-	protected String presentState;                    // The present state of the entity
-	protected int presentStateIndex;				  // The index of present state in the statelist
+	private StateRecord presentState; // The present state of the entity
 	protected double timeOfLastStateChange;           // Time at which the state was last changed
 	protected FileEntity stateReportFile;        // The file to store the state information
 	private String finalLastState = "";        // The final state of the entity (in a sequence of transitional states)
@@ -247,14 +268,11 @@ public class ModelEntity extends DisplayEntity {
 	}
 
 	public ModelEntity() {
-		presentState = "Idle";
-		presentStateIndex = 0;
 		hoursPerState = new DoubleVector();
 		lastHistogramUpdateTime = 0.0;
 		secondToLastHistogramUpdateTime = 0.0;
 		lastStartTimePerState = new DoubleVector();
 		secondToLastStartTimePerState = new DoubleVector();
-		presentState = "";
 		timeOfLastStateChange = 0.0;
 		hoursForNextFailure = 0.0;
 		iATFailure = 0.0;
@@ -277,22 +295,15 @@ public class ModelEntity extends DisplayEntity {
 		maintenance = false;
 		associatedMaintenance = false;
 		workingHours = 0.0;
-		stateMap = new HashMap<String, Integer>();
+		stateMap = new HashMap<String, StateRecord>();
 		timeOfLastStateChange = 0.0;
-
-		// Populate the hash map for the states and state list indices
-		for( int i = 0; i < getStateList().size(); i++ ) {
-			stateMap.put( ((String)getStateList().get(i)).toLowerCase(), Integer.valueOf(i));
-		}
+		initStateMap();
 	}
 
 	/**
 	 * Clear internal properties
 	 */
 	public void clearInternalProperties() {
-		presentStateIndex = 0;
-		hoursPerState.clear();
-		presentState = "";
 		timeOfLastStateChange = 0.0;
 		hoursForNextFailure = 0.0;
 		performMaintenanceAfterShipDelayPending = false;
@@ -354,6 +365,17 @@ public class ModelEntity extends DisplayEntity {
 		}
 	}
 
+	public void initStateMap() {
+
+		// Populate the hash map for the states and StateRecord
+		stateMap.clear();
+		for (int i = 0; i < getStateList().size(); i++) {
+			String state = (String)getStateList().get(i);
+			StateRecord stateRecord = new StateRecord(state, i);
+			stateMap.put(state.toLowerCase() , stateRecord);
+		}
+	}
+
 	// ******************************************************************************************************
 	// INPUT
 	// ******************************************************************************************************
@@ -380,12 +402,7 @@ public class ModelEntity extends DisplayEntity {
 			hoursForNextMaintenanceOperatingHours.set( i, hoursForNextMaintenanceOperatingHours.get( i ) - this.getWorkingHours() );
 		}
 
-		if( getStateList().size() != 0 ) {
-			hoursPerState.fillWithEntriesOf( getStateList().size(), 0.0 );
-		}
-		else {
-			hoursPerState.clear();
-		}
+		initHoursPerState();
 		timeOfLastStateChange = getCurrentTime();
 
 		// Determine the time for the first breakdown event
@@ -403,7 +420,7 @@ public class ModelEntity extends DisplayEntity {
 	}
 
 	public void initializeStatistics() {
-		hoursPerState.fillWithEntriesOf( getStateList().size(), 0.0 );
+		initHoursPerState();
 		timeOfLastStateChange = getCurrentTime();
 	}
 
@@ -424,7 +441,7 @@ public class ModelEntity extends DisplayEntity {
 			stateReportFile = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
 		}
 
-		hoursPerState.fillWithEntriesOf( getStateList().size(), 0.0 );
+		initHoursPerState();
 		lastStartTimePerState.fillWithEntriesOf( getStateList().size(), 0.0 );
 		secondToLastStartTimePerState.fillWithEntriesOf( getStateList().size(), 0.0 );
 		timeOfLastStateChange = getCurrentTime();
@@ -578,17 +595,14 @@ public class ModelEntity extends DisplayEntity {
 	 */
 	public void updateHours() {
 
-		if( presentState.length() == 0 ) {
+		if( getPresentState().length() == 0 ) {
 			timeOfLastStateChange = getCurrentTime();
 			return;
 		}
 
-		int index = this.indexOfState( presentState );
+		int index = this.indexOfState( getPresentState() );
 		if( index == -1 ) {
 			throw new ErrorException( "Present state not found in StateList." );
-		}
-		if( presentStateIndex != index ) {
-			throw new ErrorException( "presentStateIndex should be: " + index + ", but it is: " + presentStateIndex );
 		}
 
 		double dur = getCurrentTime() - timeOfLastStateChange;
@@ -600,14 +614,8 @@ public class ModelEntity extends DisplayEntity {
 			}
 
 			hoursPerState.addAt( dur, index );*/
-			if( !getStateList().get( presentStateIndex ).equals( presentState ) ) {
-				throw new ErrorException( this + " Present state index ( " + presentStateIndex + " ) does not match present state ( " + presentState + " )." );
-			}
-			if( hoursPerState.size() <= presentStateIndex  ) {
-				throw new ErrorException( this + " Present state index ( " + presentStateIndex + " ) does not exist in hoursPerState." );
-			}
 
-			hoursPerState.addAt( dur, presentStateIndex );
+			addHoursAt(dur, getPresentStateIndex());
 			timeOfLastStateChange = getCurrentTime();
 
 			// Update working hours, if required
@@ -616,6 +624,12 @@ public class ModelEntity extends DisplayEntity {
 				workingHours += dur;
 			}
 		}
+	}
+
+	public void initHoursPerState() {
+		hoursPerState.clear();
+		if( getStateList().size() != 0 )
+			hoursPerState.fillWithEntriesOf( getStateList().size(), 0.0 );
 	}
 
 	/**
@@ -629,7 +643,33 @@ public class ModelEntity extends DisplayEntity {
 	 * Returns the present status.
 	 */
 	public String getPresentState() {
-		return presentState;
+		if (presentState == null)
+			return "";
+
+		return presentState.getStateName();
+	}
+
+	public boolean presentStateEquals(String state) {
+		return getPresentState().equals(state);
+	}
+
+	public boolean presentStateMatches(String state) {
+		return getPresentState().equalsIgnoreCase(state);
+	}
+
+	public boolean presentStateStartsWith(String prefix) {
+		return getPresentState().startsWith(prefix);
+	}
+
+	public boolean presentStateEndsWith(String suffix) {
+		return getPresentState().endsWith(suffix);
+	}
+
+	protected int getPresentStateIndex() {
+		if (presentState == null)
+			return -1;
+
+		return presentState.getIndex();
 	}
 
 	public void setPresentState() {}
@@ -639,16 +679,15 @@ public class ModelEntity extends DisplayEntity {
 	 */
 	public void setPresentState( String state ) {
 		if( traceFlag ) this.trace("setState( "+state+" )");
-		if( traceFlag ) this.traceLine(" Old State = "+presentState );
+		if( traceFlag ) this.traceLine(" Old State = "+getPresentState() );
 
-		if( ! presentState.equals( state ) ) {
+		if( ! presentStateEquals( state ) ) {
 			if (testFlag(FLAG_TRACESTATE)) this.printStateTrace(state);
 
 			int ind = this.indexOfState( state );
 			if( ind != -1 ) {
 				this.updateHours();
-				presentState = state;
-				presentStateIndex = ind;
+				presentState = stateMap.get(state.toLowerCase());
 				if( lastStartTimePerState.size() > 0 ) {
 					if( secondToLastStartTimePerState.size() > 0 ) {
 						secondToLastStartTimePerState.set( ind, lastStartTimePerState.get( ind ) );
@@ -671,7 +710,7 @@ public class ModelEntity extends DisplayEntity {
 		if( finalLastState.equals("") ) {
 			finalLastState = state;
 			stateReportFile.putString(String.format("%.5f  %s.setState( \"%s\" ) dt = %s\n",
-									  0.0d, this.getName(), presentState, formatNumber(getCurrentTime())));
+									  0.0d, this.getName(), getPresentState(), formatNumber(getCurrentTime())));
 			stateReportFile.flush();
 			timeOfLastPrintedState = getCurrentTime();
 		}
@@ -695,16 +734,23 @@ public class ModelEntity extends DisplayEntity {
 	/**
 	 * Returns the amount of time spent in the specified status.
 	 */
-	public double getHoursForState( String state ) {
+	public double getCurrentCycleHoursFor( String state ) {
 
 		int index = this.indexOfState( state );
 		if( index != -1 ) {
 			this.updateHours();
-			return hoursPerState.get( index );
+			return getCurrentCycleHoursFor( index );
 		}
 		else {
 			throw new ErrorException( "Specified state: " + state + " was not found in the StateList." );
 		}
+	}
+
+	/**
+	 * Return spent hours for a given state at the index in stateList
+	 */
+	public double getCurrentCycleHoursFor(int index) {
+		return hoursPerState.get(index);
 	}
 
 	/**
@@ -765,8 +811,8 @@ public class ModelEntity extends DisplayEntity {
 	 * Return the fraction of time for the given status
 	 */
 	public double getFractionOfTimeForState( String aState ) {
-		if( hoursPerState.sum() > 0.0 ) {
-			return ((this.getHoursForState( aState ) / hoursPerState.sum()) );
+		if( getCurrentCycleHours() > 0.0 ) {
+			return ((this.getCurrentCycleHoursFor( aState ) / getCurrentCycleHours()) );
 		}
 		else {
 			return 0.0;
@@ -777,8 +823,8 @@ public class ModelEntity extends DisplayEntity {
 	 * Return the percentage of time for the given status
 	 */
 	public double getPercentageOfTimeForState( String aState ) {
-		if( hoursPerState.sum() > 0.0 ) {
-			return ((this.getHoursForState( aState ) / hoursPerState.sum()) * 100.0);
+		if( getCurrentCycleHours() > 0.0 ) {
+			return ((this.getCurrentCycleHoursFor( aState ) / getCurrentCycleHours()) * 100.0);
 		}
 		else {
 			return 0.0;
@@ -794,9 +840,11 @@ public class ModelEntity extends DisplayEntity {
 		return workingHours;
 	}
 
-	public DoubleVector getHours() {
-		this.updateHours();
-		return hoursPerState;
+	/**
+	 * Add hours to the specified state by index on the stateList
+	 */
+	protected void addHoursAt(double dur, int index) {
+		hoursPerState.addAt(dur, index);
 	}
 
 	public Vector getStateList() {
@@ -804,17 +852,25 @@ public class ModelEntity extends DisplayEntity {
 	}
 
 	public int indexOfState( String state ) {
-		Integer i = stateMap.get( state.toLowerCase() );
-		if( i != null ) {
-			return  i.intValue();
-		}
-		else {
-			return -1;
-		}
+		StateRecord stateRecord = stateMap.get( state.toLowerCase() );
+		if (stateRecord != null)
+			return  stateRecord.getIndex();
+
+		return -1;
 	}
 
-	public DoubleVector getHoursPerState() {
-		return hoursPerState;
+	/**
+	 * Return total number of states
+	 */
+	public int getNumberOfStates() {
+		return hoursPerState.size();
+	}
+
+	/**
+	 * Return the total hours in current cycle for all the states
+	 */
+	public double getCurrentCycleHours() {
+		return hoursPerState.sum();
 	}
 
 	// *******************************************************************************************************
@@ -1381,15 +1437,15 @@ public class ModelEntity extends DisplayEntity {
 		DoubleVector columnValues = new DoubleVector();
 
 		this.updateHours();
-		if( hoursPerState.size() != 0 ) {
-			total = hoursPerState.sum();
+		if( getNumberOfStates() != 0 ) {
+			total = getCurrentCycleHours();
 			if( !(total == 0.0) ) {
 				this.updateHours();
 				anOut.putStringTabs( getName(), 1 );
 				columnValues.add( 0.0 );
 
-				for( int i = 0; i < hoursPerState.size(); i++ ) {
-					double value = hoursPerState.get( i ) / total;
+				for( int i = 0; i < getNumberOfStates(); i++ ) {
+					double value = getCurrentCycleHoursFor( i ) / total;
 					anOut.putDoublePercentWithDecimals( value, 1 );
 					anOut.putTabs( 1 );
 					columnValues.add( value );
@@ -1470,10 +1526,10 @@ public class ModelEntity extends DisplayEntity {
 	 **/
 	public Vector getInfo() {
 		Vector info = super.getInfo();
-		if( presentState == null || presentState.equals( "" ) )
+		if ( presentStateEquals("") )
 			info.addElement( "Present State\t<no state>" );
 		else
-			info.addElement( "Present State" + "\t" + presentState );
+			info.addElement( "Present State" + "\t" + getPresentState() );
 		return info;
 	}
 

@@ -14,24 +14,42 @@
  */
 package com.jaamsim.render;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
+
+import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.ui.View;
+import com.sandwell.JavaSimulation.Simulation;
+import com.sandwell.JavaSimulation.Util;
+import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
 public class PreviewCache {
 
 	private HashMap<DisplayModel, Future<BufferedImage>> _imageCache;
 
+	private DisplayEntity dummyEntity;
+
 	public PreviewCache() {
 		_imageCache = new HashMap<DisplayModel, Future<BufferedImage>>();
+
+
+		if (Simulation.getSimulationState() != Simulation.SIM_STATE_RUNNING) {
+			dummyEntity = new DisplayEntity();
+			dummyEntity.kill();
+		}
 	}
 
 	public void clear() {
@@ -52,6 +70,31 @@ public class PreviewCache {
 				return cached;
 			}
 
+			// Fast path out for ImageModels
+			if (dm instanceof ImageModel) {
+				ImageModel im = (ImageModel)dm;
+				String filename = im.getImageFile();
+				Future<BufferedImage> ret = new Future<BufferedImage>(null);
+				try {
+					URL imageURL = new URL(Util.getAbsoluteFilePath(filename));
+					BufferedImage image = ImageIO.read(imageURL);
+
+					// For some weird reason, the resizing that may happen to this image fails silently
+					// for other color types, so we'll just hard convert it here
+					BufferedImage colored = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+					Graphics2D g2 = colored.createGraphics();
+					g2.drawImage(image, new AffineTransform(), null);
+					g2.dispose();
+
+					ret.setComplete(colored);
+
+				} catch (Exception ex) {
+					ret.setFailed("Bad image");
+				}
+				_imageCache.put(dm, ret);
+				return ret;
+			}
+
 			// Otherwise we need to load it....
 
 			ArrayList<RenderProxy> proxies = new ArrayList<RenderProxy>();
@@ -59,27 +102,43 @@ public class PreviewCache {
 			// Collect the render proxies for a dummy version of this DisplayModel,
 			// This will all need to be refactored soonish.
 
-			if (dm != null) {
-				dm.getBinding(null).collectProxies(proxies);
+			if (dummyEntity == null) {
+				if (Simulation.getSimulationState() != Simulation.SIM_STATE_RUNNING) {
+					dummyEntity = new DisplayEntity();
+					dummyEntity.kill();
+				} else {
+					// The simulation is running so we can't make the dummy entity
+					Future<BufferedImage> ret = new Future<BufferedImage>(null);
+					ret.setFailed("Simulation running");
+					return ret;
+				}
 			}
+
+			if (dm == null || !dm.canDisplayEntity(dummyEntity)) {
+				Future<BufferedImage> ret = new Future<BufferedImage>(null);
+				ret.setFailed("Cannot render preview");
+				return ret;
+			}
+			// TODO: generate a different dummy entity for different display model types
+
+			dm.getBinding(dummyEntity).collectProxies(0, proxies);
 
 			boolean isFlat = true;
 			if (dm instanceof DisplayModelCompat) {
-				DisplayModelCompat dmc = (DisplayModelCompat)dm;
-				String shapeString = dmc.getShape();
-				String extension = shapeString.substring(shapeString.length() - 3, shapeString.length()).toUpperCase();
-				if (extension.equals("DAE") || extension.equals("ZIP")) {
-					isFlat = false;
-				}
+				isFlat = true;
 			}
+			if (dm instanceof ColladaModel) {
+				isFlat = false;
+			}
+
 
 			Transform camTrans = new Transform();
 			if (!isFlat) {
 				// If this model is 3D, switch to an isometric view
 				Quaternion cameraRot = new Quaternion();
-				Quaternion.Rotation(Math.PI/2, Vec4d.X_AXIS).mult(cameraRot, cameraRot);
-				Quaternion.Rotation(3*Math.PI/4, Vec4d.Z_AXIS).mult(cameraRot, cameraRot);
-				Quaternion.Rotation(Math.PI/5, new Vec4d(1, -1, 0, 1.0d)).mult(cameraRot, cameraRot);
+				cameraRot.mult(Quaternion.Rotation(Math.PI/2, Vec4d.X_AXIS), cameraRot);
+				cameraRot.mult(Quaternion.Rotation(3*Math.PI/4, Vec4d.Z_AXIS), cameraRot);
+				cameraRot.mult(Quaternion.Rotation(Math.PI/5, new Vec4d(1, -1, 0, 1.0d)), cameraRot);
 				camTrans = new Transform(new Vec4d(1.2, 1.2, 1.2, 1.0d), cameraRot, 1);
 			} else {
 				camTrans = new Transform(new Vec4d(0, 0, 1.2, 1.0d));

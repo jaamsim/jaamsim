@@ -19,7 +19,8 @@ Define ObjectType  { TimeUnit
                      SpecificEnergyUnit
                      PowerUnit
                      CostUnit
-                     CostRateUnit }
+                     CostRateUnit
+                     LinearDensityUnit }
 
 TimeUnit            JavaClass { com.jaamsim.units.TimeUnit            } Palette { Units } DragAndDrop { FALSE }
 DistanceUnit        JavaClass { com.jaamsim.units.DistanceUnit        } Palette { Units } DragAndDrop { FALSE }
@@ -37,6 +38,7 @@ SpecificEnergyUnit  JavaClass { com.jaamsim.units.SpecificEnergyUnit  } Palette 
 PowerUnit           JavaClass { com.jaamsim.units.PowerUnit           } Palette { Units } DragAndDrop { FALSE }
 CostUnit            JavaClass { com.jaamsim.units.CostUnit            } Palette { Units } DragAndDrop { FALSE }
 CostRateUnit        JavaClass { com.jaamsim.units.CostRateUnit        } Palette { Units } DragAndDrop { FALSE }
+LinearDensityUnit   JavaClass { com.jaamsim.units.LinearDensityUnit   } Palette { Units } DragAndDrop { FALSE }
 
 
 " ======================================================================================================================================================
@@ -231,3 +233,12 @@ Define CostRateUnit      { $/s $/h $/d }
 $/s    ConversionFactorToSI { 1 }       Alias { $/second }
 $/h    ConversionFactorToSI { 1 3600  } Alias { $/hour }
 $/d    ConversionFactorToSI { 1 86400 } Alias { $/day }
+
+" ======================================================================================================================================================
+" Linear Density units
+" ======================================================================================================================================================
+
+Define LinearDensityUnit      { t/m kt/m }
+
+t/m  ConversionFactorToSI { 1000      }
+kt/m ConversionFactorToSI { 1000000   }

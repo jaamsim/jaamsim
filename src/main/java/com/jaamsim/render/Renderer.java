@@ -175,6 +175,7 @@ public class Renderer {
 			_caps = new GLCapabilities(glp);
 			_caps.setSampleBuffers(true);
 			_caps.setNumSamples(4);
+			_caps.setDepthBits(24);
 
 			// Create a dummy window
 			_dummyWindow = GLWindow.create(_caps);
@@ -703,7 +704,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		_protoCache.put(key, proto);
 
 		synchronized(_protoBounds) {
-			_protoBounds.put(key, proto.getHull().getAABB(new Mat4d()));
+			_protoBounds.put(key, proto.getHull().getAABB(Mat4d.IDENTITY));
 		}
 
 		synchronized(_protoBoundsLock) {

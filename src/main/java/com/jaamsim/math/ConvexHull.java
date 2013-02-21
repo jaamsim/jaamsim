@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.jaamsim.render.RenderUtils;
@@ -30,6 +29,12 @@ import com.jaamsim.render.RenderUtils;
  */
 public class ConvexHull {
 
+	public static long filterTime;
+	public static long buildTime;
+	public static long finalizeTime;
+	public static long sortTime;
+
+
 	private ArrayList<Vec4d> _verts;
 
 	private boolean _isDegenerate = false;
@@ -39,7 +44,10 @@ public class ConvexHull {
 	private double _radius;
 
 	public static ConvexHull TryBuildHull(ArrayList<Vec4d> verts, int numAttempts) {
+
+		long filterStart = System.nanoTime();
 		ArrayList<Vec4d> baseVerts = removeDoubles(verts);
+		filterTime += System.nanoTime() - filterStart;
 
 		assert(numAttempts > 0);
 
@@ -70,6 +78,7 @@ public class ConvexHull {
 		assert(seed >= 0);
 		assert(seed < 1);
 
+		long buildStart = System.nanoTime();
 
 		if (baseVerts.size() < 3) {
 			// This mesh is too small, so just create an empty Hull... or should we throw?
@@ -193,7 +202,7 @@ public class ConvexHull {
 			}
 
 			// The points that are no longer associated with a face
-			List<Integer> orphanedPoints = new LinkedList<Integer>();
+			ArrayList<Integer> orphanedPoints = new ArrayList<Integer>();
 			orphanedPoints.addAll(unclaimedPoints);
 			unclaimedPoints.clear();
 
@@ -211,12 +220,11 @@ public class ConvexHull {
 			pruneEdges(edges);
 
 			// Scan the loop to make sure it's a single loop
-			if (!scanEdges(edges, baseVerts)) {
-				// This hull diverged
-				makeDegenerate(baseVerts);
-				assert(false);
-				return;
-			}
+//			if (!scanEdges(edges)) {
+//				// This hull diverged
+//				makeDegenerate(baseVerts);
+//				return;
+//			}
 
 			ArrayList<TempHullFace> newFaces = new ArrayList<TempHullFace>();
 
@@ -230,10 +238,8 @@ public class ConvexHull {
 			} // end of building new faces
 
 			// Add each orphaned point to the new face it is the furthest away from (by normal distance)
-			Iterator<Integer> orph_it = orphanedPoints.iterator();
-			while(orph_it.hasNext()) {
-
-				int ind = orph_it.next();
+			int deadPoints = 0;
+			for (int ind : orphanedPoints) {
 
 				TempHullFace bestFace = null;
 				bestDist = -1;
@@ -247,13 +253,14 @@ public class ConvexHull {
 				}
 				if (bestFace != null) {
 					bestFace.addPoint(ind, baseVerts);
-					orph_it.remove();
+				} else {
+					++deadPoints;
 				}
 			}
 
 			// This is the end of the main loop, check that at least one point has been claimed
 
-			if (orphanedPoints.size() == 0) {
+			if (deadPoints == 0) {
 				// We have run out of points, so let's just call this good enough
 				break;
 			}
@@ -261,6 +268,10 @@ public class ConvexHull {
 		} // End of main loop
 
 		_radius = 0.0;
+
+
+		long finalizeStart = System.nanoTime();
+		buildTime += finalizeStart - buildStart;
 
 		// Now that we have all the faces we can create a real subset of points we care about
 		ArrayList<Vec4d> realVerts = new ArrayList<Vec4d>();
@@ -294,46 +305,31 @@ public class ConvexHull {
 		// swap out our vertex list to the real one
 		_verts = realVerts;
 
+		finalizeTime += System.nanoTime() - finalizeStart;
+
 	} // End of ConvexHull() Constructor
 
 
-/**
- * Truncate the significand to only a few bits an compare, this is a ridiculous function
- * that only really makes sense with the sorting comparator in order to give a
- * reliable sorting order. This method returns a double, except it is truncated
- * to only 4 bits of mantissa
- *
- * @param d
- * @return
- */
-private static int compareTruncate(double d0, double d1) {
-	long trunc0 = Double.doubleToLongBits(d0) & 0xFFFF000000000000L;
-	long trunc1 = Double.doubleToLongBits(d1) & 0xFFFF000000000000L;
+	private static final Comparator<Vec4d> COMP = new Comparator<Vec4d>() {
+		@Override
+		public int compare(Vec4d v0, Vec4d v1) {
+			int comp;
+			comp = Double.compare(v0.x, v1.x);
+			if (comp != 0)
+				return comp;
 
-	d0 = Double.longBitsToDouble(trunc0);
-	d1 = Double.longBitsToDouble(trunc1);
-	return Double.compare(d0, d1);
-}
+			comp = Double.compare(v0.y, v1.y);
+			if (comp != 0)
+				return comp;
 
-private static final Comparator<Vec4d> COMP = new Comparator<Vec4d>() {
-	@Override
-	public int compare(Vec4d v0, Vec4d v1) {
-		int comp;
-		comp = compareTruncate(v0.x, v1.x);
-		if (comp != 0)
-			return comp;
+			comp = Double.compare(v0.z, v1.z);
+			if (comp != 0)
+				return comp;
 
-		comp = compareTruncate(v0.y, v1.y);
-		if (comp != 0)
-			return comp;
+			return Double.compare(v0.w, v1.w);
+		}
+	};
 
-		comp = compareTruncate(v0.z, v1.z);
-		if (comp != 0)
-			return comp;
-
-		return compareTruncate(v0.w, v1.w);
-	}
-};
 	/**
 	 * Remove any doubles from the list and return a new, possibly shorter list
 	 * @param orig
@@ -345,15 +341,18 @@ private static final Comparator<Vec4d> COMP = new Comparator<Vec4d>() {
 			return ret;
 		}
 
-		List<Vec4d> copy = new ArrayList<Vec4d>(orig);
+		final ArrayList<Vec4d> copy = new ArrayList<Vec4d>(orig);
+
+		long sortStart = System.nanoTime();
 
 		Collections.sort(copy, COMP);
 
+		sortTime += System.nanoTime() - sortStart;
 
 		ret.add(copy.get(0));
 		int outIndex = 0; // An updated index of the last element of the returned set, this may be
 		for (int index = 1;index < copy.size(); ++index) {
-			if (!copy.get(index).equals3(ret.get(outIndex))) {
+			if (!copy.get(index).near3(ret.get(outIndex))) {
 				// We have not seen this vector before
 				ret.add(copy.get(index));
 				++outIndex;
@@ -389,25 +388,28 @@ private static final Comparator<Vec4d> COMP = new Comparator<Vec4d>() {
 		}
 	}
 
-	private boolean scanEdges(ArrayList<HullEdge> edges, ArrayList<Vec4d> verts) {
-		ArrayList<Integer> seenIndices = new ArrayList<Integer>();
+	// This is used for sanity checking the generation code, but it too slow to leave in
+	@SuppressWarnings("unused")
+	private boolean scanEdges(ArrayList<HullEdge> edges) {
+		int[] seenIndices = new int[edges.size()*2];
+		int numSeen = 0;
 
-		double[] edgeLengths = new double[edges.size()];
-		int i = 0;
-		Vec4d temp = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		//ArrayList<Integer> seenIndices = new ArrayList<Integer>();
+
 		for (HullEdge e : edges) {
-			if (!seenIndices.contains(e.ind0))
-				seenIndices.add(e.ind0);
-			if (!seenIndices.contains(e.ind1))
-				seenIndices.add(e.ind1);
+			boolean seen = false;
+			for (int i = 0; i < numSeen; ++i) { if (seenIndices[i] == e.ind0) seen = true; }
+			if (!seen)
+				seenIndices[numSeen++] = e.ind0;
 
-			temp.sub3(verts.get(e.ind0), verts.get(e.ind1));
-			edgeLengths[i++] = temp.mag3();
+			for (int i = 0; i < numSeen; ++i) { if (seenIndices[i] == e.ind1) seen = true; }
+			if (!seen)
+				seenIndices[numSeen++] = e.ind1;
 		}
 
 
 		//assert(seenIndices.size() == edges.size());
-		return seenIndices.size() == edges.size();
+		return numSeen == edges.size();
 
 	}
 
@@ -515,11 +517,11 @@ private static final Comparator<Vec4d> COMP = new Comparator<Vec4d>() {
 	 *
 	 */
 	private class TempHullFace {
-		public int[] indices = new int[3];
-		public Plane plane;
+		public final int[] indices = new int[3];
+		public final Plane plane;
 		public double furthestDist = 0;
 		public int furthestInd = 0;
-		public ArrayList<Integer> points = new ArrayList<Integer>();
+		public final ArrayList<Integer> points = new ArrayList<Integer>();
 
 		public TempHullFace(int i0, int i1, int i2, ArrayList<Vec4d> verts) {
 			indices[0] = i0;
@@ -548,14 +550,14 @@ private static final Comparator<Vec4d> COMP = new Comparator<Vec4d>() {
 	 * @author Matt.Chudleigh
 	 *
 	 */
-	public class HullFace {
-		public int[] indices = new int[3];
+	public static class HullFace {
+		public final int[] indices = new int[3];
 	}
 
 	// A really dumb class to store edges
-	private class HullEdge {
-		int ind0;
-		int ind1;
+	private static class HullEdge {
+		final int ind0;
+		final int ind1;
 		HullEdge(int i0, int i1) {
 			ind0 = i0; ind1 = i1;
 		}
@@ -579,6 +581,10 @@ private static final Comparator<Vec4d> COMP = new Comparator<Vec4d>() {
 				_radius = v.mag3();
 			}
 		}
+	}
+
+	public boolean isDegenerate() {
+		return _isDegenerate;
 	}
 
 	/**

@@ -71,7 +71,6 @@ public class Polygon implements Renderable {
 		this.hoverColour = hoverColour.toFloats();
 		this.isOutline = isOutline;
 		this.lineWidth = lineWidth;
-		this.lineWidth = 1;
 		this.pickingID = pickingID;
 		this.trans = trans;
 		this._visInfo = visInfo;

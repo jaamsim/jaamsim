@@ -40,7 +40,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.font.TessFont;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.AABB;
@@ -206,9 +208,15 @@ public class RenderManager implements DragSourceListener {
 		_popupLock = new Object();
 	}
 
-	public void updateTime(double simTime) {
-		_simTime = simTime;
+	public static final void updateTime(double simTime) {
+		if (!RenderManager.isGood())
+			return;
 
+		RenderManager.inst().queueRedraw(simTime);
+	}
+
+	private void queueRedraw(double time) {
+		_simTime = time;
 		queueRedraw();
 	}
 
@@ -331,11 +339,13 @@ public class RenderManager implements DragSourceListener {
 				DisplayModelBinding.clearCacheCounters();
 				DisplayModelBinding.clearCacheMissData();
 
+				double renderTime = _simTime;
+
 				long startNanos = System.nanoTime();
 
 				for (int i = 0; i < View.getAll().size(); i++) {
 					View v = View.getAll().get(i);
-					v.update(_simTime);
+					v.update(renderTime);
 				}
 
 				int numDisplayEntities = DisplayEntity.getAll().size();
@@ -346,7 +356,7 @@ public class RenderManager implements DragSourceListener {
 				for (int i = 0; i < numDisplayEntities; i++) {
 					try {
 						DisplayEntity de = DisplayEntity.getAll().get(i);
-						de.updateGraphics(_simTime);
+						de.updateGraphics(renderTime);
 					}
 					// Catch everything so we don't screw up the behavior handling
 					catch (Throwable e) {
@@ -356,13 +366,23 @@ public class RenderManager implements DragSourceListener {
 
 				long updateNanos = System.nanoTime();
 
+				// Refresh, as this may have changed during the update phase
+				numDisplayEntities = DisplayEntity.getAll().size();
+
 				int totalBindings = 0;
 				for (int i = 0; i < numDisplayEntities; i++) {
-					DisplayEntity de = DisplayEntity.getAll().get(i);
+					DisplayEntity de;
+					try {
+						de = DisplayEntity.getAll().get(i);
+					} catch (IndexOutOfBoundsException ex) {
+						// This is probably the end of the list, so just move on
+						break;
+					}
+
 					for (DisplayModelBinding binding : de.getDisplayBindings()) {
 						try {
 							totalBindings++;
-							binding.collectProxies(_cachedScene);
+							binding.collectProxies(renderTime, _cachedScene);
 							if (binding.isBoundTo(_selectedEntity)) {
 								selectedBindings.add(binding);
 							}
@@ -376,7 +396,7 @@ public class RenderManager implements DragSourceListener {
 				// Collect selection proxies second so they always appear on top
 				for (DisplayModelBinding binding : selectedBindings) {
 					try {
-						binding.collectSelectionProxies(_cachedScene);
+						binding.collectSelectionProxies(renderTime, _cachedScene);
 					} catch (Throwable t) {
 						// Log the exception in the exception list
 						logException(t);
@@ -751,7 +771,15 @@ public class RenderManager implements DragSourceListener {
 		}
 	}
 
-	public void setSelection(Entity ent) {
+	public static void setSelection(Entity ent) {
+		if (!RenderManager.isGood())
+			return;
+
+		RenderManager.inst().setSelectEntity(ent);
+	}
+
+
+	private void setSelectEntity(Entity ent) {
 		if (ent instanceof DisplayEntity)
 			_selectedEntity = (DisplayEntity)ent;
 		else
@@ -793,11 +821,11 @@ public class RenderManager implements DragSourceListener {
 		                             dragInfo.x - dragInfo.dx,
 		                             dragInfo.y - dragInfo.dy);
 
-		Transform trans = _selectedEntity.getGlobalTrans();
+		Transform trans = _selectedEntity.getGlobalTrans(_simTime);
 
-		Vec4d size = _selectedEntity.getJaamMathSize(1);
-		Mat4d transMat = _selectedEntity.getTransMatrix();
-		Mat4d invTransMat = _selectedEntity.getInvTransMatrix();
+		Vec4d size = _selectedEntity.getJaamMathSize(Vec4d.ONES);
+		Mat4d transMat = _selectedEntity.getTransMatrix(_simTime);
+		Mat4d invTransMat = _selectedEntity.getInvTransMatrix(_simTime);
 
 		Plane entityPlane = new Plane(); // Defaults to XY
 		entityPlane.transform(trans, entityPlane); // Transform the plane to world space
@@ -832,7 +860,7 @@ public class RenderManager implements DragSourceListener {
 		if (_dragHandleID == MOVE_PICK_ID) {
 			// We are dragging
 			if (dragInfo.shiftDown()) {
-				Vec4d entPos = new Vec4d(_selectedEntity.getGlobalPosition());
+				Vec4d entPos = _selectedEntity.getGlobalPosition();
 
 				double zDiff = getZDiff(entPos, currentRay, lastRay);
 
@@ -922,7 +950,7 @@ public class RenderManager implements DragSourceListener {
 			Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			oldFixed.mult4(transMat, fixedPoint);
 			_selectedEntity.setSize(scale);
-			transMat = _selectedEntity.getTransMatrix(); // Get the new matrix
+			transMat = _selectedEntity.getTransMatrix(_simTime); // Get the new matrix
 
 			Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			newFixed.mult4(transMat, fixedPoint);
@@ -1053,9 +1081,7 @@ public class RenderManager implements DragSourceListener {
 	private double getZDiff(Vec4d centerPoint, Ray currentRay, Ray lastRay) {
 
 		// Create a plane, orthogonal to the camera, but parallel to the Z axis
-		Vec4d normal = new Vec4d(currentRay.getDirRef());
-		normal.z = 0; // 0 the z component
-		normal.normalize3();
+		Vec4d normal = currentRay.getDirRef();
 
 		double planeDist = centerPoint.dot3(normal);
 
@@ -1318,17 +1344,11 @@ public class RenderManager implements DragSourceListener {
 		boolean isFlat = false;
 
 		// Shudder....
-		ArrayList<DisplayModel> displayModels = dEntity.getDisplayModelList().getValue();
+		ArrayList<DisplayModel> displayModels = dEntity.getDisplayModelList();
 		if (displayModels != null && displayModels.size() > 0) {
 			DisplayModel dm0 = displayModels.get(0);
-			if (dm0 instanceof DisplayModelCompat) {
-				DisplayModelCompat dmc = (DisplayModelCompat)dm0;
-				String shapeString = dmc.getShape();
-				String extension = shapeString.substring(shapeString.length() - 3, shapeString.length()).toUpperCase();
-				if (!extension.equals("DAE") && !extension.equals("ZIP")) {
-					isFlat = true;
-				}
-			}
+			if (dm0 instanceof DisplayModelCompat || dm0 instanceof ImageModel)
+				isFlat = true;
 		}
 		if (dEntity instanceof HasScreenPoints) {
 			isFlat = true;
@@ -1368,7 +1388,7 @@ public class RenderManager implements DragSourceListener {
 	public Vec4d getMeshSize(String shapeString) {
 
 		//TODO: work on meshes that have not been preloaded
-		MeshProtoKey key = DisplayModelCompat.getCachedMeshKey(shapeString);
+		MeshProtoKey key = ColladaModel.getCachedMeshKey(shapeString);
 		if (key == null) {
 			// Not loaded or bad mesh
 			return Vec4d.ONES;
@@ -1477,7 +1497,7 @@ public class RenderManager implements DragSourceListener {
 		double viewDist = viewDiff.mag3();
 
 		Quaternion rot = Quaternion.Rotation(rotZ, Vec4d.Z_AXIS);
-		rot.mult(Quaternion.Rotation(rotX, Vec4d.X_AXIS), rot);
+		rot.mult(rot, Quaternion.Rotation(rotX, Vec4d.X_AXIS));
 
 		Transform trans = new Transform(cameraPos, rot, 1);
 
