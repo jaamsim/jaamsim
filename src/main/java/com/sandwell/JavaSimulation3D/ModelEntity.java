@@ -460,6 +460,10 @@ private static class StateRecord {
 		timeOfLastStateUpdate = getCurrentTime();
 	}
 
+	private StateRecord getStateRecordFor(String state) {
+		return stateMap.get(state.toLowerCase());
+	}
+
 	// ******************************************************************************************************
 	// INPUT
 	// ******************************************************************************************************
@@ -786,7 +790,7 @@ private static class StateRecord {
 			if( ind != -1 ) {
 				this.updateHours();
 				this.updateStateRecordHours();
-				presentState = stateMap.get(state.toLowerCase());
+				presentState = getStateRecordFor(state);
 				if( lastStartTimePerState.size() > 0 ) {
 					if( secondToLastStartTimePerState.size() > 0 ) {
 						secondToLastStartTimePerState.set( ind, lastStartTimePerState.get( ind ) );
