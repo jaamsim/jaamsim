@@ -164,6 +164,7 @@ public class ModelEntity extends DisplayEntity {
 private static class StateRecord {
 	String stateName;
 	int index;
+	double totalHours;
 
 	public StateRecord(String state, int i) {
 		stateName = state;
@@ -181,7 +182,13 @@ private static class StateRecord {
 	public String toString() {
 		return getStateName();
 	}
+
+	public void addHours(double dur) {
+		totalHours += dur;
+	}
 }
+
+	private double timeOfLastStateUpdate;
 	protected double lastHistogramUpdateTime;   // Last time at which a histogram was updated for this entity
 	protected double secondToLastHistogramUpdateTime;   // Second to last time at which a histogram was updated for this entity
 	protected DoubleVector lastStartTimePerState;     // Last time at which the state changed from some other state to each state
@@ -374,6 +381,7 @@ private static class StateRecord {
 			StateRecord stateRecord = new StateRecord(state, i);
 			stateMap.put(state.toLowerCase() , stateRecord);
 		}
+		timeOfLastStateUpdate = getCurrentTime();
 	}
 
 	// ******************************************************************************************************
@@ -626,6 +634,20 @@ private static class StateRecord {
 		}
 	}
 
+	public void updateStateRecordHours() {
+
+		if (presentState == null) {
+			timeOfLastStateUpdate = getCurrentTime();
+			return;
+		}
+
+		double time =  getCurrentTime();
+		if (time != timeOfLastStateUpdate) {
+			presentState.addHours(time - timeOfLastStateUpdate);
+			timeOfLastStateUpdate = getCurrentTime();
+		}
+	}
+
 	public void initHoursPerState() {
 		hoursPerState.clear();
 		if( getStateList().size() != 0 )
@@ -687,6 +709,7 @@ private static class StateRecord {
 			int ind = this.indexOfState( state );
 			if( ind != -1 ) {
 				this.updateHours();
+				this.updateStateRecordHours();
 				presentState = stateMap.get(state.toLowerCase());
 				if( lastStartTimePerState.size() > 0 ) {
 					if( secondToLastStartTimePerState.size() > 0 ) {
