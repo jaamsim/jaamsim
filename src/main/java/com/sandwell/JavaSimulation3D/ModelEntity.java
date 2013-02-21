@@ -206,6 +206,10 @@ private static class StateRecord {
 		totalHours = 0.0d;
 		completedCycleHours = 0.0d;
 	}
+
+	public void clearCurrentCycleHours() {
+		currentCycleHours = 0.0d;
+	}
 }
 
 	private double timeOfLastStateUpdate;
@@ -429,6 +433,19 @@ private static class StateRecord {
 			each.clearReportStats();
 		}
 		numberOfCompletedCycles = 0;
+	}
+
+	/**
+	 * Clear the current cycle hours
+	 */
+	protected void clearCurrentCycleHours() {
+
+		this.updateStateRecordHours();
+
+		// clear current cycle hours for each state record
+		for ( StateRecord each : stateMap.values() ) {
+			each.clearCurrentCycleHours();
+		}
 	}
 
 	public void initStateMap() {
