@@ -166,6 +166,8 @@ private static class StateRecord {
 	int index;
 	double initializationHours;
 	double totalHours;
+	double completedCycleHours;
+	double currentCycleHours;
 
 	public StateRecord(String state, int i) {
 		stateName = state;
@@ -186,15 +188,23 @@ private static class StateRecord {
 
 	public void addHours(double dur) {
 		totalHours += dur;
+		currentCycleHours += dur;
 	}
 
 	public void collectInitializationStats() {
 		initializationHours = totalHours;
 		totalHours = 0.0d;
+		completedCycleHours = 0.0d;
+	}
+
+	public void collectCycleStats() {
+		completedCycleHours += currentCycleHours;
+		currentCycleHours = 0.0d;
 	}
 }
 
 	private double timeOfLastStateUpdate;
+	private int numberOfCompletedCycles;
 	protected double lastHistogramUpdateTime;   // Last time at which a histogram was updated for this entity
 	protected double secondToLastHistogramUpdateTime;   // Second to last time at which a histogram was updated for this entity
 	protected DoubleVector lastStartTimePerState;     // Last time at which the state changed from some other state to each state
@@ -387,6 +397,21 @@ private static class StateRecord {
 		for ( StateRecord each : stateMap.values() ) {
 			each.collectInitializationStats();
 		}
+		numberOfCompletedCycles = 0;
+	}
+
+	/**
+	 * Runs when cycle is finished
+	 */
+	public void collectCycleStats() {
+
+		this.updateStateRecordHours();
+
+		// finalize cycle for each state record
+		for ( StateRecord each : stateMap.values() ) {
+			each.collectCycleStats();
+		}
+		numberOfCompletedCycles++;
 	}
 
 	public void initStateMap() {
