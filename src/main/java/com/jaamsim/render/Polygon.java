@@ -27,6 +27,7 @@ import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Renderer.ShaderHandle;
 
@@ -65,7 +66,7 @@ public class Polygon implements Renderable {
 
 	FloatBuffer fb;
 
-	public Polygon(List<Vec4d> points, Transform trans, Vec4d scale, Color4d colour,
+	public Polygon(List<Vec4d> points, Transform trans, Vec3d scale, Color4d colour,
 			Color4d hoverColour, VisibilityInfo visInfo, boolean isOutline, double lineWidth, long pickingID) {
 		this.colour = colour.toFloats();
 		this.hoverColour = hoverColour.toFloats();

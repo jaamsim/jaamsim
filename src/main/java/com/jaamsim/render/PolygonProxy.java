@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 
 /**
@@ -36,12 +37,12 @@ public class PolygonProxy implements RenderProxy {
 	private double _lineWidth; // only meaningful if (isOutline)
 	private long _pickingID;
 	private Transform _trans;
-	private Vec4d _scale;
+	private Vec3d _scale;
 	private VisibilityInfo _visInfo;
 
 	private Polygon cachedPoly;
 
-	public PolygonProxy(List<Vec4d> points, Transform trans, Vec4d scale,
+	public PolygonProxy(List<Vec4d> points, Transform trans, Vec3d scale,
 	                    Color4d colour, boolean isOutline, double lineWidth, VisibilityInfo visInfo, long pickingID) {
 		_colour = colour;
 		_hoverColour = colour;
