@@ -23,6 +23,7 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.ColourInput;
@@ -107,7 +108,8 @@ public abstract class DisplayModelBinding {
 		// Convert the points to world space
 
 		Transform trans = de.getGlobalTrans(simTime);
-		Vec4d scale = de.getJaamMathSize(dm.getModelScale());
+		Vec3d scale = de.getSize();
+		scale.mul3(dm.getModelScale());
 
 		Mat4d mat = new Mat4d(trans.getMat4dRef());
 		mat.scaleCols3(scale);
@@ -133,7 +135,8 @@ public abstract class DisplayModelBinding {
 
 		DisplayEntity de = (DisplayEntity)observee;
 		Transform trans = de.getGlobalTrans(simTime);
-		Vec4d scale = de.getJaamMathSize(dm.getModelScale());
+		Vec3d scale = de.getSize();
+		scale.mul3(dm.getModelScale());
 
 		PolygonProxy outline = new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale,
 		                                        MINT, true, 1,

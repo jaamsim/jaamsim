@@ -247,7 +247,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			// Gather some inputs
 			Transform trans = getTransform(simTime);
-			Vec4d scale = getScale();
+			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
@@ -282,11 +282,13 @@ public class DisplayModelCompat extends DisplayModel {
 			}
 			return dispEnt.getGlobalTrans(simTime);
 		}
-		private Vec4d getScale() {
+		private Vec3d getScale() {
 			if (dispEnt == null) {
 				return Vec4d.ONES;
 			}
-			return dispEnt.getJaamMathSize(getModelScale());
+			Vec3d size = dispEnt.getSize();
+			size.mul3(getModelScale());
+			return size;
 		}
 		private long getPickingID() {
 			if (dispEnt == null) {
@@ -305,7 +307,7 @@ public class DisplayModelCompat extends DisplayModel {
 		private void addArrowProxies(double simTime) {
 			// Gather some inputs
 			Transform trans = getTransform(simTime);
-			Vec4d scale = getScale();
+			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
@@ -323,7 +325,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			// Gather some inputs
 			Transform trans = getTransform(simTime);
-			Vec4d scale = getScale();
+			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
@@ -351,7 +353,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			// Gather some inputs
 			Transform trans = getTransform(simTime);
-			Vec4d scale = getScale();
+			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
@@ -368,7 +370,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			// Gather some inputs
 			Transform trans = getTransform(simTime);
-			Vec4d scale = getScale();
+			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
@@ -428,7 +430,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			// Gather some inputs
 			Transform trans = getTransform(simTime);
-			Vec4d scale = getScale();
+			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
@@ -448,7 +450,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			// Gather some inputs
 			Transform trans = getTransform(simTime);
-			Vec4d scale = getScale();
+			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
@@ -470,7 +472,7 @@ public class DisplayModelCompat extends DisplayModel {
 		private void addDualQuadProxies(double simTime) {
 			// Gather some inputs
 			Transform trans = getTransform(simTime);
-			Vec4d scale = getScale();
+			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
@@ -496,7 +498,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			// Gather some inputs
 			Transform trans = getTransform(simTime);
-			Vec4d scale = getScale();
+			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
@@ -519,7 +521,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			// Gather some inputs
 			Transform trans = getTransform(simTime);
-			Vec4d scale = getScale();
+			Vec3d scale = getScale();
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
@@ -529,7 +531,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			// This is gross, but until we have proper draw ordering it's the kind of thing we have to do to keep the
 			// Stacker-reclaimer appearing above the stock piles reliably
-			Vec4d fixedScale = new Vec4d(scale);
+			Vec3d fixedScale = new Vec3d(scale);
 			fixedScale.z = 0.1;
 
 			cachedProxies.add(new PolygonProxy(stackerRect1Verts, trans, fixedScale, trackColour, false, 1, getVisibilityInfo(), pickingID));
@@ -543,7 +545,7 @@ public class DisplayModelCompat extends DisplayModel {
 		// A disturbingly deep helper to allow trucks and ships to share contents building code
 		// This class needs to either die or get refactored
 		private List<RenderProxy> buildContents(DoubleVector sizes, Color4d[] colours, Mat4d subTrans,
-		                                        Transform trans, Vec4d scale, long pickingID) {
+		                                        Transform trans, Vec3d scale, long pickingID) {
 			List<RenderProxy> ret = new ArrayList<RenderProxy>();
 
 			if (sizes == null || colours == null || sizes.size() != colours.length) {

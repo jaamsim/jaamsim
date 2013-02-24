@@ -256,7 +256,7 @@ static void putPointXYZ(FloatBuffer fb, Vec3d v) {
 	 * @param scale
 	 * @return
 	 */
-	public static Mat4d mergeTransAndScale(Transform trans, Vec4d scale) {
+	public static Mat4d mergeTransAndScale(Transform trans, Vec3d scale) {
 		Mat4d ret = new Mat4d();
 		trans.getMat4d(ret);
 		ret.scaleCols3(scale);

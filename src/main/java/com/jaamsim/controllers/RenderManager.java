@@ -823,7 +823,7 @@ public class RenderManager implements DragSourceListener {
 
 		Transform trans = _selectedEntity.getGlobalTrans(_simTime);
 
-		Vec4d size = _selectedEntity.getJaamMathSize(Vec4d.ONES);
+		Vec3d size = _selectedEntity.getSize();
 		Mat4d transMat = _selectedEntity.getTransMatrix(_simTime);
 		Mat4d invTransMat = _selectedEntity.getInvTransMatrix(_simTime);
 

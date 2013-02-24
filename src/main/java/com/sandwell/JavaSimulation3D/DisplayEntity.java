@@ -398,7 +398,7 @@ public class DisplayEntity extends Entity {
 		Transform trans = getGlobalTrans(simTime);
 		Mat4d ret = new Mat4d();
 		trans.getMat4d(ret);
-		ret.scaleCols3(getJaamMathSize(Vec4d.ONES));
+		ret.scaleCols3(getSize());
 		return ret;
 	}
 
@@ -440,17 +440,6 @@ public class DisplayEntity extends Entity {
 			for (DisplayModel dm : getDisplayModelList()) {
 				graphicsDirtier.addDependent(dm.getGraphicsDirtier());
 			}
-		}
-	}
-
-
-	/**
-	 * just like getSize() but returns a JammSim math library Vec4d
-	 * @return
-	 */
-	public Vec4d getJaamMathSize(Vec3d scaleFactor) {
-		synchronized (position) {
-			return new Vec4d(size.x * scaleFactor.x, size.y * scaleFactor.y, size.z * scaleFactor.z, 1.0d);
 		}
 	}
 

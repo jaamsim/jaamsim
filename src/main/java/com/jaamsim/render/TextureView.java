@@ -25,6 +25,7 @@ import com.jaamsim.math.AABB;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 
 
@@ -37,7 +38,7 @@ public class TextureView implements Renderable {
 
 	private URL _imageURL;
 	private Transform _trans;
-	private Vec4d _scale;
+	private Vec3d _scale;
 	private long _pickingID;
 
 	private AABB _bounds;
@@ -62,7 +63,7 @@ public class TextureView implements Renderable {
 
 	static private int hasTexVar;
 
-	public TextureView(URL imageURL, Transform trans, Vec4d scale, boolean isTransparent, boolean isCompressed,
+	public TextureView(URL imageURL, Transform trans, Vec3d scale, boolean isTransparent, boolean isCompressed,
 	                   VisibilityInfo visInfo, long pickingID) {
 		_imageURL = imageURL;
 		_trans = trans;

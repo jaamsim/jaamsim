@@ -18,13 +18,13 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vec4d;
+import com.jaamsim.math.Vec3d;
 
 public class ImageProxy implements RenderProxy {
 
 	private URL _imageURL;
 	private Transform _trans;
-	private Vec4d _scale;
+	private Vec3d _scale;
 	private long _pickingID;
 	private boolean _isTransparent;
 	private boolean _isCompressed;
@@ -32,7 +32,7 @@ public class ImageProxy implements RenderProxy {
 
 	private TextureView cached;
 
-	public ImageProxy(URL url, Transform trans, Vec4d scale, boolean isTransparent, boolean isCompressed,
+	public ImageProxy(URL url, Transform trans, Vec3d scale, boolean isTransparent, boolean isCompressed,
 	                  VisibilityInfo visInfo, long pickingID) {
 		_imageURL = url;
 		_trans = trans;

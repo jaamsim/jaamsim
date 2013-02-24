@@ -59,7 +59,7 @@ public class GraphModel extends DisplayModel {
 		private Mat4d graphToWorldTrans = null;
 		private Mat4d objectTransComp = null; // The composed transform and scale as a Matrix4d
 		private Transform objectTrans = null;
-		private Vec4d objectScale = null;
+		private Vec3d objectScale = null;
 		private long pickingID;
 
 		public Binding(Entity ent, DisplayModel dm) {
@@ -246,7 +246,7 @@ public class GraphModel extends DisplayModel {
 			double decZBump = graphSize.x * 0.001;
 
 			// Title
-			Vec4d objectSize = graphObservee.getJaamMathSize(Vec4d.ONES);
+			Vec3d objectSize = graphObservee.getSize();
 			double titleHeight = graphObservee.getTitleHeight();
 			String titleText = graphObservee.getTitle();
 			Color4d titleColour = graphObservee.getTitleColour();
@@ -429,7 +429,8 @@ public class GraphModel extends DisplayModel {
 
 		private void updateObjectTrans(double simTime) {
 			objectTrans = graphObservee.getGlobalTrans(simTime);
-			objectScale = graphObservee.getJaamMathSize(getModelScale());
+			objectScale = graphObservee.getSize();
+			objectScale.mul3(getModelScale());
 
 			objectTransComp = new Mat4d();
 			objectTrans.getMat4d(objectTransComp);
