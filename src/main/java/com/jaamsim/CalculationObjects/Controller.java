@@ -37,7 +37,6 @@ public class Controller extends DisplayEntity {
 	private final ArrayList<CalculationEntity> calculationEntityList;  // List of the CalculationEntities controller by this Controller.
 	private int count;  // Number of times that the controller has initiated its calculations.
 
-
 	{
 		samplingTimeInput = new DoubleInput( "SamplingTime", "Key Inputs", 1.0d);
 		samplingTimeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
