@@ -102,6 +102,23 @@ public class ReportAgent extends DisplayEntity {
 		}
 	}
 
+	/**
+	 * Runs before printing each report interval
+	 */
+	public void updateStats() {
+		for ( ModelEntity each : Simulation.getClonesOf(ModelEntity.class) ) {
+			each.updateStateRecordHours();
+		}
+	}
+	/**
+	 * Runs at the end of each report interval
+	 */
+	protected void clearReportStats() {
+		for ( ModelEntity each : Simulation.getClonesOf(ModelEntity.class) ) {
+			each.clearReportStats();
+		}
+	}
+
 
 	// ******************************************************************************************************
 	// INPUT METHODS
