@@ -89,8 +89,6 @@ public class FluidPipe extends FluidComponent {
 		double factor;
 		double reynoldsNumber = this.getReynoldsNumber();
 
-		System.out.println("Rn = " + reynoldsNumber);
-
 		// Laminar Flow
 		if( reynoldsNumber < 2300.0 ) {
 			factor = this.getLaminarFrictionFactor( reynoldsNumber );
@@ -103,8 +101,6 @@ public class FluidPipe extends FluidComponent {
 		else {
 			factor = 0.5 * ( this.getLaminarFrictionFactor(reynoldsNumber) + this.getTurbulentFrictionFactor(reynoldsNumber) );
 		}
-
-		System.out.println("fd = " + factor);
 
 		return factor;
 	}
