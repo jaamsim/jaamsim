@@ -20,7 +20,10 @@ Define ObjectType  { TimeUnit
                      PowerUnit
                      CostUnit
                      CostRateUnit
-                     LinearDensityUnit }
+                     LinearDensityUnit
+					 DensityUnit
+					 PressureUnit
+					 ViscosityUnit }
 
 TimeUnit            JavaClass { com.jaamsim.units.TimeUnit            } Palette { Units } DragAndDrop { FALSE }
 DistanceUnit        JavaClass { com.jaamsim.units.DistanceUnit        } Palette { Units } DragAndDrop { FALSE }
@@ -39,7 +42,9 @@ PowerUnit           JavaClass { com.jaamsim.units.PowerUnit           } Palette 
 CostUnit            JavaClass { com.jaamsim.units.CostUnit            } Palette { Units } DragAndDrop { FALSE }
 CostRateUnit        JavaClass { com.jaamsim.units.CostRateUnit        } Palette { Units } DragAndDrop { FALSE }
 LinearDensityUnit   JavaClass { com.jaamsim.units.LinearDensityUnit   } Palette { Units } DragAndDrop { FALSE }
-
+DensityUnit         JavaClass { com.jaamsim.units.DensityUnit         } Palette { Units } DragAndDrop { FALSE }
+PressureUnit        JavaClass { com.jaamsim.units.PressureUnit        } Palette { Units } DragAndDrop { FALSE }
+ViscosityUnit       JavaClass { com.jaamsim.units.ViscosityUnit       } Palette { Units } DragAndDrop { FALSE }
 
 " ======================================================================================================================================================
 " Time units
@@ -137,8 +142,9 @@ mmbbl ConversionFactorToSI { 1.58987294928E+05 } Alias { MMBBL MMbbl mmBBL }    
 " Volume flow units
 " ======================================================================================================================================================
 
-Define VolumeFlowUnit { m3/h m3/d m3/y km3/h km3/d km3/y bbl/h bbl/d bbl/y mbbl/h mbbl/d mbbl/y mmbbl/h mmbbl/d mmbbl/y }
+Define VolumeFlowUnit { m3/s m3/h m3/d m3/y km3/h km3/d km3/y bbl/h bbl/d bbl/y mbbl/h mbbl/d mbbl/y mmbbl/h mmbbl/d mmbbl/y }
 
+m3/s    ConversionFactorToSI { 1 }
 m3/h    ConversionFactorToSI { 1                 3600     } Alias {    M3/h   M^3/h   m^3/h }
 m3/d    ConversionFactorToSI { 1                 86400    } Alias {    M3/d   M^3/d   m^3/d }
 m3/y    ConversionFactorToSI { 1                 31536000 } Alias {    M3/y   M^3/y   m^3/y }
@@ -172,12 +178,13 @@ Radians ConversionFactorToSI { 1                    } Alias { rad }
 " Anglular speed units
 " ======================================================================================================================================================
 
-Define AngularSpeedUnit { rad/s rad/h deg/s deg/h }
+Define AngularSpeedUnit { rad/s rad/h deg/s deg/h rpm }
 
 rad/s ConversionFactorToSI { 1                       }
 rad/h ConversionFactorToSI { 1                3600   }
 deg/s ConversionFactorToSI { 3.14159265358979 180    }
 deg/h ConversionFactorToSI { 3.14159265358979 648000 }
+rpm   ConversionFactorToSI { 3.14159265358979 30 }
 
 " ======================================================================================================================================================
 " Energy units
@@ -242,3 +249,31 @@ Define LinearDensityUnit      { t/m kt/m }
 
 t/m  ConversionFactorToSI { 1000      }
 kt/m ConversionFactorToSI { 1000000   }
+
+" ======================================================================================================================================================
+" Density units
+" ======================================================================================================================================================
+
+Define DensityUnit      { kg/m3 }
+
+kg/m3  ConversionFactorToSI { 1 }
+
+" ======================================================================================================================================================
+" Pressure units
+" ======================================================================================================================================================
+
+Define PressureUnit      { Pa kPa psi }
+
+Pa   ConversionFactorToSI { 1 }
+kPa  ConversionFactorToSI { 1000 }
+psi  ConversionFactorToSI { 6894.757 }
+
+" ======================================================================================================================================================
+" Viscosity units
+" ======================================================================================================================================================
+
+Define ViscosityUnit      { Pa-s P cP }
+
+Pa-s  ConversionFactorToSI { 1 }
+P     ConversionFactorToSI { 0.1 }
+cP    ConversionFactorToSI { 0.001 }
