@@ -182,6 +182,10 @@ private static class StateRecord {
 		return stateName;
 	}
 
+	public double getTotalHours() {
+		return totalHours;
+	}
+
 	public double getCompletedCycleHours() {
 		return completedCycleHours;
 	}
@@ -487,6 +491,10 @@ private static class StateRecord {
 			total += getStateRecordFor(i).getCompletedCycleHours();
 
 		return total;
+	}
+
+	public double getTotalHoursFor(int index) {
+		return getStateRecordFor(index).getTotalHours();
 	}
 
 	// ******************************************************************************************************
