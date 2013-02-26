@@ -497,6 +497,10 @@ private static class StateRecord {
 		return getStateRecordFor(index).getTotalHours();
 	}
 
+	public double getTotalHoursFor(String state) {
+		return getStateRecordFor(state).getTotalHours();
+	}
+
 	// ******************************************************************************************************
 	// INPUT
 	// ******************************************************************************************************
