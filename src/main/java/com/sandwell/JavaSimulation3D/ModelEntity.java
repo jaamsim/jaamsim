@@ -1024,7 +1024,7 @@ private static class StateRecord {
 	 * Return total number of states
 	 */
 	public int getNumberOfStates() {
-		return hoursPerState.size();
+		return stateMap.size();
 	}
 
 	/**
