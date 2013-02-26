@@ -164,6 +164,7 @@ public class ModelEntity extends DisplayEntity {
 private static class StateRecord {
 	String stateName;
 	int index;
+	double initializationHours;
 	double totalHours;
 
 	public StateRecord(String state, int i) {
@@ -185,6 +186,11 @@ private static class StateRecord {
 
 	public void addHours(double dur) {
 		totalHours += dur;
+	}
+
+	public void collectInitializationStats() {
+		initializationHours = totalHours;
+		totalHours = 0.0d;
 	}
 }
 
@@ -369,6 +375,17 @@ private static class StateRecord {
 
 		if( downtimeIATDistribution.getValue() != null ) {
 			downtimeIATDistribution.getValue().initialize();
+		}
+	}
+
+	/**
+	 * Runs after initialization period
+	 */
+	public void collectInitializationStats() {
+
+		this.updateStateRecordHours();
+		for ( StateRecord each : stateMap.values() ) {
+			each.collectInitializationStats();
 		}
 	}
 

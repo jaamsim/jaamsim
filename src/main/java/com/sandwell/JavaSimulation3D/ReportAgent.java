@@ -22,6 +22,7 @@ import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerVector;
+import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.FileEntity;
 
@@ -31,6 +32,7 @@ public class ReportAgent extends DisplayEntity {
 	protected double lastReportIntervalTime; // time of the last report printing
 	protected String groupReportFileName;
 	protected FileEntity groupReportFile;
+	protected static boolean collectedInitializationStats; // flag to avoid re-entering collectInitializationStats() method
 
 	// Constants for the bottom line information of the group report columns
 	public static final int TOTAL_NO_DEC = 0;
@@ -78,6 +80,28 @@ public class ReportAgent extends DisplayEntity {
 		groupReportFileName = "";
 		groupReportFile = null;
 	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		collectedInitializationStats = false;
+	}
+
+	/**
+	 * Collect stats for each model entity at the end of initialization period
+	 */
+	protected void collectInitializationStats() {
+		if (collectedInitializationStats)
+			return;
+
+		collectedInitializationStats = true;
+
+		for ( ModelEntity each : Simulation.getClonesOf(ModelEntity.class) ) {
+			each.collectInitializationStats();
+		}
+	}
+
 
 	// ******************************************************************************************************
 	// INPUT METHODS
