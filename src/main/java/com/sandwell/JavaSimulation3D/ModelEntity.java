@@ -182,6 +182,10 @@ private static class StateRecord {
 		return stateName;
 	}
 
+	public double getCompletedCycleHours() {
+		return completedCycleHours;
+	}
+
 	public String toString() {
 		return getStateName();
 	}
@@ -462,6 +466,27 @@ private static class StateRecord {
 
 	private StateRecord getStateRecordFor(String state) {
 		return stateMap.get(state.toLowerCase());
+	}
+
+	private StateRecord getStateRecordFor(int index) {
+		String state = (String)getStateList().get(index);
+		return getStateRecordFor(state);
+	}
+
+	public double getCompletedCycleHoursFor(String state) {
+		return getStateRecordFor(state).getCompletedCycleHours();
+	}
+
+	public double getCompletedCycleHoursFor(int index) {
+		return getStateRecordFor(index).getCompletedCycleHours();
+	}
+
+	public double getCompletedCycleHours() {
+		double total = 0.0d;
+		for (int i = 0; i < getStateList().size(); i ++)
+			total += getStateRecordFor(i).getCompletedCycleHours();
+
+		return total;
 	}
 
 	// ******************************************************************************************************
