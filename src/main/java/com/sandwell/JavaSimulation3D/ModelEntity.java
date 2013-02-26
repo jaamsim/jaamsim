@@ -446,6 +446,10 @@ private static class StateRecord {
 		numberOfCompletedCycles = 0;
 	}
 
+	public int getNumberOfCompletedCycles() {
+		return numberOfCompletedCycles;
+	}
+
 	/**
 	 * Clear the current cycle hours
 	 */
