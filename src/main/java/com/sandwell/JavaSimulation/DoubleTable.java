@@ -213,6 +213,7 @@ public class DoubleTable {
 	 * Return a string representation of this table,
 	 * containing the String representation of each element.
 	 */
+	@Override
 	public String toString() {
 		return table.toString();
 	}

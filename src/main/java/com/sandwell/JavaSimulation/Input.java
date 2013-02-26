@@ -89,6 +89,7 @@ public abstract class Input<T> {
 		edited = false;
 	}
 
+	@Override
 	public String toString() {
 		return String.format("%s", value);
 	}

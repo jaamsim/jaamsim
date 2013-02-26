@@ -76,6 +76,7 @@ public class GraphicBox extends JDialog {
 		// Upon closing do the close method
 		setDefaultCloseOperation( FrameBox.DO_NOTHING_ON_CLOSE );
 		WindowListener windowListener = new WindowAdapter() {
+			@Override
 			public void windowClosing( WindowEvent e ) {
 				myInstance.close();
 			}
@@ -91,6 +92,7 @@ public class GraphicBox extends JDialog {
 
 		// Update the previewLabel according to the selected DisplayModel
 		displayModelList.addListSelectionListener(   new ListSelectionListener() {
+			@Override
 			public void valueChanged(ListSelectionEvent e) {
 
 				// do this unconditionally to force a repaint and allow for quick outs
@@ -126,6 +128,7 @@ public class GraphicBox extends JDialog {
 		// Import and Accept buttons
 		JButton importButton = new JButton("Import");
 		importButton.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed( ActionEvent e ) {
 
 				if (!RenderManager.isGood()) {
@@ -178,6 +181,7 @@ public class GraphicBox extends JDialog {
 
 		JButton acceptButton = new JButton("Accept");
 		acceptButton.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed( ActionEvent e ) {
 				setEnabled(false); // Don't accept any interaction
 				DisplayModel dm = (DisplayModel) displayModelList.getSelectedValue();
@@ -256,6 +260,7 @@ public class GraphicBox extends JDialog {
 		setVisible(false);
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		myInstance = null;

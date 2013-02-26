@@ -203,6 +203,7 @@ public class IntegerVector {
 	/**
 	 * Return a string containing the contents of the IntegerVector.
 	 */
+	@Override
 	public String toString() {
 		StringBuilder out = new StringBuilder("{");
 

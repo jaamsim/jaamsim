@@ -33,6 +33,7 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 		hashMap = new HashMap<K1,ArrayList<V>>();
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 
@@ -59,6 +60,7 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 		this.updateEditingFlags();
 	}
 
+	@Override
 	public ArrayList<V> getValue() {
 		return null;
 	}

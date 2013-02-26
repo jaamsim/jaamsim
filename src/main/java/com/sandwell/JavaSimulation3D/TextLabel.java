@@ -73,6 +73,7 @@ public class TextLabel extends DisplayEntity  {
 	/**
 	 * This method updates the DisplayEntity for changes in the given input
 	 */
+	@Override
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 

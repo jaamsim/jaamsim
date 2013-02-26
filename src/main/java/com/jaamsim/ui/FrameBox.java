@@ -60,6 +60,7 @@ public class FrameBox extends JFrame {
 		return allInstances;
 	}
 
+	@Override
 	public void dispose() {
 		allInstances.remove(this);
 		super.dispose();
@@ -99,6 +100,7 @@ public class FrameBox extends JFrame {
 			}
 		}
 
+		@Override
 		public void run() {
 			Entity selectedEnt;
 			synchronized (this) {
@@ -140,6 +142,7 @@ public class FrameBox extends JFrame {
 			}
 		}
 
+		@Override
 		public void run() {
 			double callBackTime;
 			synchronized (this) {

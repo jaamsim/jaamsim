@@ -33,6 +33,7 @@ class TreeCellRenderer extends DefaultTreeCellRenderer {
 	private static final Dimension prefSize = new Dimension(220, 24);
 	private final ImageIcon icon = new ImageIcon();
 
+	@Override
 	public Component getTreeCellRendererComponent(JTree tree,
 			Object value, boolean selected, boolean expanded,
 			boolean leaf, int row, boolean hasFocus) {

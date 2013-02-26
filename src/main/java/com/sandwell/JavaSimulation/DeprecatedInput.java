@@ -29,6 +29,7 @@ public class DeprecatedInput extends Input<String> {
 		this.fatal = fatal;
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		if (fatal)

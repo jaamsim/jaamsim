@@ -33,6 +33,7 @@ public class Util {
 	private static String fuelUnits = "";
 
 	public static final Comparator<Entity> nameSort = new Comparator<Entity>() {
+		@Override
 		public int compare(Entity a, Entity b) {
 			return a.getName().compareTo(b.getName());
 		}

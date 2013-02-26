@@ -90,10 +90,12 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 
 	public Arrow() {}
 
+	@Override
 	public ArrayList<Vec3d> getScreenPoints() {
 		return pointsInput.getValue();
 	}
 
+	@Override
 	public boolean selectable() {
 		return true;
 	}

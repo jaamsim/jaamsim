@@ -22,6 +22,7 @@ public class AliasListInput extends ListInput<StringVector> {
 		currentEntity = ent;
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCountRange(input, minCount, maxCount);

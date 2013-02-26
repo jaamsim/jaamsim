@@ -203,6 +203,7 @@ public class EditBox extends FrameBox {
 		return jTabbedPane;
 	}
 
+	@Override
 	public void setEntity(Entity entity) {
 		if(currentEntity == entity || ! this.isVisible())
 			return;
@@ -287,6 +288,7 @@ public class EditBox extends FrameBox {
 		jTabbedPane.addTab(category, null, jScrollPane, null);
 	}
 
+	@Override
 	public void updateValues() {
 		// table has not built yet
 		if(!this.isVisible())
@@ -295,6 +297,7 @@ public class EditBox extends FrameBox {
 		jTabbedPane.repaint();
 	}
 
+	@Override
 	public void dispose() {
 		myInstance = null;
 		super.dispose();
@@ -304,6 +307,7 @@ public class EditBox extends FrameBox {
 		private ColorEditor colorEditor;
 		private ListEditor listEditor;
 
+		@Override
 		public boolean isCellEditable( int row, int column ) {
 			return ( column == VALUE_COLUMN ); // Only Value column is editable
 		}
@@ -312,6 +316,7 @@ public class EditBox extends FrameBox {
 			super(column, row);
 		}
 
+		@Override
 		public TableCellEditor getCellEditor(int row, int col) {
 			Input<?> in = (Input<?>)this.getValueAt(row, col);
 
@@ -347,6 +352,7 @@ public class EditBox extends FrameBox {
 			return new DropDownMenuEditor(this, array);
 		}
 
+		@Override
 		public String getToolTipText(MouseEvent e) {
 			java.awt.Point p = e.getPoint();
 			int rowIndex = rowAtPoint(p);
@@ -372,6 +378,7 @@ public class EditBox extends FrameBox {
 			text = new JTextField();
 		}
 
+		@Override
 		public Component getTableCellEditorComponent(JTable table,
 				Object value, boolean isSelected, int row, int column) {
 
@@ -380,6 +387,7 @@ public class EditBox extends FrameBox {
 			return text;
 		}
 
+		@Override
 		public String getValue() {
 			return text.getText();
 		}
@@ -410,10 +418,12 @@ public class EditBox extends FrameBox {
 			jPanel.add(colorButton, BorderLayout.EAST);
 		}
 
+		@Override
 		public String getValue() {
 			return text.getText();
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if("button".equals(e.getActionCommand())) {
 				if(colorChooser == null || dialog == null) {
@@ -446,6 +456,7 @@ public class EditBox extends FrameBox {
 			}
 		}
 
+		@Override
 		public Component getTableCellEditorComponent(JTable table,
 				Object value, boolean isSelected, int row, int column) {
 
@@ -493,6 +504,7 @@ public class EditBox extends FrameBox {
 			dropDown.addActionListener(this); // Now it is safe to listen
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			// If combo box is edited, this method invokes twice
@@ -500,6 +512,7 @@ public class EditBox extends FrameBox {
 				stopCellEditing();
 		}
 
+		@Override
 		public Component getTableCellEditorComponent(JTable table,
 				Object value, boolean isSelected, int row, int column) {
 
@@ -550,10 +563,12 @@ public class EditBox extends FrameBox {
 			caseSensitive = true;
 		}
 
+		@Override
 		public String getValue() {
 			return text.getText();
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			// OK button
@@ -634,6 +649,7 @@ public class EditBox extends FrameBox {
 			}
 		}
 
+		@Override
 		public Component getTableCellEditorComponent(JTable table,
 				Object value, boolean isSelected, int row, int column) {
 
@@ -664,6 +680,7 @@ public class EditBox extends FrameBox {
 	 */
 	public static class ListRenderer implements ListCellRenderer {
 		private JCheckBox checkBox;
+		@Override
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 			checkBox = (JCheckBox)value;
@@ -685,6 +702,7 @@ public class EditBox extends FrameBox {
 	public static class CheckBoxMouseAdapter extends MouseAdapter {
 		private int i;
 		private Object obj;
+		@Override
 		public void mousePressed(MouseEvent e) {
 			i = ((JList)e.getSource()).locationToIndex(e.getPoint());
 			if(i == -1)

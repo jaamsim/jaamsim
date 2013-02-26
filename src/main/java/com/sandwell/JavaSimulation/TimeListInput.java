@@ -27,6 +27,7 @@ public class TimeListInput extends ListInput<DoubleVector> {
 		validCounts = new int[] { };
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		DoubleVector temp;

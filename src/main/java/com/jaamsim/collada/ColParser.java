@@ -1381,6 +1381,7 @@ public class ColParser extends DefaultHandler {
 			this.effect = e;
 		}
 
+		@Override
 		public boolean equals(Object o) {
 			if (o == null) return false;
 			if (!(o instanceof FaceGeoEffectPair)) return false;
@@ -1401,6 +1402,7 @@ public class ColParser extends DefaultHandler {
 			this.effect = e;
 		}
 
+		@Override
 		public boolean equals(Object o) {
 			if (o == null) return false;
 			if (!(o instanceof LineGeoEffectPair)) return false;

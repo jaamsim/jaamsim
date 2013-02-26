@@ -23,10 +23,12 @@ public class AjustToLastColumnTable extends JTable {
 	}
 
 	// Table is not editable
+	@Override
 	public boolean isCellEditable( int row, int column ) {
 		return false;
 	}
 
+	@Override
 	public void doLayout() {
 		int lastColumnWidth = this.getColumnModel().getColumn(
 				this.getColumnCount() - 1).getWidth();

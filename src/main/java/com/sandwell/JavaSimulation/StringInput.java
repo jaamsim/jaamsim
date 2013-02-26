@@ -24,11 +24,13 @@ public class StringInput extends Input<String> {
 		super(key, cat, def);
 	}
 
+	@Override
 	public void parse(StringVector input) throws InputErrorException {
 		Input.assertCount(input, 1);
 		value = input.firstElement();
 		this.updateEditingFlags();
 	}
+	@Override
 	public String getValueString() {
 		String str = super.getValueString();
 

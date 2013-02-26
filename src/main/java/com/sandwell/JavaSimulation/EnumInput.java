@@ -24,6 +24,7 @@ public class EnumInput<T extends Enum<T>> extends Input<T> {
 		type = atype;
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCount(input, 1);
@@ -31,6 +32,7 @@ public class EnumInput<T extends Enum<T>> extends Input<T> {
 		this.updateEditingFlags();
 	}
 
+	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> tmp = new ArrayList<String>();
 		for (T each : type.getEnumConstants())

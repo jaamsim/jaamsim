@@ -65,6 +65,7 @@ public class Group extends Entity {
 		return allInstances;
 	}
 
+	@Override
 	public void kill() {
 		super.kill();
 		allInstances.remove(this);
@@ -78,6 +79,7 @@ public class Group extends Entity {
 	 * Processes the input data corresponding to the specified keyword. If syntaxOnly is true,
 	 * checks input syntax only; otherwise, checks input syntax and process the input values.
 	 */
+	@Override
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
 

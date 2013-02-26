@@ -37,6 +37,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		hashMap = new HashMap<K1,V>();
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 
@@ -67,6 +68,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		maxValue = max;
 	}
 
+	@Override
 	public V getValue() {
 		return null;
 	}

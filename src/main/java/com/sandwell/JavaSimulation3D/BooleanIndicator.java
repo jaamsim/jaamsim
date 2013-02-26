@@ -29,6 +29,7 @@ public class BooleanIndicator extends DisplayEntity {
 	public BooleanIndicator() {
 	}
 
+	@Override
 	public void updateGraphics( double time ) {
 
 		String val = propReader.getPropertyValueString(time);

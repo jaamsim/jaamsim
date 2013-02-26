@@ -31,6 +31,7 @@ public class TimeInput extends Input<Double> {
 		maxValue = max;
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCountRange(input, 1, 2);

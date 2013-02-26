@@ -82,6 +82,7 @@ public class ObjectSelector extends FrameBox {
 		tree.addKeyListener(new MyKeyListener());
 	}
 
+	@Override
 	public void setEntity(Entity ent) {
 		if(ent == currentEntity || ! this.isVisible())
 			return;
@@ -113,6 +114,7 @@ public class ObjectSelector extends FrameBox {
 		}
 	}
 
+	@Override
 	public void updateValues() {
 		if (!this.isVisible())
 			return;
@@ -134,6 +136,7 @@ public class ObjectSelector extends FrameBox {
 		return myInstance;
 	}
 
+	@Override
 	public void dispose() {
 		myInstance = null;
 		currentEntity = null;
@@ -259,6 +262,7 @@ public class ObjectSelector extends FrameBox {
 	}
 
 	static class MyTreeSelectionListener implements TreeSelectionListener {
+		@Override
 		public void valueChanged( TreeSelectionEvent e ) {
 			JTree tree = (JTree) e.getSource();
 			if(tree.getLastSelectedPathComponent() == null) {
@@ -286,6 +290,7 @@ public class ObjectSelector extends FrameBox {
 			this.tree = tree;
 		}
 
+		@Override
 		public void treeNodesChanged( TreeModelEvent e ) {
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
@@ -295,8 +300,11 @@ public class ObjectSelector extends FrameBox {
 			FrameBox.valueUpdate();
 		}
 
+		@Override
 		public void treeNodesInserted(TreeModelEvent e) {}
+		@Override
 		public void treeNodesRemoved(TreeModelEvent e) {}
+		@Override
 		public void treeStructureChanged(TreeModelEvent e) {}
 	}
 
@@ -318,6 +326,7 @@ static class InputMenuItem extends DEMenuItem {
 		this.ent = ent;
 	}
 
+	@Override
 	public void action() {
 		EditBox.getInstance().setVisible(true);
 		EditBox.getInstance().setExtendedState(JFrame.NORMAL);
@@ -333,6 +342,7 @@ static class PropertyMenuItem extends DEMenuItem {
 		this.ent = ent;
 	}
 
+	@Override
 	public void action() {
 		PropertyBox.getInstance().setVisible(true);
 		PropertyBox.getInstance().setExtendedState(JFrame.NORMAL);
@@ -348,6 +358,7 @@ static class OutputMenuItem extends DEMenuItem {
 		this.ent = ent;
 	}
 
+	@Override
 	public void action() {
 		InfoBox.getInstance().setVisible(true);
 		InfoBox.getInstance().setExtendedState(JFrame.NORMAL);
@@ -363,6 +374,7 @@ static class DuplicateMenuItem extends DEMenuItem {
 		this.ent = ent;
 	}
 
+	@Override
 	public void action() {
 		Entity copiedEntity = InputAgent.defineEntityWithUniqueName(ent.getClass(),
 				String.format("Copy_of_%s", ent.getInputName()), true);
@@ -396,6 +408,7 @@ static class DeleteMenuItem extends DEMenuItem {
 		this.ent = ent;
 	}
 
+	@Override
 	public void action() {
 		ent.kill();
 		FrameBox.setSelectedEntity(null);
@@ -414,6 +427,7 @@ static class GraphicsMenuItem extends DEMenuItem {
 		this.y = y;
 	}
 
+	@Override
 	public void action() {
 		// More than one DisplayModel(LOD) or No DisplayModel
 		if(ent.getDisplayModelList() == null)
@@ -432,6 +446,7 @@ static class LabelMenuItem extends DEMenuItem {
 		this.ent = ent;
 	}
 
+	@Override
 	public void action() {
 		TextLabel label = InputAgent.defineEntityWithUniqueName(TextLabel.class,
 		                  String.format("Label_for_%s", ent.getInputName()), true);
@@ -474,6 +489,7 @@ static class LabelMenuItem extends DEMenuItem {
 	static class MyMouseListener implements MouseListener {
 		private final JPopupMenu menu= new JPopupMenu();
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 
 			if(e.getButton() != MouseEvent.BUTTON3)
@@ -487,12 +503,17 @@ static class LabelMenuItem extends DEMenuItem {
 			GUIFrame.populateMenu(menu, getMenuItems(currentEntity, e.getX(), e.getY()));
 			menu.show(e.getComponent(), e.getX(), e.getX());
 		}
+		@Override
 		public void mouseEntered(MouseEvent e) {}
+		@Override
 		public void mouseExited(MouseEvent e) {}
+		@Override
 		public void mousePressed(MouseEvent e) {}
+		@Override
 		public void mouseReleased(MouseEvent e) {}
 	}
 	static class MyKeyListener implements KeyListener {
+		@Override
 		public void keyReleased(KeyEvent e) {
 
 			if (e.getKeyCode() != KeyEvent.VK_DELETE)
@@ -509,7 +530,9 @@ static class LabelMenuItem extends DEMenuItem {
 				FrameBox.setSelectedEntity(null);
 			}
 		}
+		@Override
 		public void keyPressed(KeyEvent e) {}
+		@Override
 		public void keyTyped(KeyEvent e) {}
 	}
 }

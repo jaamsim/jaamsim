@@ -80,6 +80,7 @@ public class EventViewer extends JFrame {
 		// create a close button on the bottom of the screen
 		JButton closeButton = new JButton( "Close" );
 		closeButton.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				dispose();
 			}
@@ -87,6 +88,7 @@ public class EventViewer extends JFrame {
 
 		JButton nextEventButton = new JButton( "Next Event" );
 		nextEventButton.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed( ActionEvent e ) {
 				evtMan.nextOneEvent();
 			}
@@ -94,6 +96,7 @@ public class EventViewer extends JFrame {
 
 		JButton nextTimeButton = new JButton( "Next Time" );
 		nextTimeButton.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed( ActionEvent e ) {
 				evtMan.nextEventTime();
 			}
@@ -101,6 +104,7 @@ public class EventViewer extends JFrame {
 
 		JButton clearButton = new JButton( "Clear Events" );
 		clearButton.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed( ActionEvent e ) {
 				numRetiredEvents = 0;
 				update();
@@ -174,6 +178,7 @@ public class EventViewer extends JFrame {
 		numRetiredEvents++;
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		evtMan.unregisterEventViewer(this);

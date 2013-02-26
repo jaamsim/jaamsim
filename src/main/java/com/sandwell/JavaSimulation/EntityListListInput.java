@@ -26,6 +26,7 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 		unique = true;
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 

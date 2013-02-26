@@ -47,6 +47,7 @@ static {
 		super(key, cat, def);
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCount(input, 1, 3);

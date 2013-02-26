@@ -28,6 +28,7 @@ public class StringListInput extends ListInput<StringVector> {
 		caseSensitive = true;
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCountRange(input, minCount, maxCount);
@@ -47,6 +48,7 @@ public class StringListInput extends ListInput<StringVector> {
 		return caseSensitive;
 	}
 
+	@Override
 	public ArrayList<String> getValidOptions() {
 		return validOptions;
 	}

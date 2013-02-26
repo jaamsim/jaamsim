@@ -22,6 +22,7 @@ public class CompatInput extends Input<String> {
 		this.target = target;
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		target.readData_ForKeyword(input, this.getKeyword(), false, true);

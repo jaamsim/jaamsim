@@ -36,6 +36,7 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 		value = new ValueTable<T>(def.getDefault().getCurrentValue());
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCount(input, validCounts);

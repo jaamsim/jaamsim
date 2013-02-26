@@ -87,6 +87,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		setSize(220, 400);
 	}
 
+	@Override
 	public void dragGestureRecognized(DragGestureEvent event) {
 
 		TreePath path = tree.getSelectionPath();
@@ -166,6 +167,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		/*
 		 * This JTree has a custom ToolTip
 		 */
+		@Override
 		public JToolTip createToolTip() {
 			return toolTip;
 		}
@@ -173,6 +175,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		/*
 		 * override getToolTipText to control what to display
 		 */
+		@Override
 		public String getToolTipText(MouseEvent e) {
 			toolTip.setImage( null ); // Set defaults so we can quick out
 			toolTip.setPreferredSize( null );
@@ -196,6 +199,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 			String text = ((ObjectType)object).getName();
 
 			Runnable notifier = new Runnable() {
+				@Override
 				public void run() {
 					EntityPallet.getInstance().repaint();
 				}
@@ -234,6 +238,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 			this.image = image;
 		}
 
+		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			if(image != null){

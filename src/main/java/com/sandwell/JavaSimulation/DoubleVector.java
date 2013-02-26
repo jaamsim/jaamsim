@@ -287,6 +287,7 @@ public class DoubleVector {
 		return out.toString();
 	}
 
+	@Override
 	public String toString() {
 		return ( this.toString( "") );
 	}

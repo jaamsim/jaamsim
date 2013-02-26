@@ -147,6 +147,7 @@ public class GraphicSimulation extends Simulation {
 		DisplayEntity.setSimulation( this );
 	}
 
+	@Override
 	public void startUp() {
 		super.startUp();
 		if (startCapturerFlag) {
@@ -160,6 +161,7 @@ public class GraphicSimulation extends Simulation {
 	 * Processes the input data corresponding to the specified keyword. If syntaxOnly is true,
 	 * checks input syntax only; otherwise, checks input syntax and process the input values.
 	 */
+	@Override
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
 
@@ -194,6 +196,7 @@ public class GraphicSimulation extends Simulation {
 		return modelName;
 	}
 
+	@Override
 	public void clear() {
 		super.clear();
 
@@ -220,6 +223,7 @@ public class GraphicSimulation extends Simulation {
 		GUIFrame.instance().updateForSimulationState();
 	}
 
+	@Override
 	public void start() {
 		try {
 			super.start();
@@ -230,6 +234,7 @@ public class GraphicSimulation extends Simulation {
 		}
 	}
 
+	@Override
 	public void pause() {
 		try {
 			super.pause();
@@ -240,6 +245,7 @@ public class GraphicSimulation extends Simulation {
 		}
 	}
 
+	@Override
 	public void stop() {
 		try {
 			super.stop();
@@ -250,6 +256,7 @@ public class GraphicSimulation extends Simulation {
 		}
 	}
 
+	@Override
 	public void resume() {
 		try {
 			super.resume();
@@ -314,6 +321,7 @@ public class GraphicSimulation extends Simulation {
 		RenderManager.inst().endRecording();
 	}
 
+	@Override
 	public void updateForSimulationState() {
 		super.updateForSimulationState();
 		GUIFrame.instance().updateForSimulationState();

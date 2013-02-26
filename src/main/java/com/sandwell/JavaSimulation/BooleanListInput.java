@@ -20,6 +20,7 @@ public class BooleanListInput extends ListInput<BooleanVector> {
 		super(key, cat, def);
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCountRange(input, minCount, maxCount);

@@ -31,6 +31,7 @@ public class Palette extends Entity {
 		return allInstances;
 	}
 
+	@Override
 	public void kill() {
 		super.kill();
 		allInstances.remove(this);

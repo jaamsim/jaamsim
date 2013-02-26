@@ -58,6 +58,7 @@ public class StringVector extends Vector<String>{
 	/**
 	 * Return a string containing the contents of the StringVector.
 	 */
+	@Override
 	public String toString() {
 		StringBuilder out = new StringBuilder("{");
 

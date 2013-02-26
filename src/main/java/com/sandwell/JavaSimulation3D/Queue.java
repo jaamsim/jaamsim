@@ -100,6 +100,7 @@ public class Queue extends DisplayEntity {
 	// INFO BOX METHODS
 	// ******************************************************************************************************
 
+	@Override
 	public Vector getInfo() {
 
 		Vector info = super.getInfo();
@@ -219,6 +220,7 @@ public class Queue extends DisplayEntity {
 	 * Update the position of all entities in the queue. ASSUME that entities
 	 * will line up according to the orientation of the queue.
 	 */
+	@Override
 	public void updateGraphics( double simTime ) {
 
 		//int max = itemList.size();

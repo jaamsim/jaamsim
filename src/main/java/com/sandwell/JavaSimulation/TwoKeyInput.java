@@ -40,6 +40,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		hashMap = new HashMap<K1,HashMap<K2,V>>();
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 
@@ -86,6 +87,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		return hashMap.size();
 	}
 
+	@Override
 	public V getValue() {
 		return null;
 	}

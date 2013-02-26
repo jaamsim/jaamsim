@@ -153,6 +153,7 @@ public class TimeValue {
 			currentValue = probVal.getExpectedValue();
 	}
 
+	@Override
 	public String toString() {
 		if (!Double.isNaN(dVal))
 			return Double.toString(dVal);

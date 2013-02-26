@@ -139,6 +139,7 @@ public class Vector extends java.util.Vector<Object> {
 		addLastIfNotPresent( objectToAdd );
 	}
 
+	@Override
 	public int indexOf( Object objectToFind ) {
 		for( int i = 0; i < size(); i++ ) {
 			if( get( i ) == objectToFind ) {
@@ -152,6 +153,7 @@ public class Vector extends java.util.Vector<Object> {
 	 * Return a string containing the contents of the vector.
 	 * This method assumes that each element of the vector is an Entity.
 	 */
+	@Override
 	public String toString() {
 
 		Entity ent;

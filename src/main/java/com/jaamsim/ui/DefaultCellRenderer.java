@@ -27,6 +27,7 @@ private final Border border = BorderFactory.createEmptyBorder(0, 10, 0, 0);
 
 public DefaultCellRenderer() {}
 
+@Override
 public Component getTableCellRendererComponent(JTable table, Object value,
                                                boolean isSelected, boolean hasFocus,
                                                int row, int column) {

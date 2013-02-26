@@ -177,6 +177,7 @@ public class BooleanVector {
 	/**
 	 * Return a string containing the contents of the BooleanVector.
 	 */
+	@Override
 	public String toString() {
 		StringBuilder out = new StringBuilder("{");
 

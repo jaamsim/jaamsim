@@ -213,6 +213,7 @@ public class DisplayEntity extends Entity {
 		return allInstances;
 	}
 
+	@Override
 	public void validate()
 	throws InputErrorException {
 		super.validate();
@@ -233,6 +234,7 @@ public class DisplayEntity extends Entity {
 	/**
 	 * Destroys the branchGroup hierarchy for the entity
 	 */
+	@Override
 	public void kill() {
 		super.kill();
 
@@ -552,6 +554,7 @@ public class DisplayEntity extends Entity {
 	 Override to add details
 	 @return Vector - tab delimited strings describing the DisplayEntity
 	 **/
+	@Override
 	public Vector getInfo() {
 		Vector info = super.getInfo();
 		if( getCurrentRegion() != null )
@@ -610,6 +613,7 @@ public class DisplayEntity extends Entity {
 	/**
 	 * This method updates the DisplayEntity for changes in the given input
 	 */
+	@Override
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 

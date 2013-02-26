@@ -62,6 +62,7 @@ public class PropertyBox extends FrameBox {
 		jTabbedFrame.addChangeListener(new ChangeListener() {
 
 			// This method is called whenever the selected tab changes
+			@Override
 			public void stateChanged(ChangeEvent evt) {
 
 				if( ! ignoreStateChange ) {
@@ -98,9 +99,11 @@ public class PropertyBox extends FrameBox {
 		propTable.getTableHeader().setReorderingAllowed(false);
 
 		propTable.addMouseListener( new MouseInputListener() {
+			@Override
 			public void mouseEntered( MouseEvent e ) {
 
 			}
+			@Override
 			public void mouseClicked( MouseEvent e ) {
 
 				// Left double click
@@ -122,11 +125,16 @@ public class PropertyBox extends FrameBox {
 				}
 			}
 
+			@Override
 			public void mouseReleased(MouseEvent e) {}
+			@Override
 			public void mouseMoved(MouseEvent e) {}
+			@Override
 			public void mouseExited(MouseEvent e) {}
+			@Override
 			public void mouseDragged(MouseEvent e) {}
 
+			@Override
 			public void mousePressed( MouseEvent e ) {
 
 				// Right Mouse Button
@@ -153,6 +161,7 @@ public class PropertyBox extends FrameBox {
 						// Define a popup menu
 						JPopupMenu popupMenu = new JPopupMenu( );
 						ActionListener actionListener = new ActionListener() {
+							@Override
 							public void actionPerformed(ActionEvent e) {
 								Entity entity = Input.tryParseEntity(e.getActionCommand(), Entity.class);
 								FrameBox.setSelectedEntity(entity);
@@ -192,6 +201,7 @@ public class PropertyBox extends FrameBox {
 		return jScrollPane;
 	}
 
+	@Override
 	public void setEntity( Entity entity ) {
 		if(currentEntity == entity || ! this.isVisible())
 			return;
@@ -262,6 +272,7 @@ public class PropertyBox extends FrameBox {
 		updateValues();
 	}
 
+	@Override
 	public void updateValues() {
 		if(currentEntity == null || ! this.isVisible())
 			return;
@@ -360,6 +371,7 @@ public class PropertyBox extends FrameBox {
 		return myInstance;
 	}
 
+	@Override
 	public void dispose() {
 		myInstance = null;
 		super.dispose();

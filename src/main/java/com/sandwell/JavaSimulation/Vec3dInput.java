@@ -13,6 +13,7 @@ public class Vec3dInput extends Input<Vec3d> {
 		super(key, cat, def);
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		DoubleVector temp;

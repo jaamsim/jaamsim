@@ -27,6 +27,7 @@ public class StringChoiceInput extends IntegerInput {
 		super(key, cat, def);
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCount(input, 1);
@@ -54,6 +55,7 @@ public class StringChoiceInput extends IntegerInput {
 		choices = list;
 	}
 
+	@Override
 	public ArrayList<String> getValidOptions() {
 		return choices;
 	}

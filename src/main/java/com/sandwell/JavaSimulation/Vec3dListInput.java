@@ -26,6 +26,7 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 		super(key, cat, def);
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 

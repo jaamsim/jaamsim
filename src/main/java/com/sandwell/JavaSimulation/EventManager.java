@@ -315,6 +315,7 @@ public final class EventManager implements Runnable {
 	 * It is only paused and restarted as required. The run method is called by
 	 * eventManager.start().
 	 */
+	@Override
 	public void run() {
 
 		// Loop continuously
@@ -989,6 +990,7 @@ public final class EventManager implements Runnable {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return name;
 	}

@@ -20,6 +20,7 @@ public class ClassInput extends Input<Class<? extends Entity>>{
 		super(key, cat, def);
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCount(input, 1);

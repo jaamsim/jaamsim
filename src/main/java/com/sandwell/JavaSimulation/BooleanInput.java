@@ -34,6 +34,7 @@ public class BooleanInput extends Input<Boolean> {
 		super(key, cat, Boolean.valueOf(def));
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCount(input, 1);
@@ -41,6 +42,7 @@ public class BooleanInput extends Input<Boolean> {
 		this.updateEditingFlags();
 	}
 
+	@Override
 	public ArrayList<String> getValidOptions() {
 		return validOptions;
 	}

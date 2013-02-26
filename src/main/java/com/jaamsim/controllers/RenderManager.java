@@ -172,6 +172,7 @@ public class RenderManager implements DragSourceListener {
 		_exceptionLogger = new ExceptionLogger();
 
 		_managerThread = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				renderManagerLoop();
 			}
@@ -181,6 +182,7 @@ public class RenderManager implements DragSourceListener {
 		// Start the display timer
 		_timer = new Timer("RedrawThread");
 		TimerTask displayTask = new TimerTask() {
+			@Override
 			public void run() {
 
 				// Is a redraw scheduled
@@ -526,6 +528,7 @@ public class RenderManager implements DragSourceListener {
 					JMenuItem thisItem = new JMenuItem(de.getInputName());
 					thisItem.addActionListener( new ActionListener() {
 
+						@Override
 						public void actionPerformed( ActionEvent event ) {
 							menu.removeAll();
 							populateMenu(menu, ObjectSelector.getMenuItems(de, menuX, menuY));

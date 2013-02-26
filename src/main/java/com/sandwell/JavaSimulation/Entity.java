@@ -280,6 +280,7 @@ public class Entity {
 	 * Method to return the unique identifier of the entity. Used when building Edit tree labels
 	 * @return entityName
 	 */
+	@Override
 	public String toString() {
 		return getInputName();
 	}

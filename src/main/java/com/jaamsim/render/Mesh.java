@@ -65,6 +65,7 @@ public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, Vec4d scale, Vis
 	_pickingID = pickingID;
 }
 
+@Override
 public AABB getBoundsRef() {
 	return _bounds;
 }

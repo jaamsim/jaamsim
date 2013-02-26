@@ -172,10 +172,12 @@ public class GUIFrame extends JFrame {
 	}
 
 	private class CloseListener extends WindowAdapter implements ActionListener {
+		@Override
 		public void windowClosing(WindowEvent e) {
 			GUIFrame.this.close();
 		}
 
+		@Override
 		public void actionPerformed( ActionEvent event ) {
 			GUIFrame.this.close();
 		}
@@ -247,6 +249,7 @@ public class GUIFrame extends JFrame {
 		newMenuItem.setMnemonic( 'N' );
 		newMenuItem.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				DisplayEntity.simulation.pause();
 
@@ -274,6 +277,7 @@ public class GUIFrame extends JFrame {
 		configMenuItem.setMnemonic( 'O' );
 		configMenuItem.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				DisplayEntity.simulation.pause();
 
@@ -299,6 +303,7 @@ public class GUIFrame extends JFrame {
 		saveConfigurationMenuItem.setMnemonic( 'S' );
 		saveConfigurationMenuItem.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.save(GUIFrame.this);
 			}
@@ -309,6 +314,7 @@ public class GUIFrame extends JFrame {
 		saveConfigurationAsMenuItem.setMnemonic( 'V' );
 		saveConfigurationAsMenuItem.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.saveAs(GUIFrame.this);
 
@@ -320,6 +326,7 @@ public class GUIFrame extends JFrame {
 		printInputItem.setMnemonic( 'I' );
 		printInputItem.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.printInputFileKeywords();
 			}
@@ -342,6 +349,7 @@ public class GUIFrame extends JFrame {
 		objectPalletMenuItem.setMnemonic( 'O' );
 		objectPalletMenuItem.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				EntityPallet.getInstance().setVisible(true);
 			}
@@ -352,6 +360,7 @@ public class GUIFrame extends JFrame {
 		objectSelectorMenuItem.setMnemonic( 'S' );
 		objectSelectorMenuItem.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				ObjectSelector.getInstance().setVisible(true);
 			}
@@ -362,6 +371,7 @@ public class GUIFrame extends JFrame {
 		inputEditorMenuItem.setMnemonic( 'I' );
 		inputEditorMenuItem.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				EditBox.getInstance().setVisible(true);
 				if(ObjectSelector.getInstance().isVisible())
@@ -374,6 +384,7 @@ public class GUIFrame extends JFrame {
 		propertiesMenuItem.setMnemonic( 'P' );
 		propertiesMenuItem.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				PropertyBox.getInstance().setVisible(true);
 				if(ObjectSelector.getInstance().isVisible())
@@ -386,6 +397,7 @@ public class GUIFrame extends JFrame {
 		outputsMenuItem.setMnemonic( 'U' );
 		outputsMenuItem.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InfoBox.getInstance().setVisible(true);
 				if(ObjectSelector.getInstance().isVisible())
@@ -431,6 +443,7 @@ public class GUIFrame extends JFrame {
 		alwaysTop.setMnemonic( 'A' );
 		optionMenu.add( alwaysTop );
 		alwaysTop.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed( ActionEvent e ) {
 				if( GUIFrame.this.isAlwaysOnTop() ) {
 					GUIFrame.this.setAlwaysOnTop( false );
@@ -445,6 +458,7 @@ public class GUIFrame extends JFrame {
 		tooltip.setMnemonic( 'L' );
 		optionMenu.add( tooltip );
 		tooltip.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed( ActionEvent e ) {
 				// TODO Needs to be implemented for the new Renderer
 			}
@@ -452,6 +466,7 @@ public class GUIFrame extends JFrame {
 
 		showPosition.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent e ) {
 				setShowPositionXY();
 			}
@@ -465,6 +480,7 @@ public class GUIFrame extends JFrame {
 		aboutMenu.setMnemonic( 'A' );
 		aboutMenu.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				AboutBox.instance().setVisible(true);
 			}
@@ -499,6 +515,7 @@ public class GUIFrame extends JFrame {
 		controlStartResume.setEnabled( false );
 		controlStartResume.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				JToggleButton startResume = (JToggleButton)event.getSource();
 				if(startResume.isSelected()) {
@@ -517,6 +534,7 @@ public class GUIFrame extends JFrame {
 		controlStop.setEnabled( false );
 		controlStop.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				if( Simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING ) {
 					GUIFrame.this.pauseSimulation();
@@ -550,6 +568,7 @@ public class GUIFrame extends JFrame {
 		mainToolBar.add(pauseAt);
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		pauseTime = new JTextField("2000-00-00") {
+			@Override
 			protected void processFocusEvent( FocusEvent fe ) {
 				if ( fe.getID() == FocusEvent.FOCUS_GAINED ) {
 					if(getText().equals(String.format("%c", 8734 ))) {
@@ -618,6 +637,7 @@ public class GUIFrame extends JFrame {
 		toolButtonIsometric.setToolTipText( "Set Isometric View" );
 		toolButtonIsometric.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				if (RenderManager.isGood())
 					RenderManager.inst().setIsometricView();
@@ -630,6 +650,7 @@ public class GUIFrame extends JFrame {
 		toolButtonXYPlane.setToolTipText( "Set XY-Plane View" );
 		toolButtonXYPlane.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				if (RenderManager.isGood())
 					RenderManager.inst().setXYPlaneView();
@@ -645,6 +666,7 @@ public class GUIFrame extends JFrame {
 		toolButtonUndo.setEnabled( false );
 		toolButtonUndo.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				// Not implemented
 			}
@@ -657,6 +679,7 @@ public class GUIFrame extends JFrame {
 		toolButtonRedo.setEnabled( false );
 		toolButtonRedo.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				// Not implemented
 			}
@@ -1291,6 +1314,7 @@ public class GUIFrame extends JFrame {
 
 	public static class SpeedFactorListener implements ChangeListener {
 
+		@Override
 		public void stateChanged( ChangeEvent e ) {
 			InputAgent.processEntity_Keyword_Value(DisplayEntity.simulation,
 			   DisplayEntity.simulation.getInput("RealTimeFactor"),
@@ -1310,6 +1334,7 @@ public class GUIFrame extends JFrame {
 			super(val, min, max, stepSize);
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public Object getPreviousValue() {
 			value = this.getNumber().intValue() / 2;
@@ -1321,6 +1346,7 @@ public class GUIFrame extends JFrame {
 			return value;
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public Object getNextValue() {
 			value = this.getNumber().intValue() * 2;
@@ -1334,6 +1360,7 @@ public class GUIFrame extends JFrame {
 	}
 
 	public static class RealTimeActionListener implements ActionListener {
+		@Override
 		public void actionPerformed( ActionEvent event ) {
 			Input<?> in = DisplayEntity.simulation.getInput("RealTime");
 			String val = "FALSE";

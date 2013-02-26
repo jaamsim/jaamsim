@@ -221,6 +221,7 @@ public boolean equals(Transform other) {
 	return _trans.near4(other._trans) && _rot.equals(other._rot) && MathUtils.near(_scale, other._scale);
 }
 
+@Override
 public String toString()
 {
 	return "T: " + _trans.toString() + " R: " + _rot.toString() + " S: " + Double.toString(_scale);

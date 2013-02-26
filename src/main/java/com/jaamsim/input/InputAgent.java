@@ -969,6 +969,7 @@ public class InputAgent {
 	}
 
 	private static class ConfigFileFilter implements FilenameFilter {
+		@Override
 		public boolean accept(File inFile, String fileName) {
 			return fileName.endsWith("[cC][fF][gG]");
 		}
@@ -1066,6 +1067,7 @@ public class InputAgent {
 	private static void setLoadFile(final GUIFrame gui, String fileName) {
 		final String chosenFileName = fileName;
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				File temp = new File(chosenFileName);
 
@@ -1256,6 +1258,7 @@ public class InputAgent {
 			}
 
 			Collections.sort(cloneList, new Comparator<Entity>() {
+				@Override
 				public int compare(Entity a, Entity b) {
 					return a.getInputName().compareTo(b.getInputName());
 				}

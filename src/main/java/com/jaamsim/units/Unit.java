@@ -37,6 +37,7 @@ public abstract class Unit extends Entity {
 
 	public Unit() {}
 
+	@Override
 	public void kill() {
 		if( alias.getValue() != null ) {
 			for( String str : alias.getValue() ) {

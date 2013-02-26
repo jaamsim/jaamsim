@@ -248,6 +248,7 @@ public abstract class Simulation extends Entity {
 		Simulation.simState = SIM_STATE_LOADED;
 	}
 
+	@Override
 	public void validate() {
 		super.validate();
 
@@ -256,6 +257,7 @@ public abstract class Simulation extends Entity {
 		}
 	}
 
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
 
@@ -270,11 +272,13 @@ public abstract class Simulation extends Entity {
 		doEndAtThread = null;
 	}
 
+	@Override
 	public void startUp() {
 		super.startUp();
 		this.startProcess("doEndAt", this.getEndTime());
 	}
 
+	@Override
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 
@@ -297,6 +301,7 @@ public abstract class Simulation extends Entity {
 	 * Processes the input data corresponding to the specified keyword. If syntaxOnly is true,
 	 * checks input syntax only; otherwise, checks input syntax and process the input values.
 	 */
+	@Override
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
 

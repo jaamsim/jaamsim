@@ -24,6 +24,7 @@ public class IntegerListInput extends ListInput<IntegerVector> {
 		validCounts = new int[] { };
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCountRange(input, minCount, maxCount);

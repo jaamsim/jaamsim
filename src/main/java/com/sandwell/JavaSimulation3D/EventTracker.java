@@ -55,6 +55,7 @@ public class EventTracker extends JDialog {
 		JButton closeButton = new JButton( "Close" );
 		closeButton.addActionListener( new ActionListener() {
 
+			@Override
 			public void actionPerformed( ActionEvent event ) {
 				dispose();
 			}
@@ -62,6 +63,7 @@ public class EventTracker extends JDialog {
 
 		JButton trackButton = new JButton( "Track" );
 		trackButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Entity thisEnt = Input.tryParseEntity(objName.getText(), Entity.class);
 				if (thisEnt == null) {
@@ -82,6 +84,7 @@ public class EventTracker extends JDialog {
 
 		addWindowListener( new java.awt.event.WindowAdapter() {
 
+			@Override
 			public void windowClosed( java.awt.event.WindowEvent e ) {
 				for (Entity each : Entity.getAll()) {
 					each.clearFlag(Entity.FLAG_TRACKEVENTS);

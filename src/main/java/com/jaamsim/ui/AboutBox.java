@@ -70,6 +70,7 @@ public class AboutBox extends FrameBox {
 
 		JButton closeButton = new JButton("OK");
 		closeButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 			}

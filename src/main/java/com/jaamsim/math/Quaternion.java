@@ -315,6 +315,7 @@ public boolean equals(Quaternion other) {
 	return true;
 }
 
+@Override
 public String toString()
 {
 	return "[(" + x + ", "  + y + ", "  + z + ")i, "  + w + "]";

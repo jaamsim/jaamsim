@@ -97,6 +97,7 @@ public class PropertyReader extends InputGroup {
 		timeMethodParameter = new Object[1];
 	}
 
+	@Override
 	public void validate()
 	throws InputErrorException {
 		super.validate();

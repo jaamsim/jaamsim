@@ -64,6 +64,7 @@ public class InfoBox extends FrameBox {
 		setSize(530, 290);
 	}
 
+	@Override
 	public void setEntity(Entity entity) {
 		if (currentEntity == entity)
 			return;
@@ -81,6 +82,7 @@ public class InfoBox extends FrameBox {
 		}
 	}
 
+	@Override
 	public void updateValues() {
 
 		if (currentEntity == null || !this.isVisible())
@@ -115,6 +117,7 @@ public class InfoBox extends FrameBox {
 		return myInstance;
 	}
 
+	@Override
 	public void dispose() {
 		myInstance = null;
 		super.dispose();

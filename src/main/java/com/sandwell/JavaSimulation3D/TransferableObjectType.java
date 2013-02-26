@@ -39,14 +39,17 @@ public class TransferableObjectType implements Transferable {
 		this.type = type;
 	}
 
+	@Override
 	public DataFlavor [] getTransferDataFlavors() {
 		return new DataFlavor [] {OBJECT_TYPE_FLAVOR};
 	}
 
+	@Override
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		return OBJECT_TYPE_FLAVOR.equals(flavor);
 	}
 
+	@Override
 	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
 		if (flavor.equals(OBJECT_TYPE_FLAVOR)) {
 			return type;

@@ -29,6 +29,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		even = false;
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCountRange(input, minCount, maxCount);
@@ -46,6 +47,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		this.even = bool;
 	}
 
+	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<String>();
 		for(T each: Simulation.getClonesOf(entClass) ) {

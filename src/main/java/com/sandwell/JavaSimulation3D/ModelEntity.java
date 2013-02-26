@@ -190,6 +190,7 @@ private static class StateRecord {
 		return completedCycleHours;
 	}
 
+	@Override
 	public String toString() {
 		return getStateName();
 	}
@@ -355,6 +356,7 @@ private static class StateRecord {
 		workingHours = 0.0;
 	}
 
+	@Override
 	public void validate()
 	throws InputErrorException {
 		super.validate();
@@ -393,6 +395,7 @@ private static class StateRecord {
 			throw new InputErrorException("DowntimeIATDistribution cannot allow negative values");
 	}
 
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
 
@@ -1664,6 +1667,7 @@ private static class StateRecord {
 	 Override to add details
 	 @return Vector - tab delimited strings describing the DisplayEntity
 	 **/
+	@Override
 	public Vector getInfo() {
 		Vector info = super.getInfo();
 		if ( presentStateEquals("") )

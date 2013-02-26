@@ -51,6 +51,7 @@ public class ScriptEntity extends Entity {
 	public ScriptEntity() {
 	}
 
+	@Override
 	public void startUp() {
 		this.startProcess( "doScript" );
 	}
@@ -58,6 +59,7 @@ public class ScriptEntity extends Entity {
 	/**
 	 * This method updates the Entity for changes in the given input
 	 */
+	@Override
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 

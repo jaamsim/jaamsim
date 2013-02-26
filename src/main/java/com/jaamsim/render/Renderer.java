@@ -157,6 +157,7 @@ public class Renderer {
 		_openWindows = new HashMap<Integer, RenderWindow>();
 
 		_renderThread = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				mainRenderLoop();
 			}

@@ -73,6 +73,7 @@ public class ObjectType extends Entity {
 		}
 	}
 
+	@Override
 	public void kill() {
 		super.kill();
 		allInstances.remove(this);

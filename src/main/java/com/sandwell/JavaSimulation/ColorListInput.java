@@ -24,6 +24,7 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 		super(key, cat, def);
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCountRange(input, minCount, maxCount);

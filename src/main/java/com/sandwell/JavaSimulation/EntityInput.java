@@ -28,6 +28,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		invalidEntities = null;
 	}
 
+	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCount(input, 0, 1);
@@ -45,6 +46,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		this.updateEditingFlags();
 	}
 
+	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<String>();
 		for (T each: Simulation.getClonesOf(entClass)) {

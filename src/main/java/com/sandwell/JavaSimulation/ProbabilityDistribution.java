@@ -121,6 +121,7 @@ public class ProbabilityDistribution extends Entity {
 		return allInstances;
 	}
 
+	@Override
 	public void kill() {
 		super.kill();
 		allInstances.remove(this);
@@ -133,6 +134,7 @@ public class ProbabilityDistribution extends Entity {
 	/**
 	 * Interpret the input data in the given buffer of strings corresponding to the given keyword.
 	 */
+	@Override
 	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
 	throws InputErrorException {
 

@@ -53,6 +53,7 @@ public class ExceptionBox extends javax.swing.JDialog {
 		javax.swing.JButton okButton = new javax.swing.JButton( "OK" );
 		okButton.addActionListener( new java.awt.event.ActionListener() {
 
+			@Override
 			public void actionPerformed( java.awt.event.ActionEvent ae ) {
 				ExceptionBox.this.dispose();
 
