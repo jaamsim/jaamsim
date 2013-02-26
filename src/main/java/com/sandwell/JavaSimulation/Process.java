@@ -83,6 +83,10 @@ public class Process extends Thread {
 		}
 	}
 
+	public static final boolean isModelProcess() {
+		return (Thread.currentThread() instanceof Process);
+	}
+
 	static long currentTime() {
 		return Process.current().getEventManager().currentTime();
 	}
