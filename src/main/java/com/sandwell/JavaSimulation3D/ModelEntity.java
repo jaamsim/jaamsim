@@ -1592,7 +1592,7 @@ private static class StateRecord {
 				columnValues.add( 0.0 );
 
 				for( int i = 0; i < getNumberOfStates(); i++ ) {
-					double value = getCurrentCycleHoursFor( i ) / total;
+					double value = getTotalHoursFor( i ) / total;
 					anOut.putDoublePercentWithDecimals( value, 1 );
 					anOut.putTabs( 1 );
 					columnValues.add( value );
