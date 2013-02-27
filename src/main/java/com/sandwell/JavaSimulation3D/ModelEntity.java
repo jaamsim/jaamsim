@@ -159,7 +159,6 @@ public class ModelEntity extends DisplayEntity {
 	protected static Vector stateList = new Vector( 11, 1 ); // List of valid states
 	private final HashMap<String, StateRecord> stateMap;
 	protected double workingHours;                    // Accumulated working time spent in working states
-	protected DoubleVector hoursPerState;             // Elapsed time to date for each state
 
 private static class StateRecord {
 	String stateName;
@@ -313,7 +312,6 @@ private static class StateRecord {
 	}
 
 	public ModelEntity() {
-		hoursPerState = new DoubleVector();
 		lastHistogramUpdateTime = 0.0;
 		secondToLastHistogramUpdateTime = 0.0;
 		lastStartTimePerState = new DoubleVector();
@@ -552,7 +550,6 @@ private static class StateRecord {
 			hoursForNextMaintenanceOperatingHours.set( i, hoursForNextMaintenanceOperatingHours.get( i ) - this.getWorkingHours() );
 		}
 
-		initHoursPerState();
 		timeOfLastStateChange = getCurrentTime();
 
 		// Determine the time for the first breakdown event
@@ -570,7 +567,6 @@ private static class StateRecord {
 	}
 
 	public void initializeStatistics() {
-		initHoursPerState();
 		timeOfLastStateChange = getCurrentTime();
 	}
 
@@ -591,7 +587,6 @@ private static class StateRecord {
 			stateReportFile = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
 		}
 
-		initHoursPerState();
 		lastStartTimePerState.fillWithEntriesOf( getStateList().size(), 0.0 );
 		secondToLastStartTimePerState.fillWithEntriesOf( getStateList().size(), 0.0 );
 		timeOfLastStateChange = getCurrentTime();
@@ -765,7 +760,6 @@ private static class StateRecord {
 
 			hoursPerState.addAt( dur, index );*/
 
-			addHoursAt(dur, getPresentStateIndex());
 			timeOfLastStateChange = getCurrentTime();
 
 			// Update working hours, if required
@@ -788,12 +782,6 @@ private static class StateRecord {
 			presentState.addHours(time - timeOfLastStateUpdate);
 			timeOfLastStateUpdate = getCurrentTime();
 		}
-	}
-
-	public void initHoursPerState() {
-		hoursPerState.clear();
-		if( getStateList().size() != 0 )
-			hoursPerState.fillWithEntriesOf( getStateList().size(), 0.0 );
 	}
 
 	/**
@@ -1001,13 +989,6 @@ private static class StateRecord {
 	public double getWorkingHours() {
 		this.updateHours();
 		return workingHours;
-	}
-
-	/**
-	 * Add hours to the specified state by index on the stateList
-	 */
-	protected void addHoursAt(double dur, int index) {
-		hoursPerState.addAt(dur, index);
 	}
 
 	public Vector getStateList() {
