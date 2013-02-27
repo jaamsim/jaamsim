@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +23,8 @@ import java.util.Map.Entry;
 
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputGroup;
+import com.jaamsim.input.Output;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
 
 /**
@@ -621,4 +625,48 @@ public class Entity {
 				meth, text1, text2);
 	}
 
+	@SuppressWarnings("unchecked") // This is to suppress the cast to T warning, which really is checked
+	public <T> T getOutputValue(String outputName, double simTime, Class<T> klass) {
+		for (Method m : this.getClass().getMethods()) {
+			Output o = m.getAnnotation(Output.class);
+			if (o == null) {
+				continue;
+			}
+			// Check the name
+			if (!o.name().equals(outputName)) {
+				continue;
+			}
+
+			// check the types
+			if (m.getReturnType() != klass) {
+				continue;
+			}
+
+			Class<?>[] paramTypes = m.getParameterTypes();
+			if (paramTypes.length != 1 ||
+				paramTypes[0] != double.class) {
+				continue;
+			}
+
+			// Okay, this is definitely the method we are looking for
+			T ret = null;
+			try {
+				ret = (T)(m.invoke(this, simTime));
+			} catch (InvocationTargetException ex) {
+				assert false;
+			} catch (IllegalAccessException ex) {
+				assert false;
+			}
+			return ret;
+		}
+		// No output found
+		return null;
+	}
+
+	public Double getDoubleOutput(String outputName, double simTime) {
+		return getOutputValue(outputName, simTime, Double.class);
+	}
+	public Vec3d getVec3dOutput(String outputName, double simTime) {
+		return getOutputValue(outputName, simTime, Vec3d.class);
+	}
 }
