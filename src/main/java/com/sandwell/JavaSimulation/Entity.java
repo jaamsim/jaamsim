@@ -43,6 +43,8 @@ public class Entity {
 	private String entityInputName; // Name input by user
 	private final long entityNumber;
 
+	private HashMap<String, Method> outputCache = null;
+
 	//public static final int FLAG_TRACE = 0x01; // reserved in case we want to treat tracing like the other flags
 	public static final int FLAG_TRACEREQUIRED = 0x02;
 	public static final int FLAG_TRACESTATE = 0x04;
@@ -625,42 +627,108 @@ public class Entity {
 				meth, text1, text2);
 	}
 
-	@SuppressWarnings("unchecked") // This is to suppress the cast to T warning, which really is checked
-	public <T> T getOutputValue(String outputName, double simTime, Class<T> klass) {
+	private void buildOutputCache() {
+		outputCache = new HashMap<String, Method>();
 		for (Method m : this.getClass().getMethods()) {
 			Output o = m.getAnnotation(Output.class);
 			if (o == null) {
 				continue;
 			}
-			// Check the name
-			if (!o.name().equals(outputName)) {
-				continue;
-			}
 
-			// check the types
-			if (m.getReturnType() != klass) {
-				continue;
-			}
-
+			// Check that this method only takes a single double (simTime) parameter
 			Class<?>[] paramTypes = m.getParameterTypes();
 			if (paramTypes.length != 1 ||
 				paramTypes[0] != double.class) {
 				continue;
 			}
 
-			// Okay, this is definitely the method we are looking for
-			T ret = null;
-			try {
-				ret = (T)(m.invoke(this, simTime));
-			} catch (InvocationTargetException ex) {
-				assert false;
-			} catch (IllegalAccessException ex) {
-				assert false;
-			}
-			return ret;
+			outputCache.put(o.name(), m);
 		}
-		// No output found
-		return null;
+	}
+
+	/**
+	 * A generic method to return any declared outputs for this Entity
+	 * @param outputName - The name of the output
+	 * @param simTime - the simulation time to get the value for
+	 * @param klass - the class of the return type expected
+	 * @return
+	 */
+	@SuppressWarnings("unchecked") // This is to suppress the cast to T warning, which really is checked
+	public <T> T getOutputValue(String outputName, double simTime, Class<T> klass) {
+		// lazily initialize the output cache
+		if (outputCache == null) {
+			buildOutputCache();
+		}
+
+		Method m = outputCache.get(outputName);
+		if (m == null) {
+			return null;
+		}
+
+		if (m.getReturnType() != klass) {
+			return null;
+		}
+
+		T ret = null;
+		try {
+			ret = (T)(m.invoke(this, simTime));
+		} catch (InvocationTargetException ex) {
+			assert false;
+		} catch (IllegalAccessException ex) {
+			assert false;
+		}
+		return ret;
+	}
+
+	/**
+	 * Return the value of the output at 'simTime' with toString() called on it
+	 * @param outputName
+	 * @param simTime
+	 * @return
+	 */
+	public String getOutputAsString(String outputName, double simTime) {
+		// lazily initialize the output cache
+		if (outputCache == null) {
+			buildOutputCache();
+		}
+
+		Method m = outputCache.get(outputName);
+		String ret = null;
+		try {
+			ret = m.invoke(this, simTime).toString();
+		} catch (InvocationTargetException ex) {
+			assert false;
+		} catch (IllegalAccessException ex) {
+			assert false;
+		}
+		return ret;
+	}
+
+	public String[] getOutputNames() {
+		// lazily initialize the output cache
+		if (outputCache == null) {
+			buildOutputCache();
+		}
+
+		return outputCache.keySet().toArray(new String[outputCache.size()]);
+	}
+
+	/**
+	 * Returns the type (Class) of the output, or null if there is no such output
+	 * @param outputName
+	 * @return
+	 */
+	public Class<?> getOutputType(String outputName) {
+		// lazily initialize the output cache
+		if (outputCache == null) {
+			buildOutputCache();
+		}
+
+		Method m = outputCache.get(outputName);
+		if (m == null) {
+			return null;
+		}
+		return m.getReturnType();
 	}
 
 	public Double getDoubleOutput(String outputName, double simTime) {
