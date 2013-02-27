@@ -143,9 +143,9 @@ public Mat4d getMat4dRef() {
 
 
 private void updateMatrix() {
-	assert(_trans.x != Double.NaN);
-	assert(_trans.y != Double.NaN);
-	assert(_trans.z != Double.NaN);
+	assert(!Double.isNaN(_trans.x));
+	assert(!Double.isNaN(_trans.y));
+	assert(!Double.isNaN(_trans.z));
 
 	_mat4d = new Mat4d();
 
