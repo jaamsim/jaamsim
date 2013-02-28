@@ -513,6 +513,15 @@ private static class StateRecord {
 		return hours;
 	}
 
+	public double getTotalHours() {
+		double total = getCurrentTime() - timeOfLastStateUpdate;
+
+		for (int i = 0; i < getNumberOfStates(); i++)
+			total += getStateRecordFor(i).getTotalHours();
+
+		return total;
+	}
+
 	// ******************************************************************************************************
 	// INPUT
 	// ******************************************************************************************************
