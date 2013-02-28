@@ -964,7 +964,7 @@ private static class StateRecord {
 	 */
 	public double getFractionOfTimeForState( String aState ) {
 		if( getCurrentCycleHours() > 0.0 ) {
-			return ((this.getCurrentCycleHoursFor( aState ) / getCurrentCycleHours()) );
+			return ((this.getTotalHoursFor( aState ) / getCurrentCycleHours()) );
 		}
 		else {
 			return 0.0;
@@ -976,7 +976,7 @@ private static class StateRecord {
 	 */
 	public double getPercentageOfTimeForState( String aState ) {
 		if( getCurrentCycleHours() > 0.0 ) {
-			return ((this.getCurrentCycleHoursFor( aState ) / getCurrentCycleHours()) * 100.0);
+			return ((this.getTotalHoursFor( aState ) / getCurrentCycleHours()) * 100.0);
 		}
 		else {
 			return 0.0;
