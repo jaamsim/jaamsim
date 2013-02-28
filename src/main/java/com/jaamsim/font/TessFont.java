@@ -272,7 +272,7 @@ private TessOutput tesselateString(String s) {
 	//
     AffineTransform at = new AffineTransform();
     at.scale(1, -1);
-	PathIterator pIt = shape.getPathIterator(at, _font.getSize()/50.0);
+	PathIterator pIt = shape.getPathIterator(at, _font.getSize()/200.0);
 
 	// Create a GLU tesselator
 	GLUtessellator tess = GLU.gluNewTess();
