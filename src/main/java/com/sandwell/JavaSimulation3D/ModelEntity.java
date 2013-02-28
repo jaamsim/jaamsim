@@ -972,8 +972,8 @@ private static class StateRecord {
 	 * Return the fraction of time for the given status
 	 */
 	public double getFractionOfTimeForState( String aState ) {
-		if( getCurrentCycleHours() > 0.0 ) {
-			return ((this.getTotalHoursFor( aState ) / getCurrentCycleHours()) );
+		if( getTotalHours() > 0.0 ) {
+			return ((this.getTotalHoursFor( aState ) / getTotalHours()) );
 		}
 		else {
 			return 0.0;
@@ -984,8 +984,8 @@ private static class StateRecord {
 	 * Return the percentage of time for the given status
 	 */
 	public double getPercentageOfTimeForState( String aState ) {
-		if( getCurrentCycleHours() > 0.0 ) {
-			return ((this.getTotalHoursFor( aState ) / getCurrentCycleHours()) * 100.0);
+		if( getTotalHours() > 0.0 ) {
+			return ((this.getTotalHoursFor( aState ) / getTotalHours()) * 100.0);
 		}
 		else {
 			return 0.0;
@@ -1599,7 +1599,7 @@ private static class StateRecord {
 
 		this.updateHours();
 		if( getNumberOfStates() != 0 ) {
-			total = getCurrentCycleHours();
+			total = getTotalHours();
 			if( !(total == 0.0) ) {
 				this.updateHours();
 				anOut.putStringTabs( getName(), 1 );
