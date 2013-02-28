@@ -190,6 +190,10 @@ private static class StateRecord {
 		return completedCycleHours;
 	}
 
+	public double getCurrentCycleHours() {
+		return currentCycleHours;
+	}
+
 	@Override
 	public String toString() {
 		return getStateName();
@@ -896,22 +900,20 @@ private static class StateRecord {
 	 * Returns the amount of time spent in the specified status.
 	 */
 	public double getCurrentCycleHoursFor( String state ) {
-
 		int index = this.indexOfState( state );
-		if( index != -1 ) {
-			this.updateHours();
-			return getCurrentCycleHoursFor( index );
-		}
-		else {
-			throw new ErrorException( "Specified state: " + state + " was not found in the StateList." );
-		}
+		return getCurrentCycleHoursFor(index);
 	}
 
 	/**
 	 * Return spent hours for a given state at the index in stateList
 	 */
 	public double getCurrentCycleHoursFor(int index) {
-		return hoursPerState.get(index);
+		StateRecord rec = getStateRecordFor(index);
+		double hours = rec.getCurrentCycleHours();
+		if (presentState == rec)
+			hours += getCurrentTime() - timeOfLastStateUpdate;
+
+		return hours;
 	}
 
 	/**
@@ -1031,7 +1033,11 @@ private static class StateRecord {
 	 * Return the total hours in current cycle for all the states
 	 */
 	public double getCurrentCycleHours() {
-		return hoursPerState.sum();
+		double total = getCurrentTime() - timeOfLastStateUpdate;
+		for (int i = 0; i < getNumberOfStates(); i++) {
+			total += getStateRecordFor(i).getCurrentCycleHours();
+		}
+		return total;
 	}
 
 	// *******************************************************************************************************
