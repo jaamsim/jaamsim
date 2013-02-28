@@ -505,7 +505,12 @@ private static class StateRecord {
 	}
 
 	public double getTotalHoursFor(String state) {
-		return getStateRecordFor(state).getTotalHours();
+		StateRecord rec = getStateRecordFor(state);
+		double hours = rec.getTotalHours();
+		if (presentState == rec)
+			hours += getCurrentTime() - timeOfLastStateUpdate;
+
+		return hours;
 	}
 
 	// ******************************************************************************************************
