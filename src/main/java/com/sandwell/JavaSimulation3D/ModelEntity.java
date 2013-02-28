@@ -761,12 +761,6 @@ private static class StateRecord {
 			hoursPerState.addAt( dur, index );*/
 
 			timeOfLastStateChange = getCurrentTime();
-
-			// Update working hours, if required
-			//if( getWorkingStateList().contains( presentState ) ) {
-			if( this.isWorking() ) {
-				workingHours += dur;
-			}
 		}
 	}
 
@@ -779,7 +773,12 @@ private static class StateRecord {
 
 		double time =  getCurrentTime();
 		if (time != timeOfLastStateUpdate) {
-			presentState.addHours(time - timeOfLastStateUpdate);
+			double dur = time - timeOfLastStateUpdate;
+			presentState.addHours(dur);
+
+			if ( this.isWorking() )
+				workingHours += dur;
+
 			timeOfLastStateUpdate = getCurrentTime();
 		}
 	}
@@ -987,8 +986,11 @@ private static class StateRecord {
 	 * *!*!*!*! OVERLOAD !*!*!*!*
 	 */
 	public double getWorkingHours() {
-		this.updateHours();
-		return workingHours;
+		double hours = 0.0d;
+		if ( this.isWorking() )
+			hours = getCurrentTime() - timeOfLastStateUpdate;
+
+		return workingHours + hours;
 	}
 
 	public Vector getStateList() {
