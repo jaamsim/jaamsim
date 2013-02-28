@@ -33,8 +33,10 @@ Define ObjectType {
                     Arrow
                     TextLabel
                     PropertyLabel
+                    OutputPropertyLabel
                     OverlayTextLabel
                     OverlayPropertyLabel
+                    OverlayOPropLabel
                     OverlayImage
                     Graph
                     }
@@ -44,8 +46,10 @@ Region                JavaClass { com.sandwell.JavaSimulation3D.Region          
 DisplayEntity         JavaClass { com.sandwell.JavaSimulation3D.DisplayEntity        } Palette { 'Graphics Objects' }
 TextLabel             JavaClass { com.sandwell.JavaSimulation3D.TextLabel            } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 PropertyLabel         JavaClass { com.sandwell.JavaSimulation3D.PropertyLabel        } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
+OutputPropertyLabel   JavaClass { com.sandwell.JavaSimulation3D.OutputPropertyLabel  } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 OverlayTextLabel      JavaClass { com.sandwell.JavaSimulation3D.OverlayTextLabel     } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 OverlayPropertyLabel  JavaClass { com.sandwell.JavaSimulation3D.OverlayPropertyLabel } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
+OverlayOPropLabel     JavaClass { com.sandwell.JavaSimulation3D.OverlayOPropLabel    } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 OverlayImage          JavaClass { com.sandwell.JavaSimulation3D.OverlayImage         } Palette { 'Graphics Objects' }
 Arrow                 JavaClass { com.sandwell.JavaSimulation3D.Arrow                } Palette { 'Graphics Objects' } DefaultDisplayModel { ArrowModelDefault        }
 Graph                 JavaClass { com.sandwell.JavaSimulation3D.Graph                } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        }
