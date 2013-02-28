@@ -291,7 +291,7 @@ public class TextModel extends DisplayModel {
 
 				cachedShadow = new OverlayStringProxy(text, fk, dsColor, height,
 				                                      pos.get(0) + (dsOffset.x * (alignRight ? -1 : 1)),
-				                                      pos.get(1) + (dsOffset.y * (alignBottom ? -1 : 1)),
+				                                      pos.get(1) - (dsOffset.y * (alignBottom ? -1 : 1)),
 				                                      alignRight, alignBottom, getVisibilityInfo());
 				out.add(cachedShadow);
 			} else {
