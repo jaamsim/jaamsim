@@ -874,22 +874,23 @@ public class GUIFrame extends JFrame {
 		long cTime = System.currentTimeMillis();
 		Simulation sim = DisplayEntity.simulation;
 		double duration = sim.getRunDuration() + sim.getInitializationTime();
-		int progress = (int)(clockContents * 100.0d / duration);
+		double timeElapsed = clockContents - sim.getStartTime();
+		int progress = (int)(timeElapsed * 100.0d / duration);
 		this.setProgress(progress);
 		if (cTime - lastSystemTime > 5000) {
 			long elapsedMillis = cTime - lastSystemTime;
-			double elapsedSimHours = clockContents - lastSimTimeHours;
+			double elapsedSimHours = timeElapsed - lastSimTimeHours;
 
 			// Determine the speed-up factor
 			double speedUp = (elapsedSimHours * 3600000.0d) / elapsedMillis;
 			setSpeedUp(speedUp);
 
-			double remainingSimTime = duration - clockContents;
+			double remainingSimTime = duration - timeElapsed;
 			double remainingMinutes = (remainingSimTime * 60.0d) / speedUp;
 			setRemaining(remainingMinutes);
 
 			lastSystemTime = cTime;
-			lastSimTimeHours = clockContents;
+			lastSimTimeHours = timeElapsed;
 		}
 	}
 
