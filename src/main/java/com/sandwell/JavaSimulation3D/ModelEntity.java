@@ -156,7 +156,7 @@ public class ModelEntity extends DisplayEntity {
 	private final BooleanInput printToReport;
 
 	// States
-	protected static Vector stateList = new Vector( 11, 1 ); // List of valid states
+	private static Vector stateList = new Vector( 11, 1 ); // List of valid states
 	private final HashMap<String, StateRecord> stateMap;
 	protected double workingHours;                    // Accumulated working time spent in working states
 
