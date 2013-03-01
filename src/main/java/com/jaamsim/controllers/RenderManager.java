@@ -431,17 +431,21 @@ public class RenderManager implements DragSourceListener {
 					List<PickData> picks = pickForMouse(id);
 					ArrayList<Long> debugIDs = new ArrayList<Long>(picks.size());
 
-					String debugString = cacheString + " Picked " + picks.size() + " entities at (" + mouseInfo.x + ", " + mouseInfo.y + "): ";
-
+					StringBuilder dbgMsg = new StringBuilder(cacheString);
+					dbgMsg.append(" Picked ").append(picks.size());
+					dbgMsg.append(" entities at (").append(mouseInfo.x);
+					dbgMsg.append(", ").append(mouseInfo.y).append("): ");
 					for (PickData pd : picks) {
-						debugString += Entity.idToName(pd.id);
-						debugString += ", ";
+						Entity ent = Entity.idToEntity(pd.id);
+						if (ent != null)
+							dbgMsg.append(ent.getInputName());
+
+						dbgMsg.append(", ");
 						debugIDs.add(pd.id);
 					}
+					dbgMsg.append(timeString);
 
-					debugString += timeString;
-
-					_renderer.setWindowDebugInfo(id, debugString, debugIDs);
+					_renderer.setWindowDebugInfo(id, dbgMsg.toString(), debugIDs);
 				}
 
 				if (GUIFrame.getShuttingDownFlag()) {

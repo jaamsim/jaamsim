@@ -95,17 +95,6 @@ public class Entity {
 		}
 	}
 
-	public static String idToName(long id) {
-		synchronized (allInstances) {
-			for (Entity e : allInstances) {
-				if (e.getEntityNumber() == id) {
-					return e.getInputName();
-				}
-			}
-			return "";
-		}
-	}
-
 	public static Entity idToEntity(long id) {
 		synchronized (allInstances) {
 			for (Entity e : allInstances) {
