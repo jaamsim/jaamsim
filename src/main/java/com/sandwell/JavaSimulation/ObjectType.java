@@ -67,12 +67,6 @@ public class ObjectType extends Entity {
 		}
 	}
 
-	public static ArrayList<ObjectType> getAllCopy() {
-		synchronized (allInstances) {
-			return new ArrayList<ObjectType>(allInstances);
-		}
-	}
-
 	@Override
 	public void kill() {
 		super.kill();

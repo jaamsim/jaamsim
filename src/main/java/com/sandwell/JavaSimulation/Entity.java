@@ -89,12 +89,6 @@ public class Entity {
 		}
 	}
 
-	public static ArrayList<? extends Entity> getAllCopy() {
-		synchronized(allInstances) {
-			return new ArrayList<Entity>(allInstances);
-		}
-	}
-
 	public static Entity idToEntity(long id) {
 		synchronized (allInstances) {
 			for (Entity e : allInstances) {
