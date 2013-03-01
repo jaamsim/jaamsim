@@ -132,11 +132,9 @@ public class Entity {
 	}
 
 	public static long getEntitySequence() {
-		//synchronized (allInstances) {
-			long seq = (long)allInstances.size() << 32;
-			seq += entityCount;
-			return seq;
-		//}
+		long seq = (long)allInstances.size() << 32;
+		seq += entityCount;
+		return seq;
 	}
 
 	public final double getCurrentTime() {
