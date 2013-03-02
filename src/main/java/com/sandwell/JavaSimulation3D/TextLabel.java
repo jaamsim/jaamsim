@@ -14,7 +14,6 @@
  */
 package com.sandwell.JavaSimulation3D;
 
-import com.sandwell.JavaSimulation.DeprecatedInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Keyword;
@@ -37,30 +36,6 @@ public class TextLabel extends DisplayEntity  {
 
 		textHeight = new DoubleInput("TextHeight", "Fixed Text", 0.3d, 0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(textHeight, true);
-
-		DeprecatedInput oldfontName = new DeprecatedInput("FontName", "Has been moved to TextModel");
-		oldfontName.setFatal(false);
-		this.addInput(oldfontName, false);
-
-		DeprecatedInput oldfontcolor = new DeprecatedInput("FontColour", "Has been moved to TextModel");
-		oldfontcolor.setFatal(false);
-		this.addInput(oldfontcolor, false, "FontColor");
-
-		DeprecatedInput oldfontstyle = new DeprecatedInput("FontStyle", "Has been moved to TextModel");
-		oldfontstyle.setFatal(false);
-		this.addInput(oldfontstyle, false);
-
-		DeprecatedInput oldds = new DeprecatedInput("DropShadow", "Has been moved to TextModel");
-		oldds.setFatal(false);
-		this.addInput(oldds, false);
-
-		DeprecatedInput olddscol = new DeprecatedInput("DropShadowColour", "Has been moved to TextModel");
-		olddscol.setFatal(false);
-		this.addInput(olddscol, false);
-
-		DeprecatedInput olddsoff = new DeprecatedInput("DropShadowOffset", "Has been moved to TextModel");
-		olddsoff.setFatal(false);
-		this.addInput(olddsoff, false);
 	}
 
 	public TextLabel() {

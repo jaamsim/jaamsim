@@ -32,7 +32,6 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ChangeWatcher;
-import com.sandwell.JavaSimulation.DeprecatedInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
@@ -181,14 +180,6 @@ public class DisplayEntity extends Entity {
 
 		showToolTip = new BooleanInput("ToolTip", "Basic Graphics", true);
 		this.addInput(showToolTip, true);
-
-		DeprecatedInput oldLOD = new DeprecatedInput("LevelOfDetail", "Has been moved to DisplayModel");
-		oldLOD.setFatal(false);
-		this.addInput(oldLOD, false);
-
-		DeprecatedInput oldviews = new DeprecatedInput("VisibleViews", "Has been moved to DisplayModel");
-		oldviews.setFatal(false);
-		this.addInput(oldviews, false);
 	}
 
 	/**
