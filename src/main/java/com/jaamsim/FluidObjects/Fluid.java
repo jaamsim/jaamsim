@@ -14,6 +14,8 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.math.Color4d;
+import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
@@ -33,6 +35,10 @@ public class Fluid extends DisplayEntity {
 	         example = "Fluid1 Viscosity { 0.001002 Pa-s }")
 	private final DoubleInput viscosityInput;
 
+	@Keyword(desc = "The colour of the product, defined using a colour keyword or RGB values.",
+	         example = "Fluid1 Colour { red }")
+	private final ColourInput colourInput;
+
 	@Keyword(desc = "The acceleration of gravity.",
 	         example = "Fluid1 Gravity { 9.81 m/s2 }")
 	private final DoubleInput gravityInput;
@@ -48,6 +54,9 @@ public class Fluid extends DisplayEntity {
 		viscosityInput.setUnits( "Pa-s");
 		this.addInput( viscosityInput, true);
 
+		colourInput = new ColourInput( "Colour", "Key Inputs", ColourInput.RED);
+		this.addInput(colourInput, true, "Color");
+
 		gravityInput = new DoubleInput( "Gravity", "Key Inputs", 9.81d);
 		gravityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		gravityInput.setUnits( "m/s2");
@@ -60,6 +69,10 @@ public class Fluid extends DisplayEntity {
 
 	public double getViscosity() {
 		return viscosityInput.getValue();
+	}
+
+	public Color4d getColour() {
+		return colourInput.getValue();
 	}
 
 	public double getGravity() {
