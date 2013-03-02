@@ -16,6 +16,7 @@ package com.jaamsim.FluidObjects;
 
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
+import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
 /**
  * FluidTank is a storage tank that contains a fluid.
@@ -23,6 +24,10 @@ import com.sandwell.JavaSimulation.Keyword;
  *
  */
 public class FluidTank extends FluidComponent {
+
+	@Keyword(desc = "The total volume of fluid that can be stored in the tank.",
+	         example = "Tank1 Capacity { 1.0 m3 }")
+	private final DoubleInput capacityInput;
 
 	@Keyword(desc = "The volume of fluid in the tank at the start of the simulation.",
 	         example = "Tank1 InitialVolume { 1.0 m3 }")
@@ -40,6 +45,11 @@ public class FluidTank extends FluidComponent {
 	private double fluidLevel;  // The height of the fluid in the tank.
 
 	{
+		capacityInput = new DoubleInput( "Capacity", "Key Inputs", 1.0d);
+		capacityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
+		capacityInput.setUnits( "m3");
+		this.addInput( capacityInput, true);
+
 		initialVolumeInput = new DoubleInput( "InitialVolume", "Key Inputs", 0.0d);
 		initialVolumeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		initialVolumeInput.setUnits( "m3");
@@ -95,5 +105,17 @@ public class FluidTank extends FluidComponent {
 
 	public double getFluidLevel() {
 		return fluidLevel;
+	}
+
+	@Override
+	public void updateGraphics(double time) {
+		super.updateGraphics(time);
+
+		double ratio = Math.min( 1.0, fluidVolume / capacityInput.getValue() );
+
+		setTagSize(DisplayModelCompat.TAG_CONTENTS, ratio);
+
+		if( this.getFluid() != null )
+			setTagColour(DisplayModelCompat.TAG_CONTENTS, this.getFluid().getColour());
 	}
 }

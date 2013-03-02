@@ -14,35 +14,56 @@
  */
 package com.jaamsim.FluidObjects;
 
+import java.util.ArrayList;
+
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.render.HasScreenPoints;
+import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.ErrorException;
+import com.sandwell.JavaSimulation.Vec3dListInput;
 
 /**
  * FluidPipe is a pipe through which fluid can flow.
  * @author Harry King
  *
  */
-public class FluidPipe extends FluidComponent {
+public class FluidPipe extends FluidComponent implements HasScreenPoints {
 
 	@Keyword(desc = "The length of the pipe.",
-	         example = "Tank1 Length { 10.0 m }")
+	         example = "Pipe1 Length { 10.0 m }")
 	private final DoubleInput lengthInput;
 
 	@Keyword(desc = "The height change over the length of the pipe.  " +
 			"Equal to (outlet height - inlet height).",
-	         example = "Tank1 HeightChange { 0.0 }")
+	         example = "Pipe1 HeightChange { 0.0 }")
 	private final DoubleInput heightChangeInput;
 
 	@Keyword(desc = "The roughness height of the inside pipe surface.  " +
 			"Used to calculate the Darcy friction factor for the pipe.",
-	         example = "Tank1 Roughness { 0.01 m }")
+	         example = "Pipe1 Roughness { 0.01 m }")
 	private final DoubleInput roughnessInput;
 
 	@Keyword(desc = "The pressure loss coefficient or 'K-factor' for the pipe.  " +
 			"The factor multiplies the dynamic pressure and is applied as a loss at the pipe outlet.",
-	         example = "Tank1 PressureLossCoefficient { 0.5 }")
+	         example = "Pipe1 PressureLossCoefficient { 0.5 }")
 	private final DoubleInput pressureLossCoefficientInput;
+
+    @Keyword(desc = "A list of points in { x, y, z } coordinates defining the line segments that" +
+            "make up the pipe.  When two coordinates are given it is assumed that z = 0." ,
+             example = "Pipe1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
+	private final Vec3dListInput pointsInput;
+
+	@Keyword(desc = "The width of the pipe segments in pixels.",
+	         example = "Pipe1 Width { 1 }")
+	private final DoubleInput widthInput;
+
+	@Keyword(desc = "The colour of the pipe, defined using a colour keyword or RGB values.",
+	         example = "Pipe1 Colour { red }")
+	private final ColourInput colourInput;
 
 	{
 		lengthInput = new DoubleInput( "Length", "Key Inputs", 1.0d);
@@ -61,8 +82,22 @@ public class FluidPipe extends FluidComponent {
 		this.addInput( roughnessInput, true);
 
 		pressureLossCoefficientInput = new DoubleInput( "PressureLossCoefficient", "Key Inputs", 0.0d);
-		pressureLossCoefficientInput.setValidRange( 0.0, 1.0);
+		pressureLossCoefficientInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		this.addInput( pressureLossCoefficientInput, true);
+
+		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
+		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
+		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
+		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);
+		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
+		pointsInput.setUnits("m");
+		this.addInput(pointsInput, true);
+
+		widthInput = new DoubleInput("Width", "Key Inputs", 1.0d, 1.0d, Double.POSITIVE_INFINITY);
+		this.addInput(widthInput, true);
+
+		colourInput = new ColourInput("Colour", "Key Inputs", ColourInput.BLACK);
+		this.addInput(colourInput, true, "Color");
 	}
 
 	@Override
@@ -135,5 +170,47 @@ public class FluidPipe extends FluidComponent {
 		}
 
 		return 1.0 / ( x * x );
+	}
+
+	@Override
+	public ArrayList<Vec3d> getScreenPoints() {
+		return pointsInput.getValue();
+	}
+
+	@Override
+	public boolean selectable() {
+		return true;
+	}
+
+	/**
+	 *  Inform simulation and editBox of new positions.
+	 */
+	@Override
+	public void dragged(Vec3d dist) {
+		ArrayList<Vec3d> vec = new ArrayList<Vec3d>(pointsInput.getValue().size());
+		for (Vec3d v : pointsInput.getValue()) {
+			vec.add(new Vec3d(v.x + dist.x, v.y + dist.y, v.z + dist.z));
+		}
+
+		StringBuilder tmp = new StringBuilder();
+		for (Vec3d v : vec) {
+			tmp.append(String.format(" { %.3f %.3f %.3f %s }", v.x, v.y, v.z, pointsInput.getUnits()));
+		}
+		InputAgent.processEntity_Keyword_Value(this, pointsInput, tmp.toString());
+
+		super.dragged(dist);
+		setGraphicsDataDirty();
+	}
+
+	@Override
+	public Color4d getDisplayColour() {
+		return colourInput.getValue();
+	}
+
+	@Override
+	public int getWidth() {
+		int ret = widthInput.getValue().intValue();
+		if (ret < 1) return 1;
+		return ret;
 	}
 }

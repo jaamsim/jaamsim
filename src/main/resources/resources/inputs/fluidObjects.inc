@@ -17,19 +17,15 @@ FluidCentrifugalPump    JavaClass { com.jaamsim.FluidObjects.FluidCentrifugalPum
 Define	ImageModel {
 			FluidIconModel
 			FluidFlowIconModel
-			FluidTankIconModel
-			FluidPipeIconModel
 			FluidCentrifugalPumpIconModel
 		}
 
 FluidIconModel                 ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
 FluidFlowIconModel             ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
-FluidTankIconModel             ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
-FluidPipeIconModel             ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
 FluidCentrifugalPumpIconModel  ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
 
 Fluid                 DefaultDisplayModel 	{ FluidIconModel }
 FluidFlow             DefaultDisplayModel 	{ FluidFlowIconModel }
-FluidTank             DefaultDisplayModel 	{ FluidTankIconModel }
-FluidPipe             DefaultDisplayModel 	{ FluidPipeIconModel }
+FluidTank             DefaultDisplayModel   { BarGauge2D }
+FluidPipe             DefaultDisplayModel 	{ ScreenPointsModelDefault }
 FluidCentrifugalPump  DefaultDisplayModel 	{ FluidCentrifugalPumpIconModel }
