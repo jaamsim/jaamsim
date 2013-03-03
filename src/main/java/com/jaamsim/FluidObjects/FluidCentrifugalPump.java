@@ -14,7 +14,10 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.CalculationObjects.DoubleCalculation;
 import com.sandwell.JavaSimulation.DoubleInput;
+import com.sandwell.JavaSimulation.EntityInput;
+import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 
 /**
@@ -36,13 +39,10 @@ public class FluidCentrifugalPump extends FluidComponent {
 	         example = "Pump1 MaxPressureLoss { 1.0 Pa }")
 	private final DoubleInput maxPressureLossInput;
 
-	@Keyword(desc = "Maximum rotation speed for the pump.",
-	         example = "Pump1 MaxRotationSpeed { 1.0 rpm }")
-	private final DoubleInput maxRotationSpeedInput;
-
-	@Keyword(desc = "Present rotation speed for the pump.",
-	         example = "Pump1 PresentRotationSpeed { 1.0 rpm }")
-	private final DoubleInput presentRotationSpeedInput;
+	@Keyword(desc = "The CalculationEntity whose output sets the rotational speed of the pump.  " +
+			"The output value is ratio of present speed to maximum speed (0.0 - 1.0).",
+	         example = "Pump1 SpeedController { Calc1 }")
+	private final EntityInput<DoubleCalculation> speedControllerInput;
 
 	{
 		maxFlowRateInput = new DoubleInput( "MaxFlowRate", "Key Inputs", 1.0d);
@@ -60,15 +60,18 @@ public class FluidCentrifugalPump extends FluidComponent {
 		maxPressureLossInput.setUnits( "Pa");
 		this.addInput( maxPressureLossInput, true);
 
-		maxRotationSpeedInput = new DoubleInput( "MaxRotationSpeed", "Key Inputs", 1.0d);
-		maxRotationSpeedInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		maxRotationSpeedInput.setUnits( "rad/s");
-		this.addInput( maxRotationSpeedInput, true);
+		speedControllerInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "SpeedController", "Key Inputs", null);
+		this.addInput( speedControllerInput, true);
+	}
 
-		presentRotationSpeedInput = new DoubleInput( "PresentRotationSpeed", "Key Inputs", 1.0d);
-		presentRotationSpeedInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		presentRotationSpeedInput.setUnits( "rad/s");
-		this.addInput( presentRotationSpeedInput, true);
+	@Override
+	public void validate() {
+		super.validate();
+
+		// Confirm that the SpeedController keyword has been set
+		if( speedControllerInput.getValue() == null ) {
+			throw new InputErrorException( "The SpeedController keyword must be set." );
+		}
 	}
 
 	/*
@@ -76,7 +79,7 @@ public class FluidCentrifugalPump extends FluidComponent {
 	 */
 	@Override
 	public double calcOutletPressure( double inletPres, double flowAccel ) {
-		double speedFactor = presentRotationSpeedInput.getValue() / maxRotationSpeedInput.getValue();
+		double speedFactor = speedControllerInput.getValue().getValue();
 		double flowFactor = this.getFluidFlow().getFlowRate() / maxFlowRateInput.getValue();
 		double pres = inletPres;
 		pres += maxPressureInput.getValue() * speedFactor * speedFactor;
