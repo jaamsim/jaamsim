@@ -646,7 +646,7 @@ public class Entity {
 			return null;
 		}
 
-		if (m.getReturnType() != klass) {
+		if (!klass.isAssignableFrom(m.getReturnType())) {
 			return null;
 		}
 
