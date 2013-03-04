@@ -895,6 +895,7 @@ public class ColParser extends DefaultHandler {
 		for (ColNode subGeo : mesh.children()) {
 			String geoTag = subGeo.getTag();
 			if (geoTag.equals("polylist") ||
+			    geoTag.equals("polygons") ||
 			    geoTag.equals("triangles")) {
 
 				generateTriangleGeo(subGeo, geoData);
@@ -953,9 +954,15 @@ public class ColParser extends DefaultHandler {
 		if (geoTag.equals("polylist")) {
 			parsePolylist(smd, subGeo);
 		}
+		if (geoTag.equals("polygons")) {
+			parsePolygons(smd, subGeo);
+		}
 
 		int numVerts = smd.posDesc.indices.length;
 		assert(numVerts % 3 == 0);
+		if (numVerts == 0) {
+			return;
+		}
 
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
 		boolean hasTexCoords = (smd.texCoordDesc != null);
@@ -1091,15 +1098,19 @@ public class ColParser extends DefaultHandler {
 		int[] ps = (int[])pNode.getContent();
 
 		ColNode vcountNode = subGeo.findChildTag("vcount", false);
-		if (vcountNode == null)
-			throw new ColException("No 'vcount' child in 'polygons' in mesh.");
-
-		int[] vcounts = (int[])vcountNode.getContent();
+		int[] vcounts;
+		if (vcountNode != null)
+			vcounts = (int[])vcountNode.getContent();
+		else
+			vcounts = new int[0];
 
 		assert(vcounts.length == count);
 		int totalVerts = 0;
 		int numTriangles = 0;
 		for (int i : vcounts) {
+			if (i == 0) {
+				continue;
+			}
 			totalVerts += i;
 			numTriangles += (i-2);
 		}
@@ -1114,6 +1125,9 @@ public class ColParser extends DefaultHandler {
 		int nextWriteVert = 0;
 		int readVertOffset = 0;
 		for (int v : vcounts) {
+			if (v == 0) {
+				continue;
+			}
 			// v is the number of vertices in this polygon
 			assert(v >= 3);
 			for (int i = 0; i < (v-2); ++i) {
@@ -1143,6 +1157,67 @@ public class ColParser extends DefaultHandler {
 				nextWriteVert++;
 			}
 			readVertOffset += v;
+		}
+	}
+
+	// Note, this is definitely not correct, but for now assume all polygons are convex
+	private void parsePolygons(SubMeshDesc smd, ColNode subGeo) {
+
+		int numTriangles = 0;
+
+		// Find the number of triangles, for this we will need to iterate over all the polygons
+		for (ColNode n : subGeo.children()) {
+			// Note: we do not support 'ph' tags (polygons with holes)
+			if (n.getTag() != "p") {
+				continue;
+			}
+			int[] ps = (int[])n.getContent();
+			int numVerts = ps.length / smd.stride;
+			assert( (ps.length % smd.stride) == 0);
+			assert(numVerts >= 3);
+			numTriangles += numVerts - 2;
+		}
+
+		smd.posDesc.indices = new int[numTriangles * 3];
+		smd.normDesc.indices = new int[numTriangles * 3];
+		if (smd.texCoordDesc != null) {
+			smd.texCoordDesc.indices = new int[numTriangles * 3];
+		}
+
+		int nextWriteVert = 0;
+
+		for (ColNode n : subGeo.children()) {
+			// Note: we do not support 'ph' tags (polygons with holes)
+			if (n.getTag() != "p") {
+				continue;
+			}
+			int[] ps = (int[])n.getContent();
+			for(int i = 0; i < (ps.length / smd.stride) - 2; ++i) {
+				int vert0 = 0;
+				int vert1 = i + 1;
+				int vert2 = i + 2;
+
+				smd.posDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.posDesc.offset];
+				smd.normDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.normDesc.offset];
+				if (smd.texCoordDesc != null) {
+					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.texCoordDesc.offset];
+				}
+				nextWriteVert++;
+
+				smd.posDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.posDesc.offset];
+				smd.normDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.normDesc.offset];
+				if (smd.texCoordDesc != null) {
+					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.texCoordDesc.offset];
+				}
+				nextWriteVert++;
+
+				smd.posDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.posDesc.offset];
+				smd.normDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.normDesc.offset];
+				if (smd.texCoordDesc != null) {
+					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.texCoordDesc.offset];
+				}
+				nextWriteVert++;
+			}
 		}
 	}
 
