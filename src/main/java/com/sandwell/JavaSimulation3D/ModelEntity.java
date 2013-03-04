@@ -501,7 +501,7 @@ private static class StateRecord {
 	}
 
 	public double getTotalHoursFor(int index) {
-		return getStateRecordFor(index).getTotalHours();
+		return getTotalHoursFor( (String) getStateList().get(index) );
 	}
 
 	public double getTotalHoursFor(String state) {
