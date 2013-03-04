@@ -17,6 +17,7 @@ package com.jaamsim.FluidObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
@@ -65,6 +66,8 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 	         example = "Pipe1 Colour { red }")
 	private final ColourInput colourInput;
 
+	private double darcyFrictionFactor;  // The Darcy Friction Factor for the pipe flow.
+
 	{
 		lengthInput = new DoubleInput( "Length", "Key Inputs", 1.0d);
 		lengthInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
@@ -107,7 +110,11 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		double pres = inletPres;
 		pres -= this.getFluid().getDensityxGravity() * heightChangeInput.getValue();
 		if( dyn > 0.0 && this.getFluid().getViscosity() > 0.0 ) {
-			pres -= this.getDarcyFrictionFactor() * dyn * this.getLength() / this.getDiameter();
+			this.setDarcyFrictionFactor();
+			pres -= darcyFrictionFactor * dyn * this.getLength() / this.getDiameter();
+		}
+		else {
+			darcyFrictionFactor = 0.0;
 		}
 		pres -= pressureLossCoefficientInput.getValue() * dyn;
 		pres -= flowAccel * this.getFluid().getDensity() * lengthInput.getValue() / this.getFlowArea();
@@ -119,25 +126,22 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		return lengthInput.getValue();
 	}
 
-	private double getDarcyFrictionFactor() {
+	private void setDarcyFrictionFactor() {
 
-		double factor;
 		double reynoldsNumber = this.getReynoldsNumber();
 
 		// Laminar Flow
 		if( reynoldsNumber < 2300.0 ) {
-			factor = this.getLaminarFrictionFactor( reynoldsNumber );
+			darcyFrictionFactor = this.getLaminarFrictionFactor( reynoldsNumber );
 		}
 		// Turbulent Flow
 		else if( reynoldsNumber > 4000.0 ) {
-			factor = this.getTurbulentFrictionFactor( reynoldsNumber );
+			darcyFrictionFactor = this.getTurbulentFrictionFactor( reynoldsNumber );
 		}
 		// Transitional Flow
 		else {
-			factor = 0.5 * ( this.getLaminarFrictionFactor(reynoldsNumber) + this.getTurbulentFrictionFactor(reynoldsNumber) );
+			darcyFrictionFactor = 0.5 * ( this.getLaminarFrictionFactor(reynoldsNumber) + this.getTurbulentFrictionFactor(reynoldsNumber) );
 		}
-
-		return factor;
 	}
 
 	/*
@@ -212,5 +216,11 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		int ret = widthInput.getValue().intValue();
 		if (ret < 1) return 1;
 		return ret;
+	}
+
+	@Output( name="DarcyFrictionFactor",
+			 description="The Darcy Friction Factor for the pipe.")
+	private double getDarcyFrictionFactor( double simTime ) {
+		return darcyFrictionFactor;
 	}
 }

@@ -14,6 +14,7 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.input.Output;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Keyword;
@@ -182,5 +183,41 @@ public class FluidComponent extends DisplayEntity {
 
 	public double getFluidVolume() {
 		return 0.0;
+	}
+
+	@Output( name="FlowArea",
+			 description="The cross-sectional area of the component." )
+	public double getFlowArea( double simTime ) {
+		return flowArea;
+	}
+
+	@Output( name="Velocity",
+			 description="The velocity of the fluid within the component.")
+	public double getVelocity( double simTime ) {
+		return velocity;
+	}
+
+	@Output( name="ReynoldsNumber",
+			 description="The Reynolds Number for the fluid within the component.  Equal to (velocity)(diameter)/(kinematic viscosity).")
+	public double getReynoldsNumber( double simTime ) {
+		return this.getReynoldsNumber();
+	}
+
+	@Output( name="DynamicPressure",
+			 description="The dynamic pressure of the fluid flow.  Equal to (0.5)(density)(velocity^2)." )
+	public double getDynamicPressure( double simTime ) {
+		return this.getDynamicPressure();
+	}
+
+	@Output( name="InletPressure",
+			 description="The static pressure at the component's inlet." )
+	public double getInletPressure( double simTime ) {
+		return inletPressure;
+	}
+
+	@Output( name="OutletPressure",
+			 description="The static pressure at the component's outlet." )
+	public double getOutletPressure( double simTime ) {
+		return outletPressure;
 	}
 }

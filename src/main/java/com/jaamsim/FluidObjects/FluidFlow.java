@@ -16,6 +16,7 @@ package com.jaamsim.FluidObjects;
 
 import java.util.ArrayList;
 import com.jaamsim.CalculationObjects.CalculationEntity;
+import com.jaamsim.input.Output;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ErrorException;
@@ -176,5 +177,23 @@ public class FluidFlow extends CalculationEntity {
 
 	public Fluid getFluid() {
 		return fluidInput.getValue();
+	}
+
+	@Output( name="FlowRate",
+			 description="The volumetric flow rate for the system.")
+	public double getFlowRate( double simTime ) {
+		return flowRate;
+	}
+
+	@Output( name="FlowAcceleration",
+			 description="The time derivative of the volumetric flow rate.")
+	public double getFlowAcceleration( double simTime ) {
+		return flowAcceleration;
+	}
+
+	@Output( name="FlowInertia",
+			 description="The sum of (density)(length)/(flow area) for the hydraulic components in the route.")
+	public double getFlowInertia( double simTime ) {
+		return totalFlowInertia;
 	}
 }
