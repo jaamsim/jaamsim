@@ -316,7 +316,6 @@ private static class StateRecord {
 		secondToLastHistogramUpdateTime = 0.0;
 		lastStartTimePerState = new DoubleVector();
 		secondToLastStartTimePerState = new DoubleVector();
-		timeOfLastStateChange = 0.0;
 		hoursForNextFailure = 0.0;
 		iATFailure = 0.0;
 
@@ -339,7 +338,6 @@ private static class StateRecord {
 		associatedMaintenance = false;
 		workingHours = 0.0;
 		stateMap = new HashMap<String, StateRecord>();
-		timeOfLastStateChange = 0.0;
 		initStateMap();
 	}
 
@@ -347,7 +345,6 @@ private static class StateRecord {
 	 * Clear internal properties
 	 */
 	public void clearInternalProperties() {
-		timeOfLastStateChange = 0.0;
 		hoursForNextFailure = 0.0;
 		performMaintenanceAfterShipDelayPending = false;
 		breakdownPending = false;
@@ -475,6 +472,7 @@ private static class StateRecord {
 			stateMap.put(state.toLowerCase() , stateRecord);
 		}
 		timeOfLastStateUpdate = getCurrentTime();
+		timeOfLastStateChange = getCurrentTime();
 	}
 
 	private StateRecord getStateRecordFor(String state) {
@@ -550,8 +548,6 @@ private static class StateRecord {
 			hoursForNextMaintenanceOperatingHours.set( i, hoursForNextMaintenanceOperatingHours.get( i ) - this.getWorkingHours() );
 		}
 
-		timeOfLastStateChange = getCurrentTime();
-
 		// Determine the time for the first breakdown event
 		/*if ( downtimeIATDistribution == null ) {
 			if( breakdownSeed != 0 ) {
@@ -564,10 +560,6 @@ private static class StateRecord {
 		 else {
 			hoursForNextFailure = getNextBreakdownIAT();
 		}*/
-	}
-
-	public void initializeStatistics() {
-		timeOfLastStateChange = getCurrentTime();
 	}
 
 	/**
@@ -589,7 +581,6 @@ private static class StateRecord {
 
 		lastStartTimePerState.fillWithEntriesOf( getStateList().size(), 0.0 );
 		secondToLastStartTimePerState.fillWithEntriesOf( getStateList().size(), 0.0 );
-		timeOfLastStateChange = getCurrentTime();
 		workingHours = 0.0;
 
 		//  Calculate the average downtime duration if distributions are used
@@ -738,31 +729,7 @@ private static class StateRecord {
 	/**
 	 * Updates the statistics for the present status.
 	 */
-	public void updateHours() {
-
-		if( getPresentState().length() == 0 ) {
-			timeOfLastStateChange = getCurrentTime();
-			return;
-		}
-
-		int index = this.indexOfState( getPresentState() );
-		if( index == -1 ) {
-			throw new ErrorException( "Present state not found in StateList." );
-		}
-
-		double dur = getCurrentTime() - timeOfLastStateChange;
-
-		if( dur > 0.0 ) {
-			/*int index = getStateList().indexOfString( presentState );
-			if( index == -1 ) {
-				throw new ErrorException( " Present state not found in StateList." );
-			}
-
-			hoursPerState.addAt( dur, index );*/
-
-			timeOfLastStateChange = getCurrentTime();
-		}
-	}
+	public void updateHours() {}
 
 	public void updateStateRecordHours() {
 
@@ -840,6 +807,7 @@ private static class StateRecord {
 				this.updateHours();
 				this.updateStateRecordHours();
 				presentState = getStateRecordFor(state);
+				timeOfLastStateChange = getCurrentTime();
 				if( lastStartTimePerState.size() > 0 ) {
 					if( secondToLastStartTimePerState.size() > 0 ) {
 						secondToLastStartTimePerState.set( ind, lastStartTimePerState.get( ind ) );
