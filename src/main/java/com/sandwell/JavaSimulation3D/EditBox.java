@@ -51,6 +51,7 @@ import javax.swing.table.TableModel;
 
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputGroup;
+import com.jaamsim.input.Parser;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.EditBoxColumnRenderer;
 import com.jaamsim.ui.FrameBox;
@@ -605,7 +606,7 @@ public class EditBox extends FrameBox {
 
 			// break the value into single options
 			tokens.clear();
-			InputAgent.tokenizeString(tokens, text.getText());
+			Parser.tokenize(tokens, text.getText());
 			if( !caseSensitive ) {
 				for(i = 0; i < tokens.size(); i++ ) {
 					tokens.set(i, tokens.get(i).toUpperCase() );

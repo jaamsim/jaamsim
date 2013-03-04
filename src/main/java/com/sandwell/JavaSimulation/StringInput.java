@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Parser;
 
 public class StringInput extends Input<String> {
 
@@ -35,7 +36,7 @@ public class StringInput extends Input<String> {
 		String str = super.getValueString();
 
 		ArrayList<String> tokens = new ArrayList<String>();
-		InputAgent.tokenizeString(tokens, str);
+		Parser.tokenize(tokens, str);
 		if(tokens.size() > 1)
 			return String.format("'%s'", str);
 		return str;
