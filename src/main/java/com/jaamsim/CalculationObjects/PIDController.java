@@ -46,7 +46,7 @@ public class PIDController extends DoubleCalculation {
 	         example = "PIDController1 DifferentialGain { 1.0 }")
 	private final DoubleInput differentialGainInput;
 
-	private double lastUpdateTime;  // The time at which the last update was performed
+	private double lastUpdateTime;  // The time at which the last update was performed (seconds)
 	private double error;  // The present value for the error signal
 	private double lastError;  // The previous value for the error signal
 	private double integral;  // The integral of the error signal
@@ -97,7 +97,8 @@ public class PIDController extends DoubleCalculation {
 		double val;
 
 		// Calculate the elapsed time
-		double dt = this.getCurrentTime() - lastUpdateTime;
+		double t = 3600.0 * this.getCurrentTime();  // convert from hours to seconds
+		double dt = t - lastUpdateTime;
 
 		// Calculate the error signal
 		error = setPointInput.getValue().getValue() - processVariableInput.getValue().getValue();
@@ -121,7 +122,7 @@ public class PIDController extends DoubleCalculation {
 
 		// Record values needed for the next update
 		lastError = error;
-		lastUpdateTime = this.getCurrentTime();
+		lastUpdateTime = t;
 		return;
 	}
 }

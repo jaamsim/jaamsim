@@ -51,7 +51,8 @@ public class Differentiator extends DoubleCalculation {
 	public void update() {
 
 		// Calculate the elapsed time
-		double dt = this.getCurrentTime() - lastUpdateTime;
+		double t = 3600.0 * this.getCurrentTime();  // convert from hours to seconds
+		double dt = t - lastUpdateTime;
 
 		// Set the present value
 		if( dt > 0.0 ) {
@@ -59,7 +60,7 @@ public class Differentiator extends DoubleCalculation {
 		}
 
 		// Record values needed for the next update
-		lastUpdateTime = this.getCurrentTime();
+		lastUpdateTime = t;
 		lastInputValue = entityInput.getValue().getValue();
 		return;
 	}

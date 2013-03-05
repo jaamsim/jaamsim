@@ -65,8 +65,9 @@ public class Integrator extends DoubleCalculation {
 	public void update() {
 
 		// Calculate the elapsed time
-		double dt = this.getCurrentTime() - lastUpdateTime;
-		lastUpdateTime = this.getCurrentTime();
+		double t = 3600.0 * this.getCurrentTime();  // convert from hours to seconds
+		double dt = t - lastUpdateTime;
+		lastUpdateTime = t;
 
 		// Set the present value
 		this.setValue( entityInput.getValue().getValue() * dt  +  this.getValue() );
