@@ -16,7 +16,6 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Parser;
 
 public class StringInput extends Input<String> {
