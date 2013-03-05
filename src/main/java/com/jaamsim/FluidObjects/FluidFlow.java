@@ -125,9 +125,9 @@ public class FluidFlow extends CalculationEntity {
 	public void update() {
 
 		// Calculate the elapsed time
-		double dt = this.getCurrentTime() - lastUpdateTime;
-		dt *= 3600.0;  // Convert from hours to seconds
-		lastUpdateTime = this.getCurrentTime();
+		double t = 3600.0 * this.getCurrentTime();  // convert from hours to seconds
+		double dt = t - lastUpdateTime;
+		lastUpdateTime = t;
 
 		// Update the volume stored at the source and destination
 		double dV = flowRate * dt;
