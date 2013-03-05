@@ -634,7 +634,6 @@ public class Entity {
 	 * @param klass - the class of the return type expected
 	 * @return
 	 */
-	@SuppressWarnings("unchecked") // This is to suppress the cast to T warning, which really is checked
 	private <T> T getOutputValueImp(String outputName, double simTime, Class<T> klass) {
 		// lazily initialize the output cache
 		if (outputCache == null) {
@@ -646,20 +645,16 @@ public class Entity {
 			return null;
 		}
 
-		if (!klass.isAssignableFrom(m.getReturnType())) {
-			return null;
-		}
-
 		T ret = null;
 		try {
-			ret = (T)(m.invoke(this, simTime));
-		} catch (InvocationTargetException ex) {
-			assert false;
-		} catch (IllegalAccessException ex) {
-			assert false;
-		} catch (ClassCastException ex) {
-			assert false;
+			if (!klass.isAssignableFrom(m.getReturnType()))
+				return null;
+
+			ret = klass.cast(m.invoke(this, simTime));
 		}
+		catch (InvocationTargetException ex) {}
+		catch (IllegalAccessException ex) {}
+		catch (ClassCastException ex) {}
 		return ret;
 	}
 
