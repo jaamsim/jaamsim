@@ -635,7 +635,7 @@ public class Entity {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked") // This is to suppress the cast to T warning, which really is checked
-	public <T> T getOutputValue(String outputName, double simTime, Class<T> klass) {
+	private <T> T getOutputValueImp(String outputName, double simTime, Class<T> klass) {
 		// lazily initialize the output cache
 		if (outputCache == null) {
 			buildOutputCache();
@@ -657,8 +657,48 @@ public class Entity {
 			assert false;
 		} catch (IllegalAccessException ex) {
 			assert false;
+		} catch (ClassCastException ex) {
+			assert false;
 		}
 		return ret;
+	}
+
+	@SuppressWarnings("unchecked") // Supressing the cast warning (which is effectively checked)
+	private <T> T getInputValueImp(String inputName, double simTime, Class<T> klass) {
+		Input<?> input = inputMap.get(inputName.toUpperCase().intern());
+
+		if (input == null) {
+			return null;
+		}
+
+		T ret = null;
+		try {
+			ret = (T)input.getValue();
+		} catch(ClassCastException ex) {
+			return null;
+		}
+		if (!klass.isAssignableFrom(ret.getClass())) {
+			return null;
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Returns the value of the Output for 'outputName' at 'simTime', if if can be cast to 'klass'
+	 * This also checks the entities inputs, effectively mapping inputs to outputs
+	 * @param outputName
+	 * @param simTime
+	 * @param klass
+	 * @return
+	 */
+	public <T> T getOutputValue(String outputName, double simTime, Class<T> klass) {
+		T ret = getOutputValueImp(outputName, simTime, klass);
+		if (ret != null) {
+			return ret;
+		}
+		// Instead try the inputs
+		return getInputValueImp(outputName, simTime, klass);
 	}
 
 	/**
@@ -674,6 +714,10 @@ public class Entity {
 		}
 
 		Method m = outputCache.get(outputName);
+		if (m == null) {
+			// Instead try the inputs
+			return getInputAsString(outputName);
+		}
 		String ret = null;
 		try {
 			ret = m.invoke(this, simTime).toString();
@@ -685,13 +729,32 @@ public class Entity {
 		return ret;
 	}
 
+	private String getInputAsString(String inputName) {
+		Input<?> input = inputMap.get(inputName.toUpperCase().intern());
+		if (input == null) {
+			return null;
+		}
+		return input.getValue().toString();
+	}
+
 	public String[] getOutputNames() {
 		// lazily initialize the output cache
 		if (outputCache == null) {
 			buildOutputCache();
 		}
 
-		return outputCache.keySet().toArray(new String[outputCache.size()]);
+		String[] ret = new String[outputCache.size() + inputMap.size()];
+
+		int outIndex = 0;
+		for (String s : outputCache.keySet()) {
+			ret[outIndex++] = s;
+		}
+
+		for (String s : inputMap.keySet()) {
+			ret[outIndex++] = s;
+		}
+
+		return ret;
 	}
 
 	/**
