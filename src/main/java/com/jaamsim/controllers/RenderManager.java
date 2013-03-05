@@ -46,7 +46,6 @@ import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.font.TessFont;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.AABB;
-import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
@@ -141,6 +140,7 @@ public class RenderManager implements DragSourceListener {
 	private ObjectType _dndObjectType;
 	private long _dndDropTime = 0;
 
+	// The video recorder to sample
 	private VideoRecorder _recorder;
 
 	private PreviewCache _previewCache = new PreviewCache();
@@ -1525,19 +1525,6 @@ public class RenderManager implements DragSourceListener {
 		_renderer.freeOffscreenTarget(target);
 	}
 
-	public void resetRecorder(ArrayList<View> views, int width, int height, String filePrefix, int numFrames, boolean saveImages, boolean saveVideo, Color4d bgColor) {
-		if (_recorder != null) {
-			_recorder.freeResources();
-		}
-
-		_recorder = new VideoRecorder(views, filePrefix, width, height, numFrames, saveImages, saveVideo, bgColor);
-	}
-
-	public void endRecording() {
-		_recorder.freeResources();
-		_recorder = null;
-	}
-
 	private void takeScreenShot() {
 
 		if (_recorder != null)
@@ -1545,15 +1532,17 @@ public class RenderManager implements DragSourceListener {
 
 		synchronized(_screenshot) {
 			_screenshot.set(false);
+			_recorder = null;
 			_screenshot.notifyAll();
 		}
 	}
 
-	public void blockOnScreenShot() {
+	public void blockOnScreenShot(VideoRecorder recorder) {
 		assert(!_screenshot.get());
 
 		synchronized (_screenshot) {
 			_screenshot.set(true);
+			_recorder = recorder;
 			queueRedraw();
 			while (_screenshot.get()) {
 				try {
