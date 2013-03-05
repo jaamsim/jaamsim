@@ -726,11 +726,6 @@ private static class StateRecord {
 	// HOURS AND STATES
 	// ******************************************************************************************************
 
-	/**
-	 * Updates the statistics for the present status.
-	 */
-	public void updateHours() {}
-
 	public void updateStateRecordHours() {
 
 		if (presentState == null) {
@@ -804,7 +799,6 @@ private static class StateRecord {
 
 			int ind = this.indexOfState( state );
 			if( ind != -1 ) {
-				this.updateHours();
 				this.updateStateRecordHours();
 				presentState = getStateRecordFor(state);
 				timeOfLastStateChange = getCurrentTime();
@@ -1554,11 +1548,9 @@ private static class StateRecord {
 		double total;
 		DoubleVector columnValues = new DoubleVector();
 
-		this.updateHours();
 		if( getNumberOfStates() != 0 ) {
 			total = getTotalHours();
 			if( !(total == 0.0) ) {
-				this.updateHours();
 				anOut.putStringTabs( getName(), 1 );
 				columnValues.add( 0.0 );
 
