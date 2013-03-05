@@ -663,7 +663,6 @@ public class Entity {
 		return ret;
 	}
 
-	@SuppressWarnings("unchecked") // Supressing the cast warning (which is effectively checked)
 	private <T> T getInputValueImp(String inputName, double simTime, Class<T> klass) {
 		Input<?> input = inputMap.get(inputName.toUpperCase().intern());
 
@@ -673,13 +672,9 @@ public class Entity {
 
 		T ret = null;
 		try {
-			ret = (T)input.getValue();
-		} catch(ClassCastException ex) {
-			return null;
+			ret = klass.cast(input.getValue());
 		}
-		if (!klass.isAssignableFrom(ret.getClass())) {
-			return null;
-		}
+		catch(ClassCastException ex) {}
 
 		return ret;
 	}
