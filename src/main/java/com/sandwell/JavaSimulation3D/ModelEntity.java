@@ -755,25 +755,6 @@ private static class StateRecord {
 	// HOURS AND STATES
 	// ******************************************************************************************************
 
-	public void updateStateRecordHours() {
-
-		if (presentState == null) {
-			timeOfLastStateUpdate = getCurrentTime();
-			return;
-		}
-
-		double time =  getCurrentTime();
-		if (time != timeOfLastStateUpdate) {
-			double dur = time - timeOfLastStateUpdate;
-			presentState.addHours(dur);
-
-			if ( this.isWorking() )
-				workingHours += dur;
-
-			timeOfLastStateUpdate = getCurrentTime();
-		}
-	}
-
 	/**
 	 * Return true if the entity is working
 	 */
@@ -828,7 +809,18 @@ private static class StateRecord {
 
 			int ind = this.indexOfState( state );
 			if( ind != -1 ) {
-				this.updateStateRecordHours();
+				if (presentState != null) {
+					double time =  getCurrentTime();
+					if (time != timeOfLastStateUpdate) {
+						double dur = time - timeOfLastStateUpdate;
+						presentState.addHours(dur);
+
+						if ( this.isWorking() )
+							workingHours += dur;
+					}
+				}
+				timeOfLastStateUpdate = getCurrentTime();
+
 				presentState = getStateRecordFor(state);
 				timeOfLastStateChange = getCurrentTime();
 				if( lastStartTimePerState.size() > 0 ) {
