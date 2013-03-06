@@ -679,7 +679,7 @@ private static class StateRecord {
 	}
 
 	public double getTimeOfLastStateChange() {
-		return timeOfLastStateChange;
+		return timeOfLastStateUpdate;
 	}
 
 	/**
