@@ -193,6 +193,13 @@ private static class StateRecord {
 		return currentCycleHours;
 	}
 
+	public void setInitializationHours(double init) {
+		initializationHours = init;
+	}
+
+	public void setCurrentCycleHours(double hours) {
+		currentCycleHours = hours;
+	}
 	@Override
 	public String toString() {
 		return getStateName();
@@ -201,12 +208,6 @@ private static class StateRecord {
 	public void addHours(double dur) {
 		totalHours += dur;
 		currentCycleHours += dur;
-	}
-
-	public void collectInitializationStats() {
-		initializationHours = totalHours;
-		totalHours = 0.0d;
-		completedCycleHours = 0.0d;
 	}
 
 	public void collectCycleStats() {
@@ -412,10 +413,17 @@ private static class StateRecord {
 	 */
 	public void collectInitializationStats() {
 
-		this.updateStateRecordHours();
 		for ( StateRecord each : stateMap.values() ) {
-			each.collectInitializationStats();
+			each.setInitializationHours( getTotalHoursFor(each) );
+			each.clearReportStats();
+
+			if (each == presentState)
+				each.setCurrentCycleHours( getCurrentCycleHoursFor(each) );
 		}
+		if ( this.isWorking() )
+			workingHours += getCurrentTime() - timeOfLastStateUpdate;
+
+		timeOfLastStateUpdate = getCurrentTime();
 		numberOfCompletedCycles = 0;
 	}
 
@@ -506,8 +514,12 @@ private static class StateRecord {
 
 	public double getTotalHoursFor(String state) {
 		StateRecord rec = getStateRecordFor(state);
-		double hours = rec.getTotalHours();
-		if (presentState == rec)
+		return getTotalHoursFor(rec);
+	}
+
+	public double getTotalHoursFor(StateRecord state) {
+		double hours = state.getTotalHours();
+		if (presentState == state)
 			hours += getCurrentTime() - timeOfLastStateUpdate;
 
 		return hours;
@@ -849,8 +861,8 @@ private static class StateRecord {
 	 * Returns the amount of time spent in the specified status.
 	 */
 	public double getCurrentCycleHoursFor( String state ) {
-		int index = this.indexOfState( state );
-		return getCurrentCycleHoursFor(index);
+		StateRecord rec = getStateRecordFor(state);
+		return getCurrentCycleHoursFor(rec);
 	}
 
 	/**
@@ -858,8 +870,12 @@ private static class StateRecord {
 	 */
 	public double getCurrentCycleHoursFor(int index) {
 		StateRecord rec = getStateRecordFor(index);
-		double hours = rec.getCurrentCycleHours();
-		if (presentState == rec)
+		return getCurrentCycleHoursFor(rec);
+	}
+
+	public double getCurrentCycleHoursFor(StateRecord state) {
+		double hours = state.getCurrentCycleHours();
+		if (presentState == state)
 			hours += getCurrentTime() - timeOfLastStateUpdate;
 
 		return hours;
