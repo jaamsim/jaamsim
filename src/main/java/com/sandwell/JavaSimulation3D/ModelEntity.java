@@ -473,12 +473,18 @@ private static class StateRecord {
 	 */
 	protected void clearCurrentCycleHours() {
 
-		this.updateStateRecordHours();
-
 		// clear current cycle hours for each state record
 		for ( StateRecord each : stateMap.values() ) {
+			if (each == presentState)
+				each.setTotalHours( getTotalHoursFor(each) );
+
 			each.clearCurrentCycleHours();
 		}
+
+		if ( this.isWorking() )
+			workingHours += getCurrentTime() - timeOfLastStateUpdate;
+
+		timeOfLastStateUpdate = getCurrentTime();
 	}
 
 	public void initStateMap() {
