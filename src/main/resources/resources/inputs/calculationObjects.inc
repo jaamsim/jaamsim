@@ -52,11 +52,11 @@ Define	ImageModel {
 ControllerIconModel      ImageFile { '/resources/images/Controller-256.png' }      Transparent { TRUE }
 ConstantValueIconModel   ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
 WeightedSumIconModel     ImageFile { '/resources/images/WeightedSum-256.png' }     Transparent { TRUE }
-PolynomialIconModel      ImageFile { '/resources/images/Polynomial-256.png' }   Transparent { TRUE }
+PolynomialIconModel      ImageFile { '/resources/images/Polynomial-256.png' }      Transparent { TRUE }
 IntegratorIconModel      ImageFile { '/resources/images/Integrator-256.png' }      Transparent { TRUE }
 DifferentiatorIconModel  ImageFile { '/resources/images/Differentiator-256.png' }  Transparent { TRUE }
 PIDControllerIconModel   ImageFile { '/resources/images/PID-256.png' }             Transparent { TRUE }
-SensorIconModel          ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
+SensorIconModel          ImageFile { '/resources/images/Sensor-256.png' }          Transparent { TRUE }
 SineWaveIconModel        ImageFile { '/resources/images/SineWave-256.png' }        Transparent { TRUE }
 SquareWaveIconModel      ImageFile { '/resources/images/SquareWave-256.png' }      Transparent { TRUE }
 ConstantBooleanIconModel ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
