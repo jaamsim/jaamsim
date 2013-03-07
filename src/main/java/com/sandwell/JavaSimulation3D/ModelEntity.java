@@ -236,7 +236,6 @@ private static class StateRecord {
 	protected DoubleVector lastStartTimePerState;     // Last time at which the state changed from some other state to each state
 	protected DoubleVector secondToLastStartTimePerState;     // The second to last time at which the state changed from some other state to each state
 	private StateRecord presentState; // The present state of the entity
-	protected double timeOfLastStateChange;           // Time at which the state was last changed
 	protected FileEntity stateReportFile;        // The file to store the state information
 	private String finalLastState = "";        // The final state of the entity (in a sequence of transitional states)
 	private double timeOfLastPrintedState = 0; // The time that the last state printed in the trace state file
@@ -497,7 +496,6 @@ private static class StateRecord {
 			stateMap.put(state.toLowerCase() , stateRecord);
 		}
 		timeOfLastStateUpdate = getCurrentTime();
-		timeOfLastStateChange = getCurrentTime();
 	}
 
 	private StateRecord getStateRecordFor(String state) {
@@ -822,7 +820,6 @@ private static class StateRecord {
 				timeOfLastStateUpdate = getCurrentTime();
 
 				presentState = getStateRecordFor(state);
-				timeOfLastStateChange = getCurrentTime();
 				if( lastStartTimePerState.size() > 0 ) {
 					if( secondToLastStartTimePerState.size() > 0 ) {
 						secondToLastStartTimePerState.set( ind, lastStartTimePerState.get( ind ) );
