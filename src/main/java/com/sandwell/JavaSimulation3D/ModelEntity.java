@@ -229,7 +229,7 @@ private static class StateRecord {
 	}
 }
 
-	private double timeOfLastStateUpdate;
+	private double timeOfLastStateChange;
 	private int numberOfCompletedCycles;
 	protected double lastHistogramUpdateTime;   // Last time at which a histogram was updated for this entity
 	protected double secondToLastHistogramUpdateTime;   // Second to last time at which a histogram was updated for this entity
@@ -424,9 +424,9 @@ private static class StateRecord {
 				each.setCurrentCycleHours( getCurrentCycleHoursFor(each) );
 		}
 		if ( this.isWorking() )
-			workingHours += getCurrentTime() - timeOfLastStateUpdate;
+			workingHours += getCurrentTime() - timeOfLastStateChange;
 
-		timeOfLastStateUpdate = getCurrentTime();
+		timeOfLastStateChange = getCurrentTime();
 		numberOfCompletedCycles = 0;
 	}
 
@@ -445,9 +445,9 @@ private static class StateRecord {
 				each.setTotalHours( getTotalHoursFor(each) );
 		}
 		if ( this.isWorking() )
-			workingHours += getCurrentTime() - timeOfLastStateUpdate;
+			workingHours += getCurrentTime() - timeOfLastStateChange;
 
-		timeOfLastStateUpdate = getCurrentTime();
+		timeOfLastStateChange = getCurrentTime();
 		numberOfCompletedCycles++;
 	}
 
@@ -481,9 +481,9 @@ private static class StateRecord {
 		}
 
 		if ( this.isWorking() )
-			workingHours += getCurrentTime() - timeOfLastStateUpdate;
+			workingHours += getCurrentTime() - timeOfLastStateChange;
 
-		timeOfLastStateUpdate = getCurrentTime();
+		timeOfLastStateChange = getCurrentTime();
 	}
 
 	public void initStateMap() {
@@ -495,7 +495,7 @@ private static class StateRecord {
 			StateRecord stateRecord = new StateRecord(state, i);
 			stateMap.put(state.toLowerCase() , stateRecord);
 		}
-		timeOfLastStateUpdate = getCurrentTime();
+		timeOfLastStateChange = getCurrentTime();
 	}
 
 	private StateRecord getStateRecordFor(String state) {
@@ -535,13 +535,13 @@ private static class StateRecord {
 	public double getTotalHoursFor(StateRecord state) {
 		double hours = state.getTotalHours();
 		if (presentState == state)
-			hours += getCurrentTime() - timeOfLastStateUpdate;
+			hours += getCurrentTime() - timeOfLastStateChange;
 
 		return hours;
 	}
 
 	public double getTotalHours() {
-		double total = getCurrentTime() - timeOfLastStateUpdate;
+		double total = getCurrentTime() - timeOfLastStateChange;
 
 		for (int i = 0; i < getNumberOfStates(); i++)
 			total += getStateRecordFor(i).getTotalHours();
@@ -677,7 +677,7 @@ private static class StateRecord {
 	}
 
 	public double getTimeOfLastStateChange() {
-		return timeOfLastStateUpdate;
+		return timeOfLastStateChange;
 	}
 
 	/**
@@ -809,15 +809,15 @@ private static class StateRecord {
 			if( ind != -1 ) {
 				if (presentState != null) {
 					double time =  getCurrentTime();
-					if (time != timeOfLastStateUpdate) {
-						double dur = time - timeOfLastStateUpdate;
+					if (time != timeOfLastStateChange) {
+						double dur = time - timeOfLastStateChange;
 						presentState.addHours(dur);
 
 						if ( this.isWorking() )
 							workingHours += dur;
 					}
 				}
-				timeOfLastStateUpdate = getCurrentTime();
+				timeOfLastStateChange = getCurrentTime();
 
 				presentState = getStateRecordFor(state);
 				if( lastStartTimePerState.size() > 0 ) {
@@ -882,7 +882,7 @@ private static class StateRecord {
 	public double getCurrentCycleHoursFor(StateRecord state) {
 		double hours = state.getCurrentCycleHours();
 		if (presentState == state)
-			hours += getCurrentTime() - timeOfLastStateUpdate;
+			hours += getCurrentTime() - timeOfLastStateChange;
 
 		return hours;
 	}
@@ -972,7 +972,7 @@ private static class StateRecord {
 	public double getWorkingHours() {
 		double hours = 0.0d;
 		if ( this.isWorking() )
-			hours = getCurrentTime() - timeOfLastStateUpdate;
+			hours = getCurrentTime() - timeOfLastStateChange;
 
 		return workingHours + hours;
 	}
@@ -1000,7 +1000,7 @@ private static class StateRecord {
 	 * Return the total hours in current cycle for all the states
 	 */
 	public double getCurrentCycleHours() {
-		double total = getCurrentTime() - timeOfLastStateUpdate;
+		double total = getCurrentTime() - timeOfLastStateChange;
 		for (int i = 0; i < getNumberOfStates(); i++) {
 			total += getStateRecordFor(i).getCurrentCycleHours();
 		}
