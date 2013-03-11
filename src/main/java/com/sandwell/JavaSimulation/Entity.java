@@ -783,4 +783,13 @@ public class Entity {
 	public Vec3d getVec3dOutput(String outputName, double simTime) {
 		return getOutputValue(outputName, simTime, Vec3d.class);
 	}
+
+	////////////////////////////////////////////////////////////////////////
+	// Outputs
+	////////////////////////////////////////////////////////////////////////
+
+	@Output(name = "Name")
+	public String getNameOutput(double simTime) {
+		return entityName;
+	}
 }

@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
@@ -715,4 +716,29 @@ public class DisplayEntity extends Entity {
 	public TagSet getTagSet() {
 		return tags;
 	}
+
+	////////////////////////////////////////////////////////////////////////
+	// Outputs
+	////////////////////////////////////////////////////////////////////////
+
+	@Output(name = "Position")
+	public Vec3d getPosOutput(double simTime) {
+		return getPosition();
+	}
+
+	@Output(name = "Size")
+	public Vec3d getSizeOutput(double simTime) {
+		return getSize();
+	}
+
+	@Output(name = "Orientation")
+	public Vec3d getOrientOutput(double simTime) {
+		return getOrientation();
+	}
+
+	@Output(name = "Alignment")
+	public Vec3d getAlignOutput(double simTime) {
+		return getAlignment();
+	}
+
 }
