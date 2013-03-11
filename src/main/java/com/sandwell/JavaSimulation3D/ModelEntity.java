@@ -220,14 +220,6 @@ private static class StateRecord {
 		currentCycleHours = hours;
 	}
 
-	public void setLastStartTimeInState(double lastTime) {
-		lastStartTimeInState = lastTime;
-	}
-
-	public void setSecondLastStartTimeInState(double secondLastTime) {
-		secondLastStartTimeInState = secondLastTime;
-	}
-
 	@Override
 	public String toString() {
 		return getStateName();
@@ -822,14 +814,14 @@ private static class StateRecord {
 
 		if (testFlag(FLAG_TRACESTATE)) this.printStateTrace(state);
 
+		double curTime = getCurrentTime();
 		StateRecord nextState = this.getStateRecordFor(state);
 		if (nextState == null)
 			throw new ErrorException(this + " Specified state: " + state + " was not found in the StateList: " + this.getStateList());
 
 		if (presentState != null) {
-			double time = getCurrentTime();
-			if (time != timeOfLastStateChange) {
-				double dur = time - timeOfLastStateChange;
+			if (curTime != timeOfLastStateChange) {
+				double dur = curTime - timeOfLastStateChange;
 				presentState.addHours(dur);
 
 				if (this.isWorking())
@@ -837,10 +829,10 @@ private static class StateRecord {
 			}
 		}
 
-		timeOfLastStateChange = getCurrentTime();
+		timeOfLastStateChange = curTime;
 		presentState = nextState;
-		presentState.setSecondLastStartTimeInState(presentState.getLastStartTimeInState());
-		presentState.setLastStartTimeInState(getCurrentTime());
+		presentState.secondLastStartTimeInState = presentState.getLastStartTimeInState();
+		presentState.lastStartTimeInState = curTime;
 	}
 
 	/**
