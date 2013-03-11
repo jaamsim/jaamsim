@@ -252,8 +252,6 @@ private static class StateRecord {
 	private int numberOfCompletedCycles;
 	protected double lastHistogramUpdateTime;   // Last time at which a histogram was updated for this entity
 	protected double secondToLastHistogramUpdateTime;   // Second to last time at which a histogram was updated for this entity
-	protected DoubleVector lastStartTimePerState;     // Last time at which the state changed from some other state to each state
-	protected DoubleVector secondToLastStartTimePerState;     // The second to last time at which the state changed from some other state to each state
 	private StateRecord presentState; // The present state of the entity
 	protected FileEntity stateReportFile;        // The file to store the state information
 	private String finalLastState = "";        // The final state of the entity (in a sequence of transitional states)
@@ -337,8 +335,6 @@ private static class StateRecord {
 	public ModelEntity() {
 		lastHistogramUpdateTime = 0.0;
 		secondToLastHistogramUpdateTime = 0.0;
-		lastStartTimePerState = new DoubleVector();
-		secondToLastStartTimePerState = new DoubleVector();
 		hoursForNextFailure = 0.0;
 		iATFailure = 0.0;
 
@@ -625,8 +621,6 @@ private static class StateRecord {
 			stateReportFile = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
 		}
 
-		lastStartTimePerState.fillWithEntriesOf( getStateList().size(), 0.0 );
-		secondToLastStartTimePerState.fillWithEntriesOf( getStateList().size(), 0.0 );
 		workingHours = 0.0;
 
 		//  Calculate the average downtime duration if distributions are used
@@ -842,12 +836,6 @@ private static class StateRecord {
 
 				presentState.setSecondLastStartTimeInState(presentState.getLastStartTimeInState());
 				presentState.setLastStartTimeInState(getCurrentTime());
-				if( lastStartTimePerState.size() > 0 ) {
-					if( secondToLastStartTimePerState.size() > 0 ) {
-						secondToLastStartTimePerState.set( ind, lastStartTimePerState.get( ind ) );
-					}
-					lastStartTimePerState.set( ind, getCurrentTime() );
-				}
 			}
 			else {
 				throw new ErrorException( this + " Specified state: " + state + " was not found in the StateList: " + this.getStateList() );
