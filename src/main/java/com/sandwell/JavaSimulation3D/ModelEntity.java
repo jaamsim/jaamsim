@@ -168,6 +168,9 @@ private static class StateRecord {
 	double completedCycleHours;
 	double currentCycleHours;
 
+	double lastStartTimeInState;
+	double secondLastStartTimeInState;
+
 	public StateRecord(String state, int i) {
 		stateName = state;
 		index = i;
@@ -193,6 +196,10 @@ private static class StateRecord {
 		return currentCycleHours;
 	}
 
+	public double getLastStartTimeInState() {
+		return lastStartTimeInState;
+	}
+
 	public void setInitializationHours(double init) {
 		initializationHours = init;
 	}
@@ -207,6 +214,14 @@ private static class StateRecord {
 
 	public void setCurrentCycleHours(double hours) {
 		currentCycleHours = hours;
+	}
+
+	public void setLastStartTimeInState(double lastTime) {
+		lastStartTimeInState = lastTime;
+	}
+
+	public void setSecondLastStartTimeInState(double secondLastTime) {
+		secondLastStartTimeInState = secondLastTime;
 	}
 
 	@Override
@@ -820,6 +835,9 @@ private static class StateRecord {
 				timeOfLastStateChange = getCurrentTime();
 
 				presentState = getStateRecordFor(state);
+
+				presentState.setSecondLastStartTimeInState(presentState.getLastStartTimeInState());
+				presentState.setLastStartTimeInState(getCurrentTime());
 				if( lastStartTimePerState.size() > 0 ) {
 					if( secondToLastStartTimePerState.size() > 0 ) {
 						secondToLastStartTimePerState.set( ind, lastStartTimePerState.get( ind ) );
