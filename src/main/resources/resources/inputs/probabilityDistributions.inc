@@ -10,6 +10,8 @@ Define ObjectType {
 					WeibullDistribution
 					LogNormalDistribution
 					LogLogisticsDistribution
+					DiscreteDistribution
+					ContinuousDistribution
                     }
 
 UniformDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.UniformDistribution		} Palette { 'Probability Distributions' }
@@ -21,6 +23,8 @@ GammaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.GammaDistri
 WeibullDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.WeibullDistribution		} Palette { 'Probability Distributions' }
 LogNormalDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.LogNormalDistribution		} Palette { 'Probability Distributions' }
 LogLogisticsDistribution	JavaClass { com.jaamsim.ProbabilityDistributions.LogLogisticDistribution	} Palette { 'Probability Distributions' }
+DiscreteDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteDistribution		} Palette { 'Probability Distributions' }
+ContinuousDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ContinuousDistribution		} Palette { 'Probability Distributions' }
 
 Define	ImageModel {
 					ProbabilityDistributionIconModel
@@ -37,3 +41,5 @@ GammaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 WeibullDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogLogisticsDistribution	DefaultDisplayModel { ProbabilityDistributionIconModel }
+DiscreteDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
+ContinuousDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
