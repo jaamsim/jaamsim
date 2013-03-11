@@ -46,6 +46,8 @@ public class OutputBox extends FrameBox {
 
 		outputNames = new String[0];
 
+		table.setDefaultRenderer(Object.class, colRenderer);
+
 		pack();
 	}
 
