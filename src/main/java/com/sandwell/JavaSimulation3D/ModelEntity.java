@@ -200,6 +200,10 @@ private static class StateRecord {
 		return lastStartTimeInState;
 	}
 
+	public double getSecondLastStartTimeInState() {
+		return secondLastStartTimeInState;
+	}
+
 	public void setInitializationHours(double init) {
 		initializationHours = init;
 	}
@@ -919,36 +923,36 @@ private static class StateRecord {
 	public double getTimeFromStartState_ToEndState( String startState, String endState) {
 
 		// Determine the index of the start state
-		int startIndex = this.indexOfState( startState );
-		if( startIndex == -1 ) {
-			throw new ErrorException( "Specified state: " + startState + " was not found in the StateList." );
+		StateRecord startStateRec = this.getStateRecordFor(startState);
+		if (startStateRec == null) {
+			throw new ErrorException("Specified state: %s was not found in the StateList.", startState);
 		}
 
 		// Determine the index of the end state
-		int endIndex = this.indexOfState( endState );
-		if( endIndex == -1 ) {
-			throw new ErrorException( "Specified state: " + endState + " was not found in the StateList." );
+		StateRecord endStateRec = this.getStateRecordFor(endState);
+		if (endStateRec == null) {
+			throw new ErrorException("Specified state: %s was not found in the StateList.", endState);
 		}
 
 		// Is the start time of the end state greater or equal to the start time of the start state?
-		if( lastStartTimePerState.get( endIndex ) >= lastStartTimePerState.get( startIndex ) ) {
+		if (endStateRec.getLastStartTimeInState() >= startStateRec.getLastStartTimeInState()) {
 
 			// If either time was not in the present cycle, return NaN
-			if( lastStartTimePerState.get( endIndex ) <= lastHistogramUpdateTime ||
-				lastStartTimePerState.get( startIndex ) <= lastHistogramUpdateTime ) {
+			if (endStateRec.getLastStartTimeInState() <= lastHistogramUpdateTime ||
+			   startStateRec.getLastStartTimeInState() <= lastHistogramUpdateTime ) {
 				return Double.NaN;
 			}
 			// Return the time from the last start time of the start state to the last start time of the end state
-			return lastStartTimePerState.get( endIndex ) - lastStartTimePerState.get( startIndex );
+			return endStateRec.getLastStartTimeInState() - startStateRec.getLastStartTimeInState();
 		}
 		else {
 			// If either time was not in the present cycle, return NaN
-			if( lastStartTimePerState.get( endIndex ) <= lastHistogramUpdateTime ||
-				secondToLastStartTimePerState.get( startIndex ) <= secondToLastHistogramUpdateTime ) {
+			if (endStateRec.getLastStartTimeInState() <= lastHistogramUpdateTime ||
+			   startStateRec.getSecondLastStartTimeInState() <= secondToLastHistogramUpdateTime ) {
 				return Double.NaN;
 			}
 			// Return the time from the second to last start time of the start date to the last start time of the end state
-			return lastStartTimePerState.get( endIndex ) - secondToLastStartTimePerState.get( startIndex );
+			return endStateRec.getLastStartTimeInState() - startStateRec.getSecondLastStartTimeInState();
 		}
 	}
 
