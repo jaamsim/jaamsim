@@ -23,7 +23,9 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import java.util.Random;
 
 /**
- * ProbablityDistribution is the super-class for the various probability distributions implemented in JaamSim. *
+ * ProbablityDistribution is the super-class for the various probability distributions implemented in JaamSim.
+ * @author Harry King
+ *
  */
 public abstract class NewProbabilityDistribution extends DisplayEntity {
 
