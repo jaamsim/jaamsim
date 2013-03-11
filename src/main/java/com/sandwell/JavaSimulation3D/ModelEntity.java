@@ -812,35 +812,35 @@ private static class StateRecord {
 	 * Updates the statistics, then sets the present status to be the specified value.
 	 */
 	public void setPresentState( String state ) {
-		if( traceFlag ) this.trace("setState( "+state+" )");
-		if( traceFlag ) this.traceLine(" Old State = "+getPresentState() );
+		if (traceFlag) {
+			this.trace("setState( " + state + " )");
+			this.traceLine(" Old State = " + getPresentState());
+		}
 
-		if( ! presentStateEquals( state ) ) {
-			if (testFlag(FLAG_TRACESTATE)) this.printStateTrace(state);
+		if (presentStateEquals(state))
+			return;
 
-			int ind = this.indexOfState( state );
-			if( ind != -1 ) {
-				if (presentState != null) {
-					double time =  getCurrentTime();
-					if (time != timeOfLastStateChange) {
-						double dur = time - timeOfLastStateChange;
-						presentState.addHours(dur);
+		if (testFlag(FLAG_TRACESTATE)) this.printStateTrace(state);
 
-						if ( this.isWorking() )
-							workingHours += dur;
-					}
-				}
-				timeOfLastStateChange = getCurrentTime();
+		int ind = this.indexOfState(state);
+		if (ind == -1)
+			throw new ErrorException(this + " Specified state: " + state + " was not found in the StateList: " + this.getStateList());
 
-				presentState = getStateRecordFor(state);
+		if (presentState != null) {
+			double time = getCurrentTime();
+			if (time != timeOfLastStateChange) {
+				double dur = time - timeOfLastStateChange;
+				presentState.addHours(dur);
 
-				presentState.setSecondLastStartTimeInState(presentState.getLastStartTimeInState());
-				presentState.setLastStartTimeInState(getCurrentTime());
-			}
-			else {
-				throw new ErrorException( this + " Specified state: " + state + " was not found in the StateList: " + this.getStateList() );
+				if (this.isWorking())
+					workingHours += dur;
 			}
 		}
+		timeOfLastStateChange = getCurrentTime();
+
+		presentState = getStateRecordFor(state);
+		presentState.setSecondLastStartTimeInState(presentState.getLastStartTimeInState());
+		presentState.setLastStartTimeInState(getCurrentTime());
 	}
 
 	/**
