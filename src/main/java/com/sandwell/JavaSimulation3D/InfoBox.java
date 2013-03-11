@@ -35,7 +35,7 @@ public class InfoBox extends FrameBox {
 	private Entity currentEntity;
 
 	public InfoBox() {
-		super("Output Viewer");
+		super("Info Viewer");
 
 		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
 
@@ -76,7 +76,7 @@ public class InfoBox extends FrameBox {
 			propTable.setVisible(false);
 		}
 		else {
-			setTitle(String.format("Output Viewer - %s", currentEntity.getInputName()));
+			setTitle(String.format("Info Viewer - %s", currentEntity.getInputName()));
 			updateValues();
 			propTable.setVisible(true);
 		}

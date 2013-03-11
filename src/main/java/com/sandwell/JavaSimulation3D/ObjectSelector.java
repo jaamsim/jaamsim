@@ -351,6 +351,22 @@ static class PropertyMenuItem extends DEMenuItem {
 	}
 }
 
+static class InfoMenuItem extends DEMenuItem {
+	private final Entity ent;
+	public InfoMenuItem(Entity ent) {
+		super("Info Viewer");
+		this.ent = ent;
+	}
+
+	@Override
+	public void action() {
+		InfoBox.getInstance().setVisible(true);
+		InfoBox.getInstance().setExtendedState(JFrame.NORMAL);
+		InfoBox.getInstance().toFront();
+		FrameBox.setSelectedEntity(ent);
+	}
+}
+
 static class OutputMenuItem extends DEMenuItem {
 	private final Entity ent;
 	public OutputMenuItem(Entity ent) {
@@ -360,9 +376,9 @@ static class OutputMenuItem extends DEMenuItem {
 
 	@Override
 	public void action() {
-		InfoBox.getInstance().setVisible(true);
-		InfoBox.getInstance().setExtendedState(JFrame.NORMAL);
-		InfoBox.getInstance().toFront();
+		OutputBox.getInstance().setVisible(true);
+		OutputBox.getInstance().setExtendedState(JFrame.NORMAL);
+		OutputBox.getInstance().toFront();
 		FrameBox.setSelectedEntity(ent);
 	}
 }
@@ -466,6 +482,7 @@ static class LabelMenuItem extends DEMenuItem {
 		ArrayList<DEMenuItem> list = new ArrayList<DEMenuItem>();
 		list.add(new InputMenuItem(ent));
 		list.add(new PropertyMenuItem(ent));
+		list.add(new InfoMenuItem(ent));
 		list.add(new OutputMenuItem(ent));
 
 		if (!ent.testFlag(Entity.FLAG_GENERATED))

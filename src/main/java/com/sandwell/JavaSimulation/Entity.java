@@ -725,24 +725,35 @@ public class Entity {
 		if (input == null) {
 			return null;
 		}
-		return input.getValue().toString();
+		Object val = input.getValue();
+		if (val == null) {
+			return "null";
+		}
+		return val.toString();
 	}
 
-	public String[] getOutputNames() {
+	public String[] getOutputNames(boolean includeInputs) {
 		// lazily initialize the output cache
 		if (outputCache == null) {
 			buildOutputCache();
 		}
 
-		String[] ret = new String[outputCache.size() + inputMap.size()];
+		int outputSize = outputCache.size();
+		if (includeInputs) {
+			outputSize += inputMap.size();
+		}
+
+		String[] ret = new String[outputSize];
 
 		int outIndex = 0;
 		for (String s : outputCache.keySet()) {
 			ret[outIndex++] = s;
 		}
 
-		for (String s : inputMap.keySet()) {
-			ret[outIndex++] = s;
+		if (includeInputs) {
+			for (String s : inputMap.keySet()) {
+				ret[outIndex++] = s;
+			}
 		}
 
 		return ret;

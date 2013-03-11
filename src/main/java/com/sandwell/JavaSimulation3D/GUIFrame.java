@@ -393,9 +393,9 @@ public class GUIFrame extends JFrame {
 		} );
 		viewMenu.add( propertiesMenuItem );
 
-		JMenuItem outputsMenuItem = new JMenuItem( "Output Viewer" );
-		outputsMenuItem.setMnemonic( 'U' );
-		outputsMenuItem.addActionListener( new ActionListener() {
+		JMenuItem infoMenuItem = new JMenuItem( "Info Viewer" );
+		infoMenuItem.setMnemonic( 'I' );
+		infoMenuItem.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
@@ -404,7 +404,20 @@ public class GUIFrame extends JFrame {
 					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
 		} );
-		viewMenu.add( outputsMenuItem );
+		viewMenu.add( infoMenuItem );
+
+		JMenuItem outputMenuItem = new JMenuItem( "Output Viewer" );
+		outputMenuItem.setMnemonic( 'U' );
+		outputMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				OutputBox.getInstance().setVisible(true);
+				if(ObjectSelector.getInstance().isVisible())
+					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
+			}
+		} );
+		viewMenu.add( outputMenuItem );
 
 //		JMenuItem eventListMenuItem = new JMenuItem( "Event Viewer" );
 //		eventListMenuItem.setMnemonic( 'E' );
