@@ -225,11 +225,6 @@ private static class StateRecord {
 		return getStateName();
 	}
 
-	public void addHours(double dur) {
-		totalHours += dur;
-		currentCycleHours += dur;
-	}
-
 	public void clearReportStats() {
 		totalHours = 0.0d;
 		completedCycleHours = 0.0d;
@@ -815,18 +810,18 @@ private static class StateRecord {
 		if (testFlag(FLAG_TRACESTATE)) this.printStateTrace(state);
 
 		double curTime = getCurrentTime();
+		double duration = curTime - timeOfLastStateChange;
+
 		StateRecord nextState = this.getStateRecordFor(state);
 		if (nextState == null)
 			throw new ErrorException(this + " Specified state: " + state + " was not found in the StateList: " + this.getStateList());
 
-		if (presentState != null) {
-			if (curTime != timeOfLastStateChange) {
-				double dur = curTime - timeOfLastStateChange;
-				presentState.addHours(dur);
+		if (presentState != null && duration > 0.0d) {
+			presentState.totalHours += duration;
+			presentState.currentCycleHours += duration;
 
-				if (this.isWorking())
-					workingHours += dur;
-			}
+			if (this.isWorking())
+				workingHours += duration;
 		}
 
 		timeOfLastStateChange = curTime;
