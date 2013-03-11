@@ -822,8 +822,8 @@ private static class StateRecord {
 
 		if (testFlag(FLAG_TRACESTATE)) this.printStateTrace(state);
 
-		int ind = this.indexOfState(state);
-		if (ind == -1)
+		StateRecord nextState = this.getStateRecordFor(state);
+		if (nextState == null)
 			throw new ErrorException(this + " Specified state: " + state + " was not found in the StateList: " + this.getStateList());
 
 		if (presentState != null) {
@@ -836,9 +836,9 @@ private static class StateRecord {
 					workingHours += dur;
 			}
 		}
-		timeOfLastStateChange = getCurrentTime();
 
-		presentState = getStateRecordFor(state);
+		timeOfLastStateChange = getCurrentTime();
+		presentState = nextState;
 		presentState.setSecondLastStartTimeInState(presentState.getLastStartTimeInState());
 		presentState.setLastStartTimeInState(getCurrentTime());
 	}
