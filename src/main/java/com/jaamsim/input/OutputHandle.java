@@ -14,18 +14,21 @@
  */
 package com.jaamsim.input;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 
-import com.jaamsim.units.Unit;
+/**
+ * OutputHandle is a class that represents all the useful runtime information for an output,
+ * specifically a reference to the runtime annotation and the method it points to
+ * @author matt.chudleigh
+ *
+ */
+public class OutputHandle {
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Output {
+	public Output annotation;
+	public Method method;
 
-	public String name();
-	public String description() default "";
-	public Class<? extends Unit> unit() default Unit.class;
+	public OutputHandle(Output a, Method m) {
+		annotation = a;
+		method = m;
+	}
 }

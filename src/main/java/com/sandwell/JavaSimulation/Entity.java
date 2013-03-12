@@ -24,8 +24,10 @@ import java.util.Map.Entry;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputGroup;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.OutputHandle;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.units.Unit;
 
 /**
  * Abstract class that encapsulates the methods and data needed to create a
@@ -43,7 +45,7 @@ public class Entity {
 	private String entityInputName; // Name input by user
 	private final long entityNumber;
 
-	private HashMap<String, Method> outputCache = null;
+	private HashMap<String, OutputHandle> outputCache = null;
 
 	//public static final int FLAG_TRACE = 0x01; // reserved in case we want to treat tracing like the other flags
 	public static final int FLAG_TRACEREQUIRED = 0x02;
@@ -609,12 +611,14 @@ public class Entity {
 	}
 
 	private void buildOutputCache() {
-		outputCache = new HashMap<String, Method>();
+		outputCache = new HashMap<String, OutputHandle>();
 		for (Method m : this.getClass().getMethods()) {
 			Output o = m.getAnnotation(Output.class);
 			if (o == null) {
 				continue;
 			}
+
+			OutputHandle handle = new OutputHandle(o, m);
 
 			// Check that this method only takes a single double (simTime) parameter
 			Class<?>[] paramTypes = m.getParameterTypes();
@@ -623,7 +627,7 @@ public class Entity {
 				continue;
 			}
 
-			outputCache.put(o.name(), m);
+			outputCache.put(o.name(), handle);
 		}
 	}
 
@@ -634,14 +638,14 @@ public class Entity {
 	 * @param klass - the class of the return type expected
 	 * @return
 	 */
-	@SuppressWarnings("unchecked") // This surpresses the warning on the cast, which is effectively checked
+	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
 	private <T> T getOutputValueImp(String outputName, double simTime, Class<T> klass) {
 		// lazily initialize the output cache
 		if (outputCache == null) {
 			buildOutputCache();
 		}
 
-		Method m = outputCache.get(outputName);
+		Method m = outputCache.get(outputName).method;
 		if (m == null) {
 			return null;
 		}
@@ -704,7 +708,7 @@ public class Entity {
 			buildOutputCache();
 		}
 
-		Method m = outputCache.get(outputName);
+		Method m = outputCache.get(outputName).method;
 		if (m == null) {
 			// Instead try the inputs
 			return getInputAsString(outputName);
@@ -770,11 +774,40 @@ public class Entity {
 			buildOutputCache();
 		}
 
-		Method m = outputCache.get(outputName);
-		if (m == null) {
-			return null;
-		}
+		Method m = outputCache.get(outputName).method;
+		assert (m != null);
+
 		return m.getReturnType();
+	}
+
+	public Class<?> getOutputDeclaringClass(String outputName) {
+		if (outputCache == null) {
+			buildOutputCache();
+		}
+		Method m = outputCache.get(outputName).method;
+		assert (m != null);
+
+		return m.getDeclaringClass();
+	}
+
+	public Class<? extends Unit> getOutputUnit(String outputName) {
+		if (outputCache == null) {
+			buildOutputCache();
+		}
+		Output a = outputCache.get(outputName).annotation;
+		assert (a != null);
+
+		return a.unit();
+	}
+
+	public String getOutputDescripion(String outputName) {
+		if (outputCache == null) {
+			buildOutputCache();
+		}
+		Output a = outputCache.get(outputName).annotation;
+		assert (a != null);
+
+		return a.description();
 	}
 
 	public Double getDoubleOutput(String outputName, double simTime) {
