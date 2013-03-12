@@ -14,9 +14,13 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.Entity;
@@ -26,18 +30,65 @@ public class OutputBox extends FrameBox {
 	private static OutputBox myInstance = new OutputBox();
 
 	private JScrollPane scrollPane;
-	private JTable table;
+	private OutputTable table;
 
 	private Entity currentEntity;
 	private String[] outputNames;
 	OutputTableModel tableModel;
+
+	private class OutputTable extends JTable {
+		public OutputTable(TableModel model) {
+			super(model);
+		}
+
+		@Override
+		public String getToolTipText(MouseEvent event) {
+			Point p = event.getPoint();
+			int row = rowAtPoint(p);
+			if (row >= outputNames.length || currentEntity == null) {
+				return null;
+			}
+
+			String outputName = outputNames[row];
+
+			StringBuilder build = new StringBuilder();
+			build.append("<HTML>");
+			build.append("<b>Name:</b>  ");
+			build.append(outputName);
+			build.append("<BR>");
+			String desc = currentEntity.getOutputDescripion(outputName);
+			if (!desc.isEmpty()) {
+				build.append("<BR>");
+				build.append("<b>Description:</b> ");
+				for (String line : desc.split("\n", 0)) {
+					// Replace all <> for html parsing
+					String tempLine = line.replaceAll("&", "&amp;");
+					tempLine = tempLine.replaceAll("<", "&lt;");
+					tempLine = tempLine.replaceAll(">", "&gt;");
+
+					int len = 0;
+					build.append("<BR>");
+					// Break the line at 100-char boundaries
+					for (String word : tempLine.split(" ", -1)) {
+						build.append(word).append(" ");
+						len += word.length() + 1;
+						if (len > 100) {
+							build.append("<BR>");
+							len = 0;
+						}
+					}
+				}
+			}
+			return build.toString();
+		}
+	}
 
 	public OutputBox() {
 		super( "Output Viewer" );
 		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
 
 		tableModel = new OutputTableModel();
-		table = new JTable(tableModel);
+		table = new OutputTable(tableModel);
 		scrollPane = new JScrollPane(table);
 
 		getContentPane().add( scrollPane );
