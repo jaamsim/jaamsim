@@ -36,5 +36,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.video.vp8.TestYUV.class,
 	com.jaamsim.input.TestKeyedVec3dCurve.class,
 	com.jaamsim.input.TestParser.class,
+	com.jaamsim.input.TestOutput.class,
 })
 public class AllTests {}
