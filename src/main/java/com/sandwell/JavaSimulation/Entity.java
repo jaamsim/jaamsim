@@ -821,7 +821,8 @@ public class Entity {
 	// Outputs
 	////////////////////////////////////////////////////////////////////////
 
-	@Output(name = "Name")
+	@Output(name = "Name",
+	        description="The unique input name for this entity.")
 	public String getNameOutput(double simTime) {
 		return entityName;
 	}

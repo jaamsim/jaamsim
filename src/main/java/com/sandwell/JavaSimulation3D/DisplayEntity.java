@@ -721,22 +721,27 @@ public class DisplayEntity extends Entity {
 	// Outputs
 	////////////////////////////////////////////////////////////////////////
 
-	@Output(name = "Position")
+	@Output(name = "Position",
+	        description = "The DisplayEntity's position in region space.")
 	public Vec3d getPosOutput(double simTime) {
 		return getPosition();
 	}
 
-	@Output(name = "Size")
+	@Output(name = "Size",
+	        description = "The DisplayEntity's size in meters.")
 	public Vec3d getSizeOutput(double simTime) {
 		return getSize();
 	}
 
-	@Output(name = "Orientation")
+	@Output(name = "Orientation",
+	        description = "The XYZ euler angles describing the DisplayEntity's current rotation.")
 	public Vec3d getOrientOutput(double simTime) {
 		return getOrientation();
 	}
 
-	@Output(name = "Alignment")
+	@Output(name = "Alignment",
+	        description = "The point on the DisplayEntity that aligns direction with the position output.\n" +
+	                      "The components should be in the range [-0.5, 0.5]")
 	public Vec3d getAlignOutput(double simTime) {
 		return getAlignment();
 	}
