@@ -344,6 +344,8 @@ private static class StateRecord {
 		associatedMaintenance = false;
 		workingHours = 0.0;
 		stateMap = new HashMap<String, StateRecord>();
+		StateRecord idle = new StateRecord("Idle", 0);
+		stateMap.put("idle" , idle);
 		initStateMap();
 	}
 
@@ -491,12 +493,20 @@ private static class StateRecord {
 	public void initStateMap() {
 
 		// Populate the hash map for the states and StateRecord
+		StateRecord idle = getStateRecordFor("Idle");
 		stateMap.clear();
 		for (int i = 0; i < getStateList().size(); i++) {
 			String state = (String)getStateList().get(i);
+			if ( state.equals("Idle") ) {
+				idle.index = i;
+				continue;
+			}
+
 			StateRecord stateRecord = new StateRecord(state, i);
 			stateMap.put(state.toLowerCase() , stateRecord);
 		}
+		stateMap.put("idle", idle);
+
 		timeOfLastStateChange = getCurrentTime();
 	}
 
