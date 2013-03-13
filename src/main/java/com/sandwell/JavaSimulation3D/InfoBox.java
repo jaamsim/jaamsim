@@ -42,8 +42,7 @@ public class InfoBox extends FrameBox {
 		propTable = new AjustToLastColumnTable(0, 2);
 		tabModel = (DefaultTableModel)propTable.getModel();
 
-		JScrollPane scroller = new JScrollPane();
-		scroller = new JScrollPane(propTable);
+		JScrollPane scroller = new JScrollPane(propTable);
 		getContentPane().add(scroller);
 
 		propTable.getTableHeader().setFont(FrameBox.boldFont);
