@@ -17,11 +17,17 @@ package com.sandwell.JavaSimulation3D;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+
 
 public class AjustToLastColumnTable extends JTable {
 
 	public AjustToLastColumnTable(int column, int row) {
 		super(column, row);
+	}
+
+	public AjustToLastColumnTable(TableModel tm) {
+		super(tm);
 	}
 
 	// Table is not editable

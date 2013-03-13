@@ -16,9 +16,9 @@ package com.sandwell.JavaSimulation3D;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
@@ -33,10 +33,11 @@ public class OutputBox extends FrameBox {
 	private OutputTable table;
 
 	private Entity currentEntity;
-	private String[] outputNames;
+	private ArrayList<String> outputNames = new ArrayList<String>();
+	private ArrayList<Boolean> rowIsClass = new ArrayList<Boolean>();
 	OutputTableModel tableModel;
 
-	private class OutputTable extends JTable {
+	private class OutputTable extends AjustToLastColumnTable {
 		public OutputTable(TableModel model) {
 			super(model);
 		}
@@ -45,11 +46,11 @@ public class OutputBox extends FrameBox {
 		public String getToolTipText(MouseEvent event) {
 			Point p = event.getPoint();
 			int row = rowAtPoint(p);
-			if (row >= outputNames.length || currentEntity == null) {
+			if (row >= outputNames.size() || currentEntity == null || rowIsClass.get(row)) {
 				return null;
 			}
 
-			String outputName = outputNames[row];
+			String outputName = outputNames.get(row);
 
 			StringBuilder build = new StringBuilder();
 			build.append("<HTML>");
@@ -95,9 +96,15 @@ public class OutputBox extends FrameBox {
 		setSize( 300, 150 );
 		setLocation(0, 110);
 
-		outputNames = new String[0];
+		table.getTableHeader().setFont(FrameBox.boldFont);
+		table.getTableHeader().setReorderingAllowed(false);
+
+		table.getColumnModel().getColumn(0).setHeaderValue("Output Name");
+		table.getColumnModel().getColumn(1).setHeaderValue("Value");
 
 		table.setDefaultRenderer(Object.class, colRenderer);
+
+		setEntity(null);
 
 		pack();
 	}
@@ -105,11 +112,30 @@ public class OutputBox extends FrameBox {
 	@Override
 	public void setEntity( Entity entity ) {
 		currentEntity = entity;
-		if (currentEntity != null) {
-			outputNames = currentEntity.getOutputNames(false);
-		} else {
-			outputNames = new String[0];
+		if (currentEntity == null) {
+			outputNames.clear();
+			rowIsClass.clear();
+			updateValues();
+			return;
+		}
 
+		// Build up the row list, leaving extra rows for entity names
+		String[] tempNames = currentEntity.getSortedOutputNames();
+		Class<?> currClass = null;
+
+		outputNames = new ArrayList<String>();
+		rowIsClass = new ArrayList<Boolean>();
+
+		for (String name : tempNames) {
+			Class<?> klass = currentEntity.getOutputDeclaringClass(name);
+			if (currClass != klass) {
+				// This is the first time we've seen this class, add a place holder row
+				currClass = klass;
+				outputNames.add(klass.getSimpleName());
+				rowIsClass.add(true);
+			}
+			outputNames.add(name);
+			rowIsClass.add(false);
 		}
 
 		updateValues();
@@ -128,21 +154,8 @@ public class OutputBox extends FrameBox {
 		}
 
 		@Override
-		public String getColumnName(int col) {
-			switch (col) {
-			case 0:
-				return "Name";
-			case 1:
-				return "Value";
-			default:
-				assert false;
-				return null;
-			}
-		}
-
-		@Override
 		public int getRowCount() {
-			return outputNames.length;
+			return outputNames.size();
 		}
 
 		@Override
@@ -150,9 +163,15 @@ public class OutputBox extends FrameBox {
 
 			switch (col) {
 			case 0:
-				return outputNames[row];
+				if (rowIsClass.get(row)) {
+					return String.format("<HTML><B>%s</B></HTML>", outputNames.get(row));
+				}
+				return String.format("    %s", outputNames.get(row));
 			case 1:
-				return currentEntity.getOutputAsString(outputNames[row], 0);
+				if (rowIsClass.get(row)) {
+					return "";
+				}
+				return currentEntity.getOutputAsString(outputNames.get(row), 0);
 			default:
 				assert false;
 				return null;
