@@ -15,6 +15,8 @@
 package com.sandwell.JavaSimulation3D;
 
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 public class AjustToLastColumnTable extends JTable {
 
@@ -30,14 +32,14 @@ public class AjustToLastColumnTable extends JTable {
 
 	@Override
 	public void doLayout() {
-		int lastColumnWidth = this.getColumnModel().getColumn(
-				this.getColumnCount() - 1).getWidth();
+		TableColumnModel model = this.getColumnModel();
+		TableColumn lastCol = model.getColumn(model.getColumnCount() - 1);
+
 		int delta = this.getSize().width;
-		for(int i = 0; i < this.getColumnCount(); i++) {
-			delta -= this.getColumnModel().getColumn(i).getWidth();
+		for(int i = 0; i < model.getColumnCount(); i++) {
+			delta -= model.getColumn(i).getWidth();
 		}
-		lastColumnWidth += delta;
-		this.getColumnModel().getColumn(this.getColumnCount() - 1).setWidth(
-				lastColumnWidth);
+		int newWidth = lastCol.getWidth() + delta;
+		lastCol.setWidth(newWidth);
 	}
 }
