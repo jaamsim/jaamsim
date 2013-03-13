@@ -17,6 +17,8 @@ package com.sandwell.JavaSimulation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -46,6 +48,8 @@ public class Entity {
 	private final long entityNumber;
 
 	private HashMap<String, OutputHandle> outputCache = null;
+	// A list of outputs, sorted first by class, then alphabetically
+	private String[] sortedOutputNames = null;
 
 	//public static final int FLAG_TRACE = 0x01; // reserved in case we want to treat tracing like the other flags
 	public static final int FLAG_TRACEREQUIRED = 0x02;
@@ -610,8 +614,27 @@ public class Entity {
 				meth, text1, text2);
 	}
 
+	private static class OutputComparator implements Comparator<OutputHandle> {
+
+		@Override
+		public int compare(OutputHandle oh0, OutputHandle oh1) {
+			Class<?> class0 = oh0.method.getDeclaringClass();
+			Class<?> class1 = oh1.method.getDeclaringClass();
+
+			if (class0 == class1) {
+				return oh0.annotation.name().compareTo(oh1.annotation.name());
+			}
+
+			if (class0.isAssignableFrom(class1))
+				return -1;
+			else
+				return 1;
+		}
+	}
+
 	private void buildOutputCache() {
 		outputCache = new HashMap<String, OutputHandle>();
+		ArrayList<OutputHandle> handles = new ArrayList<OutputHandle>();
 		for (Method m : this.getClass().getMethods()) {
 			Output o = m.getAnnotation(Output.class);
 			if (o == null) {
@@ -619,6 +642,7 @@ public class Entity {
 			}
 
 			OutputHandle handle = new OutputHandle(o, m);
+			handles.add(handle);
 
 			// Check that this method only takes a single double (simTime) parameter
 			Class<?>[] paramTypes = m.getParameterTypes();
@@ -628,6 +652,12 @@ public class Entity {
 			}
 
 			outputCache.put(o.name(), handle);
+		}
+
+		Collections.sort(handles, new OutputComparator());
+		sortedOutputNames = new String[handles.size()];
+		for (int i = 0; i < handles.size(); ++i) {
+			sortedOutputNames[i] = handles.get(i).annotation.name();
 		}
 	}
 
@@ -761,6 +791,13 @@ public class Entity {
 		}
 
 		return ret;
+	}
+
+	public String[] getSortedOutputNames() {
+		if (outputCache == null) {
+			buildOutputCache();
+		}
+		return sortedOutputNames;
 	}
 
 	/**
