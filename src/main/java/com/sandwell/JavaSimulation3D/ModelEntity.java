@@ -346,6 +346,10 @@ private static class StateRecord {
 		stateMap = new HashMap<String, StateRecord>();
 		StateRecord idle = new StateRecord("Idle", 0);
 		stateMap.put("idle" , idle);
+		presentState = idle;
+		timeOfLastStateChange = getCurrentTime();
+		idle.lastStartTimeInState = getCurrentTime();
+		idle.secondLastStartTimeInState = getCurrentTime();
 		initStateMap();
 	}
 
@@ -774,9 +778,6 @@ private static class StateRecord {
 	 * Returns the present status.
 	 */
 	public String getPresentState() {
-		if (presentState == null)
-			return "";
-
 		return presentState.getStateName();
 	}
 
@@ -797,9 +798,6 @@ private static class StateRecord {
 	}
 
 	protected int getPresentStateIndex() {
-		if (presentState == null)
-			return -1;
-
 		return presentState.getIndex();
 	}
 
@@ -826,7 +824,7 @@ private static class StateRecord {
 		if (nextState == null)
 			throw new ErrorException(this + " Specified state: " + state + " was not found in the StateList: " + this.getStateList());
 
-		if (presentState != null && duration > 0.0d) {
+		if (duration > 0.0d) {
 			presentState.totalHours += duration;
 			presentState.currentCycleHours += duration;
 
