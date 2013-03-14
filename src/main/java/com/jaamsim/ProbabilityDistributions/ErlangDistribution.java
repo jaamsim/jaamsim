@@ -1,0 +1,70 @@
+/*
+ * JaamSim Discrete Event Simulation
+ * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package com.jaamsim.ProbabilityDistributions;
+
+import com.sandwell.JavaSimulation.DoubleInput;
+import com.sandwell.JavaSimulation.IntegerInput;
+import com.sandwell.JavaSimulation.Keyword;
+
+/**
+ * Erlang Distribution.
+ * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 449.
+ */
+public class ErlangDistribution extends NewProbabilityDistribution {
+
+	@Keyword(desc = "The scale parameter for the Erlang distribution.",
+	         example = "ErlangDist-1 Mean { 5.0 }")
+	private final DoubleInput meanInput;
+
+	@Keyword(desc = "The shape parameter for the Erlang distribution.  An integer value >= 1.  " +
+			"Shape = 1 gives the Exponential distribution.  " +
+			"For Shape > 10 it is better to use the Gamma distribution.",
+	         example = "ErlangDist-1 Shape { 2 }")
+	private final IntegerInput shapeInput;
+
+	{
+		meanInput = new DoubleInput("Mean", "Key Inputs", 1.0d);
+		meanInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
+		this.addInput(meanInput, true);
+
+		shapeInput = new IntegerInput("Shape", "Key Inputs", 1);
+		shapeInput.setValidRange( 1, Integer.MAX_VALUE);
+		this.addInput(shapeInput, true);
+	}
+
+	@Override
+	protected double getNextNonZeroSample() {
+
+		// Calculate the product of k random values
+		double u = 1.0;
+		int k = shapeInput.getValue();
+		for( int i=0; i<k; i++) {
+			u *= randomGenerator1.nextDouble();
+		}
+
+		// Inverse transform method
+		return (- meanInput.getValue() / shapeInput.getValue() * Math.log( u ));
+	}
+
+	@Override
+	protected double getMeanValue() {
+		return meanInput.getValue();
+	}
+
+	@Override
+	protected double getStandardDeviation() {
+		return meanInput.getValue() / Math.sqrt( shapeInput.getValue() );
+	}
+}
