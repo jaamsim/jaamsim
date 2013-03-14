@@ -12,6 +12,8 @@ Define ObjectType {
 					LogLogisticsDistribution
 					DiscreteDistribution
 					ContinuousDistribution
+					EntitlementSelector
+					RandomSelector
                     }
 
 UniformDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.UniformDistribution		} Palette { 'Probability Distributions' }
@@ -25,6 +27,8 @@ LogNormalDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.LogNorma
 LogLogisticsDistribution	JavaClass { com.jaamsim.ProbabilityDistributions.LogLogisticDistribution	} Palette { 'Probability Distributions' }
 DiscreteDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteDistribution		} Palette { 'Probability Distributions' }
 ContinuousDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ContinuousDistribution		} Palette { 'Probability Distributions' }
+EntitlementSelector			JavaClass { com.jaamsim.ProbabilityDistributions.EntitlementSelector		} Palette { 'Probability Distributions' }
+RandomSelector				JavaClass { com.jaamsim.ProbabilityDistributions.RandomSelector				} Palette { 'Probability Distributions' }
 
 Define	ImageModel {
 					ProbabilityDistributionIconModel
@@ -43,3 +47,5 @@ LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogLogisticsDistribution	DefaultDisplayModel { ProbabilityDistributionIconModel }
 DiscreteDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 ContinuousDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
+EntitlementSelector			DefaultDisplayModel { ProbabilityDistributionIconModel }
+RandomSelector				DefaultDisplayModel { ProbabilityDistributionIconModel }
