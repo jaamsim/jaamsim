@@ -33,7 +33,7 @@ public class LogNormalDistribution extends NewProbabilityDistribution {
 	private final DoubleInput normalStandardDeviationInput;
 
 	{
-		normalMeanInput = new DoubleInput("NormalMode", "Key Inputs", 0.0d);
+		normalMeanInput = new DoubleInput("NormalMean", "Key Inputs", 0.0d);
 		this.addInput(normalMeanInput, true);
 
 		normalStandardDeviationInput = new DoubleInput("NormalStandardDeviation", "Key Inputs", 1.0d);
