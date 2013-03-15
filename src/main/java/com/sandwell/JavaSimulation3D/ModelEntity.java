@@ -991,14 +991,6 @@ public static class StateRecord {
 		return stateList;
 	}
 
-	public int indexOfState( String state ) {
-		StateRecord stateRecord = stateMap.get( state.toLowerCase() );
-		if (stateRecord != null)
-			return  stateRecord.getIndex();
-
-		return -1;
-	}
-
 	/**
 	 * Return total number of states
 	 */
