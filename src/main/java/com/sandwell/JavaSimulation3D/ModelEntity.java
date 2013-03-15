@@ -804,6 +804,24 @@ private static class StateRecord {
 	public void setPresentState() {}
 
 	/**
+	 * Update the hours for the present state and set new timeofLastStateChange
+	 */
+	private void collectPresentHours() {
+		double curTime = getCurrentTime();
+
+		if (curTime == timeOfLastStateChange)
+			return;
+
+		double duration = curTime - timeOfLastStateChange;
+		timeOfLastStateChange = curTime;
+
+		presentState.totalHours += duration;
+		presentState.currentCycleHours += duration;
+		if (this.isWorking())
+			workingHours += duration;
+	}
+
+	/**
 	 * Updates the statistics, then sets the present status to be the specified value.
 	 */
 	public void setPresentState( String state ) {
@@ -817,25 +835,15 @@ private static class StateRecord {
 
 		if (testFlag(FLAG_TRACESTATE)) this.printStateTrace(state);
 
-		double curTime = getCurrentTime();
-		double duration = curTime - timeOfLastStateChange;
-
 		StateRecord nextState = this.getStateRecordFor(state);
 		if (nextState == null)
 			throw new ErrorException(this + " Specified state: " + state + " was not found in the StateList: " + this.getStateList());
 
-		if (duration > 0.0d) {
-			presentState.totalHours += duration;
-			presentState.currentCycleHours += duration;
+		collectPresentHours();
 
-			if (this.isWorking())
-				workingHours += duration;
-		}
-
-		timeOfLastStateChange = curTime;
+		nextState.secondLastStartTimeInState = nextState.getLastStartTimeInState();
+		nextState.lastStartTimeInState = timeOfLastStateChange;
 		presentState = nextState;
-		presentState.secondLastStartTimeInState = presentState.getLastStartTimeInState();
-		presentState.lastStartTimeInState = curTime;
 	}
 
 	/**
