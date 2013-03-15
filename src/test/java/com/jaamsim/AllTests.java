@@ -37,5 +37,18 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.input.TestKeyedVec3dCurve.class,
 	com.jaamsim.input.TestParser.class,
 	com.jaamsim.input.TestOutput.class,
+	com.jaamsim.probability.TestContinuousDistribution.class,
+	com.jaamsim.probability.TestDiscreteDistribution.class,
+	com.jaamsim.probability.TestErlangDistribution.class,
+	com.jaamsim.probability.TestExponentialDistribution.class,
+	com.jaamsim.probability.TestGammaDistribution.class,
+	com.jaamsim.probability.TestLogLogisticDistribution.class,
+	com.jaamsim.probability.TestLogNormalDistribution.class,
+	com.jaamsim.probability.TestNormalDistribution.class,
+	com.jaamsim.probability.TestTriangularDistribution.class,
+	com.jaamsim.probability.TestUniformDistribution.class,
+	com.jaamsim.probability.TestWeibullDistribution.class,
+	com.jaamsim.probability.TestEntitlementSelector.class,
+	com.jaamsim.probability.TestRandomSelector.class
 })
 public class AllTests {}

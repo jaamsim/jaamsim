@@ -16,29 +16,22 @@ package com.jaamsim.probability;
 
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import com.jaamsim.ProbabilityDistributions.TriangularDistribution;
+import com.jaamsim.ProbabilityDistributions.ExponentialDistribution;
 import com.jaamsim.input.InputAgent;
 
-public class TestTriangularDistribution {
+public class TestExponentialDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		TriangularDistribution dist = new TriangularDistribution();
-		InputAgent.processEntity_Keyword_Value( dist, "MinValue", "2.0");
-		InputAgent.processEntity_Keyword_Value( dist, "MaxValue", "5.0");
-		InputAgent.processEntity_Keyword_Value( dist, "Mode", "4.0");
+		ExponentialDistribution dist = new ExponentialDistribution();
+		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		dist.validate();
 		dist.earlyInit();
 
-		double total = 0.0d;
-		int numSamples = 1000000;
-		for (int i = 0; i < numSamples; i++) {
-			total += dist.nextValue();
+		for(int i = 0; i<1000000; i++) {
+			dist.nextValue();
 		}
-		double mean = total / numSamples;
-
-		assertTrue( Math.abs( dist.getSampleMean(0.0) - mean ) < 0.001 );
 		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.001 );
-		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.001 );
+		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.005 );
 	}
 }

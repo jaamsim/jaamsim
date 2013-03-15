@@ -16,29 +16,23 @@ package com.jaamsim.probability;
 
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import com.jaamsim.ProbabilityDistributions.TriangularDistribution;
+import com.jaamsim.ProbabilityDistributions.LogNormalDistribution;
 import com.jaamsim.input.InputAgent;
 
-public class TestTriangularDistribution {
+public class TestLogNormalDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		TriangularDistribution dist = new TriangularDistribution();
-		InputAgent.processEntity_Keyword_Value( dist, "MinValue", "2.0");
-		InputAgent.processEntity_Keyword_Value( dist, "MaxValue", "5.0");
-		InputAgent.processEntity_Keyword_Value( dist, "Mode", "4.0");
+		LogNormalDistribution dist = new LogNormalDistribution();
+		InputAgent.processEntity_Keyword_Value( dist, "NormalMean", "10.0");
+		InputAgent.processEntity_Keyword_Value( dist, "NormalStandardDeviation", "2.0");
 		dist.validate();
 		dist.earlyInit();
 
-		double total = 0.0d;
-		int numSamples = 1000000;
-		for (int i = 0; i < numSamples; i++) {
-			total += dist.nextValue();
+		for(int i = 0; i<10000000; i++) {  // 10 million samples needed to get an accurate standard deviation
+			dist.nextValue();
 		}
-		double mean = total / numSamples;
-
-		assertTrue( Math.abs( dist.getSampleMean(0.0) - mean ) < 0.001 );
 		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.001 );
-		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.001 );
+		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.005 );
 	}
 }

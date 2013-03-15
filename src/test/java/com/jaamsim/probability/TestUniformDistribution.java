@@ -25,7 +25,9 @@ public class TestUniformDistribution {
 	public void MeanAndStandardDeviation() {
 		UniformDistribution dist = new UniformDistribution();
 		InputAgent.processEntity_Keyword_Value( dist, "MinValue", "2.0");
-		InputAgent.processEntity_Keyword_Value(dist, "MaxValue", "5.0");
+		InputAgent.processEntity_Keyword_Value( dist, "MaxValue", "5.0");
+		dist.validate();
+		dist.earlyInit();
 
 		double total = 0.0d;
 		int numSamples = 1000000;
