@@ -651,10 +651,7 @@ public static class StateRecord {
 		// Determine the time for the first breakdown event
 		hoursForNextFailure = getNextBreakdownIAT();
 
-		int ind = this.indexOfState( "Idle" );
-		if( ind != -1 ) {
-			this.setPresentState( "Idle" );
-		}
+		this.setPresentState( "Idle" );
 		brokendown = false;
 
 		//  Start the maintenance network
