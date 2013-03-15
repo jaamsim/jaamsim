@@ -1672,10 +1672,7 @@ private static class StateRecord {
 	@Override
 	public Vector getInfo() {
 		Vector info = super.getInfo();
-		if ( presentStateEquals("") )
-			info.addElement( "Present State\t<no state>" );
-		else
-			info.addElement( "Present State" + "\t" + getPresentState() );
+		info.add( String.format("Present State\t%s", getPresentState()) );
 		return info;
 	}
 
