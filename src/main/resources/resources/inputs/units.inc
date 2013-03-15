@@ -23,7 +23,8 @@ Define ObjectType  { TimeUnit
                      LinearDensityUnit
 					 DensityUnit
 					 PressureUnit
-					 ViscosityUnit }
+					 ViscosityUnit
+					 AreaUnit }
 
 TimeUnit            JavaClass { com.jaamsim.units.TimeUnit            } Palette { Units } DragAndDrop { FALSE }
 DistanceUnit        JavaClass { com.jaamsim.units.DistanceUnit        } Palette { Units } DragAndDrop { FALSE }
@@ -45,6 +46,7 @@ LinearDensityUnit   JavaClass { com.jaamsim.units.LinearDensityUnit   } Palette 
 DensityUnit         JavaClass { com.jaamsim.units.DensityUnit         } Palette { Units } DragAndDrop { FALSE }
 PressureUnit        JavaClass { com.jaamsim.units.PressureUnit        } Palette { Units } DragAndDrop { FALSE }
 ViscosityUnit       JavaClass { com.jaamsim.units.ViscosityUnit       } Palette { Units } DragAndDrop { FALSE }
+AreaUnit            JavaClass { com.jaamsim.units.AreaUnit            } Palette { Units } DragAndDrop { FALSE }
 
 " ======================================================================================================================================================
 " Time units
@@ -277,3 +279,14 @@ Define ViscosityUnit      { Pa-s P cP }
 Pa-s  ConversionFactorToSI { 1 }
 P     ConversionFactorToSI { 0.1 }
 cP    ConversionFactorToSI { 0.001 }
+
+" ======================================================================================================================================================
+" Area units
+" ======================================================================================================================================================
+
+Define AreaUnit           { m2 cm2 mm2 in2 }
+
+m2   ConversionFactorToSI { 1 }
+cm2  ConversionFactorToSI { 1.0e-4 }
+mm2  ConversionFactorToSI { 1.0e-6 }
+in2  ConversionFactorToSI { 6.4516e-4 }
