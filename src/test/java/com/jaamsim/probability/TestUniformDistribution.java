@@ -27,9 +27,14 @@ public class TestUniformDistribution {
 		InputAgent.processEntity_Keyword_Value( dist, "MinValue", "2.0");
 		InputAgent.processEntity_Keyword_Value(dist, "MaxValue", "5.0");
 
-		for(int i = 0; i<1000000; i++) {
-			double ret = dist.nextValue();
+		double total = 0.0d;
+		int numSamples = 1000000;
+		for (int i = 0; i < numSamples; i++) {
+			total += dist.nextValue();
 		}
+		double mean = total / numSamples;
+
+		assertTrue( Math.abs( dist.getSampleMean(0.0) - mean ) < 0.001 );
 		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.001 );
 		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.001 );
 	}
