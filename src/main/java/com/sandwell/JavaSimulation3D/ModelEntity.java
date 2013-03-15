@@ -160,7 +160,7 @@ public class ModelEntity extends DisplayEntity {
 	private final HashMap<String, StateRecord> stateMap;
 	protected double workingHours;                    // Accumulated working time spent in working states
 
-private static class StateRecord {
+public static class StateRecord {
 	String stateName;
 	int index;
 	double initializationHours;
@@ -514,7 +514,7 @@ private static class StateRecord {
 		timeOfLastStateChange = getCurrentTime();
 	}
 
-	private StateRecord getStateRecordFor(String state) {
+	public StateRecord getStateRecordFor(String state) {
 		return stateMap.get(state.toLowerCase());
 	}
 
