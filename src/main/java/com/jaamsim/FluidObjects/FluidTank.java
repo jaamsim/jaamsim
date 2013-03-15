@@ -17,6 +17,8 @@ package com.jaamsim.FluidObjects;
 import com.jaamsim.input.Output;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
+import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.VolumeUnit;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
 /**
@@ -121,13 +123,15 @@ public class FluidTank extends FluidComponent {
 	}
 
 	@Output( name="FluidVolume",
-			 description="The volume of the fluid stored in the tank." )
+			 description="The volume of the fluid stored in the tank.",
+			 unit=VolumeUnit.class)
 	public double getFluidVolume( double simTime ) {
 		return fluidVolume;
 	}
 
 	@Output( name="FluidLevel",
-			 description="The height of the fluid from the bottom of the tank.")
+			 description="The height of the fluid from the bottom of the tank.",
+			 unit=DistanceUnit.class)
 	public double getFluidLevel( double simTime ) {
 		return fluidLevel;
 	}

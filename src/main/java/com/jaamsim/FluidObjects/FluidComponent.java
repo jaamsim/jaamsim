@@ -15,6 +15,9 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.input.Output;
+import com.jaamsim.units.AreaUnit;
+import com.jaamsim.units.SpeedUnit;
+import com.jaamsim.units.PressureUnit;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Keyword;
@@ -186,13 +189,15 @@ public class FluidComponent extends DisplayEntity {
 	}
 
 	@Output( name="FlowArea",
-			 description="The cross-sectional area of the component." )
+			 description="The cross-sectional area of the component.",
+			 unit=AreaUnit.class)
 	public double getFlowArea( double simTime ) {
 		return flowArea;
 	}
 
 	@Output( name="Velocity",
-			 description="The velocity of the fluid within the component.")
+			 description="The velocity of the fluid within the component.",
+			 unit=SpeedUnit.class)
 	public double getVelocity( double simTime ) {
 		return velocity;
 	}
@@ -204,19 +209,22 @@ public class FluidComponent extends DisplayEntity {
 	}
 
 	@Output( name="DynamicPressure",
-			 description="The dynamic pressure of the fluid flow.  Equal to (0.5)(density)(velocity^2)." )
+			 description="The dynamic pressure of the fluid flow.  Equal to (0.5)(density)(velocity^2).",
+			 unit=PressureUnit.class)
 	public double getDynamicPressure( double simTime ) {
 		return this.getDynamicPressure();
 	}
 
 	@Output( name="InletPressure",
-			 description="The static pressure at the component's inlet." )
+			 description="The static pressure at the component's inlet.",
+			 unit=PressureUnit.class)
 	public double getInletPressure( double simTime ) {
 		return inletPressure;
 	}
 
 	@Output( name="OutletPressure",
-			 description="The static pressure at the component's outlet." )
+			 description="The static pressure at the component's outlet.",
+			 unit=PressureUnit.class)
 	public double getOutletPressure( double simTime ) {
 		return outletPressure;
 	}

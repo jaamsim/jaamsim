@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import com.jaamsim.CalculationObjects.CalculationEntity;
 import com.jaamsim.input.Output;
 import com.sandwell.JavaSimulation.EntityInput;
+import com.jaamsim.units.VolumeFlowUnit;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Keyword;
@@ -180,7 +181,8 @@ public class FluidFlow extends CalculationEntity {
 	}
 
 	@Output( name="FlowRate",
-			 description="The volumetric flow rate for the system.")
+			 description="The volumetric flow rate for the system.",
+			 unit=VolumeFlowUnit.class)
 	public double getFlowRate( double simTime ) {
 		return flowRate;
 	}
