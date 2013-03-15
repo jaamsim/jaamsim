@@ -218,9 +218,9 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		return ret;
 	}
 
-	@Output( name="DarcyFrictionFactor",
-			 description="The Darcy Friction Factor for the pipe.")
-	private double getDarcyFrictionFactor( double simTime ) {
+	@Output(name = "DarcyFrictionFactor",
+	 description = "The Darcy Friction Factor for the pipe.")
+	public double getDarcyFrictionFactor(double simTime) {
 		return darcyFrictionFactor;
 	}
 }
