@@ -204,10 +204,6 @@ public static class StateRecord {
 		return secondLastStartTimeInState;
 	}
 
-	public void setInitializationHours(double init) {
-		initializationHours = init;
-	}
-
 	public void setTotalHours(double total) {
 		totalHours = total;
 	}
@@ -420,7 +416,7 @@ public static class StateRecord {
 	public void collectInitializationStats() {
 
 		for ( StateRecord each : stateMap.values() ) {
-			each.setInitializationHours( getTotalHoursFor(each) );
+			each.initializationHours = getTotalHoursFor(each);
 			each.totalHours = 0.0d;
 			each.completedCycleHours = 0.0d;
 
