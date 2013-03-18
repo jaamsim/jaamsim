@@ -554,35 +554,6 @@ public class ModelEntity extends DisplayEntity {
 		return false;
 	}
 
-	/**
-	 * Returns the present status.
-	 */
-	public String getPresentState() {
-		return presentState.getStateName();
-	}
-
-	public boolean presentStateEquals(String state) {
-		return getPresentState().equals(state);
-	}
-
-	public boolean presentStateMatches(String state) {
-		return getPresentState().equalsIgnoreCase(state);
-	}
-
-	public boolean presentStateStartsWith(String prefix) {
-		return getPresentState().startsWith(prefix);
-	}
-
-	public boolean presentStateEndsWith(String suffix) {
-		return getPresentState().endsWith(suffix);
-	}
-
-	protected int getPresentStateIndex() {
-		return presentState.getIndex();
-	}
-
-	public void setPresentState() {}
-
 public static class StateRecord {
 	String stateName;
 	int index;
@@ -854,6 +825,35 @@ public static class StateRecord {
 		}
 		return total;
 	}
+
+	/**
+	 * Returns the present status.
+	 */
+	public String getPresentState() {
+		return presentState.getStateName();
+	}
+
+	public boolean presentStateEquals(String state) {
+		return getPresentState().equals(state);
+	}
+
+	public boolean presentStateMatches(String state) {
+		return getPresentState().equalsIgnoreCase(state);
+	}
+
+	public boolean presentStateStartsWith(String prefix) {
+		return getPresentState().startsWith(prefix);
+	}
+
+	public boolean presentStateEndsWith(String suffix) {
+		return getPresentState().endsWith(suffix);
+	}
+
+	protected int getPresentStateIndex() {
+		return presentState.getIndex();
+	}
+
+	public void setPresentState() {}
 
 	/**
 	 * Print that state information on the trace state log file
