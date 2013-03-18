@@ -225,11 +225,6 @@ public static class StateRecord {
 		return getStateName();
 	}
 
-	public void clearReportStats() {
-		totalHours = 0.0d;
-		completedCycleHours = 0.0d;
-	}
-
 	public void clearCurrentCycleHours() {
 		currentCycleHours = 0.0d;
 	}
@@ -426,7 +421,8 @@ public static class StateRecord {
 
 		for ( StateRecord each : stateMap.values() ) {
 			each.setInitializationHours( getTotalHoursFor(each) );
-			each.clearReportStats();
+			each.totalHours = 0.0d;
+			each.completedCycleHours = 0.0d;
 
 			if (each == presentState)
 				each.setCurrentCycleHours( getCurrentCycleHoursFor(each) );
@@ -466,7 +462,8 @@ public static class StateRecord {
 
 		// clear totalHours for each state record
 		for ( StateRecord each : stateMap.values() ) {
-			each.clearReportStats();
+			each.totalHours = 0.0d;
+			each.completedCycleHours = 0.0d;
 		}
 		numberOfCompletedCycles = 0;
 	}
