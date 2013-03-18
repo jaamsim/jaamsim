@@ -656,19 +656,11 @@ public static class StateRecord {
 	 * Clear the current cycle hours
 	 */
 	protected void clearCurrentCycleHours() {
+		collectPresentHours();
 
 		// clear current cycle hours for each state record
-		for ( StateRecord each : stateMap.values() ) {
-			if (each == presentState)
-				each.totalHours = getTotalHoursFor(each);
-
+		for ( StateRecord each : stateMap.values() )
 			each.currentCycleHours = 0.0d;
-		}
-
-		if ( this.isWorking() )
-			workingHours += getCurrentTime() - timeOfLastStateChange;
-
-		timeOfLastStateChange = getCurrentTime();
 	}
 
 	/**
