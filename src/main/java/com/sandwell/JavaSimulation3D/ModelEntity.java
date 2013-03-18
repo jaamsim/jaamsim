@@ -348,15 +348,6 @@ public class ModelEntity extends DisplayEntity {
 		return numberOfCompletedCycles;
 	}
 
-	public StateRecord getStateRecordFor(String state) {
-		return stateMap.get(state.toLowerCase());
-	}
-
-	private StateRecord getStateRecordFor(int index) {
-		String state = (String)getStateList().get(index);
-		return getStateRecordFor(state);
-	}
-
 	public double getCompletedCycleHoursFor(String state) {
 		return getStateRecordFor(state).getCompletedCycleHours();
 	}
@@ -818,6 +809,15 @@ public static class StateRecord {
 		nextState.secondLastStartTimeInState = nextState.getLastStartTimeInState();
 		nextState.lastStartTimeInState = timeOfLastStateChange;
 		presentState = nextState;
+	}
+
+	public StateRecord getStateRecordFor(String state) {
+		return stateMap.get(state.toLowerCase());
+	}
+
+	private StateRecord getStateRecordFor(int index) {
+		String state = (String)getStateList().get(index);
+		return getStateRecordFor(state);
 	}
 
 	/**
