@@ -628,19 +628,13 @@ public static class StateRecord {
 	 * Runs after initialization period
 	 */
 	public void collectInitializationStats() {
+		collectPresentHours();
 
 		for ( StateRecord each : stateMap.values() ) {
-			each.initializationHours = getTotalHoursFor(each);
+			each.initializationHours = each.getTotalHours();
 			each.totalHours = 0.0d;
 			each.completedCycleHours = 0.0d;
-
-			if (each == presentState)
-				each.currentCycleHours = getCurrentCycleHoursFor(each);
 		}
-		if ( this.isWorking() )
-			workingHours += getCurrentTime() - timeOfLastStateChange;
-
-		timeOfLastStateChange = getCurrentTime();
 		numberOfCompletedCycles = 0;
 	}
 
