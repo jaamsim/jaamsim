@@ -667,6 +667,7 @@ public static class StateRecord {
 	 * Runs after each report interval
 	 */
 	public void clearReportStats() {
+		collectPresentHours();
 
 		// clear totalHours for each state record
 		for ( StateRecord each : stateMap.values() ) {
