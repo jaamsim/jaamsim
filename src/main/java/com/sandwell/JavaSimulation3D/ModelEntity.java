@@ -800,7 +800,7 @@ public static class StateRecord {
 	}
 
 	/**
-	 * Returns the amount of time spent in the specified status.
+	 * Returns the amount of time spent in the specified state in current cycle
 	 */
 	public double getCurrentCycleHoursFor( String state ) {
 		StateRecord rec = getStateRecordFor(state);
@@ -808,7 +808,7 @@ public static class StateRecord {
 	}
 
 	/**
-	 * Return spent hours for a given state at the index in stateList
+	 * Return spent hours for a given state at the index in stateList for current cycle
 	 */
 	public double getCurrentCycleHoursFor(int index) {
 		StateRecord rec = getStateRecordFor(index);
@@ -827,7 +827,7 @@ public static class StateRecord {
 	}
 
 	/**
-	 * Returns the present status.
+	 * Returns the present state name
 	 */
 	public String getPresentState() {
 		return presentState.getStateName();
