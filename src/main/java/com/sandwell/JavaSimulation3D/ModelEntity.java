@@ -208,10 +208,6 @@ public static class StateRecord {
 	public String toString() {
 		return getStateName();
 	}
-
-	public void clearCurrentCycleHours() {
-		currentCycleHours = 0.0d;
-	}
 }
 
 	private double timeOfLastStateChange;
@@ -428,7 +424,7 @@ public static class StateRecord {
 			double hour = each.getCompletedCycleHours();
 			hour += getCurrentCycleHoursFor(each);
 			each.completedCycleHours = hour;
-			each.clearCurrentCycleHours();
+			each.currentCycleHours = 0.0d;
 			if (each == presentState)
 				each.totalHours = getTotalHoursFor(each);
 		}
@@ -466,7 +462,7 @@ public static class StateRecord {
 			if (each == presentState)
 				each.totalHours = getTotalHoursFor(each);
 
-			each.clearCurrentCycleHours();
+			each.currentCycleHours = 0.0d;
 		}
 
 		if ( this.isWorking() )
