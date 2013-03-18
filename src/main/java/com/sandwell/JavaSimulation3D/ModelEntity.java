@@ -421,26 +421,6 @@ public class ModelEntity extends DisplayEntity {
 		timeOfLastStateChange = getCurrentTime();
 	}
 
-	public void initStateMap() {
-
-		// Populate the hash map for the states and StateRecord
-		StateRecord idle = getStateRecordFor("Idle");
-		stateMap.clear();
-		for (int i = 0; i < getStateList().size(); i++) {
-			String state = (String)getStateList().get(i);
-			if ( state.equals("Idle") ) {
-				idle.index = i;
-				continue;
-			}
-
-			StateRecord stateRecord = new StateRecord(state, i);
-			stateMap.put(state.toLowerCase() , stateRecord);
-		}
-		stateMap.put("idle", idle);
-
-		timeOfLastStateChange = getCurrentTime();
-	}
-
 	public StateRecord getStateRecordFor(String state) {
 		return stateMap.get(state.toLowerCase());
 	}
@@ -776,6 +756,26 @@ public static class StateRecord {
 		return getStateName();
 	}
 }
+
+	public void initStateMap() {
+
+		// Populate the hash map for the states and StateRecord
+		StateRecord idle = getStateRecordFor("Idle");
+		stateMap.clear();
+		for (int i = 0; i < getStateList().size(); i++) {
+			String state = (String)getStateList().get(i);
+			if ( state.equals("Idle") ) {
+				idle.index = i;
+				continue;
+			}
+
+			StateRecord stateRecord = new StateRecord(state, i);
+			stateMap.put(state.toLowerCase() , stateRecord);
+		}
+		stateMap.put("idle", idle);
+
+		timeOfLastStateChange = getCurrentTime();
+	}
 
 	/**
 	 * Update the hours for the present state and set new timeofLastStateChange
