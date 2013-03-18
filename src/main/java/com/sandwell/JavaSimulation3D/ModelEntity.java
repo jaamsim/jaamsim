@@ -160,56 +160,6 @@ public class ModelEntity extends DisplayEntity {
 	private final HashMap<String, StateRecord> stateMap;
 	protected double workingHours;                    // Accumulated working time spent in working states
 
-public static class StateRecord {
-	String stateName;
-	int index;
-	double initializationHours;
-	double totalHours;
-	double completedCycleHours;
-	double currentCycleHours;
-
-	double lastStartTimeInState;
-	double secondLastStartTimeInState;
-
-	public StateRecord(String state, int i) {
-		stateName = state;
-		index = i;
-	}
-
-	public int getIndex() {
-		return index;
-	}
-
-	public String getStateName() {
-		return stateName;
-	}
-
-	public double getTotalHours() {
-		return totalHours;
-	}
-
-	public double getCompletedCycleHours() {
-		return completedCycleHours;
-	}
-
-	public double getCurrentCycleHours() {
-		return currentCycleHours;
-	}
-
-	public double getLastStartTimeInState() {
-		return lastStartTimeInState;
-	}
-
-	public double getSecondLastStartTimeInState() {
-		return secondLastStartTimeInState;
-	}
-
-	@Override
-	public String toString() {
-		return getStateName();
-	}
-}
-
 	private double timeOfLastStateChange;
 	private int numberOfCompletedCycles;
 	protected double lastHistogramUpdateTime;   // Last time at which a histogram was updated for this entity
@@ -776,6 +726,56 @@ public static class StateRecord {
 	}
 
 	public void setPresentState() {}
+
+public static class StateRecord {
+	String stateName;
+	int index;
+	double initializationHours;
+	double totalHours;
+	double completedCycleHours;
+	double currentCycleHours;
+
+	double lastStartTimeInState;
+	double secondLastStartTimeInState;
+
+	public StateRecord(String state, int i) {
+		stateName = state;
+		index = i;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public double getTotalHours() {
+		return totalHours;
+	}
+
+	public double getCompletedCycleHours() {
+		return completedCycleHours;
+	}
+
+	public double getCurrentCycleHours() {
+		return currentCycleHours;
+	}
+
+	public double getLastStartTimeInState() {
+		return lastStartTimeInState;
+	}
+
+	public double getSecondLastStartTimeInState() {
+		return secondLastStartTimeInState;
+	}
+
+	@Override
+	public String toString() {
+		return getStateName();
+	}
+}
 
 	/**
 	 * Update the hours for the present state and set new timeofLastStateChange
