@@ -344,81 +344,8 @@ public class ModelEntity extends DisplayEntity {
 		}
 	}
 
-	/**
-	 * Runs after initialization period
-	 */
-	public void collectInitializationStats() {
-
-		for ( StateRecord each : stateMap.values() ) {
-			each.initializationHours = getTotalHoursFor(each);
-			each.totalHours = 0.0d;
-			each.completedCycleHours = 0.0d;
-
-			if (each == presentState)
-				each.currentCycleHours = getCurrentCycleHoursFor(each);
-		}
-		if ( this.isWorking() )
-			workingHours += getCurrentTime() - timeOfLastStateChange;
-
-		timeOfLastStateChange = getCurrentTime();
-		numberOfCompletedCycles = 0;
-	}
-
-	/**
-	 * Runs when cycle is finished
-	 */
-	public void collectCycleStats() {
-
-		// finalize cycle for each state record
-		for ( StateRecord each : stateMap.values() ) {
-			double hour = each.getCompletedCycleHours();
-			hour += getCurrentCycleHoursFor(each);
-			each.completedCycleHours = hour;
-			each.currentCycleHours = 0.0d;
-			if (each == presentState)
-				each.totalHours = getTotalHoursFor(each);
-		}
-		if ( this.isWorking() )
-			workingHours += getCurrentTime() - timeOfLastStateChange;
-
-		timeOfLastStateChange = getCurrentTime();
-		numberOfCompletedCycles++;
-	}
-
-	/**
-	 * Runs after each report interval
-	 */
-	public void clearReportStats() {
-
-		// clear totalHours for each state record
-		for ( StateRecord each : stateMap.values() ) {
-			each.totalHours = 0.0d;
-			each.completedCycleHours = 0.0d;
-		}
-		numberOfCompletedCycles = 0;
-	}
-
 	public int getNumberOfCompletedCycles() {
 		return numberOfCompletedCycles;
-	}
-
-	/**
-	 * Clear the current cycle hours
-	 */
-	protected void clearCurrentCycleHours() {
-
-		// clear current cycle hours for each state record
-		for ( StateRecord each : stateMap.values() ) {
-			if (each == presentState)
-				each.totalHours = getTotalHoursFor(each);
-
-			each.currentCycleHours = 0.0d;
-		}
-
-		if ( this.isWorking() )
-			workingHours += getCurrentTime() - timeOfLastStateChange;
-
-		timeOfLastStateChange = getCurrentTime();
 	}
 
 	public StateRecord getStateRecordFor(String state) {
@@ -775,6 +702,79 @@ public static class StateRecord {
 		stateMap.put("idle", idle);
 
 		timeOfLastStateChange = getCurrentTime();
+	}
+
+	/**
+	 * Runs after initialization period
+	 */
+	public void collectInitializationStats() {
+
+		for ( StateRecord each : stateMap.values() ) {
+			each.initializationHours = getTotalHoursFor(each);
+			each.totalHours = 0.0d;
+			each.completedCycleHours = 0.0d;
+
+			if (each == presentState)
+				each.currentCycleHours = getCurrentCycleHoursFor(each);
+		}
+		if ( this.isWorking() )
+			workingHours += getCurrentTime() - timeOfLastStateChange;
+
+		timeOfLastStateChange = getCurrentTime();
+		numberOfCompletedCycles = 0;
+	}
+
+	/**
+	 * Runs when cycle is finished
+	 */
+	public void collectCycleStats() {
+
+		// finalize cycle for each state record
+		for ( StateRecord each : stateMap.values() ) {
+			double hour = each.getCompletedCycleHours();
+			hour += getCurrentCycleHoursFor(each);
+			each.completedCycleHours = hour;
+			each.currentCycleHours = 0.0d;
+			if (each == presentState)
+				each.totalHours = getTotalHoursFor(each);
+		}
+		if ( this.isWorking() )
+			workingHours += getCurrentTime() - timeOfLastStateChange;
+
+		timeOfLastStateChange = getCurrentTime();
+		numberOfCompletedCycles++;
+	}
+
+	/**
+	 * Clear the current cycle hours
+	 */
+	protected void clearCurrentCycleHours() {
+
+		// clear current cycle hours for each state record
+		for ( StateRecord each : stateMap.values() ) {
+			if (each == presentState)
+				each.totalHours = getTotalHoursFor(each);
+
+			each.currentCycleHours = 0.0d;
+		}
+
+		if ( this.isWorking() )
+			workingHours += getCurrentTime() - timeOfLastStateChange;
+
+		timeOfLastStateChange = getCurrentTime();
+	}
+
+	/**
+	 * Runs after each report interval
+	 */
+	public void clearReportStats() {
+
+		// clear totalHours for each state record
+		for ( StateRecord each : stateMap.values() ) {
+			each.totalHours = 0.0d;
+			each.completedCycleHours = 0.0d;
+		}
+		numberOfCompletedCycles = 0;
 	}
 
 	/**
