@@ -204,10 +204,6 @@ public static class StateRecord {
 		return secondLastStartTimeInState;
 	}
 
-	public void setCurrentCycleHours(double hours) {
-		currentCycleHours = hours;
-	}
-
 	@Override
 	public String toString() {
 		return getStateName();
@@ -413,7 +409,7 @@ public static class StateRecord {
 			each.completedCycleHours = 0.0d;
 
 			if (each == presentState)
-				each.setCurrentCycleHours( getCurrentCycleHoursFor(each) );
+				each.currentCycleHours = getCurrentCycleHoursFor(each);
 		}
 		if ( this.isWorking() )
 			workingHours += getCurrentTime() - timeOfLastStateChange;
