@@ -489,6 +489,13 @@ public class ModelEntity extends DisplayEntity {
 		return printToReport.getValue();
 	}
 
+	/**
+	 * Return true if the entity is working
+	 */
+	public boolean isWorking() {
+		return false;
+	}
+
 	public boolean isBrokendown() {
 		return brokendown;
 	}
@@ -546,13 +553,6 @@ public class ModelEntity extends DisplayEntity {
 	// ******************************************************************************************************
 	// HOURS AND STATES
 	// ******************************************************************************************************
-
-	/**
-	 * Return true if the entity is working
-	 */
-	public boolean isWorking() {
-		return false;
-	}
 
 public static class StateRecord {
 	String stateName;
