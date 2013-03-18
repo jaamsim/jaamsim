@@ -348,48 +348,6 @@ public class ModelEntity extends DisplayEntity {
 		return numberOfCompletedCycles;
 	}
 
-	public double getCompletedCycleHoursFor(String state) {
-		return getStateRecordFor(state).getCompletedCycleHours();
-	}
-
-	public double getCompletedCycleHoursFor(int index) {
-		return getStateRecordFor(index).getCompletedCycleHours();
-	}
-
-	public double getCompletedCycleHours() {
-		double total = 0.0d;
-		for (int i = 0; i < getStateList().size(); i ++)
-			total += getStateRecordFor(i).getCompletedCycleHours();
-
-		return total;
-	}
-
-	public double getTotalHoursFor(int index) {
-		return getTotalHoursFor( (String) getStateList().get(index) );
-	}
-
-	public double getTotalHoursFor(String state) {
-		StateRecord rec = getStateRecordFor(state);
-		return getTotalHoursFor(rec);
-	}
-
-	public double getTotalHoursFor(StateRecord state) {
-		double hours = state.getTotalHours();
-		if (presentState == state)
-			hours += getCurrentTime() - timeOfLastStateChange;
-
-		return hours;
-	}
-
-	public double getTotalHours() {
-		double total = getCurrentTime() - timeOfLastStateChange;
-
-		for (int i = 0; i < getNumberOfStates(); i++)
-			total += getStateRecordFor(i).getTotalHours();
-
-		return total;
-	}
-
 	// ******************************************************************************************************
 	// INPUT
 	// ******************************************************************************************************
@@ -820,6 +778,83 @@ public static class StateRecord {
 		return getStateRecordFor(state);
 	}
 
+	public double getTotalHoursFor(StateRecord state) {
+		double hours = state.getTotalHours();
+		if (presentState == state)
+			hours += getCurrentTime() - timeOfLastStateChange;
+
+		return hours;
+	}
+
+	public double getTotalHoursFor(String state) {
+		StateRecord rec = getStateRecordFor(state);
+		return getTotalHoursFor(rec);
+	}
+
+	public double getTotalHoursFor(int index) {
+		return getTotalHoursFor( (String) getStateList().get(index) );
+	}
+
+	public double getTotalHours() {
+		double total = getCurrentTime() - timeOfLastStateChange;
+
+		for (int i = 0; i < getNumberOfStates(); i++)
+			total += getStateRecordFor(i).getTotalHours();
+
+		return total;
+	}
+
+	public double getCompletedCycleHoursFor(String state) {
+		return getStateRecordFor(state).getCompletedCycleHours();
+	}
+
+	public double getCompletedCycleHoursFor(int index) {
+		return getStateRecordFor(index).getCompletedCycleHours();
+	}
+
+	public double getCompletedCycleHours() {
+		double total = 0.0d;
+		for (int i = 0; i < getStateList().size(); i ++)
+			total += getStateRecordFor(i).getCompletedCycleHours();
+
+		return total;
+	}
+
+	public double getCurrentCycleHoursFor(StateRecord state) {
+		double hours = state.getCurrentCycleHours();
+		if (presentState == state)
+			hours += getCurrentTime() - timeOfLastStateChange;
+
+		return hours;
+	}
+
+	/**
+	 * Returns the amount of time spent in the specified status.
+	 */
+	public double getCurrentCycleHoursFor( String state ) {
+		StateRecord rec = getStateRecordFor(state);
+		return getCurrentCycleHoursFor(rec);
+	}
+
+	/**
+	 * Return spent hours for a given state at the index in stateList
+	 */
+	public double getCurrentCycleHoursFor(int index) {
+		StateRecord rec = getStateRecordFor(index);
+		return getCurrentCycleHoursFor(rec);
+	}
+
+	/**
+	 * Return the total hours in current cycle for all the states
+	 */
+	public double getCurrentCycleHours() {
+		double total = getCurrentTime() - timeOfLastStateChange;
+		for (int i = 0; i < getNumberOfStates(); i++) {
+			total += getStateRecordFor(i).getCurrentCycleHours();
+		}
+		return total;
+	}
+
 	/**
 	 * Print that state information on the trace state log file
 	 */
@@ -848,30 +883,6 @@ public static class StateRecord {
 			}
 			finalLastState = state;
 		}
-	}
-
-	/**
-	 * Returns the amount of time spent in the specified status.
-	 */
-	public double getCurrentCycleHoursFor( String state ) {
-		StateRecord rec = getStateRecordFor(state);
-		return getCurrentCycleHoursFor(rec);
-	}
-
-	/**
-	 * Return spent hours for a given state at the index in stateList
-	 */
-	public double getCurrentCycleHoursFor(int index) {
-		StateRecord rec = getStateRecordFor(index);
-		return getCurrentCycleHoursFor(rec);
-	}
-
-	public double getCurrentCycleHoursFor(StateRecord state) {
-		double hours = state.getCurrentCycleHours();
-		if (presentState == state)
-			hours += getCurrentTime() - timeOfLastStateChange;
-
-		return hours;
 	}
 
 	/**
@@ -973,17 +984,6 @@ public static class StateRecord {
 	 */
 	public int getNumberOfStates() {
 		return stateMap.size();
-	}
-
-	/**
-	 * Return the total hours in current cycle for all the states
-	 */
-	public double getCurrentCycleHours() {
-		double total = getCurrentTime() - timeOfLastStateChange;
-		for (int i = 0; i < getNumberOfStates(); i++) {
-			total += getStateRecordFor(i).getCurrentCycleHours();
-		}
-		return total;
 	}
 
 	// *******************************************************************************************************
