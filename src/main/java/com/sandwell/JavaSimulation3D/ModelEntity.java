@@ -14,8 +14,6 @@
  */
 package com.sandwell.JavaSimulation3D;
 
-import static com.sandwell.JavaSimulation.Util.formatNumber;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -166,8 +164,6 @@ public class ModelEntity extends DisplayEntity {
 	protected double secondToLastHistogramUpdateTime;   // Second to last time at which a histogram was updated for this entity
 	private StateRecord presentState; // The present state of the entity
 	protected FileEntity stateReportFile;        // The file to store the state information
-	private String finalLastState = "";        // The final state of the entity (in a sequence of transitional states)
-	private double timeOfLastPrintedState = 0; // The time that the last state printed in the trace state file
 
 	// Graphics
 	protected final static Color4d breakdownColor = ColourInput.DARK_RED; // Color of the entity in breaking down
@@ -707,11 +703,12 @@ public static class StateRecord {
 		if (presentStateEquals(state))
 			return;
 
-		if (testFlag(FLAG_TRACESTATE)) this.printStateTrace(state);
-
 		StateRecord nextState = this.getStateRecordFor(state);
 		if (nextState == null)
-			throw new ErrorException(this + " Specified state: " + state + " was not found in the StateList: " + this.getStateList());
+			throw new ErrorException("%s Specified state: %s was not found in the StateList: %s",
+			                         this.getInputName(), state, this.getStateList());
+
+		if (testFlag(FLAG_TRACESTATE)) this.printStateTrace(nextState);
 
 		collectPresentHours();
 
@@ -838,31 +835,17 @@ public static class StateRecord {
 	/**
 	 * Print that state information on the trace state log file
 	 */
-	public void printStateTrace( String state ) {
+	private void printStateTrace(StateRecord nextState) {
+		double curTime = getCurrentTime();
+		// Don't print states we didn't spend any time in
+		if (curTime == timeOfLastStateChange)
+			return;
 
-		// First state ever
-		if( finalLastState.equals("") ) {
-			finalLastState = state;
-			stateReportFile.putString(String.format("%.5f  %s.setState( \"%s\" ) dt = %s\n",
-									  0.0d, this.getName(), getPresentState(), formatNumber(getCurrentTime())));
-			stateReportFile.flush();
-			timeOfLastPrintedState = getCurrentTime();
-		}
-		else {
-
-			// The final state in a sequence from the previous state change (one step behind)
-			if ( ! Tester.equalCheckTimeStep( timeOfLastPrintedState, getCurrentTime() ) ) {
-				stateReportFile.putString(String.format("%.5f  %s.setState( \"%s\" ) dt = %s\n",
-										  timeOfLastPrintedState, this.getName(), finalLastState, formatNumber(getCurrentTime() - timeOfLastPrintedState)));
-//				for( int i = 0; i < stateTraceRelatedModelEntities.size(); i++ ) {
-//					ModelEntitiy each = (ModelEntitiy) stateTraceRelatedModelEntities.get( i );
-//					putString( )
-//				}
-				stateReportFile.flush();
-				timeOfLastPrintedState = getCurrentTime();
-			}
-			finalLastState = state;
-		}
+		double duration = curTime - timeOfLastStateChange;
+		stateReportFile.format("%.5f  %s.setState( \"%s\" ) dt = %g\n",
+		                       timeOfLastStateChange, this.getInputName(),
+		                       presentState.getStateName(), duration);
+		stateReportFile.flush();
 	}
 
 	/**
