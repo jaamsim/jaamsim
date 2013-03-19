@@ -958,6 +958,10 @@ public static class StateRecord {
 		return workingHours + hours;
 	}
 
+	public double getMaxCycleDur() {
+		return maxCycleDur;
+	}
+
 	public Vector getStateList() {
 		return stateList;
 	}
