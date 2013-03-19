@@ -642,20 +642,13 @@ public static class StateRecord {
 	 * Runs when cycle is finished
 	 */
 	public void collectCycleStats() {
+		collectPresentHours();
 
 		// finalize cycle for each state record
 		for ( StateRecord each : stateMap.values() ) {
-			double hour = each.getCompletedCycleHours();
-			hour += getCurrentCycleHoursFor(each);
-			each.completedCycleHours = hour;
+			each.completedCycleHours += each.getCurrentCycleHours();
 			each.currentCycleHours = 0.0d;
-			if (each == presentState)
-				each.totalHours = getTotalHoursFor(each);
 		}
-		if ( this.isWorking() )
-			workingHours += getCurrentTime() - timeOfLastStateChange;
-
-		timeOfLastStateChange = getCurrentTime();
 		numberOfCompletedCycles++;
 	}
 
