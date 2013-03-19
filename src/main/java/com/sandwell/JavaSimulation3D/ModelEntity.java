@@ -824,6 +824,10 @@ public static class StateRecord {
 		return total;
 	}
 
+	public double getStartCycleTime() {
+		return startOfCycleTime;
+	}
+
 	/**
 	 * Returns the present state name
 	 */
