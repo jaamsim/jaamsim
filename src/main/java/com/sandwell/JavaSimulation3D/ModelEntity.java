@@ -962,6 +962,10 @@ public static class StateRecord {
 		return maxCycleDur;
 	}
 
+	public double getMinCycleDur() {
+		return minCycleDur;
+	}
+
 	public Vector getStateList() {
 		return stateList;
 	}
