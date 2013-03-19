@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.jaamsim.collada;
+package com.jaamsim.xml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,16 +23,16 @@ import java.util.Iterator;
  * @author matt.chudleigh
  *
  */
-public class ColNode {
+public class XmlNode {
 
-	public class ChildIterable implements Iterable<ColNode> {
+	public class ChildIterable implements Iterable<XmlNode> {
 
 		@Override
-		public Iterator<ColNode> iterator() {
+		public Iterator<XmlNode> iterator() {
 			return new ChildIterator();
 		}
 	}
-	public class ChildIterator implements Iterator<ColNode> {
+	public class ChildIterator implements Iterator<XmlNode> {
 		private int index = 0;
 
 		@Override
@@ -41,7 +41,7 @@ public class ColNode {
 		}
 
 		@Override
-		public ColNode next() {
+		public XmlNode next() {
 			return _children.get(index++);
 		}
 
@@ -51,7 +51,7 @@ public class ColNode {
 		}
 	}
 
-	private ColNode _parent;
+	private XmlNode _parent;
 	private HashMap<String, String> _attribs = new HashMap<String, String>();
 
 	private String _tag;
@@ -62,14 +62,14 @@ public class ColNode {
 	 */
 	private Object _content;
 
-	private ArrayList<ColNode> _children;
+	private ArrayList<XmlNode> _children;
 
-	public ColNode(ColNode parent, String tag, String fragID) {
+	public XmlNode(XmlNode parent, String tag, String fragID) {
 		_parent = parent;
 		_tag = tag;
 		_fragID = fragID;
 
-		_children = new ArrayList<ColNode>();
+		_children = new ArrayList<XmlNode>();
 	}
 
 	public void addAttrib(String name, String value) {
@@ -87,7 +87,7 @@ public class ColNode {
 		return _attribs.containsKey(name);
 	}
 
-	public void addChild(ColNode child) {
+	public void addChild(XmlNode child) {
 		_children.add(child);
 	}
 
@@ -95,7 +95,7 @@ public class ColNode {
 		return _children.size();
 	}
 
-	public ColNode getChild(int index) {
+	public XmlNode getChild(int index) {
 		if (index < 0 || index >= _children.size()) {
 			assert(false);
 			return null;
@@ -111,7 +111,7 @@ public class ColNode {
 		return _fragID;
 	}
 
-	public ColNode getParent() {
+	public XmlNode getParent() {
 		return _parent;
 	}
 
@@ -126,7 +126,7 @@ public class ColNode {
 	 */
 	public int getNumChildrenByTag(String tag) {
 		int num = 0;
-		for (ColNode child : _children) {
+		for (XmlNode child : _children) {
 			if (child.getTag().equals(tag))
 				num++;
 		}
@@ -152,8 +152,8 @@ public class ColNode {
 	 * @param recurse
 	 * @return
 	 */
-	public ColNode findChildTag(String tag, boolean recurse) {
-		for (ColNode child : _children) {
+	public XmlNode findChildTag(String tag, boolean recurse) {
+		for (XmlNode child : _children) {
 			if (child.getTag().equals(tag)) {
 				return child;
 			}
@@ -161,8 +161,8 @@ public class ColNode {
 		// Note, this does a pseudo breadth first search
 		if (recurse) {
 			// Try all our children
-			for (ColNode child : _children) {
-				ColNode val = child.findChildTag(tag, true);
+			for (XmlNode child : _children) {
+				XmlNode val = child.findChildTag(tag, true);
 
 				if (val != null)
 					return val;

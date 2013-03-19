@@ -14,8 +14,6 @@
  */
 package com.jaamsim.collada;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,12 +23,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
-import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
@@ -40,51 +33,25 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.MeshProto;
 import com.jaamsim.render.RenderException;
+import com.jaamsim.xml.XmlNode;
+import com.jaamsim.xml.XmlParser;
 
 /**
  * Inspired by the Collada loader for Sweethome3d by Emmanuel Puybaret / eTeks <info@eteks.com>.
  */
-public class ColParser extends DefaultHandler {
-
-	private static final boolean COL_DEBUG = false;
-
-	static long callbackTime;
+public class ColParser {
 
 	public static MeshProto parse(URL asset) throws RenderException {
-		InputStream in;
-		try {
-			in = asset.openStream();
-		} catch (IOException ex) {
-			throw new RenderException("Can't read " + asset);
-		}
 
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setValidating(false);
 
 		try {
-			long startTime = System.nanoTime();
-			SAXParser saxParser = factory.newSAXParser();
-			ColParser handler = new ColParser(asset);
+			ColParser colParser = new ColParser(asset);
 
-			callbackTime = 0;
+			colParser.processContent();
 
-			saxParser.parse(in, handler);
-
-			long parseEndTime = System.nanoTime();
-
-			handler.processContent();
-
-			long endTime = System.nanoTime();
-			double parseTimeMS = (parseEndTime - startTime) / 1000000.0;
-			double processTimeMS = (endTime - parseEndTime) / 1000000.0;
-			double doubleParseTime = handler.arrayAccum / 1000000.0;
-			double callbackTimeMS = callbackTime / 1000000.0;
-
-			if (COL_DEBUG) {
-				System.out.printf("Collada timing for \"%s\" - parse: %f (callbacks: %f)(arrays %f), process: %f, hull %f\n", asset.toString(), parseTimeMS, callbackTimeMS, doubleParseTime, processTimeMS, handler.hullTimeMS);
-			}
-
-			return handler.getProto();
+			return colParser.getProto();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -160,10 +127,6 @@ public class ColParser extends DefaultHandler {
 
 	private final URL _contextURL;
 
-	private double hullTimeMS;
-	private long arrayAccum;
-	private long subMeshAccum;
-
 	private final HashMap<String, Geometry> _geos = new HashMap<String, Geometry>();
 	private final HashMap<String, String> _images = new HashMap<String, String>(); // Maps image names to files
 	private final HashMap<String, String> _materials = new HashMap<String, String>(); // Maps materials to effects
@@ -183,100 +146,37 @@ public class ColParser extends DefaultHandler {
 
 	private HashMap<String, Vec4d[]> _dataSources = new HashMap<String, Vec4d[]>();
 
-	private ColNode _rootNode;
-	private ColNode _colladaNode;
-
-	private ColNode _currentNode;
-
-	// The _nodeIDMap is a mapping of fragment IDs to nodes to make data analysis easier
-	private HashMap<String, ColNode> _nodeIDMap = new HashMap<String, ColNode>();
-
-	private StringBuilder _contentBuilder = new StringBuilder();
+	private XmlNode _colladaNode;
+	private XmlParser _parser;
 
 	public ColParser(URL context) {
 		_contextURL = context;
-		_rootNode = new ColNode(null, "", "");
-		_currentNode = _rootNode;
 	}
 
-	@Override
-	public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
-
-		long cbStart = System.nanoTime();
-
-		int IDIndex = attributes.getIndex("id");
-		String fragID = null;
-		if (IDIndex != -1) {
-			fragID = attributes.getValue(IDIndex);
-		}
-		ColNode node = new ColNode(_currentNode, name, fragID);
-		_currentNode.addChild(node);
-		_currentNode = node;
-		for (int i = 0; i < attributes.getLength(); ++i) {
-			if (i == IDIndex) continue; // This attribute is special and handled
-
-			String n = attributes.getQName(i);
-			String v = attributes.getValue(i);
-			node.addAttrib(n, v);
-		}
-		if (IDIndex != -1) {
-			_nodeIDMap.put(fragID, node);
-		}
-		_contentBuilder.setLength(0);
-
-		callbackTime += System.nanoTime() - cbStart;
-	}
-
-	@Override
-	public void characters(char [] ch, int start, int length) throws SAXException {
-		long cbStart = System.nanoTime();
-
-		_contentBuilder.append(ch, start, length);
-
-		callbackTime += System.nanoTime() - cbStart;
-	}
-
-	@Override
-	public void endElement(String uri, String localName, String name) throws SAXException {
-		// Handle the contents type based on the current nodes tag
-		long cbStart = System.nanoTime();
-
-		Object contents;
-		if (DOUBLE_ARRAY_TAGS.contains(name)) {
-			contents = parseDoubleArray();
-		} else if (INT_ARRAY_TAGS.contains(name)) {
-			contents = parseIntArray();
-		} else if (BOOLEAN_ARRAY_TAGS.contains(name)) {
-			contents = parseBooleanArray();
-		} else if (STRING_ARRAY_TAGS.contains(name)) {
-			contents = contentsToStringArray();
-		} else {
-			contents = _contentBuilder.toString().trim();
-		}
-
-		_currentNode.setContent(contents);
-		_currentNode = _currentNode.getParent();
-		_contentBuilder.setLength(0);
-
-		callbackTime += System.nanoTime() - cbStart;
-	}
-
-	private ColNode getNodeFromID(String fragID) {
+	private XmlNode getNodeFromID(String fragID) {
 
 		if (fragID.length() < 1 || fragID.charAt(0) != '#') {
 			return null;
 		}
-		return _nodeIDMap.get(fragID.substring(1));
+		return _parser.getNodeByID(fragID.substring(1));
 	}
 
 	private void processContent() {
 
-		_colladaNode = _rootNode.findChildTag("COLLADA", false);
+		_parser = new XmlParser(_contextURL);
+
+		_parser.setDoubleArrayTags(DOUBLE_ARRAY_TAGS);
+		_parser.setIntArrayTags(INT_ARRAY_TAGS);
+		_parser.setBooleanArrayTags(BOOLEAN_ARRAY_TAGS);
+		_parser.setStringArrayTags(STRING_ARRAY_TAGS);
+
+		_parser.parse();
+
+
+		_colladaNode = _parser.getRootNode().findChildTag("COLLADA", false);
 		assert(_colladaNode != null);
 
-		long geoStart = System.nanoTime();
 		processGeos();
-		double geoTime = (System.nanoTime() - geoStart) / 1000000.0;
 		processImages();
 		processMaterials();
 		processEffects();
@@ -286,26 +186,15 @@ public class ColParser extends DefaultHandler {
 
 		ConvexHull.buildTime = 0; ConvexHull.filterTime = 0; ConvexHull.finalizeTime = 0; ConvexHull.sortTime = 0;
 
-		long sceneStart = System.nanoTime();
 		processScene();
-		double sceneTime = (System.nanoTime() - sceneStart) / 1000000.0;
 
-		if (COL_DEBUG) {
-			System.out.printf("Process times - Geo: %f, Scene: %f (subMeshes %f, subHulls %f)\n", geoTime, sceneTime, subMeshAccum / 1000000.0, _finalProto.subHullAccum / 1000000.0);
-			System.out.printf("Convex Times - Filter: %f, Sort: %f, Build %f, Finalize: %f\n",
-			                  ConvexHull.filterTime / 1000000.0,
-			                  ConvexHull.sortTime / 1000000.0,
-			                  ConvexHull.buildTime / 1000000.0,
-			                  ConvexHull.finalizeTime / 1000000.0);
-
-		}
 	}
 
 	private double getScaleFactor() {
-		ColNode assetNode = _colladaNode.findChildTag("asset", false);
+		XmlNode assetNode = _colladaNode.findChildTag("asset", false);
 		if (assetNode == null) return 1;
 
-		ColNode unit = assetNode.findChildTag("unit", false);
+		XmlNode unit = assetNode.findChildTag("unit", false);
 		if (unit == null) return 1;
 
 		String meter = unit.getAttrib("meter");
@@ -315,10 +204,10 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private String getUpAxis() {
-		ColNode assetNode = _colladaNode.findChildTag("asset", false);
+		XmlNode assetNode = _colladaNode.findChildTag("asset", false);
 		if (assetNode == null) return "Y_UP";
 
-		ColNode upAxisNode = assetNode.findChildTag("up_axis", false);
+		XmlNode upAxisNode = assetNode.findChildTag("up_axis", false);
 		if (upAxisNode == null) return "Y_UP";
 
 
@@ -353,10 +242,10 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private void processScene() {
-		ColNode scene = _colladaNode.findChildTag("scene", false);
+		XmlNode scene = _colladaNode.findChildTag("scene", false);
 		assert(scene != null);
 
-		ColNode instVS = scene.findChildTag("instance_visual_scene", false);
+		XmlNode instVS = scene.findChildTag("instance_visual_scene", false);
 		assert(instVS != null);
 		String vsURL = instVS.getAttrib("url");
 		assert(vsURL.charAt(0) == '#');
@@ -369,9 +258,7 @@ public class ColParser extends DefaultHandler {
 			visitNode(sn, globalMat);
 		}
 
-		long hullStart = System.nanoTime();
 		_finalProto.generateHull();
-		hullTimeMS = (System.nanoTime()  - hullStart) / 1000000;
 	}
 
 	private void visitNode(SceneNode node, Mat4d parentMat) {
@@ -434,14 +321,12 @@ public class ColParser extends DefaultHandler {
 			} else {
 				geoID = _loadedFaceGeos.size();
 				_loadedFaceGeos.add(ge);
-				long subMeshStart = System.nanoTime();
 				_finalProto.addSubMesh(subGeo.verts,
 				                       subGeo.normals,
 				                       subGeo.texCoords,
 				                       effect.diffuse.texture,
 				                       effect.diffuse.color,
 				                       effect.transType, effect.transColour);
-				subMeshAccum += System.nanoTime() - subMeshStart;
 			}
 
 			_finalProto.addSubMeshInstance(geoID, mat);
@@ -467,23 +352,23 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private void processVisualScenes() {
-		ColNode libScenes = _colladaNode.findChildTag("library_visual_scenes", false);
+		XmlNode libScenes = _colladaNode.findChildTag("library_visual_scenes", false);
 		if (libScenes == null)
 			return; // No scenes
 
-		for (ColNode child : libScenes.children()) {
+		for (XmlNode child : libScenes.children()) {
 			if (child.getTag().equals("visual_scene")) {
 				processVisualScene(child);
 			}
 		}
 	}
 
-	private void processVisualScene(ColNode scene) {
+	private void processVisualScene(XmlNode scene) {
 		String id = scene.getFragID();
 		VisualScene vs = new VisualScene();
 		_visualScenes.put(id, vs);
 
-		for (ColNode child : scene.children()) {
+		for (XmlNode child : scene.children()) {
 			if (child.getTag().equals("node")) {
 				SceneNode node = processNode(child, null);
 				vs.nodes.add(node);
@@ -492,23 +377,23 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private void processImages() {
-		ColNode libImage = _colladaNode.findChildTag("library_images", false);
+		XmlNode libImage = _colladaNode.findChildTag("library_images", false);
 		if (libImage == null)
 			return; // No images
 
-		for (ColNode child : libImage.children()) {
+		for (XmlNode child : libImage.children()) {
 			if (child.getTag().equals("image")) {
 				processImage(child);
 			}
 		}
 	}
 
-	private void processImage(ColNode imageNode) {
+	private void processImage(XmlNode imageNode) {
 		// For now all we care about with images is the init_form contents and the name
 		String id = imageNode.getFragID();
 		if (id == null) return; // We do not care about images we can not reference
 
-		ColNode initFrom = imageNode.findChildTag("init_from", true);
+		XmlNode initFrom = imageNode.findChildTag("init_from", true);
 		if (initFrom == null) {
 			assert(false);
 			return;
@@ -521,22 +406,22 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private void processMaterials() {
-		ColNode libMats = _colladaNode.findChildTag("library_materials", false);
+		XmlNode libMats = _colladaNode.findChildTag("library_materials", false);
 		if (libMats == null)
 			return; // No materials
 
-		for (ColNode child : libMats.children()) {
+		for (XmlNode child : libMats.children()) {
 			if (child.getTag().equals("material")) {
 				processMaterial(child);
 			}
 		}
 	}
 
-	private void processMaterial(ColNode matNode) {
+	private void processMaterial(XmlNode matNode) {
 		String id = matNode.getFragID();
 		if (id == null) return; // We do not care about materials we can not reference
 
-		ColNode instEffect = matNode.findChildTag("instance_effect", true);
+		XmlNode instEffect = matNode.findChildTag("instance_effect", true);
 		if (instEffect == null) {
 			assert(false);
 			return;
@@ -552,31 +437,31 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private void processEffects() {
-		ColNode libEffects = _colladaNode.findChildTag("library_effects", false);
+		XmlNode libEffects = _colladaNode.findChildTag("library_effects", false);
 		if (libEffects == null)
 			return; // No effects
 
-		for (ColNode child : libEffects.children()) {
+		for (XmlNode child : libEffects.children()) {
 			if (child.getTag().equals("effect")) {
 				processEffect(child);
 			}
 		}
 	}
 
-	private void processEffect(ColNode effectNode) {
+	private void processEffect(XmlNode effectNode) {
 		String id = effectNode.getFragID();
 		if (id == null) return; // We do not care about materials we can not reference
 
-		ColNode profCommon = effectNode.findChildTag("profile_COMMON", true);
+		XmlNode profCommon = effectNode.findChildTag("profile_COMMON", true);
 		if (profCommon == null) {
 			assert(false);
 			return; // There is no common profile
 		}
 
-		HashMap<String, ColNode> paramMap = new HashMap<String, ColNode>();
+		HashMap<String, XmlNode> paramMap = new HashMap<String, XmlNode>();
 
 		// Start by building a table of all params
-		for (ColNode child : profCommon.children()) {
+		for (XmlNode child : profCommon.children()) {
 			String tag = child.getTag();
 			if (tag.equals("newparam")) {
 				String sid = child.getAttrib("sid");
@@ -584,20 +469,20 @@ public class ColParser extends DefaultHandler {
 			}
 		}
 
-		ColNode technique = profCommon.findChildTag("technique", false);
+		XmlNode technique = profCommon.findChildTag("technique", false);
 		if (technique == null) {
 			assert(false);
 			return; // There is no common profile
 		}
 		// Search technique for the kind of data we care about, for now find blinn, phong or lambert
-		ColNode diffuse = null;
-		ColNode transparency = null;
-		ColNode transparent = null;
+		XmlNode diffuse = null;
+		XmlNode transparency = null;
+		XmlNode transparent = null;
 
-		ColNode blinn = technique.findChildTag("blinn", false);
-		ColNode phong = technique.findChildTag("phong", false);
-		ColNode lambert = technique.findChildTag("lambert", false);
-		ColNode constant = technique.findChildTag("constant", false);
+		XmlNode blinn = technique.findChildTag("blinn", false);
+		XmlNode phong = technique.findChildTag("phong", false);
+		XmlNode lambert = technique.findChildTag("lambert", false);
+		XmlNode constant = technique.findChildTag("constant", false);
 		if (blinn != null) {
 			diffuse = blinn.findChildTag("diffuse", false);
 			transparency = blinn.findChildTag("transparency", false);
@@ -646,7 +531,7 @@ public class ColParser extends DefaultHandler {
 		    (opaque.equals("A_ONE") || opaque.equals("RGB_ZERO")) &&
 		    transparentCT != null &&
 		    transparentCT.color != null) {
-			ColNode floatNode = transparency.findChildTag("float", false);
+			XmlNode floatNode = transparency.findChildTag("float", false);
 			assert(floatNode != null);
 
 			double alpha = Double.parseDouble((String)floatNode.getContent());
@@ -678,13 +563,13 @@ public class ColParser extends DefaultHandler {
 		_effects.put(id,  effect);
 	}
 
-	private ColorTex getColorTex(ColNode node, HashMap<String, ColNode> paramMap) {
+	private ColorTex getColorTex(XmlNode node, HashMap<String, XmlNode> paramMap) {
 		if (node.getNumChildren() != 1) {
 			assert(false);
 			return null;
 		}
 
-		ColNode valNode = node.getChild(0);
+		XmlNode valNode = node.getChild(0);
 
 		String tag = valNode.getTag();
 		ColorTex ret = new ColorTex();
@@ -705,22 +590,22 @@ public class ColParser extends DefaultHandler {
 		// Now we have the fun dealing with COLLADA's incredible indirectness
 		String texName = valNode.getAttrib("texture");
 		// Find this sampler in the map
-		ColNode sampler = paramMap.get(texName);
+		XmlNode sampler = paramMap.get(texName);
 		assert(sampler != null);
 
-		ColNode sampler2D = sampler.findChildTag("sampler2D", false);
+		XmlNode sampler2D = sampler.findChildTag("sampler2D", false);
 		assert(sampler2D != null);
-		ColNode source = sampler2D.findChildTag("source", false);
+		XmlNode source = sampler2D.findChildTag("source", false);
 		assert(source != null);
 
 		String surfaceName = (String)source.getContent();
 
-		ColNode surfaceParam = paramMap.get(surfaceName);
-		ColNode surface = surfaceParam.findChildTag("surface", false);
+		XmlNode surfaceParam = paramMap.get(surfaceName);
+		XmlNode surface = surfaceParam.findChildTag("surface", false);
 		assert(surface != null);
 		assert(surface.getAttrib("type").equals("2D"));
 
-		ColNode initFrom = surface.findChildTag("init_from", false);
+		XmlNode initFrom = surface.findChildTag("init_from", false);
 		assert(initFrom != null);
 
 		String imageName = (String)initFrom.getContent();
@@ -737,18 +622,18 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private void processGeos() {
-		ColNode libGeo = _colladaNode.findChildTag("library_geometries", false);
+		XmlNode libGeo = _colladaNode.findChildTag("library_geometries", false);
 		if (libGeo == null)
 			return; // No geometries
 
-		for (ColNode child : libGeo.children()) {
+		for (XmlNode child : libGeo.children()) {
 			if (child.getTag().equals("geometry")) {
 				processGeo(child);
 			}
 		}
 	}
 
-	private void processGeo(ColNode geoNode) {
+	private void processGeo(XmlNode geoNode) {
 		String geoID = geoNode.getFragID();
 		if (geoID == null) {
 			// This geometry can not be referenced, don't bother
@@ -757,7 +642,7 @@ public class ColParser extends DefaultHandler {
 
 		Geometry geoData = new Geometry();
 
-		for (ColNode meshNode : geoNode.children()) {
+		for (XmlNode meshNode : geoNode.children()) {
 			if (meshNode.getTag() == "mesh") {
 				parseMesh(meshNode, geoData);
 			}
@@ -767,18 +652,18 @@ public class ColParser extends DefaultHandler {
 	}
 
 	private void processNodes() {
-		ColNode libNodes = _colladaNode.findChildTag("library_nodes", false);
+		XmlNode libNodes = _colladaNode.findChildTag("library_nodes", false);
 		if (libNodes == null)
 			return; // No images
 
-		for (ColNode child : libNodes.children()) {
+		for (XmlNode child : libNodes.children()) {
 			if (child.getTag().equals("node")) {
 				processNode(child, null);
 			}
 		}
 	}
 
-	private SceneNode processNode(ColNode node, SceneNode parent) {
+	private SceneNode processNode(XmlNode node, SceneNode parent) {
 		SceneNode sn = new SceneNode();
 		sn.id = node.getFragID();
 
@@ -789,7 +674,7 @@ public class ColParser extends DefaultHandler {
 		}
 
 		// Build up the transformation matrix for this node
-		for (ColNode child : node.children()) {
+		for (XmlNode child : node.children()) {
 			String childTag = child.getTag();
 			Mat4d mat = null;
 			if (childTag.equals("translate")) {
@@ -810,7 +695,7 @@ public class ColParser extends DefaultHandler {
 		}
 
 		// Now handle sub geometry, sub nodes and instance nodes
-		for (ColNode child : node.children()) {
+		for (XmlNode child : node.children()) {
 			String childTag = child.getTag();
 			if (childTag.equals("instance_geometry")) {
 				GeoInstInfo geoInfo = processInstGeo(child);
@@ -828,17 +713,17 @@ public class ColParser extends DefaultHandler {
 		return sn;
 	}
 
-	private GeoInstInfo processInstGeo(ColNode instGeo) {
+	private GeoInstInfo processInstGeo(XmlNode instGeo) {
 		GeoInstInfo instInfo = new GeoInstInfo();
 		instInfo.geoName = instGeo.getAttrib("url");
 
-		ColNode bindMat = instGeo.findChildTag("bind_material", false);
+		XmlNode bindMat = instGeo.findChildTag("bind_material", false);
 		if (bindMat == null) return instInfo;
 
-		ColNode techCommon = bindMat.findChildTag("technique_common", false);
+		XmlNode techCommon = bindMat.findChildTag("technique_common", false);
 		assert(techCommon != null);
 
-		for (ColNode instMat : techCommon.children()) {
+		for (XmlNode instMat : techCommon.children()) {
 			if (!instMat.getTag().equals("instance_material")) {
 				continue;
 			}
@@ -851,7 +736,7 @@ public class ColParser extends DefaultHandler {
 		return instInfo;
 	}
 
-	private Mat4d transToMat(ColNode transNode) {
+	private Mat4d transToMat(XmlNode transNode) {
 		double[] vals = (double[])transNode.getContent();
 		assert(vals != null && vals.length >= 3);
 		Vec3d transVect = new Vec3d(vals[0], vals[1], vals[2]);
@@ -860,7 +745,7 @@ public class ColParser extends DefaultHandler {
 		return ret;
 	}
 
-	private Mat4d rotToMat(ColNode rotNode) {
+	private Mat4d rotToMat(XmlNode rotNode) {
 		double[] vals = (double[])rotNode.getContent();
 		assert(vals != null && vals.length >= 4);
 
@@ -873,7 +758,7 @@ public class ColParser extends DefaultHandler {
 		return ret;
 	}
 
-	private Mat4d scaleToMat(ColNode scaleNode) {
+	private Mat4d scaleToMat(XmlNode scaleNode) {
 		double[] vals = (double[])scaleNode.getContent();
 		assert(vals != null && vals.length >= 3);
 		Vec3d scaleVect = new Vec3d(vals[0], vals[1], vals[2]);
@@ -882,17 +767,17 @@ public class ColParser extends DefaultHandler {
 		return ret;
 	}
 
-	private Mat4d matToMat(ColNode scaleNode) {
+	private Mat4d matToMat(XmlNode scaleNode) {
 		double[] vals = (double[])scaleNode.getContent();
 		assert(vals != null && vals.length >= 16);
 		Mat4d ret = new Mat4d(vals);
 		return ret;
 	}
 
-	private void parseMesh(ColNode mesh, Geometry geoData) {
+	private void parseMesh(XmlNode mesh, Geometry geoData) {
 
 		// Now try to parse geometry type
-		for (ColNode subGeo : mesh.children()) {
+		for (XmlNode subGeo : mesh.children()) {
 			String geoTag = subGeo.getTag();
 			if (geoTag.equals("polylist") ||
 			    geoTag.equals("polygons") ||
@@ -910,7 +795,7 @@ public class ColParser extends DefaultHandler {
 		}
 	}
 
-	private void generateLineGeo(ColNode subGeo, Geometry geoData) {
+	private void generateLineGeo(XmlNode subGeo, Geometry geoData) {
 		String geoTag = subGeo.getTag();
 
 		SubMeshDesc smd = readGeometryInputs(subGeo);
@@ -941,7 +826,7 @@ public class ColParser extends DefaultHandler {
 
 	}
 
-	private void generateTriangleGeo(ColNode subGeo, Geometry geoData) {
+	private void generateTriangleGeo(XmlNode subGeo, Geometry geoData) {
 		String geoTag = subGeo.getTag();
 
 		SubMeshDesc smd = readGeometryInputs(subGeo);
@@ -991,9 +876,9 @@ public class ColParser extends DefaultHandler {
 		geoData.faceSubGeos.add(fsg);
 	}
 
-	private void readVertices(SubMeshDesc smd, int offset, ColNode vertices) {
+	private void readVertices(SubMeshDesc smd, int offset, XmlNode vertices) {
 		// Check vertices for inputs
-		for (ColNode input : vertices.children()) {
+		for (XmlNode input : vertices.children()) {
 			if (input.getTag() != "input") {
 				continue;
 			}
@@ -1016,9 +901,9 @@ public class ColParser extends DefaultHandler {
 		}
 	}
 
-	private void parseLines(SubMeshDesc smd, ColNode subGeo) {
+	private void parseLines(SubMeshDesc smd, XmlNode subGeo) {
 		int count = Integer.parseInt(subGeo.getAttrib("count"));
-		ColNode pNode = subGeo.findChildTag("p", false);
+		XmlNode pNode = subGeo.findChildTag("p", false);
 		if (pNode == null)
 			throw new ColException("No 'p' child in 'lines' in mesh.");
 
@@ -1032,13 +917,13 @@ public class ColParser extends DefaultHandler {
 		}
 	}
 
-	private void parseLinestrip(SubMeshDesc smd, ColNode subGeo) {
+	private void parseLinestrip(SubMeshDesc smd, XmlNode subGeo) {
 		int count = Integer.parseInt(subGeo.getAttrib("count"));
 		// There should be 'count' number of 'p' tags in this element
 		int[][] stripIndices = new int[count][];
 		int numLines = 0;
 		int nextIndex = 0;
-		for (ColNode child : subGeo.children()) {
+		for (XmlNode child : subGeo.children()) {
 			if (!child.getTag().equals("p")) continue;
 
 			int[] ps = (int[])child.getContent();
@@ -1063,9 +948,9 @@ public class ColParser extends DefaultHandler {
 	}
 
 	// Fill in the indices for 'smd'
-	private void parseTriangles(SubMeshDesc smd, ColNode subGeo) {
+	private void parseTriangles(SubMeshDesc smd, XmlNode subGeo) {
 		int count = Integer.parseInt(subGeo.getAttrib("count"));
-		ColNode pNode = subGeo.findChildTag("p", false);
+		XmlNode pNode = subGeo.findChildTag("p", false);
 		if (pNode == null)
 			throw new ColException("No 'p' child in 'triangles' in mesh.");
 
@@ -1089,15 +974,15 @@ public class ColParser extends DefaultHandler {
 	}
 
 	// Note, this is definitely not correct, but for now assume all polygons are convex
-	private void parsePolylist(SubMeshDesc smd, ColNode subGeo) {
+	private void parsePolylist(SubMeshDesc smd, XmlNode subGeo) {
 		int count = Integer.parseInt(subGeo.getAttrib("count"));
-		ColNode pNode = subGeo.findChildTag("p", false);
+		XmlNode pNode = subGeo.findChildTag("p", false);
 		if (pNode == null)
 			throw new ColException("No 'p' child in 'polygons' in mesh.");
 
 		int[] ps = (int[])pNode.getContent();
 
-		ColNode vcountNode = subGeo.findChildTag("vcount", false);
+		XmlNode vcountNode = subGeo.findChildTag("vcount", false);
 		int[] vcounts;
 		if (vcountNode != null)
 			vcounts = (int[])vcountNode.getContent();
@@ -1161,12 +1046,12 @@ public class ColParser extends DefaultHandler {
 	}
 
 	// Note, this is definitely not correct, but for now assume all polygons are convex
-	private void parsePolygons(SubMeshDesc smd, ColNode subGeo) {
+	private void parsePolygons(SubMeshDesc smd, XmlNode subGeo) {
 
 		int numTriangles = 0;
 
 		// Find the number of triangles, for this we will need to iterate over all the polygons
-		for (ColNode n : subGeo.children()) {
+		for (XmlNode n : subGeo.children()) {
 			// Note: we do not support 'ph' tags (polygons with holes)
 			if (n.getTag() != "p") {
 				continue;
@@ -1186,7 +1071,7 @@ public class ColParser extends DefaultHandler {
 
 		int nextWriteVert = 0;
 
-		for (ColNode n : subGeo.children()) {
+		for (XmlNode n : subGeo.children()) {
 			// Note: we do not support 'ph' tags (polygons with holes)
 			if (n.getTag() != "p") {
 				continue;
@@ -1221,11 +1106,11 @@ public class ColParser extends DefaultHandler {
 		}
 	}
 
-	private SubMeshDesc readGeometryInputs(ColNode subGeo) {
+	private SubMeshDesc readGeometryInputs(XmlNode subGeo) {
 		SubMeshDesc smd = new SubMeshDesc();
 
 		int maxOffset = 0;
-		for (ColNode input : subGeo.children()) {
+		for (XmlNode input : subGeo.children()) {
 			if (!input.getTag().equals("input")) {
 				continue;
 			}
@@ -1238,7 +1123,7 @@ public class ColParser extends DefaultHandler {
 			if (offset > maxOffset) { maxOffset = offset; }
 
 			if (semantic.equals("VERTEX")) {
-				ColNode vertices = getNodeFromID(source);
+				XmlNode vertices = getNodeFromID(source);
 				readVertices(smd, offset, vertices);
 			}
 			if (semantic.equals("NORMAL")) {
@@ -1263,44 +1148,6 @@ public class ColParser extends DefaultHandler {
 		return smd;
 	}
 
-	private double[] parseDoubleArray() {
-		long arrayStart = System.nanoTime();
-		ArrayList<String> strings = contentsToStringArray();
-
-		double[] ret = new double[strings.size()];
-		int index = 0;
-		for (String s : strings) {
-			ret[index++] = Double.parseDouble(s);
-		}
-		arrayAccum += System.nanoTime() - arrayStart;
-		return ret;
-	}
-
-	private int[] parseIntArray() {
-		long arrayStart = System.nanoTime();
-		ArrayList<String> strings = contentsToStringArray();
-
-		int[] ret = new int[strings.size()];
-		int index = 0;
-		for (String s : strings) {
-			ret[index++] = Integer.parseInt(s);
-		}
-		arrayAccum += System.nanoTime() - arrayStart;
-		return ret;
-	}
-
-	private boolean[] parseBooleanArray() {
-		long arrayStart = System.nanoTime();
-		ArrayList<String> strings = contentsToStringArray();
-
-		boolean[] ret = new boolean[strings.size()];
-		int index = 0;
-		for (String s : strings) {
-			ret[index++] = Boolean.parseBoolean(s);
-		}
-		arrayAccum += System.nanoTime() - arrayStart;
-		return ret;
-	}
 
 	/**
 	 * Return a meaningful list of Vectors from data source 'id'
@@ -1314,19 +1161,19 @@ public class ColParser extends DefaultHandler {
 			return cached;
 		}
 		// Okay, this source hasn't be accessed yet
-		ColNode sourceNode = getNodeFromID(id);
+		XmlNode sourceNode = getNodeFromID(id);
 		if (sourceNode == null) { throw new ColException("Could not find node with id: " + id); }
 
-		ColNode floatNode = sourceNode.findChildTag("float_array", false);
+		XmlNode floatNode = sourceNode.findChildTag("float_array", false);
 		if (floatNode == null) { throw new ColException("No float array in source: " + id); }
 
 		int floatCount = Integer.parseInt(floatNode.getAttrib("count"));
 		double[] values = (double[])floatNode.getContent();
 
-		ColNode techCommon = sourceNode.findChildTag("technique_common", false);
+		XmlNode techCommon = sourceNode.findChildTag("technique_common", false);
 		if (techCommon == null) { throw new ColException("No technique_common in source: " + id); }
 
-		ColNode accessor = techCommon.findChildTag("accessor", false);
+		XmlNode accessor = techCommon.findChildTag("accessor", false);
 		if (accessor == null) { throw new ColException("No accessor in source: " + id); }
 
 		int stride = Integer.parseInt(accessor.getAttrib("stride"));
@@ -1354,26 +1201,6 @@ public class ColParser extends DefaultHandler {
 
 		_dataSources.put(id, ret);
 
-		return ret;
-	}
-
-	private ArrayList<String> contentsToStringArray() {
-		ArrayList<String> ret = new ArrayList<String>();
-		StringBuilder val = new StringBuilder();
-		for (int i = 0; i < _contentBuilder.length(); ++i) {
-			char c = _contentBuilder.charAt(i);
-			if (c == ' ' || c == '\t' || c == '\n') {
-				if (val.length() != 0) {
-					ret.add(val.toString());
-					val.setLength(0);
-				}
-			} else {
-				val.append(c);
-			}
-		}
-		if (val.length() != 0) {
-			ret.add(val.toString());
-		}
 		return ret;
 	}
 
