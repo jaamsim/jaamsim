@@ -134,7 +134,7 @@ public class Util {
 		try {
 			java.io.File absFile = new java.io.File( filePath );
 			if( absFile.isAbsolute() ) {
-				absoluteFilePath = absFile.getCanonicalPath() + System.getProperty( "file.separator" );
+				absoluteFilePath = absFile.getCanonicalPath();
 				if(absFile.isFile()) {
 					absoluteFilePath = "file:/" + absoluteFilePath;
 				}
