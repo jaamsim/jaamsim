@@ -157,9 +157,12 @@ public class ModelEntity extends DisplayEntity {
 	private static Vector stateList = new Vector( 11, 1 ); // List of valid states
 	private final HashMap<String, StateRecord> stateMap;
 	protected double workingHours;                    // Accumulated working time spent in working states
-
 	private double timeOfLastStateChange;
 	private int numberOfCompletedCycles;
+	private double startOfCycleTime;
+	private double maxCycleDur;
+	private double minCycleDur;
+
 	protected double lastHistogramUpdateTime;   // Last time at which a histogram was updated for this entity
 	protected double secondToLastHistogramUpdateTime;   // Second to last time at which a histogram was updated for this entity
 	private StateRecord presentState; // The present state of the entity
@@ -618,6 +621,10 @@ public static class StateRecord {
 		stateMap.put("idle", idle);
 
 		timeOfLastStateChange = getCurrentTime();
+
+		maxCycleDur = 0.0d;
+		minCycleDur = Double.POSITIVE_INFINITY;
+		startOfCycleTime = getCurrentTime();
 	}
 
 	/**
@@ -632,6 +639,9 @@ public static class StateRecord {
 			each.completedCycleHours = 0.0d;
 		}
 		numberOfCompletedCycles = 0;
+
+		maxCycleDur = 0.0d;
+		minCycleDur = Double.POSITIVE_INFINITY;
 	}
 
 	/**
@@ -646,10 +656,15 @@ public static class StateRecord {
 			each.currentCycleHours = 0.0d;
 		}
 		numberOfCompletedCycles++;
+
+		double dur = getCurrentTime() - startOfCycleTime;
+		maxCycleDur = Math.max(maxCycleDur, dur);
+		minCycleDur = Math.min(minCycleDur, dur);
+		startOfCycleTime = getCurrentTime();
 	}
 
 	/**
-	 * Clear the current cycle hours
+	 * Clear the current cycle hours, also reset the start of cycle time
 	 */
 	protected void clearCurrentCycleHours() {
 		collectPresentHours();
@@ -657,6 +672,8 @@ public static class StateRecord {
 		// clear current cycle hours for each state record
 		for ( StateRecord each : stateMap.values() )
 			each.currentCycleHours = 0.0d;
+
+		startOfCycleTime = getCurrentTime();
 	}
 
 	/**
@@ -671,6 +688,9 @@ public static class StateRecord {
 			each.completedCycleHours = 0.0d;
 		}
 		numberOfCompletedCycles = 0;
+
+		maxCycleDur = 0.0d;
+		minCycleDur = Double.POSITIVE_INFINITY;
 	}
 
 	/**
