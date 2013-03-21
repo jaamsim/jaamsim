@@ -162,6 +162,7 @@ public class ModelEntity extends DisplayEntity {
 	private double startOfCycleTime;
 	private double maxCycleDur;
 	private double minCycleDur;
+	private double totalCompletedCycleHours;
 
 	protected double lastHistogramUpdateTime;   // Last time at which a histogram was updated for this entity
 	protected double secondToLastHistogramUpdateTime;   // Second to last time at which a histogram was updated for this entity
@@ -624,6 +625,7 @@ public static class StateRecord {
 
 		maxCycleDur = 0.0d;
 		minCycleDur = Double.POSITIVE_INFINITY;
+		totalCompletedCycleHours = 0.0d;
 		startOfCycleTime = getCurrentTime();
 	}
 
@@ -642,6 +644,7 @@ public static class StateRecord {
 
 		maxCycleDur = 0.0d;
 		minCycleDur = Double.POSITIVE_INFINITY;
+		totalCompletedCycleHours = 0.0d;
 	}
 
 	/**
@@ -660,6 +663,7 @@ public static class StateRecord {
 		double dur = getCurrentTime() - startOfCycleTime;
 		maxCycleDur = Math.max(maxCycleDur, dur);
 		minCycleDur = Math.min(minCycleDur, dur);
+		totalCompletedCycleHours += dur;
 		startOfCycleTime = getCurrentTime();
 	}
 
@@ -691,6 +695,7 @@ public static class StateRecord {
 
 		maxCycleDur = 0.0d;
 		minCycleDur = Double.POSITIVE_INFINITY;
+		totalCompletedCycleHours = 0.0d;
 	}
 
 	/**
@@ -781,11 +786,7 @@ public static class StateRecord {
 	}
 
 	public double getCompletedCycleHours() {
-		double total = 0.0d;
-		for (int i = 0; i < getStateList().size(); i ++)
-			total += getStateRecordFor(i).getCompletedCycleHours();
-
-		return total;
+		return totalCompletedCycleHours;
 	}
 
 	public double getCurrentCycleHoursFor(StateRecord state) {
