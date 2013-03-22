@@ -49,6 +49,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.probability.TestUniformDistribution.class,
 	com.jaamsim.probability.TestWeibullDistribution.class,
 	com.jaamsim.probability.TestEntitlementSelector.class,
-	com.jaamsim.probability.TestRandomSelector.class
+	com.jaamsim.probability.TestRandomSelector.class,
 })
 public class AllTests {}

@@ -31,15 +31,15 @@ import com.sandwell.JavaSimulation.Keyword;
 public class FluidFlow extends CalculationEntity {
 
 	@Keyword(desc = "The Fluid being moved by the flow.",
-	         example = "FluidFlow1 Fluid { Fluid1 }")
+	      example = "FluidFlow1 Fluid { Fluid1 }")
 	private final EntityInput<Fluid> fluidInput;
 
 	@Keyword(desc = "The source for the flow.",
-	         example = "FluidFlow1 Source { Tank1 }")
+	      example = "FluidFlow1 Source { Tank1 }")
 	private final EntityInput<FluidComponent> sourceInput;
 
 	@Keyword(desc = "The destination for the flow.",
-	         example = "FluidFlow1 Destination { Tank1 }")
+	      example = "FluidFlow1 Destination { Tank1 }")
 	private final EntityInput<FluidComponent> destinationInput;
 
 	private double flowRate;  // The volumetric flow rate (m3/s) for the route.
@@ -180,21 +180,21 @@ public class FluidFlow extends CalculationEntity {
 		return fluidInput.getValue();
 	}
 
-	@Output( name="FlowRate",
-			 description="The volumetric flow rate for the system.",
-			 unit=VolumeFlowUnit.class)
+	@Output(name = "FlowRate",
+	 description = "The volumetric flow rate for the system.",
+	        unit = VolumeFlowUnit.class)
 	public double getFlowRate( double simTime ) {
 		return flowRate;
 	}
 
-	@Output( name="FlowAcceleration",
-			 description="The time derivative of the volumetric flow rate.")
+	@Output(name = "FlowAcceleration",
+	 description = "The time derivative of the volumetric flow rate.")
 	public double getFlowAcceleration( double simTime ) {
 		return flowAcceleration;
 	}
 
-	@Output( name="FlowInertia",
-			 description="The sum of (density)(length)/(flow area) for the hydraulic components in the route.")
+	@Output(name = "FlowInertia",
+	 description = "The sum of (density)(length)/(flow area) for the hydraulic components in the route.")
 	public double getFlowInertia( double simTime ) {
 		return totalFlowInertia;
 	}

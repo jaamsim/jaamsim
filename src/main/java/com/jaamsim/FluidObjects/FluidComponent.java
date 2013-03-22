@@ -31,12 +31,12 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
 public class FluidComponent extends DisplayEntity {
 
 	@Keyword(desc = "The upstream component that feeds this component.",
-	         example = "Component1 Previous { Comp1 }")
+	      example = "Component1 Previous { Comp1 }")
 	private final EntityInput<FluidComponent> previousInput;
 
 	@Keyword(desc = "The hydraulic diameter of the component.  " +
-			"Equal to the inside diameter of a pipe with a circular cross-section.",
-	         example = "Comp1 Diameter { 1.0 m }")
+	                "Equal to the inside diameter of a pipe with a circular cross-section.",
+	      example = "Comp1 Diameter { 1.0 m }")
 	private final DoubleInput diameterInput;
 
 	private FluidFlow fluidFlow;  // The fluid flow object that controls the flow from one component to the next.
@@ -188,43 +188,43 @@ public class FluidComponent extends DisplayEntity {
 		return 0.0;
 	}
 
-	@Output( name="FlowArea",
-			 description="The cross-sectional area of the component.",
-			 unit=AreaUnit.class)
+	@Output(name = "FlowArea",
+	 description = "The cross-sectional area of the component.",
+	        unit = AreaUnit.class)
 	public double getFlowArea( double simTime ) {
 		return flowArea;
 	}
 
-	@Output( name="Velocity",
-			 description="The velocity of the fluid within the component.",
-			 unit=SpeedUnit.class)
+	@Output(name = "Velocity",
+	 description = "The velocity of the fluid within the component.",
+	        unit = SpeedUnit.class)
 	public double getVelocity( double simTime ) {
 		return velocity;
 	}
 
-	@Output( name="ReynoldsNumber",
-			 description="The Reynolds Number for the fluid within the component.  Equal to (velocity)(diameter)/(kinematic viscosity).")
+	@Output(name = "ReynoldsNumber",
+	 description = "The Reynolds Number for the fluid within the component.  Equal to (velocity)(diameter)/(kinematic viscosity).")
 	public double getReynoldsNumber( double simTime ) {
 		return this.getReynoldsNumber();
 	}
 
-	@Output( name="DynamicPressure",
-			 description="The dynamic pressure of the fluid flow.  Equal to (0.5)(density)(velocity^2).",
-			 unit=PressureUnit.class)
+	@Output(name = "DynamicPressure",
+	 description = "The dynamic pressure of the fluid flow.  Equal to (0.5)(density)(velocity^2).",
+	        unit = PressureUnit.class)
 	public double getDynamicPressure( double simTime ) {
 		return this.getDynamicPressure();
 	}
 
-	@Output( name="InletPressure",
-			 description="The static pressure at the component's inlet.",
-			 unit=PressureUnit.class)
+	@Output(name = "InletPressure",
+	 description = "The static pressure at the component's inlet.",
+	        unit = PressureUnit.class)
 	public double getInletPressure( double simTime ) {
 		return inletPressure;
 	}
 
-	@Output( name="OutletPressure",
-			 description="The static pressure at the component's outlet.",
-			 unit=PressureUnit.class)
+	@Output(name = "OutletPressure",
+	 description = "The static pressure at the component's outlet.",
+	        unit = PressureUnit.class)
 	public double getOutletPressure( double simTime ) {
 		return outletPressure;
 	}
