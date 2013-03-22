@@ -30,11 +30,8 @@ public class TestTriangularDistribution {
 		dist.validate();
 		dist.earlyInit();
 
-		double total = 0.0d;
 		int numSamples = 1000000;
-		for (int i = 0; i < numSamples; i++) {
-			total += dist.nextValue();
-		}
+		double total = TestContinuousDistribution.sampleDistribution(dist, numSamples);
 		double mean = total / numSamples;
 
 		assertTrue( Math.abs( dist.getSampleMean(0.0) - mean ) < 0.001 );

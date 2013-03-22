@@ -17,9 +17,18 @@ package com.jaamsim.probability;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import com.jaamsim.ProbabilityDistributions.ContinuousDistribution;
+import com.jaamsim.ProbabilityDistributions.NewProbabilityDistribution;
 import com.jaamsim.input.InputAgent;
 
 public class TestContinuousDistribution {
+
+	static double sampleDistribution(NewProbabilityDistribution dist, int numSamples) {
+		double total = 0.0d;
+		for (int i = 0; i < numSamples; i++)
+			total += dist.nextValue();
+
+		return total;
+	}
 
 	@Test
 	public void MeanAndStandardDeviation() {
@@ -29,9 +38,11 @@ public class TestContinuousDistribution {
 		dist.validate();
 		dist.earlyInit();
 
-		for(int i = 0; i<1000000; i++) {
-			dist.nextValue();
-		}
+		int numSamples = 1000000;
+		double total = TestContinuousDistribution.sampleDistribution(dist, numSamples);
+		double mean = total / numSamples;
+
+		assertTrue( Math.abs( dist.getSampleMean(0.0) - mean ) < 0.001 );
 		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.001 );
 		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.001 );
 	}
