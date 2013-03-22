@@ -9,6 +9,9 @@ Arrow2D				Shape				{ ARROW2D }
 Define				DisplayModel		{ Triangle }
 Triangle			Shape				{ TRIANGLE }
 
+Define				DisplayModel		{ BarGauge2D }
+BarGauge2D			Shape				{ BARGAUGE2D }
+
 Define				ColladaModel		{ CrossHairs }
 CrossHairs			ColladaFile			{ '/resources/shapes/CrossHairs.dae' }
 
