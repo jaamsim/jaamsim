@@ -362,7 +362,7 @@ public class RenderManager implements DragSourceListener {
 					}
 					// Catch everything so we don't screw up the behavior handling
 					catch (Throwable e) {
-						//e.printStackTrace();
+						logException(e);
 					}
 				}
 
