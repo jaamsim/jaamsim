@@ -63,9 +63,8 @@ public class OutputPropertyLabel extends TextLabel {
 		Entity ent = entity.getValue();
 		String name = outputName.getValue();
 
-		if (outputName.getValue() == null ||
-		    entity.getValue() == null) {
-				return "";
+		if (name == null || ent == null || !ent.hasOutput(name, true)) {
+			return "";
 		}
 
 		Class<?> retType = ent.getOutputType(name);

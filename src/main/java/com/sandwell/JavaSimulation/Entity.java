@@ -766,6 +766,21 @@ public class Entity {
 		return val.toString();
 	}
 
+	public boolean hasOutput(String name, boolean includeInputs) {
+		if (outputCache == null) {
+			buildOutputCache();
+		}
+		if (outputCache.containsKey(name)) {
+			return true;
+		}
+		if (includeInputs) {
+			if (inputMap.containsKey(name.toUpperCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public String[] getOutputNames(boolean includeInputs) {
 		// lazily initialize the output cache
 		if (outputCache == null) {
