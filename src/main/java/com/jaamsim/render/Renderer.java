@@ -48,6 +48,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
 
+import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.collada.ColParser;
 import com.jaamsim.font.OverlayString;
 import com.jaamsim.font.TessFont;
@@ -696,7 +697,8 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
 
-		MeshProto proto = ColParser.parse(key.getURL());
+		MeshData data = ColParser.parse(key.getURL());
+		MeshProto proto = new MeshProto(data);
 
 		assert (proto != null);
 		proto.loadGPUAssets(gl, this);

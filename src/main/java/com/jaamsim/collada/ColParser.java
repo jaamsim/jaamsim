@@ -25,13 +25,13 @@ import java.util.Vector;
 
 import javax.xml.parsers.SAXParserFactory;
 
+import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
-import com.jaamsim.render.MeshProto;
 import com.jaamsim.render.RenderException;
 import com.jaamsim.xml.XmlNode;
 import com.jaamsim.xml.XmlParser;
@@ -41,7 +41,7 @@ import com.jaamsim.xml.XmlParser;
  */
 public class ColParser {
 
-	public static MeshProto parse(URL asset) throws RenderException {
+	public static MeshData parse(URL asset) throws RenderException {
 
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setValidating(false);
@@ -51,7 +51,7 @@ public class ColParser {
 
 			colParser.processContent();
 
-			return colParser.getProto();
+			return colParser.getData();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -142,7 +142,7 @@ public class ColParser {
 	private final ArrayList<FaceGeoEffectPair> _loadedFaceGeos = new ArrayList<FaceGeoEffectPair>();
 	private final ArrayList<LineGeoEffectPair> _loadedLineGeos = new ArrayList<LineGeoEffectPair>();
 
-	private MeshProto _finalProto = new MeshProto();
+	private MeshData _finalData = new MeshData();
 
 	private HashMap<String, Vec4d[]> _dataSources = new HashMap<String, Vec4d[]>();
 
@@ -258,7 +258,7 @@ public class ColParser {
 			visitNode(sn, globalMat);
 		}
 
-		_finalProto.generateHull();
+		_finalData.generateHull();
 	}
 
 	private void visitNode(SceneNode node, Mat4d parentMat) {
@@ -321,7 +321,7 @@ public class ColParser {
 			} else {
 				geoID = _loadedFaceGeos.size();
 				_loadedFaceGeos.add(ge);
-				_finalProto.addSubMesh(subGeo.verts,
+				_finalData.addSubMesh(subGeo.verts,
 				                       subGeo.normals,
 				                       subGeo.texCoords,
 				                       effect.diffuse.texture,
@@ -329,7 +329,7 @@ public class ColParser {
 				                       effect.transType, effect.transColour);
 			}
 
-			_finalProto.addSubMeshInstance(geoID, mat);
+			_finalData.addSubMeshInstance(geoID, mat);
 		}
 
 		for (LineSubGeo subGeo : geo.lineSubGeos) {
@@ -343,10 +343,10 @@ public class ColParser {
 			} else {
 				geoID = _loadedLineGeos.size();
 				_loadedLineGeos.add(ge);
-				_finalProto.addSubLine(subGeo.verts,
+				_finalData.addSubLine(subGeo.verts,
 				                       effect.diffuse.color);
 			}
-			_finalProto.addSubLineInstance(geoID, mat);
+			_finalData.addSubLineInstance(geoID, mat);
 
 		}
 	}
@@ -537,10 +537,10 @@ public class ColParser {
 			double alpha = Double.parseDouble((String)floatNode.getContent());
 			effect.transColour = new Color4d(transparentCT.color);
 			if (opaque.equals("A_ONE")) {
-				effect.transType = MeshProto.A_ONE_TRANS;
+				effect.transType = MeshData.A_ONE_TRANS;
 			}
 			if (opaque.equals("RGB_ZERO")) {
-				effect.transType = MeshProto.RGB_ZERO_TRANS;
+				effect.transType = MeshData.RGB_ZERO_TRANS;
 				// Handle the weird luminance term for alpha in RGB_ZERO
 				effect.transColour.a = effect.transColour.r * 0.212671 +
 				                       effect.transColour.g * 0.715160 +
@@ -554,10 +554,10 @@ public class ColParser {
 
 			if ((effect.transColour.a >= 0.999 && opaque.equals("A_ONE")) ||
 			    (effect.transColour.a <= 0.001 && opaque.equals("RGB_ZERO")) ) {
-				effect.transType = MeshProto.NO_TRANS; // Some meshes are effectively not transparent despite having the information
+				effect.transType = MeshData.NO_TRANS; // Some meshes are effectively not transparent despite having the information
 			}
 		} else {
-			effect.transType = MeshProto.NO_TRANS;
+			effect.transType = MeshData.NO_TRANS;
 		}
 
 		_effects.put(id,  effect);
@@ -1204,8 +1204,8 @@ public class ColParser {
 		return ret;
 	}
 
-	public MeshProto getProto() {
-		return _finalProto;
+	public MeshData getData() {
+		return _finalData;
 	}
 
 

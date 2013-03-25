@@ -14,16 +14,14 @@
  */
 package com.jaamsim.render;
 
-import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import javax.media.opengl.GL2GL3;
 
+import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
@@ -38,48 +36,6 @@ import com.jaamsim.math.Vec4d;
  *
  */
 public class MeshProto {
-
-public final static int NO_TRANS = 0;
-public final static int A_ONE_TRANS = 1;
-public final static int RGB_ZERO_TRANS = 2;
-
-/**
- * The sub mesh data is a CPU space representation of the data,
- * this will be pushed to the GPU when loadGPUAssets() is called
- * @author Matt.Chudleigh
- *
- */
-private static class SubMeshData {
-
-	public ArrayList<Vec4d> verts = new ArrayList<Vec4d>();
-	public ArrayList<Vec4d> texCoords = new ArrayList<Vec4d>();
-	public ArrayList<Vec4d> normals = new ArrayList<Vec4d>();
-	public Color4d diffuseColor;
-	public URL colorTex;
-
-	public int numVerts;
-	public ConvexHull hull;
-	public int transType;
-	public Color4d transColour;
-}
-
-private static class SubMeshInstance {
-	int subMeshIndex;
-	Mat4d transform;
-	Mat4d normalTrans;
-}
-
-private static class SubLineData {
-	public ArrayList<Vec4d> verts = new ArrayList<Vec4d>();
-	public Color4d diffuseColor;
-
-	public int numVerts;
-	public ConvexHull hull;
-}
-private static class SubLineInstance {
-	int subLineIndex;
-	Mat4d transform;
-}
 
 /** Sortable entry for a single transparent sub mesh before rendering
  *
@@ -99,16 +55,6 @@ private static class TransSortable implements Comparable<TransSortable> {
 		return Double.compare(o.dist, this.dist);
 	}
 }
-
-private ArrayList<SubMeshData> _subMeshesData;
-private ArrayList<SubMeshInstance> _subMeshInstances;
-private ArrayList<SubLineData> _subLinesData;
-private ArrayList<SubLineInstance> _subLineInstances;
-private ConvexHull _hull;
-private boolean _anyTransparent = false;
-
-@SuppressWarnings("unused")
-private int _numVerts = 0;
 
 private class SubMesh {
 
@@ -140,7 +86,6 @@ private class SubMesh {
 	public int _numVerts;
 	public int _id; // The system wide asset ID
 
-	public ConvexHull _hull;
 }
 
 private class SubLine {
@@ -164,122 +109,20 @@ private class SubLine {
 	public int _id; // The system wide asset ID
 }
 
+
+private MeshData data;
 private ArrayList<SubMesh> _subMeshes;
 private ArrayList<SubLine> _subLines;
 
 /**
  * The maximum distance a vertex is from the origin
  */
-private double _radius;
 private boolean _isLoadedGPU = false;
 
-public long subHullAccum;
-
-public MeshProto() {
+public MeshProto(MeshData data) {
+	this.data = data;
 	_subMeshes = new ArrayList<SubMesh>();
-	_subMeshesData = new ArrayList<SubMeshData>();
-	_subMeshInstances = new ArrayList<SubMeshInstance>();
 	_subLines = new ArrayList<SubLine>();
-	_subLinesData = new ArrayList<SubLineData>();
-	_subLineInstances = new ArrayList<SubLineInstance>();
-	_radius = 0;
-}
-
-public void addSubMeshInstance(int meshIndex, Mat4d mat) {
-	Mat4d trans = new Mat4d(mat);
-	SubMeshInstance inst = new SubMeshInstance();
-	inst.subMeshIndex = meshIndex;
-	inst.transform = trans;
-
-	Mat4d normalMat = trans.inverse();
-	normalMat.transpose4();
-	inst.normalTrans = normalMat;
-	_subMeshInstances.add(inst);
-	_numVerts += _subMeshesData.get(meshIndex).verts.size();
-
-}
-
-public void addSubLineInstance(int lineIndex, Mat4d mat) {
-	Mat4d trans = new Mat4d(mat);
-	SubLineInstance inst = new SubLineInstance();
-	inst.subLineIndex = lineIndex;
-	inst.transform = trans;
-
-	_subLineInstances.add(inst);
-}
-
-public void addSubMesh(Vec4d[] vertices,
-		Vec4d[] normals,
-		Vec4d[] texCoords,
-        URL colorTex,
-        Color4d diffuseColor,
-        int transType,
-        Color4d transColour) {
-
-
-	if (colorTex == null) {
-		assert diffuseColor != null;
-	}
-
-	boolean hasTex = colorTex != null;
-
-	SubMeshData sub = new SubMeshData();
-	sub.colorTex = colorTex;
-	sub.diffuseColor = diffuseColor;
-	sub.transType = transType;
-	sub.transColour = transColour;
-	_subMeshesData.add(sub);
-
-	if (transType != 0) {
-		_anyTransparent = true;
-	}
-
-		// This is a new sub mesh (or one with a unique color or texture)
-
-	sub.numVerts += vertices.length;
-	//_numVerts += vertices.length;
-
-	assert((sub.numVerts % 3) == 0);
-
-	assert(normals.length == vertices.length);
-
-	if (hasTex) {
-		assert(texCoords.length == vertices.length);
-
-		sub.texCoords.addAll(Arrays.asList(texCoords));
-	}
-
-	sub.verts.addAll(Arrays.asList(vertices));
-	sub.normals.addAll(Arrays.asList(normals));
-
-	long subHullStart = System.nanoTime();
-	sub.hull = ConvexHull.TryBuildHull(sub.verts, 5);
-	subHullAccum += System.nanoTime() - subHullStart;
-}
-
-public void addSubLine(Vec4d[] vertices,
-		Color4d diffuseColor) {
-
-	SubLineData sub = new SubLineData();
-	sub.diffuseColor = diffuseColor;
-	if (sub.diffuseColor == null) {
-		sub.diffuseColor = new Color4d(); // Default to black
-	}
-	_subLinesData.add(sub);
-
-		// This is a new sub mesh (or one with a unique color or texture)
-
-	sub.numVerts += vertices.length;
-
-	assert((sub.numVerts % 2) == 0);
-
-	sub.verts.addAll(Arrays.asList(vertices));
-
-	sub.hull = ConvexHull.TryBuildHull(sub.verts, 5);
-}
-
-public boolean hasTransparent() {
-	return _anyTransparent;
 }
 
 public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
@@ -302,11 +145,11 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 	Vec4d dist = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
-	for (int i = 0; i < _subMeshInstances.size(); ++i) {
-		SubMeshInstance subInst = _subMeshInstances.get(i);
+	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
+		MeshData.SubMeshInstance subInst = data.getSubMeshInstances().get(i);
 
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
-		if (subMesh._transType != NO_TRANS) {
+		if (subMesh._transType != MeshData.NO_TRANS) {
 			continue; // Render transparent submeshes after
 		}
 
@@ -334,7 +177,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 		renderSubMesh(subMesh, vaoMap, renderer, subModelViewMat, subNormalMat, cam);
 	}
 
-	for (SubLineInstance subInst : _subLineInstances) {
+	for (MeshData.SubLineInstance subInst : data.getSubLineInstances()) {
 
 		subModelMat.mult4(modelMat, subInst.transform);
 
@@ -365,15 +208,15 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 	modelViewMat.mult4(viewMat, modelMat);
 
 	ArrayList<TransSortable> transparents = new ArrayList<TransSortable>();
-	for (int i = 0; i < _subMeshInstances.size(); ++i) {
-		SubMeshInstance subInst = _subMeshInstances.get(i);
+	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
+		MeshData.SubMeshInstance subInst = data.getSubMeshInstances().get(i);
 
 		Mat4d subModelView = new Mat4d();
 		Mat4d subNormalMat = new Mat4d();
 		Mat4d subModelMat = new Mat4d();
 
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
-		if (subMesh._transType == NO_TRANS) {
+		if (subMesh._transType == MeshData.NO_TRANS) {
 			continue; // Opaque sub meshes have been rendered
 		}
 
@@ -484,7 +327,7 @@ private void renderSubMesh(SubMesh sub, Map<Integer, Integer> vaoMap,
 		gl.glUniform4fv(sub._colorVar, 1, sub._diffuseColor.toFloats(), 0);
 	}
 
-	if (sub._transType != NO_TRANS) {
+	if (sub._transType != MeshData.NO_TRANS) {
 		gl.glEnable(GL2GL3.GL_BLEND);
 		gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
 		gl.glDepthMask(false);
@@ -494,9 +337,9 @@ private void renderSubMesh(SubMesh sub, Map<Integer, Integer> vaoMap,
 		                (float)sub._transColour.b,
 		                (float)sub._transColour.a);
 
-		if (sub._transType == A_ONE_TRANS) {
+		if (sub._transType == MeshData.A_ONE_TRANS) {
 			gl.glBlendFuncSeparate(GL2GL3.GL_CONSTANT_ALPHA, GL2GL3.GL_ONE_MINUS_CONSTANT_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
-		} else if (sub._transType == RGB_ZERO_TRANS) {
+		} else if (sub._transType == MeshData.RGB_ZERO_TRANS) {
 			gl.glBlendFuncSeparate(GL2GL3.GL_ONE_MINUS_CONSTANT_COLOR, GL2GL3.GL_CONSTANT_COLOR, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
 		} else {
 			assert(false); // Unknown transparency type
@@ -513,7 +356,7 @@ private void renderSubMesh(SubMesh sub, Map<Integer, Integer> vaoMap,
 	gl.glDrawArrays(GL2GL3.GL_TRIANGLES, 0, sub._numVerts);
 	gl.glEnable(GL2GL3.GL_CULL_FACE);
 
-	if (sub._transType != NO_TRANS) {
+	if (sub._transType != MeshData.NO_TRANS) {
 		gl.glDisable(GL2GL3.GL_BLEND);
 		gl.glDepthMask(true);
 	}
@@ -582,21 +425,17 @@ private void renderSubLine(SubLine sub, Map<Integer, Integer> vaoMap,
 public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 	assert(!_isLoadedGPU);
 
-	for (SubMeshData data : _subMeshesData) {
-		loadGPUSubMesh(gl, renderer, data);
+	for (MeshData.SubMeshData subData : data.getSubMeshData()) {
+		loadGPUSubMesh(gl, renderer, subData);
 	}
-	for (SubLineData data : _subLinesData) {
-		loadGPUSubLine(gl, renderer, data);
+	for (MeshData.SubLineData subData : data.getSubLineData()) {
+		loadGPUSubLine(gl, renderer, subData);
 	}
-
-	// The data has been loaded on the GPU, there is no need to keep it in RAM
-	_subMeshesData = null;
-	_subLinesData = null;
 
 	_isLoadedGPU = true;
 }
 
-private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, SubMeshData data) {
+private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData data) {
 
 	boolean hasTex = data.colorTex != null;
 
@@ -619,8 +458,6 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, SubMeshData data) {
 
 	sub._transType = data.transType;
 	sub._transColour = data.transColour;
-
-	sub._hull = data.hull;
 
 	sub._center = data.hull.getAABB(Mat4d.IDENTITY).getCenter();
 
@@ -656,7 +493,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, SubMeshData data) {
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._texCoordBuffer);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, sub._numVerts * 2 * 4, fb, GL2GL3.GL_STATIC_DRAW);
 
-		sub._texHandle = renderer.getTexCache().getTexID(gl, data.colorTex, (data.transType != NO_TRANS), false, true);
+		sub._texHandle = renderer.getTexCache().getTexID(gl, data.colorTex, (data.transType != MeshData.NO_TRANS), false, true);
 	}
 	else
 	{
@@ -677,7 +514,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, SubMeshData data) {
 	_subMeshes.add(sub);
 }
 
-private void loadGPUSubLine(GL2GL3 gl, Renderer renderer, SubLineData data) {
+private void loadGPUSubLine(GL2GL3 gl, Renderer renderer, MeshData.SubLineData data) {
 
 	Shader s = renderer.getShader(Renderer.ShaderHandle.DEBUG);
 
@@ -737,56 +574,16 @@ public void freeResources(GL2GL3 gl) {
 
 }
 
-public double getRadius() {
-	return _radius;
-}
-
 public ConvexHull getHull() {
-	return _hull;
+	return data.getHull();
 }
 
-/**
- * Builds the convex hull of the current mesh based on all the existing sub meshes.
- */
-public void generateHull() {
-	ArrayList<Vec4d> totalHullPoints = new ArrayList<Vec4d>();
-	// Collect all the points from the hulls of the individual sub meshes
-	for (SubMeshInstance subInst : _subMeshInstances) {
-
-		List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).hull.getVertices();
-		List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
-
-		totalHullPoints.addAll(subPoints);
-	}
-	// And the lines
-	for (SubLineInstance subInst : _subLineInstances) {
-
-		List<Vec4d> pointsRef = _subLinesData.get(subInst.subLineIndex).hull.getVertices();
-		List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
-
-		totalHullPoints.addAll(subPoints);
-	}
-
-	_hull = ConvexHull.TryBuildHull(totalHullPoints, 5);
-
-	_radius = _hull.getRadius();
+public boolean hasTransparent() {
+	return data.hasTransparent();
 }
 
 public ArrayList<AABB> getSubBounds(Mat4d modelMat) {
-
-	Mat4d subModelMat = new Mat4d();
-
-	ArrayList<AABB> ret = new ArrayList<AABB>(_subMeshInstances.size());
-
-	for (SubMeshInstance subInst : _subMeshInstances) {
-
-		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
-		subModelMat.mult4(modelMat, subInst.transform);
-		AABB instBounds = subMesh._hull.getAABB(subModelMat);
-		ret.add(instBounds);
-	}
-
-	return ret;
+	return data.getSubBounds(modelMat);
 }
 
 } // class MeshProto
