@@ -43,6 +43,9 @@ public class OverlayString implements OverlayRenderable {
 	                     boolean alignRight, boolean alignBottom, VisibilityInfo visInfo) {
 		_font = font;
 		_contents = contents;
+		if (_contents == null) {
+			_contents = "";
+		}
 		_color = color.toFloats();
 		_height = height;
 		_x = x; _y = y;

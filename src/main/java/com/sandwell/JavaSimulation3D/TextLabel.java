@@ -28,7 +28,7 @@ public class TextLabel extends DisplayEntity  {
 	         example = "TitleLabel TextHeight { 15 m }")
 	private final DoubleInput textHeight;
 
-	private String renderText;
+	private String renderText = "";
 
 	{
 		text = new StringInput("Text", "Fixed Text", "abc");

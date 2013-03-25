@@ -413,6 +413,9 @@ public synchronized int getGLBuffer(GL2GL3 gl) {
  * @return
  */
 public Vec3d getStringSize(double textHeight, String string) {
+	if (string == null) {
+		return new Vec3d(0, textHeight, 0);
+	}
 	double scaleFactor = textHeight / getNominalHeight();
 	double width = 0;
 	for (int i = 0; i < string.length(); ++i) {
