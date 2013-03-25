@@ -701,9 +701,9 @@ public class DisplayEntity extends Entity {
 	}
 
 	public void setTagVisibility(String tagName, boolean isVisible) {
-		boolean oldVisible = tags.visibility.get(tagName);
+		Boolean oldVisible = tags.visibility.get(tagName);
 
-		if (oldVisible != isVisible) {
+		if (oldVisible == null || oldVisible != isVisible) {
 			tags.visibility.put(tagName, isVisible);
 			setGraphicsDataDirty();
 		}
