@@ -13,7 +13,8 @@ Define ObjectType {
                     ScriptEntity
                     Output
                     BooleanIndicator
-                    }
+                    TimeSeries
+                  }
 
 ModelEntity             JavaClass { com.sandwell.JavaSimulation3D.ModelEntity           } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Cube 					}	DragAndDrop 	{ FALSE 	}
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Circle 				}
@@ -27,3 +28,4 @@ Group                   JavaClass { com.sandwell.JavaSimulation.Group           
 ScriptEntity            JavaClass { com.sandwell.JavaSimulation3D.ScriptEntity          } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 Output                  JavaClass { com.sandwell.JavaSimulation.OutputMethod            } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 BooleanIndicator        JavaClass { com.sandwell.JavaSimulation3D.BooleanIndicator      } Palette { 'Basic Objects' } DefaultDisplayModel { Circle                   }
+TimeSeries              JavaClass { com.sandwell.JavaSimulation.TimeSeries              } Palette { 'Basic Objects' }
