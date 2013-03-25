@@ -14,6 +14,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Output;
+
 /**
  * DoubleCalculation is the super-class for all calculations that return a double.
  * @author Harry King
@@ -41,5 +43,11 @@ public class DoubleCalculation extends CalculationEntity {
 	 */
 	protected void setValue( double val ) {
 		value = val;
+	}
+
+	@Output(name = "Value",
+	 description = "The result of the calcuation at the present time.")
+	public double getValue( double simTime ) {
+		return value;
 	}
 }

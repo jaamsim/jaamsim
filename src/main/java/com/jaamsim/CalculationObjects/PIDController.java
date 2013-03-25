@@ -14,6 +14,7 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Output;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -124,5 +125,29 @@ public class PIDController extends DoubleCalculation {
 		lastError = error;
 		lastUpdateTime = t;
 		return;
+	}
+
+	@Output(name = "Error",
+	 description = "The value for SetPoint - ProcessVariable.")
+	public double getError( double simTime ) {
+		return error;
+	}
+
+	@Output(name = "ProportionalValue",
+	 description = "The proportional component of the output value.")
+	public double getProportionalValue( double simTime ) {
+		return proportionalGainInput.getValue() * error;
+	}
+
+	@Output(name = "IntegralValue",
+	 description = "The integral component of the output value.")
+	public double getIntegralValue( double simTime ) {
+		return integralGainInput.getValue() * integral;
+	}
+
+	@Output(name = "DifferentialValue",
+	 description = "The differential component of the output value.")
+	public double getDifferentialValue( double simTime ) {
+		return differentialGainInput.getValue() * differential;
 	}
 }

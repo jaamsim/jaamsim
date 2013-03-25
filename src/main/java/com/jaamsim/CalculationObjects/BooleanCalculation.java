@@ -14,6 +14,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Output;
+
 /**
  * BooleanCalculation is the super-class for all calculations that return a Boolean value.
  * @author Harry King
@@ -36,5 +38,11 @@ public class BooleanCalculation extends CalculationEntity {
 	 */
 	protected void setValue( boolean val ) {
 		value = val;
+	}
+
+	@Output(name = "Value",
+	 description = "The result of the calcuation at the present time.")
+	public boolean getValue( double simTime ) {
+		return value;
 	}
 }
