@@ -8,6 +8,7 @@ Define ObjectType {
 					Integrator
 					Differentiator
 					PIDController
+					Lag
 					Sensor
 					SineWave
 					SquareWave
@@ -24,6 +25,7 @@ Polynomial              JavaClass { com.jaamsim.CalculationObjects.Polynomial   
 Integrator              JavaClass { com.jaamsim.CalculationObjects.Integrator          } Palette { 'Calculation Objects' }
 Differentiator          JavaClass { com.jaamsim.CalculationObjects.Differentiator      } Palette { 'Calculation Objects' }
 PIDController           JavaClass { com.jaamsim.CalculationObjects.PIDController       } Palette { 'Calculation Objects' }
+Lag                     JavaClass { com.jaamsim.CalculationObjects.Lag                 } Palette { 'Calculation Objects' }
 Sensor                  JavaClass { com.jaamsim.CalculationObjects.Sensor              } Palette { 'Calculation Objects' }
 SineWave                JavaClass { com.jaamsim.CalculationObjects.SineWave            } Palette { 'Calculation Objects' }
 SquareWave              JavaClass { com.jaamsim.CalculationObjects.SquareWave          } Palette { 'Calculation Objects' }
@@ -40,6 +42,7 @@ Define	ImageModel {
 			IntegratorIconModel
 			DifferentiatorIconModel
 			PIDControllerIconModel
+			LagIconModel
 			SensorIconModel
 			SineWaveIconModel
 			SquareWaveIconModel
@@ -56,6 +59,7 @@ PolynomialIconModel      ImageFile { '/resources/images/Polynomial-256.png' }   
 IntegratorIconModel      ImageFile { '/resources/images/Integrator-256.png' }      Transparent { TRUE }
 DifferentiatorIconModel  ImageFile { '/resources/images/Differentiator-256.png' }  Transparent { TRUE }
 PIDControllerIconModel   ImageFile { '/resources/images/PID-256.png' }             Transparent { TRUE }
+LagIconModel             ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
 SensorIconModel          ImageFile { '/resources/images/Sensor-256.png' }          Transparent { TRUE }
 SineWaveIconModel        ImageFile { '/resources/images/SineWave-256.png' }        Transparent { TRUE }
 SquareWaveIconModel      ImageFile { '/resources/images/SquareWave-256.png' }      Transparent { TRUE }
@@ -71,6 +75,7 @@ Polynomial              DefaultDisplayModel 	{ PolynomialIconModel }
 Integrator              DefaultDisplayModel 	{ IntegratorIconModel }
 Differentiator          DefaultDisplayModel 	{ DifferentiatorIconModel }
 PIDController           DefaultDisplayModel 	{ PIDControllerIconModel }
+Lag                     DefaultDisplayModel 	{ LagIconModel }
 Sensor                  DefaultDisplayModel 	{ SensorIconModel }
 SineWave                DefaultDisplayModel 	{ SineWaveIconModel }
 SquareWave              DefaultDisplayModel 	{ SquareWaveIconModel }
