@@ -22,30 +22,36 @@ import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * The PIDController simulates a Proportional-Integral-Differential type Controller.
+ * Error = SetPoint - ProcessVariable
+ * Output = ScaleCoefficient * ProportionalGain * [ Error + (Integral/IntegralTime) + (DifferentialTime*Derivative) ]
  * @author Harry King
  *
  */
 public class PIDController extends DoubleCalculation {
 
 	@Keyword(desc = "The Calculation entity that represents the set point for the PID controller.",
-	         example = "PIDController1 SetPoint { Calc1 }")
+	         example = "PIDController-1 SetPoint { Calc1 }")
 	private final EntityInput<DoubleCalculation> setPointInput;
 
 	@Keyword(desc = "The Calculation entity that represents the process variable feedback to the PID controller.",
-	         example = "PIDController1 ProcessVariable { Calc1 }")
+	         example = "PIDController-1 ProcessVariable { Calc1 }")
 	private final EntityInput<DoubleCalculation> processVariableInput;
 
+	@Keyword(desc = "The scale coefficient applied to the output signal.",
+	         example = "PIDController-1 ScaleConversionCoefficient { 1.0 }")
+	private final DoubleInput scaleConversionCoefficientInput;
+
 	@Keyword(desc = "The coefficient applied to the proportional feedback loop.",
-	         example = "PIDController1 ProportionalGain { 1.0 }")
+	         example = "PIDController-1 ProportionalGain { 1.0 }")
 	private final DoubleInput proportionalGainInput;
 
 	@Keyword(desc = "The coefficient applied to the integral feedback loop.",
-	         example = "PIDController1 IntegralGain { 1.0 }")
-	private final DoubleInput integralGainInput;
+	         example = "PIDController-1 IntegralTime { 1.0 s }")
+	private final DoubleInput integralTimeInput;
 
 	@Keyword(desc = "The coefficient applied to the differential feedback loop.",
-	         example = "PIDController1 DifferentialGain { 1.0 }")
-	private final DoubleInput differentialGainInput;
+	         example = "PIDController-1 DifferentialTime { 1.0 s }")
+	private final DoubleInput differentialTimeInput;
 
 	private double lastUpdateTime;  // The time at which the last update was performed (seconds)
 	private double error;  // The present value for the error signal
@@ -60,14 +66,23 @@ public class PIDController extends DoubleCalculation {
 		processVariableInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "ProcessVariable", "Key Inputs", null);
 		this.addInput( processVariableInput, true);
 
-		proportionalGainInput = new DoubleInput( "ProportionalGain", "Key Inputs", 0.0);
+		proportionalGainInput = new DoubleInput( "ProportionalGain", "Key Inputs", 0.0d);
+		proportionalGainInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		this.addInput( proportionalGainInput, true);
 
-		integralGainInput = new DoubleInput( "IntegralGain", "Key Inputs", 0.0);
-		this.addInput( integralGainInput, true);
+		scaleConversionCoefficientInput = new DoubleInput( "ScaleConversionCoefficient", "Key Inputs", 1.0d);
+		scaleConversionCoefficientInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		this.addInput( scaleConversionCoefficientInput, true);
 
-		differentialGainInput = new DoubleInput( "DifferentailGain", "Key Inputs", 0.0);
-		this.addInput( differentialGainInput, true);
+		integralTimeInput = new DoubleInput( "IntegralTime", "Key Inputs", 1.0d);
+		integralTimeInput.setValidRange( 1.0e-10, Double.POSITIVE_INFINITY);
+		integralTimeInput.setUnits( "s" );
+		this.addInput( integralTimeInput, true);
+
+		differentialTimeInput = new DoubleInput( "DifferentailTime", "Key Inputs", 0.0d);
+		differentialTimeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		differentialTimeInput.setUnits( "s" );
+		this.addInput( differentialTimeInput, true);
 	}
 
 	@Override
@@ -114,9 +129,10 @@ public class PIDController extends DoubleCalculation {
 		}
 
 		// Calculate the present value
-		val = proportionalGainInput.getValue() * error;
-		val += integralGainInput.getValue() * integral;
-		val += differentialGainInput.getValue() * differential;
+		val = error;
+		val += integral / integralTimeInput.getValue();
+		val += differentialTimeInput.getValue() * differential;
+		val *= scaleConversionCoefficientInput.getValue() * proportionalGainInput.getValue();
 
 		// Set the present value
 		this.setValue( val );
@@ -136,18 +152,20 @@ public class PIDController extends DoubleCalculation {
 	@Output(name = "ProportionalValue",
 	 description = "The proportional component of the output value.")
 	public double getProportionalValue( double simTime ) {
-		return proportionalGainInput.getValue() * error;
+		return scaleConversionCoefficientInput.getValue() * proportionalGainInput.getValue() * error;
 	}
 
 	@Output(name = "IntegralValue",
 	 description = "The integral component of the output value.")
 	public double getIntegralValue( double simTime ) {
-		return integralGainInput.getValue() * integral;
+		return scaleConversionCoefficientInput.getValue() * proportionalGainInput.getValue()
+				* integral / integralTimeInput.getValue();
 	}
 
 	@Output(name = "DifferentialValue",
 	 description = "The differential component of the output value.")
 	public double getDifferentialValue( double simTime ) {
-		return differentialGainInput.getValue() * differential;
+		return scaleConversionCoefficientInput.getValue() * proportionalGainInput.getValue()
+				* differentialTimeInput.getValue() * differential;
 	}
 }
