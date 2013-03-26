@@ -218,6 +218,9 @@ public class DisplayModelCompat extends DisplayModel {
 			case RECLAIMER2D:
 				addStackerProxies(simTime);
 				return;
+			case CRUSHER2D:
+				addCrusher2DProxies(simTime);
+				return;
 			case CIRCLE:
 				points = RenderUtils.CIRCLE_POINTS;
 				break;
@@ -229,7 +232,6 @@ public class DisplayModelCompat extends DisplayModel {
 				break;
 			case BRIDGE2D:
 			case CONTENTSPIXELS:
-			case CRUSHER2D:
 			case CRUSHER2ND2D:
 			case DOZER2D:
 			case GANTRY2D:
@@ -542,6 +544,31 @@ public class DisplayModelCompat extends DisplayModel {
 
 		}
 
+		private void addCrusher2DProxies(double simTime) {
+			// Gather some inputs
+			Transform trans = getTransform(simTime);
+			Vec3d scale = getScale();
+			long pickingID = getPickingID();
+			DisplayEntity.TagSet tags = getTags();
+
+			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d contentsColour = tags.getTagColourUtil(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
+
+			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, contentsColour, false, 1, getVisibilityInfo(), pickingID));
+			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
+
+			cachedProxies.add(new PolygonProxy(crusher2DVerts, trans, scale, ColourInput.LIGHT_GREY, false, 1, getVisibilityInfo(), pickingID));
+			cachedProxies.add(new PolygonProxy(crusher2DVerts, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
+
+			// Add the lines
+			Mat4d lineTrans = new Mat4d();
+			trans.getMat4d(lineTrans);
+			lineTrans.scaleCols3(scale);
+			List<Vec4d> points = RenderUtils.transformPoints(lineTrans, crusher2DLines, 0);
+			cachedProxies.add(new LineProxy(points, ColourInput.BLACK, 1, getVisibilityInfo(), pickingID));
+
+		}
+
 		// A disturbingly deep helper to allow trucks and ships to share contents building code
 		// This class needs to either die or get refactored
 		private List<RenderProxy> buildContents(DoubleVector sizes, Color4d[] colours, Mat4d subTrans,
@@ -619,6 +646,9 @@ public class DisplayModelCompat extends DisplayModel {
 
 	private static List<Vec4d> stackerRect1Verts;
 	private static List<Vec4d> stackerRect2Verts;
+
+	private static List<Vec4d> crusher2DVerts;
+	private static List<Vec4d> crusher2DLines;
 
 	private static List<Vec4d> hullVerts;
 	private static List<Vec4d> shipCabinVerts;
@@ -797,5 +827,24 @@ public class DisplayModelCompat extends DisplayModel {
 		stackerRect2Verts.add(new Vec4d(-0.1, -0.5, 0.1, 1.0d));
 		stackerRect2Verts.add(new Vec4d( 0.1, -0.5, 0.1, 1.0d));
 		stackerRect2Verts.add(new Vec4d( 0.1,  0.0, 0.1, 1.0d));
+
+		crusher2DVerts = new ArrayList<Vec4d>();
+		crusher2DVerts.add(new Vec4d( 0.45, -0.45, 0.0, 1.0));
+		crusher2DVerts.add(new Vec4d(  0.0,  0.25, 0.0, 1.0));
+		crusher2DVerts.add(new Vec4d(-0.45, -0.45, 0.0, 1.0));
+
+		crusher2DLines = new ArrayList<Vec4d>();
+		crusher2DLines.add(new Vec4d(-0.45, -0.30, 0.0, 1.0));
+		crusher2DLines.add(new Vec4d(-0.10,  0.25, 0.0, 1.0));
+
+		crusher2DLines.add(new Vec4d(-0.10,  0.25, 0.0, 1.0));
+		crusher2DLines.add(new Vec4d(-0.45,  0.45, 0.0, 1.0));
+
+		crusher2DLines.add(new Vec4d( 0.45, -0.30, 0.0, 1.0));
+		crusher2DLines.add(new Vec4d( 0.10,  0.25, 0.0, 1.0));
+
+		crusher2DLines.add(new Vec4d( 0.10,  0.25, 0.0, 1.0));
+		crusher2DLines.add(new Vec4d( 0.45,  0.45, 0.0, 1.0));
+
 	}
 }
