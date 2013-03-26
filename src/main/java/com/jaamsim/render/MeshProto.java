@@ -44,6 +44,7 @@ public class MeshProto {
  */
 private static class TransSortable implements Comparable<TransSortable> {
 	public SubMesh subMesh;
+	public Material mat;
 	public double dist;
 	public Mat4d modelViewMat;
 	public Mat4d normalMat;
@@ -66,9 +67,6 @@ private class SubMesh {
 	public int _texCoordBuffer;
 	public int _normalBuffer;
 
-	public int _texHandle;
-	public Color4d _diffuseColor;
-
 	public int _progHandle;
 
 	public int _modelViewProjMatVar;
@@ -78,14 +76,20 @@ private class SubMesh {
 	public int _colorVar;
 	public int _useTexVar;
 
-	public int _transType;
-	public Color4d _transColour;
 
 	public Vec4d _center;
 
 	public int _numVerts;
 	public int _id; // The system wide asset ID
 
+}
+
+private class Material {
+	public int _texHandle;
+	public Color4d _diffuseColor;
+
+	public int _transType;
+	public Color4d _transColour;
 }
 
 private class SubLine {
@@ -109,10 +113,10 @@ private class SubLine {
 	public int _id; // The system wide asset ID
 }
 
-
 private MeshData data;
 private ArrayList<SubMesh> _subMeshes;
 private ArrayList<SubLine> _subLines;
+private ArrayList<Material> _materials;
 
 /**
  * The maximum distance a vertex is from the origin
@@ -123,6 +127,7 @@ public MeshProto(MeshData data) {
 	this.data = data;
 	_subMeshes = new ArrayList<SubMesh>();
 	_subLines = new ArrayList<SubLine>();
+	_materials = new ArrayList<Material>();
 }
 
 public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
@@ -149,7 +154,8 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 		MeshData.SubMeshInstance subInst = data.getSubMeshInstances().get(i);
 
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
-		if (subMesh._transType != MeshData.NO_TRANS) {
+		Material mat = _materials.get(subInst.materialIndex);
+		if (mat._transType != MeshData.NO_TRANS) {
 			continue; // Render transparent submeshes after
 		}
 
@@ -174,7 +180,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 		subNormalMat.mult4(normalMat, subInst.normalTrans);
 
-		renderSubMesh(subMesh, vaoMap, renderer, subModelViewMat, subNormalMat, cam);
+		renderSubMesh(subMesh, mat, vaoMap, renderer, subModelViewMat, subNormalMat, cam);
 	}
 
 	for (MeshData.SubLineInstance subInst : data.getSubLineInstances()) {
@@ -216,7 +222,9 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 		Mat4d subModelMat = new Mat4d();
 
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
-		if (subMesh._transType == MeshData.NO_TRANS) {
+		Material mat = _materials.get(subInst.materialIndex);
+
+		if (mat._transType == MeshData.NO_TRANS) {
 			continue; // Opaque sub meshes have been rendered
 		}
 
@@ -236,6 +244,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 		TransSortable ts = new TransSortable();
 		ts.subMesh = subMesh;
+		ts.mat = mat;
 		ts.modelViewMat = subModelView;
 		ts.normalMat = subNormalMat;
 		ts.dist = eyeCenter.z;
@@ -245,7 +254,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 	Collections.sort(transparents);
 
 	for (TransSortable ts : transparents) {
-		renderSubMesh(ts.subMesh, vaoMap, renderer, ts.modelViewMat, ts.normalMat, cam);
+		renderSubMesh(ts.subMesh, ts.mat, vaoMap, renderer, ts.modelViewMat, ts.normalMat, cam);
 	}
 }
 
@@ -261,7 +270,7 @@ private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Rende
 	int prog = sub._progHandle;
 	gl.glUseProgram(prog);
 
-	if (sub._texHandle != 0) {
+	if (sub._texCoordBuffer != 0) {
 		// Texture coordinates
 		int texCoordVar = gl.glGetAttribLocation(prog, "texCoord");
 		gl.glEnableVertexAttribArray(texCoordVar);
@@ -287,7 +296,7 @@ private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Rende
 
 }
 
-private void renderSubMesh(SubMesh sub, Map<Integer, Integer> vaoMap,
+private void renderSubMesh(SubMesh sub, Material mat, Map<Integer, Integer> vaoMap,
                            Renderer renderer, Mat4d modelViewMat,
                            Mat4d normalMat, Camera cam) {
 
@@ -317,29 +326,29 @@ private void renderSubMesh(SubMesh sub, Map<Integer, Integer> vaoMap,
 
 	gl.glUniform4f(sub._lightDirVar, (float)lightVect.x, (float)lightVect.y, (float)lightVect.z, (float)lightVect.w);
 
-	gl.glUniform1i(sub._useTexVar, (sub._texHandle != 0) ? 1 : 0);
+	gl.glUniform1i(sub._useTexVar, (mat._texHandle != 0) ? 1 : 0);
 
-	if (sub._texHandle != 0) {
+	if (mat._texHandle != 0) {
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
-		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, sub._texHandle);
+		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, mat._texHandle);
 		gl.glUniform1i(sub._texVar, 0);
 	} else {
-		gl.glUniform4fv(sub._colorVar, 1, sub._diffuseColor.toFloats(), 0);
+		gl.glUniform4fv(sub._colorVar, 1, mat._diffuseColor.toFloats(), 0);
 	}
 
-	if (sub._transType != MeshData.NO_TRANS) {
+	if (mat._transType != MeshData.NO_TRANS) {
 		gl.glEnable(GL2GL3.GL_BLEND);
 		gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
 		gl.glDepthMask(false);
 
-		gl.glBlendColor((float)sub._transColour.r,
-		                (float)sub._transColour.g,
-		                (float)sub._transColour.b,
-		                (float)sub._transColour.a);
+		gl.glBlendColor((float)mat._transColour.r,
+		                (float)mat._transColour.g,
+		                (float)mat._transColour.b,
+		                (float)mat._transColour.a);
 
-		if (sub._transType == MeshData.A_ONE_TRANS) {
+		if (mat._transType == MeshData.A_ONE_TRANS) {
 			gl.glBlendFuncSeparate(GL2GL3.GL_CONSTANT_ALPHA, GL2GL3.GL_ONE_MINUS_CONSTANT_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
-		} else if (sub._transType == MeshData.RGB_ZERO_TRANS) {
+		} else if (mat._transType == MeshData.RGB_ZERO_TRANS) {
 			gl.glBlendFuncSeparate(GL2GL3.GL_ONE_MINUS_CONSTANT_COLOR, GL2GL3.GL_CONSTANT_COLOR, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
 		} else {
 			assert(false); // Unknown transparency type
@@ -356,7 +365,7 @@ private void renderSubMesh(SubMesh sub, Map<Integer, Integer> vaoMap,
 	gl.glDrawArrays(GL2GL3.GL_TRIANGLES, 0, sub._numVerts);
 	gl.glEnable(GL2GL3.GL_CULL_FACE);
 
-	if (sub._transType != MeshData.NO_TRANS) {
+	if (mat._transType != MeshData.NO_TRANS) {
 		gl.glDisable(GL2GL3.GL_BLEND);
 		gl.glDepthMask(true);
 	}
@@ -431,13 +440,33 @@ public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 	for (MeshData.SubLineData subData : data.getSubLineData()) {
 		loadGPUSubLine(gl, renderer, subData);
 	}
+	for (MeshData.Material mat : data.getMaterials()) {
+		loadGPUMaterial(gl, renderer, mat);
+	}
 
 	_isLoadedGPU = true;
 }
 
+private void loadGPUMaterial(GL2GL3 gl, Renderer renderer, MeshData.Material dataMat) {
+
+	boolean hasTex = dataMat.colorTex != null;
+
+	Material mat = new Material();
+	mat._transType = dataMat.transType;
+	mat._transColour = dataMat.transColour;
+
+	if (hasTex) {
+		mat._texHandle = renderer.getTexCache().getTexID(gl, dataMat.colorTex, (dataMat.transType != MeshData.NO_TRANS), false, true);
+	} else {
+		mat._texHandle = 0;
+		mat._diffuseColor = new Color4d(dataMat.diffuseColor);
+	}
+	_materials.add(mat);
+}
+
 private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData data) {
 
-	boolean hasTex = data.colorTex != null;
+	boolean hasTex = data.texCoords != null;
 
 	SubMesh sub = new SubMesh();
 	sub._progHandle = renderer.getShader(Renderer.ShaderHandle.MESH).getProgramHandle();
@@ -455,9 +484,6 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 		sub._normalBuffer = is[1];
 		sub._texCoordBuffer = 0;
 	}
-
-	sub._transType = data.transType;
-	sub._transColour = data.transColour;
 
 	sub._center = data.hull.getAABB(Mat4d.IDENTITY).getCenter();
 
@@ -492,13 +518,6 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._texCoordBuffer);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, sub._numVerts * 2 * 4, fb, GL2GL3.GL_STATIC_DRAW);
-
-		sub._texHandle = renderer.getTexCache().getTexID(gl, data.colorTex, (data.transType != MeshData.NO_TRANS), false, true);
-	}
-	else
-	{
-		sub._texHandle = 0;
-		sub._diffuseColor = new Color4d(data.diffuseColor);
 	}
 
 	// Init normals

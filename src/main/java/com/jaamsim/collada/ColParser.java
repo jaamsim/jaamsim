@@ -139,7 +139,8 @@ public class ColParser {
 
 	// This list tracks the combinations of sub geometries and effects loaded in the mesh proto and defines an implicit
 	// index into the mesh proto. This should probably be made more explicit later
-	private final ArrayList<FaceGeoEffectPair> _loadedFaceGeos = new ArrayList<FaceGeoEffectPair>();
+	private final ArrayList<FaceSubGeo> _loadedFaceGeos = new ArrayList<FaceSubGeo>();
+	private final ArrayList<Effect> _loadedEffects = new ArrayList<Effect>();
 	private final ArrayList<LineGeoEffectPair> _loadedLineGeos = new ArrayList<LineGeoEffectPair>();
 
 	private MeshData _finalData = new MeshData();
@@ -314,22 +315,29 @@ public class ColParser {
 			// Check if this geometry and material pair has been loaded yet
 			Effect effect = geoBindingToEffect(geoInfo.materialMap, subGeo.materialSymbol);
 
-			FaceGeoEffectPair ge = new FaceGeoEffectPair(subGeo, effect);
 			int geoID;
-			if (_loadedFaceGeos.contains(ge)) {
-				geoID = _loadedFaceGeos.indexOf(ge);
+			if (_loadedFaceGeos.contains(subGeo)) {
+				geoID = _loadedFaceGeos.indexOf(subGeo);
 			} else {
 				geoID = _loadedFaceGeos.size();
-				_loadedFaceGeos.add(ge);
+				_loadedFaceGeos.add(subGeo);
 				_finalData.addSubMesh(subGeo.verts,
-				                       subGeo.normals,
-				                       subGeo.texCoords,
-				                       effect.diffuse.texture,
+				                      subGeo.normals,
+				                      subGeo.texCoords);
+			}
+
+			int matID;
+			if (_loadedEffects.contains(effect)) {
+				matID = _loadedEffects.indexOf(effect);
+			} else {
+				matID = _loadedEffects.size();
+				_loadedEffects.add(effect);
+				_finalData.addMaterial(effect.diffuse.texture,
 				                       effect.diffuse.color,
 				                       effect.transType, effect.transColour);
 			}
 
-			_finalData.addSubMeshInstance(geoID, mat);
+			_finalData.addSubMeshInstance(geoID, matID, mat);
 		}
 
 		for (LineSubGeo subGeo : geo.lineSubGeos) {
@@ -1271,29 +1279,7 @@ public class ColParser {
 		public Color4d transColour;
 	}
 
-	private static class FaceGeoEffectPair {
-		public FaceSubGeo geo;
-		public Effect effect;
-
-		@Override
-		public int hashCode() { return geo.hashCode() ^ effect.hashCode(); }
-
-		public FaceGeoEffectPair(FaceSubGeo g, Effect e) {
-			this.geo = g;
-			this.effect = e;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (o == null) return false;
-			if (!(o instanceof FaceGeoEffectPair)) return false;
-
-			FaceGeoEffectPair other = (FaceGeoEffectPair)o;
-			return other.geo == geo && other.effect == effect;
-		}
-	}
-
-	  private static class LineGeoEffectPair {
+	private static class LineGeoEffectPair {
 		public LineSubGeo geo;
 		public Effect effect;
 		@Override

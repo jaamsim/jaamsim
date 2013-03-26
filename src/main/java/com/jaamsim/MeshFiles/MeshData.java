@@ -38,18 +38,23 @@ public class MeshData {
 	public final static int A_ONE_TRANS = 1;
 	public final static int RGB_ZERO_TRANS = 2;
 
+	public static class Material {
+		public Color4d diffuseColor;
+		public URL colorTex;
+		boolean useDiffuseTex;
+
+		public int transType;
+		public Color4d transColour;
+	}
+
 	public static class SubMeshData {
 
 		public ArrayList<Vec4d> verts = new ArrayList<Vec4d>();
 		public ArrayList<Vec4d> texCoords = new ArrayList<Vec4d>();
 		public ArrayList<Vec4d> normals = new ArrayList<Vec4d>();
-		public Color4d diffuseColor;
-		public URL colorTex;
 
 		public int numVerts;
 		public ConvexHull hull;
-		public int transType;
-		public Color4d transColour;
 	}
 
 	public static class SubLineData {
@@ -62,6 +67,7 @@ public class MeshData {
 
 	public static class SubMeshInstance {
 		public int subMeshIndex;
+		public int materialIndex;
 		public Mat4d transform;
 		public Mat4d normalTrans;
 	}
@@ -73,6 +79,7 @@ public class MeshData {
 
 	private ArrayList<SubMeshData> _subMeshesData = new ArrayList<SubMeshData>();
 	private ArrayList<SubLineData> _subLinesData = new ArrayList<SubLineData>();
+	private ArrayList<Material> _materials = new ArrayList<Material>();
 	private ArrayList<SubMeshInstance> _subMeshInstances = new ArrayList<SubMeshInstance>();
 	private ArrayList<SubLineInstance> _subLineInstances = new ArrayList<SubLineInstance>();
 
@@ -81,10 +88,11 @@ public class MeshData {
 
 	private boolean _anyTransparent = false;
 
-	public void addSubMeshInstance(int meshIndex, Mat4d mat) {
+	public void addSubMeshInstance(int meshIndex, int matIndex, Mat4d mat) {
 		Mat4d trans = new Mat4d(mat);
 		SubMeshInstance inst = new SubMeshInstance();
 		inst.subMeshIndex = meshIndex;
+		inst.materialIndex = matIndex;
 		inst.transform = trans;
 
 		Mat4d normalMat = trans.inverse();
@@ -102,33 +110,37 @@ public class MeshData {
 		_subLineInstances.add(inst);
 	}
 
-	public void addSubMesh(Vec4d[] vertices,
-			Vec4d[] normals,
-			Vec4d[] texCoords,
-	        URL colorTex,
-	        Color4d diffuseColor,
-	        int transType,
-	        Color4d transColour) {
+	public void addMaterial(URL colorTex,
+	                        Color4d diffuseColor,
+	                        int transType,
+	                        Color4d transColour) {
 
-
+		Material mat = new Material();
 		if (colorTex == null) {
 			assert diffuseColor != null;
 		}
 
-		boolean hasTex = colorTex != null;
+		mat.diffuseColor = diffuseColor;
+		mat.colorTex = colorTex;
 
-		SubMeshData sub = new SubMeshData();
-		sub.colorTex = colorTex;
-		sub.diffuseColor = diffuseColor;
-		sub.transType = transType;
-		sub.transColour = transColour;
-		_subMeshesData.add(sub);
+		mat.transType = transType;
+		mat.transColour = transColour;
+		_materials.add(mat);
 
 		if (transType != NO_TRANS) {
 			_anyTransparent = true;
 		}
+	}
 
-			// This is a new sub mesh (or one with a unique color or texture)
+	public void addSubMesh(Vec4d[] vertices,
+			Vec4d[] normals,
+			Vec4d[] texCoords) {
+
+
+		SubMeshData sub = new SubMeshData();
+		_subMeshesData.add(sub);
+
+		// This is a new sub mesh (or one with a unique color or texture)
 
 		sub.numVerts += vertices.length;
 		//_numVerts += vertices.length;
@@ -137,7 +149,7 @@ public class MeshData {
 
 		assert(normals.length == vertices.length);
 
-		if (hasTex) {
+		if (texCoords != null) {
 			assert(texCoords.length == vertices.length);
 
 			sub.texCoords.addAll(Arrays.asList(texCoords));
@@ -158,8 +170,6 @@ public class MeshData {
 			sub.diffuseColor = new Color4d(); // Default to black
 		}
 		_subLinesData.add(sub);
-
-			// This is a new sub mesh (or one with a unique color or texture)
 
 		sub.numVerts += vertices.length;
 
@@ -226,7 +236,6 @@ public class MeshData {
 		return ret;
 	}
 
-
 	public ArrayList<SubMeshData> getSubMeshData() {
 		return _subMeshesData;
 	}
@@ -241,5 +250,8 @@ public class MeshData {
 		return _subLineInstances;
 	}
 
+	public ArrayList<Material> getMaterials() {
+		return _materials;
+	}
 
 }
