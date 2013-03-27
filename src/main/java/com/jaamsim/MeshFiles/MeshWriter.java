@@ -107,46 +107,38 @@ public class MeshWriter {
 		startTag(String.format("<Geometry vertices=%d, ID='Mesh%d'>", subMesh.numVerts, meshNumber));
 
 		startTag("<Vertices dims=3>");
-		startTag("<Doubles>");
 		indent();
 		for (Vec3d v : subMesh.verts) {
 			out.write(String.format("%f %f %f ", v.x, v.y, v.z));
 		}
 		out.write("\n");
-		endTag("</Doubles>");
 		endTag("</Vertices>");
 
 		startTag("<Normals dims=3>");
-		startTag("<Doubles>");
 		indent();
 		for (Vec3d n : subMesh.normals) {
 			out.write(String.format("%f %f %f ", n.x, n.y, n.z));
 		}
 		out.write("\n");
-		endTag("</Doubles>");
 		endTag("</Normals>");
 
 		if (subMesh.texCoords != null) {
 			// This mesh has tex coordinates
 			startTag("<TexCoords index=0 dims=2>");
-			startTag("<Doubles>");
 			indent();
 			for (Vec3d t : subMesh.texCoords) {
 				out.write(String.format("%f %f ", t.x, t.y));
 			}
 			out.write("\n");
-			endTag("</Doubles>");
 			endTag("</TexCoords>");
 		}
 		// Output the faces list
 		startTag(String.format("<Faces type='Triangles' count=%d>", subMesh.numVerts/3));
-		startTag("<Ints>");
 		indent();
 		for (int i = 0; i < subMesh.numVerts; ++i) {
 			out.write(String.format("%d ", i));
 		}
 		out.write("\n");
-		endTag("</Ints>");
 		endTag("</Faces>");
 		endTag("</Geometry>");
 	}
@@ -185,13 +177,11 @@ public class MeshWriter {
 		startTag(String.format("<MeshInstance geoIndex=%d, matIndex=%d>", inst.subMeshIndex, inst.materialIndex));
 		startTag("<Matrix>");
 		double[] cmData = inst.transform.toCMDataArray();
-		startTag("<Doubles>");
 		indent();
 		for (double d : cmData) {
 			out.write(String.format("%f ", d));
 		}
 		out.write("\n");
-		endTag("</Doubles>");
 		endTag("</Matrix>");
 		endTag("</MeshInstance>");
 	}
