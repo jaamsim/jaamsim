@@ -137,6 +137,7 @@ public class GraphicBox extends JDialog {
 
 				StringBuilder validString = new StringBuilder(45);
 				validString.append("*.dae;");
+				validString.append("*.jsm;");
 				validString.append("*.zip;");
 				validString.append("*.kmz;");
 				validString.append("*.bmp;");

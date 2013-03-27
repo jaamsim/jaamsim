@@ -71,6 +71,8 @@ public class MeshWriter {
 				return false;
 			}
 
+			startTag("<MeshObject>");
+
 			startTag("<Geometries>");
 
 			int meshNumber = 0;
@@ -93,6 +95,8 @@ public class MeshWriter {
 			}
 			endTag("</MeshInstances>");
 
+			endTag("</MeshObject>");
+
 			out.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -104,9 +108,9 @@ public class MeshWriter {
 
 	private void writeSubMesh(MeshData.SubMeshData subMesh, int meshNumber) throws IOException {
 
-		startTag(String.format("<Geometry vertices=%d, ID='Mesh%d'>", subMesh.numVerts, meshNumber));
+		startTag(String.format("<Geometry vertices='%d' ID='Mesh%d'>", subMesh.numVerts, meshNumber));
 
-		startTag("<Vertices dims=3>");
+		startTag("<Vertices dims='3'>");
 		indent();
 		for (Vec3d v : subMesh.verts) {
 			out.write(String.format("%f %f %f ", v.x, v.y, v.z));
@@ -114,7 +118,7 @@ public class MeshWriter {
 		out.write("\n");
 		endTag("</Vertices>");
 
-		startTag("<Normals dims=3>");
+		startTag("<Normals dims='3'>");
 		indent();
 		for (Vec3d n : subMesh.normals) {
 			out.write(String.format("%f %f %f ", n.x, n.y, n.z));
@@ -122,9 +126,9 @@ public class MeshWriter {
 		out.write("\n");
 		endTag("</Normals>");
 
-		if (subMesh.texCoords != null) {
+		if (subMesh.texCoords != null && subMesh.texCoords.size() != 0) {
 			// This mesh has tex coordinates
-			startTag("<TexCoords index=0 dims=2>");
+			startTag("<TexCoords index='0' dims='2'>");
 			indent();
 			for (Vec3d t : subMesh.texCoords) {
 				out.write(String.format("%f %f ", t.x, t.y));
@@ -133,7 +137,7 @@ public class MeshWriter {
 			endTag("</TexCoords>");
 		}
 		// Output the faces list
-		startTag(String.format("<Faces type='Triangles' count=%d>", subMesh.numVerts/3));
+		startTag(String.format("<Faces type='Triangles' count='%d'>", subMesh.numVerts/3));
 		indent();
 		for (int i = 0; i < subMesh.numVerts; ++i) {
 			out.write(String.format("%d ", i));
@@ -156,7 +160,7 @@ public class MeshWriter {
 			                                         mat.diffuseColor.a));
 			endTag("</Color>");
 		} else {
-			startTag("<Texture coordIndex=0>");
+			startTag("<Texture coordIndex='0'>");
 			indent();
 			URI tex;
 			try {
@@ -174,7 +178,7 @@ public class MeshWriter {
 	}
 
 	private void writeMeshInstance(MeshData.SubMeshInstance inst) throws IOException {
-		startTag(String.format("<MeshInstance geoIndex=%d, matIndex=%d>", inst.subMeshIndex, inst.materialIndex));
+		startTag(String.format("<MeshInstance geoIndex='%d' matIndex='%d'>", inst.subMeshIndex, inst.materialIndex));
 		startTag("<Matrix>");
 		double[] cmData = inst.transform.toCMDataArray();
 		indent();

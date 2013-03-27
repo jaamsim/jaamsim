@@ -57,6 +57,7 @@ public class ColladaModel extends DisplayModel {
 		validFileExtentions = new ArrayList<String>();
 		validFileExtentions.add("DAE");
 		validFileExtentions.add("ZIP");
+		validFileExtentions.add("JSM");
 	}
 
 	public ColladaModel() {}

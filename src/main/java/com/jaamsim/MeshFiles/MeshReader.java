@@ -52,6 +52,8 @@ public class MeshReader {
 	private URL contentURL;
 	private MeshData finalData;
 
+	private XmlNode _meshObjectNode;
+
 	public MeshReader(URL asset) {
 		contentURL = asset;
 	}
@@ -66,6 +68,7 @@ public class MeshReader {
 		DOUBLE_ARRAY_TAGS.add("Vertices");
 		DOUBLE_ARRAY_TAGS.add("Normals");
 		DOUBLE_ARRAY_TAGS.add("TexCoords");
+		DOUBLE_ARRAY_TAGS.add("Color");
 		DOUBLE_ARRAY_TAGS.add("Matrix");
 
 		INT_ARRAY_TAGS = new ArrayList<String>();
@@ -90,10 +93,15 @@ public class MeshReader {
 
 		finalData = new MeshData();
 
+		_meshObjectNode = _parser.getRootNode().findChildTag("MeshObject", false);
+		assert(_meshObjectNode != null);
+
 		parseGeometries();
 		parseMaterials();
 
 		parseInstances();
+
+		finalData.generateHull();
 	}
 
 	private MeshData getMeshData() {
@@ -101,7 +109,7 @@ public class MeshReader {
 	}
 
 	private void parseGeometries() {
-		XmlNode geosNode = _parser.getRootNode().findChildTag("Geometries", false);
+		XmlNode geosNode = _meshObjectNode.findChildTag("Geometries", false);
 		for (XmlNode child : geosNode.children()) {
 			if (!child.getTag().equals("Geometry")) {
 				continue;
@@ -111,7 +119,7 @@ public class MeshReader {
 	}
 
 	private void parseMaterials() {
-		XmlNode matsNode = _parser.getRootNode().findChildTag("Materials", false);
+		XmlNode matsNode = _meshObjectNode.findChildTag("Materials", false);
 		for (XmlNode child : matsNode.children()) {
 			if (!child.getTag().equals("Material")) {
 				continue;
@@ -121,7 +129,7 @@ public class MeshReader {
 	}
 
 	private void parseInstances() {
-		XmlNode instNode = _parser.getRootNode().findChildTag("MeshInstances", false);
+		XmlNode instNode = _meshObjectNode.findChildTag("MeshInstances", false);
 		for (XmlNode child : instNode.children()) {
 			if (!child.getTag().equals("MeshInstance")) {
 				continue;
@@ -185,7 +193,7 @@ public class MeshReader {
 	private void parseMaterial(XmlNode matNode) {
 		XmlNode diffuseNode = matNode.findChildTag("Diffuse", false);
 		assert(diffuseNode != null);
-		XmlNode textureNode = diffuseNode = matNode.findChildTag("Texture", false);
+		XmlNode textureNode = diffuseNode.findChildTag("Texture", false);
 		if (textureNode != null) {
 			assert(textureNode.getAttrib("coordIndex").equals("0"));
 			String file = (String)textureNode.getContent();
@@ -198,7 +206,7 @@ public class MeshReader {
 			}
 		}
 		// Not a texture so it must be a color
-		XmlNode colorNode = matNode.findChildTag("Color", false);
+		XmlNode colorNode = diffuseNode.findChildTag("Color", false);
 		assert(colorNode != null);
 		double[] c = (double[])colorNode.getContent();
 		assert(c.length == 4);
