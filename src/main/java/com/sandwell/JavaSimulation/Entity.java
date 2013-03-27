@@ -641,15 +641,15 @@ public class Entity {
 				continue;
 			}
 
-			OutputHandle handle = new OutputHandle(o, m);
-			handles.add(handle);
-
 			// Check that this method only takes a single double (simTime) parameter
 			Class<?>[] paramTypes = m.getParameterTypes();
 			if (paramTypes.length != 1 ||
 				paramTypes[0] != double.class) {
 				continue;
 			}
+
+			OutputHandle handle = new OutputHandle(o, m);
+			handles.add(handle);
 
 			outputCache.put(o.name(), handle);
 		}
