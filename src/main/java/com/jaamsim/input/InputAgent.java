@@ -863,10 +863,10 @@ public class InputAgent {
 		//   <obj-name> <kwd> <par> <kwd> { <par> <par> ... } ...
 		Vector multiCmds = new Vector();
 		int noOfUnclosedBraces = 0;
-		String itemObject = (String)record.remove(0);
+		String itemObject = (String)record.get(0);
 
 		// Loop through the keywords and assemble new commands
-		while( record.size() > 0 ) {
+		for( int i = 1; i < record.size(); ) {
 
 			// Enter the class, object, and keyword in the new command
 			Vector cmd = new Vector();
@@ -876,30 +876,31 @@ public class InputAgent {
 			cmd.add( itemObject );
 
 			// Keyword changes as loop proceeds
-			cmd.add( record.remove( 0 ) );
-
+			cmd.add( record.get( i ) );
+			i++;
 
 			// For a command of the new form "<obj-name> <file-name>", record
 			// will be empty here.
-			if( !record.isEmpty() ) {
+			if( i < record.size() ) {
 
 				// If there is an opening brace, then the keyword has a list of
 				// parameters
-				String openingBrace = (String)record.get( 0 );
+				String openingBrace = (String)record.get( i );
 				if( openingBrace.equals("{") ) {
 					noOfUnclosedBraces ++ ;
-					record.remove( 0 ); // throw out opening brace {
+					i++; // move past the opening brace {
 
 					// Iterate through record
-					while( (record.size() > 0) && ( noOfUnclosedBraces > 0 ) ) {
-						if ( record.get(0).equals("{") )
+					while( (i < record.size()) && ( noOfUnclosedBraces > 0 ) ) {
+						if ( record.get(i).equals("{") )
 							noOfUnclosedBraces ++ ;
-						else if (record.get(0).equals("}"))
+						else if (record.get(i).equals("}"))
 							noOfUnclosedBraces -- ;
-						cmd.add( record.remove( 0 ) );
+						cmd.add( record.get( i ) );
+						i++;
 					}
 
-					if( ( record.size() == 0 ) && ( noOfUnclosedBraces != 0) ) { // corresponding "}" is missing
+					if( ( record.size() == i ) && ( noOfUnclosedBraces != 0) ) { // corresponding "}" is missing
 						InputAgent.logError("Closing brace } is missing.");
 						return multiCmds;
 					}
@@ -914,7 +915,8 @@ public class InputAgent {
 				// If there is no brace, then the keyword must have a single
 				// parameter.
 				else {
-					cmd.add( record.remove( 0 ) );
+					cmd.add( record.get( i ) );
+					i++;
 					multiCmds.add( cmd );
 				}
 			}
