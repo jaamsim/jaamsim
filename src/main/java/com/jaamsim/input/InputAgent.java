@@ -670,7 +670,7 @@ public class InputAgent {
 	// Read the next line of the file
 	protected static Vector getNextParsedRecord(FileEntity file) {
 
-		Vector record = new Vector( 1 , 1 );
+		Vector record = new Vector();
 
 		int noOfUnclosedBraces = 0;
 
@@ -694,7 +694,7 @@ public class InputAgent {
 			// Count braces and allow input with a missing space following an opening brace and/or a missing space preceding a closing brace
 			for (int i = 0; i < nextLine.size(); i++) {
 				String checkRecord = (String)nextLine.get( i );
-				Vector parsedString = new Vector( 1 , 1 );
+				Vector parsedString = new Vector( nextLine.size() );
 
 				// Check for braces
 				for  (int j=0; j<checkRecord.length(); j++) {
@@ -712,7 +712,7 @@ public class InputAgent {
 						parsedString.add("}");
 					} else {
 						// no brace is found, assume it is a whole word until the next brace
-						String stringDump = "";
+						StringBuffer stringDump = new StringBuffer( checkRecord.length() );
 						// iterate through
 						for ( int k = j; k<checkRecord.length(); k++ ) {
 							// if a brace is found, end checking this word
@@ -721,17 +721,17 @@ public class InputAgent {
 							}
 							// otherwise, make the word
 							else {
-								stringDump += checkRecord.charAt(k);
+								stringDump.append( checkRecord.charAt(k) );
 							}
 						}
 						j += stringDump.length() - 1;
-						parsedString.add(stringDump);
+						parsedString.add(stringDump.toString());
 					}
 
 				}
 
 				// Add brackets as separate entries
-				if (parsedString.size() > 0 ) {
+				if (parsedString.size() > 1 ) {
 					nextLine.remove( i );
 					nextLine.addAll( i , parsedString );
 					i = i + parsedString.size() - 1;
