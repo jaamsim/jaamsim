@@ -74,9 +74,7 @@ public class Util {
 
 		boolean containsCmd;
 		int     recSize;
-		int     indexIsolated; // Index of first cell containing ``"'' alone
-		int     indexMixed;    // Index of first cell containing a string that starts with ``"''
-		int     indexFirst;    // Index where the comment starts from
+		int     indexFirst;    // Index of first cell containing a string that starts with "
 
 		if ( record == null ) {
 			return false;
@@ -87,25 +85,15 @@ public class Util {
 			return false;
 		}
 
-		// Find in record the index of the first cell that contains ``"''.
-		// If none of the cell contains ``"'', index = -1
-		indexIsolated = record.indexOfString( "\"" );
-		if ( indexIsolated == -1 ) {
-			indexIsolated = recSize;
-		}
-
-		// Find in record the index of the first cell that contains string of the form ``"aaa''.
-		// Disregard strings of the forms ``aaa"bbb'' and ``aaa"''
-		indexMixed = recSize;
+		// Find in record the index of the first cell that contains string of the form "aaa.
+		// Disregard strings of the forms aaa"bbb and aaa"
+		indexFirst = recSize;
 		for ( int i = 0; i < recSize; i++ ) {
 			if ( ((String)record.get(i)).startsWith( "\"" )) {
-				indexMixed = i;
+				indexFirst = i;
 				break;
 			}
 		}
-
-		// Set indexFirst to minimum of indexIsolated and indexMixed
-		indexFirst = Math.min( indexIsolated, indexMixed );
 
 		// Strip away comment string from record. Return true if record contains a command; false, otherwise
 		// Note that indexFirst cannot be greater than recSize
