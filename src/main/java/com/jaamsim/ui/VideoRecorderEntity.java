@@ -92,7 +92,6 @@ public class VideoRecorderEntity extends Entity {
 		captureInterval.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
 		captureInterval.setUnits( "h" );
 		this.addInput( captureInterval, true );
-		captureInterval.setHidden(true);
 
 		videoBGColor = new ColourInput("VideoBackgroundColor", "Key Inputs", ColourInput.WHITE);
 		this.addInput(videoBGColor, true, "Colour");
