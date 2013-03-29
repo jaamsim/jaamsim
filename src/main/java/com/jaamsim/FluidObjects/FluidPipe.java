@@ -109,7 +109,7 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		double dyn = this.getDynamicPressure();  // Note that dynamic pressure is negative for negative velocities
 		double pres = inletPres;
 		pres -= this.getFluid().getDensityxGravity() * heightChangeInput.getValue();
-		if( dyn > 0.0 && this.getFluid().getViscosity() > 0.0 ) {
+		if( Math.abs(dyn) > 0.0 && this.getFluid().getViscosity() > 0.0 ) {
 			this.setDarcyFrictionFactor();
 			pres -= darcyFrictionFactor * dyn * this.getLength() / this.getDiameter();
 		}
