@@ -23,7 +23,7 @@ import com.sandwell.JavaSimulation.Keyword;
 /**
  * The PIDController simulates a Proportional-Integral-Differential type Controller.
  * Error = SetPoint - ProcessVariable
- * Output = ScaleCoefficient * ProportionalGain * [ Error + (Integral/IntegralTime) + (DifferentialTime*Derivative) ]
+ * Output = ScaleCoefficient * ProportionalGain * [ Error + (Integral/IntegralTime) + (DerivativeTime*Derivative) ]
  * @author Harry King
  *
  */
@@ -50,14 +50,22 @@ public class PIDController extends DoubleCalculation {
 	private final DoubleInput integralTimeInput;
 
 	@Keyword(desc = "The coefficient applied to the differential feedback loop.",
-	         example = "PIDController-1 DifferentialTime { 1.0 s }")
-	private final DoubleInput differentialTimeInput;
+	         example = "PIDController-1 DerivativeTime { 1.0 s }")
+	private final DoubleInput derivativeTimeInput;
+
+	@Keyword(desc = "The lower limit for the output signal.",
+	         example = "PIDController-1 OutputLow { 0.0 }")
+	private final DoubleInput outputLowInput;
+
+	@Keyword(desc = "The upper limit for the output signal.",
+	         example = "PIDController-1 OutputHigh { 1.0 }")
+	private final DoubleInput outputHighInput;
 
 	private double lastUpdateTime;  // The time at which the last update was performed (seconds)
 	private double error;  // The present value for the error signal
 	private double lastError;  // The previous value for the error signal
 	private double integral;  // The integral of the error signal
-	private double differential;  // The differential of the error signal
+	private double derivative;  // The derivative of the error signal
 
 	{
 		setPointInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "SetPoint", "Key Inputs", null);
@@ -79,10 +87,16 @@ public class PIDController extends DoubleCalculation {
 		integralTimeInput.setUnits( "s" );
 		this.addInput( integralTimeInput, true);
 
-		differentialTimeInput = new DoubleInput( "DifferentailTime", "Key Inputs", 0.0d);
-		differentialTimeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		differentialTimeInput.setUnits( "s" );
-		this.addInput( differentialTimeInput, true);
+		derivativeTimeInput = new DoubleInput( "DerivativeTime", "Key Inputs", 0.0d);
+		derivativeTimeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		derivativeTimeInput.setUnits( "s" );
+		this.addInput( derivativeTimeInput, true);
+
+		outputLowInput = new DoubleInput( "OutputLow", "Key Inputs", Double.NEGATIVE_INFINITY);
+		this.addInput( outputLowInput, true);
+
+		outputHighInput = new DoubleInput( "OutputHigh", "Key Inputs", Double.POSITIVE_INFINITY);
+		this.addInput( outputHighInput, true);
 	}
 
 	@Override
@@ -122,17 +136,21 @@ public class PIDController extends DoubleCalculation {
 		// Calculate integral and differential terms
 		integral += error * dt;
 		if( dt > 0.0 ) {
-			differential = ( error - lastError ) / dt;
+			derivative = ( error - lastError ) / dt;
 		}
 		else {
-			differential = 0.0;
+			derivative = 0.0;
 		}
 
-		// Calculate the present value
+		// Calculate the output value
 		val = error;
 		val += integral / integralTimeInput.getValue();
-		val += differentialTimeInput.getValue() * differential;
+		val += derivativeTimeInput.getValue() * derivative;
 		val *= scaleConversionCoefficientInput.getValue() * proportionalGainInput.getValue();
+
+		// Condition the output value
+		val = Math.max( val, outputLowInput.getValue());
+		val = Math.min( val, outputHighInput.getValue());
 
 		// Set the present value
 		this.setValue( val );
@@ -162,10 +180,10 @@ public class PIDController extends DoubleCalculation {
 				* integral / integralTimeInput.getValue();
 	}
 
-	@Output(name = "DifferentialValue",
-	 description = "The differential component of the output value.")
+	@Output(name = "DerivativeValue",
+	 description = "The derivative component of the output value.")
 	public double getDifferentialValue( double simTime ) {
 		return scaleConversionCoefficientInput.getValue() * proportionalGainInput.getValue()
-				* differentialTimeInput.getValue() * differential;
+				* derivativeTimeInput.getValue() * derivative;
 	}
 }
