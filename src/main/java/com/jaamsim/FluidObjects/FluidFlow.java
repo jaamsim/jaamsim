@@ -167,7 +167,7 @@ public class FluidFlow extends CalculationEntity {
 		// Confirm that the pressure is now balanced
 		double diff = destinationInput.getValue().getInletPressure() /
 				destinationInput.getValue().getTargetInletPressure() - 1.0;
-		if( Math.abs( diff ) > 1.0e-8 ) {
+		if( Math.abs( diff ) > 1.0e-4 ) {
 			throw new ErrorException( "Pressure did not balance correctly.  Difference = " + diff );
 		}
 	}
