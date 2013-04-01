@@ -21,7 +21,7 @@ import com.jaamsim.input.Output;
  * @author Harry King
  *
  */
-public class DoubleCalculation extends CalculationEntity {
+public abstract class DoubleCalculation extends CalculationEntity {
 
 	private double value;  // Present value for this calculation
 

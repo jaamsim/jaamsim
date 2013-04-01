@@ -25,7 +25,7 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  * @author Harry King
  *
  */
-public class CalculationEntity extends DisplayEntity {
+public abstract class CalculationEntity extends DisplayEntity {
 
 	@Keyword(desc = "The Controller that controls the updating of the calculation.",
 	         example = "Calculation1 Controller { PLC1 }")
@@ -62,7 +62,7 @@ public class CalculationEntity extends DisplayEntity {
 	/*
 	 * Calculate the current value for this object.
 	 */
-	public void update() {}
+	public abstract void update();
 
 	public Controller getController() {
 		return controllerInput.getValue();

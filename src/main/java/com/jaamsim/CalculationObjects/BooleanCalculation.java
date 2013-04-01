@@ -21,8 +21,7 @@ import com.jaamsim.input.Output;
  * @author Harry King
  *
  */
-public class BooleanCalculation extends CalculationEntity {
-
+public abstract class BooleanCalculation extends CalculationEntity {
 
 	private boolean value;  // Present value for this calculation
 
