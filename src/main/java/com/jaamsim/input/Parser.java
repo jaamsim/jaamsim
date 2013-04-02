@@ -29,11 +29,17 @@ public class Parser {
 public static final void tokenize(ArrayList<String> tokens, String rec) {
 	// Split the record into two pieces, the contents portion and possibly
 	// a commented portion
-	String[] contents = rec.split("\"", 2);
+	int cIndex = rec.indexOf("\"");
+	String contents = rec;
+	String comments = null;
+	if (cIndex > -1) {
+		contents = rec.substring(0, cIndex);
+		comments = rec.substring(cIndex, rec.length());
+	}
 
 	// Split the contents along single-quoted substring boundaries to allow
 	// us to parse quoted and unquoted sections separately
-	String[] substring = contents[0].split("'", -1);
+	String[] substring = contents.split("'", -1);
 	for (int i = 0; i < substring.length; i++) {
 		// Odd indices were single-quoted strings in the original record
 		// restore the quotes and append the whole string as a single token
@@ -58,9 +64,8 @@ public static final void tokenize(ArrayList<String> tokens, String rec) {
 		}
 	}
 
-	// add any comments if they exist with a leading " prepended to denote it
-	// as commented
-	if (contents.length == 2)
-		tokens.add(String.format("\"%s", contents[1]));
+	// add comments if they exist including the leading " to denote it as commented
+	if (comments != null)
+		tokens.add(comments);
 }
 }
