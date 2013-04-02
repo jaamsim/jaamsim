@@ -70,10 +70,10 @@ private static void validateTokens(ArrayList<String> toks) {
 
 		// If a token contains { or } it must be one of those exactly
 		if (each.contains("{"))
-			assertTrue(each.equals("{"));
+			assertTrue(each == "{");
 
 		if (each.contains("}"))
-			assertTrue(each.equals("}"));
+			assertTrue(each == "}");
 	}
 }
 

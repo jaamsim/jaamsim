@@ -59,8 +59,21 @@ public static final void tokenize(ArrayList<String> tokens, String rec) {
 		String[] delimTokens = temp.split("[ ,\t]+", 0);
 		// Append the new tokens that have greater than zero length
 		for (String each : delimTokens) {
-			if (!each.isEmpty())
-				tokens.add(each);
+			if (each.length() == 0)
+				continue;
+
+			if (each.length() == 1) {
+				if ("{".equals(each)) {
+					tokens.add("{");
+					continue;
+				}
+				if ("}".equals(each)) {
+					tokens.add("}");
+					continue;
+				}
+			}
+
+			tokens.add(each);
 		}
 	}
 
