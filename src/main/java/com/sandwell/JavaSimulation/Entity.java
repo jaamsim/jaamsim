@@ -767,17 +767,15 @@ public class Entity {
 	}
 
 	public boolean hasOutput(String name, boolean includeInputs) {
-		if (outputCache == null) {
+		if (outputCache == null)
 			buildOutputCache();
-		}
-		if (outputCache.containsKey(name)) {
+
+		if (outputCache.containsKey(name))
 			return true;
-		}
-		if (includeInputs) {
-			if (inputMap.containsKey(name.toUpperCase())) {
-				return true;
-			}
-		}
+
+		if (includeInputs && this.getInput(name) != null)
+			return true;
+
 		return false;
 	}
 
