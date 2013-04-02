@@ -545,7 +545,6 @@ public class EditBox extends FrameBox {
 		private DefaultListModel listModel;
 		private CheckBoxMouseAdapter checkBoxMouseAdapter;
 		private int i;
-		private boolean bool;
 		private boolean caseSensitive;
 
 		public ListEditor(JTable table) {
@@ -616,12 +615,8 @@ public class EditBox extends FrameBox {
 
 			// checkmark according to the value input
 			for(i = 0; i < list.getModel().getSize(); i++) {
-				bool = false;
-				if( tokens.contains(
-					((JCheckBox)list.getModel().getElementAt(i)).getText()) ) {
-					bool = true;
-				}
-				((JCheckBox)list.getModel().getElementAt(i)).setSelected(bool);
+				JCheckBox box = (JCheckBox)list.getModel().getElementAt(i);
+				box.setSelected(tokens.contains(box.getText()));
 			}
 			dialog.setLocationRelativeTo((Component)e.getSource());
 			dialog.setVisible(true);
