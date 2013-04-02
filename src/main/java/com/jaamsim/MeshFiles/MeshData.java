@@ -52,8 +52,8 @@ public class MeshData {
 		public ArrayList<Vec4d> verts = new ArrayList<Vec4d>();
 		public ArrayList<Vec4d> texCoords = new ArrayList<Vec4d>();
 		public ArrayList<Vec4d> normals = new ArrayList<Vec4d>();
+		public int[] indices;
 
-		public int numVerts;
 		public ConvexHull hull;
 	}
 
@@ -132,31 +132,34 @@ public class MeshData {
 		}
 	}
 
-	public void addSubMesh(Vec4d[] vertices,
-			Vec4d[] normals,
-			Vec4d[] texCoords) {
+	public void addSubMesh(ArrayList<Vertex> vertices,
+	                       int[] indices) {
 
+		assert(vertices.size() >= 3);
 
 		SubMeshData sub = new SubMeshData();
 		_subMeshesData.add(sub);
 
-		// This is a new sub mesh (or one with a unique color or texture)
+		sub.indices = indices;
 
-		sub.numVerts += vertices.length;
-		//_numVerts += vertices.length;
+		assert((sub.indices.length % 3) == 0);
 
-		assert((sub.numVerts % 3) == 0);
+		// Assume if there is one tex coordinate, there will be all of them
+		boolean hasTexCoords = vertices.get(0).getTexCoord() != null;
 
-		assert(normals.length == vertices.length);
+		sub.verts = new ArrayList<Vec4d>(vertices.size());
+		sub.normals = new ArrayList<Vec4d>(vertices.size());
 
-		if (texCoords != null) {
-			assert(texCoords.length == vertices.length);
-
-			sub.texCoords.addAll(Arrays.asList(texCoords));
+		if (hasTexCoords) {
+			sub.texCoords = new ArrayList<Vec4d>();
 		}
-
-		sub.verts.addAll(Arrays.asList(vertices));
-		sub.normals.addAll(Arrays.asList(normals));
+		for (Vertex v : vertices) {
+			sub.verts.add(v.getPos());
+			sub.normals.add(v.getNormal());
+			if (hasTexCoords) {
+				sub.texCoords.add(v.getTexCoord());
+			}
+		}
 
 		sub.hull = ConvexHull.TryBuildHull(sub.verts, 5);
 	}

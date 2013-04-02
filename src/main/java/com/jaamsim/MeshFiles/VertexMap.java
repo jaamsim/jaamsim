@@ -49,7 +49,7 @@ public class VertexMap {
 		return newIndex;
 	}
 
-	ArrayList<Vertex> getVertList() {
+	public ArrayList<Vertex> getVertList() {
 		return verts;
 	}
 }

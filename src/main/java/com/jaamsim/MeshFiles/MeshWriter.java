@@ -71,7 +71,7 @@ public class MeshWriter {
 				return false;
 			}
 
-			startTag("<MeshObject>");
+			startTag("<MeshObject version='0.1'>");
 
 			startTag("<Geometries>");
 
@@ -108,15 +108,15 @@ public class MeshWriter {
 
 	private void writeSubMesh(MeshData.SubMeshData subMesh, int meshNumber) throws IOException {
 
-		startTag(String.format("<Geometry vertices='%d' ID='Mesh%d'>", subMesh.numVerts, meshNumber));
+		startTag(String.format("<Geometry vertices='%d' ID='Mesh%d'>", subMesh.verts.size(), meshNumber));
 
-		startTag("<Vertices dims='3'>");
+		startTag("<Positions dims='3'>");
 		indent();
 		for (Vec3d v : subMesh.verts) {
 			out.write(String.format("%f %f %f ", v.x, v.y, v.z));
 		}
 		out.write("\n");
-		endTag("</Vertices>");
+		endTag("</Positions>");
 
 		startTag("<Normals dims='3'>");
 		indent();
@@ -137,9 +137,9 @@ public class MeshWriter {
 			endTag("</TexCoords>");
 		}
 		// Output the faces list
-		startTag(String.format("<Faces type='Triangles' count='%d'>", subMesh.numVerts/3));
+		startTag(String.format("<Faces type='Triangles' count='%d'>", subMesh.indices.length/3));
 		indent();
-		for (int i = 0; i < subMesh.numVerts; ++i) {
+		for (int i : subMesh.indices) {
 			out.write(String.format("%d ", i));
 		}
 		out.write("\n");

@@ -65,7 +65,7 @@ public class MeshReader {
 
 	static {
 		DOUBLE_ARRAY_TAGS = new ArrayList<String>();
-		DOUBLE_ARRAY_TAGS.add("Vertices");
+		DOUBLE_ARRAY_TAGS.add("Positions");
 		DOUBLE_ARRAY_TAGS.add("Normals");
 		DOUBLE_ARRAY_TAGS.add("TexCoords");
 		DOUBLE_ARRAY_TAGS.add("Color");
@@ -141,12 +141,12 @@ public class MeshReader {
 	private void parseGeometry(XmlNode geoNode) {
 		int numVerts = Integer.parseInt(geoNode.getAttrib("vertices"));
 		// Start by parsing vertices
-		XmlNode vertsNode = geoNode.findChildTag("Vertices", false);
+		XmlNode vertsNode = geoNode.findChildTag("Positions", false);
 		assert(vertsNode != null);
 		assert(vertsNode.getAttrib("dims").equals("3"));
 
-		double[] verts = (double[])vertsNode.getContent();
-		assert(verts.length == numVerts * 3);
+		double[] positions = (double[])vertsNode.getContent();
+		assert(positions.length == numVerts * 3);
 
 		XmlNode normNode = geoNode.findChildTag("Normals", false);
 		assert(normNode != null);
@@ -173,21 +173,21 @@ public class MeshReader {
 		assert(faceNode.getAttrib("type").equals("Triangles"));
 
 		int[] indices = (int[])faceNode.getContent();
+		assert(numTriangles*3 == indices.length);
 
-		// TODO: actually honor the indices
-		Vec4d[] vertVects = new Vec4d[numVerts];
-		Vec4d[] normVects = new Vec4d[numVerts];
-		Vec4d[] texCoordVects = hasTex ? new Vec4d[numVerts] : null;
+		ArrayList<Vertex> verts = new ArrayList<Vertex>(numVerts);
 
 		for (int i = 0; i < numVerts; ++i) {
-			vertVects[i] = new Vec4d(verts[i*3+0], verts[i*3+1], verts[i*3+2], 1);
-			normVects[i] = new Vec4d(normals[i*3+0], normals[i*3+1], normals[i*3+2], 1);
+			Vec4d posVec = new Vec4d(positions[i*3+0], positions[i*3+1], positions[i*3+2], 1);
+			Vec4d normVec = new Vec4d(normals[i*3+0], normals[i*3+1], normals[i*3+2], 1);
+			Vec4d texCoordVec = null;
 			if (hasTex) {
-				texCoordVects[i] = new Vec4d(texCoords[i*2+0], texCoords[i*2+1], 0, 1);
+				texCoordVec = new Vec4d(texCoords[i*2+0], texCoords[i*2+1], 0, 1);
 			}
+			verts.add(new Vertex(posVec, normVec, texCoordVec));
 		}
 
-		finalData.addSubMesh(vertVects, normVects, texCoordVects);
+		finalData.addSubMesh(verts, indices);
 	}
 
 	private void parseMaterial(XmlNode matNode) {

@@ -15,6 +15,7 @@
 package com.jaamsim.render;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -66,6 +67,7 @@ private class SubMesh {
 	public int _vertexBuffer;
 	public int _texCoordBuffer;
 	public int _normalBuffer;
+	public int _indexBuffer;
 
 	public int _progHandle;
 
@@ -292,6 +294,8 @@ private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Rende
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._normalBuffer);
 	gl.glVertexAttribPointer(normalVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
 
+	gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, sub._indexBuffer);
+
 	gl.glBindVertexArray(0);
 
 }
@@ -362,7 +366,7 @@ private void renderSubMesh(SubMesh sub, Material mat, Map<Integer, Integer> vaoM
 	//gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 	gl.glDisable(GL2GL3.GL_CULL_FACE);
 
-	gl.glDrawArrays(GL2GL3.GL_TRIANGLES, 0, sub._numVerts);
+	gl.glDrawElements(GL2GL3.GL_TRIANGLES, sub._numVerts, GL2GL3.GL_UNSIGNED_INT, 0);
 	gl.glEnable(GL2GL3.GL_CULL_FACE);
 
 	if (mat._transType != MeshData.NO_TRANS) {
@@ -472,22 +476,24 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	sub._progHandle = renderer.getShader(Renderer.ShaderHandle.MESH).getProgramHandle();
 
 	if (hasTex) {
+		int[] is = new int[4];
+		gl.glGenBuffers(4, is, 0);
+		sub._vertexBuffer = is[0];
+		sub._normalBuffer = is[1];
+		sub._texCoordBuffer = is[2];
+		sub._indexBuffer = is[3];
+	} else {
 		int[] is = new int[3];
 		gl.glGenBuffers(3, is, 0);
 		sub._vertexBuffer = is[0];
 		sub._normalBuffer = is[1];
-		sub._texCoordBuffer = is[2];
-	} else {
-		int[] is = new int[2];
-		gl.glGenBuffers(2, is, 0);
-		sub._vertexBuffer = is[0];
-		sub._normalBuffer = is[1];
 		sub._texCoordBuffer = 0;
+		sub._indexBuffer = is[2];
 	}
 
 	sub._center = data.hull.getAABB(Mat4d.IDENTITY).getCenter();
 
-	sub._numVerts = data.verts.size();
+	sub._numVerts = data.indices.length;
 
 	// Init vertices
 	FloatBuffer fb = FloatBuffer.allocate(data.verts.size() * 3); //
@@ -497,7 +503,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	fb.flip();
 
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._vertexBuffer);
-	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, sub._numVerts * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.verts.size() * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
 
 	// Bind the shader variables
 	sub._modelViewProjMatVar = gl.glGetUniformLocation(sub._progHandle, "modelViewProjMat");
@@ -510,25 +516,32 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	// Init textureCoords
 	if (hasTex) {
 
-		fb = FloatBuffer.allocate(sub._numVerts * 2); //
+		fb = FloatBuffer.allocate(data.texCoords.size() * 2); //
 		for (Vec4d v : data.texCoords) {
 			RenderUtils.putPointXY(fb, v);
 		}
 		fb.flip();
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._texCoordBuffer);
-		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, sub._numVerts * 2 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.texCoords.size() * 2 * 4, fb, GL2GL3.GL_STATIC_DRAW);
 	}
 
 	// Init normals
-	fb = FloatBuffer.allocate(sub._numVerts * 3); //
+	fb = FloatBuffer.allocate(data.normals.size() * 3);
 	for (Vec4d v : data.normals) {
 		RenderUtils.putPointXYZ(fb, v);
 	}
 	fb.flip();
 
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._normalBuffer);
-	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, sub._numVerts * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.normals.size() * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+
+	IntBuffer indexBuffer = IntBuffer.wrap(data.indices);
+	gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, sub._indexBuffer);
+	gl.glBufferData(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, sub._numVerts * 4, indexBuffer, GL2GL3.GL_STATIC_DRAW);
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
+	gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	_subMeshes.add(sub);
 }

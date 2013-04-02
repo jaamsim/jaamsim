@@ -26,6 +26,7 @@ import java.util.Vector;
 import javax.xml.parsers.SAXParserFactory;
 
 import com.jaamsim.MeshFiles.MeshData;
+import com.jaamsim.MeshFiles.VertexMap;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
@@ -91,19 +92,13 @@ public class ColParser {
 	}
 
 	private static class FaceSubGeo {
-		public final Vec4d[] verts;
-		public final Vec4d[] normals;
-		public final Vec4d[] texCoords;
+		public VertexMap vMap;
+		int[] indices;
 		public String materialSymbol;
 
-		public FaceSubGeo(int size, boolean hasTex) {
-			verts = new Vec4d[size];
-			normals = new Vec4d[size];
-			if (hasTex) {
-				texCoords = new Vec4d[size];
-			} else {
-				texCoords = null;
-			}
+		public FaceSubGeo(int size) {
+			vMap = new VertexMap();
+			indices = new int[size];
 		}
 	}
 
@@ -321,9 +316,7 @@ public class ColParser {
 			} else {
 				geoID = _loadedFaceGeos.size();
 				_loadedFaceGeos.add(subGeo);
-				_finalData.addSubMesh(subGeo.verts,
-				                      subGeo.normals,
-				                      subGeo.texCoords);
+				_finalData.addSubMesh(subGeo.vMap.getVertList(), subGeo.indices);
 			}
 
 			int matID;
@@ -859,7 +852,7 @@ public class ColParser {
 
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
 		boolean hasTexCoords = (smd.texCoordDesc != null);
-		FaceSubGeo fsg = new FaceSubGeo(numVerts, hasTexCoords);
+		FaceSubGeo fsg = new FaceSubGeo(numVerts);
 
 		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
 		Vec4d[] normData = getDataArrayFromSource(smd.normDesc.source);
@@ -871,15 +864,17 @@ public class ColParser {
 		assert(fsg.materialSymbol != null);
 
 		for (int i = 0; i < numVerts; ++i) {
-			fsg.verts[i] = posData[smd.posDesc.indices[i]];
-			fsg.verts[i].w = 1;
+			Vec4d pos = new Vec4d(posData[smd.posDesc.indices[i]]);
+			pos.w = 1;
 
-			fsg.normals[i] = normData[smd.normDesc.indices[i]];
-			fsg.normals[i].w = 0;
+			Vec4d normal = new Vec4d(normData[smd.normDesc.indices[i]]);
+			normal.w = 0;
 
+			Vec4d texCoord = null;
 			if (hasTexCoords) {
-				fsg.texCoords[i] = texCoordData[smd.texCoordDesc.indices[i]];
+				texCoord = texCoordData[smd.texCoordDesc.indices[i]];
 			}
+			fsg.indices[i] = fsg.vMap.getVertIndex(pos, normal, texCoord);
 		}
 		geoData.faceSubGeos.add(fsg);
 	}
