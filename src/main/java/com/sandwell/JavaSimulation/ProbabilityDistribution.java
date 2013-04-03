@@ -31,12 +31,12 @@ public class ProbabilityDistribution extends Entity {
 	@Keyword(desc = "A list of probabilities whose size and ordering must be the same as the list of outcomes in ValueList.",
 	         example = "ProbDist1 ProbList { 0.1 0.5 0.3 0.1 }")
 	protected DoubleVector probList; // list of probabilities
-	
+
 	@Keyword(desc = "A list of numerical outcomes corresponding to the probabilities specified in ValueProb.  " +
 			        "Either this and ValueList OR CumValueList and CumValueProb must be specified.",
 	         example = "ProbDist1 ValueList { 0.1 0.5 0.3 0.1 }")
 	protected DoubleVector valueList; // list of bin values associated with probabilities
-	
+
 	protected Vector objectList;  // list of objects associated with probabilities
 	protected IntegerVector counts; // list of number of occurrences for each value
 
@@ -44,7 +44,7 @@ public class ProbabilityDistribution extends Entity {
 			        "corresponding to the list of outcomes in CumValueList.",
 	         example = "ProbDist1 CumProbList { 0.0 0.1 0.3 0.5 0.8 1.0 }")
 	protected DoubleVector cumProbList; // list of cumulative probabilities
-	
+
 	@Keyword(desc = "A list of numerical outcomes corresponding to the cumulative probabilities specified in CumValueProb.  " +
 	        "Either this and CumValueList OR ValueList and ValueProb must be specified.",
      example = "ProbDist1 CumValueList { 0.1 0.5 0.3 0.1 }")
@@ -57,13 +57,13 @@ public class ProbabilityDistribution extends Entity {
 			        "  If empty or zero, then the values are chosen deterministically and Interpolate must be set to FALSE.",
      example = "ProbDist1 RandomSeed { 0 }")
 	protected int randomSeed; // random seed, default is 0 for selecting values deterministically
-	
+
 	@Keyword(desc = "A Boolean value.  If TRUE, values sampled from this ProbabilityDistribution are interpolated from ValueList " +
 			        "to create a continuous distribution. ",
 	         example = "ProbDist1 Interpolate { FALSE }")
 	protected boolean interpolate; // if true, then the return value is interpolated from the bin values, default is false
 	protected boolean initialized;
-	
+
 	@Keyword(desc = "A multiplicative factor applied to the values returned by the ProbabilityDistribution object.",
 	         example = "ProbDist1 ValueFactor { 1.0 }")
 	protected double valueFactor; // factor applied to the values returned by the distribution
