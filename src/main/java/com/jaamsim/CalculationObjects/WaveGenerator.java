@@ -22,7 +22,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * @author Harry King
  *
  */
-public class WaveGenerator extends DoubleCalculation {
+public abstract class WaveGenerator extends DoubleCalculation {
 
 	@Keyword(desc = "Amplitude of the generated wave",
 	         example = "Wave1 Amplitude { 2.0 }")
@@ -78,7 +78,5 @@ public class WaveGenerator extends DoubleCalculation {
 	/*
 	 * Calculate the current dimensionless signal for the wave.
 	 */
-	protected double getSignal( double angle ) {
-		return 0.0;
-	}
+	protected abstract double getSignal( double angle );
 }
