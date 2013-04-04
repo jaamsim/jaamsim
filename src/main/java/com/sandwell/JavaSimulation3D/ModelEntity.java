@@ -555,7 +555,7 @@ public class ModelEntity extends DisplayEntity {
 	// ******************************************************************************************************
 
 public static class StateRecord {
-	String stateName;
+	final String name;
 	int index;
 	double initializationHours;
 	double totalHours;
@@ -566,16 +566,12 @@ public static class StateRecord {
 	double secondLastStartTimeInState;
 
 	public StateRecord(String state, int i) {
-		stateName = state;
+		name = state;
 		index = i;
 	}
 
 	public int getIndex() {
 		return index;
-	}
-
-	public String getStateName() {
-		return stateName;
 	}
 
 	public double getTotalHours() {
@@ -600,7 +596,7 @@ public static class StateRecord {
 
 	@Override
 	public String toString() {
-		return getStateName();
+		return name;
 	}
 }
 
@@ -720,12 +716,7 @@ public static class StateRecord {
 	 * Updates the statistics, then sets the present status to be the specified value.
 	 */
 	public void setPresentState( String state ) {
-		if (traceFlag) {
-			this.trace("setState( " + state + " )");
-			this.traceLine(" Old State = " + getPresentState());
-		}
-
-		if (presentStateEquals(state))
+		if (presentState.name.equals(state))
 			return;
 
 		StateRecord nextState = this.getStateRecordFor(state);
@@ -733,12 +724,22 @@ public static class StateRecord {
 			throw new ErrorException("%s Specified state: %s was not found in the StateList: %s",
 			                         this.getInputName(), state, this.getStateList());
 
+		if (traceFlag) {
+			StringBuffer buf = new StringBuffer("setState( ");
+			buf.append(nextState.name).append(" )");
+			this.trace(buf.toString());
+
+			buf.setLength(0);
+			buf.append(" Old State = ").append(presentState.name);
+			this.traceLine(buf.toString());
+		}
+
 		double curTime = getCurrentTime();
 		if (testFlag(FLAG_TRACESTATE) && curTime != timeOfLastStateChange) {
 			double duration = curTime - timeOfLastStateChange;
 			stateReportFile.format("%.5f  %s.setState( \"%s\" ) dt = %g\n",
 			                       timeOfLastStateChange, this.getInputName(),
-			                       presentState.getStateName(), duration);
+			                       presentState.name, duration);
 			stateReportFile.flush();
 		}
 
@@ -839,7 +840,7 @@ public static class StateRecord {
 	 * Returns the present state name
 	 */
 	public String getPresentState() {
-		return presentState.getStateName();
+		return presentState.name;
 	}
 
 	public boolean presentStateEquals(String state) {
