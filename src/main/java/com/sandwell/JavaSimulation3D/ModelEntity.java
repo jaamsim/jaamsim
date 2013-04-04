@@ -555,7 +555,7 @@ public class ModelEntity extends DisplayEntity {
 	// ******************************************************************************************************
 
 public static class StateRecord {
-	final String name;
+	public final String name;
 	int index;
 	double initializationHours;
 	double totalHours;
@@ -713,6 +713,16 @@ public static class StateRecord {
 	}
 
 	/**
+	 * A callback subclasses can override that is called on each state transition.
+	 *
+	 * The state has not been changed when this is called, so presentState is still
+	 * valid.
+	 *
+	 * @param next the state being transitioned to
+	 */
+	public void stateChanged(StateRecord next) {}
+
+	/**
 	 * Updates the statistics, then sets the present status to be the specified value.
 	 */
 	public void setPresentState( String state ) {
@@ -743,7 +753,9 @@ public static class StateRecord {
 			stateReportFile.flush();
 		}
 
+
 		collectPresentHours();
+		stateChanged(nextState);
 
 		nextState.secondLastStartTimeInState = nextState.getLastStartTimeInState();
 		nextState.lastStartTimeInState = timeOfLastStateChange;
