@@ -733,7 +733,14 @@ public static class StateRecord {
 			throw new ErrorException("%s Specified state: %s was not found in the StateList: %s",
 			                         this.getInputName(), state, this.getStateList());
 
-		if (testFlag(FLAG_TRACESTATE)) this.printStateTrace(nextState);
+		double curTime = getCurrentTime();
+		if (testFlag(FLAG_TRACESTATE) && curTime != timeOfLastStateChange) {
+			double duration = curTime - timeOfLastStateChange;
+			stateReportFile.format("%.5f  %s.setState( \"%s\" ) dt = %g\n",
+			                       timeOfLastStateChange, this.getInputName(),
+			                       presentState.getStateName(), duration);
+			stateReportFile.flush();
+		}
 
 		collectPresentHours();
 
@@ -856,22 +863,6 @@ public static class StateRecord {
 	}
 
 	public void setPresentState() {}
-
-	/**
-	 * Print that state information on the trace state log file
-	 */
-	private void printStateTrace(StateRecord nextState) {
-		double curTime = getCurrentTime();
-		// Don't print states we didn't spend any time in
-		if (curTime == timeOfLastStateChange)
-			return;
-
-		double duration = curTime - timeOfLastStateChange;
-		stateReportFile.format("%.5f  %s.setState( \"%s\" ) dt = %g\n",
-		                       timeOfLastStateChange, this.getInputName(),
-		                       presentState.getStateName(), duration);
-		stateReportFile.flush();
-	}
 
 	/**
 	 * Set the last time a histogram was updated for this entity
