@@ -240,6 +240,7 @@ public class InputAgent {
 				if (!InputAgent.isRecordComplete(record))
 					continue;
 
+				Parser.removeComments(record);
 				InputAgent.processRecord(url, record);
 				record.clear();
 			}
@@ -256,25 +257,8 @@ public class InputAgent {
 
 	}
 
-	private static void removeComments(ArrayList<String> record) {
-		for (int i = record.size() - 1; i >= 0; i--) {
-			// remove parts of the input that were commented out
-			if (record.get(i).startsWith("\"")) {
-				record.remove(i);
-				continue;
-			}
-
-			// strip single-quoted strings when passing through to the parsers
-			if (record.get(i).startsWith("'")) {
-				String noQuotes = record.get(i).substring(1, record.get(i).length() - 1);
-				record.set(i, noQuotes);
-			}
-		}
-	}
-
 	private static void processRecord(URL url, ArrayList<String> record) {
 		//InputAgent.echoInputRecord(record);
-		InputAgent.removeComments(record);
 
 		if (record.size() == 0)
 			return;
@@ -1395,7 +1379,7 @@ public class InputAgent {
 			tokens.add(0, "{");
 			tokens.add("}");
 		}
-		removeComments(tokens);
+		Parser.removeComments(tokens);
 		tokens.add(0, ent.getInputName());
 		tokens.add(1, in.getKeyword());
 

@@ -87,4 +87,15 @@ private static final Pattern quoted = Pattern.compile("[ ,\t{}]");
 public static final boolean needsQuoting(String s) {
 	return quoted.matcher(s).find();
 }
+
+/**
+ * Remove all commented tokens (starting with the " character)
+ * @param tokens
+ */
+public static final void removeComments(ArrayList<String> tokens) {
+	for (int i = tokens.size() - 1; i >= 0; i--) {
+		if (tokens.get(i).startsWith("\""))
+			tokens.remove(i);
+	}
+}
 }
