@@ -80,7 +80,7 @@ public class Group extends Entity {
 	 * checks input syntax only; otherwise, checks input syntax and process the input values.
 	 */
 	@Override
-	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly)
+	public void readData_ForKeyword(StringVector data, String keyword)
 	throws InputErrorException {
 
 

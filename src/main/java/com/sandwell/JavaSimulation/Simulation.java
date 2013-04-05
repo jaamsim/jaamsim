@@ -302,7 +302,7 @@ public abstract class Simulation extends Entity {
 	 * checks input syntax only; otherwise, checks input syntax and process the input values.
 	 */
 	@Override
-	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly)
+	public void readData_ForKeyword(StringVector data, String keyword)
 	throws InputErrorException {
 
 		if( "CargoUnits".equalsIgnoreCase( keyword ) ) {
@@ -322,7 +322,7 @@ public abstract class Simulation extends Entity {
 
 			return;
 		}
-		super.readData_ForKeyword( data, keyword, syntaxOnly );
+		super.readData_ForKeyword( data, keyword );
 	}
 
 	public void clear() {
