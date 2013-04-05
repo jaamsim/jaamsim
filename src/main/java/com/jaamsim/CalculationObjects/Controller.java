@@ -61,13 +61,15 @@ public class Controller extends DisplayEntity {
 		}
 
 		// Sort the calculation entities into the correct sequence
-        Collections.sort( calculationEntityList, new Comparator<CalculationEntity>(){
+		Collections.sort(calculationEntityList, new SequenceCompare());
+	}
 
-			@Override
-			public int compare( CalculationEntity ent1, CalculationEntity ent2) {
-               return (int)( ent1.getSequenceNumber() -  ent2.getSequenceNumber() );
-            }
-        });
+	// Sorts by increasing sequence number
+	private static class SequenceCompare implements Comparator<CalculationEntity> {
+		@Override
+		public int compare(CalculationEntity c1, CalculationEntity c2) {
+			return Double.compare(c1.getSequenceNumber(), c2.getSequenceNumber());
+		}
 	}
 
 	@Override
