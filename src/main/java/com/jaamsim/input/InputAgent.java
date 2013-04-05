@@ -745,11 +745,11 @@ public class InputAgent {
 			if( input != null && input.isAppendable() ) {
 				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(recordCmd);
 				for ( int i = 0; i < splitData.size(); i++ ) {
-					entity.readInput(splitData.get(i), keyword, false, false);
+					entity.readInput(splitData.get(i), keyword);
 				}
 			}
 			else {
-				entity.readInput(recordCmd, keyword, false, false);
+				entity.readInput(recordCmd, keyword);
 			}
 
 			// Create a list of entities to update in the edit table

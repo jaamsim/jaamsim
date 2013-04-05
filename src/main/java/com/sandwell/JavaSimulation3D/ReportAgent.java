@@ -120,7 +120,7 @@ public class ReportAgent extends DisplayEntity {
 	 * Interpret the input data in the given buffer of strings corresponding to the given keyword.
 	 */
 	@Override
-	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
+	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly)
 	throws InputErrorException {
 
 		// --------------- ReportDirectory ---------------
@@ -150,7 +150,7 @@ public class ReportAgent extends DisplayEntity {
 			return;
 		}
 
-		super.readData_ForKeyword( data, keyword, syntaxOnly, isCfgInput );
+		super.readData_ForKeyword( data, keyword, syntaxOnly );
 	}
 
 	public void setReportIntervals(DoubleVector vec) {

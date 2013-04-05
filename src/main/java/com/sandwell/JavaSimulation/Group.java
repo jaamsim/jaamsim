@@ -80,7 +80,7 @@ public class Group extends Entity {
 	 * checks input syntax only; otherwise, checks input syntax and process the input values.
 	 */
 	@Override
-	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
+	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly)
 	throws InputErrorException {
 
 
@@ -113,7 +113,7 @@ public class Group extends Entity {
 
 							ArrayList<StringVector> splitData = Util.splitStringVectorByBraces( currentData );
 							for ( int k = 0; k < splitData.size(); k++ ) {
-								ent.readInput(splitData.get(k), currentKeyword, syntaxOnly, isCfgInput);
+								ent.readInput(splitData.get(k), currentKeyword);
 								if(in != null) {
 									InputAgent.updateInput(ent, in, splitData.get( k ));
 								}
@@ -159,11 +159,11 @@ public class Group extends Entity {
 						splitData.add(new StringVector());
 
 					for ( int j = 0; j < splitData.size(); j++ ) {
-						ent.readInput(splitData.get(j), keyword, syntaxOnly, isCfgInput);
+						ent.readInput(splitData.get(j), keyword);
 					}
 				}
 				else {
-					ent.readInput(data, keyword, syntaxOnly, isCfgInput);
+					ent.readInput(data, keyword);
 				}
 			}
 

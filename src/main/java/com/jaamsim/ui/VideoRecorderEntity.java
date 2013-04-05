@@ -140,7 +140,7 @@ public class VideoRecorderEntity extends Entity {
 	 * checks input syntax only; otherwise, checks input syntax and process the input values.
 	 */
 	@Override
-	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
+	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly)
 	throws InputErrorException {
 
 		if( "VideoCapture".equalsIgnoreCase( keyword ) ) {
@@ -163,7 +163,7 @@ public class VideoRecorderEntity extends Entity {
 			}
 			return;
 		}
-		super.readData_ForKeyword( data, keyword, syntaxOnly, isCfgInput );
+		super.readData_ForKeyword( data, keyword, syntaxOnly);
 	}
 
 	public double getCaptureInterval() {

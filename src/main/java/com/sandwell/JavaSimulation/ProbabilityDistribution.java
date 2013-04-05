@@ -135,7 +135,7 @@ public class ProbabilityDistribution extends Entity {
 	 * Interpret the input data in the given buffer of strings corresponding to the given keyword.
 	 */
 	@Override
-	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
+	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly)
 	throws InputErrorException {
 
 		if( "ProbList".equalsIgnoreCase( keyword ) ) {
@@ -204,7 +204,7 @@ public class ProbabilityDistribution extends Entity {
 			return;
 		}
 
-		super.readData_ForKeyword( data, keyword, syntaxOnly, isCfgInput );
+		super.readData_ForKeyword( data, keyword, syntaxOnly );
 	}
 
 	// ******************************************************************************************

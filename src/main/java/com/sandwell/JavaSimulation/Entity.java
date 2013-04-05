@@ -324,7 +324,7 @@ public class Entity {
 	 */
 	public void updateForInput( Input<?> in ) {}
 
-	public final void readInput(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
+	public final void readInput(StringVector data, String keyword)
 	throws InputErrorException {
 		Input<?> in = this.getInput(keyword);
 		if (in != null) {
@@ -332,7 +332,7 @@ public class Entity {
 			in.parse(data);
 			this.updateForInput( in );
 		} else {
-			this.readData_ForKeyword(data, keyword, syntaxOnly, isCfgInput);
+			this.readData_ForKeyword(data, keyword, false);
 		}
 		FrameBox.valueUpdate();
 	}
@@ -344,7 +344,7 @@ public class Entity {
 	 *  @param data - Vector of Strings containing data to be parsed
 	 *  @param keyword - the keyword to determine what the data represents
 	 */
-	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly, boolean isCfgInput)
+	public void readData_ForKeyword(StringVector data, String keyword, boolean syntaxOnly)
 	throws InputErrorException {
 		if ("EVENTMANAGER".equalsIgnoreCase(keyword)) {
 			EventManager evt = EventManager.getDefinedManager(data.get(0));
