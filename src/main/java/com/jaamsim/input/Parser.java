@@ -15,6 +15,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class Parser {
 
@@ -45,7 +46,7 @@ public static final void tokenize(ArrayList<String> tokens, String rec) {
 		// restore the quotes and append the whole string as a single token
 		// even if there was nothing between the quotes (an empty string)
 		if (i % 2 != 0) {
-			tokens.add(String.format("'%s'", substring[i]));
+			tokens.add(substring[i]);
 			continue;
 		}
 
@@ -80,5 +81,10 @@ public static final void tokenize(ArrayList<String> tokens, String rec) {
 	// add comments if they exist including the leading " to denote it as commented
 	if (comments != null)
 		tokens.add(comments);
+}
+
+private static final Pattern quoted = Pattern.compile("[ ,\t{}]");
+public static final boolean needsQuoting(String s) {
+	return quoted.matcher(s).find();
 }
 }

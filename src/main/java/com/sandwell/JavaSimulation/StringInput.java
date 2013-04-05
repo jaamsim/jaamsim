@@ -14,8 +14,6 @@
  */
 package com.sandwell.JavaSimulation;
 
-import java.util.ArrayList;
-
 import com.jaamsim.input.Parser;
 
 public class StringInput extends Input<String> {
@@ -34,10 +32,9 @@ public class StringInput extends Input<String> {
 	public String getValueString() {
 		String str = super.getValueString();
 
-		ArrayList<String> tokens = new ArrayList<String>();
-		Parser.tokenize(tokens, str);
-		if(tokens.size() > 1)
+		if (Parser.needsQuoting(str))
 			return String.format("'%s'", str);
-		return str;
+		else
+			return str;
 	}
 }

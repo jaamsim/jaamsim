@@ -41,7 +41,7 @@ public void testTokenize() {
 
 	tok.clear();
 	Parser.tokenize(tok, "OBJECT KEYWORD{ 'ARG  '}KEYWORD\t{ARG' ARG',}");
-	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "'ARG  '", "}", "KEYWORD", "{", "ARG", "' ARG'", "}");
+	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG  ", "}", "KEYWORD", "{", "ARG", " ARG", "}");
 
 	tok.clear();
 	Parser.tokenize(tok, "OBJECT KEYWORD{ ARG }\"FOO ,\t     ");
@@ -57,22 +57,14 @@ private static void validateTokens(ArrayList<String> toks) {
 		if (each.startsWith("\""))
 			continue;
 
-		// ensure quoted strings are properly formed
-		if (each.startsWith("'")) {
-			assertTrue(each.endsWith("'"));
-			continue;
-		}
-
 		// valid tokens connot contain one of the delimiters
-		assertTrue(!each.contains(" "));
-		assertTrue(!each.contains(","));
-		assertTrue(!each.contains("\t"));
+		assertTrue(!each.contains("'"));
 
 		// If a token contains { or } it must be one of those exactly
-		if (each.contains("{"))
+		if (each.equals("{"))
 			assertTrue(each == "{");
 
-		if (each.contains("}"))
+		if (each.equals("}"))
 			assertTrue(each == "}");
 	}
 }
@@ -83,5 +75,13 @@ private static void tokenMatch(ArrayList<String> toks, String... expected) {
 	for (int i = 0; i < toks.size(); i++) {
 		assertTrue(expected[i].equals(toks.get(i)));
 	}
+}
+
+@Test
+public void testQuoting() {
+	assertTrue(Parser.needsQuoting("a "));
+	assertTrue(Parser.needsQuoting("abraca,dabra"));
+	assertTrue(Parser.needsQuoting("abraca}}dabra"));
+	assertTrue(!Parser.needsQuoting("abracadabra"));
 }
 }
