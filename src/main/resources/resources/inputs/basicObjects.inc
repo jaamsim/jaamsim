@@ -16,10 +16,20 @@ Define ObjectType {
                     TimeSeries
                   }
 
+Define	ImageModel {
+			SourceIconModel
+			SinkIconModel
+			ServerIconModel
+			}
+			
+SourceIconModel         ImageFile { '/resources/images/Source-256.png' }      Transparent { TRUE }
+SinkIconModel           ImageFile { '/resources/images/Sink-256.png'   }      Transparent { TRUE }
+ServerIconModel         ImageFile { '/resources/images/Server-256.png' }      Transparent { TRUE }
+
 ModelEntity             JavaClass { com.sandwell.JavaSimulation3D.ModelEntity           } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Cube 					}	DragAndDrop 	{ FALSE 	}
-EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Circle 				}
-Server                  JavaClass { com.jaamsim.BasicObjects.Server                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Rectangle 				}
-EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Circle 				}
+EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
+Server                  JavaClass { com.jaamsim.BasicObjects.Server                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
+EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SinkIconModel 		}
 EntityConveyor          JavaClass { com.jaamsim.BasicObjects.EntityConveyor             } Palette { 'Basic Objects' } DefaultDisplayModel	{ ScreenPointsModelDefault			}
 Queue                   JavaClass { com.sandwell.JavaSimulation3D.Queue	                } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Triangle 				}
 QueueRecorder           JavaClass { com.sandwell.JavaSimulation3D.QueueRecorder         } Palette { 'Basic Objects' } DefaultDisplayModel	{ Cube 					}	DragAndDrop 	{ FALSE 	}
