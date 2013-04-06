@@ -32,14 +32,18 @@ RandomSelector				JavaClass { com.jaamsim.ProbabilityDistributions.RandomSelecto
 
 Define	ImageModel {
 					ProbabilityDistributionIconModel
+					NormalDistributionIconModel
+					ExponentialDistributionIconModel
 					}
 
 ProbabilityDistributionIconModel	ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
+NormalDistributionIconModel			ImageFile { '/resources/images/Norm Dist-256.png'     }   Transparent { TRUE }
+ExponentialDistributionIconModel	ImageFile { '/resources/images/Exp Dist-256.png'      }   Transparent { TRUE }
 
 UniformDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 TriangularDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
-NormalDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
-ExponentialDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
+NormalDistribution			DefaultDisplayModel { NormalDistributionIconModel      }
+ExponentialDistribution		DefaultDisplayModel { ExponentialDistributionIconModel }
 ErlangDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 GammaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 WeibullDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
