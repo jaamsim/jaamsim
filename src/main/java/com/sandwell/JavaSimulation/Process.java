@@ -345,8 +345,11 @@ public class Process extends Thread {
 		return eventManager;
 	}
 
-	synchronized void setEventManager(EventManager eventManager) {
+	synchronized void wake(EventManager eventManager) {
+		this.setFlag(Process.ACTIVE);
 		this.eventManager = eventManager;
+		if (this.testFlag(Process.TERMINATE))
+			throw new ThreadKilledException("Thread killed");
 	}
 
 	synchronized String getClassMethod() {

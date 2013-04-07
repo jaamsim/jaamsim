@@ -476,11 +476,7 @@ public final class EventManager implements Runnable {
 				// TODO: check for the switching of eventmanagers
 				switchThread(Process.current().getEventManager().eventManagerThread);
 			}
-			Process.current().setFlag(Process.ACTIVE);
-			Process.current().setEventManager(this);
-			if (Process.current().testFlag(Process.TERMINATE)) {
-				throw new ThreadKilledException("Thread killed");
-			}
+			Process.current().wake(this);
 		}
 	}
 
