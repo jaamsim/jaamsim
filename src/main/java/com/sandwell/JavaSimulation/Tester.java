@@ -20,7 +20,6 @@ package com.sandwell.JavaSimulation;
 public class Tester {
 
 	private static double doubleTolerance = 1.0E-9;
-	public static final double AUD_TO_JAVA_UNIT_FACTOR = 0.001;
 
 	/**
 	 * Set the tolerance level for double valued comparisons.  The default value
