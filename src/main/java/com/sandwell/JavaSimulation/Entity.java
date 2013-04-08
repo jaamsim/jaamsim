@@ -28,7 +28,6 @@ import com.jaamsim.input.InputGroup;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.Unit;
 
 /**
@@ -323,19 +322,6 @@ public class Entity {
 	 * This method updates the Entity for changes in the given input
 	 */
 	public void updateForInput( Input<?> in ) {}
-
-	public final void readInput(StringVector data, String keyword)
-	throws InputErrorException {
-		Input<?> in = this.getInput(keyword);
-		if (in != null) {
-//			System.out.format("Parsing using input object:%s\n", in.getKeyword());
-			in.parse(data);
-			this.updateForInput( in );
-		} else {
-			this.readData_ForKeyword(data, keyword);
-		}
-		FrameBox.valueUpdate();
-	}
 
 	/**
 	 * Interpret the input data in the given buffer of strings corresponding to the given keyword.

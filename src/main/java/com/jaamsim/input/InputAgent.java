@@ -733,6 +733,20 @@ public class InputAgent {
 
 	}
 
+
+	public static final void apply(Entity ent, StringVector data, String keyword)
+	throws InputErrorException {
+		Input<?> in = ent.getInput(keyword);
+		if (in != null) {
+			in.parse(data);
+			ent.updateForInput( in );
+			FrameBox.valueUpdate();
+		} else {
+			ent.readData_ForKeyword(data, keyword);
+			FrameBox.valueUpdate();
+		}
+	}
+
 	private static void processKeyword( Entity entity, StringVector recordCmd, String keyword) {
 		if (keyword == null)
 			throw new InputErrorException("The keyword is null.");
@@ -745,11 +759,11 @@ public class InputAgent {
 			if( input != null && input.isAppendable() ) {
 				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(recordCmd);
 				for ( int i = 0; i < splitData.size(); i++ ) {
-					entity.readInput(splitData.get(i), keyword);
+					InputAgent.apply(entity, splitData.get(i), keyword);
 				}
 			}
 			else {
-				entity.readInput(recordCmd, keyword);
+				InputAgent.apply(entity, recordCmd, keyword);
 			}
 
 			// Create a list of entities to update in the edit table
