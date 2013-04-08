@@ -37,7 +37,7 @@ public class Group extends Entity {
 	private Class<?> type;
 	private final ArrayList<StringVector> groupKeywordValues;
 
-	protected Vector list; // list of objects in group
+	private final ArrayList<Entity> list; // list of objects in group
 
 	static {
 		allInstances = new ArrayList<Group>();
@@ -56,7 +56,7 @@ public class Group extends Entity {
 
 	public Group() {
 		allInstances.add(this);
-		list = new Vector( 1, 1 );
+		list = new ArrayList<Entity>();
 		type = null;
 		groupKeywordValues = new ArrayList<StringVector>();
 	}
@@ -104,7 +104,7 @@ public class Group extends Entity {
 				if ( type != null ) {
 					for ( int i = originalListSize; i < list.size(); i ++ ) {
 
-						Entity ent = (Entity)list.get( i );
+						Entity ent = list.get( i );
 						for ( int j = 0; j < this.getGroupKeywordValues().size(); j++  ) {
 							String currentKeyword = this.getGroupKeywordValues().get(j).firstElement();
 							Input<?> in = ent.getInput(currentKeyword);
@@ -150,7 +150,7 @@ public class Group extends Entity {
 
 			// For all other keywords, apply the value to each member of the list
 			for( int i = 0; i < list.size(); i++ ) {
-				Entity ent = (Entity)list.get( i );
+				Entity ent = list.get( i );
 
 				Input<?> input = ent.getInput( keyword );
 				if( input != null && input.isAppendable() ) {
@@ -177,9 +177,9 @@ public class Group extends Entity {
 		if (type == null)
 			return;
 
-		for (int i = 0; i < this.getList().size(); i++) {
-			if (!type.isInstance(this.getList().get(i)))
-				throw new InputErrorException("The Entity: %s is not of Type: %s", this.getList().get(i), type.getSimpleName());
+		for (Entity each : this.getList()) {
+			if (!type.isInstance(each))
+				throw new InputErrorException("The Entity: %s is not of Type: %s", each, type.getSimpleName());
 		}
 	}
 
@@ -187,7 +187,7 @@ public class Group extends Entity {
 	// ACCESSING
 	// ******************************************************************************************
 
-	public Vector getList() {
+	public ArrayList<Entity> getList() {
 		return list;
 	}
 

@@ -732,11 +732,11 @@ public abstract class Input<T> {
 
 			// If we found a group, expand the list of Entities
 			if (ent instanceof Group) {
-				Vector gList = ((Group)ent).getList();
+				ArrayList<Entity> gList = ((Group)ent).getList();
 				for (int j = 0; j < gList.size(); j++) {
-					T t = Input.castEntity(((Entity)gList.get(j)), aClass);
+					T t = Input.castEntity(gList.get(j), aClass);
 					if (t == null) {
-						throw new InputErrorException(INP_ERR_ENTCLASS, aClass.getSimpleName(), gList.get(j), ((Entity)gList.get(j)).getClass().getSimpleName());
+						throw new InputErrorException(INP_ERR_ENTCLASS, aClass.getSimpleName(), gList.get(j), gList.get(j).getClass().getSimpleName());
 					}
 					temp.add(t);
 				}

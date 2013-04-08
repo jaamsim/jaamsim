@@ -767,24 +767,18 @@ public class InputAgent {
 			}
 
 			// Create a list of entities to update in the edit table
-			Vector entityList = new Vector( 1, 1 );
-			if( entity instanceof Group ) {
-
-				// Is the keyword a Group keyword?
-				if( entity.getInput( keyword ) != null ) {
-					entityList.addElement( entity );
-				}
-				else {
-					entityList = ((Group)entity).getList();
-				}
+			ArrayList<Entity> updateList = null;
+			if (entity instanceof Group && input == null) {
+				updateList = ((Group)entity).getList();
 			}
 			else {
-				entityList.addElement( entity );
+				updateList = new ArrayList<Entity>(1);
+				updateList.add(entity);
 			}
 
 			// Store the keyword data for use in the edit table
-			for( int i = 0; i < entityList.size(); i++ ) {
-				Entity ent = (Entity)entityList.get( i );
+			for( int i = 0; i < updateList.size(); i++ ) {
+				Entity ent = updateList.get( i );
 				Input<?> in = ent.getInput(keyword);
 
 				if (in != null) {
