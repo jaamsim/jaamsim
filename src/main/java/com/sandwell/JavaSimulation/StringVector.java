@@ -74,46 +74,6 @@ public class StringVector extends Vector<String>{
 	}
 
 	/**
-	 * Return a string containing the contents of the vector without a bracket.
-	 * This method assumes that each element of the vector is an Entity.
-	 */
-	public String toStringWOBracket() {
-
-		StringBuilder out = new StringBuilder("");
-
-		for (int i = 0; i < size(); i++) {
-			if (i == 0)
-				out.append(" ");
-			else
-				out.append(", ");
-			out.append(get(i));
-		}
-
-		return out.toString();
-	}
-
-	/**
-	 * Searches the Vector for the given string ignoring case
-	 */
-	public boolean containsIgnoreCase( String testValue ) {
-		for( int i = 0; i < size(); i++ ) {
-			if( get( i ).equalsIgnoreCase( testValue ) ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Add the given string to the end of the vector if it is not already present
-	 */
-	public void addLastIfNotPresent( String testValue ) {
-		if( !this.contains( testValue ) ) {
-			addElement( testValue );
-		}
-	}
-
-	/**
 	 * return the inclusive substring from to
 	 * @param from
 	 * @param to
