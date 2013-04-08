@@ -74,6 +74,7 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.ObjectType;
+import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -1366,10 +1367,22 @@ public class RenderManager implements DragSourceListener {
 
 		if (isFlat) {
 			Vec3d size = dEntity.getSize();
-			String sizeString = String.format("%.3f %.3f 0.0 m", size.x, size.y);
-			InputAgent.processEntity_Keyword_Value(dEntity, "Size", sizeString);
+			Input<?> in = dEntity.getInput("Size");
+			StringVector args = new StringVector(4);
+			args.add(String.format("%.3f", size.x));
+			args.add(String.format("%.3f", size.y));
+			args.add("0.0");
+			args.add("m");
+			InputAgent.apply(dEntity, in, args);
+			InputAgent.updateInput(dEntity, in, args);
 		} else {
-			InputAgent.processEntity_Keyword_Value(dEntity, "Alignment", "0.0 0.0 -0.5");
+			Input<?> in = dEntity.getInput("Alignment");
+			StringVector args = new StringVector(3);
+			args.add("0.0");
+			args.add("0.0");
+			args.add("-0.5");
+			InputAgent.apply(dEntity, in, args);
+			InputAgent.updateInput(dEntity, in, args);
 		}
 		FrameBox.valueUpdate();
 	}

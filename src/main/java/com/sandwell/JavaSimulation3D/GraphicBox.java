@@ -49,8 +49,9 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Simulation;
-import com.sandwell.JavaSimulation.Vector;
+import com.sandwell.JavaSimulation.StringVector;
 
 public class GraphicBox extends JDialog {
 	private static GraphicBox myInstance;  // only one instance allowed to be open
@@ -164,12 +165,12 @@ public class GraphicBox extends JDialog {
 
 				DisplayModel newModel = InputAgent.defineEntityWithUniqueName(ColladaModel.class, entityName, true);
 
-				Vector data = new Vector(1);
-				data.addElement(entityName);
-				data.addElement("ColladaFile");
-				data.addElement(chosenFileName);
+				StringVector data = new StringVector(1);
+				data.add(chosenFileName);
 
-				InputAgent.processData(newModel, data);
+				Input<?> in = newModel.getInput("ColladaFile");
+				InputAgent.apply(newModel, in, data);
+				InputAgent.updateInput(newModel, in, data);
 				myInstance.refresh(); // Add the new DisplayModel to the List
 				FrameBox.valueUpdate();
 
@@ -187,11 +188,12 @@ public class GraphicBox extends JDialog {
 				setEnabled(false); // Don't accept any interaction
 				DisplayModel dm = (DisplayModel) displayModelList.getSelectedValue();
 
-				Vector data = new Vector(3);
-				data.addElement(currentEntity.getInputName());
-				data.addElement("DisplayModel");
-				data.addElement(dm.getName());
-				InputAgent.processData(currentEntity, data);
+				StringVector data = new StringVector(1);
+				data.add(dm.getInputName());
+
+				Input<?> in = currentEntity.getInput("DisplayModel");
+				InputAgent.apply(currentEntity, in, data);
+				InputAgent.updateInput(currentEntity, in, data);
 
 				if (!RenderManager.isGood()) {
 					myInstance.close();

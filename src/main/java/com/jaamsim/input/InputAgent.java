@@ -733,13 +733,16 @@ public class InputAgent {
 
 	}
 
+	public static final void apply(Entity ent, Input<?> in, StringVector data) {
+		in.parse(data);
+		ent.updateForInput(in);
+	}
 
 	public static final void apply(Entity ent, StringVector data, String keyword)
 	throws InputErrorException {
 		Input<?> in = ent.getInput(keyword);
 		if (in != null) {
-			in.parse(data);
-			ent.updateForInput( in );
+			InputAgent.apply(ent, in, data);
 			FrameBox.valueUpdate();
 		} else {
 			ent.readData_ForKeyword(data, keyword);
@@ -759,7 +762,7 @@ public class InputAgent {
 			if( input != null && input.isAppendable() ) {
 				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(recordCmd);
 				for ( int i = 0; i < splitData.size(); i++ ) {
-					InputAgent.apply(entity, splitData.get(i), keyword);
+					InputAgent.apply(entity, input, splitData.get(i));
 				}
 			}
 			else {
