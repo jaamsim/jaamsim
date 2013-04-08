@@ -26,9 +26,6 @@ import com.jaamsim.input.InputAgent;
  * If the group appears as the value in a line of input, then the list of objects is used as the value.
  */
 public class Group extends Entity {
-	private static final ArrayList<Group> allInstances;
-
-
 	@Keyword(desc = "If TRUE show the members of the group as a seperate table in the output " +
 	                "reports, including an entry for \"Total\"",
 	         example = "Group1 Reportable { TRUE }")
@@ -39,10 +36,6 @@ public class Group extends Entity {
 
 	private final ArrayList<Entity> list; // list of objects in group
 
-	static {
-		allInstances = new ArrayList<Group>();
-	}
-
 	{
 		addEditableKeyword( "List",       "",   "", false, "Key Inputs" );
 		addEditableKeyword( "AppendList", "",   "", true,  "Key Inputs" );
@@ -50,30 +43,13 @@ public class Group extends Entity {
 
 		reportable = new BooleanInput("Reportable", "Key Inputs", true);
 		this.addInput(reportable, true);
-
-
 	}
 
 	public Group() {
-		allInstances.add(this);
 		list = new ArrayList<Entity>();
 		type = null;
 		groupKeywordValues = new ArrayList<StringVector>();
 	}
-
-	public static ArrayList<Group> getAll() {
-		return allInstances;
-	}
-
-	@Override
-	public void kill() {
-		super.kill();
-		allInstances.remove(this);
-	}
-
-	// ******************************************************************************************
-	// INPUT
-	// ******************************************************************************************
 
 	/**
 	 * Processes the input data corresponding to the specified keyword. If syntaxOnly is true,
