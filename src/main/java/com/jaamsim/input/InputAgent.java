@@ -1428,7 +1428,7 @@ public class InputAgent {
 	 */
 	public static void printNewConfigurationFileWithName( String fileName ) {
 
-		StringVector preAddedRecordLines = new StringVector();
+		ArrayList<String> preAddedRecordLines = new ArrayList<String>();
 		String configFilePath = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + InputAgent.getConfigFileName();
 		if( InputAgent.hasAddedRecords() && FileEntity.fileExists( configFilePath ) ) {
 			// Store the original configuration file lines up to added records
@@ -1441,7 +1441,7 @@ public class InputAgent {
 						break;
 					}
 					else {
-						preAddedRecordLines.addElement( line );
+						preAddedRecordLines.add( line );
 					}
 				}
 				in.close();
