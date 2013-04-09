@@ -105,6 +105,9 @@ public class Renderer {
 
 	private TexCache _texCache = new TexCache(this);
 
+	// An initalization time flag specifying if the 'safest' graphical techniques should be used
+	private boolean _safeGraphics;
+
 	private final Thread _renderThread;
 	private final Object _rendererLock = new Object();
 
@@ -147,7 +150,8 @@ public class Renderer {
 	private ArrayList<Renderable> _currentScene = new ArrayList<Renderable>();
 	private ArrayList<OverlayRenderable> _currentOverlay = null;
 
-	public Renderer() throws RenderException {
+	public Renderer(boolean safeGraphics) throws RenderException {
+		_safeGraphics = safeGraphics;
 		_protoCache = new HashMap<MeshProtoKey, MeshProto>();
 		_fontCache = new HashMap<TessFontKey, TessFont>();
 		_hullCache = new HashMap<ConvexHullKey, HullProto>();
@@ -710,7 +714,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			assert(false);
 		}
 
-		MeshProto proto = new MeshProto(data);
+		MeshProto proto = new MeshProto(data, _safeGraphics);
 
 		assert (proto != null);
 		proto.loadGPUAssets(gl, this);

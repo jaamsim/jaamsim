@@ -184,7 +184,7 @@ public class VideoRecorderEntity extends Entity {
 		scheduleWait(captureStartTime.getValue(), 10);
 
 		if (!RenderManager.isGood()) {
-			RenderManager.initialize();
+			RenderManager.initialize(false);
 		}
 
 		int width = captureArea.getValue().get(0);

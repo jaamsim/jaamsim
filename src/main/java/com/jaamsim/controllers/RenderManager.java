@@ -94,8 +94,8 @@ public class RenderManager implements DragSourceListener {
 	/**
 	 * Basic singleton pattern
 	 */
-	public static void initialize() {
-		s_instance = new RenderManager();
+	public static void initialize(boolean safeGraphics) {
+		s_instance = new RenderManager(safeGraphics);
 	}
 
 	public static RenderManager inst() { return s_instance; }
@@ -167,8 +167,8 @@ public class RenderManager implements DragSourceListener {
 	// Line nodes start at this constant and proceed into the negative range, therefore this should be the lowest defined constant
 	public static final long LINENODE_PICK_ID = -12;
 
-	private RenderManager() {
-		_renderer = new Renderer();
+	private RenderManager(boolean safeGraphics) {
+		_renderer = new Renderer(safeGraphics);
 
 		_exceptionLogger = new ExceptionLogger();
 

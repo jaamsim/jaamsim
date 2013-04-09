@@ -117,6 +117,8 @@ public class GUIFrame extends JFrame {
 	private JProgressBar progressBar;
 	private static Image iconImage;
 
+	private static boolean SAFE_GRAPHICS;
+
 	static {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -789,7 +791,7 @@ public class GUIFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			if (!RenderManager.isGood()) {
 				if (RenderManager.canInitialize()) {
-					RenderManager.initialize();
+					RenderManager.initialize(SAFE_GRAPHICS);
 				} else {
 					// A fatal error has occurred, don't try to initialize again
 					return;
@@ -810,7 +812,7 @@ public class GUIFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			if (!RenderManager.isGood()) {
 				if (RenderManager.canInitialize()) {
-					RenderManager.initialize();
+					RenderManager.initialize(SAFE_GRAPHICS);
 				} else {
 					// A fatal error has occurred, don't try to initialize again
 					return;
@@ -1242,6 +1244,11 @@ public class GUIFrame extends JFrame {
 				quiet = true;
 				continue;
 			}
+			if (each.equalsIgnoreCase("-sg") ||
+					each.equalsIgnoreCase("-safe_graphics")) {
+				SAFE_GRAPHICS = true;
+				continue;
+			}
 			// Not a program directive, add to list of config files
 			configFiles.add(each);
 		}
@@ -1267,7 +1274,7 @@ public class GUIFrame extends JFrame {
 			splashScreen.setVisible(true);
 
 			// Begin initializing the rendering system
-			RenderManager.initialize();
+			RenderManager.initialize(SAFE_GRAPHICS);
 		}
 
 		FileEntity.setRootDirectory(System.getProperty("user.dir"));
