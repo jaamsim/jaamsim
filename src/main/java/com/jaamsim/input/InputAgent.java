@@ -466,22 +466,6 @@ public class InputAgent {
 		GUIFrame.shutdown(1);
 	}
 
-	public static void loadConfigFile(GUIFrame gui, String fileName) {
-		InputAgent.setConfigFileName(fileName);
-		try {
-			gui.updateForSimulationState();
-			InputAgent.loadConfigurationFile(fileName);
-		}
-		catch( InputErrorException iee ) {
-			if (!batchRun) {
-				javax.swing.JOptionPane.showMessageDialog( null, iee.getMessage(), "Input Error", javax.swing.JOptionPane.ERROR_MESSAGE );
-			}
-			else {
-				System.out.println( iee.getMessage() );
-			}
-			return;
-		}
-	}
 	// Load the run file
 	public static void loadConfigurationFile( String fileName) {
 
@@ -989,7 +973,19 @@ public class InputAgent {
 		try {
 			gui.clear();
 			Simulation.setSimulationState(Simulation.SIM_STATE_UNCONFIGURED);
-			InputAgent.loadConfigFile(gui, configFileName);
+
+			InputAgent.setConfigFileName(configFileName);
+			gui.updateForSimulationState();
+
+			try {
+				InputAgent.loadConfigurationFile(configFileName);
+			}
+			catch( InputErrorException iee ) {
+				if (!batchRun)
+					ExceptionBox.instance().setError(iee);
+				else
+					System.out.println( iee.getMessage() );
+			}
 
 			// store the present state
 			Simulation.setSimulationState(Simulation.SIM_STATE_CONFIGURED);
