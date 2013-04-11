@@ -565,7 +565,7 @@ public static class StateRecord {
 	double lastStartTimeInState;
 	double secondLastStartTimeInState;
 
-	public StateRecord(String state, int i) {
+	private StateRecord(String state, int i) {
 		name = state;
 		index = i;
 	}
@@ -853,6 +853,10 @@ public static class StateRecord {
 	 */
 	public String getPresentState() {
 		return presentState.name;
+	}
+
+	public StateRecord getState() {
+		return presentState;
 	}
 
 	public boolean presentStateEquals(String state) {
