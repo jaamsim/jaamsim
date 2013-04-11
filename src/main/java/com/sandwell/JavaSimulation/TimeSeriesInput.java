@@ -14,7 +14,12 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.Unit;
@@ -24,13 +29,19 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 
 	private int[] validCounts;
 	private Class<? extends Entity> unitType;
+	private SimpleDateFormat dateFormat;
 	private double maxValue = Double.POSITIVE_INFINITY;
 	private double minValue = Double.NEGATIVE_INFINITY;
 
 	public TimeSeriesInput(String key, String cat, TimeSeriesData def) {
 		super(key, cat, def);
-		validCounts = new int[] { 5, 6 };
+		validCounts = new int[] { 2, 3 };
 		unitType = null;
+		dateFormat = new SimpleDateFormat( "yyyy MM dd HH:mm" );
+
+		// Set the time zone to GMT so calendar calculations
+		// do not get disrupted by daylight savings
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
 	@Override
@@ -41,14 +52,25 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 		double lastTime = -1.0;
 
 		// Determine records in the time series
-		// Records have form: yyyy MM dd hour value units
-		// where hour is in decimal hours and units are optional
+		// Records have form: (e.g.) yyyy-MM-dd HH:mm value units
+		// where units are optional
 		ArrayList<StringVector> temp = Util.splitStringVectorByBraces( input );
 
 		// Determine the starting year
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeZone( TimeZone.getTimeZone( "GMT" ) );
 		int startingYear = 0;
-		if( temp.size() > 0 )
-			startingYear = Input.parseInteger( temp.get( 0 ).get( 0 ) );
+		if( temp.size() > 0 ) {
+
+			try {
+				Date startingDate = dateFormat.parse( temp.get( 0 ).get( 0 ) );
+				calendar.setTime( startingDate );
+				startingYear = calendar.get(Calendar.YEAR);
+			}
+			catch ( ParseException e ) {
+				throw new InputErrorException("Invalid date " + temp.get( 0 ).get( 0 ) );
+			}
+		}
 
 		// Loop through records in the time series
 		for (StringVector each : temp) {
@@ -57,13 +79,24 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 			Input.assertCount( each, validCounts );
 
 			// Parse the date and time from the record
-			int year = Input.parseInteger( each.get( 0 ) );
-			int month = Input.parseInteger( each.get( 1 ), 1, 12 );
-			int day = Input.parseInteger( each.get( 2 ) );
-			double hour = Input.parseDouble( each.get( 3 ), 0.0, 24.0 );
+			Date date;
+			try {
+				date = dateFormat.parse( each.get( 0 ) );
+				calendar.setTime( date );
+			}
+			catch ( ParseException e ) {
+				throw new InputErrorException( "Invalid date " + each.get( 0 ) );
+			}
+			int year = calendar.get(Calendar.YEAR);
+			int month = calendar.get(Calendar.MONTH);
+			int day = calendar.get(Calendar.DAY_OF_MONTH);
+			int hour = calendar.get(Calendar.HOUR_OF_DAY);
+			int minute = calendar.get(Calendar.MINUTE);
+			int second = calendar.get(Calendar.SECOND);
+			double decHour = hour + (minute/60.0) + (second/3600.0);
 
-			// Determine the simulation time for the date and time
-			double t = Clock.calcTimeForYear_Month_Day_Hour( year - startingYear + 1, month, day, hour );
+			// Determine the simulation time for the date and time (assuming no leap years)
+			double t = Clock.calcTimeForYear_Month_Day_Hour( year - startingYear + 1, month + 1, day, decHour );
 
 			// Make sure the times are in increasing order
 			if( t > lastTime ) {
@@ -74,8 +107,8 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 				throw new InputErrorException( "The times must be given in increasing order" );
 			}
 
-			// If there are more than five values, and the last one is not a number, then assume it is a unit
-			if( each.size() > 5 && !Tester.isDouble( each.get( each.size()-1 ) ) ) {
+			// If there are more than two values, and the last one is not a number, then assume it is a unit
+			if( each.size() > 2 && !Tester.isDouble( each.get( each.size()-1 ) ) ) {
 
 				// Check that a unit type was specified
 				if( unitType == null )
@@ -110,5 +143,9 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 
 	public void setUnitType( Class<? extends Entity> u ) {
 		unitType = u;
+	}
+
+	public void setDateFormat( String str ) {
+		dateFormat.applyPattern( str );
 	}
 }

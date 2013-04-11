@@ -30,6 +30,11 @@ public class TimeSeries extends Entity {
      example = "TimeSeries1  UnitType { DistanceUnit }")
 	private final EntityInput<ObjectType> unitType;
 
+	@Keyword(desc = "The format for the date and time (e.g. 'yyyy-MM-dd HH:mm:ss', yyyy/MM/dd).  " +
+	                "Put single quotes around the format if it includes spaces.",
+     example = "TimeSeries1  DateFormat { 'yyyy-MM-dd HH:mm' }")
+	private final StringInput dateFormat;
+
 	private int indexOfTime;  // The index of the time in the last call to getPresentValue()
 	private double cycleTime; // The number of hours in the cycle for the time series
 
@@ -39,6 +44,9 @@ public class TimeSeries extends Entity {
 
 		unitType = new EntityInput<ObjectType>( ObjectType.class, "UnitType", "Optional", null );
 		this.addInput( unitType, true );
+
+		dateFormat = new StringInput("DateFormat", "Key Inputs", null);
+		this.addInput(dateFormat, true);
 	}
 
 	public TimeSeries() { }
@@ -73,6 +81,14 @@ public class TimeSeries extends Entity {
 				throw new InputErrorException( "UnitType must be specified before Value");
 
 			value.setUnitType( unitType.getValue().getJavaClass() );
+		}
+		if ( in == dateFormat ) {
+			try {
+				value.setDateFormat( dateFormat.getValue() );
+			}
+			catch ( IllegalArgumentException e ) {
+				throw new InputErrorException( "Invalid date format " + dateFormat.getValue() );
+			}
 		}
 	}
 
