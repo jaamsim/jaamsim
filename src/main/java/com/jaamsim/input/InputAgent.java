@@ -1158,7 +1158,7 @@ public class InputAgent {
 	        		if ( (count-1)%5 == 0) {
 			        	inputReportFile.putString( "Define" );
 		        		inputReportFile.putTab();
-						inputReportFile.putString(each.getSimpleName());
+						inputReportFile.putString(type.getInputName());
 		        		inputReportFile.putTab();
 		        		inputReportFile.putString( "{ " + entityName );
 		        		inputReportFile.putTab();
@@ -1490,7 +1490,13 @@ public class InputAgent {
 
 		// Print the define statements for each new class
 		for( Class<? extends Entity> newClass : newClasses ) {
-			file.putString( "Define " + newClass.getSimpleName()+" {" );
+			for (ObjectType o : ObjectType.getAll()) {
+				if (o.getJavaClass() == newClass) {
+					file.putString( "Define " + o.getInputName()+" {" );
+					break;
+				}
+			}
+
 			for (int i = 0; i < Entity.getAll().size(); i++) {
 				Entity ent = Entity.getAll().get(i);
 				if (!ent.testFlag(Entity.FLAG_ADDED))
