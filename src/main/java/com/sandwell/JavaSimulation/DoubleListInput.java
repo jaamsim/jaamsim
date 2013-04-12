@@ -14,9 +14,6 @@
  */
 package com.sandwell.JavaSimulation;
 
-import com.jaamsim.input.InputAgent;
-import com.jaamsim.units.Unit;
-
 public class DoubleListInput extends ListInput<DoubleVector> {
 	protected double minValue = Double.NEGATIVE_INFINITY;
 	protected double maxValue = Double.POSITIVE_INFINITY;
@@ -31,41 +28,23 @@ public class DoubleListInput extends ListInput<DoubleVector> {
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
-		DoubleVector temp;
 
-		// If there is more than one value, and the last one is not a number, then assume it is a unit
+		// Parse the inputs
+		DoubleVector temp = Input.parseDoubleVector( input, minValue, maxValue, unitString);
+
+		// Test the input for validity
+		// (If there is more than one value, and the last one is not a number, then assume it is a unit)
+		StringVector numericInput = new StringVector(input);
 		if( input.size() > 1 && !Tester.isDouble( input.get( input.size()-1 ) ) ) {
-
-			// Determine the units
-			Unit unit = Input.parseUnits(input.get(input.size()- 1));
-
-			// Determine the default units
-			Unit defaultUnit = Input.tryParseEntity( unitString.replaceAll("[()]", "").trim(), Unit.class );
-			if( defaultUnit == null ) {
-				throw new InputErrorException( "Could not determine default units " + unitString );
-			}
-
-			// Determine the conversion factor to the default units
-			double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
-
-			// Parse and convert the values
-			Input.assertCountRange(input.subString(0, input.size()-2), minCount, maxCount);
-			Input.assertCount(input.subString(0,input.size()-2), validCounts);
-			temp = Input.parseDoubleVector(input.subString(0,input.size()-2), minValue, maxValue, conversionFactor);
+			numericInput.remove(numericInput.size()-1);
 		}
-		else {
-			// Parse the values
-			Input.assertCountRange(input, minCount, maxCount);
-			Input.assertCount(input, validCounts);
-			temp = Input.parseDoubleVector(input, minValue, maxValue);
-
-			if( unitString.length() > 0 )
-				InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
-		}
-
+		Input.assertCountRange( numericInput, minCount, maxCount);
+		Input.assertCount( numericInput, validCounts);
 		if( ! Double.isNaN(sumValue) ) {
-			Input.assertSumTolerance(temp, sumValue, 0.001d);
+			Input.assertSumTolerance( temp, sumValue, 0.001d);
 		}
+
+		// Inputs are valid
 		value = temp;
 		this.updateEditingFlags();
 	}

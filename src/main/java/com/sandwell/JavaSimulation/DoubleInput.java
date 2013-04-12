@@ -14,9 +14,6 @@
  */
 package com.sandwell.JavaSimulation;
 
-import com.jaamsim.input.InputAgent;
-import com.jaamsim.units.Unit;
-
 public class DoubleInput extends Input<Double> {
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
@@ -28,33 +25,7 @@ public class DoubleInput extends Input<Double> {
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
-		Input.assertCountRange(input, 1, 2);
-
-		// If there are two values, then assume the last one is a unit
-		if( input.size() == 2 ) {
-
-			// Determine the units
-			Unit unit = Input.parseUnits(input.get(1));
-
-			// Determine the default units
-			Unit defaultUnit = Input.tryParseEntity( unitString.replaceAll("[()]", "").trim(), Unit.class );
-			if( defaultUnit == null ) {
-				throw new InputErrorException( "Could not determine default units " + unitString );
-			}
-
-			// Determine the conversion factor from units to default units
-			double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
-
-			// Parse and convert the value
-			value = Double.valueOf(Input.parseDouble(input.get(0), minValue, maxValue, conversionFactor));
-		}
-		else {
-			// Parse the value
-			value = Double.valueOf(Input.parseDouble(input.get(0), minValue, maxValue));
-
-			if( unitString.length() > 0 )
-				InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
-		}
+		value = Input.parseDouble( input, minValue, maxValue, unitString);
 		this.updateEditingFlags();
 	}
 

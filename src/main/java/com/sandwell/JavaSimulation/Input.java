@@ -247,69 +247,13 @@ public abstract class Input<T> {
 	public static <T> T parse(StringVector data, Class<T> aClass, String units, double minValue, double maxValue, int minCount, int maxCount) {
 
 		if( aClass == Double.class ) {
-			Input.assertCount(data, 1, 2);
-			Double value;
-
-			// If there are 2 entries, assume the last entry is a unit
-			if( data.size() == 2 ) {
-
-				// Determine the units
-				Unit unit = Input.parseUnits(data.get(data.size()- 1));
-
-				// Determine the default units
-				Unit defaultUnit = Input.tryParseEntity( units.replaceAll("[()]", "").trim(), Unit.class );
-				if( defaultUnit == null ) {
-					throw new InputErrorException( "Could not determine default units " + units );
-				}
-
-				// Determine the conversion factor to the default units
-				double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
-
-				// Parse and convert the values
-				value = Input.parseDouble(data.get( data.size()-2 ), minValue, maxValue, conversionFactor);
-			}
-			else {
-				// Parse the values
-				value = Input.parseDouble(data.get( data.size()-1 ), minValue, maxValue);
-
-				if( units.length() > 0 )
-					InputAgent.logWarning( "Missing units.  Assuming %s.", units );
-			}
-			return aClass.cast(value);
+			return aClass.cast( Input.parseDouble( data, minValue, maxValue, units) );
 		}
 
 		if( aClass == DoubleVector.class ) {
-			DoubleVector value;
-
-			// If there is more than one value, and the last one is not a number, then assume it is a unit
-			if( data.size() > 1 && !Tester.isDouble( data.get( data.size()-1 ) ) ) {
-
-				// Determine the units
-				Unit unit = Input.parseUnits(data.get(data.size()- 1));
-
-				// Determine the default units
-				Unit defaultUnit = Input.tryParseEntity( units.replaceAll("[()]", "").trim(), Unit.class );
-				if( defaultUnit == null ) {
-					throw new InputErrorException( "Could not determine default units " + units );
-				}
-
-				// Determine the conversion factor to the default units
-				double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
-
-				// Parse and convert the values
-				value = Input.parseDoubleVector(data.subString(0,data.size()-2), minValue, maxValue, conversionFactor);
-			}
-			else {
-				// Parse the values
-				value = Input.parseDoubleVector(data.subString(0,data.size()-1), minValue, maxValue);
-
-				if( units.length() > 0 )
-					InputAgent.logWarning( "Missing units.  Assuming %s.", units );
-			}
-
+			DoubleVector value = Input.parseDoubleVector( data, minValue, maxValue, units);
 			if (value.size() < minCount || value.size() > maxCount)
 				throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, data);
-
 			return aClass.cast( value );
 		}
 
@@ -598,6 +542,38 @@ public abstract class Input<T> {
 		return temp;
 	}
 
+	/**
+	 * Convert the given String to a double including a unit conversion, if necessary
+	 */
+	public static double parseDouble(StringVector input, double minValue, double maxValue, String defaultUnitString)
+	throws InputErrorException {
+		Input.assertCountRange(input, 1, 2);
+
+		// Warn if the default unit is assumed by the input data
+		if( input.size() == 1 && defaultUnitString.length() > 0 )
+			InputAgent.logWarning( "Missing units.  Assuming %s.", defaultUnitString );
+
+		// If there are two values, then assume the last one is a unit
+		double conversionFactor = 1.0;
+		if( input.size() == 2 ) {
+
+			// Determine the units
+			Unit unit = Input.parseUnits( input.get(1) );
+
+			// Determine the default units
+			Unit defaultUnit = Input.tryParseEntity( defaultUnitString.replaceAll("[()]", "").trim(), Unit.class );
+			if( defaultUnit == null ) {
+				throw new InputErrorException( "Could not determine default units " + defaultUnitString );
+			}
+
+			// Determine the conversion factor from units to default units
+			conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
+		}
+
+		// Parse and convert the value
+		return Input.parseDouble( input.get(0), minValue, maxValue, conversionFactor);
+	}
+
 	public static DoubleVector parseDoubleVector(StringVector input, double minValue, double maxValue)
 	throws InputErrorException {
 		return Input.parseDoubleVector(input, minValue, maxValue, 1.0);
@@ -619,6 +595,42 @@ public abstract class Input<T> {
 			}
 		}
 		return temp;
+	}
+
+	/**
+	 * Convert the given StringVector to a DoubleVector including a unit conversion, if necessary
+	 */
+	public static DoubleVector parseDoubleVector(StringVector data, double minValue, double maxValue, String defaultUnitString)
+	throws InputErrorException {
+		StringVector numericData = new StringVector(data);
+
+		// If there is more than one value, and the last one is not a number, then assume it is a unit
+		double conversionFactor = 1.0;
+		String unitString = data.get( data.size()-1 );
+		if( data.size() > 1 && !Tester.isDouble(unitString) ) {
+
+			// Determine the units
+			Unit unit = Input.parseUnits(unitString);
+
+			// Determine the default units
+			Unit defaultUnit = Input.tryParseEntity( defaultUnitString.replaceAll("[()]", "").trim(), Unit.class );
+			if( defaultUnit == null ) {
+				throw new InputErrorException( "Could not determine default units " + defaultUnitString );
+			}
+
+			// Determine the conversion factor to the default units
+			conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
+
+			// Remove the unit string from the inputs
+			numericData.remove( numericData.size()-1 );
+		}
+		else {
+			if( defaultUnitString.length() > 0 )
+				InputAgent.logWarning( "Missing units.  Assuming %s.", defaultUnitString );
+		}
+
+		// Parse and convert the values
+		return Input.parseDoubleVector( numericData, minValue, maxValue, conversionFactor);
 	}
 
 	public static Vec3d parseVec3d(StringVector input)
