@@ -19,15 +19,17 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Util;
-import com.sandwell.JavaSimulation.Vector;
 
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 
 import javax.swing.JScrollPane;
@@ -221,7 +223,7 @@ public class PropertyBox extends FrameBox {
 			return;
 		}
 
-		ArrayList<Vector> propertiesBySuperClass = getPropertiesBySuperClassesOf(entity);
+		ArrayList<ClassFields> cFields = getFields(entity);
 
 		// A different class has been selected, or no previous value for currentEntity
     	if(currentEntity == null || currentEntity.getClass() != entity.getClass()) {
@@ -236,34 +238,18 @@ public class PropertyBox extends FrameBox {
 
 		// Create tabs if they do not exist yet
 		if( jTabbedFrame.getTabCount() == 0 ) {
-
-			for( int i = 0; i < propertiesBySuperClass.size(); i++ ) {
+			for( int i = 0; i < cFields.size(); i++ ) {
 				// The properties in the current page
-				Vector info = propertiesBySuperClass.get(i);
-				jTabbedFrame.addTab(info.get(0).toString(), getPropTable());
-
-				// The first one is the super class name
-				info.remove( 0 );
+				ClassFields cf = cFields.get(i);
+				jTabbedFrame.addTab(cf.klass.getSimpleName(), getPropTable());
 
 				JTable propTable = (JTable)(((JScrollPane)jTabbedFrame.getComponentAt(i)).getViewport().getComponent(0));
-
-				// Add new rows if it is required
-				while( propTable.getRowCount() < info.size() ) {
-					((javax.swing.table.DefaultTableModel) propTable.getModel()).addRow( new Object[] {"","",""});
-				}
+				((javax.swing.table.DefaultTableModel)propTable.getModel()).setRowCount(cf.fields.size());
 
 				// populate property and type columns for this propTable
-				for( int j = 0; j < info.size(); j++ ) {
-					String[] record = ((String)info.get( j )).split( "\t" );
-
-					// Property column
-					propTable.setValueAt( "<html>" + record[0], j, 0 );
-
-					if( record.length > 1 ) {
-
-						// Type column
-						propTable.setValueAt( record[1], j, 1 );
-					}
+				for( int j = 0; j < cf.fields.size(); j++ ) {
+					propTable.setValueAt(cf.fields.get(j).getName(), j, 0);
+					propTable.setValueAt(cf.fields.get(j).getType().getSimpleName(), j, 1);
 				}
 			}
 		}
@@ -279,17 +265,13 @@ public class PropertyBox extends FrameBox {
 
 		setTitle(String.format("Property Viewer - %s", currentEntity));
 
-		ArrayList<Vector> propertiesBySuperClass = getPropertiesBySuperClassesOf(currentEntity);
-		Vector info = propertiesBySuperClass.get( presentPage );
-
-		// The first one is the super class name
-		info.remove( 0 );
+		ClassFields cf = getFields(currentEntity).get( presentPage );
 
 		JTable propTable = (JTable)(((JScrollPane)jTabbedFrame.getComponentAt(presentPage)).getViewport().getComponent(0));
 
 		// Print value column for current page
-		for( int i = 0; i < info.size(); i++ ) {
-			String[] record = ((String)info.get( i )).split( "\t" );
+		for( int i = 0; i < cf.fields.size(); i++ ) {
+			String[] record = getField(currentEntity,  cf.fields.get(i)).split( "\t" );
 
 			// Value column
 			if( record.length > 2 ) {
@@ -404,71 +386,46 @@ public class PropertyBox extends FrameBox {
 		return fieldString.toString();
 	}
 
-    /**
-     * Return a list of properties for every super class
-     * The first element in each row contains the name of the super class
-     * @param object
-     * @return
-     */
-	private static ArrayList<Vector> getPropertiesBySuperClassesOf(Entity object) {
+private static class ClassFields implements Comparator<Field> {
+	final Class<?> klass;
+	final ArrayList<Field> fields;
 
-		if (object == null)
-			return new ArrayList<Vector>(0);
+	ClassFields(Class<?> aKlass) {
+		klass = aKlass;
 
-		ArrayList<Vector> infoBySuperClasses = new ArrayList<Vector>();
-
-    	Vector info = new Vector();
-    	Class<?> myClass = object.getClass();
-    	Vector fields = getAllProperties( myClass );
-
-    	for( int i = 0; i < fields.size(); i++ ) {
-			if (!(fields.get(i) instanceof java.lang.reflect.Field)) {
-				if (info.size() > 0) {
-					infoBySuperClasses.add(new Vector(info));
-					info.clear();
-				}
-				info.addElement(((Class<?>)fields.get(i)).getSimpleName());
-				continue;
-			}
-			info.addElement(getField(object, (java.lang.reflect.Field)fields.get(i)));
-    	}
-    	if( info.size() > 0 ) {
-    		infoBySuperClasses.add( info );
-    	}
-
-    	return infoBySuperClasses;
-
-    }
-
-	private static Vector getAllProperties( Class<?> thisClass ) {
-		if( thisClass == null || thisClass.getSuperclass() == null )
-			return new Vector();
-
-		Vector classProperties = getAllProperties( thisClass.getSuperclass() );
-		java.lang.reflect.Field[] myFields = thisClass.getDeclaredFields();
-
-		// Sort fields alphabetically
-		for( int i = 0; i < myFields.length - 1; i++ ) {
-			for( int j = i + 1; j < myFields.length; j++ ) {
-				if( myFields[i].getName().compareToIgnoreCase( myFields[j].getName() ) > 0 ) {
-					java.lang.reflect.Field temp = myFields[i];
-					myFields[i] = myFields[j];
-					myFields[j] = temp;
-				}
-			}
-		}
-
-		classProperties.add( thisClass );
-		for( int i = 0; i < myFields.length; i++ ) {
-
+		Field[] myFields = klass.getDeclaredFields();
+		fields = new ArrayList<Field>(myFields.length);
+		for (Field each : myFields) {
+			String name = each.getName();
 			// Static variables are all capitalized (ignore them)
-			if( myFields[i].getName().toUpperCase().equals( myFields[i].getName() ) ) {
+			if (name.toUpperCase().equals(name))
 				continue;
-			}
-			classProperties.add( myFields[i] );
-		}
 
-		return classProperties;
+			fields.add(each);
+		}
+		Collections.sort(fields, this);
+	}
+
+	@Override
+	public int compare(Field f1, Field f2) {
+		return f1.getName().compareToIgnoreCase(f2.getName());
+	}
+}
+
+	private static ArrayList<ClassFields> getFields(Entity object) {
+		if (object == null)
+			return new ArrayList<ClassFields>(0);
+
+		return getFields(object.getClass());
+	}
+
+	private static ArrayList<ClassFields> getFields(Class<?> klass) {
+		if (klass == null || klass.getSuperclass() == null)
+			return new ArrayList<ClassFields>();
+
+		ArrayList<ClassFields> cFields = getFields(klass.getSuperclass());
+		cFields.add(new ClassFields(klass));
+		return cFields;
 	}
 
 	private static String propertyFormatObject( Object value ) {
