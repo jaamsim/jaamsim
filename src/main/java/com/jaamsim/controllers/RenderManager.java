@@ -351,12 +351,10 @@ public class RenderManager implements DragSourceListener {
 					v.update(renderTime);
 				}
 
-				int numDisplayEntities = DisplayEntity.getAll().size();
-
 				ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<DisplayModelBinding>();
 
 				// Update all graphical entities in the simulation
-				for (int i = 0; i < numDisplayEntities; i++) {
+				for (int i = 0; i < DisplayEntity.getAll().size(); i++) {
 					try {
 						DisplayEntity de = DisplayEntity.getAll().get(i);
 						de.updateGraphics(renderTime);
@@ -369,11 +367,8 @@ public class RenderManager implements DragSourceListener {
 
 				long updateNanos = System.nanoTime();
 
-				// Refresh, as this may have changed during the update phase
-				numDisplayEntities = DisplayEntity.getAll().size();
-
 				int totalBindings = 0;
-				for (int i = 0; i < numDisplayEntities; i++) {
+				for (int i = 0; i < DisplayEntity.getAll().size(); i++) {
 					DisplayEntity de;
 					try {
 						de = DisplayEntity.getAll().get(i);
