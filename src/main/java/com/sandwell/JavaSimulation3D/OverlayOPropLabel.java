@@ -18,6 +18,7 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
+import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation.StringVector;
 
@@ -33,6 +34,10 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 	         example = "Label Precision { 1 }")
 	private final IntegerInput precision;
 
+	@Keyword(desc = "The text to use if this text label can not be properly resolved (for example there is a null in the chain)",
+	         example = "Label FailureText { 'N/A' }")
+	private final StringInput failureText;
+
 	private String doubleFormat = "%.0f";
 
 	{
@@ -43,6 +48,8 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 		precision.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(precision, true);
 
+		failureText = new StringInput("FailureText", "Variable Text", "");
+		this.addInput(failureText, true);
 	}
 
 	@Override
@@ -57,7 +64,7 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 
 		StringVector outputs = outputValue.getValue();
 		if (outputs.size() < 2) {
-			return "";
+			return failureText.getValue();
 		}
 		Entity ent = Entity.getNamedEntity(outputs.get(0));
 
@@ -65,7 +72,7 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 		for (int i = 1; i < outputs.size() - 1; ++i) {
 			String outputName = outputs.get(i);
 			if (ent == null || !ent.hasOutput(outputName, true)) {
-				return "";
+				return failureText.getValue();
 			}
 			ent = ent.getOutputValue(outputName, simTime, Entity.class);
 		}
@@ -74,7 +81,7 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 		String name = outputs.get(outputs.size() - 1);
 
 		if (ent == null || !ent.hasOutput(name, true)) {
-			return "";
+			return failureText.getValue();
 		}
 
 		Class<?> retType = ent.getOutputType(name);
@@ -92,7 +99,7 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 		String val = ent.getOutputAsString(name, simTime);
 
 		if (val == null) {
-			return "";
+			return failureText.getValue();
 		}
 		return val;
 	}
