@@ -15,21 +15,19 @@
 package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.StringInput;
+import com.sandwell.JavaSimulation.StringListInput;
+import com.sandwell.JavaSimulation.StringVector;
 
 public class OverlayOPropLabel extends OverlayTextLabel {
 
-	@Keyword(desc = "The name of the output to display",
-	         example = "Label OutputName { 'Contents' }")
-	private final StringInput outputName;
-
-	@Keyword(desc = "The entity to read the output from",
-	         example = "Label Entity { StockPile2 }")
-	private final EntityInput<Entity> entity;
+	@Keyword(desc = "The name of a root entity, and then an output value chain. If more than one output value is " +
+	         "given, all outputs but the last should point to an entity output to query for the next output. The " +
+	         "example gets the name of the brand in a tank",
+	         example = "Label Output { Tank1 Product Name }")
+	private final StringListInput outputValue;
 
 	@Keyword(desc = "The number of decimal places displayed by the label when displaying floating point values.",
 	         example = "Label Precision { 1 }")
@@ -38,11 +36,8 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 	private String doubleFormat = "%.0f";
 
 	{
-		entity = new EntityInput<Entity>(Entity.class, "Entity", "Variable Text", null);
-		this.addInput(entity, true);
-
-		outputName = new StringInput("OutputName", "Variable Text", null);
-		this.addInput(outputName, true);
+		outputValue = new StringListInput("OutputName", "Variable Text", null);
+		this.addInput(outputValue, true);
 
 		precision = new IntegerInput("Precision", "Variable Text", 0);
 		precision.setValidRange(0, Integer.MAX_VALUE);
@@ -60,10 +55,25 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 	@Override
 	public String getText(double simTime) {
 
-		Entity ent = entity.getValue();
-		String name = outputName.getValue();
+		StringVector outputs = outputValue.getValue();
+		if (outputs.size() < 2) {
+			return "";
+		}
+		Entity ent = Entity.getNamedEntity(outputs.get(0));
 
-		if (name == null || ent == null || !ent.hasOutput(name, true)) {
+		// For any intermediate values (not the first or last), follow the entity-output chain
+		for (int i = 1; i < outputs.size() - 1; ++i) {
+			String outputName = outputs.get(i);
+			if (ent == null || !ent.hasOutput(outputName, true)) {
+				return "";
+			}
+			ent = ent.getOutputValue(outputName, simTime, Entity.class);
+		}
+
+		// Now get the last output, and take it's value from the current entity
+		String name = outputs.get(outputs.size() - 1);
+
+		if (ent == null || !ent.hasOutput(name, true)) {
 			return "";
 		}
 
@@ -79,7 +89,7 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 			return String.format(doubleFormat, val);
 		}
 
-		String val = entity.getValue().getOutputAsString(outputName.getValue(), simTime);
+		String val = ent.getOutputAsString(name, simTime);
 
 		if (val == null) {
 			return "";
