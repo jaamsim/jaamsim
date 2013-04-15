@@ -355,8 +355,15 @@ public class RenderManager implements DragSourceListener {
 
 				// Update all graphical entities in the simulation
 				for (int i = 0; i < DisplayEntity.getAll().size(); i++) {
+					DisplayEntity de;
 					try {
-						DisplayEntity de = DisplayEntity.getAll().get(i);
+						de = DisplayEntity.getAll().get(i);
+					}
+					catch (IndexOutOfBoundsException e) {
+						break;
+					}
+
+					try {
 						de.updateGraphics(renderTime);
 					}
 					// Catch everything so we don't screw up the behavior handling
