@@ -28,7 +28,7 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
 /**
  * Class to display information about model objects.
  */
-public class AboutBox extends FrameBox {
+public class AboutBox extends FrameBox implements ActionListener {
 	private static AboutBox instance;
 
 	public AboutBox() {
@@ -69,12 +69,7 @@ public class AboutBox extends FrameBox {
 		getContentPane().add( lab );
 
 		JButton closeButton = new JButton("OK");
-		closeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-			}
-		});
+		closeButton.addActionListener(this);
 
 		constraints.gridy = index++;
 		constraints.insets = new Insets( 10, 75, 15, 75 );
@@ -84,6 +79,11 @@ public class AboutBox extends FrameBox {
 
 		setSize( 300, 150 );
 		pack();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		setVisible(false);
 	}
 
 	public static synchronized AboutBox instance() {
