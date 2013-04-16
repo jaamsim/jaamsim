@@ -33,7 +33,7 @@ public class NotOperator extends BooleanCalculation {
 	}
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 
 		// Set the present value
 		this.setValue( ! entityInput.getValue().getValue() );

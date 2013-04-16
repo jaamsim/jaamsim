@@ -53,7 +53,7 @@ public class WeightedSum extends DoubleCalculation {
 	}
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 		double val = 0.0;
 
 		// Calculate the weighted sum

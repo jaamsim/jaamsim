@@ -34,7 +34,7 @@ public class ConstantBoolean extends BooleanCalculation {
 	}
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 
 		// Set the present value
 		this.setValue( valueInput.getValue() );

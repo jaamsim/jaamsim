@@ -35,7 +35,7 @@ public class OrOperator extends BooleanCalculation {
 	private final BooleanListInput negationListInput;
 
 	{
-	entityListInput = new EntityListInput<BooleanCalculation>( BooleanCalculation.class, "EntityList", "Key Inputs", null);
+		entityListInput = new EntityListInput<BooleanCalculation>( BooleanCalculation.class, "EntityList", "Key Inputs", null);
 		this.addInput( entityListInput, true);
 
 		negationListInput = new BooleanListInput( "NegationList", "Key Inputs", null);
@@ -53,7 +53,7 @@ public class OrOperator extends BooleanCalculation {
 	}
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 		boolean val = false;
 
 		// Loop through the input values

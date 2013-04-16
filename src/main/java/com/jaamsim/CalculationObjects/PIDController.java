@@ -125,11 +125,11 @@ public class PIDController extends DoubleCalculation {
 	}
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 		double val;
 
 		// Calculate the elapsed time
-		double t = 3600.0 * this.getCurrentTime();  // convert from hours to seconds
+		double t = 3600.0 * simtime;  // convert from hours to seconds
 		double dt = t - lastUpdateTime;
 
 		// Calculate the error signal

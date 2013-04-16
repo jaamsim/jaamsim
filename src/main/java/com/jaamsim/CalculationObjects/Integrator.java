@@ -43,15 +43,15 @@ public class Integrator extends DoubleCalculation {
 	}
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 
 		// Calculate the elapsed time
-		double t = 3600.0 * this.getCurrentTime();  // convert from hours to seconds
+		double t = 3600.0 * simtime;  // convert from hours to seconds
 		double dt = t - lastUpdateTime;
 		lastUpdateTime = t;
 
 		// Set the present value
-		this.setValue( this.getInputValue(t) * dt  +  this.getValue() );
+		this.setValue( this.getInputValue(simtime) * dt  +  this.getValue() );
 		return;
 	}
 }

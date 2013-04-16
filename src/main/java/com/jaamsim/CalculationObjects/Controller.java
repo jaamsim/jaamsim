@@ -80,8 +80,9 @@ public class Controller extends DisplayEntity {
 		while( true ) {
 
 			// Update the last value for each entity
+			double simtime = this.getCurrentTime();
 			for( CalculationEntity ent : calculationEntityList ) {
-				ent.update();
+				ent.update(simtime);
 			}
 
 			// Increment the number of cycles

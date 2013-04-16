@@ -69,17 +69,16 @@ public class Sensor extends DoubleCalculation {
 	}
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 		double val = 0.0;
 		Entity ent = entityInput.getValue();
 		String name = outputNameInput.getValue();
-		double simTime = this.getCurrentTime();
 
 		Class<?> retType = ent.getOutputType(name);
 		if (retType == Double.class) {
-			val = ent.getOutputValue(name, simTime, Double.class);
+			val = ent.getOutputValue(name, simtime, Double.class);
 		} else if (retType == double.class){
-			val = ent.getOutputValue(name, simTime, double.class);
+			val = ent.getOutputValue(name, simtime, double.class);
 		}
 
 		// Set the present value

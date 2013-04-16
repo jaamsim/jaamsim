@@ -35,7 +35,7 @@ public class Polynomial extends DoubleCalculation {
 	}
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 
 		// Calculate the weighted sum
 		double x = inputValueInput.getOutputValue(simtime);

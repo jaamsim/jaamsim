@@ -36,7 +36,7 @@ public class ConstantValue extends DoubleCalculation {
 	}
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 		this.setValue( valueInput.getValue() );
 	}
 }

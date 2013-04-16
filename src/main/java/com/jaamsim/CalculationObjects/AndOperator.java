@@ -53,7 +53,7 @@ public class AndOperator extends BooleanCalculation {
 	}
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 		boolean val = true;
 
 		// Loop through the input values

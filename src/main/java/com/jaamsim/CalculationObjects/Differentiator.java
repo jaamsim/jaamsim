@@ -25,10 +25,10 @@ public class Differentiator extends DoubleCalculation {
 	private double lastInputValue;  // The input value for the last update
 
 	@Override
-	public void update() {
+	public void update(double simtime) {
 
 		// Calculate the elapsed time
-		double t = 3600.0 * this.getCurrentTime();  // convert from hours to seconds
+		double t = 3600.0 * simtime;  // convert from hours to seconds
 		double dt = t - lastUpdateTime;
 
 		// Set the present value
