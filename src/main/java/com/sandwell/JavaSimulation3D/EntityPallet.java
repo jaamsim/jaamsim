@@ -14,9 +14,13 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
@@ -24,12 +28,14 @@ import java.awt.dnd.DragSource;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JToolTip;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -157,6 +163,55 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		}
 	}
 
+	private static final Dimension prefSize = new Dimension(220, 24);
+	private static final Runnable notifier = new PalletNotifier();
+	private static final class PalletNotifier implements Runnable {
+		@Override
+		public void run() {
+			EntityPallet.getInstance().repaint();
+		}
+	}
+
+	private static class TreeCellRenderer extends DefaultTreeCellRenderer {
+		private final ImageIcon icon = new ImageIcon();
+
+		@Override
+		public Component getTreeCellRendererComponent(JTree tree,
+				Object value, boolean selected, boolean expanded,
+				boolean leaf, int row, boolean hasFocus) {
+
+			super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+
+			// If not a leaf, just return
+			if (!leaf)
+				return this;
+
+			// If we don't find an ObjectType (likely we will) just return
+			Object userObj = ((DefaultMutableTreeNode)value).getUserObject();
+			if (!(userObj instanceof ObjectType))
+				return this;
+
+			ObjectType type = (ObjectType)userObj;
+			this.setText(type.getInputName());
+			this.setPreferredSize(prefSize);
+
+			if (!RenderManager.isGood())
+				return this;
+
+			DisplayModel dm = type.getDefaultDisplayModel();
+			if (dm == null)
+				return this;
+
+			Future<BufferedImage> fi = RenderManager.inst().getPreviewForDisplayModel(dm, notifier);
+			if (fi.failed() || !fi.isDone())
+				return this;
+
+			icon.setImage(RenderUtils.scaleToRes(fi.get(), 24, 24));
+			this.setIcon(icon);
+			return this;
+		}
+	}
+
 	static class MyTree extends JTree {
 		private final MyToolTip toolTip;
 
@@ -197,14 +252,6 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 				return null;
 			}
 			String text = ((ObjectType)object).getName();
-
-			Runnable notifier = new Runnable() {
-				@Override
-				public void run() {
-					EntityPallet.getInstance().repaint();
-				}
-			};
-
 			DisplayModel dm = ((ObjectType)object).getDefaultDisplayModel();
 			if (dm == null) {
 				return null;
@@ -224,6 +271,45 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 			toolTip.setImage( image );
 			toolTip.setPreferredSize( dim );
 			return text;
+		}
+	}
+
+	private final static DataFlavor OBJECT_TYPE_FLAVOR;
+	static {
+		try {
+			// Create OBJECT_TYPE_FLAVOR
+			String objectTypeFlavor = DataFlavor.javaJVMLocalObjectMimeType +
+			";class=" + TransferableObjectType.class.getName();
+			OBJECT_TYPE_FLAVOR = new DataFlavor(objectTypeFlavor);
+		} catch (ClassNotFoundException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	private static class TransferableObjectType implements Transferable {
+		private final ObjectType type;
+
+		TransferableObjectType(ObjectType type) {
+			this.type = type;
+		}
+
+		@Override
+		public DataFlavor [] getTransferDataFlavors() {
+			return new DataFlavor [] {OBJECT_TYPE_FLAVOR};
+		}
+
+		@Override
+		public boolean isDataFlavorSupported(DataFlavor flavor) {
+			return OBJECT_TYPE_FLAVOR.equals(flavor);
+		}
+
+		@Override
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+			if (flavor.equals(OBJECT_TYPE_FLAVOR)) {
+				return type;
+			} else {
+				throw new UnsupportedFlavorException(flavor);
+			}
 		}
 	}
 
