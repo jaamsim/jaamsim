@@ -1626,8 +1626,12 @@ private static class TransSortable implements Comparable<TransSortable> {
 		if (debugDrawAABBs())
 		{
 			Color4d yellow = new Color4d(1, 1, 0, 1.0d);
+			Color4d red = new Color4d(1, 0, 0, 1.0d);
 			for (Renderable r : scene) {
 				Color4d aabbColor = yellow;
+				if (pickRay != null && r.getBoundsRef().collisionDist(pickRay) > 0) {
+					aabbColor = red;
+				}
 				DebugUtils.renderAABB(vaoMap, this, r.getBoundsRef(), aabbColor, cam);
 			}
 		} // for renderables
