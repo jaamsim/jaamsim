@@ -54,8 +54,8 @@ public abstract class Input<T> {
 	protected T defValue;
 	protected T value;
 
-	protected String unitString;
-	private boolean appendable; // indicates if input is appendable
+	protected String unitString; // name of the default unit for this input
+	private boolean appendable;  // indicates if input is appendable
 	private boolean locked; // indicates if input is locked for this entity
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean hidden; // Hide this input from the EditBox
@@ -1011,7 +1011,7 @@ public abstract class Input<T> {
 
 	}
 
-	void updateEditingFlags() {
+	protected void updateEditingFlags() {
 
 		// Keyword is edited
 		if(InputAgent.hasAddedRecords() ||

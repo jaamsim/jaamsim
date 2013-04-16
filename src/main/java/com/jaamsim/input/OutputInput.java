@@ -44,6 +44,7 @@ public class OutputInput<T> extends Input<String> {
 		}
 
 		value = String.format("%s.%s", ent.getInputName(), outputName);
+		this.updateEditingFlags();
 	}
 
 	public T getOutputValue(double simTime) {
