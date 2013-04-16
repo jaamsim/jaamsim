@@ -120,7 +120,7 @@ public abstract class FluidFlowCalculation extends CalculationEntity {
 	@Output(name = "FlowRate",
 	 description = "The volumetric flow rate for the system.",
 	        unit = VolumeFlowUnit.class)
-	public double getFlowRate( double simTime ) {
+	public Double getFlowRate( double simTime ) {
 		return flowRate;
 	}
 }
