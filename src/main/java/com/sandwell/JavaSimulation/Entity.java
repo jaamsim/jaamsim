@@ -731,7 +731,10 @@ public class Entity {
 		}
 		String ret = null;
 		try {
-			ret = m.invoke(this, simTime).toString();
+			Object o = m.invoke(this, simTime);
+			if (o == null)
+				return null;
+			return o.toString();
 		} catch (InvocationTargetException ex) {
 			assert false;
 		} catch (IllegalAccessException ex) {
