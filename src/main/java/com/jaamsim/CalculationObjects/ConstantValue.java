@@ -29,6 +29,8 @@ public class ConstantValue extends DoubleCalculation {
 	private final DoubleInput valueInput;
 
 	{
+		inputValueInput.setHidden(true);
+
 		valueInput = new DoubleInput( "Value", "Key Inputs", 0.0);
 		this.addInput( valueInput, true);
 	}
@@ -37,5 +39,4 @@ public class ConstantValue extends DoubleCalculation {
 	public void update() {
 		this.setValue( valueInput.getValue() );
 	}
-
 }

@@ -36,6 +36,8 @@ public class Sensor extends DoubleCalculation {
 	private final StringInput outputNameInput;
 
 	{
+		inputValueInput.setHidden(true);
+
 		entityInput = new EntityInput<Entity>( Entity.class, "Entity", "Key Inputs", null);
 		this.addInput(entityInput, true);
 
