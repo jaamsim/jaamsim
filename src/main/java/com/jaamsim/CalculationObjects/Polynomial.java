@@ -15,7 +15,6 @@
 package com.jaamsim.CalculationObjects;
 
 import com.sandwell.JavaSimulation.DoubleListInput;
-import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Keyword;
 
 /**
@@ -25,19 +24,12 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class Polynomial extends DoubleCalculation {
 
-	@Keyword(desc = "The DoubleCalculations entity whose present value is the input to the polynomial function.",
-	         example = "Polynomial1 Entity { Calc1 }")
-	private final EntityInput<DoubleCalculation> entityInput;
-
 	@Keyword(desc = "The list of coefficients for the polynomial function.  For example, inputs c0, c1, c2 give a polynomial" +
 			" P(x) = c0 + c1*x^2 + c2*x^3 ",
 	         example = "Polynomial1 CoefficientList { 2.0  1.5 }")
 	private final DoubleListInput coefficientListInput;
 
 	{
-		entityInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "Entity", "Key Inputs", null);
-		this.addInput( entityInput, true);
-
 		coefficientListInput = new DoubleListInput( "CoefficientList", "Key Inputs", null);
 		this.addInput( coefficientListInput, true);
 	}
@@ -46,7 +38,7 @@ public class Polynomial extends DoubleCalculation {
 	public void update() {
 
 		// Calculate the weighted sum
-		double x = entityInput.getValue().getValue();
+		double x = inputValueInput.getOutputValue(simtime);
 		double pow = 1.0;
 		double val = 0.0;
 		for(int i=0; i<coefficientListInput.getValue().size(); i++ ) {

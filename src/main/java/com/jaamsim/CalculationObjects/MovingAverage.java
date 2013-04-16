@@ -14,8 +14,6 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
 
@@ -29,10 +27,6 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class MovingAverage extends DoubleCalculation {
 
-	@Keyword(desc = "The entity whose output value is the input to this calculation.",
-	         example = "MovingAverage-1 Entity { Calc-1 }")
-	private final EntityInput<DoubleCalculation> entityInput;
-
 	@Keyword(desc = "The number of input values over which to average.",
 	         example = "MovingAverage-1 NumberOfSamples { 10 }")
 	private final IntegerInput numberOfSamplesInput;
@@ -42,22 +36,9 @@ public class MovingAverage extends DoubleCalculation {
 	private int n;  // The number of inputs values over which to average
 
 	{
-		entityInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "Entity", "Key Inputs", null);
-		this.addInput( entityInput, true);
-
 		numberOfSamplesInput = new IntegerInput( "NumberOfSamples", "Key Inputs", 1);
 		numberOfSamplesInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput( numberOfSamplesInput, true);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the Entity keyword has been set
-		if( entityInput.getValue() == null ) {
-			throw new InputErrorException( "The Entity keyword must be set." );
-		}
 	}
 
 	@Override
@@ -71,7 +52,7 @@ public class MovingAverage extends DoubleCalculation {
 	@Override
 	public void update() {
 		// Overwrite the oldest value in the list
-		samples[index] = entityInput.getValue().getValue();
+		samples[index] = inputValueInput.getOutputValue(simtime);
 
 		// Set the index to the next oldest value
 		index++;

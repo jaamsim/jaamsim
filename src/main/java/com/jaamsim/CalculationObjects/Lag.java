@@ -16,10 +16,7 @@ package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.input.Output;
 import com.sandwell.JavaSimulation.DoubleInput;
-import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
-
 
 /**
  * The Lag block is a standard control system component whose output is equal to integral( input - output ) / LagTime.
@@ -28,10 +25,6 @@ import com.sandwell.JavaSimulation.Keyword;
  *
  */
 public class Lag extends DoubleCalculation {
-
-	@Keyword(desc = "The entity whose output value is the input to this calculation.",
-	         example = "Lag-1 Entity { Calc-1 }")
-	private final EntityInput<DoubleCalculation> entityInput;
 
 	@Keyword(desc = "The time constant for this operation: output = integral( input - output) / LagTime.",
 	         example = "Lag-1 LagTime { 15 s }")
@@ -42,23 +35,10 @@ public class Lag extends DoubleCalculation {
 	private double integral; // The present value for the integral
 
 	{
-		entityInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "Entity", "Key Inputs", null);
-		this.addInput( entityInput, true);
-
 		lagTimeInput = new DoubleInput( "LagTime", "Key Inputs", 1.0d);
 		lagTimeInput.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		lagTimeInput.setUnits("s");
 		this.addInput( lagTimeInput, true);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the Entity keyword has been set
-		if( entityInput.getValue() == null ) {
-			throw new InputErrorException( "The Entity keyword must be set." );
-		}
 	}
 
 	@Override
@@ -77,7 +57,7 @@ public class Lag extends DoubleCalculation {
 		lastUpdateTime = t;
 
 		// Set the present value
-		error = entityInput.getValue().getValue() - this.getValue();
+		error = inputValueInput.getOutputValue(simtime) - this.getValue();
 		integral += error * dt;
 		this.setValue( integral / lagTimeInput.getValue() );
 		return;

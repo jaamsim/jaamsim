@@ -14,9 +14,7 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.DoubleInput;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 
 /**
@@ -26,10 +24,6 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class Integrator extends DoubleCalculation {
 
-	@Keyword(desc = "The DoubleCalculations entity whose output value is to be integrated.",
-	         example = "Integrator1 Entity { Calc1 }")
-	private final EntityInput<DoubleCalculation> entityInput;
-
 	@Keyword(desc = "The initial value for the integral at time = 0.",
 	         example = "Integrator1 InitialValue { 5.5 }")
 	private final DoubleInput initialValueInput;
@@ -37,21 +31,8 @@ public class Integrator extends DoubleCalculation {
 	private double lastUpdateTime;  // The time at which the last update was performed
 
 	{
-		entityInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "Entity", "Key Inputs", null);
-		this.addInput( entityInput, true);
-
 		initialValueInput = new DoubleInput( "InitialValue", "Key Inputs", 0.0d);
 		this.addInput( initialValueInput, true);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the Entity keyword has been set
-		if( entityInput.getValue() == null ) {
-			throw new InputErrorException( "The Entity keyword must be set." );
-		}
 	}
 
 	@Override
@@ -70,7 +51,7 @@ public class Integrator extends DoubleCalculation {
 		lastUpdateTime = t;
 
 		// Set the present value
-		this.setValue( entityInput.getValue().getValue() * dt  +  this.getValue() );
+		this.setValue( this.getInputValue(t) * dt  +  this.getValue() );
 		return;
 	}
 }

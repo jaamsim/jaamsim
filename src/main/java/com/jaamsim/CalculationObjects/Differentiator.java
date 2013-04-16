@@ -14,10 +14,6 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
-
 /**
  * The differentiator returns the derivative of the input signal with respect to time.
  * @author Harry King
@@ -25,27 +21,8 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class Differentiator extends DoubleCalculation {
 
-	@Keyword(desc = "The entity whose output value is to be differentiated.",
-	         example = "Differentiator1 Entity { Calc1 }")
-	private final EntityInput<DoubleCalculation> entityInput;
-
 	private double lastUpdateTime;  // The time at which the last update was performed
 	private double lastInputValue;  // The input value for the last update
-
-	{
-		entityInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "Entity", "Key Inputs", null);
-		this.addInput( entityInput, true);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the Entity keyword has been set
-		if( entityInput.getValue() == null ) {
-			throw new InputErrorException( "The Entity keyword must be set." );
-		}
-	}
 
 	@Override
 	public void update() {
@@ -55,13 +32,14 @@ public class Differentiator extends DoubleCalculation {
 		double dt = t - lastUpdateTime;
 
 		// Set the present value
+		double val = inputValueInput.getOutputValue(simtime);
 		if( dt > 0.0 ) {
-			this.setValue( ( entityInput.getValue().getValue() - lastInputValue ) / dt );
+			this.setValue( ( val - lastInputValue ) / dt );
 		}
 
 		// Record values needed for the next update
 		lastUpdateTime = t;
-		lastInputValue = entityInput.getValue().getValue();
+		lastInputValue = val;
 		return;
 	}
 }
