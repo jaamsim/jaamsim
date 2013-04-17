@@ -267,4 +267,8 @@ public class MeshData {
 		return _materials;
 	}
 
+	public ArrayList<Armature> getArmatures() {
+		return _armatures;
+	}
+
 }

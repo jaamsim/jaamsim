@@ -1273,6 +1273,10 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		return false;
 	}
 
+	public boolean debugDrawArmatures() {
+		return false;
+	}
+
 	public boolean isInitialized() {
 		 return _initialized.get() && !_fatalError.get();
 	}

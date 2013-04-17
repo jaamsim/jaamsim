@@ -674,4 +674,8 @@ public ArrayList<AABB> getSubBounds(Mat4d modelMat) {
 	return data.getSubBounds(modelMat);
 }
 
+public MeshData getRawData() {
+	return data;
+}
+
 } // class MeshProto

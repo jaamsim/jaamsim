@@ -104,4 +104,8 @@ public class Armature {
 		}
 		return ret;
 	}
+
+	public ArrayList<Bone> getAllBones() {
+		return bones;
+	}
 }

@@ -17,7 +17,9 @@ package com.jaamsim.render;
 import java.util.ArrayList;
 import java.util.Map;
 
+import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.AABB;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
@@ -86,6 +88,16 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, 
 		HullProto hp = renderer.getHullProto(hullKey);
 		if (hp != null) {
 			hp.render(vaoMap, renderer, modelViewMat, cam);
+		}
+	}
+	if (renderer.debugDrawArmatures()) {
+		Mat4d modelViewMat = new Mat4d();
+		cam.getViewMat4d(modelViewMat);
+		modelViewMat.mult4(_modelMat);
+
+		MeshData md = _proto.getRawData();
+		for (Armature arm : md.getArmatures()) {
+			DebugUtils.renderArmature(vaoMap, renderer, modelViewMat, arm, new Color4d(1, 0, 0), cam);
 		}
 	}
 }

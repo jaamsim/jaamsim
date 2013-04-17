@@ -15,6 +15,7 @@
 package com.jaamsim.render;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.media.opengl.GL2GL3;
@@ -141,6 +142,68 @@ public class DebugUtils {
 
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, 3 * 2 * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
+
+	}
+
+	public static void renderArmature(Map<Integer, Integer> vaoMap, Renderer renderer, Mat4d modelViewMat,
+	                                  Armature arm, Color4d color, Camera cam) {
+
+		GL2GL3 gl = renderer.getGL();
+
+		if (!vaoMap.containsKey(_debugVAOKey)) {
+			setupDebugVAO(vaoMap, renderer);
+		}
+
+		int vao = vaoMap.get(_debugVAOKey);
+		gl.glBindVertexArray(vao);
+
+		gl.glUseProgram(_debugProgHandle);
+
+		// Setup uniforms for this object
+		Mat4d projMat = cam.getProjMat4d();
+
+		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
+
+		gl.glUniform4fv(_colorVar, 1, color.toFloats(), 0);
+
+		ArrayList<Armature.Bone> bones = arm.getAllBones();
+		//Build up the list of bone vertices
+		Vec4d[] vects = new Vec4d[bones.size() * 2];
+		for (int i = 0; i < bones.size(); ++i) {
+			Armature.Bone b = bones.get(i);
+
+			Vec4d boneStart = new Vec4d(0, 0, 0, 1);
+			boneStart.mult4(b.getMatrix(), boneStart);
+
+			Vec4d boneEnd = new Vec4d(0, b.getLength(), 0, 1);
+			boneEnd.mult4(b.getMatrix(), boneEnd);
+
+			vects[2*i + 0] = boneStart;
+			vects[2*i + 1] = boneEnd;
+		}
+
+		// Now push it to the card
+		FloatBuffer fb = FloatBuffer.allocate(vects.length * 3);
+		for (Vec4d v : vects) {
+			RenderUtils.putPointXYZ(fb, v);
+		}
+		fb.flip();
+
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _lineVertBuffer);
+		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, fb.limit() * 4, fb, GL2GL3.GL_STATIC_DRAW);
+
+		gl.glVertexAttribPointer(_posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
+
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
+
+		gl.glDisable(GL2GL3.GL_DEPTH_TEST);
+		gl.glDrawArrays(GL2GL3.GL_LINES, 0, fb.limit() / 3);
+		gl.glEnable(GL2GL3.GL_DEPTH_TEST);
+
+		gl.glLineWidth(1.0f);
+
+		gl.glBindVertexArray(0);
 
 	}
 
