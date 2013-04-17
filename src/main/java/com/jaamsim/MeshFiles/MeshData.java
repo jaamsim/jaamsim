@@ -24,6 +24,7 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.render.Armature;
 import com.jaamsim.render.RenderUtils;
 
 /**
@@ -68,6 +69,7 @@ public class MeshData {
 	public static class SubMeshInstance {
 		public int subMeshIndex;
 		public int materialIndex;
+		public int armatureIndex;
 		public Mat4d transform;
 		public Mat4d normalTrans;
 	}
@@ -80,6 +82,9 @@ public class MeshData {
 	private ArrayList<SubMeshData> _subMeshesData = new ArrayList<SubMeshData>();
 	private ArrayList<SubLineData> _subLinesData = new ArrayList<SubLineData>();
 	private ArrayList<Material> _materials = new ArrayList<Material>();
+
+	private ArrayList<Armature> _armatures = new ArrayList<Armature>();
+
 	private ArrayList<SubMeshInstance> _subMeshInstances = new ArrayList<SubMeshInstance>();
 	private ArrayList<SubLineInstance> _subLineInstances = new ArrayList<SubLineInstance>();
 
@@ -88,11 +93,12 @@ public class MeshData {
 
 	private boolean _anyTransparent = false;
 
-	public void addSubMeshInstance(int meshIndex, int matIndex, Mat4d mat) {
+	public void addSubMeshInstance(int meshIndex, int matIndex, int armIndex, Mat4d mat) {
 		Mat4d trans = new Mat4d(mat);
 		SubMeshInstance inst = new SubMeshInstance();
 		inst.subMeshIndex = meshIndex;
 		inst.materialIndex = matIndex;
+		inst.armatureIndex = armIndex;
 		inst.transform = trans;
 
 		Mat4d normalMat = trans.inverse();
@@ -130,6 +136,10 @@ public class MeshData {
 		if (transType != NO_TRANS) {
 			_anyTransparent = true;
 		}
+	}
+
+	public void addArmature(Armature arm) {
+		_armatures.add(arm);
 	}
 
 	public void addSubMesh(ArrayList<Vertex> vertices,

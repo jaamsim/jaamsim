@@ -24,6 +24,7 @@ import javax.xml.parsers.SAXParserFactory;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.render.Armature;
 import com.jaamsim.render.RenderException;
 import com.jaamsim.xml.XmlNode;
 import com.jaamsim.xml.XmlParser;
@@ -98,6 +99,7 @@ public class MeshReader {
 
 		parseGeometries();
 		parseMaterials();
+		parseArmatures();
 
 		parseInstances();
 
@@ -125,6 +127,16 @@ public class MeshReader {
 				continue;
 			}
 			parseMaterial(child);
+		}
+	}
+
+	private void parseArmatures() {
+		XmlNode armsNode = _meshObjectNode.findChildTag("Armatures", false);
+		for (XmlNode child : armsNode.children()) {
+			if (!child.getTag().equals("Armature")) {
+				continue;
+			}
+			parseArmature(child);
 		}
 	}
 
@@ -214,18 +226,58 @@ public class MeshReader {
 		finalData.addMaterial(null, color, MeshData.NO_TRANS, null);
 	}
 
+	private void parseBone(XmlNode boneNode, Armature arm, String parentName) {
+		String name = boneNode.getAttrib("name");
+		double length = Double.parseDouble(boneNode.getAttrib("length"));
+		XmlNode matNode = boneNode.findChildTag("Matrix", false);
+		Mat4d mat = nodeToMat4d(matNode);
+		arm.addBone(name, mat, parentName, length);
+
+		for (XmlNode child : boneNode.children()) {
+			if (!child.getTag().equals("Bone")) {
+				continue;
+			}
+			parseBone(child, arm, name);
+		}
+	}
+
+	private void parseArmature(XmlNode armNode) {
+		Armature arm = new Armature();
+
+		for (XmlNode child : armNode.children()) {
+			if (!child.getTag().equals("Bone")) {
+				continue;
+			}
+			parseBone(child, arm, null);
+		}
+
+		finalData.addArmature(arm);
+	}
+
 	private void parseInstance(XmlNode instNode) {
 		int geoIndex = Integer.parseInt(instNode.getAttrib("geoIndex"));
 		int matIndex = Integer.parseInt(instNode.getAttrib("matIndex"));
 
 		XmlNode matrixNode = instNode.findChildTag("Matrix", false);
 		assert(matrixNode != null);
-		double[] matDoubles = (double[])matrixNode.getContent();
+
+		Mat4d mat = nodeToMat4d(matrixNode);
+
+		int armIndex = -1;
+		String armIndString = instNode.getAttrib("armIndex");
+		if (armIndString != null) {
+			armIndex = Integer.parseInt(armIndString);
+		}
+
+		finalData.addSubMeshInstance(geoIndex, matIndex, armIndex, mat);
+	}
+
+	private Mat4d nodeToMat4d(XmlNode node) {
+		double[] matDoubles = (double[])node.getContent();
 		assert(matDoubles.length == 16);
 
 		Mat4d mat = new Mat4d(matDoubles);
 		mat.transpose4();
-
-		finalData.addSubMeshInstance(geoIndex, matIndex, mat);
+		return mat;
 	}
 }
