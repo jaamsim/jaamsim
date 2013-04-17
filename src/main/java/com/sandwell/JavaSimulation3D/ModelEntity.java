@@ -1553,21 +1553,26 @@ public static class StateRecord {
 		double total;
 		DoubleVector columnValues = new DoubleVector();
 
-		if( getNumberOfStates() != 0 ) {
 			total = getTotalHours();
-			if( !(total == 0.0) ) {
-				anOut.putStringTabs( getName(), 1 );
-				columnValues.add( 0.0 );
+			if (total == 0.0d)
+				return columnValues;
 
-				for( int i = 0; i < getNumberOfStates(); i++ ) {
-					double value = getTotalHoursFor( i ) / total;
-					anOut.putDoublePercentWithDecimals( value, 1 );
-					anOut.putTabs( 1 );
-					columnValues.add( value );
+				anOut.format("%s\t", getName());
+				columnValues.add(0.0d);
+
+				// print fraction of time per state
+				for (int i = 0; i < getStateList().size(); i++) {
+					String state = (String) getStateList().get(i);
+					StateRecord rec = getStateRecordFor(state);
+					double hoursFraction = 0.0d;
+
+					if (rec != null)
+						hoursFraction = getTotalHoursFor(rec)/total;
+
+					anOut.format("%.1f%%\t", hoursFraction * 100.0d);
+					columnValues.add(hoursFraction);
 				}
-				anOut.newLine();
-			}
-		}
+				anOut.format("%n");
 		return columnValues;
 	}
 
