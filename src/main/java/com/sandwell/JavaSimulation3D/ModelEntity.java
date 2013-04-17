@@ -784,10 +784,6 @@ public static class StateRecord {
 		return getTotalHoursFor(rec);
 	}
 
-	public double getTotalHoursFor(int index) {
-		return getTotalHoursFor( (String) getStateList().get(index) );
-	}
-
 	public double getTotalHours() {
 		double total = getCurrentTime() - timeOfLastStateChange;
 
