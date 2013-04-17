@@ -822,14 +822,6 @@ public static class StateRecord {
 	}
 
 	/**
-	 * Return spent hours for a given state at the index in stateList for current cycle
-	 */
-	public double getCurrentCycleHoursFor(int index) {
-		StateRecord rec = getStateRecordFor(index);
-		return getCurrentCycleHoursFor(rec);
-	}
-
-	/**
 	 * Return the total hours in current cycle for all the states
 	 */
 	public double getCurrentCycleHours() {
