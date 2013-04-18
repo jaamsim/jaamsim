@@ -79,6 +79,9 @@ public class Controller extends DisplayEntity {
 		//Loop infinitely over the calculation entities
 		while( true ) {
 
+			// Wait for the samplingTime
+			this.scheduleWait( samplingTimeInput.getValue() );
+
 			// Update the last value for each entity
 			double simtime = this.getCurrentTime();
 			for( CalculationEntity ent : calculationEntityList ) {
@@ -87,9 +90,6 @@ public class Controller extends DisplayEntity {
 
 			// Increment the number of cycles
 			count++;
-
-			// Wait for the samplingTime
-			this.scheduleWait( samplingTimeInput.getValue() );
 		}
 	}
 
