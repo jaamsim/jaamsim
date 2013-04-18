@@ -720,7 +720,7 @@ public static class StateRecord {
 	 *
 	 * @param next the state being transitioned to
 	 */
-	public void stateChanged(StateRecord next) {}
+	public void stateChanged(StateRecord prev, StateRecord next) {}
 
 	/**
 	 * Updates the statistics, then sets the present status to be the specified value.
@@ -753,13 +753,13 @@ public static class StateRecord {
 			stateReportFile.flush();
 		}
 
-
 		collectPresentHours();
-		stateChanged(nextState);
-
 		nextState.secondLastStartTimeInState = nextState.getLastStartTimeInState();
 		nextState.lastStartTimeInState = timeOfLastStateChange;
+
+		StateRecord prev = presentState;
 		presentState = nextState;
+		stateChanged(prev, presentState);
 	}
 
 	public StateRecord getStateRecordFor(String state) {
