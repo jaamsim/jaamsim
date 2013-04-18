@@ -136,7 +136,12 @@ public class FluidComponent extends DisplayEntity {
 	}
 
 	public Fluid getFluid() {
-		return fluidFlow.getFluid();
+		if( fluidFlow != null ) {
+			return fluidFlow.getFluid();
+		}
+		else {
+			return null;  // fluidFlow is null for FluidFixedFlow
+		}
 	}
 
 	public double getLength() {
