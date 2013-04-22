@@ -766,11 +766,6 @@ public static class StateRecord {
 		return stateMap.get(state.toLowerCase());
 	}
 
-	private StateRecord getStateRecordFor(int index) {
-		String state = (String)getStateList().get(index);
-		return getStateRecordFor(state);
-	}
-
 	public double getTotalHoursFor(StateRecord state) {
 		double hours = state.getTotalHours();
 		if (presentState == state)
@@ -787,8 +782,12 @@ public static class StateRecord {
 	public double getTotalHours() {
 		double total = getCurrentTime() - timeOfLastStateChange;
 
-		for (int i = 0; i < getNumberOfStates(); i++)
-			total += getStateRecordFor(i).getTotalHours();
+		for (int i = 0; i < getStateList().size(); i++) {
+			String state = (String) getStateList().get(i);
+			StateRecord rec = getStateRecordFor(state);
+			if (rec != null)
+				total += rec.getTotalHours();
+		}
 
 		return total;
 	}
@@ -822,8 +821,11 @@ public static class StateRecord {
 	 */
 	public double getCurrentCycleHours() {
 		double total = getCurrentTime() - timeOfLastStateChange;
-		for (int i = 0; i < getNumberOfStates(); i++) {
-			total += getStateRecordFor(i).getCurrentCycleHours();
+		for (int i = 0; i < getStateList().size(); i++) {
+			String state = (String) getStateList().get(i);
+			StateRecord rec = getStateRecordFor(state);
+			if (rec != null)
+				total += rec.getCurrentCycleHours();
 		}
 		return total;
 	}
