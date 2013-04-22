@@ -312,6 +312,7 @@ public class MeshReader {
 	private Armature.Action parseAction(XmlNode actionNode) {
 		Armature.Action act = new Armature.Action();
 		act.name = actionNode.getAttrib("name");
+		act.duration = Double.parseDouble(actionNode.getAttrib("length"));
 		assert(act.name != null);
 
 		for (XmlNode child : actionNode.children()) {
