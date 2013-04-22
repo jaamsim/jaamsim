@@ -861,10 +861,6 @@ public static class StateRecord {
 		return getPresentState().endsWith(suffix);
 	}
 
-	protected int getPresentStateIndex() {
-		return presentState.getIndex();
-	}
-
 	public void setPresentState() {}
 
 	/**
