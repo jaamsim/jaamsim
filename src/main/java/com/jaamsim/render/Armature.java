@@ -16,6 +16,8 @@
  import java.util.ArrayList;
 
 import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.Quaternion;
+import com.jaamsim.math.Vec3d;
 
  /**
   * A basic data holder for armature information
@@ -24,7 +26,28 @@ import com.jaamsim.math.Mat4d;
   */
 public class Armature {
 
-	public class Bone {
+	public static class RotKey {
+		public double time;
+		public Quaternion rot;
+	}
+
+	public static class TransKey {
+		public double time;
+		public Vec3d trans;
+	}
+
+	public static class Channel {
+		public String name;
+		public ArrayList<RotKey> rotKeys;
+		public ArrayList<TransKey> transKeys;
+	}
+
+	public static class Action {
+		public String name;
+		public ArrayList<Channel> channels = new ArrayList<Channel>();
+	}
+
+	public static class Bone {
 		private String name;
 		private Mat4d mat;
 		private Mat4d invMat;
@@ -64,8 +87,10 @@ public class Armature {
 	}
 
 	private final ArrayList<Bone> bones = new ArrayList<Bone>();
-	public Armature() {
+	private final ArrayList<Action> actions = new ArrayList<Action>();
 
+	public void addAction(Action act) {
+		actions.add(act);
 	}
 
 	public void addBone(String boneName, Mat4d matrix, String parentName, double length) {

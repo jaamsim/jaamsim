@@ -23,6 +23,8 @@ import javax.xml.parsers.SAXParserFactory;
 
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.Quaternion;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Armature;
 import com.jaamsim.render.RenderException;
@@ -71,6 +73,11 @@ public class MeshReader {
 		DOUBLE_ARRAY_TAGS.add("TexCoords");
 		DOUBLE_ARRAY_TAGS.add("Color");
 		DOUBLE_ARRAY_TAGS.add("Matrix");
+		DOUBLE_ARRAY_TAGS.add("T");
+		DOUBLE_ARRAY_TAGS.add("W");
+		DOUBLE_ARRAY_TAGS.add("X");
+		DOUBLE_ARRAY_TAGS.add("Y");
+		DOUBLE_ARRAY_TAGS.add("Z");
 
 		INT_ARRAY_TAGS = new ArrayList<String>();
 		INT_ARRAY_TAGS.add("Faces");
@@ -241,6 +248,82 @@ public class MeshReader {
 		}
 	}
 
+	private void parseKeys(XmlNode node, Armature.Channel chan, boolean isTrans) {
+		XmlNode tNode = node.findChildTag("T", false);
+		XmlNode xNode = node.findChildTag("X", false);
+		XmlNode yNode = node.findChildTag("Y", false);
+		XmlNode zNode = node.findChildTag("Z", false);
+		assert(tNode != null);
+		assert(xNode != null);
+		assert(yNode != null);
+		assert(zNode != null);
+		double[] ts = (double[])tNode.getContent();
+		double[] xs = (double[])xNode.getContent();
+		double[] ys = (double[])yNode.getContent();
+		double[] zs = (double[])zNode.getContent();
+
+		assert(ts.length == xs.length);
+		assert(ts.length == ys.length);
+		assert(ts.length == zs.length);
+
+		double [] ws = null;
+		if (!isTrans) {
+			XmlNode wNode = node.findChildTag("W", false);
+			assert(wNode != null);
+			ws = (double[])wNode.getContent();
+			assert(ts.length == ws.length);
+		}
+
+		for (int i = 0; i < ts.length; ++i) {
+			if (!isTrans) {
+				Armature.RotKey rk = new Armature.RotKey();
+				rk.time = ts[i];
+				rk.rot = new Quaternion(xs[i], ys[i], zs[i], ws[i]);
+				chan.rotKeys.add(rk);
+			} else {
+				Armature.TransKey tk = new Armature.TransKey();
+				tk.time = ts[i];
+				tk.trans = new Vec3d(xs[i], ys[i], zs[i]);
+				chan.transKeys.add(tk);
+			}
+		}
+	}
+
+	private Armature.Channel parseGroup(XmlNode groupNode) {
+		Armature.Channel chan = new Armature.Channel();
+		chan.name = groupNode.getAttrib("name");
+		assert(chan.name != null);
+
+		XmlNode rotNode = groupNode.findChildTag("Rotation", false);
+		if (rotNode != null) {
+			chan.rotKeys = new ArrayList<Armature.RotKey>();
+			parseKeys(rotNode, chan, false);
+		}
+
+		XmlNode transNode = groupNode.findChildTag("Location", false);
+		if (transNode != null) {
+			chan.transKeys = new ArrayList<Armature.TransKey>();
+			parseKeys(transNode, chan, true);
+		}
+
+		return chan;
+	}
+
+	private Armature.Action parseAction(XmlNode actionNode) {
+		Armature.Action act = new Armature.Action();
+		act.name = actionNode.getAttrib("name");
+		assert(act.name != null);
+
+		for (XmlNode child : actionNode.children()) {
+			if (!child.getTag().equals("Group")) {
+				continue;
+			}
+			Armature.Channel channel = parseGroup(child);
+			act.channels.add(channel);
+		}
+		return act;
+	}
+
 	private void parseArmature(XmlNode armNode) {
 		Armature arm = new Armature();
 
@@ -252,6 +335,16 @@ public class MeshReader {
 		}
 
 		finalData.addArmature(arm);
+
+		// Now parse the actions for this armature
+		for (XmlNode child : armNode.children()) {
+			if (!child.getTag().equals("Action")) {
+				continue;
+			}
+			Armature.Action act = parseAction(child);
+			arm.addAction(act);
+		}
+
 	}
 
 	private void parseInstance(XmlNode instNode) {
