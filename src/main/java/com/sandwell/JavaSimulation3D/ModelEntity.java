@@ -269,7 +269,7 @@ public class ModelEntity extends DisplayEntity {
 		associatedMaintenance = false;
 		workingHours = 0.0;
 		stateMap = new HashMap<String, StateRecord>();
-		StateRecord idle = new StateRecord("Idle", 0);
+		StateRecord idle = new StateRecord("Idle");
 		stateMap.put("idle" , idle);
 		presentState = idle;
 		timeOfLastStateChange = getCurrentTime();
@@ -556,7 +556,6 @@ public class ModelEntity extends DisplayEntity {
 
 public static class StateRecord {
 	public final String name;
-	int index;
 	double initializationHours;
 	double totalHours;
 	double completedCycleHours;
@@ -565,13 +564,8 @@ public static class StateRecord {
 	double lastStartTimeInState;
 	double secondLastStartTimeInState;
 
-	private StateRecord(String state, int i) {
+	private StateRecord(String state) {
 		name = state;
-		index = i;
-	}
-
-	public int getIndex() {
-		return index;
 	}
 
 	public double getTotalHours() {
@@ -607,12 +601,11 @@ public static class StateRecord {
 		stateMap.clear();
 		for (int i = 0; i < getStateList().size(); i++) {
 			String state = (String)getStateList().get(i);
-			if ( state.equals("Idle") ) {
-				idle.index = i;
-				continue;
-			}
 
-			StateRecord stateRecord = new StateRecord(state, i);
+			if ( state.equals("Idle") )
+				continue;
+
+			StateRecord stateRecord = new StateRecord(state);
 			stateMap.put(state.toLowerCase() , stateRecord);
 		}
 		stateMap.put("idle", idle);
