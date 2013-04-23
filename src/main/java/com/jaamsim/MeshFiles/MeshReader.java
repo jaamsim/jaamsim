@@ -71,6 +71,8 @@ public class MeshReader {
 		DOUBLE_ARRAY_TAGS.add("Positions");
 		DOUBLE_ARRAY_TAGS.add("Normals");
 		DOUBLE_ARRAY_TAGS.add("TexCoords");
+		DOUBLE_ARRAY_TAGS.add("BoneIndices");
+		DOUBLE_ARRAY_TAGS.add("BoneWeights");
 		DOUBLE_ARRAY_TAGS.add("Color");
 		DOUBLE_ARRAY_TAGS.add("Matrix");
 		DOUBLE_ARRAY_TAGS.add("T");
@@ -83,6 +85,7 @@ public class MeshReader {
 		INT_ARRAY_TAGS.add("Faces");
 
 		STRING_ARRAY_TAGS = new ArrayList<String>();
+		STRING_ARRAY_TAGS.add("BoneNames");
 
 		BOOLEAN_ARRAY_TAGS = new ArrayList<String>();
 
@@ -185,6 +188,26 @@ public class MeshReader {
 			hasTex = true;
 		}
 
+		XmlNode boneIndicesNode = geoNode.findChildTag("BoneIndices", false);
+		XmlNode boneWeightsNode = geoNode.findChildTag("BoneWeights", false);
+		double[] boneIndices = null;
+		double[] boneWeights = null;
+		boolean hasBoneInfo = false;
+		int numBoneWeights = 0;
+		if (boneIndicesNode != null) {
+			numBoneWeights = Integer.parseInt(boneIndicesNode.getAttrib("entriesPerVert"));
+			assert(numBoneWeights == Integer.parseInt(boneWeightsNode.getAttrib("entriesPerVert"))); // Make sure these are the same
+			assert(numBoneWeights <= 4); // TODO handle more than this by discarding extras and renormalizing
+
+			boneIndices = (double[])boneIndicesNode.getContent();
+			boneWeights = (double[])boneWeightsNode.getContent();
+			assert(boneIndices.length == numBoneWeights * numVerts);
+			assert(boneWeights.length == numBoneWeights * numVerts);
+
+			hasBoneInfo = true;
+		}
+
+
 		// Finally get the indices
 		XmlNode faceNode = geoNode.findChildTag("Faces", false);
 		assert(faceNode != null);
@@ -200,10 +223,34 @@ public class MeshReader {
 			Vec4d posVec = new Vec4d(positions[i*3+0], positions[i*3+1], positions[i*3+2], 1);
 			Vec4d normVec = new Vec4d(normals[i*3+0], normals[i*3+1], normals[i*3+2], 1);
 			Vec4d texCoordVec = null;
+			Vec4d boneIndicesVec = null;
+			Vec4d boneWeightsVec = null;
 			if (hasTex) {
 				texCoordVec = new Vec4d(texCoords[i*2+0], texCoords[i*2+1], 0, 1);
 			}
-			verts.add(new Vertex(posVec, normVec, texCoordVec));
+
+			if (hasBoneInfo) {
+				boneIndicesVec = new Vec4d(0, 0, 0, 0);
+				boneWeightsVec = new Vec4d(0, 0, 0, 0);
+				if (numBoneWeights >= 1) {
+					boneIndicesVec.x = boneIndices[i*numBoneWeights + 0];
+					boneWeightsVec.x = boneWeights[i*numBoneWeights + 0];
+				}
+				if (numBoneWeights >= 2) {
+					boneIndicesVec.y = boneIndices[i*numBoneWeights + 1];
+					boneWeightsVec.y = boneWeights[i*numBoneWeights + 1];
+				}
+				if (numBoneWeights >= 3) {
+					boneIndicesVec.z = boneIndices[i*numBoneWeights + 2];
+					boneWeightsVec.z = boneWeights[i*numBoneWeights + 2];
+				}
+				if (numBoneWeights >= 4) {
+					boneIndicesVec.w = boneIndices[i*numBoneWeights + 3];
+					boneWeightsVec.w = boneWeights[i*numBoneWeights + 3];
+				}
+			}
+
+			verts.add(new Vertex(posVec, normVec, texCoordVec, boneIndicesVec, boneWeightsVec));
 		}
 
 		finalData.addSubMesh(verts, indices);
@@ -363,7 +410,16 @@ public class MeshReader {
 			armIndex = Integer.parseInt(armIndString);
 		}
 
-		finalData.addSubMeshInstance(geoIndex, matIndex, armIndex, mat);
+		XmlNode boneNamesNode = instNode.findChildTag("BoneNames", false);
+		String[] boneNames = null;
+		if (boneNamesNode != null) {
+			boneNames = (String[])boneNamesNode.getContent();
+		}
+
+		// Iff we have an armature, we also have bone names
+		assert((armIndex==-1) == (boneNames==null));
+
+		finalData.addSubMeshInstance(geoIndex, matIndex, armIndex, mat, boneNames);
 	}
 
 	private Mat4d nodeToMat4d(XmlNode node) {

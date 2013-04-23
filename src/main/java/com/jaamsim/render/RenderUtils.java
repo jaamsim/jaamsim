@@ -97,6 +97,13 @@ static void putPointXYZ(FloatBuffer fb, Vec3d v) {
 	fb.put((float)v.z);
 }
 
+static void putPointXYZW(FloatBuffer fb, Vec4d v) {
+	fb.put((float)v.x);
+	fb.put((float)v.y);
+	fb.put((float)v.z);
+	fb.put((float)v.w);
+}
+
 	/**
 	 * Returns a list of points for a circle in the XY plane at the origin
 	 * @return
@@ -428,6 +435,35 @@ static void putPointXYZ(FloatBuffer fb, Vec3d v) {
 		MAT_MARSHAL[14] = (float)mat.d23;
 		MAT_MARSHAL[15] = (float)mat.d33;
 		return MAT_MARSHAL;
+
+	}
+
+	/**
+	 * Marshal a 4x4 matrix into 'array', filling the 16 values starting at 'offset'
+	 * @param mat
+	 * @param array
+	 * @param offset
+	 */
+	public static void MarshalMat4dToArray(Mat4d mat, float[] array, int offset) {
+		array[ 0 + offset] = (float)mat.d00;
+		array[ 1 + offset] = (float)mat.d10;
+		array[ 2 + offset] = (float)mat.d20;
+		array[ 3 + offset] = (float)mat.d30;
+
+		array[ 4 + offset] = (float)mat.d01;
+		array[ 5 + offset] = (float)mat.d11;
+		array[ 6 + offset] = (float)mat.d21;
+		array[ 7 + offset] = (float)mat.d31;
+
+		array[ 8 + offset] = (float)mat.d02;
+		array[ 9 + offset] = (float)mat.d12;
+		array[10 + offset] = (float)mat.d22;
+		array[11 + offset] = (float)mat.d32;
+
+		array[12 + offset] = (float)mat.d03;
+		array[13 + offset] = (float)mat.d13;
+		array[14 + offset] = (float)mat.d23;
+		array[15 + offset] = (float)mat.d33;
 
 	}
 

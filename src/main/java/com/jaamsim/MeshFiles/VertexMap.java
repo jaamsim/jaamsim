@@ -37,7 +37,7 @@ public class VertexMap {
 	 * @return
 	 */
 	public int getVertIndex(Vec4d pos, Vec4d normal, Vec4d texCoord) {
-		Vertex v = new Vertex(pos, normal, texCoord);
+		Vertex v = new Vertex(pos, normal, texCoord, null, null);
 		Integer index = vertMap.get(v);
 		if (index != null) {
 			return index.intValue();

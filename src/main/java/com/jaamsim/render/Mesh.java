@@ -75,7 +75,7 @@ public AABB getBoundsRef() {
 @Override
 public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
 
-	_proto.render(vaoMap, renderer, _modelMat, _normalMat, cam, _subMeshBounds);
+	_proto.render(vaoMap, renderer, _modelMat, _normalMat, cam, null, _subMeshBounds);
 
 	// Debug render of the convex hull
 	if (renderer.debugDrawHulls()) {
@@ -97,7 +97,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, 
 
 		MeshData md = _proto.getRawData();
 		for (Armature arm : md.getArmatures()) {
-			DebugUtils.renderArmature(vaoMap, renderer, modelViewMat, arm, new Color4d(1, 0, 0), cam);
+			DebugUtils.renderArmature(vaoMap, renderer, modelViewMat, arm, null, new Color4d(1, 0, 0), cam);
 		}
 	}
 }

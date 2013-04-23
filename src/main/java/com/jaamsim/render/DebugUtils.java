@@ -146,7 +146,7 @@ public class DebugUtils {
 	}
 
 	public static void renderArmature(Map<Integer, Integer> vaoMap, Renderer renderer, Mat4d modelViewMat,
-	                                  Armature arm, Color4d color, Camera cam) {
+	                                  Armature arm, ArrayList<Mat4d> pose, Color4d color, Camera cam) {
 
 		GL2GL3 gl = renderer.getGL();
 
@@ -178,6 +178,14 @@ public class DebugUtils {
 
 			Vec4d boneEnd = new Vec4d(0, b.getLength(), 0, 1);
 			boneEnd.mult4(b.getMatrix(), boneEnd);
+
+			if (pose != null) {
+				// Adjust the bone by the current pose
+				Mat4d poseMat = pose.get(i);
+
+				boneStart.mult4(poseMat, boneStart);
+				boneEnd.mult4(poseMat, boneEnd);
+			}
 
 			vects[2*i + 0] = boneStart;
 			vects[2*i + 1] = boneEnd;

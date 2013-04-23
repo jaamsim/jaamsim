@@ -217,21 +217,21 @@ public class Armature {
 		return -1;
 	}
 
-	public static class PoseResult {
-		public String boneName;
-		public Mat4d boneMat;
-	}
 	/**
 	 * Returns a 'pose' (a list of matrices for known bones) based on the actions for this skeleton
 	 * @param actions
 	 * @return
 	 */
-	public ArrayList<PoseResult> getPose(ArrayList<ActionQueue> newActions) {
+	public ArrayList<Mat4d> getPose(ArrayList<ActionQueue> actions) {
+		if (actions == null) {
+			actions = new ArrayList<ActionQueue>();
+		}
+
 		ArrayList<Mat4d> poseTransforms = new ArrayList<Mat4d>(bones.size());
 		for (int i = 0; i < bones.size(); ++i)
 			poseTransforms.add(new Mat4d());
 
-		for (ActionQueue aq : newActions) {
+		for (ActionQueue aq : actions) {
 			Action a = getActionByName(aq.name);
 			if (a == null) {
 				continue;
@@ -247,24 +247,22 @@ public class Armature {
 			}
 		}
 
-		ArrayList<PoseResult> ret = new ArrayList<PoseResult>(bones.size());
+		ArrayList<Mat4d> ret = new ArrayList<Mat4d>(bones.size());
 
 		// We have the interpolated transform per bone, now build up a list of model space transforms per bone
 		for (int i = 0; i < bones.size(); ++i) {
 			Bone b = bones.get(i);
-			PoseResult pr = new PoseResult();
-			pr.boneName = b.name;
-			pr.boneMat = new Mat4d(b.mat);
-			pr.boneMat.mult4(poseTransforms.get(i));
-			pr.boneMat.mult4(b.invMat);
+			Mat4d mat = new Mat4d(b.mat);
+			mat.mult4(poseTransforms.get(i));
+			mat.mult4(b.invMat);
 
 			if (b.parent != null) {
 				// Need to include the parent of this bone
 				int parentBoneInd = b.parent.getIndex();
-				pr.boneMat.mult4(ret.get(parentBoneInd).boneMat, pr.boneMat);
+				mat.mult4(ret.get(parentBoneInd), mat);
 			}
 
-			ret.add(pr);
+			ret.add(mat);
 		}
 		return ret;
 	}

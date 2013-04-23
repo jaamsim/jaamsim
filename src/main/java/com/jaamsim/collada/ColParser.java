@@ -330,7 +330,7 @@ public class ColParser {
 				                       effect.transType, effect.transColour);
 			}
 
-			_finalData.addSubMeshInstance(geoID, matID, -1, mat);
+			_finalData.addSubMeshInstance(geoID, matID, -1, mat, null);
 		}
 
 		for (LineSubGeo subGeo : geo.lineSubGeos) {

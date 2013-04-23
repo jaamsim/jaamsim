@@ -76,7 +76,7 @@ import com.sandwell.JavaSimulation.ColourInput;
 public class Renderer {
 
 	public enum ShaderHandle {
-		MESH, FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG
+		MESH, ANIM_MESH, FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG
 	}
 
 	static private Object idLock = new Object();
@@ -586,6 +586,10 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	vert = "/resources/shaders/flat.vert";
 	frag = "/resources/shaders/flat.frag";
 	createShader(ShaderHandle.MESH, vert, frag, gl);
+
+	vert = "/resources/shaders/flat-anim.vert";
+	frag = "/resources/shaders/flat.frag";
+	createShader(ShaderHandle.ANIM_MESH, vert, frag, gl);
 
 	vert = "/resources/shaders/font.vert";
 	frag = "/resources/shaders/font.frag";

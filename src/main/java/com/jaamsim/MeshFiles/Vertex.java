@@ -28,6 +28,9 @@ public class Vertex {
 	private Vec4d normal;
 	private Vec4d texCoord;
 
+	private Vec4d boneIndices;
+	private Vec4d boneWeights;
+
 	private int cachedHash = 0;
 
 	private static int hashVec4d(Vec4d v) {
@@ -39,15 +42,24 @@ public class Vertex {
 		return hash;
 	}
 
-	public Vertex(Vec4d position, Vec4d normal, Vec4d texCoord) {
+	public Vertex(Vec4d position, Vec4d normal, Vec4d texCoord, Vec4d boneIndices, Vec4d boneWeights) {
 		this.position = position;
 		this.normal = normal;
 		this.texCoord = texCoord;
+		this.boneIndices = boneIndices;
+		this.boneWeights = boneWeights;
+
+		// If we have boneIndices we must also have boneWeights
+		assert((boneIndices==null) == (boneWeights==null));
 
 		cachedHash = cachedHash ^ hashVec4d(position);
 		cachedHash = cachedHash ^ hashVec4d(normal);
 		if (texCoord != null) {
 			cachedHash = cachedHash ^ hashVec4d(texCoord);
+		}
+		if (boneIndices != null) {
+			cachedHash = cachedHash ^ hashVec4d(boneIndices);
+			cachedHash = cachedHash ^ hashVec4d(boneWeights);
 		}
 	}
 
@@ -65,12 +77,21 @@ public class Vertex {
 		}
 
 		// One has a texCoord, but not the other
-		if ((texCoord == null && ov.texCoord != null) ||
-		    (texCoord != null && ov.texCoord == null)) {
+		if ((texCoord==null) != (ov.texCoord==null)) {
 			return false;
 		}
 
 		if (texCoord != null && texCoord != ov.texCoord && !texCoord.equals4(ov.texCoord)) {
+			return false;
+		}
+
+		if ((boneIndices==null) != (ov.boneIndices==null)) {
+			return false;
+		}
+
+		if (boneIndices != null &&
+		    boneIndices != ov.boneIndices && !boneIndices.equals4(ov.boneIndices) &&
+		    boneWeights != ov.boneWeights && !boneWeights.equals4(ov.boneWeights)) {
 			return false;
 		}
 		return true;
@@ -91,5 +112,11 @@ public class Vertex {
 
 	public Vec4d getTexCoord() {
 		return texCoord;
+	}
+	public Vec4d getBoneIndices() {
+		return boneIndices;
+	}
+	public Vec4d getBoneWeights() {
+		return boneWeights;
 	}
 }

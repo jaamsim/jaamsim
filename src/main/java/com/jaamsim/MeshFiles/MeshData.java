@@ -50,12 +50,15 @@ public class MeshData {
 
 	public static class SubMeshData {
 
-		public ArrayList<Vec4d> verts = new ArrayList<Vec4d>();
-		public ArrayList<Vec4d> texCoords = new ArrayList<Vec4d>();
-		public ArrayList<Vec4d> normals = new ArrayList<Vec4d>();
+		public ArrayList<Vec4d> verts;
+		public ArrayList<Vec4d> texCoords;
+		public ArrayList<Vec4d> normals;
 		public int[] indices;
 
 		public ConvexHull hull;
+
+		public ArrayList<Vec4d> boneIndices;
+		public ArrayList<Vec4d> boneWeights;
 	}
 
 	public static class SubLineData {
@@ -72,6 +75,8 @@ public class MeshData {
 		public int armatureIndex;
 		public Mat4d transform;
 		public Mat4d normalTrans;
+		public int[] boneMapper;
+		public String[] boneNames;
 	}
 
 	public static class SubLineInstance {
@@ -93,13 +98,35 @@ public class MeshData {
 
 	private boolean _anyTransparent = false;
 
-	public void addSubMeshInstance(int meshIndex, int matIndex, int armIndex, Mat4d mat) {
+	public void addSubMeshInstance(int meshIndex, int matIndex, int armIndex, Mat4d mat, String[] boneNames) {
 		Mat4d trans = new Mat4d(mat);
 		SubMeshInstance inst = new SubMeshInstance();
 		inst.subMeshIndex = meshIndex;
 		inst.materialIndex = matIndex;
 		inst.armatureIndex = armIndex;
 		inst.transform = trans;
+		inst.boneNames = boneNames;
+
+		if (boneNames != null) {
+			assert(armIndex != -1);
+			// Build up the mapping of armature bone indices into mesh bone indices
+			// (these will often be the same, but this is part of how blender binds meshes to armatures so let's just make sure)
+			inst.boneMapper = new int[boneNames.length];
+			Armature arm = _armatures.get(armIndex);
+			ArrayList<Armature.Bone> bones = arm.getAllBones();
+			for (int i = 0; i < boneNames.length; ++i) {
+				// Find this bone in the armature
+				boolean boneFound = false;
+				for (int j = 0; j < bones.size(); ++j) {
+					if (bones.get(j).getName().equals(boneNames[i])) {
+						inst.boneMapper[i] = j;
+						boneFound = true;
+						break;
+					}
+				}
+				assert(boneFound);
+			}
+		}
 
 		Mat4d normalMat = trans.inverse();
 		normalMat.transpose4();
@@ -157,17 +184,27 @@ public class MeshData {
 		// Assume if there is one tex coordinate, there will be all of them
 		boolean hasTexCoords = vertices.get(0).getTexCoord() != null;
 
+		boolean hasBoneInfo = vertices.get(0).getBoneIndices() != null;
+
 		sub.verts = new ArrayList<Vec4d>(vertices.size());
 		sub.normals = new ArrayList<Vec4d>(vertices.size());
 
 		if (hasTexCoords) {
-			sub.texCoords = new ArrayList<Vec4d>();
+			sub.texCoords = new ArrayList<Vec4d>(vertices.size());
+		}
+		if (hasBoneInfo) {
+			sub.boneIndices = new ArrayList<Vec4d>(vertices.size());
+			sub.boneWeights = new ArrayList<Vec4d>(vertices.size());
 		}
 		for (Vertex v : vertices) {
 			sub.verts.add(v.getPos());
 			sub.normals.add(v.getNormal());
 			if (hasTexCoords) {
 				sub.texCoords.add(v.getTexCoord());
+			}
+			if (hasBoneInfo) {
+				sub.boneIndices.add(v.getBoneIndices());
+				sub.boneWeights.add(v.getBoneWeights());
 			}
 		}
 
