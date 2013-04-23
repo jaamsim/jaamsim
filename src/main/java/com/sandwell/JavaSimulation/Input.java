@@ -63,16 +63,11 @@ public abstract class Input<T> {
 	protected String editedValueString; // new value from edit box
 
 	public Input(String key, String cat, T def) {
-		this(key, cat, "", def);
-	}
-
-	public Input(String key, String cat, String units, T def) {
 		keyword = key;
 		category = cat;
-
 		setDefaultValue(def);
 
-		unitString = units;
+		unitString = "";
 
 		appendable = false;
 		locked = false;

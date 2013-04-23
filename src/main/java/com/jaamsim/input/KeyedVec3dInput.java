@@ -28,7 +28,8 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 	private String timeUnits;
 
 	public KeyedVec3dInput(String key, String cat, String valUnits, String timeUnits) {
-		super(key, cat, valUnits, null);
+		super(key, cat, null);
+		this.setUnits(valUnits);
 		this.timeUnits = timeUnits;
 	}
 

@@ -18,7 +18,8 @@ public class CompatInput extends Input<String> {
 	Entity target;
 
 	public CompatInput(Entity target, String key, String cat, String units, String def) {
-		super(key, cat, units, def);
+		super(key, cat, def);
+		this.setUnits(units);
 		this.target = target;
 	}
 
