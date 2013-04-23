@@ -152,7 +152,12 @@ public class XmlParser  extends DefaultHandler{
 		} else if (booleanArrayTags.contains(name)) {
 			contents = parseBooleanArray();
 		} else if (stringArrayTags.contains(name)) {
-			contents = contentsToStringArray();
+			ArrayList<String> strings = contentsToStringArray();
+			String[] temp = new String[strings.size()];
+			for (int i = 0; i < strings.size(); ++i) {
+				temp[i] = strings.get(i);
+			}
+			contents = temp;
 		} else {
 			contents = contentBuilder.toString().trim();
 		}
