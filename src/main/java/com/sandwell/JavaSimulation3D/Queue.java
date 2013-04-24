@@ -16,9 +16,7 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
-import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
@@ -33,20 +31,12 @@ public class Queue extends DisplayEntity {
 	         example = "Queue1 Spacing { 1 }")
 	private final DoubleInput spacingInput;
 
-	@Keyword(desc = "If TRUE, the program prints a queue log report (.que) consisting of lines summarizing " +
-	                "the contents of the queue every time an object is added to or removed from the queue.",
-	        example = "Queue1 PrintReport { TRUE }")
-	private final BooleanInput printReportInput;
-
 	protected ArrayList<DisplayEntity> itemList;
 
 	@Keyword(desc = "The number of queuing entities in each row.",
 			example = "Queue1 MaxPerLine { 4 }")
 	protected final IntegerInput maxPerLineInput; // maximum items per sub line-up of queue
 
-//	Report
-	protected String reportFileName; //  File name of the report
-	protected FileEntity reportFile;
 
 //	Statistics
 	protected double minElements;
@@ -62,9 +52,6 @@ public class Queue extends DisplayEntity {
 		maxPerLineInput = new IntegerInput("MaxPerLine", "Key Inputs", Integer.MAX_VALUE);
 		maxPerLineInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(maxPerLineInput, true);
-
-		printReportInput = new BooleanInput("PrintReport", "Key Inputs", false);
-		this.addInput(printReportInput, true);
 	}
 
 	public Queue() {
@@ -82,12 +69,6 @@ public class Queue extends DisplayEntity {
 		minElements = Integer.MAX_VALUE;
 		maxElements = 0;
 		avgElements = 0.0;
-
-		//  Initialize reports
-		this.closeReports();
-
-		//  Report Variables
-		reportFileName = InputAgent.getReportDirectory() + InputAgent.getRunName() + "-" + this.getName() + ".que";
 
 		recorderList = new ArrayList<QueueRecorder>();
 		for( QueueRecorder rec : Simulation.getClonesOf( QueueRecorder.class ) ) {
@@ -266,18 +247,6 @@ public class Queue extends DisplayEntity {
 		}
 	}
 
-	// *******************************************************************************************************
-	// MISC SET- AND GET- METHODS
-	// *******************************************************************************************************
-
-	public boolean getReportFlag() {
-		return printReportInput.getValue();
-	}
-
-	public void setReportFileName( String name ) {
-		reportFileName = name;
-	}
-
 	public double getSpacing() {
 		return spacingInput.getValue();
 	}
@@ -342,20 +311,5 @@ public class Queue extends DisplayEntity {
 		anOut.putStringTabs( "Max Elements", 1 );
 		anOut.putStringTabs( "Present Elements", 1 );
 		anOut.newLine();
-	}
-
-	// ******************************************************************************************************
-	// REPORT METHODS
-	// ******************************************************************************************************
-
-
-	/**
-	 * Close the report file
-	 */
-	public void closeReports() {
-		if( reportFile != null ) {
-			reportFile.flush();
-			reportFile.close();
-		}
 	}
 }
