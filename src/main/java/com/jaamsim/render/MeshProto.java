@@ -83,6 +83,7 @@ private class SubMesh {
 	public int _texVar;
 	public int _colorVar;
 	public int _useTexVar;
+	public int _maxNumBonesVar;
 
 	public int _boneMatricesVar;
 
@@ -442,6 +443,8 @@ private void renderSubMesh(SubMesh sub, Material mat, Map<Integer, Integer> vaoM
 		gl.glUniformMatrix4fv(sub._boneMatricesVar, pose.size(), false, poseMatrices, 0);
 	}
 
+	gl.glUniform1i(sub._maxNumBonesVar, (pose == null) ? 0 : 4);
+
 	// Actually draw it
 	//gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 	gl.glDisable(GL2GL3.GL_CULL_FACE);
@@ -558,12 +561,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	boolean hasBoneInfo = data.boneIndices != null;
 
 	SubMesh sub = new SubMesh();
-	if (hasBoneInfo) {
-		sub._progHandle = renderer.getShader(Renderer.ShaderHandle.ANIM_MESH).getProgramHandle();
-	} else
-	{
-		sub._progHandle = renderer.getShader(Renderer.ShaderHandle.MESH).getProgramHandle();
-	}
+	sub._progHandle = renderer.getShader(Renderer.ShaderHandle.MESH).getProgramHandle();
 
 	int[] is = new int[3];
 	gl.glGenBuffers(3, is, 0);
@@ -615,6 +613,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	sub._colorVar = gl.glGetUniformLocation(sub._progHandle, "diffuseColor");
 	sub._texVar = gl.glGetUniformLocation(sub._progHandle, "tex");
 	sub._useTexVar = gl.glGetUniformLocation(sub._progHandle, "useTex");
+	sub._maxNumBonesVar = gl.glGetUniformLocation(sub._progHandle, "maxNumBones");
 
 	// Init textureCoords
 	if (hasTex) {
