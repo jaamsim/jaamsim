@@ -126,7 +126,8 @@ public boolean hasTransparent() {
 @Override
 public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
 
-	_proto.renderTransparent(vaoMap, renderer, _modelMat, _normalMat, cam, _subMeshBounds);
+	// TODO: pass actions here
+	_proto.renderTransparent(vaoMap, renderer, _modelMat, _normalMat, cam, null, _subMeshBounds);
 
 }
 

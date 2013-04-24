@@ -51,6 +51,8 @@ private static class TransSortable implements Comparable<TransSortable> {
 	public Mat4d modelViewMat;
 	public Mat4d normalMat;
 
+	public MeshData.SubMeshInstance subInst;
+
 	@Override
 	public int compareTo(TransSortable o) {
 		// Sort such that largest distance sorts to front of list
@@ -201,10 +203,15 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 			continue;
 		}
 
+		ArrayList<Mat4d> pose = null;
+		if (subInst.armatureIndex != -1) {
+			pose = poses.get(subInst.armatureIndex);
+		}
+
 		subNormalMat.mult4(normalMat, subInst.normalTrans);
 
 		renderSubMesh(subMesh, mat, vaoMap, renderer, subModelViewMat, subNormalMat,
-		              actions, subInst.armatureIndex, subInst.boneMapper, cam);
+		              pose ,subInst.boneMapper, cam);
 	}
 
 	for (MeshData.SubLineInstance subInst : data.getSubLineInstances()) {
@@ -228,7 +235,9 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
         Mat4d modelMat,
         Mat4d normalMat,
-        Camera cam, ArrayList<AABB> subInstBounds) {
+        Camera cam,
+        ArrayList<ActionQueue> actions,
+        ArrayList<AABB> subInstBounds) {
 
 
 	Mat4d viewMat = new Mat4d();
@@ -272,13 +281,31 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 		ts.modelViewMat = subModelView;
 		ts.normalMat = subNormalMat;
 		ts.dist = eyeCenter.z;
+		ts.subInst = subInst;
 		transparents.add(ts);
+	}
+
+	ArrayList<ArrayList<Mat4d>> poses = null;
+	if (actions != null) {
+		ArrayList<Armature> arms = data.getArmatures();
+		// Run the actions through all armatures attached to this mesh
+		poses = new ArrayList<ArrayList<Mat4d>>(arms.size());
+		for (int i = 0; i < arms.size(); ++i) {
+			Armature arm = arms.get(i);
+			ArrayList<Mat4d> pose = arm.getPose(actions);
+			poses.add(pose);
+		}
 	}
 
 	Collections.sort(transparents);
 
 	for (TransSortable ts : transparents) {
-		renderSubMesh(ts.subMesh, ts.mat, vaoMap, renderer, ts.modelViewMat, ts.normalMat, null, -1, null, cam);
+		ArrayList<Mat4d> pose = null;
+		if (ts.subInst.armatureIndex != -1) {
+			pose = poses.get(ts.subInst.armatureIndex);
+		}
+
+		renderSubMesh(ts.subMesh, ts.mat, vaoMap, renderer, ts.modelViewMat, ts.normalMat, pose, ts.subInst.boneMapper, cam);
 	}
 }
 
@@ -343,8 +370,8 @@ private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Rende
 private void renderSubMesh(SubMesh sub, Material mat, Map<Integer, Integer> vaoMap,
                            Renderer renderer, Mat4d modelViewMat,
                            Mat4d normalMat,
-                           ArrayList<Armature.ActionQueue> actions,
-                           int armIndex, int[] boneMap, Camera cam) {
+                           ArrayList<Mat4d> pose,
+                           int[] boneMap, Camera cam) {
 
 	GL2GL3 gl = renderer.getGL();
 
@@ -406,10 +433,7 @@ private void renderSubMesh(SubMesh sub, Material mat, Map<Integer, Integer> vaoM
 
 	// Build up the pose matrices
 
-	if (armIndex != -1) {
-		Armature arm = data.getArmatures().get(armIndex);
-		ArrayList<Mat4d> pose = arm.getPose(actions);
-
+	if (pose != null) {
 		float[] poseMatrices = new float[16*pose.size()];
 		for (int i = 0; i < pose.size(); ++i) {
 			int poseIndex = boneMap[i];
