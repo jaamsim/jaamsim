@@ -42,12 +42,7 @@ public class Armature {
 		public ArrayList<TransKey> transKeys;
 	}
 
-	public static class ActionQueue {
-		public String name;
-		public double time;
-	}
-
-	public static class Action {
+	public static class ArmAction {
 		public String name;
 		public double duration;
 		public ArrayList<Channel> channels = new ArrayList<Channel>();
@@ -98,9 +93,9 @@ public class Armature {
 	}
 
 	private final ArrayList<Bone> bones = new ArrayList<Bone>();
-	private final ArrayList<Action> actions = new ArrayList<Action>();
+	private final ArrayList<ArmAction> actions = new ArrayList<ArmAction>();
 
-	public void addAction(Action act) {
+	public void addAction(ArmAction act) {
 		actions.add(act);
 	}
 
@@ -145,12 +140,12 @@ public class Armature {
 		return bones;
 	}
 
-	public ArrayList<Action> getActions() {
+	public ArrayList<ArmAction> getActions() {
 		return actions;
 	}
 
-	private Action getActionByName(String name) {
-		for (Action a : actions) {
+	private ArmAction getActionByName(String name) {
+		for (ArmAction a : actions) {
 			if (a.name.equals(name))
 				return a;
 		}
@@ -222,17 +217,17 @@ public class Armature {
 	 * @param actions
 	 * @return
 	 */
-	public ArrayList<Mat4d> getPose(ArrayList<ActionQueue> actions) {
+	public ArrayList<Mat4d> getPose(ArrayList<Action.Queue> actions) {
 		if (actions == null) {
-			actions = new ArrayList<ActionQueue>();
+			actions = new ArrayList<Action.Queue>();
 		}
 
 		ArrayList<Mat4d> poseTransforms = new ArrayList<Mat4d>(bones.size());
 		for (int i = 0; i < bones.size(); ++i)
 			poseTransforms.add(new Mat4d());
 
-		for (ActionQueue aq : actions) {
-			Action a = getActionByName(aq.name);
+		for (Action.Queue aq : actions) {
+			ArmAction a = getActionByName(aq.name);
 			if (a == null) {
 				continue;
 			}

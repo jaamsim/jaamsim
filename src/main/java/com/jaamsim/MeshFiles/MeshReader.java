@@ -359,8 +359,8 @@ public class MeshReader {
 		return chan;
 	}
 
-	private Armature.Action parseAction(XmlNode actionNode) {
-		Armature.Action act = new Armature.Action();
+	private Armature.ArmAction parseAction(XmlNode actionNode) {
+		Armature.ArmAction act = new Armature.ArmAction();
 		act.name = actionNode.getAttrib("name");
 		act.duration = Double.parseDouble(actionNode.getAttrib("length"));
 		assert(act.name != null);
@@ -392,7 +392,7 @@ public class MeshReader {
 			if (!child.getTag().equals("Action")) {
 				continue;
 			}
-			Armature.Action act = parseAction(child);
+			Armature.ArmAction act = parseAction(child);
 			arm.addAction(act);
 		}
 

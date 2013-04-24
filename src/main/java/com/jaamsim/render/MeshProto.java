@@ -28,7 +28,6 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec4d;
-import com.jaamsim.render.Armature.ActionQueue;
 
 /**
  * A basic wrapper around mesh data and the OpenGL calls that go with it
@@ -147,7 +146,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
                    Mat4d modelMat,
                    Mat4d normalMat,
                    Camera cam,
-                   ArrayList<ActionQueue> actions,
+                   ArrayList<Action.Queue> actions,
                    ArrayList<AABB> subInstBounds) {
 
 	assert(_isLoadedGPU);
@@ -237,7 +236,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
         Mat4d modelMat,
         Mat4d normalMat,
         Camera cam,
-        ArrayList<ActionQueue> actions,
+        ArrayList<Action.Queue> actions,
         ArrayList<AABB> subInstBounds) {
 
 
