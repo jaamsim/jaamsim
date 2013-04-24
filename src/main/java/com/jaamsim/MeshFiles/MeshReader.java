@@ -142,6 +142,9 @@ public class MeshReader {
 
 	private void parseArmatures() {
 		XmlNode armsNode = _meshObjectNode.findChildTag("Armatures", false);
+		if (armsNode == null) {
+			return; // Armatures are optional
+		}
 		for (XmlNode child : armsNode.children()) {
 			if (!child.getTag().equals("Armature")) {
 				continue;
