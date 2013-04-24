@@ -26,19 +26,21 @@ public class MeshProxy implements RenderProxy {
 	private Vec4d _scale;
 	private long _pickingID;
 	private VisibilityInfo _visInfo;
+	private ArrayList<Action.Queue> _actions;
 
 	private Mesh cached;
 
-	public MeshProxy(MeshProtoKey assetKey, Transform trans, VisibilityInfo visInfo, long pickingID) {
-		this(assetKey, trans, new Vec4d(1, 1, 1, 1.0d), visInfo, pickingID);
+	public MeshProxy(MeshProtoKey assetKey, Transform trans, ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
+		this(assetKey, trans, new Vec4d(1, 1, 1, 1.0d), actions, visInfo, pickingID);
 	}
 
-	public MeshProxy(MeshProtoKey assetKey, Transform trans, Vec4d scale, VisibilityInfo visInfo, long pickingID) {
+	public MeshProxy(MeshProtoKey assetKey, Transform trans, Vec4d scale, ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
 		_assetKey = assetKey;
 		_trans = trans;
 		_scale = scale;
 		_pickingID = pickingID;
 		_visInfo = visInfo;
+		_actions = actions;
 	}
 
 	@Override
@@ -46,7 +48,7 @@ public class MeshProxy implements RenderProxy {
 		if (cached == null) {
 			MeshProto proto = r.getProto(_assetKey);
 
-			cached = new Mesh(_assetKey, proto, _trans, _scale, _visInfo, _pickingID);
+			cached = new Mesh(_assetKey, proto, _trans, _scale, _actions, _visInfo, _pickingID);
 		}
 		outList.add(cached);
 	}

@@ -54,6 +54,7 @@ import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.render.Action;
 import com.jaamsim.render.CameraInfo;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.Future;
@@ -1430,7 +1431,7 @@ public class RenderManager implements DragSourceListener {
 			}
 
 			// Block here until the
-			Object notifier = _renderer.getProtoBoundsLock();
+			Object notifier = _renderer.getMeshLoadLock();
 			while (cachedBounds == null) {
 				synchronized(notifier) {
 					try {
@@ -1443,6 +1444,31 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 		return cachedBounds;
+	}
+
+	public ArrayList<Action.Description> getMeshActions(MeshProtoKey key, boolean block) {
+		ArrayList<Action.Description> cachedActions = _renderer.getMeshActions(key);
+		if (cachedActions == null) {
+			// This has not been loaded yet, queue the renderer to load the asset
+			_renderer.loadAsset(key);
+			if (!block) {
+				return null;
+			}
+
+			// Block here until the
+			Object notifier = _renderer.getMeshLoadLock();
+			while (cachedActions == null) {
+				synchronized(notifier) {
+					try {
+						notifier.wait();
+					} catch (InterruptedException e) {
+
+					}
+				}
+				cachedActions = _renderer.getMeshActions(key);
+			}
+		}
+		return cachedActions;
 	}
 
 	/**

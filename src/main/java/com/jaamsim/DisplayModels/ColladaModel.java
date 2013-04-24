@@ -204,7 +204,7 @@ public class ColladaModel extends DisplayModel {
 			fixedTrans.merge(fixedTrans, new Transform(offset));
 
 
-			cachedProxies.add(new MeshProxy(meshKey, fixedTrans, fixedScale, getVisibilityInfo(),
+			cachedProxies.add(new MeshProxy(meshKey, fixedTrans, fixedScale, null, getVisibilityInfo(),
 					pickingID));
 		}
 

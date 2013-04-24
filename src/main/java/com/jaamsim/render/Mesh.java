@@ -42,18 +42,22 @@ private AABB _bounds;
 private Mat4d _modelMat;
 private Mat4d _normalMat;
 private ArrayList<AABB> _subMeshBounds;
+private ArrayList<Action.Queue> _actions;
 
-public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, VisibilityInfo visInfo, long pickingID) {
-	this(key, proto, trans, new Vec4d(0, 0, 0, 1.0d), visInfo, pickingID);
+public Mesh(MeshProtoKey key, MeshProto proto, Transform trans,
+            ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
+	this(key, proto, trans, new Vec4d(0, 0, 0, 1.0d), actions, visInfo, pickingID);
 }
 
-public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, Vec4d scale, VisibilityInfo visInfo, long pickingID) {
+public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, Vec4d scale,
+            ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
 
 	_trans = new Transform(trans);
 	_proto = proto;
 	_scale = new Vec4d(scale);
 	_key = key;
 	_visInfo = visInfo;
+	_actions = actions;
 
 	_modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
 
@@ -75,7 +79,7 @@ public AABB getBoundsRef() {
 @Override
 public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
 
-	_proto.render(vaoMap, renderer, _modelMat, _normalMat, cam, null, _subMeshBounds);
+	_proto.render(vaoMap, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
 
 	// Debug render of the convex hull
 	if (renderer.debugDrawHulls()) {
@@ -97,7 +101,11 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, 
 
 		MeshData md = _proto.getRawData();
 		for (Armature arm : md.getArmatures()) {
-			DebugUtils.renderArmature(vaoMap, renderer, modelViewMat, arm, null, new Color4d(1, 0, 0), cam);
+			ArrayList<Mat4d> pose = null;
+			if (_actions != null) {
+				pose = arm.getPose(_actions);
+			}
+			DebugUtils.renderArmature(vaoMap, renderer, modelViewMat, arm, pose, new Color4d(1, 0, 0), cam);
 		}
 	}
 }
@@ -127,7 +135,7 @@ public boolean hasTransparent() {
 public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
 
 	// TODO: pass actions here
-	_proto.renderTransparent(vaoMap, renderer, _modelMat, _normalMat, cam, null, _subMeshBounds);
+	_proto.renderTransparent(vaoMap, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
 
 }
 

@@ -114,8 +114,10 @@ public class Renderer {
 	private final Map<MeshProtoKey, MeshProto> _protoCache;
 	private final Map<TessFontKey, TessFont> _fontCache;
 
+	private final Map<MeshProtoKey, ArrayList<Action.Description>> _actionListCache;
+
 	private final HashMap<MeshProtoKey, AABB> _protoBounds;
-	private final Object _protoBoundsLock = new Object();
+	private final Object _meshLoadLock = new Object();
 
 	private final Map<ConvexHullKey, HullProto> _hullCache;
 
@@ -157,6 +159,7 @@ public class Renderer {
 		_hullCache = new HashMap<ConvexHullKey, HullProto>();
 
 		_protoBounds = new HashMap<MeshProtoKey, AABB>();
+		_actionListCache = new HashMap<MeshProtoKey, ArrayList<Action.Description>>();
 
 		_exceptionLogger = new ExceptionLogger();
 
@@ -352,6 +355,12 @@ public class Renderer {
 	public AABB getProtoBounds(MeshProtoKey key) {
 		synchronized (_protoBounds) {
 			return _protoBounds.get(key);
+		}
+	}
+
+	public ArrayList<Action.Description> getMeshActions(MeshProtoKey key) {
+		synchronized(_actionListCache) {
+			return _actionListCache.get(key);
 		}
 	}
 
@@ -726,8 +735,22 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			_protoBounds.put(key, proto.getHull().getAABB(Mat4d.IDENTITY));
 		}
 
-		synchronized(_protoBoundsLock) {
-			_protoBoundsLock.notifyAll();
+		// Build up a list of actions for this mesh
+		ArrayList<Action.Description> ads = new ArrayList<Action.Description>();
+		for (Armature arm : proto.getRawData().getArmatures()) {
+			for (Armature.ArmAction act : arm.getActions()) {
+				Action.Description ad = new Action.Description();
+				ad.name = act.name;
+				ad.duration = act.duration;
+				ads.add(ad);
+			}
+		}
+		synchronized(_actionListCache) {
+			_actionListCache.put(key, ads);
+		}
+
+		synchronized(_meshLoadLock) {
+			_meshLoadLock.notifyAll();
 		}
 
 		_sharedContext.release();
@@ -741,8 +764,8 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 	}
 
-	public Object getProtoBoundsLock() {
-		return _protoBoundsLock;
+	public Object getMeshLoadLock() {
+		return _meshLoadLock;
 	}
 
 	private void loadTessFontImp(TessFontKey key) {

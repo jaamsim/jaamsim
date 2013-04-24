@@ -204,7 +204,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 		}
 
 		ArrayList<Mat4d> pose = null;
-		if (subInst.armatureIndex != -1) {
+		if (subInst.armatureIndex != -1 && poses != null) {
 			pose = poses.get(subInst.armatureIndex);
 		}
 
@@ -301,7 +301,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 	for (TransSortable ts : transparents) {
 		ArrayList<Mat4d> pose = null;
-		if (ts.subInst.armatureIndex != -1) {
+		if (ts.subInst.armatureIndex != -1 && poses != null) {
 			pose = poses.get(ts.subInst.armatureIndex);
 		}
 
