@@ -29,7 +29,7 @@ then
 fi
 
 # Compile
-javac -Xmaxwarns 100000 -Xlint $CLASSPATH $BUILDDIR src/main/java/com/sandwell/*/*.java src/main/java/com/jaamsim/*/*.java src/main/java/com/jaamsim/render/util/*.java > "$LOGFILE" 2>&1
+javac -Xmaxwarns 100000 -Xlint $CLASSPATH $BUILDDIR src/main/java/com/sandwell/*/*.java src/main/java/com/jaamsim/*/*.java src/main/java/com/jaamsim/render/util/*.java src/main/java/com/jaamsim/video/*/*.java > "$LOGFILE" 2>&1
 
 # If there were any errors during compilation, complain
 # test for a non-zero error code
