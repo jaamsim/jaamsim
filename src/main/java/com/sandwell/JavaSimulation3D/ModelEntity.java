@@ -785,10 +785,6 @@ public static class StateRecord {
 		return total;
 	}
 
-	public double getCompletedCycleHoursFor(String state) {
-		return getStateRecordFor(state).getCompletedCycleHours();
-	}
-
 	public double getCompletedCycleHours() {
 		return totalCompletedCycleHours;
 	}
