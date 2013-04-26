@@ -798,14 +798,6 @@ public static class StateRecord {
 	}
 
 	/**
-	 * Returns the amount of time spent in the specified state in current cycle
-	 */
-	public double getCurrentCycleHoursFor( String state ) {
-		StateRecord rec = getStateRecordFor(state);
-		return getCurrentCycleHoursFor(rec);
-	}
-
-	/**
 	 * Return the total hours in current cycle for all the states
 	 */
 	public double getCurrentCycleHours() {
