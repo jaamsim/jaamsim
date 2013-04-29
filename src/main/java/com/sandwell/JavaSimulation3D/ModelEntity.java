@@ -885,18 +885,6 @@ public static class StateRecord {
 	}
 
 	/**
-	 * Return the percentage of time for the given status
-	 */
-	public double getPercentageOfTimeForState( String aState ) {
-		if( getTotalHours() > 0.0 ) {
-			return ((this.getTotalHoursFor( aState ) / getTotalHours()) * 100.0);
-		}
-		else {
-			return 0.0;
-		}
-	}
-
-	/**
 	 * Returns the number of hours the entity is in use.
 	 * *!*!*!*! OVERLOAD !*!*!*!*
 	 */
