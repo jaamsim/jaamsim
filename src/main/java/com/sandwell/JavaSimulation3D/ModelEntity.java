@@ -885,25 +885,6 @@ public static class StateRecord {
 	}
 
 	/**
-	 * Return the commitment
-	 */
-	public double getCommitment() {
-		return 1.0 - this.getFractionOfTimeForState( "Idle" );
-	}
-
-	/**
-	 * Return the fraction of time for the given status
-	 */
-	public double getFractionOfTimeForState( String aState ) {
-		if( getTotalHours() > 0.0 ) {
-			return ((this.getTotalHoursFor( aState ) / getTotalHours()) );
-		}
-		else {
-			return 0.0;
-		}
-	}
-
-	/**
 	 * Return the percentage of time for the given status
 	 */
 	public double getPercentageOfTimeForState( String aState ) {
