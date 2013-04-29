@@ -801,14 +801,7 @@ public static class StateRecord {
 	 * Return the total hours in current cycle for all the states
 	 */
 	public double getCurrentCycleHours() {
-		double total = getCurrentTime() - timeOfLastStateChange;
-		for (int i = 0; i < getStateList().size(); i++) {
-			String state = (String) getStateList().get(i);
-			StateRecord rec = getStateRecordFor(state);
-			if (rec != null)
-				total += rec.getCurrentCycleHours();
-		}
-		return total;
+		return getCurrentTime() - startOfCycleTime;
 	}
 
 	public double getStartCycleTime() {
