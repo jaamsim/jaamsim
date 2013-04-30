@@ -575,7 +575,7 @@ public static class StateRecord {
 		return totalHours;
 	}
 
-	public double getCompletedCycleHours() {
+	double getCompletedCycleHours() {
 		return completedCycleHours;
 	}
 
@@ -779,6 +779,13 @@ public static class StateRecord {
 
 	public double getCompletedCycleHours() {
 		return totalCompletedCycleHours;
+	}
+
+	public double getCompletedCycleHours(StateRecord state) {
+		if (state == null)
+			return 0.0d;
+
+		return state.getCompletedCycleHours();
 	}
 
 	public double getCurrentCycleHoursFor(StateRecord state) {
