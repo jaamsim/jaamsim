@@ -159,6 +159,7 @@ public class ModelEntity extends DisplayEntity {
 	protected double workingHours;                    // Accumulated working time spent in working states
 	private double timeOfLastStateChange;
 	private int numberOfCompletedCycles;
+	private double startOfCollectStatsTime;
 	private double startOfCycleTime;
 	private double maxCycleDur;
 	private double minCycleDur;
@@ -276,6 +277,7 @@ public class ModelEntity extends DisplayEntity {
 		idle.lastStartTimeInState = getCurrentTime();
 		idle.secondLastStartTimeInState = getCurrentTime();
 		initStateMap();
+		startOfCollectStatsTime = getCurrentTime();
 	}
 
 	/**
@@ -342,6 +344,7 @@ public class ModelEntity extends DisplayEntity {
 		if( downtimeIATDistribution.getValue() != null ) {
 			downtimeIATDistribution.getValue().initialize();
 		}
+		startOfCollectStatsTime = getCurrentTime();
 	}
 
 	public int getNumberOfCompletedCycles() {
@@ -634,6 +637,7 @@ public static class StateRecord {
 		maxCycleDur = 0.0d;
 		minCycleDur = Double.POSITIVE_INFINITY;
 		totalCompletedCycleHours = 0.0d;
+		startOfCollectStatsTime = getCurrentTime();
 	}
 
 	/**
@@ -680,11 +684,13 @@ public static class StateRecord {
 			each.totalHours = 0.0d;
 			each.completedCycleHours = 0.0d;
 		}
+
 		numberOfCompletedCycles = 0;
 
 		maxCycleDur = 0.0d;
 		minCycleDur = Double.POSITIVE_INFINITY;
 		totalCompletedCycleHours = 0.0d;
+		startOfCollectStatsTime = getCurrentTime();
 	}
 
 	/**
@@ -768,16 +774,7 @@ public static class StateRecord {
 	}
 
 	public double getTotalHours() {
-		double total = getCurrentTime() - timeOfLastStateChange;
-
-		for (int i = 0; i < getStateList().size(); i++) {
-			String state = (String) getStateList().get(i);
-			StateRecord rec = getStateRecordFor(state);
-			if (rec != null)
-				total += rec.getTotalHours();
-		}
-
-		return total;
+		return getCurrentTime() - startOfCollectStatsTime;
 	}
 
 	public double getCompletedCycleHours() {
