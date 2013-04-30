@@ -24,8 +24,7 @@ private double datumTime = 0.0d;
 private double datumVal = 0.0d;
 private double datumRate = 0.0d;
 
-public TVV() {
-}
+public TVV() {}
 
 public double getValueAtTime(double time) {
 	double dt = time - datumTime;
@@ -38,6 +37,9 @@ public double getValueAtTime(double time) {
 }
 
 public void setValue(double time, double val) {
+	// Clear the value if it is essentially 0.0
+	if (Tester.equalCheckTolerance(val, 0.0d))
+		val = 0.0;
 	this.set(time, val, datumRate);
 }
 
@@ -47,18 +49,17 @@ public void setRate(double time, double rate) {
 	if( Tester.equalCheckTolerance(rate, 0.0d) )
 	    rate = 0;
 
-	set(time, getValueAtTime(time), rate);
+	double newDatum = getValueAtTime(time);
+	if (Tester.equalCheckTolerance(newDatum, 0.0d))
+		newDatum = 0.0;
+
+	set(time, newDatum, rate);
 }
 
 public void set(double time, double val, double rate) {
 	datumVal = val;
 	datumRate = rate;
 	datumTime = time;
-
-	// Clear the value if it is essentially 0.0
-	if( Tester.equalCheckTolerance(datumVal, 0.0d) ) {
-		datumVal = 0.0;
-	}
 }
 
 public double getRate() {
