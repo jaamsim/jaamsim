@@ -48,6 +48,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
 
+import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.MeshFiles.MeshReader;
 import com.jaamsim.collada.ColParser;
@@ -1164,13 +1165,13 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 					perf.append(" SceneTime: ").append(_sceneTimeMS);
 					TessFont defFont = getTessFont(_defaultBoldFontKey);
 					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
-					                                     10, 10, 15, false, false, VisibilityInfo.ALWAYS);
+					                                     10, 10, 15, false, false, DisplayModel.ALWAYS);
 					os.render(_window.getVAOMap(), Renderer.this,
 					          _window.getViewableWidth(), _window.getViewableHeight());
 
 					// Also draw this window's debug string
 					os = new OverlayString(defFont, _window.getDebugString(), ColourInput.BLACK,
-					                       10, 10, 30, false, false, VisibilityInfo.ALWAYS);
+					                       10, 10, 30, false, false, DisplayModel.ALWAYS);
 					os.render(_window.getVAOMap(), Renderer.this,
 					          _window.getViewableWidth(), _window.getViewableHeight());
 

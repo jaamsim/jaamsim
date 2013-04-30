@@ -30,7 +30,9 @@ import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public abstract class DisplayModel extends Entity {
-	private VisibilityInfo visInfo = VisibilityInfo.ALWAYS;
+	public static final VisibilityInfo ALWAYS = new VisibilityInfo(null, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+	private VisibilityInfo visInfo = ALWAYS;
 
 	private ChangeWatcher graphicsDirtier = new ChangeWatcher();
 

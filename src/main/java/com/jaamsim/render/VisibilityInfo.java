@@ -20,7 +20,6 @@ import com.jaamsim.ui.View;
 
 public class VisibilityInfo {
 	private static final int[] ALL_VIEWS = new int[0];
-	public static VisibilityInfo ALWAYS = new VisibilityInfo(null, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
 	private final int[] viewIDs;
 	private final double minDist;
