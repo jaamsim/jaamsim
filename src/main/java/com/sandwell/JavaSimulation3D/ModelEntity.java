@@ -903,13 +903,6 @@ public static class StateRecord {
 		return stateList;
 	}
 
-	/**
-	 * Return total number of states
-	 */
-	public int getNumberOfStates() {
-		return stateMap.size();
-	}
-
 	// *******************************************************************************************************
 	// MAINTENANCE METHODS
 	// *******************************************************************************************************
