@@ -14,8 +14,6 @@
  */
 package com.jaamsim.DisplayModels;
 
-import java.util.ArrayList;
-
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.VisibilityInfo;
@@ -50,7 +48,7 @@ public abstract class DisplayModel extends Entity {
 	private final Vec3dInput modelScale;
 
 	{
-		visibleViews = new EntityListInput<View>(View.class, "VisibleViews", "Basic Graphics", new ArrayList<View>());
+		visibleViews = new EntityListInput<View>(View.class, "VisibleViews", "Basic Graphics", null);
 		this.addInput(visibleViews, true);
 
 		DoubleVector defSize = new DoubleVector(2);
@@ -87,11 +85,6 @@ public abstract class DisplayModel extends Entity {
 		super.updateForInput( in );
 
 		if (in == visibleViews || in == drawRange) {
-			// Cache the visibility info for performance reasons
-			ArrayList<Integer> viewIDs = new ArrayList<Integer>();
-			for (View v : visibleViews.getValue()) {
-				viewIDs.add(v.getID());
-			}
 			double minDist = drawRange.getValue().get(0);
 			double maxDist = drawRange.getValue().get(1);
 			// It's possible for the distance to be behind the camera, yet have the object visible (distance is to center)
@@ -99,7 +92,7 @@ public abstract class DisplayModel extends Entity {
 			if (minDist == 0.0) {
 				minDist = Double.NEGATIVE_INFINITY;
 			}
-			visInfo = new VisibilityInfo(viewIDs, minDist, maxDist);
+			visInfo = new VisibilityInfo(visibleViews.getValue(), minDist, maxDist);
 		}
 
 		setGraphicsDataDirty();

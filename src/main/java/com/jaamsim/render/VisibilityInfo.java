@@ -16,16 +16,26 @@ package com.jaamsim.render;
 
 import java.util.ArrayList;
 
+import com.jaamsim.ui.View;
+
 public class VisibilityInfo {
+	private static final int[] ALL_VIEWS = new int[0];
+	public static VisibilityInfo ALWAYS = new VisibilityInfo(null, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
-	public static VisibilityInfo ALWAYS = new VisibilityInfo(new ArrayList<Integer>(), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-
-	private final ArrayList<Integer> viewIDs;
+	private final int[] viewIDs;
 	private final double minDist;
 	private final double maxDist;
 
-	public VisibilityInfo(ArrayList<Integer> viewIDs, double minDist, double maxDist) {
-		this.viewIDs = viewIDs;
+	public VisibilityInfo(ArrayList<View> views, double minDist, double maxDist) {
+		if (views == null || views.size() == 0) {
+			viewIDs = ALL_VIEWS;
+		}
+		else {
+			viewIDs = new int[views.size()];
+			for (int i = 0; i < views.size(); i++)
+				viewIDs[i] = views.get(i).getID();
+		}
+
 		this.minDist = minDist;
 		this.maxDist = maxDist;
 	}
@@ -35,18 +45,18 @@ public class VisibilityInfo {
 		if (dist < minDist || dist > maxDist)
 			return false;
 
-		// If no limitation on views, we must be visible
-		if (viewIDs == null || viewIDs.size() == 0)
-			return true;
-
-		return viewIDs.contains(viewID);
+		return isVisible(viewID);
 	}
 
 	public final boolean isVisible(int viewID) {
 		// If no limitation on views, we must be visible
-		if (viewIDs == null || viewIDs.size() == 0)
+		if (viewIDs.length == 0)
 			return true;
 
-		return viewIDs.contains(viewID);
+		for (int i = 0; i < viewIDs.length; i++) {
+			if (viewIDs[i] == viewID)
+				return true;
+		}
+		return false;
 	}
 }
