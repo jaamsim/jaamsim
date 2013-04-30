@@ -20,13 +20,33 @@ public class VisibilityInfo {
 
 	public static VisibilityInfo ALWAYS = new VisibilityInfo(new ArrayList<Integer>(), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
-	public final ArrayList<Integer> viewIDs;
-	public final double minDist;
-	public final double maxDist;
+	private final ArrayList<Integer> viewIDs;
+	private final double minDist;
+	private final double maxDist;
 
 	public VisibilityInfo(ArrayList<Integer> viewIDs, double minDist, double maxDist) {
 		this.viewIDs = viewIDs;
 		this.minDist = minDist;
 		this.maxDist = maxDist;
+	}
+
+	public final boolean isVisible(int viewID, double dist) {
+		// Test the distance is in the visible range
+		if (dist < minDist || dist > maxDist)
+			return false;
+
+		// If no limitation on views, we must be visible
+		if (viewIDs == null || viewIDs.size() == 0)
+			return true;
+
+		return viewIDs.contains(viewID);
+	}
+
+	public final boolean isVisible(int viewID) {
+		// If no limitation on views, we must be visible
+		if (viewIDs == null || viewIDs.size() == 0)
+			return true;
+
+		return viewIDs.contains(viewID);
 	}
 }

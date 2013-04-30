@@ -139,12 +139,6 @@ public class DebugLine implements Renderable {
 
 	@Override
 	public boolean renderForView(int viewID, double dist) {
-		if (dist < _visInfo.minDist || dist > _visInfo.maxDist) {
-			return false;
-		}
-
-		if (_visInfo.viewIDs == null || _visInfo.viewIDs.size() == 0) return true; //Default to always visible
-		return _visInfo.viewIDs.contains(viewID);
+		return _visInfo.isVisible(viewID, dist);
 	}
-
 }

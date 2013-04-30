@@ -141,8 +141,6 @@ public class OverlayString implements OverlayRenderable {
 
 	@Override
 	public boolean renderForView(int viewID) {
-		if (_visInfo.viewIDs == null || _visInfo.viewIDs.size() == 0) return true; //Default to always visible
-		return _visInfo.viewIDs.contains(viewID);
+		return _visInfo.isVisible(viewID);
 	}
-
 }
