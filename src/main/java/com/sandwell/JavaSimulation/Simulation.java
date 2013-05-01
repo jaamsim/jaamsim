@@ -61,7 +61,7 @@ import com.sandwell.JavaSimulation3D.GUIFrame;
  *   <tr><td>Play (resume)</td><td>resume()</td><td>RUNNING</td></tr>
  * </table>
  */
-public abstract class Simulation extends Entity {
+public class Simulation extends Entity {
 	@Keyword(desc = "The initialization period for the simulation run. The model will " +
 	                "run for the initialization period and then clear the statistics " +
 	                "and execute for the specified run duration. The total length of the " +
@@ -235,7 +235,7 @@ public abstract class Simulation extends Entity {
 	 *	Constructor for the Simulation
 	 *  Protected makes this a 'singleton' class -- only one instance of it exists.  is instantiated through 'getSimulation()' method.
 	 */
-	protected Simulation() {
+	public Simulation() {
 		Simulation.simState = SIM_STATE_UNCONFIGURED;
 		EventManager.setSimulation(this);
 

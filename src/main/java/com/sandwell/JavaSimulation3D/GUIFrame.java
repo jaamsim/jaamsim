@@ -1286,7 +1286,8 @@ public class GUIFrame extends JFrame {
 		GUIFrame gui = GUIFrame.instance();
 		gui.updateForSimulationState();
 
-		GraphicSimulation gsim = new GraphicSimulation();
+		Simulation gsim = new Simulation();
+		DisplayEntity.setSimulation(gsim);
 		gui.setTitle(Simulation.getModelName());
 		gsim.setInputName("Simulation");
 

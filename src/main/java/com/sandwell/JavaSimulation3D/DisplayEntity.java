@@ -40,6 +40,7 @@ import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
+import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation.Vector;
 
@@ -51,7 +52,7 @@ import com.sandwell.JavaSimulation.Vector;
 public class DisplayEntity extends Entity {
 	private static final ArrayList<DisplayEntity> allInstances;
 
-	public static GraphicSimulation simulation;
+	public static Simulation simulation;
 
 	// A 'dirty' state tracker
 	private ChangeWatcher graphicsDirtier = new ChangeWatcher();
@@ -238,7 +239,7 @@ public class DisplayEntity extends Entity {
 	 * Sets the Graphic Simulation object for the entity.
 	 * @param newSimulation - states the new simulation the entity is controled by
 	 */
-	public static void setSimulation( GraphicSimulation newSimulation ) {
+	public static void setSimulation(Simulation newSimulation) {
 		simulation = newSimulation;
 	}
 
