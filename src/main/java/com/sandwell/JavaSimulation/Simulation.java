@@ -144,6 +144,8 @@ public abstract class Simulation extends Entity {
 	private ArrayList<EventTraceRecord> eventBuffer;
 	private long bufferTime; // Internal sim time buffer has been filled to
 
+	private static String modelName = "JaamSim";
+
 	/** the current simulation state */
 	protected static int simState;
 	/** model was executed, but no configuration performed */
@@ -673,6 +675,14 @@ public abstract class Simulation extends Entity {
 	/** retrieves the current value for speedup factor for real time execution mode */
 	public int getRealTimeFactor() {
 		return realTimeFactor.getValue();
+	}
+
+	public static void setModelName(String newModelName) {
+		modelName = newModelName;
+	}
+
+	public static String getModelName() {
+		return modelName;
 	}
 
 	/** returns the current state of the simulation. One of <br>

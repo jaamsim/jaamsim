@@ -224,7 +224,7 @@ public class GUIFrame extends JFrame {
 		FrameBox.timeUpdate(0.0d);
 
 		// Clear the title bar
-		setTitle(DisplayEntity.simulation.getModelName());
+		setTitle(Simulation.getModelName());
 
 		// Clear the status bar
 		setProgress( 0 );
@@ -918,7 +918,7 @@ public class GUIFrame extends JFrame {
 		lastValue = val;
 
 		if (Simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
-			String title = String.format("%d%% %s - %s", val, DisplayEntity.simulation.getModelName(), InputAgent.getRunName());
+			String title = String.format("%d%% %s - %s", val, Simulation.getModelName(), InputAgent.getRunName());
 			setTitle(title);
 		}
 	}
@@ -1287,7 +1287,7 @@ public class GUIFrame extends JFrame {
 		gui.updateForSimulationState();
 
 		GraphicSimulation gsim = new GraphicSimulation();
-		gui.setTitle(gsim.getModelName());
+		gui.setTitle(Simulation.getModelName());
 		gsim.setInputName("Simulation");
 
 		System.out.println( "Simulation Environment Loaded" );

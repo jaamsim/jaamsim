@@ -993,7 +993,7 @@ public class InputAgent {
 			System.out.println("Configuration File Loaded");
 
 			// show the present state in the user interface
-			gui.setTitle( DisplayEntity.simulation.getModelName() + " - " + InputAgent.getRunName() );
+			gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
 			gui.updateForSimulationState();
 		}
 		catch( Throwable t ) {
@@ -1089,7 +1089,7 @@ public class InputAgent {
 		InputAgent.setConfigFileName(Util.fileShortName(fileName));
 
 		// Set the title bar to match the new run name
-		gui.setTitle( DisplayEntity.simulation.getModelName() + " - " + InputAgent.getRunName() );
+		gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
 
 		// close the window
 		//dispose();

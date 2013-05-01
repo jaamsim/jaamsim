@@ -25,7 +25,6 @@ import com.sandwell.JavaSimulation.Simulation;
  * Integrates with GUIFrame and OrbitBehaviour to provide user interaction.
  */
 public class GraphicSimulation extends Simulation {
-	protected String modelName = "Transportation Logistics Simulator";
 
 	/**
 	 *  Constructor for the Graphic Simulation.
@@ -37,11 +36,4 @@ public class GraphicSimulation extends Simulation {
 		DisplayEntity.setSimulation( this );
 	}
 
-	public void setModelName( String newModelName ) {
-		modelName = newModelName;
-	}
-
-	public String getModelName() {
-		return modelName;
-	}
 }

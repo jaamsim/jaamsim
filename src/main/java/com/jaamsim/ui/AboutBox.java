@@ -23,7 +23,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import com.sandwell.JavaSimulation3D.DisplayEntity;
+import com.sandwell.JavaSimulation.Simulation;
 
 /**
  * Class to display information about model objects.
@@ -51,7 +51,7 @@ public class AboutBox extends FrameBox implements ActionListener {
 		constraints.insets = new Insets( 15, 75, 0, 75 );
 
 		// display the model's name
-		JLabel lab = new JLabel(DisplayEntity.simulation.getModelName());
+		JLabel lab = new JLabel(Simulation.getModelName());
 		lab.setFont(boldFont);
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );
