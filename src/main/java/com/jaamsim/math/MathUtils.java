@@ -82,50 +82,30 @@ public static double bound(double val, double min, double max) {
  */
 public static Mat4d RaySpace(Ray r) {
 
-	// Create a new orthonormal basis.
-	Vec4d basisSeed = Vec4d.Y_AXIS;
-	if (MathUtils.near(basisSeed.dot3(r.getDirRef()), 1) ||
-		MathUtils.near(basisSeed.dot3(r.getDirRef()), -1)) {
-		// The ray is nearly parallel to Y
-		basisSeed = Vec4d.X_AXIS; // So let's build our new basis from X instead
-	}
-
-	Vec4d[] newBasis = new Vec4d[3];
-	newBasis[0] = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-	newBasis[0].cross3(r.getDirRef(), basisSeed);
-	newBasis[0].normalize3();
-	newBasis[0].w = 0;
-
-	newBasis[1] = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-	newBasis[1].cross3(r.getDirRef(), newBasis[0]);
-	newBasis[1].normalize3();
-	newBasis[1].w = 0;
-
-	newBasis[2] = r.getDirRef();
+	// Create a new orthonormal basis starting with the y-axis, if the ray is
+	// nearly parallel to Y, build our new basis from X instead
+	Vec3d t = new Vec3d(0.0d, 1.0d, 0.0d);
+	double dist = Math.abs(t.dot3(r.getDirRef()));
+	if (MathUtils.near(dist, 1.0d))
+		t.set3(1.0d, 0.0d, 0.0d);
 
 	Mat4d ret = new Mat4d();
-	// Use the new basis to populate the rows of the return matrix
-	ret.d00 = newBasis[0].x;
-	ret.d01 = newBasis[0].y;
-	ret.d02 = newBasis[0].z;
 
-	ret.d10 = newBasis[1].x;
-	ret.d11 = newBasis[1].y;
-	ret.d12 = newBasis[1].z;
+	// Calculate a new basis to populate the rows of the return matrix
+	t.cross3(r.getDirRef(), t);
+	t.normalize3();
+	ret.d00 = t.x; ret.d01 = t.y; ret.d02 = t.z;
 
-	ret.d20 = newBasis[2].x;
-	ret.d21 = newBasis[2].y;
-	ret.d22 = newBasis[2].z;
+	t.cross3(r.getDirRef(), t);
+	t.normalize3();
+	ret.d10 = t.x; ret.d11 = t.y; ret.d12 = t.z;
 
-	ret.d33 = 1;
+	t.set3(r.getDirRef());
+	ret.d20 = t.x; ret.d21 = t.y; ret.d22 = t.z;
 
 	// Now use this rotation matrix to calculate the rotated translation part
-	Vec4d newTrans = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-	newTrans.mult4(ret, r.getStartRef());
-
-	ret.d03 = -newTrans.x;
-	ret.d13 = -newTrans.y;
-	ret.d23 = -newTrans.z;
+	t.mult3(ret, r.getStartRef());
+	ret.d03 = -t.x; ret.d13 = -t.y; ret.d23 = -t.z;
 
 	return ret;
 }
