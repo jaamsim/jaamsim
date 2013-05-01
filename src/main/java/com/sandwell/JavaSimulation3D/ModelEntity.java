@@ -571,7 +571,7 @@ public static class StateRecord {
 		name = state;
 	}
 
-	public double getTotalHours() {
+	double getTotalHours() {
 		return totalHours;
 	}
 
@@ -766,6 +766,9 @@ public static class StateRecord {
 	}
 
 	public double getTotalHours(StateRecord state) {
+		if (state == null)
+			return 0.0d;
+
 		double hours = state.getTotalHours();
 		if (presentState == state)
 			hours += getCurrentTime() - timeOfLastStateChange;
@@ -1483,12 +1486,7 @@ public static class StateRecord {
 		// print fraction of time per state
 		for (int i = 0; i < getStateList().size(); i++) {
 			String state = (String) getStateList().get(i);
-			StateRecord rec = getState(state);
-			double hoursFraction = 0.0d;
-
-			if (rec != null)
-				hoursFraction = getTotalHours(rec)/total;
-
+			double hoursFraction = getTotalHours(getState(state))/total;
 			anOut.format("%.1f%%\t", hoursFraction * 100.0d);
 			columnValues.add(hoursFraction);
 		}
