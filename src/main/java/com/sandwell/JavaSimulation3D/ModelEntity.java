@@ -579,7 +579,7 @@ public static class StateRecord {
 		return completedCycleHours;
 	}
 
-	public double getCurrentCycleHours() {
+	double getCurrentCycleHours() {
 		return currentCycleHours;
 	}
 
@@ -789,6 +789,9 @@ public static class StateRecord {
 	}
 
 	public double getCurrentCycleHours(StateRecord state) {
+		if (state == null)
+			return 0.0d;
+
 		double hours = state.getCurrentCycleHours();
 		if (presentState == state)
 			hours += getCurrentTime() - timeOfLastStateChange;
