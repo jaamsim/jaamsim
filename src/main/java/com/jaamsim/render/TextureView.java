@@ -58,6 +58,7 @@ public class TextureView implements Renderable {
 	static private int progHandle;
 	static private int modelViewProjMatVar;
 	static private int normalMatVar;
+	static private int bindSpaceMatVar;
 	static private int lightDirVar;
 	static private int texVar;
 
@@ -141,6 +142,7 @@ public class TextureView implements Renderable {
 
 		modelViewProjMatVar = gl.glGetUniformLocation(progHandle, "modelViewProjMat");
 		normalMatVar = gl.glGetUniformLocation(progHandle, "normalMat");
+		bindSpaceMatVar = gl.glGetUniformLocation(progHandle, "bindSpaceMat");
 		lightDirVar = gl.glGetUniformLocation(progHandle, "lightDir");
 		texVar = gl.glGetUniformLocation(progHandle, "tex");
 		hasTexVar = gl.glGetUniformLocation(progHandle, "useTex");
@@ -236,6 +238,7 @@ public class TextureView implements Renderable {
 
 		gl.glUniformMatrix4fv(modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
 		gl.glUniformMatrix4fv(normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
+		gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(new Mat4d()), 0);
 
 		gl.glUniform1i(hasTexVar, 1);
 

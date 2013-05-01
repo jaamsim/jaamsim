@@ -74,6 +74,7 @@ private class SubMesh {
 	public int _progHandle;
 
 	public int _modelViewProjMatVar;
+	public int _bindSpaceMatVar;
 	public int _normalMatVar;
 	public int _lightDirVar;
 	public int _texVar;
@@ -361,12 +362,6 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Ma
                            ArrayList<Mat4d> pose,
                            Camera cam) {
 
-	Mat4d subModelViewMat = new Mat4d();
-	subModelViewMat.mult4(modelViewMat, subInst.transform);
-
-	Mat4d subNormalMat = new Mat4d();
-	subNormalMat.mult4(normalMat, subInst.normalTrans);
-
 	Material mat = _materials.get(subInst.materialIndex);
 
 	GL2GL3 gl = renderer.getGL();
@@ -382,13 +377,13 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Ma
 	gl.glUseProgram(prog);
 
 	// Setup uniforms for this object
-	Mat4d modelViewProjMat = new Mat4d(subModelViewMat);
+	Mat4d modelViewProjMat = new Mat4d(modelViewMat);
 
-	Mat4d projMat = cam.getProjMat4d();
-	modelViewProjMat.mult4(projMat, modelViewProjMat);
+	modelViewProjMat.mult4(cam.getProjMat4d(), modelViewProjMat);
 
 	gl.glUniformMatrix4fv(subMesh._modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
-	gl.glUniformMatrix4fv(subMesh._normalMatVar, 1, false, RenderUtils.MarshalMat4d(subNormalMat), 0);
+	gl.glUniformMatrix4fv(subMesh._normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
+	gl.glUniformMatrix4fv(subMesh._bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.transform), 0);
 
 	Vec4d lightVect = new Vec4d(-0.5f,  -0.2f, -0.5,  0);
 	lightVect.normalize3();
@@ -603,6 +598,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 	// Bind the shader variables
 	sub._modelViewProjMatVar = gl.glGetUniformLocation(sub._progHandle, "modelViewProjMat");
+	sub._bindSpaceMatVar = gl.glGetUniformLocation(sub._progHandle, "bindSpaceMat");
 	sub._normalMatVar = gl.glGetUniformLocation(sub._progHandle, "normalMat");
 	sub._lightDirVar = gl.glGetUniformLocation(sub._progHandle, "lightDir");
 	sub._colorVar = gl.glGetUniformLocation(sub._progHandle, "diffuseColor");

@@ -14,6 +14,7 @@
  */
 #version 130
 
+uniform mat4 bindSpaceMat;
 uniform mat4 modelViewProjMat;
 uniform mat4 normalMat;
 
@@ -41,19 +42,27 @@ void main()
     nor.xyz = normalize(normal.xyz);
     nor.w = 0;
 
+    vec4 bindSpacePos = bindSpaceMat * position;
+    vec4 bindSpaceNor = bindSpaceMat * nor;
+
     for (int b = 0; b < maxNumBones; ++b)
     {
         int boneIndex = int(boneIndices[b]);
-        vec4 partialPos = boneMatrices[boneIndex] * position;
+        mat4 boneMat = mat4(1.0);
+        if (boneIndex != -1) {
+            boneMat = boneMatrices[boneIndex];
+        }
+
+        vec4 partialPos = boneMat * bindSpacePos;
         float weight = boneWeights[b];
         animatedPos.xyz += (partialPos * weight).xyz;
 
-        vec4 partialNormal = boneMatrices[boneIndex] * nor;
+        vec4 partialNormal = boneMatrices[boneIndex] * bindSpaceNor;
         animatedNormal.xyz += (partialNormal * weight).xyz;
     }
     if (maxNumBones == 0) {
-        animatedPos = position;
-        animatedNormal = nor;
+        animatedPos = bindSpacePos;
+        animatedNormal = bindSpaceNor;
     }
 
     gl_Position = modelViewProjMat * animatedPos;
