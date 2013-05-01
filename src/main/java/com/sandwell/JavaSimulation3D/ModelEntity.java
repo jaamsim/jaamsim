@@ -788,7 +788,7 @@ public static class StateRecord {
 		return state.getCompletedCycleHours();
 	}
 
-	public double getCurrentCycleHoursFor(StateRecord state) {
+	public double getCurrentCycleHours(StateRecord state) {
 		double hours = state.getCurrentCycleHours();
 		if (presentState == state)
 			hours += getCurrentTime() - timeOfLastStateChange;
