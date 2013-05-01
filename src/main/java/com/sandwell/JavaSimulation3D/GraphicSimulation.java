@@ -14,13 +14,6 @@
  */
 package com.sandwell.JavaSimulation3D;
 
-import java.util.ArrayList;
-
-import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.input.InputAgent;
-import com.jaamsim.ui.ExceptionBox;
-import com.jaamsim.ui.FrameBox;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Simulation;
 
 /**
@@ -50,49 +43,5 @@ public class GraphicSimulation extends Simulation {
 
 	public String getModelName() {
 		return modelName;
-	}
-
-	@Override
-	public void clear() {
-		super.clear();
-
-		// close warning/error trace file
-		InputAgent.closeLogFile();
-
-		ArrayList<FrameBox> boxes = new ArrayList<FrameBox>(FrameBox.getAllFB());
-		for (FrameBox each : boxes) {
-			each.dispose();
-		}
-
-		EntityPallet.clear();
-
-		if (RenderManager.isGood()) {
-			RenderManager.inst().closeAllWindows();
-		}
-
-		// Kill all entities except simulation
-		while(Entity.getAll().size() > 1) {
-			Entity ent = Entity.getAll().get(Entity.getAll().size()-1);
-			ent.kill();
-		}
-
-		GUIFrame.instance().updateForSimulationState();
-	}
-
-	@Override
-	public void start() {
-		try {
-			super.start();
-			GUIFrame.instance().updateForSimulationState();
-		}
-		catch( Throwable t ) {
-			ExceptionBox.instance().setError(t);
-		}
-	}
-
-	@Override
-	public void updateForSimulationState() {
-		super.updateForSimulationState();
-		GUIFrame.instance().updateForSimulationState();
 	}
 }

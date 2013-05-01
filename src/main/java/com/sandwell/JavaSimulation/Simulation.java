@@ -16,9 +16,12 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.ui.ExceptionBox;
+import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation3D.Clock;
+import com.sandwell.JavaSimulation3D.EntityPallet;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
@@ -341,7 +344,28 @@ public abstract class Simulation extends Entity {
 		// Real time execution state
 		doEndAtThread = null;
 
+		// close warning/error trace file
+		InputAgent.closeLogFile();
+
+		ArrayList<FrameBox> boxes = new ArrayList<FrameBox>(FrameBox.getAllFB());
+		for (FrameBox each : boxes) {
+			each.dispose();
+		}
+
+		EntityPallet.clear();
+
+		if (RenderManager.isGood()) {
+			RenderManager.inst().closeAllWindows();
+		}
+
+		// Kill all entities except simulation
+		while(Entity.getAll().size() > 1) {
+			Entity ent = Entity.getAll().get(Entity.getAll().size()-1);
+			ent.kill();
+		}
+
 		Simulation.simState = SIM_STATE_LOADED;
+		GUIFrame.instance().updateForSimulationState();
 	}
 
 	/**
