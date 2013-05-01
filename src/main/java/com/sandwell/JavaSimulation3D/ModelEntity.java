@@ -571,18 +571,6 @@ public static class StateRecord {
 		name = state;
 	}
 
-	double getTotalHours() {
-		return totalHours;
-	}
-
-	double getCompletedCycleHours() {
-		return completedCycleHours;
-	}
-
-	double getCurrentCycleHours() {
-		return currentCycleHours;
-	}
-
 	public double getLastStartTimeInState() {
 		return lastStartTimeInState;
 	}
@@ -628,7 +616,7 @@ public static class StateRecord {
 		collectPresentHours();
 
 		for ( StateRecord each : stateMap.values() ) {
-			each.initializationHours = each.getTotalHours();
+			each.initializationHours = each.totalHours;
 			each.totalHours = 0.0d;
 			each.completedCycleHours = 0.0d;
 		}
@@ -648,7 +636,7 @@ public static class StateRecord {
 
 		// finalize cycle for each state record
 		for ( StateRecord each : stateMap.values() ) {
-			each.completedCycleHours += each.getCurrentCycleHours();
+			each.completedCycleHours += each.currentCycleHours;
 			each.currentCycleHours = 0.0d;
 		}
 		numberOfCompletedCycles++;
@@ -769,7 +757,7 @@ public static class StateRecord {
 		if (state == null)
 			return 0.0d;
 
-		double hours = state.getTotalHours();
+		double hours = state.totalHours;
 		if (presentState == state)
 			hours += getCurrentTime() - timeOfLastStateChange;
 
@@ -788,14 +776,14 @@ public static class StateRecord {
 		if (state == null)
 			return 0.0d;
 
-		return state.getCompletedCycleHours();
+		return state.completedCycleHours;
 	}
 
 	public double getCurrentCycleHours(StateRecord state) {
 		if (state == null)
 			return 0.0d;
 
-		double hours = state.getCurrentCycleHours();
+		double hours = state.currentCycleHours;
 		if (presentState == state)
 			hours += getCurrentTime() - timeOfLastStateChange;
 
