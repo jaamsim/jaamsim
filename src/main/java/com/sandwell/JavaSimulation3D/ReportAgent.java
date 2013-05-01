@@ -205,7 +205,7 @@ public class ReportAgent extends DisplayEntity {
 
 		// If an executable name exists, print it
 		if( executableName != null ) {
-			anOut.format( "Executable File:  %s\n\n", executableName );
+			anOut.format( "Executable File:\t%s\n\n", executableName );
 		}
 
 		anOut.format( "Simulation Run Label:  %s\n\n", InputAgent.getRunName() );
