@@ -772,6 +772,4 @@ public class Simulation extends Entity {
 	public void setSimState(int state) {
 		simState = state;
 	}
-
-	public void updateForSimulationState() {}
 }

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation3D.EventViewer;
+import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Class EventManager - Sandwell Discrete Event Simulation
@@ -245,7 +246,7 @@ public final class EventManager implements Runnable {
 			EventManager.setEventState(EventManager.EVENTS_STOPPED);
 		}
 		simulation.setSimState(Simulation.SIM_STATE_PAUSED);
-		simulation.updateForSimulationState();
+		GUIFrame.instance().updateForSimulationState();
 
 		// update the event display if there is one present
 		if (currentViewer != null)
