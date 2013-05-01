@@ -600,7 +600,7 @@ public static class StateRecord {
 	public void initStateMap() {
 
 		// Populate the hash map for the states and StateRecord
-		StateRecord idle = getStateRecordFor("Idle");
+		StateRecord idle = getState("Idle");
 		stateMap.clear();
 		for (int i = 0; i < getStateList().size(); i++) {
 			String state = (String)getStateList().get(i);
@@ -728,7 +728,7 @@ public static class StateRecord {
 		if (presentState.name.equals(state))
 			return;
 
-		StateRecord nextState = this.getStateRecordFor(state);
+		StateRecord nextState = this.getState(state);
 		if (nextState == null)
 			throw new ErrorException("%s Specified state: %s was not found in the StateList: %s",
 			                         this.getInputName(), state, this.getStateList());
@@ -761,7 +761,7 @@ public static class StateRecord {
 		stateChanged(prev, presentState);
 	}
 
-	public StateRecord getStateRecordFor(String state) {
+	public StateRecord getState(String state) {
 		return stateMap.get(state.toLowerCase());
 	}
 
@@ -843,13 +843,13 @@ public static class StateRecord {
 	public double getTimeFromStartState_ToEndState( String startState, String endState) {
 
 		// Determine the index of the start state
-		StateRecord startStateRec = this.getStateRecordFor(startState);
+		StateRecord startStateRec = this.getState(startState);
 		if (startStateRec == null) {
 			throw new ErrorException("Specified state: %s was not found in the StateList.", startState);
 		}
 
 		// Determine the index of the end state
-		StateRecord endStateRec = this.getStateRecordFor(endState);
+		StateRecord endStateRec = this.getState(endState);
 		if (endStateRec == null) {
 			throw new ErrorException("Specified state: %s was not found in the StateList.", endState);
 		}
@@ -1473,7 +1473,7 @@ public static class StateRecord {
 		// print fraction of time per state
 		for (int i = 0; i < getStateList().size(); i++) {
 			String state = (String) getStateList().get(i);
-			StateRecord rec = getStateRecordFor(state);
+			StateRecord rec = getState(state);
 			double hoursFraction = 0.0d;
 
 			if (rec != null)
