@@ -45,10 +45,7 @@ public class MeshProto {
  */
 private static class TransSortable implements Comparable<TransSortable> {
 	public SubMesh subMesh;
-	public Material mat;
 	public double dist;
-	public Mat4d modelViewMat;
-	public Mat4d normalMat;
 
 	public MeshData.SubMeshInstance subInst;
 
@@ -157,10 +154,6 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 	Mat4d modelViewMat = new Mat4d();
 	modelViewMat.mult4(viewMat, modelMat);
 
-	Mat4d subModelViewMat = new Mat4d();
-	Mat4d subModelMat = new Mat4d();
-	Mat4d subNormalMat = new Mat4d();
-
 	ArrayList<ArrayList<Mat4d>> poses = null;
 	if (actions != null) {
 		ArrayList<Armature> arms = data.getArmatures();
@@ -184,11 +177,8 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 			continue; // Render transparent submeshes after
 		}
 
-		subModelViewMat.mult4(modelViewMat, subInst.transform);
-
-		subModelMat.mult4(modelMat, subInst.transform);
-
 		AABB instBounds = subInstBounds.get(i);
+
 		if (!cam.collides(instBounds)) {
 			continue;
 		}
@@ -208,11 +198,12 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 			pose = poses.get(subInst.armatureIndex);
 		}
 
-		subNormalMat.mult4(normalMat, subInst.normalTrans);
-
-		renderSubMesh(subMesh, mat, vaoMap, renderer, subModelViewMat, subNormalMat,
-		              pose ,subInst.boneMapper, cam);
+		renderSubMesh(subMesh, subInst, vaoMap, renderer, modelViewMat, normalMat,
+		              pose, cam);
 	}
+
+	Mat4d subModelViewMat = new Mat4d();
+	Mat4d subModelMat = new Mat4d();
 
 	for (MeshData.SubLineInstance subInst : data.getSubLineInstances()) {
 
@@ -277,9 +268,6 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 		TransSortable ts = new TransSortable();
 		ts.subMesh = subMesh;
-		ts.mat = mat;
-		ts.modelViewMat = subModelView;
-		ts.normalMat = subNormalMat;
 		ts.dist = eyeCenter.z;
 		ts.subInst = subInst;
 		transparents.add(ts);
@@ -305,7 +293,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 			pose = poses.get(ts.subInst.armatureIndex);
 		}
 
-		renderSubMesh(ts.subMesh, ts.mat, vaoMap, renderer, ts.modelViewMat, ts.normalMat, pose, ts.subInst.boneMapper, cam);
+		renderSubMesh(ts.subMesh, ts.subInst, vaoMap, renderer, modelViewMat, normalMat, pose, cam);
 	}
 }
 
@@ -367,46 +355,54 @@ private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Rende
 
 }
 
-private void renderSubMesh(SubMesh sub, Material mat, Map<Integer, Integer> vaoMap,
+private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Map<Integer, Integer> vaoMap,
                            Renderer renderer, Mat4d modelViewMat,
                            Mat4d normalMat,
                            ArrayList<Mat4d> pose,
-                           int[] boneMap, Camera cam) {
+                           Camera cam) {
+
+	Mat4d subModelViewMat = new Mat4d();
+	subModelViewMat.mult4(modelViewMat, subInst.transform);
+
+	Mat4d subNormalMat = new Mat4d();
+	subNormalMat.mult4(normalMat, subInst.normalTrans);
+
+	Material mat = _materials.get(subInst.materialIndex);
 
 	GL2GL3 gl = renderer.getGL();
 
-	if (!vaoMap.containsKey(sub._id)) {
-		setupVAOForSubMesh(vaoMap, sub, renderer);
+	if (!vaoMap.containsKey(subMesh._id)) {
+		setupVAOForSubMesh(vaoMap, subMesh, renderer);
 	}
 
-	int vao = vaoMap.get(sub._id);
+	int vao = vaoMap.get(subMesh._id);
 	gl.glBindVertexArray(vao);
 
-	int prog = sub._progHandle;
+	int prog = subMesh._progHandle;
 	gl.glUseProgram(prog);
 
 	// Setup uniforms for this object
-	Mat4d modelViewProjMat = new Mat4d(modelViewMat);
+	Mat4d modelViewProjMat = new Mat4d(subModelViewMat);
 
 	Mat4d projMat = cam.getProjMat4d();
 	modelViewProjMat.mult4(projMat, modelViewProjMat);
 
-	gl.glUniformMatrix4fv(sub._modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
-	gl.glUniformMatrix4fv(sub._normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
+	gl.glUniformMatrix4fv(subMesh._modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
+	gl.glUniformMatrix4fv(subMesh._normalMatVar, 1, false, RenderUtils.MarshalMat4d(subNormalMat), 0);
 
 	Vec4d lightVect = new Vec4d(-0.5f,  -0.2f, -0.5,  0);
 	lightVect.normalize3();
 
-	gl.glUniform4f(sub._lightDirVar, (float)lightVect.x, (float)lightVect.y, (float)lightVect.z, (float)lightVect.w);
+	gl.glUniform4f(subMesh._lightDirVar, (float)lightVect.x, (float)lightVect.y, (float)lightVect.z, (float)lightVect.w);
 
-	gl.glUniform1i(sub._useTexVar, (mat._texHandle != 0) ? 1 : 0);
+	gl.glUniform1i(subMesh._useTexVar, (mat._texHandle != 0) ? 1 : 0);
 
 	if (mat._texHandle != 0) {
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
 		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, mat._texHandle);
-		gl.glUniform1i(sub._texVar, 0);
+		gl.glUniform1i(subMesh._texVar, 0);
 	} else {
-		gl.glUniform4fv(sub._colorVar, 1, mat._diffuseColor.toFloats(), 0);
+		gl.glUniform4fv(subMesh._colorVar, 1, mat._diffuseColor.toFloats(), 0);
 	}
 
 	if (mat._transType != MeshData.NO_TRANS) {
@@ -436,22 +432,22 @@ private void renderSubMesh(SubMesh sub, Material mat, Map<Integer, Integer> vaoM
 	if (pose != null) {
 		float[] poseMatrices = new float[16*pose.size()];
 		for (int i = 0; i < pose.size(); ++i) {
-			int poseIndex = boneMap[i];
+			int poseIndex = subInst.boneMapper[i];
 			RenderUtils.MarshalMat4dToArray(pose.get(poseIndex), poseMatrices, i*16);
 		}
-		gl.glUniformMatrix4fv(sub._boneMatricesVar, pose.size(), false, poseMatrices, 0);
+		gl.glUniformMatrix4fv(subMesh._boneMatricesVar, pose.size(), false, poseMatrices, 0);
 	}
 
-	gl.glUniform1i(sub._maxNumBonesVar, (pose == null) ? 0 : 4);
+	gl.glUniform1i(subMesh._maxNumBonesVar, (pose == null) ? 0 : 4);
 
 	// Actually draw it
 	//gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 	gl.glDisable(GL2GL3.GL_CULL_FACE);
 
 	if (flattenBuffers) {
-		gl.glDrawArrays(GL2GL3.GL_TRIANGLES, 0, sub._numVerts);
+		gl.glDrawArrays(GL2GL3.GL_TRIANGLES, 0, subMesh._numVerts);
 	} else {
-		gl.glDrawElements(GL2GL3.GL_TRIANGLES, sub._numVerts, GL2GL3.GL_UNSIGNED_INT, 0);
+		gl.glDrawElements(GL2GL3.GL_TRIANGLES, subMesh._numVerts, GL2GL3.GL_UNSIGNED_INT, 0);
 	}
 	gl.glEnable(GL2GL3.GL_CULL_FACE);
 
