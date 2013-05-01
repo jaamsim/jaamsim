@@ -91,39 +91,6 @@ public class GraphicSimulation extends Simulation {
 	}
 
 	@Override
-	public void pause() {
-		try {
-			super.pause();
-			GUIFrame.instance().updateForSimulationState();
-		}
-		catch( Throwable t ) {
-			ExceptionBox.instance().setError(t);
-		}
-	}
-
-	@Override
-	public void stop() {
-		try {
-			super.stop();
-			GUIFrame.instance().updateForSimulationState();
-		}
-		catch( Throwable t ) {
-			ExceptionBox.instance().setError(t);
-		}
-	}
-
-	@Override
-	public void resume() {
-		try {
-			super.resume();
-			GUIFrame.instance().updateForSimulationState();
-		}
-		catch( Throwable t ) {
-			ExceptionBox.instance().setError(t);
-		}
-	}
-
-	@Override
 	public void updateForSimulationState() {
 		super.updateForSimulationState();
 		GUIFrame.instance().updateForSimulationState();

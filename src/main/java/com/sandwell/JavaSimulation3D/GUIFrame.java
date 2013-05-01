@@ -253,7 +253,7 @@ public class GUIFrame extends JFrame {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				DisplayEntity.simulation.pause();
+				Simulation.pause();
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
@@ -281,7 +281,7 @@ public class GUIFrame extends JFrame {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				DisplayEntity.simulation.pause();
+				Simulation.pause();
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
@@ -991,7 +991,7 @@ public class GUIFrame extends JFrame {
 
 			// it is not a run to time
 			if(Double.isInfinite( runToTime ) ) {
-				DisplayEntity.simulation.resume();
+				Simulation.resume();
 				return;
 			}
 		}
@@ -1008,7 +1008,7 @@ public class GUIFrame extends JFrame {
 
 	private void pauseSimulation() {
 		if( Simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING )
-			DisplayEntity.simulation.pause();
+			Simulation.pause();
 		else
 			throw new ErrorException( "Invalid Simulation State for pause" );
 	}
@@ -1016,7 +1016,7 @@ public class GUIFrame extends JFrame {
 	private void stopSimulation() {
 		if( Simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING ||
 			Simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED )
-			DisplayEntity.simulation.stop();
+			Simulation.stop();
 		else
 			throw new ErrorException( "Invalid Simulation State for stop" );
 	}

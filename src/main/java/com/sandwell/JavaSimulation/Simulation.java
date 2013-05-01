@@ -388,7 +388,13 @@ public abstract class Simulation extends Entity {
 		}
 
 		this.startExternalProcess("startModel");
-		resume();
+		Simulation.resume();
+	}
+
+	public static final void resume() {
+		EventManager.rootManager.resume();
+		Simulation.simState = SIM_STATE_RUNNING;
+		GUIFrame.instance().updateForSimulationState();
 	}
 
 	public void restart() {
@@ -408,30 +414,19 @@ public abstract class Simulation extends Entity {
 	/**
 	 *	Requests the EventManager to stop processing events.
 	 */
-	public void pause() {
+	public static final void pause() {
 		EventManager.rootManager.pause();
-
-		// store the present state
 		Simulation.simState = SIM_STATE_PAUSED;
+		GUIFrame.instance().updateForSimulationState();
 	}
 
 	/**
 	 *	Requests the EventManager to stop processing events.
 	 */
-	public void stop() {
+	public static final void stop() {
 		EventManager.rootManager.pause();
-
-		// store the present state
 		Simulation.simState = SIM_STATE_STOPPED;
-	}
-
-	/**
-	 *	Requests the EventManager to resume processing events.
-	 */
-	public void resume() {
-		EventManager.rootManager.resume();
-		// store the present state
-		Simulation.simState = SIM_STATE_RUNNING;
+		GUIFrame.instance().updateForSimulationState();
 	}
 
 	boolean isTraceEnabled() {
@@ -508,7 +503,7 @@ public abstract class Simulation extends Entity {
 					System.out.println("R:" + record.get(i));
 					System.out.println("E:" + each.get(i));
 
-					pause();
+					Simulation.pause();
 					new Throwable().printStackTrace();
 					break;
 				}
@@ -531,7 +526,7 @@ public abstract class Simulation extends Entity {
 			}
 			System.out.println();
 		}
-		pause();
+		Simulation.pause();
 	}
 
 	void processTraceData(EventTraceRecord traceRecord) {
@@ -582,7 +577,7 @@ public abstract class Simulation extends Entity {
 			scheduleWait( (end - getCurrentTime()) );
 			doEndAtThread = null;
 
-			this.pause();
+			Simulation.pause();
 
 			for (int i = 0; i < Entity.getAll().size(); i++) {
 				Entity.getAll().get(i).doEnd();
@@ -596,7 +591,7 @@ public abstract class Simulation extends Entity {
 			if( this.getExitAtStop() ) {
 				GUIFrame.shutdown(0);
 			}
-			this.pause();
+			Simulation.pause();
 		}
 	}
 
