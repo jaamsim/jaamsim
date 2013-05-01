@@ -23,10 +23,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.ActionListInput;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.render.Action;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.MeshProxy;
@@ -45,6 +47,10 @@ public class ColladaModel extends DisplayModel {
 	         example = "Ship3DModel ColladaFile { ..\\images\\CompanyIcon.png }")
 	private final StringInput colladaFile;
 
+	@Keyword(desc = "A list of active actions and the entity output that drives them",
+	         example = "Ship3DModel Actions { { ContentAction Contents } { BoomAngleAction BoomAngle } }")
+	private final ActionListInput actions;
+
 	private static HashMap<String, MeshProtoKey> _cachedKeys = new HashMap<String, MeshProtoKey>();
 
 	private static ArrayList<String> validFileExtentions;
@@ -52,6 +58,9 @@ public class ColladaModel extends DisplayModel {
 	{
 		colladaFile = new StringInput( "ColladaFile", "DisplayModel", null );
 		this.addInput( colladaFile, true);
+
+		actions = new ActionListInput("Actions", "DisplayModel", new ArrayList<Action.Binding>());
+		this.addInput(actions, true);
 	}
 	static {
 		validFileExtentions = new ArrayList<String>();
@@ -203,8 +212,15 @@ public class ColladaModel extends DisplayModel {
 			Transform fixedTrans = new Transform(trans);
 			fixedTrans.merge(fixedTrans, new Transform(offset));
 
+			ArrayList<Action.Queue> aqList = new ArrayList<Action.Queue>();
+			for (Action.Binding b : actions.getValue()) {
+				Action.Queue aq = new Action.Queue();
+				aq.name = b.actionName;
+				aq.time = dispEnt.getOutputValue(b.outputName, simTime, double.class);
+				aqList.add(aq);
+			}
 
-			cachedProxies.add(new MeshProxy(meshKey, fixedTrans, fixedScale, null, getVisibilityInfo(),
+			cachedProxies.add(new MeshProxy(meshKey, fixedTrans, fixedScale, aqList, getVisibilityInfo(),
 					pickingID));
 		}
 

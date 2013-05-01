@@ -26,4 +26,14 @@ public class Action {
 		public String name;
 		public double time;
 	}
+
+	/**
+	 * Used to bind entity outputs to active actions
+	 * @author matt.chudleigh
+	 *
+	 */
+	public static class Binding {
+		public String actionName;
+		public String outputName;
+	}
 }
