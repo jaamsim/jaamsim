@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -1552,4 +1553,40 @@ public class InputAgent {
 		InputAgent.readURL(InputAgent.class.getResource("/resources/inputs/default.cfg"));
 		sessionEdited = false;
 	}
+
+	/**
+	 * Split an input (list of strings) down to a single level of nested braces, this may then be called again for
+	 * further nesting.
+	 * @param input
+	 * @return
+	 */
+	public static ArrayList<ArrayList<String>> splitForNestedBraces(List<String> input) {
+		ArrayList<ArrayList<String>> inputs = new ArrayList<ArrayList<String>>();
+
+		int braceDepth = 0;
+		ArrayList<String> currentLine = null;
+		for (int i = 0; i < input.size(); i++) {
+			if (currentLine == null)
+				currentLine = new ArrayList<String>();
+
+			currentLine.add(input.get(i));
+			if (input.get(i).equals("{")) {
+				braceDepth++;
+				continue;
+			}
+
+			if (input.get(i).equals("}")) {
+				braceDepth--;
+				if (braceDepth == 0) {
+					inputs.add(currentLine);
+					currentLine = null;
+					continue;
+				}
+			}
+		}
+
+		return inputs;
+	}
+
+
 }

@@ -15,7 +15,6 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.Unit;
@@ -39,7 +38,7 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 		for (String s : input) {
 			strings.add(s);
 		}
-		ArrayList<ArrayList<String>> keys = splitForNestedBraces(strings);
+		ArrayList<ArrayList<String>> keys = InputAgent.splitForNestedBraces(strings);
 		for( ArrayList<String> key : keys) {
 			parseKey(key);
 		}
@@ -50,7 +49,7 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 			throw new InputErrorException("Malformed key entry: %s", key.toString());
 		}
 
-		ArrayList<ArrayList<String>> keyEntries = splitForNestedBraces(key.subList(1, key.size()-1));
+		ArrayList<ArrayList<String>> keyEntries = InputAgent.splitForNestedBraces(key.subList(1, key.size()-1));
 		if (keyEntries.size() != 2) {
 			throw new InputErrorException("Expected two values in keyed input for key entry: %s", key.toString());
 		}
@@ -115,34 +114,6 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 	@Override
 	public String getDefaultString() {
 		return "{ }";
-	}
-
-	private static ArrayList<ArrayList<String>> splitForNestedBraces(List<String> input) {
-		ArrayList<ArrayList<String>> inputs = new ArrayList<ArrayList<String>>();
-
-		int braceDepth = 0;
-		ArrayList<String> currentLine = null;
-		for (int i = 0; i < input.size(); i++) {
-			if (currentLine == null)
-				currentLine = new ArrayList<String>();
-
-			currentLine.add(input.get(i));
-			if (input.get(i).equals("{")) {
-				braceDepth++;
-				continue;
-			}
-
-			if (input.get(i).equals("}")) {
-				braceDepth--;
-				if (braceDepth == 0) {
-					inputs.add(currentLine);
-					currentLine = null;
-					continue;
-				}
-			}
-		}
-
-		return inputs;
 	}
 
 }
