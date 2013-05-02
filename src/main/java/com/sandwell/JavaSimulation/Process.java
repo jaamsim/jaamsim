@@ -209,7 +209,8 @@ public class Process extends Thread {
 	private void makeExceptionBox(Throwable e) {
 		// pause the simulation on a fatal exception
 		Simulation.pause();
-		System.err.println("EXCEPTION AT TIME: " + EventManager.simulation.getCurrentTime());
+		double curTime = eventManager.currentTime() / Process.getSimTimeFactor();
+		System.err.println("EXCEPTION AT TIME: " + curTime);
 		ExceptionBox exp = ExceptionBox.instance();
 		exp.setError(e);
 	}

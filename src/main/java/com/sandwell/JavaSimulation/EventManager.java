@@ -50,7 +50,7 @@ public final class EventManager implements Runnable {
 	private static final ArrayList<EventManager> definedManagers;
 	static final EventManager rootManager;
 
-	static Simulation simulation; // Simulation object
+	private static Simulation simulation; // Simulation object
 
 	private static int eventState;
 	static final int EVENTS_STOPPED = 0;
