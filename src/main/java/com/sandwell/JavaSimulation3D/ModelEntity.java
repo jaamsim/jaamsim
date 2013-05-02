@@ -15,7 +15,6 @@
 package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Color4d;
@@ -155,7 +154,7 @@ public class ModelEntity extends DisplayEntity {
 
 	// States
 	private static Vector stateList = new Vector( 11, 1 ); // List of valid states
-	private final HashMap<String, StateRecord> stateMap;
+	private final ArrayList<StateRecord> states;
 	protected double workingHours;                    // Accumulated working time spent in working states
 	private double timeOfLastStateChange;
 	private int numberOfCompletedCycles;
@@ -269,9 +268,9 @@ public class ModelEntity extends DisplayEntity {
 		maintenance = false;
 		associatedMaintenance = false;
 		workingHours = 0.0;
-		stateMap = new HashMap<String, StateRecord>();
+		states = new ArrayList<StateRecord>();
 		StateRecord idle = new StateRecord("Idle");
-		stateMap.put(idle.name , idle);
+		states.add(idle);
 		presentState = idle;
 		timeOfLastStateChange = getCurrentTime();
 		idle.lastStartTimeInState = getCurrentTime();
@@ -595,10 +594,9 @@ public static class StateRecord {
 
 	public StateRecord validate(String state) {
 
-		// sate is a valid state
 		if (getStateList().contains(state)) {
 			StateRecord rec = new StateRecord(state);
-			stateMap.put(state, rec);
+			states.add(rec);
 			return rec;
 		}
 
@@ -613,7 +611,7 @@ public static class StateRecord {
 	public void collectInitializationStats() {
 		collectPresentHours();
 
-		for ( StateRecord each : stateMap.values() ) {
+		for (StateRecord each : states) {
 			each.initializationHours = each.totalHours;
 			each.totalHours = 0.0d;
 			each.completedCycleHours = 0.0d;
@@ -633,7 +631,7 @@ public static class StateRecord {
 		collectPresentHours();
 
 		// finalize cycle for each state record
-		for ( StateRecord each : stateMap.values() ) {
+		for (StateRecord each : states) {
 			each.completedCycleHours += each.currentCycleHours;
 			each.currentCycleHours = 0.0d;
 		}
@@ -653,7 +651,7 @@ public static class StateRecord {
 		collectPresentHours();
 
 		// clear current cycle hours for each state record
-		for ( StateRecord each : stateMap.values() )
+		for (StateRecord each : states)
 			each.currentCycleHours = 0.0d;
 
 		startOfCycleTime = getCurrentTime();
@@ -666,7 +664,7 @@ public static class StateRecord {
 		collectPresentHours();
 
 		// clear totalHours for each state record
-		for ( StateRecord each : stateMap.values() ) {
+		for (StateRecord each : states) {
 			each.totalHours = 0.0d;
 			each.completedCycleHours = 0.0d;
 		}
@@ -748,7 +746,13 @@ public static class StateRecord {
 	}
 
 	public StateRecord getState(String state) {
-		return stateMap.get(state);
+		for (StateRecord each : states) {
+			if (each.name.equals(state)) {
+				return each;
+			}
+		}
+
+		return null;
 	}
 
 	public double getTotalHours(StateRecord state) {
