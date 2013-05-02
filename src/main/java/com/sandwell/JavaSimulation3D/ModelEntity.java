@@ -586,27 +586,25 @@ public static class StateRecord {
 }
 
 	public void initStateMap() {
-
-		// Populate the hash map for the states and StateRecord
-		StateRecord idle = getState("Idle");
-		stateMap.clear();
-		for (int i = 0; i < getStateList().size(); i++) {
-			String state = (String)getStateList().get(i);
-
-			if ( state.equals("Idle") )
-				continue;
-
-			StateRecord stateRecord = new StateRecord(state);
-			stateMap.put(stateRecord.name, stateRecord);
-		}
-		stateMap.put(idle.name, idle);
-
 		timeOfLastStateChange = getCurrentTime();
-
 		maxCycleDur = 0.0d;
 		minCycleDur = Double.POSITIVE_INFINITY;
 		totalCompletedCycleHours = 0.0d;
 		startOfCycleTime = getCurrentTime();
+	}
+
+	public StateRecord validate(String state) {
+
+		// sate is a valid state
+		if (getStateList().contains(state)) {
+			StateRecord rec = new StateRecord(state);
+			stateMap.put(state, rec);
+			return rec;
+		}
+
+		// not a valid state
+		throw new ErrorException("Specified state: %s was not found in the StateList: %s",
+		                         state, this.getStateList());
 	}
 
 	/**
@@ -716,10 +714,10 @@ public static class StateRecord {
 		if (presentState.name.equals(state))
 			return;
 
+
 		StateRecord nextState = this.getState(state);
 		if (nextState == null)
-			throw new ErrorException("%s Specified state: %s was not found in the StateList: %s",
-			                         this.getInputName(), state, this.getStateList());
+			nextState = validate(state);
 
 		if (traceFlag) {
 			StringBuffer buf = new StringBuffer("setState( ");
@@ -843,16 +841,10 @@ public static class StateRecord {
 	 */
 	public double getTimeFromStartState_ToEndState( String startState, String endState) {
 
-		// Determine the index of the start state
 		StateRecord startStateRec = this.getState(startState);
-		if (startStateRec == null) {
-			throw new ErrorException("Specified state: %s was not found in the StateList.", startState);
-		}
-
-		// Determine the index of the end state
 		StateRecord endStateRec = this.getState(endState);
-		if (endStateRec == null) {
-			throw new ErrorException("Specified state: %s was not found in the StateList.", endState);
+		if (startStateRec == null || endStateRec == null) {
+			return Double.NaN;
 		}
 
 		// Is the start time of the end state greater or equal to the start time of the start state?
