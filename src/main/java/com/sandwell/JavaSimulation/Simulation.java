@@ -138,7 +138,6 @@ public class Simulation extends Entity {
 	private Process doEndAtThread;
 	protected double startTime;
 	protected double endTime;
-	private boolean traceEnabled;
 	private FileEntity eventTraceFile;
 	private FileEntity eventVerifyFile;
 	private ArrayList<EventTraceRecord> eventBuffer;
@@ -246,7 +245,6 @@ public class Simulation extends Entity {
 		startTime = 0.0;
 		endTime = 8760.0;
 
-		traceEnabled = false;
 		// Real time execution state
 		doEndAtThread = null;
 
@@ -342,7 +340,6 @@ public class Simulation extends Entity {
 		startTime = 0.0;
 		endTime = 8760.0;
 
-		traceEnabled = false;
 		// Real time execution state
 		doEndAtThread = null;
 
@@ -386,7 +383,6 @@ public class Simulation extends Entity {
 		}
 
 		// Suppress all tracing of old model state during a restart
-		traceEnabled = false;
 		EventManager.rootManager.initialize();
 
 		if( traceEventsInput.getValue() ) {
@@ -455,10 +451,6 @@ public class Simulation extends Entity {
 		GUIFrame.instance().updateForSimulationState();
 	}
 
-	boolean isTraceEnabled() {
-		return traceEnabled;
-	}
-
 	public void traceAllEvents(boolean enable) {
 		if (enable) {
 			verifyAllEvents(false);
@@ -468,7 +460,7 @@ public class Simulation extends Entity {
 			eventTraceFile = null;
 		}
 
-		traceEnabled = enable;
+		EventManager.rootManager.traceEvents = enable;
 	}
 
 	public void verifyAllEvents(boolean enable) {
@@ -482,7 +474,7 @@ public class Simulation extends Entity {
 			eventVerifyFile = null;
 		}
 
-		traceEnabled = enable;
+		EventManager.rootManager.traceEvents = enable;
 	}
 
 	private void fillBufferUntil(long internalTime) {

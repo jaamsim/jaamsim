@@ -52,6 +52,7 @@ public final class EventManager implements Runnable {
 	static final EventManager rootManager;
 
 	private static Simulation simulation; // Simulation object
+	boolean traceEvents = false;
 
 	private static int eventState;
 	static final int EVENTS_STOPPED = 0;
@@ -195,7 +196,7 @@ public final class EventManager implements Runnable {
 	// Initialize the eventManager.  This method is needed only for re-initialization.
 	// It is not used when the eventManager is first created.
 	void initialize() {
-
+		traceEvents = false;
 		synchronized (lockObject) {
 			// Kill threads on the event stack
 			for (Event each : eventStack) {
@@ -920,7 +921,7 @@ public final class EventManager implements Runnable {
 	}
 
 	private void traceEvent(Event evt, int reason) {
-		if (!simulation.isTraceEnabled())
+		if (!traceEvents)
 			return;
 
 		traceRecord.addHeader(name, evt.eventTime);
@@ -929,7 +930,7 @@ public final class EventManager implements Runnable {
 	}
 
 	void traceProcess(Entity target, String methodName) {
-		if (!simulation.isTraceEnabled())
+		if (!traceEvents)
 			return;
 
 		traceRecord.addHeader(name, currentTime);
@@ -938,7 +939,7 @@ public final class EventManager implements Runnable {
 	}
 
 	private void traceSchedProcess(Event target) {
-		if (!simulation.isTraceEnabled())
+		if (!traceEvents)
 			return;
 
 		traceRecord.addHeader(name, currentTime);
@@ -947,7 +948,7 @@ public final class EventManager implements Runnable {
 	}
 
 	private void traceWaitUntil(int reason) {
-		if (!simulation.isTraceEnabled())
+		if (!traceEvents)
 			return;
 
 		traceRecord.addHeader(name, currentTime);
