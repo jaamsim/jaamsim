@@ -246,7 +246,7 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			EventManager.setEventState(EventManager.EVENTS_STOPPED);
 		}
-		simulation.setSimState(Simulation.SIM_STATE_PAUSED);
+		Simulation.setSimState(Simulation.SIM_STATE_PAUSED);
 		GUIFrame.instance().updateForSimulationState();
 
 		// update the event display if there is one present
@@ -906,7 +906,7 @@ public final class EventManager implements Runnable {
 	public void runToTime( double stopTime ) {
 		debuggingTime = ((long)(stopTime * Process.getSimTimeFactor()));
 		EventManager.setEventState(EventManager.EVENTS_UNTILTIME);
-		simulation.setSimState(Simulation.SIM_STATE_RUNNING);
+		Simulation.setSimState(Simulation.SIM_STATE_RUNNING);
 		startDebugging();
 	}
 

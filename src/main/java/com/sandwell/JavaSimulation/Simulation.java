@@ -363,7 +363,7 @@ public class Simulation extends Entity {
 			ent.kill();
 		}
 
-		Simulation.simState = SIM_STATE_LOADED;
+		Simulation.setSimState(SIM_STATE_LOADED);
 		GUIFrame.instance().updateForSimulationState();
 	}
 
@@ -415,7 +415,7 @@ public class Simulation extends Entity {
 
 	public static final void resume() {
 		EventManager.rootManager.resume();
-		Simulation.simState = SIM_STATE_RUNNING;
+		Simulation.setSimState(SIM_STATE_RUNNING);
 		GUIFrame.instance().updateForSimulationState();
 	}
 
@@ -429,7 +429,7 @@ public class Simulation extends Entity {
 				i++;
 		}
 
-		Simulation.simState = SIM_STATE_CONFIGURED;
+		Simulation.setSimState(SIM_STATE_CONFIGURED);
 		this.start();
 	}
 
@@ -438,7 +438,7 @@ public class Simulation extends Entity {
 	 */
 	public static final void pause() {
 		EventManager.rootManager.pause();
-		Simulation.simState = SIM_STATE_PAUSED;
+		Simulation.setSimState(SIM_STATE_PAUSED);
 		GUIFrame.instance().updateForSimulationState();
 	}
 
@@ -447,7 +447,7 @@ public class Simulation extends Entity {
 	 */
 	public static final void stop() {
 		EventManager.rootManager.pause();
-		Simulation.simState = SIM_STATE_STOPPED;
+		Simulation.setSimState(SIM_STATE_STOPPED);
 		GUIFrame.instance().updateForSimulationState();
 	}
 
@@ -689,7 +689,7 @@ public class Simulation extends Entity {
 		return Simulation.simState;
 	}
 
-	public static final void setSimulationState(int state) {
+	public static final void setSimState(int state) {
 		Simulation.simState = state;
 	}
 
@@ -759,9 +759,5 @@ public class Simulation extends Entity {
 
 	public boolean getPrintInputReport() {
 		return printInputReport.getValue();
-	}
-
-	public void setSimState(int state) {
-		simState = state;
 	}
 }

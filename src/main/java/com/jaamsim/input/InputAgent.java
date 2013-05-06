@@ -973,7 +973,7 @@ public class InputAgent {
 	public static void configure(GUIFrame gui, String configFileName) {
 		try {
 			gui.clear();
-			Simulation.setSimulationState(Simulation.SIM_STATE_UNCONFIGURED);
+			Simulation.setSimState(Simulation.SIM_STATE_UNCONFIGURED);
 
 			InputAgent.setConfigFileName(configFileName);
 			gui.updateForSimulationState();
@@ -989,7 +989,7 @@ public class InputAgent {
 			}
 
 			// store the present state
-			Simulation.setSimulationState(Simulation.SIM_STATE_CONFIGURED);
+			Simulation.setSimState(Simulation.SIM_STATE_CONFIGURED);
 
 			System.out.println("Configuration File Loaded");
 
