@@ -40,6 +40,10 @@ public class AABB {
 
 	private final Vec4d _radTemp = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
+	public AABB() {
+		this._isEmpty = true;
+	}
+
 	/**
 	 * Copy constructor for defensive copies
 	 * @param other

@@ -1408,17 +1408,17 @@ public class RenderManager implements DragSourceListener {
 	@Override
 	public void dropActionChanged(DragSourceDragEvent arg0) {}
 
-	public Vec4d getMeshSize(String shapeString) {
+	public AABB getMeshBounds(String shapeString) {
 
 		//TODO: work on meshes that have not been preloaded
 		MeshProtoKey key = ColladaModel.getCachedMeshKey(shapeString);
 		if (key == null) {
 			// Not loaded or bad mesh
-			return Vec4d.ONES;
+			return new AABB();
 		}
 		AABB bounds = getMeshBounds(key, true);
 
-		return bounds.getRadius();
+		return bounds;
 	}
 
 	public AABB getMeshBounds(MeshProtoKey key, boolean block) {

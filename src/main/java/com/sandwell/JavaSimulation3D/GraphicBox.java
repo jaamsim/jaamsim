@@ -44,6 +44,7 @@ import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Future;
@@ -62,7 +63,7 @@ public class GraphicBox extends JDialog {
 
 
 	private final JCheckBox useModelSize;
-	private final JCheckBox enabledCulling;
+	private final JCheckBox useModelPose;
 	static {
 		displayModelList = new JList();
 	}
@@ -199,11 +200,13 @@ public class GraphicBox extends JDialog {
 					myInstance.close();
 				}
 
-				Vec4d modelSize = Vec4d.ONES;
+				AABB modelBounds = new AABB();
 				if (dm instanceof ColladaModel) {
 					ColladaModel dmc = (ColladaModel)dm;
-					modelSize = RenderManager.inst().getMeshSize(dmc.getColladaFile());
+					modelBounds = RenderManager.inst().getMeshBounds(dmc.getColladaFile());
 				}
+
+				Vec4d modelSize = modelBounds.getRadius();
 
 				Vec3d entitySize = currentEntity.getSize();
 				double longestSide = modelSize.x;
@@ -219,6 +222,13 @@ public class GraphicBox extends JDialog {
 						ratio = entitySize.z/modelSize.z;
 					}
 				}
+				if (useModelPose.isSelected()) {
+
+					Vec4d entityPos = modelBounds.getCenter();
+
+					InputAgent.processEntity_Keyword_Value(currentEntity, "Position", String.format("%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z));
+					InputAgent.processEntity_Keyword_Value(currentEntity, "Alignment", "0 0 0");
+				}
 				entitySize = new Vec3d(modelSize.x*ratio, modelSize.y*ratio, modelSize.z*ratio);
 				InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format("%.6f %.6f %.6f m", entitySize.x, entitySize.y, entitySize.z));
 				FrameBox.valueUpdate();
@@ -227,12 +237,12 @@ public class GraphicBox extends JDialog {
 		} );
 		useModelSize = new JCheckBox("Use Display Model Size");
 		useModelSize.setSelected(true);
-		enabledCulling = new JCheckBox("Enable Culling");
-		enabledCulling.setSelected(true);
+		useModelPose = new JCheckBox("Keep Model Position");
+		useModelPose.setSelected(false);
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout( new FlowLayout(FlowLayout.RIGHT) );
 		buttonPanel.add(useModelSize);
-		buttonPanel.add(enabledCulling);
+		buttonPanel.add(useModelPose);
 		buttonPanel.add(importButton);
 		buttonPanel.add(acceptButton);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
