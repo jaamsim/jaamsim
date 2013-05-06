@@ -109,7 +109,7 @@ class EventTraceRecord extends ArrayList<String> {
 		this.add(rec.toString());
 	}
 
-	synchronized void addHeader(String name, long internalTime) {
+	private void addHeader(String name, long internalTime) {
 		// Don't write anything if not at level 0
 		if (traceLevel != 0)
 			return;
@@ -119,7 +119,7 @@ class EventTraceRecord extends ArrayList<String> {
 		traceLevel++;
 	}
 
-	synchronized void finish() {
+	private void finish() {
 		if(traceLevel != 1)
 			return;
 
@@ -143,9 +143,12 @@ class EventTraceRecord extends ArrayList<String> {
 
 		if (reason == 1 || reason == 2)
 			traceLevel++;
+
+		this.finish();
 	}
 
-	synchronized void formatWaitUntilTrace(int reason) {
+	synchronized void formatWaitUntilTrace(String name, long currentTime, int reason) {
+		this.addHeader(name, currentTime);
 		if (reason == 0) {
 			traceLevel--;
 			this.append("WaitUntil");
@@ -153,9 +156,11 @@ class EventTraceRecord extends ArrayList<String> {
 			this.append("Event-WaitUntilEnded");
 			traceLevel++;
 		}
+		this.finish();
 	}
 
-	synchronized void formatProcessTrace(Entity target, String methodName) {
+	synchronized void formatProcessTrace(String name, long currentTime, Entity target, String methodName) {
+		this.addHeader(name, currentTime);
 		if (target == null) {
 			traceLevel--;
 			this.append("Exit");
@@ -163,12 +168,15 @@ class EventTraceRecord extends ArrayList<String> {
 			this.append(String.format("%s\t%s\t%s", "StartProcess", target.getName(), methodName));
 			traceLevel++;
 		}
+		this.finish();
 	}
 
-	synchronized void formatSchedProcessTrace(Event evt) {
+	synchronized void formatSchedProcessTrace(String name, long currentTime, Event evt) {
+		this.addHeader(name, currentTime);
 		this.append(String.format("SchedProcess\t%d\t%d\t%s\t%s\t%s",
 				evt.eventTime, evt.priority, evt.caller.getName(),
 				evt.caller.getInputName(), evt.getClassMethod()));
+		this.finish();
 	}
 
 	boolean isDefaultEventManager() {

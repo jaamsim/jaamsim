@@ -914,38 +914,19 @@ public final class EventManager implements Runnable {
 	}
 
 	private void traceEvent(Event evt, int reason) {
-		if (!traceEvents)
-			return;
-
-		traceRecord.formatEventTrace(name, evt, reason);
-		traceRecord.finish();
+		if (traceEvents) traceRecord.formatEventTrace(name, evt, reason);
 	}
 
 	void traceProcess(Entity target, String methodName) {
-		if (!traceEvents)
-			return;
-
-		traceRecord.addHeader(name, currentTime);
-		traceRecord.formatProcessTrace(target, methodName);
-		traceRecord.finish();
+		if (traceEvents) traceRecord.formatProcessTrace(name, currentTime, target, methodName);
 	}
 
 	private void traceSchedProcess(Event target) {
-		if (!traceEvents)
-			return;
-
-		traceRecord.addHeader(name, currentTime);
-		traceRecord.formatSchedProcessTrace(target);
-		traceRecord.finish();
+		if (traceEvents) traceRecord.formatSchedProcessTrace(name, currentTime, target);
 	}
 
 	private void traceWaitUntil(int reason) {
-		if (!traceEvents)
-			return;
-
-		traceRecord.addHeader(name, currentTime);
-		traceRecord.formatWaitUntilTrace(reason);
-		traceRecord.finish();
+		if (traceEvents) traceRecord.formatWaitUntilTrace(name, currentTime, reason);
 	}
 
 	public String[] getViewerHeaders() {
