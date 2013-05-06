@@ -78,6 +78,9 @@ class EventTracer {
 	}
 
 	private static void findEventInBuffer(EventTraceRecord record) {
+		// Ensure we have read enough from the log to find this record
+		EventTracer.fillBufferUntil(record.getInternalTime());
+
 		// Try an optimistic approach first looking for exact matches
 		for (EventTraceRecord each : eventBuffer) {
 			if (!each.basicCompare(record)) {
@@ -127,20 +130,23 @@ class EventTracer {
 		Simulation.pause();
 	}
 
+	private static void writeEventToBuffer(EventTraceRecord record) {
+		for (String each : record) {
+			eventTraceFile.putString(each);
+			eventTraceFile.newLine();
+		}
+		eventTraceFile.flush();
+	}
+
 	static void processTraceData(EventTraceRecord traceRecord) {
 		if (eventTraceFile != null) {
 			synchronized (eventTraceFile) {
-				for (String each : traceRecord) {
-					eventTraceFile.putString(each);
-					eventTraceFile.newLine();
-				}
-				eventTraceFile.flush();
+				EventTracer.writeEventToBuffer(traceRecord);
 			}
 		}
 
 		if (eventVerifyFile != null) {
 			synchronized (eventVerifyFile) {
-				EventTracer.fillBufferUntil(traceRecord.getInternalTime());
 				EventTracer.findEventInBuffer(traceRecord);
 			}
 		}
