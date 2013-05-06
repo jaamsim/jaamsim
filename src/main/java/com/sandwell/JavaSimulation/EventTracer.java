@@ -40,12 +40,25 @@ class EventTracer {
 
 	private static void fillBufferUntil(long internalTime) {
 		while (bufferTime <= internalTime) {
-			EventTraceRecord temp = new EventTraceRecord(eventVerifyFile);
+			// Read a full trace record form the file, terminated at a blank line
+			EventTraceRecord temp = new EventTraceRecord();
+			while (true) {
+				String line = eventVerifyFile.readLine();
 
-			// reached end of verify file, don't add an empty record
-			if (temp.size() == 0) {
-				break;
+				if (line == null)
+					break;
+
+				temp.add(line);
+
+				if (line.length() == 0)
+					break;
 			}
+
+			if (temp.size() == 0)
+				break;
+
+			// Parse the key information from the record
+			temp.parse();
 			if (temp.isDefaultEventManager() && temp.getInternalTime() > bufferTime) {
 				bufferTime = temp.getInternalTime();
 			}

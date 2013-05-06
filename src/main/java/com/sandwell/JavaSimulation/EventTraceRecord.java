@@ -27,39 +27,11 @@ class EventTraceRecord extends ArrayList<String> {
 		traceLevel = 0;
 	}
 
-	public EventTraceRecord(FileEntity traceFile) {
-		// Trace records read from an external file don't need the traceLevel as
-		// they are read-only at that point
-		traceLevel = 0;
-
-		// Read a full trace record form the file, terminated at a blank line
-		while (true) {
-			String line = traceFile.readLine();
-
-			if (line == null)
-				break;
-
-			this.add(line);
-
-			if (line.length() == 0)
-				break;
-		}
-
-		if (this.size() == 0) {
-			return;
-		}
-		// Parse the key information from the record
-		this.parse();
-
-		//System.out.format("Read trace target:%s method:%s evt:%s time:%d\n",
-		//				  targetName, method, eventManagerName, internalTime);
-	}
-
 	void clearLevel() {
 		traceLevel = 0;
 	}
 
-	private void parse() {
+	void parse() {
 		String[] temp;
 
 		// The first line of the trace is always <eventManagerName>\t<InternalSimulationTime>
