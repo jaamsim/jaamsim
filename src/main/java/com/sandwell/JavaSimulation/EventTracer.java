@@ -22,16 +22,18 @@ class EventTracer {
 	private static FileEntity eventTraceFile;
 	private static FileEntity eventVerifyFile;
 	private static long bufferTime; // Internal sim time buffer has been filled to
-	private static ArrayList<EventTraceRecord> eventBuffer;
+	private static final ArrayList<EventTraceRecord> eventBuffer;
+
+	static {
+		eventBuffer = new ArrayList<EventTraceRecord>();
+	}
 
 	private EventTracer() {}
 
-
 	static void init() {
-		if (eventVerifyFile == null)
-			return;
+		if (eventVerifyFile != null)
+			eventVerifyFile.toStart();
 
-		eventVerifyFile.toStart();
 		eventBuffer.clear();
 		bufferTime = 0;
 	}
@@ -66,7 +68,7 @@ class EventTracer {
 	static void verifyAllEvents(boolean enable) {
 		if (enable) {
 			traceAllEvents(false);
-			eventBuffer = new ArrayList<EventTraceRecord>();
+			eventBuffer.clear();
 			bufferTime = 0;
 			eventVerifyFile = new FileEntity(InputAgent.getRunName() + ".evt", FileEntity.FILE_READ, false);
 		} else if (eventVerifyFile != null) {
