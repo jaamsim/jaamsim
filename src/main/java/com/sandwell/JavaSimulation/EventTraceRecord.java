@@ -130,9 +130,9 @@ class EventTraceRecord extends ArrayList<String> {
 		traceLevel--;
 	}
 
-	synchronized void formatEventTrace(Event evt, int reason) {
-		final String[] eventStates = {"Wait", "Event", "Int", "Kill"};
-
+	private static final String[] eventStates = {"Wait", "Event", "Int", "Kill"};
+	synchronized void formatEventTrace(String name, Event evt, int reason) {
+		this.addHeader(name, evt.eventTime);
 		if (reason == 0)
 			traceLevel--;
 

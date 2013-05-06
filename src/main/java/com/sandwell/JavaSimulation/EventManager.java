@@ -924,8 +924,7 @@ public final class EventManager implements Runnable {
 		if (!traceEvents)
 			return;
 
-		traceRecord.addHeader(name, evt.eventTime);
-		traceRecord.formatEventTrace(evt, reason);
+		traceRecord.formatEventTrace(name, evt, reason);
 		traceRecord.finish(simulation);
 	}
 
