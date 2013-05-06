@@ -138,10 +138,6 @@ public class Simulation extends Entity {
 	private Process doEndAtThread;
 	protected double startTime;
 	protected double endTime;
-	private FileEntity eventTraceFile;
-	private FileEntity eventVerifyFile;
-	private ArrayList<EventTraceRecord> eventBuffer;
-	private long bufferTime; // Internal sim time buffer has been filled to
 
 	private static String modelName = "JaamSim";
 
@@ -236,7 +232,6 @@ public class Simulation extends Entity {
 	 */
 	public Simulation() {
 		Simulation.simState = SIM_STATE_UNCONFIGURED;
-		EventManager.setSimulation(this);
 
 		// Create clock
 		Clock.setStartDate(2000, 1, 1);
@@ -367,20 +362,16 @@ public class Simulation extends Entity {
 	public void start() {
 		// call startModel from a process so it can handle events
 		EventManager.rootManager.basicInit();
-		if (eventVerifyFile != null) {
-			eventVerifyFile.toStart();
-			eventBuffer.clear();
-			bufferTime = 0;
-		}
+		EventTracer.init();
 
 		// Suppress all tracing of old model state during a restart
 		EventManager.rootManager.initialize();
 
 		if( traceEventsInput.getValue() ) {
-			this.traceAllEvents(traceEventsInput.getValue());
+			EventTracer.traceAllEvents(traceEventsInput.getValue());
 		}
 		else if( verifyEventsInput.getValue() ) {
-			this.verifyAllEvents(verifyEventsInput.getValue());
+			EventTracer.verifyAllEvents(verifyEventsInput.getValue());
 		}
 
 		// Validate each entity based on inputs only
@@ -440,121 +431,6 @@ public class Simulation extends Entity {
 		EventManager.rootManager.pause();
 		Simulation.setSimState(SIM_STATE_STOPPED);
 		GUIFrame.instance().updateForSimulationState();
-	}
-
-	public void traceAllEvents(boolean enable) {
-		if (enable) {
-			verifyAllEvents(false);
-			eventTraceFile = new FileEntity(InputAgent.getRunName() + ".evt", FileEntity.FILE_WRITE, false);
-		} else if (eventTraceFile != null) {
-			eventTraceFile.close();
-			eventTraceFile = null;
-		}
-
-		EventManager.rootManager.traceEvents = enable;
-	}
-
-	public void verifyAllEvents(boolean enable) {
-		if (enable) {
-			traceAllEvents(false);
-			eventBuffer = new ArrayList<EventTraceRecord>();
-			bufferTime = 0;
-			eventVerifyFile = new FileEntity(InputAgent.getRunName() + ".evt", FileEntity.FILE_READ, false);
-		} else if (eventVerifyFile != null) {
-			eventVerifyFile.close();
-			eventVerifyFile = null;
-		}
-
-		EventManager.rootManager.traceEvents = enable;
-	}
-
-	private void fillBufferUntil(long internalTime) {
-		while (bufferTime <= internalTime) {
-			EventTraceRecord temp = new EventTraceRecord(eventVerifyFile);
-
-			// reached end of verify file, don't add an empty record
-			if (temp.size() == 0) {
-				break;
-			}
-			if (temp.isDefaultEventManager() && temp.getInternalTime() > bufferTime) {
-				bufferTime = temp.getInternalTime();
-			}
-
-			//System.out.println("Filling buffer:");
-			//for (String line : temp) {
-			//	System.out.println(line);
-			//}
-			eventBuffer.add(temp);
-		}
-	}
-
-	private void findEventInBuffer(EventTraceRecord record) {
-		// Try an optimistic approach first looking for exact matches
-		for (EventTraceRecord each : eventBuffer) {
-			if (!each.basicCompare(record)) {
-				continue;
-			}
-
-			for (int i = 1; i < record.size(); i++) {
-				if (!record.get(i).equals(each.get(i))) {
-					System.out.println("Difference in event stream detected");
-					System.out.println("Received:");
-					for (String line : record) {
-						System.out.println(line);
-					}
-
-					System.out.println("Expected:");
-					for (String line : each) {
-						System.out.println(line);
-					}
-
-					System.out.println("Lines:");
-					System.out.println("R:" + record.get(i));
-					System.out.println("E:" + each.get(i));
-
-					Simulation.pause();
-					new Throwable().printStackTrace();
-					break;
-				}
-			}
-
-			// Found the event, it compared OK, remove from the buffer
-			eventBuffer.remove(each);
-			//System.out.println("Buffersize:" + eventBuffer.size());
-			return;
-		}
-
-		System.out.println("No matching event found for:");
-		for (String line : record) {
-			System.out.println(line);
-		}
-		for (EventTraceRecord rec : eventBuffer) {
-			System.out.println("Buffered Record:");
-			for (String line : rec) {
-				System.out.println(line);
-			}
-			System.out.println();
-		}
-		Simulation.pause();
-	}
-
-	void processTraceData(EventTraceRecord traceRecord) {
-		if (eventTraceFile != null) {
-			synchronized (eventTraceFile) {
-				for (String each : traceRecord) {
-					eventTraceFile.putString(each);
-					eventTraceFile.newLine();
-				}
-				eventTraceFile.flush();
-			}
-		}
-
-		if (eventVerifyFile != null) {
-			synchronized (eventVerifyFile) {
-				this.fillBufferUntil(traceRecord.getInternalTime());
-				this.findEventInBuffer(traceRecord);
-			}
-		}
 	}
 
 	/**

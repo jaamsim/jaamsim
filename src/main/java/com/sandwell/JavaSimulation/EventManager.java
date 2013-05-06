@@ -51,7 +51,6 @@ public final class EventManager implements Runnable {
 	private static final ArrayList<EventManager> definedManagers;
 	static final EventManager rootManager;
 
-	private static Simulation simulation; // Simulation object
 	boolean traceEvents = false;
 
 	private static int eventState;
@@ -175,10 +174,6 @@ public final class EventManager implements Runnable {
 		}
 
 		return null;
-	}
-
-	static void setSimulation(Simulation sim) {
-		simulation = sim;
 	}
 
 	private void addChild(EventManager child) {
@@ -923,7 +918,7 @@ public final class EventManager implements Runnable {
 			return;
 
 		traceRecord.formatEventTrace(name, evt, reason);
-		traceRecord.finish(simulation);
+		traceRecord.finish();
 	}
 
 	void traceProcess(Entity target, String methodName) {
@@ -932,7 +927,7 @@ public final class EventManager implements Runnable {
 
 		traceRecord.addHeader(name, currentTime);
 		traceRecord.formatProcessTrace(target, methodName);
-		traceRecord.finish(simulation);
+		traceRecord.finish();
 	}
 
 	private void traceSchedProcess(Event target) {
@@ -941,7 +936,7 @@ public final class EventManager implements Runnable {
 
 		traceRecord.addHeader(name, currentTime);
 		traceRecord.formatSchedProcessTrace(target);
-		traceRecord.finish(simulation);
+		traceRecord.finish();
 	}
 
 	private void traceWaitUntil(int reason) {
@@ -950,7 +945,7 @@ public final class EventManager implements Runnable {
 
 		traceRecord.addHeader(name, currentTime);
 		traceRecord.formatWaitUntilTrace(reason);
-		traceRecord.finish(simulation);
+		traceRecord.finish();
 	}
 
 	public String[] getViewerHeaders() {

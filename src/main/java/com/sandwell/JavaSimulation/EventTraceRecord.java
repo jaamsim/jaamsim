@@ -119,13 +119,13 @@ class EventTraceRecord extends ArrayList<String> {
 		traceLevel++;
 	}
 
-	synchronized void finish(Simulation simulation) {
+	synchronized void finish() {
 		if(traceLevel != 1)
 			return;
 
 		this.add("");
 		this.parse();
-		simulation.processTraceData(this);
+		EventTracer.processTraceData(this);
 		this.clear();
 		traceLevel--;
 	}
