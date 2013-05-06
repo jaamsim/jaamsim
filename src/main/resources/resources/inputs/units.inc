@@ -57,7 +57,7 @@ DimensionlessUnit   JavaClass { com.jaamsim.units.DimensionlessUnit   } Palette 
 " Time units
 " ======================================================================================================================================================
 
-Define TimeUnit       { Second Minute Hour Day Week Year }
+Define TimeUnit       { Second Minute Hour Day Week Year ms us ns }
 
 Second ConversionFactorToSI { 1        } Alias { Seconds seconds second Secs secs Sec sec s }
 Minute ConversionFactorToSI { 60       } Alias { Minutes minutes minute Mins mins Min min }
@@ -65,6 +65,9 @@ Hour   ConversionFactorToSI { 3600     } Alias { Hours hours hour Hrs hrs Hr hr 
 Day    ConversionFactorToSI { 86400    } Alias { Days  days  day                d }
 Week   ConversionFactorToSI { 604800   } Alias { Weeks weeks week               w }
 Year   ConversionFactorToSI { 31536000 } Alias { Years years year Yrs yrs Yr yr y }
+ms     ConversionFactorToSI { 1.0e-3   }  "milliseconds
+us     ConversionFactorToSI { 1.0e-6   }  "microseconds
+ns     ConversionFactorToSI { 1.0e-9   }  "nanoseconds
 
 " ======================================================================================================================================================
 " Distance units
