@@ -1139,8 +1139,6 @@ public class GUIFrame extends JFrame {
 	public void updateForRealTime() {
 		controlRealTime.setSelected( DisplayEntity.simulation.getRealTimeExecution() );
 		spinner.setValue(DisplayEntity.simulation.getRealTimeFactor());
-
-		//speedFactor.setText("" + simulation.getRealTimeFactor());
 	}
 
 	public static Image getWindowIcon() {

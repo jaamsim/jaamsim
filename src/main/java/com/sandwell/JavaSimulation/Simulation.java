@@ -285,17 +285,8 @@ public class Simulation extends Entity {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 
-		if(in == realTimeFactor) {
-
-			// Called to ensure the time datum is recalculated when the realtimefactor
-			// changes
-			setRealTimeExecution(EventManager.rootManager.getExecuteRealtime());
-
-			GUIFrame.instance().updateForRealTime();
-		}
-
-		if(in == realTime) {
-			setRealTimeExecution(realTime.getValue());
+		if(in == realTimeFactor || in == realTime) {
+			EventManager.rootManager.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
 			GUIFrame.instance().updateForRealTime();
 		}
 	}
@@ -654,14 +645,9 @@ public class Simulation extends Entity {
 		return initializationTime.getValue();
 	}
 
-	/** sets the simulation into real time execution mode */
-	public void setRealTimeExecution( boolean useRealTime ) {
-		EventManager.rootManager.setExecuteRealTime(useRealTime);
-	}
-
 	/** returns whether the simulation is currently executing in real time execution mode */
 	public boolean getRealTimeExecution() {
-		return EventManager.rootManager.getExecuteRealtime();
+		return realTime.getValue();
 	}
 
 	/** retrieves the current value for speedup factor for real time execution mode */

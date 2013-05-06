@@ -80,6 +80,7 @@ public final class EventManager implements Runnable {
 
 	// Real time execution state
 	private boolean executeRealTime;
+	private int realTimeFactor;
 	private long previousInternalTime;
 	private long previousWallTime;
 
@@ -152,6 +153,7 @@ public final class EventManager implements Runnable {
 		conditionalList = new ArrayList<Process>();
 
 		executeRealTime = false;
+		realTimeFactor = 1;
 		previousInternalTime = -1;
 	}
 
@@ -408,7 +410,7 @@ public final class EventManager implements Runnable {
 	}
 
 	private void updateTime(long nextTime) {
-		if (this.getExecuteRealtime()) {
+		if (executeRealTime) {
 			// Account for pausing the model/restarting
 			if (previousInternalTime == -1) {
 				previousInternalTime = nextTime;
@@ -417,23 +419,22 @@ public final class EventManager implements Runnable {
 
 			// Calculate number of milliseconds between events
 			long millisToWait = (long)((((nextTime - previousInternalTime) / Process.getSimTimeFactor()) *
-								3600 * 1000) / simulation.getRealTimeFactor());
+								3600 * 1000) / realTimeFactor);
 
 			long targetMillis = previousWallTime + millisToWait;
 			long currentWallTime = 0;
 			// cache the internal time and the current RealTimeFactor in case they
 			// are written while doing the pause
 			long prevIntTime = previousInternalTime;
-			int realTimeFact = simulation.getRealTimeFactor();
 			while ((currentWallTime = System.currentTimeMillis()) < targetMillis) {
 				this.threadPause(20);
-				long modelHours = (long)((currentWallTime - previousWallTime) * realTimeFact / 3600000.0d * Process.getSimTimeFactor());
+				long modelHours = (long)((currentWallTime - previousWallTime) * realTimeFactor / 3600000.0d * Process.getSimTimeFactor());
 				modelHours += prevIntTime;
 				if (modelHours < nextTime)
 					FrameBox.timeUpdate(modelHours / Process.getSimTimeFactor());
 
 				// If realtime was disabled, break out
-				if (!this.getExecuteRealtime() || previousInternalTime == -1)
+				if (!executeRealTime || previousInternalTime == -1)
 					break;
 			}
 		}
@@ -755,12 +756,9 @@ public final class EventManager implements Runnable {
 		return currentTime;
 	}
 
-	boolean getExecuteRealtime() {
-		return executeRealTime;
-	}
-
-	void setExecuteRealTime(boolean useRealTime) {
+	void setExecuteRealTime(boolean useRealTime, int factor) {
 		executeRealTime = useRealTime;
+		realTimeFactor = factor;
 		if (useRealTime)
 			previousInternalTime = -1;
 	}
