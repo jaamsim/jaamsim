@@ -45,7 +45,8 @@ public class Queue extends DisplayEntity {
 	protected ArrayList<QueueRecorder> recorderList;
 
 	{
-		spacingInput = new DoubleInput("Spacing", "Key Inputs", 0.0d, 0.0d, Double.POSITIVE_INFINITY);
+		spacingInput = new DoubleInput("Spacing", "Key Inputs", 0.0d);
+		spacingInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		spacingInput.setUnits( "m" );
 		this.addInput(spacingInput, true);
 

@@ -18,17 +18,11 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.Unit;
 
 public class DoubleInput extends Input<Double> {
-	private double minValue;
-	private double maxValue;
+	private double minValue = Double.NEGATIVE_INFINITY;
+	private double maxValue = Double.POSITIVE_INFINITY;
 
 	public DoubleInput(String key, String cat, Double def) {
-		this(key, cat, def, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-	}
-
-	public DoubleInput(String key, String cat, Double def, double min, double max) {
 		super(key, cat, def);
-		minValue = min;
-		maxValue = max;
 	}
 
 	@Override

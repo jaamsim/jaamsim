@@ -84,7 +84,8 @@ public class ProbabilityDistribution extends Entity {
 		addEditableKeyword( "ProbList",     "", "",      false, "Key Inputs" );
 		addEditableKeyword( "ValueFactor",  "", "1.0",   false, "Key Inputs" );
 
-		nonZeroProb = new DoubleInput("NonZeroProb", "Key Inputs", 1.0d, 0.0d, 1.0d);
+		nonZeroProb = new DoubleInput("NonZeroProb", "Key Inputs", 1.0d);
+		nonZeroProb.setValidRange(0.0d, 1.0d);
 		this.addInput(nonZeroProb, true);
 	}
 

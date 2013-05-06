@@ -71,7 +71,8 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		pointsInput.setUnits("m");
 		this.addInput(pointsInput, true);
 
-		widthInput = new DoubleInput("Width", "Key Inputs", 1.0d, 1.0d, Double.POSITIVE_INFINITY);
+		widthInput = new DoubleInput("Width", "Key Inputs", 1.0d);
+		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		this.addInput(widthInput, true);
 
 		colorInput = new ColourInput("Color", "Key Inputs", ColourInput.BLACK);

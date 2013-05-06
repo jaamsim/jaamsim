@@ -67,7 +67,8 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		pointsInput.setUnits("m");
 		this.addInput(pointsInput, true);
 
-		width = new DoubleInput("Width", "Arrow Graphics", 1.0d, 0.0d, Double.POSITIVE_INFINITY);
+		width = new DoubleInput("Width", "Arrow Graphics", 1.0d);
+		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(width, true);
 
 		arrowHeadSize = new Vec3dInput( "ArrowSize", "Arrow Graphics", new Vec3d(0.1d, 0.1d, 0.0d) );

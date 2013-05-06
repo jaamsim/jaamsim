@@ -34,7 +34,8 @@ public class TextLabel extends DisplayEntity  {
 		text = new StringInput("Text", "Fixed Text", "abc");
 		this.addInput(text, true);
 
-		textHeight = new DoubleInput("TextHeight", "Fixed Text", 0.3d, 0.0d, Double.POSITIVE_INFINITY);
+		textHeight = new DoubleInput("TextHeight", "Fixed Text", 0.3d);
+		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(textHeight, true);
 	}
 

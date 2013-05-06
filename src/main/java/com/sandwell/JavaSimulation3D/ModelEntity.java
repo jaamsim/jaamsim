@@ -202,7 +202,8 @@ public class ModelEntity extends DisplayEntity {
 		releaseEquipment = new BooleanListInput("ReleaseEquipment", "Maintenance", null);
 		this.addInput(releaseEquipment, true);
 
-		availability = new DoubleInput("Reliability", "Breakdowns", 1.0d, 0.0d, 1.0d);
+		availability = new DoubleInput("Reliability", "Breakdowns", 1.0d);
+		availability.setValidRange(0.0d, 1.0d);
 		this.addInput(availability, true);
 
 		downtimeIATDistribution = new EntityInput<ProbabilityDistribution>(ProbabilityDistribution.class, "DowntimeIATDistribution", "Breakdowns", null);
@@ -211,7 +212,8 @@ public class ModelEntity extends DisplayEntity {
 		downtimeDurationDistribution = new EntityInput<ProbabilityDistribution>(ProbabilityDistribution.class, "DowntimeDurationDistribution", "Breakdowns", null);
 		this.addInput(downtimeDurationDistribution, true);
 
-		downtimeToReleaseEquipment = new DoubleInput("DowntimeToReleaseEquipment", "Breakdowns", 0.0d, 0.0d, Double.POSITIVE_INFINITY);
+		downtimeToReleaseEquipment = new DoubleInput("DowntimeToReleaseEquipment", "Breakdowns", 0.0d);
+		downtimeToReleaseEquipment.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(downtimeToReleaseEquipment, true);
 
 		skipMaintenanceIfOverlap = new BooleanListInput("SkipMaintenanceIfOverlap", "Maintenance", new BooleanVector());
