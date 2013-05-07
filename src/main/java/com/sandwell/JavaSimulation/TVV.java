@@ -37,22 +37,11 @@ public double getValueAtTime(double time) {
 }
 
 public void setValue(double time, double val) {
-	// Clear the value if it is essentially 0.0
-	if (Tester.equalCheckTolerance(val, 0.0d))
-		val = 0.0;
 	this.set(time, val, datumRate);
 }
 
 public void setRate(double time, double rate) {
-
-	// Check if we're essentially 0
-	if( Tester.equalCheckTolerance(rate, 0.0d) )
-	    rate = 0;
-
 	double newDatum = getValueAtTime(time);
-	if (Tester.equalCheckTolerance(newDatum, 0.0d))
-		newDatum = 0.0;
-
 	set(time, newDatum, rate);
 }
 
