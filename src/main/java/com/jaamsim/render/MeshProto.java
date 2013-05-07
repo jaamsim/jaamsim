@@ -82,6 +82,10 @@ private class SubMesh {
 	public int _useTexVar;
 	public int _maxNumBonesVar;
 
+	// Var for tuning the logarithmic depth buffer
+	public int _cVar;
+	public int _fcVar;
+
 	public int _boneMatricesVar;
 
 	public Vec4d _center;
@@ -113,6 +117,9 @@ private class SubLine {
 	public int _modelViewMatVar;
 	public int _projMatVar;
 	public int _colorVar;
+
+	public int _cVar;
+	public int _fcVar;
 
 	public ConvexHull _hull;
 
@@ -435,6 +442,9 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Ma
 
 	gl.glUniform1i(subMesh._maxNumBonesVar, (pose == null) ? 0 : 4);
 
+	gl.glUniform1f(subMesh._cVar, Camera.C);
+	gl.glUniform1f(subMesh._fcVar, Camera.FC);
+
 	// Actually draw it
 	//gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 	gl.glDisable(GL2GL3.GL_CULL_FACE);
@@ -498,6 +508,9 @@ private void renderSubLine(SubLine sub, Map<Integer, Integer> vaoMap,
 	gl.glUniformMatrix4fv(sub._projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
 	gl.glUniform4fv(sub._colorVar, 1, sub._diffuseColor.toFloats(), 0);
+
+	gl.glUniform1f(sub._cVar, Camera.C);
+	gl.glUniform1f(sub._fcVar, Camera.FC);
 
 	gl.glLineWidth(1);
 
@@ -605,6 +618,9 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	sub._texVar = gl.glGetUniformLocation(sub._progHandle, "tex");
 	sub._useTexVar = gl.glGetUniformLocation(sub._progHandle, "useTex");
 	sub._maxNumBonesVar = gl.glGetUniformLocation(sub._progHandle, "maxNumBones");
+
+	sub._cVar = gl.glGetUniformLocation(sub._progHandle, "C");
+	sub._fcVar = gl.glGetUniformLocation(sub._progHandle, "FC");
 
 	// Init textureCoords
 	if (hasTex) {
@@ -751,6 +767,9 @@ private void loadGPUSubLine(GL2GL3 gl, Renderer renderer, MeshData.SubLineData d
 
 	sub._diffuseColor = new Color4d(data.diffuseColor);
 	sub._colorVar = gl.glGetUniformLocation(sub._progHandle, "color");
+
+	sub._cVar = gl.glGetUniformLocation(sub._progHandle, "C");
+	sub._fcVar = gl.glGetUniformLocation(sub._progHandle, "FC");
 
 	_subLines.add(sub);
 }

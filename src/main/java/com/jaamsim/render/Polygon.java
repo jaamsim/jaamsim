@@ -47,6 +47,9 @@ public class Polygon implements Renderable {
 	private static int _colorVar;
 	private static int _posVar;
 
+	private static int _cVar;
+	private static int _fcVar;
+
 	private static int _VAOKey;
 
 	private static boolean _hasInitialized;
@@ -150,6 +153,9 @@ public class Polygon implements Renderable {
 
 		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
 		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
+
+		gl.glUniform1f(_cVar, Camera.C);
+		gl.glUniform1f(_fcVar, Camera.FC);
 
 		gl.glUniform4fv(_colorVar, 1, renderColour, 0);
 
@@ -267,6 +273,9 @@ public class Polygon implements Renderable {
 		_modelViewMatVar = gl.glGetUniformLocation(_progHandle, "modelViewMat");
 		_projMatVar = gl.glGetUniformLocation(_progHandle, "projMat");
 		_colorVar = gl.glGetUniformLocation(_progHandle, "color");
+
+		_cVar = gl.glGetUniformLocation(_progHandle, "C");
+		_fcVar = gl.glGetUniformLocation(_progHandle, "FC");
 
 		_posVar = gl.glGetAttribLocation(_progHandle, "position");
 

@@ -145,6 +145,12 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, 
 	int colorVar = gl.glGetUniformLocation(prog, "color");
 	gl.glUniform4fv(colorVar, 1, _color, 0);
 
+	int cVar = gl.glGetUniformLocation(prog, "C");
+	gl.glUniform1f(cVar, Camera.C);
+
+	int fcVar = gl.glGetUniformLocation(prog, "FC");
+	gl.glUniform1f(fcVar, Camera.FC);
+
 	int advanceVar = gl.glGetUniformLocation(prog, "advance");
 
 	int posVar = gl.glGetAttribLocation(prog, "position");

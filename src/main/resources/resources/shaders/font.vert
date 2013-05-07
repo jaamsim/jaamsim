@@ -14,13 +14,15 @@
  */
 #version 130
 
-//uniform mat4 modelViewMat;
-//uniform mat4 projMat;
 uniform mat4 modelViewProjMat;
 
 uniform float advance;
 
 in vec2 position;
+
+uniform float C;
+uniform float FC;
+out float interpZ;
 
 void main()
 {
@@ -29,7 +31,18 @@ void main()
     pos.x += advance;
     pos.z = 0; pos.w = 1;
 
-    //gl_Position = projMat * modelViewMat * pos;
     gl_Position = modelViewProjMat * pos;
+
+    // Logarithmic depth buffer
+    interpZ = gl_Position.w;
+    float logIn = interpZ*C+1;
+    float logVal = 0;
+    // Linearize for negative values (
+    if (logIn < 0) {
+        logVal = interpZ*C;
+    } else {
+        logVal = log(logIn);
+    }
+    gl_Position.z = (2*logVal*FC - 1)*gl_Position.w;
 
 }

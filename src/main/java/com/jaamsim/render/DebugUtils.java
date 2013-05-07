@@ -45,6 +45,9 @@ public class DebugUtils {
 	private static int _colorVar;
 	private static int _posVar;
 
+	private static int _cVar;
+	private static int _fcVar;
+
 	private static int _debugVAOKey;
 
 
@@ -68,6 +71,9 @@ public class DebugUtils {
 		_colorVar = gl.glGetUniformLocation(_debugProgHandle, "color");
 
 		_posVar = gl.glGetAttribLocation(_debugProgHandle, "position");
+
+		_cVar = gl.glGetAttribLocation(_debugProgHandle, "C");
+		_fcVar = gl.glGetAttribLocation(_debugProgHandle, "FC");
 
 		_debugVAOKey = Renderer.getAssetID();
 
@@ -167,6 +173,9 @@ public class DebugUtils {
 
 		gl.glUniform4fv(_colorVar, 1, color.toFloats(), 0);
 
+		gl.glUniform1f(_cVar, Camera.C);
+		gl.glUniform1f(_fcVar, Camera.FC);
+
 		ArrayList<Armature.Bone> bones = arm.getAllBones();
 		//Build up the list of bone vertices
 		Vec4d[] vects = new Vec4d[bones.size() * 2];
@@ -248,6 +257,9 @@ public class DebugUtils {
 
 		gl.glUniform4fv(_colorVar, 1, color.toFloats(), 0);
 
+		gl.glUniform1f(_cVar, Camera.C);
+		gl.glUniform1f(_fcVar, Camera.FC);
+
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _aabbVertBuffer);
 		gl.glVertexAttribPointer(_posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
 
@@ -271,6 +283,9 @@ public class DebugUtils {
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(_debugProgHandle);
+
+		gl.glUniform1f(_cVar, Camera.C);
+		gl.glUniform1f(_fcVar, Camera.FC);
 
 		// Setup uniforms for this object
 		Mat4d projMat = cam.getProjMat4d();
@@ -326,6 +341,9 @@ public class DebugUtils {
 
 		gl.glUniform4fv(_colorVar, 1, color, 0);
 
+		gl.glUniform1f(_cVar, Camera.C);
+		gl.glUniform1f(_fcVar, Camera.FC);
+
 		gl.glLineWidth((float)lineWidth);
 
 		// Build up a float buffer to pass to GL
@@ -377,6 +395,9 @@ public class DebugUtils {
 		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
 		gl.glUniform4fv(_colorVar, 1, color, 0);
+
+		gl.glUniform1f(_cVar, Camera.C);
+		gl.glUniform1f(_fcVar, Camera.FC);
 
 		gl.glPointSize((float)pointWidth);
 

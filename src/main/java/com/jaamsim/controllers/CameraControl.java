@@ -21,6 +21,7 @@ import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.render.Camera;
 import com.jaamsim.render.CameraInfo;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
@@ -223,10 +224,8 @@ public class CameraControl implements WindowInteractionListener {
 
 		info.trans = finalTrans;
 
-		// HACK, manually set the near and far planes to keep the XY plane in view. This will be a bad thing when we go real 3D
-		// TODO: not this
-		info.nearDist = pi.radius * 0.1;
-		info.farDist = pi.radius * 10;
+		info.nearDist = Camera.near;
+		info.farDist = Camera.far;
 
 		_renderer.setCameraInfoForWindow(_windowID, info);
 

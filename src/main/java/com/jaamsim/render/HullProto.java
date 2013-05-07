@@ -43,6 +43,9 @@ public class HullProto {
 	private int _modelViewMatVar;
 	private int _projMatVar;
 
+	private int _cVar;
+	private int _fcVar;
+
 	private int _assetID;
 
 	public HullProto(ConvexHull hull) {
@@ -61,6 +64,9 @@ public class HullProto {
 
 		_modelViewMatVar = gl.glGetUniformLocation(_progHandle, "modelViewMat");
 		_projMatVar = gl.glGetUniformLocation(_progHandle, "projMat");
+
+		_cVar = gl.glGetUniformLocation(_progHandle, "C");
+		_fcVar = gl.glGetUniformLocation(_progHandle, "FC");
 
 		int[] is = new int[2];
 		gl.glGenBuffers(2, is, 0);
@@ -143,6 +149,9 @@ public class HullProto {
 
 		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
 		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
+
+		gl.glUniform1f(_cVar, Camera.C);
+		gl.glUniform1f(_fcVar, Camera.FC);
 
 		// Actually draw it
 

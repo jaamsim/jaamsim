@@ -64,6 +64,9 @@ public class TextureView implements Renderable {
 
 	static private int hasTexVar;
 
+	static private int cVar;
+	static private int fcVar;
+
 	public TextureView(URL imageURL, Transform trans, Vec3d scale, boolean isTransparent, boolean isCompressed,
 	                   VisibilityInfo visInfo, long pickingID) {
 		_imageURL = imageURL;
@@ -146,6 +149,9 @@ public class TextureView implements Renderable {
 		lightDirVar = gl.glGetUniformLocation(progHandle, "lightDir");
 		texVar = gl.glGetUniformLocation(progHandle, "tex");
 		hasTexVar = gl.glGetUniformLocation(progHandle, "useTex");
+
+		cVar = gl.glGetUniformLocation(progHandle, "C");
+		fcVar = gl.glGetUniformLocation(progHandle, "FC");
 
 		staticInit = true;
 	}
@@ -241,6 +247,9 @@ public class TextureView implements Renderable {
 		gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(new Mat4d()), 0);
 
 		gl.glUniform1i(hasTexVar, 1);
+
+		gl.glUniform1f(cVar, Camera.C);
+		gl.glUniform1f(fcVar, Camera.FC);
 
 		Vec4d lightVect = new Vec4d(0,  0, -1,  0);
 		lightVect.normalize3();

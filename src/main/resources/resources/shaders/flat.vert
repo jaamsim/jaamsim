@@ -33,6 +33,10 @@ uniform mat4 boneMatrices[MAX_BONES];
 out vec2 texCoordFrag;
 out vec3 normalFrag;
 
+uniform float C;
+uniform float FC;
+out float interpZ;
+
 void main()
 {
     vec4 animatedPos = vec4(0.0, 0.0, 0.0, 1.0);
@@ -70,4 +74,16 @@ void main()
     normalFrag = (normalMat * animatedNormal).xyz;
 
     texCoordFrag = texCoord;
+
+    // Logarithmic depth buffer
+    interpZ = gl_Position.w;
+    float logIn = interpZ*C+1;
+    float logVal = 0;
+    // Linearize for negative values (
+    if (logIn < 0) {
+        logVal = interpZ*C;
+    } else {
+        logVal = log(logIn);
+    }
+    gl_Position.z = (2*logVal*FC - 1)*gl_Position.w;
 }

@@ -19,9 +19,25 @@ uniform mat4 projMat;
 
 in vec4 position;
 
+uniform float C;
+uniform float FC;
+out float interpZ;
+
 void main()
 {
 
     gl_Position = projMat * modelViewMat * position;
+
+    // Logarithmic depth buffer
+    interpZ = gl_Position.w;
+    float logIn = interpZ*C+1;
+    float logVal = 0;
+    // Linearize for negative values (
+    if (logIn < 0) {
+        logVal = interpZ*C;
+    } else {
+        logVal = log(logIn);
+    }
+    gl_Position.z = (2*logVal*FC - 1)*gl_Position.w;
 
 }

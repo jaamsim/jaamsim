@@ -17,6 +17,10 @@
 in vec2 texCoordFrag;
 in vec3 normalFrag;
 
+uniform float C;
+uniform float FC;
+in float interpZ;
+
 //layout(location = 0) out vec4 output;
 out vec4 outColour;
 
@@ -41,5 +45,6 @@ void main()
         outColour = diffuseColor;
     }
     outColour.rgb *= light;
-    
+
+    gl_FragDepth = log(interpZ*C+1)*FC;
 }

@@ -31,6 +31,20 @@ import com.jaamsim.math.Vec4d;
  */
 public class Camera {
 
+// Tuning parameters for logarithmic depth buffer
+// Thanks to this algorithm, we can have a near distance of 0.1mm, and a far distance of around
+// 10,000km
+// This uses the algorithm from the following article:
+// http://outerra.blogspot.ca/2012/11/maximizing-depth-buffer-range-and.html
+public static final float C = 1.0f;
+public static final float FC;
+public static final float near = 0.0001f;
+public static final float far = 100000000f;
+static {
+	FC = (float)(1.0/Math.log(far*C + 1));
+}
+
+
 /**
  * All the basic camera configuration information is stored in a CameraInfo, this can be copied and passed
  * back to the app. All other members are renderer owned information

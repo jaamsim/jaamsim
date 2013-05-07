@@ -16,6 +16,10 @@
 
 uniform vec4 color;
 
+uniform float C;
+uniform float FC;
+in float interpZ;
+
 //layout(location = 0) out vec4 output;
 out vec4 outColour;
 
@@ -24,4 +28,6 @@ void main()
 
     outColour.rgb = color.rgb;
     outColour.a = 1;
+
+    gl_FragDepth = log(interpZ*C+1)*FC;
 }
