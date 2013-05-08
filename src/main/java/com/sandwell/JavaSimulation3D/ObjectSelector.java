@@ -471,7 +471,7 @@ static class LabelMenuItem extends DEMenuItem {
 		if (ent.getCurrentRegion() != null)
 			InputAgent.processEntity_Keyword_Value(label, "Region", ent.getCurrentRegion().getInputName());
 
-		InputAgent.processEntity_Keyword_Value(label, "Position", "1.0, -1.0, 0.0" );
+		InputAgent.processEntity_Keyword_Value(label, "Position", "0.0 -1.0 0.0 m" );
 		InputAgent.processEntity_Keyword_Value(label, "Text", ent.getInputName());
 
 		FrameBox.setSelectedEntity(label);
