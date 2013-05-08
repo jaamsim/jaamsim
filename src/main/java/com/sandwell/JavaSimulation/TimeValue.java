@@ -24,6 +24,7 @@ public class TimeValue {
 	private final ProbabilityDistribution probVal;
 	private final ArrayList<ProbabilityDistribution> monthProbVal;
 	private double currentValue;
+	private double probScaleFactor;  // scale factor for converting probability distribution values to default units
 
 	public TimeValue(double val) {
 		dVal = val;
@@ -31,6 +32,7 @@ public class TimeValue {
 		monthVal = null;
 		probVal = null;
 		monthProbVal = null;
+		probScaleFactor = 1.0;
 	}
 
 	public TimeValue(DoubleVector month) {
@@ -39,6 +41,7 @@ public class TimeValue {
 		currentValue = monthVal.get(0);
 		probVal = null;
 		monthProbVal = null;
+		probScaleFactor = 1.0;
 	}
 
 	public TimeValue(ProbabilityDistribution prob) {
@@ -47,6 +50,7 @@ public class TimeValue {
 		probVal = prob;
 		currentValue = 0.0;
 		monthProbVal = null;
+		probScaleFactor = 1.0;
 	}
 
 	public TimeValue(ArrayList<ProbabilityDistribution> probList) {
@@ -54,6 +58,11 @@ public class TimeValue {
 		monthVal = null;
 		probVal = null;
 		monthProbVal = probList;
+		probScaleFactor = 1.0;
+	}
+
+	public void setProbScaleFactor( double factor ) {
+		probScaleFactor = factor;
 	}
 
 	public double getNextValueForTime(double time) {
@@ -65,10 +74,10 @@ public class TimeValue {
 			currentValue = monthVal.get(Clock.getMonthIndex(time));
 
 		if (probVal != null)
-			currentValue = probVal.nextValue();
+			currentValue = probVal.nextValue() * probScaleFactor;
 
 		if(monthProbVal != null)
-			currentValue = monthProbVal.get(Clock.getMonthIndex(time)).nextValue();
+			currentValue = monthProbVal.get(Clock.getMonthIndex(time)).nextValue() * probScaleFactor;
 
 		return currentValue;
 	}
@@ -85,8 +94,8 @@ public class TimeValue {
 			return currentValue;
 
 		if(probVal != null)
-			return probVal.getExpectedValue();
-		return monthProbVal.get(Clock.getMonthIndex(time)).getExpectedValue();
+			return probVal.getExpectedValue() * probScaleFactor;
+		return monthProbVal.get(Clock.getMonthIndex(time)).getExpectedValue() * probScaleFactor;
 	}
 
 	public double getMinValueFor(double time) {
@@ -97,8 +106,8 @@ public class TimeValue {
 			return currentValue;
 
 		if(probVal != null)
-			return probVal.getMinimumValue();
-		return monthProbVal.get(Clock.getMonthIndex(time)).getMinimumValue();
+			return probVal.getMinimumValue() * probScaleFactor;
+		return monthProbVal.get(Clock.getMonthIndex(time)).getMinimumValue() * probScaleFactor;
 	}
 
 	public double getMinValue() {
@@ -109,14 +118,14 @@ public class TimeValue {
 			return currentValue;
 
 		if(probVal != null)
-			return probVal.getMinimumValue();
+			return probVal.getMinimumValue() * probScaleFactor;
 
 		double minVal = Double.POSITIVE_INFINITY;
 		for(ProbabilityDistribution each: monthProbVal) {
 			if( minVal > each.getMinimumValue() )
 				minVal = each.getMinimumValue();
 		}
-		return minVal;
+		return minVal * probScaleFactor;
 	}
 
 	public double getMaxValueFor(double time) {
@@ -127,8 +136,8 @@ public class TimeValue {
 			return currentValue;
 
 		if(probVal != null)
-			return probVal.getMaximumValue();
-		return monthProbVal.get(Clock.getMonthIndex(time)).getMaximumValue();
+			return probVal.getMaximumValue() * probScaleFactor;
+		return monthProbVal.get(Clock.getMonthIndex(time)).getMaximumValue() * probScaleFactor;
 	}
 
 	public void initialize() {
