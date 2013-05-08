@@ -461,7 +461,7 @@ public double determinant() {
 public Mat4d inverse() {
 	double det = determinant();
 
-	if (Math.abs(det) < 0.000000000001) {
+	if (det == 0.0) {
 		return null;
 	}
 
