@@ -551,7 +551,9 @@ public abstract class Input<T> {
 				return new TimeValue(Input.parseDoubleVector(input, minValue, maxValue, factor));
 			} catch (InputErrorException e) {}
 			try {
-				return new TimeValue(Input.parseEntityList(input, ProbabilityDistribution.class, false));
+				TimeValue tval = new TimeValue(Input.parseEntityList(input, ProbabilityDistribution.class, false));
+				tval.setProbScaleFactor( factor );
+				return tval;
 			} catch (InputErrorException e) {}
 		}
 		else {
@@ -562,7 +564,9 @@ public abstract class Input<T> {
 			} catch (InputErrorException e) {}
 
 			try {
-				return new TimeValue(Input.parseEntity(input.get(0), ProbabilityDistribution.class));
+				TimeValue tval = new TimeValue(Input.parseEntity(input.get(0), ProbabilityDistribution.class));
+				tval.setProbScaleFactor( factor );
+				return tval;
 			} catch (InputErrorException e) {}
 		}
 		throw new InputErrorException(INP_ERR_TIMEVALUE, input.toString());
