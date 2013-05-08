@@ -504,6 +504,22 @@ static class CenterInViewMenuItem extends DEMenuItem {
 	}
 }
 
+	private static class JActionMenuItem extends JMenuItem
+	implements ActionListener {
+		private final DEMenuItem de;
+
+		public JActionMenuItem(DEMenuItem item) {
+			super(item.menuName);
+			de = item;
+			this.addActionListener(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			de.action();
+		}
+	}
+
 	/**
 	 * A miscelaneous utility to populate a JPopupMenu with a list of DisplayEntity menu items (for the right click menu)
 	 * @param menu
@@ -512,31 +528,17 @@ static class CenterInViewMenuItem extends DEMenuItem {
 	public static void populateMenu(JPopupMenu menu, Entity ent, int x, int y) {
 		ArrayList<DEMenuItem> menuItems = getMenuItems(ent, x, y);
 		JMenu centerList = null;
-		for (final ObjectSelector.DEMenuItem item : menuItems) {
+		for (ObjectSelector.DEMenuItem item : menuItems) {
 			if (item instanceof CenterInViewMenuItem) {
 				if (centerList == null) {
 					centerList = new JMenu("Center in View");
 					menu.add(centerList);
 				}
-				JMenuItem mi = new JMenuItem(item.menuName);
-				mi.addActionListener( new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						item.action();
-					}
-				});
-				centerList.add(mi);
+				centerList.add(new JActionMenuItem(item));
 				continue;
 			}
 
-			JMenuItem mi = new JMenuItem(item.menuName);
-			mi.addActionListener( new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					item.action();
-				}
-			});
-			menu.add(mi);
+			menu.add(new JActionMenuItem(item));
 		}
 	}
 
