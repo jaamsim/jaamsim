@@ -832,7 +832,7 @@ public class ColParser {
 
 		SubMeshDesc smd = readGeometryInputs(subGeo);
 
-		assert(smd.normDesc != null);
+		boolean hasNormal = smd.normDesc != null;
 
 		if (geoTag.equals("triangles")) {
 			parseTriangles(smd, subGeo);
@@ -855,7 +855,11 @@ public class ColParser {
 		FaceSubGeo fsg = new FaceSubGeo(numVerts);
 
 		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
-		Vec4d[] normData = getDataArrayFromSource(smd.normDesc.source);
+
+		Vec4d[] normData = null;
+		if (hasNormal) {
+			normData = getDataArrayFromSource(smd.normDesc.source);
+		}
 		Vec4d[] texCoordData = null;
 		if (hasTexCoords)
 			texCoordData = getDataArrayFromSource(smd.texCoordDesc.source);
@@ -863,12 +867,37 @@ public class ColParser {
 		fsg.materialSymbol = subGeo.getAttrib("material");
 		assert(fsg.materialSymbol != null);
 
+		Vec4d[] generatedNormals = null;
+		if (!hasNormal) {
+			Vec4d t0 = new Vec4d();
+			Vec4d t1 = new Vec4d();
+			// Generate one normal per face
+			generatedNormals = new Vec4d[numVerts/3];
+			for (int i = 0; i < numVerts / 3; ++i) {
+				Vec4d p0 = posData[smd.posDesc.indices[i*3 + 0]];
+				Vec4d p1 = posData[smd.posDesc.indices[i*3 + 1]];
+				Vec4d p2 = posData[smd.posDesc.indices[i*3 + 2]];
+				t0.sub3(p1, p0);
+				t1.sub3(p2, p0);
+				Vec4d norm = new Vec4d();
+				norm.cross3(t0, t1);
+				norm.normalize3();
+				norm.w = 0;
+				generatedNormals[i] = norm;
+			}
+		}
+
 		for (int i = 0; i < numVerts; ++i) {
 			Vec4d pos = new Vec4d(posData[smd.posDesc.indices[i]]);
 			pos.w = 1;
 
-			Vec4d normal = new Vec4d(normData[smd.normDesc.indices[i]]);
-			normal.w = 0;
+			Vec4d normal = null;
+			if (hasNormal) {
+				normal = new Vec4d(normData[smd.normDesc.indices[i]]);
+				normal.w = 0;
+			} else {
+				normal = generatedNormals[i/3];
+			}
 
 			Vec4d texCoord = null;
 			if (hasTexCoords) {
@@ -961,7 +990,9 @@ public class ColParser {
 		assert(ps.length >= count * 3 * smd.stride);
 
 		smd.posDesc.indices = new int[count*3];
-		smd.normDesc.indices = new int[count*3];
+		if (smd.normDesc != null) {
+			smd.normDesc.indices = new int[count*3];
+		}
 		if (smd.texCoordDesc != null) {
 			smd.texCoordDesc.indices = new int[count*3];
 		}
@@ -969,7 +1000,9 @@ public class ColParser {
 		for (int i = 0; i < count * 3; ++i) {
 			int offset = i * smd.stride;
 			smd.posDesc.indices[i] = ps[offset + smd.posDesc.offset];
-			smd.normDesc.indices[i] = ps[offset + smd.normDesc.offset];
+			if (smd.normDesc != null) {
+				smd.normDesc.indices[i] = ps[offset + smd.normDesc.offset];
+			}
 			if (smd.texCoordDesc != null) {
 				smd.texCoordDesc.indices[i] = ps[offset + smd.texCoordDesc.offset];
 			}
@@ -1005,7 +1038,9 @@ public class ColParser {
 		assert(ps.length >= totalVerts * smd.stride);
 
 		smd.posDesc.indices = new int[numTriangles * 3];
-		smd.normDesc.indices = new int[numTriangles * 3];
+		if (smd.normDesc != null) {
+			smd.normDesc.indices = new int[numTriangles * 3];
+		}
 		if (smd.texCoordDesc != null) {
 			smd.texCoordDesc.indices = new int[numTriangles * 3];
 		}
@@ -1024,21 +1059,27 @@ public class ColParser {
 				int vert2 = readVertOffset + v - 1;
 
 				smd.posDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.posDesc.offset];
-				smd.normDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.normDesc.offset];
+				if (smd.normDesc != null) {
+					smd.normDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.normDesc.offset];
+				}
 				if (smd.texCoordDesc != null) {
 					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.texCoordDesc.offset];
 				}
 				nextWriteVert++;
 
 				smd.posDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.posDesc.offset];
-				smd.normDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.normDesc.offset];
+				if (smd.normDesc != null) {
+					smd.normDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.normDesc.offset];
+				}
 				if (smd.texCoordDesc != null) {
 					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.texCoordDesc.offset];
 				}
 				nextWriteVert++;
 
 				smd.posDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.posDesc.offset];
-				smd.normDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.normDesc.offset];
+				if (smd.normDesc != null) {
+					smd.normDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.normDesc.offset];
+				}
 				if (smd.texCoordDesc != null) {
 					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.texCoordDesc.offset];
 				}
@@ -1067,7 +1108,9 @@ public class ColParser {
 		}
 
 		smd.posDesc.indices = new int[numTriangles * 3];
-		smd.normDesc.indices = new int[numTriangles * 3];
+		if (smd.normDesc != null) {
+			smd.normDesc.indices = new int[numTriangles * 3];
+		}
 		if (smd.texCoordDesc != null) {
 			smd.texCoordDesc.indices = new int[numTriangles * 3];
 		}
@@ -1086,21 +1129,27 @@ public class ColParser {
 				int vert2 = i + 2;
 
 				smd.posDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.posDesc.offset];
-				smd.normDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.normDesc.offset];
+				if (smd.normDesc != null) {
+					smd.normDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.normDesc.offset];
+				}
 				if (smd.texCoordDesc != null) {
 					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.texCoordDesc.offset];
 				}
 				nextWriteVert++;
 
 				smd.posDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.posDesc.offset];
-				smd.normDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.normDesc.offset];
+				if (smd.normDesc != null) {
+					smd.normDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.normDesc.offset];
+				}
 				if (smd.texCoordDesc != null) {
 					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.texCoordDesc.offset];
 				}
 				nextWriteVert++;
 
 				smd.posDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.posDesc.offset];
-				smd.normDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.normDesc.offset];
+				if (smd.normDesc != null) {
+					smd.normDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.normDesc.offset];
+				}
 				if (smd.texCoordDesc != null) {
 					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.texCoordDesc.offset];
 				}
