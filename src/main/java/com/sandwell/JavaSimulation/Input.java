@@ -336,9 +336,6 @@ public abstract class Input<T> {
 				// Parse and convert the values
 				StringVector temp = data.subString(0,data.size()-2);
 				value = Input.parseTimeValue(temp, minValue, maxValue, conversionFactor);
-				if(value.isProbablity() && unit != defaultUnit) {
-					throw new InputErrorException( "the only allowed unit for this ProbabilityDistribution(s) is '%s'", defaultUnit );
-				}
 			}
 			else {
 				// Parse the values

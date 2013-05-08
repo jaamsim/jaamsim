@@ -64,9 +64,6 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 				// Parse and convert the values
 				StringVector temp = input.subString(0,input.size()-2);
 				defTime = Input.parseTimeValue(temp, minValue, maxValue, conversionFactor);
-				if(defTime.isProbablity() && unit != defaultUnit) {
-					throw new InputErrorException( "the only allowed unit for this ProbabilityDistribution(s) is '%s'", defaultUnit );
-				}
 			}
 			else {
 				// Parse the values
@@ -102,9 +99,6 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 			// Parse and convert the values
 			StringVector temp = input.subString(1,input.size()-2);
 			val = Input.parseTimeValue(temp, minValue, maxValue, conversionFactor);
-			if(val.isProbablity() && unit != defaultUnit) {
-				throw new InputErrorException( "the only allowed unit for this ProbabilityDistribution(s) is '%s'", defaultUnit );
-			}
 		}
 		else {
 			// Parse the values

@@ -54,9 +54,6 @@ public class TimeValueInput extends Input<TimeValue> {
 			// Parse and convert the values
 			StringVector temp = input.subString(0,input.size()-2);
 			value = Input.parseTimeValue(temp, minValue, maxValue, conversionFactor);
-			if(value.isProbablity() && unit != defaultUnit) {
-				throw new InputErrorException( "the only allowed unit for this ProbabilityDistribution(s) is '%s'", defaultUnit );
-			}
 		}
 		else {
 			// Parse the values
