@@ -1393,25 +1393,6 @@ public class GUIFrame extends JFrame {
 		}
 	}
 
-	/**
-	 * A miscelaneous utility to populate a JPopupMenu with a list of DisplayEntity menu items (for the right click menu)
-	 * @param menu
-	 * @param menuItems
-	 */
-	public static void populateMenu(JPopupMenu menu, ArrayList<ObjectSelector.DEMenuItem> menuItems) {
-
-		for (final ObjectSelector.DEMenuItem item : menuItems) {
-			JMenuItem mi = new JMenuItem(item.menuName);
-			mi.addActionListener( new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					item.action();
-				}
-			});
-			menu.add(mi);
-		}
-	}
-
 	public static boolean getShuttingDownFlag() {
 		return shuttingDown.get();
 	}

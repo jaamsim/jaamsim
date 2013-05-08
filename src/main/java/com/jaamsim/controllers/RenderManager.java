@@ -528,7 +528,7 @@ public class RenderManager implements DragSourceListener {
 			if (ents.size() == 0) { return; } // Nothing to show
 
 			if (ents.size() == 1) {
-				populateMenu(menu, ObjectSelector.getMenuItems(ents.get(0), menuX, menuY));
+				ObjectSelector.populateMenu(menu, ents.get(0), menuX, menuY);
 			}
 			else {
 				// Several entities, let the user pick the interesting entity first
@@ -539,7 +539,7 @@ public class RenderManager implements DragSourceListener {
 						@Override
 						public void actionPerformed( ActionEvent event ) {
 							menu.removeAll();
-							populateMenu(menu, ObjectSelector.getMenuItems(de, menuX, menuY));
+							ObjectSelector.populateMenu(menu, de, menuX, menuY);
 							menu.show(awtFrame, menuX, menuY);
 						}
 					} );
@@ -766,20 +766,6 @@ public class RenderManager implements DragSourceListener {
 		_exceptionLogger.printExceptionLog();
 
 		System.out.println("");
-	}
-
-	public void populateMenu(JPopupMenu menu, ArrayList<ObjectSelector.DEMenuItem> menuItems) {
-
-		for (final ObjectSelector.DEMenuItem item : menuItems) {
-			JMenuItem mi = new JMenuItem(item.menuName);
-			mi.addActionListener( new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					item.action();
-				}
-			});
-			menu.add(mi);
-		}
 	}
 
 	public static void setSelection(Entity ent) {

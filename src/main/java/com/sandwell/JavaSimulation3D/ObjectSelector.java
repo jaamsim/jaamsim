@@ -15,6 +15,8 @@
 package com.sandwell.JavaSimulation3D;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -23,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -481,27 +485,62 @@ static class LabelMenuItem extends DEMenuItem {
 
 static class CenterInViewMenuItem extends DEMenuItem {
 	private final DisplayEntity ent;
+	private final View v;
 
-	public CenterInViewMenuItem(DisplayEntity ent) {
-		super("Center in View");
+	public CenterInViewMenuItem(DisplayEntity ent, View v) {
+		super(v.getInputName());
 		this.ent = ent;
+		this.v = v;
 	}
 
 	@Override
 	public void action() {
 		// Move the camera position so that the entity is in the centre of the screen
-		if( View.getAll().size() > 0 ) {
-			View v = View.getAll().get(0);
-			Vec3d viewPos = new Vec3d( v.getGlobalPosition() );
-			viewPos.sub3( v.getGlobalCenter() );
-			viewPos.add3( ent.getPosition() );
-			v.setCenter(ent.getPosition());
-			v.setPosition(viewPos);
-		}
+		Vec3d viewPos = new Vec3d(v.getGlobalPosition());
+		viewPos.sub3(v.getGlobalCenter());
+		viewPos.add3(ent.getPosition());
+		v.setCenter(ent.getPosition());
+		v.setPosition(viewPos);
 	}
 }
 
-	public static ArrayList<DEMenuItem> getMenuItems(Entity ent, int x, int y) {
+	/**
+	 * A miscelaneous utility to populate a JPopupMenu with a list of DisplayEntity menu items (for the right click menu)
+	 * @param menu
+	 * @param menuItems
+	 */
+	public static void populateMenu(JPopupMenu menu, Entity ent, int x, int y) {
+		ArrayList<DEMenuItem> menuItems = getMenuItems(ent, x, y);
+		JMenu centerList = null;
+		for (final ObjectSelector.DEMenuItem item : menuItems) {
+			if (item instanceof CenterInViewMenuItem) {
+				if (centerList == null) {
+					centerList = new JMenu("Center in View");
+					menu.add(centerList);
+				}
+				JMenuItem mi = new JMenuItem(item.menuName);
+				mi.addActionListener( new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						item.action();
+					}
+				});
+				centerList.add(mi);
+				continue;
+			}
+
+			JMenuItem mi = new JMenuItem(item.menuName);
+			mi.addActionListener( new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					item.action();
+				}
+			});
+			menu.add(mi);
+		}
+	}
+
+	private static ArrayList<DEMenuItem> getMenuItems(Entity ent, int x, int y) {
 		ArrayList<DEMenuItem> list = new ArrayList<DEMenuItem>();
 		list.add(new InputMenuItem(ent));
 		list.add(new PropertyMenuItem(ent));
@@ -514,11 +553,14 @@ static class CenterInViewMenuItem extends DEMenuItem {
 		list.add(new DeleteMenuItem(ent));
 
 		if (ent instanceof DisplayEntity) {
+			DisplayEntity dEnt = (DisplayEntity)ent;
 			if (RenderManager.isGood())
-				list.add(new GraphicsMenuItem((DisplayEntity)ent, x, y));
+				list.add(new GraphicsMenuItem(dEnt, x, y));
 
-			list.add(new LabelMenuItem((DisplayEntity)ent));
-			list.add(new CenterInViewMenuItem((DisplayEntity)ent));
+			list.add(new LabelMenuItem(dEnt));
+			for (int i = 0; i < View.getAll().size(); i++) {
+				list.add(new CenterInViewMenuItem(dEnt, View.getAll().get(i)));
+			}
 		}
 
 		if (ent instanceof MenuItemEntity)
@@ -541,7 +583,7 @@ static class CenterInViewMenuItem extends DEMenuItem {
 
 			// Right mouse click on a movable DisplayEntity
 			menu.removeAll();
-			GUIFrame.populateMenu(menu, getMenuItems(currentEntity, e.getX(), e.getY()));
+			ObjectSelector.populateMenu(menu, currentEntity, e.getX(), e.getY());
 			menu.show(e.getComponent(), e.getX(), e.getX());
 		}
 		@Override
