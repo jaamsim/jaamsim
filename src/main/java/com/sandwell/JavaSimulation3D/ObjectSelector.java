@@ -39,6 +39,7 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.ObjectType;
@@ -478,6 +479,28 @@ static class LabelMenuItem extends DEMenuItem {
 	}
 }
 
+static class CenterInViewMenuItem extends DEMenuItem {
+	private final DisplayEntity ent;
+
+	public CenterInViewMenuItem(DisplayEntity ent) {
+		super("Center in View");
+		this.ent = ent;
+	}
+
+	@Override
+	public void action() {
+		// Move the camera position so that the entity is in the centre of the screen
+		if( View.getAll().size() > 0 ) {
+			View v = View.getAll().get(0);
+			Vec3d viewPos = new Vec3d( v.getGlobalPosition() );
+			viewPos.sub3( v.getGlobalCenter() );
+			viewPos.add3( ent.getPosition() );
+			v.setCenter(ent.getPosition());
+			v.setPosition(viewPos);
+		}
+	}
+}
+
 	public static ArrayList<DEMenuItem> getMenuItems(Entity ent, int x, int y) {
 		ArrayList<DEMenuItem> list = new ArrayList<DEMenuItem>();
 		list.add(new InputMenuItem(ent));
@@ -495,6 +518,7 @@ static class LabelMenuItem extends DEMenuItem {
 				list.add(new GraphicsMenuItem((DisplayEntity)ent, x, y));
 
 			list.add(new LabelMenuItem((DisplayEntity)ent));
+			list.add(new CenterInViewMenuItem((DisplayEntity)ent));
 		}
 
 		if (ent instanceof MenuItemEntity)
