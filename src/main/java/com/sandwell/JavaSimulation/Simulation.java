@@ -191,8 +191,6 @@ public class Simulation extends Entity {
 		this.addInput( portTimeStep, true );
 
 		addEditableKeyword( "CargoUnits",          "kt",        		"",               false, "Key Inputs" );
-		addEditableKeyword( "FuelUnits",           "",       		"",               false, "Key Inputs" );
-		this.getInput( "FuelUnits" ).setHidden( true );
 
 		simTimeScaleInput = new DoubleInput( "SimulationTimeScale", "Key Inputs", 4000.0d );
 		simTimeScaleInput.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
@@ -297,11 +295,6 @@ public class Simulation extends Entity {
 		if( "CargoUnits".equalsIgnoreCase( keyword ) ) {
 			Input.assertCount(data, 1);
 			Util.setCargoUnits(data.get(0));
-			return;
-		}
-		if( "FuelUnits".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			Util.setFuelUnits(data.get(0));
 			return;
 		}
 		if ("DEFINEEVENTMANAGER".equalsIgnoreCase(keyword)) {

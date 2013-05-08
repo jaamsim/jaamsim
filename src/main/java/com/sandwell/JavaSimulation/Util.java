@@ -30,7 +30,6 @@ public class Util {
 	private static final java.text.DecimalFormat exponentFormat = new java.text.DecimalFormat( "0.###E0" );
 
 	private static String cargoUnits = "";
-	private static String fuelUnits = "";
 
 	public static final Comparator<Entity> nameSort = new Comparator<Entity>() {
 		@Override
@@ -45,14 +44,6 @@ public class Util {
 
 	public static void setCargoUnits(String units) {
 		cargoUnits = units;
-	}
-
-	public static String getFuelUnits() {
-		return fuelUnits;
-	}
-
-	public static void setFuelUnits(String units) {
-		fuelUnits = units;
 	}
 
 	/**
