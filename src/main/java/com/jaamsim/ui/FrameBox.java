@@ -19,9 +19,12 @@ import java.awt.Font;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import com.jaamsim.controllers.RenderManager;
 import com.sandwell.JavaSimulation.Entity;
@@ -157,5 +160,17 @@ public class FrameBox extends JFrame {
 				each.updateValues();
 			}
 		}
+	}
+
+	public static void fitTableToLastColumn(JTable tab) {
+		TableColumnModel model = tab.getColumnModel();
+		TableColumn lastCol = model.getColumn(model.getColumnCount() - 1);
+
+		int delta = tab.getSize().width;
+		for(int i = 0; i < model.getColumnCount(); i++) {
+			delta -= model.getColumn(i).getWidth();
+		}
+		int newWidth = lastCol.getWidth() + delta;
+		lastCol.setWidth(newWidth);
 	}
 }
