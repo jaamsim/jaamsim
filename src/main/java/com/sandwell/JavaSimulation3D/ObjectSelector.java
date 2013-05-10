@@ -484,25 +484,22 @@ static class LabelMenuItem extends DEMenuItem {
 
 static class CenterInViewMenuItem extends DEMenuItem {
 	private final DisplayEntity ent;
+	private final View v;
 
-	public CenterInViewMenuItem(DisplayEntity ent) {
+	public CenterInViewMenuItem(DisplayEntity ent, View v) {
 		super("Center in View");
 		this.ent = ent;
+		this.v = v;
 	}
 
 	@Override
 	public void action() {
 		// Move the camera position so that the entity is in the centre of the screen
-		if (RenderManager.isGood()) {
-			View v = RenderManager.inst().getActiveView();
-			if( v != null ) {
-				Vec3d viewPos = new Vec3d(v.getGlobalPosition());
-				viewPos.sub3(v.getGlobalCenter());
-				viewPos.add3(ent.getPosition());
-				v.setCenter(ent.getPosition());
-				v.setPosition(viewPos);
-			}
-		}
+		Vec3d viewPos = new Vec3d(v.getGlobalPosition());
+		viewPos.sub3(v.getGlobalCenter());
+		viewPos.add3(ent.getPosition());
+		v.setCenter(ent.getPosition());
+		v.setPosition(viewPos);
 	}
 }
 
@@ -551,8 +548,13 @@ static class CenterInViewMenuItem extends DEMenuItem {
 			if (RenderManager.isGood())
 				list.add(new GraphicsMenuItem(dEnt, x, y));
 
-			list.add(new LabelMenuItem(dEnt));
-			list.add(new CenterInViewMenuItem(dEnt));
+			if (RenderManager.isGood()) {
+				View v = RenderManager.inst().getActiveView();
+				if (v != null) {
+					list.add(new LabelMenuItem(dEnt));
+					list.add(new CenterInViewMenuItem(dEnt, v));
+				}
+			}
 		}
 
 		if (ent instanceof MenuItemEntity)
