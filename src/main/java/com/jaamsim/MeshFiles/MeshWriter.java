@@ -162,14 +162,12 @@ public class MeshWriter {
 		} else {
 			startTag("<Texture coordIndex='0'>");
 			indent();
-			URI tex;
 			try {
-				tex = baseDirURI.relativize(mat.colorTex.toURI());
+				URI tex = baseDirURI.relativize(mat.colorTex.toURI());
+				out.write(tex.toString());
 			} catch (URISyntaxException ex) {
-				tex = null;
 				ex.printStackTrace();
 			}
-			out.write(tex.toString());
 			out.write("\n");
 			endTag("</Texture>");
 		}
