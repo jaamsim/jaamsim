@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -485,22 +484,25 @@ static class LabelMenuItem extends DEMenuItem {
 
 static class CenterInViewMenuItem extends DEMenuItem {
 	private final DisplayEntity ent;
-	private final View v;
 
-	public CenterInViewMenuItem(DisplayEntity ent, View v) {
-		super(v.getInputName());
+	public CenterInViewMenuItem(DisplayEntity ent) {
+		super("Center in View");
 		this.ent = ent;
-		this.v = v;
 	}
 
 	@Override
 	public void action() {
 		// Move the camera position so that the entity is in the centre of the screen
-		Vec3d viewPos = new Vec3d(v.getGlobalPosition());
-		viewPos.sub3(v.getGlobalCenter());
-		viewPos.add3(ent.getPosition());
-		v.setCenter(ent.getPosition());
-		v.setPosition(viewPos);
+		if (RenderManager.isGood()) {
+			View v = RenderManager.inst().getActiveView();
+			if( v != null ) {
+				Vec3d viewPos = new Vec3d(v.getGlobalPosition());
+				viewPos.sub3(v.getGlobalCenter());
+				viewPos.add3(ent.getPosition());
+				v.setCenter(ent.getPosition());
+				v.setPosition(viewPos);
+			}
+		}
 	}
 }
 
@@ -527,17 +529,7 @@ static class CenterInViewMenuItem extends DEMenuItem {
 	 */
 	public static void populateMenu(JPopupMenu menu, Entity ent, int x, int y) {
 		ArrayList<DEMenuItem> menuItems = getMenuItems(ent, x, y);
-		JMenu centerList = null;
 		for (ObjectSelector.DEMenuItem item : menuItems) {
-			if (item instanceof CenterInViewMenuItem) {
-				if (centerList == null) {
-					centerList = new JMenu("Center in View");
-					menu.add(centerList);
-				}
-				centerList.add(new JActionMenuItem(item));
-				continue;
-			}
-
 			menu.add(new JActionMenuItem(item));
 		}
 	}
@@ -560,9 +552,7 @@ static class CenterInViewMenuItem extends DEMenuItem {
 				list.add(new GraphicsMenuItem(dEnt, x, y));
 
 			list.add(new LabelMenuItem(dEnt));
-			for (int i = 0; i < View.getAll().size(); i++) {
-				list.add(new CenterInViewMenuItem(dEnt, View.getAll().get(i)));
-			}
+			list.add(new CenterInViewMenuItem(dEnt));
 		}
 
 		if (ent instanceof MenuItemEntity)

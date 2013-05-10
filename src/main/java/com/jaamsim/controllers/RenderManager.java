@@ -1478,6 +1478,10 @@ public class RenderManager implements DragSourceListener {
 		control.setRotationAngles(0.0, 0.0);
 	}
 
+	public View getActiveView() {
+		return _windowToViewMap.get(_activeWindowID);
+	}
+
 	public ArrayList<Integer> getOpenWindowIDs() {
 		return _renderer.getOpenWindowIDs();
 	}
