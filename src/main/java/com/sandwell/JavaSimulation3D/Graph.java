@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation3D;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
@@ -914,7 +915,7 @@ public class Graph extends DisplayEntity  {
 			value = (Double) method.invoke( info.entity, params );
 		}
 		catch (IllegalArgumentException e) {
-			this.error( "getCurrentValue", "Illegal argument has been passed to " + method, "parameters=" + params );
+			this.error( "getCurrentValue", "Illegal argument has been passed to " + method, "parameters=" + Arrays.toString(params) );
 		}
 		catch (IllegalAccessException e) {
 			this.error( "getCurrentValue", "access to this method is prohibited", "method:" + method );
