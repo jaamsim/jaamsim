@@ -141,6 +141,10 @@ private String getShaderLog(int shaderHandle, GL2GL3 gl) {
 	int[] is = new int[1];
 	gl.glGetShaderiv(shaderHandle, GL2GL3.GL_INFO_LOG_LENGTH, is, 0);
 	int logLength = is[0];
+	if (logLength == 0) {
+		return "";
+	}
+
 	byte[] bs = new byte[logLength];
 
 	gl.glGetShaderInfoLog(shaderHandle, logLength, is, 0,  bs, 0);
