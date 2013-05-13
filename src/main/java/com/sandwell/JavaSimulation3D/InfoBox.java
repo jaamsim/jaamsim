@@ -116,9 +116,13 @@ public class InfoBox extends FrameBox {
 		return myInstance;
 	}
 
+	private synchronized static void killInstance() {
+		myInstance = null;
+	}
+
 	@Override
 	public void dispose() {
-		myInstance = null;
+		killInstance();
 		super.dispose();
 	}
 }

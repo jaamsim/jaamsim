@@ -325,11 +325,7 @@ public class Simulation extends Entity {
 		// close warning/error trace file
 		InputAgent.closeLogFile();
 
-		ArrayList<FrameBox> boxes = new ArrayList<FrameBox>(FrameBox.getAllFB());
-		for (FrameBox each : boxes) {
-			each.dispose();
-		}
-
+		FrameBox.clear();
 		EntityPallet.clear();
 
 		if (RenderManager.isGood()) {

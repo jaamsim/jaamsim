@@ -299,9 +299,13 @@ public class EditBox extends FrameBox {
 		jTabbedPane.repaint();
 	}
 
+	private synchronized static void killInstance() {
+		myInstance = null;
+	}
+
 	@Override
 	public void dispose() {
-		myInstance = null;
+		killInstance();
 		super.dispose();
 	}
 

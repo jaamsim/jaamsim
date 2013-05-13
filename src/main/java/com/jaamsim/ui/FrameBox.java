@@ -59,8 +59,11 @@ public class FrameBox extends JFrame {
 		allInstances.add(this);
 	}
 
-	public static ArrayList<FrameBox> getAllFB() {
-		return allInstances;
+	public static void clear() {
+		ArrayList<FrameBox> boxes = new ArrayList<FrameBox>(allInstances);
+		for (FrameBox each : boxes) {
+			each.dispose();
+		}
 	}
 
 	@Override

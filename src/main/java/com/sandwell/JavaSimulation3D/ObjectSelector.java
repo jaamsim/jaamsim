@@ -141,9 +141,13 @@ public class ObjectSelector extends FrameBox {
 		return myInstance;
 	}
 
+	private synchronized static void killInstance() {
+		myInstance = null;
+	}
+
 	@Override
 	public void dispose() {
-		myInstance = null;
+		killInstance();
 		currentEntity = null;
 		super.dispose();
 	}
