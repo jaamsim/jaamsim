@@ -145,11 +145,12 @@ public class OutputBox extends FrameBox {
 
 	@Override
 	public void updateValues(double simTime) {
+		tableModel.simTime = simTime;
 		tableModel.fireTableDataChanged();
 	}
 
 	private class OutputTableModel extends AbstractTableModel {
-
+		double simTime = 0.0d;
 		@Override
 		public int getColumnCount() {
 			return 2;
@@ -173,7 +174,7 @@ public class OutputBox extends FrameBox {
 				if (rowIsClass.get(row)) {
 					return "";
 				}
-				return currentEntity.getOutputAsString(outputNames.get(row), 0);
+				return currentEntity.getOutputAsString(outputNames.get(row), simTime);
 			default:
 				assert false;
 				return null;
