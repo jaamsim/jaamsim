@@ -377,7 +377,14 @@ public class Simulation extends Entity {
 
 		// Initialize each entity based on inputs only
 		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity.getAll().get(i).earlyInit();
+			try {
+				Entity.getAll().get(i).earlyInit();
+			}
+			catch (Throwable e) {
+				InputAgent.doError(e);
+				ExceptionBox.instance().setInputError(Entity.getAll().get(i), e);
+				return;
+			}
 		}
 
 		this.startExternalProcess("startModel");
