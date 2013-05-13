@@ -14,7 +14,6 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.Dimension;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +45,6 @@ public class PropertyBox extends FrameBox {
 		super("Property Viewer");
 		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
 
-		jTabbedFrame.setPreferredSize( new Dimension( 800, 400 ) );
 		jTabbedFrame.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedFrame);
 
@@ -54,12 +52,6 @@ public class PropertyBox extends FrameBox {
 		setLocation(0, 110);
 
 		pack();
-	}
-
-	private JScrollPane getPropTable(Entity e, ClassFields cf) {
-		PropertyTableModel mod = new PropertyTableModel(e, cf);
-		PropertyTable tab = new PropertyTable(mod);
-		return new JScrollPane(tab);
 	}
 
 	@Override
@@ -80,7 +72,11 @@ public class PropertyBox extends FrameBox {
 		for (int i = 0; i < cFields.size(); i++) {
 			// The properties in the current page
 			ClassFields cf = cFields.get(i);
-			jTabbedFrame.addTab(cf.klass.getSimpleName(), getPropTable(entity, cf));
+			PropertyTableModel mod = new PropertyTableModel(entity, cf);
+			PropertyTable tab = new PropertyTable(mod);
+			JScrollPane scroll = new JScrollPane(tab);
+
+			jTabbedFrame.addTab(cf.klass.getSimpleName(), scroll);
 		}
 	}
 
