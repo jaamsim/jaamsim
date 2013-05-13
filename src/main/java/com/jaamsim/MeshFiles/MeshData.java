@@ -24,6 +24,7 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.render.Action;
 import com.jaamsim.render.Armature;
 import com.jaamsim.render.RenderUtils;
 
@@ -95,8 +96,12 @@ public class MeshData {
 
 	private ConvexHull _hull;
 	private double _radius;
+	// The AABB of this mesh with no transform applied
+	private AABB _defaultBounds;
 
 	private boolean _anyTransparent = false;
+
+	private ArrayList<Action.Description> _actionDesc;
 
 	public void addSubMeshInstance(int meshIndex, int matIndex, int armIndex, Mat4d mat, String[] boneNames) {
 		Mat4d trans = new Mat4d(mat);
@@ -257,8 +262,19 @@ public class MeshData {
 		}
 
 		_hull = ConvexHull.TryBuildHull(totalHullPoints, 5);
+		_defaultBounds = _hull.getAABB(new Mat4d());
 
 		_radius = _hull.getRadius();
+
+		_actionDesc = new ArrayList<Action.Description>();
+		for (Armature arm : _armatures) {
+			for (Armature.ArmAction act : arm.getActions()) {
+				Action.Description desc = new Action.Description();
+				desc.name = act.name;
+				desc.duration = act.duration;
+				_actionDesc.add(desc);
+			}
+		}
 	}
 
 	public double getRadius() {
@@ -267,6 +283,14 @@ public class MeshData {
 
 	public ConvexHull getHull() {
 		return _hull;
+	}
+
+	public AABB getDefaultBounds() {
+		return _defaultBounds;
+	}
+
+	public ArrayList<Action.Description> getActionDescriptions() {
+		return _actionDesc;
 	}
 
 	public ArrayList<AABB> getSubBounds(Mat4d modelMat) {

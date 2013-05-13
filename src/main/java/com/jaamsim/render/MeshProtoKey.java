@@ -21,7 +21,7 @@ import java.net.URL;
  * @author Matt.Chudleigh
  *
  */
-public class MeshProtoKey extends AssetKey {
+public class MeshProtoKey {
 	private URL _fileURL;
 	private String _urlString; // Use this string for comparison purposes
 

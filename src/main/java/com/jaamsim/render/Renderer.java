@@ -50,14 +50,11 @@ import javax.media.opengl.GLProfile;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.MeshFiles.MeshData;
-import com.jaamsim.MeshFiles.MeshReader;
-import com.jaamsim.collada.ColParser;
 import com.jaamsim.font.OverlayString;
 import com.jaamsim.font.TessFont;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
-import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.util.ExceptionLogger;
@@ -115,11 +112,6 @@ public class Renderer {
 	private final Map<MeshProtoKey, MeshProto> _protoCache;
 	private final Map<TessFontKey, TessFont> _fontCache;
 
-	private final Map<MeshProtoKey, ArrayList<Action.Description>> _actionListCache;
-
-	private final HashMap<MeshProtoKey, AABB> _protoBounds;
-	private final Object _meshLoadLock = new Object();
-
 	private final Map<ConvexHullKey, HullProto> _hullCache;
 
 	private final HashMap<Integer, RenderWindow> _openWindows;
@@ -158,9 +150,6 @@ public class Renderer {
 		_protoCache = new HashMap<MeshProtoKey, MeshProto>();
 		_fontCache = new HashMap<TessFontKey, TessFont>();
 		_hullCache = new HashMap<ConvexHullKey, HullProto>();
-
-		_protoBounds = new HashMap<MeshProtoKey, AABB>();
-		_actionListCache = new HashMap<MeshProtoKey, ArrayList<Action.Description>>();
 
 		_exceptionLogger = new ExceptionLogger();
 
@@ -260,7 +249,6 @@ public class Renderer {
 						_fontCache.clear();
 						_protoCache.clear();
 						_hullCache.clear();
-						_protoBounds.clear();
 						_shaders.clear();
 
 					} catch (Exception e) { }
@@ -348,21 +336,6 @@ public class Renderer {
 			loadMeshProtoImp(key);
 		}
 		return _protoCache.get(key);
-	}
-
-	/**
-	 * Get the bounds of the loaded mesh prototype
-	 */
-	public AABB getProtoBounds(MeshProtoKey key) {
-		synchronized (_protoBounds) {
-			return _protoBounds.get(key);
-		}
-	}
-
-	public ArrayList<Action.Description> getMeshActions(MeshProtoKey key) {
-		synchronized(_actionListCache) {
-			return _actionListCache.get(key);
-		}
 	}
 
 	public TessFont getTessFont(TessFontKey key) {
@@ -626,16 +599,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	private void handleMessage(RenderMessage message) {
 		assert (Thread.currentThread() == _renderThread);
 
-		if (message instanceof LoadAssetMessage) {
-			loadAssetImp(((LoadAssetMessage) message).key);
-			return;
-		}
-
-		if (message instanceof TakeMeshProtoMessage) {
-			TakeMeshProtoMessage tam = (TakeMeshProtoMessage) message;
-			takeMeshProtoImp(tam.key, tam.proto);
-			return;
-		}
 		if (message instanceof CreateWindowMessage) {
 			createWindowImp((CreateWindowMessage) message);
 			return;
@@ -682,17 +645,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		_sharedContext.release();
 	}
 
-	private void loadAssetImp(AssetKey key) {
-		if (key instanceof MeshProtoKey) {
-			loadMeshProtoImp((MeshProtoKey)key);
-			return;
-		}
-		if (key instanceof ConvexHullKey) {
-			loadHullImp((ConvexHullKey)key);
-			return;
-		}
-	}
-
 	private void loadMeshProtoImp(final MeshProtoKey key) {
 
 		//long startNanos = System.nanoTime();
@@ -712,18 +664,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
 
-		String fileString = key.getURL().toString();
-		String ext = fileString.substring(fileString.length() - 3, fileString.length());
-
-		MeshData data = null;
-		if (ext.toUpperCase().equals("DAE")) {
-			data = ColParser.parse(key.getURL());
-		} else if (ext.toUpperCase().equals("JSM")) {
-			data = MeshReader.parse(key.getURL());
-		} else {
-			assert(false);
-		}
-
+		MeshData data = MeshDataCache.getMeshData(key);
 		MeshProto proto = new MeshProto(data, _safeGraphics);
 
 		assert (proto != null);
@@ -731,10 +672,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		assert (proto.isLoadedGPU());
 		_protoCache.put(key, proto);
-
-		synchronized(_protoBounds) {
-			_protoBounds.put(key, proto.getHull().getAABB(Mat4d.IDENTITY));
-		}
 
 		// Build up a list of actions for this mesh
 		ArrayList<Action.Description> ads = new ArrayList<Action.Description>();
@@ -746,13 +683,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 				ads.add(ad);
 			}
 		}
-		synchronized(_actionListCache) {
-			_actionListCache.put(key, ads);
-		}
-
-		synchronized(_meshLoadLock) {
-			_meshLoadLock.notifyAll();
-		}
 
 		_sharedContext.release();
 		if (_drawContext != null) {
@@ -763,10 +693,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 //		long ms = (endNanos - startNanos) /1000000L;
 //		System.out.println("LoadMeshProtoImp time:" + ms + "ms");
 
-	}
-
-	public Object getMeshLoadLock() {
-		return _meshLoadLock;
 	}
 
 	private void loadTessFontImp(TessFontKey key) {
@@ -815,56 +741,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			_drawContext.makeCurrent();
 		}
 
-	}
-
-	private void takeMeshProtoImp(MeshProtoKey key, MeshProto proto) {
-		assert (proto != null);
-		assert (Thread.currentThread() == _renderThread);
-
-		if (_drawContext != null) {
-			_drawContext.release();
-		}
-
-		int res = _sharedContext.makeCurrent();
-		assert (res == GLContext.CONTEXT_CURRENT);
-
-		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
-
-		proto.loadGPUAssets(gl, this);
-
-		assert (proto.isLoadedGPU());
-		_protoCache.put(key, proto);
-
-		_sharedContext.release();
-
-		if (_drawContext != null) {
-			_drawContext.makeCurrent();
-		}
-	}
-
-	/**
-	 * Request the asset described by the asset key be loaded by the renderer. This method
-	 * returns immediately, but guarantees the asset will be loaded before the
-	 * next display update.
-	 *
-	 * @param url
-	 */
-	public void loadAsset(AssetKey key) {
-		synchronized (_renderMessages) {
-			_renderMessages.add(new LoadAssetMessage(key));
-		}
-	}
-
-	/**
-	 * Explicitly add this mesh proto to the proto cache, it is assumed the MeshProto is then owned by
-	 * the renderer (this is mostly a debug method)
-	 * @param urlKey
-	 * @param proto
-	 */
-	public void takeMeshProto(MeshProtoKey key, MeshProto proto) {
-		synchronized (_renderMessages) {
-			_renderMessages.add(new TakeMeshProtoMessage(key, proto));
-		}
 	}
 
 	// Recreate the internal scene based on external input
@@ -1204,24 +1080,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	private static class RenderMessage {
 		@SuppressWarnings("unused")
 		public long queueTime = System.nanoTime();
-	}
-
-	private static class LoadAssetMessage extends RenderMessage {
-		public AssetKey key;
-
-		public LoadAssetMessage(AssetKey key) {
-			this.key = key;
-		}
-	}
-
-	private static class TakeMeshProtoMessage extends RenderMessage {
-		public MeshProtoKey key;
-		public MeshProto proto;
-
-		public TakeMeshProtoMessage(MeshProtoKey key, MeshProto proto) {
-			this.key = key;
-			this.proto = proto;
-		}
 	}
 
 	private static class CreateWindowMessage extends RenderMessage {

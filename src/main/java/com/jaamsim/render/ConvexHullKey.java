@@ -14,7 +14,7 @@
  */
 package com.jaamsim.render;
 
-public class ConvexHullKey extends AssetKey {
+public class ConvexHullKey {
 
 	private MeshProtoKey _key;
 	public ConvexHullKey(MeshProtoKey key) {

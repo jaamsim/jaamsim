@@ -59,6 +59,7 @@ import com.jaamsim.render.CameraInfo;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.HasScreenPoints;
+import com.jaamsim.render.MeshDataCache;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.OffscreenTarget;
 import com.jaamsim.render.PreviewCache;
@@ -1396,7 +1397,6 @@ public class RenderManager implements DragSourceListener {
 
 	public AABB getMeshBounds(String shapeString) {
 
-		//TODO: work on meshes that have not been preloaded
 		MeshProtoKey key = ColladaModel.getCachedMeshKey(shapeString);
 		if (key == null) {
 			// Not loaded or bad mesh
@@ -1408,53 +1408,23 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public AABB getMeshBounds(MeshProtoKey key, boolean block) {
-		AABB cachedBounds = _renderer.getProtoBounds(key);
-		if (cachedBounds == null) {
-			// This has not been loaded yet, queue the renderer to load the asset
-			_renderer.loadAsset(key);
-			if (!block) {
-				return null;
-			}
-
-			// Block here until the
-			Object notifier = _renderer.getMeshLoadLock();
-			while (cachedBounds == null) {
-				synchronized(notifier) {
-					try {
-						notifier.wait();
-					} catch (InterruptedException e) {
-
-					}
-				}
-				cachedBounds = _renderer.getProtoBounds(key);
-			}
+		if (block || MeshDataCache.isMeshLoaded(key)) {
+			return MeshDataCache.getMeshData(key).getDefaultBounds();
 		}
-		return cachedBounds;
+
+		// The mesh is not loaded and we are non-blocking, so trigger a mesh load and return
+		MeshDataCache.loadMesh(key, new AtomicBoolean());
+		return null;
 	}
 
 	public ArrayList<Action.Description> getMeshActions(MeshProtoKey key, boolean block) {
-		ArrayList<Action.Description> cachedActions = _renderer.getMeshActions(key);
-		if (cachedActions == null) {
-			// This has not been loaded yet, queue the renderer to load the asset
-			_renderer.loadAsset(key);
-			if (!block) {
-				return null;
-			}
-
-			// Block here until the
-			Object notifier = _renderer.getMeshLoadLock();
-			while (cachedActions == null) {
-				synchronized(notifier) {
-					try {
-						notifier.wait();
-					} catch (InterruptedException e) {
-
-					}
-				}
-				cachedActions = _renderer.getMeshActions(key);
-			}
+		if (block || MeshDataCache.isMeshLoaded(key)) {
+			return MeshDataCache.getMeshData(key).getActionDescriptions();
 		}
-		return cachedActions;
+
+		// The mesh is not loaded and we are non-blocking, so trigger a mesh load and return
+		MeshDataCache.loadMesh(key, new AtomicBoolean());
+		return null;
 	}
 
 	/**

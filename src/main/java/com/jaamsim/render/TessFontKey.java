@@ -16,7 +16,7 @@ package com.jaamsim.render;
 
 import java.awt.Font;
 
-public class TessFontKey extends AssetKey {
+public class TessFontKey {
 
 	private String _fontName;
 	private int _fontStyle;
