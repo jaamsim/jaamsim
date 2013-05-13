@@ -19,6 +19,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
@@ -37,7 +38,7 @@ public class OutputBox extends FrameBox {
 	private ArrayList<Boolean> rowIsClass = new ArrayList<Boolean>();
 	OutputTableModel tableModel;
 
-	private class OutputTable extends AjustToLastColumnTable {
+	private class OutputTable extends JTable {
 		public OutputTable(TableModel model) {
 			super(model);
 		}
@@ -81,6 +82,11 @@ public class OutputBox extends FrameBox {
 				}
 			}
 			return build.toString();
+		}
+
+		@Override
+		public void doLayout() {
+			FrameBox.fitTableToLastColumn(this);
 		}
 	}
 
