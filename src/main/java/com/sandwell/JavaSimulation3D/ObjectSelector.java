@@ -93,7 +93,11 @@ public class ObjectSelector extends FrameBox {
 			return;
 
 		currentEntity = ent;
-		updateValues();
+		long curSequence = Entity.getEntitySequence();
+		if (entSequence != curSequence) {
+			entSequence = curSequence;
+			updateTree();
+		}
 
 		if (currentEntity == null) {
 			tree.setSelectionPath(null);

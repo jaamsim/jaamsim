@@ -120,7 +120,6 @@ public class OutputBox extends FrameBox {
 		if (currentEntity == null) {
 			outputNames.clear();
 			rowIsClass.clear();
-			updateValues();
 			return;
 		}
 
@@ -142,8 +141,6 @@ public class OutputBox extends FrameBox {
 			outputNames.add(name);
 			rowIsClass.add(false);
 		}
-
-		updateValues();
 	}
 
 	@Override

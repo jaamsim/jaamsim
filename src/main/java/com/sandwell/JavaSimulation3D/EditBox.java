@@ -245,7 +245,6 @@ public class EditBox extends FrameBox {
 			jTabbedPane.setSelectedIndex(0);
 
 		setTitle(String.format("Input Editor - %s", currentEntity.getInputName()));
-		updateValues();
 	}
 
 	private void buildTable(String category) {

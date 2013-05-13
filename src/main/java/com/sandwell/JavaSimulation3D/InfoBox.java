@@ -76,7 +76,6 @@ public class InfoBox extends FrameBox {
 		}
 		else {
 			setTitle(String.format("Info Viewer - %s", currentEntity.getInputName()));
-			updateValues();
 			propTable.setVisible(true);
 		}
 	}
