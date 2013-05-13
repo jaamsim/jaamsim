@@ -27,8 +27,7 @@ import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.Entity;
 
 public class OutputBox extends FrameBox {
-
-	private static OutputBox myInstance = new OutputBox();
+	private static OutputBox myInstance;
 
 	private JScrollPane scrollPane;
 	private OutputTable table;

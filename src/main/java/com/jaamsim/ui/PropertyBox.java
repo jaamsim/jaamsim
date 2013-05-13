@@ -14,6 +14,7 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.Dimension;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,8 +44,9 @@ public class PropertyBox extends FrameBox {
 
 	public PropertyBox() {
 		super("Property Viewer");
-		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
 
+		jTabbedFrame.setPreferredSize(new Dimension(800, 400));
 		jTabbedFrame.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedFrame);
 
@@ -55,8 +57,8 @@ public class PropertyBox extends FrameBox {
 	}
 
 	@Override
-	public void setEntity( Entity entity ) {
-		if(currentEntity == entity || ! this.isVisible())
+	public void setEntity(Entity entity) {
+		if(currentEntity == entity)
 			return;
 
 		currentEntity = entity;
@@ -99,18 +101,22 @@ public class PropertyBox extends FrameBox {
 		return myInstance;
 	}
 
+	private synchronized static void killInstance() {
+		myInstance = null;
+	}
+
 	@Override
 	public void dispose() {
-		myInstance = null;
+		killInstance();
 		super.dispose();
 	}
 
-	private static class TabListener implements ChangeListener {
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			FrameBox.valueUpdate();
-		}
+private static class TabListener implements ChangeListener {
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		FrameBox.valueUpdate();
 	}
+}
 
 private static class ClassFields implements Comparator<Field> {
 	final Class<?> klass;
