@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.ui;
 
 import java.awt.Dimension;
 import java.lang.reflect.Field;
@@ -31,7 +31,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
-import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.Entity;
 
 /**

@@ -66,6 +66,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
