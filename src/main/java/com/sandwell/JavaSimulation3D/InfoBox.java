@@ -81,7 +81,7 @@ public class InfoBox extends FrameBox {
 	}
 
 	@Override
-	public void updateValues() {
+	public void updateValues(double simTime) {
 
 		if (currentEntity == null || !this.isVisible())
 			return;

@@ -83,7 +83,7 @@ public class PropertyBox extends FrameBox {
 	}
 
 	@Override
-	public void updateValues() {
+	public void updateValues(double simTime) {
 		if(currentEntity == null)
 			return;
 

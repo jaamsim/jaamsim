@@ -86,7 +86,7 @@ public class FrameBox extends JFrame {
 	}
 
 	public void setEntity(Entity ent) {}
-	public void updateValues() {}
+	public void updateValues(double simTime) {}
 
 	private static class FrameBoxUpdater implements Runnable {
 		private boolean scheduled;
@@ -161,7 +161,7 @@ public class FrameBox extends JFrame {
 			RenderManager.updateTime(callBackTime);
 
 			for (FrameBox each : allInstances) {
-				each.updateValues();
+				each.updateValues(callBackTime);
 			}
 		}
 	}

@@ -144,7 +144,7 @@ public class OutputBox extends FrameBox {
 	}
 
 	@Override
-	public void updateValues() {
+	public void updateValues(double simTime) {
 		tableModel.fireTableDataChanged();
 	}
 

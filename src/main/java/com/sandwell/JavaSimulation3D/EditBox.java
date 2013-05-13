@@ -290,7 +290,7 @@ public class EditBox extends FrameBox {
 	}
 
 	@Override
-	public void updateValues() {
+	public void updateValues(double simTime) {
 		// table has not built yet
 		if(!this.isVisible())
 			return;

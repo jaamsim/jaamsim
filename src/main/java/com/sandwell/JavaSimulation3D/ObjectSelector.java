@@ -124,7 +124,7 @@ public class ObjectSelector extends FrameBox {
 	}
 
 	@Override
-	public void updateValues() {
+	public void updateValues(double simTime) {
 		if (!this.isVisible())
 			return;
 
