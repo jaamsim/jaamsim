@@ -115,6 +115,7 @@ public class FrameBox extends JFrame {
 			for (FrameBox each : allInstances) {
 				each.setEntity(selectedEnt);
 			}
+			FrameBox.valueUpdate();
 		}
 	}
 
