@@ -62,6 +62,8 @@ public class TextureView implements Renderable {
 	static private int lightDirVar;
 	static private int texVar;
 
+	static private int maxNumBonesVar;
+
 	static private int hasTexVar;
 
 	static private int cVar;
@@ -149,6 +151,8 @@ public class TextureView implements Renderable {
 		lightDirVar = gl.glGetUniformLocation(progHandle, "lightDir");
 		texVar = gl.glGetUniformLocation(progHandle, "tex");
 		hasTexVar = gl.glGetUniformLocation(progHandle, "useTex");
+
+		maxNumBonesVar = gl.glGetUniformLocation(progHandle, "maxNumBones");
 
 		cVar = gl.glGetUniformLocation(progHandle, "C");
 		fcVar = gl.glGetUniformLocation(progHandle, "FC");
@@ -247,6 +251,7 @@ public class TextureView implements Renderable {
 		gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(new Mat4d()), 0);
 
 		gl.glUniform1i(hasTexVar, 1);
+		gl.glUniform1i(maxNumBonesVar, 0);
 
 		gl.glUniform1f(cVar, Camera.C);
 		gl.glUniform1f(fcVar, Camera.FC);
