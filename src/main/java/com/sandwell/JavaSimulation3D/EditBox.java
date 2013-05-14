@@ -204,10 +204,6 @@ public class EditBox extends FrameBox {
 		return currentEntity;
 	}
 
-	public JTabbedPane getJTabbedPane() {
-		return jTabbedPane;
-	}
-
 	@Override
 	public void setEntity(Entity entity) {
 		if(currentEntity == entity || ! this.isVisible())
