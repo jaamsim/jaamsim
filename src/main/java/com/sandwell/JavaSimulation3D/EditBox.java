@@ -308,7 +308,7 @@ public class EditBox extends FrameBox {
 		super.dispose();
 	}
 
-	public static class MyJTable extends AjustToLastColumnTable {
+	public static class MyJTable extends JTable {
 		private ColorEditor colorEditor;
 		private ListEditor listEditor;
 
@@ -373,6 +373,11 @@ public class EditBox extends FrameBox {
 			TableModel model = getModel();
 			Input<?> in = (Input<?>)model.getValueAt(rowIndex, 0);
 			return EditBox.getInputDesc(EditBox.getInstance().getCurrentEntity(), in);
+		}
+
+		@Override
+		public void doLayout() {
+			FrameBox.fitTableToLastColumn(this);
 		}
 	}
 	public static class StringEditor extends CellEditor implements TableCellEditor {
