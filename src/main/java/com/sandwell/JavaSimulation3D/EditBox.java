@@ -96,7 +96,7 @@ public class EditBox extends FrameBox {
 
 		super( "Input Editor" );
 
-		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
 
 		// Set the preferred size of the panes
 		jTabbedPane = new JTabbedPane();
@@ -243,11 +243,11 @@ public class EditBox extends FrameBox {
 
 	@Override
 	public void updateValues(double simTime) {
-		// table has not built yet
-		if(!this.isVisible())
+		if(currentEntity == null)
 			return;
 
-		jTabbedPane.repaint();
+		JTable propTable = (JTable)(((JScrollPane)jTabbedPane.getSelectedComponent()).getViewport().getComponent(0));
+		((EditTableModel)propTable.getModel()).fireTableDataChanged();
 	}
 
 	private synchronized static void killInstance() {
