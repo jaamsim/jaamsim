@@ -60,6 +60,12 @@ public class ColParser {
 		}
 	}
 
+	private static void parseAssert(boolean b) {
+		if (!b) {
+			throw new RenderException("Failed Collada parsing assert");
+		}
+	}
+
 	static final List<String> DOUBLE_ARRAY_TAGS;
 	static final List<String> INT_ARRAY_TAGS;
 	static final List<String> STRING_ARRAY_TAGS;
@@ -170,7 +176,7 @@ public class ColParser {
 
 
 		_colladaNode = _parser.getRootNode().findChildTag("COLLADA", false);
-		assert(_colladaNode != null);
+		parseAssert(_colladaNode != null);
 
 		processGeos();
 		processImages();
@@ -239,12 +245,12 @@ public class ColParser {
 
 	private void processScene() {
 		XmlNode scene = _colladaNode.findChildTag("scene", false);
-		assert(scene != null);
+		parseAssert(scene != null);
 
 		XmlNode instVS = scene.findChildTag("instance_visual_scene", false);
-		assert(instVS != null);
+		parseAssert(instVS != null);
 		String vsURL = instVS.getAttrib("url");
-		assert(vsURL.charAt(0) == '#');
+		parseAssert(vsURL.charAt(0) == '#');
 
 		Mat4d globalMat = getGlobalRot();
 		globalMat.scale3(getScaleFactor());
@@ -270,12 +276,12 @@ public class ColParser {
 
 		// Add instance_node
 		for (String nodeName : node.subInstanceNames) {
-			assert(nodeName.charAt(0) == '#');
+			parseAssert(nodeName.charAt(0) == '#');
 			SceneNode instNode = _namedNodes.get(nodeName.substring(1));
 			// Check for reference loops, make sure this node is not currently in the active node stack
-			assert(!_nodeStack.contains(instNode));
+			parseAssert(!_nodeStack.contains(instNode));
 
-			assert(instNode != null);
+			parseAssert(instNode != null);
 			node.subNodes.add(instNode);
 		}
 
@@ -289,21 +295,21 @@ public class ColParser {
 
 	private Effect geoBindingToEffect(Map<String, String> materialMap, String symbol) {
 		String materialId = materialMap.get(symbol);
-		assert(materialId != null);
+		parseAssert(materialId != null);
 
-		assert(materialId.charAt(0) == '#');
+		parseAssert(materialId.charAt(0) == '#');
 		String effectId = _materials.get(materialId.substring(1));
-		assert(effectId != null);
+		parseAssert(effectId != null);
 
-		assert(effectId.charAt(0) == '#');
+		parseAssert(effectId.charAt(0) == '#');
 		Effect effect = _effects.get(effectId.substring(1));
-		assert(effect != null);
+		parseAssert(effect != null);
 
 		return effect;
 	}
 
 	private void addGeoInst(GeoInstInfo geoInfo, Mat4d mat) {
-		assert(geoInfo.geoName.charAt(0) == '#');
+		parseAssert(geoInfo.geoName.charAt(0) == '#');
 		Geometry geo = _geos.get(geoInfo.geoName.substring(1));
 
 		for (FaceSubGeo subGeo : geo.faceSubGeos) {
@@ -396,12 +402,12 @@ public class ColParser {
 
 		XmlNode initFrom = imageNode.findChildTag("init_from", true);
 		if (initFrom == null) {
-			assert(false);
+			parseAssert(false);
 			return;
 		}
 
 		String fileName = (String)initFrom.getContent();
-		assert(fileName != null);
+		parseAssert(fileName != null);
 
 		_images.put(id, fileName);
 	}
@@ -424,13 +430,13 @@ public class ColParser {
 
 		XmlNode instEffect = matNode.findChildTag("instance_effect", true);
 		if (instEffect == null) {
-			assert(false);
+			parseAssert(false);
 			return;
 		}
 
 		String effectURL = instEffect.getAttrib("url");
 		if (effectURL == null) {
-			assert(false);
+			parseAssert(false);
 			return;
 		}
 
@@ -455,7 +461,7 @@ public class ColParser {
 
 		XmlNode profCommon = effectNode.findChildTag("profile_COMMON", true);
 		if (profCommon == null) {
-			assert(false);
+			parseAssert(false);
 			return; // There is no common profile
 		}
 
@@ -472,7 +478,7 @@ public class ColParser {
 
 		XmlNode technique = profCommon.findChildTag("technique", false);
 		if (technique == null) {
-			assert(false);
+			parseAssert(false);
 			return; // There is no common profile
 		}
 		// Search technique for the kind of data we care about, for now find blinn, phong or lambert
@@ -533,7 +539,7 @@ public class ColParser {
 		    transparentCT != null &&
 		    transparentCT.color != null) {
 			XmlNode floatNode = transparency.findChildTag("float", false);
-			assert(floatNode != null);
+			parseAssert(floatNode != null);
 
 			double alpha = Double.parseDouble((String)floatNode.getContent());
 			effect.transColour = new Color4d(transparentCT.color);
@@ -566,7 +572,7 @@ public class ColParser {
 
 	private ColorTex getColorTex(XmlNode node, HashMap<String, XmlNode> paramMap) {
 		if (node.getNumChildren() != 1) {
-			assert(false);
+			parseAssert(false);
 			return null;
 		}
 
@@ -577,14 +583,14 @@ public class ColParser {
 		if (tag.equals("color")) {
 
 			double[] colVals = (double[])valNode.getContent();
-			assert(colVals != null && colVals.length >= 4);
+			parseAssert(colVals != null && colVals.length >= 4);
 			Color4d col = new Color4d(colVals[0], colVals[1], colVals[2], colVals[3]);
 			ret.color = col;
 			return ret;
 		}
 
 		if (!tag.equals("texture")) {
-			assert(false);
+			parseAssert(false);
 			return null;
 		}
 
@@ -592,32 +598,32 @@ public class ColParser {
 		String texName = valNode.getAttrib("texture");
 		// Find this sampler in the map
 		XmlNode sampler = paramMap.get(texName);
-		assert(sampler != null);
+		parseAssert(sampler != null);
 
 		XmlNode sampler2D = sampler.findChildTag("sampler2D", false);
-		assert(sampler2D != null);
+		parseAssert(sampler2D != null);
 		XmlNode source = sampler2D.findChildTag("source", false);
-		assert(source != null);
+		parseAssert(source != null);
 
 		String surfaceName = (String)source.getContent();
 
 		XmlNode surfaceParam = paramMap.get(surfaceName);
 		XmlNode surface = surfaceParam.findChildTag("surface", false);
-		assert(surface != null);
-		assert(surface.getAttrib("type").equals("2D"));
+		parseAssert(surface != null);
+		parseAssert(surface.getAttrib("type").equals("2D"));
 
 		XmlNode initFrom = surface.findChildTag("init_from", false);
-		assert(initFrom != null);
+		parseAssert(initFrom != null);
 
 		String imageName = (String)initFrom.getContent();
 
 		String img = _images.get(imageName);
-		assert(img != null);
+		parseAssert(img != null);
 		try {
 			ret.texture = new URL(_contextURL, img);
 		} catch (MalformedURLException ex) {
 			ex.printStackTrace();
-			assert(false);
+			parseAssert(false);
 		}
 		return ret;
 	}
@@ -704,7 +710,7 @@ public class ColParser {
 			}
 			if (childTag.equals("instance_node")) {
 				String nodeID = child.getAttrib("url");
-				assert(nodeID != null);
+				parseAssert(nodeID != null);
 				sn.subInstanceNames.add(nodeID);
 			}
 			if (childTag.equals("node")) {
@@ -722,7 +728,7 @@ public class ColParser {
 		if (bindMat == null) return instInfo;
 
 		XmlNode techCommon = bindMat.findChildTag("technique_common", false);
-		assert(techCommon != null);
+		parseAssert(techCommon != null);
 
 		for (XmlNode instMat : techCommon.children()) {
 			if (!instMat.getTag().equals("instance_material")) {
@@ -730,7 +736,7 @@ public class ColParser {
 			}
 			String symbol = instMat.getAttrib("symbol");
 			String target = instMat.getAttrib("target");
-			assert(symbol != null && target != null);
+			parseAssert(symbol != null && target != null);
 			instInfo.materialMap.put(symbol, target);
 			// TODO, properly handle rebinding vertex inputs
 		}
@@ -739,7 +745,7 @@ public class ColParser {
 
 	private Mat4d transToMat(XmlNode transNode) {
 		double[] vals = (double[])transNode.getContent();
-		assert(vals != null && vals.length >= 3);
+		parseAssert(vals != null && vals.length >= 3);
 		Vec3d transVect = new Vec3d(vals[0], vals[1], vals[2]);
 		Mat4d ret = new Mat4d();
 		ret.setTranslate3(transVect);
@@ -748,7 +754,7 @@ public class ColParser {
 
 	private Mat4d rotToMat(XmlNode rotNode) {
 		double[] vals = (double[])rotNode.getContent();
-		assert(vals != null && vals.length >= 4);
+		parseAssert(vals != null && vals.length >= 4);
 
 		double rads = (float)Math.toRadians(vals[3]);
 		Vec4d axis = new Vec4d(vals[0], vals[1], vals[2], 1.0d);
@@ -761,7 +767,7 @@ public class ColParser {
 
 	private Mat4d scaleToMat(XmlNode scaleNode) {
 		double[] vals = (double[])scaleNode.getContent();
-		assert(vals != null && vals.length >= 3);
+		parseAssert(vals != null && vals.length >= 3);
 		Vec3d scaleVect = new Vec3d(vals[0], vals[1], vals[2]);
 		Mat4d ret = new Mat4d();
 		ret.scaleCols3(scaleVect);
@@ -770,7 +776,7 @@ public class ColParser {
 
 	private Mat4d matToMat(XmlNode scaleNode) {
 		double[] vals = (double[])scaleNode.getContent();
-		assert(vals != null && vals.length >= 16);
+		parseAssert(vals != null && vals.length >= 16);
 		Mat4d ret = new Mat4d(vals);
 		return ret;
 	}
@@ -809,7 +815,7 @@ public class ColParser {
 		}
 
 		int numVerts = smd.posDesc.indices.length;
-		assert(numVerts % 2 == 0);
+		parseAssert(numVerts % 2 == 0);
 
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
 		LineSubGeo lsg = new LineSubGeo(numVerts);
@@ -817,7 +823,7 @@ public class ColParser {
 		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
 
 		lsg.materialSymbol = subGeo.getAttrib("material");
-		assert(lsg.materialSymbol != null);
+		parseAssert(lsg.materialSymbol != null);
 
 		for (int i = 0; i < numVerts; ++i) {
 			lsg.verts[i] = posData[smd.posDesc.indices[i]];
@@ -845,7 +851,7 @@ public class ColParser {
 		}
 
 		int numVerts = smd.posDesc.indices.length;
-		assert(numVerts % 3 == 0);
+		parseAssert(numVerts % 3 == 0);
 		if (numVerts == 0) {
 			return;
 		}
@@ -865,7 +871,7 @@ public class ColParser {
 			texCoordData = getDataArrayFromSource(smd.texCoordDesc.source);
 
 		fsg.materialSymbol = subGeo.getAttrib("material");
-		assert(fsg.materialSymbol != null);
+		parseAssert(fsg.materialSymbol != null);
 
 		Vec4d[] generatedNormals = null;
 		if (!hasNormal) {
@@ -940,7 +946,7 @@ public class ColParser {
 			throw new ColException("No 'p' child in 'lines' in mesh.");
 
 		int[] ps = (int[])pNode.getContent();
-		assert(ps.length >= count * 2 * smd.stride);
+		parseAssert(ps.length >= count * 2 * smd.stride);
 
 		smd.posDesc.indices = new int[count*2];
 		for (int i = 0; i < count * 2; ++i) {
@@ -959,8 +965,8 @@ public class ColParser {
 			if (!child.getTag().equals("p")) continue;
 
 			int[] ps = (int[])child.getContent();
-			assert(ps != null);
-			assert(nextIndex < count);
+			parseAssert(ps != null);
+			parseAssert(nextIndex < count);
 
 			stripIndices[nextIndex++] = ps;
 			numLines += ps.length - 1;
@@ -970,7 +976,7 @@ public class ColParser {
 		int nextWriteIndex = 0;
 		smd.posDesc.indices = new int[numLines * 2];
 		for (int[] strip : stripIndices) {
-			assert(strip.length >= 2);
+			parseAssert(strip.length >= 2);
 
 			for (int i = 1; i < strip.length; ++i) {
 				smd.posDesc.indices[nextWriteIndex++] = strip[i-1];
@@ -987,7 +993,7 @@ public class ColParser {
 			throw new ColException("No 'p' child in 'triangles' in mesh.");
 
 		int[] ps = (int[])pNode.getContent();
-		assert(ps.length >= count * 3 * smd.stride);
+		parseAssert(ps.length >= count * 3 * smd.stride);
 
 		smd.posDesc.indices = new int[count*3];
 		if (smd.normDesc != null) {
@@ -1025,7 +1031,7 @@ public class ColParser {
 		else
 			vcounts = new int[0];
 
-		assert(vcounts.length == count);
+		parseAssert(vcounts.length == count);
 		int totalVerts = 0;
 		int numTriangles = 0;
 		for (int i : vcounts) {
@@ -1035,7 +1041,7 @@ public class ColParser {
 			totalVerts += i;
 			numTriangles += (i-2);
 		}
-		assert(ps.length >= totalVerts * smd.stride);
+		parseAssert(ps.length >= totalVerts * smd.stride);
 
 		smd.posDesc.indices = new int[numTriangles * 3];
 		if (smd.normDesc != null) {
@@ -1052,7 +1058,7 @@ public class ColParser {
 				continue;
 			}
 			// v is the number of vertices in this polygon
-			assert(v >= 3);
+			parseAssert(v >= 3);
 			for (int i = 0; i < (v-2); ++i) {
 				int vert0 = readVertOffset + i;
 				int vert1 = readVertOffset + i + 1;
@@ -1102,8 +1108,8 @@ public class ColParser {
 			}
 			int[] ps = (int[])n.getContent();
 			int numVerts = ps.length / smd.stride;
-			assert( (ps.length % smd.stride) == 0);
-			assert(numVerts >= 3);
+			parseAssert( (ps.length % smd.stride) == 0);
+			parseAssert(numVerts >= 3);
 			numTriangles += numVerts - 2;
 		}
 
@@ -1231,7 +1237,7 @@ public class ColParser {
 		int stride = Integer.parseInt(accessor.getAttrib("stride"));
 		int count = Integer.parseInt(accessor.getAttrib("count"));
 
-		assert(floatCount >= count * stride);
+		parseAssert(floatCount >= count * stride);
 
 		Vec4d[] ret = new Vec4d[count];
 
