@@ -797,6 +797,12 @@ public void freeResources(GL2GL3 gl) {
 
 	}
 
+	for (SubLine sub : _subLines) {
+		int[] bufs = new int[1];
+		bufs[0] = sub._vertexBuffer;
+		gl.glDeleteBuffers(6, bufs, 0);
+	}
+
 	_subMeshes.clear();
 
 }
