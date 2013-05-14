@@ -51,6 +51,12 @@ public class MeshReader {
 		}
 	}
 
+	private static void parseAssert(boolean b) {
+		if (!b) {
+			throw new RenderException("Failed JSM parsing assert");
+		}
+	}
+
 	private XmlParser _parser;
 	private URL contentURL;
 	private MeshData finalData;
@@ -105,7 +111,7 @@ public class MeshReader {
 		finalData = new MeshData();
 
 		_meshObjectNode = _parser.getRootNode().findChildTag("MeshObject", false);
-		assert(_meshObjectNode != null);
+		parseAssert(_meshObjectNode != null);
 
 		parseGeometries();
 		parseMaterials();
@@ -167,27 +173,27 @@ public class MeshReader {
 		int numVerts = Integer.parseInt(geoNode.getAttrib("vertices"));
 		// Start by parsing vertices
 		XmlNode vertsNode = geoNode.findChildTag("Positions", false);
-		assert(vertsNode != null);
-		assert(vertsNode.getAttrib("dims").equals("3"));
+		parseAssert(vertsNode != null);
+		parseAssert(vertsNode.getAttrib("dims").equals("3"));
 
 		double[] positions = (double[])vertsNode.getContent();
-		assert(positions.length == numVerts * 3);
+		parseAssert(positions.length == numVerts * 3);
 
 		XmlNode normNode = geoNode.findChildTag("Normals", false);
-		assert(normNode != null);
-		assert(normNode.getAttrib("dims").equals("3"));
+		parseAssert(normNode != null);
+		parseAssert(normNode.getAttrib("dims").equals("3"));
 
 		double[] normals = (double[])normNode.getContent();
-		assert(normals.length == numVerts * 3);
+		parseAssert(normals.length == numVerts * 3);
 
 		XmlNode texCoordNode = geoNode.findChildTag("TexCoords", false);
 		double[] texCoords = null;
 		boolean hasTex = false;
 		if (texCoordNode != null) {
-			assert(texCoordNode.getAttrib("dims").equals("2"));
+			parseAssert(texCoordNode.getAttrib("dims").equals("2"));
 
 			texCoords = (double[])texCoordNode.getContent();
-			assert(texCoords.length == numVerts * 2);
+			parseAssert(texCoords.length == numVerts * 2);
 			hasTex = true;
 		}
 
@@ -199,13 +205,13 @@ public class MeshReader {
 		int numBoneWeights = 0;
 		if (boneIndicesNode != null) {
 			numBoneWeights = Integer.parseInt(boneIndicesNode.getAttrib("entriesPerVert"));
-			assert(numBoneWeights == Integer.parseInt(boneWeightsNode.getAttrib("entriesPerVert"))); // Make sure these are the same
-			assert(numBoneWeights <= 4); // TODO handle more than this by discarding extras and renormalizing
+			parseAssert(numBoneWeights == Integer.parseInt(boneWeightsNode.getAttrib("entriesPerVert"))); // Make sure these are the same
+			parseAssert(numBoneWeights <= 4); // TODO handle more than this by discarding extras and renormalizing
 
 			boneIndices = (double[])boneIndicesNode.getContent();
 			boneWeights = (double[])boneWeightsNode.getContent();
-			assert(boneIndices.length == numBoneWeights * numVerts);
-			assert(boneWeights.length == numBoneWeights * numVerts);
+			parseAssert(boneIndices.length == numBoneWeights * numVerts);
+			parseAssert(boneWeights.length == numBoneWeights * numVerts);
 
 			hasBoneInfo = true;
 		}
@@ -213,12 +219,12 @@ public class MeshReader {
 
 		// Finally get the indices
 		XmlNode faceNode = geoNode.findChildTag("Faces", false);
-		assert(faceNode != null);
+		parseAssert(faceNode != null);
 		int numTriangles = Integer.parseInt(faceNode.getAttrib("count"));
-		assert(faceNode.getAttrib("type").equals("Triangles"));
+		parseAssert(faceNode.getAttrib("type").equals("Triangles"));
 
 		int[] indices = (int[])faceNode.getContent();
-		assert(numTriangles*3 == indices.length);
+		parseAssert(numTriangles*3 == indices.length);
 
 		ArrayList<Vertex> verts = new ArrayList<Vertex>(numVerts);
 
@@ -261,24 +267,24 @@ public class MeshReader {
 
 	private void parseMaterial(XmlNode matNode) {
 		XmlNode diffuseNode = matNode.findChildTag("Diffuse", false);
-		assert(diffuseNode != null);
+		parseAssert(diffuseNode != null);
 		XmlNode textureNode = diffuseNode.findChildTag("Texture", false);
 		if (textureNode != null) {
-			assert(textureNode.getAttrib("coordIndex").equals("0"));
+			parseAssert(textureNode.getAttrib("coordIndex").equals("0"));
 			String file = (String)textureNode.getContent();
 			try {
 				URL texURL = new URL(contentURL, file);
 				finalData.addMaterial(texURL, null, MeshData.NO_TRANS, null);
 				return;
 			} catch (MalformedURLException ex) {
-				assert(false);
+				parseAssert(false);
 			}
 		}
 		// Not a texture so it must be a color
 		XmlNode colorNode = diffuseNode.findChildTag("Color", false);
-		assert(colorNode != null);
+		parseAssert(colorNode != null);
 		double[] c = (double[])colorNode.getContent();
-		assert(c.length == 4);
+		parseAssert(c.length == 4);
 		Color4d color = new Color4d(c[0], c[1], c[2], c[3]);
 		finalData.addMaterial(null, color, MeshData.NO_TRANS, null);
 	}
@@ -303,25 +309,25 @@ public class MeshReader {
 		XmlNode xNode = node.findChildTag("X", false);
 		XmlNode yNode = node.findChildTag("Y", false);
 		XmlNode zNode = node.findChildTag("Z", false);
-		assert(tNode != null);
-		assert(xNode != null);
-		assert(yNode != null);
-		assert(zNode != null);
+		parseAssert(tNode != null);
+		parseAssert(xNode != null);
+		parseAssert(yNode != null);
+		parseAssert(zNode != null);
 		double[] ts = (double[])tNode.getContent();
 		double[] xs = (double[])xNode.getContent();
 		double[] ys = (double[])yNode.getContent();
 		double[] zs = (double[])zNode.getContent();
 
-		assert(ts.length == xs.length);
-		assert(ts.length == ys.length);
-		assert(ts.length == zs.length);
+		parseAssert(ts.length == xs.length);
+		parseAssert(ts.length == ys.length);
+		parseAssert(ts.length == zs.length);
 
 		double [] ws = null;
 		if (!isTrans) {
 			XmlNode wNode = node.findChildTag("W", false);
-			assert(wNode != null);
+			parseAssert(wNode != null);
 			ws = (double[])wNode.getContent();
-			assert(ts.length == ws.length);
+			parseAssert(ts.length == ws.length);
 		}
 
 		for (int i = 0; i < ts.length; ++i) {
@@ -342,7 +348,7 @@ public class MeshReader {
 	private Armature.Channel parseGroup(XmlNode groupNode) {
 		Armature.Channel chan = new Armature.Channel();
 		chan.name = groupNode.getAttrib("name");
-		assert(chan.name != null);
+		parseAssert(chan.name != null);
 
 		XmlNode rotNode = groupNode.findChildTag("Rotation", false);
 		if (rotNode != null) {
@@ -363,7 +369,7 @@ public class MeshReader {
 		Armature.ArmAction act = new Armature.ArmAction();
 		act.name = actionNode.getAttrib("name");
 		act.duration = Double.parseDouble(actionNode.getAttrib("length"));
-		assert(act.name != null);
+		parseAssert(act.name != null);
 
 		for (XmlNode child : actionNode.children()) {
 			if (!child.getTag().equals("Group")) {
@@ -403,7 +409,7 @@ public class MeshReader {
 		int matIndex = Integer.parseInt(instNode.getAttrib("matIndex"));
 
 		XmlNode matrixNode = instNode.findChildTag("Matrix", false);
-		assert(matrixNode != null);
+		parseAssert(matrixNode != null);
 
 		Mat4d mat = nodeToMat4d(matrixNode);
 
@@ -420,14 +426,14 @@ public class MeshReader {
 		}
 
 		// Iff we have an armature, we also have bone names
-		assert((armIndex==-1) == (boneNames==null));
+		parseAssert((armIndex==-1) == (boneNames==null));
 
 		finalData.addSubMeshInstance(geoIndex, matIndex, armIndex, mat, boneNames);
 	}
 
 	private Mat4d nodeToMat4d(XmlNode node) {
 		double[] matDoubles = (double[])node.getContent();
-		assert(matDoubles.length == 16);
+		parseAssert(matDoubles.length == 16);
 
 		Mat4d mat = new Mat4d(matDoubles);
 		mat.transpose4();
