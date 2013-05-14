@@ -71,11 +71,11 @@ public class InfoBox extends FrameBox {
 		currentEntity = entity;
 
 		if (currentEntity == null) {
-			setTitle("Output Viewer");
+			setTitle("Info Viewer");
 			propTable.setVisible(false);
 		}
 		else {
-			setTitle(String.format("Info Viewer - %s", currentEntity.getInputName()));
+			setTitle("Info Viewer - " + currentEntity.getInputName());
 			propTable.setVisible(true);
 		}
 	}

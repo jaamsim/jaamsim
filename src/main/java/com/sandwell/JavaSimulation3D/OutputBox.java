@@ -104,7 +104,7 @@ public class OutputBox extends FrameBox {
 		table.getTableHeader().setFont(FrameBox.boldFont);
 		table.getTableHeader().setReorderingAllowed(false);
 
-		table.getColumnModel().getColumn(0).setHeaderValue("Output Name");
+		table.getColumnModel().getColumn(0).setHeaderValue("Output");
 		table.getColumnModel().getColumn(1).setHeaderValue("Value");
 
 		table.setDefaultRenderer(Object.class, colRenderer);
@@ -118,10 +118,12 @@ public class OutputBox extends FrameBox {
 	public void setEntity( Entity entity ) {
 		currentEntity = entity;
 		if (currentEntity == null) {
+			setTitle("Output Viewer");
 			outputNames.clear();
 			rowIsClass.clear();
 			return;
 		}
+		setTitle("Output Viewer - " + currentEntity.getInputName());
 
 		// Build up the row list, leaving extra rows for entity names
 		String[] tempNames = currentEntity.getSortedOutputNames();
