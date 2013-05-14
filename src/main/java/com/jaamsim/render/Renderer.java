@@ -642,6 +642,12 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		Polygon.init(this, gl);
 		_texCache.init(gl);
 
+		// Load the bad mesh proto
+		MeshData badData = MeshDataCache.getBadMesh();
+		MeshProto badProto = new MeshProto(badData, _safeGraphics);
+		_protoCache.put(MeshDataCache.BAD_MESH_KEY, badProto);
+		badProto.loadGPUAssets(gl, this);
+
 		_sharedContext.release();
 	}
 
@@ -670,7 +676,14 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		assert (proto != null);
 		proto.loadGPUAssets(gl, this);
 
-		assert (proto.isLoadedGPU());
+		if (!proto.isLoadedGPU()) {
+			// This did not load cleanly, clear it out and use the default bad mesh asset
+			proto.freeResources(gl);
+
+			System.out.printf("Could not load GPU assset: %s\n", key.getURL().toString());
+
+			proto = _protoCache.get(MeshDataCache.BAD_MESH_KEY);
+		}
 		_protoCache.put(key, proto);
 
 		_sharedContext.release();

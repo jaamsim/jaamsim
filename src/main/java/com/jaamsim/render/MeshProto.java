@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.media.opengl.GL2GL3;
+import javax.media.opengl.GLException;
 
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.AABB;
@@ -528,14 +529,19 @@ private void renderSubLine(SubLine sub, Map<Integer, Integer> vaoMap,
 public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 	assert(!_isLoadedGPU);
 
-	for (MeshData.SubMeshData subData : data.getSubMeshData()) {
-		loadGPUSubMesh(gl, renderer, subData);
-	}
-	for (MeshData.SubLineData subData : data.getSubLineData()) {
-		loadGPUSubLine(gl, renderer, subData);
-	}
-	for (MeshData.Material mat : data.getMaterials()) {
-		loadGPUMaterial(gl, renderer, mat);
+	try {
+		for (MeshData.SubMeshData subData : data.getSubMeshData()) {
+			loadGPUSubMesh(gl, renderer, subData);
+		}
+		for (MeshData.SubLineData subData : data.getSubLineData()) {
+			loadGPUSubLine(gl, renderer, subData);
+		}
+		for (MeshData.Material mat : data.getMaterials()) {
+			loadGPUMaterial(gl, renderer, mat);
+		}
+	} catch (GLException ex) {
+		ex.printStackTrace();
+		return; // The loader will detect that this did not load cleanly
 	}
 
 	_isLoadedGPU = true;
