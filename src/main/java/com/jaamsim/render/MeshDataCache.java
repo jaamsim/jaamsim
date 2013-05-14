@@ -14,7 +14,9 @@
  */
 package com.jaamsim.render;
 
+import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jaamsim.MeshFiles.MeshData;
@@ -28,12 +30,21 @@ public class MeshDataCache {
 	private static HashMap<MeshProtoKey, AtomicBoolean> loadingMap = new HashMap<MeshProtoKey, AtomicBoolean>();
 	private static Object loadingLock = new Object();
 
+	private static HashSet<MeshProtoKey> badMeshSet = new HashSet<MeshProtoKey>();
+	private static Object badMeshLock = new Object();
+	private static MeshData badMesh = null;
+
 	// Fetch, or lazily initialize the mesh data
 	public static MeshData getMeshData(MeshProtoKey key) {
 		synchronized (mapLock) {
 			MeshData data = dataMap.get(key);
 			if (data != null) {
 				return data;
+			}
+		}
+		synchronized (badMeshLock) {
+			if (badMeshSet.contains(key)) {
+				return getBadMesh();
 			}
 		}
 
@@ -59,12 +70,20 @@ public class MeshDataCache {
 		String ext = fileString.substring(fileString.length() - 3, fileString.length());
 
 		MeshData data = null;
-		if (ext.toUpperCase().equals("DAE")) {
-			data = ColParser.parse(key.getURL());
-		} else if (ext.toUpperCase().equals("JSM")) {
-			data = MeshReader.parse(key.getURL());
-		} else {
-			assert(false);
+		try {
+			if (ext.toUpperCase().equals("DAE")) {
+				data = ColParser.parse(key.getURL());
+			} else if (ext.toUpperCase().equals("JSM")) {
+				data = MeshReader.parse(key.getURL());
+			} else {
+				assert(false);
+			}
+		} catch (Exception ex) {
+			System.out.printf("Could not load mesh: %s \n Error: %s\n", key.getURL().toString(), ex.getMessage());
+			synchronized (badMeshLock) {
+				badMeshSet.add(key);
+				return getBadMesh();
+			}
 		}
 
 		synchronized (mapLock) {
@@ -104,5 +123,14 @@ public class MeshDataCache {
 				}
 			}
 		}.run();
+	}
+
+	// Lazily load the bad mesh data
+	private static MeshData getBadMesh() {
+		if (badMesh == null) {
+			URL badURL = TexCache.class.getResource("/resources/shapes/bad-mesh.jsm");
+			badMesh = MeshReader.parse(badURL);
+		}
+		return badMesh;
 	}
 }
