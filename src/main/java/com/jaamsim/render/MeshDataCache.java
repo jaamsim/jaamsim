@@ -14,7 +14,6 @@
  */
 package com.jaamsim.render;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,6 +32,8 @@ public class MeshDataCache {
 	private static HashSet<MeshProtoKey> badMeshSet = new HashSet<MeshProtoKey>();
 	private static Object badMeshLock = new Object();
 	private static MeshData badMesh = null;
+
+	public static final MeshProtoKey BAD_MESH_KEY = new MeshProtoKey(TexCache.class.getResource("/resources/shapes/bad-mesh.jsm"));
 
 	// Fetch, or lazily initialize the mesh data
 	public static MeshData getMeshData(MeshProtoKey key) {
@@ -126,10 +127,9 @@ public class MeshDataCache {
 	}
 
 	// Lazily load the bad mesh data
-	private static MeshData getBadMesh() {
+	public static MeshData getBadMesh() {
 		if (badMesh == null) {
-			URL badURL = TexCache.class.getResource("/resources/shapes/bad-mesh.jsm");
-			badMesh = MeshReader.parse(badURL);
+			badMesh = MeshReader.parse(BAD_MESH_KEY.getURL());
 		}
 		return badMesh;
 	}
