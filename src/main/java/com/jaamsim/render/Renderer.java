@@ -673,17 +673,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		assert (proto.isLoadedGPU());
 		_protoCache.put(key, proto);
 
-		// Build up a list of actions for this mesh
-		ArrayList<Action.Description> ads = new ArrayList<Action.Description>();
-		for (Armature arm : proto.getRawData().getArmatures()) {
-			for (Armature.ArmAction act : arm.getActions()) {
-				Action.Description ad = new Action.Description();
-				ad.name = act.name;
-				ad.duration = act.duration;
-				ads.add(ad);
-			}
-		}
-
 		_sharedContext.release();
 		if (_drawContext != null) {
 			_drawContext.makeCurrent();
