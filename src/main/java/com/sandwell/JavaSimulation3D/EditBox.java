@@ -25,6 +25,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultComboBoxModel;
@@ -222,45 +224,21 @@ public class EditBox extends FrameBox {
 			return;
 		}
 
-		// List all the categories to build tabs for
-		ArrayList<String> category = new ArrayList<String>();
-		for (Input<?> in : currentEntity.getEditableInputs()) {
-			if (in.getHidden() || in.isLocked())
-				continue;
+		for (CategoryInputs each : getInputs(currentEntity)) {
+			JTable propTable = new MyJTable(each.inputs.size(), 3, columnRender);
 
-			if (category.contains(in.getCategory()))
-				continue;
-
-			// Ensure key inputs are always the first tab
-			if (in.getCategory().equals("Key Inputs"))
-				category.add(0, in.getCategory());
-			else
-				category.add(in.getCategory());
-		}
-
-		for (String cat : category) {
-			// Find all inputs for the given category
-			ArrayList<Input<?>> inputs = new ArrayList<Input<?>>();
-			for( Input<?> in2 : currentEntity.getEditableInputs() ) {
-				if (in2.getCategory().equals(cat) && !in2.isLocked() && !in2.getHidden()) {
-					inputs.add(in2);
-				}
-			}
-
-			JTable propTable = new MyJTable(inputs.size(), 3, columnRender);
-
-			for (int row = 0; row < inputs.size(); row++) {
-				Input<?> in1 = inputs.get(row);
-				propTable.setValueAt(in1, row, 0);
-				propTable.setValueAt(in1, row, 1);
-				propTable.setValueAt(in1, row, 2);
+			for (int row = 0; row < each.inputs.size(); row++) {
+				Input<?> in = each.inputs.get(row);
+				propTable.setValueAt(in, row, 0);
+				propTable.setValueAt(in, row, 1);
+				propTable.setValueAt(in, row, 2);
 			}
 
 			JScrollPane jScrollPane = new JScrollPane(propTable);
 			jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
 			jScrollPane.setColumnHeaderView( propTable.getTableHeader());
 
-			jTabbedPane.addTab(cat, null, jScrollPane, null);
+			jTabbedPane.addTab(each.category, null, jScrollPane, null);
 		}
 
 		if (jTabbedPane.getTabCount() > 0)
@@ -781,4 +759,62 @@ public class EditBox extends FrameBox {
 
 		}
 	}
+
+	private static ArrayList<CategoryInputs> getInputs(Entity ent) {
+
+		String cat = "";
+		ArrayList<CategoryInputs> catInputsList = new ArrayList<CategoryInputs>(0);
+		ArrayList<Input<?>> inputs = new ArrayList<Input<?>>();
+
+		// assuming that editable inputs of the same category are adjacent
+		for (Input<?> in : ent.getEditableInputs()) {
+			if (in.getHidden() || in.isLocked())
+				continue;
+
+			// the first time entering the loop
+			if (cat.isEmpty())
+				cat = in.getCategory();
+
+			// new category (the previous category inputs is done so add it to the list)
+			if ( !cat.equals(in.getCategory()) ) {
+				add(catInputsList, inputs, cat);
+				inputs = new ArrayList<Input<?>>();
+				cat = in.getCategory();
+			}
+			inputs.add(in);
+		}
+
+		if (inputs.size() != 0) {
+			add(catInputsList, inputs, cat);
+		}
+
+		return catInputsList;
+	}
+
+	private static void add(ArrayList<CategoryInputs> list, ArrayList<Input<?>> inputs, String cat) {
+		CategoryInputs catInputs = new CategoryInputs(cat, inputs);
+
+		// Ensure key inputs are always the first tab
+		if (catInputs.category.equals("Key Inputs"))
+			list.add(0, catInputs);
+		else
+			list.add(catInputs);
+	}
+
+private static class CategoryInputs implements Comparator<Input<?>> {
+	final String category;
+	final ArrayList<Input<?>> inputs;
+
+	CategoryInputs(String cat, ArrayList<Input<?>> ins) {
+		category = cat;
+		inputs = ins;
+		Collections.sort(inputs, this);
+	}
+
+	@Override
+	public int compare(Input<?> in1, Input<?> in2) {
+		return in1.getKeyword().compareToIgnoreCase(in2.getKeyword());
+	}
+}
+
 }
