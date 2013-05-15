@@ -104,6 +104,9 @@ public class Simulation extends Entity {
 	         example = "Simulation TimeStep { 0.25 h }")
 	private final TimeInput clockTimeStep;
 
+	@Keyword(desc = "The default units of Cargo",
+	         example = "Sim CargoUnits { kt }")
+	private final StringInput cargoUnitString;
 
 	@Keyword(desc = "The rate of gravity",
 	         example = "This is placeholder example text")
@@ -190,7 +193,8 @@ public class Simulation extends Entity {
 		portTimeStep.setUnits( "h" );
 		this.addInput( portTimeStep, true );
 
-		addEditableKeyword( "CargoUnits",          "kt",        		"",               false, "Key Inputs" );
+		cargoUnitString = new StringInput("CargoUnits", "Key Inputs", "kt");
+		this.addInput(cargoUnitString, true);
 
 		simTimeScaleInput = new DoubleInput( "SimulationTimeScale", "Key Inputs", 4000.0d );
 		simTimeScaleInput.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
@@ -281,6 +285,12 @@ public class Simulation extends Entity {
 		if(in == realTimeFactor || in == realTime) {
 			EventManager.rootManager.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
 			GUIFrame.instance().updateForRealTime();
+			return;
+		}
+
+		if (in == cargoUnitString) {
+			Util.setCargoUnits(cargoUnitString.getValue());
+			return;
 		}
 	}
 
@@ -291,12 +301,6 @@ public class Simulation extends Entity {
 	@Override
 	public void readData_ForKeyword(StringVector data, String keyword)
 	throws InputErrorException {
-
-		if( "CargoUnits".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			Util.setCargoUnits(data.get(0));
-			return;
-		}
 		if ("DEFINEEVENTMANAGER".equalsIgnoreCase(keyword)) {
 			for (String name : data) {
 				EventManager.defineEventManager(name);
