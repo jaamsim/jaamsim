@@ -255,98 +255,6 @@ public class EditBox extends FrameBox {
 		super.dispose();
 	}
 
-	public static class EditTable extends JTable {
-		private ColorEditor colorEditor;
-		private ListEditor listEditor;
-
-		@Override
-		public boolean isCellEditable( int row, int column ) {
-			return ( column == VALUE_COLUMN ); // Only Value column is editable
-		}
-
-		public EditTable(EditTableModel mod, TableCellRenderer colRender) {
-			super(mod);
-
-			this.setRowHeight(ROW_HEIGHT);
-			this.setRowSelectionAllowed(false);
-			this.getTableHeader().setFont(boldFont);
-			this.getTableHeader().setReorderingAllowed(false);
-
-			TableColumn col;
-
-			// Set keyword table column headers
-			col = this.getColumnModel().getColumn(0);
-			col.setWidth(150);
-			col.setCellRenderer(colRender);
-
-			col = this.getColumnModel().getColumn(1);
-			col.setWidth(150);
-			col.setCellRenderer(colRender);
-
-			col = this.getColumnModel().getColumn(2);
-			col.setWidth(150);
-			col.setCellRenderer(colRender);
-		}
-
-		@Override
-		public TableCellEditor getCellEditor(int row, int col) {
-			Input<?> in = (Input<?>)this.getValueAt(row, col);
-
-			// 1) Colour input
-			if(in instanceof ColourInput) {
-				if(colorEditor == null) {
-					colorEditor = new ColorEditor(this);
-				}
-				return colorEditor;
-			}
-
-			// 2) Normal text
-			ArrayList<String> array = in.getValidOptions();
-			if(array == null) {
-				StringEditor stringEditor = new StringEditor(this);
-				return stringEditor;
-			}
-
-			// 3) Multiple selections from a List
-			if(in instanceof ListInput) {
-				if(listEditor == null) {
-					listEditor = new ListEditor(this);
-					if(in instanceof StringListInput) {
-						listEditor.setCaseSensitive(
-								((StringListInput)(in)).getCaseSensitive() );
-					}
-				}
-				listEditor.setListData(array);
-				return listEditor;
-			}
-
-			// 4) Single selection from a drop down box
-			return new DropDownMenuEditor(this, array);
-		}
-
-		@Override
-		public String getToolTipText(MouseEvent e) {
-			java.awt.Point p = e.getPoint();
-			int rowIndex = rowAtPoint(p);
-			int colIndex = columnAtPoint(p);
-
-			// not necessary because reordering of tabs is not allowed
-			colIndex = convertColumnIndexToModel(colIndex);
-
-			// Only the keyword column has tooltip
-			if (colIndex != 0)
-				return null;
-
-			TableModel model = getModel();
-			Input<?> in = (Input<?>)model.getValueAt(rowIndex, 0);
-			return EditBox.getInputDesc(EditBox.getInstance().getCurrentEntity(), in);
-		}
-
-		@Override
-		public void doLayout() {
-			FrameBox.fitTableToLastColumn(this);
-		}
-	}
 	public static class StringEditor extends CellEditor implements TableCellEditor {
 		private final JTextField text;
 
@@ -802,6 +710,100 @@ private static class CategoryInputs implements Comparator<Input<?>> {
 		return in1.getKeyword().compareToIgnoreCase(in2.getKeyword());
 	}
 }
+
+public static class EditTable extends JTable {
+	private ColorEditor colorEditor;
+	private ListEditor listEditor;
+
+	@Override
+	public boolean isCellEditable( int row, int column ) {
+		return ( column == VALUE_COLUMN ); // Only Value column is editable
+	}
+
+	public EditTable(EditTableModel mod, TableCellRenderer colRender) {
+		super(mod);
+
+		this.setRowHeight(ROW_HEIGHT);
+		this.setRowSelectionAllowed(false);
+		this.getTableHeader().setFont(boldFont);
+		this.getTableHeader().setReorderingAllowed(false);
+
+		TableColumn col;
+
+		// Set keyword table column headers
+		col = this.getColumnModel().getColumn(0);
+		col.setWidth(150);
+		col.setCellRenderer(colRender);
+
+		col = this.getColumnModel().getColumn(1);
+		col.setWidth(150);
+		col.setCellRenderer(colRender);
+
+		col = this.getColumnModel().getColumn(2);
+		col.setWidth(150);
+		col.setCellRenderer(colRender);
+	}
+
+	@Override
+	public TableCellEditor getCellEditor(int row, int col) {
+		Input<?> in = (Input<?>)this.getValueAt(row, col);
+
+		// 1) Colour input
+		if(in instanceof ColourInput) {
+			if(colorEditor == null) {
+				colorEditor = new ColorEditor(this);
+			}
+			return colorEditor;
+		}
+
+		// 2) Normal text
+		ArrayList<String> array = in.getValidOptions();
+		if(array == null) {
+			StringEditor stringEditor = new StringEditor(this);
+			return stringEditor;
+		}
+
+		// 3) Multiple selections from a List
+		if(in instanceof ListInput) {
+			if(listEditor == null) {
+				listEditor = new ListEditor(this);
+				if(in instanceof StringListInput) {
+					listEditor.setCaseSensitive(
+							((StringListInput)(in)).getCaseSensitive() );
+				}
+			}
+			listEditor.setListData(array);
+			return listEditor;
+		}
+
+		// 4) Single selection from a drop down box
+		return new DropDownMenuEditor(this, array);
+	}
+
+	@Override
+	public String getToolTipText(MouseEvent e) {
+		java.awt.Point p = e.getPoint();
+		int rowIndex = rowAtPoint(p);
+		int colIndex = columnAtPoint(p);
+
+		// not necessary because reordering of tabs is not allowed
+		colIndex = convertColumnIndexToModel(colIndex);
+
+		// Only the keyword column has tooltip
+		if (colIndex != 0)
+			return null;
+
+		TableModel model = getModel();
+		Input<?> in = (Input<?>)model.getValueAt(rowIndex, 0);
+		return EditBox.getInputDesc(EditBox.getInstance().getCurrentEntity(), in);
+	}
+
+	@Override
+	public void doLayout() {
+		FrameBox.fitTableToLastColumn(this);
+	}
+}
+
 
 private static class EditTableModel extends AbstractTableModel {
 	CategoryInputs inputs;
