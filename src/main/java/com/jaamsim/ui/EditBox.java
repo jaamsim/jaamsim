@@ -654,6 +654,22 @@ public class EditBox extends FrameBox {
 		}
 	}
 
+private static class CategoryInputs implements Comparator<Input<?>> {
+	final String category;
+	final ArrayList<Input<?>> inputs;
+
+	CategoryInputs(String cat, ArrayList<Input<?>> ins) {
+		category = cat;
+		inputs = ins;
+		Collections.sort(inputs, this);
+	}
+
+	@Override
+	public int compare(Input<?> in1, Input<?> in2) {
+		return in1.getKeyword().compareToIgnoreCase(in2.getKeyword());
+	}
+}
+
 	private static ArrayList<CategoryInputs> getInputs(Entity ent) {
 
 		String cat = "";
@@ -694,22 +710,6 @@ public class EditBox extends FrameBox {
 		else
 			list.add(catInputs);
 	}
-
-private static class CategoryInputs implements Comparator<Input<?>> {
-	final String category;
-	final ArrayList<Input<?>> inputs;
-
-	CategoryInputs(String cat, ArrayList<Input<?>> ins) {
-		category = cat;
-		inputs = ins;
-		Collections.sort(inputs, this);
-	}
-
-	@Override
-	public int compare(Input<?> in1, Input<?> in2) {
-		return in1.getKeyword().compareToIgnoreCase(in2.getKeyword());
-	}
-}
 
 public static class EditTable extends JTable {
 	private ColorEditor colorEditor;
