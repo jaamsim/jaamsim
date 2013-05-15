@@ -238,38 +238,35 @@ public class EditBox extends FrameBox {
 				category.add(in.getCategory());
 		}
 
-		for (String cat : category)
-			buildTable(cat);
+		for (String cat : category) {
+			// Find all inputs for the given category
+			ArrayList<Input<?>> inputs = new ArrayList<Input<?>>();
+			for( Input<?> in2 : currentEntity.getEditableInputs() ) {
+				if (in2.getCategory().equals(cat) && !in2.isLocked() && !in2.getHidden()) {
+					inputs.add(in2);
+				}
+			}
+
+			JTable propTable = new MyJTable(inputs.size(), 3, columnRender);
+
+			for (int row = 0; row < inputs.size(); row++) {
+				Input<?> in1 = inputs.get(row);
+				propTable.setValueAt(in1, row, 0);
+				propTable.setValueAt(in1, row, 1);
+				propTable.setValueAt(in1, row, 2);
+			}
+
+			JScrollPane jScrollPane = new JScrollPane(propTable);
+			jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
+			jScrollPane.setColumnHeaderView( propTable.getTableHeader());
+
+			jTabbedPane.addTab(cat, null, jScrollPane, null);
+		}
 
 		if (jTabbedPane.getTabCount() > 0)
 			jTabbedPane.setSelectedIndex(0);
 
 		setTitle(String.format("Input Editor - %s", currentEntity.getInputName()));
-	}
-
-	private void buildTable(String category) {
-		// Find all inputs for the given category
-		ArrayList<Input<?>> inputs = new ArrayList<Input<?>>();
-		for( Input<?> in : currentEntity.getEditableInputs() ) {
-			if (in.getCategory().equals(category) && !in.isLocked() && !in.getHidden()) {
-				inputs.add(in);
-			}
-		}
-
-		JTable propTable = new MyJTable(inputs.size(), 3, columnRender);
-
-		for (int row = 0; row < inputs.size(); row++) {
-			Input<?> in = inputs.get(row);
-			propTable.setValueAt(in, row, 0);
-			propTable.setValueAt(in, row, 1);
-			propTable.setValueAt(in, row, 2);
-		}
-
-		JScrollPane jScrollPane = new JScrollPane(propTable);
-		jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
-		jScrollPane.setColumnHeaderView( propTable.getTableHeader());
-
-		jTabbedPane.addTab(category, null, jScrollPane, null);
 	}
 
 	@Override
