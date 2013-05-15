@@ -25,8 +25,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultComboBoxModel;
@@ -663,19 +661,13 @@ private static class TabListener implements ChangeListener {
 	}
 }
 
-private static class CategoryInputs implements Comparator<Input<?>> {
+private static class CategoryInputs {
 	final String category;
 	final ArrayList<Input<?>> inputs;
 
 	CategoryInputs(String cat, ArrayList<Input<?>> ins) {
 		category = cat;
 		inputs = ins;
-		Collections.sort(inputs, this);
-	}
-
-	@Override
-	public int compare(Input<?> in1, Input<?> in2) {
-		return in1.getKeyword().compareToIgnoreCase(in2.getKeyword());
 	}
 }
 
