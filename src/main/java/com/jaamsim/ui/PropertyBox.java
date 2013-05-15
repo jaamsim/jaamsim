@@ -185,17 +185,14 @@ private static class PropertyTable extends JTable {
 		TableColumn col;
 
 		col = getColumnModel().getColumn(0);
-		col.setHeaderValue("Property");
 		col.setWidth(150);
 		col.setCellRenderer(FrameBox.colRenderer);
 
 		col = getColumnModel().getColumn(1);
-		col.setHeaderValue("Type");
 		col.setWidth(150);
 		col.setCellRenderer(FrameBox.colRenderer);
 
 		col = getColumnModel().getColumn(2);
-		col.setHeaderValue("Value");
 		col.setWidth(150);
 		col.setCellRenderer(FrameBox.colRenderer);
 
@@ -221,6 +218,17 @@ private static class PropertyTableModel extends AbstractTableModel {
 	@Override
 	public int getColumnCount() {
 		return 3;
+	}
+
+	@Override
+	public String getColumnName(int column) {
+		switch (column) {
+		case 0: return "Property";
+		case 1: return "Type";
+		case 2: return "Value";
+		}
+
+		return "Unknown";
 	}
 
 	@Override
