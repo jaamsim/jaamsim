@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2005-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2005-2013 Ausenco Engineering Canada Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,11 +205,11 @@ public class EditBox extends FrameBox {
 
 	@Override
 	public void setEntity(Entity entity) {
-		if(currentEntity == entity)
-			return;
-
 		if(entity != null && entity.testFlag(Entity.FLAG_GENERATED))
 			entity = null;
+
+		if(currentEntity == entity)
+			return;
 
 		jTabbedPane.removeAll();
 		currentEntity = entity;
