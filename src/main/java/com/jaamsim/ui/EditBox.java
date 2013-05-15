@@ -821,13 +821,12 @@ private static class EditTableModel extends AbstractTableModel {
 	@Override
 	public String getColumnName(int column) {
 		switch (column) {
-		case 0:
-			return "Keyword";
-		case 1:
-			return "Default";
-		default:
-			return "Value";
+		case 0: return "Keyword";
+		case 1: return "Default";
+		case 2:return "Value";
 		}
+
+		return "Unknown";
 	}
 
 	@Override
