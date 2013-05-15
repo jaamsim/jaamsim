@@ -277,17 +277,14 @@ public class EditBox extends FrameBox {
 
 			// Set keyword table column headers
 			col = this.getColumnModel().getColumn(0);
-			col.setHeaderValue("Keyword");
 			col.setWidth(150);
 			col.setCellRenderer(colRender);
 
 			col = this.getColumnModel().getColumn(1);
-			col.setHeaderValue("Default");
 			col.setWidth(150);
 			col.setCellRenderer(colRender);
 
 			col = this.getColumnModel().getColumn(2);
-			col.setHeaderValue("Value");
 			col.setWidth(150);
 			col.setCellRenderer(colRender);
 		}
@@ -817,6 +814,18 @@ private static class EditTableModel extends AbstractTableModel {
 	@Override
 	public int getColumnCount() {
 		return 3;
+	}
+
+	@Override
+	public String getColumnName(int column) {
+		switch (column) {
+		case 0:
+			return "Keyword";
+		case 1:
+			return "Default";
+		default:
+			return "Value";
+		}
 	}
 
 	@Override
