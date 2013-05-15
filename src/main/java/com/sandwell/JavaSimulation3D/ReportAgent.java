@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
+import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.Input;
@@ -27,8 +28,9 @@ import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.FileEntity;
 
 public class ReportAgent extends DisplayEntity {
+	private final DoubleListInput reportIntervals;
+
 	private final ArrayList<Group> groupList;  // groups for reporting in the .grp file
-	protected DoubleVector reportIntervals; // intervals for printing the .grp file
 	protected double lastReportIntervalTime; // time of the last report printing
 	protected String groupReportFileName;
 	protected FileEntity groupReportFile;
@@ -70,12 +72,15 @@ public class ReportAgent extends DisplayEntity {
 	{
 		addEditableKeyword( "ReportDirectory",   "", "  -  ", false, "Key Inputs" );
 		addEditableKeyword( "GroupList",         "", "  -  ", false, "Key Inputs" );
-		addEditableKeyword( "ReportIntervals",  "h", "  -  ", false, "Key Inputs" );
+
+		reportIntervals = new DoubleListInput("ReportIntervals", "Key Inputs", new DoubleVector(0));
+		reportIntervals.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		reportIntervals.setUnits("s");
+		this.addInput(reportIntervals, true);
 	}
 
 	public ReportAgent() {
 		groupList = new ArrayList<Group>();
-		reportIntervals = new DoubleVector();
 		lastReportIntervalTime = simulation.getInitializationTime();
 		groupReportFileName = "";
 		groupReportFile = null;
@@ -144,21 +149,15 @@ public class ReportAgent extends DisplayEntity {
 			return;
 		}
 
-		// --------------- ReportIntervals ---------------
-		if( "ReportIntervals".equalsIgnoreCase( keyword ) ) {
-			reportIntervals = Input.parseDoubleVector(data, 1e-15, Double.POSITIVE_INFINITY);
-			return;
-		}
-
 		super.readData_ForKeyword( data, keyword );
 	}
 
-	public void setReportIntervals(DoubleVector vec) {
-		reportIntervals = vec;
+	public boolean hasReportIntervals() {
+		return reportIntervals.getValue().size() > 0;
 	}
 
 	public DoubleVector getReportIntervals() {
-		return reportIntervals;
+		return reportIntervals.getValue();
 	}
 
 	// ******************************************************************************************************
@@ -231,7 +230,7 @@ public class ReportAgent extends DisplayEntity {
 		if (groupList.size() == 0)
 			return;
 
-		if (reportIntervals.size() != 0)
+		if (this.hasReportIntervals())
 			groupReportFile = new FileEntity(groupReportFileName, FileEntity.FILE_WRITE, false);
 	}
 
@@ -242,7 +241,7 @@ public class ReportAgent extends DisplayEntity {
 		if (groupList.size() == 0)
 			return;
 
-		if (reportIntervals.size() == 0) {
+		if (!this.hasReportIntervals()) {
 			this.clearFile(groupReportFileName);
 			this.printReportHeaderOn(groupReportFile);
 			this.printGroupReportOn(groupReportFile);
