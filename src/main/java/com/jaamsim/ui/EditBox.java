@@ -47,6 +47,7 @@ import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -100,6 +101,7 @@ public class EditBox extends FrameBox {
 		// Set the preferred size of the panes
 		jTabbedPane = new JTabbedPane();
 		jTabbedPane.setPreferredSize( new Dimension( 700, 400 ) );
+		jTabbedPane.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedPane);
 
 		pack();
@@ -653,6 +655,13 @@ public class EditBox extends FrameBox {
 
 		}
 	}
+
+private static class TabListener implements ChangeListener {
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		FrameBox.valueUpdate();
+	}
+}
 
 private static class CategoryInputs implements Comparator<Input<?>> {
 	final String category;
