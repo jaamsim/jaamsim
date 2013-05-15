@@ -47,6 +47,7 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.input.InputAgent;
@@ -87,7 +88,6 @@ public class EditBox extends FrameBox {
 	 * userColWidth[ 1 ] = user modified width of column 1 (defaults units column)
 	 * userColWidth[ 2 ] = user modified width of column 2 (values column)
 	 */
-	private int[] userColWidth = { 150, 150, 150 };
 
 	private EditBox() {
 
@@ -256,24 +256,7 @@ public class EditBox extends FrameBox {
 			}
 		}
 
-		JTable propTable = new MyJTable(inputs.size(), 3);
-		propTable.setRowHeight(ROW_HEIGHT);
-		propTable.setRowSelectionAllowed(false);
-		propTable.getTableHeader().setFont(boldFont);
-		propTable.getTableHeader().setReorderingAllowed(false);
-
-		// Set keyword table column headers
-		propTable.getColumnModel().getColumn(0).setHeaderValue("Keyword");
-		propTable.getColumnModel().getColumn(0).setWidth(userColWidth[0]);
-		propTable.getColumnModel().getColumn(0).setCellRenderer(columnRender);
-
-		propTable.getColumnModel().getColumn(1).setHeaderValue("Default");
-		propTable.getColumnModel().getColumn(1).setWidth(userColWidth[1]);
-		propTable.getColumnModel().getColumn(1).setCellRenderer(columnRender);
-
-		propTable.getColumnModel().getColumn(2).setHeaderValue("Value");
-		propTable.getColumnModel().getColumn(2).setWidth(userColWidth[2]);
-		propTable.getColumnModel().getColumn(2).setCellRenderer(columnRender);
+		JTable propTable = new MyJTable(inputs.size(), 3, columnRender);
 
 		for (int row = 0; row < inputs.size(); row++) {
 			Input<?> in = inputs.get(row);
@@ -317,8 +300,31 @@ public class EditBox extends FrameBox {
 			return ( column == VALUE_COLUMN ); // Only Value column is editable
 		}
 
-		public MyJTable(int column, int row) {
+		public MyJTable(int column, int row, TableCellRenderer colRender) {
 			super(column, row);
+
+			this.setRowHeight(ROW_HEIGHT);
+			this.setRowSelectionAllowed(false);
+			this.getTableHeader().setFont(boldFont);
+			this.getTableHeader().setReorderingAllowed(false);
+
+			TableColumn col;
+
+			// Set keyword table column headers
+			col = this.getColumnModel().getColumn(0);
+			col.setHeaderValue("Keyword");
+			col.setWidth(150);
+			col.setCellRenderer(colRender);
+
+			col = this.getColumnModel().getColumn(1);
+			col.setHeaderValue("Default");
+			col.setWidth(150);
+			col.setCellRenderer(colRender);
+
+			col = this.getColumnModel().getColumn(2);
+			col.setHeaderValue("Value");
+			col.setWidth(150);
+			col.setCellRenderer(colRender);
 		}
 
 		@Override
