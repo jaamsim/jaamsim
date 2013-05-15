@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation3D;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.Entity;
@@ -44,18 +45,6 @@ public class InfoBox extends FrameBox {
 
 		JScrollPane scroller = new JScrollPane(propTable);
 		getContentPane().add(scroller);
-
-		propTable.getTableHeader().setFont(FrameBox.boldFont);
-		propTable.getTableHeader().setReorderingAllowed(false);
-
-		propTable.getColumnModel().getColumn(0).setHeaderValue("Property");
-		propTable.getColumnModel().getColumn(1).setHeaderValue("Value");
-
-		propTable.getColumnModel().getColumn(0).setCellRenderer(FrameBox.colRenderer);
-		propTable.getColumnModel().getColumn(1).setCellRenderer(FrameBox.colRenderer);
-
-		propTable.getColumnModel().getColumn(0).setWidth(250);
-		propTable.getColumnModel().getColumn(1).setWidth(280);
 
 		// Set the location of the window
 		pack();
@@ -128,6 +117,21 @@ public class InfoBox extends FrameBox {
 private static class InfoTable extends JTable {
 	public InfoTable(int column, int row) {
 		super(column, row);
+
+		this.getTableHeader().setFont(FrameBox.boldFont);
+		this.getTableHeader().setReorderingAllowed(false);
+
+		TableColumn col;
+
+		col = this.getColumnModel().getColumn(0);
+		col.setHeaderValue("Property");
+		col.setCellRenderer(FrameBox.colRenderer);
+		col.setWidth(250);
+
+		col = this.getColumnModel().getColumn(1);
+		col.setHeaderValue("Value");
+		col.setCellRenderer(FrameBox.colRenderer);
+		col.setWidth(280);
 	}
 
 	// Table is not editable
