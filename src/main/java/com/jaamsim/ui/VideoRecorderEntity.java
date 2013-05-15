@@ -24,26 +24,15 @@ import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.Input;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.TimeInput;
 
 public class VideoRecorderEntity extends Entity {
-
-	private boolean captureFlag = false;  // true when capturing is in progress
-	private boolean startCapturerFlag = false;
-	private boolean hasRunStartup = false;
-
-	private VideoRecorder recorder;
-
-	private int numFramesWritten = 0;
-
 	@Keyword(desc = "Simulated time between screen captures",
 	         example = "This is placeholder example text")
 	private final TimeInput captureInterval;
@@ -80,6 +69,13 @@ public class VideoRecorderEntity extends Entity {
 	         example = "This is placeholder example text")
 	private final StringInput videoName;
 
+	@Keyword(desc = "Enable video capture",
+	         example = "VidRecorder VideoCapture { TRUE }")
+	private final BooleanInput videoCapture;
+
+	private boolean hasRunStartup = false;
+	private VideoRecorder recorder;
+	private int numFramesWritten = 0;
 	protected Process captureThread = null;
 
 	{
@@ -120,50 +116,30 @@ public class VideoRecorderEntity extends Entity {
 		videoName = new StringInput("VideoName", "Key Inputs", "");
 		this.addInput(videoName, true);
 
-		addEditableKeyword( "VideoCapture",          "",        		"  ",          false, "Key Inputs" );
-		this.getInput("VideoCapture").setHidden(true);
-
+		videoCapture = new BooleanInput("VideoCapture", "Key Inputs", false);
+		this.addInput(videoCapture, true);
 	}
 
 	@Override
 	public void startUp() {
 		super.startUp();
-		if (startCapturerFlag) {
 
+		if (videoCapture.getValue())
 			this.startProcess("doCaptureNetwork");
-		}
+
 		this.hasRunStartup = true;
 	}
 
-	/**
-	 * Processes the input data corresponding to the specified keyword. If syntaxOnly is true,
-	 * checks input syntax only; otherwise, checks input syntax and process the input values.
-	 */
 	@Override
-	public void readData_ForKeyword(StringVector data, String keyword)
-	throws InputErrorException {
+    public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
 
-		if( "VideoCapture".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			boolean bool = Input.parseBoolean(data.get(0));
-
-			if( bool ) {
-				// This is a work around for a bug, right now the external process needs to be started
-				// after the model has started. If the model has not started, simply defer starting
-				// the video recording process until startup()
-				// TODO: Review this and the process start code
-				if (hasRunStartup) {
-					this.startExternalProcess("doCaptureNetwork");
-				} else {
-					this.startCapturerFlag = true;
-				}
-			}
-			else {
-				captureFlag = false;
-			}
-			return;
+		if (in == videoCapture) {
+			// Start the capture if we are already running and we set the input
+			// to true
+			if (hasRunStartup && videoCapture.getValue())
+				this.startExternalProcess("doCaptureNetwork");
 		}
-		super.readData_ForKeyword( data, keyword);
 	}
 
 	public double getCaptureInterval() {
@@ -198,8 +174,7 @@ public class VideoRecorderEntity extends Entity {
 		                             saveImages.getValue(), saveVideo.getValue(), videoBGColor.getValue());
 
 		// Otherwise, start capturing
-		captureFlag = true;
-		while( captureFlag) {
+		while (videoCapture.getValue()) {
 
 			RenderManager.inst().blockOnScreenShot(recorder);
 			++numFramesWritten;
