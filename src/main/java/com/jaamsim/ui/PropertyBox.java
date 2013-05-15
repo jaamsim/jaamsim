@@ -74,7 +74,7 @@ public class PropertyBox extends FrameBox {
 		for (int i = 0; i < cFields.size(); i++) {
 			// The properties in the current page
 			ClassFields cf = cFields.get(i);
-			PropertyTableModel mod = new PropertyTableModel(entity, cf);
+			PropertyTableModel mod = new PropertyTableModel(entity, cf.fields);
 			PropertyTable tab = new PropertyTable(mod);
 			JScrollPane scroll = new JScrollPane(tab);
 
@@ -208,9 +208,9 @@ private static class PropertyTable extends JTable {
 
 private static class PropertyTableModel extends AbstractTableModel {
 	Entity ent;
-	ClassFields fields;
+	ArrayList<Field> fields;
 
-	PropertyTableModel(Entity e, ClassFields cf) {
+	PropertyTableModel(Entity e, ArrayList<Field> cf) {
 		ent = e;
 		fields = cf;
 	}
@@ -233,7 +233,7 @@ private static class PropertyTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return fields.fields.size();
+		return fields.size();
 	}
 
 	@Override
@@ -243,7 +243,7 @@ private static class PropertyTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
-		Field field = fields.fields.get(row);
+		Field field = fields.get(row);
 		if (col == 0)
 			return field.getName();
 
