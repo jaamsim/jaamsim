@@ -205,7 +205,7 @@ public class EditBox extends FrameBox {
 
 	@Override
 	public void setEntity(Entity entity) {
-		if(currentEntity == entity || ! this.isVisible())
+		if(currentEntity == entity)
 			return;
 
 		if(entity != null && entity.testFlag(Entity.FLAG_GENERATED))
