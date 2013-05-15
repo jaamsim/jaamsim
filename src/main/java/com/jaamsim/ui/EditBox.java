@@ -222,7 +222,7 @@ public class EditBox extends FrameBox {
 
 		for (CategoryInputs each : getInputs(currentEntity)) {
 			EditTableModel mod = new EditTableModel(each);
-			JTable propTable = new MyJTable(mod, columnRender);
+			JTable propTable = new EditTable(mod, columnRender);
 			JScrollPane jScrollPane = new JScrollPane(propTable);
 			jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
 			jScrollPane.setColumnHeaderView( propTable.getTableHeader());
@@ -255,7 +255,7 @@ public class EditBox extends FrameBox {
 		super.dispose();
 	}
 
-	public static class MyJTable extends JTable {
+	public static class EditTable extends JTable {
 		private ColorEditor colorEditor;
 		private ListEditor listEditor;
 
@@ -264,7 +264,7 @@ public class EditBox extends FrameBox {
 			return ( column == VALUE_COLUMN ); // Only Value column is editable
 		}
 
-		public MyJTable(EditTableModel mod, TableCellRenderer colRender) {
+		public EditTable(EditTableModel mod, TableCellRenderer colRender) {
 			super(mod);
 
 			this.setRowHeight(ROW_HEIGHT);
