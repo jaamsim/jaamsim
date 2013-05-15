@@ -73,10 +73,9 @@ public class VideoRecorderEntity extends Entity {
 	         example = "VidRecorder VideoCapture { TRUE }")
 	private final BooleanInput videoCapture;
 
-	private boolean hasRunStartup = false;
-	private VideoRecorder recorder;
-	private int numFramesWritten = 0;
-	protected Process captureThread = null;
+	private boolean hasRunStartup;
+	private int numFramesWritten;
+	private Process captureThread;
 
 	{
 		captureStartTime = new TimeInput( "CaptureStartTime", "Key Inputs", 0.0 );
@@ -118,6 +117,15 @@ public class VideoRecorderEntity extends Entity {
 
 		videoCapture = new BooleanInput("VideoCapture", "Key Inputs", false);
 		this.addInput(videoCapture, true);
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		hasRunStartup = false;
+		numFramesWritten = 0;
+		captureThread = null;
 	}
 
 	@Override
@@ -170,7 +178,7 @@ public class VideoRecorderEntity extends Entity {
 
 		String videoFileName = String.format("%s_%s", InputAgent.getRunName(), videoName.getValue());
 
-		recorder = new VideoRecorder(views, videoFileName, width, height, captureFrames.getDefaultValue(),
+		VideoRecorder recorder = new VideoRecorder(views, videoFileName, width, height, captureFrames.getDefaultValue(),
 		                             saveImages.getValue(), saveVideo.getValue(), videoBGColor.getValue());
 
 		// Otherwise, start capturing
