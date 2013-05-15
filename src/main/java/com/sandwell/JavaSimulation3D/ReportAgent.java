@@ -68,9 +68,9 @@ public class ReportAgent extends DisplayEntity {
 	public static final int BLANK = 30;
 
 	{
-		addEditableKeyword( "ReportDirectory",  "  -  ", "  -  ", false, "Key Inputs" );
-		addEditableKeyword( "GroupList",        "  -  ", "  -  ", false, "Key Inputs" );
-		addEditableKeyword( "ReportIntervals",  "hours", "  -  ", false, "Key Inputs" );
+		addEditableKeyword( "ReportDirectory",   "", "  -  ", false, "Key Inputs" );
+		addEditableKeyword( "GroupList",         "", "  -  ", false, "Key Inputs" );
+		addEditableKeyword( "ReportIntervals",  "h", "  -  ", false, "Key Inputs" );
 	}
 
 	public ReportAgent() {
