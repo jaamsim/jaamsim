@@ -138,6 +138,9 @@ private ArrayList<Material> _materials;
  */
 private boolean _isLoadedGPU = false;
 
+private static int zeroBuffer = 0;
+private static int zeroBufferSize; // The size of the zero buffer in vertices
+
 private final boolean flattenBuffers;
 
 public MeshProto(MeshData data, boolean flattenBuffers) {
@@ -318,29 +321,37 @@ private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Rende
 	int prog = sub._progHandle;
 	gl.glUseProgram(prog);
 
+	int texCoordVar = gl.glGetAttribLocation(prog, "texCoord");
+
 	if (sub._texCoordBuffer != 0) {
 		// Texture coordinates
-		int texCoordVar = gl.glGetAttribLocation(prog, "texCoord");
 		gl.glEnableVertexAttribArray(texCoordVar);
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._texCoordBuffer);
 		gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
+	} else {
+		gl.glVertexAttrib2f(texCoordVar, 0, 0);
 	}
+
+
+	int boneIndicesVar = gl.glGetAttribLocation(prog, "boneIndices");
+	int boneWeightsVar = gl.glGetAttribLocation(prog, "boneWeights");
 
 	if (sub._boneIndicesBuffer != 0) {
 		// Indices
-		int boneIndicesVar = gl.glGetAttribLocation(prog, "boneIndices");
 		gl.glEnableVertexAttribArray(boneIndicesVar);
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneIndicesBuffer);
 		gl.glVertexAttribPointer(boneIndicesVar, 4, GL2GL3.GL_FLOAT, false, 0, 0);
 
 		// Weights
-		int boneWeightsVar = gl.glGetAttribLocation(prog, "boneWeights");
 		gl.glEnableVertexAttribArray(boneWeightsVar);
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneWeightsBuffer);
 		gl.glVertexAttribPointer(boneWeightsVar, 4, GL2GL3.GL_FLOAT, false, 0, 0);
+	} else {
+		gl.glVertexAttrib4f(boneIndicesVar, 0, 0, 0, 0);
+		gl.glVertexAttrib4f(boneWeightsVar, 0, 0, 0, 0);
 	}
 
 	int posVar = gl.glGetAttribLocation(prog, "position");
@@ -431,7 +442,6 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Ma
 	}
 
 	// Build up the pose matrices
-
 	if (pose != null) {
 		float[] poseMatrices = new float[16*pose.size()];
 		for (int i = 0; i < pose.size(); ++i) {
@@ -587,6 +597,15 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 		gl.glGenBuffers(2, is, 0);
 		sub._boneIndicesBuffer = is[0];
 		sub._boneWeightsBuffer = is[1];
+	} else {
+		int numEntries = data.verts.size();
+		if (flattenBuffers) {
+			numEntries = data.indices.length;
+		}
+		setupZeroBuffer(numEntries, gl);
+
+		sub._boneIndicesBuffer = zeroBuffer;
+		sub._boneWeightsBuffer = zeroBuffer;
 	}
 
 	sub._center = data.hull.getAABB(Mat4d.IDENTITY).getCenter();
@@ -624,6 +643,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	sub._texVar = gl.glGetUniformLocation(sub._progHandle, "tex");
 	sub._useTexVar = gl.glGetUniformLocation(sub._progHandle, "useTex");
 	sub._maxNumBonesVar = gl.glGetUniformLocation(sub._progHandle, "maxNumBones");
+	sub._boneMatricesVar = gl.glGetUniformLocation(sub._progHandle, "boneMatrices");
 
 	sub._cVar = gl.glGetUniformLocation(sub._progHandle, "C");
 	sub._fcVar = gl.glGetUniformLocation(sub._progHandle, "FC");
@@ -675,8 +695,6 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.indices.length * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
 		}
 		else {
-			sub._boneMatricesVar = gl.glGetUniformLocation(sub._progHandle, "boneMatrices");
-
 			// Indices
 			FloatBuffer fb = FloatBuffer.allocate(data.boneIndices.size() * 4); //
 			for (Vec4d v : data.boneIndices) {
@@ -720,7 +738,6 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._normalBuffer);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.normals.size() * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
 	}
-
 
 	if (flattenBuffers) {
 		is[0] = sub._indexBuffer;
@@ -827,6 +844,31 @@ public ArrayList<AABB> getSubBounds(Mat4d modelMat) {
 
 public MeshData getRawData() {
 	return data;
+}
+
+private void setupZeroBuffer(int numEntries, GL2GL3 gl) {
+	if (numEntries <= zeroBufferSize) {
+		return; // The buffer is setup and large enough
+	}
+	if (zeroBuffer == 0) {
+		int[] is = new int[1];
+		gl.glGenBuffers(1, is, 0);
+		zeroBuffer = is[0];
+	}
+
+	// allocate a big block of zero floats
+	FloatBuffer fb = FloatBuffer.allocate(numEntries * 4);
+
+	for (int i = 0; i < numEntries * 4; ++i) {
+		fb.put(0.0f);
+	}
+	fb.flip();
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, zeroBuffer);
+	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, numEntries * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+
+	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
+
 }
 
 } // class MeshProto

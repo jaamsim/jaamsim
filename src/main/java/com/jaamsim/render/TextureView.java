@@ -55,6 +55,8 @@ public class TextureView implements Renderable {
 	static private int normalBuff;
 	static private int assetID;
 
+	static private int boneBuff;
+
 	static private int progHandle;
 	static private int modelViewProjMatVar;
 	static private int normalMatVar;
@@ -98,11 +100,12 @@ public class TextureView implements Renderable {
 
 		assetID = Renderer.getAssetID();
 
-		int[] buffs = new int[3];
-		gl.glGenBuffers(3, buffs, 0);
+		int[] buffs = new int[4];
+		gl.glGenBuffers(4, buffs, 0);
 		vertBuff = buffs[0];
 		texCoordBuff = buffs[1];
 		normalBuff = buffs[2];
+		boneBuff = buffs[3];
 
 		FloatBuffer verts = FloatBuffer.allocate(6*3); // 2 triangles * 3 coordinates
 		verts.put(-0.5f); verts.put(-0.5f); verts.put(0.0f);
@@ -139,6 +142,15 @@ public class TextureView implements Renderable {
 		normals.flip();
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, normalBuff);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, 6*3*4, normals, GL2GL3.GL_STATIC_DRAW);
+
+		FloatBuffer bones = FloatBuffer.allocate(6*4);
+		for (int i = 0; i < 6*4; ++i) {
+			bones.put(0.0f);
+		}
+
+		bones.flip();
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, boneBuff);
+		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, 6*4*4, bones, GL2GL3.GL_STATIC_DRAW);
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
 
@@ -190,6 +202,17 @@ public class TextureView implements Renderable {
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, texCoordBuff);
 		gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
+
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, boneBuff);
+		int boneIndicesVar = gl.glGetAttribLocation(progHandle, "boneIndices");
+		gl.glEnableVertexAttribArray(boneIndicesVar);
+		gl.glVertexAttribPointer(boneIndicesVar, 4, GL2GL3.GL_FLOAT, false, 0, 0);
+
+		int boneWeightsVar = gl.glGetAttribLocation(progHandle, "boneWeights");
+		gl.glEnableVertexAttribArray(boneWeightsVar);
+		gl.glVertexAttribPointer(boneWeightsVar, 4, GL2GL3.GL_FLOAT, false, 0, 0);
+
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
 
 		gl.glBindVertexArray(0);
 
