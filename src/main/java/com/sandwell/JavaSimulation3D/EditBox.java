@@ -47,6 +47,7 @@ import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -225,15 +226,8 @@ public class EditBox extends FrameBox {
 		}
 
 		for (CategoryInputs each : getInputs(currentEntity)) {
-			JTable propTable = new MyJTable(each.inputs.size(), 3, columnRender);
-
-			for (int row = 0; row < each.inputs.size(); row++) {
-				Input<?> in = each.inputs.get(row);
-				propTable.setValueAt(in, row, 0);
-				propTable.setValueAt(in, row, 1);
-				propTable.setValueAt(in, row, 2);
-			}
-
+			EditTableModel mod = new EditTableModel(each);
+			JTable propTable = new MyJTable(mod, columnRender);
 			JScrollPane jScrollPane = new JScrollPane(propTable);
 			jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
 			jScrollPane.setColumnHeaderView( propTable.getTableHeader());
@@ -275,8 +269,8 @@ public class EditBox extends FrameBox {
 			return ( column == VALUE_COLUMN ); // Only Value column is editable
 		}
 
-		public MyJTable(int column, int row, TableCellRenderer colRender) {
-			super(column, row);
+		public MyJTable(EditTableModel mod, TableCellRenderer colRender) {
+			super(mod);
 
 			this.setRowHeight(ROW_HEIGHT);
 			this.setRowSelectionAllowed(false);
@@ -814,6 +808,34 @@ private static class CategoryInputs implements Comparator<Input<?>> {
 	@Override
 	public int compare(Input<?> in1, Input<?> in2) {
 		return in1.getKeyword().compareToIgnoreCase(in2.getKeyword());
+	}
+}
+
+private static class EditTableModel extends AbstractTableModel {
+	CategoryInputs inputs;
+
+	EditTableModel(CategoryInputs ci) {
+		inputs = ci;
+	}
+
+	@Override
+	public int getColumnCount() {
+		return 3;
+	}
+
+	@Override
+	public int getRowCount() {
+		return inputs.inputs.size();
+	}
+
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		return (column == VALUE_COLUMN); // Only Value column is editable
+	}
+
+	@Override
+	public Object getValueAt(int row, int col) {
+		return inputs.inputs.get(row);
 	}
 }
 
