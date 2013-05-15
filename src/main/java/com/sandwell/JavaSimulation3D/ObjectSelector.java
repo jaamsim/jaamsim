@@ -41,6 +41,7 @@ import javax.swing.tree.TreeSelectionModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  */
 
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -57,8 +57,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputGroup;
 import com.jaamsim.input.Parser;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.ui.EditBoxColumnRenderer;
-import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
@@ -66,6 +64,7 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.StringListInput;
+import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Class to display information about model objects. <br>
