@@ -71,10 +71,10 @@ import com.sandwell.JavaSimulation3D.GUIFrame;
  */
 public class EditBox extends FrameBox {
 
-	private static EditBox myInstance;  // only one instance allowed to be open
 	private static final int ROW_HEIGHT=20;
 	private static final int VALUE_COLUMN=2;
 
+	private static EditBox myInstance;  // only one instance allowed to be open
 	private Entity currentEntity;
 	private final JTabbedPane jTabbedFrame;
 

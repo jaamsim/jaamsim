@@ -27,11 +27,11 @@ import com.sandwell.JavaSimulation.Entity;
 
 public class OutputBox extends FrameBox {
 	private static OutputBox myInstance;
-
 	private Entity currentEntity;
+	OutputTableModel tableModel;
+
 	private ArrayList<String> outputNames = new ArrayList<String>();
 	private ArrayList<Boolean> rowIsClass = new ArrayList<Boolean>();
-	OutputTableModel tableModel;
 
 	public OutputBox() {
 		super( "Output Viewer" );

@@ -30,10 +30,9 @@ import com.sandwell.JavaSimulation.Vector;
  */
 public class InfoBox extends FrameBox {
 	private static InfoBox myInstance;  // only one instance allowed to be open
-
+	private Entity currentEntity;
 	private final InfoTableModel tableModel;
 
-	private Entity currentEntity;
 
 	public InfoBox() {
 		super("Info Viewer");
