@@ -33,58 +33,6 @@ public class OutputBox extends FrameBox {
 	private ArrayList<Boolean> rowIsClass = new ArrayList<Boolean>();
 	OutputTableModel tableModel;
 
-	private class OutputTable extends JTable {
-		public OutputTable(TableModel model) {
-			super(model);
-		}
-
-		@Override
-		public String getToolTipText(MouseEvent event) {
-			Point p = event.getPoint();
-			int row = rowAtPoint(p);
-			if (row >= outputNames.size() || currentEntity == null || rowIsClass.get(row)) {
-				return null;
-			}
-
-			String outputName = outputNames.get(row);
-
-			StringBuilder build = new StringBuilder();
-			build.append("<HTML>");
-			build.append("<b>Name:</b>  ");
-			build.append(outputName);
-			build.append("<BR>");
-			String desc = currentEntity.getOutputDescripion(outputName);
-			if (!desc.isEmpty()) {
-				build.append("<BR>");
-				build.append("<b>Description:</b> ");
-				for (String line : desc.split("\n", 0)) {
-					// Replace all <> for html parsing
-					String tempLine = line.replaceAll("&", "&amp;");
-					tempLine = tempLine.replaceAll("<", "&lt;");
-					tempLine = tempLine.replaceAll(">", "&gt;");
-
-					int len = 0;
-					build.append("<BR>");
-					// Break the line at 100-char boundaries
-					for (String word : tempLine.split(" ", -1)) {
-						build.append(word).append(" ");
-						len += word.length() + 1;
-						if (len > 100) {
-							build.append("<BR>");
-							len = 0;
-						}
-					}
-				}
-			}
-			return build.toString();
-		}
-
-		@Override
-		public void doLayout() {
-			FrameBox.fitTableToLastColumn(this);
-		}
-	}
-
 	public OutputBox() {
 		super( "Output Viewer" );
 		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
@@ -147,44 +95,6 @@ public class OutputBox extends FrameBox {
 		tableModel.fireTableDataChanged();
 	}
 
-	private class OutputTableModel extends AbstractTableModel {
-		double simTime = 0.0d;
-		@Override
-		public int getColumnCount() {
-			return 2;
-		}
-
-		@Override
-		public int getRowCount() {
-			return outputNames.size();
-		}
-
-		@Override
-		public Object getValueAt(int row, int col) {
-
-			switch (col) {
-			case 0:
-				if (rowIsClass.get(row)) {
-					return String.format("<HTML><B>%s</B></HTML>", outputNames.get(row));
-				}
-				return String.format("    %s", outputNames.get(row));
-			case 1:
-				if (rowIsClass.get(row)) {
-					return "";
-				}
-				return currentEntity.getOutputAsString(outputNames.get(row), simTime);
-			default:
-				assert false;
-				return null;
-			}
-		}
-
-		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return false;
-		}
-	}
-
 	/**
 	 * Returns the only instance of the property box
 	 */
@@ -204,5 +114,95 @@ public class OutputBox extends FrameBox {
 		killInstance();
 		super.dispose();
 	}
+
+private class OutputTable extends JTable {
+	public OutputTable(TableModel model) {
+		super(model);
+	}
+
+	@Override
+	public String getToolTipText(MouseEvent event) {
+		Point p = event.getPoint();
+		int row = rowAtPoint(p);
+		if (row >= outputNames.size() || currentEntity == null || rowIsClass.get(row)) {
+			return null;
+		}
+
+		String outputName = outputNames.get(row);
+
+		StringBuilder build = new StringBuilder();
+		build.append("<HTML>");
+		build.append("<b>Name:</b>  ");
+		build.append(outputName);
+		build.append("<BR>");
+		String desc = currentEntity.getOutputDescripion(outputName);
+		if (!desc.isEmpty()) {
+			build.append("<BR>");
+			build.append("<b>Description:</b> ");
+			for (String line : desc.split("\n", 0)) {
+				// Replace all <> for html parsing
+				String tempLine = line.replaceAll("&", "&amp;");
+				tempLine = tempLine.replaceAll("<", "&lt;");
+				tempLine = tempLine.replaceAll(">", "&gt;");
+
+				int len = 0;
+				build.append("<BR>");
+				// Break the line at 100-char boundaries
+				for (String word : tempLine.split(" ", -1)) {
+					build.append(word).append(" ");
+					len += word.length() + 1;
+					if (len > 100) {
+						build.append("<BR>");
+						len = 0;
+					}
+				}
+			}
+		}
+		return build.toString();
+	}
+
+	@Override
+	public void doLayout() {
+		FrameBox.fitTableToLastColumn(this);
+	}
+}
+
+private class OutputTableModel extends AbstractTableModel {
+	double simTime = 0.0d;
+	@Override
+	public int getColumnCount() {
+		return 2;
+	}
+
+	@Override
+	public int getRowCount() {
+		return outputNames.size();
+	}
+
+	@Override
+	public Object getValueAt(int row, int col) {
+
+		switch (col) {
+		case 0:
+			if (rowIsClass.get(row)) {
+				return String.format("<HTML><B>%s</B></HTML>", outputNames.get(row));
+			}
+			return String.format("    %s", outputNames.get(row));
+		case 1:
+			if (rowIsClass.get(row)) {
+				return "";
+			}
+			return currentEntity.getOutputAsString(outputNames.get(row), simTime);
+		default:
+			assert false;
+			return null;
+		}
+	}
+
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return false;
+	}
+}
 
 }
