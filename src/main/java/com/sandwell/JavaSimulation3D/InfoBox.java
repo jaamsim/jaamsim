@@ -39,7 +39,7 @@ public class InfoBox extends FrameBox {
 	public InfoBox() {
 		super("Info Viewer");
 
-		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
 		tableModel = new InfoTableModel();
 		InfoTable propTable = new InfoTable(tableModel);
 		JScrollPane scroller = new JScrollPane(propTable);
