@@ -58,6 +58,16 @@ public class OutputBox extends FrameBox {
 		pack();
 	}
 
+	/**
+	 * Returns the only instance of the property box
+	 */
+	public synchronized static OutputBox getInstance() {
+		if (myInstance == null)
+			myInstance = new OutputBox();
+
+		return myInstance;
+	}
+
 	@Override
 	public void setEntity( Entity entity ) {
 		currentEntity = entity;
@@ -93,16 +103,6 @@ public class OutputBox extends FrameBox {
 	public void updateValues(double simTime) {
 		tableModel.simTime = simTime;
 		tableModel.fireTableDataChanged();
-	}
-
-	/**
-	 * Returns the only instance of the property box
-	 */
-	public synchronized static OutputBox getInstance() {
-		if (myInstance == null)
-			myInstance = new OutputBox();
-
-		return myInstance;
 	}
 
 	private synchronized static void killInstance() {
