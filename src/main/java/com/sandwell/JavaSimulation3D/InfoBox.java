@@ -14,9 +14,11 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import java.util.ArrayList;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import com.jaamsim.ui.FrameBox;
@@ -30,8 +32,7 @@ import com.sandwell.JavaSimulation.Vector;
 public class InfoBox extends FrameBox {
 	private static InfoBox myInstance;  // only one instance allowed to be open
 
-	private final InfoTable propTable;
-	private final DefaultTableModel tabModel;
+	private final InfoTableModel tableModel;
 
 	private Entity currentEntity;
 
@@ -39,10 +40,8 @@ public class InfoBox extends FrameBox {
 		super("Info Viewer");
 
 		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
-
-		propTable = new InfoTable(0, 2);
-		tabModel = (DefaultTableModel)propTable.getModel();
-
+		tableModel = new InfoTableModel();
+		InfoTable propTable = new InfoTable(tableModel);
 		JScrollPane scroller = new JScrollPane(propTable);
 		getContentPane().add(scroller);
 
@@ -61,18 +60,17 @@ public class InfoBox extends FrameBox {
 
 		if (currentEntity == null) {
 			setTitle("Info Viewer");
-			propTable.setVisible(false);
+			tableModel.setInfos(null);
+			tableModel.fireTableDataChanged();
 		}
 		else {
 			setTitle("Info Viewer - " + currentEntity.getInputName());
-			propTable.setVisible(true);
 		}
 	}
 
 	@Override
 	public void updateValues(double simTime) {
-
-		if (currentEntity == null || !this.isVisible())
+		if (currentEntity == null)
 			return;
 
 		Vector info = null;
@@ -80,21 +78,27 @@ public class InfoBox extends FrameBox {
 			info = currentEntity.getInfo();
 		}
 		catch (Throwable e) {
-			tabModel.setRowCount(0);
 			return;
 		}
 
-		tabModel.setRowCount(info.size());
-
+		ArrayList<Info> tmp = new ArrayList<Info>(info.size());
 		for (int i = 0; i < info.size(); i++) {
 			String[] record = ((String)info.get(i)).split("\t", 2);
-			propTable.setValueAt(record[0], i, 0);
 
-			if (record.length >= 2)
-				propTable.setValueAt(record[1], i, 1);
-			else
-				propTable.setValueAt("", i, 1);
+			Info inf = new Info();
+			inf.name = record[0];
+
+			if (record.length > 1) {
+				inf.value = record[1];
+			}
+			else {
+				inf.value = "";
+			}
+			tmp.add(inf);
 		}
+
+		tableModel.setInfos(tmp);
+		tableModel.fireTableDataChanged();
 	}
 
 	public synchronized static InfoBox getInstance() {
@@ -114,9 +118,14 @@ public class InfoBox extends FrameBox {
 		super.dispose();
 	}
 
+private static class Info {
+	String name;
+	String value;
+}
+
 private static class InfoTable extends JTable {
-	public InfoTable(int column, int row) {
-		super(column, row);
+	public InfoTable(InfoTableModel mod) {
+		super(mod);
 
 		this.getTableHeader().setFont(FrameBox.boldFont);
 		this.getTableHeader().setReorderingAllowed(false);
@@ -143,6 +152,47 @@ private static class InfoTable extends JTable {
 	@Override
 	public void doLayout() {
 		FrameBox.fitTableToLastColumn(this);
+	}
+}
+private static class InfoTableModel extends AbstractTableModel {
+	ArrayList<Info> infos;
+
+	InfoTableModel() {
+		infos = null;
+	}
+
+	void setInfos(ArrayList<Info> list) {
+		infos = list;
+	}
+
+	@Override
+	public int getColumnCount() {
+		return 2;
+	}
+
+	@Override
+	public int getRowCount() {
+		if (infos == null)
+			return 0;
+
+		return infos.size();
+	}
+
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return false;
+	}
+
+	@Override
+	public Object getValueAt(int row, int col) {
+		if (infos == null)
+			return "";
+
+		switch (col) {
+			case 0: return infos.get(row).name;
+			case 1: return infos.get(row).value;
+		}
+		return "";
 	}
 }
 
