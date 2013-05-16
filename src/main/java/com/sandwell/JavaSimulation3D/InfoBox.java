@@ -29,7 +29,7 @@ import com.sandwell.JavaSimulation.Vector;
 public class InfoBox extends FrameBox {
 	private static InfoBox myInstance;  // only one instance allowed to be open
 
-	private final JTable propTable;
+	private final InfoTable propTable;
 	private final DefaultTableModel tabModel;
 
 	private Entity currentEntity;
@@ -39,7 +39,7 @@ public class InfoBox extends FrameBox {
 
 		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
 
-		propTable = new AjustToLastColumnTable(0, 2);
+		propTable = new InfoTable(0, 2);
 		tabModel = (DefaultTableModel)propTable.getModel();
 
 		JScrollPane scroller = new JScrollPane(propTable);
@@ -124,4 +124,22 @@ public class InfoBox extends FrameBox {
 		killInstance();
 		super.dispose();
 	}
+
+private static class InfoTable extends JTable {
+	public InfoTable(int column, int row) {
+		super(column, row);
+	}
+
+	// Table is not editable
+	@Override
+	public boolean isCellEditable( int row, int column ) {
+		return false;
+	}
+
+	@Override
+	public void doLayout() {
+		FrameBox.fitTableToLastColumn(this);
+	}
+}
+
 }
