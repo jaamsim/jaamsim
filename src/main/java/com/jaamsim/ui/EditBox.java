@@ -114,6 +114,58 @@ public class EditBox extends FrameBox {
 		return myInstance;
 	}
 
+	@Override
+	public void setEntity(Entity entity) {
+		if(entity != null && entity.testFlag(Entity.FLAG_GENERATED))
+			entity = null;
+
+		if(currentEntity == entity)
+			return;
+
+		jTabbedPane.removeAll();
+		currentEntity = entity;
+
+		// no entity is selected
+		if(currentEntity == null) {
+			setTitle("Input Editor");
+			return;
+		}
+
+		for (CategoryInputs each : getInputs(currentEntity)) {
+			EditTableModel mod = new EditTableModel(each);
+			JTable propTable = new EditTable(mod, columnRender);
+			JScrollPane jScrollPane = new JScrollPane(propTable);
+			jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
+			jScrollPane.setColumnHeaderView( propTable.getTableHeader());
+
+			jTabbedPane.addTab(each.category, null, jScrollPane, null);
+		}
+
+		if (jTabbedPane.getTabCount() > 0)
+			jTabbedPane.setSelectedIndex(0);
+
+		setTitle(String.format("Input Editor - %s", currentEntity.getInputName()));
+	}
+
+	@Override
+	public void updateValues(double simTime) {
+		if(currentEntity == null)
+			return;
+
+		JTable propTable = (JTable)(((JScrollPane)jTabbedPane.getSelectedComponent()).getViewport().getComponent(0));
+		((EditTableModel)propTable.getModel()).fireTableDataChanged();
+	}
+
+	private synchronized static void killInstance() {
+		myInstance = null;
+	}
+
+	@Override
+	public void dispose() {
+		killInstance();
+		super.dispose();
+	}
+
 	public static final String scanClassForInputDesc(Class<?> curClass, Object obj, Input<?> in) {
 		for (Field f : curClass.getDeclaredFields()) {
 			if (!Input.class.isAssignableFrom(f.getType())) {
@@ -201,58 +253,6 @@ public class EditBox extends FrameBox {
 
 	Entity getCurrentEntity() {
 		return currentEntity;
-	}
-
-	@Override
-	public void setEntity(Entity entity) {
-		if(entity != null && entity.testFlag(Entity.FLAG_GENERATED))
-			entity = null;
-
-		if(currentEntity == entity)
-			return;
-
-		jTabbedPane.removeAll();
-		currentEntity = entity;
-
-		// no entity is selected
-		if(currentEntity == null) {
-			setTitle("Input Editor");
-			return;
-		}
-
-		for (CategoryInputs each : getInputs(currentEntity)) {
-			EditTableModel mod = new EditTableModel(each);
-			JTable propTable = new EditTable(mod, columnRender);
-			JScrollPane jScrollPane = new JScrollPane(propTable);
-			jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
-			jScrollPane.setColumnHeaderView( propTable.getTableHeader());
-
-			jTabbedPane.addTab(each.category, null, jScrollPane, null);
-		}
-
-		if (jTabbedPane.getTabCount() > 0)
-			jTabbedPane.setSelectedIndex(0);
-
-		setTitle(String.format("Input Editor - %s", currentEntity.getInputName()));
-	}
-
-	@Override
-	public void updateValues(double simTime) {
-		if(currentEntity == null)
-			return;
-
-		JTable propTable = (JTable)(((JScrollPane)jTabbedPane.getSelectedComponent()).getViewport().getComponent(0));
-		((EditTableModel)propTable.getModel()).fireTableDataChanged();
-	}
-
-	private synchronized static void killInstance() {
-		myInstance = null;
-	}
-
-	@Override
-	public void dispose() {
-		killInstance();
-		super.dispose();
 	}
 
 	public static class StringEditor extends CellEditor implements TableCellEditor {

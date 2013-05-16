@@ -50,6 +50,13 @@ public class InfoBox extends FrameBox {
 		setSize(530, 290);
 	}
 
+	public synchronized static InfoBox getInstance() {
+		if (myInstance == null)
+			myInstance = new InfoBox();
+
+		return myInstance;
+	}
+
 	@Override
 	public void setEntity(Entity entity) {
 		if (currentEntity == entity)
@@ -98,13 +105,6 @@ public class InfoBox extends FrameBox {
 
 		tableModel.setInfos(tmp);
 		tableModel.fireTableDataChanged();
-	}
-
-	public synchronized static InfoBox getInstance() {
-		if (myInstance == null)
-			myInstance = new InfoBox();
-
-		return myInstance;
 	}
 
 	private synchronized static void killInstance() {

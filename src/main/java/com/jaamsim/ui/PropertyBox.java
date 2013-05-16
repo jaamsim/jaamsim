@@ -56,6 +56,16 @@ public class PropertyBox extends FrameBox {
 		pack();
 	}
 
+	/**
+	 * Returns the only instance of the property box
+	 */
+	public synchronized static PropertyBox getInstance() {
+		if (myInstance == null)
+			myInstance = new PropertyBox();
+
+		return myInstance;
+	}
+
 	@Override
 	public void setEntity(Entity entity) {
 		if(currentEntity == entity)
@@ -89,16 +99,6 @@ public class PropertyBox extends FrameBox {
 
 		JTable propTable = (JTable)(((JScrollPane)jTabbedFrame.getSelectedComponent()).getViewport().getComponent(0));
 		((PropertyTableModel)propTable.getModel()).fireTableDataChanged();
-	}
-
-	/**
-	 * Returns the only instance of the property box
-	 */
-	public synchronized static PropertyBox getInstance() {
-		if (myInstance == null)
-			myInstance = new PropertyBox();
-
-		return myInstance;
 	}
 
 	private synchronized static void killInstance() {
