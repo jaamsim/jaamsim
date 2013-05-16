@@ -76,7 +76,7 @@ public class EditBox extends FrameBox {
 	private static final int VALUE_COLUMN=2;
 
 	private Entity currentEntity;
-	private final JTabbedPane jTabbedPane;
+	private final JTabbedPane jTabbedFrame;
 
 	private final TableCellRenderer columnRender = new EditBoxColumnRenderer();
 
@@ -97,10 +97,10 @@ public class EditBox extends FrameBox {
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
 
 		// Set the preferred size of the panes
-		jTabbedPane = new JTabbedPane();
-		jTabbedPane.setPreferredSize( new Dimension( 700, 400 ) );
-		jTabbedPane.addChangeListener(new TabListener());
-		getContentPane().add(jTabbedPane);
+		jTabbedFrame = new JTabbedPane();
+		jTabbedFrame.setPreferredSize( new Dimension( 700, 400 ) );
+		jTabbedFrame.addChangeListener(new TabListener());
+		getContentPane().add(jTabbedFrame);
 
 		pack();
 		setLocation(220, 710);
@@ -122,7 +122,7 @@ public class EditBox extends FrameBox {
 		if(currentEntity == entity)
 			return;
 
-		jTabbedPane.removeAll();
+		jTabbedFrame.removeAll();
 		currentEntity = entity;
 
 		// no entity is selected
@@ -138,11 +138,11 @@ public class EditBox extends FrameBox {
 			jScrollPane.getVerticalScrollBar().setUnitIncrement(ROW_HEIGHT);
 			jScrollPane.setColumnHeaderView( propTable.getTableHeader());
 
-			jTabbedPane.addTab(each.category, null, jScrollPane, null);
+			jTabbedFrame.addTab(each.category, null, jScrollPane, null);
 		}
 
-		if (jTabbedPane.getTabCount() > 0)
-			jTabbedPane.setSelectedIndex(0);
+		if (jTabbedFrame.getTabCount() > 0)
+			jTabbedFrame.setSelectedIndex(0);
 
 		setTitle(String.format("Input Editor - %s", currentEntity.getInputName()));
 	}
@@ -152,7 +152,7 @@ public class EditBox extends FrameBox {
 		if(currentEntity == null)
 			return;
 
-		JTable propTable = (JTable)(((JScrollPane)jTabbedPane.getSelectedComponent()).getViewport().getComponent(0));
+		JTable propTable = (JTable)(((JScrollPane)jTabbedFrame.getSelectedComponent()).getViewport().getComponent(0));
 		((EditTableModel)propTable.getModel()).fireTableDataChanged();
 	}
 
