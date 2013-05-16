@@ -29,9 +29,6 @@ import com.sandwell.JavaSimulation.Entity;
 public class OutputBox extends FrameBox {
 	private static OutputBox myInstance;
 
-	private JScrollPane scrollPane;
-	private OutputTable table;
-
 	private Entity currentEntity;
 	private ArrayList<String> outputNames = new ArrayList<String>();
 	private ArrayList<Boolean> rowIsClass = new ArrayList<Boolean>();
@@ -94,8 +91,8 @@ public class OutputBox extends FrameBox {
 		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
 
 		tableModel = new OutputTableModel();
-		table = new OutputTable(tableModel);
-		scrollPane = new JScrollPane(table);
+		OutputTable table = new OutputTable(tableModel);
+		JScrollPane scrollPane = new JScrollPane(table);
 
 		getContentPane().add( scrollPane );
 		setSize( 300, 150 );
