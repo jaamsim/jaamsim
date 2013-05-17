@@ -98,13 +98,11 @@ public class EditBox extends FrameBox {
 
 		// Set the preferred size of the panes
 		jTabbedFrame = new JTabbedPane();
-		jTabbedFrame.setPreferredSize( new Dimension( 700, 400 ) );
 		jTabbedFrame.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedFrame);
 
-		pack();
-		setLocation(220, 710);
-		setSize(530, 290);
+		setLocation(GUIFrame.COL2_START, GUIFrame.LOWER_START);
+		setSize(GUIFrame.COL2_WIDTH, GUIFrame.LOWER_HEIGHT);
 	}
 
 	public synchronized static EditBox getInstance() {

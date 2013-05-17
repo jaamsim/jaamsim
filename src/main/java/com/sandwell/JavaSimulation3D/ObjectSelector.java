@@ -14,7 +14,6 @@
  */
 package com.sandwell.JavaSimulation3D;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -76,13 +75,13 @@ public class ObjectSelector extends FrameBox {
 		updateTree();
 
 		treeView = new JScrollPane(tree);
-		treeView.setPreferredSize(new Dimension(220, 400));
 		getContentPane().add(treeView);
 
 		entSequence = 0;
 
-		setLocation(0, 510);
-		setSize(220, 490);
+		setLocation(GUIFrame.COL1_START, GUIFrame.BOTTOM_START);
+		setSize(GUIFrame.COL1_WIDTH, GUIFrame.HALF_BOTTOM);
+
 		tree.addTreeSelectionListener( new MyTreeSelectionListener() );
 		treeModel.addTreeModelListener( new MyTreeModelListener(tree) );
 

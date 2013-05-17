@@ -23,6 +23,7 @@ import javax.swing.table.TableColumn;
 
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Vector;
+import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Class to display information about model objects. <br>
@@ -43,10 +44,8 @@ public class InfoBox extends FrameBox {
 		JScrollPane scroller = new JScrollPane(propTable);
 		getContentPane().add(scroller);
 
-		// Set the location of the window
-		pack();
-		setLocation(750, 710);
-		setSize(530, 290);
+		setLocation(GUIFrame.COL3_START, GUIFrame.LOWER_START);
+		setSize(GUIFrame.COL3_WIDTH, GUIFrame.LOWER_HEIGHT);
 	}
 
 	public synchronized static InfoBox getInstance() {

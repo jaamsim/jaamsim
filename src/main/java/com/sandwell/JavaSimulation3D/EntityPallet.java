@@ -81,16 +81,13 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		treeView = new JScrollPane( tree );
 		getContentPane().add( treeView );
 
-		// Set the attributes for the frame
-		setLocation(0, 110);
-		setVisible( true );
-
 		tree.setRowHeight(25);
 		tree.setCellRenderer(new TreeCellRenderer());
 		ToolTipManager.sharedInstance().registerComponent(tree);
 		ToolTipManager.sharedInstance().setDismissDelay(600000);
-		pack();
-		setSize(220, 400);
+
+		setLocation(GUIFrame.COL1_START, GUIFrame.TOP_START);
+		setSize(GUIFrame.COL1_WIDTH, GUIFrame.HALF_TOP);
 	}
 
 	@Override

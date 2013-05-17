@@ -32,6 +32,7 @@ import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
+import com.sandwell.JavaSimulation3D.GUIFrame;
 import com.sandwell.JavaSimulation3D.Region;
 
 public class View extends Entity {
@@ -112,16 +113,16 @@ static {
 	this.addInput(position, true);
 
 	IntegerVector defSize = new IntegerVector(2);
-	defSize.add(1060);
-	defSize.add(600);
+	defSize.add(GUIFrame.VIEW_WIDTH);
+	defSize.add(GUIFrame.VIEW_HEIGHT);
 	windowSize = new IntegerListInput("WindowSize", "Graphics", defSize);
 	windowSize.setValidCount(2);
 	windowSize.setValidRange(1, 8192);
 	this.addInput(windowSize, true);
 
 	IntegerVector defPos = new IntegerVector(2);
-	defPos.add(220);
-	defPos.add(110);
+	defPos.add(GUIFrame.COL2_START);
+	defPos.add(GUIFrame.TOP_START);
 	windowPos = new IntegerListInput("WindowPosition", "Graphics", defPos);
 	windowPos.setValidCount(2);
 	windowPos.setValidRange(-8192, 8192);

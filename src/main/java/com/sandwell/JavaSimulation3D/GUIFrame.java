@@ -123,6 +123,22 @@ public class GUIFrame extends JFrame {
 
 	private static boolean SAFE_GRAPHICS;
 
+	// Collection of default window parameters
+	public static int COL1_WIDTH;
+	public static int COL2_WIDTH;
+	public static int COL3_WIDTH;
+	public static int COL1_START;
+	public static int COL2_START;
+	public static int COL3_START;
+	public static int HALF_TOP;
+	public static int HALF_BOTTOM;
+	public static int TOP_START;
+	public static int BOTTOM_START;
+	public static int LOWER_HEIGHT;
+	public static int LOWER_START;
+	public static int VIEW_HEIGHT;
+	public static int VIEW_WIDTH;
+
 	static {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -1178,6 +1194,31 @@ public class GUIFrame extends JFrame {
 		locatorPos.setText( "(-, -, -)" );
 	}
 
+	private static void calcWindowDefaults() {
+		Dimension guiSize = GUIFrame.instance().getSize();
+		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+
+		COL1_WIDTH = 220;
+		COL2_WIDTH = Math.min(520, (winSize.width - COL1_WIDTH) / 2);
+		COL3_WIDTH = Math.min(420, winSize.width - COL1_WIDTH - COL2_WIDTH);
+
+		COL1_START = 0;
+		COL2_START = COL1_START + COL1_WIDTH;
+		COL3_START = COL2_START + COL2_WIDTH;
+
+		HALF_TOP = (winSize.height - guiSize.height) / 2;
+		HALF_BOTTOM = (winSize.height - guiSize.height - HALF_TOP);
+
+		TOP_START = guiSize.height;
+		BOTTOM_START = TOP_START + HALF_TOP;
+
+		LOWER_HEIGHT = (winSize.height - guiSize.height) / 3;
+		LOWER_START = winSize.height - LOWER_HEIGHT;
+
+		VIEW_WIDTH = COL2_WIDTH + COL3_WIDTH;
+		VIEW_HEIGHT = winSize.height - TOP_START - LOWER_HEIGHT;
+	}
+
 	public static void displayWindows(boolean viewOnly) {
 		for (View v : View.getAll()) {
 			if (v.showOnStart())
@@ -1187,27 +1228,12 @@ public class GUIFrame extends JFrame {
 		if (viewOnly)
 			return;
 
-		Dimension guiSize = GUIFrame.instance().getSize();
-		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-
-		int halfHeight = (winSize.height - guiSize.height) / 2;
 		EntityPallet.getInstance().setVisible(true);
-		EntityPallet.getInstance().setLocation(0, guiSize.height);
-		EntityPallet.getInstance().setSize(220, halfHeight);
-
 		ObjectSelector.getInstance().setVisible(true);
-		ObjectSelector.getInstance().setLocation(0, guiSize.height + halfHeight);
-		ObjectSelector.getInstance().setSize(220, halfHeight);
-
-		int thirdHeight = (winSize.height - guiSize.height) / 3;
-		int halfWidth = (winSize.width - 220) / 2;
 		EditBox.getInstance().setVisible(true);
-		EditBox.getInstance().setLocation(220, guiSize.height + thirdHeight * 2);
-		EditBox.getInstance().setSize(halfWidth, thirdHeight);
-
 		InfoBox.getInstance().setVisible(true);
-		InfoBox.getInstance().setLocation(220 + halfWidth, guiSize.height + thirdHeight * 2);
-		InfoBox.getInstance().setSize(halfWidth, thirdHeight);
+
+		FrameBox.setSelectedEntity(View.getAll().get(0));
 	}
 
 	// ******************************************************************************************************
@@ -1302,6 +1328,7 @@ public class GUIFrame extends JFrame {
 			gui.setExtendedState(JFrame.ICONIFIED);
 
 		gui.setVisible(true);
+		GUIFrame.calcWindowDefaults();
 
 		InputAgent.readURL(InputAgent.class.getResource("/resources/inputs/autoload.cfg"));
 

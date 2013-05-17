@@ -24,6 +24,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class OutputBox extends FrameBox {
 	private static OutputBox myInstance;
@@ -42,8 +43,6 @@ public class OutputBox extends FrameBox {
 		JScrollPane scrollPane = new JScrollPane(table);
 
 		getContentPane().add( scrollPane );
-		setSize( 300, 150 );
-		setLocation(0, 110);
 
 		table.getTableHeader().setFont(FrameBox.boldFont);
 		table.getTableHeader().setReorderingAllowed(false);
@@ -55,7 +54,8 @@ public class OutputBox extends FrameBox {
 
 		setEntity(null);
 
-		pack();
+		setLocation(GUIFrame.COL3_START, GUIFrame.LOWER_START);
+		setSize(GUIFrame.COL3_WIDTH, GUIFrame.LOWER_HEIGHT);
 	}
 
 	/**
