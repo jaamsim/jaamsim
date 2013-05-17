@@ -23,7 +23,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -343,9 +342,7 @@ static class InputMenuItem extends DEMenuItem {
 
 	@Override
 	public void action() {
-		EditBox.getInstance().setVisible(true);
-		EditBox.getInstance().setExtendedState(JFrame.NORMAL);
-		EditBox.getInstance().toFront();
+		EditBox.getInstance().makeVisible();
 		FrameBox.setSelectedEntity(ent);
 	}
 }
@@ -359,9 +356,7 @@ static class PropertyMenuItem extends DEMenuItem {
 
 	@Override
 	public void action() {
-		PropertyBox.getInstance().setVisible(true);
-		PropertyBox.getInstance().setExtendedState(JFrame.NORMAL);
-		PropertyBox.getInstance().toFront();
+		PropertyBox.getInstance().makeVisible();
 		FrameBox.setSelectedEntity(ent);
 	}
 }
@@ -375,9 +370,7 @@ static class InfoMenuItem extends DEMenuItem {
 
 	@Override
 	public void action() {
-		InfoBox.getInstance().setVisible(true);
-		InfoBox.getInstance().setExtendedState(JFrame.NORMAL);
-		InfoBox.getInstance().toFront();
+		InfoBox.getInstance().makeVisible();
 		FrameBox.setSelectedEntity(ent);
 	}
 }
@@ -391,9 +384,7 @@ static class OutputMenuItem extends DEMenuItem {
 
 	@Override
 	public void action() {
-		OutputBox.getInstance().setVisible(true);
-		OutputBox.getInstance().setExtendedState(JFrame.NORMAL);
-		OutputBox.getInstance().toFront();
+		OutputBox.getInstance().makeVisible();
 		FrameBox.setSelectedEntity(ent);
 	}
 }

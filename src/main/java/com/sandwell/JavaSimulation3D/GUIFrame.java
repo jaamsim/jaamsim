@@ -395,7 +395,7 @@ public class GUIFrame extends JFrame {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				EditBox.getInstance().setVisible(true);
+				EditBox.getInstance().makeVisible();
 				if(ObjectSelector.getInstance().isVisible())
 					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
@@ -408,7 +408,7 @@ public class GUIFrame extends JFrame {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				PropertyBox.getInstance().setVisible(true);
+				PropertyBox.getInstance().makeVisible();
 				if(ObjectSelector.getInstance().isVisible())
 					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
@@ -421,7 +421,7 @@ public class GUIFrame extends JFrame {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InfoBox.getInstance().setVisible(true);
+				InfoBox.getInstance().makeVisible();
 				if(ObjectSelector.getInstance().isVisible())
 					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
@@ -434,7 +434,7 @@ public class GUIFrame extends JFrame {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				OutputBox.getInstance().setVisible(true);
+				OutputBox.getInstance().makeVisible();
 				if(ObjectSelector.getInstance().isVisible())
 					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
