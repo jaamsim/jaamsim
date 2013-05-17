@@ -47,9 +47,6 @@ public class OutputBox extends FrameBox {
 		table.getTableHeader().setFont(FrameBox.boldFont);
 		table.getTableHeader().setReorderingAllowed(false);
 
-		table.getColumnModel().getColumn(0).setHeaderValue("Output");
-		table.getColumnModel().getColumn(1).setHeaderValue("Value");
-
 		table.setDefaultRenderer(Object.class, colRenderer);
 
 		setEntity(null);
@@ -172,6 +169,16 @@ private class OutputTableModel extends AbstractTableModel {
 	@Override
 	public int getColumnCount() {
 		return 2;
+	}
+
+	@Override
+	public String getColumnName(int column) {
+		switch (column) {
+		case 0: return "Output";
+		case 1: return "Value";
+		}
+
+		return "Unknown";
 	}
 
 	@Override
