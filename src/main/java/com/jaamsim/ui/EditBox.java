@@ -49,7 +49,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.input.InputAgent;
@@ -724,23 +723,17 @@ public static class EditTable extends JTable {
 
 		this.setRowHeight(ROW_HEIGHT);
 		this.setRowSelectionAllowed(false);
-		this.getTableHeader().setFont(boldFont);
+
+		getColumnModel().getColumn(0).setWidth(150);
+		getColumnModel().getColumn(1).setWidth(100);
+		getColumnModel().getColumn(2).setWidth(150);
+
+		getColumnModel().getColumn(0).setCellRenderer(colRender);
+		getColumnModel().getColumn(1).setCellRenderer(colRender);
+		getColumnModel().getColumn(2).setCellRenderer(colRender);
+
+		this.getTableHeader().setFont(FrameBox.boldFont);
 		this.getTableHeader().setReorderingAllowed(false);
-
-		TableColumn col;
-
-		// Set keyword table column headers
-		col = this.getColumnModel().getColumn(0);
-		col.setWidth(150);
-		col.setCellRenderer(colRender);
-
-		col = this.getColumnModel().getColumn(1);
-		col.setWidth(150);
-		col.setCellRenderer(colRender);
-
-		col = this.getColumnModel().getColumn(2);
-		col.setWidth(150);
-		col.setCellRenderer(colRender);
 	}
 
 	@Override
@@ -821,7 +814,7 @@ private static class EditTableModel extends AbstractTableModel {
 		switch (column) {
 		case 0: return "Keyword";
 		case 1: return "Default";
-		case 2:return "Value";
+		case 2: return "Value";
 		}
 
 		return "Unknown";

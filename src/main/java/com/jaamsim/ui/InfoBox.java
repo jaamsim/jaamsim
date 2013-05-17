@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Vector;
@@ -124,20 +123,13 @@ private static class InfoTable extends JTable {
 	public InfoTable(InfoTableModel mod) {
 		super(mod);
 
+		setDefaultRenderer(Object.class, colRenderer);
+
+		getColumnModel().getColumn(0).setWidth(150);
+		getColumnModel().getColumn(1).setWidth(100);
+
 		this.getTableHeader().setFont(FrameBox.boldFont);
 		this.getTableHeader().setReorderingAllowed(false);
-
-		TableColumn col;
-
-		col = this.getColumnModel().getColumn(0);
-		col.setHeaderValue("Property");
-		col.setCellRenderer(FrameBox.colRenderer);
-		col.setWidth(250);
-
-		col = this.getColumnModel().getColumn(1);
-		col.setHeaderValue("Value");
-		col.setCellRenderer(FrameBox.colRenderer);
-		col.setWidth(280);
 	}
 
 	// Table is not editable
@@ -165,6 +157,16 @@ private static class InfoTableModel extends AbstractTableModel {
 	@Override
 	public int getColumnCount() {
 		return 2;
+	}
+
+	@Override
+	public String getColumnName(int column) {
+		switch (column) {
+		case 0: return "Property";
+		case 1: return "Value";
+		}
+
+		return "Unknown";
 	}
 
 	@Override

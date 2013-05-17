@@ -14,7 +14,6 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.Dimension;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,10 +27,10 @@ import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Class to display information about model objects. <br>
@@ -46,14 +45,11 @@ public class PropertyBox extends FrameBox {
 		super("Property Viewer");
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
 
-		jTabbedFrame.setPreferredSize(new Dimension(800, 400));
 		jTabbedFrame.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedFrame);
 
-		setSize( 300, 150 );
-		setLocation(0, 110);
-
-		pack();
+		setLocation(GUIFrame.COL2_START, GUIFrame.LOWER_START);
+		setSize(GUIFrame.COL2_WIDTH, GUIFrame.LOWER_HEIGHT);
 	}
 
 	/**
@@ -182,19 +178,11 @@ private static class PropertyTable extends JTable {
 	PropertyTable(TableModel model) {
 		super(model);
 
-		TableColumn col;
+		setDefaultRenderer(Object.class, colRenderer);
 
-		col = getColumnModel().getColumn(0);
-		col.setWidth(150);
-		col.setCellRenderer(FrameBox.colRenderer);
-
-		col = getColumnModel().getColumn(1);
-		col.setWidth(150);
-		col.setCellRenderer(FrameBox.colRenderer);
-
-		col = getColumnModel().getColumn(2);
-		col.setWidth(150);
-		col.setCellRenderer(FrameBox.colRenderer);
+		getColumnModel().getColumn(0).setWidth(150);
+		getColumnModel().getColumn(1).setWidth(100);
+		getColumnModel().getColumn(2).setWidth(100);
 
 		getTableHeader().setFont(FrameBox.boldFont);
 		getTableHeader().setReorderingAllowed(false);

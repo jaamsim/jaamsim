@@ -44,11 +44,6 @@ public class OutputBox extends FrameBox {
 
 		getContentPane().add( scrollPane );
 
-		table.getTableHeader().setFont(FrameBox.boldFont);
-		table.getTableHeader().setReorderingAllowed(false);
-
-		table.setDefaultRenderer(Object.class, colRenderer);
-
 		setEntity(null);
 
 		setLocation(GUIFrame.COL3_START, GUIFrame.LOWER_START);
@@ -115,6 +110,14 @@ public class OutputBox extends FrameBox {
 private class OutputTable extends JTable {
 	public OutputTable(TableModel model) {
 		super(model);
+
+		setDefaultRenderer(Object.class, colRenderer);
+
+		getColumnModel().getColumn(0).setWidth(150);
+		getColumnModel().getColumn(1).setWidth(100);
+
+		this.getTableHeader().setFont(FrameBox.boldFont);
+		this.getTableHeader().setReorderingAllowed(false);
 	}
 
 	@Override
