@@ -40,8 +40,6 @@ public class Entity {
 	private static final ArrayList<Entity> allInstances;
 	private static final HashMap<String, Entity> namedEntities;
 
-	private EventManager eventManager;
-
 	private String entityName;
 	private String entityInputName; // Name input by user
 	private final long entityNumber;
@@ -229,9 +227,6 @@ public class Entity {
 	 * Static method to get the eventManager for all entities.
 	 */
 	public EventManager getEventManager() {
-		if (eventManager != null)
-			return eventManager;
-
 		return EventManager.rootManager;
 	}
 
@@ -332,16 +327,6 @@ public class Entity {
 	 */
 	public void readData_ForKeyword(StringVector data, String keyword)
 	throws InputErrorException {
-		if ("EVENTMANAGER".equalsIgnoreCase(keyword)) {
-			EventManager evt = EventManager.getDefinedManager(data.get(0));
-
-			if (evt == null) {
-				throw new InputErrorException("EventManager %s not defined", data.get(0));
-			}
-			eventManager = evt;
-			return;
-		}
-
 		if( "TRACE".equalsIgnoreCase( keyword ) ) {
 			Input.assertCount(data, 1);
 			boolean trace = Input.parseBoolean(data.get(0));

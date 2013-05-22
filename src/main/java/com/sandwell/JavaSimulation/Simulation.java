@@ -294,23 +294,6 @@ public class Simulation extends Entity {
 		}
 	}
 
-	/**
-	 * Processes the input data corresponding to the specified keyword. If syntaxOnly is true,
-	 * checks input syntax only; otherwise, checks input syntax and process the input values.
-	 */
-	@Override
-	public void readData_ForKeyword(StringVector data, String keyword)
-	throws InputErrorException {
-		if ("DEFINEEVENTMANAGER".equalsIgnoreCase(keyword)) {
-			for (String name : data) {
-				EventManager.defineEventManager(name);
-			}
-
-			return;
-		}
-		super.readData_ForKeyword( data, keyword );
-	}
-
 	public void clear() {
 		EventManager.rootManager.initialize();
 
