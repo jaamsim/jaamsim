@@ -33,6 +33,9 @@ uniform bool useTex;
 
 void main()
 {
+    if (interpZ < 0)
+        discard;
+
     vec3 l = normalize(lightDir.xyz);
     vec3 n = normalize(normalFrag);
 

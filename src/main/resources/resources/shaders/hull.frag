@@ -23,6 +23,8 @@ out vec4 outColour;
 
 void main()
 {
+    if (interpZ < 0)
+        discard;
 
     if (gl_FrontFacing) {
       outColour.rgb = vec3(0, 0.5, 0);

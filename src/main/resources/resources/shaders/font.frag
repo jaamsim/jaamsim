@@ -25,6 +25,9 @@ uniform vec4 color;
 
 void main() 
 {
+    if (interpZ < 0)
+        discard;
+
     outColour = color;
 
     gl_FragDepth = log(interpZ*C+1)*FC;

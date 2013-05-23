@@ -25,6 +25,8 @@ out vec4 outColour;
 
 void main()
 {
+    if (interpZ < 0)
+        discard;
 
     outColour.rgb = color.rgb;
     outColour.a = 1;
