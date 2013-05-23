@@ -326,38 +326,21 @@ public class TexCache {
 		gl.glBindBuffer(GL2GL3.GL_PIXEL_UNPACK_BUFFER, le.bufferID);
 		gl.glUnmapBuffer(GL2GL3.GL_PIXEL_UNPACK_BUFFER);
 
-		if (le.compressed) {
-			gl.glCompressedTexImage2D(GL2GL3.GL_PROXY_TEXTURE_2D, 0, internalFormat, le.width,
-	                le.height, 0, le.data.capacity(), 0);
-		} else {
-			gl.glTexImage2D(GL2GL3.GL_PROXY_TEXTURE_2D, 0, internalFormat, le.width,
-	                le.height, 0, GL2GL3.GL_BGRA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV, 0);
-		}
-
-		int[] texWidth = new int[1];
-		gl.glGetTexLevelParameteriv(GL2GL3.GL_PROXY_TEXTURE_2D, 0, GL2GL3.GL_TEXTURE_WIDTH, texWidth, 0);
-		if (texWidth[0] == 0) {
-			// This texture could not be loaded
-			return badTextureID;
-		}
-
-		if (le.compressed) {
-			gl.glCompressedTexImage2D(GL2GL3.GL_TEXTURE_2D, 0, internalFormat, le.width,
-			                          le.height, 0, le.data.capacity(), 0);
-		} else {
-			gl.glTexImage2D(GL2GL3.GL_TEXTURE_2D, 0, internalFormat, le.width,
-			                le.height, 0, GL2GL3.GL_BGRA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV, 0);
-		}
-
-		// Note we do not let openGL generate compressed mipmaps because it stalls the render thread really badly
-		// in theory it could be generated in the worker thread, but not yet
-
 		try {
+			if (le.compressed) {
+				gl.glCompressedTexImage2D(GL2GL3.GL_TEXTURE_2D, 0, internalFormat, le.width,
+				                          le.height, 0, le.data.capacity(), 0);
+			} else {
+				gl.glTexImage2D(GL2GL3.GL_TEXTURE_2D, 0, internalFormat, le.width,
+				                le.height, 0, GL2GL3.GL_BGRA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV, 0);
+			}
+
+			// Note we do not let openGL generate compressed mipmaps because it stalls the render thread really badly
+			// in theory it could be generated in the worker thread, but not yet
 			if (!le.compressed)
 				gl.glGenerateMipmap(GL2GL3.GL_TEXTURE_2D);
 		} catch (GLException ex) {
-			// It is possible to run out of texture memory here (although it is less likely than
-			// running out above
+			// We do not have enough texture memory
 			return badTextureID;
 		}
 
