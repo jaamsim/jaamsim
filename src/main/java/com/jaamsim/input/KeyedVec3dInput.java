@@ -27,9 +27,8 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 	private KeyedVec3dCurve curve = new KeyedVec3dCurve();
 	private String timeUnits;
 
-	public KeyedVec3dInput(String key, String cat, String valUnits, String timeUnits) {
+	public KeyedVec3dInput(String key, String cat, String timeUnits) {
 		super(key, cat, null);
-		this.setUnits(valUnits);
 		this.timeUnits = timeUnits;
 	}
 

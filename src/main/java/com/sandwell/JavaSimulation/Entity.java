@@ -516,7 +516,8 @@ public class Entity {
 
 		if( this.getInput( keyword ) == null ) {
 			// Create a new input object
-			CompatInput in = new CompatInput(this, keyword, category, unit, defaultValue);
+			CompatInput in = new CompatInput(this, keyword, category, defaultValue);
+			in.setUnits(unit);
 			in.setAppendable( append );
 			this.addInput(in, true, synonymsArray);
 		} else {
