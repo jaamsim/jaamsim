@@ -206,7 +206,8 @@ public class GraphicBox extends JDialog {
 					modelBounds = RenderManager.inst().getMeshBounds(dmc.getColladaFile());
 				}
 
-				Vec4d modelSize = modelBounds.getRadius();
+				Vec4d modelSize = new Vec4d(modelBounds.getRadius());
+				modelSize.scale3(2);
 
 				Vec3d entitySize = currentEntity.getSize();
 				double longestSide = modelSize.x;
