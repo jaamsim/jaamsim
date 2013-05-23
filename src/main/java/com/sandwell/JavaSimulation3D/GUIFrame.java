@@ -1231,7 +1231,7 @@ public class GUIFrame extends JFrame {
 		EntityPallet.getInstance().setVisible(true);
 		ObjectSelector.getInstance().setVisible(true);
 		EditBox.getInstance().setVisible(true);
-		InfoBox.getInstance().setVisible(true);
+		OutputBox.getInstance().setVisible(true);
 
 		FrameBox.setSelectedEntity(View.getAll().get(0));
 	}
