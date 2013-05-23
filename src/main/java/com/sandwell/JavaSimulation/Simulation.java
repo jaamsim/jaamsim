@@ -62,79 +62,79 @@ import com.sandwell.JavaSimulation3D.GUIFrame;
  * </table>
  */
 public class Simulation extends Entity {
-	@Keyword(desc = "The initialization period for the simulation run. The model will " +
+	@Keyword(description = "The initialization period for the simulation run. The model will " +
 	                "run for the initialization period and then clear the statistics " +
 	                "and execute for the specified run duration. The total length of the " +
 	                "simulation run will be the sum of Initialization and Duration.",
 	         example = "Simulation Initialization { 720 h }")
 	protected final DoubleInput initializationTime;
 
-	@Keyword(desc = "Date at which the simulation run is started (yyyy-mm-dd). This " +
+	@Keyword(description = "Date at which the simulation run is started (yyyy-mm-dd). This " +
 	                "input has no effect on the simulation results unless the seasonality " +
 	                "factors vary from month to month.",
 	         example = "Simulation StartDate { 2011-01-01 }")
 	protected final StringInput startDate;
 
-	@Keyword(desc = "Time at which the simulation run is started (hh:mm).",
+	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
 	         example = "Simulation StartTime { 2160 h }")
 	protected final TimeInput startTimeInput;
 
-	@Keyword(desc = "The duration of the simulation run in which all statistics will be recorded.",
+	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
 	         example = "Simulation Duration { 8760 h }")
 	protected final DoubleInput runDuration;
 
-	@Keyword(desc = "The number of discrete time units in one hour.",
+	@Keyword(description = "The number of discrete time units in one hour.",
 	         example = "Simulation SimulationTimeScale { 4500 }")
 	private final DoubleInput simTimeScaleInput;
 
-	@Keyword(desc = "If the value is TRUE, then the input report file will be printed after loading the " +
+	@Keyword(description = "If the value is TRUE, then the input report file will be printed after loading the " +
 	                "configuration file.  The input report can always be generated when needed by selecting " +
 	                "\"Print Input Report\" under the File menu.",
 	         example = "Simulation PrintInputReport { TRUE }")
 	private final BooleanInput printInputReport;
 
-	@Keyword(desc = "Timestep for updating port operations, in the form hh:mm or in decimal hours.",
+	@Keyword(description = "Timestep for updating port operations, in the form hh:mm or in decimal hours.",
 	         example = "Simulation PortTimeStep { 0.25 h }")
 	private final TimeInput portTimeStep;
 
-	@Keyword(desc = "The time interval to increment each step by. The model calculates all parameters " +
+	@Keyword(description = "The time interval to increment each step by. The model calculates all parameters " +
 	                "at every time step, so a higher time step will provide coarser resolution in time " +
 	                "for results, but will take less time to complete a simulation run. A time step of " +
 	                "15 minutes is recommended for most models.",
 	         example = "Simulation TimeStep { 0.25 h }")
 	private final TimeInput clockTimeStep;
 
-	@Keyword(desc = "The default units of Cargo",
+	@Keyword(description = "The default units of Cargo",
 	         example = "Sim CargoUnits { kt }")
 	private final StringInput cargoUnitString;
 
-	@Keyword(desc = "The rate of gravity",
+	@Keyword(description = "The rate of gravity",
 	         example = "This is placeholder example text")
 	private final DoubleInput gravity;
 
-	@Keyword(desc = "This is placeholder description text",
+	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
 	private final DoubleInput traceStartTime;
 
-	@Keyword(desc = "This is placeholder description text",
+	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
 	private final BooleanInput traceEventsInput;
 
-	@Keyword(desc = "This is placeholder description text",
+	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
 	private final BooleanInput verifyEventsInput;
 
-	@Keyword(desc = "This is placeholder description text",
+	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
 	private final BooleanInput exitAtStop;
 
-	@Keyword(desc = "The real time speed up factor",
+	@Keyword(description = "The real time speed up factor",
 	         example = "RunControl RealTimeFactor { 1200 }")
 	private final IntegerInput realTimeFactor;
 	public static final int DEFAULT_REAL_TIME_FACTOR = 10000;
 	public static final int MIN_REAL_TIME_FACTOR = 1;
 	public static final int MAX_REAL_TIME_FACTOR= 1000000;
-	@Keyword(desc = "A Boolean to turn on or off real time in the simulation run",
+	@Keyword(description = "A Boolean to turn on or off real time in the simulation run",
 	         example = "RunControl RealTime { TRUE }")
 	private final BooleanInput realTime;
 

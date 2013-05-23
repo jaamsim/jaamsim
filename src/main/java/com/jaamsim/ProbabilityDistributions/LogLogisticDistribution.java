@@ -23,11 +23,11 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class LogLogisticDistribution extends NewProbabilityDistribution {
 
-	@Keyword(desc = "The scale parameter for the Log-Logistic distribution.",
+	@Keyword(description = "The scale parameter for the Log-Logistic distribution.",
 	         example = "LogLogisticDist-1 Scale { 3.0 }")
 	private final DoubleInput scaleInput;
 
-	@Keyword(desc = "The shape parameter for the Log-Logistic distribution.  A decimal value > 0.0.",
+	@Keyword(description = "The shape parameter for the Log-Logistic distribution.  A decimal value > 0.0.",
 	         example = "LogLogisticDist-1 Shape { 1.0 }")
 	private final DoubleInput shapeInput;
 

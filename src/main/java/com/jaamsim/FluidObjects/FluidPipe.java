@@ -34,35 +34,35 @@ import com.sandwell.JavaSimulation.Vec3dListInput;
  */
 public class FluidPipe extends FluidComponent implements HasScreenPoints {
 
-	@Keyword(desc = "The length of the pipe.",
+	@Keyword(description = "The length of the pipe.",
 	         example = "Pipe1 Length { 10.0 m }")
 	private final DoubleInput lengthInput;
 
-	@Keyword(desc = "The height change over the length of the pipe.  " +
+	@Keyword(description = "The height change over the length of the pipe.  " +
 			"Equal to (outlet height - inlet height).",
 	         example = "Pipe1 HeightChange { 0.0 }")
 	private final DoubleInput heightChangeInput;
 
-	@Keyword(desc = "The roughness height of the inside pipe surface.  " +
+	@Keyword(description = "The roughness height of the inside pipe surface.  " +
 			"Used to calculate the Darcy friction factor for the pipe.",
 	         example = "Pipe1 Roughness { 0.01 m }")
 	private final DoubleInput roughnessInput;
 
-	@Keyword(desc = "The pressure loss coefficient or 'K-factor' for the pipe.  " +
+	@Keyword(description = "The pressure loss coefficient or 'K-factor' for the pipe.  " +
 			"The factor multiplies the dynamic pressure and is applied as a loss at the pipe outlet.",
 	         example = "Pipe1 PressureLossCoefficient { 0.5 }")
 	private final DoubleInput pressureLossCoefficientInput;
 
-    @Keyword(desc = "A list of points in { x, y, z } coordinates defining the line segments that" +
+    @Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
             "make up the pipe.  When two coordinates are given it is assumed that z = 0." ,
              example = "Pipe1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
 	private final Vec3dListInput pointsInput;
 
-	@Keyword(desc = "The width of the pipe segments in pixels.",
+	@Keyword(description = "The width of the pipe segments in pixels.",
 	         example = "Pipe1 Width { 1 }")
 	private final DoubleInput widthInput;
 
-	@Keyword(desc = "The colour of the pipe, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the pipe, defined using a colour keyword or RGB values.",
 	         example = "Pipe1 Colour { red }")
 	private final ColourInput colourInput;
 

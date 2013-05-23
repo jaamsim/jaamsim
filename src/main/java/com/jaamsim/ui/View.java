@@ -43,50 +43,50 @@ private static int nextID = 1;
 
 private final int viewID;
 
-@Keyword(desc = "The Region this View is within.",
+@Keyword(description = "The Region this View is within.",
          example = "View1 Region { Region1 }")
 private final EntityInput<Region> region;
 
-@Keyword(desc = "The position the view is looking at.",
+@Keyword(description = "The position the view is looking at.",
          example = "View1 ViewCenter { 0 0 0 m }")
 private final Vec3dInput center;
 
-@Keyword(desc = "The position the view is looking from.",
+@Keyword(description = "The position the view is looking from.",
          example = "View1 ViewPosition { 0 0 50 m }")
 private final Vec3dInput position;
 
-@Keyword(desc = "The size of the window in pixels (width, height).",
+@Keyword(description = "The size of the window in pixels (width, height).",
          example = "View1 WindowSize { 500 300 }")
 private final IntegerListInput windowSize;
 
-@Keyword(desc = "The position of the upper left corner of the window in pixels measured" +
+@Keyword(description = "The position of the upper left corner of the window in pixels measured" +
                 "from the top left corner of the screen.",
          example = "View1 WindowPosition { 220 110 }")
 private final IntegerListInput windowPos;
 
-@Keyword(desc = "The text to place in the title bar of the window",
+@Keyword(description = "The text to place in the title bar of the window",
          example = "View1 TilteBarText { 'An Example Title' }")
 private final StringInput titleBar;
 
-@Keyword(desc = "A Boolean indicating whether the view should show a window" +
+@Keyword(description = "A Boolean indicating whether the view should show a window" +
                 "after all inputs have been loaded",
          example = "View1 ShowWindow { FALSE }")
 private final BooleanInput showOnStartup;
 
-@Keyword(desc = "A Boolean indicating whether the view position can be moved (panned or rotated)",
+@Keyword(description = "A Boolean indicating whether the view position can be moved (panned or rotated)",
  example = "View1 Movable { FALSE }")
 private final BooleanInput movable;
 
-@Keyword(desc = "The (optional) entity for this view to follow. Setting this input makes the view ignore ViewCenter " +
+@Keyword(description = "The (optional) entity for this view to follow. Setting this input makes the view ignore ViewCenter " +
                 "and interprets ViewPosition as a relative offset to this entity.",
          example = "View1 FollowEntity { Ship1 }")
 private final EntityInput<DisplayEntity> followEntityInput;
 
-@Keyword(desc = "The (optional) scripted curve for the view position to follow.",
+@Keyword(description = "The (optional) scripted curve for the view position to follow.",
  example = "View1 ScriptedViewPosition { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
 private final KeyedVec3dInput positionScriptInput;
 
-@Keyword(desc = "The (optional) scripted curve for the view center to follow.",
+@Keyword(description = "The (optional) scripted curve for the view center to follow.",
 example = "View1 ScriptedViewCenter { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
 private final KeyedVec3dInput centerScriptInput;
 

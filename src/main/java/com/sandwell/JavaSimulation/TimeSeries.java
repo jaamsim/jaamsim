@@ -19,18 +19,18 @@ import com.jaamsim.units.Unit;
 
 public class TimeSeries extends Entity {
 
-	@Keyword(desc = "A list of time series records for the form { yyyy MM dd hour value units }, " +
+	@Keyword(description = "A list of time series records for the form { yyyy MM dd hour value units }, " +
 					"where hour is in decimal hours, value is the time series value for the given date " +
 					"and time, and units is optional.  The dates must be given in increasing order.",
 	         example = "TimeSeries1  Value { { 2010 1 1 0.0 0.5 m } { 2010 1 1 3.0 1.5 m } { 2010 1 1 6.0 1.2 m } }")
 	private final TimeSeriesInput value;
 
-	@Keyword(desc = "The unit type for the time series (e.g. DistanceUnit, TimeUnit, MassUnit).  " +
+	@Keyword(description = "The unit type for the time series (e.g. DistanceUnit, TimeUnit, MassUnit).  " +
 			"If the UnitType keyword is specified, it must be specified before the Values keyword.",
      example = "TimeSeries1  UnitType { DistanceUnit }")
 	private final EntityInput<ObjectType> unitType;
 
-	@Keyword(desc = "The format for the date and time (e.g. 'yyyy-MM-dd HH:mm:ss', yyyy/MM/dd).  " +
+	@Keyword(description = "The format for the date and time (e.g. 'yyyy-MM-dd HH:mm:ss', yyyy/MM/dd).  " +
 	                "Put single quotes around the format if it includes spaces.",
      example = "TimeSeries1  DateFormat { 'yyyy-MM-dd HH:mm' }")
 	private final StringInput dateFormat;

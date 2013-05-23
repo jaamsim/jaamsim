@@ -24,7 +24,7 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class NotOperator extends BooleanCalculation {
 
-	@Keyword(desc = "The BooleanCalculation entity that is the input to this operation.",
+	@Keyword(description = "The BooleanCalculation entity that is the input to this operation.",
 	         example = "OrOperator1 Entity { Bool1 }")
 	private final EntityInput<BooleanCalculation> entityInput;
 	{

@@ -188,7 +188,7 @@ public class EditBox extends FrameBox {
 				build.append(in.getCategory());
 				build.append("<BR><BR>");
 				build.append("<b>Description:</b> ");
-				for (String line : key.desc().split("\n", 0)) {
+				for (String line : key.description().split("\n", 0)) {
 					// Replace all <> for html parsing
 					String tempLine = line.replaceAll("&", "&amp;");
 					tempLine = tempLine.replaceAll("<", "&lt;");

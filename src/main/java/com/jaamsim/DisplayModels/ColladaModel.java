@@ -43,11 +43,11 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class ColladaModel extends DisplayModel {
 
-	@Keyword(desc = "The file containing the image to show, valid formats are: BMP, JPG, PNG, PCX, GIF.",
+	@Keyword(description = "The file containing the image to show, valid formats are: BMP, JPG, PNG, PCX, GIF.",
 	         example = "Ship3DModel ColladaFile { ..\\images\\CompanyIcon.png }")
 	private final StringInput colladaFile;
 
-	@Keyword(desc = "A list of active actions and the entity output that drives them",
+	@Keyword(description = "A list of active actions and the entity output that drives them",
 	         example = "Ship3DModel Actions { { ContentAction Contents } { BoomAngleAction BoomAngle } }")
 	private final ActionListInput actions;
 

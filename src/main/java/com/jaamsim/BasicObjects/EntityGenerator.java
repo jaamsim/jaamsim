@@ -28,11 +28,11 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public class EntityGenerator extends LinkedComponent {
 
-	@Keyword(desc = "The probability distribution object used to select the inter-arrival time between generated DisplayEntities.",
+	@Keyword(description = "The probability distribution object used to select the inter-arrival time between generated DisplayEntities.",
 	         example = "EntityGenerator1 IATdistribution { Dist1 }")
 	private final EntityInput<ProbabilityDistribution> iatDistributionInput;
 
-	@Keyword(desc = "The list of DisplayModels to be assigned to the generated DisplayEntities.",
+	@Keyword(description = "The list of DisplayModels to be assigned to the generated DisplayEntities.",
 	         example = "EntityGenerator1 GeneratedDisplayModelList { Sphere }")
 	private final EntityListInput<DisplayModel> generatedDisplayModelListInput;
 

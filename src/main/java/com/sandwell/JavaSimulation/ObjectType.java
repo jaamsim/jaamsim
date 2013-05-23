@@ -21,19 +21,19 @@ import com.jaamsim.DisplayModels.DisplayModel;
 public class ObjectType extends Entity {
 	private static final ArrayList<ObjectType> allInstances;
 
-	@Keyword(desc = "The java class of the object type",
+	@Keyword(description = "The java class of the object type",
 	         example = "This is placeholder example text")
 	private final ClassInput javaClass;
 
-	@Keyword(desc = "The package to which the object type belongs",
+	@Keyword(description = "The package to which the object type belongs",
 	         example = "This is placeholder example text")
 	private final EntityInput<Palette> palette;
 
-	@Keyword(desc = "Only for DisplayEntity",
+	@Keyword(description = "Only for DisplayEntity",
 	         example = "This is placeholder example text")
 	private final EntityInput<DisplayModel> defaultDisplayModel;
 
-	@Keyword(desc = "This is placeholder description text",
+	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
 	private final BooleanInput dragAndDrop;
 

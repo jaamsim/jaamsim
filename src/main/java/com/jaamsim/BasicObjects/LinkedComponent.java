@@ -24,7 +24,7 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public class LinkedComponent extends DisplayEntity {
 
-	@Keyword(desc = "The next object to which the processed DisplayEntity is passed.",
+	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 	         example = "EntityGenerator1 NextComponent { Server1 }")
 	private final EntityInput<LinkedComponent> nextComponentInput;
 

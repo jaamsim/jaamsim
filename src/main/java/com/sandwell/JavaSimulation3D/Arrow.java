@@ -28,33 +28,33 @@ import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 
 public class Arrow extends DisplayEntity implements HasScreenPoints {
-	@Keyword(desc = "A list of points in { x, y, z } coordinates defining the line segments that" +
+	@Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
                     "make up the arrow.  When two coordinates are given it is assumed that z = 0." ,
 	         example = "Arrow1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
 	private final Vec3dListInput pointsInput;
 
-	@Keyword(desc = "If TRUE, then a drop shadow appears for the arrow.",
+	@Keyword(description = "If TRUE, then a drop shadow appears for the arrow.",
 	         example = "Arrow1  DropShadow { TRUE }")
 	private final BooleanInput dropShadow;
 
-	@Keyword(desc = "The colour of the drop shadow, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the drop shadow, defined using a colour keyword or RGB values.",
 	         example = "Arrow1  DropShadowColour { blue }")
 	private final ColourInput dropShadowColor;
 
-	@Keyword(desc = "A set of { x, y, z } offsets in each direction of the drop shadow from the Arrow.",
+	@Keyword(description = "A set of { x, y, z } offsets in each direction of the drop shadow from the Arrow.",
 	         example = "Arrow1  DropShadowOffset { 0.1 0.1 0.0 m }")
 	private final Vec3dInput dropShadowOffset;
 
-	@Keyword(desc = "The width of the Arrow line segments in pixels.",
+	@Keyword(description = "The width of the Arrow line segments in pixels.",
 	         example = "Arrow1 Width { 1 }")
 	private final DoubleInput width;
 
-	@Keyword(desc = "A set of { x, y, z } numbers that define the size of the arrowhead " +
+	@Keyword(description = "A set of { x, y, z } numbers that define the size of the arrowhead " +
 	                "in those directions at the end of the connector.",
 	         example = "Arrow1 ArrowSize { 0.165 0.130 0.0 m }")
 	private final Vec3dInput arrowHeadSize;
 
-	@Keyword(desc = "The colour of the arrow, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the arrow, defined using a colour keyword or RGB values.",
 	         example = "Arrow1 Color { red }")
 	private final ColourInput color;
 

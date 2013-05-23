@@ -21,36 +21,36 @@ public class PropertyReader extends InputGroup {
 	private Object[] targetInputParameters;
 	private final Object[] timeMethodParameter;
 
-	@Keyword(desc = "The object for which the property label is created.",
+	@Keyword(description = "The object for which the property label is created.",
 	         example = "Object1Label TargetEntity { Object1 }")
 	private final EntityInput<Entity> targetEntity;
 
-	@Keyword(desc = "The target method name used to access the property value.",
+	@Keyword(description = "The target method name used to access the property value.",
 	         example = "Object1Label TargetMethod { getContentsForType }")
 	private final StringInput targetMethodName;
 
-	@Keyword(desc = "If the access method has input parameter(s) other than time, this is a list of those parameters.",
+	@Keyword(description = "If the access method has input parameter(s) other than time, this is a list of those parameters.",
 	         example = "Object1Label TargetInputParameters { ContentType }")
 	private final StringListInput targetInputParameterNames;
 
-	@Keyword(desc = "If TRUE, the current time is an input parameter for the accessor method.",
+	@Keyword(description = "If TRUE, the current time is an input parameter for the accessor method.",
 	         example = "Object1Label TimeMethod { TRUE }")
 	private final BooleanInput timeMethod;
 
-	@Keyword(desc = "The number of decimal places displayed by the label.",
+	@Keyword(description = "The number of decimal places displayed by the label.",
 	         example = "Object1Label Precision { 1 }")
 	private final IntegerInput precision;
 
-	@Keyword(desc = "A multiplicative factor applied to the property value, to be used when the " +
+	@Keyword(description = "A multiplicative factor applied to the property value, to be used when the " +
 	                "units to be displayed are different from the values used in the simulation.",
 	         example = "Object1Label Multiplier { 1000 }")
 	private final DoubleInput multiplier;
 
-	@Keyword(desc = "A string (enclosed in single quotes) displaying the units after the property value.",
+	@Keyword(description = "A string (enclosed in single quotes) displaying the units after the property value.",
 	         example = "Object1Label Units { 't' }")
 	private final StringInput units;
 
-	@Keyword(desc = "A string (enclosed in single quotes) displayed as a prefix to the property value",
+	@Keyword(description = "A string (enclosed in single quotes) displayed as a prefix to the property value",
 	         example = "Object1Label Prefix { 'Contents: ' }" )
 	private final StringInput prefix;
 

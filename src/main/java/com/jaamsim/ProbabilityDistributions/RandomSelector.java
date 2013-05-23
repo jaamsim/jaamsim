@@ -27,7 +27,7 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class RandomSelector extends ObjectSelector {
 
-	@Keyword(desc = "Seed for the random number generator.  Must be an integer > 0.",
+	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
 			 example = "RandomSelector-1 RandomSeed { 547 }")
 	private IntegerInput randomSeedInput;
 

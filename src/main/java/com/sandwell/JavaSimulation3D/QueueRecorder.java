@@ -23,7 +23,7 @@ import com.sandwell.JavaSimulation.Keyword;
 
 public class QueueRecorder extends DisplayEntity {
 
-	@Keyword(desc = "A list of queues for which the recorder prints times " +
+	@Keyword(description = "A list of queues for which the recorder prints times " +
 	                "at which objects are added and removed to the *.que file.",
 			 example = "QRec QueueList { Queue1 Queue2 }")
 	private final EntityListInput<Queue> queueList;

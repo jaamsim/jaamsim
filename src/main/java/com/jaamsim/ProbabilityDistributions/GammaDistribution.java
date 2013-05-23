@@ -25,11 +25,11 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class GammaDistribution extends NewProbabilityDistribution {
 
-	@Keyword(desc = "The mean of the Gamma distribution.",
+	@Keyword(description = "The mean of the Gamma distribution.",
 	         example = "GammaDist-1 Mean { 5.0 }")
 	private final DoubleInput meanInput;
 
-	@Keyword(desc = "The shape parameter for the Gamma distribution.  A decimal value > 0.0.",
+	@Keyword(description = "The shape parameter for the Gamma distribution.  A decimal value > 0.0.",
 	         example = "GammaDist-1 Shape { 2.0 }")
 	private final DoubleInput shapeInput;
 

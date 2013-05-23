@@ -24,7 +24,7 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class TriangularDistribution extends NewProbabilityDistribution {
 
-	@Keyword(desc = "The mode of the triangular distribution, i.e. the value with the highest probability.",
+	@Keyword(description = "The mode of the triangular distribution, i.e. the value with the highest probability.",
 	         example = "TriangularDist-1 Mode { 5.0 }")
 	private final DoubleInput modeInput;
 

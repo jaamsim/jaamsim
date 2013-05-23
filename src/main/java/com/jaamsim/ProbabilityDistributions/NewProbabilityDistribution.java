@@ -29,28 +29,28 @@ import java.util.Random;
  */
 public abstract class NewProbabilityDistribution extends DisplayEntity {
 
-	@Keyword(desc = "Seed for the random number generator.  Must be an integer > 0.",
+	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
 			 example = "ProbDist1 RandomSeed { 547 }")
 	private final IntegerInput randomSeedInput;
 
-	@Keyword(desc = "Probability of a non-zero value. The probability of a non-zero value is sampled first. " +
+	@Keyword(description = "Probability of a non-zero value. The probability of a non-zero value is sampled first. " +
 					"The probability distribution is sampled only if the first sample is positive. " +
 					"For example, if the non-zero probability is 0.2, then the value of zero will be returned for 80% of the samples. " +
 					"A non-zero value sampled from the probability distribution will be returned for 20% of the samples.",
 	         example = "ProbDist1 NonZeroProb { 0.2 }")
 	private final DoubleInput nonZeroProbInput;
 
-	@Keyword(desc = "Multiplicative factor applied to the values returned by the ProbabilityDistribution object. " +
+	@Keyword(description = "Multiplicative factor applied to the values returned by the ProbabilityDistribution object. " +
 					"Used for unit conversion.",
 	         example = "ProbDist1 ValueFactor { 1.0 }")
 	private final DoubleInput valueFactorInput;
 
-	@Keyword(desc = "Minimum value that can be returned (before ValueFactor is applied). " +
+	@Keyword(description = "Minimum value that can be returned (before ValueFactor is applied). " +
 					"Smaller values are rejected and resampled.",
 	         example = "ProbDist1 MinValue { 0.0 }")
 	private final DoubleInput minValueInput;
 
-	@Keyword(desc = "Maximum value that can be returned (before ValueFactor is applied). " +
+	@Keyword(description = "Maximum value that can be returned (before ValueFactor is applied). " +
 					"Larger values are rejected and resampled.",
 	         example = "ProbDist1 MaxValue { 200.0 }")
 	private final DoubleInput maxValueInput;

@@ -24,7 +24,7 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class ConstantValue extends DoubleCalculation {
 
-	@Keyword(desc = "The numerical value returned by the object.",
+	@Keyword(description = "The numerical value returned by the object.",
 	         example = "ConstantValue1 Value { 5.0 }")
 	private final DoubleInput valueInput;
 

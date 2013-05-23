@@ -33,43 +33,43 @@ import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.TimeInput;
 
 public class VideoRecorderEntity extends Entity {
-	@Keyword(desc = "Simulated time between screen captures",
+	@Keyword(description = "Simulated time between screen captures",
 	         example = "This is placeholder example text")
 	private final TimeInput captureInterval;
 
-	@Keyword(desc = "How long the simulation waits until starting video recording",
+	@Keyword(description = "How long the simulation waits until starting video recording",
 	         example = "This is placeholder example text")
 	private final TimeInput captureStartTime;
 
-	@Keyword(desc = "Number of frames to capture",
+	@Keyword(description = "Number of frames to capture",
 	         example = "This is placeholder example text")
 	private final IntegerInput captureFrames;
 
-	@Keyword(desc = "If the video recorder should save out PNG files of individual frames",
+	@Keyword(description = "If the video recorder should save out PNG files of individual frames",
 	         example = "This is placeholder example text")
 	private final BooleanInput saveImages;
 
-	@Keyword(desc = "If the video recorder should save out an AVI file",
+	@Keyword(description = "If the video recorder should save out an AVI file",
 	         example = "This is placeholder example text")
 	private final BooleanInput saveVideo;
 
-	@Keyword(desc = "The size of the video/image in pixels",
+	@Keyword(description = "The size of the video/image in pixels",
 	         example = "This is placeholder example text")
 	private final IntegerListInput captureArea;
 
-	@Keyword(desc = "The background color to use for video recording",
+	@Keyword(description = "The background color to use for video recording",
 	         example = "This is placeholder example text")
 	private final ColourInput videoBGColor;
 
-	@Keyword(desc = "The list of views to draw in the video",
+	@Keyword(description = "The list of views to draw in the video",
 	         example = "This is placeholder example text")
 	private final EntityListInput<View> captureViews;
 
-	@Keyword(desc = "The name of the video file to record",
+	@Keyword(description = "The name of the video file to record",
 	         example = "This is placeholder example text")
 	private final StringInput videoName;
 
-	@Keyword(desc = "Enable video capture",
+	@Keyword(description = "Enable video capture",
 	         example = "VidRecorder VideoCapture { TRUE }")
 	private final BooleanInput videoCapture;
 

@@ -56,73 +56,73 @@ public class Graph extends DisplayEntity  {
 	protected final ArrayList<SeriesInfo> primarySeries;
 	protected final ArrayList<SeriesInfo> secondarySeries;
 
-	@Keyword(desc = "The number of data points that can be displayed on the graph. This " +
+	@Keyword(description = "The number of data points that can be displayed on the graph. This " +
 	                "parameter determines the resolution of the graph.",
 	         example = "Graph1 NumberOfPoints { 200 }")
 	protected final IntegerInput numberOfPoints;	 // Total number of values that can be shown on the graph (the more the sharper the graph)
 
-	@Keyword(desc = "The amount of time in hours to display data before the present time.",
+	@Keyword(description = "The amount of time in hours to display data before the present time.",
 	         example = "Graph1 StartTime { -48 }")
 	protected final DoubleInput startTime; 	 // start time for drawing the graph
 
-	@Keyword(desc = "The amount of time in hours to display data after the present time.",
+	@Keyword(description = "The amount of time in hours to display data after the present time.",
 	         example = "Graph1 EndTime { 8 }")
 	protected final DoubleInput endTime; 	 // end time for drawing the graph
 
-	@Keyword(desc = "The number of hours between time labels on the x-axis. Time labels are shown " +
+	@Keyword(description = "The number of hours between time labels on the x-axis. Time labels are shown " +
 	                "starting from the start time.",
 	         example = "Graph1 TimeInterval { 8 }")
 	private final DoubleInput timeInterval; // Time interval used to label x axis
 
-	@Keyword(desc = "The minimum value for the y-axis.",
+	@Keyword(description = "The minimum value for the y-axis.",
 	         example = "Graph1 YAxisStart { 0 }")
 	private final DoubleInput yAxisStart;
 
-	@Keyword(desc = "The maximum value for the y-axis.",
+	@Keyword(description = "The maximum value for the y-axis.",
 	         example = "Graph1 YAxisEnd { 5 }")
 	private final DoubleInput yAxisEnd;
 
-	@Keyword(desc = "The interval between y-axis labels.",
+	@Keyword(description = "The interval between y-axis labels.",
 	         example = "Graph1 YAxisInterval { 1 }")
 	private final DoubleInput yAxisInterval;
 
-	@Keyword(desc = "A list of values at which to insert horizontal gridlines.",
+	@Keyword(description = "A list of values at which to insert horizontal gridlines.",
 	         example ="Graph1 YLines { 0 0.5 1 1.5 2 2.5 3 }")
 	private final DoubleListInput yLines; // Horizontal lines
 
-	@Keyword(desc = "The colour of the horizontal gridlines (or a list corresponding to the colour of each " +
+	@Keyword(description = "The colour of the horizontal gridlines (or a list corresponding to the colour of each " +
                     "gridline defined in YLines), defined using a colour keyword or RGB values.",
 	         example = "Graph1 YLinesColor { gray76 }")
 	private final ColorListInput yLinesColor;
 
-	@Keyword(desc = "The minimum value for the secondary y-axis.",
+	@Keyword(description = "The minimum value for the secondary y-axis.",
 	         example = "Graph1 SecondaryYAxisStart { 0 }")
 	private final DoubleInput secondaryYAxisStart;
 
-	@Keyword(desc = "The maximum value for the secondary y-axis.",
+	@Keyword(description = "The maximum value for the secondary y-axis.",
 	         example = "Graph1 SecondaryYAxisEnd { 5 }")
 	private final DoubleInput secondaryYAxisEnd;
 
-	@Keyword(desc = "The interval between secondary y-axis labels.",
+	@Keyword(description = "The interval between secondary y-axis labels.",
 	         example = "Graph1 SecondaryYAxisInterval { 1 }")
 	private final DoubleInput secondaryYAxisInterval;
 
-	@Keyword(desc = "A list of time values between StartTime and EndTime where vertical gridlines are inserted.",
+	@Keyword(description = "A list of time values between StartTime and EndTime where vertical gridlines are inserted.",
 	         example = "Graph1 XLines { -48 -40 -32 -24 -16 -8 0 }")
 	private final DoubleListInput xLines; // Vertical lines
 
-	@Keyword(desc = "The color of the vertical gridlines (or a list corresponding to the colour of each " +
+	@Keyword(description = "The color of the vertical gridlines (or a list corresponding to the colour of each " +
 	                "gridline defined in XLines), defined using a colour keyword or RGB values.",
 	         example = "Graph1 XLinesColor { gray76 }")
 	private final ColorListInput xLinesColor;
 
-	@Keyword(desc = "The object for which the graph is created.  For multiple data series on a graph, " +
+	@Keyword(description = "The object for which the graph is created.  For multiple data series on a graph, " +
 	                "enter a list of objects or a Group object.",
 	         example = "Graph1 TargetEntity { Object1 }")
 	protected final EntityListInput<Entity> targetEntityList; //  list the entity that graph is being shown for
 	//protected ArrayList<Entity> targetEntities;
 
-	@Keyword(desc = "The object for which the graph is created using a secondary y-axis.  " +
+	@Keyword(description = "The object for which the graph is created using a secondary y-axis.  " +
 	                "For multiple data series on a graph, enter a list of objects.",
 	         example = "Graph1 SecondaryTargetEntity { Terminal1 }")
 	protected final EntityListInput<Entity> secondaryTargetEntityList;
@@ -131,38 +131,38 @@ public class Graph extends DisplayEntity  {
 	protected Method secondaryTargetMethod;
 	private boolean timeInputParameter; // true => time is passing to the target method(graph may show future values)
 
-	@Keyword(desc = "The target method used to access the property value.",
+	@Keyword(description = "The target method used to access the property value.",
 	         example = "Graph1 TargetMethod { getContentsForType }")
 	private final StringInput targetMethodName;
 
-	@Keyword(desc = "The target method used to access the property value.",
+	@Keyword(description = "The target method used to access the property value.",
 	         example = "Graph1 SecondaryTargetMethod { getContentsForType }")
 	private final StringInput secondaryTargetMethodName;
 
-	@Keyword(desc = "If the target method requires input arguments to be passed to it, then this is a " +
+	@Keyword(description = "If the target method requires input arguments to be passed to it, then this is a " +
 	                "list of those parameters.",
 	         example = "Graph1 TargetInputParameters { ContentType }")
 	protected final EntityListListInput<Entity> targetInputParameters; // List of all input parameters to target method for each entity
 
-	@Keyword(desc = "If the target method requires input arguments to be passed to it, then this is a " +
+	@Keyword(description = "If the target method requires input arguments to be passed to it, then this is a " +
             "list of those parameters.",
 	         example = "Graph1 SecondaryTargetInputParameters { ContentType }")
 	private final EntityListListInput<Entity> secondaryTargetInputParameters;
 
 
-	@Keyword(desc = "Title of the y-axis, enclosed in single quotes, rotated by 90 degrees counter-clockwise.",
+	@Keyword(description = "Title of the y-axis, enclosed in single quotes, rotated by 90 degrees counter-clockwise.",
 	         example = "Graph1 YAxisTitle { 'Water Height (m)' }")
 	private final StringInput yAxisTitle; // Title for the y axis
 
-	@Keyword(desc = "Title of the secondary y-axis, enclosed in single quotes, rotated by 90 degrees clockwise.",
+	@Keyword(description = "Title of the secondary y-axis, enclosed in single quotes, rotated by 90 degrees clockwise.",
 	         example = "Graph1 SecondaryYAxisTitle { 'Water Height (m)' }")
 	private final StringInput secondaryYAxisTitle; // Title for the secondary y axis
 
-	@Keyword(desc= "Text for the graph title, enclosed in single quotes if it contains spaces.",
+	@Keyword(description= "Text for the graph title, enclosed in single quotes if it contains spaces.",
 	         example = "Graph1 Title { 'Title of the Graph' }")
 	private final StringInput title;	   // Title of the graph (shown on the center top)
 
-	@Keyword(desc = "The font name for all labels, enclosed in single quotes.",
+	@Keyword(description = "The font name for all labels, enclosed in single quotes.",
 	         example = "Graph1 LabelFontName { 'Arial' }")
 	protected final StringInput labelFontName; // For all the texts
 	protected Vec3d graphSize;   // graph size (the actual graph area)
@@ -171,121 +171,121 @@ public class Graph extends DisplayEntity  {
 
 	// A list of the line thickness for corresponding item in targetEntityList
 
-	@Keyword(desc = "A list of line widths (in pixels) for the line series to be displayed.",
+	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.",
 	         example = "Graph1 LineWidths { 1 2 3 7 }")
 	protected final DoubleListInput lineWidths;
 
-	@Keyword(desc = "A list of line widths (in pixels) for the line series to be displayed.",
+	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.",
 	         example = "Graph1 SecondaryLineWidths { 1 2 3 7 }")
 	protected final DoubleListInput secondaryLineWidths;
 
-	@Keyword(desc = "A list of colours (each consisting of a colour keyword or RGB values) for the line series to be displayed. " +
+	@Keyword(description = "A list of colours (each consisting of a colour keyword or RGB values) for the line series to be displayed. " +
 	                "For multiple colours, each colour must be enclosed in braces as they can themselves be defined as a list of RGB values.",
 	         example = "Graph1 LineColors { midnightblue }")
 	protected final ColorListInput lineColorsList;	// list of line colours for each entity. Each element contains a vector of colours for each series for that entity
 	//protected ArrayList<ColoringAttributes> lineColors;
 
-	@Keyword(desc = "A list of colours (each consisting of a colour keyword or RGB values) for the line series to be displayed. " +
+	@Keyword(description = "A list of colours (each consisting of a colour keyword or RGB values) for the line series to be displayed. " +
 	                "For multiple colours, each colour must be enclosed in braces as they can themselves be defined as a list of RGB values.",
 	         example = "Graph1 SecondaryLineColors { midnightblue }")
 	protected final ColorListInput secondaryLineColorsList;
 
 
-	@Keyword(desc = "The colour of the graph background, defined by a color keyword or RGB values.",
+	@Keyword(description = "The colour of the graph background, defined by a color keyword or RGB values.",
 	         example = "Graph1 GraphColor { floralwhite }")
 	private final ColourInput graphColor;
 
-	@Keyword(desc = "The colour for both axes labels, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour for both axes labels, defined using a colour keyword or RGB values.",
 	         example = "Graph1 LabelFontColor { black }")
 	private final ColourInput labelFontColor;
 
-	@Keyword(desc = "The color for tick marks, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The color for tick marks, defined using a colour keyword or RGB values.",
 	         example = "Graph1 TickColor { black }")
 	private final ColourInput tickColor;
 
-	@Keyword(desc = "The color for the outer pane background, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The color for the outer pane background, defined using a colour keyword or RGB values.",
 	         example = "Graph1 BackgroundColor { floralwhite }")
 	private final ColourInput backgroundColor;
 
-	@Keyword(desc = "The color of the graph border, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The color of the graph border, defined using a colour keyword or RGB values.",
 	         example = "Graph1 BorderColor { red }")
 	private final ColourInput borderColor;
 
-	@Keyword(desc = "The colour for the graph title, defined by a color keyword or RGB values.",
+	@Keyword(description = "The colour for the graph title, defined by a color keyword or RGB values.",
 	         example = "Graph1 TitleColor { black }")
 	private final ColourInput titleColor;
 
 
-	@Keyword(desc = "The text height for both x- and y-axis labels.",
+	@Keyword(description = "The text height for both x- and y-axis labels.",
 	         example = "Graph1 LabelTextHeight { 0.35 }")
 	private final DoubleInput labelTextHeight; // Text height for axes labels
 
-	@Keyword(desc = "The text height for the graph title.",
+	@Keyword(description = "The text height for the graph title.",
 	         example = "Graph1 TitleTextHeight { 0.5 }")
 	private final DoubleInput titleTextHeight; // Title text height
 
-	@Keyword(desc = "The text height for the y-axis title.",
+	@Keyword(description = "The text height for the y-axis title.",
 	         example = "Graph1 YAxisTitleTextHeight { 0.3 }")
 	private final DoubleInput yAxisTitleTextHeight; // y axis title text height
 
-	@Keyword(desc = "The gap between the x-axis labels and the x-axis.",
+	@Keyword(description = "The gap between the x-axis labels and the x-axis.",
 	         example = "Graph1 XAxisLabelGap { 0.3 }")
 	private final DoubleInput xAxisLabelGap; // Distance between labels and x axis
 
-	@Keyword(desc = "The gap between the y-axis and its labels.  If left blank, this is automatically calculated.",
+	@Keyword(description = "The gap between the y-axis and its labels.  If left blank, this is automatically calculated.",
 	         example = "Graph1 YAxisLabelGap { 0.3 }")
 	private final DoubleInput yAxisLabelGap; // Distance between labels and y axis
 
-	@Keyword(desc = "The gap between the title and top of the graph.",
+	@Keyword(description = "The gap between the title and top of the graph.",
 	         example = "Graph1 TitleGap { 0.3 }")
 	private final DoubleInput titleGap; // gap between title and graph top
 
-	@Keyword(desc = "The gap between the y-axis title and the y-axis labels.",
+	@Keyword(description = "The gap between the y-axis title and the y-axis labels.",
 	         example = "Graph1 yAxisTitleGap { 0.3 }")
 	private final DoubleInput yAxisTitleGap; // gap between y axis title and y axis labels
 
-	@Keyword(desc = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
+	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
 	                "side of the graph.",
 	         example = "Graph1 TopMargin { 0.300 }")
 	private final DoubleInput topMargin;		// Empty margin at top
 
-	@Keyword(desc = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
+	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
 	                "side of the graph.",
              example = "Graph1 BottomMargin { 0.300 }")
 	private final DoubleInput bottomMargin;	// Empty margin at bottom
 
-	@Keyword(desc = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
+	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
 	                "side of the graph.",
 	         example = "Graph1 LeftMargin { 0.200 }")
 	private final DoubleInput leftMargin;		// Empty margin at left
 
-	@Keyword(desc = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
+	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
 	                "side of the graph.",
 	         example = "Graph1 RightMargin { 0.400 }")
 	private final DoubleInput rightMargin;		// Empty margin at right
 
 
-	@Keyword(desc = "Coordinates (in { x, y, z }) of the center of the legend.",
+	@Keyword(description = "Coordinates (in { x, y, z }) of the center of the legend.",
 	         example = "Graph1 LegendCenter { -10 -10 0 }")
 	private final Vec3dInput legendCenter; // TopLeft corner of the legend
 
-	@Keyword(desc = "Size (width and height) of the legend.",
+	@Keyword(description = "Size (width and height) of the legend.",
 	         example = "Graph1 LegendSize { 7.00 4.00 }")
 	private final Vec3dInput legendSize;	  // size of legend
 
-	@Keyword(desc = "The height of the legend text.",
+	@Keyword(description = "The height of the legend text.",
 	         example = "Graph1 LegendTextHeight { 0.5 }")
 	private DoubleInput legendTextHeight;			// height of text in legend
 
-	@Keyword(desc = "Width and height of the legend markers.",
+	@Keyword(description = "Width and height of the legend markers.",
 	         example = "Graph1 LegendMarkerSize { 2.4 0.03 }")
 	private final Vec3dInput legendMarkerSize;	// size of the marker for each series
 
-	@Keyword(desc = "The gap between the left margin of the legend and the text labels.",
+	@Keyword(description = "The gap between the left margin of the legend and the text labels.",
 	         example = "Graph1 LegendSeriesLabelGap { 3 }")
 	private final DoubleInput seriesLabelGap;				// gap between the marker and the text for the series
 
-	@Keyword(desc = "The gap between the left margin of the legend and the legend markers.",
+	@Keyword(description = "The gap between the left margin of the legend and the legend markers.",
 	         example = "Graph1 LegendSeriesMarkerGap { 0.1 }")
 	private final DoubleInput seriesMakerGap;				// gap between the left border and the maker
 
@@ -294,33 +294,33 @@ public class Graph extends DisplayEntity  {
 	static int ENTITY_PARAMETER = 2;
 
 
-	@Keyword(desc  = "The number of decimal places to show in the y-axis labels.",
+	@Keyword(description  = "The number of decimal places to show in the y-axis labels.",
 	         example = "Graph1 YAxisPrecision { 1 }")
 	private final IntegerInput yAxisPrecision; // number of decimal places to show in the y-axis labels
 
-	@Keyword(desc = "The number of decimal places to show in the secondary y-axis labels.",
+	@Keyword(description = "The number of decimal places to show in the secondary y-axis labels.",
 	         example = "Graph1 SecondaryYAxisPrecision { 1 }")
 	private final IntegerInput secondaryYAxisPrecision; // number of decimal places to show in the secondary y-axis labels
 
-	@Keyword(desc = "The number of decimal places to show in the x-axis labels.",
+	@Keyword(description = "The number of decimal places to show in the x-axis labels.",
 	         example = "Graph1 XAxisPrecision { 1 }")
 	private final IntegerInput xAxisPrecision; // number of decimal places to show in the x-axis labels
 
-	@Keyword(desc = "A text string (enclosed in single quotes) to be shown after the x-axis label.",
+	@Keyword(description = "A text string (enclosed in single quotes) to be shown after the x-axis label.",
 	         example = "Graph1 XAxisUnits { d }")
 	private final StringInput xAxisUnits; // text shown after each x-axis label
 
-	@Keyword(desc = "A numerical multiplier used to rescale the x-axis of a graph for different time units (eg. days)." +
+	@Keyword(description = "A numerical multiplier used to rescale the x-axis of a graph for different time units (eg. days)." +
 	         " Note: this only affects the display, the other inputs need to be specified in internal units",
 	         example = "Graph1 XAxisMultiplier { 0.0416667 }")
 	private final DoubleInput xAxisMultiplier; // the value to multiply each x-axis label by
 
-	@Keyword(desc = "A numerical multiplier used to rescale the y-axis of a graph for different property value units." +
+	@Keyword(description = "A numerical multiplier used to rescale the y-axis of a graph for different property value units." +
 	         " Note: this only affects the display, the other inputs need to be specified in internal units",
 	         example = "Graph1 YAxisMultiplier { 3.28083 }")
 	private final DoubleInput yAxisMultiplier; // the value to multiply each y-axis label by
 
-	@Keyword(desc = "A numerical multiplier used to rescale the secondary y-axis of a graph for different property value units." +
+	@Keyword(description = "A numerical multiplier used to rescale the secondary y-axis of a graph for different property value units." +
 	         " Note: this only affects the display, the other inputs need to be specified in internal units",
 	         example = "Graph1 SecondaryYAxisMultiplier { 3.28083 }")
 	private final DoubleInput secondaryYAxisMultiplier; // the value to multiply each secondary y-axis label by

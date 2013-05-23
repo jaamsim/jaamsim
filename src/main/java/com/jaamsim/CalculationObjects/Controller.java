@@ -30,7 +30,7 @@ import java.util.Collections;
  */
 public class Controller extends DisplayEntity {
 
-	@Keyword(desc = "The sampling time for the Controller.",
+	@Keyword(description = "The sampling time for the Controller.",
 	         example = "Controller1 SamplingTime { 100 ms }")
 	private final DoubleInput samplingTimeInput;
 

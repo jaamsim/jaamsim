@@ -29,11 +29,11 @@ import com.sandwell.JavaSimulation3D.Queue;
  */
 public class Server extends LinkedComponent {
 
-	@Keyword(desc = "The probability distribution object used to select the service time for each DisplayEntity.",
+	@Keyword(description = "The probability distribution object used to select the service time for each DisplayEntity.",
 	         example = "Server1 ServiceTimeDistribution { Dist1 }")
 	private final EntityInput<ProbabilityDistribution> serviceTimeDistributionInput;
 
-	@Keyword(desc = "The queue in which the waiting DisplayEntities will be placed.",
+	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         example = "Server1 WaitQueue { Queue1 }")
 	private final EntityInput<Queue> waitQueueInput;
 

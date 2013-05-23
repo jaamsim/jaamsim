@@ -30,11 +30,11 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public class FluidComponent extends DisplayEntity {
 
-	@Keyword(desc = "The upstream component that feeds this component.",
+	@Keyword(description = "The upstream component that feeds this component.",
 	      example = "Component1 Previous { Comp1 }")
 	private final EntityInput<FluidComponent> previousInput;
 
-	@Keyword(desc = "The hydraulic diameter of the component.  " +
+	@Keyword(description = "The hydraulic diameter of the component.  " +
 	                "Equal to the inside diameter of a pipe with a circular cross-section.",
 	      example = "Comp1 Diameter { 1.0 m }")
 	private final DoubleInput diameterInput;

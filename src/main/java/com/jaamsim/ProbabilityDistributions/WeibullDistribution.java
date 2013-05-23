@@ -23,11 +23,11 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class WeibullDistribution extends NewProbabilityDistribution {
 
-	@Keyword(desc = "The scale parameter for the Weibull distribution.",
+	@Keyword(description = "The scale parameter for the Weibull distribution.",
 	         example = "WeibullDist-1 Scale { 3.0 }")
 	private final DoubleInput scaleInput;
 
-	@Keyword(desc = "The shape parameter for the Weibull distribution.  A decimal value > 0.0.  " +
+	@Keyword(description = "The shape parameter for the Weibull distribution.  A decimal value > 0.0.  " +
 			"Note: The CalculatedMean and CalculatedStandardDeviation outputs are valid only for shape = 1/N, 1, or 2.  " +
 			"Other values for Shape are acceptable, but the CalculatedMean and CalculatedStandardDeviation outputs will be reported incorrectly as zero.",
 	         example = "WeibullDist-1 Shape { 1.0 }")

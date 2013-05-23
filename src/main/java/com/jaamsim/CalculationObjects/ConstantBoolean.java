@@ -24,7 +24,7 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class ConstantBoolean extends BooleanCalculation {
 
-	@Keyword(desc = "The Boolean constant value to be returned by this object.",
+	@Keyword(description = "The Boolean constant value to be returned by this object.",
 	         example = "ConstantBoolean1 Value { TRUE  FALSE }")
 	private final BooleanInput valueInput;
 

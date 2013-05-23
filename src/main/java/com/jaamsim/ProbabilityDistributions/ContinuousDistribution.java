@@ -28,11 +28,11 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class ContinuousDistribution extends NewProbabilityDistribution {
 
-	@Keyword(desc = "The list of values for the user-defined cumulative probability distribution.",
+	@Keyword(description = "The list of values for the user-defined cumulative probability distribution.",
 	         example = "ContinuousDist-1 ValueList { 2.0  4.3  8.9 }")
 	private final DoubleListInput valueListInput;
 
-	@Keyword(desc = "The list of cumulative probabilities corresponding to the values in the ValueList.  " +
+	@Keyword(description = "The list of cumulative probabilities corresponding to the values in the ValueList.  " +
 			"The cumulative probabilities must be given in increasing order.  The first value must be exactly 0.0.  " +
 			"The last value must be exactly 1.0.",
 	         example = "ContinuousDist-1 CumulativeProbabilityList { 0.0  0.6  1.0 }")

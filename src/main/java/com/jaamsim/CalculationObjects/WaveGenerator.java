@@ -24,19 +24,19 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public abstract class WaveGenerator extends DoubleCalculation {
 
-	@Keyword(desc = "Amplitude of the generated wave",
+	@Keyword(description = "Amplitude of the generated wave",
 	         example = "Wave1 Amplitude { 2.0 }")
 	private final DoubleInput amplitudeInput;
 
-	@Keyword(desc = "Period of the generated wave",
+	@Keyword(description = "Period of the generated wave",
 	         example = "Wave1 Period { 2 s }")
 	private final DoubleInput periodInput;
 
-	@Keyword(desc = "Initial phase angle of the generated wave",
+	@Keyword(description = "Initial phase angle of the generated wave",
 	         example = "Wave1 PhaseAngle { 45 deg }")
 	private final DoubleInput phaseAngleInput;
 
-	@Keyword(desc = "Offset added to the output of the generated wave",
+	@Keyword(description = "Offset added to the output of the generated wave",
 	         example = "Wave1 Offset { 2.0 }")
 	private final DoubleInput offsetInput;
 

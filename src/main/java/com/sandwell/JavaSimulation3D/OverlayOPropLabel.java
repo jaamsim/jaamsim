@@ -24,17 +24,17 @@ import com.sandwell.JavaSimulation.StringVector;
 
 public class OverlayOPropLabel extends OverlayTextLabel {
 
-	@Keyword(desc = "The name of a root entity, and then an output value chain. If more than one output value is " +
+	@Keyword(description = "The name of a root entity, and then an output value chain. If more than one output value is " +
 	         "given, all outputs but the last should point to an entity output to query for the next output. The " +
 	         "example gets the name of the brand in a tank",
 	         example = "Label Output { Tank1 Product Name }")
 	private final StringListInput outputValue;
 
-	@Keyword(desc = "The number of decimal places displayed by the label when displaying floating point values.",
+	@Keyword(description = "The number of decimal places displayed by the label when displaying floating point values.",
 	         example = "Label Precision { 1 }")
 	private final IntegerInput precision;
 
-	@Keyword(desc = "The text to use if this text label can not be properly resolved (for example there is a null in the chain)",
+	@Keyword(description = "The text to use if this text label can not be properly resolved (for example there is a null in the chain)",
 	         example = "Label FailureText { 'N/A' }")
 	private final StringInput failureText;
 

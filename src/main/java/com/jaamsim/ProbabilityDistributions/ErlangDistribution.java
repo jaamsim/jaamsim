@@ -24,11 +24,11 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class ErlangDistribution extends NewProbabilityDistribution {
 
-	@Keyword(desc = "The scale parameter for the Erlang distribution.",
+	@Keyword(description = "The scale parameter for the Erlang distribution.",
 	         example = "ErlangDist-1 Mean { 5.0 }")
 	private final DoubleInput meanInput;
 
-	@Keyword(desc = "The shape parameter for the Erlang distribution.  An integer value >= 1.  " +
+	@Keyword(description = "The shape parameter for the Erlang distribution.  An integer value >= 1.  " +
 			"Shape = 1 gives the Exponential distribution.  " +
 			"For Shape > 10 it is better to use the Gamma distribution.",
 	         example = "ErlangDist-1 Shape { 2 }")

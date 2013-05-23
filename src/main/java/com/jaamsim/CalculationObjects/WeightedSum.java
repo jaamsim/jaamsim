@@ -26,11 +26,11 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class WeightedSum extends DoubleCalculation {
 
-	@Keyword(desc = "The list of DoubleCalculations entities that are inputs to this calculation.",
+	@Keyword(description = "The list of DoubleCalculations entities that are inputs to this calculation.",
 	         example = "WeightedSum1 EntityList { Calc1  Calc2 }")
 	private final EntityListInput<DoubleCalculation> entityListInput;
 
-	@Keyword(desc = "The list of multaplicative factors to be applied to the value provide by the inputs.",
+	@Keyword(description = "The list of multaplicative factors to be applied to the value provide by the inputs.",
 	         example = "WeightedSum1 CoefficientList { 2.0  1.5 }")
 	private final DoubleListInput coefficientListInput;
 

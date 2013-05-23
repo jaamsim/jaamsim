@@ -36,15 +36,15 @@ public abstract class DisplayModel extends Entity {
 
 	private ChangeWatcher graphicsDirtier = new ChangeWatcher();
 
-	@Keyword(desc = "The view objects this model will be visible on. If this is empty the entity is visible on all views.",
+	@Keyword(description = "The view objects this model will be visible on. If this is empty the entity is visible on all views.",
 	         example = "ShipModel VisibleViews { TitleView DefaultView }")
 	private final EntityListInput<View> visibleViews;
 
-	@Keyword(desc = "The distances from the camera that this display model will be visible",
+	@Keyword(description = "The distances from the camera that this display model will be visible",
 	         example = "ShipModel DrawRange { 0 100 m }")
 	private final DoubleListInput drawRange;
 
-	@Keyword(desc = "ModelScale scales the resulting visualization by this vector. Warning!! Resizing an entity with this set " +
+	@Keyword(description = "ModelScale scales the resulting visualization by this vector. Warning!! Resizing an entity with this set " +
 	         "to a value that is not 1 is very unintuitive.",
 	         example = "ShipModel ModelScale { 5 5 5 }")
 	private final Vec3dInput modelScale;

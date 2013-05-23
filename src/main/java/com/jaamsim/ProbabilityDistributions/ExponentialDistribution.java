@@ -23,7 +23,7 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class ExponentialDistribution extends NewProbabilityDistribution {
 
-	@Keyword(desc = "The mean of the exponential distribution.",
+	@Keyword(description = "The mean of the exponential distribution.",
 	         example = "ExponentialDist-1 Mean { 5.0 }")
 	private final DoubleInput meanInput;
 

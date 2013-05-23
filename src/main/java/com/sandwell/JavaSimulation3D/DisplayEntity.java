@@ -57,25 +57,25 @@ public class DisplayEntity extends Entity {
 	// A 'dirty' state tracker
 	private ChangeWatcher graphicsDirtier = new ChangeWatcher();
 
-	@Keyword(desc = "The point in the region at which the alignment point of the object is positioned.",
+	@Keyword(description = "The point in the region at which the alignment point of the object is positioned.",
 	         example = "Object1 Position { -3.922 -1.830 0.000 m }")
 	private final Vec3dInput positionInput;
 
-	@Keyword(desc = "The size of the object in { x, y, z } coordinates. If only the x and y coordinates are given " +
+	@Keyword(description = "The size of the object in { x, y, z } coordinates. If only the x and y coordinates are given " +
 	                "then the z dimension is assumed to be zero.",
 	         example = "Object1 Size { 15 12 0 m }")
 	private final Vec3dInput sizeInput;
 
-	@Keyword(desc = "Euler angles defining the rotation of the object.",
+	@Keyword(description = "Euler angles defining the rotation of the object.",
 	         example = "Object1 Orientation { 0 0 90 deg }")
 	private final Vec3dInput orientationInput;
 
-	@Keyword(desc = "The point within the object about which its Position keyword is defined, " +
+	@Keyword(description = "The point within the object about which its Position keyword is defined, " +
 	                "expressed with respect to a unit box centered about { 0 0 0 }.",
 	         example = "Object1 Alignment { -0.5 -0.5 0.0 }")
 	private final Vec3dInput alignmentInput;
 
-	@Keyword(desc = "The name of the Region containing the object.  Applies an offset " +
+	@Keyword(description = "The name of the Region containing the object.  Applies an offset " +
 			        "to the Position of the object corresponding to the Region's " +
 			        "Position and Orientation values.",
 	         example ="Object1 Region { Region1 }")
@@ -88,28 +88,28 @@ public class DisplayEntity extends Entity {
 
 	private Region currentRegion;
 
-	@Keyword(desc = "The graphic representation of the object.  Accepts a list of objects where the distances defined in " +
+	@Keyword(description = "The graphic representation of the object.  Accepts a list of objects where the distances defined in " +
 	                "LevelOfDetail dictate which DisplayModel entry is used.",
 	         example = "Object1 DisplayModel { Pixels }")
 	private final EntityListInput<DisplayModel> displayModelList;
 
-	@Keyword(desc = "The name of an object with respect to which the Position keyword is referenced.",
+	@Keyword(description = "The name of an object with respect to which the Position keyword is referenced.",
 	         example ="Object1Label RelativeEntity { Object1 }")
 	private final EntityInput<DisplayEntity> relativeEntity;
 
-	@Keyword(desc = "If TRUE, the object is displayed in the simulation view windows.",
+	@Keyword(description = "If TRUE, the object is displayed in the simulation view windows.",
 	         example = "Object1 Show { FALSE }")
 	private final BooleanInput show;
 
-	@Keyword(desc = "If TRUE, the object is active and used in simulation runs.",
+	@Keyword(description = "If TRUE, the object is active and used in simulation runs.",
 	         example = "Object1 Active { FALSE }")
 	private final BooleanInput active;
 
-	@Keyword(desc = "If TRUE, the object can be positioned interactively using the GUI.",
+	@Keyword(description = "If TRUE, the object can be positioned interactively using the GUI.",
 	         example = "Object1 Movable { FALSE }")
 	private final BooleanInput movable;
 
-	@Keyword(desc = "If TRUE, tool tips are displayed for the object on mouseover during the simulation run.",
+	@Keyword(description = "If TRUE, tool tips are displayed for the object on mouseover during the simulation run.",
 	         example = "Simulation ToolTip { FALSE }")
 	protected BooleanInput showToolTip;
 

@@ -28,15 +28,15 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public abstract class FluidFlowCalculation extends CalculationEntity {
 
-	@Keyword(desc = "The Fluid being moved by the flow.",
+	@Keyword(description = "The Fluid being moved by the flow.",
 	      example = "FluidFlow1 Fluid { Fluid1 }")
 	private final EntityInput<Fluid> fluidInput;
 
-	@Keyword(desc = "The source for the flow.",
+	@Keyword(description = "The source for the flow.",
 	      example = "FluidFlow1 Source { Tank1 }")
 	private final EntityInput<FluidComponent> sourceInput;
 
-	@Keyword(desc = "The destination for the flow.",
+	@Keyword(description = "The destination for the flow.",
 	      example = "FluidFlow1 Destination { Tank1 }")
 	private final EntityInput<FluidComponent> destinationInput;
 

@@ -26,11 +26,11 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class OrOperator extends BooleanCalculation {
 
-	@Keyword(desc = "The list of BooleanCalculation entities that are inputs to this operation.",
+	@Keyword(description = "The list of BooleanCalculation entities that are inputs to this operation.",
 	         example = "OrOperator1 EntityList { Bool1  Bool2 }")
 	private final EntityListInput<BooleanCalculation> entityListInput;
 
-	@Keyword(desc = "The list of true/false inputs cooresponding to the EntityList.  An entry of TRUE indicates that a NOT operation will be applied to the input.",
+	@Keyword(description = "The list of true/false inputs cooresponding to the EntityList.  An entry of TRUE indicates that a NOT operation will be applied to the input.",
 	         example = "OrOperator1 NegationList { TRUE  FALSE }")
 	private final BooleanListInput negationListInput;
 

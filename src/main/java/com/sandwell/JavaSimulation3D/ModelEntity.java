@@ -45,7 +45,7 @@ public class ModelEntity extends DisplayEntity {
 
 	// Breakdowns
 
-	@Keyword(desc = "Reliability is defined as:\n" +
+	@Keyword(description = "Reliability is defined as:\n" +
 	                " 100% - (plant breakdown time / total operation time)\n " +
 	                "or\n " +
 	                "(Operational Time)/(Breakdown + Operational Time)",
@@ -62,35 +62,35 @@ public class ModelEntity extends DisplayEntity {
 	protected double breakdownEndTime;           // End time of the most recent breakdown
 
 	// Breakdown Probability Distributions
-	@Keyword(desc = "A ProbabilityDistribution object that governs the duration of breakdowns (in hours).",
+	@Keyword(description = "A ProbabilityDistribution object that governs the duration of breakdowns (in hours).",
 	         example = "Object1  DowntimeDurationDistribution { BreakdownProbDist1 }")
 	private final EntityInput<ProbabilityDistribution> downtimeDurationDistribution;
 
-	@Keyword(desc = "A ProbabilityDistribution object that governs when breakdowns occur (in hours).",
+	@Keyword(description = "A ProbabilityDistribution object that governs when breakdowns occur (in hours).",
 	         example = "Object1  DowntimeIATDistribution { BreakdownProbDist1 }")
 	private final EntityInput<ProbabilityDistribution> downtimeIATDistribution;
 
 	// Maintenance
 
-	@Keyword(desc = "The simulation time for the start of the first maintenance for each maintenance cycle.",
+	@Keyword(description = "The simulation time for the start of the first maintenance for each maintenance cycle.",
 	         example = "Object1 FirstMaintenanceTime { 24 h }")
 	protected DoubleListInput firstMaintenanceTimes;
 
-	@Keyword(desc = "The time between maintenance activities for each maintenance cycle",
+	@Keyword(description = "The time between maintenance activities for each maintenance cycle",
 	         example = "Object1 MaintenanceInterval { 168 h }")
 	protected DoubleListInput maintenanceIntervals;
 
-	@Keyword(desc = "The durations of a single maintenance event for each maintenance cycle.",
+	@Keyword(description = "The durations of a single maintenance event for each maintenance cycle.",
 	         example = "Object1 MaintenanceDuration { 336 h }")
 	protected DoubleListInput maintenanceDurations;
 	protected IntegerVector maintenancePendings;  // Number of maintenance periods that are due
 
-	@Keyword(desc = "A Boolean value. Allows scheduled maintenances to be skipped if it overlaps " +
+	@Keyword(description = "A Boolean value. Allows scheduled maintenances to be skipped if it overlaps " +
 	                "with another planned maintenance event.",
 	         example = "Object1 SkipMaintenanceIfOverlap { TRUE }")
 	protected BooleanListInput skipMaintenanceIfOverlap;
 
-	@Keyword(desc = "A list of objects that share the maintenance schedule with this object. " +
+	@Keyword(description = "A list of objects that share the maintenance schedule with this object. " +
 	                "In order for the maintenance to start, all objects on this list must be available." +
 	                "This keyword is for Handlers and Signal Blocks only.",
 	         example = "Block1 SharedMaintenance { Block2 Block2 }")
@@ -101,15 +101,15 @@ public class ModelEntity extends DisplayEntity {
 
 	// Maintenance based on hours of operations
 
-	@Keyword(desc = "Working time for the start of the first maintenance for each maintenance cycle",
+	@Keyword(description = "Working time for the start of the first maintenance for each maintenance cycle",
 	         example = "Object1 FirstMaintenanceOperatingHours { 1000 2500 h }")
 	private final DoubleListInput firstMaintenanceOperatingHours;
 
-	@Keyword(desc = "Working time between one maintenance event and the next for each maintenance cycle",
+	@Keyword(description = "Working time between one maintenance event and the next for each maintenance cycle",
 	         example = "Object1 MaintenanceOperatingHoursIntervals { 2000 5000 h }")
 	private final DoubleListInput maintenanceOperatingHoursIntervals;
 
-	@Keyword(desc = "Duration of maintenance events based on working hours for each maintenance cycle",
+	@Keyword(description = "Duration of maintenance events based on working hours for each maintenance cycle",
 	         example = "Ship1 MaintenanceOperatingHoursDurations { 24 48 h }")
 	private final DoubleListInput maintenanceOperatingHoursDurations;
 	protected IntegerVector maintenanceOperatingHoursPendings;  // Number of maintenance periods that are due
@@ -121,7 +121,7 @@ public class ModelEntity extends DisplayEntity {
 	protected double nextMaintenanceDuration; // duration for next maintenance
 	protected DoubleVector lastScheduledMaintenanceTimes;
 
-	@Keyword(desc = "If maintenance has been deferred by the DeferMaintenanceLookAhead keyword " +
+	@Keyword(description = "If maintenance has been deferred by the DeferMaintenanceLookAhead keyword " +
 	                "for longer than this time, the maintenance will start even if " +
 	                "there is an object within the lookahead. There must be one entry for each " +
 	                "defined maintenance schedule if DeferMaintenanceLookAhead is used.  This" +
@@ -130,16 +130,16 @@ public class ModelEntity extends DisplayEntity {
 	private final DoubleListInput deferMaintenanceLimit;
 
 
-	@Keyword(desc = "If the duration of the downtime is longer than this time, equipment will be released",
+	@Keyword(description = "If the duration of the downtime is longer than this time, equipment will be released",
 	         example = "Object1 DowntimeToReleaseEquipment { 1.0 h }")
 	protected final DoubleInput downtimeToReleaseEquipment;
 
-	@Keyword(desc = "A list of Boolean values corresponding to the maintenance cycles. If a value is TRUE, " +
+	@Keyword(description = "A list of Boolean values corresponding to the maintenance cycles. If a value is TRUE, " +
 	                "then routes/tasks are released before performing the maintenance in the cycle.",
 	         example = "Object1 ReleaseEquipment { TRUE FALSE FALSE }")
 	protected final BooleanListInput releaseEquipment;
 
-	@Keyword(desc = "A list of Boolean values corresponding to the maintenance cycles. If a value is " +
+	@Keyword(description = "A list of Boolean values corresponding to the maintenance cycles. If a value is " +
 	                "TRUE, then maintenance in the cycle can start even if the equipment is presently " +
 	                "working.",
 	         example = "Object1 ForceMaintenance { TRUE FALSE FALSE }")
@@ -147,7 +147,7 @@ public class ModelEntity extends DisplayEntity {
 
 	// Statistics
 
-	@Keyword(desc = "If TRUE, then statistics for this object are " +
+	@Keyword(description = "If TRUE, then statistics for this object are " +
 	                "included in the main output report.",
 	         example = "Object1 PrintToReport { TRUE }")
 	private final BooleanInput printToReport;

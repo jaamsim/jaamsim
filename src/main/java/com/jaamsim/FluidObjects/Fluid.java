@@ -27,19 +27,19 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public class Fluid extends DisplayEntity {
 
-	@Keyword(desc = "The density of the fluid (default = water).",
+	@Keyword(description = "The density of the fluid (default = water).",
 	         example = "Fluid1 Density { 1000 kg/m3 }")
 	private final DoubleInput densityInput;
 
-	@Keyword(desc = "The dynamic viscosity of the fluid (default = water).",
+	@Keyword(description = "The dynamic viscosity of the fluid (default = water).",
 	         example = "Fluid1 Viscosity { 0.001002 Pa-s }")
 	private final DoubleInput viscosityInput;
 
-	@Keyword(desc = "The colour of the product, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the product, defined using a colour keyword or RGB values.",
 	         example = "Fluid1 Colour { red }")
 	private final ColourInput colourInput;
 
-	@Keyword(desc = "The acceleration of gravity.",
+	@Keyword(description = "The acceleration of gravity.",
 	         example = "Fluid1 Gravity { 9.81 m/s2 }")
 	private final DoubleInput gravityInput;
 

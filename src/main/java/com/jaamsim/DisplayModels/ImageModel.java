@@ -40,15 +40,15 @@ import com.sandwell.JavaSimulation3D.OverlayImage;
 
 public class ImageModel extends DisplayModel {
 
-	@Keyword(desc = "The file containing the image to show, valid formats are: BMP, JPG, PNG, PCX, GIF.",
+	@Keyword(description = "The file containing the image to show, valid formats are: BMP, JPG, PNG, PCX, GIF.",
 	         example = "Ship3DModel ImageFile { ..\\images\\CompanyIcon.png }")
 	private final StringInput imageFile;
 
-	@Keyword(desc = "Indicates the loaded image has an alpha channel (transparency information) that should be used",
+	@Keyword(description = "Indicates the loaded image has an alpha channel (transparency information) that should be used",
 	         example = "CompanyLogo Transparent { TRUE }")
 	private final BooleanInput transparent;
 
-	@Keyword(desc = "Indicates the loaded image should use texture compression in video memory",
+	@Keyword(description = "Indicates the loaded image should use texture compression in video memory",
 	         example = "WorldMap CompressedTexture { TRUE }")
 	private final BooleanInput compressedTexture;
 

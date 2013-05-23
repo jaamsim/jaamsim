@@ -33,20 +33,20 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
-	@Keyword(desc = "The travel time for the conveyor.",
+	@Keyword(description = "The travel time for the conveyor.",
 	         example = "Conveyor1 TravelTime { 10.0 s }")
 	private final DoubleInput travelTimeInput;
 
-    @Keyword(desc = "A list of points in { x, y, z } coordinates defining the line segments that" +
+    @Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
             "make up the arrow.  When two coordinates are given it is assumed that z = 0." ,
              example = "Conveyor1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
 	private final Vec3dListInput pointsInput;
 
-	@Keyword(desc = "The width of the Arrow line segments in pixels.",
+	@Keyword(description = "The width of the Arrow line segments in pixels.",
 	         example = "Conveyor1 Width { 1 }")
 	private final DoubleInput widthInput;
 
-	@Keyword(desc = "The colour of the arrow, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the arrow, defined using a colour keyword or RGB values.",
 	         example = "Conveyor1 Color { red }")
 	private final ColourInput colorInput;
 

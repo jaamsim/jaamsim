@@ -10,24 +10,24 @@ import com.sandwell.JavaSimulation.StringInput;
 
 public class OverlayTextLabel extends DisplayEntity {
 
-	@Keyword(desc = "The static text to be displayed.  If spaces are included, enclose the text in single quotes.",
+	@Keyword(description = "The static text to be displayed.  If spaces are included, enclose the text in single quotes.",
 	         example = "TitleLabel Text { 'Example Simulation Model' }")
 	private final StringInput text;
 
-	@Keyword(desc = "The height of the font as displayed in the view window. Unit is in pixels.",
+	@Keyword(description = "The height of the font as displayed in the view window. Unit is in pixels.",
 	         example = "TitleLabel TextHeight { 15 }")
 	private final IntegerInput textHeight;
 
-	@Keyword(desc = "The position of the label, from the upper left corner of the window to the upper left corner " +
+	@Keyword(description = "The position of the label, from the upper left corner of the window to the upper left corner " +
 	                "of the label. Value is in pixels",
 	     example = "TitleLabel ScreenPosition { 20 20 }")
 	private final IntegerListInput screenPosition;
 
-	@Keyword(desc = "If this text label should be aligned from the right edge of the window (instead of the left)",
+	@Keyword(description = "If this text label should be aligned from the right edge of the window (instead of the left)",
 	         example = "TitleLabel AlignRight { TRUE }")
 	private final BooleanInput alignRight;
 
-	@Keyword(desc = "If this text label should be aligned from the bottom edge of the window (instead of the top)",
+	@Keyword(description = "If this text label should be aligned from the bottom edge of the window (instead of the top)",
 	         example = "TitleLabel AlignBottom { TRUE }")
 	private final BooleanInput alignBottom;
 

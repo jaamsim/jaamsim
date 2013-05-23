@@ -24,11 +24,11 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class NormalDistribution extends NewProbabilityDistribution {
 
-	@Keyword(desc = "The mean of the normal distribution (ignoring the MinValue and MaxValue keywords).",
+	@Keyword(description = "The mean of the normal distribution (ignoring the MinValue and MaxValue keywords).",
 	         example = "NormalDist-1 Mean { 5.0 }")
 	private final DoubleInput meanInput;
 
-	@Keyword(desc = "The standard deviation of the normal distribution (ignoring the MinValue and MaxValue keywords).",
+	@Keyword(description = "The standard deviation of the normal distribution (ignoring the MinValue and MaxValue keywords).",
 	         example = "NormalDist-1 StandardDeviation { 2.0 }")
 	private final DoubleInput standardDeviationInput;
 

@@ -33,20 +33,20 @@ import com.sandwell.JavaSimulation.Vec3dListInput;
  */
 public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoints {
 
-	@Keyword(desc = "Volumetric flow rate.",
+	@Keyword(description = "Volumetric flow rate.",
 	         example = "FluidFixedFlow-1 FlowRate { 1.0 m3/s }")
 	private final DoubleInput flowRateInput;
 
-    @Keyword(desc = "A list of points in { x, y, z } coordinates defining the line segments that" +
+    @Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
             "make up the pipe.  When two coordinates are given it is assumed that z = 0." ,
              example = "Pipe1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
 	private final Vec3dListInput pointsInput;
 
-	@Keyword(desc = "The width of the pipe segments in pixels.",
+	@Keyword(description = "The width of the pipe segments in pixels.",
 	         example = "Pipe1 Width { 1 }")
 	private final DoubleInput widthInput;
 
-	@Keyword(desc = "The colour of the pipe, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the pipe, defined using a colour keyword or RGB values.",
 	         example = "Pipe1 Colour { red }")
 	private final ColourInput colourInput;
 

@@ -7,11 +7,11 @@ public class BooleanIndicator extends DisplayEntity {
 
 	private PropertyReader propReader;
 
-	@Keyword(desc = "The colour of the indicator when the property is true",
+	@Keyword(description = "The colour of the indicator when the property is true",
 	         example = "BinLevel TrueColor { green }")
 	private final ColourInput trueColor;
 
-	@Keyword(desc = "The colour of the indicator when the property is false",
+	@Keyword(description = "The colour of the indicator when the property is false",
 	         example = "BinLevel TrueColor { green }")
 	private final ColourInput falseColor;
 

@@ -27,19 +27,19 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class FluidCentrifugalPump extends FluidComponent {
 
-	@Keyword(desc = "Maximum volumetric flow rate that the pump can generate.",
+	@Keyword(description = "Maximum volumetric flow rate that the pump can generate.",
 	         example = "Pump1 MaxFlowRate { 1.0 m3/s }")
 	private final DoubleInput maxFlowRateInput;
 
-	@Keyword(desc = "Maximum static pressure that the pump can generate (at zero flow rate).",
+	@Keyword(description = "Maximum static pressure that the pump can generate (at zero flow rate).",
 	         example = "Pump1 MaxPressure { 1.0 Pa }")
 	private final DoubleInput maxPressureInput;
 
-	@Keyword(desc = "Maximum static pressure loss speed for the pump (at maximum flow rate).",
+	@Keyword(description = "Maximum static pressure loss speed for the pump (at maximum flow rate).",
 	         example = "Pump1 MaxPressureLoss { 1.0 Pa }")
 	private final DoubleInput maxPressureLossInput;
 
-	@Keyword(desc = "The CalculationEntity whose output sets the rotational speed of the pump.  " +
+	@Keyword(description = "The CalculationEntity whose output sets the rotational speed of the pump.  " +
 			"The output value is ratio of present speed to maximum speed (0.0 - 1.0).",
 	         example = "Pump1 SpeedController { Calc1 }")
 	private final EntityInput<DoubleCalculation> speedControllerInput;

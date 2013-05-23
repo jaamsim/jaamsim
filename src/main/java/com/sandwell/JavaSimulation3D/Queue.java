@@ -27,13 +27,13 @@ import com.sandwell.JavaSimulation.Vector;
 
 public class Queue extends DisplayEntity {
 
-	@Keyword(desc = "The amount of graphical space shown between DisplayEntity objects in the queue.",
+	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
 	         example = "Queue1 Spacing { 1 }")
 	private final DoubleInput spacingInput;
 
 	protected ArrayList<DisplayEntity> itemList;
 
-	@Keyword(desc = "The number of queuing entities in each row.",
+	@Keyword(description = "The number of queuing entities in each row.",
 			example = "Queue1 MaxPerLine { 4 }")
 	protected final IntegerInput maxPerLineInput; // maximum items per sub line-up of queue
 

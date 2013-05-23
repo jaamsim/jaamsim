@@ -44,28 +44,28 @@ import com.sandwell.JavaSimulation3D.TextLabel;
 
 public class TextModel extends DisplayModel {
 
-	@Keyword(desc = "The name of the font to be used for the label. The " +
+	@Keyword(description = "The name of the font to be used for the label. The " +
 	                "font name must be enclosed in single quotes.",
 	         example = "TitleModel FontName { 'Arial' }")
 	private final StringChoiceInput fontName;
 
-	@Keyword(desc = "A list of font styles to be applied to the label, e.g. Bold, Italic. ",
+	@Keyword(description = "A list of font styles to be applied to the label, e.g. Bold, Italic. ",
 	         example = "TitleModel FontStyle { Bold }  ")
 	private final StringListInput fontStyle;
 
-	@Keyword(desc = "The colour of the font, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the font, defined using a colour keyword or RGB values.",
 	         example = "TitleModel FontColor { Red }")
 	private final ColourInput fontColor;
 
-	@Keyword(desc = "A Boolean value.  If TRUE, then a drop shadow appears for the text label.",
+	@Keyword(description = "A Boolean value.  If TRUE, then a drop shadow appears for the text label.",
 	         example = "TitleModel  DropShadow { TRUE }")
 	private final BooleanInput dropShadow;
 
-	@Keyword(desc = "The colour for the drop shadow, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour for the drop shadow, defined using a colour keyword or RGB values.",
 	         example = "TitleModel  DropShadowColour { red }")
 	private final ColourInput dropShadowColor;
 
-	@Keyword(desc = "A set of { x, y, z } numbers that define the offset in each direction of the drop shadow from the TextLabel.",
+	@Keyword(description = "A set of { x, y, z } numbers that define the offset in each direction of the drop shadow from the TextLabel.",
 	         example = "TitleModel  DropShadowOffset { 0.1 0.1 0.0 }")
 	private final Vec3dInput dropShadowOffset;
 

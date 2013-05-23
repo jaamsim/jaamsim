@@ -29,11 +29,11 @@ import com.sandwell.JavaSimulation.Vector;
 public class ScriptEntity extends Entity {
 
 
-	@Keyword(desc = "The name of the script file for the script entity.",
+	@Keyword(description = "The name of the script file for the script entity.",
 	         example = "ScriptEntity Script { test.scr }")
 	private final FileInput scriptFileName;
 
-	@Keyword(desc = "The Time keyword appears inside the script file. The value represents the simulation " +
+	@Keyword(description = "The Time keyword appears inside the script file. The value represents the simulation " +
 	                "time at which the next set of commands in the script are implemented.",
 	         example = "ScriptEntity Time { 24.0 h }")
 	private final DoubleInput scriptTime; // the time that has been read in the script

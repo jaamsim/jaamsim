@@ -29,35 +29,35 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class PIDController extends DoubleCalculation {
 
-	@Keyword(desc = "The Calculation entity that represents the set point for the PID controller.",
+	@Keyword(description = "The Calculation entity that represents the set point for the PID controller.",
 	         example = "PIDController-1 SetPoint { Calc1 }")
 	private final EntityInput<DoubleCalculation> setPointInput;
 
-	@Keyword(desc = "The Calculation entity that represents the process variable feedback to the PID controller.",
+	@Keyword(description = "The Calculation entity that represents the process variable feedback to the PID controller.",
 	         example = "PIDController-1 ProcessVariable { Calc1 }")
 	private final EntityInput<DoubleCalculation> processVariableInput;
 
-	@Keyword(desc = "The scale coefficient applied to the output signal.",
+	@Keyword(description = "The scale coefficient applied to the output signal.",
 	         example = "PIDController-1 ScaleConversionCoefficient { 1.0 }")
 	private final DoubleInput scaleConversionCoefficientInput;
 
-	@Keyword(desc = "The coefficient applied to the proportional feedback loop.",
+	@Keyword(description = "The coefficient applied to the proportional feedback loop.",
 	         example = "PIDController-1 ProportionalGain { 1.0 }")
 	private final DoubleInput proportionalGainInput;
 
-	@Keyword(desc = "The coefficient applied to the integral feedback loop.",
+	@Keyword(description = "The coefficient applied to the integral feedback loop.",
 	         example = "PIDController-1 IntegralTime { 1.0 s }")
 	private final DoubleInput integralTimeInput;
 
-	@Keyword(desc = "The coefficient applied to the differential feedback loop.",
+	@Keyword(description = "The coefficient applied to the differential feedback loop.",
 	         example = "PIDController-1 DerivativeTime { 1.0 s }")
 	private final DoubleInput derivativeTimeInput;
 
-	@Keyword(desc = "The lower limit for the output signal.",
+	@Keyword(description = "The lower limit for the output signal.",
 	         example = "PIDController-1 OutputLow { 0.0 }")
 	private final DoubleInput outputLowInput;
 
-	@Keyword(desc = "The upper limit for the output signal.",
+	@Keyword(description = "The upper limit for the output signal.",
 	         example = "PIDController-1 OutputHigh { 1.0 }")
 	private final DoubleInput outputHighInput;
 

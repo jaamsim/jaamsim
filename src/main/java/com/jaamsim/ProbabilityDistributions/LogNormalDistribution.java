@@ -24,11 +24,11 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class LogNormalDistribution extends NewProbabilityDistribution {
 
-	@Keyword(desc = "The mean of the normal distribution (not the mean of the lognormal).",
+	@Keyword(description = "The mean of the normal distribution (not the mean of the lognormal).",
 	         example = "LogNormalDist-1 NormalMean { 5.0 }")
 	private final DoubleInput normalMeanInput;
 
-	@Keyword(desc = "The standard deviation of the normal distribution (not the standard deviation of the lognormal).",
+	@Keyword(description = "The standard deviation of the normal distribution (not the standard deviation of the lognormal).",
 	         example = "LogNormalDist-1 NormalStandardDeviation { 2.0 }")
 	private final DoubleInput normalStandardDeviationInput;
 

@@ -28,11 +28,11 @@ import com.sandwell.JavaSimulation.Vec3dInput;
  * stage construct. Abstract class as it does not define the doProcess() method.
  */
 public class Region extends Entity {
-@Keyword(desc = "The location of the origin (0,0,0) of the region in the world.",
+@Keyword(description = "The location of the origin (0,0,0) of the region in the world.",
       example = "Region1 Origin { -3.922 -1.830 0.000 m }")
 private final Vec3dInput originInput;
 
-@Keyword(desc = "Euler angles describing the orientation of the region's local coordinate system.",
+@Keyword(description = "Euler angles describing the orientation of the region's local coordinate system.",
       example = "Region1 Orientation { 0 0 90 deg }")
 private final Vec3dInput orientationInput;
 

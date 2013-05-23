@@ -27,7 +27,7 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class MovingAverage extends DoubleCalculation {
 
-	@Keyword(desc = "The number of input values over which to average.",
+	@Keyword(description = "The number of input values over which to average.",
 	         example = "MovingAverage-1 NumberOfSamples { 10 }")
 	private final IntegerInput numberOfSamplesInput;
 

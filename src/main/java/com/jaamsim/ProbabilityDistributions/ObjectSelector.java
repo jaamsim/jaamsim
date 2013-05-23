@@ -28,11 +28,11 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public abstract class ObjectSelector extends DisplayEntity {
 
-	@Keyword(desc = "The list of entities from which to select.",
+	@Keyword(description = "The list of entities from which to select.",
 	         example = "ObjectDist-1 EntityList { Ent-1  Ent-2 }")
 	private final EntityListInput<DisplayEntity> entityListInput;
 
-	@Keyword(desc = "The list of probabilities corresponding to the entities in the EntityList.  Must sum to 1.0.",
+	@Keyword(description = "The list of probabilities corresponding to the entities in the EntityList.  Must sum to 1.0.",
 	         example = "ObjectDist-1 ProbabilityList { 0.3  0.7 }")
 	private final DoubleListInput probabilityListInput;
 

@@ -24,7 +24,7 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class Polynomial extends DoubleCalculation {
 
-	@Keyword(desc = "The list of coefficients for the polynomial function.  For example, inputs c0, c1, c2 give a polynomial" +
+	@Keyword(description = "The list of coefficients for the polynomial function.  For example, inputs c0, c1, c2 give a polynomial" +
 			" P(x) = c0 + c1*x^2 + c2*x^3 ",
 	         example = "Polynomial1 CoefficientList { 2.0  1.5 }")
 	private final DoubleListInput coefficientListInput;

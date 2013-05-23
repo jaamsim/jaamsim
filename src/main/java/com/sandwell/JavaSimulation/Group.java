@@ -26,7 +26,7 @@ import com.jaamsim.input.InputAgent;
  * If the group appears as the value in a line of input, then the list of objects is used as the value.
  */
 public class Group extends Entity {
-	@Keyword(desc = "If TRUE show the members of the group as a seperate table in the output " +
+	@Keyword(description = "If TRUE show the members of the group as a seperate table in the output " +
 	                "reports, including an entry for \"Total\"",
 	         example = "Group1 Reportable { TRUE }")
 	private final BooleanInput reportable;

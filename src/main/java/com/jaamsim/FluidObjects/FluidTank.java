@@ -28,19 +28,19 @@ import com.sandwell.JavaSimulation3D.DisplayModelCompat;
  */
 public class FluidTank extends FluidComponent {
 
-	@Keyword(desc = "The total volume of fluid that can be stored in the tank.",
+	@Keyword(description = "The total volume of fluid that can be stored in the tank.",
 	         example = "Tank1 Capacity { 1.0 m3 }")
 	private final DoubleInput capacityInput;
 
-	@Keyword(desc = "The volume of fluid in the tank at the start of the simulation.",
+	@Keyword(description = "The volume of fluid in the tank at the start of the simulation.",
 	         example = "Tank1 InitialVolume { 1.0 m3 }")
 	private final DoubleInput initialVolumeInput;
 
-	@Keyword(desc = "The ambient pressure in the tank.",
+	@Keyword(description = "The ambient pressure in the tank.",
 	         example = "Tank1 AmbientPressure { 1.0 Pa }")
 	private final DoubleInput ambientPressureInput;
 
-	@Keyword(desc = "The height of the inlet to the tank above its outlet.",
+	@Keyword(description = "The height of the inlet to the tank above its outlet.",
 	         example = "Tank1 InletHeight { 1.0 m }")
 	private final DoubleInput inletHeightInput;
 

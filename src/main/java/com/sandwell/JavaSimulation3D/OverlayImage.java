@@ -7,20 +7,20 @@ import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
 
 public class OverlayImage extends DisplayEntity {
-	@Keyword(desc = "The position of the image, from the upper left corner of the window to the upper left corner " +
+	@Keyword(description = "The position of the image, from the upper left corner of the window to the upper left corner " +
 	                "of the image. Value is in pixels",
 	         example = "Logo ScreenPosition { 20 20 }")
 	private final IntegerListInput screenPosition;
 
-	@Keyword(desc = "The size of the image. Value is in pixels",
+	@Keyword(description = "The size of the image. Value is in pixels",
 	         example = "Logo ImageSize { 200 100 }")
 	private final IntegerListInput size;
 
-	@Keyword(desc = "If this text label should be aligned from the right edge of the window (instead of the left)",
+	@Keyword(description = "If this text label should be aligned from the right edge of the window (instead of the left)",
 	         example = "Logo AlignRight { TRUE }")
 	private final BooleanInput alignRight;
 
-	@Keyword(desc = "If this text label should be aligned from the bottom edge of the window (instead of the top)",
+	@Keyword(description = "If this text label should be aligned from the bottom edge of the window (instead of the top)",
 	         example = "Logo AlignBottom { TRUE }")
 	private final BooleanInput alignBottom;
 

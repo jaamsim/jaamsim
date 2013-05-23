@@ -24,7 +24,7 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class Integrator extends DoubleCalculation {
 
-	@Keyword(desc = "The initial value for the integral at time = 0.",
+	@Keyword(description = "The initial value for the integral at time = 0.",
 	         example = "Integrator1 InitialValue { 5.5 }")
 	private final DoubleInput initialValueInput;
 

@@ -26,7 +26,7 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class Lag extends DoubleCalculation {
 
-	@Keyword(desc = "The time constant for this operation: output = integral( input - output) / LagTime.",
+	@Keyword(description = "The time constant for this operation: output = integral( input - output) / LagTime.",
 	         example = "Lag-1 LagTime { 15 s }")
 	private final DoubleInput lagTimeInput;
 

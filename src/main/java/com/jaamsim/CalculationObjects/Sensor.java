@@ -27,11 +27,11 @@ import com.sandwell.JavaSimulation.StringInput;
  */
 public class Sensor extends DoubleCalculation {
 
-	@Keyword(desc = "The entity to read the output from.",
+	@Keyword(description = "The entity to read the output from.",
 	         example = "Sensor1 Entity { StockPile2 }")
 	private final EntityInput<Entity> entityInput;
 
-	@Keyword(desc = "The name of the output to read.",
+	@Keyword(description = "The name of the output to read.",
 	         example = "Sensor1 OutputName { 'Contents' }")
 	private final StringInput outputNameInput;
 

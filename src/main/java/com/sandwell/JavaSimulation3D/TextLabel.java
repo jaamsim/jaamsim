@@ -20,11 +20,11 @@ import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
 
 public class TextLabel extends DisplayEntity  {
-	@Keyword(desc = "The static text to be displayed.  If spaces are included, enclose the text in single quotes.",
+	@Keyword(description = "The static text to be displayed.  If spaces are included, enclose the text in single quotes.",
 	         example = "TitleLabel Text { 'Example Simulation Model' }")
 	private final StringInput text;
 
-	@Keyword(desc = "The height of the font as displayed in the view window.",
+	@Keyword(description = "The height of the font as displayed in the view window.",
 	         example = "TitleLabel TextHeight { 15 m }")
 	private final DoubleInput textHeight;
 

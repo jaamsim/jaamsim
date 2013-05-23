@@ -27,11 +27,11 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public abstract class CalculationEntity extends DisplayEntity {
 
-	@Keyword(desc = "The Controller that controls the updating of the calculation.",
+	@Keyword(description = "The Controller that controls the updating of the calculation.",
 	         example = "Calculation1 Controller { PLC1 }")
 	private final EntityInput<Controller> controllerInput;
 
-	@Keyword(desc = "The sequence number used by the Controller to determine the order in which calculations are performed." +
+	@Keyword(description = "The sequence number used by the Controller to determine the order in which calculations are performed." +
 			"  A calculation with a lower value is executed before the ones with higher values.",
 	         example = "Calculation1 SequenceNumber { 2.1 }")
 	private final DoubleInput sequenceNumberInput;
