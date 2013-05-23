@@ -63,7 +63,7 @@ public class GraphicBox extends JDialog {
 
 
 	private final JCheckBox useModelSize;
-	private final JCheckBox useModelPose;
+	private final JCheckBox useModelPosition;
 	static {
 		displayModelList = new JList();
 	}
@@ -222,7 +222,7 @@ public class GraphicBox extends JDialog {
 						ratio = entitySize.z/modelSize.z;
 					}
 				}
-				if (useModelPose.isSelected()) {
+				if (useModelPosition.isSelected()) {
 
 					Vec4d entityPos = modelBounds.getCenter();
 
@@ -237,12 +237,12 @@ public class GraphicBox extends JDialog {
 		} );
 		useModelSize = new JCheckBox("Use Display Model Size");
 		useModelSize.setSelected(true);
-		useModelPose = new JCheckBox("Keep Model Position");
-		useModelPose.setSelected(false);
+		useModelPosition = new JCheckBox("Keep Model Position");
+		useModelPosition.setSelected(false);
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout( new FlowLayout(FlowLayout.RIGHT) );
 		buttonPanel.add(useModelSize);
-		buttonPanel.add(useModelPose);
+		buttonPanel.add(useModelPosition);
 		buttonPanel.add(importButton);
 		buttonPanel.add(acceptButton);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
