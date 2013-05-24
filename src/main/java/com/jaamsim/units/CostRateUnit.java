@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class CostRateUnit extends Unit {
+	static {
+		Unit.setSIUnit(CostRateUnit.class, "$/s");
+	}
+
 	public CostRateUnit() {}
 }

@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class AngleUnit extends Unit {
+	static {
+		Unit.setSIUnit(AngleUnit.class, "rad");
+	}
+
 	public AngleUnit() {}
 }

@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class EnergyDensityUnit extends Unit {
+	static {
+		Unit.setSIUnit(EnergyDensityUnit.class, "J/m3");
+	}
+
 	public EnergyDensityUnit() {}
 }

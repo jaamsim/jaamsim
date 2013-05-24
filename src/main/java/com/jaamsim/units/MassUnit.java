@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class MassUnit extends Unit {
+	static {
+		Unit.setSIUnit(MassUnit.class, "kg");
+	}
+
 	public MassUnit() {}
 }

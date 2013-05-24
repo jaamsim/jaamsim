@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class SpeedUnit extends Unit {
+	static {
+		Unit.setSIUnit(SpeedUnit.class, "m/s");
+	}
+
 	public SpeedUnit() {}
 }

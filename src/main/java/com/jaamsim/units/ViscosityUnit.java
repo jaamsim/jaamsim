@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class ViscosityUnit extends Unit {
+	static {
+		Unit.setSIUnit(ViscosityUnit.class, "Pa-s");
+	}
+
 	public ViscosityUnit() {}
 }

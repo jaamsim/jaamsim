@@ -14,16 +14,24 @@
  */
 package com.jaamsim.units;
 
+import java.util.HashMap;
+
 import com.sandwell.JavaSimulation.AliasListInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
 
 public abstract class Unit extends Entity {
+	private static final HashMap<Class<? extends Unit>, String> siUnit;
+
 	// if one entry, it is the number of SI units per this unit.  i.e. multiply by this number to convert this unit into SI units
 	// if two entries, it is the number of SI units per this unit expressed as a fraction.  i.e. multiply by the first number and divide by the second number to convert this unit into SI units
 	private final DoubleListInput conversionFactorToSI;
 	private final AliasListInput alias; // a list of strings that can be used as alternate names of the object
+
+	static {
+		siUnit = new HashMap<Class<? extends Unit>, String>();
+	}
 
 	{
 		conversionFactorToSI = new DoubleListInput( "ConversionFactorToSI", "Key Inputs", null );
@@ -45,6 +53,23 @@ public abstract class Unit extends Entity {
 			}
 		}
 		super.kill();
+	}
+
+	public static final void setSIUnit(Class<? extends Unit> unitType, String si) {
+		siUnit.put(unitType, si);
+	}
+
+	/**
+	 * Get the SI unit for the given unit type.
+	 * @param unitType
+	 * @return a string describing the SI unit, or if one has not been defined: 'SI'
+	 */
+	public static final String getSIUnit(Class<? extends Unit> unitType) {
+		String unit = siUnit.get(unitType);
+		if (unit != null)
+			return unit;
+
+		return "SI";
 	}
 
 	/**

@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class PressureUnit extends Unit {
+	static {
+		Unit.setSIUnit(PressureUnit.class, "Pa");
+	}
+
 	public PressureUnit() {}
 }

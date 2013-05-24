@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class LinearDensityUnit extends Unit {
+	static {
+		Unit.setSIUnit(LinearDensityUnit.class, "kg/m");
+	}
+
 	public LinearDensityUnit() {}
 }

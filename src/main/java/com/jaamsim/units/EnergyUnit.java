@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class EnergyUnit extends Unit {
+	static {
+		Unit.setSIUnit(EnergyUnit.class, "J");
+	}
+
 	public EnergyUnit() {}
 }

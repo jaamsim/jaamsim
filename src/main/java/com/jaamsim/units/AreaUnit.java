@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class AreaUnit extends Unit {
+	static {
+		Unit.setSIUnit(AreaUnit.class, "m2");
+	}
+
 	public AreaUnit() {}
 }

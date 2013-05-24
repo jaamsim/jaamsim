@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class MassFlowUnit extends Unit {
+	static {
+		Unit.setSIUnit(MassFlowUnit.class, "kg/s");
+	}
+
 	public MassFlowUnit() {}
 }

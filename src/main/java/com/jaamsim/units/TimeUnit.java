@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class TimeUnit extends Unit {
+	static {
+		Unit.setSIUnit(TimeUnit.class, "s");
+	}
+
 	public TimeUnit() {}
 }

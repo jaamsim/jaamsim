@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class AngularSpeedUnit extends Unit {
+	static {
+		Unit.setSIUnit(AngularSpeedUnit.class, "rad/s");
+	}
+
 	public AngularSpeedUnit() {}
 }

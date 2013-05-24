@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class VolumeUnit extends Unit {
+	static {
+		Unit.setSIUnit(VolumeUnit.class, "m3");
+	}
+
 	public VolumeUnit() {}
 }

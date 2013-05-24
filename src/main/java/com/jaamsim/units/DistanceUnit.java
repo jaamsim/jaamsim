@@ -15,5 +15,9 @@
 package com.jaamsim.units;
 
 public class DistanceUnit extends Unit {
+	static {
+		Unit.setSIUnit(DistanceUnit.class, "m");
+	}
+
 	public DistanceUnit() {}
 }
