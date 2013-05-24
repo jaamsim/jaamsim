@@ -43,6 +43,7 @@ public class Process extends Thread {
 
 	private static double timeScale; // the scale from discrete to continuous time
 	private static double ticksPerSecond; // The number of discrete ticks per simulated second
+	private static double secondsPerTick; // The reciprocal of ticksPerSecond
 
 	private Entity target; // The entity whose method is to be executed
 	private Method method; // The method to be executed
@@ -377,10 +378,15 @@ public class Process extends Thread {
 	static void setSimTimeScale(double scale) {
 		timeScale = scale;
 		ticksPerSecond = scale / 3600.0d;
+		secondsPerTick = 3600.0d / scale;
 	}
 
 	public static double getTicksPerSecond() {
 		return ticksPerSecond;
+	}
+
+	public static double getSecondsPerTick() {
+		return secondsPerTick;
 	}
 
 	public static double getSimTimeFactor() {

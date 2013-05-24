@@ -152,7 +152,7 @@ public class Entity {
 		catch (ErrorException e) {
 			internalTime = EventManager.rootManager.currentTime();
 		}
-		return internalTime / Process.getTicksPerSecond();
+		return internalTime * Process.getSecondsPerTick();
 	}
 
 	public final double getCurrentTime() {
@@ -443,10 +443,6 @@ public class Entity {
 		getEventManager().scheduleSingleProcess(0, EventManager.PRIO_LASTFIFO, this, methodName, args);
 	}
 
-	private long secondsToTicks(double secs) {
-		return (long)Math.floor(secs * Process.getTicksPerSecond());
-	}
-
 	/**
 	 * Wait a number of simulated seconds.
 	 * @param secs
@@ -461,7 +457,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWait(double secs, int priority) {
-		long ticks = secondsToTicks(secs);
+		long ticks = (long)Math.floor(secs * Process.getTicksPerSecond());
 		this.simWaitTicks(ticks, priority);
 	}
 
