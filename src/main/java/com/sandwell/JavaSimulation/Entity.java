@@ -475,7 +475,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWaitTicks(long ticks, int priority) {
-		getEventManager().scheduleWait(ticks, priority, this);
+		getEventManager().waitTicks(ticks, priority, this);
 	}
 
 	/**

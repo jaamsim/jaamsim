@@ -557,6 +557,21 @@ public final class EventManager implements Runnable {
 	 * Schedules a future event to occur with a given priority.  Lower priority
 	 * events will be executed preferentially over higher priority.  This is
 	 * by lower priority events being placed higher on the event stack.
+	 * @param ticks the number of discrete ticks from now to schedule the event.
+	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
+	 */
+	void waitTicks(long ticks, int priority, Entity caller) {
+		// Test for negative duration schedule wait length
+		if(ticks < 0)
+			throw new ErrorException("Negative duration wait is invalid (wait length specified to be %d )", ticks);
+
+		raw_scheduleWait(ticks, priority, caller);
+	}
+
+	/**
+	 * Schedules a future event to occur with a given priority.  Lower priority
+	 * events will be executed preferentially over higher priority.  This is
+	 * by lower priority events being placed higher on the event stack.
 	 * @param waitLength the length of time from now to schedule the event.
 	 * @param eventPriority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
