@@ -141,29 +141,30 @@ public class Entity {
 	}
 
 	/**
+	 * Get the current Simulation ticks value.
+	 * @return the current simulation tick
+	 */
+	public final long getSimTicks() {
+		try {
+			return Process.currentTime();
+		}
+		catch (ErrorException e) {
+			return EventManager.rootManager.currentTime();
+		}
+	}
+
+	/**
 	 * Get the current Simulation time.
 	 * @return the current time in seconds
 	 */
 	public final double getSimTime() {
-		long internalTime = 0;
-		try {
-			internalTime = Process.currentTime();
-		}
-		catch (ErrorException e) {
-			internalTime = EventManager.rootManager.currentTime();
-		}
-		return internalTime * Process.getSecondsPerTick();
+		long ticks = getSimTicks();
+		return ticks * Process.getSecondsPerTick();
 	}
 
 	public final double getCurrentTime() {
-		long internalTime = 0;
-		try {
-			internalTime = Process.currentTime();
-		}
-		catch (ErrorException e) {
-			internalTime = EventManager.rootManager.currentTime();
-		}
-		return internalTime / Process.getSimTimeFactor();
+		long ticks = getSimTicks();
+		return ticks / Process.getSimTimeFactor();
 	}
 
 	protected void mapInput(Input<?> in, String key) {
