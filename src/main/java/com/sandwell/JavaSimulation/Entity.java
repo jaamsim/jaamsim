@@ -529,17 +529,6 @@ public class Entity {
 		getEventManager().waitUntilEnded(this);
 	}
 
-	/**
-	 * Increment clock by the minimum time step
-	 */
-	public final void scheduleWaitOneTick() {
-		getEventManager().scheduleWait(1, EventManager.PRIO_DEFAULT, this);
-	}
-
-	public final void scheduleWaitOneTick( int priority ) {
-		getEventManager().scheduleWait(1, priority, this);
-	}
-
 	// ******************************************************************************************************
 	// EDIT TABLE METHODS
 	// ******************************************************************************************************
