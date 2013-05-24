@@ -140,6 +140,21 @@ public class Entity {
 		return seq;
 	}
 
+	/**
+	 * Get the current Simulation time.
+	 * @return the current time in seconds
+	 */
+	public final double getSimTime() {
+		long internalTime = 0;
+		try {
+			internalTime = Process.currentTime();
+		}
+		catch (ErrorException e) {
+			internalTime = EventManager.rootManager.currentTime();
+		}
+		return internalTime / Process.getTicksPerSecond();
+	}
+
 	public final double getCurrentTime() {
 		long internalTime = 0;
 		try {
@@ -428,6 +443,45 @@ public class Entity {
 		getEventManager().scheduleSingleProcess(0, EventManager.PRIO_LASTFIFO, this, methodName, args);
 	}
 
+	private long secondsToTicks(double secs) {
+		return (long)Math.floor(secs * Process.getTicksPerSecond());
+	}
+
+	/**
+	 * Wait a number of simulated seconds.
+	 * @param secs
+	 */
+	public final void simWait(double secs) {
+		simWait(secs, EventManager.PRIO_DEFAULT);
+	}
+
+	/**
+	 * Wait a number of simulated seconds and a given priority.
+	 * @param secs
+	 * @param priority
+	 */
+	public final void simWait(double secs, int priority) {
+		long ticks = secondsToTicks(secs);
+		this.simWaitTicks(ticks, priority);
+	}
+
+	/**
+	 * Wait a number of discrete simulation ticks.
+	 * @param secs
+	 */
+	public final void simWaitTicks(long ticks) {
+		simWaitTicks(ticks, EventManager.PRIO_DEFAULT);
+	}
+
+	/**
+	 * Wait a number of discrete simulation ticks and a given priority.
+	 * @param secs
+	 * @param priority
+	 */
+	public final void simWaitTicks(long ticks, int priority) {
+		getEventManager().scheduleWait(ticks, priority, this);
+	}
+
 	/**
 	 * Wrapper of eventManager.scheduleWait(). Used as a syntax nicity for
 	 * calling the wait method.
@@ -436,21 +490,6 @@ public class Entity {
 	 */
 	public final void scheduleWait(double duration) {
 		long waitLength = calculateDelayLength(duration);
-		getEventManager().scheduleWait(waitLength, EventManager.PRIO_DEFAULT, this);
-	}
-
-	public final void scheduleWaitBefore(double duration) {
-		long waitLength = (long)Math.floor(duration * Process.getSimTimeFactor());
-		getEventManager().scheduleWait(waitLength, EventManager.PRIO_DEFAULT, this);
-	}
-
-	public final void scheduleWaitBefore(double duration, int priority) {
-		long waitLength = (long)Math.floor(duration * Process.getSimTimeFactor());
-		getEventManager().scheduleWait(waitLength, priority, this);
-	}
-
-	public final void scheduleWaitAfter(double duration) {
-		long waitLength = (long)Math.ceil(duration * Process.getSimTimeFactor());
 		getEventManager().scheduleWait(waitLength, EventManager.PRIO_DEFAULT, this);
 	}
 

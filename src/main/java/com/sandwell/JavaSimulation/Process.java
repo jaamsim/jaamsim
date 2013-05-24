@@ -42,6 +42,7 @@ public class Process extends Thread {
 	private static int numProcesses = 0; // Total of all created processes to date (used to name new Processes)
 
 	private static double timeScale; // the scale from discrete to continuous time
+	private static double ticksPerSecond; // The number of discrete ticks per simulated second
 
 	private Entity target; // The entity whose method is to be executed
 	private Method method; // The method to be executed
@@ -375,6 +376,11 @@ public class Process extends Thread {
 
 	static void setSimTimeScale(double scale) {
 		timeScale = scale;
+		ticksPerSecond = scale / 3600.0d;
+	}
+
+	public static double getTicksPerSecond() {
+		return ticksPerSecond;
 	}
 
 	public static double getSimTimeFactor() {
