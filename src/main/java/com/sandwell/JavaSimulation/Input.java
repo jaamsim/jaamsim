@@ -40,6 +40,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_NOTUNIQUE = "List must contain unique entries, repeated entry: %s";
 	protected static final String INP_ERR_NOTVALIDENTRY = "List must not contain: %s";
 	protected static final String INP_ERR_ENTCLASS = "Expected a %s, %s is a %s";
+	protected static final String INP_ERR_INTERFACE = "Expected an object implementing %s, %s does not";
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
 
@@ -699,6 +700,15 @@ public abstract class Input<T> {
 		}
 
 		throw new InputErrorException("Entity type not found: %s", input);
+	}
+
+	public static <T> T castImplements(Entity ent, Class<T> klass) {
+		try {
+			return klass.cast(ent);
+		}
+		catch (ClassCastException e) {
+			throw new InputErrorException(INP_ERR_INTERFACE, klass.getName(), ent.getInputName());
+		}
 	}
 
 	private static <T extends Entity> T castEntity(Entity ent, Class<T> aClass)

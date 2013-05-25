@@ -25,7 +25,7 @@ public class TestContinuousDistribution {
 	static double sampleDistribution(Distribution dist, int numSamples) {
 		double total = 0.0d;
 		for (int i = 0; i < numSamples; i++)
-			total += dist.nextValue();
+			total += dist.nextValue(0.0d);
 
 		return total;
 	}

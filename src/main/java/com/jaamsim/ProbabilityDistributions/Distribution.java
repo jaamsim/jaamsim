@@ -14,7 +14,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Output;
+import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
@@ -27,7 +29,8 @@ import java.util.Random;
  * @author Harry King
  *
  */
-public abstract class Distribution extends DisplayEntity {
+public abstract class Distribution extends DisplayEntity
+implements SampleProvider {
 
 	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
 			 example = "ProbDist1 RandomSeed { 547 }")
@@ -152,16 +155,23 @@ public abstract class Distribution extends DisplayEntity {
 	/**
 	 * Return the present sample from probability distribution.
 	 */
-	public double getValue() {
+	@Override
+	public double getValue(double simTime) {
 		return presentSample * valueFactorInput.getValue();
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return null;
 	}
 
 	/**
 	 * Returns the next sample from the probability distribution.
 	 */
-	public double nextValue() {
+	@Override
+	public double nextValue(double simTime) {
 		this.setNextSample();
-		return ( this.getValue() );
+		return (this.getValue(simTime));
 	}
 
 	protected double getMinValue() {
