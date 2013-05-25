@@ -21,8 +21,17 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringVector;
 
 public class SampleInput extends Input<SampleProvider> {
+	private Class<? extends Unit> unitType;
+
 	public SampleInput(String key, String cat, SampleProvider def) {
 		super(key, cat, def);
+
+		if (def != null)
+			unitType = def.getUnitType();
+	}
+
+	public void setUnitType(Class<? extends Unit> type) {
+		unitType = type;
 	}
 
 	@Override
@@ -34,7 +43,7 @@ public class SampleInput extends Input<SampleProvider> {
 		if (input.size() == 1) {
 			Entity ent = Input.parseEntity(input.get(0), Entity.class);
 			SampleProvider s = Input.castImplements(ent, SampleProvider.class);
-			// TODO: verify the unitType
+			Input.assertUnitsMatch(unitType, s.getUnitType());
 			value = s;
 			this.updateEditingFlags();
 			return;
@@ -43,9 +52,8 @@ public class SampleInput extends Input<SampleProvider> {
 		// In case we pass a constant and a Unit
 		if (input.size() == 2) {
 			double val = Input.parseDouble(input.get(0));
-
-			// TODO: verify the unitType
 			Unit u = Input.parseUnits(input.get(1));
+			Input.assertUnitsMatch(unitType, u.getClass());
 			val *= u.getConversionFactorToSI();
 			value = new ConstantDouble(u.getClass(), val);
 			this.updateEditingFlags();

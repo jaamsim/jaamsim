@@ -41,6 +41,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_NOTVALIDENTRY = "List must not contain: %s";
 	protected static final String INP_ERR_ENTCLASS = "Expected a %s, %s is a %s";
 	protected static final String INP_ERR_INTERFACE = "Expected an object implementing %s, %s does not";
+	protected static final String INP_ERR_UNITS = "Unit types do not match";
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
 
@@ -702,7 +703,14 @@ public abstract class Input<T> {
 		throw new InputErrorException("Entity type not found: %s", input);
 	}
 
-	public static <T> T castImplements(Entity ent, Class<T> klass) {
+	public static void assertUnitsMatch(Class<? extends Unit> u1, Class<? extends Unit> u2)
+	throws InputErrorException {
+		if (u1 != u2)
+			throw new InputErrorException(INP_ERR_UNITS);
+	}
+
+	public static <T> T castImplements(Entity ent, Class<T> klass)
+	throws InputErrorException {
 		try {
 			return klass.cast(ent);
 		}
