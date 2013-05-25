@@ -22,7 +22,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * Erlang Distribution.
  * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 449.
  */
-public class ErlangDistribution extends NewProbabilityDistribution {
+public class ErlangDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Erlang distribution.",
 	         example = "ErlangDist-1 Mean { 5.0 }")

@@ -25,7 +25,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * @author Harry King
  *
  */
-public class DiscreteDistribution extends NewProbabilityDistribution {
+public class DiscreteDistribution extends Distribution {
 
 	@Keyword(description = "The list of discrete values that can be returned by the distribution.  " +
 			"The values can be any positive or negative and can be listed in any order.  " +

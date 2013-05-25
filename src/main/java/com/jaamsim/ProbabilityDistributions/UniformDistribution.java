@@ -18,7 +18,7 @@ package com.jaamsim.ProbabilityDistributions;
  * Uniform Distribution.
  * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 448.
  */
-public class UniformDistribution extends NewProbabilityDistribution {
+public class UniformDistribution extends Distribution {
 
 	@Override
 	protected double getNextNonZeroSample() {

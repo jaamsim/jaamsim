@@ -22,7 +22,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 454.
  * Polar Method, Marsaglia and Bray (1964) is used to calculate the normal distribution
  */
-public class LogNormalDistribution extends NewProbabilityDistribution {
+public class LogNormalDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the normal distribution (not the mean of the lognormal).",
 	         example = "LogNormalDist-1 NormalMean { 5.0 }")

@@ -21,7 +21,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * Weibull Distribution.
  * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 452.
  */
-public class WeibullDistribution extends NewProbabilityDistribution {
+public class WeibullDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Weibull distribution.",
 	         example = "WeibullDist-1 Scale { 3.0 }")

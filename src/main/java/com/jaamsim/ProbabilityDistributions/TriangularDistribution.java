@@ -22,7 +22,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * Triangular Distribution.
  * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 457.
  */
-public class TriangularDistribution extends NewProbabilityDistribution {
+public class TriangularDistribution extends Distribution {
 
 	@Keyword(description = "The mode of the triangular distribution, i.e. the value with the highest probability.",
 	         example = "TriangularDist-1 Mode { 5.0 }")

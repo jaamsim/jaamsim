@@ -27,7 +27,7 @@ import java.util.Random;
  * @author Harry King
  *
  */
-public abstract class NewProbabilityDistribution extends DisplayEntity {
+public abstract class Distribution extends DisplayEntity {
 
 	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
 			 example = "ProbDist1 RandomSeed { 547 }")
@@ -84,7 +84,7 @@ public abstract class NewProbabilityDistribution extends DisplayEntity {
 		this.addInput(maxValueInput, true);
 	}
 
-	public NewProbabilityDistribution() {
+	public Distribution() {
 		randomGenerator1 = new Random();
 		randomGenerator2 = new Random();
 	}

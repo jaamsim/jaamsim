@@ -21,7 +21,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * Exponential Distribution.
  * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 448.
  */
-public class ExponentialDistribution extends NewProbabilityDistribution {
+public class ExponentialDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the exponential distribution.",
 	         example = "ExponentialDist-1 Mean { 5.0 }")

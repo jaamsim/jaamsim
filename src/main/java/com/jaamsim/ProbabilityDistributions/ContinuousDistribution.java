@@ -26,7 +26,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * @author Harry King
  *
  */
-public class ContinuousDistribution extends NewProbabilityDistribution {
+public class ContinuousDistribution extends Distribution {
 
 	@Keyword(description = "The list of values for the user-defined cumulative probability distribution.",
 	         example = "ContinuousDist-1 ValueList { 2.0  4.3  8.9 }")

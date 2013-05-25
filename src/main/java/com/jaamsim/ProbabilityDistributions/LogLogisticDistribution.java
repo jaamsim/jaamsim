@@ -21,7 +21,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * Log-Logistic Distribution.
  * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 456.
  */
-public class LogLogisticDistribution extends NewProbabilityDistribution {
+public class LogLogisticDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Log-Logistic distribution.",
 	         example = "LogLogisticDist-1 Scale { 3.0 }")

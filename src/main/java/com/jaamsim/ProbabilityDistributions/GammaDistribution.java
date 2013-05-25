@@ -23,7 +23,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * Ahrens and Dieter (1974) for shape parameter < 1
  * Cheng (1977) for shape parameter >= 1
  */
-public class GammaDistribution extends NewProbabilityDistribution {
+public class GammaDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the Gamma distribution.",
 	         example = "GammaDist-1 Mean { 5.0 }")

@@ -22,7 +22,7 @@ import com.sandwell.JavaSimulation.Keyword;
  * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 453.
  * Polar Method, Marsaglia and Bray (1964)
  */
-public class NormalDistribution extends NewProbabilityDistribution {
+public class NormalDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the normal distribution (ignoring the MinValue and MaxValue keywords).",
 	         example = "NormalDist-1 Mean { 5.0 }")

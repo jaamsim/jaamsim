@@ -17,12 +17,12 @@ package com.jaamsim.probability;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import com.jaamsim.ProbabilityDistributions.ContinuousDistribution;
-import com.jaamsim.ProbabilityDistributions.NewProbabilityDistribution;
+import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.input.InputAgent;
 
 public class TestContinuousDistribution {
 
-	static double sampleDistribution(NewProbabilityDistribution dist, int numSamples) {
+	static double sampleDistribution(Distribution dist, int numSamples) {
 		double total = 0.0d;
 		for (int i = 0; i < numSamples; i++)
 			total += dist.nextValue();
