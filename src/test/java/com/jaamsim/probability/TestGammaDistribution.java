@@ -52,7 +52,7 @@ public class TestGammaDistribution {
 		dist.earlyInit();
 
 		for(int i = 0; i<1000000; i++) {
-			dist.nextValue(0.0d);
+			dist.getNextSample(0.0d);
 		}
 		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.005 );
 		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.005 );

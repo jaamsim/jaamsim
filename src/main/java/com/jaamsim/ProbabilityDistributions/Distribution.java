@@ -126,7 +126,6 @@ implements SampleProvider {
 	/**
 	 * Return the present sample from probability distribution.
 	 */
-	@Override
 	public double getValue(double simTime) {
 		return presentSample;
 	}
@@ -140,7 +139,7 @@ implements SampleProvider {
 	 * Returns the next sample from the probability distribution.
 	 */
 	@Override
-	public double nextValue(double simTime) {
+	public double getNextSample(double simTime) {
 		this.setNextSample();
 		return (this.getValue(simTime));
 	}

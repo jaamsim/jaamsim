@@ -31,12 +31,7 @@ public class ConstantDouble implements SampleProvider {
 	}
 
 	@Override
-	public double nextValue(double simTime) {
-		return val;
-	}
-
-	@Override
-	public double getValue(double simTime) {
+	public double getNextSample(double simTime) {
 		return val;
 	}
 }
