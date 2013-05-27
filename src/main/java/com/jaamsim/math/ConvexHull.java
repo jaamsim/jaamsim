@@ -43,7 +43,7 @@ public class ConvexHull {
 
 	private double _radius;
 
-	public static ConvexHull TryBuildHull(ArrayList<Vec4d> verts, int numAttempts) {
+	public static ConvexHull TryBuildHull(ArrayList<Vec4d> verts, int numAttempts, int maxNumPoints) {
 
 		long filterStart = System.nanoTime();
 		ArrayList<Vec4d> baseVerts = removeDoubles(verts);
@@ -58,7 +58,7 @@ public class ConvexHull {
 		for (int i = 0; i < numAttempts; ++i) {
 			int seed = (int)((double)i/(double)numAttempts);
 
-			ret = new ConvexHull(baseVerts, seed);
+			ret = new ConvexHull(baseVerts, seed, maxNumPoints);
 			if (!ret._isDegenerate || badInput) {
 				return ret;
 			}
@@ -73,7 +73,7 @@ public class ConvexHull {
 	 * Initialize this hull from the vertices provided. This is an implementation of the QuickHull algorithm (or close enough to it)
 	 * @param verts
 	 */
-	public ConvexHull(ArrayList<Vec4d> baseVerts, int seed) {
+	public ConvexHull(ArrayList<Vec4d> baseVerts, int seed, int maxNumPoints) {
 
 		assert(seed >= 0);
 		assert(seed < 1);
@@ -165,6 +165,8 @@ public class ConvexHull {
 			makeDegenerate(baseVerts);
 			return;
 		}
+
+		int numPoints = 3; // We start with 3 points
 
 		// Initialization is complete, start the core loop
 		while (true) {
@@ -262,6 +264,10 @@ public class ConvexHull {
 
 			if (deadPoints == 0) {
 				// We have run out of points, so let's just call this good enough
+				break;
+			}
+			if (++numPoints > maxNumPoints && maxNumPoints > 0) {
+				// We've looped and built up a hull of the maximum number of points
 				break;
 			}
 

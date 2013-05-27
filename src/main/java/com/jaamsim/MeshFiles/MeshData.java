@@ -36,6 +36,9 @@ import com.jaamsim.render.RenderUtils;
  */
 public class MeshData {
 
+	public final static int MAX_HULL_ATTEMPTS = 5;
+	public final static int MAX_HULL_POINTS = 100;
+
 	public final static int NO_TRANS = 0;
 	public final static int A_ONE_TRANS = 1;
 	public final static int RGB_ZERO_TRANS = 2;
@@ -213,7 +216,7 @@ public class MeshData {
 			}
 		}
 
-		sub.hull = ConvexHull.TryBuildHull(sub.verts, 5);
+		sub.hull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
 	}
 
 	public void addSubLine(Vec4d[] vertices,
@@ -232,7 +235,7 @@ public class MeshData {
 
 		sub.verts.addAll(Arrays.asList(vertices));
 
-		sub.hull = ConvexHull.TryBuildHull(sub.verts, 5);
+		sub.hull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
 	}
 
 	public boolean hasTransparent() {
@@ -261,7 +264,7 @@ public class MeshData {
 			totalHullPoints.addAll(subPoints);
 		}
 
-		_hull = ConvexHull.TryBuildHull(totalHullPoints, 5);
+		_hull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
 		_defaultBounds = _hull.getAABB(new Mat4d());
 
 		_radius = _hull.getRadius();
