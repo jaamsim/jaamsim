@@ -110,8 +110,9 @@ Mt        ConversionFactorToSI { 1000000000 }
 " Mass flow units
 " ======================================================================================================================================================
 
-Define MassFlowUnit   { kg/h kg/d kg/y t/h t/d t/y kt/h kt/d kt/y Mt/h Mt/d Mt/y }
+Define MassFlowUnit   { kg/s kg/h kg/d kg/y t/h t/d t/y kt/h kt/d kt/y Mt/h Mt/d Mt/y }
 
+kg/s ConversionFactorToSI { 1           1        }
 kg/h ConversionFactorToSI { 1           3600     }
 kg/d ConversionFactorToSI { 1           86400    }
 kg/y ConversionFactorToSI { 1           31536000 }
@@ -256,10 +257,11 @@ kt/m ConversionFactorToSI { 1000000   }
 " Density units
 " ======================================================================================================================================================
 
-Define DensityUnit      { kg/m3 t/m3 }
+Define DensityUnit      { kg/m3 t/m3 kt/m3 }
 
 kg/m3  ConversionFactorToSI { 1 }
 t/m3   ConversionFactorToSI { 1000      }
+kt/m3  ConversionFactorToSI { 1000000   }
 
 " ======================================================================================================================================================
 " Pressure units
