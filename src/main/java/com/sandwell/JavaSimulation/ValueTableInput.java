@@ -36,6 +36,11 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 		value = new ValueTable<T>(def.getDefault().getCurrentValue());
 	}
 
+	private String unitString = "";
+	public void setUnits(String units) {
+		unitString = units;
+	}
+
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {

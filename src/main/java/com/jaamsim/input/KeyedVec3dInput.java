@@ -32,6 +32,11 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 		this.timeUnits = timeUnits;
 	}
 
+	private String unitString = "";
+	public void setUnits(String units) {
+		unitString = units;
+	}
+
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
 		ArrayList<String> strings = new ArrayList<String>(input.size());

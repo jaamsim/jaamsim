@@ -42,6 +42,11 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		hashMap = new HashMap<K1,HashMap<K2,HashMap<K3,V>>>();
 	}
 
+	private String unitString = "";
+	public void setUnits(String units) {
+		unitString = units;
+	}
+
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
@@ -170,6 +175,6 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 
 	@Override
 	public String getDefaultString() {
-		return getDefaultStringForKeyInputs();
+		return getDefaultStringForKeyInputs(unitString);
 	}
 }

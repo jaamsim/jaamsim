@@ -28,6 +28,11 @@ public class DoubleTableInput extends Input<ArrayList<DoubleVector>> {
 		super(key, cat, def);
 	}
 
+	private String unitString = "";
+	public void setUnits(String units) {
+		unitString = units;
+	}
+
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
 		ArrayList<StringVector> temp = Util.splitStringVectorByBraces(input);

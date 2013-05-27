@@ -37,6 +37,11 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		hashMap = new HashMap<K1,V>();
 	}
 
+	private String unitString = "";
+	public void setUnits(String units) {
+		unitString = units;
+	}
+
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
@@ -98,6 +103,6 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 
 	@Override
 	public String getDefaultString() {
-		return getDefaultStringForKeyInputs();
+		return getDefaultStringForKeyInputs(unitString);
 	}
 }

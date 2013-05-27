@@ -57,7 +57,6 @@ public abstract class Input<T> {
 	protected T defValue;
 	protected T value;
 
-	protected String unitString; // name of the default unit for this input
 	private boolean appendable;  // indicates if input is appendable
 	private boolean locked; // indicates if input is locked for this entity
 	private boolean edited; // indicates if input has been edited for this entity
@@ -69,8 +68,6 @@ public abstract class Input<T> {
 		keyword = key;
 		category = cat;
 		setDefaultValue(def);
-
-		unitString = "";
 
 		appendable = false;
 		locked = false;
@@ -118,24 +115,11 @@ public abstract class Input<T> {
 		if (tmp.length() == 0)
 			return NO_VALUE;
 
-		if (!unitString.isEmpty()) {
-			tmp.append(SEPARATOR);
-			tmp.append(unitString);
-		}
-
 		return tmp.toString();
 	}
 
 	public T getValue() {
 		return value;
-	}
-
-	public void setUnits(String units) {
-		unitString = units;
-	}
-
-	public String getUnits() {
-		return unitString;
 	}
 
 	public void setAppendable(boolean bool) {
@@ -1093,7 +1077,7 @@ public abstract class Input<T> {
 		return (str.equals(POSITIVE_INFINITY) || str.equals(NEGATIVE_INFINITY));
 	}
 
-	public String getDefaultStringForKeyInputs() {
+	public String getDefaultStringForKeyInputs(String unitString) {
 
 		if (defValue == null)
 			return NO_VALUE;

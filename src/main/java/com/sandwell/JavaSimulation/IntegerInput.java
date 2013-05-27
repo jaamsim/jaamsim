@@ -48,11 +48,6 @@ public class IntegerInput extends Input<Integer> {
 
 		StringBuilder tmp = new StringBuilder(defValue.toString());
 
-		if (!unitString.isEmpty()) {
-			tmp.append(SEPARATOR);
-			tmp.append(unitString);
-		}
-
 		return tmp.toString();
 	}
 }

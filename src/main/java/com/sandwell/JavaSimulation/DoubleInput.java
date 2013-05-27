@@ -22,6 +22,15 @@ public class DoubleInput extends Input<Double> {
 		super(key, cat, def);
 	}
 
+	private String unitString = "";
+	public void setUnits(String units) {
+		unitString = units;
+	}
+
+	public String getUnits() {
+		return unitString;
+	}
+
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {

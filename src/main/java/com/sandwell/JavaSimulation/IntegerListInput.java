@@ -57,11 +57,6 @@ public class IntegerListInput extends ListInput<IntegerVector> {
 			tmp.append(defValue.get(i));
 		}
 
-		if (!unitString.isEmpty()) {
-			tmp.append(SEPARATOR);
-			tmp.append(unitString);
-		}
-
 		return tmp.toString();
 	}
 }

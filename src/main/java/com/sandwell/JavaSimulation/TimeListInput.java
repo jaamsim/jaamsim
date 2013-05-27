@@ -27,6 +27,11 @@ public class TimeListInput extends ListInput<DoubleVector> {
 		validCounts = new int[] { };
 	}
 
+	private String unitString = "";
+	public void setUnits(String units) {
+		unitString = units;
+	}
+
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
