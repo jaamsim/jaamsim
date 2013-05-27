@@ -73,7 +73,7 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		this.addInput(width, true);
 
 		arrowHeadSize = new Vec3dInput( "ArrowSize", "Arrow Graphics", new Vec3d(0.1d, 0.1d, 0.0d) );
-		arrowHeadSize.setUnits( "m" );
+		arrowHeadSize.setUnitType(DistanceUnit.class);
 		this.addInput( arrowHeadSize, true );
 
 		color = new ColourInput("Color", "Arrow Graphics", ColourInput.BLACK);
@@ -86,7 +86,7 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		this.addInput(dropShadowColor, true, "DropShadowColor");
 
 		dropShadowOffset = new Vec3dInput( "DropShadowOffset", "Arrow Graphics", new Vec3d() );
-		dropShadowOffset.setUnits( "m" );
+		dropShadowOffset.setUnitType(DistanceUnit.class);
 		this.addInput( dropShadowOffset, true );
 	}
 

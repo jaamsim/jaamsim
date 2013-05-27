@@ -31,6 +31,8 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.units.AngleUnit;
+import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.DoubleVector;
@@ -146,18 +148,18 @@ public class DisplayEntity extends Entity {
 
 	{
 		positionInput = new Vec3dInput("Position", "Basic Graphics", new Vec3d());
-		positionInput.setUnits("m");
+		positionInput.setUnitType(DistanceUnit.class);
 		this.addInput(positionInput, true);
 
 		alignmentInput = new Vec3dInput("Alignment", "Basic Graphics", new Vec3d());
 		this.addInput(alignmentInput, true);
 
 		sizeInput = new Vec3dInput("Size", "Basic Graphics", new Vec3d(1.0d, 1.0d, 1.0d));
-		sizeInput.setUnits("m");
+		sizeInput.setUnitType(DistanceUnit.class);
 		this.addInput(sizeInput, true);
 
 		orientationInput = new Vec3dInput("Orientation", "Basic Graphics", new Vec3d());
-		orientationInput.setUnits("rad");
+		orientationInput.setUnitType(AngleUnit.class);
 		this.addInput(orientationInput, true);
 
 		regionInput = new EntityInput<Region>(Region.class, "Region", "Basic Graphics", null);
@@ -522,7 +524,7 @@ public class DisplayEntity extends Entity {
 		invReg.apply(pos, localPos);
 
 		setPosition(localPos);
-		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format( "%.6f %.6f %.6f %s", localPos.x, localPos.y, localPos.z, positionInput.getUnits() ));
+		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format( "%.6f %.6f %.6f m", localPos.x, localPos.y, localPos.z ));
 		FrameBox.valueUpdate();
 	}
 
@@ -583,7 +585,7 @@ public class DisplayEntity extends Entity {
 		this.setPosition(newPos);
 
 		// inform simulation and editBox of new positions
-		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format( "%.6f %.6f %.6f %s", newPos.x, newPos.y, newPos.z, positionInput.getUnits() ));
+		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format( "%.6f %.6f %.6f m", newPos.x, newPos.y, newPos.z ));
 		FrameBox.valueUpdate();
 	}
 

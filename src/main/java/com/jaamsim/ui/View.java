@@ -21,6 +21,7 @@ import com.jaamsim.input.KeyedVec3dInput;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
@@ -105,11 +106,11 @@ static {
 	this.addInput(region, true);
 
 	center = new Vec3dInput("ViewCenter", "Graphics", new Vec3d());
-	center.setUnits("m");
+	center.setUnitType(DistanceUnit.class);
 	this.addInput(center, true);
 
 	position = new Vec3dInput("ViewPosition", "Graphics", new Vec3d(5.0d, -5.0d, 5.0d));
-	position.setUnits("m");
+	position.setUnitType(DistanceUnit.class);
 	this.addInput(position, true);
 
 	IntegerVector defSize = new IntegerVector(2);
