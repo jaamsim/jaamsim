@@ -141,12 +141,12 @@ static {
 	followEntityInput = new EntityInput<DisplayEntity>(DisplayEntity.class, "FollowEntity", "Graphics", null);
 	this.addInput(followEntityInput, true);
 
-	positionScriptInput = new KeyedVec3dInput("ScriptedViewPosition", "Graphics", "h");
-	positionScriptInput.setUnits("m");
+	positionScriptInput = new KeyedVec3dInput("ScriptedViewPosition", "Graphics");
+	positionScriptInput.setUnitType(DistanceUnit.class);
 	this.addInput(positionScriptInput, true);
 
-	centerScriptInput = new KeyedVec3dInput("ScriptedViewCenter", "Graphics", "h");
-	centerScriptInput.setUnits("m");
+	centerScriptInput = new KeyedVec3dInput("ScriptedViewCenter", "Graphics");
+	centerScriptInput.setUnitType(DistanceUnit.class);
 	this.addInput(centerScriptInput, true);
 }
 

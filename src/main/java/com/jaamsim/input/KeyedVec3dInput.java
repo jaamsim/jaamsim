@@ -17,24 +17,23 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
+import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringVector;
 
 public class KeyedVec3dInput extends Input<Vec3d> {
-
+	private Class<? extends Unit> unitType = Unit.class;
 	private KeyedVec3dCurve curve = new KeyedVec3dCurve();
-	private String timeUnits;
 
-	public KeyedVec3dInput(String key, String cat, String timeUnits) {
+	public KeyedVec3dInput(String key, String cat) {
 		super(key, cat, null);
-		this.timeUnits = timeUnits;
 	}
 
-	private String unitString = "";
-	public void setUnits(String units) {
-		unitString = units;
+	public void setUnitType(Class<? extends Unit> units) {
+		unitType = units;
 	}
 
 	@Override
@@ -69,37 +68,20 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 			throw new InputErrorException("Value entry not formated correctly: %s", valInput.toString());
 		}
 
-		Unit timeUnit = Input.parseUnits(timeInput.get(2));
-		Unit valUnit = Input.parseUnits(valInput.get(4));
-
-		Unit defTimeUnit = Input.tryParseEntity(timeUnits.replaceAll("[()]", "").trim(), Unit.class);
-		Unit defValUnit = Input.tryParseEntity(unitString.replaceAll("[()]", "").trim(), Unit.class);
+		Unit timeUnit = Input.parseEntity(timeInput.get(2), TimeUnit.class);
+		Unit defTimeUnit = Input.tryParseEntity("h", Unit.class);
 
 		double timeConversionFactor = timeUnit.getConversionFactorToUnit(defTimeUnit);
-		double valConversionFactor = valUnit.getConversionFactorToUnit(defValUnit);
 
 		double time = Input.parseDouble(timeInput.get(1),
 		                                Double.NEGATIVE_INFINITY,
 		                                Double.POSITIVE_INFINITY,
 		                                timeConversionFactor);
 
-		double x = Input.parseDouble(valInput.get(1),
-		                             Double.NEGATIVE_INFINITY,
-		                             Double.POSITIVE_INFINITY,
-		                             valConversionFactor);
-
-		double y = Input.parseDouble(valInput.get(2),
-		                             Double.NEGATIVE_INFINITY,
-		                             Double.POSITIVE_INFINITY,
-		                             valConversionFactor);
-
-		double z = Input.parseDouble(valInput.get(3),
-		                             Double.NEGATIVE_INFINITY,
-		                             Double.POSITIVE_INFINITY,
-		                             valConversionFactor);
-
-		Vec3d val = new Vec3d(x, y, z);
-
+		StringVector temp = new StringVector();
+		temp.addAll(valInput.subList(1, 5));
+		DoubleVector vals = Input.parseDoubles(temp, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+		Vec3d val = new Vec3d(vals.get(0), vals.get(1), vals.get(2));
 		curve.addKey(time, val);
 	}
 
