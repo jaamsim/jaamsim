@@ -42,6 +42,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_ENTCLASS = "Expected a %s, %s is a %s";
 	protected static final String INP_ERR_INTERFACE = "Expected an object implementing %s, %s does not";
 	protected static final String INP_ERR_UNITS = "Unit types do not match";
+	protected static final String INP_ERR_NOTSUBCLASS = "Expected a subclass of %s, got %s";
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
 
@@ -707,6 +708,15 @@ public abstract class Input<T> {
 	throws InputErrorException {
 		if (u1 != u2)
 			throw new InputErrorException(INP_ERR_UNITS);
+	}
+
+	public static <T extends Entity> Class<? extends T> checkCast(Class<? extends Entity> klass, Class<T> parent) {
+		try {
+			return klass.asSubclass(parent);
+		}
+		catch (ClassCastException e) {
+			throw new InputErrorException(INP_ERR_NOTSUBCLASS, parent.getName(), klass.getName());
+		}
 	}
 
 	public static <T> T castImplements(Entity ent, Class<T> klass)
