@@ -31,17 +31,9 @@ import java.util.Random;
  */
 public abstract class Distribution extends DisplayEntity
 implements SampleProvider {
-
 	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
 			 example = "ProbDist1 RandomSeed { 547 }")
 	private final IntegerInput randomSeedInput;
-
-	@Keyword(description = "Probability of a non-zero value. The probability of a non-zero value is sampled first. " +
-					"The probability distribution is sampled only if the first sample is positive. " +
-					"For example, if the non-zero probability is 0.2, then the value of zero will be returned for 80% of the samples. " +
-					"A non-zero value sampled from the probability distribution will be returned for 20% of the samples.",
-	         example = "ProbDist1 NonZeroProb { 0.2 }")
-	private final DoubleInput nonZeroProbInput;
 
 	@Keyword(description = "Multiplicative factor applied to the values returned by the ProbabilityDistribution object. " +
 					"Used for unit conversion.",
@@ -72,10 +64,6 @@ implements SampleProvider {
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 1);
 		randomSeedInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(randomSeedInput, true);
-
-		nonZeroProbInput = new DoubleInput("NonZeroProb", "Key Inputs", 1.0d);
-		nonZeroProbInput.setValidRange( 0.0d, 1.0d);
-		this.addInput(nonZeroProbInput, true);
 
 		valueFactorInput = new DoubleInput("ValueFactor", "Key Inputs", 1.0d);
 		this.addInput(valueFactorInput, true);
@@ -123,21 +111,12 @@ implements SampleProvider {
 	 * Select the next sample from the probability distribution.
 	 */
 	private void setNextSample() {
-
-		// If the NonZeroProb input is used, then test for a non-zero sample first
-		if( nonZeroProbInput.getValue() < 1.0 &&
-				( randomGenerator2.nextDouble() > nonZeroProbInput.getValue() ) ) {
-			presentSample = 0.0;
+		// Loop until the select sample falls within the desired min and max values
+		do {
+			presentSample = this.getNextNonZeroSample();
 		}
-
-		// Sample a non-zero value from the distribution
-		else {
-
-			// Loop until the select sample falls within the desired min and max values
-			do {
-				presentSample = this.getNextNonZeroSample();
-			} while( presentSample < minValueInput.getValue() || ( presentSample > maxValueInput.getValue() ) );
-		}
+		while (presentSample < minValueInput.getValue() ||
+		       presentSample > maxValueInput.getValue());
 
 		// Collect statistics on the sampled values
 		sampleCount++;
