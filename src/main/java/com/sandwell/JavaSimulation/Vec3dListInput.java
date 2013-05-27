@@ -16,14 +16,18 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.Unit;
 
 public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
+	private Class<? extends Unit> unitType = Unit.class;
 
 	public Vec3dListInput(String key, String cat, ArrayList<Vec3d> def) {
 		super(key, cat, def);
+	}
+
+	public void setUnitType(Class<? extends Unit> units) {
+		unitType = units;
 	}
 
 	@Override
@@ -36,40 +40,8 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, input.toString());
 
 		ArrayList<Vec3d> tempValue = new ArrayList<Vec3d>();
-
-		for( StringVector innerInput : splitData ) {
-			DoubleVector temp;
-
-			// If there is more than one value, and the last one is not a number, then assume it is a unit
-			if( innerInput.size() > 1 && !Tester.isDouble( innerInput.get( innerInput.size()-1 ) ) ) {
-
-				// Determine the units
-				Unit unit = Input.parseUnits(innerInput.get(innerInput.size()- 1));
-
-				// Determine the default units
-				String unitName = unitString.replaceAll("[()]", "").trim();
-				Unit defaultUnit = Input.tryParseEntity( unitName, Unit.class );
-				if( defaultUnit == null) {
-					throw new InputErrorException( "Could not determine default units " + unitString );
-				}
-
-				// Determine the conversion factor to the default units
-				double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
-
-				// Parse and convert the values
-				Input.assertCountRange(innerInput.subString(0,innerInput.size()-2), 1, 3);
-				temp = Input.parseDoubleVector(innerInput.subString(0,innerInput.size()-2), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, conversionFactor);
-
-			}
-			else {
-				// Parse the values
-				Input.assertCountRange(innerInput, 1, 3);
-				temp = Input.parseDoubleVector(innerInput, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-
-				if( unitString.length() > 0 )
-					InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
-			}
-
+		for (StringVector innerInput : splitData) {
+			DoubleVector temp = Input.parseDoubles(innerInput, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 			// pad the vector to have 3 elements
 			while (temp.size() < 3) {
 				temp.add(0.0d);
@@ -110,8 +82,8 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 			tmp.append(SEPARATOR);
 			tmp.append(each.z);
 			tmp.append(SEPARATOR);
-			if (!unitString.isEmpty()) {
-				tmp.append(unitString);
+			if (unitType != Unit.class) {
+				tmp.append(Unit.getSIUnit(unitType));
 				tmp.append(SEPARATOR);
 			}
 			tmp.append("}");

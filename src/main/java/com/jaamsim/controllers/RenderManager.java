@@ -1052,9 +1052,6 @@ public class RenderManager implements DragSourceListener {
 
 			StringBuilder sb = new StringBuilder();
 			String pointFormatter = " { %.3f %.3f %.3f m }";
-			if (pointsInput.getUnits() == "")
-				pointFormatter = " { %.3f %.3f %.3f }";
-
 			for(Vec3d pt : screenPoints) {
 				sb.append(String.format(pointFormatter, pt.x, pt.y, pt.z));
 			}

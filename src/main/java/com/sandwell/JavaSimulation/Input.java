@@ -596,6 +596,33 @@ public abstract class Input<T> {
 	}
 
 	/**
+	 * Convert the given StringVector to a DoubleVector and apply the given conversion factor
+	 */
+	public static DoubleVector parseDoubles(StringVector input, double minValue, double maxValue, Class<? extends Unit> unitType)
+	throws InputErrorException {
+		// If a unittype is provided, the last entry must be a unit
+		Unit unit = null;
+		double factor = 1.0d;
+		int numDoubles = input.size();
+		if (unitType != Unit.class) {
+			unit = Input.parseEntity(input.get(input.size() - 1), unitType);
+			factor = unit.getConversionFactorToSI();
+			numDoubles = input.size() - 1;
+		}
+
+		DoubleVector temp = new DoubleVector(numDoubles);
+		for (int i = 0; i < numDoubles; i++) {
+			try {
+				double element = Input.parseDouble(input.get(i), minValue, maxValue, factor);
+				temp.add(element);
+			} catch (InputErrorException e) {
+				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+			}
+		}
+		return temp;
+	}
+
+	/**
 	 * Convert the given StringVector to a DoubleVector including a unit conversion, if necessary
 	 */
 	public static DoubleVector parseDoubleVector(StringVector data, double minValue, double maxValue, String defaultUnitString)

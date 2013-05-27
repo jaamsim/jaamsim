@@ -19,6 +19,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
+import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
@@ -61,7 +62,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
 		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);
 		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
-		pointsInput.setUnits("m");
+		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput, true);
 
 		widthInput = new DoubleInput("Width", "Key Inputs", 1.0d);
@@ -101,7 +102,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 
 		StringBuilder tmp = new StringBuilder();
 		for (Vec3d v : vec) {
-			tmp.append(String.format(" { %.3f %.3f %.3f %s }", v.x, v.y, v.z, pointsInput.getUnits()));
+			tmp.append(String.format(" { %.3f %.3f %.3f m }", v.x, v.y, v.z));
 		}
 		InputAgent.processEntity_Keyword_Value(this, pointsInput, tmp.toString());
 
