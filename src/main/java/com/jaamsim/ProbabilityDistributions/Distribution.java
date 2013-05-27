@@ -35,11 +35,6 @@ implements SampleProvider {
 			 example = "ProbDist1 RandomSeed { 547 }")
 	private final IntegerInput randomSeedInput;
 
-	@Keyword(description = "Multiplicative factor applied to the values returned by the ProbabilityDistribution object. " +
-					"Used for unit conversion.",
-	         example = "ProbDist1 ValueFactor { 1.0 }")
-	private final DoubleInput valueFactorInput;
-
 	@Keyword(description = "Minimum value that can be returned (before ValueFactor is applied). " +
 					"Smaller values are rejected and resampled.",
 	         example = "ProbDist1 MinValue { 0.0 }")
@@ -64,9 +59,6 @@ implements SampleProvider {
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 1);
 		randomSeedInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(randomSeedInput, true);
-
-		valueFactorInput = new DoubleInput("ValueFactor", "Key Inputs", 1.0d);
-		this.addInput(valueFactorInput, true);
 
 		minValueInput = new DoubleInput("MinValue", "Key Inputs", Double.NEGATIVE_INFINITY);
 		this.addInput(minValueInput, true);
@@ -136,7 +128,7 @@ implements SampleProvider {
 	 */
 	@Override
 	public double getValue(double simTime) {
-		return presentSample * valueFactorInput.getValue();
+		return presentSample;
 	}
 
 	@Override
