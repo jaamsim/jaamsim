@@ -17,7 +17,6 @@ package com.jaamsim.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -152,12 +151,7 @@ public class XmlParser  extends DefaultHandler{
 		} else if (booleanArrayTags.contains(name)) {
 			contents = parseBooleanArray();
 		} else if (stringArrayTags.contains(name)) {
-			ArrayList<String> strings = contentsToStringArray();
-			String[] temp = new String[strings.size()];
-			for (int i = 0; i < strings.size(); ++i) {
-				temp[i] = strings.get(i);
-			}
-			contents = temp;
+			contents = parseStringArray();
 		} else {
 			contents = contentBuilder.toString().trim();
 		}
@@ -167,55 +161,103 @@ public class XmlParser  extends DefaultHandler{
 		contentBuilder.setLength(0);
 	}
 
-	private double[] parseDoubleArray() {
-		ArrayList<String> strings = contentsToStringArray();
+	// return the number of 'words' in the contents
+	private int wordCount() {
 
-		double[] ret = new double[strings.size()];
-		int index = 0;
-		for (String s : strings) {
-			ret[index++] = Double.parseDouble(s);
+		int numWords = 0;
+		boolean readingWord = false;
+		for (int i = 0; i < contentBuilder.length(); ++i) {
+			char c = contentBuilder.charAt(i);
+			if (isWhitespace(c)) {
+				if (readingWord) {
+					// end of word
+					readingWord = false;
+				}
+			} else {
+				if (!readingWord) {
+					// beginning of word
+					readingWord = true;
+					++numWords;
+				}
+			}
+		}
+		return numWords;
+	}
+
+	private static final boolean isWhitespace(char c) {
+		return (c == ' ' || c == '\t' || c == '\n');
+	}
+
+	private int parsePos = 0;
+	private String getWord() {
+		StringBuilder ret = new StringBuilder();
+		while (parsePos < contentBuilder.length()) {
+			char c = contentBuilder.charAt(parsePos);
+			// Read through leading whitespace
+			if (!isWhitespace(c)) {
+				break;
+			}
+			++parsePos;
+		}
+
+		while (parsePos < contentBuilder.length()) {
+			char c = contentBuilder.charAt(parsePos++);
+			// Build up the 'word'
+			if (isWhitespace(c)) {
+				return ret.toString();
+			}
+			ret.append(c);
+		}
+		return ret.toString();
+	}
+
+	private double[] parseDoubleArray() {
+
+		int numWords = wordCount();
+		parsePos = 0;
+
+		double[] ret = new double[numWords];
+		for (int i = 0; i < numWords; ++i) {
+			String val = getWord();
+			ret[i] = Double.parseDouble(val);
 		}
 		return ret;
 	}
 
 	private int[] parseIntArray() {
-		ArrayList<String> strings = contentsToStringArray();
+		int numWords = wordCount();
+		parsePos = 0;
 
-		int[] ret = new int[strings.size()];
-		int index = 0;
-		for (String s : strings) {
-			ret[index++] = Integer.parseInt(s);
+		int[] ret = new int[numWords];
+		for (int i = 0; i < numWords; ++i) {
+			String val = getWord();
+			ret[i] = Integer.parseInt(val);
 		}
 		return ret;
 	}
 
 	private boolean[] parseBooleanArray() {
-		ArrayList<String> strings = contentsToStringArray();
 
-		boolean[] ret = new boolean[strings.size()];
-		int index = 0;
-		for (String s : strings) {
-			ret[index++] = Boolean.parseBoolean(s);
+		int numWords = wordCount();
+		parsePos = 0;
+
+		boolean[] ret = new boolean[numWords];
+		for (int i = 0; i < numWords; ++i) {
+			String val = getWord();
+			ret[i] = Boolean.parseBoolean(val);
 		}
 		return ret;
 	}
 
-	private ArrayList<String> contentsToStringArray() {
-		ArrayList<String> ret = new ArrayList<String>();
-		StringBuilder val = new StringBuilder();
-		for (int i = 0; i < contentBuilder.length(); ++i) {
-			char c = contentBuilder.charAt(i);
-			if (c == ' ' || c == '\t' || c == '\n') {
-				if (val.length() != 0) {
-					ret.add(val.toString());
-					val.setLength(0);
-				}
-			} else {
-				val.append(c);
-			}
-		}
-		if (val.length() != 0) {
-			ret.add(val.toString());
+	private String[] parseStringArray() {
+
+		int numWords = wordCount();
+		parsePos = 0;
+
+		String[] ret = new String[numWords];
+		for (int i = 0; i < numWords; ++i) {
+			String val = getWord();
+			ret[i] = val;
 		}
 		return ret;
 	}
