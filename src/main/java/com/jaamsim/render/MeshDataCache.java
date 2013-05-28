@@ -123,7 +123,7 @@ public class MeshDataCache {
 					notifier.notifyAll();
 				}
 			}
-		}.run();
+		}.start();
 	}
 
 	// Lazily load the bad mesh data
