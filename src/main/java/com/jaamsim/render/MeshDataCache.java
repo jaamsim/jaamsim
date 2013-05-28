@@ -56,10 +56,10 @@ public class MeshDataCache {
 
 		if (loadingFlag != null) {
 			// Someone already triggered a delayed load for this mesh, let's just wait for that one...
-			while (!loadingFlag.get()) {
-				synchronized (loadingFlag) {
+			synchronized (loadingFlag) {
+				while (!loadingFlag.get()) {
 					try {
-							loadingFlag.wait();
+						loadingFlag.wait();
 					} catch (InterruptedException ex) {}
 				}
 			}
