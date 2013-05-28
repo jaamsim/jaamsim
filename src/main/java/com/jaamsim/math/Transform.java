@@ -217,8 +217,18 @@ public void inverse(Transform out) {
 	out._matrixDirty = true;
 }
 
-public boolean equals(Transform other) {
-	return _trans.near4(other._trans) && _rot.equals(other._rot) && MathUtils.near(_scale, other._scale);
+@Override
+public boolean equals(Object o) {
+	if (!(o instanceof Transform)) return false;
+	Transform t = (Transform)o;
+
+	return _trans.near4(t._trans) && _rot.equals(t._rot) && MathUtils.near(_scale, t._scale);
+}
+
+@Override
+public int hashCode() {
+	assert false : "hashCode not designed";
+	return 42; // any arbitrary constant will do
 }
 
 @Override

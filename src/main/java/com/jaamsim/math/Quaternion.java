@@ -306,13 +306,23 @@ public void slerp(Quaternion q, double weight, Quaternion res) {
 	res.w = w * thisScale + q.w * qScale;
 }
 
-public boolean equals(Quaternion other) {
-	if (!MathUtils.near(x, other.x)) return false;
-	if (!MathUtils.near(y, other.y)) return false;
-	if (!MathUtils.near(z, other.z)) return false;
-	if (!MathUtils.near(w, other.w)) return false;
+@Override
+public boolean equals(Object o) {
+	if (!(o instanceof Quaternion)) return false;
+	Quaternion q = (Quaternion)o;
+
+	if (!MathUtils.near(x, q.x)) return false;
+	if (!MathUtils.near(y, q.y)) return false;
+	if (!MathUtils.near(z, q.z)) return false;
+	if (!MathUtils.near(w, q.w)) return false;
 
 	return true;
+}
+
+@Override
+public int hashCode() {
+	assert false : "hashCode not designed";
+	return 42; // any arbitrary constant will do
 }
 
 @Override

@@ -119,8 +119,17 @@ public boolean near(Plane p) {
 	return _normal.near4(p._normal) && MathUtils.near(_dist, p._dist);
 }
 
-public boolean equals(Plane p) {
+@Override
+public boolean equals(Object o) {
+	if (!(o instanceof Plane)) return false;
+	Plane p = (Plane)o;
 	return _normal.equals4(p._normal) && MathUtils.near(_dist, p._dist);
+}
+
+@Override
+public int hashCode() {
+	assert false : "hashCode not designed";
+	return 42; // any arbitrary constant will do
 }
 
 /**
