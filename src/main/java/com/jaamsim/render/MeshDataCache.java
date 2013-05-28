@@ -127,7 +127,7 @@ public class MeshDataCache {
 	}
 
 	// Lazily load the bad mesh data
-	public static MeshData getBadMesh() {
+	public synchronized static MeshData getBadMesh() {
 		if (badMesh == null) {
 			badMesh = MeshReader.parse(BAD_MESH_KEY.getURL());
 		}
