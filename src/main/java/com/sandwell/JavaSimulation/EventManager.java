@@ -426,7 +426,7 @@ public final class EventManager implements Runnable {
 				long modelHours = (long)((currentWallTime - previousWallTime) * realTimeFactor / 3600000.0d * Process.getSimTimeFactor());
 				modelHours += prevIntTime;
 				if (modelHours < nextTime)
-					FrameBox.timeUpdate(modelHours / Process.getSimTimeFactor());
+					FrameBox.timeUpdate(modelHours * Process.getSecondsPerTick());
 
 				// If realtime was disabled, break out
 				if (!executeRealTime || previousInternalTime == -1)
@@ -434,7 +434,7 @@ public final class EventManager implements Runnable {
 			}
 		}
 
-		FrameBox.timeUpdate(nextTime / Process.getSimTimeFactor());
+		FrameBox.timeUpdate(nextTime * Process.getSecondsPerTick());
 	}
 
 	/**

@@ -903,7 +903,8 @@ public class GUIFrame extends JFrame {
 	private long lastSystemTime = System.currentTimeMillis();
 	private double lastSimTimeHours = 0.0d;
 
-	public void setClock( double clockContents ) {
+	public void setClock(double simTime) {
+		double clockContents = simTime / 3600.0d;
 		clockDisplay.setText(String.format("%.2f", clockContents));
 
 		long cTime = System.currentTimeMillis();

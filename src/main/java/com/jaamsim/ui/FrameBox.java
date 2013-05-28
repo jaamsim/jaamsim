@@ -165,7 +165,6 @@ public class FrameBox extends JFrame {
 
 			GUIFrame.instance().setClock(callBackTime);
 			RenderManager.updateTime(callBackTime);
-
 			for (FrameBox each : allInstances) {
 				each.updateValues(callBackTime);
 			}
