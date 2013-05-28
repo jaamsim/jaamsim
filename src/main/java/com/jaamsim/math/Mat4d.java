@@ -513,7 +513,7 @@ private double cofactor(int x, int y, double[] data, double[] sub) {
 	ret -= sub[1] * sub[3] * sub[8];
 	ret -= sub[0] * sub[5] * sub[7];
 
-	if ((x+y) % 2 == 1) {
+	if ((x+y) % 2 != 0) {
 		ret *= -1;
 	}
 	return ret;
