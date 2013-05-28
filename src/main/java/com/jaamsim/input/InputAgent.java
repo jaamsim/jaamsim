@@ -99,7 +99,7 @@ public class InputAgent {
 
 	public static void setReportDirectory(String dir) {
 		reportDirectory = Util.getAbsoluteFilePath(dir);
-		if (reportDirectory.substring(reportDirectory.length() - 1) != "\\")
+		if (!reportDirectory.substring(reportDirectory.length() - 1).equals("\\"))
 			reportDirectory = reportDirectory + "\\";
 
 		// Create the report directory if it does not already exist
