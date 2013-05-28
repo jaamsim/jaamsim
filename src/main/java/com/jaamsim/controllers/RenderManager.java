@@ -367,7 +367,7 @@ public class RenderManager implements DragSourceListener {
 					}
 
 					try {
-						de.updateGraphics(renderHours);
+						de.updateGraphics(renderTime);
 					}
 					// Catch everything so we don't screw up the behavior handling
 					catch (Throwable e) {

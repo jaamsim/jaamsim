@@ -252,13 +252,14 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 	@Override
 	public void updateGraphics( double simTime ) {
+		double simHours = simTime / 3600.0d;
 
 		// Loop through the entities on the conveyor
 		for( int i = 0; i < entityList.size(); i++) {
 			DisplayEntity each = entityList.get( i );
 
 			// Calculate the distance travelled by this entity
-			double dist = ( simTime - startTimeList.get(i) ) / travelTimeInput.getValue() * totalLength;
+			double dist = ( simHours - startTimeList.get(i) ) / travelTimeInput.getValue() * totalLength;
 
 			// Set the position for the entity
 			each.setPosition( this.getPositionForDistance( dist) );
