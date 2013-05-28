@@ -345,7 +345,6 @@ public class RenderManager implements DragSourceListener {
 				DisplayModelBinding.clearCacheMissData();
 
 				double renderTime = _simTime;
-				double renderHours = renderTime / 3600.0d; // TODO: remove
 
 				long startNanos = System.nanoTime();
 
@@ -390,7 +389,7 @@ public class RenderManager implements DragSourceListener {
 					for (DisplayModelBinding binding : de.getDisplayBindings()) {
 						try {
 							totalBindings++;
-							binding.collectProxies(renderHours, _cachedScene);
+							binding.collectProxies(renderTime, _cachedScene);
 							if (binding.isBoundTo(_selectedEntity)) {
 								selectedBindings.add(binding);
 							}
@@ -404,7 +403,7 @@ public class RenderManager implements DragSourceListener {
 				// Collect selection proxies second so they always appear on top
 				for (DisplayModelBinding binding : selectedBindings) {
 					try {
-						binding.collectSelectionProxies(renderHours, _cachedScene);
+						binding.collectSelectionProxies(renderTime, _cachedScene);
 					} catch (Throwable t) {
 						// Log the exception in the exception list
 						logException(t);
