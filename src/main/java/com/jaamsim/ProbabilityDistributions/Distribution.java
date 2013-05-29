@@ -16,6 +16,7 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.IntegerInput;
@@ -31,6 +32,10 @@ import java.util.Random;
  */
 public abstract class Distribution extends DisplayEntity
 implements SampleProvider {
+	@Keyword(description = "The unittype that the distribution returns values in.",
+	         example = "ProbDist1 UnitType { DistanceUnit }")
+	private final UnitTypeInput unitType;
+
 	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
 			 example = "ProbDist1 RandomSeed { 547 }")
 	private final IntegerInput randomSeedInput;
@@ -56,6 +61,9 @@ implements SampleProvider {
 	private double sampleMax;
 
 	{
+		unitType = new UnitTypeInput("UnitType", "Key Inputs");
+		this.addInput(unitType, true);
+
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 1);
 		randomSeedInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(randomSeedInput, true);
@@ -132,7 +140,7 @@ implements SampleProvider {
 
 	@Override
 	public Class<? extends Unit> getUnitType() {
-		return null;
+		return unitType.getUnitType();
 	}
 
 	/**
