@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
@@ -30,16 +32,15 @@ import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.TimeInput;
 
 public class VideoRecorderEntity extends Entity {
 	@Keyword(description = "Simulated time between screen captures",
 	         example = "This is placeholder example text")
-	private final TimeInput captureInterval;
+	private final ValueInput captureInterval;
 
 	@Keyword(description = "How long the simulation waits until starting video recording",
 	         example = "This is placeholder example text")
-	private final TimeInput captureStartTime;
+	private final ValueInput captureStartTime;
 
 	@Keyword(description = "Number of frames to capture",
 	         example = "This is placeholder example text")
@@ -78,15 +79,15 @@ public class VideoRecorderEntity extends Entity {
 	private Process captureThread;
 
 	{
-		captureStartTime = new TimeInput( "CaptureStartTime", "Key Inputs", 0.0 );
-		captureStartTime.setValidRange( 0, Double.POSITIVE_INFINITY );
-		captureStartTime.setUnits( "h" );
-		this.addInput( captureStartTime, true );
+		captureStartTime = new ValueInput("CaptureStartTime", "Key Inputs", 0.0d);
+		captureStartTime.setUnitType(TimeUnit.class);
+		captureStartTime.setValidRange(0, Double.POSITIVE_INFINITY);
+		this.addInput(captureStartTime, true);
 
-		captureInterval = new TimeInput( "CaptureInterval", "Key Inputs", 1.0 );
-		captureInterval.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
-		captureInterval.setUnits( "h" );
-		this.addInput( captureInterval, true );
+		captureInterval = new ValueInput("CaptureInterval", "Key Inputs", 3600.0d);
+		captureInterval.setUnitType(TimeUnit.class);
+		captureInterval.setValidRange(0.1d, Double.POSITIVE_INFINITY);
+		this.addInput(captureInterval, true);
 
 		videoBGColor = new ColourInput("VideoBackgroundColor", "Key Inputs", ColourInput.WHITE);
 		this.addInput(videoBGColor, true, "Colour");
@@ -150,10 +151,6 @@ public class VideoRecorderEntity extends Entity {
 		}
 	}
 
-	public double getCaptureInterval() {
-		return captureInterval.getValue();
-	}
-
 	/**
 	 * Capture JPEG images of the screen at regular simulated intervals
 	 */
@@ -165,7 +162,7 @@ public class VideoRecorderEntity extends Entity {
 			captureThread = null;
 		}
 
-		scheduleWait(captureStartTime.getValue(), 10);
+		simWait(captureStartTime.getValue(), 10);
 
 		if (!RenderManager.isGood()) {
 			RenderManager.initialize(false);
@@ -194,7 +191,7 @@ public class VideoRecorderEntity extends Entity {
 			// Wait until the next time to capture a frame
 			// (priority 10 is used to allow higher priority events to complete first)
 			captureThread = Process.current();
-			scheduleWait( this.getCaptureInterval(), 10 );
+			simWait(captureInterval.getValue(), 10);
 			captureThread = null;
 		}
 
