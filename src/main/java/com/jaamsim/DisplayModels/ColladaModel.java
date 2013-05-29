@@ -22,14 +22,17 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ActionListInput;
+import com.jaamsim.input.Output;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Action;
 import com.jaamsim.render.DisplayModelBinding;
+import com.jaamsim.render.MeshDataCache;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.MeshProxy;
 import com.jaamsim.render.RenderProxy;
@@ -236,4 +239,38 @@ public class ColladaModel extends DisplayModel {
 			out.addAll(cachedProxies);
 		}
 	}
+
+	private MeshData getMeshData() {
+		MeshProtoKey key = _cachedKeys.get(colladaFile.getValue());
+		if (key == null) return null;
+
+		return MeshDataCache.getMeshData(key);
+	}
+
+	@Output(name = "Vertices")
+	public int getNumVerticesOutput(double simTime) {
+		MeshData data = getMeshData();
+		if (data == null) return 0;
+
+		return data.getNumVertices();
+	}
+
+	@Output(name = "Triangles")
+	public int getNumTrianglesOutput(double simTime) {
+		MeshData data = getMeshData();
+		if (data == null) return 0;
+
+		return data.getNumTriangles();
+	}
+
+	@Output(name = "VertexShareRatio")
+	public double getVertexShareRatioOutput(double simTime) {
+		MeshData data = getMeshData();
+		if (data == null) return 0;
+
+		double numTriangles = data.getNumTriangles();
+		double numVertices = data.getNumVertices();
+		return numTriangles / (numVertices/3);
+	}
+
 }

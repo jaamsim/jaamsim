@@ -335,4 +335,21 @@ public class MeshData {
 		return _armatures;
 	}
 
+	public int getNumTriangles() {
+		int numTriangles = 0;
+		for (SubMeshInstance inst : _subMeshInstances) {
+			SubMeshData data = _subMeshesData.get(inst.subMeshIndex);
+			numTriangles += data.indices.length / 3;
+		}
+		return numTriangles;
+	}
+
+	public int getNumVertices() {
+		int numVerts = 0;
+		for (SubMeshData data : _subMeshesData) {
+			numVerts += data.verts.size();
+		}
+		return numVerts;
+	}
+
 }
