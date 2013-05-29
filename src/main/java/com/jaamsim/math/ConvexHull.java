@@ -522,7 +522,7 @@ public class ConvexHull {
 	 * @author Matt.Chudleigh
 	 *
 	 */
-	private class TempHullFace {
+	private static class TempHullFace {
 		public final int[] indices = new int[3];
 		public final Plane plane;
 		public double furthestDist = 0;
