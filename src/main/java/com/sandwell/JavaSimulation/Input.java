@@ -19,6 +19,7 @@ import java.util.Arrays;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
 public abstract class Input<T> {
@@ -456,6 +457,43 @@ public abstract class Input<T> {
 		return value;
 	}
 
+	/**
+	 * Convert the given String to a double and apply the given conversion factor
+	 */
+	public static double parseSeconds(String data, double minValue, double maxValue, double factor )
+	throws InputErrorException {
+		double value = 0.0d;
+
+		// check for hh:mm:ss or hh:mm
+		if (data.indexOf(":") > -1) {
+			String[] splitDouble = data.split( ":" );
+			if (splitDouble.length != 2 && splitDouble.length != 3)
+				throw new InputErrorException(INP_ERR_TIME, data);
+
+			try {
+				double hour = Double.valueOf(splitDouble[0]);
+				double min = Double.valueOf(splitDouble[1]);
+				double sec = 0.0d;
+
+				if (splitDouble.length == 3)
+					sec = Double.valueOf(splitDouble[2]);
+
+				value = hour * 3600.0d + min * 60.0d + sec;
+			}
+			catch (NumberFormatException e) {
+				throw new InputErrorException(INP_ERR_TIME, data);
+			}
+		} else {
+			value = Input.parseDouble(data);
+			value = value * factor;
+		}
+
+		if (value < minValue || value > maxValue)
+			throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, value);
+
+		return value;
+	}
+
 	public static DoubleVector parseTimeVector(StringVector input, double minValue, double maxValue)
 	throws InputErrorException {
 		return parseTimeVector(input, minValue, maxValue, 1.0d);
@@ -613,8 +651,15 @@ public abstract class Input<T> {
 		DoubleVector temp = new DoubleVector(numDoubles);
 		for (int i = 0; i < numDoubles; i++) {
 			try {
-				double element = Input.parseDouble(input.get(i), minValue, maxValue, factor);
-				temp.add(element);
+				// Allow a special syntax for time-based inputs
+				if (unitType == TimeUnit.class) {
+					double element = Input.parseSeconds(input.get(i), minValue, maxValue, factor);
+					temp.add(element);
+				}
+				else {
+					double element = Input.parseDouble(input.get(i), minValue, maxValue, factor);
+					temp.add(element);
+				}
 			} catch (InputErrorException e) {
 				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
 			}
