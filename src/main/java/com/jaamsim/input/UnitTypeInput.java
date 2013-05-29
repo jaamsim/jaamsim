@@ -14,26 +14,56 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import com.jaamsim.units.Unit;
+import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ObjectType;
+import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
 
-public class UnitTypeInput extends Input<Class<? extends Unit>>{
+public class UnitTypeInput extends Input<ObjectType> {
+	private Class<? extends Unit> unitType = Unit.class;
+
 	public UnitTypeInput(String key, String cat) {
-		super(key, cat, Unit.class);
+		super(key, cat, null);
 	}
 
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCount(input, 1);
-		if (value != Unit.class)
-			throw new InputErrorException("Value has already been set to %s", value.getName());
+		if (value != null)
+			throw new InputErrorException("Value has already been set to %s", value.getInputName());
 
 		ObjectType t = Input.parseEntity(input.get(0), ObjectType.class);
-		value = Input.checkCast(t.getJavaClass(), Unit.class);
+		Class<? extends Unit> type = Input.checkCast(t.getJavaClass(), Unit.class);
+
+		value = t;
+		unitType = type;
+
 		this.updateEditingFlags();
+	}
+
+	@Override
+	public ArrayList<String> getValidOptions() {
+		ArrayList<String> list = new ArrayList<String>();
+		for (ObjectType each: Simulation.getClonesOf(ObjectType.class)) {
+			Class<? extends Entity> klass = each.getJavaClass();
+			if (klass == null)
+				continue;
+
+			if (Unit.class.isAssignableFrom(klass))
+				list.add(each.getInputName());
+		}
+		Collections.sort(list);
+		return list;
+	}
+
+	public Class<? extends Unit> getUnitType() {
+		return unitType;
 	}
 }
