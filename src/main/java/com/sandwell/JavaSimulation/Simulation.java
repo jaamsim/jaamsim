@@ -18,8 +18,10 @@ import java.util.ArrayList;
 
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.Clock;
 import com.sandwell.JavaSimulation3D.EntityPallet;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -77,7 +79,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
 	         example = "Simulation StartTime { 2160 h }")
-	protected final TimeInput startTimeInput;
+	private final ValueInput startTimeInput;
 
 	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
 	         example = "Simulation Duration { 8760 h }")
@@ -95,14 +97,14 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "Timestep for updating port operations, in the form hh:mm or in decimal hours.",
 	         example = "Simulation PortTimeStep { 0.25 h }")
-	private final TimeInput portTimeStep;
+	private final ValueInput portTimeStep;
 
 	@Keyword(description = "The time interval to increment each step by. The model calculates all parameters " +
 	                "at every time step, so a higher time step will provide coarser resolution in time " +
 	                "for results, but will take less time to complete a simulation run. A time step of " +
 	                "15 minutes is recommended for most models.",
 	         example = "Simulation TimeStep { 0.25 h }")
-	private final TimeInput clockTimeStep;
+	private final ValueInput clockTimeStep;
 
 	@Keyword(description = "The default units of Cargo",
 	         example = "Sim CargoUnits { kt }")
@@ -173,25 +175,25 @@ public class Simulation extends Entity {
 		startDate = new StringInput("StartDate", "Key Inputs", null);
 		this.addInput(startDate, true);
 
-		startTimeInput = new TimeInput( "StartTime", "Key Inputs", 0.0 );
-		startTimeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY );
-		startTimeInput.setUnits( "h" );
-		this.addInput( startTimeInput, true );
+		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
+		startTimeInput.setUnitType(TimeUnit.class);
+		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(startTimeInput, true);
 
 		exitAtStop = new BooleanInput( "ExitAtStop", "Key Inputs", false );
 		this.addInput( exitAtStop, true );
 
-		clockTimeStep = new TimeInput( "TimeStep", "Key Inputs", 1.0 );
-		clockTimeStep.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
-		clockTimeStep.setUnits( "h" );
+		clockTimeStep = new ValueInput("TimeStep", "Key Inputs", 3600.0d);
+		clockTimeStep.setUnitType(TimeUnit.class);
+		clockTimeStep.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		clockTimeStep.setHidden(true);
-		this.addInput( clockTimeStep, true );
+		this.addInput(clockTimeStep, true);
 
-		portTimeStep = new TimeInput( "PortTimeStep", "Key Inputs", 1.0 );
-		portTimeStep.setValidRange( 0.001d, Double.POSITIVE_INFINITY );
+		portTimeStep = new ValueInput("PortTimeStep", "Key Inputs", 3600.0d);
+		portTimeStep.setUnitType(TimeUnit.class);
+		portTimeStep.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		portTimeStep.setHidden(true);
-		portTimeStep.setUnits( "h" );
-		this.addInput( portTimeStep, true );
+		this.addInput(portTimeStep, true);
 
 		cargoUnitString = new StringInput("CargoUnits", "Key Inputs", "kt");
 		this.addInput(cargoUnitString, true);
@@ -266,7 +268,8 @@ public class Simulation extends Entity {
 		if( startDate.getValue() != null ) {
 			Clock.getStartingDateFromString( startDate.getValue() );
 		}
-		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeInput.getValue());
+		double startTimeHours = startTimeInput.getValue() / 3600.0d;
+		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
 		endTime = this.getStartTime() + this.getInitializationTime() + this.getRunDuration();
 
 		doEndAtThread = null;
@@ -570,11 +573,11 @@ public class Simulation extends Entity {
 	}
 
 	public double getTimeStep() {
-		return clockTimeStep.getValue();
+		return clockTimeStep.getValue() / 3600.0d;
 	}
 
 	public double getPortTimeStep() {
-		return portTimeStep.getValue();
+		return portTimeStep.getValue() / 3600.0d;
 	}
 
 	public double getGravity() {
