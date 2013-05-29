@@ -171,6 +171,22 @@ public abstract class Input<T> {
 
 	public abstract void parse(StringVector input) throws InputErrorException;
 
+	public static void assertCount(DoubleVector input, int... counts)
+	throws InputErrorException {
+		// If there is no constraint on the element count, return
+		if (counts.length == 0)
+			return;
+
+		// If there is an exact constraint, check the count
+		for (int each : counts) {
+			if (each == input.size())
+				return;
+		}
+
+		// Input size is not equal to any of the specified counts
+		throw new InputErrorException(INP_ERR_COUNT, Arrays.toString(counts), input.toString());
+	}
+
 	public static void assertCount(StringVector input, int... counts)
 	throws InputErrorException {
 		// If there is no constraint on the element count, return
