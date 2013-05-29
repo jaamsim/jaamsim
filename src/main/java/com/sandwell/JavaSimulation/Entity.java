@@ -27,7 +27,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputGroup;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.Unit;
 
 /**
@@ -859,17 +858,6 @@ public class Entity {
 
 		return a.description();
 	}
-
-	public Double getDoubleOutput(String outputName, double simTime) {
-		return getOutputValue(outputName, simTime, Double.class);
-	}
-	public Vec3d getVec3dOutput(String outputName, double simTime) {
-		return getOutputValue(outputName, simTime, Vec3d.class);
-	}
-
-	////////////////////////////////////////////////////////////////////////
-	// Outputs
-	////////////////////////////////////////////////////////////////////////
 
 	@Output(name = "Name",
 	        description="The unique input name for this entity.")
