@@ -644,7 +644,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		// Load the bad mesh proto
 		MeshData badData = MeshDataCache.getBadMesh();
-		MeshProto badProto = new MeshProto(badData, _safeGraphics);
+		MeshProto badProto = new MeshProto(badData, _safeGraphics, !_safeGraphics);
 		_protoCache.put(MeshDataCache.BAD_MESH_KEY, badProto);
 		badProto.loadGPUAssets(gl, this);
 
@@ -671,7 +671,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
 
 		MeshData data = MeshDataCache.getMeshData(key);
-		MeshProto proto = new MeshProto(data, _safeGraphics);
+		MeshProto proto = new MeshProto(data, _safeGraphics, !_safeGraphics);
 
 		assert (proto != null);
 		proto.loadGPUAssets(gl, this);

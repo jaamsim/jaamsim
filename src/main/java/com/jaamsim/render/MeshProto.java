@@ -142,9 +142,11 @@ private static int zeroBuffer = 0;
 private static int zeroBufferSize; // The size of the zero buffer in vertices
 
 private final boolean flattenBuffers;
+private final boolean useZeroBuffer;
 
-public MeshProto(MeshData data, boolean flattenBuffers) {
+public MeshProto(MeshData data, boolean flattenBuffers, boolean useZeroBuffer) {
 	this.flattenBuffers = flattenBuffers;
+	this.useZeroBuffer = useZeroBuffer;
 	this.data = data;
 	_subMeshes = new ArrayList<SubMesh>();
 	_subLines = new ArrayList<SubLine>();
@@ -597,15 +599,18 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 		gl.glGenBuffers(2, is, 0);
 		sub._boneIndicesBuffer = is[0];
 		sub._boneWeightsBuffer = is[1];
-	} else {
-		int numEntries = data.verts.size();
-		if (flattenBuffers) {
-			numEntries = data.indices.length;
-		}
-		setupZeroBuffer(numEntries, gl);
+	}
+	else {
+		if (useZeroBuffer) {
+			int numEntries = data.verts.size();
+			if (flattenBuffers) {
+				numEntries = data.indices.length;
+			}
+			setupZeroBuffer(numEntries, gl);
 
-		sub._boneIndicesBuffer = zeroBuffer;
-		sub._boneWeightsBuffer = zeroBuffer;
+			sub._boneIndicesBuffer = zeroBuffer;
+			sub._boneWeightsBuffer = zeroBuffer;
+		}
 	}
 
 	sub._center = data.hull.getAABB(Mat4d.IDENTITY).getCenter();
