@@ -140,13 +140,7 @@ public class GraphicBox extends JDialog {
 				StringBuilder validString = new StringBuilder(45);
 				validString.append("*.dae;");
 				validString.append("*.jsm;");
-				validString.append("*.zip;");
-				validString.append("*.kmz;");
-				validString.append("*.bmp;");
-				validString.append("*.jpg;");
-				validString.append("*.png;");
-				validString.append("*.pcx;");
-				validString.append("*.gif");
+				validString.append("*.zip");
 
 				FileDialog chooser = new FileDialog(myInstance, "New DisplayModel", FileDialog.LOAD );
 				chooser.setFile(validString.toString());
