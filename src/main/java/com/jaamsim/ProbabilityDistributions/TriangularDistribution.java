@@ -14,7 +14,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 
@@ -26,10 +28,11 @@ public class TriangularDistribution extends Distribution {
 
 	@Keyword(description = "The mode of the triangular distribution, i.e. the value with the highest probability.",
 	         example = "TriangularDist-1 Mode { 5.0 }")
-	private final DoubleInput modeInput;
+	private final ValueInput modeInput;
 
 	{
-		modeInput = new DoubleInput("Mode", "Key Inputs", 1.0d);
+		modeInput = new ValueInput("Mode", "Key Inputs", 1.0d);
+		modeInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(modeInput, true);
 	}
 
@@ -44,6 +47,12 @@ public class TriangularDistribution extends Distribution {
 		if( this.getMaxValue() < modeInput.getValue() ) {
 			throw new InputErrorException( "The input for Mode must be <= than that for MaxValue.");
 		}
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> specified) {
+		super.setUnitType(specified);
+		modeInput.setUnitType(specified);
 	}
 
 	@Override
