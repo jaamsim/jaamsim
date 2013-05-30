@@ -18,15 +18,20 @@ import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
+import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.StringVector;
 
-public class ValueInput extends Input<Double> {
+public class ValueListInput extends ListInput<DoubleVector> {
 	private Class<? extends Unit> unitType = Unit.class;
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
+	private double sumValue = Double.NaN;
+	private double sumTolerance = 1e-10d;
+	private int[] validCounts; // valid list sizes not including units
 
-	public ValueInput(String key, String cat, Double def) {
+	public ValueListInput(String key, String cat, DoubleVector def) {
 		super(key, cat, def);
+		validCounts = new int[] { };
 	}
 
 	public void setUnitType(Class<? extends Unit> units) {
@@ -37,8 +42,12 @@ public class ValueInput extends Input<Double> {
 	public void parse(StringVector input)
 	throws InputErrorException {
 		DoubleVector temp = Input.parseDoubles(input, minValue, maxValue, unitType);
-		Input.assertCount(temp, 1);
-		value = Double.valueOf(temp.get(0));
+		Input.assertCount(temp, validCounts);
+		Input.assertCountRange(temp, minCount, maxCount);
+		if (!Double.isNaN(sumValue))
+			Input.assertSumTolerance(temp, sumValue, sumTolerance);
+
+		value = temp;
 		this.updateEditingFlags();
 	}
 
@@ -47,20 +56,31 @@ public class ValueInput extends Input<Double> {
 		maxValue = max;
 	}
 
+	public void setValidSum(double sum, double tol) {
+		sumValue = sum;
+		sumTolerance = tol;
+	}
+
+	public void setValidCounts(int... list) {
+		validCounts = list;
+	}
+
 	@Override
 	public String getDefaultString() {
-		if (defValue == null)
-			return NO_VALUE;
+		if (defValue == null || defValue.size() == 0) {
+			StringBuilder tmp = new StringBuilder(NO_VALUE);
+			if (unitType != Unit.class) {
+				tmp.append(SEPARATOR);
+				tmp.append(Unit.getSIUnit(unitType));
+			}
+			return tmp.toString();
+		}
 
 		StringBuilder tmp = new StringBuilder();
-		if (defValue.doubleValue() == Double.POSITIVE_INFINITY) {
-			tmp.append(POSITIVE_INFINITY);
-		}
-		else if (defValue.doubleValue() == Double.NEGATIVE_INFINITY) {
-			tmp.append(NEGATIVE_INFINITY);
-		}
-		else {
-			tmp.append(defValue.toString());
+		for (int i = 0; i < defValue.size(); i++) {
+			if (i > 0)
+				tmp.append(SEPARATOR);
+			tmp.append(defValue.get(i));
 		}
 
 		if (unitType != Unit.class) {
