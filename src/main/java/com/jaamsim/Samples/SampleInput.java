@@ -15,6 +15,7 @@
 package com.jaamsim.Samples;
 
 import com.jaamsim.units.Unit;
+import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Input;
@@ -38,25 +39,20 @@ public class SampleInput extends Input<SampleProvider> {
 	throws InputErrorException {
 		Input.assertCountRange(input, 1, 2);
 
-		// Only one argument means we must have passed an Entity
-		if (input.size() == 1) {
-			Entity ent = Input.parseEntity(input.get(0), Entity.class);
-			SampleProvider s = Input.castImplements(ent, SampleProvider.class);
-			Input.assertUnitsMatch(unitType, s.getUnitType());
-			value = s;
+		// Try to parse as a constant value
+		try {
+			DoubleVector tmp = Input.parseDoubles(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+			value = new ConstantDouble(unitType, tmp.get(0));
 			this.updateEditingFlags();
 			return;
 		}
+		catch (InputErrorException e) {}
 
-		// In case we pass a constant and a Unit
-		if (input.size() == 2) {
-			double val = Input.parseDouble(input.get(0));
-			Unit u = Input.parseUnits(input.get(1));
-			Input.assertUnitsMatch(unitType, u.getClass());
-			val *= u.getConversionFactorToSI();
-			value = new ConstantDouble(u.getClass(), val);
-			this.updateEditingFlags();
-			return;
-		}
+		// If not a constant, try parsing a SampleProvider
+		Entity ent = Input.parseEntity(input.get(0), Entity.class);
+		SampleProvider s = Input.castImplements(ent, SampleProvider.class);
+		Input.assertUnitsMatch(unitType, s.getUnitType());
+		value = s;
+		this.updateEditingFlags();
 	}
 }

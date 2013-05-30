@@ -25,6 +25,11 @@ public class ConstantDouble implements SampleProvider {
 		this.val = val;
 	}
 
+	public ConstantDouble(double val) {
+		this.unitType = Unit.class;
+		this.val = val;
+	}
+
 	@Override
 	public Class<? extends Unit> getUnitType() {
 		return unitType;
@@ -38,7 +43,9 @@ public class ConstantDouble implements SampleProvider {
 	@Override
 	public String toString() {
 		StringBuilder tmp = new StringBuilder();
-		tmp.append(val).append("  ").append(Unit.getSIUnit(unitType));
+		tmp.append(val);
+		if (unitType != Unit.class)
+			tmp.append("  ").append(Unit.getSIUnit(unitType));
 		return tmp.toString();
 	}
 }
