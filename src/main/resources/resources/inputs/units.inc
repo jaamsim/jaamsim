@@ -21,10 +21,12 @@ Define ObjectType  { TimeUnit
                      CostUnit
                      CostRateUnit
                      LinearDensityUnit
-					 DensityUnit
-					 PressureUnit
-					 ViscosityUnit
-					 AreaUnit }
+                     DensityUnit
+                     PressureUnit
+                     ViscosityUnit
+                     AreaUnit
+                     DimensionlessUnit
+                     }
 
 TimeUnit            JavaClass { com.jaamsim.units.TimeUnit            } Palette { Units } DragAndDrop { FALSE }
 DistanceUnit        JavaClass { com.jaamsim.units.DistanceUnit        } Palette { Units } DragAndDrop { FALSE }
@@ -47,6 +49,7 @@ DensityUnit         JavaClass { com.jaamsim.units.DensityUnit         } Palette 
 PressureUnit        JavaClass { com.jaamsim.units.PressureUnit        } Palette { Units } DragAndDrop { FALSE }
 ViscosityUnit       JavaClass { com.jaamsim.units.ViscosityUnit       } Palette { Units } DragAndDrop { FALSE }
 AreaUnit            JavaClass { com.jaamsim.units.AreaUnit            } Palette { Units } DragAndDrop { FALSE }
+DimensionlessUnit   JavaClass { com.jaamsim.units.DimensionlessUnit   } Palette { Units } DragAndDrop { FALSE }
 
 " ======================================================================================================================================================
 " Time units

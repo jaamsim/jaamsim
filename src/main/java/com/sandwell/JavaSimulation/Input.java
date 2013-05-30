@@ -19,6 +19,7 @@ import java.util.Arrays;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -655,12 +656,18 @@ public abstract class Input<T> {
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
 
-		// If a unittype is provided, the last entry must be a unit
-		Unit unit = null;
 		double factor = 1.0d;
 		int numDoubles = input.size();
-		if (unitType != Unit.class) {
-			unit = Input.parseEntity(input.get(input.size() - 1), unitType);
+
+		// If a unittype is provided, the last entry must be a unit
+		Unit unit = null;
+		if (unitType != Unit.class)
+			unit = Input.tryParseEntity(input.get(input.size() - 1), unitType);
+
+		if (unit == null && unitType != Unit.class && unitType != DimensionlessUnit.class)
+			throw new InputErrorException("Units not found");
+
+		if (unit != null) {
 			factor = unit.getConversionFactorToSI();
 			numDoubles = input.size() - 1;
 		}
