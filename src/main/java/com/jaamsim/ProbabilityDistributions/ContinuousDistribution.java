@@ -14,6 +14,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.input.ValueListInput;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -30,7 +33,7 @@ public class ContinuousDistribution extends Distribution {
 
 	@Keyword(description = "The list of values for the user-defined cumulative probability distribution.",
 	         example = "ContinuousDist-1 ValueList { 2.0  4.3  8.9 }")
-	private final DoubleListInput valueListInput;
+	private final ValueListInput valueListInput;
 
 	@Keyword(description = "The list of cumulative probabilities corresponding to the values in the ValueList.  " +
 			"The cumulative probabilities must be given in increasing order.  The first value must be exactly 0.0.  " +
@@ -39,7 +42,8 @@ public class ContinuousDistribution extends Distribution {
 	private final DoubleListInput cumulativeProbabilityListInput;
 
 	{
-		valueListInput = new DoubleListInput( "ValueList", "Key Inputs", null);
+		valueListInput = new ValueListInput("ValueList", "Key Inputs", null);
+		valueListInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( valueListInput, true);
 
 		cumulativeProbabilityListInput = new DoubleListInput( "CumulativeProbabilityList", "Key Inputs", null);
@@ -74,6 +78,12 @@ public class ContinuousDistribution extends Distribution {
 			}
 			last = cumulativeProbabilityListInput.getValue().get(i);
 		}
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> specified) {
+		super.setUnitType(specified);
+		valueListInput.setUnitType(specified);
 	}
 
 	@Override

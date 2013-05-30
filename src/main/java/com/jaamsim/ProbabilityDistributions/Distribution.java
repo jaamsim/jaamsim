@@ -14,16 +14,19 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import java.util.Random;
+
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.DoubleInput;
-import com.sandwell.JavaSimulation.IntegerInput;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
-import com.sandwell.JavaSimulation.Keyword;
+import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
-import java.util.Random;
+import com.sandwell.JavaSimulation.IntegerInput;
+import com.sandwell.JavaSimulation.Keyword;
+import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
  * ProbablityDistribution is the super-class for the various probability distributions implemented in JaamSim.
@@ -43,12 +46,12 @@ implements SampleProvider {
 	@Keyword(description = "Minimum value that can be returned (before ValueFactor is applied). " +
 					"Smaller values are rejected and resampled.",
 	         example = "ProbDist1 MinValue { 0.0 }")
-	private final DoubleInput minValueInput;
+	private final ValueInput minValueInput;
 
 	@Keyword(description = "Maximum value that can be returned (before ValueFactor is applied). " +
 					"Larger values are rejected and resampled.",
 	         example = "ProbDist1 MaxValue { 200.0 }")
-	private final DoubleInput maxValueInput;
+	private final ValueInput maxValueInput;
 
 	protected final Random randomGenerator1; // first random generator for picking values
 	protected final Random randomGenerator2; // second random generator for picking values
@@ -68,10 +71,12 @@ implements SampleProvider {
 		randomSeedInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(randomSeedInput, true);
 
-		minValueInput = new DoubleInput("MinValue", "Key Inputs", Double.NEGATIVE_INFINITY);
+		minValueInput = new ValueInput("MinValue", "Key Inputs", Double.NEGATIVE_INFINITY);
+		minValueInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(minValueInput, true);
 
-		maxValueInput = new DoubleInput("MaxValue", "Key Inputs", Double.POSITIVE_INFINITY);
+		maxValueInput = new ValueInput("MaxValue", "Key Inputs", Double.POSITIVE_INFINITY);
+		maxValueInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(maxValueInput, true);
 	}
 
@@ -105,6 +110,16 @@ implements SampleProvider {
 		sampleSquaredSum = 0.0;
 		sampleMin = Double.POSITIVE_INFINITY;
 		sampleMax = Double.NEGATIVE_INFINITY;
+	}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == unitType) {
+			setUnitType(getUnitType());
+			return;
+		}
 	}
 
 	/**
@@ -141,6 +156,11 @@ implements SampleProvider {
 	@Override
 	public Class<? extends Unit> getUnitType() {
 		return unitType.getUnitType();
+	}
+
+	protected void setUnitType(Class<? extends Unit> specified) {
+		minValueInput.setUnitType(specified);
+		maxValueInput.setUnitType(specified);
 	}
 
 	/**

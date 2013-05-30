@@ -42,6 +42,7 @@ public class DiscreteDistribution extends Distribution {
 		this.addInput( valueListInput, true);
 
 		probabilityListInput = new DoubleListInput( "ProbabilityList", "Key Inputs", null);
+		probabilityListInput.setValidSum(1.0d);
 		this.addInput( probabilityListInput, true);
 	}
 
@@ -52,11 +53,6 @@ public class DiscreteDistribution extends Distribution {
 		// The number of entries in the ValueList and ProbabilityList inputs must match
 		if( probabilityListInput.getValue().size() != valueListInput.getValue().size() ) {
 			throw new InputErrorException( "The number of entries for ProbabilityList and ValueList must be equal" );
-		}
-
-		// The entries in the ProbabilityList must sum to 1.0
-		if( Math.abs( probabilityListInput.getValue().sum() - 1.0 ) > 1.0e-10 ) {
-			throw new InputErrorException( "The entries in the ProbabilityList must sum to 1.0" );
 		}
 	}
 
