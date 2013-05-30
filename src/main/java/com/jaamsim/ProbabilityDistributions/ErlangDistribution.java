@@ -14,7 +14,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
 
@@ -26,7 +28,7 @@ public class ErlangDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Erlang distribution.",
 	         example = "ErlangDist-1 Mean { 5.0 }")
-	private final DoubleInput meanInput;
+	private final ValueInput meanInput;
 
 	@Keyword(description = "The shape parameter for the Erlang distribution.  An integer value >= 1.  " +
 			"Shape = 1 gives the Exponential distribution.  " +
@@ -35,13 +37,20 @@ public class ErlangDistribution extends Distribution {
 	private final IntegerInput shapeInput;
 
 	{
-		meanInput = new DoubleInput("Mean", "Key Inputs", 1.0d);
-		meanInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
+		meanInput = new ValueInput("Mean", "Key Inputs", 1.0d);
+		meanInput.setUnitType(UserSpecifiedUnit.class);
+		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(meanInput, true);
 
 		shapeInput = new IntegerInput("Shape", "Key Inputs", 1);
 		shapeInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(shapeInput, true);
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> specified) {
+		super.setUnitType(specified);
+		meanInput.setUnitType(specified);
 	}
 
 	@Override

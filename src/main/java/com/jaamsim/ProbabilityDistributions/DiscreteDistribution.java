@@ -14,6 +14,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.input.ValueListInput;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -31,14 +34,15 @@ public class DiscreteDistribution extends Distribution {
 			"The values can be any positive or negative and can be listed in any order.  " +
 			"No interpolation is performed between these values.",
 	         example = "DiscreteDist-1 ValueList { 6.2 10.1 }")
-	private final DoubleListInput valueListInput;
+	private final ValueListInput valueListInput;
 
 	@Keyword(description = "The list of probabilities corresponding to the discrete values in the ValueList.  Must sum to 1.0.",
 	         example = "DiscreteDist-1 ProbabilityList { 0.3  0.7 }")
 	private final DoubleListInput probabilityListInput;
 
 	{
-		valueListInput = new DoubleListInput( "ValueList", "Key Inputs", null);
+		valueListInput = new ValueListInput( "ValueList", "Key Inputs", null);
+		valueListInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( valueListInput, true);
 
 		probabilityListInput = new DoubleListInput( "ProbabilityList", "Key Inputs", null);
@@ -54,6 +58,12 @@ public class DiscreteDistribution extends Distribution {
 		if( probabilityListInput.getValue().size() != valueListInput.getValue().size() ) {
 			throw new InputErrorException( "The number of entries for ProbabilityList and ValueList must be equal" );
 		}
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> specified) {
+		super.setUnitType(specified);
+		valueListInput.setUnitType(specified);
 	}
 
 	@Override

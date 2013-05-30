@@ -14,6 +14,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
 
@@ -27,20 +30,27 @@ public class GammaDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the Gamma distribution.",
 	         example = "GammaDist-1 Mean { 5.0 }")
-	private final DoubleInput meanInput;
+	private final ValueInput meanInput;
 
 	@Keyword(description = "The shape parameter for the Gamma distribution.  A decimal value > 0.0.",
 	         example = "GammaDist-1 Shape { 2.0 }")
 	private final DoubleInput shapeInput;
 
 	{
-		meanInput = new DoubleInput("Mean", "Key Inputs", 1.0d);
-		meanInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
+		meanInput = new ValueInput("Mean", "Key Inputs", 1.0d);
+		meanInput.setUnitType(UserSpecifiedUnit.class);
+		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(meanInput, true);
 
 		shapeInput = new DoubleInput("Shape", "Key Inputs", 1.0);
 		shapeInput.setValidRange( 1.0e-10d, Integer.MAX_VALUE);
 		this.addInput(shapeInput, true);
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> specified) {
+		super.setUnitType(specified);
+		meanInput.setUnitType(specified);
 	}
 
 	@Override

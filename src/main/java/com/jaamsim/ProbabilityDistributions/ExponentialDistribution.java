@@ -14,7 +14,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.Keyword;
 
 /**
@@ -25,12 +27,19 @@ public class ExponentialDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the exponential distribution.",
 	         example = "ExponentialDist-1 Mean { 5.0 }")
-	private final DoubleInput meanInput;
+	private final ValueInput meanInput;
 
 	{
-		meanInput = new DoubleInput("Mean", "Key Inputs", 1.0d);
-		meanInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
+		meanInput = new ValueInput("Mean", "Key Inputs", 1.0d);
+		meanInput.setUnitType(UserSpecifiedUnit.class);
+		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(meanInput, true);
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> specified) {
+		super.setUnitType(specified);
+		meanInput.setUnitType(specified);
 	}
 
 	@Override
