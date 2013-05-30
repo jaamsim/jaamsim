@@ -251,8 +251,9 @@ $/d    ConversionFactorToSI { 1 86400 } Alias { $/day }
 " Linear Density units
 " ======================================================================================================================================================
 
-Define LinearDensityUnit      { t/m kt/m }
+Define LinearDensityUnit      { kg/m t/m kt/m  }
 
+kg/m ConversionFactorToSI { 1         }
 t/m  ConversionFactorToSI { 1000      }
 kt/m ConversionFactorToSI { 1000000   }
 
