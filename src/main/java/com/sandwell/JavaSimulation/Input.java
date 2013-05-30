@@ -21,6 +21,7 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public abstract class Input<T> {
 	protected static final String INP_ERR_COUNT = "Expected an input with %s value(s), received: %s";
@@ -43,6 +44,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_ENTCLASS = "Expected a %s, %s is a %s";
 	protected static final String INP_ERR_INTERFACE = "Expected an object implementing %s, %s does not";
 	protected static final String INP_ERR_UNITS = "Unit types do not match";
+	protected static final String INP_ERR_UNITUNSPECIFIED = "Unit type has not been specified";
 	protected static final String INP_ERR_NOTSUBCLASS = "Expected a subclass of %s, got %s";
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
@@ -202,6 +204,18 @@ public abstract class Input<T> {
 
 		// Input size is not equal to any of the specified counts
 		throw new InputErrorException(INP_ERR_COUNT, Arrays.toString(counts), input.toString());
+	}
+
+	public static void assertCountRange(DoubleVector input, int min, int max)
+	throws InputErrorException {
+		// For a range with a single value, fall back to the exact test
+		if (min == max) {
+			Input.assertCount(input, min);
+			return;
+		}
+
+		if (input.size() < min || input.size() > max)
+			throw new InputErrorException(INP_ERR_RANGECOUNT, min, max, input.toString());
 	}
 
 	public static void assertCountRange(StringVector input, int min, int max)
@@ -638,6 +652,9 @@ public abstract class Input<T> {
 	 */
 	public static DoubleVector parseDoubles(StringVector input, double minValue, double maxValue, Class<? extends Unit> unitType)
 	throws InputErrorException {
+		if (unitType == UserSpecifiedUnit.class)
+			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
+
 		// If a unittype is provided, the last entry must be a unit
 		Unit unit = null;
 		double factor = 1.0d;
