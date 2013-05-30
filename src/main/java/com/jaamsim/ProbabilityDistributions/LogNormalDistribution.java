@@ -14,7 +14,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.Keyword;
 
 /**
@@ -26,19 +28,29 @@ public class LogNormalDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the normal distribution (not the mean of the lognormal).",
 	         example = "LogNormalDist-1 NormalMean { 5.0 }")
-	private final DoubleInput normalMeanInput;
+	private final ValueInput normalMeanInput;
 
 	@Keyword(description = "The standard deviation of the normal distribution (not the standard deviation of the lognormal).",
 	         example = "LogNormalDist-1 NormalStandardDeviation { 2.0 }")
-	private final DoubleInput normalStandardDeviationInput;
+	private final ValueInput normalStandardDeviationInput;
 
 	{
-		normalMeanInput = new DoubleInput("NormalMean", "Key Inputs", 0.0d);
+		normalMeanInput = new ValueInput("NormalMean", "Key Inputs", 0.0d);
+		normalMeanInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(normalMeanInput, true);
 
-		normalStandardDeviationInput = new DoubleInput("NormalStandardDeviation", "Key Inputs", 1.0d);
-		normalStandardDeviationInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		normalStandardDeviationInput = new ValueInput("NormalStandardDeviation", "Key Inputs", 1.0d);
+		normalStandardDeviationInput.setUnitType(UserSpecifiedUnit.class);
+		normalStandardDeviationInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(normalStandardDeviationInput, true);
+	}
+
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> specified) {
+		super.setUnitType(specified);
+		normalMeanInput.setUnitType(specified);
+		normalStandardDeviationInput.setUnitType(specified);
 	}
 
 	@Override
