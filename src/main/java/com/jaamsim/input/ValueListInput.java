@@ -27,11 +27,10 @@ public class ValueListInput extends ListInput<DoubleVector> {
 	private double maxValue = Double.POSITIVE_INFINITY;
 	private double sumValue = Double.NaN;
 	private double sumTolerance = 1e-10d;
-	private int[] validCounts; // valid list sizes not including units
+	private int[] validCounts = null; // valid list sizes not including units
 
 	public ValueListInput(String key, String cat, DoubleVector def) {
 		super(key, cat, def);
-		validCounts = new int[] { };
 	}
 
 	public void setUnitType(Class<? extends Unit> units) {

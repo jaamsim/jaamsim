@@ -177,7 +177,7 @@ public abstract class Input<T> {
 	public static void assertCount(DoubleVector input, int... counts)
 	throws InputErrorException {
 		// If there is no constraint on the element count, return
-		if (counts.length == 0)
+		if (counts == null || counts.length == 0)
 			return;
 
 		// If there is an exact constraint, check the count
