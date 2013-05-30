@@ -34,4 +34,11 @@ public class ConstantDouble implements SampleProvider {
 	public double getNextSample(double simTime) {
 		return val;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(val).append("  ").append(Unit.getSIUnit(unitType));
+		return tmp.toString();
+	}
 }
