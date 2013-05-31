@@ -67,7 +67,7 @@ public class DiscreteDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextNonZeroSample() {
+	protected double getNextSample() {
 
 		double rand = randomGenerator1.nextDouble();
 		double cumProb = 0.0;

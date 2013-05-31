@@ -43,7 +43,7 @@ public class ExponentialDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextNonZeroSample() {
+	protected double getNextSample() {
 
 		// Inverse transform method
 		return (- meanInput.getValue() * Math.log( randomGenerator1.nextDouble() ) );

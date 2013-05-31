@@ -42,7 +42,7 @@ public class LogLogisticDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextNonZeroSample() {
+	protected double getNextSample() {
 
 		// Inverse transform method
 		double u = randomGenerator1.nextDouble();

@@ -125,7 +125,7 @@ implements SampleProvider {
 	/**
 	 * Select the next sample from the probability distribution.
 	 */
-	protected abstract double getNextNonZeroSample();
+	protected abstract double getNextSample();
 
 	@Override
 	public Class<? extends Unit> getUnitType() {
@@ -145,7 +145,7 @@ implements SampleProvider {
 		// Loop until the select sample falls within the desired min and max values
 		double nextSample;
 		do {
-			nextSample = this.getNextNonZeroSample();
+			nextSample = this.getNextSample();
 		}
 		while (nextSample < this.minValueInput.getValue() ||
 		       nextSample > this.maxValueInput.getValue());

@@ -54,7 +54,7 @@ public class ErlangDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextNonZeroSample() {
+	protected double getNextSample() {
 
 		// Calculate the product of k random values
 		double u = 1.0;

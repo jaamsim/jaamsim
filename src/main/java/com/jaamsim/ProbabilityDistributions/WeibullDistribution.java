@@ -44,7 +44,7 @@ public class WeibullDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextNonZeroSample() {
+	protected double getNextSample() {
 
 		// Inverse transform method
 		return  scaleInput.getValue() * Math.pow( - Math.log( randomGenerator1.nextDouble() ), 1.0/shapeInput.getValue() );

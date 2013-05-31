@@ -56,7 +56,7 @@ public class TriangularDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextNonZeroSample() {
+	protected double getNextSample() {
 
 		double sample;
 		double min = this.getMinValue();

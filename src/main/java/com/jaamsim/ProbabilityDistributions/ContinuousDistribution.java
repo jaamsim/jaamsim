@@ -87,7 +87,7 @@ public class ContinuousDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextNonZeroSample() {
+	protected double getNextSample() {
 
 		double rand = randomGenerator1.nextDouble();
 		DoubleVector cumList = cumulativeProbabilityListInput.getValue();

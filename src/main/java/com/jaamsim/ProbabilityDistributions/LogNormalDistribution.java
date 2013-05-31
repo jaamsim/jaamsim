@@ -54,7 +54,7 @@ public class LogNormalDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextNonZeroSample() {
+	protected double getNextSample() {
 
 		// Loop until we have a random x-y coordinate in the unit circle
 		double w, v1, v2, sample;

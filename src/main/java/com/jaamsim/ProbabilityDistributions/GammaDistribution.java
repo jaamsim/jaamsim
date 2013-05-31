@@ -54,7 +54,7 @@ public class GammaDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextNonZeroSample() {
+	protected double getNextSample() {
 		double u2, b, sample;
 
 		// Case 1 - Shape parameter < 1

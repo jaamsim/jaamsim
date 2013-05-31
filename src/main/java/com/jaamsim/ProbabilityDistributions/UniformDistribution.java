@@ -21,7 +21,7 @@ package com.jaamsim.ProbabilityDistributions;
 public class UniformDistribution extends Distribution {
 
 	@Override
-	protected double getNextNonZeroSample() {
+	protected double getNextSample() {
 
 		// Select the sample from a uniform distribution between the min and max values
 		return this.getMinValue() + randomGenerator1.nextDouble() * ( this.getMaxValue() - this.getMinValue() );
