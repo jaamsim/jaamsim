@@ -125,33 +125,7 @@ implements SampleProvider {
 	/**
 	 * Select the next sample from the probability distribution.
 	 */
-	private void setNextSample() {
-		// Loop until the select sample falls within the desired min and max values
-		do {
-			presentSample = this.getNextNonZeroSample();
-		}
-		while (presentSample < minValueInput.getValue() ||
-		       presentSample > maxValueInput.getValue());
-
-		// Collect statistics on the sampled values
-		sampleCount++;
-		sampleSum += presentSample;
-		sampleSquaredSum += presentSample*presentSample;
-		sampleMin = Math.min( sampleMin, presentSample);
-		sampleMax = Math.max( sampleMax, presentSample);
-	}
-
-	/**
-	 * Select the next sample from the probability distribution.
-	 */
 	protected abstract double getNextNonZeroSample();
-
-	/**
-	 * Return the present sample from probability distribution.
-	 */
-	public double getValue(double simTime) {
-		return presentSample;
-	}
 
 	@Override
 	public Class<? extends Unit> getUnitType() {
@@ -167,9 +141,23 @@ implements SampleProvider {
 	 * Returns the next sample from the probability distribution.
 	 */
 	@Override
-	public double getNextSample(double simTime) {
-		this.setNextSample();
-		return (this.getValue(simTime));
+	public final double getNextSample(double simTime) {
+		// Loop until the select sample falls within the desired min and max values
+		double nextSample;
+		do {
+			nextSample = this.getNextNonZeroSample();
+		}
+		while (nextSample < this.minValueInput.getValue() ||
+		       nextSample > this.maxValueInput.getValue());
+
+		// Collect statistics on the sampled values
+		presentSample = nextSample;
+		sampleCount++;
+		sampleSum += this.presentSample;
+		sampleSquaredSum += this.presentSample * this.presentSample;
+		sampleMin = Math.min(this.sampleMin, this.presentSample);
+		sampleMax = Math.max(this.sampleMax, this.presentSample);
+		return presentSample;
 	}
 
 	protected double getMinValue() {
