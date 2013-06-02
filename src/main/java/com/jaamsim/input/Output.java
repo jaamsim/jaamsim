@@ -27,5 +27,5 @@ public @interface Output {
 
 	public String name();
 	public String description() default "";
-	public Class<? extends Unit> unit() default Unit.class;
+	public Class<? extends Unit> unitType() default Unit.class;
 }

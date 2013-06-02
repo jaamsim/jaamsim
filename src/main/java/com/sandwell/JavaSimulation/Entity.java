@@ -846,7 +846,7 @@ public class Entity {
 		Output a = outputCache.get(outputName).annotation;
 		assert (a != null);
 
-		return a.unit();
+		return a.unitType();
 	}
 
 	public String getOutputDescripion(String outputName) {

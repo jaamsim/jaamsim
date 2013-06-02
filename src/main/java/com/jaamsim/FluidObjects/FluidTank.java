@@ -124,14 +124,14 @@ public class FluidTank extends FluidComponent {
 
 	@Output(name = "FluidVolume",
 	 description = "The volume of the fluid stored in the tank.",
-	        unit = VolumeUnit.class)
+	    unitType = VolumeUnit.class)
 	public double getFluidVolume( double simTime ) {
 		return fluidVolume;
 	}
 
 	@Output(name = "FluidLevel",
 	 description = "The height of the fluid from the bottom of the tank.",
-	        unit = DistanceUnit.class)
+	    unitType = DistanceUnit.class)
 	public double getFluidLevel( double simTime ) {
 		return fluidLevel;
 	}
