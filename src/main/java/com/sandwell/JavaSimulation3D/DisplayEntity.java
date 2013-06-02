@@ -32,6 +32,7 @@ import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.AngleUnit;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ChangeWatcher;
@@ -725,26 +726,30 @@ public class DisplayEntity extends Entity {
 	////////////////////////////////////////////////////////////////////////
 
 	@Output(name = "Position",
-	        description = "The DisplayEntity's position in region space.")
+	        description = "The DisplayEntity's position in region space.",
+	        unitType = DistanceUnit.class)
 	public Vec3d getPosOutput(double simTime) {
 		return getPosition();
 	}
 
 	@Output(name = "Size",
-	        description = "The DisplayEntity's size in meters.")
+	        description = "The DisplayEntity's size in meters.",
+	        unitType = DistanceUnit.class)
 	public Vec3d getSizeOutput(double simTime) {
 		return getSize();
 	}
 
 	@Output(name = "Orientation",
-	        description = "The XYZ euler angles describing the DisplayEntity's current rotation.")
+	        description = "The XYZ euler angles describing the DisplayEntity's current rotation.",
+	        unitType = AngleUnit.class)
 	public Vec3d getOrientOutput(double simTime) {
 		return getOrientation();
 	}
 
 	@Output(name = "Alignment",
 	        description = "The point on the DisplayEntity that aligns direction with the position output.\n" +
-	                      "The components should be in the range [-0.5, 0.5]")
+	                      "The components should be in the range [-0.5, 0.5]",
+	        unitType = DimensionlessUnit.class)
 	public Vec3d getAlignOutput(double simTime) {
 		return getAlignment();
 	}
