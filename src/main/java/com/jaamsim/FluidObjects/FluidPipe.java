@@ -21,6 +21,7 @@ import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
@@ -221,7 +222,8 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 	}
 
 	@Output(name = "DarcyFrictionFactor",
-	 description = "The Darcy Friction Factor for the pipe.")
+	 description = "The Darcy Friction Factor for the pipe.",
+	    unitType = DimensionlessUnit.class)
 	public double getDarcyFrictionFactor(double simTime) {
 		return darcyFrictionFactor;
 	}

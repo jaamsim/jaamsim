@@ -16,6 +16,7 @@ package com.jaamsim.FluidObjects;
 
 import com.jaamsim.input.Output;
 import com.jaamsim.units.AreaUnit;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.SpeedUnit;
 import com.jaamsim.units.PressureUnit;
 import com.sandwell.JavaSimulation.DoubleInput;
@@ -203,7 +204,8 @@ public class FluidComponent extends DisplayEntity {
 	}
 
 	@Output(name = "ReynoldsNumber",
-	 description = "The Reynolds Number for the fluid within the component.  Equal to (velocity)(diameter)/(kinematic viscosity).")
+	 description = "The Reynolds Number for the fluid within the component.  Equal to (velocity)(diameter)/(kinematic viscosity).",
+	    unitType = DimensionlessUnit.class)
 	public double getReynoldsNumber( double simTime ) {
 		return this.getReynoldsNumber();
 	}
