@@ -15,8 +15,8 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.input.Output;
+import com.jaamsim.input.OutputInput;
 import com.sandwell.JavaSimulation.DoubleInput;
-import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 
@@ -29,13 +29,14 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public class PIDController extends DoubleCalculation {
 
-	@Keyword(description = "The Calculation entity that represents the set point for the PID controller.",
-	         example = "PIDController-1 SetPoint { Calc1 }")
-	private final EntityInput<DoubleCalculation> setPointInput;
 
-	@Keyword(description = "The Calculation entity that represents the process variable feedback to the PID controller.",
-	         example = "PIDController-1 ProcessVariable { Calc1 }")
-	private final EntityInput<DoubleCalculation> processVariableInput;
+	@Keyword(description = "The Entity and Output that provides the set point for the PID controller.",
+	         example = "PIDController-1 SetPoint { Calc1.Value }")
+	private final OutputInput<Double> setPointInput;
+
+	@Keyword(description = "The Entity and Output that provides the process variable feedback to the PID controller.",
+	         example = "PIDController-1 ProcessVariable { Calc1.Value }")
+	private final OutputInput<Double> processVariableInput;
 
 	@Keyword(description = "The scale coefficient applied to the output signal.",
 	         example = "PIDController-1 ScaleConversionCoefficient { 1.0 }")
@@ -70,10 +71,10 @@ public class PIDController extends DoubleCalculation {
 	{
 		inputValueInput.setHidden(true);
 
-		setPointInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "SetPoint", "Key Inputs", null);
+		setPointInput = new OutputInput<Double>( Double.class, "SetPoint", "Key Inputs", null);
 		this.addInput( setPointInput, true);
 
-		processVariableInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "ProcessVariable", "Key Inputs", null);
+		processVariableInput = new OutputInput<Double>( Double.class, "ProcessVariable", "Key Inputs", null);
 		this.addInput( processVariableInput, true);
 
 		proportionalGainInput = new DoubleInput( "ProportionalGain", "Key Inputs", 0.0d);
@@ -111,7 +112,7 @@ public class PIDController extends DoubleCalculation {
 		}
 
 		// Confirm that the ProcessVariable keyword has been set
-		if( setPointInput.getValue() == null ) {
+		if( processVariableInput.getValue() == null ) {
 			throw new InputErrorException( "The ProcessVariable keyword must be set." );
 		}
 	}
@@ -133,7 +134,7 @@ public class PIDController extends DoubleCalculation {
 		double dt = t - lastUpdateTime;
 
 		// Calculate the error signal
-		error = setPointInput.getValue().getValue() - processVariableInput.getValue().getValue();
+		error = setPointInput.getOutputValue(simtime) - processVariableInput.getOutputValue(simtime);
 
 		// Calculate integral and differential terms
 		integral += error * dt;
