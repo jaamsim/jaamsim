@@ -20,14 +20,22 @@ import com.sandwell.JavaSimulation.AliasListInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
+import com.sandwell.JavaSimulation.Keyword;
 
 public abstract class Unit extends Entity {
 	private static final HashMap<Class<? extends Unit>, String> siUnit;
 
-	// if one entry, it is the number of SI units per this unit.  i.e. multiply by this number to convert this unit into SI units
-	// if two entries, it is the number of SI units per this unit expressed as a fraction.  i.e. multiply by the first number and divide by the second number to convert this unit into SI units
+	@Keyword(description = "Factor to convert from the specified unit to the System International (SI) unit. " +
+					"The factor is entered as A / B, where A is the first entry and B is the second. " +
+					"For example, to convert from miles per hour to m/s, the first factor is 1609.344 (meters in one mile) and " +
+					"the second factor is 3600 (seconds in one hour).",
+			example = "mph  ConversionFactorToSI { 1609.344  3600 }")
 	private final DoubleListInput conversionFactorToSI;
-	private final AliasListInput alias; // a list of strings that can be used as alternate names of the object
+
+	@Keyword(description = "Alternative names for the same unit.  For example, the unit 'Year' could have aliases of " +
+					"'y' or 'yr'. With these aliases, the following inputs are equivalent: { 1.0 year }, { 1.0 y }, and { 1.0 yr }.",
+			example = "Year Alias { y  yr }")
+	private final AliasListInput alias;
 
 	static {
 		siUnit = new HashMap<Class<? extends Unit>, String>();
