@@ -18,13 +18,13 @@ import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Vec3dListInput;
@@ -38,22 +38,22 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 
 	@Keyword(description = "The length of the pipe.",
 	         example = "Pipe1 Length { 10.0 m }")
-	private final DoubleInput lengthInput;
+	private final ValueInput lengthInput;
 
 	@Keyword(description = "The height change over the length of the pipe.  " +
 			"Equal to (outlet height - inlet height).",
 	         example = "Pipe1 HeightChange { 0.0 }")
-	private final DoubleInput heightChangeInput;
+	private final ValueInput heightChangeInput;
 
 	@Keyword(description = "The roughness height of the inside pipe surface.  " +
 			"Used to calculate the Darcy friction factor for the pipe.",
 	         example = "Pipe1 Roughness { 0.01 m }")
-	private final DoubleInput roughnessInput;
+	private final ValueInput roughnessInput;
 
 	@Keyword(description = "The pressure loss coefficient or 'K-factor' for the pipe.  " +
 			"The factor multiplies the dynamic pressure and is applied as a loss at the pipe outlet.",
 	         example = "Pipe1 PressureLossCoefficient { 0.5 }")
-	private final DoubleInput pressureLossCoefficientInput;
+	private final ValueInput pressureLossCoefficientInput;
 
     @Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
             "make up the pipe.  When two coordinates are given it is assumed that z = 0." ,
@@ -62,7 +62,7 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 
 	@Keyword(description = "The width of the pipe segments in pixels.",
 	         example = "Pipe1 Width { 1 }")
-	private final DoubleInput widthInput;
+	private final ValueInput widthInput;
 
 	@Keyword(description = "The colour of the pipe, defined using a colour keyword or RGB values.",
 	         example = "Pipe1 Colour { red }")
@@ -71,23 +71,24 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 	private double darcyFrictionFactor;  // The Darcy Friction Factor for the pipe flow.
 
 	{
-		lengthInput = new DoubleInput( "Length", "Key Inputs", 1.0d);
+		lengthInput = new ValueInput( "Length", "Key Inputs", 1.0d);
 		lengthInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		lengthInput.setUnits( "m");
+		lengthInput.setUnitType( DistanceUnit.class );
 		this.addInput( lengthInput, true);
 
-		heightChangeInput = new DoubleInput( "HeightChange", "Key Inputs", 0.0d);
+		heightChangeInput = new ValueInput( "HeightChange", "Key Inputs", 0.0d);
 		heightChangeInput.setValidRange( Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-		heightChangeInput.setUnits( "m");
+		heightChangeInput.setUnitType( DistanceUnit.class );
 		this.addInput( heightChangeInput, true);
 
-		roughnessInput = new DoubleInput( "Roughness", "Key Inputs", 0.0d);
+		roughnessInput = new ValueInput( "Roughness", "Key Inputs", 0.0d);
 		roughnessInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		roughnessInput.setUnits( "m");
+		roughnessInput.setUnitType( DistanceUnit.class );
 		this.addInput( roughnessInput, true);
 
-		pressureLossCoefficientInput = new DoubleInput( "PressureLossCoefficient", "Key Inputs", 0.0d);
+		pressureLossCoefficientInput = new ValueInput( "PressureLossCoefficient", "Key Inputs", 0.0d);
 		pressureLossCoefficientInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
+		pressureLossCoefficientInput.setUnitType( DimensionlessUnit.class );
 		this.addInput( pressureLossCoefficientInput, true);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
@@ -98,8 +99,9 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput, true);
 
-		widthInput = new DoubleInput("Width", "Key Inputs", 1.0d);
+		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
+		widthInput.setUnitType( DimensionlessUnit.class );
 		this.addInput(widthInput, true);
 
 		colourInput = new ColourInput("Colour", "Key Inputs", ColourInput.BLACK);

@@ -14,9 +14,12 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.units.AccelerationUnit;
+import com.jaamsim.units.DensityUnit;
+import com.jaamsim.units.ViscosityUnit;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
@@ -29,11 +32,11 @@ public class Fluid extends DisplayEntity {
 
 	@Keyword(description = "The density of the fluid (default = water).",
 	         example = "Fluid1 Density { 1000 kg/m3 }")
-	private final DoubleInput densityInput;
+	private final ValueInput densityInput;
 
 	@Keyword(description = "The dynamic viscosity of the fluid (default = water).",
 	         example = "Fluid1 Viscosity { 0.001002 Pa-s }")
-	private final DoubleInput viscosityInput;
+	private final ValueInput viscosityInput;
 
 	@Keyword(description = "The colour of the product, defined using a colour keyword or RGB values.",
 	         example = "Fluid1 Colour { red }")
@@ -41,25 +44,25 @@ public class Fluid extends DisplayEntity {
 
 	@Keyword(description = "The acceleration of gravity.",
 	         example = "Fluid1 Gravity { 9.81 m/s2 }")
-	private final DoubleInput gravityInput;
+	private final ValueInput gravityInput;
 
 	{
-		densityInput = new DoubleInput( "Density", "Key Inputs", 1000.0d);
+		densityInput = new ValueInput( "Density", "Key Inputs", 1000.0d);
 		densityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		densityInput.setUnits( "kg/m3");
+		densityInput.setUnitType( DensityUnit.class );
 		this.addInput( densityInput, true);
 
-		viscosityInput = new DoubleInput( "Viscosity", "Key Inputs", 0.001002d);
+		viscosityInput = new ValueInput( "Viscosity", "Key Inputs", 0.001002d);
 		viscosityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		viscosityInput.setUnits( "Pa-s");
+		viscosityInput.setUnitType( ViscosityUnit.class );
 		this.addInput( viscosityInput, true);
 
 		colourInput = new ColourInput( "Colour", "Key Inputs", ColourInput.RED);
 		this.addInput(colourInput, true, "Color");
 
-		gravityInput = new DoubleInput( "Gravity", "Key Inputs", 9.81d);
+		gravityInput = new ValueInput( "Gravity", "Key Inputs", 9.81d);
 		gravityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		gravityInput.setUnits( "m/s2");
+		gravityInput.setUnitType( AccelerationUnit.class );
 		this.addInput( gravityInput, true);
 	}
 

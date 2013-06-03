@@ -16,12 +16,14 @@ package com.jaamsim.FluidObjects;
 
 import java.util.ArrayList;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.VolumeFlowUnit;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 
@@ -36,7 +38,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 
 	@Keyword(description = "Volumetric flow rate.",
 	         example = "FluidFixedFlow-1 FlowRate { 1.0 m3/s }")
-	private final DoubleInput flowRateInput;
+	private final ValueInput flowRateInput;
 
     @Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
             "make up the pipe.  When two coordinates are given it is assumed that z = 0." ,
@@ -45,16 +47,16 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 
 	@Keyword(description = "The width of the pipe segments in pixels.",
 	         example = "Pipe1 Width { 1 }")
-	private final DoubleInput widthInput;
+	private final ValueInput widthInput;
 
 	@Keyword(description = "The colour of the pipe, defined using a colour keyword or RGB values.",
 	         example = "Pipe1 Colour { red }")
 	private final ColourInput colourInput;
 
 	{
-		flowRateInput = new DoubleInput( "FlowRate", "Key Inputs", 0.0d);
+		flowRateInput = new ValueInput( "FlowRate", "Key Inputs", 0.0d);
 		flowRateInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		flowRateInput.setUnits( "m3/s");
+		flowRateInput.setUnitType( VolumeFlowUnit.class );
 		this.addInput( flowRateInput, true);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
@@ -65,8 +67,9 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput, true);
 
-		widthInput = new DoubleInput("Width", "Key Inputs", 1.0d);
+		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
+		widthInput.setUnitType( DimensionlessUnit.class );
 		this.addInput(widthInput, true);
 
 		colourInput = new ColourInput("Colour", "Key Inputs", ColourInput.BLACK);

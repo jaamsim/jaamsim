@@ -15,9 +15,10 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.input.Output;
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.PressureUnit;
 import com.jaamsim.units.VolumeUnit;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
@@ -30,41 +31,41 @@ public class FluidTank extends FluidComponent {
 
 	@Keyword(description = "The total volume of fluid that can be stored in the tank.",
 	         example = "Tank1 Capacity { 1.0 m3 }")
-	private final DoubleInput capacityInput;
+	private final ValueInput capacityInput;
 
 	@Keyword(description = "The volume of fluid in the tank at the start of the simulation.",
 	         example = "Tank1 InitialVolume { 1.0 m3 }")
-	private final DoubleInput initialVolumeInput;
+	private final ValueInput initialVolumeInput;
 
 	@Keyword(description = "The ambient pressure in the tank.",
 	         example = "Tank1 AmbientPressure { 1.0 Pa }")
-	private final DoubleInput ambientPressureInput;
+	private final ValueInput ambientPressureInput;
 
 	@Keyword(description = "The height of the inlet to the tank above its outlet.",
 	         example = "Tank1 InletHeight { 1.0 m }")
-	private final DoubleInput inletHeightInput;
+	private final ValueInput inletHeightInput;
 
 	private double fluidVolume;  // The present volume of the fluid in the tank.
 	private double fluidLevel;  // The height of the fluid in the tank.
 
 	{
-		capacityInput = new DoubleInput( "Capacity", "Key Inputs", 1.0d);
+		capacityInput = new ValueInput( "Capacity", "Key Inputs", 1.0d);
 		capacityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		capacityInput.setUnits( "m3");
+		capacityInput.setUnitType( VolumeUnit.class );
 		this.addInput( capacityInput, true);
 
-		initialVolumeInput = new DoubleInput( "InitialVolume", "Key Inputs", 0.0d);
+		initialVolumeInput = new ValueInput( "InitialVolume", "Key Inputs", 0.0d);
 		initialVolumeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		initialVolumeInput.setUnits( "m3");
+		initialVolumeInput.setUnitType( VolumeUnit.class );
 		this.addInput( initialVolumeInput, true);
 
-		ambientPressureInput = new DoubleInput( "AmbientPressure", "Key Inputs", 0.0d);
-		ambientPressureInput.setUnits( "Pa");
+		ambientPressureInput = new ValueInput( "AmbientPressure", "Key Inputs", 0.0d);
+		ambientPressureInput.setUnitType( PressureUnit.class );
 		this.addInput( ambientPressureInput, true);
 
-		inletHeightInput = new DoubleInput( "InletHeight", "Key Inputs", 0.0d);
+		inletHeightInput = new ValueInput( "InletHeight", "Key Inputs", 0.0d);
 		inletHeightInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		inletHeightInput.setUnits( "m");
+		inletHeightInput.setUnitType( DistanceUnit.class );
 		this.addInput( inletHeightInput, true);
 	}
 

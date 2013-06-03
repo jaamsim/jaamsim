@@ -15,11 +15,12 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.input.Output;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.AreaUnit;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.SpeedUnit;
 import com.jaamsim.units.PressureUnit;
-import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
@@ -38,7 +39,7 @@ public class FluidComponent extends DisplayEntity {
 	@Keyword(description = "The hydraulic diameter of the component.  " +
 	                "Equal to the inside diameter of a pipe with a circular cross-section.",
 	      example = "Comp1 Diameter { 1.0 m }")
-	private final DoubleInput diameterInput;
+	private final ValueInput diameterInput;
 
 	private FluidFlow fluidFlow;  // The fluid flow object that controls the flow from one component to the next.
 	private double baseInletPressure;  // The static pressure at the component's inlet, ignoring the effect of flow acceleration.
@@ -52,9 +53,9 @@ public class FluidComponent extends DisplayEntity {
 		previousInput = new EntityInput<FluidComponent>( FluidComponent.class, "Previous", "Key Inputs", null);
 		this.addInput( previousInput, true);
 
-		diameterInput = new DoubleInput( "Diameter", "Key Inputs", Double.POSITIVE_INFINITY);
+		diameterInput = new ValueInput( "Diameter", "Key Inputs", Double.POSITIVE_INFINITY);
 		diameterInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		diameterInput.setUnits( "m");
+		diameterInput.setUnitType( DistanceUnit.class );
 		this.addInput( diameterInput, true);
 	}
 

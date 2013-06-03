@@ -15,7 +15,9 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.CalculationObjects.DoubleCalculation;
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.PressureUnit;
+import com.jaamsim.units.VolumeFlowUnit;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
@@ -29,15 +31,15 @@ public class FluidCentrifugalPump extends FluidComponent {
 
 	@Keyword(description = "Maximum volumetric flow rate that the pump can generate.",
 	         example = "Pump1 MaxFlowRate { 1.0 m3/s }")
-	private final DoubleInput maxFlowRateInput;
+	private final ValueInput maxFlowRateInput;
 
 	@Keyword(description = "Maximum static pressure that the pump can generate (at zero flow rate).",
 	         example = "Pump1 MaxPressure { 1.0 Pa }")
-	private final DoubleInput maxPressureInput;
+	private final ValueInput maxPressureInput;
 
 	@Keyword(description = "Maximum static pressure loss speed for the pump (at maximum flow rate).",
 	         example = "Pump1 MaxPressureLoss { 1.0 Pa }")
-	private final DoubleInput maxPressureLossInput;
+	private final ValueInput maxPressureLossInput;
 
 	@Keyword(description = "The CalculationEntity whose output sets the rotational speed of the pump.  " +
 			"The output value is ratio of present speed to maximum speed (0.0 - 1.0).",
@@ -45,19 +47,19 @@ public class FluidCentrifugalPump extends FluidComponent {
 	private final EntityInput<DoubleCalculation> speedControllerInput;
 
 	{
-		maxFlowRateInput = new DoubleInput( "MaxFlowRate", "Key Inputs", 1.0d);
+		maxFlowRateInput = new ValueInput( "MaxFlowRate", "Key Inputs", 1.0d);
 		maxFlowRateInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		maxFlowRateInput.setUnits( "m3/s");
+		maxFlowRateInput.setUnitType( VolumeFlowUnit.class );
 		this.addInput( maxFlowRateInput, true);
 
-		maxPressureInput = new DoubleInput( "MaxPressure", "Key Inputs", 1.0d);
+		maxPressureInput = new ValueInput( "MaxPressure", "Key Inputs", 1.0d);
 		maxPressureInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		maxPressureInput.setUnits( "Pa");
+		maxPressureInput.setUnitType( PressureUnit.class );
 		this.addInput( maxPressureInput, true);
 
-		maxPressureLossInput = new DoubleInput( "MaxPressureLoss", "Key Inputs", 1.0d);
+		maxPressureLossInput = new ValueInput( "MaxPressureLoss", "Key Inputs", 1.0d);
 		maxPressureLossInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		maxPressureLossInput.setUnits( "Pa");
+		maxPressureLossInput.setUnitType( PressureUnit.class );
 		this.addInput( maxPressureLossInput, true);
 
 		speedControllerInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "SpeedController", "Key Inputs", null);
