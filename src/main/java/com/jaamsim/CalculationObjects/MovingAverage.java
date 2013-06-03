@@ -50,9 +50,9 @@ public class MovingAverage extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simtime) {
+	public void update(double simTime) {
 		// Overwrite the oldest value in the list
-		samples[index] = inputValueInput.getOutputValue(simtime);
+		samples[index] = inputValueInput.getOutputValue(simTime);
 
 		// Set the index to the next oldest value
 		index++;

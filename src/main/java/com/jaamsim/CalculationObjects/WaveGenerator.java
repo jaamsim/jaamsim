@@ -69,10 +69,10 @@ public abstract class WaveGenerator extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simtime) {
+	public void update(double simTime) {
 
 		// Calculate the present phase angle
-		double angle = 2.0 * Math.PI * simtime / periodInput.getValue() + phaseAngleInput.getValue();
+		double angle = 2.0 * Math.PI * simTime / periodInput.getValue() + phaseAngleInput.getValue();
 
 		// Set the output value for the wave
 		this.setValue( amplitudeInput.getValue() * this.getSignal( angle )  +  offsetInput.getValue() );

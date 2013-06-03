@@ -35,10 +35,10 @@ public class Polynomial extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simtime) {
+	public void update(double simTime) {
 
 		// Calculate the weighted sum
-		double x = inputValueInput.getOutputValue(simtime);
+		double x = inputValueInput.getOutputValue(simTime);
 		double pow = 1.0;
 		double val = 0.0;
 		for(int i=0; i<coefficientListInput.getValue().size(); i++ ) {

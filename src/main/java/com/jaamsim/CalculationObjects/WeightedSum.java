@@ -35,7 +35,7 @@ public class WeightedSum extends DoubleCalculation {
 	private final DoubleListInput coefficientListInput;
 
 	{
-	entityListInput = new EntityListInput<DoubleCalculation>( DoubleCalculation.class, "EntityList", "Key Inputs", null);
+		entityListInput = new EntityListInput<DoubleCalculation>( DoubleCalculation.class, "EntityList", "Key Inputs", null);
 		this.addInput( entityListInput, true);
 
 		coefficientListInput = new DoubleListInput( "CoefficientList", "Key Inputs", null);
@@ -53,7 +53,7 @@ public class WeightedSum extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simtime) {
+	public void update(double simTime) {
 		double val = 0.0;
 
 		// Calculate the weighted sum

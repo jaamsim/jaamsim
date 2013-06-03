@@ -36,7 +36,7 @@ public class ConstantValue extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simtime) {
+	public void update(double simTime) {
 		this.setValue( valueInput.getValue() );
 	}
 }

@@ -62,7 +62,7 @@ public abstract class CalculationEntity extends DisplayEntity {
 	/*
 	 * Calculate the current value for this object.
 	 */
-	public abstract void update(double simtime);
+	public abstract void update(double simTime);
 
 	public Controller getController() {
 		return controllerInput.getValue();

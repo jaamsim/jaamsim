@@ -111,8 +111,8 @@ public class FluidTank extends FluidComponent {
 	}
 
 	@Override
-	public void updateGraphics(double time) {
-		super.updateGraphics(time);
+	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
 
 		double ratio = Math.min( 1.0, fluidVolume / capacityInput.getValue() );
 
