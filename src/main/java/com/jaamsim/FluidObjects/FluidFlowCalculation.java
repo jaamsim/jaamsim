@@ -71,12 +71,10 @@ public abstract class FluidFlowCalculation extends CalculationEntity {
 	}
 
 	@Override
-	public void update(double simtime) {
+	public void update(double simTime) {
 
-		// Calculate the elapsed time
-		double t = 3600.0 * simtime;  // convert from hours to seconds
-		double dt = t - lastUpdateTime;
-		lastUpdateTime = t;
+		double dt = simTime - lastUpdateTime;
+		lastUpdateTime = simTime;
 
 		// Update the volume stored at the source and destination
 		FluidComponent source = sourceInput.getValue();

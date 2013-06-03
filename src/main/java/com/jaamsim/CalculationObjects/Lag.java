@@ -49,15 +49,14 @@ public class Lag extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simtime) {
+	public void update(double simTime) {
 
 		// Calculate the elapsed time
-		double t = 3600.0 * simtime;  // convert from hours to seconds
-		double dt = t - lastUpdateTime;
-		lastUpdateTime = t;
+		double dt = simTime - lastUpdateTime;
+		lastUpdateTime = simTime;
 
 		// Set the present value
-		error = inputValueInput.getOutputValue(simtime) - this.getValue();
+		error = inputValueInput.getOutputValue(simTime) - this.getValue();
 		integral += error * dt;
 		this.setValue( integral / lagTimeInput.getValue() );
 		return;

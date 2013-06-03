@@ -14,14 +14,15 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.sandwell.JavaSimulation.DoubleInput;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Collections;
 
 /**
  * The Controller object simulates the operation of a Programmable Logic Controller
@@ -32,16 +33,16 @@ public class Controller extends DisplayEntity {
 
 	@Keyword(description = "The sampling time for the Controller.",
 	         example = "Controller1 SamplingTime { 100 ms }")
-	private final DoubleInput samplingTimeInput;
+	private final ValueInput samplingTimeInput;
 
 	private final ArrayList<CalculationEntity> calculationEntityList;  // List of the CalculationEntities controller by this Controller.
 	private int count;  // Number of times that the controller has initiated its calculations.
 
 	{
-		samplingTimeInput = new DoubleInput( "SamplingTime", "Key Inputs", 1.0d);
-		samplingTimeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		samplingTimeInput.setUnits( "h");
-		this.addInput( samplingTimeInput, true);
+		samplingTimeInput = new ValueInput("SamplingTime", "Key Inputs", 1.0d);
+		samplingTimeInput.setUnitType(TimeUnit.class);
+		samplingTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		this.addInput(samplingTimeInput, true);
 	}
 
 	public Controller() {
@@ -80,12 +81,12 @@ public class Controller extends DisplayEntity {
 		while( true ) {
 
 			// Wait for the samplingTime
-			this.scheduleWait( samplingTimeInput.getValue() );
+			this.simWait( samplingTimeInput.getValue() );
 
 			// Update the last value for each entity
-			double simtime = this.getCurrentTime();
+			double simTime = this.getSimTime();
 			for( CalculationEntity ent : calculationEntityList ) {
-				ent.update(simtime);
+				ent.update(simTime);
 			}
 
 			// Increment the number of cycles

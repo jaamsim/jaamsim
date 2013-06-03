@@ -14,6 +14,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
 
@@ -30,7 +32,7 @@ public abstract class WaveGenerator extends DoubleCalculation {
 
 	@Keyword(description = "Period of the generated wave",
 	         example = "Wave1 Period { 2 s }")
-	private final DoubleInput periodInput;
+	private final ValueInput periodInput;
 
 	@Keyword(description = "Initial phase angle of the generated wave",
 	         example = "Wave1 PhaseAngle { 45 deg }")
@@ -47,10 +49,10 @@ public abstract class WaveGenerator extends DoubleCalculation {
 		amplitudeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		this.addInput( amplitudeInput, true);
 
-		periodInput = new DoubleInput( "Period", "Key Inputs", 1.0d);
+		periodInput = new ValueInput("Period", "Key Inputs", 1.0d);
+		periodInput.setUnitType(TimeUnit.class);
 		periodInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		periodInput.setUnits("h");
-		this.addInput( periodInput, true);
+		this.addInput(periodInput, true);
 
 		phaseAngleInput = new DoubleInput( "PhaseAngle", "Key Inputs", 0.0d);
 		phaseAngleInput.setUnits("rad");

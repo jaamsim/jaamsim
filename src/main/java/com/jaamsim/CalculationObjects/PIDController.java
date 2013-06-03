@@ -126,15 +126,14 @@ public class PIDController extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simtime) {
+	public void update(double simTime) {
 		double val;
 
 		// Calculate the elapsed time
-		double t = 3600.0 * simtime;  // convert from hours to seconds
-		double dt = t - lastUpdateTime;
+		double dt = simTime - lastUpdateTime;
 
 		// Calculate the error signal
-		error = setPointInput.getOutputValue(simtime) - processVariableInput.getOutputValue(simtime);
+		error = setPointInput.getOutputValue(simTime) - processVariableInput.getOutputValue(simTime);
 
 		// Calculate integral and differential terms
 		integral += error * dt;
@@ -160,7 +159,7 @@ public class PIDController extends DoubleCalculation {
 
 		// Record values needed for the next update
 		lastError = error;
-		lastUpdateTime = t;
+		lastUpdateTime = simTime;
 		return;
 	}
 
