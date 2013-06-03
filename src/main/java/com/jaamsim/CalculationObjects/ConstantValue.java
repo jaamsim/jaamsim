@@ -14,7 +14,7 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
 import com.sandwell.JavaSimulation.Keyword;
 
 /**
@@ -26,12 +26,12 @@ public class ConstantValue extends DoubleCalculation {
 
 	@Keyword(description = "The numerical value returned by the object.",
 	         example = "ConstantValue1 Value { 5.0 }")
-	private final DoubleInput valueInput;
+	private final ValueInput valueInput;
 
 	{
 		inputValueInput.setHidden(true);
 
-		valueInput = new DoubleInput( "Value", "Key Inputs", 0.0);
+		valueInput = new ValueInput( "Value", "Key Inputs", 0.0);
 		this.addInput( valueInput, true);
 	}
 

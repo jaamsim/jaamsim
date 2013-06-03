@@ -16,7 +16,8 @@ package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputInput;
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 
@@ -40,27 +41,27 @@ public class PIDController extends DoubleCalculation {
 
 	@Keyword(description = "The scale coefficient applied to the output signal.",
 	         example = "PIDController-1 ScaleConversionCoefficient { 1.0 }")
-	private final DoubleInput scaleConversionCoefficientInput;
+	private final ValueInput scaleConversionCoefficientInput;
 
 	@Keyword(description = "The coefficient applied to the proportional feedback loop.",
 	         example = "PIDController-1 ProportionalGain { 1.0 }")
-	private final DoubleInput proportionalGainInput;
+	private final ValueInput proportionalGainInput;
 
 	@Keyword(description = "The coefficient applied to the integral feedback loop.",
 	         example = "PIDController-1 IntegralTime { 1.0 s }")
-	private final DoubleInput integralTimeInput;
+	private final ValueInput integralTimeInput;
 
 	@Keyword(description = "The coefficient applied to the differential feedback loop.",
 	         example = "PIDController-1 DerivativeTime { 1.0 s }")
-	private final DoubleInput derivativeTimeInput;
+	private final ValueInput derivativeTimeInput;
 
 	@Keyword(description = "The lower limit for the output signal.",
 	         example = "PIDController-1 OutputLow { 0.0 }")
-	private final DoubleInput outputLowInput;
+	private final ValueInput outputLowInput;
 
 	@Keyword(description = "The upper limit for the output signal.",
 	         example = "PIDController-1 OutputHigh { 1.0 }")
-	private final DoubleInput outputHighInput;
+	private final ValueInput outputHighInput;
 
 	private double lastUpdateTime;  // The time at which the last update was performed (seconds)
 	private double error;  // The present value for the error signal
@@ -77,28 +78,28 @@ public class PIDController extends DoubleCalculation {
 		processVariableInput = new OutputInput<Double>( Double.class, "ProcessVariable", "Key Inputs", null);
 		this.addInput( processVariableInput, true);
 
-		proportionalGainInput = new DoubleInput( "ProportionalGain", "Key Inputs", 0.0d);
+		proportionalGainInput = new ValueInput( "ProportionalGain", "Key Inputs", 0.0d);
 		proportionalGainInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		this.addInput( proportionalGainInput, true);
 
-		scaleConversionCoefficientInput = new DoubleInput( "ScaleConversionCoefficient", "Key Inputs", 1.0d);
+		scaleConversionCoefficientInput = new ValueInput( "ScaleConversionCoefficient", "Key Inputs", 1.0d);
 		scaleConversionCoefficientInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		this.addInput( scaleConversionCoefficientInput, true);
 
-		integralTimeInput = new DoubleInput( "IntegralTime", "Key Inputs", 1.0d);
+		integralTimeInput = new ValueInput( "IntegralTime", "Key Inputs", 1.0d);
 		integralTimeInput.setValidRange( 1.0e-10, Double.POSITIVE_INFINITY);
-		integralTimeInput.setUnits( "s" );
+		integralTimeInput.setUnitType( TimeUnit.class );
 		this.addInput( integralTimeInput, true);
 
-		derivativeTimeInput = new DoubleInput( "DerivativeTime", "Key Inputs", 0.0d);
+		derivativeTimeInput = new ValueInput( "DerivativeTime", "Key Inputs", 0.0d);
 		derivativeTimeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		derivativeTimeInput.setUnits( "s" );
+		derivativeTimeInput.setUnitType( TimeUnit.class );
 		this.addInput( derivativeTimeInput, true);
 
-		outputLowInput = new DoubleInput( "OutputLow", "Key Inputs", Double.NEGATIVE_INFINITY);
+		outputLowInput = new ValueInput( "OutputLow", "Key Inputs", Double.NEGATIVE_INFINITY);
 		this.addInput( outputLowInput, true);
 
-		outputHighInput = new DoubleInput( "OutputHigh", "Key Inputs", Double.POSITIVE_INFINITY);
+		outputHighInput = new ValueInput( "OutputHigh", "Key Inputs", Double.POSITIVE_INFINITY);
 		this.addInput( outputHighInput, true);
 	}
 

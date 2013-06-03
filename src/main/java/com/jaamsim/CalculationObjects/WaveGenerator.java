@@ -15,8 +15,8 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Keyword;
 
 /**
@@ -28,7 +28,7 @@ public abstract class WaveGenerator extends DoubleCalculation {
 
 	@Keyword(description = "Amplitude of the generated wave",
 	         example = "Wave1 Amplitude { 2.0 }")
-	private final DoubleInput amplitudeInput;
+	private final ValueInput amplitudeInput;
 
 	@Keyword(description = "Period of the generated wave",
 	         example = "Wave1 Period { 2 s }")
@@ -36,16 +36,16 @@ public abstract class WaveGenerator extends DoubleCalculation {
 
 	@Keyword(description = "Initial phase angle of the generated wave",
 	         example = "Wave1 PhaseAngle { 45 deg }")
-	private final DoubleInput phaseAngleInput;
+	private final ValueInput phaseAngleInput;
 
 	@Keyword(description = "Offset added to the output of the generated wave",
 	         example = "Wave1 Offset { 2.0 }")
-	private final DoubleInput offsetInput;
+	private final ValueInput offsetInput;
 
 	{
 		inputValueInput.setHidden(true);
 
-		amplitudeInput = new DoubleInput( "Amplitude", "Key Inputs", 1.0d);
+		amplitudeInput = new ValueInput( "Amplitude", "Key Inputs", 1.0d);
 		amplitudeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		this.addInput( amplitudeInput, true);
 
@@ -54,11 +54,11 @@ public abstract class WaveGenerator extends DoubleCalculation {
 		periodInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(periodInput, true);
 
-		phaseAngleInput = new DoubleInput( "PhaseAngle", "Key Inputs", 0.0d);
-		phaseAngleInput.setUnits("rad");
+		phaseAngleInput = new ValueInput( "PhaseAngle", "Key Inputs", 0.0d);
+		phaseAngleInput.setUnitType( AngleUnit.class );
 		this.addInput( phaseAngleInput, true);
 
-		offsetInput = new DoubleInput( "Offset", "Key Inputs", 0.0d);
+		offsetInput = new ValueInput( "Offset", "Key Inputs", 0.0d);
 		this.addInput( offsetInput, true);
 	}
 

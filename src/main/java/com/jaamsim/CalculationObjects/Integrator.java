@@ -14,7 +14,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.Keyword;
 
 /**
@@ -26,12 +27,13 @@ public class Integrator extends DoubleCalculation {
 
 	@Keyword(description = "The initial value for the integral at time = 0.",
 	         example = "Integrator1 InitialValue { 5.5 }")
-	private final DoubleInput initialValueInput;
+	private final ValueInput initialValueInput;
 
 	private double lastUpdateTime;  // The time at which the last update was performed
 
 	{
-		initialValueInput = new DoubleInput( "InitialValue", "Key Inputs", 0.0d);
+		initialValueInput = new ValueInput( "InitialValue", "Key Inputs", 0.0d);
+		initialValueInput.setUnitType(DimensionlessUnit.class);
 		this.addInput( initialValueInput, true);
 	}
 

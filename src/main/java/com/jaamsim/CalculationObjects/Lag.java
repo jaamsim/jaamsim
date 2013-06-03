@@ -15,7 +15,8 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.input.Output;
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Keyword;
 
 /**
@@ -28,16 +29,16 @@ public class Lag extends DoubleCalculation {
 
 	@Keyword(description = "The time constant for this operation: output = integral( input - output) / LagTime.",
 	         example = "Lag-1 LagTime { 15 s }")
-	private final DoubleInput lagTimeInput;
+	private final ValueInput lagTimeInput;
 
 	private double lastUpdateTime;  // The time at which the last update was performed
 	private double error;  // inputValue - outputValue
 	private double integral; // The present value for the integral
 
 	{
-		lagTimeInput = new DoubleInput( "LagTime", "Key Inputs", 1.0d);
+		lagTimeInput = new ValueInput( "LagTime", "Key Inputs", 1.0d);
 		lagTimeInput.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
-		lagTimeInput.setUnits("s");
+		lagTimeInput.setUnitType(TimeUnit.class);
 		this.addInput( lagTimeInput, true);
 	}
 

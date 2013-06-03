@@ -14,7 +14,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
@@ -34,14 +35,15 @@ public abstract class CalculationEntity extends DisplayEntity {
 	@Keyword(description = "The sequence number used by the Controller to determine the order in which calculations are performed." +
 			"  A calculation with a lower value is executed before the ones with higher values.",
 	         example = "Calculation1 SequenceNumber { 2.1 }")
-	private final DoubleInput sequenceNumberInput;
+	private final ValueInput sequenceNumberInput;
 
 	{
 		controllerInput = new EntityInput<Controller>( Controller.class, "Controller", "Key Inputs", null);
 		this.addInput( controllerInput, true);
 
-		sequenceNumberInput = new DoubleInput( "SequenceNumber", "Key Inputs", 0.0);
+		sequenceNumberInput = new ValueInput( "SequenceNumber", "Key Inputs", 0.0);
 		sequenceNumberInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		sequenceNumberInput.setUnitType(DimensionlessUnit.class);
 		this.addInput( sequenceNumberInput, true);
 	}
 
