@@ -78,6 +78,12 @@ public class CameraControl implements WindowInteractionListener {
 
 		PolarInfo pi = getPolarCoordsFromView();
 
+		if (dragInfo.controlDown() && dragInfo.shiftDown()) {
+			// look around
+			handleTurnCamera(dragInfo.dx, dragInfo.dy);
+			return;
+		}
+
 		if (dragInfo.controlDown()) {
 			handleRotAroundPoint(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
 			return;
@@ -91,6 +97,33 @@ public class CameraControl implements WindowInteractionListener {
 
 		// this is pan then
 		handlePan(pi, dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
+		updateCamTrans(pi, true);
+
+	}
+
+	private void handleTurnCamera(int dx, int dy) {
+
+		Vec3d camPos = _updateView.getGlobalPosition();
+		Vec3d center = _updateView.getGlobalCenter();
+
+		PolarInfo origPi = getPolarFrom(center, camPos);
+
+		Quaternion origRot = polarToRot(origPi);
+		Vec4d origUp = new Vec4d();
+		origRot.rotateVector(Vec4d.Y_AXIS, origUp);
+
+		Vec4d rotXAxis = new Vec4d();
+		origRot.rotateVector(Vec4d.X_AXIS, rotXAxis);
+
+		Quaternion rotX = Quaternion.Rotation(dy * ROT_SCALE_X / 4, rotXAxis);
+		Quaternion rotZ = Quaternion.Rotation(dx * ROT_SCALE_Z / 4, Vec4d.Z_AXIS);
+
+		Transform rotTransX = MathUtils.rotateAroundPoint(rotX, camPos);
+		Transform rotTransZ = MathUtils.rotateAroundPoint(rotZ, camPos);
+
+		rotTransX.apply(center, center);
+		rotTransZ.apply(center, center);
+		PolarInfo pi = getPolarFrom(center, camPos);
 		updateCamTrans(pi, true);
 
 	}
@@ -241,6 +274,15 @@ public class CameraControl implements WindowInteractionListener {
 	@Override
 	public void mouseClicked(int windowID, int x, int y, int button, int modifiers) {
 		if (!RenderManager.isGood()) { return; }
+
+		if (button == 1 && (modifiers & WindowInteractionListener.MOD_ALT) != 0) {
+			// Set the POI
+			Vec4d newPOI = RenderManager.inst().getNearestPick(_windowID);
+			if (newPOI != null) {
+				POI = newPOI;
+				return;
+			}
+		}
 
 		RenderManager.inst().hideExistingPopups();
 		if (button  == 3) {

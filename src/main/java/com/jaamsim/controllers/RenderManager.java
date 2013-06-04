@@ -700,6 +700,32 @@ public class RenderManager implements DragSourceListener {
 		return 0;
 	}
 
+	public Vec4d getNearestPick(int windowID) {
+		Renderer.WindowMouseInfo mouseInfo = _renderer.getMouseInfo(windowID);
+
+		View view = _windowToViewMap.get(windowID);
+		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
+			// The mouse is not actually in the window, or the window was closed along the way
+			return null;
+		}
+
+		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
+
+		List<Renderer.PickResult> picks = _renderer.pick(pickRay, view.getID(), true);
+
+		if (picks.size() == 0) {
+			return null;
+		}
+
+		double pickDist = Double.POSITIVE_INFINITY;
+
+		for (Renderer.PickResult pick : picks) {
+			if (pick.dist < pickDist) {
+				pickDist = pick.dist;
+			}
+		}
+		return pickRay.getPointAtDist(pickDist);
+	}
 
 	/**
 	 * Perform a pick from this world space ray
@@ -775,7 +801,6 @@ public class RenderManager implements DragSourceListener {
 
 		RenderManager.inst().setSelectEntity(ent);
 	}
-
 
 	private void setSelectEntity(Entity ent) {
 		if (ent instanceof DisplayEntity)
