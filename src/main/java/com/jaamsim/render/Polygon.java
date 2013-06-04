@@ -24,7 +24,7 @@ import javax.media.opengl.GL2GL3;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
-import com.jaamsim.math.Plane;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -223,41 +223,9 @@ public class Polygon implements Renderable {
 		trans.inverse(invTrans);
 		Ray localRay = r.transform(invTrans);
 
-		// Check that this is actually inside the polygon, this assumes the points are co-planar
-		Plane p = new Plane(_points.get(0), _points.get(1), _points.get(2));
-		dist = p.collisionDist(localRay);
+		Vec4d[] pointsArray = _points.toArray(new Vec4d[0]);
 
-		if (dist < 0) { return dist; } // Behind the start of the ray
-
-		// This is the potential collision point, if it's inside the polygon
-		Vec4d collisionPoint = localRay.getPointAtDist(dist);
-
-		Vec4d a = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		Vec4d b = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		Vec4d cross = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		boolean posSign = true;
-
-		for (int i = 0; i < _points.size(); ++i) {
-			// Check that the collision point is on the same winding side of all the
-			Vec4d p0 = _points.get(i);
-			Vec4d p1 = _points.get((i + 1) % _points.size());
-			a.sub3(p0, collisionPoint);
-			b.sub3(p1, p0);
-			cross.cross3(a, b);
-
-			double triple = cross.dot3(r.getDirRef());
-			// This point is inside the polygon if all triple products have the same sign
-			if (i == 0 && triple < 0) {
-				// First iteration sets the sign
-				posSign = false;
-			}
-			if (posSign && triple < 0) {
-				return -1;
-			} else if (!posSign && triple > 0) {
-				return -1;
-			}
-		}
-		return dist; // This must be valid then
+		return MathUtils.collisionDistPoly(localRay, pointsArray);
 	}
 
 	// This should be called from the renderer at initialization

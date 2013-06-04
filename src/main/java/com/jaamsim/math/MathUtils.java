@@ -126,4 +126,46 @@ public static Transform rotateAroundPoint(Quaternion rot, Vec4d point) {
 	return ret;
 }
 
+public static double collisionDistPoly(Ray r, Vec4d[] points) {
+	if (points.length < 3) {
+		return -1; // Should this be an error?
+	}
+	// Check that this is actually inside the polygon, this assumes the points are co-planar
+	Plane p = new Plane(points[0], points[1], points[2]);
+	double dist = p.collisionDist(r);
+
+	if (dist < 0) { return dist; } // Behind the start of the ray
+
+	// This is the potential collision point, if it's inside the polygon
+	Vec4d collisionPoint = r.getPointAtDist(dist);
+
+	Vec4d a = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	Vec4d b = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	Vec4d cross = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	boolean posSign = true;
+
+	for (int i = 0; i < points.length; ++i) {
+		// Check that the collision point is on the same winding side of all the
+		Vec4d p0 = points[i];
+		Vec4d p1 = points[(i + 1) % points.length];
+		a.sub3(p0, collisionPoint);
+		b.sub3(p1, p0);
+		cross.cross3(a, b);
+
+		double triple = cross.dot3(r.getDirRef());
+		// This point is inside the polygon if all triple products have the same sign
+		if (i == 0 && triple < 0) {
+			// First iteration sets the sign
+			posSign = false;
+		}
+		if (posSign && triple < 0) {
+			return -1;
+		} else if (!posSign && triple > 0) {
+			return -1;
+		}
+	}
+	return dist; // This must be valid then
+
+}
+
 } // class
