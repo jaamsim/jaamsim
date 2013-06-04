@@ -21,6 +21,7 @@ import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec4d;
@@ -123,9 +124,96 @@ public double getCollisionDist(Ray r, boolean precise)
 		return boundsDist;
 	}
 
-	return _proto.getHull().collisionDistance(r, _trans, _scale);
+	double roughCollision = _proto.getHull().collisionDistance(r, _trans, _scale);
+	if (!precise || roughCollision < 0) {
+		// This is either a rough collision, or we missed outright
+		return roughCollision;
+	}
 
-	// TODO: precise
+	double shortDistance = Double.POSITIVE_INFINITY;
+
+	MeshData data = _proto.getRawData();
+	// Check against all sub meshes
+	for (int instInd = 0; instInd < data.getSubMeshInstances().size(); ++instInd) {
+		AABB subBounds = _subMeshBounds.get(instInd);
+		// Rough collision to AABB
+		if (subBounds.collisionDist(r) < 0) {
+			continue;
+		}
+
+		MeshData.SubMeshInstance subInst = data.getSubMeshInstances().get(instInd);
+
+		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
+
+		Mat4d subMat = RenderUtils.mergeTransAndScale(_trans, _scale);
+		subMat.mult4(subInst.transform);
+
+		Mat4d invMat = subMat.inverse();
+		double subDist = subData.hull.collisionDistanceByMatrix(r, subMat, invMat);
+		if (subDist < 0) {
+			continue;
+		}
+		// We have hit both the AABB and the convex hull for this sub instance, now do individual triangle collision
+
+		Ray localRay = r.transform(invMat);
+		Vec4d[] triVecs = new Vec4d[3];
+
+		Vec4d temp = new Vec4d();
+		for (int triInd = 0; triInd < subData.indices.length / 3; ++triInd) {
+			triVecs[0] = subData.verts.get(subData.indices[triInd*3+0]);
+			triVecs[1] = subData.verts.get(subData.indices[triInd*3+1]);
+			triVecs[2] = subData.verts.get(subData.indices[triInd*3+2]);
+			double triDist = MathUtils.collisionDistPoly(localRay, triVecs);
+			if (triDist > 0) {
+				// We have collided, now we need to figure out the distance in original ray space, not the transformed ray space
+				temp = localRay.getPointAtDist(triDist);
+				temp.mult4(subMat, temp); // Temp is the collision point in world space
+				temp.sub3(temp, r.getStartRef());
+
+				double newDist = temp.mag3();
+
+				if (newDist < shortDistance) {
+					shortDistance = newDist;
+				}
+			}
+		}
+	}
+
+	// Now check against line components
+	for (int instInd = 0; instInd < data.getSubLineInstances().size(); ++instInd) {
+		MeshData.SubLineInstance subInst = data.getSubLineInstances().get(instInd);
+
+		MeshData.SubLineData subData = data.getSubLineData().get(subInst.subLineIndex);
+
+		Mat4d subMat = RenderUtils.mergeTransAndScale(_trans, _scale);
+		subMat.mult4(subInst.transform);
+
+		Mat4d invMat = subMat.inverse();
+		double subDist = subData.hull.collisionDistanceByMatrix(r, subMat, invMat);
+		if (subDist < 0) {
+			continue;
+		}
+
+		Mat4d rayMat = MathUtils.RaySpace(r);
+		Vec4d[] lineVerts = new Vec4d[subData.verts.size()];
+		for (int i = 0; i < lineVerts.length; ++i) {
+			lineVerts[i] = new Vec4d();
+			lineVerts[i].mult4(subMat, subData.verts.get(i));
+		}
+
+		double lineDist = MathUtils.collisionDistLines(rayMat, lineVerts, 0.01309); // Angle is 0.75 deg in radians
+
+		if (lineDist > 0 && lineDist < shortDistance) {
+			shortDistance = lineDist;
+		}
+	}
+
+	if (shortDistance == Double.POSITIVE_INFINITY) {
+		return -1; // We did not actually collide with anything
+	}
+
+	return shortDistance;
+
 }
 
 @Override
