@@ -321,9 +321,11 @@ public class TextureView implements Renderable {
 	}
 
 	@Override
-	public double getCollisionDist(Ray r)
+	public double getCollisionDist(Ray r, boolean precise)
 	{
 		return _bounds.collisionDist(r);
+
+		// TODO: precise
 	}
 
 	@Override

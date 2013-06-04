@@ -200,9 +200,11 @@ public AABB getBoundsRef() {
 }
 
 @Override
-public double getCollisionDist(Ray r)
+public double getCollisionDist(Ray r, boolean precise)
 {
 	return _bounds.collisionDist(r);
+
+	// TODO precise collision
 }
 
 @Override

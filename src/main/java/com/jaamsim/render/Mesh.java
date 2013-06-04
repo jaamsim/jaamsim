@@ -116,7 +116,7 @@ public long getPickingID() {
 }
 
 @Override
-public double getCollisionDist(Ray r)
+public double getCollisionDist(Ray r, boolean precise)
 {
 	double boundsDist = _bounds.collisionDist(r);
 	if (boundsDist < 0) {
@@ -124,6 +124,8 @@ public double getCollisionDist(Ray r)
 	}
 
 	return _proto.getHull().collisionDistance(r, _trans, _scale);
+
+	// TODO: precise
 }
 
 @Override

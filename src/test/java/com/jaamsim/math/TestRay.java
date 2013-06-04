@@ -53,12 +53,12 @@ public class TestRay {
 
 		Ray r0 = new Ray(Vec4d.ORIGIN, Vec4d.Z_AXIS);
 
-		double r0Dist = dl.getCollisionDist(r0);
+		double r0Dist = dl.getCollisionDist(r0, true);
 		assertTrue(MathUtils.near(r0Dist, 1)); // Should collide at (0, 0, 1)
 
 		Ray r1 = new Ray(new Vec4d(6, -3, 0, 1.0d), Vec4d.Y_AXIS);
 
-		double r1Dist = dl.getCollisionDist(r1);
+		double r1Dist = dl.getCollisionDist(r1, true);
 		assertTrue(MathUtils.near(r1Dist, 5)); // Should collide at (0, 0, 1)
 
 	}

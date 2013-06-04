@@ -59,7 +59,7 @@ public class DebugPoints implements Renderable {
 			Camera cam, Ray pickRay) {
 
 		float[] renderColour = _colour;
-		if (pickRay != null && getCollisionDist(pickRay) > 0)
+		if (pickRay != null && getCollisionDist(pickRay, false) > 0)
 			renderColour = _hoverColour;
 
 		DebugUtils.renderPoints(vaoMap, renderer, fb, renderColour, _pointWidth, cam);
@@ -84,7 +84,7 @@ public class DebugPoints implements Renderable {
 	}
 
 	@Override
-	public double getCollisionDist(Ray r) {
+	public double getCollisionDist(Ray r, boolean precise) {
 		if (r == null) {
 			return -1;
 		}

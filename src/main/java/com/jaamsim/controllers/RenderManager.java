@@ -433,7 +433,7 @@ public class RenderManager implements DragSourceListener {
 						continue;
 					}
 
-					List<PickData> picks = pickForMouse(id);
+					List<PickData> picks = pickForMouse(id, false);
 					ArrayList<Long> debugIDs = new ArrayList<Long>(picks.size());
 
 					StringBuilder dbgMsg = new StringBuilder(cacheString);
@@ -499,7 +499,7 @@ public class RenderManager implements DragSourceListener {
 				return;
 			}
 
-			List<PickData> picks = pickForMouse(windowID);
+			List<PickData> picks = pickForMouse(windowID, false);
 
 			ArrayList<DisplayEntity> ents = new ArrayList<DisplayEntity>();
 
@@ -562,7 +562,7 @@ public class RenderManager implements DragSourceListener {
 
 	public void handleSelection(int windowID) {
 
-		List<PickData> picks = pickForMouse(windowID);
+		List<PickData> picks = pickForMouse(windowID, false);
 
 		Collections.sort(picks, new SelectionSorter());
 
@@ -590,7 +590,7 @@ public class RenderManager implements DragSourceListener {
 	 * @param mouseY
 	 * @return
 	 */
-	private List<PickData> pickForMouse(int windowID) {
+	private List<PickData> pickForMouse(int windowID, boolean precise) {
 		Renderer.WindowMouseInfo mouseInfo = _renderer.getMouseInfo(windowID);
 
 		View view = _windowToViewMap.get(windowID);
@@ -601,7 +601,7 @@ public class RenderManager implements DragSourceListener {
 
 		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
 
-		return pickForRay(pickRay, view.getID());
+		return pickForRay(pickRay, view.getID(), precise);
 	}
 
 
@@ -706,8 +706,8 @@ public class RenderManager implements DragSourceListener {
 	 * @param pickRay - the ray
 	 * @return
 	 */
-	private List<PickData> pickForRay(Ray pickRay, int viewID) {
-		List<Renderer.PickResult> picks = _renderer.pick(pickRay, viewID);
+	private List<PickData> pickForRay(Ray pickRay, int viewID, boolean precise) {
+		List<Renderer.PickResult> picks = _renderer.pick(pickRay, viewID, precise);
 
 		List<PickData> uniquePicks = new ArrayList<PickData>();
 
@@ -1239,7 +1239,7 @@ public class RenderManager implements DragSourceListener {
 			return false;
 		}
 
-		List<PickData> picks = pickForRay(pickRay, view.getID());
+		List<PickData> picks = pickForRay(pickRay, view.getID(), false);
 
 		Collections.sort(picks, new HandleSorter());
 

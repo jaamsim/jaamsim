@@ -131,7 +131,7 @@ public class Polygon implements Renderable {
 		}
 
 		float[] renderColour = colour;
-		if (pickRay != null && getCollisionDist(pickRay) > 0)
+		if (pickRay != null && getCollisionDist(pickRay, false) > 0)
 			renderColour = hoverColour;
 
 		if (!vaoMap.containsKey(_VAOKey)) {
@@ -213,7 +213,7 @@ public class Polygon implements Renderable {
 	}
 
 	@Override
-	public double getCollisionDist(Ray r) {
+	public double getCollisionDist(Ray r, boolean precise) {
 		double dist =  _bounds.collisionDist(r);
 
 		if (dist < 0) { return dist; } // Does not collide with the bounds

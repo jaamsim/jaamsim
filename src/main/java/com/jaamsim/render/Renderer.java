@@ -778,7 +778,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	 * @param ray
 	 * @return
 	 */
-	public List<PickResult> pick(Ray pickRay, int viewID) {
+	public List<PickResult> pick(Ray pickRay, int viewID, boolean precise) {
 		// Do not update the scene while a pick is underway
 		ArrayList<PickResult> ret = new ArrayList<PickResult>();
 
@@ -788,7 +788,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		synchronized (_sceneLock) {
 			for (Renderable r : _currentScene) {
-				double rayDist = r.getCollisionDist(pickRay);
+				double rayDist = r.getCollisionDist(pickRay, precise);
 				if (rayDist >= 0.0) {
 
 					// Also check that this is visible

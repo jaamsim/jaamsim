@@ -46,10 +46,11 @@ public boolean renderForView(int viewID, double dist);
 
 /**
  * Test for collision with a ray in global space, return the distance to a collision,
- * a negative return value indicates no collision.
+ * a negative return value indicates no collision. There is two modes for determining collision, set by 'precise'
+ * a precise collision will check down to the individual renderable elements (lines, triangles, etc) and can be quite slow
  * @param r
  * @return
  */
-public double getCollisionDist(Ray r);
+public double getCollisionDist(Ray r, boolean precise);
 
 } // Interface Renderable

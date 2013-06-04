@@ -63,7 +63,7 @@ public class DebugLine implements Renderable {
 			Camera cam, Ray pickRay) {
 
 		float[] renderColour = _colour;
-		if (pickRay != null && getCollisionDist(pickRay) > 0)
+		if (pickRay != null && getCollisionDist(pickRay, false) > 0)
 			renderColour = _hoverColour;
 
 		DebugUtils.renderLine(vaoMap, renderer, _fb, renderColour, _lineWidth, cam);
@@ -92,7 +92,7 @@ public class DebugLine implements Renderable {
 	 * call setCollisionAngle() first.
 	 */
 	@Override
-	public double getCollisionDist(Ray r) {
+	public double getCollisionDist(Ray r, boolean precise) {
 		if (r == null) {
 			return -1;
 		}
