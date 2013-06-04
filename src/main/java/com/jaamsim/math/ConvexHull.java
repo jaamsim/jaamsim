@@ -474,16 +474,20 @@ public class ConvexHull {
 	 */
 	public double collisionDistance(Ray r, Transform trans, Vec4d scale) {
 
-		// Simply use the AABB formed from the points for the degenerate cases
+		return collisionDistanceByMatrix(r,
+				RenderUtils.mergeTransAndScale(trans, scale),
+				RenderUtils.getInverseWithScale(trans, scale));
+	}
+
+	public double collisionDistanceByMatrix(Ray r, Mat4d mat, Mat4d invMat) {
+
 		if (_isDegenerate) {
-			AABB aabb = getAABB(RenderUtils.mergeTransAndScale(trans, scale));
+			AABB aabb = getAABB(mat);
 			return aabb.collisionDist(r);
 		}
 
-		Mat4d transMat = RenderUtils.getInverseWithScale(trans, scale);
-
 		// hullRay is the point in hull space
-		Ray hullRay = r.transform(transMat);
+		Ray hullRay = r.transform(invMat);
 
 		double back = Double.MAX_VALUE;
 		double front = -Double.MAX_VALUE;
