@@ -36,7 +36,7 @@ public class ImageProxy implements RenderProxy {
 	                  VisibilityInfo visInfo, long pickingID) {
 		_imageURL = url;
 		_trans = trans;
-		_scale = scale;
+		_scale = RenderUtils.fixupScale(scale);
 		_isTransparent = isTransparent;
 		_pickingID = pickingID;
 		_isCompressed = isCompressed;

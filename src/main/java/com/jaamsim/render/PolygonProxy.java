@@ -48,7 +48,7 @@ public class PolygonProxy implements RenderProxy {
 		_hoverColour = colour;
 		_points = points;
 		_trans = trans;
-		_scale = scale;
+		_scale = RenderUtils.fixupScale(scale);
 		_isOutline = isOutline;
 		_lineWidth = lineWidth;
 		_pickingID = pickingID;

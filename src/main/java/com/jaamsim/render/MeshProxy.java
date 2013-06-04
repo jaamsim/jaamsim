@@ -37,7 +37,7 @@ public class MeshProxy implements RenderProxy {
 	public MeshProxy(MeshProtoKey assetKey, Transform trans, Vec4d scale, ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
 		_assetKey = assetKey;
 		_trans = trans;
-		_scale = scale;
+		_scale = RenderUtils.fixupScale(scale);
 		_pickingID = pickingID;
 		_visInfo = visInfo;
 		_actions = actions;
