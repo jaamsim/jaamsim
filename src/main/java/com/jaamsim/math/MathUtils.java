@@ -118,8 +118,8 @@ public static Mat4d RaySpace(Ray r) {
  * @param point - the point to rotate around
  * @return
  */
-public static Transform rotateAroundPoint(Quaternion rot, Vec4d point) {
-	Vec4d negPoint = new Vec4d(point);
+public static Transform rotateAroundPoint(Quaternion rot, Vec3d point) {
+	Vec3d negPoint = new Vec3d(point);
 	negPoint.scale3(-1);
 
 	Transform ret = new Transform(point);
