@@ -103,29 +103,8 @@ public class DebugLine implements Renderable {
 		// Otherwise perform collision cone tests on individual line segments
 		Mat4d rayMatrix = MathUtils.RaySpace(r);
 
-		double shortDist = Double.POSITIVE_INFINITY;
-
-		for (int i = 0; i < _lineSegments.size(); i+=2) {
-			Vec4d nearPoint = RenderUtils.rayClosePoint(rayMatrix, _lineSegments.get(i), _lineSegments.get(i+1));
-
-			double angle = RenderUtils.angleToRay(rayMatrix, nearPoint);
-			if (angle < 0) {
-				continue;
-			}
-
-			Vec4d raySpaceNear = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			raySpaceNear.mult4(rayMatrix, nearPoint);
-
-			if (angle < _collisionAngle && raySpaceNear.z < shortDist) {
-				shortDist = raySpaceNear.z;
-			}
-		}
-
-		// Short dist is the shortest collision distance
-		if (shortDist == Double.POSITIVE_INFINITY) {
-			return -1; // No collision
-		}
-		return shortDist;
+		Vec4d[] linesArray = _lineSegments.toArray(new Vec4d[0]);
+		return MathUtils.collisionDistLines(rayMatrix, linesArray, _collisionAngle);
 	}
 
 	@Override

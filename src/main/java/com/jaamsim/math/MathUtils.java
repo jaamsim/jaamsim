@@ -14,6 +14,8 @@
  */
 package com.jaamsim.math;
 
+import com.jaamsim.render.RenderUtils;
+
 /**
  * Some handy static methods to make life easier else where
  * @author Matt Chudleigh
@@ -165,6 +167,40 @@ public static double collisionDistPoly(Ray r, Vec4d[] points) {
 		}
 	}
 	return dist; // This must be valid then
+
+}
+
+/**
+ * Determine line collision
+ * @param rayMat - the rayspace matrix
+ * @param lines - pairs of vertices, each pair defining a line segment (this is not a line strip or line loop)
+ * @param collisionAngle - the angle of the collision cone in radians
+ * @return
+ */
+public static double collisionDistLines(Mat4d rayMat, Vec4d[] lines, double collisionAngle) {
+	double shortDist = Double.POSITIVE_INFINITY;
+
+	for (int i = 0; i < lines.length; i+=2) {
+		Vec4d nearPoint = RenderUtils.rayClosePoint(rayMat, lines[i], lines[i+1]);
+
+		double angle = RenderUtils.angleToRay(rayMat, nearPoint);
+		if (angle < 0) {
+			continue;
+		}
+
+		Vec4d raySpaceNear = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		raySpaceNear.mult4(rayMat, nearPoint);
+
+		if (angle < collisionAngle && raySpaceNear.z < shortDist) {
+			shortDist = raySpaceNear.z;
+		}
+	}
+
+	// Short dist is the shortest collision distance
+	if (shortDist == Double.POSITIVE_INFINITY) {
+		return -1; // No collision
+	}
+	return shortDist;
 
 }
 
