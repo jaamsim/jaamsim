@@ -21,6 +21,7 @@ Define ObjectType  { TimeUnit
                      CostUnit
                      CostRateUnit
                      LinearDensityUnit
+                     LinearDensityVolumeUnit
                      DensityUnit
                      PressureUnit
                      ViscosityUnit
@@ -45,6 +46,7 @@ PowerUnit           JavaClass { com.jaamsim.units.PowerUnit           } Palette 
 CostUnit            JavaClass { com.jaamsim.units.CostUnit            } Palette { Units } DragAndDrop { FALSE }
 CostRateUnit        JavaClass { com.jaamsim.units.CostRateUnit        } Palette { Units } DragAndDrop { FALSE }
 LinearDensityUnit   JavaClass { com.jaamsim.units.LinearDensityUnit   } Palette { Units } DragAndDrop { FALSE }
+LinearDensityVolumeUnit   JavaClass { com.jaamsim.units.LinearDensityVolumeUnit   } Palette { Units } DragAndDrop { FALSE }
 DensityUnit         JavaClass { com.jaamsim.units.DensityUnit         } Palette { Units } DragAndDrop { FALSE }
 PressureUnit        JavaClass { com.jaamsim.units.PressureUnit        } Palette { Units } DragAndDrop { FALSE }
 ViscosityUnit       JavaClass { com.jaamsim.units.ViscosityUnit       } Palette { Units } DragAndDrop { FALSE }
@@ -248,7 +250,7 @@ $/h    ConversionFactorToSI { 1 3600  } Alias { $/hour }
 $/d    ConversionFactorToSI { 1 86400 } Alias { $/day }
 
 " ======================================================================================================================================================
-" Linear Density units
+" Linear Density units (mass)
 " ======================================================================================================================================================
 
 Define LinearDensityUnit      { kg/m t/m kt/m  }
@@ -256,6 +258,14 @@ Define LinearDensityUnit      { kg/m t/m kt/m  }
 kg/m ConversionFactorToSI { 1         }
 t/m  ConversionFactorToSI { 1000      }
 kt/m ConversionFactorToSI { 1000000   }
+
+" ======================================================================================================================================================
+" Linear Density units (volume)
+" ======================================================================================================================================================
+
+Define LinearDensityVolumeUnit      { m3/m }
+
+m3/m ConversionFactorToSI { 1         }
 
 " ======================================================================================================================================================
 " Density units
