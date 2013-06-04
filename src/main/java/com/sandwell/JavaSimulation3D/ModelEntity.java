@@ -338,6 +338,8 @@ public class ModelEntity extends DisplayEntity {
 	public void earlyInit() {
 		super.earlyInit();
 
+		timeOfLastStateChange = getCurrentTime();
+
 		if( downtimeDurationDistribution.getValue() != null ) {
 			downtimeDurationDistribution.getValue().initialize();
 		}
