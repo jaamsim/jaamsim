@@ -31,7 +31,7 @@ public class MouseHandler extends MouseAdapter {
 	private static int modsFromEvent(InputEvent e) {
 		int flags = 0;
 		flags += e.isShiftDown() ? WindowInteractionListener.MOD_SHIFT : 0;
-		flags += e.isMetaDown() ? WindowInteractionListener.MOD_ALT : 0;
+		flags += e.isAltDown() ? WindowInteractionListener.MOD_ALT : 0;
 		flags += e.isControlDown() ? WindowInteractionListener.MOD_CTRL : 0;
 
 		return flags;
