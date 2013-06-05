@@ -457,18 +457,6 @@ public class Simulation extends Entity {
 	}
 
 	/**
-	 * Return the time as a number of ticks rounded up
-	 */
-	public double getDiscreteTimeRoundedUp(double time) {
-		if (time == Double.POSITIVE_INFINITY) {
-			return time;
-		} else {
-			double factor = Process.getSimTimeFactor();
-			return Math.ceil(time * factor) / factor;
-		}
-	}
-
-	/**
 	 * Returns the end time of the run.
 	 * @return double - the time the current run will stop
 	 */
