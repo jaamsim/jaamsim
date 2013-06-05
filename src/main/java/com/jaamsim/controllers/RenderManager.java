@@ -832,8 +832,8 @@ public class RenderManager implements DragSourceListener {
 			return false;
 		}
 
-		// We don't drag with control down
-		if (dragInfo.controlDown()) {
+		// For now, experimental controls requires control to be down to drag or resize
+		if (getExperimentalControls() != dragInfo.controlDown()) {
 			return false;
 		}
 
@@ -1243,9 +1243,10 @@ public class RenderManager implements DragSourceListener {
 			return true; // handled
 		}
 
-		if ((modifiers & WindowInteractionListener.MOD_CTRL) != 0) {
+		boolean controlDown = (modifiers & WindowInteractionListener.MOD_CTRL) != 0;
+
+		if (controlDown) {
 			// Check if we can split a line segment
-			_isDragging = false;
 			if (_selectedEntity != null && _selectedEntity instanceof HasScreenPoints) {
 				if ((modifiers & WindowInteractionListener.MOD_SHIFT) != 0) {
 					removeLineNode(windowID, x, y);
@@ -1254,6 +1255,10 @@ public class RenderManager implements DragSourceListener {
 				}
 				return true;
 			}
+		}
+
+		if (controlDown != getExperimentalControls()) {
+			_isDragging = false;
 			return false;
 		}
 
@@ -1484,6 +1489,10 @@ public class RenderManager implements DragSourceListener {
 
 	public void focusWindow(int windowID) {
 		_renderer.focusWindow(windowID);
+	}
+
+	public boolean getExperimentalControls() {
+		return GUIFrame.instance().getExperimentalControls();
 	}
 
 	/**

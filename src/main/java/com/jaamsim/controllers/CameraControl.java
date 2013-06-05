@@ -47,7 +47,7 @@ public class CameraControl implements WindowInteractionListener {
 
 	private ChangeWatcher.Tracker _viewTracker;
 
-	private Vec4d POI = new Vec4d(0, 1, 0, 1);
+	private Vec4d POI = new Vec4d(0, 0, 0, 1);
 
 	private static class PolarInfo {
 		double rotZ; // The spherical coordinate that rotates around Z (in radians)
@@ -78,13 +78,15 @@ public class CameraControl implements WindowInteractionListener {
 
 		PolarInfo pi = getPolarCoordsFromView();
 
-		if (dragInfo.controlDown() && dragInfo.shiftDown()) {
+		boolean expControls = RenderManager.inst().getExperimentalControls();
+
+		if (expControls && dragInfo.shiftDown()) {
 			// look around
 			handleTurnCamera(dragInfo.dx, dragInfo.dy);
 			return;
 		}
 
-		if (dragInfo.controlDown()) {
+		if (expControls) {
 			handleRotAroundPoint(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
 			return;
 		}
@@ -226,7 +228,8 @@ public class CameraControl implements WindowInteractionListener {
 	@Override
 	public void mouseWheelMoved(int windowID, int x, int y, int wheelRotation, int modifiers) {
 
-		if ((modifiers & WindowInteractionListener.MOD_CTRL) != 0) {
+
+		if (RenderManager.inst().getExperimentalControls()) {
 			zoomToPOI(wheelRotation);
 			return;
 		}

@@ -95,6 +95,7 @@ public class GUIFrame extends JFrame {
 	private JCheckBoxMenuItem showPosition;
 	private JCheckBoxMenuItem alwaysTop;
 	private JCheckBoxMenuItem tooltip;
+	private JCheckBoxMenuItem expControls;
 	private JMenuItem showEventViewer;
 	private JMenuItem showEventTracker;
 	private JMenuItem printInputItem;
@@ -498,6 +499,10 @@ public class GUIFrame extends JFrame {
 				// TODO Needs to be implemented for the new Renderer
 			}
 		} );
+
+		expControls = new JCheckBoxMenuItem( "Experimental Controls", false );
+		expControls.setMnemonic( 'E' );
+		optionMenu.add( expControls );
 
 		showPosition.addActionListener( new ActionListener() {
 
@@ -1193,6 +1198,10 @@ public class GUIFrame extends JFrame {
 		locatorPos.setVisible( show );
 		locatorLabel.setText( "Pos: " );
 		locatorPos.setText( "(-, -, -)" );
+	}
+
+	public boolean getExperimentalControls() {
+		return expControls.getState();
 	}
 
 	private static void calcWindowDefaults() {
