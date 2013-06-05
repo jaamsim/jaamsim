@@ -110,10 +110,6 @@ public class Simulation extends Entity {
 	         example = "Sim CargoUnits { kt }")
 	private final StringInput cargoUnitString;
 
-	@Keyword(description = "The rate of gravity",
-	         example = "This is placeholder example text")
-	private final DoubleInput gravity;
-
 	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
 	private final DoubleInput traceStartTime;
@@ -201,12 +197,6 @@ public class Simulation extends Entity {
 		simTimeScaleInput = new DoubleInput( "SimulationTimeScale", "Key Inputs", 4000.0d );
 		simTimeScaleInput.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
 		this.addInput( simTimeScaleInput, true );
-
-		gravity = new DoubleInput( "Gravity", "Key Inputs", 32.2d );
-		gravity.setValidRange( 0.0d, Double.POSITIVE_INFINITY );
-		gravity.setUnits( "ft/s2" );
-		gravity.setHidden(true);
-		this.addInput( gravity, true );
 
 		traceStartTime = new DoubleInput( "TraceStartTime", "Key Inputs", 0.0d );
 		traceStartTime.setValidRange( 0.0d, Double.POSITIVE_INFINITY );
@@ -580,9 +570,6 @@ public class Simulation extends Entity {
 		return portTimeStep.getValue() / 3600.0d;
 	}
 
-	public double getGravity() {
-		return gravity.getValue();
-	}
 	public double getTraceStartTime() {
 		return traceStartTime.getValue();
 	}
