@@ -446,9 +446,9 @@ public class CameraControl implements WindowInteractionListener {
 		pi.rotX = Math.atan2(xyDist, viewDiff.z);
 
 		// If we are near vertical (within about a quarter of a degree) don't rotate around Z (take X as up)
-//		if (Math.abs(pi.rotX) < 0.005) {
-//			pi.rotZ = 0;
-//		}
+		if (Math.abs(pi.rotX) < 0.005 && !RenderManager.inst().getExperimentalControls()) {
+			pi.rotZ = 0;
+		}
 		return pi;
 
 	}
