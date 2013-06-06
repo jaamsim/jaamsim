@@ -53,6 +53,7 @@ public class ModelEntity extends DisplayEntity {
 	private final DoubleInput availability;
 	protected double hoursForNextFailure;    // The number of working hours required before the next breakdown
 	protected double iATFailure;             // inter arrival time between failures
+	protected double iATFailureFactor;       // factor applied to time between failures to get desired availability
 	protected boolean breakdownPending;          // true when a breakdown is to occur
 	protected boolean brokendown;                // true => entity is presently broken down
 	protected boolean maintenance;               // true => entity is presently in maintenance
@@ -419,21 +420,20 @@ public class ModelEntity extends DisplayEntity {
 			average = getDowntimeDurationDistribution().getExpectedValue();
 
 		//  Calculate the average downtime inter-arrival time
+		iATFailureFactor = 1.0;
 		if( (getAvailability() == 1.0 || average == 0.0) ) {
 			iATFailure = 10.0E10;
 		}
 		else {
+			iATFailure = (average / (1.0 - getAvailability())) - average;
+
 			if( getDowntimeIATDistribution() != null ) {
-				iATFailure = getDowntimeIATDistribution().getExpectedValue();
+				double expectedIATFailure = getDowntimeIATDistribution().getExpectedValue();
 
 				// Adjust the downtime inter-arrival time to get the specified availability
-				if( ! Tester.equalCheckTolerance( iATFailure, ( (average / (1.0 - getAvailability())) - average ) ) ) {
-					getDowntimeIATDistribution().setValueFactor_For( ( (average / (1.0 - getAvailability())) - average) / iATFailure, this  );
-					iATFailure = getDowntimeIATDistribution().getExpectedValue();
+				if( ! Tester.equalCheckTolerance( expectedIATFailure, ( (average / (1.0 - getAvailability())) - average ) ) ) {
+					iATFailureFactor = ( (average / (1.0 - getAvailability())) - average) / expectedIATFailure;
 				}
-			}
-			else {
-				iATFailure = ( (average / (1.0 - getAvailability())) - average );
 			}
 		}
 
@@ -1530,7 +1530,7 @@ public static class StateRecord {
 	 */
 	public double getNextBreakdownIAT() {
 		if( getDowntimeIATDistribution() != null ) {
-			return getDowntimeIATDistribution().nextValue();
+			return getDowntimeIATDistribution().nextValue() * iATFailureFactor;
 		}
 		else {
 			return iATFailure;
