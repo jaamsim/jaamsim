@@ -67,7 +67,6 @@ public class ProbabilityDistribution extends Entity {
 	@Keyword(description = "A multiplicative factor applied to the values returned by the ProbabilityDistribution object.",
 	         example = "ProbDist1 ValueFactor { 1.0 }")
 	protected double valueFactor; // factor applied to the values returned by the distribution
-	protected Entity adjustingEntity; // The last entity which adjusts this distribution list
 
 	protected double expectedValue;
 
@@ -396,20 +395,6 @@ public class ProbabilityDistribution extends Entity {
 		else {
 			return valueList.getMax() * valueFactor;
 		}
-	}
-
-	public void setValueFactor_For( double factor, Entity entity ) {
-		if( adjustingEntity != null && factor != valueFactor ) {
-			this.warning( "setValueFactor_For( " + factor + ", " + entity + " )",
-						  "Time between failure distribution \""  + this + "\" is being used by two entities with different reliabilities or \n" +
-						  "average downtime durations.  The time between failure distribution cannot be factored to satisfy both entities. \n" +
-						  "One entity will receive the incorrect amount of breakdowns; results cannot be trusted.",
-						  "Details [entity, (target factor)]:\n" +
-						  adjustingEntity + " ( " + valueFactor + " ) and " + entity + " ( " + factor + " )" );
-		}
-		adjustingEntity = entity;
-		valueFactor = factor;
-
 	}
 
 	/**
