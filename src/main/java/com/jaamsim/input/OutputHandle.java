@@ -14,7 +14,11 @@
  */
 package com.jaamsim.input;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import com.jaamsim.units.Unit;
+import com.sandwell.JavaSimulation.Entity;
 
 /**
  * OutputHandle is a class that represents all the useful runtime information for an output,
@@ -30,5 +34,59 @@ public class OutputHandle {
 	public OutputHandle(Output a, Method m) {
 		annotation = a;
 		method = m;
+	}
+
+	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
+	public <T> T getValue(Entity ent, double simTime, Class<T> klass) {
+		if (method == null) {
+			return null;
+		}
+
+		T ret = null;
+		try {
+			if (!klass.isAssignableFrom(method.getReturnType()))
+				return null;
+
+			ret = (T)method.invoke(ent, simTime);
+		}
+		catch (InvocationTargetException ex) {}
+		catch (IllegalAccessException ex) {}
+		catch (ClassCastException ex) {}
+		return ret;
+	}
+
+	public String getValueAsString(Entity ent, double simTime) {
+		String ret = null;
+		try {
+			Object o = method.invoke(ent, simTime);
+			if (o == null)
+				return null;
+			return o.toString();
+		} catch (InvocationTargetException ex) {
+			assert false;
+		} catch (IllegalAccessException ex) {
+			assert false;
+		}
+		return ret;
+	}
+
+	public Class<?> getReturnType() {
+		assert (method != null);
+		return method.getReturnType();
+	}
+
+	public Class<?> getDeclaringClass() {
+		assert (method != null);
+		return method.getDeclaringClass();
+	}
+
+	public Class<? extends Unit> getUnitType() {
+		assert (annotation != null);
+		return annotation.unitType();
+	}
+
+	public String getDescription() {
+		assert (annotation != null);
+		return annotation.description();
 	}
 }

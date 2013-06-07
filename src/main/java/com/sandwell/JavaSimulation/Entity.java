@@ -672,6 +672,34 @@ public class Entity {
 		Collections.sort(handles, new OutputComparator());
 	}
 
+	public OutputHandle getOutputHandle(String outputName) {
+		// lazily initialize the output cache
+		if (outputCache == null) {
+			buildOutputCache();
+		}
+
+		return outputCache.get(outputName);
+	}
+
+	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
+	public <T> T getOutputValue(OutputHandle out, double simTime, Class<T> klass) {
+		if (out.method == null) {
+			return null;
+		}
+
+		T ret = null;
+		try {
+			if (!klass.isAssignableFrom(out.getReturnType()))
+				return null;
+
+			ret = (T)out.method.invoke(this, simTime);
+		}
+		catch (InvocationTargetException ex) {}
+		catch (IllegalAccessException ex) {}
+		catch (ClassCastException ex) {}
+		return ret;
+	}
+
 	/**
 	 * A generic method to return any declared outputs for this Entity
 	 * @param outputName - The name of the output
@@ -679,29 +707,9 @@ public class Entity {
 	 * @param klass - the class of the return type expected
 	 * @return
 	 */
-	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
 	private <T> T getOutputValueImp(String outputName, double simTime, Class<T> klass) {
-		// lazily initialize the output cache
-		if (outputCache == null) {
-			buildOutputCache();
-		}
-
-		Method m = outputCache.get(outputName).method;
-		if (m == null) {
-			return null;
-		}
-
-		T ret = null;
-		try {
-			if (!klass.isAssignableFrom(m.getReturnType()))
-				return null;
-
-			ret = (T)m.invoke(this, simTime);
-		}
-		catch (InvocationTargetException ex) {}
-		catch (IllegalAccessException ex) {}
-		catch (ClassCastException ex) {}
-		return ret;
+		OutputHandle out = this.getOutputHandle(outputName);
+		return this.getOutputValue(out, simTime, klass);
 	}
 
 	private <T> T getInputValueImp(String inputName, double simTime, Class<T> klass) {
@@ -744,19 +752,14 @@ public class Entity {
 	 * @return
 	 */
 	public String getOutputAsString(String outputName, double simTime) {
-		// lazily initialize the output cache
-		if (outputCache == null) {
-			buildOutputCache();
-		}
-
-		Method m = outputCache.get(outputName).method;
-		if (m == null) {
+		OutputHandle out = this.getOutputHandle(outputName);
+		if (out.method == null) {
 			// Instead try the inputs
 			return getInputAsString(outputName);
 		}
 		String ret = null;
 		try {
-			Object o = m.invoke(this, simTime);
+			Object o = out.method.invoke(this, simTime);
 			if (o == null)
 				return null;
 			return o.toString();
