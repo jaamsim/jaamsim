@@ -1,7 +1,6 @@
 Define Palette { 'Basic Objects' }
 
 Define ObjectType {
-                    ModelEntity
                     EntityGenerator
                     Server
                     EntitySink
@@ -26,7 +25,6 @@ SourceIconModel         ImageFile { '/resources/images/Source-256.png' }      Tr
 SinkIconModel           ImageFile { '/resources/images/Sink-256.png'   }      Transparent { TRUE }
 ServerIconModel         ImageFile { '/resources/images/Server-256.png' }      Transparent { TRUE }
 
-ModelEntity             JavaClass { com.sandwell.JavaSimulation3D.ModelEntity           } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Cube 					}	DragAndDrop 	{ FALSE 	}
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
 Server                  JavaClass { com.jaamsim.BasicObjects.Server                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
 EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SinkIconModel 		}
