@@ -59,7 +59,7 @@ public class TexCache {
 
 	private static class LoadingEntry {
 		public int bufferID;
-		public String imageURL;
+		public URL imageURL;
 		public boolean hasAlpha;
 		public boolean compressed;
 		public ByteBuffer data;
@@ -68,7 +68,7 @@ public class TexCache {
 		public AtomicBoolean failed = new AtomicBoolean(false);
 		public final Object lock = new Object();
 
-		public LoadingEntry(String url, ByteBuffer data, boolean alpha, boolean compressed) {
+		public LoadingEntry(URL url, ByteBuffer data, boolean alpha, boolean compressed) {
 			this.imageURL = url;
 			this.data = data;
 			this.hasAlpha = alpha;
@@ -78,6 +78,10 @@ public class TexCache {
 
 	private final Map<String, TexEntry> _texMap = new HashMap<String, TexEntry>();
 	private final Map<String, LoadingEntry> _loadingMap = new HashMap<String, LoadingEntry>();
+
+	private final ArrayList<LoadingEntry> _loadingList = new ArrayList<LoadingEntry>();
+	private Thread _loadThread;
+	private Object _loadLock = new Object();
 
 	private Renderer _renderer;
 
@@ -114,7 +118,7 @@ public class TexCache {
 			if (le.done.get()) {
 				loadedStrings.add(entry.getKey());
 				int glTexID = loadGLTexture(gl, le);
-				_texMap.put(le.imageURL, new TexEntry(glTexID, le.hasAlpha, le.compressed));
+				_texMap.put(le.imageURL.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed));
 			}
 		}
 		for (String s : loadedStrings) {
@@ -167,7 +171,7 @@ public class TexCache {
 		_loadingMap.remove(imageURLKey);
 
 		int glTexID = loadGLTexture(gl, le);
-		_texMap.put(le.imageURL, new TexEntry(glTexID, le.hasAlpha, le.compressed));
+		_texMap.put(le.imageURL.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed));
 
 		return glTexID;
 	}
@@ -215,74 +219,19 @@ public class TexCache {
 
 		gl.glBindBuffer(GL2GL3.GL_PIXEL_UNPACK_BUFFER, 0);
 
-		final LoadingEntry le = new LoadingEntry(imageURL.toString(), mappedBuffer, transparent, compressed);
+		final LoadingEntry le = new LoadingEntry(imageURL, mappedBuffer, transparent, compressed);
 		le.bufferID = ids[0];
-
-		Runnable loader = new Runnable() {
-			@Override
-			public void run() {
-				BufferedImage img = null;
-				try {
-					img = ImageIO.read(imageURL);
-				}
-				catch(Exception e) {
-					le.failed.set(true);
-					le.done.set(true);
-					return;
-				}
-				if (img == null) {
-					le.failed.set(true);
-					le.done.set(true);
-					return;
-				}
-
-				int width = img.getWidth();
-				int height = img.getHeight();
-
-				le.width = width;
-				le.height = height;
-
-				AffineTransform flipper = new AffineTransform(1, 0,
-				                                              0, -1,
-				                                              0, height);
-
-				BufferedImage bgr = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-				Graphics2D g2 = bgr.createGraphics();
-
-				if (!transparent) {
-					g2.setColor(Color.WHITE);
-				} else {
-					g2.setColor(new Color(0, 0, 0, 0));
-				}
-				g2.fillRect(0, 0, width, height);
-
-				g2.drawImage(img, flipper, null);
-				g2.dispose();
-				DataBufferInt ints = (DataBufferInt)bgr.getData().getDataBuffer();
-
-				if (compressed) {
-					S3TexCompressor comp = new S3TexCompressor();
-					IntBuffer intBuffer = (IntBuffer.wrap(ints.getData()));
-
-					ByteBuffer compressed = comp.compress(intBuffer, le.width, le.height);
-					le.data.put(compressed);
-				} else {
-					le.data.asIntBuffer().put(ints.getData());
-				}
-
-				le.done.set(true);
-				synchronized(le.lock) {
-					le.lock.notify();
-				}
-
-				_renderer.queueRedraw();
-			}
-		};
 
 		_loadingMap.put(imageURL.toString(), le);
 
-		Thread loadThread = new Thread(loader);
-		loadThread.start();
+		synchronized (_loadLock) {
+			_loadingList.add(le);
+
+			if (_loadThread == null) {
+				spawnLoadingThread();
+			}
+		}
+
 		return le;
 	}
 
@@ -370,6 +319,89 @@ public class TexCache {
 		}
 
 		return null;
+	}
+
+	private void spawnLoadingThread() {
+
+		Runnable loader = new Runnable() {
+			@Override
+			public void run() {
+				while (!_loadingList.isEmpty())	{
+					LoadingEntry le;
+					synchronized (_loadLock) {
+						le = _loadingList.get(0);
+						_loadingList.remove(0);
+					}
+
+					loadImage(le);
+				}
+				synchronized (_loadLock) {
+					_loadThread = null;
+				}
+			}
+
+		};
+
+		_loadThread = new Thread(loader, "TextureLoadThread");
+		_loadThread.start();
+	}
+
+	private void loadImage(LoadingEntry le) {
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(le.imageURL);
+		}
+		catch(Exception e) {
+			le.failed.set(true);
+			le.done.set(true);
+			return;
+		}
+		if (img == null) {
+			le.failed.set(true);
+			le.done.set(true);
+			return;
+		}
+
+		int width = img.getWidth();
+		int height = img.getHeight();
+
+		le.width = width;
+		le.height = height;
+
+		AffineTransform flipper = new AffineTransform(1, 0,
+		                                              0, -1,
+		                                              0, height);
+
+		BufferedImage bgr = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = bgr.createGraphics();
+
+		if (!le.hasAlpha) {
+			g2.setColor(Color.WHITE);
+		} else {
+			g2.setColor(new Color(0, 0, 0, 0));
+		}
+		g2.fillRect(0, 0, width, height);
+
+		g2.drawImage(img, flipper, null);
+		g2.dispose();
+		DataBufferInt ints = (DataBufferInt)bgr.getData().getDataBuffer();
+
+		if (le.compressed) {
+			S3TexCompressor comp = new S3TexCompressor();
+			IntBuffer intBuffer = (IntBuffer.wrap(ints.getData()));
+
+			ByteBuffer compressed = comp.compress(intBuffer, le.width, le.height);
+			le.data.put(compressed);
+		} else {
+			le.data.asIntBuffer().put(ints.getData());
+		}
+
+		le.done.set(true);
+		synchronized(le.lock) {
+			le.lock.notify();
+		}
+
+		_renderer.queueRedraw();
 	}
 
 	private void waitForTex(LoadingEntry le) {
