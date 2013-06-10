@@ -17,10 +17,15 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
+
 /**
  * Probability distribution class.
  */
-public class ProbabilityDistribution extends Entity {
+public class ProbabilityDistribution extends Entity
+implements SampleProvider {
 	private static final ArrayList<ProbabilityDistribution> allInstances;
 
 
@@ -544,5 +549,19 @@ public class ProbabilityDistribution extends Entity {
 			//  Return the interpolated value
 			return lower + (frac * (upper - lower));
 		}
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		// Required because ProbabilityDistribution implements SampleProvider
+		// Assumes all existing ProbabilityDistributions were for time
+		return TimeUnit.class;
+	}
+
+	@Override
+	public double getNextSample(double simTime) {
+		// Assumes all existing ProbabilityDistributions were for time in hours
+		// Return time in seconds
+		return nextValue() * 3600.0 ;
 	}
 }
