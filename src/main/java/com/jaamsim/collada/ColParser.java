@@ -989,6 +989,10 @@ public class ColParser {
 	private void parseTriangles(SubMeshDesc smd, XmlNode subGeo) {
 		int count = Integer.parseInt(subGeo.getAttrib("count"));
 		XmlNode pNode = subGeo.findChildTag("p", false);
+		if (count == 0) {
+			smd.posDesc.indices = new int[0];
+			return;
+		}
 		if (pNode == null)
 			throw new ColException("No 'p' child in 'triangles' in mesh.");
 
