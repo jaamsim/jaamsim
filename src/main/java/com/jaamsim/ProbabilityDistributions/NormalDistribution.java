@@ -14,6 +14,8 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import java.util.Random;
+
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -34,6 +36,8 @@ public class NormalDistribution extends Distribution {
 	         example = "NormalDist-1 StandardDeviation { 2.0 }")
 	private final ValueInput standardDeviationInput;
 
+	protected final Random randomGenerator2; // second random generator for picking values
+
 	{
 		meanInput = new ValueInput("Mean", "Key Inputs", 0.0d);
 		meanInput.setUnitType(UserSpecifiedUnit.class);
@@ -43,6 +47,19 @@ public class NormalDistribution extends Distribution {
 		standardDeviationInput.setUnitType(UserSpecifiedUnit.class);
 		standardDeviationInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(standardDeviationInput, true);
+	}
+
+	public NormalDistribution() {
+		randomGenerator2 = new Random();
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		// Set the seed for the second random generator
+		int seed = (int) ( randomGenerator1.nextDouble() * 10000.0 );
+		randomGenerator2.setSeed( seed );
 	}
 
 	@Override

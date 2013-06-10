@@ -14,6 +14,8 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import java.util.Random;
+
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -36,6 +38,8 @@ public class GammaDistribution extends Distribution {
 	         example = "GammaDist-1 Shape { 2.0 }")
 	private final DoubleInput shapeInput;
 
+	protected final Random randomGenerator2; // second random generator for picking values
+
 	{
 		meanInput = new ValueInput("Mean", "Key Inputs", 1.0d);
 		meanInput.setUnitType(UserSpecifiedUnit.class);
@@ -45,6 +49,19 @@ public class GammaDistribution extends Distribution {
 		shapeInput = new DoubleInput("Shape", "Key Inputs", 1.0);
 		shapeInput.setValidRange( 1.0e-10d, Integer.MAX_VALUE);
 		this.addInput(shapeInput, true);
+	}
+
+	public GammaDistribution() {
+		randomGenerator2 = new Random();
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		// Set the seed for the second random generator
+		int seed = (int) ( randomGenerator1.nextDouble() * 10000.0 );
+		randomGenerator2.setSeed( seed );
 	}
 
 	@Override

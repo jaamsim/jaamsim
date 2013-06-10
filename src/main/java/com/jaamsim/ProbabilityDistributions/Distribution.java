@@ -54,7 +54,6 @@ implements SampleProvider {
 	private final ValueInput maxValueInput;
 
 	protected final Random randomGenerator1; // first random generator for picking values
-	protected final Random randomGenerator2; // second random generator for picking values
 	private double presentSample; // last sample taken from the probability distribution (before ValueFactor is applied)
 
 	private int sampleCount;
@@ -82,7 +81,6 @@ implements SampleProvider {
 
 	public Distribution() {
 		randomGenerator1 = new Random();
-		randomGenerator2 = new Random();
 	}
 
 	@Override
@@ -99,10 +97,8 @@ implements SampleProvider {
 	public void earlyInit() {
 		super.earlyInit();
 
-		// Set the seeds for the two random generators
+		// Set the seed for the first random generator
 		randomGenerator1.setSeed( randomSeedInput.getValue() );
-		int seed = (int) ( randomGenerator1.nextDouble() * 10000.0 );
-		randomGenerator2.setSeed( seed );
 
 		// Initialise the sample statistics
 		sampleCount = 0;
