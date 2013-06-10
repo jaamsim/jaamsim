@@ -27,6 +27,7 @@ Define ObjectType  { TimeUnit
                      ViscosityUnit
                      AreaUnit
                      DimensionlessUnit
+                     RateUnit
                      }
 
 TimeUnit            JavaClass { com.jaamsim.units.TimeUnit            } Palette { Units } DragAndDrop { FALSE }
@@ -52,6 +53,7 @@ PressureUnit        JavaClass { com.jaamsim.units.PressureUnit        } Palette 
 ViscosityUnit       JavaClass { com.jaamsim.units.ViscosityUnit       } Palette { Units } DragAndDrop { FALSE }
 AreaUnit            JavaClass { com.jaamsim.units.AreaUnit            } Palette { Units } DragAndDrop { FALSE }
 DimensionlessUnit   JavaClass { com.jaamsim.units.DimensionlessUnit   } Palette { Units } DragAndDrop { FALSE }
+RateUnit            JavaClass { com.jaamsim.units.RateUnit            } Palette { Units } DragAndDrop { FALSE }
 
 " ======================================================================================================================================================
 " Time units
@@ -310,3 +312,15 @@ m2   ConversionFactorToSI { 1 }
 cm2  ConversionFactorToSI { 1.0e-4 }
 mm2  ConversionFactorToSI { 1.0e-6 }
 in2  ConversionFactorToSI { 6.4516e-4 }
+
+" ======================================================================================================================================================
+" Rate units
+" ======================================================================================================================================================
+
+Define RateUnit  { /s  /h  /d  /w  /y }
+
+/s   ConversionFactorToSI { 1          }  "Second
+/h   ConversionFactorToSI { 1 3600     }  "Hour
+/d   ConversionFactorToSI { 1 86400    }  "Day
+/w   ConversionFactorToSI { 1 604800   }  "Week
+/y   ConversionFactorToSI { 1 31536000 }  "Year
