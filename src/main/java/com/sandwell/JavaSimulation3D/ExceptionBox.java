@@ -14,12 +14,15 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import com.jaamsim.input.InputAgent;
 
 /**
  * Implements a graphic interface to display Exceptions to the user
  */
-public class ExceptionBox extends javax.swing.JDialog {
+public class ExceptionBox extends javax.swing.JDialog implements ActionListener{
 
 	public ExceptionBox( Throwable e ) {
 		this( e, true );
@@ -51,18 +54,16 @@ public class ExceptionBox extends javax.swing.JDialog {
 
 		// setup the OK button
 		javax.swing.JButton okButton = new javax.swing.JButton( "OK" );
-		okButton.addActionListener( new java.awt.event.ActionListener() {
-
-			@Override
-			public void actionPerformed( java.awt.event.ActionEvent ae ) {
-				ExceptionBox.this.dispose();
-
-			}
-		} );
-		getContentPane().add( okButton, java.awt.BorderLayout.SOUTH );
+		okButton.addActionListener(this);
+		getContentPane().add(okButton, java.awt.BorderLayout.SOUTH);
 
 		// set size and display
 		setSize( 400, 200 );
 		setVisible( true );
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		this.dispose();
 	}
 }
