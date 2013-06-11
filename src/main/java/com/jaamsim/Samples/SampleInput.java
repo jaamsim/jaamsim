@@ -17,7 +17,6 @@ package com.jaamsim.Samples;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringVector;
@@ -27,11 +26,11 @@ public class SampleInput extends Input<SampleProvider> {
 
 	public SampleInput(String key, String cat, SampleProvider def) {
 		super(key, cat, def);
+		unitType = null;
+	}
 
-		if (def != null)
-			unitType = def.getUnitType();
-		else
-			throw new ErrorException("A default provider must be given to define unitType.");
+	public void setUnitType(Class<? extends Unit> u) {
+		unitType = u;
 	}
 
 	@Override
