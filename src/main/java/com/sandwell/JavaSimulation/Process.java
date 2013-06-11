@@ -381,12 +381,18 @@ public class Process extends Thread {
 		secondsPerTick = 3600.0d / scale;
 	}
 
-	public static double getTicksPerSecond() {
-		return ticksPerSecond;
+	/**
+	 * Return the number of seconds represented by the given number of ticks.
+	 */
+	public static final double ticksToSeconds(long ticks) {
+		return ticks * secondsPerTick;
 	}
 
-	public static double getSecondsPerTick() {
-		return secondsPerTick;
+	/**
+	 * Convert the number of seconds rounded to the nearest tick.
+	 */
+	public static final long secondsToTicks(double seconds) {
+		return Math.round(seconds * ticksPerSecond);
 	}
 
 	public static double getSimTimeFactor() {

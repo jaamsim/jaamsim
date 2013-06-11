@@ -423,10 +423,11 @@ public final class EventManager implements Runnable {
 			long prevIntTime = previousInternalTime;
 			while ((currentWallTime = System.currentTimeMillis()) < targetMillis) {
 				this.threadPause(20);
-				long modelHours = (long)((currentWallTime - previousWallTime) * realTimeFactor / 3600000.0d * Process.getSimTimeFactor());
-				modelHours += prevIntTime;
-				if (modelHours < nextTime)
-					FrameBox.timeUpdate(modelHours * Process.getSecondsPerTick());
+				double modelSecs = ((currentWallTime - previousWallTime) * realTimeFactor) / 1000.0d;
+				long modelTicks = Process.secondsToTicks(modelSecs);
+				modelTicks += prevIntTime;
+				if (modelTicks < nextTime)
+					FrameBox.timeUpdate(Process.ticksToSeconds(modelTicks));
 
 				// If realtime was disabled, break out
 				if (!executeRealTime || previousInternalTime == -1)
@@ -434,7 +435,7 @@ public final class EventManager implements Runnable {
 			}
 		}
 
-		FrameBox.timeUpdate(nextTime * Process.getSecondsPerTick());
+		FrameBox.timeUpdate(Process.ticksToSeconds(nextTime));
 	}
 
 	/**

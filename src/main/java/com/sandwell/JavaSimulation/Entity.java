@@ -157,8 +157,7 @@ public class Entity {
 	 * @return the current time in seconds
 	 */
 	public final double getSimTime() {
-		long ticks = getSimTicks();
-		return ticks * Process.getSecondsPerTick();
+		return Process.ticksToSeconds(getSimTicks());
 	}
 
 	public final double getCurrentTime() {
@@ -457,7 +456,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWait(double secs, int priority) {
-		long ticks = (long)Math.floor(secs * Process.getTicksPerSecond());
+		long ticks = Process.secondsToTicks(secs);
 		this.simWaitTicks(ticks, priority);
 	}
 
