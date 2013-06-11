@@ -40,7 +40,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.font.TessFont;
@@ -1421,18 +1420,6 @@ public class RenderManager implements DragSourceListener {
 
 	@Override
 	public void dropActionChanged(DragSourceDragEvent arg0) {}
-
-	public AABB getMeshBounds(String shapeString) {
-
-		MeshProtoKey key = ColladaModel.getCachedMeshKey(shapeString);
-		if (key == null) {
-			// Not loaded or bad mesh
-			return new AABB();
-		}
-		AABB bounds = getMeshBounds(key, true);
-
-		return bounds;
-	}
 
 	public AABB getMeshBounds(MeshProtoKey key, boolean block) {
 		if (block || MeshDataCache.isMeshLoaded(key)) {

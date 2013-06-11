@@ -14,13 +14,8 @@
  */
 package com.jaamsim.DisplayModels;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.controllers.RenderManager;
@@ -36,6 +31,7 @@ import com.jaamsim.render.MeshDataCache;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.MeshProxy;
 import com.jaamsim.render.RenderProxy;
+import com.jaamsim.render.RenderUtils;
 import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -149,45 +145,11 @@ public class ColladaModel extends DisplayModel {
 
 			MeshProtoKey meshKey = _cachedKeys.get(filename);
 
-			// We have not loaded this file before, cache the mesh proto key so
-			// we don't dig through a zip file every render
 			if (meshKey == null) {
-				try {
-					URL meshURL = new URL(Util.getAbsoluteFilePath(filename));
-
-					String ext = filename.substring(filename.length() - 4,
-							filename.length());
-
-					if (ext.toUpperCase().equals(".ZIP")) {
-						// This is a zip, use a zip stream to actually pull out
-						// the .dae file
-						ZipInputStream zipInputStream = new ZipInputStream(meshURL.openStream());
-
-						// Loop through zipEntries
-						for (ZipEntry zipEntry; (zipEntry = zipInputStream
-								.getNextEntry()) != null;) {
-
-							String entryName = zipEntry.getName();
-							if (!Util.getFileExtention(entryName)
-									.equalsIgnoreCase("DAE"))
-								continue;
-
-							// This zipEntry is a collada file, no need to look
-							// any further
-							meshURL = new URL("jar:" + meshURL + "!/"
-									+ entryName);
-							break;
-						}
-					}
-
-					meshKey = new MeshProtoKey(meshURL);
-					_cachedKeys.put(filename, meshKey);
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-					assert (false);
-				} catch (IOException e) {
-					assert (false);
-				}
+				// This has not been cached yet
+				meshKey = RenderUtils.FileNameToMeshProtoKey(filename);
+				assert(meshKey != null);
+				_cachedKeys.put(filename, meshKey);
 			}
 
 			AABB bounds = RenderManager.inst().getMeshBounds(meshKey, true);

@@ -17,9 +17,14 @@ package com.jaamsim.render;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Plane;
@@ -28,6 +33,7 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.sandwell.JavaSimulation.Util;
 
 /**
  * A big pile of static methods that currently don't have a better place to live. All Rendering specific
@@ -483,4 +489,43 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 		return ret;
 	}
 
+	public static MeshProtoKey FileNameToMeshProtoKey(String filename) {
+		try {
+			URL meshURL = new URL(Util.getAbsoluteFilePath(filename));
+
+			String ext = filename.substring(filename.length() - 4,
+					filename.length());
+
+			if (ext.toUpperCase().equals(".ZIP")) {
+				// This is a zip, use a zip stream to actually pull out
+				// the .dae file
+				ZipInputStream zipInputStream = new ZipInputStream(meshURL.openStream());
+
+				// Loop through zipEntries
+				for (ZipEntry zipEntry; (zipEntry = zipInputStream
+						.getNextEntry()) != null;) {
+
+					String entryName = zipEntry.getName();
+					if (!Util.getFileExtention(entryName)
+							.equalsIgnoreCase("DAE"))
+						continue;
+
+					// This zipEntry is a collada file, no need to look
+					// any further
+					meshURL = new URL("jar:" + meshURL + "!/"
+							+ entryName);
+					break;
+				}
+			}
+
+			MeshProtoKey ret = new MeshProtoKey(meshURL);
+			return ret;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			assert (false);
+		} catch (IOException e) {
+			assert (false);
+		}
+		return null;
+	}
 }

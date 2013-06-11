@@ -48,6 +48,7 @@ import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Future;
+import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.Input;
@@ -197,7 +198,8 @@ public class GraphicBox extends JDialog {
 				AABB modelBounds = new AABB();
 				if (dm instanceof ColladaModel) {
 					ColladaModel dmc = (ColladaModel)dm;
-					modelBounds = RenderManager.inst().getMeshBounds(dmc.getColladaFile());
+					MeshProtoKey key = RenderUtils.FileNameToMeshProtoKey(dmc.getColladaFile());
+					modelBounds = RenderManager.inst().getMeshBounds(key, true);
 				}
 
 				Vec4d modelSize = new Vec4d(modelBounds.getRadius());
