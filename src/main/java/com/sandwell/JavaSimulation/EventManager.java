@@ -75,7 +75,7 @@ public final class EventManager implements Runnable {
 
 	private int activeChildCount; // The number of currently executing child eventManagers
 	private long currentTick; // Master simulation time (long)
-	private long targetTime; // The time a child eventManager will run to before waking the parent eventManager
+	private long targetTick; // The time a child eventManager will run to before waking the parent eventManager
 
 	// Real time execution state
 	private boolean executeRealTime;
@@ -147,7 +147,7 @@ public final class EventManager implements Runnable {
 
 		// Initialize and event lists and timekeeping variables
 		currentTick = 0;
-		targetTime = 0;
+		targetTick = 0;
 		eventStack = new ArrayList<Event>();
 		conditionalList = new ArrayList<Process>();
 
@@ -184,7 +184,7 @@ public final class EventManager implements Runnable {
 	}
 
 	void basicInit() {
-		targetTime = Long.MAX_VALUE;
+		targetTick = Long.MAX_VALUE;
 		currentTick = 0;
 		traceRecord.clearLevel();
 		traceRecord.clear();
@@ -284,7 +284,7 @@ public final class EventManager implements Runnable {
 
 	// Restart executing future events for each child eventManager
 	// @nextTime - maximum simulation time to execute until
-	private void updateChildren(long nextTime) {
+	private void updateChildren(long nextTick) {
  		synchronized (lockObject) {
  			// Temporary debug code to account for racy initialization
  			if (activeChildCount != 0) {
@@ -297,7 +297,7 @@ public final class EventManager implements Runnable {
 				// child eventManager
 				activeChildCount++;
 				synchronized (child.lockObject) {
-					child.targetTime = nextTime;
+					child.targetTick = nextTick;
 					child.eventManagerThread.interrupt();
 				}
 			}
@@ -353,7 +353,7 @@ public final class EventManager implements Runnable {
 			}
 
 			// 3) Check to see if the target simulation time has been reached
-			if (currentTick == targetTime) {
+			if (currentTick == targetTick) {
 
 				// Notify the parent eventManager that this child has finished
 				this.wakeParent();
@@ -367,28 +367,28 @@ public final class EventManager implements Runnable {
 			this.evaluateConditionals();
 
 			// Determine the next event time
-			long nextTime;
+			long nextTick;
 			if (eventStack.size() > 0) {
-				nextTime = Math.min(eventStack.get(0).schedTick, targetTime);
+				nextTick = Math.min(eventStack.get(0).schedTick, targetTick);
 			}
 			else {
-				nextTime = targetTime;
+				nextTick = targetTick;
 			}
 
 			// Update all the child eventManagers to this next event time
-			this.updateChildren(nextTime);
+			this.updateChildren(nextTick);
 
 			// Only the top-level eventManager should update the master simulation
 			// time
 			if (parent == null)
-				this.updateTime(nextTime);
+				this.updateTime(nextTick);
 
 			// Set the present time for this eventManager to the next event time
-			if (eventStack.size() > 0 && eventStack.get(0).schedTick < nextTime) {
-				System.out.format("Big trouble:%s %d %d\n", name, nextTime, eventStack.get(0).schedTick);
-				nextTime = eventStack.get(0).schedTick;
+			if (eventStack.size() > 0 && eventStack.get(0).schedTick < nextTick) {
+				System.out.format("Big trouble:%s %d %d\n", name, nextTick, eventStack.get(0).schedTick);
+				nextTick = eventStack.get(0).schedTick;
 			}
-			currentTick = nextTime;
+			currentTick = nextTick;
 
 			if (EventManager.getEventState() == EventManager.EVENTS_RUNONE) {
 				doDebug();
