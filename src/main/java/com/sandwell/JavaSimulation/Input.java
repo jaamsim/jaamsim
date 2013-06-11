@@ -787,17 +787,14 @@ public abstract class Input<T> {
 	public static Class<? extends Entity> parseEntityType(String input)
 	throws InputErrorException {
 		ObjectType type = Input.tryParseEntity( input, ObjectType.class );
-		if( type != null ) {
-			try {
-				Class<?> proto = Class.forName( type.getJavaClass().getName() );
-				Class<? extends Entity> entProto = proto.asSubclass(Entity.class);
-				return entProto;
-			}
-			catch (ClassNotFoundException e) {} // Keep trying other classes
-			catch (ClassCastException e) {} //
-		}
+		if (type == null)
+			throw new InputErrorException("Entity type not found: %s", input);
 
-		throw new InputErrorException("Entity type not found: %s", input);
+		Class<? extends Entity> klass = type.getJavaClass();
+		if (klass == null)
+			throw new InputErrorException("ObjectType %s does not have a java class set", input);
+
+		return klass;
 	}
 
 	public static void assertUnitsMatch(Class<? extends Unit> u1, Class<? extends Unit> u2)
