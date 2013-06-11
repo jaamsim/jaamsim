@@ -142,15 +142,6 @@ public class TimeValue {
 
 	public void initialize() {
 
-		if( probVal != null ) {
-			probVal.initialize();
-		}
-		if( monthProbVal != null) {
-			for(ProbabilityDistribution each: monthProbVal) {
-				each.initialize();
-			}
-		}
-
 		// Initialize the current value
 		if (!Double.isNaN(dVal))
 			currentValue = dVal;

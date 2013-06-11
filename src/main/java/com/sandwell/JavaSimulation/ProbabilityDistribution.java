@@ -234,7 +234,8 @@ public class ProbabilityDistribution extends Entity {
 	/**
 	 * Initialize the probability distribution.
 	 */
-	public void initialize() {
+	@Override
+	public void earlyInit() {
 
 		// If already initialized, just reset the counts
 		if( initialized ) {
