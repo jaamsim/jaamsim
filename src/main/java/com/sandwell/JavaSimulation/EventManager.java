@@ -74,7 +74,7 @@ public final class EventManager implements Runnable {
 	private final Thread eventManagerThread;
 
 	private int activeChildCount; // The number of currently executing child eventManagers
-	private long currentTime; // Master simulation time (long)
+	private long currentTick; // Master simulation time (long)
 	private long targetTime; // The time a child eventManager will run to before waking the parent eventManager
 
 	// Real time execution state
@@ -146,7 +146,7 @@ public final class EventManager implements Runnable {
 		traceRecord = new EventTraceRecord();
 
 		// Initialize and event lists and timekeeping variables
-		currentTime = 0;
+		currentTick = 0;
 		targetTime = 0;
 		eventStack = new ArrayList<Event>();
 		conditionalList = new ArrayList<Process>();
@@ -185,7 +185,7 @@ public final class EventManager implements Runnable {
 
 	void basicInit() {
 		targetTime = Long.MAX_VALUE;
-		currentTime = 0;
+		currentTick = 0;
 		traceRecord.clearLevel();
 		traceRecord.clear();
 	}
@@ -333,7 +333,7 @@ public final class EventManager implements Runnable {
 
 			// Is there another event at this simulation time?
 			if (eventStack.size() > 0 &&
-				eventStack.get(0).schedTick == currentTime) {
+				eventStack.get(0).schedTick == currentTick) {
 
 				// Remove the event from the future events
 				Event nextEvent = eventStack.remove(0);
@@ -342,7 +342,7 @@ public final class EventManager implements Runnable {
 				// If required, track the events for this entity
 				if (nextEvent.caller.testFlag(Entity.FLAG_TRACKEVENTS)) {
 					System.out.println(String.format("TRACK caller: %s at:%d[%.3f]",
-						nextEvent.caller.getName(), currentTime, currentTime/Process.getSimTimeFactor()));
+						nextEvent.caller.getName(), currentTick, currentTick/Process.getSimTimeFactor()));
 				}
 
 				// Pass control to this event's thread
@@ -353,7 +353,7 @@ public final class EventManager implements Runnable {
 			}
 
 			// 3) Check to see if the target simulation time has been reached
-			if (currentTime == targetTime) {
+			if (currentTick == targetTime) {
 
 				// Notify the parent eventManager that this child has finished
 				this.wakeParent();
@@ -388,7 +388,7 @@ public final class EventManager implements Runnable {
 				System.out.format("Big trouble:%s %d %d\n", name, nextTime, eventStack.get(0).schedTick);
 				nextTime = eventStack.get(0).schedTick;
 			}
-			currentTime = nextTime;
+			currentTick = nextTime;
 
 			if (EventManager.getEventState() == EventManager.EVENTS_RUNONE) {
 				doDebug();
@@ -503,14 +503,14 @@ public final class EventManager implements Runnable {
 		if (!Process.current().getEventManager().isParentOf(this)) {
 			System.out.format("Crossing eventManager boundary dst:%s src:%s\n",
 					name, Process.current().getEventManager().name);
-			long time = Process.current().getEventManager().currentTime() + waitLength;
+			long time = Process.current().getEventManager().currentTick() + waitLength;
 			if (eventStack.size() > 0 && eventStack.get(0).schedTick > time)
 				System.out.format("Next Event:%d This Event:%d\n", eventStack.get(0).schedTick, time);
 		}
 
-		long nextEventTime = calculateEventTime(Process.currentTime(), waitLength);
+		long nextEventTime = calculateEventTime(Process.currentTick(), waitLength);
 
-		Event temp = new Event(currentTime(), nextEventTime, eventPriority, caller, Process.current());
+		Event temp = new Event(currentTick(), nextEventTime, eventPriority, caller, Process.current());
 		Process.current().getEventManager().traceEvent(temp, STATE_WAITING);
 		addEventToStack(temp);
 		popThread();
@@ -520,10 +520,10 @@ public final class EventManager implements Runnable {
 		assertNotWaitUntil();
 		// Take a process from the pool
 		Process newProcess = Process.allocate(this, caller, methodName, args);
-		long eventTime = calculateEventTime(Process.currentTime(), waitLength);
+		long eventTime = calculateEventTime(Process.currentTick(), waitLength);
 
 		// Create an event for the new process at the present time, and place it on the event stack
-		Event newEvent = new Event(this.currentTime(), eventTime, eventPriority, caller, newProcess);
+		Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, caller, newProcess);
 		Process.current().getEventManager().traceSchedProcess(newEvent);
 		addEventToStack(newEvent);
 	}
@@ -533,7 +533,7 @@ public final class EventManager implements Runnable {
 	}
 
 	void scheduleSingleProcess(long waitLength, int eventPriority, Entity caller, String methodName, Object[] args) {
-		long eventTime = calculateEventTime(Process.currentTime(), waitLength);
+		long eventTime = calculateEventTime(Process.currentTick(), waitLength);
 
 		synchronized (lockObject) {
 			for (int i = 0; i < eventStack.size(); i++) {
@@ -617,7 +617,7 @@ public final class EventManager implements Runnable {
 	 */
 	private void addEventToStack(Event newEvent) {
 		synchronized (lockObject) {
-			if (newEvent.schedTick < currentTime) {
+			if (newEvent.schedTick < currentTick) {
 				System.out.println("Time travel detected - whoops");
 				throw new ErrorException("Going back in time");
 			}
@@ -763,8 +763,8 @@ public final class EventManager implements Runnable {
 		traceEvent(retired, reason);
 	}
 
-	long currentTime() {
-		return currentTime;
+	long currentTick() {
+		return currentTick;
 	}
 
 	void setExecuteRealTime(boolean useRealTime, int factor) {
@@ -843,7 +843,7 @@ public final class EventManager implements Runnable {
 		Process newProcess = Process.allocate(this, target, methodName, arguments);
 
 		// Create an event for the new process at the present time, and place it on the event stack
-		Event newEvent = new Event(currentTime, currentTime, PRIO_DEFAULT, target, newProcess);
+		Event newEvent = new Event(currentTick, currentTick, PRIO_DEFAULT, target, newProcess);
 		this.traceSchedProcess(newEvent);
 		addEventToStack(newEvent);
 	}
@@ -934,15 +934,15 @@ public final class EventManager implements Runnable {
 	}
 
 	void traceProcess(Entity target, String methodName) {
-		if (traceEvents) traceRecord.formatProcessTrace(name, currentTime, target, methodName);
+		if (traceEvents) traceRecord.formatProcessTrace(name, currentTick, target, methodName);
 	}
 
 	private void traceSchedProcess(Event target) {
-		if (traceEvents) traceRecord.formatSchedProcessTrace(name, currentTime, target);
+		if (traceEvents) traceRecord.formatSchedProcessTrace(name, currentTick, target);
 	}
 
 	private void traceWaitUntil(int reason) {
-		if (traceEvents) traceRecord.formatWaitUntilTrace(name, currentTime, reason);
+		if (traceEvents) traceRecord.formatWaitUntilTrace(name, currentTick, reason);
 	}
 
 	/**

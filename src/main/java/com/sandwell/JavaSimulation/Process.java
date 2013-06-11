@@ -89,8 +89,8 @@ public class Process extends Thread {
 		return (Thread.currentThread() instanceof Process);
 	}
 
-	static long currentTime() {
-		return Process.current().getEventManager().currentTime();
+	static long currentTick() {
+		return Process.current().getEventManager().currentTick();
 	}
 
 	public static final void terminate(Process proc) {
@@ -211,7 +211,7 @@ public class Process extends Thread {
 	private void makeExceptionBox(Throwable e) {
 		// pause the simulation on a fatal exception
 		Simulation.pause();
-		double curTime = eventManager.currentTime() / Process.getSimTimeFactor();
+		double curTime = eventManager.currentTick() / Process.getSimTimeFactor();
 		System.err.println("EXCEPTION AT TIME: " + curTime);
 		ExceptionBox exp = ExceptionBox.instance();
 		exp.setError(e);

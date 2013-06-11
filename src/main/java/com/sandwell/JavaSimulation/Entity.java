@@ -145,10 +145,10 @@ public class Entity {
 	 */
 	public final long getSimTicks() {
 		try {
-			return Process.currentTime();
+			return Process.currentTick();
 		}
 		catch (ErrorException e) {
-			return EventManager.rootManager.currentTime();
+			return EventManager.rootManager.currentTick();
 		}
 	}
 
@@ -416,17 +416,17 @@ public class Entity {
 	}
 
 	public double calculateEventTime(double waitLength) {
-		long eventTime = Process.currentTime() + this.calculateDelayLength(waitLength);
+		long eventTime = Process.currentTick() + this.calculateDelayLength(waitLength);
 		return eventTime / Process.getSimTimeFactor();
 	}
 
 	public double calculateEventTimeBefore(double waitLength) {
-		long eventTime = Process.currentTime() + (long)Math.floor(waitLength * Process.getSimTimeFactor());
+		long eventTime = Process.currentTick() + (long)Math.floor(waitLength * Process.getSimTimeFactor());
 		return eventTime / Process.getSimTimeFactor();
 	}
 
 	public double calculateEventTimeAfter(double waitLength) {
-		long eventTime = Process.currentTime() + (long)Math.ceil(waitLength * Process.getSimTimeFactor());
+		long eventTime = Process.currentTick() + (long)Math.ceil(waitLength * Process.getSimTimeFactor());
 		return eventTime / Process.getSimTimeFactor();
 	}
 
