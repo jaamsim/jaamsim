@@ -333,7 +333,7 @@ public final class EventManager implements Runnable {
 
 			// Is there another event at this simulation time?
 			if (eventStack.size() > 0 &&
-				eventStack.get(0).eventTime == currentTime) {
+				eventStack.get(0).schedTick == currentTime) {
 
 				// Remove the event from the future events
 				Event nextEvent = eventStack.remove(0);
@@ -369,7 +369,7 @@ public final class EventManager implements Runnable {
 			// Determine the next event time
 			long nextTime;
 			if (eventStack.size() > 0) {
-				nextTime = Math.min(eventStack.get(0).eventTime, targetTime);
+				nextTime = Math.min(eventStack.get(0).schedTick, targetTime);
 			}
 			else {
 				nextTime = targetTime;
@@ -384,20 +384,20 @@ public final class EventManager implements Runnable {
 				this.updateTime(nextTime);
 
 			// Set the present time for this eventManager to the next event time
-			if (eventStack.size() > 0 && eventStack.get(0).eventTime < nextTime) {
-				System.out.format("Big trouble:%s %d %d\n", name, nextTime, eventStack.get(0).eventTime);
-				nextTime = eventStack.get(0).eventTime;
+			if (eventStack.size() > 0 && eventStack.get(0).schedTick < nextTime) {
+				System.out.format("Big trouble:%s %d %d\n", name, nextTime, eventStack.get(0).schedTick);
+				nextTime = eventStack.get(0).schedTick;
 			}
 			currentTime = nextTime;
 
 			if (EventManager.getEventState() == EventManager.EVENTS_RUNONE) {
 				doDebug();
 			} else if (EventManager.getEventState() == EventManager.EVENTS_TIMESTEP) {
-				if (eventStack.get(0).eventTime != debuggingTime) {
+				if (eventStack.get(0).schedTick != debuggingTime) {
 					doDebug();
 				}
 			} else if (EventManager.getEventState() == EventManager.EVENTS_UNTILTIME) {
-				if (eventStack.get(0).eventTime >= debuggingTime) {
+				if (eventStack.get(0).schedTick >= debuggingTime) {
 					doDebug();
 				}
 			}
@@ -503,8 +503,8 @@ public final class EventManager implements Runnable {
 			System.out.format("Crossing eventManager boundary dst:%s src:%s\n",
 					name, Process.current().getEventManager().name);
 			long time = Process.current().getEventManager().currentTime() + waitLength;
-			if (eventStack.size() > 0 && eventStack.get(0).eventTime > time)
-				System.out.format("Next Event:%d This Event:%d\n", eventStack.get(0).eventTime, time);
+			if (eventStack.size() > 0 && eventStack.get(0).schedTick > time)
+				System.out.format("Next Event:%d This Event:%d\n", eventStack.get(0).schedTick, time);
 		}
 
 		long nextEventTime = calculateEventTime(Process.currentTime(), waitLength);
@@ -539,11 +539,11 @@ public final class EventManager implements Runnable {
 				Event each = eventStack.get(i);
 				// We passed where any duplicate could be, break out to the
 				// insertion part
-				if (each.eventTime > eventTime)
+				if (each.schedTick > eventTime)
 					break;
 
 				// if we have an exact match, do not schedule another event
-				if (each.eventTime == eventTime && each.priority == eventPriority && each.caller == caller && each.getClassMethod().endsWith(methodName)) {
+				if (each.schedTick == eventTime && each.priority == eventPriority && each.caller == caller && each.getClassMethod().endsWith(methodName)) {
 					//System.out.println("Suppressed duplicate event:" + Process.currentProcess().getEventManager().currentLongTime);
 					Process.current().getEventManager().traceSchedProcess(each);
 					return;
@@ -616,7 +616,7 @@ public final class EventManager implements Runnable {
 	 */
 	private void addEventToStack(Event newEvent) {
 		synchronized (lockObject) {
-			if (newEvent.eventTime < currentTime) {
+			if (newEvent.schedTick < currentTime) {
 				System.out.println("Time travel detected - whoops");
 				throw new ErrorException("Going back in time");
 			}
@@ -624,7 +624,7 @@ public final class EventManager implements Runnable {
 			int i;
 			// skip all event that happen before the new event
 			for (i = 0; i < eventStack.size(); i++) {
-				if (eventStack.get(i).eventTime < newEvent.eventTime) {
+				if (eventStack.get(i).schedTick < newEvent.schedTick) {
 					continue;
 				} else {
 					break;
@@ -634,7 +634,7 @@ public final class EventManager implements Runnable {
 			// skip all events at an equal time that have higher priority
 			for (; i < eventStack.size(); i++) {
 				// next stack event happens at a later time, i is the insertion index
-				if (eventStack.get(i).eventTime > newEvent.eventTime) {
+				if (eventStack.get(i).schedTick > newEvent.schedTick) {
 					break;
 				}
 				// skip the higher priority events at the same time
@@ -906,7 +906,7 @@ public final class EventManager implements Runnable {
 	}
 
 	public void nextEventTime() {
-		debuggingTime = eventStack.get(0).eventTime;
+		debuggingTime = eventStack.get(0).schedTick;
 		EventManager.setEventState(EventManager.EVENTS_TIMESTEP);
 		startDebugging();
 	}
@@ -967,7 +967,7 @@ public final class EventManager implements Runnable {
 
 			for (int i = 0; i < eventStack.size(); i++) {
 				data[i] = eventStack.get(i).getData(EventManager.STATE_WAITING);
-				if (i > 0 && eventStack.get(i).eventTime == eventStack.get(i - 1).eventTime) {
+				if (i > 0 && eventStack.get(i).schedTick == eventStack.get(i - 1).schedTick) {
 					data[i][0] = "";
 					data[i][1] = "";
 				}

@@ -19,10 +19,10 @@ package com.sandwell.JavaSimulation;
  * events.
  */
 class Event {
-
-	final long eventTime;
+	final long addedTick; // The tick at which this event was queued to execute
+	final long schedTick; // The tick at which this event will execute
 	final int priority;
-	final long creationTime;
+
 	final Process process;
 	final Entity caller;
 
@@ -34,11 +34,11 @@ class Event {
 	 * @param newpriority the priority of the event
 	 */
 	Event(long neweventTime, int newpriority, Entity caller, Process process) {
-		eventTime = neweventTime;
+		schedTick = neweventTime;
 		this.process = process;
 		priority = newpriority;
 		this.caller = caller;
-		creationTime = process.getEventManager().currentTime();
+		addedTick = process.getEventManager().currentTime();
 	}
 
 	public String getClassMethod() {
@@ -69,15 +69,15 @@ class Event {
 	public String[] getData(int state) {
 		String[] data = new String[10];
 
-		data[0] = String.format("%15d", eventTime);
-		data[1] = String.format("%15.3f", eventTime / Process.getSimTimeFactor());
+		data[0] = String.format("%15d", schedTick);
+		data[1] = String.format("%15.3f", schedTick / Process.getSimTimeFactor());
 		data[2] = String.format("%5d", priority);
 		data[3] = String.format("%s", caller.getName());
 		data[4] = String.format("%s", caller.getInputName());
 		data[5] = String.format("%s", "");
 		data[6] = getClassMethod();
 		data[7] = getFileLine();
-		data[8] = String.format("%15.3f", creationTime / Process.getSimTimeFactor());
+		data[8] = String.format("%15.3f", addedTick / Process.getSimTimeFactor());
 		data[9] = "Unknown";
 
 		switch (state) {
