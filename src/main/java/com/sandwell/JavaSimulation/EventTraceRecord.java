@@ -16,6 +16,8 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.sandwell.JavaSimulation.EventManager.Event;
+
 class EventTraceRecord extends ArrayList<String> {
 	private String eventManagerName;
 	private long internalTime;
@@ -111,7 +113,7 @@ class EventTraceRecord extends ArrayList<String> {
 		this.append(String.format("%s\t%d\t%d\t%s\t%s\t%s",
 					eventStates[reason],
 					evt.schedTick, evt.priority, evt.caller.getName(),
-					evt.caller.getInputName(), evt.getClassMethod()));
+					evt.caller.getInputName(), EventManager.getClassMethod(evt)));
 
 		if (reason == 1 || reason == 2)
 			traceLevel++;
@@ -147,7 +149,7 @@ class EventTraceRecord extends ArrayList<String> {
 		this.addHeader(name, currentTime);
 		this.append(String.format("SchedProcess\t%d\t%d\t%s\t%s\t%s",
 				evt.schedTick, evt.priority, evt.caller.getName(),
-				evt.caller.getInputName(), evt.getClassMethod()));
+				evt.caller.getInputName(), EventManager.getClassMethod(evt)));
 		this.finish();
 	}
 

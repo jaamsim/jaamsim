@@ -543,7 +543,7 @@ public final class EventManager implements Runnable {
 					break;
 
 				// if we have an exact match, do not schedule another event
-				if (each.schedTick == eventTime && each.priority == eventPriority && each.caller == caller && each.getClassMethod().endsWith(methodName)) {
+				if (each.schedTick == eventTime && each.priority == eventPriority && each.caller == caller && EventManager.getClassMethod(each).endsWith(methodName)) {
 					//System.out.println("Suppressed duplicate event:" + Process.currentProcess().getEventManager().currentLongTime);
 					Process.current().getEventManager().traceSchedProcess(each);
 					return;
@@ -944,6 +944,60 @@ public final class EventManager implements Runnable {
 		if (traceEvents) traceRecord.formatWaitUntilTrace(name, currentTime, reason);
 	}
 
+	/**
+	 * Holder class for event data used by the event monitor to schedule future
+	 * events.
+	 */
+	static class Event {
+		final long addedTick; // The tick at which this event was queued to execute
+		final long schedTick; // The tick at which this event will execute
+		final int priority;   // The schedule priority of this event
+
+		final Process process;
+		final Entity caller;
+
+		/**
+		 * Constructs a new event object.
+		 * @param currentTick the current simulation tick
+		 * @param scheduleTick the simulation tick the event is schedule for
+		 * @param prio the event priority for scheduling purposes
+		 * @param caller
+		 * @param process
+		 */
+		Event(long currentTick, long scheduleTick, int prio, Entity caller, Process process) {
+			addedTick = currentTick;
+			schedTick = scheduleTick;
+			priority = prio;
+
+			this.process = process;
+			this.caller = caller;
+		}
+	}
+
+	static String getClassMethod(Event evt) {
+		StackTraceElement[] callStack = evt.process.getStackTrace();
+
+		for (int i = 0; i < callStack.length; i++) {
+			if (callStack[i].getClassName().equals("com.sandwell.JavaSimulation.Entity")) {
+				return String.format("%s.%s", evt.caller.getClass().getSimpleName(), callStack[i + 1].getMethodName());
+			}
+		}
+
+		// Possible the process hasn't started running yet, check the Process target
+		// state
+		return evt.process.getClassMethod();
+	}
+
+	static  String getFileLine(Event evt) {
+		StackTraceElement[] callStack = evt.process.getStackTrace();
+
+		for (int i = 0; i < callStack.length; i++) {
+			if (callStack[i].getClassName().equals("com.sandwell.JavaSimulation.Entity")) {
+				return String.format("%s:%s", callStack[i + 1].getFileName(), callStack[i + 1].getLineNumber());
+			}
+		}
+		return "Unknown method state";
+	}
 	String[] getEventData(Event evt, int state) {
 		String[] data = new String[10];
 
@@ -953,8 +1007,8 @@ public final class EventManager implements Runnable {
 		data[3] = String.format("%s", evt.caller.getName());
 		data[4] = String.format("%s", evt.caller.getInputName());
 		data[5] = String.format("%s", "");
-		data[6] = evt.getClassMethod();
-		data[7] = evt.getFileLine();
+		data[6] = EventManager.getClassMethod(evt);
+		data[7] = EventManager.getFileLine(evt);
 		data[8] = String.format("%15.3f", evt.addedTick / Process.getSimTimeFactor());
 		data[9] = "Unknown";
 
