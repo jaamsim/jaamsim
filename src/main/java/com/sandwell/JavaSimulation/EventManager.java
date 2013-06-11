@@ -757,7 +757,7 @@ public final class EventManager implements Runnable {
 
 	private void retireEvent(Event retired, int reason) {
 		if (currentViewer != null)
-			currentViewer.addRetiredEvent(retired.getData(reason), reason);
+			currentViewer.addRetiredEvent(getEventData(retired, reason), reason);
 
 		traceEvent(retired, reason);
 	}
@@ -944,6 +944,38 @@ public final class EventManager implements Runnable {
 		if (traceEvents) traceRecord.formatWaitUntilTrace(name, currentTime, reason);
 	}
 
+	String[] getEventData(Event evt, int state) {
+		String[] data = new String[10];
+
+		data[0] = String.format("%15d", evt.schedTick);
+		data[1] = String.format("%15.3f", evt.schedTick / Process.getSimTimeFactor());
+		data[2] = String.format("%5d", evt.priority);
+		data[3] = String.format("%s", evt.caller.getName());
+		data[4] = String.format("%s", evt.caller.getInputName());
+		data[5] = String.format("%s", "");
+		data[6] = evt.getClassMethod();
+		data[7] = evt.getFileLine();
+		data[8] = String.format("%15.3f", evt.addedTick / Process.getSimTimeFactor());
+		data[9] = "Unknown";
+
+		switch (state) {
+		case EventManager.STATE_WAITING:
+			data[9] = "Waiting";
+			break;
+		case EventManager.STATE_EXITED:
+			data[9] = "Ran Normally";
+			break;
+		case EventManager.STATE_INTERRUPTED:
+			data[9] = "Interrupted";
+			break;
+		case EventManager.STATE_TERMINATED:
+			data[9] = "Terminated";
+			break;
+		}
+
+		return data;
+	}
+
 	public String[] getViewerHeaders() {
 		String[] headerNames = new String[10];
 
@@ -966,7 +998,7 @@ public final class EventManager implements Runnable {
 			String[][] data = new String[eventStack.size()][];
 
 			for (int i = 0; i < eventStack.size(); i++) {
-				data[i] = eventStack.get(i).getData(EventManager.STATE_WAITING);
+				data[i] = getEventData(eventStack.get(i), EventManager.STATE_WAITING);
 				if (i > 0 && eventStack.get(i).schedTick == eventStack.get(i - 1).schedTick) {
 					data[i][0] = "";
 					data[i][1] = "";

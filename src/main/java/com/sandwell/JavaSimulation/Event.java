@@ -67,36 +67,4 @@ class Event {
 		}
 		return "Unknown method state";
 	}
-
-	public String[] getData(int state) {
-		String[] data = new String[10];
-
-		data[0] = String.format("%15d", schedTick);
-		data[1] = String.format("%15.3f", schedTick / Process.getSimTimeFactor());
-		data[2] = String.format("%5d", priority);
-		data[3] = String.format("%s", caller.getName());
-		data[4] = String.format("%s", caller.getInputName());
-		data[5] = String.format("%s", "");
-		data[6] = getClassMethod();
-		data[7] = getFileLine();
-		data[8] = String.format("%15.3f", addedTick / Process.getSimTimeFactor());
-		data[9] = "Unknown";
-
-		switch (state) {
-		case EventManager.STATE_WAITING:
-			data[9] = "Waiting";
-			break;
-		case EventManager.STATE_EXITED:
-			data[9] = "Ran Normally";
-			break;
-		case EventManager.STATE_INTERRUPTED:
-			data[9] = "Interrupted";
-			break;
-		case EventManager.STATE_TERMINATED:
-			data[9] = "Terminated";
-			break;
-		}
-
-		return data;
-	}
 }
