@@ -509,7 +509,7 @@ public final class EventManager implements Runnable {
 
 		long nextEventTime = calculateEventTime(Process.currentTime(), waitLength);
 
-		Event temp = new Event(nextEventTime, eventPriority, caller, Process.current());
+		Event temp = new Event(currentTime(), nextEventTime, eventPriority, caller, Process.current());
 		Process.current().getEventManager().traceEvent(temp, STATE_WAITING);
 		addEventToStack(temp);
 		popThread();
@@ -522,7 +522,7 @@ public final class EventManager implements Runnable {
 		long eventTime = calculateEventTime(Process.currentTime(), waitLength);
 
 		// Create an event for the new process at the present time, and place it on the event stack
-		Event newEvent = new Event(eventTime, eventPriority, caller, newProcess);
+		Event newEvent = new Event(this.currentTime(), eventTime, eventPriority, caller, newProcess);
 		Process.current().getEventManager().traceSchedProcess(newEvent);
 		addEventToStack(newEvent);
 	}
@@ -842,7 +842,7 @@ public final class EventManager implements Runnable {
 		Process newProcess = Process.allocate(this, target, methodName, arguments);
 
 		// Create an event for the new process at the present time, and place it on the event stack
-		Event newEvent = new Event(currentTime, PRIO_DEFAULT, target, newProcess);
+		Event newEvent = new Event(currentTime, currentTime, PRIO_DEFAULT, target, newProcess);
 		this.traceSchedProcess(newEvent);
 		addEventToStack(newEvent);
 	}

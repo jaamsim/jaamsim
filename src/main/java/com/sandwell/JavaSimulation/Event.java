@@ -21,24 +21,26 @@ package com.sandwell.JavaSimulation;
 class Event {
 	final long addedTick; // The tick at which this event was queued to execute
 	final long schedTick; // The tick at which this event will execute
-	final int priority;
+	final int priority;   // The schedule priority of this event
 
 	final Process process;
 	final Entity caller;
 
 	/**
 	 * Constructs a new event object.
-	 *
-	 * @param neweventTime the simulation time the event is to be scheduled for
-	 * @param newthread the thread that requires scheduling
-	 * @param newpriority the priority of the event
+	 * @param currentTick the current simulation tick
+	 * @param scheduleTick the simulation tick the event is schedule for
+	 * @param prio the event priority for scheduling purposes
+	 * @param caller
+	 * @param process
 	 */
-	Event(long neweventTime, int newpriority, Entity caller, Process process) {
-		schedTick = neweventTime;
+	Event(long currentTick, long scheduleTick, int prio, Entity caller, Process process) {
+		addedTick = currentTick;
+		schedTick = scheduleTick;
+		priority = prio;
+
 		this.process = process;
-		priority = newpriority;
 		this.caller = caller;
-		addedTick = process.getEventManager().currentTime();
 	}
 
 	public String getClassMethod() {
