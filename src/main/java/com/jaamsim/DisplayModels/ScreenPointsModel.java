@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -96,14 +97,17 @@ public class ScreenPointsModel extends DisplayModel {
 			points = new ArrayList<Vec4d>();
 			nodePoints = new ArrayList<Vec4d>();
 			ArrayList<Vec3d> screenPoints = screenPointObservee.getScreenPoints();
+			AABB bounds = new AABB(screenPoints);
+			double zBump = bounds.getRadius().mag3() * 0.001;
+
 			if (screenPoints == null || screenPoints.size() < 2) { return; }
 
 			for (int i = 1; i < screenPoints.size(); ++i) { // Skip the first point
 				Vec3d start = screenPoints.get(i - 1);
 				Vec3d end = screenPoints.get(i);
 
-				points.add(new Vec4d(start.x, start.y, start.z, 1.0d));
-				points.add(new Vec4d(end.x, end.y, end.z, 1.0d));
+				points.add(new Vec4d(start.x, start.y, start.z + zBump, 1.0d));
+				points.add(new Vec4d(end.x, end.y, end.z + zBump, 1.0d));
 			}
 
 			for (int i = 0; i < screenPoints.size(); ++i) { // Skip the first point
