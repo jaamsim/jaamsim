@@ -80,19 +80,26 @@ public class CameraControl implements WindowInteractionListener {
 
 		boolean expControls = RenderManager.inst().getExperimentalControls();
 
-		if (expControls && dragInfo.shiftDown()) {
-			// look around
-			handleTurnCamera(dragInfo.dx, dragInfo.dy);
-			return;
-		}
-
 		if (expControls) {
-			handleRotAroundPoint(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
+			if (dragInfo.button == 1) {
+				if (dragInfo.shiftDown()) {
+					handleExpVertPan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
+				} else {
+					handleExpPan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
+				}
+			}
+			else if (dragInfo.button == 3) {
+				if (dragInfo.shiftDown()) {
+					handleTurnCamera(dragInfo.dx, dragInfo.dy);
+				} else {
+					handleRotAroundPoint(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
+				}
+			}
 			return;
 		}
 		if (dragInfo.shiftDown()) {
 			// handle rotation
-			handleRotation(pi, dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
+			handleRotation(pi, dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
 			updateCamTrans(pi, true);
 			return;
 		}
@@ -130,8 +137,61 @@ public class CameraControl implements WindowInteractionListener {
 
 	}
 
-	private void handleRotAroundPoint(int x, int y, int dx, int dy,
-            int button) {
+	private void handleExpPan(int x, int y, int dx, int dy) {
+
+		Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_windowID);
+		if (info == null) return;
+
+		//Cast a ray into the XY plane both for now, and for the previous mouse position
+		Ray currRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
+		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x - dx, y - dy, info.width, info.height);
+
+		Plane dragPlane = new Plane(Vec4d.Z_AXIS, POI.z);
+		double currDist = dragPlane.collisionDist(currRay);
+		double prevDist = dragPlane.collisionDist(prevRay);
+		if (currDist < 0 || prevDist < 0 ||
+		    currDist == Double.POSITIVE_INFINITY ||
+		    prevDist == Double.POSITIVE_INFINITY)
+		{
+			// We're either parallel to or beneath the collision plane, bail out
+			return;
+		}
+
+		Vec4d currIntersect = currRay.getPointAtDist(currDist);
+		Vec4d prevIntersect = prevRay.getPointAtDist(prevDist);
+
+		Vec4d diff = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		diff.sub3(currIntersect, prevIntersect);
+
+		Vec3d camPos = _updateView.getGlobalPosition();
+		Vec3d center = _updateView.getGlobalCenter();
+		camPos.sub3(diff);
+		center.sub3(diff);
+		PolarInfo pi = getPolarFrom(center, camPos);
+		updateCamTrans(pi, true);
+
+	}
+
+	private void handleExpVertPan(int x, int y, int dx, int dy) {
+		Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_windowID);
+		if (info == null) return;
+
+		//Cast a ray into the XY plane both for now, and for the previous mouse position
+		Ray currRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
+		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x - dx, y - dy, info.width, info.height);
+
+		double zDiff = RenderUtils.getZDiff(POI, currRay, prevRay);
+
+		Vec3d camPos = _updateView.getGlobalPosition();
+		Vec3d center = _updateView.getGlobalCenter();
+		camPos.z -= zDiff;
+		center.z -= zDiff;
+		PolarInfo pi = getPolarFrom(center, camPos);
+		updateCamTrans(pi, true);
+
+	}
+
+	private void handleRotAroundPoint(int x, int y, int dx, int dy) {
 
 		Vec3d camPos = _updateView.getGlobalPosition();
 		Vec3d center = _updateView.getGlobalCenter();
@@ -178,8 +238,7 @@ public class CameraControl implements WindowInteractionListener {
 		updateCamTrans(pi, true);
 	}
 
-	private void handleRotation(PolarInfo pi, int x, int y, int dx, int dy,
-	                            int button) {
+	private void handleRotation(PolarInfo pi, int x, int y, int dx, int dy) {
 
 		pi.rotZ -= dx * ROT_SCALE_Z;
 		pi.rotX -= dy * ROT_SCALE_X;
@@ -278,15 +337,6 @@ public class CameraControl implements WindowInteractionListener {
 	public void mouseClicked(int windowID, int x, int y, int button, int modifiers) {
 		if (!RenderManager.isGood()) { return; }
 
-		if (button == 1 && (modifiers & WindowInteractionListener.MOD_ALT) != 0) {
-			// Set the POI
-			Vec4d newPOI = RenderManager.inst().getNearestPick(_windowID);
-			if (newPOI != null) {
-				POI = newPOI;
-				return;
-			}
-		}
-
 		RenderManager.inst().hideExistingPopups();
 		if (button  == 3) {
 			// Hand this off to the RenderManager to deal with
@@ -383,6 +433,29 @@ public class CameraControl implements WindowInteractionListener {
 	@Override
 	public void mouseButtonDown(int windowID, int x, int y, int button, boolean isDown, int modifiers) {
 		if (!RenderManager.isGood()) { return; }
+
+		// We need to cache dragging for experimental controls
+		if (RenderManager.inst().getExperimentalControls() && button == 1 && isDown) {
+			Vec4d clickPoint = RenderManager.inst().getNearestPick(_windowID);
+			if (clickPoint != null) {
+				POI.set4(clickPoint);
+				//dragPlane = new Plane(Vec4d.Z_AXIS, clickPoint.z);
+			} else {
+				// Set the drag plane to the XY_PLANE
+				Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_windowID);
+				if (info == null) return;
+
+				//Cast a ray into the XY plane both for now, and for the previous mouse position
+				Ray mouseRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
+				double dist = Plane.XY_PLANE.collisionDist(mouseRay);
+				if (dist < 0) {
+					return;
+				}
+				POI = mouseRay.getPointAtDist(dist);
+				//dragPlane = Plane.XY_PLANE;
+
+			}
+		}
 
 		RenderManager.inst().handleMouseButton(windowID, x, y, button, isDown, modifiers);
 	}
