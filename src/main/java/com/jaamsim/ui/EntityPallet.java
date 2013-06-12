@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.ui;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -44,9 +44,9 @@ import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.RenderUtils;
-import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Palette;
+import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class EntityPallet extends JFrame implements DragGestureListener {
 

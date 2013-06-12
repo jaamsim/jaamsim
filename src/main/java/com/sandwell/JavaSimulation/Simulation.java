@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.Clock;
-import com.sandwell.JavaSimulation3D.EntityPallet;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
