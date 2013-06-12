@@ -341,8 +341,10 @@ public class DisplayModelCompat extends DisplayModel {
 			Color4d outlineColour= tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
 			cachedProxies.add(new PolygonProxy(hullVerts, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
 
+			Transform cabinTrans = new Transform(trans);
+			cabinTrans.getTransRef().z += scale.y * 0.01; // Bump the cabin up a touch to prevent Z fighting
 			// Cabin
-			cachedProxies.add(new PolygonProxy(shipCabinVerts, trans, scale, ColourInput.BLACK, false, 1, getVisibilityInfo(), pickingID));
+			cachedProxies.add(new PolygonProxy(shipCabinVerts, cabinTrans, scale, ColourInput.BLACK, false, 1, getVisibilityInfo(), pickingID));
 
 			// Add the contents parcels
 			DoubleVector sizes = tags.sizes.get(DisplayModelCompat.TAG_CONTENTS);
@@ -527,6 +529,9 @@ public class DisplayModelCompat extends DisplayModel {
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 
+			Transform contentsTrans = new Transform(trans);
+			contentsTrans.getTransRef().z += scale.y * 0.001;
+
 			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
 			Color4d contentsColour = tags.getTagColourUtil(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
 			Color4d trackColour = ColourInput.MED_GREY;
@@ -539,8 +544,8 @@ public class DisplayModelCompat extends DisplayModel {
 			cachedProxies.add(new PolygonProxy(stackerRect1Verts, trans, fixedScale, trackColour, false, 1, getVisibilityInfo(), pickingID));
 			cachedProxies.add(new PolygonProxy(stackerRect1Verts, trans, fixedScale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
 
-			cachedProxies.add(new PolygonProxy(stackerRect2Verts, trans, fixedScale, contentsColour, false, 1, getVisibilityInfo(), pickingID));
-			cachedProxies.add(new PolygonProxy(stackerRect2Verts, trans, fixedScale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
+			cachedProxies.add(new PolygonProxy(stackerRect2Verts, contentsTrans, fixedScale, contentsColour, false, 1, getVisibilityInfo(), pickingID));
+			cachedProxies.add(new PolygonProxy(stackerRect2Verts, contentsTrans, fixedScale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
 
 		}
 
@@ -579,10 +584,10 @@ public class DisplayModelCompat extends DisplayModel {
 				// We are either out of sync or this is a ShipType, either way draw an empty cargo hold
 				// Add a single grey rectangle
 				List<Vec4d> contentsPoints = new ArrayList<Vec4d>();
-				contentsPoints.add(new Vec4d( 1, -0.5, 0, 1.0d));
-				contentsPoints.add(new Vec4d( 1,  0.5, 0, 1.0d));
-				contentsPoints.add(new Vec4d( 0,  0.5, 0, 1.0d));
-				contentsPoints.add(new Vec4d( 0, -0.5, 0, 1.0d));
+				contentsPoints.add(new Vec4d( 1, -0.5, 0.001, 1.0d));
+				contentsPoints.add(new Vec4d( 1,  0.5, 0.001, 1.0d));
+				contentsPoints.add(new Vec4d( 0,  0.5, 0.001, 1.0d));
+				contentsPoints.add(new Vec4d( 0, -0.5, 0.001, 1.0d));
 				for (int i = 0; i < contentsPoints.size(); ++i) {
 					contentsPoints.get(i).mult4(subTrans, contentsPoints.get(i));
 				}
@@ -600,10 +605,10 @@ public class DisplayModelCompat extends DisplayModel {
 				double end = (sizeOffset + size) / totalSize;
 
 				List<Vec4d> contentsPoints = new ArrayList<Vec4d>();
-				contentsPoints.add(new Vec4d(  end, -0.5, 0, 1.0d));
-				contentsPoints.add(new Vec4d(  end,  0.5, 0, 1.0d));
-				contentsPoints.add(new Vec4d(start,  0.5, 0, 1.0d));
-				contentsPoints.add(new Vec4d(start, -0.5, 0, 1.0d));
+				contentsPoints.add(new Vec4d(  end, -0.5, 0.001, 1.0d));
+				contentsPoints.add(new Vec4d(  end,  0.5, 0.001, 1.0d));
+				contentsPoints.add(new Vec4d(start,  0.5, 0.001, 1.0d));
+				contentsPoints.add(new Vec4d(start, -0.5, 0.001, 1.0d));
 
 				sizeOffset += size;
 
@@ -685,11 +690,11 @@ public class DisplayModelCompat extends DisplayModel {
 
 		shipContentsTrans = new Mat4d();
 		shipContentsTrans.setTranslate3(new Vec3d(-0.225, 0.0, 0.0));
-		shipContentsTrans.scaleCols3(new Vec3d(0.65, 0.6, 0));
+		shipContentsTrans.scaleCols3(new Vec3d(0.65, 0.6, 1));
 
 		truckContentsTrans = new Mat4d();
 		truckContentsTrans.setTranslate3(new Vec3d(-0.5, 0.0, 0.0));
-		truckContentsTrans.scaleCols3(new Vec3d(0.75, 1, 0));
+		truckContentsTrans.scaleCols3(new Vec3d(0.75, 1, 1));
 
 		arrowHeadVerts = new ArrayList<Vec4d>(3);
 		arrowHeadVerts.add(new Vec4d(-0.5,  0.0, 0.0, 1.0d));
