@@ -146,6 +146,15 @@ public class CameraControl implements WindowInteractionListener {
 		Ray currRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
 		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x - dx, y - dy, info.width, info.height);
 
+		double currZDot = Vec4d.Z_AXIS.dot3(currRay.getDirRef());
+		double prevZDot = Vec4d.Z_AXIS.dot3(prevRay.getDirRef());
+		if (Math.abs(currZDot) < 0.017 ||
+			Math.abs(prevZDot) < 0.017) // 0.017 is roughly sin(1 degree)
+		{
+			// This is too close to the xy-plane and will lead to too wild a translation
+			return;
+		}
+
 		Plane dragPlane = new Plane(Vec4d.Z_AXIS, POI.z);
 		double currDist = dragPlane.collisionDist(currRay);
 		double prevDist = dragPlane.collisionDist(prevRay);
@@ -263,6 +272,15 @@ public class CameraControl implements WindowInteractionListener {
 		//Cast a ray into the XY plane both for now, and for the previous mouse position
 		Ray currRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
 		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x - dx, y - dy, info.width, info.height);
+
+		double currZDot = Vec4d.Z_AXIS.dot3(currRay.getDirRef());
+		double prevZDot = Vec4d.Z_AXIS.dot3(prevRay.getDirRef());
+		if (Math.abs(currZDot) < 0.017 ||
+			Math.abs(prevZDot) < 0.017) // 0.017 is roughly sin(1 degree)
+		{
+			// This is too close to the xy-plane and will lead to too wild a translation
+			return;
+		}
 
 		double currDist = Plane.XY_PLANE.collisionDist(currRay);
 		double prevDist = Plane.XY_PLANE.collisionDist(prevRay);
