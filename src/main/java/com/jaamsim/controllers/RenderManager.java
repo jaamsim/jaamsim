@@ -719,7 +719,9 @@ public class RenderManager implements DragSourceListener {
 		double pickDist = Double.POSITIVE_INFINITY;
 
 		for (Renderer.PickResult pick : picks) {
-			if (pick.dist < pickDist) {
+			if (pick.dist < pickDist && pick.pickingID >= 0) {
+				// Negative pickingIDs are reserved for interaction handles and are therefore not
+				// part of the content
 				pickDist = pick.dist;
 			}
 		}
