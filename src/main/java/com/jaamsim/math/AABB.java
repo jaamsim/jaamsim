@@ -56,9 +56,11 @@ public class AABB {
 		updateCenterAndRadius();
 	}
 
-	public AABB(Vec4d posPoint, Vec4d negPoint) {
-		_posPoint.set4(posPoint);
-		_negPoint.set4(negPoint);
+	public AABB(Vec3d posPoint, Vec3d negPoint) {
+		_posPoint.set3(posPoint);
+		_posPoint.w = 1;
+		_negPoint.set3(negPoint);
+		_negPoint.w = 1;
 
 		updateCenterAndRadius();
 	}
@@ -68,7 +70,7 @@ public class AABB {
 	 * @param points
 	 * @param expansion
 	 */
-	public AABB(List<Vec4d> points, double fudge) {
+	public AABB(List<? extends Vec3d> points, double fudge) {
 		this(points);
 		_posPoint.x += fudge;
 		_posPoint.y += fudge;
@@ -86,15 +88,17 @@ public class AABB {
 	 * Build an AABB that contains all the supplied points
 	 * @param points
 	 */
-	public AABB(List<Vec4d> points) {
+	public AABB(List<? extends Vec3d> points) {
 		if (points.size() == 0) {
 			_isEmpty = true;
 			return;
 		}
 
-		_posPoint.set4(points.get(0));
-		_negPoint.set4(points.get(0));
-		for (Vec4d p : points) {
+		_posPoint.set3(points.get(0));
+		_posPoint.w = 1;
+		_negPoint.set3(points.get(0));
+		_negPoint.w = 1;
+		for (Vec3d p : points) {
 			_posPoint.max3(p);
 			_negPoint.min3(p);
 		}
@@ -111,19 +115,24 @@ public class AABB {
 	 * Build an AABB that contains all the supplied points
 	 * @param points
 	 */
-	public AABB(List<Vec4d> points, Mat4d trans) {
+	public AABB(List<? extends Vec3d> points, Mat4d trans) {
 		if (points.size() == 0) {
 			_isEmpty = true;
 			return;
 		}
 
+		Vec4d temp = new Vec4d();
+		temp.w = 1;
+
 		Vec4d p = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		p.mult4(trans, points.get(0));
+		temp.set3(points.get(0));
+		p.mult4(trans, temp);
 
 		_posPoint.set4(p);
 		_negPoint.set4(p);
-		for (Vec4d p_orig : points) {
-			p.mult4(trans, p_orig);
+		for (Vec3d p_orig : points) {
+			temp.set3(p_orig);
+			p.mult4(trans, temp);
 			_posPoint.max3(p);
 			_negPoint.min3(p);
 		}
