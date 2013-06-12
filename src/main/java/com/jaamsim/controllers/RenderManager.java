@@ -886,7 +886,7 @@ public class RenderManager implements DragSourceListener {
 			if (dragInfo.shiftDown()) {
 				Vec4d entPos = _selectedEntity.getGlobalPosition();
 
-				double zDiff = getZDiff(entPos, currentRay, lastRay);
+				double zDiff = RenderUtils.getZDiff(entPos, currentRay, lastRay);
 
 				entPos.z += zDiff;
 				_selectedEntity.setGlobalPosition(entPos);
@@ -1026,7 +1026,7 @@ public class RenderManager implements DragSourceListener {
 				// Find the geometric median of the points
 				Vec4d medPoint = RenderUtils.getGeometricMedian(screenPoints);
 
-				double zDiff = getZDiff(medPoint, currentRay, lastRay);
+				double zDiff = RenderUtils.getZDiff(medPoint, currentRay, lastRay);
 				_selectedEntity.dragged(new Vec3d(0, 0, zDiff));
 				return true;
 			}
@@ -1059,7 +1059,7 @@ public class RenderManager implements DragSourceListener {
 			Vec3d point = screenPoints.get(nodeIndex);
 
 			if (dragInfo.shiftDown()) {
-				double zDiff = getZDiff(new Vec4d(point.x, point.y, point.z, 1.0d), currentRay, lastRay);
+				double zDiff = RenderUtils.getZDiff(new Vec4d(point.x, point.y, point.z, 1.0d), currentRay, lastRay);
 				point.z += zDiff;
 			} else {
 				Plane pointPlane = new Plane(Vec4d.Z_AXIS, point.z);
@@ -1089,40 +1089,6 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Get the difference in Z height from projecting the two rays onto the vertical plane
-	 * defined at the provided centerPoint
-	 * @param centerPoint
-	 * @param currentRay
-	 * @param lastRay
-	 * @return
-	 */
-	private double getZDiff(Vec4d centerPoint, Ray currentRay, Ray lastRay) {
-
-		// Create a plane, orthogonal to the camera, but parallel to the Z axis
-		Vec4d normal = currentRay.getDirRef();
-
-		double planeDist = centerPoint.dot3(normal);
-
-		Plane plane = new Plane(normal, planeDist);
-
-		double currentDist = plane.collisionDist(currentRay);
-		double lastDist = plane.collisionDist(lastRay);
-
-		if (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
-		       lastDist < 0 ||    lastDist == Double.POSITIVE_INFINITY)
-		{
-			// The plane is parallel or behind one of the rays...
-			return 0; // Just ignore it for now...
-		}
-
-		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
-		Vec4d currentPoint = currentRay.getPointAtDist(currentDist);
-		Vec4d lastPoint = lastRay.getPointAtDist(lastDist);
-
-		return currentPoint.z - lastPoint.z;
 	}
 
 	private void splitLineEntity(int windowID, int x, int y) {

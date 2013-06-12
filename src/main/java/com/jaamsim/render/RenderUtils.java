@@ -528,4 +528,42 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 		}
 		return null;
 	}
+
+	/**
+	 * Get the difference in Z height from projecting the two rays onto the vertical plane
+	 * defined at the provided centerPoint
+	 * @param centerPoint
+	 * @param currentRay
+	 * @param lastRay
+	 * @return
+	 */
+	public static double getZDiff(Vec4d centerPoint, Ray currentRay, Ray lastRay) {
+
+		// Create a plane, orthogonal to the camera, but parallel to the Z axis
+		Vec4d normal = new Vec4d(currentRay.getDirRef());
+		normal.z = 0;
+		normal.normalize3();
+
+		double planeDist = centerPoint.dot3(normal);
+
+		Plane plane = new Plane(normal, planeDist);
+
+		double currentDist = plane.collisionDist(currentRay);
+		double lastDist = plane.collisionDist(lastRay);
+
+		if (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
+		       lastDist < 0 ||    lastDist == Double.POSITIVE_INFINITY)
+		{
+			// The plane is parallel or behind one of the rays...
+			return 0; // Just ignore it for now...
+		}
+
+		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
+		Vec4d currentPoint = currentRay.getPointAtDist(currentDist);
+		Vec4d lastPoint = lastRay.getPointAtDist(lastDist);
+
+		return currentPoint.z - lastPoint.z;
+	}
+
+
 }
