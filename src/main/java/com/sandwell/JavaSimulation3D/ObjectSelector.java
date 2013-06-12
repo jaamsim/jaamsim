@@ -41,6 +41,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.GraphicBox;
 import com.jaamsim.ui.InfoBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;

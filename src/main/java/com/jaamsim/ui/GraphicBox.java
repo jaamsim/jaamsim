@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -50,10 +50,11 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
-import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
+import com.sandwell.JavaSimulation3D.DisplayEntity;
+import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class GraphicBox extends JDialog {
 	private static GraphicBox myInstance;  // only one instance allowed to be open
