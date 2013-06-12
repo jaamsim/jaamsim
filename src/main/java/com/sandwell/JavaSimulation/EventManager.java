@@ -338,13 +338,6 @@ public final class EventManager implements Runnable {
 				// Remove the event from the future events
 				Event nextEvent = eventStack.remove(0);
 				this.retireEvent(nextEvent, STATE_EXITED);
-
-				// If required, track the events for this entity
-				if (nextEvent.caller.testFlag(Entity.FLAG_TRACKEVENTS)) {
-					System.out.println(String.format("TRACK caller: %s at:%d[%.3f]",
-						nextEvent.caller.getName(), currentTick, currentTick/Process.getSimTimeFactor()));
-				}
-
 				// Pass control to this event's thread
 				nextEvent.process.setNextProcess(null);
 				switchThread(nextEvent.process);

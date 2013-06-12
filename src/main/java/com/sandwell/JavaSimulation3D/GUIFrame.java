@@ -98,7 +98,6 @@ public class GUIFrame extends JFrame {
 	private JCheckBoxMenuItem tooltip;
 	private JCheckBoxMenuItem expControls;
 	private JMenuItem showEventViewer;
-	private JMenuItem showEventTracker;
 	private JMenuItem printInputItem;
 	private JLabel clockDisplay;
 	private JLabel speedUpDisplay;
@@ -1071,8 +1070,6 @@ public class GUIFrame extends JFrame {
 				progressBar.setEnabled( false );
 				if( showEventViewer != null )
 					showEventViewer.setEnabled( false );
-				if( showEventTracker != null )
-					showEventTracker.setEnabled( false );
 				break;
 
 			case Simulation.SIM_STATE_UNCONFIGURED:
@@ -1097,8 +1094,6 @@ public class GUIFrame extends JFrame {
 				setShowPositionXY();
 				if( showEventViewer != null )
 					showEventViewer.setEnabled( false );
-				if( showEventTracker != null )
-					showEventTracker.setEnabled( false );
 				break;
 
 			case Simulation.SIM_STATE_CONFIGURED:
@@ -1122,8 +1117,6 @@ public class GUIFrame extends JFrame {
 				progressBar.setEnabled( true );
 				if( showEventViewer != null )
 					showEventViewer.setEnabled( true );
-				if( showEventTracker != null )
-					showEventTracker.setEnabled( true );
 				break;
 
 			case Simulation.SIM_STATE_RUNNING:
@@ -1135,8 +1128,6 @@ public class GUIFrame extends JFrame {
 
 				if( showEventViewer != null )
 					showEventViewer.setEnabled( true );
-				if( showEventTracker != null )
-					showEventTracker.setEnabled( true );
 				break;
 
 			case Simulation.SIM_STATE_PAUSED:
