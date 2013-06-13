@@ -95,21 +95,6 @@ public class Simulation extends Entity {
 	         example = "Simulation PrintInputReport { TRUE }")
 	private final BooleanInput printInputReport;
 
-	@Keyword(description = "Timestep for updating port operations, in the form hh:mm or in decimal hours.",
-	         example = "Simulation PortTimeStep { 0.25 h }")
-	private final ValueInput portTimeStep;
-
-	@Keyword(description = "The time interval to increment each step by. The model calculates all parameters " +
-	                "at every time step, so a higher time step will provide coarser resolution in time " +
-	                "for results, but will take less time to complete a simulation run. A time step of " +
-	                "15 minutes is recommended for most models.",
-	         example = "Simulation TimeStep { 0.25 h }")
-	private final ValueInput clockTimeStep;
-
-	@Keyword(description = "The default units of Cargo",
-	         example = "Sim CargoUnits { kt }")
-	private final StringInput cargoUnitString;
-
 	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
 	private final DoubleInput traceStartTime;
@@ -178,21 +163,6 @@ public class Simulation extends Entity {
 
 		exitAtStop = new BooleanInput( "ExitAtStop", "Key Inputs", false );
 		this.addInput( exitAtStop, true );
-
-		clockTimeStep = new ValueInput("TimeStep", "Key Inputs", 3600.0d);
-		clockTimeStep.setUnitType(TimeUnit.class);
-		clockTimeStep.setValidRange(1.0d, Double.POSITIVE_INFINITY);
-		clockTimeStep.setHidden(true);
-		this.addInput(clockTimeStep, true);
-
-		portTimeStep = new ValueInput("PortTimeStep", "Key Inputs", 3600.0d);
-		portTimeStep.setUnitType(TimeUnit.class);
-		portTimeStep.setValidRange(1.0d, Double.POSITIVE_INFINITY);
-		portTimeStep.setHidden(true);
-		this.addInput(portTimeStep, true);
-
-		cargoUnitString = new StringInput("CargoUnits", "Key Inputs", "kt");
-		this.addInput(cargoUnitString, true);
 
 		simTimeScaleInput = new DoubleInput( "SimulationTimeScale", "Key Inputs", 4000.0d );
 		simTimeScaleInput.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
@@ -278,11 +248,6 @@ public class Simulation extends Entity {
 		if(in == realTimeFactor || in == realTime) {
 			EventManager.rootManager.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
 			GUIFrame.instance().updateForRealTime();
-			return;
-		}
-
-		if (in == cargoUnitString) {
-			Util.setCargoUnits(cargoUnitString.getValue());
 			return;
 		}
 	}
@@ -548,14 +513,6 @@ public class Simulation extends Entity {
 			return true;
 
 		return exitAtStop.getValue();
-	}
-
-	public double getTimeStep() {
-		return clockTimeStep.getValue() / 3600.0d;
-	}
-
-	public double getPortTimeStep() {
-		return portTimeStep.getValue() / 3600.0d;
 	}
 
 	public double getTraceStartTime() {
