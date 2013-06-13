@@ -35,11 +35,10 @@ be added in the next few months.
 
 A copy of all dependencies is shipped in the jar/ folder and are as follows:
 
-vecmath - from the Java3D project, which is currently being removed as a dependency
 jogl2 - from the jogamp.org people
 
 Simply run the build.sh script from the top level to produce a functional jar 'JaamSim.jar',
-you'll need to have the above two prerequisites in you classpath.
+you'll need to have the prerequisites from the jar/ folder in you classpath.
 
 To build it in another environment, link the jar/ folder as an external 
 classpath folder, or download your own copy of JOGL2.
