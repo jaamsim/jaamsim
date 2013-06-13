@@ -85,6 +85,7 @@ public class FrameBox extends JFrame {
 
 	public static final void timeUpdate(double time) {
 		valueUpdater.scheduleUpdate(time);
+		RenderManager.updateTime(time);
 	}
 
 	public static final void valueUpdate() {
@@ -164,7 +165,6 @@ public class FrameBox extends JFrame {
 			}
 
 			GUIFrame.instance().setClock(callBackTime);
-			RenderManager.updateTime(callBackTime);
 			for (FrameBox each : allInstances) {
 				each.updateValues(callBackTime);
 			}
