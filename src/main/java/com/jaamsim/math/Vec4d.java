@@ -378,22 +378,4 @@ public void mult4(Vec4d v, Mat4d m) {
 	this.z = _z;
 	this.w = _w;
 }
-
-public double getComp(int i) {
-	if (i == 0) return x;
-	if (i == 1) return y;
-	if (i == 2) return z;
-	if (i == 3) return w;
-	assert(false);
-	return 0;
-}
-
-public void setComp(int i, double val) {
-	if (i == 0) { x = val; return; }
-	if (i == 1) { y = val; return; }
-	if (i == 2) { z = val; return; }
-	if (i == 3) { w = val; return; }
-	assert(false);
-	return ;
-}
 }

@@ -209,6 +209,25 @@ public class AABB {
 		return collisionDist(r, 0);
 	}
 
+
+	public void setComp(Vec4d v, int i, double val) {
+		if (i == 0) { v.x = val; return; }
+		if (i == 1) { v.y = val; return; }
+		if (i == 2) { v.z = val; return; }
+		if (i == 3) { v.w = val; return; }
+		assert(false);
+		return ;
+	}
+
+	private double getComp(Vec4d v, int i) {
+		if (i == 0) return v.x;
+		if (i == 1) return v.y;
+		if (i == 2) return v.z;
+		if (i == 3) return v.w;
+		assert(false);
+		return 0;
+	}
+
 	public double collisionDist(Ray r, double fudge) {
 		if (_isEmpty) {
 			return -1;
@@ -221,19 +240,19 @@ public class AABB {
 		Vec4d rayDir = r.getDirRef();
 		// Iterate over the 3 axes
 		for (int axis = 0; axis < 3; ++axis) {
-			if (MathUtils.near(rayDir.getComp(axis), 0)) {
+			if (MathUtils.near(getComp(rayDir, axis), 0)) {
 				continue; // The ray is parallel to the box in this axis
 			}
 
 			Vec4d faceNorm = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			double faceDist = 0;
-			if (rayDir.getComp(axis) > 0) {
+			if (getComp(rayDir, axis) > 0) {
 				// Collides with the negative face
-				faceNorm.setComp(axis, -1);
-				faceDist = -_negPoint.getComp(axis) - fudge;
+				setComp(faceNorm, axis, -1.0d);
+				faceDist = -getComp(_negPoint, axis) - fudge;
 			} else {
-				faceNorm.setComp(axis, 1);
-				faceDist = _posPoint.getComp(axis) + fudge;
+				setComp(faceNorm, axis, 1.0d);
+				faceDist = getComp(_posPoint, axis) + fudge;
 			}
 
 			Plane facePlane = new Plane(faceNorm, faceDist);
@@ -256,11 +275,13 @@ public class AABB {
 			// Figure out the point of contact
 			Vec4d contactPoint = r.getPointAtDist(rayCollisionDist);
 
-			if (contactPoint.getComp(a1) < _negPoint.getComp(a1) - fudge || contactPoint.getComp(a1) > _posPoint.getComp(a1) + fudge) {
+			if (getComp(contactPoint, a1) < getComp(_negPoint, a1) - fudge ||
+			    getComp(contactPoint, a1) > getComp(_posPoint, a1) + fudge) {
 				continue; // No contact
 			}
 
-			if (contactPoint.getComp(a2) < _negPoint.getComp(a2) - fudge || contactPoint.getComp(a2) > _posPoint.getComp(a2) + fudge) {
+			if (getComp(contactPoint, a2) < getComp(_negPoint, a2) - fudge ||
+			    getComp(contactPoint, a2) > getComp(_posPoint, a2) + fudge) {
 				continue; // No contact
 			}
 			// Collision!
