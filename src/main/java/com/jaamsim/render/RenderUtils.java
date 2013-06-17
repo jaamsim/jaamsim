@@ -537,7 +537,7 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 	 * @param lastRay
 	 * @return
 	 */
-	public static double getZDiff(Vec4d centerPoint, Ray currentRay, Ray lastRay) {
+	public static double getZDiff(Vec3d centerPoint, Ray currentRay, Ray lastRay) {
 
 		// Create a plane, orthogonal to the camera, but parallel to the Z axis
 		Vec4d normal = new Vec4d(currentRay.getDirRef());

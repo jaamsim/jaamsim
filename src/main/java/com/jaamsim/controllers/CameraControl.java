@@ -47,7 +47,7 @@ public class CameraControl implements WindowInteractionListener {
 
 	private ChangeWatcher.Tracker _viewTracker;
 
-	private Vec4d POI = new Vec4d(0, 0, 0, 1);
+	private final Vec3d POI = new Vec3d();
 
 	private static class PolarInfo {
 		double rotZ; // The spherical coordinate that rotates around Z (in radians)
@@ -456,7 +456,7 @@ public class CameraControl implements WindowInteractionListener {
 		if (RenderManager.inst().getExperimentalControls() && button == 1 && isDown) {
 			Vec4d clickPoint = RenderManager.inst().getNearestPick(_windowID);
 			if (clickPoint != null) {
-				POI.set4(clickPoint);
+				POI.set3(clickPoint);
 				//dragPlane = new Plane(Vec4d.Z_AXIS, clickPoint.z);
 			} else {
 				// Set the drag plane to the XY_PLANE
@@ -469,7 +469,7 @@ public class CameraControl implements WindowInteractionListener {
 				if (dist < 0) {
 					return;
 				}
-				POI = mouseRay.getPointAtDist(dist);
+				POI.set3(mouseRay.getPointAtDist(dist));
 				//dragPlane = Plane.XY_PLANE;
 
 			}

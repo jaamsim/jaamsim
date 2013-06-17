@@ -1059,7 +1059,7 @@ public class RenderManager implements DragSourceListener {
 			Vec3d point = screenPoints.get(nodeIndex);
 
 			if (dragInfo.shiftDown()) {
-				double zDiff = RenderUtils.getZDiff(new Vec4d(point.x, point.y, point.z, 1.0d), currentRay, lastRay);
+				double zDiff = RenderUtils.getZDiff(point, currentRay, lastRay);
 				point.z += zDiff;
 			} else {
 				Plane pointPlane = new Plane(Vec4d.Z_AXIS, point.z);
