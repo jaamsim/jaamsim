@@ -90,7 +90,7 @@ public double getDist() {
  * @param point
  * @return
  */
-public double getNormalDist(Vec4d point) {
+public double getNormalDist(Vec3d point) {
 	double dot = point.dot3(_normal);
 	return dot - _dist;
 }

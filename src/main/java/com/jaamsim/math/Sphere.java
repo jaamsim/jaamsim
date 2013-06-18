@@ -21,54 +21,33 @@ package com.jaamsim.math;
  */
 public class Sphere {
 
-private Vec4d _center;
-private double _radius;
+public final Vec3d center;
+public double radius;
 
 public Sphere(Vec4d center, double radius) {
-	_center = new Vec4d(center);
-	_radius = radius;
+	this.center = new Vec3d(center);
+	this.radius = radius;
 }
 
-public void setCenter(Vec4d cent) {
-	_center.set4(cent);
-}
+public double getDistance(Vec3d point) {
+	Vec3d diff = new Vec3d();
+	diff.sub3(center, point);
 
-public void setRadius(double radius) {
-	_radius = radius;
-}
-
-public void getCenter(Vec4d centOut) {
-	centOut.set4(_center);
-}
-
-public Vec4d getCenterRef() {
-	return _center;
-}
-
-public double getRadius() {
-	return _radius;
-}
-
-public double getDistance(Vec4d point) {
-	Vec4d diff = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-	diff.sub3(_center, point);
 	double dist = diff.mag3();
-
-	return dist - _radius;
+	return dist - radius;
 }
 
 public double getDistance(Sphere s) {
 
 	Vec4d diff = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-	diff.sub3(_center, s._center);
+	diff.sub3(center, s.center);
 	double dist = diff.mag3();
 
-	return dist - _radius - s._radius;
+	return dist - radius - s.radius;
 }
 
 public double getDistance(Plane p) {
-	double dist = p.getNormalDist(_center);
-	return dist - _radius;
+	double dist = p.getNormalDist(center);
+	return dist - radius;
 }
-
-} // class Sphere
+}

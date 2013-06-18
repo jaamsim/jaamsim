@@ -242,8 +242,8 @@ public boolean collides(Sphere s) {
 
 	// The sphere needs to be inside (or touching) all planes to be in the frustum
 	for (int i = 0; i < 6; ++i) {
-		double dist = _frustum[i].getNormalDist(s.getCenterRef());
-		if (dist < - s.getRadius()) {
+		double dist = s.getDistance(_frustum[i]);
+		if (dist < - s.radius) {
 			return false;
 		}
 	}
