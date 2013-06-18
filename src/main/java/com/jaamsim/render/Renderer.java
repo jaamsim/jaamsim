@@ -1468,7 +1468,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 				continue;
 			}
 
-			if (!cam.collides(bounds) || bounds.isEmpty()) {
+			if (!cam.collides(bounds)) {
 				++perfInfo.objectsCulled;
 				continue;
 			}
@@ -1499,7 +1499,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 		for (TransSortable ts : transparents) {
 
 			AABB bounds = ts.r.getBoundsRef();
-			if (!cam.collides(bounds) || bounds.isEmpty()) {
+			if (!cam.collides(bounds)) {
 				++perfInfo.objectsCulled;
 				continue;
 			}
