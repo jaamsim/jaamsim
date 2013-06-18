@@ -228,6 +228,14 @@ public class AABB {
 		return 0;
 	}
 
+	private double getComp(Vec3d v, int i) {
+		if (i == 0) return v.x;
+		if (i == 1) return v.y;
+		if (i == 2) return v.z;
+		assert(false);
+		return 0;
+	}
+
 	public double collisionDist(Ray r, double fudge) {
 		if (_isEmpty) {
 			return -1;
@@ -273,7 +281,7 @@ public class AABB {
 			int a2 = (axis + 2) % 3;
 
 			// Figure out the point of contact
-			Vec4d contactPoint = r.getPointAtDist(rayCollisionDist);
+			Vec3d contactPoint = r.getPointAtDist(rayCollisionDist);
 
 			if (getComp(contactPoint, a1) < getComp(_negPoint, a1) - fudge ||
 			    getComp(contactPoint, a1) > getComp(_posPoint, a1) + fudge) {

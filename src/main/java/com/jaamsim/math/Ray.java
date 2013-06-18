@@ -74,10 +74,10 @@ public class Ray {
 	 * @param dist
 	 * @return
 	 */
-	public Vec4d getPointAtDist(double dist) {
-		Vec4d ret = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		ret.scale3(dist, _direction);
-		ret.add3(_start, ret);
+	public Vec3d getPointAtDist(double dist) {
+		Vec3d ret = new Vec3d(_direction);
+		ret.scale3(dist);
+		ret.add3(_start);
 		return ret;
 	}
 
