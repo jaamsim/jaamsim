@@ -241,8 +241,8 @@ public boolean collides(Sphere s) {
 	updateFrustum();
 
 	// The sphere needs to be inside (or touching) all planes to be in the frustum
-	for (int i = 0; i < 5; ++i) {
-		double dist = s.getDistance(_frustum[i]);
+	for (Plane p : _frustum) {
+		double dist = s.getDistance(p);
 		if (dist < - s.radius) {
 			return false;
 		}
@@ -257,9 +257,9 @@ public boolean collides(AABB aabb) {
 
 	updateFrustum();
 
-	for (int i = 0; i < 5; ++i) {
+	for (Plane p : _frustum) {
 		// Check if the AABB is completely outside any frustum plane
-		if (aabb.testToPlane(_frustum[i]) == AABB.PlaneTestResult.NEGATIVE) {
+		if (aabb.testToPlane(p) == AABB.PlaneTestResult.NEGATIVE) {
 			return false;
 		}
 	}
@@ -309,8 +309,8 @@ private void updateFrustum() {
 	_frustum[4] = new Plane(new Vec4d(0, 0, 1, 1.0d), -_info.farDist);
 
 	// Apply the current transform to the planes. Puts the planes in world space
-	for (int i = 0; i < 5; ++i) {
-		_frustum[i].transform(_info.trans, _frustum[i]);
+	for (Plane p : _frustum) {
+		p.transform(_info.trans, p);
 	}
 
 }
