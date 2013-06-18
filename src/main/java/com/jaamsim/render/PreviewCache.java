@@ -29,6 +29,7 @@ import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Simulation;
@@ -136,9 +137,17 @@ public class PreviewCache {
 			if (!isFlat) {
 				// If this model is 3D, switch to an isometric view
 				Quaternion cameraRot = new Quaternion();
-				cameraRot.mult(Quaternion.Rotation(Math.PI/2, Vec4d.X_AXIS), cameraRot);
-				cameraRot.mult(Quaternion.Rotation(3*Math.PI/4, Vec4d.Z_AXIS), cameraRot);
-				cameraRot.mult(Quaternion.Rotation(Math.PI/5, new Vec4d(1, -1, 0, 1.0d)), cameraRot);
+				Quaternion tmp = new Quaternion();
+
+				tmp.setRotXAxis(Math.PI / 2);
+				cameraRot.mult(tmp, cameraRot);
+
+				tmp.setRotZAxis(3*Math.PI / 4);
+				cameraRot.mult(tmp, cameraRot);
+
+				tmp.setAxisAngle(new Vec3d(1.0d, -1.0d, 0.0d), Math.PI / 5);
+				cameraRot.mult(tmp, cameraRot);
+
 				camTrans = new Transform(new Vec4d(1.2, 1.2, 1.2, 1.0d), cameraRot, 1);
 			} else {
 				camTrans = new Transform(new Vec4d(0, 0, 1.2, 1.0d));

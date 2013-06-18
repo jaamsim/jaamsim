@@ -1489,9 +1489,13 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		double viewDist = viewDiff.mag3();
+		Quaternion rot = new Quaternion();
+		rot.setRotZAxis(rotZ);
 
-		Quaternion rot = Quaternion.Rotation(rotZ, Vec4d.Z_AXIS);
-		rot.mult(rot, Quaternion.Rotation(rotX, Vec4d.X_AXIS));
+		Quaternion tmp = new Quaternion();
+		tmp.setRotXAxis(rotX);
+
+		rot.mult(rot, tmp);
 
 		Transform trans = new Transform(cameraPos, rot, 1);
 

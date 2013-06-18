@@ -460,13 +460,17 @@ public void testDeterminant() {
 
 @Test
 public void testInverse() {
-
+	Quaternion tmp = new Quaternion();
 	for (int i = 1; i < 10; ++i) {
 		// Create 10 random matrices to invert
 		Mat4d xRot = new Mat4d();
-		xRot.setRot3(Quaternion.Rotation(i * .63453, Vec4d.X_AXIS));
+		tmp.setRotXAxis(i * .63453);
+		xRot.setRot3(tmp);
+
 		Mat4d yRot = new Mat4d();
-		yRot.setRot3(Quaternion.Rotation(i * .63453, Vec4d.Y_AXIS));
+		tmp.setRotYAxis(i * .63453);
+		yRot.setRot3(tmp);
+
 		Mat4d scale = new Mat4d();
 		scale.scaleCols4(new Vec4d(i, i*2, i*3, 1.0d));
 		Mat4d trans = new Mat4d();

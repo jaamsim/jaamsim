@@ -56,8 +56,9 @@ public void TestConstruct() {
 @Test
 public void TestTransform() {
 	Plane p0 = new Plane(new Vec4d(1, 0, 0, 1.0d), 13);
-
-	Transform tx = new Transform(new Vec4d(0, 0, 0, 1.0d), Quaternion.Rotation(Math.PI, Vec4d.X_AXIS), 1);
+	Quaternion q = new Quaternion();
+	q.setRotXAxis(Math.PI);
+	Transform tx = new Transform(new Vec4d(0, 0, 0, 1.0d), q, 1);
 
 	// Rotating P0 around the X axis should have no effect
 	Plane res = new Plane();
@@ -65,7 +66,8 @@ public void TestTransform() {
 
 	assertTrue(p0.near(res));
 
-	Transform ty = new Transform(new Vec4d(0, 0, 3, 1.0d), Quaternion.Rotation(Math.PI/2, Vec4d.Y_AXIS), 2);
+	q.setRotYAxis(Math.PI / 2);
+	Transform ty = new Transform(new Vec4d(0, 0, 3, 1.0d), q, 2);
 
 	// Rotation around the y axis should point the plane in the -Z direction
 	Plane expected = new Plane(new Vec4d(0, 0, -1, 1.0d), 23);

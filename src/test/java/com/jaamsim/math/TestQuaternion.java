@@ -31,14 +31,23 @@ private Quaternion ident;
 
 @Before
 public void setup() {
-	x_pi = Quaternion.Rotation(Math.PI, Vec4d.X_AXIS);
-	x_halfPi = Quaternion.Rotation(Math.PI / 2.0, Vec4d.X_AXIS);
+	x_pi = new Quaternion();
+	x_pi.setRotXAxis(Math.PI);
 
-	y_pi = Quaternion.Rotation(Math.PI, Vec4d.Y_AXIS);
-	y_halfPi = Quaternion.Rotation(Math.PI / 2.0, Vec4d.Y_AXIS);
+	x_halfPi = new Quaternion();
+	x_halfPi.setRotXAxis(Math.PI / 2.0d);
 
-	z_pi = Quaternion.Rotation(Math.PI, Vec4d.Z_AXIS);
-	z_halfPi = Quaternion.Rotation(Math.PI / 2.0, Vec4d.Z_AXIS);
+	y_pi = new Quaternion();
+	y_pi.setRotYAxis(Math.PI);
+
+	y_halfPi = new Quaternion();
+	y_halfPi.setRotYAxis(Math.PI / 2.0d);
+
+	z_pi = new Quaternion();
+	z_pi.setRotZAxis(Math.PI);
+
+	z_halfPi = new Quaternion();
+	z_halfPi.setRotZAxis(Math.PI / 2.0d);
 
 	ident = new Quaternion();
 }
@@ -103,14 +112,17 @@ public void testConstructor() {
 	Quaternion x_eighthPi = new Quaternion();
 	ident.slerp(x_halfPi, 0.25, x_eighthPi);
 
-	Quaternion x_eighthPi2 = Quaternion.Rotation(Math.PI/8, Vec4d.X_AXIS);
+	Quaternion x_eighthPi2 = new Quaternion();
+	x_eighthPi2.setRotXAxis(Math.PI/8);
 
 	assertTrue(x_eighthPi.equals(x_eighthPi2));
 
 	Quaternion x_negEighthPi = new Quaternion();
 	x_negEighthPi.conjugate(x_eighthPi);
 
-	Quaternion x_negEighthPi2 = Quaternion.Rotation(-Math.PI/8, Vec4d.X_AXIS);
+	Quaternion x_negEighthPi2 = new Quaternion();
+	x_negEighthPi2.setRotXAxis(-Math.PI/8);
+
 	assertTrue(x_negEighthPi.equals(x_negEighthPi2));
 }
 

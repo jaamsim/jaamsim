@@ -77,11 +77,50 @@ public void set(Quaternion q) {
  */
 public void setEuler3(Vec3d v) {
 	// This will almost certainly be a performance bottleneck before too long
-	Quaternion ret = Rotation(v.x, Vec4d.X_AXIS);
-	ret.mult(Rotation(v.y, Vec4d.Y_AXIS), ret);
-	ret.mult(Rotation(v.z, Vec4d.Z_AXIS), ret);
+	Quaternion tmp = new Quaternion();
+	this.setRotXAxis(v.x);
 
-	this.set(ret);
+	tmp.setRotYAxis(v.y);
+	this.mult(tmp, this);
+
+	tmp.setRotZAxis(v.z);
+	this.mult(tmp, this);
+}
+
+/**
+ * Set this Quaternion to a rotation about the X-axis.
+ * @param angle the angle to rotate through
+ */
+public void setRotXAxis(double angle) {
+	double halfAngle = 0.5d * angle;
+	this.x = Math.sin(halfAngle);
+	this.y = 0.0d;
+	this.z = 0.0d;
+	this.w = Math.cos(halfAngle);
+}
+
+/**
+ * Set this Quaternion to a rotation about the Y-axis.
+ * @param angle the angle to rotate through
+ */
+public void setRotYAxis(double angle) {
+	double halfAngle = 0.5d * angle;
+	this.x = 0.0d;
+	this.y = Math.sin(halfAngle);
+	this.z = 0.0d;
+	this.w = Math.cos(halfAngle);
+}
+
+/**
+ * Set this Quaternion to a rotation about the Z-axis.
+ * @param angle the angle to rotate through
+ */
+public void setRotZAxis(double angle) {
+	double halfAngle = 0.5d * angle;
+	this.x = 0.0d;
+	this.y = 0.0d;
+	this.z = Math.sin(halfAngle);
+	this.w = Math.cos(halfAngle);
 }
 
 /**
@@ -98,18 +137,6 @@ public void setAxisAngle(Vec3d axis, double angle) {
 
 	this.x = v.x; this.y = v.y; this.z = v.z;
 	this.w = Math.cos(halfAngle);
-}
-
-/**
- * Factory that creates a quaternion representing a rotation, created in axis angle representation
- * @param angle
- * @param axis
- * @return
- */
-public static Quaternion Rotation(double angle, Vec3d axis) {
-	Quaternion ret = new Quaternion();
-	ret.setAxisAngle(axis, angle);
-	return ret;
 }
 
 /**
@@ -133,7 +160,9 @@ public static Quaternion transformVectors(Vec4d from, Vec4d to) {
 	double angle = Math.asin(cross.mag3());
 	cross.normalize3();
 
-	return Rotation(angle, cross);
+	Quaternion ret = new Quaternion();
+	ret.setAxisAngle(cross, angle);
+	return ret;
 }
 
 private final double _dot4(Quaternion q1, Quaternion q2) {

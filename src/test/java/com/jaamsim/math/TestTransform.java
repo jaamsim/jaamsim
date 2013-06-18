@@ -49,7 +49,8 @@ public void testTranslation() {
 @Test
 public void testRotation() {
 	Transform t = new Transform();
-	Quaternion rot = Quaternion.Rotation(Math.PI/2, Vec4d.X_AXIS);
+	Quaternion rot = new Quaternion();
+	rot.setRotXAxis(Math.PI/2);
 	t.setRot(rot);
 	Vec4d in = new Vec4d(1, 2, 3, 1.0d);
 
@@ -77,7 +78,8 @@ public void testScale() {
 public void testInverse()
 {
 	Vec4d trans = new Vec4d(1, 2, 3, 1.0d);
-	Quaternion rot = Quaternion.Rotation(Math.PI/4, Vec4d.Z_AXIS);
+	Quaternion rot = new Quaternion();
+	rot.setRotZAxis(Math.PI/4);
 	Transform t = new Transform(trans, rot, 3);
 
 	Transform invT = new Transform();
@@ -135,11 +137,13 @@ public static void assertNear(Mat4d m1, Mat4d m2) {
 @Test
 public void testSelfAssignment() {
 	Vec4d trans1 = new Vec4d(1, 2, 3, 1.0d);
-	Quaternion rot1 = Quaternion.Rotation(Math.PI/4, Vec4d.Z_AXIS);
+	Quaternion rot1 = new Quaternion();
+	rot1.setRotZAxis(Math.PI/4);
 	Transform t1 = new Transform(trans1, rot1, 3);
 
 	Vec4d trans2 = new Vec4d(3, 2, 1, 1.0d);
-	Quaternion rot2 = Quaternion.Rotation(Math.PI/3, Vec4d.X_AXIS);
+	Quaternion rot2 = new Quaternion();
+	rot2.setRotXAxis(Math.PI/3);
 	Transform t2 = new Transform(trans2, rot2, 6);
 
 	Transform t3 = new Transform();

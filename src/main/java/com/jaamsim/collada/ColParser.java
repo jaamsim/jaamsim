@@ -756,9 +756,11 @@ public class ColParser {
 		double[] vals = (double[])rotNode.getContent();
 		parseAssert(vals != null && vals.length >= 4);
 
+		Vec3d axis = new Vec3d(vals[0], vals[1], vals[2]);
 		double rads = (float)Math.toRadians(vals[3]);
-		Vec4d axis = new Vec4d(vals[0], vals[1], vals[2], 1.0d);
-		Quaternion rot = Quaternion.Rotation(rads, axis);
+
+		Quaternion rot = new Quaternion();
+		rot.setAxisAngle(axis, rads);
 
 		Mat4d ret = new Mat4d();
 		ret.setRot3(rot);

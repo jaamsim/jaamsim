@@ -125,8 +125,11 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d rotXAxis = new Vec3d();
 		rotXAxis.mult3(rot, Vec4d.X_AXIS);
 
-		Quaternion rotX = Quaternion.Rotation(dy * ROT_SCALE_X / 4, rotXAxis);
-		Quaternion rotZ = Quaternion.Rotation(dx * ROT_SCALE_Z / 4, Vec4d.Z_AXIS);
+		Quaternion rotX = new Quaternion();
+		rotX.setAxisAngle(rotXAxis, dy * ROT_SCALE_X / 4);
+
+		Quaternion rotZ = new Quaternion();
+		rotZ.setRotZAxis(dx * ROT_SCALE_Z / 4);
 
 		Transform rotTransX = MathUtils.rotateAroundPoint(rotX, camPos);
 		Transform rotTransZ = MathUtils.rotateAroundPoint(rotZ, camPos);
@@ -218,8 +221,11 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d rotXAxis = new Vec3d();
 		rotXAxis.mult3(rot, Vec4d.X_AXIS);
 
-		Quaternion rotX = Quaternion.Rotation(-dy * ROT_SCALE_X, rotXAxis);
-		Quaternion rotZ = Quaternion.Rotation(-dx * ROT_SCALE_Z, Vec4d.Z_AXIS);
+		Quaternion rotX = new Quaternion();
+		rotX.setAxisAngle(rotXAxis, -dy * ROT_SCALE_X);
+
+		Quaternion rotZ = new Quaternion();
+		rotZ.setRotZAxis(-dx * ROT_SCALE_Z);
 
 		Transform rotTransX = MathUtils.rotateAroundPoint(rotX, POI);
 		Transform rotTransZ = MathUtils.rotateAroundPoint(rotZ, POI);
@@ -393,8 +399,13 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	private Quaternion polarToRot(PolarInfo pi) {
-		Quaternion rot = Quaternion.Rotation(pi.rotZ, Vec4d.Z_AXIS);
-		rot.mult(rot, Quaternion.Rotation(pi.rotX, Vec4d.X_AXIS));
+		Quaternion rot = new Quaternion();
+		rot.setRotZAxis(pi.rotZ);
+
+		Quaternion tmp = new Quaternion();
+		tmp.setRotXAxis(pi.rotX);
+
+		rot.mult(rot, tmp);
 		return rot;
 	}
 
