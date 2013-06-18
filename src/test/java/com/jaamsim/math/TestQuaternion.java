@@ -46,28 +46,37 @@ public void setup() {
 
 @Test
 public void testSimpleQuatRotation() {
+	Mat4d tempRot = new Mat4d();
 	Vec4d res = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-	z_halfPi.rotateVector(Vec4d.X_AXIS, res);
+
+	tempRot.setRot3(z_halfPi);
+	res.mult3(tempRot, Vec4d.X_AXIS);
 	assertTrue(res.near4(Vec4d.Y_AXIS));
 
-	z_pi.rotateVector(Vec4d.X_AXIS, res);
+	tempRot.setRot3(z_pi);
+	res.mult3(tempRot, Vec4d.X_AXIS);
 	assertTrue(res.near4(Vec4d.NEG_X_AXIS));
 
-	y_halfPi.rotateVector(Vec4d.X_AXIS, res);
+	tempRot.setRot3(y_halfPi);
+	res.mult3(tempRot, Vec4d.X_AXIS);
 	assertTrue(res.near4(Vec4d.NEG_Z_AXIS));
 
-	y_pi.rotateVector(Vec4d.X_AXIS, res);
+	tempRot.setRot3(y_pi);
+	res.mult3(tempRot, Vec4d.X_AXIS);
 	assertTrue(res.near4(Vec4d.NEG_X_AXIS));
 
-	x_halfPi.rotateVector(Vec4d.Y_AXIS, res);
+	tempRot.setRot3(x_halfPi);
+	res.mult3(tempRot, Vec4d.Y_AXIS);
 	assertTrue(res.near4(Vec4d.Z_AXIS));
-	x_pi.rotateVector(Vec4d.Y_AXIS, res);
-	assertTrue(res.near4(Vec4d.NEG_Y_AXIS));
 
+	tempRot.setRot3(x_pi);
+	res.mult3(tempRot, Vec4d.Y_AXIS);
+	assertTrue(res.near4(Vec4d.NEG_Y_AXIS));
 }
 
 @Test
 public void testSlerp() {
+	Mat4d tempRot = new Mat4d();
 
 	Quaternion x_quarterPi = new Quaternion();
 	ident.slerp(x_halfPi, 0.5, x_quarterPi);
@@ -78,10 +87,12 @@ public void testSlerp() {
 	Vec4d expected = new Vec4d(0, 1, 1, 1);
 	expected.normalize3();
 
-	x_quarterPi.rotateVector(Vec4d.Y_AXIS, res);
+	tempRot.setRot3(x_quarterPi);
+	res.mult3(tempRot, Vec4d.Y_AXIS);
 	assertTrue(res.near3(expected));
 
-	x_eighthPi.rotateVector(Vec4d.Y_AXIS, res);
+	tempRot.setRot3(x_eighthPi);
+	res.mult3(tempRot, Vec4d.Y_AXIS);
 	expected.set3(0,  Math.cos(Math.PI/8), Math.sin(Math.PI/8));
 	assertTrue(res.near3(expected));
 }

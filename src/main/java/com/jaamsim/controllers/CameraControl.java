@@ -15,6 +15,7 @@
 
 package com.jaamsim.controllers;
 
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Quaternion;
@@ -118,11 +119,11 @@ public class CameraControl implements WindowInteractionListener {
 		PolarInfo origPi = getPolarFrom(center, camPos);
 
 		Quaternion origRot = polarToRot(origPi);
-		Vec4d origUp = new Vec4d();
-		origRot.rotateVector(Vec4d.Y_AXIS, origUp);
+		Mat4d rot = new Mat4d();
+		rot.setRot3(origRot);
 
-		Vec4d rotXAxis = new Vec4d();
-		origRot.rotateVector(Vec4d.X_AXIS, rotXAxis);
+		Vec3d rotXAxis = new Vec3d();
+		rotXAxis.mult3(rot, Vec4d.X_AXIS);
 
 		Quaternion rotX = Quaternion.Rotation(dy * ROT_SCALE_X / 4, rotXAxis);
 		Quaternion rotZ = Quaternion.Rotation(dx * ROT_SCALE_Z / 4, Vec4d.Z_AXIS);
@@ -208,11 +209,14 @@ public class CameraControl implements WindowInteractionListener {
 		PolarInfo origPi = getPolarFrom(center, camPos);
 
 		Quaternion origRot = polarToRot(origPi);
-		Vec4d origUp = new Vec4d();
-		origRot.rotateVector(Vec4d.Y_AXIS, origUp);
+		Mat4d rot = new Mat4d();
+		rot.setRot3(origRot);
 
-		Vec4d rotXAxis = new Vec4d();
-		origRot.rotateVector(Vec4d.X_AXIS, rotXAxis);
+		Vec3d origUp = new Vec3d();
+		origUp.mult3(rot, Vec4d.Y_AXIS);
+
+		Vec3d rotXAxis = new Vec3d();
+		rotXAxis.mult3(rot, Vec4d.X_AXIS);
 
 		Quaternion rotX = Quaternion.Rotation(-dy * ROT_SCALE_X, rotXAxis);
 		Quaternion rotZ = Quaternion.Rotation(-dx * ROT_SCALE_Z, Vec4d.Z_AXIS);
@@ -229,8 +233,11 @@ public class CameraControl implements WindowInteractionListener {
 		PolarInfo pi = getPolarFrom(center, camPos);
 
 		Quaternion newRot = polarToRot(pi);
-		Vec4d newUp = new Vec4d();
-		newRot.rotateVector(Vec4d.Y_AXIS, newUp);
+		rot.setRot3(newRot);
+
+		Vec3d newUp = new Vec3d();
+		newUp.mult3(rot, Vec4d.Y_AXIS);
+
 		double upDot = origUp.dot3(newUp);
 		if (upDot < 0) {
 			// The up angle has changed by more than 90 degrees, we probably are looking directly up or down

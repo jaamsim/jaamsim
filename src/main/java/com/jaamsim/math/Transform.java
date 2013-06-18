@@ -165,10 +165,12 @@ private void updateMatrix() {
  * @param out
  */
 public void merge(Transform a, Transform b) {
-
 	Vec4d temp = new Vec4d(a._trans);
 
-	a._rot.rotateVector(b._trans, _trans);
+	Mat4d rotTemp = new Mat4d();
+	rotTemp.setRot3(a._rot);
+
+	_trans.mult3(rotTemp, b._trans);
 	_trans.scale3(a._scale);
 
 	_trans.add3(temp);
@@ -212,7 +214,10 @@ public void inverse(Transform out) {
 
 	out._trans.set4(_trans);
 	out._trans.scale3(-out._scale);
-	out._rot.rotateVector(out._trans, out._trans);
+
+	Mat4d rotTemp = new Mat4d();
+	rotTemp.setRot3(out._rot);
+	out._trans.mult3(rotTemp, out._trans);
 
 	out._matrixDirty = true;
 }

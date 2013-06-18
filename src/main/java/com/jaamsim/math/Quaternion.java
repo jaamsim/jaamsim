@@ -75,20 +75,6 @@ public void set(Quaternion q) {
  * @param axis
  * @return
  */
-public static Quaternion Rotation(double angle, Vec4d axis) {
-	Vec3d v = new Vec3d(axis.x, axis.y, axis.z);
-	v.normalize3();
-	v.scale3(Math.sin(angle/2.0));
-
-	return new Quaternion(v.x, v.y, v.z, Math.cos(angle / 2.0d));
-}
-
-/**
- * Factory that creates a quaternion representing a rotation, created in axis angle representation
- * @param angle
- * @param axis
- * @return
- */
 public static Quaternion Rotation(double angle, Vec3d axis) {
 	Vec3d v = new Vec3d(axis);
 	v.normalize3();
@@ -246,12 +232,6 @@ public void mult(Quaternion a, Quaternion b) {
 public boolean isNormal() {
 	double magSquared = magSquared();
 	return MathUtils.near(magSquared, 1.0);
-}
-
-public void rotateVector(Vec4d vect, Vec4d res) {
-	Mat4d mat = new Mat4d();
-	mat.setRot4(this);
-	res.mult4(mat, vect);
 }
 
 public double dot(Quaternion q) {
