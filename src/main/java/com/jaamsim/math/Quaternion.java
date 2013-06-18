@@ -85,17 +85,31 @@ public void setEuler3(Vec3d v) {
 }
 
 /**
+ * Set this Quaternion from a rotation in axis-angle form.
+ * @param axis the about which to rotate
+ * @param angle the angle to rotate through
+ * @throws NullPointerException if axis is null
+ */
+public void setAxisAngle(Vec3d axis, double angle) {
+	double halfAngle = 0.5d * angle;
+	Vec3d v = new Vec3d(axis);
+	v.normalize3();
+	v.scale3(Math.sin(halfAngle));
+
+	this.x = v.x; this.y = v.y; this.z = v.z;
+	this.w = Math.cos(halfAngle);
+}
+
+/**
  * Factory that creates a quaternion representing a rotation, created in axis angle representation
  * @param angle
  * @param axis
  * @return
  */
 public static Quaternion Rotation(double angle, Vec3d axis) {
-	Vec3d v = new Vec3d(axis);
-	v.normalize3();
-	v.scale3(Math.sin(angle/2.0));
-
-	return new Quaternion(v.x, v.y, v.z, Math.cos(angle / 2.0d));
+	Quaternion ret = new Quaternion();
+	ret.setAxisAngle(axis, angle);
+	return ret;
 }
 
 /**
