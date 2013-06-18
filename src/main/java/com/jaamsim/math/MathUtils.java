@@ -139,11 +139,11 @@ public static double collisionDistPoly(Ray r, Vec4d[] points) {
 	if (dist < 0) { return dist; } // Behind the start of the ray
 
 	// This is the potential collision point, if it's inside the polygon
-	Vec4d collisionPoint = r.getPointAtDist(dist);
+	Vec3d collisionPoint = r.getPointAtDist(dist);
 
-	Vec4d a = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-	Vec4d b = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-	Vec4d cross = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	Vec3d a = new Vec3d();
+	Vec3d b = new Vec3d();
+	Vec3d cross = new Vec3d();
 	boolean posSign = true;
 
 	for (int i = 0; i < points.length; ++i) {

@@ -390,7 +390,7 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 		return new Vec4d((minX+maxX)/2, (minY+maxY)/2,  (minZ+maxZ)/2, 1.0d);
 	}
 
-	public static Vec4d getPlaneCollisionDiff(Plane p, Ray r0, Ray r1) {
+	public static Vec3d getPlaneCollisionDiff(Plane p, Ray r0, Ray r1) {
 		double r0Dist = p.collisionDist(r0);
 		double r1Dist = p.collisionDist(r1);
 
@@ -402,10 +402,10 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 		}
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
-		Vec4d r0Point = r0.getPointAtDist(r0Dist);
-		Vec4d r1Point = r1.getPointAtDist(r1Dist);
+		Vec3d r0Point = r0.getPointAtDist(r0Dist);
+		Vec3d r1Point = r1.getPointAtDist(r1Dist);
 
-		Vec4d ret = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Vec3d ret = new Vec3d();
 		ret.sub3(r0Point, r1Point);
 		return ret;
 	}
@@ -559,8 +559,8 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 		}
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
-		Vec4d currentPoint = currentRay.getPointAtDist(currentDist);
-		Vec4d lastPoint = lastRay.getPointAtDist(lastDist);
+		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
+		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
 
 		return currentPoint.z - lastPoint.z;
 	}

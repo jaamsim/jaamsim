@@ -170,10 +170,10 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 		}
 
-		Vec4d currIntersect = currRay.getPointAtDist(currDist);
-		Vec4d prevIntersect = prevRay.getPointAtDist(prevDist);
+		Vec3d currIntersect = currRay.getPointAtDist(currDist);
+		Vec3d prevIntersect = prevRay.getPointAtDist(prevDist);
 
-		Vec4d diff = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Vec3d diff = new Vec3d();
 		diff.sub3(currIntersect, prevIntersect);
 
 		Vec3d camPos = _updateView.getGlobalPosition();
@@ -305,10 +305,10 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 		}
 
-		Vec4d currIntersect = currRay.getPointAtDist(currDist);
-		Vec4d prevIntersect = prevRay.getPointAtDist(prevDist);
+		Vec3d currIntersect = currRay.getPointAtDist(currDist);
+		Vec3d prevIntersect = prevRay.getPointAtDist(prevDist);
 
-		Vec4d diff = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Vec3d diff = new Vec3d();
 		diff.sub3(currIntersect, prevIntersect);
 
 		pi.viewCenter.sub3(diff);
@@ -472,7 +472,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		// We need to cache dragging for experimental controls
 		if (RenderManager.inst().getExperimentalControls() && button == 1 && isDown) {
-			Vec4d clickPoint = RenderManager.inst().getNearestPick(_windowID);
+			Vec3d clickPoint = RenderManager.inst().getNearestPick(_windowID);
 			if (clickPoint != null) {
 				POI.set3(clickPoint);
 				//dragPlane = new Plane(Vec4d.Z_AXIS, clickPoint.z);

@@ -24,6 +24,7 @@ import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 
 //import javax.media.opengl.*;
@@ -158,7 +159,6 @@ public double getCollisionDist(Ray r, boolean precise)
 		Ray localRay = r.transform(invMat);
 		Vec4d[] triVecs = new Vec4d[3];
 
-		Vec4d temp = new Vec4d();
 		for (int triInd = 0; triInd < subData.indices.length / 3; ++triInd) {
 			triVecs[0] = subData.verts.get(subData.indices[triInd*3+0]);
 			triVecs[1] = subData.verts.get(subData.indices[triInd*3+1]);
@@ -166,8 +166,8 @@ public double getCollisionDist(Ray r, boolean precise)
 			double triDist = MathUtils.collisionDistPoly(localRay, triVecs);
 			if (triDist > 0) {
 				// We have collided, now we need to figure out the distance in original ray space, not the transformed ray space
-				temp = localRay.getPointAtDist(triDist);
-				temp.mult4(subMat, temp); // Temp is the collision point in world space
+				Vec3d temp = localRay.getPointAtDist(triDist);
+				temp.multAndTrans3(subMat, temp); // Temp is the collision point in world space
 				temp.sub3(temp, r.getStartRef());
 
 				double newDist = temp.mag3();

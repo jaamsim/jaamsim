@@ -699,7 +699,7 @@ public class RenderManager implements DragSourceListener {
 		return 0;
 	}
 
-	public Vec4d getNearestPick(int windowID) {
+	public Vec3d getNearestPick(int windowID) {
 		Renderer.WindowMouseInfo mouseInfo = _renderer.getMouseInfo(windowID);
 
 		View view = _windowToViewMap.get(windowID);
@@ -865,19 +865,19 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
-		Vec4d currentPoint = currentRay.getPointAtDist(currentDist);
-		Vec4d lastPoint = lastRay.getPointAtDist(lastDist);
+		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
+		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
 
-		Vec4d entSpaceCurrent = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // entSpacePoint is the current point in model space
-		entSpaceCurrent.mult4(invTransMat, currentPoint);
+		Vec3d entSpaceCurrent = new Vec3d(); // entSpacePoint is the current point in model space
+		entSpaceCurrent.multAndTrans3(invTransMat, currentPoint);
 
-		Vec4d entSpaceLast = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // entSpaceLast is the last point in model space
-		entSpaceLast.mult4(invTransMat, lastPoint);
+		Vec3d entSpaceLast = new Vec3d(); // entSpaceLast is the last point in model space
+		entSpaceLast.multAndTrans3(invTransMat, lastPoint);
 
-		Vec4d delta = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Vec3d delta = new Vec3d();
 		delta.sub3(currentPoint, lastPoint);
 
-		Vec4d entSpaceDelta = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Vec3d entSpaceDelta = new Vec3d();
 		entSpaceDelta.sub3(entSpaceCurrent, entSpaceLast);
 
 		// Handle each handle by type...
@@ -1063,7 +1063,7 @@ public class RenderManager implements DragSourceListener {
 				point.z += zDiff;
 			} else {
 				Plane pointPlane = new Plane(Vec4d.Z_AXIS, point.z);
-				Vec4d diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, lastRay);
+				Vec3d diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, lastRay);
 				point.x += diff.x;
 				point.y += diff.y;
 				point.z += 0;
@@ -1294,9 +1294,8 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		Vec4d xyPlanePoint = currentRay.getPointAtDist(dist);
-		Vec3d tempPoint = new Vec3d(xyPlanePoint.x, xyPlanePoint.y, xyPlanePoint.z);
-		GUIFrame.instance().showLocatorPosition(tempPoint);
+		Vec3d xyPlanePoint = currentRay.getPointAtDist(dist);
+		GUIFrame.instance().showLocatorPosition(xyPlanePoint);
 		queueRedraw();
 	}
 
@@ -1310,7 +1309,7 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
-		Vec4d creationPoint = currentRay.getPointAtDist(dist);
+		Vec3d creationPoint = currentRay.getPointAtDist(dist);
 
 		// Create a new instance
 		Class<? extends Entity> proto  = _dndObjectType.getJavaClass();

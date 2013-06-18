@@ -38,8 +38,7 @@ public double getDistance(Vec3d point) {
 }
 
 public double getDistance(Sphere s) {
-
-	Vec4d diff = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	Vec3d diff = new Vec3d();
 	diff.sub3(center, s.center);
 	double dist = diff.mag3();
 
