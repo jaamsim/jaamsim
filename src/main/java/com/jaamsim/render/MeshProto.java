@@ -251,13 +251,11 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 	Mat4d modelViewMat = new Mat4d();
 	modelViewMat.mult4(viewMat, modelMat);
 
+	Mat4d subModelView = new Mat4d();
+
 	ArrayList<TransSortable> transparents = new ArrayList<TransSortable>();
 	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
 		MeshData.SubMeshInstance subInst = data.getSubMeshInstances().get(i);
-
-		Mat4d subModelView = new Mat4d();
-		Mat4d subNormalMat = new Mat4d();
-		Mat4d subModelMat = new Mat4d();
 
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
 		Material mat = _materials.get(subInst.materialIndex);
@@ -266,16 +264,12 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 			continue; // Opaque sub meshes have been rendered
 		}
 
-		subModelMat.mult4(modelMat, subInst.transform);
-
 		AABB instBounds = subInstBounds.get(i);
 		if (!cam.collides(instBounds)) {
 			continue;
 		}
 
 		subModelView.mult4(modelViewMat, subInst.transform);
-
-		subNormalMat.mult4(normalMat, subInst.normalTrans);
 
 		Vec4d eyeCenter = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		eyeCenter.mult4(subModelView, subMesh._center);
