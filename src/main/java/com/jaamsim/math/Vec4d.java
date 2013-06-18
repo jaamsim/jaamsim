@@ -30,7 +30,7 @@ public static Vec4d NEG_Z_AXIS = new Vec4d( 0,  0, -1, 1.0d);
 public double w;
 
 /**
- * Construct a Vec4d initialized to (0,0,0,1);
+ * Construct a Vec4d initialized to (0,0,0,0);
  */
 public Vec4d() {
 	x = 0.0d;
