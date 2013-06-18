@@ -72,8 +72,10 @@ private final Vec3dInput orientationInput;
 	public Transform getRegionTrans(double simTime) {
 		Quaternion rot = null;
 		Vec3d temp = orientationInput.getValue();
-		if (temp != null)
-			rot = Quaternion.FromEuler(temp.x, temp.y, temp.z);
+		if (temp != null) {
+			rot = new Quaternion();
+			rot.setEuler3(temp);
+		}
 
 		temp = originInput.getValue();
 		return new Transform(temp, rot, 1.0d);

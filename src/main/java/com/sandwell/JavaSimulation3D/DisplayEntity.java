@@ -371,7 +371,8 @@ public class DisplayEntity extends Entity {
 		temp.scale3(-1.0d);
 		Transform alignTrans = new Transform(temp);
 
-		Quaternion rot = Quaternion.FromEuler(orient.x, orient.y, orient.z);
+		Quaternion rot = new Quaternion();
+		rot.setEuler3(orient);
 
 		Vec3d transVect = new Vec3d(position);
 		DisplayEntity entity = this.getRelativeEntity();

@@ -70,6 +70,21 @@ public void set(Quaternion q) {
 }
 
 /**
+ * Set this Quaternion from Euler angles, specifically the kind of euler angles
+ * used by Java3d (which seems to be rotation around global x, then y, then z)
+ * @param v the Vec3d containing the x,y,z angles
+ * @throws NullPointerException if v is null
+ */
+public void setEuler3(Vec3d v) {
+	// This will almost certainly be a performance bottleneck before too long
+	Quaternion ret = Rotation(v.x, Vec4d.X_AXIS);
+	ret.mult(Rotation(v.y, Vec4d.Y_AXIS), ret);
+	ret.mult(Rotation(v.z, Vec4d.Z_AXIS), ret);
+
+	this.set(ret);
+}
+
+/**
  * Factory that creates a quaternion representing a rotation, created in axis angle representation
  * @param angle
  * @param axis
@@ -81,32 +96,6 @@ public static Quaternion Rotation(double angle, Vec3d axis) {
 	v.scale3(Math.sin(angle/2.0));
 
 	return new Quaternion(v.x, v.y, v.z, Math.cos(angle / 2.0d));
-}
-
-/**
- * Create a quaternion from Euler angles, specifically the kind of euler angles used by Java3d
- * (which seems to be rotation around global x, then y, then z
- * @param x - rotation in radians
- * @param y
- * @param z
- * @return
- */
-public static Quaternion FromEuler(double x, double y, double z) {
-	// This will almost certainly be a performance bottleneck before too long
-	Quaternion ret = Rotation(x, Vec4d.X_AXIS);
-
-	ret.mult(Rotation(y, Vec4d.Y_AXIS), ret);
-	ret.mult(Rotation(z, Vec4d.Z_AXIS), ret);
-	return ret;
-}
-
-/**
- * Create a quaternion from Euler angles, specifically the kind of euler angles used by Java3d
- * (which seems to be rotation around global x, then y, then z
- * @return
- */
-public static Quaternion FromEuler(Vec4d rot) {
-	return Quaternion.FromEuler(rot.x, rot.y, rot.z);
 }
 
 /**
