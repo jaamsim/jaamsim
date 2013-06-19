@@ -640,6 +640,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		// Sub system specific intitializations
 		DebugUtils.init(this, gl);
 		Polygon.init(this, gl);
+		MeshProto.init(this, gl);
 		_texCache.init(gl);
 
 		// Load the bad mesh proto
