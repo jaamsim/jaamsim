@@ -725,6 +725,9 @@ public class RenderManager implements DragSourceListener {
 				pickDist = pick.dist;
 			}
 		}
+		if (pickDist == Double.POSITIVE_INFINITY) {
+			return null;
+		}
 		return pickRay.getPointAtDist(pickDist);
 	}
 
