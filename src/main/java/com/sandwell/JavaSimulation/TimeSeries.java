@@ -27,7 +27,7 @@ public class TimeSeries extends Entity {
 	private final TimeSeriesInput value;
 
 	@Keyword(description = "The unit type for the time series (e.g. DistanceUnit, TimeUnit, MassUnit).  " +
-			"If the UnitType keyword is specified, it must be specified before the Values keyword.",
+			"If the UnitType keyword is specified, it must be specified before the Value keyword.",
      example = "TimeSeries1  UnitType { DistanceUnit }")
 	private final UnitTypeInput unitType;
 
