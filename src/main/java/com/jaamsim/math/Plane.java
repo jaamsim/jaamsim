@@ -102,9 +102,15 @@ public double getNormalDist(Vec3d point) {
  * @param out - the output
  */
 public void transform(Transform t, Plane out) {
+	transform(t, out, new Vec4d());
+}
 
-	Vec4d closePoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // The point closest to the origin (need any point on the plane
-	closePoint.scale3(_dist, _normal);
+public void transform(Transform t, Plane out, Vec4d temp) {
+
+	Vec4d closePoint = temp;
+
+	closePoint.scale3(_dist, _normal); // The point closest to the origin (need any point on the plane
+	closePoint.w = 1;
 
 	t.apply(_normal, out._normal);
 	out._normal.normalize3();

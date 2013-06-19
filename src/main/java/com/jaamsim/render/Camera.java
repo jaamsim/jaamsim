@@ -20,7 +20,6 @@ import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Sphere;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 
 /**
@@ -296,7 +295,7 @@ private void updateFrustum() {
 	double cosX = Math.cos(thetaX);
 	double cosY = Math.cos(thetaY);
 
-	Vec3d v = new Vec3d();
+	Vec4d v = new Vec4d();
 	// Create the planes that define the frustum, anything on the positive side
 	// of all planes is in the frustum
 	// +Y
@@ -319,7 +318,7 @@ private void updateFrustum() {
 
 	// Apply the current transform to the planes. Puts the planes in world space
 	for (Plane p : _frustum) {
-		p.transform(_info.trans, p);
+		p.transform(_info.trans, p, v);
 	}
 
 }
