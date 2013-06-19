@@ -136,6 +136,7 @@ public class Renderer {
 
 	private boolean _allowDelayedTextures;
 	private double _sceneTimeMS;
+	private double _loopTimeMS;
 
 	// This may not be the best way to cache this
 	//private GL2GL3 _currentGL = null;
@@ -221,6 +222,8 @@ public class Renderer {
 //		ms = (endNanos - startNanos) /1000000L;
 //		System.out.println("Started renderer loop after:" + ms + "ms");
 
+		long lastLoopEnd = System.nanoTime();
+
 		while (!_shutdown.get()) {
 			try {
 
@@ -300,6 +303,11 @@ public class Renderer {
 						}
 					}
 				}
+
+				long loopEnd = System.nanoTime();
+				_loopTimeMS = (loopEnd - lastLoopEnd) / 1000000;
+				lastLoopEnd = loopEnd;
+
 				try {
 					synchronized (_displayNeeded) {
 						_displayNeeded.wait(10);
@@ -1042,6 +1050,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 					StringBuilder perf = new StringBuilder("Objects Culled: ").append(pi.objectsCulled);
 					perf.append(" Frame time (ms) :").append(_lastFrameNanos / 1000000.0);
 					perf.append(" SceneTime: ").append(_sceneTimeMS);
+					perf.append(" Loop Time: ").append(_loopTimeMS);
 					TessFont defFont = getTessFont(_defaultBoldFontKey);
 					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
 					                                     10, 10, 15, false, false, DisplayModel.ALWAYS);
