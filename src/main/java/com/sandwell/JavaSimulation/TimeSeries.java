@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 import com.jaamsim.input.Output;
+import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.units.Unit;
 
 public class TimeSeries extends Entity {
@@ -28,7 +29,7 @@ public class TimeSeries extends Entity {
 	@Keyword(description = "The unit type for the time series (e.g. DistanceUnit, TimeUnit, MassUnit).  " +
 			"If the UnitType keyword is specified, it must be specified before the Values keyword.",
      example = "TimeSeries1  UnitType { DistanceUnit }")
-	private final EntityInput<ObjectType> unitType;
+	private final UnitTypeInput unitType;
 
 	@Keyword(description = "The format for the date and time (e.g. 'yyyy-MM-dd HH:mm:ss', yyyy/MM/dd).  " +
 	                "Put single quotes around the format if it includes spaces.",
@@ -42,7 +43,7 @@ public class TimeSeries extends Entity {
 		value = new TimeSeriesInput("Value", "Key Inputs", null);
 		this.addInput(value, true);
 
-		unitType = new EntityInput<ObjectType>( ObjectType.class, "UnitType", "Optional", null );
+		unitType = new UnitTypeInput( "UnitType", "Optional" );
 		this.addInput( unitType, true );
 
 		dateFormat = new StringInput("DateFormat", "Key Inputs", null);
@@ -74,13 +75,10 @@ public class TimeSeries extends Entity {
 		super.updateForInput( in );
 
 		if ( in == unitType ) {
-			if( ! unitType.getValue().getJavaClass().getSuperclass().equals( Unit.class ) )
-				throw new InputErrorException( unitType.getValue() + " is not valid a unit type" );
-
 			if( value.getValue() != null )
 				throw new InputErrorException( "UnitType must be specified before Value");
 
-			value.setUnitType( unitType.getValue().getJavaClass() );
+			value.setUnitType( unitType.getUnitType() );
 		}
 		if ( in == dateFormat ) {
 			try {
@@ -128,5 +126,9 @@ public class TimeSeries extends Entity {
 
 		// No value was found for the present time, return 0
 		return 0.0;
+	}
+
+	public Class<? extends Unit> getUnitType() {
+		return unitType.getUnitType();
 	}
 }
