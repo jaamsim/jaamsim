@@ -1068,7 +1068,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 				}
 
 				GL2GL3 gl = drawable.getContext().getGL().getGL2GL3(); // Just to clean up the code below
-				gl.glFlush();
+				gl.glFinish();
 
 				long endNanos = System.nanoTime();
 				_lastFrameNanos = endNanos - startNanos;
