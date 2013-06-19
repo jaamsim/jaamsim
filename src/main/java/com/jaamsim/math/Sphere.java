@@ -24,7 +24,7 @@ public class Sphere {
 public final Vec3d center;
 public double radius;
 
-public Sphere(Vec4d center, double radius) {
+public Sphere(Vec3d center, double radius) {
 	this.center = new Vec3d(center);
 	this.radius = radius;
 }

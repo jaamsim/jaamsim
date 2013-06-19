@@ -22,9 +22,9 @@ public class TestSphere {
 
 @Test
 public void testSphereDistance() {
-	Sphere s0 = new Sphere(new Vec4d(0, 0, 0, 1.0d), 3);
+	Sphere s0 = new Sphere(new Vec3d(0, 0, 0), 3);
 
-	Sphere s1 = new Sphere(new Vec4d(3, 4, 0, 1.0d), 1);
+	Sphere s1 = new Sphere(new Vec3d(3, 4, 0), 1);
 
 	// sphere to sphere
 	double dist0 = s0.getDistance(s1);
