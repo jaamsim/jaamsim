@@ -235,4 +235,22 @@ public class ColladaModel extends DisplayModel {
 		return numTriangles / (numVertices/3);
 	}
 
+	@Output(name = "NumSubInstances")
+	public int getNumSubInstancesOutput(double simTime) {
+		MeshData data = getMeshData();
+		if (data == null) return 0;
+
+		return data.getNumSubInstances();
+
+	}
+
+	@Output(name = "NumSubMeshes")
+	public int getNumSubMeshesOutput(double simTime) {
+		MeshData data = getMeshData();
+		if (data == null) return 0;
+
+		return data.getNumSubMeshes();
+
+	}
+
 }

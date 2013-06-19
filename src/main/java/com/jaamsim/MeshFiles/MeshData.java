@@ -352,4 +352,11 @@ public class MeshData {
 		return numVerts;
 	}
 
+	public int getNumSubInstances() {
+		return _subMeshInstances.size() + _subLineInstances.size();
+	}
+	public int getNumSubMeshes() {
+		return _subMeshesData.size() + _subLinesData.size();
+	}
+
 }
