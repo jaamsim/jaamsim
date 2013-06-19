@@ -26,7 +26,7 @@ public class Transform {
 private Quaternion _rot;
 private Vec4d _trans;
 private double _scale;
-private Mat4d _mat4d;
+private final Mat4d _mat4d = new Mat4d();
 private boolean _matrixDirty;
 
 public static final Transform ident = new Transform(); // Static Identity transform
@@ -35,7 +35,6 @@ public Transform() {
 	_trans = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // Zero
 	_rot = new Quaternion(); // Identity
 	_scale = 1;
-	_mat4d = new Mat4d();
 	_matrixDirty = false;
 }
 
@@ -147,10 +146,8 @@ private void updateMatrix() {
 	assert(!Double.isNaN(_trans.y));
 	assert(!Double.isNaN(_trans.z));
 
-	_mat4d = new Mat4d();
-
+	_mat4d.setRot4(_rot);
 	_mat4d.setTranslate3(_trans);
-	_mat4d.setRot3(_rot);
 	_mat4d.scale3(_scale);
 
 	_matrixDirty = false;
