@@ -20,6 +20,7 @@ import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
 import com.jaamsim.math.Sphere;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 
 /**
@@ -59,8 +60,14 @@ private boolean _projMatDirty = true;
 /**
  * An array of 6 Planes that represent the view frustum in world coordinates
  */
-private Plane[] _frustum;
+private final Plane[] _frustum;
 private boolean _frustumDirty = true;
+
+{
+	_frustum = new Plane[5];
+	for (int i = 0; i < _frustum.length; i++)
+		_frustum[i] = new Plane();
+}
 
 /**
  * Construct a new camera, the parameters provided are needed to determine the view frustum and the
@@ -289,24 +296,26 @@ private void updateFrustum() {
 	double cosX = Math.cos(thetaX);
 	double cosY = Math.cos(thetaY);
 
-	if (_frustum == null) {
-		_frustum = new Plane[5];
-	}
-
-	// Create the 6 planes that define the frustum, anything on the positive side of all 6 planes is
-	// in the frustum
+	Vec3d v = new Vec3d();
+	// Create the planes that define the frustum, anything on the positive side
+	// of all planes is in the frustum
 	// +Y
-	_frustum[0] = new Plane(new Vec4d(0,  cosY, -sinY, 1.0d), 0);
+	v.set3(0,  cosY, -sinY);
+	_frustum[0].set(v, 0.0d);
 	// -Y
-	_frustum[1] = new Plane(new Vec4d(0, -cosY, -sinY, 1.0d), 0);
+	v.set3(0, -cosY, -sinY);
+	_frustum[1].set(v, 0.0d);
 
 	// +X
-	_frustum[2] = new Plane(new Vec4d( cosX, 0, -sinX, 1.0d), 0);
+	v.set3( cosX, 0, -sinX);
+	_frustum[2].set(v, 0.0d);
 	// -X
-	_frustum[3] = new Plane(new Vec4d(-cosX, 0, -sinX, 1.0d), 0);
+	v.set3(-cosX, 0, -sinX);
+	_frustum[3].set(v, 0.0d);
 
 	// -Z
-	_frustum[4] = new Plane(new Vec4d(0, 0, 1, 1.0d), -_info.farDist);
+	v.set3(0.0d, 0.0d, 1.0d);
+	_frustum[4].set(v, -_info.farDist);
 
 	// Apply the current transform to the planes. Puts the planes in world space
 	for (Plane p : _frustum) {

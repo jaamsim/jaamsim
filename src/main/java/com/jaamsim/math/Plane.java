@@ -21,7 +21,7 @@ public class Plane {
 	/**
 	 * The normal direction of the plane, should always have w = 0 and be of unit length
 	 */
-private Vec4d _normal;
+private final Vec4d _normal = new Vec4d();
 /**
  * The shortest distance from the plane to the origin, by normal direction (affects sign)
  */
@@ -34,20 +34,15 @@ private double _dist;
  * @param distance
  */
 public Plane(Vec4d normal, double distance) {
-	_normal = new Vec4d(normal);
-	_normal.normalize3();
-	_normal.w = 0;
-
-	_dist = distance;
-
+	this.set(normal, distance);
 }
 
 /**
  * By default return the XY plane
  */
 public Plane() {
-	_normal = new Vec4d(0, 0, 1, 0);
-	_dist = 0;
+	_normal.set4(0.0d, 0.0d, 1.0d, 0.0d);
+	_dist = 0.0d;
 }
 
 /**
@@ -58,7 +53,6 @@ public Plane() {
  */
 
 public Plane(Vec4d p0, Vec4d p1, Vec4d p2) {
-	_normal = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 	Vec4d v0 = new Vec4d(p1);
 	v0.sub3(p0);
 	v0.normalize3();
@@ -71,6 +65,13 @@ public Plane(Vec4d p0, Vec4d p1, Vec4d p2) {
 	_normal.normalize3();
 	_normal.w = 0;
 	_dist = _normal.dot3(p0);
+}
+
+public void set(Vec3d normal, double distance) {
+	_normal.normalize3(normal);
+	_normal.w = 0.0d;
+
+	_dist = distance;
 }
 
 public void getNormal(Vec4d norm) {
