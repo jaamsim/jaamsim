@@ -20,10 +20,16 @@ import com.jaamsim.units.Unit;
 
 public class TimeSeries extends Entity {
 
-	@Keyword(description = "A list of time series records for the form { yyyy MM dd hour value units }, " +
-					"where hour is in decimal hours, value is the time series value for the given date " +
-					"and time, and units is optional.  The dates must be given in increasing order.",
-	         example = "TimeSeries1  Value { { 2010 1 1 0.0 0.5 m } { 2010 1 1 3.0 1.5 m } { 2010 1 1 6.0 1.2 m } }")
+	@Keyword(description = "A list of time series records with default format { 'yyyy MM dd HH:mm' value units }, where\n" +
+					"yyyy is the year\n" +
+					"MM is the month (1-12)\n" +
+					"dd is the day of the month\n" +
+					"HH is the hour of day (0-23)\n" +
+					"mm is the minutes (0-59)\n" +
+					"value is the time series value for the given date and time\n" +
+					"units is the optional units for the value\n" +
+					"The date and times must be given in increasing order.",
+	         example = "TimeSeries1  Value { { '2010 1 1 0:00' 0.5 m } { '2010 1 1 3:00' 1.5 m } { '2010 1 1 6:00' 1.2 m } }")
 	private final TimeSeriesInput value;
 
 	@Keyword(description = "The unit type for the time series (e.g. DistanceUnit, TimeUnit, MassUnit).  " +
