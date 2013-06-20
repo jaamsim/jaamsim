@@ -61,8 +61,11 @@ public class TextureView implements Renderable {
 	static private int modelViewProjMatVar;
 	static private int normalMatVar;
 	static private int bindSpaceMatVar;
-	static private int lightDirVar;
 	static private int texVar;
+
+	static private int lightDirVar;
+	static private int lightIntVar;
+	static private int numLightsVar;
 
 	static private int maxNumBonesVar;
 
@@ -70,6 +73,9 @@ public class TextureView implements Renderable {
 
 	static private int cVar;
 	static private int fcVar;
+
+	static private float[] lightDir = new float[3];
+	static private float[] lightInt = new float[1];
 
 	public TextureView(URL imageURL, Transform trans, Vec3d scale, boolean isTransparent, boolean isCompressed,
 	                   VisibilityInfo visInfo, long pickingID) {
@@ -160,14 +166,23 @@ public class TextureView implements Renderable {
 		modelViewProjMatVar = gl.glGetUniformLocation(progHandle, "modelViewProjMat");
 		normalMatVar = gl.glGetUniformLocation(progHandle, "normalMat");
 		bindSpaceMatVar = gl.glGetUniformLocation(progHandle, "bindSpaceMat");
-		lightDirVar = gl.glGetUniformLocation(progHandle, "lightDir");
 		texVar = gl.glGetUniformLocation(progHandle, "tex");
 		hasTexVar = gl.glGetUniformLocation(progHandle, "useTex");
+
+		lightDirVar = gl.glGetUniformLocation(progHandle, "lightDir");
+		lightIntVar = gl.glGetUniformLocation(progHandle, "lightIntensity");
+		numLightsVar = gl.glGetUniformLocation(progHandle, "numLights");
 
 		maxNumBonesVar = gl.glGetUniformLocation(progHandle, "maxNumBones");
 
 		cVar = gl.glGetUniformLocation(progHandle, "C");
 		fcVar = gl.glGetUniformLocation(progHandle, "FC");
+
+		lightDir[0] = 0;
+		lightDir[1] = 0;
+		lightDir[2] = -1;
+
+		lightInt[0] = 1;
 
 		staticInit = true;
 	}
@@ -279,13 +294,9 @@ public class TextureView implements Renderable {
 		gl.glUniform1f(cVar, Camera.C);
 		gl.glUniform1f(fcVar, Camera.FC);
 
-		Vec4d lightVect = new Vec4d(0,  0, -1,  0);
-		lightVect.normalize3();
-
-		gl.glUniform4f(lightDirVar, (float)lightVect.x,
-		                            (float)lightVect.y,
-		                            (float)lightVect.z,
-		                            (float)lightVect.w);
+		gl.glUniform1i(numLightsVar, 1);
+		gl.glUniform3fv(lightDirVar, 1, lightDir, 0);
+		gl.glUniform1fv(lightIntVar, 1, lightInt, 0);
 
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
 		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, textureID);

@@ -64,11 +64,18 @@ private static int meshProgHandle;
 private static int modelViewProjMatVar;
 private static int bindSpaceMatVar;
 private static int normalMatVar;
-private static int lightDirVar;
 private static int texVar;
 private static int colorVar;
 private static int useTexVar;
 private static int maxNumBonesVar;
+
+private static int lightDirVar;
+private static int lightIntVar;
+private static int numLightsVar;
+
+private static float[] lightsDir = new float[6];
+private static float[] lightsInt = new float[2];
+private static int numLights;
 
 // Var for tuning the logarithmic depth buffer
 private static int cVar;
@@ -174,18 +181,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 	modelViewProjMat.mult4(cam.getProjMat4d(), modelViewMat);
 
 
-	GL2GL3 gl = renderer.getGL();
-	gl.glUseProgram(meshProgHandle);
-	gl.glUniformMatrix4fv(modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
-	gl.glUniformMatrix4fv(normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
-
-	Vec4d lightVect = new Vec4d(-0.5f,  -0.2f, -0.5,  0);
-	lightVect.normalize3();
-
-	gl.glUniform4f(lightDirVar, (float)lightVect.x, (float)lightVect.y, (float)lightVect.z, (float)lightVect.w);
-
-	gl.glUniform1f(cVar, Camera.C);
-	gl.glUniform1f(fcVar, Camera.FC);
+	initUniforms(renderer, modelViewProjMat, normalMat);
 
 	ArrayList<ArrayList<Mat4d>> poses = null;
 	if (actions != null) {
@@ -314,19 +310,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 	Mat4d modelViewProjMat = new Mat4d();
 	modelViewProjMat.mult4(cam.getProjMat4d(), modelViewMat);
 
-	GL2GL3 gl = renderer.getGL();
-	gl.glUseProgram(meshProgHandle);
-
-	gl.glUniformMatrix4fv(modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
-	gl.glUniformMatrix4fv(normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
-
-	Vec4d lightVect = new Vec4d(-0.5f,  -0.2f, -0.5,  0);
-	lightVect.normalize3();
-
-	gl.glUniform4f(lightDirVar, (float)lightVect.x, (float)lightVect.y, (float)lightVect.z, (float)lightVect.w);
-
-	gl.glUniform1f(cVar, Camera.C);
-	gl.glUniform1f(fcVar, Camera.FC);
+	initUniforms(renderer, modelViewProjMat, normalMat);
 
 	Collections.sort(transparents);
 
@@ -338,6 +322,22 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 		renderSubMesh(ts.subMesh, ts.subInst, vaoMap, renderer, pose);
 	}
+}
+
+private void initUniforms(Renderer renderer, Mat4d modelViewProjMat, Mat4d normalMat) {
+	GL2GL3 gl = renderer.getGL();
+	gl.glUseProgram(meshProgHandle);
+
+	gl.glUniformMatrix4fv(modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
+	gl.glUniformMatrix4fv(normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
+
+	gl.glUniform3fv(lightDirVar, 2, lightsDir, 0);
+	gl.glUniform1fv(lightIntVar, 2, lightsInt, 0);
+	gl.glUniform1i(numLightsVar, numLights);
+
+	gl.glUniform1f(cVar, Camera.C);
+	gl.glUniform1f(fcVar, Camera.FC);
+
 }
 
 private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Renderer renderer) {
@@ -593,16 +593,31 @@ public static void init(Renderer r, GL2GL3 gl) {
 	modelViewProjMatVar = gl.glGetUniformLocation(meshProgHandle, "modelViewProjMat");
 	bindSpaceMatVar = gl.glGetUniformLocation(meshProgHandle, "bindSpaceMat");
 	normalMatVar = gl.glGetUniformLocation(meshProgHandle, "normalMat");
-	lightDirVar = gl.glGetUniformLocation(meshProgHandle, "lightDir");
 	colorVar = gl.glGetUniformLocation(meshProgHandle, "diffuseColor");
 	texVar = gl.glGetUniformLocation(meshProgHandle, "tex");
 	useTexVar = gl.glGetUniformLocation(meshProgHandle, "useTex");
 	maxNumBonesVar = gl.glGetUniformLocation(meshProgHandle, "maxNumBones");
 	boneMatricesVar = gl.glGetUniformLocation(meshProgHandle, "boneMatrices");
 
+	lightDirVar = gl.glGetUniformLocation(meshProgHandle, "lightDir");
+	lightIntVar = gl.glGetUniformLocation(meshProgHandle, "lightIntensity");
+	numLightsVar = gl.glGetUniformLocation(meshProgHandle, "numLights");
+
 	cVar = gl.glGetUniformLocation(meshProgHandle, "C");
 	fcVar = gl.glGetUniformLocation(meshProgHandle, "FC");
 
+	numLights = 2;
+
+	lightsDir[0] = -0.3f;
+	lightsDir[1] = -0.2f;
+	lightsDir[2] = -0.5f;
+
+	lightsDir[3] =  0.5f;
+	lightsDir[4] =  1.0f;
+	lightsDir[5] = -0.1f;
+
+	lightsInt[0] = 1f;
+	lightsInt[1] = 0.5f;
 }
 
 private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData data) {

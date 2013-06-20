@@ -26,7 +26,12 @@ out vec4 outColour;
 
 uniform sampler2D tex;
 
-uniform vec4 lightDir;
+const int MAX_LIGHTS = 10;
+
+uniform vec3 lightDir[MAX_LIGHTS];
+uniform float lightIntensity[MAX_LIGHTS];
+uniform int numLights;
+
 uniform vec4 diffuseColor;
 
 uniform bool useTex;
@@ -36,11 +41,16 @@ void main()
     if (interpZ < 0)
         discard;
 
-    vec3 l = normalize(lightDir.xyz);
     vec3 n = normalize(normalFrag);
 
-    float lightDotN = dot(n, l) * -1;
-    float light = clamp(lightDotN, 0, 1)*0.5 + 0.5;
+    float light = 0;
+    for (int i = 0; i < numLights; ++i) {
+        vec3 l = normalize(lightDir[i]);
+        float intensity = -1*dot(n, l) * lightIntensity[i];
+        light += clamp(intensity, 0, 1);
+    }
+
+    light = clamp(light, 0.3, 1);
 
     if (useTex) {
         outColour = texture2D(tex, texCoordFrag);
