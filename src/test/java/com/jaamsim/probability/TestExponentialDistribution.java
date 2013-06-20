@@ -18,12 +18,17 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import com.jaamsim.ProbabilityDistributions.ExponentialDistribution;
 import com.jaamsim.input.InputAgent;
+import com.sandwell.JavaSimulation.ObjectType;
 
 public class TestExponentialDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
+		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
+		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+
 		ExponentialDistribution dist = new ExponentialDistribution();
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		dist.validate();
 		dist.earlyInit();

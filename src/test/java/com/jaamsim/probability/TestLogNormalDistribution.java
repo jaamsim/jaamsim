@@ -18,12 +18,17 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import com.jaamsim.ProbabilityDistributions.LogNormalDistribution;
 import com.jaamsim.input.InputAgent;
+import com.sandwell.JavaSimulation.ObjectType;
 
 public class TestLogNormalDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
+		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
+		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+
 		LogNormalDistribution dist = new LogNormalDistribution();
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "NormalMean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "NormalStandardDeviation", "2.0");
 		dist.validate();

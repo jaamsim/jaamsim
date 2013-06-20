@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import com.jaamsim.ProbabilityDistributions.GammaDistribution;
 import com.jaamsim.input.InputAgent;
+import com.sandwell.JavaSimulation.ObjectType;
 
 public class TestGammaDistribution {
 
@@ -26,7 +27,11 @@ public class TestGammaDistribution {
 	 * Tests the gamma distribution for Shape >= 1
 	 */
 	public void MeanAndStandardDeviation1() {
+		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
+		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+
 		GammaDistribution dist = new GammaDistribution();
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "2.0");
 		dist.validate();
@@ -46,7 +51,11 @@ public class TestGammaDistribution {
 	 * Tests the gamma distribution for Shape < 1
 	 */
 	public void MeanAndStandardDeviation2() {
+		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
+		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+
 		GammaDistribution dist = new GammaDistribution();
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "0.5");
 		dist.earlyInit();

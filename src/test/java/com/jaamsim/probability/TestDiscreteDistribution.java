@@ -18,12 +18,17 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import com.jaamsim.ProbabilityDistributions.DiscreteDistribution;
 import com.jaamsim.input.InputAgent;
+import com.sandwell.JavaSimulation.ObjectType;
 
 public class TestDiscreteDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
+		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
+		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+
 		DiscreteDistribution dist = new DiscreteDistribution();
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "ValueList", "1.0  3.0  10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "ProbabilityList", "0.5  0.3  0.2");
 		dist.validate();
