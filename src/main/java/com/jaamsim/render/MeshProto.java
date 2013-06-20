@@ -363,7 +363,6 @@ private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Rende
 		gl.glVertexAttrib2f(texCoordVar, 0, 0);
 	}
 
-
 	int boneIndicesVar = gl.glGetAttribLocation(meshProgHandle, "boneIndices");
 	int boneWeightsVar = gl.glGetAttribLocation(meshProgHandle, "boneWeights");
 
@@ -669,6 +668,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._vertexBuffer);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.indices.length * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+		renderer.usingVRAM(data.indices.length * 3 * 4);
 	} else
 	{
 		// Init vertices
@@ -680,6 +680,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._vertexBuffer);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.verts.size() * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+		renderer.usingVRAM(data.verts.size() * 3 * 4);
 	}
 
 	// Init textureCoords
@@ -694,6 +695,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._texCoordBuffer);
 			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.indices.length * 2 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+			renderer.usingVRAM(data.indices.length * 2 * 4);
 
 		} else
 		{
@@ -705,6 +707,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._texCoordBuffer);
 			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.texCoords.size() * 2 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+			renderer.usingVRAM(data.texCoords.size() * 2 * 4);
 		}
 	}
 
@@ -718,6 +721,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneIndicesBuffer);
 			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.indices.length * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+			renderer.usingVRAM(data.indices.length * 4 * 4);
 
 			fb = FloatBuffer.allocate(data.indices.length * 4); //
 			for (int ind : data.indices) {
@@ -727,6 +731,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneWeightsBuffer);
 			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.indices.length * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+			renderer.usingVRAM(data.indices.length * 4 * 4);
 		}
 		else {
 			// Indices
@@ -738,6 +743,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneIndicesBuffer);
 			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.boneIndices.size() * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+			renderer.usingVRAM(data.boneIndices.size() * 4 * 4);
 
 			// Weights
 			fb = FloatBuffer.allocate(data.boneWeights.size() * 4); //
@@ -748,6 +754,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneWeightsBuffer);
 			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.boneWeights.size() * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+			renderer.usingVRAM(data.boneWeights.size() * 4 * 4);
 		}
 	}
 
@@ -760,6 +767,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._normalBuffer);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.indices.length * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+		renderer.usingVRAM(data.indices.length * 3 * 4);
 	} else
 	{
 		// Init normals
@@ -771,6 +779,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._normalBuffer);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.normals.size() * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+		renderer.usingVRAM(data.normals.size() * 3 * 4);
 	}
 
 	if (flattenBuffers) {
@@ -782,6 +791,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 		IntBuffer indexBuffer = IntBuffer.wrap(data.indices);
 		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, sub._indexBuffer);
 		gl.glBufferData(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, sub._numVerts * 4, indexBuffer, GL2GL3.GL_STATIC_DRAW);
+		renderer.usingVRAM(sub._numVerts * 4);
 
 	}
 

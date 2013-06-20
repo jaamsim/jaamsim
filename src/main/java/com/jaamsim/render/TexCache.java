@@ -279,9 +279,11 @@ public class TexCache {
 			if (le.compressed) {
 				gl.glCompressedTexImage2D(GL2GL3.GL_TEXTURE_2D, 0, internalFormat, le.width,
 				                          le.height, 0, le.data.capacity(), 0);
+				_renderer.usingVRAM(le.data.capacity());
 			} else {
 				gl.glTexImage2D(GL2GL3.GL_TEXTURE_2D, 0, internalFormat, le.width,
 				                le.height, 0, GL2GL3.GL_BGRA, GL2GL3.GL_UNSIGNED_INT_8_8_8_8_REV, 0);
+				_renderer.usingVRAM(le.width*le.height*4);
 			}
 
 			// Note we do not let openGL generate compressed mipmaps because it stalls the render thread really badly

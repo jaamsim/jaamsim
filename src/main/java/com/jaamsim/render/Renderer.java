@@ -138,6 +138,8 @@ public class Renderer {
 	private double _sceneTimeMS;
 	private double _loopTimeMS;
 
+	private long _usedVRAM = 0;
+
 	// This may not be the best way to cache this
 	//private GL2GL3 _currentGL = null;
 	private GLContext _drawContext = null;
@@ -1048,6 +1050,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 					// Draw a window specific performance counter
 					_drawContext = drawable.getContext();
 					StringBuilder perf = new StringBuilder("Objects Culled: ").append(pi.objectsCulled);
+					perf.append(" VRAM: ").append(_usedVRAM/(1024.0*1024.0)).append("MB");
 					perf.append(" Frame time (ms) :").append(_lastFrameNanos / 1000000.0);
 					perf.append(" SceneTime: ").append(_sceneTimeMS);
 					perf.append(" Loop Time: ").append(_loopTimeMS);
@@ -1554,4 +1557,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 		_drawContext = null;
 	}
 
+	public void usingVRAM(long bytes) {
+		_usedVRAM += bytes;
+	}
 }
