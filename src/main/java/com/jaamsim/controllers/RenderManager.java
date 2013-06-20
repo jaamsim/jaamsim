@@ -855,7 +855,7 @@ public class RenderManager implements DragSourceListener {
 		Mat4d invTransMat = _selectedEntity.getInvTransMatrix(_simTime);
 
 		Plane entityPlane = new Plane(); // Defaults to XY
-		entityPlane.transform(trans, entityPlane); // Transform the plane to world space
+		entityPlane.transform(trans, entityPlane, new Vec3d()); // Transform the plane to world space
 
 		double currentDist = entityPlane.collisionDist(currentRay);
 		double lastDist = entityPlane.collisionDist(lastRay);
