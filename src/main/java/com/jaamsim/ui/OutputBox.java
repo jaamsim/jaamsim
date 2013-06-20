@@ -23,6 +23,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import com.jaamsim.input.OutputHandle;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
@@ -31,8 +32,7 @@ public class OutputBox extends FrameBox {
 	private Entity currentEntity;
 	OutputTableModel tableModel;
 
-	private ArrayList<String> outputNames = new ArrayList<String>();
-	private ArrayList<Boolean> rowIsClass = new ArrayList<Boolean>();
+	private final ArrayList<Object> entries = new ArrayList<Object>();
 
 	public OutputBox() {
 		super( "Output Viewer" );
@@ -65,29 +65,24 @@ public class OutputBox extends FrameBox {
 		currentEntity = entity;
 		if (currentEntity == null) {
 			setTitle("Output Viewer");
-			outputNames.clear();
-			rowIsClass.clear();
+			entries.clear();
 			return;
 		}
 		setTitle("Output Viewer - " + currentEntity.getInputName());
 
 		// Build up the row list, leaving extra rows for entity names
-		String[] tempNames = currentEntity.getSortedOutputNames();
 		Class<?> currClass = null;
+		entries.clear();
 
-		outputNames = new ArrayList<String>();
-		rowIsClass = new ArrayList<Boolean>();
-
-		for (String name : tempNames) {
-			Class<?> klass = currentEntity.getOutputDeclaringClass(name);
+		ArrayList<OutputHandle> handles = currentEntity.getOutputs();
+		for (OutputHandle h : handles) {
+			Class<?> klass = h.method.getDeclaringClass();
 			if (currClass != klass) {
 				// This is the first time we've seen this class, add a place holder row
 				currClass = klass;
-				outputNames.add(klass.getSimpleName());
-				rowIsClass.add(true);
+				entries.add(klass);
 			}
-			outputNames.add(name);
-			rowIsClass.add(false);
+			entries.add(h);
 		}
 	}
 
@@ -124,18 +119,20 @@ private class OutputTable extends JTable {
 	public String getToolTipText(MouseEvent event) {
 		Point p = event.getPoint();
 		int row = rowAtPoint(p);
-		if (row >= outputNames.size() || currentEntity == null || rowIsClass.get(row)) {
+		if (currentEntity == null ||
+		    row >= entries.size() ||
+		    entries.get(row) instanceof Class) {
 			return null;
 		}
 
-		String outputName = outputNames.get(row);
+		OutputHandle output = (OutputHandle)entries.get(row);
 
 		StringBuilder build = new StringBuilder();
 		build.append("<HTML>");
 		build.append("<b>Name:</b>  ");
-		build.append(outputName);
+		build.append(output.annotation.name());
 		build.append("<BR>");
-		String desc = currentEntity.getOutputDescripion(outputName);
+		String desc = output.annotation.description();
 		if (!desc.isEmpty()) {
 			build.append("<BR>");
 			build.append("<b>Description:</b> ");
@@ -186,23 +183,21 @@ private class OutputTableModel extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return outputNames.size();
+		return entries.size();
 	}
 
 	@Override
 	public Object getValueAt(int row, int col) {
-
+		Object entry = entries.get(row);
 		switch (col) {
 		case 0:
-			if (rowIsClass.get(row)) {
-				return String.format("<HTML><B>%s</B></HTML>", outputNames.get(row));
-			}
-			return String.format("    %s", outputNames.get(row));
+			if (entry instanceof Class)
+				return String.format("<HTML><B>%s</B></HTML>", ((Class<?>)entry).getSimpleName());
+			return String.format("    %s", ((OutputHandle)entry).annotation.name());
 		case 1:
-			if (rowIsClass.get(row)) {
+			if (entry instanceof Class)
 				return "";
-			}
-			return currentEntity.getOutputAsString(outputNames.get(row), simTime);
+			return currentEntity.getOutputAsString(((OutputHandle)entry).annotation.name(), simTime);
 		default:
 			assert false;
 			return null;

@@ -44,8 +44,6 @@ public class Entity {
 	private final long entityNumber;
 
 	private HashMap<String, OutputHandle> outputCache = null;
-	// A list of outputs, sorted first by class, then alphabetically
-	private String[] sortedOutputNames = null;
 
 	//public static final int FLAG_TRACE = 0x01; // reserved in case we want to treat tracing like the other flags
 	public static final int FLAG_TRACEREQUIRED = 0x02;
@@ -627,6 +625,28 @@ public class Entity {
 		}
 	}
 
+	public final ArrayList<OutputHandle> getOutputs() {
+		ArrayList<OutputHandle> handles = new ArrayList<OutputHandle>();
+		for (Method m : this.getClass().getMethods()) {
+			Output o = m.getAnnotation(Output.class);
+			if (o == null)
+				continue;
+
+			// Check that this method only takes a single double (simTime) parameter
+			Class<?>[] paramTypes = m.getParameterTypes();
+			if (paramTypes.length != 1 ||
+			    paramTypes[0] != double.class) {
+				continue;
+			}
+
+			OutputHandle handle = new OutputHandle(o, m);
+			handles.add(handle);
+		}
+
+		Collections.sort(handles, new OutputComparator());
+		return handles;
+	}
+
 	private void buildOutputCache() {
 		outputCache = new HashMap<String, OutputHandle>();
 		ArrayList<OutputHandle> handles = new ArrayList<OutputHandle>();
@@ -650,10 +670,6 @@ public class Entity {
 		}
 
 		Collections.sort(handles, new OutputComparator());
-		sortedOutputNames = new String[handles.size()];
-		for (int i = 0; i < handles.size(); ++i) {
-			sortedOutputNames[i] = handles.get(i).annotation.name();
-		}
 	}
 
 	/**
@@ -777,40 +793,6 @@ public class Entity {
 		return false;
 	}
 
-	public String[] getOutputNames(boolean includeInputs) {
-		// lazily initialize the output cache
-		if (outputCache == null) {
-			buildOutputCache();
-		}
-
-		int outputSize = outputCache.size();
-		if (includeInputs) {
-			outputSize += inputMap.size();
-		}
-
-		String[] ret = new String[outputSize];
-
-		int outIndex = 0;
-		for (String s : outputCache.keySet()) {
-			ret[outIndex++] = s;
-		}
-
-		if (includeInputs) {
-			for (String s : inputMap.keySet()) {
-				ret[outIndex++] = s;
-			}
-		}
-
-		return ret;
-	}
-
-	public String[] getSortedOutputNames() {
-		if (outputCache == null) {
-			buildOutputCache();
-		}
-		return sortedOutputNames;
-	}
-
 	/**
 	 * Returns the type (Class) of the output, or null if there is no such output
 	 * @param outputName
@@ -828,16 +810,6 @@ public class Entity {
 		return m.getReturnType();
 	}
 
-	public Class<?> getOutputDeclaringClass(String outputName) {
-		if (outputCache == null) {
-			buildOutputCache();
-		}
-		Method m = outputCache.get(outputName).method;
-		assert (m != null);
-
-		return m.getDeclaringClass();
-	}
-
 	public Class<? extends Unit> getOutputUnit(String outputName) {
 		if (outputCache == null) {
 			buildOutputCache();
@@ -846,16 +818,6 @@ public class Entity {
 		assert (a != null);
 
 		return a.unitType();
-	}
-
-	public String getOutputDescripion(String outputName) {
-		if (outputCache == null) {
-			buildOutputCache();
-		}
-		Output a = outputCache.get(outputName).annotation;
-		assert (a != null);
-
-		return a.description();
 	}
 
 	@Output(name = "Name",
