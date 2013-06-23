@@ -60,7 +60,7 @@ public class DynamicDoubleInput extends Input<SampleProvider> {
 
 		Entity ent = Input.parseEntity(input.get(0), Entity.class);
 		String output = input.get(1);
-		Class<?> outklass = ent.getOutputType(output);
+		Class<?> outklass = ent.getOutputHandle(output).getReturnType();
 		if (outklass != double.class && outklass != Double.class)
 			throw new InputErrorException("The output variable %s does not return a number.", output);
 

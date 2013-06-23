@@ -182,7 +182,7 @@ public class ColladaModel extends DisplayModel {
 			for (Action.Binding b : actions.getValue()) {
 				Action.Queue aq = new Action.Queue();
 				aq.name = b.actionName;
-				aq.time = dispEnt.getOutputValue(b.outputName, simTime, double.class);
+				aq.time = dispEnt.getOutputHandle(b.outputName).getValue(dispEnt, simTime, double.class);
 				aqList.add(aq);
 			}
 

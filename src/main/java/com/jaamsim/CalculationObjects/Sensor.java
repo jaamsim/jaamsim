@@ -14,6 +14,7 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.OutputHandle;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -62,7 +63,8 @@ public class Sensor extends DoubleCalculation {
 		// Check that the output is a double or a Double
 		Entity ent = entityInput.getValue();
 		String name = outputNameInput.getValue();
-		Class<?> retType = ent.getOutputType(name);
+		OutputHandle out = ent.getOutputHandle(name);
+		Class<?> retType = out.getReturnType();
 		if ( retType != Double.class && retType != double.class) {
 			throw new InputErrorException( "The OutputName keyword must specify a floating point output." );
 		}
@@ -74,11 +76,12 @@ public class Sensor extends DoubleCalculation {
 		Entity ent = entityInput.getValue();
 		String name = outputNameInput.getValue();
 
-		Class<?> retType = ent.getOutputType(name);
+		OutputHandle out = ent.getOutputHandle(name);
+		Class<?> retType = out.getReturnType();
 		if (retType == Double.class) {
-			val = ent.getOutputValue(name, simTime, Double.class);
+			val = out.getValue(ent, simTime, Double.class);
 		} else if (retType == double.class){
-			val = ent.getOutputValue(name, simTime, double.class);
+			val = out.getValue(ent, simTime, double.class);
 		}
 
 		// Set the present value

@@ -24,6 +24,7 @@ public class OutputInput<T> extends Input<String> {
 	private Class<T> klass;
 	private Entity ent;
 	private String outputName;
+	private OutputHandle out;
 
 	public OutputInput(Class<T> klass, String key, String cat, String def) {
 		super(key, cat, def);
@@ -35,10 +36,10 @@ public class OutputInput<T> extends Input<String> {
 		Input.assertCount(input, 2);
 
 		ent = Input.parseEntity(input.get(0), Entity.class);
-
 		outputName = input.get(1);
+		out = ent.getOutputHandle(outputName);
 
-		Class<?> retClass = ent.getOutputType(outputName);
+		Class<?> retClass = out.getReturnType();
 		if (!klass.isAssignableFrom(retClass)) {
 			throw new InputErrorException("OutputInput class mismatch. Expected: %s, got: %s", klass.toString(), retClass.toString());
 		}
@@ -48,7 +49,7 @@ public class OutputInput<T> extends Input<String> {
 	}
 
 	public T getOutputValue(double simTime) {
-		return ent.getOutputValue(outputName, simTime, klass);
+		return out.getValue(ent, simTime, klass);
 	}
 
 }

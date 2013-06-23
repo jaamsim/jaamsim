@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.input.OutputHandle;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerInput;
@@ -74,7 +75,7 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 			if (ent == null || !ent.hasOutput(outputName, true)) {
 				return failureText.getValue();
 			}
-			ent = ent.getOutputValue(outputName, simTime, Entity.class);
+			ent = ent.getOutputHandle(outputName).getValue(ent, simTime, Entity.class);
 		}
 
 		// Now get the last output, and take it's value from the current entity
@@ -84,19 +85,20 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 			return failureText.getValue();
 		}
 
-		Class<?> retType = ent.getOutputType(name);
+		OutputHandle out = ent.getOutputHandle(name);
+		Class<?> retType = out.getReturnType();
 		if (retType == Double.class ||
 		    retType == double.class) {
 			double val = 0;
 			if (retType == Double.class) {
-				val = ent.getOutputValue(name, simTime, Double.class);
+				val = out.getValue(ent, simTime, Double.class);
 			} else {
-				val = ent.getOutputValue(name, simTime, double.class);
+				val = out.getValue(ent, simTime, double.class);
 			}
 			return String.format(doubleFormat, val);
 		}
 
-		String val = ent.getOutputAsString(name, simTime);
+		String val = out.getValueAsString(ent, simTime);
 
 		if (val == null) {
 			return failureText.getValue();

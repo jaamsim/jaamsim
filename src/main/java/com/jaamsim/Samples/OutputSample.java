@@ -14,31 +14,34 @@
  */
 package com.jaamsim.Samples;
 
+import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 
 public class OutputSample implements SampleProvider {
 	private final Entity ent;
 	private final String output;
+	private final OutputHandle out;
 	private final Class<?> retType;
 
 	public OutputSample(Entity ent, String output) {
 		this.ent = ent;
 		this.output = output;
-		retType = ent.getOutputType(output);
+		this.out = ent.getOutputHandle(output);
+		retType = out.getReturnType();
 	}
 
 	@Override
 	public Class<? extends Unit> getUnitType() {
-		return ent.getOutputUnit(output);
+		return out.getUnitType();
 	}
 
 	@Override
 	public double getNextSample(double simTime) {
 		if (retType == Double.class)
-			return ent.getOutputValue(output, simTime, Double.class);
+			return out.getValue(ent, simTime, Double.class);
 		else
-			return ent.getOutputValue(output, simTime, double.class);
+			return out.getValue(ent, simTime, double.class);
 	}
 
 	@Override
