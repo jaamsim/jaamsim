@@ -27,7 +27,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputGroup;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
-import com.jaamsim.units.Unit;
 
 /**
  * Abstract class that encapsulates the methods and data needed to create a
@@ -794,33 +793,6 @@ public class Entity {
 			return true;
 
 		return false;
-	}
-
-	/**
-	 * Returns the type (Class) of the output, or null if there is no such output
-	 * @param outputName
-	 * @return
-	 */
-	public Class<?> getOutputType(String outputName) {
-		// lazily initialize the output cache
-		if (outputCache == null) {
-			buildOutputCache();
-		}
-
-		Method m = outputCache.get(outputName).method;
-		assert (m != null);
-
-		return m.getReturnType();
-	}
-
-	public Class<? extends Unit> getOutputUnit(String outputName) {
-		if (outputCache == null) {
-			buildOutputCache();
-		}
-		Output a = outputCache.get(outputName).annotation;
-		assert (a != null);
-
-		return a.unitType();
 	}
 
 	@Output(name = "Name",
