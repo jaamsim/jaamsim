@@ -32,11 +32,11 @@ public class PIDController extends DoubleCalculation {
 
 
 	@Keyword(description = "The Entity and Output that provides the set point for the PID controller.",
-	         example = "PIDController-1 SetPoint { Calc1.Value }")
+	         example = "PIDController-1 SetPoint { Calc1 Value }")
 	private final OutputInput<Double> setPointInput;
 
 	@Keyword(description = "The Entity and Output that provides the process variable feedback to the PID controller.",
-	         example = "PIDController-1 ProcessVariable { Calc1.Value }")
+	         example = "PIDController-1 ProcessVariable { Calc1 Value }")
 	private final OutputInput<Double> processVariableInput;
 
 	@Keyword(description = "The scale coefficient applied to the output signal.",

@@ -26,8 +26,8 @@ import com.sandwell.JavaSimulation.Keyword;
  */
 public abstract class DoubleCalculation extends CalculationEntity {
 
-	@Keyword(description = "The value to be used as an input to the present calculation.",
-	         example = "Calculation1 InputValue { Tank-1.FluidLevel }")
+	@Keyword(description = "The Entity and Output that provides the input to the present calculation.",
+	         example = "Calculation1 InputValue { Tank-1 FluidLevel }")
 	protected final OutputInput<Double> inputValueInput;
 
 	private double value;  // Present value for this calculation
