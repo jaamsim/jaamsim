@@ -67,8 +67,6 @@ public abstract class DoubleCalculation extends CalculationEntity {
 		value = val;
 	}
 
-	@Output(name = "InputValue",
-	 description = "The input to the calculation at the present time.")
 	public Double getInputValue( double simTime ) {
 		return inputValueInput.getOutputValue( simTime );
 	}
