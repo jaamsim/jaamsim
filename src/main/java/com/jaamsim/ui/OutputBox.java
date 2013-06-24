@@ -197,7 +197,7 @@ private class OutputTableModel extends AbstractTableModel {
 		case 1:
 			if (entry instanceof Class)
 				return "";
-			return currentEntity.getOutputAsString(((OutputHandle)entry).annotation.name(), simTime);
+			return ((OutputHandle)entry).getValueAsString(currentEntity, simTime);
 		default:
 			assert false;
 			return null;
