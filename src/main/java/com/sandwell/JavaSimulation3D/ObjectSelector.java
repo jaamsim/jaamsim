@@ -537,9 +537,9 @@ static class CenterInViewMenuItem extends DEMenuItem {
 	private static ArrayList<DEMenuItem> getMenuItems(Entity ent, int x, int y) {
 		ArrayList<DEMenuItem> list = new ArrayList<DEMenuItem>();
 		list.add(new InputMenuItem(ent));
+		list.add(new OutputMenuItem(ent));
 		list.add(new PropertyMenuItem(ent));
 		list.add(new InfoMenuItem(ent));
-		list.add(new OutputMenuItem(ent));
 
 		if (!ent.testFlag(Entity.FLAG_GENERATED))
 			list.add(new DuplicateMenuItem(ent));
