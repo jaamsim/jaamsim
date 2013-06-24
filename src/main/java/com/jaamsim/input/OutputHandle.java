@@ -17,6 +17,7 @@ package com.jaamsim.input;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 
@@ -61,7 +62,14 @@ public class OutputHandle {
 			Object o = method.invoke(ent, simTime);
 			if (o == null)
 				return null;
-			return o.toString();
+
+			ret = o.toString();
+			Class<? extends Unit> ut = annotation.unitType();
+			if( ut != Unit.class && ut != DimensionlessUnit.class )
+				ret += "  " + Unit.getSIUnit(ut);
+
+			return ret;
+
 		} catch (InvocationTargetException ex) {
 			assert false;
 		} catch (IllegalAccessException ex) {
