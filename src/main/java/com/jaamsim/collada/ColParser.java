@@ -835,6 +835,16 @@ public class ColParser {
 
 	}
 
+	private Vec4d generateNormal(Vec4d p0, Vec4d p1, Vec4d p2, Vec4d t0, Vec4d t1) {
+		t0.sub3(p1, p0);
+		t1.sub3(p2, p0);
+		Vec4d norm = new Vec4d();
+		norm.cross3(t0, t1);
+		norm.normalize3();
+		norm.w = 0;
+		return norm;
+	}
+
 	private void generateTriangleGeo(XmlNode subGeo, Geometry geoData) {
 		String geoTag = subGeo.getTag();
 
@@ -875,22 +885,18 @@ public class ColParser {
 		fsg.materialSymbol = subGeo.getAttrib("material");
 		parseAssert(fsg.materialSymbol != null);
 
+		Vec4d t0 = new Vec4d();
+		Vec4d t1 = new Vec4d();
+
 		Vec4d[] generatedNormals = null;
 		if (!hasNormal) {
-			Vec4d t0 = new Vec4d();
-			Vec4d t1 = new Vec4d();
 			// Generate one normal per face
 			generatedNormals = new Vec4d[numVerts/3];
 			for (int i = 0; i < numVerts / 3; ++i) {
 				Vec4d p0 = posData[smd.posDesc.indices[i*3 + 0]];
 				Vec4d p1 = posData[smd.posDesc.indices[i*3 + 1]];
 				Vec4d p2 = posData[smd.posDesc.indices[i*3 + 2]];
-				t0.sub3(p1, p0);
-				t1.sub3(p2, p0);
-				Vec4d norm = new Vec4d();
-				norm.cross3(t0, t1);
-				norm.normalize3();
-				norm.w = 0;
+				Vec4d norm = generateNormal(p0, p1, p2, t0, t1);
 				generatedNormals[i] = norm;
 			}
 		}
@@ -901,8 +907,20 @@ public class ColParser {
 
 			Vec4d normal = null;
 			if (hasNormal) {
-				normal = new Vec4d(normData[smd.normDesc.indices[i]]);
-				normal.w = 0;
+				// Make sure the normal is actually present, treat negative indices as missing normals
+				int normInd = smd.normDesc.indices[i];
+				if (normInd < 0) {
+					// We need to generate one
+					int triInd = i/3;
+					Vec4d p0 = posData[smd.posDesc.indices[triInd*3 + 0]];
+					Vec4d p1 = posData[smd.posDesc.indices[triInd*3 + 1]];
+					Vec4d p2 = posData[smd.posDesc.indices[triInd*3 + 2]];
+					normal = generateNormal(p0, p1, p2, t0, t1);
+				}
+				else {
+					normal = new Vec4d(normData[normInd]);
+					normal.w = 0;
+				}
 			} else {
 				normal = generatedNormals[i/3];
 			}
