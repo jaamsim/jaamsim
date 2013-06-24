@@ -35,6 +35,8 @@ public class WeightedSum extends DoubleCalculation {
 	private final DoubleListInput coefficientListInput;
 
 	{
+		inputValueInput.setHidden(true);
+
 		entityListInput = new EntityListInput<DoubleCalculation>( DoubleCalculation.class, "EntityList", "Key Inputs", null);
 		this.addInput( entityListInput, true);
 
