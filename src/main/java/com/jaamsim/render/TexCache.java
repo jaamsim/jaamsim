@@ -46,6 +46,8 @@ import com.jogamp.opengl.GLExtensions;
  */
 public class TexCache {
 
+	private static final int MAX_UNCOMPRESSED_SIZE = 64*1024*1024; // No texture can be more than 64 megs uncompressed
+
 	private static class TexEntry {
 		public int texID;
 		public boolean hasAlpha;
@@ -176,7 +178,7 @@ public class TexCache {
 		return glTexID;
 	}
 
-	private LoadingEntry launchLoadImage(GL2GL3 gl, final URL imageURL, final boolean transparent, final boolean compressed) {
+	private LoadingEntry launchLoadImage(GL2GL3 gl, final URL imageURL, boolean transparent, boolean compressed) {
 
 		Dimension dim = getImageDimension(imageURL);
 		if (dim == null) {
@@ -189,6 +191,14 @@ public class TexCache {
 		gl.glGenBuffers(1, ids, 0);
 
 		int bufferSize = dim.width*dim.height*4;
+
+		if (!transparent) {
+			if (dim.width * dim.height * 3 > MAX_UNCOMPRESSED_SIZE) {
+				// Always compress large textures and save the user from themselves
+				compressed = true;
+			}
+		}
+
 		if (compressed) {
 			assert(gl.isExtensionAvailable(GLExtensions.EXT_texture_compression_s3tc));
 			// Round width and height up to nearest multiple of 4 (the s3tc block size)
