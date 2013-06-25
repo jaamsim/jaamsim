@@ -81,8 +81,8 @@ public class ScriptEntity extends Entity {
 
 		// If the script file exists, open it
 		FileEntity scriptFile;
-		if( FileEntity.fileExists( scriptFileName.getValue() ) ) {
-			scriptFile = new FileEntity( scriptFileName.getValue(), FileEntity.FILE_READ, true );
+		if( FileEntity.fileExists( Util.getAbsoluteFilePath( scriptFileName.getValue() ) ) ) {
+			scriptFile = new FileEntity( Util.getAbsoluteFilePath( scriptFileName.getValue() ), FileEntity.FILE_READ, true );
 		}
 		else {
 			throw new InputErrorException( "The script file " + scriptFileName.getValue() + " was not found" );
