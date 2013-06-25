@@ -16,8 +16,9 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.IntegerInput;
@@ -29,7 +30,7 @@ public class Queue extends DisplayEntity {
 
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
 	         example = "Queue1 Spacing { 1 }")
-	private final DoubleInput spacingInput;
+	private final ValueInput spacingInput;
 
 	protected ArrayList<DisplayEntity> itemList;
 
@@ -45,9 +46,9 @@ public class Queue extends DisplayEntity {
 	protected ArrayList<QueueRecorder> recorderList;
 
 	{
-		spacingInput = new DoubleInput("Spacing", "Key Inputs", 0.0d);
+		spacingInput = new ValueInput("Spacing", "Key Inputs", 0.0d);
+		spacingInput.setUnitType(DistanceUnit.class);
 		spacingInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		spacingInput.setUnits( "m" );
 		this.addInput(spacingInput, true);
 
 		maxPerLineInput = new IntegerInput("MaxPerLine", "Key Inputs", Integer.MAX_VALUE);
