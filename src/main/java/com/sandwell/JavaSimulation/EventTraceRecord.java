@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.events.ProcessTarget;
 import com.sandwell.JavaSimulation.EventManager.Event;
 
 class EventTraceRecord extends ArrayList<String> {
@@ -62,7 +63,7 @@ class EventTraceRecord extends ArrayList<String> {
 
 		if (temp[0].endsWith("StartProcess")) {
 			targetName = temp[1];
-			method = temp[2];
+			method = "";
 			return;
 		}
 
@@ -133,15 +134,17 @@ class EventTraceRecord extends ArrayList<String> {
 		this.finish();
 	}
 
-	synchronized void formatProcessTrace(String name, long currentTime, Entity target, String methodName) {
+	synchronized void formatBegin(String name, long currentTime, ProcessTarget t) {
 		this.addHeader(name, currentTime);
-		if (target == null) {
-			traceLevel--;
-			this.append("Exit");
-		} else {
-			this.append(String.format("%s\t%s\t%s", "StartProcess", target.getName(), methodName));
-			traceLevel++;
-		}
+		this.append(String.format("StartProcess\t%s", t.getDescription()));
+		traceLevel++;
+		this.finish();
+	}
+
+	synchronized void formatExit(String name, long currentTime) {
+		this.addHeader(name, currentTime);
+		traceLevel--;
+		this.append("Exit");
 		this.finish();
 	}
 

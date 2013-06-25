@@ -14,10 +14,10 @@
  */
 package com.sandwell.JavaSimulation;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.ui.ExceptionBox;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
@@ -45,9 +45,7 @@ public class Process extends Thread {
 	private static double ticksPerSecond; // The number of discrete ticks per simulated second
 	private static double secondsPerTick; // The reciprocal of ticksPerSecond
 
-	private Entity target; // The entity whose method is to be executed
-	private Method method; // The method to be executed
-	private Object[] arguments; // The arguments passed to the method to be executed
+	private ProcessTarget target; // The entity whose method is to be executed
 
 	private EventManager eventManager; // The EventManager that is currently managing this Process
 	private Process nextProcess; // The Process from which the present process was created
@@ -140,24 +138,18 @@ public class Process extends Thread {
 	}
 
 	private void execute() {
-		Method procMethod;
-		Entity procTarget;
-		Object[] procArgs;
+		ProcessTarget procTarget;
 
-		// Save a locally-consistent set of target/method/args, synchronized
+		// Save a locally-consistent processTarget, synchronized
 		// against against a call to allocate() from a separate thread
 		synchronized (this) {
-			procMethod = this.method;
 			procTarget = this.target;
-			procArgs = this.arguments;
 			this.target = null;
-			this.method = null;
-			this.arguments = null;
 		}
 
 		try {
 			// Execute the method
-			procMethod.invoke(procTarget, procArgs);
+			procTarget.process();
 
 			// Notify the event manager that the process has been completed
 			synchronized (this) {
@@ -165,41 +157,20 @@ public class Process extends Thread {
 			}
 			return;
 		}
-
-		// Normal exceptions throw by procMethod.invoke() are of type
-		// InvocationTargetException
-		catch (InvocationTargetException e) {
-
+		catch (ThreadKilledException e) {
 			// If the process was killed by a terminateThread method then
 			// return to the beginning of the process loop
-			if (e.getCause() instanceof ThreadKilledException) {
-				return;
-			}
-			// Trap an out of memory error and print a message to the command
-			// line
-			else if (e.getCause() instanceof java.lang.OutOfMemoryError) {
-				System.err.println("Out of Memory " + procTarget.getCurrentTime());
-				System.err.println("use the -Xmx flag during execution for more memory");
-				System.err.println("Further debug information:");
-				OutOfMemoryError err = (OutOfMemoryError)e.getCause();
-				System.err.println("Error: " + err.getMessage());
-				for (StackTraceElement each : err.getStackTrace())
-					System.out.println(each.toString());
-				GUIFrame.shutdown(1);
-			}
-			// All other errors are trapped normally
-			else {
-				this.makeExceptionBox(e.getCause());
-			}
+			return;
 		}
-
-		// Other exception are also possible in the case of programming errors
-		catch (IllegalAccessException e) { this.makeExceptionBox(e); }
-		catch (IllegalArgumentException e) { this.makeExceptionBox(e); }
-		catch (NullPointerException e) { this.makeExceptionBox(e); }
-		catch (ExceptionInInitializerError e) { this.makeExceptionBox(e); }
+		catch (OutOfMemoryError e) {
+			System.err.println("Out of Memory use the -Xmx flag during execution for more memory");
+			System.err.println("Further debug information:");
+			System.err.println("Error: " + e.getMessage());
+			for (StackTraceElement each : e.getStackTrace())
+				System.out.println(each.toString());
+			GUIFrame.shutdown(1);
+		}
 		catch (Throwable e) {
-			System.err.println("Caught unknown error, exiting " + e.getClass().getName());
 			this.makeExceptionBox(e);
 		}
 	}
@@ -220,13 +191,17 @@ public class Process extends Thread {
 	// Create a new process for the given entity, method, and arguments and transfer
 	// control to this process.
 	static void start(Entity target, String methodName, Object[] arguments) {
+		ProcessTarget t = new ReflectionTarget(target, methodName, arguments);
+		Process.start(t);
+	}
+
+	public static void start(ProcessTarget t) {
 
 		// Create the new process
 		EventManager evt = Process.current().getEventManager();
-		Process newProcess = Process.allocate(evt, target, methodName, arguments);
+		Process newProcess = Process.allocate(evt, t);
 		// Notify the eventManager that a new process has been started
-		evt.traceProcess(target, methodName);
-
+		evt.traceProcessStart(t);
 
 		// Transfer control to the new process
 		newProcess.setNextProcess(Process.current());
@@ -235,19 +210,14 @@ public class Process extends Thread {
 
 	// Set up a new process for the given entity, method, and arguments
 	// Called from Process.start() and from EventManager.startExternalProcess()
-	static Process allocate(EventManager eventManager, Entity target, String methodName, Object[] arguments) {
+	static Process allocate(EventManager eventManager, ProcessTarget proc) {
 
 		// Create the new process
 		Process newProcess = Process.getProcess();
 
-		// Find the method to be executed
-		Method method = Process.findEntityMethod(target.getClass(), methodName, arguments);
-
 		// Setup the process state for execution
 		synchronized (newProcess) {
-			newProcess.target = target;
-			newProcess.method = method;
-			newProcess.arguments = arguments;
+			newProcess.target = proc;
 			newProcess.eventManager = eventManager;
 			newProcess.flags = 0;
 		}
@@ -255,61 +225,12 @@ public class Process extends Thread {
 		return newProcess;
 	}
 
-	// Look up the method with the given name for the given entity and argument list.
-	private static Method findEntityMethod(Class<?> targetClass, String methodName, Object... arguments) {
-		Class<?>[] argClasses = new Class<?>[arguments.length];
-
-		// Fill in the class of each argument, if there are any
-		for (int i = 0; i < arguments.length; i++) {
-			// The argument itself is null, no class information available
-			if (arguments[i] == null) {
-				argClasses[i] = null;
-				continue;
-			}
-
-			argClasses[i] = arguments[i].getClass();
-
-			// We wrap primitive doubles as Double, put back the primitive type
-			if (argClasses[i] == Double.class) {
-				argClasses[i] = Double.TYPE;
-			}
-
-			// We wrap primitive integers as Integer, put back the primitive type
-			if (argClasses[i] == Integer.class) {
-				argClasses[i] = Integer.TYPE;
-			}
-		}
-
-		// Attempt to lookup the method using exact type information
-		try {
-			return targetClass.getMethod(methodName, argClasses);
-		}
-		catch (SecurityException e) {
-			throw new ErrorException("Security Exception when finding method: %s", methodName);
-		}
-		catch (NullPointerException e) {
-			throw new ErrorException("Name passed to startProcess was NULL");
-		}
-		catch (NoSuchMethodException e) {
-			// Get a list of all our methods
-			Method[] methods = targetClass.getMethods();
-
-			// Loop over all methods looking for a unique method name
-			int matchIndexHolder = -1;
-			int numMatches = 0;
-			for (int i = 0; i < methods.length; i++) {
-				if (methods[i].getName().equals(methodName)) {
-					numMatches++;
-					matchIndexHolder = i;
-				}
-			}
-
-			// If there was only one method found, use it
-			if (numMatches == 1)
-				return methods[matchIndexHolder];
-			else
-				throw new ErrorException("Method: %s does not exist, could not invoke.", methodName);
-		}
+	// Set up a new process for the given entity, method, and arguments
+	// Called from Process.start() and from EventManager.startExternalProcess()
+	static Process allocate(EventManager eventManager, Entity target, String methodName, Object[] arguments) {
+		// Find the method to be executed
+		ProcessTarget proc = new ReflectionTarget(target, methodName, arguments);
+		return Process.allocate(eventManager, proc);
 	}
 
 	// Return a process from the pool or create a new one
@@ -356,11 +277,9 @@ public class Process extends Thread {
 	}
 
 	synchronized String getClassMethod() {
-		if (target != null && method != null) {
-			return String.format("%s.%s", target.getClass().getSimpleName(), method.getName());
-		} else {
-			return "Unknown Method State";
-		}
+		if (target == null)
+ 			return "Unknown Method State";
+		return target.getDescription();
 	}
 
 	synchronized void setFlag(int flag) {

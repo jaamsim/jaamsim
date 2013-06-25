@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation3D.EventViewer;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -436,7 +437,7 @@ public final class EventManager implements Runnable {
 	 * the threadStack one level.
 	 */
 	void releaseProcess() {
-		traceProcess(null, null);
+		traceProcessEnd();
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 			Process next = Process.current().getNextProcess();
@@ -926,8 +927,12 @@ public final class EventManager implements Runnable {
 		if (traceEvents) traceRecord.formatEventTrace(name, evt, reason);
 	}
 
-	void traceProcess(Entity target, String methodName) {
-		if (traceEvents) traceRecord.formatProcessTrace(name, currentTick, target, methodName);
+	void traceProcessStart(ProcessTarget t) {
+		if (traceEvents) traceRecord.formatBegin(name, currentTick, t);
+	}
+
+	void traceProcessEnd() {
+		if (traceEvents) traceRecord.formatExit(name, currentTick);
 	}
 
 	private void traceSchedProcess(Event target) {
