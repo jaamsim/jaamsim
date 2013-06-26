@@ -180,9 +180,9 @@ public class InputAgent {
 		return false;
 	}
 
-	private static boolean isRecordComplete(ArrayList<String> tokens) {
-		int braceDepth = 0;
-		for (int i = 0; i < tokens.size(); i++) {
+	private static int getBraceDepth(ArrayList<String> tokens, int startingBraceDepth, int startingIndex) {
+		int braceDepth = startingBraceDepth;
+		for (int i = startingIndex; i < tokens.size(); i++) {
 			String token = tokens.get(i);
 
 			if (token.equals("{"))
@@ -194,20 +194,15 @@ public class InputAgent {
 			if (braceDepth < 0) {
 				InputAgent.logBadInput(tokens, "Extra closing braces found");
 				tokens.clear();
-				return false;
 			}
 
 			if (braceDepth > 2) {
 				InputAgent.logBadInput(tokens, "Maximum brace depth (2) exceeded");
 				tokens.clear();
-				return false;
 			}
 		}
 
-		if (braceDepth == 0)
-			return true;
-		else
-			return false;
+		return braceDepth;
 	}
 
 	public static void readURL(URL url) {
@@ -225,6 +220,7 @@ public class InputAgent {
 
 		try {
 			ArrayList<String> record = new ArrayList<String>();
+			int braceDepth = 0;
 
 			while (true) {
 				String line = buf.readLine();
@@ -237,8 +233,10 @@ public class InputAgent {
 					addedRecordFound = true;
 				}
 
+				int previousRecordSize = record.size();
 				Parser.tokenize(record, line);
-				if (!InputAgent.isRecordComplete(record))
+				braceDepth = InputAgent.getBraceDepth(record, braceDepth, previousRecordSize);
+				if( braceDepth != 0 )
 					continue;
 
 				Parser.removeComments(record);
