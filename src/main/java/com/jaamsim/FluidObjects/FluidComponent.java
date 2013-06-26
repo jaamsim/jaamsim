@@ -117,10 +117,12 @@ public class FluidComponent extends DisplayEntity {
 	 * (Dynamic pressure is negative for negative velocities.)
 	 */
 	public double getDynamicPressure() {
+		if( fluidFlow == null ) return 0.0;
 		return 0.5 * fluidFlow.getFluid().getDensity() * velocity * Math.abs(velocity);
 	}
 
 	public double getReynoldsNumber() {
+		if( fluidFlow == null )	return 0.0;
 		return Math.abs(velocity) * diameterInput.getValue() / fluidFlow.getFluid().getKinematicViscosity();
 	}
 
