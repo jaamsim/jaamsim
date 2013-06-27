@@ -32,13 +32,22 @@ public class ReflectionTarget extends ProcessTarget {
 	}
 
 	@Override
-	public void process() throws Throwable {
+	public void process() {
 		try {
 			method.invoke(target, arguments);
 		}
 		// Normal exceptions thrown by the method called by invoke are wrapped
 		catch (InvocationTargetException e) {
-			throw e.getCause();
+			if (e.getCause() instanceof RuntimeException)
+				throw (RuntimeException)e.getCause();
+			else
+				throw new ErrorException(e.getCause());
+		}
+		catch (IllegalArgumentException e) {
+			throw e;
+		}
+		catch (IllegalAccessException e) {
+			throw new ErrorException(e);
 		}
 	}
 

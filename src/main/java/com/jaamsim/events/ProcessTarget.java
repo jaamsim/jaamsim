@@ -16,5 +16,5 @@ package com.jaamsim.events;
 
 public abstract class ProcessTarget {
 	public abstract String getDescription();
-	public abstract void process() throws Throwable;
+	public abstract void process();
 }
