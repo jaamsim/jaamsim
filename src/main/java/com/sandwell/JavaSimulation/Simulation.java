@@ -97,10 +97,6 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
-	private final DoubleInput traceStartTime;
-
-	@Keyword(description = "This is placeholder description text",
-	         example = "This is placeholder example text")
 	private final BooleanInput traceEventsInput;
 
 	@Keyword(description = "This is placeholder description text",
@@ -167,11 +163,6 @@ public class Simulation extends Entity {
 		simTimeScaleInput = new DoubleInput( "SimulationTimeScale", "Key Inputs", 4000.0d );
 		simTimeScaleInput.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
 		this.addInput( simTimeScaleInput, true );
-
-		traceStartTime = new DoubleInput( "TraceStartTime", "Key Inputs", 0.0d );
-		traceStartTime.setValidRange( 0.0d, Double.POSITIVE_INFINITY );
-		traceStartTime.setUnits( "h" );
-		this.addInput( traceStartTime, false );
 
 		traceEventsInput = new BooleanInput( "TraceEvents", "Key Inputs", false );
 		this.addInput( traceEventsInput, false );
@@ -513,28 +504,6 @@ public class Simulation extends Entity {
 			return true;
 
 		return exitAtStop.getValue();
-	}
-
-	public double getTraceStartTime() {
-		return traceStartTime.getValue();
-	}
-
-	/**
-	 * Wait until the trace start time and then turn on the traceflag for all required entities
-	 */
-	public void doTracing() {
-
-		// Wait until trace start time
-		if( this.getTraceStartTime() > 0 ) {
-			scheduleWait( this.getTraceStartTime() );
-		}
-
-		// Set all required entities trace flags to TRUE
-		for (Entity ent : Entity.getAll()) {
-			if (ent.testFlag(FLAG_TRACEREQUIRED)) {
-				ent.setTraceFlag();
-			}
-		}
 	}
 
 	public boolean getPrintInputReport() {

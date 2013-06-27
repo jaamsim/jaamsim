@@ -63,6 +63,8 @@ public class Entity {
 
 	private final ArrayList<InputGroup> inputGroups;
 
+	private final BooleanInput trace;
+
 	static {
 		allInstances = new ArrayList<Entity>(100);
 		namedEntities = new HashMap<String, Entity>(100);
@@ -82,6 +84,10 @@ public class Entity {
 		editableInputs = new ArrayList<Input<?>>();
 		inputMap = new HashMap<String, Input<?>>();
 		inputGroups = new ArrayList<InputGroup>();
+
+		trace = new BooleanInput("Trace", "Key Inputs", false);
+		trace.setHidden(true);
+		this.addInput(trace, true);
 	}
 
 	public static ArrayList<? extends Entity> getAll() {
@@ -329,7 +335,16 @@ public class Entity {
 	/**
 	 * This method updates the Entity for changes in the given input
 	 */
-	public void updateForInput( Input<?> in ) {}
+	public void updateForInput( Input<?> in ) {
+		if (in == trace) {
+			if (trace.getValue())
+				this.setTraceFlag();
+			else
+				this.clearTraceFlag();
+
+			return;
+		}
+	}
 
 	/**
 	 * Interpret the input data in the given buffer of strings corresponding to the given keyword.
@@ -340,25 +355,6 @@ public class Entity {
 	 */
 	public void readData_ForKeyword(StringVector data, String keyword)
 	throws InputErrorException {
-		if( "TRACE".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			boolean trace = Input.parseBoolean(data.get(0));
-			if (trace)
-				this.setFlag(FLAG_TRACEREQUIRED);
-			else
-				this.clearFlag(FLAG_TRACEREQUIRED);
-			return;
-		}
-		if( "TRACESTATE".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			boolean value = Input.parseBoolean(data.get(0));
-			if (value)
-				this.setFlag(FLAG_TRACESTATE);
-			else
-				this.clearFlag(FLAG_TRACESTATE);
-			return;
-		}
-
 		// --------------- LOCK ---------------
 		if( "LOCK".equalsIgnoreCase( keyword ) ) {
 			Input.assertCount(data, 1);
