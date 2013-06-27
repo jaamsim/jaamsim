@@ -241,6 +241,11 @@ public class Simulation extends Entity {
 			GUIFrame.instance().updateForRealTime();
 			return;
 		}
+
+		if (in == printInputReport) {
+			InputAgent.setPrintInputs(printInputReport.getValue());
+			return;
+		}
 	}
 
 	public void clear() {
@@ -504,9 +509,5 @@ public class Simulation extends Entity {
 			return true;
 
 		return exitAtStop.getValue();
-	}
-
-	public boolean getPrintInputReport() {
-		return printInputReport.getValue();
 	}
 }
