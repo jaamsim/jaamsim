@@ -187,13 +187,6 @@ public class Process extends Thread {
 		exp.setError(e);
 	}
 
-	// Create a new process for the given entity, method, and arguments and transfer
-	// control to this process.
-	static void start(Entity target, String methodName, Object[] arguments) {
-		ProcessTarget t = new ReflectionTarget(target, methodName, arguments);
-		Process.start(t);
-	}
-
 	/**
 	 * Start a new Process that executes the given ProcessTarget, control will
 	 * return to the caller when the started Process either waits or exits.

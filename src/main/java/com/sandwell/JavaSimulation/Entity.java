@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputGroup;
 import com.jaamsim.input.Output;
@@ -428,7 +430,8 @@ public class Entity {
 	}
 
 	public final void startProcess(String methodName, Object... args) {
-		Process.start(this, methodName, args);
+		ProcessTarget t = new ReflectionTarget(this, methodName, args);
+		Process.start(t);
 	}
 
 	public final void startExternalProcess(String methodName, Object... args) {
