@@ -349,44 +349,11 @@ public class Entity {
 	/**
 	 * Interpret the input data in the given buffer of strings corresponding to the given keyword.
 	 * Reads keyword from a configuration file:
-	 *   TRACE		 - trace flag (0 = off, 1 = on)
 	 *  @param data - Vector of Strings containing data to be parsed
 	 *  @param keyword - the keyword to determine what the data represents
 	 */
 	public void readData_ForKeyword(StringVector data, String keyword)
 	throws InputErrorException {
-		// --------------- LOCK ---------------
-		if( "LOCK".equalsIgnoreCase( keyword ) ) {
-			Input.assertCount(data, 1);
-			boolean value = Input.parseBoolean(data.get(0));
-
-			if (!value)
-				throw new InputErrorException("Object cannot be unlocked");
-
-			if (value)
-				this.setFlag(FLAG_LOCKED);
-			else
-				this.clearFlag(FLAG_LOCKED);
-			return;
-		}
-
-		// --------------- LOCKKEYWORDS ---------------
-		if( "LOCKKEYWORDS".equalsIgnoreCase( keyword ) ) {
-
-			// Check that the individual keywords for locking are valid
-			for( int i = 0; i < data.size(); i++ ) {
-				if( this.getInput( data.get(i) ) == null ) {
-					throw new InputErrorException( "LockKeyword " + data.get( i ) + " is not a valid keyword" );
-				}
-			}
-			// Lock the individual keywords for this entity
-			for( int i = 0; i < data.size(); i++ ) {
-				Input<?> input = this.getInput( data.get(i) );
-				input.setLocked( true );
-			}
-			return;
-		}
-
 		throw new InputErrorException( "Invalid keyword " + keyword );
 	}
 
