@@ -75,12 +75,11 @@ public class Process extends Thread {
 	 * Returns the currently executing Process.
 	 */
 	public static final Process current() {
-		try {
-			return (Process)Thread.currentThread();
-		}
-		catch (ClassCastException e) {
-			throw new ErrorException("Non-process thread called for Process.current()");
-		}
+		Thread cur = Thread.currentThread();
+		if (cur instanceof Process)
+			return (Process)cur;
+
+		throw new ErrorException("Non-process thread called for Process.current()");
 	}
 
 	public static final boolean isModelProcess() {
@@ -195,16 +194,22 @@ public class Process extends Thread {
 		Process.start(t);
 	}
 
+	/**
+	 * Start a new Process that executes the given ProcessTarget, control will
+	 * return to the caller when the started Process either waits or exits.
+	 * @param t the target to begin execution
+	 */
 	public static void start(ProcessTarget t) {
+		Process cur = Process.current();
 
 		// Create the new process
-		EventManager evt = Process.current().getEventManager();
+		EventManager evt = cur.getEventManager();
 		Process newProcess = Process.allocate(evt, t);
 		// Notify the eventManager that a new process has been started
 		evt.traceProcessStart(t);
 
 		// Transfer control to the new process
-		newProcess.setNextProcess(Process.current());
+		newProcess.setNextProcess(cur);
 		evt.switchThread(newProcess);
 	}
 
