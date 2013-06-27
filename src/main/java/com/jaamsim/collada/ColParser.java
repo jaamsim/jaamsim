@@ -74,6 +74,7 @@ public class ColParser {
 	static {
 		DOUBLE_ARRAY_TAGS = new ArrayList<String>();
 		DOUBLE_ARRAY_TAGS.add("float_array");
+		DOUBLE_ARRAY_TAGS.add("float");
 		DOUBLE_ARRAY_TAGS.add("rotate");
 		DOUBLE_ARRAY_TAGS.add("translate");
 		DOUBLE_ARRAY_TAGS.add("scale");
@@ -333,6 +334,9 @@ public class ColParser {
 				_loadedEffects.add(effect);
 				_finalData.addMaterial(effect.diffuse.texture,
 				                       effect.diffuse.color,
+				                       effect.ambient,
+				                       effect.spec,
+				                       effect.shininess,
 				                       effect.transType, effect.transColour);
 			}
 
@@ -483,6 +487,9 @@ public class ColParser {
 		}
 		// Search technique for the kind of data we care about, for now find blinn, phong or lambert
 		XmlNode diffuse = null;
+		XmlNode ambient = null;
+		XmlNode spec = null;
+		XmlNode shininess = null;
 		XmlNode transparency = null;
 		XmlNode transparent = null;
 
@@ -492,16 +499,23 @@ public class ColParser {
 		XmlNode constant = technique.findChildTag("constant", false);
 		if (blinn != null) {
 			diffuse = blinn.findChildTag("diffuse", false);
+			ambient = blinn.findChildTag("ambient", false);
+			spec = blinn.findChildTag("specular", false);
+			shininess = blinn.findChildTag("shininess", false);
 			transparency = blinn.findChildTag("transparency", false);
 			transparent = blinn.findChildTag("transparent", false);
 		}
 		if (phong != null) {
 			diffuse = phong.findChildTag("diffuse", false);
+			ambient = phong.findChildTag("ambient", false);
+			spec = phong.findChildTag("specular", false);
+			shininess = phong.findChildTag("shininess", false);
 			transparency = phong.findChildTag("transparency", false);
 			transparent = phong.findChildTag("transparent", false);
 		}
 		if (lambert != null) {
 			diffuse = lambert.findChildTag("diffuse", false);
+			ambient = lambert.findChildTag("ambient", false);
 			transparency = lambert.findChildTag("transparency", false);
 			transparent = lambert.findChildTag("transparent", false);
 		}
@@ -523,6 +537,9 @@ public class ColParser {
 		}
 
 		effect.diffuse = diffuseCT;
+		effect.spec = getColor(spec);
+		effect.ambient = getColor(ambient);
+		effect.shininess = getFloat(shininess, 1.0);
 
 		String opaque = null;
 		ColorTex transparentCT = null;
@@ -541,7 +558,9 @@ public class ColParser {
 			XmlNode floatNode = transparency.findChildTag("float", false);
 			parseAssert(floatNode != null);
 
-			double alpha = Double.parseDouble((String)floatNode.getContent());
+			double[] floats = (double[])floatNode.getContent();
+			parseAssert(floats != null && floats.length >= 1);
+			double alpha = floats[0];
 			effect.transColour = new Color4d(transparentCT.color);
 			if (opaque.equals("A_ONE")) {
 				effect.transType = MeshData.A_ONE_TRANS;
@@ -568,6 +587,45 @@ public class ColParser {
 		}
 
 		_effects.put(id,  effect);
+	}
+
+	// Parse a Color4d from the xml node
+	private Color4d getColor(XmlNode node) {
+		if (node == null) return new Color4d();
+
+		if (node.getNumChildren() != 1) {
+			parseAssert(false);
+			return null;
+		}
+
+		XmlNode valNode = node.getChild(0);
+
+		String tag = valNode.getTag();
+		parseAssert(tag.equals("color"));
+
+		double[] colVals = (double[])valNode.getContent();
+		parseAssert(colVals != null && colVals.length >= 4);
+		Color4d col = new Color4d(colVals[0], colVals[1], colVals[2], colVals[3]);
+		return col;
+	}
+
+	// Parse a floating point value from the xml node
+	private double getFloat(XmlNode node, double def) {
+		if (node == null) return def;
+
+		if (node.getNumChildren() != 1) {
+			parseAssert(false);
+			return def;
+		}
+
+		XmlNode valNode = node.getChild(0);
+
+		String tag = valNode.getTag();
+		parseAssert(tag.equals("float"));
+
+		double[] vals = (double[])valNode.getContent();
+		parseAssert(vals != null && vals.length >= 1);
+		return vals[0];
 	}
 
 	private ColorTex getColorTex(XmlNode node, HashMap<String, XmlNode> paramMap) {
@@ -1349,6 +1407,9 @@ public class ColParser {
 	private static class Effect {
 		// Only hold diffuse colour for now
 		public ColorTex diffuse;
+		public Color4d ambient;
+		public Color4d spec;
+		public double shininess;
 		public int transType;
 		public Color4d transColour;
 	}

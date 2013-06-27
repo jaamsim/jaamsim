@@ -65,13 +65,18 @@ private static int modelViewProjMatVar;
 private static int bindSpaceMatVar;
 private static int normalMatVar;
 private static int texVar;
-private static int colorVar;
+private static int diffuseColorVar;
+private static int specColorVar;
+private static int ambientColorVar;
+private static int shininessVar;
 private static int useTexVar;
 private static int maxNumBonesVar;
 
 private static int lightDirVar;
 private static int lightIntVar;
 private static int numLightsVar;
+
+private static int viewDirVar;
 
 private static float[] lightsDir = new float[6];
 private static float[] lightsInt = new float[2];
@@ -108,6 +113,9 @@ private static class SubMesh {
 private static class Material {
 	public int _texHandle;
 	public Color4d _diffuseColor;
+	public Color4d _specColor  = new Color4d();
+	public Color4d _ambientColor = new Color4d();
+	public double _shininess;
 
 	public int _transType;
 	public Color4d _transColour;
@@ -180,8 +188,10 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 	Mat4d modelViewProjMat = new Mat4d();
 	modelViewProjMat.mult4(cam.getProjMat4d(), modelViewMat);
 
+	Vec4d viewDir = new Vec4d();
+	cam.getViewDir(viewDir);
 
-	initUniforms(renderer, modelViewProjMat, normalMat);
+	initUniforms(renderer, modelViewProjMat, normalMat, viewDir);
 
 	ArrayList<ArrayList<Mat4d>> poses = null;
 	if (actions != null) {
@@ -310,7 +320,10 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 	Mat4d modelViewProjMat = new Mat4d();
 	modelViewProjMat.mult4(cam.getProjMat4d(), modelViewMat);
 
-	initUniforms(renderer, modelViewProjMat, normalMat);
+	Vec4d viewDir = new Vec4d();
+	cam.getViewDir(viewDir);
+
+	initUniforms(renderer, modelViewProjMat, normalMat, viewDir);
 
 	Collections.sort(transparents);
 
@@ -324,7 +337,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 	}
 }
 
-private void initUniforms(Renderer renderer, Mat4d modelViewProjMat, Mat4d normalMat) {
+private void initUniforms(Renderer renderer, Mat4d modelViewProjMat, Mat4d normalMat, Vec4d viewDir) {
 	GL2GL3 gl = renderer.getGL();
 	gl.glUseProgram(meshProgHandle);
 
@@ -334,6 +347,8 @@ private void initUniforms(Renderer renderer, Mat4d modelViewProjMat, Mat4d norma
 	gl.glUniform3fv(lightDirVar, 2, lightsDir, 0);
 	gl.glUniform1fv(lightIntVar, 2, lightsInt, 0);
 	gl.glUniform1i(numLightsVar, numLights);
+
+	gl.glUniform3f(viewDirVar, (float)viewDir.x, (float)viewDir.y, (float)viewDir.z);
 
 	gl.glUniform1f(cVar, Camera.C);
 	gl.glUniform1f(fcVar, Camera.FC);
@@ -429,8 +444,12 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Ma
 		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, mat._texHandle);
 		gl.glUniform1i(texVar, 0);
 	} else {
-		gl.glUniform4fv(colorVar, 1, mat._diffuseColor.toFloats(), 0);
+		gl.glUniform3fv(diffuseColorVar, 1, mat._diffuseColor.toFloats(), 0);
 	}
+
+	gl.glUniform3fv(ambientColorVar, 1, mat._ambientColor.toFloats(), 0);
+	gl.glUniform3fv(specColorVar, 1, mat._specColor.toFloats(), 0);
+	gl.glUniform1f(shininessVar, (float)mat._shininess);
 
 	if (mat._transType != MeshData.NO_TRANS) {
 		gl.glEnable(GL2GL3.GL_BLEND);
@@ -581,6 +600,11 @@ private void loadGPUMaterial(GL2GL3 gl, Renderer renderer, MeshData.Material dat
 		mat._texHandle = 0;
 		mat._diffuseColor = new Color4d(dataMat.diffuseColor);
 	}
+
+	mat._ambientColor = new Color4d(dataMat.ambientColor);
+	mat._specColor = new Color4d(dataMat.specColor);
+	mat._shininess = dataMat.shininess;
+
 	_materials.add(mat);
 }
 
@@ -592,7 +616,10 @@ public static void init(Renderer r, GL2GL3 gl) {
 	modelViewProjMatVar = gl.glGetUniformLocation(meshProgHandle, "modelViewProjMat");
 	bindSpaceMatVar = gl.glGetUniformLocation(meshProgHandle, "bindSpaceMat");
 	normalMatVar = gl.glGetUniformLocation(meshProgHandle, "normalMat");
-	colorVar = gl.glGetUniformLocation(meshProgHandle, "diffuseColor");
+	diffuseColorVar = gl.glGetUniformLocation(meshProgHandle, "diffuseColor");
+	ambientColorVar = gl.glGetUniformLocation(meshProgHandle, "ambientColor");
+	specColorVar = gl.glGetUniformLocation(meshProgHandle, "specColor");
+	shininessVar = gl.glGetUniformLocation(meshProgHandle, "shininess");
 	texVar = gl.glGetUniformLocation(meshProgHandle, "tex");
 	useTexVar = gl.glGetUniformLocation(meshProgHandle, "useTex");
 	maxNumBonesVar = gl.glGetUniformLocation(meshProgHandle, "maxNumBones");
@@ -601,6 +628,8 @@ public static void init(Renderer r, GL2GL3 gl) {
 	lightDirVar = gl.glGetUniformLocation(meshProgHandle, "lightDir");
 	lightIntVar = gl.glGetUniformLocation(meshProgHandle, "lightIntensity");
 	numLightsVar = gl.glGetUniformLocation(meshProgHandle, "numLights");
+
+	viewDirVar = gl.glGetUniformLocation(meshProgHandle, "viewDir");
 
 	cVar = gl.glGetUniformLocation(meshProgHandle, "C");
 	fcVar = gl.glGetUniformLocation(meshProgHandle, "FC");

@@ -274,7 +274,7 @@ public class MeshReader {
 			String file = (String)textureNode.getContent();
 			try {
 				URL texURL = new URL(contentURL, file);
-				finalData.addMaterial(texURL, null, MeshData.NO_TRANS, null);
+				finalData.addMaterial(texURL, null, null, null, 1, MeshData.NO_TRANS, null);
 				return;
 			} catch (MalformedURLException ex) {
 				parseAssert(false);
@@ -286,7 +286,7 @@ public class MeshReader {
 		double[] c = (double[])colorNode.getContent();
 		parseAssert(c.length == 4);
 		Color4d color = new Color4d(c[0], c[1], c[2], c[3]);
-		finalData.addMaterial(null, color, MeshData.NO_TRANS, null);
+		finalData.addMaterial(null, color, null, null, 1, MeshData.NO_TRANS, null);
 	}
 
 	private void parseBone(XmlNode boneNode, Armature arm, String parentName) {

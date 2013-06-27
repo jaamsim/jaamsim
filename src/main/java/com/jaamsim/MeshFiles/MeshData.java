@@ -45,6 +45,10 @@ public class MeshData {
 
 	public static class Material {
 		public Color4d diffuseColor;
+		public Color4d ambientColor;
+		public Color4d specColor;
+		public double shininess;
+
 		public URL colorTex;
 		boolean useDiffuseTex;
 
@@ -153,6 +157,9 @@ public class MeshData {
 
 	public void addMaterial(URL colorTex,
 	                        Color4d diffuseColor,
+	                        Color4d ambientColor,
+	                        Color4d specColor,
+	                        double shininess,
 	                        int transType,
 	                        Color4d transColour) {
 
@@ -162,7 +169,13 @@ public class MeshData {
 		}
 
 		mat.diffuseColor = diffuseColor;
+		mat.ambientColor = ambientColor;
+		mat.specColor = specColor;
+		mat.shininess = shininess;
 		mat.colorTex = colorTex;
+
+		if (mat.ambientColor == null) mat.ambientColor = new Color4d();
+		if (mat.specColor == null) mat.specColor = new Color4d();
 
 		mat.transType = transType;
 		mat.transColour = transColour;

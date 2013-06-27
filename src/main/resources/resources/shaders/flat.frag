@@ -32,7 +32,12 @@ uniform vec3 lightDir[MAX_LIGHTS];
 uniform float lightIntensity[MAX_LIGHTS];
 uniform int numLights;
 
-uniform vec4 diffuseColor;
+uniform vec3 viewDir;
+
+uniform vec3 diffuseColor;
+uniform vec3 ambientColor;
+uniform vec3 specColor;
+uniform float shininess;
 
 uniform bool useTex;
 
@@ -41,23 +46,36 @@ void main()
     if (interpZ < 0)
         discard;
 
+    outColour.a = 1;
+
     vec3 n = normalize(normalFrag);
+
+    vec3 dColor = diffuseColor;
+    if (useTex) {
+        vec4 tex = texture2D(tex, texCoordFrag);
+        dColor = tex.rgb;
+        outColour.a = tex.a;
+    }
+
+    vec3 d = vec3(0, 0, 0);
+    vec3 s = vec3(0, 0, 0);
 
     float light = 0;
     for (int i = 0; i < numLights; ++i) {
         vec3 l = normalize(lightDir[i]);
-        float intensity = -1*dot(n, l) * lightIntensity[i];
-        light += clamp(intensity, 0, 1);
+
+        float lDotN = dot(n, l);
+        d += max(0, -1*lDotN) * lightIntensity[i] * dColor;
+
+        if (shininess > 2) { // shininess == 1 is default, but all real values will be > 2
+            vec3 ref = 2*lDotN*n - l;
+            float specExp = pow(max(0, dot(ref, viewDir)), shininess);
+
+            s += specExp * lightIntensity[i] * specColor;
+        }
     }
 
-    light = clamp(light, 0.3, 1);
-
-    if (useTex) {
-        outColour = texture2D(tex, texCoordFrag);
-    } else {
-        outColour = diffuseColor;
-    }
-    outColour.rgb *= light;
+    outColour.rgb = s + d + ambientColor * 0.1;
 
     gl_FragDepth = log(interpZ*C+1)*FC;
 }

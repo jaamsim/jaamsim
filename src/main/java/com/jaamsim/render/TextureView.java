@@ -67,6 +67,10 @@ public class TextureView implements Renderable {
 	static private int lightIntVar;
 	static private int numLightsVar;
 
+	static private int specColorVar;
+	static private int ambientColorVar;
+	static private int shininessVar;
+
 	static private int maxNumBonesVar;
 
 	static private int hasTexVar;
@@ -172,6 +176,10 @@ public class TextureView implements Renderable {
 		lightDirVar = gl.glGetUniformLocation(progHandle, "lightDir");
 		lightIntVar = gl.glGetUniformLocation(progHandle, "lightIntensity");
 		numLightsVar = gl.glGetUniformLocation(progHandle, "numLights");
+
+		specColorVar = gl.glGetUniformLocation(progHandle, "specColor");
+		ambientColorVar = gl.glGetUniformLocation(progHandle, "ambientColor");
+		shininessVar = gl.glGetUniformLocation(progHandle, "shininess");
 
 		maxNumBonesVar = gl.glGetUniformLocation(progHandle, "maxNumBones");
 
@@ -297,6 +305,10 @@ public class TextureView implements Renderable {
 		gl.glUniform1i(numLightsVar, 1);
 		gl.glUniform3fv(lightDirVar, 1, lightDir, 0);
 		gl.glUniform1fv(lightIntVar, 1, lightInt, 0);
+
+		gl.glUniform3f(ambientColorVar, 0.0f, 0.0f, 0.0f);
+		gl.glUniform3f(specColorVar, 0.0f, 0.0f, 0.0f);
+		gl.glUniform1f(shininessVar, 1.0f);
 
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
 		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, textureID);
