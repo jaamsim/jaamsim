@@ -168,6 +168,7 @@ public class MeshData {
 			assert diffuseColor != null;
 		}
 
+
 		mat.diffuseColor = diffuseColor;
 		mat.ambientColor = ambientColor;
 		mat.specColor = specColor;
@@ -176,6 +177,16 @@ public class MeshData {
 
 		if (mat.ambientColor == null) mat.ambientColor = new Color4d();
 		if (mat.specColor == null) mat.specColor = new Color4d();
+
+		if (mat.specColor.r == 0.0 &&
+		    mat.specColor.g == 0.0 &&
+		    mat.specColor.b == 0.0) {
+
+			// A black spec color means that the shininess has no effect
+			// set it to one as the shader uses shininess < 2 to fast path
+			// the spec calculations
+			mat.shininess = 1;
+		}
 
 		mat.transType = transType;
 		mat.transColour = transColour;
