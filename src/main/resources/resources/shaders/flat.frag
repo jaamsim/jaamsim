@@ -62,7 +62,7 @@ void main()
 
     float light = 0;
     for (int i = 0; i < numLights; ++i) {
-        vec3 l = normalize(lightDir[i]);
+        vec3 l = lightDir[i];
 
         float lDotN = dot(n, l);
         d += max(0, -1*lDotN) * lightIntensity[i] * dColor;

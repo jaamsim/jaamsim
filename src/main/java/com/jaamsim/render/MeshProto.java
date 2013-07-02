@@ -28,6 +28,7 @@ import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Renderer.ShaderHandle;
 
@@ -636,13 +637,19 @@ public static void init(Renderer r, GL2GL3 gl) {
 
 	numLights = 2;
 
-	lightsDir[0] = -0.3f;
-	lightsDir[1] = -0.2f;
-	lightsDir[2] = -0.5f;
+	Vec3d lightsDir0 = new Vec3d(-0.3, -0.2, -0.5);
+	lightsDir0.normalize3();
 
-	lightsDir[3] =  0.5f;
-	lightsDir[4] =  1.0f;
-	lightsDir[5] = -0.1f;
+	Vec3d lightsDir1 = new Vec3d( 0.5, 1.0, -0.1);
+	lightsDir1.normalize3();
+
+	lightsDir[0] = (float)lightsDir0.x;
+	lightsDir[1] = (float)lightsDir0.y;
+	lightsDir[2] = (float)lightsDir0.z;
+
+	lightsDir[3] = (float)lightsDir1.x;
+	lightsDir[4] = (float)lightsDir1.y;
+	lightsDir[5] = (float)lightsDir1.z;
 
 	lightsInt[0] = 1f;
 	lightsInt[1] = 0.5f;
