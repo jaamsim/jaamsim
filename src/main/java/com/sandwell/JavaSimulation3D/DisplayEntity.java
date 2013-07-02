@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
@@ -421,6 +422,7 @@ public class DisplayEntity extends Entity {
 
 	public void setGraphicsDataDirty() {
 		graphicsDirtier.changed();
+		RenderManager.inst().queueRedraw();
 	}
 
 	public ChangeWatcher getGraphicsDirtier() {
