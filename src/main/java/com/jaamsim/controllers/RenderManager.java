@@ -216,12 +216,8 @@ public class RenderManager implements DragSourceListener {
 		if (!RenderManager.isGood())
 			return;
 
-		RenderManager.inst().queueRedraw(simTime);
-	}
-
-	private void queueRedraw(double time) {
-		_simTime = time;
-		queueRedraw();
+		RenderManager.inst()._simTime = simTime;
+		RenderManager.inst().queueRedraw();
 	}
 
 	public void queueRedraw() {
