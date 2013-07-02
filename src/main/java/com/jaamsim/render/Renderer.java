@@ -312,7 +312,9 @@ public class Renderer {
 
 				try {
 					synchronized (_displayNeeded) {
-						_displayNeeded.wait(10);
+						if (!_displayNeeded.get()) {
+							_displayNeeded.wait();
+						}
 					}
 				} catch (InterruptedException e) {
 					// Let's loop anyway...
@@ -372,11 +374,19 @@ public class Renderer {
 
 	public void queueRedraw() {
 		_displayNeeded.set(true);
+		synchronized(_displayNeeded) {
+			_displayNeeded.notifyAll();
+		}
+	}
+
+	private void addRenderMessage(RenderMessage msg) {
+		_renderMessages.add(msg);
+		queueRedraw();
 	}
 
 	public void setCameraInfoForWindow(int windowID, CameraInfo info) {
 		synchronized (_renderMessages) {
-			_renderMessages.add(new SetCameraMessage(windowID, info));
+			addRenderMessage(new SetCameraMessage(windowID, info));
 		}
 	}
 
@@ -489,7 +499,7 @@ public class Renderer {
 	                         WindowInteractionListener listener) {
 		synchronized (_renderMessages) {
 			int windowID = getAssetID();
-			_renderMessages.add(new CreateWindowMessage(x, y, width, height, title,
+			addRenderMessage(new CreateWindowMessage(x, y, width, height, title,
 					name, windowID, viewID, icon, listener));
 			return windowID;
 		}
@@ -515,7 +525,7 @@ public class Renderer {
 	public void closeWindow(int windowID) {
 
 		synchronized (_renderMessages) {
-			_renderMessages.add(new CloseWindowMessage(windowID));
+			addRenderMessage(new CloseWindowMessage(windowID));
 		}
 
 	}
@@ -1230,7 +1240,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		Camera cam = new Camera(camInfo, (double)width/(double)height);
 
 		synchronized (_renderMessages) {
-			_renderMessages.add(new OffScreenMessage(scene, viewID, cam, width, height, result, target));
+			addRenderMessage(new OffScreenMessage(scene, viewID, cam, width, height, result, target));
 		}
 
 		synchronized (_displayNeeded) {
@@ -1246,17 +1256,16 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		synchronized (_renderMessages) {
 			CreateOffscreenTargetMessage msg = new CreateOffscreenTargetMessage();
 			msg.target = ret;
-			_renderMessages.add(msg);
+			addRenderMessage(msg);
 		}
 		return ret;
-
 	}
 
 	public void freeOffscreenTarget(OffscreenTarget target) {
 		synchronized (_renderMessages) {
 			FreeOffscreenTargetMessage msg = new FreeOffscreenTargetMessage();
 			msg.target = target;
-			_renderMessages.add(msg);
+			addRenderMessage(msg);
 		}
 	}
 
