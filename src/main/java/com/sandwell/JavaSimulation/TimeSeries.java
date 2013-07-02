@@ -115,23 +115,23 @@ public class TimeSeries extends Entity {
 
 		// Perform linear search for time from indexOfTime
 		for( int i = indexOfTime; i < timeList.size()-1; i++ ) {
-			if( Tester.lessOrEqualCheckTolerance( timeList.get( i ), timeInCycle )
-					&& Tester.lessCheckTolerance( timeInCycle, timeList.get( i+1 ) ) ) {
+			if( Tester.lessOrEqualCheckTimeStep( timeList.get( i ), timeInCycle )
+					&& Tester.lessCheckTimeStep( timeInCycle, timeList.get( i+1 ) ) ) {
 				indexOfTime = i;
 				return valueList.get( indexOfTime );
 			}
 		}
 
 		// If the time in the cycle is greater than the last time, return the last value
-		if( Tester.greaterOrEqualCheckTolerance( timeInCycle, timeList.get( timeList.size() - 1 ) ) ) {
+		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList.get( timeList.size() - 1 ) ) ) {
 			indexOfTime = timeList.size() - 1;
 			return valueList.get( indexOfTime );
 		}
 
 		// Perform linear search for time from 0
 		for( int i = 0; i < indexOfTime; i++ ) {
-			if( Tester.lessOrEqualCheckTolerance( timeList.get( i ), timeInCycle )
-					&& Tester.lessCheckTolerance( timeInCycle, timeList.get( i+1 ) ) ) {
+			if( Tester.lessOrEqualCheckTimeStep( timeList.get( i ), timeInCycle )
+					&& Tester.lessCheckTimeStep( timeInCycle, timeList.get( i+1 ) ) ) {
 				indexOfTime = i;
 				return valueList.get( indexOfTime );
 			}
