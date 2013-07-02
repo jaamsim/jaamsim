@@ -83,7 +83,7 @@ private static int fcVar;
 
 private static int boneMatricesVar;
 
-private class SubMesh {
+private static class SubMesh {
 
 	SubMesh() {
 		_id = Renderer.getAssetID();
@@ -105,7 +105,7 @@ private class SubMesh {
 
 }
 
-private class Material {
+private static class Material {
 	public int _texHandle;
 	public Color4d _diffuseColor;
 
@@ -113,7 +113,7 @@ private class Material {
 	public Color4d _transColour;
 }
 
-private class SubLine {
+private static class SubLine {
 
 	SubLine() {
 		_id = Renderer.getAssetID();
