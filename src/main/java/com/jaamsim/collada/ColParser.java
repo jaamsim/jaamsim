@@ -601,7 +601,9 @@ public class ColParser {
 		XmlNode valNode = node.getChild(0);
 
 		String tag = valNode.getTag();
-		parseAssert(tag.equals("color"));
+		if (!tag.equals("color")) {
+			return null;
+		}
 
 		double[] colVals = (double[])valNode.getContent();
 		parseAssert(colVals != null && colVals.length >= 4);
