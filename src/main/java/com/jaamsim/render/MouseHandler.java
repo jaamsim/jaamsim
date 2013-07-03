@@ -130,6 +130,6 @@ public class MouseHandler extends MouseAdapter {
 
 	@Override
 	public void mouseWheelMoved(MouseEvent e) {
-		_listener.mouseWheelMoved(_windowID, e.getX(), e.getY(), e.getWheelRotation(), modsFromEvent(e));
+		_listener.mouseWheelMoved(_windowID, e.getX(), e.getY(), (int)e.getRotation()[1], modsFromEvent(e));
 	}
 }

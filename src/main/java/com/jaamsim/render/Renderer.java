@@ -38,7 +38,7 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.media.opengl.DebugGL2GL3;
+import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2GL3;
 import javax.media.opengl.GLAutoDrawable;
@@ -651,7 +651,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		assert (res == GLContext.CONTEXT_CURRENT);
 
 		if (USE_DEBUG_GL) {
-			_sharedContext.setGL(new DebugGL2GL3(_sharedContext.getGL().getGL2GL3()));
+			_sharedContext.setGL(new DebugGL2(_sharedContext.getGL().getGL2()));
 		}
 
 		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
@@ -989,7 +989,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			synchronized (_rendererLock) {
 				// Per window initialization
 				if (USE_DEBUG_GL) {
-					drawable.setGL(new DebugGL2GL3(drawable.getGL().getGL2GL3()));
+					drawable.setGL(new DebugGL2(drawable.getGL().getGL2()));
 				}
 
 				GL2GL3 gl = drawable.getGL().getGL2GL3();
