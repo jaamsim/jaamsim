@@ -43,9 +43,6 @@ uniform bool useTex;
 
 void main()
 {
-    if (interpZ < 0)
-        discard;
-
     outColour.a = 1;
 
     vec3 n = normalize(normalFrag);
