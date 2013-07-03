@@ -311,6 +311,8 @@ public class TexCache {
 		i[0] = le.bufferID;
 		gl.glDeleteBuffers(1, i, 0);
 
+		// Finally queue a redraw in case an asset avoided drawing this one
+		_renderer.queueRedraw();
 		return glTexID;
 	}
 
