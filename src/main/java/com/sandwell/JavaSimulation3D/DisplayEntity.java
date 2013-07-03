@@ -422,7 +422,8 @@ public class DisplayEntity extends Entity {
 
 	public void setGraphicsDataDirty() {
 		graphicsDirtier.changed();
-		RenderManager.inst().queueRedraw();
+		if (RenderManager.isGood())
+			RenderManager.inst().queueRedraw();
 	}
 
 	public ChangeWatcher getGraphicsDirtier() {
