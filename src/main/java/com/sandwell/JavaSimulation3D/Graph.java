@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.sandwell.JavaSimulation.ColorListInput;
@@ -34,6 +35,7 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
+import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.Vec3dInput;
 
@@ -747,6 +749,24 @@ public class Graph extends DisplayEntity  {
 
 	}
 
+	private static class ProcessGraphTarget extends ProcessTarget {
+		final Graph graph;
+
+		ProcessGraphTarget(Graph graph) {
+			this.graph = graph;
+		}
+
+		@Override
+		public String getDescription() {
+			return graph.getInputName() + ".processGraph";
+		}
+
+		@Override
+		public void process() {
+			graph.processGraph();
+		}
+	}
+
 	@Override
 	public void startUp() {
 		super.startUp();
@@ -769,7 +789,7 @@ public class Graph extends DisplayEntity  {
 			setupLine(info, colour, lineWidth);
 		}
 
-		this.startProcess("processGraph");
+		Process.start(new ProcessGraphTarget(this));
 	}
 
 	/**

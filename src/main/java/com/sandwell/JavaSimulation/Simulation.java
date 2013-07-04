@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.EntityPallet;
@@ -226,10 +227,28 @@ public class Simulation extends Entity {
 		doEndAtThread = null;
 	}
 
+	private static class EndAtTarget extends ProcessTarget {
+		final Simulation sim;
+
+		EndAtTarget(Simulation sim) {
+			this.sim = sim;
+		}
+
+		@Override
+		public String getDescription() {
+			return sim.getInputName() + ".doEndAt";
+		}
+
+		@Override
+		public void process() {
+			sim.doEndAt(sim.getEndTime());
+		}
+	}
+
 	@Override
 	public void startUp() {
 		super.startUp();
-		this.startProcess("doEndAt", this.getEndTime());
+		Process.start(new EndAtTarget(this));
 	}
 
 	@Override
@@ -370,6 +389,24 @@ public class Simulation extends Entity {
 		GUIFrame.instance().updateForSimulationState();
 	}
 
+	private static class StartUpTarget extends ProcessTarget {
+		final Entity ent;
+
+		StartUpTarget(Entity ent) {
+			this.ent = ent;
+		}
+
+		@Override
+		public String getDescription() {
+			return ent.getInputName() + ".startUp";
+		}
+
+		@Override
+		public void process() {
+			ent.startUp();
+		}
+	}
+
 	/**
 	 *	Called by Simulation to inform the model to begin simulation networks.  Events should not be
 	 *	added to the EventManager before startModel();
@@ -385,7 +422,7 @@ public class Simulation extends Entity {
 
 		// Initialize each entity based on early initialization and start networks
 		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity.getAll().get(i).startProcess("startUp");
+			Process.start(new StartUpTarget(Entity.getAll().get(i)));
 		}
 	}
 

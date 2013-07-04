@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Entity;
@@ -22,6 +23,7 @@ import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
+import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation.Vector;
@@ -51,9 +53,28 @@ public class ScriptEntity extends Entity {
 	public ScriptEntity() {
 	}
 
+
+	private static class ScriptTarget extends ProcessTarget {
+		final ScriptEntity script;
+
+		ScriptTarget(ScriptEntity script) {
+			this.script = script;
+		}
+
+		@Override
+		public String getDescription() {
+			return script.getInputName() + ".doScript";
+		}
+
+		@Override
+		public void process() {
+			script.doScript();
+		}
+	}
+
 	@Override
 	public void startUp() {
-		this.startProcess( "doScript" );
+		Process.start(new ScriptTarget(this));
 	}
 
 	/**
