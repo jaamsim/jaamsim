@@ -24,6 +24,7 @@ public class Clock{
 
 	private static final int[] firstDayOfMonth;
 	private static final int[] daysInMonth;
+	private static final int[] secsInMonth;
 	private static final String monthNames[];
 
 	private static int startingYear;
@@ -62,6 +63,10 @@ public class Clock{
 		daysInMonth[9] = 31;
 		daysInMonth[10] = 30;
 		daysInMonth[11] = 31;
+
+		secsInMonth = new int[12];
+		for (int i = 0; i < daysInMonth.length; i++)
+			secsInMonth[i] = daysInMonth[i] * 24 * 60 * 60;
 
 		monthNames = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 	}
@@ -189,6 +194,13 @@ public static class ClockTime {
 	 */
 	public static int getDaysInMonth( int m ) {
 		return daysInMonth[m - 1];
+	}
+
+	/**
+	 * Return the number of seconds in the given month index 0-11
+	 */
+	public static int getSecsInMonthIdx(int idx) {
+		return secsInMonth[idx];
 	}
 
 	public static void getStartingDateFromString( String startingDate ) {
