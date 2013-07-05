@@ -23,9 +23,11 @@ import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
+import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
+import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
@@ -180,7 +182,18 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 		// If necessary, wake up the conveyor
 		if ( !busy ) {
-			this.startProcess( "processEntities" );
+			Process.start(new ProcessEntitiesTarget(this));
+		}
+	}
+
+	private static class ProcessEntitiesTarget extends EntityTarget<EntityConveyor> {
+		ProcessEntitiesTarget(EntityConveyor ent) {
+			super(ent, "processEntities");
+		}
+
+		@Override
+		public void process() {
+			ent.processEntities();
 		}
 	}
 

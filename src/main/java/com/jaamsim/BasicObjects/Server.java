@@ -16,10 +16,12 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.math.Vec3d;
 import com.sandwell.JavaSimulation.EntityInput;
+import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.ProbabilityDistribution;
+import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;
 
@@ -90,7 +92,18 @@ public class Server extends LinkedComponent {
 
 		// If necessary, wake up the server
 		if ( !busy ) {
-			this.startProcess( "processEntities" );
+			Process.start(new ProcessEntitiesTarget(this));
+		}
+	}
+
+	private static class ProcessEntitiesTarget extends EntityTarget<Server> {
+		ProcessEntitiesTarget(Server ent) {
+			super(ent, "processEntities");
+		}
+
+		@Override
+		public void process() {
+			ent.processEntities();
 		}
 	}
 

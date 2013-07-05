@@ -18,9 +18,11 @@ import com.jaamsim.DisplayModels.DisplayModel;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityListInput;
+import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.ProbabilityDistribution;
+import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
@@ -67,7 +69,18 @@ public class EntityGenerator extends LinkedComponent {
 		super.startUp();
 
 		// Start a new process for the Generator's main creation loop
-		this.startProcess( "createEntities" );
+		Process.start(new CreateEntitiesTarget(this));
+	}
+
+	private static class CreateEntitiesTarget extends EntityTarget<EntityGenerator> {
+		public CreateEntitiesTarget(EntityGenerator ent) {
+			super(ent, "createEntities");
+		}
+
+		@Override
+		public void process() {
+			ent.createEntities();
+		}
 	}
 
 	/**
