@@ -57,7 +57,7 @@ public class AboutBox extends FrameBox implements ActionListener {
 		getContentPane().add( lab );
 
 		// display model info
-		lab = new JLabel("Version: 2013-26");
+		lab = new JLabel("Version: 2013-27");
 		constraints.gridy = index++;
 		constraints.insets = new Insets( 0, 75, 0, 75 );
 		layout.setConstraints( lab, constraints );
