@@ -52,10 +52,12 @@ public class TexCache {
 		public int texID;
 		public boolean hasAlpha;
 		public boolean compressed;
-		public TexEntry(int id, boolean alpha, boolean compressed) {
+		public boolean forcedCompressed;
+		public TexEntry(int id, boolean alpha, boolean compressed, boolean forcedCompressed) {
 			this.texID = id;
 			this.hasAlpha = alpha;
 			this.compressed = compressed;
+			this.forcedCompressed = forcedCompressed;
 		}
 	}
 
@@ -64,17 +66,19 @@ public class TexCache {
 		public URL imageURL;
 		public boolean hasAlpha;
 		public boolean compressed;
+		public boolean forcedCompressed; // The user did not request a compressed texture, but we compressed it anyway
 		public ByteBuffer data;
 		public int width, height;
 		public AtomicBoolean done = new AtomicBoolean(false);
 		public AtomicBoolean failed = new AtomicBoolean(false);
 		public final Object lock = new Object();
 
-		public LoadingEntry(URL url, ByteBuffer data, boolean alpha, boolean compressed) {
+		public LoadingEntry(URL url, ByteBuffer data, boolean alpha, boolean compressed, boolean forcedCompressed) {
 			this.imageURL = url;
 			this.data = data;
 			this.hasAlpha = alpha;
 			this.compressed = compressed;
+			this.forcedCompressed = forcedCompressed;
 		}
 	}
 
@@ -120,7 +124,7 @@ public class TexCache {
 			if (le.done.get()) {
 				loadedStrings.add(entry.getKey());
 				int glTexID = loadGLTexture(gl, le);
-				_texMap.put(le.imageURL.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed));
+				_texMap.put(le.imageURL.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed, le.forcedCompressed));
 			}
 		}
 		for (String s : loadedStrings) {
@@ -136,7 +140,7 @@ public class TexCache {
 			if (withAlpha && !entry.hasAlpha) {
 				found = false; // This entry does not have an alpha channel
 			}
-			if (entry.compressed && !compressed) {
+			if (entry.compressed && !compressed && !entry.forcedCompressed) {
 				// The entry is compressed, but we requested an uncompressed image
 				found = false;
 			}
@@ -160,7 +164,7 @@ public class TexCache {
 
 			if (le == null) {
 				// The image could not be found
-				_texMap.put(imageURLKey, new TexEntry(badTextureID, withAlpha, compressed));
+				_texMap.put(imageURLKey, new TexEntry(badTextureID, withAlpha, compressed, false));
 				return badTextureID;
 			}
 		}
@@ -173,7 +177,7 @@ public class TexCache {
 		_loadingMap.remove(imageURLKey);
 
 		int glTexID = loadGLTexture(gl, le);
-		_texMap.put(le.imageURL.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed));
+		_texMap.put(le.imageURL.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed, le.forcedCompressed));
 
 		return glTexID;
 	}
@@ -192,10 +196,12 @@ public class TexCache {
 
 		int bufferSize = dim.width*dim.height*4;
 
-		if (!transparent) {
+		boolean forcedCompressed = false;
+		if (!transparent && !compressed) {
 			if (dim.width * dim.height * 3 > MAX_UNCOMPRESSED_SIZE) {
 				// Always compress large textures and save the user from themselves
 				compressed = true;
+				forcedCompressed = true;
 			}
 		}
 
@@ -229,7 +235,7 @@ public class TexCache {
 
 		gl.glBindBuffer(GL2GL3.GL_PIXEL_UNPACK_BUFFER, 0);
 
-		final LoadingEntry le = new LoadingEntry(imageURL, mappedBuffer, transparent, compressed);
+		final LoadingEntry le = new LoadingEntry(imageURL, mappedBuffer, transparent, compressed, forcedCompressed);
 		le.bufferID = ids[0];
 
 		_loadingMap.put(imageURL.toString(), le);
