@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DistanceUnit;
+import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Vector;
 
 public class Queue extends DisplayEntity {
@@ -73,7 +73,7 @@ public class Queue extends DisplayEntity {
 		avgElements = 0.0;
 
 		recorderList = new ArrayList<QueueRecorder>();
-		for( QueueRecorder rec : Simulation.getClonesOf( QueueRecorder.class ) ) {
+		for( QueueRecorder rec : Entity.getClonesOf( QueueRecorder.class ) ) {
 			if( rec.getQueueList().contains( this ) ) {
 				recorderList.add( rec );
 			}

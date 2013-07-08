@@ -96,6 +96,31 @@ public class Entity {
 		}
 	}
 
+
+	public static <T extends Entity> ArrayList<T> getInstancesOf(Class<T> proto) {
+		ArrayList<T> instanceList = new ArrayList<T>();
+
+		for (Entity each : allInstances) {
+			if (proto == each.getClass()) {
+				instanceList.add(proto.cast(each));
+			}
+		}
+
+		return instanceList;
+	}
+
+	public static <T extends Entity> ArrayList<T> getClonesOf(Class<T> proto) {
+		ArrayList<T> cloneList = new ArrayList<T>();
+
+		for (Entity each : allInstances) {
+			if (proto.isAssignableFrom(each.getClass())) {
+				cloneList.add(proto.cast(each));
+			}
+		}
+
+		return cloneList;
+	}
+
 	public static Entity idToEntity(long id) {
 		synchronized (allInstances) {
 			for (Entity e : allInstances) {

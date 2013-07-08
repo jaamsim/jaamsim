@@ -22,7 +22,6 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
 
 public class UnitTypeInput extends Input<ObjectType> {
@@ -51,7 +50,7 @@ public class UnitTypeInput extends Input<ObjectType> {
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<String>();
-		for (ObjectType each: Simulation.getClonesOf(ObjectType.class)) {
+		for (ObjectType each: Entity.getClonesOf(ObjectType.class)) {
 			Class<? extends Entity> klass = each.getJavaClass();
 			if (klass == null)
 				continue;

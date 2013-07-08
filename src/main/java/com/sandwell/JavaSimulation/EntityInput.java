@@ -49,7 +49,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<String>();
-		for (T each: Simulation.getClonesOf(entClass)) {
+		for (T each: Entity.getClonesOf(entClass)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 

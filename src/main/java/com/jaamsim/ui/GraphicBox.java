@@ -50,8 +50,8 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
+import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -280,7 +280,7 @@ public class GraphicBox extends JDialog {
 	private void refresh() {
 		DisplayModel entDisplayModel = currentEntity.getDisplayModelList().get(0);
 
-		ArrayList<DisplayModel> models = Simulation.getClonesOf(DisplayModel.class);
+		ArrayList<DisplayModel> models = Entity.getClonesOf(DisplayModel.class);
 		// Populate JList with all the DisplayModels
 		DisplayModel[] displayModels = new DisplayModel[models.size()];
 		int index = 0;

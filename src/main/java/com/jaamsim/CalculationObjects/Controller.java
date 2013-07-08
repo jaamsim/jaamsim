@@ -20,8 +20,8 @@ import java.util.Comparator;
 
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
+import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
@@ -56,7 +56,7 @@ public class Controller extends DisplayEntity {
 
 		// Prepare a list of the calculation entities managed by this controller
 		calculationEntityList.clear();
-		for (CalculationEntity ent : Simulation.getClonesOf(CalculationEntity.class)) {
+		for (CalculationEntity ent : Entity.getClonesOf(CalculationEntity.class)) {
 			if (ent.getController() == this)
 				calculationEntityList.add(ent);
 		}

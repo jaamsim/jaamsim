@@ -1135,7 +1135,7 @@ public class InputAgent {
 			Class<? extends Entity> each = type.getJavaClass();
 
 			 // Loop through the instances for this entity class
-			ArrayList<? extends Entity> cloneList = Simulation.getInstancesOf(each);
+			ArrayList<? extends Entity> cloneList = Entity.getInstancesOf(each);
 			count = 0;
 	        for( int j=0; j < cloneList.size(); j++ ) {
 	        	hasinput = false;
@@ -1191,7 +1191,7 @@ public class InputAgent {
 
 			// Get the list of instances for this entity class
 			// sort the list alphabetically
-			ArrayList<? extends Entity> cloneList = Simulation.getInstancesOf(each);
+			ArrayList<? extends Entity> cloneList = Entity.getInstancesOf(each);
 
 			// Print the entity class name to the report (in the form of a comment)
 			if( cloneList.size() > 0 ) {
