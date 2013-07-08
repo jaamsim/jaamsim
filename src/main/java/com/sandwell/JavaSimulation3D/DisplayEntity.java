@@ -24,7 +24,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
-import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -120,9 +119,15 @@ public class DisplayEntity extends Entity {
 	private ArrayList<DisplayModelBinding> modelBindings;
 
 	public static class TagSet {
-		public Map<String, Color4d[]> colours = new HashMap<String, Color4d[]>();
-		public Map<String, DoubleVector> sizes = new HashMap<String, DoubleVector>();
-		public Map<String, Boolean> visibility = new HashMap<String, Boolean>();
+		public Map<String, Color4d[]> colours;
+		public Map<String, DoubleVector> sizes;
+		public Map<String, Boolean> visibility;
+
+		public void init() {
+			colours = new HashMap<String, Color4d[]>();
+			sizes = new HashMap<String, DoubleVector>();
+			visibility = new HashMap<String, Boolean>();
+		}
 
 		/**
 		 * A purely utility method to get the first colour, or default if the first colour is not present
@@ -140,9 +145,62 @@ public class DisplayEntity extends Entity {
 			return (isVisible == null || isVisible.booleanValue()); // Default to visible
 		}
 
+		// Explicitly compare the values in the TagSet
+		// This is as verbose as it is due to the non-comparable nature of the basic tag value types
+		public boolean isSame(TagSet other) {
+
+			if (colours.size() != other.colours.size()) return false;
+
+			for (String cName : colours.keySet()) {
+				if (!other.colours.containsKey(cName)) {
+					return false;
+				}
+				Color4d[] cs = colours.get(cName);
+				Color4d[] ocs = other.colours.get(cName);
+				if (cs.length != ocs.length) return false;
+				for (int i = 0; i < cs.length; ++i) {
+					if (!cs[i].equals(ocs[i])) return false;
+				}
+			}
+
+			if (sizes.size() != other.sizes.size()) return false;
+
+			for (String sName : sizes.keySet()) {
+				if (!other.sizes.containsKey(sName)) {
+					return false;
+				}
+				DoubleVector ss = sizes.get(sName);
+				DoubleVector oss = other.sizes.get(sName);
+				if (ss.size() != oss.size()) return false;
+				for (int i = 0; i < ss.size(); ++i) {
+					if (ss.get(i) != oss.get(i)) return false;
+				}
+			}
+
+			if (visibility.size() != other.visibility.size()) return false;
+
+			for (String vName : visibility.keySet()) {
+				if (!other.visibility.containsKey(vName)) {
+					return false;
+				}
+				if (visibility.get(vName) != other.visibility.get(vName)) return false;
+			}
+
+			return true;
+		}
+
+		// Create a shallow copy of this TagSet
+		public TagSet copy() {
+			TagSet ret = new TagSet();
+			ret.colours = new HashMap<String, Color4d[]>(colours);
+			ret.sizes = new HashMap<String, DoubleVector>(sizes);
+			ret.visibility = new HashMap<String, Boolean>(visibility);
+			return ret;
+		}
 	}
 
-	private TagSet tags = new TagSet();
+	private TagSet tags;
+	private TagSet lastTags;
 
 	static {
 		allInstances = new ArrayList<DisplayEntity>(100);
@@ -186,6 +244,10 @@ public class DisplayEntity extends Entity {
 
 		showToolTip = new BooleanInput("ToolTip", "Basic Graphics", true);
 		this.addInput(showToolTip, true);
+
+		tags = new TagSet();
+		tags.init();
+
 	}
 
 	/**
@@ -267,7 +329,12 @@ public class DisplayEntity extends Entity {
 	 * The JaamSim renderer will only call updateGraphics() while the Java3D renderer will call both
 	 * updateGraphics() and render()
 	 */
-	public void updateGraphics(double simTime) {}
+	public void updateGraphics(double simTime) {
+		if (lastTags == null || !lastTags.isSame(tags)) {
+			setGraphicsDataDirty();
+		}
+		lastTags = tags.copy();
+	}
 
 	private void calculateEulerRotation(Vec3d val, Vec3d euler) {
 		double sinx = Math.sin(euler.x);
@@ -658,27 +725,8 @@ public class DisplayEntity extends Entity {
 
 	public void setTagColours(String tagName, Color4d[] cas) {
 
-		// Update the colour tags, but make sure to only dirty the state if something actually changed
-		Color4d[] colours = tags.colours.get(tagName);
-		boolean changed = false;
+		tags.colours.put(tagName, cas);
 
-		if (colours == null || colours.length != cas.length) {
-			colours = new Color4d[cas.length];
-			changed = true;
-		}
-
-		for (int i = 0; i < cas.length; ++i) {
-			Color4d newColour = cas[i];
-			if (!newColour.equals(colours[i])) {
-				changed = true;
-			}
-			colours[i] = newColour;
-		}
-
-		if (changed) {
-			tags.colours.put(tagName, colours);
-			setGraphicsDataDirty();
-		}
 	}
 
 	public void setTagSize(String tagName, double size) {
@@ -688,33 +736,11 @@ public class DisplayEntity extends Entity {
 	}
 
 	public void setTagSizes(String tagName, DoubleVector sizes) {
-		DoubleVector oldSizes = tags.sizes.get(tagName);
-		boolean changed = false;
-
-		if (oldSizes == null || oldSizes.size() != sizes.size()) {
-			changed = true;
-		}
-		else {
-			for (int i = 0; i < sizes.size(); ++i) {
-				if (!MathUtils.near(sizes.get(i), oldSizes.get(i))) {
-					changed = true;
-				}
-			}
-		}
-
-		if (changed) {
-			tags.sizes.put(tagName, sizes);
-			setGraphicsDataDirty();
-		}
+		tags.sizes.put(tagName, sizes);
 	}
 
 	public void setTagVisibility(String tagName, boolean isVisible) {
-		Boolean oldVisible = tags.visibility.get(tagName);
-
-		if (oldVisible == null || oldVisible != isVisible) {
-			tags.visibility.put(tagName, isVisible);
-			setGraphicsDataDirty();
-		}
+		tags.visibility.put(tagName, isVisible);
 	}
 
 	/**
