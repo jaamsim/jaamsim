@@ -256,7 +256,7 @@ public class Simulation extends Entity {
 
 		if(in == realTimeFactor || in == realTime) {
 			EventManager.rootManager.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
-			GUIFrame.instance().updateForRealTime();
+			GUIFrame.instance().updateForRealTime(this.getRealTimeExecution(), this.getRealTimeFactor());
 			return;
 		}
 

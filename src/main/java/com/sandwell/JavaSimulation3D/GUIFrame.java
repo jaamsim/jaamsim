@@ -1154,9 +1154,9 @@ public class GUIFrame extends JFrame {
 	/**
 	 * updates RealTime button and Spinner
 	 */
-	public void updateForRealTime() {
-		controlRealTime.setSelected( DisplayEntity.simulation.getRealTimeExecution() );
-		spinner.setValue(DisplayEntity.simulation.getRealTimeFactor());
+	public void updateForRealTime(boolean executeRT, int factorRT) {
+		controlRealTime.setSelected(executeRT);
+		spinner.setValue(factorRT);
 	}
 
 	public static Image getWindowIcon() {
@@ -1369,9 +1369,10 @@ public class GUIFrame extends JFrame {
 
 		@Override
 		public void stateChanged( ChangeEvent e ) {
+			String factorRT = String.format("%d", ((JSpinner)e.getSource()).getValue());
 			InputAgent.processEntity_Keyword_Value(DisplayEntity.simulation,
-			   DisplayEntity.simulation.getInput("RealTimeFactor"),
-			   String.format( "%d", ((JSpinner)e.getSource()).getValue()) );
+			                                       "RealTimeFactor",
+			                                       factorRT);
 
 			FrameBox.valueUpdate();
 		}
