@@ -413,6 +413,10 @@ public class CameraControl implements WindowInteractionListener {
 
 		Vec4d zOffset = new Vec4d(0, 0, pi.radius, 1.0d);
 
+		if (pi.rotX == 0) {
+			pi.rotZ = 0; // If we're ever looking directly down, which is degenerate, force Y up
+		}
+
 		Quaternion rot = polarToRot(pi);
 
 		Transform finalTrans = new Transform(pi.viewCenter);
