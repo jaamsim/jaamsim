@@ -500,7 +500,7 @@ public class GUIFrame extends JFrame {
 			}
 		} );
 
-		expControls = new JCheckBoxMenuItem( "Experimental Controls", false );
+		expControls = new JCheckBoxMenuItem( "Experimental Controls", true );
 		expControls.setMnemonic( 'E' );
 		optionMenu.add( expControls );
 
