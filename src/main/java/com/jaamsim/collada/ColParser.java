@@ -23,12 +23,9 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
-import javax.xml.parsers.SAXParserFactory;
-
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.MeshFiles.VertexMap;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec3d;
@@ -42,10 +39,9 @@ import com.jaamsim.xml.XmlParser;
  */
 public class ColParser {
 
-	public static MeshData parse(URL asset) throws RenderException {
+	private static boolean SHOW_COL_DEBUG = false;
 
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		factory.setValidating(false);
+	public static MeshData parse(URL asset) throws RenderException {
 
 		try {
 			ColParser colParser = new ColParser(asset);
@@ -173,13 +169,16 @@ public class ColParser {
 		_parser.setBooleanArrayTags(BOOLEAN_ARRAY_TAGS);
 		_parser.setStringArrayTags(STRING_ARRAY_TAGS);
 
+		long startTime = System.nanoTime();
 		_parser.parse();
+		long parseTime = System.nanoTime();
 
 
 		_colladaNode = _parser.getRootNode().findChildTag("COLLADA", false);
 		parseAssert(_colladaNode != null);
 
 		processGeos();
+		long geoTime = System.nanoTime();
 		processImages();
 		processMaterials();
 		processEffects();
@@ -187,10 +186,17 @@ public class ColParser {
 
 		processVisualScenes();
 
-		ConvexHull.buildTime = 0; ConvexHull.filterTime = 0; ConvexHull.finalizeTime = 0; ConvexHull.sortTime = 0;
-
 		processScene();
 
+		long sceneTime = System.nanoTime();
+
+		double parseDurMS = (parseTime - startTime)/1000000.0;
+		double geoDurMS = (geoTime - parseTime)/1000000.0;
+		double sceneDurMS = (sceneTime - geoTime)/1000000.0;
+
+		if (SHOW_COL_DEBUG) {
+			System.out.printf("%s Parse: %.1f Geo: %.1f, Scene: %.1f\n", _contextURL.toString(), parseDurMS, geoDurMS, sceneDurMS);
+		}
 	}
 
 	private double getScaleFactor() {
