@@ -58,9 +58,11 @@ public class TextureView implements Renderable {
 	static private int boneBuff;
 
 	static private int progHandle;
-	static private int modelViewProjMatVar;
+	static private int projMatVar;
+	static private int modelViewMatVar;
 	static private int normalMatVar;
 	static private int bindSpaceMatVar;
+	static private int bindSpaceNorMatVar;
 	static private int texVar;
 
 	static private int lightDirVar;
@@ -167,9 +169,11 @@ public class TextureView implements Renderable {
 		// Initialize the shader variables
 		progHandle = r.getShader(Renderer.ShaderHandle.MESH).getProgramHandle();
 
-		modelViewProjMatVar = gl.glGetUniformLocation(progHandle, "modelViewProjMat");
+		modelViewMatVar = gl.glGetUniformLocation(progHandle, "modelViewMat");
+		projMatVar = gl.glGetUniformLocation(progHandle, "projMat");
 		normalMatVar = gl.glGetUniformLocation(progHandle, "normalMat");
 		bindSpaceMatVar = gl.glGetUniformLocation(progHandle, "bindSpaceMat");
+		bindSpaceNorMatVar = gl.glGetUniformLocation(progHandle, "bindSpaceNorMat");
 		texVar = gl.glGetUniformLocation(progHandle, "tex");
 		hasTexVar = gl.glGetUniformLocation(progHandle, "useTex");
 
@@ -273,15 +277,12 @@ public class TextureView implements Renderable {
 		int vao = vaoMap.get(assetID);
 		gl.glBindVertexArray(vao);
 
-		Mat4d projMat = cam.getProjMat4d();
 
-		Mat4d modelViewProjMat = new Mat4d();
+		Mat4d modelViewMat = new Mat4d();
 
-		cam.getViewMat4d(modelViewProjMat);
-		modelViewProjMat.mult4(_trans.getMat4dRef());
-		modelViewProjMat.scaleCols3(_scale);
-
-		modelViewProjMat.mult4(projMat, modelViewProjMat);
+		cam.getViewMat4d(modelViewMat);
+		modelViewMat.mult4(_trans.getMat4dRef());
+		modelViewMat.scaleCols3(_scale);
 
 		Mat4d normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
 		normalMat.transpose4();
@@ -292,9 +293,11 @@ public class TextureView implements Renderable {
 
 		gl.glUseProgram(progHandle);
 
-		gl.glUniformMatrix4fv(modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
+		gl.glUniformMatrix4fv(modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+		gl.glUniformMatrix4fv(projMatVar, 1, false, RenderUtils.MarshalMat4d(cam.getProjMat4d()), 0);
 		gl.glUniformMatrix4fv(normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
-		gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(new Mat4d()), 0);
+		gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(Mat4d.IDENTITY), 0);
+		gl.glUniformMatrix4fv(bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(Mat4d.IDENTITY), 0);
 
 		gl.glUniform1i(hasTexVar, 1);
 		gl.glUniform1i(maxNumBonesVar, 0);

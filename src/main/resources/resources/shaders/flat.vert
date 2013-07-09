@@ -15,7 +15,9 @@
 #version 130
 
 uniform mat4 bindSpaceMat;
-uniform mat4 modelViewProjMat;
+uniform mat4 bindSpaceNorMat;
+uniform mat4 modelViewMat;
+uniform mat4 projMat;
 uniform mat4 normalMat;
 
 uniform int maxNumBones;
@@ -36,6 +38,7 @@ out vec3 normalFrag;
 uniform float C;
 uniform float FC;
 out float interpZ;
+out vec3 viewDir;
 
 void main()
 {
@@ -47,7 +50,7 @@ void main()
     nor.w = 0;
 
     vec4 bindSpacePos = bindSpaceMat * position;
-    vec4 bindSpaceNor = bindSpaceMat * nor;
+    vec4 bindSpaceNor = bindSpaceNorMat * nor;
 
     for (int b = 0; b < maxNumBones; ++b)
     {
@@ -69,11 +72,14 @@ void main()
         animatedNormal = bindSpaceNor;
     }
 
-    gl_Position = modelViewProjMat * animatedPos;
+    vec4 eyeSpacePos = modelViewMat * animatedPos;
+    gl_Position = projMat * eyeSpacePos;
 
     normalFrag = (normalMat * animatedNormal).xyz;
 
     texCoordFrag = texCoord;
+
+    viewDir = normalize(eyeSpacePos.xyz);
 
     // Logarithmic depth buffer
     interpZ = gl_Position.w;

@@ -28,7 +28,6 @@ import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Renderer.ShaderHandle;
 
@@ -62,8 +61,10 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 private static int meshProgHandle;
 
-private static int modelViewProjMatVar;
+private static int modelViewMatVar;
+private static int projMatVar;
 private static int bindSpaceMatVar;
+private static int bindSpaceNorMatVar;
 private static int normalMatVar;
 private static int texVar;
 private static int diffuseColorVar;
@@ -77,9 +78,9 @@ private static int lightDirVar;
 private static int lightIntVar;
 private static int numLightsVar;
 
-private static int viewDirVar;
-
-private static float[] lightsDir = new float[6];
+private static Vec4d[] lightsDir = new Vec4d[2];
+private static Vec4d[] lightsDirScratch = new Vec4d[2];
+private static float[] lightsDirFloats = new float[6];
 private static float[] lightsInt = new float[2];
 private static int numLights;
 
@@ -183,16 +184,14 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 	Mat4d viewMat = new Mat4d();
 	cam.getViewMat4d(viewMat);
 
+	Mat4d finalNorMat = new Mat4d(); // The normal matrix in eye space
+	cam.getRotMat4d(finalNorMat);
+	finalNorMat.mult4(finalNorMat, normalMat);
+
 	Mat4d modelViewMat = new Mat4d();
 	modelViewMat.mult4(viewMat, modelMat);
 
-	Mat4d modelViewProjMat = new Mat4d();
-	modelViewProjMat.mult4(cam.getProjMat4d(), modelViewMat);
-
-	Vec4d viewDir = new Vec4d();
-	cam.getViewDir(viewDir);
-
-	initUniforms(renderer, modelViewProjMat, normalMat, viewDir);
+	initUniforms(renderer, modelViewMat, cam.getProjMat4d(), viewMat, finalNorMat);
 
 	ArrayList<ArrayList<Mat4d>> poses = null;
 	if (actions != null) {
@@ -273,6 +272,10 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 	Mat4d viewMat = new Mat4d();
 	cam.getViewMat4d(viewMat);
 
+	Mat4d finalNorMat = new Mat4d(); // The normal matrix in eye space
+	cam.getRotMat4d(finalNorMat);
+	finalNorMat.mult4(finalNorMat, normalMat);
+
 	Mat4d modelViewMat = new Mat4d();
 	modelViewMat.mult4(viewMat, modelMat);
 
@@ -318,13 +321,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 		}
 	}
 
-	Mat4d modelViewProjMat = new Mat4d();
-	modelViewProjMat.mult4(cam.getProjMat4d(), modelViewMat);
-
-	Vec4d viewDir = new Vec4d();
-	cam.getViewDir(viewDir);
-
-	initUniforms(renderer, modelViewProjMat, normalMat, viewDir);
+	initUniforms(renderer, modelViewMat, cam.getProjMat4d(), viewMat, finalNorMat);
 
 	Collections.sort(transparents);
 
@@ -338,18 +335,28 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 	}
 }
 
-private void initUniforms(Renderer renderer, Mat4d modelViewProjMat, Mat4d normalMat, Vec4d viewDir) {
+private void initUniforms(Renderer renderer, Mat4d modelViewMat, Mat4d projMat, Mat4d viewMat, Mat4d normalMat) {
 	GL2GL3 gl = renderer.getGL();
 	gl.glUseProgram(meshProgHandle);
 
-	gl.glUniformMatrix4fv(modelViewProjMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewProjMat), 0);
+	gl.glUniformMatrix4fv(modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+	gl.glUniformMatrix4fv(projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 	gl.glUniformMatrix4fv(normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
 
-	gl.glUniform3fv(lightDirVar, 2, lightsDir, 0);
+	lightsDirScratch[0].mult4(viewMat, lightsDir[0]);
+	lightsDirScratch[1].mult4(viewMat, lightsDir[1]);
+
+	lightsDirFloats[0] = (float)lightsDirScratch[0].x;
+	lightsDirFloats[1] = (float)lightsDirScratch[0].y;
+	lightsDirFloats[2] = (float)lightsDirScratch[0].z;
+
+	lightsDirFloats[3] = (float)lightsDirScratch[1].x;
+	lightsDirFloats[4] = (float)lightsDirScratch[1].y;
+	lightsDirFloats[5] = (float)lightsDirScratch[1].z;
+
+	gl.glUniform3fv(lightDirVar, 2, lightsDirFloats, 0);
 	gl.glUniform1fv(lightIntVar, 2, lightsInt, 0);
 	gl.glUniform1i(numLightsVar, numLights);
-
-	gl.glUniform3f(viewDirVar, (float)viewDir.x, (float)viewDir.y, (float)viewDir.z);
 
 	gl.glUniform1f(cVar, Camera.C);
 	gl.glUniform1f(fcVar, Camera.FC);
@@ -437,6 +444,7 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Ma
 	// Setup uniforms for this object
 
 	gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.transform), 0);
+	gl.glUniformMatrix4fv(bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.normalTrans), 0);
 
 	gl.glUniform1i(useTexVar, (mat._texHandle != 0) ? 1 : 0);
 
@@ -614,8 +622,10 @@ public static void init(Renderer r, GL2GL3 gl) {
 	gl.glUseProgram(meshProgHandle);
 
 	// Bind the shader variables
-	modelViewProjMatVar = gl.glGetUniformLocation(meshProgHandle, "modelViewProjMat");
+	modelViewMatVar = gl.glGetUniformLocation(meshProgHandle, "modelViewMat");
+	projMatVar = gl.glGetUniformLocation(meshProgHandle, "projMat");
 	bindSpaceMatVar = gl.glGetUniformLocation(meshProgHandle, "bindSpaceMat");
+	bindSpaceNorMatVar = gl.glGetUniformLocation(meshProgHandle, "bindSpaceNorMat");
 	normalMatVar = gl.glGetUniformLocation(meshProgHandle, "normalMat");
 	diffuseColorVar = gl.glGetUniformLocation(meshProgHandle, "diffuseColor");
 	ambientColorVar = gl.glGetUniformLocation(meshProgHandle, "ambientColor");
@@ -630,29 +640,24 @@ public static void init(Renderer r, GL2GL3 gl) {
 	lightIntVar = gl.glGetUniformLocation(meshProgHandle, "lightIntensity");
 	numLightsVar = gl.glGetUniformLocation(meshProgHandle, "numLights");
 
-	viewDirVar = gl.glGetUniformLocation(meshProgHandle, "viewDir");
-
 	cVar = gl.glGetUniformLocation(meshProgHandle, "C");
 	fcVar = gl.glGetUniformLocation(meshProgHandle, "FC");
 
 	numLights = 2;
 
-	Vec3d lightsDir0 = new Vec3d(-0.3, -0.2, -0.5);
-	lightsDir0.normalize3();
 
-	Vec3d lightsDir1 = new Vec3d( 0.5, 1.0, -0.1);
-	lightsDir1.normalize3();
+	lightsDir[0] = new Vec4d(-0.3, -0.2, -0.5, 0.0);
+	lightsDir[1] = new Vec4d( 0.5, 1.0, -0.1, 0.0);
 
-	lightsDir[0] = (float)lightsDir0.x;
-	lightsDir[1] = (float)lightsDir0.y;
-	lightsDir[2] = (float)lightsDir0.z;
-
-	lightsDir[3] = (float)lightsDir1.x;
-	lightsDir[4] = (float)lightsDir1.y;
-	lightsDir[5] = (float)lightsDir1.z;
+	lightsDir[0].normalize3();
+	lightsDir[1].normalize3();
 
 	lightsInt[0] = 1f;
 	lightsInt[1] = 0.5f;
+
+	lightsDirScratch[0] = new Vec4d();
+	lightsDirScratch[1] = new Vec4d();
+
 }
 
 private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData data) {

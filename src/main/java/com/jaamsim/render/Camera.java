@@ -181,6 +181,10 @@ public void getViewMat4d(Mat4d viewOut) {
 
 }
 
+public void getRotMat4d(Mat4d rotOut) {
+	rotOut.setRot4(invTrans.getRotRef());
+}
+
 public void getViewTrans(Transform transOut) {
 	transOut.copyFrom(invTrans);
 }

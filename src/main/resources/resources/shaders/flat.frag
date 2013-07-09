@@ -32,7 +32,7 @@ uniform vec3 lightDir[MAX_LIGHTS];
 uniform float lightIntensity[MAX_LIGHTS];
 uniform int numLights;
 
-uniform vec3 viewDir;
+in vec3 viewDir;
 
 uniform vec3 diffuseColor;
 uniform vec3 ambientColor;
