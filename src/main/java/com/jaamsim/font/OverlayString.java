@@ -110,7 +110,6 @@ public class OverlayString implements OverlayRenderable {
 		float offsetY = (float)(2*y/windowHeight - 1);
 
 		gl.glDisable(GL2GL3.GL_CULL_FACE);
-		gl.glDisable(GL2GL3.GL_DEPTH_TEST);
 
 		for (int i = 0; i < _contents.length(); ++i) {
 			TessChar tc = _font.getTessChar(_contents.charAt(i));
@@ -127,8 +126,6 @@ public class OverlayString implements OverlayRenderable {
 		}
 
 		gl.glEnable(GL2GL3.GL_CULL_FACE);
-		gl.glEnable(GL2GL3.GL_DEPTH_TEST);
-
 	}
 
 
