@@ -201,6 +201,41 @@ public class MeshData {
 		_armatures.add(arm);
 	}
 
+	// Returns a new index list with any zero area triangles removed
+	private int[] removeDegenerateTriangles(ArrayList<Vertex> vertices, int[] indices) {
+		assert(indices.length % 3 == 0);
+		int[] goodIndices = new int[indices.length];
+		int goodWritePos = 0;
+
+		for (int triInd = 0; triInd < indices.length/3; ++triInd) {
+			int ind0 = indices[triInd * 3 + 0];
+			int ind1 = indices[triInd * 3 + 1];
+			int ind2 = indices[triInd * 3 + 2];
+			Vec4d pos0 = vertices.get(ind0).getPos();
+			Vec4d pos1 = vertices.get(ind1).getPos();
+			Vec4d pos2 = vertices.get(ind2).getPos();
+
+			if (ind0 == ind1 || ind1 == ind2 || ind2 == ind0) {
+				continue;
+			}
+			if (pos0.equals4(pos1) || pos1.equals4(pos2) || pos2.equals4(pos0)) {
+				continue;
+			}
+			goodIndices[goodWritePos++] = ind0;
+			goodIndices[goodWritePos++] = ind1;
+			goodIndices[goodWritePos++] = ind2;
+		}
+		// Finally rebuild the index list
+		if (goodIndices.length == indices.length) {
+			return goodIndices; // No degenerates found
+		}
+		int[] ret = new int[goodWritePos];
+		for (int i = 0; i < goodWritePos; ++i) {
+			ret[i] = goodIndices[i];
+		}
+		return ret;
+	}
+
 	public void addSubMesh(ArrayList<Vertex> vertices,
 	                       int[] indices) {
 
@@ -209,14 +244,21 @@ public class MeshData {
 		SubMeshData sub = new SubMeshData();
 		_subMeshesData.add(sub);
 
-		sub.indices = indices;
+		boolean hasBoneInfo = vertices.get(0).getBoneIndices() != null;
+
+		if (!hasBoneInfo) {
+			// If this mesh can not be animated, do an extra check and remove zero area triangles
+			// (for animated meshes, this is not safe as the triangles may not alway be zero area)
+			int[] goodIndices = removeDegenerateTriangles(vertices, indices);
+			sub.indices = goodIndices;
+		} else {
+			sub.indices = indices;
+		}
 
 		assert((sub.indices.length % 3) == 0);
 
 		// Assume if there is one tex coordinate, there will be all of them
 		boolean hasTexCoords = vertices.get(0).getTexCoord() != null;
-
-		boolean hasBoneInfo = vertices.get(0).getBoneIndices() != null;
 
 		sub.verts = new ArrayList<Vec4d>(vertices.size());
 		sub.normals = new ArrayList<Vec4d>(vertices.size());
