@@ -163,6 +163,11 @@ public double getCollisionDist(Ray r, boolean precise)
 			triVecs[0] = subData.verts.get(subData.indices[triInd*3+0]);
 			triVecs[1] = subData.verts.get(subData.indices[triInd*3+1]);
 			triVecs[2] = subData.verts.get(subData.indices[triInd*3+2]);
+			if ( triVecs[0].equals4(triVecs[1]) ||
+			     triVecs[1].equals4(triVecs[2]) ||
+			     triVecs[2].equals4(triVecs[0])) {
+				continue;
+			}
 			double triDist = MathUtils.collisionDistPoly(localRay, triVecs);
 			if (triDist > 0) {
 				// We have collided, now we need to figure out the distance in original ray space, not the transformed ray space
