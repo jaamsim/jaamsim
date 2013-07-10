@@ -30,10 +30,6 @@ class EventTraceRecord extends ArrayList<String> {
 		traceLevel = 0;
 	}
 
-	void clearLevel() {
-		traceLevel = 0;
-	}
-
 	void parse() {
 		String[] temp;
 
@@ -103,6 +99,12 @@ class EventTraceRecord extends ArrayList<String> {
 		EventTracer.processTraceData(this);
 		this.clear();
 		traceLevel--;
+	}
+
+
+	synchronized void clearTrace() {
+		traceLevel = 0;
+		clear();
 	}
 
 	private static final String[] eventStates = {"Wait", "Event", "Int", "Kill"};

@@ -187,8 +187,7 @@ public final class EventManager implements Runnable {
 	void basicInit() {
 		targetTick = Long.MAX_VALUE;
 		currentTick = 0;
-		traceRecord.clearLevel();
-		traceRecord.clear();
+		traceRecord.clearTrace();
 	}
 
 	// Initialize the eventManager.  This method is needed only for re-initialization.
