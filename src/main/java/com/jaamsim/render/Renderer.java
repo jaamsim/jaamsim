@@ -1056,8 +1056,11 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 				            cam, _window.getViewableWidth(), _window.getViewableHeight(),
 				            pickRay, _window.getViewID(), pi);
 
+				GL2GL3 gl = drawable.getContext().getGL().getGL2GL3(); // Just to clean up the code below
+
 				if (RENDER_DEBUG_INFO) {
 					// Draw a window specific performance counter
+					gl.glDisable(GL2GL3.GL_DEPTH_TEST);
 					_drawContext = drawable.getContext();
 					StringBuilder perf = new StringBuilder("Objects Culled: ").append(pi.objectsCulled);
 					perf.append(" VRAM: ").append(_usedVRAM/(1024.0*1024.0)).append("MB");
@@ -1077,10 +1080,10 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 					          _window.getViewableWidth(), _window.getViewableHeight());
 
 					_drawContext = null;
+					gl.glEnable(GL2GL3.GL_DEPTH_TEST);
 
 				}
 
-				GL2GL3 gl = drawable.getContext().getGL().getGL2GL3(); // Just to clean up the code below
 				gl.glFinish();
 
 				long endNanos = System.nanoTime();
