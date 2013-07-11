@@ -141,6 +141,42 @@ public class TimeSeries extends Entity {
 		return 0.0;
 	}
 
+	/**
+	 * Return the time in hours from the given start time
+	 * until the value is less than or equal to the given limit.
+	 */
+	public double calcTimeFrom_UntilLessThanOrEqualTo( double time, double limit ) {
+
+		// If the value at the start time is less than or equal to the limit, return 0
+		if( getValueForTime( time ) <= limit )
+			return 0;
+
+		DoubleVector timeList = value.getValue().getTimeList();
+		DoubleVector valueList = value.getValue().getValueList();
+
+		// Determine the time in the cycle for the given time
+		int completedCycles = (int)Math.floor( time / cycleTime );
+		double timeInCycle = time - ( completedCycles * cycleTime );
+
+		// Assume indexOfTime corresponds to the given start time
+		// Perform linear search for time from indexOfTime + 1
+		for( int i = indexOfTime + 1; i < timeList.size(); i++ ) {
+			if( valueList.get( i ) <= limit ) {
+				return timeList.get( i ) - timeInCycle;
+			}
+		}
+
+		// Perform linear search for time from 0
+		for( int i = 0; i < indexOfTime; i++ ) {
+			if( valueList.get( i ) <= limit ) {
+				return timeList.get( i ) + cycleTime - timeInCycle;
+			}
+		}
+
+		// The value is never less than or equal to the limit.  Return infinity
+		return Double.POSITIVE_INFINITY;
+	}
+
 	public Class<? extends Unit> getUnitType() {
 		return unitType.getUnitType();
 	}
