@@ -19,14 +19,13 @@ import java.util.ArrayList;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.ErrorException;
+import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 
 /**
@@ -69,6 +68,8 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 	private final ColourInput colourInput;
 
 	private double darcyFrictionFactor;  // The Darcy Friction Factor for the pipe flow.
+
+	private HasScreenPoints.PointsInfo[] cachedPointInfo;
 
 	{
 		lengthInput = new ValueInput( "Length", "Key Inputs", 1.0d);
@@ -182,8 +183,24 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 	}
 
 	@Override
-	public ArrayList<Vec3d> getScreenPoints() {
-		return pointsInput.getValue();
+	public void setGraphicsDataDirty() {
+		cachedPointInfo = null;
+		super.setGraphicsDataDirty();
+	}
+
+	@Override
+	public HasScreenPoints.PointsInfo[] getScreenPoints() {
+		if (cachedPointInfo == null) {
+			cachedPointInfo = new HasScreenPoints.PointsInfo[1];
+			HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
+			cachedPointInfo[0] = pi;
+
+			pi.points = pointsInput.getValue();
+			pi.color = colourInput.getValue();
+			pi.width = widthInput.getValue().intValue();
+			if (pi.width < 1) pi.width = 1;
+		}
+		return cachedPointInfo;
 	}
 
 	@Override
@@ -209,18 +226,6 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 
 		super.dragged(dist);
 		setGraphicsDataDirty();
-	}
-
-	@Override
-	public Color4d getDisplayColour() {
-		return colourInput.getValue();
-	}
-
-	@Override
-	public int getWidth() {
-		int ret = widthInput.getValue().intValue();
-		if (ret < 1) return 1;
-		return ret;
 	}
 
 	@Output(name = "DarcyFrictionFactor",

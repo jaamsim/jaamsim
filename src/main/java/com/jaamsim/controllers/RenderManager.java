@@ -1020,7 +1020,7 @@ public class RenderManager implements DragSourceListener {
 			if (dragInfo.shiftDown()) {
 				ArrayList<Vec3d> screenPoints = null;
 				if (_selectedEntity instanceof HasScreenPoints)
-					screenPoints = ((HasScreenPoints)_selectedEntity).getScreenPoints();
+					screenPoints = ((HasScreenPoints)_selectedEntity).getScreenPoints()[0].points;
 				if (screenPoints == null || screenPoints.size() == 0) return true; // just ignore this
 				// Find the geometric median of the points
 				Vec4d medPoint = RenderUtils.getGeometricMedian(screenPoints);
@@ -1047,7 +1047,7 @@ public class RenderManager implements DragSourceListener {
 			int nodeIndex = (int)(-1*(_dragHandleID - LINENODE_PICK_ID));
 			ArrayList<Vec3d> screenPoints = null;
 			if (_selectedEntity instanceof HasScreenPoints)
-				screenPoints = ((HasScreenPoints)_selectedEntity).getScreenPoints();
+				screenPoints = ((HasScreenPoints)_selectedEntity).getScreenPoints()[0].points;
 
 			// Note: screenPoints is not a defensive copy, but we'll put it back into itself
 			// in a second so everything should be safe
@@ -1098,7 +1098,7 @@ public class RenderManager implements DragSourceListener {
 		HasScreenPoints hsp = (HasScreenPoints)_selectedEntity;
 		assert(hsp != null);
 
-		ArrayList<Vec3d> points = hsp.getScreenPoints();
+		ArrayList<Vec3d> points = hsp.getScreenPoints()[0].points;
 
 		int splitInd = 0;
 		Vec4d nearPoint = null;
@@ -1152,7 +1152,7 @@ public class RenderManager implements DragSourceListener {
 		HasScreenPoints hsp = (HasScreenPoints)_selectedEntity;
 		assert(hsp != null);
 
-		ArrayList<Vec3d> points = hsp.getScreenPoints();
+		ArrayList<Vec3d> points = hsp.getScreenPoints()[0].points;
 		// Find a point that is within the threshold
 
 		if (points.size() <= 2) {

@@ -79,12 +79,12 @@ public class ArrowModel extends ScreenPointsModel {
 			}
 
 			// Draw an arrow head at the last two points
-			if (points.size() < 2) {
+			if (selectionPoints.size() < 2) {
 				return;
 			}
 
-			Vec4d startPoint = points.get(points.size() - 1);
-			Vec4d fromPoint = points.get(points.size() - 2);
+			Vec4d startPoint = selectionPoints.get(selectionPoints.size() - 1);
+			Vec4d fromPoint = selectionPoints.get(selectionPoints.size() - 2);
 
 			// Calculate a z-rotation in the XY-plane
 			Vec3d zRot = new Vec3d();
@@ -111,13 +111,13 @@ public class ArrowModel extends ScreenPointsModel {
 				return;
 			}
 
-			updatePoints(simTime);
+			updateProxies(simTime);
 			updateHead();
 
 			super.collectProxies(simTime, out);
 
 			out.add(new PolygonProxy(headPoints, Transform.ident, Vec4d.ONES,
-			        screenPointObservee.getDisplayColour(),
+			        screenPointObservee.getScreenPoints()[0].color,
 			        false, 1, getVisibilityInfo(), arrowObservee.getEntityNumber()));
 		}
 	}

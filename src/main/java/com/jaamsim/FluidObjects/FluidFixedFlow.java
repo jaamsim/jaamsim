@@ -15,9 +15,9 @@
 package com.jaamsim.FluidObjects;
 
 import java.util.ArrayList;
+
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
@@ -53,6 +53,8 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 	         example = "Pipe1 Colour { red }")
 	private final ColourInput colourInput;
 
+	private HasScreenPoints.PointsInfo[] cachedPointInfo;
+
 	{
 		flowRateInput = new ValueInput( "FlowRate", "Key Inputs", 0.0d);
 		flowRateInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
@@ -84,8 +86,24 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 	}
 
 	@Override
-	public ArrayList<Vec3d> getScreenPoints() {
-		return pointsInput.getValue();
+	public void setGraphicsDataDirty() {
+		cachedPointInfo = null;
+		super.setGraphicsDataDirty();
+	}
+
+	@Override
+	public HasScreenPoints.PointsInfo[] getScreenPoints() {
+		if (cachedPointInfo == null) {
+			cachedPointInfo = new HasScreenPoints.PointsInfo[1];
+			HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
+			cachedPointInfo[0] = pi;
+
+			pi.points = pointsInput.getValue();
+			pi.color = colourInput.getValue();
+			pi.width = widthInput.getValue().intValue();
+			if (pi.width < 1) pi.width = 1;
+		}
+		return cachedPointInfo;
 	}
 
 	@Override
@@ -113,15 +131,4 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 		setGraphicsDataDirty();
 	}
 
-	@Override
-	public Color4d getDisplayColour() {
-		return colourInput.getValue();
-	}
-
-	@Override
-	public int getWidth() {
-		int ret = widthInput.getValue().intValue();
-		if (ret < 1) return 1;
-		return ret;
-	}
 }

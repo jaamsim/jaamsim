@@ -7,14 +7,13 @@ import com.jaamsim.math.Vec3d;
 
 public interface HasScreenPoints {
 
-	public ArrayList<Vec3d> getScreenPoints();
-	public Color4d getDisplayColour();
+	public static class PointsInfo {
+		public ArrayList<Vec3d> points;
+		public Color4d color;
+		public int width; // Line width in pixels
+	}
 
-	/**
-	 * Returns the screen width of the line in pixels
-	 * @return
-	 */
-	public int getWidth();
+	public PointsInfo[] getScreenPoints();
 
 	public boolean selectable();
 

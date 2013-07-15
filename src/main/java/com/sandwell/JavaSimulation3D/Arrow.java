@@ -17,7 +17,6 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DistanceUnit;
@@ -59,6 +58,8 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 	         example = "Arrow1 Color { red }")
 	private final ColourInput color;
 
+	private HasScreenPoints.PointsInfo[] cachedPointInfo;
+
 	{
 		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
@@ -93,8 +94,24 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 	public Arrow() {}
 
 	@Override
-	public ArrayList<Vec3d> getScreenPoints() {
-		return pointsInput.getValue();
+	public void setGraphicsDataDirty() {
+		cachedPointInfo = null;
+		super.setGraphicsDataDirty();
+	}
+
+	@Override
+	public HasScreenPoints.PointsInfo[] getScreenPoints() {
+		if (cachedPointInfo == null) {
+			cachedPointInfo = new HasScreenPoints.PointsInfo[1];
+			HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
+			cachedPointInfo[0] = pi;
+
+			pi.points = pointsInput.getValue();
+			pi.color = color.getValue();
+			pi.width = width.getValue().intValue();
+			if (pi.width < 1) pi.width = 1;
+		}
+		return cachedPointInfo;
 	}
 
 	@Override
@@ -120,18 +137,6 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 
 		super.dragged(dist);
 		setGraphicsDataDirty();
-	}
-
-	@Override
-	public Color4d getDisplayColour() {
-		return color.getValue();
-	}
-
-	@Override
-	public int getWidth() {
-		int ret = width.getValue().intValue();
-		if (ret < 1) return 1;
-		return ret;
 	}
 
 	public Vec3d getArrowHeadSize() {

@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -56,9 +55,9 @@ public class ScreenPointsModel extends DisplayModel {
 		private ChangeWatcher.Tracker observeeTracker;
 		private ChangeWatcher.Tracker dmTracker;
 
-		protected ArrayList<Vec4d> points = null;
+		protected ArrayList<Vec4d> selectionPoints = null;
 		private ArrayList<Vec4d> nodePoints = null;
-		private LineProxy cachedProxy = null;
+		private LineProxy[] cachedProxies = null;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
@@ -81,9 +80,9 @@ public class ScreenPointsModel extends DisplayModel {
 		/**
 		 * Update the cached Points list
 		 */
-		protected void updatePoints(double simTime) {
+		protected void updateProxies(double simTime) {
 
-			if (points != null && observeeTracker != null && !observeeTracker.checkAndClear()
+			if (cachedProxies != null && observeeTracker != null && !observeeTracker.checkAndClear()
 			    && !dmTracker.checkAndClear()) {
 				// up to date
 				_cacheHits++;
@@ -93,37 +92,65 @@ public class ScreenPointsModel extends DisplayModel {
 			_cacheMisses++;
 			registerCacheMiss("Points");
 
-			// Convert to JaamSim math lib, and convert from a line list to discrete segments
-			points = new ArrayList<Vec4d>();
-			nodePoints = new ArrayList<Vec4d>();
-			ArrayList<Vec3d> screenPoints = screenPointObservee.getScreenPoints();
-			AABB bounds = new AABB(screenPoints);
-			double zBump = bounds.getRadius().mag3() * 0.001;
+			HasScreenPoints.PointsInfo[] pis = screenPointObservee.getScreenPoints();
 
-			if (screenPoints == null || screenPoints.size() < 2) { return; }
-
-			for (int i = 1; i < screenPoints.size(); ++i) { // Skip the first point
-				Vec3d start = screenPoints.get(i - 1);
-				Vec3d end = screenPoints.get(i);
-
-				points.add(new Vec4d(start.x, start.y, start.z + zBump, 1.0d));
-				points.add(new Vec4d(end.x, end.y, end.z + zBump, 1.0d));
+			if (pis.length == 0) {
+				cachedProxies = new LineProxy[0];
+				return;
 			}
 
-			for (int i = 0; i < screenPoints.size(); ++i) { // Skip the first point
+			selectionPoints = new ArrayList<Vec4d>();
+			nodePoints = new ArrayList<Vec4d>();
+
+			// Cache the points in the first series for selection and editing
+			ArrayList<Vec3d> basePoints = pis[0].points;
+			if (basePoints == null || basePoints.size() < 2) {
+				cachedProxies = new LineProxy[0];
+				return;
+			}
+
+			for (int i = 1; i < basePoints.size(); ++i) { // Skip the first point
+				Vec3d start = basePoints.get(i - 1);
+				Vec3d end = basePoints.get(i);
+
+				selectionPoints.add(new Vec4d(start.x, start.y, start.z, 1.0d));
+				selectionPoints.add(new Vec4d(end.x, end.y, end.z, 1.0d));
+			}
+
+			for (int i = 0; i < basePoints.size(); ++i) {
 				// Save the point list as is for control nodes
-				Vec3d p = screenPoints.get(i);
+				Vec3d p = basePoints.get(i);
 				nodePoints.add(new Vec4d(p.x, p.y, p.z, 1.0d));
 			}
 
+			Transform regionTrans = null;
 			if (displayObservee.getCurrentRegion() != null) {
-				Transform regionTrans = displayObservee.getCurrentRegion().getRegionTrans(simTime);
-				RenderUtils.transformPointsLocal(regionTrans, points, 0);
+				regionTrans = displayObservee.getCurrentRegion().getRegionTrans(simTime);
+				RenderUtils.transformPointsLocal(regionTrans, selectionPoints, 0);
 				RenderUtils.transformPointsLocal(regionTrans, nodePoints, 0);
 			}
 
-			cachedProxy = new LineProxy(points, screenPointObservee.getDisplayColour(),
-		                                screenPointObservee.getWidth(), getVisibilityInfo(), displayObservee.getEntityNumber());
+			// Add the line proxies
+			cachedProxies = new LineProxy[pis.length];
+
+			int proxyIndex = 0;
+			for (HasScreenPoints.PointsInfo pi : pis) {
+				List<Vec4d> points = new ArrayList<Vec4d>();
+
+				for (int i = 1; i < pi.points.size(); ++i) { // Skip the first point
+					Vec3d start = pi.points.get(i - 1);
+					Vec3d end = pi.points.get(i);
+
+					points.add(new Vec4d(start.x, start.y, start.z, 1.0d));
+					points.add(new Vec4d(end.x, end.y, end.z, 1.0d));
+				}
+
+				if (regionTrans != null) {
+					RenderUtils.transformPointsLocal(regionTrans, points, 0);
+				}
+
+				cachedProxies[proxyIndex++] = new LineProxy(points, pi.color, pi.width, getVisibilityInfo(), displayObservee.getEntityNumber());
+			}
 		}
 
 		@Override
@@ -133,14 +160,14 @@ public class ScreenPointsModel extends DisplayModel {
 				return;
 			}
 
-			updatePoints(simTime);
+			updateProxies(simTime);
 
-			if (points.size() == 0) {
-				return;
+			if (cachedProxies == null) {
+				int i = 0;
 			}
-
-			out.add(cachedProxy);
-
+			for (LineProxy lp : cachedProxies) {
+				out.add(lp);
+			}
 		}
 
 		@Override
@@ -153,13 +180,13 @@ public class ScreenPointsModel extends DisplayModel {
 				return;
 			}
 
-			updatePoints(simTime);
+			updateProxies(simTime);
 
-			if (points.size() == 0) {
+			if (selectionPoints.size() == 0) {
 				return;
 			}
 
-			LineProxy lp = new LineProxy(points, MINT, 2, getVisibilityInfo(), RenderManager.LINEDRAG_PICK_ID);
+			LineProxy lp = new LineProxy(selectionPoints, MINT, 2, getVisibilityInfo(), RenderManager.LINEDRAG_PICK_ID);
 			lp.setHoverColour(ColourInput.LIGHT_GREY);
 			out.add(lp);
 

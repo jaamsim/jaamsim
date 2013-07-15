@@ -17,7 +17,6 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DistanceUnit;
@@ -59,6 +58,8 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 	private double totalLength;  // Graphical length of the conveyor
 	private final ArrayList<Double> lengthList;  // Length of each segment of the conveyor
 	private final ArrayList<Double> cumLengthList;  // Total length to the end of each segment
+
+	private HasScreenPoints.PointsInfo[] cachedPointInfo;
 
 	{
 		travelTimeInput = new DoubleInput( "TravelTime", "Key Inputs", 0.0d);
@@ -131,8 +132,24 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 	}
 
 	@Override
-	public ArrayList<Vec3d> getScreenPoints() {
-		return pointsInput.getValue();
+	public void setGraphicsDataDirty() {
+		cachedPointInfo = null;
+		super.setGraphicsDataDirty();
+	}
+
+	@Override
+	public HasScreenPoints.PointsInfo[] getScreenPoints() {
+		if (cachedPointInfo == null) {
+			cachedPointInfo = new HasScreenPoints.PointsInfo[1];
+			HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
+			cachedPointInfo[0] = pi;
+
+			pi.points = pointsInput.getValue();
+			pi.color = colorInput.getValue();
+			pi.width = widthInput.getValue().intValue();
+			if (pi.width < 1) pi.width = 1;
+		}
+		return cachedPointInfo;
 	}
 
 	@Override
@@ -158,19 +175,6 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 		super.dragged(dist);
 		setGraphicsDataDirty();
-	}
-
-	@Override
-	public Color4d getDisplayColour() {
-		return colorInput.getValue();
-	}
-
-	@Override
-	public int getWidth() {
-		int ret = widthInput.getValue().intValue();
-		if (ret < 1) return 1;
-		return ret;
-
 	}
 
 	@Override
