@@ -210,6 +210,13 @@ public class CameraControl implements WindowInteractionListener {
 		Vec3d center = _updateView.getGlobalCenter();
 
 		PolarInfo origPi = getPolarFrom(center, camPos);
+		if ( camPos.x == center.x &&
+		     camPos.y == center.y ) {
+			// This is a degenerate camera view, tweak the polar info a bit to
+			// prevent view flipping
+			origPi.rotX = 0.00001;
+			origPi.rotZ = 0;
+		}
 
 		Quaternion origRot = polarToRot(origPi);
 		Mat4d rot = new Mat4d();
