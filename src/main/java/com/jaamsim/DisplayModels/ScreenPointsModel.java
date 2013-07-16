@@ -162,9 +162,6 @@ public class ScreenPointsModel extends DisplayModel {
 
 			updateProxies(simTime);
 
-			if (cachedProxies == null) {
-				int i = 0;
-			}
 			for (LineProxy lp : cachedProxies) {
 				out.add(lp);
 			}
