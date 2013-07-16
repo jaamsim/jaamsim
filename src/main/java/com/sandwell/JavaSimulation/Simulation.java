@@ -356,6 +356,15 @@ public class Simulation extends Entity {
 		EventManager.rootManager.pause();
 		Simulation.setSimState(SIM_STATE_STOPPED);
 		GUIFrame.instance().updateForSimulationState();
+
+		// kill all generated objects
+		for (int i = 0; i < Entity.getAll().size();) {
+			Entity ent = Entity.getAll().get(i);
+			if (ent.testFlag(Entity.FLAG_GENERATED))
+				ent.kill();
+			else
+				i++;
+		}
 	}
 
 	private static class StartUpTarget extends ProcessTarget {
