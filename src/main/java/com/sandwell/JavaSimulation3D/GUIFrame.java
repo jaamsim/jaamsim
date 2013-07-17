@@ -140,6 +140,7 @@ public class GUIFrame extends JFrame {
 	public static int VIEW_HEIGHT;
 	public static int VIEW_WIDTH;
 
+	static final String infinitySign = "\u221e";
 	static {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -611,7 +612,7 @@ public class GUIFrame extends JFrame {
 			@Override
 			protected void processFocusEvent( FocusEvent fe ) {
 				if ( fe.getID() == FocusEvent.FOCUS_GAINED ) {
-					if(getText().equals(String.format("%c", 8734 ))) {
+					if(getText().equals(infinitySign)) {
 						this.setHorizontalAlignment(JTextField.RIGHT);
 						this.setText("");
 					}
@@ -621,15 +622,13 @@ public class GUIFrame extends JFrame {
 				}
 				else if (fe.getID() == FocusEvent.FOCUS_LOST) {
 					if(getText().isEmpty()) {
-						this.setText(String.format("%c", 8734 ));
+						this.setText(infinitySign);
 						this.setHorizontalAlignment(JTextField.CENTER);
 					}
 				}
 				super.processFocusEvent( fe );
 			}
 		};
-
-		pauseTime.setHorizontalAlignment(JTextField.RIGHT);
 
 		// avoid height increase for pauseTime
 		pauseTime.setMaximumSize(pauseTime.getPreferredSize());
@@ -639,7 +638,8 @@ public class GUIFrame extends JFrame {
 
 		mainToolBar.add(pauseTime);
 
-		pauseTime.setText(String.format("%c", 8734 )); //default-Infinity sign
+		pauseTime.setText(infinitySign);
+		pauseTime.setHorizontalAlignment(JTextField.CENTER);
 
 		SpinnerNumberModel numberModel =
 				new SpinnerModel(Simulation.DEFAULT_REAL_TIME_FACTOR,
@@ -965,7 +965,7 @@ public class GUIFrame extends JFrame {
 
 		// pause at a time
 		double runToTime = Double.POSITIVE_INFINITY;
-		if(! pauseTime.getText().equalsIgnoreCase(String.format("%c", 8734))) {
+		if(! pauseTime.getText().equalsIgnoreCase(infinitySign)) {
 
 			try {
 				if (Tester.isDate(pauseTime.getText())) {
