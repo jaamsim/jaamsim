@@ -844,7 +844,7 @@ public class InputAgent {
 		for( int i = 1; i < record.size(); ) {
 
 			// Enter the class, object, and keyword in the new command
-			StringVector cmd = new StringVector();
+			StringVector cmd = new StringVector( record.size() );
 
 			// Keyword changes as loop proceeds
 			cmd.add((String)record.get(i));
