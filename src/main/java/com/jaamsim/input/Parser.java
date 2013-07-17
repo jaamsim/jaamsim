@@ -14,10 +14,43 @@
  */
 package com.jaamsim.input;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Parser {
+
+private static URI pwdPath;
+private static URI pwdRoot;
+private static URI resourceRoot;
+private static final String res = "/resources/inputs/";
+
+static {
+	// Walk up the parent list until we find a parentless entry, call that
+	// the 'root'
+	File f = new File(System.getProperty("user.dir"));
+	File par = f;
+	while (true) {
+		File t = par.getParentFile();
+		if (t == null) {
+			pwdRoot = par.toURI();
+			break;
+		}
+		par = t;
+	}
+
+	pwdPath = pwdRoot.relativize(f.toURI());
+
+	try {
+		// locate the resource folder, and create
+		resourceRoot = Parser.class.getResource(res).toURI();
+	}
+	catch (URISyntaxException e) {}
+
+
+}
 
 /**
  * Tokenize the given record and append to the given list of tokens
