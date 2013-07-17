@@ -340,20 +340,6 @@ public class Simulation extends Entity {
 		GUIFrame.instance().updateForSimulationState();
 	}
 
-	public void restart() {
-		// kill all generated objects
-		for (int i = 0; i < Entity.getAll().size();) {
-			Entity ent = Entity.getAll().get(i);
-			if (ent.testFlag(Entity.FLAG_GENERATED))
-				ent.kill();
-			else
-				i++;
-		}
-
-		Simulation.setSimState(SIM_STATE_CONFIGURED);
-		this.start();
-	}
-
 	/**
 	 *	Requests the EventManager to stop processing events.
 	 */

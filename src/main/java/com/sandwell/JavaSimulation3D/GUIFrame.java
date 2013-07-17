@@ -72,6 +72,7 @@ import com.jaamsim.ui.InfoBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
+import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Input;
@@ -1022,7 +1023,17 @@ public class GUIFrame extends JFrame {
 			}
 		}
 		else if( Simulation.getSimulationState() == Simulation.SIM_STATE_STOPPED ) {
-			DisplayEntity.simulation.restart();
+			// kill all generated objects
+			for (int i = 0; i < Entity.getAll().size();) {
+				Entity ent = Entity.getAll().get(i);
+				if (ent.testFlag(Entity.FLAG_GENERATED))
+					ent.kill();
+				else
+					i++;
+			}
+
+			Simulation.setSimState(Simulation.SIM_STATE_CONFIGURED);
+			DisplayEntity.simulation.start();
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
