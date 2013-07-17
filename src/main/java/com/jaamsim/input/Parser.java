@@ -28,23 +28,23 @@ public class Parser {
  * @param rec record to tokenize and append
  */
 public static final void tokenize(ArrayList<String> tokens, String rec) {
-	// Split the record into two pieces, the contents portion and possibly
-	// a commented portion
-	int cIndex = rec.indexOf("\"");
-	String contents = rec;
-	String comments = null;
-	if (cIndex > -1) {
+	// Records can be divided into two pieces, the contents portion and possibly
+	// a commented portion, the division point is the first " character, if no
+	// quoting in a record, the entire line is contents for tokenizing
+	final int cIndex = rec.indexOf("\"");
+	final String contents;
+	if (cIndex == -1)
+		contents = rec;
+	else
 		contents = rec.substring(0, cIndex);
-		comments = rec.substring(cIndex, rec.length());
-	}
 
 	// Split the contents along single-quoted substring boundaries to allow
 	// us to parse quoted and unquoted sections separately
 	String[] substring = contents.split("'", -1);
 	for (int i = 0; i < substring.length; i++) {
 		// Odd indices were single-quoted strings in the original record
-		// restore the quotes and append the whole string as a single token
-		// even if there was nothing between the quotes (an empty string)
+		// append the whole string as a single token even if there was nothing
+		// between the quotes (an empty string)
 		if (i % 2 != 0) {
 			tokens.add(substring[i]);
 			continue;
@@ -79,8 +79,8 @@ public static final void tokenize(ArrayList<String> tokens, String rec) {
 	}
 
 	// add comments if they exist including the leading " to denote it as commented
-	if (comments != null)
-		tokens.add(comments);
+	if (cIndex > -1)
+		tokens.add(rec.substring(cIndex, rec.length()));
 }
 
 private static final Pattern quoted = Pattern.compile("[ ,\t{}]");
