@@ -334,18 +334,6 @@ public class Simulation extends Entity {
 			}
 		}
 
-		// Initialize each entity based on inputs only
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			try {
-				Entity.getAll().get(i).earlyInit();
-			}
-			catch (Throwable e) {
-				InputAgent.doError(e);
-				ExceptionBox.instance().setInputError(Entity.getAll().get(i), e);
-				return;
-			}
-		}
-
 		this.startExternalProcess("startModel");
 		Simulation.resume();
 	}
@@ -411,9 +399,9 @@ public class Simulation extends Entity {
 	 *	added to the EventManager before startModel();
 	 **/
 	public void startModel() {
-
-		if (Simulation.simState <= SIM_STATE_UNCONFIGURED)
-			throw new ErrorException( "Failed to initialize" );
+		for (int i = 0; i < Entity.getAll().size(); i++) {
+			Entity.getAll().get(i).earlyInit();
+		}
 
 		if( this.getStartTime() > 0.0 ) {
 			scheduleWait( this.getStartTime() );
