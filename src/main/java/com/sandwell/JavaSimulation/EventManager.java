@@ -184,16 +184,16 @@ public final class EventManager implements Runnable {
 		}
 	}
 
+	// Initialize the eventManager.  This method is needed only for re-initialization.
+	// It is not used when the eventManager is first created.
 	void basicInit() {
 		targetTick = Long.MAX_VALUE;
 		currentTick = 0;
-		traceRecord.clearTrace();
-	}
 
-	// Initialize the eventManager.  This method is needed only for re-initialization.
-	// It is not used when the eventManager is first created.
-	void initialize() {
+		traceRecord.clearTrace();
+		EventTracer.init();
 		traceEvents = false;
+
 		synchronized (lockObject) {
 			// Kill threads on the event stack
 			for (Event each : eventStack) {

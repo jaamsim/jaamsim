@@ -267,7 +267,7 @@ public class Simulation extends Entity {
 	}
 
 	public void clear() {
-		EventManager.rootManager.initialize();
+		EventManager.rootManager.basicInit();
 
 		this.resetInputs();
 
@@ -310,10 +310,6 @@ public class Simulation extends Entity {
 	public void start() {
 		// call startModel from a process so it can handle events
 		EventManager.rootManager.basicInit();
-		EventTracer.init();
-
-		// Suppress all tracing of old model state during a restart
-		EventManager.rootManager.initialize();
 
 		if( traceEventsInput.getValue() ) {
 			EventTracer.traceAllEvents(traceEventsInput.getValue());
