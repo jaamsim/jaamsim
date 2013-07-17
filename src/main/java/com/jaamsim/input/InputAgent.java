@@ -442,7 +442,7 @@ public class InputAgent {
 		ArrayList<String> currentLine = null;
 		for (int i = 1; i < input.size(); i++) {
 			if (currentLine == null)
-				currentLine = new ArrayList<String>();
+				currentLine = new ArrayList<String>( input.size() );
 
 			currentLine.add(input.get(i));
 			if (input.get(i).equals("{")) {
