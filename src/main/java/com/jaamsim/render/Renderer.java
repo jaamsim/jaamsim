@@ -74,7 +74,7 @@ import com.sandwell.JavaSimulation.ColourInput;
 public class Renderer {
 
 	public enum ShaderHandle {
-		MESH, FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG
+		MESH, FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, SKYBOX
 	}
 
 	static private Object idLock = new Object();
@@ -143,6 +143,8 @@ public class Renderer {
 	// This may not be the best way to cache this
 	//private GL2GL3 _currentGL = null;
 	private GLContext _drawContext = null;
+
+	private Skybox _skybox;
 
 	// A cache of the current scene, needed by the individual windows to render
 	private ArrayList<Renderable> _currentScene = new ArrayList<Renderable>();
@@ -609,6 +611,11 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	vert = "/resources/shaders/debug.vert";
 	frag = "/resources/shaders/debug.frag";
 	createShader(ShaderHandle.DEBUG, vert, frag, gl);
+
+	vert = "/resources/shaders/skybox.vert";
+	frag = "/resources/shaders/skybox.frag";
+	createShader(ShaderHandle.SKYBOX, vert, frag, gl);
+
 }
 
 	/**
@@ -668,6 +675,8 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		MeshProto badProto = new MeshProto(badData, _safeGraphics, !_safeGraphics);
 		_protoCache.put(MeshDataCache.BAD_MESH_KEY, badProto);
 		badProto.loadGPUAssets(gl, this);
+
+		_skybox = new Skybox();
 
 		_sharedContext.release();
 	}
@@ -1519,6 +1528,10 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 		gl.glEnable(GL2GL3.GL_BLEND);
 		gl.glDepthMask(false);
+
+		// Draw the skybox after
+		_skybox.setTexture(cam.getInfo().skyboxTexture);
+		_skybox.render(vaoMap, this, cam);
 
 		Collections.sort(transparents);
 		for (TransSortable ts : transparents) {
