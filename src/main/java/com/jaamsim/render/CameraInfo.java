@@ -14,6 +14,8 @@
  */
 package com.jaamsim.render;
 
+import java.net.URL;
+
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Transform;
 
@@ -30,12 +32,13 @@ public class CameraInfo {
 	public double nearDist;
 	public double farDist;
 	public Transform trans;
+	public URL skyboxTexture;
 
-
-	public CameraInfo(double FOV, double nearDist, double farDist, Transform transRef) {
+	public CameraInfo(double FOV, double nearDist, double farDist, Transform transRef, URL skyboxTexure) {
 		this.FOV = FOV;
 		this.nearDist = nearDist;
 		this.farDist = farDist;
+		this.skyboxTexture = skyboxTexure;
 
 		this.trans = new Transform(transRef);
 	}
@@ -59,7 +62,7 @@ public class CameraInfo {
 	 * @return
 	 */
 	public CameraInfo getCopy() {
-		return new CameraInfo(FOV, nearDist, farDist, trans);
+		return new CameraInfo(FOV, nearDist, farDist, trans, skyboxTexture);
 	}
 
 	/**

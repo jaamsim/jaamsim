@@ -78,7 +78,7 @@ private boolean _frustumDirty = true;
  * @param far
  */
 public Camera(double FOV, double aspectRatio, double near, double far) {
-	_info = new CameraInfo(FOV, near, far, Transform.ident);
+	_info = new CameraInfo(FOV, near, far, Transform.ident, null);
 
 	_aspectRatio = aspectRatio;
 	_info.trans.inverse(invTrans);

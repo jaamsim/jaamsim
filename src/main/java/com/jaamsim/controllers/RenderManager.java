@@ -1498,7 +1498,7 @@ public class RenderManager implements DragSourceListener {
 
 		Transform trans = new Transform(cameraPos, rot, 1);
 
-		CameraInfo camInfo = new CameraInfo(Math.PI/3, viewDist*0.1, viewDist*10, trans);
+		CameraInfo camInfo = new CameraInfo(Math.PI/3, viewDist*0.1, viewDist*10, trans, null);
 
 		return _renderer.renderOffscreen(_cachedScene, viewID, camInfo, width, height, null, target);
 	}
