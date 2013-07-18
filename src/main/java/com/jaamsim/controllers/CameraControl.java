@@ -450,6 +450,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		info.nearDist = Camera.near;
 		info.farDist = Camera.far;
+		info.skyboxTexture = _updateView.getSkyboxTexture();
 
 		_renderer.setCameraInfoForWindow(_windowID, info);
 

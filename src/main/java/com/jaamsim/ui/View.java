@@ -14,8 +14,11 @@
  */
 package com.jaamsim.ui;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
+import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeyedVec3dInput;
 import com.jaamsim.math.Transform;
@@ -31,6 +34,7 @@ import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
+import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -91,6 +95,10 @@ private final KeyedVec3dInput positionScriptInput;
 example = "View1 ScriptedViewCenter { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
 private final KeyedVec3dInput centerScriptInput;
 
+@Keyword(description = "The text to place in the title bar of the window",
+example = "View1 SkyboxImage { '/resources/images/sky_map_2048x1024.jpg' }")
+private final StringInput skyboxImage;
+
 private Object setLock = new Object();
 
 private double cachedSimTime = 0;
@@ -148,6 +156,10 @@ static {
 	centerScriptInput = new KeyedVec3dInput("ScriptedViewCenter", "Graphics");
 	centerScriptInput.setUnitType(DistanceUnit.class);
 	this.addInput(centerScriptInput, true);
+
+	skyboxImage = new StringInput("SkyboxImage", "Graphics", null);
+	this.addInput(skyboxImage, true);
+
 }
 
 public View() {
@@ -167,8 +179,11 @@ public void kill() {
 
 @Override
 public void updateForInput( Input<?> in ) {
-	if (in == position || in == center) {
+	if (in == position || in == center || in == skyboxImage) {
 		dataDirtier.changed();
+		if (RenderManager.isGood()) {
+			RenderManager.inst().queueRedraw();
+		}
 		return;
 	}
 
@@ -338,6 +353,18 @@ public boolean isFollowing() {
 
 public boolean isScripted() {
 	return positionScriptInput.hasKeys() || centerScriptInput.hasKeys();
+}
+
+public URL getSkyboxTexture() {
+	try {
+		String file = skyboxImage.getValue();
+		if (file == null || file.equals("")) {
+			return null;
+		}
+		return new URL(Util.getAbsoluteFilePath(file));
+	} catch (MalformedURLException ex) {
+		return null;
+	}
 }
 
 public void update(double simTime) {
