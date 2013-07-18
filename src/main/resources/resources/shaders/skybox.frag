@@ -32,7 +32,7 @@ float atan2(in float x, in float y) {
 void main()
 {
     vec2 texCoords;
-    texCoords.x = (atan2(interpPos.x, interpPos.y) + PI) / (2*PI);
+    texCoords.x = (-atan2(interpPos.x, interpPos.y) + PI) / (2*PI);
     texCoords.y = (atan(interpPos.z / length(interpPos.xy)) + (PI/2)) / (PI);
 
     outColor = texture2D(tex, texCoords);
