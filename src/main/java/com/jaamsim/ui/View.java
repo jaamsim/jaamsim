@@ -95,7 +95,7 @@ private final KeyedVec3dInput positionScriptInput;
 example = "View1 ScriptedViewCenter { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
 private final KeyedVec3dInput centerScriptInput;
 
-@Keyword(description = "The text to place in the title bar of the window",
+@Keyword(description = "The image file to use as the background for this view.",
 example = "View1 SkyboxImage { '/resources/images/sky_map_2048x1024.jpg' }")
 private final StringInput skyboxImage;
 
