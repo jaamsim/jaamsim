@@ -41,7 +41,6 @@ import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation3D.OverlayTextLabel;
 import com.sandwell.JavaSimulation3D.Text;
-import com.sandwell.JavaSimulation3D.TextLabel;
 
 public class TextModel extends DisplayModel {
 

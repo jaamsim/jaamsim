@@ -34,6 +34,7 @@ public class TextLabel extends Text  {
 	public TextLabel() {
 	}
 
+	@Override
 	public String getRenderText(double time) {
 		return text.getValue();
 	}
