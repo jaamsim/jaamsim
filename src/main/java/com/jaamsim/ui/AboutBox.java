@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 
 import com.sandwell.JavaSimulation.Simulation;
 
@@ -48,25 +49,33 @@ public class AboutBox extends FrameBox implements ActionListener {
 		constraints.gridx = index++;
 		constraints.gridy = 0;
 
-		constraints.insets = new Insets( 15, 75, 0, 75 );
+		constraints.insets = new Insets( 15, 15, 0, 15 );
 
 		// display the model's name
-		JLabel lab = new JLabel(Simulation.getModelName());
+		JLabel lab = new JLabel(Simulation.getModelName() + " Version: 2013-28");
 		lab.setFont(boldFont);
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );
 
-		// display model info
-		lab = new JLabel("Version: 2013-28");
-		constraints.gridy = index++;
-		constraints.insets = new Insets( 0, 75, 0, 75 );
-		layout.setConstraints( lab, constraints );
-		getContentPane().add( lab );
+		StringBuilder msg = new StringBuilder("Copyright (C) 2013 Ausenco Engineering Canada Inc.\n\n");
+		msg.append("This program is free software: you can redistribute it and/or modify\n");
+		msg.append("it under the terms of the GNU General Public License as published by\n");
+		msg.append("the Free Software Foundation, either version 3 of the License, or\n");
+		msg.append("(at your option) any later version.\n");
+		msg.append("\n");
+		msg.append("This program is distributed in the hope that it will be useful,\n");
+		msg.append("but WITHOUT ANY WARRANTY; without even the implied warranty of\n");
+		msg.append("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n");
+		msg.append("GNU General Public License for more details.");
 
-		lab = new JLabel("Copyright (C) 2013 Ausenco Engineering Canada Inc.");
+		JTextArea area = new JTextArea(msg.toString());
+		area.setEditable(false);
+		area.setFocusable(false);
+		area.setBackground(lab.getBackground());
+		area.setFont(boldFont);
 		constraints.gridy = index++;
-		layout.setConstraints( lab, constraints );
-		getContentPane().add( lab );
+		layout.setConstraints( area, constraints );
+		getContentPane().add( area );
 
 		JButton closeButton = new JButton("OK");
 		closeButton.addActionListener(this);
