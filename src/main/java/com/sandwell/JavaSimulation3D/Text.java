@@ -31,7 +31,7 @@ public class Text extends DisplayEntity {
 	@Keyword(description = "The fixed and variable text to be displayed.  If spaces are included, enclose the text in single quotes.  " +
 			"If variable text is to be displayed using the OutputName keyword, include the appropriate Java format in the text, " +
 			"e.g. %s, %.6f, %.6g",
-	         example = "Text-1 FormatText { 'Present speed = %.3f m/s' }")
+	         example = "Text-1 Format { 'Present speed = %.3f m/s' }")
 	protected final StringInput formatText;
 
 	@Keyword(description = "The output value chain that returns the variable text to be displayed. " +
@@ -52,7 +52,7 @@ public class Text extends DisplayEntity {
 	private String invalidOutputName = "Invalid entry for keyword OutputName";
 
 	{
-		formatText = new StringInput("FormatText", "Key Inputs", "abc");
+		formatText = new StringInput("Format", "Key Inputs", "abc");
 		this.addInput(formatText, true);
 
 		outputName = new StringListInput("OutputName", "Key Inputs", null);
