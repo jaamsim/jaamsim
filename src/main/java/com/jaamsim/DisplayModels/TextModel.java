@@ -40,6 +40,7 @@ import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation3D.OverlayTextLabel;
+import com.sandwell.JavaSimulation3D.Text;
 import com.sandwell.JavaSimulation3D.TextLabel;
 
 public class TextModel extends DisplayModel {
@@ -135,7 +136,7 @@ public class TextModel extends DisplayModel {
 
 	@Override
 	public DisplayModelBinding getBinding(Entity ent) {
-		if (ent instanceof TextLabel) {
+		if (ent instanceof Text) {
 			return new Binding(ent, this);
 		} else if (ent instanceof OverlayTextLabel){
 			return new OverlayBinding(ent, this);
@@ -146,12 +147,12 @@ public class TextModel extends DisplayModel {
 
 	@Override
 	public boolean canDisplayEntity(Entity ent) {
-		return (ent instanceof TextLabel) || (ent instanceof OverlayTextLabel);
+		return (ent instanceof Text) || (ent instanceof OverlayTextLabel);
 	}
 
 	private class Binding extends DisplayModelBinding {
 
-		private TextLabel labelObservee;
+		private Text labelObservee;
 		private ChangeWatcher.Tracker observeeTracker;
 		private ChangeWatcher.Tracker modelTracker;
 
@@ -161,7 +162,7 @@ public class TextModel extends DisplayModel {
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			try {
-				labelObservee = (TextLabel)ent;
+				labelObservee = (Text)ent;
 				if (labelObservee != null) {
 					observeeTracker = labelObservee.getGraphicsChangeTracker();
 					modelTracker = dm.getGraphicsChangeTracker();
