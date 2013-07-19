@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.Input;
 
 /**
  * OutputHandle is a class that represents all the useful runtime information for an output,
@@ -57,18 +58,50 @@ public class OutputHandle {
 	}
 
 	public String getValueAsString(Entity ent, double simTime) {
+		Class<? extends Unit> ut = this.getUnitType();
+		String ret = this.getValueAsString(ent, simTime, 1.0, "");
+		if( ut != Unit.class && ut != DimensionlessUnit.class )
+			ret += "  " + Unit.getSIUnit(ut);
+		return ret;
+	}
+
+	public String getValueAsString(Entity ent, double simTime, String unitString, String format) {
+		return this.getValueAsString(ent, simTime, Input.parseUnits(unitString), format);
+	}
+
+	public String getValueAsString(Entity ent, double simTime, Unit unit, String format) {
+		double factor = 1.0;
+		if( unit != null ) {
+			factor = unit.getConversionFactorToSI();
+			if( unit.getClass() != annotation.unitType() )
+				return "Unit Mismatch";
+		}
+		return this.getValueAsString(ent, simTime, factor, format);
+	}
+
+	public String getValueAsString(Entity ent, double simTime, double factor, String format) {
 		String ret = null;
 		try {
+			Class<?> retType = this.getReturnType();
+			if (retType == Double.class ||
+			    retType == double.class) {
+				double val = 0;
+				if (retType == Double.class) {
+					val = this.getValue(ent, simTime, Double.class);
+				} else {
+					val = this.getValue(ent, simTime, double.class);
+				}
+				if( format.isEmpty() )
+					return String.format("%.6g", val/factor);
+				return String.format(format, val/factor);
+			}
+
 			Object o = method.invoke(ent, simTime);
 			if (o == null)
 				return null;
-
-			ret = o.toString();
-			Class<? extends Unit> ut = annotation.unitType();
-			if( ut != Unit.class && ut != DimensionlessUnit.class )
-				ret += "  " + Unit.getSIUnit(ut);
-
-			return ret;
+			if( format.isEmpty() )
+				return o.toString();
+			return String.format(format, o.toString());
 
 		} catch (InvocationTargetException ex) {
 			assert false;
