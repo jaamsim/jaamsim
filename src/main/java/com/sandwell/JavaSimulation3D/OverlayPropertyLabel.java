@@ -10,10 +10,10 @@ public class OverlayPropertyLabel extends OverlayTextLabel {
 	}
 
 	@Override
-	protected String getText(double time) {
+	public String getRenderText(double time) {
 		String val = propReader.getPropertyValueString(time);
 		if (val.equals("")) {
-			return super.getText(time);
+			return super.getRenderText(time);
 		}
 
 		return val;

@@ -39,7 +39,7 @@ import com.sandwell.JavaSimulation.StringChoiceInput;
 import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Vec3dInput;
-import com.sandwell.JavaSimulation3D.OverlayTextLabel;
+import com.sandwell.JavaSimulation3D.OverlayText;
 import com.sandwell.JavaSimulation3D.Text;
 
 public class TextModel extends DisplayModel {
@@ -137,7 +137,7 @@ public class TextModel extends DisplayModel {
 	public DisplayModelBinding getBinding(Entity ent) {
 		if (ent instanceof Text) {
 			return new Binding(ent, this);
-		} else if (ent instanceof OverlayTextLabel){
+		} else if (ent instanceof OverlayText){
 			return new OverlayBinding(ent, this);
 		}
 		assert(false);
@@ -146,7 +146,7 @@ public class TextModel extends DisplayModel {
 
 	@Override
 	public boolean canDisplayEntity(Entity ent) {
-		return (ent instanceof Text) || (ent instanceof OverlayTextLabel);
+		return (ent instanceof Text) || (ent instanceof OverlayText);
 	}
 
 	private class Binding extends DisplayModelBinding {
@@ -231,7 +231,7 @@ public class TextModel extends DisplayModel {
 
 	private class OverlayBinding extends DisplayModelBinding {
 
-		private OverlayTextLabel labelObservee;
+		private OverlayText labelObservee;
 		private ChangeWatcher.Tracker observeeTracker;
 		private ChangeWatcher.Tracker modelTracker;
 
@@ -242,7 +242,7 @@ public class TextModel extends DisplayModel {
 		public OverlayBinding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			try {
-				labelObservee = (OverlayTextLabel)ent;
+				labelObservee = (OverlayText)ent;
 				if (labelObservee != null) {
 					observeeTracker = labelObservee.getGraphicsChangeTracker();
 					modelTracker = dm.getGraphicsChangeTracker();
@@ -278,11 +278,11 @@ public class TextModel extends DisplayModel {
 			String text = labelObservee.getCachedText();
 
 			Color4d color = fontColor.getValue();
-			IntegerVector pos = labelObservee.screenPosition();
+			IntegerVector pos = labelObservee.getScreenPosition();
 			int height = labelObservee.getTextHeight();
 
-			boolean alignRight = labelObservee.alignRight();
-			boolean alignBottom = labelObservee.alignBottom();
+			boolean alignRight = labelObservee.getAlignRight();
+			boolean alignBottom = labelObservee.getAlignBottom();
 
 			TessFontKey fk = new TessFontKey(fontName.getChoice(), style);
 

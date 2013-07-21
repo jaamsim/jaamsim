@@ -20,16 +20,9 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation.StringVector;
 
 public class OverlayOPropLabel extends OverlayTextLabel {
-
-	@Keyword(description = "The name of a root entity, and then an output value chain. If more than one output value is " +
-	         "given, all outputs but the last should point to an entity output to query for the next output. The " +
-	         "example gets the name of the brand in a tank",
-	         example = "Label Output { Tank1 Product Name }")
-	private final StringListInput outputValue;
 
 	@Keyword(description = "The number of decimal places displayed by the label when displaying floating point values.",
 	         example = "Label Precision { 1 }")
@@ -42,14 +35,13 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 	private String doubleFormat = "%.0f";
 
 	{
-		outputValue = new StringListInput("OutputName", "Variable Text", null);
-		this.addInput(outputValue, true);
+		outputName.setHidden(false);
 
-		precision = new IntegerInput("Precision", "Variable Text", 0);
+		precision = new IntegerInput("Precision", "Key Inputs", 0);
 		precision.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(precision, true);
 
-		failureText = new StringInput("FailureText", "Variable Text", "");
+		failureText = new StringInput("FailureText", "Key Inputs", "");
 		this.addInput(failureText, true);
 	}
 
@@ -61,10 +53,10 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 		}
 	}
 	@Override
-	public String getText(double simTime) {
+	public String getRenderText(double simTime) {
 
-		StringVector outputs = outputValue.getValue();
-		if (outputs.size() < 2) {
+		StringVector outputs = outputName.getValue();
+		if (outputs == null || outputs.size() < 2) {
 			return failureText.getValue();
 		}
 		Entity ent = Entity.getNamedEntity(outputs.get(0));
