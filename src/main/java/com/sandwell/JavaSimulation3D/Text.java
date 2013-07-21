@@ -27,6 +27,11 @@ import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation.StringVector;
 
+/**
+ * The "Text" object displays written text within the 3D model universe.  Both fixed and variable text can be displayed.
+ * @author Harry King
+ *
+ */
 public class Text extends DisplayEntity {
 
 	@Keyword(description = "The fixed and variable text to be displayed.  If spaces are included, enclose the text in single quotes.  " +
@@ -112,7 +117,7 @@ public class Text extends DisplayEntity {
 			return invalidOutputName;
 		ret = out.getValueAsString(ent, simTime, unit.getValue(), formatText.getValue());
 		if( ret == null )
-			return "Invalid format in entry for keyword TextString";
+			return "Invalid entry for keyword Format";
 		return ret;
 	}
 
@@ -120,7 +125,7 @@ public class Text extends DisplayEntity {
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
 
-		// This is cached because PropertyLabel uses reflection to get this, so who knows how long it will take
+		// This text is cached because reflection is used to get it, so who knows how long it will take
 		String newRenderText = getRenderText(simTime);
 		if (newRenderText.equals(renderText)) {
 			// Nothing important has changed
