@@ -33,7 +33,6 @@ Define ObjectType {
                     Region
                     DisplayEntity
 					Text
-                    Arrow
                     TextLabel
                     PropertyLabel
                     OutputPropertyLabel
@@ -42,6 +41,7 @@ Define ObjectType {
                     OverlayOPropLabel
                     OverlayImage
 					OverlayText
+                    Arrow
                     Graph
                     VideoRecorder
                     }
@@ -53,9 +53,9 @@ Text                  JavaClass { com.sandwell.JavaSimulation3D.Text            
 TextLabel             JavaClass { com.sandwell.JavaSimulation3D.TextLabel            } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } DragAndDrop { FALSE }
 PropertyLabel         JavaClass { com.sandwell.JavaSimulation3D.PropertyLabel        } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } DragAndDrop { FALSE }
 OutputPropertyLabel   JavaClass { com.sandwell.JavaSimulation3D.OutputPropertyLabel  } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } DragAndDrop { FALSE }
-OverlayTextLabel      JavaClass { com.sandwell.JavaSimulation3D.OverlayTextLabel     } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
-OverlayPropertyLabel  JavaClass { com.sandwell.JavaSimulation3D.OverlayPropertyLabel } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
-OverlayOPropLabel     JavaClass { com.sandwell.JavaSimulation3D.OverlayOPropLabel    } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
+OverlayTextLabel      JavaClass { com.sandwell.JavaSimulation3D.OverlayTextLabel     } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } DragAndDrop { FALSE }
+OverlayPropertyLabel  JavaClass { com.sandwell.JavaSimulation3D.OverlayPropertyLabel } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } DragAndDrop { FALSE }
+OverlayOPropLabel     JavaClass { com.sandwell.JavaSimulation3D.OverlayOPropLabel    } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } DragAndDrop { FALSE }
 OverlayImage          JavaClass { com.sandwell.JavaSimulation3D.OverlayImage         } Palette { 'Graphics Objects' }
 OverlayText           JavaClass { com.sandwell.JavaSimulation3D.OverlayText          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 Arrow                 JavaClass { com.sandwell.JavaSimulation3D.Arrow                } Palette { 'Graphics Objects' } DefaultDisplayModel { ArrowModelDefault        }
