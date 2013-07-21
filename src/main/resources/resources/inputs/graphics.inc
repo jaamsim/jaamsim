@@ -41,6 +41,7 @@ Define ObjectType {
                     OverlayPropertyLabel
                     OverlayOPropLabel
                     OverlayImage
+					OverlayText
                     Graph
                     VideoRecorder
                     }
@@ -56,6 +57,7 @@ OverlayTextLabel      JavaClass { com.sandwell.JavaSimulation3D.OverlayTextLabel
 OverlayPropertyLabel  JavaClass { com.sandwell.JavaSimulation3D.OverlayPropertyLabel } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 OverlayOPropLabel     JavaClass { com.sandwell.JavaSimulation3D.OverlayOPropLabel    } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 OverlayImage          JavaClass { com.sandwell.JavaSimulation3D.OverlayImage         } Palette { 'Graphics Objects' }
+OverlayText           JavaClass { com.sandwell.JavaSimulation3D.OverlayText          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 Arrow                 JavaClass { com.sandwell.JavaSimulation3D.Arrow                } Palette { 'Graphics Objects' } DefaultDisplayModel { ArrowModelDefault        }
 Graph                 JavaClass { com.sandwell.JavaSimulation3D.Graph                } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        }
 
