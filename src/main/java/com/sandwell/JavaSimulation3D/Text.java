@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DistanceUnit;
@@ -65,6 +66,8 @@ public class Text extends DisplayEntity {
 		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		textHeight.setUnitType(DistanceUnit.class);
 		this.addInput(textHeight, true);
+
+		InputAgent.processEntity_Keyword_Value(this, "Size", "1.0 1.0 0.0 m");
 	}
 
 	public Text() {
