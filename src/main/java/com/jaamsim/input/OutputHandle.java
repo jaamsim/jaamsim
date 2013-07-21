@@ -97,7 +97,7 @@ public class OutputHandle {
 					val = this.getValue(ent, simTime, double.class);
 				}
 				if( format.isEmpty() )
-					return String.format("%.6g", val/factor);
+					return String.format("%,.6g", val/factor);
 				return String.format(format, val/factor);
 			}
 
