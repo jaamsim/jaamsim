@@ -471,7 +471,7 @@ static class LabelMenuItem extends DEMenuItem {
 
 	@Override
 	public void action() {
-		TextLabel label = InputAgent.defineEntityWithUniqueName(TextLabel.class,
+		Text label = InputAgent.defineEntityWithUniqueName(Text.class,
 		                  String.format("Label_for_%s", ent.getInputName()), true);
 
 		InputAgent.processEntity_Keyword_Value(label, "RelativeEntity", ent.getInputName() );
@@ -479,7 +479,7 @@ static class LabelMenuItem extends DEMenuItem {
 			InputAgent.processEntity_Keyword_Value(label, "Region", ent.getCurrentRegion().getInputName());
 
 		InputAgent.processEntity_Keyword_Value(label, "Position", "0.0 -1.0 0.0 m" );
-		InputAgent.processEntity_Keyword_Value(label, "Text", ent.getInputName());
+		InputAgent.processEntity_Keyword_Value(label, "Format", ent.getInputName());
 
 		FrameBox.setSelectedEntity(label);
 	}
