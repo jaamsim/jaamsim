@@ -85,7 +85,6 @@ public class OutputHandle {
 	}
 
 	public String getValueAsString(Entity ent, double simTime, double factor, String format) {
-		String ret = null;
 		try {
 			Class<?> retType = this.getReturnType();
 			if (retType == Double.class ||
@@ -113,7 +112,7 @@ public class OutputHandle {
 		} catch (IllegalAccessException ex) {
 			assert false;
 		}
-		return ret;
+		return null;
 	}
 
 	public Class<?> getReturnType() {
