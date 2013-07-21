@@ -71,9 +71,14 @@ public class OutputHandle {
 
 	public String getValueAsString(Entity ent, double simTime, Unit unit, String format) {
 		double factor = 1.0;
-		if( unit != null ) {
+		Class<? extends Unit> ut = this.getUnitType();
+		if( unit == null ) {
+			if( ut != Unit.class && ut != DimensionlessUnit.class )
+				return "Unit Mismatch";
+		}
+		else {
 			factor = unit.getConversionFactorToSI();
-			if( unit.getClass() != annotation.unitType() )
+			if( unit.getClass() != ut )
 				return "Unit Mismatch";
 		}
 		return this.getValueAsString(ent, simTime, factor, format);
