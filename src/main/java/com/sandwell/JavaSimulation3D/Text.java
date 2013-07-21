@@ -16,7 +16,7 @@ package com.sandwell.JavaSimulation3D;
 
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
@@ -45,7 +45,7 @@ public class Text extends DisplayEntity {
 	protected final EntityInput<Unit> unit;
 
 	@Keyword(description = "The height of the font as displayed in the view window.",
-	         example = "Text-1 TextHeight { 15 }")
+	         example = "Text-1 TextHeight { 15 m }")
 	protected final ValueInput textHeight;
 
 	protected String renderText = "";
@@ -63,7 +63,7 @@ public class Text extends DisplayEntity {
 
 		textHeight = new ValueInput("TextHeight", "Key Inputs", 0.3d);
 		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		textHeight.setUnitType(DimensionlessUnit.class);
+		textHeight.setUnitType(DistanceUnit.class);
 		this.addInput(textHeight, true);
 	}
 

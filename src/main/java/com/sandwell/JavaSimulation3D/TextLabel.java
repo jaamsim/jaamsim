@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
 
@@ -26,6 +27,8 @@ public class TextLabel extends Text  {
 		formatText.setHidden(true);
 		outputName.setHidden(true);
 		unit.setHidden(true);
+
+		textHeight.setUnitType(DimensionlessUnit.class);
 
 		text = new StringInput("Text", "Key Inputs", "abc");
 		this.addInput(text, true);
