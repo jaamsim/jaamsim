@@ -211,7 +211,7 @@ public class ImageModel extends DisplayModel {
 			registerCacheMiss("OverlayImage");
 
 			String filename = imageFile.getValue();
-			IntegerVector pos = imageObservee.getScreenPos();
+			IntegerVector pos = imageObservee.getScreenPosition();
 			IntegerVector size = imageObservee.getImageSize();
 
 			boolean alignRight = imageObservee.getAlignRight();
