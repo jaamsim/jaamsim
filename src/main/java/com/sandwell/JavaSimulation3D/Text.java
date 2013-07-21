@@ -82,7 +82,7 @@ public class Text extends DisplayEntity {
 	public String getRenderText(double simTime) {
 		String ret = "";
 		StringVector outputs = outputName.getValue();
-		if( outputs == null )
+		if( outputs == null || outputs.isEmpty() )
 			return formatText.getValue();
 
 		if (outputs.size() < 2)
