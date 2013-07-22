@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2GL3;
+import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
@@ -1291,7 +1292,13 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		int height = target.getHeight();
 
 		_sharedContext.makeCurrent();
-		GL2GL3 gl = _sharedContext.getGL().getGL2GL3(); // Just to clean up the code below
+		GL3 gl = _sharedContext.getGL().getGL3(); // Just to clean up the code below
+
+		// This does not support opengl 3, so for now we don't support off screen rendering
+		if (gl == null) {
+			_sharedContext.release();
+			return;
+		}
 
 		// Create a new frame buffer for this draw operation
 		int[] temp = new int[2];
@@ -1306,14 +1313,14 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		gl.glGenRenderbuffers(1, temp, 0);
 		int depthBuf = temp[0];
 
-		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D_MULTISAMPLE, drawTex);
-		gl.glTexImage2DMultisample(GL2GL3.GL_TEXTURE_2D_MULTISAMPLE, 4, GL2GL3.GL_RGBA8, width, height, true);
+		gl.glBindTexture(GL3.GL_TEXTURE_2D_MULTISAMPLE, drawTex);
+		gl.glTexImage2DMultisample(GL3.GL_TEXTURE_2D_MULTISAMPLE, 4, GL2GL3.GL_RGBA8, width, height, true);
 
 		gl.glBindRenderbuffer(GL2GL3.GL_RENDERBUFFER, depthBuf);
 		gl.glRenderbufferStorageMultisample(GL2GL3.GL_RENDERBUFFER, 4, GL2GL3.GL_DEPTH_COMPONENT, width, height);
 
 		gl.glBindFramebuffer(GL2GL3.GL_FRAMEBUFFER, drawFBO);
-		gl.glFramebufferTexture2D(GL2GL3.GL_FRAMEBUFFER, GL2GL3.GL_COLOR_ATTACHMENT0, GL2GL3.GL_TEXTURE_2D_MULTISAMPLE, drawTex, 0);
+		gl.glFramebufferTexture2D(GL2GL3.GL_FRAMEBUFFER, GL2GL3.GL_COLOR_ATTACHMENT0, GL3.GL_TEXTURE_2D_MULTISAMPLE, drawTex, 0);
 
 		gl.glFramebufferRenderbuffer(GL2GL3.GL_FRAMEBUFFER, GL2GL3.GL_DEPTH_ATTACHMENT, GL2GL3.GL_RENDERBUFFER, depthBuf);
 
@@ -1336,6 +1343,9 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	}
 
 	private void freeOffscreenTargetImp(OffscreenTarget target) {
+		if (!target.isLoaded()) {
+			return; // Nothing to free
+		}
 		_sharedContext.makeCurrent();
 		GL2GL3 gl = _sharedContext.getGL().getGL2GL3(); // Just to clean up the code below
 
@@ -1377,6 +1387,10 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			int width = message.width;
 			int height = message.height;
 
+			if (!target.isLoaded()) {
+				message.result.setFailed("Contexted not loaded. Is OpenGL 3 supported?");
+				return;
+			}
 			assert(target.isLoaded());
 
 			_sharedContext.makeCurrent();
