@@ -62,6 +62,7 @@ public class CameraControl implements WindowInteractionListener {
 		_updateView = updateView;
 
 		_viewTracker = _updateView.getChangeTracker();
+		POI.set3(_updateView.getGlobalCenter());
 	}
 
 	@Override
