@@ -15,13 +15,13 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.ProbabilityDistribution;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
@@ -32,14 +32,15 @@ public class EntityGenerator extends LinkedComponent {
 
 	@Keyword(description = "The probability distribution object used to select the inter-arrival time between generated DisplayEntities.",
 	         example = "EntityGenerator1 IATdistribution { Dist1 }")
-	private final EntityInput<ProbabilityDistribution> iatDistributionInput;
+	private final SampleInput iatDistributionInput;
 
 	@Keyword(description = "The list of DisplayModels to be assigned to the generated DisplayEntities.",
 	         example = "EntityGenerator1 GeneratedDisplayModelList { Sphere }")
 	private final EntityListInput<DisplayModel> generatedDisplayModelListInput;
 
 	{
-		iatDistributionInput = new EntityInput<ProbabilityDistribution>( ProbabilityDistribution.class, "IATdistribution", "Key Inputs", null);
+		iatDistributionInput = new SampleInput( "IATdistribution", "Key Inputs", null);
+		iatDistributionInput.setUnitType( TimeUnit.class );
 		this.addInput( iatDistributionInput, true);
 
 		generatedDisplayModelListInput = new EntityListInput<DisplayModel>( DisplayModel.class, "DisplayModelList", "Key Inputs", null);
@@ -91,10 +92,10 @@ public class EntityGenerator extends LinkedComponent {
 		while( true ) {
 
 			// Determine the interarrival time for the next creation event
-			double dt = iatDistributionInput.getValue().nextValue();
+			double dt = iatDistributionInput.getValue().getNextSample(0.0);
 
 			// Schedule the creation event at this time
-			this.scheduleWait( dt );
+			this.simWait( dt );
 
 			// Create the new DisplayEntity
 			DisplayEntity newDisplayEntity = new DisplayEntity();
