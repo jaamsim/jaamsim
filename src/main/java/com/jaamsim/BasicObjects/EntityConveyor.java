@@ -24,7 +24,6 @@ import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.ErrorException;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.Vec3dListInput;
@@ -88,16 +87,6 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		startTimeList = new ArrayList<Double>();
 		lengthList = new ArrayList<Double>();
 		cumLengthList = new ArrayList<Double>();
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the next entity in the chain has been specified
-		if( getNextComponent() == null ) {
-			throw new InputErrorException( "The keyword NextEntity must be set." );
-		}
 	}
 
 	@Override

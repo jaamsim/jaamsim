@@ -60,10 +60,6 @@ public class EntityGenerator extends LinkedComponent {
 		}
 
 		iatDistributionInput.verifyUnit();
-		// Confirm that the next entity in the chain has been specified
-		if( getNextComponent() == null ) {
-			throw new InputErrorException( "The keyword NextEntity must be set." );
-		}
 	}
 
 	@Override

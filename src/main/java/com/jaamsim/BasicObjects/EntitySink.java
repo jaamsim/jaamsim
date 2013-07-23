@@ -14,7 +14,6 @@
  */
 package com.jaamsim.BasicObjects;
 
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
@@ -22,14 +21,8 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public class EntitySink extends LinkedComponent {
 
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the next entity in the chain has not been specified
-		if( getNextComponent() != null ) {
-			throw new InputErrorException( "The keyword NextEntity must not be set." );
-		}
+	{
+		nextComponentInput.setHidden(true);
 	}
 
 	/**
@@ -43,6 +36,6 @@ public class EntitySink extends LinkedComponent {
 
 		// Increment the total number killed
 		numberProcessed++;
-
 	}
+
 }

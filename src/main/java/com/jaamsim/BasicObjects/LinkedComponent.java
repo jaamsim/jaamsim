@@ -15,6 +15,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.sandwell.JavaSimulation.EntityInput;
+import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
@@ -26,7 +27,7 @@ public class LinkedComponent extends DisplayEntity {
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 	         example = "EntityGenerator1 NextComponent { Server1 }")
-	private final EntityInput<LinkedComponent> nextComponentInput;
+	protected final EntityInput<LinkedComponent> nextComponentInput;
 
 	int numberProcessed; // Number of entities processed by this component
 
@@ -36,6 +37,16 @@ public class LinkedComponent extends DisplayEntity {
 	}
 
 	public LinkedComponent() {
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+
+		// Confirm that the next entity in the chain has been specified
+		if( ! nextComponentInput.getHidden() &&	getNextComponent() == null ) {
+			throw new InputErrorException( "The keyword NextEntity must be set." );
+		}
 	}
 
 	@Override

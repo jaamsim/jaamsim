@@ -67,10 +67,6 @@ public class Server extends LinkedComponent {
 		}
 
 		serviceTimeDistributionInput.verifyUnit();
-		// Confirm that the next entity in the chain has been specified
-		if( getNextComponent() == null ) {
-			throw new InputErrorException( "The keyword NextEntity must be set." );
-		}
 	}
 
 	@Override
