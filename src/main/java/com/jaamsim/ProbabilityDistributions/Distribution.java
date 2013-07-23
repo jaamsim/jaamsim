@@ -43,13 +43,11 @@ implements SampleProvider {
 			 example = "ProbDist1 RandomSeed { 547 }")
 	private final IntegerInput randomSeedInput;
 
-	@Keyword(description = "Minimum value that can be returned (before ValueFactor is applied). " +
-					"Smaller values are rejected and resampled.",
+	@Keyword(description = "Minimum value that can be returned.  Smaller values are rejected and resampled.",
 	         example = "ProbDist1 MinValue { 0.0 }")
 	private final ValueInput minValueInput;
 
-	@Keyword(description = "Maximum value that can be returned (before ValueFactor is applied). " +
-					"Larger values are rejected and resampled.",
+	@Keyword(description = "Maximum value that can be returned.  Larger values are rejected and resampled.",
 	         example = "ProbDist1 MaxValue { 200.0 }")
 	private final ValueInput maxValueInput;
 
