@@ -93,13 +93,6 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 	public void earlyInit() {
 		super.earlyInit();
 
-		// Clear the entities being conveyed
-//		int doLoop = entityList.size();
-//		for( int i = 0; i < doLoop; i++ ) {
-//			DisplayEntity each = entityList.get( i );
-//			each.exitRegion();
-//			each.kill();
-//		}
 		entityList.clear();
 		startTimeList.clear();
 		busy = false;
