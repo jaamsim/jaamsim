@@ -31,6 +31,11 @@ public class UnitTypeInput extends Input<ObjectType> {
 		super(key, cat, null);
 	}
 
+	public UnitTypeInput(String key, String cat, Class<? extends Unit> ut) {
+		super(key, cat, null);
+		unitType = ut;
+	}
+
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {

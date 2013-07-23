@@ -15,6 +15,7 @@
 package com.jaamsim.Samples;
 
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
@@ -50,8 +51,13 @@ public class SampleInput extends Input<SampleProvider> {
 		// If not a constant, try parsing a SampleProvider
 		Entity ent = Input.parseEntity(input.get(0), Entity.class);
 		SampleProvider s = Input.castImplements(ent, SampleProvider.class);
-		Input.assertUnitsMatch(unitType, s.getUnitType());
+		if( s.getUnitType() != UserSpecifiedUnit.class )
+			Input.assertUnitsMatch(unitType, s.getUnitType());
 		value = s;
 		this.updateEditingFlags();
+	}
+
+	public void verifyUnit() {
+		Input.assertUnitsMatch( unitType, value.getUnitType());
 	}
 }

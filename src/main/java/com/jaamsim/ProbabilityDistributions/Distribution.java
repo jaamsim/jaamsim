@@ -63,7 +63,7 @@ implements SampleProvider {
 	private double sampleMax;
 
 	{
-		unitType = new UnitTypeInput("UnitType", "Key Inputs");
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(unitType, true);
 
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 1);

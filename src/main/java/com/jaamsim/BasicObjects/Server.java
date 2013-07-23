@@ -66,6 +66,7 @@ public class Server extends LinkedComponent {
 			throw new InputErrorException( "The keyword WaitQueue must be set." );
 		}
 
+		serviceTimeDistributionInput.verifyUnit();
 		// Confirm that the next entity in the chain has been specified
 		if( getNextComponent() == null ) {
 			throw new InputErrorException( "The keyword NextEntity must be set." );
