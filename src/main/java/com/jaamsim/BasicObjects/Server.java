@@ -14,13 +14,14 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.ProbabilityDistribution;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;
@@ -33,7 +34,7 @@ public class Server extends LinkedComponent {
 
 	@Keyword(description = "The probability distribution object used to select the service time for each DisplayEntity.",
 	         example = "Server1 ServiceTimeDistribution { Dist1 }")
-	private final EntityInput<ProbabilityDistribution> serviceTimeDistributionInput;
+	private final SampleInput serviceTimeDistributionInput;
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         example = "Server1 WaitQueue { Queue1 }")
@@ -43,7 +44,8 @@ public class Server extends LinkedComponent {
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
 
 	{
-		serviceTimeDistributionInput = new EntityInput<ProbabilityDistribution>( ProbabilityDistribution.class, "ServiceTimeDistribution", "Key Inputs", null);
+		serviceTimeDistributionInput = new SampleInput( "ServiceTimeDistribution", "Key Inputs", null);
+		serviceTimeDistributionInput.setUnitType( TimeUnit.class );
 		this.addInput( serviceTimeDistributionInput, true);
 
 		waitQueueInput = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
@@ -127,8 +129,8 @@ public class Server extends LinkedComponent {
 			this.setGraphicsDataDirty();
 
 			// Select the processing time and wait for it to be completed
-			double dt = serviceTimeDistributionInput.getValue().nextValue();
-			this.scheduleWait( dt );
+			double dt = serviceTimeDistributionInput.getValue().getNextSample(0.0);
+			this.simWait( dt );
 
 			// Increment the total number served
 			numberProcessed++;
