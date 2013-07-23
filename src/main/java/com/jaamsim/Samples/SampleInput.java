@@ -14,6 +14,10 @@
  */
 package com.jaamsim.Samples;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleVector;
@@ -55,6 +59,18 @@ public class SampleInput extends Input<SampleProvider> {
 			Input.assertUnitsMatch(unitType, s.getUnitType());
 		value = s;
 		this.updateEditingFlags();
+	}
+
+	@Override
+	public ArrayList<String> getValidOptions() {
+		ArrayList<String> list = new ArrayList<String>();
+		for (Entity each: Entity.getAll()) {
+			if( (SampleProvider.class).isAssignableFrom(each.getClass()) ) {
+			    list.add(each.getInputName());
+			}
+		}
+		Collections.sort(list);
+		return list;
 	}
 
 	public void verifyUnit() {
