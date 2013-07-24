@@ -153,7 +153,7 @@ public class ColladaModel extends DisplayModel {
 			}
 
 			AABB bounds = RenderManager.inst().getMeshBounds(meshKey, true);
-			if (bounds == null) {
+			if (bounds == null || bounds.isEmpty()) {
 				// This mesh has not been loaded yet, try again next time
 				cachedProxies = null; // Invalidate the cache
 				return;
@@ -198,7 +198,8 @@ public class ColladaModel extends DisplayModel {
 
 			updateCache(simTime);
 
-			out.addAll(cachedProxies);
+			if (cachedProxies != null)
+				out.addAll(cachedProxies);
 		}
 	}
 
