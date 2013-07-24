@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.MeshFiles.MeshReader;
+import com.jaamsim.MeshFiles.ObjReader;
 import com.jaamsim.collada.ColParser;
 
 public class MeshDataCache {
@@ -76,6 +77,8 @@ public class MeshDataCache {
 				data = ColParser.parse(key.getURL());
 			} else if (ext.toUpperCase().equals("JSM")) {
 				data = MeshReader.parse(key.getURL());
+			} else if (ext.toUpperCase().equals("OBJ")) {
+				data = ObjReader.parse(key.getURL());
 			} else {
 				assert(false);
 			}
