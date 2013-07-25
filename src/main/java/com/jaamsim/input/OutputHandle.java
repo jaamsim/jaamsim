@@ -32,10 +32,14 @@ public class OutputHandle {
 
 	public Output annotation;
 	public Method method;
+	public Class<? extends Unit> unitType;
 
 	public OutputHandle(Output a, Method m) {
 		annotation = a;
 		method = m;
+
+		assert (annotation != null);
+		unitType =  annotation.unitType();
 	}
 
 	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
@@ -126,8 +130,11 @@ public class OutputHandle {
 	}
 
 	public Class<? extends Unit> getUnitType() {
-		assert (annotation != null);
-		return annotation.unitType();
+		return unitType;
+	}
+
+	public void setUnitType( Class<? extends Unit> ut ) {
+		unitType = ut;
 	}
 
 	public String getDescription() {
