@@ -35,7 +35,7 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public abstract class Distribution extends DisplayEntity
 implements SampleProvider {
-	@Keyword(description = "The unittype that the distribution returns values in.",
+	@Keyword(description = "The unit type that the distribution returns values in.",
 	         example = "ProbDist1 UnitType { DistanceUnit }")
 	private final UnitTypeInput unitType;
 
