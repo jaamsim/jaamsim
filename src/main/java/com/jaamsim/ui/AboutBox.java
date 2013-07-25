@@ -52,7 +52,7 @@ public class AboutBox extends FrameBox implements ActionListener {
 		constraints.insets = new Insets( 15, 15, 0, 15 );
 
 		// display the model's name
-		JLabel lab = new JLabel(Simulation.getModelName() + " Version: 2013-29");
+		JLabel lab = new JLabel(Simulation.getModelName() + " Version: 2013-30");
 		lab.setFont(boldFont);
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );
