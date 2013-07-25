@@ -20,6 +20,7 @@ import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.Input;
@@ -126,9 +127,15 @@ implements SampleProvider {
 		return unitType.getUnitType();
 	}
 
-	protected void setUnitType(Class<? extends Unit> specified) {
-		minValueInput.setUnitType(specified);
-		maxValueInput.setUnitType(specified);
+	protected void setUnitType(Class<? extends Unit> ut) {
+		minValueInput.setUnitType(ut);
+		maxValueInput.setUnitType(ut);
+		this.getOutputHandle("CalculatedMean"             ).setUnitType(ut);
+		this.getOutputHandle("CalculatedStandardDeviation").setUnitType(ut);
+		this.getOutputHandle("SampleMean"                 ).setUnitType(ut);
+		this.getOutputHandle("SampleStandardDeviation"    ).setUnitType(ut);
+		this.getOutputHandle("SampleMin"                  ).setUnitType(ut);
+		this.getOutputHandle("SampleMax"                  ).setUnitType(ut);
 	}
 
 	/**
@@ -174,45 +181,52 @@ implements SampleProvider {
 
 	@Output( name="CalculatedMean",
 			 description="The mean of the probability distribution calculated directly from the inputs.  " +
-			 		"It is NOT the mean of the sampled values.  The inputs for MinValue and MaxValue are ignored.")
+					"It is NOT the mean of the sampled values.  The inputs for MinValue and MaxValue are ignored.",
+			 unitType=UserSpecifiedUnit.class)
 	public double getMeanValue( double simTime ) {
 		return this.getMeanValue();
 	}
 
 	@Output( name="CalculatedStandardDeviation",
 			 description="The standard deviation of the probability distribution calculated directly from the inputs.  " +
-			 		"It is NOT the standard deviation of the sampled values.  The inputs for MinValue and MaxValue are ignored.")
+					"It is NOT the standard deviation of the sampled values.  The inputs for MinValue and MaxValue are ignored.",
+			 unitType=UserSpecifiedUnit.class)
 	public double getStandardDeviation( double simTime ) {
 		return this.getStandardDeviation();
 	}
 
 	@Output( name="NumberOfSamples",
-			 description="The number of times the probability distribution has been sampled.")
+			 description="The number of times the probability distribution has been sampled.",
+			 unitType=DimensionlessUnit.class)
 	public int getNumberOfSamples( double simTime ) {
 		return sampleCount;
 	}
 
 	@Output( name="SampleMean",
-			 description="The mean of the values sampled from the probability distribution.")
+			 description="The mean of the values sampled from the probability distribution.",
+			 unitType=UserSpecifiedUnit.class)
 	public double getSampleMean( double simTime ) {
 		return sampleSum / sampleCount;
 	}
 
 	@Output( name="SampleStandardDeviation",
-			 description="The standard deviation of the values sampled from the probability distribution.")
+			 description="The standard deviation of the values sampled from the probability distribution.",
+			 unitType=UserSpecifiedUnit.class)
 	public double getSampleStandardDeviation( double simTime ) {
 		double sampleMean = sampleSum / sampleCount;
 		return Math.sqrt( sampleSquaredSum/sampleCount - sampleMean*sampleMean );
 	}
 
 	@Output( name="SampleMin",
-			 description="The minimum of the values sampled from the probability distribution.")
+			 description="The minimum of the values sampled from the probability distribution.",
+			 unitType=UserSpecifiedUnit.class)
 	public double getSampleMin( double simTime ) {
 		return sampleMin;
 	}
 
 	@Output( name="SampleMax",
-			 description="The maximum of the values sampled from the probability distribution.")
+			 description="The maximum of the values sampled from the probability distribution.",
+			 unitType=UserSpecifiedUnit.class)
 	public double getSampleMax( double simTime ) {
 		return sampleMax;
 	}
