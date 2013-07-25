@@ -74,7 +74,7 @@ public class OutputBox extends FrameBox {
 		Class<?> currClass = null;
 		entries.clear();
 
-		ArrayList<OutputHandle> handles = currentEntity.getOutputs();
+		ArrayList<OutputHandle> handles = currentEntity.getOutputHandles();
 		for (OutputHandle h : handles) {
 			Class<?> klass = h.method.getDeclaringClass();
 			if (currClass != klass) {

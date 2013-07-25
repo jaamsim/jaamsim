@@ -615,31 +615,20 @@ public class Entity {
 		}
 	}
 
-	public final ArrayList<OutputHandle> getOutputs() {
-		ArrayList<OutputHandle> handles = new ArrayList<OutputHandle>();
-		for (Method m : this.getClass().getMethods()) {
-			Output o = m.getAnnotation(Output.class);
-			if (o == null)
-				continue;
+	public final ArrayList<OutputHandle> getOutputHandles() {
 
-			// Check that this method only takes a single double (simTime) parameter
-			Class<?>[] paramTypes = m.getParameterTypes();
-			if (paramTypes.length != 1 ||
-			    paramTypes[0] != double.class) {
-				continue;
-			}
-
-			OutputHandle handle = new OutputHandle(o, m);
-			handles.add(handle);
+		// lazily initialize the output cache
+		if (outputCache == null) {
+			buildOutputCache();
 		}
 
+		ArrayList<OutputHandle> handles = new ArrayList<OutputHandle>( outputCache.values() );
 		Collections.sort(handles, new OutputComparator());
 		return handles;
 	}
 
 	private void buildOutputCache() {
 		outputCache = new HashMap<String, OutputHandle>();
-		ArrayList<OutputHandle> handles = new ArrayList<OutputHandle>();
 		for (Method m : this.getClass().getMethods()) {
 			Output o = m.getAnnotation(Output.class);
 			if (o == null) {
@@ -654,12 +643,8 @@ public class Entity {
 			}
 
 			OutputHandle handle = new OutputHandle(o, m);
-			handles.add(handle);
-
 			outputCache.put(o.name(), handle);
 		}
-
-		Collections.sort(handles, new OutputComparator());
 	}
 
 	public OutputHandle getOutputHandle(String outputName) {
