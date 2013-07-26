@@ -126,7 +126,7 @@ public class Server extends LinkedComponent {
 			this.setGraphicsDataDirty();
 
 			// Select the processing time and wait for it to be completed
-			double dt = serviceTimeDistributionInput.getValue().getNextSample(0.0);
+			double dt = serviceTimeDistributionInput.getValue().getNextSample(getSimTime());
 			this.simWait( dt );
 
 			// Increment the total number served

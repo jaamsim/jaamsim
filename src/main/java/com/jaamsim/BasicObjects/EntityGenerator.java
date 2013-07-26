@@ -89,7 +89,7 @@ public class EntityGenerator extends LinkedComponent {
 		while( true ) {
 
 			// Determine the interarrival time for the next creation event
-			double dt = iatDistributionInput.getValue().getNextSample(0.0);
+			double dt = iatDistributionInput.getValue().getNextSample(getSimTime());
 
 			// Schedule the creation event at this time
 			this.simWait( dt );
