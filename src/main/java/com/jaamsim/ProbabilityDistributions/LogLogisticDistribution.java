@@ -14,7 +14,10 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.Keyword;
 
 /**
@@ -25,20 +28,28 @@ public class LogLogisticDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Log-Logistic distribution.",
 	         example = "LogLogisticDist-1 Scale { 3.0 }")
-	private final DoubleInput scaleInput;
+	private final ValueInput scaleInput;
 
 	@Keyword(description = "The shape parameter for the Log-Logistic distribution.  A decimal value > 0.0.",
 	         example = "LogLogisticDist-1 Shape { 1.0 }")
-	private final DoubleInput shapeInput;
+	private final ValueInput shapeInput;
 
 	{
-		scaleInput = new DoubleInput("Scale", "Key Inputs", 1.0d);
+		scaleInput = new ValueInput("Scale", "Key Inputs", 1.0d);
 		scaleInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
+		scaleInput.setUnitType( UserSpecifiedUnit.class );
 		this.addInput(scaleInput, true);
 
-		shapeInput = new DoubleInput("Shape", "Key Inputs", 1.0d);
+		shapeInput = new ValueInput("Shape", "Key Inputs", 1.0d);
 		shapeInput.setValidRange( 2.000001d, Double.POSITIVE_INFINITY);
+		shapeInput.setUnitType( DimensionlessUnit.class );
 		this.addInput(shapeInput, true);
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> ut) {
+		super.setUnitType(ut);
+		scaleInput.setUnitType(ut);
 	}
 
 	@Override
