@@ -16,7 +16,6 @@ package com.sandwell.JavaSimulation3D;
 
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
@@ -52,7 +51,6 @@ public class OverlayText extends OverlayEntity {
 	private final IntegerInput textHeight;
 
 	private String renderText;
-	private String invalidOutputName = "Invalid entry for keyword OutputName";
 
 	{
 		formatText = new StringInput("Format", "Key Inputs", "abc");
@@ -75,28 +73,9 @@ public class OverlayText extends OverlayEntity {
 		if( outputs == null || outputs.isEmpty() )
 			return formatText.getValue();
 
-		if (outputs.size() < 2)
-			return invalidOutputName;
-
-		Entity ent = Entity.getNamedEntity(outputs.get(0));
-
-		// For any intermediate values (not the first or last), follow the entity-output chain
-		for (int i = 1; i < outputs.size() - 1; ++i) {
-			String outputName = outputs.get(i);
-			if (ent == null || !ent.hasOutput(outputName, true))
-				return invalidOutputName;
-			ent = ent.getOutputHandle(outputName).getValue(simTime, Entity.class);
-		}
-
-		// Now get the last output, and take it's value from the current entity
-		String name = outputs.get(outputs.size() - 1);
-
-		if (ent == null || !ent.hasOutput(name, true))
-			return invalidOutputName;
-
-		OutputHandle out = ent.getOutputHandle(name);
+		OutputHandle out = OutputHandle.getOutputHandle(outputs, simTime);
 		if( out == null )
-			return invalidOutputName;
+			return "Invalid entry for keyword OutputName";
 		ret = out.getValueAsString(simTime, unit.getValue(), formatText.getValue());
 		if( ret == null )
 			return "Invalid entry for keyword Format";
