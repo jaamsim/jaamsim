@@ -30,11 +30,13 @@ import com.sandwell.JavaSimulation.Input;
  */
 public class OutputHandle {
 
+	public Entity ent;
 	public Output annotation;
 	public Method method;
 	public Class<? extends Unit> unitType;
 
-	public OutputHandle(Output a, Method m) {
+	public OutputHandle(Entity e, Output a, Method m) {
+		ent = e;
 		annotation = a;
 		method = m;
 

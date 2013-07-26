@@ -642,7 +642,7 @@ public class Entity {
 				continue;
 			}
 
-			OutputHandle handle = new OutputHandle(o, m);
+			OutputHandle handle = new OutputHandle(this, o, m);
 			outputCache.put(o.name(), handle);
 		}
 	}
