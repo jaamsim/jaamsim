@@ -70,7 +70,7 @@ public class OutputPropertyLabel extends TextLabel {
 			if (ent == null || !ent.hasOutput(outputName, true)) {
 				return failureText.getValue();
 			}
-			ent = ent.getOutputHandle(outputName).getValue(ent, simTime, Entity.class);
+			ent = ent.getOutputHandle(outputName).getValue(simTime, Entity.class);
 		}
 
 		// Now get the last output, and take it's value from the current entity
@@ -86,14 +86,14 @@ public class OutputPropertyLabel extends TextLabel {
 		    retType == double.class) {
 			double val = 0;
 			if (retType == Double.class) {
-				val = out.getValue(ent, simTime, Double.class);
+				val = out.getValue(simTime, Double.class);
 			} else {
-				val = out.getValue(ent, simTime, double.class);
+				val = out.getValue(simTime, double.class);
 			}
 			return String.format(doubleFormat, val);
 		}
 
-		String val = out.getValueAsString(ent, simTime);
+		String val = out.getValueAsString(simTime);
 
 		if (val == null) {
 			return failureText.getValue();

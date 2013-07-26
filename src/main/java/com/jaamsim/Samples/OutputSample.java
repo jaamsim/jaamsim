@@ -39,9 +39,9 @@ public class OutputSample implements SampleProvider {
 	@Override
 	public double getNextSample(double simTime) {
 		if (retType == Double.class)
-			return out.getValue(ent, simTime, Double.class);
+			return out.getValue(simTime, Double.class);
 		else
-			return out.getValue(ent, simTime, double.class);
+			return out.getValue(simTime, double.class);
 	}
 
 	@Override

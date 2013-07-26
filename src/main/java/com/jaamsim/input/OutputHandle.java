@@ -45,7 +45,7 @@ public class OutputHandle {
 	}
 
 	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
-	public <T> T getValue(Entity ent, double simTime, Class<T> klass) {
+	public <T> T getValue(double simTime, Class<T> klass) {
 		if (method == null) {
 			return null;
 		}
@@ -63,19 +63,19 @@ public class OutputHandle {
 		return ret;
 	}
 
-	public String getValueAsString(Entity ent, double simTime) {
+	public String getValueAsString(double simTime) {
 		Class<? extends Unit> ut = this.getUnitType();
-		String ret = this.getValueAsString(ent, simTime, 1.0, "");
+		String ret = this.getValueAsString(simTime, 1.0, "");
 		if( ut != Unit.class && ut != DimensionlessUnit.class )
 			ret += "  " + Unit.getSIUnit(ut);
 		return ret;
 	}
 
-	public String getValueAsString(Entity ent, double simTime, String unitString, String format) {
-		return this.getValueAsString(ent, simTime, Input.parseUnits(unitString), format);
+	public String getValueAsString(double simTime, String unitString, String format) {
+		return this.getValueAsString(simTime, Input.parseUnits(unitString), format);
 	}
 
-	public String getValueAsString(Entity ent, double simTime, Unit unit, String format) {
+	public String getValueAsString(double simTime, Unit unit, String format) {
 		double factor = 1.0;
 		Class<? extends Unit> ut = this.getUnitType();
 		if( unit == null ) {
@@ -87,19 +87,19 @@ public class OutputHandle {
 			if( unit.getClass() != ut )
 				return "Unit Mismatch";
 		}
-		return this.getValueAsString(ent, simTime, factor, format);
+		return this.getValueAsString(simTime, factor, format);
 	}
 
-	public String getValueAsString(Entity ent, double simTime, double factor, String format) {
+	public String getValueAsString(double simTime, double factor, String format) {
 		try {
 			Class<?> retType = this.getReturnType();
 			if (retType == Double.class ||
 			    retType == double.class) {
 				double val = 0;
 				if (retType == Double.class) {
-					val = this.getValue(ent, simTime, Double.class);
+					val = this.getValue(simTime, Double.class);
 				} else {
-					val = this.getValue(ent, simTime, double.class);
+					val = this.getValue(simTime, double.class);
 				}
 				if( format.isEmpty() )
 					return String.format("%,.6g", val/factor);

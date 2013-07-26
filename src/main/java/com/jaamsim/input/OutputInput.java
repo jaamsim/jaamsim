@@ -49,7 +49,7 @@ public class OutputInput<T> extends Input<String> {
 	}
 
 	public T getOutputValue(double simTime) {
-		return out.getValue(ent, simTime, klass);
+		return out.getValue(simTime, klass);
 	}
 
 }

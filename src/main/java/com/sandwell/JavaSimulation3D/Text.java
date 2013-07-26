@@ -103,7 +103,7 @@ public class Text extends DisplayEntity {
 			String outputName = outputs.get(i);
 			if (ent == null || !ent.hasOutput(outputName, true))
 				return invalidOutputName;
-			ent = ent.getOutputHandle(outputName).getValue(ent, simTime, Entity.class);
+			ent = ent.getOutputHandle(outputName).getValue(simTime, Entity.class);
 		}
 
 		// Now get the last output, and take it's value from the current entity
@@ -115,7 +115,7 @@ public class Text extends DisplayEntity {
 		OutputHandle out = ent.getOutputHandle(name);
 		if( out == null )
 			return invalidOutputName;
-		ret = out.getValueAsString(ent, simTime, unit.getValue(), formatText.getValue());
+		ret = out.getValueAsString(simTime, unit.getValue(), formatText.getValue());
 		if( ret == null )
 			return "Invalid entry for keyword Format";
 		return ret;

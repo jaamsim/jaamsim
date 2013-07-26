@@ -79,9 +79,9 @@ public class Sensor extends DoubleCalculation {
 		OutputHandle out = ent.getOutputHandle(name);
 		Class<?> retType = out.getReturnType();
 		if (retType == Double.class) {
-			val = out.getValue(ent, simTime, Double.class);
+			val = out.getValue(simTime, Double.class);
 		} else if (retType == double.class){
-			val = out.getValue(ent, simTime, double.class);
+			val = out.getValue(simTime, double.class);
 		}
 
 		// Set the present value
