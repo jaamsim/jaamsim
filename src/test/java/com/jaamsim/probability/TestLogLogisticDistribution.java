@@ -18,12 +18,17 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import com.jaamsim.ProbabilityDistributions.LogLogisticDistribution;
 import com.jaamsim.input.InputAgent;
+import com.sandwell.JavaSimulation.ObjectType;
 
 public class TestLogLogisticDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
+		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
+		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+
 		LogLogisticDistribution dist = new LogLogisticDistribution();
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Scale", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "4.0");
 		dist.validate();
