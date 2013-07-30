@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation3D;
 
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputHandle;
+import com.jaamsim.input.OutputInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
@@ -23,8 +24,6 @@ import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.StringListInput;
-import com.sandwell.JavaSimulation.StringVector;
 
 /**
  * The "Text" object displays written text within the 3D model universe.  Both fixed and variable text can be displayed.
@@ -43,7 +42,7 @@ public class Text extends DisplayEntity {
 			"If more than one output value is given, all outputs but the last should point to an entity output to query" +
 			" for the next output. The example returns the name of the product in a tank",
 	         example = "Text-1 OutputName { Tank1 Product Name }")
-	protected final StringListInput outputName;
+	protected final OutputInput<Object> outputName;
 
 	@Keyword(description = "The unit inwhich to express the output value",
 	         example = "Text-1 Unit { m/s }")
@@ -59,7 +58,7 @@ public class Text extends DisplayEntity {
 		formatText = new StringInput("Format", "Key Inputs", "abc");
 		this.addInput(formatText, true);
 
-		outputName = new StringListInput("OutputName", "Key Inputs", null);
+		outputName = new OutputInput<Object>(Object.class, "OutputName", "Key Inputs", null);
 		this.addInput(outputName, true);
 
 		unit = new EntityInput<Unit>( Unit.class, "Unit", "Key Inputs", null);
@@ -86,15 +85,14 @@ public class Text extends DisplayEntity {
 	}
 
 	public String getRenderText(double simTime) {
-		String ret = "";
-		StringVector outputs = outputName.getValue();
-		if( outputs == null || outputs.isEmpty() )
+
+		if( outputName.getValue() == null )
 			return formatText.getValue();
 
-		OutputHandle out = OutputHandle.getOutputHandle(outputs, simTime);
+		OutputHandle out = outputName.getOutputHandle(simTime);
 		if( out == null )
 			return "Invalid entry for keyword OutputName";
-		ret = out.getValueAsString(simTime, unit.getValue(), formatText.getValue());
+		String ret = out.getValueAsString(simTime, unit.getValue(), formatText.getValue());
 		if( ret == null )
 			return "Invalid entry for keyword Format";
 		return ret;

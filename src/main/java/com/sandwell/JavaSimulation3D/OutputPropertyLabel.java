@@ -15,12 +15,10 @@
 package com.sandwell.JavaSimulation3D;
 
 import com.jaamsim.input.OutputHandle;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.StringVector;
 
 public class OutputPropertyLabel extends TextLabel {
 
@@ -58,46 +56,15 @@ public class OutputPropertyLabel extends TextLabel {
 	@Override
 	public String getRenderText(double simTime) {
 
-		StringVector outputs = outputName.getValue();
-		if (outputs == null || outputs.size() < 2) {
-			return failureText.getValue();
-		}
-		Entity ent = Entity.getNamedEntity(outputs.get(0));
+		if( outputName.getValue() == null )
+			return formatText.getValue();
 
-		// For any intermediate values (not the first or last), follow the entity-output chain
-		for (int i = 1; i < outputs.size() - 1; ++i) {
-			String outputName = outputs.get(i);
-			if (ent == null || !ent.hasOutput(outputName)) {
-				return failureText.getValue();
-			}
-			ent = ent.getOutputHandle(outputName).getValue(simTime, Entity.class);
-		}
-
-		// Now get the last output, and take it's value from the current entity
-		String name = outputs.get(outputs.size() - 1);
-
-		if (ent == null || !ent.hasOutput(name)) {
-			return failureText.getValue();
-		}
-
-		OutputHandle out = ent.getOutputHandle(name);
-		Class<?> retType = out.getReturnType();
-		if (retType == Double.class ||
-		    retType == double.class) {
-			double val = 0;
-			if (retType == Double.class) {
-				val = out.getValue(simTime, Double.class);
-			} else {
-				val = out.getValue(simTime, double.class);
-			}
-			return String.format(doubleFormat, val);
-		}
-
-		String val = out.getValueAsString(simTime);
-
-		if (val == null) {
-			return failureText.getValue();
-		}
-		return val;
+		OutputHandle out = outputName.getOutputHandle(simTime);
+		if( out == null )
+			return "Invalid entry for keyword OutputName";
+		String ret = out.getValueAsString(simTime, 1.0, doubleFormat);
+		if( ret == null )
+			return "Invalid entry for keyword Format";
+		return ret;
 	}
 }
