@@ -15,6 +15,8 @@
 
 package com.jaamsim.render;
 
+import com.jaamsim.input.OutputHandle;
+
 public class Action {
 
 	public static class Description {
@@ -35,5 +37,6 @@ public class Action {
 	public static class Binding {
 		public String actionName;
 		public String outputName;
+		public OutputHandle outputHandle;
 	}
 }

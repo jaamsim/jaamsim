@@ -21,6 +21,7 @@ import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ActionListInput;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.OutputHandle;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -180,9 +181,11 @@ public class ColladaModel extends DisplayModel {
 
 			ArrayList<Action.Queue> aqList = new ArrayList<Action.Queue>();
 			for (Action.Binding b : actions.getValue()) {
+				if( b.outputHandle == null )
+					b.outputHandle = dispEnt.getOutputHandle(b.outputName);
 				Action.Queue aq = new Action.Queue();
 				aq.name = b.actionName;
-				aq.time = dispEnt.getOutputHandle(b.outputName).getValue(simTime, double.class);
+				aq.time = b.outputHandle.getValue(simTime, double.class);
 				aqList.add(aq);
 			}
 
