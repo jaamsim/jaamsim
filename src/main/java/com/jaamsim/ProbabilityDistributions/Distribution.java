@@ -18,8 +18,11 @@ import java.util.Random;
 
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.View;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -113,8 +116,17 @@ implements SampleProvider {
 
 		if (in == unitType) {
 			setUnitType(getUnitType());
+			FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
 			return;
 		}
+	}
+
+	@Override
+	public OutputHandle getOutputHandle(String outputName) {
+		OutputHandle out = super.getOutputHandle(outputName);
+		if( out.getUnitType() == UserSpecifiedUnit.class )
+			out.setUnitType( unitType.getUnitType() );
+		return out;
 	}
 
 	/**
@@ -130,12 +142,6 @@ implements SampleProvider {
 	protected void setUnitType(Class<? extends Unit> ut) {
 		minValueInput.setUnitType(ut);
 		maxValueInput.setUnitType(ut);
-		this.getOutputHandle("CalculatedMean"             ).setUnitType(ut);
-		this.getOutputHandle("CalculatedStandardDeviation").setUnitType(ut);
-		this.getOutputHandle("SampleMean"                 ).setUnitType(ut);
-		this.getOutputHandle("SampleStandardDeviation"    ).setUnitType(ut);
-		this.getOutputHandle("SampleMin"                  ).setUnitType(ut);
-		this.getOutputHandle("SampleMax"                  ).setUnitType(ut);
 	}
 
 	/**
