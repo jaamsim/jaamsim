@@ -14,10 +14,7 @@
  */
 package com.sandwell.JavaSimulation;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -42,8 +39,6 @@ public class Entity {
 	private String entityName;
 	private String entityInputName; // Name input by user
 	private final long entityNumber;
-
-	private HashMap<String, OutputHandle> outputCache = null;
 
 	//public static final int FLAG_TRACE = 0x01; // reserved in case we want to treat tracing like the other flags
 	public static final int FLAG_TRACEREQUIRED = 0x02;
@@ -596,76 +591,12 @@ public class Entity {
 				meth, text1, text2);
 	}
 
-	private static class OutputComparator implements Comparator<OutputHandle> {
-
-		@Override
-		public int compare(OutputHandle oh0, OutputHandle oh1) {
-			Class<?> class0 = oh0.method.getDeclaringClass();
-			Class<?> class1 = oh1.method.getDeclaringClass();
-
-			if (class0 == class1) {
-				return oh0.annotation.name().compareTo(oh1.annotation.name());
-			}
-
-			if (class0.isAssignableFrom(class1))
-				return -1;
-			else
-				return 1;
-		}
-	}
-
-	public final ArrayList<OutputHandle> getOutputHandles() {
-
-		// lazily initialize the output cache
-		if (outputCache == null) {
-			buildOutputCache();
-		}
-
-		ArrayList<OutputHandle> handles = new ArrayList<OutputHandle>( outputCache.values() );
-		Collections.sort(handles, new OutputComparator());
-		return handles;
-	}
-
-	private void buildOutputCache() {
-		outputCache = new HashMap<String, OutputHandle>();
-		for (Method m : this.getClass().getMethods()) {
-			Output o = m.getAnnotation(Output.class);
-			if (o == null) {
-				continue;
-			}
-
-			// Check that this method only takes a single double (simTime) parameter
-			Class<?>[] paramTypes = m.getParameterTypes();
-			if (paramTypes.length != 1 ||
-				paramTypes[0] != double.class) {
-				continue;
-			}
-
-			OutputHandle handle = new OutputHandle(this, o, m);
-			outputCache.put(o.name(), handle);
-		}
-	}
-
 	public OutputHandle getOutputHandle(String outputName) {
-		// lazily initialize the output cache
-		if (outputCache == null) {
-			buildOutputCache();
-		}
-
-		return outputCache.get(outputName);
+		return new OutputHandle(this, outputName);
 	}
 
-	public boolean hasOutput(String name, boolean includeInputs) {
-		if (outputCache == null)
-			buildOutputCache();
-
-		if (outputCache.containsKey(name))
-			return true;
-
-		if (includeInputs && this.getInput(name) != null)
-			return true;
-
-		return false;
+	public boolean hasOutput(String outputName) {
+		return OutputHandle.hasOutput(this.getClass(), outputName);
 	}
 
 	@Output(name = "Name",

@@ -16,6 +16,10 @@ package com.jaamsim.input;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -32,17 +36,104 @@ import com.sandwell.JavaSimulation.StringVector;
 public class OutputHandle {
 
 	public Entity ent;
-	public Output annotation;
-	public Method method;
+	public OutputPair pair;
 	public Class<? extends Unit> unitType;
 
-	public OutputHandle(Entity e, Output a, Method m) {
-		ent = e;
-		annotation = a;
-		method = m;
+	private static HashMap<Class<? extends Entity>, ArrayList<OutputPair>> outputPairCache = null;
 
-		assert (annotation != null);
-		unitType =  annotation.unitType();
+	public OutputHandle(Entity e, String outputName) {
+		ent = e;
+		pair = OutputHandle.getOutputPair(e.getClass(), outputName);
+		unitType = pair.annotation.unitType();
+	}
+
+	private static class OutputPair {
+		public Method method;
+		public Output annotation;
+
+		public OutputPair(Method m, Output a) {
+			method = m;
+			annotation = a;
+		}
+	}
+
+	public static Boolean hasOutput(Class<? extends Entity> klass, String outputName) {
+		return OutputHandle.getOutputPair(klass, outputName) != null;
+	}
+
+	private static OutputPair getOutputPair(Class<? extends Entity> klass, String outputName) {
+		if( outputPairCache == null )
+			outputPairCache = new HashMap<Class<? extends Entity>, ArrayList<OutputPair>>();
+
+		if( ! outputPairCache.containsKey(klass) )
+			OutputHandle.buildOutputPairCache(klass);
+
+		for( OutputPair p : outputPairCache.get(klass) ) {
+			if( p.annotation.name().equals(outputName) )
+				return p;
+		}
+		return null;
+	}
+
+	private static void buildOutputPairCache(Class<? extends Entity> klass) {
+		ArrayList<OutputPair> list = new ArrayList<OutputPair>();
+		for (Method m : klass.getMethods()) {
+			Output a = m.getAnnotation(Output.class);
+			if (a == null) {
+				continue;
+			}
+
+			// Check that this method only takes a single double (simTime) parameter
+			Class<?>[] paramTypes = m.getParameterTypes();
+			if (paramTypes.length != 1 ||
+				paramTypes[0] != double.class) {
+				continue;
+			}
+
+			list.add( new OutputPair(m,a) );
+		}
+		outputPairCache.put(klass, list);
+	}
+
+	/**
+	 * Return a list of the OuputHandles for the given entity.
+	 * @param e = the entity whose OutputHandles are to be returned.
+	 * @return = ArrayList of OutputHandles.
+	 */
+	public static ArrayList<OutputHandle> getOutputHandleList(Entity e) {
+		if( outputPairCache == null )
+			outputPairCache = new HashMap<Class<? extends Entity>, ArrayList<OutputPair>>();
+
+		Class<? extends Entity> klass = e.getClass();
+		if( ! outputPairCache.containsKey(klass) )
+			OutputHandle.buildOutputPairCache(klass);
+
+		ArrayList<OutputPair> list = outputPairCache.get(klass);
+		ArrayList<OutputHandle> ret = new ArrayList<OutputHandle>(list.size());
+		for( OutputPair p : list ) {
+			//ret.add( new OutputHandle(e, p) );
+			ret.add( e.getOutputHandle(p.annotation.name()) );  // required to get the correct unit type for the output
+		}
+
+		Collections.sort(ret, new OutputHandleComparator());
+		return ret;
+	}
+
+	private static class OutputHandleComparator implements Comparator<OutputHandle> {
+
+		@Override
+		public int compare(OutputHandle hand0, OutputHandle hand1) {
+			Class<?> class0 = hand0.getDeclaringClass();
+			Class<?> class1 = hand1.getDeclaringClass();
+
+			if (class0 == class1)
+				return hand0.pair.annotation.name().compareTo(hand1.pair.annotation.name());
+
+			if (class0.isAssignableFrom(class1))
+				return -1;
+			else
+				return 1;
+		}
 	}
 
 	/**
@@ -61,7 +152,7 @@ public class OutputHandle {
 		// For any intermediate values (not the first or last), follow the entity-output chain
 		for (int i = 1; i < outputs.size() - 1; ++i) {
 			String outputName = outputs.get(i);
-			if (e == null || !e.hasOutput(outputName, true))
+			if (e == null || !e.hasOutput(outputName))
 				return null;
 			e = e.getOutputHandle(outputName).getValue(simTime, Entity.class);
 		}
@@ -69,7 +160,7 @@ public class OutputHandle {
 		// Now get the last output, and take it's value from the current entity
 		String name = outputs.get(outputs.size() - 1);
 
-		if (e == null || !e.hasOutput(name, true))
+		if (e == null || !e.hasOutput(name))
 			return null;
 
 		return e.getOutputHandle(name);
@@ -77,16 +168,15 @@ public class OutputHandle {
 
 	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
 	public <T> T getValue(double simTime, Class<T> klass) {
-		if (method == null) {
+		if( pair.method == null )
 			return null;
-		}
 
 		T ret = null;
 		try {
-			if (!klass.isAssignableFrom(method.getReturnType()))
+			if (!klass.isAssignableFrom(pair.method.getReturnType()))
 				return null;
 
-			ret = (T)method.invoke(ent, simTime);
+			ret = (T)pair.method.invoke(ent, simTime);
 		}
 		catch (InvocationTargetException ex) {}
 		catch (IllegalAccessException ex) {}
@@ -137,7 +227,7 @@ public class OutputHandle {
 				return String.format(format, val/factor);
 			}
 
-			Object o = method.invoke(ent, simTime);
+			Object o = pair.method.invoke(ent, simTime);
 			if (o == null)
 				return null;
 			if( format.isEmpty() )
@@ -153,25 +243,31 @@ public class OutputHandle {
 	}
 
 	public Class<?> getReturnType() {
-		assert (method != null);
-		return method.getReturnType();
+		assert (pair.method != null);
+		return pair.method.getReturnType();
 	}
 
 	public Class<?> getDeclaringClass() {
-		assert (method != null);
-		return method.getDeclaringClass();
+		assert (pair.method != null);
+		return pair.method.getDeclaringClass();
+	}
+
+	public void setUnitType(Class<? extends Unit> ut) {
+		unitType = ut;
 	}
 
 	public Class<? extends Unit> getUnitType() {
 		return unitType;
 	}
 
-	public void setUnitType( Class<? extends Unit> ut ) {
-		unitType = ut;
+	public String getDescription() {
+		assert (pair.annotation != null);
+		return pair.annotation.description();
 	}
 
-	public String getDescription() {
-		assert (annotation != null);
-		return annotation.description();
+	public String getName() {
+		assert (pair.annotation != null);
+		return pair.annotation.name();
 	}
+
 }

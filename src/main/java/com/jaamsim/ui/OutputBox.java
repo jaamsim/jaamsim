@@ -74,9 +74,9 @@ public class OutputBox extends FrameBox {
 		Class<?> currClass = null;
 		entries.clear();
 
-		ArrayList<OutputHandle> handles = currentEntity.getOutputHandles();
+		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(currentEntity);
 		for (OutputHandle h : handles) {
-			Class<?> klass = h.method.getDeclaringClass();
+			Class<?> klass = h.getDeclaringClass();
 			if (currClass != klass) {
 				// This is the first time we've seen this class, add a place holder row
 				currClass = klass;
@@ -130,9 +130,9 @@ private class OutputTable extends JTable {
 		StringBuilder build = new StringBuilder();
 		build.append("<HTML>");
 		build.append("<b>Name:</b>  ");
-		build.append(output.annotation.name());
+		build.append(output.getName());
 		build.append("<BR>");
-		String desc = output.annotation.description();
+		String desc = output.getDescription();
 		if (!desc.isEmpty()) {
 			build.append("<BR>");
 			build.append("<b>Description:</b> ");
@@ -193,7 +193,7 @@ private class OutputTableModel extends AbstractTableModel {
 		case 0:
 			if (entry instanceof Class)
 				return String.format("<HTML><B>%s</B></HTML>", ((Class<?>)entry).getSimpleName());
-			return String.format("    %s", ((OutputHandle)entry).annotation.name());
+			return String.format("    %s", ((OutputHandle)entry).getName());
 		case 1:
 			if (entry instanceof Class)
 				return "";

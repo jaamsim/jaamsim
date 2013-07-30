@@ -64,7 +64,7 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 		// For any intermediate values (not the first or last), follow the entity-output chain
 		for (int i = 1; i < outputs.size() - 1; ++i) {
 			String outputName = outputs.get(i);
-			if (ent == null || !ent.hasOutput(outputName, true)) {
+			if (ent == null || !ent.hasOutput(outputName)) {
 				return failureText.getValue();
 			}
 			ent = ent.getOutputHandle(outputName).getValue(simTime, Entity.class);
@@ -73,7 +73,7 @@ public class OverlayOPropLabel extends OverlayTextLabel {
 		// Now get the last output, and take it's value from the current entity
 		String name = outputs.get(outputs.size() - 1);
 
-		if (ent == null || !ent.hasOutput(name, true)) {
+		if (ent == null || !ent.hasOutput(name)) {
 			return failureText.getValue();
 		}
 
