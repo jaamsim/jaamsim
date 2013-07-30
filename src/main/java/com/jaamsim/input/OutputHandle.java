@@ -25,7 +25,6 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
-import com.sandwell.JavaSimulation.StringVector;
 
 /**
  * OutputHandle is a class that represents all the useful runtime information for an output,
@@ -134,36 +133,6 @@ public class OutputHandle {
 			else
 				return 1;
 		}
-	}
-
-	/**
-	 * Return the OutputHandle obtained from an Entity and a chain of Output names.
-	 * @param outputs = list containing athe Entity followed by the chain of Output names
-	 * @param simTime = the simulation time at which the chain is to be evaluated
-	 * @return = the OutputHandle corresponding to the last Output in the chain.
-	 */
-	public static OutputHandle getOutputHandle( StringVector outputs, double simTime) {
-
-		if (outputs.size() < 2)
-			return null;
-
-		Entity e = Entity.getNamedEntity(outputs.get(0));
-
-		// For any intermediate values (not the first or last), follow the entity-output chain
-		for (int i = 1; i < outputs.size() - 1; ++i) {
-			String outputName = outputs.get(i);
-			if (e == null || !e.hasOutput(outputName))
-				return null;
-			e = e.getOutputHandle(outputName).getValue(simTime, Entity.class);
-		}
-
-		// Now get the last output, and take it's value from the current entity
-		String name = outputs.get(outputs.size() - 1);
-
-		if (e == null || !e.hasOutput(name))
-			return null;
-
-		return e.getOutputHandle(name);
 	}
 
 	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
