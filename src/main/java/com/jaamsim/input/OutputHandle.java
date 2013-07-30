@@ -126,7 +126,7 @@ public class OutputHandle {
 			Class<?> class1 = hand1.getDeclaringClass();
 
 			if (class0 == class1)
-				return hand0.pair.annotation.name().compareTo(hand1.pair.annotation.name());
+				return 0;
 
 			if (class0.isAssignableFrom(class1))
 				return -1;
