@@ -590,6 +590,9 @@ public class GUIFrame extends JFrame {
 				if (userOption == JOptionPane.YES_OPTION) {
 					GUIFrame.this.stopSimulation();
 					FrameBox.timeUpdate(0.0d);
+					lastSimTimeHours = 0.0d;
+					lastSystemTime = System.currentTimeMillis();
+					setSpeedUp(0.0d);
 				}
 			}
 		} );
