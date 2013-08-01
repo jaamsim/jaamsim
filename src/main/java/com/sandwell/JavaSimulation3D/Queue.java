@@ -85,7 +85,9 @@ public class Queue extends DisplayEntity {
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
 	 */
 	public void add( int i, DisplayEntity perf ) {
+		this.updateStatistics();
 		itemList.add( i, perf );
+		this.updateStatistics();
 		setGraphicsDataDirty();
 
 		for( QueueRecorder rec : recorderList ) {
@@ -105,7 +107,9 @@ public class Queue extends DisplayEntity {
 	 */
 	public DisplayEntity remove(int i) {
 		if( i < itemList.size() && i >= 0 ) {
+			this.updateStatistics();
 			DisplayEntity out = itemList.remove(i);
+			this.updateStatistics();
 			setGraphicsDataDirty();
 
 			for( QueueRecorder rec : recorderList ) {
