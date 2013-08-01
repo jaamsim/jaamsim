@@ -81,20 +81,6 @@ public class Queue extends DisplayEntity {
 	// ******************************************************************************************************
 
 	/**
-
-	/**
-	 * Add an entity to the queue
-	 */
-	public void addLast( DisplayEntity perf ) {
-		itemList.add( perf );
-		setGraphicsDataDirty();
-
-		for( QueueRecorder rec : recorderList ) {
-			rec.add( perf, this );
-		}
-	}
-
-	/**
 	 * Inserts the specified element at the specified position in this Queue.
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
 	 */
@@ -108,61 +94,55 @@ public class Queue extends DisplayEntity {
 	}
 
 	/**
-	 * Removes the specified entity from the queue
+	 * Add an entity to the end of the queue
 	 */
-	public void remove( DisplayEntity perf ) {
-		if( itemList.contains( perf ) ) {
-			itemList.remove( perf );
+	public void addLast( DisplayEntity perf ) {
+		this.add(itemList.size(), perf);
+	}
+
+	/**
+	 * Removes the entity at the specified position in the queue
+	 */
+	public DisplayEntity remove(int i) {
+		if( i < itemList.size() && i >= 0 ) {
+			DisplayEntity out = itemList.remove(i);
 			setGraphicsDataDirty();
 
 			for( QueueRecorder rec : recorderList ) {
-				rec.remove( perf, this );
+				rec.remove( out, this );
 			}
+			return out;
 		}
 		else {
-			throw new ErrorException( "item not found in queue " );
+			throw new ErrorException( " Index is beyond the end of the queue. " );
 		}
 	}
 
-    /**
-     * Removes the first entity from the queue
-     */
-    public DisplayEntity removeFirst() {
-        DisplayEntity out;
+	/**
+	 * Removes the specified entity from the queue
+	 */
+	public void remove( DisplayEntity perf ) {
+		int i = itemList.indexOf(perf);
+		if( i >= 0 )
+			this.remove(i);
 
-        if( !itemList.isEmpty() ) {
-            out = itemList.remove( 0 );
-            setGraphicsDataDirty();
+		else
+			throw new ErrorException( "item not found in queue " );
+	}
 
-			for( QueueRecorder rec : recorderList ) {
-				rec.remove( out, this );
-			}
-            return out;
-        }
-        else {
-            throw new ErrorException( " Attempt to remove from empty queue " );
-        }
-    }
+	/**
+	 * Removes the first entity from the queue
+	 */
+	public DisplayEntity removeFirst() {
+		return this.remove(0);
+	}
 
-    /**
-     * Removes the last entity from the queue
-     */
-    public DisplayEntity removeLast() {
-        DisplayEntity out;
-
-        if( !itemList.isEmpty() ) {
-            out =   itemList.remove( itemList.size() - 1 );
-            setGraphicsDataDirty();
-
-			for( QueueRecorder rec : recorderList ) {
-				rec.remove( out, this );
-			}
-            return out;
-        }
-        else {
-            throw new ErrorException( " Attempt to remove from empty queue " );
-        }
-    }
+	/**
+	 * Removes the last entity from the queue
+	 */
+	public DisplayEntity removeLast() {
+		return this.remove( itemList.size()-1 );
+	}
 
 	/**
 	 * Number of entities in the queue
