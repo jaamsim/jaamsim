@@ -116,52 +116,6 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 	}
 
 	@Override
-	public void setGraphicsDataDirty() {
-		cachedPointInfo = null;
-		super.setGraphicsDataDirty();
-	}
-
-	@Override
-	public HasScreenPoints.PointsInfo[] getScreenPoints() {
-		if (cachedPointInfo == null) {
-			cachedPointInfo = new HasScreenPoints.PointsInfo[1];
-			HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
-			cachedPointInfo[0] = pi;
-
-			pi.points = pointsInput.getValue();
-			pi.color = colorInput.getValue();
-			pi.width = widthInput.getValue().intValue();
-			if (pi.width < 1) pi.width = 1;
-		}
-		return cachedPointInfo;
-	}
-
-	@Override
-	public boolean selectable() {
-		return true;
-	}
-
-	/**
-	 *  Inform simulation and editBox of new positions.
-	 */
-	@Override
-	public void dragged(Vec3d dist) {
-		ArrayList<Vec3d> vec = new ArrayList<Vec3d>(pointsInput.getValue().size());
-		for (Vec3d v : pointsInput.getValue()) {
-			vec.add(new Vec3d(v.x + dist.x, v.y + dist.y, v.z + dist.z));
-		}
-
-		StringBuilder tmp = new StringBuilder();
-		for (Vec3d v : vec) {
-			tmp.append(String.format(" { %.3f %.3f %.3f m }", v.x, v.y, v.z));
-		}
-		InputAgent.processEntity_Keyword_Value(this, pointsInput, tmp.toString());
-
-		super.dragged(dist);
-		setGraphicsDataDirty();
-	}
-
-	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
 		super.addDisplayEntity(ent);
 
@@ -266,4 +220,51 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 			each.setPosition( this.getPositionForDistance( dist) );
 		}
 	}
+
+	@Override
+	public void setGraphicsDataDirty() {
+		cachedPointInfo = null;
+		super.setGraphicsDataDirty();
+	}
+
+	@Override
+	public HasScreenPoints.PointsInfo[] getScreenPoints() {
+		if (cachedPointInfo == null) {
+			cachedPointInfo = new HasScreenPoints.PointsInfo[1];
+			HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
+			cachedPointInfo[0] = pi;
+
+			pi.points = pointsInput.getValue();
+			pi.color = colorInput.getValue();
+			pi.width = widthInput.getValue().intValue();
+			if (pi.width < 1) pi.width = 1;
+		}
+		return cachedPointInfo;
+	}
+
+	@Override
+	public boolean selectable() {
+		return true;
+	}
+
+	/**
+	 *  Inform simulation and editBox of new positions.
+	 */
+	@Override
+	public void dragged(Vec3d dist) {
+		ArrayList<Vec3d> vec = new ArrayList<Vec3d>(pointsInput.getValue().size());
+		for (Vec3d v : pointsInput.getValue()) {
+			vec.add(new Vec3d(v.x + dist.x, v.y + dist.y, v.z + dist.z));
+		}
+
+		StringBuilder tmp = new StringBuilder();
+		for (Vec3d v : vec) {
+			tmp.append(String.format(" { %.3f %.3f %.3f m }", v.x, v.y, v.z));
+		}
+		InputAgent.processEntity_Keyword_Value(this, pointsInput, tmp.toString());
+
+		super.dragged(dist);
+		setGraphicsDataDirty();
+	}
+
 }
