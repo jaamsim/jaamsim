@@ -17,9 +17,11 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.EntityTarget;
@@ -36,7 +38,7 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 	@Keyword(description = "The travel time for the conveyor.",
 	         example = "Conveyor1 TravelTime { 10.0 s }")
-	private final DoubleInput travelTimeInput;
+	private final ValueInput travelTimeInput;
 
     @Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
             "make up the arrow.  When two coordinates are given it is assumed that z = 0." ,
@@ -61,9 +63,9 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 	private HasScreenPoints.PointsInfo[] cachedPointInfo;
 
 	{
-		travelTimeInput = new DoubleInput( "TravelTime", "Key Inputs", 0.0d);
+		travelTimeInput = new ValueInput( "TravelTime", "Key Inputs", 0.0d);
 		travelTimeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		travelTimeInput.setUnits( "h" );
+		travelTimeInput.setUnitType(TimeUnit.class);
 		this.addInput( travelTimeInput, true);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
@@ -165,7 +167,7 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 		// Add the entity to the conveyor
 		entityList.add( ent );
-		startTimeList.add( this.getCurrentTime() );
+		startTimeList.add( this.getSimTime() );
 
 		// If necessary, wake up the conveyor
 		if ( !busy ) {
@@ -199,8 +201,8 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		while( entityList.size() > 0 ) {
 
 			// Wait for the first entity to reach the end
-			double dt = startTimeList.get(0) + travelTimeInput.getValue() - this.getCurrentTime();
-			this.scheduleWait( dt);
+			double dt = startTimeList.get(0) + travelTimeInput.getValue() - this.getSimTime();
+			this.simWait( dt);
 
 			// Remove the entity from the conveyor
 			DisplayEntity ent = entityList.remove(0);
@@ -252,14 +254,13 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 	@Override
 	public void updateGraphics( double simTime ) {
-		double simHours = simTime / 3600.0d;
 
 		// Loop through the entities on the conveyor
 		for( int i = 0; i < entityList.size(); i++) {
 			DisplayEntity each = entityList.get( i );
 
 			// Calculate the distance travelled by this entity
-			double dist = ( simHours - startTimeList.get(i) ) / travelTimeInput.getValue() * totalLength;
+			double dist = ( simTime - startTimeList.get(i) ) / travelTimeInput.getValue() * totalLength;
 
 			// Set the position for the entity
 			each.setPosition( this.getPositionForDistance( dist) );
