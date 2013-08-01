@@ -24,20 +24,18 @@ import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.Vector;
 
 public class Queue extends DisplayEntity {
 
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
-	         example = "Queue1 Spacing { 1 }")
+	         example = "Queue-1 Spacing { 1 }")
 	private final ValueInput spacingInput;
 
-	protected ArrayList<DisplayEntity> itemList;
-
 	@Keyword(description = "The number of queuing entities in each row.",
-			example = "Queue1 MaxPerLine { 4 }")
+			example = "Queue-1 MaxPerLine { 4 }")
 	protected final IntegerInput maxPerLineInput; // maximum items per sub line-up of queue
 
+	protected ArrayList<DisplayEntity> itemList;
 
 //	Statistics
 	protected double minElements;
@@ -68,9 +66,7 @@ public class Queue extends DisplayEntity {
 		itemList.clear();
 
 		// Clear statistics
-		minElements = Integer.MAX_VALUE;
-		maxElements = 0;
-		avgElements = 0.0;
+		this.clearStatistics();
 
 		recorderList = new ArrayList<QueueRecorder>();
 		for( QueueRecorder rec : Entity.getClonesOf( QueueRecorder.class ) ) {
@@ -79,36 +75,12 @@ public class Queue extends DisplayEntity {
 			}
 		}
 	}
-	// ******************************************************************************************************
-	// INFO BOX METHODS
-	// ******************************************************************************************************
-
-	@Override
-	public Vector getInfo() {
-
-		Vector info = super.getInfo();
-		info.addElement( "Count" + "\t" + this.getCount() );
-		return info;
-	}
 
 	// ******************************************************************************************************
 	// QUEUE HANDLING METHODS
 	// ******************************************************************************************************
 
 	/**
-	 * Returns the position for a new entity at the end of the queue.
-	 */
-	public Vec3d getEndVector3dFor(DisplayEntity perf) {
-		Vec3d qSize = this.getSize();
-		double distance = 0.5d * qSize.x;
-		for (int x = 0; x < itemList.size(); x++) {
-			DisplayEntity item = itemList.get(x);
-			distance += this.getSpacing() + item.getSize().x;
-		}
-		distance += this.getSpacing() + 0.5d * perf.getSize().x;
-		Vec3d tempAlign = new Vec3d(-distance / qSize.x, 0.0d, 0.0d);
-		return this.getPositionForAlignment(tempAlign);
-	}
 
 	/**
 	 * Add an entity to the queue
@@ -230,14 +202,14 @@ public class Queue extends DisplayEntity {
 			// if new row is required, set reset distanceX and move distanceY up one row
 			if( i > 0 && i % maxPerLineInput.getValue() == 0 ){
 				 distanceX = 0.5d * qSize.x;
-				 distanceY += this.getSpacing() + maxWidth;
+				 distanceY += spacingInput.getValue() + maxWidth;
 			}
 
 			DisplayEntity item = itemList.get(i);
 			// Rotate each transporter about its center so it points to the right direction
 			item.setOrientation(queueOrientation);
 			Vec3d itemSize = item.getSize();
-			distanceX += this.getSpacing() + 0.5d * itemSize.x;
+			distanceX += spacingInput.getValue() + 0.5d * itemSize.x;
 			tmp.set3(-distanceX / qSize.x, distanceY/qSize.y, 0.0d);
 
 			// increment total distance
@@ -247,10 +219,6 @@ public class Queue extends DisplayEntity {
 			Vec3d itemCenter = this.getPositionForAlignment(tmp);
 			item.setPositionForAlignment(new Vec3d(), itemCenter);
 		}
-	}
-
-	public double getSpacing() {
-		return spacingInput.getValue();
 	}
 
 	public ArrayList<DisplayEntity> getItemList() {
@@ -263,9 +231,24 @@ public class Queue extends DisplayEntity {
 		length = 0.0;
 		for( int x = 0; x < itemList.size(); x++ ) {
 			DisplayEntity item = itemList.get( x );
-			length += item.getSize().x + this.getSpacing();
+			length += item.getSize().x + spacingInput.getValue();
 		}
 		return length;
+	}
+
+	/**
+	 * Returns the position for a new entity at the end of the queue.
+	 */
+	public Vec3d getEndVector3dFor(DisplayEntity perf) {
+		Vec3d qSize = this.getSize();
+		double distance = 0.5d * qSize.x;
+		for (int x = 0; x < itemList.size(); x++) {
+			DisplayEntity item = itemList.get(x);
+			distance += spacingInput.getValue() + item.getSize().x;
+		}
+		distance += spacingInput.getValue() + 0.5d * perf.getSize().x;
+		Vec3d tempAlign = new Vec3d(-distance / qSize.x, 0.0d, 0.0d);
+		return this.getPositionForAlignment(tempAlign);
 	}
 
 	// *******************************************************************************************************
