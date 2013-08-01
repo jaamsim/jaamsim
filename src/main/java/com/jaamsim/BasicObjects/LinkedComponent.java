@@ -23,10 +23,10 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  * LinkedComponents are used to form a chain of components that process DisplayEntities that pass through the system.
  * Sub-classes for EntityGenerator, Server, and EntitySink.
  */
-public class LinkedComponent extends DisplayEntity {
+public abstract class LinkedComponent extends DisplayEntity {
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
-	         example = "EntityGenerator1 NextComponent { Server1 }")
+	         example = "EntityGenerator-1 NextComponent { Server-1 }")
 	protected final EntityInput<LinkedComponent> nextComponentInput;
 
 	int numberProcessed; // Number of entities processed by this component
@@ -36,15 +36,12 @@ public class LinkedComponent extends DisplayEntity {
 		this.addInput( nextComponentInput, true);
 	}
 
-	public LinkedComponent() {
-	}
-
 	@Override
 	public void validate() {
 		super.validate();
 
 		// Confirm that the next entity in the chain has been specified
-		if( ! nextComponentInput.getHidden() &&	getNextComponent() == null ) {
+		if( ! nextComponentInput.getHidden() &&	nextComponentInput.getValue() == null ) {
 			throw new InputErrorException( "The keyword NextEntity must be set." );
 		}
 	}
@@ -56,12 +53,6 @@ public class LinkedComponent extends DisplayEntity {
 		numberProcessed = 0;
 	}
 
-
-	/**
-	 * MUST BE OVERWRITTEN BY EACH SUB-CLASS
-	 * Receive a DisplayEntity from the upstream LinkedEntity.
-	 * @param ent = the DisplayEntity that is received.
-	 */
 	public void addDisplayEntity( DisplayEntity ent ) {
 	}
 
