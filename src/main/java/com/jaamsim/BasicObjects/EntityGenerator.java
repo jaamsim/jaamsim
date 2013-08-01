@@ -99,10 +99,7 @@ public class EntityGenerator extends LinkedComponent {
 			newDisplayEntity.setFlag(Entity.FLAG_GENERATED);
 
 			//  Send the entity to the next element in the chain
-			getNextComponent().addDisplayEntity( newDisplayEntity );
-
-			// Increment the total number that have been created
-			numberProcessed++;
+			this.sendToNextComponent( newDisplayEntity );
 		}
 	}
 

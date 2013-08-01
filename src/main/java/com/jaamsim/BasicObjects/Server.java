@@ -85,6 +85,7 @@ public class Server extends LinkedComponent {
 	 */
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
+		super.addDisplayEntity(ent);
 
 		// Add the entity to the queue
 		waitQueueInput.getValue().addLast( ent );
@@ -129,11 +130,8 @@ public class Server extends LinkedComponent {
 			double dt = serviceTimeDistributionInput.getValue().getNextSample(getSimTime());
 			this.simWait( dt );
 
-			// Increment the total number served
-			numberProcessed++;
-
 			// Send the entity to the next component in the chain
-			getNextComponent().addDisplayEntity( servedEntity );
+			this.sendToNextComponent( servedEntity );
 			servedEntity = null;
 			this.setGraphicsDataDirty();
 		}

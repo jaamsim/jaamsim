@@ -161,6 +161,7 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
+		super.addDisplayEntity(ent);
 
 		// Add the entity to the conveyor
 		entityList.add( ent );
@@ -206,7 +207,7 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 			startTimeList.remove(0);
 
 			// Send the entity to the next component
-			getNextComponent().addDisplayEntity( ent);
+			this.sendToNextComponent(ent);
 			this.setGraphicsDataDirty();
 		}
 

@@ -30,12 +30,13 @@ public class EntitySink extends LinkedComponent {
 	 */
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
+		super.addDisplayEntity(ent);
+
+		// Only increments the number process when there is no next entity
+		this.sendToNextComponent(ent);
 
 		// Kill the added entity
 		ent.kill();
-
-		// Increment the total number killed
-		numberProcessed++;
 	}
 
 }

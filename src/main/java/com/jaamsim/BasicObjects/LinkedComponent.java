@@ -14,6 +14,9 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.RateUnit;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
@@ -29,7 +32,8 @@ public abstract class LinkedComponent extends DisplayEntity {
 	         example = "EntityGenerator-1 NextComponent { Server-1 }")
 	protected final EntityInput<LinkedComponent> nextComponentInput;
 
-	int numberProcessed; // Number of entities processed by this component
+	private int numberAdded;     // Number of entities added to this component from upstream
+	private int numberProcessed; // Number of entities processed by this component
 
 	{
 		nextComponentInput = new EntityInput<LinkedComponent>( LinkedComponent.class, "NextComponent", "Key Inputs", null);
@@ -49,15 +53,39 @@ public abstract class LinkedComponent extends DisplayEntity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-
+		numberAdded = 0;
 		numberProcessed = 0;
 	}
 
 	public void addDisplayEntity( DisplayEntity ent ) {
+		numberAdded++;
 	}
 
-	public LinkedComponent getNextComponent(){
-		return nextComponentInput.getValue();
+	public void sendToNextComponent(DisplayEntity ent) {
+		if( nextComponentInput.getValue() != null )
+			nextComponentInput.getValue().addDisplayEntity(ent);
+
+		numberProcessed++;
+	}
+
+	@Output(name = "NumberAdded",
+	 description = "The number of entities received from upstream.",
+	    unitType = DimensionlessUnit.class)
+	public Integer getNumberAdded(double simTime) {
+		return numberAdded;
+	}
+
+	@Output(name = "NumberProcessed",
+	 description = "The number of entities processed by this component.",
+	    unitType = DimensionlessUnit.class)
+	public Integer getNumberProcessed(double simTime) {
+		return numberProcessed;
+	}
+	@Output(name = "ProcessingRate",
+	 description = "The number of entities processed per unit time by this component.",
+	    unitType = RateUnit.class)
+	public Double getProcessingRate( double simTime) {
+		return numberProcessed/simTime;
 	}
 
 }
