@@ -38,7 +38,11 @@ public class OutputHandle {
 	public OutputPair pair;
 	public Class<? extends Unit> unitType;
 
-	private static HashMap<Class<? extends Entity>, ArrayList<OutputPair>> outputPairCache = null;
+	private static final HashMap<Class<? extends Entity>, ArrayList<OutputPair>> outputPairCache;
+
+	static {
+		outputPairCache = new HashMap<Class<? extends Entity>, ArrayList<OutputPair>>();
+	}
 
 	public OutputHandle(Entity e, String outputName) {
 		ent = e;
@@ -61,37 +65,36 @@ public class OutputHandle {
 	}
 
 	private static OutputPair getOutputPair(Class<? extends Entity> klass, String outputName) {
-		if( outputPairCache == null )
-			outputPairCache = new HashMap<Class<? extends Entity>, ArrayList<OutputPair>>();
-
-		if( ! outputPairCache.containsKey(klass) )
-			OutputHandle.buildOutputPairCache(klass);
-
-		for( OutputPair p : outputPairCache.get(klass) ) {
+		for (OutputPair p : getOutputPair(klass)) {
 			if( p.annotation.name().equals(outputName) )
 				return p;
 		}
 		return null;
 	}
 
-	private static void buildOutputPairCache(Class<? extends Entity> klass) {
-		ArrayList<OutputPair> list = new ArrayList<OutputPair>();
+	private static ArrayList<OutputPair> getOutputPair(Class<? extends Entity> klass) {
+		ArrayList<OutputPair> ret = outputPairCache.get(klass);
+		if (ret != null)
+			return ret;
+
+		// klass has not been cached yet, generate pairs
+		ret = new ArrayList<OutputPair>();
 		for (Method m : klass.getMethods()) {
 			Output a = m.getAnnotation(Output.class);
-			if (a == null) {
+			if (a == null)
 				continue;
-			}
 
 			// Check that this method only takes a single double (simTime) parameter
 			Class<?>[] paramTypes = m.getParameterTypes();
 			if (paramTypes.length != 1 ||
-				paramTypes[0] != double.class) {
+			    paramTypes[0] != double.class) {
 				continue;
 			}
 
-			list.add( new OutputPair(m,a) );
+			ret.add(new OutputPair(m, a));
 		}
-		outputPairCache.put(klass, list);
+		outputPairCache.put(klass, ret);
+		return ret;
 	}
 
 	/**
@@ -100,14 +103,8 @@ public class OutputHandle {
 	 * @return = ArrayList of OutputHandles.
 	 */
 	public static ArrayList<OutputHandle> getOutputHandleList(Entity e) {
-		if( outputPairCache == null )
-			outputPairCache = new HashMap<Class<? extends Entity>, ArrayList<OutputPair>>();
-
 		Class<? extends Entity> klass = e.getClass();
-		if( ! outputPairCache.containsKey(klass) )
-			OutputHandle.buildOutputPairCache(klass);
-
-		ArrayList<OutputPair> list = outputPairCache.get(klass);
+		ArrayList<OutputPair> list = getOutputPair(klass);
 		ArrayList<OutputHandle> ret = new ArrayList<OutputHandle>(list.size());
 		for( OutputPair p : list ) {
 			//ret.add( new OutputHandle(e, p) );
