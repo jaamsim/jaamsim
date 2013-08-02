@@ -22,7 +22,6 @@ import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;

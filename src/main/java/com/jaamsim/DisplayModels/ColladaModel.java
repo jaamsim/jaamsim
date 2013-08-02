@@ -21,7 +21,6 @@ import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ActionListInput;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.OutputHandle;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
