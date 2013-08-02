@@ -212,6 +212,63 @@ public class InputAgent {
 		return braceDepth;
 	}
 
+	private static URI pwdPath;
+	private static URI pwdRoot;
+	private static URI resRoot;
+	private static URI resPath;
+	private static final String res = "/resources/inputs/";
+
+	static {
+		// Walk up the parent list until we find a parentless entry, call that
+		// the 'root'
+		File f = new File(System.getProperty("user.dir"));
+		File par = f;
+		while (true) {
+			File t = par.getParentFile();
+			if (t == null) {
+				pwdRoot = par.toURI();
+				break;
+			}
+			par = t;
+		}
+
+		pwdPath = pwdRoot.relativize(f.toURI());
+
+		try {
+			// locate the resource folder, and create
+			resRoot = InputAgent.class.getResource(res).toURI();
+		}
+		catch (URISyntaxException e) {}
+
+		resPath = URI.create("");
+	}
+
+	public static final void readResource(String res) {
+		if (res == null)
+			return;
+
+		readStream(resRoot, resPath, res);
+	}
+
+	public static final boolean readStream(URI root, URI path, String file) {
+		URI resolved = path.resolve(file);
+		resolved.normalize();
+
+		if (resolved.getRawPath().contains("../"))
+			return false;
+
+		URL t = null;
+		try {
+			t = new URI(root.toString() + resolved.toString()).toURL();
+		}
+		catch (MalformedURLException e) {}
+		catch (URISyntaxException e) {}
+
+		readURL(t);
+
+		return true;
+	}
+
 	public static void readURL(URL url) {
 		if (url == null)
 			return;
@@ -1552,7 +1609,7 @@ public class InputAgent {
 
 	public static void loadDefault() {
 		// Read the default configuration file
-		InputAgent.readURL(InputAgent.class.getResource("/resources/inputs/default.cfg"));
+		InputAgent.readResource("default.cfg");
 		sessionEdited = false;
 	}
 
