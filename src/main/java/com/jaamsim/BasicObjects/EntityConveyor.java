@@ -199,10 +199,7 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		else if( frac > 1.0 )  frac = 1.0;
 
 		Vec3d vec = new Vec3d();
-		vec.sub3( pointsInput.getValue().get(seg+1), pointsInput.getValue().get(seg));
-
-		vec.scale3( frac);
-		vec.add3( pointsInput.getValue().get(seg));
+		vec.interpolate3(pointsInput.getValue().get(seg), pointsInput.getValue().get(seg+1), frac);
 		return vec;
 	}
 
