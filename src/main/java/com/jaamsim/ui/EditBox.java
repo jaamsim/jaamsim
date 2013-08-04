@@ -116,17 +116,14 @@ public class EditBox extends FrameBox {
 		if(entity != null && entity.testFlag(Entity.FLAG_GENERATED))
 			entity = null;
 
-		if(currentEntity == entity)
-			return;
-
 		jTabbedFrame.removeAll();
-		currentEntity = entity;
 
-		// no entity is selected
-		if(currentEntity == null) {
+		currentEntity = entity;
+		if (currentEntity == null) {
 			setTitle("Input Editor");
 			return;
 		}
+		setTitle("Input Editor - " + currentEntity.getInputName());
 
 		for (CategoryInputs each : getInputs(currentEntity)) {
 			EditTableModel mod = new EditTableModel(each);
@@ -140,8 +137,6 @@ public class EditBox extends FrameBox {
 
 		if (jTabbedFrame.getTabCount() > 0)
 			jTabbedFrame.setSelectedIndex(0);
-
-		setTitle(String.format("Input Editor - %s", currentEntity.getInputName()));
 	}
 
 	@Override

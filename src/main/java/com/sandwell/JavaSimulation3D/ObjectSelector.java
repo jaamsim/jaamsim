@@ -312,7 +312,7 @@ public class ObjectSelector extends FrameBox {
 			String newName = (String)node.getUserObject();
 			currentEntity.setInputName(newName);
 			node.setUserObject(currentEntity);
-			FrameBox.valueUpdate();
+			FrameBox.setSelectedEntity(currentEntity);
 		}
 
 		@Override

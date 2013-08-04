@@ -64,16 +64,14 @@ public class PropertyBox extends FrameBox {
 
 	@Override
 	public void setEntity(Entity entity) {
-		if(currentEntity == entity)
-			return;
+
+		jTabbedFrame.removeAll();
 
 		currentEntity = entity;
-		jTabbedFrame.removeAll();
 		if (currentEntity == null) {
 			setTitle("Property Viewer");
 			return;
 		}
-
 		setTitle("Property Viewer - " + currentEntity.getInputName());
 
 		ArrayList<ClassFields> cFields = getFields(entity);

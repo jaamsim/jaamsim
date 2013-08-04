@@ -56,8 +56,6 @@ public class InfoBox extends FrameBox {
 
 	@Override
 	public void setEntity(Entity entity) {
-		if (currentEntity == entity)
-			return;
 
 		currentEntity = entity;
 
