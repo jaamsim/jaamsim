@@ -66,7 +66,6 @@ public abstract class Input<T> {
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean hidden; // Hide this input from the EditBox
 	protected String valueString; // value from .cfg file
-	protected String editedValueString; // new value from edit box
 
 	public Input(String key, String cat, T def) {
 		keyword = key;
@@ -78,13 +77,11 @@ public abstract class Input<T> {
 		edited = false;
 		hidden = false;
 		valueString = "";
-		editedValueString = "";
 	}
 
 	public void reset() {
 		this.setDefaultValue( this.getDefaultValue() );
 		valueString = "";
-		editedValueString = "";
 		edited = false;
 	}
 
@@ -159,18 +156,11 @@ public abstract class Input<T> {
 	}
 
 	public String getValueString() {
-		if(edited) {
-			return editedValueString;
-		}
 		return valueString;
 	}
 
 	public void setValueString(String str) {
 		valueString = str;
-	}
-
-	public void setEditedValueString(String str) {
-		editedValueString = str;
 	}
 
 	public abstract void parse(StringVector input) throws InputErrorException;

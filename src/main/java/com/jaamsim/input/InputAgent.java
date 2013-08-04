@@ -1479,13 +1479,10 @@ public class InputAgent {
 		}
 
 		if(in.isEdited()) {
-			in.setEditedValueString(str);
 			ent.setFlag(Entity.FLAG_EDITED);
 			sessionEdited = true;
 		}
-		else {
-			in.setValueString(str);
-		}
+		in.setValueString(str);
 
 	}
 
