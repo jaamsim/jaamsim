@@ -91,4 +91,20 @@ public class OutputInput<T> extends Input<String> {
 		return o.getValue(simTime, klass);
 	}
 
+	@Override
+	public String getValueString() {
+		if (ent == null)
+			return "";
+
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(ent.getInputName());
+		tmp.append(SEPARATOR);
+		tmp.append(outputName);
+		for( String name : outputNameList ) {
+			tmp.append(SEPARATOR);
+			tmp.append(name);
+		}
+		return tmp.toString();
+	}
+
 }
