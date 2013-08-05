@@ -62,6 +62,13 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		return list;
 	}
 
+	@Override
+	public String getValueString() {
+		if( value == null )
+			return "";
+		return value.getInputName();
+	}
+
 	public void setInvalidEntities(T... list) {
 		if (list == null) {
 			invalidEntities = null;
