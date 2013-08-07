@@ -104,7 +104,7 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 				lastTime = t;
 			}
 			else {
-				throw new InputErrorException( "The times must be given in increasing order" );
+				throw new InputErrorException( "The times must be given in increasing order on " + each.get(0) );
 			}
 
 			// If there are more than two values, and the last one is not a number, then assume it is a unit
