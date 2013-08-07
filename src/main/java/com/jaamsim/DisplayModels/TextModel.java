@@ -110,7 +110,7 @@ public class TextModel extends DisplayModel {
 		dropShadowColor = new ColourInput("DropShadowColour", "Fixed Text", ColourInput.BLACK);
 		this.addInput(dropShadowColor, true, "DropShadowColor");
 
-		dropShadowOffset = new Vec3dInput("DropShadowOffset", "Fixed Text", new Vec3d(-0.1,-0.1,0.0));
+		dropShadowOffset = new Vec3dInput("DropShadowOffset", "Fixed Text", new Vec3d(-0.1d, -0.1d, -0.001d));
 		this.addInput(dropShadowOffset, true);
 
 		style = Font.PLAIN;
@@ -204,15 +204,11 @@ public class TextModel extends DisplayModel {
 				return;
 			}
 
-			double zBump = textSize.y * 0.01;
-			trans.getTransRef().z += zBump;
-
 			cachedProxy = new StringProxy(text, fontKey, textColour, trans, height, getVisibilityInfo(), labelObservee.getEntityNumber());
 
 			if (dropShadow.getValue()) {
 				Transform dsTrans = new Transform(trans);
 				Vec3d shadowTrans = new Vec3d(dropShadowOffset.getValue());
-				shadowTrans.z -= zBump;
 				shadowTrans.scale3(height);
 				shadowTrans.add3(dsTrans.getTransRef());
 				dsTrans.setTrans(shadowTrans);
