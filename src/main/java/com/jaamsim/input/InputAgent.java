@@ -254,8 +254,10 @@ public class InputAgent {
 		URI resolved = path.resolve(file);
 		resolved.normalize();
 
-		if (resolved.getRawPath().contains("../"))
+		if (resolved.getRawPath().contains("../")) {
+			InputAgent.logWarning("Unable to resolve path %s%s - %s", root.toString(), path.toString(), file);
 			return false;
+		}
 
 		URL t = null;
 		try {
@@ -264,6 +266,10 @@ public class InputAgent {
 		catch (MalformedURLException e) {}
 		catch (URISyntaxException e) {}
 
+		if (t == null) {
+			InputAgent.logWarning("Unable to resolve path %s%s - %s", root.toString(), path.toString(), file);
+			return false;
+		}
 		readURL(t);
 
 		return true;
