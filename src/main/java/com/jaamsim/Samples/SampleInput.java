@@ -73,6 +73,13 @@ public class SampleInput extends Input<SampleProvider> {
 		return list;
 	}
 
+	@Override
+	public String getValueString() {
+		if( value == null )
+			return "";
+		return value.toString();
+	}
+
 	public void verifyUnit() {
 		Input.assertUnitsMatch( unitType, value.getUnitType());
 	}
