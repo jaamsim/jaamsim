@@ -42,7 +42,7 @@ public class TimeSeries extends Entity {
      example = "TimeSeries1  DateFormat { 'yyyy-MM-dd HH:mm' }")
 	private final StringInput dateFormat;
 
-	private int indexOfTime;  // The index of the time in the last call to getPresentValue()
+	private int indexOfTime;  // The index of the time in the last call to getValueForTime()
 	private double cycleTime; // The number of hours in the cycle for the time series
 
 	{
@@ -99,14 +99,21 @@ public class TimeSeries extends Entity {
 	@Output( name="PresentValue",
 			 description="The time series value for the present time." )
 	public double getPresentValue( double simTime ) {
+		return this.getValueForTime( simTime / 3600.0 );
+	}
+
+	/**
+	 * Return the value for the given simulation time in hours
+	 */
+	public double getValueForTime( double time ) {
 		DoubleVector timeList = value.getValue().getTimeList();
 		DoubleVector valueList = value.getValue().getValueList();
 
-		// Determine the time in the cycle for the current simulation time
-		int completedCycles = (int)Math.floor( getCurrentTime() / cycleTime );
-		double timeInCycle = getCurrentTime() - ( completedCycles * cycleTime );
+		// Determine the time in the cycle for the given time
+		int completedCycles = (int)Math.floor( time / cycleTime );
+		double timeInCycle = time - ( completedCycles * cycleTime );
 
-		// Perform linear search for the present time from indexOfTime
+		// Perform linear search for time from indexOfTime
 		for( int i = indexOfTime; i < timeList.size()-1; i++ ) {
 			if( Tester.lessOrEqualCheckTolerance( timeList.get( i ), timeInCycle )
 					&& Tester.lessCheckTolerance( timeInCycle, timeList.get( i+1 ) ) ) {
@@ -121,7 +128,7 @@ public class TimeSeries extends Entity {
 			return valueList.get( indexOfTime );
 		}
 
-		// Perform linear search for the present time from 0
+		// Perform linear search for time from 0
 		for( int i = 0; i < indexOfTime; i++ ) {
 			if( Tester.lessOrEqualCheckTolerance( timeList.get( i ), timeInCycle )
 					&& Tester.lessCheckTolerance( timeInCycle, timeList.get( i+1 ) ) ) {
@@ -130,7 +137,7 @@ public class TimeSeries extends Entity {
 			}
 		}
 
-		// No value was found for the present time, return 0
+		// No value was found for time, return 0
 		return 0.0;
 	}
 
