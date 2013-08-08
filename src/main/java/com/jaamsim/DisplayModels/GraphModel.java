@@ -296,7 +296,7 @@ public class GraphModel extends DisplayModel {
 			// Y labels
 			for (int i = 0; i * yAxisInterval <= yRange; ++i) {
 
-				String text = String.format( "%." + yAxisPrecision + "f",  ( i * yAxisInterval + yMin ) * yAxisMult);
+				String text = String.format( "%,." + yAxisPrecision + "f",  ( i * yAxisInterval + yMin ) * yAxisMult);
 
 				// Find the rendered string size so we can right justify the labels
 				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight, text);
