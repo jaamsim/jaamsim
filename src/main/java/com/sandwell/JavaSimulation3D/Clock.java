@@ -108,6 +108,13 @@ public static class ClockTime {
 		return new ClockTime(lyear + 1, lmonth, lday + 1, lhour);
 	}
 
+	/**
+	 * Return the day of the year (1-365) that corresponds to the first day of the given month (1-12).
+	 */
+	public static int getFirstDayOfMonth(int month) {
+		return firstDayOfMonth[month-1];
+	}
+
 	public static double calcTimeForYear_Month_Day_Hour( int y, int m, int d, double h ) {
 		double result = (y - 1) * 8760.0; // year
 		result += ((firstDayOfMonth[m - 1] - 1) * 24.0); // months to this point
