@@ -60,20 +60,32 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		return list;
 	}
 
+	private String getInputString(ArrayList<T> val) {
+
+		if (val.size() == 0)
+			return NO_VALUE;
+
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(val.get(0).getInputName());
+		for (int i = 1; i < val.size(); i++) {
+			tmp.append(SEPARATOR);
+			tmp.append(val.get(i).getInputName());
+		}
+		return tmp.toString();
+	}
+
+
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
 			return NO_VALUE;
+		return this.getInputString(defValue);
+	}
 
-		if (defValue.size() == 0)
-			return NO_VALUE;
-
-		StringBuilder tmp = new StringBuilder();
-		tmp.append(defValue.get(0).getInputName());
-		for (int i = 1; i < defValue.size(); i++) {
-			tmp.append(SEPARATOR);
-			tmp.append(defValue.get(i).getInputName());
-		}
-		return tmp.toString();
+	@Override
+	public String getValueString() {
+		if (value == null)
+			return "";
+		return this.getInputString(value);
 	}
 }
