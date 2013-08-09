@@ -16,9 +16,12 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
+import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
@@ -37,10 +40,16 @@ public class Queue extends DisplayEntity {
 
 	protected ArrayList<DisplayEntity> itemList;
 
-//	Statistics
-	protected double minElements;
-	protected int maxElements;
-	protected double avgElements;
+	//	Statistics
+	protected double timeOfLastUpdate; // time at which the statistics were last updated
+	protected double startOfStatisticsCollection; // time at which statistics collection was started
+	protected int minElements; // minimum observed number of entities in the queue
+	protected int maxElements; // maximum observed number of entities in the queue
+	protected double elementSeconds;  // total time that entities have spent in the queue
+	protected double squaredElementSeconds;  // total time for the square of the number of elements in the queue
+	protected int numberAdded;    // number of entities that have been added to the queue
+	protected int numberRemoved;  // number of entities that have been removed from the queue
+	protected DoubleVector queueLengthDist;  // entry at position n is the total time the queue has had length n
 	protected ArrayList<QueueRecorder> recorderList;
 
 	{
@@ -56,6 +65,7 @@ public class Queue extends DisplayEntity {
 
 	public Queue() {
 		itemList = new ArrayList<DisplayEntity>();
+		queueLengthDist = new DoubleVector(10,10);
 	}
 
 	@Override
@@ -85,9 +95,10 @@ public class Queue extends DisplayEntity {
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
 	 */
 	public void add( int i, DisplayEntity perf ) {
-		this.updateStatistics();
+		this.updateStatistics();  // update the queue length distribution
 		itemList.add( i, perf );
-		this.updateStatistics();
+		this.updateStatistics();  // update the min and max queue length
+		numberAdded++;
 		setGraphicsDataDirty();
 
 		for( QueueRecorder rec : recorderList ) {
@@ -107,9 +118,10 @@ public class Queue extends DisplayEntity {
 	 */
 	public DisplayEntity remove(int i) {
 		if( i < itemList.size() && i >= 0 ) {
-			this.updateStatistics();
+			this.updateStatistics();  // update the queue length distribution
 			DisplayEntity out = itemList.remove(i);
-			this.updateStatistics();
+			this.updateStatistics();  // update the min and max queue length
+			numberRemoved++;
 			setGraphicsDataDirty();
 
 			for( QueueRecorder rec : recorderList ) {
@@ -243,19 +255,37 @@ public class Queue extends DisplayEntity {
 	 * Clear queue statistics
 	 */
 	public void clearStatistics() {
-		minElements = 10E10;
-		maxElements = 0;
-		avgElements  = 0.0;
+		double simTime = this.getSimTime();
+		startOfStatisticsCollection = simTime;
+		timeOfLastUpdate = simTime;
+		minElements = itemList.size();
+		maxElements = itemList.size();
+		elementSeconds = 0.0;
+		squaredElementSeconds = 0.0;
+		numberAdded = 0;
+		numberRemoved = 0;
+		queueLengthDist.clear();
 	}
 
 	public void updateStatistics() {
 
-		if( itemList.size() < minElements ) {
-			minElements = itemList.size();
+		int queueSize = itemList.size();  // present number of entities in the queue
+		minElements = Math.min(queueSize, minElements);
+		maxElements = Math.max(queueSize, maxElements);
+
+		// Add the necessary number of additional bins to the queue length distribution
+		int n = queueSize + 1 - queueLengthDist.size();
+		for( int i=0; i<n; i++ ) {
+			queueLengthDist.add(0.0);
 		}
 
-		if( itemList.size() > maxElements ) {
-			maxElements = itemList.size();
+		double simTime = this.getSimTime();
+		double dt = simTime - timeOfLastUpdate;
+		if( dt > 0.0 ) {
+			elementSeconds += dt * queueSize;
+			squaredElementSeconds += dt * queueSize * queueSize;
+			queueLengthDist.addAt(dt,queueSize);  // add dt to the entry at index queueSize
+			timeOfLastUpdate = simTime;
 		}
 	}
 
@@ -267,9 +297,9 @@ public class Queue extends DisplayEntity {
 
 		if (isActive()) {
 			anOut.putStringTabs( getInputName(), 1 );
-			anOut.putStringTabs( ""+minElements, 1 );
-			anOut.putStringTabs( ""+maxElements, 1 );
-			anOut.putStringTabs( ""+itemList.size(), 1 );
+			anOut.putStringTabs( ""+this.getQueueLengthMinimum(0.0), 1 );
+			anOut.putStringTabs( ""+this.getQueueLengthMaximum(0.0), 1 );
+			anOut.putStringTabs( ""+this.getQueueLength(0.0), 1 );
 			anOut.newLine();
 		}
 	}
@@ -281,4 +311,93 @@ public class Queue extends DisplayEntity {
 		anOut.putStringTabs( "Present Elements", 1 );
 		anOut.newLine();
 	}
+
+	@Output(name = "NumberAdded",
+	 description = "The number of entities that have been added to the queue.",
+	    unitType = DimensionlessUnit.class)
+	public Integer getNumberAdded(double simTime) {
+		return numberAdded;
+	}
+
+	@Output(name = "NumberRemoved",
+	 description = "The number of entities that have been removed from the queue.",
+	    unitType = DimensionlessUnit.class)
+	public Integer getNumberRemoved(double simTime) {
+		return numberRemoved;
+	}
+
+	@Output(name = "QueueLength",
+	 description = "The present number of entities in the queue.",
+	    unitType = DimensionlessUnit.class)
+	public Integer getQueueLength(double simTime) {
+		return itemList.size();
+	}
+
+	@Output(name = "QueueLengthAverage",
+	 description = "The average number of entities in the queue.",
+	    unitType = DimensionlessUnit.class)
+	public double getQueueLengthAverage(double simTime) {
+		double dt = simTime - timeOfLastUpdate;
+		int queueSize = itemList.size();
+		double totalTime = simTime - startOfStatisticsCollection;
+		if( totalTime > 0.0 ) {
+			return (elementSeconds + dt*queueSize)/totalTime;
+		}
+		return 0.0;
+	}
+
+	@Output(name = "QueueLengthStandardDeviation",
+	 description = "The standard deviation of the number of entities in the queue.",
+	    unitType = DimensionlessUnit.class)
+	public double getQueueLengthStandardDeviation(double simTime) {
+		double dt = simTime - timeOfLastUpdate;
+		int queueSize = itemList.size();
+		double mean = this.getQueueLengthAverage(simTime);
+		double totalTime = simTime - startOfStatisticsCollection;
+		if( totalTime > 0.0 ) {
+			return Math.sqrt( (squaredElementSeconds + dt*queueSize*queueSize)/totalTime - mean*mean );
+		}
+		return 0.0;
+	}
+
+	@Output(name = "QueueLengthMinimum",
+	 description = "The minimum number of entities in the queue.",
+	    unitType = DimensionlessUnit.class)
+	public Integer getQueueLengthMinimum(double simTime) {
+		return minElements;
+	}
+
+	@Output(name = "QueueLengthMaximum",
+	 description = "The maximum number of entities in the queue.",
+	    unitType = DimensionlessUnit.class)
+	public Integer getQueueLengthMaximum(double simTime) {
+		// An entity that is added to an empty queue and removed immediately
+		// does not count as a non-zero queue length
+		if( maxElements == 1 && queueLengthDist.get(1) == 0.0 )
+			return 0;
+		return maxElements;
+	}
+
+	@Output(name = "QueueLengthDistribution",
+	 description = "The fraction of time that the queue has length 0, 1, 2, etc.",
+	    unitType = DimensionlessUnit.class)
+	public DoubleVector getQueueLengthDistribution(double simTime) {
+		DoubleVector ret = new DoubleVector(queueLengthDist);
+		double dt = simTime - timeOfLastUpdate;
+		int queueSize = itemList.size();
+		double totalTime = simTime - startOfStatisticsCollection;
+		if( totalTime > 0.0 ) {
+			if( ret.size() == 0 )
+				ret.add(0.0);
+			ret.addAt(dt, queueSize);  // adds dt to the entry at index queueSize
+			for( int i=0; i<ret.size(); i++ ) {
+				ret.set(i, ret.get(i)/totalTime);
+			}
+		}
+		else {
+			ret.clear();
+		}
+		return ret;
+	}
+
 }
