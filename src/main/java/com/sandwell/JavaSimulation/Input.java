@@ -923,23 +923,6 @@ public abstract class Input<T> {
 		}
 	}
 
-	/**
-	 * DO NOT USE
-	 * parse a list of coordinates to ArrayList<Vector3d>
-	 * @param data
-	 * @return
-	 */
-	public static ArrayList<Vec3d> parseXYList( StringVector input ) {
-		Input.assertCountEven(input);
-
-		DoubleVector values = Input.parseDoubleVector( input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY );
-		ArrayList<Vec3d> xyList = new ArrayList<Vec3d>();
-		for( int i = 0; i < input.size(); i += 2 ) {
-			xyList.add( new Vec3d( values.get( i ), values.get( i + 1 ), 0 ) );
-		}
-		return xyList;
-	}
-
 	private static void assertUnique(ArrayList<? extends Entity> list) {
 		for (int i = 0; i < list.size(); i++) {
 			Entity ent = list.get(i);
