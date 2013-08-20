@@ -142,6 +142,42 @@ public class TimeSeries extends Entity {
 	}
 
 	/**
+	 * Return the index for the given simulation time in hours
+	 */
+	public int getIndexForTime( double time, int startIndex ) {
+		DoubleVector timeList = value.getValue().getTimeList();
+
+		// Determine the time in the cycle for the given time
+		int completedCycles = (int)Math.floor( time / cycleTime );
+		double timeInCycle = time - ( completedCycles * cycleTime );
+
+		// Perform linear search for time from startIndex
+		for( int i = startIndex; i < timeList.size()-1; i++ ) {
+			if( Tester.lessOrEqualCheckTimeStep( timeList.get( i ), timeInCycle )
+					&& Tester.lessCheckTimeStep( timeInCycle, timeList.get( i+1 ) ) ) {
+				return i;
+			}
+		}
+
+		// If the time in the cycle is greater than the last time, return the last value
+		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList.get( timeList.size() - 1 ) ) ) {
+			return timeList.size() - 1;
+		}
+
+		// Perform linear search for time from 0
+		for( int i = 0; i < startIndex; i++ ) {
+			if( Tester.lessOrEqualCheckTimeStep( timeList.get( i ), timeInCycle )
+					&& Tester.lessCheckTimeStep( timeInCycle, timeList.get( i+1 ) ) ) {
+				return i;
+			}
+		}
+
+		// No value was found for time
+		this.error( "getIndexForTime( "+time+", "+startIndex+" )", "No record was found for the given time.", "" );
+		return -1;
+	}
+
+	/**
 	 * Return the time in hours from the given start time
 	 * until the value is less than or equal to the given limit.
 	 */
