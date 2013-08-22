@@ -46,9 +46,6 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
-		DoubleVector times = new DoubleVector();
-		DoubleVector values = new DoubleVector();
-
 		double lastTime = -1.0;
 
 		// Determine records in the time series
@@ -72,6 +69,8 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 			}
 		}
 
+		DoubleVector times = new DoubleVector(temp.size());
+		DoubleVector values = new DoubleVector(temp.size());
 		// Loop through records in the time series
 		for (StringVector each : temp) {
 
