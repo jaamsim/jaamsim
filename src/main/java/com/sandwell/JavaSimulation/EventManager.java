@@ -79,10 +79,11 @@ public final class EventManager implements Runnable {
 	private long targetTick; // The time a child eventManager will run to before waking the parent eventManager
 
 	// Real time execution state
-	private boolean executeRealTime;
-	private int realTimeFactor;
-	private long previousInternalTime;
-	private long previousWallTime;
+	private boolean executeRealTime;  // TRUE if the simulation is to be executed in Real Time mode
+	private boolean rebaseRealTime;   // TRUE if the time keeping for Real Time model needs re-basing
+	private int realTimeFactor;       // target ratio of elapsed simulation time to elapsed wall clock time
+	private double baseSimTime;       // simulation time at which Real Time mode was commenced
+	private long baseTimeMillis;      // wall clock time in milliseconds at which Real Time model was commenced
 
 	private EventTraceRecord traceRecord;
 
@@ -154,7 +155,7 @@ public final class EventManager implements Runnable {
 
 		executeRealTime = false;
 		realTimeFactor = 1;
-		previousInternalTime = -1;
+		rebaseRealTime = true;
 	}
 
 	void start() {
@@ -189,6 +190,7 @@ public final class EventManager implements Runnable {
 	void basicInit() {
 		targetTick = Long.MAX_VALUE;
 		currentTick = 0;
+		rebaseRealTime = true;
 
 		traceRecord.clearTrace();
 		EventTracer.init();
@@ -371,10 +373,21 @@ public final class EventManager implements Runnable {
 			// Update all the child eventManagers to this next event time
 			this.updateChildren(nextTick);
 
-			// Only the top-level eventManager should update the master simulation
-			// time
-			if (parent == null)
-				this.updateTime(nextTick);
+			// Only the top-level eventManager should update the master simulation time
+			if (parent == null) {
+
+				// Advance simulation time smoothly between events
+				if (executeRealTime) {
+					this.doRealTime(nextTick);
+
+					// Has the simulation been stopped and restarted
+					if( eventStack.get(0).schedTick == 0 )
+						continue;
+				}
+
+				// Update the displayed simulation time
+				FrameBox.timeUpdate( Process.ticksToSeconds(nextTick) );
+			}
 
 			// Set the present time for this eventManager to the next event time
 			if (eventStack.size() > 0 && eventStack.get(0).schedTick < nextTick) {
@@ -397,38 +410,66 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	private void updateTime(long nextTime) {
-		if (executeRealTime) {
-			// Account for pausing the model/restarting
-			if (previousInternalTime == -1) {
-				previousInternalTime = nextTime;
-				previousWallTime = System.currentTimeMillis();
+	/**
+	 * Advance simulation time smoothly between events.
+	 * @param nextTick = internal simulation time for the next event
+	 */
+	private void doRealTime(long nextTick) {
+		double nextSimTime = Process.ticksToSeconds(nextTick);
+
+		// If necessary, set up the real time parameters
+		if( rebaseRealTime )
+			this.rebaseRealTime(System.currentTimeMillis(), Process.ticksToSeconds(currentTick));
+
+		// Loop until the next event time is reached
+		double simTime = this.getSimTime(System.currentTimeMillis());
+		while( simTime < nextSimTime && executeRealTime ) {
+
+			// Update the displayed simulation time
+			FrameBox.timeUpdate(simTime);
+
+			// Wait for 20 milliseconds
+			this.threadPause(20);
+
+			// Has the simulation set to the paused state during the wait?
+			if( EventManager.getEventState() == EventManager.EVENTS_STOPPED ) {
+				synchronized (lockObject) {
+					this.threadWait();
+				}
+				// Has the simulation been stopped and restarted?
+				if( eventStack.get(0).schedTick == 0 )
+					return;
 			}
 
-			// Calculate number of milliseconds between events
-			long millisToWait = (long)((((nextTime - previousInternalTime) / Process.getSimTimeFactor()) *
-								3600 * 1000) / realTimeFactor);
+			// Has the simulation speed been changed down during the wait?
+			if( rebaseRealTime )
+				this.rebaseRealTime(System.currentTimeMillis(), simTime);
 
-			long targetMillis = previousWallTime + millisToWait;
-			long currentWallTime = 0;
-			// cache the internal time and the current RealTimeFactor in case they
-			// are written while doing the pause
-			long prevIntTime = previousInternalTime;
-			while ((currentWallTime = System.currentTimeMillis()) < targetMillis) {
-				this.threadPause(20);
-				double modelSecs = ((currentWallTime - previousWallTime) * realTimeFactor) / 1000.0d;
-				long modelTicks = Process.secondsToTicks(modelSecs);
-				modelTicks += prevIntTime;
-				if (modelTicks < nextTime)
-					FrameBox.timeUpdate(Process.ticksToSeconds(modelTicks));
-
-				// If realtime was disabled, break out
-				if (!executeRealTime || previousInternalTime == -1)
-					break;
-			}
+			// Calculate the simulation time corresponding to the present wall clock time
+			simTime = this.getSimTime(System.currentTimeMillis());
 		}
+	}
 
-		FrameBox.timeUpdate(Process.ticksToSeconds(nextTime));
+	/**
+	 * Return the simulation time corresponding the given wall clock time
+	 * @param currentTimeMillis = wall clock time in milliseconds
+	 * @return simulation time in seconds
+	 */
+	private double getSimTime(long currentTimeMillis) {
+		return baseSimTime + (currentTimeMillis - baseTimeMillis) * realTimeFactor / 1000.0d;
+	}
+
+	/**
+	 * Reset the parameters used to calculate simulation time from wall clock time in Real Time mode.
+	 * This method is called whenever Real Time mode is first started, or when the real time
+	 * factor is changed.
+	 * @param currentTimeMillis = present wall clock time in milliseconds
+	 * @param simTime = present simulation time in seconds
+	 */
+	private void rebaseRealTime(long currentTimeMillis, double simTime) {
+		baseSimTime = simTime;
+		baseTimeMillis = currentTimeMillis;
+		rebaseRealTime = false;
 	}
 
 	/**
@@ -764,7 +805,7 @@ public final class EventManager implements Runnable {
 		executeRealTime = useRealTime;
 		realTimeFactor = factor;
 		if (useRealTime)
-			previousInternalTime = -1;
+			rebaseRealTime = true;
 	}
 
 	/**
@@ -868,7 +909,7 @@ public final class EventManager implements Runnable {
 	 * from an inconsistent state.
 	 */
 	void resume() {
-		previousInternalTime = -1;
+		rebaseRealTime = true;
 		if (EventManager.getEventState() != EventManager.EVENTS_STOPPED)
 			return;
 
