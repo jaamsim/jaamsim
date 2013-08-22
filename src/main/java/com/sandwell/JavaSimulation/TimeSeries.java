@@ -16,6 +16,8 @@ package com.sandwell.JavaSimulation;
 
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
 public class TimeSeries extends Entity {
@@ -42,8 +44,11 @@ public class TimeSeries extends Entity {
      example = "TimeSeries1  DateFormat { 'yyyy-MM-dd HH:mm' }")
 	private final StringInput dateFormat;
 
+	@Keyword(description = "Defines when the time series will repeat from the start.",
+            example = "TimeSeries1  CycleTime { 8760.0 h }")
+	private final ValueInput cycleTime;
+
 	private int indexOfTime;  // The index of the time in the last call to getValueForTime()
-	private double cycleTime; // The number of hours in the cycle for the time series
 
 	{
 		value = new TimeSeriesInput("Value", "Key Inputs", null);
@@ -54,6 +59,10 @@ public class TimeSeries extends Entity {
 
 		dateFormat = new StringInput("DateFormat", "Key Inputs", null);
 		this.addInput(dateFormat, true);
+
+		cycleTime = new ValueInput( "CycleTime", "Key Inputs", Double.POSITIVE_INFINITY );
+		cycleTime.setUnitType(TimeUnit.class);
+		this.addInput( cycleTime, true );
 	}
 
 	public TimeSeries() { }
@@ -64,16 +73,15 @@ public class TimeSeries extends Entity {
 
 		if( value.getValue() == null || value.getValue().getTimeList().size() == 0 )
 			throw new InputErrorException( "Time series Value must be specified" );
+
+		if( this.getCycleTimeInHours() < value.getValue().getTimeList().get( value.getValue().getTimeList().size() -1 ) )
+			throw new InputErrorException( "CycleTime must be larger than the last time in the series" );
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		indexOfTime = 0;
-
-		// Determine the cycle time as the last time rounded up to the nearest year
-		DoubleVector timeList = value.getValue().getTimeList();
-		cycleTime = Math.ceil( timeList.get( timeList.size() - 1 ) / 8760.0 ) * 8760.0;
 	}
 
 	@Override
@@ -106,12 +114,18 @@ public class TimeSeries extends Entity {
 	 * Return the value for the given simulation time in hours
 	 */
 	public double getValueForTime( double time ) {
-		DoubleVector timeList = value.getValue().getTimeList();
-		DoubleVector valueList = value.getValue().getValueList();
+		DoubleVector timeList = this.getTimeList();
+		DoubleVector valueList = this.getValueList();
 
 		// Determine the time in the cycle for the given time
-		int completedCycles = (int)Math.floor( time / cycleTime );
-		double timeInCycle = time - ( completedCycles * cycleTime );
+		double timeInCycle;
+		if( this.getCycleTimeInHours() == Double.POSITIVE_INFINITY ) {
+			timeInCycle = time;
+		}
+		else {
+			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
+			timeInCycle = time - ( completedCycles * this.getCycleTimeInHours() );
+		}
 
 		// Perform linear search for time from indexOfTime
 		for( int i = indexOfTime; i < timeList.size()-1; i++ ) {
@@ -148,8 +162,14 @@ public class TimeSeries extends Entity {
 		DoubleVector timeList = value.getValue().getTimeList();
 
 		// Determine the time in the cycle for the given time
-		int completedCycles = (int)Math.floor( time / cycleTime );
-		double timeInCycle = time - ( completedCycles * cycleTime );
+		double timeInCycle;
+		if( this.getCycleTimeInHours() == Double.POSITIVE_INFINITY ) {
+			timeInCycle = time;
+		}
+		else {
+			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
+			timeInCycle = time - ( completedCycles * this.getCycleTimeInHours() );
+		}
 
 		// Perform linear search for time from startIndex
 		for( int i = startIndex; i < timeList.size()-1; i++ ) {
@@ -185,8 +205,8 @@ public class TimeSeries extends Entity {
 		return value.getValue().getValueList();
 	}
 
-	public double getCycleTime() {
-		return cycleTime;
+	public double getCycleTimeInHours() {
+		return cycleTime.getValue() / 3600;
 	}
 
 	/**
@@ -199,12 +219,18 @@ public class TimeSeries extends Entity {
 		if( getValueForTime( time ) <= limit )
 			return 0;
 
-		DoubleVector timeList = value.getValue().getTimeList();
-		DoubleVector valueList = value.getValue().getValueList();
+		DoubleVector timeList = this.getTimeList();
+		DoubleVector valueList = this.getValueList();
 
 		// Determine the time in the cycle for the given time
-		int completedCycles = (int)Math.floor( time / cycleTime );
-		double timeInCycle = time - ( completedCycles * cycleTime );
+		double timeInCycle;
+		if( this.getCycleTimeInHours() == Double.POSITIVE_INFINITY ) {
+			timeInCycle = time;
+		}
+		else {
+			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
+			timeInCycle = time - ( completedCycles * this.getCycleTimeInHours() );
+		}
 
 		// Assume indexOfTime corresponds to the given start time
 		// Perform linear search for time from indexOfTime + 1
@@ -217,7 +243,7 @@ public class TimeSeries extends Entity {
 		// Perform linear search for time from 0
 		for( int i = 0; i < indexOfTime; i++ ) {
 			if( valueList.get( i ) <= limit ) {
-				return timeList.get( i ) + cycleTime - timeInCycle;
+				return timeList.get( i ) + this.getCycleTimeInHours() - timeInCycle;
 			}
 		}
 
@@ -235,12 +261,18 @@ public class TimeSeries extends Entity {
 		if( getValueForTime( time ) > limit )
 			return 0;
 
-		DoubleVector timeList = value.getValue().getTimeList();
-		DoubleVector valueList = value.getValue().getValueList();
+		DoubleVector timeList = this.getTimeList();
+		DoubleVector valueList = this.getValueList();
 
 		// Determine the time in the cycle for the given time
-		int completedCycles = (int)Math.floor( time / cycleTime );
-		double timeInCycle = time - ( completedCycles * cycleTime );
+		double timeInCycle;
+		if( this.getCycleTimeInHours() == Double.POSITIVE_INFINITY ) {
+			timeInCycle = time;
+		}
+		else {
+			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
+			timeInCycle = time - ( completedCycles * this.getCycleTimeInHours() );
+		}
 
 		// Assume indexOfTime corresponds to the given start time
 		// Perform linear search for time from indexOfTime + 1
@@ -253,7 +285,7 @@ public class TimeSeries extends Entity {
 		// Perform linear search for time from 0
 		for( int i = 0; i < indexOfTime; i++ ) {
 			if( valueList.get( i ) > limit ) {
-				return timeList.get( i ) + cycleTime - timeInCycle;
+				return timeList.get( i ) + this.getCycleTimeInHours() - timeInCycle;
 			}
 		}
 
