@@ -18,10 +18,14 @@ public class TimeSeriesData {
 
 	private DoubleVector timeList;
 	private DoubleVector valueList;
+	private double maxValue;  // The maximum value that occurs in valueList
+	private double minValue;  // The minimum value that occurs in valueList
 
 	public TimeSeriesData( DoubleVector times, DoubleVector values ) {
 		timeList = times;
 		valueList = values;
+		maxValue = values.getMax();
+		minValue = values.getMin();
 	}
 
 	public DoubleVector getTimeList() {
@@ -30,5 +34,13 @@ public class TimeSeriesData {
 
 	public DoubleVector getValueList() {
 		return valueList;
+	}
+
+	public double getMaxValue() {
+		return maxValue;
+	}
+
+	public double getMinValue() {
+		return minValue;
 	}
 }

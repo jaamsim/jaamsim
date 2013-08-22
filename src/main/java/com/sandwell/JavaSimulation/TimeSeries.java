@@ -216,4 +216,12 @@ public class TimeSeries extends Entity {
 	public Class<? extends Unit> getUnitType() {
 		return unitType.getUnitType();
 	}
+
+	public double getMaxValue() {
+		return value.getValue().getMaxValue();
+	}
+
+	public double getMinValue() {
+		return value.getValue().getMinValue();
+	}
 }
