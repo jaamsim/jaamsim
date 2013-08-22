@@ -177,6 +177,18 @@ public class TimeSeries extends Entity {
 		return -1;
 	}
 
+	public DoubleVector getTimeList() {
+		return value.getValue().getTimeList();
+	}
+
+	public DoubleVector getValueList() {
+		return value.getValue().getValueList();
+	}
+
+	public double getCycleTime() {
+		return cycleTime;
+	}
+
 	/**
 	 * Return the time in hours from the given start time
 	 * until the value is less than or equal to the given limit.
