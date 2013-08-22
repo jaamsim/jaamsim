@@ -22,7 +22,9 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation3D.Clock;
 
 public class TimeSeriesInput extends Input<TimeSeriesData> {
@@ -46,6 +48,9 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
+		if (unitType == UserSpecifiedUnit.class)
+			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
+
 		double lastTime = -1.0;
 
 		// Determine records in the time series
@@ -129,7 +134,7 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 			else {
 				values.add( Input.parseDouble( each.get( each.size()-1 ), minValue, maxValue ) );
 
-				if( unitType != null )
+				if( unitType != DimensionlessUnit.class )
 					InputAgent.logWarning( "Missing units.  Assuming SI." );
 			}
 		}

@@ -19,6 +19,7 @@ import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class TimeSeries extends Entity {
 
@@ -52,9 +53,10 @@ public class TimeSeries extends Entity {
 
 	{
 		value = new TimeSeriesInput("Value", "Key Inputs", null);
+		value.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(value, true);
 
-		unitType = new UnitTypeInput( "UnitType", "Optional" );
+		unitType = new UnitTypeInput( "UnitType", "Key Inputs" );
 		this.addInput( unitType, true );
 
 		dateFormat = new StringInput("DateFormat", "Key Inputs", null);
@@ -70,6 +72,9 @@ public class TimeSeries extends Entity {
 	@Override
 	public void validate() {
 		super.validate();
+
+		if( unitType.getValue() == null )
+			throw new InputErrorException( "UnitType must be specified first" );
 
 		if( value.getValue() == null || value.getValue().getTimeList().size() == 0 )
 			throw new InputErrorException( "Time series Value must be specified" );
@@ -88,12 +93,11 @@ public class TimeSeries extends Entity {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 
-		if ( in == unitType ) {
-			if( value.getValue() != null )
-				throw new InputErrorException( "UnitType must be specified before Value");
-
+		if (in == unitType) {
 			value.setUnitType( unitType.getUnitType() );
+			return;
 		}
+
 		if ( in == dateFormat ) {
 			try {
 				value.setDateFormat( dateFormat.getValue() );
