@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
@@ -1069,6 +1070,22 @@ public abstract class Input<T> {
 	}
 
 	public static void validateInputSize(DoubleListInput list1, DoubleListInput list2)
+	throws InputErrorException {
+
+		// One list is set but not the other
+		if( list1.getValue() != null && list2.getValue() == null )
+			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
+
+		if( list1.getValue() == null && list2.getValue() != null )
+			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
+
+		// Both are set, but of differing size
+		if (list1.getValue().size() != list2.getValue().size())
+			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
+
+	}
+
+	public static void validateInputSize(ValueListInput list1, DoubleListInput list2)
 	throws InputErrorException {
 
 		// One list is set but not the other

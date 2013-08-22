@@ -48,6 +48,7 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
+
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
 
