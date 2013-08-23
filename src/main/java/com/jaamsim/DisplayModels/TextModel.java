@@ -92,25 +92,25 @@ public class TextModel extends DisplayModel {
 	}
 
 	{
-		fontName = new StringChoiceInput("FontName", "Fixed Text", defFont);
+		fontName = new StringChoiceInput("FontName", "Key Inputs", defFont);
 		fontName.setChoices(validFontNames);
 		this.addInput(fontName, true);
 
-		fontColor = new ColourInput("FontColour", "Fixed Text", ColourInput.BLACK);
+		fontColor = new ColourInput("FontColour", "Key Inputs", ColourInput.BLACK);
 		this.addInput(fontColor, true, "FontColor");
 
-		fontStyle = new StringListInput("FontStyle", "Fixed Text", new StringVector());
+		fontStyle = new StringListInput("FontStyle", "Key Inputs", new StringVector());
 		fontStyle.setValidOptions(validStyles);
 		fontStyle.setCaseSensitive(false);
 		this.addInput(fontStyle, true);
 
-		dropShadow = new BooleanInput( "DropShadow", "Fixed Text", false );
+		dropShadow = new BooleanInput( "DropShadow", "Key Inputs", false );
 		this.addInput( dropShadow, true );
 
-		dropShadowColor = new ColourInput("DropShadowColour", "Fixed Text", ColourInput.BLACK);
+		dropShadowColor = new ColourInput("DropShadowColour", "Key Inputs", ColourInput.BLACK);
 		this.addInput(dropShadowColor, true, "DropShadowColor");
 
-		dropShadowOffset = new Vec3dInput("DropShadowOffset", "Fixed Text", new Vec3d(-0.1d, -0.1d, -0.001d));
+		dropShadowOffset = new Vec3dInput("DropShadowOffset", "Key Inputs", new Vec3d(-0.1d, -0.1d, -0.001d));
 		this.addInput(dropShadowOffset, true);
 
 		style = Font.PLAIN;
