@@ -44,7 +44,7 @@ public class Text extends DisplayEntity {
 	         example = "Text-1 OutputName { Tank1 Product Name }")
 	protected final OutputInput<Object> outputName;
 
-	@Keyword(description = "The unit inwhich to express the output value",
+	@Keyword(description = "The unit in which to express the output value",
 	         example = "Text-1 Unit { m/s }")
 	protected final EntityInput<Unit> unit;
 
