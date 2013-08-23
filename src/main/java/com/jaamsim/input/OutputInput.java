@@ -45,9 +45,14 @@ public class OutputInput<T> extends Input<String> {
 		}
 
 		Input.assertCountRange(input, 2, Integer.MAX_VALUE);
+		Entity tmp = Input.parseEntity(input.get(0), Entity.class);
+		String outName = input.get(1);
+		if (!tmp.hasOutput(outName)) {
+			throw new InputErrorException("Output named %s not found for Entity %s", outName, tmp.getName());
+		}
 
-		ent = Input.parseEntity(input.get(0), Entity.class);
-		outputName = input.get(1);
+		ent = tmp;
+		outputName = outName;
 		out = ent.getOutputHandle(outputName);
 
 		outputNameList = new StringVector();

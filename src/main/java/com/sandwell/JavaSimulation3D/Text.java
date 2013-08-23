@@ -52,6 +52,11 @@ public class Text extends DisplayEntity {
 	         example = "Text-1 TextHeight { 15 m }")
 	protected final ValueInput textHeight;
 
+	@Keyword(description = "The text to display if there is any failure while formatting" +
+	                       "the dynamic text, or while reading the output's value.",
+	         example = "Text-1 FailText { '' }")
+	private final StringInput failText;
+
 	protected String renderText = "";
 
 	{
@@ -68,6 +73,9 @@ public class Text extends DisplayEntity {
 		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		textHeight.setUnitType(DistanceUnit.class);
 		this.addInput(textHeight, true);
+
+		failText = new StringInput("FailText", "Key Inputs", "");
+		this.addInput(failText, true);
 
 		InputAgent.processEntity_Keyword_Value(this, "Size", "1.0 1.0 0.0 m");
 	}
@@ -89,13 +97,22 @@ public class Text extends DisplayEntity {
 		if( outputName.getValue() == null )
 			return formatText.getValue();
 
+		try {
 		OutputHandle out = outputName.getOutputHandle(simTime);
-		if( out == null )
-			return "Invalid entry for keyword OutputName";
+		if( out == null ) {
+			failText.getValue();
+			//return "Invalid entry for keyword OutputName";
+		}
 		String ret = out.getValueAsString(simTime, unit.getValue(), formatText.getValue());
-		if( ret == null )
-			return "Invalid entry for keyword Format";
+		if( ret == null ) {
+			return failText.getValue();
+			//return "Invalid entry for keyword Format";
+		}
 		return ret;
+		}
+		catch (Throwable e) {
+			return failText.getValue();
+		}
 	}
 
 	@Override
