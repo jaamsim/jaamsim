@@ -14,11 +14,11 @@
  */
 package com.jaamsim.BasicObjects;
 
-import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.EntityListInput;
+import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
@@ -34,17 +34,18 @@ public class EntityGenerator extends LinkedComponent {
 	         example = "EntityGenerator1 IATdistribution { Dist1 }")
 	private final SampleInput iatDistributionInput;
 
-	@Keyword(description = "The list of DisplayModels to be assigned to the generated DisplayEntities.",
-	         example = "EntityGenerator1 GeneratedDisplayModelList { Sphere }")
-	private final EntityListInput<DisplayModel> generatedDisplayModelListInput;
+	@Keyword(description = "The prototype for entities to be generated.\n" +
+			"The generated entities will be copies of this entity.",
+	         example = "EntityGenerator-1 PrototypeEntity { Ship }")
+	private final EntityInput<DisplayEntity> prototypeEntityInput;
 
 	{
 		iatDistributionInput = new SampleInput( "IATdistribution", "Key Inputs", null);
 		iatDistributionInput.setUnitType( TimeUnit.class );
 		this.addInput( iatDistributionInput, true);
 
-		generatedDisplayModelListInput = new EntityListInput<DisplayModel>( DisplayModel.class, "DisplayModelList", "Key Inputs", null);
-		this.addInput( generatedDisplayModelListInput, true);
+		prototypeEntityInput = new EntityInput<DisplayEntity>( DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		this.addInput( prototypeEntityInput, true);
 	}
 
 	public EntityGenerator() {
@@ -57,6 +58,11 @@ public class EntityGenerator extends LinkedComponent {
 		// Confirm that probability distribution has been specified
 		if( iatDistributionInput.getValue() == null ) {
 			throw new InputErrorException( "The keyword IATdistribution must be set." );
+		}
+
+		// Confirm that prototype entity has been specified
+		if( prototypeEntityInput.getValue() == null ) {
+			throw new InputErrorException( "The keyword PrototypeEntity must be set." );
 		}
 
 		iatDistributionInput.verifyUnit();
@@ -86,6 +92,8 @@ public class EntityGenerator extends LinkedComponent {
 	*/
 	public void createEntities() {
 
+		int numberGenerated = 0;
+
 		while( true ) {
 
 			// Determine the interarrival time for the next creation event
@@ -95,11 +103,15 @@ public class EntityGenerator extends LinkedComponent {
 			this.simWait( dt );
 
 			// Create the new DisplayEntity
-			DisplayEntity newDisplayEntity = new DisplayEntity();
-			newDisplayEntity.setFlag(Entity.FLAG_GENERATED);
+			numberGenerated++;
+			DisplayEntity proto = prototypeEntityInput.getValue();
+			String name = String.format("Copy_of_%s-%s", proto.getInputName(), numberGenerated);
+			DisplayEntity ent = InputAgent.defineEntityWithUniqueName(proto.getClass(), name, true);
+			ent.copyInputs(proto);
+			ent.setFlag(Entity.FLAG_GENERATED);
 
 			//  Send the entity to the next element in the chain
-			this.sendToNextComponent( newDisplayEntity );
+			this.sendToNextComponent( ent );
 		}
 	}
 
