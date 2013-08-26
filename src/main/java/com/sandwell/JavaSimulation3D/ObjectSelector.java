@@ -404,12 +404,13 @@ static class DuplicateMenuItem extends DEMenuItem {
 		// Match all the inputs
 		copiedEntity.copyInputs(ent);
 
+		// Position the duplicated entity next to the original
 		if (copiedEntity instanceof DisplayEntity) {
 			DisplayEntity dEnt = (DisplayEntity)copiedEntity;
 
 			Vec3d pos = dEnt.getPosition();
 			pos.x += 0.5d * dEnt.getSize().x;
-			pos.y += 0.5d * dEnt.getSize().y;
+			pos.y -= 0.5d * dEnt.getSize().y;
 
 			dEnt.setPosition(pos);
 		}
