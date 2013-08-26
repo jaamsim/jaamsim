@@ -55,11 +55,10 @@ public Vec3d(double x, double y, double z) {
  */
 @Override
 public String toString() {
-	StringBuilder tmp = new StringBuilder("(");
+	StringBuilder tmp = new StringBuilder();
 	tmp.append(x);
-	tmp.append(", ").append(y);
-	tmp.append(", ").append(z);
-	tmp.append(")");
+	tmp.append("  ").append(y);
+	tmp.append("  ").append(z);
 	return tmp.toString();
 }
 
