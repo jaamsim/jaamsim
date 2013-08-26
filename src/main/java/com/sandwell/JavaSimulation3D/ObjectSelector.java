@@ -413,7 +413,13 @@ static class DuplicateMenuItem extends DEMenuItem {
 			pos.y -= 0.5d * dEnt.getSize().y;
 
 			dEnt.setPosition(pos);
+
+			// Set the input for the "Position" keyword to the new value
+			InputAgent.processEntity_Keyword_Value(dEnt, "Position", String.format( "%.6f %.6f %.6f m", pos.x, pos.y, pos.z ));
+			FrameBox.valueUpdate();
 		}
+
+		// Show the duplicated entity in the editors and viewers
 		FrameBox.setSelectedEntity(copiedEntity);
 	}
 }
