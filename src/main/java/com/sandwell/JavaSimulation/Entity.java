@@ -241,6 +241,25 @@ public class Entity {
         }
 	}
 
+	/**
+	 * Copy the inputs for each keyword to the caller.  Any inputs that have already
+	 * been set for the caller are overwritten by those for the entity being copied.
+	 * @param ent = entity whose inputs are to be copied
+	 */
+	public void copyInputs(Entity ent) {
+		for(Input<?> sourceInput: ent.getEditableInputs() ){
+			Input<?> targetInput = this.getInput(sourceInput.getKeyword());
+			String val = sourceInput.getValueString();
+			if( val.isEmpty() ) {
+				if( ! targetInput.getValueString().isEmpty() )
+					targetInput.reset();
+			}
+			else {
+				InputAgent.processEntity_Keyword_Value(this, targetInput, val);
+			}
+		}
+	}
+
 	public void setFlag(int flag) {
 		flags |= flag;
 	}
