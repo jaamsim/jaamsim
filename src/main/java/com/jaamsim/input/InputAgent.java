@@ -420,6 +420,13 @@ public class InputAgent {
 	 * @return
 	 */
 	public static <T extends Entity> T defineEntityWithUniqueName(Class<T> proto, String key, boolean addedEntity) {
+
+		// Has the provided name been used already?
+		if (Entity.getNamedEntity(key) == null) {
+			return defineEntity(proto, key, addedEntity);
+		}
+
+		// Try the provided name plus "-1", "-2", etc. until an unused name is found
 		int entityNum = 1;
 		while(true) {
 			String name = String.format("%s-%d", key, entityNum);
