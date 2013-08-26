@@ -149,10 +149,6 @@ public class Server extends LinkedComponent {
 
 			Vec3d serverCenter = this.getPositionForAlignment(new Vec3d());
 			servedEntity.setPosition( serverCenter);
-
-			// Set the alignment and orientation of the entity
-			servedEntity.setAlignment( new Vec3d() );
-			servedEntity.setOrientation( this.getOrientation() );
 		}
 	}
 }
