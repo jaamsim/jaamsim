@@ -510,6 +510,7 @@ public class RenderManager implements DragSourceListener {
 				if (!(ent instanceof DisplayEntity)) { continue; }
 
 				DisplayEntity de = (DisplayEntity)ent;
+				if (!de.isMovable()) { continue; }  // only a movable DisplayEntity responds to a right-click
 
 				ents.add(de);
 			}
