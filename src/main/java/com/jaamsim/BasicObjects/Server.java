@@ -32,9 +32,10 @@ import com.sandwell.JavaSimulation3D.Queue;
  */
 public class Server extends LinkedComponent {
 
-	@Keyword(description = "The probability distribution object used to select the service time for each DisplayEntity.",
-	         example = "Server1 ServiceTimeDistribution { Dist1 }")
-	private final SampleInput serviceTimeDistributionInput;
+	@Keyword(description = "The service time required to process an entity.\n" +
+			"A constant value, a distribution to be sampled, or a time series can be entered.",
+	         example = "Server1 ServiceTime { 3.0 h }")
+	private final SampleInput serviceTimeInput;
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         example = "Server1 WaitQueue { Queue1 }")
@@ -44,9 +45,9 @@ public class Server extends LinkedComponent {
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
 
 	{
-		serviceTimeDistributionInput = new SampleInput( "ServiceTimeDistribution", "Key Inputs", null);
-		serviceTimeDistributionInput.setUnitType( TimeUnit.class );
-		this.addInput( serviceTimeDistributionInput, true);
+		serviceTimeInput = new SampleInput( "ServiceTime", "Key Inputs", null);
+		serviceTimeInput.setUnitType( TimeUnit.class );
+		this.addInput( serviceTimeInput, true);
 
 		waitQueueInput = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput( waitQueueInput, true);
@@ -57,8 +58,8 @@ public class Server extends LinkedComponent {
 		super.validate();
 
 		// Confirm that probability distribution has been specified
-		if( serviceTimeDistributionInput.getValue() == null ) {
-			throw new InputErrorException( "The keyword ServiceTimeDistribution must be set." );
+		if( serviceTimeInput.getValue() == null ) {
+			throw new InputErrorException( "The keyword ServiceTime must be set." );
 		}
 
 		// Confirm that the target queue has been specified
@@ -66,7 +67,7 @@ public class Server extends LinkedComponent {
 			throw new InputErrorException( "The keyword WaitQueue must be set." );
 		}
 
-		serviceTimeDistributionInput.verifyUnit();
+		serviceTimeInput.verifyUnit();
 	}
 
 	@Override
@@ -127,7 +128,7 @@ public class Server extends LinkedComponent {
 			this.setGraphicsDataDirty();
 
 			// Select the processing time and wait for it to be completed
-			double dt = serviceTimeDistributionInput.getValue().getNextSample(getSimTime());
+			double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
 			this.simWait( dt );
 
 			// Send the entity to the next component in the chain
