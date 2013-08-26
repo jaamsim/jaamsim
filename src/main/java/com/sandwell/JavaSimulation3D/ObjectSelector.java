@@ -47,7 +47,6 @@ import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Palette;
 
@@ -403,14 +402,8 @@ static class DuplicateMenuItem extends DEMenuItem {
 				String.format("Copy_of_%s", ent.getInputName()), true);
 
 		// Match all the inputs
-		for(Input<?> each: ent.getEditableInputs() ){
-			String val = each.getValueString();
-			if (val.isEmpty())
-				continue;
+		copiedEntity.copyInputs(ent);
 
-			Input<?> copiedInput = copiedEntity.getInput(each.getKeyword());
-			InputAgent.processEntity_Keyword_Value(copiedEntity, copiedInput, val);
-		}
 		if (copiedEntity instanceof DisplayEntity) {
 			DisplayEntity dEnt = (DisplayEntity)copiedEntity;
 
