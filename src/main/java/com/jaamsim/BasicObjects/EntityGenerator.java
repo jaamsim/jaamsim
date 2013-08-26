@@ -30,9 +30,10 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public class EntityGenerator extends LinkedComponent {
 
-	@Keyword(description = "The probability distribution object used to select the inter-arrival time between generated DisplayEntities.",
-	         example = "EntityGenerator1 IATdistribution { Dist1 }")
-	private final SampleInput iatDistributionInput;
+	@Keyword(description = "The inter-arrival time between generated entities.\n" +
+			"A constant value, a distribution to be sampled, or a time series can be entered.",
+	         example = "EntityGenerator-1 InterArrivalTime { 1.5 h }")
+	private final SampleInput interArrivalTimeInput;
 
 	@Keyword(description = "The prototype for entities to be generated.\n" +
 			"The generated entities will be copies of this entity.",
@@ -40,9 +41,9 @@ public class EntityGenerator extends LinkedComponent {
 	private final EntityInput<DisplayEntity> prototypeEntityInput;
 
 	{
-		iatDistributionInput = new SampleInput( "IATdistribution", "Key Inputs", null);
-		iatDistributionInput.setUnitType( TimeUnit.class );
-		this.addInput( iatDistributionInput, true);
+		interArrivalTimeInput = new SampleInput( "InterArrivalTime", "Key Inputs", null);
+		interArrivalTimeInput.setUnitType( TimeUnit.class );
+		this.addInput( interArrivalTimeInput, true);
 
 		prototypeEntityInput = new EntityInput<DisplayEntity>( DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
 		this.addInput( prototypeEntityInput, true);
@@ -56,8 +57,8 @@ public class EntityGenerator extends LinkedComponent {
 		super.validate();
 
 		// Confirm that probability distribution has been specified
-		if( iatDistributionInput.getValue() == null ) {
-			throw new InputErrorException( "The keyword IATdistribution must be set." );
+		if( interArrivalTimeInput.getValue() == null ) {
+			throw new InputErrorException( "The keyword InterArrivalTime must be set." );
 		}
 
 		// Confirm that prototype entity has been specified
@@ -65,7 +66,7 @@ public class EntityGenerator extends LinkedComponent {
 			throw new InputErrorException( "The keyword PrototypeEntity must be set." );
 		}
 
-		iatDistributionInput.verifyUnit();
+		interArrivalTimeInput.verifyUnit();
 	}
 
 	@Override
@@ -97,7 +98,7 @@ public class EntityGenerator extends LinkedComponent {
 		while( true ) {
 
 			// Determine the interarrival time for the next creation event
-			double dt = iatDistributionInput.getValue().getNextSample(getSimTime());
+			double dt = interArrivalTimeInput.getValue().getNextSample(getSimTime());
 
 			// Schedule the creation event at this time
 			this.simWait( dt );
