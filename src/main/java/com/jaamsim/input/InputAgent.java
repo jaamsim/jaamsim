@@ -699,6 +699,7 @@ public class InputAgent {
 			}
 		}
 		catch( InputErrorException iee ) {
+			InputAgent.logError( iee.getMessage() );
 		}
 	}
 
