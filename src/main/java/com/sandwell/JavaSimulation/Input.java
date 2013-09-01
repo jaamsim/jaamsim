@@ -934,7 +934,7 @@ public abstract class Input<T> {
 			}
 		}
 	}
-	public static void validateIndexedLists(ArrayList<? extends Entity> keys, BooleanVector values, String keyName, String valueName)
+	public static void validateIndexedLists(ArrayList<?> keys, BooleanVector values, String keyName, String valueName)
 	throws InputErrorException {
 		// If no values set, no validation to be done
 		if (values == null)
@@ -949,7 +949,7 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
 	}
 
-	public static void validateIndexedLists(ArrayList<? extends Entity> keys, IntegerVector values, String keyName, String valueName)
+	public static void validateIndexedLists(ArrayList<?> keys, IntegerVector values, String keyName, String valueName)
 	throws InputErrorException {
 		// If no values set, no validation to be done
 		if (values == null)
@@ -964,7 +964,7 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
 	}
 
-	public static void validateIndexedLists(ArrayList<? extends Entity> keys, DoubleVector values, String keyName, String valueName)
+	public static void validateIndexedLists(ArrayList<?> keys, DoubleVector values, String keyName, String valueName)
 	throws InputErrorException {
 		// If no values set, no validation to be done
 		if (values == null)
