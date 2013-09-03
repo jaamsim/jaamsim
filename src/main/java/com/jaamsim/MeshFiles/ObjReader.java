@@ -153,8 +153,23 @@ public class ObjReader {
 			if (fv.t != -1)
 				texCoord = texCoords.get(fv.t - 1);
 			Vec4d normal = null;
-			if (fv.n != -1)
+			if (fv.n != -1) {
 				normal = normals.get(fv.n - 1);
+			} else {
+				// This face does not have a normal, we'd better generate one from the vertices
+				int faceInd = i / 3;
+				Vec4d p0 = vertices.get(faces.get(faceInd*3 + 0).v-1);
+				Vec4d p1 = vertices.get(faces.get(faceInd*3 + 1).v-1);
+				Vec4d p2 = vertices.get(faces.get(faceInd*3 + 2).v-1);
+				Vec4d d0 = new Vec4d();
+				d0.sub4(p1, p0);
+				Vec4d d1 = new Vec4d();
+				d1.sub4(p2, p0);
+				normal = new Vec4d();
+				normal.cross3(d0, d1);
+				normal.normalize3();
+				normal.w = 0;
+			}
 
 			vertIndices[i] = map.getVertIndex(pos, normal, texCoord);
 		}
@@ -255,29 +270,37 @@ public class ObjReader {
 
 		FaceVert[] fvs = new FaceVert[tokens.length - 1];
 		for (int i = 0; i < tokens.length - 1; ++i) {
+
+			boolean hasNormal = false;
+			boolean hasTex = false;
+
 			fvs[i] = new FaceVert();
 			String[] indices = tokens[i+1].split("/");
 			parseAssert(indices.length > 0);
 			fvs[i].v = Integer.parseInt(indices[0]);
 
-			if (indices.length < 2 || indices[1].isEmpty())
+			if (indices.length < 2 || indices[1].isEmpty()) {
 				fvs[i].t = -1;
-			else
+			} else {
 				fvs[i].t = Integer.parseInt(indices[1]);
+				hasTex = true;
+			}
 
-			if (indices.length < 3 || indices[2].isEmpty())
+			if (indices.length < 3 || indices[2].isEmpty()) {
 				fvs[i].n = -1;
-			else
+			} else {
 				fvs[i].n = Integer.parseInt(indices[2]);
+				hasNormal = true;
+			}
 
 			// Check for relative indexing
 			if (fvs[i].v < 0) {
 				fvs[i].v = vertices.size() + 1 - fvs[i].v;
 			}
-			if (fvs[i].t < 0) {
+			if (fvs[i].t < 0 && hasTex) {
 				fvs[i].t = texCoords.size() + 1 - fvs[i].t;
 			}
-			if (fvs[i].n < 0) {
+			if (fvs[i].n < 0 && hasNormal) {
 				fvs[i].n = normals.size() + 1 - fvs[i].n;
 			}
 		}
@@ -342,7 +365,7 @@ public class ObjReader {
 			if (tokens.length == 1) return; // Ignore empty tags
 			parseAssert(tokens.length == 2);
 			parseAssert(parsingMat != null);
-			parsingMat.alpha = Double.parseDouble(tokens[1]);
+			parsingMat.alpha = 1.0 - Double.parseDouble(tokens[1]);
 		} else if (tokens[0].equals("map_Kd")) {
 			if (tokens.length == 1) return; // Ignore empty tags
 			parseAssert(tokens.length == 2);
