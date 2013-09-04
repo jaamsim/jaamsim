@@ -27,7 +27,7 @@ import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation3D.Clock;
 
-public class TimeSeriesInput extends Input<TimeSeriesData> {
+public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 	private int[] validCounts;
 	private Class<? extends Entity> unitType;
@@ -35,7 +35,7 @@ public class TimeSeriesInput extends Input<TimeSeriesData> {
 	private double maxValue = Double.POSITIVE_INFINITY;
 	private double minValue = Double.NEGATIVE_INFINITY;
 
-	public TimeSeriesInput(String key, String cat, TimeSeriesData def) {
+	public TimeSeriesDataInput(String key, String cat, TimeSeriesData def) {
 		super(key, cat, def);
 		validCounts = new int[] { 2, 3 };
 		unitType = null;

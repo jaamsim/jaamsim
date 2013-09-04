@@ -33,7 +33,7 @@ public class TimeSeries extends Entity {
 					"units is the optional units for the value\n" +
 					"The date and times must be given in increasing order.",
 	         example = "TimeSeries1  Value { { '2010 1 1 0:00' 0.5 m } { '2010 1 1 3:00' 1.5 m } { '2010 1 1 6:00' 1.2 m } }")
-	private final TimeSeriesInput value;
+	private final TimeSeriesDataInput value;
 
 	@Keyword(description = "The unit type for the time series (e.g. DistanceUnit, TimeUnit, MassUnit).  " +
 			"If the UnitType keyword is specified, it must be specified before the Value keyword.",
@@ -52,7 +52,7 @@ public class TimeSeries extends Entity {
 	private int indexOfTime;  // The index of the time in the last call to getValueForTime()
 
 	{
-		value = new TimeSeriesInput("Value", "Key Inputs", null);
+		value = new TimeSeriesDataInput("Value", "Key Inputs", null);
 		value.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(value, true);
 
