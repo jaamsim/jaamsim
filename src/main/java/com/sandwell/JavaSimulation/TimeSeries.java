@@ -49,7 +49,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
             example = "TimeSeries1  CycleTime { 8760.0 h }")
 	private final ValueInput cycleTime;
 
-	private int indexOfTime;  // The index of the time in the last call to getValueForTime()
+	private int indexOfCurrentTime;  // The index of the time in the last call to getValueForTime()
 
 	{
 		value = new TimeSeriesDataInput("Value", "Key Inputs", null);
@@ -86,7 +86,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		indexOfTime = 0;
+		indexOfCurrentTime = 0;
 	}
 
 	@Override
@@ -122,6 +122,9 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		DoubleVector timeList = this.getTimeList();
 		DoubleVector valueList = this.getValueList();
 
+		// Update the index within the series for the current time
+		indexOfCurrentTime = this.getIndexForTime(getCurrentTime(), indexOfCurrentTime);
+
 		// Determine the time in the cycle for the given time
 		double timeInCycle;
 		if( this.getCycleTimeInHours() == Double.POSITIVE_INFINITY ) {
@@ -133,26 +136,23 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		}
 
 		// Perform linear search for time from indexOfTime
-		for( int i = indexOfTime; i < timeList.size()-1; i++ ) {
+		for( int i = indexOfCurrentTime; i < timeList.size()-1; i++ ) {
 			if( Tester.lessOrEqualCheckTimeStep( timeList.get( i ), timeInCycle )
 					&& Tester.lessCheckTimeStep( timeInCycle, timeList.get( i+1 ) ) ) {
-				indexOfTime = i;
-				return valueList.get( indexOfTime );
+				return valueList.get( i );
 			}
 		}
 
 		// If the time in the cycle is greater than the last time, return the last value
 		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList.get( timeList.size() - 1 ) ) ) {
-			indexOfTime = timeList.size() - 1;
-			return valueList.get( indexOfTime );
+			return valueList.get( valueList.size() - 1 );
 		}
 
 		// Perform linear search for time from 0
-		for( int i = 0; i < indexOfTime; i++ ) {
+		for( int i = 0; i < indexOfCurrentTime; i++ ) {
 			if( Tester.lessOrEqualCheckTimeStep( timeList.get( i ), timeInCycle )
 					&& Tester.lessCheckTimeStep( timeInCycle, timeList.get( i+1 ) ) ) {
-				indexOfTime = i;
-				return valueList.get( indexOfTime );
+				return valueList.get( i );
 			}
 		}
 
@@ -209,14 +209,13 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	public double getNextChangeTimeAfter( double time ) {
 
 		// Collect parameters for the current time
-		indexOfTime = this.getIndexForTime(time,indexOfTime);
+		int startIndex = this.getIndexForTime(time,indexOfCurrentTime)+1;
 		double cycleTime = this.getCycleTimeInHours();
 
 		// Determine how many cycles through the time series have been completed
 		int completedCycles = (int)Math.floor( time / cycleTime );
 
 		// If this is the last point in the cycle, need to cycle around to get the next point
-		int startIndex = indexOfTime+1;
 		if( startIndex > this.getTimeList().size() - 1 ) {
 
 			// If the series does not cycle, the value will never change
@@ -238,7 +237,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		if( cycleTime != Double.POSITIVE_INFINITY ) {
 			cycleOffset = (completedCycles)*cycleTime;
 		}
-		return this.getTimeList().get(indexOfTime+1) + cycleOffset;
+		return this.getTimeList().get(startIndex) + cycleOffset;
 	}
 
 	public DoubleVector getTimeList() {
@@ -287,14 +286,14 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 
 		// Assume indexOfTime corresponds to the given start time
 		// Perform linear search for time from indexOfTime + 1
-		for( int i = indexOfTime + 1; i < timeList.size(); i++ ) {
+		for( int i = indexOfCurrentTime + 1; i < timeList.size(); i++ ) {
 			if( valueList.get( i ) <= limit ) {
 				return timeList.get( i ) - timeInCycle;
 			}
 		}
 
 		// Perform linear search for time from 0
-		for( int i = 0; i < indexOfTime; i++ ) {
+		for( int i = 0; i < indexOfCurrentTime; i++ ) {
 			if( valueList.get( i ) <= limit ) {
 				return timeList.get( i ) + this.getCycleTimeInHours() - timeInCycle;
 			}
@@ -329,14 +328,14 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 
 		// Assume indexOfTime corresponds to the given start time
 		// Perform linear search for time from indexOfTime + 1
-		for( int i = indexOfTime + 1; i < timeList.size(); i++ ) {
+		for( int i = indexOfCurrentTime + 1; i < timeList.size(); i++ ) {
 			if( valueList.get( i ) > limit ) {
 				return timeList.get( i ) - timeInCycle;
 			}
 		}
 
 		// Perform linear search for time from 0
-		for( int i = 0; i < indexOfTime; i++ ) {
+		for( int i = 0; i < indexOfCurrentTime; i++ ) {
 			if( valueList.get( i ) > limit ) {
 				return timeList.get( i ) + this.getCycleTimeInHours() - timeInCycle;
 			}
