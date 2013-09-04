@@ -156,7 +156,7 @@ public class Renderer {
 		_fontCache = new HashMap<TessFontKey, TessFont>();
 		_hullCache = new HashMap<ConvexHullKey, HullProto>();
 
-		_exceptionLogger = new ExceptionLogger();
+		_exceptionLogger = new ExceptionLogger(1); // Print the call stack on the first exception of any kind
 
 		_openWindows = new HashMap<Integer, RenderWindow>();
 

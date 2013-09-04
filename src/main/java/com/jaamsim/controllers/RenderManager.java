@@ -91,6 +91,11 @@ import com.sandwell.JavaSimulation3D.Region;
  */
 public class RenderManager implements DragSourceListener {
 
+	private final static int EXCEPTION_STACK_THRESHOLD = 10; // The number of recoverable exceptions until a stack trace is output
+	private final static int EXCEPTION_PRINT_RATE = 30; // The number of total exceptions until the overall log is printed
+
+	private int numberOfExceptions = 0;
+
 	private static RenderManager s_instance = null;
 	/**
 	 * Basic singleton pattern
@@ -171,7 +176,7 @@ public class RenderManager implements DragSourceListener {
 	private RenderManager(boolean safeGraphics) {
 		_renderer = new Renderer(safeGraphics);
 
-		_exceptionLogger = new ExceptionLogger();
+		_exceptionLogger = new ExceptionLogger(EXCEPTION_STACK_THRESHOLD);
 
 		_managerThread = new Thread(new Runnable() {
 			@Override
@@ -783,16 +788,14 @@ public class RenderManager implements DragSourceListener {
 	private void logException(Throwable t) {
 		_exceptionLogger.logException(t);
 
-		// And print the output
-		printExceptionLog();
-	}
+		numberOfExceptions++;
 
-	private void printExceptionLog() {
-		System.out.println("Recoverable Exceptions from RenderManager: ");
-
-		_exceptionLogger.printExceptionLog();
-
-		System.out.println("");
+		// Only print the exception log periodically (this can get a bit spammy)
+		if (numberOfExceptions % EXCEPTION_PRINT_RATE == 0) {
+			System.out.println("Recoverable Exceptions from RenderManager: ");
+			_exceptionLogger.printExceptionLog();
+			System.out.println("");
+		}
 	}
 
 	public static void setSelection(Entity ent) {

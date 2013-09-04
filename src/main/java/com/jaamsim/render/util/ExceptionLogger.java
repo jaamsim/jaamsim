@@ -30,9 +30,11 @@ import java.util.Map.Entry;
 public class ExceptionLogger {
 
 	private final Map<StackTraceElement, Integer> _exceptionStats;
+	private int stackDumpThreshold;
 
-	public ExceptionLogger() {
+	public ExceptionLogger(int dumpThreshold) {
 		_exceptionStats = new HashMap<StackTraceElement, Integer>();
+		stackDumpThreshold = dumpThreshold;
 	}
 
 	// Sort exceptions list in descending order (most common first)
@@ -57,8 +59,11 @@ public class ExceptionLogger {
 		Integer count = _exceptionStats.get(key);
 		if (count == null) {
 			// First time
-			_exceptionStats.put(key, 1);
-			return;
+			count = new Integer(0);
+		}
+
+		if (count + 1 == stackDumpThreshold) {
+			t.printStackTrace();
 		}
 
 		//Otherwise increment the count for this element
