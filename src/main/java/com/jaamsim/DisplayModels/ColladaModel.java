@@ -93,6 +93,16 @@ public class ColladaModel extends DisplayModel {
 	}
 
 	public static MeshProtoKey getCachedMeshKey(String shapeString) {
+
+		MeshProtoKey meshKey = _cachedKeys.get(shapeString);
+
+		if (meshKey == null) {
+			// This has not been cached yet
+			meshKey = RenderUtils.FileNameToMeshProtoKey(shapeString);
+			assert(meshKey != null);
+			_cachedKeys.put(shapeString, meshKey);
+		}
+
 		return _cachedKeys.get(shapeString);
 	}
 
@@ -143,14 +153,8 @@ public class ColladaModel extends DisplayModel {
 
 			String filename = colladaFile.getValue();
 
-			MeshProtoKey meshKey = _cachedKeys.get(filename);
+			MeshProtoKey meshKey = getCachedMeshKey(filename);
 
-			if (meshKey == null) {
-				// This has not been cached yet
-				meshKey = RenderUtils.FileNameToMeshProtoKey(filename);
-				assert(meshKey != null);
-				_cachedKeys.put(filename, meshKey);
-			}
 
 			AABB bounds = RenderManager.inst().getMeshBounds(meshKey, true);
 			if (bounds == null || bounds.isEmpty()) {
@@ -256,4 +260,15 @@ public class ColladaModel extends DisplayModel {
 
 	}
 
+	@Output (name = "Actions")
+	public String getActionsOutput(double simTime) {
+		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
+		ArrayList<Action.Description> actionDescs = RenderManager.inst().getMeshActions(meshKey, true);
+
+		StringBuilder ret = new StringBuilder();
+		for (Action.Description desc : actionDescs) {
+			ret.append(desc.name + " ");
+		}
+		return ret.toString();
+	}
 }
