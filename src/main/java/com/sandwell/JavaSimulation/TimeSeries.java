@@ -21,7 +21,7 @@ import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
-public class TimeSeries extends Entity {
+public class TimeSeries extends Entity implements TimeSeriesProvider {
 
 	@Keyword(description = "A list of time series records with default format { 'yyyy MM dd HH:mm' value units }, where\n" +
 					"yyyy is the year\n" +
@@ -117,6 +117,7 @@ public class TimeSeries extends Entity {
 	/**
 	 * Return the value for the given simulation time in hours
 	 */
+	@Override
 	public double getValueForTime( double time ) {
 		DoubleVector timeList = this.getTimeList();
 		DoubleVector valueList = this.getValueList();
@@ -201,6 +202,45 @@ public class TimeSeries extends Entity {
 		return -1;
 	}
 
+	/**
+	 * Return the first time that the value will be updated, after the given time.
+	 */
+	@Override
+	public double getNextChangeTimeAfter( double time ) {
+
+		// Collect parameters for the current time
+		indexOfTime = this.getIndexForTime(time,indexOfTime);
+		double cycleTime = this.getCycleTimeInHours();
+
+		// Determine how many cycles through the time series have been completed
+		int completedCycles = (int)Math.floor( time / cycleTime );
+
+		// If this is the last point in the cycle, need to cycle around to get the next point
+		int startIndex = indexOfTime+1;
+		if( startIndex > this.getTimeList().size() - 1 ) {
+
+			// If the series does not cycle, the value will never change
+			if( cycleTime == Double.POSITIVE_INFINITY ) {
+				return Double.POSITIVE_INFINITY;
+			}
+			else {
+				double cycleOffset = 0.0;
+				if( cycleTime != Double.POSITIVE_INFINITY ) {
+					cycleOffset = (completedCycles+1)*cycleTime;
+				}
+
+				return this.getTimeList().get(0) + cycleOffset;
+			}
+		}
+
+		// No cycling required, return the next value
+		double cycleOffset = 0.0;
+		if( cycleTime != Double.POSITIVE_INFINITY ) {
+			cycleOffset = (completedCycles)*cycleTime;
+		}
+		return this.getTimeList().get(indexOfTime+1) + cycleOffset;
+	}
+
 	public DoubleVector getTimeList() {
 		return value.getValue().getTimeList();
 	}
@@ -211,6 +251,15 @@ public class TimeSeries extends Entity {
 
 	public double getCycleTimeInHours() {
 		return cycleTime.getValue() / 3600;
+	}
+
+	@Override
+	public double getMaxTimeValueInHours() {
+
+		if( this.getCycleTimeInHours() != Double.POSITIVE_INFINITY )
+			return this.getCycleTimeInHours();
+
+		return this.getTimeList().get( this.getTimeList().size()-1 );
 	}
 
 	/**
@@ -297,10 +346,12 @@ public class TimeSeries extends Entity {
 		return Double.POSITIVE_INFINITY;
 	}
 
+	@Override
 	public Class<? extends Unit> getUnitType() {
 		return unitType.getUnitType();
 	}
 
+	@Override
 	public double getMaxValue() {
 		return value.getValue().getMaxValue();
 	}
