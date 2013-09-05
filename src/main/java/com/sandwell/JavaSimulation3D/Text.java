@@ -100,7 +100,7 @@ public class Text extends DisplayEntity {
 		try {
 		OutputHandle out = outputName.getOutputHandle(simTime);
 		if( out == null ) {
-			failText.getValue();
+			return failText.getValue();
 			//return "Invalid entry for keyword OutputName";
 		}
 		String ret = out.getValueAsString(simTime, unit.getValue(), formatText.getValue());
