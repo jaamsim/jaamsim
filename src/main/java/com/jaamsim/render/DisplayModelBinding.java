@@ -60,6 +60,7 @@ public abstract class DisplayModelBinding {
 	protected static int _cacheHits = 0;
 	protected static int _cacheMisses = 0;
 
+	protected boolean isDirty;
 
 	static {
 		// NOTE: the order of the points corresponds to the list of static picking IDs in RenderManager,
@@ -211,5 +212,19 @@ public abstract class DisplayModelBinding {
 		return dm.getVisibilityInfo();
 	}
 
+	protected void clearDirty() {
+		isDirty = false;
+	}
 
+	protected void setDirty() {
+		isDirty = true;
+	}
+
+	protected <T> void checkCache(DataCache<T> cache, T val) {
+		boolean isSame = cache.checkValue(val);
+
+		if (!isSame) {
+			setDirty();
+		}
+	}
 }
