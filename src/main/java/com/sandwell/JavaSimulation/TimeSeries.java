@@ -14,7 +14,6 @@
  */
 package com.sandwell.JavaSimulation;
 
-import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
@@ -52,12 +51,12 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	private int indexOfCurrentTime;  // The index of the time in the last call to getValueForTime()
 
 	{
+		unitType = new UnitTypeInput( "UnitType", "Key Inputs" );
+		this.addInput( unitType, true );
+
 		value = new TimeSeriesDataInput("Value", "Key Inputs", null);
 		value.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(value, true);
-
-		unitType = new UnitTypeInput( "UnitType", "Key Inputs" );
-		this.addInput( unitType, true );
 
 		dateFormat = new StringInput("DateFormat", "Key Inputs", null);
 		this.addInput(dateFormat, true);
@@ -108,8 +107,6 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		}
 	}
 
-	@Output( name="PresentValue",
-			 description="The time series value for the present time." )
 	public double getPresentValue( double simTime ) {
 		return this.getValueForTime( simTime / 3600.0 );
 	}
