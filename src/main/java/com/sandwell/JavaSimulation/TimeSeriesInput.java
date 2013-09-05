@@ -37,6 +37,7 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 		// Try to parse as a constant value
 		try {
 			DoubleVector tmp = Input.parseDoubles(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+			Input.assertCount(tmp, 1);
 			value = new TimeSeriesConstantDouble(unitType, tmp.get(0));
 			this.updateEditingFlags();
 			return;
@@ -44,6 +45,7 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 		catch (InputErrorException e) {}
 
 		// If not a constant, try parsing a TimeSeriesProvider
+		Input.assertCount(input, 1);
 		Entity ent = Input.parseEntity(input.get(0), Entity.class);
 		TimeSeriesProvider s = Input.castImplements(ent, TimeSeriesProvider.class);
 		if( s.getUnitType() != UserSpecifiedUnit.class )
