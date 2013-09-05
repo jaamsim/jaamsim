@@ -323,12 +323,14 @@ public boolean equals(Object o) {
 	if (!(o instanceof Quaternion)) return false;
 	Quaternion q = (Quaternion)o;
 
-	if (!MathUtils.near(x, q.x)) return false;
-	if (!MathUtils.near(y, q.y)) return false;
-	if (!MathUtils.near(z, q.z)) return false;
-	if (!MathUtils.near(w, q.w)) return false;
+	return q.x == x && q.y == y && q.z == z && q.w == w;
+}
 
-	return true;
+public boolean near(Quaternion q) {
+	return MathUtils.near(x, q.x)
+	    && MathUtils.near(y, q.y)
+	    && MathUtils.near(z, q.z)
+	    && MathUtils.near(w, q.w);
 }
 
 @Override

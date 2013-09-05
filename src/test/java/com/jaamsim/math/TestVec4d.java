@@ -60,6 +60,9 @@ public void testEquals() {
 	assertTrue(vec.equals4(seq));
 	assertFalse(vec.equals4(one));
 
+	assertTrue(vec.equals(seq));
+	assertFalse(vec.equals(one));
+
 	// Test -0.0 and 0.0 compare as equal
 	vec.set4(-0.0d, -0.0d, -0.0d, -0.0d);
 	assertTrue(vec.equals2(zero));

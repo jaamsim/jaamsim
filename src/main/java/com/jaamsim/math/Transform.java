@@ -224,6 +224,10 @@ public boolean equals(Object o) {
 	if (!(o instanceof Transform)) return false;
 	Transform t = (Transform)o;
 
+	return _trans.equals4(t._trans) && _rot.equals(t._rot) && MathUtils.near(_scale, t._scale);
+}
+
+public boolean near(Transform t) {
 	return _trans.near4(t._trans) && _rot.equals(t._rot) && MathUtils.near(_scale, t._scale);
 }
 

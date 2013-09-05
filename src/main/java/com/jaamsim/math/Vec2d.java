@@ -317,4 +317,11 @@ public void mult2(Vec2d v, Mat4d m) {
 	this.x = _x;
 	this.y = _y;
 }
+
+@Override
+public boolean equals(Object o) {
+	if (!(o instanceof Vec2d)) return false;
+	Vec2d v = (Vec2d)o;
+	return v.x == x && v.y == y;
+}
 }

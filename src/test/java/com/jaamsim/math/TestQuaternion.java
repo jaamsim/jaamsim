@@ -115,7 +115,7 @@ public void testConstructor() {
 	Quaternion x_eighthPi2 = new Quaternion();
 	x_eighthPi2.setRotXAxis(Math.PI/8);
 
-	assertTrue(x_eighthPi.equals(x_eighthPi2));
+	assertTrue(x_eighthPi.near(x_eighthPi2));
 
 	Quaternion x_negEighthPi = new Quaternion();
 	x_negEighthPi.conjugate(x_eighthPi);
@@ -123,7 +123,7 @@ public void testConstructor() {
 	Quaternion x_negEighthPi2 = new Quaternion();
 	x_negEighthPi2.setRotXAxis(-Math.PI/8);
 
-	assertTrue(x_negEighthPi.equals(x_negEighthPi2));
+	assertTrue(x_negEighthPi.near(x_negEighthPi2));
 }
 
 @Test

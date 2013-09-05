@@ -57,18 +57,9 @@ public boolean equals(Object o)
 	if (!(o instanceof Color4d))
 		return false;
 
-	Color4d other = (Color4d)o;
+	Color4d c = (Color4d)o;
 
-	// Object equality is naturally equal
-	if (other == this)
-		return true;
-
-	if (this.r != other.r) return false;
-	if (this.g != other.g) return false;
-	if (this.b != other.b) return false;
-	if (this.a != other.a) return false;
-
-	return true;
+	return r == c.r && g == c.g && b == c.b && a == c.a;
 }
 
 @Override

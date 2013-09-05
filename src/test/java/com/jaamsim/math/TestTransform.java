@@ -90,7 +90,7 @@ public void testInverse()
 	Transform test = new Transform();
 	test.merge(t, invT);
 
-	assertTrue(test.equals(ident));
+	assertTrue(test.near(ident));
 
 	Mat4d mat = new Mat4d();
 	Mat4d matInv = new Mat4d();
