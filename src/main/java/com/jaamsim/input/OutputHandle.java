@@ -208,6 +208,61 @@ public class OutputHandle {
 		return null;
 	}
 
+	/**
+	 * Checks the output for all possible numerical types and returns a double representing the value
+	 * @param simTime
+	 * @param def - the default value if the return is null or not a number value
+	 * @return
+	 */
+	public double getValueAsDouble(double simTime, double def) {
+		Class<?> retType = this.getReturnType();
+		if (retType == Double.class) {
+			Double val = getValue(simTime, Double.class);
+			if (val == null) return def;
+			return val.doubleValue();
+		}
+		if (retType == Float.class) {
+			Float val = getValue(simTime, Float.class);
+			if (val == null) return def;
+			return val.doubleValue();
+		}
+		if (retType == Long.class) {
+			Long val = getValue(simTime, Long.class);
+			if (val == null) return def;
+			return val.doubleValue();
+		}
+		if (retType == Integer.class) {
+			Integer val = getValue(simTime, Integer.class);
+			if (val == null) return def;
+			return val.doubleValue();
+		}
+		if (retType == Short.class) {
+			Short val = getValue(simTime, Short.class);
+			if (val == null) return def;
+			return val.doubleValue();
+		}
+		if (retType == Character.class) {
+			Character val = getValue(simTime, Character.class);
+			if (val == null) return def;
+			return val.charValue();
+		}
+
+		if (retType == double.class)
+			return this.getValue(simTime, double.class);
+		if (retType == float.class)
+			return this.getValue(simTime, float.class);
+		if (retType == int.class)
+			return this.getValue(simTime, int.class);
+		if (retType == long.class)
+			return this.getValue(simTime, long.class);
+		if (retType == short.class)
+			return this.getValue(simTime, short.class);
+		if (retType == char.class)
+			return this.getValue(simTime, char.class);
+
+		return def;
+	}
+
 	public Class<?> getReturnType() {
 		assert (pair.method != null);
 		return pair.method.getReturnType();
