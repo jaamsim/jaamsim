@@ -49,6 +49,11 @@ public class OverlayText extends OverlayEntity {
 	         example = "OverlayText-1 TextHeight { 15 }")
 	private final IntegerInput textHeight;
 
+	@Keyword(description = "The text to display if there is any failure while formatting" +
+	                       "the dynamic text, or while reading the output's value.",
+	             example = "Text-1 FailText { '' }")
+	private final StringInput failText;
+
 	private String renderText;
 
 	{
@@ -64,6 +69,9 @@ public class OverlayText extends OverlayEntity {
 		textHeight = new IntegerInput("TextHeight", "Key Inputs", 15);
 		textHeight.setValidRange(0, 1000);
 		this.addInput(textHeight, true);
+
+		failText = new StringInput("FailText", "Key Inputs", "");
+		this.addInput(failText, true);
 	}
 
 	public String getRenderText(double simTime) {
@@ -73,10 +81,10 @@ public class OverlayText extends OverlayEntity {
 
 		OutputHandle out = outputName.getOutputHandle(simTime);
 		if( out == null )
-			return "Invalid entry for keyword OutputName";
+			return failText.getValue();
 		String ret = out.getValueAsString(simTime, unit.getValue(), formatText.getValue());
 		if( ret == null )
-			return "Invalid entry for keyword Format";
+			return failText.getValue();
 		return ret;
 	}
 
