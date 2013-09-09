@@ -58,4 +58,14 @@ public class VisibilityInfo {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof VisibilityInfo)) {
+			return false;
+		}
+
+		VisibilityInfo vi = (VisibilityInfo)o;
+		return vi.viewIDs.equals(viewIDs) && vi.minDist == minDist && vi.maxDist == maxDist;
+	}
 }

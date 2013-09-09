@@ -33,6 +33,7 @@ import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.MeshProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
+import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
@@ -116,6 +117,7 @@ public class ColladaModel extends DisplayModel {
 		private DataCache<Vec3d> scaleCache = new DataCache<Vec3d>();
 		private DataCache<String> colCache = new DataCache<String>();
 		private DataCache<ArrayList<Action.Queue>> actionsCache = new DataCache<ArrayList<Action.Queue>>();
+		private DataCache<VisibilityInfo> viCache = new DataCache<VisibilityInfo>();
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
@@ -153,12 +155,15 @@ public class ColladaModel extends DisplayModel {
 				aqList.add(aq);
 			}
 
+			VisibilityInfo vi = getVisibilityInfo();
+
 			clearDirty();
 
 			checkCache(transCache, trans);
 			checkCache(scaleCache, scale);
 			checkCache(colCache, filename);
 			checkCache(actionsCache, aqList);
+			checkCache(viCache, vi);
 
 			if (cachedProxies != null && !isDirty) {
 				// Nothing changed
@@ -198,7 +203,7 @@ public class ColladaModel extends DisplayModel {
 			Transform fixedTrans = new Transform(trans);
 			fixedTrans.merge(fixedTrans, new Transform(offset));
 
-			cachedProxies.add(new MeshProxy(meshKey, fixedTrans, fixedScale, aqList, getVisibilityInfo(),
+			cachedProxies.add(new MeshProxy(meshKey, fixedTrans, fixedScale, aqList, vi,
 					pickingID));
 		}
 
