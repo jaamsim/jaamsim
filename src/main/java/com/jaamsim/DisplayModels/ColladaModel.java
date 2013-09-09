@@ -26,13 +26,13 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Action;
+import com.jaamsim.render.DataCache;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.MeshDataCache;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.MeshProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
@@ -109,30 +109,21 @@ public class ColladaModel extends DisplayModel {
 	private class Binding extends DisplayModelBinding {
 
 		private ArrayList<RenderProxy> cachedProxies;
-		private ChangeWatcher.Tracker observeeTracker;
-		private ChangeWatcher.Tracker dmTracker;
 
 		private DisplayEntity dispEnt;
+
+		private DataCache<Transform> transCache = new DataCache<Transform>();
+		private DataCache<Vec3d> scaleCache = new DataCache<Vec3d>();
+		private DataCache<String> colCache = new DataCache<String>();
+		private DataCache<ArrayList<Action.Queue>> actionsCache = new DataCache<ArrayList<Action.Queue>>();
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			dispEnt = (DisplayEntity)observee;
-
-			if (dispEnt != null) {
-				observeeTracker = dispEnt.getGraphicsChangeTracker();
-			}
-			dmTracker = dm.getGraphicsChangeTracker();
 		}
 
 		private void updateCache(double simTime) {
-			if (cachedProxies != null && observeeTracker != null && !observeeTracker.checkAndClear()
-			    && !dmTracker.checkAndClear()) {
-				// Nothing changed
-				++_cacheHits;
-				return;
-			}
 
-			++_cacheMisses;
 			// Gather some inputs
 			Transform trans;
 			Vec3d scale;
@@ -149,12 +140,37 @@ public class ColladaModel extends DisplayModel {
 				pickingID = dispEnt.getEntityNumber();
 			}
 
-			cachedProxies = new ArrayList<RenderProxy>();
-
 			String filename = colladaFile.getValue();
 
-			MeshProtoKey meshKey = getCachedMeshKey(filename);
+			ArrayList<Action.Queue> aqList = new ArrayList<Action.Queue>();
+			for (Action.Binding b : actions.getValue()) {
+				if( b.outputHandle == null )
+					b.outputHandle = dispEnt.getOutputHandle(b.outputName);
+				Action.Queue aq = new Action.Queue();
+				aq.name = b.actionName;
+				aq.time = b.outputHandle.getValueAsDouble(simTime, 0);
 
+				aqList.add(aq);
+			}
+
+			clearDirty();
+
+			checkCache(transCache, trans);
+			checkCache(scaleCache, scale);
+			checkCache(colCache, filename);
+			checkCache(actionsCache, aqList);
+
+			if (cachedProxies != null && !isDirty) {
+				// Nothing changed
+				++_cacheHits;
+				return;
+			}
+
+			++_cacheMisses;
+
+			cachedProxies = new ArrayList<RenderProxy>();
+
+			MeshProtoKey meshKey = getCachedMeshKey(filename);
 
 			AABB bounds = RenderManager.inst().getMeshBounds(meshKey, true);
 			if (bounds == null || bounds.isEmpty()) {
@@ -181,17 +197,6 @@ public class ColladaModel extends DisplayModel {
 
 			Transform fixedTrans = new Transform(trans);
 			fixedTrans.merge(fixedTrans, new Transform(offset));
-
-			ArrayList<Action.Queue> aqList = new ArrayList<Action.Queue>();
-			for (Action.Binding b : actions.getValue()) {
-				if( b.outputHandle == null )
-					b.outputHandle = dispEnt.getOutputHandle(b.outputName);
-				Action.Queue aq = new Action.Queue();
-				aq.name = b.actionName;
-				aq.time = b.outputHandle.getValueAsDouble(simTime, 0);
-
-				aqList.add(aq);
-			}
 
 			cachedProxies.add(new MeshProxy(meshKey, fixedTrans, fixedScale, aqList, getVisibilityInfo(),
 					pickingID));

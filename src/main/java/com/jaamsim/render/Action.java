@@ -27,6 +27,15 @@ public class Action {
 	public static class Queue {
 		public String name;
 		public double time;
+
+		@Override
+		public boolean equals(Object o) {
+			if (!(o instanceof Queue)) {
+				return false;
+			}
+			Queue q = (Queue)o;
+			return q.name == name && q.time == time;
+		}
 	}
 
 	/**
