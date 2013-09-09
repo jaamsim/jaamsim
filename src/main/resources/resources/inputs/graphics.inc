@@ -35,7 +35,6 @@ Define ObjectType {
 					Text
                     TextLabel
                     PropertyLabel
-                    OutputPropertyLabel
                     OverlayImage
 					OverlayText
 					OverlayClock
@@ -50,7 +49,6 @@ DisplayEntity         JavaClass { com.sandwell.JavaSimulation3D.DisplayEntity   
 Text                  JavaClass { com.sandwell.JavaSimulation3D.Text                 } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 TextLabel             JavaClass { com.sandwell.JavaSimulation3D.TextLabel            } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } DragAndDrop { FALSE }
 PropertyLabel         JavaClass { com.sandwell.JavaSimulation3D.PropertyLabel        } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } DragAndDrop { FALSE }
-OutputPropertyLabel   JavaClass { com.sandwell.JavaSimulation3D.OutputPropertyLabel  } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } DragAndDrop { FALSE }
 OverlayImage          JavaClass { com.sandwell.JavaSimulation3D.OverlayImage         } Palette { 'Graphics Objects' }
 OverlayText           JavaClass { com.sandwell.JavaSimulation3D.OverlayText          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 OverlayClock          JavaClass { com.sandwell.JavaSimulation3D.OverlayClock         } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
