@@ -1214,8 +1214,9 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		boolean controlDown = (modifiers & WindowInteractionListener.MOD_CTRL) != 0;
+		boolean altDown = (modifiers & WindowInteractionListener.MOD_ALT) != 0;
 
-		if (controlDown) {
+		if (controlDown && altDown) {
 			// Check if we can split a line segment
 			if (_selectedEntity != null && _selectedEntity instanceof HasScreenPoints) {
 				if ((modifiers & WindowInteractionListener.MOD_SHIFT) != 0) {
