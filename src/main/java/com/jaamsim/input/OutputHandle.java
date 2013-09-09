@@ -24,7 +24,6 @@ import java.util.HashMap;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Input;
 
 /**
  * OutputHandle is a class that represents all the useful runtime information for an output,
@@ -156,10 +155,6 @@ public class OutputHandle {
 		if( ut != Unit.class && ut != DimensionlessUnit.class )
 			ret += "  " + Unit.getSIUnit(ut);
 		return ret;
-	}
-
-	public String getValueAsString(double simTime, String unitString, String format) {
-		return this.getValueAsString(simTime, Input.parseUnits(unitString), format);
 	}
 
 	public String getValueAsString(double simTime, Unit unit, String format) {
