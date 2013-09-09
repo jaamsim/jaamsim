@@ -78,38 +78,20 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 		}
 
-		PolarInfo pi = getPolarCoordsFromView();
-
-		boolean expControls = RenderManager.inst().getExperimentalControls();
-
-		if (expControls) {
-			if (dragInfo.button == 1) {
-				if (dragInfo.shiftDown()) {
-					handleExpVertPan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
-				} else {
-					handleExpPan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
-				}
+		if (dragInfo.button == 1) {
+			if (dragInfo.shiftDown()) {
+				handleExpVertPan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
+			} else {
+				handleExpPan(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
 			}
-			else if (dragInfo.button == 3) {
-				if (dragInfo.shiftDown()) {
-					handleTurnCamera(dragInfo.dx, dragInfo.dy);
-				} else {
-					handleRotAroundPoint(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
-				}
+		}
+		else if (dragInfo.button == 3) {
+			if (dragInfo.shiftDown()) {
+				handleTurnCamera(dragInfo.dx, dragInfo.dy);
+			} else {
+				handleRotAroundPoint(dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
 			}
-			return;
 		}
-		if (dragInfo.shiftDown()) {
-			// handle rotation
-			handleRotation(pi, dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy);
-			updateCamTrans(pi, true);
-			return;
-		}
-
-		// this is pan then
-		handlePan(pi, dragInfo.x, dragInfo.y, dragInfo.dx, dragInfo.dy, dragInfo.button);
-		updateCamTrans(pi, true);
-
 	}
 
 	private void handleTurnCamera(int dx, int dy) {
@@ -268,88 +250,9 @@ public class CameraControl implements WindowInteractionListener {
 		updateCamTrans(pi, true);
 	}
 
-	private void handleRotation(PolarInfo pi, int x, int y, int dx, int dy) {
-
-		pi.rotZ -= dx * ROT_SCALE_Z;
-		pi.rotX -= dy * ROT_SCALE_X;
-
-		if (pi.rotX < 0) pi.rotX = 0;
-		if (pi.rotX > Math.PI) pi.rotX = Math.PI;
-
-		if (pi.rotZ < 0) pi.rotZ += 2*Math.PI;
-		if (pi.rotZ > 2*Math.PI) pi.rotZ -= 2*Math.PI;
-	}
-
-	private void handlePan(PolarInfo pi, int x, int y, int dx, int dy,
-	                            int button) {
-
-		Renderer.WindowMouseInfo info = _renderer.getMouseInfo(_windowID);
-		if (info == null) return;
-
-		if (_updateView.isFollowing() || _updateView.isScripted()) {
-			return; // We can not pan while following an object
-		}
-
-		//Cast a ray into the XY plane both for now, and for the previous mouse position
-		Ray currRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x, y, info.width, info.height);
-		Ray prevRay = RenderUtils.getPickRayForPosition(info.cameraInfo, x - dx, y - dy, info.width, info.height);
-
-		double currZDot = Vec4d.Z_AXIS.dot3(currRay.getDirRef());
-		double prevZDot = Vec4d.Z_AXIS.dot3(prevRay.getDirRef());
-		if (Math.abs(currZDot) < 0.017 ||
-			Math.abs(prevZDot) < 0.017) // 0.017 is roughly sin(1 degree)
-		{
-			// This is too close to the xy-plane and will lead to too wild a translation
-			return;
-		}
-
-		double currDist = Plane.XY_PLANE.collisionDist(currRay);
-		double prevDist = Plane.XY_PLANE.collisionDist(prevRay);
-		if (currDist < 0 || prevDist < 0 ||
-		    currDist == Double.POSITIVE_INFINITY ||
-		    prevDist == Double.POSITIVE_INFINITY)
-		{
-			// We're either parallel to or beneath the XY plane, bail out
-			return;
-		}
-
-		Vec3d currIntersect = currRay.getPointAtDist(currDist);
-		Vec3d prevIntersect = prevRay.getPointAtDist(prevDist);
-
-		Vec3d diff = new Vec3d();
-		diff.sub3(currIntersect, prevIntersect);
-
-		pi.viewCenter.sub3(diff);
-
-	}
 
 	@Override
 	public void mouseWheelMoved(int windowID, int x, int y, int wheelRotation, int modifiers) {
-
-
-		if (RenderManager.inst().getExperimentalControls()) {
-			zoomToPOI(wheelRotation);
-			return;
-		}
-
-		if (!_updateView.isMovable() || _updateView.isScripted()) {
-			return;
-		}
-
-		PolarInfo pi = getPolarCoordsFromView();
-
-		int rot = wheelRotation;
-
-		double zoomFactor = (rot > 0) ? 1/ZOOM_FACTOR : ZOOM_FACTOR;
-
-		for (int i = 0; i < Math.abs(rot); ++i) {
-			pi.radius = pi.radius * zoomFactor;
-		}
-
-		updateCamTrans(pi, true);
-	}
-
-	private void zoomToPOI(int rot) {
 		Vec3d camPos = _updateView.getGlobalPosition();
 		Vec3d center = _updateView.getGlobalCenter();
 
@@ -357,8 +260,8 @@ public class CameraControl implements WindowInteractionListener {
 		diff.sub3(POI, camPos);
 
 		double scale = 1;
-		double zoomFactor = (rot > 0) ? 1/ZOOM_FACTOR : ZOOM_FACTOR;
-		for (int i = 0; i < Math.abs(rot); ++i) {
+		double zoomFactor = (wheelRotation > 0) ? 1/ZOOM_FACTOR : ZOOM_FACTOR;
+		for (int i = 0; i < Math.abs(wheelRotation); ++i) {
 			scale = scale * zoomFactor;
 		}
 
@@ -483,8 +386,8 @@ public class CameraControl implements WindowInteractionListener {
 	public void mouseButtonDown(int windowID, int x, int y, int button, boolean isDown, int modifiers) {
 		if (!RenderManager.isGood()) { return; }
 
-		// We need to cache dragging for experimental controls
-		if (RenderManager.inst().getExperimentalControls() && button == 1 && isDown) {
+		// We need to cache dragging
+		if (button == 1 && isDown) {
 			Vec3d clickPoint = RenderManager.inst().getNearestPick(_windowID);
 			if (clickPoint != null) {
 				POI.set3(clickPoint);
@@ -567,10 +470,6 @@ public class CameraControl implements WindowInteractionListener {
 
 		pi.rotX = Math.atan2(xyDist, viewDiff.z);
 
-		// If we are near vertical (within about a quarter of a degree) don't rotate around Z (take X as up)
-		if (Math.abs(pi.rotX) < 0.005 && !RenderManager.inst().getExperimentalControls()) {
-			pi.rotZ = 0;
-		}
 		return pi;
 
 	}

@@ -836,8 +836,7 @@ public class RenderManager implements DragSourceListener {
 			return false;
 		}
 
-		// For now, experimental controls requires control to be down to drag or resize
-		if (getExperimentalControls() != dragInfo.controlDown()) {
+		if (!dragInfo.controlDown()) {
 			return false;
 		}
 
@@ -1228,7 +1227,7 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 
-		if (controlDown != getExperimentalControls()) {
+		if (!controlDown) {
 			_isDragging = false;
 			return false;
 		}
@@ -1448,10 +1447,6 @@ public class RenderManager implements DragSourceListener {
 
 	public void focusWindow(int windowID) {
 		_renderer.focusWindow(windowID);
-	}
-
-	public boolean getExperimentalControls() {
-		return GUIFrame.instance().getExperimentalControls();
 	}
 
 	/**
