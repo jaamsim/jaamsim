@@ -148,6 +148,7 @@ public class DisplayEntity extends Entity {
 		// Explicitly compare the values in the TagSet
 		// This is as verbose as it is due to the non-comparable nature of the basic tag value types
 		public boolean isSame(TagSet other) {
+			if (other == null) return false;
 
 			if (colours.size() != other.colours.size()) return false;
 

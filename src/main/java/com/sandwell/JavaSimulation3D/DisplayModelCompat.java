@@ -28,8 +28,8 @@ import com.jaamsim.render.LineProxy;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
+import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
@@ -160,24 +160,47 @@ public class DisplayModelCompat extends DisplayModel {
 	private class Binding extends DisplayModelBinding {
 
 		private ArrayList<RenderProxy> cachedProxies;
-		private ChangeWatcher.Tracker observeeTracker;
-		private ChangeWatcher.Tracker dmTracker;
 
 		private DisplayEntity dispEnt;
+
+		private Transform transCache;
+		private Vec3d scaleCache;
+		private DisplayEntity.TagSet tagsCache;
+		private String shapeStringCache;
+		private VisibilityInfo viCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			dispEnt = (DisplayEntity)ent;
 
 			if (dispEnt != null) {
-				observeeTracker = dispEnt.getGraphicsChangeTracker();
 			}
-			dmTracker = dm.getGraphicsChangeTracker();
 		}
 
 		private void updateCache(double simTime) {
-			if (cachedProxies != null && observeeTracker != null && !observeeTracker.checkAndClear() &&
-			    !dmTracker.checkAndClear()) {
+
+			Transform trans = getTransform(simTime);
+			Vec3d scale = getScale();
+			long pickingID = getPickingID();
+			DisplayEntity.TagSet tags = getTags();
+			VisibilityInfo vi = getVisibilityInfo();
+			String shapeString = shape.getValueString();
+
+			boolean dirty = false;
+
+			dirty = dirty || !compare(transCache, trans);
+			dirty = dirty || !compare(scaleCache, scale);
+			dirty = dirty || !tags.isSame(tagsCache);
+			dirty = dirty || !compare(shapeStringCache, shapeString);
+			dirty = dirty || !compare(viCache, vi);
+
+			transCache = trans;
+			scaleCache = scale;
+			tagsCache = tags.copy();
+			shapeStringCache = shapeString;
+			viCache = vi;
+
+			if (cachedProxies != null && !dirty) {
 				// Nothing changed
 				++_cacheHits;
 				return;
@@ -248,10 +271,6 @@ public class DisplayModelCompat extends DisplayModel {
 			}
 
 			// Gather some inputs
-			Transform trans = getTransform(simTime);
-			Vec3d scale = getScale();
-			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
 			if (tags.isTagVisibleUtil(DisplayModelCompat.TAG_OUTLINES))
 			{
