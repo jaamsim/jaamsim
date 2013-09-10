@@ -328,6 +328,14 @@ public void setWindowPos(int x, int y, int width, int height) {
 
 }
 
+public IntegerVector getWindowPos() {
+	return windowPos.getValue();
+}
+
+public IntegerVector getWindowSize() {
+	return windowSize.getValue();
+}
+
 public ChangeWatcher.Tracker getChangeTracker() {
 	return dataDirtier.getTracker();
 }

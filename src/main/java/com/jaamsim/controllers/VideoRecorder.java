@@ -82,8 +82,8 @@ public class VideoRecorder {
 		for (View v : views) {
 			ViewInfo vi = new ViewInfo();
 
-			IntegerVector windSize = (IntegerVector)v.getInput("WindowSize").getValue();
-			IntegerVector windPos = (IntegerVector)v.getInput("WindowPosition").getValue();
+			IntegerVector windSize = v.getWindowSize();
+			IntegerVector windPos = v.getWindowPos();
 
 			vi.x = windPos.get(0);
 			vi.y = windPos.get(1);
