@@ -26,6 +26,7 @@ import com.jaamsim.render.ImageProxy;
 import com.jaamsim.render.OverlayTextureProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.TexCache;
+import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
@@ -104,32 +105,22 @@ public class ImageModel extends DisplayModel {
 	private class Binding extends DisplayModelBinding {
 
 		private ArrayList<RenderProxy> cachedProxies;
-		private ChangeWatcher.Tracker observeeTracker;
-		private ChangeWatcher.Tracker modelTracker;
 
 		private DisplayEntity dispEnt;
+
+		private Transform transCache;
+		private Vec3d scaleCache;
+		private String imageCache;
+		private boolean compressedCache;
+		private boolean transparentCache;
+		private VisibilityInfo viCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			dispEnt = (DisplayEntity)observee;
-
-			if (dispEnt != null) {
-				observeeTracker = dispEnt.getGraphicsChangeTracker();
-			}
-			modelTracker = dm.getGraphicsChangeTracker();
 		}
 
 		private void updateCache(double simTime) {
-			if (cachedProxies != null && observeeTracker != null
-			    && !observeeTracker.checkAndClear()
-			    && !modelTracker.checkAndClear()) {
-				// Nothing changed
-				++_cacheHits;
-				return;
-			}
-
-			++_cacheMisses;
-			// Gather some inputs
 			Transform trans;
 			Vec3d scale;
 			long pickingID;
@@ -144,13 +135,44 @@ public class ImageModel extends DisplayModel {
 				pickingID = dispEnt.getEntityNumber();
 			}
 
+			String imageName = imageFile.getValue();
+			Boolean transp = transparent.getValue();
+			Boolean compressed = compressedTexture.getValue();
+
+			VisibilityInfo vi = getVisibilityInfo();
+
+			boolean dirty = false;
+
+			dirty = dirty || !compare(transCache, trans);
+			dirty = dirty || !compare(scaleCache, scale);
+			dirty = dirty || !compare(imageCache, imageName);
+			dirty = dirty || transparentCache != transp;
+			dirty = dirty || compressedCache != compressed;
+			dirty = dirty || !compare(viCache, vi);
+
+			transCache = trans;
+			scaleCache = scale;
+			imageCache = imageName;
+			transparentCache = transp;
+			compressedCache = compressed;
+			viCache = vi;
+
+			if (cachedProxies != null && !dirty) {
+				// Nothing changed
+				++_cacheHits;
+				return;
+			}
+
+			++_cacheMisses;
+			// Gather some inputs
+
 			cachedProxies = new ArrayList<RenderProxy>();
 			try {
-				cachedProxies.add(new ImageProxy(new URL(Util.getAbsoluteFilePath(imageFile.getValue())), trans,
-				                       scale, transparent.getValue(), compressedTexture.getValue(), getVisibilityInfo(), pickingID));
+				cachedProxies.add(new ImageProxy(new URL(Util.getAbsoluteFilePath(imageName)), trans,
+				                       scale, transp, compressed, vi, pickingID));
 			} catch (MalformedURLException e) {
 				cachedProxies.add(new ImageProxy(TexCache.BAD_TEXTURE, trans, scale,
-				                                 transparent.getValue(), compressedTexture.getValue(), getVisibilityInfo(), pickingID));
+				                                 transp, compressed, vi, pickingID));
 			}
 
 		}
