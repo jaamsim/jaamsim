@@ -26,7 +26,6 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Action;
-import com.jaamsim.render.DataCache;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.MeshDataCache;
 import com.jaamsim.render.MeshProtoKey;
@@ -113,11 +112,11 @@ public class ColladaModel extends DisplayModel {
 
 		private DisplayEntity dispEnt;
 
-		private DataCache<Transform> transCache = new DataCache<Transform>();
-		private DataCache<Vec3d> scaleCache = new DataCache<Vec3d>();
-		private DataCache<String> colCache = new DataCache<String>();
-		private DataCache<ArrayList<Action.Queue>> actionsCache = new DataCache<ArrayList<Action.Queue>>();
-		private DataCache<VisibilityInfo> viCache = new DataCache<VisibilityInfo>();
+		private Transform transCache;
+		private Vec3d scaleCache;
+		private String colCache;
+		private ArrayList<Action.Queue> actionsCache;
+		private VisibilityInfo viCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
@@ -157,15 +156,21 @@ public class ColladaModel extends DisplayModel {
 
 			VisibilityInfo vi = getVisibilityInfo();
 
-			clearDirty();
+			boolean dirty = false;
 
-			checkCache(transCache, trans);
-			checkCache(scaleCache, scale);
-			checkCache(colCache, filename);
-			checkCache(actionsCache, aqList);
-			checkCache(viCache, vi);
+			dirty = dirty || !compare(transCache, trans);
+			dirty = dirty || !compare(scaleCache, scale);
+			dirty = dirty || !compare(colCache, filename);
+			dirty = dirty || !compare(actionsCache, aqList);
+			dirty = dirty || !compare(viCache, vi);
 
-			if (cachedProxies != null && !isDirty) {
+			transCache = trans;
+			scaleCache = scale;
+			colCache = filename;
+			actionsCache = aqList;
+			viCache = vi;
+
+			if (cachedProxies != null && !dirty) {
 				// Nothing changed
 				++_cacheHits;
 				return;
