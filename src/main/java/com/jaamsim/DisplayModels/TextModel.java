@@ -28,8 +28,8 @@ import com.jaamsim.render.OverlayStringProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.StringProxy;
 import com.jaamsim.render.TessFontKey;
+import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
@@ -152,20 +152,28 @@ public class TextModel extends DisplayModel {
 	private class Binding extends DisplayModelBinding {
 
 		private Text labelObservee;
-		private ChangeWatcher.Tracker observeeTracker;
-		private ChangeWatcher.Tracker modelTracker;
 
-		private StringProxy cachedProxy = null;
-		private StringProxy cachedShadow = null;
+		private String textCache;
+		private Transform transCache;
+
+		private Color4d colorCache;
+		private double heightCache;
+
+		private TessFontKey fkCache;
+
+		private boolean dropShadowCache;
+		private Vec3d dsOffsetCache;
+		private Color4d dsColorCache;
+
+		private VisibilityInfo viCache;
+
+
+		private ArrayList<RenderProxy> cachedProxies = null;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			try {
 				labelObservee = (Text)ent;
-				if (labelObservee != null) {
-					observeeTracker = labelObservee.getGraphicsChangeTracker();
-					modelTracker = dm.getGraphicsChangeTracker();
-				}
 			} catch (ClassCastException e) {
 				// The observee is not a display entity
 				labelObservee = null;
@@ -178,13 +186,45 @@ public class TextModel extends DisplayModel {
 				return;
 			}
 
-			if (!modelTracker.checkAndClear() && !observeeTracker.checkAndClear() &&
-			    cachedProxy != null) {
+			String text = labelObservee.getCachedText();
+			double height = labelObservee.getTextHeight();
+			Color4d color = fontColor.getValue();
+			TessFontKey fk = new TessFontKey(fontName.getChoice(), style);
+
+			Vec3d textSize = RenderManager.inst().getRenderedStringSize(fk, height, text);
+			Transform trans = labelObservee.getGlobalTransForSize(textSize, simTime);
+
+			boolean ds = dropShadow.getValue();
+			Color4d dsColor = dropShadowColor.getValue();
+			Vec3d dsOffset = dropShadowOffset.getValue();
+
+			VisibilityInfo vi = getVisibilityInfo();
+
+			boolean dirty = false;
+
+			dirty = dirty || !compare(textCache, text);
+			dirty = dirty || !compare(transCache, trans);
+			dirty = dirty || !compare(colorCache, color);
+			dirty = dirty || heightCache != height;
+			dirty = dirty || !compare(fkCache, fk);
+			dirty = dirty || dropShadowCache != ds;
+			dirty = dirty || !compare(dsColorCache, dsColor);
+			dirty = dirty || !compare(dsOffsetCache, dsOffset);
+			dirty = dirty || !compare(viCache, vi);
+
+			textCache = text;
+			transCache = trans;
+			colorCache = color;
+			heightCache = height;
+			fkCache = fk;
+			dropShadowCache = ds;
+			dsColorCache = dsColor;
+			dsOffsetCache = dsOffset;
+			viCache = vi;
+
+			if (cachedProxies != null && !dirty) {
 				// Nothing changed
-				if (cachedShadow != null) {
-					out.add(cachedShadow);
-				}
-				out.add(cachedProxy);
+				out.addAll(cachedProxies);
 				++_cacheHits;
 				return;
 			}
@@ -192,57 +232,55 @@ public class TextModel extends DisplayModel {
 			++_cacheMisses;
 			registerCacheMiss("TextLabel");
 
-			TessFontKey fontKey = new TessFontKey(fontName.getChoice(), style);
-			double height = labelObservee.getTextHeight();
-			String text = labelObservee.getCachedText();
-			Color4d textColour = fontColor.getValue();
-
-			Vec3d textSize = RenderManager.inst().getRenderedStringSize(fontKey, height, text);
-			Transform trans = labelObservee.getGlobalTransForSize(textSize, simTime);
-
 			if (trans == null) {
 				return;
 			}
 
-			cachedProxy = new StringProxy(text, fontKey, textColour, trans, height, getVisibilityInfo(), labelObservee.getEntityNumber());
+			cachedProxies = new ArrayList<RenderProxy>();
 
-			if (dropShadow.getValue()) {
+			cachedProxies.add(new StringProxy(text, fk, color, trans, height, vi, labelObservee.getEntityNumber()));
+
+			if (ds) {
 				Transform dsTrans = new Transform(trans);
-				Vec3d shadowTrans = new Vec3d(dropShadowOffset.getValue());
+				Vec3d shadowTrans = new Vec3d(dsOffset);
 				shadowTrans.scale3(height);
 				shadowTrans.add3(dsTrans.getTransRef());
 				dsTrans.setTrans(shadowTrans);
 
-				Color4d dsColor = dropShadowColor.getValue();
-
-				cachedShadow = new StringProxy(text, fontKey, dsColor, dsTrans, height, getVisibilityInfo(), labelObservee.getEntityNumber());
-				out.add(cachedShadow);
-			} else {
-				cachedShadow = null;
+				cachedProxies.add(new StringProxy(text, fk, dsColor, dsTrans, height, vi, labelObservee.getEntityNumber()));
 			}
-
-			out.add( cachedProxy );
+			out.addAll(cachedProxies);
 		}
 	}
 
 	private class OverlayBinding extends DisplayModelBinding {
 
 		private OverlayText labelObservee;
-		private ChangeWatcher.Tracker observeeTracker;
-		private ChangeWatcher.Tracker modelTracker;
 
-		private OverlayStringProxy cachedProxy = null;
-		private OverlayStringProxy cachedShadow = null;
+		private String textCache;
+
+		private Color4d colorCache;
+		private IntegerVector posCache;
+		private int heightCache;
+
+		private boolean alignRightCache;
+		private boolean alignBottomCache;
+
+		private TessFontKey fkCache;
+
+		private boolean dropShadowCache;
+		private Vec3d dsOffsetCache;
+		private Color4d dsColorCache;
+
+		private VisibilityInfo viCache;
+
+		private ArrayList<RenderProxy> cachedProxies = null;
 
 
 		public OverlayBinding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			try {
 				labelObservee = (OverlayText)ent;
-				if (labelObservee != null) {
-					observeeTracker = labelObservee.getGraphicsChangeTracker();
-					modelTracker = dm.getGraphicsChangeTracker();
-				}
 			} catch (ClassCastException e) {
 				// The observee is not a display entity
 				labelObservee = null;
@@ -254,22 +292,6 @@ public class TextModel extends DisplayModel {
 			if (labelObservee == null || !labelObservee.getShow()) {
 				return;
 			}
-
-			if (!modelTracker.checkAndClear() &&
-			    !observeeTracker.checkAndClear() &&
-			    cachedProxy != null) {
-				// Nothing changed
-
-				if (cachedShadow != null) {
-					out.add(cachedShadow);
-				}
-				out.add(cachedProxy);
-				++_cacheHits;
-				return;
-			}
-
-			++_cacheMisses;
-			registerCacheMiss("OverlayText");
 
 			String text = labelObservee.getCachedText();
 
@@ -282,24 +304,66 @@ public class TextModel extends DisplayModel {
 
 			TessFontKey fk = new TessFontKey(fontName.getChoice(), style);
 
-			if (dropShadow.getValue()) {
-				Color4d dsColor = dropShadowColor.getValue();
+			boolean ds = dropShadow.getValue();
 
-				Vec3d dsOffset = new Vec3d(dropShadowOffset.getValue());
-				dsOffset.scale3(height);
+			Color4d dsColor = dropShadowColor.getValue();
 
-				cachedShadow = new OverlayStringProxy(text, fk, dsColor, height,
-				                                      pos.get(0) + (dsOffset.x * (alignRight ? -1 : 1)),
-				                                      pos.get(1) - (dsOffset.y * (alignBottom ? -1 : 1)),
-				                                      alignRight, alignBottom, getVisibilityInfo());
-				out.add(cachedShadow);
-			} else {
-				cachedShadow = null;
+			Vec3d dsOffset = new Vec3d(dropShadowOffset.getValue());
+			dsOffset.scale3(height);
+
+			VisibilityInfo vi = getVisibilityInfo();
+
+			boolean dirty = false;
+
+			dirty = dirty || !compare(textCache, text);
+			dirty = dirty || !compare(colorCache, color);
+			dirty = dirty || !compare(posCache, pos);
+			dirty = dirty || heightCache != height;
+			dirty = dirty || alignRightCache != alignRight;
+			dirty = dirty || alignBottomCache != alignBottom;
+			dirty = dirty || !compare(fkCache, fk);
+			dirty = dirty || dropShadowCache != ds;
+			dirty = dirty || !compare(dsColorCache, dsColor);
+			dirty = dirty || !compare(dsOffsetCache, dsOffset);
+			dirty = dirty || !compare(viCache, vi);
+
+			textCache = text;
+			colorCache = color;
+			posCache = pos;
+			heightCache = height;
+			alignRightCache = alignRight;
+			alignBottomCache = alignBottom;
+			fkCache = fk;
+			dropShadowCache = ds;
+			dsColorCache = dsColor;
+			dsOffsetCache = dsOffset;
+			viCache = vi;
+
+			if (cachedProxies != null && !dirty) {
+				// Nothing changed
+
+				out.addAll(cachedProxies);
+				++_cacheHits;
+				return;
 			}
 
-			cachedProxy = new OverlayStringProxy(text, fk, color, height, pos.get(0), pos.get(1),
-			                                     alignRight, alignBottom, getVisibilityInfo());
-			out.add(cachedProxy);
+			++_cacheMisses;
+			registerCacheMiss("OverlayText");
+
+			cachedProxies = new ArrayList<RenderProxy>();
+
+			if (ds) {
+
+				cachedProxies.add(new OverlayStringProxy(text, fk, dsColor, height,
+				                                      pos.get(0) + (dsOffset.x * (alignRight ? -1 : 1)),
+				                                      pos.get(1) - (dsOffset.y * (alignBottom ? -1 : 1)),
+				                                      alignRight, alignBottom, vi));
+			}
+
+			cachedProxies.add(new OverlayStringProxy(text, fk, color, height, pos.get(0), pos.get(1),
+			                                     alignRight, alignBottom, vi));
+
+			out.addAll(cachedProxies);
 		}
 
 		@Override
