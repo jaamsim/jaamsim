@@ -11,6 +11,18 @@ public interface HasScreenPoints {
 		public ArrayList<Vec3d> points;
 		public Color4d color;
 		public int width; // Line width in pixels
+
+		@Override
+		public boolean equals(Object o) {
+			if (o == this) return true;
+			if (!(o instanceof PointsInfo)) return false;
+
+			PointsInfo pi = (PointsInfo)o;
+
+			return points != null && points.equals(pi.points) &&
+			       color != null && color.equals(pi.color) &&
+			       width == pi.width;
+		}
 	}
 
 	public PointsInfo[] getScreenPoints();

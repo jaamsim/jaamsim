@@ -28,7 +28,7 @@ import com.jaamsim.render.LineProxy;
 import com.jaamsim.render.PointProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
-import com.sandwell.JavaSimulation.ChangeWatcher;
+import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
@@ -52,8 +52,10 @@ public class ScreenPointsModel extends DisplayModel {
 		//private Segment _segmentObservee;
 		protected HasScreenPoints screenPointObservee;
 		protected DisplayEntity displayObservee;
-		private ChangeWatcher.Tracker observeeTracker;
-		private ChangeWatcher.Tracker dmTracker;
+
+		private HasScreenPoints.PointsInfo[] pisCache;
+		private Transform regionTransCache;
+		private VisibilityInfo viCache;
 
 		protected ArrayList<Vec4d> selectionPoints = null;
 		private ArrayList<Vec4d> nodePoints = null;
@@ -65,16 +67,11 @@ public class ScreenPointsModel extends DisplayModel {
 			try {
 				screenPointObservee = (HasScreenPoints)ent;
 				displayObservee = (DisplayEntity)ent;
-				if (displayObservee != null) {
-					observeeTracker = displayObservee.getGraphicsChangeTracker();
-				}
 			} catch (ClassCastException e) {
 				// The observee is not a display entity
 				screenPointObservee = null;
 				displayObservee = null;
 			}
-			dmTracker = dm.getGraphicsChangeTracker();
-
 		}
 
 		/**
@@ -82,8 +79,26 @@ public class ScreenPointsModel extends DisplayModel {
 		 */
 		protected void updateProxies(double simTime) {
 
-			if (cachedProxies != null && observeeTracker != null && !observeeTracker.checkAndClear()
-			    && !dmTracker.checkAndClear()) {
+			HasScreenPoints.PointsInfo[] pis = screenPointObservee.getScreenPoints();
+
+			Transform regionTrans = null;
+			if (displayObservee.getCurrentRegion() != null) {
+				regionTrans = displayObservee.getCurrentRegion().getRegionTrans(simTime);
+			}
+
+			VisibilityInfo vi = getVisibilityInfo();
+
+			boolean dirty = false;
+
+			dirty = dirty || !compare(pisCache, pis);
+			dirty = dirty || !compare(regionTransCache, regionTrans);
+			dirty = dirty || !compare(viCache, vi);
+
+			pisCache = pis;
+			regionTransCache = regionTrans;
+			viCache = vi;
+
+			if (cachedProxies != null && !dirty) {
 				// up to date
 				_cacheHits++;
 				return;
@@ -91,8 +106,6 @@ public class ScreenPointsModel extends DisplayModel {
 
 			_cacheMisses++;
 			registerCacheMiss("Points");
-
-			HasScreenPoints.PointsInfo[] pis = screenPointObservee.getScreenPoints();
 
 			if (pis.length == 0) {
 				cachedProxies = new LineProxy[0];
@@ -123,9 +136,7 @@ public class ScreenPointsModel extends DisplayModel {
 				nodePoints.add(new Vec4d(p.x, p.y, p.z, 1.0d));
 			}
 
-			Transform regionTrans = null;
-			if (displayObservee.getCurrentRegion() != null) {
-				regionTrans = displayObservee.getCurrentRegion().getRegionTrans(simTime);
+			if (regionTrans != null) {
 				RenderUtils.transformPointsLocal(regionTrans, selectionPoints, 0);
 				RenderUtils.transformPointsLocal(regionTrans, nodePoints, 0);
 			}
@@ -149,7 +160,7 @@ public class ScreenPointsModel extends DisplayModel {
 					RenderUtils.transformPointsLocal(regionTrans, points, 0);
 				}
 
-				cachedProxies[proxyIndex++] = new LineProxy(points, pi.color, pi.width, getVisibilityInfo(), displayObservee.getEntityNumber());
+				cachedProxies[proxyIndex++] = new LineProxy(points, pi.color, pi.width, vi, displayObservee.getEntityNumber());
 			}
 		}
 

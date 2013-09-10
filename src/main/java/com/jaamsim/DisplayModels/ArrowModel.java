@@ -17,6 +17,7 @@ package com.jaamsim.DisplayModels;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -24,7 +25,6 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.Arrow;
 
@@ -51,29 +51,42 @@ public class ArrowModel extends ScreenPointsModel {
 	private class Binding extends ScreenPointsModel.Binding {
 
 		private Arrow arrowObservee;
-		private ChangeWatcher.Tracker observeeTracker;
-		private ChangeWatcher.Tracker dmTracker;
-
 
 		private ArrayList<Vec4d> headPoints = null;
+
+		private RenderProxy cachedProxy = null;
+
+		private Vec4d startCache;
+		private Vec4d fromCache;
+		private Color4d colorCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			try {
 				arrowObservee = (Arrow)observee;
-				if (arrowObservee != null) {
-					observeeTracker = arrowObservee.getGraphicsChangeTracker();
-				}
 			} catch (ClassCastException e) {
 				// The observee is not a display entity
 				arrowObservee = null;
 			}
-			dmTracker = dm.getGraphicsChangeTracker();
 		}
 
 		private void updateHead() {
-			if (headPoints != null && observeeTracker != null && !observeeTracker.checkAndClear()
-			    && !dmTracker.checkAndClear()) {
+
+			Vec4d startPoint = selectionPoints.get(selectionPoints.size() - 1);
+			Vec4d fromPoint = selectionPoints.get(selectionPoints.size() - 2);
+			Color4d color = screenPointObservee.getScreenPoints()[0].color;
+
+			boolean dirty = false;
+
+			dirty = dirty || compare(startCache, startPoint);
+			dirty = dirty || compare(fromCache, fromPoint);
+			dirty = dirty || compare(colorCache, color);
+
+			startCache = startPoint;
+			fromCache = fromPoint;
+			colorCache = color;
+
+			if (cachedProxy != null && !dirty) {
 				// up to date
 				return;
 			}
@@ -82,9 +95,6 @@ public class ArrowModel extends ScreenPointsModel {
 			if (selectionPoints.size() < 2) {
 				return;
 			}
-
-			Vec4d startPoint = selectionPoints.get(selectionPoints.size() - 1);
-			Vec4d fromPoint = selectionPoints.get(selectionPoints.size() - 2);
 
 			// Calculate a z-rotation in the XY-plane
 			Vec3d zRot = new Vec3d();
@@ -102,6 +112,9 @@ public class ArrowModel extends ScreenPointsModel {
 				tmp.mult4(trans, v);
 				headPoints.add(tmp);
 			}
+
+			cachedProxy = new PolygonProxy(headPoints, Transform.ident, Vec4d.ONES, color,
+			        false, 1, getVisibilityInfo(), arrowObservee.getEntityNumber());
 		}
 
 		@Override
@@ -116,9 +129,7 @@ public class ArrowModel extends ScreenPointsModel {
 
 			super.collectProxies(simTime, out);
 
-			out.add(new PolygonProxy(headPoints, Transform.ident, Vec4d.ONES,
-			        screenPointObservee.getScreenPoints()[0].color,
-			        false, 1, getVisibilityInfo(), arrowObservee.getEntityNumber()));
+			out.add(cachedProxy);
 		}
 	}
 }
