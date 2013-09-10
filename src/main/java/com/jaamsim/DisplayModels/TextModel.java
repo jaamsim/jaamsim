@@ -65,7 +65,7 @@ public class TextModel extends DisplayModel {
 	         example = "TitleModel  DropShadowColour { red }")
 	private final ColourInput dropShadowColor;
 
-	@Keyword(description = "A set of { x, y, z } numbers that define the offset in each direction of the drop shadow from the TextLabel.",
+	@Keyword(description = "A set of { x, y, z } numbers that define the offset in each direction of the drop shadow from the Text.",
 	         example = "TitleModel  DropShadowOffset { 0.1 0.1 0.0 }")
 	private final Vec3dInput dropShadowOffset;
 

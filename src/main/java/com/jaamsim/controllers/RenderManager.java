@@ -42,6 +42,7 @@ import javax.swing.SwingUtilities;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
+import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.font.TessFont;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.AABB;
@@ -1341,7 +1342,7 @@ public class RenderManager implements DragSourceListener {
 		ArrayList<DisplayModel> displayModels = dEntity.getDisplayModelList();
 		if (displayModels != null && displayModels.size() > 0) {
 			DisplayModel dm0 = displayModels.get(0);
-			if (dm0 instanceof DisplayModelCompat || dm0 instanceof ImageModel)
+			if (dm0 instanceof DisplayModelCompat || dm0 instanceof ImageModel || dm0 instanceof TextModel )
 				isFlat = true;
 		}
 		if (dEntity instanceof HasScreenPoints) {

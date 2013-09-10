@@ -33,7 +33,6 @@ Define ObjectType {
                     Region
                     DisplayEntity
 					Text
-                    TextLabel
                     OverlayImage
 					OverlayText
 					OverlayClock
@@ -46,7 +45,6 @@ View                  JavaClass { com.jaamsim.ui.View                           
 Region                JavaClass { com.sandwell.JavaSimulation3D.Region               } Palette { 'Graphics Objects' }                                           DragAndDrop { FALSE }
 DisplayEntity         JavaClass { com.sandwell.JavaSimulation3D.DisplayEntity        } Palette { 'Graphics Objects' }
 Text                  JavaClass { com.sandwell.JavaSimulation3D.Text                 } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
-TextLabel             JavaClass { com.sandwell.JavaSimulation3D.TextLabel            } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } DragAndDrop { FALSE }
 OverlayImage          JavaClass { com.sandwell.JavaSimulation3D.OverlayImage         } Palette { 'Graphics Objects' }
 OverlayText           JavaClass { com.sandwell.JavaSimulation3D.OverlayText          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 OverlayClock          JavaClass { com.sandwell.JavaSimulation3D.OverlayClock         } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }

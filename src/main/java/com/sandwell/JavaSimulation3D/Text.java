@@ -14,7 +14,6 @@
  */
 package com.sandwell.JavaSimulation3D;
 
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.OutputInput;
 import com.jaamsim.input.ValueInput;
@@ -76,12 +75,9 @@ public class Text extends DisplayEntity {
 
 		failText = new StringInput("FailText", "Key Inputs", "");
 		this.addInput(failText, true);
-
-		InputAgent.processEntity_Keyword_Value(this, "Size", "1.0 1.0 0.0 m");
 	}
 
-	public Text() {
-	}
+	public Text() {}
 
 	@Override
 	public void updateForInput( Input<?> in ) {
