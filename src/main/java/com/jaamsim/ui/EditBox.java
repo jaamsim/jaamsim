@@ -52,7 +52,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.InputGroup;
 import com.jaamsim.input.Parser;
 import com.jaamsim.math.Color4d;
 import com.sandwell.JavaSimulation.ColourInput;
@@ -231,15 +230,6 @@ public class EditBox extends FrameBox {
 				break;
 		}
 
-		// Try all the InputGroups in this class
-		for (InputGroup grp : ent.getInputGroups()) {
-			Class<? extends InputGroup> grpClass = grp.getClass();
-
-			String desc = scanClassForInputDesc(grpClass, grp, in);
-			if (desc != null) {
-				return desc;
-			}
-		}
 		return null;
 	}
 

@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.InputGroup;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 
@@ -55,8 +54,6 @@ public class Entity {
 	private final ArrayList<Input<?>> editableInputs;
 	private final HashMap<String, Input<?>> inputMap;
 
-	private final ArrayList<InputGroup> inputGroups;
-
 	private final BooleanInput trace;
 
 	static {
@@ -77,7 +74,6 @@ public class Entity {
 
 		editableInputs = new ArrayList<Input<?>>();
 		inputMap = new HashMap<String, Input<?>>();
-		inputGroups = new ArrayList<InputGroup>();
 
 		trace = new BooleanInput("Trace", "Key Inputs", false);
 		trace.setHidden(true);
@@ -127,17 +123,9 @@ public class Entity {
 	}
 
 	// This is defined for handlers only
-	public void validate() throws InputErrorException {
-		for (InputGroup grp : inputGroups) {
-			grp.validate();
-		}
-	}
+	public void validate() throws InputErrorException {}
 
-	public void earlyInit() {
-		for (InputGroup grp : inputGroups) {
-			grp.earlyInit();
-		}
-	}
+	public void earlyInit() {}
 
 	public void startUp() {}
 
@@ -217,21 +205,8 @@ public class Entity {
 			this.mapInput(in, each);
 	}
 
-	protected void addInputGroup(InputGroup grp) {
-
-		inputGroups.add(grp);
-
-		for (Input<?> in : grp.getInputs()) {
-			this.addInput(in, true);
-		}
-	}
-
 	public Input<?> getInput(String key) {
 		return inputMap.get(key.toUpperCase());
-	}
-
-	public ArrayList<InputGroup> getInputGroups() {
-		return inputGroups;
 	}
 
 	public void resetInputs() {
