@@ -28,7 +28,6 @@ import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.TexCache;
 import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -193,24 +192,26 @@ public class ImageModel extends DisplayModel {
 	private class OverlayBinding extends DisplayModelBinding {
 
 		private OverlayImage imageObservee;
-		private ChangeWatcher.Tracker observeeTracker;
-		private ChangeWatcher.Tracker modelTracker;
 
 		private OverlayTextureProxy cachedProxy = null;
+
+		private String filenameCache;
+		private IntegerVector posCache;
+		private IntegerVector sizeCache;
+		private boolean alignBottomCache;
+		private boolean alignRightCache;
+		private VisibilityInfo viCache;
 
 		public OverlayBinding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			try {
 				imageObservee = (OverlayImage)observee;
 				if (imageObservee != null) {
-					observeeTracker = imageObservee.getGraphicsChangeTracker();
 				}
 			} catch (ClassCastException e) {
 				// The observee is not a display entity
 				imageObservee = null;
 			}
-			modelTracker = dm.getGraphicsChangeTracker();
-
 		}
 
 		@Override
@@ -219,9 +220,32 @@ public class ImageModel extends DisplayModel {
 				return;
 			}
 
-			if (!modelTracker.checkAndClear() &&
-			    !observeeTracker.checkAndClear() &&
-			    cachedProxy != null) {
+			String filename = imageFile.getValue();
+			IntegerVector pos = imageObservee.getScreenPosition();
+			IntegerVector size = imageObservee.getImageSize();
+
+			boolean alignRight = imageObservee.getAlignRight();
+			boolean alignBottom = imageObservee.getAlignBottom();
+
+			VisibilityInfo vi = getVisibilityInfo();
+
+			boolean dirty = false;
+
+			dirty = dirty || !compare(filenameCache, filename);
+			dirty = dirty || !compare(posCache, pos);
+			dirty = dirty || !compare(sizeCache, size);
+			dirty = dirty || alignRightCache != alignRight;
+			dirty = dirty || alignBottomCache != alignBottom;
+			dirty = dirty || !compare(viCache, vi);
+
+			filenameCache = filename;
+			posCache = pos;
+			sizeCache = size;
+			alignRightCache = alignRight;
+			alignBottomCache = alignBottom;
+			viCache = vi;
+
+			if (cachedProxy != null && !dirty) {
 				// Nothing changed
 
 				out.add(cachedProxy);
@@ -232,18 +256,11 @@ public class ImageModel extends DisplayModel {
 			++_cacheMisses;
 			registerCacheMiss("OverlayImage");
 
-			String filename = imageFile.getValue();
-			IntegerVector pos = imageObservee.getScreenPosition();
-			IntegerVector size = imageObservee.getImageSize();
-
-			boolean alignRight = imageObservee.getAlignRight();
-			boolean alignBottom = imageObservee.getAlignBottom();
-
 			try {
 				cachedProxy = new OverlayTextureProxy(pos.get(0), pos.get(1), size.get(0), size.get(1),
 				                                      new URL(Util.getAbsoluteFilePath(filename)),
 				                                      transparent.getValue(), false,
-				                                      alignRight, alignBottom, getVisibilityInfo());
+				                                      alignRight, alignBottom, vi);
 
 				out.add(cachedProxy);
 			} catch (MalformedURLException ex) {
