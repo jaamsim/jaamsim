@@ -19,9 +19,7 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DistanceUnit;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Vec3dInput;
 
@@ -38,8 +36,6 @@ private final Vec3dInput originInput;
       example = "Region1 Orientation { 0 0 90 deg }")
 private final Vec3dInput orientationInput;
 
-	private final ChangeWatcher graphicsDirtier = new ChangeWatcher();
-
 {
 	originInput = new Vec3dInput("Origin", "Basic Graphics", null);
 	originInput.setUnitType(DistanceUnit.class);
@@ -54,20 +50,6 @@ private final Vec3dInput orientationInput;
 	 * Constructor creating a new locale in the simulation universe.
 	 */
 	public Region() {}
-
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == originInput ||
-			in == orientationInput) {
-			graphicsDirtier.changed();
-		}
-	}
-
-	public ChangeWatcher getGraphicsDirtier() {
-		return graphicsDirtier;
-	}
 
 	public Transform getRegionTrans(double simTime) {
 		Quaternion rot = null;

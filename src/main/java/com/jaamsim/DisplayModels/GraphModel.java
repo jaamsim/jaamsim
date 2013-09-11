@@ -31,7 +31,6 @@ import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.StringProxy;
 import com.jaamsim.render.TessFontKey;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
@@ -52,7 +51,6 @@ public class GraphModel extends DisplayModel {
 	private class Binding extends DisplayModelBinding {
 
 		private Graph graphObservee;
-		private ChangeWatcher.Tracker observeeTracker;
 
 		private List<Vec4d> graphRectPoints = null;
 		private Mat4d graphAreaTrans = null;
@@ -67,7 +65,6 @@ public class GraphModel extends DisplayModel {
 			try {
 				graphObservee = (Graph)observee;
 				if (graphObservee != null) {
-					observeeTracker = graphObservee.getGraphicsChangeTracker();
 					pickingID = graphObservee.getEntityNumber();
 				}
 			} catch (ClassCastException e) {
@@ -82,9 +79,7 @@ public class GraphModel extends DisplayModel {
 				return;
 			}
 
-			if (objectTrans == null || observeeTracker.checkAndClear()) {
-				updateObjectTrans(simTime);
-			}
+			updateObjectTrans(simTime);
 
 			++_cacheMisses;
 			registerCacheMiss("Graph");

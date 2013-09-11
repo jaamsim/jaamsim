@@ -15,7 +15,6 @@
 package com.sandwell.JavaSimulation3D;
 
 import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
@@ -66,13 +65,6 @@ public abstract class OverlayEntity extends DisplayEntity {
 		getInput("show").setHidden(true);
 		getInput("movable").setHidden(true);
 		getInput("tooltip").setHidden(true);
-	}
-
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput(in);
-
-		setGraphicsDataDirty();
 	}
 
 	public boolean getAlignRight() {

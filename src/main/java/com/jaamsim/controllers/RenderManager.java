@@ -270,7 +270,6 @@ public class RenderManager implements DragSourceListener {
 		_windowControls.put(windowID, control);
 		_windowToViewMap.put(windowID, view);
 
-		dirtyAllEntities();
 		queueRedraw();
 	}
 
@@ -300,12 +299,6 @@ public class RenderManager implements DragSourceListener {
 	 */
 	public static boolean canInitialize() {
 		return s_instance == null;
-	}
-
-	private void dirtyAllEntities() {
-		for (int i = 0; i < DisplayEntity.getAll().size(); ++i) {
-			DisplayEntity.getAll().get(i).setGraphicsDataDirty();
-		}
 	}
 
 	private void renderManagerLoop() {
@@ -1075,7 +1068,6 @@ public class RenderManager implements DragSourceListener {
 			Input<?> pointsInput = _selectedEntity.getInput("Points");
 			assert(pointsInput != null);
 			if (pointsInput == null) {
-				_selectedEntity.setGraphicsDataDirty();
 				return true;
 			}
 
@@ -1087,7 +1079,6 @@ public class RenderManager implements DragSourceListener {
 
 			InputAgent.processEntity_Keyword_Value(_selectedEntity, pointsInput, sb.toString());
 			FrameBox.valueUpdate();
-			_selectedEntity.setGraphicsDataDirty();
 			return true;
 		}
 
@@ -1145,7 +1136,6 @@ public class RenderManager implements DragSourceListener {
 		Input<?> pointsInput = _selectedEntity.getInput("Points");
 		InputAgent.processEntity_Keyword_Value(_selectedEntity, pointsInput, sb.toString());
 		FrameBox.valueUpdate();
-		_selectedEntity.setGraphicsDataDirty();
 	}
 
 	private void removeLineNode(int windowID, int x, int y) {
@@ -1195,7 +1185,6 @@ public class RenderManager implements DragSourceListener {
 		Input<?> pointsInput = _selectedEntity.getInput("Points");
 		InputAgent.processEntity_Keyword_Value(_selectedEntity, pointsInput, sb.toString());
 		FrameBox.valueUpdate();
-		_selectedEntity.setGraphicsDataDirty();
 	}
 
 

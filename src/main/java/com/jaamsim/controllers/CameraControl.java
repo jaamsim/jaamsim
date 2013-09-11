@@ -31,7 +31,6 @@ import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.View;
 import com.jogamp.newt.event.MouseEvent;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 
 public class CameraControl implements WindowInteractionListener {
 
@@ -46,8 +45,6 @@ public class CameraControl implements WindowInteractionListener {
 
 	private int _windowPosSetsToIgnore = 4;
 
-	private ChangeWatcher.Tracker _viewTracker;
-
 	private final Vec3d POI = new Vec3d();
 
 	private static class PolarInfo {
@@ -55,13 +52,25 @@ public class CameraControl implements WindowInteractionListener {
 		double rotX; // Ditto for X
 		double radius; // The distance the camera is from the view center
 		Vec3d viewCenter;
+
+		@Override
+		public boolean equals(Object o) {
+			if (!(o instanceof PolarInfo)) {
+				return false;
+			}
+			PolarInfo pi = (PolarInfo)o;
+
+			return pi.rotZ == rotZ && pi.rotX == rotX && pi.radius == radius &&
+			       viewCenter != null && viewCenter.equals(pi.viewCenter);
+		}
 	}
+
+	private PolarInfo piCache; // The last polar info this view has re-drawn for
 
 	public CameraControl(Renderer renderer, View updateView) {
 		_renderer = renderer;
 		_updateView = updateView;
 
-		_viewTracker = _updateView.getChangeTracker();
 		POI.set3(_updateView.getGlobalCenter());
 	}
 
@@ -322,11 +331,17 @@ public class CameraControl implements WindowInteractionListener {
 
 	private void updateCamTrans(PolarInfo pi, boolean updateInputs) {
 
-		Vec4d zOffset = new Vec4d(0, 0, pi.radius, 1.0d);
-
 		if (pi.rotX == 0) {
 			pi.rotZ = 0; // If we're ever looking directly down, which is degenerate, force Y up
 		}
+
+		if (piCache != null && piCache.equals(pi) && !updateInputs) {
+			return; // This update won't do anything
+		}
+
+		piCache = pi;
+
+		Vec4d zOffset = new Vec4d(0, 0, pi.radius, 1.0d);
 
 		Quaternion rot = polarToRot(pi);
 
@@ -345,7 +360,6 @@ public class CameraControl implements WindowInteractionListener {
 		if (info == null) {
 			// This window has not been opened yet (or is closed) force a redraw as everything will catch up
 			// and the information has been saved to the view object
-			_updateView.forceDirty();
 			RenderManager.inst().queueRedraw();
 			return;
 		}
@@ -479,12 +493,7 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	public void checkForUpdate() {
-		if (!_viewTracker.checkAndClear()) {
-			return;
-		}
-
 		PolarInfo pi = getPolarCoordsFromView();
 		updateCamTrans(pi, false);
-
 	}
 }

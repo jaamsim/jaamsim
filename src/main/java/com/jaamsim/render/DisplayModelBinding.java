@@ -26,7 +26,6 @@ import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
@@ -48,8 +47,6 @@ public abstract class DisplayModelBinding {
 	private static HashMap<String, Integer> cacheMissData = new HashMap<String, Integer>();
 
 	//protected DisplayEntity _dispObservee;
-
-	private ChangeWatcher.Tracker _selectionTracker;
 
 	private List<Vec4d> handlePoints = null;
 
@@ -86,10 +83,6 @@ public abstract class DisplayModelBinding {
 	public DisplayModelBinding(Entity ent, DisplayModel dm) {
 		this.observee = ent;
 		this.dm = dm;
-		if (observee instanceof DisplayEntity)
-		{
-			_selectionTracker = ((DisplayEntity)ent).getGraphicsChangeTracker();
-		}
 	}
 
 	public abstract void collectProxies(double simTime, ArrayList<RenderProxy> out);
@@ -144,9 +137,7 @@ public abstract class DisplayModelBinding {
 		outline.setHoverColour(ColourInput.LIGHT_GREY);
 		out.add(outline);
 
-		if (handlePoints == null || _selectionTracker.checkAndClear()) {
-			updatePoints(simTime);
-		}
+		updatePoints(simTime);
 
 		for (int i = 0; i < 8; ++i) {
 

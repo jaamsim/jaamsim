@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.jaamsim.DisplayModels.DisplayModel;
-import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
@@ -35,7 +34,6 @@ import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
@@ -55,9 +53,6 @@ public class DisplayEntity extends Entity {
 	private static final ArrayList<DisplayEntity> allInstances;
 
 	public static Simulation simulation;
-
-	// A 'dirty' state tracker
-	private ChangeWatcher graphicsDirtier = new ChangeWatcher();
 
 	@Keyword(description = "The point in the region at which the alignment point of the object is positioned.",
 	         example = "Object1 Position { -3.922 -1.830 0.000 m }")
@@ -200,7 +195,6 @@ public class DisplayEntity extends Entity {
 	}
 
 	private TagSet tags;
-	private TagSet lastTags;
 
 	static {
 		allInstances = new ArrayList<DisplayEntity>(100);
@@ -319,7 +313,6 @@ public class DisplayEntity extends Entity {
 	 */
 	public void setRegion( Region newRegion ) {
 		currentRegion = newRegion;
-		updateDirtyDependencies();
 	}
 
 	/**
@@ -330,10 +323,6 @@ public class DisplayEntity extends Entity {
 	 * updateGraphics() and render()
 	 */
 	public void updateGraphics(double simTime) {
-		if (lastTags == null || !lastTags.isSame(tags)) {
-			setGraphicsDataDirty();
-		}
-		lastTags = tags.copy();
 	}
 
 	private void calculateEulerRotation(Vec3d val, Vec3d euler) {
@@ -388,7 +377,6 @@ public class DisplayEntity extends Entity {
 				return;
 			}
 			orient.set3(orientation);
-			setGraphicsDataDirty();
 		}
 	}
 
@@ -398,7 +386,6 @@ public class DisplayEntity extends Entity {
 				return;
 			}
 			this.size.set3(size);
-			setGraphicsDataDirty();
 		}
 	}
 
@@ -479,40 +466,6 @@ public class DisplayEntity extends Entity {
 
 
 	/**
-	 * Returns a new Tracker of this DisplayEntity's graphics data state.
-	 * If there has been a change in graphics data, the Tracker.hasChanged() will return true
-	 * @return A new graphics state tracker
-	 */
-	public ChangeWatcher.Tracker getGraphicsChangeTracker() {
-		return graphicsDirtier.getTracker();
-	}
-
-	public void setGraphicsDataDirty() {
-		graphicsDirtier.changed();
-		if (RenderManager.isGood())
-			RenderManager.inst().queueRedraw();
-	}
-
-	public ChangeWatcher getGraphicsDirtier() {
-		return graphicsDirtier;
-	}
-
-	private void updateDirtyDependencies() {
-		graphicsDirtier.clearDependents();
-		if (currentRegion != null) {
-			graphicsDirtier.addDependent(currentRegion.getGraphicsDirtier());
-		}
-		if (relativeEntity.getValue() != null) {
-			graphicsDirtier.addDependent(relativeEntity.getValue().getGraphicsDirtier());
-		}
-		if (getDisplayModelList() != null) {
-			for (DisplayModel dm : getDisplayModelList()) {
-				graphicsDirtier.addDependent(dm.getGraphicsDirtier());
-			}
-		}
-	}
-
-	/**
 	 * Return the position in the global coordinate system
 	 * @return
 	 */
@@ -564,7 +517,6 @@ public class DisplayEntity extends Entity {
 			}
 
 			this.align.set3(align);
-			setGraphicsDataDirty();
 		}
 	}
 
@@ -575,7 +527,6 @@ public class DisplayEntity extends Entity {
 			}
 
 			position.set3(pos);
-			setGraphicsDataDirty();
 		}
 	}
 
@@ -690,11 +641,6 @@ public class DisplayEntity extends Entity {
 		if (in == displayModelList) {
 			modelBindings = null; // Clear this on any change, and build it lazily later
 		}
-
-		if( in == relativeEntity || in == displayModelList) {
-			updateDirtyDependencies();
-		}
-		setGraphicsDataDirty();
 	}
 
 	/////////////////////////////////

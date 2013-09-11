@@ -18,7 +18,6 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.View;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
@@ -33,8 +32,6 @@ public abstract class DisplayModel extends Entity {
 	public static final VisibilityInfo ALWAYS = new VisibilityInfo(null, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
 	private VisibilityInfo visInfo = ALWAYS;
-
-	private ChangeWatcher graphicsDirtier = new ChangeWatcher();
 
 	@Keyword(description = "The view objects this model will be visible on. If this is empty the entity is visible on all views.",
 	         example = "ShipModel VisibleViews { TitleView DefaultView }")
@@ -97,19 +94,6 @@ public abstract class DisplayModel extends Entity {
 			visInfo = new VisibilityInfo(visibleViews.getValue(), minDist, maxDist);
 		}
 
-		setGraphicsDataDirty();
-	}
-
-	public void setGraphicsDataDirty() {
-		graphicsDirtier.changed();
-	}
-
-	public ChangeWatcher.Tracker getGraphicsChangeTracker() {
-		return graphicsDirtier.getTracker();
-	}
-
-	public ChangeWatcher getGraphicsDirtier() {
-		return graphicsDirtier;
 	}
 
 	public VisibilityInfo getVisibilityInfo() {

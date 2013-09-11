@@ -26,7 +26,6 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.ChangeWatcher;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Input;
@@ -103,8 +102,6 @@ private Object setLock = new Object();
 
 private double cachedSimTime = 0;
 
-private ChangeWatcher dataDirtier = new ChangeWatcher();
-
 static {
 	allInstances = new ArrayList<View>();
 }
@@ -180,21 +177,8 @@ public void kill() {
 @Override
 public void updateForInput( Input<?> in ) {
 	if (in == position || in == center || in == skyboxImage) {
-		dataDirtier.changed();
 		if (RenderManager.isGood()) {
 			RenderManager.inst().queueRedraw();
-		}
-		return;
-	}
-
-	// The entity inputs that this view is dependent on
-	if (in == region || in == followEntityInput) {
-		dataDirtier.clearDependents();
-		if (region.getValue() != null) {
-			dataDirtier.addDependent(region.getValue().getGraphicsDirtier());
-		}
-		if (followEntityInput.getValue() != null) {
-			dataDirtier.addDependent(followEntityInput.getValue().getGraphicsDirtier());
 		}
 		return;
 	}
@@ -281,7 +265,6 @@ public void updateCenterAndPos(Vec3d center, Vec3d pos) {
 		InputAgent.processEntity_Keyword_Value(this, this.position, posVal);
 		String cenVal = String.format("%f %f %f m", tempCent.x, tempCent.y, tempCent.z);
 		InputAgent.processEntity_Keyword_Value(this, this.center, cenVal);
-		dataDirtier.changed();
 	}
 }
 
@@ -307,15 +290,11 @@ public void setRegion(Region reg) {
 public void setPosition(Vec3d pos) {
 	String val = String.format("%f %f %f m", pos.x, pos.y, pos.z);
 	InputAgent.processEntity_Keyword_Value(this, this.position, val);
-
-	dataDirtier.changed();
 }
 
 public void setCenter(Vec3d cent) {
 	String val = String.format("%f %f %f m", cent.x, cent.y, cent.z);
 	InputAgent.processEntity_Keyword_Value(this, this.center, val);
-
-	dataDirtier.changed();
 }
 
 public void setWindowPos(int x, int y, int width, int height) {
@@ -334,17 +313,6 @@ public IntegerVector getWindowPos() {
 
 public IntegerVector getWindowSize() {
 	return windowSize.getValue();
-}
-
-public ChangeWatcher.Tracker getChangeTracker() {
-	return dataDirtier.getTracker();
-}
-
-/**
- * Allow an outside influence to force a dirty state
- */
-public void forceDirty() {
-	dataDirtier.changed();
 }
 
 public int getID() {
@@ -377,9 +345,6 @@ public URL getSkyboxTexture() {
 
 public void update(double simTime) {
 	cachedSimTime = simTime;
-	if (isScripted()) {
-		forceDirty();
-	}
 }
 
 }
