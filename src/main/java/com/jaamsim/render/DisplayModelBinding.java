@@ -15,6 +15,7 @@
 package com.jaamsim.render;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -225,4 +226,16 @@ public abstract class DisplayModelBinding {
 		return ((cacheNull && valNull) || (!cacheNull && cache.equals(val)));
 
 	}
+
+	protected <T> boolean compareArray(T[] cache, T[] val) {
+
+		if (cache == val) return true;
+
+		boolean cacheNull = cache == null;
+		boolean valNull = val == null;
+
+		return ((cacheNull && valNull) || (!cacheNull && Arrays.deepEquals(cache, val)));
+
+	}
+
 }

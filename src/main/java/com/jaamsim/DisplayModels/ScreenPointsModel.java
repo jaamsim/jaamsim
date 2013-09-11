@@ -90,7 +90,7 @@ public class ScreenPointsModel extends DisplayModel {
 
 			boolean dirty = false;
 
-			dirty = dirty || !compare(pisCache, pis);
+			dirty = dirty || !compareArray(pisCache, pis);
 			dirty = dirty || !compare(regionTransCache, regionTrans);
 			dirty = dirty || !compare(viCache, vi);
 
