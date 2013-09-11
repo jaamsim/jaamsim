@@ -184,18 +184,6 @@ public class Util {
 			return formatter.format( num );
 	}
 
-    /**
-     * Return the factorial of the given number
-     */
-    public static int factorial( int n ) {
-    	if( n == 1 ) {
-    		return 1;
-    	}
-    	else {
-    		return n * factorial( n - 1 );
-    	}
-    }
-
 	/**
 	 * Expects a StringVector of one of two forms:
 	 * 1.  { entry entry entry } { entry entry entry }
