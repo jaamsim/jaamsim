@@ -26,6 +26,7 @@ import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.ErrorException;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.Vec3dListInput;
@@ -164,7 +165,6 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 			// Send the entity to the next component
 			this.sendToNextComponent(ent);
-			this.setGraphicsDataDirty();
 		}
 
 		// Queue is empty, stop work
@@ -204,6 +204,17 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 	}
 
 	@Override
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput(in);
+
+		// If Points were input, then use them to set the start and end coordinates
+		if( in == pointsInput || in == colorInput || in == widthInput ) {
+			cachedPointInfo = null;
+			return;
+		}
+	}
+
+	@Override
 	public void updateGraphics( double simTime ) {
 
 		// Loop through the entities on the conveyor
@@ -216,12 +227,6 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 			// Set the position for the entity
 			each.setPosition( this.getPositionForDistance( dist) );
 		}
-	}
-
-	@Override
-	public void setGraphicsDataDirty() {
-		cachedPointInfo = null;
-		super.setGraphicsDataDirty();
 	}
 
 	@Override
@@ -261,7 +266,6 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		InputAgent.processEntity_Keyword_Value(this, pointsInput, tmp.toString());
 
 		super.dragged(dist);
-		setGraphicsDataDirty();
 	}
 
 }

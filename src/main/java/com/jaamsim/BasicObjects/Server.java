@@ -125,7 +125,6 @@ public class Server extends LinkedComponent {
 
 			// Remove the first entity from the queue
 			servedEntity = waitQueueInput.getValue().removeFirst();
-			this.setGraphicsDataDirty();
 
 			// Select the processing time and wait for it to be completed
 			double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
@@ -134,7 +133,6 @@ public class Server extends LinkedComponent {
 			// Send the entity to the next component in the chain
 			this.sendToNextComponent( servedEntity );
 			servedEntity = null;
-			this.setGraphicsDataDirty();
 		}
 
 		// Queue is empty, stop work

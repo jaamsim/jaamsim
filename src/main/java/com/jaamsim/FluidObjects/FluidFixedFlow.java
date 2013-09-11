@@ -24,6 +24,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.VolumeFlowUnit;
 import com.sandwell.JavaSimulation.ColourInput;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 
@@ -86,9 +87,14 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 	}
 
 	@Override
-	public void setGraphicsDataDirty() {
-		cachedPointInfo = null;
-		super.setGraphicsDataDirty();
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput(in);
+
+		// If Points were input, then use them to set the start and end coordinates
+		if( in == pointsInput || in == colourInput || in == widthInput ) {
+			cachedPointInfo = null;
+			return;
+		}
 	}
 
 	@Override
@@ -128,7 +134,6 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 		InputAgent.processEntity_Keyword_Value(this, pointsInput, tmp.toString());
 
 		super.dragged(dist);
-		setGraphicsDataDirty();
 	}
 
 }

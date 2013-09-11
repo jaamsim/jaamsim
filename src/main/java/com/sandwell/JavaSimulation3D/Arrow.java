@@ -23,6 +23,7 @@ import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation.Vec3dListInput;
@@ -94,9 +95,14 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 	public Arrow() {}
 
 	@Override
-	public void setGraphicsDataDirty() {
-		cachedPointInfo = null;
-		super.setGraphicsDataDirty();
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput(in);
+
+		// If Points were input, then use them to set the start and end coordinates
+		if( in == pointsInput || in == color || in == width ) {
+			cachedPointInfo = null;
+			return;
+		}
 	}
 
 	@Override
@@ -136,7 +142,6 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		InputAgent.processEntity_Keyword_Value(this, pointsInput, tmp.toString());
 
 		super.dragged(dist);
-		setGraphicsDataDirty();
 	}
 
 	public Vec3d getArrowHeadSize() {

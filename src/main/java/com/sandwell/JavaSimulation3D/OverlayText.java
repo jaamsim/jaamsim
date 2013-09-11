@@ -100,7 +100,6 @@ public class OverlayText extends OverlayEntity {
 		}
 
 		// The text has been updated
-		setGraphicsDataDirty();
 		renderText = newRenderText;
 
 	}

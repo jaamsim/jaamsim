@@ -99,7 +99,6 @@ public class Queue extends DisplayEntity {
 		itemList.add( i, perf );
 		this.updateStatistics();  // update the min and max queue length
 		numberAdded++;
-		setGraphicsDataDirty();
 
 		for( QueueRecorder rec : recorderList ) {
 			rec.add( perf, this );
@@ -122,7 +121,6 @@ public class Queue extends DisplayEntity {
 			DisplayEntity out = itemList.remove(i);
 			this.updateStatistics();  // update the min and max queue length
 			numberRemoved++;
-			setGraphicsDataDirty();
 
 			for( QueueRecorder rec : recorderList ) {
 				rec.remove( out, this );
