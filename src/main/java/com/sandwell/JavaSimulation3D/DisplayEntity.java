@@ -45,7 +45,6 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Vec3dInput;
-import com.sandwell.JavaSimulation.Vector;
 
 /**
  * Encapsulates the methods and data needed to display a simulation object in the 3D environment.
@@ -613,23 +612,6 @@ public class DisplayEntity extends Entity {
 		// add the difference to the current position and set the new position
 		diff.add3(getPosition());
 		setPosition(diff);
-	}
-
-
-
-	/**
-	 Returns a vector of strings describing the DisplayEntity.
-	 Override to add details
-	 @return Vector - tab delimited strings describing the DisplayEntity
-	 **/
-	@Override
-	public Vector getInfo() {
-		Vector info = super.getInfo();
-		if( getCurrentRegion() != null )
-			info.addElement("Region\t" + getCurrentRegion().getInputName());
-		else
-			info.addElement( "Region\t<no region>" );
-		return info;
 	}
 
 	public ArrayList<DisplayModel> getDisplayModelList() {

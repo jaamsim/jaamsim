@@ -42,7 +42,6 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GraphicBox;
-import com.jaamsim.ui.InfoBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
@@ -361,20 +360,6 @@ static class PropertyMenuItem extends DEMenuItem {
 	}
 }
 
-static class InfoMenuItem extends DEMenuItem {
-	private final Entity ent;
-	public InfoMenuItem(Entity ent) {
-		super("Info Viewer");
-		this.ent = ent;
-	}
-
-	@Override
-	public void action() {
-		InfoBox.getInstance().makeVisible();
-		FrameBox.setSelectedEntity(ent);
-	}
-}
-
 static class OutputMenuItem extends DEMenuItem {
 	private final Entity ent;
 	public OutputMenuItem(Entity ent) {
@@ -540,7 +525,6 @@ static class CenterInViewMenuItem extends DEMenuItem {
 		list.add(new InputMenuItem(ent));
 		list.add(new OutputMenuItem(ent));
 		list.add(new PropertyMenuItem(ent));
-		list.add(new InfoMenuItem(ent));
 
 		if (!ent.testFlag(Entity.FLAG_GENERATED))
 			list.add(new DuplicateMenuItem(ent));

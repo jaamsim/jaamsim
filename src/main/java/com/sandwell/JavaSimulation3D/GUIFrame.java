@@ -68,7 +68,6 @@ import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.InfoBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
@@ -428,19 +427,6 @@ public class GUIFrame extends JFrame {
 			}
 		} );
 		viewMenu.add( propertiesMenuItem );
-
-		JMenuItem infoMenuItem = new JMenuItem( "Info Viewer" );
-		infoMenuItem.setMnemonic( 'I' );
-		infoMenuItem.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				InfoBox.getInstance().makeVisible();
-				if(ObjectSelector.getInstance().isVisible())
-					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
-			}
-		} );
-		viewMenu.add( infoMenuItem );
 
 //		JMenuItem eventListMenuItem = new JMenuItem( "Event Viewer" );
 //		eventListMenuItem.setMnemonic( 'E' );

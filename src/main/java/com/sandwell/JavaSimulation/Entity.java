@@ -370,17 +370,6 @@ public class Entity {
 		throw new InputErrorException( "Invalid keyword " + keyword );
 	}
 
-	/**
-	 * Accessor to return information about the entity.
-	 */
-	public Vector getInfo() {
-		Vector info = new Vector( 1, 1 );
-		info.addElement( "Name" + "\t" + getName() );
-		String[] temp = getClass().getName().split( "[.]" );
-		info.addElement( "Type" + "\t" + temp[temp.length - 1] );
-		return info;
-	}
-
 	private long calculateDelayLength(double waitLength) {
 		return Math.round(waitLength * Process.getSimTimeFactor());
 	}
