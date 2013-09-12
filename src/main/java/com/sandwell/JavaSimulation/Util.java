@@ -26,9 +26,6 @@ import java.util.Comparator;
 	 *
 	 */
 public class Util {
-	private static final java.text.DecimalFormat formatter = new java.text.DecimalFormat( "0.000" );
-	private static final java.text.DecimalFormat exponentFormat = new java.text.DecimalFormat( "0.###E0" );
-
 	private static String cargoUnits = "";
 
 	public static final Comparator<Entity> nameSort = new Comparator<Entity>() {
@@ -168,20 +165,6 @@ public class Util {
 
 		String ext = name.substring( name.lastIndexOf(".")).trim();
 		return ext.replace(".", "").toUpperCase();
-	}
-
-	/**
-	 * Format a number in decimal or exponent format depending on its magnitude.
-	 */
-	public static String formatNumber( double num ) {
-		if( num > 999999.0 || num < -999999.0 )
-			return exponentFormat.format( num );
-		else if( num == 0.0 )
-			return formatter.format( num );
-		if( Math.log( num ) < -4.0 )
-			return exponentFormat.format( num );
-		else
-			return formatter.format( num );
 	}
 
 	/**
