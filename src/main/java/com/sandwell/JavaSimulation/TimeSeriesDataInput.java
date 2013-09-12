@@ -16,7 +16,6 @@ package com.sandwell.JavaSimulation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -54,31 +53,46 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 		double lastTime = -1.0;
 
-		// Determine records in the time series
-		// Records have form: (e.g.) yyyy-MM-dd HH:mm value units
-		// where units are optional
-		ArrayList<StringVector> temp = Util.splitStringVectorByBraces( input );
-
 		// Determine the starting year
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeZone( TimeZone.getTimeZone( "GMT" ) );
-		int startingYear = 0;
-		if( temp.size() > 0 ) {
+		int startingYear = -1;
 
-			try {
-				Date startingDate = dateFormat.parse( temp.get( 0 ).get( 0 ) );
-				calendar.setTime( startingDate );
-				startingYear = calendar.get(Calendar.YEAR);
-			}
-			catch ( ParseException e ) {
-				throw new InputErrorException("Invalid date " + temp.get( 0 ).get( 0 ) );
-			}
-		}
+		DoubleVector times = new DoubleVector(input.size()/4);
+		DoubleVector values = new DoubleVector(input.size()/4);
 
-		DoubleVector times = new DoubleVector(temp.size());
-		DoubleVector values = new DoubleVector(temp.size());
-		// Loop through records in the time series
-		for (StringVector each : temp) {
+		// Determine records in the time series
+		// Records have form: (e.g.) yyyy-MM-dd HH:mm value units
+		// where units are optional
+		StringVector each = new StringVector();
+		for (int i=0; i < input.size(); i++) {
+
+			//skip over opening brace if present
+			if (input.get(i).equals("{") )
+				continue;
+
+			each.clear();
+
+			//iterate until closing brace, or end of entry
+			for (int j = i; j < input.size(); j++, i++){
+				if (input.get(j).equals("}"))
+					break;
+
+				each.add(input.get(j));
+			}
+
+			// each now contains a time series record
+			// Is this the first time series record?
+			if( startingYear == -1 ) {
+				try {
+					Date startingDate = dateFormat.parse( each.get( 0 ) );
+					calendar.setTime( startingDate );
+					startingYear = calendar.get(Calendar.YEAR);
+				}
+				catch ( ParseException e ) {
+					throw new InputErrorException("Invalid date " + each.get( 0 ) );
+				}
+			}
 
 			// Check the number of entries in the record
 			Input.assertCount( each, validCounts );
