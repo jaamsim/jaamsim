@@ -1478,10 +1478,14 @@ public class InputAgent {
 
 		StringBuilder out = new StringBuilder(data.size() * 6);
 		for (int i = 0; i < data.size(); i++) {
-			out.append(data.get(i));
+			String dat = data.get(i);
+			if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
+				out.append("'").append(dat).append("'");
+			else
+				out.append(dat);
 
 			if( i < data.size() - 1 )
-				out.append(" ");
+				out.append("  ");
 		}
 		String str = out.toString();
 
