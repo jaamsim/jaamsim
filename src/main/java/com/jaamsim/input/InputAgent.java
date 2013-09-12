@@ -859,19 +859,28 @@ public class InputAgent {
 		}
 	}
 
+	protected static class KeywordValuePair {
+		public String keyword;
+		public StringVector value;
+
+		public KeywordValuePair( int size ) {
+			keyword = null;
+			value = new StringVector( size );
+		}
+	}
+
 	public static void processData(Entity ent, Vector rec) {
 		if( rec.get( 1 ).toString().trim().equals( "{" ) ) {
 			InputAgent.logError("A keyword expected after: %s", ent.getName());
 		}
-		ArrayList<StringVector> multiCmds = InputAgent.splitMultipleCommands(rec);
+		ArrayList<KeywordValuePair> multiCmds = InputAgent.splitMultipleCommands(rec);
 
 		// Process each command
 		for( int i = 0; i < multiCmds.size(); i++ ) {
-			StringVector cmd = multiCmds.get(i);
-			String keyword = cmd.remove(0);
+			KeywordValuePair cmd = multiCmds.get(i);
 
 			// Process the record
-			InputAgent.processKeyword(ent, cmd, keyword);
+			InputAgent.processKeyword(ent, cmd.value, cmd.keyword);
 		}
 		return;
 	}
@@ -900,7 +909,7 @@ public class InputAgent {
 	 * each vector will be of form <obj-name> <kwd> <data> <data>
 	 * no braces are returned
 	 */
-	private static ArrayList<StringVector> splitMultipleCommands( Vector record ) {
+	private static ArrayList<KeywordValuePair> splitMultipleCommands( Vector record ) {
 
 		// SUPPORTED SYNTAX:
 		//
@@ -908,17 +917,17 @@ public class InputAgent {
 		//   <obj-name> <kwd> { <par> <par> ... }
 		//   <obj-name> <kwd> { <par> <par> ... } <kwd> { <par> <par> ... } ...
 		//   <obj-name> <kwd> <par> <kwd> { <par> <par> ... } ...
-		ArrayList<StringVector> multiCmds = new ArrayList<StringVector>();
+		ArrayList<KeywordValuePair> multiCmds = new ArrayList<KeywordValuePair>();
 		int noOfUnclosedBraces = 0;
 
 		// Loop through the keywords and assemble new commands
 		for( int i = 1; i < record.size(); ) {
 
 			// Enter the class, object, and keyword in the new command
-			StringVector cmd = new StringVector( record.size() );
+			KeywordValuePair cmd = new KeywordValuePair( record.size() );
 
 			// Keyword changes as loop proceeds
-			cmd.add((String)record.get(i));
+			cmd.keyword = ((String)record.get(i));
 			i++;
 
 			// For a command of the new form "<obj-name> <file-name>", record
@@ -938,7 +947,7 @@ public class InputAgent {
 							noOfUnclosedBraces ++ ;
 						else if (record.get(i).equals("}"))
 							noOfUnclosedBraces -- ;
-						cmd.add((String)record.get(i));
+						cmd.value.add((String)record.get(i));
 						i++;
 					}
 
@@ -949,7 +958,7 @@ public class InputAgent {
 
 					// Last item added was the corresponding closing brace
 					else {
-						cmd.remove(cmd.size()-1); // throw out the closing brace }
+						cmd.value.remove(cmd.value.size()-1); // throw out the closing brace }
 						multiCmds.add( cmd );
 					}
 				}
@@ -957,7 +966,7 @@ public class InputAgent {
 				// If there is no brace, then the keyword must have a single
 				// parameter.
 				else {
-					cmd.add((String)record.get(i));
+					cmd.value.add((String)record.get(i));
 					i++;
 					multiCmds.add( cmd );
 				}
