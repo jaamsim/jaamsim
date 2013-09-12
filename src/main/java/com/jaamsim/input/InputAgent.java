@@ -1476,19 +1476,14 @@ public class InputAgent {
 		if(ent.testFlag(Entity.FLAG_GENERATED))
 			return;
 
-		String str = data.toString();
-		// reformat input string to be added to keyword
-		// strip out "{}" from data to find value
-		if( data.size() > 0 ) {
-			if (!(data.get(0).equals("{"))) {
-				str = str.replaceAll("[{}]", "");
-			} else {
-				int strLength = str.length();
-				str = String.format("{%s}", str.substring(3,strLength-3));
-			}
-			str = str.replaceAll( "[,]", " " );
-			str = str.trim();
+		StringBuilder out = new StringBuilder(data.size() * 6);
+		for (int i = 0; i < data.size(); i++) {
+			out.append(data.get(i));
+
+			if( i < data.size() - 1 )
+				out.append(" ");
 		}
+		String str = out.toString();
 
 		// Takes care of old format, displaying as new format -- appending onto end of record.
 		if( in.isAppendable() && ! data.get(0).equals("{") ) {
