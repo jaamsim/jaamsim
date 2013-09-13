@@ -46,7 +46,7 @@ public class SampleInput extends Input<SampleProvider> {
 		// Try to parse as a constant value
 		try {
 			DoubleVector tmp = Input.parseDoubles(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
-			value = new ConstantDouble(unitType, tmp.get(0));
+			value = new SampleConstant(unitType, tmp.get(0));
 			this.updateEditingFlags();
 			return;
 		}

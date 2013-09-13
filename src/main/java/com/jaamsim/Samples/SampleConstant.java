@@ -16,16 +16,16 @@ package com.jaamsim.Samples;
 
 import com.jaamsim.units.Unit;
 
-public class ConstantDouble implements SampleProvider {
+public class SampleConstant implements SampleProvider {
 	private final Class<? extends Unit> unitType;
 	private final double val;
 
-	public ConstantDouble(Class<? extends Unit> unitType, double val) {
+	public SampleConstant(Class<? extends Unit> unitType, double val) {
 		this.unitType = unitType;
 		this.val = val;
 	}
 
-	public ConstantDouble(double val) {
+	public SampleConstant(double val) {
 		this.unitType = Unit.class;
 		this.val = val;
 	}
