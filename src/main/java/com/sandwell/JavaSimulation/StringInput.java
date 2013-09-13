@@ -14,8 +14,6 @@
  */
 package com.sandwell.JavaSimulation;
 
-import com.jaamsim.input.Parser;
-
 public class StringInput extends Input<String> {
 
 	public StringInput(String key, String cat, String def) {
@@ -27,14 +25,5 @@ public class StringInput extends Input<String> {
 		Input.assertCount(input, 1);
 		value = input.firstElement();
 		this.updateEditingFlags();
-	}
-	@Override
-	public String getValueString() {
-		String str = super.getValueString();
-
-		if (Parser.needsQuoting(str))
-			return String.format("'%s'", str);
-		else
-			return str;
 	}
 }
