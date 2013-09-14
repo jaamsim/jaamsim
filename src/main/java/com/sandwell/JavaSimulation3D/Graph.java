@@ -14,12 +14,11 @@
  */
 package com.sandwell.JavaSimulation3D;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.OutputListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.sandwell.JavaSimulation.ColorListInput;
@@ -27,10 +26,6 @@ import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
-import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.EntityListInput;
-import com.sandwell.JavaSimulation.EntityListListInput;
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
@@ -38,6 +33,7 @@ import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.Vec3dInput;
+import com.jaamsim.input.OutputHandle;
 
 public class Graph extends DisplayEntity  {
 
@@ -48,8 +44,7 @@ public class Graph extends DisplayEntity  {
 		public double[] values;
 		public int numPoints; // The first point to draw from the start (used to be confusingly called index)
 		public int removedPoints; // The number of points to draw for entities that have been removed
-		public Entity entity;
-		public ArrayList<Entity> params;
+		public OutputHandle out; // The source of the data for the series
 		public boolean isRemoved = false; // Is this line slated for removal (entity is dead)
 		public double lineWidth;
 		public Color4d lineColour;
@@ -57,6 +52,16 @@ public class Graph extends DisplayEntity  {
 
 	protected final ArrayList<SeriesInfo> primarySeries;
 	protected final ArrayList<SeriesInfo> secondarySeries;
+
+	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
+			"  Each source is graphed as a separate line and is specified by an Entity and its Output.",
+     example = "Graph1 DataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
+	protected final OutputListInput<Double> dataSource;
+
+	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
+			"  Each source is graphed as a separate line and is specified by an Entity and its Output.",
+     example = "Graph1 SecondaryDataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
+	protected final OutputListInput<Double> secondaryDataSource;
 
 	@Keyword(description = "The number of data points that can be displayed on the graph. This " +
 	                "parameter determines the resolution of the graph.",
@@ -117,40 +122,6 @@ public class Graph extends DisplayEntity  {
 	                "gridline defined in XLines), defined using a colour keyword or RGB values.",
 	         example = "Graph1 XLinesColor { gray76 }")
 	private final ColorListInput xLinesColor;
-
-	@Keyword(description = "The object for which the graph is created.  For multiple data series on a graph, " +
-	                "enter a list of objects or a Group object.",
-	         example = "Graph1 TargetEntity { Object1 }")
-	protected final EntityListInput<Entity> targetEntityList; //  list the entity that graph is being shown for
-	//protected ArrayList<Entity> targetEntities;
-
-	@Keyword(description = "The object for which the graph is created using a secondary y-axis.  " +
-	                "For multiple data series on a graph, enter a list of objects.",
-	         example = "Graph1 SecondaryTargetEntity { Terminal1 }")
-	protected final EntityListInput<Entity> secondaryTargetEntityList;
-
-	protected Method targetMethod;  // Target method for the primary y axis
-	protected Method secondaryTargetMethod;
-	private boolean timeInputParameter; // true => time is passing to the target method(graph may show future values)
-
-	@Keyword(description = "The target method used to access the property value.",
-	         example = "Graph1 TargetMethod { getContentsForType }")
-	private final StringInput targetMethodName;
-
-	@Keyword(description = "The target method used to access the property value.",
-	         example = "Graph1 SecondaryTargetMethod { getContentsForType }")
-	private final StringInput secondaryTargetMethodName;
-
-	@Keyword(description = "If the target method requires input arguments to be passed to it, then this is a " +
-	                "list of those parameters.",
-	         example = "Graph1 TargetInputParameters { ContentType }")
-	protected final EntityListListInput<Entity> targetInputParameters; // List of all input parameters to target method for each entity
-
-	@Keyword(description = "If the target method requires input arguments to be passed to it, then this is a " +
-            "list of those parameters.",
-	         example = "Graph1 SecondaryTargetInputParameters { ContentType }")
-	private final EntityListListInput<Entity> secondaryTargetInputParameters;
-
 
 	@Keyword(description = "Title of the y-axis, enclosed in single quotes, rotated by 90 degrees counter-clockwise.",
 	         example = "Graph1 YAxisTitle { 'Water Height (m)' }")
@@ -328,15 +299,11 @@ public class Graph extends DisplayEntity  {
 	private final DoubleInput secondaryYAxisMultiplier; // the value to multiply each secondary y-axis label by
 
 	{
-		targetEntityList = new EntityListInput<Entity>(Entity.class, "TargetEntity", "Data", new ArrayList<Entity>(0));
-		targetEntityList.setUnique(false);
-		this.addInput(targetEntityList, true);
+		dataSource = new OutputListInput<Double>(Double.class, "DataSource", "Data", null);
+		this.addInput(dataSource, true);
 
-		targetMethodName = new StringInput("TargetMethod", "Data", "");
-		this.addInput(targetMethodName, true);
-
-		targetInputParameters = new EntityListListInput<Entity>( Entity.class, "TargetInputParameters", "Data", new ArrayList<ArrayList<Entity>>() );
-		this.addInput(targetInputParameters, true);
+		secondaryDataSource = new OutputListInput<Double>(Double.class, "SecondaryDataSource", "Secondary Data", null);
+		this.addInput(secondaryDataSource, true);
 
 		lineColorsList = new ColorListInput("LineColours", "Data", new ArrayList<Color4d>(0));
 		this.addInput(lineColorsList, true, "LineColors");
@@ -495,33 +462,17 @@ public class Graph extends DisplayEntity  {
 		legendMarkerSize.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(legendMarkerSize, true);
 
-		secondaryTargetEntityList = new EntityListInput<Entity>(Entity.class, "SecondaryTargetEntity", "Secondary Data", new ArrayList<Entity>(0));
-		secondaryTargetEntityList.setUnique(false);
-		this.addInput(secondaryTargetEntityList, true);
-
-		secondaryTargetMethodName = new StringInput("SecondaryTargetMethod", "Secondary Data", "");
-		this.addInput(secondaryTargetMethodName, true);
-
-		secondaryTargetInputParameters = new EntityListListInput<Entity>( Entity.class, "SecondaryTargetInputParameters", "Secondary Data", new ArrayList<ArrayList<Entity>>() );
-		this.addInput(secondaryTargetInputParameters, true);
-
 		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", "Secondary Data", new ArrayList<Color4d>(0));
 		this.addInput(secondaryLineColorsList, true, "SecondaryLineColors");
 
 		secondaryLineWidths = new DoubleListInput("SecondaryLineWidths", "Secondary Data", new DoubleVector());
 		this.addInput(secondaryLineWidths, true);
-
-
-
-
-
 	}
 
 	public Graph() {
 
 		primarySeries = new ArrayList<SeriesInfo>();
 		secondarySeries = new ArrayList<SeriesInfo>();
-
 	}
 
 	@Override
@@ -532,30 +483,28 @@ public class Graph extends DisplayEntity  {
 		if(yLinesColor.getValue().size() > 1) {
 			Input.validateIndexedLists(yLines.getValue(), yLinesColor.getValue(), "YLines", "YLinesColor");
 		}
-		if(targetInputParameters.getValue().size() > 0)
-			Input.validateIndexedLists(targetEntityList.getValue(), targetInputParameters.getValue(), "TargetEntityList", "TargetInputParameters");
 
 		if(xLinesColor.getValue().size() > 1) {
 			Input.validateIndexedLists(xLines.getValue(), xLinesColor.getValue(), "XLines", "XLinesColor");
 		}
 
 		if(lineColorsList.getValue().size() > 1){
-			Input.validateIndexedLists(targetEntityList.getValue(), lineColorsList.getValue(),
-					"TargetEntityList", "LinesColor"
-			);
+			Input.validateIndexedLists(dataSource.getValue(), lineColorsList.getValue(),
+					"DataSource", "LinesColor");
 		}
 
 		if(secondaryLineColorsList.getValue().size() > 1){
-			Input.validateIndexedLists(secondaryTargetEntityList.getValue(), secondaryLineColorsList.getValue(),
-					"SecondaryTargetEntityList", "SecondaryLinesColor"
-			);
+			Input.validateIndexedLists(secondaryDataSource.getValue(), secondaryLineColorsList.getValue(),
+					"SecondaryTargetEntityList", "SecondaryLinesColor");
 		}
 
 		if(lineWidths.getValue().size() > 1)
-			Input.validateIndexedLists(targetEntityList.getValue(), lineWidths.getValue(), "TargetEntity", "LineWidths");
+			Input.validateIndexedLists(dataSource.getValue(), lineWidths.getValue(),
+					"DataSource", "LineWidths");
 
 		if(secondaryLineWidths.getValue().size() > 1)
-			Input.validateIndexedLists(secondaryTargetEntityList.getValue(), secondaryLineWidths.getValue(), "SecondaryTargetEntity", "SecondaryLineWidths");
+			Input.validateIndexedLists(secondaryDataSource.getValue(), secondaryLineWidths.getValue(),
+					"SecondaryDataSource", "SecondaryLineWidths");
 
 		for( int i = 0; i < yLines.getValue().size(); i++ ) {
 			double y = yLines.getValue().get( i );
@@ -582,139 +531,19 @@ public class Graph extends DisplayEntity  {
 		secondarySeries.clear();
 
 		// Populate the primary series data structures
-		populateSeriesInfo(primarySeries, targetEntityList, targetInputParameters);
-		populateSeriesInfo(secondarySeries, secondaryTargetEntityList, secondaryTargetInputParameters);
+		populateSeriesInfo(primarySeries, dataSource);
+		populateSeriesInfo(secondarySeries, secondaryDataSource);
 	}
 
-	private void populateSeriesInfo(ArrayList<SeriesInfo> infos, EntityListInput<Entity> targets, EntityListListInput<Entity> params) {
-		ArrayList<Entity> ents = targets.getValue();
-		for (int entInd = 0; entInd < ents.size(); ++entInd) {
+	private void populateSeriesInfo(ArrayList<SeriesInfo> infos, OutputListInput<Double> data) {
+		ArrayList<OutputHandle> outs = data.getValue();
+		for (int outInd = 0; outInd < outs.size(); ++outInd) {
 			SeriesInfo info = new SeriesInfo();
-			info.entity = ents.get(entInd);
+			info.out = outs.get(outInd);
 			info.values = new double[numberOfPoints.getValue()];
-			if (params.getValue().size() > entInd) {
-				info.params = params.getValue().get(entInd);
-			} else {
-				info.params = new ArrayList<Entity>();
-			}
 
 			infos.add(info);
 		}
-	}
-
-	/**
-	 *
-	 * @param yAxis: "Primary" or "Secondary"
-	 */
-	public Method targetMethodForYAxis(String yAxis) {
-
-		String methodName=null;
-		Method method=null;
-
-		// Primary y axis
-		ArrayList<SeriesInfo> seriesList = null;
-		if(yAxis.equalsIgnoreCase("Primary") ){
-			seriesList = primarySeries;
-			methodName = targetMethodName.getValue();
-		}
-
-		// Secondary y axis
-		else{
-			seriesList = secondarySeries;
-			methodName = secondaryTargetMethodName.getValue();
-		}
-
-		int numberOfSeries =  seriesList.size();
-		Entity ent = null;
-
-		// Populate target method from its name and parameters class type
-		// Loop through all the input parameters to make sure the input is fine
-		for( int i = 0; i < numberOfSeries; i ++ ) {
-			SeriesInfo info = seriesList.get(i);
-			ent = info.entity;
-			if(ent == null)
-				continue;
-			Method previousMethod = method;
-			Class<?>[] currentParameterTypes = null;
-
-			currentParameterTypes = new Class[ info.params.size() ];
-			for( int j = 0; j < info.params.size(); j++ ) {
-
-				// obtain classes of parameters
-				currentParameterTypes[ j ] = info.params.get(j).getClass();
-			}
-
-			// try to find the targetMethod
-			try {
-				method = ent.getClass().getMethod( methodName, currentParameterTypes );
-			}
-			catch (SecurityException e) {
-				throw new SecurityException( "Method:" + ent + "." + methodName + " is not accessible" );
-			} catch ( NoSuchMethodException e) {
-
-				// Target method accepts time as input parameter
-				if(info.params.size() == 0){
-					timeInputParameter = true;
-					currentParameterTypes = new Class[] { double.class };
-					try {
-						method = ent.getClass().getMethod( methodName, currentParameterTypes );
-					}
-					catch (SecurityException e2) {
-						throw new SecurityException( "Method:" + ent + "." + methodName + " is not accessible" );
-					} catch ( NoSuchMethodException e2) {
-						throw new ErrorException("Method: " + methodName + " does not exist, could not invoke.");
-					}
-				}
-				else {
-					// user defined parameter type may be a subclass of the defined parameter types
-					// Get a list of all methods defined by the target
-					ArrayList<Method> matchingMethods = new ArrayList<Method>();
-					Method[] methods = ent.getClass().getMethods();
-
-					// try to find method with the same name
-					for (int j = 0; j < methods.length; j++) {
-						if( methods[j].getName().equals( methodName ) ) {
-							matchingMethods.add(methods[j]);
-						}
-					}
-
-					// for all the method with a matching name, check if parameter matches
-					for( int m = 0 ; m < matchingMethods.size() && method == null; m++ ){
-						Class<?>[] paratypes = matchingMethods.get(m).getParameterTypes();
-
-						// if number of parameters are not the same, try next method
-						if( paratypes.length != currentParameterTypes.length ){
-							break;
-						}
-
-						// check if parameter types are the same or subclass of defined parameters
-						for( int j = 0 ; j < paratypes.length; j++ ){
-
-							// if parameter is not a subclass of the defined parameter class
-							if( ! paratypes[j].isInstance( info.params.get(j) )){
-								break;
-							}
-						}
-						method = matchingMethods.get(m);
-					}
-				}
-
-				// A method was not found
-				if( method == null ) {
-					throw new ErrorException("Method: " + methodName + " does not exist, could not invoke.");
-				}
-				if(previousMethod != null && ! method.equals(previousMethod)){
-					throw new ErrorException("Two different methods: " + methodName);
-				}
-				previousMethod = method;
-			}
-		}
-		if(endTime.getValue() > 0 && ! timeInputParameter){
-			throw new ErrorException(" %s -- value for endTime must not be positive(%f) when the input parameter is not time",
-				this, endTime.getValue()
-			);
-		}
-		return method;
 	}
 
 	public Vec3d getGraphOrigin() {
@@ -772,9 +601,6 @@ public class Graph extends DisplayEntity  {
 		super.startUp();
 		extraStartGraph();
 
-		targetMethod = targetMethodForYAxis("Primary");
-		secondaryTargetMethod = targetMethodForYAxis("Secondary");
-
 		for (int i = 0; i < primarySeries.size(); ++ i) {
 			SeriesInfo info = primarySeries.get(i);
 			Color4d colour = getLineColor(i, lineColorsList.getValue());
@@ -831,7 +657,7 @@ public class Graph extends DisplayEntity  {
 		info.removedPoints = 0;
 
 		for( int i = 0; i * xInterval < endTime.getValue(); i++ ) {
-			Double presentValue = this.getCurrentValue( i * xInterval, info, targetMethod);
+			double presentValue = this.getCurrentValue( i * xInterval, info);
 			info.values[info.numPoints++] = presentValue;
 		}
 	}
@@ -867,12 +693,12 @@ public class Graph extends DisplayEntity  {
 
 			// Calculate values for the primary y-axis
 			for (SeriesInfo info : primarySeries) {
-				processGraph(info, targetMethod);
+				processGraph(info);
 			}
 
 			// Calculate values for the secondary y-axis
 			for (SeriesInfo info : secondarySeries) {
-				processGraph(info, secondaryTargetMethod);
+				processGraph(info);
 			}
 
 			scheduleWait( xInterval, 7 );
@@ -884,10 +710,10 @@ public class Graph extends DisplayEntity  {
 	 * @param info - the information for the series to be rendered
 	 * @param method - the method to call to gather more data points
 	 */
-	public void processGraph(SeriesInfo info, Method method) {
+	public void processGraph(SeriesInfo info) {
 
 		// Entity has been removed
-		if(info.entity == null) {
+		if(info.out == null) {
 			return;
 		}
 
@@ -895,7 +721,7 @@ public class Graph extends DisplayEntity  {
 		if (info.isRemoved) {
 			presentValue = info.values[info.numPoints - 1];
 		} else {
-			presentValue = this.getCurrentValue( getCurrentTime() + endTime.getValue(), info, method);
+			presentValue = this.getCurrentValue( getCurrentTime() + endTime.getValue(), info);
 
 		}
 
@@ -909,41 +735,11 @@ public class Graph extends DisplayEntity  {
 	}
 
 	/**
-	 * Access the target method of the target entity and return its value for a entity on ind
-	 *
-	 * 1) targetInputParameters has values => this values are passing to the method and returns a number
-	 * 2) timeInputParameter == false  => the method should have no argument and returns a number
-	 * 3) timeInputParameter == true   => the method has time input argument and returns a number
-	 * yAxis: Primary or Secondary
+	 * Return the current value for the series
 	 * @return double
 	 */
-	protected Double getCurrentValue(double time, SeriesInfo info, Method method) {
-
-		Object[ ] params = new Object [ 0 ];
-		if( info.params.size() != 0 ) {
-			params = info.params.toArray();
-		}
-
-		// Time is passing to the method as an argument
-		if(timeInputParameter) {
-			params = new Object [ ] { time };
-		}
-
-		double value = 0;
-		try {
-			// run target method and return its value
-			value = (Double) method.invoke( info.entity, params );
-		}
-		catch (IllegalArgumentException e) {
-			this.error( "getCurrentValue", "Illegal argument has been passed to " + method, "parameters=" + Arrays.toString(params) );
-		}
-		catch (IllegalAccessException e) {
-			this.error( "getCurrentValue", "access to this method is prohibited", "method:" + method );
-		}
-		catch ( InvocationTargetException e) {
-			this.error( "getCurrentValue", "exception happened in method" + method , e.getMessage() );
-		}
-		return value;
+	protected double getCurrentValue(double simTime, SeriesInfo info) {
+		return info.out.getValueAsDouble(simTime, 0.0);
 	}
 
 	public ArrayList<SeriesInfo> getPrimarySeries() {
