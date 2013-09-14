@@ -32,6 +32,9 @@ import com.sandwell.JavaSimulation.Simulation;
 public class AboutBox extends FrameBox implements ActionListener {
 	private static AboutBox instance;
 
+	public static final String version = "2013-38";
+	public static final String copyright = "Copyright (C) 2013 Ausenco Engineering Canada Inc.";
+
 	public AboutBox() {
 		super("About");
 
@@ -52,12 +55,12 @@ public class AboutBox extends FrameBox implements ActionListener {
 		constraints.insets = new Insets( 15, 15, 0, 15 );
 
 		// display the model's name
-		JLabel lab = new JLabel(Simulation.getModelName() + " Version: 2013-38");
+		JLabel lab = new JLabel(Simulation.getModelName() + " Version: " + version);
 		lab.setFont(boldFont);
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );
 
-		StringBuilder msg = new StringBuilder("Copyright (C) 2013 Ausenco Engineering Canada Inc.\n\n");
+		StringBuilder msg = new StringBuilder(copyright).append("\n\n");
 		msg.append("This program is free software: you can redistribute it and/or modify\n");
 		msg.append("it under the terms of the GNU General Public License as published by\n");
 		msg.append("the Free Software Foundation, either version 3 of the License, or\n");
