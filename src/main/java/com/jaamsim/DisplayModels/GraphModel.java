@@ -248,13 +248,14 @@ public class GraphModel extends DisplayModel {
 			// Title
 			Vec3d objectSize = graphObservee.getSize();
 			double titleHeight = graphObservee.getTitleHeight();
+			double titleGap = graphObservee.getTitleGap();
 			String titleText = graphObservee.getTitle();
 			Color4d titleColour = graphObservee.getTitleColour();
 			String fontName = graphObservee.getFontName();
 
 			TessFontKey fontKey = new TessFontKey(fontName);
 
-			Vec4d titleCenter = new Vec4d(0, graphOrigin.y + graphSize.y + titleHeight, decZBump, 1.0d);
+			Vec4d titleCenter = new Vec4d(0, graphOrigin.y + graphSize.y + titleGap + titleHeight/2, decZBump, 1.0d);
 
 			// Compensate for the non-linear scaling in the parent object
 			double xScaleFactor = objectSize.y / objectSize.x;
@@ -262,7 +263,6 @@ public class GraphModel extends DisplayModel {
 			// These two matrices are needed to cancel out the object level non-uniform scaling for text objects
 			// xScale if for horizontal text, yScale is for vertical text
 			Vec3d xScaleVec = new Vec3d(xScaleFactor, 1, 1);
-
 			Vec3d yScaleVec = new Vec3d(1/xScaleFactor, 1, 1);
 
 			Mat4d titleTrans = new Mat4d();
@@ -278,7 +278,6 @@ public class GraphModel extends DisplayModel {
 			String yAxisLabelFormat = graphObservee.getYAxisLabelFormat();
 			double yAxisLabelGap = graphObservee.getYAxisLabelGap();
 			double labelHeight = graphObservee.getLabelHeight();
-			double labelWidth = graphObservee.getLabelHeight() * xScaleFactor;
 			Color4d labelColour = graphObservee.getLabelColour();
 
 			Unit yAxisUnit = graphObservee.getYAxisUnit();
@@ -286,29 +285,27 @@ public class GraphModel extends DisplayModel {
 			if( yAxisUnit != null )
 				yAxisUnit.getConversionFactorToSI();
 
-			double xTickSize = labelHeight/2 * xScaleFactor;
-			double yTickSize = labelHeight/2;
+			double xTickSize = labelHeight/2 * xScaleFactor; // horizontal tick marks for the y-axis
+			double yTickSize = labelHeight/2; // vertical tick marks for the x-axis
 
 			ArrayList<Vec4d> tickPoints = new ArrayList<Vec4d>();
 
 			double minYLabelXPos = graphOrigin.x;
 			double maxYLabelXPos = graphOrigin.x + graphSize.x;
+
 			// Y labels
 			for (int i = 0; i * yAxisInterval <= yRange; ++i) {
 
 				String text = String.format( yAxisLabelFormat,  ( i * yAxisInterval + yMin )/yAxisFactor);
-
-				// Find the rendered string size so we can right justify the labels
-				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight, text);
-
 				double yPos = graphOrigin.y + (i * yAxisInterval * graphSize.y )/yRange; // current label
-				// Right justify the label
-				double rightJustifyFactor = stringSize.x * xScaleFactor * 0.5;
-				double xPos = graphOrigin.x - yAxisLabelGap - xTickSize - labelWidth - rightJustifyFactor;
 
-				if (xPos - stringSize.x * xScaleFactor < minYLabelXPos) {
-					minYLabelXPos = xPos - stringSize.x * xScaleFactor;
-				}
+				// Right justify the labels
+				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight*xScaleFactor, text);
+				double rightJustifyOffset = stringSize.x * 0.5;
+				double xPos = graphOrigin.x - xTickSize - yAxisLabelGap - rightJustifyOffset;
+
+				// Save the left-most extent of the labels
+				minYLabelXPos = Math.min(minYLabelXPos, xPos - rightJustifyOffset);
 
 				Mat4d labelTrans = new Mat4d();
 				labelTrans.setTranslate3(new Vec3d(xPos, yPos, decZBump));
@@ -317,6 +314,7 @@ public class GraphModel extends DisplayModel {
 
 				out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
 
+				// Prepare the tick marks
 				Vec4d tickPointA = new Vec4d(graphOrigin.x            , yPos, decZBump, 1.0d);
 				Vec4d tickPointB = new Vec4d(graphOrigin.x - xTickSize, yPos, decZBump, 1.0d);
 				tickPointA.mult4(objectTransComp, tickPointA);
@@ -335,24 +333,17 @@ public class GraphModel extends DisplayModel {
 
 			// Secondary Y labels
 			for (int i = 0; i * secYAxisInterval <= secYRange; ++i) {
-				// The defaults for the secondary axis allow for an infinite loop, check here and bail
-				if (secYAxisInterval == 0 || yRange == 0) {
-					break;
-				}
 
 				String text = String.format( secYAxisLabelFormat,  ( i * secYAxisInterval + secYMin )/secYAxisFactor);
-
-				// Find the rendered string size so we can right justify the labels
-				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight, text);
-
 				double yPos = graphOrigin.y + (i * secYAxisInterval * graphSize.y )/secYRange; // current label
-				// Right justify the label
-				double leftJustifyFactor = stringSize.x * xScaleFactor * 0.5;
-				double xPos = graphOrigin.x + graphSize.x + yAxisLabelGap + xTickSize + labelWidth + leftJustifyFactor;
 
-				if (xPos + stringSize.x * xScaleFactor > maxYLabelXPos) {
-					maxYLabelXPos = xPos + stringSize.x * xScaleFactor;
-				}
+				// Right justify the labels
+				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight*xScaleFactor, text);
+				double leftJustifyOffset = stringSize.x * 0.5;
+				double xPos = graphOrigin.x + graphSize.x + xTickSize + yAxisLabelGap + leftJustifyOffset;
+
+				// Save the right-most extent of the labels
+				maxYLabelXPos = Math.max(maxYLabelXPos, xPos + leftJustifyOffset);
 
 				Mat4d labelTrans = new Mat4d();
 				labelTrans.setTranslate3(new Vec3d(xPos, yPos, decZBump));
@@ -361,6 +352,7 @@ public class GraphModel extends DisplayModel {
 
 				out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
 
+				// Prepare the tick marks
 				Vec4d tickPointA = new Vec4d(graphOrigin.x + graphSize.x            , yPos, decZBump, 1.0d);
 				Vec4d tickPointB = new Vec4d(graphOrigin.x + graphSize.x + xTickSize, yPos, decZBump, 1.0d);
 				tickPointA.mult4(objectTransComp, tickPointA);
@@ -390,8 +382,8 @@ public class GraphModel extends DisplayModel {
 					text = String.format( xAxisFormat, time/xAxisFactor);
 				}
 
-				double xPos = graphOrigin.x + ( ( i * timeInterval) * graphSize.x)/xRange;
-				double yPos = graphOrigin.y - xAxisLabelGap/objectScale.y - labelHeight - yTickSize;
+				double xPos = graphOrigin.x + ( i * timeInterval * graphSize.x)/xRange;
+				double yPos = graphOrigin.y - yTickSize - labelHeight - xAxisLabelGap;
 
 				Mat4d labelTrans = new Mat4d();
 				labelTrans.setTranslate3(new Vec3d(xPos, yPos, decZBump));
@@ -400,6 +392,7 @@ public class GraphModel extends DisplayModel {
 
 				out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
 
+				// Prepare the tick marks
 				Vec4d tickPointA = new Vec4d(xPos, graphOrigin.y, decZBump, 1.0d);
 				Vec4d tickPointB = new Vec4d(xPos, graphOrigin.y - yTickSize, decZBump, 1.0d);
 				tickPointA.mult4(objectTransComp, tickPointA);
@@ -410,13 +403,13 @@ public class GraphModel extends DisplayModel {
 
 			out.add(new LineProxy(tickPoints, labelColour, 1, getVisibilityInfo(), pickingID));
 
-			// The Y Axis label
+			// The Y-Axis and Secondary Y-Axis Titles
 			String yAxisTitle = graphObservee.getYAxisTitle();
 			String secYAxisTitle = graphObservee.getSecondaryYAxisTitle();
 			double yAxisTitleHeight = graphObservee.getYAxisTitleHeight();
 			double yAxisTitleGap = graphObservee.getYAxisTitleGap();
-			double xPos = minYLabelXPos - yAxisTitleGap;
-			double secXPos = maxYLabelXPos + yAxisTitleGap;
+			double xPos = minYLabelXPos - yAxisTitleGap - yAxisTitleHeight/2;
+			double secXPos = maxYLabelXPos + yAxisTitleGap + yAxisTitleHeight/2;
 
 			Mat4d ytitleTrans = new Mat4d();
 			ytitleTrans.setTranslate3(new Vec3d(xPos, 0, decZBump));

@@ -699,13 +699,13 @@ public class Graph extends DisplayEntity  {
 		Vec3d graphExtent = getSize();
 		// Draw graphic rectangle
 		graphSize = new Vec3d();
-		graphSize.x = ( ( graphExtent.x - ( leftMargin.getValue() +  rightMargin.getValue() ) ) / graphExtent.x );
-		graphSize.y = ( ( graphExtent.y - (  topMargin.getValue() + bottomMargin.getValue() ) ) / graphExtent.y );
+		graphSize.x = ( graphExtent.x - leftMargin.getValue() - rightMargin.getValue() ) / graphExtent.x;
+		graphSize.y = ( graphExtent.y - topMargin.getValue() - bottomMargin.getValue() ) / graphExtent.y;
 		graphSize.z = 1;
 
 		// Center position of the graph
-		graphCenter = new Vec3d( ( ( leftMargin.getValue() ) / 2 -	rightMargin.getValue()/2 ) / graphExtent.x,
-				(( bottomMargin.getValue() ) / 2 - ( topMargin.getValue() ) / 2 ) / graphExtent.y , 0.0 );
+		graphCenter = new Vec3d( ( leftMargin.getValue()/2 - rightMargin.getValue()/2 ) / graphExtent.x,
+				( bottomMargin.getValue()/2 - topMargin.getValue()/2 ) / graphExtent.y , 0.0 );
 
 		graphOrigin = new Vec3d( graphCenter.x - graphSize.x/2, graphCenter.y - graphSize.y/2, 0.0  );
 
@@ -907,18 +907,6 @@ public class Graph extends DisplayEntity  {
 		return endTime.getValue();
 	}
 
-	public double getLabelHeight() {
-		return labelTextHeight.getValue() / getSize().y;
-	}
-
-	public double getTitleHeight() {
-		double titleHeight = titleTextHeight.getValue();
-		if( titleHeight == 0.0 && ! title.getValue().isEmpty() ) {
-			titleHeight = labelTextHeight.getValue();
-		}
-		return titleHeight / getSize().y;
-	}
-
 	public String getTitle() {
 		return title.getValue();
 	}
@@ -965,14 +953,6 @@ public class Graph extends DisplayEntity  {
 		return secondaryYAxisTitle.getValue();
 	}
 
-	public double getYAxisTitleHeight() {
-		return yAxisTitleTextHeight.getValue() / getSize().x;
-	}
-
-	public double getYAxisTitleGap() {
-		return yAxisTitleGap.getValue() / getSize().x;
-	}
-
 	public double getYAxisInterval() {
 		return yAxisInterval.getValue();
 	}
@@ -980,23 +960,11 @@ public class Graph extends DisplayEntity  {
 		return yAxisLabelFormat.getValue();
 	}
 
-	public double getXAxisLabelGap() {
-		return xAxisLabelGap.getValue() / getSize().y;
-	}
-
 	public double getSecondaryYAxisInterval() {
 		return secondaryYAxisInterval.getValue();
 	}
 	public String getSecondaryYAxisLabelFormat() {
 		return secondaryYAxisLabelFormat.getValue();
-	}
-
-	public double getYAxisLabelGap() {
-		return yAxisLabelGap.getValue();
-	}
-
-	public double getTitleGap() {
-		return titleGap.getValue();
 	}
 
 	public Color4d getLabelColour() {
@@ -1021,6 +989,34 @@ public class Graph extends DisplayEntity  {
 
 	public double getTimeInterval() {
 		return timeInterval.getValue();
+	}
+
+	public double getTitleHeight() {
+		return titleTextHeight.getValue() / getSize().y;
+	}
+
+	public double getTitleGap() {
+		return titleGap.getValue() / getSize().y;
+	}
+
+	public double getLabelHeight() {
+		return labelTextHeight.getValue() / getSize().y;
+	}
+
+	public double getXAxisLabelGap() {
+		return xAxisLabelGap.getValue() / getSize().y;
+	}
+
+	public double getYAxisTitleHeight() {
+		return yAxisTitleTextHeight.getValue() / getSize().x;
+	}
+
+	public double getYAxisTitleGap() {
+		return yAxisTitleGap.getValue() / getSize().x;
+	}
+
+	public double getYAxisLabelGap() {
+		return yAxisLabelGap.getValue() / getSize().x;
 	}
 
 	// ******************************************************************************************
