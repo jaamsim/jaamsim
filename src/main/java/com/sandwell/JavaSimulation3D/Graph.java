@@ -575,6 +575,36 @@ public class Graph extends DisplayEntity  {
 			secondaryYAxisInterval.setUnitType(secondaryDataUnitType);
 			FrameBox.valueUpdate();  // show the new units in the Input Editor
 		}
+
+		if (in == xAxisLabelFormat) {
+			String temp = xAxisLabelFormat.getValue();
+			try {
+				String.format(temp,0.0);
+			}
+			catch (Throwable e) {
+				throw new InputErrorException("Invalid Java format string", temp);
+			}
+		}
+
+		if (in == yAxisLabelFormat) {
+			String temp = yAxisLabelFormat.getValue();
+			try {
+				String.format(temp,0.0);
+			}
+			catch (Throwable e) {
+				throw new InputErrorException("Invalid Java format string", temp);
+			}
+		}
+
+		if (in == secondaryYAxisLabelFormat) {
+			String temp = secondaryYAxisLabelFormat.getValue();
+			try {
+				String.format(temp,0.0);
+			}
+			catch (Throwable e) {
+				throw new InputErrorException("Invalid Java format string", temp);
+			}
+		}
 	}
 
 	@Override
@@ -639,6 +669,8 @@ public class Graph extends DisplayEntity  {
 
 	private void populateSeriesInfo(ArrayList<SeriesInfo> infos, OutputListInput<Double> data) {
 		ArrayList<OutputHandle> outs = data.getValue();
+		if( outs == null )
+			return;
 		for (int outInd = 0; outInd < outs.size(); ++outInd) {
 			SeriesInfo info = new SeriesInfo();
 			info.out = outs.get(outInd);
