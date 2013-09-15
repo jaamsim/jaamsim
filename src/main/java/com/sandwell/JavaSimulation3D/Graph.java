@@ -18,18 +18,19 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.ColorListInput;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.EntityInput;
@@ -39,7 +40,6 @@ import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.Vec3dInput;
 import com.jaamsim.input.OutputHandle;
 
 public class Graph extends DisplayEntity  {
@@ -63,20 +63,55 @@ public class Graph extends DisplayEntity  {
 	private Class<? extends Unit> dataUnitType;          // unit type for the graphed lines plotted against the y-axis
 	private Class<? extends Unit> secondaryDataUnitType;  // unit type for the graphed lines plotted against the secondary y-axis
 
+	// Size and position of the graph area (excluding the titles, labels, etc.) scaled to the unit cube for the DisplayModel
+	protected Vec3d graphSize;   // graph size
+	protected Vec3d graphOrigin; // bottom left position of the graph area,
+	protected Vec3d graphCenter; // Center point of the graph area
+
+	static int ENTITY_ONLY = 0;
+	static int PARAMETER_ONLY = 1;
+	static int ENTITY_PARAMETER = 2;
+
+	// Data category
+
+	@Keyword(description = "The number of data points that can be displayed on the graph. This " +
+	                "parameter determines the resolution of the graph.",
+	         example = "Graph1 NumberOfPoints { 200 }")
+	protected final IntegerInput numberOfPoints;
+
 	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
 			"  Each source is graphed as a separate line and is specified by an Entity and its Output.",
      example = "Graph1 DataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
 	protected final OutputListInput<Double> dataSource;
+
+	@Keyword(description = "A list of colours (each consisting of a colour keyword or RGB values) for the line series to be displayed. " +
+	                "For multiple colours, each colour must be enclosed in braces as they can themselves be defined as a list of RGB values.",
+	         example = "Graph1 LineColors { midnightblue }")
+	protected final ColorListInput lineColorsList;
+
+	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.",
+	         example = "Graph1 LineWidths { 1 2 3 7 }")
+	protected final DoubleListInput lineWidths;
 
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
 			"  Each source is graphed as a separate line and is specified by an Entity and its Output.",
      example = "Graph1 SecondaryDataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
 	protected final OutputListInput<Double> secondaryDataSource;
 
-	@Keyword(description = "The number of data points that can be displayed on the graph. This " +
-	                "parameter determines the resolution of the graph.",
-	         example = "Graph1 NumberOfPoints { 200 }")
-	protected final IntegerInput numberOfPoints;	 // Total number of values that can be shown on the graph (the more the sharper the graph)
+	@Keyword(description = "A list of colours (each consisting of a colour keyword or RGB values) for the line series to be displayed. " +
+	                "For multiple colours, each colour must be enclosed in braces as they can themselves be defined as a list of RGB values.",
+	         example = "Graph1 SecondaryLineColors { midnightblue }")
+	protected final ColorListInput secondaryLineColorsList;
+
+	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.",
+	         example = "Graph1 SecondaryLineWidths { 1 2 3 7 }")
+	protected final DoubleListInput secondaryLineWidths;
+
+	// X-Axis category
+
+	@Keyword(description = "The time unit to be used for the x-axis.",
+	         example = "Graph1 XAxisUnit { h }")
+	private final EntityInput<TimeUnit> xAxisUnit;
 
 	@Keyword(description = "The start time for the x-axis relative to the present time.\n" +
 			"The present time is 0 for this axis.",
@@ -91,6 +126,26 @@ public class Graph extends DisplayEntity  {
 	@Keyword(description = "The time increment between the tick marks on the x-axis.",
 	         example = "Graph1 TimeInterval { 8 h }")
 	private final ValueInput timeInterval;
+
+	@Keyword(description = "The Java format to be used for the tick mark values on the x-axis.\n" +
+			"For example, the format %.1fs would dispaly the value 5 as 5.0s.",
+	         example = "Graph1 XAxisLabelFormat { %.1fs }")
+	private final StringInput xAxisLabelFormat;
+
+	@Keyword(description = "A list of time values between StartTime and EndTime where vertical gridlines are inserted.",
+	         example = "Graph1 XLines { -48 -40 -32 -24 -16 -8 0 h }")
+	private final ValueListInput xLines;
+
+	@Keyword(description = "The color of the vertical gridlines (or a list corresponding to the colour of each " +
+	                "gridline defined in XLines), defined using a colour keyword or RGB values.",
+	         example = "Graph1 XLinesColor { gray76 }")
+	private final ColorListInput xLinesColor;
+
+	// Y-Axis category
+
+	@Keyword(description = "Title of the y-axis, enclosed in single quotes, rotated by 90 degrees counter-clockwise.",
+	         example = "Graph1 YAxisTitle { 'Water Height (m)' }")
+	private final StringInput yAxisTitle;
 
 	@Keyword(description = "The unit to be used for the y-axis.\n" +
 			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
@@ -110,6 +165,11 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 YAxisInterval { 1 t/h }")
 	private final ValueInput yAxisInterval;
 
+	@Keyword(description  = "The Java format to be used for the tick mark values on the y-axis.\n" +
+			"For example, the format %.1f would dispaly the value 5 as 5.0.",
+	         example = "Graph1 YAxisLabelFormat { %.1f }")
+	private final StringInput yAxisLabelFormat;
+
 	@Keyword(description = "A list of values at which to insert horizontal gridlines.",
 	         example ="Graph1 YLines { 0  0.5  1  1.5  2  2.5  3  t/h }")
 	private final ValueListInput yLines;
@@ -118,6 +178,12 @@ public class Graph extends DisplayEntity  {
                     "gridline defined in YLines), defined using a colour keyword or RGB values.",
 	         example = "Graph1 YLinesColor { gray76 }")
 	private final ColorListInput yLinesColor;
+
+	// Secondary Y-Axis category
+
+	@Keyword(description = "Title of the secondary y-axis, enclosed in single quotes, rotated by 90 degrees clockwise.",
+	         example = "Graph1 SecondaryYAxisTitle { 'Water Height (m)' }")
+	private final StringInput secondaryYAxisTitle;
 
 	@Keyword(description = "The unit to be used for the secondary y-axis.\n" +
 			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
@@ -137,55 +203,68 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 SecondaryYAxisInterval { 1 }")
 	private final ValueInput secondaryYAxisInterval;
 
-	@Keyword(description = "A list of time values between StartTime and EndTime where vertical gridlines are inserted.",
-	         example = "Graph1 XLines { -48 -40 -32 -24 -16 -8 0 h }")
-	private final ValueListInput xLines;
+	@Keyword(description  = "The Java format to be used for the tick mark values on the secondary y-axis.\n" +
+			"For example, the format %.1f would dispaly the value 5 as 5.0.",
+	         example = "Graph1 SecondaryYAxisLabelFormat { %.1f }")
+	private final StringInput secondaryYAxisLabelFormat;
 
-	@Keyword(description = "The color of the vertical gridlines (or a list corresponding to the colour of each " +
-	                "gridline defined in XLines), defined using a colour keyword or RGB values.",
-	         example = "Graph1 XLinesColor { gray76 }")
-	private final ColorListInput xLinesColor;
-
-	@Keyword(description = "Title of the y-axis, enclosed in single quotes, rotated by 90 degrees counter-clockwise.",
-	         example = "Graph1 YAxisTitle { 'Water Height (m)' }")
-	private final StringInput yAxisTitle; // Title for the y axis
-
-	@Keyword(description = "Title of the secondary y-axis, enclosed in single quotes, rotated by 90 degrees clockwise.",
-	         example = "Graph1 SecondaryYAxisTitle { 'Water Height (m)' }")
-	private final StringInput secondaryYAxisTitle; // Title for the secondary y axis
+	// Layout category
 
 	@Keyword(description= "Text for the graph title, enclosed in single quotes if it contains spaces.",
 	         example = "Graph1 Title { 'Title of the Graph' }")
-	private final StringInput title;	   // Title of the graph (shown on the center top)
+	private final StringInput title;
+
+	@Keyword(description = "The text height for the graph title.",
+	         example = "Graph1 TitleTextHeight { 0.50 m }")
+	private final ValueInput titleTextHeight;
+
+	@Keyword(description = "The text height for the y-axis title.",
+	         example = "Graph1 YAxisTitleTextHeight { 0.30 m }")
+	private final ValueInput yAxisTitleTextHeight;
+
+	@Keyword(description = "The text height for both x- and y-axis labels.",
+	         example = "Graph1 LabelTextHeight { 0.35 m }")
+	private final ValueInput labelTextHeight;
+
+	@Keyword(description = "The gap between the title and top of the graph.",
+	         example = "Graph1 TitleGap { 0.30 m }")
+	private final ValueInput titleGap;
+
+	@Keyword(description = "The gap between the x-axis labels and the x-axis.",
+	         example = "Graph1 XAxisLabelGap { 0.30 m }")
+	private final ValueInput xAxisLabelGap;
+
+	@Keyword(description = "The gap between the y-axis and its labels.  If left blank, this is automatically calculated.",
+	         example = "Graph1 YAxisLabelGap { 0.30 m }")
+	private final ValueInput yAxisLabelGap;
+
+	@Keyword(description = "The gap between the y-axis title and the y-axis labels.",
+	         example = "Graph1 yAxisTitleGap { 0.30 m }")
+	private final ValueInput yAxisTitleGap;
+
+	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
+	                "side of the graph.",
+	         example = "Graph1 TopMargin { 0.30 m }")
+	private final ValueInput topMargin;
+
+	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
+	                "side of the graph.",
+             example = "Graph1 BottomMargin { 0.30 m }")
+	private final ValueInput bottomMargin;
+
+	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
+	                "side of the graph.",
+	         example = "Graph1 LeftMargin { 0.20 m }")
+	private final ValueInput leftMargin;
+
+	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
+	                "side of the graph.",
+	         example = "Graph1 RightMargin { 0.40 m }")
+	private final ValueInput rightMargin;
 
 	@Keyword(description = "The font name for all labels, enclosed in single quotes.",
 	         example = "Graph1 LabelFontName { 'Arial' }")
-	protected final StringInput labelFontName; // For all the texts
-	protected Vec3d graphSize;   // graph size (the actual graph area)
-	protected Vec3d graphOrigin; // bottom left position of the graph
-	protected Vec3d graphCenter; // Center point of the graph
-
-	// A list of the line thickness for corresponding item in targetEntityList
-
-	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.",
-	         example = "Graph1 LineWidths { 1 2 3 7 }")
-	protected final DoubleListInput lineWidths;
-
-	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.",
-	         example = "Graph1 SecondaryLineWidths { 1 2 3 7 }")
-	protected final DoubleListInput secondaryLineWidths;
-
-	@Keyword(description = "A list of colours (each consisting of a colour keyword or RGB values) for the line series to be displayed. " +
-	                "For multiple colours, each colour must be enclosed in braces as they can themselves be defined as a list of RGB values.",
-	         example = "Graph1 LineColors { midnightblue }")
-	protected final ColorListInput lineColorsList;	// list of line colours for each entity. Each element contains a vector of colours for each series for that entity
-	//protected ArrayList<ColoringAttributes> lineColors;
-
-	@Keyword(description = "A list of colours (each consisting of a colour keyword or RGB values) for the line series to be displayed. " +
-	                "For multiple colours, each colour must be enclosed in braces as they can themselves be defined as a list of RGB values.",
-	         example = "Graph1 SecondaryLineColors { midnightblue }")
-	protected final ColorListInput secondaryLineColorsList;
-
+	protected final StringInput labelFontName;
 
 	@Keyword(description = "The colour of the graph background, defined by a color keyword or RGB values.",
 	         example = "Graph1 GraphColor { floralwhite }")
@@ -194,10 +273,6 @@ public class Graph extends DisplayEntity  {
 	@Keyword(description = "The colour for both axes labels, defined using a colour keyword or RGB values.",
 	         example = "Graph1 LabelFontColor { black }")
 	private final ColourInput labelFontColor;
-
-	@Keyword(description = "The color for tick marks, defined using a colour keyword or RGB values.",
-	         example = "Graph1 TickColor { black }")
-	private final ColourInput tickColor;
 
 	@Keyword(description = "The color for the outer pane background, defined using a colour keyword or RGB values.",
 	         example = "Graph1 BackgroundColor { floralwhite }")
@@ -211,116 +286,45 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 TitleColor { black }")
 	private final ColourInput titleColor;
 
+	/*@Keyword(description = "The color for tick marks, defined using a colour keyword or RGB values.",
+	         example = "Graph1 TickColor { black }")
+	private final ColourInput tickColor;*/
 
-	@Keyword(description = "The text height for both x- and y-axis labels.",
-	         example = "Graph1 LabelTextHeight { 0.35 }")
-	private final DoubleInput labelTextHeight; // Text height for axes labels
+	// Legend category (not implemented at present)
 
-	@Keyword(description = "The text height for the graph title.",
-	         example = "Graph1 TitleTextHeight { 0.5 }")
-	private final DoubleInput titleTextHeight; // Title text height
-
-	@Keyword(description = "The text height for the y-axis title.",
-	         example = "Graph1 YAxisTitleTextHeight { 0.3 }")
-	private final DoubleInput yAxisTitleTextHeight; // y axis title text height
-
-	@Keyword(description = "The gap between the x-axis labels and the x-axis.",
-	         example = "Graph1 XAxisLabelGap { 0.3 }")
-	private final DoubleInput xAxisLabelGap; // Distance between labels and x axis
-
-	@Keyword(description = "The gap between the y-axis and its labels.  If left blank, this is automatically calculated.",
-	         example = "Graph1 YAxisLabelGap { 0.3 }")
-	private final DoubleInput yAxisLabelGap; // Distance between labels and y axis
-
-	@Keyword(description = "The gap between the title and top of the graph.",
-	         example = "Graph1 TitleGap { 0.3 }")
-	private final DoubleInput titleGap; // gap between title and graph top
-
-	@Keyword(description = "The gap between the y-axis title and the y-axis labels.",
-	         example = "Graph1 yAxisTitleGap { 0.3 }")
-	private final DoubleInput yAxisTitleGap; // gap between y axis title and y axis labels
-
-	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
-	                "side of the graph.",
-	         example = "Graph1 TopMargin { 0.300 }")
-	private final DoubleInput topMargin;		// Empty margin at top
-
-	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
-	                "side of the graph.",
-             example = "Graph1 BottomMargin { 0.300 }")
-	private final DoubleInput bottomMargin;	// Empty margin at bottom
-
-	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
-	                "side of the graph.",
-	         example = "Graph1 LeftMargin { 0.200 }")
-	private final DoubleInput leftMargin;		// Empty margin at left
-
-	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
-	                "side of the graph.",
-	         example = "Graph1 RightMargin { 0.400 }")
-	private final DoubleInput rightMargin;		// Empty margin at right
-
-
-	@Keyword(description = "Coordinates (in { x, y, z }) of the center of the legend.",
+	/*@Keyword(description = "Coordinates (in { x, y, z }) of the center of the legend.",
 	         example = "Graph1 LegendCenter { -10 -10 0 }")
-	private final Vec3dInput legendCenter; // TopLeft corner of the legend
+	private final Vec3dInput legendCenter;
 
 	@Keyword(description = "Size (width and height) of the legend.",
 	         example = "Graph1 LegendSize { 7.00 4.00 }")
-	private final Vec3dInput legendSize;	  // size of legend
+	private final Vec3dInput legendSize;
 
 	@Keyword(description = "The height of the legend text.",
 	         example = "Graph1 LegendTextHeight { 0.5 }")
-	private DoubleInput legendTextHeight;			// height of text in legend
+	private DoubleInput legendTextHeight;
 
 	@Keyword(description = "Width and height of the legend markers.",
 	         example = "Graph1 LegendMarkerSize { 2.4 0.03 }")
-	private final Vec3dInput legendMarkerSize;	// size of the marker for each series
+	private final Vec3dInput legendMarkerSize;
 
 	@Keyword(description = "The gap between the left margin of the legend and the text labels.",
 	         example = "Graph1 LegendSeriesLabelGap { 3 }")
-	private final DoubleInput seriesLabelGap;				// gap between the marker and the text for the series
+	private final DoubleInput seriesLabelGap;
 
 	@Keyword(description = "The gap between the left margin of the legend and the legend markers.",
 	         example = "Graph1 LegendSeriesMarkerGap { 0.1 }")
-	private final DoubleInput seriesMakerGap;				// gap between the left border and the maker
-
-	static int ENTITY_ONLY = 0;
-	static int PARAMETER_ONLY = 1;
-	static int ENTITY_PARAMETER = 2;
-
-
-	@Keyword(description  = "The Java format to be used for the tick mark values on the y-axis.\n" +
-			"For example, the format %.1f would dispaly the value 5 as 5.0.",
-	         example = "Graph1 YAxisLabelFormat { %.1f }")
-	private final StringInput yAxisLabelFormat;
-
-	@Keyword(description  = "The Java format to be used for the tick mark values on the secondary y-axis.\n" +
-			"For example, the format %.1f would dispaly the value 5 as 5.0.",
-	         example = "Graph1 SecondaryYAxisLabelFormat { %.1f }")
-	private final StringInput secondaryYAxisLabelFormat;
-
-	@Keyword(description = "The Java format to be used for the tick mark values on the x-axis.\n" +
-			"For example, the format %.1fs would dispaly the value 5 as 5.0s.",
-	         example = "Graph1 XAxisLabelFormat { %.1fs }")
-	private final StringInput xAxisLabelFormat;
-
-	@Keyword(description = "The time unit to be used for the x-axis.",
-	         example = "Graph1 XAxisUnit { h }")
-	private final EntityInput<TimeUnit> xAxisUnit;
+	private final DoubleInput seriesMakerGap; */
 
 	{
-		yAxisUnit = new EntityInput<Unit>(Unit.class, "YAxisUnit", "Data", null);
-		this.addInput(yAxisUnit, true);
+		// Data category
+
+		numberOfPoints = new IntegerInput("NumberOfPoints", "Data", 100);
+		numberOfPoints.setValidRange(0, Integer.MAX_VALUE);
+		this.addInput(numberOfPoints, true);
 
 		dataSource = new OutputListInput<Double>(Double.class, "DataSource", "Data", null);
 		this.addInput(dataSource, true);
-
-		secondaryYAxisUnit = new EntityInput<Unit>(Unit.class, "SecondaryYAxisUnit", "Secondary Data", null);
-		this.addInput(secondaryYAxisUnit, true);
-
-		secondaryDataSource = new OutputListInput<Double>(Double.class, "SecondaryDataSource", "Secondary Data", null);
-		this.addInput(secondaryDataSource, true);
 
 		lineColorsList = new ColorListInput("LineColours", "Data", new ArrayList<Color4d>(0));
 		this.addInput(lineColorsList, true, "LineColors");
@@ -328,136 +332,185 @@ public class Graph extends DisplayEntity  {
 		lineWidths = new DoubleListInput("LineWidths", "Data", new DoubleVector());
 		this.addInput(lineWidths, true);
 
-		numberOfPoints = new IntegerInput("NumberOfPoints", "Data", 100);
-		numberOfPoints.setValidRange(0, Integer.MAX_VALUE);
-		this.addInput(numberOfPoints, true);
+		secondaryDataSource = new OutputListInput<Double>(Double.class, "SecondaryDataSource", "Data", null);
+		this.addInput(secondaryDataSource, true);
 
-		startTime = new ValueInput("StartTime", "X Axis", -86400.0d);  // default = -24 hours
+		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", "Data", new ArrayList<Color4d>(0));
+		this.addInput(secondaryLineColorsList, true, "SecondaryLineColors");
+
+		secondaryLineWidths = new DoubleListInput("SecondaryLineWidths", "Data", new DoubleVector());
+		this.addInput(secondaryLineWidths, true);
+
+		// X-Axis category
+
+		xAxisUnit = new EntityInput<TimeUnit>(TimeUnit.class, "XAxisUnit", "X-Axis", null);
+		this.addInput(xAxisUnit, true);
+
+		startTime = new ValueInput("StartTime", "X-Axis", -60.0d);
 		startTime.setUnitType(TimeUnit.class);
+		startTime.setValidRange(Double.NEGATIVE_INFINITY, 1.0e-6);
 		this.addInput(startTime, true);
 
-		endTime = new ValueInput("EndTime", "X Axis", 0.0d);
+		endTime = new ValueInput("EndTime", "X-Axis", 0.0d);
 		endTime.setUnitType(TimeUnit.class);
+		endTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(endTime, true);
 
-		timeInterval = new ValueInput("TimeInterval", "X Axis", 21600.0d); // default = 6 hours
+		timeInterval = new ValueInput("TimeInterval", "X-Axis", 10.0d);
 		timeInterval.setUnitType(TimeUnit.class);
+		timeInterval.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		this.addInput(timeInterval, true);
 
-		xLines = new ValueListInput("XLines", "X Axis", new DoubleVector());
+		xAxisLabelFormat = new StringInput("XAxisLabelFormat", "X-Axis", "%.0fs");
+		this.addInput(xAxisLabelFormat, true);
+
+		//tickColor = new ColourInput("TickColor", "X-Axis", ColourInput.DARK_BLUE);
+		//this.addInput(tickColor, true, "TickColour");
+
+		DoubleVector defXLines = new DoubleVector();
+		defXLines.add(-20.0);
+		defXLines.add(-40.0);
+		xLines = new ValueListInput("XLines", "X-Axis", defXLines);
 		xLines.setUnitType(TimeUnit.class);
 		this.addInput(xLines, true);
 
-		xLinesColor = new ColorListInput("XLinesColor", "X Axis", new ArrayList<Color4d>(0));
+		ArrayList<Color4d> defXlinesColor = new ArrayList<Color4d>(0);
+		defXlinesColor.add(ColourInput.getColorWithName("gray50"));
+		xLinesColor = new ColorListInput("XLinesColor", "X-Axis", defXlinesColor);
 		this.addInput(xLinesColor, true, "XLinesColour");
 
-		yAxisStart = new ValueInput("YAxisStart", "Y Axis", 0.0);
+		// Y-Axis category
+
+		yAxisTitle = new StringInput("YAxisTitle", "Y-Axis", "Y-Axis Title");
+		this.addInput(yAxisTitle, true);
+
+		yAxisUnit = new EntityInput<Unit>(Unit.class, "YAxisUnit", "Y-Axis", null);
+		this.addInput(yAxisUnit, true);
+
+		yAxisStart = new ValueInput("YAxisStart", "Y-Axis", 0.0);
 		yAxisStart.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yAxisStart, true);
 
-		yAxisEnd = new ValueInput("YAxisEnd", "Y Axis", 5.0d);
+		yAxisEnd = new ValueInput("YAxisEnd", "Y-Axis", 5.0d);
 		yAxisEnd.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yAxisEnd, true);
 
-		yAxisInterval = new ValueInput("YAxisInterval", "Y Axis", 1.0d);
+		yAxisInterval = new ValueInput("YAxisInterval", "Y-Axis", 1.0d);
 		yAxisInterval.setUnitType(UserSpecifiedUnit.class);
+		yAxisInterval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		this.addInput(yAxisInterval, true);
 
-		yLines = new ValueListInput("YLines", "Y Axis", new DoubleVector());
+		yAxisLabelFormat = new StringInput("YAxisLabelFormat", "Y-Axis", "%.1f");
+		this.addInput(yAxisLabelFormat, true);
+
+		DoubleVector defYLines = new DoubleVector();
+		defYLines.add(1.0);
+		defYLines.add(2.0);
+		defYLines.add(3.0);
+		defYLines.add(4.0);
+		yLines = new ValueListInput("YLines", "Y-Axis", defYLines);
 		yLines.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yLines, true);
 
-		yLinesColor = new ColorListInput("YLinesColor", "Y Axis", new ArrayList<Color4d>(0));
+		ArrayList<Color4d> defYlinesColor = new ArrayList<Color4d>(0);
+		defYlinesColor.add(ColourInput.getColorWithName("gray50"));
+		yLinesColor = new ColorListInput("YLinesColor", "Y-Axis", defYlinesColor);
 		this.addInput(yLinesColor, true, "YLinesColour");
 
-		secondaryYAxisStart = new ValueInput("SecondaryYAxisStart", "Y Axis", 0.0);
+		// Secondary Y-Axis category
+
+		secondaryYAxisTitle = new StringInput("SecondaryYAxisTitle", "Secondary Y-Axis", "Secondary Y-Axis Title");
+		this.addInput(secondaryYAxisTitle, true);
+
+		secondaryYAxisUnit = new EntityInput<Unit>(Unit.class, "SecondaryYAxisUnit", "Secondary Y-Axis", null);
+		this.addInput(secondaryYAxisUnit, true);
+
+		secondaryYAxisStart = new ValueInput("SecondaryYAxisStart", "Secondary Y-Axis", 0.0);
 		secondaryYAxisStart.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(secondaryYAxisStart, true);
 
-		secondaryYAxisEnd = new ValueInput("SecondaryYAxisEnd", "Y Axis", 0.0);
+		secondaryYAxisEnd = new ValueInput("SecondaryYAxisEnd", "Secondary Y-Axis", 5.0);
 		secondaryYAxisEnd.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(secondaryYAxisEnd, true);
 
-		secondaryYAxisInterval = new ValueInput("SecondaryYAxisInterval", "Y Axis", 0.0);
+		secondaryYAxisInterval = new ValueInput("SecondaryYAxisInterval", "Secondary Y-Axis", 1.0);
 		secondaryYAxisInterval.setUnitType(UserSpecifiedUnit.class);
+		secondaryYAxisInterval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		this.addInput(secondaryYAxisInterval, true);
 
-		labelTextHeight = new DoubleInput("LabelTextHeight", "X Axis Labels", 0.05);
-		this.addInput(labelTextHeight, true);
-
-		xAxisLabelGap = new DoubleInput("XAxisLabelGap", "X Axis Labels", 0.0);
-		this.addInput(xAxisLabelGap, true);
-
-		xAxisLabelFormat = new StringInput("XAxisLabelFormat", "X Axis Labels", "%.1f");
-		this.addInput(xAxisLabelFormat, true);
-
-		labelFontColor = new ColourInput("LabelFontColor", "X Axis Labels", ColourInput.BLUE);
-		this.addInput(labelFontColor, true, "LabelFontColour");
-
-		tickColor = new ColourInput("TickColor", "X Axis Labels", ColourInput.DARK_BLUE);
-		this.addInput(tickColor, true, "TickColour");
-
-		labelFontName = new StringInput("LabelFontName", "X Axis Labels", "Verdana");
-		this.addInput(labelFontName, true);
-
-		xAxisUnit = new EntityInput<TimeUnit>(TimeUnit.class, "XAxisUnit", "X Axis", null);
-		this.addInput(xAxisUnit, true);
-
-		yAxisTitleTextHeight = new DoubleInput("YAxisTitleTextHeight", "Y Axis Labels", 0.05d);
-		this.addInput(yAxisTitleTextHeight, true);
-
-		yAxisLabelGap = new DoubleInput("YAxisLabelGap", "Y Axis Labels", 0.0);
-		this.addInput(yAxisLabelGap, true);
-
-		yAxisLabelFormat = new StringInput("YAxisLabelFormat", "Y Axis Labels", "%.1f");
-		this.addInput(yAxisLabelFormat, true);
-
-		yAxisTitleGap = new DoubleInput("YAxisTitleGap", "Y Axis Labels", 0.0);
-		this.addInput(yAxisTitleGap, true);
-
-		secondaryYAxisLabelFormat = new StringInput("SecondaryYAxisLabelFormat", "Y Axis Labels", "%.1f");
+		secondaryYAxisLabelFormat = new StringInput("SecondaryYAxisLabelFormat", "Secondary Y-Axis", "%.1f");
 		this.addInput(secondaryYAxisLabelFormat, true);
 
-		yAxisTitle = new StringInput("YAxisTitle", "Y Axis Labels", "Y-Axis");
-		this.addInput(yAxisTitle, true);
+		// Layout category
 
-		secondaryYAxisTitle = new StringInput("SecondaryYAxisTitle", "Y Axis Labels", "");
-		this.addInput(secondaryYAxisTitle, true);
-
-		title = new StringInput("Title", "Title", "Title");
+		title = new StringInput("Title", "Layout", "Graph Title");
 		this.addInput(title, true);
 
-		titleTextHeight = new DoubleInput("TitleTextHeight", "Title", 0.0);
+		titleTextHeight = new ValueInput("TitleTextHeight", "Layout", 0.15d);
+		titleTextHeight.setUnitType(DistanceUnit.class);
 		this.addInput(titleTextHeight, true);
 
-		titleColor = new ColourInput("TitleColor", "Title", ColourInput.getColorWithName("brick"));
-		this.addInput(titleColor, true, "TitleColour");
+		yAxisTitleTextHeight = new ValueInput("YAxisTitleTextHeight", "Layout", 0.15d);
+		yAxisTitleTextHeight.setUnitType(DistanceUnit.class);
+		this.addInput(yAxisTitleTextHeight, true);
 
-		titleGap = new DoubleInput("TitleGap", "Title", 0.05d);
+		labelTextHeight = new ValueInput("LabelTextHeight", "Layout", 0.07d);
+		labelTextHeight.setUnitType(DistanceUnit.class);
+		this.addInput(labelTextHeight, true);
+
+		titleGap = new ValueInput("TitleGap", "Layout", 0.07d);
+		titleGap.setUnitType(DistanceUnit.class);
 		this.addInput(titleGap, true);
 
-		graphColor = new ColourInput("GraphColor", "Background", ColourInput.getColorWithName("ivory"));
-		this.addInput(graphColor, true, "GraphColour");
+		xAxisLabelGap = new ValueInput("XAxisLabelGap", "Layout", 0.05d);
+		xAxisLabelGap.setUnitType(DistanceUnit.class);
+		this.addInput(xAxisLabelGap, true);
 
-		backgroundColor = new ColourInput("BackgroundColor", "Background", ColourInput.getColorWithName("gray95"));
-		this.addInput(backgroundColor, true, "BackgroundColour");
+		yAxisTitleGap = new ValueInput("YAxisTitleGap", "Layout", 0.05d);
+		yAxisTitleGap.setUnitType(DistanceUnit.class);
+		this.addInput(yAxisTitleGap, true);
 
-		borderColor = new ColourInput("BorderColor", "Background", ColourInput.BLACK);
-		this.addInput(borderColor, true, "BorderColour");
+		yAxisLabelGap = new ValueInput("YAxisLabelGap", "Layout", 0.05d);
+		yAxisLabelGap.setUnitType(DistanceUnit.class);
+		this.addInput(yAxisLabelGap, true);
 
-		topMargin = new DoubleInput("TopMargin", "Background", 0.20d);
+		topMargin = new ValueInput("TopMargin", "Layout", 0.30d);
+		topMargin.setUnitType(DistanceUnit.class);
 		this.addInput(topMargin, true);
 
-		bottomMargin = new DoubleInput("BottomMargin", "Background", 0.20d);
+		bottomMargin = new ValueInput("BottomMargin", "Layout", 0.30d);
+		bottomMargin.setUnitType(DistanceUnit.class);
 		this.addInput(bottomMargin, true);
 
-		leftMargin = new DoubleInput("LeftMargin", "Background", 0.20d);
+		leftMargin = new ValueInput("LeftMargin", "Layout", 0.55d);
+		leftMargin.setUnitType(DistanceUnit.class);
 		this.addInput(leftMargin, true);
 
-		rightMargin = new DoubleInput("RightMargin", "Background", 0.10d);
+		rightMargin = new ValueInput("RightMargin", "Layout", 0.55d);
+		rightMargin.setUnitType(DistanceUnit.class);
 		this.addInput(rightMargin, true);
 
-		legendTextHeight = new DoubleInput("LegendTextHeight", "Legend", 0.5);
+		labelFontName = new StringInput("LabelFontName", "Layout", "Verdana");
+		this.addInput(labelFontName, true);
+
+		titleColor = new ColourInput("TitleColor", "Layout", ColourInput.getColorWithName("brick"));
+		this.addInput(titleColor, true, "TitleColour");
+
+		labelFontColor = new ColourInput("LabelFontColor", "Layout", ColourInput.BLUE);
+		this.addInput(labelFontColor, true, "LabelFontColour");
+
+		graphColor = new ColourInput("GraphColor", "Layout", ColourInput.getColorWithName("ivory"));
+		this.addInput(graphColor, true, "GraphColour");
+
+		backgroundColor = new ColourInput("BackgroundColor", "Layout", ColourInput.getColorWithName("gray95"));
+		this.addInput(backgroundColor, true, "BackgroundColour");
+
+		borderColor = new ColourInput("BorderColor", "Layout", ColourInput.BLACK);
+		this.addInput(borderColor, true, "BorderColour");
+
+		// Legend category (not implemented at present)
+
+		/*legendTextHeight = new DoubleInput("LegendTextHeight", "Legend", 0.5);
 		this.addInput(legendTextHeight, true);
 
 		seriesMakerGap = new DoubleInput("LegendSeriesMarkerGap", "Legend", 0.0);
@@ -475,13 +528,7 @@ public class Graph extends DisplayEntity  {
 
 		legendMarkerSize = new Vec3dInput("LegendMarkerSize", "Legend", new Vec3d(0.1d, 0.1d, 0.0d));
 		legendMarkerSize.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(legendMarkerSize, true);
-
-		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", "Secondary Data", new ArrayList<Color4d>(0));
-		this.addInput(secondaryLineColorsList, true, "SecondaryLineColors");
-
-		secondaryLineWidths = new DoubleListInput("SecondaryLineWidths", "Secondary Data", new DoubleVector());
-		this.addInput(secondaryLineWidths, true);
+		this.addInput(legendMarkerSize, true);*/
 	}
 
 	public Graph() {
