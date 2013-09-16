@@ -74,37 +74,43 @@ public class Graph extends DisplayEntity  {
 
 	// Data category
 
-	@Keyword(description = "The number of data points that can be displayed on the graph. This " +
-	                "parameter determines the resolution of the graph.",
+	@Keyword(description = "The number of data points that can be displayed on the graph.\n" +
+			" This parameter determines the resolution of the graph.",
 	         example = "Graph1 NumberOfPoints { 200 }")
 	protected final IntegerInput numberOfPoints;
 
 	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
-			"  Each source is graphed as a separate line and is specified by an Entity and its Output.",
+			"Each source is graphed as a separate line and is specified by an Entity and its Output.",
      example = "Graph1 DataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
 	protected final OutputListInput<Double> dataSource;
 
-	@Keyword(description = "A list of colours (each consisting of a colour keyword or RGB values) for the line series to be displayed. " +
-	                "For multiple colours, each colour must be enclosed in braces as they can themselves be defined as a list of RGB values.",
-	         example = "Graph1 LineColors { midnightblue }")
+	@Keyword(description = "A list of colors for the line series to be displayed.\n" +
+			"Each color can be specified by either a color keyword or an RGB value.\n" +
+			"For multiple lines, each color must be enclosed in braces.\n" +
+			"If only one color is provided, it is used for all the lines.",
+	         example = "Graph1 LineColors { { red } { green } }")
 	protected final ColorListInput lineColorsList;
 
-	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.",
-	         example = "Graph1 LineWidths { 1 2 3 7 }")
+	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.\n" +
+			"If only one line width is provided, it is used for all the lines.",
+	         example = "Graph1 LineWidths { 2 1 }")
 	protected final DoubleListInput lineWidths;
 
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
-			"  Each source is graphed as a separate line and is specified by an Entity and its Output.",
+			"Each source is graphed as a separate line and is specified by an Entity and its Output.",
      example = "Graph1 SecondaryDataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
 	protected final OutputListInput<Double> secondaryDataSource;
 
-	@Keyword(description = "A list of colours (each consisting of a colour keyword or RGB values) for the line series to be displayed. " +
-	                "For multiple colours, each colour must be enclosed in braces as they can themselves be defined as a list of RGB values.",
-	         example = "Graph1 SecondaryLineColors { midnightblue }")
+	@Keyword(description = "A list of colors for the secondary line series to be displayed.\n" +
+			"Each color can be specified by either a color keyword or an RGB value.\n" +
+			"For multiple lines, each color must be enclosed in braces.\n" +
+			"If only one color is provided, it is used for all the lines.",
+	         example = "Graph1 SecondaryLineColors { { red } { green } }")
 	protected final ColorListInput secondaryLineColorsList;
 
-	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.",
-	         example = "Graph1 SecondaryLineWidths { 1 2 3 7 }")
+	@Keyword(description = "A list of line widths (in pixels) for the seconardy line series to be displayed.\n" +
+			"If only one line width is provided, it is used for all the lines.",
+	         example = "Graph1 SecondaryLineWidths { 2 1 }")
 	protected final DoubleListInput secondaryLineWidths;
 
 	// X-Axis category
@@ -326,19 +332,31 @@ public class Graph extends DisplayEntity  {
 		dataSource = new OutputListInput<Double>(Double.class, "DataSource", "Data", null);
 		this.addInput(dataSource, true);
 
-		lineColorsList = new ColorListInput("LineColours", "Data", new ArrayList<Color4d>(0));
+		ArrayList<Color4d> defLineColor = new ArrayList<Color4d>(0);
+		defLineColor.add(ColourInput.getColorWithName("red"));
+		lineColorsList = new ColorListInput("LineColours", "Data", defLineColor);
+		lineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(lineColorsList, true, "LineColors");
 
-		lineWidths = new DoubleListInput("LineWidths", "Data", new DoubleVector());
+		DoubleVector defLineWidths = new DoubleVector();
+		defLineWidths.add(1.0);
+		lineWidths = new DoubleListInput("LineWidths", "Data", defLineWidths);
+		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(lineWidths, true);
 
 		secondaryDataSource = new OutputListInput<Double>(Double.class, "SecondaryDataSource", "Data", null);
 		this.addInput(secondaryDataSource, true);
 
-		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", "Data", new ArrayList<Color4d>(0));
+		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<Color4d>(0);
+		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
+		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", "Data", defSecondaryLineColor);
+		secondaryLineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(secondaryLineColorsList, true, "SecondaryLineColors");
 
-		secondaryLineWidths = new DoubleListInput("SecondaryLineWidths", "Data", new DoubleVector());
+		DoubleVector defSecondaryLineWidths = new DoubleVector();
+		defSecondaryLineWidths.add(1.0);
+		secondaryLineWidths = new DoubleListInput("SecondaryLineWidths", "Data", defSecondaryLineWidths);
+		secondaryLineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(secondaryLineWidths, true);
 
 		// X-Axis category
@@ -576,6 +594,34 @@ public class Graph extends DisplayEntity  {
 			FrameBox.valueUpdate();  // show the new units in the Input Editor
 		}
 
+		if (in == lineColorsList) {
+			for (int i = 0; i < primarySeries.size(); ++ i) {
+				SeriesInfo info = primarySeries.get(i);
+				info.lineColour = getLineColor(i, lineColorsList.getValue());
+			}
+		}
+
+		if (in == lineWidths) {
+			for (int i = 0; i < primarySeries.size(); ++ i) {
+				SeriesInfo info = primarySeries.get(i);
+				info.lineWidth = getLineWidth(i, lineWidths.getValue());
+			}
+		}
+
+		if (in == secondaryLineColorsList) {
+			for (int i = 0; i < secondarySeries.size(); ++ i) {
+				SeriesInfo info = secondarySeries.get(i);
+				info.lineColour = getLineColor(i, secondaryLineColorsList.getValue());
+			}
+		}
+
+		if (in == secondaryLineWidths) {
+			for (int i = 0; i < secondarySeries.size(); ++ i) {
+				SeriesInfo info = secondarySeries.get(i);
+				info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
+			}
+		}
+
 		if (in == xAxisLabelFormat) {
 			String temp = xAxisLabelFormat.getValue();
 			try {
@@ -736,16 +782,14 @@ public class Graph extends DisplayEntity  {
 
 		for (int i = 0; i < primarySeries.size(); ++ i) {
 			SeriesInfo info = primarySeries.get(i);
-			Color4d colour = getLineColor(i, lineColorsList.getValue());
-			double lineWidth = getLineWidth(i, lineWidths);
-			setupLine(info, colour, lineWidth);
+			info.lineColour = getLineColor(i, lineColorsList.getValue());
+			info.lineWidth = getLineWidth(i, lineWidths.getValue());
 		}
 
 		for (int i = 0; i < secondarySeries.size(); ++i) {
 			SeriesInfo info = secondarySeries.get(i);
-			Color4d colour = getLineColor(i, secondaryLineColorsList.getValue());
-			double lineWidth = getLineWidth(i, secondaryLineWidths);
-			setupLine(info, colour, lineWidth);
+			info.lineColour = getLineColor(i, secondaryLineColorsList.getValue());
+			info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
 		}
 
 		Process.start(new ProcessGraphTarget(this));
@@ -756,29 +800,16 @@ public class Graph extends DisplayEntity  {
 	 */
 	protected void extraStartGraph() {}
 
-	protected void setupLine(SeriesInfo info, Color4d colour, double lineWidth) {
-		info.lineWidth = lineWidth;
-		info.lineColour = colour;
-	}
-
 	protected Color4d getLineColor(int index, ArrayList<Color4d> colorList) {
-		Color4d currentLineColour = ColourInput.RED; // Default color
-		if (colorList.size() >= index)
-			currentLineColour = colorList.get(index);
-		else if(colorList.size() == 1)
-			currentLineColour = colorList.get(0);
-
-		return currentLineColour;
+		if (colorList.size() == 1)
+			return colorList.get(0);
+		return colorList.get(index);
 	}
 
-	protected double getLineWidth(int index, DoubleListInput widthList) {
-		double lineWidth = 1.0d; // Default
-		if (widthList.getValue().size() > index)
-			lineWidth = widthList.getValue().get(index);
-		else if (widthList.getValue().size() == 1)
-			lineWidth = widthList.getValue().get(0);
-
-		return lineWidth;
+	protected double getLineWidth(int index, DoubleVector widthList) {
+		if (widthList.size() == 1)
+			return widthList.get(0);
+		return widthList.get(index);
 	}
 
 	/**
