@@ -245,7 +245,7 @@ public class GraphModel extends DisplayModel {
 			Vec3d graphOrigin = graphObservee.getGraphOrigin();
 			double decZBump = graphSize.x * 0.001;
 
-			// Title
+			// Graph Title
 			Vec3d objectSize = graphObservee.getSize();
 			double titleHeight = graphObservee.getTitleHeight();
 			double titleGap = graphObservee.getTitleGap();
@@ -272,8 +272,7 @@ public class GraphModel extends DisplayModel {
 
 			out.add(new StringProxy(titleText, fontKey, titleColour, titleTrans, titleHeight, getVisibilityInfo(), pickingID));
 
-			// Y axis labels and ticks
-
+			// Y-Axis Labels and Tick Marks
 			double yAxisInterval = graphObservee.getYAxisInterval();
 			String yAxisLabelFormat = graphObservee.getYAxisLabelFormat();
 			double yAxisLabelGap = graphObservee.getYAxisLabelGap();
@@ -293,7 +292,6 @@ public class GraphModel extends DisplayModel {
 			double minYLabelXPos = graphOrigin.x;
 			double maxYLabelXPos = graphOrigin.x + graphSize.x;
 
-			// Y labels
 			for (int i = 0; i * yAxisInterval <= yRange; ++i) {
 
 				String text = String.format( yAxisLabelFormat,  ( i * yAxisInterval + yMin )/yAxisFactor);
@@ -323,6 +321,7 @@ public class GraphModel extends DisplayModel {
 				tickPoints.add(tickPointB);
 			}
 
+			// Secondary Y-Axis Labels and Tick Marks
 			String secYAxisLabelFormat = graphObservee.getSecondaryYAxisLabelFormat();
 			double secYAxisInterval = graphObservee.getSecondaryYAxisInterval();
 
@@ -362,6 +361,7 @@ public class GraphModel extends DisplayModel {
 				tickPoints.add(tickPointB);
 			}
 
+			// X-Axis Labels and Tick Marks
 			double timeInterval = graphObservee.getTimeInterval();
 			String xAxisFormat = graphObservee.getXAxisLabelFormat();
 			double xAxisLabelGap = graphObservee.getXAxisLabelGap();
@@ -371,7 +371,6 @@ public class GraphModel extends DisplayModel {
 			if( xAxisUnit != null )
 				xAxisFactor = xAxisUnit.getConversionFactorToSI();
 
-			// X labels
 			for (int i = 0; startTime + i*timeInterval <= endTime; ++i) {
 
 				double time = (startTime + i * timeInterval);
@@ -403,7 +402,7 @@ public class GraphModel extends DisplayModel {
 
 			out.add(new LineProxy(tickPoints, labelColour, 1, getVisibilityInfo(), pickingID));
 
-			// The Y-Axis and Secondary Y-Axis Titles
+			// Primary Y-Axis Title
 			String yAxisTitle = graphObservee.getYAxisTitle();
 			String secYAxisTitle = graphObservee.getSecondaryYAxisTitle();
 			double yAxisTitleHeight = graphObservee.getYAxisTitleHeight();
