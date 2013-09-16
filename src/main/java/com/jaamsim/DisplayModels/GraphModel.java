@@ -290,7 +290,6 @@ public class GraphModel extends DisplayModel {
 			ArrayList<Vec4d> tickPoints = new ArrayList<Vec4d>();
 
 			double minYLabelXPos = graphOrigin.x;
-			double maxYLabelXPos = graphOrigin.x + graphSize.x;
 
 			for (int i = 0; i * yAxisInterval <= yRange; ++i) {
 
@@ -330,35 +329,38 @@ public class GraphModel extends DisplayModel {
 			if( secYAxisUnit != null )
 				secYAxisUnit.getConversionFactorToSI();
 
-			// Secondary Y labels
-			for (int i = 0; i * secYAxisInterval <= secYRange; ++i) {
+			double maxYLabelXPos = graphOrigin.x + graphSize.x;
 
-				String text = String.format( secYAxisLabelFormat,  ( i * secYAxisInterval + secYMin )/secYAxisFactor);
-				double yPos = graphOrigin.y + (i * secYAxisInterval * graphSize.y )/secYRange; // current label
+			if (! graphObservee.getSecondarySeries().isEmpty() ) {
+				for (int i = 0; i * secYAxisInterval <= secYRange; ++i) {
 
-				// Right justify the labels
-				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight*xScaleFactor, text);
-				double leftJustifyOffset = stringSize.x * 0.5;
-				double xPos = graphOrigin.x + graphSize.x + xTickSize + yAxisLabelGap + leftJustifyOffset;
+					String text = String.format( secYAxisLabelFormat,  ( i * secYAxisInterval + secYMin )/secYAxisFactor);
+					double yPos = graphOrigin.y + (i * secYAxisInterval * graphSize.y )/secYRange; // current label
 
-				// Save the right-most extent of the labels
-				maxYLabelXPos = Math.max(maxYLabelXPos, xPos + leftJustifyOffset);
+					// Right justify the labels
+					Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight*xScaleFactor, text);
+					double leftJustifyOffset = stringSize.x * 0.5;
+					double xPos = graphOrigin.x + graphSize.x + xTickSize + yAxisLabelGap + leftJustifyOffset;
 
-				Mat4d labelTrans = new Mat4d();
-				labelTrans.setTranslate3(new Vec3d(xPos, yPos, decZBump));
-				labelTrans.mult4(objectTransComp, labelTrans);
-				labelTrans.scaleCols3(xScaleVec);
+					// Save the right-most extent of the labels
+					maxYLabelXPos = Math.max(maxYLabelXPos, xPos + leftJustifyOffset);
 
-				out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
+					Mat4d labelTrans = new Mat4d();
+					labelTrans.setTranslate3(new Vec3d(xPos, yPos, decZBump));
+					labelTrans.mult4(objectTransComp, labelTrans);
+					labelTrans.scaleCols3(xScaleVec);
 
-				// Prepare the tick marks
-				Vec4d tickPointA = new Vec4d(graphOrigin.x + graphSize.x            , yPos, decZBump, 1.0d);
-				Vec4d tickPointB = new Vec4d(graphOrigin.x + graphSize.x + xTickSize, yPos, decZBump, 1.0d);
-				tickPointA.mult4(objectTransComp, tickPointA);
-				tickPointB.mult4(objectTransComp, tickPointB);
+					out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
 
-				tickPoints.add(tickPointA);
-				tickPoints.add(tickPointB);
+					// Prepare the tick marks
+					Vec4d tickPointA = new Vec4d(graphOrigin.x + graphSize.x            , yPos, decZBump, 1.0d);
+					Vec4d tickPointB = new Vec4d(graphOrigin.x + graphSize.x + xTickSize, yPos, decZBump, 1.0d);
+					tickPointA.mult4(objectTransComp, tickPointA);
+					tickPointB.mult4(objectTransComp, tickPointB);
+
+					tickPoints.add(tickPointA);
+					tickPoints.add(tickPointB);
+				}
 			}
 
 			// X-Axis Labels and Tick Marks
@@ -404,11 +406,9 @@ public class GraphModel extends DisplayModel {
 
 			// Primary Y-Axis Title
 			String yAxisTitle = graphObservee.getYAxisTitle();
-			String secYAxisTitle = graphObservee.getSecondaryYAxisTitle();
 			double yAxisTitleHeight = graphObservee.getYAxisTitleHeight();
 			double yAxisTitleGap = graphObservee.getYAxisTitleGap();
 			double xPos = minYLabelXPos - yAxisTitleGap - yAxisTitleHeight/2;
-			double secXPos = maxYLabelXPos + yAxisTitleGap + yAxisTitleHeight/2;
 
 			Mat4d ytitleTrans = new Mat4d();
 			ytitleTrans.setTranslate3(new Vec3d(xPos, 0, decZBump));
@@ -418,13 +418,19 @@ public class GraphModel extends DisplayModel {
 
 			out.add(new StringProxy(yAxisTitle, fontKey, titleColour, ytitleTrans, yAxisTitleHeight, getVisibilityInfo(), pickingID));
 
-			Mat4d secYtitleTrans = new Mat4d();
-			secYtitleTrans.setTranslate3(new Vec3d(secXPos, 0, decZBump));
-			secYtitleTrans.setEuler3(new Vec3d(0, 0, Math.PI/2));
-			secYtitleTrans.mult4(objectTransComp, secYtitleTrans);
-			secYtitleTrans.scaleCols3(yScaleVec);
+			// Secondary Y-Axis Title
+			if (! graphObservee.getSecondarySeries().isEmpty() ) {
+				String secYAxisTitle = graphObservee.getSecondaryYAxisTitle();
+				double secXPos = maxYLabelXPos + yAxisTitleGap + yAxisTitleHeight/2;
 
-			out.add(new StringProxy(secYAxisTitle, fontKey, titleColour, secYtitleTrans, yAxisTitleHeight, getVisibilityInfo(), pickingID));
+				Mat4d secYtitleTrans = new Mat4d();
+				secYtitleTrans.setTranslate3(new Vec3d(secXPos, 0, decZBump));
+				secYtitleTrans.setEuler3(new Vec3d(0, 0, Math.PI/2));
+				secYtitleTrans.mult4(objectTransComp, secYtitleTrans);
+				secYtitleTrans.scaleCols3(yScaleVec);
+
+				out.add(new StringProxy(secYAxisTitle, fontKey, titleColour, secYtitleTrans, yAxisTitleHeight, getVisibilityInfo(), pickingID));
+			}
 
 		}
 
