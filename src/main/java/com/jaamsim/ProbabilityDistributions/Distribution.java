@@ -55,7 +55,6 @@ implements SampleProvider {
 	private final ValueInput maxValueInput;
 
 	protected final Random randomGenerator1; // first random generator for picking values
-	private double presentSample; // last sample taken from the probability distribution (before ValueFactor is applied)
 
 	private int sampleCount;
 	private double sampleSum;
@@ -157,13 +156,12 @@ implements SampleProvider {
 		       nextSample > this.maxValueInput.getValue());
 
 		// Collect statistics on the sampled values
-		presentSample = nextSample;
 		sampleCount++;
-		sampleSum += this.presentSample;
-		sampleSquaredSum += this.presentSample * this.presentSample;
-		sampleMin = Math.min(this.sampleMin, this.presentSample);
-		sampleMax = Math.max(this.sampleMax, this.presentSample);
-		return presentSample;
+		sampleSum += nextSample;
+		sampleSquaredSum += nextSample * nextSample;
+		sampleMin = Math.min(sampleMin, nextSample);
+		sampleMax = Math.max(sampleMax, nextSample);
+		return nextSample;
 	}
 
 	protected double getMinValue() {
