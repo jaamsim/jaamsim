@@ -338,6 +338,7 @@ public class RenderManager implements DragSourceListener {
 				DisplayModelBinding.clearCacheCounters();
 				DisplayModelBinding.clearCacheMissData();
 
+				boolean screenShotThisFrame = _screenshot.get();
 				double renderTime = _simTime;
 
 				long startNanos = System.nanoTime();
@@ -454,7 +455,7 @@ public class RenderManager implements DragSourceListener {
 				_renderer.queueRedraw();
 				_redraw.set(false);
 
-				if (_screenshot.get()) {
+				if (screenShotThisFrame) {
 					takeScreenShot();
 				}
 
