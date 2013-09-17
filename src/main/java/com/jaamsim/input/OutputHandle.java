@@ -150,45 +150,6 @@ public class OutputHandle {
 		return ret;
 	}
 
-	public String getValueAsString(double simTime) {
-		Class<? extends Unit> ut = this.getUnitType();
-		String ret = this.getValueAsString(simTime, 1.0, "");
-		if( ut != Unit.class && ut != DimensionlessUnit.class )
-			ret += "  " + Unit.getSIUnit(ut);
-		return ret;
-	}
-
-	public String getValueAsString(double simTime, double factor, String format) {
-		try {
-			Class<?> retType = this.getReturnType();
-			if (retType == Double.class ||
-			    retType == double.class) {
-				double val = 0;
-				if (retType == Double.class) {
-					val = this.getValue(simTime, Double.class);
-				} else {
-					val = this.getValue(simTime, double.class);
-				}
-				if( format.isEmpty() )
-					return String.format("%,.6g", val/factor);
-				return String.format(format, val/factor);
-			}
-
-			Object o = pair.method.invoke(ent, simTime);
-			if (o == null)
-				return null;
-			if( format.isEmpty() )
-				return o.toString();
-			return String.format(format, o.toString());
-
-		} catch (InvocationTargetException ex) {
-			assert false;
-		} catch (IllegalAccessException ex) {
-			assert false;
-		}
-		return null;
-	}
-
 	public boolean isNumericValue() {
 		Class<?> rtype = this.getReturnType();
 		if (rtype == Double.class) return true;

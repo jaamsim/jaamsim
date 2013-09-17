@@ -24,6 +24,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.input.OutputHandle;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
@@ -198,7 +200,13 @@ private class OutputTableModel extends AbstractTableModel {
 			if (entry instanceof Class)
 				return "";
 			try {
-				return ((OutputHandle)entry).getValueAsString(simTime);
+				OutputHandle o = (OutputHandle)entry;
+				String s = o.getValue(simTime, o.getReturnType()).toString();
+				Class<? extends Unit> ut = o.getUnitType();
+				if (ut != Unit.class && ut != DimensionlessUnit.class)
+					return s + "  " + Unit.getSIUnit(ut);
+				else
+					return s;
 			}
 			catch (Throwable e) {
 				return "";
