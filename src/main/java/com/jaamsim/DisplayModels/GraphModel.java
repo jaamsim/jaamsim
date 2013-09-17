@@ -31,6 +31,8 @@ import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.StringProxy;
 import com.jaamsim.render.TessFontKey;
+import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
@@ -272,12 +274,9 @@ public class GraphModel extends DisplayModel {
 			double yAxisInterval = graphObservee.getYAxisInterval();
 			int yAxisPrecision = graphObservee.getYAxisPrecision();
 			double yAxisLabelGap = graphObservee.getYAxisLabelGap();
-			double xAxisLabelGap = graphObservee.getXAxisLabelGap();
 			double labelHeight = graphObservee.getLabelHeight();
 			double labelWidth = graphObservee.getLabelHeight() * xScaleFactor;
 			Color4d labelColour = graphObservee.getLabelColour();
-
-			double xAxisMult = graphObservee.getXAxisMultiplier();
 			double yAxisMult = graphObservee.getYAxisMultiplier();
 			double secYAxisMult = graphObservee.getSecondaryYAxisMultiplier();
 
@@ -361,9 +360,13 @@ public class GraphModel extends DisplayModel {
 			}
 
 			double timeInterval = graphObservee.getTimeInterval();
-			int xAxisPrecision = graphObservee.getXAxisPrecision();
-			String xAxisUnits = graphObservee.getXAxisUnits();
+			String xAxisFormat = graphObservee.getXAxisLabelFormat();
+			double xAxisLabelGap = graphObservee.getXAxisLabelGap();
 
+			TimeUnit xAxisUnit = graphObservee.getXAxisUnit();
+			double xAxisFactor = 1.0;
+			if( xAxisUnit != null )
+				xAxisFactor = xAxisUnit.getConversionFactorToSI();
 
 			// X labels
 			for (int i = 0; startTime + i*timeInterval <= endTime; ++i) {
@@ -373,7 +376,7 @@ public class GraphModel extends DisplayModel {
 				if (time == 0) {
 					text = "Now";
 				} else {
-					text = String.format( "%." + xAxisPrecision + "f" + xAxisUnits, time * xAxisMult);
+					text = String.format( xAxisFormat, time/xAxisFactor);
 				}
 
 				double xPos = graphOrigin.x + ( ( i * timeInterval) * graphSize.x)/xRange;

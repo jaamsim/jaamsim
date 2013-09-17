@@ -19,13 +19,17 @@ import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.OutputListInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.ColorListInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
+import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
@@ -68,18 +72,20 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 NumberOfPoints { 200 }")
 	protected final IntegerInput numberOfPoints;	 // Total number of values that can be shown on the graph (the more the sharper the graph)
 
-	@Keyword(description = "The amount of time in hours to display data before the present time.",
-	         example = "Graph1 StartTime { -48 }")
-	protected final DoubleInput startTime; 	 // start time for drawing the graph
+	@Keyword(description = "The start time for the x-axis relative to the present time.\n" +
+			"The present time is 0 for this axis.",
+	         example = "Graph1 StartTime { -48 h }")
+	protected final ValueInput startTime;
 
-	@Keyword(description = "The amount of time in hours to display data after the present time.",
-	         example = "Graph1 EndTime { 8 }")
-	protected final DoubleInput endTime; 	 // end time for drawing the graph
+	@Keyword(description = "The end time for the x-axis relative to the present time.\n" +
+			"The present time is 0 for this axis.",
+	         example = "Graph1 EndTime { 8 h }")
+	protected final ValueInput endTime;
 
-	@Keyword(description = "The number of hours between time labels on the x-axis. Time labels are shown " +
-	                "starting from the start time.",
-	         example = "Graph1 TimeInterval { 8 }")
-	private final DoubleInput timeInterval; // Time interval used to label x axis
+	@Keyword(description = "The time increment between the tick marks on the x-axis.",
+	         example = "Graph1 TimeInterval { 8 h }")
+	private final ValueInput timeInterval;
+
 
 	@Keyword(description = "The minimum value for the y-axis.",
 	         example = "Graph1 YAxisStart { 0 }")
@@ -115,8 +121,8 @@ public class Graph extends DisplayEntity  {
 	private final DoubleInput secondaryYAxisInterval;
 
 	@Keyword(description = "A list of time values between StartTime and EndTime where vertical gridlines are inserted.",
-	         example = "Graph1 XLines { -48 -40 -32 -24 -16 -8 0 }")
-	private final DoubleListInput xLines; // Vertical lines
+	         example = "Graph1 XLines { -48 -40 -32 -24 -16 -8 0 h }")
+	private final ValueListInput xLines;
 
 	@Keyword(description = "The color of the vertical gridlines (or a list corresponding to the colour of each " +
 	                "gridline defined in XLines), defined using a colour keyword or RGB values.",
@@ -275,19 +281,16 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 SecondaryYAxisPrecision { 1 }")
 	private final IntegerInput secondaryYAxisPrecision; // number of decimal places to show in the secondary y-axis labels
 
-	@Keyword(description = "The number of decimal places to show in the x-axis labels.",
-	         example = "Graph1 XAxisPrecision { 1 }")
-	private final IntegerInput xAxisPrecision; // number of decimal places to show in the x-axis labels
 
-	@Keyword(description = "A text string (enclosed in single quotes) to be shown after the x-axis label.",
-	         example = "Graph1 XAxisUnits { d }")
-	private final StringInput xAxisUnits; // text shown after each x-axis label
 
-	@Keyword(description = "A numerical multiplier used to rescale the x-axis of a graph for different time units (eg. days)." +
-	         " Note: this only affects the display, the other inputs need to be specified in internal units",
-	         example = "Graph1 XAxisMultiplier { 0.0416667 }")
-	private final DoubleInput xAxisMultiplier; // the value to multiply each x-axis label by
+	@Keyword(description = "The Java format to be used for the tick mark values on the x-axis.\n" +
+			"For example, the format %.1fs would dispaly the value 5 as 5.0s.",
+	         example = "Graph1 XAxisLabelFormat { %.1fs }")
+	private final StringInput xAxisLabelFormat;
 
+	@Keyword(description = "The time unit to be used for the x-axis.",
+	         example = "Graph1 XAxisUnit { h }")
+	private final EntityInput<TimeUnit> xAxisUnit;
 	@Keyword(description = "A numerical multiplier used to rescale the y-axis of a graph for different property value units." +
 	         " Note: this only affects the display, the other inputs need to be specified in internal units",
 	         example = "Graph1 YAxisMultiplier { 3.28083 }")
@@ -315,19 +318,20 @@ public class Graph extends DisplayEntity  {
 		numberOfPoints.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(numberOfPoints, true);
 
-		startTime = new DoubleInput("StartTime", "X Axis", -24.0d);
+		startTime = new ValueInput("StartTime", "X Axis", -86400.0d);  // default = -24 hours
+		startTime.setUnitType(TimeUnit.class);
 		this.addInput(startTime, true);
 
-		endTime = new DoubleInput("EndTime", "X Axis", 0.0);
+		endTime = new ValueInput("EndTime", "X Axis", 0.0d);
+		endTime.setUnitType(TimeUnit.class);
 		this.addInput(endTime, true);
 
-		timeInterval = new DoubleInput("TimeInterval", "X Axis", 6.0d);
+		timeInterval = new ValueInput("TimeInterval", "X Axis", 21600.0d); // default = 6 hours
+		timeInterval.setUnitType(TimeUnit.class);
 		this.addInput(timeInterval, true);
 
-		xAxisMultiplier = new DoubleInput("XAxisMultiplier", "X Axis", 1.0);
-		this.addInput(xAxisMultiplier, true);
-
-		xLines = new DoubleListInput("XLines", "X Axis", new DoubleVector());
+		xLines = new ValueListInput("XLines", "X Axis", new DoubleVector());
+		xLines.setUnitType(TimeUnit.class);
 		this.addInput(xLines, true);
 
 		xLinesColor = new ColorListInput("XLinesColor", "X Axis", new ArrayList<Color4d>(0));
@@ -370,9 +374,8 @@ public class Graph extends DisplayEntity  {
 		xAxisLabelGap = new DoubleInput("XAxisLabelGap", "X Axis Labels", 0.0);
 		this.addInput(xAxisLabelGap, true);
 
-		xAxisPrecision = new IntegerInput("XAxisPrecision", "X Axis Labels", 0);
-		xAxisPrecision.setValidRange(0, Integer.MAX_VALUE);
-		this.addInput(xAxisPrecision, true);
+		xAxisLabelFormat = new StringInput("XAxisLabelFormat", "X Axis Labels", "%.1f");
+		this.addInput(xAxisLabelFormat, true);
 
 		labelFontColor = new ColourInput("LabelFontColor", "X Axis Labels", ColourInput.BLUE);
 		this.addInput(labelFontColor, true, "LabelFontColour");
@@ -383,8 +386,8 @@ public class Graph extends DisplayEntity  {
 		labelFontName = new StringInput("LabelFontName", "X Axis Labels", "Verdana");
 		this.addInput(labelFontName, true);
 
-		xAxisUnits = new StringInput("XAxisUnits", "X Axis Labels", "h");
-		this.addInput(xAxisUnits, true);
+		xAxisUnit = new EntityInput<TimeUnit>(TimeUnit.class, "XAxisUnit", "X Axis", null);
+		this.addInput(xAxisUnit, true);
 
 		yAxisTitleTextHeight = new DoubleInput("YAxisTitleTextHeight", "Y Axis Labels", 0.05d);
 		this.addInput(yAxisTitleTextHeight, true);
@@ -701,7 +704,7 @@ public class Graph extends DisplayEntity  {
 				processGraph(info);
 			}
 
-			scheduleWait( xInterval, 7 );
+			simWait( xInterval, 7 );
 		}
 	}
 
@@ -721,7 +724,7 @@ public class Graph extends DisplayEntity  {
 		if (info.isRemoved) {
 			presentValue = info.values[info.numPoints - 1];
 		} else {
-			presentValue = this.getCurrentValue( getCurrentTime() + endTime.getValue(), info);
+			presentValue = this.getCurrentValue( getSimTime() + endTime.getValue(), info);
 
 		}
 
@@ -870,24 +873,20 @@ public class Graph extends DisplayEntity  {
 		return labelFontColor.getValue();
 	}
 
-	public int getXAxisPrecision() {
-		return xAxisPrecision.getValue();
+	public String getXAxisLabelFormat() {
+		return xAxisLabelFormat.getValue();
 	}
 
-	public String getXAxisUnits() {
-		return xAxisUnits.getValue();
-	}
-
-	public double getTimeInterval() {
-		return timeInterval.getValue();
-	}
-
-	public double getXAxisMultiplier() {
-		return xAxisMultiplier.getValue();
+	public TimeUnit getXAxisUnit() {
+		return xAxisUnit.getValue();
 	}
 
 	public double getYAxisMultiplier() {
 		return yAxisMultiplier.getValue();
+	}
+
+	public double getTimeInterval() {
+		return timeInterval.getValue();
 	}
 
 	public double getSecondaryYAxisMultiplier() {
