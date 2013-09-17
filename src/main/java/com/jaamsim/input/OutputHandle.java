@@ -24,6 +24,7 @@ import java.util.HashMap;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.ErrorException;
 
 /**
  * OutputHandle is a class that represents all the useful runtime information for an output,
@@ -157,21 +158,6 @@ public class OutputHandle {
 		return ret;
 	}
 
-	public String getValueAsString(double simTime, Unit unit, String format) {
-		double factor = 1.0;
-		Class<? extends Unit> ut = this.getUnitType();
-		if( unit == null ) {
-			if( ut != Unit.class && ut != DimensionlessUnit.class )
-				return "Unit Mismatch";
-		}
-		else {
-			factor = unit.getConversionFactorToSI();
-			if( unit.getClass() != ut )
-				return "Unit Mismatch";
-		}
-		return this.getValueAsString(simTime, factor, format);
-	}
-
 	public String getValueAsString(double simTime, double factor, String format) {
 		try {
 			Class<?> retType = this.getReturnType();
@@ -203,6 +189,47 @@ public class OutputHandle {
 		return null;
 	}
 
+	public boolean isNumericValue() {
+		Class<?> rtype = this.getReturnType();
+		if (rtype == Double.class) return true;
+		if (rtype == double.class) return true;
+		if (rtype == Float.class) return true;
+		if (rtype == float.class) return true;
+		if (rtype == Long.class) return true;
+		if (rtype == long.class) return true;
+		if (rtype == Integer.class) return true;
+		if (rtype == int.class) return true;
+		if (rtype == Short.class) return true;
+		if (rtype == short.class) return true;
+		if (rtype == Character.class) return true;
+		if (rtype == char.class) return true;
+
+		return false;
+	}
+
+	/**
+	 * Checks the output for all possible numerical types and returns a double representing the value
+	 * @param simTime
+	 * @param def - the default value if the return is null or not a number value
+	 * @return
+	 */
+	public double getValueAsDouble(double simTime, double def, Unit u) {
+		double ret = getValueAsDouble(simTime, def);
+		Class<? extends Unit> ut = this.getUnitType();
+		if (u == null) {
+			if (ut != Unit.class && ut != DimensionlessUnit.class)
+				throw new ErrorException("Unit Mismatch");
+			else
+				return ret;
+		}
+
+		if (u.getClass() != ut)
+			throw new ErrorException("Unit Mismatch");
+
+		ret /= u.getConversionFactorToSI();
+		return ret;
+	}
+
 	/**
 	 * Checks the output for all possible numerical types and returns a double representing the value
 	 * @param simTime
@@ -211,6 +238,9 @@ public class OutputHandle {
 	 */
 	public double getValueAsDouble(double simTime, double def) {
 		Class<?> retType = this.getReturnType();
+		if (retType == double.class)
+			return this.getValue(simTime, double.class);
+
 		if (retType == Double.class) {
 			Double val = getValue(simTime, Double.class);
 			if (val == null) return def;
@@ -242,8 +272,6 @@ public class OutputHandle {
 			return val.charValue();
 		}
 
-		if (retType == double.class)
-			return this.getValue(simTime, double.class);
 		if (retType == float.class)
 			return this.getValue(simTime, float.class);
 		if (retType == int.class)

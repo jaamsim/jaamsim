@@ -79,22 +79,22 @@ public class Text extends DisplayEntity {
 	public Text() {}
 
 	public String getRenderText(double simTime) {
-
 		if( outputName.getValue() == null )
 			return formatText.getValue();
 
 		try {
 		OutputHandle out = outputName.getOutputHandle(simTime);
-		if( out == null ) {
+		if( out == null )
 			return failText.getValue();
-			//return "Invalid entry for keyword OutputName";
+
+		if (out.isNumericValue()) {
+			double d = out.getValueAsDouble(simTime, 0.0d, unit.getValue());
+			return String.format(formatText.getValue(), d);
 		}
-		String ret = out.getValueAsString(simTime, unit.getValue(), formatText.getValue());
-		if( ret == null ) {
-			return failText.getValue();
-			//return "Invalid entry for keyword Format";
+		else {
+			Object o = out.getValue(simTime, out.getReturnType());
+			return String.format(formatText.getValue(), o);
 		}
-		return ret;
 		}
 		catch (Throwable e) {
 			return failText.getValue();
