@@ -14,11 +14,12 @@
  */
 package com.jaamsim.DisplayModels;
 
+import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.View;
-import com.sandwell.JavaSimulation.DoubleListInput;
+import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityListInput;
@@ -39,21 +40,26 @@ public abstract class DisplayModel extends Entity {
 
 	@Keyword(description = "The distances from the camera that this display model will be visible",
 	         example = "ShipModel DrawRange { 0 100 m }")
-	private final DoubleListInput drawRange;
+	private final ValueListInput drawRange;
 
 	@Keyword(description = "ModelScale scales the resulting visualization by this vector. Warning!! Resizing an entity with this set " +
 	         "to a value that is not 1 is very unintuitive.",
 	         example = "ShipModel ModelScale { 5 5 5 }")
 	private final Vec3dInput modelScale;
 
+	private static final DoubleVector defRange = new DoubleVector(2);
+
+	static {
+		defRange.add(0.0d);
+		defRange.add(Double.POSITIVE_INFINITY);
+	}
+
 	{
 		visibleViews = new EntityListInput<View>(View.class, "VisibleViews", "Basic Graphics", null);
 		this.addInput(visibleViews, true);
 
-		DoubleVector defSize = new DoubleVector(2);
-		defSize.add(0);
-		defSize.add(Double.POSITIVE_INFINITY);
-		drawRange = new DoubleListInput("DrawRange", "Basic Graphics", defSize);
+		drawRange = new ValueListInput("DrawRange", "Basic Graphics", defRange);
+		drawRange.setUnitType(DistanceUnit.class);
 		drawRange.setValidCount(2);
 		drawRange.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(drawRange, true);
