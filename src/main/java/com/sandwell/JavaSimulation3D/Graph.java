@@ -23,7 +23,10 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.ColorListInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
@@ -57,6 +60,9 @@ public class Graph extends DisplayEntity  {
 	protected final ArrayList<SeriesInfo> primarySeries;
 	protected final ArrayList<SeriesInfo> secondarySeries;
 
+	private Class<? extends Unit> dataUnitType;          // unit type for the graphed lines plotted against the y-axis
+	private Class<? extends Unit> secondaryDataUnitType;  // unit type for the graphed lines plotted against the secondary y-axis
+
 	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
 			"  Each source is graphed as a separate line and is specified by an Entity and its Output.",
      example = "Graph1 DataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
@@ -86,39 +92,50 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 TimeInterval { 8 h }")
 	private final ValueInput timeInterval;
 
+	@Keyword(description = "The unit to be used for the y-axis.\n" +
+			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
+			"i.e. if the data has units of distance, then unit must be a distance unit such as meters.",
+	         example = "Graph1 YAxisUnit { t/h }")
+	private final EntityInput<? extends Unit> yAxisUnit;
 
 	@Keyword(description = "The minimum value for the y-axis.",
-	         example = "Graph1 YAxisStart { 0 }")
-	private final DoubleInput yAxisStart;
+	         example = "Graph1 YAxisStart { 0 t/h }")
+	private final ValueInput yAxisStart;
 
 	@Keyword(description = "The maximum value for the y-axis.",
-	         example = "Graph1 YAxisEnd { 5 }")
-	private final DoubleInput yAxisEnd;
+	         example = "Graph1 YAxisEnd { 5 t/h }")
+	private final ValueInput yAxisEnd;
 
 	@Keyword(description = "The interval between y-axis labels.",
-	         example = "Graph1 YAxisInterval { 1 }")
-	private final DoubleInput yAxisInterval;
+	         example = "Graph1 YAxisInterval { 1 t/h }")
+	private final ValueInput yAxisInterval;
 
 	@Keyword(description = "A list of values at which to insert horizontal gridlines.",
-	         example ="Graph1 YLines { 0 0.5 1 1.5 2 2.5 3 }")
-	private final DoubleListInput yLines; // Horizontal lines
+	         example ="Graph1 YLines { 0  0.5  1  1.5  2  2.5  3  t/h }")
+	private final ValueListInput yLines;
 
 	@Keyword(description = "The colour of the horizontal gridlines (or a list corresponding to the colour of each " +
                     "gridline defined in YLines), defined using a colour keyword or RGB values.",
 	         example = "Graph1 YLinesColor { gray76 }")
 	private final ColorListInput yLinesColor;
 
+	@Keyword(description = "The unit to be used for the secondary y-axis.\n" +
+			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
+			"i.e. if the data has units of distance, then unit must be a distance unit such as meters.",
+	         example = "Graph1 SecondaryYAxisUnit { t/h }")
+	private final EntityInput<? extends Unit> secondaryYAxisUnit;
+
 	@Keyword(description = "The minimum value for the secondary y-axis.",
 	         example = "Graph1 SecondaryYAxisStart { 0 }")
-	private final DoubleInput secondaryYAxisStart;
+	private final ValueInput secondaryYAxisStart;
 
 	@Keyword(description = "The maximum value for the secondary y-axis.",
 	         example = "Graph1 SecondaryYAxisEnd { 5 }")
-	private final DoubleInput secondaryYAxisEnd;
+	private final ValueInput secondaryYAxisEnd;
 
 	@Keyword(description = "The interval between secondary y-axis labels.",
 	         example = "Graph1 SecondaryYAxisInterval { 1 }")
-	private final DoubleInput secondaryYAxisInterval;
+	private final ValueInput secondaryYAxisInterval;
 
 	@Keyword(description = "A list of time values between StartTime and EndTime where vertical gridlines are inserted.",
 	         example = "Graph1 XLines { -48 -40 -32 -24 -16 -8 0 h }")
@@ -273,15 +290,15 @@ public class Graph extends DisplayEntity  {
 	static int ENTITY_PARAMETER = 2;
 
 
-	@Keyword(description  = "The number of decimal places to show in the y-axis labels.",
-	         example = "Graph1 YAxisPrecision { 1 }")
-	private final IntegerInput yAxisPrecision; // number of decimal places to show in the y-axis labels
+	@Keyword(description  = "The Java format to be used for the tick mark values on the y-axis.\n" +
+			"For example, the format %.1f would dispaly the value 5 as 5.0.",
+	         example = "Graph1 YAxisLabelFormat { %.1f }")
+	private final StringInput yAxisLabelFormat;
 
-	@Keyword(description = "The number of decimal places to show in the secondary y-axis labels.",
-	         example = "Graph1 SecondaryYAxisPrecision { 1 }")
-	private final IntegerInput secondaryYAxisPrecision; // number of decimal places to show in the secondary y-axis labels
-
-
+	@Keyword(description  = "The Java format to be used for the tick mark values on the secondary y-axis.\n" +
+			"For example, the format %.1f would dispaly the value 5 as 5.0.",
+	         example = "Graph1 SecondaryYAxisLabelFormat { %.1f }")
+	private final StringInput secondaryYAxisLabelFormat;
 
 	@Keyword(description = "The Java format to be used for the tick mark values on the x-axis.\n" +
 			"For example, the format %.1fs would dispaly the value 5 as 5.0s.",
@@ -291,19 +308,16 @@ public class Graph extends DisplayEntity  {
 	@Keyword(description = "The time unit to be used for the x-axis.",
 	         example = "Graph1 XAxisUnit { h }")
 	private final EntityInput<TimeUnit> xAxisUnit;
-	@Keyword(description = "A numerical multiplier used to rescale the y-axis of a graph for different property value units." +
-	         " Note: this only affects the display, the other inputs need to be specified in internal units",
-	         example = "Graph1 YAxisMultiplier { 3.28083 }")
-	private final DoubleInput yAxisMultiplier; // the value to multiply each y-axis label by
-
-	@Keyword(description = "A numerical multiplier used to rescale the secondary y-axis of a graph for different property value units." +
-	         " Note: this only affects the display, the other inputs need to be specified in internal units",
-	         example = "Graph1 SecondaryYAxisMultiplier { 3.28083 }")
-	private final DoubleInput secondaryYAxisMultiplier; // the value to multiply each secondary y-axis label by
 
 	{
+		yAxisUnit = new EntityInput<Unit>(Unit.class, "YAxisUnit", "Data", null);
+		this.addInput(yAxisUnit, true);
+
 		dataSource = new OutputListInput<Double>(Double.class, "DataSource", "Data", null);
 		this.addInput(dataSource, true);
+
+		secondaryYAxisUnit = new EntityInput<Unit>(Unit.class, "SecondaryYAxisUnit", "Secondary Data", null);
+		this.addInput(secondaryYAxisUnit, true);
 
 		secondaryDataSource = new OutputListInput<Double>(Double.class, "SecondaryDataSource", "Secondary Data", null);
 		this.addInput(secondaryDataSource, true);
@@ -337,36 +351,36 @@ public class Graph extends DisplayEntity  {
 		xLinesColor = new ColorListInput("XLinesColor", "X Axis", new ArrayList<Color4d>(0));
 		this.addInput(xLinesColor, true, "XLinesColour");
 
-		yAxisStart = new DoubleInput("YAxisStart", "Y Axis", 0.0);
+		yAxisStart = new ValueInput("YAxisStart", "Y Axis", 0.0);
+		yAxisStart.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yAxisStart, true);
 
-		yAxisEnd = new DoubleInput("YAxisEnd", "Y Axis", 5.0d);
+		yAxisEnd = new ValueInput("YAxisEnd", "Y Axis", 5.0d);
+		yAxisEnd.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yAxisEnd, true);
 
-		yAxisInterval = new DoubleInput("YAxisInterval", "Y Axis", 1.0d);
+		yAxisInterval = new ValueInput("YAxisInterval", "Y Axis", 1.0d);
+		yAxisInterval.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yAxisInterval, true);
 
-		yAxisMultiplier = new DoubleInput("YAxisMultiplier", "Y Axis", 1.0);
-		this.addInput(yAxisMultiplier, true);
-
-		yLines = new DoubleListInput("YLines", "Y Axis", new DoubleVector());
+		yLines = new ValueListInput("YLines", "Y Axis", new DoubleVector());
+		yLines.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yLines, true);
 
 		yLinesColor = new ColorListInput("YLinesColor", "Y Axis", new ArrayList<Color4d>(0));
 		this.addInput(yLinesColor, true, "YLinesColour");
 
-		secondaryYAxisStart = new DoubleInput("SecondaryYAxisStart", "Y Axis", 0.0);
+		secondaryYAxisStart = new ValueInput("SecondaryYAxisStart", "Y Axis", 0.0);
+		secondaryYAxisStart.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(secondaryYAxisStart, true);
 
-		secondaryYAxisEnd = new DoubleInput("SecondaryYAxisEnd", "Y Axis", 0.0);
+		secondaryYAxisEnd = new ValueInput("SecondaryYAxisEnd", "Y Axis", 0.0);
+		secondaryYAxisEnd.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(secondaryYAxisEnd, true);
 
-		secondaryYAxisInterval = new DoubleInput("SecondaryYAxisInterval", "Y Axis", 0.0);
+		secondaryYAxisInterval = new ValueInput("SecondaryYAxisInterval", "Y Axis", 0.0);
+		secondaryYAxisInterval.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(secondaryYAxisInterval, true);
-
-		secondaryYAxisMultiplier = new DoubleInput("SecondaryYAxisMultiplier", "Y Axis", 1.0);
-		this.addInput(secondaryYAxisMultiplier, true);
-
 
 		labelTextHeight = new DoubleInput("LabelTextHeight", "X Axis Labels", 0.05);
 		this.addInput(labelTextHeight, true);
@@ -395,16 +409,14 @@ public class Graph extends DisplayEntity  {
 		yAxisLabelGap = new DoubleInput("YAxisLabelGap", "Y Axis Labels", 0.0);
 		this.addInput(yAxisLabelGap, true);
 
+		yAxisLabelFormat = new StringInput("YAxisLabelFormat", "Y Axis Labels", "%.1f");
+		this.addInput(yAxisLabelFormat, true);
+
 		yAxisTitleGap = new DoubleInput("YAxisTitleGap", "Y Axis Labels", 0.0);
 		this.addInput(yAxisTitleGap, true);
 
-		yAxisPrecision = new IntegerInput("YAxisPrecision", "Y Axis Labels", 0);
-		yAxisPrecision.setValidRange(0, Integer.MAX_VALUE);
-		this.addInput(yAxisPrecision, true);
-
-		secondaryYAxisPrecision = new IntegerInput("SecondaryYAxisPrecision", "Y Axis Labels", 0);
-		secondaryYAxisPrecision.setValidRange(0, Integer.MAX_VALUE);
-		this.addInput(secondaryYAxisPrecision, true);
+		secondaryYAxisLabelFormat = new StringInput("SecondaryYAxisLabelFormat", "Y Axis Labels", "%.1f");
+		this.addInput(secondaryYAxisLabelFormat, true);
 
 		yAxisTitle = new StringInput("YAxisTitle", "Y Axis Labels", "Y-Axis");
 		this.addInput(yAxisTitle, true);
@@ -476,6 +488,46 @@ public class Graph extends DisplayEntity  {
 
 		primarySeries = new ArrayList<SeriesInfo>();
 		secondarySeries = new ArrayList<SeriesInfo>();
+	}
+
+	@Override
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if (in == dataSource) {
+			ArrayList<OutputHandle> outs = dataSource.getValue();
+			if (outs.isEmpty())
+				return;
+			Class<? extends Unit> temp = outs.get(0).getUnitType();
+			for (int i=1; i<outs.size(); i++) {
+				if( outs.get(i).getUnitType() != temp )
+					throw new InputErrorException("All inputs for keyword DataSource must have the same unit type./n" +
+							"The unit type for the first source is %s", temp);
+			}
+			dataUnitType = temp;
+			yAxisStart.setUnitType(dataUnitType);
+			yAxisEnd.setUnitType(dataUnitType);
+			yAxisInterval.setUnitType(dataUnitType);
+			yLines.setUnitType(dataUnitType);
+			FrameBox.valueUpdate();  // show the new units in the Input Editor
+		}
+
+		if (in == secondaryDataSource) {
+			ArrayList<OutputHandle> outs = secondaryDataSource.getValue();
+			if (outs.isEmpty())
+				return;
+			Class<? extends Unit> temp = outs.get(0).getUnitType();
+			for (int i=1; i<outs.size(); i++) {
+				if( outs.get(i).getUnitType() != temp )
+					throw new InputErrorException("All inputs for keyword SecondaryDataSource must have the same unit type./n" +
+							"The unit type for the first source is %s", temp);
+			}
+			secondaryDataUnitType = temp;
+			secondaryYAxisStart.setUnitType(secondaryDataUnitType);
+			secondaryYAxisEnd.setUnitType(secondaryDataUnitType);
+			secondaryYAxisInterval.setUnitType(secondaryDataUnitType);
+			FrameBox.valueUpdate();  // show the new units in the Input Editor
+		}
 	}
 
 	@Override
@@ -577,7 +629,6 @@ public class Graph extends DisplayEntity  {
 				(( bottomMargin.getValue() ) / 2 - ( topMargin.getValue() ) / 2 ) / graphExtent.y , 0.0 );
 
 		graphOrigin = new Vec3d( graphCenter.x - graphSize.x/2, graphCenter.y - graphSize.y/2, 0.0  );
-
 
 	}
 
@@ -846,8 +897,8 @@ public class Graph extends DisplayEntity  {
 	public double getYAxisInterval() {
 		return yAxisInterval.getValue();
 	}
-	public int getYAxisPrecision() {
-		return yAxisPrecision.getValue();
+	public String getYAxisLabelFormat() {
+		return yAxisLabelFormat.getValue();
 	}
 
 	public double getXAxisLabelGap() {
@@ -857,8 +908,8 @@ public class Graph extends DisplayEntity  {
 	public double getSecondaryYAxisInterval() {
 		return secondaryYAxisInterval.getValue();
 	}
-	public int getSecondaryYAxisPrecision() {
-		return secondaryYAxisPrecision.getValue();
+	public String getSecondaryYAxisLabelFormat() {
+		return secondaryYAxisLabelFormat.getValue();
 	}
 
 	public double getYAxisLabelGap() {
@@ -881,16 +932,16 @@ public class Graph extends DisplayEntity  {
 		return xAxisUnit.getValue();
 	}
 
-	public double getYAxisMultiplier() {
-		return yAxisMultiplier.getValue();
+	public Unit getYAxisUnit() {
+		return yAxisUnit.getValue();
+	}
+
+	public Unit getSecondaryYAxisUnit() {
+		return secondaryYAxisUnit.getValue();
 	}
 
 	public double getTimeInterval() {
 		return timeInterval.getValue();
-	}
-
-	public double getSecondaryYAxisMultiplier() {
-		return secondaryYAxisMultiplier.getValue();
 	}
 
 	// ******************************************************************************************

@@ -272,13 +272,16 @@ public class GraphModel extends DisplayModel {
 			// Y axis labels and ticks
 
 			double yAxisInterval = graphObservee.getYAxisInterval();
-			int yAxisPrecision = graphObservee.getYAxisPrecision();
+			String yAxisLabelFormat = graphObservee.getYAxisLabelFormat();
 			double yAxisLabelGap = graphObservee.getYAxisLabelGap();
 			double labelHeight = graphObservee.getLabelHeight();
 			double labelWidth = graphObservee.getLabelHeight() * xScaleFactor;
 			Color4d labelColour = graphObservee.getLabelColour();
-			double yAxisMult = graphObservee.getYAxisMultiplier();
-			double secYAxisMult = graphObservee.getSecondaryYAxisMultiplier();
+
+			Unit yAxisUnit = graphObservee.getYAxisUnit();
+			double yAxisFactor = 1.0;
+			if( yAxisUnit != null )
+				yAxisUnit.getConversionFactorToSI();
 
 			double xTickSize = labelHeight/2 * xScaleFactor;
 			double yTickSize = labelHeight/2;
@@ -290,7 +293,7 @@ public class GraphModel extends DisplayModel {
 			// Y labels
 			for (int i = 0; i * yAxisInterval <= yRange; ++i) {
 
-				String text = String.format( "%,." + yAxisPrecision + "f",  ( i * yAxisInterval + yMin ) * yAxisMult);
+				String text = String.format( yAxisLabelFormat,  ( i * yAxisInterval + yMin )/yAxisFactor);
 
 				// Find the rendered string size so we can right justify the labels
 				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight, text);
@@ -319,8 +322,13 @@ public class GraphModel extends DisplayModel {
 				tickPoints.add(tickPointB);
 			}
 
+			String secYAxisLabelFormat = graphObservee.getSecondaryYAxisLabelFormat();
 			double secYAxisInterval = graphObservee.getSecondaryYAxisInterval();
-			int secYAxisPrecision = graphObservee.getSecondaryYAxisPrecision();
+
+			Unit secYAxisUnit = graphObservee.getSecondaryYAxisUnit();
+			double secYAxisFactor = 1.0;
+			if( secYAxisUnit != null )
+				secYAxisUnit.getConversionFactorToSI();
 
 			// Secondary Y labels
 			for (int i = 0; i * secYAxisInterval <= secYRange; ++i) {
@@ -329,7 +337,7 @@ public class GraphModel extends DisplayModel {
 					break;
 				}
 
-				String text = String.format( "%." + secYAxisPrecision + "f",  ( i * secYAxisInterval + secYMin ) * secYAxisMult);
+				String text = String.format( secYAxisLabelFormat,  ( i * secYAxisInterval + secYMin )/secYAxisFactor);
 
 				// Find the rendered string size so we can right justify the labels
 				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight, text);
