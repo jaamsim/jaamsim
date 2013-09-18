@@ -292,36 +292,6 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 TitleColor { black }")
 	private final ColourInput titleColor;
 
-	/*@Keyword(description = "The color for tick marks, defined using a colour keyword or RGB values.",
-	         example = "Graph1 TickColor { black }")
-	private final ColourInput tickColor;*/
-
-	// Legend category (not implemented at present)
-
-	/*@Keyword(description = "Coordinates (in { x, y, z }) of the center of the legend.",
-	         example = "Graph1 LegendCenter { -10 -10 0 }")
-	private final Vec3dInput legendCenter;
-
-	@Keyword(description = "Size (width and height) of the legend.",
-	         example = "Graph1 LegendSize { 7.00 4.00 }")
-	private final Vec3dInput legendSize;
-
-	@Keyword(description = "The height of the legend text.",
-	         example = "Graph1 LegendTextHeight { 0.5 }")
-	private DoubleInput legendTextHeight;
-
-	@Keyword(description = "Width and height of the legend markers.",
-	         example = "Graph1 LegendMarkerSize { 2.4 0.03 }")
-	private final Vec3dInput legendMarkerSize;
-
-	@Keyword(description = "The gap between the left margin of the legend and the text labels.",
-	         example = "Graph1 LegendSeriesLabelGap { 3 }")
-	private final DoubleInput seriesLabelGap;
-
-	@Keyword(description = "The gap between the left margin of the legend and the legend markers.",
-	         example = "Graph1 LegendSeriesMarkerGap { 0.1 }")
-	private final DoubleInput seriesMakerGap; */
-
 	{
 		// Data category
 
@@ -381,9 +351,6 @@ public class Graph extends DisplayEntity  {
 
 		xAxisLabelFormat = new StringInput("XAxisLabelFormat", "X-Axis", "%.0fs");
 		this.addInput(xAxisLabelFormat, true);
-
-		//tickColor = new ColourInput("TickColor", "X-Axis", ColourInput.DARK_BLUE);
-		//this.addInput(tickColor, true, "TickColour");
 
 		DoubleVector defXLines = new DoubleVector();
 		defXLines.add(-20.0);
@@ -525,28 +492,6 @@ public class Graph extends DisplayEntity  {
 
 		borderColor = new ColourInput("BorderColor", "Layout", ColourInput.BLACK);
 		this.addInput(borderColor, true, "BorderColour");
-
-		// Legend category (not implemented at present)
-
-		/*legendTextHeight = new DoubleInput("LegendTextHeight", "Legend", 0.5);
-		this.addInput(legendTextHeight, true);
-
-		seriesMakerGap = new DoubleInput("LegendSeriesMarkerGap", "Legend", 0.0);
-		this.addInput(seriesMakerGap, true);
-
-		seriesLabelGap = new DoubleInput("LegendSeriesLabelGap", "Legend", 0.0);
-		this.addInput(seriesLabelGap, true);
-
-		legendCenter = new Vec3dInput("LegendCenter", "Legend", new Vec3d(0.0d, 0.0d, 0.0d));
-		this.addInput(legendCenter, true);
-
-		legendSize = new Vec3dInput("LegendSize", "Legend", new Vec3d(1.0d, 1.0d, 0.0d));
-		legendSize.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(legendSize, true);
-
-		legendMarkerSize = new Vec3dInput("LegendMarkerSize", "Legend", new Vec3d(0.1d, 0.1d, 0.0d));
-		legendMarkerSize.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(legendMarkerSize, true);*/
 	}
 
 	public Graph() {
