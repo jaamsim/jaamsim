@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
@@ -177,12 +176,8 @@ public class OutputHandle {
 	public double getValueAsDouble(double simTime, double def, Unit u) {
 		double ret = getValueAsDouble(simTime, def);
 		Class<? extends Unit> ut = this.getUnitType();
-		if (u == null) {
-			if (ut != Unit.class && ut != DimensionlessUnit.class)
-				throw new ErrorException("Unit Mismatch");
-			else
-				return ret;
-		}
+		if (u == null)
+			return ret;
 
 		if (u.getClass() != ut)
 			throw new ErrorException("Unit Mismatch");
