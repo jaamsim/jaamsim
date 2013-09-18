@@ -27,6 +27,7 @@ import java.util.Comparator;
 	 */
 public class Util {
 	private static String cargoUnits = "";
+	private static String cargoUnitsPerHour = "";
 
 	public static final Comparator<Entity> nameSort = new Comparator<Entity>() {
 		@Override
@@ -39,8 +40,13 @@ public class Util {
 		return cargoUnits;
 	}
 
+	public static String getCargoUnitsPerHour() {
+		return cargoUnitsPerHour;
+	}
+
 	public static void setCargoUnits(String units) {
 		cargoUnits = units;
+		cargoUnitsPerHour = cargoUnits + "/h";
 	}
 
 	/**
