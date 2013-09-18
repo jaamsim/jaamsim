@@ -887,7 +887,7 @@ public class RenderManager implements DragSourceListener {
 		if (_dragHandleID == MOVE_PICK_ID) {
 			// We are dragging
 			if (dragInfo.shiftDown()) {
-				Vec4d entPos = _selectedEntity.getGlobalPosition();
+				Vec3d entPos = _selectedEntity.getGlobalPosition();
 
 				double zDiff = RenderUtils.getZDiff(entPos, currentRay, lastRay);
 
@@ -897,7 +897,7 @@ public class RenderManager implements DragSourceListener {
 				return true;
 			}
 
-			Vec4d pos = new Vec4d(_selectedEntity.getGlobalPosition());
+			Vec3d pos = _selectedEntity.getGlobalPosition();
 			pos.add3(delta);
 			_selectedEntity.setGlobalPosition(pos);
 			return true;
@@ -907,7 +907,7 @@ public class RenderManager implements DragSourceListener {
 		if (_dragHandleID <= RESIZE_POSX_PICK_ID &&
 		    _dragHandleID >= RESIZE_NXNY_PICK_ID) {
 
-			Vec4d pos = new Vec4d(_selectedEntity.getGlobalPosition());
+			Vec3d pos = _selectedEntity.getGlobalPosition();
 			Vec3d scale = _selectedEntity.getSize();
 			Vec4d fixedPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 

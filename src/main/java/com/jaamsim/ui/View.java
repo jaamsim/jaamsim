@@ -183,7 +183,7 @@ public Vec3d getGlobalPosition() {
 		// Is this view following an entity?
 		DisplayEntity follow = followEntityInput.getValue();
 		if (follow != null) {
-			Vec4d ret = follow.getGlobalPosition();
+			Vec3d ret = follow.getGlobalPosition();
 			ret.add3(position.getValue());
 			return ret;
 		}

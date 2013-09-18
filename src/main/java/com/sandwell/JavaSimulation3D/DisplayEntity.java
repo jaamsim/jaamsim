@@ -26,7 +26,6 @@ import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
@@ -469,11 +468,8 @@ public class DisplayEntity extends Entity {
 	 * Return the position in the global coordinate system
 	 * @return
 	 */
-	public Vec4d getGlobalPosition() {
-		Vec4d localPos = null;
-		synchronized (position) {
-			localPos = new Vec4d(position.x, position.y, position.z, 1.0d);
-		}
+	public Vec3d getGlobalPosition() {
+		Vec3d localPos = getPosition();
 
 		if (currentRegion != null) {
 			Transform regionTrans = currentRegion.getRegionTrans(getCurrentTime());
@@ -535,7 +531,7 @@ public class DisplayEntity extends Entity {
 	 * transform and sets the local position accordingly
 	 * @param pos - The new position in the global coordinate system
 	 */
-	public void setGlobalPosition(Vec4d pos) {
+	public void setGlobalPosition(Vec3d pos) {
 		Transform invReg = new Transform();
 
 		if (currentRegion != null) {
@@ -543,7 +539,7 @@ public class DisplayEntity extends Entity {
 			regionTrans.inverse(invReg);
 		}
 
-		Vec4d localPos = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Vec3d localPos = new Vec3d();
 		invReg.apply(pos, localPos);
 
 		setPosition(localPos);
