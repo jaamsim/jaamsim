@@ -88,22 +88,6 @@ public class Vector extends java.util.Vector<Object> {
 		return -1;
 	}
 
-	public int indexOfStringCaseFree( String testString ) {
-		String elementString;
-		for( int i = 0; i < size(); i++ ) {
-			try {
-				elementString = ((String)get( i )).toLowerCase();
-				if( elementString.equals( testString.toLowerCase() ) ) {
-					return i;
-				}
-			}
-			catch( ClassCastException e ) {
-				continue;
-			}
-		}
-		return -1;
-	}
-
 	public void addAllLast( Vector addVector ) {
 		for( int i = 0; i < addVector.size(); i++ ) {
 			addElement( addVector.get( i ) );
@@ -212,20 +196,5 @@ public class Vector extends java.util.Vector<Object> {
 			}
 		}
 		return ints;
-	}
-
-	/**
-	 * Reverse the elements position n to 0 and 0 to n
-	 * @return
-	 */
-	public void reverse() {
-		int numSwaps = this.size() / 2;
-		int swapIndex = this.size() - 1;
-
-		for (int i = 0; i < numSwaps; i++, swapIndex--) {
-			Object temp = this.get(swapIndex);
-			this.set(swapIndex, this.get(i));
-			this.set(i, temp);
-		}
 	}
 }
