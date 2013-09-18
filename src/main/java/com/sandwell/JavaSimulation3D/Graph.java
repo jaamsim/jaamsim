@@ -18,14 +18,13 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -194,19 +193,19 @@ public class Graph extends DisplayEntity  {
 	@Keyword(description = "The unit to be used for the secondary y-axis.\n" +
 			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
 			"i.e. if the data has units of distance, then unit must be a distance unit such as meters.",
-	         example = "Graph1 SecondaryYAxisUnit { t/h }")
+	         example = "Graph1 SecondaryYAxisUnit { m }")
 	private final EntityInput<? extends Unit> secondaryYAxisUnit;
 
 	@Keyword(description = "The minimum value for the secondary y-axis.",
-	         example = "Graph1 SecondaryYAxisStart { 0 }")
+	         example = "Graph1 SecondaryYAxisStart { 0 m }")
 	private final ValueInput secondaryYAxisStart;
 
 	@Keyword(description = "The maximum value for the secondary y-axis.",
-	         example = "Graph1 SecondaryYAxisEnd { 5 }")
+	         example = "Graph1 SecondaryYAxisEnd { 5 m }")
 	private final ValueInput secondaryYAxisEnd;
 
 	@Keyword(description = "The interval between secondary y-axis labels.",
-	         example = "Graph1 SecondaryYAxisInterval { 1 }")
+	         example = "Graph1 SecondaryYAxisInterval { 1 m }")
 	private final ValueInput secondaryYAxisInterval;
 
 	@Keyword(description  = "The Java format to be used for the tick mark values on the secondary y-axis.\n" +
@@ -221,51 +220,58 @@ public class Graph extends DisplayEntity  {
 	private final StringInput title;
 
 	@Keyword(description = "The text height for the graph title.",
-	         example = "Graph1 TitleTextHeight { 0.50 m }")
+	         example = "Graph1 TitleTextHeight { 0.05 }")
 	private final ValueInput titleTextHeight;
 
-	@Keyword(description = "The text height for the y-axis title.",
-	         example = "Graph1 YAxisTitleTextHeight { 0.30 m }")
+	@Keyword(description = "The text height for the y-axis title.\n" +
+			"Expressed as a fraction of the total graph height.",
+	         example = "Graph1 YAxisTitleTextHeight { 0.05 }")
 	private final ValueInput yAxisTitleTextHeight;
 
-	@Keyword(description = "The text height for both x- and y-axis labels.",
-	         example = "Graph1 LabelTextHeight { 0.35 m }")
+	@Keyword(description = "The text height for both x- and y-axis labels.\n" +
+			"Expressed as a fraction of the total graph height.",
+	         example = "Graph1 LabelTextHeight { 0.025 }")
 	private final ValueInput labelTextHeight;
 
-	@Keyword(description = "The gap between the title and top of the graph.",
-	         example = "Graph1 TitleGap { 0.30 m }")
+	@Keyword(description = "The gap between the title and top of the graph.\n" +
+			"Expressed as a fraction of the total graph height.",
+	         example = "Graph1 TitleGap { 0.025 }")
 	private final ValueInput titleGap;
 
-	@Keyword(description = "The gap between the x-axis labels and the x-axis.",
-	         example = "Graph1 XAxisLabelGap { 0.30 m }")
+	@Keyword(description = "The gap between the x-axis labels and the x-axis.\n" +
+			"Expressed as a fraction of the total graph height.",
+	         example = "Graph1 XAxisLabelGap { 0.025 }")
 	private final ValueInput xAxisLabelGap;
 
-	@Keyword(description = "The gap between the y-axis and its labels.  If left blank, this is automatically calculated.",
-	         example = "Graph1 YAxisLabelGap { 0.30 m }")
+	@Keyword(description = "The gap between the y-axis and its labels.\n" +
+			"Expressed as a fraction of the total graph height.",
+	         example = "Graph1 YAxisLabelGap { 0.025 }")
 	private final ValueInput yAxisLabelGap;
 
-	@Keyword(description = "The gap between the y-axis title and the y-axis labels.",
-	         example = "Graph1 yAxisTitleGap { 0.30 m }")
+	@Keyword(description = "The gap between the y-axis title and the y-axis labels.\n" +
+			"Expressed as a fraction of the total graph height.",
+	         example = "Graph1 yAxisTitleGap { 0.025 }")
 	private final ValueInput yAxisTitleGap;
 
-	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
+	@Keyword(description = "The margin between the top of the graph and the top of the graph object.\n" +
+			"Expressed as a fraction of the total graph height." +
 	                "side of the graph.",
-	         example = "Graph1 TopMargin { 0.30 m }")
+	         example = "Graph1 TopMargin { 0.10 }")
 	private final ValueInput topMargin;
 
-	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
-	                "side of the graph.",
-             example = "Graph1 BottomMargin { 0.30 m }")
+	@Keyword(description = "The margin between the bottom of the graph and the bottom of the graph object.\n" +
+	                "Expressed as a fraction of the total graph height.",
+             example = "Graph1 BottomMargin { 0.10 }")
 	private final ValueInput bottomMargin;
 
-	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
-	                "side of the graph.",
-	         example = "Graph1 LeftMargin { 0.20 m }")
+	@Keyword(description = "The margin between the left side of the graph and the left side of the graph object.\n" +
+	                "Expressed as a fraction of the total graph height.",
+	         example = "Graph1 LeftMargin { 0.20 }")
 	private final ValueInput leftMargin;
 
-	@Keyword(description = "The size of the margins from each of the four sides of the outer pane to the corresponding " +
-	                "side of the graph.",
-	         example = "Graph1 RightMargin { 0.40 m }")
+	@Keyword(description = "The margin between the right side of the graph and the right side of the graph object.\n" +
+	                "Expressed as a fraction of the total graph height.",
+	         example = "Graph1 RightMargin { 0.20 }")
 	private final ValueInput rightMargin;
 
 	@Keyword(description = "The font name for all labels, enclosed in single quotes.",
@@ -431,48 +437,48 @@ public class Graph extends DisplayEntity  {
 		title = new StringInput("Title", "Layout", "Graph Title");
 		this.addInput(title, true);
 
-		titleTextHeight = new ValueInput("TitleTextHeight", "Layout", 0.15d);
-		titleTextHeight.setUnitType(DistanceUnit.class);
+		titleTextHeight = new ValueInput("TitleTextHeight", "Layout", 0.05d);
+		titleTextHeight.setUnitType(DimensionlessUnit.class);
 		this.addInput(titleTextHeight, true);
 
-		yAxisTitleTextHeight = new ValueInput("YAxisTitleTextHeight", "Layout", 0.15d);
-		yAxisTitleTextHeight.setUnitType(DistanceUnit.class);
+		yAxisTitleTextHeight = new ValueInput("YAxisTitleTextHeight", "Layout", 0.05d);
+		yAxisTitleTextHeight.setUnitType(DimensionlessUnit.class);
 		this.addInput(yAxisTitleTextHeight, true);
 
-		labelTextHeight = new ValueInput("LabelTextHeight", "Layout", 0.07d);
-		labelTextHeight.setUnitType(DistanceUnit.class);
+		labelTextHeight = new ValueInput("LabelTextHeight", "Layout", 0.025d);
+		labelTextHeight.setUnitType(DimensionlessUnit.class);
 		this.addInput(labelTextHeight, true);
 
-		titleGap = new ValueInput("TitleGap", "Layout", 0.07d);
-		titleGap.setUnitType(DistanceUnit.class);
+		titleGap = new ValueInput("TitleGap", "Layout", 0.025d);
+		titleGap.setUnitType(DimensionlessUnit.class);
 		this.addInput(titleGap, true);
 
-		xAxisLabelGap = new ValueInput("XAxisLabelGap", "Layout", 0.05d);
-		xAxisLabelGap.setUnitType(DistanceUnit.class);
+		xAxisLabelGap = new ValueInput("XAxisLabelGap", "Layout", 0.025d);
+		xAxisLabelGap.setUnitType(DimensionlessUnit.class);
 		this.addInput(xAxisLabelGap, true);
 
-		yAxisTitleGap = new ValueInput("YAxisTitleGap", "Layout", 0.05d);
-		yAxisTitleGap.setUnitType(DistanceUnit.class);
+		yAxisTitleGap = new ValueInput("YAxisTitleGap", "Layout", 0.025d);
+		yAxisTitleGap.setUnitType(DimensionlessUnit.class);
 		this.addInput(yAxisTitleGap, true);
 
-		yAxisLabelGap = new ValueInput("YAxisLabelGap", "Layout", 0.05d);
-		yAxisLabelGap.setUnitType(DistanceUnit.class);
+		yAxisLabelGap = new ValueInput("YAxisLabelGap", "Layout", 0.025d);
+		yAxisLabelGap.setUnitType(DimensionlessUnit.class);
 		this.addInput(yAxisLabelGap, true);
 
-		topMargin = new ValueInput("TopMargin", "Layout", 0.30d);
-		topMargin.setUnitType(DistanceUnit.class);
+		topMargin = new ValueInput("TopMargin", "Layout", 0.10d);
+		topMargin.setUnitType(DimensionlessUnit.class);
 		this.addInput(topMargin, true);
 
-		bottomMargin = new ValueInput("BottomMargin", "Layout", 0.30d);
-		bottomMargin.setUnitType(DistanceUnit.class);
+		bottomMargin = new ValueInput("BottomMargin", "Layout", 0.10d);
+		bottomMargin.setUnitType(DimensionlessUnit.class);
 		this.addInput(bottomMargin, true);
 
-		leftMargin = new ValueInput("LeftMargin", "Layout", 0.55d);
-		leftMargin.setUnitType(DistanceUnit.class);
+		leftMargin = new ValueInput("LeftMargin", "Layout", 0.20d);
+		leftMargin.setUnitType(DimensionlessUnit.class);
 		this.addInput(leftMargin, true);
 
-		rightMargin = new ValueInput("RightMargin", "Layout", 0.55d);
-		rightMargin.setUnitType(DistanceUnit.class);
+		rightMargin = new ValueInput("RightMargin", "Layout", 0.20d);
+		rightMargin.setUnitType(DimensionlessUnit.class);
 		this.addInput(rightMargin, true);
 
 		labelFontName = new StringInput("LabelFontName", "Layout", "Verdana");
@@ -688,15 +694,17 @@ public class Graph extends DisplayEntity  {
 		super.updateGraphics(time);
 
 		Vec3d graphExtent = getSize();
+		double xScaleFactor = graphExtent.y / graphExtent.x;
+
 		// Draw graphic rectangle
 		graphSize = new Vec3d();
-		graphSize.x = ( graphExtent.x - leftMargin.getValue() - rightMargin.getValue() ) / graphExtent.x;
-		graphSize.y = ( graphExtent.y - topMargin.getValue() - bottomMargin.getValue() ) / graphExtent.y;
+		graphSize.x = 1.0 - ( leftMargin.getValue() + rightMargin.getValue() ) * xScaleFactor;
+		graphSize.y = 1.0 - ( topMargin.getValue() + bottomMargin.getValue() );
 		graphSize.z = 1;
 
 		// Center position of the graph
-		graphCenter = new Vec3d( ( leftMargin.getValue()/2 - rightMargin.getValue()/2 ) / graphExtent.x,
-				( bottomMargin.getValue()/2 - topMargin.getValue()/2 ) / graphExtent.y , 0.0 );
+		graphCenter = new Vec3d( leftMargin.getValue()/2 - rightMargin.getValue()/2,
+				bottomMargin.getValue()/2 - topMargin.getValue()/2, 0.0 );
 
 		graphOrigin = new Vec3d( graphCenter.x - graphSize.x/2, graphCenter.y - graphSize.y/2, 0.0  );
 
@@ -968,31 +976,31 @@ public class Graph extends DisplayEntity  {
 	}
 
 	public double getTitleHeight() {
-		return titleTextHeight.getValue() / getSize().y;
+		return titleTextHeight.getValue();
 	}
 
 	public double getTitleGap() {
-		return titleGap.getValue() / getSize().y;
+		return titleGap.getValue();
 	}
 
 	public double getLabelHeight() {
-		return labelTextHeight.getValue() / getSize().y;
+		return labelTextHeight.getValue();
 	}
 
 	public double getXAxisLabelGap() {
-		return xAxisLabelGap.getValue() / getSize().y;
+		return xAxisLabelGap.getValue();
 	}
 
 	public double getYAxisTitleHeight() {
-		return yAxisTitleTextHeight.getValue() / getSize().x;
+		return yAxisTitleTextHeight.getValue();
 	}
 
 	public double getYAxisTitleGap() {
-		return yAxisTitleGap.getValue() / getSize().x;
+		return yAxisTitleGap.getValue();
 	}
 
 	public double getYAxisLabelGap() {
-		return yAxisLabelGap.getValue() / getSize().x;
+		return yAxisLabelGap.getValue();
 	}
 
 	// ******************************************************************************************

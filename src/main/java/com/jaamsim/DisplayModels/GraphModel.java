@@ -257,7 +257,8 @@ public class GraphModel extends DisplayModel {
 
 			Vec4d titleCenter = new Vec4d(0, graphOrigin.y + graphSize.y + titleGap + titleHeight/2, decZBump, 1.0d);
 
-			// Compensate for the non-linear scaling in the parent object
+			// This factor is applied to lengths expressed as a fraction of the graph's y-extent and
+			// converts then to fractions of the graph's x-extent
 			double xScaleFactor = objectSize.y / objectSize.x;
 
 			// These two matrices are needed to cancel out the object level non-uniform scaling for text objects
@@ -299,7 +300,7 @@ public class GraphModel extends DisplayModel {
 				// Right justify the labels
 				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight*xScaleFactor, text);
 				double rightJustifyOffset = stringSize.x * 0.5;
-				double xPos = graphOrigin.x - xTickSize - yAxisLabelGap - rightJustifyOffset;
+				double xPos = graphOrigin.x - xTickSize - yAxisLabelGap*xScaleFactor - rightJustifyOffset;
 
 				// Save the left-most extent of the labels
 				minYLabelXPos = Math.min(minYLabelXPos, xPos - rightJustifyOffset);
@@ -340,7 +341,7 @@ public class GraphModel extends DisplayModel {
 					// Right justify the labels
 					Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight*xScaleFactor, text);
 					double leftJustifyOffset = stringSize.x * 0.5;
-					double xPos = graphOrigin.x + graphSize.x + xTickSize + yAxisLabelGap + leftJustifyOffset;
+					double xPos = graphOrigin.x + graphSize.x + xTickSize + yAxisLabelGap*xScaleFactor + leftJustifyOffset;
 
 					// Save the right-most extent of the labels
 					maxYLabelXPos = Math.max(maxYLabelXPos, xPos + leftJustifyOffset);
@@ -384,7 +385,7 @@ public class GraphModel extends DisplayModel {
 				}
 
 				double xPos = graphOrigin.x + ( i * timeInterval * graphSize.x)/xRange;
-				double yPos = graphOrigin.y - yTickSize - labelHeight - xAxisLabelGap;
+				double yPos = graphOrigin.y - yTickSize - xAxisLabelGap - labelHeight/2;
 
 				Mat4d labelTrans = new Mat4d();
 				labelTrans.setTranslate3(new Vec3d(xPos, yPos, decZBump));
@@ -406,8 +407,8 @@ public class GraphModel extends DisplayModel {
 
 			// Primary Y-Axis Title
 			String yAxisTitle = graphObservee.getYAxisTitle();
-			double yAxisTitleHeight = graphObservee.getYAxisTitleHeight();
-			double yAxisTitleGap = graphObservee.getYAxisTitleGap();
+			double yAxisTitleHeight = graphObservee.getYAxisTitleHeight()*xScaleFactor;
+			double yAxisTitleGap = graphObservee.getYAxisTitleGap()*xScaleFactor;
 			double xPos = minYLabelXPos - yAxisTitleGap - yAxisTitleHeight/2;
 
 			Mat4d ytitleTrans = new Mat4d();
