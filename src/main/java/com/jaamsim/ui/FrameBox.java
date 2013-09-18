@@ -90,6 +90,7 @@ public class FrameBox extends JFrame {
 
 	public static final void valueUpdate() {
 		valueUpdater.scheduleUpdate();
+		RenderManager.queueRedraw();
 	}
 
 	public void setEntity(Entity ent) {}

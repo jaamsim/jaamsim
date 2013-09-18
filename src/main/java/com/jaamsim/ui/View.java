@@ -18,7 +18,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeyedVec3dInput;
 import com.jaamsim.math.Transform;
@@ -28,7 +27,6 @@ import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
@@ -172,16 +170,6 @@ public static ArrayList<View> getAll() {
 public void kill() {
 	super.kill();
 	allInstances.remove(this);
-}
-
-@Override
-public void updateForInput( Input<?> in ) {
-	if (in == position || in == center || in == skyboxImage) {
-		if (RenderManager.isGood()) {
-			RenderManager.inst().queueRedraw();
-		}
-		return;
-	}
 }
 
 public Vec3d getGlobalPosition() {

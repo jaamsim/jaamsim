@@ -223,10 +223,16 @@ public class RenderManager implements DragSourceListener {
 			return;
 
 		RenderManager.inst()._simTime = simTime;
-		RenderManager.inst().queueRedraw();
+		RenderManager.inst()._queueRedraw();
 	}
 
-	public void queueRedraw() {
+	public static final void queueRedraw() {
+		if (!isGood()) return;
+
+		inst()._queueRedraw();
+	}
+
+	private void _queueRedraw() {
 		long scheduledTime = _scheduledDraw.get();
 		long lastRedraw = _lastDraw.get();
 
@@ -270,7 +276,7 @@ public class RenderManager implements DragSourceListener {
 		_windowControls.put(windowID, control);
 		_windowToViewMap.put(windowID, view);
 
-		queueRedraw();
+		_queueRedraw();
 	}
 
 	public void closeAllWindows() {
@@ -570,13 +576,13 @@ public class RenderManager implements DragSourceListener {
 					continue;
 				}
 				FrameBox.setSelectedEntity(ent);
-				queueRedraw();
+				_queueRedraw();
 				return;
 			}
 		}
 
 		FrameBox.setSelectedEntity(null);
-		queueRedraw();
+		_queueRedraw();
 	}
 
 	/**
@@ -808,7 +814,7 @@ public class RenderManager implements DragSourceListener {
 			_selectedEntity = null;
 
 		_isDragging = false;
-		queueRedraw();
+		_queueRedraw();
 	}
 
 	/**
@@ -1290,7 +1296,7 @@ public class RenderManager implements DragSourceListener {
 
 		Vec3d xyPlanePoint = currentRay.getPointAtDist(dist);
 		GUIFrame.instance().showLocatorPosition(xyPlanePoint);
-		queueRedraw();
+		_queueRedraw();
 	}
 
 
@@ -1524,7 +1530,7 @@ public class RenderManager implements DragSourceListener {
 		synchronized (_screenshot) {
 			_screenshot.set(true);
 			_recorder = recorder;
-			queueRedraw();
+			_queueRedraw();
 			while (_screenshot.get()) {
 				try {
 					_screenshot.wait();

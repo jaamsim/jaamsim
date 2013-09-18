@@ -79,7 +79,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		// Give the RenderManager first crack at this
 		if (RenderManager.inst().handleDrag(dragInfo)) {
-			RenderManager.inst().queueRedraw();
+			RenderManager.queueRedraw();
 			return; // Handled
 		}
 
@@ -360,7 +360,7 @@ public class CameraControl implements WindowInteractionListener {
 		if (info == null) {
 			// This window has not been opened yet (or is closed) force a redraw as everything will catch up
 			// and the information has been saved to the view object
-			RenderManager.inst().queueRedraw();
+			RenderManager.queueRedraw();
 			return;
 		}
 
@@ -373,7 +373,7 @@ public class CameraControl implements WindowInteractionListener {
 		_renderer.setCameraInfoForWindow(_windowID, info);
 
 		// Queue a redraw
-		RenderManager.inst().queueRedraw();
+		RenderManager.queueRedraw();
 	}
 
 	public void setRotationAngles(double rotX, double rotZ) {
