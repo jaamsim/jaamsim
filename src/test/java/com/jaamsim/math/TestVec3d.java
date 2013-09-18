@@ -37,16 +37,16 @@ public void testConstructors() {
 public void testString() {
 	Vec3d vec = new Vec3d();
 	vec.set3(seq);
-	assertTrue("(1.0, 2.0, 3.0)".equals(vec.toString()));
+	assertTrue("1.0  2.0  3.0".equals(vec.toString()));
 
 	vec.set3(nseq);
-	assertTrue("(-1.0, -2.0, -3.0)".equals(vec.toString()));
+	assertTrue("-1.0  -2.0  -3.0".equals(vec.toString()));
 
 	vec.set3(allNaN);
-	assertTrue("(NaN, NaN, NaN)".equals(vec.toString()));
+	assertTrue("NaN  NaN  NaN".equals(vec.toString()));
 
 	vec.set3(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-	assertTrue("(Infinity, -Infinity, Infinity)".equals(vec.toString()));
+	assertTrue("Infinity  -Infinity  Infinity".equals(vec.toString()));
 }
 
 @Test
