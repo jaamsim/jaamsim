@@ -88,6 +88,11 @@ public static final boolean needsQuoting(String s) {
 	return quoted.matcher(s).find();
 }
 
+private static final Pattern isquoted = Pattern.compile("'.*'");
+public static final boolean isQuoted(String s) {
+	return isquoted.matcher(s).matches();
+}
+
 /**
  * Remove all commented tokens (starting with the " character)
  * @param tokens

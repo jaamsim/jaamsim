@@ -14,6 +14,7 @@
  */
 package com.jaamsim.input;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -83,5 +84,14 @@ public void testQuoting() {
 	assertTrue(Parser.needsQuoting("abraca,dabra"));
 	assertTrue(Parser.needsQuoting("abraca}}dabra"));
 	assertTrue(!Parser.needsQuoting("abracadabra"));
+}
+
+@Test
+public void testQuoted() {
+	assertTrue(Parser.isQuoted("'floob '"));
+	assertTrue(Parser.isQuoted("' '"));
+	assertTrue(Parser.isQuoted("''"));
+	assertFalse(Parser.isQuoted("'"));
+	assertFalse(Parser.isQuoted("'' "));
 }
 }

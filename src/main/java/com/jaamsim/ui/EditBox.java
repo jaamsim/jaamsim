@@ -60,6 +60,7 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.ListInput;
+import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
@@ -614,8 +615,11 @@ public static class CellListener implements CellEditorListener {
 			return;
 
 		try {
-
-			String str = editor.getValue();
+			String str = editor.getValue().trim();
+			if (in.getClass() == StringInput.class) {
+				if (Parser.needsQuoting(str) && !Parser.isQuoted(str))
+					str = String.format("'%s'", str);
+			}
 
 			if( str.isEmpty() ) {
 
