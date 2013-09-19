@@ -17,9 +17,11 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.render.Action;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.StringVector;
+import com.sandwell.JavaSimulation.Util;
 
 public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 
@@ -29,28 +31,64 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
-		ArrayList<String> strings = new ArrayList<String>(input.size());
-		for (String s : input) {
-			strings.add(s);
+		ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(input);
+		ArrayList<Action.Binding> bindings = new ArrayList<Action.Binding>(splitData.size());
+		for (int i = 0; i < splitData.size(); i++) {
+			try {
+				bindings.add(parseBinding(splitData.get(i)));
+			} catch (InputErrorException e) {
+				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+			}
 		}
-
-		value = new ArrayList<Action.Binding>();
-
-		ArrayList<ArrayList<String>> bindings = InputAgent.splitForNestedBraces(strings);
-		for( ArrayList<String> b : bindings) {
-			Action.Binding binding = parseBinding(b);
-			value.add(binding);
-		}
+		value = bindings;
+		this.updateEditingFlags();
 	}
 
-	public Action.Binding parseBinding(ArrayList<String> tokens) {
-		if (tokens.size() != 4|| !tokens.get(0).equals("{") || !tokens.get(3).equals("}")) {
-			throw new InputErrorException("Malformed binding entry: %s", tokens.toString());
-		}
-
+	private Action.Binding parseBinding(StringVector tokens) throws InputErrorException {
+		Input.assertCount(tokens, 2);
 		Action.Binding binding = new Action.Binding();
-		binding.actionName = tokens.get(1);
-		binding.outputName = tokens.get(2);
+		binding.actionName = tokens.get(0);
+		binding.outputName = tokens.get(1);
 		return binding;
+	}
+
+	@Override
+	public String getValueString() {
+		if (value == null)
+			return "";
+
+		StringBuilder tmp = new StringBuilder();
+		for (int i = 0; i < value.size(); i++) {
+			// Separate each action
+			if (i > 0) tmp.append(SEPARATOR);
+
+			Action.Binding b = value.get(i);
+			tmp.append("{ ");
+			tmp.append(b.actionName);
+			tmp.append(SEPARATOR);
+			tmp.append(b.outputName);
+			tmp.append(" }");
+		}
+		return tmp.toString();
+	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null || defValue.isEmpty())
+			return NO_VALUE;
+
+		StringBuilder tmp = new StringBuilder();
+		for (int i = 0; i < defValue.size(); i++) {
+			// Separate each action
+			if (i > 0) tmp.append(SEPARATOR);
+
+			Action.Binding b = value.get(i);
+			tmp.append("{ ");
+			tmp.append(b.actionName);
+			tmp.append(SEPARATOR);
+			tmp.append(b.outputName);
+			tmp.append(" }");
+		}
+		return tmp.toString();
 	}
 }
