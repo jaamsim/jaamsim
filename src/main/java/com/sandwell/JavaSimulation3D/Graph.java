@@ -17,6 +17,8 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
+import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.FormatInput;
 import com.jaamsim.input.OutputListInput;
@@ -291,15 +293,15 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 LabelTextModel { TextModelDefault }")
 	protected final EntityInput<TextModel> labelTextModel;
 
-	@Keyword(description = "The colour of the graph background, defined by a color keyword or RGB values.",
+	@Keyword(description = "The color of the graph background, defined by a color keyword or an RGB value.",
 	         example = "Graph1 GraphColor { floralwhite }")
 	private final ColourInput graphColor;
 
-	@Keyword(description = "The color for the outer pane background, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The color for the outer pane background, defined using a color keyword or an RGB value.",
 	         example = "Graph1 BackgroundColor { floralwhite }")
 	private final ColourInput backgroundColor;
 
-	@Keyword(description = "The color of the graph border, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The color of the graph border, defined using a color keyword or an RGB value.",
 	         example = "Graph1 BorderColor { red }")
 	private final ColourInput borderColor;
 
