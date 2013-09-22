@@ -18,6 +18,7 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.FormatInput;
 import com.jaamsim.input.OutputListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
@@ -135,7 +136,7 @@ public class Graph extends DisplayEntity  {
 	@Keyword(description = "The Java format to be used for the tick mark values on the x-axis.\n" +
 			"For example, the format %.1fs would dispaly the value 5 as 5.0s.",
 	         example = "Graph1 XAxisLabelFormat { %.1fs }")
-	private final StringInput xAxisLabelFormat;
+	private final FormatInput xAxisLabelFormat;
 
 	@Keyword(description = "A list of time values between StartTime and EndTime where vertical gridlines are inserted.",
 	         example = "Graph1 XLines { -48 -40 -32 -24 -16 -8 0 h }")
@@ -173,7 +174,7 @@ public class Graph extends DisplayEntity  {
 	@Keyword(description  = "The Java format to be used for the tick mark values on the y-axis.\n" +
 			"For example, the format %.1f would dispaly the value 5 as 5.0.",
 	         example = "Graph1 YAxisLabelFormat { %.1f }")
-	private final StringInput yAxisLabelFormat;
+	private final FormatInput yAxisLabelFormat;
 
 	@Keyword(description = "A list of values at which to insert horizontal gridlines.",
 	         example ="Graph1 YLines { 0  0.5  1  1.5  2  2.5  3  t/h }")
@@ -211,7 +212,7 @@ public class Graph extends DisplayEntity  {
 	@Keyword(description  = "The Java format to be used for the tick mark values on the secondary y-axis.\n" +
 			"For example, the format %.1f would dispaly the value 5 as 5.0.",
 	         example = "Graph1 SecondaryYAxisLabelFormat { %.1f }")
-	private final StringInput secondaryYAxisLabelFormat;
+	private final FormatInput secondaryYAxisLabelFormat;
 
 	// Layout category
 
@@ -355,7 +356,7 @@ public class Graph extends DisplayEntity  {
 		timeInterval.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		this.addInput(timeInterval, true);
 
-		xAxisLabelFormat = new StringInput("XAxisLabelFormat", "X-Axis", "%.0fs");
+		xAxisLabelFormat = new FormatInput("XAxisLabelFormat", "X-Axis", "%.0fs");
 		this.addInput(xAxisLabelFormat, true);
 
 		DoubleVector defXLines = new DoubleVector();
@@ -391,7 +392,7 @@ public class Graph extends DisplayEntity  {
 		yAxisInterval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		this.addInput(yAxisInterval, true);
 
-		yAxisLabelFormat = new StringInput("YAxisLabelFormat", "Y-Axis", "%.1f");
+		yAxisLabelFormat = new FormatInput("YAxisLabelFormat", "Y-Axis", "%.1f");
 		this.addInput(yAxisLabelFormat, true);
 
 		DoubleVector defYLines = new DoubleVector();
@@ -429,7 +430,7 @@ public class Graph extends DisplayEntity  {
 		secondaryYAxisInterval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		this.addInput(secondaryYAxisInterval, true);
 
-		secondaryYAxisLabelFormat = new StringInput("SecondaryYAxisLabelFormat", "Secondary Y-Axis", "%.1f");
+		secondaryYAxisLabelFormat = new FormatInput("SecondaryYAxisLabelFormat", "Secondary Y-Axis", "%.1f");
 		this.addInput(secondaryYAxisLabelFormat, true);
 
 		// Layout category
@@ -570,36 +571,6 @@ public class Graph extends DisplayEntity  {
 			for (int i = 0; i < secondarySeries.size(); ++ i) {
 				SeriesInfo info = secondarySeries.get(i);
 				info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
-			}
-		}
-
-		if (in == xAxisLabelFormat) {
-			String temp = xAxisLabelFormat.getValue();
-			try {
-				String.format(temp,0.0);
-			}
-			catch (Throwable e) {
-				throw new InputErrorException("Invalid Java format string", temp);
-			}
-		}
-
-		if (in == yAxisLabelFormat) {
-			String temp = yAxisLabelFormat.getValue();
-			try {
-				String.format(temp,0.0);
-			}
-			catch (Throwable e) {
-				throw new InputErrorException("Invalid Java format string", temp);
-			}
-		}
-
-		if (in == secondaryYAxisLabelFormat) {
-			String temp = secondaryYAxisLabelFormat.getValue();
-			try {
-				String.format(temp,0.0);
-			}
-			catch (Throwable e) {
-				throw new InputErrorException("Invalid Java format string", temp);
 			}
 		}
 	}
