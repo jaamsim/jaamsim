@@ -629,7 +629,7 @@ public static class CellListener implements CellEditorListener {
 			InputAgent.processEntity_Keyword_Value(EditBox.getInstance().getCurrentEntity(), in, str);
 		} catch (InputErrorException exep) {
 			JOptionPane.showMessageDialog(EditBox.getInstance(),
-			   String.format( "%s; value will be cleared", exep.getMessage() ),
+			   String.format( "%s. \nValue will be cleared.", exep.getMessage() ),
 			   "Input Error", JOptionPane.ERROR_MESSAGE);
 
 			FrameBox.valueUpdate();
