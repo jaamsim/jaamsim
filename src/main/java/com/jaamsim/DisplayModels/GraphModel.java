@@ -249,10 +249,8 @@ public class GraphModel extends DisplayModel {
 			double titleHeight = graphObservee.getTitleHeight();
 			double titleGap = graphObservee.getTitleGap();
 			String titleText = graphObservee.getTitle();
-			Color4d titleColour = graphObservee.getTitleColour();
-			String fontName = graphObservee.getFontName();
-
-			TessFontKey fontKey = new TessFontKey(fontName);
+			TessFontKey titleFontKey = graphObservee.getTitleTextModel().getTessFontKey();
+			Color4d titleFontColor = graphObservee.getTitleTextModel().getFontColor();
 
 			Vec4d titleCenter = new Vec4d(0, graphOrigin.y + graphSize.y + titleGap + titleHeight/2, decZBump, 1.0d);
 
@@ -270,14 +268,15 @@ public class GraphModel extends DisplayModel {
 			titleTrans.mult4(objectTransComp, titleTrans);
 			titleTrans.scaleCols3(xScaleVec);
 
-			out.add(new StringProxy(titleText, fontKey, titleColour, titleTrans, titleHeight, getVisibilityInfo(), pickingID));
+			out.add(new StringProxy(titleText, titleFontKey, titleFontColor, titleTrans, titleHeight, getVisibilityInfo(), pickingID));
 
 			// Y-Axis Labels and Tick Marks
 			double yAxisInterval = graphObservee.getYAxisInterval();
 			String yAxisLabelFormat = graphObservee.getYAxisLabelFormat();
 			double yAxisLabelGap = graphObservee.getYAxisLabelGap();
 			double labelHeight = graphObservee.getLabelHeight();
-			Color4d labelColour = graphObservee.getLabelColour();
+			TessFontKey labelFontKey = graphObservee.getLabelTextModel().getTessFontKey();
+			Color4d labelFontColor = graphObservee.getLabelTextModel().getFontColor();
 
 			Unit yAxisUnit = graphObservee.getYAxisUnit();
 			double yAxisFactor = 1.0;
@@ -297,7 +296,7 @@ public class GraphModel extends DisplayModel {
 				double yPos = graphOrigin.y + (i * yAxisInterval * graphSize.y )/yRange; // current label
 
 				// Right justify the labels
-				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight*xScaleFactor, text);
+				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(labelFontKey, labelHeight*xScaleFactor, text);
 				double rightJustifyOffset = stringSize.x * 0.5;
 				double xPos = graphOrigin.x - xTickSize - yAxisLabelGap*xScaleFactor - rightJustifyOffset;
 
@@ -309,7 +308,7 @@ public class GraphModel extends DisplayModel {
 				labelTrans.mult4(objectTransComp, labelTrans);
 				labelTrans.scaleCols3(xScaleVec);
 
-				out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
+				out.add(new StringProxy(text, labelFontKey, labelFontColor, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
 
 				// Prepare the tick marks
 				Vec4d tickPointA = new Vec4d(graphOrigin.x            , yPos, decZBump, 1.0d);
@@ -338,7 +337,7 @@ public class GraphModel extends DisplayModel {
 					double yPos = graphOrigin.y + (i * secYAxisInterval * graphSize.y )/secYRange; // current label
 
 					// Right justify the labels
-					Vec3d stringSize = RenderManager.inst().getRenderedStringSize(fontKey, labelHeight*xScaleFactor, text);
+					Vec3d stringSize = RenderManager.inst().getRenderedStringSize(labelFontKey, labelHeight*xScaleFactor, text);
 					double leftJustifyOffset = stringSize.x * 0.5;
 					double xPos = graphOrigin.x + graphSize.x + xTickSize + yAxisLabelGap*xScaleFactor + leftJustifyOffset;
 
@@ -350,7 +349,7 @@ public class GraphModel extends DisplayModel {
 					labelTrans.mult4(objectTransComp, labelTrans);
 					labelTrans.scaleCols3(xScaleVec);
 
-					out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
+					out.add(new StringProxy(text, labelFontKey, labelFontColor, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
 
 					// Prepare the tick marks
 					Vec4d tickPointA = new Vec4d(graphOrigin.x + graphSize.x            , yPos, decZBump, 1.0d);
@@ -391,7 +390,7 @@ public class GraphModel extends DisplayModel {
 				labelTrans.mult4(objectTransComp, labelTrans);
 				labelTrans.scaleCols3(xScaleVec);
 
-				out.add(new StringProxy(text, fontKey, labelColour, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
+				out.add(new StringProxy(text, labelFontKey, labelFontColor, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
 
 				// Prepare the tick marks
 				Vec4d tickPointA = new Vec4d(xPos, graphOrigin.y, decZBump, 1.0d);
@@ -402,7 +401,7 @@ public class GraphModel extends DisplayModel {
 				tickPoints.add(tickPointB);
 			}
 
-			out.add(new LineProxy(tickPoints, labelColour, 1, getVisibilityInfo(), pickingID));
+			out.add(new LineProxy(tickPoints, labelFontColor, 1, getVisibilityInfo(), pickingID));
 
 			// Primary Y-Axis Title
 			String yAxisTitle = graphObservee.getYAxisTitle();
@@ -410,13 +409,16 @@ public class GraphModel extends DisplayModel {
 			double yAxisTitleGap = graphObservee.getYAxisTitleGap()*xScaleFactor;
 			double xPos = minYLabelXPos - yAxisTitleGap - yAxisTitleHeight/2;
 
+			TessFontKey axisTitleFontKey = graphObservee.getAxisTitleTextModel().getTessFontKey();
+			Color4d axisTitleFontColor = graphObservee.getAxisTitleTextModel().getFontColor();
+
 			Mat4d ytitleTrans = new Mat4d();
 			ytitleTrans.setTranslate3(new Vec3d(xPos, 0, decZBump));
 			ytitleTrans.setEuler3(new Vec3d(0, 0, Math.PI/2));
 			ytitleTrans.mult4(objectTransComp, ytitleTrans);
 			ytitleTrans.scaleCols3(yScaleVec);
 
-			out.add(new StringProxy(yAxisTitle, fontKey, titleColour, ytitleTrans, yAxisTitleHeight, getVisibilityInfo(), pickingID));
+			out.add(new StringProxy(yAxisTitle, axisTitleFontKey, axisTitleFontColor, ytitleTrans, yAxisTitleHeight, getVisibilityInfo(), pickingID));
 
 			// Secondary Y-Axis Title
 			if (! graphObservee.getSecondarySeries().isEmpty() ) {
@@ -429,7 +431,7 @@ public class GraphModel extends DisplayModel {
 				secYtitleTrans.mult4(objectTransComp, secYtitleTrans);
 				secYtitleTrans.scaleCols3(yScaleVec);
 
-				out.add(new StringProxy(secYAxisTitle, fontKey, titleColour, secYtitleTrans, yAxisTitleHeight, getVisibilityInfo(), pickingID));
+				out.add(new StringProxy(secYAxisTitle, axisTitleFontKey, axisTitleFontColor, secYtitleTrans, yAxisTitleHeight, getVisibilityInfo(), pickingID));
 			}
 
 		}

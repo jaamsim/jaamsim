@@ -370,4 +370,12 @@ public class TextModel extends DisplayModel {
 		}
 	}
 
+	public TessFontKey getTessFontKey() {
+		return new TessFontKey(fontName.getChoice(), style);
+	}
+
+	public Color4d getFontColor() {
+		return fontColor.getValue();
+	}
+
 }

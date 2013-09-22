@@ -275,17 +275,25 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 RightMargin { 0.20 }")
 	private final ValueInput rightMargin;
 
-	@Keyword(description = "The font name for all labels, enclosed in single quotes.",
-	         example = "Graph1 LabelFontName { 'Arial' }")
-	protected final StringInput labelFontName;
+	@Keyword(description = "The text model to be used for the graph title.\n" +
+			"Determines the font, color, and style (bold, italics) for the text.",
+	         example = "Graph1 TitleTextModel { TextModelDefault }")
+	protected final EntityInput<TextModel> titleTextModel;
+
+	@Keyword(description = "The text model to be used for the axis titles (x-axis, y-axis, and secondary y-axis).\n" +
+			"Determines the font, color, and style (bold, italics) for the text.",
+	         example = "Graph1 AxisTitleTextModel { TextModelDefault }")
+	protected final EntityInput<TextModel> axisTitleTextModel;
+
+	@Keyword(description = "The text model to be used for the numbers next to the tick marks on each axis" +
+			" (x-axis, y-axis, and secondary y-axis).\n" +
+			"Determines the font, color, and style (bold, italics) for the text.",
+	         example = "Graph1 LabelTextModel { TextModelDefault }")
+	protected final EntityInput<TextModel> labelTextModel;
 
 	@Keyword(description = "The colour of the graph background, defined by a color keyword or RGB values.",
 	         example = "Graph1 GraphColor { floralwhite }")
 	private final ColourInput graphColor;
-
-	@Keyword(description = "The colour for both axes labels, defined using a colour keyword or RGB values.",
-	         example = "Graph1 LabelFontColor { black }")
-	private final ColourInput labelFontColor;
 
 	@Keyword(description = "The color for the outer pane background, defined using a colour keyword or RGB values.",
 	         example = "Graph1 BackgroundColor { floralwhite }")
@@ -294,10 +302,6 @@ public class Graph extends DisplayEntity  {
 	@Keyword(description = "The color of the graph border, defined using a colour keyword or RGB values.",
 	         example = "Graph1 BorderColor { red }")
 	private final ColourInput borderColor;
-
-	@Keyword(description = "The colour for the graph title, defined by a color keyword or RGB values.",
-	         example = "Graph1 TitleColor { black }")
-	private final ColourInput titleColor;
 
 	{
 		// Data category
@@ -482,14 +486,16 @@ public class Graph extends DisplayEntity  {
 		rightMargin.setUnitType(DimensionlessUnit.class);
 		this.addInput(rightMargin, true);
 
-		labelFontName = new StringInput("LabelFontName", "Layout", "Verdana");
-		this.addInput(labelFontName, true);
+		TextModel defTextModel = (TextModel) DisplayModel.getDefaultDisplayModelForClass(Text.class);
 
-		titleColor = new ColourInput("TitleColor", "Layout", ColourInput.getColorWithName("brick"));
-		this.addInput(titleColor, true, "TitleColour");
+		titleTextModel = new EntityInput<TextModel>(TextModel.class, "TitleTextModel", "Layout", defTextModel);
+		this.addInput(titleTextModel, true);
 
-		labelFontColor = new ColourInput("LabelFontColor", "Layout", ColourInput.BLUE);
-		this.addInput(labelFontColor, true, "LabelFontColour");
+		axisTitleTextModel = new EntityInput<TextModel>(TextModel.class, "AxisTitleTextModel", "Layout", defTextModel);
+		this.addInput(axisTitleTextModel, true);
+
+		labelTextModel = new EntityInput<TextModel>(TextModel.class, "LabelTextModel", "Layout", defTextModel);
+		this.addInput(labelTextModel, true);
 
 		graphColor = new ColourInput("GraphColor", "Layout", ColourInput.getColorWithName("ivory"));
 		this.addInput(graphColor, true, "GraphColour");
@@ -865,9 +871,6 @@ public class Graph extends DisplayEntity  {
 	public String getTitle() {
 		return title.getValue();
 	}
-	public String getFontName() {
-		return labelFontName.getValue();
-	}
 
 	public double getYAxisStart() {
 		return yAxisStart.getValue();
@@ -896,10 +899,6 @@ public class Graph extends DisplayEntity  {
 		return backgroundColor.getValue();
 	}
 
-	public Color4d getTitleColour() {
-		return titleColor.getValue();
-	}
-
 	public String getYAxisTitle() {
 		return yAxisTitle.getValue();
 	}
@@ -920,10 +919,6 @@ public class Graph extends DisplayEntity  {
 	}
 	public String getSecondaryYAxisLabelFormat() {
 		return secondaryYAxisLabelFormat.getValue();
-	}
-
-	public Color4d getLabelColour() {
-		return labelFontColor.getValue();
 	}
 
 	public String getXAxisLabelFormat() {
@@ -972,6 +967,18 @@ public class Graph extends DisplayEntity  {
 
 	public double getYAxisLabelGap() {
 		return yAxisLabelGap.getValue();
+	}
+
+	public TextModel getTitleTextModel() {
+		return titleTextModel.getValue();
+	}
+
+	public TextModel getAxisTitleTextModel() {
+		return axisTitleTextModel.getValue();
+	}
+
+	public TextModel getLabelTextModel() {
+		return labelTextModel.getValue();
 	}
 
 	// ******************************************************************************************
