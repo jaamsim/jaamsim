@@ -206,8 +206,6 @@ public class ImageModel extends DisplayModel {
 			super(ent, dm);
 			try {
 				imageObservee = (OverlayImage)observee;
-				if (imageObservee != null) {
-				}
 			} catch (ClassCastException e) {
 				// The observee is not a display entity
 				imageObservee = null;
