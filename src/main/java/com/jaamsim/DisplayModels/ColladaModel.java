@@ -176,7 +176,7 @@ public class ColladaModel extends DisplayModel {
 				return;
 			}
 
-			++_cacheMisses;
+			registerCacheMiss("ColladaModel");
 
 			cachedProxies = new ArrayList<RenderProxy>();
 

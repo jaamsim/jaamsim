@@ -162,7 +162,7 @@ public class ImageModel extends DisplayModel {
 				return;
 			}
 
-			++_cacheMisses;
+			registerCacheMiss("ImageModel");
 			// Gather some inputs
 
 			cachedProxies = new ArrayList<RenderProxy>();

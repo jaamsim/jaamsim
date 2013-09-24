@@ -56,7 +56,7 @@ public abstract class DisplayModelBinding {
 	private final static ArrayList<Vec4d> ROTATE_POINTS;
 
 	protected static int _cacheHits = 0;
-	protected static int _cacheMisses = 0;
+	private static int cacheMisses = 0;
 
 	static {
 		// NOTE: the order of the points corresponds to the list of static picking IDs in RenderManager,
@@ -166,11 +166,11 @@ public abstract class DisplayModelBinding {
 	}
 
 	public static int getCacheMisses() {
-		return _cacheMisses;
+		return cacheMisses;
 	}
 	public static void clearCacheCounters() {
 		_cacheHits = 0;
-		_cacheMisses = 0;
+		cacheMisses = 0;
 	}
 
 	public static void clearCacheMissData() {
@@ -182,7 +182,7 @@ public abstract class DisplayModelBinding {
 	}
 
 	public static void registerCacheMiss(String type) {
-		_cacheMisses++;
+		cacheMisses++;
 		if (!saveCacheMissData()) {
 			return;
 		}
