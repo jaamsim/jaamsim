@@ -35,78 +35,14 @@ public class HullProto {
 	private ConvexHull _hull;
 	boolean _isLoadedGPU = false;
 
-	private int _vertexBuffer;
-	private int _indexBuffer;
-	private int _numIndices;
-
-	private int _progHandle;
-	private int _modelViewMatVar;
-	private int _projMatVar;
-
-	private int _cVar;
-	private int _fcVar;
-
 	private int _assetID;
 
 	public HullProto(ConvexHull hull) {
 		_hull = hull;
-	}
-
-	public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
-		assert(!_isLoadedGPU);
-
 		_assetID = Renderer.getAssetID();
-
-		Shader s = renderer.getShader(Renderer.ShaderHandle.HULL);
-
-		_progHandle = s.getProgramHandle();
-		gl.glUseProgram(_progHandle);
-
-		_modelViewMatVar = gl.glGetUniformLocation(_progHandle, "modelViewMat");
-		_projMatVar = gl.glGetUniformLocation(_progHandle, "projMat");
-
-		_cVar = gl.glGetUniformLocation(_progHandle, "C");
-		_fcVar = gl.glGetUniformLocation(_progHandle, "FC");
-
-		int[] is = new int[2];
-		gl.glGenBuffers(2, is, 0);
-		_vertexBuffer = is[0];
-		_indexBuffer = is[1];
-
-		List<Vec4d> verts = _hull.getVertices();
-		// Generate the vertex buffer
-		FloatBuffer fb = FloatBuffer.allocate(verts.size() * 3); //
-		for (Vec4d v : verts) {
-			RenderUtils.putPointXYZ(fb, v);
-		}
-		fb.flip();
-
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _vertexBuffer);
-		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, verts.size() * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
-
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
-
-		// Generate the index buffer
-		List<ConvexHull.HullFace> faces = _hull.getFaces();
-
-		_numIndices = faces.size() * 3;
-
-		IntBuffer ib = IntBuffer.allocate(faces.size() * 3); //
-		for (ConvexHull.HullFace f : faces) {
-			ib.put(f.indices, 0 ,3);
-		}
-
-		ib.flip();
-
-		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-		gl.glBufferData(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, faces.size() * 3 * 4, ib, GL2GL3.GL_STATIC_DRAW);
-
-		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		_isLoadedGPU = true;
 	}
 
-	private void setupVAO(Map<Integer, Integer> vaoMap, Renderer renderer) {
+	private void setupVAO(Map<Integer, Integer> vaoMap, Renderer renderer, int progHandle, int vertexBuffer, int indexBuffer) {
 		GL2GL3 gl = renderer.getGL();
 
 		int[] vaos = new int[1];
@@ -115,15 +51,15 @@ public class HullProto {
 		vaoMap.put(_assetID, vao);
 		gl.glBindVertexArray(vao);
 
-		gl.glUseProgram(_progHandle);
+		gl.glUseProgram(progHandle);
 
-		int posVar = gl.glGetAttribLocation(_progHandle, "position");
+		int posVar = gl.glGetAttribLocation(progHandle, "position");
 		gl.glEnableVertexAttribArray(posVar);
 
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _vertexBuffer);
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, vertexBuffer);
 		gl.glVertexAttribPointer(posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
 
-		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 
 		gl.glBindVertexArray(0);
 
@@ -135,23 +71,69 @@ public class HullProto {
 
 		GL2GL3 gl = renderer.getGL();
 
+		Shader s = renderer.getShader(Renderer.ShaderHandle.HULL);
+
+		int progHandle = s.getProgramHandle();
+		gl.glUseProgram(progHandle);
+
+		int modelViewMatVar = gl.glGetUniformLocation(progHandle, "modelViewMat");
+		int projMatVar = gl.glGetUniformLocation(progHandle, "projMat");
+
+		int cVar = gl.glGetUniformLocation(progHandle, "C");
+		int fcVar = gl.glGetUniformLocation(progHandle, "FC");
+
+		int[] is = new int[2];
+		gl.glGenBuffers(2, is, 0);
+		int vertexBuffer = is[0];
+		int indexBuffer = is[1];
+
+		List<Vec4d> verts = _hull.getVertices();
+		// Generate the vertex buffer
+		FloatBuffer fb = FloatBuffer.allocate(verts.size() * 3); //
+		for (Vec4d v : verts) {
+			RenderUtils.putPointXYZ(fb, v);
+		}
+		fb.flip();
+
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, vertexBuffer);
+		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, verts.size() * 3 * 4, fb, GL2GL3.GL_STATIC_DRAW);
+
+		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
+
+		// Generate the index buffer
+		List<ConvexHull.HullFace> faces = _hull.getFaces();
+
+		int numIndices = faces.size() * 3;
+
+		IntBuffer ib = IntBuffer.allocate(faces.size() * 3); //
+		for (ConvexHull.HullFace f : faces) {
+			ib.put(f.indices, 0 ,3);
+		}
+
+		ib.flip();
+
+		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+		gl.glBufferData(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, faces.size() * 3 * 4, ib, GL2GL3.GL_STATIC_DRAW);
+
+		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, 0);
+
 		if (!vaoMap.containsKey(_assetID)) {
-			setupVAO(vaoMap, renderer);
+			setupVAO(vaoMap, renderer, progHandle, vertexBuffer, indexBuffer);
 		}
 
 		int vao = vaoMap.get(_assetID);
 		gl.glBindVertexArray(vao);
 
-		gl.glUseProgram(_progHandle);
+		gl.glUseProgram(progHandle);
 
 		// Setup uniforms for this object
 		Mat4d projMat = cam.getProjMat4d();
 
-		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
-		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
+		gl.glUniformMatrix4fv(modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+		gl.glUniformMatrix4fv(projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
-		gl.glUniform1f(_cVar, Camera.C);
-		gl.glUniform1f(_fcVar, Camera.FC);
+		gl.glUniform1f(cVar, Camera.C);
+		gl.glUniform1f(fcVar, Camera.FC);
 
 		// Actually draw it
 
@@ -166,7 +148,7 @@ public class HullProto {
 
 		//gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 
-		gl.glDrawElements(GL2GL3.GL_TRIANGLES, _numIndices, GL2GL3.GL_UNSIGNED_INT, 0);
+		gl.glDrawElements(GL2GL3.GL_TRIANGLES, numIndices, GL2GL3.GL_UNSIGNED_INT, 0);
 
 		//gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 
@@ -178,6 +160,8 @@ public class HullProto {
 		gl.glDisable(GL2GL3.GL_BLEND);
 
 		gl.glBindVertexArray(0);
+
+		gl.glDeleteBuffers(2, is, 0);
 
 	}
 

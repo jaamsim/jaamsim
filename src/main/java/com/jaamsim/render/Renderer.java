@@ -34,8 +34,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.media.opengl.DebugGL2;
@@ -55,7 +55,6 @@ import com.jaamsim.font.OverlayString;
 import com.jaamsim.font.TessFont;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.util.ExceptionLogger;
@@ -113,8 +112,6 @@ public class Renderer {
 	private final Map<MeshProtoKey, MeshProto> _protoCache;
 	private final Map<TessFontKey, TessFont> _fontCache;
 
-	private final Map<ConvexHullKey, HullProto> _hullCache;
-
 	private final HashMap<Integer, RenderWindow> _openWindows;
 
 	private final Queue<RenderMessage> _renderMessages = new ArrayDeque<RenderMessage>();
@@ -155,7 +152,6 @@ public class Renderer {
 		_safeGraphics = safeGraphics;
 		_protoCache = new HashMap<MeshProtoKey, MeshProto>();
 		_fontCache = new HashMap<TessFontKey, TessFont>();
-		_hullCache = new HashMap<ConvexHullKey, HullProto>();
 
 		_exceptionLogger = new ExceptionLogger(1); // Print the call stack on the first exception of any kind
 
@@ -256,7 +252,6 @@ public class Renderer {
 
 						_fontCache.clear();
 						_protoCache.clear();
-						_hullCache.clear();
 						_shaders.clear();
 
 					} catch (Exception e) { }
@@ -359,14 +354,6 @@ public class Renderer {
 		}
 
 		return _fontCache.get(key);
-	}
-
-	public HullProto getHullProto(ConvexHullKey key) {
-		HullProto hp = _hullCache.get(key);
-		if (hp == null) {
-			loadHullImp(key);
-		}
-		return _hullCache.get(key);
 	}
 
 	public void setScene(ArrayList<RenderProxy> scene) {
@@ -736,44 +723,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		TessFont tf = new TessFont(key);
 
 		_fontCache.put(key, tf);
-	}
-
-	private void loadHullImp(ConvexHullKey key) {
-		// Find the mesh proto
-		assert (Thread.currentThread() == _renderThread);
-
-		MeshProto proto = _protoCache.get(key.getMeshKey());
-		if (proto == null) {
-			//TODO: log error, or load mesh
-			return; // This mesh has not been loaded....
-		}
-
-		ConvexHull hull = proto.getHull();
-
-		assert(hull != null);
-
-		HullProto hp = new HullProto(hull);
-
-		if (_drawContext != null) {
-			_drawContext.release();
-		}
-
-		int res = _sharedContext.makeCurrent();
-		assert (res == GLContext.CONTEXT_CURRENT);
-
-		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
-
-		hp.loadGPUAssets(gl, this);
-
-		assert (hp.isLoadedGPU());
-		_hullCache.put(key, hp);
-
-		_sharedContext.release();
-
-		if (_drawContext != null) {
-			_drawContext.makeCurrent();
-		}
-
 	}
 
 	// Recreate the internal scene based on external input
@@ -1185,15 +1134,15 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		return _texCache;
 	}
 
-	public boolean debugDrawHulls() {
+	public static boolean debugDrawHulls() {
 		return false;
 	}
 
-	public boolean debugDrawAABBs() {
+	public static boolean debugDrawAABBs() {
 		return false;
 	}
 
-	public boolean debugDrawArmatures() {
+	public static boolean debugDrawArmatures() {
 		return false;
 	}
 

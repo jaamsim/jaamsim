@@ -48,7 +48,7 @@ public class MeshProxy implements RenderProxy {
 		if (cached == null) {
 			MeshProto proto = r.getProto(_assetKey);
 
-			cached = new Mesh(_assetKey, proto, _trans, _scale, _actions, _visInfo, _pickingID);
+			cached = new Mesh(proto, _trans, _scale, _actions, _visInfo, _pickingID);
 		}
 		outList.add(cached);
 	}

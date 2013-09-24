@@ -32,7 +32,6 @@ import com.jaamsim.math.Vec4d;
 public class Mesh implements Renderable {
 
 private MeshProto _proto;
-private MeshProtoKey _key;
 private Transform _trans;
 private Vec4d _scale; // Allow for a non-uniform scale
 
@@ -45,19 +44,19 @@ private Mat4d _modelMat;
 private Mat4d _normalMat;
 private ArrayList<AABB> _subMeshBounds;
 private ArrayList<Action.Queue> _actions;
+private HullProto debugHull = null;
 
 public Mesh(MeshProtoKey key, MeshProto proto, Transform trans,
             ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
-	this(key, proto, trans, new Vec4d(0, 0, 0, 1.0d), actions, visInfo, pickingID);
+	this(proto, trans, new Vec4d(0, 0, 0, 1.0d), actions, visInfo, pickingID);
 }
 
-public Mesh(MeshProtoKey key, MeshProto proto, Transform trans, Vec4d scale,
+public Mesh(MeshProto proto, Transform trans, Vec4d scale,
             ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
 
 	_trans = new Transform(trans);
 	_proto = proto;
 	_scale = new Vec4d(scale);
-	_key = key;
 	_visInfo = visInfo;
 	_actions = actions;
 
@@ -83,20 +82,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, 
 
 	_proto.render(vaoMap, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
 
-	// Debug render of the convex hull
-	if (renderer.debugDrawHulls()) {
-
-		Mat4d modelViewMat = new Mat4d();
-		cam.getViewMat4d(modelViewMat);
-		modelViewMat.mult4(_modelMat);
-
-		ConvexHullKey hullKey = new ConvexHullKey(_key);
-		HullProto hp = renderer.getHullProto(hullKey);
-		if (hp != null) {
-			hp.render(vaoMap, renderer, modelViewMat, cam);
-		}
-	}
-	if (renderer.debugDrawArmatures()) {
+	if (Renderer.debugDrawArmatures()) {
 		Mat4d modelViewMat = new Mat4d();
 		cam.getViewMat4d(modelViewMat);
 		modelViewMat.mult4(_modelMat);
@@ -223,7 +209,7 @@ public double getCollisionDist(Ray r, boolean precise)
 
 @Override
 public boolean hasTransparent() {
-	return _proto.hasTransparent();
+	return _proto.hasTransparent() || Renderer.debugDrawHulls();
 }
 
 @Override
@@ -232,6 +218,18 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, C
 	// TODO: pass actions here
 	_proto.renderTransparent(vaoMap, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
 
+	// Debug render of the convex hull
+	if (Renderer.debugDrawHulls()) {
+
+		Mat4d modelViewMat = new Mat4d();
+		cam.getViewMat4d(modelViewMat);
+		modelViewMat.mult4(_modelMat);
+
+		if (debugHull == null) {
+			debugHull = new HullProto(_proto.getHull());
+		}
+		debugHull.render(vaoMap, renderer, modelViewMat, cam);
+	}
 }
 
 @Override
