@@ -417,12 +417,8 @@ public final class EventManager implements Runnable {
 	private void doRealTime(long nextTick) {
 		double nextSimTime = Process.ticksToSeconds(nextTick);
 
-		// If necessary, set up the real time parameters
-		if( rebaseRealTime )
-			this.rebaseRealTime(System.currentTimeMillis(), Process.ticksToSeconds(currentTick));
-
 		// Loop until the next event time is reached
-		double simTime = this.getSimTime(System.currentTimeMillis());
+		double simTime = this.calcSimTime(Process.ticksToSeconds(currentTick));
 		while( simTime < nextSimTime && executeRealTime ) {
 
 			// Update the displayed simulation time
@@ -441,35 +437,26 @@ public final class EventManager implements Runnable {
 					return;
 			}
 
-			// Has the simulation speed been changed down during the wait?
-			if( rebaseRealTime )
-				this.rebaseRealTime(System.currentTimeMillis(), simTime);
-
 			// Calculate the simulation time corresponding to the present wall clock time
-			simTime = this.getSimTime(System.currentTimeMillis());
+			simTime = this.calcSimTime(simTime);
 		}
 	}
 
 	/**
 	 * Return the simulation time corresponding the given wall clock time
-	 * @param currentTimeMillis = wall clock time in milliseconds
+	 * @param simTime = the current simulation time used when setting a real-time basis
 	 * @return simulation time in seconds
 	 */
-	private double getSimTime(long currentTimeMillis) {
-		return baseSimTime + (currentTimeMillis - baseTimeMillis) * realTimeFactor / 1000.0d;
-	}
+	private double calcSimTime(double simTime) {
+		long curMS = System.currentTimeMillis();
+		if (rebaseRealTime) {
+			baseSimTime = simTime;
+			baseTimeMillis = curMS;
+			rebaseRealTime = false;
+		}
 
-	/**
-	 * Reset the parameters used to calculate simulation time from wall clock time in Real Time mode.
-	 * This method is called whenever Real Time mode is first started, or when the real time
-	 * factor is changed.
-	 * @param currentTimeMillis = present wall clock time in milliseconds
-	 * @param simTime = present simulation time in seconds
-	 */
-	private void rebaseRealTime(long currentTimeMillis, double simTime) {
-		baseSimTime = simTime;
-		baseTimeMillis = currentTimeMillis;
-		rebaseRealTime = false;
+		double simSeconds = ((curMS - baseTimeMillis) * realTimeFactor) / 1000.0d;
+		return baseSimTime + simSeconds;
 	}
 
 	/**
