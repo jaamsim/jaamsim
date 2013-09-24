@@ -253,7 +253,6 @@ public class ImageModel extends DisplayModel {
 				return;
 			}
 
-			++_cacheMisses;
 			registerCacheMiss("OverlayImage");
 
 			try {

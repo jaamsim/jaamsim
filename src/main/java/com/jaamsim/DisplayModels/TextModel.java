@@ -229,7 +229,6 @@ public class TextModel extends DisplayModel {
 				return;
 			}
 
-			++_cacheMisses;
 			registerCacheMiss("TextLabel");
 
 			if (trans == null) {
@@ -347,7 +346,6 @@ public class TextModel extends DisplayModel {
 				return;
 			}
 
-			++_cacheMisses;
 			registerCacheMiss("OverlayText");
 
 			cachedProxies = new ArrayList<RenderProxy>();

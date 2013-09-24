@@ -206,7 +206,6 @@ public class DisplayModelCompat extends DisplayModel {
 				return;
 			}
 
-			++_cacheMisses;
 			registerCacheMiss("DisplayModelCompat");
 
 			cachedProxies = new ArrayList<RenderProxy>();

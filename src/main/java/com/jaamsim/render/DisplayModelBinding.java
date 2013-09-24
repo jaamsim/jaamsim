@@ -182,6 +182,7 @@ public abstract class DisplayModelBinding {
 	}
 
 	public static void registerCacheMiss(String type) {
+		_cacheMisses++;
 		if (!saveCacheMissData()) {
 			return;
 		}

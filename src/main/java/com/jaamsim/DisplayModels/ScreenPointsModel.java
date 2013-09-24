@@ -104,7 +104,6 @@ public class ScreenPointsModel extends DisplayModel {
 				return;
 			}
 
-			_cacheMisses++;
 			registerCacheMiss("Points");
 
 			if (pis.length == 0) {

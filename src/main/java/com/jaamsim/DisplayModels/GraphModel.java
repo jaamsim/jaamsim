@@ -83,7 +83,6 @@ public class GraphModel extends DisplayModel {
 
 			updateObjectTrans(simTime);
 
-			++_cacheMisses;
 			registerCacheMiss("Graph");
 
 			Color4d graphColour = graphObservee.getGraphColour();
