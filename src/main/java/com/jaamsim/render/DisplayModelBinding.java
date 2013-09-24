@@ -44,7 +44,7 @@ public abstract class DisplayModelBinding {
 	private static final Color4d MINT = ColourInput.getColorWithName("mint");
 
 	private static final boolean _saveCacheMissData = false;
-	private static HashMap<String, Integer> cacheMissData = new HashMap<String, Integer>();
+	private static final HashMap<String, CacheCounter> cacheMissData = new HashMap<String, CacheCounter>();
 
 	//protected DisplayEntity _dispObservee;
 
@@ -181,21 +181,25 @@ public abstract class DisplayModelBinding {
 		return _saveCacheMissData;
 	}
 
+
+	private static class CacheCounter {
+		int count = 0;
+
+		CacheCounter() {}
+	}
+
 	public static void registerCacheMiss(String type) {
 		cacheMisses++;
 		if (!saveCacheMissData()) {
 			return;
 		}
 
-		int count = 1;
-		if (cacheMissData.containsKey(type)) {
-			count = cacheMissData.get(type) + 1;
+		CacheCounter cc = cacheMissData.get(type);
+		if (cc == null) {
+			cc = new CacheCounter();
+			cacheMissData.put(type, cc);
 		}
-		cacheMissData.put(type, count);
-	}
-
-	public static HashMap<String, Integer> getCacheMissData() {
-		return cacheMissData;
+		cc.count++;
 	}
 
 	public VisibilityInfo getVisibilityInfo() {
