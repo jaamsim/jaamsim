@@ -63,6 +63,9 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 					throw new InputErrorException( "Could not determine default units " + unitString );
 				}
 
+				if (defaultUnit.getClass() != unit.getClass())
+					throw new InputErrorException( "Cannot convert from %s to %s", defaultUnit.getName(), unit.getName());
+
 				// Determine the conversion factor to the default units
 				double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
 
@@ -97,6 +100,9 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 			if( defaultUnit == null ) {
 				throw new InputErrorException( "Could not determine default units " + unitString );
 			}
+
+			if (defaultUnit.getClass() != unit.getClass())
+				throw new InputErrorException( "Cannot convert from %s to %s", defaultUnit.getName(), unit.getName());
 
 			// Determine the conversion factor to the default units
 			double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );

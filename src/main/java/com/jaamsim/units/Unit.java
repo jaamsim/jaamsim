@@ -18,8 +18,8 @@ import java.util.HashMap;
 
 import com.sandwell.JavaSimulation.AliasListInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
+import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 
 public abstract class Unit extends Entity {
@@ -37,12 +37,17 @@ public abstract class Unit extends Entity {
 			example = "Year Alias { y  yr }")
 	private final AliasListInput alias;
 
+	private static final DoubleVector defFactors;
+
 	static {
 		siUnit = new HashMap<Class<? extends Unit>, String>();
+
+		defFactors = new DoubleVector(1);
+		defFactors.add(1.0d);
 	}
 
 	{
-		conversionFactorToSI = new DoubleListInput( "ConversionFactorToSI", "Key Inputs", null );
+		conversionFactorToSI = new DoubleListInput("ConversionFactorToSI", "Key Inputs", defFactors);
 		conversionFactorToSI.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
 		conversionFactorToSI.setValidCountRange( 1, 2 );
 		this.addInput( conversionFactorToSI, true );
@@ -84,39 +89,22 @@ public abstract class Unit extends Entity {
 	 * Return the conversion factor to SI units
 	 */
 	public double getConversionFactorToSI() {
+		DoubleVector d = conversionFactorToSI.getValue();
 
-		if( conversionFactorToSI.getValue() == null ) {
-			throw new InputErrorException( this.getName() + " missing conversion factor to SI" );
-		}
+		// if the conversionFactorToSI input has one value, we assume a divisor
+		// of 1.0
+		if (d.size() == 1)
+			return d.get(0);
 
-		// if the conversionFactorToSI input has one value, then it is the conversion factor to SI units
-		if( conversionFactorToSI.getValue().size() == 1 ) {
-			return conversionFactorToSI.getValue().get( 0 );
-		}
-		else {
-			// if the conversionFactorToSI input has two values,
-			// then the first value divided by the second value is the conversion factor to SI units
-			if( conversionFactorToSI.getValue().size() == 2 ) {
-				return conversionFactorToSI.getValue().get( 0 ) / conversionFactorToSI.getValue().get( 1 );
-			}
-			else {
-				throw new InputErrorException( this.getName() + " ConversionFactorToSI must have 1 or 2 values" );
-			}
-		}
+		return d.get(0) / d.get(1);
 	}
 
 	/**
 	 * Return the conversion factor to the given units
 	 */
 	public double getConversionFactorToUnit( Unit unit ) {
-		Double factor1 = this.getConversionFactorToSI();
-		Double factor2 = unit.getConversionFactorToSI();
-		if( unit.getClass() == this.getClass() && factor1 != null && factor2 != null ) {
-			return factor1 / factor2 ;
-		}
-		else {
-			throw new InputErrorException( "Cannot convert from " + this + " to " + unit );
-		}
+		double f1 = this.getConversionFactorToSI();
+		double f2 = unit.getConversionFactorToSI();
+		return f1 / f2 ;
 	}
-
 }

@@ -279,6 +279,9 @@ public abstract class Input<T> {
 					throw new InputErrorException( "Could not determine default units " + units );
 				}
 
+				if (defaultUnit.getClass() != unit.getClass())
+					throw new InputErrorException( "Cannot convert from %s to %s", defaultUnit.getName(), unit.getName());
+
 				// Determine the conversion factor to the default units
 				double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
 
@@ -608,6 +611,9 @@ public abstract class Input<T> {
 				throw new InputErrorException( "Could not determine default units " + defaultUnitString );
 			}
 
+			if (defaultUnit.getClass() != unit.getClass())
+				throw new InputErrorException( "Cannot convert from %s to %s", defaultUnit.getName(), unit.getName());
+
 			// Determine the conversion factor from units to default units
 			conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
 		}
@@ -702,6 +708,9 @@ public abstract class Input<T> {
 			if( defaultUnit == null ) {
 				throw new InputErrorException( "Could not determine default units " + defaultUnitString );
 			}
+
+			if (defaultUnit.getClass() != unit.getClass())
+				throw new InputErrorException( "Cannot convert from %s to %s", defaultUnit.getName(), unit.getName());
 
 			// Determine the conversion factor to the default units
 			conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
