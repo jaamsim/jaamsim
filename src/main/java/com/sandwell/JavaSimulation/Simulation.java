@@ -123,8 +123,6 @@ public class Simulation extends Entity {
 
 	private static String modelName = "JaamSim";
 
-	/** the current simulation state */
-	protected static int simState;
 	/** model was executed, but no configuration performed */
 	public static final int SIM_STATE_LOADED = 0;
 	/** essential model elements created, no configuration performed */
@@ -487,22 +485,6 @@ public class Simulation extends Entity {
 
 	public static String getModelName() {
 		return modelName;
-	}
-
-	/** returns the current state of the simulation. One of <br>
-	 *   SIM_STATE_LOADED - indicates the simulation environment is loaded
-	 *   SIM_STATE_UNCONFIGURED - indicates the model is ready to be configured
-	 *   SIM_STATE_CONFIGURED - indicates the model is configured, read to execute
-	 *   SIM_STATE_RUNNING - indicates the model is currently executing events
-	 *   SIM_STATE_PAUSED - indicates the model is currently not executing events
-	 *   @return int - current simulation state
-	 */
-	public static final int getSimulationState() {
-		return Simulation.simState;
-	}
-
-	public static final void setSimState(int state) {
-		Simulation.simState = state;
 	}
 
 	public boolean getExitAtStop() {

@@ -557,7 +557,7 @@ public class GUIFrame extends JFrame {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if( Simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING ) {
+				if( getSimState() == Simulation.SIM_STATE_RUNNING ) {
 					GUIFrame.this.pauseSimulation();
 				}
 				int userOption = JOptionPane.showConfirmDialog( null,
@@ -926,7 +926,7 @@ public class GUIFrame extends JFrame {
 		progressBar.repaint(25);
 		lastValue = val;
 
-		if (Simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
+		if (getSimState() >= Simulation.SIM_STATE_CONFIGURED) {
 			String title = String.format("%d%% %s - %s", val, Simulation.getModelName(), InputAgent.getRunName());
 			setTitle(title);
 		}
@@ -990,13 +990,13 @@ public class GUIFrame extends JFrame {
 			return;
 		}
 
-		if( Simulation.getSimulationState() <= Simulation.SIM_STATE_CONFIGURED ) {
+		if( getSimState() <= Simulation.SIM_STATE_CONFIGURED ) {
 			if (InputAgent.isSessionEdited()) {
 				InputAgent.saveAs(this);
 			}
 			DisplayEntity.simulation.start();
 		}
-		else if( Simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED ) {
+		else if( getSimState() == Simulation.SIM_STATE_PAUSED ) {
 
 			// it is not a run to time
 			if(Double.isInfinite( runToTime ) ) {
@@ -1004,8 +1004,8 @@ public class GUIFrame extends JFrame {
 				return;
 			}
 		}
-		else if( Simulation.getSimulationState() == Simulation.SIM_STATE_STOPPED ) {
-			Simulation.setSimState(Simulation.SIM_STATE_CONFIGURED);
+		else if( getSimState() == Simulation.SIM_STATE_STOPPED ) {
+			updateForSimulationState(Simulation.SIM_STATE_CONFIGURED);
 			DisplayEntity.simulation.start();
 		}
 		else
@@ -1017,28 +1017,33 @@ public class GUIFrame extends JFrame {
 	}
 
 	private void pauseSimulation() {
-		if( Simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING )
+		if( getSimState() == Simulation.SIM_STATE_RUNNING )
 			Simulation.pause();
 		else
 			throw new ErrorException( "Invalid Simulation State for pause" );
 	}
 
 	private void stopSimulation() {
-		if( Simulation.getSimulationState() == Simulation.SIM_STATE_RUNNING ||
-			Simulation.getSimulationState() == Simulation.SIM_STATE_PAUSED )
+		if( getSimState() == Simulation.SIM_STATE_RUNNING ||
+		    getSimState() == Simulation.SIM_STATE_PAUSED )
 			Simulation.stop();
 		else
 			throw new ErrorException( "Invalid Simulation State for stop" );
 	}
 
+	private int simState;
+	public int getSimState() {
+		return simState;
+	}
+
 	public void updateForSimulationState(int state) {
-		Simulation.setSimState(state);
+		simState = state;
 		if (state >= Simulation.SIM_STATE_CONFIGURED)
 			InputAgent.setRecordEdits(true);
 		else
 			InputAgent.setRecordEdits(false);
 
-		switch( Simulation.getSimulationState() ) {
+		switch( getSimState() ) {
 			case Simulation.SIM_STATE_LOADED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
 					fileMenu.getItem(i).setEnabled(true);

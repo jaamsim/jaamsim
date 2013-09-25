@@ -36,6 +36,7 @@ import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
+import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class PreviewCache {
 
@@ -47,7 +48,7 @@ public class PreviewCache {
 		_imageCache = new HashMap<DisplayModel, Future<BufferedImage>>();
 
 
-		if (Simulation.getSimulationState() != Simulation.SIM_STATE_RUNNING) {
+		if (GUIFrame.instance().getSimState() != Simulation.SIM_STATE_RUNNING) {
 			dummyEntity = new DisplayEntity();
 			dummyEntity.kill();
 		}
@@ -104,7 +105,7 @@ public class PreviewCache {
 			// This will all need to be refactored soonish.
 
 			if (dummyEntity == null) {
-				if (Simulation.getSimulationState() != Simulation.SIM_STATE_RUNNING) {
+				if (GUIFrame.instance().getSimState() != Simulation.SIM_STATE_RUNNING) {
 					dummyEntity = new DisplayEntity();
 					dummyEntity.kill();
 				} else {
