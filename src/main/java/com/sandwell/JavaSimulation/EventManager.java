@@ -548,10 +548,6 @@ public final class EventManager implements Runnable {
 		addEventToStack(newEvent);
 	}
 
-	void scheduleProcess(long waitLength, int eventPriority, Entity caller, String methodName, Object[] args) {
-		raw_scheduleProcess(waitLength, eventPriority, caller, methodName, args);
-	}
-
 	void scheduleSingleProcess(long waitLength, int eventPriority, Entity caller, String methodName, Object[] args) {
 		long eventTime = calculateEventTime(Process.currentTick(), waitLength);
 
@@ -854,18 +850,12 @@ public final class EventManager implements Runnable {
 		return false;
 	}
 
-	/**
-	 * This method will create a new process from outside the simulation.
-	 * For example, it is used when pressing F5 to start an avi capture.
-	 */
-	void startExternalProcess(Entity target, String methodName, Object[] arguments) {
-		// Take a process from the pool
-		Process newProcess = Process.allocate(this, target, methodName, arguments);
-
-		// Create an event for the new process at the present time, and place it on the event stack
-		Event newEvent = new Event(currentTick, currentTick, PRIO_DEFAULT, target, newProcess);
-		this.traceSchedProcess(newEvent);
-		addEventToStack(newEvent);
+	void scheduleProcess(long waitLength, int eventPriority, Entity ent, ProcessTarget t) {
+		Process p = Process.allocate(this, t);
+		long schedTick = currentTick + waitLength;
+		Event e = new Event(currentTick, schedTick, eventPriority, ent, p);
+		this.traceSchedProcess(e);
+		addEventToStack(e);
 	}
 
 	private static synchronized int getEventState() {

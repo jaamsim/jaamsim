@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
@@ -134,7 +135,7 @@ public class VideoRecorderEntity extends Entity {
 		super.startUp();
 
 		if (videoCapture.getValue())
-			this.startProcess("doCaptureNetwork");
+			Process.start(new CaptureNetworkTarget(this));
 
 		this.hasRunStartup = true;
 	}
@@ -147,10 +148,27 @@ public class VideoRecorderEntity extends Entity {
 			// Start the capture if we are already running and we set the input
 			// to true
 			if (hasRunStartup && videoCapture.getValue())
-				this.startExternalProcess("doCaptureNetwork");
+				this.scheduleProcess(new CaptureNetworkTarget(this));
 		}
 	}
 
+	private static class CaptureNetworkTarget extends ProcessTarget {
+		final VideoRecorderEntity rec;
+
+		CaptureNetworkTarget(VideoRecorderEntity rec) {
+			this.rec = rec;
+		}
+
+		@Override
+		public String getDescription() {
+			return rec.getInputName() + ".doCaptureNetwork";
+		}
+
+		@Override
+		public void process() {
+			rec.doCaptureNetwork();
+		}
+	}
 	/**
 	 * Capture JPEG images of the screen at regular simulated intervals
 	 */

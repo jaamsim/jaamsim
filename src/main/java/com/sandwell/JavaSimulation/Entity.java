@@ -399,8 +399,8 @@ public class Entity {
 		Process.start(t);
 	}
 
-	public final void startExternalProcess(String methodName, Object... args) {
-		getEventManager().startExternalProcess(this, methodName, args);
+	public final void scheduleProcess(ProcessTarget t) {
+		getEventManager().scheduleProcess(0, EventManager.PRIO_DEFAULT, this, t);
 	}
 
 	public final void scheduleSingleProcess(String methodName, Object... args) {

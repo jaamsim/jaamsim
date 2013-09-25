@@ -303,7 +303,6 @@ public class Simulation extends Entity {
 	 *		3) start EventManager processing events
 	 */
 	public void start() {
-		// call startModel from a process so it can handle events
 		EventManager.rootManager.basicInit();
 
 		if( traceEventsInput.getValue() ) {
@@ -325,9 +324,10 @@ public class Simulation extends Entity {
 			}
 		}
 
-		this.startExternalProcess("startModel");
+		EventManager.rootManager.scheduleProcess(0, EventManager.PRIO_DEFAULT, this, new StartModelTarget(this));
 		Simulation.resume();
 	}
+
 
 	public static final void resume() {
 		EventManager.rootManager.resume();
@@ -374,6 +374,24 @@ public class Simulation extends Entity {
 		@Override
 		public void process() {
 			ent.startUp();
+		}
+	}
+
+	private static class StartModelTarget extends ProcessTarget {
+		final Simulation ent;
+
+		StartModelTarget(Simulation sim) {
+			this.ent = sim;
+		}
+
+		@Override
+		public String getDescription() {
+			return ent.getInputName() + ".startModel";
+		}
+
+		@Override
+		public void process() {
+			ent.startModel();
 		}
 	}
 
