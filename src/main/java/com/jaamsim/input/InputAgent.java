@@ -1056,10 +1056,8 @@ public class InputAgent {
 	public static void configure(GUIFrame gui, String configFileName) {
 		try {
 			gui.clear();
-			Simulation.setSimState(Simulation.SIM_STATE_UNCONFIGURED);
-
 			InputAgent.setConfigFileName(configFileName);
-			gui.updateForSimulationState();
+			gui.updateForSimulationState(Simulation.SIM_STATE_UNCONFIGURED);
 
 			try {
 				InputAgent.loadConfigurationFile(configFileName);
@@ -1071,14 +1069,11 @@ public class InputAgent {
 					System.out.println( iee.getMessage() );
 			}
 
-			// store the present state
-			Simulation.setSimState(Simulation.SIM_STATE_CONFIGURED);
-
 			System.out.println("Configuration File Loaded");
 
 			// show the present state in the user interface
 			gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
-			gui.updateForSimulationState();
+			gui.updateForSimulationState(Simulation.SIM_STATE_CONFIGURED);
 		}
 		catch( Throwable t ) {
 			ExceptionBox.instance().setError(t);

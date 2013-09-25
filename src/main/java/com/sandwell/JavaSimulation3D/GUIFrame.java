@@ -546,7 +546,6 @@ public class GUIFrame extends JFrame {
 				else {
 					GUIFrame.this.pauseSimulation();
 				}
-				GUIFrame.this.updateForSimulationState();
 			}
 		} );
 
@@ -1032,7 +1031,8 @@ public class GUIFrame extends JFrame {
 			throw new ErrorException( "Invalid Simulation State for stop" );
 	}
 
-	public void updateForSimulationState() {
+	public void updateForSimulationState(int state) {
+		Simulation.setSimState(state);
 		switch( Simulation.getSimulationState() ) {
 			case Simulation.SIM_STATE_LOADED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
@@ -1295,7 +1295,7 @@ public class GUIFrame extends JFrame {
 		System.out.flush();
 
 		GUIFrame gui = GUIFrame.instance();
-		gui.updateForSimulationState();
+		gui.updateForSimulationState(Simulation.SIM_STATE_LOADED);
 
 		Simulation gsim = new Simulation();
 		DisplayEntity.setSimulation(gsim);

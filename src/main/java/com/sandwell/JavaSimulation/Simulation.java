@@ -186,8 +186,6 @@ public class Simulation extends Entity {
 	 *  Protected makes this a 'singleton' class -- only one instance of it exists.  is instantiated through 'getSimulation()' method.
 	 */
 	public Simulation() {
-		Simulation.simState = SIM_STATE_UNCONFIGURED;
-
 		// Create clock
 		Clock.setStartDate(2000, 1, 1);
 
@@ -197,8 +195,6 @@ public class Simulation extends Entity {
 
 		// Real time execution state
 		doEndAtThread = null;
-
-		Simulation.simState = SIM_STATE_LOADED;
 	}
 
 	@Override
@@ -297,8 +293,7 @@ public class Simulation extends Entity {
 			ent.kill();
 		}
 
-		Simulation.setSimState(SIM_STATE_LOADED);
-		GUIFrame.instance().updateForSimulationState();
+		GUIFrame.instance().updateForSimulationState(SIM_STATE_LOADED);
 	}
 
 	/**
@@ -336,8 +331,7 @@ public class Simulation extends Entity {
 
 	public static final void resume() {
 		EventManager.rootManager.resume();
-		Simulation.setSimState(SIM_STATE_RUNNING);
-		GUIFrame.instance().updateForSimulationState();
+		GUIFrame.instance().updateForSimulationState(SIM_STATE_RUNNING);
 	}
 
 	/**
@@ -345,8 +339,7 @@ public class Simulation extends Entity {
 	 */
 	public static final void pause() {
 		EventManager.rootManager.pause();
-		Simulation.setSimState(SIM_STATE_PAUSED);
-		GUIFrame.instance().updateForSimulationState();
+		GUIFrame.instance().updateForSimulationState(SIM_STATE_PAUSED);
 	}
 
 	/**
@@ -354,8 +347,7 @@ public class Simulation extends Entity {
 	 */
 	public static final void stop() {
 		EventManager.rootManager.pause();
-		Simulation.setSimState(SIM_STATE_STOPPED);
-		GUIFrame.instance().updateForSimulationState();
+		GUIFrame.instance().updateForSimulationState(SIM_STATE_STOPPED);
 
 		// kill all generated objects
 		for (int i = 0; i < Entity.getAll().size();) {
