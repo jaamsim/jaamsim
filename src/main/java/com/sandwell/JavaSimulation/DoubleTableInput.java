@@ -75,8 +75,6 @@ public class DoubleTableInput extends Input<ArrayList<DoubleVector>> {
 
 			value.add(vec);
 		}
-
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

@@ -26,7 +26,6 @@ public class Vec3dInput extends Input<Vec3d> {
 		}
 
 		value = new Vec3d(temp.get(0), temp.get(1), temp.get(2));
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

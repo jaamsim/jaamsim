@@ -48,8 +48,6 @@ public class UnitTypeInput extends Input<ObjectType> {
 
 		value = t;
 		unitType = type;
-
-		this.updateEditingFlags();
 	}
 
 	@Override

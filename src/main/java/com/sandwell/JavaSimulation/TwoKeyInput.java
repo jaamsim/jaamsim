@@ -80,7 +80,6 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 				h1.put( list2.get(j), val );
 			}
 		}
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

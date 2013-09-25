@@ -103,7 +103,6 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 				h1.put( list2.get( j ), val );
 			}
 		}
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

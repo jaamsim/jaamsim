@@ -41,7 +41,6 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 			}
 		}
 		value = bindings;
-		this.updateEditingFlags();
 	}
 
 	private Action.Binding parseBinding(StringVector tokens) throws InputErrorException {

@@ -47,7 +47,6 @@ public class SampleInput extends Input<SampleProvider> {
 		try {
 			DoubleVector tmp = Input.parseDoubles(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 			value = new SampleConstant(unitType, tmp.get(0));
-			this.updateEditingFlags();
 			return;
 		}
 		catch (InputErrorException e) {}
@@ -58,7 +57,6 @@ public class SampleInput extends Input<SampleProvider> {
 		if( s.getUnitType() != UserSpecifiedUnit.class )
 			Input.assertUnitsMatch(unitType, s.getUnitType());
 		value = s;
-		this.updateEditingFlags();
 	}
 
 	@Override

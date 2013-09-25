@@ -35,7 +35,6 @@ public class DoubleInput extends Input<Double> {
 	public void parse(StringVector input)
 	throws InputErrorException {
 		value = Input.parseDouble( input, minValue, maxValue, unitString);
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

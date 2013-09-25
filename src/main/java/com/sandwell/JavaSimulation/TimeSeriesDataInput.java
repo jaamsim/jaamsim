@@ -156,8 +156,6 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 		// Set the value to a new time series data object
 		value = new TimeSeriesData( times, values );
-
-		this.updateEditingFlags();
 	}
 
 	public void setUnitType( Class<? extends Entity> u ) {

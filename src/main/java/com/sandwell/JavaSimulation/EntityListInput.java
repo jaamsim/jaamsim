@@ -37,7 +37,6 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 			Input.assertCountEven(input);
 
 		value = Input.parseEntityList(input, entClass, unique);
-		this.updateEditingFlags();
 	}
 
 	public void setUnique(boolean unique) {

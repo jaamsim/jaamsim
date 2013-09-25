@@ -57,7 +57,6 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 		for( int i = 0; i < list.size(); i++ ) {
 			hashMap.put( list.get(i), val );
 		}
-		this.updateEditingFlags();
 	}
 
 	@Override

@@ -67,7 +67,6 @@ public class OutputListInput<T> extends ListInput<ArrayList<OutputHandle>> {
 			}
 		}
 		value = temp;
-		this.updateEditingFlags();
 	}
 
 	public T getOutputValue(int i, double simTime) {

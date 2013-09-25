@@ -29,7 +29,6 @@ public class EnumInput<T extends Enum<T>> extends Input<T> {
 	throws InputErrorException {
 		Input.assertCount(input, 1);
 		value = Input.parseEnum(type, input.get(0));
-		this.updateEditingFlags();
 	}
 
 	@Override

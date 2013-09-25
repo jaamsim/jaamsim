@@ -39,7 +39,6 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 			DoubleVector tmp = Input.parseDoubles(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 			Input.assertCount(tmp, 1);
 			value = new TimeSeriesConstantDouble(unitType, tmp.get(0));
-			this.updateEditingFlags();
 			return;
 		}
 		catch (InputErrorException e) {}
@@ -51,6 +50,5 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 		if( s.getUnitType() != UserSpecifiedUnit.class )
 			Input.assertUnitsMatch(unitType, s.getUnitType());
 		value = s;
-		this.updateEditingFlags();
 	}
 }

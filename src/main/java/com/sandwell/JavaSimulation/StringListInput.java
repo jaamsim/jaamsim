@@ -33,7 +33,6 @@ public class StringListInput extends ListInput<StringVector> {
 	throws InputErrorException {
 		Input.assertCountRange(input, minCount, maxCount);
 		value = input;
-		this.updateEditingFlags();
 	}
 
 	public void setValidOptions(ArrayList<String> list) {

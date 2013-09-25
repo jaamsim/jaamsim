@@ -51,7 +51,6 @@ public class DoubleListInput extends ListInput<DoubleVector> {
 
 		// Inputs are valid
 		value = temp;
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

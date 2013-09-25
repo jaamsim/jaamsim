@@ -51,7 +51,6 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 		}
 
 		value = tempValue;
-		this.updateEditingFlags();
 	}
 
 	@Override

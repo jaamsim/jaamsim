@@ -30,7 +30,6 @@ public class IntegerListInput extends ListInput<IntegerVector> {
 		Input.assertCountRange(input, minCount, maxCount);
 		Input.assertCount(input, validCounts);
 		value = Input.parseIntegerVector(input, minValue, maxValue);
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(int min, int max) {

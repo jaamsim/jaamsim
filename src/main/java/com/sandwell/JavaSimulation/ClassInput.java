@@ -25,7 +25,6 @@ public class ClassInput extends Input<Class<? extends Entity>>{
 	throws InputErrorException {
 		Input.assertCount(input, 1);
 		value = Input.parseClass(input.get(0));
-		this.updateEditingFlags();
 	}
 
 }

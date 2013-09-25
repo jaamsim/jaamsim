@@ -794,6 +794,12 @@ public class InputAgent {
 
 	public static final void apply(Entity ent, Input<?> in, StringVector data) {
 		in.parse(data);
+
+		// Only mark the keyword edited if we have finished initial configuration
+		if (InputAgent.hasAddedRecords() ||
+		    Simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
+			in.setEdited(true);
+		}
 		ent.updateForInput(in);
 	}
 

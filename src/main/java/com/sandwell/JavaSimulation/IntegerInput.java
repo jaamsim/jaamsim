@@ -27,7 +27,6 @@ public class IntegerInput extends Input<Integer> {
 	throws InputErrorException {
 		Input.assertCount(input, 1);
 		value = Input.parseInteger(input.get(0), minValue, maxValue);
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(int min, int max) {

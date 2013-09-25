@@ -40,7 +40,6 @@ public class OutputInput<T> extends Input<String> {
 			outputName = "";
 			out = null;
 			outputNameList.clear();
-			this.updateEditingFlags();
 			return;
 		}
 
@@ -75,7 +74,6 @@ public class OutputInput<T> extends Input<String> {
 				value += "." + name;
 			}
 		}
-		this.updateEditingFlags();
 	}
 
 	public OutputHandle getOutputHandle(double simTime) {

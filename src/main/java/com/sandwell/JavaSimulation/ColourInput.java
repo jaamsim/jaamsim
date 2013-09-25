@@ -52,7 +52,6 @@ static {
 	throws InputErrorException {
 		Input.assertCount(input, 1, 3);
 		value = Input.parseColour(input);
-		this.updateEditingFlags();
 	}
 
 public static Color4d getColorWithName(String colorName) {

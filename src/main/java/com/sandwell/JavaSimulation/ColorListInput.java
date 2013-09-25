@@ -29,7 +29,6 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 	throws InputErrorException {
 		Input.assertCountRange(input, minCount, maxCount);
 		value = Input.parseColorVector(input);
-		this.updateEditingFlags();
 	}
 
 	@Override

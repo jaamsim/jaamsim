@@ -65,7 +65,6 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		for( int i = 0; i < list.size(); i++ ) {
 			hashMap.put( list.get(i), val );
 		}
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

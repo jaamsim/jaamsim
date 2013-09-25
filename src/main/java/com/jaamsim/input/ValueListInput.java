@@ -47,7 +47,6 @@ public class ValueListInput extends ListInput<DoubleVector> {
 			Input.assertSumTolerance(temp, sumValue, sumTolerance);
 
 		value = temp;
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

@@ -70,7 +70,6 @@ public class TimeValueInput extends Input<TimeValue> {
 			if( unitString.length() > 0 )
 				InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
 		}
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

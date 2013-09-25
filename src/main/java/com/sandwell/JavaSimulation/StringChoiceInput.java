@@ -33,7 +33,6 @@ public class StringChoiceInput extends IntegerInput {
 		Input.assertCount(input, 1);
 		String temp = Input.parseString(input.get(0), choices);
 		value = choices.indexOf( temp );
-		this.updateEditingFlags();
 	}
 
 	public void addChoice(String choice) {

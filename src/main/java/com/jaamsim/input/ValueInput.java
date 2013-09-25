@@ -39,7 +39,6 @@ public class ValueInput extends Input<Double> {
 		DoubleVector temp = Input.parseDoubles(input, minValue, maxValue, unitType);
 		Input.assertCount(temp, 1);
 		value = Double.valueOf(temp.get(0));
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

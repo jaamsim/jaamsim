@@ -39,7 +39,6 @@ public class BooleanInput extends Input<Boolean> {
 	throws InputErrorException {
 		Input.assertCount(input, 1);
 		value = Boolean.valueOf(Input.parseBoolean(input.get(0)));
-		this.updateEditingFlags();
 	}
 
 	@Override

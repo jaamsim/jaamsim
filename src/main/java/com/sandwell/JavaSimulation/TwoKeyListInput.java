@@ -70,7 +70,6 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 				h1.put( list2.get(j), val );
 			}
 		}
-		this.updateEditingFlags();
 	}
 
 	@Override

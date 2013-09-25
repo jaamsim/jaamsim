@@ -71,7 +71,6 @@ public class TimeListInput extends ListInput<DoubleVector> {
 		}
 
 		value = temp;
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

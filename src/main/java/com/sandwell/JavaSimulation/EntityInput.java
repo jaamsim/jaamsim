@@ -42,8 +42,6 @@ public class EntityInput<T extends Entity> extends Input<T> {
 
 			value = tmp;
 		}
-
-		this.updateEditingFlags();
 	}
 
 	@Override

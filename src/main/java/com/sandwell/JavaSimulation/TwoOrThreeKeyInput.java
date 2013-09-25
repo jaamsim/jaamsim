@@ -105,7 +105,6 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 				}
 			}
 		}
-		this.updateEditingFlags();
 	}
 
 	public void setValidRange(double min, double max) {

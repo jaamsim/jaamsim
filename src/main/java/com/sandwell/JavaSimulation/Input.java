@@ -1126,15 +1126,6 @@ public abstract class Input<T> {
 
 	}
 
-	protected void updateEditingFlags() {
-
-		// Keyword is edited
-		if(InputAgent.hasAddedRecords() ||
-				Simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
-			this.setEdited(true);
-		}
-	}
-
 	/*
 	 * return a list of valid options if the input has limited number of
 	 * choices(e.g true or false for BooleanUinput).

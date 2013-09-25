@@ -24,6 +24,5 @@ public class StringInput extends Input<String> {
 	public void parse(StringVector input) throws InputErrorException {
 		Input.assertCount(input, 1);
 		value = input.firstElement();
-		this.updateEditingFlags();
 	}
 }
