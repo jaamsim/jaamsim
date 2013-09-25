@@ -95,7 +95,6 @@ public class GUIFrame extends JFrame {
 	private JCheckBoxMenuItem showPosition;
 	private JCheckBoxMenuItem alwaysTop;
 	private JCheckBoxMenuItem tooltip;
-	private JMenuItem showEventViewer;
 	private JMenuItem printInputItem;
 	private JLabel clockDisplay;
 	private JLabel speedUpDisplay;
@@ -427,16 +426,6 @@ public class GUIFrame extends JFrame {
 			}
 		} );
 		viewMenu.add( propertiesMenuItem );
-
-//		JMenuItem eventListMenuItem = new JMenuItem( "Event Viewer" );
-//		eventListMenuItem.setMnemonic( 'E' );
-//		eventListMenuItem.addActionListener( new ActionListener() {
-//
-//			public void actionPerformed( ActionEvent e ) {
-//				new EventViewer( DisplayEntity.simulation.getEventManager() );
-//			}
-//		} );
-//		viewMenu.add( eventListMenuItem );
 
 		mainMenuBar.add( viewMenu );
 		// End File menu creation
@@ -1077,8 +1066,6 @@ public class GUIFrame extends JFrame {
 				toolButtonIsometric.setEnabled( true );
 				toolButtonXYPlane.setEnabled( true );
 				progressBar.setEnabled( false );
-				if( showEventViewer != null )
-					showEventViewer.setEnabled( false );
 				break;
 
 			case SIM_STATE_UNCONFIGURED:
@@ -1101,8 +1088,6 @@ public class GUIFrame extends JFrame {
 				progressBar.setEnabled( false );
 				showPosition.setState( true );
 				setShowPositionXY();
-				if( showEventViewer != null )
-					showEventViewer.setEnabled( false );
 				break;
 
 			case SIM_STATE_CONFIGURED:
@@ -1124,8 +1109,6 @@ public class GUIFrame extends JFrame {
 				toolButtonIsometric.setEnabled( true );
 				toolButtonXYPlane.setEnabled( true );
 				progressBar.setEnabled( true );
-				if( showEventViewer != null )
-					showEventViewer.setEnabled( true );
 				break;
 
 			case SIM_STATE_RUNNING:
@@ -1134,9 +1117,6 @@ public class GUIFrame extends JFrame {
 				controlStartResume.setToolTipText( "Pause" );
 				controlStop.setEnabled( true );
 				controlStop.setSelected( false );
-
-				if( showEventViewer != null )
-					showEventViewer.setEnabled( true );
 				break;
 
 			case SIM_STATE_PAUSED:

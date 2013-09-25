@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.ui.FrameBox;
-import com.sandwell.JavaSimulation3D.EventViewer;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
@@ -88,18 +87,8 @@ public final class EventManager implements Runnable {
 
 	private EventTraceRecord traceRecord;
 
-	private EventViewer currentViewer;
-	/*
-	 * TODO: eventViewer needs to show events for all eventManagers, not just a
-	 * single eventManager
-	 */
-	private boolean wasPaused; // Holds the state of the model when an eventViewer was opened
-
 	private long debuggingTime;
 	/*
-	 * TODO: rename this to better reflect its function. Used by the eventViewer in
-	 * doOneEvent, doEventsAtTime, runToTime
-	 *
 	 * event time to debug, implements the run to time functionality
 	 */
 
@@ -247,10 +236,6 @@ public final class EventManager implements Runnable {
 			EventManager.setEventState(EventManager.EVENTS_STOPPED);
 		}
 		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
-
-		// update the event display if there is one present
-		if (currentViewer != null)
-			currentViewer.update();
 	}
 
 	// Notify the parent eventManager than this eventManager has completed all its
@@ -775,9 +760,6 @@ public final class EventManager implements Runnable {
 	}
 
 	private void retireEvent(Event retired, int reason) {
-		if (currentViewer != null)
-			currentViewer.addRetiredEvent(getEventData(retired, reason), reason);
-
 		traceEvent(retired, reason);
 	}
 
@@ -891,26 +873,10 @@ public final class EventManager implements Runnable {
 		if (EventManager.getEventState() != EventManager.EVENTS_STOPPED)
 			return;
 
-		// cannot resume if viewing events
-		if( currentViewer != null )
-			return;
-
 		synchronized( lockObject ) {
 			EventManager.setEventState(EventManager.EVENTS_RUNNING);
 			eventManagerThread.interrupt();
 		}
-	}
-
-	public void registerEventViewer( EventViewer ev ) {
-		currentViewer = ev;
-		wasPaused = (EventManager.getEventState() == EventManager.EVENTS_STOPPED);
-		pause();
-	}
-
-	public void unregisterEventViewer( EventViewer ev ) {
-		currentViewer = null;
-		if( !wasPaused )
-			resume();
 	}
 
 	public void nextOneEvent() {
@@ -1003,80 +969,6 @@ public final class EventManager implements Runnable {
 		// Possible the process hasn't started running yet, check the Process target
 		// state
 		return evt.process.getClassMethod();
-	}
-
-	static  String getFileLine(Event evt) {
-		StackTraceElement[] callStack = evt.process.getStackTrace();
-
-		for (int i = 0; i < callStack.length; i++) {
-			if (callStack[i].getClassName().equals("com.sandwell.JavaSimulation.Entity")) {
-				return String.format("%s:%s", callStack[i + 1].getFileName(), callStack[i + 1].getLineNumber());
-			}
-		}
-		return "Unknown method state";
-	}
-	String[] getEventData(Event evt, int state) {
-		String[] data = new String[10];
-
-		data[0] = String.format("%15d", evt.schedTick);
-		data[1] = String.format("%15.3f", evt.schedTick / Process.getSimTimeFactor());
-		data[2] = String.format("%5d", evt.priority);
-		data[3] = String.format("%s", evt.caller.getName());
-		data[4] = String.format("%s", evt.caller.getInputName());
-		data[5] = String.format("%s", "");
-		data[6] = EventManager.getClassMethod(evt);
-		data[7] = EventManager.getFileLine(evt);
-		data[8] = String.format("%15.3f", evt.addedTick / Process.getSimTimeFactor());
-		data[9] = "Unknown";
-
-		switch (state) {
-		case EventManager.STATE_WAITING:
-			data[9] = "Waiting";
-			break;
-		case EventManager.STATE_EXITED:
-			data[9] = "Ran Normally";
-			break;
-		case EventManager.STATE_INTERRUPTED:
-			data[9] = "Interrupted";
-			break;
-		case EventManager.STATE_TERMINATED:
-			data[9] = "Terminated";
-			break;
-		}
-
-		return data;
-	}
-
-	public String[] getViewerHeaders() {
-		String[] headerNames = new String[10];
-
-		headerNames[0] = "Event Time";
-		headerNames[1] = "Simulation Time";
-		headerNames[2] = "Priority";
-		headerNames[3] = "Entity";
-		headerNames[4] = "Region";
-		headerNames[5] = "Description";
-		headerNames[6] = "Class.Method";
-		headerNames[7] = "File:Line";
-		headerNames[8] = "Creation Time";
-		headerNames[9] = "State";
-
-		return headerNames;
-	}
-
-	public String[][] getViewerData() {
-		synchronized (lockObject) {
-			String[][] data = new String[eventStack.size()][];
-
-			for (int i = 0; i < eventStack.size(); i++) {
-				data[i] = getEventData(eventStack.get(i), EventManager.STATE_WAITING);
-				if (i > 0 && eventStack.get(i).schedTick == eventStack.get(i - 1).schedTick) {
-					data[i][0] = "";
-					data[i][1] = "";
-				}
-			}
-			return data;
-		}
 	}
 
 	@Override
