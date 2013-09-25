@@ -696,7 +696,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 		}
 	}
 
-	sub._center = data.hull.getAABB(Mat4d.IDENTITY).getCenter();
+	sub._center = data.staticHull.getAABB(Mat4d.IDENTITY).getCenter();
 
 	sub._numVerts = data.indices.length;
 
@@ -915,16 +915,16 @@ public void freeResources(GL2GL3 gl) {
 
 }
 
-public ConvexHull getHull() {
-	return data.getHull();
+public ConvexHull getHull(ArrayList<Action.Queue> actions, ArrayList<ConvexHull> subInstHulls) {
+	return data.getHull(actions, subInstHulls);
 }
 
 public boolean hasTransparent() {
 	return data.hasTransparent();
 }
 
-public ArrayList<AABB> getSubBounds(Mat4d modelMat) {
-	return data.getSubBounds(modelMat);
+public ArrayList<ConvexHull> getSubHulls(ArrayList<Action.Queue> actions) {
+	return data.getSubHulls(actions);
 }
 
 public MeshData getRawData() {

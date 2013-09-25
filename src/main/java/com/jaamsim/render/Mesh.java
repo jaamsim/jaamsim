@@ -20,6 +20,7 @@ import java.util.Map;
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Ray;
@@ -38,10 +39,12 @@ private Vec4d _scale; // Allow for a non-uniform scale
 private long _pickingID;
 private VisibilityInfo _visInfo;
 
+private ConvexHull _hull;
 private AABB _bounds;
 
 private Mat4d _modelMat;
 private Mat4d _normalMat;
+private ArrayList<ConvexHull> _subMeshHulls;
 private ArrayList<AABB> _subMeshBounds;
 private ArrayList<Action.Queue> _actions;
 private HullProto debugHull = null;
@@ -60,9 +63,16 @@ public Mesh(MeshProto proto, Transform trans, Vec4d scale,
 	_normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
 	_normalMat.transpose4();
 
-	_bounds = _proto.getHull().getAABB(_modelMat);
+	_subMeshHulls = _proto.getSubHulls(actions);
 
-	_subMeshBounds = _proto.getSubBounds(_modelMat);
+	_hull = _proto.getHull(_actions, _subMeshHulls);
+	_bounds = _hull.getAABB(_modelMat);
+
+	_subMeshBounds = new ArrayList<AABB>(_subMeshHulls.size());
+	for (ConvexHull subHull : _subMeshHulls) {
+		AABB subBounds = subHull.getAABB(_modelMat);
+		_subMeshBounds.add(subBounds);
+	}
 
 	_pickingID = pickingID;
 }
@@ -106,7 +116,7 @@ public double getCollisionDist(Ray r, boolean precise)
 		return boundsDist;
 	}
 
-	double roughCollision = _proto.getHull().collisionDistance(r, _trans, _scale);
+	double roughCollision = _hull.collisionDistance(r, _trans, _scale);
 	if (!precise || roughCollision < 0) {
 		// This is either a rough collision, or we missed outright
 		return roughCollision;
@@ -131,7 +141,7 @@ public double getCollisionDist(Ray r, boolean precise)
 		subMat.mult4(subInst.transform);
 
 		Mat4d invMat = subMat.inverse();
-		double subDist = subData.hull.collisionDistanceByMatrix(r, subMat, invMat);
+		double subDist = subData.staticHull.collisionDistanceByMatrix(r, subMat, invMat);
 		if (subDist < 0) {
 			continue;
 		}
@@ -221,7 +231,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, C
 		modelViewMat.mult4(_modelMat);
 
 		if (debugHull == null) {
-			debugHull = new HullProto(_proto.getHull());
+			debugHull = new HullProto(_hull);
 		}
 		debugHull.render(vaoMap, renderer, modelViewMat, cam);
 	}

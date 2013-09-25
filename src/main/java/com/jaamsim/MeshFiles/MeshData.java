@@ -63,10 +63,13 @@ public class MeshData {
 		public ArrayList<Vec4d> normals;
 		public int[] indices;
 
-		public ConvexHull hull;
+		public ConvexHull staticHull;
 
 		public ArrayList<Vec4d> boneIndices;
 		public ArrayList<Vec4d> boneWeights;
+
+		public ArrayList<ConvexHull> boneHulls;
+		public ConvexHull bonelessHull;
 	}
 
 	public static class SubLineData {
@@ -101,7 +104,7 @@ public class MeshData {
 	private ArrayList<SubMeshInstance> _subMeshInstances = new ArrayList<SubMeshInstance>();
 	private ArrayList<SubLineInstance> _subLineInstances = new ArrayList<SubLineInstance>();
 
-	private ConvexHull _hull;
+	private ConvexHull _staticHull;
 	private double _radius;
 	// The AABB of this mesh with no transform applied
 	private AABB _defaultBounds;
@@ -270,6 +273,7 @@ public class MeshData {
 			sub.boneIndices = new ArrayList<Vec4d>(vertices.size());
 			sub.boneWeights = new ArrayList<Vec4d>(vertices.size());
 		}
+		int maxBoneIndex = -1;
 		for (Vertex v : vertices) {
 			sub.verts.add(v.getPos());
 			sub.normals.add(v.getNormal());
@@ -277,12 +281,60 @@ public class MeshData {
 				sub.texCoords.add(v.getTexCoord());
 			}
 			if (hasBoneInfo) {
-				sub.boneIndices.add(v.getBoneIndices());
-				sub.boneWeights.add(v.getBoneWeights());
+				Vec4d boneIndices = v.getBoneIndices();
+				Vec4d boneWeights = v.getBoneWeights();
+				sub.boneIndices.add(boneIndices);
+				sub.boneWeights.add(boneWeights);
+
+				if (boneWeights.x > 0 && (int)boneIndices.x > maxBoneIndex)
+					maxBoneIndex = (int)boneIndices.x;
+				if (boneWeights.y > 0 && (int)boneIndices.y > maxBoneIndex)
+					maxBoneIndex = (int)boneIndices.y;
+				if (boneWeights.z > 0 && (int)boneIndices.z > maxBoneIndex)
+					maxBoneIndex = (int)boneIndices.z;
+				if (boneWeights.w > 0 && (int)boneIndices.w > maxBoneIndex)
+					maxBoneIndex = (int)boneIndices.w;
 			}
 		}
 
-		sub.hull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+		if (hasBoneInfo) {
+			// Generate the per-bone convex hulls
+			sub.boneHulls = new ArrayList<ConvexHull>(maxBoneIndex + 1);
+			for(int i = 0; i < maxBoneIndex + 1; ++i) {
+				ArrayList<Vec4d> boneVerts = new ArrayList<Vec4d>();
+				// Scan all vertices, and if it is influenced by this bone, add it to the hull
+				for (Vertex v : vertices) {
+					Vec4d boneIndices = v.getBoneIndices();
+					Vec4d boneWeights = v.getBoneWeights();
+					boolean isInfluenced = false;
+					if (boneWeights.x > 0 && (int)boneIndices.x == i)
+						isInfluenced = true;
+					if (boneWeights.y > 0 && (int)boneIndices.y == i)
+						isInfluenced = true;
+					if (boneWeights.z > 0 && (int)boneIndices.z == i)
+						isInfluenced = true;
+					if (boneWeights.w > 0 && (int)boneIndices.w == i)
+						isInfluenced = true;
+					if (isInfluenced) {
+						boneVerts.add(v.getPos());
+					}
+				}
+
+				ConvexHull boneHull = ConvexHull.TryBuildHull(boneVerts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+				sub.boneHulls.add(boneHull);
+			}
+			// Lastly, make a convex hull of any vertices that are influenced by no bones
+			ArrayList<Vec4d> bonelessVerts = new ArrayList<Vec4d>();
+			for (Vertex v : vertices) {
+				Vec4d boneIndices = v.getBoneIndices();
+				if (boneIndices.x == -1) {
+					bonelessVerts.add(v.getPos());
+				}
+			}
+			sub.bonelessHull = ConvexHull.TryBuildHull(bonelessVerts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+		}
+
+		sub.staticHull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
 	}
 
 	public void addSubLine(Vec4d[] vertices,
@@ -316,7 +368,7 @@ public class MeshData {
 		// Collect all the points from the hulls of the individual sub meshes
 		for (SubMeshInstance subInst : _subMeshInstances) {
 
-			List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).hull.getVertices();
+			List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
 			List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
 
 			totalHullPoints.addAll(subPoints);
@@ -330,10 +382,10 @@ public class MeshData {
 			totalHullPoints.addAll(subPoints);
 		}
 
-		_hull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
-		_defaultBounds = _hull.getAABB(new Mat4d());
+		_staticHull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+		_defaultBounds = _staticHull.getAABB(new Mat4d());
 
-		_radius = _hull.getRadius();
+		_radius = _staticHull.getRadius();
 
 		_actionDesc = new ArrayList<Action.Description>();
 		for (Armature arm : _armatures) {
@@ -350,8 +402,43 @@ public class MeshData {
 		return _radius;
 	}
 
-	public ConvexHull getHull() {
-		return _hull;
+	public ConvexHull getHull(ArrayList<Action.Queue> actions) {
+		if (actions == null || actions.size() == 0)
+			return _staticHull;
+
+		ArrayList<ConvexHull> subInstHulls = new ArrayList<ConvexHull>(_subMeshInstances.size());
+		for (SubMeshInstance subInst : _subMeshInstances) {
+			ConvexHull subHull = getSubInstHull(subInst, actions);
+			subInstHulls.add(subHull);
+		}
+		return getHull(actions, subInstHulls);
+	}
+
+	// This is an optimization. Mesh needs a list of sub mesh hulls based on a pose. As it already has it calculated,
+	// it can be passed back to MeshData and save the effort of recalculating them. The other getHull() will do that
+	// calculation if it's needed.
+	public ConvexHull getHull(ArrayList<Action.Queue> actions, ArrayList<ConvexHull> subInstHulls) {
+		if (actions == null || actions.size() == 0)
+			return _staticHull;
+
+		// Otherwise, we need to calculate a new hull
+		ArrayList<Vec4d> hullPoints = new ArrayList<Vec4d>();
+
+		for (ConvexHull subHull : subInstHulls) {
+			hullPoints.addAll(subHull.getVertices());
+		}
+
+		// And the lines
+		for (SubLineInstance subInst : _subLineInstances) {
+
+			List<Vec4d> pointsRef = _subLinesData.get(subInst.subLineIndex).hull.getVertices();
+			List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
+
+			hullPoints.addAll(subPoints);
+		}
+
+		ConvexHull ret = ConvexHull.TryBuildHull(hullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+		return ret;
 	}
 
 	public AABB getDefaultBounds() {
@@ -362,18 +449,51 @@ public class MeshData {
 		return _actionDesc;
 	}
 
-	public ArrayList<AABB> getSubBounds(Mat4d modelMat) {
+	private ConvexHull getSubInstHull(SubMeshInstance subInst, ArrayList<Action.Queue> actions) {
 
-		Mat4d subModelMat = new Mat4d();
+		ArrayList<Vec4d> hullPoints = new ArrayList<Vec4d>();
 
-		ArrayList<AABB> ret = new ArrayList<AABB>(_subMeshInstances.size());
+		if (actions == null || actions.size() == 0 || subInst.armatureIndex == -1) {
+			// This is an unanimated sub instance, just add the normal points
+			List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
+			List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
+			hullPoints.addAll(subPoints);
+		} else {
+			// We need to add each bone in it's animated position
+			Armature arm = _armatures.get(subInst.armatureIndex);
+			SubMeshData subMesh = _subMeshesData.get(subInst.subMeshIndex);
+			ArrayList<Mat4d> pose = arm.getPose(actions);
+			for (int bInstInd = 0; bInstInd < subMesh.boneHulls.size(); ++bInstInd) {
+				ConvexHull boneHull = subMesh.boneHulls.get(bInstInd);
+				Mat4d boneMat = Mat4d.IDENTITY;
+
+				if (bInstInd < subInst.boneMapper.length)
+					boneMat = pose.get(subInst.boneMapper[bInstInd]);
+
+				for (Vec4d hullVect : boneHull.getVertices()) {
+					Vec4d temp = new Vec4d(hullVect);
+					temp.mult4(subInst.transform, temp);
+					temp.mult4(boneMat, temp);
+					hullPoints.add(temp);
+				}
+			}
+			// Add the vertices
+			List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).bonelessHull.getVertices();
+			List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
+			hullPoints.addAll(subPoints);
+		}
+
+		return ConvexHull.TryBuildHull(hullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+	}
+
+	public ArrayList<ConvexHull> getSubHulls(ArrayList<Action.Queue> actions) {
+
+		ArrayList<ConvexHull> ret = new ArrayList<ConvexHull>(_subMeshInstances.size());
 
 		for (SubMeshInstance subInst : _subMeshInstances) {
 
-			SubMeshData subMesh = _subMeshesData.get(subInst.subMeshIndex);
-			subModelMat.mult4(modelMat, subInst.transform);
-			AABB instBounds = subMesh.hull.getAABB(subModelMat);
-			ret.add(instBounds);
+			ConvexHull instHull = getSubInstHull(subInst, actions);
+			ret.add(instHull);
 		}
 
 		return ret;
