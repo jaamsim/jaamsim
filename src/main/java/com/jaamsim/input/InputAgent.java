@@ -63,6 +63,7 @@ public class InputAgent {
 	private static boolean batchRun;
 	private static boolean sessionEdited;
 	private static boolean addedRecordFound;
+	private static boolean recordEdits;
 	private static boolean endOfFileReached;		// notes end of cfg files
 	// ConfigurationFile load and save variables
 	final protected static int SAVE_ONLY = 2;
@@ -143,6 +144,14 @@ public class InputAgent {
 
 	public static boolean hasAddedRecords() {
 		return addedRecordFound;
+	}
+
+	public static boolean recordEdits() {
+		return recordEdits;
+	}
+
+	public static void setRecordEdits(boolean b) {
+		recordEdits = b;
 	}
 
 	public static boolean isSessionEdited() {
@@ -796,10 +805,9 @@ public class InputAgent {
 		in.parse(data);
 
 		// Only mark the keyword edited if we have finished initial configuration
-		if (InputAgent.hasAddedRecords() ||
-		    Simulation.getSimulationState() >= Simulation.SIM_STATE_CONFIGURED) {
+		if (InputAgent.hasAddedRecords() || InputAgent.recordEdits())
 			in.setEdited(true);
-		}
+
 		ent.updateForInput(in);
 	}
 

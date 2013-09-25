@@ -1033,6 +1033,11 @@ public class GUIFrame extends JFrame {
 
 	public void updateForSimulationState(int state) {
 		Simulation.setSimState(state);
+		if (state >= Simulation.SIM_STATE_CONFIGURED)
+			InputAgent.setRecordEdits(true);
+		else
+			InputAgent.setRecordEdits(false);
+
 		switch( Simulation.getSimulationState() ) {
 			case Simulation.SIM_STATE_LOADED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
