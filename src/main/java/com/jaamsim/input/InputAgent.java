@@ -1071,7 +1071,7 @@ public class InputAgent {
 		try {
 			gui.clear();
 			InputAgent.setConfigFileName(configFileName);
-			gui.updateForSimulationState(Simulation.SIM_STATE_UNCONFIGURED);
+			gui.updateForSimulationState(GUIFrame.SIM_STATE_UNCONFIGURED);
 
 			try {
 				InputAgent.loadConfigurationFile(configFileName);
@@ -1087,7 +1087,7 @@ public class InputAgent {
 
 			// show the present state in the user interface
 			gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
-			gui.updateForSimulationState(Simulation.SIM_STATE_CONFIGURED);
+			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
 		catch( Throwable t ) {
 			ExceptionBox.instance().setError(t);

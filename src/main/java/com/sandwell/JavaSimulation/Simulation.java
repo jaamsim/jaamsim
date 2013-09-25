@@ -32,36 +32,6 @@ import com.sandwell.JavaSimulation3D.GUIFrame;
  * Class structure defining essential simulation objects.  Eventmanager is
  * instantiated to manage events generated in the simulation.  Function prototypes
  * are defined which any simulation must define in order to run.
- * <p>
- * Global information available to the simulation
- * <ul>
- *  <li>version of the Java Simulation Modeling Language</li>
- *  <li>licensee of the Java Simulation Modeling Language</li>
- *  <li>copyright notice for the simulation</li>
- *  <li>issue copy number for simulation Licensee</li>
- *  <li></li>
- *  <li>name of the simulation model. example: Marine Transportation Model</li>
- *  <li>version of the model (modelName)</li>
- *  <li>Licensed User of the Model</li>
- *  <li>copyright notice for the model</li>
- *	<li>issue copy number for licensed user (or "unlimited")</li>
- *	<li>additional information to be displayed in the about box</li>
- *  <li></li>
- *	<li>name of a specific simulation run</li>
- *	<li>description of a specific simulation run</li>
- * </ul>
- * <p>
- * Simulations are executed following a distinct path of methods and callbacks
- * from program execution to model running.
- * <p>
- * <table width = "100%" border= "1">
- *   <tr bgcolor= "#999999"><th>Event</th><th>Method</th><th>Callback</th><th>Resulting State</th></tr>
- *   <tr><td>~launch~</td><td>~constructor~</td><td>preConfigureModel()</td><td>UNCONFIGURED</td></tr>
- *   <tr><td>Load</td><td>configure()</td><td>configureModel()<br>postConfigureModel()</td><td>CONFIGURED</td></tr>
- *   <tr><td>Play</td><td>start()</td><td>startModel()</td><td>RUNNING</td></tr>
- *   <tr><td>Pause</td><td>pause()</td><td>PAUSED</td></tr>
- *   <tr><td>Play (resume)</td><td>resume()</td><td>RUNNING</td></tr>
- * </table>
  */
 public class Simulation extends Entity {
 	@Keyword(description = "The initialization period for the simulation run. The model will " +
@@ -122,19 +92,6 @@ public class Simulation extends Entity {
 	protected double endTime;
 
 	private static String modelName = "JaamSim";
-
-	/** model was executed, but no configuration performed */
-	public static final int SIM_STATE_LOADED = 0;
-	/** essential model elements created, no configuration performed */
-	public static final int SIM_STATE_UNCONFIGURED = 1;
-	/** model has been configured, not started */
-	public static final int SIM_STATE_CONFIGURED = 2;
-	/** model is presently executing events */
-	public static final int SIM_STATE_RUNNING = 3;
-	/** model has run, but presently is paused */
-	public static final int SIM_STATE_PAUSED = 4;
-	/** model has run, but presently is stopped */
-	public static final int SIM_STATE_STOPPED = 5;
 
 	{
 		runDuration = new DoubleInput( "Duration", "Key Inputs", 8760.0 );
@@ -291,7 +248,7 @@ public class Simulation extends Entity {
 			ent.kill();
 		}
 
-		GUIFrame.instance().updateForSimulationState(SIM_STATE_LOADED);
+		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_LOADED);
 	}
 
 	/**
@@ -329,7 +286,7 @@ public class Simulation extends Entity {
 
 	public static final void resume() {
 		EventManager.rootManager.resume();
-		GUIFrame.instance().updateForSimulationState(SIM_STATE_RUNNING);
+		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 	}
 
 	/**
@@ -337,7 +294,7 @@ public class Simulation extends Entity {
 	 */
 	public static final void pause() {
 		EventManager.rootManager.pause();
-		GUIFrame.instance().updateForSimulationState(SIM_STATE_PAUSED);
+		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
 	}
 
 	/**
@@ -345,7 +302,7 @@ public class Simulation extends Entity {
 	 */
 	public static final void stop() {
 		EventManager.rootManager.pause();
-		GUIFrame.instance().updateForSimulationState(SIM_STATE_STOPPED);
+		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_STOPPED);
 
 		// kill all generated objects
 		for (int i = 0; i < Entity.getAll().size();) {

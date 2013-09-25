@@ -32,7 +32,6 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.ui.View;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
@@ -48,7 +47,7 @@ public class PreviewCache {
 		_imageCache = new HashMap<DisplayModel, Future<BufferedImage>>();
 
 
-		if (GUIFrame.instance().getSimState() != Simulation.SIM_STATE_RUNNING) {
+		if (GUIFrame.instance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
 			dummyEntity = new DisplayEntity();
 			dummyEntity.kill();
 		}
@@ -105,7 +104,7 @@ public class PreviewCache {
 			// This will all need to be refactored soonish.
 
 			if (dummyEntity == null) {
-				if (GUIFrame.instance().getSimState() != Simulation.SIM_STATE_RUNNING) {
+				if (GUIFrame.instance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
 					dummyEntity = new DisplayEntity();
 					dummyEntity.kill();
 				} else {

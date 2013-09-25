@@ -557,7 +557,7 @@ public class GUIFrame extends JFrame {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				if( getSimState() == Simulation.SIM_STATE_RUNNING ) {
+				if( getSimState() == SIM_STATE_RUNNING ) {
 					GUIFrame.this.pauseSimulation();
 				}
 				int userOption = JOptionPane.showConfirmDialog( null,
@@ -926,7 +926,7 @@ public class GUIFrame extends JFrame {
 		progressBar.repaint(25);
 		lastValue = val;
 
-		if (getSimState() >= Simulation.SIM_STATE_CONFIGURED) {
+		if (getSimState() >= SIM_STATE_CONFIGURED) {
 			String title = String.format("%d%% %s - %s", val, Simulation.getModelName(), InputAgent.getRunName());
 			setTitle(title);
 		}
@@ -990,13 +990,13 @@ public class GUIFrame extends JFrame {
 			return;
 		}
 
-		if( getSimState() <= Simulation.SIM_STATE_CONFIGURED ) {
+		if( getSimState() <= SIM_STATE_CONFIGURED ) {
 			if (InputAgent.isSessionEdited()) {
 				InputAgent.saveAs(this);
 			}
 			DisplayEntity.simulation.start();
 		}
-		else if( getSimState() == Simulation.SIM_STATE_PAUSED ) {
+		else if( getSimState() == SIM_STATE_PAUSED ) {
 
 			// it is not a run to time
 			if(Double.isInfinite( runToTime ) ) {
@@ -1004,8 +1004,8 @@ public class GUIFrame extends JFrame {
 				return;
 			}
 		}
-		else if( getSimState() == Simulation.SIM_STATE_STOPPED ) {
-			updateForSimulationState(Simulation.SIM_STATE_CONFIGURED);
+		else if( getSimState() == SIM_STATE_STOPPED ) {
+			updateForSimulationState(SIM_STATE_CONFIGURED);
 			DisplayEntity.simulation.start();
 		}
 		else
@@ -1017,19 +1017,33 @@ public class GUIFrame extends JFrame {
 	}
 
 	private void pauseSimulation() {
-		if( getSimState() == Simulation.SIM_STATE_RUNNING )
+		if( getSimState() == SIM_STATE_RUNNING )
 			Simulation.pause();
 		else
 			throw new ErrorException( "Invalid Simulation State for pause" );
 	}
 
 	private void stopSimulation() {
-		if( getSimState() == Simulation.SIM_STATE_RUNNING ||
-		    getSimState() == Simulation.SIM_STATE_PAUSED )
+		if( getSimState() == SIM_STATE_RUNNING ||
+		    getSimState() == SIM_STATE_PAUSED )
 			Simulation.stop();
 		else
 			throw new ErrorException( "Invalid Simulation State for stop" );
 	}
+
+
+	/** model was executed, but no configuration performed */
+	public static final int SIM_STATE_LOADED = 0;
+	/** essential model elements created, no configuration performed */
+	public static final int SIM_STATE_UNCONFIGURED = 1;
+	/** model has been configured, not started */
+	public static final int SIM_STATE_CONFIGURED = 2;
+	/** model is presently executing events */
+	public static final int SIM_STATE_RUNNING = 3;
+	/** model has run, but presently is paused */
+	public static final int SIM_STATE_PAUSED = 4;
+	/** model has run, but presently is stopped */
+	public static final int SIM_STATE_STOPPED = 5;
 
 	private int simState;
 	public int getSimState() {
@@ -1038,13 +1052,13 @@ public class GUIFrame extends JFrame {
 
 	public void updateForSimulationState(int state) {
 		simState = state;
-		if (state >= Simulation.SIM_STATE_CONFIGURED)
+		if (state >= SIM_STATE_CONFIGURED)
 			InputAgent.setRecordEdits(true);
 		else
 			InputAgent.setRecordEdits(false);
 
 		switch( getSimState() ) {
-			case Simulation.SIM_STATE_LOADED:
+			case SIM_STATE_LOADED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
 					fileMenu.getItem(i).setEnabled(true);
 				}
@@ -1067,7 +1081,7 @@ public class GUIFrame extends JFrame {
 					showEventViewer.setEnabled( false );
 				break;
 
-			case Simulation.SIM_STATE_UNCONFIGURED:
+			case SIM_STATE_UNCONFIGURED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
 					fileMenu.getItem(i).setEnabled(true);
 				}
@@ -1091,7 +1105,7 @@ public class GUIFrame extends JFrame {
 					showEventViewer.setEnabled( false );
 				break;
 
-			case Simulation.SIM_STATE_CONFIGURED:
+			case SIM_STATE_CONFIGURED:
 				for( int i = 0; i < fileMenu.getItemCount() - 1; i++ ) {
 					fileMenu.getItem(i).setEnabled(true);
 				}
@@ -1114,7 +1128,7 @@ public class GUIFrame extends JFrame {
 					showEventViewer.setEnabled( true );
 				break;
 
-			case Simulation.SIM_STATE_RUNNING:
+			case SIM_STATE_RUNNING:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( true );
 				controlStartResume.setToolTipText( "Pause" );
@@ -1125,14 +1139,14 @@ public class GUIFrame extends JFrame {
 					showEventViewer.setEnabled( true );
 				break;
 
-			case Simulation.SIM_STATE_PAUSED:
+			case SIM_STATE_PAUSED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText( "Run" );
 				controlStop.setEnabled( true );
 				controlStop.setSelected( false );
 				break;
-			case Simulation.SIM_STATE_STOPPED:
+			case SIM_STATE_STOPPED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText( "Run" );
@@ -1305,7 +1319,7 @@ public class GUIFrame extends JFrame {
 		System.out.flush();
 
 		GUIFrame gui = GUIFrame.instance();
-		gui.updateForSimulationState(Simulation.SIM_STATE_LOADED);
+		gui.updateForSimulationState(SIM_STATE_LOADED);
 
 		Simulation gsim = new Simulation();
 		DisplayEntity.setSimulation(gsim);
