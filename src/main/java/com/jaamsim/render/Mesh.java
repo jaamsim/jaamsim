@@ -137,23 +137,77 @@ public double getCollisionDist(Ray r, boolean precise)
 
 		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
 
-		Mat4d subMat = RenderUtils.mergeTransAndScale(_trans, _scale);
-		subMat.mult4(subInst.transform);
+		Mat4d objMat = RenderUtils.mergeTransAndScale(_trans, _scale);
+		Mat4d invObjMat = objMat.inverse();
 
-		Mat4d invMat = subMat.inverse();
-		double subDist = subData.staticHull.collisionDistanceByMatrix(r, subMat, invMat);
+		ConvexHull subInstHull = _subMeshHulls.get(instInd);
+		double subDist = subInstHull.collisionDistanceByMatrix(r, objMat, invObjMat);
 		if (subDist < 0) {
 			continue;
 		}
 		// We have hit both the AABB and the convex hull for this sub instance, now do individual triangle collision
 
+		Mat4d subMat = RenderUtils.mergeTransAndScale(_trans, _scale);
+		subMat.mult4(subInst.transform);
+
+		Mat4d invMat = subMat.inverse();
+
+		ArrayList<Vec4d> vertices = null;
+		if (_actions == null || _actions.size() == 0 || subInst.armatureIndex == -1) {
+			// Not animated, just take the static vertices
+			vertices = subData.verts;
+		} else {
+			// This mesh is being animated by an armature, we need to work out the
+			// new vertex positions
+			ArrayList<Mat4d> pose = data.getArmatures().get(subInst.armatureIndex).getPose(_actions);
+
+			Mat4d bindMat = subInst.transform;
+			Mat4d invBindMat = bindMat.inverse();
+
+			double[] weights = new double[4];
+			int[] indices = new int[4];
+
+			Vec4d bindSpaceVert = new Vec4d();
+			Vec4d temp = new Vec4d();
+
+			vertices = new ArrayList<Vec4d>(subData.verts.size());
+			for (int i = 0; i < subData.verts.size(); ++i) {
+				Vec4d vert = subData.verts.get(i);
+				bindSpaceVert.mult4(bindMat, vert);
+
+				Vec4d rawWeights = subData.boneWeights.get(i);
+				Vec4d rawIndices = subData.boneIndices.get(i);
+				weights[0] = rawWeights.x; weights[1] = rawWeights.y; weights[2] = rawWeights.z; weights[3] = rawWeights.w;
+				indices[0] = (int)rawIndices.x; indices[1] = (int)rawIndices.y; indices[2] = (int)rawIndices.z; indices[3] = (int)rawIndices.w;
+
+				if (indices[0] == -1) {
+					// This vertex is not influenced by any bone
+					vertices.add(vert);
+					continue;
+				}
+				Vec4d animVert = new Vec4d();
+				for (int j = 0; j < 4; ++j) {
+					if (weights[j] == 0) continue;
+
+					// Add the influence of all the bones
+					Mat4d boneMat = pose.get(indices[j]);
+					temp.mult4(boneMat, bindSpaceVert);
+					temp.scale3(weights[j]);
+					animVert.add3(temp);
+				}
+				// Now convert this vertex back to instance space to be equivalent to the non-animated case
+				animVert.mult4(invBindMat, animVert);
+				vertices.add(animVert);
+			}
+		}
+
 		Ray localRay = r.transform(invMat);
 		Vec4d[] triVecs = new Vec4d[3];
 
 		for (int triInd = 0; triInd < subData.indices.length / 3; ++triInd) {
-			triVecs[0] = subData.verts.get(subData.indices[triInd*3+0]);
-			triVecs[1] = subData.verts.get(subData.indices[triInd*3+1]);
-			triVecs[2] = subData.verts.get(subData.indices[triInd*3+2]);
+			triVecs[0] = vertices.get(subData.indices[triInd*3+0]);
+			triVecs[1] = vertices.get(subData.indices[triInd*3+1]);
+			triVecs[2] = vertices.get(subData.indices[triInd*3+2]);
 			if ( triVecs[0].equals4(triVecs[1]) ||
 			     triVecs[1].equals4(triVecs[2]) ||
 			     triVecs[2].equals4(triVecs[0])) {
