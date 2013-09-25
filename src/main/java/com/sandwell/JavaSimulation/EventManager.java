@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation3D.EventViewer;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -538,8 +539,9 @@ public final class EventManager implements Runnable {
 
 	private void raw_scheduleProcess(long waitLength, int eventPriority, Entity caller, String methodName, Object[] args) {
 		assertNotWaitUntil();
-		// Take a process from the pool
-		Process newProcess = Process.allocate(this, caller, methodName, args);
+
+		ProcessTarget proc = new ReflectionTarget(caller, methodName, args);
+		Process newProcess = Process.allocate(this, proc);
 		long eventTime = calculateEventTime(Process.currentTick(), waitLength);
 
 		// Create an event for the new process at the present time, and place it on the event stack

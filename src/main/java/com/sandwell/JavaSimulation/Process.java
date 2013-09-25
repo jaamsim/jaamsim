@@ -17,7 +17,6 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.ui.ExceptionBox;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
@@ -221,14 +220,6 @@ public class Process extends Thread {
 		}
 
 		return newProcess;
-	}
-
-	// Set up a new process for the given entity, method, and arguments
-	// Called from Process.start() and from EventManager.startExternalProcess()
-	static Process allocate(EventManager eventManager, Entity target, String methodName, Object[] arguments) {
-		// Find the method to be executed
-		ProcessTarget proc = new ReflectionTarget(target, methodName, arguments);
-		return Process.allocate(eventManager, proc);
 	}
 
 	// Return a process from the pool or create a new one
