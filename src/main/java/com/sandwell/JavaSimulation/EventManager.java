@@ -231,11 +231,26 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	private void doDebug() {
-		synchronized (lockObject) {
-			EventManager.setEventState(EventManager.EVENTS_STOPPED);
+	private boolean checkStopConditions() {
+		switch (EventManager.getEventState()) {
+		case EVENTS_RUNNING:
+		case EVENTS_STOPPED:
+			return false;
+		case EVENTS_RUNONE:
+			return true;
+		case EVENTS_TIMESTEP:
+			if (eventStack.get(0).schedTick != debuggingTime)
+				return true;
+			else
+				return false;
+		case EVENTS_UNTILTIME:
+			if (eventStack.get(0).schedTick >= debuggingTime)
+				return true;
+			else
+				return false;
+		default:
+			return false;
 		}
-		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
 	}
 
 	// Notify the parent eventManager than this eventManager has completed all its
@@ -381,16 +396,11 @@ public final class EventManager implements Runnable {
 			}
 			currentTick = nextTick;
 
-			if (EventManager.getEventState() == EventManager.EVENTS_RUNONE) {
-				doDebug();
-			} else if (EventManager.getEventState() == EventManager.EVENTS_TIMESTEP) {
-				if (eventStack.get(0).schedTick != debuggingTime) {
-					doDebug();
+			if (checkStopConditions()) {
+				synchronized (lockObject) {
+					EventManager.setEventState(EventManager.EVENTS_STOPPED);
 				}
-			} else if (EventManager.getEventState() == EventManager.EVENTS_UNTILTIME) {
-				if (eventStack.get(0).schedTick >= debuggingTime) {
-					doDebug();
-				}
+				GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
 			}
 		}
 	}
