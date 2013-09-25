@@ -46,11 +46,6 @@ private ArrayList<AABB> _subMeshBounds;
 private ArrayList<Action.Queue> _actions;
 private HullProto debugHull = null;
 
-public Mesh(MeshProtoKey key, MeshProto proto, Transform trans,
-            ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
-	this(proto, trans, new Vec4d(0, 0, 0, 1.0d), actions, visInfo, pickingID);
-}
-
 public Mesh(MeshProto proto, Transform trans, Vec4d scale,
             ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
 
