@@ -208,7 +208,12 @@ private class OutputTableModel extends AbstractTableModel {
 					else
 						return String.format("%g  %s", d, Unit.getSIUnit(o.getUnitType()));
 				}
-				return o.getValue(simTime, o.getReturnType()).toString();
+
+				String s = o.getValue(simTime, o.getReturnType()).toString();
+				if (o.getUnitType() == Unit.class)
+					return s;
+				else
+					return s + "  " + Unit.getSIUnit(o.getUnitType());
 			}
 			catch (Throwable e) {
 				return "";
