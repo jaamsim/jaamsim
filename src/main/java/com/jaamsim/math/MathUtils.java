@@ -123,7 +123,7 @@ public static Transform rotateAroundPoint(Quaternion rot, Vec3d point) {
 	negPoint.scale3(-1);
 
 	Transform ret = new Transform(point);
-	ret.merge(ret, new Transform(Vec4d.ORIGIN, rot, 1));
+	ret.merge(ret, new Transform(null, rot, 1));
 	ret.merge(ret, new Transform(negPoint));
 	return ret;
 }

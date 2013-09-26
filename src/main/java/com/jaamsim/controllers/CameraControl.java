@@ -347,7 +347,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		Transform finalTrans = new Transform(pi.viewCenter);
 
-		finalTrans.merge(finalTrans, new Transform(Vec4d.ORIGIN, rot, 1));
+		finalTrans.merge(finalTrans, new Transform(null, rot, 1));
 		finalTrans.merge(finalTrans, new Transform(zOffset));
 
 
