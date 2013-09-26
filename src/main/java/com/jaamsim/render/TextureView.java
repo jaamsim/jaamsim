@@ -287,10 +287,6 @@ public class TextureView implements Renderable {
 		Mat4d normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
 		normalMat.transpose4();
 
-		//Debug
-		Vec4d transNormal = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		transNormal.mult4(normalMat, Vec4d.Z_AXIS);
-
 		gl.glUseProgram(progHandle);
 
 		gl.glUniformMatrix4fv(modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
