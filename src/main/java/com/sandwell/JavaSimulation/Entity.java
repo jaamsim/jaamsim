@@ -51,14 +51,20 @@ public class Entity {
 	private int flags;
 	protected boolean traceFlag = false;
 
-	private final ArrayList<Input<?>> editableInputs;
-	private final HashMap<String, Input<?>> inputMap;
+	private final ArrayList<Input<?>> editableInputs = new ArrayList<Input<?>>();
+	private final HashMap<String, Input<?>> inputMap = new HashMap<String, Input<?>>();
 
 	private final BooleanInput trace;
 
 	static {
 		allInstances = new ArrayList<Entity>(100);
 		namedEntities = new HashMap<String, Entity>(100);
+	}
+
+	{
+		trace = new BooleanInput("Trace", "Key Inputs", false);
+		trace.setHidden(true);
+		this.addInput(trace, true);
 	}
 
 	/**
@@ -71,13 +77,6 @@ public class Entity {
 		}
 
 		flags = 0;
-
-		editableInputs = new ArrayList<Input<?>>();
-		inputMap = new HashMap<String, Input<?>>();
-
-		trace = new BooleanInput("Trace", "Key Inputs", false);
-		trace.setHidden(true);
-		this.addInput(trace, true);
 	}
 
 	public static ArrayList<? extends Entity> getAll() {
