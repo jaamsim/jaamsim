@@ -56,6 +56,10 @@ public class Entity {
 
 	private final BooleanInput trace;
 
+	@Keyword(description = "A free form string describing the Entity",
+	         example = "Ent Description { 'A very useful entity' }")
+	private final StringInput desc;
+
 	static {
 		allInstances = new ArrayList<Entity>(100);
 		namedEntities = new HashMap<String, Entity>(100);
@@ -65,6 +69,9 @@ public class Entity {
 		trace = new BooleanInput("Trace", "Key Inputs", false);
 		trace.setHidden(true);
 		this.addInput(trace, true);
+
+		desc = new StringInput("Description", "Key Inputs", "");
+		this.addInput(desc, true);
 	}
 
 	/**
@@ -585,5 +592,11 @@ public class Entity {
 	        description="The unique input name for this entity.")
 	public String getNameOutput(double simTime) {
 		return entityName;
+	}
+
+	@Output(name = "Description",
+	        description="A string describing this entity.")
+	public String getDescription(double simTime) {
+		return desc.getValue();
 	}
 }
