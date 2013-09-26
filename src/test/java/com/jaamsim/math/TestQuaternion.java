@@ -21,6 +21,13 @@ import org.junit.Test;
 
 public class TestQuaternion {
 
+private static final Vec4d X_AXIS = new Vec4d(1, 0, 0, 1.0d);
+private static final Vec4d Y_AXIS = new Vec4d(0, 1, 0, 1.0d);
+private static final Vec4d Z_AXIS = new Vec4d(0, 0, 1, 1.0d);
+private static final Vec4d NEG_X_AXIS = new Vec4d(-1,  0,  0, 1.0d);
+private static final Vec4d NEG_Y_AXIS = new Vec4d( 0, -1,  0, 1.0d);
+private static final Vec4d NEG_Z_AXIS = new Vec4d( 0,  0, -1, 1.0d);
+
 private Quaternion x_pi;
 private Quaternion x_halfPi;
 private Quaternion y_pi;
@@ -59,28 +66,28 @@ public void testSimpleQuatRotation() {
 	Vec4d res = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
 	tempRot.setRot3(z_halfPi);
-	res.mult3(tempRot, Vec4d.X_AXIS);
-	assertTrue(res.near4(Vec4d.Y_AXIS));
+	res.mult3(tempRot, X_AXIS);
+	assertTrue(res.near4(Y_AXIS));
 
 	tempRot.setRot3(z_pi);
-	res.mult3(tempRot, Vec4d.X_AXIS);
-	assertTrue(res.near4(Vec4d.NEG_X_AXIS));
+	res.mult3(tempRot, X_AXIS);
+	assertTrue(res.near4(NEG_X_AXIS));
 
 	tempRot.setRot3(y_halfPi);
-	res.mult3(tempRot, Vec4d.X_AXIS);
-	assertTrue(res.near4(Vec4d.NEG_Z_AXIS));
+	res.mult3(tempRot, X_AXIS);
+	assertTrue(res.near4(NEG_Z_AXIS));
 
 	tempRot.setRot3(y_pi);
-	res.mult3(tempRot, Vec4d.X_AXIS);
-	assertTrue(res.near4(Vec4d.NEG_X_AXIS));
+	res.mult3(tempRot, X_AXIS);
+	assertTrue(res.near4(NEG_X_AXIS));
 
 	tempRot.setRot3(x_halfPi);
-	res.mult3(tempRot, Vec4d.Y_AXIS);
-	assertTrue(res.near4(Vec4d.Z_AXIS));
+	res.mult3(tempRot, Y_AXIS);
+	assertTrue(res.near4(Z_AXIS));
 
 	tempRot.setRot3(x_pi);
-	res.mult3(tempRot, Vec4d.Y_AXIS);
-	assertTrue(res.near4(Vec4d.NEG_Y_AXIS));
+	res.mult3(tempRot, Y_AXIS);
+	assertTrue(res.near4(NEG_Y_AXIS));
 }
 
 @Test
@@ -97,11 +104,11 @@ public void testSlerp() {
 	expected.normalize3();
 
 	tempRot.setRot3(x_quarterPi);
-	res.mult3(tempRot, Vec4d.Y_AXIS);
+	res.mult3(tempRot, Y_AXIS);
 	assertTrue(res.near3(expected));
 
 	tempRot.setRot3(x_eighthPi);
-	res.mult3(tempRot, Vec4d.Y_AXIS);
+	res.mult3(tempRot, Y_AXIS);
 	expected.set3(0,  Math.cos(Math.PI/8), Math.sin(Math.PI/8));
 	assertTrue(res.near3(expected));
 }
