@@ -114,8 +114,8 @@ public class CameraControl implements WindowInteractionListener {
 		Mat4d rot = new Mat4d();
 		rot.setRot3(origRot);
 
-		Vec3d rotXAxis = new Vec3d();
-		rotXAxis.mult3(rot, Vec4d.X_AXIS);
+		Vec3d rotXAxis = new Vec3d(1.0d, 0.0d, 0.0d);
+		rotXAxis.mult3(rot, rotXAxis);
 
 		Quaternion rotX = new Quaternion();
 		rotX.setAxisAngle(rotXAxis, dy * ROT_SCALE_X / 4);
@@ -214,11 +214,11 @@ public class CameraControl implements WindowInteractionListener {
 		Mat4d rot = new Mat4d();
 		rot.setRot3(origRot);
 
-		Vec3d origUp = new Vec3d();
-		origUp.mult3(rot, Vec4d.Y_AXIS);
+		Vec3d origUp = new Vec3d(0.0d, 1.0d, 0.0d);
+		origUp.mult3(rot, origUp);
 
-		Vec3d rotXAxis = new Vec3d();
-		rotXAxis.mult3(rot, Vec4d.X_AXIS);
+		Vec3d rotXAxis = new Vec3d(1.0d, 0.0d, 0.0d);
+		rotXAxis.mult3(rot, rotXAxis);
 
 		Quaternion rotX = new Quaternion();
 		rotX.setAxisAngle(rotXAxis, -dy * ROT_SCALE_X);
@@ -240,8 +240,8 @@ public class CameraControl implements WindowInteractionListener {
 		Quaternion newRot = polarToRot(pi);
 		rot.setRot3(newRot);
 
-		Vec3d newUp = new Vec3d();
-		newUp.mult3(rot, Vec4d.Y_AXIS);
+		Vec3d newUp = new Vec3d(0.0d, 1.0d, 0.0d);
+		newUp.mult3(rot, newUp);
 
 		double upDot = origUp.dot3(newUp);
 		if (upDot < 0) {
