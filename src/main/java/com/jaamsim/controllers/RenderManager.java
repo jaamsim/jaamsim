@@ -1071,7 +1071,7 @@ public class RenderManager implements DragSourceListener {
 				double zDiff = RenderUtils.getZDiff(point, currentRay, lastRay);
 				point.z += zDiff;
 			} else {
-				Plane pointPlane = new Plane(Vec4d.Z_AXIS, point.z);
+				Plane pointPlane = new Plane(null, point.z);
 				Vec3d diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, lastRay);
 				point.x += diff.x;
 				point.y += diff.y;

@@ -34,6 +34,11 @@ private double _dist;
  * @param distance
  */
 public Plane(Vec4d normal, double distance) {
+	if (normal == null) {
+		_normal.set4(0.0d, 0.0d, 1.0d, 0.0d);
+		_dist = distance;
+		return;
+	}
 	this.set(normal, distance);
 }
 

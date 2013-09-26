@@ -151,7 +151,7 @@ public class CameraControl implements WindowInteractionListener {
 			return;
 		}
 
-		Plane dragPlane = new Plane(Vec4d.Z_AXIS, POI.z);
+		Plane dragPlane = new Plane(null, POI.z);
 		double currDist = dragPlane.collisionDist(currRay);
 		double prevDist = dragPlane.collisionDist(prevRay);
 		if (currDist < 0 || prevDist < 0 ||
