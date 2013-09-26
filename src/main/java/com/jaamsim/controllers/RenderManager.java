@@ -279,7 +279,13 @@ public class RenderManager implements DragSourceListener {
 		queueRedraw();
 	}
 
-	public void closeAllWindows() {
+	public static final void clear() {
+		if (!isGood()) return;
+
+		RenderManager.inst().closeAllWindows();
+	}
+
+	private void closeAllWindows() {
 		ArrayList<Integer> windIDs = _renderer.getOpenWindowIDs();
 		for (int id : windIDs) {
 			_renderer.closeWindow(id);

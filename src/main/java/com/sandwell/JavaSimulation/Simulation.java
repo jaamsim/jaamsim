@@ -238,9 +238,7 @@ public class Simulation extends Entity {
 		FrameBox.clear();
 		EntityPallet.clear();
 
-		if (RenderManager.isGood()) {
-			RenderManager.inst().closeAllWindows();
-		}
+		RenderManager.clear();
 
 		// Kill all entities except simulation
 		while(Entity.getAll().size() > 1) {
