@@ -17,15 +17,7 @@ package com.jaamsim.math;
 
 public class Vec4d extends Vec3d {
 
-public static Vec4d ORIGIN = new Vec4d(0, 0, 0, 1.0d);
 public static Vec4d ONES = new Vec4d(1, 1, 1, 1.0d);
-public static Vec4d X_AXIS = new Vec4d(1, 0, 0, 1.0d);
-public static Vec4d Y_AXIS = new Vec4d(0, 1, 0, 1.0d);
-public static Vec4d Z_AXIS = new Vec4d(0, 0, 1, 1.0d);
-
-public static Vec4d NEG_X_AXIS = new Vec4d(-1,  0,  0, 1.0d);
-public static Vec4d NEG_Y_AXIS = new Vec4d( 0, -1,  0, 1.0d);
-public static Vec4d NEG_Z_AXIS = new Vec4d( 0,  0, -1, 1.0d);
 
 public double w;
 
