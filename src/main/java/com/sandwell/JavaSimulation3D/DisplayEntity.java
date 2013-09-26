@@ -372,18 +372,12 @@ public class DisplayEntity extends Entity {
 
 	public void setOrientation(Vec3d orientation) {
 		synchronized (position) {
-			if (orient.equals3(orientation)) {
-				return;
-			}
 			orient.set3(orientation);
 		}
 	}
 
 	public void setSize(Vec3d size) {
 		synchronized (position) {
-			if (this.size.equals3(size)) {
-				return;
-			}
 			this.size.set3(size);
 		}
 	}
@@ -508,20 +502,12 @@ public class DisplayEntity extends Entity {
 
 	public void setAlignment(Vec3d align) {
 		synchronized (position) {
-			if (this.align.equals3(align)) {
-				return;
-			}
-
 			this.align.set3(align);
 		}
 	}
 
 	public void setPosition(Vec3d pos) {
 		synchronized (position) {
-			if (this.position.equals3(pos)) {
-				return;
-			}
-
 			position.set3(pos);
 		}
 	}
