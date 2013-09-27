@@ -1220,7 +1220,8 @@ public class GUIFrame extends JFrame {
 		EditBox.getInstance().setVisible(true);
 		OutputBox.getInstance().setVisible(true);
 
-		FrameBox.setSelectedEntity(View.getAll().get(0));
+		if (View.getAll().size() > 0)
+			FrameBox.setSelectedEntity(View.getAll().get(0));
 	}
 
 	// ******************************************************************************************************
