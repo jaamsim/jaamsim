@@ -532,22 +532,10 @@ public final class EventManager implements Runnable {
 		popThread();
 	}
 
-	private void raw_scheduleProcess(long waitLength, int eventPriority, Entity caller, String methodName, Object[] args) {
+	void scheduleSingleProcess(long waitLength, int eventPriority, Entity caller, String methodName, Object[] args) {
 		assertNotWaitUntil();
 
-		ProcessTarget proc = new ReflectionTarget(caller, methodName, args);
-		Process newProcess = Process.allocate(this, proc);
 		long eventTime = calculateEventTime(Process.currentTick(), waitLength);
-
-		// Create an event for the new process at the present time, and place it on the event stack
-		Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, caller, newProcess);
-		Process.current().getEventManager().traceSchedProcess(newEvent);
-		addEventToStack(newEvent);
-	}
-
-	void scheduleSingleProcess(long waitLength, int eventPriority, Entity caller, String methodName, Object[] args) {
-		long eventTime = calculateEventTime(Process.currentTick(), waitLength);
-
 		synchronized (lockObject) {
 			for (int i = 0; i < eventStack.size(); i++) {
 				Event each = eventStack.get(i);
@@ -563,7 +551,13 @@ public final class EventManager implements Runnable {
 					return;
 				}
 			}
-			raw_scheduleProcess(waitLength, eventPriority, caller, methodName, args);
+			ProcessTarget proc = new ReflectionTarget(caller, methodName, args);
+			Process newProcess = Process.allocate(this, proc);
+
+			// Create an event for the new process at the present time, and place it on the event stack
+			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, caller, newProcess);
+			Process.current().getEventManager().traceSchedProcess(newEvent);
+			addEventToStack(newEvent);
 		}
 	}
 
