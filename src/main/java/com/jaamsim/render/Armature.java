@@ -18,8 +18,6 @@ package com.jaamsim.render;
  import java.util.ArrayList;
 
 import com.jaamsim.math.Mat4d;
-import com.jaamsim.math.Quaternion;
-import com.jaamsim.math.Vec3d;
 
  /**
   * A basic data holder for armature information
@@ -27,28 +25,6 @@ import com.jaamsim.math.Vec3d;
   *
   */
 public class Armature {
-
-	public static class RotKey {
-		public double time;
-		public Quaternion rot;
-	}
-
-	public static class TransKey {
-		public double time;
-		public Vec3d trans;
-	}
-
-	public static class Channel {
-		public String name;
-		public ArrayList<RotKey> rotKeys;
-		public ArrayList<TransKey> transKeys;
-	}
-
-	public static class ArmAction {
-		public String name;
-		public double duration;
-		public ArrayList<Channel> channels = new ArrayList<Channel>();
-	}
 
 	public static class Bone {
 		private String name;
@@ -95,9 +71,9 @@ public class Armature {
 	}
 
 	private final ArrayList<Bone> bones = new ArrayList<Bone>();
-	private final ArrayList<ArmAction> actions = new ArrayList<ArmAction>();
+	private final ArrayList<Action> actions = new ArrayList<Action>();
 
-	public void addAction(ArmAction act) {
+	public void addAction(Action act) {
 		actions.add(act);
 	}
 
@@ -142,68 +118,16 @@ public class Armature {
 		return bones;
 	}
 
-	public ArrayList<ArmAction> getActions() {
+	public ArrayList<Action> getActions() {
 		return actions;
 	}
 
-	private ArmAction getActionByName(String name) {
-		for (ArmAction a : actions) {
+	private Action getActionByName(String name) {
+		for (Action a : actions) {
 			if (a.name.equals(name))
 				return a;
 		}
 		return null;
-	}
-
-	// Calculate the interpolated rotation for this channel at time
-	private Quaternion interpRot(Channel ch, double time) {
-		if (ch.rotKeys == null || ch.rotKeys.size() == 0) {
-			return new Quaternion(); // identity
-		}
-		if (time < ch.rotKeys.get(0).time) {
-			return ch.rotKeys.get(0).rot; // Before the first key, so just take that value
-		}
-		if (time > ch.rotKeys.get(ch.rotKeys.size()-1).time) {
-			return ch.rotKeys.get(ch.rotKeys.size()-1).rot; // past the end
-		}
-		for (int i = 0; i < ch.rotKeys.size() - 1; ++i) {
-			RotKey a = ch.rotKeys.get(i);
-			RotKey b = ch.rotKeys.get(i+1);
-			if (time < a.time || time > b.time) continue;
-
-			double bWeight = (time-a.time) / (b.time-a.time);
-			Quaternion ret = new Quaternion();
-			a.rot.slerp(b.rot, bWeight, ret);
-			return ret;
-		}
-		assert(false);
-		return new Quaternion();
-	}
-
-	// Calculate the interpolated tranlation for this channel at time
-	private Vec3d interpTrans(Channel ch, double time) {
-		if (ch.transKeys == null || ch.transKeys.size() == 0) {
-			return new Vec3d(); // identity
-		}
-		if (time < ch.transKeys.get(0).time) {
-			return ch.transKeys.get(0).trans; // Before the first key, so just take that value
-		}
-		if (time > ch.transKeys.get(ch.transKeys.size()-1).time) {
-			return ch.transKeys.get(ch.transKeys.size()-1).trans; // past the end
-		}
-		for (int i = 0; i < ch.transKeys.size()-1; ++i) {
-			TransKey a = ch.transKeys.get(i);
-			TransKey b = ch.transKeys.get(i+1);
-			if (time < a.time || time > b.time) continue;
-
-			double bw = (time-a.time) / (b.time-a.time);
-			double aw = 1 - bw;
-			Vec3d ret = new Vec3d(	a.trans.x*aw + b.trans.x*bw,
-									a.trans.y*aw + b.trans.y*bw,
-									a.trans.z*aw + b.trans.z*bw);
-			return ret;
-		}
-		assert(false);
-		return new Vec3d();
 	}
 
 	public int getBoneIndex(String name) {
@@ -229,17 +153,15 @@ public class Armature {
 			poseTransforms.add(new Mat4d());
 
 		for (Action.Queue aq : actions) {
-			ArmAction a = getActionByName(aq.name);
+			Action a = getActionByName(aq.name);
 			if (a == null) {
 				continue;
 			}
 
-			for (Channel ch : a.channels) {
+			for (Action.Channel ch : a.channels) {
 				int boneInd = getBoneIndex(ch.name);
 				assert(boneInd != -1);
-				Mat4d mat = new Mat4d();
-				mat.setRot3(interpRot(ch, aq.time));
-				mat.setTranslate3(interpTrans(ch, aq.time));
+				Mat4d mat = Action.getChannelMatAtTime(ch, aq.time);
 				poseTransforms.get(boneInd).mult4(mat);
 			}
 		}

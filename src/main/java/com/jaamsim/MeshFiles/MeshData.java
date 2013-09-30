@@ -397,7 +397,7 @@ public class MeshData {
 
 		_actionDesc = new ArrayList<Action.Description>();
 		for (Armature arm : _armatures) {
-			for (Armature.ArmAction act : arm.getActions()) {
+			for (Action act : arm.getActions()) {
 				Action.Description desc = new Action.Description();
 				desc.name = act.name;
 				desc.duration = act.duration;
