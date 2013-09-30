@@ -85,10 +85,17 @@ public class MeshData {
 		public int subMeshIndex;
 		public int materialIndex;
 		public int armatureIndex;
-		public Mat4d transform;
-		public Mat4d normalTrans;
+		private Mat4d transform;
+		private Mat4d normalTrans;
 		public int[] boneMapper;
 		public String[] boneNames;
+
+		public Mat4d getAnimatedTransform(ArrayList<Action.Queue> actions) {
+			return transform;
+		}
+		public Mat4d getAnimatedNormalTransform(ArrayList<Action.Queue> actions) {
+			return normalTrans;
+		}
 	}
 
 	public static class SubLineInstance {
@@ -453,11 +460,12 @@ public class MeshData {
 	private ConvexHull getSubInstHull(SubMeshInstance subInst, ArrayList<Action.Queue> actions) {
 
 		ArrayList<Vec4d> hullPoints = new ArrayList<Vec4d>();
+		Mat4d animatedTransform = subInst.getAnimatedTransform(actions);
 
 		if (actions == null || actions.size() == 0 || subInst.armatureIndex == -1) {
 			// This is an unanimated sub instance, just add the normal points
 			List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
-			List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
+			List<Vec4d> subPoints = RenderUtils.transformPoints(animatedTransform, pointsRef, 0);
 			hullPoints.addAll(subPoints);
 		} else {
 			// We need to add each bone in it's animated position
@@ -473,14 +481,14 @@ public class MeshData {
 
 				for (Vec4d hullVect : boneHull.getVertices()) {
 					Vec4d temp = new Vec4d(hullVect);
-					temp.mult4(subInst.transform, temp);
+					temp.mult4(animatedTransform, temp);
 					temp.mult4(boneMat, temp);
 					hullPoints.add(temp);
 				}
 			}
-			// Add the vertices
+			// Add the boneless vertices
 			List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).bonelessHull.getVertices();
-			List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
+			List<Vec4d> subPoints = RenderUtils.transformPoints(animatedTransform, pointsRef, 0);
 			hullPoints.addAll(subPoints);
 		}
 

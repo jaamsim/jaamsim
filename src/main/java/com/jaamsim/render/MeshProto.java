@@ -237,7 +237,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 			pose = poses.get(subInst.armatureIndex);
 		}
 
-		renderSubMesh(subMesh, subInst, vaoMap, renderer, pose);
+		renderSubMesh(subMesh, subInst, vaoMap, renderer, pose, actions);
 	}
 
 	Mat4d subModelViewMat = new Mat4d();
@@ -297,7 +297,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 			continue;
 		}
 
-		subModelView.mult4(modelViewMat, subInst.transform);
+		subModelView.mult4(modelViewMat, subInst.getAnimatedTransform(actions));
 
 		Vec4d eyeCenter = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		eyeCenter.mult4(subModelView, subMesh._center);
@@ -331,7 +331,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 			pose = poses.get(ts.subInst.armatureIndex);
 		}
 
-		renderSubMesh(ts.subMesh, ts.subInst, vaoMap, renderer, pose);
+		renderSubMesh(ts.subMesh, ts.subInst, vaoMap, renderer, pose, actions);
 	}
 }
 
@@ -428,7 +428,7 @@ private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Rende
 }
 
 private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Map<Integer, Integer> vaoMap,
-                           Renderer renderer, ArrayList<Mat4d> pose) {
+                           Renderer renderer, ArrayList<Mat4d> pose, ArrayList<Action.Queue> actions) {
 
 	Material mat = _materials.get(subInst.materialIndex);
 
@@ -443,8 +443,8 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Ma
 
 	// Setup uniforms for this object
 
-	gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.transform), 0);
-	gl.glUniformMatrix4fv(bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.normalTrans), 0);
+	gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.getAnimatedTransform(actions)), 0);
+	gl.glUniformMatrix4fv(bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.getAnimatedNormalTransform(actions)), 0);
 
 	gl.glUniform1i(useTexVar, (mat._texHandle != 0) ? 1 : 0);
 

@@ -147,8 +147,10 @@ public double getCollisionDist(Ray r, boolean precise)
 		}
 		// We have hit both the AABB and the convex hull for this sub instance, now do individual triangle collision
 
+		Mat4d animatedTransform = subInst.getAnimatedTransform(_actions);
+
 		Mat4d subMat = RenderUtils.mergeTransAndScale(_trans, _scale);
-		subMat.mult4(subInst.transform);
+		subMat.mult4(animatedTransform);
 
 		Mat4d invMat = subMat.inverse();
 
@@ -161,7 +163,8 @@ public double getCollisionDist(Ray r, boolean precise)
 			// new vertex positions
 			ArrayList<Mat4d> pose = data.getArmatures().get(subInst.armatureIndex).getPose(_actions);
 
-			Mat4d bindMat = subInst.transform;
+			// Just renaming the matrix to make this code easier to read
+			Mat4d bindMat = animatedTransform;
 			Mat4d invBindMat = bindMat.inverse();
 
 			double[] weights = new double[4];

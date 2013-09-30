@@ -178,7 +178,7 @@ public class MeshWriter {
 	private void writeMeshInstance(MeshData.SubMeshInstance inst) throws IOException {
 		startTag(String.format("<MeshInstance geoIndex='%d' matIndex='%d'>", inst.subMeshIndex, inst.materialIndex));
 		startTag("<Matrix>");
-		double[] cmData = inst.transform.toCMDataArray();
+		double[] cmData = inst.getAnimatedTransform(null).toCMDataArray();
 		indent();
 		for (double d : cmData) {
 			out.write(String.format("%f ", d));
