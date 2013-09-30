@@ -252,6 +252,13 @@ public class InputAgent {
 		resPath = URI.create("");
 	}
 
+	public static final void readPWDResource(String res) {
+		if (res == null)
+			return;
+
+		readStream(pwdRoot, pwdPath, res);
+	}
+
 	public static final void readResource(String res) {
 		if (res == null)
 			return;
