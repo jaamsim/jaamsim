@@ -189,6 +189,7 @@ public double getCollisionDist(Ray r, boolean precise)
 					continue;
 				}
 				Vec4d animVert = new Vec4d();
+				animVert.w = 1;
 				for (int j = 0; j < 4; ++j) {
 					if (weights[j] == 0) continue;
 
