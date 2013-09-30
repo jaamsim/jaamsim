@@ -202,6 +202,14 @@ public abstract class DisplayModelBinding {
 		cc.count++;
 	}
 
+	public static int getCacheMissCount(String type) {
+		CacheCounter cc = cacheMissData.get(type);
+		if (cc == null)
+			return 0;
+
+		return cc.count;
+	}
+
 	public VisibilityInfo getVisibilityInfo() {
 
 		return dm.getVisibilityInfo();
