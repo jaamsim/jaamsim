@@ -120,7 +120,7 @@ public class MeshReader {
 
 		parseInstances();
 
-		finalData.generateHull();
+		finalData.finalizeData();
 	}
 
 	private MeshData getMeshData() {

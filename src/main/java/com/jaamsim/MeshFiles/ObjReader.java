@@ -116,7 +116,7 @@ public class ObjReader {
 
 		finishCurrentMesh();
 
-		data.generateHull();
+		data.finalizeData();
 	}
 
 	// Load the material in the return data (if necessary) and return the appropriate index

@@ -267,7 +267,7 @@ public class ColParser {
 			visitNode(sn, globalMat);
 		}
 
-		_finalData.generateHull();
+		_finalData.finalizeData();
 	}
 
 	private void visitNode(SceneNode node, Mat4d parentMat) {

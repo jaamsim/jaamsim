@@ -371,7 +371,7 @@ public class MeshData {
 	/**
 	 * Builds the convex hull of the current mesh based on all the existing sub meshes.
 	 */
-	public void generateHull() {
+	public void finalizeData() {
 		ArrayList<Vec4d> totalHullPoints = new ArrayList<Vec4d>();
 		// Collect all the points from the hulls of the individual sub meshes
 		for (SubMeshInstance subInst : _subMeshInstances) {
