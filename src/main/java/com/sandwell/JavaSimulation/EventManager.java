@@ -526,7 +526,7 @@ public final class EventManager implements Runnable {
 
 		long nextEventTime = calculateEventTime(Process.currentTick(), waitLength);
 
-		Event temp = new Event(currentTick(), nextEventTime, eventPriority, caller, Process.current());
+		Event temp = new Event(currentTick(), nextEventTime, eventPriority, caller, Process.current(), null);
 		Process.current().getEventManager().traceEvent(temp, STATE_WAITING);
 		addEventToStack(temp);
 		popThread();
@@ -551,11 +551,11 @@ public final class EventManager implements Runnable {
 					return;
 				}
 			}
-			ProcessTarget proc = new ReflectionTarget(caller, methodName, args);
-			Process newProcess = Process.allocate(this, proc);
 
 			// Create an event for the new process at the present time, and place it on the event stack
-			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, caller, newProcess);
+			ProcessTarget proc = new ReflectionTarget(caller, methodName, args);
+			Process newProcess = Process.allocate(this, proc);
+			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, caller, newProcess, proc);
 			Process.current().getEventManager().traceSchedProcess(newEvent);
 			addEventToStack(newEvent);
 		}
@@ -841,7 +841,7 @@ public final class EventManager implements Runnable {
 	void scheduleProcess(long waitLength, int eventPriority, Entity ent, ProcessTarget t) {
 		Process p = Process.allocate(this, t);
 		long schedTick = currentTick + waitLength;
-		Event e = new Event(currentTick, schedTick, eventPriority, ent, p);
+		Event e = new Event(currentTick, schedTick, eventPriority, ent, p, t);
 		this.traceSchedProcess(e);
 		addEventToStack(e);
 	}
@@ -940,6 +940,7 @@ public final class EventManager implements Runnable {
 		final long schedTick; // The tick at which this event will execute
 		final int priority;   // The schedule priority of this event
 
+		final ProcessTarget target;
 		final Process process;
 		final Entity caller;
 
@@ -951,11 +952,12 @@ public final class EventManager implements Runnable {
 		 * @param caller
 		 * @param process
 		 */
-		Event(long currentTick, long scheduleTick, int prio, Entity caller, Process process) {
+		Event(long currentTick, long scheduleTick, int prio, Entity caller, Process process, ProcessTarget target) {
 			addedTick = currentTick;
 			schedTick = scheduleTick;
 			priority = prio;
 
+			this.target = target;
 			this.process = process;
 			this.caller = caller;
 		}
