@@ -265,12 +265,6 @@ public class Process extends Thread {
 			throw new ThreadKilledException("Thread killed");
 	}
 
-	synchronized String getClassMethod() {
-		if (target == null)
- 			return "Unknown Method State";
-		return target.getDescription();
-	}
-
 	synchronized void setFlag(int flag) {
 		flags |= flag;
 	}

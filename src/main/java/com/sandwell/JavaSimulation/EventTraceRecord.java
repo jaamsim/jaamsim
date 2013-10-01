@@ -113,10 +113,8 @@ class EventTraceRecord extends ArrayList<String> {
 		if (reason == 0)
 			traceLevel--;
 
-		this.append(String.format("%s\t%d\t%d\t%s\t%s\t%s",
-					eventStates[reason],
-					evt.schedTick, evt.priority, evt.caller.getName(),
-					evt.caller.getInputName(), EventManager.getClassMethod(evt)));
+		this.append(String.format("%s\t%d\t%d\t%s", eventStates[reason],
+		            evt.schedTick, evt.priority, evt.getDesc()));
 
 		if (reason == 1 || reason == 2)
 			traceLevel++;
@@ -152,9 +150,8 @@ class EventTraceRecord extends ArrayList<String> {
 
 	synchronized void formatSchedProcessTrace(String name, long currentTime, Event evt) {
 		this.addHeader(name, currentTime);
-		this.append(String.format("SchedProcess\t%d\t%d\t%s\t%s\t%s",
-				evt.schedTick, evt.priority, evt.caller.getName(),
-				evt.caller.getInputName(), EventManager.getClassMethod(evt)));
+		this.append(String.format("SchedProcess\t%d\t%d\t%s",
+		            evt.schedTick, evt.priority, evt.getDesc()));
 		this.finish();
 	}
 

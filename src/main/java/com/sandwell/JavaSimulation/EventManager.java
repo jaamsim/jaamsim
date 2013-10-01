@@ -545,7 +545,7 @@ public final class EventManager implements Runnable {
 					break;
 
 				// if we have an exact match, do not schedule another event
-				if (each.schedTick == eventTime && each.priority == eventPriority && each.caller == caller && EventManager.getClassMethod(each).endsWith(methodName)) {
+				if (each.schedTick == eventTime && each.priority == eventPriority && each.caller == caller && each.getDesc().endsWith(methodName)) {
 					//System.out.println("Suppressed duplicate event:" + Process.currentProcess().getEventManager().currentLongTime);
 					Process.current().getEventManager().traceSchedProcess(each);
 					return;
@@ -961,20 +961,23 @@ public final class EventManager implements Runnable {
 			this.process = process;
 			this.caller = caller;
 		}
-	}
 
-	static String getClassMethod(Event evt) {
-		StackTraceElement[] callStack = evt.process.getStackTrace();
+		String getDesc() {
+			if (target != null)
+				return target.getDescription();
 
-		for (int i = 0; i < callStack.length; i++) {
-			if (callStack[i].getClassName().equals("com.sandwell.JavaSimulation.Entity")) {
-				return String.format("%s.%s", evt.caller.getClass().getSimpleName(), callStack[i + 1].getMethodName());
+			StackTraceElement[] callStack = process.getStackTrace();
+
+			for (int i = 0; i < callStack.length; i++) {
+				if (callStack[i].getClassName().equals("com.sandwell.JavaSimulation.Entity")) {
+					return String.format("%s.%s", caller.getClass().getSimpleName(), callStack[i + 1].getMethodName());
+				}
 			}
-		}
 
-		// Possible the process hasn't started running yet, check the Process target
-		// state
-		return evt.process.getClassMethod();
+			// Possible the process hasn't started running yet, check the Process target
+			// state
+			return "Unknown Method State";
+		}
 	}
 
 	@Override
