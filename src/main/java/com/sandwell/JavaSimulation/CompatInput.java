@@ -22,12 +22,6 @@ public class CompatInput extends Input<String> {
 		this.target = target;
 	}
 
-	@SuppressWarnings("unused")
-    private String unitString = "";
-	public void setUnits(String units) {
-		unitString = units;
-	}
-
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
