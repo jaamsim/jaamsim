@@ -267,12 +267,14 @@ public class RenderManager implements DragSourceListener {
 		Image icon = GUIFrame.getWindowIcon();
 
 		CameraControl control = new CameraControl(_renderer, view);
+
 		int windowID = _renderer.createWindow(windPos.get(0), windPos.get(1),
 		                                      windSize.get(0), windSize.get(1),
 		                                      view.getID(),
 		                                      view.getTitle(), view.getInputName(),
 		                                      icon, control);
 
+		control.setWindowID(windowID);
 		_windowControls.put(windowID, control);
 		_windowToViewMap.put(windowID, view);
 
@@ -480,7 +482,7 @@ public class RenderManager implements DragSourceListener {
 			synchronized(_redraw) {
 				while (!_redraw.get()) {
 					try {
-						_redraw.wait(30);
+						_redraw.wait();
 					} catch (InterruptedException e) {}
 				}
 			}

@@ -23,14 +23,6 @@ public interface WindowInteractionListener {
 	public static int MOD_ALT = 	2;
 	public static int MOD_CTRL = 	4;
 
-	/**
-	 * Inform the Listener of the window to observe. This will be called once before any
-	 * other callbacks are used. This is necessary because the Listener will be created before the
-	 * window
-	 * @param wind
-	 */
-	public void setWindowID(int windowID);
-
 
 	/**
 	 *

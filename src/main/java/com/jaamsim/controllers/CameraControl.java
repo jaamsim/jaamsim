@@ -361,6 +361,7 @@ public class CameraControl implements WindowInteractionListener {
 			// This window has not been opened yet (or is closed) force a redraw as everything will catch up
 			// and the information has been saved to the view object
 			RenderManager.redraw();
+			piCache = null;
 			return;
 		}
 
@@ -383,7 +384,6 @@ public class CameraControl implements WindowInteractionListener {
 		updateCamTrans(pi, true);
 	}
 
-	@Override
 	public void setWindowID(int windowID) {
 		_windowID = windowID;
 	}

@@ -34,8 +34,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.media.opengl.DebugGL2;
@@ -457,10 +457,6 @@ public class Renderer {
 
 		RenderGLListener listener = new RenderGLListener();
 
-		// Set the listeners windowID before creating the window to ensure it never gets a callback before the
-		// ID is valid
-		message.listener.setWindowID(message.windowID);
-
 		RenderWindow window = new RenderWindow(message.x, message.y,
 		                                       message.width, message.height,
 		                                       message.title, message.name,
@@ -483,6 +479,7 @@ public class Renderer {
 
 		window.getAWTFrameRef().setVisible(true);
 
+		queueRedraw();
 	}
 
 	public int createWindow(int x, int y, int width, int height, int viewID, String title, String name, Image icon,
