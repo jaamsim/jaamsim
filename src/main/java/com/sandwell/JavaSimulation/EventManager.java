@@ -339,9 +339,12 @@ public final class EventManager implements Runnable {
 				// Remove the event from the future events
 				Event nextEvent = eventStack.remove(0);
 				this.retireEvent(nextEvent, STATE_EXITED);
+				Process p = nextEvent.process;
+				if (p == null)
+					p = Process.allocate(this, nextEvent.target);
 				// Pass control to this event's thread
-				nextEvent.process.setNextProcess(null);
-				switchThread(nextEvent.process);
+				p.setNextProcess(null);
+				switchThread(p);
 
 				continue;
 			}
@@ -554,8 +557,7 @@ public final class EventManager implements Runnable {
 			}
 
 			// Create an event for the new process at the present time, and place it on the event stack
-			Process newProcess = Process.allocate(this, t);
-			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, newProcess, t);
+			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, null, t);
 			Process.current().getEventManager().traceSchedProcess(newEvent);
 			addEventToStack(newEvent);
 		}
@@ -839,9 +841,8 @@ public final class EventManager implements Runnable {
 	}
 
 	void scheduleProcess(long waitLength, int eventPriority, ProcessTarget t) {
-		Process p = Process.allocate(this, t);
 		long schedTick = currentTick + waitLength;
-		Event e = new Event(currentTick, schedTick, eventPriority, p, t);
+		Event e = new Event(currentTick, schedTick, eventPriority, null, t);
 		this.traceSchedProcess(e);
 		addEventToStack(e);
 	}
