@@ -476,7 +476,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastFIFO() {
-		getEventManager().scheduleLastFIFO();
+		getEventManager().waitTicks(0, EventManager.PRIO_LASTFIFO);
 	}
 
 	/**
@@ -484,7 +484,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastLIFO() {
-		getEventManager().scheduleLastLIFO();
+		getEventManager().waitTicks(0, EventManager.PRIO_LASTLIFO);
 	}
 
 	public final void waitUntil() {

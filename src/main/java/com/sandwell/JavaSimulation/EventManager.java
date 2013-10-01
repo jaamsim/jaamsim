@@ -516,24 +516,6 @@ public final class EventManager implements Runnable {
 		return nextEventTime;
 	}
 
-	private void raw_scheduleWait(long waitLength, int eventPriority) {
-		assertNotWaitUntil();
-		if (!Process.current().getEventManager().isParentOf(this)) {
-			System.out.format("Crossing eventManager boundary dst:%s src:%s\n",
-					name, Process.current().getEventManager().name);
-			long time = Process.current().getEventManager().currentTick() + waitLength;
-			if (eventStack.size() > 0 && eventStack.get(0).schedTick > time)
-				System.out.format("Next Event:%d This Event:%d\n", eventStack.get(0).schedTick, time);
-		}
-
-		long nextEventTime = calculateEventTime(Process.currentTick(), waitLength);
-
-		Event temp = new Event(currentTick(), nextEventTime, eventPriority, Process.current(), null);
-		Process.current().getEventManager().traceEvent(temp, STATE_WAITING);
-		addEventToStack(temp);
-		popThread();
-	}
-
 	void scheduleSingleProcess(long waitLength, int eventPriority, ProcessTarget t) {
 		assertNotWaitUntil();
 
@@ -575,7 +557,21 @@ public final class EventManager implements Runnable {
 		if(ticks < 0)
 			throw new ErrorException("Negative duration wait is invalid (wait length specified to be %d )", ticks);
 
-		raw_scheduleWait(ticks, priority);
+		assertNotWaitUntil();
+		if (!Process.current().getEventManager().isParentOf(this)) {
+			System.out.format("Crossing eventManager boundary dst:%s src:%s\n",
+			                  name, Process.current().getEventManager().name);
+			long time = Process.current().getEventManager().currentTick() + ticks;
+			if (eventStack.size() > 0 && eventStack.get(0).schedTick > time)
+				System.out.format("Next Event:%d This Event:%d\n", eventStack.get(0).schedTick, time);
+		}
+
+		long nextEventTime = calculateEventTime(Process.currentTick(), ticks);
+
+		Event temp = new Event(currentTick(), nextEventTime, priority, Process.current(), null);
+		Process.current().getEventManager().traceEvent(temp, STATE_WAITING);
+		addEventToStack(temp);
+		popThread();
 	}
 
 	/**
@@ -586,31 +582,11 @@ public final class EventManager implements Runnable {
 	 * @param eventPriority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
 	void scheduleWait(long waitLength, int eventPriority) {
-
 		// Test for zero duration scheduled wait length
-		if (waitLength == 0) {
+		if (waitLength == 0)
 			return;
-		}
 
-		// Test for negative duration schedule wait length
-		if(waitLength < 0) {
-			throw new ErrorException("Negative duration wait is invalid (wait length specified to be %d )", waitLength);
-		}
-
-		raw_scheduleWait(waitLength, eventPriority);
-	}
-
-	void scheduleLastFIFO() {
-		raw_scheduleWait(0, PRIO_LASTFIFO);
-	}
-
-	/**
-	 * Schedules an event to happen as the last event at the current time in LIFO.
-	 * Additional calls to scheduleLast will place a new event as the last event,
-	 * in fron of other 'last' events.
-	 */
-	void scheduleLastLIFO() {
-		raw_scheduleWait(0, PRIO_LASTLIFO);
+		waitTicks(waitLength, eventPriority);
 	}
 
 	/**
@@ -704,7 +680,7 @@ public final class EventManager implements Runnable {
 			} else {
 				traceWaitUntil(1);
 				Process.current().clearFlag(Process.COND_WAIT);
-				scheduleLastFIFO();
+				waitTicks(0, PRIO_LASTFIFO);
 			}
 		}
 	}
