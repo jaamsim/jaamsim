@@ -177,7 +177,7 @@ public class ObjReader {
 		int matIndex = getMaterialIndex(activeMat);
 
 		data.addSubMesh(map.getVertList(), vertIndices);
-		data.addSubMeshInstance(numLoadedMeshes++,  matIndex, -1, new Mat4d(), null);
+		data.addSubMeshInstance(numLoadedMeshes++,  matIndex, -1, new Mat4d(), null, null);
 
 		faces.clear();
 	}

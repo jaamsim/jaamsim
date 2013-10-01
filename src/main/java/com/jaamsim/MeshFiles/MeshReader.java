@@ -346,22 +346,28 @@ public class MeshReader {
 		}
 	}
 
-	private Action.Channel parseGroup(XmlNode groupNode) {
-		Action.Channel chan = new Action.Channel();
-		chan.name = groupNode.getAttrib("name");
-		parseAssert(chan.name != null);
+	private void populateChannel(XmlNode node, Action.Channel chan) {
 
-		XmlNode rotNode = groupNode.findChildTag("Rotation", false);
+		XmlNode rotNode = node.findChildTag("Rotation", false);
 		if (rotNode != null) {
 			chan.rotKeys = new ArrayList<Action.RotKey>();
 			parseKeys(rotNode, chan, false);
 		}
 
-		XmlNode transNode = groupNode.findChildTag("Location", false);
+		XmlNode transNode = node.findChildTag("Location", false);
 		if (transNode != null) {
 			chan.transKeys = new ArrayList<Action.TransKey>();
 			parseKeys(transNode, chan, true);
 		}
+
+	}
+
+	private Action.Channel parseGroup(XmlNode groupNode) {
+		Action.Channel chan = new Action.Channel();
+		chan.name = groupNode.getAttrib("name");
+		parseAssert(chan.name != null);
+
+		populateChannel(groupNode, chan);
 
 		return chan;
 	}
@@ -405,6 +411,20 @@ public class MeshReader {
 
 	}
 
+	private Action parseInstAction(XmlNode actNode) {
+		Action act = new Action();
+		act.name = actNode.getAttrib("name");
+		act.duration = Double.parseDouble(actNode.getAttrib("length"));
+		parseAssert(act.name != null);
+
+		// Submesh Instance actions can only have a single channel
+		act.channels = new ArrayList<Action.Channel>(1);
+		Action.Channel chan = new Action.Channel();
+		populateChannel(actNode, chan);
+		act.channels.add(chan);
+		return act;
+	}
+
 	private void parseInstance(XmlNode instNode) {
 		int geoIndex = Integer.parseInt(instNode.getAttrib("geoIndex"));
 		int matIndex = Integer.parseInt(instNode.getAttrib("matIndex"));
@@ -429,7 +449,21 @@ public class MeshReader {
 		// Iff we have an armature, we also have bone names
 		parseAssert((armIndex==-1) == (boneNames==null));
 
-		finalData.addSubMeshInstance(geoIndex, matIndex, armIndex, mat, boneNames);
+		XmlNode actionsNode = instNode.findChildTag("Actions", false);
+		ArrayList<Action> actions = null;
+		if (actionsNode != null) {
+			actions = new ArrayList<Action>();
+			for (XmlNode child : actionsNode.children()) {
+				if (!child.getTag().equals("Action")) {
+					continue;
+				}
+				Action act = parseInstAction(child);
+				actions.add(act);
+				parseAssert(act.channels.size() == 1); // Sub instance key frames can only have one channel
+			}
+		}
+
+		finalData.addSubMeshInstance(geoIndex, matIndex, armIndex, mat, boneNames, actions);
 	}
 
 	private Mat4d nodeToMat4d(XmlNode node) {

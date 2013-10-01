@@ -89,11 +89,44 @@ public class MeshData {
 		private Mat4d normalTrans;
 		public int[] boneMapper;
 		public String[] boneNames;
+		public ArrayList<Action> actions;
 
-		public Mat4d getAnimatedTransform(ArrayList<Action.Queue> actions) {
+		public Mat4d getAnimatedTransform(ArrayList<Action.Queue> aqs) {
+			if (aqs == null || aqs.size() == 0 || this.actions == null)
+				return transform;
+
+			// Find the first action in aqs that matches one in this.actions
+			for (Action.Queue aq : aqs) {
+				// Find this action
+				for (Action act : this.actions) {
+					if (aq.name.equals(act.name)) {
+						assert(act.channels.size() == 1);
+						return Action.getChannelMatAtTime(act.channels.get(0), aq.time);
+					}
+				}
+			}
+			// None of the actions apply to this sub instance
 			return transform;
 		}
-		public Mat4d getAnimatedNormalTransform(ArrayList<Action.Queue> actions) {
+
+		public Mat4d getAnimatedNormalTransform(ArrayList<Action.Queue> aqs) {
+			if (aqs == null || aqs.size() == 0 || this.actions == null)
+				return normalTrans;
+
+			// Find the first action in aqs that matches one in this.actions
+			for (Action.Queue aq : aqs) {
+				// Find this action
+				for (Action act : this.actions) {
+					if (aq.name.equals(act.name)) {
+						assert(act.channels.size() == 1);
+						Mat4d trans = Action.getChannelMatAtTime(act.channels.get(0), aq.time);
+						Mat4d ret = trans.inverse();
+						ret.transpose4();
+						return ret;
+					}
+				}
+			}
+
 			return normalTrans;
 		}
 	}
@@ -121,7 +154,7 @@ public class MeshData {
 
 	private ArrayList<Action.Description> _actionDesc;
 
-	public void addSubMeshInstance(int meshIndex, int matIndex, int armIndex, Mat4d mat, String[] boneNames) {
+	public void addSubMeshInstance(int meshIndex, int matIndex, int armIndex, Mat4d mat, String[] boneNames, ArrayList<Action> actions) {
 		Mat4d trans = new Mat4d(mat);
 		SubMeshInstance inst = new SubMeshInstance();
 		inst.subMeshIndex = meshIndex;
@@ -129,6 +162,7 @@ public class MeshData {
 		inst.armatureIndex = armIndex;
 		inst.transform = trans;
 		inst.boneNames = boneNames;
+		inst.actions = actions;
 
 		if (boneNames != null) {
 			assert(armIndex != -1);
@@ -396,12 +430,24 @@ public class MeshData {
 		_radius = _staticHull.getRadius();
 
 		_actionDesc = new ArrayList<Action.Description>();
+		// Add all the actions found in the armatures
 		for (Armature arm : _armatures) {
 			for (Action act : arm.getActions()) {
 				Action.Description desc = new Action.Description();
 				desc.name = act.name;
 				desc.duration = act.duration;
 				_actionDesc.add(desc);
+			}
+		}
+		// And sub meshes
+		for (SubMeshInstance subInst : _subMeshInstances) {
+			if (subInst.actions != null) {
+				for (Action act : subInst.actions) {
+					Action.Description desc = new Action.Description();
+					desc.name = act.name;
+					desc.duration = act.duration;
+					_actionDesc.add(desc);
+				}
 			}
 		}
 	}
