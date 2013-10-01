@@ -525,7 +525,7 @@ public final class EventManager implements Runnable {
 
 		long nextEventTime = calculateEventTime(Process.currentTick(), waitLength);
 
-		Event temp = new Event(currentTick(), nextEventTime, eventPriority, caller, Process.current(), null);
+		Event temp = new Event(currentTick(), nextEventTime, eventPriority, Process.current(), null);
 		Process.current().getEventManager().traceEvent(temp, STATE_WAITING);
 		addEventToStack(temp);
 		popThread();
@@ -555,7 +555,7 @@ public final class EventManager implements Runnable {
 
 			// Create an event for the new process at the present time, and place it on the event stack
 			Process newProcess = Process.allocate(this, t);
-			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, null, newProcess, t);
+			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, newProcess, t);
 			Process.current().getEventManager().traceSchedProcess(newEvent);
 			addEventToStack(newEvent);
 		}
@@ -841,7 +841,7 @@ public final class EventManager implements Runnable {
 	void scheduleProcess(long waitLength, int eventPriority, Entity ent, ProcessTarget t) {
 		Process p = Process.allocate(this, t);
 		long schedTick = currentTick + waitLength;
-		Event e = new Event(currentTick, schedTick, eventPriority, ent, p, t);
+		Event e = new Event(currentTick, schedTick, eventPriority, p, t);
 		this.traceSchedProcess(e);
 		addEventToStack(e);
 	}
@@ -942,7 +942,6 @@ public final class EventManager implements Runnable {
 
 		final ProcessTarget target;
 		final Process process;
-		final Entity caller;
 
 		/**
 		 * Constructs a new event object.
@@ -952,14 +951,13 @@ public final class EventManager implements Runnable {
 		 * @param caller
 		 * @param process
 		 */
-		Event(long currentTick, long scheduleTick, int prio, Entity caller, Process process, ProcessTarget target) {
+		Event(long currentTick, long scheduleTick, int prio, Process process, ProcessTarget target) {
 			addedTick = currentTick;
 			schedTick = scheduleTick;
 			priority = prio;
 
 			this.target = target;
 			this.process = process;
-			this.caller = caller;
 		}
 
 		String getDesc() {
@@ -970,7 +968,7 @@ public final class EventManager implements Runnable {
 
 			for (int i = 0; i < callStack.length; i++) {
 				if (callStack[i].getClassName().equals("com.sandwell.JavaSimulation.Entity")) {
-					return String.format("%s.%s", caller.getClass().getSimpleName(), callStack[i + 1].getMethodName());
+					return String.format("%s:%s", callStack[i + 1].getClassName(), callStack[i + 1].getMethodName());
 				}
 			}
 
