@@ -965,11 +965,15 @@ public final class EventManager implements Runnable {
 				return target.getDescription();
 
 			StackTraceElement[] callStack = process.getStackTrace();
-
+			boolean seenEntity = false;
 			for (int i = 0; i < callStack.length; i++) {
 				if (callStack[i].getClassName().equals("com.sandwell.JavaSimulation.Entity")) {
-					return String.format("%s:%s", callStack[i + 1].getClassName(), callStack[i + 1].getMethodName());
+					seenEntity = true;
+					continue;
 				}
+
+				if (seenEntity)
+					return String.format("%s:%s", callStack[i].getClassName(), callStack[i].getMethodName());
 			}
 
 			// Possible the process hasn't started running yet, check the Process target

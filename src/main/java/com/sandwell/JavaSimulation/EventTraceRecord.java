@@ -23,7 +23,6 @@ class EventTraceRecord extends ArrayList<String> {
 	private String eventManagerName;
 	private long internalTime;
 	private String targetName;
-	private String method;
 	private int traceLevel;
 
 	public EventTraceRecord() {
@@ -44,7 +43,6 @@ class EventTraceRecord extends ArrayList<String> {
 		// A regular event wakeup, parse target/method
 		if (temp[0].endsWith("Event")) {
 			targetName = temp[3];
-			method = temp[5];
 			return;
 		}
 
@@ -53,19 +51,16 @@ class EventTraceRecord extends ArrayList<String> {
 		if (temp[0].endsWith("Event-WaitUntilEnded")) {
 			temp = this.get(2).split("\t");
 			targetName = temp[3];
-			method = temp[5];
 			return;
 		}
 
 		if (temp[0].endsWith("StartProcess")) {
 			targetName = temp[1];
-			method = "";
 			return;
 		}
 
 		if (temp[0].endsWith("SchedProcess")) {
 			targetName = temp[3];
-			method = temp[5];
 			return;
 		}
 	}
@@ -175,9 +170,6 @@ class EventTraceRecord extends ArrayList<String> {
 			return false;
 
 		if (!record.targetName.equals(this.targetName))
-			return false;
-
-		if (!record.method.equals(this.method))
 			return false;
 
 		return true;
