@@ -406,7 +406,7 @@ public class Entity {
 	}
 
 	public final void scheduleProcess(ProcessTarget t) {
-		getEventManager().scheduleProcess(0, EventManager.PRIO_DEFAULT, this, t);
+		getEventManager().scheduleProcess(0, EventManager.PRIO_DEFAULT, t);
 	}
 
 	public final void scheduleSingleProcess(ProcessTarget t) {
@@ -445,7 +445,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWaitTicks(long ticks, int priority) {
-		getEventManager().waitTicks(ticks, priority, this);
+		getEventManager().waitTicks(ticks, priority);
 	}
 
 	/**
@@ -456,7 +456,7 @@ public class Entity {
 	 */
 	public final void scheduleWait(double duration) {
 		long waitLength = calculateDelayLength(duration);
-		getEventManager().scheduleWait(waitLength, EventManager.PRIO_DEFAULT, this);
+		getEventManager().scheduleWait(waitLength, EventManager.PRIO_DEFAULT);
 	}
 
 	/**
@@ -468,7 +468,7 @@ public class Entity {
 	 */
 	public final void scheduleWait( double duration, int priority ) {
 		long waitLength = calculateDelayLength(duration);
-		getEventManager().scheduleWait(waitLength, priority, this);
+		getEventManager().scheduleWait(waitLength, priority);
 	}
 
 	/**
@@ -476,7 +476,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastFIFO() {
-		getEventManager().scheduleLastFIFO( this );
+		getEventManager().scheduleLastFIFO();
 	}
 
 	/**
@@ -484,15 +484,15 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastLIFO() {
-		getEventManager().scheduleLastLIFO( this );
+		getEventManager().scheduleLastLIFO();
 	}
 
 	public final void waitUntil() {
-		getEventManager().waitUntil(this);
+		getEventManager().waitUntil();
 	}
 
 	public final void waitUntilEnded() {
-		getEventManager().waitUntilEnded(this);
+		getEventManager().waitUntilEnded();
 	}
 
 	// ******************************************************************************************************

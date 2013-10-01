@@ -277,7 +277,7 @@ public class Simulation extends Entity {
 			}
 		}
 
-		EventManager.rootManager.scheduleProcess(0, EventManager.PRIO_DEFAULT, this, new StartModelTarget(this));
+		EventManager.rootManager.scheduleProcess(0, EventManager.PRIO_DEFAULT, new StartModelTarget(this));
 		Simulation.resume();
 	}
 

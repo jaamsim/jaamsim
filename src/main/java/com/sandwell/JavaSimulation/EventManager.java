@@ -513,7 +513,7 @@ public final class EventManager implements Runnable {
 		return nextEventTime;
 	}
 
-	private void raw_scheduleWait(long waitLength, int eventPriority, Entity caller) {
+	private void raw_scheduleWait(long waitLength, int eventPriority) {
 		assertNotWaitUntil();
 		if (!Process.current().getEventManager().isParentOf(this)) {
 			System.out.format("Crossing eventManager boundary dst:%s src:%s\n",
@@ -568,12 +568,12 @@ public final class EventManager implements Runnable {
 	 * @param ticks the number of discrete ticks from now to schedule the event.
 	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
-	void waitTicks(long ticks, int priority, Entity caller) {
+	void waitTicks(long ticks, int priority) {
 		// Test for negative duration schedule wait length
 		if(ticks < 0)
 			throw new ErrorException("Negative duration wait is invalid (wait length specified to be %d )", ticks);
 
-		raw_scheduleWait(ticks, priority, caller);
+		raw_scheduleWait(ticks, priority);
 	}
 
 	/**
@@ -583,7 +583,7 @@ public final class EventManager implements Runnable {
 	 * @param waitLength the length of time from now to schedule the event.
 	 * @param eventPriority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
-	void scheduleWait(long waitLength, int eventPriority, Entity caller) {
+	void scheduleWait(long waitLength, int eventPriority) {
 
 		// Test for zero duration scheduled wait length
 		if (waitLength == 0) {
@@ -595,11 +595,11 @@ public final class EventManager implements Runnable {
 			throw new ErrorException("Negative duration wait is invalid (wait length specified to be %d )", waitLength);
 		}
 
-		raw_scheduleWait(waitLength, eventPriority, caller);
+		raw_scheduleWait(waitLength, eventPriority);
 	}
 
-	void scheduleLastFIFO( Entity caller ) {
-		raw_scheduleWait(0, PRIO_LASTFIFO, caller);
+	void scheduleLastFIFO() {
+		raw_scheduleWait(0, PRIO_LASTFIFO);
 	}
 
 	/**
@@ -607,8 +607,8 @@ public final class EventManager implements Runnable {
 	 * Additional calls to scheduleLast will place a new event as the last event,
 	 * in fron of other 'last' events.
 	 */
-	void scheduleLastLIFO( Entity caller ) {
-		raw_scheduleWait(0, PRIO_LASTLIFO, caller);
+	void scheduleLastLIFO() {
+		raw_scheduleWait(0, PRIO_LASTLIFO);
 	}
 
 	/**
@@ -682,7 +682,7 @@ public final class EventManager implements Runnable {
 	 * thread to the conditional stack, then wakes the next waiting thread on
 	 * the thread stack.
 	 */
-	void waitUntil(Entity caller) {
+	void waitUntil() {
 		synchronized (lockObject) {
 			if (!conditionalList.contains(Process.current())) {
 				Process.current().getEventManager().traceWaitUntil(0);
@@ -693,7 +693,7 @@ public final class EventManager implements Runnable {
 		popThread();
 	}
 
-	void waitUntilEnded(Entity caller) {
+	void waitUntilEnded() {
 		synchronized (lockObject) {
 			if (!conditionalList.remove(Process.current())) {
 				// Do not wait at all if we never actually were on the waitUntilStack
@@ -702,7 +702,7 @@ public final class EventManager implements Runnable {
 			} else {
 				traceWaitUntil(1);
 				Process.current().clearFlag(Process.COND_WAIT);
-				scheduleLastFIFO(caller);
+				scheduleLastFIFO();
 			}
 		}
 	}
@@ -838,7 +838,7 @@ public final class EventManager implements Runnable {
 		return false;
 	}
 
-	void scheduleProcess(long waitLength, int eventPriority, Entity ent, ProcessTarget t) {
+	void scheduleProcess(long waitLength, int eventPriority, ProcessTarget t) {
 		Process p = Process.allocate(this, t);
 		long schedTick = currentTick + waitLength;
 		Event e = new Event(currentTick, schedTick, eventPriority, p, t);
