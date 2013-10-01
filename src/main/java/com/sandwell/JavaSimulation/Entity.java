@@ -409,8 +409,8 @@ public class Entity {
 		getEventManager().scheduleProcess(0, EventManager.PRIO_DEFAULT, this, t);
 	}
 
-	public final void scheduleSingleProcess(String methodName, Object... args) {
-		getEventManager().scheduleSingleProcess(0, EventManager.PRIO_LASTFIFO, this, methodName, args);
+	public final void scheduleSingleProcess(ProcessTarget t) {
+		getEventManager().scheduleSingleProcess(0, EventManager.PRIO_LASTFIFO, t);
 	}
 
 	/**

@@ -17,7 +17,6 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
@@ -532,7 +531,7 @@ public final class EventManager implements Runnable {
 		popThread();
 	}
 
-	void scheduleSingleProcess(long waitLength, int eventPriority, Entity caller, String methodName, Object[] args) {
+	void scheduleSingleProcess(long waitLength, int eventPriority, ProcessTarget t) {
 		assertNotWaitUntil();
 
 		long eventTime = calculateEventTime(Process.currentTick(), waitLength);
@@ -545,17 +544,18 @@ public final class EventManager implements Runnable {
 					break;
 
 				// if we have an exact match, do not schedule another event
-				if (each.schedTick == eventTime && each.priority == eventPriority && each.caller == caller && each.getDesc().endsWith(methodName)) {
-					//System.out.println("Suppressed duplicate event:" + Process.currentProcess().getEventManager().currentLongTime);
+				if (each.schedTick == eventTime &&
+				    each.priority == eventPriority &&
+				    each.target == t) {
+					//System.out.println("Suppressed duplicate event:" +Process.currentTick() + " " + each.target.getDescription());
 					Process.current().getEventManager().traceSchedProcess(each);
 					return;
 				}
 			}
 
 			// Create an event for the new process at the present time, and place it on the event stack
-			ProcessTarget proc = new ReflectionTarget(caller, methodName, args);
-			Process newProcess = Process.allocate(this, proc);
-			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, caller, newProcess, proc);
+			Process newProcess = Process.allocate(this, t);
+			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, null, newProcess, t);
 			Process.current().getEventManager().traceSchedProcess(newEvent);
 			addEventToStack(newEvent);
 		}
