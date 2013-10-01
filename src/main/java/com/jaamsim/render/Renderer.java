@@ -281,8 +281,7 @@ public class Renderer {
 
 				} while (!_renderMessages.isEmpty());
 
-				if (_displayNeeded.get()) {
-					_displayNeeded.set(false);
+				if (_displayNeeded.compareAndSet(true, false)) {
 					updateRenderableScene();
 
 					// Defensive copy the window list (in case a window is closed while we render)
@@ -363,8 +362,8 @@ public class Renderer {
 	}
 
 	public void queueRedraw() {
-		_displayNeeded.set(true);
 		synchronized(_displayNeeded) {
+			_displayNeeded.set(true);
 			_displayNeeded.notifyAll();
 		}
 	}
@@ -989,11 +988,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		@Override
 		public void display(GLAutoDrawable drawable) {
-			// Only display from the render thread, this can be called from the EDT for first window draw...
-			if (Thread.currentThread() != _renderThread) {
-				queueRedraw();
-				return;
-			}
 			synchronized (_rendererLock) {
 
 				Camera cam = _window.getCameraRef();
@@ -1203,6 +1197,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		}
 
 		synchronized (_displayNeeded) {
+			_displayNeeded.set(true);
 			_displayNeeded.notifyAll();
 		}
 
@@ -1315,6 +1310,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 	private void offScreenImp(OffScreenMessage message) {
 
+		synchronized(_rendererLock) {
 		try {
 
 			boolean isTempTarget;
@@ -1403,6 +1399,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			if (_sharedContext.isCurrent())
 				_sharedContext.release();
 		}
+		} // synchronized(_rendererLock)
 	}
 
 	/**
