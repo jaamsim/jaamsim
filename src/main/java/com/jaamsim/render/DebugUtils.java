@@ -248,7 +248,7 @@ public class DebugUtils {
 		cam.getViewMat4d(modelViewMat);
 
 		Mat4d aabbCenterMat = new Mat4d();
-		aabbCenterMat.setTranslate3(aabb.getCenter());
+		aabbCenterMat.setTranslate3(aabb.center);
 		modelViewMat.mult4(aabbCenterMat);
 		modelViewMat.scaleCols3(aabb.radius);
 

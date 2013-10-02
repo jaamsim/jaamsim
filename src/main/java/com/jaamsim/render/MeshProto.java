@@ -28,6 +28,7 @@ import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Renderer.ShaderHandle;
 
@@ -205,7 +206,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 		}
 	}
 
-	Vec4d dist = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	Vec3d dist = new Vec3d();
 
 	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
 		MeshData.SubMeshInstance subInst = data.getSubMeshInstances().get(i);
@@ -223,7 +224,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 		}
 
 		// Work out distance to the camera
-		dist.set4(instBounds.getCenter());
+		dist.set3(instBounds.center);
 		dist.sub3(cam.getTransformRef().getTransRef());
 
 		double apparentSize = 2 * instBounds.radius.mag3() / dist.mag3();
@@ -696,7 +697,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 		}
 	}
 
-	sub._center = data.staticHull.getAABB(Mat4d.IDENTITY).getCenter();
+	sub._center = data.staticHull.getAABBCenter();
 
 	sub._numVerts = data.indices.length;
 

@@ -46,7 +46,6 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
@@ -223,7 +222,7 @@ public class GraphicBox extends JDialog {
 				}
 				if (useModelPosition.isSelected()) {
 
-					Vec4d entityPos = modelBounds.getCenter();
+					Vec3d entityPos = modelBounds.center;
 
 					InputAgent.processEntity_Keyword_Value(currentEntity, "Position", String.format("%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z));
 					InputAgent.processEntity_Keyword_Value(currentEntity, "Alignment", "0 0 0");

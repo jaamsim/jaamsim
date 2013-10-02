@@ -56,6 +56,7 @@ import com.jaamsim.font.TessFont;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Ray;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.util.ExceptionLogger;
 import com.jogamp.newt.event.WindowEvent;
@@ -768,7 +769,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 				if (rayDist >= 0.0) {
 
 					// Also check that this is visible
-					double centerDist = pickRay.getDistAlongRay(r.getBoundsRef().getCenter());
+					double centerDist = pickRay.getDistAlongRay(r.getBoundsRef().center);
 
 					if (r.renderForView(viewID, centerDist)) {
 						ret.add(new PickResult(rayDist, r.getPickingID()));
@@ -1434,7 +1435,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 		final Vec4d viewDir = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		cam.getViewDir(viewDir);
 
-		final Vec4d temp = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		final Vec3d temp = new Vec3d();
 
 		assert (_drawContext == null);
 		_drawContext = context;
@@ -1474,7 +1475,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 				// Defer rendering of transparent objects
 				TransSortable ts = new TransSortable();
 				ts.r = r;
-				temp.set4(r.getBoundsRef().getCenter());
+				temp.set3(r.getBoundsRef().center);
 				temp.sub3(cam.getTransformRef().getTransRef());
 				ts.dist = temp.dot3(viewDir);
 				transparents.add(ts);

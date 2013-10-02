@@ -35,7 +35,7 @@ public class AABB {
 	 */
 	private final Vec4d _negPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
-	private final Vec4d _center = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	public final Vec3d center = new Vec3d();
 	public final Vec3d radius = new Vec3d();
 
 	public AABB() {
@@ -298,22 +298,11 @@ public class AABB {
 	}
 
 	private void updateCenterAndRadius() {
-		_center.set4(_posPoint);
-		_center.add3(_negPoint);
-		_center.scale3(0.5);
+		center.add3(_posPoint, _negPoint);
+		center.scale3(0.5);
 
-		radius.set3(_posPoint);
-		radius.sub3(_negPoint);
+		radius.sub3(_posPoint, _negPoint);
 		radius.scale3(0.5);
-
-	}
-
-	/**
-	 * Get the center point of the AABB, this is not valid for empty AABBs
-	 * @return
-	 */
-	public Vec4d getCenter() {
-		return _center;
 	}
 
 	public boolean isEmpty() {
@@ -341,7 +330,7 @@ public class AABB {
 		effectiveRadius += radius.y * Math.abs(pNorm.y);
 		effectiveRadius += radius.z * Math.abs(pNorm.z);
 
-		double centerDist = p.getNormalDist(_center);
+		double centerDist = p.getNormalDist(center);
 		// If the effective radius is greater than the distance to the center, we're good
 		if (centerDist > effectiveRadius) {
 			return PlaneTestResult.POSITIVE;

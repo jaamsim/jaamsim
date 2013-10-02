@@ -87,8 +87,8 @@ public class Ray {
 	 * @param point
 	 * @return
 	 */
-	public double getDistAlongRay(Vec4d point) {
-		Vec4d diff = new Vec4d(point);
+	public double getDistAlongRay(Vec3d point) {
+		Vec3d diff = new Vec3d(point);
 		diff.sub3(_start);
 		return diff.dot3(_direction);
 	}

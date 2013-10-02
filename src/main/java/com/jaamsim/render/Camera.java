@@ -333,11 +333,11 @@ public CameraInfo getInfo() {
 }
 
 
-private Vec4d centerTemp = new Vec4d();
+private Vec3d centerTemp = new Vec3d();
 
 public double distToBounds(AABB bounds) {
 
-	invTrans.apply(bounds.getCenter(), centerTemp);
+	invTrans.apply(bounds.center, centerTemp);
 
 	return centerTemp.z * -1; // In camera space, Z is in the negative direction
 

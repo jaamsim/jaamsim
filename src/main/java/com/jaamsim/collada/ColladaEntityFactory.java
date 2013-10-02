@@ -22,7 +22,6 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
 import com.sandwell.JavaSimulation.Entity;
@@ -107,7 +106,7 @@ public class ColladaEntityFactory extends Entity {
 		InputAgent.processEntity_Keyword_Value(de, "DisplayModel", dm.getInputName());
 
 		// Now set the size and position
-		Vec4d entityPos = modelBounds.getCenter();
+		Vec3d entityPos = modelBounds.center;
 		Vec3d modelSize = new Vec3d(modelBounds.radius);
 		modelSize.scale3(2);
 
