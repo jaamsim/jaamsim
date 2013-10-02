@@ -25,14 +25,10 @@ public class AABB {
 
 	private boolean _isEmpty = false;
 
-	/**
-	 * The most positive point (MaxX, MaxY, MaxZ)
-	 */
+	/** The most positive point (MaxX, MaxY, MaxZ) */
 	public final Vec3d maxPt = new Vec3d();
 
-	/**
-	 * The most negative point (MinX, MinY, MinZ)
-	 */
+	/** The most negative point (MinX, MinY, MinZ) */
 	public final Vec3d minPt = new Vec3d();
 
 	public final Vec3d center = new Vec3d();
@@ -115,18 +111,13 @@ public class AABB {
 			return;
 		}
 
-		Vec4d temp = new Vec4d();
-		temp.w = 1;
-
-		Vec4d p = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		temp.set3(points.get(0));
-		p.mult4(trans, temp);
+		Vec3d p = new Vec3d();
+		p.multAndTrans3(trans, points.get(0));
 
 		maxPt.set3(p);
 		minPt.set3(p);
 		for (Vec3d p_orig : points) {
-			temp.set3(p_orig);
-			p.mult4(trans, temp);
+			p.multAndTrans3(trans, p_orig);
 			maxPt.max3(p);
 			minPt.min3(p);
 		}
