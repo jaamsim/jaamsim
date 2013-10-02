@@ -69,19 +69,13 @@ public void set(Vec3d norm, double distance) {
 public void set(Vec3d p0, Vec3d p1, Vec3d p2) {
 	Vec3d v0 = new Vec3d();
 	v0.sub3(p1, p0);
-	v0.normalize3();
 
 	Vec3d v1 = new Vec3d();
 	v1.sub3(p2, p1);
-	v1.normalize3();
 
 	normal.cross3(v0, v1);
 	normal.normalize3();
 	_dist = normal.dot3(p0);
-}
-
-public double getDist() {
-	return _dist;
 }
 
 /**
