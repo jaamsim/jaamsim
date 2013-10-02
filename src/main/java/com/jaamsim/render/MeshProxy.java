@@ -17,13 +17,13 @@ package com.jaamsim.render;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vec4d;
+import com.jaamsim.math.Vec3d;
 
 public class MeshProxy implements RenderProxy {
 
 	private MeshProtoKey _assetKey;
 	private Transform _trans;
-	private Vec4d _scale;
+	private Vec3d _scale;
 	private long _pickingID;
 	private VisibilityInfo _visInfo;
 	private ArrayList<Action.Queue> _actions;
@@ -31,10 +31,10 @@ public class MeshProxy implements RenderProxy {
 	private Mesh cached;
 
 	public MeshProxy(MeshProtoKey assetKey, Transform trans, ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
-		this(assetKey, trans, new Vec4d(1, 1, 1, 1.0d), actions, visInfo, pickingID);
+		this(assetKey, trans, new Vec3d(1, 1, 1), actions, visInfo, pickingID);
 	}
 
-	public MeshProxy(MeshProtoKey assetKey, Transform trans, Vec4d scale, ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
+	public MeshProxy(MeshProtoKey assetKey, Transform trans, Vec3d scale, ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
 		_assetKey = assetKey;
 		_trans = trans;
 		_scale = RenderUtils.fixupScale(scale);

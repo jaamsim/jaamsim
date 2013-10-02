@@ -34,7 +34,7 @@ public class Mesh implements Renderable {
 
 private MeshProto _proto;
 private Transform _trans;
-private Vec4d _scale; // Allow for a non-uniform scale
+private Vec3d _scale; // Allow for a non-uniform scale
 
 private long _pickingID;
 private VisibilityInfo _visInfo;
@@ -49,12 +49,12 @@ private ArrayList<AABB> _subMeshBounds;
 private ArrayList<Action.Queue> _actions;
 private HullProto debugHull = null;
 
-public Mesh(MeshProto proto, Transform trans, Vec4d scale,
+public Mesh(MeshProto proto, Transform trans, Vec3d scale,
             ArrayList<Action.Queue> actions, VisibilityInfo visInfo, long pickingID) {
 
 	_trans = new Transform(trans);
 	_proto = proto;
-	_scale = new Vec4d(scale);
+	_scale = new Vec3d(scale);
 	_visInfo = visInfo;
 	_actions = actions;
 

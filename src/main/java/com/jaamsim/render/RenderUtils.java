@@ -475,12 +475,8 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 
 	private static final double SMALL_SCALE = 0.000001;
 
-	public static Vec4d fixupScale(Vec3d inScale) {
-		Vec4d ret = new Vec4d();
-		ret.x = inScale.x;
-		ret.y = inScale.y;
-		ret.z = inScale.z;
-		ret.w = 1.0;
+	public static Vec3d fixupScale(Vec3d inScale) {
+		Vec3d ret = new Vec3d(inScale);
 
 		if (ret.x <= 0.0) ret.x = SMALL_SCALE;
 		if (ret.y <= 0.0) ret.y = SMALL_SCALE;

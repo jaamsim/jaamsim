@@ -473,7 +473,7 @@ public class ConvexHull {
 	 * @param trans
 	 * @return - distance to collision, or -1 if no collision
 	 */
-	public double collisionDistance(Ray r, Transform trans, Vec4d scale) {
+	public double collisionDistance(Ray r, Transform trans, Vec3d scale) {
 
 		return collisionDistanceByMatrix(r,
 				RenderUtils.mergeTransAndScale(trans, scale),
