@@ -79,11 +79,7 @@ public void set(Vec3d normal, double distance) {
 	_dist = distance;
 }
 
-public void getNormal(Vec4d norm) {
-	norm.set4(_normal);
-}
-
-public Vec4d getNormalRef() {
+public Vec3d getNormalRef() {
 	return _normal;
 }
 

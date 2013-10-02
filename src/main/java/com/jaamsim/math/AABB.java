@@ -279,7 +279,7 @@ public class AABB {
 
 		// Make sure the radius points in the same direction of the normal
 		double effectiveRadius = 0.0d;
-		Vec4d pNorm = p.getNormalRef();
+		Vec3d pNorm = p.getNormalRef();
 		effectiveRadius += radius.x * Math.abs(pNorm.x);
 		effectiveRadius += radius.y * Math.abs(pNorm.y);
 		effectiveRadius += radius.z * Math.abs(pNorm.z);
