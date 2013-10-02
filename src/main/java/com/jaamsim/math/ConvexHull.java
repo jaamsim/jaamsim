@@ -451,8 +451,9 @@ public class ConvexHull {
 		Vec4d p = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		inv.apply(point, p);
 
+		Plane plane = new Plane();
 		for (HullFace f : _faces) {
-			Plane plane = faceToPlane(f);
+			this.faceToPlane(f, plane);
 			double dist = plane.getNormalDist(p);
 			if (dist > 0) {
 				// This point is outside at least one plane, so there is not intersection
@@ -492,8 +493,9 @@ public class ConvexHull {
 		double back = Double.MAX_VALUE;
 		double front = -Double.MAX_VALUE;
 
+		Plane plane = new Plane();
 		for (HullFace f : _faces) {
-			Plane plane = faceToPlane(f);
+			this.faceToPlane(f, plane);
 
 			boolean bBackFace = plane.backFaceCollision(hullRay);
 
@@ -573,11 +575,10 @@ public class ConvexHull {
 		}
 	}
 
-	private Plane faceToPlane(HullFace f) {
-		return new Plane(_verts.get(f.indices[0]),
-                         _verts.get(f.indices[1]),
-                         _verts.get(f.indices[2]));
-
+	private void faceToPlane(HullFace f, Plane p) {
+		p.set(_verts.get(f.indices[0]),
+		      _verts.get(f.indices[1]),
+		      _verts.get(f.indices[2]));
 	}
 
 	private void makeDegenerate(ArrayList<Vec4d> vs) {

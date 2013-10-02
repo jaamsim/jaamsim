@@ -58,22 +58,26 @@ public Plane() {
  */
 
 public Plane(Vec4d p0, Vec4d p1, Vec4d p2) {
-	Vec4d v0 = new Vec4d(p1);
-	v0.sub3(p0);
-	v0.normalize3();
-
-	Vec4d v1 = new Vec4d(p2);
-	v1.sub3(p1);
-	v1.normalize3();
-
-	normal.cross3(v0, v1);
-	normal.normalize3();
-	_dist = normal.dot3(p0);
+	this.set(p0, p1, p2);
 }
 
 public void set(Vec3d norm, double distance) {
 	normal.normalize3(norm);
 	_dist = distance;
+}
+
+public void set(Vec3d p0, Vec3d p1, Vec3d p2) {
+	Vec3d v0 = new Vec3d();
+	v0.sub3(p1, p0);
+	v0.normalize3();
+
+	Vec3d v1 = new Vec3d();
+	v1.sub3(p2, p1);
+	v1.normalize3();
+
+	normal.cross3(v0, v1);
+	normal.normalize3();
+	_dist = normal.dot3(p0);
 }
 
 public double getDist() {
