@@ -49,7 +49,7 @@ public class DebugLine implements Renderable {
 		_visInfo = visInfo;
 
 		_bounds = new AABB(lineSegments);
-		_collisionFudge = _bounds.getRadius().mag3() * 0.1; // Allow a 10% fudge factor on the overall AABB size
+		_collisionFudge = _bounds.radius.mag3() * 0.1; // Allow a 10% fudge factor on the overall AABB size
 		_fb = FloatBuffer.allocate(3 * lineSegments.size());
 		for (Vec4d vert : lineSegments) {
 			RenderUtils.putPointXYZ(_fb, vert);

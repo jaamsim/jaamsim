@@ -316,16 +316,6 @@ public class AABB {
 		return _center;
 	}
 
-	/**
-	 * Get the 'radius' of this AABB, effectively the distance from the center to the
-	 * positive most point, this is not valid for empty AABBs
-	 * @return
-	 */
-	public Vec3d getRadius() {
-		return radius;
-	}
-
-
 	public boolean isEmpty() {
 		return _isEmpty;
 	}

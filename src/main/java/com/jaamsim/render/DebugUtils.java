@@ -250,7 +250,7 @@ public class DebugUtils {
 		Mat4d aabbCenterMat = new Mat4d();
 		aabbCenterMat.setTranslate3(aabb.getCenter());
 		modelViewMat.mult4(aabbCenterMat);
-		modelViewMat.scaleCols3(aabb.getRadius());
+		modelViewMat.scaleCols3(aabb.radius);
 
 		gl.glUniformMatrix4fv(_modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
 		gl.glUniformMatrix4fv(_projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);

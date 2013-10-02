@@ -108,7 +108,7 @@ public class ColladaEntityFactory extends Entity {
 
 		// Now set the size and position
 		Vec4d entityPos = modelBounds.getCenter();
-		Vec3d modelSize = new Vec3d(modelBounds.getRadius());
+		Vec3d modelSize = new Vec3d(modelBounds.radius);
 		modelSize.scale3(2);
 
 		InputAgent.processEntity_Keyword_Value(de, "Position", String.format("%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z));

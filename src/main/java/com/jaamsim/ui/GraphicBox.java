@@ -204,7 +204,7 @@ public class GraphicBox extends JDialog {
 					modelBounds = RenderManager.inst().getMeshBounds(key, true);
 				}
 
-				Vec3d modelSize = new Vec3d(modelBounds.getRadius());
+				Vec3d modelSize = new Vec3d(modelBounds.radius);
 				modelSize.scale3(2);
 
 				Vec3d entitySize = currentEntity.getSize();

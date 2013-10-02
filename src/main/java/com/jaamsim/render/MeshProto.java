@@ -226,7 +226,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 		dist.set4(instBounds.getCenter());
 		dist.sub3(cam.getTransformRef().getTransRef());
 
-		double apparentSize = 2 * instBounds.getRadius().mag3() / dist.mag3();
+		double apparentSize = 2 * instBounds.radius.mag3() / dist.mag3();
 		if (apparentSize < 0.001) {
 			// This object is too small to draw
 			continue;

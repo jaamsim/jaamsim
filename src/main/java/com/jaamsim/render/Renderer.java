@@ -1464,7 +1464,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 				continue;
 			}
 
-			double apparentSize = 2 * bounds.getRadius().mag3() / Math.abs(dist);
+			double apparentSize = 2 * bounds.radius.mag3() / Math.abs(dist);
 			if (apparentSize < unitPixelHeight) {
 				// This object is too small to draw
 				++perfInfo.objectsCulled;
