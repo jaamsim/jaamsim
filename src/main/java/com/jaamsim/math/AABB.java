@@ -36,9 +36,7 @@ public class AABB {
 	private final Vec4d _negPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
 	private final Vec4d _center = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-	private final Vec4d _radius = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-
-	private final Vec4d _radTemp = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	public final Vec3d radius = new Vec3d();
 
 	public AABB() {
 		this._isEmpty = true;
@@ -304,9 +302,9 @@ public class AABB {
 		_center.add3(_negPoint);
 		_center.scale3(0.5);
 
-		_radius.set4(_posPoint);
-		_radius.sub3(_negPoint);
-		_radius.scale3(0.5);
+		radius.set3(_posPoint);
+		radius.sub3(_negPoint);
+		radius.scale3(0.5);
 
 	}
 
@@ -323,8 +321,8 @@ public class AABB {
 	 * positive most point, this is not valid for empty AABBs
 	 * @return
 	 */
-	public Vec4d getRadius() {
-		return _radius;
+	public Vec3d getRadius() {
+		return radius;
 	}
 
 
@@ -346,14 +344,12 @@ public class AABB {
 			return PlaneTestResult.EMPTY;
 		}
 
-		_radTemp.set4(_radius);
-		Vec4d pNorm = p.getNormalRef();
 		// Make sure the radius points in the same direction of the normal
-		if (pNorm.x < 0) { _radTemp.x *= -1; }
-		if (pNorm.y < 0) { _radTemp.y *= -1; }
-		if (pNorm.z < 0) { _radTemp.z *= -1; }
-
-		double effectiveRadius = _radTemp.dot3(pNorm);
+		double effectiveRadius = 0.0d;
+		Vec4d pNorm = p.getNormalRef();
+		effectiveRadius += radius.x * Math.abs(pNorm.x);
+		effectiveRadius += radius.y * Math.abs(pNorm.y);
+		effectiveRadius += radius.z * Math.abs(pNorm.z);
 
 		double centerDist = p.getNormalDist(_center);
 		// If the effective radius is greater than the distance to the center, we're good
