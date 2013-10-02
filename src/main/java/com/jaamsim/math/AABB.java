@@ -129,7 +129,7 @@ public class AABB {
 	/**
 	 * Check collision, but allow for a fudge factor on the AABB
 	 */
-	public boolean collides(Vec4d point, double fudge) {
+	public boolean collides(Vec3d point, double fudge) {
 		if (_isEmpty) {
 			return false;
 		}
@@ -140,7 +140,7 @@ public class AABB {
 		return bX && bY && bZ;
 	}
 
-	public boolean collides(Vec4d point) {
+	public boolean collides(Vec3d point) {
 		return collides(point, 0);
 	}
 
