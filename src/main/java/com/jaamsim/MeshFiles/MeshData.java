@@ -520,7 +520,7 @@ public class MeshData {
 			ArrayList<Mat4d> pose = arm.getPose(actions);
 			for (int bInstInd = 0; bInstInd < subMesh.boneHulls.size(); ++bInstInd) {
 				ConvexHull boneHull = subMesh.boneHulls.get(bInstInd);
-				Mat4d boneMat = Mat4d.IDENTITY;
+				Mat4d boneMat = null;
 
 				if (bInstInd < subInst.boneMapper.length)
 					boneMat = pose.get(subInst.boneMapper[bInstInd]);
@@ -528,7 +528,8 @@ public class MeshData {
 				for (Vec4d hullVect : boneHull.getVertices()) {
 					Vec4d temp = new Vec4d(hullVect);
 					temp.mult4(animatedTransform, temp);
-					temp.mult4(boneMat, temp);
+					if (boneMat != null)
+						temp.mult4(boneMat, temp);
 					hullPoints.add(temp);
 				}
 			}

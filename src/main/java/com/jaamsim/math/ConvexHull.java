@@ -607,7 +607,7 @@ public class ConvexHull {
 	}
 
 	public Vec4d getAABBCenter() {
-		AABB tmp = new AABB(_verts, Mat4d.IDENTITY);
+		AABB tmp = new AABB(_verts);
 		Vec4d v = new Vec4d();
 		v.set3(tmp.center);
 		v.w = 1.0d;

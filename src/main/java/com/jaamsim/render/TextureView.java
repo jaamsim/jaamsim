@@ -83,6 +83,16 @@ public class TextureView implements Renderable {
 	static private float[] lightDir = new float[3];
 	static private float[] lightInt = new float[1];
 
+	// a column-major identity matrix
+	static private float[] identMat = new float[16];
+
+	static {
+		identMat[ 0] = 1.0f; identMat[ 4] = 0.0f; identMat[ 8] = 0.0f; identMat[12] = 0.0f;
+		identMat[ 1] = 0.0f; identMat[ 5] = 1.0f; identMat[ 9] = 0.0f; identMat[13] = 0.0f;
+		identMat[ 2] = 0.0f; identMat[ 6] = 0.0f; identMat[10] = 1.0f; identMat[14] = 0.0f;
+		identMat[ 3] = 0.0f; identMat[ 7] = 0.0f; identMat[11] = 0.0f; identMat[15] = 1.0f;
+	}
+
 	public TextureView(URL imageURL, Transform trans, Vec3d scale, boolean isTransparent, boolean isCompressed,
 	                   VisibilityInfo visInfo, long pickingID) {
 		_imageURL = imageURL;
@@ -292,8 +302,8 @@ public class TextureView implements Renderable {
 		gl.glUniformMatrix4fv(modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
 		gl.glUniformMatrix4fv(projMatVar, 1, false, RenderUtils.MarshalMat4d(cam.getProjMat4d()), 0);
 		gl.glUniformMatrix4fv(normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
-		gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(Mat4d.IDENTITY), 0);
-		gl.glUniformMatrix4fv(bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(Mat4d.IDENTITY), 0);
+		gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, identMat, 0);
+		gl.glUniformMatrix4fv(bindSpaceNorMatVar, 1, false, identMat, 0);
 
 		gl.glUniform1i(hasTexVar, 1);
 		gl.glUniform1i(maxNumBonesVar, 0);
