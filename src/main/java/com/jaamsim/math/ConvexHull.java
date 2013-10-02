@@ -141,7 +141,7 @@ public class ConvexHull {
 		tempFaces.add(f1);
 
 		// Make sure the planes do not face each other
-		assert(f0.plane.getNormalRef().dot3(f1.plane.getNormalRef()) < 0.9999 );
+		assert(f0.plane.normal.dot3(f1.plane.normal) < 0.9999 );
 
 		boolean planar = true;
 

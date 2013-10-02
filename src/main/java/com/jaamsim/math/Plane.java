@@ -18,10 +18,10 @@ public class Plane {
 
 	public static Plane XY_PLANE = new Plane();
 
-	/**
-	 * The normal direction of the plane, should always have w = 0 and be of unit length
-	 */
-private final Vec4d _normal = new Vec4d();
+/**
+ * The normal direction of the plane, should always be of unit length
+ */
+public final Vec3d normal = new Vec3d();
 /**
  * The shortest distance from the plane to the origin, by normal direction (affects sign)
  */
@@ -30,23 +30,23 @@ private double _dist;
 /**
  * Create a plane defined by a normal, and a closest distance to the origin
  * This is the storage format and similar to the common mathematical definition for a plane
- * @param normal
+ * @param norm
  * @param distance
  */
-public Plane(Vec4d normal, double distance) {
-	if (normal == null) {
-		_normal.set4(0.0d, 0.0d, 1.0d, 0.0d);
+public Plane(Vec4d norm, double distance) {
+	if (norm == null) {
+		normal.set3(0.0d, 0.0d, 1.0d);
 		_dist = distance;
 		return;
 	}
-	this.set(normal, distance);
+	this.set(norm, distance);
 }
 
 /**
  * By default return the XY plane
  */
 public Plane() {
-	_normal.set4(0.0d, 0.0d, 1.0d, 0.0d);
+	normal.set3(0.0d, 0.0d, 1.0d);
 	_dist = 0.0d;
 }
 
@@ -66,21 +66,14 @@ public Plane(Vec4d p0, Vec4d p1, Vec4d p2) {
 	v1.sub3(p1);
 	v1.normalize3();
 
-	_normal.cross3(v0, v1);
-	_normal.normalize3();
-	_normal.w = 0;
-	_dist = _normal.dot3(p0);
+	normal.cross3(v0, v1);
+	normal.normalize3();
+	_dist = normal.dot3(p0);
 }
 
-public void set(Vec3d normal, double distance) {
-	_normal.normalize3(normal);
-	_normal.w = 0.0d;
-
+public void set(Vec3d norm, double distance) {
+	normal.normalize3(norm);
 	_dist = distance;
-}
-
-public Vec3d getNormalRef() {
-	return _normal;
 }
 
 public double getDist() {
@@ -93,7 +86,7 @@ public double getDist() {
  * @return
  */
 public double getNormalDist(Vec3d point) {
-	double dot = point.dot3(_normal);
+	double dot = point.dot3(normal);
 	return dot - _dist;
 }
 
@@ -107,26 +100,26 @@ public void transform(Transform t, Plane p, Vec3d temp) {
 	Vec3d closePoint = temp;
 
 	// The point closest to the origin (need any point on the plane
-	closePoint.scale3(p._dist, p._normal);
+	closePoint.scale3(p._dist, p.normal);
 	// Now close point is the transformed point
 	closePoint.multAndTrans3(tmat, closePoint);
 
-	this._normal.mult4(tmat, p._normal);
-	this._normal.normalize3();
+	this.normal.mult3(tmat, p.normal);
+	this.normal.normalize3();
 
-	this._dist = this._normal.dot3(closePoint);
+	this._dist = this.normal.dot3(closePoint);
 
 }
 
 public boolean near(Plane p) {
-	return _normal.near4(p._normal) && MathUtils.near(_dist, p._dist);
+	return normal.near3(p.normal) && MathUtils.near(_dist, p._dist);
 }
 
 @Override
 public boolean equals(Object o) {
 	if (!(o instanceof Plane)) return false;
 	Plane p = (Plane)o;
-	return _normal.equals4(p._normal) && MathUtils.near(_dist, p._dist);
+	return normal.equals3(p.normal) && MathUtils.near(_dist, p._dist);
 }
 
 @Override
@@ -144,14 +137,14 @@ public int hashCode() {
 public double collisionDist(Ray r) {
 
 	// cos = plane-Normal dot ray-direction
-	double cos = -1 * _normal.dot3(r.getDirRef());
+	double cos = -1 * normal.dot3(r.getDirRef());
 
 	if (MathUtils.near(cos, 0.0)) {
 		// The ray is nearly parallel to the plane, so no collision
 		return Double.POSITIVE_INFINITY;
 	}
 
-	return ( _normal.dot3(r.getStartRef()) - _dist ) / cos;
+	return ( normal.dot3(r.getStartRef()) - _dist ) / cos;
 
 }
 
@@ -162,7 +155,7 @@ public double collisionDist(Ray r) {
  */
 public boolean backFaceCollision(Ray r) {
 
-	return _normal.dot3(r.getDirRef()) > 0;
+	return normal.dot3(r.getDirRef()) > 0;
 }
 
 } // class Plane
