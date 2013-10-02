@@ -28,12 +28,12 @@ public class AABB {
 	/**
 	 * The most positive point (MaxX, MaxY, MaxZ)
 	 */
-	private final Vec4d _posPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	public final Vec3d maxPt = new Vec3d();
 
 	/**
 	 * The most negative point (MinX, MinY, MinZ)
 	 */
-	private final Vec4d _negPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+	public final Vec3d minPt = new Vec3d();
 
 	public final Vec3d center = new Vec3d();
 	public final Vec3d radius = new Vec3d();
@@ -48,17 +48,15 @@ public class AABB {
 	 */
 	public AABB(AABB other) {
 		this._isEmpty = other._isEmpty;
-		this._negPoint.set4(other._negPoint);
-		this._posPoint.set4(other._posPoint);
+		this.minPt.set3(other.minPt);
+		this.maxPt.set3(other.maxPt);
 
 		updateCenterAndRadius();
 	}
 
 	public AABB(Vec3d posPoint, Vec3d negPoint) {
-		_posPoint.set3(posPoint);
-		_posPoint.w = 1;
-		_negPoint.set3(negPoint);
-		_negPoint.w = 1;
+		maxPt.set3(posPoint);
+		minPt.set3(negPoint);
 
 		updateCenterAndRadius();
 	}
@@ -70,13 +68,13 @@ public class AABB {
 	 */
 	public AABB(List<? extends Vec3d> points, double fudge) {
 		this(points);
-		_posPoint.x += fudge;
-		_posPoint.y += fudge;
-		_posPoint.z += fudge;
+		maxPt.x += fudge;
+		maxPt.y += fudge;
+		maxPt.z += fudge;
 
-		_negPoint.x -= fudge;
-		_negPoint.y -= fudge;
-		_negPoint.z -= fudge;
+		minPt.x -= fudge;
+		minPt.y -= fudge;
+		minPt.z -= fudge;
 
 		updateCenterAndRadius();
 
@@ -92,13 +90,11 @@ public class AABB {
 			return;
 		}
 
-		_posPoint.set3(points.get(0));
-		_posPoint.w = 1;
-		_negPoint.set3(points.get(0));
-		_negPoint.w = 1;
+		maxPt.set3(points.get(0));
+		minPt.set3(points.get(0));
 		for (Vec3d p : points) {
-			_posPoint.max3(p);
-			_negPoint.min3(p);
+			maxPt.max3(p);
+			minPt.min3(p);
 		}
 
 		updateCenterAndRadius();
@@ -126,41 +122,17 @@ public class AABB {
 		temp.set3(points.get(0));
 		p.mult4(trans, temp);
 
-		_posPoint.set4(p);
-		_negPoint.set4(p);
+		maxPt.set3(p);
+		minPt.set3(p);
 		for (Vec3d p_orig : points) {
 			temp.set3(p_orig);
 			p.mult4(trans, temp);
-			_posPoint.max3(p);
-			_negPoint.min3(p);
+			maxPt.max3(p);
+			minPt.min3(p);
 		}
 
 		updateCenterAndRadius();
 
-	}
-
-
-	/**
-	 * Return an AABB that contains both this and 'other'
-	 * @param other
-	 * @return
-	 */
-	public AABB superBox(AABB other) {
-		if (other._isEmpty) {
-			return new AABB(this);
-		}
-
-		if (this._isEmpty) {
-			return new AABB(other);
-		}
-
-		Vec4d newPos = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		newPos.max3(_posPoint, other._posPoint);
-
-		Vec4d newNeg = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		newNeg.min3(_negPoint, other._negPoint);
-
-		return new AABB(newPos, newNeg);
 	}
 
 	/**
@@ -171,9 +143,9 @@ public class AABB {
 			return false;
 		}
 
-		boolean bX = point.x > _negPoint.x - fudge && point.x < _posPoint.x + fudge;
-		boolean bY = point.y > _negPoint.y - fudge && point.y < _posPoint.y + fudge;
-		boolean bZ = point.z > _negPoint.z - fudge && point.z < _posPoint.z + fudge;
+		boolean bX = point.x > minPt.x - fudge && point.x < maxPt.x + fudge;
+		boolean bY = point.y > minPt.y - fudge && point.y < maxPt.y + fudge;
+		boolean bZ = point.z > minPt.z - fudge && point.z < maxPt.z + fudge;
 		return bX && bY && bZ;
 	}
 
@@ -192,9 +164,9 @@ public class AABB {
 			return false;
 		}
 
-		boolean bX = MathUtils.segOverlap(_negPoint.x, _posPoint.x, other._negPoint.x, other._posPoint.x, fudge);
-		boolean bY = MathUtils.segOverlap(_negPoint.y, _posPoint.y, other._negPoint.y, other._posPoint.y, fudge);
-		boolean bZ = MathUtils.segOverlap(_negPoint.z, _posPoint.z, other._negPoint.z, other._posPoint.z, fudge);
+		boolean bX = MathUtils.segOverlap(minPt.x, maxPt.x, other.minPt.x, other.maxPt.x, fudge);
+		boolean bY = MathUtils.segOverlap(minPt.y, maxPt.y, other.minPt.y, other.maxPt.y, fudge);
+		boolean bZ = MathUtils.segOverlap(minPt.z, maxPt.z, other.minPt.z, other.maxPt.z, fudge);
 		return bX && bY && bZ;
 	}
 
@@ -215,15 +187,6 @@ public class AABB {
 		if (i == 3) { v.w = val; return; }
 		assert(false);
 		return ;
-	}
-
-	private double getComp(Vec4d v, int i) {
-		if (i == 0) return v.x;
-		if (i == 1) return v.y;
-		if (i == 2) return v.z;
-		if (i == 3) return v.w;
-		assert(false);
-		return 0;
 	}
 
 	private double getComp(Vec3d v, int i) {
@@ -255,10 +218,10 @@ public class AABB {
 			if (getComp(rayDir, axis) > 0) {
 				// Collides with the negative face
 				setComp(faceNorm, axis, -1.0d);
-				faceDist = -getComp(_negPoint, axis) - fudge;
+				faceDist = -getComp(minPt, axis) - fudge;
 			} else {
 				setComp(faceNorm, axis, 1.0d);
-				faceDist = getComp(_posPoint, axis) + fudge;
+				faceDist = getComp(maxPt, axis) + fudge;
 			}
 
 			Plane facePlane = new Plane(faceNorm, faceDist);
@@ -281,13 +244,13 @@ public class AABB {
 			// Figure out the point of contact
 			Vec3d contactPoint = r.getPointAtDist(rayCollisionDist);
 
-			if (getComp(contactPoint, a1) < getComp(_negPoint, a1) - fudge ||
-			    getComp(contactPoint, a1) > getComp(_posPoint, a1) + fudge) {
+			if (getComp(contactPoint, a1) < getComp(minPt, a1) - fudge ||
+			    getComp(contactPoint, a1) > getComp(maxPt, a1) + fudge) {
 				continue; // No contact
 			}
 
-			if (getComp(contactPoint, a2) < getComp(_negPoint, a2) - fudge ||
-			    getComp(contactPoint, a2) > getComp(_posPoint, a2) + fudge) {
+			if (getComp(contactPoint, a2) < getComp(minPt, a2) - fudge ||
+			    getComp(contactPoint, a2) > getComp(maxPt, a2) + fudge) {
 				continue; // No contact
 			}
 			// Collision!
@@ -298,10 +261,10 @@ public class AABB {
 	}
 
 	private void updateCenterAndRadius() {
-		center.add3(_posPoint, _negPoint);
+		center.add3(maxPt, minPt);
 		center.scale3(0.5);
 
-		radius.sub3(_posPoint, _negPoint);
+		radius.sub3(maxPt, minPt);
 		radius.scale3(0.5);
 	}
 
