@@ -204,7 +204,7 @@ public class GraphicBox extends JDialog {
 					modelBounds = RenderManager.inst().getMeshBounds(key, true);
 				}
 
-				Vec4d modelSize = new Vec4d(modelBounds.getRadius());
+				Vec3d modelSize = new Vec3d(modelBounds.getRadius());
 				modelSize.scale3(2);
 
 				Vec3d entitySize = currentEntity.getSize();
@@ -228,7 +228,8 @@ public class GraphicBox extends JDialog {
 					InputAgent.processEntity_Keyword_Value(currentEntity, "Position", String.format("%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z));
 					InputAgent.processEntity_Keyword_Value(currentEntity, "Alignment", "0 0 0");
 				}
-				entitySize = new Vec3d(modelSize.x*ratio, modelSize.y*ratio, modelSize.z*ratio);
+				entitySize = new Vec3d(modelSize);
+				entitySize.scale3(ratio);
 				InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format("%.6f %.6f %.6f m", entitySize.x, entitySize.y, entitySize.z));
 				FrameBox.valueUpdate();
 				myInstance.close();

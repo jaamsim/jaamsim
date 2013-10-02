@@ -192,7 +192,7 @@ public class ColladaModel extends DisplayModel {
 			// Tweak the transform and scale to adjust for the bounds of the
 			// loaded model
 			Vec4d offset = new Vec4d(bounds.getCenter());
-			Vec4d boundsRad = new Vec4d(bounds.getRadius());
+			Vec3d boundsRad = new Vec3d(bounds.getRadius());
 			if (boundsRad.z == 0) {
 				boundsRad.z = 1;
 			}
