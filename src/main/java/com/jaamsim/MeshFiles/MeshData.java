@@ -38,7 +38,7 @@ public class MeshData {
 
 	public final static int MAX_HULL_ATTEMPTS = 5;
 	public final static int MAX_HULL_POINTS = 100;
-	public final static int MAX_SUBINST_HULL_POINTS = 20;
+	public final static int MAX_SUBINST_HULL_POINTS = 30;
 
 	public final static int NO_TRANS = 0;
 	public final static int A_ONE_TRANS = 1;
