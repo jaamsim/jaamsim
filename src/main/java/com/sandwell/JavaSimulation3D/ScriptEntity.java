@@ -20,7 +20,6 @@ import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.FileInput;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
@@ -75,19 +74,6 @@ public class ScriptEntity extends Entity {
 	@Override
 	public void startUp() {
 		Process.start(new ScriptTarget(this));
-	}
-
-	/**
-	 * This method updates the Entity for changes in the given input
-	 */
-	@Override
-	public void updateForInput( Input<?> in ) {
-		super.updateForInput( in );
-
-		if( in == scriptTime ) {
-			Tester.checkValueGreaterOrEqual( scriptTime.getValue(), getCurrentTime() );
-			return;
-		}
 	}
 
 	/**
