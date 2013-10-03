@@ -14,6 +14,7 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Input;
@@ -22,7 +23,7 @@ import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.StringVector;
 
 public class ValueListInput extends ListInput<DoubleVector> {
-	private Class<? extends Unit> unitType = Unit.class;
+	private Class<? extends Unit> unitType = DimensionlessUnit.class;
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
 	private double sumValue = Double.NaN;

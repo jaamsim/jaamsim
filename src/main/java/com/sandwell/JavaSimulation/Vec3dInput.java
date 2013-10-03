@@ -1,10 +1,11 @@
 package com.sandwell.JavaSimulation;
 
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class Vec3dInput extends Input<Vec3d> {
-	private Class<? extends Unit> unitType = Unit.class;
+	private Class<? extends Unit> unitType = DimensionlessUnit.class;
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
 

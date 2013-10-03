@@ -17,10 +17,11 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
-	private Class<? extends Unit> unitType = Unit.class;
+	private Class<? extends Unit> unitType = DimensionlessUnit.class;
 
 	public Vec3dListInput(String key, String cat, ArrayList<Vec3d> def) {
 		super(key, cat, def);

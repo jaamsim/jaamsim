@@ -41,6 +41,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_BADCHOICE = "Expected one of %s, received: %s";
 	protected static final String INP_ERR_ELEMENT = "Error parsing element %d: %s";
 	protected static final String INP_ERR_ENTNAME = "Could not find an Entity named: %s";
+	protected static final String INP_ERR_UNITNAME = "Could not find a Unit named: %s";
 	protected static final String INP_ERR_NOTUNIQUE = "List must contain unique entries, repeated entry: %s";
 	protected static final String INP_ERR_NOTVALIDENTRY = "List must not contain: %s";
 	protected static final String INP_ERR_ENTCLASS = "Expected a %s, %s is a %s";
@@ -656,15 +657,16 @@ public abstract class Input<T> {
 		double factor = 1.0d;
 		int numDoubles = input.size();
 
-		// If a unittype is provided, the last entry must be a unit
-		Unit unit = null;
-		if (unitType != Unit.class)
-			unit = Input.tryParseEntity(input.get(input.size() - 1), unitType);
+		// If not a Dimensinless value, a unit is mandatory
+		if (unitType != DimensionlessUnit.class) {
+			Entity ent = Entity.getNamedEntity(input.get(input.size() - 1));
+			if (ent == null)
+				throw new InputErrorException(INP_ERR_UNITNAME, input.get(input.size() - 1));
 
-		if (unit == null && unitType != Unit.class && unitType != DimensionlessUnit.class)
-			throw new InputErrorException("Units not found");
+			Unit unit = Input.castEntity(ent, unitType);
+			if (unit == null)
+				throw new InputErrorException(INP_ERR_ENTCLASS, unitType.getSimpleName(), ent.getInputName(), ent.getClass().getSimpleName());
 
-		if (unit != null) {
 			factor = unit.getConversionFactorToSI();
 			numDoubles = input.size() - 1;
 		}

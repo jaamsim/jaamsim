@@ -17,6 +17,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.DoubleVector;
@@ -25,7 +26,7 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringVector;
 
 public class KeyedVec3dInput extends Input<Vec3d> {
-	private Class<? extends Unit> unitType = Unit.class;
+	private Class<? extends Unit> unitType = DimensionlessUnit.class;
 	private KeyedVec3dCurve curve = new KeyedVec3dCurve();
 
 	public KeyedVec3dInput(String key, String cat) {

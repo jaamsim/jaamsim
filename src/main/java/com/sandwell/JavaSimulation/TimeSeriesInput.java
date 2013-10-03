@@ -14,15 +14,15 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
 public class TimeSeriesInput extends Input<TimeSeriesProvider> {
-	private Class<? extends Unit> unitType;
+	private Class<? extends Unit> unitType = DimensionlessUnit.class;
 
 	public TimeSeriesInput(String key, String cat, TimeSeriesProvider def) {
 		super(key, cat, def);
-		unitType = null;
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleVector;
@@ -27,11 +28,10 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringVector;
 
 public class SampleInput extends Input<SampleProvider> {
-	private Class<? extends Unit> unitType;
+	private Class<? extends Unit> unitType = DimensionlessUnit.class;
 
 	public SampleInput(String key, String cat, SampleProvider def) {
 		super(key, cat, def);
-		unitType = null;
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
@@ -41,17 +41,17 @@ public class SampleInput extends Input<SampleProvider> {
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
-		Input.assertCountRange(input, 1, 2);
-
 		// Try to parse as a constant value
 		try {
 			DoubleVector tmp = Input.parseDoubles(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+			Input.assertCount(tmp, 1);
 			value = new SampleConstant(unitType, tmp.get(0));
 			return;
 		}
 		catch (InputErrorException e) {}
 
 		// If not a constant, try parsing a SampleProvider
+		Input.assertCount(input, 1);
 		Entity ent = Input.parseEntity(input.get(0), Entity.class);
 		SampleProvider s = Input.castImplements(ent, SampleProvider.class);
 		if( s.getUnitType() != UserSpecifiedUnit.class )
