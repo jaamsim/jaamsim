@@ -24,9 +24,6 @@ import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Keyword;
 
 public abstract class Unit extends Entity {
-	private static final HashMap<Class<? extends Unit>, String> siUnit;
-	private static final HashMap<Class<? extends Unit>, EntityInput<? extends Unit>> prefUnit;
-
 	@Keyword(description = "Factor to convert from the specified unit to the System International (SI) unit. " +
 					"The factor is entered as A / B, where A is the first entry and B is the second. " +
 					"For example, to convert from miles per hour to m/s, the first factor is 1609.344 (meters in one mile) and " +
@@ -47,9 +44,6 @@ public abstract class Unit extends Entity {
 	private static final DoubleVector defFactors;
 
 	static {
-		siUnit = new HashMap<Class<? extends Unit>, String>();
-		prefUnit = new HashMap<Class<? extends Unit>, EntityInput<? extends Unit>>();
-
 		defFactors = new DoubleVector(1);
 		defFactors.add(1.0d);
 	}
@@ -83,6 +77,10 @@ public abstract class Unit extends Entity {
 		super.kill();
 	}
 
+
+	private static final HashMap<Class<? extends Unit>, String>
+		siUnit = new HashMap<Class<? extends Unit>, String>();
+
 	public static final void setSIUnit(Class<? extends Unit> unitType, String si) {
 		siUnit.put(unitType, si);
 	}
@@ -99,6 +97,9 @@ public abstract class Unit extends Entity {
 
 		return "SI";
 	}
+
+	private static final HashMap<Class<? extends Unit>, EntityInput<? extends Unit>>
+		prefUnit = new HashMap<Class<? extends Unit>, EntityInput<? extends Unit>>();
 
 	private static final <T extends Unit> EntityInput<? extends Unit> getPrefInput(Class<T> type) {
 		EntityInput<? extends Unit> inp = prefUnit.get(type);
