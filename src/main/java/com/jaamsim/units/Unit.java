@@ -20,10 +20,12 @@ import com.sandwell.JavaSimulation.AliasListInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Keyword;
 
 public abstract class Unit extends Entity {
 	private static final HashMap<Class<? extends Unit>, String> siUnit;
+	private static final HashMap<Class<? extends Unit>, EntityInput<? extends Unit>> prefUnit;
 
 	@Keyword(description = "Factor to convert from the specified unit to the System International (SI) unit. " +
 					"The factor is entered as A / B, where A is the first entry and B is the second. " +
@@ -31,6 +33,11 @@ public abstract class Unit extends Entity {
 					"the second factor is 3600 (seconds in one hour).",
 			example = "mph  ConversionFactorToSI { 1609.344  3600 }")
 	private final DoubleListInput conversionFactorToSI;
+
+	@Keyword(description = "The preferred unit for formatting output values in the OutputViewer for " +
+	                       "this type of Unit.",
+	         example = "mph PreferredUnit { km/h }")
+	private final EntityInput<? extends Unit> prefInput;
 
 	@Keyword(description = "Alternative names for the same unit.  For example, the unit 'Year' could have aliases of " +
 					"'y' or 'yr'. With these aliases, the following inputs are equivalent: { 1.0 year }, { 1.0 y }, and { 1.0 yr }.",
@@ -41,6 +48,7 @@ public abstract class Unit extends Entity {
 
 	static {
 		siUnit = new HashMap<Class<? extends Unit>, String>();
+		prefUnit = new HashMap<Class<? extends Unit>, EntityInput<? extends Unit>>();
 
 		defFactors = new DoubleVector(1);
 		defFactors.add(1.0d);
@@ -51,6 +59,9 @@ public abstract class Unit extends Entity {
 		conversionFactorToSI.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
 		conversionFactorToSI.setValidCountRange( 1, 2 );
 		this.addInput( conversionFactorToSI, true );
+
+		prefInput = getPrefInput(this.getClass());
+		this.addInput(prefInput, true);
 
 		alias = new AliasListInput( "Alias", "Key Inputs", null, this );
 		this.addInput( alias, true );
@@ -65,6 +76,10 @@ public abstract class Unit extends Entity {
 				this.removeAlias( str );
 			}
 		}
+
+		if (prefInput.getValue() == this)
+			prefInput.reset();
+
 		super.kill();
 	}
 
@@ -83,6 +98,23 @@ public abstract class Unit extends Entity {
 			return unit;
 
 		return "SI";
+	}
+
+	private static final <T extends Unit> EntityInput<? extends Unit> getPrefInput(Class<T> type) {
+		EntityInput<? extends Unit> inp = prefUnit.get(type);
+		if (inp == null) {
+			inp = new EntityInput<T>(type, "PreferredUnit", "Key Inputs", null);
+			prefUnit.put(type, inp);
+		}
+		return inp;
+	}
+
+	public static final <T extends Unit> Unit getPreferredUnit(Class<T> type) {
+		EntityInput<? extends Unit> inp = prefUnit.get(type);
+		if (inp == null)
+			return null;
+		else
+			return inp.getValue();
 	}
 
 	/**

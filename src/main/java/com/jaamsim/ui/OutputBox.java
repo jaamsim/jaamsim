@@ -203,14 +203,21 @@ private class OutputTableModel extends AbstractTableModel {
 				OutputHandle o = (OutputHandle)entry;
 				if (o.isNumericValue()) {
 					double d = o.getValueAsDouble(simTime, Double.NaN);
-					if (o.getUnitType() == Unit.class || o.getUnitType() == DimensionlessUnit.class)
+					Class<? extends Unit> ut = o.getUnitType();
+					if (ut == Unit.class || ut == DimensionlessUnit.class) {
 						return String.format("%g", d);
-					else
-						return String.format("%g  %s", d, Unit.getSIUnit(o.getUnitType()));
+					}
+					else {
+						Unit u = Unit.getPreferredUnit(ut);
+						if (u == null)
+							return String.format("%g  %s", d, Unit.getSIUnit(ut));
+						else
+							return String.format("%g  %s", d / u.getConversionFactorToSI(), u.getInputName());
+					}
 				}
 
 				String s = o.getValue(simTime, o.getReturnType()).toString();
-				if (o.getUnitType() == Unit.class)
+				if (o.getUnitType() == Unit.class )
 					return s;
 				else
 					return s + "  " + Unit.getSIUnit(o.getUnitType());
