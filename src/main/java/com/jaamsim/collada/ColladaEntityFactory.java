@@ -51,6 +51,8 @@ public class ColladaEntityFactory extends Entity {
 
 	@Override
 	public void updateForInput( Input<?> in ) {
+		super.updateForInput(in);
+
 		if (in == directoryInput) {
 			updateForDirectoryInput();
 		}
