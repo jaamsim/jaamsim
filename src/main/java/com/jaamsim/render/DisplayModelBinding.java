@@ -55,7 +55,7 @@ public abstract class DisplayModelBinding {
 	private final static ArrayList<Vec4d> HANDLE_POINTS;
 	private final static ArrayList<Vec4d> ROTATE_POINTS;
 
-	protected static int _cacheHits = 0;
+	private static int cacheHits = 0;
 	private static int cacheMisses = 0;
 
 	static {
@@ -162,14 +162,14 @@ public abstract class DisplayModelBinding {
 	}
 
 	public static int getCacheHits() {
-		return _cacheHits;
+		return cacheHits;
 	}
 
 	public static int getCacheMisses() {
 		return cacheMisses;
 	}
 	public static void clearCacheCounters() {
-		_cacheHits = 0;
+		cacheHits = 0;
 		cacheMisses = 0;
 	}
 
@@ -183,9 +183,32 @@ public abstract class DisplayModelBinding {
 
 
 	private static class CacheCounter {
-		int count = 0;
+		int misses = 0;
+		int hits = 0;
 
 		CacheCounter() {}
+	}
+
+	public static void registerCacheHit(String type) {
+		cacheHits++;
+		if (!saveCacheMissData()) {
+			return;
+		}
+
+		CacheCounter cc = cacheMissData.get(type);
+		if (cc == null) {
+			cc = new CacheCounter();
+			cacheMissData.put(type, cc);
+		}
+		cc.hits++;
+	}
+
+	public static int getCacheHitCount(String type) {
+		CacheCounter cc = cacheMissData.get(type);
+		if (cc == null)
+			return 0;
+
+		return cc.hits;
 	}
 
 	public static void registerCacheMiss(String type) {
@@ -199,7 +222,7 @@ public abstract class DisplayModelBinding {
 			cc = new CacheCounter();
 			cacheMissData.put(type, cc);
 		}
-		cc.count++;
+		cc.misses++;
 	}
 
 	public static int getCacheMissCount(String type) {
@@ -207,7 +230,7 @@ public abstract class DisplayModelBinding {
 		if (cc == null)
 			return 0;
 
-		return cc.count;
+		return cc.misses;
 	}
 
 	public VisibilityInfo getVisibilityInfo() {

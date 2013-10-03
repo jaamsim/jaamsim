@@ -225,7 +225,7 @@ public class TextModel extends DisplayModel {
 			if (cachedProxies != null && !dirty) {
 				// Nothing changed
 				out.addAll(cachedProxies);
-				++_cacheHits;
+				registerCacheHit("TextLabel");
 				return;
 			}
 
@@ -342,7 +342,7 @@ public class TextModel extends DisplayModel {
 				// Nothing changed
 
 				out.addAll(cachedProxies);
-				++_cacheHits;
+				registerCacheHit("OverlayText");
 				return;
 			}
 

@@ -172,7 +172,7 @@ public class ColladaModel extends DisplayModel {
 
 			if (cachedProxies != null && !dirty) {
 				// Nothing changed
-				++_cacheHits;
+				registerCacheHit("ColladaModel");
 				return;
 			}
 

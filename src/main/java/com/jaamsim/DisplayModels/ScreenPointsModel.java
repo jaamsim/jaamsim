@@ -100,7 +100,7 @@ public class ScreenPointsModel extends DisplayModel {
 
 			if (cachedProxies != null && !dirty) {
 				// up to date
-				_cacheHits++;
+				registerCacheHit("Points");
 				return;
 			}
 

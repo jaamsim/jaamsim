@@ -158,7 +158,7 @@ public class ImageModel extends DisplayModel {
 
 			if (cachedProxies != null && !dirty) {
 				// Nothing changed
-				++_cacheHits;
+				registerCacheHit("ImageModel");
 				return;
 			}
 
@@ -247,7 +247,7 @@ public class ImageModel extends DisplayModel {
 				// Nothing changed
 
 				out.add(cachedProxy);
-				++_cacheHits;
+				registerCacheHit("OverlayImage");
 				return;
 			}
 

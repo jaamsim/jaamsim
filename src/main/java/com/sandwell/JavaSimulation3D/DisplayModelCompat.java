@@ -202,7 +202,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			if (cachedProxies != null && !dirty) {
 				// Nothing changed
-				++_cacheHits;
+				registerCacheHit("DisplayModelCompat");
 				return;
 			}
 
