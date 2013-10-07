@@ -327,7 +327,7 @@ public class Queue extends DisplayEntity {
 	@Output(name = "QueueLength",
 	 description = "The present number of entities in the queue.",
 	    unitType = DimensionlessUnit.class)
-	public Integer getQueueLength(double simTime) {
+	public double getQueueLength(double simTime) {
 		return itemList.size();
 	}
 
