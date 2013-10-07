@@ -1002,8 +1002,14 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 				_allowDelayedTextures = true;
 
+				// Cache the current scene. This way we don't need to lock it for the full render
+				ArrayList<Renderable> scene = new ArrayList<Renderable>(_currentScene.size());
+				synchronized(_sceneLock) {
+					scene.addAll(_currentScene);
+				}
+
 				renderScene(drawable.getContext(), _window.getVAOMap(),
-				            _currentScene, _currentOverlay,
+				            scene, _currentOverlay,
 				            cam, _window.getViewableWidth(), _window.getViewableHeight(),
 				            pickRay, _window.getViewID(), pi);
 
