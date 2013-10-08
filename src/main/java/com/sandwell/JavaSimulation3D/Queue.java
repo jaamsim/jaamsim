@@ -294,20 +294,20 @@ public class Queue extends DisplayEntity {
 	public void printUtilizationOn( FileEntity anOut ) {
 
 		if (isActive()) {
-			anOut.putStringTabs( getInputName(), 1 );
-			anOut.putStringTabs( ""+this.getQueueLengthMinimum(0.0), 1 );
-			anOut.putStringTabs( ""+this.getQueueLengthMaximum(0.0), 1 );
-			anOut.putStringTabs( ""+this.getQueueLength(0.0), 1 );
-			anOut.newLine();
+			anOut.format( "%s\t", getInputName() );
+			anOut.format( "%d\t", this.getQueueLengthMinimum(0.0) );
+			anOut.format( "%d\t", this.getQueueLengthMaximum(0.0) );
+			anOut.format( "%.0f\t", this.getQueueLength(0.0) );
+			anOut.format( "\n" );
 		}
 	}
 
 	public void printUtilizationHeaderOn( FileEntity anOut ) {
-		anOut.putStringTabs( "Name", 1 );
-		anOut.putStringTabs( "Min Elements", 1 );
-		anOut.putStringTabs( "Max Elements", 1 );
-		anOut.putStringTabs( "Present Elements", 1 );
-		anOut.newLine();
+		anOut.format( "Name\t" );
+		anOut.format( "Min Elements\t" );
+		anOut.format( "Max Elements\t" );
+		anOut.format( "Present Elements\t" );
+		anOut.format( "\n" );
 	}
 
 	@Output(name = "NumberAdded",
