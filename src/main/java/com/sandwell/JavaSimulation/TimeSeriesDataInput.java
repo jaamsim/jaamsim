@@ -20,24 +20,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation3D.Clock;
 
 public class TimeSeriesDataInput extends Input<TimeSeriesData> {
-
-	private int[] validCounts;
-	private Class<? extends Entity> unitType;
+	private Class<? extends Unit> unitType;
 	private SimpleDateFormat dateFormat;
 	private double maxValue = Double.POSITIVE_INFINITY;
 	private double minValue = Double.NEGATIVE_INFINITY;
 
 	public TimeSeriesDataInput(String key, String cat, TimeSeriesData def) {
 		super(key, cat, def);
-		validCounts = new int[] { 2, 3 };
-		unitType = null;
+		unitType = DimensionlessUnit.class;
+
 		dateFormat = new SimpleDateFormat( "yyyy MM dd HH:mm" );
 
 		// Set the time zone to GMT so calendar calculations
@@ -95,7 +92,10 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			}
 
 			// Check the number of entries in the record
-			Input.assertCount( each, validCounts );
+			if (unitType == DimensionlessUnit.class)
+				Input.assertCount(each, 2);
+			else
+				Input.assertCount(each, 3);
 
 			// Parse the date and time from the record
 			Date date;
@@ -126,39 +126,16 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 				throw new InputErrorException( "The times must be given in increasing order on " + each.get(0) );
 			}
 
-			// If there are more than two values, and the last one is not a number, then assume it is a unit
-			if( each.size() > 2 && !Tester.isDouble( each.get( each.size()-1 ) ) ) {
-
-				// Check that a unit type was specified
-				if( unitType == null )
-					throw new InputErrorException( "UnitType was not specified" );
-
-				// Determine the units
-				Unit unit = Input.parseUnits( each.get( each.size()- 1 ) );
-
-				// Check that the unit is of the stored unit type
-				if( unit.getClass() != unitType )
-					throw new InputErrorException( unit + " is not a " + unitType.getSimpleName() );
-
-				// Determine the conversion factor to SI
-				double conversionFactor = unit.getConversionFactorToSI();
-
-				// Parse the value from the record
-				values.add( Input.parseDouble( each.get( each.size()-2 ), minValue, maxValue, conversionFactor) );
-			}
-			else {
-				values.add( Input.parseDouble( each.get( each.size()-1 ), minValue, maxValue ) );
-
-				if( unitType != DimensionlessUnit.class )
-					InputAgent.logWarning( "Missing units.  Assuming SI." );
-			}
+			each.remove(0);  // We've finished parsing the date at this point
+			DoubleVector v = Input.parseDoubles(each, minValue, maxValue, unitType);
+			values.add(v.get(0));
 		}
 
 		// Set the value to a new time series data object
 		value = new TimeSeriesData( times, values );
 	}
 
-	public void setUnitType( Class<? extends Entity> u ) {
+	public void setUnitType(Class<? extends Unit> u) {
 		unitType = u;
 	}
 
