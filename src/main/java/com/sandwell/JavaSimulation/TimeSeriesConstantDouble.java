@@ -36,6 +36,11 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	}
 
 	@Override
+	public double getNextSample(double simTime) {
+		return val;
+	}
+
+	@Override
 	public double getValueForTime(double simTime) {
 		return val;
 	}

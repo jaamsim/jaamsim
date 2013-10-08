@@ -121,8 +121,9 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	@Output( name="PresentValue",
 			 description="The time series value for the present time.",
 			 unitType = UserSpecifiedUnit.class)
-	public double getPresentValue( double simTime ) {
-		return this.getValueForTime( simTime / 3600.0 );
+	@Override
+	public double getNextSample(double simTime) {
+		return this.getValueForTime(simTime / 3600.0);
 	}
 
 	/**

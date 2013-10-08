@@ -14,10 +14,9 @@
  */
 package com.sandwell.JavaSimulation;
 
-import com.jaamsim.units.Unit;
+import com.jaamsim.Samples.SampleProvider;
 
-public interface TimeSeriesProvider {
-	public Class<? extends Unit> getUnitType();
+public interface TimeSeriesProvider extends SampleProvider {
 	public double getValueForTime(double simTime);
 	public double getNextChangeTimeAfter( double simTime );
 	public double getMaxValue();
