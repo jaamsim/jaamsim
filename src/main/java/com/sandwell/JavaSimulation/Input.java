@@ -507,7 +507,8 @@ public abstract class Input<T> {
 		return value;
 	}
 
-	private static final Pattern is8601 = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}:\\d{2}");
+	private static final Pattern is8601date = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+	private static final Pattern is8601time = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}:\\d{2}");
 	private static final long usPerSec = 1000000;
 	private static final long usPerMin = 60 * usPerSec;
 	private static final long usPerHr  = 60 * usPerMin;
@@ -525,16 +526,23 @@ public abstract class Input<T> {
 	 * @return
 	 */
 	public static long parseRFC8601DateTime(String input) {
-		if (!is8601.matcher(input).matches())
+		boolean isDate = is8601date.matcher(input).matches();
+		boolean isTime = is8601time.matcher(input).matches();
+		if (!isDate && !isTime)
 			throw new InputErrorException(INP_ERR_BADDATE, input);
 
 		int YY = Integer.parseInt(input.substring(0, 4));
 		int MM = Integer.parseInt(input.substring(5, 7));
 		int DD = Integer.parseInt(input.substring(8, 10));
 
-		int hh = Integer.parseInt(input.substring(11, 13));
-		int mm = Integer.parseInt(input.substring(14, 16));
-		int ss = Integer.parseInt(input.substring(17, 19));
+		int hh = 0;
+		int mm = 0;
+		int ss = 0;
+		if (isTime) {
+			hh = Integer.parseInt(input.substring(11, 13));
+			mm = Integer.parseInt(input.substring(14, 16));
+			ss = Integer.parseInt(input.substring(17, 19));
+		}
 
 		// Validate ranges
 		if (MM <= 0 || MM > 12)
