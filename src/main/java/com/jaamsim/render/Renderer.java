@@ -670,14 +670,10 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		//long startNanos = System.nanoTime();
 
-		assert (Thread.currentThread() == _renderThread);
+		assert(_drawContext == null || !_drawContext.isCurrent());
 
 		if (_protoCache.get(key) != null) {
 			return; // This mesh has already been loaded
-		}
-
-		if (_drawContext != null) {
-			_drawContext.release();
 		}
 
 		int res = _sharedContext.makeCurrent();
@@ -702,9 +698,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		_protoCache.put(key, proto);
 
 		_sharedContext.release();
-		if (_drawContext != null) {
-			_drawContext.makeCurrent();
-		}
 
 //		long endNanos = System.nanoTime();
 //		long ms = (endNanos - startNanos) /1000000L;
