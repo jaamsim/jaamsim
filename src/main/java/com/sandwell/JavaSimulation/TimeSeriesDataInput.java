@@ -14,32 +14,19 @@
  */
 package com.sandwell.JavaSimulation;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation3D.Clock;
 
 public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 	private Class<? extends Unit> unitType;
-	private SimpleDateFormat dateFormat;
+
 	private double maxValue = Double.POSITIVE_INFINITY;
 	private double minValue = Double.NEGATIVE_INFINITY;
 
 	public TimeSeriesDataInput(String key, String cat, TimeSeriesData def) {
 		super(key, cat, def);
 		unitType = DimensionlessUnit.class;
-
-		dateFormat = new SimpleDateFormat( "yyyy MM dd HH:mm" );
-
-		// Set the time zone to GMT so calendar calculations
-		// do not get disrupted by daylight savings
-		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
 	@Override
@@ -48,12 +35,8 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
 
-		double lastTime = -1.0;
-
-		// Determine the starting year
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeZone( TimeZone.getTimeZone( "GMT" ) );
-		int startingYear = -1;
+		long startingYearOffset = -1;
+		long lastTime = -1;
 
 		DoubleVector times = new DoubleVector(input.size()/4);
 		DoubleVector values = new DoubleVector(input.size()/4);
@@ -84,38 +67,25 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			else
 				Input.assertCount(each, 3);
 
-			// Parse the date and time from the record
-			try {
-				Date date = dateFormat.parse( each.get( 0 ) );
-				calendar.setTime( date );
-				if (startingYear == -1)
-					startingYear = calendar.get(Calendar.YEAR);
-			}
-			catch ( ParseException e ) {
-				throw new InputErrorException( "Invalid date " + each.get( 0 ) );
-			}
-			int year = calendar.get(Calendar.YEAR);
-			int month = calendar.get(Calendar.MONTH);
-			int day = calendar.get(Calendar.DAY_OF_MONTH);
-			int hour = calendar.get(Calendar.HOUR_OF_DAY);
-			int minute = calendar.get(Calendar.MINUTE);
-			int second = calendar.get(Calendar.SECOND);
-			double decHour = hour + (minute/60.0) + (second/3600.0);
-
-			// Determine the simulation time for the date and time (assuming no leap years)
-			double t = Clock.calcTimeForYear_Month_Day_Hour( year - startingYear + 1, month + 1, day, decHour );
-
+			long recordus = Input.parseRFC8601DateTime(each.get(0));
 			// Make sure the times are in increasing order
-			if( t > lastTime ) {
-				times.add( t );
-				lastTime = t;
+			if (recordus <= lastTime)
+				throw new InputErrorException( "The times must be given in increasing order on " + each.get(0));
+
+			lastTime = recordus;
+
+			// set the offset to the number of whole years from the first record
+			if (startingYearOffset == -1) {
+				startingYearOffset = recordus / Input.usPerYr;
+				startingYearOffset *= Input.usPerYr;
 			}
-			else {
-				throw new InputErrorException( "The times must be given in increasing order on " + each.get(0) );
-			}
+
+			long usOffset = recordus - startingYearOffset;
 
 			each.remove(0);  // We've finished parsing the date at this point
 			DoubleVector v = Input.parseDoubles(each, minValue, maxValue, unitType);
+
+			times.add(usOffset / 3.6e9d); // convert to hours 3600 secs * 1e6 us
 			values.add(v.get(0));
 		}
 
@@ -125,9 +95,5 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 	public void setUnitType(Class<? extends Unit> u) {
 		unitType = u;
-	}
-
-	public void setDateFormat( String str ) {
-		dateFormat.applyPattern( str );
 	}
 }

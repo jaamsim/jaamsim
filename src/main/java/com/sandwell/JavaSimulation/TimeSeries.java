@@ -41,11 +41,6 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
      example = "TimeSeries1  UnitType { DistanceUnit }")
 	private final UnitTypeInput unitType;
 
-	@Keyword(description = "The format for the date and time (e.g. 'yyyy-MM-dd HH:mm:ss', yyyy/MM/dd).  " +
-	                "Put single quotes around the format if it includes spaces.",
-     example = "TimeSeries1  DateFormat { 'yyyy-MM-dd HH:mm' }")
-	private final StringInput dateFormat;
-
 	@Keyword(description = "Defines when the time series will repeat from the start.",
             example = "TimeSeries1  CycleTime { 8760.0 h }")
 	private final ValueInput cycleTime;
@@ -59,9 +54,6 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		value = new TimeSeriesDataInput("Value", "Key Inputs", null);
 		value.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(value, true);
-
-		dateFormat = new StringInput("DateFormat", "Key Inputs", null);
-		this.addInput(dateFormat, true);
 
 		cycleTime = new ValueInput( "CycleTime", "Key Inputs", Double.POSITIVE_INFINITY );
 		cycleTime.setUnitType(TimeUnit.class);
@@ -98,15 +90,6 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 			value.setUnitType( unitType.getUnitType() );
 			this.getOutputHandle("PresentValue").setUnitType( unitType.getUnitType() );
 			return;
-		}
-
-		if ( in == dateFormat ) {
-			try {
-				value.setDateFormat( dateFormat.getValue() );
-			}
-			catch ( IllegalArgumentException e ) {
-				throw new InputErrorException( "Invalid date format " + dateFormat.getValue() );
-			}
 		}
 	}
 

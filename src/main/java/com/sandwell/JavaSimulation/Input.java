@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.ValueListInput;
@@ -24,6 +25,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation3D.Clock;
 
 public abstract class Input<T> {
 	protected static final String INP_ERR_COUNT = "Expected an input with %s value(s), received: %s";
@@ -49,6 +51,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_UNITS = "Unit types do not match";
 	protected static final String INP_ERR_UNITUNSPECIFIED = "Unit type has not been specified";
 	protected static final String INP_ERR_NOTSUBCLASS = "Expected a subclass of %s, got %s";
+	protected static final String INP_ERR_BADDATE = "Expected a valid RFC8601 datetime, got: %s";
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
 
@@ -502,6 +505,59 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, value);
 
 		return value;
+	}
+
+	private static final Pattern is8601 = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}:\\d{2}");
+	private static final long usPerSec = 1000000;
+	private static final long usPerMin = 60 * usPerSec;
+	private static final long usPerHr  = 60 * usPerMin;
+	private static final long usPerDay = 24 * usPerHr;
+	static final long usPerYr  = 365 * usPerDay;
+	/**
+	 * Parse an RFC8601 date time and return it as an offset in microseconds from
+	 * 0AD. This assumes a very simple concept of a 365 day year with no leap years
+	 * and no leap seconds.
+	 *
+	 * An RFC8601 date time looks like YYYY-MM-DD HH:MM:SS.mmm or YYYY-MM-DDTHH:MM:SS.mmm
+	 *
+	 * @param input
+	 * @param datumYear
+	 * @return
+	 */
+	public static long parseRFC8601DateTime(String input) {
+		if (!is8601.matcher(input).matches())
+			throw new InputErrorException(INP_ERR_BADDATE, input);
+
+		int YY = Integer.parseInt(input.substring(0, 4));
+		int MM = Integer.parseInt(input.substring(5, 7));
+		int DD = Integer.parseInt(input.substring(8, 10));
+
+		int hh = Integer.parseInt(input.substring(11, 13));
+		int mm = Integer.parseInt(input.substring(14, 16));
+		int ss = Integer.parseInt(input.substring(17, 19));
+
+		// Validate ranges
+		if (MM <= 0 || MM > 12)
+			throw new InputErrorException(INP_ERR_BADDATE, input);
+
+		if (DD <= 0 || DD > Clock.getDaysInMonth(MM))
+			throw new InputErrorException(INP_ERR_BADDATE, input);
+
+		if (hh < 0 || hh > 23)
+			throw new InputErrorException(INP_ERR_BADDATE, input);
+
+		if (mm < 0 || mm > 59 || ss < 0 || ss > 59)
+			throw new InputErrorException(INP_ERR_BADDATE, input);
+
+		long ret = 0;
+		ret += YY * usPerYr;
+		ret += (Clock.getFirstDayOfMonth(MM) - 1) * usPerDay;
+		ret += (DD - 1) * usPerDay;
+		ret += hh * usPerHr;
+		ret += mm * usPerMin;
+		ret += ss * usPerSec;
+
+		return ret;
 	}
 
 	public static DoubleVector parseTimeVector(StringVector input, double minValue, double maxValue)
