@@ -70,25 +70,12 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 			each.clear();
 
-			//iterate until closing brace, or end of entry
+			// Load one record into 'each' containing an individual timeseries record
 			for (int j = i; j < input.size(); j++, i++){
 				if (input.get(j).equals("}"))
 					break;
 
 				each.add(input.get(j));
-			}
-
-			// each now contains a time series record
-			// Is this the first time series record?
-			if( startingYear == -1 ) {
-				try {
-					Date startingDate = dateFormat.parse( each.get( 0 ) );
-					calendar.setTime( startingDate );
-					startingYear = calendar.get(Calendar.YEAR);
-				}
-				catch ( ParseException e ) {
-					throw new InputErrorException("Invalid date " + each.get( 0 ) );
-				}
 			}
 
 			// Check the number of entries in the record
@@ -98,10 +85,11 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 				Input.assertCount(each, 3);
 
 			// Parse the date and time from the record
-			Date date;
 			try {
-				date = dateFormat.parse( each.get( 0 ) );
+				Date date = dateFormat.parse( each.get( 0 ) );
 				calendar.setTime( date );
+				if (startingYear == -1)
+					startingYear = calendar.get(Calendar.YEAR);
 			}
 			catch ( ParseException e ) {
 				throw new InputErrorException( "Invalid date " + each.get( 0 ) );
