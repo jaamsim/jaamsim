@@ -117,7 +117,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	@Override
 	public double getValueForTimeHours( double time ) {
 		double[] timeList = value.getValue().timeList;
-		DoubleVector valueList = this.getValueList();
+		double[] valueList = value.getValue().valueList;
 
 		// Update the index within the series for the current time
 		indexOfCurrentTime = this.getIndexForTimeHours(getCurrentTime(), indexOfCurrentTime);
@@ -133,20 +133,20 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		for( int i = indexOfCurrentTime; i < timeList.length-1; i++ ) {
 			if( Tester.lessOrEqualCheckTimeStep( timeList[ i ], timeInCycle )
 					&& Tester.lessCheckTimeStep( timeInCycle, timeList[ i+1 ] ) ) {
-				return valueList.get( i );
+				return valueList[ i ];
 			}
 		}
 
 		// If the time in the cycle is greater than the last time, return the last value
 		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList[ timeList.length - 1 ] ) ) {
-			return valueList.get( valueList.size() - 1 );
+			return valueList[ valueList.length - 1 ];
 		}
 
 		// Perform linear search for time from 0
 		for( int i = 0; i < indexOfCurrentTime; i++ ) {
 			if( Tester.lessOrEqualCheckTimeStep( timeList[ i ], timeInCycle )
 					&& Tester.lessCheckTimeStep( timeInCycle, timeList[ i+1 ] ) ) {
-				return valueList.get( i );
+				return valueList[ i ];
 			}
 		}
 
@@ -229,10 +229,6 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 			cycleOffset = (completedCycles)*cycleTime;
 		}
 		return timeList[startIndex] + cycleOffset;
-	}
-
-	public DoubleVector getValueList() {
-		return value.getValue().getValueList();
 	}
 
 	public double getCycleTimeInHours() {

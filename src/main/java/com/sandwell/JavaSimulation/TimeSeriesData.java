@@ -16,7 +16,7 @@ package com.sandwell.JavaSimulation;
 
 public class TimeSeriesData {
 	final double[] timeList;
-	private DoubleVector valueList;
+	final double[] valueList;
 	private double maxValue;  // The maximum value that occurs in valueList
 	private double minValue;  // The minimum value that occurs in valueList
 
@@ -25,13 +25,12 @@ public class TimeSeriesData {
 		for (int i = 0; i < times.size(); i++)
 			timeList[i] = times.get(i);
 
-		valueList = values;
+		valueList = new double[values.size()];
+		for (int i = 0; i < values.size(); i++)
+			valueList[i] = values.get(i);
+
 		maxValue = values.getMax();
 		minValue = values.getMin();
-	}
-
-	public DoubleVector getValueList() {
-		return valueList;
 	}
 
 	public double getMaxValue() {
