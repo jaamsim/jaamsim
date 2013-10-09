@@ -56,7 +56,7 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	}
 
 	@Override
-	public double getMaxTimeValueInHours() {
+	public double getMaxTimeValue() {
 		return 0.0;
 	}
 }

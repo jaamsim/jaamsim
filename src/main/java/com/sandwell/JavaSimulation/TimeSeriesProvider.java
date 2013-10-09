@@ -20,5 +20,5 @@ public interface TimeSeriesProvider extends SampleProvider {
 	public double getValueForTimeHours(double simTime);
 	public double getNextChangeTimeAfterHours( double simTime );
 	public double getMaxValue();
-	public double getMaxTimeValueInHours();
+	public double getMaxTimeValue();
 }

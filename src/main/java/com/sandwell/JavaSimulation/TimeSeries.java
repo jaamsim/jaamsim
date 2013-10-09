@@ -247,12 +247,11 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	}
 
 	@Override
-	public double getMaxTimeValueInHours() {
+	public double getMaxTimeValue() {
+		if (this.getCycleLength() < Double.POSITIVE_INFINITY)
+			return this.getCycleLength();
 
-		if( this.getCycleTimeInHours() != Double.POSITIVE_INFINITY )
-			return this.getCycleTimeInHours();
-
-		return this.getTimeList().get( this.getTimeList().size()-1 );
+		return this.getTimeList().get( this.getTimeList().size()-1 ) * 3600.0d;
 	}
 
 	@Override
