@@ -26,11 +26,13 @@ public class TimeSeriesData {
 			timeList[i] = times.get(i);
 
 		valueList = new double[values.size()];
-		for (int i = 0; i < values.size(); i++)
+		maxValue = Double.NEGATIVE_INFINITY;
+		minValue = Double.POSITIVE_INFINITY;
+		for (int i = 0; i < values.size(); i++) {
 			valueList[i] = values.get(i);
-
-		maxValue = values.getMax();
-		minValue = values.getMin();
+			maxValue = Math.max(maxValue, valueList[i]);
+			minValue = Math.min(minValue, valueList[i]);
+		}
 	}
 
 	public double getMaxValue() {
