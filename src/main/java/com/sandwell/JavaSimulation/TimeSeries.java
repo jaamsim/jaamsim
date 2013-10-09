@@ -106,28 +106,25 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 			 unitType = UserSpecifiedUnit.class)
 	@Override
 	public double getNextSample(double simTime) {
-		return this.getValueForTime(simTime / 3600.0);
+		return this.getValueForTimeHours(simTime / 3600.0);
 	}
 
 	/**
 	 * Return the value for the given simulation time in hours
 	 */
 	@Override
-	public double getValueForTime( double time ) {
+	public double getValueForTimeHours( double time ) {
 		DoubleVector timeList = this.getTimeList();
 		DoubleVector valueList = this.getValueList();
 
 		// Update the index within the series for the current time
-		indexOfCurrentTime = this.getIndexForTime(getCurrentTime(), indexOfCurrentTime);
+		indexOfCurrentTime = this.getIndexForTimeHours(getCurrentTime(), indexOfCurrentTime);
 
 		// Determine the time in the cycle for the given time
-		double timeInCycle;
-		if( this.getCycleTimeInHours() == Double.POSITIVE_INFINITY ) {
-			timeInCycle = time;
-		}
-		else {
+		double timeInCycle = time;
+		if (this.getCycleLength() < Double.POSITIVE_INFINITY) {
 			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
-			timeInCycle = time - ( completedCycles * this.getCycleTimeInHours() );
+			timeInCycle -= completedCycles * this.getCycleTimeInHours();
 		}
 
 		// Perform linear search for time from indexOfTime
@@ -158,17 +155,14 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	/**
 	 * Return the index for the given simulation time in hours
 	 */
-	public int getIndexForTime( double time, int startIndex ) {
+	public int getIndexForTimeHours( double time, int startIndex ) {
 		DoubleVector timeList = value.getValue().getTimeList();
 
 		// Determine the time in the cycle for the given time
-		double timeInCycle;
-		if( this.getCycleTimeInHours() == Double.POSITIVE_INFINITY ) {
-			timeInCycle = time;
-		}
-		else {
+		double timeInCycle = time;
+		if (this.getCycleLength() < Double.POSITIVE_INFINITY) {
 			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
-			timeInCycle = time - ( completedCycles * this.getCycleTimeInHours() );
+			timeInCycle -= completedCycles * this.getCycleTimeInHours();
 		}
 
 		// Perform linear search for time from startIndex
@@ -201,10 +195,10 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	 * Return the first time that the value will be updated, after the given time.
 	 */
 	@Override
-	public double getNextChangeTimeAfter( double time ) {
+	public double getNextChangeTimeAfterHours( double time ) {
 
 		// Collect parameters for the current time
-		int startIndex = this.getIndexForTime(time,indexOfCurrentTime)+1;
+		int startIndex = this.getIndexForTimeHours(time,indexOfCurrentTime)+1;
 		double cycleTime = this.getCycleTimeInHours();
 
 		// Determine how many cycles through the time series have been completed

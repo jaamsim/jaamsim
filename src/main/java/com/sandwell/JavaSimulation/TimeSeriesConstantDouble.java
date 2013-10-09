@@ -41,12 +41,12 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	}
 
 	@Override
-	public double getValueForTime(double simTime) {
+	public double getValueForTimeHours(double simTime) {
 		return val;
 	}
 
 	@Override
-	public double getNextChangeTimeAfter( double simTime ) {
+	public double getNextChangeTimeAfterHours( double simTime ) {
 		return Double.POSITIVE_INFINITY;
 	}
 
