@@ -1550,27 +1550,27 @@ public class InputAgent {
 
 		// include the original configuration file
 		if (!InputAgent.hasAddedRecords()) {
-			file.format( "\" File: %s\n\n", file.getFileName() );
-			file.format( "include %s\n\n", InputAgent.getConfigFileName() );
+			file.format( "\" File: %s%n%n", file.getFileName() );
+			file.format( "include %s%n%n", InputAgent.getConfigFileName() );
 		}
 		else {
 			for( int i=0; i < preAddedRecordLines.size(); i++ ) {
 				String line = preAddedRecordLines.get( i );
 				if( line.startsWith( "\" File: " ) ) {
-					file.format( "\" File: %s\n", file.getFileName() );
+					file.format( "\" File: %s%n", file.getFileName() );
 				}
 				else {
-					file.format("%s\n", line);
+					file.format("%s%n", line);
 				}
 			}
 		}
 
-		file.format("%s\n", addedRecordMarker);
+		file.format("%s%n", addedRecordMarker);
 		addedRecordFound = true;
 
 		// Print changes to simulation
 		writeInputsOnFile_ForEntity( file, DisplayEntity.simulation );
-		file.format("\n");
+		file.format("%n");
 
 		// Determine all the new classes that were created
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<Class<? extends Entity>>();
@@ -1587,7 +1587,7 @@ public class InputAgent {
 		for( Class<? extends Entity> newClass : newClasses ) {
 			for (ObjectType o : ObjectType.getAll()) {
 				if (o.getJavaClass() == newClass) {
-					file.putString( "Define " + o.getInputName()+" {" );
+					file.format("Define %s {", o.getInputName());
 					break;
 				}
 			}
@@ -1601,7 +1601,7 @@ public class InputAgent {
 					file.format(" %s ", ent.getInputName());
 
 			}
-			file.format("}\n");
+			file.format("}%n");
 		}
 
 		// List all the changes that were saved for each edited entity
@@ -1625,20 +1625,16 @@ public class InputAgent {
 		file.format("\n");
 		for( int j=0; j < ent.getEditableInputs().size(); j++ ) {
 			Input<?> in = ent.getEditableInputs().get( j );
+			if (!in.isEdited())
+				continue;
 
-			if( in.isEdited() ) {
-
-				// Each line starts with the entity name followed by changed keyword
-				file.format("%s %s ", ent.getInputName(), in.getKeyword());
-
-				String value = in.getValueString();
-				ArrayList<String> tokens = new ArrayList<String>();
-				Parser.tokenize(tokens, value);
-				if(! InputAgent.enclosedByBraces(tokens) ) {
-					value = String.format("{ %s }", value);
-				}
-				file.format("%s\n", value);
-			}
+			String value = in.getValueString();
+			ArrayList<String> tokens = new ArrayList<String>();
+			Parser.tokenize(tokens, value);
+			if (!InputAgent.enclosedByBraces(tokens))
+				file.format("%s %s { %s }%n", ent.getInputName(), in.getKeyword(), value);
+			else
+				file.format("%s %s %s%n", ent.getInputName(), in.getKeyword(), value);
 		}
 	}
 
