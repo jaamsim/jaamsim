@@ -409,6 +409,11 @@ public class Entity {
 		getEventManager().scheduleProcess(0, EventManager.PRIO_DEFAULT, t);
 	}
 
+	public final void scheduleProcess(double duration, int priority, ProcessTarget t) {
+		long waitLength = calculateDelayLength(duration);
+		getEventManager().scheduleProcess(waitLength, priority, t);
+	}
+
 	public final void scheduleSingleProcess(ProcessTarget t) {
 		getEventManager().scheduleSingleProcess(0, EventManager.PRIO_LASTFIFO, t);
 	}
