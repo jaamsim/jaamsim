@@ -1335,9 +1335,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			}
 			assert(target.isLoaded());
 
-			_sharedContext.makeCurrent();
-			GL2GL3 gl = _sharedContext.getGL().getGL2GL3(); // Just to clean up the code below
-
 			// Collect the renderables
 			ArrayList<Renderable> renderables = new ArrayList<Renderable>();
 			ArrayList<OverlayRenderable> overlay = new ArrayList<OverlayRenderable>();
@@ -1345,6 +1342,9 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 				p.collectRenderables(this, renderables);
 				p.collectOverlayRenderables(this, overlay);
 			}
+
+			_sharedContext.makeCurrent();
+			GL2GL3 gl = _sharedContext.getGL().getGL2GL3(); // Just to clean up the code below
 
 			gl.glBindFramebuffer(GL2GL3.GL_DRAW_FRAMEBUFFER, target.getDrawFBO());
 
@@ -1426,7 +1426,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 	}
 }
 
-	public void renderScene(GLContext context, Map<Integer, Integer> vaoMap,
+	private void renderScene(GLContext context, Map<Integer, Integer> vaoMap,
 	                        List<Renderable> scene, List<OverlayRenderable> overlay,
 	                        Camera cam, int width, int height, Ray pickRay,
 	                        int viewID, PerfInfo perfInfo) {
