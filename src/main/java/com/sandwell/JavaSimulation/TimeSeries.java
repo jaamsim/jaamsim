@@ -70,10 +70,11 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		if( unitType.getValue() == null )
 			throw new InputErrorException( "UnitType must be specified first" );
 
-		if( value.getValue() == null || value.getValue().getTimeList().size() == 0 )
+		if( value.getValue() == null || value.getValue().timeList.length == 0 )
 			throw new InputErrorException( "Time series Value must be specified" );
 
-		if( this.getCycleTimeInHours() < value.getValue().getTimeList().get( value.getValue().getTimeList().size() -1 ) )
+		double[] tList = value.getValue().timeList;
+		if (this.getCycleTimeInHours() < tList[tList.length - 1])
 			throw new InputErrorException( "CycleTime must be larger than the last time in the series" );
 	}
 
@@ -115,7 +116,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	 */
 	@Override
 	public double getValueForTimeHours( double time ) {
-		DoubleVector timeList = this.getTimeList();
+		double[] timeList = value.getValue().timeList;
 		DoubleVector valueList = this.getValueList();
 
 		// Update the index within the series for the current time
@@ -129,22 +130,22 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		}
 
 		// Perform linear search for time from indexOfTime
-		for( int i = indexOfCurrentTime; i < timeList.size()-1; i++ ) {
-			if( Tester.lessOrEqualCheckTimeStep( timeList.get( i ), timeInCycle )
-					&& Tester.lessCheckTimeStep( timeInCycle, timeList.get( i+1 ) ) ) {
+		for( int i = indexOfCurrentTime; i < timeList.length-1; i++ ) {
+			if( Tester.lessOrEqualCheckTimeStep( timeList[ i ], timeInCycle )
+					&& Tester.lessCheckTimeStep( timeInCycle, timeList[ i+1 ] ) ) {
 				return valueList.get( i );
 			}
 		}
 
 		// If the time in the cycle is greater than the last time, return the last value
-		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList.get( timeList.size() - 1 ) ) ) {
+		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList[ timeList.length - 1 ] ) ) {
 			return valueList.get( valueList.size() - 1 );
 		}
 
 		// Perform linear search for time from 0
 		for( int i = 0; i < indexOfCurrentTime; i++ ) {
-			if( Tester.lessOrEqualCheckTimeStep( timeList.get( i ), timeInCycle )
-					&& Tester.lessCheckTimeStep( timeInCycle, timeList.get( i+1 ) ) ) {
+			if( Tester.lessOrEqualCheckTimeStep( timeList[ i ], timeInCycle )
+					&& Tester.lessCheckTimeStep( timeInCycle, timeList[ i+1 ] ) ) {
 				return valueList.get( i );
 			}
 		}
@@ -157,7 +158,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	 * Return the index for the given simulation time in hours
 	 */
 	public int getIndexForTimeHours( double time, int startIndex ) {
-		DoubleVector timeList = value.getValue().getTimeList();
+		double[] timeList = value.getValue().timeList;
 
 		// Determine the time in the cycle for the given time
 		double timeInCycle = time;
@@ -167,22 +168,22 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		}
 
 		// Perform linear search for time from startIndex
-		for( int i = startIndex; i < timeList.size()-1; i++ ) {
-			if( Tester.lessOrEqualCheckTimeStep( timeList.get( i ), timeInCycle )
-					&& Tester.lessCheckTimeStep( timeInCycle, timeList.get( i+1 ) ) ) {
+		for( int i = startIndex; i < timeList.length-1; i++ ) {
+			if( Tester.lessOrEqualCheckTimeStep( timeList[ i ], timeInCycle )
+					&& Tester.lessCheckTimeStep( timeInCycle, timeList[ i+1 ] ) ) {
 				return i;
 			}
 		}
 
 		// If the time in the cycle is greater than the last time, return the last value
-		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList.get( timeList.size() - 1 ) ) ) {
-			return timeList.size() - 1;
+		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList[ timeList.length - 1 ] ) ) {
+			return timeList.length - 1;
 		}
 
 		// Perform linear search for time from 0
 		for( int i = 0; i < startIndex; i++ ) {
-			if( Tester.lessOrEqualCheckTimeStep( timeList.get( i ), timeInCycle )
-					&& Tester.lessCheckTimeStep( timeInCycle, timeList.get( i+1 ) ) ) {
+			if( Tester.lessOrEqualCheckTimeStep( timeList[ i ], timeInCycle )
+					&& Tester.lessCheckTimeStep( timeInCycle, timeList[ i+1 ] ) ) {
 				return i;
 			}
 		}
@@ -204,9 +205,9 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 
 		// Determine how many cycles through the time series have been completed
 		int completedCycles = (int)Math.floor( time / cycleTime );
-
+		double[] timeList = value.getValue().timeList;
 		// If this is the last point in the cycle, need to cycle around to get the next point
-		if( startIndex > this.getTimeList().size() - 1 ) {
+		if( startIndex > timeList.length - 1 ) {
 
 			// If the series does not cycle, the value will never change
 			if( cycleTime == Double.POSITIVE_INFINITY ) {
@@ -218,7 +219,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 					cycleOffset = (completedCycles+1)*cycleTime;
 				}
 
-				return this.getTimeList().get(0) + cycleOffset;
+				return timeList[0] + cycleOffset;
 			}
 		}
 
@@ -227,11 +228,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		if( cycleTime != Double.POSITIVE_INFINITY ) {
 			cycleOffset = (completedCycles)*cycleTime;
 		}
-		return this.getTimeList().get(startIndex) + cycleOffset;
-	}
-
-	public DoubleVector getTimeList() {
-		return value.getValue().getTimeList();
+		return timeList[startIndex] + cycleOffset;
 	}
 
 	public DoubleVector getValueList() {
@@ -251,7 +248,8 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		if (this.getCycleLength() < Double.POSITIVE_INFINITY)
 			return this.getCycleLength();
 
-		return this.getTimeList().get( this.getTimeList().size()-1 ) * 3600.0d;
+		double[] tList = value.getValue().timeList;
+		return tList[ tList.length-1 ] * 3600.0d;
 	}
 
 	@Override
