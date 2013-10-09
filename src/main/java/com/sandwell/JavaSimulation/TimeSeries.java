@@ -247,6 +247,10 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		return cycleTime.getValue() / 3600;
 	}
 
+	double getCycleLength() {
+		return cycleTime.getValue();
+	}
+
 	@Override
 	public double getMaxTimeValueInHours() {
 
@@ -254,90 +258,6 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 			return this.getCycleTimeInHours();
 
 		return this.getTimeList().get( this.getTimeList().size()-1 );
-	}
-
-	/**
-	 * Return the time in hours from the given start time
-	 * until the value is less than or equal to the given limit.
-	 */
-	public double calcTimeFrom_UntilLessThanOrEqualTo( double time, double limit ) {
-
-		// If the value at the start time is less than or equal to the limit, return 0
-		if( getValueForTime( time ) <= limit )
-			return 0;
-
-		DoubleVector timeList = this.getTimeList();
-		DoubleVector valueList = this.getValueList();
-
-		// Determine the time in the cycle for the given time
-		double timeInCycle;
-		if( this.getCycleTimeInHours() == Double.POSITIVE_INFINITY ) {
-			timeInCycle = time;
-		}
-		else {
-			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
-			timeInCycle = time - ( completedCycles * this.getCycleTimeInHours() );
-		}
-
-		// Assume indexOfTime corresponds to the given start time
-		// Perform linear search for time from indexOfTime + 1
-		for( int i = indexOfCurrentTime + 1; i < timeList.size(); i++ ) {
-			if( valueList.get( i ) <= limit ) {
-				return timeList.get( i ) - timeInCycle;
-			}
-		}
-
-		// Perform linear search for time from 0
-		for( int i = 0; i < indexOfCurrentTime; i++ ) {
-			if( valueList.get( i ) <= limit ) {
-				return timeList.get( i ) + this.getCycleTimeInHours() - timeInCycle;
-			}
-		}
-
-		// The value is never less than or equal to the limit.  Return infinity
-		return Double.POSITIVE_INFINITY;
-	}
-
-	/**
-	 * Return the time in hours from the given start time
-	 * until the value is greater than the given limit.
-	 */
-	public double calcTimeFrom_UntilGreaterThan( double time, double limit ) {
-
-		// If the value at the start time greater the limit, return 0
-		if( getValueForTime( time ) > limit )
-			return 0;
-
-		DoubleVector timeList = this.getTimeList();
-		DoubleVector valueList = this.getValueList();
-
-		// Determine the time in the cycle for the given time
-		double timeInCycle;
-		if( this.getCycleTimeInHours() == Double.POSITIVE_INFINITY ) {
-			timeInCycle = time;
-		}
-		else {
-			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
-			timeInCycle = time - ( completedCycles * this.getCycleTimeInHours() );
-		}
-
-		// Assume indexOfTime corresponds to the given start time
-		// Perform linear search for time from indexOfTime + 1
-		for( int i = indexOfCurrentTime + 1; i < timeList.size(); i++ ) {
-			if( valueList.get( i ) > limit ) {
-				return timeList.get( i ) - timeInCycle;
-			}
-		}
-
-		// Perform linear search for time from 0
-		for( int i = 0; i < indexOfCurrentTime; i++ ) {
-			if( valueList.get( i ) > limit ) {
-				return timeList.get( i ) + this.getCycleTimeInHours() - timeInCycle;
-			}
-		}
-
-		// The value is never greater than the limit.  Return infinity
-		return Double.POSITIVE_INFINITY;
 	}
 
 	@Override
