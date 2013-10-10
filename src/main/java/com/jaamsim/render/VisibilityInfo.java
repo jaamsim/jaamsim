@@ -15,6 +15,7 @@
 package com.jaamsim.render;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.jaamsim.ui.View;
 
@@ -66,6 +67,6 @@ public class VisibilityInfo {
 		}
 
 		VisibilityInfo vi = (VisibilityInfo)o;
-		return vi.viewIDs.equals(viewIDs) && vi.minDist == minDist && vi.maxDist == maxDist;
+		return Arrays.equals(vi.viewIDs, viewIDs) && vi.minDist == minDist && vi.maxDist == maxDist;
 	}
 }
