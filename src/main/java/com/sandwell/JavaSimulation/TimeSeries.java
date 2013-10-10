@@ -258,6 +258,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		return value.getValue().getMaxValue();
 	}
 
+	@Override
 	public double getMinValue() {
 		return value.getValue().getMinValue();
 	}
