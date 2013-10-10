@@ -64,10 +64,8 @@ public class Sensor extends DoubleCalculation {
 		Entity ent = entityInput.getValue();
 		String name = outputNameInput.getValue();
 		OutputHandle out = ent.getOutputHandle(name);
-		Class<?> retType = out.getReturnType();
-		if ( retType != Double.class && retType != double.class) {
+		if (!out.isNumericValue())
 			throw new InputErrorException( "The OutputName keyword must specify a floating point output." );
-		}
 	}
 
 	@Override
@@ -77,12 +75,8 @@ public class Sensor extends DoubleCalculation {
 		String name = outputNameInput.getValue();
 
 		OutputHandle out = ent.getOutputHandle(name);
-		Class<?> retType = out.getReturnType();
-		if (retType == Double.class) {
-			val = out.getValue(simTime, Double.class);
-		} else if (retType == double.class){
-			val = out.getValue(simTime, double.class);
-		}
+		if (out.isNumericValue())
+			val = out.getValueAsDouble(simTime, 0.0d);
 
 		// Set the present value
 		this.setValue( val );
