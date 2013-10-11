@@ -244,25 +244,24 @@ public abstract class DisplayModelBinding {
 	 * @param val
 	 */
 	protected <T> boolean compare(T cache, T val) {
+		if (cache == val)
+			return true;
 
-		if (cache == val) return true;
+		// We tested above for the both-null case, if only one is null, not equal
+		if (cache == null || val == null)
+			return false;
 
-		boolean cacheNull = cache == null;
-		boolean valNull = val == null;
-
-		return ((cacheNull && valNull) || (!cacheNull && cache.equals(val)));
-
+		return cache.equals(val);
 	}
 
 	protected <T> boolean compareArray(T[] cache, T[] val) {
+		if (cache == val)
+			return true;
 
-		if (cache == val) return true;
+		// We tested above for the both-null case, if only one is null, not equal
+		if (cache == null || val == null)
+			return false;
 
-		boolean cacheNull = cache == null;
-		boolean valNull = val == null;
-
-		return ((cacheNull && valNull) || (!cacheNull && Arrays.deepEquals(cache, val)));
-
+		return Arrays.deepEquals(cache, val);
 	}
-
 }
