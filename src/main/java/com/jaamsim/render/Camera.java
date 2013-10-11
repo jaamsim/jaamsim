@@ -329,7 +329,7 @@ private void updateFrustum() {
 }
 
 public CameraInfo getInfo() {
-	return _info.getCopy();
+	return new CameraInfo(_info);
 }
 
 
@@ -347,7 +347,7 @@ public double distToBounds(AABB bounds) {
  */
 public void setInfo(CameraInfo newInfo) {
 	boolean dirty = !_info.isSame(newInfo);
-	_info = newInfo.getCopy();
+	_info = new CameraInfo(newInfo);
 	_info.trans.inverse(invTrans);
 
 	_frustumDirty = dirty || _frustumDirty;
