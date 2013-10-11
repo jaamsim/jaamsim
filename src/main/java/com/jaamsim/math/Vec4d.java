@@ -368,12 +368,4 @@ public void mult4(Vec4d v, Mat4d m) {
 	this.z = _z;
 	this.w = _w;
 }
-
-@Override
-public boolean equals(Object o) {
-	if (!(o instanceof Vec4d)) return false;
-	Vec4d v = (Vec4d)o;
-	return v.x == x && v.y == y && v.z == z && v.w == w;
-}
-
 }

@@ -381,12 +381,4 @@ public void cross3(Vec3d v1, Vec3d v2) {
 	this.y = _y;
 	this.z = _z;
 }
-
-@Override
-public boolean equals(Object o) {
-	if (!(o instanceof Vec3d)) return false;
-	Vec3d v = (Vec3d)o;
-	return v.x == x && v.y == y && v.z == z;
-}
-
 }
