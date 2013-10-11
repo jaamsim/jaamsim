@@ -31,6 +31,7 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public abstract class DisplayModel extends Entity {
 	public static final VisibilityInfo ALWAYS = new VisibilityInfo(null, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+	public static final Vec3d ONES = new Vec3d(1.0d, 1.0d, 1.0d);
 
 	private VisibilityInfo visInfo = ALWAYS;
 

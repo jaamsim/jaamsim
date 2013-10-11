@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.ImageProxy;
 import com.jaamsim.render.OverlayTextureProxy;
@@ -125,7 +124,7 @@ public class ImageModel extends DisplayModel {
 			long pickingID;
 			if (dispEnt == null) {
 				trans = Transform.ident;
-				scale = Vec4d.ONES;
+				scale = DisplayModel.ONES;
 				pickingID = 0;
 			} else {
 				trans = dispEnt.getGlobalTrans(simTime);

@@ -17,8 +17,6 @@ package com.jaamsim.math;
 
 public class Vec4d extends Vec3d {
 
-public static Vec4d ONES = new Vec4d(1, 1, 1, 1.0d);
-
 public double w;
 
 /**

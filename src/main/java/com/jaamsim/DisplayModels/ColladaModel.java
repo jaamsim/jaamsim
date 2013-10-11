@@ -132,7 +132,7 @@ public class ColladaModel extends DisplayModel {
 
 			if (dispEnt == null) {
 				trans = Transform.ident;
-				scale = Vec4d.ONES;
+				scale = DisplayModel.ONES;
 				pickingID = 0;
 			} else {
 				trans = dispEnt.getGlobalTrans(simTime);

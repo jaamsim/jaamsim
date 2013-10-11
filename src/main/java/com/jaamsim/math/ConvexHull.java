@@ -463,8 +463,9 @@ public class ConvexHull {
 		return true;
 	}
 
+	private static final Vec3d ONES = new Vec3d(1.0d, 1.0d, 1.0d);
 	public double collisionDistance(Ray r, Transform trans) {
-		return collisionDistance(r, trans, Vec4d.ONES);
+		return collisionDistance(r, trans, ONES);
 	}
 
 	/**

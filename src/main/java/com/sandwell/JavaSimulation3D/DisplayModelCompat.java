@@ -304,7 +304,7 @@ public class DisplayModelCompat extends DisplayModel {
 		}
 		private Vec3d getScale() {
 			if (dispEnt == null) {
-				return Vec4d.ONES;
+				return DisplayModel.ONES;
 			}
 			Vec3d size = dispEnt.getSize();
 			size.mul3(getModelScale());

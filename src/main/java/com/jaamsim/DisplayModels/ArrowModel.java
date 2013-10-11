@@ -113,7 +113,7 @@ public class ArrowModel extends ScreenPointsModel {
 				headPoints.add(tmp);
 			}
 
-			cachedProxy = new PolygonProxy(headPoints, Transform.ident, Vec4d.ONES, color,
+			cachedProxy = new PolygonProxy(headPoints, Transform.ident, DisplayModel.ONES, color,
 			        false, 1, getVisibilityInfo(), arrowObservee.getEntityNumber());
 		}
 
