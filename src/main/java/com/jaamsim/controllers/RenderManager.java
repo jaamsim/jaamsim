@@ -1048,8 +1048,8 @@ public class RenderManager implements DragSourceListener {
 				regionInvTrans = reg.getRegionTrans(0.0d);
 				regionInvTrans.inverse(regionInvTrans);
 			}
-			Vec4d localDelta = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			regionInvTrans.apply(delta, localDelta);
+			Vec3d localDelta = new Vec3d();
+			regionInvTrans.multAndTrans(delta, localDelta);
 
 			_selectedEntity.dragged(localDelta);
 			return true;

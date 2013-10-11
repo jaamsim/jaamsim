@@ -88,7 +88,7 @@ public class Polygon implements Renderable {
 			_points.add(temp);
 
 			Vec3d bTemp = new Vec3d();
-			trans.apply(temp, bTemp);
+			trans.multAndTrans(temp, bTemp);
 			boundsPoints.add(bTemp);
 		}
 

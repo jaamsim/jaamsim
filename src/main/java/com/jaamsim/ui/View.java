@@ -239,8 +239,8 @@ public void updateCenterAndPos(Vec3d center, Vec3d pos) {
 		if (region.getValue() != null) {
 			Transform regTrans = region.getValue().getRegionTrans(0);
 			regTrans.inverse(regTrans);
-			regTrans.apply(pos, tempPos);
-			regTrans.apply(center, tempCent);
+			regTrans.multAndTrans(pos, tempPos);
+			regTrans.multAndTrans(center, tempCent);
 		}
 
 		// If this is following an entity, subtract that entity's position from the camera position (as it is interpreted as relative)

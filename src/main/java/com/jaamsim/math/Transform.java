@@ -192,7 +192,7 @@ public void apply(Vec4d vect, Vec4d out) {
 	out.mult4(_mat4d, vect);
 }
 
-public void apply(Vec3d vect, Vec3d out) {
+public void multAndTrans(Vec3d vect, Vec3d out) {
 	if (_matrixDirty) {
 		updateMatrix();
 	}

@@ -467,7 +467,7 @@ public class DisplayEntity extends Entity {
 
 		if (currentRegion != null) {
 			Transform regionTrans = currentRegion.getRegionTrans(getCurrentTime());
-			regionTrans.apply(localPos, localPos);
+			regionTrans.multAndTrans(localPos, localPos);
 		}
 
 		return localPos;
@@ -526,7 +526,7 @@ public class DisplayEntity extends Entity {
 		}
 
 		Vec3d localPos = new Vec3d();
-		invReg.apply(pos, localPos);
+		invReg.multAndTrans(pos, localPos);
 
 		setPosition(localPos);
 		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format( "%.6f %.6f %.6f m", localPos.x, localPos.y, localPos.z ));

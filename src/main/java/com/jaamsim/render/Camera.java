@@ -337,7 +337,7 @@ private Vec3d centerTemp = new Vec3d();
 
 public double distToBounds(AABB bounds) {
 
-	invTrans.apply(bounds.center, centerTemp);
+	invTrans.multAndTrans(bounds.center, centerTemp);
 
 	return centerTemp.z * -1; // In camera space, Z is in the negative direction
 
