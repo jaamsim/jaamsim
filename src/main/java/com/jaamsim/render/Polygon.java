@@ -54,7 +54,7 @@ public class Polygon implements Renderable {
 
 	private static boolean _hasInitialized;
 
-	private ArrayList<Vec4d> _points;
+	private final ArrayList<Vec3d> _points;
 	private VisibilityInfo _visInfo;
 
 	private final float[] colour;
@@ -80,14 +80,14 @@ public class Polygon implements Renderable {
 		this._visInfo = visInfo;
 
 		// Points includes the scale, but not the transform
-		_points = new ArrayList<Vec4d>(points.size());
-		ArrayList<Vec4d> boundsPoints = new ArrayList<Vec4d>(points.size());
+		_points = new ArrayList<Vec3d>(points.size());
+		ArrayList<Vec3d> boundsPoints = new ArrayList<Vec3d>(points.size());
 		for (Vec4d p : points) {
-			Vec4d temp = new Vec4d(p);
+			Vec3d temp = new Vec3d(p);
 			temp.mul3(scale);
 			_points.add(temp);
 
-			Vec4d bTemp = new Vec4d();
+			Vec3d bTemp = new Vec3d();
 			trans.apply(temp, bTemp);
 			boundsPoints.add(bTemp);
 		}
@@ -96,13 +96,13 @@ public class Polygon implements Renderable {
 
 		if (this.isOutline) {
 			fb = FloatBuffer.allocate(3 * _points.size());
-			for (Vec4d vert : _points) {
+			for (Vec3d vert : _points) {
 				RenderUtils.putPointXYZ(fb, vert);
 			}
 		} else {
 			// Otherwise make a triangle fan c
-			Vec4d center = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			for (Vec4d vert : _points) {
+			Vec3d center = new Vec3d();
+			for (Vec3d vert : _points) {
 				center.add3(vert);
 			}
 			center.scale3(1.0/_points.size());
@@ -112,7 +112,7 @@ public class Polygon implements Renderable {
 			fb = FloatBuffer.allocate(buffSize);
 			// Put the center to start the triangle fan
 			RenderUtils.putPointXYZ(fb, center);
-			for (Vec4d vert : _points) {
+			for (Vec3d vert : _points) {
 				RenderUtils.putPointXYZ(fb, vert);
 			}
 			RenderUtils.putPointXYZ(fb, _points.get(0));
@@ -223,9 +223,7 @@ public class Polygon implements Renderable {
 		trans.inverse(invTrans);
 		Ray localRay = r.transform(invTrans);
 
-		Vec4d[] pointsArray = _points.toArray(new Vec4d[0]);
-
-		return MathUtils.collisionDistPoly(localRay, pointsArray);
+		return MathUtils.collisionDistPoly(localRay, _points);
 	}
 
 	// This should be called from the renderer at initialization

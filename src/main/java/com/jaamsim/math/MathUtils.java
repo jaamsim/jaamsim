@@ -14,6 +14,8 @@
  */
 package com.jaamsim.math;
 
+import java.util.List;
+
 import com.jaamsim.render.RenderUtils;
 
 /**
@@ -150,6 +152,49 @@ public static double collisionDistPoly(Ray r, Vec4d[] points) {
 		// Check that the collision point is on the same winding side of all the
 		Vec4d p0 = points[i];
 		Vec4d p1 = points[(i + 1) % points.length];
+		a.sub3(p0, collisionPoint);
+		b.sub3(p1, p0);
+		cross.cross3(a, b);
+
+		double triple = cross.dot3(r.getDirRef());
+		// This point is inside the polygon if all triple products have the same sign
+		if (i == 0 && triple < 0) {
+			// First iteration sets the sign
+			posSign = false;
+		}
+		if (posSign && triple < 0) {
+			return -1;
+		} else if (!posSign && triple > 0) {
+			return -1;
+		}
+	}
+	return dist; // This must be valid then
+
+}
+
+public static double collisionDistPoly(Ray r, List<Vec3d> points) {
+	if (points.size() < 3) {
+		return -1; // Should this be an error?
+	}
+	// Check that this is actually inside the polygon, this assumes the points are co-planar
+	Plane p = new Plane();
+	p.set(points.get(0), points.get(1), points.get(2));
+	double dist = p.collisionDist(r);
+
+	if (dist < 0) { return dist; } // Behind the start of the ray
+
+	// This is the potential collision point, if it's inside the polygon
+	Vec3d collisionPoint = r.getPointAtDist(dist);
+
+	Vec3d a = new Vec3d();
+	Vec3d b = new Vec3d();
+	Vec3d cross = new Vec3d();
+	boolean posSign = true;
+
+	for (int i = 0; i < points.size(); ++i) {
+		// Check that the collision point is on the same winding side of all the
+		Vec3d p0 = points.get(i);
+		Vec3d p1 = points.get((i + 1) % points.size());
 		a.sub3(p0, collisionPoint);
 		b.sub3(p1, p0);
 		cross.cross3(a, b);
