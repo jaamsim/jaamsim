@@ -123,11 +123,13 @@ public class CameraControl implements WindowInteractionListener {
 		Quaternion rotZ = new Quaternion();
 		rotZ.setRotZAxis(dx * ROT_SCALE_Z / 4);
 
-		Transform rotTransX = MathUtils.rotateAroundPoint(rotX, camPos);
-		Transform rotTransZ = MathUtils.rotateAroundPoint(rotZ, camPos);
 
-		rotTransX.apply(center, center);
-		rotTransZ.apply(center, center);
+		Mat4d rotTransX = MathUtils.rotateAroundPoint(rotX, camPos);
+		Mat4d rotTransZ = MathUtils.rotateAroundPoint(rotZ, camPos);
+
+		center.multAndTrans3(rotTransX, center);
+		center.multAndTrans3(rotTransZ, center);
+
 		PolarInfo pi = getPolarFrom(center, camPos);
 		updateCamTrans(pi, true);
 
@@ -226,14 +228,14 @@ public class CameraControl implements WindowInteractionListener {
 		Quaternion rotZ = new Quaternion();
 		rotZ.setRotZAxis(-dx * ROT_SCALE_Z);
 
-		Transform rotTransX = MathUtils.rotateAroundPoint(rotX, POI);
-		Transform rotTransZ = MathUtils.rotateAroundPoint(rotZ, POI);
+		Mat4d rotTransX = MathUtils.rotateAroundPoint(rotX, POI);
+		Mat4d rotTransZ = MathUtils.rotateAroundPoint(rotZ, POI);
 
-		rotTransX.apply(camPos, camPos);
-		rotTransX.apply(center, center);
+		camPos.multAndTrans3(rotTransX, camPos);
+		center.multAndTrans3(rotTransX, center);
 
-		rotTransZ.apply(camPos, camPos);
-		rotTransZ.apply(center, center);
+		camPos.multAndTrans3(rotTransZ, camPos);
+		center.multAndTrans3(rotTransZ, center);
 
 		PolarInfo pi = getPolarFrom(center, camPos);
 
@@ -250,8 +252,8 @@ public class CameraControl implements WindowInteractionListener {
 			camPos = _updateView.getGlobalPosition();
 			center = _updateView.getGlobalCenter();
 
-			rotTransZ.apply(camPos, camPos);
-			rotTransZ.apply(center, center);
+			camPos.multAndTrans3(rotTransZ, camPos);
+			center.multAndTrans3(rotTransZ, center);
 
 			pi = getPolarFrom(center, camPos);
 		}

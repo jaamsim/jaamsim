@@ -120,14 +120,14 @@ public static Mat4d RaySpace(Ray r) {
  * @param point - the point to rotate around
  * @return
  */
-public static Transform rotateAroundPoint(Quaternion rot, Vec3d point) {
+public static Mat4d rotateAroundPoint(Quaternion rot, Vec3d point) {
 	Vec3d negPoint = new Vec3d(point);
 	negPoint.scale3(-1);
 
-	Transform ret = new Transform(point);
-	ret.merge(ret, new Transform(null, rot, 1));
+	Transform ret = new Transform(point, rot, 1);
 	ret.merge(ret, new Transform(negPoint));
-	return ret;
+
+	return ret.getMat4dRef();
 }
 
 public static double collisionDistPoly(Ray r, Vec4d[] points) {
