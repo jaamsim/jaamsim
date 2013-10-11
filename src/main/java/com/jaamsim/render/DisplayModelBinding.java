@@ -286,6 +286,22 @@ public abstract class DisplayModelBinding {
 		return !cache.equals4(val);
 	}
 
+	/**
+	 * A utility method to compare values while respecting null, used for caching
+	 * @param cache
+	 * @param val
+	 */
+	protected static boolean dirty_col4d(Color4d cache, Color4d val) {
+		if (cache == val)
+			return false;
+
+		// We tested above for the both-null case, if only one is null, not equal
+		if (cache == null || val == null)
+			return true;
+
+		return !cache.equals4(val);
+	}
+
 	protected <T> boolean compareArray(T[] cache, T[] val) {
 		if (cache == val)
 			return true;

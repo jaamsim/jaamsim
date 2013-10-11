@@ -47,6 +47,18 @@ public float[] toFloats() {
 }
 
 /**
+ * Tests the first four components are exactly equal.
+ *
+ * This returns true if the r,g,b,a components compare as equal using the ==
+ * operator.  Note that NaN will always return false, and -0.0 and 0.0
+ * will compare as equal.
+ * @throws NullPointerException if col is null
+ */
+public boolean equals4(Color4d c) {
+	return r == c.r && g == c.g && b == c.b && a == c.a;
+}
+
+/**
  * Checks if all vector components are within EPSILON of each other
  * @param other - the other vector
  * @return

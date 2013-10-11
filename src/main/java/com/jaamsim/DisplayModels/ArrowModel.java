@@ -80,7 +80,7 @@ public class ArrowModel extends ScreenPointsModel {
 
 			if (!dirty) dirty = dirty_vec4d(startCache, startPoint);
 			if (!dirty) dirty = dirty_vec4d(fromCache, fromPoint);
-			dirty = dirty || compare(colorCache, color);
+			if (!dirty) dirty = dirty_col4d(colorCache, color);
 
 			startCache = startPoint;
 			fromCache = fromPoint;
