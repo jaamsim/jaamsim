@@ -254,6 +254,38 @@ public abstract class DisplayModelBinding {
 		return cache.equals(val);
 	}
 
+	/**
+	 * A utility method to compare values while respecting null, used for caching
+	 * @param cache
+	 * @param val
+	 */
+	protected static boolean dirty_vec3d(Vec3d cache, Vec3d val) {
+		if (cache == val)
+			return false;
+
+		// We tested above for the both-null case, if only one is null, not equal
+		if (cache == null || val == null)
+			return true;
+
+		return !cache.equals3(val);
+	}
+
+	/**
+	 * A utility method to compare values while respecting null, used for caching
+	 * @param cache
+	 * @param val
+	 */
+	protected static boolean dirty_vec4d(Vec4d cache, Vec4d val) {
+		if (cache == val)
+			return false;
+
+		// We tested above for the both-null case, if only one is null, not equal
+		if (cache == null || val == null)
+			return true;
+
+		return !cache.equals4(val);
+	}
+
 	protected <T> boolean compareArray(T[] cache, T[] val) {
 		if (cache == val)
 			return true;

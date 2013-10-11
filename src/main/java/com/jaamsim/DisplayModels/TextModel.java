@@ -209,7 +209,7 @@ public class TextModel extends DisplayModel {
 			dirty = dirty || !compare(fkCache, fk);
 			dirty = dirty || dropShadowCache != ds;
 			dirty = dirty || !compare(dsColorCache, dsColor);
-			dirty = dirty || !compare(dsOffsetCache, dsOffset);
+			if (!dirty) dirty = dirty_vec3d(dsOffsetCache, dsOffset);
 			dirty = dirty || !compare(viCache, vi);
 
 			textCache = text;
@@ -323,7 +323,7 @@ public class TextModel extends DisplayModel {
 			dirty = dirty || !compare(fkCache, fk);
 			dirty = dirty || dropShadowCache != ds;
 			dirty = dirty || !compare(dsColorCache, dsColor);
-			dirty = dirty || !compare(dsOffsetCache, dsOffset);
+			if (!dirty) dirty = dirty_vec3d(dsOffsetCache, dsOffset);
 			dirty = dirty || !compare(viCache, vi);
 
 			textCache = text;

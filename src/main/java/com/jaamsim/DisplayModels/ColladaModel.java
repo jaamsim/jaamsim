@@ -159,7 +159,7 @@ public class ColladaModel extends DisplayModel {
 			boolean dirty = false;
 
 			dirty = dirty || !compare(transCache, trans);
-			dirty = dirty || !compare(scaleCache, scale);
+			if (!dirty) dirty = dirty_vec3d(scaleCache, scale);
 			dirty = dirty || !compare(colCache, filename);
 			dirty = dirty || !compare(actionsCache, aqList);
 			dirty = dirty || !compare(viCache, vi);
