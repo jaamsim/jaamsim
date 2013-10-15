@@ -142,7 +142,7 @@ public class ImageModel extends DisplayModel {
 			boolean dirty = false;
 
 			dirty = dirty || !compare(transCache, trans);
-			if (!dirty) dirty = dirty_vec3d(scaleCache, scale);
+			dirty = dirty || dirty_vec3d(scaleCache, scale);
 			dirty = dirty || !compare(imageCache, imageName);
 			dirty = dirty || transparentCache != transp;
 			dirty = dirty || compressedCache != compressed;

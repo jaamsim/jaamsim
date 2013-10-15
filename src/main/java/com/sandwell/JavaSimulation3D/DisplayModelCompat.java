@@ -189,7 +189,7 @@ public class DisplayModelCompat extends DisplayModel {
 			boolean dirty = false;
 
 			dirty = dirty || !compare(transCache, trans);
-			if (!dirty) dirty = dirty_vec3d(scaleCache, scale);
+			dirty = dirty || dirty_vec3d(scaleCache, scale);
 			dirty = dirty || !tags.isSame(tagsCache);
 			dirty = dirty || !compare(shapeStringCache, shapeString);
 			dirty = dirty || !compare(viCache, vi);

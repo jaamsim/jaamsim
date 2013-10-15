@@ -204,12 +204,12 @@ public class TextModel extends DisplayModel {
 
 			dirty = dirty || !compare(textCache, text);
 			dirty = dirty || !compare(transCache, trans);
-			if (!dirty) dirty = dirty_col4d(colorCache, color);
+			dirty = dirty || dirty_col4d(colorCache, color);
 			dirty = dirty || heightCache != height;
 			dirty = dirty || !compare(fkCache, fk);
 			dirty = dirty || dropShadowCache != ds;
-			if (!dirty) dirty = dirty_col4d(dsColorCache, dsColor);
-			if (!dirty) dirty = dirty_vec3d(dsOffsetCache, dsOffset);
+			dirty = dirty || dirty_col4d(dsColorCache, dsColor);
+			dirty = dirty || dirty_vec3d(dsOffsetCache, dsOffset);
 			dirty = dirty || !compare(viCache, vi);
 
 			textCache = text;
@@ -315,15 +315,15 @@ public class TextModel extends DisplayModel {
 			boolean dirty = false;
 
 			dirty = dirty || !compare(textCache, text);
-			if (!dirty) dirty = dirty_col4d(colorCache, color);
+			dirty = dirty || dirty_col4d(colorCache, color);
 			dirty = dirty || !compare(posCache, pos);
 			dirty = dirty || heightCache != height;
 			dirty = dirty || alignRightCache != alignRight;
 			dirty = dirty || alignBottomCache != alignBottom;
 			dirty = dirty || !compare(fkCache, fk);
 			dirty = dirty || dropShadowCache != ds;
-			if (!dirty) dirty = dirty_col4d(dsColorCache, dsColor);
-			if (!dirty) dirty = dirty_vec3d(dsOffsetCache, dsOffset);
+			dirty = dirty || dirty_col4d(dsColorCache, dsColor);
+			dirty = dirty || dirty_vec3d(dsOffsetCache, dsOffset);
 			dirty = dirty || !compare(viCache, vi);
 
 			textCache = text;
