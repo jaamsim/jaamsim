@@ -1487,7 +1487,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 		gl.glDepthMask(false);
 
 		// Draw the skybox after
-		_skybox.setTexture(cam.getInfo().skyboxTexture);
+		_skybox.setTexture(cam.getInfoRef().skyboxTexture);
 		_skybox.render(vaoMap, this, cam);
 
 		Collections.sort(transparents);

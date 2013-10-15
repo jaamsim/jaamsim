@@ -332,6 +332,9 @@ public CameraInfo getInfo() {
 	return new CameraInfo(_info);
 }
 
+CameraInfo getInfoRef() {
+	return _info;
+}
 
 private Vec3d centerTemp = new Vec3d();
 
