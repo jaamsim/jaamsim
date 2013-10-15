@@ -146,7 +146,7 @@ public static double collisionDistPoly(Ray r, Vec4d[] points) {
 	Vec3d a = new Vec3d();
 	Vec3d b = new Vec3d();
 	Vec3d cross = new Vec3d();
-	boolean posSign = true;
+	boolean firstPos = false;
 
 	for (int i = 0; i < points.length; ++i) {
 		// Check that the collision point is on the same winding side of all the
@@ -158,13 +158,12 @@ public static double collisionDistPoly(Ray r, Vec4d[] points) {
 
 		double triple = cross.dot3(r.getDirRef());
 		// This point is inside the polygon if all triple products have the same sign
-		if (i == 0 && triple < 0) {
+		if (i == 0) {
 			// First iteration sets the sign
-			posSign = false;
+			firstPos = triple > 0;
 		}
-		if (posSign && triple < 0) {
-			return -1;
-		} else if (!posSign && triple > 0) {
+
+		if (firstPos != (triple > 0)) {
 			return -1;
 		}
 	}
@@ -189,7 +188,7 @@ public static double collisionDistPoly(Ray r, List<Vec3d> points) {
 	Vec3d a = new Vec3d();
 	Vec3d b = new Vec3d();
 	Vec3d cross = new Vec3d();
-	boolean posSign = true;
+	boolean firstPos = false;
 
 	for (int i = 0; i < points.size(); ++i) {
 		// Check that the collision point is on the same winding side of all the
@@ -201,13 +200,12 @@ public static double collisionDistPoly(Ray r, List<Vec3d> points) {
 
 		double triple = cross.dot3(r.getDirRef());
 		// This point is inside the polygon if all triple products have the same sign
-		if (i == 0 && triple < 0) {
+		if (i == 0) {
 			// First iteration sets the sign
-			posSign = false;
+			firstPos = triple > 0;
 		}
-		if (posSign && triple < 0) {
-			return -1;
-		} else if (!posSign && triple > 0) {
+
+		if (firstPos != (triple > 0)) {
 			return -1;
 		}
 	}
