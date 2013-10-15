@@ -116,42 +116,8 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	 */
 	@Override
 	public double getValueForTimeHours( double time ) {
-		double[] timeList = value.getValue().timeList;
 		double[] valueList = value.getValue().valueList;
-
-		// Update the index within the series for the current time
-		indexOfCurrentTime = this.getIndexForTimeHours(getCurrentTime(), indexOfCurrentTime);
-
-		// Determine the time in the cycle for the given time
-		double timeInCycle = time;
-		if (this.getCycleLength() < Double.POSITIVE_INFINITY) {
-			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
-			timeInCycle -= completedCycles * this.getCycleTimeInHours();
-		}
-
-		// Perform linear search for time from indexOfTime
-		for( int i = indexOfCurrentTime; i < timeList.length-1; i++ ) {
-			if( Tester.lessOrEqualCheckTimeStep( timeList[ i ], timeInCycle )
-					&& Tester.lessCheckTimeStep( timeInCycle, timeList[ i+1 ] ) ) {
-				return valueList[ i ];
-			}
-		}
-
-		// If the time in the cycle is greater than the last time, return the last value
-		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList[ timeList.length - 1 ] ) ) {
-			return valueList[ valueList.length - 1 ];
-		}
-
-		// Perform linear search for time from 0
-		for( int i = 0; i < indexOfCurrentTime; i++ ) {
-			if( Tester.lessOrEqualCheckTimeStep( timeList[ i ], timeInCycle )
-					&& Tester.lessCheckTimeStep( timeInCycle, timeList[ i+1 ] ) ) {
-				return valueList[ i ];
-			}
-		}
-
-		// No value was found for time, return 0
-		return 0.0;
+		return valueList[ getIndexForTimeHours( time ) ];
 	}
 
 	/**
