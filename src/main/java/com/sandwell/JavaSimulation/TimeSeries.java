@@ -146,7 +146,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 				// or (insertion index) = -(index+1) = -index-1
 				// If the time at the insertion index is within one tick,
 				// then return it
-				if( Tester.equalCheckTimeStep( time, timeList[-index - 1] ) )
+				if( Tester.equalCheckTimeStep( timeInCycle, timeList[-index - 1] ) )
 					return -index - 1;
 				else
 					// Otherwise, return the index before the insertion index
