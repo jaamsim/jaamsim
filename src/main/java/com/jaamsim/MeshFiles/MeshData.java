@@ -286,12 +286,15 @@ public class MeshData {
 	public void addSubMesh(ArrayList<Vertex> vertices,
 	                       int[] indices) {
 
-		assert(vertices.size() >= 3);
+		if (vertices.size() < 3) {
+			vertices = new ArrayList<Vertex>();
+			indices = new int[0];
+		}
 
 		SubMeshData sub = new SubMeshData();
 		_subMeshesData.add(sub);
 
-		boolean hasBoneInfo = vertices.get(0).getBoneIndices() != null;
+		boolean hasBoneInfo = vertices.size() > 0 && vertices.get(0).getBoneIndices() != null;
 
 		if (!hasBoneInfo) {
 			// If this mesh can not be animated, do an extra check and remove zero area triangles
@@ -305,7 +308,7 @@ public class MeshData {
 		assert((sub.indices.length % 3) == 0);
 
 		// Assume if there is one tex coordinate, there will be all of them
-		boolean hasTexCoords = vertices.get(0).getTexCoord() != null;
+		boolean hasTexCoords = vertices.size() > 0 && vertices.get(0).getTexCoord() != null;
 
 		sub.verts = new ArrayList<Vec3d>(vertices.size());
 		sub.normals = new ArrayList<Vec3d>(vertices.size());
