@@ -22,7 +22,7 @@ uniform mat4 normalMat;
 
 uniform int maxNumBones;
 
-in vec4 position;
+in vec3 position;
 in vec4 normal;
 in vec2 texCoord;
 
@@ -42,6 +42,8 @@ out vec3 viewDir;
 
 void main()
 {
+    vec4 pos = vec4(position, 1.0);
+
     vec4 animatedPos = vec4(0.0, 0.0, 0.0, 1.0);
     vec4 animatedNormal = vec4(0.0, 0.0, 0.0, 0.0);
 
@@ -49,7 +51,7 @@ void main()
     nor.xyz = normalize(normal.xyz);
     nor.w = 0;
 
-    vec4 bindSpacePos = bindSpaceMat * position;
+    vec4 bindSpacePos = bindSpaceMat * pos;
     vec4 bindSpaceNor = bindSpaceNorMat * nor;
 
     for (int b = 0; b < maxNumBones; ++b)
