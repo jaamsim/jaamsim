@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.util.Arrays;
+
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.UnitTypeInput;
@@ -46,8 +48,6 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
             example = "TimeSeries1  CycleTime { 8760.0 h }")
 	private final ValueInput cycleTime;
 
-	private int indexOfCurrentTime;  // The index of the time in the last call to getValueForTime()
-
 	{
 		unitType = new UnitTypeInput( "UnitType", "Key Inputs", UserSpecifiedUnit.class );
 		this.addInput( unitType, true );
@@ -76,12 +76,6 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		double[] tList = value.getValue().timeList;
 		if (this.getCycleTimeInHours() < tList[tList.length - 1])
 			throw new InputErrorException( "CycleTime must be larger than the last time in the series" );
-	}
-
-	@Override
-	public void earlyInit() {
-		super.earlyInit();
-		indexOfCurrentTime = 0;
 	}
 
 	@Override
@@ -123,7 +117,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	/**
 	 * Return the index for the given simulation time in hours
 	 */
-	public int getIndexForTimeHours( double time, int startIndex ) {
+	public int getIndexForTimeHours( double time ) {
 		double[] timeList = value.getValue().timeList;
 
 		// Determine the time in the cycle for the given time
@@ -133,30 +127,32 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 			timeInCycle -= completedCycles * this.getCycleTimeInHours();
 		}
 
-		// Perform linear search for time from startIndex
-		for( int i = startIndex; i < timeList.length-1; i++ ) {
-			if( Tester.lessOrEqualCheckTimeStep( timeList[ i ], timeInCycle )
-					&& Tester.lessCheckTimeStep( timeInCycle, timeList[ i+1 ] ) ) {
-				return i;
-			}
-		}
-
 		// If the time in the cycle is greater than the last time, return the last value
 		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList[ timeList.length - 1 ] ) ) {
 			return timeList.length - 1;
 		}
+		else {
+			// Otherwise, find the index with a binary search
+			int index = Arrays.binarySearch(timeList, timeInCycle);
 
-		// Perform linear search for time from 0
-		for( int i = 0; i < startIndex; i++ ) {
-			if( Tester.lessOrEqualCheckTimeStep( timeList[ i ], timeInCycle )
-					&& Tester.lessCheckTimeStep( timeInCycle, timeList[ i+1 ] ) ) {
-				return i;
+			// If the returned index is greater or equal to zero,
+			// then an exact match was found
+			if( index >= 0 ) {
+				return index;
+			}
+			else {
+				// If the returned index is negative,
+				// then index = -(insertion index)-1
+				// or (insertion index) = -(index+1) = -index-1
+				// If the time at the insertion index is within one tick,
+				// then return it
+				if( Tester.equalCheckTimeStep( time, timeList[-index - 1] ) )
+					return -index - 1;
+				else
+					// Otherwise, return the index before the insertion index
+					return -index - 2;
 			}
 		}
-
-		// No value was found for time
-		this.error( "getIndexForTime( "+time+", "+startIndex+" )", "No record was found for the given time.", "" );
-		return -1;
 	}
 
 	/**
@@ -166,7 +162,7 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	public double getNextChangeTimeAfterHours( double time ) {
 
 		// Collect parameters for the current time
-		int startIndex = this.getIndexForTimeHours(time,indexOfCurrentTime)+1;
+		int startIndex = this.getIndexForTimeHours(time)+1;
 		double cycleTime = this.getCycleTimeInHours();
 
 		// Determine how many cycles through the time series have been completed
