@@ -24,6 +24,8 @@ import java.util.HashMap;
 
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.Vec2d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.RenderException;
 
@@ -70,9 +72,9 @@ public class ObjReader {
 
 	private HashMap<String, Material> materialMap = new HashMap<String, Material>();
 
-	private ArrayList<Vec4d> vertices = new ArrayList<Vec4d>();
-	private ArrayList<Vec4d> texCoords = new ArrayList<Vec4d>();
-	private ArrayList<Vec4d> normals = new ArrayList<Vec4d>();
+	private ArrayList<Vec3d> vertices = new ArrayList<Vec3d>();
+	private ArrayList<Vec2d> texCoords = new ArrayList<Vec2d>();
+	private ArrayList<Vec3d> normals = new ArrayList<Vec3d>();
 	private ArrayList<FaceVert> faces = new ArrayList<FaceVert>();
 
 	private String activeMat = null;
@@ -148,27 +150,26 @@ public class ObjReader {
 
 		for (int i = 0; i < faces.size(); ++i) {
 			FaceVert fv = faces.get(i);
-			Vec4d pos = vertices.get(fv.v - 1);
-			Vec4d texCoord = null;
+			Vec3d pos = vertices.get(fv.v - 1);
+			Vec2d texCoord = null;
 			if (fv.t != -1)
 				texCoord = texCoords.get(fv.t - 1);
-			Vec4d normal = null;
+			Vec3d normal = null;
 			if (fv.n != -1) {
 				normal = normals.get(fv.n - 1);
 			} else {
 				// This face does not have a normal, we'd better generate one from the vertices
 				int faceInd = i / 3;
-				Vec4d p0 = vertices.get(faces.get(faceInd*3 + 0).v-1);
-				Vec4d p1 = vertices.get(faces.get(faceInd*3 + 1).v-1);
-				Vec4d p2 = vertices.get(faces.get(faceInd*3 + 2).v-1);
-				Vec4d d0 = new Vec4d();
-				d0.sub4(p1, p0);
-				Vec4d d1 = new Vec4d();
-				d1.sub4(p2, p0);
-				normal = new Vec4d();
+				Vec3d p0 = vertices.get(faces.get(faceInd*3 + 0).v-1);
+				Vec3d p1 = vertices.get(faces.get(faceInd*3 + 1).v-1);
+				Vec3d p2 = vertices.get(faces.get(faceInd*3 + 2).v-1);
+				Vec3d d0 = new Vec3d();
+				d0.sub3(p1, p0);
+				Vec3d d1 = new Vec3d();
+				d1.sub3(p2, p0);
+				normal = new Vec3d();
 				normal.cross3(d0, d1);
 				normal.normalize3();
-				normal.w = 0;
 			}
 
 			vertIndices[i] = map.getVertIndex(pos, normal, texCoord);

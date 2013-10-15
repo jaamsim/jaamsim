@@ -17,7 +17,8 @@ package com.jaamsim.MeshFiles;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.jaamsim.math.Vec4d;
+import com.jaamsim.math.Vec2d;
+import com.jaamsim.math.Vec3d;
 
 /**
  * This map builds up a list of unique vertices, and can return the index of vertices at add time
@@ -36,7 +37,7 @@ public class VertexMap {
 	 * @param texCoord
 	 * @return
 	 */
-	public int getVertIndex(Vec4d pos, Vec4d normal, Vec4d texCoord) {
+	public int getVertIndex(Vec3d pos, Vec3d normal, Vec2d texCoord) {
 		Vertex v = new Vertex(pos, normal, texCoord, null, null);
 		Integer index = vertMap.get(v);
 		if (index != null) {

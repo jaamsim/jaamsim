@@ -28,6 +28,7 @@ import com.jaamsim.MeshFiles.VertexMap;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.RenderException;
@@ -901,13 +902,12 @@ public class ColParser {
 
 	}
 
-	private Vec4d generateNormal(Vec4d p0, Vec4d p1, Vec4d p2, Vec4d t0, Vec4d t1) {
+	private Vec3d generateNormal(Vec4d p0, Vec4d p1, Vec4d p2, Vec4d t0, Vec4d t1) {
 		t0.sub3(p1, p0);
 		t1.sub3(p2, p0);
-		Vec4d norm = new Vec4d();
+		Vec3d norm = new Vec3d();
 		norm.cross3(t0, t1);
 		norm.normalize3();
-		norm.w = 0;
 		return norm;
 	}
 
@@ -954,7 +954,7 @@ public class ColParser {
 		Vec4d t0 = new Vec4d();
 		Vec4d t1 = new Vec4d();
 
-		Vec4d[] generatedNormals = null;
+		Vec3d[] generatedNormals = null;
 		if (!hasNormal) {
 			// Generate one normal per face
 			generatedNormals = new Vec4d[numVerts/3];
@@ -962,16 +962,15 @@ public class ColParser {
 				Vec4d p0 = posData[smd.posDesc.indices[i*3 + 0]];
 				Vec4d p1 = posData[smd.posDesc.indices[i*3 + 1]];
 				Vec4d p2 = posData[smd.posDesc.indices[i*3 + 2]];
-				Vec4d norm = generateNormal(p0, p1, p2, t0, t1);
+				Vec3d norm = generateNormal(p0, p1, p2, t0, t1);
 				generatedNormals[i] = norm;
 			}
 		}
 
 		for (int i = 0; i < numVerts; ++i) {
-			Vec4d pos = new Vec4d(posData[smd.posDesc.indices[i]]);
-			pos.w = 1;
+			Vec3d pos = new Vec3d(posData[smd.posDesc.indices[i]]);
 
-			Vec4d normal = null;
+			Vec3d normal = null;
 			if (hasNormal) {
 				// Make sure the normal is actually present, treat negative indices as missing normals
 				int normInd = smd.normDesc.indices[i];
@@ -984,16 +983,15 @@ public class ColParser {
 					normal = generateNormal(p0, p1, p2, t0, t1);
 				}
 				else {
-					normal = new Vec4d(normData[normInd]);
-					normal.w = 0;
+					normal = new Vec3d(normData[normInd]);
 				}
 			} else {
 				normal = generatedNormals[i/3];
 			}
 
-			Vec4d texCoord = null;
+			Vec2d texCoord = null;
 			if (hasTexCoords) {
-				texCoord = texCoordData[smd.texCoordDesc.indices[i]];
+				texCoord = new Vec2d(texCoordData[smd.texCoordDesc.indices[i]]);
 			}
 			fsg.indices[i] = fsg.vMap.getVertIndex(pos, normal, texCoord);
 		}

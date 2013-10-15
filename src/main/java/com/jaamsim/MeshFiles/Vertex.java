@@ -35,6 +35,21 @@ public class Vertex {
 
 	private int cachedHash = 0;
 
+	private static int hashVec2d(Vec2d v) {
+		int hash = 0;
+		hash = hash ^ Double.valueOf(v.x).hashCode();
+		hash = hash ^ Double.valueOf(v.y).hashCode();
+		return hash;
+	}
+
+	private static int hashVec3d(Vec3d v) {
+		int hash = 0;
+		hash = hash ^ Double.valueOf(v.x).hashCode();
+		hash = hash ^ Double.valueOf(v.y).hashCode();
+		hash = hash ^ Double.valueOf(v.z).hashCode();
+		return hash;
+	}
+
 	private static int hashVec4d(Vec4d v) {
 		int hash = 0;
 		hash = hash ^ Double.valueOf(v.x).hashCode();
@@ -44,7 +59,7 @@ public class Vertex {
 		return hash;
 	}
 
-	public Vertex(Vec4d position, Vec4d normal, Vec4d texCoord, Vec4d boneIndices, Vec4d boneWeights) {
+	public Vertex(Vec3d position, Vec3d normal, Vec2d texCoord, Vec4d boneIndices, Vec4d boneWeights) {
 		this.position = position;
 		this.normal = normal;
 		this.texCoord = texCoord;
@@ -54,10 +69,10 @@ public class Vertex {
 		// If we have boneIndices we must also have boneWeights
 		assert((boneIndices==null) == (boneWeights==null));
 
-		cachedHash = cachedHash ^ hashVec4d(position);
-		cachedHash = cachedHash ^ hashVec4d(normal);
+		cachedHash = cachedHash ^ hashVec3d(position);
+		cachedHash = cachedHash ^ hashVec3d(normal);
 		if (texCoord != null) {
-			cachedHash = cachedHash ^ hashVec4d(texCoord);
+			cachedHash = cachedHash ^ hashVec2d(texCoord);
 		}
 		if (boneIndices != null) {
 			cachedHash = cachedHash ^ hashVec4d(boneIndices);

@@ -24,6 +24,7 @@ import javax.xml.parsers.SAXParserFactory;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Action;
@@ -230,13 +231,13 @@ public class MeshReader {
 		ArrayList<Vertex> verts = new ArrayList<Vertex>(numVerts);
 
 		for (int i = 0; i < numVerts; ++i) {
-			Vec4d posVec = new Vec4d(positions[i*3+0], positions[i*3+1], positions[i*3+2], 1);
-			Vec4d normVec = new Vec4d(normals[i*3+0], normals[i*3+1], normals[i*3+2], 1);
-			Vec4d texCoordVec = null;
+			Vec3d posVec = new Vec3d(positions[i*3+0], positions[i*3+1], positions[i*3+2]);
+			Vec3d normVec = new Vec3d(normals[i*3+0], normals[i*3+1], normals[i*3+2]);
+			Vec2d texCoordVec = null;
 			Vec4d boneIndicesVec = null;
 			Vec4d boneWeightsVec = null;
 			if (hasTex) {
-				texCoordVec = new Vec4d(texCoords[i*2+0], texCoords[i*2+1], 0, 1);
+				texCoordVec = new Vec2d(texCoords[i*2+0], texCoords[i*2+1]);
 			}
 
 			if (hasBoneInfo) {
