@@ -55,9 +55,6 @@ public void testEquals() {
 	assertTrue(vec.equals2(seq));
 	assertFalse(vec.equals2(one));
 
-	assertTrue(vec.equals(seq));
-	assertFalse(vec.equals(one));
-
 	// Test -0.0 and 0.0 compare as equal
 	vec.set2(-0.0d, -0.0d);
 	assertTrue(vec.equals2(zero));
