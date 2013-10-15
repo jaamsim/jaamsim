@@ -23,6 +23,8 @@ import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.Vec2d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Action;
 import com.jaamsim.render.Armature;
@@ -59,9 +61,9 @@ public class MeshData {
 
 	public static class SubMeshData {
 
-		public ArrayList<Vec4d> verts;
-		public ArrayList<Vec4d> texCoords;
-		public ArrayList<Vec4d> normals;
+		public ArrayList<Vec3d> verts;
+		public ArrayList<Vec2d> texCoords;
+		public ArrayList<Vec3d> normals;
 		public int[] indices;
 
 		public ConvexHull staticHull;
@@ -74,7 +76,7 @@ public class MeshData {
 	}
 
 	public static class SubLineData {
-		public ArrayList<Vec4d> verts = new ArrayList<Vec4d>();
+		public ArrayList<Vec3d> verts = new ArrayList<Vec3d>();
 		public Color4d diffuseColor;
 
 		public int numVerts;
@@ -256,14 +258,14 @@ public class MeshData {
 			int ind0 = indices[triInd * 3 + 0];
 			int ind1 = indices[triInd * 3 + 1];
 			int ind2 = indices[triInd * 3 + 2];
-			Vec4d pos0 = vertices.get(ind0).getPos();
-			Vec4d pos1 = vertices.get(ind1).getPos();
-			Vec4d pos2 = vertices.get(ind2).getPos();
+			Vec3d pos0 = vertices.get(ind0).getPos();
+			Vec3d pos1 = vertices.get(ind1).getPos();
+			Vec3d pos2 = vertices.get(ind2).getPos();
 
 			if (ind0 == ind1 || ind1 == ind2 || ind2 == ind0) {
 				continue;
 			}
-			if (pos0.equals4(pos1) || pos1.equals4(pos2) || pos2.equals4(pos0)) {
+			if (pos0.equals3(pos1) || pos1.equals3(pos2) || pos2.equals3(pos0)) {
 				continue;
 			}
 			goodIndices[goodWritePos++] = ind0;
@@ -305,11 +307,11 @@ public class MeshData {
 		// Assume if there is one tex coordinate, there will be all of them
 		boolean hasTexCoords = vertices.get(0).getTexCoord() != null;
 
-		sub.verts = new ArrayList<Vec4d>(vertices.size());
-		sub.normals = new ArrayList<Vec4d>(vertices.size());
+		sub.verts = new ArrayList<Vec3d>(vertices.size());
+		sub.normals = new ArrayList<Vec3d>(vertices.size());
 
 		if (hasTexCoords) {
-			sub.texCoords = new ArrayList<Vec4d>(vertices.size());
+			sub.texCoords = new ArrayList<Vec2d>(vertices.size());
 		}
 		if (hasBoneInfo) {
 			sub.boneIndices = new ArrayList<Vec4d>(vertices.size());
@@ -343,7 +345,7 @@ public class MeshData {
 			// Generate the per-bone convex hulls
 			sub.boneHulls = new ArrayList<ConvexHull>(maxBoneIndex + 1);
 			for(int i = 0; i < maxBoneIndex + 1; ++i) {
-				ArrayList<Vec4d> boneVerts = new ArrayList<Vec4d>();
+				ArrayList<Vec3d> boneVerts = new ArrayList<Vec3d>();
 				// Scan all vertices, and if it is influenced by this bone, add it to the hull
 				for (Vertex v : vertices) {
 					Vec4d boneIndices = v.getBoneIndices();
@@ -366,7 +368,7 @@ public class MeshData {
 				sub.boneHulls.add(boneHull);
 			}
 			// Lastly, make a convex hull of any vertices that are influenced by no bones
-			ArrayList<Vec4d> bonelessVerts = new ArrayList<Vec4d>();
+			ArrayList<Vec3d> bonelessVerts = new ArrayList<Vec3d>();
 			for (Vertex v : vertices) {
 				Vec4d boneIndices = v.getBoneIndices();
 				if (boneIndices.x == -1) {
@@ -379,7 +381,7 @@ public class MeshData {
 		sub.staticHull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
 	}
 
-	public void addSubLine(Vec4d[] vertices,
+	public void addSubLine(Vec3d[] vertices,
 			Color4d diffuseColor) {
 
 		SubLineData sub = new SubLineData();
@@ -406,20 +408,20 @@ public class MeshData {
 	 * Builds the convex hull of the current mesh based on all the existing sub meshes.
 	 */
 	public void finalizeData() {
-		ArrayList<Vec4d> totalHullPoints = new ArrayList<Vec4d>();
+		ArrayList<Vec3d> totalHullPoints = new ArrayList<Vec3d>();
 		// Collect all the points from the hulls of the individual sub meshes
 		for (SubMeshInstance subInst : _subMeshInstances) {
 
-			List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
-			List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
+			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
+			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(subInst.transform, pointsRef);
 
 			totalHullPoints.addAll(subPoints);
 		}
 		// And the lines
 		for (SubLineInstance subInst : _subLineInstances) {
 
-			List<Vec4d> pointsRef = _subLinesData.get(subInst.subLineIndex).hull.getVertices();
-			List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
+			List<Vec3d> pointsRef = _subLinesData.get(subInst.subLineIndex).hull.getVertices();
+			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(subInst.transform, pointsRef);
 
 			totalHullPoints.addAll(subPoints);
 		}
@@ -476,7 +478,7 @@ public class MeshData {
 			return _staticHull;
 
 		// Otherwise, we need to calculate a new hull
-		ArrayList<Vec4d> hullPoints = new ArrayList<Vec4d>();
+		ArrayList<Vec3d> hullPoints = new ArrayList<Vec3d>();
 
 		for (ConvexHull subHull : subInstHulls) {
 			hullPoints.addAll(subHull.getVertices());
@@ -485,8 +487,8 @@ public class MeshData {
 		// And the lines
 		for (SubLineInstance subInst : _subLineInstances) {
 
-			List<Vec4d> pointsRef = _subLinesData.get(subInst.subLineIndex).hull.getVertices();
-			List<Vec4d> subPoints = RenderUtils.transformPoints(subInst.transform, pointsRef, 0);
+			List<Vec3d> pointsRef = _subLinesData.get(subInst.subLineIndex).hull.getVertices();
+			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(subInst.transform, pointsRef);
 
 			hullPoints.addAll(subPoints);
 		}
@@ -505,13 +507,13 @@ public class MeshData {
 
 	private ConvexHull getSubInstHull(SubMeshInstance subInst, ArrayList<Action.Queue> actions) {
 
-		ArrayList<Vec4d> hullPoints = new ArrayList<Vec4d>();
+		ArrayList<Vec3d> hullPoints = new ArrayList<Vec3d>();
 		Mat4d animatedTransform = subInst.getAnimatedTransform(actions);
 
 		if (actions == null || actions.size() == 0 || subInst.armatureIndex == -1) {
 			// This is an unanimated sub instance, just add the normal points
-			List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
-			List<Vec4d> subPoints = RenderUtils.transformPoints(animatedTransform, pointsRef, 0);
+			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
+			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
 			hullPoints.addAll(subPoints);
 		} else {
 			// We need to add each bone in it's animated position
@@ -525,17 +527,17 @@ public class MeshData {
 				if (bInstInd < subInst.boneMapper.length)
 					boneMat = pose.get(subInst.boneMapper[bInstInd]);
 
-				for (Vec4d hullVect : boneHull.getVertices()) {
-					Vec4d temp = new Vec4d(hullVect);
-					temp.mult4(animatedTransform, temp);
+				for (Vec3d hullVect : boneHull.getVertices()) {
+					Vec3d temp = new Vec3d(hullVect);
+					temp.multAndTrans3(animatedTransform, temp);
 					if (boneMat != null)
-						temp.mult4(boneMat, temp);
+						temp.multAndTrans3(boneMat, temp);
 					hullPoints.add(temp);
 				}
 			}
 			// Add the boneless vertices
-			List<Vec4d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).bonelessHull.getVertices();
-			List<Vec4d> subPoints = RenderUtils.transformPoints(animatedTransform, pointsRef, 0);
+			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).bonelessHull.getVertices();
+			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
 			hullPoints.addAll(subPoints);
 		}
 

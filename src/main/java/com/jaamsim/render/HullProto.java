@@ -23,7 +23,7 @@ import javax.media.opengl.GL2GL3;
 
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
-import com.jaamsim.math.Vec4d;
+import com.jaamsim.math.Vec3d;
 
 /**
  * A renderable prototype for a convex hull
@@ -87,10 +87,10 @@ public class HullProto {
 		int vertexBuffer = is[0];
 		int indexBuffer = is[1];
 
-		List<Vec4d> verts = _hull.getVertices();
+		List<Vec3d> verts = _hull.getVertices();
 		// Generate the vertex buffer
 		FloatBuffer fb = FloatBuffer.allocate(verts.size() * 3); //
-		for (Vec4d v : verts) {
+		for (Vec3d v : verts) {
 			RenderUtils.putPointXYZ(fb, v);
 		}
 		fb.flip();

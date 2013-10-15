@@ -57,7 +57,7 @@ public Plane() {
  * @param p2
  */
 
-public Plane(Vec4d p0, Vec4d p1, Vec4d p2) {
+public Plane(Vec3d p0, Vec3d p1, Vec3d p2) {
 	this.set(p0, p1, p2);
 }
 

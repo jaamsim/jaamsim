@@ -130,7 +130,7 @@ public static Mat4d rotateAroundPoint(Quaternion rot, Vec3d point) {
 	return ret.getMat4dRef();
 }
 
-public static double collisionDistPoly(Ray r, Vec4d[] points) {
+public static double collisionDistPoly(Ray r, Vec3d[] points) {
 	if (points.length < 3) {
 		return -1; // Should this be an error?
 	}
@@ -150,8 +150,8 @@ public static double collisionDistPoly(Ray r, Vec4d[] points) {
 
 	for (int i = 0; i < points.length; ++i) {
 		// Check that the collision point is on the same winding side of all the
-		Vec4d p0 = points[i];
-		Vec4d p1 = points[(i + 1) % points.length];
+		Vec3d p0 = points[i];
+		Vec3d p1 = points[(i + 1) % points.length];
 		a.sub3(p0, collisionPoint);
 		b.sub3(p1, p0);
 		cross.cross3(a, b);

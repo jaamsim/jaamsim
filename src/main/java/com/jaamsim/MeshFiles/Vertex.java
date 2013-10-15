@@ -14,6 +14,8 @@
  */
 package com.jaamsim.MeshFiles;
 
+import com.jaamsim.math.Vec2d;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 
 /**
@@ -24,9 +26,9 @@ import com.jaamsim.math.Vec4d;
  */
 public class Vertex {
 
-	private Vec4d position;
-	private Vec4d normal;
-	private Vec4d texCoord;
+	private Vec3d position;
+	private Vec3d normal;
+	private Vec2d texCoord;
 
 	private Vec4d boneIndices;
 	private Vec4d boneWeights;
@@ -69,10 +71,10 @@ public class Vertex {
 			return false;
 		}
 		Vertex ov = (Vertex)o;
-		if (position != ov.position && !position.equals4(ov.position)) {
+		if (position != ov.position && !position.equals3(ov.position)) {
 			return false;
 		}
-		if (normal != ov.normal && !normal.equals4(ov.normal)) {
+		if (normal != ov.normal && !normal.equals3(ov.normal)) {
 			return false;
 		}
 
@@ -81,7 +83,7 @@ public class Vertex {
 			return false;
 		}
 
-		if (texCoord != null && texCoord != ov.texCoord && !texCoord.equals4(ov.texCoord)) {
+		if (texCoord != null && texCoord != ov.texCoord && !texCoord.equals2(ov.texCoord)) {
 			return false;
 		}
 
@@ -102,15 +104,15 @@ public class Vertex {
 		return cachedHash;
 	}
 
-	public Vec4d getPos() {
+	public Vec3d getPos() {
 		return position;
 	}
 
-	public Vec4d getNormal() {
+	public Vec3d getNormal() {
 		return normal;
 	}
 
-	public Vec4d getTexCoord() {
+	public Vec2d getTexCoord() {
 		return texCoord;
 	}
 	public Vec4d getBoneIndices() {

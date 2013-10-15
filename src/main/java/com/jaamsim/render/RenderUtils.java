@@ -72,21 +72,21 @@ public class RenderUtils {
 		}
 	}
 
-	public static List<Vec4d> transformPoints(Transform trans, List<Vec4d> points, int dummy) {
-		List<Vec4d> ret = new ArrayList<Vec4d>();
-		for (Vec4d p : points) {
-			Vec4d v = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			trans.apply(p, v);
-			ret.add(v);
-		}
-		return ret;
-	}
-
 	public static List<Vec4d> transformPoints(Mat4d mat, List<Vec4d> points, int dummy) {
 		List<Vec4d> ret = new ArrayList<Vec4d>();
 		for (Vec4d p : points) {
 			Vec4d v = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			v.mult4(mat, p);
+			ret.add(v);
+		}
+		return ret;
+	}
+
+	public static List<Vec3d> transformPointsWithTrans(Mat4d mat, List<Vec3d> points) {
+		List<Vec3d> ret = new ArrayList<Vec3d>();
+		for (Vec3d p : points) {
+			Vec3d v = new Vec3d();
+			v.multAndTrans3(mat, p);
 			ret.add(v);
 		}
 		return ret;

@@ -28,6 +28,7 @@ import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Renderer.ShaderHandle;
@@ -715,7 +716,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	{
 		// Init vertices
 		FloatBuffer fb = FloatBuffer.allocate(data.verts.size() * 3); //
-		for (Vec4d v : data.verts) {
+		for (Vec3d v : data.verts) {
 			RenderUtils.putPointXYZ(fb, v);
 		}
 		fb.flip();
@@ -742,7 +743,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 		} else
 		{
 			FloatBuffer fb = FloatBuffer.allocate(data.texCoords.size() * 2); //
-			for (Vec4d v : data.texCoords) {
+			for (Vec2d v : data.texCoords) {
 				RenderUtils.putPointXY(fb, v);
 			}
 			fb.flip();
@@ -814,7 +815,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	{
 		// Init normals
 		FloatBuffer fb = FloatBuffer.allocate(data.normals.size() * 3);
-		for (Vec4d v : data.normals) {
+		for (Vec3d v : data.normals) {
 			RenderUtils.putPointXYZ(fb, v);
 		}
 		fb.flip();
@@ -862,7 +863,7 @@ private void loadGPUSubLine(GL2GL3 gl, Renderer renderer, MeshData.SubLineData d
 
 	// Init vertices
 	FloatBuffer fb = FloatBuffer.allocate(data.verts.size() * 3); //
-	for (Vec4d v : data.verts) {
+	for (Vec3d v : data.verts) {
 		RenderUtils.putPointXYZ(fb, v);
 	}
 	fb.flip();

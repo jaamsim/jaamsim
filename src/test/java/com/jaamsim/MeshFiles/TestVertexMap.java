@@ -30,7 +30,6 @@ public class TestVertexMap {
 		assertTrue(ind3 == 1);
 
 		ArrayList<Vertex> verts = map.getVertList();
-		assertTrue(verts.get(1).getTexCoord().equals4(vecD));
-		assertTrue(!verts.get(1).getTexCoord().equals4(vecCb));
+		assertTrue(verts.get(1).getTexCoord().equals2(vecD));
 	}
 }

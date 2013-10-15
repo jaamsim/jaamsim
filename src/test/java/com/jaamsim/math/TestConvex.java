@@ -26,7 +26,7 @@ public class TestConvex {
 	public void TestConvexCube() {
 		// Create a list of points with 3 nested cubes
 
-		ArrayList<Vec4d> totalPoints = new ArrayList<Vec4d>();
+		ArrayList<Vec3d> totalPoints = new ArrayList<Vec3d>();
 		//totalPoints.addAll(getPointsForCube(1));
 		//totalPoints.addAll(getPointsForCube(2));
 		totalPoints.addAll(getPointsForCube(3));
@@ -55,7 +55,7 @@ public class TestConvex {
 
 	@Test
 	public void TestConvexCubeToRay() {
-		ArrayList<Vec4d> totalPoints = new ArrayList<Vec4d>();
+		ArrayList<Vec3d> totalPoints = new ArrayList<Vec3d>();
 		totalPoints.addAll(getPointsForCube(1));
 		totalPoints.addAll(getPointsForCube(2));
 		totalPoints.addAll(getPointsForCube(3));

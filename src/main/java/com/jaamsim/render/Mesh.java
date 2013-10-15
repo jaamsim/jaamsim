@@ -154,7 +154,7 @@ public double getCollisionDist(Ray r, boolean precise)
 
 		Mat4d invMat = subMat.inverse();
 
-		ArrayList<Vec4d> vertices = null;
+		ArrayList<Vec3d> vertices = null;
 		if (_actions == null || _actions.size() == 0 || subInst.armatureIndex == -1) {
 			// Not animated, just take the static vertices
 			vertices = subData.verts;
@@ -170,13 +170,13 @@ public double getCollisionDist(Ray r, boolean precise)
 			double[] weights = new double[4];
 			int[] indices = new int[4];
 
-			Vec4d bindSpaceVert = new Vec4d();
-			Vec4d temp = new Vec4d();
+			Vec3d bindSpaceVert = new Vec3d();
+			Vec3d temp = new Vec3d();
 
-			vertices = new ArrayList<Vec4d>(subData.verts.size());
+			vertices = new ArrayList<Vec3d>(subData.verts.size());
 			for (int i = 0; i < subData.verts.size(); ++i) {
-				Vec4d vert = subData.verts.get(i);
-				bindSpaceVert.mult4(bindMat, vert);
+				Vec3d vert = subData.verts.get(i);
+				bindSpaceVert.multAndTrans3(bindMat, vert);
 
 				Vec4d rawWeights = subData.boneWeights.get(i);
 				Vec4d rawIndices = subData.boneIndices.get(i);
@@ -195,7 +195,7 @@ public double getCollisionDist(Ray r, boolean precise)
 
 					// Add the influence of all the bones
 					Mat4d boneMat = pose.get(indices[j]);
-					temp.mult4(boneMat, bindSpaceVert);
+					temp.multAndTrans3(boneMat, bindSpaceVert);
 					temp.scale3(weights[j]);
 					animVert.add3(temp);
 				}
@@ -206,15 +206,15 @@ public double getCollisionDist(Ray r, boolean precise)
 		}
 
 		Ray localRay = r.transform(invMat);
-		Vec4d[] triVecs = new Vec4d[3];
+		Vec3d[] triVecs = new Vec3d[3];
 
 		for (int triInd = 0; triInd < subData.indices.length / 3; ++triInd) {
 			triVecs[0] = vertices.get(subData.indices[triInd*3+0]);
 			triVecs[1] = vertices.get(subData.indices[triInd*3+1]);
 			triVecs[2] = vertices.get(subData.indices[triInd*3+2]);
-			if ( triVecs[0].equals4(triVecs[1]) ||
-			     triVecs[1].equals4(triVecs[2]) ||
-			     triVecs[2].equals4(triVecs[0])) {
+			if ( triVecs[0].equals3(triVecs[1]) ||
+			     triVecs[1].equals3(triVecs[2]) ||
+			     triVecs[2].equals3(triVecs[0])) {
 				continue;
 			}
 			double triDist = MathUtils.collisionDistPoly(localRay, triVecs);
@@ -252,7 +252,7 @@ public double getCollisionDist(Ray r, boolean precise)
 		Vec4d[] lineVerts = new Vec4d[subData.verts.size()];
 		for (int i = 0; i < lineVerts.length; ++i) {
 			lineVerts[i] = new Vec4d();
-			lineVerts[i].mult4(subMat, subData.verts.get(i));
+			lineVerts[i].multAndTrans3(subMat, subData.verts.get(i));
 		}
 
 		double lineDist = MathUtils.collisionDistLines(rayMat, lineVerts, 0.01309); // Angle is 0.75 deg in radians

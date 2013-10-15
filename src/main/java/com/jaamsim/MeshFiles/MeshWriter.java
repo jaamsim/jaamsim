@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 
 
@@ -130,7 +131,7 @@ public class MeshWriter {
 			// This mesh has tex coordinates
 			startTag("<TexCoords index='0' dims='2'>");
 			indent();
-			for (Vec3d t : subMesh.texCoords) {
+			for (Vec2d t : subMesh.texCoords) {
 				out.write(String.format("%f %f ", t.x, t.y));
 			}
 			out.write("\n");

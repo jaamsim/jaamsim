@@ -35,7 +35,7 @@ public class ConvexHull {
 	public static long sortTime;
 
 
-	private ArrayList<Vec4d> _verts;
+	private ArrayList<Vec3d> _verts;
 
 	private boolean _isDegenerate = false;
 
@@ -43,10 +43,10 @@ public class ConvexHull {
 
 	private double _radius;
 
-	public static ConvexHull TryBuildHull(ArrayList<Vec4d> verts, int numAttempts, int maxNumPoints) {
+	public static ConvexHull TryBuildHull(ArrayList<Vec3d> verts, int numAttempts, int maxNumPoints) {
 
 		long filterStart = System.nanoTime();
-		ArrayList<Vec4d> baseVerts = removeDoubles(verts);
+		ArrayList<Vec3d> baseVerts = removeDoubles(verts);
 		filterTime += System.nanoTime() - filterStart;
 
 		assert(numAttempts > 0);
@@ -73,7 +73,7 @@ public class ConvexHull {
 	 * Initialize this hull from the vertices provided. This is an implementation of the QuickHull algorithm (or close enough to it)
 	 * @param verts
 	 */
-	public ConvexHull(ArrayList<Vec4d> baseVerts, int seed, int maxNumPoints) {
+	public ConvexHull(ArrayList<Vec3d> baseVerts, int seed, int maxNumPoints) {
 
 		assert(seed >= 0);
 		assert(seed < 1);
@@ -94,10 +94,10 @@ public class ConvexHull {
 		// Create two starting faces (both use the same verts but are wound backwards to face in both directions)
 
 		int ind0 = baseVerts.size() * seed;
-		Vec4d v0 = baseVerts.get(0);
+		Vec3d v0 = baseVerts.get(0);
 		double bestDist = 0;
 		int ind1 = 0;
-		Vec4d temp = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Vec3d temp = new Vec3d();
 		for (int i = 0; i < baseVerts.size(); ++i) {
 			if (i == ind0) continue;
 
@@ -111,7 +111,7 @@ public class ConvexHull {
 		}
 		// Now ind2 is the vertex furthest from the line of the above two
 		bestDist = 0;
-		Vec4d dir = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		Vec3d dir = new Vec3d();
 		dir.sub3(v0, baseVerts.get(ind1));
 		dir.normalize3();
 		int ind2 = 0;
@@ -188,7 +188,7 @@ public class ConvexHull {
 			int farInd = f.furthestInd;
 
 			// Remove any faces that can see this point and orphan any points owned by these faces
-			Vec4d farVert = baseVerts.get(farInd);
+			Vec3d farVert = baseVerts.get(farInd);
 
 			ArrayList<TempHullFace> deadFaces = new ArrayList<TempHullFace>();
 
@@ -280,12 +280,12 @@ public class ConvexHull {
 		buildTime += finalizeStart - buildStart;
 
 		// Now that we have all the faces we can create a real subset of points we care about
-		ArrayList<Vec4d> realVerts = new ArrayList<Vec4d>();
+		ArrayList<Vec3d> realVerts = new ArrayList<Vec3d>();
 		for (TempHullFace tf : tempFaces) {
 			HullFace realFace = new HullFace();
 			for (int i = 0; i < 3; ++i) {
 
-				Vec4d oldVert = baseVerts.get(tf.indices[i]);
+				Vec3d oldVert = baseVerts.get(tf.indices[i]);
 
 				int newInd = realVerts.size();
 
@@ -316,9 +316,9 @@ public class ConvexHull {
 	} // End of ConvexHull() Constructor
 
 
-	private static final Comparator<Vec4d> COMP = new Comparator<Vec4d>() {
+	private static final Comparator<Vec3d> COMP = new Comparator<Vec3d>() {
 		@Override
-		public int compare(Vec4d v0, Vec4d v1) {
+		public int compare(Vec3d v0, Vec3d v1) {
 			int comp;
 			comp = Double.compare(v0.x, v1.x);
 			if (comp != 0)
@@ -328,11 +328,8 @@ public class ConvexHull {
 			if (comp != 0)
 				return comp;
 
-			comp = Double.compare(v0.z, v1.z);
-			if (comp != 0)
-				return comp;
+			return Double.compare(v0.z, v1.z);
 
-			return Double.compare(v0.w, v1.w);
 		}
 	};
 
@@ -341,13 +338,13 @@ public class ConvexHull {
 	 * @param orig
 	 * @return
 	 */
-	private static ArrayList<Vec4d> removeDoubles(List<Vec4d> orig) {
-		ArrayList<Vec4d> ret = new ArrayList<Vec4d>();
+	private static ArrayList<Vec3d> removeDoubles(List<Vec3d> orig) {
+		ArrayList<Vec3d> ret = new ArrayList<Vec3d>();
 		if (orig.size() == 0) {
 			return ret;
 		}
 
-		final ArrayList<Vec4d> copy = new ArrayList<Vec4d>(orig);
+		final ArrayList<Vec3d> copy = new ArrayList<Vec3d>(orig);
 
 		long sortStart = System.nanoTime();
 
@@ -427,7 +424,7 @@ public class ConvexHull {
 		return _faces;
 	}
 
-	public List<Vec4d> getVertices() {
+	public List<Vec3d> getVertices() {
 
 		return _verts;
 	}
@@ -448,8 +445,8 @@ public class ConvexHull {
 		trans.inverse(inv);
 
 		// P is the point in hull space
-		Vec4d p = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		inv.apply(point, p);
+		Vec3d p = new Vec3d();
+		inv.multAndTrans(point, p);
 
 		Plane plane = new Plane();
 		for (HullFace f : _faces) {
@@ -536,7 +533,7 @@ public class ConvexHull {
 		public int furthestInd = 0;
 		public final ArrayList<Integer> points = new ArrayList<Integer>();
 
-		public TempHullFace(int i0, int i1, int i2, ArrayList<Vec4d> verts) {
+		public TempHullFace(int i0, int i1, int i2, ArrayList<Vec3d> verts) {
 			indices[0] = i0;
 			indices[1] = i1;
 			indices[2] = i2;
@@ -545,8 +542,8 @@ public class ConvexHull {
 			                  verts.get(indices[2]));
 
 		}
-		public void addPoint(int ind, ArrayList<Vec4d> verts) {
-			Vec4d v = verts.get(ind);
+		public void addPoint(int ind, ArrayList<Vec3d> verts) {
+			Vec3d v = verts.get(ind);
 			double dist = plane.getNormalDist(v);
 			if (dist >= furthestDist) {
 				furthestDist = dist;
@@ -582,13 +579,13 @@ public class ConvexHull {
 		      _verts.get(f.indices[2]));
 	}
 
-	private void makeDegenerate(ArrayList<Vec4d> vs) {
+	private void makeDegenerate(ArrayList<Vec3d> vs) {
 		_isDegenerate = true;
 		_verts = vs;
 		_faces = new ArrayList<HullFace>();
 		// Figure out a radius
 		_radius = 0;
-		for (Vec4d v : vs) {
+		for (Vec3d v : vs) {
 			if (v.mag3() > _radius) {
 				_radius = v.mag3();
 			}
