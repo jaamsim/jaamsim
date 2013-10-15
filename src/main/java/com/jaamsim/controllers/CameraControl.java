@@ -61,7 +61,7 @@ public class CameraControl implements WindowInteractionListener {
 			PolarInfo pi = (PolarInfo)o;
 
 			return pi.rotZ == rotZ && pi.rotX == rotX && pi.radius == radius &&
-			       viewCenter != null && viewCenter.equals(pi.viewCenter);
+			       viewCenter != null && viewCenter.equals3(pi.viewCenter);
 		}
 	}
 
