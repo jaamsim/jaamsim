@@ -957,7 +957,7 @@ public class ColParser {
 		Vec3d[] generatedNormals = null;
 		if (!hasNormal) {
 			// Generate one normal per face
-			generatedNormals = new Vec4d[numVerts/3];
+			generatedNormals = new Vec3d[numVerts/3];
 			for (int i = 0; i < numVerts / 3; ++i) {
 				Vec4d p0 = posData[smd.posDesc.indices[i*3 + 0]];
 				Vec4d p1 = posData[smd.posDesc.indices[i*3 + 1]];

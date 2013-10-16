@@ -25,7 +25,6 @@ import com.jaamsim.math.Vec4d;
  *
  */
 public class Vertex {
-
 	private Vec3d position;
 	private Vec3d normal;
 	private Vec2d texCoord;
