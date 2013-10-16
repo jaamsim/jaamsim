@@ -1338,11 +1338,22 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			assert(target.isLoaded());
 
 			// Collect the renderables
-			ArrayList<Renderable> renderables = new ArrayList<Renderable>();
-			ArrayList<OverlayRenderable> overlay = new ArrayList<OverlayRenderable>();
-			for (RenderProxy p : message.scene) {
-				p.collectRenderables(this, renderables);
-				p.collectOverlayRenderables(this, overlay);
+			ArrayList<Renderable> renderables;
+			ArrayList<OverlayRenderable> overlay;
+
+			if (message.scene != null) {
+				renderables = new ArrayList<Renderable>();
+				overlay = new ArrayList<OverlayRenderable>();
+				for (RenderProxy p : message.scene) {
+					p.collectRenderables(this, renderables);
+					p.collectOverlayRenderables(this, overlay);
+				}
+			} else {
+				// Use the current current scene if one is not provided
+				synchronized(_sceneLock) {
+					renderables = new ArrayList<Renderable>(_currentScene);
+					overlay = new ArrayList<OverlayRenderable>(_currentOverlay);
+				}
 			}
 
 			_sharedContext.makeCurrent();

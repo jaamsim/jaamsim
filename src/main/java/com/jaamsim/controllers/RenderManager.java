@@ -1505,7 +1505,7 @@ public class RenderManager implements DragSourceListener {
 
 		CameraInfo camInfo = new CameraInfo(Math.PI/3, viewDist*0.1, viewDist*10, trans, null);
 
-		return _renderer.renderOffscreen(_cachedScene, viewID, camInfo, width, height, null, target);
+		return _renderer.renderOffscreen(null, viewID, camInfo, width, height, null, target);
 	}
 
 	public Future<BufferedImage> getPreviewForDisplayModel(DisplayModel dm, Runnable notifier) {
