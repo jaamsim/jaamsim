@@ -226,6 +226,19 @@ static final boolean nonNormalMag(double mag) {
 	return mag == 0.0d || Double.isNaN(mag) || Double.isInfinite(mag);
 }
 
+private void _norm2(Vec2d v) {
+	double mag = _dot2(v, v);
+	if (nonNormalMag(mag)) {
+		this.x = 0.0d;
+		this.y = 1.0d;
+		return;
+	}
+
+	mag = Math.sqrt(mag);
+	this.x = v.x / mag;
+	this.y = v.y / mag;
+}
+
 /**
  * Normalize the first two components in-place
  *
@@ -233,17 +246,7 @@ static final boolean nonNormalMag(double mag) {
  * all components but the last to zero, the last component is set to one.
  */
 public void normalize2() {
-	double mag = _dot2(this, this);
-	if (nonNormalMag(mag)) {
-		assert false;
-		this.x = 0.0d;
-		this.y = 1.0d;
-		return;
-	}
-
-	mag = Math.sqrt(mag);
-	this.x = this.x / mag;
-	this.y = this.y / mag;
+	_norm2(this);
 }
 
 /**
@@ -254,17 +257,7 @@ public void normalize2() {
  * @throws NullPointerException if v is null
  */
 public void normalize2(Vec2d v) {
-	double mag = _dot2(v, v);
-	if (nonNormalMag(mag)) {
-		assert false;
-		this.x = 0.0d;
-		this.y = 1.0d;
-	}
-	else {
-		mag = Math.sqrt(mag);
-		this.x = v.x / mag;
-		this.y = v.y / mag;
-	}
+	_norm2(v);
 }
 
 /**

@@ -255,16 +255,9 @@ public double magSquare4() {
 	return _dot4(this, this);
 }
 
-/**
- * Normalize the first four components in-place
- *
- * If the Vec has a zero magnitude or contains NaN or Inf, this sets
- * all components but the last to zero, the last component is set to one.
- */
-public void normalize4() {
-	double mag = _dot4(this, this);
+private void _norm4(Vec4d v) {
+	double mag = _dot4(v, v);
 	if (nonNormalMag(mag)) {
-		assert false;
 		this.x = 0.0d;
 		this.y = 0.0d;
 		this.z = 0.0d;
@@ -273,10 +266,20 @@ public void normalize4() {
 	}
 
 	mag = Math.sqrt(mag);
-	this.x = this.x / mag;
-	this.y = this.y / mag;
-	this.z = this.z / mag;
-	this.w = this.w / mag;
+	this.x = v.x / mag;
+	this.y = v.y / mag;
+	this.z = v.z / mag;
+	this.w = v.w / mag;
+}
+
+/**
+ * Normalize the first four components in-place
+ *
+ * If the Vec has a zero magnitude or contains NaN or Inf, this sets
+ * all components but the last to zero, the last component is set to one.
+ */
+public void normalize4() {
+	_norm4(this);
 }
 
 /**
@@ -287,21 +290,7 @@ public void normalize4() {
  * @throws NullPointerException if v is null
  */
 public void normalize4(Vec4d v) {
-	double mag = _dot4(v, v);
-	if (nonNormalMag(mag)) {
-		assert false;
-		this.x = 0.0d;
-		this.y = 0.0d;
-		this.z = 0.0d;
-		this.w = 1.0d;
-	}
-	else {
-		mag = Math.sqrt(mag);
-		this.x = v.x / mag;
-		this.y = v.y / mag;
-		this.z = v.z / mag;
-		this.w = v.w / mag;
-	}
+	_norm4(v);
 }
 
 /**

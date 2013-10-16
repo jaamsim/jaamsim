@@ -234,16 +234,9 @@ public double magSquare3() {
 	return _dot3(this, this);
 }
 
-/**
- * Normalize the first three components in-place
- *
- * If the Vec has a zero magnitude or contains NaN or Inf, this sets
- * all components but the last to zero, the last component is set to one.
- */
-public void normalize3() {
-	double mag = _dot3(this, this);
+private void _norm3(Vec3d v) {
+	double mag = _dot3(v, v);
 	if (nonNormalMag(mag)) {
-		//assert false;
 		this.x = 0.0d;
 		this.y = 0.0d;
 		this.z = 1.0d;
@@ -251,9 +244,19 @@ public void normalize3() {
 	}
 
 	mag = Math.sqrt(mag);
-	this.x = this.x / mag;
-	this.y = this.y / mag;
-	this.z = this.z / mag;
+	this.x = v.x / mag;
+	this.y = v.y / mag;
+	this.z = v.z / mag;
+}
+
+/**
+ * Normalize the first three components in-place
+ *
+ * If the Vec has a zero magnitude or contains NaN or Inf, this sets
+ * all components but the last to zero, the last component is set to one.
+ */
+public void normalize3() {
+	_norm3(this);
 }
 
 /**
@@ -264,19 +267,7 @@ public void normalize3() {
  * @throws NullPointerException if v is null
  */
 public void normalize3(Vec3d v) {
-	double mag = _dot3(v, v);
-	if (nonNormalMag(mag)) {
-		assert false;
-		this.x = 0.0d;
-		this.y = 0.0d;
-		this.z = 1.0d;
-	}
-	else {
-		mag = Math.sqrt(mag);
-		this.x = v.x / mag;
-		this.y = v.y / mag;
-		this.z = v.z / mag;
-	}
+	_norm3(v);
 }
 
 /**
