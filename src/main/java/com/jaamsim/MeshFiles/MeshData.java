@@ -333,19 +333,19 @@ public class MeshData {
 				sub.texCoords.add(v.getTexCoord());
 			}
 			if (hasBoneInfo) {
-				Vec4d boneIndices = v.getBoneIndices();
-				Vec4d boneWeights = v.getBoneWeights();
-				sub.boneIndices.add(v4Interner.intern(boneIndices));
-				sub.boneWeights.add(v4Interner.intern(boneWeights));
+				Vec4d boneIndices = v4Interner.intern(v.getBoneIndices());
+				Vec4d boneWeights = v4Interner.intern(v.getBoneWeights());
+				sub.boneIndices.add(boneIndices);
+				sub.boneWeights.add(boneWeights);
 
-				if (boneWeights.x > 0 && (int)boneIndices.x > maxBoneIndex)
-					maxBoneIndex = (int)boneIndices.x;
-				if (boneWeights.y > 0 && (int)boneIndices.y > maxBoneIndex)
-					maxBoneIndex = (int)boneIndices.y;
-				if (boneWeights.z > 0 && (int)boneIndices.z > maxBoneIndex)
-					maxBoneIndex = (int)boneIndices.z;
-				if (boneWeights.w > 0 && (int)boneIndices.w > maxBoneIndex)
-					maxBoneIndex = (int)boneIndices.w;
+				if (boneWeights.x > 0)
+					maxBoneIndex = Math.max(maxBoneIndex, (int)boneIndices.x);
+				if (boneWeights.y > 0)
+					maxBoneIndex = Math.max(maxBoneIndex, (int)boneIndices.y);
+				if (boneWeights.z > 0)
+					maxBoneIndex = Math.max(maxBoneIndex, (int)boneIndices.z);
+				if (boneWeights.w > 0)
+					maxBoneIndex = Math.max(maxBoneIndex, (int)boneIndices.w);
 			}
 		}
 
