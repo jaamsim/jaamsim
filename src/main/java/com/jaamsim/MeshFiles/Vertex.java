@@ -33,31 +33,7 @@ public class Vertex {
 	private Vec4d boneIndices;
 	private Vec4d boneWeights;
 
-	private int cachedHash = 0;
-
-	private static int hashVec2d(Vec2d v) {
-		int hash = 0;
-		hash = hash ^ Double.valueOf(v.x).hashCode();
-		hash = hash ^ Double.valueOf(v.y).hashCode() * 3;
-		return hash;
-	}
-
-	private static int hashVec3d(Vec3d v) {
-		int hash = 0;
-		hash = hash ^ Double.valueOf(v.x).hashCode();
-		hash = hash ^ Double.valueOf(v.y).hashCode() * 3;
-		hash = hash ^ Double.valueOf(v.z).hashCode() * 7;
-		return hash;
-	}
-
-	private static int hashVec4d(Vec4d v) {
-		int hash = 0;
-		hash = hash ^ Double.valueOf(v.x).hashCode();
-		hash = hash ^ Double.valueOf(v.y).hashCode() * 3;
-		hash = hash ^ Double.valueOf(v.z).hashCode() * 7;
-		hash = hash ^ Double.valueOf(v.w).hashCode() * 15;
-		return hash;
-	}
+	private final int cachedHash;
 
 	public Vertex(Vec3d position, Vec3d normal, Vec2d texCoord, Vec4d boneIndices, Vec4d boneWeights) {
 		this.position = position;
@@ -69,15 +45,54 @@ public class Vertex {
 		// If we have boneIndices we must also have boneWeights
 		assert((boneIndices==null) == (boneWeights==null));
 
-		cachedHash = cachedHash ^ hashVec3d(position);
-		cachedHash = cachedHash ^ hashVec3d(normal) * 11;
-		if (texCoord != null) {
-			cachedHash = cachedHash ^ hashVec2d(texCoord) * 19;
-		}
+		// Calculate a hash of the Vertex contents
+		cachedHash = hashVertex();
+	}
+
+	private static int hashDouble(double d) {
+		long l = Double.doubleToLongBits(d);
+		return (int)(l ^ (l >>> 32));
+	}
+
+	private static int hashVec2d(Vec2d v) {
+		int hash = 0;
+		hash ^= hashDouble(v.x);
+		hash ^= hashDouble(v.y) * 3;
+		return hash;
+	}
+
+	private static int hashVec3d(Vec3d v) {
+		int hash = 0;
+		hash ^= hashDouble(v.x);
+		hash ^= hashDouble(v.y) * 3;
+		hash ^= hashDouble(v.z) * 7;
+		return hash;
+	}
+
+	private static int hashVec4d(Vec4d v) {
+		int hash = 0;
+		hash ^= hashDouble(v.x);
+		hash ^= hashDouble(v.y) * 3;
+		hash ^= hashDouble(v.z) * 7;
+		hash ^= hashDouble(v.w) * 15;
+		return hash;
+	}
+
+	/** Calculate a hash of the Vertex contents */
+	private int hashVertex() {
+		int ret = 0;
+
+		ret ^= hashVec3d(position);
+		ret ^= hashVec3d(normal) * 11;
+
+		if (texCoord != null)
+			ret ^= hashVec2d(texCoord) * 19;
+
 		if (boneIndices != null) {
-			cachedHash = cachedHash ^ hashVec4d(boneIndices) * 23;
-			cachedHash = cachedHash ^ hashVec4d(boneWeights) * 29;
+			ret ^= hashVec4d(boneIndices) * 23;
+			ret ^= hashVec4d(boneWeights) * 29;
 		}
+		return ret;
 	}
 
 	@Override

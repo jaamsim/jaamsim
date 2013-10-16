@@ -6,17 +6,18 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.jaamsim.math.Vec4d;
+import com.jaamsim.math.Vec2d;
+import com.jaamsim.math.Vec3d;
 
 public class TestVertexMap {
 
 	@Test
 	public void testAdd() throws Throwable {
-		Vec4d vecA = new Vec4d(1, 2, 3, 1);
-		Vec4d vecB = new Vec4d(1, 3, 3, 1);
-		Vec4d vecCa = new Vec4d(1, 4, 3, 1);
-		Vec4d vecCb = new Vec4d(1, 4, 3, 1);
-		Vec4d vecD = new Vec4d(1, 4, 3.00001, 1);
+		Vec3d vecA = new Vec3d(1, 2, 3);
+		Vec3d vecB = new Vec3d(1, 3, 3);
+		Vec2d vecCa = new Vec2d(1, 4);
+		Vec2d vecCb = new Vec2d(1, 4);
+		Vec2d vecD = new Vec2d(1, 5);
 
 		VertexMap map = new VertexMap();
 		int ind0 = map.getVertIndex(vecA, vecB, vecCa);
