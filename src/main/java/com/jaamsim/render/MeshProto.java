@@ -107,7 +107,7 @@ private static class SubMesh {
 	public int _boneWeightsBuffer;
 
 
-	public Vec4d _center;
+	public Vec3d _center;
 
 	public int _numVerts;
 	public int _id; // The system wide asset ID
@@ -301,8 +301,8 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 		subModelView.mult4(modelViewMat, subInst.getAnimatedTransform(actions));
 
-		Vec4d eyeCenter = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-		eyeCenter.mult4(subModelView, subMesh._center);
+		Vec3d eyeCenter = new Vec3d();
+		eyeCenter.multAndTrans3(subModelView, subMesh._center);
 
 		TransSortable ts = new TransSortable();
 		ts.subMesh = subMesh;
