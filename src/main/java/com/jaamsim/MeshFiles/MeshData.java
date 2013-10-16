@@ -25,7 +25,9 @@ import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec3dInterner;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.math.Vec4dInterner;
 import com.jaamsim.render.Action;
 import com.jaamsim.render.Armature;
 import com.jaamsim.render.RenderUtils;
@@ -155,6 +157,9 @@ public class MeshData {
 	private boolean _anyTransparent = false;
 
 	private ArrayList<Action.Description> _actionDesc;
+
+	private Vec3dInterner v3Interner = new Vec3dInterner();
+	private Vec4dInterner v4Interner = new Vec4dInterner();
 
 	public void addSubMeshInstance(int meshIndex, int matIndex, int armIndex, Mat4d mat, String[] boneNames, ArrayList<Action> actions) {
 		Mat4d trans = new Mat4d(mat);
@@ -322,7 +327,7 @@ public class MeshData {
 		}
 		int maxBoneIndex = -1;
 		for (Vertex v : vertices) {
-			sub.verts.add(v.getPos());
+			sub.verts.add(v3Interner.intern(v.getPos()));
 			sub.normals.add(v.getNormal());
 			if (hasTexCoords) {
 				sub.texCoords.add(v.getTexCoord());
@@ -330,8 +335,8 @@ public class MeshData {
 			if (hasBoneInfo) {
 				Vec4d boneIndices = v.getBoneIndices();
 				Vec4d boneWeights = v.getBoneWeights();
-				sub.boneIndices.add(boneIndices);
-				sub.boneWeights.add(boneWeights);
+				sub.boneIndices.add(v4Interner.intern(boneIndices));
+				sub.boneWeights.add(v4Interner.intern(boneWeights));
 
 				if (boneWeights.x > 0 && (int)boneIndices.x > maxBoneIndex)
 					maxBoneIndex = (int)boneIndices.x;
@@ -455,6 +460,8 @@ public class MeshData {
 				}
 			}
 		}
+		v3Interner = null; // Drop ref to the interner to free memory
+		v4Interner = null; // Drop ref to the interner to free memory
 	}
 
 	public double getRadius() {

@@ -842,6 +842,12 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	_subMeshes.add(sub);
+
+	// These will never be needed again, so let's just get rid of them
+	if (data.texCoords != null)
+		data.texCoords.clear();
+	if (data.normals != null)
+		data.normals.clear();
 }
 
 private void loadGPUSubLine(GL2GL3 gl, Renderer renderer, MeshData.SubLineData data) {
