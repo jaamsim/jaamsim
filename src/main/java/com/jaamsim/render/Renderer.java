@@ -147,7 +147,7 @@ public class Renderer {
 
 	// A cache of the current scene, needed by the individual windows to render
 	private ArrayList<Renderable> _currentScene = new ArrayList<Renderable>();
-	private ArrayList<OverlayRenderable> _currentOverlay = null;
+	private ArrayList<OverlayRenderable> _currentOverlay = new ArrayList<OverlayRenderable>();
 
 	public Renderer(boolean safeGraphics) throws RenderException {
 		_safeGraphics = safeGraphics;
@@ -997,12 +997,14 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 				// Cache the current scene. This way we don't need to lock it for the full render
 				ArrayList<Renderable> scene = new ArrayList<Renderable>(_currentScene.size());
+				ArrayList<OverlayRenderable> overlay = new ArrayList<OverlayRenderable>(_currentOverlay.size());
 				synchronized(_sceneLock) {
 					scene.addAll(_currentScene);
+					overlay.addAll(_currentOverlay);
 				}
 
 				renderScene(drawable.getContext(), _window.getVAOMap(),
-				            scene, _currentOverlay,
+				            scene, overlay,
 				            cam, _window.getViewableWidth(), _window.getViewableHeight(),
 				            pickRay, _window.getViewID(), pi);
 
