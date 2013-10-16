@@ -236,11 +236,10 @@ public class ObjReader {
 
 	private void parseTexCoord(String[] tokens) {
 		parseAssert(tokens.length >= 3 && tokens.length <= 4);
-		Vec4d texCoord = new Vec4d();
+		Vec2d texCoord = new Vec2d();
 		try {
 			texCoord.x = Double.parseDouble(tokens[1]);
 			texCoord.y = Double.parseDouble(tokens[2]);
-			texCoord.w = 1;
 
 			texCoords.add(texCoord);
 		} catch (NumberFormatException ex) {
@@ -251,12 +250,11 @@ public class ObjReader {
 
 	private void parseNormal(String[] tokens) {
 		parseAssert(tokens.length == 4);
-		Vec4d normal = new Vec4d();
+		Vec3d normal = new Vec3d();
 		try {
 			normal.x = Double.parseDouble(tokens[1]);
 			normal.y = Double.parseDouble(tokens[2]);
 			normal.z = Double.parseDouble(tokens[3]);
-			normal.w = 0;
 
 			normal.normalize3();
 			normals.add(normal);
