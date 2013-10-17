@@ -650,7 +650,7 @@ public class RenderManager implements DragSourceListener {
 	/**
 	 * This Comparator sorts based on entity selection preference
 	 */
-	private class SelectionSorter implements Comparator<PickData> {
+	private static class SelectionSorter implements Comparator<PickData> {
 
 		@Override
 		public int compare(PickData p0, PickData p1) {
@@ -671,7 +671,7 @@ public class RenderManager implements DragSourceListener {
 	/**
 	 * This Comparator sorts based on interaction handle priority
 	 */
-	private class HandleSorter implements Comparator<PickData> {
+	private static class HandleSorter implements Comparator<PickData> {
 
 		@Override
 		public int compare(PickData p0, PickData p1) {

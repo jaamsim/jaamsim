@@ -110,7 +110,7 @@ public synchronized TessChar getTessChar(char c) {
 	return cachedChar;
 }
 
-private class CharTesselator extends GLUtessellatorCallbackAdapter {
+private static class CharTesselator extends GLUtessellatorCallbackAdapter {
 
 	private int _type;
 	private Vector<Double> _verts;
@@ -259,7 +259,7 @@ private class CharTesselator extends GLUtessellatorCallbackAdapter {
 	}
 }
 
-private class TessOutput {
+private static class TessOutput {
 	public Rectangle2D bounds;
 	public double[] verts;
 	public double[] advances; // one horizontal advance per character entered

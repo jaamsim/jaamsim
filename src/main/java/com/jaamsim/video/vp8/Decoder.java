@@ -126,15 +126,15 @@ public class Decoder {
 		}
 	}
 
-	class Tokens {
+	static class Tokens {
 		short[] v = new short[16];
 	}
 
-	class MBTokens {
+	static class MBTokens {
 		Tokens t[] = new Tokens[25];
 		boolean hasValues = false;
 		MBTokens() {
-			for (int i = 0; i < 25; ++i) {
+			for (int i = 0; i < t.length; ++i) {
 				t[i] = new Tokens();
 			}
 		}
