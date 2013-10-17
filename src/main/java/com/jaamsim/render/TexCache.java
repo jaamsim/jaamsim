@@ -339,31 +339,26 @@ public class TexCache {
 		@Override
 		public void run() {
 			while (true) {
-				LoadingEntry le = getNextEntry();
-				if (le == null) {
-					synchronized (this) {
+				LoadingEntry le = null;
+				synchronized (this) {
+					if (list.isEmpty()) {
 						loadThread = null;
+						return;
 					}
-					return;
+					le = list.remove(0);
 				}
 
 				loadImage(le);
-
 			}
 		}
 
-		synchronized LoadingEntry getNextEntry() {
-			if (list.isEmpty())
-				return null;
-
-			return list.remove(0);
-		}
-
-		synchronized void loadEntry(LoadingEntry le) {
-			list.add(le);
-			if (loadThread == null) {
-				loadThread = new Thread(this, "TextureLoadThread");
-				loadThread.start();
+		void loadEntry(LoadingEntry le) {
+			synchronized (this) {
+				list.add(le);
+				if (loadThread == null) {
+					loadThread = new Thread(this, "TextureLoadThread");
+					loadThread.start();
+				}
 			}
 		}
 	}
