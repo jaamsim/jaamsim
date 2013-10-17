@@ -210,18 +210,8 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 	}
 
 	static class MyTree extends JTree {
-		private final MyToolTip toolTip;
 
 		public MyTree() {
-			toolTip = new MyToolTip();
-		}
-
-		/*
-		 * This JTree has a custom ToolTip
-		 */
-		@Override
-		public JToolTip createToolTip() {
-			return toolTip;
 		}
 
 		/*
@@ -229,8 +219,6 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		 */
 		@Override
 		public String getToolTipText(MouseEvent e) {
-			toolTip.setImage( null ); // Set defaults so we can quick out
-			toolTip.setPreferredSize( null );
 
 			if(this.getPathForLocation(e.getX(), e.getY()) == null) {
 				return null;
@@ -248,25 +236,15 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 			if (!(object instanceof ObjectType)) {
 				return null;
 			}
-			String text = ((ObjectType)object).getName();
-			DisplayModel dm = ((ObjectType)object).getDefaultDisplayModel();
-			if (dm == null) {
-				return null;
-			}
-			Future<BufferedImage> fi = RenderManager.inst().getPreviewForDisplayModel(dm, notifier);
+			ObjectType ot = (ObjectType)object;
+			String text = ot.getName();
 
-			if (!fi.isDone()) {
-				return null;
-			}
-			if (fi.failed()) {
-				return null;
+			String desc = ot.getDescription(0);
+
+			if (desc != null && desc.length() != 0) {
+				text = text + ": " + desc;
 			}
 
-			BufferedImage image = RenderUtils.scaleToRes(fi.get(), 180, 180);
-			Dimension dim = new Dimension(180, 180); // frame size for image toolTip
-
-			toolTip.setImage( image );
-			toolTip.setPreferredSize( dim );
 			return text;
 		}
 	}
@@ -310,23 +288,4 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		}
 	}
 
-	static class MyToolTip extends JToolTip {
-		private BufferedImage image;
-
-		public MyToolTip() {
-			image = null;
-		}
-
-		protected void setImage(BufferedImage image){
-			this.image = image;
-		}
-
-		@Override
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			if(image != null){
-				g.drawImage(image, 0, 0, this);
-			}
-		}
-	}
 }
