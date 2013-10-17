@@ -110,6 +110,10 @@ public class Graph extends DisplayEntity  {
 
 	// X-Axis category
 
+	@Keyword(description = "Title of the x-axis.",
+	         example = "Graph1 XAxisTitle { 'Time (s)' }")
+	private final StringInput xAxisTitle;
+
 	@Keyword(description = "The time unit to be used for the x-axis.",
 	         example = "Graph1 XAxisUnit { h }")
 	private final EntityInput<TimeUnit> xAxisUnit;
@@ -144,7 +148,7 @@ public class Graph extends DisplayEntity  {
 
 	// Y-Axis category
 
-	@Keyword(description = "Title of the y-axis, enclosed in single quotes, rotated by 90 degrees counter-clockwise.",
+	@Keyword(description = "Title of the y-axis.",
 	         example = "Graph1 YAxisTitle { 'Water Height (m)' }")
 	private final StringInput yAxisTitle;
 
@@ -182,7 +186,7 @@ public class Graph extends DisplayEntity  {
 
 	// Secondary Y-Axis category
 
-	@Keyword(description = "Title of the secondary y-axis, enclosed in single quotes, rotated by 90 degrees clockwise.",
+	@Keyword(description = "Title of the secondary y-axis.",
 	         example = "Graph1 SecondaryYAxisTitle { 'Water Height (m)' }")
 	private final StringInput secondaryYAxisTitle;
 
@@ -250,6 +254,9 @@ public class Graph extends DisplayEntity  {
 		this.addInput(secondaryLineWidths, true);
 
 		// X-Axis category
+
+		xAxisTitle = new StringInput("XAxisTitle", "X-Axis", "X-Axis Title");
+		this.addInput(xAxisTitle, true);
 
 		xAxisUnit = new EntityInput<TimeUnit>(TimeUnit.class, "XAxisUnit", "X-Axis", null);
 		this.addInput(xAxisUnit, true);
@@ -649,19 +656,23 @@ public class Graph extends DisplayEntity  {
 		return numberOfPoints.getValue();
 	}
 
+	public String getXAxisTitle() {
+		return xAxisTitle.getValue();
+	}
+
 	public TimeUnit getXAxisUnit() {
 		return xAxisUnit.getValue();
 	}
 
-	public double getStartTime() {
+	public double getXAxisStart() {
 		return startTime.getValue();
 	}
 
-	public double getEndTime() {
+	public double getXAxisEnd() {
 		return endTime.getValue();
 	}
 
-	public double getTimeInterval() {
+	public double getXAxisInterval() {
 		return timeInterval.getValue();
 	}
 

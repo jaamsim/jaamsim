@@ -33,7 +33,6 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.StringProxy;
 import com.jaamsim.render.TessFontKey;
 import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleVector;
@@ -306,10 +305,10 @@ public class GraphModel extends DisplayModel {
 			xScaleVec = new Vec3d(xScaleFactor, 1, 1);
 			yScaleVec = new Vec3d(1/xScaleFactor, 1, 1);
 
-			xMin = graphObservee.getStartTime();
-			xMax = graphObservee.getEndTime();
+			xMin = graphObservee.getXAxisStart();
+			xMax = graphObservee.getXAxisEnd();
 			xRange = xMax - xMin;
-			xAxisInterval = graphObservee.getTimeInterval();
+			xAxisInterval = graphObservee.getXAxisInterval();
 
 			yMin= graphObservee.getYAxisStart();
 			yMax= graphObservee.getYAxisEnd();
@@ -572,7 +571,7 @@ public class GraphModel extends DisplayModel {
 			// X-Axis Labels and Tick Marks
 			String xAxisFormat = graphObservee.getXAxisLabelFormat();
 
-			TimeUnit xAxisUnit = graphObservee.getXAxisUnit();
+			Unit xAxisUnit = graphObservee.getXAxisUnit();
 			double xAxisFactor = 1.0;
 			if( xAxisUnit != null )
 				xAxisFactor = xAxisUnit.getConversionFactorToSI();
