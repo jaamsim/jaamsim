@@ -25,11 +25,7 @@ import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.StringVector;
 
 public class UnitTypeInput extends Input<ObjectType> {
-	private Class<? extends Unit> unitType = Unit.class;
-
-	public UnitTypeInput(String key, String cat) {
-		super(key, cat, null);
-	}
+	private Class<? extends Unit> unitType;
 
 	public UnitTypeInput(String key, String cat, Class<? extends Unit> ut) {
 		super(key, cat, null);
