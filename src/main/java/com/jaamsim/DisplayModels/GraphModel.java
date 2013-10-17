@@ -150,8 +150,8 @@ public class GraphModel extends DisplayModel {
 			ArrayList<Vec4d> seriesPoints = new ArrayList<Vec4d>((series.numPoints-1)*2);
 			// Loop through one fewer points in the series to reduce the chance that the Render
 			// will need to trap an index of of bound error
-			//for (int i = 0; i < series.numPoints - 1 - series.removedPoints; i++) {
-			for (int i = 0; i < series.numPoints - 2 - series.removedPoints; i++) {
+			//for (int i = 0; i < series.numPoints - 1; i++) {
+			for (int i = 0; i < series.numPoints - 2; i++) {
 				seriesPoints.add(new Vec4d(xVals[i  ], yVals[i  ], zBump, 1.0d));
 				seriesPoints.add(new Vec4d(xVals[i+1], yVals[i+1], zBump, 1.0d));
 			}

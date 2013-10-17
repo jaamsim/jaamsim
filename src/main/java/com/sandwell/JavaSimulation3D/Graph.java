@@ -52,9 +52,7 @@ public class Graph extends DisplayEntity  {
 	public static class SeriesInfo {
 		public double[] values;
 		public int numPoints; // The first point to draw from the start (used to be confusingly called index)
-		public int removedPoints; // The number of points to draw for entities that have been removed
 		public OutputHandle out; // The source of the data for the series
-		public boolean isRemoved = false; // Is this line slated for removal (entity is dead)
 		public double lineWidth;
 		public Color4d lineColour;
 	}
@@ -750,7 +748,6 @@ public class Graph extends DisplayEntity  {
 	private void setupSeriesData(SeriesInfo info, double xLength, double xInterval) {
 
 		info.numPoints = 0;
-		info.removedPoints = 0;
 
 		for( int i = 0; i * xInterval < endTime.getValue(); i++ ) {
 			double presentValue = this.getCurrentValue( i * xInterval, info);
@@ -772,8 +769,6 @@ public class Graph extends DisplayEntity  {
 		double xLength = endTime.getValue() - startTime.getValue();
 		double xInterval = xLength/(numberOfPoints.getValue() -1);
 
-		// Initialize primary y-axis
-		//for ()
 		for (SeriesInfo info : primarySeries) {
 			setupSeriesData(info, xLength, xInterval);
 		}
@@ -804,7 +799,6 @@ public class Graph extends DisplayEntity  {
 	/**
 	 * Calculate values for the data series on the graph
 	 * @param info - the information for the series to be rendered
-	 * @param method - the method to call to gather more data points
 	 */
 	public void processGraph(SeriesInfo info) {
 
@@ -813,14 +807,8 @@ public class Graph extends DisplayEntity  {
 			return;
 		}
 
-		double presentValue = 0;
-		if (info.isRemoved) {
-			presentValue = info.values[info.numPoints - 1];
-		} else {
-			presentValue = this.getCurrentValue( getSimTime() + endTime.getValue(), info);
-
-		}
-
+		double t = getSimTime() + endTime.getValue();
+		double presentValue = this.getCurrentValue(t, info);
 		if (info.numPoints < info.values.length) {
 			info.values[info.numPoints++] = presentValue;
 		}
