@@ -103,7 +103,7 @@ public class DebugLine implements Renderable {
 		// Otherwise perform collision cone tests on individual line segments
 		Mat4d rayMatrix = MathUtils.RaySpace(r);
 
-		Vec4d[] linesArray = _lineSegments.toArray(new Vec4d[0]);
+		Vec4d[] linesArray = _lineSegments.toArray(new Vec4d[_lineSegments.size()]);
 		return MathUtils.collisionDistLines(rayMatrix, linesArray, _collisionAngle);
 	}
 
