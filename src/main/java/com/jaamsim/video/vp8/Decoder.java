@@ -310,7 +310,7 @@ public class Decoder {
 			refreshGolden = true;
 			refreshAltRef = true;
 			copyGolden = 0;
-			copyGolden = 0;
+			copyAltRef = 0;
 			signBiases[GOLDEN_FRAME] = false;
 			signBiases[ALTREF_FRAME] = false;
 			refreshEntropy = p0Dec.getFlag();
