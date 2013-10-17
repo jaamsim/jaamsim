@@ -641,20 +641,16 @@ public class Graph extends DisplayEntity  {
 		return secondarySeries;
 	}
 
-	public DoubleVector getYLines() {
-		return yLines.getValue();
+	public String getTitle() {
+		return title.getValue();
 	}
 
-	public ArrayList<Color4d> getYLineColours() {
-		return yLinesColor.getValue();
+	public int getNumberOfPoints() {
+		return numberOfPoints.getValue();
 	}
 
-	public DoubleVector getXLines() {
-		return xLines.getValue();
-	}
-
-	public ArrayList<Color4d> getXLineColours() {
-		return xLinesColor.getValue();
+	public TimeUnit getXAxisUnit() {
+		return xAxisUnit.getValue();
 	}
 
 	public double getStartTime() {
@@ -665,8 +661,20 @@ public class Graph extends DisplayEntity  {
 		return endTime.getValue();
 	}
 
-	public String getTitle() {
-		return title.getValue();
+	public double getTimeInterval() {
+		return timeInterval.getValue();
+	}
+
+	public String getXAxisLabelFormat() {
+		return xAxisLabelFormat.getValue();
+	}
+
+	public String getYAxisTitle() {
+		return yAxisTitle.getValue();
+	}
+
+	public Unit getYAxisUnit() {
+		return yAxisUnit.getValue();
 	}
 
 	public double getYAxisStart() {
@@ -677,32 +685,28 @@ public class Graph extends DisplayEntity  {
 		return yAxisEnd.getValue();
 	}
 
-	public double getSecondaryYAxisStart() {
-		return secondaryYAxisStart.getValue();
-	}
-
-	public double getSecondaryYAxisEnd() {
-		return secondaryYAxisEnd.getValue();
-	}
-
-	public int getNumberOfPoints() {
-		return numberOfPoints.getValue();
-	}
-
-	public String getYAxisTitle() {
-		return yAxisTitle.getValue();
-	}
-
-	public String getSecondaryYAxisTitle() {
-		return secondaryYAxisTitle.getValue();
-	}
-
 	public double getYAxisInterval() {
 		return yAxisInterval.getValue();
 	}
 
 	public String getYAxisLabelFormat() {
 		return yAxisLabelFormat.getValue();
+	}
+
+	public String getSecondaryYAxisTitle() {
+		return secondaryYAxisTitle.getValue();
+	}
+
+	public Unit getSecondaryYAxisUnit() {
+		return secondaryYAxisUnit.getValue();
+	}
+
+	public double getSecondaryYAxisStart() {
+		return secondaryYAxisStart.getValue();
+	}
+
+	public double getSecondaryYAxisEnd() {
+		return secondaryYAxisEnd.getValue();
 	}
 
 	public double getSecondaryYAxisInterval() {
@@ -713,24 +717,20 @@ public class Graph extends DisplayEntity  {
 		return secondaryYAxisLabelFormat.getValue();
 	}
 
-	public String getXAxisLabelFormat() {
-		return xAxisLabelFormat.getValue();
+	public DoubleVector getXLines() {
+		return xLines.getValue();
 	}
 
-	public TimeUnit getXAxisUnit() {
-		return xAxisUnit.getValue();
+	public ArrayList<Color4d> getXLineColours() {
+		return xLinesColor.getValue();
 	}
 
-	public Unit getYAxisUnit() {
-		return yAxisUnit.getValue();
+	public DoubleVector getYLines() {
+		return yLines.getValue();
 	}
 
-	public Unit getSecondaryYAxisUnit() {
-		return secondaryYAxisUnit.getValue();
-	}
-
-	public double getTimeInterval() {
-		return timeInterval.getValue();
+	public ArrayList<Color4d> getYLineColours() {
+		return yLinesColor.getValue();
 	}
 
 	// ******************************************************************************************
