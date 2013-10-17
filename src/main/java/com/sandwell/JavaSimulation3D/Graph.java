@@ -17,17 +17,13 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
-import com.jaamsim.DisplayModels.DisplayModel;
-import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.FormatInput;
 import com.jaamsim.input.OutputListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -63,16 +59,15 @@ public class Graph extends DisplayEntity  {
 	private Class<? extends Unit> dataUnitType;          // unit type for the graphed lines plotted against the y-axis
 	private Class<? extends Unit> secondaryDataUnitType;  // unit type for the graphed lines plotted against the secondary y-axis
 
-	// Size and position of the graph area (excluding the titles, labels, etc.) scaled to the unit cube for the DisplayModel
-	protected Vec3d graphSize;   // graph size
-	protected Vec3d graphOrigin; // bottom left position of the graph area,
-	protected Vec3d graphCenter; // Center point of the graph area
-
 	static int ENTITY_ONLY = 0;
 	static int PARAMETER_ONLY = 1;
 	static int ENTITY_PARAMETER = 2;
 
 	// Data category
+
+	@Keyword(description= "Text for the graph title.",
+	         example = "Graph1 Title { 'Title of the Graph' }")
+	private final StringInput title;
 
 	@Keyword(description = "The number of data points that can be displayed on the graph.\n" +
 			" This parameter determines the resolution of the graph.",
@@ -214,97 +209,11 @@ public class Graph extends DisplayEntity  {
 	         example = "Graph1 SecondaryYAxisLabelFormat { %.1f }")
 	private final FormatInput secondaryYAxisLabelFormat;
 
-	// Layout category
-
-	@Keyword(description= "Text for the graph title, enclosed in single quotes if it contains spaces.",
-	         example = "Graph1 Title { 'Title of the Graph' }")
-	private final StringInput title;
-
-	@Keyword(description = "The text height for the graph title.",
-	         example = "Graph1 TitleTextHeight { 0.05 }")
-	private final ValueInput titleTextHeight;
-
-	@Keyword(description = "The text height for the y-axis title.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 YAxisTitleTextHeight { 0.05 }")
-	private final ValueInput yAxisTitleTextHeight;
-
-	@Keyword(description = "The text height for both x- and y-axis labels.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 LabelTextHeight { 0.025 }")
-	private final ValueInput labelTextHeight;
-
-	@Keyword(description = "The gap between the title and top of the graph.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 TitleGap { 0.025 }")
-	private final ValueInput titleGap;
-
-	@Keyword(description = "The gap between the x-axis labels and the x-axis.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 XAxisLabelGap { 0.025 }")
-	private final ValueInput xAxisLabelGap;
-
-	@Keyword(description = "The gap between the y-axis and its labels.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 YAxisLabelGap { 0.025 }")
-	private final ValueInput yAxisLabelGap;
-
-	@Keyword(description = "The gap between the y-axis title and the y-axis labels.\n" +
-			"Expressed as a fraction of the total graph height.",
-	         example = "Graph1 yAxisTitleGap { 0.025 }")
-	private final ValueInput yAxisTitleGap;
-
-	@Keyword(description = "The margin between the top of the graph and the top of the graph object.\n" +
-			"Expressed as a fraction of the total graph height." +
-	                "side of the graph.",
-	         example = "Graph1 TopMargin { 0.10 }")
-	private final ValueInput topMargin;
-
-	@Keyword(description = "The margin between the bottom of the graph and the bottom of the graph object.\n" +
-	                "Expressed as a fraction of the total graph height.",
-             example = "Graph1 BottomMargin { 0.10 }")
-	private final ValueInput bottomMargin;
-
-	@Keyword(description = "The margin between the left side of the graph and the left side of the graph object.\n" +
-	                "Expressed as a fraction of the total graph height.",
-	         example = "Graph1 LeftMargin { 0.20 }")
-	private final ValueInput leftMargin;
-
-	@Keyword(description = "The margin between the right side of the graph and the right side of the graph object.\n" +
-	                "Expressed as a fraction of the total graph height.",
-	         example = "Graph1 RightMargin { 0.20 }")
-	private final ValueInput rightMargin;
-
-	@Keyword(description = "The text model to be used for the graph title.\n" +
-			"Determines the font, color, and style (bold, italics) for the text.",
-	         example = "Graph1 TitleTextModel { TextModelDefault }")
-	protected final EntityInput<TextModel> titleTextModel;
-
-	@Keyword(description = "The text model to be used for the axis titles (x-axis, y-axis, and secondary y-axis).\n" +
-			"Determines the font, color, and style (bold, italics) for the text.",
-	         example = "Graph1 AxisTitleTextModel { TextModelDefault }")
-	protected final EntityInput<TextModel> axisTitleTextModel;
-
-	@Keyword(description = "The text model to be used for the numbers next to the tick marks on each axis" +
-			" (x-axis, y-axis, and secondary y-axis).\n" +
-			"Determines the font, color, and style (bold, italics) for the text.",
-	         example = "Graph1 LabelTextModel { TextModelDefault }")
-	protected final EntityInput<TextModel> labelTextModel;
-
-	@Keyword(description = "The color of the graph background, defined by a color keyword or an RGB value.",
-	         example = "Graph1 GraphColor { floralwhite }")
-	private final ColourInput graphColor;
-
-	@Keyword(description = "The color for the outer pane background, defined using a color keyword or an RGB value.",
-	         example = "Graph1 BackgroundColor { floralwhite }")
-	private final ColourInput backgroundColor;
-
-	@Keyword(description = "The color of the graph border, defined using a color keyword or an RGB value.",
-	         example = "Graph1 BorderColor { red }")
-	private final ColourInput borderColor;
-
 	{
 		// Data category
+
+		title = new StringInput("Title", "Data", "Graph Title");
+		this.addInput(title, true);
 
 		numberOfPoints = new IntegerInput("NumberOfPoints", "Data", 100);
 		numberOfPoints.setValidRange(0, Integer.MAX_VALUE);
@@ -436,75 +345,6 @@ public class Graph extends DisplayEntity  {
 
 		secondaryYAxisLabelFormat = new FormatInput("SecondaryYAxisLabelFormat", "Secondary Y-Axis", "%.1f");
 		this.addInput(secondaryYAxisLabelFormat, true);
-
-		// Layout category
-
-		title = new StringInput("Title", "Layout", "Graph Title");
-		this.addInput(title, true);
-
-		titleTextHeight = new ValueInput("TitleTextHeight", "Layout", 0.05d);
-		titleTextHeight.setUnitType(DimensionlessUnit.class);
-		this.addInput(titleTextHeight, true);
-
-		yAxisTitleTextHeight = new ValueInput("YAxisTitleTextHeight", "Layout", 0.05d);
-		yAxisTitleTextHeight.setUnitType(DimensionlessUnit.class);
-		this.addInput(yAxisTitleTextHeight, true);
-
-		labelTextHeight = new ValueInput("LabelTextHeight", "Layout", 0.025d);
-		labelTextHeight.setUnitType(DimensionlessUnit.class);
-		this.addInput(labelTextHeight, true);
-
-		titleGap = new ValueInput("TitleGap", "Layout", 0.025d);
-		titleGap.setUnitType(DimensionlessUnit.class);
-		this.addInput(titleGap, true);
-
-		xAxisLabelGap = new ValueInput("XAxisLabelGap", "Layout", 0.025d);
-		xAxisLabelGap.setUnitType(DimensionlessUnit.class);
-		this.addInput(xAxisLabelGap, true);
-
-		yAxisTitleGap = new ValueInput("YAxisTitleGap", "Layout", 0.025d);
-		yAxisTitleGap.setUnitType(DimensionlessUnit.class);
-		this.addInput(yAxisTitleGap, true);
-
-		yAxisLabelGap = new ValueInput("YAxisLabelGap", "Layout", 0.025d);
-		yAxisLabelGap.setUnitType(DimensionlessUnit.class);
-		this.addInput(yAxisLabelGap, true);
-
-		topMargin = new ValueInput("TopMargin", "Layout", 0.10d);
-		topMargin.setUnitType(DimensionlessUnit.class);
-		this.addInput(topMargin, true);
-
-		bottomMargin = new ValueInput("BottomMargin", "Layout", 0.10d);
-		bottomMargin.setUnitType(DimensionlessUnit.class);
-		this.addInput(bottomMargin, true);
-
-		leftMargin = new ValueInput("LeftMargin", "Layout", 0.20d);
-		leftMargin.setUnitType(DimensionlessUnit.class);
-		this.addInput(leftMargin, true);
-
-		rightMargin = new ValueInput("RightMargin", "Layout", 0.20d);
-		rightMargin.setUnitType(DimensionlessUnit.class);
-		this.addInput(rightMargin, true);
-
-		TextModel defTextModel = (TextModel) DisplayModel.getDefaultDisplayModelForClass(Text.class);
-
-		titleTextModel = new EntityInput<TextModel>(TextModel.class, "TitleTextModel", "Layout", defTextModel);
-		this.addInput(titleTextModel, true);
-
-		axisTitleTextModel = new EntityInput<TextModel>(TextModel.class, "AxisTitleTextModel", "Layout", defTextModel);
-		this.addInput(axisTitleTextModel, true);
-
-		labelTextModel = new EntityInput<TextModel>(TextModel.class, "LabelTextModel", "Layout", defTextModel);
-		this.addInput(labelTextModel, true);
-
-		graphColor = new ColourInput("GraphColor", "Layout", ColourInput.getColorWithName("ivory"));
-		this.addInput(graphColor, true, "GraphColour");
-
-		backgroundColor = new ColourInput("BackgroundColor", "Layout", ColourInput.getColorWithName("gray95"));
-		this.addInput(backgroundColor, true, "BackgroundColour");
-
-		borderColor = new ColourInput("BorderColor", "Layout", ColourInput.BLACK);
-		this.addInput(borderColor, true, "BorderColour");
 	}
 
 	public Graph() {
@@ -652,39 +492,6 @@ public class Graph extends DisplayEntity  {
 
 			infos.add(info);
 		}
-	}
-
-	public Vec3d getGraphOrigin() {
-		return graphOrigin;
-	}
-
-	public Vec3d getGraphSize() {
-		return graphSize;
-	}
-
-	public Vec3d getGraphCenter() {
-		return graphCenter;
-	}
-
-	@Override
-	public void updateGraphics(double time) {
-		super.updateGraphics(time);
-
-		Vec3d graphExtent = getSize();
-		double xScaleFactor = graphExtent.y / graphExtent.x;
-
-		// Draw graphic rectangle
-		graphSize = new Vec3d();
-		graphSize.x = 1.0 - ( leftMargin.getValue() + rightMargin.getValue() ) * xScaleFactor;
-		graphSize.y = 1.0 - ( topMargin.getValue() + bottomMargin.getValue() );
-		graphSize.z = 1;
-
-		// Center position of the graph
-		graphCenter = new Vec3d( leftMargin.getValue()/2 - rightMargin.getValue()/2,
-				bottomMargin.getValue()/2 - topMargin.getValue()/2, 0.0 );
-
-		graphOrigin = new Vec3d( graphCenter.x - graphSize.x/2, graphCenter.y - graphSize.y/2, 0.0  );
-
 	}
 
 	private static class ProcessGraphTarget extends ProcessTarget {
@@ -865,28 +672,21 @@ public class Graph extends DisplayEntity  {
 	public double getYAxisStart() {
 		return yAxisStart.getValue();
 	}
+
 	public double getYAxisEnd() {
 		return yAxisEnd.getValue();
 	}
+
 	public double getSecondaryYAxisStart() {
 		return secondaryYAxisStart.getValue();
 	}
+
 	public double getSecondaryYAxisEnd() {
 		return secondaryYAxisEnd.getValue();
 	}
 
 	public int getNumberOfPoints() {
 		return numberOfPoints.getValue();
-	}
-
-	public Color4d getGraphColour() {
-		return graphColor.getValue();
-	}
-	public Color4d getBorderColour() {
-		return borderColor.getValue();
-	}
-	public Color4d getBackgroundColour() {
-		return backgroundColor.getValue();
 	}
 
 	public String getYAxisTitle() {
@@ -900,6 +700,7 @@ public class Graph extends DisplayEntity  {
 	public double getYAxisInterval() {
 		return yAxisInterval.getValue();
 	}
+
 	public String getYAxisLabelFormat() {
 		return yAxisLabelFormat.getValue();
 	}
@@ -907,6 +708,7 @@ public class Graph extends DisplayEntity  {
 	public double getSecondaryYAxisInterval() {
 		return secondaryYAxisInterval.getValue();
 	}
+
 	public String getSecondaryYAxisLabelFormat() {
 		return secondaryYAxisLabelFormat.getValue();
 	}
@@ -929,46 +731,6 @@ public class Graph extends DisplayEntity  {
 
 	public double getTimeInterval() {
 		return timeInterval.getValue();
-	}
-
-	public double getTitleHeight() {
-		return titleTextHeight.getValue();
-	}
-
-	public double getTitleGap() {
-		return titleGap.getValue();
-	}
-
-	public double getLabelHeight() {
-		return labelTextHeight.getValue();
-	}
-
-	public double getXAxisLabelGap() {
-		return xAxisLabelGap.getValue();
-	}
-
-	public double getYAxisTitleHeight() {
-		return yAxisTitleTextHeight.getValue();
-	}
-
-	public double getYAxisTitleGap() {
-		return yAxisTitleGap.getValue();
-	}
-
-	public double getYAxisLabelGap() {
-		return yAxisLabelGap.getValue();
-	}
-
-	public TextModel getTitleTextModel() {
-		return titleTextModel.getValue();
-	}
-
-	public TextModel getAxisTitleTextModel() {
-		return axisTitleTextModel.getValue();
-	}
-
-	public TextModel getLabelTextModel() {
-		return labelTextModel.getValue();
 	}
 
 	// ******************************************************************************************
