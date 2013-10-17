@@ -22,11 +22,11 @@ public abstract class EntityTarget<T extends Entity> extends ProcessTarget {
 
 	public EntityTarget(T ent, String method) {
 		this.ent = ent;
-		this.desc = ent.getInputName() + "." + method;
+		this.desc = method;
 	}
 
 	@Override
 	public String getDescription() {
-		return desc;
+		return ent.getInputName() + "." + desc;
 	}
 }
