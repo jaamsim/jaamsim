@@ -733,16 +733,4 @@ public class Graph extends DisplayEntity  {
 		return yLinesColor.getValue();
 	}
 
-	// ******************************************************************************************
-	// OUTPUT METHODS
-	// ******************************************************************************************
-
-	/**
-	 * Return the value for the given data point index for the given series index.
-	 * @param seriesIndex - the index of the data series (starting from 1)
-	 * @param pointIndex - the index of the data point (starting from 1)
-	 */
-	public double Series_Point( Integer seriesIndex, Integer pointIndex ) {
-		return primarySeries.get(seriesIndex).values[pointIndex - 1];
-	}
 }
