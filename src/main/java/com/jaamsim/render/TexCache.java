@@ -85,9 +85,7 @@ public class TexCache {
 	private final Map<String, TexEntry> _texMap = new HashMap<String, TexEntry>();
 	private final Map<String, LoadingEntry> _loadingMap = new HashMap<String, LoadingEntry>();
 
-	private final ArrayList<LoadingEntry> _loadingList = new ArrayList<LoadingEntry>();
-	private Thread _loadThread;
-	private Object _loadLock = new Object();
+	private final EntryLoaderRunner entryLoader = new EntryLoaderRunner();
 
 	private Renderer _renderer;
 
@@ -240,14 +238,7 @@ public class TexCache {
 
 		_loadingMap.put(imageURL.toString(), le);
 
-		synchronized (_loadLock) {
-			_loadingList.add(le);
-
-			if (_loadThread == null) {
-				spawnLoadingThread();
-			}
-		}
-
+		entryLoader.loadEntry(le);
 		return le;
 	}
 
@@ -341,29 +332,40 @@ public class TexCache {
 		return null;
 	}
 
-	private void spawnLoadingThread() {
+	private class EntryLoaderRunner implements Runnable {
+		final ArrayList<LoadingEntry> list = new ArrayList<LoadingEntry>();
+		private Thread loadThread = null;
 
-		Runnable loader = new Runnable() {
-			@Override
-			public void run() {
-				while (!_loadingList.isEmpty())	{
-					LoadingEntry le;
-					synchronized (_loadLock) {
-						le = _loadingList.get(0);
-						_loadingList.remove(0);
+		@Override
+		public void run() {
+			while (true) {
+				LoadingEntry le = getNextEntry();
+				if (le == null) {
+					synchronized (this) {
+						loadThread = null;
 					}
+					return;
+				}
 
-					loadImage(le);
-				}
-				synchronized (_loadLock) {
-					_loadThread = null;
-				}
+				loadImage(le);
+
 			}
+		}
 
-		};
+		synchronized LoadingEntry getNextEntry() {
+			if (list.isEmpty())
+				return null;
 
-		_loadThread = new Thread(loader, "TextureLoadThread");
-		_loadThread.start();
+			return list.remove(0);
+		}
+
+		synchronized void loadEntry(LoadingEntry le) {
+			list.add(le);
+			if (loadThread == null) {
+				loadThread = new Thread(this, "TextureLoadThread");
+				loadThread.start();
+			}
+		}
 	}
 
 	private void loadImage(LoadingEntry le) {
