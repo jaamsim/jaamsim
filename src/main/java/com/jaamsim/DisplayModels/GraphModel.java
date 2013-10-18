@@ -354,40 +354,48 @@ public class GraphModel extends DisplayModel {
 			out.add(new PolygonProxy(graphRectPoints, objectTrans, objectScale, graphColor.getValue(), false, 1, getVisibilityInfo(), pickingID));
 			out.add(new PolygonProxy(graphRectPoints, objectTrans, objectScale, borderColor.getValue(), true, 1, getVisibilityInfo(), pickingID));
 
+			// Draw the graph title
+			drawGraphTitle(out);
+
+			// Draw the x-axis, y-axis, and axis titles
+			drawXAxis(out);
+			drawYAxis(out);
+
+			// Draw the secondary y-axis title (if used)
+			if (! graphObservee.getSecondarySeries().isEmpty() )
+				drawSecondaryYAxis(out);
+
+			// Draw the selected grid lines
+			drawXLines(out);
+			drawYLines(out);
+
+			// Draw the primary series
 			ArrayList<Graph.SeriesInfo> primarySeries = graphObservee.getPrimarySeries();
-
-			// Labels, titles, graph lines, etc
-			drawDecorations(out);
-
-			// Draw the series
 			for (int i = 0; i < primarySeries.size(); ++i) {
 				drawSeries(primarySeries.get(i), yMin, yMax, out);
 			}
 
+			// Draw the secondary series
 			ArrayList<Graph.SeriesInfo> secondarySeries = graphObservee.getSecondarySeries();
 			for (int i = 0; i < secondarySeries.size(); ++i) {
 				drawSeries(secondarySeries.get(i), secYMin, secYMax, out);
 			}
-
 		}
 
-		private void drawSeries(Graph.SeriesInfo series, double yMin, double yMax,
-		                        ArrayList<RenderProxy> out) {
+		private void drawSeries(Graph.SeriesInfo series, double yMinimum, double yMaximum, ArrayList<RenderProxy> out) {
 
-			int numberOfPoints = graphObservee.getNumberOfPoints();
-			double xInc = 1.0 / (numberOfPoints - 1.0);
-
-			double yRange = yMax - yMin;
-
-			if (series.numPoints < 2) {
+			if (series.numPoints < 2)
 				return; // Nothing to display yet
-			}
+
+			double yRange = yMaximum - yMinimum;  // yRange can be either the primary or secondary range
 
 			double[] yVals = new double[series.numPoints];
 			double[] xVals = new double[series.numPoints];
+			double xInc = 1.0 / (graphObservee.getNumberOfPoints() - 1.0);
+
 			for (int i = 0; i < series.numPoints; i++) {
 				xVals[i] = (i*xInc) - (series.numPoints-1)*xInc + 0.5;
-				yVals[i] = MathUtils.bound((series.values[i] - yMin) / yRange, 0, 1) - 0.5; // Bound the y values inside the graph range
+				yVals[i] = MathUtils.bound((series.values[i] - yMinimum) / yRange, 0, 1) - 0.5; // Bound the y values inside the graph range
 			}
 
 			ArrayList<Vec4d> seriesPoints = new ArrayList<Vec4d>((series.numPoints-1)*2);
@@ -405,38 +413,206 @@ public class GraphModel extends DisplayModel {
 			}
 
 			out.add(new LineProxy(seriesPoints, series.lineColour, series.lineWidth, getVisibilityInfo(), pickingID));
-
 		}
 
-		private void drawDecorations(ArrayList<RenderProxy> out) {
+		private void drawGraphTitle(ArrayList<RenderProxy> out) {
 
-			// Y Lines
-			DoubleVector yLines = graphObservee.getYLines();
-			ArrayList<Color4d> yLineColours = graphObservee.getYLineColours();
+			String titleText = graphObservee.getTitle();
 
-			for (int i = 0; i < yLines.size(); ++i) {
-				double yPos = (yLines.get(i) - yMin) / yRange - 0.5;
-				ArrayList<Vec4d> linePoints = new ArrayList<Vec4d>(2);
-
-				linePoints.add(new Vec4d(-0.5, yPos, zBump, 1.0d));
-				linePoints.add(new Vec4d( 0.5, yPos, zBump, 1.0d));
-
-				Color4d colour = ColourInput.LIGHT_GREY;
-				if (yLineColours.size() > i) {
-					colour = yLineColours.get(i);
-				} else if (yLineColours.size() >= 1) {
-					colour = yLineColours.get(0);
-				}
-
-				// Transform to world space
-				for (int j = 0; j < linePoints.size(); ++j) {
-					linePoints.get(j).mult4(graphToWorldTrans, linePoints.get(j));
-				}
-
-				out.add(new LineProxy(linePoints, colour, 1, getVisibilityInfo(), pickingID));
+			TessFontKey titleFontKey;
+			Color4d titleFontColor;
+			if( titleTextModel.getValue() == null ) {
+				titleFontKey = TextModel.getDefaultTessFontKey();
+				titleFontColor = ColourInput.BLACK;
+			}
+			else {
+				titleFontKey = titleTextModel.getValue().getTessFontKey();
+				titleFontColor = titleTextModel.getValue().getFontColor();
 			}
 
-			// X lines
+			Vec4d titleCenter = new Vec4d(0, graphOrigin.y + graphSize.y + titleGap.getValue() + titleTextHeight.getValue()/2, zBump, 1.0d);
+
+			Mat4d titleTrans = new Mat4d();
+			titleTrans.setTranslate3(titleCenter);
+			titleTrans.mult4(objectTransComp, titleTrans);
+			titleTrans.scaleCols3(xScaleVec);
+
+			out.add(new StringProxy(titleText, titleFontKey, titleFontColor, titleTrans, titleTextHeight.getValue(), getVisibilityInfo(), pickingID));
+		}
+
+		private void drawXAxis(ArrayList<RenderProxy> out) {
+
+			String xAxisFormat = graphObservee.getXAxisLabelFormat();
+			ArrayList<Vec4d> tickPoints = new ArrayList<Vec4d>();
+
+			double xAxisFactor = 1.0;
+			if( graphObservee.getXAxisUnit() != null )
+				xAxisFactor = graphObservee.getXAxisUnit().getConversionFactorToSI();
+
+			for (int i = 0; xMin + i*xAxisInterval <= xMax; ++i) {
+
+				double time = (xMin + i * xAxisInterval);
+				String text;
+				if (time == 0) {
+					text = "Now";
+				} else {
+					text = String.format( xAxisFormat, time/xAxisFactor);
+				}
+
+				double xPos = graphOrigin.x + ( i * xAxisInterval * graphSize.x)/xRange;
+				double yPos = graphOrigin.y - xAxisTickSize - xAxisLabelGap.getValue() - labelHeight/2;
+
+				Mat4d labelTrans = new Mat4d();
+				labelTrans.setTranslate3(new Vec3d(xPos, yPos, zBump));
+				labelTrans.mult4(objectTransComp, labelTrans);
+				labelTrans.scaleCols3(xScaleVec);
+
+				out.add(new StringProxy(text, labelFontKey, labelFontColor, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
+
+				// Prepare the tick marks
+				Vec4d tickPointA = new Vec4d(xPos, graphOrigin.y, zBump, 1.0d);
+				Vec4d tickPointB = new Vec4d(xPos, graphOrigin.y - xAxisTickSize, zBump, 1.0d);
+				tickPointA.mult4(objectTransComp, tickPointA);
+				tickPointB.mult4(objectTransComp, tickPointB);
+				tickPoints.add(tickPointA);
+				tickPoints.add(tickPointB);
+			}
+
+			out.add(new LineProxy(tickPoints, labelFontColor, 1, getVisibilityInfo(), pickingID));
+
+			// X-Axis Title
+			String xAxisTitle = graphObservee.getXAxisTitle();
+			Vec4d titleCenter = new Vec4d(0, graphOrigin.y - xAxisTickSize - xAxisLabelGap.getValue() - labelHeight
+					- xAxisTitleGap.getValue() - xAxisTitleTextHeight.getValue()/2, zBump, 1.0d);
+
+			Mat4d xtitleTrans = new Mat4d();
+			xtitleTrans.setTranslate3(titleCenter);
+			xtitleTrans.mult4(objectTransComp, xtitleTrans);
+			xtitleTrans.scaleCols3(xScaleVec);
+
+			out.add(new StringProxy(xAxisTitle, axisTitleFontKey, axisTitleFontColor, xtitleTrans,
+					xAxisTitleTextHeight.getValue(), getVisibilityInfo(), pickingID));
+		}
+
+		private void drawYAxis(ArrayList<RenderProxy> out) {
+
+			String yAxisLabelFormat = graphObservee.getYAxisLabelFormat();
+
+			Unit yAxisUnit = graphObservee.getYAxisUnit();
+			double yAxisFactor = 1.0;
+			if( yAxisUnit != null )
+				yAxisFactor = yAxisUnit.getConversionFactorToSI();
+
+			ArrayList<Vec4d> tickPoints = new ArrayList<Vec4d>();
+
+			double minYLabelXPos = graphOrigin.x;
+
+			for (int i = 0; i * yAxisInterval <= yRange; ++i) {
+
+				String text = String.format( yAxisLabelFormat,  ( i * yAxisInterval + yMin )/yAxisFactor);
+				double yPos = graphOrigin.y + (i * yAxisInterval * graphSize.y )/yRange;
+
+				// Right justify the labels
+				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(labelFontKey,	labelHeight*xScaleFactor, text);
+				double xPos = graphOrigin.x - yAxisTickSize - yAxisLabelGap.getValue()*xScaleFactor - stringSize.x/2;
+
+				// Save the left-most extent of the labels
+				minYLabelXPos = Math.min(minYLabelXPos, xPos - stringSize.x/2);
+
+				Mat4d labelTrans = new Mat4d();
+				labelTrans.setTranslate3(new Vec3d(xPos, yPos, zBump));
+				labelTrans.mult4(objectTransComp, labelTrans);
+				labelTrans.scaleCols3(xScaleVec);
+
+				out.add(new StringProxy(text, labelFontKey, labelFontColor, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
+
+				// Prepare the tick marks
+
+				Vec4d tickPointA = new Vec4d(graphOrigin.x                , yPos, zBump, 1.0d);
+				Vec4d tickPointB = new Vec4d(graphOrigin.x - yAxisTickSize, yPos, zBump, 1.0d);
+
+				tickPointA.mult4(objectTransComp, tickPointA);
+				tickPointB.mult4(objectTransComp, tickPointB);
+				tickPoints.add(tickPointA);
+				tickPoints.add(tickPointB);
+			}
+
+			out.add(new LineProxy(tickPoints, labelFontColor, 1, getVisibilityInfo(), pickingID));
+
+			// Primary Y-Axis Title
+			String yAxisTitle = graphObservee.getYAxisTitle();
+			double xPos = minYLabelXPos - yAxisTitleGap.getValue()*xScaleFactor - yAxisTitleHeight/2;
+
+			Mat4d ytitleTrans = new Mat4d();
+			ytitleTrans.setTranslate3(new Vec3d(xPos, 0, zBump));
+			ytitleTrans.setEuler3(new Vec3d(0, 0, Math.PI/2));
+			ytitleTrans.mult4(objectTransComp, ytitleTrans);
+			ytitleTrans.scaleCols3(yScaleVec);
+
+			out.add(new StringProxy(yAxisTitle, axisTitleFontKey, axisTitleFontColor, ytitleTrans,
+					yAxisTitleHeight, getVisibilityInfo(), pickingID));
+		}
+
+		private void drawSecondaryYAxis(ArrayList<RenderProxy> out) {
+
+			ArrayList<Vec4d> tickPoints = new ArrayList<Vec4d>();
+
+			// Secondary Y-Axis Labels and Tick Marks
+			String secYAxisLabelFormat = graphObservee.getSecondaryYAxisLabelFormat();
+
+			Unit secYAxisUnit = graphObservee.getSecondaryYAxisUnit();
+			double secYAxisFactor = 1.0;
+			if( secYAxisUnit != null )
+				secYAxisFactor = secYAxisUnit.getConversionFactorToSI();
+
+			double maxYLabelXPos = graphOrigin.x + graphSize.x;
+
+			for (int i = 0; i * secYAxisInterval <= secYRange; ++i) {
+
+				String text = String.format( secYAxisLabelFormat,  ( i * secYAxisInterval + secYMin )/secYAxisFactor);
+				double yPos = graphOrigin.y + (i * secYAxisInterval * graphSize.y )/secYRange;
+
+				// Right justify the labels
+				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(labelFontKey,	labelHeight*xScaleFactor, text);
+				double xPos = graphOrigin.x + graphSize.x + yAxisTickSize + yAxisLabelGap.getValue()*xScaleFactor + stringSize.x/2;
+
+				// Save the right-most extent of the labels
+				maxYLabelXPos = Math.max(maxYLabelXPos, xPos + stringSize.x/2);
+
+				Mat4d labelTrans = new Mat4d();
+				labelTrans.setTranslate3(new Vec3d(xPos, yPos, zBump));
+				labelTrans.mult4(objectTransComp, labelTrans);
+				labelTrans.scaleCols3(xScaleVec);
+
+				out.add(new StringProxy(text, labelFontKey, labelFontColor, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
+
+				// Prepare the tick marks
+				Vec4d tickPointA = new Vec4d(graphOrigin.x + graphSize.x                , yPos, zBump, 1.0d);
+				Vec4d tickPointB = new Vec4d(graphOrigin.x + graphSize.x + yAxisTickSize, yPos, zBump, 1.0d);
+				tickPointA.mult4(objectTransComp, tickPointA);
+				tickPointB.mult4(objectTransComp, tickPointB);
+				tickPoints.add(tickPointA);
+				tickPoints.add(tickPointB);
+			}
+
+			out.add(new LineProxy(tickPoints, labelFontColor, 1, getVisibilityInfo(), pickingID));
+
+			// Secondary Y-Axis Title
+			String secYAxisTitle = graphObservee.getSecondaryYAxisTitle();
+			double secXPos = maxYLabelXPos + yAxisTitleGap.getValue()*xScaleFactor + yAxisTitleHeight/2;
+
+			Mat4d secYtitleTrans = new Mat4d();
+			secYtitleTrans.setTranslate3(new Vec3d(secXPos, 0, zBump));
+			secYtitleTrans.setEuler3(new Vec3d(0, 0, Math.PI/2));
+			secYtitleTrans.mult4(objectTransComp, secYtitleTrans);
+			secYtitleTrans.scaleCols3(yScaleVec);
+
+			out.add(new StringProxy(secYAxisTitle, axisTitleFontKey, axisTitleFontColor, secYtitleTrans,
+					yAxisTitleHeight, getVisibilityInfo(), pickingID));
+		}
+
+		private void drawXLines(ArrayList<RenderProxy> out) {
+
 			DoubleVector xLines = graphObservee.getXLines();
 			ArrayList<Color4d> xLineColours = graphObservee.getXLineColours();
 
@@ -463,179 +639,38 @@ public class GraphModel extends DisplayModel {
 				out.add(new LineProxy(linePoints, colour, 1,
 						getVisibilityInfo(), graphObservee.getEntityNumber()));
 			}
+		}
 
-			String titleText = graphObservee.getTitle();
+		private void drawYLines(ArrayList<RenderProxy> out) {
 
-			TessFontKey titleFontKey;
-			Color4d titleFontColor;
-			if( titleTextModel.getValue() == null ) {
-				titleFontKey = TextModel.getDefaultTessFontKey();
-				titleFontColor = ColourInput.BLACK;
-			}
-			else {
-				titleFontKey = titleTextModel.getValue().getTessFontKey();
-				titleFontColor = titleTextModel.getValue().getFontColor();
-			}
+			DoubleVector yLines = graphObservee.getYLines();
+			ArrayList<Color4d> yLineColours = graphObservee.getYLineColours();
 
-			Vec4d titleCenter = new Vec4d(0, graphOrigin.y + graphSize.y + titleGap.getValue() + titleTextHeight.getValue()/2, zBump, 1.0d);
+			for (int i = 0; i < yLines.size(); ++i) {
+				double yPos = (yLines.get(i) - yMin) / yRange - 0.5;
+				ArrayList<Vec4d> linePoints = new ArrayList<Vec4d>(2);
 
-			Mat4d titleTrans = new Mat4d();
-			titleTrans.setTranslate3(titleCenter);
-			titleTrans.mult4(objectTransComp, titleTrans);
-			titleTrans.scaleCols3(xScaleVec);
+				linePoints.add(new Vec4d(-0.5, yPos, zBump, 1.0d));
+				linePoints.add(new Vec4d( 0.5, yPos, zBump, 1.0d));
 
-			out.add(new StringProxy(titleText, titleFontKey, titleFontColor, titleTrans, titleTextHeight.getValue(), getVisibilityInfo(), pickingID));
-
-			// Y-Axis Labels and Tick Marks
-			String yAxisLabelFormat = graphObservee.getYAxisLabelFormat();
-			Unit yAxisUnit = graphObservee.getYAxisUnit();
-			double yAxisFactor = 1.0;
-			if( yAxisUnit != null )
-				yAxisFactor = yAxisUnit.getConversionFactorToSI();
-
-			double xTickSize = labelHeight/2 * xScaleFactor; // horizontal tick marks for the y-axis
-			double yTickSize = labelHeight/2; // vertical tick marks for the x-axis
-
-			ArrayList<Vec4d> tickPoints = new ArrayList<Vec4d>();
-
-			double minYLabelXPos = graphOrigin.x;
-
-			for (int i = 0; i * yAxisInterval <= yRange; ++i) {
-
-				String text = String.format( yAxisLabelFormat,  ( i * yAxisInterval + yMin )/yAxisFactor);
-				double yPos = graphOrigin.y + (i * yAxisInterval * graphSize.y )/yRange; // current label
-
-				// Right justify the labels
-				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(labelFontKey,	labelHeight*xScaleFactor, text);
-				double xPos = graphOrigin.x - yAxisTickSize - yAxisLabelGap.getValue()*xScaleFactor - stringSize.x/2;
-
-				// Save the left-most extent of the labels
-				minYLabelXPos = Math.min(minYLabelXPos, xPos - stringSize.x/2);
-
-				Mat4d labelTrans = new Mat4d();
-				labelTrans.setTranslate3(new Vec3d(xPos, yPos, zBump));
-				labelTrans.mult4(objectTransComp, labelTrans);
-				labelTrans.scaleCols3(xScaleVec);
-
-				out.add(new StringProxy(text, labelFontKey, labelFontColor, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
-
-				// Prepare the tick marks
-				Vec4d tickPointA = new Vec4d(graphOrigin.x            , yPos, zBump, 1.0d);
-				Vec4d tickPointB = new Vec4d(graphOrigin.x - xTickSize, yPos, zBump, 1.0d);
-				tickPointA.mult4(objectTransComp, tickPointA);
-				tickPointB.mult4(objectTransComp, tickPointB);
-				tickPoints.add(tickPointA);
-				tickPoints.add(tickPointB);
-			}
-
-			// Secondary Y-Axis Labels and Tick Marks
-			String secYAxisLabelFormat = graphObservee.getSecondaryYAxisLabelFormat();
-			Unit secYAxisUnit = graphObservee.getSecondaryYAxisUnit();
-			double secYAxisFactor = 1.0;
-			if( secYAxisUnit != null )
-				secYAxisFactor = secYAxisUnit.getConversionFactorToSI();
-
-			double maxYLabelXPos = graphOrigin.x + graphSize.x;
-
-			if (! graphObservee.getSecondarySeries().isEmpty() ) {
-				for (int i = 0; i * secYAxisInterval <= secYRange; ++i) {
-
-					String text = String.format( secYAxisLabelFormat,  ( i * secYAxisInterval + secYMin )/secYAxisFactor);
-					double yPos = graphOrigin.y + (i * secYAxisInterval * graphSize.y )/secYRange; // current label
-
-					// Right justify the labels
-					Vec3d stringSize = RenderManager.inst().getRenderedStringSize(labelFontKey,	labelHeight*xScaleFactor, text);
-					double xPos = graphOrigin.x + graphSize.x + yAxisTickSize + yAxisLabelGap.getValue()*xScaleFactor + stringSize.x/2;
-
-					// Save the right-most extent of the labels
-					maxYLabelXPos = Math.max(maxYLabelXPos, xPos + stringSize.x/2);
-
-					Mat4d labelTrans = new Mat4d();
-					labelTrans.setTranslate3(new Vec3d(xPos, yPos, zBump));
-					labelTrans.mult4(objectTransComp, labelTrans);
-					labelTrans.scaleCols3(xScaleVec);
-
-					out.add(new StringProxy(text, labelFontKey, labelFontColor, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
-
-					// Prepare the tick marks
-					Vec4d tickPointA = new Vec4d(graphOrigin.x + graphSize.x            , yPos, zBump, 1.0d);
-					Vec4d tickPointB = new Vec4d(graphOrigin.x + graphSize.x + xTickSize, yPos, zBump, 1.0d);
-					tickPointA.mult4(objectTransComp, tickPointA);
-					tickPointB.mult4(objectTransComp, tickPointB);
-
-					tickPoints.add(tickPointA);
-					tickPoints.add(tickPointB);
-				}
-			}
-
-			// X-Axis Labels and Tick Marks
-			String xAxisFormat = graphObservee.getXAxisLabelFormat();
-
-			Unit xAxisUnit = graphObservee.getXAxisUnit();
-			double xAxisFactor = 1.0;
-			if( xAxisUnit != null )
-				xAxisFactor = xAxisUnit.getConversionFactorToSI();
-
-			for (int i = 0; xMin + i*xAxisInterval <= xMax; ++i) {
-
-				double time = (xMin + i * xAxisInterval);
-				String text;
-				if (time == 0) {
-					text = "Now";
-				} else {
-					text = String.format( xAxisFormat, time/xAxisFactor);
+				Color4d colour = ColourInput.LIGHT_GREY;
+				if (yLineColours.size() > i) {
+					colour = yLineColours.get(i);
+				} else if (yLineColours.size() >= 1) {
+					colour = yLineColours.get(0);
 				}
 
-				double xPos = graphOrigin.x + ( i * xAxisInterval * graphSize.x)/xRange;
-				double yPos = graphOrigin.y - xAxisTickSize - xAxisLabelGap.getValue() - labelHeight/2;
+				// Transform to world space
+				for (int j = 0; j < linePoints.size(); ++j) {
+					linePoints.get(j).mult4(graphToWorldTrans, linePoints.get(j));
+				}
 
-				Mat4d labelTrans = new Mat4d();
-				labelTrans.setTranslate3(new Vec3d(xPos, yPos, zBump));
-				labelTrans.mult4(objectTransComp, labelTrans);
-				labelTrans.scaleCols3(xScaleVec);
-
-				out.add(new StringProxy(text, labelFontKey, labelFontColor, labelTrans, labelHeight, getVisibilityInfo(), pickingID));
-
-				// Prepare the tick marks
-				Vec4d tickPointA = new Vec4d(xPos, graphOrigin.y, zBump, 1.0d);
-				Vec4d tickPointB = new Vec4d(xPos, graphOrigin.y - yTickSize, zBump, 1.0d);
-				tickPointA.mult4(objectTransComp, tickPointA);
-				tickPointB.mult4(objectTransComp, tickPointB);
-				tickPoints.add(tickPointA);
-				tickPoints.add(tickPointB);
+				out.add(new LineProxy(linePoints, colour, 1, getVisibilityInfo(), pickingID));
 			}
-
-			out.add(new LineProxy(tickPoints, labelFontColor, 1, getVisibilityInfo(), pickingID));
-
-			// Primary Y-Axis Title
-			String yAxisTitle = graphObservee.getYAxisTitle();
-			double xPos = minYLabelXPos - yAxisTitleGap.getValue()*xScaleFactor - yAxisTitleHeight/2;
-
-			Mat4d ytitleTrans = new Mat4d();
-			ytitleTrans.setTranslate3(new Vec3d(xPos, 0, zBump));
-			ytitleTrans.setEuler3(new Vec3d(0, 0, Math.PI/2));
-			ytitleTrans.mult4(objectTransComp, ytitleTrans);
-			ytitleTrans.scaleCols3(yScaleVec);
-
-			out.add(new StringProxy(yAxisTitle, axisTitleFontKey, axisTitleFontColor, ytitleTrans, yAxisTitleHeight, getVisibilityInfo(), pickingID));
-
-			// Secondary Y-Axis Title
-			if (! graphObservee.getSecondarySeries().isEmpty() ) {
-				String secYAxisTitle = graphObservee.getSecondaryYAxisTitle();
-				double secXPos = maxYLabelXPos + yAxisTitleGap.getValue()*xScaleFactor + yAxisTitleHeight/2;
-
-				Mat4d secYtitleTrans = new Mat4d();
-				secYtitleTrans.setTranslate3(new Vec3d(secXPos, 0, zBump));
-				secYtitleTrans.setEuler3(new Vec3d(0, 0, Math.PI/2));
-				secYtitleTrans.mult4(objectTransComp, secYtitleTrans);
-				secYtitleTrans.scaleCols3(yScaleVec);
-
-				out.add(new StringProxy(secYAxisTitle, axisTitleFontKey, axisTitleFontColor, secYtitleTrans, yAxisTitleHeight, getVisibilityInfo(), pickingID));
-			}
-
 		}
 
 		private void updateObjectTrans(double simTime) {
+
 			// Set graph proportions
 			Vec3d graphExtent = graphObservee.getSize();
 			double xScaleFactor = graphExtent.y / graphExtent.x;
