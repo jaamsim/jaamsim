@@ -254,6 +254,8 @@ public class GraphModel extends DisplayModel {
 		private double secYRange;
 		private double secYAxisInterval;
 
+		private Boolean timeTrace;
+
 		private double yAxisTitleHeight;
 
 		private TessFontKey axisTitleFontKey;
@@ -320,6 +322,8 @@ public class GraphModel extends DisplayModel {
 			secYRange = secYMax - secYMin;
 			secYAxisInterval = graphObservee.getSecondaryYAxisInterval();
 
+			timeTrace = graphObservee.getTimeTrace();
+
 			yAxisTitleHeight = yAxisTitleTextHeight.getValue()*xScaleFactor; // scaled height of the y-axis title
 
 			if( axisTitleTextModel.getValue() == null ) {
@@ -372,17 +376,17 @@ public class GraphModel extends DisplayModel {
 			// Draw the primary series
 			ArrayList<Graph.SeriesInfo> primarySeries = graphObservee.getPrimarySeries();
 			for (int i = 0; i < primarySeries.size(); ++i) {
-				drawSeries(primarySeries.get(i), yMin, yMax, out);
+				drawSeries(primarySeries.get(i), yMin, yMax, simTime, out);
 			}
 
 			// Draw the secondary series
 			ArrayList<Graph.SeriesInfo> secondarySeries = graphObservee.getSecondarySeries();
 			for (int i = 0; i < secondarySeries.size(); ++i) {
-				drawSeries(secondarySeries.get(i), secYMin, secYMax, out);
+				drawSeries(secondarySeries.get(i), secYMin, secYMax, simTime, out);
 			}
 		}
 
-		private void drawSeries(Graph.SeriesInfo series, double yMinimum, double yMaximum, ArrayList<RenderProxy> out) {
+		private void drawSeries(Graph.SeriesInfo series, double yMinimum, double yMaximum, double simTime, ArrayList<RenderProxy> out) {
 
 			if (series.numPoints < 2)
 				return; // Nothing to display yet
@@ -391,18 +395,18 @@ public class GraphModel extends DisplayModel {
 
 			double[] yVals = new double[series.numPoints];
 			double[] xVals = new double[series.numPoints];
-			double xInc = 1.0 / (graphObservee.getNumberOfPoints() - 1.0);
 
 			for (int i = 0; i < series.numPoints; i++) {
-				xVals[i] = (i*xInc) - (series.numPoints-1)*xInc + 0.5;
-				yVals[i] = MathUtils.bound((series.values[i] - yMinimum) / yRange, 0, 1) - 0.5; // Bound the y values inside the graph range
+				if( timeTrace )
+					xVals[i] = MathUtils.bound((series.xValues[i] - simTime - xMin) / xRange, 0, 1) - 0.5;
+				else
+					xVals[i] = MathUtils.bound((series.xValues[i] - xMin) / xRange, 0, 1) - 0.5;
+
+				yVals[i] = MathUtils.bound((series.yValues[i] - yMinimum) / yRange, 0, 1) - 0.5;
 			}
 
 			ArrayList<Vec4d> seriesPoints = new ArrayList<Vec4d>((series.numPoints-1)*2);
-			// Loop through one fewer points in the series to reduce the chance that the Render
-			// will need to trap an index of of bound error
-			//for (int i = 0; i < series.numPoints - 1; i++) {
-			for (int i = 0; i < series.numPoints - 2; i++) {
+			for (int i = 0; i < series.numPoints - 1; i++) {
 				seriesPoints.add(new Vec4d(xVals[i  ], yVals[i  ], zBump, 1.0d));
 				seriesPoints.add(new Vec4d(xVals[i+1], yVals[i+1], zBump, 1.0d));
 			}
@@ -451,12 +455,12 @@ public class GraphModel extends DisplayModel {
 
 			for (int i = 0; xMin + i*xAxisInterval <= xMax; ++i) {
 
-				double time = (xMin + i * xAxisInterval);
+				double x = (xMin + i * xAxisInterval);
 				String text;
-				if (time == 0) {
+				if( timeTrace && x == 0 ) {
 					text = "Now";
 				} else {
-					text = String.format( xAxisFormat, time/xAxisFactor);
+					text = String.format( xAxisFormat, x/xAxisFactor);
 				}
 
 				double xPos = graphOrigin.x + ( i * xAxisInterval * graphSize.x)/xRange;
@@ -591,6 +595,7 @@ public class GraphModel extends DisplayModel {
 				Vec4d tickPointB = new Vec4d(graphOrigin.x + graphSize.x + yAxisTickSize, yPos, zBump, 1.0d);
 				tickPointA.mult4(objectTransComp, tickPointA);
 				tickPointB.mult4(objectTransComp, tickPointB);
+
 				tickPoints.add(tickPointA);
 				tickPoints.add(tickPointB);
 			}

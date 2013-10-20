@@ -46,8 +46,9 @@ public class Graph extends DisplayEntity  {
 	 * A struct containing all the information pertaining to a specific series
 	 */
 	public static class SeriesInfo {
-		public double[] values;
-		public int numPoints; // The first point to draw from the start (used to be confusingly called index)
+		public double[] yValues;
+		public double[] xValues;
+		public int numPoints; // number of points to be graphed
 		public OutputHandle out; // The source of the data for the series
 		public double lineWidth;
 		public Color4d lineColour;
@@ -495,7 +496,8 @@ public class Graph extends DisplayEntity  {
 		for (int outInd = 0; outInd < outs.size(); ++outInd) {
 			SeriesInfo info = new SeriesInfo();
 			info.out = outs.get(outInd);
-			info.values = new double[numberOfPoints.getValue()];
+			info.yValues = new double[numberOfPoints.getValue()];
+			info.xValues = new double[numberOfPoints.getValue()];
 
 			infos.add(info);
 		}
@@ -564,8 +566,10 @@ public class Graph extends DisplayEntity  {
 		info.numPoints = 0;
 
 		for( int i = 0; i * xInterval < endTime.getValue(); i++ ) {
-			double presentValue = this.getCurrentValue( i * xInterval, info);
-			info.values[info.numPoints++] = presentValue;
+			double t = i * xInterval;
+			info.numPoints++;
+			info.xValues[info.numPoints] = t;
+			info.yValues[info.numPoints] = this.getCurrentValue(t, info);
 		}
 	}
 
@@ -623,12 +627,16 @@ public class Graph extends DisplayEntity  {
 
 		double t = getSimTime() + endTime.getValue();
 		double presentValue = this.getCurrentValue(t, info);
-		if (info.numPoints < info.values.length) {
-			info.values[info.numPoints++] = presentValue;
+		if (info.numPoints < info.yValues.length) {
+			info.xValues[info.numPoints] = t;
+			info.yValues[info.numPoints] = presentValue;
+			info.numPoints++;
 		}
 		else {
-			System.arraycopy(info.values, 1, info.values, 0, info.values.length - 1);
-			info.values[info.values.length - 1] = presentValue;
+			System.arraycopy(info.xValues, 1, info.xValues, 0, info.xValues.length - 1);
+			System.arraycopy(info.yValues, 1, info.yValues, 0, info.yValues.length - 1);
+			info.xValues[info.xValues.length - 1] = t;
+			info.yValues[info.yValues.length - 1] = presentValue;
 		}
 	}
 
@@ -742,6 +750,10 @@ public class Graph extends DisplayEntity  {
 
 	public ArrayList<Color4d> getYLineColours() {
 		return yLinesColor.getValue();
+	}
+
+	public Boolean getTimeTrace() {
+		return true;
 	}
 
 }
