@@ -366,7 +366,7 @@ public class GraphModel extends DisplayModel {
 			drawYAxis(out);
 
 			// Draw the secondary y-axis title (if used)
-			if (! graphObservee.getSecondarySeries().isEmpty() )
+			if( graphObservee.showSecondaryYAxis() )
 				drawSecondaryYAxis(out);
 
 			// Draw the selected grid lines

@@ -51,6 +51,7 @@ public abstract class GraphBasics extends DisplayEntity {
 	protected final ArrayList<SeriesInfo> secondarySeries;
 
 	protected Boolean timeTrace;  // TRUE if the x-axis moves so that zero is always the present time
+	protected Boolean showSecondaryYAxis;  // TRUE if the secondary y-axis is to be displayed
 
 	// Key Inputs category
 
@@ -274,6 +275,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		secondarySeries = new ArrayList<SeriesInfo>();
 
 		timeTrace = false;
+		showSecondaryYAxis = false;
 	}
 
 	@Override
@@ -423,6 +425,10 @@ public abstract class GraphBasics extends DisplayEntity {
 
 	public Boolean getTimeTrace() {
 		return timeTrace;
+	}
+
+	public Boolean showSecondaryYAxis() {
+		return showSecondaryYAxis;
 	}
 
 }

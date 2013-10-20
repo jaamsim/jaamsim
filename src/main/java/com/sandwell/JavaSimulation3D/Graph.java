@@ -139,6 +139,7 @@ public class Graph extends GraphBasics  {
 
 		if (in == secondaryDataSource) {
 			ArrayList<OutputHandle> outs = secondaryDataSource.getValue();
+			showSecondaryYAxis = ! outs.isEmpty();
 			if (outs.isEmpty())
 				return;
 			Class<? extends Unit> temp = outs.get(0).getUnitType();
