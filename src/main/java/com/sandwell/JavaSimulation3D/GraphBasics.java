@@ -22,7 +22,6 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.FrameBox;
-import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.ColorListInput;
@@ -65,30 +64,28 @@ public abstract class GraphBasics extends DisplayEntity {
 	         example = "Graph1 XAxisTitle { 'Time (s)' }")
 	private final StringInput xAxisTitle;
 
-	@Keyword(description = "The time unit to be used for the x-axis.",
+	@Keyword(description = "The unit to be used for the x-axis.",
 	         example = "Graph1 XAxisUnit { h }")
-	private final EntityInput<TimeUnit> xAxisUnit;
+	private final EntityInput<? extends Unit> xAxisUnit;
 
-	@Keyword(description = "The start time for the x-axis relative to the present time.\n" +
-			"The present time is 0 for this axis.",
-	         example = "Graph1 StartTime { -48 h }")
-	protected final ValueInput startTime;
+	@Keyword(description = "The minimum value for the x-axis.",
+	         example = "Graph1 XAxisStart { -48 h }")
+	protected final ValueInput xAxisStart;
 
-	@Keyword(description = "The end time for the x-axis relative to the present time.\n" +
-			"The present time is 0 for this axis.",
-	         example = "Graph1 EndTime { 8 h }")
-	protected final ValueInput endTime;
+	@Keyword(description = "The maximum value for the x-axis.",
+	         example = "Graph1 XAxisEnd { 8 h }")
+	protected final ValueInput xAxisEnd;
 
-	@Keyword(description = "The time increment between the tick marks on the x-axis.",
-	         example = "Graph1 TimeInterval { 8 h }")
-	private final ValueInput timeInterval;
+	@Keyword(description = "The interval between x-axis labels.",
+	         example = "Graph1 XAxisInterval { 8 h }")
+	private final ValueInput xAxisInterval;
 
 	@Keyword(description = "The Java format to be used for the tick mark values on the x-axis.\n" +
 			"For example, the format %.1fs would dispaly the value 5 as 5.0s.",
 	         example = "Graph1 XAxisLabelFormat { %.1fs }")
 	private final FormatInput xAxisLabelFormat;
 
-	@Keyword(description = "A list of time values between StartTime and EndTime where vertical gridlines are inserted.",
+	@Keyword(description = "A list of values between XAxisStart and XAxisEnd at which to insert vertical gridlines.",
 	         example = "Graph1 XLines { -48 -40 -32 -24 -16 -8 0 h }")
 	private final ValueListInput xLines;
 
@@ -126,7 +123,7 @@ public abstract class GraphBasics extends DisplayEntity {
 	         example = "Graph1 YAxisLabelFormat { %.1f }")
 	private final FormatInput yAxisLabelFormat;
 
-	@Keyword(description = "A list of values at which to insert horizontal gridlines.",
+	@Keyword(description = "A list of values between YAxisStart and YAxisEnd at which to insert horizontal gridlines.",
 	         example ="Graph1 YLines { 0  0.5  1  1.5  2  2.5  3  t/h }")
 	private final ValueListInput yLines;
 
@@ -175,23 +172,23 @@ public abstract class GraphBasics extends DisplayEntity {
 		xAxisTitle = new StringInput("XAxisTitle", "X-Axis", "X-Axis Title");
 		this.addInput(xAxisTitle, true);
 
-		xAxisUnit = new EntityInput<TimeUnit>(TimeUnit.class, "XAxisUnit", "X-Axis", null);
+		xAxisUnit = new EntityInput<Unit>(Unit.class, "XAxisUnit", "X-Axis", null);
 		this.addInput(xAxisUnit, true);
 
-		startTime = new ValueInput("StartTime", "X-Axis", -60.0d);
-		startTime.setUnitType(TimeUnit.class);
-		startTime.setValidRange(Double.NEGATIVE_INFINITY, 1.0e-6);
-		this.addInput(startTime, true);
+		xAxisStart = new ValueInput("StartTime", "X-Axis", -60.0d);
+		xAxisStart.setUnitType(UserSpecifiedUnit.class);
+		xAxisStart.setValidRange(Double.NEGATIVE_INFINITY, 1.0e-6);
+		this.addInput(xAxisStart, true);
 
-		endTime = new ValueInput("EndTime", "X-Axis", 0.0d);
-		endTime.setUnitType(TimeUnit.class);
-		endTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		this.addInput(endTime, true);
+		xAxisEnd = new ValueInput("EndTime", "X-Axis", 0.0d);
+		xAxisEnd.setUnitType(UserSpecifiedUnit.class);
+		xAxisEnd.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		this.addInput(xAxisEnd, true);
 
-		timeInterval = new ValueInput("TimeInterval", "X-Axis", 10.0d);
-		timeInterval.setUnitType(TimeUnit.class);
-		timeInterval.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
-		this.addInput(timeInterval, true);
+		xAxisInterval = new ValueInput("TimeInterval", "X-Axis", 10.0d);
+		xAxisInterval.setUnitType(UserSpecifiedUnit.class);
+		xAxisInterval.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
+		this.addInput(xAxisInterval, true);
 
 		xAxisLabelFormat = new FormatInput("XAxisLabelFormat", "X-Axis", "%.0fs");
 		this.addInput(xAxisLabelFormat, true);
@@ -200,7 +197,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		defXLines.add(-20.0);
 		defXLines.add(-40.0);
 		xLines = new ValueListInput("XLines", "X-Axis", defXLines);
-		xLines.setUnitType(TimeUnit.class);
+		xLines.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(xLines, true);
 
 		ArrayList<Color4d> defXlinesColor = new ArrayList<Color4d>(0);
@@ -302,11 +299,19 @@ public abstract class GraphBasics extends DisplayEntity {
 
 		for( int i = 0; i < xLines.getValue().size(); i++ ) {
 			double x = xLines.getValue().get( i );
-			if( x < startTime.getValue() || x > endTime.getValue() ) {
+			if( x < xAxisStart.getValue() || x > xAxisEnd.getValue() ) {
 				throw new InputErrorException("value for xLines should be in (%f, %f) range -- it is (%f)",
-					startTime.getValue(), endTime.getValue(), x);
+					xAxisStart.getValue(), xAxisEnd.getValue(), x);
 			}
 		}
+	}
+
+	protected void setXAxisUnit(Class<? extends Unit> unitType) {
+		xAxisStart.setUnitType(unitType);
+		xAxisEnd.setUnitType(unitType);
+		xAxisInterval.setUnitType(unitType);
+		xLines.setUnitType(unitType);
+		FrameBox.valueUpdate();  // show the new units in the Input Editor
 	}
 
 	protected void setYAxisUnit(Class<? extends Unit> unitType) {
@@ -332,20 +337,20 @@ public abstract class GraphBasics extends DisplayEntity {
 		return xAxisTitle.getValue();
 	}
 
-	public TimeUnit getXAxisUnit() {
+	public Unit getXAxisUnit() {
 		return xAxisUnit.getValue();
 	}
 
 	public double getXAxisStart() {
-		return startTime.getValue();
+		return xAxisStart.getValue();
 	}
 
 	public double getXAxisEnd() {
-		return endTime.getValue();
+		return xAxisEnd.getValue();
 	}
 
 	public double getXAxisInterval() {
-		return timeInterval.getValue();
+		return xAxisInterval.getValue();
 	}
 
 	public String getXAxisLabelFormat() {

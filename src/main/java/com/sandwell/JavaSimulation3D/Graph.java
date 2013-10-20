@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.OutputListInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.ColorListInput;
 import com.sandwell.JavaSimulation.ColourInput;
@@ -116,6 +117,7 @@ public class Graph extends GraphBasics  {
 	public Graph() {
 
 		timeTrace = true;
+		this.setXAxisUnit(TimeUnit.class);
 	}
 
 	@Override
@@ -289,7 +291,7 @@ public class Graph extends GraphBasics  {
 
 		info.numPoints = 0;
 
-		for( int i = 0; i * xInterval < endTime.getValue(); i++ ) {
+		for( int i = 0; i * xInterval < xAxisEnd.getValue(); i++ ) {
 			double t = i * xInterval;
 			info.numPoints++;
 			info.xValues[info.numPoints] = t;
@@ -308,7 +310,7 @@ public class Graph extends GraphBasics  {
 	public void processGraph() {
 		if( traceFlag ) this.trace( "processGraph()" );
 
-		double xLength = endTime.getValue() - startTime.getValue();
+		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
 		double xInterval = xLength/(numberOfPoints.getValue() -1);
 
 		for (SeriesInfo info : primarySeries) {
@@ -349,7 +351,7 @@ public class Graph extends GraphBasics  {
 			return;
 		}
 
-		double t = getSimTime() + endTime.getValue();
+		double t = getSimTime() + xAxisEnd.getValue();
 		double presentValue = this.getCurrentValue(t, info);
 		if (info.numPoints < info.yValues.length) {
 			info.xValues[info.numPoints] = t;
