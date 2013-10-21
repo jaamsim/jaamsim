@@ -24,6 +24,7 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec2d;
+import com.jaamsim.math.Vec2dInterner;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec3dInterner;
 import com.jaamsim.math.Vec4d;
@@ -158,6 +159,7 @@ public class MeshData {
 
 	private ArrayList<Action.Description> _actionDesc;
 
+	private Vec2dInterner v2Interner = new Vec2dInterner();
 	private Vec3dInterner v3Interner = new Vec3dInterner();
 	private Vec4dInterner v4Interner = new Vec4dInterner();
 
@@ -330,7 +332,7 @@ public class MeshData {
 			sub.verts.add(v3Interner.intern(v.getPos()));
 			sub.normals.add(v.getNormal());
 			if (hasTexCoords) {
-				sub.texCoords.add(v.getTexCoord());
+				sub.texCoords.add(v2Interner.intern(v.getTexCoord()));
 			}
 			if (hasBoneInfo) {
 				Vec4d boneIndices = v4Interner.intern(v.getBoneIndices());
