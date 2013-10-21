@@ -964,10 +964,10 @@ public class InputAgent {
 
 					// Iterate through record
 					while( (i < record.size()) && ( noOfUnclosedBraces > 0 ) ) {
-						if ( record.get(i).equals("{") )
-							noOfUnclosedBraces ++ ;
-						else if (record.get(i).equals("}"))
-							noOfUnclosedBraces -- ;
+						if ("{".equals(record.get(i)))
+							noOfUnclosedBraces++;
+						else if ("}".equals(record.get(i)))
+							noOfUnclosedBraces--;
 						cmd.value.add((String)record.get(i));
 						i++;
 					}
