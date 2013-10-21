@@ -182,37 +182,10 @@ public double mag() {
 	return Math.sqrt(_dot4(this, this));
 }
 
-/**
- * Normalize the quaternion in place
- */
-public void normalize() {
-	double mag = _dot4(this, this);
-	if (mag < Constants.EPSILON) { // The quaternion is of length 0, simply return an identity
-		this.x = 0.0d;
-		this.y = 0.0d;
-		this.z = 0.0d;
-		this.w = 1.0d;
-		return;
-	}
-
-	mag = Math.sqrt(mag);
-	this.x = this.x / mag;
-	this.y = this.y / mag;
-	this.z = this.z / mag;
-	this.w = this.w / mag;
-}
-
-/**
- * Set this quaternion to the normalized value of q
- * @throws NullPointerException if q is null
- */
-public void normalize(Quaternion q) {
+private void _norm(Quaternion q) {
 	double mag = _dot4(q, q);
 	if (mag < Constants.EPSILON) { // The quaternion is of length 0, simply return an identity
-		this.x = 0.0d;
-		this.y = 0.0d;
-		this.z = 0.0d;
-		this.w = 1.0d;
+		this.x = 0.0d; this.y = 0.0d; this.z = 0.0d; this.w = 1.0d;
 		return;
 	}
 
@@ -221,6 +194,21 @@ public void normalize(Quaternion q) {
 	this.y = q.y / mag;
 	this.z = q.z / mag;
 	this.w = q.w / mag;
+}
+
+/**
+ * Normalize the quaternion in place
+ */
+public void normalize() {
+	_norm(this);
+}
+
+/**
+ * Set this quaternion to the normalized value of q
+ * @throws NullPointerException if q is null
+ */
+public void normalize(Quaternion q) {
+	_norm(q);
 }
 
 /**
