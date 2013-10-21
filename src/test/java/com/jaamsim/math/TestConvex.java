@@ -31,7 +31,7 @@ public class TestConvex {
 		//totalPoints.addAll(getPointsForCube(2));
 		totalPoints.addAll(getPointsForCube(3));
 
-		ConvexHull hull = ConvexHull.TryBuildHull(totalPoints, 1, 0);
+		ConvexHull hull = ConvexHull.TryBuildHull(totalPoints, 1, 0, null);
 
 		assertTrue(hull.getVertices().size() == 8);
 
@@ -60,7 +60,7 @@ public class TestConvex {
 		totalPoints.addAll(getPointsForCube(2));
 		totalPoints.addAll(getPointsForCube(3));
 
-		ConvexHull hull = ConvexHull.TryBuildHull(totalPoints, 1, 0);
+		ConvexHull hull = ConvexHull.TryBuildHull(totalPoints, 1, 0, null);
 
 		Ray r = new Ray(new Vec4d(5, 0, 0, 1.0d), new Vec4d(-1, 0, 0, 1.0d));
 		double colDist = hull.collisionDistance(r, Transform.ident);

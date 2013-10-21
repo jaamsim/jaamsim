@@ -374,7 +374,7 @@ public class MeshData {
 					}
 				}
 
-				ConvexHull boneHull = ConvexHull.TryBuildHull(boneVerts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+				ConvexHull boneHull = ConvexHull.TryBuildHull(boneVerts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 				sub.boneHulls.add(boneHull);
 			}
 			// Lastly, make a convex hull of any vertices that are influenced by no bones
@@ -385,10 +385,10 @@ public class MeshData {
 					bonelessVerts.add(v.getPos());
 				}
 			}
-			sub.bonelessHull = ConvexHull.TryBuildHull(bonelessVerts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+			sub.bonelessHull = ConvexHull.TryBuildHull(bonelessVerts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 		}
 
-		sub.staticHull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+		sub.staticHull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 	}
 
 	public void addSubLine(Vec3d[] vertices,
@@ -407,7 +407,7 @@ public class MeshData {
 
 		sub.verts.addAll(Arrays.asList(vertices));
 
-		sub.hull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+		sub.hull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 	}
 
 	public boolean hasTransparent() {
@@ -436,7 +436,7 @@ public class MeshData {
 			totalHullPoints.addAll(subPoints);
 		}
 
-		_staticHull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+		_staticHull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 		_defaultBounds = _staticHull.getAABB(new Mat4d());
 
 		_radius = _staticHull.getRadius();
@@ -462,6 +462,7 @@ public class MeshData {
 				}
 			}
 		}
+		v2Interner = null; // Drop ref to the interner to free memory
 		v3Interner = null; // Drop ref to the interner to free memory
 		v4Interner = null; // Drop ref to the interner to free memory
 	}
@@ -505,7 +506,7 @@ public class MeshData {
 			hullPoints.addAll(subPoints);
 		}
 
-		ConvexHull ret = ConvexHull.TryBuildHull(hullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS);
+		ConvexHull ret = ConvexHull.TryBuildHull(hullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, null);
 		return ret;
 	}
 
@@ -553,7 +554,7 @@ public class MeshData {
 			hullPoints.addAll(subPoints);
 		}
 
-		return ConvexHull.TryBuildHull(hullPoints, MAX_HULL_ATTEMPTS, MAX_SUBINST_HULL_POINTS);
+		return ConvexHull.TryBuildHull(hullPoints, MAX_HULL_ATTEMPTS, MAX_SUBINST_HULL_POINTS, null);
 	}
 
 	public ArrayList<ConvexHull> getSubHulls(ArrayList<Action.Queue> actions) {

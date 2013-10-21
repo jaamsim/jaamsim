@@ -43,7 +43,7 @@ public class ConvexHull {
 
 	private double _radius;
 
-	public static ConvexHull TryBuildHull(ArrayList<Vec3d> verts, int numAttempts, int maxNumPoints) {
+	public static ConvexHull TryBuildHull(ArrayList<Vec3d> verts, int numAttempts, int maxNumPoints, Vec3dInterner interner) {
 
 		long filterStart = System.nanoTime();
 		ArrayList<Vec3d> baseVerts = removeDoubles(verts);
@@ -58,7 +58,7 @@ public class ConvexHull {
 		for (int i = 0; i < numAttempts; ++i) {
 			int seed = (int)((double)i/(double)numAttempts);
 
-			ret = new ConvexHull(baseVerts, seed, maxNumPoints);
+			ret = new ConvexHull(baseVerts, seed, maxNumPoints, interner);
 			if (!ret._isDegenerate || badInput) {
 				return ret;
 			}
@@ -73,7 +73,7 @@ public class ConvexHull {
 	 * Initialize this hull from the vertices provided. This is an implementation of the QuickHull algorithm (or close enough to it)
 	 * @param verts
 	 */
-	public ConvexHull(ArrayList<Vec3d> baseVerts, int seed, int maxNumPoints) {
+	public ConvexHull(ArrayList<Vec3d> baseVerts, int seed, int maxNumPoints, Vec3dInterner interner) {
 
 		assert(seed >= 0);
 		assert(seed < 1);
@@ -297,7 +297,10 @@ public class ConvexHull {
 				}
 				if (newInd == realVerts.size()) {
 					// This vertex isn't in the new list, so add it and update the radius
-					realVerts.add(oldVert);
+					if (interner != null)
+						realVerts.add(interner.intern(oldVert));
+					else
+						realVerts.add(oldVert);
 
 					double rad = oldVert.mag3();
 					if (rad > _radius) { _radius = rad; }
