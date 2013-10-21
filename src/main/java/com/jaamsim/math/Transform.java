@@ -23,8 +23,8 @@ package com.jaamsim.math;
  */
 public class Transform {
 
-private Quaternion _rot;
-private Vec4d _trans;
+private final Quaternion _rot;
+private final Vec3d _trans;
 private double _scale;
 private final Mat4d _mat4d = new Mat4d();
 private boolean _matrixDirty;
@@ -32,14 +32,14 @@ private boolean _matrixDirty;
 public static final Transform ident = new Transform(); // Static Identity transform
 
 public Transform() {
-	_trans = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d); // Zero
+	_trans = new Vec3d();
 	_rot = new Quaternion(); // Identity
 	_scale = 1;
 	_matrixDirty = false;
 }
 
 public Transform(Transform t) {
-	_trans = new Vec4d(t._trans);
+	_trans = new Vec3d(t._trans);
 	_rot = new Quaternion(t._rot);
 	_scale = t._scale;
 	_matrixDirty = true;
@@ -48,9 +48,9 @@ public Transform(Transform t) {
 public Transform(Vec3d trans, Quaternion rot, double scale)
 {
 	if (trans == null)
-		_trans = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		_trans = new Vec3d();
 	else
-		_trans = new Vec4d(trans.x, trans.y, trans.z, 1.0d);
+		_trans = new Vec3d(trans);
 
 	if (rot == null)
 		_rot = new Quaternion();
@@ -65,7 +65,7 @@ public Transform(Vec3d trans) {
 }
 
 public void copyFrom(Transform t) {
-	_trans.set4(t._trans);
+	_trans.set3(t._trans);
 	_rot.set(t._rot);
 	_scale = t._scale;
 
@@ -76,10 +76,10 @@ public void copyFrom(Transform t) {
 }
 
 public void setTrans(Vec3d trans) {
-	if (_trans.equals(trans)) {
+	if (_trans.equals3(trans)) {
 		return;
 	}
-	_trans = new Vec4d(trans.x, trans.y, trans.z, 1.0d);
+	_trans.set3(trans);
 	_matrixDirty = true;
 }
 
@@ -107,12 +107,8 @@ public Quaternion getRotRef() {
 	return _rot;
 }
 
-public Vec4d getTransRef() {
+public Vec3d getTransRef() {
 	return _trans;
-}
-
-public void getTrans(Vec4d out) {
-	out.set4(_trans.x, _trans.y, _trans.z, 1);
 }
 
 public double getScale() {
@@ -162,7 +158,7 @@ private void updateMatrix() {
  * @param out
  */
 public void merge(Transform a, Transform b) {
-	Vec4d temp = new Vec4d(a._trans);
+	Vec3d temp = new Vec3d(a._trans);
 
 	Mat4d rotTemp = new Mat4d();
 	rotTemp.setRot3(a._rot);
@@ -209,7 +205,7 @@ public void inverse(Transform out) {
 	out._scale = 1/_scale;
 	out._rot.conjugate(_rot);
 
-	out._trans.set4(_trans);
+	out._trans.set3(_trans);
 	out._trans.scale3(-out._scale);
 
 	Mat4d rotTemp = new Mat4d();
@@ -224,11 +220,11 @@ public boolean equals(Object o) {
 	if (!(o instanceof Transform)) return false;
 	Transform t = (Transform)o;
 
-	return _trans.equals4(t._trans) && _rot.equals(t._rot) && MathUtils.near(_scale, t._scale);
+	return _trans.equals3(t._trans) && _rot.equals(t._rot) && MathUtils.near(_scale, t._scale);
 }
 
 public boolean near(Transform t) {
-	return _trans.near4(t._trans) && _rot.equals(t._rot) && MathUtils.near(_scale, t._scale);
+	return _trans.near3(t._trans) && _rot.equals(t._rot) && MathUtils.near(_scale, t._scale);
 }
 
 @Override
