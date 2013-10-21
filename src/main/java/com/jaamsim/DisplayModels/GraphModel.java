@@ -282,7 +282,7 @@ public class GraphModel extends DisplayModel {
 			Unit yAxisUnit = graphObservee.getYAxisUnit();
 			double yAxisFactor = 1.0;
 			if( yAxisUnit != null )
-				yAxisUnit.getConversionFactorToSI();
+				yAxisFactor = yAxisUnit.getConversionFactorToSI();
 
 			double xTickSize = labelHeight/2 * xScaleFactor; // horizontal tick marks for the y-axis
 			double yTickSize = labelHeight/2; // vertical tick marks for the x-axis
@@ -327,7 +327,7 @@ public class GraphModel extends DisplayModel {
 			Unit secYAxisUnit = graphObservee.getSecondaryYAxisUnit();
 			double secYAxisFactor = 1.0;
 			if( secYAxisUnit != null )
-				secYAxisUnit.getConversionFactorToSI();
+				secYAxisFactor = secYAxisUnit.getConversionFactorToSI();
 
 			double maxYLabelXPos = graphOrigin.x + graphSize.x;
 
