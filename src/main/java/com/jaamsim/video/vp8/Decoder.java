@@ -451,7 +451,6 @@ public class Decoder {
 			}
 		}
 
-		TokenEnt leftEnt = new TokenEnt();
 		TokenEnt[] aboveEnts = new TokenEnt[mbCols];
 		for (int i = 0; i < mbCols; ++i) {
 			aboveEnts[i] = new TokenEnt();
@@ -468,7 +467,7 @@ public class Decoder {
 
 		// Now decode DCT tokens
 		for (int y = 0; y < mbRows; ++y) {
-			leftEnt = new TokenEnt();
+			TokenEnt leftEnt = new TokenEnt();
 			for (int x = 0; x < mbCols; ++x) {
 				MBInfo mbi = mbInfos[y*mbCols + x];
 				MBTokens mbt = mbTokens[y*mbCols + x];
