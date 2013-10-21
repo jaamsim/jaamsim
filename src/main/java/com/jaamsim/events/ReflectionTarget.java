@@ -38,10 +38,11 @@ public class ReflectionTarget extends ProcessTarget {
 		}
 		// Normal exceptions thrown by the method called by invoke are wrapped
 		catch (InvocationTargetException e) {
-			if (e.getCause() instanceof RuntimeException)
-				throw (RuntimeException)e.getCause();
+			Throwable cause = e.getCause();
+			if (cause instanceof RuntimeException)
+				throw (RuntimeException)cause;
 			else
-				throw new ErrorException(e.getCause());
+				throw new ErrorException(cause);
 		}
 		catch (IllegalArgumentException e) {
 			throw e;
