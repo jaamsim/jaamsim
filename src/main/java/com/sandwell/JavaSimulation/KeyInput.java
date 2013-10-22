@@ -17,10 +17,14 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
+
 /**
  * Class KeyInput for storing objects of class V (e.g. Double or DoubleVector), with an optional key of class K1
  */
 public class KeyInput<K1 extends Entity, V> extends Input<V> {
+	private Class<? extends Unit> unitType = DimensionlessUnit.class; // for when V is a SampleProvider
 
 	protected double minValue = Double.NEGATIVE_INFINITY;
 	protected double maxValue = Double.POSITIVE_INFINITY;
@@ -37,6 +41,10 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		hashMap = new HashMap<K1,V>();
 	}
 
+	public void setUnitType(Class<? extends Unit> u) {
+		unitType = u;
+	}
+
 	private String unitString = "";
 	public void setUnits(String units) {
 		unitString = units;
@@ -49,7 +57,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		// If an entity key is not provided, set the default value
 		Entity ent = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		if( ent == null || input.size() == 1 ) {
-			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount );
+			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 			this.setDefaultValue( defValue );
 			return;
 		}
@@ -59,7 +67,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		ArrayList<K1> list = Input.parseEntityList(input.subString(0, 0), keyClass, true);
 
 		// Determine the value
-		V val = Input.parse( input.subString(1,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount );
+		V val = Input.parse( input.subString(1,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {

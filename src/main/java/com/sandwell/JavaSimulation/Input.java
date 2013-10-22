@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
@@ -253,7 +255,7 @@ public abstract class Input<T> {
 		throw new InputErrorException(INP_ERR_BADSUM, sum, vec.sum());
 	}
 
-	public static <T> T parse(StringVector data, Class<T> aClass, String units, double minValue, double maxValue, int minCount, int maxCount) {
+	public static <T> T parse(StringVector data, Class<T> aClass, String units, double minValue, double maxValue, int minCount, int maxCount, Class<? extends Unit> unitType) {
 
 		if( aClass == Double.class ) {
 			return aClass.cast( Input.parseDouble( data, minValue, maxValue, units) );
@@ -319,6 +321,25 @@ public abstract class Input<T> {
 			Input.assertCount(data, 1);
 			Integer value = Input.parseInteger(data.get( 0 ), (int)minValue, (int)maxValue);
 			return aClass.cast(value);
+		}
+
+		if( aClass == SampleProvider.class ) {
+
+			// Try to parse as a constant value
+			try {
+				DoubleVector tmp = Input.parseDoubles(data, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+				Input.assertCount(tmp, 1);
+				return aClass.cast( new SampleConstant(unitType, tmp.get(0)) );
+			}
+			catch (InputErrorException e) {}
+
+			// If not a constant, try parsing a SampleProvider
+			Input.assertCount(data, 1);
+			Entity ent = Input.parseEntity(data.get(0), Entity.class);
+			SampleProvider s = Input.castImplements(ent, SampleProvider.class);
+			if( s.getUnitType() != UserSpecifiedUnit.class )
+				Input.assertUnitsMatch(unitType, s.getUnitType());
+			return aClass.cast(s);
 		}
 
 		// TODO - parse other classes

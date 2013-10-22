@@ -58,7 +58,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount );
+			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, null );
 			this.setDefaultValue( defValue );
 			return;
 		}
@@ -85,7 +85,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		}
 
 		// Determine the value
-		V val = Input.parse( input.subString(numKeys,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount );
+		V val = Input.parse( input.subString(numKeys,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, null );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {
