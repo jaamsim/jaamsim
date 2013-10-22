@@ -224,4 +224,9 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 	public double getMinValue() {
 		return value.getValue().getMinValue();
 	}
+
+	@Override
+	public double getMeanValue(double simTime) {
+		return this.getNextSample(simTime);
+	}
 }

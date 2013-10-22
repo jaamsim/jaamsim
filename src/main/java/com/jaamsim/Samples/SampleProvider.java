@@ -19,4 +19,5 @@ import com.jaamsim.units.Unit;
 public interface SampleProvider {
 	public Class<? extends Unit> getUnitType();
 	public double getNextSample(double simTime);
+	public double getMeanValue(double simTime);
 }

@@ -41,6 +41,11 @@ public class SampleConstant implements SampleProvider {
 	}
 
 	@Override
+	public double getMeanValue(double simTime) {
+		return val;
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(val);

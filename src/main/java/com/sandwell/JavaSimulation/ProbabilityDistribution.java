@@ -564,4 +564,11 @@ implements SampleProvider {
 		// Return time in seconds
 		return nextValue() * 3600.0 ;
 	}
+
+	@Override
+	public double getMeanValue(double simTime) {
+		// Assumes all existing ProbabilityDistributions were for time in hours
+		// Return time in seconds
+		return this.getExpectedValue() * 3600.0;
+	}
 }

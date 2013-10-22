@@ -64,4 +64,9 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	public double getMaxTimeValue() {
 		return 0.0;
 	}
+
+	@Override
+	public double getMeanValue(double simTime) {
+		return val;
+	}
 }
