@@ -50,8 +50,8 @@ public abstract class GraphBasics extends DisplayEntity {
 	protected final ArrayList<SeriesInfo> primarySeries;
 	protected final ArrayList<SeriesInfo> secondarySeries;
 
-	protected Boolean timeTrace;  // TRUE if the x-axis moves so that zero is always the present time
-	protected Boolean showSecondaryYAxis;  // TRUE if the secondary y-axis is to be displayed
+	protected boolean timeTrace;  // TRUE if the x-axis moves so that zero is always the present time
+	protected boolean showSecondaryYAxis;  // TRUE if the secondary y-axis is to be displayed
 
 	// Key Inputs category
 
@@ -423,11 +423,11 @@ public abstract class GraphBasics extends DisplayEntity {
 		return yLinesColor.getValue();
 	}
 
-	public Boolean getTimeTrace() {
+	public boolean getTimeTrace() {
 		return timeTrace;
 	}
 
-	public Boolean showSecondaryYAxis() {
+	public boolean showSecondaryYAxis() {
 		return showSecondaryYAxis;
 	}
 

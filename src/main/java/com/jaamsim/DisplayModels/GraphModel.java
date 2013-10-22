@@ -254,7 +254,7 @@ public class GraphModel extends DisplayModel {
 		private double secYRange;
 		private double secYAxisInterval;
 
-		private Boolean timeTrace;
+		private boolean timeTrace;
 
 		private double yAxisTitleHeight;
 
