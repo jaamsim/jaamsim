@@ -16,7 +16,6 @@ package com.jaamsim.MeshFiles;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.jaamsim.math.AABB;
@@ -405,7 +404,9 @@ public class MeshData {
 
 		assert((sub.numVerts % 2) == 0);
 
-		sub.verts.addAll(Arrays.asList(vertices));
+		for (Vec3d v : vertices) {
+			sub.verts.add(v3Interner.intern(v));
+		}
 
 		sub.hull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 	}
