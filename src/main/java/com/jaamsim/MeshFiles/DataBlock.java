@@ -115,6 +115,11 @@ public class DataBlock {
 		dataSize += d.length;
 	}
 
+	public void writeByte(byte b) {
+		checkWriteSize(1);
+		data[dataSize++] = b;
+	}
+
 	public void writeDouble(double d) {
 		writeLong(Double.doubleToLongBits(d));
 	}
@@ -148,6 +153,11 @@ public class DataBlock {
 		} catch (UnsupportedEncodingException e) {
 			throw new Error(e.getMessage());
 		}
+	}
+
+	public byte readByte() {
+		checkReadSize(1);
+		return data[readPos++];
 	}
 
 	public int readInt() {
@@ -198,4 +208,17 @@ public class DataBlock {
 		}
 	}
 
+	/**
+	 * Returns the first child with a matching name. Utility
+	 * @param name
+	 * @return
+	 */
+	public DataBlock findChildByName(String name) {
+		for (DataBlock b : children) {
+			if (b.name.equals(name)) {
+				return b;
+			}
+		}
+		return null;
+	}
 }

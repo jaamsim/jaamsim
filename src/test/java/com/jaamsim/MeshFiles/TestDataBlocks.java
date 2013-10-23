@@ -24,6 +24,28 @@ import org.junit.Test;
 public class TestDataBlocks {
 
 	@Test
+	public void testAddByteToBlock() throws Throwable {
+		DataBlock block = new DataBlock("Blockity", 128);
+
+		byte[] bytes = new byte[128];
+
+		for (int i = 0; i < 128; ++i) {
+			bytes[i] = (byte)(i * 2);
+		}
+
+		for (int i = 0; i < 128; ++i) {
+			block.writeByte(bytes[i]);
+		}
+
+		block.setReadPosition(0);
+
+		for (int i = 0; i < 128; ++i) {
+			byte val = block.readByte();
+			assertTrue(val == bytes[i]);
+		}
+	}
+
+	@Test
 	public void testAddDoubleToBlock() throws Throwable {
 		DataBlock block = new DataBlock("Blockity", 128);
 
