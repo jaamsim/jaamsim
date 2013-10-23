@@ -55,7 +55,6 @@ public class MeshData {
 		public double shininess;
 
 		public URL colorTex;
-		boolean useDiffuseTex;
 
 		public int transType;
 		public Color4d transColour;
@@ -83,7 +82,6 @@ public class MeshData {
 		public ArrayList<Vec3d> verts = new ArrayList<Vec3d>();
 		public Color4d diffuseColor;
 
-		public int numVerts;
 		public ConvexHull hull;
 	}
 
@@ -229,7 +227,6 @@ public class MeshData {
 			assert diffuseColor != null;
 		}
 
-
 		mat.diffuseColor = diffuseColor;
 		mat.ambientColor = ambientColor;
 		mat.specColor = specColor;
@@ -338,7 +335,7 @@ public class MeshData {
 		int maxBoneIndex = -1;
 		for (Vertex v : vertices) {
 			sub.verts.add(v3Interner.intern(v.getPos()));
-			sub.normals.add(v.getNormal());
+			sub.normals.add(v3Interner.intern(v.getNormal()));
 			if (hasTexCoords) {
 				sub.texCoords.add(v2Interner.intern(v.getTexCoord()));
 			}
@@ -409,9 +406,7 @@ public class MeshData {
 		}
 		_subLinesData.add(sub);
 
-		sub.numVerts += vertices.length;
-
-		assert((sub.numVerts % 2) == 0);
+		assert((vertices.length % 2) == 0);
 
 		for (Vec3d v : vertices) {
 			sub.verts.add(v3Interner.intern(v));
