@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.jaamsim.MeshFiles.BlockReader;
+import com.jaamsim.MeshFiles.DataBlock;
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.MeshFiles.MeshReader;
 import com.jaamsim.MeshFiles.ObjReader;
@@ -77,6 +79,9 @@ public class MeshDataCache {
 				data = ColParser.parse(key.getURL());
 			} else if (ext.toUpperCase().equals("JSM")) {
 				data = MeshReader.parse(key.getURL());
+			} else if (ext.toUpperCase().equals("JSB")) {
+				DataBlock block = BlockReader.readBlockFromFile(key.getURL());
+				data = new MeshData(false, block);
 			} else if (ext.toUpperCase().equals("OBJ")) {
 				data = ObjReader.parse(key.getURL());
 			} else {
