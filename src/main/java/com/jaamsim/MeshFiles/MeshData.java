@@ -14,6 +14,7 @@
  */
 package com.jaamsim.MeshFiles;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.math.Vec4dInterner;
 import com.jaamsim.render.Action;
 import com.jaamsim.render.Armature;
+import com.jaamsim.render.RenderException;
 import com.jaamsim.render.RenderUtils;
 
 /**
@@ -624,4 +626,371 @@ public class MeshData {
 		return _subMeshesData.size() + _subLinesData.size();
 	}
 
+	/**
+	 * Write the color as 4 bytes, RGBA
+	 * @param col
+	 * @param b
+	 */
+	private void writeColorToBlock(Color4d col, DataBlock b) {
+		if (col == null) {
+			b.writeInt(0);
+			return;
+		}
+
+		b.writeByte((byte)(col.r*255));
+		b.writeByte((byte)(col.g*255));
+		b.writeByte((byte)(col.b*255));
+		b.writeByte((byte)(col.a*255));
+	}
+
+	private Color4d readColorFromBlock(DataBlock block) {
+		int r = block.readByte() & 0x000000FF;
+		int g = block.readByte() & 0x000000FF;
+		int b = block.readByte() & 0x000000FF;
+		int a = block.readByte() & 0x000000FF;
+		return new Color4d(r/255.0, g/255.0, b/255.0, a/255.0);
+	}
+
+	/**
+	 * Initialize a MeshData from a DataBlock, throws a RenderException if things go sideways.
+	 * @param topBlock
+	 */
+	public MeshData(boolean keepRuntimeData, DataBlock topBlock) {
+
+		this.keepRuntimeData = keepRuntimeData;
+
+		DataBlock vectorsBlock = topBlock.findChildByName("VectorLib");
+		if (vectorsBlock == null) throw new RenderException("Binary MeshData: Missing Vectors Library");
+
+		DataBlock v2s = vectorsBlock.findChildByName("Vec2ds");
+		DataBlock v3s = vectorsBlock.findChildByName("Vec3ds");
+		DataBlock v4s = vectorsBlock.findChildByName("Vec4ds");
+
+		int vec2dSize = (v2s != null) ? v2s.getDataSize() / 16 : 0;
+		Vec2d[] vec2ds = new Vec2d[vec2dSize];
+		for (int i = 0; i < vec2dSize; ++i) {
+			vec2ds[i] = new Vec2d(v2s.readDouble(), v2s.readDouble());
+		}
+
+		int vec3dSize = (v3s != null) ? v3s.getDataSize() / 24 : 0;
+		Vec3d[] vec3ds = new Vec3d[vec3dSize];
+		for (int i = 0; i < vec3dSize; ++i) {
+			vec3ds[i] = new Vec3d(v3s.readDouble(), v3s.readDouble(), v3s.readDouble());
+		}
+
+		int vec4dSize = (v4s != null) ? v4s.getDataSize() / 32 : 0;
+		Vec4d[] vec4ds = new Vec4d[vec4dSize];
+		for (int i = 0; i < vec4dSize; ++i) {
+			vec4ds[i] = new Vec4d(v4s.readDouble(), v4s.readDouble(), v4s.readDouble(), v4s.readDouble());
+		}
+
+		// Build up the sub mesh data
+		DataBlock subMeshesBlock = topBlock.findChildByName("SubMeshes");
+		for (DataBlock subMeshBlock : subMeshesBlock.getChildren()) {
+			if (!subMeshBlock.getName().equals("SubMeshData")) {
+				continue;
+			}
+			SubMeshData subData = new SubMeshData();
+			subData.keepRuntimeData = keepRuntimeData;
+
+			DataBlock vertBlock = subMeshBlock.findChildByName("Vertices");
+			if (vertBlock == null) throw new RenderException("Missing vertices in submesh");
+			subData.verts = new ArrayList<Vec3d>(vertBlock.getDataSize() / 4);
+			for (int i = 0; i < vertBlock.getDataSize() / 4; ++i) {
+				int vertInd = vertBlock.readInt();
+				subData.verts.add(vec3ds[vertInd]);
+			}
+
+			DataBlock normBlock = subMeshBlock.findChildByName("Normals");
+			if (normBlock == null) throw new RenderException("Missing normals in submesh");
+			subData.normals = new ArrayList<Vec3d>(normBlock.getDataSize() / 4);
+			for (int i = 0; i < normBlock.getDataSize() / 4; ++i) {
+				int normInd = normBlock.readInt();
+				subData.normals.add(vec3ds[normInd]);
+			}
+
+			DataBlock texCoordBlock = subMeshBlock.findChildByName("TexCoords");
+			if (texCoordBlock != null) {
+				subData.texCoords = new ArrayList<Vec2d>(texCoordBlock.getDataSize() / 4);
+				for (int i = 0; i < texCoordBlock.getDataSize() / 4; ++i) {
+					int texInd = texCoordBlock.readInt();
+					subData.texCoords.add(vec2ds[texInd]);
+				}
+			}
+
+			DataBlock indicesBlock = subMeshBlock.findChildByName("Indices");
+			if (indicesBlock == null) throw new RenderException("Missing indices in submesh");
+			subData.indices = new int[indicesBlock.getDataSize() / 4];
+			for (int i = 0; i < indicesBlock.getDataSize() / 4; ++i) {
+				subData.indices[i] = indicesBlock.readInt();
+			}
+
+			subData.staticHull = ConvexHull.TryBuildHull(subData.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
+			_subMeshesData.add(subData);
+		}
+
+		DataBlock subLinesBlock = topBlock.findChildByName("SubLines");
+		for (DataBlock subLineBlock : subLinesBlock.getChildren()) {
+			if (!subLineBlock.getName().equals("SubLineData")) {
+				continue;
+			}
+			SubLineData subLine = new SubLineData();
+
+			DataBlock vertBlock = subLineBlock.findChildByName("Vertices");
+			if (vertBlock == null) throw new RenderException("Missing vertices in subline");
+			subLine.verts = new ArrayList<Vec3d>(vertBlock.getDataSize() / 4);
+			for (int i = 0; i < vertBlock.getDataSize() / 4; ++i) {
+				int vertInd = vertBlock.readInt();
+				subLine.verts.add(vec3ds[vertInd]);
+			}
+
+			DataBlock colorBlock = subLineBlock.findChildByName("Color");
+			if (colorBlock == null) throw new RenderException("Missing color in subline");
+			subLine.diffuseColor = readColorFromBlock(colorBlock);
+
+			subLine.hull = ConvexHull.TryBuildHull(subLine.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
+		}
+
+		// Add Materials
+		DataBlock matsBlock = topBlock.findChildByName("Materials");
+		if (matsBlock == null) throw new RenderException("Missing materials block");
+		for (DataBlock matBlock : matsBlock.getChildren()) {
+			if (!matBlock.getName().equals("Material"))
+				continue;
+
+			DataBlock colorBlock = matBlock.findChildByName("DifAmbSpecShinTrans");
+			if (colorBlock == null) throw new RenderException("Missing color block in material");
+
+			Color4d diffuse = readColorFromBlock(colorBlock);
+			Color4d ambient = readColorFromBlock(colorBlock);
+			Color4d specular = readColorFromBlock(colorBlock);
+			float shininess = colorBlock.readFloat();
+			Color4d transColor = readColorFromBlock(colorBlock);
+			int transType = colorBlock.readInt();
+
+			URL texURL = null;
+			DataBlock textureBlock = matBlock.findChildByName("DiffuseTexture");
+			if (textureBlock != null) {
+				String texString = textureBlock.readString();
+				try {
+					texURL = new URL(texString);
+				} catch (MalformedURLException ex){
+					throw new RenderException(String.format("Error with texture URL: %s", texString));
+				}
+			}
+
+			addMaterial(texURL, diffuse, ambient, specular, shininess, transType, transColor);
+		}
+
+		// Now for the instances
+		DataBlock subMeshInstBlock = topBlock.findChildByName("SubMeshInstances");
+		if (subMeshInstBlock == null) throw new RenderException("Missing mesh instance block");
+		for (DataBlock subInstBlock : subMeshInstBlock.getChildren()) {
+			if (!subInstBlock.getName().equals("StaticSubInstance"))
+				continue;
+
+			DataBlock indexBlock = subInstBlock.findChildByName("Indices");
+			if (indexBlock == null) throw new RenderException("Missing sub instance indices");
+			int meshIndex = indexBlock.readInt();
+			int matIndex = indexBlock.readInt();
+
+			DataBlock transBlock = subInstBlock.findChildByName("Transform");
+			if (transBlock == null) throw new RenderException("Missing sub instance transform");
+			double[] cmMat = new double[16];
+			for (int i = 0; i < 16; ++i) {
+				cmMat[i] = transBlock.readDouble();
+			}
+			Mat4d trans = new Mat4d(cmMat);
+			trans.transpose4();
+
+			addSubMeshInstance(meshIndex, matIndex, -1, trans, null, null);
+		}
+
+		DataBlock subLineInstBlock = topBlock.findChildByName("SubLineInstances");
+		if (subLineInstBlock == null) throw new RenderException("Missing line instance block");
+		for (DataBlock subInstBlock : subLineInstBlock.getChildren()) {
+
+			DataBlock indexBlock = subInstBlock.findChildByName("Indices");
+			if (indexBlock == null) throw new RenderException("Missing sub instance indices");
+			int lineIndex = indexBlock.readInt();
+
+			DataBlock transBlock = subInstBlock.findChildByName("Transform");
+			if (transBlock == null) throw new RenderException("Missing sub instance transform");
+			double[] cmMat = new double[16];
+			for (int i = 0; i < 16; ++i) {
+				cmMat[i] = transBlock.readDouble();
+			}
+			Mat4d trans = new Mat4d(cmMat);
+			trans.transpose4();
+
+			addSubLineInstance(lineIndex, trans);
+		}
+
+		finalizeData();
+	}
+
+	/**
+	 * Build up a tree of 'DataBlock's and return it. This will return null if the runtime data needed as been discarded
+	 * @return
+	 */
+	public DataBlock getDataAsBlock() {
+		if (!keepRuntimeData) {
+			return null;
+		}
+
+		DataBlock topBlock = new DataBlock("MeshData", 0);
+		DataBlock vectorsBlock = new DataBlock("VectorLib", 0);
+		topBlock.addChildBlock(vectorsBlock);
+
+		// Write out all the vector data to be indexed later
+		DataBlock vec2Block = new DataBlock("Vec2ds", v2Interner.getMaxIndex() * 16);
+		vectorsBlock.addChildBlock(vec2Block);
+		for (int i = 0; i < v2Interner.getMaxIndex(); ++i) {
+			Vec2d val = v2Interner.getValueForIndex(i);
+			vec2Block.writeDouble(val.x);
+			vec2Block.writeDouble(val.y);
+		}
+
+		DataBlock vec3Block = new DataBlock("Vec3ds", v3Interner.getMaxIndex() * 24);
+		vectorsBlock.addChildBlock(vec3Block);
+		for (int i = 0; i < v3Interner.getMaxIndex(); ++i) {
+			Vec3d val = v3Interner.getValueForIndex(i);
+			vec3Block.writeDouble(val.x);
+			vec3Block.writeDouble(val.y);
+			vec3Block.writeDouble(val.z);
+		}
+
+		DataBlock vec4Block = new DataBlock("Vec4ds", v2Interner.getMaxIndex() * 32);
+		vectorsBlock.addChildBlock(vec4Block);
+		for (int i = 0; i < v4Interner.getMaxIndex(); ++i) {
+			Vec4d val = v4Interner.getValueForIndex(i);
+			vec4Block.writeDouble(val.x);
+			vec4Block.writeDouble(val.y);
+			vec4Block.writeDouble(val.z);
+			vec4Block.writeDouble(val.w);
+		}
+
+		// Sub mesh data
+		DataBlock subMeshes = new DataBlock("SubMeshes", 0);
+		topBlock.addChildBlock(subMeshes);
+
+		for (SubMeshData subData : _subMeshesData) {
+			DataBlock subDataBlock = new DataBlock("SubMeshData", 0);
+			subMeshes.addChildBlock(subDataBlock);
+
+			DataBlock subVertsBlock = new DataBlock("Vertices", subData.verts.size() * 4);
+			subDataBlock.addChildBlock(subVertsBlock);
+			for (Vec3d v : subData.verts) {
+				int vecInd = v3Interner.getIndexForValue(v);
+				subVertsBlock.writeInt(vecInd);
+			}
+
+			DataBlock subNormBlock = new DataBlock("Normals", subData.normals.size() * 4);
+			subDataBlock.addChildBlock(subNormBlock);
+			for (Vec3d v : subData.normals) {
+				int vecInd = v3Interner.getIndexForValue(v);
+				subNormBlock.writeInt(vecInd);
+			}
+
+			if (subData.texCoords != null) {
+				DataBlock subTexBlock = new DataBlock("TexCoords", subData.texCoords.size() * 4);
+				subDataBlock.addChildBlock(subTexBlock);
+				for (Vec2d v : subData.texCoords) {
+					int vecInd = v2Interner.getIndexForValue(v);
+					subTexBlock.writeInt(vecInd);
+				}
+			}
+
+			DataBlock indicesBlock = new DataBlock("Indices", subData.indices.length * 4);
+			subDataBlock.addChildBlock(indicesBlock);
+			for (int ind : subData.indices) {
+				indicesBlock.writeInt(ind);
+			}
+
+		}
+
+		// Sub line data
+		DataBlock subLines = new DataBlock("SubLines", 0);
+		topBlock.addChildBlock(subLines);
+
+		for (SubLineData subData : _subLinesData) {
+			DataBlock subDataBlock = new DataBlock("SubLineData", 0);
+			subLines.addChildBlock(subDataBlock);
+
+			DataBlock subVertsBlock = new DataBlock("Vertices", subData.verts.size() * 4);
+			subDataBlock.addChildBlock(subVertsBlock);
+			for (Vec3d v : subData.verts) {
+				int vecInd = v3Interner.getIndexForValue(v);
+				subVertsBlock.writeInt(vecInd);
+			}
+
+			DataBlock colorBlock = new DataBlock("Color", 4);
+			subDataBlock.addChildBlock(colorBlock);
+			writeColorToBlock(subData.diffuseColor, colorBlock);
+		}
+
+		DataBlock subMInsts = new DataBlock("SubMeshInstances", 0);
+		topBlock.addChildBlock(subMInsts);
+		for (SubMeshInstance subInst : _subMeshInstances) {
+			DataBlock staticSubInst = new DataBlock("StaticSubInstance", 0);
+			subMInsts.addChildBlock(staticSubInst);
+
+			DataBlock indices = new DataBlock("Indices", 8);
+			staticSubInst.addChildBlock(indices);
+			indices.writeInt(subInst.subMeshIndex);
+			indices.writeInt(subInst.materialIndex);
+
+			DataBlock transBlock = new DataBlock("Transform", 128);
+			staticSubInst.addChildBlock(transBlock);
+			double[] transCMData = subInst.transform.toCMDataArray();
+			for (int i = 0; i < 16; ++i) {
+				transBlock.writeDouble(transCMData[i]);
+			}
+		}
+
+		DataBlock subLInsts = new DataBlock("SubLineInstances", 0);
+		topBlock.addChildBlock(subLInsts);
+		for (SubLineInstance subInst : _subLineInstances) {
+			DataBlock subLineInst = new DataBlock("SubLineInstance", 0);
+			subLInsts.addChildBlock(subLineInst);
+
+			DataBlock indices = new DataBlock("Index", 4);
+			subLineInst.addChildBlock(indices);
+			indices.writeInt(subInst.subLineIndex);
+
+			DataBlock transBlock = new DataBlock("Transform", 128);
+			subLineInst.addChildBlock(transBlock);
+			double[] transCMData = subInst.transform.toCMDataArray();
+			for (int i = 0; i < 16; ++i) {
+				transBlock.writeDouble(transCMData[i]);
+			}
+		}
+
+		// Materials
+		DataBlock matsBlock = new DataBlock("Materials", 0);
+		topBlock.addChildBlock(matsBlock);
+		for (Material mat : _materials) {
+			DataBlock matBlock = new DataBlock("Material", 0);
+			matsBlock.addChildBlock(matBlock);
+
+			DataBlock colors = new DataBlock("DifAmbSpecShinTrans", 24);
+			matBlock.addChildBlock(colors);
+			writeColorToBlock(mat.diffuseColor, colors);
+			writeColorToBlock(mat.ambientColor, colors);
+			writeColorToBlock(mat.specColor, colors);
+			colors.writeFloat((float)mat.shininess);
+			writeColorToBlock(mat.transColour, colors);
+			colors.writeInt(mat.transType);
+
+
+			if (mat.colorTex != null) {
+				String texString = mat.colorTex.toString();
+				DataBlock texBlock = new DataBlock("DiffuseTexture", texString.length()*4 + 1); // Worst case size
+				matBlock.addChildBlock(texBlock);
+				texBlock.writeString(texString);
+			}
+		}
+
+		return topBlock;
+	}
 }
