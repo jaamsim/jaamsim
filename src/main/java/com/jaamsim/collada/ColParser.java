@@ -42,6 +42,11 @@ public class ColParser {
 
 	private static boolean SHOW_COL_DEBUG = false;
 
+	private static boolean keepRuntimeData = false;
+	public static void setKeepData(boolean keepData) {
+		keepRuntimeData = keepData;
+	}
+
 	public static MeshData parse(URL asset) throws RenderException {
 
 		try {
@@ -142,7 +147,7 @@ public class ColParser {
 	private final ArrayList<Effect> _loadedEffects = new ArrayList<Effect>();
 	private final ArrayList<LineGeoEffectPair> _loadedLineGeos = new ArrayList<LineGeoEffectPair>();
 
-	private MeshData _finalData = new MeshData(false);
+	private MeshData _finalData = new MeshData(keepRuntimeData);
 
 	private HashMap<String, Vec4d[]> _dataSources = new HashMap<String, Vec4d[]>();
 
