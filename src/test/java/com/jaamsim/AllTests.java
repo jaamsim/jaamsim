@@ -31,6 +31,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.math.TestVec3d.class,
 	com.jaamsim.math.TestVec4d.class,
 	com.jaamsim.math.TestMat4d.class,
+	com.jaamsim.math.TestInterners.class,
 	com.jaamsim.video.vp8.TestBoolEncoder.class,
 	com.jaamsim.video.vp8.TestTransforms.class,
 	com.jaamsim.video.vp8.TestYUV.class,

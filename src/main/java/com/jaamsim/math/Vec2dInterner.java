@@ -14,6 +14,7 @@
  */
 package com.jaamsim.math;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -23,8 +24,12 @@ import java.util.HashMap;
  */
 public class Vec2dInterner {
 
+	private int nextIndex = 0;
+	private ArrayList<Vec2d> orderedValues = new ArrayList<Vec2d>();
+
 	private static class VecWrapper {
 		public Vec2d val;
+		public int index;
 		public VecWrapper(Vec2d v) {
 			val = v;
 		}
@@ -44,7 +49,7 @@ public class Vec2dInterner {
 		}
 	}
 
-	private HashMap<VecWrapper, Vec2d> map = new HashMap<VecWrapper, Vec2d>();
+	private HashMap<VecWrapper, VecWrapper> map = new HashMap<VecWrapper, VecWrapper>();
 
 	/**
 	 * intern will return a pointer to a Vec2d (which may differ from input 'v') that is mathematically equal but
@@ -53,12 +58,29 @@ public class Vec2dInterner {
 	 */
 	public Vec2d intern(Vec2d v) {
 		VecWrapper wrapped = new VecWrapper(v);
-		Vec2d interned = map.get(wrapped);
+		VecWrapper interned = map.get(wrapped);
 		if (interned != null) {
-			return interned;
+			return interned.val;
 		}
 
-		map.put(wrapped, v);
+		// This wrapped value will be stored
+		wrapped.index = nextIndex++;
+		orderedValues.add(v);
+		map.put(wrapped, wrapped);
 		return v;
 	}
+
+	public Vec2d getValueForIndex(int i) {
+		return orderedValues.get(i);
+	}
+
+	public int getIndexForValue(Vec2d v) {
+		VecWrapper wrapped = new VecWrapper(v);
+		return map.get(wrapped).index;
+	}
+
+	public int getMaxIndex() {
+		return orderedValues.size();
+	}
+
 }
