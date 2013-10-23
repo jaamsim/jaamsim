@@ -110,7 +110,7 @@ public class MeshReader {
 
 		_parser.parse();
 
-		finalData = new MeshData();
+		finalData = new MeshData(false);
 
 		_meshObjectNode = _parser.getRootNode().findChildTag("MeshObject", false);
 		parseAssert(_meshObjectNode != null);

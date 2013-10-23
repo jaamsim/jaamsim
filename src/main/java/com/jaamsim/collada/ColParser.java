@@ -142,7 +142,7 @@ public class ColParser {
 	private final ArrayList<Effect> _loadedEffects = new ArrayList<Effect>();
 	private final ArrayList<LineGeoEffectPair> _loadedLineGeos = new ArrayList<LineGeoEffectPair>();
 
-	private MeshData _finalData = new MeshData();
+	private MeshData _finalData = new MeshData(false);
 
 	private HashMap<String, Vec4d[]> _dataSources = new HashMap<String, Vec4d[]>();
 

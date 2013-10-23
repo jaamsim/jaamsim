@@ -75,6 +75,8 @@ public class MeshData {
 
 		public ArrayList<ConvexHull> boneHulls;
 		public ConvexHull bonelessHull;
+
+		public boolean keepRuntimeData;
 	}
 
 	public static class SubLineData {
@@ -161,6 +163,12 @@ public class MeshData {
 	private Vec2dInterner v2Interner = new Vec2dInterner();
 	private Vec3dInterner v3Interner = new Vec3dInterner();
 	private Vec4dInterner v4Interner = new Vec4dInterner();
+
+	public boolean keepRuntimeData;
+
+	public MeshData(boolean keepRuntimeData) {
+		this.keepRuntimeData = keepRuntimeData;
+	}
 
 	public void addSubMeshInstance(int meshIndex, int matIndex, int armIndex, Mat4d mat, String[] boneNames, ArrayList<Action> actions) {
 		Mat4d trans = new Mat4d(mat);
@@ -298,6 +306,7 @@ public class MeshData {
 		}
 
 		SubMeshData sub = new SubMeshData();
+		sub.keepRuntimeData = keepRuntimeData;
 		_subMeshesData.add(sub);
 
 		boolean hasBoneInfo = vertices.size() > 0 && vertices.get(0).getBoneIndices() != null;
@@ -463,9 +472,12 @@ public class MeshData {
 				}
 			}
 		}
-		v2Interner = null; // Drop ref to the interner to free memory
-		v3Interner = null; // Drop ref to the interner to free memory
-		v4Interner = null; // Drop ref to the interner to free memory
+
+		if (!keepRuntimeData) {
+			v2Interner = null; // Drop ref to the interner to free memory
+			v3Interner = null; // Drop ref to the interner to free memory
+			v4Interner = null; // Drop ref to the interner to free memory
+		}
 	}
 
 	public double getRadius() {

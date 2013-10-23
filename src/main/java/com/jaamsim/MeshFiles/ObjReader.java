@@ -93,7 +93,7 @@ public class ObjReader {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(contentURL.openStream()));
 
-			data = new MeshData();
+			data = new MeshData(false);
 			while(true) {
 				String line = br.readLine();
 				lineNum++;
