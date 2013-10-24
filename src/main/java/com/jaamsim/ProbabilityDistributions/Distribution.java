@@ -186,6 +186,7 @@ implements SampleProvider {
 			 description="The mean of the probability distribution calculated directly from the inputs.  " +
 					"It is NOT the mean of the sampled values.  The inputs for MinValue and MaxValue are ignored.",
 			 unitType=UserSpecifiedUnit.class)
+	@Override
 	public double getMeanValue( double simTime ) {
 		return this.getMeanValue();
 	}
