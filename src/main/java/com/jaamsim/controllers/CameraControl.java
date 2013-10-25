@@ -51,7 +51,11 @@ public class CameraControl implements WindowInteractionListener {
 		double rotZ; // The spherical coordinate that rotates around Z (in radians)
 		double rotX; // Ditto for X
 		double radius; // The distance the camera is from the view center
-		Vec3d viewCenter;
+		final Vec3d viewCenter;
+
+		PolarInfo(Vec3d center) {
+			viewCenter = new Vec3d(center);
+		}
 
 		@Override
 		public boolean equals(Object o) {
@@ -61,7 +65,7 @@ public class CameraControl implements WindowInteractionListener {
 			PolarInfo pi = (PolarInfo)o;
 
 			return pi.rotZ == rotZ && pi.rotX == rotX && pi.radius == radius &&
-			       viewCenter != null && viewCenter.equals3(pi.viewCenter);
+			       viewCenter.equals3(pi.viewCenter);
 		}
 	}
 
@@ -471,9 +475,7 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	private PolarInfo getPolarFrom(Vec3d center, Vec3d pos) {
-		PolarInfo pi = new PolarInfo();
-
-		pi.viewCenter = new Vec3d(center);
+		PolarInfo pi = new PolarInfo(center);
 
 		Vec3d viewDiff = new Vec3d();
 		viewDiff.sub3(pos, pi.viewCenter);
