@@ -176,17 +176,17 @@ public abstract class GraphBasics extends DisplayEntity {
 		xAxisUnit = new EntityInput<Unit>(Unit.class, "XAxisUnit", "X-Axis", null);
 		this.addInput(xAxisUnit, true);
 
-		xAxisStart = new ValueInput("StartTime", "X-Axis", -60.0d);
+		xAxisStart = new ValueInput("XAxisStart", "X-Axis", -60.0d);
 		xAxisStart.setUnitType(UserSpecifiedUnit.class);
 		xAxisStart.setValidRange(Double.NEGATIVE_INFINITY, 1.0e-6);
 		this.addInput(xAxisStart, true);
 
-		xAxisEnd = new ValueInput("EndTime", "X-Axis", 0.0d);
+		xAxisEnd = new ValueInput("XAxisEnd", "X-Axis", 0.0d);
 		xAxisEnd.setUnitType(UserSpecifiedUnit.class);
 		xAxisEnd.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput(xAxisEnd, true);
 
-		xAxisInterval = new ValueInput("TimeInterval", "X-Axis", 10.0d);
+		xAxisInterval = new ValueInput("XAxisInterval", "X-Axis", 10.0d);
 		xAxisInterval.setUnitType(UserSpecifiedUnit.class);
 		xAxisInterval.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		this.addInput(xAxisInterval, true);
