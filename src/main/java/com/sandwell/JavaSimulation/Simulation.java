@@ -87,7 +87,6 @@ public class Simulation extends Entity {
 	         example = "RunControl RealTime { TRUE }")
 	private final BooleanInput realTime;
 
-	private Process doEndAtThread;
 	protected double startTime;
 	protected double endTime;
 
@@ -147,9 +146,6 @@ public class Simulation extends Entity {
 		// Initialize basic model information
 		startTime = 0.0;
 		endTime = 8760.0;
-
-		// Real time execution state
-		doEndAtThread = null;
 	}
 
 	@Override
@@ -173,8 +169,6 @@ public class Simulation extends Entity {
 		double startTimeHours = startTimeInput.getValue() / 3600.0d;
 		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
 		endTime = this.getStartTime() + this.getInitializationTime() + this.getRunDuration();
-
-		doEndAtThread = null;
 	}
 
 	private static class EndAtTarget extends ProcessTarget {
@@ -228,9 +222,6 @@ public class Simulation extends Entity {
 		// Initialize basic model information
 		startTime = 0.0;
 		endTime = 8760.0;
-
-		// Real time execution state
-		doEndAtThread = null;
 
 		// close warning/error trace file
 		InputAgent.closeLogFile();
@@ -372,10 +363,7 @@ public class Simulation extends Entity {
 	 */
 	public void doEndAt( double end ) {
 		if( (end - getCurrentTime()) > 0.0 ) {
-			Process.terminate(doEndAtThread);
-			doEndAtThread = Process.current();
 			scheduleWait( (end - getCurrentTime()) );
-			doEndAtThread = null;
 
 			Simulation.pause();
 
