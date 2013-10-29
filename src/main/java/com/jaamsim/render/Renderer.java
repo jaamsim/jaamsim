@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.URL;
 import java.nio.IntBuffer;
 import java.util.ArrayDeque;
@@ -38,10 +39,12 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.media.nativewindow.NativeWindowFactory;
 import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2GL3;
 import javax.media.opengl.GL3;
+import javax.media.opengl.GLAnimatorControl;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
@@ -72,7 +75,7 @@ import com.sandwell.JavaSimulation.ColourInput;
  * @author Matt.Chudleigh
  *
  */
-public class Renderer {
+public class Renderer implements GLAnimatorControl {
 
 	public enum ShaderHandle {
 		MESH, FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, SKYBOX
@@ -138,6 +141,9 @@ public class Renderer {
 	private double _loopTimeMS;
 
 	private long _usedVRAM = 0;
+
+	// A flag to track JOGL's GLAnimatorControl pause feature
+	private boolean isPaused = false;
 
 	// This may not be the best way to cache this
 	//private GL2GL3 _currentGL = null;
@@ -226,6 +232,22 @@ public class Renderer {
 
 		long lastLoopEnd = System.nanoTime();
 
+		// Add a custom shutdown hook to make sure we're finished closing before JOGL tries to shutdown
+		NativeWindowFactory.addCustomShutdownHook(true, new Runnable() {
+			@Override
+			public void run() {
+				// Block JOGL shutting down until we're dead
+				shutdown();
+				while (_renderThread.isAlive()) {
+					synchronized (this) {
+						try {
+							wait(50);
+						} catch (InterruptedException ex) {}
+					}
+				}
+			}
+		});
+
 		while (!_shutdown.get()) {
 			try {
 
@@ -290,16 +312,18 @@ public class Renderer {
 					synchronized (_openWindows) {
 						winds = new HashMap<Integer, RenderWindow>(_openWindows);
 					}
-					for (RenderWindow wind : winds.values()) {
-						try {
-							GLContext context = wind.getGLWindowRef().getContext();
-							if (context != null && context.isCreated() && !_shutdown.get())
-							{
-								wind.getGLWindowRef().display();
+					if (!isPaused) {
+						for (RenderWindow wind : winds.values()) {
+							try {
+								GLContext context = wind.getGLWindowRef().getContext();
+								if (context != null && !_shutdown.get())
+								{
+									wind.getGLWindowRef().display();
+								}
+							} catch (Throwable t) {
+								// Log it, but move on to the other windows
+								logException(t);
 							}
-						} catch (Throwable t) {
-							// Log it, but move on to the other windows
-							logException(t);
 						}
 					}
 				}
@@ -471,6 +495,8 @@ public class Renderer {
 		synchronized (_openWindows) {
 			_openWindows.put(message.windowID, window);
 		}
+
+		window.getGLWindowRef().setAnimator(this);
 
 		GLWindowListener wl = new GLWindowListener(window.getWindowID());
 		window.getGLWindowRef().addWindowListener(wl);
@@ -1554,5 +1580,130 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 	public void usingVRAM(long bytes) {
 		_usedVRAM += bytes;
+	}
+
+	/////////////////////////////////////////////////////////////////////
+	// Below are functions inherited from GLAnimatorControl
+	// the interface is a bit of a mess and there's a lot here we don't need
+	@Override
+	public long getFPSStartTime() {
+		// Not supported
+		assert(false);
+		return 0;
+	}
+
+	@Override
+	public float getLastFPS() {
+		// Not supported
+		return 0;
+	}
+
+	@Override
+	public long getLastFPSPeriod() {
+		// Not supported
+		return 0;
+	}
+
+	@Override
+	public long getLastFPSUpdateTime() {
+		// Not supported
+		return 0;
+	}
+
+	@Override
+	public float getTotalFPS() {
+		// Not supported
+		return 0;
+	}
+
+	@Override
+	public long getTotalFPSDuration() {
+		// Not supported
+		return 0;
+	}
+
+	@Override
+	public int getTotalFPSFrames() {
+		// Not supported
+		return 0;
+	}
+
+	@Override
+	public int getUpdateFPSFrames() {
+		// Not supported
+		return 0;
+	}
+
+	@Override
+	public void resetFPSCounter() {
+		// Not supported
+	}
+
+	@Override
+	public void setUpdateFPSFrames(int arg0, PrintStream arg1) {
+		// Not supported
+	}
+
+	@Override
+	public void add(GLAutoDrawable arg0) {
+		// Not supported
+		assert(false);
+	}
+
+	@Override
+	public Thread getThread() {
+		return _renderThread;
+	}
+
+	@Override
+	public boolean isAnimating() {
+		return true;
+	}
+
+	@Override
+	public boolean isPaused() {
+		synchronized (_rendererLock) { // Make sure we aren't currently rendering
+			return isPaused;
+		}
+	}
+
+	@Override
+	public boolean isStarted() {
+		return true;
+	}
+
+	@Override
+	public boolean pause() {
+		synchronized(_rendererLock) {
+			isPaused = true;
+			return true;
+		}
+	}
+
+	@Override
+	public void remove(GLAutoDrawable arg0) {
+		// Not supported
+		assert(false);
+	}
+
+	@Override
+	public boolean resume() {
+		isPaused = false;
+		queueRedraw();
+		return true;
+	}
+
+	@Override
+	public boolean start() {
+		// Not supported
+		assert(false);
+		return false;
+	}
+
+	@Override
+	public boolean stop() {
+		// Not supported
+		assert(false);
+		return false;
 	}
 }
