@@ -1548,6 +1548,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public void shutdown() {
+		_timer.cancel();
 		_finished.set(true);
 		if (_renderer != null) {
 			_renderer.shutdown();
