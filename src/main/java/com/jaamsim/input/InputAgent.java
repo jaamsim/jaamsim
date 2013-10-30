@@ -685,35 +685,27 @@ public class InputAgent {
 	 * @param file
 	 */
 	private static void readRecord(Vector record, FileEntity file) {
-		if(record.size() < 2){
-			InputAgent.logError("Invalid input line - missing keyword or parameter");
-			return;
-		}
-
 		try {
+			if(record.size() < 2)
+				throw new InputErrorException("Invalid input line - missing keyword or parameter");
+
 			if( "DEFINE".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
 				ArrayList<String> tempCopy = new ArrayList<String>(record.size());
 				for (int i = 0; i < record.size(); i++)
 					tempCopy.add((String)record.get(i));
 				InputAgent.processDefineRecord(tempCopy);
 			}
-			// Process other files
+
 			else if( "INCLUDE".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
+				if( record.size() != 2 )
+					throw new InputErrorException("There must be exactly two entries in an Include record");
 
-				if( record.size() == 2 ) {
-					if( FileEntity.fileExists( (String)record.get( 1 ) ) ) {
+				if( ! FileEntity.fileExists( (String)record.get( 1 ) ) )
+					throw new InputErrorException("File not found: %s", (String)record.get(1));
 
-						// Load the included file and process its records first
-						InputAgent.loadConfigurationFile( (String)record.get( 1 ), false );
-						GUIFrame.instance().setProgressText(file.getFileName());
-					}
-					else {
-						InputAgent.logError("File not found: %s", (String)record.get(1));
-					}
-				}
-				else {
-					InputAgent.logError("There must be exactly two entries in an Include record");
-				}
+				// Load the included file and process its records first
+				InputAgent.loadConfigurationFile( (String)record.get( 1 ), false );
+				GUIFrame.instance().setProgressText(file.getFileName());
 			}
 
 			// is a keyword
