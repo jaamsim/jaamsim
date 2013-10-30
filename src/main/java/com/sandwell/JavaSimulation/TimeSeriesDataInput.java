@@ -62,10 +62,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			}
 
 			// Check the number of entries in the record
-			if (unitType == DimensionlessUnit.class)
-				Input.assertCount(each, 2);
-			else
-				Input.assertCount(each, 3);
+			Input.assertCountRange(each, 2, 3);
 
 			long recordus = Input.parseRFC8601DateTime(each.get(0));
 			// Make sure the times are in increasing order
