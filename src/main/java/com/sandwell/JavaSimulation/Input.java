@@ -45,7 +45,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_BADCHOICE = "Expected one of %s, received: %s";
 	protected static final String INP_ERR_ELEMENT = "Error parsing element %d: %s";
 	protected static final String INP_ERR_ENTNAME = "Could not find an Entity named: %s";
-	protected static final String INP_ERR_NOUNITFOUND = "A unit is required, could no parse '%s' as a %s";
+	protected static final String INP_ERR_NOUNITFOUND = "A unit is required, could not parse '%s' as a %s";
 	protected static final String INP_ERR_NOTUNIQUE = "List must contain unique entries, repeated entry: %s";
 	protected static final String INP_ERR_NOTVALIDENTRY = "List must not contain: %s";
 	protected static final String INP_ERR_ENTCLASS = "Expected a %s, %s is a %s";
