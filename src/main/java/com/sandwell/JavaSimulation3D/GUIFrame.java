@@ -550,7 +550,8 @@ public class GUIFrame extends JFrame {
 					GUIFrame.this.pauseSimulation();
 				}
 				int userOption = JOptionPane.showConfirmDialog( null,
-						"WARNING: If you stop the run, it cannot continue from the present time and can only be re-started from time 0.  Do you really want to stop?",
+						"WARNING: If you stop the run, it can only be re-started from time 0.\n" +
+						"                       Do you really want to stop?",
 						"Confirm Stop",
 						JOptionPane.YES_OPTION,
 						JOptionPane.WARNING_MESSAGE );
