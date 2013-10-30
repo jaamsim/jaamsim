@@ -710,7 +710,11 @@ public class InputAgent {
 
 			// is a keyword
 			else {
-				InputAgent.processData(record);
+				try {
+					InputAgent.processData(record);
+				}
+				catch( InputErrorException iee ) {  // processData already logs an InputErrorException
+				}
 			}
 		}
 		catch( InputErrorException iee ) {
