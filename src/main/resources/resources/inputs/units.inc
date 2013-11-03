@@ -1,7 +1,5 @@
 " Input file for unit conversion
 
-" Created February 9, 2011 by Stephen Wong
-
 Define Palette { Units }
 
 Define ObjectType  { TimeUnit
@@ -54,6 +52,31 @@ ViscosityUnit       JavaClass { com.jaamsim.units.ViscosityUnit       } Palette 
 AreaUnit            JavaClass { com.jaamsim.units.AreaUnit            } Palette { Units } DragAndDrop { FALSE }
 DimensionlessUnit   JavaClass { com.jaamsim.units.DimensionlessUnit   } Palette { Units } DragAndDrop { FALSE }
 RateUnit            JavaClass { com.jaamsim.units.RateUnit            } Palette { Units } DragAndDrop { FALSE }
+
+TimeUnit                Description { 'Unit of time. Default = seconds (s).' }
+DistanceUnit            Description { 'Unit of length. Default = meters (m).' }
+SpeedUnit               Description { 'Unit of velocity. Default = meters per second (m/s).' }
+AccelerationUnit        Description { 'Unit of acceleration. Default = meters per second squared (m/s2).' }
+MassUnit                Description { 'Unit of mass. Default = kilograms (kg).' }
+MassFlowUnit            Description { 'Unit of mass flow per unit time. Default = kilograms per second (kg/s).' }
+VolumeUnit              Description { 'Unit of volume. Default = cubic meters (m3).' }
+VolumeFlowUnit          Description { 'Unit of volume flow per unit time. Default = cubic meters per second (m3/s).' }
+AngleUnit               Description { 'Unit of angle. Default = radians (rad).' }
+AngularSpeedUnit        Description { 'Unit of angular speed. Default = radians per second (rad/s).' }
+EnergyUnit              Description { 'Unit of energy. Default = Joules (J).' }
+EnergyDensityUnit       Description { 'Unit of energy per unit volume. Default = Joules per cubic meter (J/m3).' }
+SpecificEnergyUnit      Description { 'Unit of energy per unit mass. Default = Joules per kilogram (J/kg).' }
+PowerUnit               Description { 'Unit of power. Default = Watts (W).' }
+CostUnit                Description { 'Unit of cost. Default = dollars ($).' }
+CostRateUnit            Description { 'Unit of cost per unit time. Default = dollars per second ($/s).' }
+LinearDensityUnit       Description { 'Unit of mass per unit distance. Default = kilograms per meter (kg/m).' }
+LinearDensityVolumeUnit Description { 'Unit of volume per unit distance. Default = cubic meters per meter (m3/m).' }
+DensityUnit             Description { 'Unit of mass per unit volume. Default = kilograms per cubic meter (kg/m3).' }
+PressureUnit            Description { 'Unit of pressure. Default = Pascals (Pa).' }
+ViscosityUnit           Description { 'Unit of dynamic viscosity. Default = Pascal-seconds (Pa-s).' }
+AreaUnit                Description { 'Unit of area. Default = square meters (m2).' }
+DimensionlessUnit       Description { 'Indicates that a value is a pure number. No unit is required or accepted.' }
+RateUnit                Description { 'Unit of number per unit time. Default = per second (/s).' }
 
 " ======================================================================================================================================================
 " Time units
