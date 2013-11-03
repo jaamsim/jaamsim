@@ -52,3 +52,14 @@ Arrow                 JavaClass { com.sandwell.JavaSimulation3D.Arrow           
 Graph                 JavaClass { com.sandwell.JavaSimulation3D.Graph                } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        }
 
 VideoRecorder         JavaClass { com.jaamsim.ui.VideoRecorderEntity                 } Palette { 'Graphics Objects' }    DragAndDrop { FALSE }
+
+View          Description { 'Display window showing view of the 3D model universe.' }
+Region        Description { 'Local coordinate system.' }
+DisplayEntity Description { 'Graphical object displaying either a 3D shape or a 2D picture.' }
+Text          Description { 'Text that appears in the 3D model universe.' }
+OverlayImage  Description { 'Picture that appears in a fixed position in the display window.' }
+OverlayText   Description { 'Text that appears in a fixed position in the dispay window.' }
+OverlayClock  Description { 'Time and date display that appears in a fixed position in the display window.' }
+Arrow         Description { 'Line that terminates in an arrow head.' }
+Graph         Description { 'Chart that shows the values of model outputs as they change in time.' }
+VideoRecorder Description { 'Object that makes a video recording of the model.' }
