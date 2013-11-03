@@ -53,3 +53,17 @@ DiscreteDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 ContinuousDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 EntitlementSelector			DefaultDisplayModel { ProbabilityDistributionIconModel }
 RandomSelector				DefaultDisplayModel { ProbabilityDistributionIconModel }
+
+UniformDistribution      Description { 'Generates random numbers from a uniform probability density function.' }
+TriangularDistribution   Description { 'Generates random numbers from a triangular probability density function.' }
+NormalDistribution       Description { 'Generates random numbers from a normal probability density function.' }
+ExponentialDistribution  Description { 'Generates random numbers from a negative exponential probability density function.' }
+ErlangDistribution       Description { 'Generates random numbers from an Erlang probability density function.' }
+GammaDistribution        Description { 'Generates random numbers from a gamma probability density function.' }
+WeibullDistribution      Description { 'Generates random numbers from a Weibull probability density function.' }
+LogNormalDistribution    Description { 'Generates random numbers from a log-normal probability density function.' }
+LogLogisticsDistribution Description { 'Generates random numbers from a log-logistical probability density function.' }
+DiscreteDistribution     Description { 'Generates random numbers from a user-specified set of values and probabilities.' }
+ContinuousDistribution   Description { 'Generates random numbers from a user-specified probability density function.' }
+EntitlementSelector      Description { 'Selects on the basis of entitlement from a given set of entities and proportions.' }
+RandomSelector           Description { 'Randomly selects from a given set of entities and probabilities.' }
