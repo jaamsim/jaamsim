@@ -88,3 +88,20 @@ ConstantBoolean         DefaultDisplayModel 	{ ConstantBooleanIconModel }
 AndOperator             DefaultDisplayModel 	{ AndOperatorIconModel }
 OrOperator              DefaultDisplayModel 	{ OrOperatorIconModel }
 NotOperator             DefaultDisplayModel 	{ NotOperatorIconModel }
+
+Controller       Description { 'Signals the updating of each component in the specified sequence.' }
+ConstantValue    Description { 'Provides a fixed numerical value.' }
+WeightedSum      Description { 'Calculates the weighted sum of the input values.' }
+Polynomial       Description { 'Evaluates a polynomial function of the input value.' }
+Integrator       Description { 'Integrates the input value over time.' }
+Differentiator   Description { 'Differentiates the input value over time.' }
+PIDController    Description { 'Proportional-Integral-Differential controller.' }
+Lag              Description { 'Calculates the LAG operation for the input value.' }
+MovingAverage    Description { 'Calculates a moving average of the input value over a specified range of time.' }
+Sensor           Description { 'Allows the numerical output value for an entity to be used as an input to a calculation.' }
+SineWave         Description { 'Generates a sinusoidal wave.' }
+SquareWave       Description { 'Generates a square wave.' }
+ConstantBoolean  Description { 'Provides a fixed Boolean value (TRUE or FALSE).' }
+AndOperator      Description { 'Calculates the AND function on the Boolean inputs.' }
+OrOperator       Description { 'Calculates the OR function on the Boolean inputs.' }
+NotOperator      Description { 'Calculates the NOT function on a Boolean input.' }
