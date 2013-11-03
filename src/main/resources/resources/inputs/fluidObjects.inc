@@ -32,3 +32,10 @@ FluidFixedFlow        DefaultDisplayModel 	{ ScreenPointsModelDefault }
 FluidTank             DefaultDisplayModel   { BarGauge2D }
 FluidPipe             DefaultDisplayModel 	{ ScreenPointsModelDefault }
 FluidCentrifugalPump  DefaultDisplayModel 	{ FluidCentrifugalPumpIconModel }
+
+Fluid                Description { 'Defines a specific fluid and its properties.' }
+FluidFlow            Description { 'Computed flow of a specified fluid between a source and a destination.' }
+FluidFixedFlow       Description { 'Constant flow to/from a specified tank.' }
+FluidTank            Description { 'Cylindrical vessel for storing fluid.' }
+FluidPipe            Description { 'Cylindrical conduit for transporting fluid.' }
+FluidCentrifugalPump Description { 'Type of pump with a rotating impeller.' }
