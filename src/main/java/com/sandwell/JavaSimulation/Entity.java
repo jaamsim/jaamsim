@@ -326,20 +326,6 @@ public class Entity {
 	}
 
 	/**
-	 * Method to set an alias of the entity.
-	 */
-	public void setAlias(String newName) {
-		namedEntities.put(newName, this);
-	}
-
-	/**
-	 * Method to remove an alias of the entity.
-	 */
-	public void removeAlias(String newName) {
-		namedEntities.remove(newName);
-	}
-
-	/**
 	 * Method to get the input name of the entity.
 	 */
 	public String getInputName() {

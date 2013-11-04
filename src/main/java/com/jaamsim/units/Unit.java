@@ -16,7 +16,6 @@ package com.jaamsim.units;
 
 import java.util.HashMap;
 
-import com.sandwell.JavaSimulation.AliasListInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
@@ -36,11 +35,6 @@ public abstract class Unit extends Entity {
 	         example = "mph PreferredUnit { km/h }")
 	private final EntityInput<? extends Unit> prefInput;
 
-	@Keyword(description = "Alternative names for the same unit.  For example, the unit 'Year' could have aliases of " +
-					"'y' or 'yr'. With these aliases, the following inputs are equivalent: { 1.0 year }, { 1.0 y }, and { 1.0 yr }.",
-			example = "Year Alias { y  yr }")
-	private final AliasListInput alias;
-
 	private static final DoubleVector defFactors;
 
 	static {
@@ -56,20 +50,12 @@ public abstract class Unit extends Entity {
 
 		prefInput = getPrefInput(this.getClass());
 		this.addInput(prefInput, true);
-
-		alias = new AliasListInput( "Alias", "Key Inputs", null, this );
-		this.addInput( alias, true );
 	}
 
 	public Unit() {}
 
 	@Override
 	public void kill() {
-		if( alias.getValue() != null ) {
-			for( String str : alias.getValue() ) {
-				this.removeAlias( str );
-			}
-		}
 
 		if (prefInput.getValue() == this)
 			prefInput.reset();
