@@ -82,62 +82,63 @@ RateUnit                Description { 'Unit of number per unit time. Default = p
 " Time units
 " ======================================================================================================================================================
 
-Define TimeUnit       { Second Minute Hour Day Week Year ms us ns }
+Define TimeUnit { s min h d w y ms us ns }
 
-Second ConversionFactorToSI { 1        } Alias { Seconds seconds second Secs secs Sec sec s }
-Minute ConversionFactorToSI { 60       } Alias { Minutes minutes minute Mins mins Min min }
-Hour   ConversionFactorToSI { 3600     } Alias { Hours hours hour Hrs hrs Hr hr h }
-Day    ConversionFactorToSI { 86400    } Alias { Days  days  day                d }
-Week   ConversionFactorToSI { 604800   } Alias { Weeks weeks week               w }
-Year   ConversionFactorToSI { 31536000 } Alias { Years years year Yrs yrs Yr yr y }
-ms     ConversionFactorToSI { 1.0e-3   }  "milliseconds
-us     ConversionFactorToSI { 1.0e-6   }  "microseconds
-ns     ConversionFactorToSI { 1.0e-9   }  "nanoseconds
+s      ConversionFactorToSI { 1        }  Description { 'Seconds' }
+min    ConversionFactorToSI { 60       }  Description { 'Minutes' }
+h      ConversionFactorToSI { 3600     }  Description { 'Hours' }
+d      ConversionFactorToSI { 86400    }  Description { 'Days' }
+w      ConversionFactorToSI { 604800   }  Description { 'Weeks' }
+y      ConversionFactorToSI { 31536000 }  Description { 'Years' }
+ms     ConversionFactorToSI { 1.0e-3   }  Description { 'Milliseconds' }
+us     ConversionFactorToSI { 1.0e-6   }  Description { 'Microseconds' }
+ns     ConversionFactorToSI { 1.0e-9   }  Description { 'Nanoseconds' }
 
 " ======================================================================================================================================================
 " Distance units
 " ======================================================================================================================================================
 
-Define DistanceUnit   { Metres Kilometres nmi Miles Feet Inches mm }
+Define DistanceUnit { m km cm mm nmi mi ft in }
 
-Metres       ConversionFactorToSI { 1        } Alias { Meters m }
-Kilometres   ConversionFactorToSI { 1000     } Alias { Kilometers km }
-nmi          ConversionFactorToSI { 1852     }
-Miles        ConversionFactorToSI { 1609.344 } Alias { mi }
-Feet         ConversionFactorToSI { 0.3048   } Alias { ft }
-Inches       ConversionFactorToSI { 0.0254   } Alias { in }
-mm           ConversionFactorToSI { 0.001    }
+m      ConversionFactorToSI { 1        }  Description { 'Meters' }
+km     ConversionFactorToSI { 1000     }  Description { 'Kilometers' }
+cm     ConversionFactorToSI { 0.01     }  Description { 'Centimeters' }
+mm     ConversionFactorToSI { 0.001    }  Description { 'Millimeters' }
+nmi    ConversionFactorToSI { 1852     }  Description { 'Nautical Miles' }
+mi     ConversionFactorToSI { 1609.344 }  Description { 'Statute Miles' }
+ft     ConversionFactorToSI { 0.3048   }  Description { 'Feet' }
+in     ConversionFactorToSI { 0.0254   }  Description { 'Inches' }
 
 " ======================================================================================================================================================
 " Speed units
 " ======================================================================================================================================================
 
-Define SpeedUnit      { m/s km/h Knots mph }
+Define SpeedUnit { m/s km/h knots mph }
 
-m/s          ConversionFactorToSI { 1             }
-km/h         ConversionFactorToSI { 1000 3600     } Alias { kmph }
-Knots        ConversionFactorToSI { 1852 3600     } Alias { knots kn }
-mph          ConversionFactorToSI { 1609.344 3600 } Alias { mi/h } "Miles per hour
+m/s    ConversionFactorToSI { 1             }  Description { 'Meters per Second' }
+km/h   ConversionFactorToSI { 1000 3600     }  Description { 'Kilometers per Hour' }
+knots  ConversionFactorToSI { 1852 3600     }  Description { 'Knots' }
+mph    ConversionFactorToSI { 1609.344 3600 }  Description { 'Miles per Hour' }
 
 " ======================================================================================================================================================
 " Acceleration units
 " ======================================================================================================================================================
 
-Define AccelerationUnit      { m/s2 ft/s2 }
+Define AccelerationUnit { m/s2 ft/s2 }
 
-m/s2         ConversionFactorToSI { 1      } Alias { m/s^2 }
-ft/s2        ConversionFactorToSI { 0.3048 } Alias { ft/s^2 }
+m/s2   ConversionFactorToSI { 1      }  Description { 'Meters per Second Squared' }
+ft/s2  ConversionFactorToSI { 0.3048 }  Description { 'Feet per Second Squared' }
 
 " ======================================================================================================================================================
 " Mass units
 " ======================================================================================================================================================
 
-Define MassUnit       { Kilograms Tonnes kt Mt }
+Define MassUnit { kg t kt Mt }
 
-Kilograms ConversionFactorToSI { 1          } Alias { kg }
-Tonnes    ConversionFactorToSI { 1000       } Alias { t tonne tonnes }
-kt        ConversionFactorToSI { 1000000    }    
-Mt        ConversionFactorToSI { 1000000000 }
+kg     ConversionFactorToSI { 1      }  Description { 'Kilograms' }
+t      ConversionFactorToSI { 1000   }  Description { 'Metric Tonnes' }
+kt     ConversionFactorToSI { 1.0e6  }  Description { 'Kilotonnes' }
+Mt     ConversionFactorToSI { 1.0e9  }  Description { 'Millions of Tonnes' }
 
 " ======================================================================================================================================================
 " Mass flow units
@@ -145,34 +146,34 @@ Mt        ConversionFactorToSI { 1000000000 }
 
 Define MassFlowUnit   { kg/s kg/h kg/d kg/y t/h t/d t/y kt/h kt/d kt/y Mt/h Mt/d Mt/y }
 
-kg/s ConversionFactorToSI { 1           1        }
-kg/h ConversionFactorToSI { 1           3600     }
-kg/d ConversionFactorToSI { 1           86400    }
-kg/y ConversionFactorToSI { 1           31536000 }
+kg/s   ConversionFactorToSI { 1               }  Description { 'Kilograms per Second' }
+kg/h   ConversionFactorToSI { 1      3600     }  Description { 'Kilograms per Hour' }
+kg/d   ConversionFactorToSI { 1      86400    }  Description { 'Kilograms per Day' }
+kg/y   ConversionFactorToSI { 1      31536000 }  Description { 'Kilograms per Year' }
 
-t/h  ConversionFactorToSI { 1000        3600     } Alias { tph }
-t/d  ConversionFactorToSI { 1000        86400    }
-t/y  ConversionFactorToSI { 1000        31536000 }
+t/h    ConversionFactorToSI { 1000   3600     }  Description { 'Tonnes per Hour' }
+t/d    ConversionFactorToSI { 1000   86400    }  Description { 'Tonnes per Day' }
+t/y    ConversionFactorToSI { 1000   31536000 }  Description { 'Tonnes per Year' }
 
-kt/h ConversionFactorToSI { 1000000     3600     } Alias { ktph }
-kt/d ConversionFactorToSI { 1000000     86400    }
-kt/y ConversionFactorToSI { 1000000     31536000 } Alias { ktpa }
+kt/h   ConversionFactorToSI { 1.0e6  3600     }  Description { 'Kilotonnes per Hour' }
+kt/d   ConversionFactorToSI { 1.0e6  86400    }  Description { 'Kilotonnes per Day' }
+kt/y   ConversionFactorToSI { 1.0e6  31536000 }  Description { 'Kilotonnes per Year' }
 
-Mt/h ConversionFactorToSI { 1000000000  3600     }
-Mt/d ConversionFactorToSI { 1000000000  86400    }
-Mt/y ConversionFactorToSI { 1000000000  31536000 } Alias { Mtpa }
+Mt/h   ConversionFactorToSI { 1.0e9  3600     }  Description { 'Million Tonnes per Hour' }
+Mt/d   ConversionFactorToSI { 1.0e9  86400    }  Description { 'Million Tonnes per Day' }
+Mt/y   ConversionFactorToSI { 1.0e9  31536000 }  Description { 'Million Tonnes per Year' }
 
 " ======================================================================================================================================================
 " Volume units 
 " ======================================================================================================================================================
 
-Define VolumeUnit     { m3 km3 bbl mbbl mmbbl }
+Define VolumeUnit { m3 km3 bbl mbbl mmbbl }
 
-m3    ConversionFactorToSI { 1                 } Alias { M3  M^3  m^3  }        " cubic meters
-km3   ConversionFactorToSI { 1000              } Alias { KM3 KM^3 km^3 }        " thousands of cubic meters
-bbl   ConversionFactorToSI { 1.58987294928E-01 } Alias { BBL }                  " barrels of oil
-mbbl  ConversionFactorToSI { 1.58987294928E+02 } Alias { MBBL Mbbl mBBL kbbl }  " thousands of barrels of oil
-mmbbl ConversionFactorToSI { 1.58987294928E+05 } Alias { MMBBL MMbbl mmBBL }    " millions of barrels of oil
+m3     ConversionFactorToSI { 1                 }  Description { 'Cubic Meters' }
+km3    ConversionFactorToSI { 1000              }  Description { 'Thousands of Cubic Meters' }
+bbl    ConversionFactorToSI { 1.58987294928E-01 }  Description { 'Barrels of Oil' }
+mbbl   ConversionFactorToSI { 1.58987294928E+02 }  Description { 'Thousands of Barrels of Oil' }
+mmbbl  ConversionFactorToSI { 1.58987294928E+05 }  Description { 'Millions of Barrels of Oil' }
 
 " ======================================================================================================================================================
 " Volume flow units
@@ -180,35 +181,35 @@ mmbbl ConversionFactorToSI { 1.58987294928E+05 } Alias { MMBBL MMbbl mmBBL }    
 
 Define VolumeFlowUnit { m3/s m3/h m3/d m3/y km3/h km3/d km3/y bbl/h bbl/d bbl/y mbbl/h mbbl/d mbbl/y mmbbl/h mmbbl/d mmbbl/y }
 
-m3/s    ConversionFactorToSI { 1 }
-m3/h    ConversionFactorToSI { 1                 3600     } Alias {    M3/h   M^3/h   m^3/h }
-m3/d    ConversionFactorToSI { 1                 86400    } Alias {    M3/d   M^3/d   m^3/d }
-m3/y    ConversionFactorToSI { 1                 31536000 } Alias {    M3/y   M^3/y   m^3/y }
+m3/s    ConversionFactorToSI { 1                          }  Description { 'Cubic Meters per Second' }
+m3/h    ConversionFactorToSI { 1                 3600     }  Description { 'Cubic Meters per Hour' }
+m3/d    ConversionFactorToSI { 1                 86400    }  Description { 'Cubic Meters per Day' }
+m3/y    ConversionFactorToSI { 1                 31536000 }  Description { 'Cubic Meters per Year' }
 
-km3/h   ConversionFactorToSI { 1000              3600     } Alias {   KM3/h  KM^3/h  km^3/h }
-km3/d   ConversionFactorToSI { 1000              86400    } Alias {   KM3/d  KM^3/d  km^3/d }
-km3/y   ConversionFactorToSI { 1000              31536000 } Alias {   KM3/y  KM^3/y  km^3/y }
+km3/h   ConversionFactorToSI { 1000              3600     }  Description { 'Thousand Cubic Meters per Hour' }
+km3/d   ConversionFactorToSI { 1000              86400    }  Description { 'Thousand Cubic Meters per Day' }
+km3/y   ConversionFactorToSI { 1000              31536000 }  Description { 'Thousand Cubic Meters per Year' }
 
-bbl/h   ConversionFactorToSI { 1.58987294928E-01 3600     } Alias {   BBL/h }
-bbl/d   ConversionFactorToSI { 1.58987294928E-01 86400    } Alias {   BBL/d }
-bbl/y   ConversionFactorToSI { 1.58987294928E-01 31536000 } Alias {   BBL/y }
+bbl/h   ConversionFactorToSI { 1.58987294928E-01 3600     }  Description { 'Barrels of Oil per Hour' }
+bbl/d   ConversionFactorToSI { 1.58987294928E-01 86400    }  Description { 'Barrels of Oil per Day' }
+bbl/y   ConversionFactorToSI { 1.58987294928E-01 31536000 }  Description { 'Barrels of Oil per Year' }
 
-mbbl/h  ConversionFactorToSI { 1.58987294928E+02 3600     } Alias {  MBBL/h  Mbbl/h  mBBL/h kbbl/h }
-mbbl/d  ConversionFactorToSI { 1.58987294928E+02 86400    } Alias {  MBBL/d  Mbbl/d  mBBL/d kbbl/d }
-mbbl/y  ConversionFactorToSI { 1.58987294928E+02 31536000 } Alias {  MBBL/y  Mbbl/y  mBBL/y kbbl/y }
+mbbl/h  ConversionFactorToSI { 1.58987294928E+02 3600     }  Description { 'Thousands of Barrels of Oil per Hour' }
+mbbl/d  ConversionFactorToSI { 1.58987294928E+02 86400    }  Description { 'Thousands of Barrels of Oil per Day' }
+mbbl/y  ConversionFactorToSI { 1.58987294928E+02 31536000 }  Description { 'Thousands of Barrels of Oil per Year' }
 
-mmbbl/h ConversionFactorToSI { 1.58987294928E+05 3600     } Alias { MMBBL/h MMbbl/h mmBBL/h }
-mmbbl/d ConversionFactorToSI { 1.58987294928E+05 86400    } Alias { MMBBL/d MMbbl/d mmBBL/d }
-mmbbl/y ConversionFactorToSI { 1.58987294928E+05 31536000 } Alias { MMBBL/y MMbbl/y mmBBL/y }
+mmbbl/h ConversionFactorToSI { 1.58987294928E+05 3600     }  Description { 'Millions of Barrels of Oil per Hour' }
+mmbbl/d ConversionFactorToSI { 1.58987294928E+05 86400    }  Description { 'Millions of Barrels of Oil per Day' }
+mmbbl/y ConversionFactorToSI { 1.58987294928E+05 31536000 }  Description { 'Millions of Barrels of Oil per Year' }
 
 " ======================================================================================================================================================
 " Angle units
 " ======================================================================================================================================================
 
-Define AngleUnit      { Radians Degrees }
+Define AngleUnit { rad deg }
 
-Degrees ConversionFactorToSI { 3.14159265358979 180 } Alias { deg }
-Radians ConversionFactorToSI { 1                    } Alias { rad }
+rad    ConversionFactorToSI { 1                    }  Description { 'Radians' }
+deg    ConversionFactorToSI { 3.14159265358979 180 }  Description { 'Degrees' }
 
 " ======================================================================================================================================================
 " Anglular speed units
@@ -216,125 +217,125 @@ Radians ConversionFactorToSI { 1                    } Alias { rad }
 
 Define AngularSpeedUnit { rad/s rad/h deg/s deg/h rpm }
 
-rad/s ConversionFactorToSI { 1                       }
-rad/h ConversionFactorToSI { 1                3600   }
-deg/s ConversionFactorToSI { 3.14159265358979 180    }
-deg/h ConversionFactorToSI { 3.14159265358979 648000 }
-rpm   ConversionFactorToSI { 3.14159265358979 30 }
+rad/s  ConversionFactorToSI { 1                       }  Description { 'Radians per Second' }
+rad/h  ConversionFactorToSI { 1                3600   }  Description { 'Radians per Hour' }
+deg/s  ConversionFactorToSI { 3.14159265358979 180    }  Description { 'Degrees per Second' }
+deg/h  ConversionFactorToSI { 3.14159265358979 648000 }  Description { 'Degrees per Hour' }
+rpm    ConversionFactorToSI { 3.14159265358979 30     }  Description { 'Revolutions per Minute' }
 
 " ======================================================================================================================================================
 " Energy units
 " ======================================================================================================================================================
 
-Define EnergyUnit      { J kWh }
+Define EnergyUnit { J kWh }
 
-kWh    ConversionFactorToSI { 3600000 }
-J      ConversionFactorToSI { 1       }
+J      ConversionFactorToSI { 1       }  Description { 'Joules' }
+kWh    ConversionFactorToSI { 3600000 }  Description { 'Kilowatt-Hours' }
 
 " ======================================================================================================================================================
 " Energy density units
 " ======================================================================================================================================================
 
-Define EnergyDensityUnit      { J/m3 kWh/m3 }
+Define EnergyDensityUnit { J/m3 kWh/m3 }
 
-kWh/m3 ConversionFactorToSI { 3600000 }
-J/m3   ConversionFactorToSI { 1       }
+J/m3   ConversionFactorToSI { 1       }  Description { 'Joules per Cubic Meter' }
+kWh/m3 ConversionFactorToSI { 3600000 }  Description { 'Kilowatt-Hours per Cubic Meter' }
 
 " ======================================================================================================================================================
 " Specific Energy units
 " ======================================================================================================================================================
 
-Define SpecificEnergyUnit      { J/kg kWh/t }
+Define SpecificEnergyUnit { J/kg kWh/t }
 
-kWh/t  ConversionFactorToSI { 3600000 1000 }
-J/kg   ConversionFactorToSI { 1            }
+J/kg   ConversionFactorToSI { 1            }  Description { 'Joules per Kilogram' }
+kWh/t  ConversionFactorToSI { 3600000 1000 }  Description { 'Kilowatt-Hours per Tonne' }
 
 " ======================================================================================================================================================
 " Power units
 " ======================================================================================================================================================
 
-Define PowerUnit      { Watt kW MW}
+Define PowerUnit { W kW MW}
 
-MW     ConversionFactorToSI { 1000000 }
-kW     ConversionFactorToSI { 1000 }
-Watt   ConversionFactorToSI { 1    } Alias { W }
+W      ConversionFactorToSI { 1     }  Description { 'Watts' }
+kW     ConversionFactorToSI { 1000  }  Description { 'Kilowatts' }
+MW     ConversionFactorToSI { 1.0e6 }  Description { 'Megawatts' }
 
 " ======================================================================================================================================================
 " Cost units
 " ======================================================================================================================================================
 
-Define CostUnit      { $ }
+Define CostUnit { $ }
 
-$     ConversionFactorToSI { 1 }  Alias { dollars }
+$      ConversionFactorToSI { 1     }  Description { 'Dollars' }
 
 " ======================================================================================================================================================
 " Cost rate units
 " ======================================================================================================================================================
 
-Define CostRateUnit      { $/s $/h $/d }
+Define CostRateUnit { $/s $/h $/d }
 
-$/s    ConversionFactorToSI { 1 }       Alias { $/second }
-$/h    ConversionFactorToSI { 1 3600  } Alias { $/hour }
-$/d    ConversionFactorToSI { 1 86400 } Alias { $/day }
+$/s    ConversionFactorToSI { 1       }  Description { 'Dollars per Second' }
+$/h    ConversionFactorToSI { 1 3600  }  Description { 'Dollars per Hour' }
+$/d    ConversionFactorToSI { 1 86400 }  Description { 'Dollars per Day' }
 
 " ======================================================================================================================================================
 " Linear Density units (mass)
 " ======================================================================================================================================================
 
-Define LinearDensityUnit      { kg/m t/m kt/m  }
+Define LinearDensityUnit { kg/m t/m kt/m  }
 
-kg/m ConversionFactorToSI { 1         }
-t/m  ConversionFactorToSI { 1000      }
-kt/m ConversionFactorToSI { 1000000   }
+kg/m   ConversionFactorToSI { 1       }  Description { 'Kilograms per Meter' }
+t/m    ConversionFactorToSI { 1000    }  Description { 'Tonnes per Meter' }
+kt/m   ConversionFactorToSI { 1.0e6   }  Description { 'Kilotonnes per Meter' }
 
 " ======================================================================================================================================================
 " Linear Density units (volume)
 " ======================================================================================================================================================
 
-Define LinearDensityVolumeUnit      { m3/m }
+Define LinearDensityVolumeUnit { m3/m }
 
-m3/m ConversionFactorToSI { 1         }
+m3/m   ConversionFactorToSI { 1       }  Description { 'Cubic Meters per Meter' }
 
 " ======================================================================================================================================================
 " Density units
 " ======================================================================================================================================================
 
-Define DensityUnit      { kg/m3 t/m3 kt/m3 }
+Define DensityUnit { kg/m3 t/m3 kt/m3 }
 
-kg/m3  ConversionFactorToSI { 1 }
-t/m3   ConversionFactorToSI { 1000      }
-kt/m3  ConversionFactorToSI { 1000000   }
+kg/m3  ConversionFactorToSI { 1       }  Description { 'Kilograms per Cubic Meter' }
+t/m3   ConversionFactorToSI { 1000    }  Description { 'Tonnes per Cubic Meter' }
+kt/m3  ConversionFactorToSI { 1.0e6   }  Description { 'Kilotonnes per Cubic Meter' }
 
 " ======================================================================================================================================================
 " Pressure units
 " ======================================================================================================================================================
 
-Define PressureUnit      { Pa kPa psi }
+Define PressureUnit { Pa kPa psi }
 
-Pa   ConversionFactorToSI { 1 }
-kPa  ConversionFactorToSI { 1000 }
-psi  ConversionFactorToSI { 6894.757 }
+Pa     ConversionFactorToSI { 1         }  Description { 'Pascals' }
+kPa    ConversionFactorToSI { 1000      }  Description { 'Kilopascals' }
+psi    ConversionFactorToSI { 6894.757  }  Description { 'Pounds per Square Inch' }
 
 " ======================================================================================================================================================
 " Viscosity units
 " ======================================================================================================================================================
 
-Define ViscosityUnit      { Pa-s P cP }
+Define ViscosityUnit { Pa-s P cP }
 
-Pa-s  ConversionFactorToSI { 1 }
-P     ConversionFactorToSI { 0.1 }
-cP    ConversionFactorToSI { 0.001 }
+Pa-s   ConversionFactorToSI { 1        }  Description { 'Pascals-Seconds' }
+P      ConversionFactorToSI { 0.1      }  Description { 'Poise' }
+cP     ConversionFactorToSI { 0.001    }  Description { 'Centipoise' }
 
 " ======================================================================================================================================================
 " Area units
 " ======================================================================================================================================================
 
-Define AreaUnit           { m2 cm2 mm2 in2 }
+Define AreaUnit { m2 cm2 mm2 in2 }
 
-m2   ConversionFactorToSI { 1 }
-cm2  ConversionFactorToSI { 1.0e-4 }
-mm2  ConversionFactorToSI { 1.0e-6 }
-in2  ConversionFactorToSI { 6.4516e-4 }
+m2     ConversionFactorToSI { 1         }  Description { 'Square Meters' }
+cm2    ConversionFactorToSI { 1.0e-4    }  Description { 'Square Centimeters' }
+mm2    ConversionFactorToSI { 1.0e-6    }  Description { 'Square Millimeters' }
+in2    ConversionFactorToSI { 6.4516e-4 }  Description { 'Square Inches' }
 
 " ======================================================================================================================================================
 " Rate units
@@ -342,8 +343,8 @@ in2  ConversionFactorToSI { 6.4516e-4 }
 
 Define RateUnit  { /s  /h  /d  /w  /y }
 
-/s   ConversionFactorToSI { 1          }  "Second
-/h   ConversionFactorToSI { 1 3600     }  "Hour
-/d   ConversionFactorToSI { 1 86400    }  "Day
-/w   ConversionFactorToSI { 1 604800   }  "Week
-/y   ConversionFactorToSI { 1 31536000 }  "Year
+/s     ConversionFactorToSI { 1          }  Description { 'Per Second' }
+/h     ConversionFactorToSI { 1 3600     }  Description { 'Per Hour' }
+/d     ConversionFactorToSI { 1 86400    }  Description { 'Per Day' }
+/w     ConversionFactorToSI { 1 604800   }  Description { 'Per Week' }
+/y     ConversionFactorToSI { 1 31536000 }  Description { 'Per Year' }
