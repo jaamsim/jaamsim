@@ -241,6 +241,7 @@ public class Renderer implements GLAnimatorControl {
 				while (_renderThread.isAlive()) {
 					synchronized (this) {
 						try {
+							queueRedraw(); // Just in case the render thread got stalled somewhere
 							wait(50);
 						} catch (InterruptedException ex) {}
 					}
@@ -419,6 +420,7 @@ public class Renderer implements GLAnimatorControl {
 	 */
 	public void shutdown() {
 		_shutdown.set(true);
+		queueRedraw();
 	}
 
 	public GL2GL3 getGL() {
