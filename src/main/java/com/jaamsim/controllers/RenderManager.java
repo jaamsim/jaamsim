@@ -142,7 +142,6 @@ public class RenderManager implements DragSourceListener {
 
 	private double _simTime = 0.0d;
 
-	private boolean _isDragging = false;
 	private long _dragHandleID = 0;
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
@@ -833,7 +832,6 @@ public class RenderManager implements DragSourceListener {
 		else
 			_selectedEntity = null;
 
-		_isDragging = false;
 		queueRedraw();
 	}
 
@@ -845,20 +843,17 @@ public class RenderManager implements DragSourceListener {
 	 */
 	public boolean handleDrag(WindowInteractionListener.DragInfo dragInfo) {
 
-		if (!_isDragging) {
-			// We have not cached a drag handle ID, so don't claim this and let CameraControl have control back
-			return false;
-		}
-		// We should have a selected entity
-		assert(_selectedEntity != null);
-
 		// Any quick outs go here
-		if (!_selectedEntity.isMovable()) {
-			return false;
-		}
-
 		if (!dragInfo.controlDown()) {
 			return false;
+		}
+
+		if (_dragHandleID == 0) {
+			return true;
+		}
+
+		if (_selectedEntity == null || !_selectedEntity.isMovable()) {
+			return true;
 		}
 
 		// Find the start and current world space positions
@@ -1225,7 +1220,7 @@ public class RenderManager implements DragSourceListener {
 		if (button != 1) { return false; }
 		if (!isDown) {
 			// Click released
-			_isDragging = false;
+			_dragHandleID = 0;
 			return true; // handled
 		}
 
@@ -1245,7 +1240,6 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		if (!controlDown) {
-			_isDragging = false;
 			return false;
 		}
 
@@ -1268,7 +1262,6 @@ public class RenderManager implements DragSourceListener {
 		for (PickData pd : picks) {
 			if (isMouseHandleID(pd.id)) {
 				// this is a mouse handle, remember the handle for future drag events
-				_isDragging = true;
 				_dragHandleID = pd.id;
 				return true;
 			}
@@ -1278,8 +1271,6 @@ public class RenderManager implements DragSourceListener {
 
 	public void clearSelection() {
 		_selectedEntity = null;
-		_isDragging = false;
-
 	}
 
 	public void hideExistingPopups() {
