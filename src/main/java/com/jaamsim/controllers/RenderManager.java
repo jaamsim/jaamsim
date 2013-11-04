@@ -14,6 +14,7 @@
  */
 package com.jaamsim.controllers;
 
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.dnd.DragSourceDragEvent;
@@ -23,6 +24,7 @@ import java.awt.dnd.DragSourceListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,7 +40,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
@@ -493,8 +494,25 @@ public class RenderManager implements DragSourceListener {
 
 	}
 
+	public void popupMenu(final int windowID) {
+		try {
+			// Transfer control from the NEWT-EDT to the AWT-EDT
+			EventQueue.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					popupMenuImp(windowID);
+				}
+			});
+		} catch (InvocationTargetException ex) {
+			assert(false);
+		} catch (InterruptedException ex) {
+			assert(false);
+		}
+	}
+
 	// Temporary dumping ground until I find a better place for this
-	public void popupMenu(int windowID) {
+	// Note: this is intentionally package private to be called by an inner class
+	void popupMenuImp(int windowID) {
 		synchronized (_popupLock) {
 
 			Renderer.WindowMouseInfo mouseInfo = _renderer.getMouseInfo(windowID);
@@ -559,14 +577,8 @@ public class RenderManager implements DragSourceListener {
 				}
 			}
 
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					menu.show(awtFrame, menuX, menuY);
-					menu.repaint();
-				}
-			});
-
+			menu.show(awtFrame, menuX, menuY);
+			menu.repaint();
 		} // synchronized (_popupLock)
 	}
 
