@@ -231,16 +231,7 @@ public class InputAgent {
 		// Walk up the parent list until we find a parentless entry, call that
 		// the 'root'
 		File f = new File(System.getProperty("user.dir"));
-		File par = f;
-		while (true) {
-			File t = par.getParentFile();
-			if (t == null) {
-				pwdRoot = par.toURI();
-				break;
-			}
-			par = t;
-		}
-
+		pwdRoot = getFileRoot(f);
 		pwdPath = pwdRoot.relativize(f.toURI());
 
 		try {
@@ -250,6 +241,20 @@ public class InputAgent {
 		catch (URISyntaxException e) {}
 
 		resPath = URI.create("");
+	}
+
+	private static URI getFileRoot(File f) {
+		File par = f;
+
+		// Walk up the list of parents to the entry that has no parent, call thsi
+		// the root entry
+		while (true) {
+			File t = par.getParentFile();
+			if (t == null)
+				return par.toURI();
+			else
+				par = t;
+		}
 	}
 
 	public static final void readPWDResource(String res) {
