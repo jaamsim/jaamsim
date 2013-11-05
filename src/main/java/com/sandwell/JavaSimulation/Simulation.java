@@ -212,7 +212,7 @@ public class Simulation extends Entity {
 	}
 
 	public void clear() {
-		EventManager.rootManager.basicInit();
+		EventManager.clear();
 
 		this.resetInputs();
 
@@ -247,7 +247,7 @@ public class Simulation extends Entity {
 	 *		3) start EventManager processing events
 	 */
 	public void start() {
-		EventManager.rootManager.basicInit();
+		EventManager.clear();
 
 		if( traceEventsInput.getValue() ) {
 			EventTracer.traceAllEvents(traceEventsInput.getValue());
