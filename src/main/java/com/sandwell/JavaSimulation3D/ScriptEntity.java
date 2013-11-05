@@ -16,7 +16,8 @@ package com.sandwell.JavaSimulation3D;
 
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
-import com.sandwell.JavaSimulation.DoubleInput;
+import com.jaamsim.input.ValueInput;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.FileInput;
@@ -37,21 +38,19 @@ public class ScriptEntity extends Entity {
 	@Keyword(description = "The Time keyword appears inside the script file. The value represents the simulation " +
 	                "time at which the next set of commands in the script are implemented.",
 	         example = "ScriptEntity Time { 24.0 h }")
-	private final DoubleInput scriptTime; // the time that has been read in the script
+	private final ValueInput scriptTime; // the time that has been read in the script
 
 	{
 		scriptFileName = new FileInput( "Script", "Key Inputs", null );
 		this.addInput( scriptFileName, true );
 
-		scriptTime = new DoubleInput( "Time", "Key Inputs", 0.0d );
-		scriptTime.setValidRange( 0.0d, Double.POSITIVE_INFINITY );
-		scriptTime.setUnits( "h" );
-		this.addInput( scriptTime, false );
+		scriptTime = new ValueInput("Time", "Key Inputs", 0.0d);
+		scriptTime.setUnitType(TimeUnit.class);
+		scriptTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(scriptTime, false);
 	}
 
-	public ScriptEntity() {
-	}
-
+	public ScriptEntity() {}
 
 	private static class ScriptTarget extends ProcessTarget {
 		final ScriptEntity script;
@@ -111,8 +110,8 @@ public class ScriptEntity extends Entity {
 			InputAgent.processData( record );
 
 			// If a "Time" record was read, then wait until the time
-			if( Tester.greaterCheckTimeStep( scriptTime.getValue(), getCurrentTime() ) ) {
-				scheduleWait( scriptTime.getValue() - getCurrentTime() );
+			if (Tester.greaterCheckTimeStep(scriptTime.getValue(), getSimTime())) {
+				simWait(scriptTime.getValue() - getSimTime());
 			}
 
 			// Read the next record
