@@ -195,12 +195,13 @@ public class RenderManager implements DragSourceListener {
 			public void run() {
 
 				// Is a redraw scheduled
-				long currentTime = System.currentTimeMillis();
-				long scheduledTime = _scheduledDraw.get();
 				long lastRedraw = _lastDraw.get();
+				long scheduledTime = _scheduledDraw.get();
+				long currentTime = System.currentTimeMillis();
 
 				// Only draw if the scheduled time is before now and after the last redraw
-				if (scheduledTime < lastRedraw || currentTime < scheduledTime) {
+				// but never skip a draw if a screen shot is requested
+				if (!_screenshot.get() && (scheduledTime < lastRedraw || currentTime < scheduledTime)) {
 					return;
 				}
 
@@ -211,6 +212,7 @@ public class RenderManager implements DragSourceListener {
 					_redraw.set(true);
 					_redraw.notifyAll();
 				}
+				_lastDraw.set(currentTime);
 			}
 		};
 
@@ -236,15 +238,16 @@ public class RenderManager implements DragSourceListener {
 	private void queueRedraw() {
 		long scheduledTime = _scheduledDraw.get();
 		long lastRedraw = _lastDraw.get();
+		long currentTime = System.currentTimeMillis();
 
 		if (scheduledTime > lastRedraw) {
 			// A draw is scheduled
 			return;
 		}
 
-		long newDraw = System.currentTimeMillis();
+		long newDraw = currentTime;
 		long frameTime = (long)(1000.0/FPS);
-		if (newDraw - lastRedraw < frameTime) {
+		if (newDraw < lastRedraw + frameTime) {
 			// This would be scheduled too soon
 			newDraw = lastRedraw + frameTime;
 		}
@@ -334,8 +337,6 @@ public class RenderManager implements DragSourceListener {
 
 					break;
 				}
-
-				_lastDraw.set(System.currentTimeMillis());
 
 				if (!_renderer.isInitialized()) {
 					// Give the renderer a chance to initialize
