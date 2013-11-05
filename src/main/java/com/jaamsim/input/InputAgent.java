@@ -1014,13 +1014,17 @@ public class InputAgent {
 
 		FileDialog chooser = new FileDialog(gui, "Load Configuration File", FileDialog.LOAD);
 		chooser.setFilenameFilter(new ConfigFileFilter());
-		String chosenFileName = chooseFile(chooser, FileDialog.LOAD);
-		if (chosenFileName != null) {
-			//dispose();
-			setLoadFile(gui, chosenFileName);
-		} else {
-			//dispose();
-		}
+		chooser.setFile("*.cfg");
+
+		chooser.setVisible(true); // display the dialog, waits for selection
+
+		String file = chooser.getFile();
+		if (file == null)
+			return;
+
+		String absFile = chooser.getDirectory() + file;
+		absFile = absFile.trim();
+		setLoadFile(gui, absFile);
 	}
 
 	public static void save(GUIFrame gui) {
@@ -1037,42 +1041,17 @@ public class InputAgent {
 		System.out.println("Save As...");
 		FileDialog chooser = new FileDialog(gui, "Save Configuration File As", FileDialog.SAVE);
 		chooser.setFilenameFilter(new ConfigFileFilter());
-		String chosenFileName = chooseFile(chooser, FileDialog.SAVE);
-		if ( chosenFileName != null ) {
-			//dispose();
-			setSaveFile(gui, chosenFileName, FileDialog.SAVE );
-		} else {
-			//dispose();
-		}
-	}
+		chooser.setFile(InputAgent.getConfigFileName());
 
-	/**
-	 *  Opens browser to choose file.  returns a boolean if a file was picked, false if canceled or closed.
-	 */
-	private static String chooseFile(FileDialog chooser, int saveOrLoadType) {
+		chooser.setVisible(true); // display the dialog, waits for selection
 
-		// filter
-		if (saveOrLoadType == FileDialog.SAVE) {
-			chooser.setFile( InputAgent.getConfigFileName() );
-		} else {
-			chooser.setFile( "*.cfg" );
-		}
+		String file = chooser.getFile();
+		if (file == null)
+			return;
 
-		// display browser
-		//this.show();
-
-		chooser.setVisible( true );
-
-		// if a file was picked, set entryarea to be this file
-		if( chooser.getFile() != null ) {
-
-			//chooser should not set root directory
-			//FileEntity.setRootDirectory( chooser.getDirectory() );
-			String chosenFileName = chooser.getDirectory() + chooser.getFile();
-			return chosenFileName.trim();
-		} else {
-			return null;
-		}
+		String absFile = chooser.getDirectory() + file;
+		absFile = absFile.trim();
+		setSaveFile(gui, absFile, FileDialog.SAVE);
 	}
 
 	public static void configure(GUIFrame gui, String configFileName) {
