@@ -143,6 +143,7 @@ public class RenderManager implements DragSourceListener {
 	private double _simTime = 0.0d;
 
 	private long _dragHandleID = 0;
+	private Vec3d _dragCollisionPoint;
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
 	private ObjectType _dndObjectType;
@@ -634,15 +635,17 @@ public class RenderManager implements DragSourceListener {
 	private static class PickData {
 		public long id;
 		public double size;
+		public double dist;
 		boolean isEntity;
 
 		/**
 		 * This pick does not correspond to an entity, and is a handle or other UI element
 		 * @param id
 		 */
-		public PickData(long id) {
+		public PickData(long id, double d) {
 			this.id = id;
 			size = 0;
+			dist = d;
 			isEntity = false;
 		}
 		/**
@@ -650,9 +653,10 @@ public class RenderManager implements DragSourceListener {
 		 * @param id - the id
 		 * @param ent - the entity
 		 */
-		public PickData(long id, DisplayEntity ent) {
+		public PickData(long id, double d, DisplayEntity ent) {
 			this.id = id;
 			size = ent.getSize().mag3();
+			dist = d;
 
 			isEntity = true;
 		}
@@ -775,9 +779,9 @@ public class RenderManager implements DragSourceListener {
 			DisplayEntity ent = (DisplayEntity)Entity.idToEntity(pick.pickingID);
 			if (ent == null) {
 				// This object is not an entity, but may be a picking handle
-				uniquePicks.add(new PickData(pick.pickingID));
+				uniquePicks.add(new PickData(pick.pickingID, pick.dist));
 			} else {
-				uniquePicks.add(new PickData(pick.pickingID, ent));
+				uniquePicks.add(new PickData(pick.pickingID, pick.dist, ent));
 			}
 		}
 
@@ -875,10 +879,12 @@ public class RenderManager implements DragSourceListener {
 		double currentDist = entityPlane.collisionDist(currentRay);
 		double lastDist = entityPlane.collisionDist(lastRay);
 
-		if (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
-		       lastDist < 0 ||    lastDist == Double.POSITIVE_INFINITY)
+		if (_dragHandleID != MOVE_PICK_ID &&
+		    (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
+		        lastDist < 0 ||    lastDist == Double.POSITIVE_INFINITY))
 		{
 			// The plane is parallel or behind one of the rays...
+			// Moving uses a different plane, so we'll test that below
 			return true; // Just ignore it for now...
 		}
 
@@ -901,10 +907,14 @@ public class RenderManager implements DragSourceListener {
 		// Handle each handle by type...
 		if (_dragHandleID == MOVE_PICK_ID) {
 			// We are dragging
+
+			// Dragging may not happen in the entity's XY plane, so we need to re-do some of the work above
+			Plane dragPlane = new Plane(new Vec3d(0, 0, 1), _dragCollisionPoint.z); // XY plane at collistion point
+
 			if (dragInfo.shiftDown()) {
 				Vec3d entPos = _selectedEntity.getGlobalPosition();
 
-				double zDiff = RenderUtils.getZDiff(entPos, currentRay, lastRay);
+				double zDiff = RenderUtils.getZDiff(_dragCollisionPoint, currentRay, lastRay);
 
 				entPos.z += zDiff;
 				_selectedEntity.setGlobalPosition(entPos);
@@ -912,8 +922,21 @@ public class RenderManager implements DragSourceListener {
 				return true;
 			}
 
+			double cDist = dragPlane.collisionDist(currentRay);
+			double lDist = dragPlane.collisionDist(lastRay);
+
+			if (cDist < 0 || cDist == Double.POSITIVE_INFINITY ||
+			    lDist < 0 || lDist == Double.POSITIVE_INFINITY)
+				return true;
+
+			Vec3d cPoint = currentRay.getPointAtDist(cDist);
+			Vec3d lPoint = lastRay.getPointAtDist(lDist);
+
+			Vec3d del = new Vec3d();
+			del.sub3(cPoint, lPoint);
+
 			Vec3d pos = _selectedEntity.getGlobalPosition();
-			pos.add3(delta);
+			pos.add3(del);
 			_selectedEntity.setGlobalPosition(pos);
 			return true;
 		}
@@ -1250,7 +1273,7 @@ public class RenderManager implements DragSourceListener {
 			return false;
 		}
 
-		List<PickData> picks = pickForRay(pickRay, view.getID(), false);
+		List<PickData> picks = pickForRay(pickRay, view.getID(), true);
 
 		Collections.sort(picks, new HandleSorter());
 
@@ -1258,14 +1281,37 @@ public class RenderManager implements DragSourceListener {
 			return false;
 		}
 
+		double mouseHandleDist = Double.POSITIVE_INFINITY;
+		double entityDist = Double.POSITIVE_INFINITY;
 		// See if we are hovering over any interaction handles
 		for (PickData pd : picks) {
-			if (isMouseHandleID(pd.id)) {
+			if (isMouseHandleID(pd.id) && mouseHandleDist == Double.POSITIVE_INFINITY) {
 				// this is a mouse handle, remember the handle for future drag events
 				_dragHandleID = pd.id;
-				return true;
+				mouseHandleDist = pd.dist;
+			}
+			if (_selectedEntity != null && pd.id == _selectedEntity.getEntityNumber()) {
+				// We clicked on the selected entity
+				entityDist = pd.dist;
 			}
 		}
+		// The following logical condition effectively checks if we hit the entity first, and did not select
+		// any mouse handle other than the move handle
+		if (entityDist != Double.POSITIVE_INFINITY &&
+		    entityDist < mouseHandleDist &&
+		    (_dragHandleID == 0 || _dragHandleID == MOVE_PICK_ID)) {
+
+			// Use the entity collision point for dragging instead of the handle collision point
+			_dragCollisionPoint = pickRay.getPointAtDist(entityDist);
+			_dragHandleID = MOVE_PICK_ID;
+			return true;
+		}
+		if (mouseHandleDist != Double.POSITIVE_INFINITY) {
+			// We hit a mouse handle
+			_dragCollisionPoint = pickRay.getPointAtDist(mouseHandleDist);
+			return true;
+		}
+
 		return false;
 	}
 
