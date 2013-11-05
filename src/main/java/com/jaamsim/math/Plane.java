@@ -33,7 +33,7 @@ private double _dist;
  * @param norm
  * @param distance
  */
-public Plane(Vec4d norm, double distance) {
+public Plane(Vec3d norm, double distance) {
 	if (norm == null) {
 		normal.set3(0.0d, 0.0d, 1.0d);
 		_dist = distance;
