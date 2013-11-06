@@ -21,6 +21,8 @@ import java.util.zip.CRC32;
 
 public class BlockReader {
 
+	private static final boolean CHECK_PAYLOAD_CRC = false;
+
 	public static DataBlock readBlockFromURL(URL fileURL) throws Exception {
 		InputStream inStream = fileURL.openStream();
 		return readBlock(inStream);
@@ -82,7 +84,7 @@ public class BlockReader {
 
 			ArrayList<DataBlock> children = new ArrayList<DataBlock>();
 
-			BlockUtils.CRCInputStream wrappedIn = new BlockUtils.CRCInputStream(in);
+			BlockUtils.CRCInputStream wrappedIn = new BlockUtils.CRCInputStream(in, CHECK_PAYLOAD_CRC);
 
 			for (int i = 0; i < numChildren; ++i) {
 				children.add(readBlock(wrappedIn));
@@ -98,10 +100,12 @@ public class BlockReader {
 			// Check the CRC and footer
 			bytesRead = in.read(readBuffer, 0, 4);
 			if (bytesRead != 4) throw new DataBlock.Error("Unexpected End of stream");
-			int payloadValue = BlockUtils.intFromBytes(readBuffer, 0);
 
-			if (payloadValue != (int)wrappedIn.getCRC())
-				throw new DataBlock.Error("Block payload CRC mismatch");
+			if (CHECK_PAYLOAD_CRC) {
+				int payloadValue = BlockUtils.intFromBytes(readBuffer, 0);
+				if (payloadValue != (int)wrappedIn.getCRC())
+					throw new DataBlock.Error("Block payload CRC mismatch");
+			}
 
 			// Finally read the footer
 			bytesRead = in.read(readBuffer, 0, 4);

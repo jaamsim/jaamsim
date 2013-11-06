@@ -113,22 +113,26 @@ public class BlockUtils {
 		private final CRC32 crc = new CRC32();
 		private final InputStream wrapped;
 		private long bytesRead = 0;
-		public CRCInputStream(InputStream wrapped) {
+		private boolean doCRC;
+		public CRCInputStream(InputStream wrapped, boolean doCRC) {
 			this.wrapped = wrapped;
+			this.doCRC = doCRC;
 		}
 
 		@Override
 		public int read() throws IOException {
 			int ret = wrapped.read();
 			bytesRead++;
-			crc.update(ret);
+			if (doCRC)
+				crc.update(ret);
 			return ret;
 		}
 
 		@Override
 		public int read(byte[] b) throws IOException {
 			int read = wrapped.read(b);
-			crc.update(b, 0, read);
+			if (doCRC)
+				crc.update(b, 0, read);
 			bytesRead += read;
 			return read;
 		}
@@ -136,7 +140,8 @@ public class BlockUtils {
 		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
 			int read = wrapped.read(b, off, len);
-			crc.update(b, off, read);
+			if (doCRC)
+				crc.update(b, off, read);
 			bytesRead += read;
 			return read;
 		}
