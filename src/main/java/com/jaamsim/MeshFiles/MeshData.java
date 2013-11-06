@@ -822,7 +822,18 @@ public class MeshData {
 			addSubLineInstance(lineIndex, trans);
 		}
 
-		finalizeData();
+		DataBlock hullBlock = topBlock.findChildByName("ConvexHull");
+		if (hullBlock == null) throw new RenderException("Missing mesh convex hull");
+
+		_staticHull = ConvexHull.fromDataBlock(hullBlock, vec3ds);
+		_defaultBounds = _staticHull.getAABB(new Mat4d());
+
+		if (!keepRuntimeData) {
+			v2Interner = null; // Drop ref to the interner to free memory
+			v3Interner = null; // Drop ref to the interner to free memory
+			v4Interner = null; // Drop ref to the interner to free memory
+		}
+
 	}
 
 	/**
@@ -988,6 +999,9 @@ public class MeshData {
 				texBlock.writeString(texString);
 			}
 		}
+
+		DataBlock hullBlock = _staticHull.toDataBlock(v3Interner);
+		topBlock.addChildBlock(hullBlock);
 
 		return topBlock;
 	}
