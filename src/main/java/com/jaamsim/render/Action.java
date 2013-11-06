@@ -17,7 +17,6 @@ package com.jaamsim.render;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.OutputHandle;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec3d;
@@ -51,7 +50,6 @@ public class Action {
 	public static class Binding {
 		public String actionName;
 		public String outputName;
-		public OutputHandle outputHandle;
 	}
 
 	public static class RotKey {
