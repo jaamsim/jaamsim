@@ -41,8 +41,6 @@ public class ConvexHull {
 
 	private ArrayList<HullFace> _faces = new ArrayList<HullFace>();
 
-	private double _radius;
-
 	public static ConvexHull TryBuildHull(ArrayList<Vec3d> verts, int numAttempts, int maxNumPoints, Vec3dInterner interner) {
 
 		long filterStart = System.nanoTime();
@@ -273,9 +271,6 @@ public class ConvexHull {
 
 		} // End of main loop
 
-		_radius = 0.0;
-
-
 		long finalizeStart = System.nanoTime();
 		buildTime += finalizeStart - buildStart;
 
@@ -301,9 +296,6 @@ public class ConvexHull {
 						realVerts.add(interner.intern(oldVert));
 					else
 						realVerts.add(oldVert);
-
-					double rad = oldVert.mag3();
-					if (rad > _radius) { _radius = rad; }
 				}
 				realFace.indices[i] = newInd;
 			}
@@ -430,11 +422,6 @@ public class ConvexHull {
 	public List<Vec3d> getVertices() {
 
 		return _verts;
-	}
-
-
-	public double getRadius() {
-		return _radius;
 	}
 
 	public boolean collides(Vec4d point, Transform trans) {
@@ -587,12 +574,6 @@ public class ConvexHull {
 		_verts = vs;
 		_faces = new ArrayList<HullFace>();
 		// Figure out a radius
-		_radius = 0;
-		for (Vec3d v : vs) {
-			if (v.mag3() > _radius) {
-				_radius = v.mag3();
-			}
-		}
 	}
 
 	public boolean isDegenerate() {

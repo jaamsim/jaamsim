@@ -37,8 +37,6 @@ public class TestConvex {
 
 		assertTrue(hull.getFaces().size() == 12);
 
-		assertTrue(MathUtils.near(hull.getRadius(), Math.sqrt(27)));
-
 		assertTrue(hull.collides(new Vec4d(0, 0, 0, 1.0d), Transform.ident));
 		assertTrue(hull.collides(new Vec4d(1, 1, 1, 1.0d), Transform.ident));
 

@@ -152,7 +152,6 @@ public class MeshData {
 	private ArrayList<SubLineInstance> _subLineInstances = new ArrayList<SubLineInstance>();
 
 	private ConvexHull _staticHull;
-	private double _radius;
 	// The AABB of this mesh with no transform applied
 	private AABB _defaultBounds;
 
@@ -446,8 +445,6 @@ public class MeshData {
 		_staticHull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 		_defaultBounds = _staticHull.getAABB(new Mat4d());
 
-		_radius = _staticHull.getRadius();
-
 		_actionDesc = new ArrayList<Action.Description>();
 		// Add all the actions found in the armatures
 		for (Armature arm : _armatures) {
@@ -475,10 +472,6 @@ public class MeshData {
 			v3Interner = null; // Drop ref to the interner to free memory
 			v4Interner = null; // Drop ref to the interner to free memory
 		}
-	}
-
-	public double getRadius() {
-		return _radius;
 	}
 
 	public ConvexHull getHull(ArrayList<Action.Queue> actions) {
