@@ -20,6 +20,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import com.jaamsim.MeshFiles.DataBlock;
+import com.jaamsim.render.RenderException;
 import com.jaamsim.render.RenderUtils;
 
 /**
@@ -310,6 +312,9 @@ public class ConvexHull {
 
 	} // End of ConvexHull() Constructor
 
+	private ConvexHull() {
+
+	}
 
 	private static final Comparator<Vec3d> COMP = new Comparator<Vec3d>() {
 		@Override
@@ -592,5 +597,60 @@ public class ConvexHull {
 	public Vec3d getAABBCenter() {
 		AABB tmp = new AABB(_verts);
 		return new Vec3d(tmp.center);
+	}
+
+	public DataBlock toDataBlock(Vec3dInterner interner) {
+		DataBlock topBlock = new DataBlock("ConvexHull", 0);
+
+		DataBlock vertsBlock = new DataBlock("Vertices", _verts.size() * 4);
+		for (Vec3d v : _verts) {
+			vertsBlock.writeInt(interner.getIndexForValue(v));
+		}
+
+		DataBlock facesBlock = new DataBlock("Faces", _faces.size() * 4*3);
+		for (HullFace f : _faces) {
+			facesBlock.writeInt(f.indices[0]);
+			facesBlock.writeInt(f.indices[1]);
+			facesBlock.writeInt(f.indices[2]);
+		}
+
+		topBlock.addChildBlock(vertsBlock);
+		topBlock.addChildBlock(facesBlock);
+		return topBlock;
+	}
+
+	public static ConvexHull fromDataBlock(DataBlock topBlock, Vec3d[] vecs) {
+		if (!topBlock.getName().equals("ConvexHull")) {
+			throw new RenderException("ConvexHull block not found");
+		}
+
+		ConvexHull ret = new ConvexHull();
+
+		DataBlock vertsBlock = topBlock.findChildByName("Vertices");
+		DataBlock facesBlock = topBlock.findChildByName("Faces");
+
+		if (vertsBlock == null) throw new RenderException("Missing vertices in ConvexHull");
+		if (facesBlock == null) throw new RenderException("Missing faces in ConvexHull");
+
+		int numVerts = vertsBlock.getDataSize() / 4;
+		ret._verts = new ArrayList<Vec3d>(numVerts);
+		for (int i = 0; i < numVerts; ++i) {
+			int index = vertsBlock.readInt();
+			ret._verts.add(vecs[index]);
+		}
+
+		int numFaces = facesBlock.getDataSize() / (4*3);
+		ret._faces = new ArrayList<HullFace>(numFaces);
+		for (int i = 0; i < numFaces; ++i) {
+			HullFace f = new HullFace();
+			f.indices[0] = facesBlock.readInt();
+			f.indices[1] = facesBlock.readInt();
+			f.indices[2] = facesBlock.readInt();
+			ret._faces.add(f);
+		}
+
+		ret._isDegenerate = (numFaces == 0);
+
+		return ret;
 	}
 }

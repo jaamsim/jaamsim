@@ -718,7 +718,10 @@ public class MeshData {
 				subData.indices[i] = indicesBlock.readInt();
 			}
 
-			subData.staticHull = ConvexHull.TryBuildHull(subData.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
+			DataBlock hullBlock = subMeshBlock.findChildByName("ConvexHull");
+			if (hullBlock == null) throw new RenderException("Missing hull in submesh");
+			subData.staticHull = ConvexHull.fromDataBlock(hullBlock, vec3ds);
+
 			_subMeshesData.add(subData);
 		}
 
@@ -900,6 +903,8 @@ public class MeshData {
 				indicesBlock.writeInt(ind);
 			}
 
+			DataBlock hullBlock = subData.staticHull.toDataBlock(v3Interner);
+			subDataBlock.addChildBlock(hullBlock);
 		}
 
 		// Sub line data
