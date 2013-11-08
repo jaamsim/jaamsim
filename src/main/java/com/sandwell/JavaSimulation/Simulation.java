@@ -67,11 +67,11 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
-	private final BooleanInput traceEventsInput;
+	private static final BooleanInput traceEventsInput;
 
 	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
-	private final BooleanInput verifyEventsInput;
+	private static final BooleanInput verifyEventsInput;
 
 	@Keyword(description = "The real time speed up factor",
 	         example = "RunControl RealTimeFactor { 1200 }")
@@ -87,6 +87,11 @@ public class Simulation extends Entity {
 	protected double endTime;
 
 	private static String modelName = "JaamSim";
+
+	static {
+		traceEventsInput = new BooleanInput("TraceEvents", "Key Inputs", false);
+		verifyEventsInput = new BooleanInput("VerifyEvents", "Key Inputs", false);
+	}
 
 	{
 		runDuration = new DoubleInput( "Duration", "Key Inputs", 8760.0 );
@@ -111,11 +116,8 @@ public class Simulation extends Entity {
 		simTimeScaleInput.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
 		this.addInput( simTimeScaleInput, true );
 
-		traceEventsInput = new BooleanInput( "TraceEvents", "Key Inputs", false );
-		this.addInput( traceEventsInput, false );
-
-		verifyEventsInput = new BooleanInput( "VerifyEvents", "Key Inputs", false );
-		this.addInput( verifyEventsInput, false );
+		this.addInput(traceEventsInput, false);
+		this.addInput(verifyEventsInput, false);
 
 		printInputReport = new BooleanInput( "PrintInputReport", "Key Inputs", false );
 		this.addInput( printInputReport, true );
