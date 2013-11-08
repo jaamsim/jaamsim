@@ -84,6 +84,10 @@ public class Simulation extends Entity {
 	         example = "RunControl RealTime { TRUE }")
 	private static final BooleanInput realTime;
 
+	@Keyword(description = "This is placeholder description text",
+	         example = "This is placeholder example text")
+	private static final BooleanInput exitAtStop;
+
 	private static double startTime;
 	private static double endTime;
 
@@ -105,6 +109,8 @@ public class Simulation extends Entity {
 		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
 
 		realTime = new BooleanInput("RealTime", "Key Inputs", false);
+
+		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
 	}
 
 	{
@@ -131,6 +137,8 @@ public class Simulation extends Entity {
 
 		this.addInput(realTimeFactor, true);
 		this.addInput(realTime, true);
+
+		this.addInput(exitAtStop, true);
 	}
 
 	/**
@@ -219,6 +227,7 @@ public class Simulation extends Entity {
 		verifyEventsInput.reset();
 		realTimeFactor.reset();
 		realTime.reset();
+		exitAtStop.reset();
 
 		// Create clock
 		Clock.setStartDate(2000, 1, 1);
@@ -373,7 +382,7 @@ public class Simulation extends Entity {
 		// close warning/error trace file
 		InputAgent.closeLogFile();
 
-		if (InputAgent.getBatch())
+		if (Simulation.getExitAtStop() || InputAgent.getBatch())
 			GUIFrame.shutdown(0);
 
 		Simulation.pause();
@@ -437,5 +446,9 @@ public class Simulation extends Entity {
 
 	public static String getModelName() {
 		return modelName;
+	}
+
+	public static boolean getExitAtStop() {
+		return exitAtStop.getValue();
 	}
 }
