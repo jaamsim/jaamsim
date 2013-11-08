@@ -362,7 +362,7 @@ public class Entity {
 		throw new InputErrorException( "Invalid keyword " + keyword );
 	}
 
-	private long calculateDelayLength(double waitLength) {
+	static long calculateDelayLength(double waitLength) {
 		return Math.round(waitLength * Process.getSimTimeFactor());
 	}
 
@@ -372,7 +372,7 @@ public class Entity {
 	}
 
 	public double calculateEventTime(double waitLength) {
-		long eventTime = Process.currentTick() + this.calculateDelayLength(waitLength);
+		long eventTime = Process.currentTick() + calculateDelayLength(waitLength);
 		return eventTime / Process.getSimTimeFactor();
 	}
 

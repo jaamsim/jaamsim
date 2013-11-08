@@ -167,33 +167,6 @@ public class Simulation extends Entity {
 		}
 	}
 
-	private static class EndAtTarget extends ProcessTarget {
-		EndAtTarget() {}
-
-		@Override
-		public String getDescription() {
-			return "SimulationEnd";
-		}
-
-		@Override
-		public void process() {
-			Simulation.pause();
-			for (int i = 0; i < Entity.getAll().size(); i++) {
-				Entity.getAll().get(i).doEnd();
-			}
-
-			System.out.println( "Made it to do end at" );
-			// close warning/error trace file
-			InputAgent.closeLogFile();
-
-			if (Simulation.getExitAtStop() || InputAgent.getBatch())
-				GUIFrame.shutdown(0);
-
-			Simulation.pause();
-
-		}
-	}
-
 	@Override
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
@@ -246,7 +219,7 @@ public class Simulation extends Entity {
 	 *		2) calls startModel() to allow the model to add its starting events to EventManager
 	 *		3) start EventManager processing events
 	 */
-	public void start() {
+	public static void start() {
 		EventManager.clear();
 
 		if( traceEventsInput.getValue() ) {
@@ -268,7 +241,15 @@ public class Simulation extends Entity {
 			}
 		}
 
-		EventManager.rootManager.scheduleProcess(0, EventManager.PRIO_DEFAULT, new StartModelTarget(this));
+		Process.setSimTimeScale(simTimeScaleInput.getValue());
+		if( startDate.getValue() != null ) {
+			Clock.getStartingDateFromString( startDate.getValue() );
+		}
+		double startTimeHours = startTimeInput.getValue() / 3600.0d;
+		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
+		endTime = startTime + Simulation.getInitializationHours() + Simulation.getRunDurationHours();
+
+		EventManager.rootManager.scheduleProcess(0, EventManager.PRIO_DEFAULT, new InitModelTarget());
 		Simulation.resume();
 	}
 
@@ -321,51 +302,68 @@ public class Simulation extends Entity {
 		}
 	}
 
-	private static class StartModelTarget extends ProcessTarget {
-		final Simulation ent;
-
-		StartModelTarget(Simulation sim) {
-			this.ent = sim;
-		}
+	private static class InitModelTarget extends ProcessTarget {
+		InitModelTarget() {}
 
 		@Override
 		public String getDescription() {
-			return ent.getInputName() + ".startModel";
+			return "SimulationInit";
 		}
 
 		@Override
 		public void process() {
-			ent.startModel();
+			for (int i = 0; i < Entity.getAll().size(); i++) {
+				Entity.getAll().get(i).earlyInit();
+			}
+
+			long startTick = calculateDelayLength(Simulation.getStartHours());
+			EventManager.rootManager.scheduleProcess(startTick, EventManager.PRIO_DEFAULT, new StartModelTarget());
+
+			long endTick = calculateDelayLength(Simulation.getEndHours());
+			EventManager.rootManager.scheduleProcess(endTick, EventManager.PRIO_DEFAULT, new EndModelTarget());
 		}
 	}
 
-	/**
-	 *	Called by Simulation to inform the model to begin simulation networks.  Events should not be
-	 *	added to the EventManager before startModel();
-	 **/
-	public void startModel() {
-		Process.setSimTimeScale(simTimeScaleInput.getValue());
+	private static class StartModelTarget extends ProcessTarget {
+		StartModelTarget() {}
 
-		if( startDate.getValue() != null ) {
-			Clock.getStartingDateFromString( startDate.getValue() );
-		}
-		double startTimeHours = startTimeInput.getValue() / 3600.0d;
-		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
-		endTime = startTime + Simulation.getInitializationHours() + Simulation.getRunDurationHours();
-
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity.getAll().get(i).earlyInit();
+		@Override
+		public String getDescription() {
+			return "SimulationStart";
 		}
 
-		scheduleProcess(Simulation.getEndHours(), EventManager.PRIO_DEFAULT, new EndAtTarget());
+		@Override
+		public void process() {
+			for (int i = 0; i < Entity.getAll().size(); i++) {
+				Process.start(new StartUpTarget(Entity.getAll().get(i)));
+			}
+		}
+	}
 
-		if( Simulation.getStartHours() > 0.0 ) {
-			scheduleWait( Simulation.getStartHours() );
+	private static class EndModelTarget extends ProcessTarget {
+		EndModelTarget() {}
+
+		@Override
+		public String getDescription() {
+			return "SimulationEnd";
 		}
 
-		// Initialize each entity based on early initialization and start networks
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Process.start(new StartUpTarget(Entity.getAll().get(i)));
+		@Override
+		public void process() {
+			Simulation.pause();
+			for (int i = 0; i < Entity.getAll().size(); i++) {
+				Entity.getAll().get(i).doEnd();
+			}
+
+			System.out.println( "Made it to do end at" );
+			// close warning/error trace file
+			InputAgent.closeLogFile();
+
+			if (Simulation.getExitAtStop() || InputAgent.getBatch())
+				GUIFrame.shutdown(0);
+
+			Simulation.pause();
+
 		}
 	}
 

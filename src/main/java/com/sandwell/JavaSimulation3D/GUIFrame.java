@@ -983,7 +983,7 @@ public class GUIFrame extends JFrame {
 			if (InputAgent.isSessionEdited()) {
 				InputAgent.saveAs(this);
 			}
-			DisplayEntity.simulation.start();
+			Simulation.start();
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
 
@@ -995,7 +995,7 @@ public class GUIFrame extends JFrame {
 		}
 		else if( getSimState() == SIM_STATE_STOPPED ) {
 			updateForSimulationState(SIM_STATE_CONFIGURED);
-			DisplayEntity.simulation.start();
+			Simulation.start();
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
@@ -1347,7 +1347,7 @@ public class GUIFrame extends JFrame {
 		if (batch) {
 			if (InputAgent.numErrors() > 0)
 				GUIFrame.shutdown(0);
-			gsim.start();
+			Simulation.start();
 		}
 	}
 
