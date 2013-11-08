@@ -46,11 +46,11 @@ public class Simulation extends Entity {
 	                "input has no effect on the simulation results unless the seasonality " +
 	                "factors vary from month to month.",
 	         example = "Simulation StartDate { 2011-01-01 }")
-	protected final StringInput startDate;
+	private static final StringInput startDate;
 
 	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
 	         example = "Simulation StartTime { 2160 h }")
-	private final ValueInput startTimeInput;
+	private static final ValueInput startTimeInput;
 
 	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
 	         example = "Simulation Duration { 8760 h }")
@@ -58,7 +58,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The number of discrete time units in one hour.",
 	         example = "Simulation SimulationTimeScale { 4500 }")
-	private final DoubleInput simTimeScaleInput;
+	private static final DoubleInput simTimeScaleInput;
 
 	@Keyword(description = "If the value is TRUE, then the input report file will be printed after loading the " +
 	                "configuration file.  The input report can always be generated when needed by selecting " +
@@ -102,6 +102,15 @@ public class Simulation extends Entity {
 		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
 		runDuration.setUnits("h");
 
+		startDate = new StringInput("StartDate", "Key Inputs", null);
+
+		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
+		startTimeInput.setUnitType(TimeUnit.class);
+		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+
+		simTimeScaleInput = new DoubleInput("SimulationTimeScale", "Key Inputs", 4000.0d);
+		simTimeScaleInput.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
+
 		traceEventsInput = new BooleanInput("TraceEvents", "Key Inputs", false);
 		verifyEventsInput = new BooleanInput("VerifyEvents", "Key Inputs", false);
 
@@ -119,17 +128,11 @@ public class Simulation extends Entity {
 		this.addInput(runDuration, true);
 		this.addInput(initializationTime, true);
 
-		startDate = new StringInput("StartDate", "Key Inputs", null);
 		this.addInput(startDate, true);
 
-		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
-		startTimeInput.setUnitType(TimeUnit.class);
-		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(startTimeInput, true);
 
-		simTimeScaleInput = new DoubleInput( "SimulationTimeScale", "Key Inputs", 4000.0d );
-		simTimeScaleInput.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
-		this.addInput( simTimeScaleInput, true );
+		this.addInput(simTimeScaleInput, true);
 
 		this.addInput(traceEventsInput, false);
 		this.addInput(verifyEventsInput, false);
@@ -162,20 +165,6 @@ public class Simulation extends Entity {
 		if( startDate.getValue() != null && !Tester.isDate( startDate.getValue() ) ) {
 			throw new InputErrorException("The value for Start Date must be a valid date.");
 		}
-	}
-
-	@Override
-	public void earlyInit() {
-		super.earlyInit();
-
-		Process.setSimTimeScale(simTimeScaleInput.getValue());
-
-		if( startDate.getValue() != null ) {
-			Clock.getStartingDateFromString( startDate.getValue() );
-		}
-		double startTimeHours = startTimeInput.getValue() / 3600.0d;
-		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
-		endTime = startTime + Simulation.getInitializationHours() + Simulation.getRunDurationHours();
 	}
 
 	private static class EndAtTarget extends ProcessTarget {
@@ -219,6 +208,7 @@ public class Simulation extends Entity {
 		DisplayEntity.simulation.resetInputs();
 		initializationTime.reset();
 		runDuration.reset();
+		simTimeScaleInput.reset();
 		traceEventsInput.reset();
 		verifyEventsInput.reset();
 		printInputReport.reset();
@@ -352,6 +342,15 @@ public class Simulation extends Entity {
 	 *	added to the EventManager before startModel();
 	 **/
 	public void startModel() {
+		Process.setSimTimeScale(simTimeScaleInput.getValue());
+
+		if( startDate.getValue() != null ) {
+			Clock.getStartingDateFromString( startDate.getValue() );
+		}
+		double startTimeHours = startTimeInput.getValue() / 3600.0d;
+		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
+		endTime = startTime + Simulation.getInitializationHours() + Simulation.getRunDurationHours();
+
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			Entity.getAll().get(i).earlyInit();
 		}
