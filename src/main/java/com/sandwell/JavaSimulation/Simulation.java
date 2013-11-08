@@ -168,28 +168,30 @@ public class Simulation extends Entity {
 	}
 
 	private static class EndAtTarget extends ProcessTarget {
-		final Simulation sim;
-
-		EndAtTarget(Simulation sim) {
-			this.sim = sim;
-		}
+		EndAtTarget() {}
 
 		@Override
 		public String getDescription() {
-			return sim.getInputName() + ".doEndAt";
+			return "SimulationEnd";
 		}
 
 		@Override
 		public void process() {
-			sim.doEndAt();
-		}
-	}
+			Simulation.pause();
+			for (int i = 0; i < Entity.getAll().size(); i++) {
+				Entity.getAll().get(i).doEnd();
+			}
 
-	@Override
-	public void startUp() {
-		super.startUp();
-		double timeUntilEnd = Simulation.getEndHours() - getCurrentTime();
-		scheduleProcess(timeUntilEnd, EventManager.PRIO_DEFAULT, new EndAtTarget(this));
+			System.out.println( "Made it to do end at" );
+			// close warning/error trace file
+			InputAgent.closeLogFile();
+
+			if (Simulation.getExitAtStop() || InputAgent.getBatch())
+				GUIFrame.shutdown(0);
+
+			Simulation.pause();
+
+		}
 	}
 
 	@Override
@@ -355,6 +357,8 @@ public class Simulation extends Entity {
 			Entity.getAll().get(i).earlyInit();
 		}
 
+		scheduleProcess(Simulation.getEndHours(), EventManager.PRIO_DEFAULT, new EndAtTarget());
+
 		if( Simulation.getStartHours() > 0.0 ) {
 			scheduleWait( Simulation.getStartHours() );
 		}
@@ -363,25 +367,6 @@ public class Simulation extends Entity {
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			Process.start(new StartUpTarget(Entity.getAll().get(i)));
 		}
-	}
-
-	/**
-	 * Called at the end of the run
-	 */
-	public void doEndAt() {
-		Simulation.pause();
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity.getAll().get(i).doEnd();
-		}
-
-		System.out.println( "Made it to do end at" );
-		// close warning/error trace file
-		InputAgent.closeLogFile();
-
-		if (Simulation.getExitAtStop() || InputAgent.getBatch())
-			GUIFrame.shutdown(0);
-
-		Simulation.pause();
 	}
 
 	/**
