@@ -39,7 +39,7 @@ public class Simulation extends Entity {
 	                "and execute for the specified run duration. The total length of the " +
 	                "simulation run will be the sum of Initialization and Duration.",
 	         example = "Simulation Initialization { 720 h }")
-	protected final DoubleInput initializationTime;
+	private static final DoubleInput initializationTime;
 
 	@Keyword(description = "Date at which the simulation run is started (yyyy-mm-dd). This " +
 	                "input has no effect on the simulation results unless the seasonality " +
@@ -89,6 +89,10 @@ public class Simulation extends Entity {
 	private static String modelName = "JaamSim";
 
 	static {
+		initializationTime = new DoubleInput("InitializationDuration", "Key Inputs", 0.0);
+		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		initializationTime.setUnits("h");
+
 		traceEventsInput = new BooleanInput("TraceEvents", "Key Inputs", false);
 		verifyEventsInput = new BooleanInput("VerifyEvents", "Key Inputs", false);
 	}
@@ -99,10 +103,7 @@ public class Simulation extends Entity {
 		runDuration.setUnits( "h" );
 		this.addInput( runDuration, true, "RunDuration" );
 
-		initializationTime = new DoubleInput( "Initialization", "Key Inputs", 0.0 );
-		initializationTime.setValidRange( 0.0d, Double.POSITIVE_INFINITY );
-		initializationTime.setUnits( "h" );
-		this.addInput( initializationTime, true, "InitializationDuration" );
+		this.addInput(initializationTime, true);
 
 		startDate = new StringInput("StartDate", "Key Inputs", null);
 		this.addInput(startDate, true);
@@ -163,7 +164,7 @@ public class Simulation extends Entity {
 		}
 		double startTimeHours = startTimeInput.getValue() / 3600.0d;
 		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
-		endTime = startTime + this.getInitializationTime() + this.getRunDuration();
+		endTime = startTime + Simulation.getInitializationHours() + this.getRunDuration();
 	}
 
 	private static class EndAtTarget extends ProcessTarget {
@@ -398,7 +399,7 @@ public class Simulation extends Entity {
 	/**
 	 * Return the initialization duration in hours
 	 */
-	public double getInitializationTime() {
+	public static double getInitializationHours() {
 		return initializationTime.getValue();
 	}
 
