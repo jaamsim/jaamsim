@@ -24,7 +24,6 @@ import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.Clock;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
@@ -180,7 +179,6 @@ public class Simulation extends Entity {
 	public static void clear() {
 		EventManager.clear();
 
-		DisplayEntity.simulation.resetInputs();
 		initializationTime.reset();
 		runDuration.reset();
 		simTimeScaleInput.reset();
@@ -207,7 +205,7 @@ public class Simulation extends Entity {
 		RenderManager.clear();
 
 		// Kill all entities except simulation
-		while(Entity.getAll().size() > 1) {
+		while(Entity.getAll().size() > 0) {
 			Entity ent = Entity.getAll().get(Entity.getAll().size()-1);
 			ent.kill();
 		}

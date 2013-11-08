@@ -1302,10 +1302,7 @@ public class GUIFrame extends JFrame {
 		GUIFrame gui = GUIFrame.instance();
 		gui.updateForSimulationState(SIM_STATE_LOADED);
 
-		Simulation gsim = new Simulation();
-		DisplayEntity.setSimulation(gsim);
 		gui.setTitle(Simulation.getModelName());
-		gsim.setInputName("Simulation");
 
 		System.out.println( "Simulation Environment Loaded" );
 

@@ -40,7 +40,6 @@ import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Vec3dInput;
 
 /**
@@ -50,8 +49,6 @@ import com.sandwell.JavaSimulation.Vec3dInput;
  */
 public class DisplayEntity extends Entity {
 	private static final ArrayList<DisplayEntity> allInstances;
-
-	public static Simulation simulation;
 
 	@Keyword(description = "The point in the region at which the alignment point of the object is positioned.",
 	         example = "Object1 Position { -3.922 -1.830 0.000 m }")
@@ -292,14 +289,6 @@ public class DisplayEntity extends Entity {
 
 		allInstances.remove(this);
 		currentRegion = null;
-	}
-
-	/**
-	 * Sets the Graphic Simulation object for the entity.
-	 * @param newSimulation - states the new simulation the entity is controled by
-	 */
-	public static void setSimulation(Simulation newSimulation) {
-		simulation = newSimulation;
 	}
 
 	public Region getCurrentRegion() {

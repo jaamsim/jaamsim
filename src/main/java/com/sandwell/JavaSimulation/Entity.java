@@ -16,8 +16,6 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.events.ReflectionTarget;
@@ -213,13 +211,6 @@ public class Entity {
 
 	public Input<?> getInput(String key) {
 		return inputMap.get(key.toUpperCase());
-	}
-
-	public void resetInputs() {
-        Iterator<Entry<String,Input<?>>> iterator = inputMap.entrySet().iterator();
-        while(iterator. hasNext()){
-            iterator.next().getValue().reset();
-        }
 	}
 
 	/**

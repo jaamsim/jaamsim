@@ -47,7 +47,6 @@ import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation.Vector;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class InputAgent {
@@ -1540,10 +1539,6 @@ public class InputAgent {
 		file.format("%s%n", addedRecordMarker);
 		addedRecordFound = true;
 
-		// Print changes to simulation
-		writeInputsOnFile_ForEntity( file, DisplayEntity.simulation );
-		file.format("%n");
-
 		// Determine all the new classes that were created
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<Class<? extends Entity>>();
 		for (int i = 0; i < Entity.getAll().size(); i++) {
@@ -1579,9 +1574,6 @@ public class InputAgent {
 		// List all the changes that were saved for each edited entity
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			Entity ent = Entity.getAll().get(i);
-			if( ent == DisplayEntity.simulation )
-				continue;
-
 			if (!ent.testFlag(Entity.FLAG_EDITED))
 				continue;
 
