@@ -1302,8 +1302,6 @@ public class GUIFrame extends JFrame {
 		GUIFrame gui = GUIFrame.instance();
 		gui.updateForSimulationState(SIM_STATE_LOADED);
 
-		gui.setTitle(Simulation.getModelName());
-
 		System.out.println( "Simulation Environment Loaded" );
 
 		if (batch)
@@ -1320,7 +1318,7 @@ public class GUIFrame extends JFrame {
 		if( configFiles.size() == 0 ) {
 			InputAgent.loadDefault();
 		}
-
+		gui.setTitle(Simulation.getModelName());
 		// Process any config files passed on command line
 		for (int i = 0; i < configFiles.size(); i++) {
 			// Consume regular configuration files
