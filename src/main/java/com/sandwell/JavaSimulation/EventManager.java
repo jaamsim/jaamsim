@@ -875,7 +875,7 @@ public final class EventManager implements Runnable {
 		startDebugging();
 	}
 
-	public void runToTime( double stopTime ) {
+	void runToTime(double stopTime) {
 		debuggingTime = ((long)(stopTime * Process.getSimTimeFactor()));
 		EventManager.setEventState(EventManager.EVENTS_UNTILTIME);
 		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);

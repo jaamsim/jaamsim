@@ -396,6 +396,15 @@ public class Simulation extends Entity {
 		return initializationTime.getValue();
 	}
 
+	public static void runToTime(double stopTimeHours) {
+		EventManager.rootManager.runToTime(stopTimeHours);
+	}
+
+	public static final double getInternalHours() {
+		long ticks = EventManager.rootManager.currentTick();
+		return ticks / Process.getSimTimeFactor();
+	}
+
 	static void updateRealTime() {
 		EventManager.rootManager.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
 		GUIFrame.instance().updateForRealTime(realTime.getValue(), realTimeFactor.getValue());

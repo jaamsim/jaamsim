@@ -975,7 +975,7 @@ public class GUIFrame extends JFrame {
 			}
 		}
 
-		if(runToTime <= DisplayEntity.simulation.getCurrentTime() ) {
+		if (runToTime <= Simulation.getInternalHours()) {
 			return;
 		}
 
@@ -1001,7 +1001,7 @@ public class GUIFrame extends JFrame {
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
 
 		if( ! Double.isInfinite(runToTime) ) {
-			DisplayEntity.simulation.getEventManager().runToTime(runToTime);
+			Simulation.runToTime(runToTime);
 		}
 	}
 
