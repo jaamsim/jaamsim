@@ -70,7 +70,6 @@ public class InputAgent {
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 
-	private static boolean printInputReport;
 	private static String reportDirectory;
 
 	static {
@@ -81,7 +80,6 @@ public class InputAgent {
 		configFileName = null;
 		reportDirectory = "";
 		lastTimeForTrace = -1.0d;
-		printInputReport = false;
 	}
 
 	public static void clear() {
@@ -93,12 +91,6 @@ public class InputAgent {
 		configFileName = null;
 		reportDirectory = "";
 		lastTimeForTrace = -1.0d;
-		printInputReport = false;
-	}
-
-
-	public static void setPrintInputs(boolean print) {
-		printInputReport = print;
 	}
 
 	public static String getReportDirectory() {
@@ -598,7 +590,7 @@ public class InputAgent {
 		if( InputAgent.numErrors > 0 )
 			throw new InputErrorException("%d input errors found, check log file", InputAgent.numErrors);
 
-		if (printInputReport)
+		if (Simulation.getPrintInputReport())
 			InputAgent.printInputFileKeywords();
 	}
 

@@ -64,7 +64,7 @@ public class Simulation extends Entity {
 	                "configuration file.  The input report can always be generated when needed by selecting " +
 	                "\"Print Input Report\" under the File menu.",
 	         example = "Simulation PrintInputReport { TRUE }")
-	private final BooleanInput printInputReport;
+	private static final BooleanInput printInputReport;
 
 	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
@@ -105,6 +105,8 @@ public class Simulation extends Entity {
 		traceEventsInput = new BooleanInput("TraceEvents", "Key Inputs", false);
 		verifyEventsInput = new BooleanInput("VerifyEvents", "Key Inputs", false);
 
+		printInputReport = new BooleanInput("PrintInputReport", "Key Inputs", false);
+
 		realTimeFactor = new IntegerInput("RealTimeFactor", "Key Inputs", DEFAULT_REAL_TIME_FACTOR);
 		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
 
@@ -132,8 +134,7 @@ public class Simulation extends Entity {
 		this.addInput(traceEventsInput, false);
 		this.addInput(verifyEventsInput, false);
 
-		printInputReport = new BooleanInput( "PrintInputReport", "Key Inputs", false );
-		this.addInput( printInputReport, true );
+		this.addInput(printInputReport, true);
 
 		this.addInput(realTimeFactor, true);
 		this.addInput(realTime, true);
@@ -210,11 +211,6 @@ public class Simulation extends Entity {
 			updateRealTime();
 			return;
 		}
-
-		if (in == printInputReport) {
-			InputAgent.setPrintInputs(printInputReport.getValue());
-			return;
-		}
 	}
 
 	public static void clear() {
@@ -225,6 +221,7 @@ public class Simulation extends Entity {
 		runDuration.reset();
 		traceEventsInput.reset();
 		verifyEventsInput.reset();
+		printInputReport.reset();
 		realTimeFactor.reset();
 		realTime.reset();
 		exitAtStop.reset();
@@ -450,5 +447,9 @@ public class Simulation extends Entity {
 
 	public static boolean getExitAtStop() {
 		return exitAtStop.getValue();
+	}
+
+	public static boolean getPrintInputReport() {
+		return printInputReport.getValue();
 	}
 }
