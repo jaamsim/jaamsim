@@ -888,7 +888,7 @@ public class GUIFrame extends JFrame {
 		long cTime = System.currentTimeMillis();
 		Simulation sim = DisplayEntity.simulation;
 		double duration = sim.getRunDuration() + sim.getInitializationTime();
-		double timeElapsed = clockContents - sim.getStartTime();
+		double timeElapsed = clockContents - Simulation.getStartHours();
 		int progress = (int)(timeElapsed * 100.0d / duration);
 		this.setProgress(progress);
 		if (cTime - lastSystemTime > 5000) {

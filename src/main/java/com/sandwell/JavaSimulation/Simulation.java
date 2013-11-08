@@ -83,8 +83,8 @@ public class Simulation extends Entity {
 	         example = "RunControl RealTime { TRUE }")
 	private final BooleanInput realTime;
 
-	protected double startTime;
-	protected double endTime;
+	private static double startTime;
+	private static double endTime;
 
 	private static String modelName = "JaamSim";
 
@@ -163,7 +163,7 @@ public class Simulation extends Entity {
 		}
 		double startTimeHours = startTimeInput.getValue() / 3600.0d;
 		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
-		endTime = this.getStartTime() + this.getInitializationTime() + this.getRunDuration();
+		endTime = startTime + this.getInitializationTime() + this.getRunDuration();
 	}
 
 	private static class EndAtTarget extends ProcessTarget {
@@ -187,7 +187,7 @@ public class Simulation extends Entity {
 	@Override
 	public void startUp() {
 		super.startUp();
-		double timeUntilEnd = this.getEndTime() - getCurrentTime();
+		double timeUntilEnd = Simulation.getEndHours() - getCurrentTime();
 		scheduleProcess(timeUntilEnd, EventManager.PRIO_DEFAULT, new EndAtTarget(this));
 	}
 
@@ -344,8 +344,8 @@ public class Simulation extends Entity {
 			Entity.getAll().get(i).earlyInit();
 		}
 
-		if( this.getStartTime() > 0.0 ) {
-			scheduleWait( this.getStartTime() );
+		if( Simulation.getStartHours() > 0.0 ) {
+			scheduleWait( Simulation.getStartHours() );
 		}
 
 		// Initialize each entity based on early initialization and start networks
@@ -377,7 +377,7 @@ public class Simulation extends Entity {
 	 * Returns the end time of the run.
 	 * @return double - the time the current run will stop
 	 */
-	public double getEndTime() {
+	public static double getEndHours() {
 		return endTime;
 	}
 
@@ -391,7 +391,7 @@ public class Simulation extends Entity {
 	/**
 	 * Returns the start time of the run.
 	 */
-	public double getStartTime() {
+	public static double getStartHours() {
 		return startTime;
 	}
 
