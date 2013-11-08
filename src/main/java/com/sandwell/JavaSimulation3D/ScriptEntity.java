@@ -24,7 +24,6 @@ import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
-import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation.Vector;
 
@@ -110,9 +109,9 @@ public class ScriptEntity extends Entity {
 			InputAgent.processData( record );
 
 			// If a "Time" record was read, then wait until the time
-			if (Tester.greaterCheckTimeStep(scriptTime.getValue(), getSimTime())) {
-				simWait(scriptTime.getValue() - getSimTime());
-			}
+			long delayTicks = Process.secondsToTicks(scriptTime.getValue()) - getSimTicks();
+			if (delayTicks > 0)
+				simWaitTicks(delayTicks);
 
 			// Read the next record
 			record = scriptFile.readAndParseRecord();
