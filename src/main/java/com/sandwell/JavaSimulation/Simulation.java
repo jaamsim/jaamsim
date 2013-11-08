@@ -73,10 +73,6 @@ public class Simulation extends Entity {
 	         example = "This is placeholder example text")
 	private final BooleanInput verifyEventsInput;
 
-	@Keyword(description = "This is placeholder description text",
-	         example = "This is placeholder example text")
-	private final BooleanInput exitAtStop;
-
 	@Keyword(description = "The real time speed up factor",
 	         example = "RunControl RealTimeFactor { 1200 }")
 	private final IntegerInput realTimeFactor;
@@ -110,9 +106,6 @@ public class Simulation extends Entity {
 		startTimeInput.setUnitType(TimeUnit.class);
 		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(startTimeInput, true);
-
-		exitAtStop = new BooleanInput( "ExitAtStop", "Key Inputs", false );
-		this.addInput( exitAtStop, true );
 
 		simTimeScaleInput = new DoubleInput( "SimulationTimeScale", "Key Inputs", 4000.0d );
 		simTimeScaleInput.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
@@ -371,9 +364,10 @@ public class Simulation extends Entity {
 		System.out.println( "Made it to do end at" );
 		// close warning/error trace file
 		InputAgent.closeLogFile();
-		if( this.getExitAtStop() ) {
+
+		if (InputAgent.getBatch())
 			GUIFrame.shutdown(0);
-		}
+
 		Simulation.pause();
 	}
 
@@ -422,12 +416,5 @@ public class Simulation extends Entity {
 
 	public static String getModelName() {
 		return modelName;
-	}
-
-	public boolean getExitAtStop() {
-		if (InputAgent.getBatch())
-			return true;
-
-		return exitAtStop.getValue();
 	}
 }
