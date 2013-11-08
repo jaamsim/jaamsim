@@ -185,14 +185,15 @@ public class Simulation extends Entity {
 
 		@Override
 		public void process() {
-			sim.doEndAt(sim.getEndTime());
+			sim.doEndAt();
 		}
 	}
 
 	@Override
 	public void startUp() {
 		super.startUp();
-		Process.start(new EndAtTarget(this));
+		double timeUntilEnd = this.getEndTime() - getCurrentTime();
+		scheduleProcess(timeUntilEnd, EventManager.PRIO_DEFAULT, new EndAtTarget(this));
 	}
 
 	@Override
@@ -361,26 +362,19 @@ public class Simulation extends Entity {
 	/**
 	 * Called at the end of the run
 	 */
-	public void doEndAt( double end ) {
-		if( (end - getCurrentTime()) > 0.0 ) {
-			scheduleWait( (end - getCurrentTime()) );
-
-			Simulation.pause();
-
-			for (int i = 0; i < Entity.getAll().size(); i++) {
-				Entity.getAll().get(i).doEnd();
-			}
-
-			System.out.println( "Made it to do end at" );
-
-			// close warning/error trace file
-			InputAgent.closeLogFile();
-
-			if( this.getExitAtStop() ) {
-				GUIFrame.shutdown(0);
-			}
-			Simulation.pause();
+	public void doEndAt() {
+		Simulation.pause();
+		for (int i = 0; i < Entity.getAll().size(); i++) {
+			Entity.getAll().get(i).doEnd();
 		}
+
+		System.out.println( "Made it to do end at" );
+		// close warning/error trace file
+		InputAgent.closeLogFile();
+		if( this.getExitAtStop() ) {
+			GUIFrame.shutdown(0);
+		}
+		Simulation.pause();
 	}
 
 	/**
