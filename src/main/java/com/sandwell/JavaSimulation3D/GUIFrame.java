@@ -886,8 +886,7 @@ public class GUIFrame extends JFrame {
 		clockDisplay.setText(String.format("%.2f", clockContents));
 
 		long cTime = System.currentTimeMillis();
-		Simulation sim = DisplayEntity.simulation;
-		double duration = sim.getRunDuration() + Simulation.getInitializationHours();
+		double duration = Simulation.getRunDurationHours() + Simulation.getInitializationHours();
 		double timeElapsed = clockContents - Simulation.getStartHours();
 		int progress = (int)(timeElapsed * 100.0d / duration);
 		this.setProgress(progress);

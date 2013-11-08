@@ -53,7 +53,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
 	         example = "Simulation Duration { 8760 h }")
-	protected final DoubleInput runDuration;
+	private static final DoubleInput runDuration;
 
 	@Keyword(description = "The number of discrete time units in one hour.",
 	         example = "Simulation SimulationTimeScale { 4500 }")
@@ -93,16 +93,16 @@ public class Simulation extends Entity {
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		initializationTime.setUnits("h");
 
+		runDuration = new DoubleInput("RunDuration", "Key Inputs", 8760.0);
+		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
+		runDuration.setUnits("h");
+
 		traceEventsInput = new BooleanInput("TraceEvents", "Key Inputs", false);
 		verifyEventsInput = new BooleanInput("VerifyEvents", "Key Inputs", false);
 	}
 
 	{
-		runDuration = new DoubleInput( "Duration", "Key Inputs", 8760.0 );
-		runDuration.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
-		runDuration.setUnits( "h" );
-		this.addInput( runDuration, true, "RunDuration" );
-
+		this.addInput(runDuration, true);
 		this.addInput(initializationTime, true);
 
 		startDate = new StringInput("StartDate", "Key Inputs", null);
@@ -164,7 +164,7 @@ public class Simulation extends Entity {
 		}
 		double startTimeHours = startTimeInput.getValue() / 3600.0d;
 		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
-		endTime = startTime + Simulation.getInitializationHours() + this.getRunDuration();
+		endTime = startTime + Simulation.getInitializationHours() + Simulation.getRunDurationHours();
 	}
 
 	private static class EndAtTarget extends ProcessTarget {
@@ -385,7 +385,7 @@ public class Simulation extends Entity {
 	/**
 	 * Return the run duration for the run (not including intialization)
 	 */
-	public double getRunDuration() {
+	public static double getRunDurationHours() {
 		return runDuration.getValue();
 	}
 
