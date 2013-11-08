@@ -24,6 +24,7 @@ import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.Clock;
+import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
@@ -75,13 +76,13 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The real time speed up factor",
 	         example = "RunControl RealTimeFactor { 1200 }")
-	private final IntegerInput realTimeFactor;
+	private static final IntegerInput realTimeFactor;
 	public static final int DEFAULT_REAL_TIME_FACTOR = 10000;
 	public static final int MIN_REAL_TIME_FACTOR = 1;
 	public static final int MAX_REAL_TIME_FACTOR= 1000000;
 	@Keyword(description = "A Boolean to turn on or off real time in the simulation run",
 	         example = "RunControl RealTime { TRUE }")
-	private final BooleanInput realTime;
+	private static final BooleanInput realTime;
 
 	private static double startTime;
 	private static double endTime;
@@ -99,6 +100,11 @@ public class Simulation extends Entity {
 
 		traceEventsInput = new BooleanInput("TraceEvents", "Key Inputs", false);
 		verifyEventsInput = new BooleanInput("VerifyEvents", "Key Inputs", false);
+
+		realTimeFactor = new IntegerInput("RealTimeFactor", "Key Inputs", DEFAULT_REAL_TIME_FACTOR);
+		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
+
+		realTime = new BooleanInput("RealTime", "Key Inputs", false);
 	}
 
 	{
@@ -123,11 +129,7 @@ public class Simulation extends Entity {
 		printInputReport = new BooleanInput( "PrintInputReport", "Key Inputs", false );
 		this.addInput( printInputReport, true );
 
-		realTimeFactor = new IntegerInput("RealTimeFactor", "Key Inputs", DEFAULT_REAL_TIME_FACTOR);
-		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
 		this.addInput(realTimeFactor, true);
-
-		realTime = new BooleanInput("RealTime", "Key Inputs", false);
 		this.addInput(realTime, true);
 	}
 
@@ -197,8 +199,7 @@ public class Simulation extends Entity {
 		super.updateForInput( in );
 
 		if(in == realTimeFactor || in == realTime) {
-			EventManager.rootManager.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
-			GUIFrame.instance().updateForRealTime(this.getRealTimeExecution(), this.getRealTimeFactor());
+			updateRealTime();
 			return;
 		}
 
@@ -208,10 +209,16 @@ public class Simulation extends Entity {
 		}
 	}
 
-	public void clear() {
+	public static void clear() {
 		EventManager.clear();
 
-		this.resetInputs();
+		DisplayEntity.simulation.resetInputs();
+		initializationTime.reset();
+		runDuration.reset();
+		traceEventsInput.reset();
+		verifyEventsInput.reset();
+		realTimeFactor.reset();
+		realTime.reset();
 
 		// Create clock
 		Clock.setStartDate(2000, 1, 1);
@@ -233,8 +240,6 @@ public class Simulation extends Entity {
 			Entity ent = Entity.getAll().get(Entity.getAll().size()-1);
 			ent.kill();
 		}
-
-		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_LOADED);
 	}
 
 	/**
@@ -403,14 +408,27 @@ public class Simulation extends Entity {
 		return initializationTime.getValue();
 	}
 
-	/** returns whether the simulation is currently executing in real time execution mode */
-	public boolean getRealTimeExecution() {
-		return realTime.getValue();
+	static void updateRealTime() {
+		EventManager.rootManager.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
+		GUIFrame.instance().updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
 	}
 
-	/** retrieves the current value for speedup factor for real time execution mode */
-	public int getRealTimeFactor() {
-		return realTimeFactor.getValue();
+	public static void setRealTime(boolean rt) {
+		StringVector t = new StringVector(1);
+		if (rt)
+			t.add("TRUE");
+		else
+			t.add("FALSE");
+
+		realTime.parse(t);
+		updateRealTime();
+	}
+
+	public static void setRealTimeFactor(String fac) {
+		StringVector t = new StringVector(1);
+		t.add(fac);
+		realTimeFactor.parse(t);
+		updateRealTime();
 	}
 
 	public static void setModelName(String newModelName) {

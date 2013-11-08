@@ -73,7 +73,6 @@ import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation.Util;
@@ -239,7 +238,8 @@ public class GUIFrame extends JFrame {
 	public void clear() {
 
 		// Clear the simulation
-		DisplayEntity.simulation.clear();
+		Simulation.clear();
+		this.updateForSimulationState(GUIFrame.SIM_STATE_LOADED);
 		FrameBox.timeUpdate(0.0d);
 
 		// Clear the title bar
@@ -1356,10 +1356,7 @@ public class GUIFrame extends JFrame {
 		@Override
 		public void stateChanged( ChangeEvent e ) {
 			String factorRT = String.format("%d", ((JSpinner)e.getSource()).getValue());
-			InputAgent.processEntity_Keyword_Value(DisplayEntity.simulation,
-			                                       "RealTimeFactor",
-			                                       factorRT);
-
+			Simulation.setRealTimeFactor(factorRT);
 			FrameBox.valueUpdate();
 		}
 	}
@@ -1402,13 +1399,7 @@ public class GUIFrame extends JFrame {
 	public static class RealTimeActionListener implements ActionListener {
 		@Override
 		public void actionPerformed( ActionEvent event ) {
-			Input<?> in = DisplayEntity.simulation.getInput("RealTime");
-			String val = "FALSE";
-			if(((JToggleButton)event.getSource()).isSelected())
-				val = "TRUE";
-
-			InputAgent.processEntity_Keyword_Value(DisplayEntity.simulation, in, val);
-
+			Simulation.setRealTime(((JToggleButton)event.getSource()).isSelected());
 			FrameBox.valueUpdate();
 		}
 	}
