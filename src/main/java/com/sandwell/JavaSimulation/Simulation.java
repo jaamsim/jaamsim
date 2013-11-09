@@ -39,7 +39,7 @@ public class Simulation extends Entity {
 	                "and execute for the specified run duration. The total length of the " +
 	                "simulation run will be the sum of Initialization and Duration.",
 	         example = "Simulation Initialization { 720 h }")
-	private static final DoubleInput initializationTime;
+	private static final ValueInput initializationTime;
 
 	@Keyword(description = "Date at which the simulation run is started (yyyy-mm-dd). This " +
 	                "input has no effect on the simulation results unless the seasonality " +
@@ -53,7 +53,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
 	         example = "Simulation Duration { 8760 h }")
-	private static final DoubleInput runDuration;
+	private static final ValueInput runDuration;
 
 	@Keyword(description = "The number of discrete time units in one hour.",
 	         example = "Simulation SimulationTimeScale { 4500 }")
@@ -93,13 +93,13 @@ public class Simulation extends Entity {
 	private static String modelName = "JaamSim";
 
 	static {
-		initializationTime = new DoubleInput("InitializationDuration", "Key Inputs", 0.0);
+		initializationTime = new ValueInput("InitializationDuration", "Key Inputs", 0.0);
+		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		initializationTime.setUnits("h");
 
-		runDuration = new DoubleInput("RunDuration", "Key Inputs", 8760.0);
+		runDuration = new ValueInput("RunDuration", "Key Inputs", 31536000.0d);
+		runDuration.setUnitType(TimeUnit.class);
 		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
-		runDuration.setUnits("h");
 
 		startDate = new StringInput("StartDate", "Key Inputs", null);
 
@@ -377,7 +377,7 @@ public class Simulation extends Entity {
 	 * Return the run duration for the run (not including intialization)
 	 */
 	public static double getRunDurationHours() {
-		return runDuration.getValue();
+		return runDuration.getValue() / 3600.0d;
 	}
 
 	/**
@@ -391,7 +391,7 @@ public class Simulation extends Entity {
 	 * Return the initialization duration in hours
 	 */
 	public static double getInitializationHours() {
-		return initializationTime.getValue();
+		return initializationTime.getValue() / 3600.0d;
 	}
 
 	public static void runToTime(double stopTimeHours) {
