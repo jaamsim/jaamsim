@@ -255,7 +255,7 @@ public class Entity {
 	/**
 	 * Static method to get the eventManager for all entities.
 	 */
-	public EventManager getEventManager() {
+	private EventManager getEventManager() {
 		return EventManager.rootManager;
 	}
 
