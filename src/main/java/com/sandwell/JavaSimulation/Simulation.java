@@ -117,6 +117,13 @@ public class Simulation extends Entity {
 		realTime = new BooleanInput("RealTime", "Key Inputs", false);
 
 		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
+
+		// Create clock
+		Clock.setStartDate(2000, 1, 1);
+
+		// Initialize basic model information
+		startTime = 0.0;
+		endTime = 8760.0;
 	}
 
 	{
@@ -140,18 +147,7 @@ public class Simulation extends Entity {
 		this.addInput(exitAtStop, true);
 	}
 
-	/**
-	 *	Constructor for the Simulation
-	 *  Protected makes this a 'singleton' class -- only one instance of it exists.  is instantiated through 'getSimulation()' method.
-	 */
-	public Simulation() {
-		// Create clock
-		Clock.setStartDate(2000, 1, 1);
-
-		// Initialize basic model information
-		startTime = 0.0;
-		endTime = 8760.0;
-	}
+	public Simulation() {}
 
 	@Override
 	public void validate() {
