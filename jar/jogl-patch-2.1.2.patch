@@ -1,0 +1,31 @@
+diff --git a/src/newt/native/WindowsWindow.c b/src/newt/native/WindowsWindow.c
+index a19efbc..c162474 100644
+--- a/src/newt/native/WindowsWindow.c
++++ b/src/newt/native/WindowsWindow.c
+@@ -972,7 +972,7 @@ static LRESULT CALLBACK wndProc(HWND wnd, UINT message, WPARAM wParam, LPARAM lP
+                 wud->width, wud->height, wud->mouseInside, wud->touchDownCount, wud->touchDownLastUp);
+             if( 0 == wud->touchDownLastUp && 0 == wud->touchDownCount ) {
+                 wud->mouseInside = 1;
+-                (*env)->CallVoidMethod(env, window, requestFocusID, JNI_FALSE);
++                SetFocus(wnd);
+                 (*env)->CallVoidMethod(env, window, sendMouseEventID,
+                                        (jshort) EVENT_MOUSE_PRESSED,
+                                        GetModifiers( 0 ),
+@@ -1008,7 +1008,7 @@ static LRESULT CALLBACK wndProc(HWND wnd, UINT message, WPARAM wParam, LPARAM lP
+                 wud->width, wud->height, wud->mouseInside, wud->touchDownCount, wud->touchDownLastUp);
+             if( 0 == wud->touchDownCount ) {
+                 wud->mouseInside = 1;
+-                (*env)->CallVoidMethod(env, window, requestFocusID, JNI_FALSE);
++                SetFocus(wnd);
+                 (*env)->CallVoidMethod(env, window, sendMouseEventID,
+                                        (jshort) EVENT_MOUSE_PRESSED,
+                                        GetModifiers( 0 ),
+@@ -1041,7 +1041,7 @@ static LRESULT CALLBACK wndProc(HWND wnd, UINT message, WPARAM wParam, LPARAM lP
+                 wud->width, wud->height, wud->mouseInside, wud->touchDownCount, wud->touchDownLastUp);
+             if( 0 == wud->touchDownCount ) {
+                 wud->mouseInside = 1;
+-                (*env)->CallVoidMethod(env, window, requestFocusID, JNI_FALSE);
++                SetFocus(wnd);
+                 (*env)->CallVoidMethod(env, window, sendMouseEventID,
+                                        (jshort) EVENT_MOUSE_PRESSED,
+                                        GetModifiers( 0 ),
