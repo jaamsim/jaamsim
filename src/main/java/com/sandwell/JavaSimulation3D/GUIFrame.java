@@ -241,6 +241,11 @@ public class GUIFrame extends JFrame {
 
 		// Clear the simulation
 		Simulation.clear();
+
+		FrameBox.clear();
+		EntityPallet.clear();
+		RenderManager.clear();
+
 		this.updateForSimulationState(GUIFrame.SIM_STATE_LOADED);
 		FrameBox.timeUpdate(0.0d);
 

@@ -15,12 +15,9 @@
 package com.sandwell.JavaSimulation;
 
 
-import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.ui.EntityPallet;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.Clock;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -197,11 +194,6 @@ public class Simulation extends Entity {
 
 		// close warning/error trace file
 		InputAgent.closeLogFile();
-
-		FrameBox.clear();
-		EntityPallet.clear();
-
-		RenderManager.clear();
 
 		// Kill all entities except simulation
 		while(Entity.getAll().size() > 0) {
