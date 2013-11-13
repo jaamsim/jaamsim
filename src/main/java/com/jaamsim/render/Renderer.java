@@ -1659,7 +1659,8 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 	@Override
 	public boolean isAnimating() {
-		return false;
+		queueRedraw();
+		return true;
 	}
 
 	@Override
