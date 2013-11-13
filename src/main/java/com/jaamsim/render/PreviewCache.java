@@ -120,7 +120,16 @@ public class PreviewCache {
 				ret.setFailed("Cannot render preview");
 				return ret;
 			}
-			// TODO: generate a different dummy entity for different display model types
+
+			// For ColladaModels maintain the proportions of the imported model
+			if (dm instanceof ColladaModel) {
+				ColladaModel cm = (ColladaModel)dm;
+				MeshProtoKey key = ColladaModel.getCachedMeshKey(cm.getColladaFile());
+				Vec3d meshSize = new Vec3d(RenderManager.inst().getMeshBounds(key, true).radius);
+				double maxDim = Math.max(Math.max(meshSize.x, meshSize.y), meshSize.z);
+				meshSize.scale3(1/maxDim);
+				dummyEntity.setSize(meshSize);
+			}
 
 			dm.getBinding(dummyEntity).collectProxies(0, proxies);
 
