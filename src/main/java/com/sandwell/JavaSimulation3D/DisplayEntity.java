@@ -540,6 +540,10 @@ public class DisplayEntity extends Entity {
 		return displayModelList.getValue();
 	}
 
+	public final void clearBindings() {
+		modelBindings = null;
+	}
+
 	public ArrayList<DisplayModelBinding> getDisplayBindings() {
 		if (modelBindings == null) {
 			// Populate the model binding list
@@ -610,7 +614,7 @@ public class DisplayEntity extends Entity {
 		}
 
 		if (in == displayModelList) {
-			modelBindings = null; // Clear this on any change, and build it lazily later
+			clearBindings(); // Clear this on any change, and build it lazily later
 		}
 	}
 
