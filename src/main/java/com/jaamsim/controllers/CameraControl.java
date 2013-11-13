@@ -30,6 +30,7 @@ import com.jaamsim.render.Renderer;
 import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.View;
+import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.MouseEvent;
 
 public class CameraControl implements WindowInteractionListener {
@@ -499,5 +500,19 @@ public class CameraControl implements WindowInteractionListener {
 	public void checkForUpdate() {
 		PolarInfo pi = getPolarCoordsFromView();
 		updateCamTrans(pi, false);
+	}
+
+	@Override
+	public void keyPressed(KeyEvent event) {
+		switch (event.getKeySymbol()) {
+		case KeyEvent.VK_DELETE:
+			RenderManager.inst().deleteSelected();
+			break;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent event) {
+		// Empty
 	}
 }

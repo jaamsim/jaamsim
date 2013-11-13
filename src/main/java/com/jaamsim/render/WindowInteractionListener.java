@@ -14,9 +14,11 @@
  */
 package com.jaamsim.render;
 
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseEvent;
 
-public interface WindowInteractionListener {
+public interface WindowInteractionListener extends KeyListener {
 
 	// Flags used as modifiers
 	public static int MOD_SHIFT = 	1;
@@ -111,4 +113,9 @@ public interface WindowInteractionListener {
 	 */
 	public void windowGainedFocus();
 	public void windowMoved(int x, int y, int width, int height);
+
+	@Override
+	public void keyPressed(KeyEvent event);
+	@Override
+	public void keyReleased(KeyEvent event);
 }

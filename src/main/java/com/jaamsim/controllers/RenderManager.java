@@ -1604,5 +1604,16 @@ public class RenderManager implements DragSourceListener {
 			_renderer.shutdown();
 		}
 	}
+
+	/**
+	 * Delete the currently selected entity
+	 */
+	public void deleteSelected() {
+		if (_selectedEntity == null) {
+			return;
+		}
+		_selectedEntity.kill();
+		FrameBox.setSelectedEntity(null);
+	}
 }
 

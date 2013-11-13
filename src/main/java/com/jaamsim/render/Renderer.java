@@ -504,6 +504,7 @@ public class Renderer implements GLAnimatorControl {
 		window.getGLWindowRef().addWindowListener(wl);
 		window.getAWTFrameRef().addComponentListener(wl);
 		window.getGLWindowRef().addMouseListener(new MouseHandler(window, message.listener));
+		window.getGLWindowRef().addKeyListener(message.listener);
 
 		window.getAWTFrameRef().setVisible(true);
 
