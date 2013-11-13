@@ -181,6 +181,9 @@ public class Simulation extends Entity {
 		realTime.reset();
 		exitAtStop.reset();
 
+		startDate.reset();
+		startTimeInput.reset();
+
 		// Create clock
 		Clock.setStartDate(2000, 1, 1);
 
