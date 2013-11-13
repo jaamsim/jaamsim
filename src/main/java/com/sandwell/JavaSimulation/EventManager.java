@@ -192,6 +192,9 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			// Kill threads on the event stack
 			for (Event each : eventStack) {
+				if (each.process == null)
+					continue;
+
 				if (each.process.testFlag(Process.ACTIVE)) {
 					throw new ErrorException( "Cannot terminate an active thread" );
 				}
