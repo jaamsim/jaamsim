@@ -98,36 +98,31 @@ ns     ConversionFactorToSI { 1.0e-9   }  Description { 'Nanoseconds' }
 " Distance units
 " ======================================================================================================================================================
 
-Define DistanceUnit { m km cm mm nmi mi ft in }
+Define DistanceUnit { m km cm mm nmi }
 
 m      ConversionFactorToSI { 1        }  Description { 'Meters' }
 km     ConversionFactorToSI { 1000     }  Description { 'Kilometers' }
 cm     ConversionFactorToSI { 0.01     }  Description { 'Centimeters' }
 mm     ConversionFactorToSI { 0.001    }  Description { 'Millimeters' }
 nmi    ConversionFactorToSI { 1852     }  Description { 'Nautical Miles' }
-mi     ConversionFactorToSI { 1609.344 }  Description { 'Statute Miles' }
-ft     ConversionFactorToSI { 0.3048   }  Description { 'Feet' }
-in     ConversionFactorToSI { 0.0254   }  Description { 'Inches' }
 
 " ======================================================================================================================================================
 " Speed units
 " ======================================================================================================================================================
 
-Define SpeedUnit { m/s km/h knots mph }
+Define SpeedUnit { m/s km/h knots }
 
 m/s    ConversionFactorToSI { 1             }  Description { 'Meters per Second' }
 km/h   ConversionFactorToSI { 1000 3600     }  Description { 'Kilometers per Hour' }
 knots  ConversionFactorToSI { 1852 3600     }  Description { 'Knots' }
-mph    ConversionFactorToSI { 1609.344 3600 }  Description { 'Miles per Hour' }
 
 " ======================================================================================================================================================
 " Acceleration units
 " ======================================================================================================================================================
 
-Define AccelerationUnit { m/s2 ft/s2 }
+Define AccelerationUnit { m/s2 }
 
 m/s2   ConversionFactorToSI { 1      }  Description { 'Meters per Second Squared' }
-ft/s2  ConversionFactorToSI { 0.3048 }  Description { 'Feet per Second Squared' }
 
 " ======================================================================================================================================================
 " Mass units
@@ -310,11 +305,10 @@ kt/m3  ConversionFactorToSI { 1.0e6   }  Description { 'Kilotonnes per Cubic Met
 " Pressure units
 " ======================================================================================================================================================
 
-Define PressureUnit { Pa kPa psi }
+Define PressureUnit { Pa kPa }
 
 Pa     ConversionFactorToSI { 1         }  Description { 'Pascals' }
 kPa    ConversionFactorToSI { 1000      }  Description { 'Kilopascals' }
-psi    ConversionFactorToSI { 6894.757  }  Description { 'Pounds per Square Inch' }
 
 " ======================================================================================================================================================
 " Viscosity units
@@ -330,12 +324,11 @@ cP     ConversionFactorToSI { 0.001    }  Description { 'Centipoise' }
 " Area units
 " ======================================================================================================================================================
 
-Define AreaUnit { m2 cm2 mm2 in2 }
+Define AreaUnit { m2 cm2 mm2 }
 
 m2     ConversionFactorToSI { 1         }  Description { 'Square Meters' }
 cm2    ConversionFactorToSI { 1.0e-4    }  Description { 'Square Centimeters' }
 mm2    ConversionFactorToSI { 1.0e-6    }  Description { 'Square Millimeters' }
-in2    ConversionFactorToSI { 6.4516e-4 }  Description { 'Square Inches' }
 
 " ======================================================================================================================================================
 " Rate units
