@@ -98,23 +98,21 @@ ns     ConversionFactorToSI { 1.0e-9   }  Description { 'Nanoseconds' }
 " Distance units
 " ======================================================================================================================================================
 
-Define DistanceUnit { m km cm mm nmi }
+Define DistanceUnit { m km cm mm }
 
 m      ConversionFactorToSI { 1        }  Description { 'Meters' }
 km     ConversionFactorToSI { 1000     }  Description { 'Kilometers' }
 cm     ConversionFactorToSI { 0.01     }  Description { 'Centimeters' }
 mm     ConversionFactorToSI { 0.001    }  Description { 'Millimeters' }
-nmi    ConversionFactorToSI { 1852     }  Description { 'Nautical Miles' }
 
 " ======================================================================================================================================================
 " Speed units
 " ======================================================================================================================================================
 
-Define SpeedUnit { m/s km/h knots }
+Define SpeedUnit { m/s km/h }
 
 m/s    ConversionFactorToSI { 1             }  Description { 'Meters per Second' }
 km/h   ConversionFactorToSI { 1000 3600     }  Description { 'Kilometers per Hour' }
-knots  ConversionFactorToSI { 1852 3600     }  Description { 'Knots' }
 
 " ======================================================================================================================================================
 " Acceleration units
