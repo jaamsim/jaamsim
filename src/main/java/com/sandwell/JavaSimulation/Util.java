@@ -120,45 +120,40 @@ public class Util {
 	}
 
 	public static String getAbsoluteFilePath( String filePath ) {
-		String absoluteFilePath;
 		try {
 			java.io.File absFile = new java.io.File( filePath );
 			if( absFile.isAbsolute() ) {
-				absoluteFilePath = absFile.getCanonicalPath();
-				if(absFile.isFile()) {
-					absoluteFilePath = "file:/" + absoluteFilePath;
-				}
-				else {
-					absoluteFilePath += System.getProperty( "file.separator" );
-				}
-			}
-			else {
-				// For absolute files inside the resource folder of the jar file
-				if (Simulation.class.getResource(filePath) != null) {
-					absoluteFilePath = Simulation.class.getResource(filePath).toString();
-				}
-				else {
+				String absPath = absFile.getCanonicalPath();
 
-					// Does the relative filepath exist inside the jar file?
-					String relativeURL = FileEntity.getRelativeURL( filePath );
-					if (Simulation.class.getResource(relativeURL) != null) {
-						absoluteFilePath = Simulation.class.getResource(relativeURL).getFile();
-					}
-					else {
-						absoluteFilePath = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + filePath;
-						absoluteFilePath = FileEntity.getRelativeURL(absoluteFilePath);
-						if(FileEntity.fileExists(absoluteFilePath)) {
-							absoluteFilePath = "file:/" + absoluteFilePath;
-						}
-					}
+				if(absFile.isFile()) {
+					return "file:/" + absPath;
 				}
+
+				// Not a file, so this must be a directory?
+				return absPath + System.getProperty( "file.separator" );
 			}
+
+			// For absolute files inside the resource folder of the jar file
+			if (Simulation.class.getResource(filePath) != null) {
+				return Simulation.class.getResource(filePath).toString();
+			}
+
+			// Does the relative filepath exist inside the jar file?
+			String relativeURL = FileEntity.getRelativeURL( filePath );
+			if (Simulation.class.getResource(relativeURL) != null) {
+				return Simulation.class.getResource(relativeURL).getFile();
+			}
+
+			String absPath = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + filePath;
+			absPath = FileEntity.getRelativeURL(absPath);
+			if(FileEntity.fileExists(absPath)) {
+				absPath = "file:/" + absPath;
+			}
+			return absPath;
 		}
 		catch( Exception e ) {
 			throw new ErrorException( e );
 		}
-
-		return absoluteFilePath;
 	}
 
 	public static String getFileExtention(String name){
