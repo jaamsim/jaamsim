@@ -282,12 +282,12 @@ public class InputAgent {
 			InputAgent.logWarning("Unable to resolve path %s%s - %s", root.toString(), path.toString(), file);
 			return false;
 		}
-		readURL(t);
+		readURL(root, path, t);
 
 		return true;
 	}
 
-	public static void readURL(URL url) {
+	public static void readURL(URI root, URI path, URL url) {
 		if (url == null)
 			return;
 
@@ -322,7 +322,7 @@ public class InputAgent {
 					continue;
 
 				Parser.removeComments(record);
-				InputAgent.processRecord(url, record);
+				InputAgent.processRecord(root, path, record);
 				record.clear();
 			}
 
@@ -338,14 +338,14 @@ public class InputAgent {
 
 	}
 
-	private static void processRecord(URL url, ArrayList<String> record) {
+	private static void processRecord(URI root, URI path, ArrayList<String> record) {
 		//InputAgent.echoInputRecord(record);
 
 		if (record.size() == 0)
 			return;
 
 		if (record.get(0).equalsIgnoreCase("INCLUDE")) {
-			InputAgent.processIncludeRecord(url, record);
+			InputAgent.processIncludeRecord(root, path, record);
 			return;
 		}
 
@@ -358,39 +358,13 @@ public class InputAgent {
 		InputAgent.processKeywordRecord(record);
 	}
 
-	private static void processIncludeRecord(URL baseURL, ArrayList<String> record) {
+	private static void processIncludeRecord(URI root, URI path, ArrayList<String> record) {
 		if (record.size() != 2) {
 			InputAgent.logError("Bad Include record, should be: Include <File>");
 			return;
 		}
 
-		// Ensure the include filename is well formed
-		URL finalURL = null;
-		try {
-			URI incFile = new URI(record.get(1).replaceAll("\\\\", "/"));
-
-			// Construct a base file in case this URI is relative and split at ! to
-			// account for a jar:file:<jarfilename>!<internalfilename> URL
-			int bangIndex = baseURL.toString().lastIndexOf("!") + 1;
-			String prefix = baseURL.toString().substring(0, bangIndex);
-			String folder = baseURL.toString().substring(bangIndex);
-
-			URI folderURI = new URI(folder).resolve(incFile);
-			// Remove all remaining relative path directives ../
-			String noRelative = folderURI.toString().replaceAll("\\.\\./", "");
-			finalURL = new URL(prefix + noRelative);
-		}
-		catch (NullPointerException e) {}
-		catch (URISyntaxException e) {}
-		catch (MalformedURLException e) {}
-		finally {
-			if (finalURL == null) {
-				InputAgent.logError("Unable to parse filename: %s", record.get(1));
-				return;
-			}
-		}
-
-		InputAgent.readURL(finalURL);
+		InputAgent.readStream(root, path, record.get(1).replaceAll("\\\\", "/"));
 	}
 
 	private static void processDefineRecord(ArrayList<String> record) {
