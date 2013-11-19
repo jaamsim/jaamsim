@@ -21,6 +21,8 @@ public class Vec3dInput extends Input<Vec3d> {
 	public void parse(StringVector input)
 	throws InputErrorException {
 		DoubleVector temp = Input.parseDoubles(input, minValue, maxValue, unitType);
+		Input.assertCountRange(temp, 1, 3);
+
 		// pad the vector to have 3 elements
 		while (temp.size() < 3) {
 			temp.add(0.0d);
