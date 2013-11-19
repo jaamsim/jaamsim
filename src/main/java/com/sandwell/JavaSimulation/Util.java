@@ -138,14 +138,7 @@ public class Util {
 				return Simulation.class.getResource(filePath).toString();
 			}
 
-			// Does the relative filepath exist inside the jar file?
-			String relativeURL = FileEntity.getRelativeURL( filePath );
-			if (Simulation.class.getResource(relativeURL) != null) {
-				return Simulation.class.getResource(relativeURL).getFile();
-			}
-
 			String absPath = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + filePath;
-			absPath = FileEntity.getRelativeURL(absPath);
 			if(FileEntity.fileExists(absPath)) {
 				absPath = "file:/" + absPath;
 			}

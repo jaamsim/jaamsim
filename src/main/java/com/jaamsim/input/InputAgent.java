@@ -613,7 +613,6 @@ public class InputAgent {
 		file = new FileEntity( fileName, FileEntity.FILE_READ, false );
 
 		String mainRootDirectory = null;
-		String originalJarFileRootDirectory = null;
 
 		if( firstTime ) {
 
@@ -627,9 +626,6 @@ public class InputAgent {
 
 			// Switch to the directory of the current input file
 			file.setRootDirectory();
-
-			// Save the directory of the first file within the jar file
-			originalJarFileRootDirectory = FileEntity.getJarFileRootDirectory();
 		}
 
 		// Initialize the input file
@@ -671,7 +667,6 @@ public class InputAgent {
 		// Restore to the directory of the first input file
 		if ( ! firstTime ) {
 			FileEntity.setRootDirectory( mainRootDirectory );
-			FileEntity.setJarFileRootDirectory( originalJarFileRootDirectory );
 		}
 	}
 

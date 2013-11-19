@@ -14,14 +14,14 @@
  */
 package com.sandwell.JavaSimulation;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
 /**
@@ -30,7 +30,6 @@ import java.text.DecimalFormat;
 public class FileEntity {
 
 	private static File rootDirectory;
-	private static String jarFileRootDirectory = ""; // the present directory in the jar file relative to com/sandwell/JavaSimulation/ for reading input files
 
 	public static int ALIGNMENT_LEFT = 0;
 	public static int ALIGNMENT_RIGHT = 1;
@@ -72,10 +71,9 @@ public class FileEntity {
 			}
 
 			// Check if the relative file name exists
-			String relativeURL = FileEntity.getRelativeURL( fileName );
-			if (Simulation.class.getResource(relativeURL) != null) {
+			if (Simulation.class.getResource(fileName) != null) {
 				fname = fileName;
-				InputStream inStream = this.getClass().getResourceAsStream( relativeURL );
+				InputStream inStream = this.getClass().getResourceAsStream( fileName );
 
 				inputStream = new BufferedReader( new InputStreamReader( inStream ) );
 				inputStream.mark( 4096 );
@@ -550,43 +548,6 @@ public class FileEntity {
 		}
 	}
 
-	public static String getJarFileRootDirectory() {
-		return jarFileRootDirectory;
-	}
-
-	public static void setJarFileRootDirectory( String newDir ) {
-		jarFileRootDirectory = newDir;
-	}
-
-	/**
-	 * @return url to the given file from the jar file com/sandwell/JavaSimulation directory
-	 * using forward slashes and removing redundant directories
-	 *
-	 * Example:
-	 * If jarFileRootDirectory = "Inputs\Run_Files" and fileName = "..\Basecase\basefile.cfg"
-	 * Then return Inputs/Basecase/basefile.cfg
-	 */
-	public static String getRelativeURL( String fileName ) {
-
-		// Create a temporary file
-		File tempFile = new File( jarFileRootDirectory + "\\" + fileName );
-
-		// Determine the starting index of the jar file root directory
-		int firstIndex = tempFile.getAbsolutePath().indexOf( jarFileRootDirectory );
-
-		try {
-
-			// Eliminate redundant directories by getting the canonical path.  Also replace back slashes with forward slashes.
-			String relativeURL = tempFile.getCanonicalPath().replace( "\\", "/" );
-
-			// Return the portion from the starting index
-			return relativeURL.substring( firstIndex );
-		}
-		catch( java.io.IOException ioe ) {
-			throw new ErrorException( "Unable to get relative url: " + ioe );
-		}
-	}
-
 	public static boolean fileExists( String fileName ) {
 		if( fileName.length() == 0 ) {
 			return false;
@@ -602,13 +563,6 @@ public class FileEntity {
 			// an absolute reference to a file inside the resources
 			if (Simulation.class.getResource(fileName) != null) {
 				return true;
-			}
-			else {
-				// If the relative file name exists, return true
-				String relativeURL = FileEntity.getRelativeURL( fileName );
-				if (Simulation.class.getResource(relativeURL) != null) {
-					return true;
-				}
 			}
 		}
 		catch( Exception e ) {
