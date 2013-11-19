@@ -79,6 +79,8 @@ public class EditBox extends FrameBox {
 
 	private final TableCellRenderer columnRender = new EditBoxColumnRenderer();
 
+	static String lastCategory = null;
+
 	/**
 	 * Widths of columns in the table of keywords as modified by the user in an edit
 	 * session. When the EditBox is re-opened for the next edit (during the same session),
@@ -125,6 +127,8 @@ public class EditBox extends FrameBox {
 		}
 		setTitle("Input Editor - " + currentEntity.getInputName());
 
+		int initialTab = 0;
+		int curTab = 0;
 		for (CategoryInputs each : getInputs(currentEntity)) {
 			EditTableModel mod = new EditTableModel(each);
 			JTable propTable = new EditTable(mod, columnRender);
@@ -133,10 +137,16 @@ public class EditBox extends FrameBox {
 			jScrollPane.setColumnHeaderView( propTable.getTableHeader());
 
 			jTabbedFrame.addTab(each.category, null, jScrollPane, null);
+			if (each.category.equals(lastCategory))
+				initialTab = curTab;
+
+			curTab++;
 		}
 
-		if (jTabbedFrame.getTabCount() > 0)
-			jTabbedFrame.setSelectedIndex(0);
+		if (jTabbedFrame.getTabCount() > 0) {
+			jTabbedFrame.setSelectedIndex(initialTab);
+			lastCategory = jTabbedFrame.getTitleAt(initialTab);
+		}
 	}
 
 	@Override
@@ -643,6 +653,12 @@ public static class CellListener implements CellEditorListener {
 private static class TabListener implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent e) {
+		JTabbedPane tab = (JTabbedPane)e.getSource();
+		int idx = tab.getSelectedIndex();
+		if (idx > -1 && tab.getTabCount() > 1) {
+			lastCategory = tab.getTitleAt(idx);
+		}
+
 		FrameBox.valueUpdate();
 	}
 }
