@@ -18,7 +18,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 	/**
@@ -206,73 +205,6 @@ public class Util {
 
 		return newData;
 	}
-
-private static class CriteriaHolder implements Comparable<CriteriaHolder> {
-private final Object obj;
-private final double crit1;
-private final double crit2;
-private final double crit3;
-private final double crit4;
-private final double crit5;
-
-CriteriaHolder(Object obj, double c1, double c2, double c3, double c4, double c5) {
-	this.obj = obj;
-	crit1 = c1;
-	crit2 = c2;
-	crit3 = c3;
-	crit4 = c4;
-	crit5 = c5;
-}
-
-@Override
-/**
- * We sort from largest to smallest, so reverse the order in Double.compare.
- */
-public int compareTo(CriteriaHolder u) {
-	int comp;
-
-	comp = Double.compare(u.crit1, this.crit1);
-	if (comp != 0)
-		return comp;
-
-	comp = Double.compare(u.crit2, this.crit2);
-	if (comp != 0)
-		return comp;
-
-	comp = Double.compare(u.crit3, this.crit3);
-	if (comp != 0)
-		return comp;
-
-	comp = Double.compare(u.crit4, this.crit4);
-	if (comp != 0)
-		return comp;
-
-	return Double.compare(u.crit5, this.crit5);
-}
-}
-
-public static void mergeSort(Vector objectsToSort, DoubleVector crit1) {
-	mergeSort(objectsToSort, crit1, crit1, crit1, crit1, crit1);
-}
-
-public static void mergeSort(Vector objectsToSort, DoubleVector crit1,
-                             DoubleVector crit2) {
-	mergeSort(objectsToSort, crit1, crit2, crit2, crit2, crit2);
-}
-
-public static void mergeSort(Vector objectsToSort, DoubleVector crit1,
-                             DoubleVector crit2, DoubleVector crit3,
-                             DoubleVector crit4, DoubleVector crit5) {
-	ArrayList<CriteriaHolder> temp = new ArrayList<Util.CriteriaHolder>(objectsToSort.size());
-	for (int i = 0; i < objectsToSort.size(); i++) {
-		temp.add(new CriteriaHolder(objectsToSort.get(i), crit1.get(i), crit2.get(i), crit3.get(i), crit4.get(i), crit5.get(i)));
-	}
-	Collections.sort(temp);
-	objectsToSort.clear();
-	for (int i = 0; i < temp.size(); i++) {
-		objectsToSort.add(temp.get(i).obj);
-	}
-}
 
 	/**
      * Returns the pixel length of the string with specified font
