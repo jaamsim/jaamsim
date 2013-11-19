@@ -18,6 +18,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
@@ -30,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -77,7 +80,6 @@ import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Tester;
-import com.sandwell.JavaSimulation.Util;
 
 /**
  * The main window for a Graphical Simulation.  It provides the controls for managing then
@@ -512,6 +514,15 @@ public class GUIFrame extends JFrame {
 		setJMenuBar( mainMenuBar );
 	}
 
+	/**
+	 * Returns the pixel length of the string with specified font
+	 */
+	private static int getPixelWidthOfString_ForFont(String str, Font font) {
+		FontMetrics metrics = new FontMetrics(font) {};
+		Rectangle2D bounds = metrics.getStringBounds(str, null);
+		return (int)bounds.getWidth();
+	}
+
 	public void initializeMainToolBars() {
 
 
@@ -629,7 +640,7 @@ public class GUIFrame extends JFrame {
 		// make sure spinner TextField is no wider than 9 digits
 		int diff =
 			((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().getPreferredSize().width -
-			Util.getPixelWidthOfString_ForFont("9", spinner.getFont()) * 9;
+			getPixelWidthOfString_ForFont("9", spinner.getFont()) * 9;
 		Dimension dim = spinner.getPreferredSize();
 		dim.width -= diff;
 		spinner.setMaximumSize(dim);

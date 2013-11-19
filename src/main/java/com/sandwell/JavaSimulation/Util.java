@@ -14,9 +14,6 @@
  */
 package com.sandwell.JavaSimulation;
 
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -205,18 +202,6 @@ public class Util {
 
 		return newData;
 	}
-
-	/**
-     * Returns the pixel length of the string with specified font
-     * @param str
-     * @param font
-     * @return
-     */
-    public static int getPixelWidthOfString_ForFont( String str, Font font ) {
-		FontMetrics metrics = new FontMetrics(font) {        };
-		Rectangle2D bounds = metrics.getStringBounds( str, null);
-		return (int) bounds.getWidth();
-    }
 
     public static String HTMLString(String font, String size, String backgroundColor, String color, String accent, String text) {
     	StringBuilder ret = new StringBuilder("<html><pre style=\"font-family:");
