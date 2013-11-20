@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import java.util.ArrayList;
+
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.ValueInput;
@@ -103,10 +105,14 @@ public class ScriptEntity extends Entity {
 		}
 
 		// While end of file has not been reached
+		ArrayList<String> rec = new ArrayList<String>();
 		while( record.size() > 0 ) {
-
 			// Process the record
-			InputAgent.processData( record, null );
+			rec.clear();
+			for (int i = 0; i < record.size(); i++)
+				rec.add((String)record.get(i));
+
+			InputAgent.processKeywordRecord(rec, null);
 
 			// If a "Time" record was read, then wait until the time
 			long delayTicks = Process.secondsToTicks(scriptTime.getValue()) - getSimTicks();

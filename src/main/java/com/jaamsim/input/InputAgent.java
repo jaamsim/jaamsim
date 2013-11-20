@@ -46,7 +46,6 @@ import com.sandwell.JavaSimulation.Palette;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Util;
-import com.sandwell.JavaSimulation.Vector;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class InputAgent {
@@ -450,7 +449,7 @@ public class InputAgent {
 		return ent;
 	}
 
-	private static void processKeywordRecord(ArrayList<String> record, Input.ParseContext context) {
+	public static void processKeywordRecord(ArrayList<String> record, Input.ParseContext context) {
 		Entity ent = Input.tryParseEntity(record.get(0), Entity.class);
 		if (ent == null) {
 			InputAgent.logError("Could not find Entity: %s", record.get(0));
@@ -668,127 +667,6 @@ public class InputAgent {
 			InputAgent.logError("Entity: %s Keyword: %s - %s", entity.getName(), keyword, e.getMessage());
 			throw e;
 		}
-	}
-
-	protected static class KeywordValuePair {
-		public String keyword;
-		public StringVector value;
-
-		public KeywordValuePair( int size ) {
-			keyword = null;
-			value = new StringVector( size );
-		}
-	}
-
-	public static void processData(Entity ent, Vector rec, Input.ParseContext context) {
-		if( rec.get( 1 ).toString().trim().equals( "{" ) ) {
-			InputAgent.logError("A keyword expected after: %s", ent.getName());
-		}
-		ArrayList<KeywordValuePair> multiCmds = InputAgent.splitMultipleCommands(rec);
-
-		// Process each command
-		for( int i = 0; i < multiCmds.size(); i++ ) {
-			KeywordValuePair cmd = multiCmds.get(i);
-
-			// Process the record
-			InputAgent.processKeyword(ent, cmd.value, cmd.keyword, context);
-		}
-		return;
-	}
-
-	/**
-	 * process's input data from record for use as a keyword.
-	 * format of record: <obj-name> <keyword> <data> <keyword> <data>
-	 * braces are included
-	 */
-	public static void processData( Vector record, Input.ParseContext context ) {
-		String item1 = ((String)record.get( 0 )).trim();
-
-		//  Checks on Entity:
-		Entity obj = Input.tryParseEntity(item1, Entity.class);
-		if (obj == null) {
-			InputAgent.logError("Object not found: %s", item1);
-			return;
-		}
-
-		// Entity exists with name <entityName> or name <region>/<entityName>
-		InputAgent.processData(obj, record, context);
-	}
-
-	/**
-	 * returns a vector of vectors
-	 * each vector will be of form <obj-name> <kwd> <data> <data>
-	 * no braces are returned
-	 */
-	private static ArrayList<KeywordValuePair> splitMultipleCommands( Vector record ) {
-
-		// SUPPORTED SYNTAX:
-		//
-		//   <obj-name> <kwd> { <par> }
-		//   <obj-name> <kwd> { <par> <par> ... }
-		//   <obj-name> <kwd> { <par> <par> ... } <kwd> { <par> <par> ... } ...
-		//   <obj-name> <kwd> <par> <kwd> { <par> <par> ... } ...
-		ArrayList<KeywordValuePair> multiCmds = new ArrayList<KeywordValuePair>();
-		int noOfUnclosedBraces = 0;
-
-		// Loop through the keywords and assemble new commands
-		for( int i = 1; i < record.size(); ) {
-
-			// Enter the class, object, and keyword in the new command
-			KeywordValuePair cmd = new KeywordValuePair( record.size() );
-
-			// Keyword changes as loop proceeds
-			cmd.keyword = ((String)record.get(i));
-			i++;
-
-			// For a command of the new form "<obj-name> <file-name>", record
-			// will be empty here.
-			if( i < record.size() ) {
-
-				// If there is an opening brace, then the keyword has a list of
-				// parameters
-				String openingBrace = (String)record.get( i );
-				if( openingBrace.equals("{") ) {
-					noOfUnclosedBraces ++ ;
-					i++; // move past the opening brace {
-
-					// Iterate through record
-					while( (i < record.size()) && ( noOfUnclosedBraces > 0 ) ) {
-						if ("{".equals(record.get(i)))
-							noOfUnclosedBraces++;
-						else if ("}".equals(record.get(i)))
-							noOfUnclosedBraces--;
-						cmd.value.add((String)record.get(i));
-						i++;
-					}
-
-					if( ( record.size() == i ) && ( noOfUnclosedBraces != 0) ) { // corresponding "}" is missing
-						InputAgent.logError("Closing brace } is missing.");
-						return multiCmds;
-					}
-
-					// Last item added was the corresponding closing brace
-					else {
-						cmd.value.remove(cmd.value.size()-1); // throw out the closing brace }
-						multiCmds.add( cmd );
-					}
-				}
-
-				// If there is no brace, then the keyword must have a single
-				// parameter.
-				else {
-					cmd.value.add((String)record.get(i));
-					i++;
-					multiCmds.add( cmd );
-				}
-			}
-
-			// Record contains no other items
-			else {
-				multiCmds.add( cmd );
-			}
-		}
-		return multiCmds;
 	}
 
 	private static class ConfigFileFilter implements FilenameFilter {
@@ -1204,24 +1082,6 @@ public class InputAgent {
 		System.out.flush();
 	}
 
-	/*
-	 * Log the input to a file, but don't echo it out as well.
-	 */
-	public static void echoInput(Vector line) {
-		// if there is no log file currently, output nothing
-		if (logFile == null)
-			return;
-
-		StringBuilder msg = new StringBuilder();
-		for (Object each : line) {
-			msg.append("  ");
-			msg.append(each);
-		}
-		logFile.write(msg.toString());
-		logFile.newLine();
-		logFile.flush();
-	}
-
 	public static void logWarning(String fmt, Object... args) {
 		numWarnings++;
 		String msg = String.format(fmt, args);
@@ -1245,9 +1105,7 @@ public class InputAgent {
 		tokens.add(0, ent.getInputName());
 		tokens.add(1, in.getKeyword());
 
-		Vector data = new Vector(tokens.size());
-		data.addAll(tokens);
-		InputAgent.processData(ent, data, null);
+		InputAgent.processKeywordRecord(tokens, null);
 	}
 
 
