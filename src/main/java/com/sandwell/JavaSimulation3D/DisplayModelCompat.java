@@ -196,7 +196,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			transCache = trans;
 			scaleCache = scale;
-			tagsCache = tags.copy();
+			tagsCache = new DisplayEntity.TagSet(tags);
 			shapeStringCache = shapeString;
 			viCache = vi;
 

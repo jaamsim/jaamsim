@@ -109,14 +109,20 @@ public class DisplayEntity extends Entity {
 	private ArrayList<DisplayModelBinding> modelBindings;
 
 	public static class TagSet {
-		public Map<String, Color4d[]> colours;
-		public Map<String, DoubleVector> sizes;
-		public Map<String, Boolean> visibility;
+		public final Map<String, Color4d[]> colours;
+		public final Map<String, DoubleVector> sizes;
+		public final Map<String, Boolean> visibility;
 
-		public void init() {
+		public TagSet() {
 			colours = new HashMap<String, Color4d[]>();
 			sizes = new HashMap<String, DoubleVector>();
 			visibility = new HashMap<String, Boolean>();
+		}
+
+		public TagSet(TagSet in) {
+			colours = new HashMap<String, Color4d[]>(in.colours);
+			sizes = new HashMap<String, DoubleVector>(in.sizes);
+			visibility = new HashMap<String, Boolean>(in.visibility);
 		}
 
 		/**
@@ -179,15 +185,6 @@ public class DisplayEntity extends Entity {
 
 			return true;
 		}
-
-		// Create a shallow copy of this TagSet
-		public TagSet copy() {
-			TagSet ret = new TagSet();
-			ret.colours = new HashMap<String, Color4d[]>(colours);
-			ret.sizes = new HashMap<String, DoubleVector>(sizes);
-			ret.visibility = new HashMap<String, Boolean>(visibility);
-			return ret;
-		}
 	}
 
 	private TagSet tags;
@@ -236,8 +233,6 @@ public class DisplayEntity extends Entity {
 		this.addInput(showToolTip, true);
 
 		tags = new TagSet();
-		tags.init();
-
 	}
 
 	/**
