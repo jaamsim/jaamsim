@@ -79,7 +79,7 @@ public class EditBox extends FrameBox {
 
 	private final TableCellRenderer columnRender = new EditBoxColumnRenderer();
 
-	static String lastCategory = null;
+	private String lastCategory = null;
 
 	/**
 	 * Widths of columns in the table of keywords as modified by the user in an edit
@@ -118,6 +118,12 @@ public class EditBox extends FrameBox {
 		if(entity != null && entity.testFlag(Entity.FLAG_GENERATED))
 			entity = null;
 
+		if (currentEntity != null) {
+			int idx = jTabbedFrame.getSelectedIndex();
+			if (idx > -1)
+				lastCategory = jTabbedFrame.getTitleAt(idx);
+		}
+
 		jTabbedFrame.removeAll();
 
 		currentEntity = entity;
@@ -145,7 +151,6 @@ public class EditBox extends FrameBox {
 
 		if (jTabbedFrame.getTabCount() > 0) {
 			jTabbedFrame.setSelectedIndex(initialTab);
-			lastCategory = jTabbedFrame.getTitleAt(initialTab);
 		}
 	}
 
@@ -653,12 +658,6 @@ public static class CellListener implements CellEditorListener {
 private static class TabListener implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		JTabbedPane tab = (JTabbedPane)e.getSource();
-		int idx = tab.getSelectedIndex();
-		if (idx > -1 && tab.getTabCount() > 1) {
-			lastCategory = tab.getTitleAt(idx);
-		}
-
 		FrameBox.valueUpdate();
 	}
 }
