@@ -175,37 +175,4 @@ public class Util {
 
 		return newData;
 	}
-
-    public static String HTMLString(String font, String size, String backgroundColor, String color, String accent, String text) {
-    	StringBuilder ret = new StringBuilder("<html><pre style=\"font-family:");
-
-		if (font == null)
-			ret.append("verdana");
-		else
-			ret.append(font);
-
-		if (size != null) {
-			ret.append(";font-size:");
-			ret.append(size);
-		}
-
-		if (backgroundColor != null) {
-			ret.append(";background-color:");
-			ret.append(backgroundColor);
-		}
-
-		if (color != null) {
-			ret.append(";color:");
-			ret.append(color);
-		}
-
-		ret.append("\">");
-
-		if (accent != null) {
-			ret.append(accent);
-		}
-		ret.append(text);
-
-		return ret.toString();
-    }
 }
