@@ -20,10 +20,10 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
+import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation.Vector;
 
@@ -32,7 +32,7 @@ public class ScriptEntity extends Entity {
 
 	@Keyword(description = "The name of the script file for the script entity.",
 	         example = "ScriptEntity Script { test.scr }")
-	private final FileInput scriptFileName;
+	private final StringInput scriptFileName;
 
 	@Keyword(description = "The Time keyword appears inside the script file. The value represents the simulation " +
 	                "time at which the next set of commands in the script are implemented.",
@@ -40,7 +40,7 @@ public class ScriptEntity extends Entity {
 	private final ValueInput scriptTime; // the time that has been read in the script
 
 	{
-		scriptFileName = new FileInput( "Script", "Key Inputs", null );
+		scriptFileName = new StringInput( "Script", "Key Inputs", null );
 		this.addInput( scriptFileName, true );
 
 		scriptTime = new ValueInput("Time", "Key Inputs", 0.0d);
