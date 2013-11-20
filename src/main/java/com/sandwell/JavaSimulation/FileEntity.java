@@ -29,7 +29,7 @@ import java.text.DecimalFormat;
  */
 public class FileEntity {
 
-	private static File rootDirectory;
+	private static String rootDirectory;
 
 	public static int ALIGNMENT_LEFT = 0;
 	public static int ALIGNMENT_RIGHT = 1;
@@ -510,7 +510,8 @@ public class FileEntity {
 	}
 
 	public static void setRootDirectory( String newDir ) {
-		rootDirectory = new File( newDir );
+		//rootDirectory = new File( newDir );
+		rootDirectory = newDir;
 	}
 
 	/**
@@ -518,15 +519,7 @@ public class FileEntity {
 	 *         directory where the *.cfg file is located.
 	 */
 	public static String getRootDirectory() {
-		String canonicalPath;
-
-		try {
-			canonicalPath = rootDirectory.getCanonicalPath();
-		}
-		catch( java.io.IOException ioe ) {
-			throw new ErrorException( "Unable to get canonical path: " + ioe );
-		}
-		return canonicalPath;
+		return rootDirectory;
 	}
 
 	public static void setRootDirectoryFromFile( String fileName ) {
@@ -534,17 +527,17 @@ public class FileEntity {
 		if( tempRootDirectory == null ) {
 			return;
 		}
-		rootDirectory = tempRootDirectory;
+		rootDirectory = tempRootDirectory.getAbsolutePath();
 	}
 
 	public static void setRootDirectory( File newDir ) {
-		rootDirectory = newDir;
+		rootDirectory = newDir.getAbsolutePath();
 		//        System.out.println( rootDirectory );
 	}
 
 	public void setRootDirectory() {
 		if( backingFileObject != null ) {
-			rootDirectory = backingFileObject.getParentFile();
+			rootDirectory = backingFileObject.getParentFile().getAbsolutePath();
 		}
 	}
 

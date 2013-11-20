@@ -63,7 +63,6 @@ public class InputAgent {
 	private static boolean sessionEdited;
 	private static boolean addedRecordFound;
 	private static boolean recordEdits;
-	private static boolean endOfFileReached;		// notes end of cfg files
 	// ConfigurationFile load and save variables
 	final protected static int SAVE_ONLY = 2;
 
@@ -74,7 +73,6 @@ public class InputAgent {
 	static {
 		addedRecordFound = false;
 		sessionEdited = false;
-		endOfFileReached = false;
 		batchRun = false;
 		configFileName = null;
 		reportDirectory = "";
@@ -212,18 +210,11 @@ public class InputAgent {
 		return braceDepth;
 	}
 
-	private static URI pwdPath;
-	private static URI pwdRoot;
 	private static URI resRoot;
 	private static URI resPath;
 	private static final String res = "/resources/inputs/";
 
 	static {
-		// Walk up the parent list until we find a parentless entry, call that
-		// the 'root'
-		File f = new File(System.getProperty("user.dir"));
-		pwdRoot = getFileRoot(f);
-		pwdPath = pwdRoot.relativize(f.toURI());
 
 		try {
 			// locate the resource folder, and create
@@ -231,65 +222,50 @@ public class InputAgent {
 		}
 		catch (URISyntaxException e) {}
 
-		resPath = URI.create("");
+		resPath = URI.create(resRoot.toString());
 	}
 
-	private static URI getFileRoot(File f) {
-		File par = f;
-
-		// Walk up the list of parents to the entry that has no parent, call thsi
-		// the root entry
-		while (true) {
-			File t = par.getParentFile();
-			if (t == null)
-				return par.toURI();
-			else
-				par = t;
-		}
-	}
-
-	public static final void readPWDResource(String res) {
-		if (res == null)
-			return;
-
-		readStream(pwdRoot, pwdPath, res);
+	private static void rethrowWrapped(Exception ex) {
+		StringBuilder causedStack = new StringBuilder();
+		for (StackTraceElement elm : ex.getStackTrace())
+			causedStack.append(elm.toString()).append("\n");
+		throw new InputErrorException("Caught exception: %s", ex.getMessage() + "\n" + causedStack.toString());
 	}
 
 	public static final void readResource(String res) {
 		if (res == null)
 			return;
 
-		readStream(resRoot, resPath, res);
-	}
-
-	public static final boolean readStream(URI root, URI path, String file) {
-		URI resolved = path.resolve(file);
-		resolved.normalize();
-
-		if (resolved.getRawPath().contains("../")) {
-			InputAgent.logWarning("Unable to resolve path %s%s - %s", root.toString(), path.toString(), file);
-			return false;
-		}
-
-		URL t = null;
 		try {
-			t = new URI(root.toString() + resolved.toString()).toURL();
+		readStream(resRoot.toString(), resPath, res);
+		} catch (URISyntaxException ex) {
+			rethrowWrapped(ex);
 		}
-		catch (MalformedURLException e) {}
-		catch (URISyntaxException e) {}
 
-		if (t == null) {
-			InputAgent.logWarning("Unable to resolve path %s%s - %s", root.toString(), path.toString(), file);
-			return false;
-		}
-		readURL(root, path, t);
-
-		return true;
 	}
 
-	public static void readURL(URI root, URI path, URL url) {
-		if (url == null)
-			return;
+	public static final boolean readStream(String root, URI path, String file) throws URISyntaxException {
+
+		URI resolved = getFileURI(path, file, root);
+
+		String resolvedPath = resolved.getSchemeSpecificPart();
+		String currentDir = resolvedPath.substring(0, resolvedPath.lastIndexOf('/') + 1);
+
+		String oldRoot = FileEntity.getRootDirectory();
+		FileEntity.setRootDirectory(currentDir);
+
+		URL url = null;
+		try {
+			url = resolved.normalize().toURL();
+		}
+		catch (MalformedURLException e) {
+			rethrowWrapped(e);
+		}
+
+		if (url == null) {
+			InputAgent.logWarning("Unable to resolve path %s%s - %s", root, path.toString(), file);
+			return false;
+		}
 
 		BufferedReader buf = null;
 		try {
@@ -297,7 +273,7 @@ public class InputAgent {
 			buf = new BufferedReader(new InputStreamReader(in));
 		} catch (IOException e) {
 			InputAgent.logWarning("Could not read from %s", url.toString());
-			return;
+			return false;
 		}
 
 		try {
@@ -322,7 +298,11 @@ public class InputAgent {
 					continue;
 
 				Parser.removeComments(record);
-				InputAgent.processRecord(root, path, record);
+				try {
+					InputAgent.processRecord(root, resolved, record);
+				} catch (URISyntaxException ex) {
+					rethrowWrapped(ex);
+				}
 				record.clear();
 			}
 
@@ -336,9 +316,12 @@ public class InputAgent {
 			try { buf.close(); } catch (IOException e2) {}
 		}
 
+		FileEntity.setRootDirectory(oldRoot);
+
+		return true;
 	}
 
-	private static void processRecord(URI root, URI path, ArrayList<String> record) {
+	private static void processRecord(String root, URI path, ArrayList<String> record) throws URISyntaxException {
 		//InputAgent.echoInputRecord(record);
 
 		if (record.size() == 0)
@@ -358,11 +341,13 @@ public class InputAgent {
 		InputAgent.processKeywordRecord(record);
 	}
 
-	private static void processIncludeRecord(URI root, URI path, ArrayList<String> record) {
+	private static void processIncludeRecord(String root, URI path, ArrayList<String> record) throws URISyntaxException {
 		if (record.size() != 2) {
 			InputAgent.logError("Bad Include record, should be: Include <File>");
 			return;
 		}
+
+		// TODO handle special formats here
 
 		InputAgent.readStream(root, path, record.get(1).replaceAll("\\\\", "/"));
 	}
@@ -500,6 +485,17 @@ public class InputAgent {
 			if (currentLine == null)
 				currentLine = new ArrayList<String>( input.size() );
 
+			if (currentLine.size() == 1 && !input.get(i).equals("{")) {
+				// Old style brace-free input
+				InputAgent.logWarning("Input detected without braces: %s - %s", currentLine.get(0), input.get(i));
+				currentLine.add("{");
+				currentLine.add(input.get(i));
+				currentLine.add("}");
+				inputs.add(currentLine);
+				currentLine = null;
+				continue;
+			}
+
 			currentLine.add(input.get(i));
 			if (input.get(i).equals("{")) {
 				braceDepth++;
@@ -529,15 +525,18 @@ public class InputAgent {
 	}
 
 	// Load the run file
-	public static void loadConfigurationFile( String fileName) {
+	public static void loadConfigurationFile( String fileName) throws URISyntaxException {
 
 		String inputTraceFileName = InputAgent.getRunName() + ".log";
 		// Initializing the tracing for the model
 		try {
 			System.out.println( "Creating trace file" );
 
+			URI confURI = new File(fileName).toURI();
+			URI logURI = confURI.resolve(inputTraceFileName);
+
 			// Set and open the input trace file name
-			logFile = new FileEntity( inputTraceFileName, FileEntity.FILE_WRITE, false );
+			logFile = new FileEntity( logURI.getPath(), FileEntity.FILE_WRITE, false );
 		}
 		catch( Exception e ) {
 			throw new ErrorException( "Could not create trace file" );
@@ -572,200 +571,26 @@ public class InputAgent {
 	 * @param fileName
 	 * @param firstTime ( true => this is the main config file (run file);  false => this is an included file within  main config file or another included file )
 	 */
-	public static void loadConfigurationFile( String fileName, boolean firstTime ) {
-		//System.out.println( "load configuration file " + fileName );
-		FileEntity file;
-		Vector record;
+	public static void loadConfigurationFile( String rawFileName, boolean firstTime ) throws URISyntaxException {
 
-		// If the file does not exist, write an error and exit
-		if( !FileEntity.fileExists( fileName ) ) {
-			System.out.println( (("Error  --  The input file " + fileName) + " was not found ") );
-			GUIFrame.shutdown(0);
-		}
+		URI fileURI = new File(rawFileName).toURI();
 
-		// Open the file
-		file = new FileEntity( fileName, FileEntity.FILE_READ, false );
+		String path = fileURI.getPath();
 
-		String mainRootDirectory = null;
+		String dir = path.substring(0, path.lastIndexOf('/')+1);
+		URI dirURI = new URI("file", dir, null);
+		String fileName = path.substring(path.lastIndexOf('/') + 1, path.length());
 
-		if( firstTime ) {
+		readStream("", dirURI, fileName);
 
-			// Store the directory of the first input file
-			file.setRootDirectory();
-		}
-		else {
+		FileEntity.setRootDirectory(dir);
 
-			// Save the directory of the first file
-			mainRootDirectory = FileEntity.getRootDirectory();
+		GUIFrame.instance().setProgressText(fileName);
 
-			// Switch to the directory of the current input file
-			file.setRootDirectory();
-		}
-
-		// Initialize the input file
-		file.toStart();
-
-		GUIFrame.instance().setProgressText(file.getFileName());
-
-		// For each line in the file
-		while( true ) {
-
-			// Read the next line to record
-			record = getNextParsedRecord( file );
-//			System.out.println( record.toString() );
-
-			// Determine the amount of file read and update the progress gauge
-			int per = (int)(((double)file.getNumRead()) / ((double)file.getLength()) * 100.0);
-			GUIFrame.instance().setProgress( per );
-
-			// When end-of-file is reached, record.size() == 0
-			if( endOfFileReached ) {
-				break;
-			}
-
-			// Process this line if it is not empty
-			if ( record.size() > 0 ) {
-
-				// If there is an included file, LoadConfigurationFile is run for that (This is recursive)
-				InputAgent.readRecord(record, file);
-			}
-		}
 
 		// Reset the progress bar to zero and remove its label
 		GUIFrame.instance().setProgressText(null);
 		GUIFrame.instance().setProgress(0);
-
-		// Close the file
-		file.close();
-
-		// Restore to the directory of the first input file
-		if ( ! firstTime ) {
-			FileEntity.setRootDirectory( mainRootDirectory );
-		}
-	}
-
-	/**
-	 * Reads record, either as a default, define statement, include, or keyword
-	 * @param record
-	 * @param file
-	 */
-	private static void readRecord(Vector record, FileEntity file) {
-		try {
-			if(record.size() < 2)
-				throw new InputErrorException("Invalid input line - missing keyword or parameter");
-
-			if( "DEFINE".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
-				ArrayList<String> tempCopy = new ArrayList<String>(record.size());
-				for (int i = 0; i < record.size(); i++)
-					tempCopy.add((String)record.get(i));
-				InputAgent.processDefineRecord(tempCopy);
-			}
-
-			else if( "INCLUDE".equalsIgnoreCase( (String)record.get( 0 ) )  ) {
-				if( record.size() != 2 )
-					throw new InputErrorException("There must be exactly two entries in an Include record");
-
-				if( ! FileEntity.fileExists( (String)record.get( 1 ) ) )
-					throw new InputErrorException("File not found: %s", (String)record.get(1));
-
-				// Load the included file and process its records first
-				InputAgent.loadConfigurationFile( (String)record.get( 1 ), false );
-				GUIFrame.instance().setProgressText(file.getFileName());
-			}
-
-			// is a keyword
-			else {
-				try {
-					InputAgent.processData(record);
-				}
-				catch( InputErrorException iee ) {  // processData already logs an InputErrorException
-				}
-			}
-		}
-		catch( InputErrorException iee ) {
-			InputAgent.logError( iee.getMessage() );
-		}
-	}
-
-	// Read the next line of the file
-	protected static Vector getNextParsedRecord(FileEntity file) {
-
-		Vector record = new Vector();
-
-		int noOfUnclosedBraces = 0;
-
-		do {
-			Vector nextLine = file.readAndParseRecord();
-			InputAgent.echoInput(nextLine);
-			if (nextLine.size() == 0) {
-				endOfFileReached = true;
-			}
-			else {
-				endOfFileReached = false;
-			}
-
-			// Set flag if input records added through the EditBox interface are found
-			if ( !(endOfFileReached) && ( ((String) nextLine.get( 0 )).equalsIgnoreCase( addedRecordMarker ) ) ) {
-				addedRecordFound = true;
-			}
-
-			Util.discardComment( nextLine );
-
-			// Count braces and allow input with a missing space following an opening brace and/or a missing space preceding a closing brace
-			for (int i = 0; i < nextLine.size(); i++) {
-				String checkRecord = (String)nextLine.get( i );
-				Vector parsedString = new Vector( nextLine.size() );
-
-				// Check for braces
-				for  (int j=0; j<checkRecord.length(); j++) {
-
-					// '(' & ')' are not allowed in the input file
-					if( checkRecord.charAt(j) == '(' || checkRecord.charAt(j) == ')' ) {
-						throw new ErrorException( "\n\"" + checkRecord.charAt(j) + "\""  + " is not allowed in the input file: \n" + nextLine + "\n" + FileEntity.getRootDirectory() + file.getFileName() );
-					}
-					if	(checkRecord.charAt(j) == '{') {
-						noOfUnclosedBraces++;
-						parsedString.add("{");
-					}
-					else if (checkRecord.charAt(j) == '}') {
-						noOfUnclosedBraces--;
-						parsedString.add("}");
-					} else {
-						// no brace is found, assume it is a whole word until the next brace
-						StringBuffer stringDump = new StringBuffer( checkRecord.length() );
-						// iterate through
-						for ( int k = j; k<checkRecord.length(); k++ ) {
-							// if a brace is found, end checking this word
-							if ( checkRecord.charAt(k) == '{' || checkRecord.charAt(k) == '}' ) {
-								k = checkRecord.length();
-							}
-							// otherwise, make the word
-							else {
-								stringDump.append( checkRecord.charAt(k) );
-							}
-						}
-						j += stringDump.length() - 1;
-						parsedString.add(stringDump.toString());
-					}
-
-				}
-
-				// Add brackets as separate entries
-				if (parsedString.size() > 1 ) {
-					nextLine.remove( i );
-					nextLine.addAll( i , parsedString );
-					i = i + parsedString.size() - 1;
-				}
-
-			}
-			record.addAll(nextLine);
-
-		} while ( ( noOfUnclosedBraces != 0 ) && ( !endOfFileReached ) );
-
-		if( noOfUnclosedBraces != 0 ) {
-			InputAgent.logError("Missing closing brace");
-		}
-		return record;
 
 	}
 
@@ -1052,11 +877,12 @@ public class InputAgent {
 				File temp = new File(chosenFileName);
 
 				if( temp.isAbsolute() ) {
-					FileEntity.setRootDirectory( temp.getParentFile() );
-					InputAgent.configure(gui, temp.getName());
+					//FileEntity.setRootDirectory( temp.getParentFile() );
+					InputAgent.configure(gui, chosenFileName);
 				}
 				else {
-					InputAgent.configure(gui, chosenFileName);
+					System.out.printf("Error: loading a relative file: %s\n", chosenFileName);
+					//InputAgent.configure(gui, chosenFileName);
 				}
 				GUIFrame.displayWindows(true);
 				FrameBox.valueUpdate();
@@ -1611,5 +1437,33 @@ public class InputAgent {
 		return inputs;
 	}
 
+	/**
+	 * This is the heart of path handling, find a file relative to a root 'context' and then check that
+	 * the normalized URI matches the jail prefix, otherwise reject it
+	 * @param context
+	 * @param path
+	 * @param jailPrefix
+	 * @return
+	 */
+	private static URI getFileURI(URI context, String path, String jailPrefix) throws URISyntaxException {
+		URI pathURI = new URI(null, path, null);
+
+		URI ret = null;
+		if (context.isOpaque()) {
+			// Things are going to get messy in here
+			URI schemeless = new URI(null, context.getSchemeSpecificPart(), null);
+			URI resolved = schemeless.resolve(pathURI).normalize();
+			ret = new URI(context.getScheme(), resolved.toString(), null);
+		} else {
+			ret = context.resolve(pathURI).normalize();
+		}
+
+		if (jailPrefix != null && ret.toString().indexOf(jailPrefix) != 0) {
+			System.out.printf("Failed jail test: %s in jail: %s context: %s\n", ret.toString(), jailPrefix, context.toString());
+			return null; // This resolved URI is not in our jail
+		}
+
+		return ret;
+	}
 
 }
