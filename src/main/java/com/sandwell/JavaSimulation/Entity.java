@@ -76,12 +76,16 @@ public class Entity {
 	 * Constructor for entity initializing members.
 	 */
 	public Entity() {
-		entityNumber = ++entityCount;
+		entityNumber = getNextID();
 		synchronized(allInstances) {
 			allInstances.add(this);
 		}
 
 		flags = 0;
+	}
+
+	private static synchronized long getNextID() {
+		return ++entityCount;
 	}
 
 	public static ArrayList<? extends Entity> getAll() {
