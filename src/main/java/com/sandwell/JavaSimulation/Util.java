@@ -17,33 +17,18 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+
 	/**
 	 *
 	 *
 	 */
 public class Util {
-	private static String cargoUnits = "";
-	private static String cargoUnitsPerHour = "";
-
 	public static final Comparator<Entity> nameSort = new Comparator<Entity>() {
 		@Override
 		public int compare(Entity a, Entity b) {
 			return a.getName().compareTo(b.getName());
 		}
 	};
-
-	public static String getCargoUnits() {
-		return cargoUnits;
-	}
-
-	public static String getCargoUnitsPerHour() {
-		return cargoUnitsPerHour;
-	}
-
-	public static void setCargoUnits(String units) {
-		cargoUnits = units;
-		cargoUnitsPerHour = cargoUnits + "/h";
-	}
 
 	/**
 	 *
