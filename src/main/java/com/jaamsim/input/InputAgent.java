@@ -70,6 +70,9 @@ public class InputAgent {
 
 	private static String reportDirectory;
 
+	private static URI parsingContext = null;
+	private static String parsingJail = "";
+
 	static {
 		addedRecordFound = false;
 		sessionEdited = false;
@@ -266,6 +269,9 @@ public class InputAgent {
 			InputAgent.logWarning("Unable to resolve path %s%s - %s", root, path.toString(), file);
 			return false;
 		}
+
+		parsingContext = resolved;
+		parsingJail = root;
 
 		BufferedReader buf = null;
 		try {
@@ -877,12 +883,10 @@ public class InputAgent {
 				File temp = new File(chosenFileName);
 
 				if( temp.isAbsolute() ) {
-					//FileEntity.setRootDirectory( temp.getParentFile() );
 					InputAgent.configure(gui, chosenFileName);
 				}
 				else {
 					System.out.printf("Error: loading a relative file: %s\n", chosenFileName);
-					//InputAgent.configure(gui, chosenFileName);
 				}
 				GUIFrame.displayWindows(true);
 				FrameBox.valueUpdate();
@@ -1464,6 +1468,21 @@ public class InputAgent {
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Get the URI for the relative path file WRT to the current parsing context
+	 * @param path
+	 * @return
+	 */
+	public static URI getFileURI(String path) {
+		try {
+			return getFileURI(parsingContext, path, parsingJail);
+		} catch (URISyntaxException ex) {
+			rethrowWrapped(ex);
+		}
+		// unreachable
+		return null;
 	}
 
 }

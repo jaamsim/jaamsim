@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.text.DecimalFormat;
 
 /**
@@ -87,12 +88,6 @@ public class FileEntity {
 			throw new ErrorException( e );
 		}
 
-		// Case 2) the file does not exist inside the jar file
-		if( staticFormatter == null ) {
-			staticFormatter = new DecimalFormat( "##0.00" );
-		}
-		formatter = new DecimalFormat( "##0.00" );
-
 		// Check if absolute file name was passed, otherwise use root directory
 		backingFileObject = new File( fileName);
 		if( backingFileObject.isAbsolute() ) {
@@ -102,6 +97,22 @@ public class FileEntity {
 		else {
 			backingFileObject = new File( rootDirectory, fileName );
 		}
+
+		init(io_status, append);
+	}
+
+	public FileEntity(URI file, int io_status, boolean append) {
+		backingFileObject = new File(file);
+		init(io_status, append);
+	}
+
+	private void init(int io_status, boolean append) {
+
+		// Case 2) the file does not exist inside the jar file
+		if( staticFormatter == null ) {
+			staticFormatter = new DecimalFormat( "##0.00" );
+		}
+		formatter = new DecimalFormat( "##0.00" );
 
 		fname = backingFileObject.getName();
 		try {

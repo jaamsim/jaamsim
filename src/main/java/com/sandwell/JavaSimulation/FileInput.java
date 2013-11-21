@@ -14,9 +14,13 @@
  */
 package com.sandwell.JavaSimulation;
 
-public class FileInput extends Input<String> {
+import java.net.URI;
 
-	public FileInput(String key, String cat, String def) {
+import com.jaamsim.input.InputAgent;
+
+public class FileInput extends Input<URI> {
+
+	public FileInput(String key, String cat, URI def) {
 		super(key, cat, def);
 	}
 
@@ -24,6 +28,10 @@ public class FileInput extends Input<String> {
 	public void parse(StringVector input)
 	throws InputErrorException {
 		Input.assertCount(input, 1);
-		value = input.get(0);
+		value = InputAgent.getFileURI(input.get(0));
+	}
+
+	public FileEntity getFileEntity(int io_status, boolean append) {
+		return new FileEntity(value, io_status, append);
 	}
 }
