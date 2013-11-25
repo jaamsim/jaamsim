@@ -36,9 +36,9 @@ Define	ImageModel {
 					ExponentialDistributionIconModel
 					}
 
-ProbabilityDistributionIconModel	ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
-NormalDistributionIconModel			ImageFile { '/resources/images/Norm Dist-256.png'     }   Transparent { TRUE }
-ExponentialDistributionIconModel	ImageFile { '/resources/images/Exp Dist-256.png'      }   Transparent { TRUE }
+ProbabilityDistributionIconModel	ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
+NormalDistributionIconModel			ImageFile { '<res>/images/Norm Dist-256.png'     }   Transparent { TRUE }
+ExponentialDistributionIconModel	ImageFile { '<res>/images/Exp Dist-256.png'      }   Transparent { TRUE }
 
 UniformDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 TriangularDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }

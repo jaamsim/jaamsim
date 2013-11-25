@@ -22,9 +22,9 @@ Define	ImageModel {
 			FluidCentrifugalPumpIconModel
 		}
 
-FluidIconModel                 ImageFile { '/resources/images/Fluid-256.png' }   Transparent { TRUE }
-FluidFlowIconModel             ImageFile { '/resources/images/Flow-256.png' }   Transparent { TRUE }
-FluidCentrifugalPumpIconModel  ImageFile { '/resources/images/Pump-256.png' }   Transparent { TRUE }
+FluidIconModel                 ImageFile { '<res>/images/Fluid-256.png' }   Transparent { TRUE }
+FluidFlowIconModel             ImageFile { '<res>/images/Flow-256.png' }   Transparent { TRUE }
+FluidCentrifugalPumpIconModel  ImageFile { '<res>/images/Pump-256.png' }   Transparent { TRUE }
 
 Fluid                 DefaultDisplayModel 	{ FluidIconModel }
 FluidFlow             DefaultDisplayModel 	{ FluidFlowIconModel }

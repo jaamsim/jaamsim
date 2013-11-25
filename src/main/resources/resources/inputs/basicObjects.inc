@@ -21,9 +21,9 @@ Define	ImageModel {
 			ServerIconModel
 			}
 			
-SourceIconModel         ImageFile { '/resources/images/Source-256.png' }      Transparent { TRUE }
-SinkIconModel           ImageFile { '/resources/images/Sink-256.png'   }      Transparent { TRUE }
-ServerIconModel         ImageFile { '/resources/images/Server-256.png' }      Transparent { TRUE }
+SourceIconModel         ImageFile { '<res>/images/Source-256.png' }      Transparent { TRUE }
+SinkIconModel           ImageFile { '<res>/images/Sink-256.png'   }      Transparent { TRUE }
+ServerIconModel         ImageFile { '<res>/images/Server-256.png' }      Transparent { TRUE }
 
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
 Server                  JavaClass { com.jaamsim.BasicObjects.Server                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}

@@ -15,7 +15,7 @@
 package com.jaamsim.DisplayModels;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Transform;
@@ -29,10 +29,10 @@ import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
+import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.OverlayImage;
@@ -41,7 +41,7 @@ public class ImageModel extends DisplayModel {
 
 	@Keyword(description = "The file containing the image to show, valid formats are: BMP, JPG, PNG, PCX, GIF.",
 	         example = "Ship3DModel ImageFile { ..\\images\\CompanyIcon.png }")
-	private final StringInput imageFile;
+	private final FileInput imageFile;
 
 	@Keyword(description = "Indicates the loaded image has an alpha channel (transparency information) that should be used",
 	         example = "CompanyLogo Transparent { TRUE }")
@@ -54,7 +54,7 @@ public class ImageModel extends DisplayModel {
 	private static ArrayList<String> validFileExtentions;
 
 	{
-		imageFile = new StringInput( "ImageFile", "DisplayModel", null );
+		imageFile = new FileInput( "ImageFile", "DisplayModel", null );
 		this.addInput( imageFile, true);
 
 		transparent = new BooleanInput("Transparent", "DisplayModel", false);
@@ -89,12 +89,12 @@ public class ImageModel extends DisplayModel {
 	}
 
 	public String getImageFile() {
-		return imageFile.getValue();
+		return imageFile.getValue().toString();
 	}
 
 	@Override
 	public void validate() {
-		String ext = Util.getFileExtention(imageFile.getValue());
+		String ext = Util.getFileExtention(imageFile.getValue().toString());
 		if(! validFileExtentions.contains(ext)){
 			throw new InputErrorException("Invalid file format \"%s\"", imageFile.getValue());
 		}
@@ -108,7 +108,7 @@ public class ImageModel extends DisplayModel {
 
 		private Transform transCache;
 		private Vec3d scaleCache;
-		private String imageCache;
+		private URI imageCache;
 		private boolean compressedCache;
 		private boolean transparentCache;
 		private VisibilityInfo viCache;
@@ -133,7 +133,7 @@ public class ImageModel extends DisplayModel {
 				pickingID = dispEnt.getEntityNumber();
 			}
 
-			String imageName = imageFile.getValue();
+			URI imageName = imageFile.getValue();
 			Boolean transp = transparent.getValue();
 			Boolean compressed = compressedTexture.getValue();
 
@@ -166,7 +166,7 @@ public class ImageModel extends DisplayModel {
 
 			cachedProxies = new ArrayList<RenderProxy>();
 			try {
-				cachedProxies.add(new ImageProxy(new URL(Util.getAbsoluteFilePath(imageName)), trans,
+				cachedProxies.add(new ImageProxy(imageName.toURL(), trans,
 				                       scale, transp, compressed, vi, pickingID));
 			} catch (MalformedURLException e) {
 				cachedProxies.add(new ImageProxy(TexCache.BAD_TEXTURE, trans, scale,
@@ -194,7 +194,7 @@ public class ImageModel extends DisplayModel {
 
 		private OverlayTextureProxy cachedProxy = null;
 
-		private String filenameCache;
+		private URI filenameCache;
 		private IntegerVector posCache;
 		private IntegerVector sizeCache;
 		private boolean alignBottomCache;
@@ -217,7 +217,7 @@ public class ImageModel extends DisplayModel {
 				return;
 			}
 
-			String filename = imageFile.getValue();
+			URI filename = imageFile.getValue();
 			IntegerVector pos = imageObservee.getScreenPosition();
 			IntegerVector size = imageObservee.getImageSize();
 
@@ -254,7 +254,7 @@ public class ImageModel extends DisplayModel {
 
 			try {
 				cachedProxy = new OverlayTextureProxy(pos.get(0), pos.get(1), size.get(0), size.get(1),
-				                                      new URL(Util.getAbsoluteFilePath(filename)),
+				                                      filename.toURL(),
 				                                      transparent.getValue(), false,
 				                                      alignRight, alignBottom, vi);
 

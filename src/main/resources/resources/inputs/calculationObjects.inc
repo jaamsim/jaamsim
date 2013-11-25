@@ -55,22 +55,22 @@ Define	ImageModel {
 			NotOperatorIconModel
 		}
 
-ControllerIconModel      ImageFile { '/resources/images/Controller-256.png' }      Transparent { TRUE }
-ConstantValueIconModel   ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
-WeightedSumIconModel     ImageFile { '/resources/images/WeightedSum-256.png' }     Transparent { TRUE }
-PolynomialIconModel      ImageFile { '/resources/images/Polynomial-256.png' }      Transparent { TRUE }
-IntegratorIconModel      ImageFile { '/resources/images/Integrator-256.png' }      Transparent { TRUE }
-DifferentiatorIconModel  ImageFile { '/resources/images/Differentiator-256.png' }  Transparent { TRUE }
-PIDControllerIconModel   ImageFile { '/resources/images/PID-256.png' }             Transparent { TRUE }
-LagIconModel             ImageFile { '/resources/images/LAG-256.png' }             Transparent { TRUE }
-MovingAverageIconModel   ImageFile { '/resources/images/AVG-256.png' }             Transparent { TRUE }
-SensorIconModel          ImageFile { '/resources/images/Sensor-256.png' }          Transparent { TRUE }
-SineWaveIconModel        ImageFile { '/resources/images/SineWave-256.png' }        Transparent { TRUE }
-SquareWaveIconModel      ImageFile { '/resources/images/SquareWave-256.png' }      Transparent { TRUE }
-ConstantBooleanIconModel ImageFile { '/resources/images/ConstantValue-256.png' }   Transparent { TRUE }
-AndOperatorIconModel     ImageFile { '/resources/images/AND-256.png' }             Transparent { TRUE }
-OrOperatorIconModel      ImageFile { '/resources/images/OR-256.png' }              Transparent { TRUE }
-NotOperatorIconModel     ImageFile { '/resources/images/NOT-256.png' }             Transparent { TRUE }
+ControllerIconModel      ImageFile { '<res>/images/Controller-256.png' }      Transparent { TRUE }
+ConstantValueIconModel   ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
+WeightedSumIconModel     ImageFile { '<res>/images/WeightedSum-256.png' }     Transparent { TRUE }
+PolynomialIconModel      ImageFile { '<res>/images/Polynomial-256.png' }      Transparent { TRUE }
+IntegratorIconModel      ImageFile { '<res>/images/Integrator-256.png' }      Transparent { TRUE }
+DifferentiatorIconModel  ImageFile { '<res>/images/Differentiator-256.png' }  Transparent { TRUE }
+PIDControllerIconModel   ImageFile { '<res>/images/PID-256.png' }             Transparent { TRUE }
+LagIconModel             ImageFile { '<res>/images/LAG-256.png' }             Transparent { TRUE }
+MovingAverageIconModel   ImageFile { '<res>/images/AVG-256.png' }             Transparent { TRUE }
+SensorIconModel          ImageFile { '<res>/images/Sensor-256.png' }          Transparent { TRUE }
+SineWaveIconModel        ImageFile { '<res>/images/SineWave-256.png' }        Transparent { TRUE }
+SquareWaveIconModel      ImageFile { '<res>/images/SquareWave-256.png' }      Transparent { TRUE }
+ConstantBooleanIconModel ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
+AndOperatorIconModel     ImageFile { '<res>/images/AND-256.png' }             Transparent { TRUE }
+OrOperatorIconModel      ImageFile { '<res>/images/OR-256.png' }              Transparent { TRUE }
+NotOperatorIconModel     ImageFile { '<res>/images/NOT-256.png' }             Transparent { TRUE }
 
 Controller              DefaultDisplayModel 	{ ControllerIconModel }
 ConstantValue           DefaultDisplayModel 	{ ConstantValueIconModel }
