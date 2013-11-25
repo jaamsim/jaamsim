@@ -19,6 +19,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -485,12 +486,13 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 		return ret;
 	}
 
-	public static MeshProtoKey FileNameToMeshProtoKey(String filename) {
+	public static MeshProtoKey FileNameToMeshProtoKey(URI fileURI) {
 		try {
-			URL meshURL = new URL(Util.getAbsoluteFilePath(filename));
+			URL meshURL = fileURI.toURL();
 
-			String ext = filename.substring(filename.length() - 4,
-					filename.length());
+			String fileString = fileURI.toString();
+			String ext = fileString.substring(fileString.length() - 4,
+					fileString.length());
 
 			if (ext.toUpperCase().equals(".ZIP")) {
 				// This is a zip, use a zip stream to actually pull out

@@ -14,6 +14,7 @@
  */
 package com.jaamsim.DisplayModels;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -34,9 +35,9 @@ import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
@@ -44,18 +45,18 @@ public class ColladaModel extends DisplayModel {
 
 	@Keyword(description = "The file containing the image to show, valid formats are: BMP, JPG, PNG, PCX, GIF.",
 	         example = "Ship3DModel ColladaFile { ..\\images\\CompanyIcon.png }")
-	private final StringInput colladaFile;
+	private final FileInput colladaFile;
 
 	@Keyword(description = "A list of active actions and the entity output that drives them",
 	         example = "Ship3DModel Actions { { ContentAction Contents } { BoomAngleAction BoomAngle } }")
 	private final ActionListInput actions;
 
-	private static HashMap<String, MeshProtoKey> _cachedKeys = new HashMap<String, MeshProtoKey>();
+	private static HashMap<URI, MeshProtoKey> _cachedKeys = new HashMap<URI, MeshProtoKey>();
 
 	private static ArrayList<String> validFileExtentions;
 
 	{
-		colladaFile = new StringInput( "ColladaFile", "DisplayModel", null );
+		colladaFile = new FileInput( "ColladaFile", "DisplayModel", null );
 		this.addInput( colladaFile, true);
 
 		actions = new ActionListInput("Actions", "DisplayModel", new ArrayList<Action.Binding>());
@@ -82,28 +83,28 @@ public class ColladaModel extends DisplayModel {
 
 	@Override
 	public void validate() {
-		String ext = Util.getFileExtention(colladaFile.getValue());
+		String ext = Util.getFileExtention(colladaFile.getValue().toString());
 		if(! validFileExtentions.contains(ext)){
 			throw new InputErrorException("Invalid file format \"%s\"", colladaFile.getValue());
 		}
 	}
 
-	public String getColladaFile() {
+	public URI getColladaFile() {
 		return colladaFile.getValue();
 	}
 
-	public static MeshProtoKey getCachedMeshKey(String shapeString) {
+	public static MeshProtoKey getCachedMeshKey(URI shapeURI) {
 
-		MeshProtoKey meshKey = _cachedKeys.get(shapeString);
+		MeshProtoKey meshKey = _cachedKeys.get(shapeURI);
 
 		if (meshKey == null) {
 			// This has not been cached yet
-			meshKey = RenderUtils.FileNameToMeshProtoKey(shapeString);
+			meshKey = RenderUtils.FileNameToMeshProtoKey(shapeURI);
 			assert(meshKey != null);
-			_cachedKeys.put(shapeString, meshKey);
+			_cachedKeys.put(shapeURI, meshKey);
 		}
 
-		return _cachedKeys.get(shapeString);
+		return _cachedKeys.get(shapeURI);
 	}
 
 	private class Binding extends DisplayModelBinding {
@@ -114,7 +115,7 @@ public class ColladaModel extends DisplayModel {
 
 		private Transform transCache;
 		private Vec3d scaleCache;
-		private String colCache;
+		private URI colCache;
 		private ArrayList<Action.Queue> actionsCache;
 		private VisibilityInfo viCache;
 
@@ -141,7 +142,7 @@ public class ColladaModel extends DisplayModel {
 				pickingID = dispEnt.getEntityNumber();
 			}
 
-			String filename = colladaFile.getValue();
+			URI filename = colladaFile.getValue();
 
 			ArrayList<Action.Queue> aqList = new ArrayList<Action.Queue>();
 			for (Action.Binding b : actions.getValue()) {

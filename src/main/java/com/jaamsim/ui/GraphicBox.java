@@ -25,6 +25,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -154,8 +155,7 @@ public class GraphicBox extends JDialog {
 					return;
 
 				String fileName = chooser.getFile();
-				String chosenFileName = chooser.getDirectory() + fileName;
-				chosenFileName = chosenFileName.trim();
+				File f = new File(chooser.getDirectory() + fileName);
 
 				int to = fileName.contains(".") ? fileName.indexOf(".") : fileName.length()-1;
 				String entityName = fileName.substring(0, to); // File name without the extension
@@ -164,7 +164,7 @@ public class GraphicBox extends JDialog {
 				DisplayModel newModel = InputAgent.defineEntityWithUniqueName(ColladaModel.class, entityName, true);
 
 				StringVector data = new StringVector(1);
-				data.add(chosenFileName);
+				data.add(f.toURI().toString());
 
 				Input<?> in = newModel.getInput("ColladaFile");
 				InputAgent.apply(newModel, in, data, null);

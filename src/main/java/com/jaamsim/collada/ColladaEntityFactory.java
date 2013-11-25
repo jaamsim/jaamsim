@@ -16,6 +16,7 @@ package com.jaamsim.collada;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.controllers.RenderManager;
@@ -77,7 +78,7 @@ public class ColladaEntityFactory extends Entity {
 
 	private void createEntityFromFile(File f) throws IOException {
 		String fileName = f.getName();
-		String filePath = f.getCanonicalPath();
+		URI fileURI = f.toURI();
 
 		int i = fileName.lastIndexOf('.');
 		String extension = null;
@@ -99,9 +100,9 @@ public class ColladaEntityFactory extends Entity {
 		String modelName = entityName + "-model";
 		ColladaModel dm = InputAgent.defineEntity(ColladaModel.class, modelName, true);
 
-		InputAgent.processEntity_Keyword_Value(dm, "ColladaFile", "'" + filePath + "'");
+		InputAgent.processEntity_Keyword_Value(dm, "ColladaFile", "'" + fileURI.toString() + "'");
 
-		MeshProtoKey meshKey = RenderUtils.FileNameToMeshProtoKey(filePath);
+		MeshProtoKey meshKey = RenderUtils.FileNameToMeshProtoKey(fileURI);
 		AABB modelBounds = RenderManager.inst().getMeshBounds(meshKey, true);
 
 		DisplayEntity de = InputAgent.defineEntity(DisplayEntity.class, entityName, true);

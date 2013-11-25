@@ -13,11 +13,11 @@ Define				DisplayModel		{ BarGauge2D }
 BarGauge2D			Shape				{ BARGAUGE2D }
 
 Define				ColladaModel		{ CrossHairs }
-CrossHairs			ColladaFile			{ '/resources/shapes/CrossHairs.dae' }
+CrossHairs			ColladaFile			{ '<res>/shapes/CrossHairs.dae' }
 
 Define		ColladaModel	{ Cube }
-Cube		ColladaFile		{ '/resources/shapes/cube.dae' }
+Cube		ColladaFile		{ '<res>/shapes/cube.dae' }
 DisplayEntity	DefaultDisplayModel { Cube }
 
 Define		ColladaModel	{ Sphere }
-Sphere		ColladaFile		{ '/resources/shapes/Sphere.dae' }
+Sphere		ColladaFile		{ '<res>/shapes/Sphere.dae' }
