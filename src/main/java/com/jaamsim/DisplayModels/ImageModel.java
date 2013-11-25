@@ -88,8 +88,8 @@ public class ImageModel extends DisplayModel {
 		return ent instanceof DisplayEntity;
 	}
 
-	public String getImageFile() {
-		return imageFile.getValue().toString();
+	public URI getImageFile() {
+		return imageFile.getValue();
 	}
 
 	@Override

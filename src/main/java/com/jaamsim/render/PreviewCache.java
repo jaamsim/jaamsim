@@ -17,6 +17,7 @@ package com.jaamsim.render;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +33,6 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.ui.View;
-import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -74,10 +74,10 @@ public class PreviewCache {
 			// Fast path out for ImageModels
 			if (dm instanceof ImageModel) {
 				ImageModel im = (ImageModel)dm;
-				String filename = im.getImageFile();
+				URI file = im.getImageFile();
 				Future<BufferedImage> ret = new Future<BufferedImage>(null);
 				try {
-					URL imageURL = new URL(Util.getAbsoluteFilePath(filename));
+					URL imageURL = file.toURL();
 					BufferedImage image = ImageIO.read(imageURL);
 
 					// For some weird reason, the resizing that may happen to this image fails silently

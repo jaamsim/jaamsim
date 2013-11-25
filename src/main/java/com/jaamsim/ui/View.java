@@ -15,6 +15,7 @@
 package com.jaamsim.ui;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -27,11 +28,11 @@ import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
+import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -94,7 +95,7 @@ private final KeyedVec3dInput centerScriptInput;
 
 @Keyword(description = "The image file to use as the background for this view.",
 example = "View1 SkyboxImage { '/resources/images/sky_map_2048x1024.jpg' }")
-private final StringInput skyboxImage;
+private final FileInput skyboxImage;
 
 private Object setLock = new Object();
 
@@ -152,7 +153,7 @@ static {
 	centerScriptInput.setUnitType(DistanceUnit.class);
 	this.addInput(centerScriptInput, true);
 
-	skyboxImage = new StringInput("SkyboxImage", "Graphics", null);
+	skyboxImage = new FileInput("SkyboxImage", "Graphics", null);
 	this.addInput(skyboxImage, true);
 
 }
@@ -321,11 +322,11 @@ public boolean isScripted() {
 
 public URL getSkyboxTexture() {
 	try {
-		String file = skyboxImage.getValue();
-		if (file == null || file.equals("")) {
+		URI file = skyboxImage.getValue();
+		if (file == null || file.toString().equals("")) {
 			return null;
 		}
-		return new URL(Util.getAbsoluteFilePath(file));
+		return file.toURL();
 	} catch (MalformedURLException ex) {
 		return null;
 	}
