@@ -215,7 +215,7 @@ public class InputAgent {
 
 	private static URI resRoot;
 	private static URI resPath;
-	private static final String res = "/resources/inputs/";
+	private static final String res = "/resources/";
 
 	static {
 
@@ -1403,7 +1403,7 @@ public class InputAgent {
 
 	public static void loadDefault() {
 		// Read the default configuration file
-		InputAgent.readResource("default.cfg");
+		InputAgent.readResource("inputs/default.cfg");
 		sessionEdited = false;
 	}
 
@@ -1450,16 +1450,27 @@ public class InputAgent {
 	 * @return
 	 */
 	private static URI getFileURI(URI context, String path, String jailPrefix) throws URISyntaxException {
-		URI pathURI = new URI(null, path, null);
-
+		int openBrace = path.indexOf('<');
+		int closeBrace = path.indexOf('>');
+		int firstSlash = path.indexOf('/');
 		URI ret = null;
-		if (context.isOpaque()) {
-			// Things are going to get messy in here
-			URI schemeless = new URI(null, context.getSchemeSpecificPart(), null);
-			URI resolved = schemeless.resolve(pathURI).normalize();
-			ret = new URI(context.getScheme(), resolved.toString(), null);
+		if (openBrace == 0 && closeBrace != -1 && firstSlash == closeBrace + 1) {
+			// Special path format, expand the resource
+			String specPath = path.substring(openBrace + 1, closeBrace);
+			if (specPath.equals("res")) {
+				ret = new URI(null, resRoot.toString() + path.substring(closeBrace+2), null).normalize();
+			}
 		} else {
-			ret = context.resolve(pathURI).normalize();
+			URI pathURI = new URI(null, path, null).normalize();
+
+			if (context.isOpaque()) {
+				// Things are going to get messy in here
+				URI schemeless = new URI(null, context.getSchemeSpecificPart(), null);
+				URI resolved = schemeless.resolve(pathURI).normalize();
+				ret = new URI(context.getScheme(), resolved.toString(), null);
+			} else {
+				ret = context.resolve(pathURI).normalize();
+			}
 		}
 
 		if (jailPrefix != null && ret.toString().indexOf(jailPrefix) != 0) {

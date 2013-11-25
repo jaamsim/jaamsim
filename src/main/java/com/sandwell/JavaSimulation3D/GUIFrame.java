@@ -262,7 +262,7 @@ public class GUIFrame extends JFrame {
 
 		// Read the autoload configuration file
 		InputAgent.clear();
-		InputAgent.readResource("autoload.cfg");
+		InputAgent.readResource("inputs/autoload.cfg");
 	}
 
 	public void initializeMenus() {
@@ -1349,7 +1349,7 @@ public class GUIFrame extends JFrame {
 		gui.setVisible(true);
 		GUIFrame.calcWindowDefaults();
 
-		InputAgent.readResource("autoload.cfg");
+		InputAgent.readResource("inputs/autoload.cfg");
 
 		if( configFiles.size() == 0 ) {
 			InputAgent.loadDefault();
