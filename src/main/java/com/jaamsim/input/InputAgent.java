@@ -70,9 +70,6 @@ public class InputAgent {
 
 	private static String reportDirectory;
 
-	private static URI parsingContext = null;
-	private static String parsingJail = "";
-
 	static {
 		addedRecordFound = false;
 		sessionEdited = false;
@@ -270,9 +267,6 @@ public class InputAgent {
 			return false;
 		}
 
-		parsingContext = resolved;
-		parsingJail = root;
-
 		BufferedReader buf = null;
 		try {
 			InputStream in = url.openStream();
@@ -343,8 +337,12 @@ public class InputAgent {
 			return;
 		}
 
+		Input.ParseContext pc = new Input.ParseContext();
+		pc.jail = root;
+		pc.context = path;
+
 		// Otherwise assume it is a Keyword record
-		InputAgent.processKeywordRecord(record);
+		InputAgent.processKeywordRecord(record, pc);
 	}
 
 	private static void processIncludeRecord(String root, URI path, ArrayList<String> record) throws URISyntaxException {
@@ -452,7 +450,7 @@ public class InputAgent {
 		return ent;
 	}
 
-	private static void processKeywordRecord(ArrayList<String> record) {
+	private static void processKeywordRecord(ArrayList<String> record, Input.ParseContext context) {
 		Entity ent = Input.tryParseEntity(record.get(0), Entity.class);
 		if (ent == null) {
 			InputAgent.logError("Could not find Entity: %s", record.get(0));
@@ -474,7 +472,7 @@ public class InputAgent {
 				args.add(keyword.get(i));
 			}
 			try {
-				InputAgent.processKeyword(ent, args, key);
+				InputAgent.processKeyword(ent, args, key, context);
 			}
 			catch (Throwable e) {
 				InputAgent.logError("Exception thrown from Entity: %s for keyword:%s - %s", ent.getInputName(), key, e.getMessage());
@@ -600,8 +598,8 @@ public class InputAgent {
 
 	}
 
-	public static final void apply(Entity ent, Input<?> in, StringVector data) {
-		in.parse(data);
+	public static final void apply(Entity ent, Input<?> in, StringVector data, Input.ParseContext context) {
+		in.parse(data, context);
 
 		// Only mark the keyword edited if we have finished initial configuration
 		if (InputAgent.hasAddedRecords() || InputAgent.recordEdits())
@@ -610,11 +608,11 @@ public class InputAgent {
 		ent.updateForInput(in);
 	}
 
-	public static final void apply(Entity ent, StringVector data, String keyword)
+	public static final void apply(Entity ent, StringVector data, String keyword, Input.ParseContext context)
 	throws InputErrorException {
 		Input<?> in = ent.getInput(keyword);
 		if (in != null) {
-			InputAgent.apply(ent, in, data);
+			InputAgent.apply(ent, in, data, context);
 			FrameBox.valueUpdate();
 		} else {
 			ent.readData_ForKeyword(data, keyword);
@@ -622,7 +620,7 @@ public class InputAgent {
 		}
 	}
 
-	private static void processKeyword( Entity entity, StringVector recordCmd, String keyword) {
+	private static void processKeyword( Entity entity, StringVector recordCmd, String keyword, Input.ParseContext context) {
 		if (keyword == null)
 			throw new InputErrorException("The keyword is null.");
 
@@ -634,11 +632,11 @@ public class InputAgent {
 			if( input != null && input.isAppendable() ) {
 				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(recordCmd);
 				for ( int i = 0; i < splitData.size(); i++ ) {
-					InputAgent.apply(entity, input, splitData.get(i));
+					InputAgent.apply(entity, input, splitData.get(i), context);
 				}
 			}
 			else {
-				InputAgent.apply(entity, recordCmd, keyword);
+				InputAgent.apply(entity, recordCmd, keyword, context);
 			}
 
 			// Create a list of entities to update in the edit table
@@ -682,7 +680,7 @@ public class InputAgent {
 		}
 	}
 
-	public static void processData(Entity ent, Vector rec) {
+	public static void processData(Entity ent, Vector rec, Input.ParseContext context) {
 		if( rec.get( 1 ).toString().trim().equals( "{" ) ) {
 			InputAgent.logError("A keyword expected after: %s", ent.getName());
 		}
@@ -693,7 +691,7 @@ public class InputAgent {
 			KeywordValuePair cmd = multiCmds.get(i);
 
 			// Process the record
-			InputAgent.processKeyword(ent, cmd.value, cmd.keyword);
+			InputAgent.processKeyword(ent, cmd.value, cmd.keyword, context);
 		}
 		return;
 	}
@@ -703,7 +701,7 @@ public class InputAgent {
 	 * format of record: <obj-name> <keyword> <data> <keyword> <data>
 	 * braces are included
 	 */
-	public static void processData( Vector record ) {
+	public static void processData( Vector record, Input.ParseContext context ) {
 		String item1 = ((String)record.get( 0 )).trim();
 
 		//  Checks on Entity:
@@ -714,7 +712,7 @@ public class InputAgent {
 		}
 
 		// Entity exists with name <entityName> or name <region>/<entityName>
-		InputAgent.processData(obj, record);
+		InputAgent.processData(obj, record, context);
 	}
 
 	/**
@@ -1249,7 +1247,7 @@ public class InputAgent {
 
 		Vector data = new Vector(tokens.size());
 		data.addAll(tokens);
-		InputAgent.processData(ent, data);
+		InputAgent.processData(ent, data, null);
 	}
 
 
@@ -1449,7 +1447,7 @@ public class InputAgent {
 	 * @param jailPrefix
 	 * @return
 	 */
-	private static URI getFileURI(URI context, String path, String jailPrefix) throws URISyntaxException {
+	public static URI getFileURI(URI context, String path, String jailPrefix) throws URISyntaxException {
 		int openBrace = path.indexOf('<');
 		int closeBrace = path.indexOf('>');
 		int firstSlash = path.indexOf('/');
@@ -1463,13 +1461,18 @@ public class InputAgent {
 		} else {
 			URI pathURI = new URI(null, path, null).normalize();
 
-			if (context.isOpaque()) {
-				// Things are going to get messy in here
-				URI schemeless = new URI(null, context.getSchemeSpecificPart(), null);
-				URI resolved = schemeless.resolve(pathURI).normalize();
-				ret = new URI(context.getScheme(), resolved.toString(), null);
+			if (context != null) {
+				if (context.isOpaque()) {
+					// Things are going to get messy in here
+					URI schemeless = new URI(null, context.getSchemeSpecificPart(), null);
+					URI resolved = schemeless.resolve(pathURI).normalize();
+					ret = new URI(context.getScheme(), resolved.toString(), null);
+				} else {
+					ret = context.resolve(pathURI).normalize();
+				}
 			} else {
-				ret = context.resolve(pathURI).normalize();
+				// We have no context, so hope the URI is absolute or otherwise openable
+				ret = pathURI;
 			}
 		}
 
@@ -1480,20 +1483,4 @@ public class InputAgent {
 
 		return ret;
 	}
-
-	/**
-	 * Get the URI for the relative path file WRT to the current parsing context
-	 * @param path
-	 * @return
-	 */
-	public static URI getFileURI(String path) {
-		try {
-			return getFileURI(parsingContext, path, parsingJail);
-		} catch (URISyntaxException ex) {
-			rethrowWrapped(ex);
-		}
-		// unreachable
-		return null;
-	}
-
 }

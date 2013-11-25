@@ -13,6 +13,7 @@
  * GNU General Public License for more details.
  */
 package com.sandwell.JavaSimulation;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -73,6 +74,11 @@ public abstract class Input<T> {
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean hidden; // Hide this input from the EditBox
 	protected String valueString; // value from .cfg file
+
+	public static class ParseContext {
+		public URI context;
+		public String jail;
+	}
 
 	public Input(String key, String cat, T def) {
 		keyword = key;
@@ -171,6 +177,10 @@ public abstract class Input<T> {
 	}
 
 	public abstract void parse(StringVector input) throws InputErrorException;
+
+	public void parse(StringVector input, ParseContext context) throws InputErrorException {
+		parse(input);
+	}
 
 	public static void assertCount(DoubleVector input, int... counts)
 	throws InputErrorException {

@@ -1414,7 +1414,7 @@ public class RenderManager implements DragSourceListener {
 			args.add(String.format("%.3f", size.y));
 			args.add("0.0");
 			args.add("m");
-			InputAgent.apply(dEntity, in, args);
+			InputAgent.apply(dEntity, in, args, null);
 			InputAgent.updateInput(dEntity, in, args);
 		} else {
 			Input<?> in = dEntity.getInput("Alignment");
@@ -1422,7 +1422,7 @@ public class RenderManager implements DragSourceListener {
 			args.add("0.0");
 			args.add("0.0");
 			args.add("-0.5");
-			InputAgent.apply(dEntity, in, args);
+			InputAgent.apply(dEntity, in, args, null);
 			InputAgent.updateInput(dEntity, in, args);
 		}
 		FrameBox.valueUpdate();

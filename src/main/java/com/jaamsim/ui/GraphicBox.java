@@ -167,7 +167,7 @@ public class GraphicBox extends JDialog {
 				data.add(chosenFileName);
 
 				Input<?> in = newModel.getInput("ColladaFile");
-				InputAgent.apply(newModel, in, data);
+				InputAgent.apply(newModel, in, data, null);
 				InputAgent.updateInput(newModel, in, data);
 				myInstance.refresh(); // Add the new DisplayModel to the List
 				FrameBox.valueUpdate();
@@ -190,7 +190,7 @@ public class GraphicBox extends JDialog {
 				data.add(dm.getInputName());
 
 				Input<?> in = currentEntity.getInput("DisplayModel");
-				InputAgent.apply(currentEntity, in, data);
+				InputAgent.apply(currentEntity, in, data, null);
 				InputAgent.updateInput(currentEntity, in, data);
 
 				if (!RenderManager.isGood()) {

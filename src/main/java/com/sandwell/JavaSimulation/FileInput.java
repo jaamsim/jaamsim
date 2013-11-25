@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import com.jaamsim.input.InputAgent;
 
@@ -25,13 +26,26 @@ public class FileInput extends Input<URI> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(StringVector input, Input.ParseContext context)
 	throws InputErrorException {
 		Input.assertCount(input, 1);
-		value = InputAgent.getFileURI(input.get(0));
+		try {
+			if (context != null) {
+				value = InputAgent.getFileURI(context.context, input.get(0), context.jail);
+			} else {
+				value = InputAgent.getFileURI(null, input.get(0), null);
+			}
+		} catch(URISyntaxException ex) {
+			throw new InputErrorException("File Entity parse error: %s", ex.getMessage());
+		}
 	}
 
 	public FileEntity getFileEntity(int io_status, boolean append) {
 		return new FileEntity(value, io_status, append);
+	}
+
+	@Override
+	public void parse(StringVector input) throws InputErrorException {
+		throw new InputErrorException("FileInput.parse() deprecated method called.");
 	}
 }

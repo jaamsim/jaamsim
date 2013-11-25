@@ -106,7 +106,7 @@ public class ScriptEntity extends Entity {
 		while( record.size() > 0 ) {
 
 			// Process the record
-			InputAgent.processData( record );
+			InputAgent.processData( record, null );
 
 			// If a "Time" record was read, then wait until the time
 			long delayTicks = Process.secondsToTicks(scriptTime.getValue()) - getSimTicks();

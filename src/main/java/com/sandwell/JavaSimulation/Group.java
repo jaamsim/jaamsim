@@ -89,7 +89,7 @@ public class Group extends Entity {
 
 							ArrayList<StringVector> splitData = Util.splitStringVectorByBraces( currentData );
 							for ( int k = 0; k < splitData.size(); k++ ) {
-								InputAgent.apply(ent, splitData.get(k), currentKeyword);
+								InputAgent.apply(ent, splitData.get(k), currentKeyword, null);
 								if(in != null) {
 									InputAgent.updateInput(ent, in, splitData.get( k ));
 								}
@@ -135,11 +135,11 @@ public class Group extends Entity {
 						splitData.add(new StringVector());
 
 					for ( int j = 0; j < splitData.size(); j++ ) {
-						InputAgent.apply(ent, splitData.get(j), keyword);
+						InputAgent.apply(ent, splitData.get(j), keyword, null);
 					}
 				}
 				else {
-					InputAgent.apply(ent, data, keyword);
+					InputAgent.apply(ent, data, keyword, null);
 				}
 			}
 
