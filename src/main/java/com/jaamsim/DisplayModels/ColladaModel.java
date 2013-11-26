@@ -36,9 +36,7 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileInput;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class ColladaModel extends DisplayModel {
@@ -53,20 +51,21 @@ public class ColladaModel extends DisplayModel {
 
 	private static HashMap<URI, MeshProtoKey> _cachedKeys = new HashMap<URI, MeshProtoKey>();
 
-	private static ArrayList<String> validFileExtentions;
+	private static final String[] validFileExtentions;
+	static {
+		validFileExtentions = new String[3];
+		validFileExtentions[0] = "DAE";
+		validFileExtentions[1] = "ZIP";
+		validFileExtentions[2] = "JSM";
+	}
 
 	{
 		colladaFile = new FileInput( "ColladaFile", "DisplayModel", null );
+		colladaFile.setValidExtensions(validFileExtentions);
 		this.addInput( colladaFile, true);
 
 		actions = new ActionListInput("Actions", "DisplayModel", new ArrayList<Action.Binding>());
 		this.addInput(actions, true);
-	}
-	static {
-		validFileExtentions = new ArrayList<String>();
-		validFileExtentions.add("DAE");
-		validFileExtentions.add("ZIP");
-		validFileExtentions.add("JSM");
 	}
 
 	public ColladaModel() {}
@@ -79,14 +78,6 @@ public class ColladaModel extends DisplayModel {
 	@Override
 	public boolean canDisplayEntity(Entity ent) {
 		return ent instanceof DisplayEntity;
-	}
-
-	@Override
-	public void validate() {
-		String ext = Util.getFileExtention(colladaFile.getValue().toString());
-		if(! validFileExtentions.contains(ext)){
-			throw new InputErrorException("Invalid file format \"%s\"", colladaFile.getValue());
-		}
 	}
 
 	public URI getColladaFile() {

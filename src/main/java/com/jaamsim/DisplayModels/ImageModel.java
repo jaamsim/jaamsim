@@ -30,10 +30,8 @@ import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileInput;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.Keyword;
-import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.OverlayImage;
 
@@ -51,10 +49,19 @@ public class ImageModel extends DisplayModel {
 	         example = "WorldMap CompressedTexture { TRUE }")
 	private final BooleanInput compressedTexture;
 
-	private static ArrayList<String> validFileExtentions;
+	private static final String[] validFileExtentions;
+	static {
+		validFileExtentions = new String[5];
+		validFileExtentions[0] = "BMP";
+		validFileExtentions[1] = "JPG";
+		validFileExtentions[2] = "PNG";
+		validFileExtentions[3] = "PCX";
+		validFileExtentions[4] = "GIF";
+	}
 
 	{
 		imageFile = new FileInput( "ImageFile", "DisplayModel", null );
+		imageFile.setValidExtensions(validFileExtentions);
 		this.addInput( imageFile, true);
 
 		transparent = new BooleanInput("Transparent", "DisplayModel", false);
@@ -63,14 +70,6 @@ public class ImageModel extends DisplayModel {
 		compressedTexture = new BooleanInput("CompressedTexture", "DisplayModel", false);
 		this.addInput(compressedTexture, true);
 
-	}
-	static {
-		validFileExtentions = new ArrayList<String>();
-		validFileExtentions.add("BMP");
-		validFileExtentions.add("JPG");
-		validFileExtentions.add("PNG");
-		validFileExtentions.add("PCX");
-		validFileExtentions.add("GIF");
 	}
 
 	public ImageModel() {}
@@ -90,14 +89,6 @@ public class ImageModel extends DisplayModel {
 
 	public URI getImageFile() {
 		return imageFile.getValue();
-	}
-
-	@Override
-	public void validate() {
-		String ext = Util.getFileExtention(imageFile.getValue().toString());
-		if(! validFileExtentions.contains(ext)){
-			throw new InputErrorException("Invalid file format \"%s\"", imageFile.getValue());
-		}
 	}
 
 	private class Binding extends DisplayModelBinding {
