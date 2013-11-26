@@ -15,7 +15,6 @@
 package com.jaamsim.collada;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 
 import com.jaamsim.DisplayModels.ColladaModel;
@@ -68,15 +67,11 @@ public class ColladaEntityFactory extends Entity {
 		File[] files = dirFile.listFiles();
 
 		for (File f : files) {
-			try {
-				createEntityFromFile(f);
-			} catch (IOException ex) {
-				System.out.printf("Import IO error: %s\n", ex.getMessage());
-			}
+			createEntityFromFile(f);
 		}
 	}
 
-	private void createEntityFromFile(File f) throws IOException {
+	private void createEntityFromFile(File f) {
 		String fileName = f.getName();
 		URI fileURI = f.toURI();
 
