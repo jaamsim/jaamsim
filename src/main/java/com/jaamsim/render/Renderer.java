@@ -205,6 +205,8 @@ public class Renderer implements GLAnimatorControl {
 //			long ms = (endNanos - startNanos) /1000000L;
 //			System.out.println("Creating shared context at:" + ms + "ms");
 
+			checkForIntelDriver();
+
 			initSharedContext();
 
 			// Notify the main thread we're done
@@ -1709,5 +1711,20 @@ private static class TransSortable implements Comparable<TransSortable> {
 		// Not supported
 		assert(false);
 		return false;
+	}
+
+	private void checkForIntelDriver() {
+		int res = _sharedContext.makeCurrent();
+		assert (res == GLContext.CONTEXT_CURRENT);
+
+		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
+		String vendorString = gl.glGetString(GL2GL3.GL_VENDOR).toLowerCase();
+		boolean intelDriver = vendorString.indexOf("intel") != -1;
+		if (intelDriver) {
+			_safeGraphics = true;
+		}
+
+		_sharedContext.release();
+
 	}
 }
