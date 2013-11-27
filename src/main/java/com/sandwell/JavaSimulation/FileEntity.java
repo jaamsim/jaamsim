@@ -181,6 +181,10 @@ public class FileEntity {
 		putString(String.format(format, args));
 	}
 
+	public URI getFileURI() {
+		return backingFileObject.toURI();
+	}
+
 	/**
 	 * Prints the given string for the specified number of times.
 	 */

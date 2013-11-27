@@ -38,6 +38,7 @@ import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
+import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -1227,6 +1228,11 @@ public class InputAgent {
 			if (!in.isEdited())
 				continue;
 
+			if (in instanceof FileInput) {
+				writeFileInput((FileInput)in, file, ent);
+				continue;
+			}
+
 			String value = in.getValueString();
 			ArrayList<String> tokens = new ArrayList<String>();
 			Parser.tokenize(tokens, value);
@@ -1235,6 +1241,31 @@ public class InputAgent {
 			else
 				file.format("%s %s %s%n", ent.getInputName(), in.getKeyword(), value);
 		}
+	}
+
+	static private void writeFileInput(FileInput in, FileEntity file, Entity ent) {
+		URI fileURI = file.getFileURI();
+
+		URI inputURI = in.getValue();
+
+		String resString = resRoot.toString();
+		String inputString = inputURI.toString();
+		// Check if this is a resource
+		if (inputString.indexOf(resString) == 0) {
+			file.format("%s %s { '<res>/%s' }%n", ent.getInputName(), in.getKeyword(), inputString.substring(resString.length()));
+			return;
+		}
+
+		// Try to relativize this URL to the current file
+		try {
+			String filePath = fileURI.getPath();
+			URI dirURI = new URI(fileURI.getScheme(), filePath.substring(0, filePath.lastIndexOf('/') + 1), null);
+			inputURI = dirURI.relativize(inputURI);
+		} catch (Exception ex) {
+			// We failed, just spit out an absolute URI
+		}
+
+		file.format("%s %s { '%s' }%n", ent.getInputName(), in.getKeyword(), inputURI.getPath());
 	}
 
 	public static void loadDefault() {
