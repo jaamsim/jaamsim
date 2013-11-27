@@ -852,8 +852,6 @@ public class InputAgent {
 	 *
 	 */
 	public static void printInputFileKeywords() {
-		Entity ent;
-
 		// Create report file for the inputs
 		FileEntity	inputReportFile;
 		String inputReportFileName = InputAgent.getReportDirectory() + InputAgent.getRunName() + ".inp";
@@ -867,22 +865,17 @@ public class InputAgent {
 			inputReportFile = new FileEntity( inputReportFileName, FileEntity.FILE_WRITE, false );
 		}
 
-		// Loop through the entity classes
-		boolean hasinput = false;		// for formating output
-		int count = 0;					// for formating output
-		String entityName = null;		// to take out Region name
-
-		// print Define statements
+		// Loop through the entity classes printing Define statements
 		for (ObjectType type : ObjectType.getAll()) {
 			Class<? extends Entity> each = type.getJavaClass();
 
 			// Loop through the instances for this entity class
 			ArrayList<? extends Entity> cloneList = Entity.getInstancesOf(each);
-			count = 0;
+			int count = 0;
 			for (int j = 0; j < cloneList.size(); j++) {
-				hasinput = false;
+				boolean hasinput = false;
 
-				ent = cloneList.get(j);
+				Entity ent = cloneList.get(j);
 				for (Input<?> in : ent.getEditableInputs()) {
 					// If the keyword has been used, then add a record to the report
 					if (in.getValueString().length() != 0) {
@@ -892,14 +885,8 @@ public class InputAgent {
 					}
 				}
 
-				if (each.getSimpleName().equalsIgnoreCase("Region") && !hasinput)
-				{
-					count++;
-					hasinput = true;
-				}
-
 				if (hasinput) {
-					entityName = cloneList.get(j).getInputName();
+					String entityName = ent.getInputName();
 					if ((count - 1) % 5 == 0) {
 						inputReportFile.putString("Define");
 						inputReportFile.putTab();
@@ -954,9 +941,9 @@ public class InputAgent {
 
 				// Make sure the clone is an instance of the class (and not an instance of a subclass)
 				if (cloneList.get(j).getClass() == each) {
-					ent = cloneList.get(j);
-					entityName = cloneList.get(j).getInputName();
-					hasinput = false;
+					Entity ent = cloneList.get(j);
+					String entityName = ent.getInputName();
+					boolean hasinput = false;
 
 					// Loop through the editable keywords for this instance
 					for (Input<?> in : ent.getEditableInputs()) {
