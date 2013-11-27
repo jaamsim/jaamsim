@@ -533,7 +533,7 @@ public class InputAgent {
 			System.out.println( "Creating trace file" );
 
 			URI confURI = new File(fileName).toURI();
-			URI logURI = confURI.resolve(inputTraceFileName);
+			URI logURI = confURI.resolve(new URI(null, inputTraceFileName, null)); // The new URI here effectively escapes the file name
 
 			// Set and open the input trace file name
 			logFile = new FileEntity( logURI.getPath(), FileEntity.FILE_WRITE, false );
