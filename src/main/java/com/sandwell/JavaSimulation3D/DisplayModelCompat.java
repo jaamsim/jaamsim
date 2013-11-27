@@ -166,7 +166,7 @@ public class DisplayModelCompat extends DisplayModel {
 		private Transform transCache;
 		private Vec3d scaleCache;
 		private DisplayEntity.TagSet tagsCache;
-		private String shapeStringCache;
+		private ValidShapes shapeCache;
 		private VisibilityInfo viCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
@@ -184,20 +184,20 @@ public class DisplayModelCompat extends DisplayModel {
 			long pickingID = getPickingID();
 			DisplayEntity.TagSet tags = getTags();
 			VisibilityInfo vi = getVisibilityInfo();
-			String shapeString = shape.getValueString();
+			ValidShapes sc = shape.getValue();
 
 			boolean dirty = false;
 
 			dirty = dirty || !compare(transCache, trans);
 			dirty = dirty || dirty_vec3d(scaleCache, scale);
 			dirty = dirty || !tags.isSame(tagsCache);
-			dirty = dirty || !compare(shapeStringCache, shapeString);
+			dirty = dirty || !compare(shapeCache, sc);
 			dirty = dirty || !compare(viCache, vi);
 
 			transCache = trans;
 			scaleCache = scale;
 			tagsCache = new DisplayEntity.TagSet(tags);
-			shapeStringCache = shapeString;
+			shapeCache = sc;
 			viCache = vi;
 
 			if (cachedProxies != null && !dirty) {
@@ -211,7 +211,7 @@ public class DisplayModelCompat extends DisplayModel {
 			cachedProxies = new ArrayList<RenderProxy>();
 
 			List<Vec4d> points = null;
-			switch (shape.getValue()) {
+			switch (shapeCache) {
 			case SHIP2D:
 				addShipProxies(simTime);
 				return;
