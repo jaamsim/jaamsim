@@ -282,6 +282,10 @@ public class InputAgent {
 			ArrayList<String> record = new ArrayList<String>();
 			int braceDepth = 0;
 
+			Input.ParseContext pc = new Input.ParseContext();
+			pc.jail = root;
+			pc.context = path;
+
 			while (true) {
 				String line = buf.readLine();
 				// end of file, stop reading
@@ -300,11 +304,28 @@ public class InputAgent {
 					continue;
 
 				Parser.removeComments(record);
-				try {
-					InputAgent.processRecord(root, resolved, record);
-				} catch (URISyntaxException ex) {
-					rethrowWrapped(ex);
+				if (record.size() == 0)
+					continue;
+
+				if ("DEFINE".equalsIgnoreCase(record.get(0))) {
+					InputAgent.processDefineRecord(record);
+					record.clear();
+					continue;
 				}
+
+				if ("INCLUDE".equalsIgnoreCase(record.get(0))) {
+					try {
+						InputAgent.processIncludeRecord(pc.jail, resolved, record);
+					}
+					catch (URISyntaxException ex) {
+						rethrowWrapped(ex);
+					}
+					record.clear();
+					continue;
+				}
+
+				// Otherwise assume it is a Keyword record
+				InputAgent.processKeywordRecord(record, pc);
 				record.clear();
 			}
 
@@ -321,30 +342,6 @@ public class InputAgent {
 		FileEntity.setRootDirectory(oldRoot);
 
 		return true;
-	}
-
-	private static void processRecord(String root, URI path, ArrayList<String> record) throws URISyntaxException {
-		//InputAgent.echoInputRecord(record);
-
-		if (record.size() == 0)
-			return;
-
-		if (record.get(0).equalsIgnoreCase("INCLUDE")) {
-			InputAgent.processIncludeRecord(root, path, record);
-			return;
-		}
-
-		if (record.get(0).equalsIgnoreCase("DEFINE")) {
-			InputAgent.processDefineRecord(record);
-			return;
-		}
-
-		Input.ParseContext pc = new Input.ParseContext();
-		pc.jail = root;
-		pc.context = path;
-
-		// Otherwise assume it is a Keyword record
-		InputAgent.processKeywordRecord(record, pc);
 	}
 
 	private static void processIncludeRecord(String root, URI path, ArrayList<String> record) throws URISyntaxException {
