@@ -236,15 +236,18 @@ public class InputAgent {
 			return;
 
 		try {
-		readStream(resRoot.toString(), resPath, res);
-		} catch (URISyntaxException ex) {
+			readStream(resRoot.toString(), resPath, res);
+			GUIFrame.instance().setProgressText(null);
+		}
+		catch (URISyntaxException ex) {
 			rethrowWrapped(ex);
 		}
 
 	}
 
 	public static final boolean readStream(String root, URI path, String file) throws URISyntaxException {
-
+		String shortName = file.substring(file.lastIndexOf('/') + 1, file.length());
+		GUIFrame.instance().setProgressText(shortName);
 		URI resolved = getFileURI(path, file, root);
 
 		String resolvedPath = resolved.getSchemeSpecificPart();
@@ -349,9 +352,6 @@ public class InputAgent {
 			InputAgent.logError("Bad Include record, should be: Include <File>");
 			return;
 		}
-
-		// TODO handle special formats here
-
 		InputAgent.readStream(root, path, record.get(1).replaceAll("\\\\", "/"));
 	}
 
@@ -588,10 +588,6 @@ public class InputAgent {
 
 		FileEntity.setRootDirectory(dir);
 
-		GUIFrame.instance().setProgressText(fileName);
-
-
-		// Reset the progress bar to zero and remove its label
 		GUIFrame.instance().setProgressText(null);
 		GUIFrame.instance().setProgress(0);
 
