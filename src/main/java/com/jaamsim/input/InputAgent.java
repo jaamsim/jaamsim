@@ -873,62 +873,62 @@ public class InputAgent {
 		String entityName = null;		// to take out Region name
 
 		// print Define statements
-		for( ObjectType type : ObjectType.getAll() ) {
+		for (ObjectType type : ObjectType.getAll()) {
 			Class<? extends Entity> each = type.getJavaClass();
 
-			 // Loop through the instances for this entity class
+			// Loop through the instances for this entity class
 			ArrayList<? extends Entity> cloneList = Entity.getInstancesOf(each);
 			count = 0;
-	        for( int j=0; j < cloneList.size(); j++ ) {
-	        	hasinput = false;
+			for (int j = 0; j < cloneList.size(); j++) {
+				hasinput = false;
 
 				ent = cloneList.get(j);
-			for( Input<?> in : ent.getEditableInputs() ){
-        			// If the keyword has been used, then add a record to the report
-				if ( in.getValueString().length() != 0 ){
-        					hasinput = true;
-        					count++;
-        					break;
-        			}
-        		}
+				for (Input<?> in : ent.getEditableInputs()) {
+					// If the keyword has been used, then add a record to the report
+					if (in.getValueString().length() != 0) {
+						hasinput = true;
+						count++;
+						break;
+					}
+				}
 
-        		if ( each.getSimpleName().equalsIgnoreCase("Region") && ! hasinput )
-        		{
-        			count++;
-        			hasinput = true;
-        		}
+				if (each.getSimpleName().equalsIgnoreCase("Region") && !hasinput)
+				{
+					count++;
+					hasinput = true;
+				}
 
-	        	if( hasinput ){
+				if (hasinput) {
 					entityName = cloneList.get(j).getInputName();
-	        		if ( (count-1)%5 == 0) {
-			        	inputReportFile.putString( "Define" );
-		        		inputReportFile.putTab();
+					if ((count - 1) % 5 == 0) {
+						inputReportFile.putString("Define");
+						inputReportFile.putTab();
 						inputReportFile.putString(type.getInputName());
-		        		inputReportFile.putTab();
-		        		inputReportFile.putString( "{ " + entityName );
-		        		inputReportFile.putTab();
-		        	}
-		        	else if ( (count-1)%5 == 4 ){
-						inputReportFile.putString( entityName + " }" );
+						inputReportFile.putTab();
+						inputReportFile.putString("{ " + entityName);
+						inputReportFile.putTab();
+					}
+					else if ((count - 1) % 5 == 4) {
+						inputReportFile.putString(entityName + " }");
 						inputReportFile.newLine();
-		        	}
-		        	else {
-		        		inputReportFile.putString( entityName );
-		        		inputReportFile.putTab();
-		        	}
-	        	}
-	        }
+					}
+					else {
+						inputReportFile.putString(entityName);
+						inputReportFile.putTab();
+					}
+				}
+			}
 
-	        if ( cloneList.size() > 0 ){
-		        if ( count%5 != 0 ){
-		        	inputReportFile.putString(  " }" );
-		        	inputReportFile.newLine();
-		        }
-		        inputReportFile.newLine();
-	        }
+			if (cloneList.size() > 0) {
+				if (count % 5 != 0) {
+					inputReportFile.putString(" }");
+					inputReportFile.newLine();
+				}
+				inputReportFile.newLine();
+			}
 		}
 
-		for( ObjectType type : ObjectType.getAll() ) {
+		for (ObjectType type : ObjectType.getAll()) {
 			Class<? extends Entity> each = type.getJavaClass();
 
 			// Get the list of instances for this entity class
@@ -936,10 +936,10 @@ public class InputAgent {
 			ArrayList<? extends Entity> cloneList = Entity.getInstancesOf(each);
 
 			// Print the entity class name to the report (in the form of a comment)
-			if( cloneList.size() > 0 ) {
-				inputReportFile.putString( "\" " + each.getSimpleName() + " \"");
+			if (cloneList.size() > 0) {
+				inputReportFile.putString("\" " + each.getSimpleName() + " \"");
 				inputReportFile.newLine();
-				inputReportFile.newLine();  // blank line below the class name heading
+				inputReportFile.newLine(); // blank line below the class name heading
 			}
 
 			Collections.sort(cloneList, new Comparator<Entity>() {
@@ -949,52 +949,52 @@ public class InputAgent {
 				}
 			});
 
-	        // Loop through the instances for this entity class
-	        for( int j=0; j < cloneList.size(); j++ ) {
+			// Loop through the instances for this entity class
+			for (int j = 0; j < cloneList.size(); j++) {
 
-	        	// Make sure the clone is an instance of the class (and not an instance of a subclass)
+				// Make sure the clone is an instance of the class (and not an instance of a subclass)
 				if (cloneList.get(j).getClass() == each) {
 					ent = cloneList.get(j);
 					entityName = cloneList.get(j).getInputName();
-	        		hasinput = false;
+					hasinput = false;
 
-	        		// Loop through the editable keywords for this instance
-				for( Input<?> in : ent.getEditableInputs() ) {
-	        			// If the keyword has been used, then add a record to the report
-					if ( in.getValueString().length() != 0 ) {
+					// Loop through the editable keywords for this instance
+					for (Input<?> in : ent.getEditableInputs()) {
+						// If the keyword has been used, then add a record to the report
+						if (in.getValueString().length() != 0) {
 
-						if ( ! in.getCategory().contains("Graphics") ) {
-		        				hasinput = true;
-				        		inputReportFile.putTab();
-				        		inputReportFile.putString( entityName );
-				        		inputReportFile.putTab();
-							inputReportFile.putString( in.getKeyword() );
-				        		inputReportFile.putTab();
-							if( in.getValueString().lastIndexOf( "{" ) > 10 ) {
-		        					String[] item1Array;
-								item1Array = in.getValueString().trim().split( " }" );
+							if (!in.getCategory().contains("Graphics")) {
+								hasinput = true;
+								inputReportFile.putTab();
+								inputReportFile.putString(entityName);
+								inputReportFile.putTab();
+								inputReportFile.putString(in.getKeyword());
+								inputReportFile.putTab();
+								if (in.getValueString().lastIndexOf("{") > 10) {
+									String[] item1Array;
+									item1Array = in.getValueString().trim().split(" }");
 
-		        					inputReportFile.putString( "{ " + item1Array[0] + " }" );
-		        					for (int l = 1; l < (item1Array.length); l++ ){
-		        						inputReportFile.newLine();
-		        						inputReportFile.putTabs( 5 );
-		        						inputReportFile.putString( item1Array[l] + " } " );
-		        					}
-		        					inputReportFile.putString(  "	}" );
-		        				}
-		        				else {
-								inputReportFile.putString( "{ " + in.getValueString() + " }" );
-		        				}
-				        		inputReportFile.newLine();
-	        				}
-	        			}
-	        		}
-	        		// Put a blank line after each instance
-					if ( hasinput ) {
+									inputReportFile.putString("{ " + item1Array[0] + " }");
+									for (int l = 1; l < (item1Array.length); l++) {
+										inputReportFile.newLine();
+										inputReportFile.putTabs(5);
+										inputReportFile.putString(item1Array[l] + " } ");
+									}
+									inputReportFile.putString("	}");
+								}
+								else {
+									inputReportFile.putString("{ " + in.getValueString() + " }");
+								}
+								inputReportFile.newLine();
+							}
+						}
+					}
+					// Put a blank line after each instance
+					if (hasinput) {
 						inputReportFile.newLine();
 					}
-	        	}
-	        }
+				}
+			}
 		}
 
 		// Close out the report
