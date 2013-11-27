@@ -1309,8 +1309,12 @@ public class InputAgent {
 					ret = context.resolve(pathURI).normalize();
 				}
 			} else {
-				// We have no context, so hope the URI is absolute or otherwise openable
-				ret = pathURI;
+				// We have no context, so append a 'file' scheme if necessary
+				if (pathURI.getScheme() == null) {
+					ret = new URI("file", pathURI.getPath(), null);
+				} else {
+					ret = pathURI;
+				}
 			}
 		}
 

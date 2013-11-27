@@ -164,7 +164,7 @@ public class GraphicBox extends JDialog {
 				DisplayModel newModel = InputAgent.defineEntityWithUniqueName(ColladaModel.class, entityName, true);
 
 				StringVector data = new StringVector(1);
-				data.add(f.toURI().toString());
+				data.add(f.toURI().getPath());
 
 				Input<?> in = newModel.getInput("ColladaFile");
 				InputAgent.apply(newModel, in, data, null);
