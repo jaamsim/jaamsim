@@ -151,6 +151,9 @@ public class Renderer implements GLAnimatorControl {
 
 	private Skybox _skybox;
 
+	private MeshData badData;
+	private MeshProto badProto;
+
 	// A cache of the current scene, needed by the individual windows to render
 	private ArrayList<Renderable> _currentScene = new ArrayList<Renderable>();
 	private ArrayList<OverlayRenderable> _currentOverlay = new ArrayList<OverlayRenderable>();
@@ -687,9 +690,8 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		_texCache.init(gl);
 
 		// Load the bad mesh proto
-		MeshData badData = MeshDataCache.getBadMesh();
-		MeshProto badProto = new MeshProto(badData, _safeGraphics, !_safeGraphics);
-		_protoCache.put(MeshDataCache.BAD_MESH_KEY, badProto);
+		badData = MeshDataCache.getBadMesh();
+		badProto = new MeshProto(badData, _safeGraphics, !_safeGraphics);
 		badProto.loadGPUAssets(gl, this);
 
 		_skybox = new Skybox();
@@ -712,19 +714,25 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
 
+		MeshProto proto;
+
 		MeshData data = MeshDataCache.getMeshData(key);
-		MeshProto proto = new MeshProto(data, _safeGraphics, !_safeGraphics);
+		if (data == badData) {
+			proto = badProto;
+		} else {
+			proto = new MeshProto(data, _safeGraphics, !_safeGraphics);
 
-		assert (proto != null);
-		proto.loadGPUAssets(gl, this);
+			assert (proto != null);
+			proto.loadGPUAssets(gl, this);
 
-		if (!proto.isLoadedGPU()) {
-			// This did not load cleanly, clear it out and use the default bad mesh asset
-			proto.freeResources(gl);
+			if (!proto.isLoadedGPU()) {
+				// This did not load cleanly, clear it out and use the default bad mesh asset
+				proto.freeResources(gl);
 
-			System.out.printf("Could not load GPU assset: %s\n", key.getURL().toString());
+				System.out.printf("Could not load GPU assset: %s\n", key.getURL().toString());
 
-			proto = _protoCache.get(MeshDataCache.BAD_MESH_KEY);
+				proto = badProto;
+			}
 		}
 		_protoCache.put(key, proto);
 
