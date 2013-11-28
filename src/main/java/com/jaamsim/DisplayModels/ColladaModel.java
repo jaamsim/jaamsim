@@ -14,11 +14,17 @@
  */
 package com.jaamsim.DisplayModels;
 
+import java.awt.FileDialog;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.MeshFiles.BlockWriter;
+import com.jaamsim.MeshFiles.DataBlock;
 import com.jaamsim.MeshFiles.MeshData;
+import com.jaamsim.collada.ColParser;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ActionListInput;
 import com.jaamsim.input.Output;
@@ -38,8 +44,11 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
+import com.sandwell.JavaSimulation3D.MenuItemEntity;
+import com.sandwell.JavaSimulation3D.ObjectSelector;
+import com.sandwell.JavaSimulation3D.ObjectSelector.DEMenuItem;
 
-public class ColladaModel extends DisplayModel {
+public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
 	@Keyword(description = "The file containing the image to show, valid formats are: BMP, JPG, PNG, PCX, GIF.",
 	         example = "Ship3DModel ColladaFile { ..\\images\\CompanyIcon.png }")
@@ -276,4 +285,40 @@ public class ColladaModel extends DisplayModel {
 		}
 		return ret.toString();
 	}
+
+	private void exportBinaryMesh(String outputName) {
+		MeshProtoKey meshKey = getCachedMeshKey(colladaFile.getValue());
+
+		try {
+			ColParser.setKeepData(true);
+			MeshData data = ColParser.parse(meshKey.getURL());
+			DataBlock block = data.getDataAsBlock();
+			File outFile = new File(outputName);
+			FileOutputStream outStream = new FileOutputStream(outFile);
+			BlockWriter.writeBlock(outStream, block);
+
+			System.out.printf("Successfully exported: %s\n", outputName);
+		} catch (Exception ex) {
+			System.out.printf("Could not export model. Error: %s\n", ex.getMessage());
+			ex.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void gatherMenuItems(ArrayList<ObjectSelector.DEMenuItem> list, int x, int y) {
+		list.add(new DEMenuItem("Export Binary Mesh") {
+
+			@Override
+			public void action() {
+				FileDialog chooser = new FileDialog(ObjectSelector.getInstance(), "New DisplayModel", FileDialog.LOAD );
+				chooser.setFile("*.jsb");
+				chooser.setVisible(true);
+
+				if (chooser.getFile() != null)
+					exportBinaryMesh(chooser.getDirectory() + chooser.getFile());
+			}
+		});
+	}
+
 }
