@@ -62,10 +62,12 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
 	private static final String[] validFileExtentions;
 	static {
-		validFileExtentions = new String[3];
+		validFileExtentions = new String[5];
 		validFileExtentions[0] = "DAE";
 		validFileExtentions[1] = "ZIP";
 		validFileExtentions[2] = "JSM";
+		validFileExtentions[3] = "JSB";
+		validFileExtentions[4] = "OBJ";
 	}
 
 	{
