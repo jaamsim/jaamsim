@@ -745,6 +745,8 @@ public class MeshData {
 			subLine.diffuseColor = readColorFromBlock(colorBlock);
 
 			subLine.hull = ConvexHull.TryBuildHull(subLine.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
+
+			_subLinesData.add(subLine);
 		}
 
 		// Add Materials
@@ -963,7 +965,7 @@ public class MeshData {
 			DataBlock subLineInst = new DataBlock("SubLineInstance", 0);
 			subLInsts.addChildBlock(subLineInst);
 
-			DataBlock indices = new DataBlock("Index", 4);
+			DataBlock indices = new DataBlock("Indices", 4);
 			subLineInst.addChildBlock(indices);
 			indices.writeInt(subInst.subLineIndex);
 
