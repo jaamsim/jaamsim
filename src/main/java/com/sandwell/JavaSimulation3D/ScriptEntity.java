@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Parser;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
@@ -27,7 +28,6 @@ import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.Util;
-import com.sandwell.JavaSimulation.Vector;
 
 public class ScriptEntity extends Entity {
 
@@ -95,36 +95,24 @@ public class ScriptEntity extends Entity {
 			throw new InputErrorException( "The script file " + scriptFileName.getValue() + " was not found" );
 		}
 
-		// Read the next record
-		Vector record = scriptFile.readAndParseRecord();
-		if( record.size() > 0 ) {
-			while( ((String)record.get( 0 )).startsWith( "\"" ) ) {
-				record = scriptFile.readAndParseRecord();
-			}
-			Util.discardComment( record );
-		}
+		ArrayList<String> tokens = new ArrayList<String>();
+		while (true) {
+			String line = scriptFile.readLine();
+			if (line == null)
+				break;
 
-		// While end of file has not been reached
-		ArrayList<String> rec = new ArrayList<String>();
-		while( record.size() > 0 ) {
-			// Process the record
-			rec.clear();
-			for (int i = 0; i < record.size(); i++)
-				rec.add((String)record.get(i));
+			Parser.tokenize(tokens, line);
+			Parser.removeComments(tokens);
+			if (tokens.size() == 0)
+				continue;
 
-			InputAgent.processKeywordRecord(rec, null);
+			InputAgent.processKeywordRecord(tokens, null);
+			tokens.clear();
 
 			// If a "Time" record was read, then wait until the time
 			long delayTicks = Process.secondsToTicks(scriptTime.getValue()) - getSimTicks();
 			if (delayTicks > 0)
 				simWaitTicks(delayTicks);
-
-			// Read the next record
-			record = scriptFile.readAndParseRecord();
-			while( record.size() > 0 && ((String)record.get( 0 )).startsWith( "\"" ) ) {
-				record = scriptFile.readAndParseRecord();
-			}
-			Util.discardComment( record );
 		}
 	}
 }
