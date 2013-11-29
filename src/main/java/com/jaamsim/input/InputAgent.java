@@ -607,8 +607,12 @@ public class InputAgent {
 		if (in != null) {
 			InputAgent.apply(ent, in, data, context);
 			FrameBox.valueUpdate();
-		} else {
-			ent.readData_ForKeyword(data, keyword);
+			return;
+		}
+
+		if (ent instanceof Group) {
+			Group g = (Group)ent;
+			g.readGroupKeyword(data, keyword);
 			FrameBox.valueUpdate();
 		}
 	}

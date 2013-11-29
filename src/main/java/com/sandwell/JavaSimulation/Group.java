@@ -113,39 +113,41 @@ public class Group extends Entity {
 				this.checkType();
 				return;
 			}
-
-			// for all other keywords, keep track in keywordValues vector
-			StringVector record = new StringVector( data );
-			record.insertElementAt(keyword, 0);
-			this.getGroupKeywordValues().add( record );
-
-			// If there can never be elements in the group, throw a warning
-			if( type == null && list.size() == 0 ) {
-				InputAgent.logWarning("The group %s has no elements to apply keyword: %s", this, keyword);
-			}
-
-			// For all other keywords, apply the value to each member of the list
-			for( int i = 0; i < list.size(); i++ ) {
-				Entity ent = list.get( i );
-
-				Input<?> input = ent.getInput( keyword );
-				if( input != null && input.isAppendable() ) {
-					ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(data);
-					if( splitData.size() == 0 )
-						splitData.add(new StringVector());
-
-					for ( int j = 0; j < splitData.size(); j++ ) {
-						InputAgent.apply(ent, splitData.get(j), keyword, null);
-					}
-				}
-				else {
-					InputAgent.apply(ent, data, keyword, null);
-				}
-			}
-
 		}
 		catch( Exception e ) {
 			InputAgent.logError("Entity: %s Keyword: %s - %s", this.getName(), keyword, e.getMessage());
+		}
+	}
+
+	public void readGroupKeyword(StringVector data, String keyword) {
+
+		// for all other keywords, keep track in keywordValues vector
+		StringVector record = new StringVector( data );
+		record.insertElementAt(keyword, 0);
+		this.getGroupKeywordValues().add( record );
+
+		// If there can never be elements in the group, throw a warning
+		if( type == null && list.size() == 0 ) {
+			InputAgent.logWarning("The group %s has no elements to apply keyword: %s", this, keyword);
+		}
+
+		// For all other keywords, apply the value to each member of the list
+		for( int i = 0; i < list.size(); i++ ) {
+			Entity ent = list.get( i );
+
+			Input<?> input = ent.getInput( keyword );
+			if( input != null && input.isAppendable() ) {
+				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(data);
+				if( splitData.size() == 0 )
+					splitData.add(new StringVector());
+
+				for ( int j = 0; j < splitData.size(); j++ ) {
+					InputAgent.apply(ent, splitData.get(j), keyword, null);
+				}
+			}
+			else {
+				InputAgent.apply(ent, data, keyword, null);
+			}
 		}
 	}
 
