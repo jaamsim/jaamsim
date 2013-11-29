@@ -492,13 +492,13 @@ public class Entity {
 	/**
 	 * Make the given keyword editable from the edit box with Synonyms
 	 */
-	public void addEditableKeyword( String keyword, String unit, String defaultValue, boolean append, String category, String... synonymsArray ) {
+	public void addEditableKeyword( String keyword, String unit, String defaultValue, boolean append, String category) {
 
 		if( this.getInput( keyword ) == null ) {
 			// Create a new input object
 			CompatInput in = new CompatInput(this, keyword, category, defaultValue);
 			in.setAppendable( append );
-			this.addInput(in, true, synonymsArray);
+			this.addInput(in, true);
 		} else {
 			System.out.format("Edited keyword added twice %s:%s%n", this.getClass().getName(), keyword);
 		}
