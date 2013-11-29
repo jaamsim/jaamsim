@@ -612,7 +612,26 @@ public class InputAgent {
 
 		if (ent instanceof Group) {
 			Group g = (Group)ent;
-			g.readGroupKeyword(data, keyword);
+			g.saveGroupKeyword(data, keyword);
+
+			// For all other keywords, apply the value to each member of the list
+			for( int i = 0; i < g.getList().size(); i++ ) {
+				Entity grpEnt = g.getList().get(i);
+
+				Input<?> input = grpEnt.getInput( keyword );
+				if( input != null && input.isAppendable() ) {
+					ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(data);
+					if( splitData.size() == 0 )
+						splitData.add(new StringVector());
+
+					for ( int j = 0; j < splitData.size(); j++ ) {
+						InputAgent.apply(grpEnt, splitData.get(j), keyword, null);
+					}
+				}
+				else {
+					InputAgent.apply(grpEnt, data, keyword, null);
+				}
+			}
 			FrameBox.valueUpdate();
 		}
 	}

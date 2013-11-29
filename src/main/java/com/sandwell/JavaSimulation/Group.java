@@ -82,10 +82,9 @@ public class Group extends Entity {
 
 						Entity ent = list.get( i );
 						for ( int j = 0; j < this.getGroupKeywordValues().size(); j++  ) {
-							String currentKeyword = this.getGroupKeywordValues().get(j).firstElement();
-							Input<?> in = ent.getInput(currentKeyword);
 							StringVector currentData = new StringVector(this.getGroupKeywordValues().get(j));
-							currentData.remove( 0 );
+							String currentKeyword = currentData.remove(0);
+							Input<?> in = ent.getInput(currentKeyword);
 
 							ArrayList<StringVector> splitData = Util.splitStringVectorByBraces( currentData );
 							for ( int k = 0; k < splitData.size(); k++ ) {
@@ -96,7 +95,7 @@ public class Group extends Entity {
 
 								// The keyword is not on the editable keyword list
 								else {
-									InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", currentKeyword);
+									InputAgent.logWarning("Keyword %s could not be found for Entity %s.", currentKeyword, ent.getInputName());
 								}
 							}
 						}
@@ -119,7 +118,7 @@ public class Group extends Entity {
 		}
 	}
 
-	public void readGroupKeyword(StringVector data, String keyword) {
+	public void saveGroupKeyword(StringVector data, String keyword) {
 
 		// for all other keywords, keep track in keywordValues vector
 		StringVector record = new StringVector( data );
@@ -129,25 +128,6 @@ public class Group extends Entity {
 		// If there can never be elements in the group, throw a warning
 		if( type == null && list.size() == 0 ) {
 			InputAgent.logWarning("The group %s has no elements to apply keyword: %s", this, keyword);
-		}
-
-		// For all other keywords, apply the value to each member of the list
-		for( int i = 0; i < list.size(); i++ ) {
-			Entity ent = list.get( i );
-
-			Input<?> input = ent.getInput( keyword );
-			if( input != null && input.isAppendable() ) {
-				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(data);
-				if( splitData.size() == 0 )
-					splitData.add(new StringVector());
-
-				for ( int j = 0; j < splitData.size(); j++ ) {
-					InputAgent.apply(ent, splitData.get(j), keyword, null);
-				}
-			}
-			else {
-				InputAgent.apply(ent, data, keyword, null);
-			}
 		}
 	}
 
