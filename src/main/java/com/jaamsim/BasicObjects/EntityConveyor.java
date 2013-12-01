@@ -126,13 +126,14 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 		// If necessary, wake up the conveyor
 		if ( !busy ) {
-			Process.start(new ProcessEntitiesTarget(this));
+			Process.start( new ProcessEntitiesTarget(this, "processEntities") );
 		}
 	}
 
 	private static class ProcessEntitiesTarget extends EntityTarget<EntityConveyor> {
-		ProcessEntitiesTarget(EntityConveyor ent) {
-			super(ent, "processEntities");
+
+		ProcessEntitiesTarget(EntityConveyor ent, String method) {
+			super(ent, method);
 		}
 
 		@Override
