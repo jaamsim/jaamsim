@@ -39,6 +39,7 @@ public class Queue extends DisplayEntity {
 	protected final IntegerInput maxPerLineInput; // maximum items per sub line-up of queue
 
 	protected ArrayList<DisplayEntity> itemList;
+	private ArrayList<Double> timeAddedList;
 
 	//	Statistics
 	protected double timeOfLastUpdate; // time at which the statistics were last updated
@@ -65,6 +66,7 @@ public class Queue extends DisplayEntity {
 
 	public Queue() {
 		itemList = new ArrayList<DisplayEntity>();
+		timeAddedList = new ArrayList<Double>();
 		queueLengthDist = new DoubleVector(10,10);
 	}
 
@@ -74,6 +76,7 @@ public class Queue extends DisplayEntity {
 
 		// Clear the entries in the queue
 		itemList.clear();
+		timeAddedList.clear();
 
 		// Clear statistics
 		this.clearStatistics();
@@ -97,6 +100,7 @@ public class Queue extends DisplayEntity {
 	public void add( int i, DisplayEntity perf ) {
 		this.updateStatistics();  // update the queue length distribution
 		itemList.add( i, perf );
+		timeAddedList.add( i, this.getSimTime() );
 		this.updateStatistics();  // update the min and max queue length
 		numberAdded++;
 
@@ -119,6 +123,8 @@ public class Queue extends DisplayEntity {
 		if( i < itemList.size() && i >= 0 ) {
 			this.updateStatistics();  // update the queue length distribution
 			DisplayEntity out = itemList.remove(i);
+			//double queueTime = this.getSimTime() - timeAddedList.remove(i);
+			timeAddedList.remove(i);
 			this.updateStatistics();  // update the min and max queue length
 			numberRemoved++;
 
@@ -163,6 +169,13 @@ public class Queue extends DisplayEntity {
 	 */
 	public int getCount() {
 		return itemList.size();
+	}
+
+	/**
+	 * Returns the number of seconds spent by the first object in the queue
+	 */
+	public double getQueueTime() {
+		return this.getSimTime() - timeAddedList.get(0);
 	}
 
 	/**
