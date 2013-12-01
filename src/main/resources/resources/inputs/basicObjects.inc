@@ -5,7 +5,11 @@ Define ObjectType {
                     Server
                     EntitySink
                     EntityConveyor
+					EntityDelay
                     Queue
+					Seize
+					Release
+					Resource
                     QueueRecorder
                     ProbabilityDistribution
                     Group
@@ -29,7 +33,11 @@ EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator    
 Server                  JavaClass { com.jaamsim.BasicObjects.Server                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
 EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SinkIconModel 		}
 EntityConveyor          JavaClass { com.jaamsim.BasicObjects.EntityConveyor             } Palette { 'Basic Objects' } DefaultDisplayModel	{ ScreenPointsModelDefault			}
+EntityDelay             JavaClass { com.jaamsim.BasicObjects.EntityDelay                } Palette { 'Basic Objects' } DefaultDisplayModel	{ ScreenPointsModelDefault			}
 Queue                   JavaClass { com.sandwell.JavaSimulation3D.Queue	                } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Triangle 				}
+Seize                   JavaClass { com.jaamsim.BasicObjects.Seize                      } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
+Release                 JavaClass { com.jaamsim.BasicObjects.Release                    } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SinkIconModel 		}
+Resource                JavaClass { com.jaamsim.BasicObjects.Resource                   } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
 QueueRecorder           JavaClass { com.sandwell.JavaSimulation3D.QueueRecorder         } Palette { 'Basic Objects' } DefaultDisplayModel	{ Cube 					}	DragAndDrop 	{ FALSE 	}
 ProbabilityDistribution JavaClass { com.sandwell.JavaSimulation.ProbabilityDistribution } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 Group                   JavaClass { com.sandwell.JavaSimulation.Group                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
@@ -42,7 +50,11 @@ EntityGenerator    Description { 'Creates copies of a specified entity at specif
 Server             Description { 'Processes a received entity over a specified duration.' }
 EntitySink         Description { 'Destroys any entity it receives.' }
 EntityConveyor     Description { 'Transports a received entity along a specified path at a fixed speed.' }
+EntityDelay        Description { 'Delays a received entity by a specified duration.' }
 Queue              Description { 'Stores received entities in first-in-first-out order until they are needed.' }
+Seize              Description { 'Seizes one or more units of a Resource.' }
+Release            Description { 'Releases one or more units of a Resource.' }
+Resource           Description { 'Set of identical resource units that be seized and released by various process.' }
 QueueRecorder      Description { 'Logs an entry every time the specified queue receives or releases an entity.' }
 ProbabilityDistribution  Description { 'Obsolete probability distribution retained for backwards compatibity with TLS.' }
 Group              Description { 'Collection of entities used as an convenience for specifying model inputs.' }
