@@ -46,7 +46,7 @@ public abstract class LinkedComponent extends DisplayEntity {
 
 		// Confirm that the next entity in the chain has been specified
 		if( ! nextComponentInput.getHidden() &&	nextComponentInput.getValue() == null ) {
-			throw new InputErrorException( "The keyword NextEntity must be set." );
+			throw new InputErrorException( "The keyword NextComponent must be set." );
 		}
 	}
 
