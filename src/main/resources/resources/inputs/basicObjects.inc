@@ -10,6 +10,7 @@ Define ObjectType {
 					Seize
 					Release
 					Resource
+					Branch
                     QueueRecorder
                     ProbabilityDistribution
                     Group
@@ -38,6 +39,7 @@ Queue                   JavaClass { com.sandwell.JavaSimulation3D.Queue	        
 Seize                   JavaClass { com.jaamsim.BasicObjects.Seize                      } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
 Release                 JavaClass { com.jaamsim.BasicObjects.Release                    } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SinkIconModel 		}
 Resource                JavaClass { com.jaamsim.BasicObjects.Resource                   } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
+Branch                  JavaClass { com.jaamsim.BasicObjects.Branch                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Rectangle             }
 QueueRecorder           JavaClass { com.sandwell.JavaSimulation3D.QueueRecorder         } Palette { 'Basic Objects' } DefaultDisplayModel	{ Cube 					}	DragAndDrop 	{ FALSE 	}
 ProbabilityDistribution JavaClass { com.sandwell.JavaSimulation.ProbabilityDistribution } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 Group                   JavaClass { com.sandwell.JavaSimulation.Group                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
@@ -55,6 +57,7 @@ Queue              Description { 'Stores received entities in first-in-first-out
 Seize              Description { 'Seizes one or more units of a Resource.' }
 Release            Description { 'Releases one or more units of a Resource.' }
 Resource           Description { 'Set of identical resource units that be seized and released by various process.' }
+Branch             Description { 'Directs received entities to an assortment of destinations.' }
 QueueRecorder      Description { 'Logs an entry every time the specified queue receives or releases an entity.' }
 ProbabilityDistribution  Description { 'Obsolete probability distribution retained for backwards compatibity with TLS.' }
 Group              Description { 'Collection of entities used as an convenience for specifying model inputs.' }
