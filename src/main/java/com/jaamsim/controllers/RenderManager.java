@@ -857,7 +857,8 @@ public class RenderManager implements DragSourceListener {
 			return true;
 		}
 
-		if (_selectedEntity == null || !_selectedEntity.isMovable()) {
+		DisplayEntity dispEnt = _selectedEntity;
+		if (dispEnt == null || !dispEnt.isMovable()) {
 			return true;
 		}
 
@@ -868,11 +869,11 @@ public class RenderManager implements DragSourceListener {
 		                             dragInfo.x - dragInfo.dx,
 		                             dragInfo.y - dragInfo.dy);
 
-		Transform trans = _selectedEntity.getGlobalTrans(_simTime);
+		Transform trans = dispEnt.getGlobalTrans(_simTime);
 
-		Vec3d size = _selectedEntity.getSize();
-		Mat4d transMat = _selectedEntity.getTransMatrix(_simTime);
-		Mat4d invTransMat = _selectedEntity.getInvTransMatrix(_simTime);
+		Vec3d size = dispEnt.getSize();
+		Mat4d transMat = dispEnt.getTransMatrix(_simTime);
+		Mat4d invTransMat = dispEnt.getInvTransMatrix(_simTime);
 
 		Plane entityPlane = new Plane(); // Defaults to XY
 		entityPlane.transform(trans, entityPlane, new Vec3d()); // Transform the plane to world space
@@ -913,12 +914,12 @@ public class RenderManager implements DragSourceListener {
 			Plane dragPlane = new Plane(new Vec3d(0, 0, 1), _dragCollisionPoint.z); // XY plane at collistion point
 
 			if (dragInfo.shiftDown()) {
-				Vec3d entPos = _selectedEntity.getGlobalPosition();
+				Vec3d entPos = dispEnt.getGlobalPosition();
 
 				double zDiff = RenderUtils.getZDiff(_dragCollisionPoint, currentRay, lastRay);
 
 				entPos.z += zDiff;
-				_selectedEntity.setGlobalPosition(entPos);
+				dispEnt.setGlobalPosition(entPos);
 
 				return true;
 			}
@@ -936,9 +937,9 @@ public class RenderManager implements DragSourceListener {
 			Vec3d del = new Vec3d();
 			del.sub3(cPoint, lPoint);
 
-			Vec3d pos = _selectedEntity.getGlobalPosition();
+			Vec3d pos = dispEnt.getGlobalPosition();
 			pos.add3(del);
-			_selectedEntity.setGlobalPosition(pos);
+			dispEnt.setGlobalPosition(pos);
 			return true;
 		}
 
@@ -946,8 +947,8 @@ public class RenderManager implements DragSourceListener {
 		if (_dragHandleID <= RESIZE_POSX_PICK_ID &&
 		    _dragHandleID >= RESIZE_NXNY_PICK_ID) {
 
-			Vec3d pos = _selectedEntity.getGlobalPosition();
-			Vec3d scale = _selectedEntity.getSize();
+			Vec3d pos = dispEnt.getGlobalPosition();
+			Vec3d scale = dispEnt.getSize();
 			Vec4d fixedPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
 			if (_dragHandleID == RESIZE_POSX_PICK_ID) {
@@ -1015,8 +1016,8 @@ public class RenderManager implements DragSourceListener {
 
 			Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			oldFixed.mult4(transMat, fixedPoint);
-			_selectedEntity.setSize(scale);
-			transMat = _selectedEntity.getTransMatrix(_simTime); // Get the new matrix
+			dispEnt.setSize(scale);
+			transMat = dispEnt.getTransMatrix(_simTime); // Get the new matrix
 
 			Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			newFixed.mult4(transMat, fixedPoint);
@@ -1025,17 +1026,17 @@ public class RenderManager implements DragSourceListener {
 			posAdjust.sub3(oldFixed, newFixed);
 
 			pos.add3(posAdjust);
-			_selectedEntity.setGlobalPosition(pos);
+			dispEnt.setGlobalPosition(pos);
 
-			Vec3d vec = _selectedEntity.getSize();
-			InputAgent.processEntity_Keyword_Value(_selectedEntity, "Size", String.format( "%.6f %.6f %.6f %s", vec.x, vec.y, vec.z, "m" ));
+			Vec3d vec = dispEnt.getSize();
+			InputAgent.processEntity_Keyword_Value(dispEnt, "Size", String.format( "%.6f %.6f %.6f %s", vec.x, vec.y, vec.z, "m" ));
 			FrameBox.valueUpdate();
 			return true;
 		}
 
 		if (_dragHandleID == ROTATE_PICK_ID) {
 
-			Vec3d align = _selectedEntity.getAlignment();
+			Vec3d align = dispEnt.getAlignment();
 
 			Vec4d rotateCenter = new Vec4d(align.x, align.y, align.z, 1.0d);
 			rotateCenter.mult4(transMat, rotateCenter);
@@ -1051,9 +1052,9 @@ public class RenderManager implements DragSourceListener {
 			double sinTheta = aCrossB.z / a.mag3() / b.mag3();
 			double theta = Math.asin(sinTheta);
 
-			Vec3d orient = _selectedEntity.getOrientation();
+			Vec3d orient = dispEnt.getOrientation();
 			orient.z += theta;
-			InputAgent.processEntity_Keyword_Value(_selectedEntity, "Orientation", String.format("%f %f %f rad", orient.x, orient.y, orient.z));
+			InputAgent.processEntity_Keyword_Value(dispEnt, "Orientation", String.format("%f %f %f rad", orient.x, orient.y, orient.z));
 			FrameBox.valueUpdate();
 			return true;
 		}
@@ -1062,18 +1063,18 @@ public class RenderManager implements DragSourceListener {
 
 			if (dragInfo.shiftDown()) {
 				ArrayList<Vec3d> screenPoints = null;
-				if (_selectedEntity instanceof HasScreenPoints)
-					screenPoints = ((HasScreenPoints)_selectedEntity).getScreenPoints()[0].points;
+				if (dispEnt instanceof HasScreenPoints)
+					screenPoints = ((HasScreenPoints)dispEnt).getScreenPoints()[0].points;
 				if (screenPoints == null || screenPoints.size() == 0) return true; // just ignore this
 				// Find the geometric median of the points
 				Vec4d medPoint = RenderUtils.getGeometricMedian(screenPoints);
 
 				double zDiff = RenderUtils.getZDiff(medPoint, currentRay, lastRay);
-				_selectedEntity.dragged(new Vec3d(0, 0, zDiff));
+				dispEnt.dragged(new Vec3d(0, 0, zDiff));
 				return true;
 			}
 
-			Region reg = _selectedEntity.getCurrentRegion();
+			Region reg = dispEnt.getCurrentRegion();
 			Transform regionInvTrans = new Transform();
 			if (reg != null) {
 				regionInvTrans = reg.getRegionTrans(0.0d);
@@ -1082,15 +1083,15 @@ public class RenderManager implements DragSourceListener {
 			Vec3d localDelta = new Vec3d();
 			regionInvTrans.multAndTrans(delta, localDelta);
 
-			_selectedEntity.dragged(localDelta);
+			dispEnt.dragged(localDelta);
 			return true;
 		}
 
 		if (_dragHandleID <= LINENODE_PICK_ID) {
 			int nodeIndex = (int)(-1*(_dragHandleID - LINENODE_PICK_ID));
 			ArrayList<Vec3d> screenPoints = null;
-			if (_selectedEntity instanceof HasScreenPoints)
-				screenPoints = ((HasScreenPoints)_selectedEntity).getScreenPoints()[0].points;
+			if (dispEnt instanceof HasScreenPoints)
+				screenPoints = ((HasScreenPoints)dispEnt).getScreenPoints()[0].points;
 
 			// Note: screenPoints is not a defensive copy, but we'll put it back into itself
 			// in a second so everything should be safe
@@ -1111,7 +1112,7 @@ public class RenderManager implements DragSourceListener {
 				point.z += 0;
 			}
 
-			Input<?> pointsInput = _selectedEntity.getInput("Points");
+			Input<?> pointsInput = dispEnt.getInput("Points");
 			assert(pointsInput != null);
 			if (pointsInput == null) {
 				return true;
@@ -1123,7 +1124,7 @@ public class RenderManager implements DragSourceListener {
 				sb.append(String.format(pointFormatter, pt.x, pt.y, pt.z));
 			}
 
-			InputAgent.processEntity_Keyword_Value(_selectedEntity, pointsInput, sb.toString());
+			InputAgent.processEntity_Keyword_Value(dispEnt, pointsInput, sb.toString());
 			FrameBox.valueUpdate();
 			return true;
 		}
