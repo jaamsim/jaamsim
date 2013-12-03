@@ -125,6 +125,9 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 		if (this.getCycleLength() < Double.POSITIVE_INFINITY) {
 			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
 			timeInCycle -= completedCycles * this.getCycleTimeInHours();
+			if( Tester.equalCheckTolerance(timeInCycle, this.getCycleTimeInHours()) ) {
+				timeInCycle = 0;
+			}
 		}
 
 		// If the time in the cycle is greater than the last time, return the last value
@@ -167,6 +170,13 @@ public class TimeSeries extends Entity implements TimeSeriesProvider {
 
 		// Determine how many cycles through the time series have been completed
 		int completedCycles = (int)Math.floor( time / cycleTime );
+
+		// Tolerance check for essentially through a cycle
+		double timeInCycle = time - (completedCycles * this.getCycleTimeInHours());
+		if( Tester.equalCheckTolerance(timeInCycle, this.getCycleTimeInHours()) ) {
+			completedCycles++;
+		}
+
 		double[] timeList = value.getValue().timeList;
 		// If this is the last point in the cycle, need to cycle around to get the next point
 		if( startIndex > timeList.length - 1 ) {
