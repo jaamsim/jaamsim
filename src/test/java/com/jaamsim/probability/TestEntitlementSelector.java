@@ -31,7 +31,7 @@ public class TestEntitlementSelector {
 		entB.setInputName( "B" );
 		entC.setInputName( "C" );
 
-		EntitlementSelector selector = new EntitlementSelector();
+		EntitlementSelector selector = InputAgent.defineEntityWithUniqueName(EntitlementSelector.class, "Dist", true);
 		InputAgent.processEntity_Keyword_Value( selector, "EntityList", "A  B  C");
 		InputAgent.processEntity_Keyword_Value( selector, "ProbabilityList", "0.5  0.3  0.2");
 		selector.validate();

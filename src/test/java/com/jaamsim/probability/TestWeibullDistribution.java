@@ -27,7 +27,7 @@ public class TestWeibullDistribution {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		WeibullDistribution dist = new WeibullDistribution();
+		WeibullDistribution dist = InputAgent.defineEntityWithUniqueName(WeibullDistribution.class, "Dist", true);
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Scale", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "2.0");

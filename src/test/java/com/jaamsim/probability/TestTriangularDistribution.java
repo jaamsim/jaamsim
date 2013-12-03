@@ -27,7 +27,7 @@ public class TestTriangularDistribution {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		TriangularDistribution dist = new TriangularDistribution();
+		TriangularDistribution dist = InputAgent.defineEntityWithUniqueName(TriangularDistribution.class, "Dist", true);
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "MinValue", "2.0");
 		InputAgent.processEntity_Keyword_Value( dist, "MaxValue", "5.0");
