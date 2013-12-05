@@ -641,50 +641,44 @@ public class InputAgent {
 		if (entity.testFlag(Entity.FLAG_LOCKED))
 			throw new InputErrorException("Entity: %s is locked and cannot be modified", entity.getName());
 
-		try {
-			Input<?> input = entity.getInput( key.keyword );
-			StringVector args = new StringVector(key.end - key.start);
-			for (int i = key.start + 2; i < key.end; i++) {
-				args.add(key.input.get(i));
-			}
-			if( input != null && input.isAppendable() ) {
-				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(args);
-				for ( int i = 0; i < splitData.size(); i++ ) {
-					InputAgent.apply(entity, input, splitData.get(i), context);
-				}
-			}
-			else {
-				InputAgent.apply(entity, args, key.keyword, context);
-			}
-
-			// Create a list of entities to update in the edit table
-			ArrayList<Entity> updateList = null;
-			if (entity instanceof Group && input == null) {
-				updateList = ((Group)entity).getList();
-			}
-			else {
-				updateList = new ArrayList<Entity>(1);
-				updateList.add(entity);
-			}
-
-			// Store the keyword data for use in the edit table
-			for( int i = 0; i < updateList.size(); i++ ) {
-				Entity ent = updateList.get( i );
-				Input<?> in = ent.getInput(key.keyword);
-
-				if (in != null) {
-					InputAgent.updateInput(ent, in, args);
-				}
-
-				// The keyword is not on the editable keyword list
-				else {
-					InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", key.keyword);
-				}
+		Input<?> input = entity.getInput( key.keyword );
+		StringVector args = new StringVector(key.end - key.start);
+		for (int i = key.start + 2; i < key.end; i++) {
+			args.add(key.input.get(i));
+		}
+		if( input != null && input.isAppendable() ) {
+			ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(args);
+			for ( int i = 0; i < splitData.size(); i++ ) {
+				InputAgent.apply(entity, input, splitData.get(i), context);
 			}
 		}
-		catch ( InputErrorException e ) {
-			InputAgent.logError("Entity: %s Keyword: %s - %s", entity.getInputName(), key.keyword, e.getMessage());
-			throw e;
+		else {
+			InputAgent.apply(entity, args, key.keyword, context);
+		}
+
+		// Create a list of entities to update in the edit table
+		ArrayList<Entity> updateList = null;
+		if (entity instanceof Group && input == null) {
+			updateList = ((Group)entity).getList();
+		}
+		else {
+			updateList = new ArrayList<Entity>(1);
+			updateList.add(entity);
+		}
+
+		// Store the keyword data for use in the edit table
+		for( int i = 0; i < updateList.size(); i++ ) {
+			Entity ent = updateList.get( i );
+			Input<?> in = ent.getInput(key.keyword);
+
+			if (in != null) {
+				InputAgent.updateInput(ent, in, args);
+			}
+
+			// The keyword is not on the editable keyword list
+			else {
+				InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", key.keyword);
+			}
 		}
 	}
 
