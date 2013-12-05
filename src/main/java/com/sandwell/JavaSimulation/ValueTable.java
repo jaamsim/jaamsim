@@ -72,6 +72,21 @@ public class ValueTable<T extends Entity> extends HashMap<T, TimeValue> {
 		return defaultValue.getExpectedValueForTime(t);
 	}
 
+	public boolean hasNonZeroExpectedValueForTime(double t) {
+
+		// find the first non zero entry
+		for( TimeValue each : this.values() ) {
+			if( each.getExpectedValueForTime(t) > 0 ) {
+				return true;
+			}
+		}
+
+		if( defaultValue.getExpectedValueForTime(t) > 0 )
+			return true;
+
+		return false;
+	}
+
 	public double getMinValueForEntity_AtTime( T ent, double t ) {
 
 		TimeValue val = this.get( ent );
