@@ -16,11 +16,13 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
@@ -56,6 +58,17 @@ public class Resource extends DisplayEntity {
 	public Resource() {
 		unitsInUseDist = new DoubleVector();
 		seizeList = new ArrayList<Seize>();
+	}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == capacity) {
+			if( capacity.getValue() instanceof Distribution )
+				throw new InputErrorException( "A probability distribution is not a valid input.");
+			return;
+		}
 	}
 
 	@Override
