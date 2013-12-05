@@ -39,6 +39,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		keyClass = kClass;
 		valClass = vClass;
 		hashMap = new HashMap<K1,V>();
+		setAppendable(true);
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
