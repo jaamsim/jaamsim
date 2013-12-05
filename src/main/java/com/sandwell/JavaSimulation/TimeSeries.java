@@ -23,8 +23,9 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation3D.DisplayEntity;
 
-public class TimeSeries extends Entity implements TimeSeriesProvider {
+public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 
 	@Keyword(description = "A list of time series records with format { 'YYYY-MM-DD hh:mm:ss' value units }, where\n" +
 					"YYYY is the year\n" +

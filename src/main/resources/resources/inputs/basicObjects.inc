@@ -28,6 +28,7 @@ Define	ImageModel {
 			SeizeIconModel
 			ReleaseIconModel
 			BranchIconModel
+			TimeSeriesIconModel
 			}
 			
 SourceIconModel         ImageFile { '<res>/images/Source-256.png' }      Transparent { TRUE }
@@ -37,6 +38,7 @@ ResourceIconModel       ImageFile { '<res>/images/Resource-256.png' }    Transpa
 SeizeIconModel          ImageFile { '<res>/images/Seize-256.png'  }      Transparent { TRUE }
 ReleaseIconModel        ImageFile { '<res>/images/Release-256.png' }     Transparent { TRUE }
 BranchIconModel         ImageFile { '<res>/images/Branch-256.png' }      Transparent { TRUE }
+TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
 
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
 Server                  JavaClass { com.jaamsim.BasicObjects.Server                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
@@ -54,7 +56,7 @@ Group                   JavaClass { com.sandwell.JavaSimulation.Group           
 ScriptEntity            JavaClass { com.sandwell.JavaSimulation3D.ScriptEntity          } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 Output                  JavaClass { com.sandwell.JavaSimulation.OutputMethod            } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 BooleanIndicator        JavaClass { com.sandwell.JavaSimulation3D.BooleanIndicator      } Palette { 'Basic Objects' } DefaultDisplayModel { Circle                   }
-TimeSeries              JavaClass { com.sandwell.JavaSimulation.TimeSeries              } Palette { 'Basic Objects' }
+TimeSeries              JavaClass { com.sandwell.JavaSimulation.TimeSeries              } Palette { 'Basic Objects' } DefaultDisplayModel 	{ TimeSeriesIconModel    }
 
 EntityGenerator    Description { 'Creates copies of a specified entity at specified intervals.' }
 Server             Description { 'Processes a received entity over a specified duration.' }
