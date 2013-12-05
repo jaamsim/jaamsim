@@ -456,12 +456,8 @@ public class InputAgent {
 		// Validate the tokens have the Entity Keyword { Args... } Keyword { Args... }
 		ArrayList<KeywordIndex> words = InputAgent.getKeywords(record);
 		for (KeywordIndex keyword : words) {
-			StringVector args = new StringVector(keyword.end - keyword.start);
-			for (int i = keyword.start + 2; i < keyword.end; i++) {
-				args.add(record.get(i));
-			}
 			try {
-				InputAgent.processKeyword(ent, args, keyword.keyword, context);
+				InputAgent.processKeyword(ent, keyword, context);
 			}
 			catch (Throwable e) {
 				InputAgent.logError("Exception thrown from Entity: %s for keyword:%s - %s", ent.getInputName(), keyword.keyword, e.getMessage());
@@ -470,11 +466,13 @@ public class InputAgent {
 	}
 
 	private static class KeywordIndex {
+		final ArrayList<String> input;
 		final String keyword;
 		final int start;
 		final int end;
 
-		KeywordIndex(String k, int s, int e) {
+		KeywordIndex(ArrayList<String> inp, String k, int s, int e) {
+			input = inp;
 			keyword = k;
 			start = s;
 			end = e;
@@ -496,7 +494,7 @@ public class InputAgent {
 			if ("}".equals(tok)) {
 				braceDepth--;
 				if (braceDepth == 0) {
-					ret.add(new KeywordIndex(input.get(index), index, i));
+					ret.add(new KeywordIndex(input, input.get(index), index, i));
 					index = i + 1;
 					continue;
 				}
@@ -506,7 +504,7 @@ public class InputAgent {
 		// Look for a leftover keyword at the end of line
 		KeywordIndex last = ret.get(ret.size() - 1);
 		if (last.end != input.size() - 1) {
-			ret.add(new KeywordIndex(input.get(last.end + 1), last.end + 1, input.size() - 1));
+			ret.add(new KeywordIndex(input, input.get(last.end + 1), last.end + 1, input.size() - 1));
 		}
 
 		for (KeywordIndex kw : ret) {
@@ -639,23 +637,24 @@ public class InputAgent {
 		}
 	}
 
-	private static void processKeyword( Entity entity, StringVector recordCmd, String keyword, Input.ParseContext context) {
-		if (keyword == null)
-			throw new InputErrorException("The keyword is null.");
-
+	private static void processKeyword(Entity entity, KeywordIndex key, Input.ParseContext context) {
 		if (entity.testFlag(Entity.FLAG_LOCKED))
 			throw new InputErrorException("Entity: %s is locked and cannot be modified", entity.getName());
 
 		try {
-			Input<?> input = entity.getInput( keyword );
+			Input<?> input = entity.getInput( key.keyword );
+			StringVector args = new StringVector(key.end - key.start);
+			for (int i = key.start + 2; i < key.end; i++) {
+				args.add(key.input.get(i));
+			}
 			if( input != null && input.isAppendable() ) {
-				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(recordCmd);
+				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(args);
 				for ( int i = 0; i < splitData.size(); i++ ) {
 					InputAgent.apply(entity, input, splitData.get(i), context);
 				}
 			}
 			else {
-				InputAgent.apply(entity, recordCmd, keyword, context);
+				InputAgent.apply(entity, args, key.keyword, context);
 			}
 
 			// Create a list of entities to update in the edit table
@@ -671,20 +670,20 @@ public class InputAgent {
 			// Store the keyword data for use in the edit table
 			for( int i = 0; i < updateList.size(); i++ ) {
 				Entity ent = updateList.get( i );
-				Input<?> in = ent.getInput(keyword);
+				Input<?> in = ent.getInput(key.keyword);
 
 				if (in != null) {
-					InputAgent.updateInput(ent, in, recordCmd);
+					InputAgent.updateInput(ent, in, args);
 				}
 
 				// The keyword is not on the editable keyword list
 				else {
-					InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", keyword);
+					InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", key.keyword);
 				}
 			}
 		}
 		catch ( InputErrorException e ) {
-			InputAgent.logError("Entity: %s Keyword: %s - %s", entity.getName(), keyword, e.getMessage());
+			InputAgent.logError("Entity: %s Keyword: %s - %s", entity.getInputName(), key.keyword, e.getMessage());
 			throw e;
 		}
 	}
