@@ -24,11 +24,19 @@ Define	ImageModel {
 			SourceIconModel
 			SinkIconModel
 			ServerIconModel
+			ResourceIconModel
+			SeizeIconModel
+			ReleaseIconModel
+			BranchIconModel
 			}
 			
 SourceIconModel         ImageFile { '<res>/images/Source-256.png' }      Transparent { TRUE }
 SinkIconModel           ImageFile { '<res>/images/Sink-256.png'   }      Transparent { TRUE }
 ServerIconModel         ImageFile { '<res>/images/Server-256.png' }      Transparent { TRUE }
+ResourceIconModel       ImageFile { '<res>/images/Resource-256.png' }    Transparent { TRUE }
+SeizeIconModel          ImageFile { '<res>/images/Seize-256.png'  }      Transparent { TRUE }
+ReleaseIconModel        ImageFile { '<res>/images/Release-256.png' }     Transparent { TRUE }
+BranchIconModel         ImageFile { '<res>/images/Branch-256.png' }      Transparent { TRUE }
 
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
 Server                  JavaClass { com.jaamsim.BasicObjects.Server                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
@@ -36,10 +44,10 @@ EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink         
 EntityConveyor          JavaClass { com.jaamsim.BasicObjects.EntityConveyor             } Palette { 'Basic Objects' } DefaultDisplayModel	{ ScreenPointsModelDefault			}
 EntityDelay             JavaClass { com.jaamsim.BasicObjects.EntityDelay                } Palette { 'Basic Objects' } DefaultDisplayModel	{ ScreenPointsModelDefault			}
 Queue                   JavaClass { com.sandwell.JavaSimulation3D.Queue	                } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Triangle 				}
-Seize                   JavaClass { com.jaamsim.BasicObjects.Seize                      } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
-Release                 JavaClass { com.jaamsim.BasicObjects.Release                    } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SinkIconModel 		}
-Resource                JavaClass { com.jaamsim.BasicObjects.Resource                   } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
-Branch                  JavaClass { com.jaamsim.BasicObjects.Branch                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Rectangle             }
+Seize                   JavaClass { com.jaamsim.BasicObjects.Seize                      } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SeizeIconModel		}
+Release                 JavaClass { com.jaamsim.BasicObjects.Release                    } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ReleaseIconModel 		}
+Resource                JavaClass { com.jaamsim.BasicObjects.Resource                   } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ResourceIconModel		}
+Branch                  JavaClass { com.jaamsim.BasicObjects.Branch                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ BranchIconModel       }
 QueueRecorder           JavaClass { com.sandwell.JavaSimulation3D.QueueRecorder         } Palette { 'Basic Objects' } DefaultDisplayModel	{ Cube 					}	DragAndDrop 	{ FALSE 	}
 ProbabilityDistribution JavaClass { com.sandwell.JavaSimulation.ProbabilityDistribution } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 Group                   JavaClass { com.sandwell.JavaSimulation.Group                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
