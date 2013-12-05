@@ -34,6 +34,7 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 
 		// initialize value to hold the default
 		value = new ValueTable<T>(def.getDefault().getCurrentValue());
+		setAppendable(true);
 	}
 
 	private String unitString = "";
