@@ -112,4 +112,15 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 	public String getDefaultString() {
 		return getDefaultStringForKeyInputs(unitString);
 	}
+
+	public ArrayList<V> getAllValues() {
+
+		ArrayList<V> values = new ArrayList<V>();
+
+		for( V each : hashMap.values() ) {
+			values.add(each);
+		}
+		values.add(this.getDefaultValue());
+		return values;
+	}
 }
