@@ -38,6 +38,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		key2Class = k2Class;
 		valClass = vClass;
 		hashMap = new HashMap<K1,HashMap<K2,V>>();
+		setAppendable(true);
 	}
 
 	private String unitString = "";

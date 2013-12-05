@@ -40,6 +40,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		key3Class = k3Class;
 		valClass = vClass;
 		hashMap = new HashMap<K1,HashMap<K2,HashMap<K3,V>>>();
+		setAppendable(true);
 	}
 
 	private String unitString = "";
