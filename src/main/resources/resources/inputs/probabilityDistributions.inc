@@ -34,18 +34,24 @@ Define	ImageModel {
 					ProbabilityDistributionIconModel
 					NormalDistributionIconModel
 					ExponentialDistributionIconModel
+					UniformDistributionIconModel
+					TriangularDistributionIconModel
+					ErlangDistributionIconModel
 					}
 
 ProbabilityDistributionIconModel	ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
 NormalDistributionIconModel			ImageFile { '<res>/images/Norm Dist-256.png'     }   Transparent { TRUE }
 ExponentialDistributionIconModel	ImageFile { '<res>/images/Exp Dist-256.png'      }   Transparent { TRUE }
+UniformDistributionIconModel		ImageFile { '<res>/images/UniformDist-256.png'   }   Transparent { TRUE }
+TriangularDistributionIconModel		ImageFile { '<res>/images/TriangleDist-256.png'  }   Transparent { TRUE }
+ErlangDistributionIconModel			ImageFile { '<res>/images/ErlangDist-256.png'    }   Transparent { TRUE }
 
-UniformDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
-TriangularDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
+UniformDistribution			DefaultDisplayModel { UniformDistributionIconModel     }
+TriangularDistribution		DefaultDisplayModel { TriangularDistributionIconModel  }
 NormalDistribution			DefaultDisplayModel { NormalDistributionIconModel      }
 ExponentialDistribution		DefaultDisplayModel { ExponentialDistributionIconModel }
-ErlangDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
-GammaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
+ErlangDistribution			DefaultDisplayModel { ErlangDistributionIconModel      }
+GammaDistribution			DefaultDisplayModel { ErlangDistributionIconModel      }
 WeibullDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogLogisticsDistribution	DefaultDisplayModel { ProbabilityDistributionIconModel }
