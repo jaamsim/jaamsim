@@ -31,6 +31,7 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 		keyClass = kClass;
 		valClass = vClass;
 		hashMap = new HashMap<K1,ArrayList<V>>();
+		setAppendable(true);
 	}
 
 	@Override
