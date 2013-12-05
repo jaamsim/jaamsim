@@ -136,7 +136,7 @@ public abstract class Input<T> {
 		return value;
 	}
 
-	public void setAppendable(boolean bool) {
+	void setAppendable(boolean bool) {
 		appendable = bool;
 	}
 
