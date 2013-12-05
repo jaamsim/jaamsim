@@ -299,12 +299,11 @@ public class InputAgent {
 				}
 
 				int previousRecordSize = record.size();
-				Parser.tokenize(record, line);
+				Parser.tokenize(record, line, true);
 				braceDepth = InputAgent.getBraceDepth(record, braceDepth, previousRecordSize);
 				if( braceDepth != 0 )
 					continue;
 
-				Parser.removeComments(record);
 				if (record.size() == 0)
 					continue;
 
@@ -454,66 +453,70 @@ public class InputAgent {
 			return;
 		}
 
-		ArrayList<ArrayList<String>> keywords = InputAgent.splitKeywords(record);
-		for (ArrayList<String> keyword : keywords) {
-			if (keyword.size() < 3 ||
-			    !keyword.get(1).equals("{") ||
-			    !keyword.get(keyword.size() - 1).equals("}")) {
-				InputAgent.logError("Keyword not valid, should be <keyword> { <args> }");
-				continue;
-			}
-
-			String key = keyword.get(0);
-			StringVector args = new StringVector(keyword.size() - 3);
-			for (int i = 2; i < keyword.size() - 1; i++) {
-				args.add(keyword.get(i));
+		// Validate the tokens have the Entity Keyword { Args... } Keyword { Args... }
+		ArrayList<KeywordIndex> words = InputAgent.getKeywords(record);
+		for (KeywordIndex keyword : words) {
+			StringVector args = new StringVector(keyword.end - keyword.start);
+			for (int i = keyword.start + 2; i < keyword.end; i++) {
+				args.add(record.get(i));
 			}
 			try {
-				InputAgent.processKeyword(ent, args, key, context);
+				InputAgent.processKeyword(ent, args, keyword.keyword, context);
 			}
 			catch (Throwable e) {
-				InputAgent.logError("Exception thrown from Entity: %s for keyword:%s - %s", ent.getInputName(), key, e.getMessage());
+				InputAgent.logError("Exception thrown from Entity: %s for keyword:%s - %s", ent.getInputName(), keyword.keyword, e.getMessage());
 			}
 		}
 	}
 
-	private static ArrayList<ArrayList<String>> splitKeywords(ArrayList<String> input) {
-		ArrayList<ArrayList<String>> inputs = new ArrayList<ArrayList<String>>();
+	private static class KeywordIndex {
+		final String keyword;
+		final int start;
+		final int end;
+
+		KeywordIndex(String k, int s, int e) {
+			keyword = k;
+			start = s;
+			end = e;
+		}
+	}
+
+	private static ArrayList<KeywordIndex> getKeywords(ArrayList<String> input) {
+		ArrayList<KeywordIndex> ret = new ArrayList<KeywordIndex>();
 
 		int braceDepth = 0;
-		ArrayList<String> currentLine = null;
+		int index = 1;
 		for (int i = 1; i < input.size(); i++) {
-			if (currentLine == null)
-				currentLine = new ArrayList<String>( input.size() );
-
-			if (currentLine.size() == 1 && !input.get(i).equals("{")) {
-				// Old style brace-free input
-				InputAgent.logWarning("Input detected without braces: %s - %s", currentLine.get(0), input.get(i));
-				currentLine.add("{");
-				currentLine.add(input.get(i));
-				currentLine.add("}");
-				inputs.add(currentLine);
-				currentLine = null;
-				continue;
-			}
-
-			currentLine.add(input.get(i));
-			if (input.get(i).equals("{")) {
+			String tok = input.get(i);
+			if ("{".equals(tok)) {
 				braceDepth++;
 				continue;
 			}
 
-			if (input.get(i).equals("}")) {
+			if ("}".equals(tok)) {
 				braceDepth--;
 				if (braceDepth == 0) {
-					inputs.add(currentLine);
-					currentLine = null;
+					ret.add(new KeywordIndex(input.get(index), index, i));
+					index = i + 1;
 					continue;
 				}
 			}
 		}
 
-		return inputs;
+		// Look for a leftover keyword at the end of line
+		KeywordIndex last = ret.get(ret.size() - 1);
+		if (last.end != input.size() - 1) {
+			ret.add(new KeywordIndex(input.get(last.end + 1), last.end + 1, input.size() - 1));
+		}
+
+		for (KeywordIndex kw : ret) {
+			if (!"{".equals(input.get(kw.start + 1)) ||
+			    !"}".equals(input.get(kw.end))) {
+				throw new InputErrorException("Keyword %s not valid, should be <keyword> { <args> }", kw.keyword);
+			}
+		}
+
+		return ret;
 	}
 
 	public static void doError(Throwable e) {
