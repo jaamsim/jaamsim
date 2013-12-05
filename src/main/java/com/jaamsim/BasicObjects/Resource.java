@@ -110,9 +110,8 @@ public class Resource extends DisplayEntity {
 	 * @param n = number of units to seize
 	 */
 	public void seize(int n) {
-		this.updateStatistics();
+		this.updateStatistics(unitsInUse, unitsInUse+n);
 		unitsInUse += n;
-		this.updateStatistics();
 		unitsSeized += n;
 	}
 
@@ -121,9 +120,8 @@ public class Resource extends DisplayEntity {
 	 * @param n = number of units to release
 	 */
 	public void release(int n) {
-		this.updateStatistics();
+		this.updateStatistics(unitsInUse, unitsInUse-n);
 		unitsInUse -= n;
-		this.updateStatistics();
 		unitsReleased += n;
 
 		// Notify the Seize object(s) that can use the released units
@@ -170,13 +168,13 @@ public class Resource extends DisplayEntity {
 		unitsInUseDist.clear();
 	}
 
-	public void updateStatistics() {
+	public void updateStatistics( int oldValue, int newValue) {
 
-		minUnitsInUse = Math.min(unitsInUse, minUnitsInUse);
-		maxUnitsInUse = Math.max(unitsInUse, maxUnitsInUse);
+		minUnitsInUse = Math.min(newValue, minUnitsInUse);
+		maxUnitsInUse = Math.max(newValue, maxUnitsInUse);
 
 		// Add the necessary number of additional bins to the queue length distribution
-		int n = unitsInUse + 1 - unitsInUseDist.size();
+		int n = newValue + 1 - unitsInUseDist.size();
 		for( int i=0; i<n; i++ ) {
 			unitsInUseDist.add(0.0);
 		}
@@ -184,9 +182,9 @@ public class Resource extends DisplayEntity {
 		double simTime = this.getSimTime();
 		double dt = simTime - timeOfLastUpdate;
 		if( dt > 0.0 ) {
-			unitSeconds += dt * unitsInUse;
-			squaredUnitSeconds += dt * unitsInUse * unitsInUse;
-			unitsInUseDist.addAt(dt,unitsInUse);  // add dt to the entry at index queueSize
+			unitSeconds += dt * oldValue;
+			squaredUnitSeconds += dt * oldValue * oldValue;
+			unitsInUseDist.addAt(dt,oldValue);  // add dt to the entry at index queueSize
 			timeOfLastUpdate = simTime;
 		}
 	}
