@@ -642,30 +642,35 @@ public class InputAgent {
 			throw new InputErrorException("Entity: %s is locked and cannot be modified", entity.getName());
 
 		Input<?> input = entity.getInput( key.keyword );
+		if (input != null) {
+			StringVector args = new StringVector(key.end - key.start);
+			for (int i = key.start + 2; i < key.end; i++) {
+				args.add(key.input.get(i));
+			}
+			if (input.isAppendable()) {
+				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(args);
+				for ( int i = 0; i < splitData.size(); i++ ) {
+					InputAgent.apply(entity, input, splitData.get(i), context);
+				}
+			}
+			else {
+				InputAgent.apply(entity, input, args, context);
+			}
+			InputAgent.updateInput(entity, input, args);
+			return;
+		}
+
+		if (!(entity instanceof Group))
+			throw new InputErrorException("Not a valid keyword");
+
 		StringVector args = new StringVector(key.end - key.start);
 		for (int i = key.start + 2; i < key.end; i++) {
 			args.add(key.input.get(i));
 		}
-		if( input != null && input.isAppendable() ) {
-			ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(args);
-			for ( int i = 0; i < splitData.size(); i++ ) {
-				InputAgent.apply(entity, input, splitData.get(i), context);
-			}
-		}
-		else {
-			InputAgent.apply(entity, args, key.keyword, context);
-		}
+		Group grp = (Group)entity;
+		InputAgent.apply(grp, args, key.keyword, context);
 
-		// Create a list of entities to update in the edit table
-		ArrayList<Entity> updateList = null;
-		if (entity instanceof Group && input == null) {
-			updateList = ((Group)entity).getList();
-		}
-		else {
-			updateList = new ArrayList<Entity>(1);
-			updateList.add(entity);
-		}
-
+		ArrayList<Entity> updateList = grp.getList();
 		// Store the keyword data for use in the edit table
 		for( int i = 0; i < updateList.size(); i++ ) {
 			Entity ent = updateList.get( i );
@@ -673,11 +678,6 @@ public class InputAgent {
 
 			if (in != null) {
 				InputAgent.updateInput(ent, in, args);
-			}
-
-			// The keyword is not on the editable keyword list
-			else {
-				InputAgent.logWarning("Keyword %s is obsolete. Please replace the Keyword. Refer to the manual for more detail.", key.keyword);
 			}
 		}
 	}
