@@ -85,21 +85,14 @@ public class Group extends Entity {
 							StringVector currentData = new StringVector(this.getGroupKeywordValues().get(j));
 							String currentKeyword = currentData.remove(0);
 							Input<?> in = ent.getInput(currentKeyword);
-
-							ArrayList<StringVector> splitData = Util.splitStringVectorByBraces( currentData );
-							for ( int k = 0; k < splitData.size(); k++ ) {
-								InputAgent.apply(ent, splitData.get(k), currentKeyword, null);
-								if(in != null) {
-									InputAgent.updateInput(ent, in, splitData.get( k ));
-								}
-
+							if(in != null) {
+								InputAgent.apply(ent, in, currentData, null);
+							}
 								// The keyword is not on the editable keyword list
-								else {
-									InputAgent.logWarning("Keyword %s could not be found for Entity %s.", currentKeyword, ent.getInputName());
-								}
+							else {
+								InputAgent.logWarning("Keyword %s could not be found for Entity %s.", currentKeyword, ent.getInputName());
 							}
 						}
-
 					}
 				}
 

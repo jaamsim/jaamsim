@@ -603,28 +603,6 @@ public class InputAgent {
 		InputAgent.updateInput(ent, in, data);
 	}
 
-	public static final void apply(Entity ent, StringVector data, String keyword, Input.ParseContext context)
-	throws InputErrorException {
-		Input<?> in = ent.getInput(keyword);
-		if (in != null) {
-			InputAgent.apply(ent, in, data, context);
-			FrameBox.valueUpdate();
-			return;
-		}
-
-		if (ent instanceof Group) {
-			Group g = (Group)ent;
-			g.saveGroupKeyword(data, keyword);
-
-			// For all other keywords, apply the value to each member of the list
-			for( int i = 0; i < g.getList().size(); i++ ) {
-				Entity grpEnt = g.getList().get(i);
-				InputAgent.apply(grpEnt, data, keyword, null);
-			}
-			FrameBox.valueUpdate();
-		}
-	}
-
 	private static void processKeyword(Entity entity, KeywordIndex key, Input.ParseContext context) {
 		if (entity.testFlag(Entity.FLAG_LOCKED))
 			throw new InputErrorException("Entity: %s is locked and cannot be modified", entity.getName());
@@ -647,16 +625,18 @@ public class InputAgent {
 			args.add(key.input.get(i));
 		}
 		Group grp = (Group)entity;
-		InputAgent.apply(grp, args, key.keyword, context);
+		grp.saveGroupKeyword(args, key.keyword);
 
-		ArrayList<Entity> updateList = grp.getList();
 		// Store the keyword data for use in the edit table
-		for( int i = 0; i < updateList.size(); i++ ) {
-			Entity ent = updateList.get( i );
+		for( int i = 0; i < grp.getList().size(); i++ ) {
+			Entity ent = grp.getList().get( i );
 			Input<?> in = ent.getInput(key.keyword);
 
 			if (in != null) {
-				InputAgent.updateInput(ent, in, args);
+				InputAgent.apply(ent, in, args, context);
+			}
+			else {
+				InputAgent.logWarning("Keyword %s could not be found for Entity %s.", key.keyword, ent.getInputName());
 			}
 		}
 	}
