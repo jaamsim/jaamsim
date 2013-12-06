@@ -1129,18 +1129,12 @@ public class InputAgent {
 			if( i < data.size() - 1 )
 				out.append("  ");
 		}
-		String str = out.toString();
-
-		// Takes care of old format, displaying as new format -- appending onto end of record.
-		if( in.isAppendable() && ! data.get(0).equals("{") ) {
-			str = String.format("%s { %s }",  in.getValueString(), str );
-		}
 
 		if(in.isEdited()) {
 			ent.setFlag(Entity.FLAG_EDITED);
 			sessionEdited = true;
 		}
-		in.setValueString(str);
+		in.setValueString(out.toString());
 
 	}
 
