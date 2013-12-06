@@ -58,6 +58,13 @@ public class ExceptionBox extends FrameBox {
 		setSize( 400, 200 );
 	}
 
+	public void setErrorBox(String fmt, Object... args) {
+		setTitle("INPUT ERROR");
+
+		txt.setText(String.format(fmt, args));
+		this.setVisible(true);
+	}
+
 	public void setError(Throwable e) {
 		InputAgent.doError(e);
 
@@ -69,6 +76,7 @@ public class ExceptionBox extends FrameBox {
 			s.append(elm.toString()).append("\n");
 
 		txt.setText(s.toString());
+		setTitle("FATAL ERROR");
 		this.setVisible(true);
 	}
 

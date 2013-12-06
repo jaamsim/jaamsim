@@ -307,6 +307,8 @@ public class InputAgent {
 				if (record.size() == 0)
 					continue;
 
+				InputAgent.echoInputRecord(record);
+
 				if ("DEFINE".equalsIgnoreCase(record.get(0))) {
 					InputAgent.processDefineRecord(record);
 					record.clear();
@@ -562,7 +564,7 @@ public class InputAgent {
 
 		//  Check for found errors
 		if( InputAgent.numErrors > 0 )
-			throw new InputErrorException("%d input errors found, check log file", InputAgent.numErrors);
+			throw new InputErrorException("%d input errors and %d warnings found, check %s", InputAgent.numErrors, InputAgent.numWarnings, inputTraceFileName);
 
 		if (Simulation.getPrintInputReport())
 			InputAgent.printInputFileKeywords();
@@ -724,7 +726,7 @@ public class InputAgent {
 			}
 			catch( InputErrorException iee ) {
 				if (!batchRun)
-					ExceptionBox.instance().setError(iee);
+					ExceptionBox.instance().setErrorBox(iee.getMessage());
 				else
 					System.out.println( iee.getMessage() );
 			}
@@ -1007,18 +1009,24 @@ public class InputAgent {
 	}
 
 	private static void echoInputRecord(ArrayList<String> tokens) {
+		if (logFile == null)
+			return;
 		StringBuilder line = new StringBuilder();
 		for (int i = 0; i < tokens.size(); i++) {
 			line.append("  ").append(tokens.get(i));
 			if (tokens.get(i).startsWith("\"")) {
-				InputAgent.logMessage("%s", line.toString());
+				logFile.write(line.toString());
+				logFile.newLine();
 				line.setLength(0);
 			}
 		}
 
 		// Leftover input
-		if (line.length() > 0)
-			InputAgent.logMessage("%s", line.toString());
+		if (line.length() > 0) {
+			logFile.write(line.toString());
+			logFile.newLine();
+		}
+		logFile.flush();
 	}
 
 	private static void logBadInput(ArrayList<String> tokens, String msg) {
