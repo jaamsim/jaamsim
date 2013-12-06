@@ -471,9 +471,9 @@ public class InputAgent {
 		final int start;
 		final int end;
 
-		KeywordIndex(ArrayList<String> inp, String k, int s, int e) {
+		KeywordIndex(ArrayList<String> inp, int s, int e) {
 			input = inp;
-			keyword = k;
+			keyword = input.get(s);
 			start = s;
 			end = e;
 		}
@@ -494,7 +494,7 @@ public class InputAgent {
 			if ("}".equals(tok)) {
 				braceDepth--;
 				if (braceDepth == 0) {
-					ret.add(new KeywordIndex(input, input.get(index), index, i));
+					ret.add(new KeywordIndex(input, index, i));
 					index = i + 1;
 					continue;
 				}
@@ -504,7 +504,7 @@ public class InputAgent {
 		// Look for a leftover keyword at the end of line
 		KeywordIndex last = ret.get(ret.size() - 1);
 		if (last.end != input.size() - 1) {
-			ret.add(new KeywordIndex(input, input.get(last.end + 1), last.end + 1, input.size() - 1));
+			ret.add(new KeywordIndex(input, last.end + 1, input.size() - 1));
 		}
 
 		for (KeywordIndex kw : ret) {
@@ -1080,7 +1080,7 @@ public class InputAgent {
 		Parser.tokenize(tokens, value, true);
 		tokens.add("}");
 
-		KeywordIndex kw = new KeywordIndex(tokens, in.getKeyword(), 0, tokens.size() - 1);
+		KeywordIndex kw = new KeywordIndex(tokens, 0, tokens.size() - 1);
 		InputAgent.processKeyword(ent, kw, null);
 	}
 
@@ -1092,7 +1092,7 @@ public class InputAgent {
 		Parser.tokenize(tokens, value, true);
 		tokens.add("}");
 
-		KeywordIndex kw = new KeywordIndex(tokens, keyword, 0, tokens.size() - 1);
+		KeywordIndex kw = new KeywordIndex(tokens, 0, tokens.size() - 1);
 		InputAgent.processKeyword(ent, kw, null);
 	}
 
