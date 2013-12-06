@@ -600,6 +600,7 @@ public class InputAgent {
 			in.setEdited(true);
 
 		ent.updateForInput(in);
+		InputAgent.updateInput(ent, in, data);
 	}
 
 	public static final void apply(Entity ent, StringVector data, String keyword, Input.ParseContext context)
