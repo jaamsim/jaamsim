@@ -543,7 +543,7 @@ public class InputAgent {
 			logFile = new FileEntity( logURI.getPath(), FileEntity.FILE_WRITE, false );
 		}
 		catch( Exception e ) {
-			throw new ErrorException( "Could not create trace file" );
+			InputAgent.logWarning("Could not create trace file");
 		}
 
 		InputAgent.loadConfigurationFile(fileName, true);
