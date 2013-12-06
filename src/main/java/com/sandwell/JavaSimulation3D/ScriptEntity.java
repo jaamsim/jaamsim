@@ -101,8 +101,7 @@ public class ScriptEntity extends Entity {
 			if (line == null)
 				break;
 
-			Parser.tokenize(tokens, line);
-			Parser.removeComments(tokens);
+			Parser.tokenize(tokens, line, true);
 			if (tokens.size() == 0)
 				continue;
 

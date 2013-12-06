@@ -1075,22 +1075,25 @@ public class InputAgent {
 
 	public static void processEntity_Keyword_Value(Entity ent, Input<?> in, String value){
 		ArrayList<String> tokens = new ArrayList<String>();
-		Parser.tokenize(tokens, value);
-		if(! InputAgent.enclosedByBraces(tokens) ) {
-			tokens.add(0, "{");
-			tokens.add("}");
-		}
-		Parser.removeComments(tokens);
-		tokens.add(0, ent.getInputName());
-		tokens.add(1, in.getKeyword());
+		tokens.add(in.getKeyword());
+		tokens.add("{");
+		Parser.tokenize(tokens, value, true);
+		tokens.add("}");
 
-		InputAgent.processKeywordRecord(tokens, null);
+		KeywordIndex kw = new KeywordIndex(tokens, in.getKeyword(), 0, tokens.size() - 1);
+		InputAgent.processKeyword(ent, kw, null);
 	}
 
 
 	public static void processEntity_Keyword_Value(Entity ent, String keyword, String value){
-		Input<?> in = ent.getInput( keyword );
-		processEntity_Keyword_Value(ent, in, value);
+		ArrayList<String> tokens = new ArrayList<String>();
+		tokens.add(keyword);
+		tokens.add("{");
+		Parser.tokenize(tokens, value, true);
+		tokens.add("}");
+
+		KeywordIndex kw = new KeywordIndex(tokens, keyword, 0, tokens.size() - 1);
+		InputAgent.processKeyword(ent, kw, null);
 	}
 
 	/**
