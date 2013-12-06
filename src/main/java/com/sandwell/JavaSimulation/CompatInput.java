@@ -14,17 +14,41 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.util.ArrayList;
+
 public class CompatInput extends Input<String> {
 	Entity target;
+	private boolean appendable;
 
 	public CompatInput(Entity target, String key, String cat, String def) {
 		super(key, cat, def);
 		this.target = target;
+
+		appendable = false;
 	}
 
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
+		if (isAppendable()) {
+			ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+			for (StringVector each : split)
+				this.innerParse(each);
+		}
+		else {
+			innerParse(input);
+		}
+	}
+
+	private void innerParse(StringVector input) {
 		target.readData_ForKeyword(input, this.getKeyword());
+	}
+
+	void setAppendable(boolean bool) {
+		appendable = bool;
+	}
+
+	boolean isAppendable() {
+		return appendable;
 	}
 }

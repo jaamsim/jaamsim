@@ -40,7 +40,6 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		key3Class = k3Class;
 		valClass = vClass;
 		hashMap = new HashMap<K1,HashMap<K2,HashMap<K3,V>>>();
-		setAppendable(true);
 	}
 
 	private String unitString = "";
@@ -51,7 +50,12 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
+		ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+		for (StringVector each : split)
+			this.innerParse(each);
+	}
 
+	private void innerParse(StringVector input) {
 		// If two entity keys are not provided, set the default value
 		Entity ent1 = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		Entity ent2 = null;

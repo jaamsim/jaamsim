@@ -38,7 +38,6 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		key2Class = k2Class;
 		valClass = vClass;
 		hashMap = new HashMap<K1,HashMap<K2,V>>();
-		setAppendable(true);
 	}
 
 	private String unitString = "";
@@ -49,7 +48,12 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
+		ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+		for (StringVector each : split)
+			this.innerParse(each);
+	}
 
+	private void innerParse(StringVector input) {
 		// If one entity key is not provided, set the default value
 		Entity ent1 = Input.tryParseEntity( input.get( 0 ), key1Class );
 

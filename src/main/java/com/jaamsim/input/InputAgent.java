@@ -618,20 +618,7 @@ public class InputAgent {
 			// For all other keywords, apply the value to each member of the list
 			for( int i = 0; i < g.getList().size(); i++ ) {
 				Entity grpEnt = g.getList().get(i);
-
-				Input<?> input = grpEnt.getInput( keyword );
-				if( input != null && input.isAppendable() ) {
-					ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(data);
-					if( splitData.size() == 0 )
-						splitData.add(new StringVector());
-
-					for ( int j = 0; j < splitData.size(); j++ ) {
-						InputAgent.apply(grpEnt, splitData.get(j), keyword, null);
-					}
-				}
-				else {
-					InputAgent.apply(grpEnt, data, keyword, null);
-				}
+				InputAgent.apply(grpEnt, data, keyword, null);
 			}
 			FrameBox.valueUpdate();
 		}
@@ -647,16 +634,7 @@ public class InputAgent {
 			for (int i = key.start + 2; i < key.end; i++) {
 				args.add(key.input.get(i));
 			}
-			if (input.isAppendable()) {
-				ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(args);
-				for ( int i = 0; i < splitData.size(); i++ ) {
-					InputAgent.apply(entity, input, splitData.get(i), context);
-				}
-			}
-			else {
-				InputAgent.apply(entity, input, args, context);
-			}
-			InputAgent.updateInput(entity, input, args);
+			InputAgent.apply(entity, input, args, context);
 			return;
 		}
 

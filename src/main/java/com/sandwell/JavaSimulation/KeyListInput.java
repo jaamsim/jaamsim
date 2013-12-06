@@ -31,13 +31,17 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 		keyClass = kClass;
 		valClass = vClass;
 		hashMap = new HashMap<K1,ArrayList<V>>();
-		setAppendable(true);
 	}
 
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
+		ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+		for (StringVector each : split)
+			this.innerParse(each);
+	}
 
+	private void innerParse(StringVector input) {
 		ArrayList<K1> list;
 		try {
 			// Determine the key(s)

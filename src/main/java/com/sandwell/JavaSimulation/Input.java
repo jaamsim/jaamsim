@@ -69,7 +69,6 @@ public abstract class Input<T> {
 	protected T defValue;
 	protected T value;
 
-	private boolean appendable;  // indicates if input is appendable
 	private boolean locked; // indicates if input is locked for this entity
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean hidden; // Hide this input from the EditBox
@@ -85,7 +84,6 @@ public abstract class Input<T> {
 		category = cat;
 		setDefaultValue(def);
 
-		appendable = false;
 		locked = false;
 		edited = false;
 		hidden = false;
@@ -134,14 +132,6 @@ public abstract class Input<T> {
 
 	public T getValue() {
 		return value;
-	}
-
-	void setAppendable(boolean bool) {
-		appendable = bool;
-	}
-
-	public boolean isAppendable() {
-		return appendable;
 	}
 
 	public void setLocked(boolean bool) {

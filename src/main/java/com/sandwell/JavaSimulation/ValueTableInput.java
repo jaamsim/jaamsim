@@ -34,7 +34,6 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 
 		// initialize value to hold the default
 		value = new ValueTable<T>(def.getDefault().getCurrentValue());
-		setAppendable(true);
 	}
 
 	private String unitString = "";
@@ -45,6 +44,12 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
+		ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+		for (StringVector each : split)
+			this.innerParse(each);
+	}
+
+	private void innerParse(StringVector input) {
 		Input.assertCount(input, validCounts);
 
 		// Default for all objects that are not explicitly stated
