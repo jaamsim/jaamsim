@@ -27,7 +27,7 @@ public class TestExponentialDistribution {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		ExponentialDistribution dist = new ExponentialDistribution();
+		ExponentialDistribution dist = InputAgent.defineEntityWithUniqueName(ExponentialDistribution.class, "Dist", true);
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		dist.validate();

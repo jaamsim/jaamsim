@@ -30,7 +30,7 @@ public class TestGammaDistribution {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		GammaDistribution dist = new GammaDistribution();
+		GammaDistribution dist = InputAgent.defineEntityWithUniqueName(GammaDistribution.class, "Dist", true);
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "2.0");
@@ -54,7 +54,7 @@ public class TestGammaDistribution {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		GammaDistribution dist = new GammaDistribution();
+		GammaDistribution dist = InputAgent.defineEntityWithUniqueName(GammaDistribution.class, "Dist", true);
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "0.5");
