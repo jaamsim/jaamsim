@@ -39,7 +39,6 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		keyClass = kClass;
 		valClass = vClass;
 		hashMap = new HashMap<K1,V>();
-		setAppendable(true);
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
@@ -54,7 +53,12 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
+		ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+		for (StringVector each : split)
+			this.innerParse(each);
+	}
 
+	private void innerParse(StringVector input) {
 		// If an entity key is not provided, set the default value
 		Entity ent = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		if( ent == null || input.size() == 1 ) {
