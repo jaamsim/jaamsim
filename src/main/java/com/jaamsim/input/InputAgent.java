@@ -600,7 +600,27 @@ public class InputAgent {
 			in.setEdited(true);
 
 		ent.updateForInput(in);
-		InputAgent.updateInput(ent, in, data);
+
+		if(ent.testFlag(Entity.FLAG_GENERATED))
+			return;
+
+		StringBuilder out = new StringBuilder(data.size() * 6);
+		for (int i = 0; i < data.size(); i++) {
+			String dat = data.get(i);
+			if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
+				out.append("'").append(dat).append("'");
+			else
+				out.append(dat);
+
+			if( i < data.size() - 1 )
+				out.append("  ");
+		}
+
+		if(in.isEdited()) {
+			ent.setFlag(Entity.FLAG_EDITED);
+			sessionEdited = true;
+		}
+		in.setValueString(out.toString());
 	}
 
 	private static void processKeyword(Entity entity, KeywordIndex key, Input.ParseContext context) {
@@ -1071,30 +1091,6 @@ public class InputAgent {
 	public static void processEntity_Keyword_Value(Entity ent, String keyword, String value){
 		Input<?> in = ent.getInput( keyword );
 		processEntity_Keyword_Value(ent, in, value);
-	}
-
-	public static void updateInput(Entity ent, Input<?> in, StringVector data) {
-		if(ent.testFlag(Entity.FLAG_GENERATED))
-			return;
-
-		StringBuilder out = new StringBuilder(data.size() * 6);
-		for (int i = 0; i < data.size(); i++) {
-			String dat = data.get(i);
-			if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
-				out.append("'").append(dat).append("'");
-			else
-				out.append(dat);
-
-			if( i < data.size() - 1 )
-				out.append("  ");
-		}
-
-		if(in.isEdited()) {
-			ent.setFlag(Entity.FLAG_EDITED);
-			sessionEdited = true;
-		}
-		in.setValueString(out.toString());
-
 	}
 
 	/**
