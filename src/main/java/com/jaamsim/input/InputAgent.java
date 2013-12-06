@@ -462,7 +462,7 @@ public class InputAgent {
 				InputAgent.processKeyword(ent, keyword, context);
 			}
 			catch (Throwable e) {
-				InputAgent.logError("Exception thrown from Entity: %s for keyword:%s - %s", ent.getInputName(), keyword.keyword, e.getMessage());
+				InputAgent.logInpError("Entity: %s, Keyword: %s - %s", ent.getInputName(), keyword.keyword, e.getMessage());
 			}
 		}
 	}
@@ -998,6 +998,7 @@ public class InputAgent {
 	}
 
 	private static final String errPrefix = "*** ERROR *** %s%n";
+	private static final String inpErrPrefix = "*** INPUT ERROR *** %s%n";
 	private static final String wrnPrefix = "***WARNING*** %s%n";
 
 	public static int numErrors() {
@@ -1079,6 +1080,12 @@ public class InputAgent {
 		numErrors++;
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(errPrefix, msg);
+	}
+
+	public static void logInpError(String fmt, Object... args) {
+		numErrors++;
+		String msg = String.format(fmt, args);
+		InputAgent.logMessage(inpErrPrefix, msg);
 	}
 
 	public static void processEntity_Keyword_Value(Entity ent, Input<?> in, String value){
