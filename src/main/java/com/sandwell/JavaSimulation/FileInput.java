@@ -34,10 +34,11 @@ public class FileInput extends Input<URI> {
 		Input.assertCount(input, 1);
 		URI temp = null;
 		try {
+			String slashy = input.get(0).replaceAll("\\\\", "/");
 			if (context != null)
-				temp = InputAgent.getFileURI(context.context, input.get(0), context.jail);
+				temp = InputAgent.getFileURI(context.context, slashy, context.jail);
 			else
-				temp = InputAgent.getFileURI(null, input.get(0), null);
+				temp = InputAgent.getFileURI(null, slashy, null);
 
 		}
 		catch (URISyntaxException ex) {
