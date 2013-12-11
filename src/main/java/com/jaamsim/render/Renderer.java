@@ -40,10 +40,11 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.media.nativewindow.NativeWindowFactory;
-import javax.media.opengl.DebugGL2;
+import javax.media.opengl.DebugGL4bc;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2GL3;
 import javax.media.opengl.GL3;
+import javax.media.opengl.GL4bc;
 import javax.media.opengl.GLAnimatorControl;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
@@ -677,7 +678,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		assert (res == GLContext.CONTEXT_CURRENT);
 
 		if (USE_DEBUG_GL) {
-			_sharedContext.setGL(new DebugGL2(_sharedContext.getGL().getGL2()));
+			_sharedContext.setGL(new DebugGL4bc((GL4bc)_sharedContext.getGL().getGL2GL3()));
 		}
 
 		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
@@ -977,7 +978,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			synchronized (_rendererLock) {
 				// Per window initialization
 				if (USE_DEBUG_GL) {
-					drawable.setGL(new DebugGL2(drawable.getGL().getGL2()));
+					drawable.setGL(new DebugGL4bc((GL4bc)drawable.getGL().getGL2GL3()));
 				}
 
 				GL2GL3 gl = drawable.getGL().getGL2GL3();
