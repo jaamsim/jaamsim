@@ -52,13 +52,13 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Parser;
 import com.jaamsim.math.Color4d;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.StringListInput;

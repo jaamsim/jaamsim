@@ -14,10 +14,10 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.BooleanListInput;
 import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * The OrOperator implements the Boolean "Or" operation.

@@ -17,6 +17,7 @@ package com.jaamsim.FluidObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
@@ -26,7 +27,6 @@ import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Input;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 
 /**

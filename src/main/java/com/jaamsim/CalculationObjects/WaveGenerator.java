@@ -14,10 +14,10 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * Super-class for wave generators that produce either sine or square waves.

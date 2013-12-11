@@ -18,9 +18,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerInput;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
 
 /**

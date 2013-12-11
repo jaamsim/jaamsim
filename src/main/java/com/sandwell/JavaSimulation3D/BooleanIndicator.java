@@ -1,8 +1,8 @@
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.OutputInput;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.Keyword;
 
 public class BooleanIndicator extends DisplayEntity {
 

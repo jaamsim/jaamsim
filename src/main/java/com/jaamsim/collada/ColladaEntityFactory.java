@@ -20,6 +20,7 @@ import java.net.URI;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.MeshProtoKey;
@@ -27,7 +28,6 @@ import com.jaamsim.render.RenderUtils;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Input;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 

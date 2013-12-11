@@ -14,12 +14,12 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.RateUnit;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**

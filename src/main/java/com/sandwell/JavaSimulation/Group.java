@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 
 /**
  * Group class - for storing a list of objects

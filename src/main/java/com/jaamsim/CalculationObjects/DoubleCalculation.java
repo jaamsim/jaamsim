@@ -14,10 +14,10 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputInput;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * DoubleCalculation is the super-class for all calculations that return a double.

@@ -20,6 +20,7 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
@@ -30,7 +31,6 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.StringInput;
 

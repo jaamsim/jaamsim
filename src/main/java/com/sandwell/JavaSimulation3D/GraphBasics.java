@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 
 import com.jaamsim.input.FormatInput;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
@@ -30,7 +31,6 @@ import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
 
 public abstract class GraphBasics extends DisplayEntity {

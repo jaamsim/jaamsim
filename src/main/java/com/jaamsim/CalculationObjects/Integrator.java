@@ -14,9 +14,9 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * The Integrator returns the integral of the input values.

@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.Clock;

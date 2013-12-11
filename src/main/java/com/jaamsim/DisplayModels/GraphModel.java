@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -38,7 +39,6 @@ import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.Graph;
 
 public class GraphModel extends DisplayModel {

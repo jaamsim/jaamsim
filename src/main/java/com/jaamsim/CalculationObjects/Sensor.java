@@ -14,11 +14,11 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.OutputHandle;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.StringInput;
 
 /**

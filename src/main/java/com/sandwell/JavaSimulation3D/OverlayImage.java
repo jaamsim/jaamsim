@@ -14,9 +14,9 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * OverlayImage displays a 2D image (JPG, PNG, etc.) as an overlay on a View window.

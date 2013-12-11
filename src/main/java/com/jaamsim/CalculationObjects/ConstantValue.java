@@ -14,8 +14,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * The ConstantValue object simply returns a constant value.

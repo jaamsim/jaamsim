@@ -17,9 +17,9 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation.Keyword;
 
 public class QueueRecorder extends DisplayEntity {
 

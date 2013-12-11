@@ -14,8 +14,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * The BooleanConstant return a constant Boolean value.

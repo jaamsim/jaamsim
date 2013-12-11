@@ -17,6 +17,7 @@ package com.jaamsim.ProbabilityDistributions;
 import java.util.Random;
 
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.UnitTypeInput;
@@ -28,7 +29,6 @@ import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**

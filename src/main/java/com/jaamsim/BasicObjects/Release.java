@@ -14,10 +14,10 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class Release extends LinkedComponent {

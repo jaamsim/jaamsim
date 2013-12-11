@@ -20,6 +20,7 @@ import java.util.HashMap;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 

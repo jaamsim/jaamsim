@@ -16,11 +16,11 @@ package com.jaamsim.units;
 
 import java.util.HashMap;
 
+import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.Keyword;
 
 public abstract class Unit extends Entity {
 	@Keyword(description = "Factor to convert from the specified unit to the System International (SI) unit. " +

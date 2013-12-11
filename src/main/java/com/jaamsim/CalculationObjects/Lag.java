@@ -14,10 +14,10 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * The Lag block is a standard control system component whose output is equal to integral( input - output ) / LagTime.

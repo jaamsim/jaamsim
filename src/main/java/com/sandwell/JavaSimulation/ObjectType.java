@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.input.Keyword;
 
 public class ObjectType extends Entity {
 	private static final ArrayList<ObjectType> allInstances;

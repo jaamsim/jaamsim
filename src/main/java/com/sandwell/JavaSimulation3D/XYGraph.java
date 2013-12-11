@@ -16,12 +16,12 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.OutputListInput;
 import com.jaamsim.math.Color4d;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColorListInput;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.Keyword;
 
 public class XYGraph extends GraphBasics {
 

@@ -15,10 +15,10 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class Branch extends LinkedComponent {

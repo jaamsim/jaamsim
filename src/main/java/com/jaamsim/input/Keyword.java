@@ -1,4 +1,4 @@
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

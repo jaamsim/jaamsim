@@ -14,12 +14,12 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 /**
  * ObjectSelector is the super-class for model components that select an entity from a list.

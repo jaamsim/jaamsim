@@ -14,8 +14,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.IntegerInput;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * The MovingAverage block returns the average of the current input and the N-1 previous inputs.

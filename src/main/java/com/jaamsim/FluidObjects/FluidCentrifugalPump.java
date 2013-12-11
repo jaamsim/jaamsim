@@ -15,12 +15,12 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.CalculationObjects.DoubleCalculation;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.PressureUnit;
 import com.jaamsim.units.VolumeFlowUnit;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * FluidCentrifugalPump models the performance of a centrifugal pump.

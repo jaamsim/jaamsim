@@ -14,8 +14,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * The NotOperator implements the Boolean "Not" operation.

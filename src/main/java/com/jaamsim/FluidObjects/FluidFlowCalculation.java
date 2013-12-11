@@ -15,11 +15,11 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.CalculationObjects.CalculationEntity;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.jaamsim.units.VolumeFlowUnit;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * FluidFlowCalculation is the super-class for all flows between source and destination tanks.

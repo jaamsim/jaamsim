@@ -14,8 +14,8 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.DoubleListInput;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * The Polynomial entity returns a user-defined polynomial function of its input value.

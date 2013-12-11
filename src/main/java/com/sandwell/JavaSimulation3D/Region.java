@@ -14,13 +14,13 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Vec3dInput;
 
 /**

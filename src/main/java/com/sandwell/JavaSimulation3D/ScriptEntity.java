@@ -18,13 +18,13 @@ import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Parser;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.FileInput;
-import com.sandwell.JavaSimulation.Keyword;
 import com.sandwell.JavaSimulation.Process;
 
 public class ScriptEntity extends Entity {

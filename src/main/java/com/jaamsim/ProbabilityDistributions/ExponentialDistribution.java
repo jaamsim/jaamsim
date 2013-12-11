@@ -14,10 +14,10 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.Keyword;
 
 /**
  * Exponential Distribution.
