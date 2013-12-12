@@ -36,7 +36,7 @@ The present release includes the following palettes:
 
 The JaamSim executable, user manuals, examples, and technical articles can be downloaded
 from:
-http://ausencosimulation.github.io/JaamSim/
+http://jaamsim.com
 
 # Dependencies and Installation
 
