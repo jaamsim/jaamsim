@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -905,6 +906,7 @@ public class RenderManager implements DragSourceListener {
 
 		Vec3d entSpaceDelta = new Vec3d();
 		entSpaceDelta.sub3(entSpaceCurrent, entSpaceLast);
+		Locale loc = null;
 
 		// Handle each handle by type...
 		if (_dragHandleID == MOVE_PICK_ID) {
@@ -1029,7 +1031,7 @@ public class RenderManager implements DragSourceListener {
 			dispEnt.setGlobalPosition(pos);
 
 			Vec3d vec = dispEnt.getSize();
-			InputAgent.processEntity_Keyword_Value(dispEnt, "Size", String.format( "%.6f %.6f %.6f %s", vec.x, vec.y, vec.z, "m" ));
+			InputAgent.processEntity_Keyword_Value(dispEnt, "Size", String.format(loc, "%.6f %.6f %.6f %s", vec.x, vec.y, vec.z, "m" ));
 			FrameBox.valueUpdate();
 			return true;
 		}
@@ -1054,7 +1056,7 @@ public class RenderManager implements DragSourceListener {
 
 			Vec3d orient = dispEnt.getOrientation();
 			orient.z += theta;
-			InputAgent.processEntity_Keyword_Value(dispEnt, "Orientation", String.format("%f %f %f rad", orient.x, orient.y, orient.z));
+			InputAgent.processEntity_Keyword_Value(dispEnt, "Orientation", String.format(loc, "%f %f %f rad", orient.x, orient.y, orient.z));
 			FrameBox.valueUpdate();
 			return true;
 		}
@@ -1121,7 +1123,7 @@ public class RenderManager implements DragSourceListener {
 			StringBuilder sb = new StringBuilder();
 			String pointFormatter = " { %.3f %.3f %.3f m }";
 			for(Vec3d pt : screenPoints) {
-				sb.append(String.format(pointFormatter, pt.x, pt.y, pt.z));
+				sb.append(String.format(loc, pointFormatter, pt.x, pt.y, pt.z));
 			}
 
 			InputAgent.processEntity_Keyword_Value(dispEnt, pointsInput, sb.toString());
@@ -1166,18 +1168,19 @@ public class RenderManager implements DragSourceListener {
 		// If we are here, we have a segment to split, at index i
 
 		StringBuilder sb = new StringBuilder();
+		Locale loc = null;
 		String pointFormatter = " { %.3f %.3f %.3f m }";
 
 		for(int i = 0; i <= splitInd; ++i) {
 			Vec3d pt = points.get(i);
-			sb.append(String.format(pointFormatter, pt.x, pt.y, pt.z));
+			sb.append(String.format(loc, pointFormatter, pt.x, pt.y, pt.z));
 		}
 
-		sb.append(String.format(pointFormatter, nearPoint.x, nearPoint.y, nearPoint.z));
+		sb.append(String.format(loc, pointFormatter, nearPoint.x, nearPoint.y, nearPoint.z));
 
 		for (int i = splitInd+1; i < points.size(); ++i) {
 			Vec3d pt = points.get(i);
-			sb.append(String.format(pointFormatter, pt.x, pt.y, pt.z));
+			sb.append(String.format(loc, pointFormatter, pt.x, pt.y, pt.z));
 		}
 
 		Input<?> pointsInput = _selectedEntity.getInput("Points");
@@ -1218,6 +1221,7 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		StringBuilder sb = new StringBuilder();
+		Locale loc = null;
 		String pointFormatter = " { %.3f %.3f %.3f m }";
 
 		for(int i = 0; i < points.size(); ++i) {
@@ -1226,7 +1230,7 @@ public class RenderManager implements DragSourceListener {
 			}
 
 			Vec3d pt = points.get(i);
-			sb.append(String.format(pointFormatter, pt.x, pt.y, pt.z));
+			sb.append(String.format(loc, pointFormatter, pt.x, pt.y, pt.z));
 		}
 
 		Input<?> pointsInput = _selectedEntity.getInput("Points");
@@ -1411,8 +1415,9 @@ public class RenderManager implements DragSourceListener {
 			Vec3d size = dEntity.getSize();
 			Input<?> in = dEntity.getInput("Size");
 			StringVector args = new StringVector(4);
-			args.add(String.format("%.3f", size.x));
-			args.add(String.format("%.3f", size.y));
+			Locale loc = null;
+			args.add(String.format(loc, "%.3f", size.x));
+			args.add(String.format(loc, "%.3f", size.y));
 			args.add("0.0");
 			args.add("m");
 			InputAgent.apply(dEntity, in, args, null);
