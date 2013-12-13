@@ -193,18 +193,14 @@ public final class EventManager implements Runnable {
 	}
 
 	private boolean checkStopConditions() {
-		switch (EventManager.getEventState()) {
-		case EVENTS_RUNNING:
-		case EVENTS_STOPPED:
-			return false;
-		case EVENTS_UNTILTIME:
-			if (eventStack.get(0).schedTick >= debuggingTime)
-				return true;
-			else
-				return false;
-		default:
-			return false;
-		}
+		if (eventStack.isEmpty())
+			return true;
+
+		if (EventManager.getEventState() == EVENTS_UNTILTIME &&
+		    eventStack.get(0).schedTick >= debuggingTime)
+			return true;
+
+		return false;
 	}
 
 	/**
@@ -220,26 +216,25 @@ public final class EventManager implements Runnable {
 
 		// Loop continuously
 		while (true) {
-			if (checkStopConditions()) {
-				synchronized (lockObject) {
+			synchronized (lockObject) {
+				if (checkStopConditions()) {
 					EventManager.setEventState(EventManager.EVENTS_STOPPED);
+					GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
 				}
-				GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
-			}
 
-			// 1) Check whether the model has been paused
-			if (EventManager.getEventState() == EventManager.EVENTS_STOPPED) {
-				synchronized (lockObject) {
+				if (EventManager.getEventState() == EventManager.EVENTS_STOPPED) {
 					this.threadWait();
+					continue;
 				}
-				continue;
 			}
 
-			// 2) Execute the next event at the present simulation time
+			// If the next event would require us to advance the time, check the
+			// conditonal events
+			if (eventStack.get(0).schedTick > currentTick)
+				this.evaluateConditionals();
 
 			// Is there another event at this simulation time?
-			if (eventStack.size() > 0 &&
-				eventStack.get(0).schedTick == currentTick) {
+			if (eventStack.get(0).schedTick == currentTick) {
 
 				// Remove the event from the future events
 				Event nextEvent = eventStack.remove(0);
@@ -250,20 +245,13 @@ public final class EventManager implements Runnable {
 				// Pass control to this event's thread
 				p.setNextProcess(null);
 				switchThread(p);
-
 				continue;
 			}
 
-			// 4) Advance to the next event time
-			// (at this point, there are no more events at the present event time)
-
-			// Check all the conditional events
-			this.evaluateConditionals();
+			// Advance to the next event time
 
 			// Determine the next event time
-			long nextTick = Long.MAX_VALUE;
-			if (eventStack.size() > 0)
-				nextTick = eventStack.get(0).schedTick;
+			long nextTick = eventStack.get(0).schedTick;
 
 			// Only the top-level eventManager should update the master simulation time
 			// Advance simulation time smoothly between events
@@ -638,20 +626,19 @@ public final class EventManager implements Runnable {
 	 */
 	private void threadWait() {
 		// Ensure that the thread owns the global thread lock
-		synchronized( lockObject ) {
-			try {
-				/*
-				 * Halt the thread and only wake up by being interrupted.
-				 *
-				 * The infinite loop is _absolutely_ necessary to prevent
-				 * spurious wakeups from waking us early....which causes the
-				 * model to get into an inconsistent state causing crashes.
-				 */
-				while (true) { lockObject.wait(); }
-			}
-			// Catch the exception when the thread is interrupted
-			catch( InterruptedException e ) {}
+		try {
+			/*
+			 * Halt the thread and only wake up by being interrupted.
+			 *
+			 * The infinite loop is _absolutely_ necessary to prevent
+			 * spurious wakeups from waking us early....which causes the
+			 * model to get into an inconsistent state causing crashes.
+			 */
+			while (true) { lockObject.wait(); }
 		}
+		// Catch the exception when the thread is interrupted
+		catch( InterruptedException e ) {}
+
 	}
 
 	private void threadPause(long millisToWait) {
