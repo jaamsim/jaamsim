@@ -67,7 +67,6 @@ public final class EventManager implements Runnable {
 	private final Thread eventManagerThread;
 
 	private long currentTick; // Master simulation time (long)
-	private long targetTick; // The time a child eventManager will run to before waking the parent eventManager
 
 	// Real time execution state
 	private boolean executeRealTime;  // TRUE if the simulation is to be executed in Real Time mode
@@ -117,7 +116,6 @@ public final class EventManager implements Runnable {
 
 		// Initialize and event lists and timekeeping variables
 		currentTick = 0;
-		targetTick = 0;
 		eventStack = new ArrayList<Event>();
 		conditionalList = new ArrayList<Process>();
 
@@ -139,7 +137,6 @@ public final class EventManager implements Runnable {
 	// Initialize the eventManager.  This method is needed only for re-initialization.
 	// It is not used when the eventManager is first created.
 	private void basicInit() {
-		targetTick = Long.MAX_VALUE;
 		currentTick = 0;
 		rebaseRealTime = true;
 
@@ -210,16 +207,6 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	// Notify the parent eventManager than this eventManager has completed all its
-	// events up to some specified simulation time.
-	private void wakeParent() {
-		synchronized (lockObject) {
-			// For the top level eventManager, notify the simulation object
-			// Stop the eventManager's thread
-			threadWait();
-		}
-	}
-
 	/**
 	 * Main event processing loop for the eventManager.
 	 *
@@ -267,14 +254,6 @@ public final class EventManager implements Runnable {
 				continue;
 			}
 
-			// 3) Check to see if the target simulation time has been reached
-			if (currentTick == targetTick) {
-
-				// Notify the parent eventManager that this child has finished
-				this.wakeParent();
-				continue;
-			}
-
 			// 4) Advance to the next event time
 			// (at this point, there are no more events at the present event time)
 
@@ -282,13 +261,9 @@ public final class EventManager implements Runnable {
 			this.evaluateConditionals();
 
 			// Determine the next event time
-			long nextTick;
-			if (eventStack.size() > 0) {
-				nextTick = Math.min(eventStack.get(0).schedTick, targetTick);
-			}
-			else {
-				nextTick = targetTick;
-			}
+			long nextTick = Long.MAX_VALUE;
+			if (eventStack.size() > 0)
+				nextTick = eventStack.get(0).schedTick;
 
 			// Only the top-level eventManager should update the master simulation time
 			// Advance simulation time smoothly between events
