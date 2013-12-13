@@ -77,6 +77,7 @@ import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
+import com.sandwell.JavaSimulation.EventManager;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Tester;
@@ -1335,6 +1336,8 @@ public class GUIFrame extends JFrame {
 		System.out.println( "Loading Simulation Environment ... " );
 		System.out.flush();
 
+		EventManager evt = EventManager.initEventManager("DefaultEventManager");
+		Entity.setEVT(evt);
 		GUIFrame gui = GUIFrame.instance();
 		gui.updateForSimulationState(SIM_STATE_LOADED);
 

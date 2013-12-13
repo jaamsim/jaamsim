@@ -75,7 +75,7 @@ class EventTracer {
 			eventTraceFile = null;
 		}
 
-		EventManager.rootManager.traceEvents = enable;
+		Entity.root.traceEvents = enable;
 	}
 
 	static void verifyAllEvents(boolean enable) {
@@ -89,7 +89,7 @@ class EventTracer {
 			eventVerifyFile = null;
 		}
 
-		EventManager.rootManager.traceEvents = enable;
+		Entity.root.traceEvents = enable;
 	}
 
 	private static void findEventInBuffer(EventTraceRecord record) {

@@ -30,6 +30,8 @@ import com.jaamsim.input.OutputHandle;
  * event execution.
  */
 public class Entity {
+	static EventManager root;
+
 	private static long entityCount = 0;
 	private static final ArrayList<Entity> allInstances;
 	private static final HashMap<String, Entity> namedEntities;
@@ -95,6 +97,9 @@ public class Entity {
 		}
 	}
 
+	public static synchronized final void setEVT(EventManager evt) {
+		root = evt;
+	}
 
 	public static <T extends Entity> ArrayList<T> getInstancesOf(Class<T> proto) {
 		ArrayList<T> instanceList = new ArrayList<T>();
@@ -169,7 +174,7 @@ public class Entity {
 			return Process.currentTick();
 		}
 		catch (ErrorException e) {
-			return EventManager.rootManager.currentTick();
+			return root.currentTick();
 		}
 	}
 
@@ -261,7 +266,7 @@ public class Entity {
 	 * Static method to get the eventManager for all entities.
 	 */
 	private EventManager getEventManager() {
-		return EventManager.rootManager;
+		return root;
 	}
 
 	/**

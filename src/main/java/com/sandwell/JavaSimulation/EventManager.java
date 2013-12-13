@@ -48,8 +48,6 @@ import com.sandwell.JavaSimulation3D.GUIFrame;
  * all entities will schedule themselves with the same event manager.
  */
 public final class EventManager implements Runnable {
-	static final EventManager rootManager;
-
 	boolean traceEvents = false;
 
 	private static int eventState;
@@ -101,9 +99,6 @@ public final class EventManager implements Runnable {
 
 	static {
 		eventState = EVENTS_STOPPED;
-
-		rootManager = new EventManager("DefaultEventManager");
-		rootManager.start();
 	}
 
 	/**
@@ -112,7 +107,7 @@ public final class EventManager implements Runnable {
 	 * @param parent the connection point for this EventManager in the tree
 	 * @param name the name this EventManager should use
 	 */
-	EventManager(String name) {
+	private EventManager(String name) {
 		// Basic initialization
 		this.name = name;
 		lockObject = new Object();
@@ -133,12 +128,14 @@ public final class EventManager implements Runnable {
 		rebaseRealTime = true;
 	}
 
-	void start() {
-		eventManagerThread.start();
+	public static EventManager initEventManager(String name) {
+		EventManager evtman = new EventManager(name);
+		evtman.eventManagerThread.start();
+		return evtman;
 	}
 
-	static void clear() {
-		EventManager.rootManager.basicInit();
+	void clear() {
+		basicInit();
 	}
 
 	// Initialize the eventManager.  This method is needed only for re-initialization.

@@ -170,7 +170,7 @@ public class Simulation extends Entity {
 	}
 
 	public static void clear() {
-		EventManager.clear();
+		root.clear();
 
 		initializationTime.reset();
 		runDuration.reset();
@@ -209,7 +209,7 @@ public class Simulation extends Entity {
 	 *		3) start EventManager processing events
 	 */
 	public static void start() {
-		EventManager.clear();
+		root.clear();
 
 		if( traceEventsInput.getValue() ) {
 			EventTracer.traceAllEvents(traceEventsInput.getValue());
@@ -225,13 +225,13 @@ public class Simulation extends Entity {
 		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
 		endTime = startTime + Simulation.getInitializationHours() + Simulation.getRunDurationHours();
 
-		EventManager.rootManager.scheduleProcess(0, EventManager.PRIO_DEFAULT, new InitModelTarget());
+		root.scheduleProcess(0, EventManager.PRIO_DEFAULT, new InitModelTarget());
 		Simulation.resume();
 	}
 
 
 	public static final void resume() {
-		EventManager.rootManager.resume();
+		root.resume();
 		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 	}
 
@@ -239,7 +239,7 @@ public class Simulation extends Entity {
 	 *	Requests the EventManager to stop processing events.
 	 */
 	public static final void pause() {
-		EventManager.rootManager.pause();
+		root.pause();
 		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
 	}
 
@@ -247,7 +247,7 @@ public class Simulation extends Entity {
 	 *	Requests the EventManager to stop processing events.
 	 */
 	public static final void stop() {
-		EventManager.rootManager.pause();
+		root.pause();
 		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_STOPPED);
 
 		// kill all generated objects
@@ -293,10 +293,10 @@ public class Simulation extends Entity {
 			}
 
 			long startTick = calculateDelayLength(Simulation.getStartHours());
-			EventManager.rootManager.scheduleProcess(startTick, EventManager.PRIO_DEFAULT, new StartModelTarget());
+			root.scheduleProcess(startTick, EventManager.PRIO_DEFAULT, new StartModelTarget());
 
 			long endTick = calculateDelayLength(Simulation.getEndHours());
-			EventManager.rootManager.scheduleProcess(endTick, EventManager.PRIO_DEFAULT, new EndModelTarget());
+			root.scheduleProcess(endTick, EventManager.PRIO_DEFAULT, new EndModelTarget());
 		}
 	}
 
@@ -373,16 +373,16 @@ public class Simulation extends Entity {
 	}
 
 	public static void runToTime(double stopTimeHours) {
-		EventManager.rootManager.runToTime(stopTimeHours);
+		root.runToTime(stopTimeHours);
 	}
 
 	public static final double getInternalHours() {
-		long ticks = EventManager.rootManager.currentTick();
+		long ticks = root.currentTick();
 		return ticks / Process.getSimTimeFactor();
 	}
 
 	static void updateRealTime() {
-		EventManager.rootManager.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
+		root.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
 		GUIFrame.instance().updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
 	}
 
