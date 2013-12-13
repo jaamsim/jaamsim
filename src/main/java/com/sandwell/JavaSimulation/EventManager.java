@@ -53,8 +53,6 @@ public final class EventManager implements Runnable {
 	private static int eventState;
 	static final int EVENTS_STOPPED = 0;
 	static final int EVENTS_RUNNING = 1;
-	static final int EVENTS_RUNONE = 2;
-	static final int EVENTS_TIMESTEP = 3;
 	static final int EVENTS_UNTILTIME = 4;
 
 	final String name;
@@ -202,13 +200,6 @@ public final class EventManager implements Runnable {
 		case EVENTS_RUNNING:
 		case EVENTS_STOPPED:
 			return false;
-		case EVENTS_RUNONE:
-			return true;
-		case EVENTS_TIMESTEP:
-			if (eventStack.get(0).schedTick != debuggingTime)
-				return true;
-			else
-				return false;
 		case EVENTS_UNTILTIME:
 			if (eventStack.get(0).schedTick >= debuggingTime)
 				return true;
@@ -745,17 +736,6 @@ public final class EventManager implements Runnable {
 			EventManager.setEventState(EventManager.EVENTS_RUNNING);
 			eventManagerThread.interrupt();
 		}
-	}
-
-	public void nextOneEvent() {
-		EventManager.setEventState(EventManager.EVENTS_RUNONE);
-		startDebugging();
-	}
-
-	public void nextEventTime() {
-		debuggingTime = eventStack.get(0).schedTick;
-		EventManager.setEventState(EventManager.EVENTS_TIMESTEP);
-		startDebugging();
 	}
 
 	void runToTime(double stopTime) {
