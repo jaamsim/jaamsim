@@ -48,7 +48,6 @@ import com.sandwell.JavaSimulation3D.GUIFrame;
  * all entities will schedule themselves with the same event manager.
  */
 public final class EventManager implements Runnable {
-	private static final ArrayList<EventManager> definedManagers;
 	static final EventManager rootManager;
 
 	boolean traceEvents = false;
@@ -61,8 +60,6 @@ public final class EventManager implements Runnable {
 	static final int EVENTS_UNTILTIME = 4;
 
 	final String name;
-	private final EventManager parent;
-	private final ArrayList<EventManager> children;
 
 	private final Object lockObject; // Object used as global lock for synchronization
 	private final ArrayList<Event> eventStack;
@@ -73,7 +70,6 @@ public final class EventManager implements Runnable {
 	private final ArrayList<Process> conditionalList; // List of all conditionally waiting processes
 	private final Thread eventManagerThread;
 
-	private int activeChildCount; // The number of currently executing child eventManagers
 	private long currentTick; // Master simulation time (long)
 	private long targetTick; // The time a child eventManager will run to before waking the parent eventManager
 
@@ -105,10 +101,8 @@ public final class EventManager implements Runnable {
 
 	static {
 		eventState = EVENTS_STOPPED;
-		definedManagers = new ArrayList<EventManager>();
 
-		rootManager = new EventManager(null, "DefaultEventManager");
-		definedManagers.add(rootManager);
+		rootManager = new EventManager("DefaultEventManager");
 		rootManager.start();
 	}
 
@@ -118,18 +112,10 @@ public final class EventManager implements Runnable {
 	 * @param parent the connection point for this EventManager in the tree
 	 * @param name the name this EventManager should use
 	 */
-	EventManager(EventManager parent, String name) {
+	EventManager(String name) {
 		// Basic initialization
 		this.name = name;
 		lockObject = new Object();
-
-		// Initialize the tree structure for multiple EventManagers
-		this.parent = parent;
-		if (this.parent != null) {
-			this.parent.addChild(this);
-		}
-		children = new ArrayList<EventManager>();
-		activeChildCount = 0;
 
 		// Initialize the thread which processes events from this EventManager
 		eventManagerThread = new Thread(this, "evt-" + name);
@@ -149,29 +135,6 @@ public final class EventManager implements Runnable {
 
 	void start() {
 		eventManagerThread.start();
-	}
-
-	static void defineEventManager(String name) {
-		EventManager evt = new EventManager(rootManager, name);
-		definedManagers.add(evt);
-		evt.start();
-	}
-
-	static EventManager getDefinedManager(String name) {
-		for (EventManager each : definedManagers) {
-			if (each.name.equals(name)) {
-				return each;
-			}
-		}
-
-		return null;
-	}
-
-	private void addChild(EventManager child) {
-		synchronized (lockObject) {
-			children.add(child);
-			activeChildCount++;
-		}
 	}
 
 	static void clear() {
@@ -264,54 +227,9 @@ public final class EventManager implements Runnable {
 	private void wakeParent() {
 		synchronized (lockObject) {
 			// For the top level eventManager, notify the simulation object
-			if (parent == null) {
-				// Stop the eventManager's thread
-				threadWait();
-			}
-			// For an eventManager that does have a parent
-			else {
-				// Wake up the parent and stop this eventManager's thread
-				parent.wake();
-				threadWait();
-			}
+			// Stop the eventManager's thread
+			threadWait();
 		}
-	}
-
-	// Called by child eventManager to restart its parent eventManager
-	private void wake() {
-		synchronized (lockObject) {
-			// Decrement the number of active child eventManagers
-			// (note that this must be done here and not when the child calls this
-			// method because the parent's lockobject must be held to modify its property)
-			activeChildCount--;
-			if (activeChildCount == 0) {
-				eventManagerThread.interrupt();
-			}
-		}
-	}
-
-	// Restart executing future events for each child eventManager
-	// @nextTime - maximum simulation time to execute until
-	private void updateChildren(long nextTick) {
- 		synchronized (lockObject) {
- 			// Temporary debug code to account for racy initialization
- 			if (activeChildCount != 0) {
- 				System.out.println("Child count corrupt:"+activeChildCount);
- 				activeChildCount = 0;
- 			}
- 			// Loop through the child eventManagers
-			for (EventManager child : children) {
-				// Increment the number of active children and restart the
-				// child eventManager
-				activeChildCount++;
-				synchronized (child.lockObject) {
-					child.targetTick = nextTick;
-					child.eventManagerThread.interrupt();
-				}
-			}
-			if (activeChildCount > 0)
-				threadWait();
-	 	}
 	}
 
 	/**
@@ -329,8 +247,7 @@ public final class EventManager implements Runnable {
 		while (true) {
 
 			// 1) Check whether the model has been paused
-			if (parent == null &&
-			    EventManager.getEventState() == EventManager.EVENTS_STOPPED) {
+			if (EventManager.getEventState() == EventManager.EVENTS_STOPPED) {
 				synchronized (lockObject) {
 					this.threadWait();
 				}
@@ -379,24 +296,19 @@ public final class EventManager implements Runnable {
 				nextTick = targetTick;
 			}
 
-			// Update all the child eventManagers to this next event time
-			this.updateChildren(nextTick);
-
 			// Only the top-level eventManager should update the master simulation time
-			if (parent == null) {
+			// Advance simulation time smoothly between events
+			if (executeRealTime) {
+				this.doRealTime(nextTick);
 
-				// Advance simulation time smoothly between events
-				if (executeRealTime) {
-					this.doRealTime(nextTick);
-
-					// Has the simulation been stopped and restarted
-					if( eventStack.get(0).schedTick == 0 )
-						continue;
-				}
-
-				// Update the displayed simulation time
-				FrameBox.timeUpdate( Process.ticksToSeconds(nextTick) );
+				// Has the simulation been stopped and restarted
+				if( eventStack.get(0).schedTick == 0 )
+					continue;
 			}
+
+			// Update the displayed simulation time
+			FrameBox.timeUpdate( Process.ticksToSeconds(nextTick) );
+
 
 			// Set the present time for this eventManager to the next event time
 			if (eventStack.size() > 0 && eventStack.get(0).schedTick < nextTick) {
@@ -565,14 +477,6 @@ public final class EventManager implements Runnable {
 			throw new ErrorException("Negative duration wait is invalid (wait length specified to be %d )", ticks);
 
 		assertNotWaitUntil();
-		if (!Process.current().getEventManager().isParentOf(this)) {
-			System.out.format("Crossing eventManager boundary dst:%s src:%s\n",
-			                  name, Process.current().getEventManager().name);
-			long time = Process.current().getEventManager().currentTick() + ticks;
-			if (eventStack.size() > 0 && eventStack.get(0).schedTick > time)
-				System.out.format("Next Event:%d This Event:%d\n", eventStack.get(0).schedTick, time);
-		}
-
 		long nextEventTime = calculateEventTime(Process.currentTick(), ticks);
 
 		Event temp = new Event(currentTick(), nextEventTime, priority, Process.current(), null);
@@ -806,21 +710,6 @@ public final class EventManager implements Runnable {
 			// Catch the exception when the thread is interrupted
 			catch( InterruptedException e ) {}
 		}
-	}
-
-	private boolean isParentOf(EventManager child) {
-		// Allow trivial case where we check against ourself
-		EventManager temp = child;
-
-		while (temp != null) {
-			if (this == temp) {
-				return true;
-			} else {
-				temp = temp.parent;
-			}
-		}
-
-		return false;
 	}
 
 	void scheduleProcess(long waitLength, int eventPriority, ProcessTarget t) {
