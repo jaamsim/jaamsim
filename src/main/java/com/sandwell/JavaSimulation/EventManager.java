@@ -233,6 +233,12 @@ public final class EventManager implements Runnable {
 
 		// Loop continuously
 		while (true) {
+			if (checkStopConditions()) {
+				synchronized (lockObject) {
+					EventManager.setEventState(EventManager.EVENTS_STOPPED);
+				}
+				GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
+			}
 
 			// 1) Check whether the model has been paused
 			if (EventManager.getEventState() == EventManager.EVENTS_STOPPED) {
@@ -304,13 +310,6 @@ public final class EventManager implements Runnable {
 				nextTick = eventStack.get(0).schedTick;
 			}
 			currentTick = nextTick;
-
-			if (checkStopConditions()) {
-				synchronized (lockObject) {
-					EventManager.setEventState(EventManager.EVENTS_STOPPED);
-				}
-				GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
-			}
 		}
 	}
 
