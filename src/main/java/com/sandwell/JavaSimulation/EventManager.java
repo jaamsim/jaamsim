@@ -511,7 +511,6 @@ public final class EventManager implements Runnable {
 	private void addEventToStack(Event newEvent) {
 		synchronized (lockObject) {
 			if (newEvent.schedTick < currentTick) {
-				System.out.println("Time travel detected - whoops");
 				throw new ErrorException("Going back in time");
 			}
 
@@ -640,12 +639,7 @@ public final class EventManager implements Runnable {
 					return;
 				}
 			}
-			//if (parent != null) {
-			//	parent.terminateThread(killThread);
-			//	return;
-			//}
 		}
-		System.out.format("Threadevt:%s", killThread.getEventManager().name);
 		throw new ErrorException("Tried to terminate a thread in %s that couldn't be found", name);
 	}
 
