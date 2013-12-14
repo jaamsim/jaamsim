@@ -234,7 +234,8 @@ public final class EventManager implements Runnable {
 				this.evaluateConditionals();
 
 			// Is there another event at this simulation time?
-			if (eventStack.get(0).schedTick == currentTick) {
+			long nextTick = eventStack.get(0).schedTick;
+			if (nextTick == currentTick) {
 
 				// Remove the event from the future events
 				Event nextEvent = eventStack.remove(0);
@@ -248,10 +249,8 @@ public final class EventManager implements Runnable {
 				continue;
 			}
 
-			// Advance to the next event time
 
-			// Determine the next event time
-			long nextTick = eventStack.get(0).schedTick;
+			// Advance to the next event time
 
 			// Only the top-level eventManager should update the master simulation time
 			// Advance simulation time smoothly between events
@@ -703,17 +702,10 @@ public final class EventManager implements Runnable {
 		debuggingTime = ((long)(stopTime * Process.getSimTimeFactor()));
 		EventManager.setEventState(EventManager.EVENTS_UNTILTIME);
 		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
-		startDebugging();
-	}
-
-	public void startDebugging() {
 		synchronized( lockObject ) {
-			if (eventStack.size() == 0)
-				return;
-
-			eventManagerThread.interrupt();
+			if (!eventStack.isEmpty())
+				eventManagerThread.interrupt();
 		}
-
 	}
 
 	private void traceEvent(Event evt, int reason) {
