@@ -32,6 +32,8 @@ public class BooleanIndicator extends DisplayEntity {
 
 	@Override
 	public void updateGraphics( double time ) {
+		if (boolProp.getValue() == null)
+			return;
 		Boolean b = boolProp.getOutputValue(time);
 		if (b.booleanValue()) {
 			setTagColour(DisplayModelCompat.TAG_CONTENTS, trueColor.getValue());
