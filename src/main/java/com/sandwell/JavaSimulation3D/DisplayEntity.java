@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.jaamsim.DisplayModels.DisplayModel;
@@ -513,7 +514,8 @@ public class DisplayEntity extends Entity {
 		invReg.multAndTrans(pos, localPos);
 
 		setPosition(localPos);
-		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format( "%.6f %.6f %.6f m", localPos.x, localPos.y, localPos.z ));
+		Locale loc = null;
+		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format(loc, "%.6f %.6f %.6f m", localPos.x, localPos.y, localPos.z ));
 		FrameBox.valueUpdate();
 	}
 
@@ -561,7 +563,8 @@ public class DisplayEntity extends Entity {
 		this.setPosition(newPos);
 
 		// inform simulation and editBox of new positions
-		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format( "%.6f %.6f %.6f m", newPos.x, newPos.y, newPos.z ));
+		Locale loc = null;
+		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format(loc, "%.6f %.6f %.6f m", newPos.x, newPos.y, newPos.z ));
 		FrameBox.valueUpdate();
 	}
 

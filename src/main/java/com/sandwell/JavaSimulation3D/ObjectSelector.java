@@ -22,6 +22,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Locale;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -399,8 +400,9 @@ static class DuplicateMenuItem extends DEMenuItem {
 
 			dEnt.setPosition(pos);
 
+			Locale loc = null;
 			// Set the input for the "Position" keyword to the new value
-			InputAgent.processEntity_Keyword_Value(dEnt, "Position", String.format( "%.6f %.6f %.6f m", pos.x, pos.y, pos.z ));
+			InputAgent.processEntity_Keyword_Value(dEnt, "Position", String.format(loc, "%.6f %.6f %.6f m", pos.x, pos.y, pos.z ));
 			FrameBox.valueUpdate();
 		}
 

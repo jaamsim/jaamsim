@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeyedVec3dInput;
@@ -250,9 +251,10 @@ public void updateCenterAndPos(Vec3d center, Vec3d pos) {
 			tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
 		}
 
-		String posVal = String.format("%f %f %f m", tempPos.x, tempPos.y, tempPos.z);
+		Locale loc = null;
+		String posVal = String.format(loc, "%f %f %f m", tempPos.x, tempPos.y, tempPos.z);
 		InputAgent.processEntity_Keyword_Value(this, this.position, posVal);
-		String cenVal = String.format("%f %f %f m", tempCent.x, tempCent.y, tempCent.z);
+		String cenVal = String.format(loc, "%f %f %f m", tempCent.x, tempCent.y, tempCent.z);
 		InputAgent.processEntity_Keyword_Value(this, this.center, cenVal);
 	}
 }
@@ -277,18 +279,21 @@ public void setRegion(Region reg) {
 }
 
 public void setPosition(Vec3d pos) {
-	String val = String.format("%f %f %f m", pos.x, pos.y, pos.z);
+	Locale loc = null;
+	String val = String.format(loc, "%f %f %f m", pos.x, pos.y, pos.z);
 	InputAgent.processEntity_Keyword_Value(this, this.position, val);
 }
 
 public void setCenter(Vec3d cent) {
-	String val = String.format("%f %f %f m", cent.x, cent.y, cent.z);
+	Locale loc = null;
+	String val = String.format(loc, "%f %f %f m", cent.x, cent.y, cent.z);
 	InputAgent.processEntity_Keyword_Value(this, this.center, val);
 }
 
 public void setWindowPos(int x, int y, int width, int height) {
-	String posVal = String.format("%d %d", x, y);
-	String sizeVal = String.format("%d %d", width, height);
+	Locale loc = null;
+	String posVal = String.format(loc, "%d %d", x, y);
+	String sizeVal = String.format(loc, "%d %d", width, height);
 	InputAgent.processEntity_Keyword_Value(this, this.windowPos, posVal);
 	InputAgent.processEntity_Keyword_Value(this, this.windowSize, sizeVal);
 

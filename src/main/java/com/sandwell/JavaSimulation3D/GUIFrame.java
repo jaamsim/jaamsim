@@ -35,6 +35,7 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.BorderFactory;
@@ -1203,7 +1204,8 @@ public class GUIFrame extends JFrame {
 		}
 		else {
 			if( showPosition.getState() ) {
-				locatorPos.setText(String.format("(%.3f, %.3f, %.3f)",
+				Locale loc = null;
+				locatorPos.setText(String.format(loc, "(%.3f, %.3f, %.3f)",
 					pos.x, pos.y, pos.z));
 			}
 		}

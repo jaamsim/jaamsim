@@ -16,6 +16,7 @@ package com.jaamsim.collada;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Locale;
 
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.controllers.RenderManager;
@@ -108,10 +109,11 @@ public class ColladaEntityFactory extends Entity {
 		Vec3d modelSize = new Vec3d(modelBounds.radius);
 		modelSize.scale3(2);
 
-		InputAgent.processEntity_Keyword_Value(de, "Position", String.format("%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z));
+		Locale loc = null;
+		InputAgent.processEntity_Keyword_Value(de, "Position", String.format(loc, "%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z));
 		InputAgent.processEntity_Keyword_Value(de, "Alignment", "0 0 0");
 
-		InputAgent.processEntity_Keyword_Value(de, "Size", String.format("%.6f %.6f %.6f m", modelSize.x, modelSize.y, modelSize.z));
+		InputAgent.processEntity_Keyword_Value(de, "Size", String.format(loc, "%.6f %.6f %.6f m", modelSize.x, modelSize.y, modelSize.z));
 
 	}
 }

@@ -15,6 +15,7 @@
 package com.jaamsim.FluidObjects;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -223,10 +224,10 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		for (Vec3d v : pointsInput.getValue()) {
 			vec.add(new Vec3d(v.x + dist.x, v.y + dist.y, v.z + dist.z));
 		}
-
+		Locale loc = null;
 		StringBuilder tmp = new StringBuilder();
 		for (Vec3d v : vec) {
-			tmp.append(String.format(" { %.3f %.3f %.3f m }", v.x, v.y, v.z));
+			tmp.append(String.format(loc, " { %.3f %.3f %.3f m }", v.x, v.y, v.z));
 		}
 		InputAgent.processEntity_Keyword_Value(this, pointsInput, tmp.toString());
 

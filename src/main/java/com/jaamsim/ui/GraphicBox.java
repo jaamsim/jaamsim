@@ -27,6 +27,7 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -219,16 +220,17 @@ public class GraphicBox extends JDialog {
 						ratio = entitySize.z/modelSize.z;
 					}
 				}
+				Locale loc = null;
 				if (useModelPosition.isSelected()) {
 
 					Vec3d entityPos = modelBounds.center;
 
-					InputAgent.processEntity_Keyword_Value(currentEntity, "Position", String.format("%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z));
+					InputAgent.processEntity_Keyword_Value(currentEntity, "Position", String.format(loc, "%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z));
 					InputAgent.processEntity_Keyword_Value(currentEntity, "Alignment", "0 0 0");
 				}
 				entitySize = new Vec3d(modelSize);
 				entitySize.scale3(ratio);
-				InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format("%.6f %.6f %.6f m", entitySize.x, entitySize.y, entitySize.z));
+				InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format(loc, "%.6f %.6f %.6f m", entitySize.x, entitySize.y, entitySize.z));
 				FrameBox.valueUpdate();
 				myInstance.close();
 			}
