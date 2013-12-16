@@ -14,7 +14,6 @@
  */
 package com.jaamsim.render;
 
-import java.util.Map;
 
 /**
  * OverlayRenderable is for renderable objects that render to a screen space overlay
@@ -31,7 +30,7 @@ public interface OverlayRenderable {
 	 * @param windowWidth - the width of the current window
 	 * @param windowHeight - the height of the current window
 	 */
-	public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
+	public void render(int contextID, Renderer renderer,
 	                   double windowWidth, double windowHeight);
 
 	/**

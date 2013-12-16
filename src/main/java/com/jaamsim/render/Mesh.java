@@ -15,7 +15,6 @@
 package com.jaamsim.render;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.AABB;
@@ -83,9 +82,9 @@ public AABB getBoundsRef() {
 }
 
 @Override
-public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
+public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 
-	_proto.render(vaoMap, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
+	_proto.render(contextID, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
 
 	if (Renderer.debugDrawArmatures()) {
 		Mat4d modelViewMat = new Mat4d();
@@ -98,7 +97,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, 
 			if (_actions != null) {
 				pose = arm.getPose(_actions);
 			}
-			DebugUtils.renderArmature(vaoMap, renderer, modelViewMat, arm, pose, new Color4d(1, 0, 0), cam);
+			DebugUtils.renderArmature(contextID, renderer, modelViewMat, arm, pose, new Color4d(1, 0, 0), cam);
 		}
 	}
 }
@@ -276,10 +275,9 @@ public boolean hasTransparent() {
 }
 
 @Override
-public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
+public void renderTransparent(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 
-	// TODO: pass actions here
-	_proto.renderTransparent(vaoMap, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
+	_proto.renderTransparent(contextID, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
 
 	// Debug render of the convex hull
 	if (Renderer.debugDrawHulls()) {
@@ -291,7 +289,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, C
 		if (debugHull == null) {
 			debugHull = new HullProto(_hull);
 		}
-		debugHull.render(vaoMap, renderer, modelViewMat, cam);
+		debugHull.render(contextID, renderer, modelViewMat, cam);
 	}
 }
 

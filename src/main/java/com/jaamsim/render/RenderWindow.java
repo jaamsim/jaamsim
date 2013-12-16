@@ -17,8 +17,6 @@ package com.jaamsim.render;
 import java.awt.Frame;
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.media.opengl.GLCapabilitiesImmutable;
 import javax.media.opengl.GLContext;
@@ -41,11 +39,6 @@ public class RenderWindow {
 	// These two members are almost certainly a bad idea and are just around to debug the picking
 	private String _debugString = "";
 	private ArrayList<Long> _debugIDs = new ArrayList<Long>();
-
-	// Each rendering window can share Textures and buffers but do not share VAOs, therefore
-	// each window needs a list of the VAOs associated with it. This map is keyed on an 'assetID' acquired from
-	// Renderer.getAssetID()
-	private Map<Integer, Integer> _vaoMap = new HashMap<Integer, Integer>();
 
 	RenderWindow(int x, int y, int width, int height, String title, String name,
 	             GLContext sharedContext,
@@ -92,10 +85,6 @@ public class RenderWindow {
 
 	public String getName() {
 		return _name;
-	}
-
-	public Map<Integer, Integer> getVAOMap() {
-		return _vaoMap;
 	}
 
 	public int getWindowID() {

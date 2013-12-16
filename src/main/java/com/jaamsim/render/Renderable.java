@@ -14,8 +14,6 @@
  */
 package com.jaamsim.render;
 
-import java.util.Map;
-
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Ray;
 
@@ -27,8 +25,8 @@ public interface Renderable {
  * @param toEyeSpace - Transform from model space to eye space
  * @param cam - the camera used to render
  */
-public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay);
-public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay);
+public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay);
+public void renderTransparent(int contextID, Renderer renderer, Camera cam, Ray pickRay);
 
 public long getPickingID();
 

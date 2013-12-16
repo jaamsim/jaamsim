@@ -16,7 +16,7 @@ package com.jaamsim.render;
 
 import java.net.URL;
 import java.nio.FloatBuffer;
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.media.opengl.GL2GL3;
 
@@ -34,7 +34,7 @@ public class OverlayTexture implements OverlayRenderable {
 	static private boolean staticInit = false;
 	static private int vertBuff;
 	static private int texCoordBuff;
-	static private int assetID;
+	static private HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
 
 	static private int progHandle;
 
@@ -58,8 +58,6 @@ public class OverlayTexture implements OverlayRenderable {
 
 	private static void initStaticBuffers(Renderer r) {
 		GL2GL3 gl = r.getGL();
-
-		assetID = Renderer.getAssetID();
 
 		int[] buffs = new int[2];
 		gl.glGenBuffers(2, buffs, 0);
@@ -104,12 +102,12 @@ public class OverlayTexture implements OverlayRenderable {
 		staticInit = true;
 	}
 
-	private void setupVAO(Map<Integer, Integer> vaoMap, Renderer renderer) {
+	private void setupVAO(int contextID, Renderer renderer) {
 		GL2GL3 gl = renderer.getGL();
 
 		int[] vaos = new int[1];
 		gl.glGenVertexArrays(1, vaos, 0);
-		vaoMap.put(assetID, vaos[0]);
+		VAOMap.put(contextID, vaos[0]);
 
 		gl.glBindVertexArray(vaos[0]);
 
@@ -133,7 +131,7 @@ public class OverlayTexture implements OverlayRenderable {
 
 
 	@Override
-	public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
+	public void render(int contextID, Renderer renderer,
 			double windowWidth, double windowHeight) {
 
 		if (!staticInit) {
@@ -157,11 +155,11 @@ public class OverlayTexture implements OverlayRenderable {
 			return; // This texture is not ready yet
 		}
 
-		if (!vaoMap.containsKey(assetID)) {
-			setupVAO(vaoMap, renderer);
+		if (!VAOMap.containsKey(contextID)) {
+			setupVAO(contextID, renderer);
 		}
 
-		int vao = vaoMap.get(assetID);
+		int vao = VAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(progHandle);

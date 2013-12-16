@@ -18,7 +18,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.media.opengl.GL2GL3;
 import javax.media.opengl.GLException;
@@ -94,10 +94,6 @@ private static int boneMatricesVar;
 
 private static class SubMesh {
 
-	SubMesh() {
-		_id = Renderer.getAssetID();
-	}
-
 	public int _vertexBuffer;
 	public int _texCoordBuffer;
 	public int _normalBuffer;
@@ -110,7 +106,7 @@ private static class SubMesh {
 	public Vec3d _center;
 
 	public int _numVerts;
-	public int _id; // The system wide asset ID
+	public HashMap<Integer, Integer> vaoMap = new HashMap<Integer, Integer>();
 
 }
 
@@ -127,10 +123,6 @@ private static class Material {
 
 private static class SubLine {
 
-	SubLine() {
-		_id = Renderer.getAssetID();
-	}
-
 	public int _vertexBuffer;
 	public Color4d _diffuseColor;
 
@@ -146,7 +138,7 @@ private static class SubLine {
 	public ConvexHull _hull;
 
 	public int _numVerts;
-	public int _id; // The system wide asset ID
+	public HashMap<Integer, Integer> vaoMap = new HashMap<Integer, Integer>();
 }
 
 private MeshData data;
@@ -174,7 +166,7 @@ public MeshProto(MeshData data, boolean flattenBuffers, boolean useZeroBuffer) {
 	_materials = new ArrayList<Material>();
 }
 
-public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
+public void render(int contextID, Renderer renderer,
                    Mat4d modelMat,
                    Mat4d normalMat,
                    Camera cam,
@@ -239,7 +231,7 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 			pose = poses.get(subInst.armatureIndex);
 		}
 
-		renderSubMesh(subMesh, subInst, vaoMap, renderer, pose, actions);
+		renderSubMesh(subMesh, subInst, contextID, renderer, pose, actions);
 	}
 
 	Mat4d subModelViewMat = new Mat4d();
@@ -258,12 +250,12 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
 
 		subModelViewMat.mult4(modelViewMat, subInst.transform);
 
-		renderSubLine(subLine, vaoMap, renderer, subModelViewMat, cam);
+		renderSubLine(subLine, contextID, renderer, subModelViewMat, cam);
 	}
 
 }
 
-public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
+public void renderTransparent(int contextID, Renderer renderer,
         Mat4d modelMat,
         Mat4d normalMat,
         Camera cam,
@@ -333,7 +325,7 @@ public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer,
 			pose = poses.get(ts.subInst.armatureIndex);
 		}
 
-		renderSubMesh(ts.subMesh, ts.subInst, vaoMap, renderer, pose, actions);
+		renderSubMesh(ts.subMesh, ts.subInst, contextID, renderer, pose, actions);
 	}
 }
 
@@ -365,13 +357,13 @@ private void initUniforms(Renderer renderer, Mat4d modelViewMat, Mat4d projMat, 
 
 }
 
-private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Renderer renderer) {
+private void setupVAOForSubMesh(int contextID, SubMesh sub, Renderer renderer) {
 	GL2GL3 gl = renderer.getGL();
 
 	int[] vaos = new int[1];
 	gl.glGenVertexArrays(1, vaos, 0);
 	int vao = vaos[0];
-	vaoMap.put(sub._id, vao);
+	sub.vaoMap.put(contextID, vao);
 	gl.glBindVertexArray(vao);
 
 	gl.glUseProgram(meshProgHandle);
@@ -429,18 +421,18 @@ private void setupVAOForSubMesh(Map<Integer, Integer> vaoMap, SubMesh sub, Rende
 
 }
 
-private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Map<Integer, Integer> vaoMap,
+private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, int contextID,
                            Renderer renderer, ArrayList<Mat4d> pose, ArrayList<Action.Queue> actions) {
 
 	Material mat = _materials.get(subInst.materialIndex);
 
 	GL2GL3 gl = renderer.getGL();
 
-	if (!vaoMap.containsKey(subMesh._id)) {
-		setupVAOForSubMesh(vaoMap, subMesh, renderer);
+	if (!subMesh.vaoMap.containsKey(contextID)) {
+		setupVAOForSubMesh(contextID, subMesh, renderer);
 	}
 
-	int vao = vaoMap.get(subMesh._id);
+	int vao = subMesh.vaoMap.get(contextID);
 	gl.glBindVertexArray(vao);
 
 	// Setup uniforms for this object
@@ -516,13 +508,13 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, Ma
 
 }
 
-private void setupVAOForSubLine(Map<Integer, Integer> vaoMap, SubLine sub, Renderer renderer) {
+private void setupVAOForSubLine(int contextID, SubLine sub, Renderer renderer) {
 	GL2GL3 gl = renderer.getGL();
 
 	int[] vaos = new int[1];
 	gl.glGenVertexArrays(1, vaos, 0);
 	int vao = vaos[0];
-	vaoMap.put(sub._id, vao);
+	sub.vaoMap.put(contextID, vao);
 	gl.glBindVertexArray(vao);
 
 	int prog = sub._progHandle;
@@ -538,16 +530,16 @@ private void setupVAOForSubLine(Map<Integer, Integer> vaoMap, SubLine sub, Rende
 
 }
 
-private void renderSubLine(SubLine sub, Map<Integer, Integer> vaoMap,
+private void renderSubLine(SubLine sub, int contextID,
         Renderer renderer, Mat4d modelViewMat, Camera cam) {
 
 	GL2GL3 gl = renderer.getGL();
 
-	if (!vaoMap.containsKey(sub._id)) {
-		setupVAOForSubLine(vaoMap, sub, renderer);
+	if (!sub.vaoMap.containsKey(contextID)) {
+		setupVAOForSubLine(contextID, sub, renderer);
 	}
 
-	int vao = vaoMap.get(sub._id);
+	int vao = sub.vaoMap.get(contextID);
 	gl.glBindVertexArray(vao);
 
 	int prog = sub._progHandle;

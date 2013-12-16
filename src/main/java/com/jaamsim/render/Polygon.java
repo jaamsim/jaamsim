@@ -16,8 +16,8 @@ package com.jaamsim.render;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.media.opengl.GL2GL3;
 
@@ -50,7 +50,7 @@ public class Polygon implements Renderable {
 	private static int _cVar;
 	private static int _fcVar;
 
-	private static int _VAOKey;
+	private static HashMap<Integer, Integer> _VAOMap = new HashMap<Integer, Integer>();
 
 	private static boolean _hasInitialized;
 
@@ -121,7 +121,7 @@ public class Polygon implements Renderable {
 	}
 
 	@Override
-	public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
+	public void render(int contextID, Renderer renderer,
 			Camera cam, Ray pickRay) {
 		assert(_hasInitialized);
 
@@ -134,11 +134,11 @@ public class Polygon implements Renderable {
 		if (pickRay != null && getCollisionDist(pickRay, false) > 0)
 			renderColour = hoverColour;
 
-		if (!vaoMap.containsKey(_VAOKey)) {
-			setupVAO(vaoMap, renderer);
+		if (!_VAOMap.containsKey(contextID)) {
+			setupVAO(contextID, renderer);
 		}
 
-		int vao = vaoMap.get(_VAOKey);
+		int vao = _VAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(_progHandle);
@@ -245,18 +245,16 @@ public class Polygon implements Renderable {
 
 		_posVar = gl.glGetAttribLocation(_progHandle, "position");
 
-		_VAOKey = Renderer.getAssetID();
-
 		_hasInitialized = true;
 	}
 
-	private static void setupVAO(Map<Integer, Integer> vaoMap, Renderer renderer) {
+	private static void setupVAO(int contextID, Renderer renderer) {
 		GL2GL3 gl = renderer.getGL();
 
 		int[] vaos = new int[1];
 		gl.glGenVertexArrays(1, vaos, 0);
 		int vao = vaos[0];
-		vaoMap.put(_VAOKey, vao);
+		_VAOMap.put(contextID, vao);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(_progHandle);
@@ -273,7 +271,7 @@ public class Polygon implements Renderable {
 	}
 
 	@Override
-	public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
+	public void renderTransparent(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 	}
 
 	@Override

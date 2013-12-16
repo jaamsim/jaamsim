@@ -103,6 +103,7 @@ public class Renderer implements GLAnimatorControl {
 	// Screen _screen = null;
 	private GLContext _sharedContext = null;
 	Map<Integer, Integer> _sharedVaoMap = new HashMap<Integer, Integer>();
+	int _sharedContextID = getAssetID();
 	GLWindow _dummyWindow;
 	private GLCapabilities _caps = null;
 
@@ -1003,21 +1004,6 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		@Override
 		public void dispose(GLAutoDrawable drawable) {
-			synchronized (_rendererLock) {
-
-				GL2GL3 gl = drawable.getGL().getGL2GL3();
-
-				Map<Integer, Integer> vaoMap = _window.getVAOMap();
-
-				int[] vaos = new int[vaoMap.size()];
-				int index = 0;
-				for (int vao : vaoMap.values()) {
-					vaos[index++] = vao;
-				}
-				if (vaos.length > 0) {
-					gl.glDeleteVertexArrays(vaos.length, vaos, 0);
-				}
-			}
 		}
 
 		@Override
@@ -1043,7 +1029,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 					overlay.addAll(_currentOverlay);
 				}
 
-				renderScene(drawable.getContext(), _window.getVAOMap(),
+				renderScene(drawable.getContext(), _window.getWindowID(),
 				            scene, overlay,
 				            cam, _window.getViewableWidth(), _window.getViewableHeight(),
 				            pickRay, _window.getViewID(), pi);
@@ -1062,13 +1048,13 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 					TessFont defFont = getTessFont(_defaultBoldFontKey);
 					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
 					                                     10, 10, 15, false, false, DisplayModel.ALWAYS);
-					os.render(_window.getVAOMap(), Renderer.this,
+					os.render(_window.getWindowID(), Renderer.this,
 					          _window.getViewableWidth(), _window.getViewableHeight());
 
 					// Also draw this window's debug string
 					os = new OverlayString(defFont, _window.getDebugString(), ColourInput.BLACK,
 					                       10, 10, 30, false, false, DisplayModel.ALWAYS);
-					os.render(_window.getVAOMap(), Renderer.this,
+					os.render(_window.getWindowID(), Renderer.this,
 					          _window.getViewableWidth(), _window.getViewableHeight());
 
 					_drawContext = null;
@@ -1410,7 +1396,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 			PerfInfo perfInfo = new PerfInfo();
 			// Okay, now actually render this thing...
-			renderScene(_sharedContext, _sharedVaoMap, renderables, overlay, message.cam,
+			renderScene(_sharedContext, _sharedContextID, renderables, overlay, message.cam,
 			            width, height, null, message.viewID, perfInfo);
 
 			gl.glFinish();
@@ -1479,7 +1465,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 	}
 }
 
-	private void renderScene(GLContext context, Map<Integer, Integer> vaoMap,
+	private void renderScene(GLContext context, int contextID,
 	                        List<Renderable> scene, List<OverlayRenderable> overlay,
 	                        Camera cam, int width, int height, Ray pickRay,
 	                        int viewID, PerfInfo perfInfo) {
@@ -1533,7 +1519,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 				transparents.add(ts);
 			}
 
-			r.render(vaoMap, this, cam, pickRay);
+			r.render(contextID, this, cam, pickRay);
 		}
 
 		gl.glEnable(GL2GL3.GL_BLEND);
@@ -1541,7 +1527,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 		// Draw the skybox after
 		_skybox.setTexture(cam.getInfoRef().skyboxTexture);
-		_skybox.render(vaoMap, this, cam);
+		_skybox.render(contextID, this, cam);
 
 		Collections.sort(transparents);
 		for (TransSortable ts : transparents) {
@@ -1552,7 +1538,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 				continue;
 			}
 
-			ts.r.renderTransparent(vaoMap, this, cam, pickRay);
+			ts.r.renderTransparent(contextID, this, cam, pickRay);
 		}
 
 		gl.glDisable(GL2GL3.GL_BLEND);
@@ -1568,7 +1554,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 				if (pickRay != null && r.getBoundsRef().collisionDist(pickRay) > 0) {
 					aabbColor = red;
 				}
-				DebugUtils.renderAABB(vaoMap, this, r.getBoundsRef(), aabbColor, cam);
+				DebugUtils.renderAABB(contextID, this, r.getBoundsRef(), aabbColor, cam);
 			}
 		} // for renderables
 
@@ -1581,7 +1567,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 					continue;
 				}
 
-				r.render(vaoMap, this, width, height);
+				r.render(contextID, this, width, height);
 			}
 		}
 

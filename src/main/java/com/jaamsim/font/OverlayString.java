@@ -14,7 +14,7 @@
  */
 package com.jaamsim.font;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.media.opengl.GL2GL3;
 
@@ -37,6 +37,7 @@ public class OverlayString implements OverlayRenderable {
 	private boolean _alignRight, _alignBottom;
 	private VisibilityInfo _visInfo;
 
+	private static HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
 
 	public OverlayString(TessFont font, String contents, Color4d color,
 	                     double height, double x, double y,
@@ -54,7 +55,7 @@ public class OverlayString implements OverlayRenderable {
 	}
 
 	@Override
-	public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
+	public void render(int contextID, Renderer renderer,
 		double windowWidth, double windowHeight) {
 
 
@@ -71,12 +72,11 @@ public class OverlayString implements OverlayRenderable {
 
 		GL2GL3 gl = renderer.getGL();
 
-		int fontID = _font.getAssetID();
-		if (!vaoMap.containsKey(fontID)) {
-			setupVAO(vaoMap, fontID, renderer);
+		if (!VAOMap.containsKey(contextID)) {
+			setupVAO(contextID, renderer);
 		}
 
-		int vao = vaoMap.get(fontID);
+		int vao = VAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		// Render the string
@@ -128,14 +128,12 @@ public class OverlayString implements OverlayRenderable {
 		gl.glEnable(GL2GL3.GL_CULL_FACE);
 	}
 
-
-	private void setupVAO(Map<Integer, Integer> vaoMap, int id, Renderer renderer) {
+	private void setupVAO(int contextID, Renderer renderer) {
 		GL2GL3 gl = renderer.getGL();
 
 		int[] vaos = new int[1];
 		gl.glGenVertexArrays(1, vaos, 0);
-		vaoMap.put(id, vaos[0]);
-
+		VAOMap.put(contextID, vaos[0]);
 	}
 
 	@Override

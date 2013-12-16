@@ -15,7 +15,7 @@
 package com.jaamsim.font;
 
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.media.opengl.GL2GL3;
 
@@ -54,6 +54,8 @@ private VisibilityInfo _visInfo;
 private int[] starts;
 private int[] numVerts;
 private double[] advances;
+
+private static HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
 
 public TessString(TessFont font, String contents, Color4d color,
         Transform trans, double textHeight, VisibilityInfo visInfo, long pickingID) {
@@ -114,15 +116,14 @@ public TessString(TessFont font, String contents, Color4d color,
 }
 
 @Override
-public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
+public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 	GL2GL3 gl = renderer.getGL();
 
-	int fontID = _font.getAssetID();
-	if (!vaoMap.containsKey(fontID)) {
-		setupVAO(vaoMap, fontID, renderer);
+	if (!VAOMap.containsKey(contextID)) {
+		setupVAO(contextID, renderer);
 	}
 
-	int vao = vaoMap.get(fontID);
+	int vao = VAOMap.get(contextID);
 	gl.glBindVertexArray(vao);
 
 	// Render the string
@@ -180,12 +181,12 @@ public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, 
 	gl.glDisableVertexAttribArray(posVar);
 }
 
-private void setupVAO(Map<Integer, Integer> vaoMap, int id, Renderer renderer) {
+private void setupVAO(int contextID, Renderer renderer) {
 	GL2GL3 gl = renderer.getGL();
 
 	int[] vaos = new int[1];
 	gl.glGenVertexArrays(1, vaos, 0);
-	vaoMap.put(id, vaos[0]);
+	VAOMap.put(contextID, vaos[0]);
 
 }
 
@@ -214,7 +215,7 @@ public boolean hasTransparent() {
 
 
 @Override
-public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
+public void renderTransparent(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 }
 
 @Override

@@ -17,7 +17,7 @@ package com.jaamsim.render;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.media.opengl.GL2GL3;
 
@@ -53,7 +53,7 @@ public class TextureView implements Renderable {
 	static private int vertBuff;
 	static private int texCoordBuff;
 	static private int normalBuff;
-	static private int assetID;
+	static private HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
 
 	static private int boneBuff;
 
@@ -119,8 +119,6 @@ public class TextureView implements Renderable {
 
 	private static void initStaticBuffers(Renderer r) {
 		GL2GL3 gl = r.getGL();
-
-		assetID = Renderer.getAssetID();
 
 		int[] buffs = new int[4];
 		gl.glGenBuffers(4, buffs, 0);
@@ -209,12 +207,12 @@ public class TextureView implements Renderable {
 		staticInit = true;
 	}
 
-	private void setupVAO(Map<Integer, Integer> vaoMap, Renderer renderer) {
+	private void setupVAO(int contextID, Renderer renderer) {
 		GL2GL3 gl = renderer.getGL();
 
 		int[] vaos = new int[1];
 		gl.glGenVertexArrays(1, vaos, 0);
-		vaoMap.put(assetID, vaos[0]);
+		VAOMap.put(contextID, vaos[0]);
 
 		gl.glBindVertexArray(vaos[0]);
 
@@ -257,16 +255,16 @@ public class TextureView implements Renderable {
 
 
 	@Override
-	public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
+	public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 		if (_isTransparent) {
 			// Return, this will be handled in the transparent render phase
 			return;
 		}
 
-		renderImp(vaoMap, renderer, cam, pickRay);
+		renderImp(contextID, renderer, cam, pickRay);
 	}
 
-	private void renderImp(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
+	private void renderImp(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 
 		if (!staticInit) {
 			initStaticBuffers(renderer);
@@ -280,11 +278,11 @@ public class TextureView implements Renderable {
 			return; // This texture is not ready yet
 		}
 
-		if (!vaoMap.containsKey(assetID)) {
-			setupVAO(vaoMap, renderer);
+		if (!VAOMap.containsKey(contextID)) {
+			setupVAO(contextID, renderer);
 		}
 
-		int vao = vaoMap.get(assetID);
+		int vao = VAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 
@@ -366,8 +364,8 @@ public class TextureView implements Renderable {
 	}
 
 	@Override
-	public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
-		renderImp(vaoMap, renderer, cam, pickRay);
+	public void renderTransparent(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
+		renderImp(contextID, renderer, cam, pickRay);
 	}
 
 	@Override

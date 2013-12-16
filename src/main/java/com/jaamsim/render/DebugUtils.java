@@ -16,7 +16,7 @@ package com.jaamsim.render;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.media.opengl.GL2GL3;
 
@@ -48,7 +48,7 @@ public class DebugUtils {
 	private static int _cVar;
 	private static int _fcVar;
 
-	private static int _debugVAOKey;
+	private static HashMap<Integer, Integer> _debugVAOMap = new HashMap<Integer, Integer>();
 
 
 	/**
@@ -74,8 +74,6 @@ public class DebugUtils {
 
 		_cVar = gl.glGetAttribLocation(_debugProgHandle, "C");
 		_fcVar = gl.glGetAttribLocation(_debugProgHandle, "FC");
-
-		_debugVAOKey = Renderer.getAssetID();
 
 		// Build up a buffer of vertices for lines in a box
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, _aabbVertBuffer);
@@ -151,16 +149,16 @@ public class DebugUtils {
 
 	}
 
-	public static void renderArmature(Map<Integer, Integer> vaoMap, Renderer renderer, Mat4d modelViewMat,
+	public static void renderArmature(int contextID, Renderer renderer, Mat4d modelViewMat,
 	                                  Armature arm, ArrayList<Mat4d> pose, Color4d color, Camera cam) {
 
 		GL2GL3 gl = renderer.getGL();
 
-		if (!vaoMap.containsKey(_debugVAOKey)) {
-			setupDebugVAO(vaoMap, renderer);
+		if (!_debugVAOMap.containsKey(contextID)) {
+			setupDebugVAO(contextID, renderer);
 		}
 
-		int vao = vaoMap.get(_debugVAOKey);
+		int vao = _debugVAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(_debugProgHandle);
@@ -224,7 +222,7 @@ public class DebugUtils {
 
 	}
 
-	public static void renderAABB(Map<Integer, Integer> vaoMap, Renderer renderer,
+	public static void renderAABB(int contextID, Renderer renderer,
 	                              AABB aabb, Color4d color, Camera cam) {
 
 		if (aabb.isEmpty()) {
@@ -233,11 +231,11 @@ public class DebugUtils {
 
 		GL2GL3 gl = renderer.getGL();
 
-		if (!vaoMap.containsKey(_debugVAOKey)) {
-			setupDebugVAO(vaoMap, renderer);
+		if (!_debugVAOMap.containsKey(contextID)) {
+			setupDebugVAO(contextID, renderer);
 		}
 
-		int vao = vaoMap.get(_debugVAOKey);
+		int vao = _debugVAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(_debugProgHandle);
@@ -270,16 +268,16 @@ public class DebugUtils {
 	}
 
 	// Render a 1*1 box in the XY plane centered at the origin
-	public static void renderBox(Map<Integer, Integer> vaoMap, Renderer renderer,
+	public static void renderBox(int contextID, Renderer renderer,
             Transform modelTrans, Vec4d scale, Color4d color, Camera cam) {
 
 		GL2GL3 gl = renderer.getGL();
 
-		if (!vaoMap.containsKey(_debugVAOKey)) {
-			setupDebugVAO(vaoMap, renderer);
+		if (!_debugVAOMap.containsKey(contextID)) {
+			setupDebugVAO(contextID, renderer);
 		}
 
-		int vao = vaoMap.get(_debugVAOKey);
+		int vao = _debugVAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(_debugProgHandle);
@@ -316,16 +314,16 @@ public class DebugUtils {
 	 * @param color
 	 * @param cam
 	 */
-	public static void renderLine(Map<Integer, Integer> vaoMap, Renderer renderer,
+	public static void renderLine(int contextID, Renderer renderer,
             FloatBuffer lineSegments, float[] color, double lineWidth, Camera cam) {
 
 		GL2GL3 gl = renderer.getGL();
 
-		if (!vaoMap.containsKey(_debugVAOKey)) {
-			setupDebugVAO(vaoMap, renderer);
+		if (!_debugVAOMap.containsKey(contextID)) {
+			setupDebugVAO(contextID, renderer);
 		}
 
-		int vao = vaoMap.get(_debugVAOKey);
+		int vao = _debugVAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(_debugProgHandle);
@@ -371,16 +369,16 @@ public class DebugUtils {
 	 * @param pointWidth
 	 * @param cam
 	 */
-	public static void renderPoints(Map<Integer, Integer> vaoMap, Renderer renderer,
+	public static void renderPoints(int contextID, Renderer renderer,
             FloatBuffer points, float[] color, double pointWidth, Camera cam) {
 
 		GL2GL3 gl = renderer.getGL();
 
-		if (!vaoMap.containsKey(_debugVAOKey)) {
-			setupDebugVAO(vaoMap, renderer);
+		if (!_debugVAOMap.containsKey(contextID)) {
+			setupDebugVAO(contextID, renderer);
 		}
 
-		int vao = vaoMap.get(_debugVAOKey);
+		int vao = _debugVAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(_debugProgHandle);
@@ -415,13 +413,13 @@ public class DebugUtils {
 		gl.glBindVertexArray(0);
 	}
 
-	private static void setupDebugVAO(Map<Integer, Integer> vaoMap, Renderer renderer) {
+	private static void setupDebugVAO(int contextID, Renderer renderer) {
 		GL2GL3 gl = renderer.getGL();
 
 		int[] vaos = new int[1];
 		gl.glGenVertexArrays(1, vaos, 0);
 		int vao = vaos[0];
-		vaoMap.put(_debugVAOKey, vao);
+		_debugVAOMap.put(contextID, vao);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(_debugProgHandle);

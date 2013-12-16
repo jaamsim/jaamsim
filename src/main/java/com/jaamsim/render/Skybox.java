@@ -16,7 +16,7 @@ package com.jaamsim.render;
 
 import java.net.URL;
 import java.nio.FloatBuffer;
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.media.opengl.GL2GL3;
 
@@ -26,7 +26,7 @@ public class Skybox {
 
 	private URL textureURL;
 
-	private static int id;
+	private static HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
 	private static int vertBuff;
 	private static int progHandle;
 
@@ -44,7 +44,6 @@ public class Skybox {
 
 		GL2GL3 gl = r.getGL();
 
-		id = Renderer.getAssetID();
 		int[] buffs = new int[1];
 		gl.glGenBuffers(1, buffs, 0);
 		vertBuff = buffs[0];
@@ -73,7 +72,7 @@ public class Skybox {
 		isLoaded = true;
 	}
 
-	public void render(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam) {
+	public void render(int contextID, Renderer renderer, Camera cam) {
 
 		if (textureURL == null) {
 			return;
@@ -82,13 +81,13 @@ public class Skybox {
 		if (!isLoaded) {
 			loadGPUAssets(renderer);
 		}
-		if (!vaoMap.containsKey(id)) {
-			setupVAO(vaoMap, renderer);
+		if (!VAOMap.containsKey(contextID)) {
+			setupVAO(contextID, renderer);
 		}
 
 		GL2GL3 gl = renderer.getGL();
 
-		int vao = vaoMap.get(id);
+		int vao = VAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		int textureID = renderer.getTexCache().getTexID(gl, textureURL, false, false, false);
@@ -118,12 +117,12 @@ public class Skybox {
 
 	}
 
-	private void setupVAO(Map<Integer, Integer> vaoMap, Renderer renderer) {
+	private void setupVAO(int contextID, Renderer renderer) {
 		GL2GL3 gl = renderer.getGL();
 
 		int[] vaos = new int[1];
 		gl.glGenVertexArrays(1, vaos, 0);
-		vaoMap.put(id, vaos[0]);
+		VAOMap.put(contextID, vaos[0]);
 
 		gl.glBindVertexArray(vaos[0]);
 

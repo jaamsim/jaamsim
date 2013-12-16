@@ -16,7 +16,6 @@ package com.jaamsim.render;
 
 import java.nio.FloatBuffer;
 import java.util.List;
-import java.util.Map;
 
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
@@ -55,14 +54,14 @@ public class DebugPoints implements Renderable {
 	}
 
 	@Override
-	public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
+	public void render(int contextID, Renderer renderer,
 			Camera cam, Ray pickRay) {
 
 		float[] renderColour = _colour;
 		if (pickRay != null && getCollisionDist(pickRay, false) > 0)
 			renderColour = _hoverColour;
 
-		DebugUtils.renderPoints(vaoMap, renderer, fb, renderColour, _pointWidth, cam);
+		DebugUtils.renderPoints(contextID, renderer, fb, renderColour, _pointWidth, cam);
 	}
 
 	@Override
@@ -125,7 +124,7 @@ public class DebugPoints implements Renderable {
 	}
 
 	@Override
-	public void renderTransparent(Map<Integer, Integer> vaoMap, Renderer renderer, Camera cam, Ray pickRay) {
+	public void renderTransparent(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 	}
 
 	@Override

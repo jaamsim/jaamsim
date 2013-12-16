@@ -16,8 +16,8 @@ package com.jaamsim.render;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.media.opengl.GL2GL3;
 
@@ -35,20 +35,19 @@ public class HullProto {
 	private ConvexHull _hull;
 	boolean _isLoadedGPU = false;
 
-	private int _assetID;
+	private HashMap<Integer, Integer> _vaoMap = new HashMap<Integer, Integer>();
 
 	public HullProto(ConvexHull hull) {
 		_hull = hull;
-		_assetID = Renderer.getAssetID();
 	}
 
-	private void setupVAO(Map<Integer, Integer> vaoMap, Renderer renderer, int progHandle, int vertexBuffer, int indexBuffer) {
+	private void setupVAO(int contextID, Renderer renderer, int progHandle, int vertexBuffer, int indexBuffer) {
 		GL2GL3 gl = renderer.getGL();
 
 		int[] vaos = new int[1];
 		gl.glGenVertexArrays(1, vaos, 0);
 		int vao = vaos[0];
-		vaoMap.put(_assetID, vao);
+		_vaoMap.put(contextID, vao);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(progHandle);
@@ -65,7 +64,7 @@ public class HullProto {
 
 	}
 
-	public void render(Map<Integer, Integer> vaoMap, Renderer renderer,
+	public void render(int contextID, Renderer renderer,
             Mat4d modelViewMat,
             Camera cam) {
 
@@ -117,11 +116,11 @@ public class HullProto {
 
 		gl.glBindBuffer(GL2GL3.GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		if (!vaoMap.containsKey(_assetID)) {
-			setupVAO(vaoMap, renderer, progHandle, vertexBuffer, indexBuffer);
+		if (!_vaoMap.containsKey(contextID)) {
+			setupVAO(contextID, renderer, progHandle, vertexBuffer, indexBuffer);
 		}
 
-		int vao = vaoMap.get(_assetID);
+		int vao = _vaoMap.get(contextID);
 		gl.glBindVertexArray(vao);
 
 		gl.glUseProgram(progHandle);
