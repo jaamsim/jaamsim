@@ -75,8 +75,6 @@ public class TextureView implements Renderable {
 
 	static private int maxNumBonesVar;
 
-	static private int hasTexVar;
-
 	static private int cVar;
 	static private int fcVar;
 
@@ -175,15 +173,14 @@ public class TextureView implements Renderable {
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
 
 		// Initialize the shader variables
-		progHandle = r.getShader(Renderer.ShaderHandle.MESH).getProgramHandle();
+		progHandle = r.getMeshShader(Renderer.DIFF_TEX_FLAG).getProgramHandle();
 
 		modelViewMatVar = gl.glGetUniformLocation(progHandle, "modelViewMat");
 		projMatVar = gl.glGetUniformLocation(progHandle, "projMat");
 		normalMatVar = gl.glGetUniformLocation(progHandle, "normalMat");
 		bindSpaceMatVar = gl.glGetUniformLocation(progHandle, "bindSpaceMat");
 		bindSpaceNorMatVar = gl.glGetUniformLocation(progHandle, "bindSpaceNorMat");
-		texVar = gl.glGetUniformLocation(progHandle, "tex");
-		hasTexVar = gl.glGetUniformLocation(progHandle, "useTex");
+		texVar = gl.glGetUniformLocation(progHandle, "diffuseTex");
 
 		lightDirVar = gl.glGetUniformLocation(progHandle, "lightDir");
 		lightIntVar = gl.glGetUniformLocation(progHandle, "lightIntensity");
@@ -303,7 +300,6 @@ public class TextureView implements Renderable {
 		gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, identMat, 0);
 		gl.glUniformMatrix4fv(bindSpaceNorMatVar, 1, false, identMat, 0);
 
-		gl.glUniform1i(hasTexVar, 1);
 		gl.glUniform1i(maxNumBonesVar, 0);
 
 		gl.glUniform1f(cVar, Camera.C);

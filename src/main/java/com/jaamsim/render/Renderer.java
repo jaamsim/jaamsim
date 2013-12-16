@@ -79,7 +79,7 @@ import com.sandwell.JavaSimulation.ColourInput;
 public class Renderer implements GLAnimatorControl {
 
 	public enum ShaderHandle {
-		MESH, FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, SKYBOX
+		FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, SKYBOX
 	}
 
 	static private Object idLock = new Object();
@@ -97,7 +97,11 @@ public class Renderer implements GLAnimatorControl {
 	private static boolean RENDER_DEBUG_INFO = false;
 	private static boolean USE_DEBUG_GL = true;
 
+	public static int DIFF_TEX_FLAG = 1;
+	public static int NUM_MESH_SHADERS = 2; // Should be 2^(max_flag)
+
 	private EnumMap<ShaderHandle, Shader> _shaders;
+	private Shader[] meshShaders = new Shader[NUM_MESH_SHADERS];
 
 	// Display _display = null;
 	// Screen _screen = null;
@@ -366,6 +370,11 @@ public class Renderer implements GLAnimatorControl {
 		return _shaders.get(h);
 	}
 
+	public Shader getMeshShader(int flags) {
+		assert(flags < NUM_MESH_SHADERS);
+		return meshShaders[flags];
+	}
+
 	/**
 	 * Returns the MeshProto for the supplied key, should only be called from the render thread (during a render)
 	 * @param key
@@ -602,16 +611,20 @@ private void createShader(ShaderHandle sh, String vert, String frag, GL2GL3 gl) 
 	throw new RenderException("Shader failed: " + sh.toString() + " " + failure);
 }
 
+private String getMeshShaderDefines(int i) {
+	StringBuilder defines = new StringBuilder();
+	if ((i & DIFF_TEX_FLAG) != 0) {
+		defines.append("#define DIFF_TEX\n");
+	}
+	return defines.toString();
+}
+
 /**
  * Create and compile all the shaders
  */
 private void initShaders(GL2GL3 gl) throws RenderException {
 	_shaders = new EnumMap<ShaderHandle, Shader>(ShaderHandle.class);
 	String vert, frag;
-
-	vert = "/resources/shaders/flat.vert";
-	frag = "/resources/shaders/flat.frag";
-	createShader(ShaderHandle.MESH, vert, frag, gl);
 
 	vert = "/resources/shaders/font.vert";
 	frag = "/resources/shaders/font.frag";
@@ -637,6 +650,23 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	frag = "/resources/shaders/skybox.frag";
 	createShader(ShaderHandle.SKYBOX, vert, frag, gl);
 
+	String meshVertSrc = readSource("/resources/shaders/flat.vert");
+	String meshFragSrc = readSource("/resources/shaders/flat.frag");
+
+	// Create the mesh shaders
+	for (int i = 0; i < NUM_MESH_SHADERS; ++i) {
+		String defines = getMeshShaderDefines(i);
+
+		String definedFragSrc = meshFragSrc.replaceAll("@DEFINES@", defines);
+
+		Shader s = new Shader(meshVertSrc, definedFragSrc, gl);
+		if (!s.isGood()) {
+			String failure = s.getFailureLog();
+			throw new RenderException("Mesh Shader failed, flags: " + i + " " + failure);
+		}
+
+		meshShaders[i] = s;
+	}
 }
 
 	/**

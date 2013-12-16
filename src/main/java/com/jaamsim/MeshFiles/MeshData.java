@@ -33,6 +33,7 @@ import com.jaamsim.render.Action;
 import com.jaamsim.render.Armature;
 import com.jaamsim.render.RenderException;
 import com.jaamsim.render.RenderUtils;
+import com.jaamsim.render.Renderer;
 
 /**
  * MeshData represents all the data contained in a mesh 3d object. This data is not yet in video ram and can be written back to disk
@@ -60,6 +61,14 @@ public class MeshData {
 
 		public int transType;
 		public Color4d transColour;
+
+		public int getShaderID() {
+			int ret = 0;
+			if (colorTex != null) {
+				ret += Renderer.DIFF_TEX_FLAG;
+			}
+			return ret;
+		}
 	}
 
 	public static class SubMeshData {
@@ -1006,5 +1015,25 @@ public class MeshData {
 		topBlock.addChildBlock(hullBlock);
 
 		return topBlock;
+	}
+
+	/**
+	 * Returns an array of all the used shaders for this MeshData
+	 * @return
+	 */
+	public int[] getUsedMeshShaders() {
+		ArrayList<Integer> shaderIDs = new ArrayList<Integer>();
+		for (SubMeshInstance smi : _subMeshInstances) {
+			int shaderID = _materials.get(smi.materialIndex).getShaderID();
+
+			if (!shaderIDs.contains(shaderID))
+				shaderIDs.add(shaderID);
+		}
+
+		int[] ret = new int[shaderIDs.size()];
+		for (int i = 0; i < shaderIDs.size(); ++i) {
+			ret[i] = shaderIDs.get(i);
+		}
+		return ret;
 	}
 }

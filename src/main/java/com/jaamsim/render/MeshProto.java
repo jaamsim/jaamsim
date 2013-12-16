@@ -31,7 +31,6 @@ import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
-import com.jaamsim.render.Renderer.ShaderHandle;
 
 /**
  * A basic wrapper around mesh data and the OpenGL calls that go with it
@@ -61,36 +60,38 @@ private static class TransSortable implements Comparable<TransSortable> {
 	}
 }
 
-private static int meshProgHandle;
+private static class ShaderInfo {
+	private int meshProgHandle;
 
-private static int modelViewMatVar;
-private static int projMatVar;
-private static int bindSpaceMatVar;
-private static int bindSpaceNorMatVar;
-private static int normalMatVar;
-private static int texVar;
-private static int diffuseColorVar;
-private static int specColorVar;
-private static int ambientColorVar;
-private static int shininessVar;
-private static int useTexVar;
-private static int maxNumBonesVar;
+	private int modelViewMatVar;
+	private int projMatVar;
+	private int bindSpaceMatVar;
+	private int bindSpaceNorMatVar;
+	private int normalMatVar;
+	private int texVar;
+	private int diffuseColorVar;
+	private int specColorVar;
+	private int ambientColorVar;
+	private int shininessVar;
+	private int maxNumBonesVar;
 
-private static int lightDirVar;
-private static int lightIntVar;
-private static int numLightsVar;
+	private int lightDirVar;
+	private int lightIntVar;
+	private int numLightsVar;
+
+	private int cVar;
+	private int fcVar;
+
+	private int boneMatricesVar;
+}
+
+private static ShaderInfo[] sInfos = new ShaderInfo[Renderer.NUM_MESH_SHADERS];
 
 private static Vec4d[] lightsDir = new Vec4d[2];
 private static Vec4d[] lightsDirScratch = new Vec4d[2];
 private static float[] lightsDirFloats = new float[6];
 private static float[] lightsInt = new float[2];
 private static int numLights;
-
-// Var for tuning the logarithmic depth buffer
-private static int cVar;
-private static int fcVar;
-
-private static int boneMatricesVar;
 
 private static class SubMesh {
 
@@ -106,8 +107,7 @@ private static class SubMesh {
 	public Vec3d _center;
 
 	public int _numVerts;
-	public HashMap<Integer, Integer> vaoMap = new HashMap<Integer, Integer>();
-
+	public HashMap<Integer, Integer>[] vaoMaps;
 }
 
 private static class Material {
@@ -119,6 +119,8 @@ private static class Material {
 
 	public int _transType;
 	public Color4d _transColour;
+
+	int shaderID;
 }
 
 private static class SubLine {
@@ -146,6 +148,8 @@ private ArrayList<SubMesh> _subMeshes;
 private ArrayList<SubLine> _subLines;
 private ArrayList<Material> _materials;
 
+private int[] usedShaders;
+
 /**
  * The maximum distance a vertex is from the origin
  */
@@ -164,6 +168,8 @@ public MeshProto(MeshData data, boolean flattenBuffers, boolean useZeroBuffer) {
 	_subMeshes = new ArrayList<SubMesh>();
 	_subLines = new ArrayList<SubLine>();
 	_materials = new ArrayList<Material>();
+
+	usedShaders = data.getUsedMeshShaders();
 }
 
 public void render(int contextID, Renderer renderer,
@@ -331,11 +337,6 @@ public void renderTransparent(int contextID, Renderer renderer,
 
 private void initUniforms(Renderer renderer, Mat4d modelViewMat, Mat4d projMat, Mat4d viewMat, Mat4d normalMat) {
 	GL2GL3 gl = renderer.getGL();
-	gl.glUseProgram(meshProgHandle);
-
-	gl.glUniformMatrix4fv(modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
-	gl.glUniformMatrix4fv(projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
-	gl.glUniformMatrix4fv(normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
 
 	lightsDirScratch[0].mult4(viewMat, lightsDir[0]);
 	lightsDirScratch[1].mult4(viewMat, lightsDir[1]);
@@ -348,40 +349,63 @@ private void initUniforms(Renderer renderer, Mat4d modelViewMat, Mat4d projMat, 
 	lightsDirFloats[4] = (float)lightsDirScratch[1].y;
 	lightsDirFloats[5] = (float)lightsDirScratch[1].z;
 
-	gl.glUniform3fv(lightDirVar, 2, lightsDirFloats, 0);
-	gl.glUniform1fv(lightIntVar, 2, lightsInt, 0);
-	gl.glUniform1i(numLightsVar, numLights);
 
-	gl.glUniform1f(cVar, Camera.C);
-	gl.glUniform1f(fcVar, Camera.FC);
+	for (int i = 0; i < usedShaders.length; ++i) {
+		int shaderID = usedShaders[i];
+		ShaderInfo si = sInfos[shaderID];
 
+		gl.glUseProgram(si.meshProgHandle);
+
+		gl.glUniformMatrix4fv(si.modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+		gl.glUniformMatrix4fv(si.projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
+		gl.glUniformMatrix4fv(si.normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
+
+		gl.glUniform3fv(si.lightDirVar, 2, lightsDirFloats, 0);
+		gl.glUniform1fv(si.lightIntVar, 2, lightsInt, 0);
+		gl.glUniform1i(si.numLightsVar, numLights);
+
+		gl.glUniform1f(si.cVar, Camera.C);
+		gl.glUniform1f(si.fcVar, Camera.FC);
+
+	}
 }
 
 private void setupVAOForSubMesh(int contextID, SubMesh sub, Renderer renderer) {
+	// Setup a VAO for each used shader for this mesh (this could be optimized for only the sub mesh...
+	for (int shaderID : usedShaders) {
+		setupVAOForSubMeshImp(contextID, shaderID, sub, renderer);
+	}
+}
+
+private void setupVAOForSubMeshImp(int contextID, int shaderID, SubMesh sub, Renderer renderer) {
 	GL2GL3 gl = renderer.getGL();
 
 	int[] vaos = new int[1];
 	gl.glGenVertexArrays(1, vaos, 0);
 	int vao = vaos[0];
-	sub.vaoMap.put(contextID, vao);
+	sub.vaoMaps[shaderID].put(contextID, vao);
 	gl.glBindVertexArray(vao);
 
-	gl.glUseProgram(meshProgHandle);
+	int progHandle = sInfos[shaderID].meshProgHandle;
+	gl.glUseProgram(progHandle);
 
-	int texCoordVar = gl.glGetAttribLocation(meshProgHandle, "texCoord");
+	int texCoordVar = gl.glGetAttribLocation(progHandle, "texCoord");
 
-	if (sub._texCoordBuffer != 0) {
-		// Texture coordinates
-		gl.glEnableVertexAttribArray(texCoordVar);
+	// For some shaders the texCoordVar may be optimized away
+	if (texCoordVar != -1) {
+		if (sub._texCoordBuffer != 0) {
+			// Texture coordinates
+			gl.glEnableVertexAttribArray(texCoordVar);
 
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._texCoordBuffer);
-		gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
-	} else {
-		gl.glVertexAttrib2f(texCoordVar, 0, 0);
+			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._texCoordBuffer);
+			gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
+		} else {
+			gl.glVertexAttrib2f(texCoordVar, 0, 0);
+		}
 	}
 
-	int boneIndicesVar = gl.glGetAttribLocation(meshProgHandle, "boneIndices");
-	int boneWeightsVar = gl.glGetAttribLocation(meshProgHandle, "boneWeights");
+	int boneIndicesVar = gl.glGetAttribLocation(progHandle, "boneIndices");
+	int boneWeightsVar = gl.glGetAttribLocation(progHandle, "boneWeights");
 
 	if (sub._boneIndicesBuffer != 0) {
 		// Indices
@@ -400,14 +424,14 @@ private void setupVAOForSubMesh(int contextID, SubMesh sub, Renderer renderer) {
 		gl.glVertexAttrib4f(boneWeightsVar, 0, 0, 0, 0);
 	}
 
-	int posVar = gl.glGetAttribLocation(meshProgHandle, "position");
+	int posVar = gl.glGetAttribLocation(progHandle, "position");
 	gl.glEnableVertexAttribArray(posVar);
 
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._vertexBuffer);
 	gl.glVertexAttribPointer(posVar, 3, GL2GL3.GL_FLOAT, false, 0, 0);
 
 	// Normals
-	int normalVar = gl.glGetAttribLocation(meshProgHandle, "normal");
+	int normalVar = gl.glGetAttribLocation(progHandle, "normal");
 	gl.glEnableVertexAttribArray(normalVar);
 
 	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._normalBuffer);
@@ -425,34 +449,37 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
                            Renderer renderer, ArrayList<Mat4d> pose, ArrayList<Action.Queue> actions) {
 
 	Material mat = _materials.get(subInst.materialIndex);
+	int shaderID = mat.shaderID;
 
 	GL2GL3 gl = renderer.getGL();
 
-	if (!subMesh.vaoMap.containsKey(contextID)) {
+	if (!subMesh.vaoMaps[shaderID].containsKey(contextID)) {
 		setupVAOForSubMesh(contextID, subMesh, renderer);
 	}
 
-	int vao = subMesh.vaoMap.get(contextID);
+	int vao = subMesh.vaoMaps[shaderID].get(contextID);
 	gl.glBindVertexArray(vao);
+
+	ShaderInfo si = sInfos[shaderID];
+
+	gl.glUseProgram(si.meshProgHandle);
 
 	// Setup uniforms for this object
 
-	gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.getAnimatedTransform(actions)), 0);
-	gl.glUniformMatrix4fv(bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.getAnimatedNormalTransform(actions)), 0);
-
-	gl.glUniform1i(useTexVar, (mat._texHandle != 0) ? 1 : 0);
+	gl.glUniformMatrix4fv(si.bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.getAnimatedTransform(actions)), 0);
+	gl.glUniformMatrix4fv(si.bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.getAnimatedNormalTransform(actions)), 0);
 
 	if (mat._texHandle != 0) {
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
 		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, mat._texHandle);
-		gl.glUniform1i(texVar, 0);
+		gl.glUniform1i(si.texVar, 0);
 	} else {
-		gl.glUniform3fv(diffuseColorVar, 1, mat._diffuseColor.toFloats(), 0);
+		gl.glUniform4fv(si.diffuseColorVar, 1, mat._diffuseColor.toFloats(), 0);
 	}
 
-	gl.glUniform3fv(ambientColorVar, 1, mat._ambientColor.toFloats(), 0);
-	gl.glUniform3fv(specColorVar, 1, mat._specColor.toFloats(), 0);
-	gl.glUniform1f(shininessVar, (float)mat._shininess);
+	gl.glUniform3fv(si.ambientColorVar, 1, mat._ambientColor.toFloats(), 0);
+	gl.glUniform3fv(si.specColorVar, 1, mat._specColor.toFloats(), 0);
+	gl.glUniform1f(si.shininessVar, (float)mat._shininess);
 
 	if (mat._transType != MeshData.NO_TRANS) {
 		gl.glEnable(GL2GL3.GL_BLEND);
@@ -483,10 +510,10 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
 			int poseIndex = subInst.boneMapper[i];
 			RenderUtils.MarshalMat4dToArray(pose.get(poseIndex), poseMatrices, i*16);
 		}
-		gl.glUniformMatrix4fv(boneMatricesVar, pose.size(), false, poseMatrices, 0);
+		gl.glUniformMatrix4fv(si.boneMatricesVar, pose.size(), false, poseMatrices, 0);
 	}
 
-	gl.glUniform1i(maxNumBonesVar, (pose == null) ? 0 : 4);
+	gl.glUniform1i(si.maxNumBonesVar, (pose == null) ? 0 : 4);
 
 	// Actually draw it
 	//gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
@@ -594,6 +621,7 @@ private void loadGPUMaterial(GL2GL3 gl, Renderer renderer, MeshData.Material dat
 	boolean hasTex = dataMat.colorTex != null;
 
 	Material mat = new Material();
+	mat.shaderID = dataMat.getShaderID();
 	mat._transType = dataMat.transType;
 	mat._transColour = dataMat.transColour;
 
@@ -612,30 +640,35 @@ private void loadGPUMaterial(GL2GL3 gl, Renderer renderer, MeshData.Material dat
 }
 
 public static void init(Renderer r, GL2GL3 gl) {
-	meshProgHandle = r.getShader(ShaderHandle.MESH).getProgramHandle();
-	gl.glUseProgram(meshProgHandle);
+	for (int i = 0; i < Renderer.NUM_MESH_SHADERS; ++i) {
+		ShaderInfo si = new ShaderInfo();
+		sInfos[i] = si;
 
-	// Bind the shader variables
-	modelViewMatVar = gl.glGetUniformLocation(meshProgHandle, "modelViewMat");
-	projMatVar = gl.glGetUniformLocation(meshProgHandle, "projMat");
-	bindSpaceMatVar = gl.glGetUniformLocation(meshProgHandle, "bindSpaceMat");
-	bindSpaceNorMatVar = gl.glGetUniformLocation(meshProgHandle, "bindSpaceNorMat");
-	normalMatVar = gl.glGetUniformLocation(meshProgHandle, "normalMat");
-	diffuseColorVar = gl.glGetUniformLocation(meshProgHandle, "diffuseColor");
-	ambientColorVar = gl.glGetUniformLocation(meshProgHandle, "ambientColor");
-	specColorVar = gl.glGetUniformLocation(meshProgHandle, "specColor");
-	shininessVar = gl.glGetUniformLocation(meshProgHandle, "shininess");
-	texVar = gl.glGetUniformLocation(meshProgHandle, "tex");
-	useTexVar = gl.glGetUniformLocation(meshProgHandle, "useTex");
-	maxNumBonesVar = gl.glGetUniformLocation(meshProgHandle, "maxNumBones");
-	boneMatricesVar = gl.glGetUniformLocation(meshProgHandle, "boneMatrices");
+		si.meshProgHandle = r.getMeshShader(i).getProgramHandle();
 
-	lightDirVar = gl.glGetUniformLocation(meshProgHandle, "lightDir");
-	lightIntVar = gl.glGetUniformLocation(meshProgHandle, "lightIntensity");
-	numLightsVar = gl.glGetUniformLocation(meshProgHandle, "numLights");
+		gl.glUseProgram(si.meshProgHandle);
 
-	cVar = gl.glGetUniformLocation(meshProgHandle, "C");
-	fcVar = gl.glGetUniformLocation(meshProgHandle, "FC");
+		// Bind the shader variables
+		si.modelViewMatVar = gl.glGetUniformLocation(si.meshProgHandle, "modelViewMat");
+		si.projMatVar = gl.glGetUniformLocation(si.meshProgHandle, "projMat");
+		si.bindSpaceMatVar = gl.glGetUniformLocation(si.meshProgHandle, "bindSpaceMat");
+		si.bindSpaceNorMatVar = gl.glGetUniformLocation(si.meshProgHandle, "bindSpaceNorMat");
+		si.normalMatVar = gl.glGetUniformLocation(si.meshProgHandle, "normalMat");
+		si.diffuseColorVar = gl.glGetUniformLocation(si.meshProgHandle, "diffuseColor");
+		si.ambientColorVar = gl.glGetUniformLocation(si.meshProgHandle, "ambientColor");
+		si.specColorVar = gl.glGetUniformLocation(si.meshProgHandle, "specColor");
+		si.shininessVar = gl.glGetUniformLocation(si.meshProgHandle, "shininess");
+		si.texVar = gl.glGetUniformLocation(si.meshProgHandle, "diffuseTex");
+		si.maxNumBonesVar = gl.glGetUniformLocation(si.meshProgHandle, "maxNumBones");
+		si.boneMatricesVar = gl.glGetUniformLocation(si.meshProgHandle, "boneMatrices");
+
+		si.lightDirVar = gl.glGetUniformLocation(si.meshProgHandle, "lightDir");
+		si.lightIntVar = gl.glGetUniformLocation(si.meshProgHandle, "lightIntensity");
+		si.numLightsVar = gl.glGetUniformLocation(si.meshProgHandle, "numLights");
+
+		si.cVar = gl.glGetUniformLocation(si.meshProgHandle, "C");
+		si.fcVar = gl.glGetUniformLocation(si.meshProgHandle, "FC");
+	}
 
 	numLights = 2;
 
@@ -654,12 +687,18 @@ public static void init(Renderer r, GL2GL3 gl) {
 
 }
 
+@SuppressWarnings("unchecked") // Suppresses a warning due to the array of hash maps
 private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData data) {
 
 	boolean hasTex = data.texCoords != null;
 	boolean hasBoneInfo = data.boneIndices != null;
 
 	SubMesh sub = new SubMesh();
+	sub.vaoMaps = new HashMap[Renderer.NUM_MESH_SHADERS]; // This would generate a warning
+	for (int i = 0; i < usedShaders.length; ++i) {
+		int shaderID = usedShaders[i];
+		sub.vaoMaps[shaderID] = new HashMap<Integer, Integer>();
+	}
 
 	int[] is = new int[3];
 	gl.glGenBuffers(3, is, 0);

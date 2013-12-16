@@ -14,6 +14,9 @@
  */
 #version 130
 
+// This will be replaced with appropriate defines as a macro expansion
+@DEFINES@
+
 in vec2 texCoordFrag;
 in vec3 normalFrag;
 
@@ -24,7 +27,17 @@ in float interpZ;
 //layout(location = 0) out vec4 output;
 out vec4 outColour;
 
-uniform sampler2D tex;
+#ifdef DIFF_TEX
+// Use a diffuse texture
+uniform sampler2D diffuseTex;
+#define DIFF_VAL texture2D(diffuseTex, texCoordFrag)
+
+#else
+// Constant diffuse color
+uniform vec4 diffuseColor;
+#define DIFF_VAL diffuseColor
+
+#endif
 
 const int MAX_LIGHTS = 10;
 
@@ -34,12 +47,9 @@ uniform int numLights;
 
 in vec3 viewDir;
 
-uniform vec3 diffuseColor;
 uniform vec3 ambientColor;
 uniform vec3 specColor;
 uniform float shininess;
-
-uniform bool useTex;
 
 void main()
 {
@@ -47,12 +57,8 @@ void main()
 
     vec3 n = normalize(normalFrag);
 
-    vec3 dColor = diffuseColor;
-    if (useTex) {
-        vec4 tex = texture2D(tex, texCoordFrag);
-        dColor = tex.rgb;
-        outColour.a = tex.a;
-    }
+    vec4 dColor = DIFF_VAL;
+    outColour.a = dColor.a;
 
     vec3 d = vec3(0, 0, 0);
     vec3 s = vec3(0, 0, 0);
@@ -62,7 +68,7 @@ void main()
         vec3 l = lightDir[i];
 
         float lDotN = dot(n, l);
-        d += max(0, -1*lDotN) * lightIntensity[i] * dColor;
+        d += max(0, -1*lDotN) * lightIntensity[i] * dColor.rgb;
 
         if (shininess > 2) { // shininess == 1 is default, but all real values will be > 2
             vec3 ref = 2*lDotN*n - l;
