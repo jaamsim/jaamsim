@@ -541,7 +541,7 @@ public abstract class Input<T> {
 	private static final long usPerMin = 60 * usPerSec;
 	private static final long usPerHr  = 60 * usPerMin;
 	private static final long usPerDay = 24 * usPerHr;
-	static final long usPerYr  = 365 * usPerDay;
+	public static final long usPerYr  = 365 * usPerDay;
 	/**
 	 * Parse an RFC8601 date time and return it as an offset in microseconds from
 	 * 0AD. This assumes a very simple concept of a 365 day year with no leap years
