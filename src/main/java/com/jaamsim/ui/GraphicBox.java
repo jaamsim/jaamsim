@@ -46,6 +46,7 @@ import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputAgent.KeywordIndex;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.Future;
@@ -53,7 +54,6 @@ import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
-import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
@@ -164,11 +164,17 @@ public class GraphicBox extends JDialog {
 
 				DisplayModel newModel = InputAgent.defineEntityWithUniqueName(ColladaModel.class, entityName, true);
 
-				StringVector data = new StringVector(1);
-				data.add(f.toURI().getPath());
+				ArrayList<String> tokens = new ArrayList<String>();
+				tokens.add(newModel.getInputName());
+				tokens.add("ColladaFile");
+				tokens.add("{");
+				tokens.add(f.toURI().getPath());
+				tokens.add("}");
 
-				Input<?> in = newModel.getInput("ColladaFile");
-				InputAgent.apply(newModel, in, data, null);
+				KeywordIndex kw = new KeywordIndex(tokens, 1, tokens.size() - 1, null);
+				Input<?> in = currentEntity.getInput(kw.keyword);
+
+				InputAgent.apply(newModel, in, kw);
 				myInstance.refresh(); // Add the new DisplayModel to the List
 				FrameBox.valueUpdate();
 
@@ -186,11 +192,16 @@ public class GraphicBox extends JDialog {
 				setEnabled(false); // Don't accept any interaction
 				DisplayModel dm = (DisplayModel) displayModelList.getSelectedValue();
 
-				StringVector data = new StringVector(1);
-				data.add(dm.getInputName());
+				ArrayList<String> tokens = new ArrayList<String>();
+				tokens.add(currentEntity.getInputName());
+				tokens.add("DisplayModel");
+				tokens.add("{");
+				tokens.add(dm.getInputName());
+				tokens.add("}");
 
-				Input<?> in = currentEntity.getInput("DisplayModel");
-				InputAgent.apply(currentEntity, in, data, null);
+				KeywordIndex kw = new KeywordIndex(tokens, 1, tokens.size() - 1, null);
+				Input<?> in = currentEntity.getInput(kw.keyword);
+				InputAgent.apply(currentEntity, in, kw);
 
 				if (!RenderManager.isGood()) {
 					myInstance.close();

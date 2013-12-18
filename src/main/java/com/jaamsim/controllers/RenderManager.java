@@ -47,6 +47,7 @@ import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.font.TessFont;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputAgent.KeywordIndex;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
@@ -78,7 +79,6 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -1413,21 +1413,35 @@ public class RenderManager implements DragSourceListener {
 
 		if (isFlat) {
 			Vec3d size = dEntity.getSize();
-			Input<?> in = dEntity.getInput("Size");
-			StringVector args = new StringVector(4);
+
+			ArrayList<String> tokens = new ArrayList<String>();
+			tokens.add(dEntity.getInputName());
+			tokens.add("Size");
+			tokens.add("{");
 			Locale loc = null;
-			args.add(String.format(loc, "%.3f", size.x));
-			args.add(String.format(loc, "%.3f", size.y));
-			args.add("0.0");
-			args.add("m");
-			InputAgent.apply(dEntity, in, args, null);
+			tokens.add(String.format(loc, "%.3f", size.x));
+			tokens.add(String.format(loc, "%.3f", size.y));
+			tokens.add("0.0");
+			tokens.add("m");
+			tokens.add("}");
+
+			KeywordIndex kw = new KeywordIndex(tokens, 1, tokens.size() - 1, null);
+			Input<?> in = dEntity.getInput(kw.keyword);
+
+			InputAgent.apply(dEntity, in, kw);
 		} else {
-			Input<?> in = dEntity.getInput("Alignment");
-			StringVector args = new StringVector(3);
-			args.add("0.0");
-			args.add("0.0");
-			args.add("-0.5");
-			InputAgent.apply(dEntity, in, args, null);
+			ArrayList<String> tokens = new ArrayList<String>();
+			tokens.add(dEntity.getInputName());
+			tokens.add("Alignment");
+			tokens.add("{");
+			tokens.add("0.0");
+			tokens.add("0.0");
+			tokens.add("-0.5");
+			tokens.add("}");
+
+			KeywordIndex kw = new KeywordIndex(tokens, 1, tokens.size() - 1, null);
+			Input<?> in = dEntity.getInput(kw.keyword);
+			InputAgent.apply(dEntity, in, kw);
 		}
 		FrameBox.valueUpdate();
 	}

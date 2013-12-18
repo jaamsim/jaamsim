@@ -468,14 +468,14 @@ public class InputAgent {
 		}
 	}
 
-	private static class KeywordIndex {
-		final ArrayList<String> input;
-		final String keyword;
-		final int start;
-		final int end;
-		final ParseContext context;
+	public static class KeywordIndex {
+		public final ArrayList<String> input;
+		public final String keyword;
+		public final int start;
+		public final int end;
+		public final ParseContext context;
 
-		KeywordIndex(ArrayList<String> inp, int s, int e, ParseContext ctxt) {
+		public KeywordIndex(ArrayList<String> inp, int s, int e, ParseContext ctxt) {
 			input = inp;
 			keyword = input.get(s);
 			start = s;
@@ -597,8 +597,13 @@ public class InputAgent {
 
 	}
 
-	public static final void apply(Entity ent, Input<?> in, StringVector data, Input.ParseContext context) {
-		in.parse(data, context);
+	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
+		StringVector data = new StringVector(kw.end - kw.start);
+		for (int i = kw.start + 2; i < kw.end; i++) {
+			data.add(kw.input.get(i));
+		}
+
+		in.parse(data, kw.context);
 
 		// Only mark the keyword edited if we have finished initial configuration
 		if (InputAgent.hasAddedRecords() || InputAgent.recordEdits())
@@ -634,35 +639,27 @@ public class InputAgent {
 
 		Input<?> input = entity.getInput( key.keyword );
 		if (input != null) {
-			StringVector args = new StringVector(key.end - key.start);
-			for (int i = key.start + 2; i < key.end; i++) {
-				args.add(key.input.get(i));
-			}
-			InputAgent.apply(entity, input, args, key.context);
+			InputAgent.apply(entity, input, key);
 			return;
 		}
 
 		if (!(entity instanceof Group))
 			throw new InputErrorException("Not a valid keyword");
 
-		StringVector args = new StringVector(key.end - key.start);
-		for (int i = key.start + 2; i < key.end; i++) {
-			args.add(key.input.get(i));
-		}
 		Group grp = (Group)entity;
-		grp.saveGroupKeyword(args, key.keyword);
+		grp.saveGroupKeyword(key);
 
 		// Store the keyword data for use in the edit table
 		for( int i = 0; i < grp.getList().size(); i++ ) {
 			Entity ent = grp.getList().get( i );
 			Input<?> in = ent.getInput(key.keyword);
 
-			if (in != null) {
-				InputAgent.apply(ent, in, args, key.context);
-			}
-			else {
+			if (in == null) {
 				InputAgent.logWarning("Keyword %s could not be found for Entity %s.", key.keyword, ent.getInputName());
+				continue;
 			}
+
+			InputAgent.apply(ent, in, key);
 		}
 	}
 

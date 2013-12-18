@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputAgent.KeywordIndex;
 import com.jaamsim.input.Keyword;
 
 /**
@@ -33,7 +34,7 @@ public class Group extends Entity {
 	private final BooleanInput reportable;
 
 	private Class<?> type;
-	private final ArrayList<StringVector> groupKeywordValues;
+	private final ArrayList<KeywordIndex> groupKeywordValues;
 
 	private final ArrayList<Entity> list; // list of objects in group
 
@@ -49,7 +50,7 @@ public class Group extends Entity {
 	public Group() {
 		list = new ArrayList<Entity>();
 		type = null;
-		groupKeywordValues = new ArrayList<StringVector>();
+		groupKeywordValues = new ArrayList<KeywordIndex>();
 	}
 
 	/**
@@ -82,17 +83,14 @@ public class Group extends Entity {
 					for ( int i = originalListSize; i < list.size(); i ++ ) {
 
 						Entity ent = list.get( i );
-						for ( int j = 0; j < this.getGroupKeywordValues().size(); j++  ) {
-							StringVector currentData = new StringVector(this.getGroupKeywordValues().get(j));
-							String currentKeyword = currentData.remove(0);
-							Input<?> in = ent.getInput(currentKeyword);
-							if(in != null) {
-								InputAgent.apply(ent, in, currentData, null);
+						for ( int j = 0; j < groupKeywordValues.size(); j++  ) {
+							KeywordIndex kw = groupKeywordValues.get(j);
+							Input<?> in = ent.getInput(kw.keyword);
+							if (in == null) {
+								InputAgent.logWarning("Keyword %s could not be found for Entity %s.", kw.keyword, ent.getInputName());
+								continue;
 							}
-								// The keyword is not on the editable keyword list
-							else {
-								InputAgent.logWarning("Keyword %s could not be found for Entity %s.", currentKeyword, ent.getInputName());
-							}
+							InputAgent.apply(ent, in, kw);
 						}
 					}
 				}
@@ -112,16 +110,18 @@ public class Group extends Entity {
 		}
 	}
 
-	public void saveGroupKeyword(StringVector data, String keyword) {
+	public void saveGroupKeyword(KeywordIndex key) {
+		ArrayList<String> toks = new ArrayList<String>(key.end - key.start + 2);
+		toks.add(key.input.get(0));
+		for (int i = key.start; i <= key.end; i++)
+			toks.add(key.input.get(i));
 
-		// for all other keywords, keep track in keywordValues vector
-		StringVector record = new StringVector( data );
-		record.insertElementAt(keyword, 0);
-		this.getGroupKeywordValues().add( record );
+		KeywordIndex saved = new KeywordIndex(toks, 1, toks.size() - 1, key.context);
+		groupKeywordValues.add(saved);
 
 		// If there can never be elements in the group, throw a warning
 		if( type == null && list.size() == 0 ) {
-			InputAgent.logWarning("The group %s has no elements to apply keyword: %s", this, keyword);
+			InputAgent.logWarning("The group %s has no elements to apply keyword: %s", this, key.keyword);
 		}
 	}
 
@@ -145,9 +145,5 @@ public class Group extends Entity {
 
 	public boolean isReportable() {
 		return reportable.getValue();
-	}
-
-	private ArrayList<StringVector> getGroupKeywordValues() {
-		return groupKeywordValues;
 	}
 }
