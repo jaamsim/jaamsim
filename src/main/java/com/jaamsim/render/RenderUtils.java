@@ -563,5 +563,13 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 		return currentPoint.z - lastPoint.z;
 	}
 
+	public static int[] stringToCodePoints(String s) {
+		int numCodePoints = s.codePointCount(0, s.length());
+		int[] ret = new int[numCodePoints];
 
+		for (int i = 0; i < numCodePoints; ++i) {
+			ret[i] = s.codePointAt(s.offsetByCodePoints(0, i));
+		}
+		return ret;
+	}
 }

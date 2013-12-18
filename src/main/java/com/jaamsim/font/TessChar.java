@@ -25,9 +25,9 @@ package com.jaamsim.font;
 public class TessChar {
 
 /**
- * The character this represents
+ * The code point this represents
  */
-private char _c;
+private int _cp;
 /**
  * A list of vertices to make the character, only a dumb triangle list for now so the length
  * should be a multiple of 3
@@ -55,8 +55,8 @@ private double _advance;
  * @param width - width of the bounds
  * @param height - height of the bounds
  */
-public TessChar(char c, int startIndex, int numVerts, double width, double height, double advance) {
-	_c = c;
+public TessChar(int cp, int startIndex, int numVerts, double width, double height, double advance) {
+	_cp = cp;
 	_width = width;
 	_height = height;
 	_advance = advance;
@@ -80,8 +80,8 @@ public double getHeight() {
 	return _height;
 }
 
-public char getChar() {
-	return _c;
+public int getCodePoint() {
+	return _cp;
 }
 
 public double getAdvance() {

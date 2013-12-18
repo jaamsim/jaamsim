@@ -35,7 +35,7 @@ import com.jaamsim.render.VisibilityInfo;
 public class TessString implements Renderable {
 
 private TessFont _font;
-private String _contents;
+private int[] _contents;
 
 private final float[] _color;
 
@@ -78,8 +78,6 @@ public TessString(TessFont font, String contents, Color4d color,
 	_trans.scale3(heightScale);
 	//_trans.setScale( trans.getScale() * heightScale);
 
-	_contents = contents;
-
 	_pickingID = pickingID;
 
 	starts = new int[contents.length()];
@@ -88,9 +86,9 @@ public TessString(TessFont font, String contents, Color4d color,
 
 	double width = 0;
 	double height = _font.getNominalHeight();
-	for (int i = 0; i < _contents.length(); ++i) {
-		char c = _contents.charAt(i);
-		TessChar tc = _font.getTessChar(c);
+	_contents = RenderUtils.stringToCodePoints(contents);
+	for (int i = 0; i < _contents.length; ++i) {
+		TessChar tc = _font.getTessChar(_contents[i]);
 		assert(tc != null);
 		width += tc.getAdvance();
 
@@ -167,7 +165,7 @@ public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 
 	gl.glDisable(GL2GL3.GL_CULL_FACE);
 
-	for (int i = 0; i < _contents.length(); ++i) {
+	for (int i = 0; i < _contents.length; ++i) {
 
 		gl.glUniform1f(advanceVar, advance);
 

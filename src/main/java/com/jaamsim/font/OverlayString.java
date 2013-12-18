@@ -21,6 +21,7 @@ import javax.media.opengl.GL2GL3;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.OverlayRenderable;
+import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.Shader;
 import com.jaamsim.render.VisibilityInfo;
@@ -111,8 +112,8 @@ public class OverlayString implements OverlayRenderable {
 
 		gl.glDisable(GL2GL3.GL_CULL_FACE);
 
-		for (int i = 0; i < _contents.length(); ++i) {
-			TessChar tc = _font.getTessChar(_contents.charAt(i));
+		for (int cp : RenderUtils.stringToCodePoints(_contents)) {
+			TessChar tc = _font.getTessChar(cp);
 			if (tc == null) {
 				assert(false);
 				continue;

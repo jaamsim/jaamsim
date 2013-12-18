@@ -34,6 +34,7 @@ import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.TessFontKey;
 
@@ -52,7 +53,7 @@ import com.jaamsim.render.TessFontKey;
 
 public class TessFont {
 
-private HashMap<Character, TessChar> _charMap;
+private HashMap<Integer, TessChar> _charMap;
 
 private final Font _font;
 private final TessFontKey _key;
@@ -75,17 +76,17 @@ public TessFont(TessFontKey key) {
 	_key = key;
 	_vertices = new ArrayList<double[]>();
 
-	_charMap = new HashMap<Character, TessChar>();
+	_charMap = new HashMap<Integer, TessChar>();
 	// Originally support all the basic latin characters (will lazily add new ones as needed)
 	String initialChars= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890.,/<>?;':\"[]{}!@#$%^&*()_+-= \t";
 
 	for (int i = 0; i < initialChars.length(); ++i) {
-		generateChar(initialChars.charAt(i));
+		generateChar(initialChars.charAt(i)); // Note, none of these are supplementary, so this is safe
 	}
 
 	_id = Renderer.getAssetID();
 
-	_nominalHeight = _charMap.get('A').getHeight();
+	_nominalHeight = _charMap.get((int)'A').getHeight();
 }
 
 /**
@@ -98,13 +99,13 @@ public TessFont(TessFontKey key) {
  * @return
  */
 
-public synchronized TessChar getTessChar(char c) {
-	TessChar cachedChar = _charMap.get(c);
+public synchronized TessChar getTessChar(int cp) {
+	TessChar cachedChar = _charMap.get(cp);
 
 	// Load any characters this font has not loaded before
 	if (cachedChar == null) {
-		generateChar(c);
-		cachedChar = _charMap.get(c);
+		generateChar(cp);
+		cachedChar = _charMap.get(cp);
 	}
 
 	return cachedChar;
@@ -331,8 +332,10 @@ private TessOutput tesselateString(String s) {
 	return ret;
 }
 
-private void generateChar(char c) {
-	String s = "" + c;
+private void generateChar(int cp) {
+	StringBuilder sb = new StringBuilder();
+	sb.appendCodePoint(cp);
+	String s = sb.toString();
 
 	TessOutput tessed = tesselateString(s);
 	int totalVerts = 0;
@@ -351,8 +354,8 @@ private void generateChar(char c) {
 	// Append the verts to the list
 	_vertices.add(tessed.verts);
 
-	TessChar tc = new TessChar(c, startIndex, numVerts, tessed.bounds.getWidth(), tessed.bounds.getHeight(), tessed.advances[0]);
-	_charMap.put(c, tc);
+	TessChar tc = new TessChar(cp, startIndex, numVerts, tessed.bounds.getWidth(), tessed.bounds.getHeight(), tessed.advances[0]);
+	_charMap.put(cp, tc);
 
 	_glBufferDirty = true;
 
@@ -418,11 +421,11 @@ public Vec3d getStringSize(double textHeight, String string) {
 	}
 	double scaleFactor = textHeight / getNominalHeight();
 	double width = 0;
-	for (int i = 0; i < string.length(); ++i) {
-		char c = string.charAt(i);
-		TessChar tc = getTessChar(c);
+	for (int cp : RenderUtils.stringToCodePoints(string)) {
+		TessChar tc = getTessChar(cp);
 		width += tc.getAdvance();
 	}
+
 	return new Vec3d(width * scaleFactor, textHeight, 0.0d);
 }
 
