@@ -81,16 +81,10 @@ public class Group extends Entity {
 				// set values of appended objects to the group values
 				if ( type != null ) {
 					for ( int i = originalListSize; i < list.size(); i ++ ) {
-
 						Entity ent = list.get( i );
 						for ( int j = 0; j < groupKeywordValues.size(); j++  ) {
 							KeywordIndex kw = groupKeywordValues.get(j);
-							Input<?> in = ent.getInput(kw.keyword);
-							if (in == null) {
-								InputAgent.logWarning("Keyword %s could not be found for Entity %s.", kw.keyword, ent.getInputName());
-								continue;
-							}
-							InputAgent.apply(ent, in, kw);
+							InputAgent.apply(ent, kw);
 						}
 					}
 				}

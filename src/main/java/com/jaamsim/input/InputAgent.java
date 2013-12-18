@@ -597,6 +597,16 @@ public class InputAgent {
 
 	}
 
+	public static final void apply(Entity ent, KeywordIndex kw) {
+		Input<?> in = ent.getInput(kw.keyword);
+		if (in == null) {
+			InputAgent.logWarning("Keyword %s could not be found for Entity %s.", kw.keyword, ent.getInputName());
+			return;
+		}
+
+		InputAgent.apply(ent, in, kw);
+	}
+
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
 		StringVector data = new StringVector(kw.end - kw.start);
 		for (int i = kw.start + 2; i < kw.end; i++) {
@@ -652,14 +662,7 @@ public class InputAgent {
 		// Store the keyword data for use in the edit table
 		for( int i = 0; i < grp.getList().size(); i++ ) {
 			Entity ent = grp.getList().get( i );
-			Input<?> in = ent.getInput(key.keyword);
-
-			if (in == null) {
-				InputAgent.logWarning("Keyword %s could not be found for Entity %s.", key.keyword, ent.getInputName());
-				continue;
-			}
-
-			InputAgent.apply(ent, in, key);
+			InputAgent.apply(ent, key);
 		}
 	}
 

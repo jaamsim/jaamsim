@@ -1426,9 +1426,7 @@ public class RenderManager implements DragSourceListener {
 			tokens.add("}");
 
 			KeywordIndex kw = new KeywordIndex(tokens, 1, tokens.size() - 1, null);
-			Input<?> in = dEntity.getInput(kw.keyword);
-
-			InputAgent.apply(dEntity, in, kw);
+			InputAgent.apply(dEntity, kw);
 		} else {
 			ArrayList<String> tokens = new ArrayList<String>();
 			tokens.add(dEntity.getInputName());
@@ -1440,8 +1438,7 @@ public class RenderManager implements DragSourceListener {
 			tokens.add("}");
 
 			KeywordIndex kw = new KeywordIndex(tokens, 1, tokens.size() - 1, null);
-			Input<?> in = dEntity.getInput(kw.keyword);
-			InputAgent.apply(dEntity, in, kw);
+			InputAgent.apply(dEntity, kw);
 		}
 		FrameBox.valueUpdate();
 	}

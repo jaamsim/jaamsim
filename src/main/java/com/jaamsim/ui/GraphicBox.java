@@ -53,7 +53,6 @@ import com.jaamsim.render.Future;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
@@ -172,9 +171,7 @@ public class GraphicBox extends JDialog {
 				tokens.add("}");
 
 				KeywordIndex kw = new KeywordIndex(tokens, 1, tokens.size() - 1, null);
-				Input<?> in = currentEntity.getInput(kw.keyword);
-
-				InputAgent.apply(newModel, in, kw);
+				InputAgent.apply(newModel, kw);
 				myInstance.refresh(); // Add the new DisplayModel to the List
 				FrameBox.valueUpdate();
 
@@ -200,8 +197,7 @@ public class GraphicBox extends JDialog {
 				tokens.add("}");
 
 				KeywordIndex kw = new KeywordIndex(tokens, 1, tokens.size() - 1, null);
-				Input<?> in = currentEntity.getInput(kw.keyword);
-				InputAgent.apply(currentEntity, in, kw);
+				InputAgent.apply(currentEntity, kw);
 
 				if (!RenderManager.isGood()) {
 					myInstance.close();
