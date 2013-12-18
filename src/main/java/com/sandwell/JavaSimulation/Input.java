@@ -530,6 +530,7 @@ public abstract class Input<T> {
 
 	private static final Pattern is8601date = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
 	private static final Pattern is8601time = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}:\\d{2}");
+	private static final Pattern isextendtime = Pattern.compile("\\d{1,}:\\d{2}:\\d{2}");
 	private static final long usPerSec = 1000000;
 	private static final long usPerMin = 60 * usPerSec;
 	private static final long usPerHr  = 60 * usPerMin;
@@ -547,24 +548,43 @@ public abstract class Input<T> {
 	 * @return
 	 */
 	public static long parseRFC8601DateTime(String input) {
-		boolean isDate = is8601date.matcher(input).matches();
-		boolean isTime = is8601time.matcher(input).matches();
-		if (!isDate && !isTime)
-			throw new InputErrorException(INP_ERR_BADDATE, input);
-
-		int YY = Integer.parseInt(input.substring(0, 4));
-		int MM = Integer.parseInt(input.substring(5, 7));
-		int DD = Integer.parseInt(input.substring(8, 10));
-
-		int hh = 0;
-		int mm = 0;
-		int ss = 0;
-		if (isTime) {
-			hh = Integer.parseInt(input.substring(11, 13));
-			mm = Integer.parseInt(input.substring(14, 16));
-			ss = Integer.parseInt(input.substring(17, 19));
+		if (is8601time.matcher(input).matches()) {
+			int YY = Integer.parseInt(input.substring(0, 4));
+			int MM = Integer.parseInt(input.substring(5, 7));
+			int DD = Integer.parseInt(input.substring(8, 10));
+			int hh = Integer.parseInt(input.substring(11, 13));
+			int mm = Integer.parseInt(input.substring(14, 16));
+			int ss = Integer.parseInt(input.substring(17, 19));
+			return getUS(input, YY, MM, DD, hh, mm, ss);
 		}
 
+		if (is8601date.matcher(input).matches()) {
+			int YY = Integer.parseInt(input.substring(0, 4));
+			int MM = Integer.parseInt(input.substring(5, 7));
+			int DD = Integer.parseInt(input.substring(8, 10));
+			return getUS(input, YY, MM, DD, 0, 0, 0);
+		}
+
+		if (isextendtime.matcher(input).matches()) {
+			int len = input.length();
+			int hh = Integer.parseInt(input.substring(0, len - 6));
+			int mm = Integer.parseInt(input.substring(len - 5, len - 3));
+			int ss = Integer.parseInt(input.substring(len - 2, len));
+
+			if (mm < 0 || mm > 59 || ss < 0 || ss > 59)
+				throw new InputErrorException(INP_ERR_BADDATE, input);
+
+			long ret = 0;
+			ret += hh * usPerHr;
+			ret += mm * usPerMin;
+			ret += ss * usPerSec;
+			return ret;
+		}
+
+		throw new InputErrorException(INP_ERR_BADDATE, input);
+	}
+
+	private static final long getUS(String input, int YY, int MM, int DD, int hh, int mm, int ss) {
 		// Validate ranges
 		if (MM <= 0 || MM > 12)
 			throw new InputErrorException(INP_ERR_BADDATE, input);
