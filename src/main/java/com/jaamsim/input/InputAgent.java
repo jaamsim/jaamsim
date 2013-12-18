@@ -41,6 +41,7 @@ import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.Input;
+import com.sandwell.JavaSimulation.Input.ParseContext;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Palette;
@@ -456,10 +457,10 @@ public class InputAgent {
 		}
 
 		// Validate the tokens have the Entity Keyword { Args... } Keyword { Args... }
-		ArrayList<KeywordIndex> words = InputAgent.getKeywords(record);
+		ArrayList<KeywordIndex> words = InputAgent.getKeywords(record, context);
 		for (KeywordIndex keyword : words) {
 			try {
-				InputAgent.processKeyword(ent, keyword, context);
+				InputAgent.processKeyword(ent, keyword);
 			}
 			catch (Throwable e) {
 				InputAgent.logInpError("Entity: %s, Keyword: %s - %s", ent.getInputName(), keyword.keyword, e.getMessage());
@@ -472,16 +473,18 @@ public class InputAgent {
 		final String keyword;
 		final int start;
 		final int end;
+		final ParseContext context;
 
-		KeywordIndex(ArrayList<String> inp, int s, int e) {
+		KeywordIndex(ArrayList<String> inp, int s, int e, ParseContext ctxt) {
 			input = inp;
 			keyword = input.get(s);
 			start = s;
 			end = e;
+			context = ctxt;
 		}
 	}
 
-	private static ArrayList<KeywordIndex> getKeywords(ArrayList<String> input) {
+	private static ArrayList<KeywordIndex> getKeywords(ArrayList<String> input, ParseContext context) {
 		ArrayList<KeywordIndex> ret = new ArrayList<KeywordIndex>();
 
 		int braceDepth = 0;
@@ -496,7 +499,7 @@ public class InputAgent {
 			if ("}".equals(tok)) {
 				braceDepth--;
 				if (braceDepth == 0) {
-					ret.add(new KeywordIndex(input, index, i));
+					ret.add(new KeywordIndex(input, index, i, context));
 					index = i + 1;
 					continue;
 				}
@@ -506,7 +509,7 @@ public class InputAgent {
 		// Look for a leftover keyword at the end of line
 		KeywordIndex last = ret.get(ret.size() - 1);
 		if (last.end != input.size() - 1) {
-			ret.add(new KeywordIndex(input, last.end + 1, input.size() - 1));
+			ret.add(new KeywordIndex(input, last.end + 1, input.size() - 1, context));
 		}
 
 		for (KeywordIndex kw : ret) {
@@ -625,7 +628,7 @@ public class InputAgent {
 		in.setValueString(out.toString());
 	}
 
-	private static void processKeyword(Entity entity, KeywordIndex key, Input.ParseContext context) {
+	private static void processKeyword(Entity entity, KeywordIndex key) {
 		if (entity.testFlag(Entity.FLAG_LOCKED))
 			throw new InputErrorException("Entity: %s is locked and cannot be modified", entity.getName());
 
@@ -635,7 +638,7 @@ public class InputAgent {
 			for (int i = key.start + 2; i < key.end; i++) {
 				args.add(key.input.get(i));
 			}
-			InputAgent.apply(entity, input, args, context);
+			InputAgent.apply(entity, input, args, key.context);
 			return;
 		}
 
@@ -655,7 +658,7 @@ public class InputAgent {
 			Input<?> in = ent.getInput(key.keyword);
 
 			if (in != null) {
-				InputAgent.apply(ent, in, args, context);
+				InputAgent.apply(ent, in, args, key.context);
 			}
 			else {
 				InputAgent.logWarning("Keyword %s could not be found for Entity %s.", key.keyword, ent.getInputName());
@@ -1095,8 +1098,8 @@ public class InputAgent {
 		Parser.tokenize(tokens, value, true);
 		tokens.add("}");
 
-		KeywordIndex kw = new KeywordIndex(tokens, 0, tokens.size() - 1);
-		InputAgent.processKeyword(ent, kw, null);
+		KeywordIndex kw = new KeywordIndex(tokens, 0, tokens.size() - 1, null);
+		InputAgent.processKeyword(ent, kw);
 	}
 
 
@@ -1107,8 +1110,8 @@ public class InputAgent {
 		Parser.tokenize(tokens, value, true);
 		tokens.add("}");
 
-		KeywordIndex kw = new KeywordIndex(tokens, 0, tokens.size() - 1);
-		InputAgent.processKeyword(ent, kw, null);
+		KeywordIndex kw = new KeywordIndex(tokens, 0, tokens.size() - 1, null);
+		InputAgent.processKeyword(ent, kw);
 	}
 
 	/**
