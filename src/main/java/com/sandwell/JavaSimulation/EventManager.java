@@ -50,10 +50,10 @@ import com.sandwell.JavaSimulation3D.GUIFrame;
 public final class EventManager implements Runnable {
 	boolean traceEvents = false;
 
-	private static int eventState;
-	static final int EVENTS_STOPPED = 0;
-	static final int EVENTS_RUNNING = 1;
-	static final int EVENTS_UNTILTIME = 4;
+	private int eventState;
+	private static final int EVENTS_STOPPED = 0;
+	private static final int EVENTS_RUNNING = 1;
+	private static final int EVENTS_UNTILTIME = 4;
 
 	final String name;
 
@@ -94,10 +94,6 @@ public final class EventManager implements Runnable {
 	 * Used to communicate with the eventViewer about the status of a given event
 	 */
 
-	static {
-		eventState = EVENTS_STOPPED;
-	}
-
 	/**
 	 * Allocates a new EventManager with the given parent and name
 	 *
@@ -119,6 +115,7 @@ public final class EventManager implements Runnable {
 		eventStack = new ArrayList<Event>();
 		conditionalList = new ArrayList<Process>();
 
+		eventState = EVENTS_STOPPED;
 		executeRealTime = false;
 		realTimeFactor = 1;
 		rebaseRealTime = true;
@@ -196,7 +193,7 @@ public final class EventManager implements Runnable {
 		if (eventStack.isEmpty())
 			return true;
 
-		if (EventManager.getEventState() == EVENTS_UNTILTIME &&
+		if (eventState == EVENTS_UNTILTIME &&
 		    eventStack.get(0).schedTick >= debuggingTime)
 			return true;
 
@@ -218,11 +215,11 @@ public final class EventManager implements Runnable {
 		while (true) {
 			synchronized (lockObject) {
 				if (checkStopConditions()) {
-					EventManager.setEventState(EventManager.EVENTS_STOPPED);
+					eventState = EVENTS_STOPPED;
 					GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
 				}
 
-				if (EventManager.getEventState() == EventManager.EVENTS_STOPPED) {
+				if (eventState == EVENTS_STOPPED) {
 					this.threadWait();
 					continue;
 				}
@@ -293,7 +290,7 @@ public final class EventManager implements Runnable {
 			this.threadPause(20);
 
 			// Has the simulation set to the paused state during the wait?
-			if( EventManager.getEventState() == EventManager.EVENTS_STOPPED ) {
+			if( eventState == EVENTS_STOPPED ) {
 				synchronized (lockObject) {
 					this.threadWait();
 				}
@@ -661,14 +658,6 @@ public final class EventManager implements Runnable {
 		addEventToStack(e);
 	}
 
-	private static synchronized int getEventState() {
-		return eventState;
-	}
-
-	private static synchronized void setEventState(int state) {
-		eventState = state;
-	}
-
 	/**
 	 * Sets the value that is tested in the doProcess loop to determine if the
 	 * next event should be executed.  If set to false, the eventManager will
@@ -677,7 +666,9 @@ public final class EventManager implements Runnable {
 	 * thread referenced in activeThread is the eventManager thread.
 	 */
 	void pause() {
-		EventManager.setEventState(EventManager.EVENTS_STOPPED);
+		synchronized (lockObject) {
+			eventState = EVENTS_STOPPED;
+		}
 	}
 
 	/**
@@ -689,18 +680,18 @@ public final class EventManager implements Runnable {
 	 */
 	void resume() {
 		rebaseRealTime = true;
-		if (EventManager.getEventState() != EventManager.EVENTS_STOPPED)
+		if (eventState != EVENTS_STOPPED)
 			return;
 
 		synchronized( lockObject ) {
-			EventManager.setEventState(EventManager.EVENTS_RUNNING);
+			eventState = EventManager.EVENTS_RUNNING;
 			eventManagerThread.interrupt();
 		}
 	}
 
 	void runToTime(double stopTime) {
 		debuggingTime = ((long)(stopTime * Process.getSimTimeFactor()));
-		EventManager.setEventState(EventManager.EVENTS_UNTILTIME);
+		eventState = EVENTS_UNTILTIME;
 		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		synchronized( lockObject ) {
 			if (!eventStack.isEmpty())
