@@ -19,6 +19,7 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.Clock;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -209,6 +210,18 @@ public class Simulation extends Entity {
 	 *		3) start EventManager processing events
 	 */
 	public static void start() {
+		// Validate each entity based on inputs only
+		for (int i = 0; i < Entity.getAll().size(); i++) {
+			try {
+				Entity.getAll().get(i).validate();
+			}
+			catch (Throwable e) {
+				InputAgent.doError(e);
+				ExceptionBox.instance().setInputError(Entity.getAll().get(i), e);
+				return;
+			}
+		}
+
 		root.clear();
 
 		if( traceEventsInput.getValue() ) {

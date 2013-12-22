@@ -71,7 +71,6 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
-import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
@@ -953,22 +952,6 @@ public class GUIFrame extends JFrame {
 		remainingDisplay.setText(String.format("%.1f", val));
 	}
 
-	public boolean allEntitiesValid() {
-		// Validate each entity based on inputs only
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			try {
-				Entity.getAll().get(i).validate();
-			}
-			catch (Throwable e) {
-				InputAgent.doError(e);
-				ExceptionBox.instance().setInputError(Entity.getAll().get(i), e);
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 	private void startSimulation() {
 
 		// pause at a time
@@ -1019,8 +1002,7 @@ public class GUIFrame extends JFrame {
 			if (InputAgent.isSessionEdited()) {
 				InputAgent.saveAs(this);
 			}
-			if (allEntitiesValid())
-				Simulation.start();
+			Simulation.start();
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
 
@@ -1032,8 +1014,7 @@ public class GUIFrame extends JFrame {
 		}
 		else if( getSimState() == SIM_STATE_STOPPED ) {
 			updateForSimulationState(SIM_STATE_CONFIGURED);
-			if (allEntitiesValid())
-				Simulation.start();
+			Simulation.start();
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
@@ -1383,8 +1364,7 @@ public class GUIFrame extends JFrame {
 		if (batch) {
 			if (InputAgent.numErrors() > 0)
 				GUIFrame.shutdown(0);
-			if (gui.allEntitiesValid())
-				Simulation.start();
+			Simulation.start();
 		}
 	}
 
