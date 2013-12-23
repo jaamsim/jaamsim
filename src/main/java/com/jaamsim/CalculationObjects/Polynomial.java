@@ -38,7 +38,7 @@ public class Polynomial extends DoubleCalculation {
 	public void update(double simTime) {
 
 		// Calculate the weighted sum
-		double x = inputValueInput.getOutputValue(simTime);
+		double x = this.getInputValue(simTime);
 		double pow = 1.0;
 		double val = 0.0;
 		for(int i=0; i<coefficientListInput.getValue().size(); i++ ) {

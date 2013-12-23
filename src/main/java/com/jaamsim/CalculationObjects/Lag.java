@@ -57,7 +57,7 @@ public class Lag extends DoubleCalculation {
 		lastUpdateTime = simTime;
 
 		// Set the present value
-		error = inputValueInput.getOutputValue(simTime) - this.getValue();
+		error = this.getInputValue(simTime) - this.getValue();
 		integral += error * dt;
 		this.setValue( integral / lagTimeInput.getValue() );
 		return;

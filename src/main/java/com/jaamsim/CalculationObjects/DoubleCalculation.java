@@ -15,8 +15,11 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.input.Keyword;
+import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.OutputInput;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.InputErrorException;
 
 /**
@@ -24,16 +27,18 @@ import com.sandwell.JavaSimulation.InputErrorException;
  * @author Harry King
  *
  */
-public abstract class DoubleCalculation extends CalculationEntity {
+public abstract class DoubleCalculation extends CalculationEntity
+implements SampleProvider {
 
-	@Keyword(description = "The Entity and Output that provides the input to the present calculation.",
-	         example = "Calculation1 InputValue { Tank-1 FluidLevel }")
-	protected final OutputInput<Double> inputValueInput;
+	@Keyword(description = "The input value for the present calculation.\n" +
+			"A number can be entered or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
+	         example = "Calculation1 InputValue { Calc-2 }")
+	protected final SampleInput inputValueInput;
 
 	private double value;  // Present value for this calculation
 
 	{
-		inputValueInput = new OutputInput<Double>( Double.class, "InputValue", "Key Inputs", null);
+		inputValueInput = new SampleInput( "InputValue", "Key Inputs", null);
 		this.addInput( inputValueInput, true);
 	}
 
@@ -60,6 +65,21 @@ public abstract class DoubleCalculation extends CalculationEntity {
 		return value;
 	}
 
+	@Override
+	public double getNextSample(double simTime) {
+		return value;
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return DimensionlessUnit.class;
+	}
+
+	@Override
+	public double getMeanValue(double simTime) {
+		return value;
+	}
+
 	/*
 	 * Set the present value for this calculation.
 	 */
@@ -68,11 +88,12 @@ public abstract class DoubleCalculation extends CalculationEntity {
 	}
 
 	public Double getInputValue( double simTime ) {
-		return inputValueInput.getOutputValue( simTime );
+		return inputValueInput.getValue().getNextSample( simTime );
 	}
 
 	@Output(name = "Value",
-	 description = "The result of the calcuation at the present time.")
+	 description = "The result of the calcuation at the present time.",
+	 unitType = DimensionlessUnit.class)
 	public Double getValue( double simTime ) {
 		return value;
 	}

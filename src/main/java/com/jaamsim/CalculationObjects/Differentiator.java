@@ -31,7 +31,7 @@ public class Differentiator extends DoubleCalculation {
 		double dt = simTime - lastUpdateTime;
 
 		// Set the present value
-		double val = inputValueInput.getOutputValue(simTime);
+		double val = this.getInputValue(simTime);
 		if( dt > 0.0 ) {
 			this.setValue( ( val - lastInputValue ) / dt );
 		}
