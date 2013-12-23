@@ -189,17 +189,6 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	private boolean checkStopConditions() {
-		if (eventStack.isEmpty())
-			return true;
-
-		if (eventState == EVENTS_UNTILTIME &&
-		    eventStack.get(0).schedTick >= debuggingTime)
-			return true;
-
-		return false;
-	}
-
 	/**
 	 * Main event processing loop for the eventManager.
 	 *
@@ -214,12 +203,15 @@ public final class EventManager implements Runnable {
 		// Loop continuously
 		while (true) {
 			synchronized (lockObject) {
-				if (checkStopConditions()) {
+				if (eventStack.isEmpty())
 					eventState = EVENTS_STOPPED;
-					GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
-				}
+
+				if (eventState == EVENTS_UNTILTIME &&
+				    eventStack.get(0).schedTick >= debuggingTime)
+					eventState = EVENTS_STOPPED;
 
 				if (eventState == EVENTS_STOPPED) {
+					GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
 					this.threadWait();
 					continue;
 				}
@@ -679,21 +671,21 @@ public final class EventManager implements Runnable {
 	 * from an inconsistent state.
 	 */
 	void resume() {
-		rebaseRealTime = true;
-		if (eventState != EVENTS_STOPPED)
-			return;
+		synchronized (lockObject) {
+			rebaseRealTime = true;
+			if (eventState != EVENTS_STOPPED)
+				return;
 
-		synchronized( lockObject ) {
 			eventState = EventManager.EVENTS_RUNNING;
 			eventManagerThread.interrupt();
 		}
 	}
 
 	void runToTime(double stopTime) {
-		debuggingTime = ((long)(stopTime * Process.getSimTimeFactor()));
-		eventState = EVENTS_UNTILTIME;
-		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
-		synchronized( lockObject ) {
+		synchronized (lockObject) {
+			debuggingTime = ((long) (stopTime * Process.getSimTimeFactor()));
+			eventState = EVENTS_UNTILTIME;
+			GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 			if (!eventStack.isEmpty())
 				eventManagerThread.interrupt();
 		}
