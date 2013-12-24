@@ -26,17 +26,17 @@ public class NotOperator extends BooleanCalculation {
 
 	@Keyword(description = "The BooleanCalculation entity that is the input to this operation.",
 	         example = "OrOperator1 Entity { Bool1 }")
-	private final EntityInput<BooleanCalculation> entityInput;
+	private final EntityInput<BooleanCalculation> entity;
 	{
-	entityInput = new EntityInput<BooleanCalculation>( BooleanCalculation.class, "Entity", "Key Inputs", null);
-		this.addInput( entityInput, true);
+	entity = new EntityInput<BooleanCalculation>( BooleanCalculation.class, "Entity", "Key Inputs", null);
+		this.addInput( entity, true);
 	}
 
 	@Override
 	public void update(double simTime) {
 
 		// Set the present value
-		this.setValue( ! entityInput.getValue().getNextSample(simTime) );
+		this.setValue( ! entity.getValue().getNextSample(simTime) );
 		return;
 	}
 }

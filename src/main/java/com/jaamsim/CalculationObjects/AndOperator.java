@@ -28,18 +28,18 @@ public class AndOperator extends BooleanCalculation {
 
 	@Keyword(description = "The list of BooleanCalculation entities that are inputs to this operation.",
 	         example = "AndOperator1 EntityList { Bool1  Bool2 }")
-	private final EntityListInput<BooleanCalculation> entityListInput;
+	private final EntityListInput<BooleanCalculation> entityList;
 
 	@Keyword(description = "The list of true/false inputs cooresponding to the EntityList.  An entry of TRUE indicates that a NOT operation will be applied to the input.",
 	         example = "AndOperator1 NegationList { TRUE  FALSE }")
-	private final BooleanListInput negationListInput;
+	private final BooleanListInput negationList;
 
 	{
-	entityListInput = new EntityListInput<BooleanCalculation>( BooleanCalculation.class, "EntityList", "Key Inputs", null);
-		this.addInput( entityListInput, true);
+	entityList = new EntityListInput<BooleanCalculation>( BooleanCalculation.class, "EntityList", "Key Inputs", null);
+		this.addInput( entityList, true);
 
-		negationListInput = new BooleanListInput( "NegationList", "Key Inputs", null);
-		this.addInput( negationListInput, true);
+		negationList = new BooleanListInput( "NegationList", "Key Inputs", null);
+		this.addInput( negationList, true);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class AndOperator extends BooleanCalculation {
 		super.validate();
 
 		// Confirm that the number of entries in the NegationList matches the EntityList
-		if( negationListInput.getValue().size() != entityListInput.getValue().size() ) {
+		if( negationList.getValue().size() != entityList.getValue().size() ) {
 			throw new InputErrorException( "The number of entries for NegationList and EntityList must be equal" );
 		}
 	}
@@ -57,15 +57,15 @@ public class AndOperator extends BooleanCalculation {
 		boolean val = true;
 
 		// Loop through the input values
-		for(int i=0; i<entityListInput.getValue().size(); i++ ) {
-			if( negationListInput.getValue().get(i) ) {
-				if( entityListInput.getValue().get(i).getNextSample(simTime) ) {
+		for(int i=0; i<entityList.getValue().size(); i++ ) {
+			if( negationList.getValue().get(i) ) {
+				if( entityList.getValue().get(i).getNextSample(simTime) ) {
 					val = false;
 					break;
 				}
 			}
 			else {
-				if( ! entityListInput.getValue().get(i).getNextSample(simTime) ) {
+				if( ! entityList.getValue().get(i).getNextSample(simTime) ) {
 					val = false;
 					break;
 				}
