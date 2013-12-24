@@ -33,16 +33,16 @@ public class Controller extends DisplayEntity {
 
 	@Keyword(description = "The sampling time for the Controller.",
 	         example = "Controller1 SamplingTime { 100 ms }")
-	private final ValueInput samplingTimeInput;
+	private final ValueInput samplingTime;
 
 	private final ArrayList<CalculationEntity> calculationEntityList;  // List of the CalculationEntities controller by this Controller.
 	private int count;  // Number of times that the controller has initiated its calculations.
 
 	{
-		samplingTimeInput = new ValueInput("SamplingTime", "Key Inputs", 1.0d);
-		samplingTimeInput.setUnitType(TimeUnit.class);
-		samplingTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		this.addInput(samplingTimeInput, true);
+		samplingTime = new ValueInput("SamplingTime", "Key Inputs", 1.0d);
+		samplingTime.setUnitType(TimeUnit.class);
+		samplingTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		this.addInput(samplingTime, true);
 	}
 
 	public Controller() {
@@ -81,7 +81,7 @@ public class Controller extends DisplayEntity {
 		while( true ) {
 
 			// Wait for the samplingTime
-			this.simWait( samplingTimeInput.getValue() );
+			this.simWait( samplingTime.getValue() );
 
 			// Update the last value for each entity
 			double simTime = this.getSimTime();
