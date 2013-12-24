@@ -30,20 +30,20 @@ public class Sensor extends DoubleCalculation {
 
 	@Keyword(description = "The entity to read the output from.",
 	         example = "Sensor1 Entity { StockPile2 }")
-	private final EntityInput<Entity> entityInput;
+	private final EntityInput<Entity> entity;
 
 	@Keyword(description = "The name of the output to read.",
 	         example = "Sensor1 OutputName { 'Contents' }")
-	private final StringInput outputNameInput;
+	private final StringInput outputName;
 
 	{
 		inputValue.setHidden(true);
 
-		entityInput = new EntityInput<Entity>( Entity.class, "Entity", "Key Inputs", null);
-		this.addInput(entityInput, true);
+		entity = new EntityInput<Entity>( Entity.class, "Entity", "Key Inputs", null);
+		this.addInput(entity, true);
 
-		outputNameInput = new StringInput( "OutputName", "Key Inputs", null);
-		this.addInput(outputNameInput, true);
+		outputName = new StringInput( "OutputName", "Key Inputs", null);
+		this.addInput(outputName, true);
 	}
 
 	@Override
@@ -51,18 +51,18 @@ public class Sensor extends DoubleCalculation {
 		super.validate();
 
 		// Check that the entity has been set
-		if ( entityInput.getValue() == null ) {
+		if ( entity.getValue() == null ) {
 			throw new InputErrorException( "The Entity keyword must be set." );
 		}
 
 		// Check that the output has been set
-		if ( outputNameInput.getValue() == null ) {
+		if ( outputName.getValue() == null ) {
 			throw new InputErrorException( "The OutputName keyword must be set." );
 		}
 
 		// Check that the output is a double or a Double
-		Entity ent = entityInput.getValue();
-		String name = outputNameInput.getValue();
+		Entity ent = entity.getValue();
+		String name = outputName.getValue();
 		OutputHandle out = ent.getOutputHandle(name);
 		if (!out.isNumericValue())
 			throw new InputErrorException( "The OutputName keyword must specify a floating point output." );
@@ -71,8 +71,8 @@ public class Sensor extends DoubleCalculation {
 	@Override
 	public void update(double simTime) {
 		double val = 0.0;
-		Entity ent = entityInput.getValue();
-		String name = outputNameInput.getValue();
+		Entity ent = entity.getValue();
+		String name = outputName.getValue();
 
 		OutputHandle out = ent.getOutputHandle(name);
 		if (out.isNumericValue())
