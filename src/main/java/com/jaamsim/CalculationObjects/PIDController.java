@@ -70,6 +70,7 @@ public class PIDController extends DoubleCalculation {
 	private double derivative;  // The derivative of the error signal
 
 	{
+		controllerRequired = true;
 		inputValue.setHidden(true);
 
 		setPoint = new OutputInput<Double>( Double.class, "SetPoint", "Key Inputs", null);

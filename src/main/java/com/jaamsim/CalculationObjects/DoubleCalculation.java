@@ -67,6 +67,11 @@ implements SampleProvider {
 
 	@Override
 	public double getNextSample(double simTime) {
+		if( this.getController() == null && ! updateInProgress ) {
+			updateInProgress = true;
+			this.update(simTime);
+			updateInProgress = false;
+		}
 		return value;
 	}
 

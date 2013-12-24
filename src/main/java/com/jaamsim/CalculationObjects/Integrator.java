@@ -32,6 +32,8 @@ public class Integrator extends DoubleCalculation {
 	private double lastUpdateTime;  // The time at which the last update was performed
 
 	{
+		controllerRequired = true;
+
 		initialValue = new ValueInput( "InitialValue", "Key Inputs", 0.0d);
 		initialValue.setUnitType(DimensionlessUnit.class);
 		this.addInput( initialValue, true);

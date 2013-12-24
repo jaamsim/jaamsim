@@ -36,6 +36,8 @@ public class MovingAverage extends DoubleCalculation {
 	private int n;  // The number of inputs values over which to average
 
 	{
+		controllerRequired = true;
+
 		numberOfSamples = new IntegerInput( "NumberOfSamples", "Key Inputs", 1);
 		numberOfSamples.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput( numberOfSamples, true);

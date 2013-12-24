@@ -24,6 +24,10 @@ public class Differentiator extends DoubleCalculation {
 	private double lastUpdateTime;  // The time at which the last update was performed
 	private double lastInputValue;  // The input value for the last update
 
+	{
+		controllerRequired = true;
+	}
+
 	@Override
 	public void update(double simTime) {
 

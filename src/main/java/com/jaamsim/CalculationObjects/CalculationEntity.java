@@ -28,7 +28,8 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public abstract class CalculationEntity extends DisplayEntity {
 
-	@Keyword(description = "The Controller that controls the updating of the calculation.",
+	@Keyword(description = "The Controller that controls the updating of the calculation.\n" +
+			"If a Controller is not specified, the calculation is performed asynchronously, on demand.",
 	         example = "Calculation1 Controller { PLC1 }")
 	private final EntityInput<Controller> controller;
 
@@ -36,6 +37,9 @@ public abstract class CalculationEntity extends DisplayEntity {
 			"  A calculation with a lower value is executed before the ones with higher values.",
 	         example = "Calculation1 SequenceNumber { 2.1 }")
 	private final ValueInput sequenceNumber;
+
+	protected boolean updateInProgress = false;  // TRUE if an update has been started, but not completed yet
+	protected boolean controllerRequired = false;  // TRUE if the Controller keyword must be set
 
 	{
 		controller = new EntityInput<Controller>( Controller.class, "Controller", "Key Inputs", null);
@@ -50,11 +54,14 @@ public abstract class CalculationEntity extends DisplayEntity {
 	@Override
 	public void validate() {
 		super.validate();
-
-		// Confirm that controller has been specified
-		if( controller.getValue() == null ) {
+		if( controllerRequired && controller.getValue() == null )
 			throw new InputErrorException( "The keyword Controller must be set." );
-		}
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		updateInProgress = false;
 	}
 
 	public double getSequenceNumber() {
