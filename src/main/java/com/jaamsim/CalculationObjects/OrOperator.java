@@ -59,13 +59,13 @@ public class OrOperator extends BooleanCalculation {
 		// Loop through the input values
 		for(int i=0; i<entityListInput.getValue().size(); i++ ) {
 			if( negationListInput.getValue().get(i) ) {
-				if( ! entityListInput.getValue().get(i).getValue() ) {
+				if( ! entityListInput.getValue().get(i).getNextSample(simTime) ) {
 					val = true;
 					break;
 				}
 			}
 			else {
-				if( entityListInput.getValue().get(i).getValue() ) {
+				if( entityListInput.getValue().get(i).getNextSample(simTime) ) {
 					val = true;
 					break;
 				}

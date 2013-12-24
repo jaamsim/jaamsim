@@ -36,7 +36,7 @@ public class NotOperator extends BooleanCalculation {
 	public void update(double simTime) {
 
 		// Set the present value
-		this.setValue( ! entityInput.getValue().getValue() );
+		this.setValue( ! entityInput.getValue().getNextSample(simTime) );
 		return;
 	}
 }
