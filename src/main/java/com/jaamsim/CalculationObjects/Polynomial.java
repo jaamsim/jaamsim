@@ -27,11 +27,11 @@ public class Polynomial extends DoubleCalculation {
 	@Keyword(description = "The list of coefficients for the polynomial function.  For example, inputs c0, c1, c2 give a polynomial" +
 			" P(x) = c0 + c1*x^2 + c2*x^3 ",
 	         example = "Polynomial1 CoefficientList { 2.0  1.5 }")
-	private final DoubleListInput coefficientListInput;
+	private final DoubleListInput coefficientList;
 
 	{
-		coefficientListInput = new DoubleListInput( "CoefficientList", "Key Inputs", null);
-		this.addInput( coefficientListInput, true);
+		coefficientList = new DoubleListInput( "CoefficientList", "Key Inputs", null);
+		this.addInput( coefficientList, true);
 	}
 
 	@Override
@@ -41,8 +41,8 @@ public class Polynomial extends DoubleCalculation {
 		double x = this.getInputValue(simTime);
 		double pow = 1.0;
 		double val = 0.0;
-		for(int i=0; i<coefficientListInput.getValue().size(); i++ ) {
-			val += coefficientListInput.getValue().get(i) * pow;
+		for(int i=0; i<coefficientList.getValue().size(); i++ ) {
+			val += coefficientList.getValue().get(i) * pow;
 			pow *= x;
 		}
 
