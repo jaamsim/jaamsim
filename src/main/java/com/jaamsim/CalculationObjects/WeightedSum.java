@@ -28,20 +28,20 @@ public class WeightedSum extends DoubleCalculation {
 
 	@Keyword(description = "The list of DoubleCalculations entities that are inputs to this calculation.",
 	         example = "WeightedSum1 EntityList { Calc1  Calc2 }")
-	private final EntityListInput<DoubleCalculation> entityListInput;
+	private final EntityListInput<DoubleCalculation> entityList;
 
 	@Keyword(description = "The list of multaplicative factors to be applied to the value provide by the inputs.",
 	         example = "WeightedSum1 CoefficientList { 2.0  1.5 }")
-	private final DoubleListInput coefficientListInput;
+	private final DoubleListInput coefficientList;
 
 	{
 		inputValue.setHidden(true);
 
-		entityListInput = new EntityListInput<DoubleCalculation>( DoubleCalculation.class, "EntityList", "Key Inputs", null);
-		this.addInput( entityListInput, true);
+		entityList = new EntityListInput<DoubleCalculation>( DoubleCalculation.class, "EntityList", "Key Inputs", null);
+		this.addInput( entityList, true);
 
-		coefficientListInput = new DoubleListInput( "CoefficientList", "Key Inputs", null);
-		this.addInput( coefficientListInput, true);
+		coefficientList = new DoubleListInput( "CoefficientList", "Key Inputs", null);
+		this.addInput( coefficientList, true);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class WeightedSum extends DoubleCalculation {
 		super.validate();
 
 		// Confirm that the number of entries in the CoeffientList matches the EntityList
-		if( coefficientListInput.getValue().size() != entityListInput.getValue().size() ) {
+		if( coefficientList.getValue().size() != entityList.getValue().size() ) {
 			throw new InputErrorException( "The number of entries for CoefficientList and EntityList must be equal" );
 		}
 	}
@@ -59,8 +59,8 @@ public class WeightedSum extends DoubleCalculation {
 		double val = 0.0;
 
 		// Calculate the weighted sum
-		for(int i=0; i<entityListInput.getValue().size(); i++ ) {
-			val += coefficientListInput.getValue().get(i) * entityListInput.getValue().get(i).getValue();
+		for(int i=0; i<entityList.getValue().size(); i++ ) {
+			val += coefficientList.getValue().get(i) * entityList.getValue().get(i).getValue();
 		}
 
 		// Set the present value
