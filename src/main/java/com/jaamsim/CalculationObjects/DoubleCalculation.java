@@ -33,13 +33,13 @@ implements SampleProvider {
 	@Keyword(description = "The input value for the present calculation.\n" +
 			"A number can be entered or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
 	         example = "Calculation1 InputValue { Calc-2 }")
-	protected final SampleInput inputValueInput;
+	protected final SampleInput inputValue;
 
 	private double value;  // Present value for this calculation
 
 	{
-		inputValueInput = new SampleInput( "InputValue", "Key Inputs", null);
-		this.addInput( inputValueInput, true);
+		inputValue = new SampleInput( "InputValue", "Key Inputs", null);
+		this.addInput( inputValue, true);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ implements SampleProvider {
 		super.validate();
 
 		// Confirm that the InputValue keyword has been set (unless it is hidden by the sub-class)
-		if( ! inputValueInput.getHidden() && inputValueInput.getValue() == null ) {
+		if( ! inputValue.getHidden() && inputValue.getValue() == null ) {
 			throw new InputErrorException( "The InputValue keyword must be set." );
 		}
 	}
@@ -88,7 +88,7 @@ implements SampleProvider {
 	}
 
 	public Double getInputValue( double simTime ) {
-		return inputValueInput.getValue().getNextSample( simTime );
+		return inputValue.getValue().getNextSample( simTime );
 	}
 
 	@Output(name = "Value",

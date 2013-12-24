@@ -43,7 +43,7 @@ public abstract class WaveGenerator extends DoubleCalculation {
 	private final ValueInput offsetInput;
 
 	{
-		inputValueInput.setHidden(true);
+		inputValue.setHidden(true);
 
 		amplitudeInput = new ValueInput( "Amplitude", "Key Inputs", 1.0d);
 		amplitudeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
