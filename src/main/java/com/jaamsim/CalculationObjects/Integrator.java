@@ -27,20 +27,20 @@ public class Integrator extends DoubleCalculation {
 
 	@Keyword(description = "The initial value for the integral at time = 0.",
 	         example = "Integrator1 InitialValue { 5.5 }")
-	private final ValueInput initialValueInput;
+	private final ValueInput initialValue;
 
 	private double lastUpdateTime;  // The time at which the last update was performed
 
 	{
-		initialValueInput = new ValueInput( "InitialValue", "Key Inputs", 0.0d);
-		initialValueInput.setUnitType(DimensionlessUnit.class);
-		this.addInput( initialValueInput, true);
+		initialValue = new ValueInput( "InitialValue", "Key Inputs", 0.0d);
+		initialValue.setUnitType(DimensionlessUnit.class);
+		this.addInput( initialValue, true);
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		this.setValue( initialValueInput.getValue() );
+		this.setValue( initialValue.getValue() );
 		lastUpdateTime = 0.0;
 	}
 
