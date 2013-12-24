@@ -33,35 +33,35 @@ public class PIDController extends DoubleCalculation {
 
 	@Keyword(description = "The Entity and Output that provides the set point for the PID controller.",
 	         example = "PIDController-1 SetPoint { Calc1 Value }")
-	private final OutputInput<Double> setPointInput;
+	private final OutputInput<Double> setPoint;
 
 	@Keyword(description = "The Entity and Output that provides the process variable feedback to the PID controller.",
 	         example = "PIDController-1 ProcessVariable { Calc1 Value }")
-	private final OutputInput<Double> processVariableInput;
+	private final OutputInput<Double> processVariable;
 
 	@Keyword(description = "The scale coefficient applied to the output signal.",
 	         example = "PIDController-1 ScaleConversionCoefficient { 1.0 }")
-	private final ValueInput scaleConversionCoefficientInput;
+	private final ValueInput scaleConversionCoefficient;
 
 	@Keyword(description = "The coefficient applied to the proportional feedback loop.",
 	         example = "PIDController-1 ProportionalGain { 1.0 }")
-	private final ValueInput proportionalGainInput;
+	private final ValueInput proportionalGain;
 
 	@Keyword(description = "The coefficient applied to the integral feedback loop.",
 	         example = "PIDController-1 IntegralTime { 1.0 s }")
-	private final ValueInput integralTimeInput;
+	private final ValueInput integralTime;
 
 	@Keyword(description = "The coefficient applied to the differential feedback loop.",
 	         example = "PIDController-1 DerivativeTime { 1.0 s }")
-	private final ValueInput derivativeTimeInput;
+	private final ValueInput derivativeTime;
 
 	@Keyword(description = "The lower limit for the output signal.",
 	         example = "PIDController-1 OutputLow { 0.0 }")
-	private final ValueInput outputLowInput;
+	private final ValueInput outputLow;
 
 	@Keyword(description = "The upper limit for the output signal.",
 	         example = "PIDController-1 OutputHigh { 1.0 }")
-	private final ValueInput outputHighInput;
+	private final ValueInput outputHigh;
 
 	private double lastUpdateTime;  // The time at which the last update was performed (seconds)
 	private double error;  // The present value for the error signal
@@ -72,35 +72,35 @@ public class PIDController extends DoubleCalculation {
 	{
 		inputValue.setHidden(true);
 
-		setPointInput = new OutputInput<Double>( Double.class, "SetPoint", "Key Inputs", null);
-		this.addInput( setPointInput, true);
+		setPoint = new OutputInput<Double>( Double.class, "SetPoint", "Key Inputs", null);
+		this.addInput( setPoint, true);
 
-		processVariableInput = new OutputInput<Double>( Double.class, "ProcessVariable", "Key Inputs", null);
-		this.addInput( processVariableInput, true);
+		processVariable = new OutputInput<Double>( Double.class, "ProcessVariable", "Key Inputs", null);
+		this.addInput( processVariable, true);
 
-		proportionalGainInput = new ValueInput( "ProportionalGain", "Key Inputs", 0.0d);
-		proportionalGainInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		this.addInput( proportionalGainInput, true);
+		proportionalGain = new ValueInput( "ProportionalGain", "Key Inputs", 0.0d);
+		proportionalGain.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		this.addInput( proportionalGain, true);
 
-		scaleConversionCoefficientInput = new ValueInput( "ScaleConversionCoefficient", "Key Inputs", 1.0d);
-		scaleConversionCoefficientInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		this.addInput( scaleConversionCoefficientInput, true);
+		scaleConversionCoefficient = new ValueInput( "ScaleConversionCoefficient", "Key Inputs", 1.0d);
+		scaleConversionCoefficient.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		this.addInput( scaleConversionCoefficient, true);
 
-		integralTimeInput = new ValueInput( "IntegralTime", "Key Inputs", 1.0d);
-		integralTimeInput.setValidRange( 1.0e-10, Double.POSITIVE_INFINITY);
-		integralTimeInput.setUnitType( TimeUnit.class );
-		this.addInput( integralTimeInput, true);
+		integralTime = new ValueInput( "IntegralTime", "Key Inputs", 1.0d);
+		integralTime.setValidRange( 1.0e-10, Double.POSITIVE_INFINITY);
+		integralTime.setUnitType( TimeUnit.class );
+		this.addInput( integralTime, true);
 
-		derivativeTimeInput = new ValueInput( "DerivativeTime", "Key Inputs", 0.0d);
-		derivativeTimeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		derivativeTimeInput.setUnitType( TimeUnit.class );
-		this.addInput( derivativeTimeInput, true);
+		derivativeTime = new ValueInput( "DerivativeTime", "Key Inputs", 0.0d);
+		derivativeTime.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		derivativeTime.setUnitType( TimeUnit.class );
+		this.addInput( derivativeTime, true);
 
-		outputLowInput = new ValueInput( "OutputLow", "Key Inputs", Double.NEGATIVE_INFINITY);
-		this.addInput( outputLowInput, true);
+		outputLow = new ValueInput( "OutputLow", "Key Inputs", Double.NEGATIVE_INFINITY);
+		this.addInput( outputLow, true);
 
-		outputHighInput = new ValueInput( "OutputHigh", "Key Inputs", Double.POSITIVE_INFINITY);
-		this.addInput( outputHighInput, true);
+		outputHigh = new ValueInput( "OutputHigh", "Key Inputs", Double.POSITIVE_INFINITY);
+		this.addInput( outputHigh, true);
 	}
 
 	@Override
@@ -108,12 +108,12 @@ public class PIDController extends DoubleCalculation {
 		super.validate();
 
 		// Confirm that the SetPoint keyword has been set
-		if( setPointInput.getValue() == null ) {
+		if( setPoint.getValue() == null ) {
 			throw new InputErrorException( "The SetPoint keyword must be set." );
 		}
 
 		// Confirm that the ProcessVariable keyword has been set
-		if( processVariableInput.getValue() == null ) {
+		if( processVariable.getValue() == null ) {
 			throw new InputErrorException( "The ProcessVariable keyword must be set." );
 		}
 	}
@@ -134,7 +134,7 @@ public class PIDController extends DoubleCalculation {
 		double dt = simTime - lastUpdateTime;
 
 		// Calculate the error signal
-		error = setPointInput.getOutputValue(simTime) - processVariableInput.getOutputValue(simTime);
+		error = setPoint.getOutputValue(simTime) - processVariable.getOutputValue(simTime);
 
 		// Calculate integral and differential terms
 		integral += error * dt;
@@ -147,13 +147,13 @@ public class PIDController extends DoubleCalculation {
 
 		// Calculate the output value
 		val = error;
-		val += integral / integralTimeInput.getValue();
-		val += derivativeTimeInput.getValue() * derivative;
-		val *= scaleConversionCoefficientInput.getValue() * proportionalGainInput.getValue();
+		val += integral / integralTime.getValue();
+		val += derivativeTime.getValue() * derivative;
+		val *= scaleConversionCoefficient.getValue() * proportionalGain.getValue();
 
 		// Condition the output value
-		val = Math.max( val, outputLowInput.getValue());
-		val = Math.min( val, outputHighInput.getValue());
+		val = Math.max( val, outputLow.getValue());
+		val = Math.min( val, outputHigh.getValue());
 
 		// Set the present value
 		this.setValue( val );
@@ -173,20 +173,20 @@ public class PIDController extends DoubleCalculation {
 	@Output(name = "ProportionalValue",
 	 description = "The proportional component of the output value.")
 	public Double getProportionalValue( double simTime ) {
-		return scaleConversionCoefficientInput.getValue() * proportionalGainInput.getValue() * error;
+		return scaleConversionCoefficient.getValue() * proportionalGain.getValue() * error;
 	}
 
 	@Output(name = "IntegralValue",
 	 description = "The integral component of the output value.")
 	public Double getIntegralValue( double simTime ) {
-		return scaleConversionCoefficientInput.getValue() * proportionalGainInput.getValue()
-				* integral / integralTimeInput.getValue();
+		return scaleConversionCoefficient.getValue() * proportionalGain.getValue()
+				* integral / integralTime.getValue();
 	}
 
 	@Output(name = "DerivativeValue",
 	 description = "The derivative component of the output value.")
 	public Double getDifferentialValue( double simTime ) {
-		return scaleConversionCoefficientInput.getValue() * proportionalGainInput.getValue()
-				* derivativeTimeInput.getValue() * derivative;
+		return scaleConversionCoefficient.getValue() * proportionalGain.getValue()
+				* derivativeTime.getValue() * derivative;
 	}
 }
