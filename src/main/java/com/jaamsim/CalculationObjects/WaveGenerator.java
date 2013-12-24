@@ -28,54 +28,54 @@ public abstract class WaveGenerator extends DoubleCalculation {
 
 	@Keyword(description = "Amplitude of the generated wave",
 	         example = "Wave1 Amplitude { 2.0 }")
-	private final ValueInput amplitudeInput;
+	private final ValueInput amplitude;
 
 	@Keyword(description = "Period of the generated wave",
 	         example = "Wave1 Period { 2 s }")
-	private final ValueInput periodInput;
+	private final ValueInput period;
 
 	@Keyword(description = "Initial phase angle of the generated wave",
 	         example = "Wave1 PhaseAngle { 45 deg }")
-	private final ValueInput phaseAngleInput;
+	private final ValueInput phaseAngle;
 
 	@Keyword(description = "Offset added to the output of the generated wave",
 	         example = "Wave1 Offset { 2.0 }")
-	private final ValueInput offsetInput;
+	private final ValueInput offset;
 
 	{
 		inputValue.setHidden(true);
 
-		amplitudeInput = new ValueInput( "Amplitude", "Key Inputs", 1.0d);
-		amplitudeInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		this.addInput( amplitudeInput, true);
+		amplitude = new ValueInput( "Amplitude", "Key Inputs", 1.0d);
+		amplitude.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		this.addInput( amplitude, true);
 
-		periodInput = new ValueInput("Period", "Key Inputs", 1.0d);
-		periodInput.setUnitType(TimeUnit.class);
-		periodInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(periodInput, true);
+		period = new ValueInput("Period", "Key Inputs", 1.0d);
+		period.setUnitType(TimeUnit.class);
+		period.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(period, true);
 
-		phaseAngleInput = new ValueInput( "PhaseAngle", "Key Inputs", 0.0d);
-		phaseAngleInput.setUnitType( AngleUnit.class );
-		this.addInput( phaseAngleInput, true);
+		phaseAngle = new ValueInput( "PhaseAngle", "Key Inputs", 0.0d);
+		phaseAngle.setUnitType( AngleUnit.class );
+		this.addInput( phaseAngle, true);
 
-		offsetInput = new ValueInput( "Offset", "Key Inputs", 0.0d);
-		this.addInput( offsetInput, true);
+		offset = new ValueInput( "Offset", "Key Inputs", 0.0d);
+		this.addInput( offset, true);
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		this.setValue( amplitudeInput.getValue() * this.getSignal( phaseAngleInput.getValue() ) );
+		this.setValue( amplitude.getValue() * this.getSignal( phaseAngle.getValue() ) );
 	}
 
 	@Override
 	public void update(double simTime) {
 
 		// Calculate the present phase angle
-		double angle = 2.0 * Math.PI * simTime / periodInput.getValue() + phaseAngleInput.getValue();
+		double angle = 2.0 * Math.PI * simTime / period.getValue() + phaseAngle.getValue();
 
 		// Set the output value for the wave
-		this.setValue( amplitudeInput.getValue() * this.getSignal( angle )  +  offsetInput.getValue() );
+		this.setValue( amplitude.getValue() * this.getSignal( angle )  +  offset.getValue() );
 		return;
 	}
 
