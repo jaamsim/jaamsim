@@ -29,17 +29,17 @@ public class Lag extends DoubleCalculation {
 
 	@Keyword(description = "The time constant for this operation: output = integral( input - output) / LagTime.",
 	         example = "Lag-1 LagTime { 15 s }")
-	private final ValueInput lagTimeInput;
+	private final ValueInput lagTime;
 
 	private double lastUpdateTime;  // The time at which the last update was performed
 	private double error;  // inputValue - outputValue
 	private double integral; // The present value for the integral
 
 	{
-		lagTimeInput = new ValueInput( "LagTime", "Key Inputs", 1.0d);
-		lagTimeInput.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
-		lagTimeInput.setUnitType(TimeUnit.class);
-		this.addInput( lagTimeInput, true);
+		lagTime = new ValueInput( "LagTime", "Key Inputs", 1.0d);
+		lagTime.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
+		lagTime.setUnitType(TimeUnit.class);
+		this.addInput( lagTime, true);
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class Lag extends DoubleCalculation {
 		// Set the present value
 		error = this.getInputValue(simTime) - this.getValue();
 		integral += error * dt;
-		this.setValue( integral / lagTimeInput.getValue() );
+		this.setValue( integral / lagTime.getValue() );
 		return;
 	}
 
