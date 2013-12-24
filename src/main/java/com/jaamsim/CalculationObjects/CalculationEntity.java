@@ -30,21 +30,21 @@ public abstract class CalculationEntity extends DisplayEntity {
 
 	@Keyword(description = "The Controller that controls the updating of the calculation.",
 	         example = "Calculation1 Controller { PLC1 }")
-	private final EntityInput<Controller> controllerInput;
+	private final EntityInput<Controller> controller;
 
 	@Keyword(description = "The sequence number used by the Controller to determine the order in which calculations are performed." +
 			"  A calculation with a lower value is executed before the ones with higher values.",
 	         example = "Calculation1 SequenceNumber { 2.1 }")
-	private final ValueInput sequenceNumberInput;
+	private final ValueInput sequenceNumber;
 
 	{
-		controllerInput = new EntityInput<Controller>( Controller.class, "Controller", "Key Inputs", null);
-		this.addInput( controllerInput, true);
+		controller = new EntityInput<Controller>( Controller.class, "Controller", "Key Inputs", null);
+		this.addInput( controller, true);
 
-		sequenceNumberInput = new ValueInput( "SequenceNumber", "Key Inputs", 0.0);
-		sequenceNumberInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		sequenceNumberInput.setUnitType(DimensionlessUnit.class);
-		this.addInput( sequenceNumberInput, true);
+		sequenceNumber = new ValueInput( "SequenceNumber", "Key Inputs", 0.0);
+		sequenceNumber.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		sequenceNumber.setUnitType(DimensionlessUnit.class);
+		this.addInput( sequenceNumber, true);
 	}
 
 	@Override
@@ -52,13 +52,13 @@ public abstract class CalculationEntity extends DisplayEntity {
 		super.validate();
 
 		// Confirm that controller has been specified
-		if( controllerInput.getValue() == null ) {
+		if( controller.getValue() == null ) {
 			throw new InputErrorException( "The keyword Controller must be set." );
 		}
 	}
 
 	public double getSequenceNumber() {
-		return sequenceNumberInput.getValue();
+		return sequenceNumber.getValue();
 	}
 
 	/*
@@ -67,6 +67,6 @@ public abstract class CalculationEntity extends DisplayEntity {
 	public abstract void update(double simTime);
 
 	public Controller getController() {
-		return controllerInput.getValue();
+		return controller.getValue();
 	}
 }
