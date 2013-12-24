@@ -2,7 +2,6 @@ Define Palette { 'Calculation Objects' }
 
 Define ObjectType {
                     Controller
-					ConstantValue
 					WeightedSum
 					Polynomial
 					Integrator
@@ -20,7 +19,6 @@ Define ObjectType {
                     }
 
 Controller              JavaClass { com.jaamsim.CalculationObjects.Controller          } Palette { 'Calculation Objects' }
-ConstantValue           JavaClass { com.jaamsim.CalculationObjects.ConstantValue       } Palette { 'Calculation Objects' }
 WeightedSum             JavaClass { com.jaamsim.CalculationObjects.WeightedSum         } Palette { 'Calculation Objects' }
 Polynomial              JavaClass { com.jaamsim.CalculationObjects.Polynomial          } Palette { 'Calculation Objects' }
 Integrator              JavaClass { com.jaamsim.CalculationObjects.Integrator          } Palette { 'Calculation Objects' }
@@ -38,7 +36,6 @@ NotOperator             JavaClass { com.jaamsim.CalculationObjects.NotOperator  
 
 Define	ImageModel {
 			ControllerIconModel
-			ConstantValueIconModel
 			WeightedSumIconModel
 			PolynomialIconModel
 			IntegratorIconModel
@@ -56,7 +53,6 @@ Define	ImageModel {
 		}
 
 ControllerIconModel      ImageFile { '<res>/images/Controller-256.png' }      Transparent { TRUE }
-ConstantValueIconModel   ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
 WeightedSumIconModel     ImageFile { '<res>/images/WeightedSum-256.png' }     Transparent { TRUE }
 PolynomialIconModel      ImageFile { '<res>/images/Polynomial-256.png' }      Transparent { TRUE }
 IntegratorIconModel      ImageFile { '<res>/images/Integrator-256.png' }      Transparent { TRUE }
@@ -73,7 +69,6 @@ OrOperatorIconModel      ImageFile { '<res>/images/OR-256.png' }              Tr
 NotOperatorIconModel     ImageFile { '<res>/images/NOT-256.png' }             Transparent { TRUE }
 
 Controller              DefaultDisplayModel 	{ ControllerIconModel }
-ConstantValue           DefaultDisplayModel 	{ ConstantValueIconModel }
 WeightedSum             DefaultDisplayModel 	{ WeightedSumIconModel }
 Polynomial              DefaultDisplayModel 	{ PolynomialIconModel }
 Integrator              DefaultDisplayModel 	{ IntegratorIconModel }
@@ -90,7 +85,6 @@ OrOperator              DefaultDisplayModel 	{ OrOperatorIconModel }
 NotOperator             DefaultDisplayModel 	{ NotOperatorIconModel }
 
 Controller       Description { 'Signals the updating of each component in the specified sequence.' }
-ConstantValue    Description { 'Provides a fixed numerical value.' }
 WeightedSum      Description { 'Calculates the weighted sum of the input values.' }
 Polynomial       Description { 'Evaluates a polynomial function of the input value.' }
 Integrator       Description { 'Integrates the input value over time.' }
