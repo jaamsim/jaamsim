@@ -15,11 +15,8 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.OutputHandle;
-import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.EntityInput;
+import com.jaamsim.input.OutputInput;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.StringInput;
 
 /**
  * The Sensor connect the output from some other object to the DoubleCalculation components.
@@ -28,22 +25,15 @@ import com.sandwell.JavaSimulation.StringInput;
  */
 public class Sensor extends DoubleCalculation {
 
-	@Keyword(description = "The entity to read the output from.",
-	         example = "Sensor1 Entity { StockPile2 }")
-	private final EntityInput<Entity> entity;
-
-	@Keyword(description = "The name of the output to read.",
-	         example = "Sensor1 OutputName { 'Contents' }")
-	private final StringInput outputName;
+	@Keyword(description = "The Entity and Output that provides the input to the Sensor.",
+	         example = "Sensor-1 SensedOutput { StockPile-2 Contents }")
+	private final OutputInput<Double> sensedOutput;
 
 	{
 		inputValue.setHidden(true);
 
-		entity = new EntityInput<Entity>( Entity.class, "Entity", "Key Inputs", null);
-		this.addInput(entity, true);
-
-		outputName = new StringInput( "OutputName", "Key Inputs", null);
-		this.addInput(outputName, true);
+		sensedOutput = new OutputInput<Double>( Double.class, "SensedOutput", "Key Inputs", null);
+		this.addInput(sensedOutput, true);
 	}
 
 	@Override
@@ -51,34 +41,13 @@ public class Sensor extends DoubleCalculation {
 		super.validate();
 
 		// Check that the entity has been set
-		if ( entity.getValue() == null ) {
-			throw new InputErrorException( "The Entity keyword must be set." );
+		if ( sensedOutput.getValue() == null ) {
+			throw new InputErrorException( "The SensedOutput keyword must be set." );
 		}
-
-		// Check that the output has been set
-		if ( outputName.getValue() == null ) {
-			throw new InputErrorException( "The OutputName keyword must be set." );
-		}
-
-		// Check that the output is a double or a Double
-		Entity ent = entity.getValue();
-		String name = outputName.getValue();
-		OutputHandle out = ent.getOutputHandle(name);
-		if (!out.isNumericValue())
-			throw new InputErrorException( "The OutputName keyword must specify a floating point output." );
 	}
 
 	@Override
 	public void update(double simTime) {
-		double val = 0.0;
-		Entity ent = entity.getValue();
-		String name = outputName.getValue();
-
-		OutputHandle out = ent.getOutputHandle(name);
-		if (out.isNumericValue())
-			val = out.getValueAsDouble(simTime, 0.0d);
-
-		// Set the present value
-		this.setValue( val );
+		this.setValue( sensedOutput.getOutputValue(simTime) );
 	}
 }
