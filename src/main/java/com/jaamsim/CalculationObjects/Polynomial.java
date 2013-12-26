@@ -15,7 +15,8 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation.DoubleListInput;
+import com.jaamsim.input.ValueListInput;
+import com.jaamsim.units.DimensionlessUnit;
 
 /**
  * The Polynomial entity returns a user-defined polynomial function of its input value.
@@ -27,10 +28,11 @@ public class Polynomial extends DoubleCalculation {
 	@Keyword(description = "The list of coefficients for the polynomial function.  For example, inputs c0, c1, c2 give a polynomial" +
 			" P(x) = c0 + c1*x^2 + c2*x^3 ",
 	         example = "Polynomial1 CoefficientList { 2.0  1.5 }")
-	private final DoubleListInput coefficientList;
+	private final ValueListInput coefficientList;
 
 	{
-		coefficientList = new DoubleListInput( "CoefficientList", "Key Inputs", null);
+		coefficientList = new ValueListInput( "CoefficientList", "Key Inputs", null);
+		coefficientList.setUnitType(DimensionlessUnit.class);
 		this.addInput( coefficientList, true);
 	}
 
