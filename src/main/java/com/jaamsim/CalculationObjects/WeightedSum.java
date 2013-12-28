@@ -17,7 +17,10 @@ package com.jaamsim.CalculationObjects;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
+import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.InputErrorException;
 
 /**
@@ -40,11 +43,18 @@ public class WeightedSum extends DoubleCalculation {
 		inputValue.setHidden(true);
 
 		inputValueList = new SampleListInput( "InputValueList", "Key Inputs", null);
-		inputValueList.setUnitType(DimensionlessUnit.class);
+		inputValueList.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( inputValueList, true);
 
 		coefficientList = new ValueListInput( "CoefficientList", "Key Inputs", null);
+		coefficientList.setUnitType(DimensionlessUnit.class);
 		this.addInput( coefficientList, true);
+	}
+
+	protected void setUnitType(Class<? extends Unit> ut) {
+		super.setUnitType(ut);
+		inputValueList.setUnitType(ut);
+		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
 	}
 
 	@Override
