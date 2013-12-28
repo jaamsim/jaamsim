@@ -16,8 +16,8 @@ package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.ValueListInput;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 
 /**
@@ -34,7 +34,7 @@ public class WeightedSum extends DoubleCalculation {
 
 	@Keyword(description = "The list of multaplicative factors to be applied to the value provide by the inputs.",
 	         example = "WeightedSum1 CoefficientList { 2.0  1.5 }")
-	private final DoubleListInput coefficientList;
+	private final ValueListInput coefficientList;
 
 	{
 		inputValue.setHidden(true);
@@ -43,7 +43,7 @@ public class WeightedSum extends DoubleCalculation {
 		inputValueList.setUnitType(DimensionlessUnit.class);
 		this.addInput( inputValueList, true);
 
-		coefficientList = new DoubleListInput( "CoefficientList", "Key Inputs", null);
+		coefficientList = new ValueListInput( "CoefficientList", "Key Inputs", null);
 		this.addInput( coefficientList, true);
 	}
 
