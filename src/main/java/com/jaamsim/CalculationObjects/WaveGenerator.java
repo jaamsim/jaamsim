@@ -16,8 +16,11 @@ package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Super-class for wave generators that produce either sine or square waves.
@@ -47,6 +50,7 @@ public abstract class WaveGenerator extends DoubleCalculation {
 
 		amplitude = new ValueInput( "Amplitude", "Key Inputs", 1.0d);
 		amplitude.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		amplitude.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( amplitude, true);
 
 		period = new ValueInput("Period", "Key Inputs", 1.0d);
@@ -59,7 +63,17 @@ public abstract class WaveGenerator extends DoubleCalculation {
 		this.addInput( phaseAngle, true);
 
 		offset = new ValueInput( "Offset", "Key Inputs", 0.0d);
+		offset.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( offset, true);
+	}
+
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> ut) {
+		super.setUnitType(ut);
+		amplitude.setUnitType(ut);
+		offset.setUnitType(ut);
+		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
 	}
 
 	@Override
