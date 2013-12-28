@@ -17,8 +17,14 @@ package com.jaamsim.CalculationObjects;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.ui.FrameBox;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 
 /**
@@ -30,6 +36,9 @@ import com.sandwell.JavaSimulation.InputErrorException;
  */
 public class PIDController extends DoubleCalculation {
 
+	@Keyword(description = "The unit type for the set point and the process variable.",
+	         example = "PIDController-1 SetPointUnitType { DistanceUnit }")
+	private final UnitTypeInput setPointUnitType;
 
 	@Keyword(description = "The set point for the PID controller.\n" +
 			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
@@ -79,18 +88,25 @@ public class PIDController extends DoubleCalculation {
 		controllerRequired = true;
 		inputValue.setHidden(true);
 
+		setPointUnitType = new UnitTypeInput( "SetPointUnitType", "Key Inputs", UserSpecifiedUnit.class);
+		this.addInput(setPointUnitType, true);
+
 		setPoint = new SampleInput( "SetPoint", "Key Inputs", null);
+		setPoint.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( setPoint, true);
 
 		processVariable = new SampleInput( "ProcessVariable", "Key Inputs", null);
+		processVariable.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( processVariable, true);
 
 		proportionalGain = new ValueInput( "ProportionalGain", "Key Inputs", 0.0d);
 		proportionalGain.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		proportionalGain.setUnitType(DimensionlessUnit.class);
 		this.addInput( proportionalGain, true);
 
 		scaleConversionCoefficient = new ValueInput( "ScaleConversionCoefficient", "Key Inputs", 1.0d);
 		scaleConversionCoefficient.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		scaleConversionCoefficient.setUnitType(DimensionlessUnit.class);
 		this.addInput( scaleConversionCoefficient, true);
 
 		integralTime = new ValueInput( "IntegralTime", "Key Inputs", 1.0d);
@@ -104,10 +120,20 @@ public class PIDController extends DoubleCalculation {
 		this.addInput( derivativeTime, true);
 
 		outputLow = new ValueInput( "OutputLow", "Key Inputs", Double.NEGATIVE_INFINITY);
+		outputLow.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( outputLow, true);
 
 		outputHigh = new ValueInput( "OutputHigh", "Key Inputs", Double.POSITIVE_INFINITY);
+		outputHigh.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( outputHigh, true);
+	}
+
+	@Override
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if (in == setPointUnitType)
+			this.setSPUnitType(setPointUnitType.getUnitType());
 	}
 
 	@Override
@@ -129,6 +155,20 @@ public class PIDController extends DoubleCalculation {
 		lastError = 0.0;
 		integral = 0.0;
 		lastUpdateTime = 0.0;
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> ut) {
+		super.setUnitType(ut);
+		outputLow.setUnitType(ut);
+		outputHigh.setUnitType(ut);
+		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
+	}
+
+	private void setSPUnitType(Class<? extends Unit> ut) {
+		setPoint.setUnitType(ut);
+		processVariable.setUnitType(ut);
+		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
 	}
 
 	@Override
