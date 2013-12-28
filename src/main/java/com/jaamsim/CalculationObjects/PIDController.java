@@ -41,7 +41,11 @@ public class PIDController extends DoubleCalculation {
 	         example = "PIDController-1 ProcessVariable { Calc-1 }")
 	private final SampleInput processVariable;
 
-	@Keyword(description = "The scale coefficient applied to the output signal.",
+	@Keyword(description = "The scale coefficient applied to the output signal.\n" +
+			"This coefficient converts from the units for the setpoint and process variable to the units for the " +
+			"manipulated variable. The units for the scale coefficient are the ratio of the manipulated variable's unit type " +
+			"and the set point's unit type. At present, this input should be entered in the appropriate SI unit, but " +
+			"with no unit shown explicitly.",
 	         example = "PIDController-1 ScaleConversionCoefficient { 1.0 }")
 	private final ValueInput scaleConversionCoefficient;
 
@@ -111,14 +115,12 @@ public class PIDController extends DoubleCalculation {
 		super.validate();
 
 		// Confirm that the SetPoint keyword has been set
-		if( setPoint.getValue() == null ) {
+		if( setPoint.getValue() == null )
 			throw new InputErrorException( "The SetPoint keyword must be set." );
-		}
 
 		// Confirm that the ProcessVariable keyword has been set
-		if( processVariable.getValue() == null ) {
+		if( processVariable.getValue() == null )
 			throw new InputErrorException( "The ProcessVariable keyword must be set." );
-		}
 	}
 
 	@Override

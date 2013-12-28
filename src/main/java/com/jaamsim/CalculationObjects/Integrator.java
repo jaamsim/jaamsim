@@ -26,7 +26,7 @@ import com.jaamsim.units.DimensionlessUnit;
 public class Integrator extends DoubleCalculation {
 
 	@Keyword(description = "The initial value for the integral at time = 0.",
-	         example = "Integrator1 InitialValue { 5.5 }")
+	         example = "Integrator-1 InitialValue { 5.5 }")
 	private final ValueInput initialValue;
 
 	private double lastUpdateTime;  // The time at which the last update was performed

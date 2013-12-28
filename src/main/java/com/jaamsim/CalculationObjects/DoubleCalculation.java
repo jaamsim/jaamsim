@@ -31,8 +31,8 @@ public abstract class DoubleCalculation extends CalculationEntity
 implements SampleProvider {
 
 	@Keyword(description = "The input value for the present calculation.\n" +
-			"A number can be entered or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
-	         example = "Calculation1 InputValue { Calc-2 }")
+			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
+	         example = "Calc-1 InputValue { Calc-2 }")
 	protected final SampleInput inputValue;
 
 	private double value;  // Present value for this calculation
@@ -47,9 +47,8 @@ implements SampleProvider {
 		super.validate();
 
 		// Confirm that the InputValue keyword has been set (unless it is hidden by the sub-class)
-		if( ! inputValue.getHidden() && inputValue.getValue() == null ) {
+		if( ! inputValue.getHidden() && inputValue.getValue() == null )
 			throw new InputErrorException( "The InputValue keyword must be set." );
-		}
 	}
 
 	@Override
