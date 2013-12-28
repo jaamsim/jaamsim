@@ -15,11 +15,16 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.OutputHandle;
+import com.jaamsim.input.UnitTypeInput;
+import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Output;
-import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 
 /**
@@ -30,6 +35,10 @@ import com.sandwell.JavaSimulation.InputErrorException;
 public abstract class DoubleCalculation extends CalculationEntity
 implements SampleProvider {
 
+	@Keyword(description = "The unit type for the value returned by the calculation.",
+	         example = "Calc-1 UnitType { DistanceUnit }")
+	protected final UnitTypeInput unitType;
+
 	@Keyword(description = "The input value for the present calculation.\n" +
 			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
 	         example = "Calc-1 InputValue { Calc-2 }")
@@ -38,8 +47,28 @@ implements SampleProvider {
 	private double value;  // Present value for this calculation
 
 	{
+		unitType = new UnitTypeInput( "UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		this.addInput(unitType, true);
+
 		inputValue = new SampleInput( "InputValue", "Key Inputs", null);
+		inputValue.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( inputValue, true);
+	}
+
+	@Override
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if (in == unitType)
+			this.setUnitType(this.getUnitType());
+	}
+
+	@Override
+	public OutputHandle getOutputHandle(String outputName) {
+		OutputHandle out = super.getOutputHandle(outputName);
+		if( out.getUnitType() == UserSpecifiedUnit.class )
+			out.setUnitType( unitType.getUnitType() );
+		return out;
 	}
 
 	@Override
@@ -78,9 +107,14 @@ implements SampleProvider {
 		return value;
 	}
 
+	protected void setUnitType(Class<? extends Unit> ut) {
+		inputValue.setUnitType(ut);
+		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
+	}
+
 	@Override
 	public Class<? extends Unit> getUnitType() {
-		return DimensionlessUnit.class;
+		return unitType.getUnitType();
 	}
 
 	@Override
@@ -101,7 +135,7 @@ implements SampleProvider {
 
 	@Output(name = "Value",
 	 description = "The result of the calcuation at the present time.",
-	 unitType = DimensionlessUnit.class)
+	 unitType = UserSpecifiedUnit.class)
 	public Double getValue( double simTime ) {
 		return value;
 	}
