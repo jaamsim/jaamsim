@@ -49,6 +49,10 @@ implements SampleProvider {
 		// Confirm that the InputValue keyword has been set (unless it is hidden by the sub-class)
 		if( ! inputValue.getHidden() && inputValue.getValue() == null )
 			throw new InputErrorException( "The InputValue keyword must be set." );
+
+		// If the input is a ProbabilityDistribution, then a Controller must be used to ensure repeatable results
+		if( this.getController() == null && ! inputValue.getHidden() && inputValue.getValue() instanceof Distribution )
+			throw new InputErrorException( "The Contoller keyword must be set when the InputValue keyword is set to a ProbabilityDistribution." );
 	}
 
 	@Override
