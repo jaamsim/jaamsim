@@ -14,9 +14,14 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.ui.FrameBox;
+import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * The Integrator returns the integral of the input values.
@@ -29,14 +34,30 @@ public class Integrator extends DoubleCalculation {
 	         example = "Integrator-1 InitialValue { 5.5 }")
 	private final ValueInput initialValue;
 
+	@Keyword(description = "The time scale for the integration:  integral = InitialValue + 1/IntegralTime * integral(x)\n" +
+			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
+	         example = "Integrator-1 IntegralTime { 5 s }")
+	protected final SampleInput integralTime;
+
 	private double lastUpdateTime;  // The time at which the last update was performed
 
 	{
 		controllerRequired = true;
 
 		initialValue = new ValueInput( "InitialValue", "Key Inputs", 0.0d);
-		initialValue.setUnitType(DimensionlessUnit.class);
+		initialValue.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( initialValue, true);
+
+		integralTime = new SampleInput( "IntegralTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
+		integralTime.setUnitType(TimeUnit.class);
+		this.addInput( integralTime, true);
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> ut) {
+		super.setUnitType(ut);
+		initialValue.setUnitType(ut);
+		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
 	}
 
 	@Override
@@ -52,9 +73,10 @@ public class Integrator extends DoubleCalculation {
 		// Calculate the elapsed time
 		double dt = simTime - lastUpdateTime;
 		lastUpdateTime = simTime;
+		double scale = integralTime.getValue().getNextSample(simTime);
 
 		// Set the present value
-		this.setValue( this.getInputValue(simTime) * dt  +  this.getValue() );
+		this.setValue( this.getInputValue(simTime) * dt/scale  +  this.getValue() );
 		return;
 	}
 }
