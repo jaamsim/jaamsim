@@ -77,12 +77,6 @@ public abstract class WaveGenerator extends DoubleCalculation {
 	}
 
 	@Override
-	public void earlyInit() {
-		super.earlyInit();
-		this.setValue( amplitude.getValue() * this.getSignal( phaseAngle.getValue() ) );
-	}
-
-	@Override
 	public double calculateValue(double simTime) {
 
 		// Calculate the present phase angle

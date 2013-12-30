@@ -154,13 +154,6 @@ implements SampleProvider {
 		return value;
 	}
 
-	/*
-	 * Set the present value for this calculation.
-	 */
-	protected void setValue( double val ) {
-		value = val;
-	}
-
 	public double getInputValue( double simTime ) {
 		return inputValue.getValue().getNextSample(simTime);
 	}

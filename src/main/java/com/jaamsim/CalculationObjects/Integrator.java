@@ -71,7 +71,6 @@ public class Integrator extends DoubleCalculation {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		this.setValue( initialValue.getValue() );
 		lastUpdateTime = 0.0;
 		integral = 0.0;
 	}
