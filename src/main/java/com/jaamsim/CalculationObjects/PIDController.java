@@ -219,27 +219,30 @@ public class PIDController extends DoubleCalculation {
 
 	@Output(name = "Error",
 	 description = "The value for SetPoint - ProcessVariable.")
-	public Double getError( double simTime ) {
+	public double getError( double simTime ) {
 		return setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
 	}
 
 	@Output(name = "ProportionalValue",
-	 description = "The proportional component of the output value.")
-	public Double getProportionalValue( double simTime ) {
+	 description = "The proportional component of the output value.",
+	    unitType = UserSpecifiedUnit.class)
+	public double getProportionalValue( double simTime ) {
 		double error = setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
 		return scaleConversionCoefficient.getValue() * proportionalGain.getValue() * error;
 	}
 
 	@Output(name = "IntegralValue",
-	 description = "The integral component of the output value.")
-	public Double getIntegralValue( double simTime ) {
+	 description = "The integral component of the output value.",
+	    unitType = UserSpecifiedUnit.class)
+	public double getIntegralValue( double simTime ) {
 		return scaleConversionCoefficient.getValue() * proportionalGain.getValue()
 				* integral / integralTime.getValue();
 	}
 
 	@Output(name = "DerivativeValue",
-	 description = "The derivative component of the output value.")
-	public Double getDifferentialValue( double simTime ) {
+	 description = "The derivative component of the output value.",
+	    unitType = UserSpecifiedUnit.class)
+	public double getDifferentialValue( double simTime ) {
 		return scaleConversionCoefficient.getValue() * proportionalGain.getValue()
 				* derivativeTime.getValue() * derivative;
 	}

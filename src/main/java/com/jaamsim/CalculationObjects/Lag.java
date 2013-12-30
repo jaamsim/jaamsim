@@ -71,7 +71,8 @@ public class Lag extends DoubleCalculation {
 
 	@Output(name = "Error",
 	 description = "The value for InputValue - OutputValue.")
-	public Double getError( double simTime ) {
+	public double getError( double simTime ) {
 		return this.getInputValue(simTime) - presentValue;
 	}
+
 }

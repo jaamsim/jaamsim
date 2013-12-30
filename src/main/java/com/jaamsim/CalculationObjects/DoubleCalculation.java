@@ -161,14 +161,14 @@ implements SampleProvider {
 		value = val;
 	}
 
-	public Double getInputValue( double simTime ) {
-		return inputValue.getValue().getNextSample( simTime );
+	public double getInputValue( double simTime ) {
+		return inputValue.getValue().getNextSample(simTime);
 	}
 
 	@Output(name = "Value",
 	 description = "The result of the calcuation at the present time.",
 	 unitType = UserSpecifiedUnit.class)
-	public Double getValue( double simTime ) {
-		return value;
+	public double getValue( double simTime ) {
+		return calculateValue(simTime);
 	}
 }
