@@ -53,7 +53,6 @@ public final class EventManager implements Runnable {
 	private int eventState;
 	private static final int EVENTS_STOPPED = 0;
 	private static final int EVENTS_RUNNING = 1;
-	private static final int EVENTS_UNTILTIME = 4;
 
 	final String name;
 
@@ -135,6 +134,7 @@ public final class EventManager implements Runnable {
 	// It is not used when the eventManager is first created.
 	private void basicInit() {
 		currentTick = 0;
+		debuggingTime = Long.MAX_VALUE;
 		rebaseRealTime = true;
 
 		traceRecord.clearTrace();
@@ -203,12 +203,10 @@ public final class EventManager implements Runnable {
 		// Loop continuously
 		while (true) {
 			synchronized (lockObject) {
-				if (eventStack.isEmpty())
+				if (eventStack.isEmpty() ||
+				    eventStack.get(0).schedTick >= debuggingTime) {
 					eventState = EVENTS_STOPPED;
-
-				if (eventState == EVENTS_UNTILTIME &&
-				    eventStack.get(0).schedTick >= debuggingTime)
-					eventState = EVENTS_STOPPED;
+				}
 
 				if (eventState == EVENTS_STOPPED) {
 					GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
@@ -672,6 +670,7 @@ public final class EventManager implements Runnable {
 	 */
 	void resume() {
 		synchronized (lockObject) {
+			debuggingTime = Long.MAX_VALUE;
 			rebaseRealTime = true;
 			if (eventState != EVENTS_STOPPED)
 				return;
@@ -684,7 +683,7 @@ public final class EventManager implements Runnable {
 	void runToTime(double stopTime) {
 		synchronized (lockObject) {
 			debuggingTime = ((long) (stopTime * Process.getSimTimeFactor()));
-			eventState = EVENTS_UNTILTIME;
+			eventState = EventManager.EVENTS_RUNNING;
 			GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 			if (!eventStack.isEmpty())
 				eventManagerThread.interrupt();
