@@ -127,12 +127,6 @@ public final class EventManager implements Runnable {
 	}
 
 	void clear() {
-		basicInit();
-	}
-
-	// Initialize the eventManager.  This method is needed only for re-initialization.
-	// It is not used when the eventManager is first created.
-	private void basicInit() {
 		currentTick = 0;
 		debuggingTime = Long.MAX_VALUE;
 		rebaseRealTime = true;
