@@ -239,13 +239,12 @@ public class Simulation extends Entity {
 		endTime = startTime + Simulation.getInitializationHours() + Simulation.getRunDurationHours();
 
 		root.scheduleProcess(0, EventManager.PRIO_DEFAULT, new InitModelTarget());
-		Simulation.resume();
 	}
 
 
-	public static final void resume() {
-		root.resume();
-		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
+	public static final void resume(double secs) {
+		long ticks = Process.secondsToTicks(secs);
+		root.resume(ticks);
 	}
 
 	/**
@@ -253,7 +252,6 @@ public class Simulation extends Entity {
 	 */
 	public static final void pause() {
 		root.pause();
-		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
 	}
 
 	/**
@@ -385,13 +383,8 @@ public class Simulation extends Entity {
 		return initializationTime.getValue() / 3600.0d;
 	}
 
-	public static void runToTime(double stopTimeHours) {
-		root.runToTime(stopTimeHours);
-	}
-
-	public static final double getInternalHours() {
-		long ticks = root.currentTick();
-		return ticks / Process.getSimTimeFactor();
+	public static final double getInternalSecs() {
+		return Process.ticksToSeconds(root.currentTick());
 	}
 
 	static void updateRealTime() {

@@ -955,7 +955,7 @@ public class GUIFrame extends JFrame {
 	private void startSimulation() {
 
 		// pause at a time
-		double runToTime = Double.POSITIVE_INFINITY;
+		double runToSecs = Double.POSITIVE_INFINITY;
 		if(! pauseTime.getText().equalsIgnoreCase(infinitySign)) {
 
 			try {
@@ -978,9 +978,9 @@ public class GUIFrame extends JFrame {
 					double startingTime = Clock.calcTimeForYear_Month_Day_Hour(
 							startingYear, startingMonth, startingDay, 0.0);
 
-					runToTime = time - startingTime;
+					runToSecs = (time - startingTime) * 3600.0d;
 				} else {
-					runToTime = Double.parseDouble(pauseTime.getText());
+					runToSecs = Double.parseDouble(pauseTime.getText()) * 3600.0d;
 				}
 			} catch (NumberFormatException nfe) {
 				JOptionPane.showMessageDialog(this,	String.format(
@@ -994,34 +994,26 @@ public class GUIFrame extends JFrame {
 			}
 		}
 
-		if (runToTime <= Simulation.getInternalHours()) {
-			return;
-		}
-
 		if( getSimState() <= SIM_STATE_CONFIGURED ) {
 			if (InputAgent.isSessionEdited()) {
 				InputAgent.saveAs(this);
 			}
 			Simulation.start();
+			Simulation.resume(runToSecs);
+			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
-
-			// it is not a run to time
-			if(Double.isInfinite( runToTime ) ) {
-				Simulation.resume();
-				return;
-			}
+			Simulation.resume(runToSecs);
+			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
 		else if( getSimState() == SIM_STATE_STOPPED ) {
 			updateForSimulationState(SIM_STATE_CONFIGURED);
 			Simulation.start();
+			Simulation.resume(runToSecs);
+			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
-
-		if( ! Double.isInfinite(runToTime) ) {
-			Simulation.runToTime(runToTime);
-		}
 	}
 
 	private void pauseSimulation() {
@@ -1365,6 +1357,8 @@ public class GUIFrame extends JFrame {
 			if (InputAgent.numErrors() > 0)
 				GUIFrame.shutdown(0);
 			Simulation.start();
+			Simulation.resume(Double.POSITIVE_INFINITY);
+			GUIFrame.instance.updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
 	}
 

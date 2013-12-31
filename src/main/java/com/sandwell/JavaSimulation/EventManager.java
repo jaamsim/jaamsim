@@ -662,25 +662,15 @@ public final class EventManager implements Runnable {
 	 * resume the event execution loop.  This prevents the model being resumed
 	 * from an inconsistent state.
 	 */
-	void resume() {
+	void resume(long targetTicks) {
 		synchronized (lockObject) {
-			debuggingTime = Long.MAX_VALUE;
+			debuggingTime = targetTicks;
 			rebaseRealTime = true;
 			if (eventState != EVENTS_STOPPED)
 				return;
 
 			eventState = EventManager.EVENTS_RUNNING;
 			eventManagerThread.interrupt();
-		}
-	}
-
-	void runToTime(double stopTime) {
-		synchronized (lockObject) {
-			debuggingTime = ((long) (stopTime * Process.getSimTimeFactor()));
-			eventState = EventManager.EVENTS_RUNNING;
-			GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
-			if (!eventStack.isEmpty())
-				eventManagerThread.interrupt();
 		}
 	}
 
