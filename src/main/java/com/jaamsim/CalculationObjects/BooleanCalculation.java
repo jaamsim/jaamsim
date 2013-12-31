@@ -26,10 +26,10 @@ public abstract class BooleanCalculation extends CalculationEntity {
 	private boolean value;  // Present value for this calculation
 
 	public boolean getNextSample(double simTime) {
-		if( this.getController() == null && ! updateInProgress ) {
-			updateInProgress = true;
+		if( this.getController() == null && ! calculationInProgress ) {
+			calculationInProgress = true;
 			this.update(simTime);
-			updateInProgress = false;
+			calculationInProgress = false;
 		}
 		return value;
 	}

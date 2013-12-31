@@ -47,7 +47,7 @@ public class Sensor extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simTime) {
-		this.setValue( sensedOutput.getOutputValue(simTime) );
+	public double calculateValue(double simTime) {
+		return sensedOutput.getOutputValue(simTime);
 	}
 }

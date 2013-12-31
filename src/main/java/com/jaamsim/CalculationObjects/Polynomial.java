@@ -14,6 +14,7 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
@@ -50,6 +51,12 @@ public class Polynomial extends DoubleCalculation {
 	}
 
 	@Override
+	protected boolean repeatableInputs() {
+		return super.repeatableInputs()
+				&& ! (scale.getValue() instanceof Distribution);
+	}
+
+	@Override
 	protected void setUnitType(Class<? extends Unit> ut) {
 		super.setUnitType(ut);
 		scale.setUnitType(ut);
@@ -57,9 +64,8 @@ public class Polynomial extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simTime) {
+	protected double calculateValue(double simTime) {
 
-		// Calculate the weighted sum
 		double x = this.getInputValue(simTime) / scale.getValue().getNextSample(simTime);
 		double pow = 1.0;
 		double val = 0.0;
@@ -68,8 +74,7 @@ public class Polynomial extends DoubleCalculation {
 			pow *= x;
 		}
 
-		// Set the present value
-		this.setValue( val );
-		return;
+		return val;
 	}
+
 }

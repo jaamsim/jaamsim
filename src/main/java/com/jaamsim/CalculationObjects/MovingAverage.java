@@ -34,6 +34,7 @@ public class MovingAverage extends DoubleCalculation {
 	private double[] samples;  // The previous input values over which to average
 	private int index;  // The next index to overwrite (the oldest value on the list)
 	private int n;  // The number of inputs values over which to average
+	private double average;  // The present value for the moving average
 
 	{
 		controllerRequired = true;
@@ -49,10 +50,18 @@ public class MovingAverage extends DoubleCalculation {
 		samples = new double[ numberOfSamples.getValue() ];
 		index = 0;
 		n = numberOfSamples.getValue();
+		average = 0.0;
+	}
+
+	@Override
+	public double calculateValue(double simTime) {
+		return average;
 	}
 
 	@Override
 	public void update(double simTime) {
+		super.update(simTime);
+
 		// Overwrite the oldest value in the list
 		samples[index] = this.getInputValue(simTime);
 
@@ -67,7 +76,8 @@ public class MovingAverage extends DoubleCalculation {
 		for( int i=0; i<n; i++) {
 			val += samples[i];
 		}
-		this.setValue( val/n );
+		average = val/n;
 		return;
 	}
+
 }

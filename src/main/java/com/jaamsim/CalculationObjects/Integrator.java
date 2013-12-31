@@ -14,6 +14,7 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
@@ -40,6 +41,7 @@ public class Integrator extends DoubleCalculation {
 	protected final SampleInput integralTime;
 
 	private double lastUpdateTime;  // The time at which the last update was performed
+	private double integral; // The present value for the integral
 
 	{
 		controllerRequired = true;
@@ -54,6 +56,12 @@ public class Integrator extends DoubleCalculation {
 	}
 
 	@Override
+	protected boolean repeatableInputs() {
+		return super.repeatableInputs()
+				&& ! (integralTime.getValue() instanceof Distribution);
+	}
+
+	@Override
 	protected void setUnitType(Class<? extends Unit> ut) {
 		super.setUnitType(ut);
 		initialValue.setUnitType(ut);
@@ -65,18 +73,22 @@ public class Integrator extends DoubleCalculation {
 		super.earlyInit();
 		this.setValue( initialValue.getValue() );
 		lastUpdateTime = 0.0;
+		integral = 0.0;
+	}
+
+	@Override
+	protected double calculateValue(double simTime) {
+		double dt = simTime - lastUpdateTime;
+		double scale = integralTime.getValue().getNextSample(simTime);
+		return ( integral + this.getInputValue(simTime) * dt )/scale  +  initialValue.getValue();
 	}
 
 	@Override
 	public void update(double simTime) {
-
-		// Calculate the elapsed time
+		super.update(simTime);
 		double dt = simTime - lastUpdateTime;
+		integral += this.getInputValue(simTime) * dt;
 		lastUpdateTime = simTime;
-		double scale = integralTime.getValue().getNextSample(simTime);
-
-		// Set the present value
-		this.setValue( this.getInputValue(simTime) * dt/scale  +  this.getValue() );
-		return;
 	}
+
 }

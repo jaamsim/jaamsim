@@ -68,7 +68,7 @@ public class WeightedSum extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simTime) {
+	protected double calculateValue(double simTime) {
 		double val = 0.0;
 
 		// Calculate the weighted sum
@@ -76,8 +76,7 @@ public class WeightedSum extends DoubleCalculation {
 			val += coefficientList.getValue().get(i) * inputValueList.getValue().get(i).getNextSample(simTime);
 		}
 
-		// Set the present value
-		this.setValue( val );
-		return;
+		return val;
 	}
+
 }

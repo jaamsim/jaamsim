@@ -38,7 +38,7 @@ public abstract class CalculationEntity extends DisplayEntity {
 	         example = "Calculation1 SequenceNumber { 2.1 }")
 	private final ValueInput sequenceNumber;
 
-	protected boolean updateInProgress = false;  // TRUE if an update has been started, but not completed yet
+	protected boolean calculationInProgress = false;  // TRUE if a value calculation has been started, but not completed yet
 	protected boolean controllerRequired = false;  // TRUE if the Controller keyword must be set
 
 	{
@@ -61,7 +61,7 @@ public abstract class CalculationEntity extends DisplayEntity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		updateInProgress = false;
+		calculationInProgress = false;
 	}
 
 	public double getSequenceNumber() {

@@ -24,6 +24,7 @@ import com.jaamsim.input.Output;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 
@@ -63,6 +64,16 @@ implements SampleProvider {
 			this.setUnitType(this.getUnitType());
 	}
 
+	/**
+	 * Test whether the inputs to this object can be sampled repeatably.
+	 * An input is repeatable if getNextSample(t) returns the same value for successive calls.
+	 * At present, the only non-repeatable input is a probability distribution.
+	 * @return = TRUE if all the inputs are repeatable.
+	 */
+	protected boolean repeatableInputs() {
+		return inputValue.getHidden() || ! (inputValue.getValue() instanceof Distribution);
+	}
+
 	@Override
 	public OutputHandle getOutputHandle(String outputName) {
 		OutputHandle out = super.getOutputHandle(outputName);
@@ -80,8 +91,9 @@ implements SampleProvider {
 			throw new InputErrorException( "The InputValue keyword must be set." );
 
 		// If the input is a ProbabilityDistribution, then a Controller must be used to ensure repeatable results
-		if( this.getController() == null && ! inputValue.getHidden() && inputValue.getValue() instanceof Distribution )
-			throw new InputErrorException( "The Contoller keyword must be set when the InputValue keyword is set to a ProbabilityDistribution." );
+		if( this.getController() == null && ! this.repeatableInputs() )
+			throw new InputErrorException( "The Contoller keyword must be set when an input to the object is a ProbabilityDistribution, " +
+					"or any other object that cannot be sampled repeatably." );
 	}
 
 	@Override
@@ -91,20 +103,40 @@ implements SampleProvider {
 	}
 
 	/*
-	 * Return the present value for this calculation.
+	 * Return the stored value for this calculation.
 	 */
 	public double getValue() {
 		return value;
 	}
 
+	protected abstract double calculateValue(double simTime);
+
+	@Override
+	public void update(double simTime) {
+		value = this.calculateValue(simTime);
+	}
+
 	@Override
 	public double getNextSample(double simTime) {
-		if( this.getController() == null && ! updateInProgress ) {
-			updateInProgress = true;
-			this.update(simTime);
-			updateInProgress = false;
+
+		// If this object has a non-repeatable input, then return the value stored by the last update
+		if( !this.repeatableInputs() )
+			return value;
+
+		// Has this method has already been called for this object
+		if( calculationInProgress ) {
+			if( this.getController() != null ) {
+				return value;
+			}
+			throw new ErrorException("A tight loop is present. Try setting the Controller keyword for object: %s.", this.getName());
 		}
-		return value;
+
+		// Perform the calculation (calls getNextSample for all its inputs)
+		calculationInProgress = true;
+		double val = this.calculateValue(simTime);
+		calculationInProgress = false;
+
+		return val;
 	}
 
 	protected void setUnitType(Class<? extends Unit> ut) {

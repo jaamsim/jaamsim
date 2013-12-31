@@ -32,8 +32,8 @@ public class Lag extends DoubleCalculation {
 	private final ValueInput lagTime;
 
 	private double lastUpdateTime;  // The time at which the last update was performed
-	private double error;  // inputValue - outputValue
 	private double integral; // The present value for the integral
+	private double presentValue;  // The present output value
 
 	{
 		controllerRequired = true;
@@ -48,26 +48,30 @@ public class Lag extends DoubleCalculation {
 	public void earlyInit() {
 		super.earlyInit();
 		integral = 0.0;
+		presentValue = 0.0;
 		lastUpdateTime = 0.0;
 	}
 
 	@Override
-	public void update(double simTime) {
-
-		// Calculate the elapsed time
+	public double calculateValue(double simTime) {
 		double dt = simTime - lastUpdateTime;
-		lastUpdateTime = simTime;
+		double error = this.getInputValue(simTime) - presentValue;
+		return ( integral + error*dt ) / lagTime.getValue();
+	}
 
-		// Set the present value
-		error = this.getInputValue(simTime) - this.getValue();
+	@Override
+	public void update(double simTime) {
+		super.update(simTime);
+		double dt = simTime - lastUpdateTime;
+		double error = this.getInputValue(simTime) - presentValue;
 		integral += error * dt;
-		this.setValue( integral / lagTime.getValue() );
-		return;
+		presentValue = this.getValue();
+		lastUpdateTime = simTime;
 	}
 
 	@Output(name = "Error",
 	 description = "The value for InputValue - OutputValue.")
 	public Double getError( double simTime ) {
-		return error;
+		return this.getInputValue(simTime) - presentValue;
 	}
 }

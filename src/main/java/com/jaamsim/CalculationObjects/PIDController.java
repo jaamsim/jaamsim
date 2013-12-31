@@ -14,6 +14,7 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -78,8 +79,7 @@ public class PIDController extends DoubleCalculation {
 	         example = "PIDController-1 OutputHigh { 1.0 }")
 	private final ValueInput outputHigh;
 
-	private double lastUpdateTime;  // The time at which the last update was performed (seconds)
-	private double error;  // The present value for the error signal
+	private double lastUpdateTime;  // The time at which the last update was performed
 	private double lastError;  // The previous value for the error signal
 	private double integral;  // The integral of the error signal
 	private double derivative;  // The derivative of the error signal
@@ -137,6 +137,13 @@ public class PIDController extends DoubleCalculation {
 	}
 
 	@Override
+	protected boolean repeatableInputs() {
+		return super.repeatableInputs()
+				&& ! (setPoint.getValue() instanceof Distribution)
+				&& ! (processVariable.getValue() instanceof Distribution);
+	}
+
+	@Override
 	public void validate() {
 		super.validate();
 
@@ -172,38 +179,39 @@ public class PIDController extends DoubleCalculation {
 	}
 
 	@Override
-	public void update(double simTime) {
-		double val;
+	protected double calculateValue(double simTime) {
 
 		// Calculate the elapsed time
 		double dt = simTime - lastUpdateTime;
 
 		// Calculate the error signal
-		error = setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
+		double error = setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
 
 		// Calculate integral and differential terms
-		integral += error * dt;
-		if( dt > 0.0 ) {
-			derivative = ( error - lastError ) / dt;
-		}
-		else {
-			derivative = 0.0;
-		}
+		double intgrl = integral + error * dt;
+		double deriv = 0.0;
+		if( dt > 0.0 )
+			deriv = ( error - lastError ) / dt;
 
 		// Calculate the output value
-		val = error;
-		val += integral / integralTime.getValue();
-		val += derivativeTime.getValue() * derivative;
+		double val = error;
+		val += intgrl / integralTime.getValue();
+		val += derivativeTime.getValue() * deriv;
 		val *= scaleConversionCoefficient.getValue() * proportionalGain.getValue();
 
 		// Condition the output value
 		val = Math.max( val, outputLow.getValue());
 		val = Math.min( val, outputHigh.getValue());
 
-		// Set the present value
-		this.setValue( val );
+		return val;
+	}
 
-		// Record values needed for the next update
+	@Override
+	public void update(double simTime) {
+		super.update(simTime);
+		double dt = simTime - lastUpdateTime;
+		double error = setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
+		integral += error * dt;
 		lastError = error;
 		lastUpdateTime = simTime;
 		return;
@@ -212,12 +220,13 @@ public class PIDController extends DoubleCalculation {
 	@Output(name = "Error",
 	 description = "The value for SetPoint - ProcessVariable.")
 	public Double getError( double simTime ) {
-		return error;
+		return setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
 	}
 
 	@Output(name = "ProportionalValue",
 	 description = "The proportional component of the output value.")
 	public Double getProportionalValue( double simTime ) {
+		double error = setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
 		return scaleConversionCoefficient.getValue() * proportionalGain.getValue() * error;
 	}
 
