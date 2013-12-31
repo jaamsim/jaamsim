@@ -14,9 +14,13 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
+import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * The Polynomial entity returns a user-defined polynomial function of its input value.
@@ -25,22 +29,38 @@ import com.jaamsim.units.DimensionlessUnit;
  */
 public class Polynomial extends DoubleCalculation {
 
-	@Keyword(description = "The list of coefficients for the polynomial function.  For example, inputs c0, c1, c2 give a polynomial" +
-			" P(x) = c0 + c1*x^2 + c2*x^3 ",
-	         example = "Polynomial1 CoefficientList { 2.0  1.5 }")
+	@Keyword(description = "The list of coefficients for the polynomial function.\n" +
+			"For example, inputs c0, c1, c2 give a polynomial P(x) = scale * [ c0 + c1*(x/scale) + c2*(x/scale)^2 ]",
+	         example = "Polynomial-1 CoefficientList { 2.0  1.5 }")
 	private final ValueListInput coefficientList;
+
+	@Keyword(description = "The scale to apply to the input value.\n" +
+			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
+	         example = "Polynomial-1 Scale { 5.0 m }")
+	protected final SampleInput scale;
 
 	{
 		coefficientList = new ValueListInput( "CoefficientList", "Key Inputs", null);
 		coefficientList.setUnitType(DimensionlessUnit.class);
 		this.addInput( coefficientList, true);
+
+		scale = new SampleInput( "Scale", "Key Inputs", null);
+		scale.setUnitType(UserSpecifiedUnit.class);
+		this.addInput( scale, true);
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> ut) {
+		super.setUnitType(ut);
+		scale.setUnitType(ut);
+		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
 	}
 
 	@Override
 	public void update(double simTime) {
 
 		// Calculate the weighted sum
-		double x = this.getInputValue(simTime);
+		double x = this.getInputValue(simTime) / scale.getValue().getNextSample(simTime);
 		double pow = 1.0;
 		double val = 0.0;
 		for(int i=0; i<coefficientList.getValue().size(); i++ ) {
