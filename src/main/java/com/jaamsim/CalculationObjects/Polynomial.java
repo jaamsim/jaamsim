@@ -15,6 +15,7 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.ProbabilityDistributions.Distribution;
+import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
@@ -22,6 +23,7 @@ import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation.DoubleVector;
 
 /**
  * The Polynomial entity returns a user-defined polynomial function of its input value.
@@ -41,11 +43,13 @@ public class Polynomial extends DoubleCalculation {
 	protected final SampleInput scale;
 
 	{
-		coefficientList = new ValueListInput( "CoefficientList", "Key Inputs", null);
+		DoubleVector defList = new DoubleVector();
+		defList.add(0.0);
+		coefficientList = new ValueListInput( "CoefficientList", "Key Inputs", defList);
 		coefficientList.setUnitType(DimensionlessUnit.class);
 		this.addInput( coefficientList, true);
 
-		scale = new SampleInput( "Scale", "Key Inputs", null);
+		scale = new SampleInput( "Scale", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 1.0d));
 		scale.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( scale, true);
 	}

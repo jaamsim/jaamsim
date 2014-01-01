@@ -15,6 +15,7 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.ProbabilityDistributions.Distribution;
+import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -91,15 +92,15 @@ public class PIDController extends DoubleCalculation {
 		setPointUnitType = new UnitTypeInput( "SetPointUnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(setPointUnitType, true);
 
-		setPoint = new SampleInput( "SetPoint", "Key Inputs", null);
+		setPoint = new SampleInput( "SetPoint", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
 		setPoint.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( setPoint, true);
 
-		processVariable = new SampleInput( "ProcessVariable", "Key Inputs", null);
+		processVariable = new SampleInput( "ProcessVariable", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
 		processVariable.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( processVariable, true);
 
-		proportionalGain = new ValueInput( "ProportionalGain", "Key Inputs", 0.0d);
+		proportionalGain = new ValueInput( "ProportionalGain", "Key Inputs", 1.0d);
 		proportionalGain.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		proportionalGain.setUnitType(DimensionlessUnit.class);
 		this.addInput( proportionalGain, true);
