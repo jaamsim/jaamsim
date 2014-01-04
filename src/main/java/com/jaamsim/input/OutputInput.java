@@ -60,7 +60,7 @@ public class OutputInput<T> extends Input<String> {
 
 		Class<?> retClass = out.getReturnType();
 		if( input.size() == 2 ) {
-			if ( klass != Object.class && !klass.isAssignableFrom(retClass))
+			if ( klass != Object.class && !out.isNumericValue() )
 				throw new InputErrorException("OutputInput class mismatch. Expected: %s, got: %s", klass.toString(), retClass.toString());
 		}
 		else {
@@ -92,6 +92,19 @@ public class OutputInput<T> extends Input<String> {
 		if( o == null )
 			return null;
 		return o.getValue(simTime, klass);
+	}
+
+	/**
+	 * Returns the value of any numerical output converted to a double.
+	 * @param simTime = present simulation time.
+	 * @param def = the default value to return in case of null or a non-number.
+	 * @return
+	 */
+	public double getOutputValueAsDouble(double simTime, double def) {
+		OutputHandle o = this.getOutputHandle(simTime);
+		if( o == null )
+			return def;
+		return o.getValueAsDouble(simTime, def);
 	}
 
 	@Override
