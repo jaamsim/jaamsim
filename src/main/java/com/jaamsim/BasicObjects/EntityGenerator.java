@@ -40,12 +40,12 @@ public class EntityGenerator extends LinkedComponent {
 	@Keyword(description = "The inter-arrival time between generated entities.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         example = "EntityGenerator-1 InterArrivalTime { 1.5 h }")
-	private final SampleInput interArrivalTimeInput;
+	private final SampleInput interArrivalTime;
 
 	@Keyword(description = "The prototype for entities to be generated.\n" +
 			"The generated entities will be copies of this entity.",
 	         example = "EntityGenerator-1 PrototypeEntity { Ship }")
-	private final EntityInput<DisplayEntity> prototypeEntityInput;
+	private final EntityInput<DisplayEntity> prototypeEntity;
 
 	@Keyword(description = "The maximum number of entities to be generated.\n" +
 			"Default is no limit.",
@@ -57,12 +57,12 @@ public class EntityGenerator extends LinkedComponent {
 		firstArrivalTime.setUnitType( TimeUnit.class );
 		this.addInput( firstArrivalTime, true);
 
-		interArrivalTimeInput = new SampleInput( "InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
-		interArrivalTimeInput.setUnitType( TimeUnit.class );
-		this.addInput( interArrivalTimeInput, true);
+		interArrivalTime = new SampleInput( "InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
+		interArrivalTime.setUnitType( TimeUnit.class );
+		this.addInput( interArrivalTime, true);
 
-		prototypeEntityInput = new EntityInput<DisplayEntity>( DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
-		this.addInput( prototypeEntityInput, true);
+		prototypeEntity = new EntityInput<DisplayEntity>( DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		this.addInput( prototypeEntity, true);
 
 		maxNumber = new IntegerInput( "MaxNumber", "Key Inputs", null);
 		maxNumber.setValidRange(1, Integer.MAX_VALUE);
@@ -77,16 +77,16 @@ public class EntityGenerator extends LinkedComponent {
 		super.validate();
 
 		// Confirm that probability distribution has been specified
-		if( interArrivalTimeInput.getValue() == null ) {
+		if( interArrivalTime.getValue() == null ) {
 			throw new InputErrorException( "The keyword InterArrivalTime must be set." );
 		}
 
 		// Confirm that prototype entity has been specified
-		if( prototypeEntityInput.getValue() == null ) {
+		if( prototypeEntity.getValue() == null ) {
 			throw new InputErrorException( "The keyword PrototypeEntity must be set." );
 		}
 
-		interArrivalTimeInput.verifyUnit();
+		interArrivalTime.verifyUnit();
 	}
 
 	@Override
@@ -122,14 +122,14 @@ public class EntityGenerator extends LinkedComponent {
 			if( numberGenerated == 0 )
 				dt = firstArrivalTime.getValue().getNextSample(getSimTime());
 			else
-				dt = interArrivalTimeInput.getValue().getNextSample(getSimTime());
+				dt = interArrivalTime.getValue().getNextSample(getSimTime());
 
 			// Schedule the creation event at this time
 			this.simWait( dt );
 
 			// Create the new DisplayEntity
 			numberGenerated++;
-			DisplayEntity proto = prototypeEntityInput.getValue();
+			DisplayEntity proto = prototypeEntity.getValue();
 			String name = String.format("Copy_of_%s-%s", proto.getInputName(), numberGenerated);
 			DisplayEntity ent = InputAgent.defineEntityWithUniqueName(proto.getClass(), name, true);
 			ent.copyInputs(proto);
