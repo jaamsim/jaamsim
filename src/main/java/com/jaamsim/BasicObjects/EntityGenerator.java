@@ -14,6 +14,7 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -31,6 +32,11 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public class EntityGenerator extends LinkedComponent {
 
+	@Keyword(description = "The arrival time for the first generated entity.\n" +
+			"A constant value, a distribution to be sampled, or a time series can be entered.",
+	         example = "EntityGenerator-1 FirstArrivalTime { 1.0 h }")
+	private final SampleInput firstArrivalTime;
+
 	@Keyword(description = "The inter-arrival time between generated entities.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         example = "EntityGenerator-1 InterArrivalTime { 1.5 h }")
@@ -47,6 +53,10 @@ public class EntityGenerator extends LinkedComponent {
 	private final IntegerInput maxNumber;
 
 	{
+		firstArrivalTime = new SampleInput( "FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		firstArrivalTime.setUnitType( TimeUnit.class );
+		this.addInput( firstArrivalTime, true);
+
 		interArrivalTimeInput = new SampleInput( "InterArrivalTime", "Key Inputs", null);
 		interArrivalTimeInput.setUnitType( TimeUnit.class );
 		this.addInput( interArrivalTimeInput, true);
@@ -104,12 +114,15 @@ public class EntityGenerator extends LinkedComponent {
 	public void createEntities() {
 
 		int numberGenerated = 0;
-
 		Integer max = maxNumber.getValue();
 		while( max == null || numberGenerated < max ) {
 
 			// Determine the interarrival time for the next creation event
-			double dt = interArrivalTimeInput.getValue().getNextSample(getSimTime());
+			double dt;
+			if( numberGenerated == 0 )
+				dt = firstArrivalTime.getValue().getNextSample(getSimTime());
+			else
+				dt = interArrivalTimeInput.getValue().getNextSample(getSimTime());
 
 			// Schedule the creation event at this time
 			this.simWait( dt );
