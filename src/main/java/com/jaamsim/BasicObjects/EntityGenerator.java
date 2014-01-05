@@ -22,6 +22,7 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.InputErrorException;
+import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
@@ -40,6 +41,11 @@ public class EntityGenerator extends LinkedComponent {
 	         example = "EntityGenerator-1 PrototypeEntity { Ship }")
 	private final EntityInput<DisplayEntity> prototypeEntityInput;
 
+	@Keyword(description = "The maximum number of entities to be generated.\n" +
+			"Default is no limit.",
+	         example = "EntityGenerator-1 MaxNumber { 3 }")
+	private final IntegerInput maxNumber;
+
 	{
 		interArrivalTimeInput = new SampleInput( "InterArrivalTime", "Key Inputs", null);
 		interArrivalTimeInput.setUnitType( TimeUnit.class );
@@ -47,6 +53,10 @@ public class EntityGenerator extends LinkedComponent {
 
 		prototypeEntityInput = new EntityInput<DisplayEntity>( DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
 		this.addInput( prototypeEntityInput, true);
+
+		maxNumber = new IntegerInput( "MaxNumber", "Key Inputs", null);
+		maxNumber.setValidRange(1, Integer.MAX_VALUE);
+		this.addInput( maxNumber, true);
 	}
 
 	public EntityGenerator() {
@@ -95,7 +105,8 @@ public class EntityGenerator extends LinkedComponent {
 
 		int numberGenerated = 0;
 
-		while( true ) {
+		Integer max = maxNumber.getValue();
+		while( max == null || numberGenerated < max ) {
 
 			// Determine the interarrival time for the next creation event
 			double dt = interArrivalTimeInput.getValue().getNextSample(getSimTime());
