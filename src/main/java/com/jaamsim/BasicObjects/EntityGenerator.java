@@ -24,7 +24,6 @@ import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
-import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
@@ -51,6 +50,8 @@ public class EntityGenerator extends LinkedComponent {
 			"Default is no limit.",
 	         example = "EntityGenerator-1 MaxNumber { 3 }")
 	private final IntegerInput maxNumber;
+
+	int numberGenerated = 0;  // Number of entities generated so far
 
 	{
 		firstArrivalTime = new SampleInput( "FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
@@ -90,54 +91,53 @@ public class EntityGenerator extends LinkedComponent {
 	}
 
 	@Override
+	public void earlyInit() {
+		numberGenerated = 0;
+	}
+
+	@Override
 	public void startUp() {
 		super.startUp();
 
-		// Start a new process for the Generator's main creation loop
-		Process.start(new CreateEntitiesTarget(this));
+		// Generate the first entity and start the recursive loop to continue the process
+		double dt = firstArrivalTime.getValue().getNextSample(0.0);
+		this.scheduleProcess(dt, 5, new CreateNextEntityTarget(this, "createNextEntity"));
 	}
 
-	private static class CreateEntitiesTarget extends EntityTarget<EntityGenerator> {
-		public CreateEntitiesTarget(EntityGenerator ent) {
-			super(ent, "createEntities");
+	private static class CreateNextEntityTarget extends EntityTarget<EntityGenerator> {
+		public CreateNextEntityTarget(EntityGenerator ent, String method) {
+			super(ent, method);
 		}
 
 		@Override
 		public void process() {
-			ent.createEntities();
+			ent.createNextEntity();
 		}
 	}
 
 	/**
-	* Loop endlessly creating DisplayEntities
+	* Loop recursively to generate each entity
 	*/
-	public void createEntities() {
+	public void createNextEntity() {
 
-		int numberGenerated = 0;
-		Integer max = maxNumber.getValue();
-		while( max == null || numberGenerated < max ) {
+		// Create the new entity
+		numberGenerated++;
+		DisplayEntity proto = prototypeEntity.getValue();
+		String name = String.format("Copy_of_%s-%s", proto.getInputName(), numberGenerated);
+		DisplayEntity ent = InputAgent.defineEntityWithUniqueName(proto.getClass(), name, true);
+		ent.copyInputs(proto);
+		ent.setFlag(Entity.FLAG_GENERATED);
 
-			// Determine the interarrival time for the next creation event
-			double dt;
-			if( numberGenerated == 0 )
-				dt = firstArrivalTime.getValue().getNextSample(getSimTime());
-			else
-				dt = interArrivalTime.getValue().getNextSample(getSimTime());
+		// Send the entity to the next element in the chain
+		this.sendToNextComponent( ent );
 
-			// Schedule the creation event at this time
-			this.simWait( dt );
+		// Stop if the last entity been generated
+		if( maxNumber.getValue() != null && numberGenerated >= maxNumber.getValue() )
+			return;
 
-			// Create the new DisplayEntity
-			numberGenerated++;
-			DisplayEntity proto = prototypeEntity.getValue();
-			String name = String.format("Copy_of_%s-%s", proto.getInputName(), numberGenerated);
-			DisplayEntity ent = InputAgent.defineEntityWithUniqueName(proto.getClass(), name, true);
-			ent.copyInputs(proto);
-			ent.setFlag(Entity.FLAG_GENERATED);
-
-			//  Send the entity to the next element in the chain
-			this.sendToNextComponent( ent );
-		}
+		// Schedule the next entity to be generated
+		double dt = interArrivalTime.getValue().getNextSample(getSimTime());
+		this.scheduleProcess(dt, 5, new CreateNextEntityTarget(this, "createNextEntity"));
 	}
 
 }
