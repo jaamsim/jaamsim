@@ -57,7 +57,7 @@ public class EntityGenerator extends LinkedComponent {
 		firstArrivalTime.setUnitType( TimeUnit.class );
 		this.addInput( firstArrivalTime, true);
 
-		interArrivalTimeInput = new SampleInput( "InterArrivalTime", "Key Inputs", null);
+		interArrivalTimeInput = new SampleInput( "InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
 		interArrivalTimeInput.setUnitType( TimeUnit.class );
 		this.addInput( interArrivalTimeInput, true);
 
