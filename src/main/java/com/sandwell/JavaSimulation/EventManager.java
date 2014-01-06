@@ -276,6 +276,7 @@ public final class EventManager implements Runnable {
 			// Has the simulation set to the paused state during the wait?
 			if( eventState == EVENTS_STOPPED ) {
 				synchronized (lockObject) {
+					GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
 					this.threadWait();
 				}
 				// Has the simulation been stopped and restarted?
