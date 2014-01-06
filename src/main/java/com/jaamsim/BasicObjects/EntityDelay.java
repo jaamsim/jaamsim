@@ -130,7 +130,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		startTimeList.add(simTime);
 		durationList.add(dur);
 
-		this.scheduleProcess(dur/3600.0, 5, new RemoveDisplayEntityTarget(this, "removeDisplayEntity", ent));
+		this.scheduleProcess(dur, 5, new RemoveDisplayEntityTarget(this, "removeDisplayEntity", ent));
 	}
 
 	private static class RemoveDisplayEntityTarget extends ProcessTarget {
