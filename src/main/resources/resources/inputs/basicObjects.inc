@@ -11,6 +11,7 @@ Define ObjectType {
 					Release
 					Resource
 					Branch
+					EntityGate
                     QueueRecorder
                     ProbabilityDistribution
                     Group
@@ -28,6 +29,7 @@ Define	ImageModel {
 			SeizeIconModel
 			ReleaseIconModel
 			BranchIconModel
+			EntityGateIconModel
 			TimeSeriesIconModel
 			}
 			
@@ -38,6 +40,7 @@ ResourceIconModel       ImageFile { '<res>/images/Resource-256.png' }    Transpa
 SeizeIconModel          ImageFile { '<res>/images/Seize-256.png'  }      Transparent { TRUE }
 ReleaseIconModel        ImageFile { '<res>/images/Release-256.png' }     Transparent { TRUE }
 BranchIconModel         ImageFile { '<res>/images/Branch-256.png' }      Transparent { TRUE }
+EntityGateIconModel     ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
 
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
@@ -50,6 +53,7 @@ Seize                   JavaClass { com.jaamsim.BasicObjects.Seize              
 Release                 JavaClass { com.jaamsim.BasicObjects.Release                    } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ReleaseIconModel 		}
 Resource                JavaClass { com.jaamsim.BasicObjects.Resource                   } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ResourceIconModel		}
 Branch                  JavaClass { com.jaamsim.BasicObjects.Branch                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ BranchIconModel       }
+EntityGate              JavaClass { com.jaamsim.BasicObjects.EntityGate                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ EntityGateIconModel   }
 QueueRecorder           JavaClass { com.sandwell.JavaSimulation3D.QueueRecorder         } Palette { 'Basic Objects' } DefaultDisplayModel	{ Cube 					}	DragAndDrop 	{ FALSE 	}
 ProbabilityDistribution JavaClass { com.sandwell.JavaSimulation.ProbabilityDistribution } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 Group                   JavaClass { com.sandwell.JavaSimulation.Group                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
@@ -68,6 +72,7 @@ Seize              Description { 'Seizes one or more units of a Resource.' }
 Release            Description { 'Releases one or more units of a Resource.' }
 Resource           Description { 'Set of identical resource units that be seized and released by various process.' }
 Branch             Description { 'Directs received entities to an assortment of destinations.' }
+EntityGate         Description { 'Blocks received entities from progressing further until the Gate is opened by a Signal.' }
 QueueRecorder      Description { 'Logs an entry every time the specified queue receives or releases an entity.' }
 ProbabilityDistribution  Description { 'Obsolete probability distribution retained for backwards compatibity with TLS.' }
 Group              Description { 'Collection of entities used as an convenience for specifying model inputs.' }
