@@ -73,7 +73,7 @@ public class SampleInput extends Input<SampleProvider> {
 
 	@Override
 	public String getValueString() {
-		if( value == null )
+		if (value == null || defValue == value)
 			return "";
 		return value.toString();
 	}
