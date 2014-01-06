@@ -270,18 +270,18 @@ public final class EventManager implements Runnable {
 			// Update the displayed simulation time
 			FrameBox.timeUpdate(simTime);
 
-			// Wait for 20 milliseconds
-			this.threadPause(20);
-
-			// Has the simulation set to the paused state during the wait?
-			if( eventState == EVENTS_STOPPED ) {
-				synchronized (lockObject) {
-					GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
-					this.threadWait();
+			synchronized (lockObject) {
+				try {
+					/*
+					 * Halt the thread for 20ms and allow timeouts to wake us.
+					 */
+					lockObject.wait(20);
 				}
-				// Has the simulation been stopped and restarted?
-				if( eventStack.get(0).schedTick == 0 )
-					return;
+				// Catch the exception when the thread is interrupted
+				catch( InterruptedException e ) {}
+
+				// Events have been stopped, stop waiting
+				if (eventState == EVENTS_STOPPED) return;
 			}
 
 			// Calculate the simulation time corresponding to the present wall clock time
@@ -620,20 +620,6 @@ public final class EventManager implements Runnable {
 		// Catch the exception when the thread is interrupted
 		catch( InterruptedException e ) {}
 
-	}
-
-	private void threadPause(long millisToWait) {
-		// Ensure that the thread owns the global thread lock
-		synchronized( lockObject ) {
-			try {
-				/*
-				 * Halt the thread and allow timeouts to wake us.
-				 */
-				lockObject.wait(millisToWait);
-			}
-			// Catch the exception when the thread is interrupted
-			catch( InterruptedException e ) {}
-		}
 	}
 
 	void scheduleProcess(long waitLength, int eventPriority, ProcessTarget t) {
