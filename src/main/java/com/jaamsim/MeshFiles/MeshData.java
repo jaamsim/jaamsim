@@ -58,6 +58,8 @@ public class MeshData {
 		public double shininess;
 
 		public URL colorTex;
+		// TODO Properly relativize this one day
+		public String relColorTex; // the 'relative' name for this texture, used by the binary exporter
 
 		public int transType;
 		public Color4d transColour;
@@ -225,6 +227,7 @@ public class MeshData {
 	}
 
 	public void addMaterial(URL colorTex,
+	                        String relTexString,
 	                        Color4d diffuseColor,
 	                        Color4d ambientColor,
 	                        Color4d specColor,
@@ -242,6 +245,7 @@ public class MeshData {
 		mat.specColor = specColor;
 		mat.shininess = shininess;
 		mat.colorTex = colorTex;
+		mat.relColorTex = relTexString;
 
 		if (mat.ambientColor == null) mat.ambientColor = new Color4d();
 		if (mat.specColor == null) mat.specColor = new Color4d();
@@ -657,7 +661,7 @@ public class MeshData {
 	 * Initialize a MeshData from a DataBlock, throws a RenderException if things go sideways.
 	 * @param topBlock
 	 */
-	public MeshData(boolean keepRuntimeData, DataBlock topBlock) {
+	public MeshData(boolean keepRuntimeData, DataBlock topBlock, URL contextURL) {
 
 		this.keepRuntimeData = keepRuntimeData;
 
@@ -776,17 +780,18 @@ public class MeshData {
 			int transType = colorBlock.readInt();
 
 			URL texURL = null;
+			String texString = null;
 			DataBlock textureBlock = matBlock.findChildByName("DiffuseTexture");
 			if (textureBlock != null) {
-				String texString = textureBlock.readString();
+				texString = textureBlock.readString();
 				try {
-					texURL = new URL(texString);
+					texURL = new URL(contextURL, texString);
 				} catch (MalformedURLException ex){
 					throw new RenderException(String.format("Error with texture URL: %s", texString));
 				}
 			}
 
-			addMaterial(texURL, diffuse, ambient, specular, shininess, transType, transColor);
+			addMaterial(texURL, texString, diffuse, ambient, specular, shininess, transType, transColor);
 		}
 
 		// Now for the instances
@@ -1004,7 +1009,7 @@ public class MeshData {
 
 
 			if (mat.colorTex != null) {
-				String texString = mat.colorTex.toString();
+				String texString = mat.relColorTex;
 				DataBlock texBlock = new DataBlock("DiffuseTexture", texString.length()*4 + 1); // Worst case size
 				matBlock.addChildBlock(texBlock);
 				texBlock.writeString(texString);

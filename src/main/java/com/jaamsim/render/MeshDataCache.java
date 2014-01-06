@@ -81,7 +81,7 @@ public class MeshDataCache {
 				data = MeshReader.parse(key.getURL());
 			} else if (ext.toUpperCase().equals("JSB")) {
 				DataBlock block = BlockReader.readBlockFromURL(key.getURL());
-				data = new MeshData(false, block);
+				data = new MeshData(false, block, key.getURL());
 			} else if (ext.toUpperCase().equals("OBJ")) {
 				data = ObjReader.parse(key.getURL());
 			} else {

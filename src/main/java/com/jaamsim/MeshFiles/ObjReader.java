@@ -64,6 +64,7 @@ public class ObjReader {
 		public Color4d spec;
 		public Color4d diffuse;
 		public URL diffuseTex;
+		public String relDiffuseTex;
 		public double shininess = 1.0;
 		public double alpha = 1.0;
 	}
@@ -133,7 +134,7 @@ public class ObjReader {
 		parseAssert(mat != null);
 
 		int transType = mat.alpha == 1.0 ? MeshData.NO_TRANS : MeshData.A_ONE_TRANS;
-		data.addMaterial(mat.diffuseTex, mat.diffuse, mat.ambient, mat.spec, mat.shininess, transType, new Color4d(1, 1, 1, mat.alpha));
+		data.addMaterial(mat.diffuseTex, mat.relDiffuseTex, mat.diffuse, mat.ambient, mat.spec, mat.shininess, transType, new Color4d(1, 1, 1, mat.alpha));
 		loadedMaterials.put(matName, newIndex);
 		return newIndex;
 	}
@@ -370,6 +371,7 @@ public class ObjReader {
 			parseAssert(tokens.length == 2);
 			parseAssert(parsingMat != null);
 			parsingMat.diffuseTex = new URL(contentURL, tokens[1]);
+			parsingMat.relDiffuseTex = tokens[1];
 		}
 	}
 

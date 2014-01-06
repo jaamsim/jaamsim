@@ -345,6 +345,7 @@ public class ColParser {
 				matID = _loadedEffects.size();
 				_loadedEffects.add(effect);
 				_finalData.addMaterial(effect.diffuse.texture,
+				                       effect.diffuse.relTexture,
 				                       effect.diffuse.color,
 				                       effect.ambient,
 				                       effect.spec,
@@ -693,6 +694,7 @@ public class ColParser {
 		parseAssert(img != null);
 		try {
 			ret.texture = new URL(_contextURL, img);
+			ret.relTexture = img;
 		} catch (MalformedURLException ex) {
 			ex.printStackTrace();
 			parseAssert(false);
@@ -1413,6 +1415,7 @@ public class ColParser {
 	private static class ColorTex {
 		public Color4d color;
 		public URL texture;
+		public String relTexture;
 	}
 
 	private static class Effect {
