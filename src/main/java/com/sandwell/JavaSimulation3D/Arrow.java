@@ -60,6 +60,7 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 	         example = "Arrow1 Color { red }")
 	private final ColourInput color;
 
+	private Object screenPointLock = new Object();
 	private HasScreenPoints.PointsInfo[] cachedPointInfo;
 
 	{
@@ -101,24 +102,28 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 
 		// If Points were input, then use them to set the start and end coordinates
 		if( in == pointsInput || in == color || in == width ) {
-			cachedPointInfo = null;
+			synchronized(screenPointLock) {
+				cachedPointInfo = null;
+			}
 			return;
 		}
 	}
 
 	@Override
 	public HasScreenPoints.PointsInfo[] getScreenPoints() {
-		if (cachedPointInfo == null) {
-			cachedPointInfo = new HasScreenPoints.PointsInfo[1];
-			HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
-			cachedPointInfo[0] = pi;
+		synchronized(screenPointLock) {
+			if (cachedPointInfo == null) {
+				cachedPointInfo = new HasScreenPoints.PointsInfo[1];
+				HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
+				cachedPointInfo[0] = pi;
 
-			pi.points = pointsInput.getValue();
-			pi.color = color.getValue();
-			pi.width = width.getValue().intValue();
-			if (pi.width < 1) pi.width = 1;
+				pi.points = pointsInput.getValue();
+				pi.color = color.getValue();
+				pi.width = width.getValue().intValue();
+				if (pi.width < 1) pi.width = 1;
+			}
+			return cachedPointInfo;
 		}
-		return cachedPointInfo;
 	}
 
 	@Override

@@ -64,6 +64,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	private final ArrayList<Double> lengthList;  // Length of each segment of the path
 	private final ArrayList<Double> cumLengthList;  // Total length to the end of each segment
 
+	private Object screenPointLock = new Object();
 	private HasScreenPoints.PointsInfo[] cachedPointInfo;
 
 	{
@@ -205,7 +206,9 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 
 		// If Points were input, then use them to set the start and end coordinates
 		if( in == pointsInput || in == colorInput || in == widthInput ) {
-			cachedPointInfo = null;
+			synchronized(screenPointLock) {
+				cachedPointInfo = null;
+			}
 			return;
 		}
 	}
@@ -227,17 +230,19 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 
 	@Override
 	public HasScreenPoints.PointsInfo[] getScreenPoints() {
-		if (cachedPointInfo == null) {
-			cachedPointInfo = new HasScreenPoints.PointsInfo[1];
-			HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
-			cachedPointInfo[0] = pi;
+		synchronized(screenPointLock) {
+			if (cachedPointInfo == null) {
+				cachedPointInfo = new HasScreenPoints.PointsInfo[1];
+				HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
+				cachedPointInfo[0] = pi;
 
-			pi.points = pointsInput.getValue();
-			pi.color = colorInput.getValue();
-			pi.width = widthInput.getValue().intValue();
-			if (pi.width < 1) pi.width = 1;
+				pi.points = pointsInput.getValue();
+				pi.color = colorInput.getValue();
+				pi.width = widthInput.getValue().intValue();
+				if (pi.width < 1) pi.width = 1;
+			}
+			return cachedPointInfo;
 		}
-		return cachedPointInfo;
 	}
 
 	@Override
