@@ -429,6 +429,15 @@ public class ColParser {
 		_images.put(id, fileName);
 	}
 
+	// According to the spec, image nodes can be in a lot of places
+	private void scanNodeForImages(XmlNode node) {
+		for (XmlNode child : node.children()) {
+			if (child.getTag().equals("image")) {
+				processImage(child);
+			}
+		}
+	}
+
 	private void processMaterials() {
 		XmlNode libMats = _colladaNode.findChildTag("library_materials", false);
 		if (libMats == null)
@@ -476,11 +485,15 @@ public class ColParser {
 		String id = effectNode.getFragID();
 		if (id == null) return; // We do not care about materials we can not reference
 
+		scanNodeForImages(effectNode);
+
 		XmlNode profCommon = effectNode.findChildTag("profile_COMMON", true);
 		if (profCommon == null) {
 			parseAssert(false);
 			return; // There is no common profile
 		}
+
+		scanNodeForImages(profCommon);
 
 		HashMap<String, XmlNode> paramMap = new HashMap<String, XmlNode>();
 
@@ -498,6 +511,9 @@ public class ColParser {
 			parseAssert(false);
 			return; // There is no common profile
 		}
+
+		scanNodeForImages(technique);
+
 		// Search technique for the kind of data we care about, for now find blinn, phong or lambert
 		XmlNode diffuse = null;
 		XmlNode ambient = null;
