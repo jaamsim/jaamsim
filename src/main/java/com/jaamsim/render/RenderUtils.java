@@ -486,6 +486,19 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 		return ret;
 	}
 
+	private static boolean isValidExtension(String ext) {
+		if (ext.equalsIgnoreCase("DAE"))
+			return true;
+		if (ext.equalsIgnoreCase("OBJ"))
+			return true;
+		if (ext.equalsIgnoreCase("JSM"))
+			return true;
+		if (ext.equalsIgnoreCase("JSB"))
+			return true;
+
+		return false;
+	}
+
 	public static MeshProtoKey FileNameToMeshProtoKey(URI fileURI) {
 		try {
 			URL meshURL = fileURI.toURL();
@@ -504,8 +517,7 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 						.getNextEntry()) != null;) {
 
 					String entryName = zipEntry.getName();
-					if (!Util.getFileExtention(entryName)
-							.equalsIgnoreCase("DAE"))
+					if (!isValidExtension(Util.getFileExtention(entryName)))
 						continue;
 
 					// This zipEntry is a collada file, no need to look
