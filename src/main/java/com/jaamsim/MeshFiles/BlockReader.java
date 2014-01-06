@@ -94,8 +94,15 @@ public class BlockReader {
 			if (remainingBytes > Integer.MAX_VALUE) throw new DataBlock.Error("Block is too big and broke java");
 
 			byte[] data = new byte[(int)remainingBytes];
-			bytesRead = wrappedIn.read(data);
-			if (bytesRead != remainingBytes) throw new DataBlock.Error("Unexpected End of stream");
+			int total = 0;
+			while (total < remainingBytes) {
+				bytesRead = wrappedIn.read(data, total, (int)(remainingBytes - total));
+
+				if (bytesRead == -1)
+					throw new DataBlock.Error("Unexpected End of stream");
+
+				total += bytesRead;
+			}
 
 			// Check the CRC and footer
 			bytesRead = in.read(readBuffer, 0, 4);
