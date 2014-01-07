@@ -67,6 +67,7 @@ public final class EventManager implements Runnable {
 	private final Thread eventManagerThread;
 
 	private long currentTick; // Master simulation time (long)
+	private long nextTick; // The next tick to execute events at
 
 	// Real time execution state
 	private boolean executeRealTime;  // TRUE if the simulation is to be executed in Real Time mode
@@ -112,6 +113,7 @@ public final class EventManager implements Runnable {
 
 		// Initialize and event lists and timekeeping variables
 		currentTick = 0;
+		nextTick = 0;
 		eventStack = new ArrayList<Event>();
 		conditionalList = new ArrayList<Process>();
 
@@ -129,6 +131,7 @@ public final class EventManager implements Runnable {
 
 	void clear() {
 		currentTick = 0;
+		nextTick = 0;
 		debuggingTime = Long.MAX_VALUE;
 		rebaseRealTime = true;
 
@@ -210,15 +213,8 @@ public final class EventManager implements Runnable {
 				}
 			}
 
-			// If the next event would require us to advance the time, check the
-			// conditonal events
-			if (eventStack.get(0).schedTick > currentTick)
-				this.evaluateConditionals();
-
-			// Is there another event at this simulation time?
-			long nextTick = eventStack.get(0).schedTick;
-			if (nextTick == currentTick) {
-
+			// If the next event is at the current tick, execute it
+			if (eventStack.get(0).schedTick == currentTick) {
 				// Remove the event from the future events
 				Event nextEvent = eventStack.remove(0);
 				this.retireEvent(nextEvent, STATE_EXITED);
@@ -231,62 +227,43 @@ public final class EventManager implements Runnable {
 				continue;
 			}
 
-
-			// Advance to the next event time
-
-			// Only the top-level eventManager should update the master simulation time
-			// Advance simulation time smoothly between events
-			if (executeRealTime) {
-				this.doRealTime(nextTick);
-
-				// Has the simulation been stopped and restarted
-				if( eventStack.get(0).schedTick == 0 )
+			// If the next event would require us to advance the time, check the
+			// conditonal events
+			if (eventStack.get(0).schedTick > nextTick) {
+				this.evaluateConditionals();
+				// If a conditional event was satisfied, we will have a new event at the
+				// beginning of the eventStack for the current tick, go back to the
+				// beginning, otherwise fall through to the time-advance
+				nextTick = eventStack.get(0).schedTick;
+				if (nextTick == currentTick)
 					continue;
 			}
 
-			// Update the displayed simulation time
-			FrameBox.timeUpdate( Process.ticksToSeconds(nextTick) );
-
-
-			// Set the present time for this eventManager to the next event time
-			if (eventStack.size() > 0 && eventStack.get(0).schedTick < nextTick) {
-				System.out.format("Big trouble:%s %d %d\n", name, nextTick, eventStack.get(0).schedTick);
-				nextTick = eventStack.get(0).schedTick;
-			}
-			currentTick = nextTick;
-		}
-	}
-
-	/**
-	 * Advance simulation time smoothly between events.
-	 * @param nextTick = internal simulation time for the next event
-	 */
-	private void doRealTime(long nextTick) {
-		double nextSimTime = Process.ticksToSeconds(nextTick);
-
-		// Loop until the next event time is reached
-		double simTime = this.calcSimTime(Process.ticksToSeconds(currentTick));
-		while( simTime < nextSimTime && executeRealTime ) {
-
-			// Update the displayed simulation time
-			FrameBox.timeUpdate(simTime);
-
-			synchronized (lockObject) {
-				try {
-					/*
-					 * Halt the thread for 20ms and allow timeouts to wake us.
-					 */
-					lockObject.wait(20);
+			// Advance to the next event time
+			if (executeRealTime) {
+				double nextSimTime = Process.ticksToSeconds(nextTick);
+				// Loop until the next event time is reached
+				double simTime = this.calcSimTime(Process.ticksToSeconds(currentTick));
+				if (simTime < nextSimTime) {
+					// Update the displayed simulation time
+					FrameBox.timeUpdate(simTime);
+					synchronized (lockObject) {
+						try {
+							/*
+							 * Halt the thread for 20ms and allow timeouts to wake us.
+							 */
+							lockObject.wait(20);
+						}
+						// Catch the exception when the thread is interrupted
+						catch( InterruptedException e ) {}
+					}
+					continue;
 				}
-				// Catch the exception when the thread is interrupted
-				catch( InterruptedException e ) {}
-
-				// Events have been stopped, stop waiting
-				if (eventState == EVENTS_STOPPED) return;
 			}
 
-			// Calculate the simulation time corresponding to the present wall clock time
-			simTime = this.calcSimTime(simTime);
+			// advance time
+			currentTick = nextTick;
+			FrameBox.timeUpdate(Process.ticksToSeconds(currentTick));
 		}
 	}
 
