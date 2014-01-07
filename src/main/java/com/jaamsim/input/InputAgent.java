@@ -1316,7 +1316,7 @@ public class InputAgent {
 			// Special path format, expand the resource
 			String specPath = path.substring(openBrace + 1, closeBrace);
 			if (specPath.equals("res")) {
-				ret = new URI(null, resRoot.toString() + path.substring(closeBrace+2), null).normalize();
+				ret = new URI(resRoot.getScheme(), resRoot.getSchemeSpecificPart() + path.substring(closeBrace+2), null).normalize();
 			}
 		} else {
 			URI pathURI = new URI(null, path, null).normalize();
