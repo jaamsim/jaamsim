@@ -132,9 +132,8 @@ public class OverlayString implements OverlayRenderable {
 	private void setupVAO(int contextID, Renderer renderer) {
 		GL2GL3 gl = renderer.getGL();
 
-		int[] vaos = new int[1];
-		gl.glGenVertexArrays(1, vaos, 0);
-		VAOMap.put(contextID, vaos[0]);
+		int vao = renderer.generateVAO(contextID, gl);
+		VAOMap.put(contextID, vao);
 	}
 
 	@Override

@@ -44,9 +44,8 @@ public class HullProto {
 	private void setupVAO(int contextID, Renderer renderer, int progHandle, int vertexBuffer, int indexBuffer) {
 		GL2GL3 gl = renderer.getGL();
 
-		int[] vaos = new int[1];
-		gl.glGenVertexArrays(1, vaos, 0);
-		int vao = vaos[0];
+		int vao = renderer.generateVAO(contextID, gl);
+
 		_vaoMap.put(contextID, vao);
 		gl.glBindVertexArray(vao);
 

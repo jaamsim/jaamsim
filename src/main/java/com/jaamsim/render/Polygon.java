@@ -251,9 +251,8 @@ public class Polygon implements Renderable {
 	private static void setupVAO(int contextID, Renderer renderer) {
 		GL2GL3 gl = renderer.getGL();
 
-		int[] vaos = new int[1];
-		gl.glGenVertexArrays(1, vaos, 0);
-		int vao = vaos[0];
+		int vao = renderer.generateVAO(contextID, gl);
+
 		_VAOMap.put(contextID, vao);
 		gl.glBindVertexArray(vao);
 

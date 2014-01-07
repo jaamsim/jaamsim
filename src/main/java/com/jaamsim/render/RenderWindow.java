@@ -40,6 +40,8 @@ public class RenderWindow {
 	private String _debugString = "";
 	private ArrayList<Long> _debugIDs = new ArrayList<Long>();
 
+	private ArrayList<Integer> _VAOs = new ArrayList<Integer>();
+
 	RenderWindow(int x, int y, int width, int height, String title, String name,
 	             GLContext sharedContext,
 	             GLCapabilitiesImmutable caps,
@@ -170,5 +172,13 @@ public class RenderWindow {
 
 	public WindowInteractionListener getWindowListener() {
 		return _appListener;
+	}
+
+	public void addVAO(int vao) {
+		_VAOs.add(vao);
+	}
+
+	public ArrayList<Integer> getVAOs() {
+		return _VAOs;
 	}
 }

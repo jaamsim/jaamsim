@@ -380,9 +380,7 @@ private void setupVAOForSubMesh(int contextID, SubMesh sub, Renderer renderer) {
 private void setupVAOForSubMeshImp(int contextID, int shaderID, SubMesh sub, Renderer renderer) {
 	GL2GL3 gl = renderer.getGL();
 
-	int[] vaos = new int[1];
-	gl.glGenVertexArrays(1, vaos, 0);
-	int vao = vaos[0];
+	int vao = renderer.generateVAO(contextID, gl);
 	sub.vaoMaps[shaderID].put(contextID, vao);
 	gl.glBindVertexArray(vao);
 
@@ -538,9 +536,7 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
 private void setupVAOForSubLine(int contextID, SubLine sub, Renderer renderer) {
 	GL2GL3 gl = renderer.getGL();
 
-	int[] vaos = new int[1];
-	gl.glGenVertexArrays(1, vaos, 0);
-	int vao = vaos[0];
+	int vao = renderer.generateVAO(contextID, gl);
 	sub.vaoMap.put(contextID, vao);
 	gl.glBindVertexArray(vao);
 

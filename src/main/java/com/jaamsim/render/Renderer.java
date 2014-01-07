@@ -786,6 +786,20 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		_fontCache.put(key, tf);
 	}
 
+	public int generateVAO(int contextID, GL2GL3 gl) {
+		assert(Thread.currentThread() == _renderThread);
+
+		int[] vaos = new int[1];
+		gl.glGenVertexArrays(1, vaos, 0);
+		int vao = vaos[0];
+
+		RenderWindow wind = _openWindows.get(contextID);
+		if (wind != null) {
+			wind.addVAO(vao);
+		}
+		return vao;
+	}
+
 	// Recreate the internal scene based on external input
 	private void updateRenderableScene() {
 		synchronized (_sceneLock) {
@@ -1034,6 +1048,21 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		@Override
 		public void dispose(GLAutoDrawable drawable) {
+			synchronized (_rendererLock) {
+
+				GL2GL3 gl = drawable.getGL().getGL2GL3();
+
+				ArrayList<Integer> vaoArray = _window.getVAOs();
+
+				int[] vaos = new int[vaoArray.size()];
+				int index = 0;
+				for (int vao : vaoArray) {
+					vaos[index++] = vao;
+				}
+				if (vaos.length > 0) {
+					gl.glDeleteVertexArrays(vaos.length, vaos, 0);
+				}
+			}
 		}
 
 		@Override
