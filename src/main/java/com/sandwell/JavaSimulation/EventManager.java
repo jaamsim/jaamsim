@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
@@ -735,5 +736,25 @@ public final class EventManager implements Runnable {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	void handleProcessError(Throwable t) {
+		if (t instanceof OutOfMemoryError) {
+			OutOfMemoryError e = (OutOfMemoryError)t;
+			System.err.println("Out of Memory use the -Xmx flag during execution for more memory");
+			System.err.println("Further debug information:");
+			System.err.println("Error: " + e.getMessage());
+			for (StackTraceElement each : e.getStackTrace())
+				System.out.println(each.toString());
+			GUIFrame.shutdown(1);
+			return;
+		}
+		else {
+			this.pause();
+			double curSec = Process.ticksToSeconds(currentTick);
+			System.err.format("EXCEPTION AT TIME: %f s%n", curSec);
+			ExceptionBox exp = ExceptionBox.instance();
+			exp.setError(t);
+		}
 	}
 }

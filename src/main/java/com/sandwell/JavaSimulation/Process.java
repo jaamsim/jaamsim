@@ -17,8 +17,6 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.ui.ExceptionBox;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Process is a subclass of Thread that can be managed by the discrete event
@@ -160,20 +158,8 @@ public class Process extends Thread {
 			// return to the beginning of the process loop
 			return;
 		}
-		catch (OutOfMemoryError e) {
-			System.err.println("Out of Memory use the -Xmx flag during execution for more memory");
-			System.err.println("Further debug information:");
-			System.err.println("Error: " + e.getMessage());
-			for (StackTraceElement each : e.getStackTrace())
-				System.out.println(each.toString());
-			GUIFrame.shutdown(1);
-		}
 		catch (Throwable e) {
-			Simulation.pause();
-			double curSec = Process.ticksToSeconds(eventManager.currentTick());
-			System.err.format("EXCEPTION AT TIME: %f s%n", curSec);
-			ExceptionBox exp = ExceptionBox.instance();
-			exp.setError(e);
+			eventManager.handleProcessError(e);
 		}
 	}
 
