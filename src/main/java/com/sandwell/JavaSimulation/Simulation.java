@@ -383,10 +383,6 @@ public class Simulation extends Entity {
 		return initializationTime.getValue() / 3600.0d;
 	}
 
-	public static final double getInternalSecs() {
-		return Process.ticksToSeconds(root.currentTick());
-	}
-
 	static void updateRealTime() {
 		root.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
 		GUIFrame.instance().updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
