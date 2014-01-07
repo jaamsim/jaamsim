@@ -169,21 +169,12 @@ public class Process extends Thread {
 			GUIFrame.shutdown(1);
 		}
 		catch (Throwable e) {
-			this.makeExceptionBox(e);
+			Simulation.pause();
+			double curSec = Process.ticksToSeconds(eventManager.currentTick());
+			System.err.format("EXCEPTION AT TIME: %f s%n", curSec);
+			ExceptionBox exp = ExceptionBox.instance();
+			exp.setError(e);
 		}
-	}
-
-
-	/**
-	 * Create an error message box
-	 */
-	private void makeExceptionBox(Throwable e) {
-		// pause the simulation on a fatal exception
-		Simulation.pause();
-		double curTime = eventManager.currentTick() / Process.getSimTimeFactor();
-		System.err.println("EXCEPTION AT TIME: " + curTime);
-		ExceptionBox exp = ExceptionBox.instance();
-		exp.setError(e);
 	}
 
 	/**
