@@ -14,28 +14,33 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation.EntityInput;
+import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.IntegerInput;
+import com.sandwell.JavaSimulation.IntegerListInput;
+import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class Release extends LinkedComponent {
 
-	@Keyword(description = "The Resource to be released.",
+	@Keyword(description = "The Resource(s) to be released.",
 	         example = "Release-1 Resource { Resource-1 }")
-	private final EntityInput<Resource> resource;
+	private final EntityListInput<Resource> resourceList;
 
-	@Keyword(description = "The number of resource units to release.",
+	@Keyword(description = "The number of units to release from the Resource(s).",
 	         example = "Release-1 NumberOfUnits { 2 }")
-	private final IntegerInput numberOfUnits;
+	private final IntegerListInput numberOfUnitsList;
 
 	{
-		resource = new EntityInput<Resource>(Resource.class, "Resource", "Key Inputs", null);
-		this.addInput( resource, true);
+		resourceList = new EntityListInput<Resource>(Resource.class, "Resource", "Key Inputs", null);
+		this.addInput( resourceList, true);
 
-		numberOfUnits = new IntegerInput("NumberOfUnits", "Key Inputs", 1);
-		this.addInput( numberOfUnits, true);
+		IntegerVector defNum = new IntegerVector();
+		defNum.add(1);
+		numberOfUnitsList = new IntegerListInput("NumberOfUnits", "Key Inputs", defNum);
+		this.addInput( numberOfUnitsList, true);
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public class Release extends LinkedComponent {
 		super.validate();
 
 		// Confirm that the resource has been specified
-		if( resource.getValue() == null ) {
+		if( resourceList.getValue() == null ) {
 			throw new InputErrorException( "The keyword Resource must be set." );
 		}
 	}
@@ -55,15 +60,27 @@ public class Release extends LinkedComponent {
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
 		super.addDisplayEntity(ent);
-
-		Resource res = resource.getValue();
-		int n = numberOfUnits.getValue();
-
-		res.release(n);
-
-
-
+		this.releaseResources();
 		this.sendToNextComponent( ent );
+	}
+
+	/**
+	 * Release the specified Resources.
+	 * @return
+	 */
+	public void releaseResources() {
+		ArrayList<Resource> resList = resourceList.getValue();
+		IntegerVector numberList = numberOfUnitsList.getValue();
+
+		// Release the Resources
+		for(int i=0; i<resList.size(); i++) {
+			resList.get(i).release(numberList.get(i));
+		}
+
+		// Notify any Seize objects that are waiting for these Resources
+		for(int i=0; i<resList.size(); i++) {
+			resList.get(i).notifySeizeObjects();
+		}
 	}
 
 }

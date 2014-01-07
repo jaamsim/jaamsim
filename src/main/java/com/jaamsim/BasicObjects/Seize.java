@@ -14,33 +14,39 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.EntityInput;
+import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.IntegerInput;
+import com.sandwell.JavaSimulation.IntegerListInput;
+import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;
 
 public class Seize extends LinkedComponent {
 
-	@Keyword(description = "The Resource to be seized.",
-	         example = "Seize-1 Resource { Resource-1 }")
-	private final EntityInput<Resource> resource;
+	@Keyword(description = "The Resource(s) to be seized.",
+	         example = "Seize-1 Resource { Resource-1 Resource-2 }")
+	private final EntityListInput<Resource> resourceList;
 
-	@Keyword(description = "The number of resource units to seize.",
-	         example = "Seize-1 NumberOfUnits { 2 }")
-	private final IntegerInput numberOfUnits;
+	@Keyword(description = "The number of units to seize from the Resource(s).",
+	         example = "Seize-1 NumberOfUnits { 2 1 }")
+	private final IntegerListInput numberOfUnitsList;
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         example = "Seize-1 WaitQueue { Queue-1 }")
 	private final EntityInput<Queue> waitQueue;
 
 	{
-		resource = new EntityInput<Resource>(Resource.class, "Resource", "Key Inputs", null);
-		this.addInput( resource, true);
+		resourceList = new EntityListInput<Resource>(Resource.class, "Resource", "Key Inputs", null);
+		this.addInput( resourceList, true);
 
-		numberOfUnits = new IntegerInput("NumberOfUnits", "Key Inputs", 1);
-		this.addInput( numberOfUnits, true);
+		IntegerVector defNum = new IntegerVector();
+		defNum.add(1);
+		numberOfUnitsList = new IntegerListInput("NumberOfUnits", "Key Inputs", defNum);
+		this.addInput( numberOfUnitsList, true);
 
 		waitQueue = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput( waitQueue, true);
@@ -56,7 +62,7 @@ public class Seize extends LinkedComponent {
 		}
 
 		// Confirm that the resource has been specified
-		if( resource.getValue() == null ) {
+		if( resourceList.getValue() == null ) {
 			throw new InputErrorException( "The keyword Resource must be set." );
 		}
 	}
@@ -68,20 +74,43 @@ public class Seize extends LinkedComponent {
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
 		super.addDisplayEntity(ent);
-
-		Resource res = resource.getValue();
-		int n = numberOfUnits.getValue();
 		Queue queue = waitQueue.getValue();
 
 		// If other entities are queued already or insufficient units are available, then add the entity to the queue
-		if( queue.getCount() > 0 || res.getAvailableUnits() < n ) {
+		if( queue.getCount() > 0 || !this.checkResources() ) {
 			queue.addLast( ent );
 			return;
 		}
 
 		// If sufficient units are available, then seize them and pass the entity to the next component
-		res.seize(n);
+		this.seizeResources();
 		this.sendToNextComponent( ent );
+	}
+
+	/**
+	 * Determine whether the required Resources are available.
+	 * @return = TRUE if all the resources are available
+	 */
+	public boolean checkResources() {
+		ArrayList<Resource> resList = resourceList.getValue();
+		IntegerVector numberList = numberOfUnitsList.getValue();
+		for(int i=0; i<resList.size(); i++) {
+			if( resList.get(i).getAvailableUnits() < numberList.get(i) )
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Seize the required Resources.
+	 * @return
+	 */
+	public void seizeResources() {
+		ArrayList<Resource> resList = resourceList.getValue();
+		IntegerVector numberList = numberOfUnitsList.getValue();
+		for(int i=0; i<resList.size(); i++) {
+			resList.get(i).seize(numberList.get(i));
+		}
 	}
 
 	/**
@@ -90,26 +119,24 @@ public class Seize extends LinkedComponent {
 	 */
 	public void processQueuedEntity(int i) {
 
-		Resource res = resource.getValue();
-		int n = numberOfUnits.getValue();
-
-		if( res.getAvailableUnits() >= n ) {
-			res.seize(n);
+		if( this.checkResources() ) {
+			this.seizeResources();
 			DisplayEntity ent = waitQueue.getValue().remove(i);
 			this.sendToNextComponent( ent );
 		}
-	}
-
-	public Resource getResource() {
-		return resource.getValue();
 	}
 
 	public Queue getQueue() {
 		return waitQueue.getValue();
 	}
 
-	public int getNumberOfUnits() {
-		return numberOfUnits.getValue();
+	/**
+	 * Is the specified Resource required by this Seize object?
+	 * @param res = the specified Resource.
+	 * @return = TRUE if the Resource is required.
+	 */
+	public boolean requiresResource(Resource res) {
+		return resourceList.getValue().contains(res);
 	}
 
 }

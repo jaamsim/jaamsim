@@ -74,7 +74,7 @@ public class Resource extends DisplayEntity {
 	@Override
 	public void validate() {
 		for (Seize ent : Entity.getClonesOf(Seize.class)) {
-			if (ent.getResource() == this)
+			if( ent.requiresResource(this) )
 				return;
 		}
 		throw new InputErrorException( "At least one Seize object must use this resource." );
@@ -92,7 +92,7 @@ public class Resource extends DisplayEntity {
 		// Prepare a list of the Seize objects that use this resource
 		seizeList.clear();
 		for (Seize ent : Entity.getClonesOf(Seize.class)) {
-			if (ent.getResource() == this)
+			if( ent.requiresResource(this) )
 				seizeList.add(ent);
 		}
 	}
@@ -123,6 +123,12 @@ public class Resource extends DisplayEntity {
 		this.updateStatistics(unitsInUse, unitsInUse-n);
 		unitsInUse -= n;
 		unitsReleased += n;
+	}
+
+	/**
+	 * Notify all the Seize object that the number of available units of this Resource has increased.
+	 */
+	public void notifySeizeObjects() {
 
 		// Notify the Seize object(s) that can use the released units
 		int cap = (int) capacity.getValue().getNextSample(this.getSimTime());
@@ -142,7 +148,7 @@ public class Resource extends DisplayEntity {
 			}
 
 			// Ensure that the number of units needed by selected Seize object can be provided
-			if( selection == null || selection.getNumberOfUnits() > ( cap - unitsInUse ) )
+			if( selection == null || !selection.checkResources() )
 				return;
 			selection.processQueuedEntity(0);
 		}
