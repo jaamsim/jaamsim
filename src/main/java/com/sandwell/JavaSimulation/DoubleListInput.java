@@ -33,21 +33,12 @@ public class DoubleListInput extends ListInput<DoubleVector> {
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
-
 		// Parse the inputs
 		DoubleVector temp = Input.parseDoubleVector( input, minValue, maxValue, unitString);
-
-		// Test the input for validity
-		// (If there is more than one value, and the last one is not a number, then assume it is a unit)
-		StringVector numericInput = new StringVector(input);
-		if( input.size() > 1 && !Tester.isDouble( input.get( input.size()-1 ) ) ) {
-			numericInput.remove(numericInput.size()-1);
-		}
-		Input.assertCountRange( numericInput, minCount, maxCount);
-		Input.assertCount( numericInput, validCounts);
-		if( ! Double.isNaN(sumValue) ) {
-			Input.assertSumTolerance( temp, sumValue, 0.001d);
-		}
+		Input.assertCountRange( temp, minCount, maxCount);
+		Input.assertCount( temp, validCounts);
+		if (!Double.isNaN(sumValue))
+			Input.assertSumTolerance(temp, sumValue, 0.001d);
 
 		// Inputs are valid
 		value = temp;

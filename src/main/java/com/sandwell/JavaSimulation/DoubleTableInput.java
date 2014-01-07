@@ -16,9 +16,6 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.InputAgent;
-import com.jaamsim.units.Unit;
-
 public class DoubleTableInput extends Input<ArrayList<DoubleVector>> {
 	protected double minValue = Double.NEGATIVE_INFINITY;
 	protected double maxValue = Double.POSITIVE_INFINITY;
@@ -36,45 +33,15 @@ public class DoubleTableInput extends Input<ArrayList<DoubleVector>> {
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
 		ArrayList<StringVector> temp = Util.splitStringVectorByBraces(input);
-
-		value = new ArrayList<DoubleVector>(temp.size());
+		ArrayList<DoubleVector> tab = new ArrayList<DoubleVector>(temp.size());
 		for (StringVector each : temp) {
-
-			DoubleVector vec;
-
-			// If there is more than one value, and the last one is not a number, then assume it is a unit
-			if( each.size() > 1 && !Tester.isDouble( each.get( each.size()-1 ) ) ) {
-
-				// Determine the units
-				Unit unit = Input.parseUnits(each.get(each.size()- 1));
-
-				// Determine the default units
-				Unit defaultUnit = Input.tryParseEntity( unitString.replaceAll("[()]", "").trim(), Unit.class );
-				if( defaultUnit == null ) {
-					throw new InputErrorException( "Could not determine default units " + unitString );
-				}
-
-				if (defaultUnit.getClass() != unit.getClass())
-					throw new InputErrorException( "Cannot convert from %s to %s", defaultUnit.getName(), unit.getName());
-				// Determine the conversion factor to the default units
-				double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
-
-				vec = Input.parseDoubleVector(each.subString(0,each.size()-2), minValue, maxValue, conversionFactor);
-			}
-			else {
-				vec = Input.parseDoubleVector(each, minValue, maxValue);
-
-				if( unitString.length() > 0 )
-					InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
-
-			}
-
-			if( ! Double.isNaN(sumValue) ) {
+			DoubleVector vec = Input.parseDoubleVector(each, minValue, maxValue, unitString);
+			if (!Double.isNaN(sumValue))
 				Input.assertSumTolerance(vec, sumValue, 0.001d);
-			}
 
-			value.add(vec);
+			tab.add(vec);
 		}
+		value = tab;
 	}
 
 	public void setValidRange(double min, double max) {
