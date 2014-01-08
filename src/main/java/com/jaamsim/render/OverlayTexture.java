@@ -20,6 +20,8 @@ import java.util.HashMap;
 
 import javax.media.opengl.GL2GL3;
 
+import com.jaamsim.math.Ray;
+
 public class OverlayTexture implements OverlayRenderable {
 
 	// Position and size, specified in pixels, origin at the bottom left
@@ -131,7 +133,7 @@ public class OverlayTexture implements OverlayRenderable {
 
 	@Override
 	public void render(int contextID, Renderer renderer,
-			double windowWidth, double windowHeight) {
+			double windowWidth, double windowHeight, Camera cam, Ray pickRay) {
 
 		if (!staticInit) {
 			initStaticBuffers(renderer);
@@ -197,7 +199,7 @@ public class OverlayTexture implements OverlayRenderable {
 	}
 
 	@Override
-	public boolean renderForView(int viewID) {
+	public boolean renderForView(int viewID, Camera cam) {
 		return _visInfo.isVisible(viewID);
 	}
 }

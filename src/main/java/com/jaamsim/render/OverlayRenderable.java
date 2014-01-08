@@ -14,6 +14,8 @@
  */
 package com.jaamsim.render;
 
+import com.jaamsim.math.Ray;
+
 
 /**
  * OverlayRenderable is for renderable objects that render to a screen space overlay
@@ -29,15 +31,17 @@ public interface OverlayRenderable {
 	 * @param renderer
 	 * @param windowWidth - the width of the current window
 	 * @param windowHeight - the height of the current window
+	 * @param cam - the camera object for the current view
+	 * @param pickRay - the ray representing the current mouse projected into the 3D scene, may be null
 	 */
 	public void render(int contextID, Renderer renderer,
-	                   double windowWidth, double windowHeight);
+	                   double windowWidth, double windowHeight, Camera cam, Ray pickRay);
 
 	/**
 	 * Returns if this renderable should be rendered for the listed window, most implementations will hard code this to true
 	 * @param windowID - the ID of the window be queried about
 	 * @return - a boolean indicating this renderable is visible on that window
 	 */
-	public boolean renderForView(int windowID);
+	public boolean renderForView(int windowID, Camera cam);
 
 }

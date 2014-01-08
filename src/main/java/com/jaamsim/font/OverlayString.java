@@ -19,7 +19,9 @@ import java.util.HashMap;
 import javax.media.opengl.GL2GL3;
 
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Ray;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.render.Camera;
 import com.jaamsim.render.OverlayRenderable;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
@@ -57,7 +59,7 @@ public class OverlayString implements OverlayRenderable {
 
 	@Override
 	public void render(int contextID, Renderer renderer,
-		double windowWidth, double windowHeight) {
+		double windowWidth, double windowHeight, Camera cam, Ray pickRay) {
 
 
 		Vec3d renderedSize = _font.getStringSize(_height, _contents);
@@ -137,7 +139,7 @@ public class OverlayString implements OverlayRenderable {
 	}
 
 	@Override
-	public boolean renderForView(int viewID) {
+	public boolean renderForView(int viewID, Camera cam) {
 		return _visInfo.isVisible(viewID);
 	}
 }

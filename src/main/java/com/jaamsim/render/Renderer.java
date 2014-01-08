@@ -1119,13 +1119,13 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
 					                                     10, 10, 15, false, false, DisplayModel.ALWAYS);
 					os.render(_window.getWindowID(), Renderer.this,
-					          _window.getViewableWidth(), _window.getViewableHeight());
+					          _window.getViewableWidth(), _window.getViewableHeight(), cam, null);
 
 					// Also draw this window's debug string
 					os = new OverlayString(defFont, _window.getDebugString(), ColourInput.BLACK,
 					                       10, 10, 30, false, false, DisplayModel.ALWAYS);
 					os.render(_window.getWindowID(), Renderer.this,
-					          _window.getViewableWidth(), _window.getViewableHeight());
+					          _window.getViewableWidth(), _window.getViewableHeight(), cam, null);
 
 					_drawContext = null;
 					gl.glEnable(GL2GL3.GL_DEPTH_TEST);
@@ -1633,11 +1633,11 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 		if (overlay != null) {
 			for (OverlayRenderable r : overlay) {
-				if (!r.renderForView(viewID)) {
+				if (!r.renderForView(viewID, cam)) {
 					continue;
 				}
 
-				r.render(contextID, this, width, height);
+				r.render(contextID, this, width, height, cam, pickRay);
 			}
 		}
 
