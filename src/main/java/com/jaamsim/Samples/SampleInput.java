@@ -36,7 +36,7 @@ public class SampleInput extends Input<SampleProvider> {
 
 	public void setUnitType(Class<? extends Unit> u) {
 		unitType = u;
-		if( defValue != null )
+		if (defValue instanceof SampleConstant)
 			((SampleConstant)defValue).setUnitType(unitType);
 	}
 

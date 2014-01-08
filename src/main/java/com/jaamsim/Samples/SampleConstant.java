@@ -30,7 +30,7 @@ public class SampleConstant implements SampleProvider {
 		this.val = val;
 	}
 
-	public void setUnitType(Class<? extends Unit> ut) {
+	void setUnitType(Class<? extends Unit> ut) {
 		unitType = ut;
 	}
 
