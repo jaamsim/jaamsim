@@ -60,7 +60,7 @@ public class OutputInput<T> extends Input<String> {
 
 		Class<?> retClass = out.getReturnType();
 		if( input.size() == 2 ) {
-			if ( klass != Object.class && !out.isNumericValue() )
+			if ( klass != Object.class && !klass.isAssignableFrom(retClass) )
 				throw new InputErrorException("OutputInput class mismatch. Expected: %s, got: %s", klass.toString(), retClass.toString());
 		}
 		else {
