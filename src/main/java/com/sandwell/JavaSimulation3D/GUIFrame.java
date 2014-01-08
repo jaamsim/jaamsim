@@ -263,7 +263,9 @@ public class GUIFrame extends JFrame {
 
 		// Read the autoload configuration file
 		InputAgent.clear();
+		InputAgent.setRecordEdits(false);
 		InputAgent.readResource("inputs/autoload.cfg");
+		InputAgent.setRecordEdits(true);
 	}
 
 	public void initializeMenus() {
@@ -1052,10 +1054,6 @@ public class GUIFrame extends JFrame {
 
 	public void updateForSimulationState(int state) {
 		simState = state;
-		if (state >= SIM_STATE_CONFIGURED)
-			InputAgent.setRecordEdits(true);
-		else
-			InputAgent.setRecordEdits(false);
 
 		switch( getSimState() ) {
 			case SIM_STATE_LOADED:
@@ -1327,6 +1325,7 @@ public class GUIFrame extends JFrame {
 		gui.setVisible(true);
 		GUIFrame.calcWindowDefaults();
 
+		InputAgent.setRecordEdits(false);
 		InputAgent.readResource("inputs/autoload.cfg");
 
 		if( configFiles.size() == 0 ) {
@@ -1340,6 +1339,7 @@ public class GUIFrame extends JFrame {
 			continue;
 		}
 
+		InputAgent.setRecordEdits(true);
 		if(!quiet && !batch) {
 			displayWindows(false);
 		}

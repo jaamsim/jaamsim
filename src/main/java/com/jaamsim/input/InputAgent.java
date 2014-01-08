@@ -758,7 +758,9 @@ public class InputAgent {
 				File temp = new File(chosenFileName);
 
 				if( temp.isAbsolute() ) {
+					InputAgent.setRecordEdits(false);
 					InputAgent.configure(gui, chosenFileName);
+					InputAgent.setRecordEdits(true);
 				}
 				else {
 					System.out.printf("Error: loading a relative file: %s\n", chosenFileName);
