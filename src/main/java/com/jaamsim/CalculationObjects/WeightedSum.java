@@ -54,6 +54,7 @@ public class WeightedSum extends DoubleCalculation {
 		this.addInput( coefficientList, true);
 	}
 
+	@Override
 	protected void setUnitType(Class<? extends Unit> ut) {
 		super.setUnitType(ut);
 		inputValueList.setUnitType(ut);
