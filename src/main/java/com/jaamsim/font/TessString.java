@@ -216,7 +216,8 @@ public void renderTransparent(int contextID, Renderer renderer, Camera cam, Ray 
 }
 
 @Override
-public boolean renderForView(int viewID, double dist) {
+public boolean renderForView(int viewID, Camera cam) {
+	double dist = cam.distToBounds(getBoundsRef());
 	return _visInfo.isVisible(viewID, dist);
 }
 } // class

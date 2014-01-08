@@ -274,7 +274,8 @@ public class Polygon implements Renderable {
 	}
 
 	@Override
-	public boolean renderForView(int viewID, double dist) {
+	public boolean renderForView(int viewID, Camera cam) {
+		double dist = cam.distToBounds(getBoundsRef());
 		return _visInfo.isVisible(viewID, dist);
 	}
 }

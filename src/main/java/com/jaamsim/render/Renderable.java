@@ -40,7 +40,7 @@ public boolean hasTransparent();
 	 * @param dist - the distance this object is from the camera. This is used for LOD renderables
 	 * @return - a boolean indicating this renderable is visible on that window
  */
-public boolean renderForView(int viewID, double dist);
+public boolean renderForView(int viewID, Camera cam);
 
 /**
  * Test for collision with a ray in global space, return the distance to a collision,

@@ -841,15 +841,25 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			return ret;
 		}
 
+
+		Camera cam = null;
+		for (RenderWindow wind : _openWindows.values()) {
+			if (wind.getViewID() == viewID) {
+				cam = wind.getCameraRef();
+				break;
+			}
+		}
+		if (cam == null) {
+			// Invalid view
+			return ret;
+		}
+
 		synchronized (_sceneLock) {
 			for (Renderable r : _currentScene) {
 				double rayDist = r.getCollisionDist(pickRay, precise);
 				if (rayDist >= 0.0) {
 
-					// Also check that this is visible
-					double centerDist = pickRay.getDistAlongRay(r.getBoundsRef().center);
-
-					if (r.renderForView(viewID, centerDist)) {
+					if (r.renderForView(viewID, cam)) {
 						ret.add(new PickResult(rayDist, r.getPickingID()));
 					}
 				}
@@ -1554,7 +1564,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 			AABB bounds = r.getBoundsRef();
 			double dist = cam.distToBounds(bounds);
 
-			if (!r.renderForView(viewID, dist)) {
+			if (!r.renderForView(viewID, cam)) {
 				continue;
 			}
 
