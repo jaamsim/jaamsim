@@ -920,6 +920,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 		}
 
 		w.getAWTFrameRef().setVisible(false);
+		w.getGLWindowRef().destroy();
 
 		// Fire the window closing callback
 		w.getWindowListener().windowClosing();
