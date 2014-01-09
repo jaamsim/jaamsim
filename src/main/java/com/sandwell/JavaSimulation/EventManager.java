@@ -375,21 +375,6 @@ public final class EventManager implements Runnable {
 	}
 
 	/**
-	 * Schedules a future event to occur with a given priority.  Lower priority
-	 * events will be executed preferentially over higher priority.  This is
-	 * by lower priority events being placed higher on the event stack.
-	 * @param waitLength the length of time from now to schedule the event.
-	 * @param eventPriority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
-	 */
-	void scheduleWait(long waitLength, int eventPriority) {
-		// Test for zero duration scheduled wait length
-		if (waitLength == 0)
-			return;
-
-		waitTicks(waitLength, eventPriority);
-	}
-
-	/**
 	 * Adds a new event to the event stack.  This method will add an event to
 	 * the event stack based on its scheduled time, priority, and in stack
 	 * order otherwise.  Called from scheduleWait in order to abstract the

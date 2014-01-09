@@ -452,7 +452,9 @@ public class Entity {
 	 */
 	public final void scheduleWait(double duration) {
 		long waitLength = calculateDelayLength(duration);
-		getEventManager().scheduleWait(waitLength, EventManager.PRIO_DEFAULT);
+		if (waitLength == 0)
+			return;
+		getEventManager().waitTicks(waitLength, EventManager.PRIO_DEFAULT);
 	}
 
 	/**
@@ -464,7 +466,9 @@ public class Entity {
 	 */
 	public final void scheduleWait( double duration, int priority ) {
 		long waitLength = calculateDelayLength(duration);
-		getEventManager().scheduleWait(waitLength, priority);
+		if (waitLength == 0)
+			return;
+		getEventManager().waitTicks(waitLength, priority);
 	}
 
 	/**
