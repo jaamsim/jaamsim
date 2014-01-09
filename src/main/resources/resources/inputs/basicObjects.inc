@@ -42,8 +42,8 @@ ResourceIconModel       ImageFile { '<res>/images/Resource-256.png' }    Transpa
 SeizeIconModel          ImageFile { '<res>/images/Seize-256.png'  }      Transparent { TRUE }
 ReleaseIconModel        ImageFile { '<res>/images/Release-256.png' }     Transparent { TRUE }
 BranchIconModel         ImageFile { '<res>/images/Branch-256.png' }      Transparent { TRUE }
-EntityGateIconModel     ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
-EntitySignalIconModel   ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
+EntityGateIconModel     ImageFile { '<res>/images/Gate-256.png' }        Transparent { TRUE }
+EntitySignalIconModel   ImageFile { '<res>/images/Signal-256.png' }      Transparent { TRUE }
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
 
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
