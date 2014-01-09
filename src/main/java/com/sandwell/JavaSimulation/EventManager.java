@@ -177,10 +177,9 @@ public final class EventManager implements Runnable {
 	 */
 	@Override
 	public void run() {
-
-		// Loop continuously
-		while (true) {
-			synchronized (lockObject) {
+		synchronized (lockObject) {
+			// Loop continuously
+			while (true) {
 				if (eventStack.isEmpty() ||
 				    eventStack.get(0).schedTick >= debuggingTime) {
 					eventState = EVENTS_STOPPED;
@@ -191,26 +190,24 @@ public final class EventManager implements Runnable {
 					this.threadWait();
 					continue;
 				}
-			}
 
-			// If the next event is at the current tick, execute it
-			if (eventStack.get(0).schedTick == currentTick) {
-				// Remove the event from the future events
-				Event nextEvent = eventStack.remove(0);
-				this.retireEvent(nextEvent, STATE_EXITED);
-				Process p = nextEvent.process;
-				if (p == null)
-					p = Process.allocate(this, nextEvent.target);
-				// Pass control to this event's thread
-				p.setNextProcess(null);
-				switchThread(p);
-				continue;
-			}
+				// If the next event is at the current tick, execute it
+				if (eventStack.get(0).schedTick == currentTick) {
+					// Remove the event from the future events
+					Event nextEvent = eventStack.remove(0);
+					this.retireEvent(nextEvent, STATE_EXITED);
+					Process p = nextEvent.process;
+					if (p == null)
+						p = Process.allocate(this, nextEvent.target);
+					// Pass control to this event's thread
+					p.setNextProcess(null);
+					switchThread(p);
+					continue;
+				}
 
-			// If the next event would require us to advance the time, check the
-			// conditonal events
-			if (eventStack.get(0).schedTick > nextTick) {
-				synchronized (lockObject) {
+				// If the next event would require us to advance the time, check the
+				// conditonal events
+				if (eventStack.get(0).schedTick > nextTick) {
 					if (conditionalList.size() > 0) {
 						// Loop through the conditions in reverse order and add to the linked
 						// list of active threads
@@ -223,41 +220,33 @@ public final class EventManager implements Runnable {
 						// at this point, nextThread == conditionalList.get(0)
 						switchThread(conditionalList.get(0));
 					}
+
+					// If a conditional event was satisfied, we will have a new event at the
+					// beginning of the eventStack for the current tick, go back to the
+					// beginning, otherwise fall through to the time-advance
+					nextTick = eventStack.get(0).schedTick;
+					if (nextTick == currentTick)
+						continue;
 				}
 
-				// If a conditional event was satisfied, we will have a new event at the
-				// beginning of the eventStack for the current tick, go back to the
-				// beginning, otherwise fall through to the time-advance
-				nextTick = eventStack.get(0).schedTick;
-				if (nextTick == currentTick)
-					continue;
-			}
-
-			// Advance to the next event time
-			if (executeRealTime) {
-				double nextSimTime = Process.ticksToSeconds(nextTick);
-				// Loop until the next event time is reached
-				double simTime = this.calcSimTime(Process.ticksToSeconds(currentTick));
-				if (simTime < nextSimTime) {
-					// Update the displayed simulation time
-					FrameBox.timeUpdate(simTime);
-					synchronized (lockObject) {
-						try {
-							/*
-							 * Halt the thread for 20ms and allow timeouts to wake us.
-							 */
-							lockObject.wait(20);
-						}
-						// Catch the exception when the thread is interrupted
-						catch( InterruptedException e ) {}
+				// Advance to the next event time
+				if (executeRealTime) {
+					double nextSimTime = Process.ticksToSeconds(nextTick);
+					// Loop until the next event time is reached
+					double simTime = this.calcSimTime(Process.ticksToSeconds(currentTick));
+					if (simTime < nextSimTime) {
+						// Update the displayed simulation time
+						FrameBox.timeUpdate(simTime);
+						//Halt the thread for 20ms and then reevaluate the loop
+						try { lockObject.wait(20); } catch( InterruptedException e ) {}
+						continue;
 					}
-					continue;
 				}
-			}
 
-			// advance time
-			currentTick = nextTick;
-			FrameBox.timeUpdate(Process.ticksToSeconds(currentTick));
+				// advance time
+				currentTick = nextTick;
+				FrameBox.timeUpdate(Process.ticksToSeconds(currentTick));
+			}
 		}
 	}
 
