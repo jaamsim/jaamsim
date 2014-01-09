@@ -230,24 +230,6 @@ public class Graph extends GraphBasics  {
 		}
 	}
 
-	private static class ProcessGraphTarget extends ProcessTarget {
-		final Graph graph;
-
-		ProcessGraphTarget(Graph graph) {
-			this.graph = graph;
-		}
-
-		@Override
-		public String getDescription() {
-			return graph.getInputName() + ".processGraph";
-		}
-
-		@Override
-		public void process() {
-			graph.processGraph();
-		}
-	}
-
 	@Override
 	public void startUp() {
 		super.startUp();
@@ -265,7 +247,7 @@ public class Graph extends GraphBasics  {
 			info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
 		}
 
-		Process.start(new ProcessGraphTarget(this));
+		Process.start(processGraph);
 	}
 
 	/**
@@ -304,6 +286,25 @@ public class Graph extends GraphBasics  {
 	 * A hook method for descendant graph types to grab some processing time
 	 */
 	protected void extraProcessing() {}
+
+	private static class ProcessGraphTarget extends ProcessTarget {
+		final Graph graph;
+
+		ProcessGraphTarget(Graph graph) {
+			this.graph = graph;
+		}
+
+		@Override
+		public String getDescription() {
+			return graph.getInputName() + ".processGraph";
+		}
+
+		@Override
+		public void process() {
+			graph.processGraph();
+		}
+	}
+	private final ProcessTarget processGraph = new ProcessGraphTarget(this);
 
 	/**
 	 * Calculate values for the data series on the graph
