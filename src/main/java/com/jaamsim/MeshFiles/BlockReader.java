@@ -14,6 +14,7 @@
  */
 package com.jaamsim.MeshFiles;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,16 +34,14 @@ public class BlockReader {
 			byte[] readBuffer = new byte[128];
 
 			// Read the header
-			int bytesRead = in.read(readBuffer, 0, 4);
-			if (bytesRead != 4) throw new DataBlock.Error("Unexpected End of stream");
+			readLoop(in, readBuffer, 0, 4);
 			for (int i = 0; i < 4; ++i) {
 				if (readBuffer[i] != BlockUtils.header[i])
 					throw new DataBlock.Error("Missing block header");
 			}
 
 			// Read the header CRC
-			bytesRead = in.read(readBuffer, 0, 4);
-			if (bytesRead != 4) throw new DataBlock.Error("Unexpected End of stream");
+			readLoop(in, readBuffer, 0, 4);
 			int headerValue = BlockUtils.intFromBytes(readBuffer, 0);
 
 			CRC32 headerCRC = new CRC32();
@@ -64,15 +63,13 @@ public class BlockReader {
 			String blockName = new String(readBuffer, 0, stringSize, "UTF-8");
 
 			// Read the number of children
-			bytesRead = in.read(readBuffer, 0, 4);
-			if (bytesRead != 4) throw new DataBlock.Error("Unexpected End of stream");
+			readLoop(in, readBuffer, 0, 4);
 
 			int numChildren = BlockUtils.intFromBytes(readBuffer, 0);
 			headerCRC.update(readBuffer, 0, 4);
 
 			// Read the block size
-			bytesRead = in.read(readBuffer, 0, 8);
-			if (bytesRead != 8) throw new DataBlock.Error("Unexpected End of stream");
+			readLoop(in, readBuffer, 0, 8);
 
 			long payloadSize = BlockUtils.longFromBytes(readBuffer, 0);
 			headerCRC.update(readBuffer, 0, 8);
@@ -94,19 +91,10 @@ public class BlockReader {
 			if (remainingBytes > Integer.MAX_VALUE) throw new DataBlock.Error("Block is too big and broke java");
 
 			byte[] data = new byte[(int)remainingBytes];
-			int total = 0;
-			while (total < remainingBytes) {
-				bytesRead = wrappedIn.read(data, total, (int)(remainingBytes - total));
-
-				if (bytesRead == -1)
-					throw new DataBlock.Error("Unexpected End of stream");
-
-				total += bytesRead;
-			}
+			readLoop(in, data, 0, (int)remainingBytes);
 
 			// Check the CRC and footer
-			bytesRead = in.read(readBuffer, 0, 4);
-			if (bytesRead != 4) throw new DataBlock.Error("Unexpected End of stream");
+			readLoop(in, readBuffer, 0, 4);
 
 			if (CHECK_PAYLOAD_CRC) {
 				int payloadValue = BlockUtils.intFromBytes(readBuffer, 0);
@@ -115,8 +103,7 @@ public class BlockReader {
 			}
 
 			// Finally read the footer
-			bytesRead = in.read(readBuffer, 0, 4);
-			if (bytesRead != 4) throw new DataBlock.Error("Unexpected End of stream");
+			readLoop(in, readBuffer, 0, 4);
 			for (int i = 0; i < 4; ++i) {
 				if (readBuffer[i] != BlockUtils.footer[i])
 					throw new DataBlock.Error("Missing block header");
@@ -128,6 +115,22 @@ public class BlockReader {
 		} catch (Exception e) {
 			throw new DataBlock.Error(e.getMessage());
 		}
+	}
 
+	/**
+	 * Wrapper around InputStream.read() that keeps reading until the requested amount is found, or EOF
+	 * Throws on error
+	 */
+	private static void readLoop(InputStream in, byte[] buffer, int offset, int size) throws IOException {
+		int total = 0;
+		int bytesRead;
+		while (total < size) {
+			bytesRead = in.read(buffer, total, size - total);
+
+			if (bytesRead == -1)
+				throw new DataBlock.Error("Unexpected End of stream");
+
+			total += bytesRead;
+		}
 	}
 }
