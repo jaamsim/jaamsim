@@ -68,20 +68,17 @@ public final class EventManager implements Runnable {
 
 	private long currentTick; // Master simulation time (long)
 	private long nextTick; // The next tick to execute events at
+	private long targetTick; // the largest time we will execute events for (run to time)
 
 	// Real time execution state
+	private long realTimeTick;    // the simulation tick corresponding to the wall-clock millis value
+	private long realTimeMillis;  // the wall-clock time in millis
+
 	private boolean executeRealTime;  // TRUE if the simulation is to be executed in Real Time mode
 	private boolean rebaseRealTime;   // TRUE if the time keeping for Real Time model needs re-basing
 	private int realTimeFactor;       // target ratio of elapsed simulation time to elapsed wall clock time
-	private double baseSimTime;       // simulation time at which Real Time mode was commenced
-	private long baseTimeMillis;      // wall clock time in milliseconds at which Real Time model was commenced
 
 	private EventTraceRecord traceRecord;
-
-	private long debuggingTime;
-	/*
-	 * event time to debug, implements the run to time functionality
-	 */
 
 	static final int PRIO_DEFAULT = 5;
 	static final int PRIO_LASTLIFO = 11;
@@ -132,7 +129,7 @@ public final class EventManager implements Runnable {
 	void clear() {
 		currentTick = 0;
 		nextTick = 0;
-		debuggingTime = Long.MAX_VALUE;
+		targetTick = Long.MAX_VALUE;
 		rebaseRealTime = true;
 
 		traceRecord.clearTrace();
@@ -181,7 +178,7 @@ public final class EventManager implements Runnable {
 			// Loop continuously
 			while (true) {
 				if (eventStack.isEmpty() ||
-				    eventStack.get(0).schedTick >= debuggingTime) {
+				    eventStack.get(0).schedTick >= targetTick) {
 					eventState = EVENTS_STOPPED;
 				}
 
@@ -231,12 +228,11 @@ public final class EventManager implements Runnable {
 
 				// Advance to the next event time
 				if (executeRealTime) {
-					double nextSimTime = Process.ticksToSeconds(nextTick);
 					// Loop until the next event time is reached
-					double simTime = this.calcSimTime(Process.ticksToSeconds(currentTick));
-					if (simTime < nextSimTime) {
+					long realTick = this.calcRealTimeTick();
+					if (realTick < nextTick) {
 						// Update the displayed simulation time
-						FrameBox.timeUpdate(simTime);
+						FrameBox.timeUpdate(Process.ticksToSeconds(realTick));
 						//Halt the thread for 20ms and then reevaluate the loop
 						try { lockObject.wait(20); } catch( InterruptedException e ) {}
 						continue;
@@ -255,16 +251,17 @@ public final class EventManager implements Runnable {
 	 * @param simTime = the current simulation time used when setting a real-time basis
 	 * @return simulation time in seconds
 	 */
-	private double calcSimTime(double simTime) {
+	private long calcRealTimeTick() {
 		long curMS = System.currentTimeMillis();
 		if (rebaseRealTime) {
-			baseSimTime = simTime;
-			baseTimeMillis = curMS;
+			realTimeTick = currentTick;
+			realTimeMillis = curMS;
 			rebaseRealTime = false;
 		}
 
-		double simSeconds = ((curMS - baseTimeMillis) * realTimeFactor) / 1000.0d;
-		return baseSimTime + simSeconds;
+		double simElapsedsec = ((curMS - realTimeMillis) * realTimeFactor) / 1000.0d;
+		long simElapsedTicks = Process.secondsToTicks(simElapsedsec);
+		return realTimeTick + simElapsedTicks;
 	}
 
 	/**
@@ -612,7 +609,7 @@ public final class EventManager implements Runnable {
 	 */
 	void resume(long targetTicks) {
 		synchronized (lockObject) {
-			debuggingTime = targetTicks;
+			targetTick = targetTicks;
 			rebaseRealTime = true;
 			if (eventState != EVENTS_STOPPED)
 				return;
