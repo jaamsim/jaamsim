@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.OutputListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.TimeUnit;
@@ -30,8 +31,6 @@ import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
-import com.sandwell.JavaSimulation.Process;
-import com.jaamsim.input.OutputHandle;
 
 public class Graph extends GraphBasics  {
 
@@ -247,7 +246,19 @@ public class Graph extends GraphBasics  {
 			info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
 		}
 
-		Process.start(processGraph);
+
+		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
+		double xInterval = xLength/(numberOfPoints.getValue() -1);
+
+		for (SeriesInfo info : primarySeries) {
+			setupSeriesData(info, xLength, xInterval);
+		}
+
+		for (SeriesInfo info : secondarySeries) {
+			setupSeriesData(info, xLength, xInterval);
+		}
+
+		processGraph();
 	}
 
 	/**
@@ -304,42 +315,29 @@ public class Graph extends GraphBasics  {
 			graph.processGraph();
 		}
 	}
+
 	private final ProcessTarget processGraph = new ProcessGraphTarget(this);
 
 	/**
 	 * Calculate values for the data series on the graph
 	 */
 	public void processGraph() {
-		if( traceFlag ) this.trace( "processGraph()" );
+		// Give processing time to sub-classes
+		extraProcessing();
+
+		// Calculate values for the primary y-axis
+		for (SeriesInfo info : primarySeries) {
+			processGraph(info);
+		}
+
+		// Calculate values for the secondary y-axis
+		for (SeriesInfo info : secondarySeries) {
+			processGraph(info);
+		}
 
 		double xLength = xAxisEnd.getValue() - xAxisStart.getValue();
-		double xInterval = xLength/(numberOfPoints.getValue() -1);
-
-		for (SeriesInfo info : primarySeries) {
-			setupSeriesData(info, xLength, xInterval);
-		}
-
-		for (SeriesInfo info : secondarySeries) {
-			setupSeriesData(info, xLength, xInterval);
-		}
-
-		while ( true ) {
-
-			// Give processing time to sub-classes
-			extraProcessing();
-
-			// Calculate values for the primary y-axis
-			for (SeriesInfo info : primarySeries) {
-				processGraph(info);
-			}
-
-			// Calculate values for the secondary y-axis
-			for (SeriesInfo info : secondarySeries) {
-				processGraph(info);
-			}
-
-			simWait( xInterval, 7 );
-		}
+		double xInterval = xLength / (numberOfPoints.getValue() - 1);
+		scheduleProcess(xInterval, 7, processGraph);
 	}
 
 	/**
