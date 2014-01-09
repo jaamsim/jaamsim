@@ -386,9 +386,9 @@ public class TextModel extends DisplayModel {
 
 		private TessFontKey fkCache;
 
-//		private boolean dropShadowCache;
-//		private Vec3d dsOffsetCache;
-//		private Color4d dsColorCache;
+		private boolean dropShadowCache;
+		private Vec3d dsOffsetCache;
+		private Color4d dsColorCache;
 
 		private VisibilityInfo viCache;
 
@@ -418,12 +418,12 @@ public class TextModel extends DisplayModel {
 
 			TessFontKey fk = new TessFontKey(fontName.getChoice(), style);
 
-			//boolean ds = dropShadow.getValue();
+			boolean ds = dropShadow.getValue();
 
-			//Color4d dsColor = dropShadowColor.getValue();
+			Color4d dsColor = dropShadowColor.getValue();
 
-			//Vec3d dsOffset = new Vec3d(dropShadowOffset.getValue());
-			//dsOffset.scale3(height);
+			Vec3d dsOffset = new Vec3d(dropShadowOffset.getValue());
+			dsOffset.scale3(height);
 
 			Vec3d pos = labelObservee.getGlobalPosition();
 
@@ -436,9 +436,9 @@ public class TextModel extends DisplayModel {
 			dirty = dirty || heightCache != height;
 			dirty = dirty || dirty_vec3d(posCache, pos);
 			dirty = dirty || !compare(fkCache, fk);
-//			dirty = dirty || dropShadowCache != ds;
-//			dirty = dirty || dirty_col4d(dsColorCache, dsColor);
-//			dirty = dirty || dirty_vec3d(dsOffsetCache, dsOffset);
+			dirty = dirty || dropShadowCache != ds;
+			dirty = dirty || dirty_col4d(dsColorCache, dsColor);
+			dirty = dirty || dirty_vec3d(dsOffsetCache, dsOffset);
 			dirty = dirty || !compare(viCache, vi);
 
 			textCache = text;
@@ -446,9 +446,9 @@ public class TextModel extends DisplayModel {
 			posCache = pos;
 			heightCache = height;
 			fkCache = fk;
-//			dropShadowCache = ds;
-//			dsColorCache = dsColor;
-//			dsOffsetCache = dsOffset;
+			dropShadowCache = ds;
+			dsColorCache = dsColor;
+			dsOffsetCache = dsOffset;
 			viCache = vi;
 
 			if (cachedProxies != null && !dirty) {
@@ -463,15 +463,11 @@ public class TextModel extends DisplayModel {
 
 			cachedProxies = new ArrayList<RenderProxy>();
 
-//			if (ds) {
-//
-//				cachedProxies.add(new BillboardStringProxy(text, fk, dsColor, height,
-//				                                      pos.get(0) + (dsOffset.x * (alignRight ? -1 : 1)),
-//				                                      pos.get(1) - (dsOffset.y * (alignBottom ? -1 : 1)),
-//				                                      alignRight, alignBottom, vi));
-//			}
+			if (ds) {
+				cachedProxies.add(new BillboardStringProxy(text, fk, dsColor, height, pos, dsOffset.x, dsOffset.y, vi));
+			}
 
-			cachedProxies.add(new BillboardStringProxy(text, fk, color, height, pos, vi));
+			cachedProxies.add(new BillboardStringProxy(text, fk, color, height, pos, 0, 0, vi));
 
 			out.addAll(cachedProxies);
 		}

@@ -39,6 +39,7 @@ public class BillboardString implements OverlayRenderable {
 
 	private final double _height;
 	private final Vec3d _pos;
+	private final double _xOffset, _yOffset;
 	private final VisibilityInfo _visInfo;
 
 	private final Mat4d tempViewMat = new Mat4d();
@@ -47,11 +48,13 @@ public class BillboardString implements OverlayRenderable {
 	private static HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
 
 	public BillboardString(TessFont font, String contents, Color4d color,
-            double height, Vec3d pos, VisibilityInfo visInfo) {
+            double height, Vec3d pos, double xOffset, double yOffset, VisibilityInfo visInfo) {
 		_font = font;
 		_contents = contents;
 		_color = color.toFloats();
 		_height = height;
+		_xOffset = xOffset;
+		_yOffset = yOffset;
 		_pos = pos;
 		_visInfo = visInfo;
 	}
@@ -114,6 +117,9 @@ public class BillboardString implements OverlayRenderable {
 
 		float offsetX = (float)tempPos.x;
 		float offsetY = (float)tempPos.y;
+
+		offsetX += _xOffset*2.0/windowWidth;
+		offsetY += _yOffset*2.0/windowHeight;
 
 		gl.glDisable(GL2GL3.GL_CULL_FACE);
 

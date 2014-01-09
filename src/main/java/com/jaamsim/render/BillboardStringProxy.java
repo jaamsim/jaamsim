@@ -27,17 +27,20 @@ public class BillboardStringProxy implements RenderProxy {
 	private final TessFontKey _fontKey;
 	private final Color4d _fontColour;
 	private final double _height;
+	private final double _xOffset, _yOffset;
 	private final Vec3d _pos;
 	private final VisibilityInfo _visInfo;
 	BillboardString cachedString;
 
 	public BillboardStringProxy(String cont, TessFontKey fontKey, Color4d colour,
-	                          double height, Vec3d pos,
+	                          double height, Vec3d pos, double xOffset, double yOffset,
 	                          VisibilityInfo visInfo) {
 		_contents = cont;
 		_fontKey = fontKey;
 		_fontColour = colour;
 		_height = height;
+		_xOffset = xOffset;
+		_yOffset = yOffset;
 		_pos = pos;
 		_visInfo = visInfo;
 	}
@@ -52,7 +55,7 @@ public class BillboardStringProxy implements RenderProxy {
 
 		if (cachedString == null) {
 			TessFont tf = r.getTessFont(_fontKey);
-			cachedString = new BillboardString(tf, _contents, _fontColour, _height, _pos, _visInfo);
+			cachedString = new BillboardString(tf, _contents, _fontColour, _height, _pos, _xOffset, _yOffset, _visInfo);
 		}
 		outList.add(cachedString);
 
