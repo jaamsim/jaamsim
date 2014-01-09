@@ -24,6 +24,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.render.BillboardStringProxy;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.OverlayStringProxy;
 import com.jaamsim.render.RenderProxy;
@@ -39,6 +40,7 @@ import com.sandwell.JavaSimulation.StringChoiceInput;
 import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Vec3dInput;
+import com.sandwell.JavaSimulation3D.BillboardText;
 import com.sandwell.JavaSimulation3D.OverlayText;
 import com.sandwell.JavaSimulation3D.Text;
 
@@ -135,7 +137,9 @@ public class TextModel extends DisplayModel {
 
 	@Override
 	public DisplayModelBinding getBinding(Entity ent) {
-		if (ent instanceof Text) {
+		if (ent instanceof BillboardText) {
+			return new BillboardBinding(ent, this);
+		} else if (ent instanceof Text) {
 			return new Binding(ent, this);
 		} else if (ent instanceof OverlayText){
 			return new OverlayBinding(ent, this);
@@ -360,6 +364,114 @@ public class TextModel extends DisplayModel {
 
 			cachedProxies.add(new OverlayStringProxy(text, fk, color, height, pos.get(0), pos.get(1),
 			                                     alignRight, alignBottom, vi));
+
+			out.addAll(cachedProxies);
+		}
+
+		@Override
+		protected void collectSelectionBox(double simTime, ArrayList<RenderProxy> out) {
+			// No selection widgets for now
+		}
+	}
+
+	private class BillboardBinding extends DisplayModelBinding {
+
+		private BillboardText labelObservee;
+
+		private String textCache;
+
+		private Color4d colorCache;
+		private Vec3d posCache;
+		private int heightCache;
+
+		private TessFontKey fkCache;
+
+//		private boolean dropShadowCache;
+//		private Vec3d dsOffsetCache;
+//		private Color4d dsColorCache;
+
+		private VisibilityInfo viCache;
+
+		private ArrayList<RenderProxy> cachedProxies = null;
+
+
+		public BillboardBinding(Entity ent, DisplayModel dm) {
+			super(ent, dm);
+			try {
+				labelObservee = (BillboardText)ent;
+			} catch (ClassCastException e) {
+				// The observee is not a display entity
+				labelObservee = null;
+			}
+		}
+
+		@Override
+		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
+			if (labelObservee == null || !labelObservee.getShow()) {
+				return;
+			}
+
+			String text = labelObservee.getCachedText();
+
+			Color4d color = fontColor.getValue();
+			int height = (int)labelObservee.getTextHeight();
+
+			TessFontKey fk = new TessFontKey(fontName.getChoice(), style);
+
+			//boolean ds = dropShadow.getValue();
+
+			//Color4d dsColor = dropShadowColor.getValue();
+
+			//Vec3d dsOffset = new Vec3d(dropShadowOffset.getValue());
+			//dsOffset.scale3(height);
+
+			Vec3d pos = labelObservee.getGlobalPosition();
+
+			VisibilityInfo vi = getVisibilityInfo();
+
+			boolean dirty = false;
+
+			dirty = dirty || !compare(textCache, text);
+			dirty = dirty || dirty_col4d(colorCache, color);
+			dirty = dirty || heightCache != height;
+			dirty = dirty || dirty_vec3d(posCache, pos);
+			dirty = dirty || !compare(fkCache, fk);
+//			dirty = dirty || dropShadowCache != ds;
+//			dirty = dirty || dirty_col4d(dsColorCache, dsColor);
+//			dirty = dirty || dirty_vec3d(dsOffsetCache, dsOffset);
+			dirty = dirty || !compare(viCache, vi);
+
+			textCache = text;
+			colorCache = color;
+			posCache = pos;
+			heightCache = height;
+			fkCache = fk;
+//			dropShadowCache = ds;
+//			dsColorCache = dsColor;
+//			dsOffsetCache = dsOffset;
+			viCache = vi;
+
+			if (cachedProxies != null && !dirty) {
+				// Nothing changed
+
+				out.addAll(cachedProxies);
+				registerCacheHit("OverlayText");
+				return;
+			}
+
+			registerCacheMiss("OverlayText");
+
+			cachedProxies = new ArrayList<RenderProxy>();
+
+//			if (ds) {
+//
+//				cachedProxies.add(new BillboardStringProxy(text, fk, dsColor, height,
+//				                                      pos.get(0) + (dsOffset.x * (alignRight ? -1 : 1)),
+//				                                      pos.get(1) - (dsOffset.y * (alignBottom ? -1 : 1)),
+//				                                      alignRight, alignBottom, vi));
+//			}
+
+			cachedProxies.add(new BillboardStringProxy(text, fk, color, height, pos, vi));
 
 			out.addAll(cachedProxies);
 		}

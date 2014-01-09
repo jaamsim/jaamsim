@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2014 Ausenco Engineering Canada Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,10 @@ import java.util.HashMap;
 import javax.media.opengl.GL2GL3;
 
 import com.jaamsim.math.Color4d;
+import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Camera;
 import com.jaamsim.render.OverlayRenderable;
 import com.jaamsim.render.RenderUtils;
@@ -28,50 +30,39 @@ import com.jaamsim.render.Renderer;
 import com.jaamsim.render.Shader;
 import com.jaamsim.render.VisibilityInfo;
 
-public class OverlayString implements OverlayRenderable {
+public class BillboardString implements OverlayRenderable {
 
-	private TessFont _font;
-	private String _contents;
+	private final TessFont _font;
+	private final String _contents;
 
 	private final float[] _color;
 
-	private double _height;
-	private double _x, _y;
-	private boolean _alignRight, _alignBottom;
-	private VisibilityInfo _visInfo;
+	private final double _height;
+	private final Vec3d _pos;
+	private final VisibilityInfo _visInfo;
+
+	private final Mat4d tempViewMat = new Mat4d();
+	private final Vec4d tempPos = new Vec4d();
 
 	private static HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
 
-	public OverlayString(TessFont font, String contents, Color4d color,
-	                     double height, double x, double y,
-	                     boolean alignRight, boolean alignBottom, VisibilityInfo visInfo) {
+	public BillboardString(TessFont font, String contents, Color4d color,
+            double height, Vec3d pos, VisibilityInfo visInfo) {
 		_font = font;
 		_contents = contents;
-		if (_contents == null) {
-			_contents = "";
-		}
 		_color = color.toFloats();
 		_height = height;
-		_x = x; _y = y;
-		_alignRight = alignRight; _alignBottom = alignBottom;
+		_pos = pos;
 		_visInfo = visInfo;
 	}
 
+	/**
+	 * Note: render() and renderForView() are mutually non-reentrant due to shared temporaries. This should be fine
+	 * because neither should ever be called by any thread other than the render thread.
+	 */
 	@Override
-	public void render(int contextID, Renderer renderer,
-		double windowWidth, double windowHeight, Camera cam, Ray pickRay) {
-
-
-		Vec3d renderedSize = _font.getStringSize(_height, _contents);
-		double x = _x;
-		double y = _y;
-		if (_alignRight) {
-			x = windowWidth - _x - renderedSize.x;
-		}
-		if (!_alignBottom) {
-			y = windowHeight - _y - renderedSize.y;
-		}
-
+	public void render(int contextID, Renderer renderer, double windowWidth,
+			double windowHeight, Camera cam, Ray pickRay) {
 
 		GL2GL3 gl = renderer.getGL();
 
@@ -87,6 +78,21 @@ public class OverlayString implements OverlayRenderable {
 
 		s.useShader(gl);
 		int prog = s.getProgramHandle();
+
+		// Work out the billboard position
+		cam.getViewMat4d(tempViewMat);
+		// Build up the projection*view matrix
+		tempViewMat.mult4(cam.getProjMat4d(), tempViewMat);
+
+		tempPos.x = _pos.x;
+		tempPos.y = _pos.y;
+		tempPos.z = _pos.z;
+		tempPos.w = 1.0;
+
+		tempPos.mult4(tempViewMat, tempPos);
+		tempPos.x /= tempPos.w;
+		tempPos.y /= tempPos.w;
+		// TempPos x and y are now in normalized coordinate space (after the projection)
 
 		int colorVar = gl.glGetUniformLocation(prog, "color");
 		gl.glUniform4fv(colorVar, 1, _color, 0);
@@ -106,8 +112,8 @@ public class OverlayString implements OverlayRenderable {
 		int scaleVar = gl.glGetUniformLocation(prog, "scale");
 		gl.glUniform2f(scaleVar, scaleX, scaleY);
 
-		float offsetX = (float)(2*x/windowWidth - 1);
-		float offsetY = (float)(2*y/windowHeight - 1);
+		float offsetX = (float)tempPos.x;
+		float offsetY = (float)tempPos.y;
 
 		gl.glDisable(GL2GL3.GL_CULL_FACE);
 
@@ -126,6 +132,7 @@ public class OverlayString implements OverlayRenderable {
 		}
 
 		gl.glEnable(GL2GL3.GL_CULL_FACE);
+
 	}
 
 	private void setupVAO(int contextID, Renderer renderer) {
@@ -135,8 +142,21 @@ public class OverlayString implements OverlayRenderable {
 		VAOMap.put(contextID, vao);
 	}
 
+
 	@Override
 	public boolean renderForView(int viewID, Camera cam) {
-		return _visInfo.isVisible(viewID);
+		// Check the view
+		if (!_visInfo.isVisible(viewID)) {
+			return false;
+		}
+
+		// Render if the billboard is in front of the camera
+		cam.getViewMat4d(tempViewMat);
+
+		// tempPos is now the billboard in normalized coordinate space
+		tempPos.multAndTrans3(tempViewMat, _pos);
+
+		return tempPos.z < 0;
 	}
+
 }

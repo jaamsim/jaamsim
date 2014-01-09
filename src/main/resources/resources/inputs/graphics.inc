@@ -32,10 +32,11 @@ Define ObjectType {
                     View
                     Region
                     DisplayEntity
-					Text
+                    Text
                     OverlayImage
-					OverlayText
-					OverlayClock
+                    OverlayText
+                    OverlayClock
+                    BillboardText
                     Arrow
                     Graph
                     VideoRecorder
@@ -48,6 +49,7 @@ Text                  JavaClass { com.sandwell.JavaSimulation3D.Text            
 OverlayImage          JavaClass { com.sandwell.JavaSimulation3D.OverlayImage         } Palette { 'Graphics Objects' }
 OverlayText           JavaClass { com.sandwell.JavaSimulation3D.OverlayText          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 OverlayClock          JavaClass { com.sandwell.JavaSimulation3D.OverlayClock         } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
+BillboardText         JavaClass { com.sandwell.JavaSimulation3D.BillboardText        } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 Arrow                 JavaClass { com.sandwell.JavaSimulation3D.Arrow                } Palette { 'Graphics Objects' } DefaultDisplayModel { ArrowModelDefault        }
 Graph                 JavaClass { com.sandwell.JavaSimulation3D.Graph                } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        }
 
@@ -60,6 +62,7 @@ Text          Description { 'Text that appears in the 3D model universe.' }
 OverlayImage  Description { 'Picture that appears in a fixed position in the display window.' }
 OverlayText   Description { 'Text that appears in a fixed position in the dispay window.' }
 OverlayClock  Description { 'Time and date display that appears in a fixed position in the display window.' }
+BillboardText Description { 'Text that follows a 3D position but is always upright on the screen.' }
 Arrow         Description { 'Line that terminates in an arrow head.' }
 Graph         Description { 'Chart that shows the values of model outputs as they change in time.' }
 VideoRecorder Description { 'Object that makes a video recording of the model.' }
