@@ -450,6 +450,12 @@ public class DisplayEntity extends Entity {
 	public Vec3d getGlobalPosition() {
 		Vec3d localPos = getPosition();
 
+		DisplayEntity entity = this.getRelativeEntity();
+		if(entity != null && entity != this) {
+			localPos.add3(entity.position);
+			return localPos;
+		}
+
 		if (currentRegion != null) {
 			Transform regionTrans = currentRegion.getRegionTrans(getCurrentTime());
 			regionTrans.multAndTrans(localPos, localPos);
