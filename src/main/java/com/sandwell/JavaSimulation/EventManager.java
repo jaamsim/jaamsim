@@ -167,26 +167,6 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	private void evaluateConditionals() {
-		// All conditional events if time advanced
-		synchronized (lockObject) {
-			if (conditionalList.size() == 0) {
-				return;
-			}
-
-			// Loop through the conditions in reverse order and add to the linked
-			// list of active threads
-			for (int i = 0; i < conditionalList.size() - 1; i++) {
-				conditionalList.get(i).setNextProcess(conditionalList.get(i + 1));
-			}
-			conditionalList.get(conditionalList.size() - 1).setNextProcess(null);
-
-			// Wake up the first conditional thread to be tested
-			// at this point, nextThread == conditionalList.get(0)
-			switchThread(conditionalList.get(0));
-		}
-	}
-
 	/**
 	 * Main event processing loop for the eventManager.
 	 *
@@ -230,7 +210,21 @@ public final class EventManager implements Runnable {
 			// If the next event would require us to advance the time, check the
 			// conditonal events
 			if (eventStack.get(0).schedTick > nextTick) {
-				this.evaluateConditionals();
+				synchronized (lockObject) {
+					if (conditionalList.size() > 0) {
+						// Loop through the conditions in reverse order and add to the linked
+						// list of active threads
+						for (int i = 0; i < conditionalList.size() - 1; i++) {
+							conditionalList.get(i).setNextProcess(conditionalList.get(i + 1));
+						}
+						conditionalList.get(conditionalList.size() - 1).setNextProcess(null);
+
+						// Wake up the first conditional thread to be tested
+						// at this point, nextThread == conditionalList.get(0)
+						switchThread(conditionalList.get(0));
+					}
+				}
+
 				// If a conditional event was satisfied, we will have a new event at the
 				// beginning of the eventStack for the current tick, go back to the
 				// beginning, otherwise fall through to the time-advance
