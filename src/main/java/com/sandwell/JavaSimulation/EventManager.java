@@ -232,7 +232,8 @@ public final class EventManager implements Runnable {
 					long realTick = this.calcRealTimeTick();
 					if (realTick < nextTick) {
 						// Update the displayed simulation time
-						FrameBox.timeUpdate(Process.ticksToSeconds(realTick));
+						currentTick = realTick;
+						FrameBox.timeUpdate(Process.ticksToSeconds(currentTick));
 						//Halt the thread for 20ms and then reevaluate the loop
 						try { lockObject.wait(20); } catch( InterruptedException e ) {}
 						continue;
