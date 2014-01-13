@@ -37,6 +37,8 @@ Define	ImageModel {
 					UniformDistributionIconModel
 					TriangularDistributionIconModel
 					ErlangDistributionIconModel
+					DiscreteDistributionIconModel
+					ContinuousDistributionIconModel
 					}
 
 ProbabilityDistributionIconModel	ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
@@ -45,6 +47,8 @@ ExponentialDistributionIconModel	ImageFile { '<res>/images/Exp Dist-256.png'    
 UniformDistributionIconModel		ImageFile { '<res>/images/UniformDist-256.png'   }   Transparent { TRUE }
 TriangularDistributionIconModel		ImageFile { '<res>/images/TriangleDist-256.png'  }   Transparent { TRUE }
 ErlangDistributionIconModel			ImageFile { '<res>/images/ErlangDist-256.png'    }   Transparent { TRUE }
+DiscreteDistributionIconModel       ImageFile { '<res>/images/DiscreteDist-256.png'  }   Transparent { TRUE }
+ContinuousDistributionIconModel     ImageFile { '<res>/images/ContinuousDist-256.png' }  Transparent { TRUE }
 
 UniformDistribution			DefaultDisplayModel { UniformDistributionIconModel     }
 TriangularDistribution		DefaultDisplayModel { TriangularDistributionIconModel  }
@@ -55,8 +59,8 @@ GammaDistribution			DefaultDisplayModel { ErlangDistributionIconModel      }
 WeibullDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogLogisticsDistribution	DefaultDisplayModel { ProbabilityDistributionIconModel }
-DiscreteDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
-ContinuousDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
+DiscreteDistribution		DefaultDisplayModel { DiscreteDistributionIconModel    }
+ContinuousDistribution		DefaultDisplayModel { ContinuousDistributionIconModel  }
 EntitlementSelector			DefaultDisplayModel { ProbabilityDistributionIconModel }
 RandomSelector				DefaultDisplayModel { ProbabilityDistributionIconModel }
 
