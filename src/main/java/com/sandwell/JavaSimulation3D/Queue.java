@@ -22,6 +22,7 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
@@ -409,6 +410,18 @@ public class Queue extends DisplayEntity {
 			ret.clear();
 		}
 		return ret;
+	}
+
+	@Output(name = "AverageQueueTime",
+	 description = "The average time each entity waits in the queue.  Calculated as total queue time to date divided " +
+			"by the total number of entities added to the queue.",
+	    unitType = TimeUnit.class)
+	public double getAverageQueueTime(double simTime) {
+		if( numberAdded == 0 )
+			return 0.0;
+		double dt = simTime - timeOfLastUpdate;
+		int queueSize = itemList.size();
+		return (elementSeconds + dt*queueSize)/numberAdded;
 	}
 
 }
