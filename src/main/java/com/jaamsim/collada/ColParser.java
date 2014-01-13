@@ -350,7 +350,8 @@ public class ColParser {
 				                       effect.ambient,
 				                       effect.spec,
 				                       effect.shininess,
-				                       effect.transType, effect.transColour);
+				                       effect.transType,
+				                       effect.transColour);
 			}
 
 			_finalData.addSubMeshInstance(geoID, matID, -1, mat, null, null);
@@ -570,46 +571,68 @@ public class ColParser {
 		effect.ambient = getColor(ambient);
 		effect.shininess = getFloat(shininess, 1.0);
 
+
+		double alpha = 1.0;
+		if (transparency != null) {
+			XmlNode floatNode = transparency.findChildTag("float", false);
+			parseAssert(floatNode != null);
+			double[] floats = (double[])floatNode.getContent();
+			parseAssert(floats != null && floats.length >= 1);
+			alpha = floats[0];
+		}
+
 		String opaque = null;
 		ColorTex transparentCT = null;
 		if (transparent != null) {
 			opaque = transparent.getAttrib("opaque");
+			if (opaque != null)
+			{
+				parseAssert((opaque.equals("A_ONE") || opaque.equals("RGB_ZERO")));
+			}
 			transparentCT = getColorTex(transparent, paramMap);
 		}
 
+		if (opaque == null) {
+			opaque = "A_ONE";
+		}
+
 		// There is a ton of conditions for us to handle transparency
-		if (transparency != null &&
-		    transparent != null &&
-		    opaque != null &&
-		    (opaque.equals("A_ONE") || opaque.equals("RGB_ZERO")) &&
-		    transparentCT != null &&
-		    transparentCT.color != null) {
-			XmlNode floatNode = transparency.findChildTag("float", false);
-			parseAssert(floatNode != null);
+		if (transparentCT != null) {
 
-			double[] floats = (double[])floatNode.getContent();
-			parseAssert(floats != null && floats.length >= 1);
-			double alpha = floats[0];
-			effect.transColour = new Color4d(transparentCT.color);
-			if (opaque.equals("A_ONE")) {
-				effect.transType = MeshData.A_ONE_TRANS;
-			}
-			if (opaque.equals("RGB_ZERO")) {
-				effect.transType = MeshData.RGB_ZERO_TRANS;
-				// Handle the weird luminance term for alpha in RGB_ZERO
-				effect.transColour.a = effect.transColour.r * 0.212671 +
-				                       effect.transColour.g * 0.715160 +
-				                       effect.transColour.b * 0.072169;
-			}
-			// Bake the transparency term into the colour
-			effect.transColour.r *= alpha;
-			effect.transColour.g *= alpha;
-			effect.transColour.b *= alpha;
-			effect.transColour.a *= alpha;
+			if (transparentCT.color != null) {
+				effect.transColour = new Color4d(transparentCT.color);
+				// Solid transparent color
+				if (opaque.equals("A_ONE")) {
+					effect.transType = MeshData.A_ONE_TRANS;
+				}
+				if (opaque.equals("RGB_ZERO")) {
+					effect.transType = MeshData.RGB_ZERO_TRANS;
+					// Handle the weird luminance term for alpha in RGB_ZERO
+					effect.transColour.a = effect.transColour.r * 0.212671 +
+					                       effect.transColour.g * 0.715160 +
+					                       effect.transColour.b * 0.072169;
+				}
+				// Bake the transparency term into the colour
+				effect.transColour.r *= alpha;
+				effect.transColour.g *= alpha;
+				effect.transColour.b *= alpha;
+				effect.transColour.a *= alpha;
 
-			if ((effect.transColour.a >= 0.999 && opaque.equals("A_ONE")) ||
-			    (effect.transColour.a <= 0.001 && opaque.equals("RGB_ZERO")) ) {
-				effect.transType = MeshData.NO_TRANS; // Some meshes are effectively not transparent despite having the information
+				if ((effect.transColour.a >= 0.999 && opaque.equals("A_ONE")) ||
+				    (effect.transColour.a <= 0.001 && opaque.equals("RGB_ZERO")) ) {
+					effect.transType = MeshData.NO_TRANS; // Some meshes are effectively not transparent despite having the information
+				}
+			} else {
+				// Transparent texture, we only support a very limited sub set of possible collada alpha mapping,
+				// specifically only if the texture used is the alpha channel of the diffuse texture
+
+				// We do not support trasparent textures and RGB_ZERO mode
+				parseAssert(opaque.equals("A_ONE"));
+				parseAssert(alpha == 1.0); // We do not support variable transparency with transparent textures
+
+				parseAssert(transparentCT.texture != null);
+				parseAssert(transparentCT.texture.equals(effect.diffuse.texture));
+				effect.transType = MeshData.DIFF_ALPHA_TRANS;
 			}
 		} else {
 			effect.transType = MeshData.NO_TRANS;

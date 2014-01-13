@@ -50,6 +50,7 @@ public class MeshData {
 	public final static int NO_TRANS = 0;
 	public final static int A_ONE_TRANS = 1;
 	public final static int RGB_ZERO_TRANS = 2;
+	public final static int DIFF_ALPHA_TRANS = 3;
 
 	public static class Material {
 		public Color4d diffuseColor;
@@ -262,6 +263,7 @@ public class MeshData {
 
 		mat.transType = transType;
 		mat.transColour = transColour;
+
 		_materials.add(mat);
 
 		if (transType != NO_TRANS) {

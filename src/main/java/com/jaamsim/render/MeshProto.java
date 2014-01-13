@@ -484,15 +484,19 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
 		gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
 		gl.glDepthMask(false);
 
-		gl.glBlendColor((float)mat._transColour.r,
-		                (float)mat._transColour.g,
-		                (float)mat._transColour.b,
-		                (float)mat._transColour.a);
+		if (mat._transType != MeshData.DIFF_ALPHA_TRANS) {
+			gl.glBlendColor((float)mat._transColour.r,
+			                (float)mat._transColour.g,
+			                (float)mat._transColour.b,
+			                (float)mat._transColour.a);
+		}
 
 		if (mat._transType == MeshData.A_ONE_TRANS) {
-			gl.glBlendFuncSeparate(GL2GL3.GL_CONSTANT_ALPHA, GL2GL3.GL_ONE_MINUS_CONSTANT_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
+			gl.glBlendFuncSeparate(GL2GL3.GL_CONSTANT_ALPHA, GL2GL3.GL_ONE_MINUS_CONSTANT_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ZERO);
 		} else if (mat._transType == MeshData.RGB_ZERO_TRANS) {
-			gl.glBlendFuncSeparate(GL2GL3.GL_ONE_MINUS_CONSTANT_COLOR, GL2GL3.GL_CONSTANT_COLOR, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
+			gl.glBlendFuncSeparate(GL2GL3.GL_ONE_MINUS_CONSTANT_COLOR, GL2GL3.GL_CONSTANT_COLOR, GL2GL3.GL_ONE, GL2GL3.GL_ZERO);
+		} else if (mat._transType == MeshData.DIFF_ALPHA_TRANS) {
+			gl.glBlendFuncSeparate(GL2GL3.GL_SRC_ALPHA, GL2GL3.GL_ONE_MINUS_SRC_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ZERO);
 		} else {
 			assert(false); // Unknown transparency type
 		}
