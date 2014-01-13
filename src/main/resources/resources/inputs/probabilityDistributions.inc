@@ -39,6 +39,7 @@ Define	ImageModel {
 					ErlangDistributionIconModel
 					DiscreteDistributionIconModel
 					ContinuousDistributionIconModel
+					SelectorIconModel
 					}
 
 ProbabilityDistributionIconModel	ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
@@ -49,6 +50,7 @@ TriangularDistributionIconModel		ImageFile { '<res>/images/TriangleDist-256.png'
 ErlangDistributionIconModel			ImageFile { '<res>/images/ErlangDist-256.png'    }   Transparent { TRUE }
 DiscreteDistributionIconModel       ImageFile { '<res>/images/DiscreteDist-256.png'  }   Transparent { TRUE }
 ContinuousDistributionIconModel     ImageFile { '<res>/images/ContinuousDist-256.png' }  Transparent { TRUE }
+SelectorIconModel                   ImageFile { '<res>/images/Selector-256.png'      }   Transparent { TRUE }
 
 UniformDistribution			DefaultDisplayModel { UniformDistributionIconModel     }
 TriangularDistribution		DefaultDisplayModel { TriangularDistributionIconModel  }
@@ -61,8 +63,8 @@ LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogLogisticsDistribution	DefaultDisplayModel { ProbabilityDistributionIconModel }
 DiscreteDistribution		DefaultDisplayModel { DiscreteDistributionIconModel    }
 ContinuousDistribution		DefaultDisplayModel { ContinuousDistributionIconModel  }
-EntitlementSelector			DefaultDisplayModel { ProbabilityDistributionIconModel }
-RandomSelector				DefaultDisplayModel { ProbabilityDistributionIconModel }
+EntitlementSelector			DefaultDisplayModel { SelectorIconModel                }
+RandomSelector				DefaultDisplayModel { SelectorIconModel                }
 
 UniformDistribution      Description { 'Generates random numbers from a uniform probability density function.' }
 TriangularDistribution   Description { 'Generates random numbers from a triangular probability density function.' }
