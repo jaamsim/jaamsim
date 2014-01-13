@@ -43,7 +43,7 @@ fi
 
 # Package
 rm -f $JARNAME
-jar cfe $JARNAME com.sandwell.JavaSimulation3D.GUIFrame $CLASSES $RESFILES
+jar cfme $JARNAME Manifest.MF com.sandwell.JavaSimulation3D.GUIFrame $CLASSES $RESFILES
 
 # If there were any errors while producing the jar file, complain
 # test for a non-zero error code

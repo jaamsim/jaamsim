@@ -1,0 +1,1 @@
+Class-Path: jogl-all.jar gluegen-rt.jar
