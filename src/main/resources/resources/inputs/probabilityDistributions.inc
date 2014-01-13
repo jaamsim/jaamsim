@@ -42,7 +42,7 @@ Define	ImageModel {
 					SelectorIconModel
 					}
 
-ProbabilityDistributionIconModel	ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
+ProbabilityDistributionIconModel	ImageFile { '<res>/images/ErlangDist-256.png'    }   Transparent { TRUE }
 NormalDistributionIconModel			ImageFile { '<res>/images/Norm Dist-256.png'     }   Transparent { TRUE }
 ExponentialDistributionIconModel	ImageFile { '<res>/images/Exp Dist-256.png'      }   Transparent { TRUE }
 UniformDistributionIconModel		ImageFile { '<res>/images/UniformDist-256.png'   }   Transparent { TRUE }
@@ -57,7 +57,7 @@ TriangularDistribution		DefaultDisplayModel { TriangularDistributionIconModel  }
 NormalDistribution			DefaultDisplayModel { NormalDistributionIconModel      }
 ExponentialDistribution		DefaultDisplayModel { ExponentialDistributionIconModel }
 ErlangDistribution			DefaultDisplayModel { ErlangDistributionIconModel      }
-GammaDistribution			DefaultDisplayModel { ErlangDistributionIconModel      }
+GammaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 WeibullDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogLogisticsDistribution	DefaultDisplayModel { ProbabilityDistributionIconModel }
