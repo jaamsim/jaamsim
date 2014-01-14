@@ -98,6 +98,7 @@ public class GUIFrame extends JFrame {
 	private JCheckBoxMenuItem showPosition;
 	private JCheckBoxMenuItem alwaysTop;
 	private JCheckBoxMenuItem tooltip;
+	private JCheckBoxMenuItem graphicsDebug;
 	private JMenuItem printInputItem;
 	private JLabel clockDisplay;
 	private JLabel speedUpDisplay;
@@ -483,6 +484,16 @@ public class GUIFrame extends JFrame {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
 				// TODO Needs to be implemented for the new Renderer
+			}
+		} );
+
+		graphicsDebug = new JCheckBoxMenuItem( "Graphics Debug Info", false );
+		graphicsDebug.setMnemonic( 'G' );
+		optionMenu.add( graphicsDebug );
+		graphicsDebug.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				RenderManager.setDebugInfo(graphicsDebug.getState());
 			}
 		} );
 

@@ -94,7 +94,6 @@ public class Renderer implements GLAnimatorControl {
 		}
 	}
 
-	private static boolean RENDER_DEBUG_INFO = false;
 	private static boolean USE_DEBUG_GL = true;
 
 	public static int DIFF_TEX_FLAG = 1;
@@ -145,6 +144,9 @@ public class Renderer implements GLAnimatorControl {
 	private boolean _allowDelayedTextures;
 	private double _sceneTimeMS;
 	private double _loopTimeMS;
+
+	private final Object _settingsLock = new Object();
+	private boolean _showDebugInfo = false;
 
 	private long _usedVRAM = 0;
 
@@ -1106,7 +1108,11 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 				GL2GL3 gl = drawable.getContext().getGL().getGL2GL3(); // Just to clean up the code below
 
-				if (RENDER_DEBUG_INFO) {
+				boolean showDebug;
+				synchronized(_settingsLock) {
+					showDebug = _showDebugInfo;
+				}
+				if (showDebug) {
 					// Draw a window specific performance counter
 					gl.glDisable(GL2GL3.GL_DEPTH_TEST);
 					_drawContext = drawable.getContext();
@@ -1791,5 +1797,11 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 		_sharedContext.release();
 
+	}
+
+	public void setDebugInfo(boolean showDebug) {
+		synchronized(_settingsLock) {
+			_showDebugInfo = showDebug;
+		}
 	}
 }

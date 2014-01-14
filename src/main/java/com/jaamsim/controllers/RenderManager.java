@@ -1630,5 +1630,13 @@ public class RenderManager implements DragSourceListener {
 		_selectedEntity.kill();
 		FrameBox.setSelectedEntity(null);
 	}
+
+	public static void setDebugInfo(boolean showDebug) {
+		if (!isGood()) {
+			return;
+		}
+		s_instance._renderer.setDebugInfo(showDebug);
+		s_instance.queueRedraw();
+	}
 }
 
