@@ -120,7 +120,7 @@ public final class EventManager implements Runnable {
 		rebaseRealTime = true;
 	}
 
-	public static EventManager initEventManager(String name) {
+	static EventManager initEventManager(String name) {
 		EventManager evtman = new EventManager(name);
 		evtman.eventManagerThread.start();
 		return evtman;

@@ -97,8 +97,10 @@ public class Entity {
 		}
 	}
 
-	public static synchronized final void setEVT(EventManager evt) {
-		root = evt;
+	public static synchronized final EventManager initEVT() {
+		if (root != null) return root;
+		root = EventManager.initEventManager("DefaultEventManager");
+		return root;
 	}
 
 	public static <T extends Entity> ArrayList<T> getInstancesOf(Class<T> proto) {
