@@ -87,10 +87,14 @@ public class Skybox {
 
 		GL2GL3 gl = renderer.getGL();
 
+		int textureID = renderer.getTexCache().getTexID(gl, textureURL, false, false, false);
+		if (textureID == TexCache.LOADING_TEX_ID) {
+			// Sky box is not ready yet, get it next time
+			return;
+		}
+
 		int vao = VAOMap.get(contextID);
 		gl.glBindVertexArray(vao);
-
-		int textureID = renderer.getTexCache().getTexID(gl, textureURL, false, false, false);
 
 		gl.glUseProgram(progHandle);
 
