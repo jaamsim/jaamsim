@@ -155,7 +155,10 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 					return -index - 1;
 				else
 					// Otherwise, return the index before the insertion index
-					return -index - 2;
+					if( index == -1 )
+						throw new ErrorException( this + " does not have a value at time " + time );
+					else
+						return -index - 2;
 			}
 		}
 	}
