@@ -258,7 +258,13 @@ public abstract class Input<T> {
 	public static <T> T parse(StringVector data, Class<T> aClass, String units, double minValue, double maxValue, int minCount, int maxCount, Class<? extends Unit> unitType) {
 
 		if( aClass == Double.class ) {
-			return aClass.cast( Input.parseDouble( data, minValue, maxValue, units) );
+			if( units != null )
+				return aClass.cast( Input.parseDouble( data, minValue, maxValue, units) );
+			else{
+				DoubleVector tmp = Input.parseDoubles( data, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType );
+				Input.assertCount(tmp, 1);
+				return aClass.cast( tmp.get(0));
+			}
 		}
 
 		if( aClass == DoubleVector.class ) {
@@ -1304,7 +1310,7 @@ public abstract class Input<T> {
 			return "?????";
 		}
 
-		if (!unitString.isEmpty()) {
+		if (unitString == null || !unitString.isEmpty()) {
 			tmp.append(SEPARATOR);
 			tmp.append(unitString);
 		}

@@ -17,12 +17,15 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 /**
  * Class OneOrTwoKeyInput for storing objects of class V (e.g. Double or DoubleVector),
  * with one mandatory key of class K1 and one optional key of class K2
  */
 public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<V> {
 
+	private Class<? extends Unit> unitType = DimensionlessUnit.class;
 	protected double minValue = Double.NEGATIVE_INFINITY;
 	protected double maxValue = Double.POSITIVE_INFINITY;
 	private Class<K1> key1Class;
@@ -45,6 +48,11 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		unitString = units;
 	}
 
+	public void setUnitType(Class<? extends Unit> units) {
+		unitType = units;
+		unitString = null;
+	}
+
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
@@ -63,7 +71,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		}
 
 		if( ent1 == null ) {
-			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, null );
+			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 			this.setDefaultValue( defValue );
 			return;
 		}
@@ -95,7 +103,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		}
 
 		// Determine the value
-		V val = Input.parse( input.subString(numKeys,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, null );
+		V val = Input.parse( input.subString(numKeys,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {
