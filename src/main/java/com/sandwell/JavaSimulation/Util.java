@@ -84,18 +84,6 @@ public class Util {
 
 	} // discardComment
 
-	/**
-	 * if ( fileFullName = "C:\Projects\A01.cfg" ), returns "A01.cfg"
-	 * if ( fileFullName = "A01.cfg" ), returns "A01.cfg"
-	 */
-	public static String fileShortName( String fileFullName ) {
-		int indexLast = fileFullName.lastIndexOf( '\\' );
-		indexLast = Math.max( indexLast, fileFullName.lastIndexOf( '/') );
-		String fileName = fileFullName.substring( indexLast + 1 );
-
-		return fileName;
-	}
-
 	public static String getAbsoluteFilePath( String filePath ) {
 		try {
 			java.io.File absFile = new java.io.File( filePath );

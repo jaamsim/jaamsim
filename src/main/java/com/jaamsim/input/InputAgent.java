@@ -115,18 +115,29 @@ public class InputAgent {
 		return configFileName;
 	}
 
+	/**
+	 * if ( fileFullName = "C:\Projects\A01.cfg" ), returns "A01.cfg"
+	 * if ( fileFullName = "A01.cfg" ), returns "A01.cfg"
+	 */
+	private static String shortName(String fileFullName) {
+		int idx = Math.max(fileFullName.lastIndexOf('\\'), fileFullName.lastIndexOf('/'));
+		// if idx is -1, we return the entire string
+		return fileFullName.substring(idx + 1);
+	}
+
 	public static String getRunName() {
 		String runName;
 		if( InputAgent.getConfigFileName() == null ) {
 			runName = "";
 		}
 		else {
-			int index = Util.fileShortName( InputAgent.getConfigFileName() ).indexOf( "." );
+			String shortName = shortName(InputAgent.getConfigFileName());
+			int index = shortName.indexOf( "." );
 			if( index > -1 ) {
-				runName = Util.fileShortName( InputAgent.getConfigFileName() ).substring( 0, index );
+				runName = shortName.substring( 0, index );
 			}
 			else {
-				runName = Util.fileShortName( InputAgent.getConfigFileName() );
+				runName = shortName;
 			}
 		}
 		return runName;
@@ -833,7 +844,7 @@ public class InputAgent {
 		sessionEdited = false;
 
 		//TODOalan set directory of model.. ?
-		InputAgent.setConfigFileName(Util.fileShortName(fileName));
+		InputAgent.setConfigFileName(shortName(fileName));
 
 		// Set the title bar to match the new run name
 		gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
