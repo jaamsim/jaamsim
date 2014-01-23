@@ -15,7 +15,6 @@
 package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 
 	/**
@@ -23,13 +22,6 @@ import java.util.Comparator;
 	 *
 	 */
 public class Util {
-	public static final Comparator<Entity> nameSort = new Comparator<Entity>() {
-		@Override
-		public int compare(Entity a, Entity b) {
-			return a.getName().compareTo(b.getName());
-		}
-	};
-
 	/**
 	 *
 	 *
