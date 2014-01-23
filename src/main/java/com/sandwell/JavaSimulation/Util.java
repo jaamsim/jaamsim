@@ -126,14 +126,6 @@ public class Util {
 		}
 	}
 
-	public static String getFileExtention(String name){
-		if(name.indexOf(".") < 0)
-			return "";
-
-		String ext = name.substring( name.lastIndexOf(".")).trim();
-		return ext.replace(".", "").toUpperCase();
-	}
-
 	/**
 	 * Expects a StringVector of one of two forms:
 	 * 1.  { entry entry entry } { entry entry entry }
