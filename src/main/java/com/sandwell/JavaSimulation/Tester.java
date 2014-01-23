@@ -297,52 +297,6 @@ public class Tester {
 	}
 
 	/********************************************************************************
-	 * METHODS FOR INPUT SYNTAX CHECK: check range of double values
-	 ********************************************************************************/
-
-	/**
-	 * Checks whether or not the specified number is in the range from the specified
-	 * minimum number to the specified maximum number, inclusive.
-	 *
-	 * @param num the number being checked
-	 * @param min the minimum allowed value for the number
-	 * @param max the maximum allowed value for the number
-	 * @return true if the specified number is in the specified range from min to max,
-	 * inclusive
-	 * @throws InputErrorException if the specified number is outside of the specified
-	 * range
-	 * @author SS
-	 * *checked*
-	 */
-	public static boolean checkValueRangeInclusive( double num, double min, double max ) throws InputErrorException {
-		if ( num < min || num > max ) {
-			throw new InputErrorException( "The value must be in the range from " + min + " to " + max + ", inclusive." );
-		}
-		return true;
-	}
-
-	/**
-	 * Checks whether or not the specified number is greater than or equal to the
-	 * specified number.
-	 *
-	 * @param num the number being checked
-	 * @param min the minimum allowed value for num
-	 * @return true if num is greater than or equal to min
-	 * @throws InputErrorException if num is less than min
-	 * @author SS
-	 * *checked*
-	 */
-	public static boolean checkValueGreaterOrEqual( double num, double min ) throws InputErrorException {
-		try {
-			Tester.checkValueRangeInclusive( num, min, Double.POSITIVE_INFINITY );
-		}
-		catch ( InputErrorException e ) {
-			throw new InputErrorException( "The value must be greater than or equal to " + min + "." );
-		}
-		return true;
-	}
-
-	/********************************************************************************
 	 * METHODS FOR INPUT SYNTAX CHECK: check range of values in a DoubleVector
 	 ********************************************************************************/
 
