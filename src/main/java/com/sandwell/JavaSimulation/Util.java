@@ -22,68 +22,6 @@ import java.util.ArrayList;
 	 *
 	 */
 public class Util {
-	/**
-	 *
-	 *
-	 * {  aaa, bbb,  ccc, ddd }
-	 * {    ", bbb,  ccc, ddd }
-	 * {  aaa, bbb,    ", ddd }
-	 * { "aaa, bbb,  ccc, ddd }
-	 * {  aaa, bbb, "ccc, ddd }
-	 * { a"aa, bbb,  ccc, ddd } <-- disregard this possibility
-	 * {  aaa, bbb, cc"c, ddd } <-- disregard this possibility
-	 *
-	 *
-	 * Returns true if record is not empty; false, otherwise.
-	 *
-	 */
-	public static boolean discardComment( Vector record ) {
-
-		boolean containsCmd;
-		int     recSize;
-		int     indexFirst;    // Index of first cell containing a string that starts with "
-
-		if ( record == null ) {
-			return false;
-		}
-
-		recSize = record.size();
-		if ( recSize == 0 ) {
-			return false;
-		}
-
-		// Find in record the index of the first cell that contains string of the form "aaa.
-		// Disregard strings of the forms aaa"bbb and aaa"
-		indexFirst = recSize;
-		for ( int i = 0; i < recSize; i++ ) {
-			if ( ((String)record.get(i)).startsWith( "\"" )) {
-				indexFirst = i;
-				break;
-			}
-		}
-
-		// Strip away comment string from record. Return true if record contains a command; false, otherwise
-		// Note that indexFirst cannot be greater than recSize
-		if ( indexFirst == recSize ) { // no comments found
-			containsCmd = true;
-		}
-		else if ( indexFirst > 0 ) { // command and comment found
-			containsCmd = true;
-
-			// Discard elements from index to (recSize - 1)
-			for ( int x = indexFirst; x < recSize; x++ ) {
-				record.removeElementAt( indexFirst );
-			}
-		}
-		else { // if (indexFirst == 0), it means that record contains only comment
-			containsCmd = false;
-			record.clear();
-		}
-
-		return containsCmd;
-
-	} // discardComment
-
 	public static String getAbsoluteFilePath( String filePath ) {
 		try {
 			java.io.File absFile = new java.io.File( filePath );
