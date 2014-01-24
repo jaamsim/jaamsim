@@ -707,7 +707,7 @@ public class InputAgent {
 	public static void save(GUIFrame gui) {
 		System.out.println("Saving...");
 		if( InputAgent.getConfigFileName() != null ) {
-			setSaveFile(gui, FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + InputAgent.getConfigFileName(), SAVE_ONLY );
+			setSaveFile(gui, InputAgent.getConfigFileName(), SAVE_ONLY );
 		}
 		else {
 			saveAs( gui );
@@ -788,7 +788,7 @@ public class InputAgent {
 	 *  if editbox is open and unaccepted, accepts changes.
 	 */
 	private static void setSaveFile(GUIFrame gui, String fileName, int saveOrLoadType) {
-		String configFilePath = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + InputAgent.getConfigFileName();
+		String configFilePath = InputAgent.getConfigFileName();
 
 		// check ending string of filename, force cfg onto end if needed
 		if (!(fileName.endsWith(".cfg"))) {
