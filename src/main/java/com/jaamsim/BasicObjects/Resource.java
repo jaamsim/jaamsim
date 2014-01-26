@@ -119,7 +119,8 @@ public class Resource extends DisplayEntity {
 	 * Release the given number of units back to the resource.
 	 * @param n = number of units to release
 	 */
-	public void release(int n) {
+	public void release(int m) {
+		int n = Math.min(m, unitsInUse);
 		this.updateStatistics(unitsInUse, unitsInUse-n);
 		unitsInUse -= n;
 		unitsReleased += n;
