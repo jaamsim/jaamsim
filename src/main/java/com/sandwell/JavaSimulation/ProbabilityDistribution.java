@@ -572,4 +572,14 @@ implements SampleProvider {
 		// Return time in seconds
 		return this.getExpectedValueHours() * 3600.0;
 	}
+
+	@Override
+	public double getMinValue() {
+		return this.getMinimumValueHours() * 3600.0;
+	}
+
+	@Override
+	public double getMaxValue() {
+		return this.getMaximumValueHours() * 3600.0;
+	}
 }

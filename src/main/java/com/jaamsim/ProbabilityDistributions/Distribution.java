@@ -164,11 +164,13 @@ implements SampleProvider {
 		return nextSample;
 	}
 
-	protected double getMinValue() {
+	@Override
+	public double getMinValue() {
 		return minValueInput.getValue();
 	}
 
-	protected double getMaxValue() {
+	@Override
+	public double getMaxValue() {
 		return maxValueInput.getValue();
 	}
 

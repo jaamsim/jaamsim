@@ -50,6 +50,16 @@ public class SampleConstant implements SampleProvider {
 	}
 
 	@Override
+	public double getMinValue() {
+		return val;
+	}
+
+	@Override
+	public double getMaxValue() {
+		return val;
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(val);

@@ -20,4 +20,6 @@ public interface SampleProvider {
 	public Class<? extends Unit> getUnitType();
 	public double getNextSample(double simTime);
 	public double getMeanValue(double simTime);
+	public double getMinValue();
+	public double getMaxValue();
 }

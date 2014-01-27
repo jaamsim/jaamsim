@@ -155,6 +155,16 @@ implements SampleProvider {
 		return value;
 	}
 
+	@Override
+	public double getMinValue() {
+		return value;
+	}
+
+	@Override
+	public double getMaxValue() {
+		return value;
+	}
+
 	public double getInputValue( double simTime ) {
 		return inputValue.getValue().getNextSample(simTime);
 	}
