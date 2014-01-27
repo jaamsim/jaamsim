@@ -376,14 +376,14 @@ implements SampleProvider {
 	/**
 	 * Return the expected value for the probability distribution
 	 */
-	public double getExpectedValue() {
+	public double getExpectedValueHours() {
 		return expectedValue * valueFactor;
 	}
 
 	/**
 	 * Return the minimum value for the probability distribution
 	 */
-	public double getMinimumValue() {
+	public double getMinimumValueHours() {
 		if( interpolate ) {
 			return cumValueList.getMin() * valueFactor;
 		}
@@ -395,7 +395,7 @@ implements SampleProvider {
 	/**
 	 * Return the maximum value for the probability distribution
 	 */
-	public double getMaximumValue() {
+	public double getMaximumValueHours() {
 		if( interpolate ) {
 			return cumValueList.getMax() * valueFactor;
 		}
@@ -570,6 +570,6 @@ implements SampleProvider {
 	public double getMeanValue(double simTime) {
 		// Assumes all existing ProbabilityDistributions were for time in hours
 		// Return time in seconds
-		return this.getExpectedValue() * 3600.0;
+		return this.getExpectedValueHours() * 3600.0;
 	}
 }

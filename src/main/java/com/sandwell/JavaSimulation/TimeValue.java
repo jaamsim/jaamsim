@@ -94,8 +94,8 @@ public class TimeValue {
 			return currentValue;
 
 		if(probVal != null)
-			return probVal.getExpectedValue() * probScaleFactor;
-		return monthProbVal.get(Clock.getMonthIndex(time)).getExpectedValue() * probScaleFactor;
+			return probVal.getExpectedValueHours() * probScaleFactor;
+		return monthProbVal.get(Clock.getMonthIndex(time)).getExpectedValueHours() * probScaleFactor;
 	}
 
 	public double getMinValueFor(double time) {
@@ -106,8 +106,8 @@ public class TimeValue {
 			return currentValue;
 
 		if(probVal != null)
-			return probVal.getMinimumValue() * probScaleFactor;
-		return monthProbVal.get(Clock.getMonthIndex(time)).getMinimumValue() * probScaleFactor;
+			return probVal.getMinimumValueHours() * probScaleFactor;
+		return monthProbVal.get(Clock.getMonthIndex(time)).getMinimumValueHours() * probScaleFactor;
 	}
 
 	public double getMinValue() {
@@ -118,12 +118,12 @@ public class TimeValue {
 			return currentValue;
 
 		if(probVal != null)
-			return probVal.getMinimumValue() * probScaleFactor;
+			return probVal.getMinimumValueHours() * probScaleFactor;
 
 		double minVal = Double.POSITIVE_INFINITY;
 		for(ProbabilityDistribution each: monthProbVal) {
-			if( minVal > each.getMinimumValue() )
-				minVal = each.getMinimumValue();
+			if( minVal > each.getMinimumValueHours() )
+				minVal = each.getMinimumValueHours();
 		}
 		return minVal * probScaleFactor;
 	}
@@ -136,8 +136,8 @@ public class TimeValue {
 			return currentValue;
 
 		if(probVal != null)
-			return probVal.getMaximumValue() * probScaleFactor;
-		return monthProbVal.get(Clock.getMonthIndex(time)).getMaximumValue() * probScaleFactor;
+			return probVal.getMaximumValueHours() * probScaleFactor;
+		return monthProbVal.get(Clock.getMonthIndex(time)).getMaximumValueHours() * probScaleFactor;
 	}
 
 	public void initialize() {
@@ -150,7 +150,7 @@ public class TimeValue {
 			currentValue = monthVal.get(Clock.getMonthIndex(0));
 
 		if (probVal != null)
-			currentValue = probVal.getExpectedValue();
+			currentValue = probVal.getExpectedValueHours();
 	}
 
 	@Override
