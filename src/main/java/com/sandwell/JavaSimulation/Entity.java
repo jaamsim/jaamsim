@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.basicsim.InstanceIterable;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.input.InputAgent;
@@ -113,6 +114,10 @@ public class Entity {
 		}
 
 		return instanceList;
+	}
+
+	public static <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
+		return new InstanceIterable<T>(proto);
 	}
 
 	public static <T extends Entity> ArrayList<T> getClonesOf(Class<T> proto) {
