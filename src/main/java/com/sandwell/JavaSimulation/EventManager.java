@@ -192,7 +192,7 @@ public final class EventManager implements Runnable {
 				if (eventStack.get(0).schedTick == currentTick) {
 					// Remove the event from the future events
 					Event nextEvent = eventStack.remove(0);
-					this.retireEvent(nextEvent, STATE_EXITED);
+					traceEvent(nextEvent, STATE_EXITED);
 					Process p = nextEvent.process;
 					if (p == null)
 						p = Process.allocate(this, nextEvent.target);
@@ -484,7 +484,7 @@ public final class EventManager implements Runnable {
 			for (int i = 0; i < eventStack.size(); i++) {
 				if (eventStack.get(i).process == intThread) {
 					Event interruptEvent = eventStack.remove(i);
-					retireEvent(interruptEvent, STATE_INTERRUPTED);
+					traceEvent(interruptEvent, STATE_INTERRUPTED);
 					interruptEvent.process.setNextProcess(Process.current());
 					switchThread(interruptEvent.process);
 					return;
@@ -511,7 +511,7 @@ public final class EventManager implements Runnable {
 			for( int i = 0; i < eventStack.size(); i++ ) {
 				if (eventStack.get(i).process == killThread) {
 					Event temp = eventStack.remove(i);
-					retireEvent(temp, STATE_TERMINATED);
+					traceEvent(temp, STATE_TERMINATED);
 					killThread.setFlag(Process.TERMINATE);
 					killThread.interrupt();
 					return;
@@ -519,10 +519,6 @@ public final class EventManager implements Runnable {
 			}
 		}
 		throw new ErrorException("Tried to terminate a thread in %s that couldn't be found", name);
-	}
-
-	private void retireEvent(Event retired, int reason) {
-		traceEvent(retired, reason);
 	}
 
 	long currentTick() {
