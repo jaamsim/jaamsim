@@ -470,6 +470,16 @@ public final class EventManager implements Runnable {
 		}
 	}
 
+	void start(ProcessTarget t) {
+		Process newProcess = Process.allocate(this, t);
+		// Notify the eventManager that a new process has been started
+		traceProcessStart(t);
+
+		// Transfer control to the new process
+		newProcess.setNextProcess(Process.current());
+		switchThread(newProcess);
+	}
+
 	/**
 	 *	Removes the thread from the pending list and executes it immediately
 	 */

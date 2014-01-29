@@ -172,14 +172,7 @@ public class Process extends Thread {
 		Process cur = Process.current();
 
 		// Create the new process
-		EventManager evt = cur.getEventManager();
-		Process newProcess = Process.allocate(evt, t);
-		// Notify the eventManager that a new process has been started
-		evt.traceProcessStart(t);
-
-		// Transfer control to the new process
-		newProcess.setNextProcess(cur);
-		evt.switchThread(newProcess);
+		cur.getEventManager().start(t);
 	}
 
 	// Set up a new process for the given entity, method, and arguments
