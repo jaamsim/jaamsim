@@ -306,7 +306,7 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	void switchThread(Thread next) {
+	private void switchThread(Thread next) {
 		synchronized (lockObject) {
 			next.interrupt();
 			threadWait();
@@ -615,11 +615,11 @@ public final class EventManager implements Runnable {
 		if (traceEvents) traceRecord.formatEventTrace(name, evt, reason);
 	}
 
-	void traceProcessStart(ProcessTarget t) {
+	private void traceProcessStart(ProcessTarget t) {
 		if (traceEvents) traceRecord.formatBegin(name, currentTick, t);
 	}
 
-	void traceProcessEnd() {
+	private void traceProcessEnd() {
 		if (traceEvents) traceRecord.formatExit(name, currentTick);
 	}
 
