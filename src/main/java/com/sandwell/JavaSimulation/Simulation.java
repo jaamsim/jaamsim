@@ -225,10 +225,10 @@ public class Simulation extends Entity {
 		root.clear();
 
 		if( traceEventsInput.getValue() ) {
-			EventTracer.traceAllEvents(traceEventsInput.getValue());
+			root.traceAllEvents(traceEventsInput.getValue());
 		}
 		else if( verifyEventsInput.getValue() ) {
-			EventTracer.verifyAllEvents(verifyEventsInput.getValue());
+			root.verifyAllEvents(verifyEventsInput.getValue());
 		}
 		Process.setSimTimeScale(simTimeScaleInput.getValue());
 		if( startDate.getValue() != null ) {

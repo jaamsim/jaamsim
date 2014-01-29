@@ -611,6 +611,14 @@ public final class EventManager implements Runnable {
 		}
 	}
 
+	public void traceAllEvents(boolean enable) {
+		EventTracer.traceAllEvents(this, enable);
+	}
+
+	public void verifyAllEvents(boolean enable) {
+		EventTracer.verifyAllEvents(this, enable);
+	}
+
 	private void traceEvent(Event evt, int reason) {
 		if (traceEvents) traceRecord.formatEventTrace(name, evt, reason);
 	}

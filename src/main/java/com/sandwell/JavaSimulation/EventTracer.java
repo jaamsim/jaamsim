@@ -66,21 +66,21 @@ class EventTracer {
 		}
 	}
 
-	static void traceAllEvents(boolean enable) {
+	static void traceAllEvents(EventManager evt, boolean enable) {
 		if (enable) {
-			verifyAllEvents(false);
+			verifyAllEvents(evt, false);
 			eventTraceFile = new FileEntity(InputAgent.getRunName() + ".evt", FileEntity.FILE_WRITE, false);
 		} else if (eventTraceFile != null) {
 			eventTraceFile.close();
 			eventTraceFile = null;
 		}
 
-		Entity.root.traceEvents = enable;
+		evt.traceEvents = enable;
 	}
 
-	static void verifyAllEvents(boolean enable) {
+	static void verifyAllEvents(EventManager evt, boolean enable) {
 		if (enable) {
-			traceAllEvents(false);
+			traceAllEvents(evt, false);
 			eventBuffer.clear();
 			bufferTime = 0;
 			eventVerifyFile = new FileEntity(InputAgent.getRunName() + ".evt", FileEntity.FILE_READ, false);
@@ -89,7 +89,7 @@ class EventTracer {
 			eventVerifyFile = null;
 		}
 
-		Entity.root.traceEvents = enable;
+		evt.traceEvents = enable;
 	}
 
 	private static void findEventInBuffer(EventTraceRecord record) {
