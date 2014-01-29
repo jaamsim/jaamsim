@@ -29,7 +29,6 @@ import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Input;
-import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
@@ -128,7 +127,7 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 		// If necessary, wake up the conveyor
 		if ( !busy ) {
-			Process.start( new ProcessEntitiesTarget(this, "processEntities") );
+			startProcess( new ProcessEntitiesTarget(this, "processEntities") );
 		}
 	}
 

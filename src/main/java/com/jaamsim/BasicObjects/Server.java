@@ -22,7 +22,6 @@ import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;
 
@@ -93,7 +92,7 @@ public class Server extends LinkedComponent {
 
 		// If necessary, wake up the server
 		if ( !busy ) {
-			Process.start(new ProcessEntitiesTarget(this));
+			startProcess(new ProcessEntitiesTarget(this));
 		}
 	}
 

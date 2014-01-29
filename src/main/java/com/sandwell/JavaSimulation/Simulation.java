@@ -322,7 +322,7 @@ public class Simulation extends Entity {
 		@Override
 		public void process() {
 			for (int i = 0; i < Entity.getAll().size(); i++) {
-				Process.start(new StartUpTarget(Entity.getAll().get(i)));
+				root.start(new StartUpTarget(Entity.getAll().get(i)));
 			}
 		}
 	}

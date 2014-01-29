@@ -163,18 +163,6 @@ public class Process extends Thread {
 		}
 	}
 
-	/**
-	 * Start a new Process that executes the given ProcessTarget, control will
-	 * return to the caller when the started Process either waits or exits.
-	 * @param t the target to begin execution
-	 */
-	public static void start(ProcessTarget t) {
-		Process cur = Process.current();
-
-		// Create the new process
-		cur.getEventManager().start(t);
-	}
-
 	// Set up a new process for the given entity, method, and arguments
 	// Called from Process.start() and from EventManager.startExternalProcess()
 	static Process allocate(EventManager eventManager, ProcessTarget proc) {

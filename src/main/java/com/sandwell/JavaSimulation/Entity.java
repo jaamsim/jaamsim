@@ -391,7 +391,11 @@ public class Entity {
 
 	public final void startProcess(String methodName, Object... args) {
 		ProcessTarget t = new ReflectionTarget(this, methodName, args);
-		Process.start(t);
+		startProcess(t);
+	}
+
+	public final void startProcess(ProcessTarget t) {
+		getEventManager().start(t);
 	}
 
 	public final void scheduleProcess(ProcessTarget t) {

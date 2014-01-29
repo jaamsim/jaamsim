@@ -135,7 +135,7 @@ public class VideoRecorderEntity extends Entity {
 		super.startUp();
 
 		if (videoCapture.getValue())
-			Process.start(new CaptureNetworkTarget(this));
+			startProcess(new CaptureNetworkTarget(this));
 
 		this.hasRunStartup = true;
 	}

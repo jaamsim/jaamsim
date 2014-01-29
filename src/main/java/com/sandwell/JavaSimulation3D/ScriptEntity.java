@@ -71,7 +71,7 @@ public class ScriptEntity extends Entity {
 
 	@Override
 	public void startUp() {
-		Process.start(new ScriptTarget(this));
+		startProcess(new ScriptTarget(this));
 	}
 
 	/**
