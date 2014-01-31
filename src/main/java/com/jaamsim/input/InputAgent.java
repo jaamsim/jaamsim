@@ -882,12 +882,10 @@ public class InputAgent {
 			Class<? extends Entity> each = type.getJavaClass();
 
 			// Loop through the instances for this entity class
-			ArrayList<? extends Entity> cloneList = Entity.getInstancesOf(each);
 			int count = 0;
-			for (int j = 0; j < cloneList.size(); j++) {
+			for (Entity ent : Entity.getInstanceIterator(each)) {
 				boolean hasinput = false;
 
-				Entity ent = cloneList.get(j);
 				for (Input<?> in : ent.getEditableInputs()) {
 					// If the keyword has been used, then add a record to the report
 					if (in.getValueString().length() != 0) {
@@ -918,7 +916,7 @@ public class InputAgent {
 				}
 			}
 
-			if (cloneList.size() > 0) {
+			if (!Entity.getInstanceIterator(each).hasNext()) {
 				if (count % 5 != 0) {
 					inputReportFile.putString(" }");
 					inputReportFile.newLine();
