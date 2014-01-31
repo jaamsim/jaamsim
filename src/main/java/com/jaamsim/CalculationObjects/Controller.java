@@ -56,7 +56,7 @@ public class Controller extends DisplayEntity {
 
 		// Prepare a list of the calculation entities managed by this controller
 		calculationEntityList.clear();
-		for (CalculationEntity ent : Entity.getClonesOf(CalculationEntity.class)) {
+		for (CalculationEntity ent : Entity.getClonesOfIterator(CalculationEntity.class)) {
 			if (ent.getController() == this)
 				calculationEntityList.add(ent);
 		}

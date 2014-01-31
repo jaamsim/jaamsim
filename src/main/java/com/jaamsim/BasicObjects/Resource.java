@@ -73,7 +73,7 @@ public class Resource extends DisplayEntity {
 
 	@Override
 	public void validate() {
-		for (Seize ent : Entity.getClonesOf(Seize.class)) {
+		for (Seize ent : Entity.getClonesOfIterator(Seize.class)) {
 			if( ent.requiresResource(this) )
 				return;
 		}
@@ -91,7 +91,7 @@ public class Resource extends DisplayEntity {
 
 		// Prepare a list of the Seize objects that use this resource
 		seizeList.clear();
-		for (Seize ent : Entity.getClonesOf(Seize.class)) {
+		for (Seize ent : Entity.getClonesOfIterator(Seize.class)) {
 			if( ent.requiresResource(this) )
 				seizeList.add(ent);
 		}

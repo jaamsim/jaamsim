@@ -83,7 +83,7 @@ public class Queue extends DisplayEntity {
 		this.clearStatistics();
 
 		recorderList = new ArrayList<QueueRecorder>();
-		for( QueueRecorder rec : Entity.getClonesOf( QueueRecorder.class ) ) {
+		for( QueueRecorder rec : Entity.getClonesOfIterator( QueueRecorder.class ) ) {
 			if( rec.getQueueList().contains( this ) ) {
 				recorderList.add( rec );
 			}

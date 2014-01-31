@@ -49,7 +49,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<String>();
-		for(T each: Entity.getClonesOf(entClass) ) {
+		for(T each: Entity.getClonesOfIterator(entClass) ) {
 			if(each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 
