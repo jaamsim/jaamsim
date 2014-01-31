@@ -1339,6 +1339,7 @@ public class GUIFrame extends JFrame {
 
 		if( configFiles.size() == 0 ) {
 			InputAgent.loadDefault();
+			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
 		gui.setTitle(Simulation.getModelName());
 		// Process any config files passed on command line
