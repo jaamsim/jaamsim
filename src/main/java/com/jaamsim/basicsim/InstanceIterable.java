@@ -33,34 +33,40 @@ public class InstanceIterable<T extends Entity> implements Iterable<T>, Iterator
 		nextPos = -1;
 	}
 
-	private boolean findNext(){
-		if(nextPos+1 >= allInstances.size())
-			return false;
-		while(allInstances.get(++nextPos).getClass() != entClass){
-			// if this is the last item on the list, exit
-			if(nextPos+1 >= allInstances.size())
-				return false;
+	private void updatePos() {
+		if (nextPos >= allInstances.size())
+			return;
+
+		while (++nextPos < allInstances.size()) {
+			// If we find a match, break out
+			if (allInstances.get(nextPos).getClass() == entClass)
+				break;
 		}
-		return true;
 	}
 
 	@Override
 	public boolean hasNext() {
-		if(nextPos+1 >=  allInstances.size())
-			return false;
-		if(nextPos > curPos)
+		if (curPos == nextPos)
+			updatePos();
+
+		if (nextPos < allInstances.size())
 			return true;
-		return findNext();
+		else
+			return false;
 	}
 
 	@Override
 	public T next() {
-		if(nextPos == curPos){
-			if( !findNext() )
-				throw new NoSuchElementException();
+		if (curPos == nextPos)
+			updatePos();
+
+		if (nextPos < allInstances.size()) {
+			curPos = nextPos;
+			return entClass.cast(allInstances.get(curPos));
 		}
-		curPos = nextPos;
-		return entClass.cast(allInstances.get(curPos));
+		else {
+			throw new NoSuchElementException();
+		}
 	}
 
 	@Override
