@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.basicsim.ClonesOfIterable;
 import com.jaamsim.basicsim.InstanceIterable;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.events.ReflectionTarget;
@@ -118,6 +119,10 @@ public class Entity {
 
 	public static <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
 		return new InstanceIterable<T>(proto);
+	}
+
+	public static <T extends Entity> ClonesOfIterable<T> getClonesOfIterator(Class<T> proto){
+		return new ClonesOfIterable<T>(proto);
 	}
 
 	public static <T extends Entity> ArrayList<T> getClonesOf(Class<T> proto) {
