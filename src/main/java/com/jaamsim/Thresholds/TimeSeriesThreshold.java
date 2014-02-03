@@ -180,8 +180,7 @@ public class TimeSeriesThreshold extends Threshold {
 	 * Return TRUE if the threshold is closed at the given time
 	 * @param time - The time in hours
 	 */
-	@Override
-	public boolean isClosedAtTime( double time ) {
+	private boolean isClosedAtTime( double time ) {
 
 		// Add offset from input
 		time += this.getOffsetInHours();

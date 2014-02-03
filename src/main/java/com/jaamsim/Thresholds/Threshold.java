@@ -121,8 +121,6 @@ public abstract class Threshold extends DisplayEntity {
 		return closed;
 	}
 
-	public abstract boolean isClosedAtTime( double time );
-
 	public abstract double calcClosedTimeFromTime( double startTime );
 
 	@Override
