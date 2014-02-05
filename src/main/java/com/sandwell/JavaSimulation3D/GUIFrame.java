@@ -75,6 +75,7 @@ import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
@@ -443,6 +444,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 		viewMenu.add( propertiesMenuItem );
+
+		JMenuItem logMenuItem = new JMenuItem( "Log Viewer" );
+		logMenuItem.setMnemonic( 'L' );
+		logMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				LogBox.getInstance().makeVisible();
+			}
+		} );
+		viewMenu.add( logMenuItem );
 
 		mainMenuBar.add( viewMenu );
 		// End File menu creation
