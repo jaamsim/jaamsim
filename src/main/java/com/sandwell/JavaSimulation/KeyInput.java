@@ -43,6 +43,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 
 	public void setUnitType(Class<? extends Unit> u) {
 		unitType = u;
+		unitString = null;
 	}
 
 	private String unitString = "";
