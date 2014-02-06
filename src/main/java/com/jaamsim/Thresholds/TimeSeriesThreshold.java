@@ -249,7 +249,7 @@ public class TimeSeriesThreshold extends Threshold {
 			}
 
 			// if have already searched the longest cycle, the threshold will never open
-			if( changeTime > startTime + maxTimeValueFromTimeSeries )
+			if( changeTime > startTime + maxTimeValueFromTimeSeries + this.getLookAhead() )
 				return Double.POSITIVE_INFINITY;
 
 			// Closed index
