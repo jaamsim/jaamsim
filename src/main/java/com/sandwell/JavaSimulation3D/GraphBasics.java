@@ -67,7 +67,7 @@ public abstract class GraphBasics extends DisplayEntity {
 
 	@Keyword(description = "The unit to be used for the x-axis.",
 	         example = "Graph1 XAxisUnit { h }")
-	private final EntityInput<? extends Unit> xAxisUnit;
+	private final EntityInput<Unit> xAxisUnit;
 
 	@Keyword(description = "The minimum value for the x-axis.",
 	         example = "Graph1 XAxisStart { -48 h }")
@@ -105,7 +105,7 @@ public abstract class GraphBasics extends DisplayEntity {
 			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
 			"i.e. if the data has units of distance, then unit must be a distance unit such as meters.",
 	         example = "Graph1 YAxisUnit { t/h }")
-	private final EntityInput<? extends Unit> yAxisUnit;
+	private final EntityInput<Unit> yAxisUnit;
 
 	@Keyword(description = "The minimum value for the y-axis.",
 	         example = "Graph1 YAxisStart { 0 t/h }")
@@ -143,7 +143,7 @@ public abstract class GraphBasics extends DisplayEntity {
 			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
 			"i.e. if the data has units of distance, then unit must be a distance unit such as meters.",
 	         example = "Graph1 SecondaryYAxisUnit { m }")
-	private final EntityInput<? extends Unit> secondaryYAxisUnit;
+	private final EntityInput<Unit> secondaryYAxisUnit;
 
 	@Keyword(description = "The minimum value for the secondary y-axis.",
 	         example = "Graph1 SecondaryYAxisStart { 0 m }")
@@ -309,6 +309,7 @@ public abstract class GraphBasics extends DisplayEntity {
 	}
 
 	protected void setXAxisUnit(Class<? extends Unit> unitType) {
+		xAxisUnit.setSubClass(unitType);
 		xAxisStart.setUnitType(unitType);
 		xAxisEnd.setUnitType(unitType);
 		xAxisInterval.setUnitType(unitType);
@@ -317,6 +318,7 @@ public abstract class GraphBasics extends DisplayEntity {
 	}
 
 	protected void setYAxisUnit(Class<? extends Unit> unitType) {
+		yAxisUnit.setSubClass(unitType);
 		yAxisStart.setUnitType(unitType);
 		yAxisEnd.setUnitType(unitType);
 		yAxisInterval.setUnitType(unitType);
@@ -325,6 +327,7 @@ public abstract class GraphBasics extends DisplayEntity {
 	}
 
 	protected void setSecondaryYAxisUnit(Class<? extends Unit> unitType) {
+		secondaryYAxisUnit.setSubClass(unitType);
 		secondaryYAxisStart.setUnitType(unitType);
 		secondaryYAxisEnd.setUnitType(unitType);
 		secondaryYAxisInterval.setUnitType(unitType);
