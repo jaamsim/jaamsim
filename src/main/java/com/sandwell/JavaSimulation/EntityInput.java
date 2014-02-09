@@ -20,12 +20,18 @@ import java.util.Collections;
 public class EntityInput<T extends Entity> extends Input<T> {
 
 	private Class<T> entClass;
+	private Class<? extends T> entSubClass;  // a particular sub-class that can be set at runtime
 	private ArrayList<T> invalidEntities;
 
 	public EntityInput(Class<T> aClass, String key, String cat, T def) {
 		super(key, cat, def);
 		entClass = aClass;
+		entSubClass = aClass;
 		invalidEntities = null;
+	}
+
+	public void setSubClass(Class<? extends T> aClass) {
+		entSubClass = aClass;
 	}
 
 	@Override
@@ -47,7 +53,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<String>();
-		for (T each: Entity.getClonesOfIterator(entClass)) {
+		for (T each: Entity.getClonesOfIterator(entSubClass)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 
