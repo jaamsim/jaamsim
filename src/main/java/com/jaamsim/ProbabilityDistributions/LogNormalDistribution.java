@@ -39,6 +39,8 @@ public class LogNormalDistribution extends Distribution {
 	protected final Random randomGenerator2; // second random generator for picking values
 
 	{
+		minValueInput.setDefaultValue(0.0);
+
 		normalMeanInput = new ValueInput("NormalMean", "Key Inputs", 0.0d);
 		normalMeanInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(normalMeanInput, true);

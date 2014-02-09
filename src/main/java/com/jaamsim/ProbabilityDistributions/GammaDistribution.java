@@ -41,6 +41,8 @@ public class GammaDistribution extends Distribution {
 	protected final Random randomGenerator2; // second random generator for picking values
 
 	{
+		minValueInput.setDefaultValue(0.0);
+
 		meanInput = new ValueInput("Mean", "Key Inputs", 1.0d);
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);

@@ -35,6 +35,8 @@ public class LogLogisticDistribution extends Distribution {
 	private final ValueInput shapeInput;
 
 	{
+		minValueInput.setDefaultValue(0.0);
+
 		scaleInput = new ValueInput("Scale", "Key Inputs", 1.0d);
 		scaleInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		scaleInput.setUnitType( UserSpecifiedUnit.class );

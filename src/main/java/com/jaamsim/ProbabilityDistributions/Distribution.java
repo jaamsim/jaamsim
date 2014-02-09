@@ -48,11 +48,11 @@ implements SampleProvider {
 
 	@Keyword(description = "Minimum value that can be returned.  Smaller values are rejected and resampled.",
 	         example = "ProbDist1 MinValue { 0.0 }")
-	private final ValueInput minValueInput;
+	protected final ValueInput minValueInput;
 
 	@Keyword(description = "Maximum value that can be returned.  Larger values are rejected and resampled.",
 	         example = "ProbDist1 MaxValue { 200.0 }")
-	private final ValueInput maxValueInput;
+	protected final ValueInput maxValueInput;
 
 	protected final Random randomGenerator1; // first random generator for picking values
 
