@@ -21,6 +21,7 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.EntityInput;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.StringInput;
 
 /**
@@ -77,6 +78,17 @@ public class Text extends DisplayEntity {
 	}
 
 	public Text() {}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == outputName) {
+			Class<? extends Unit> ut = outputName.getOutputHandle(0.0).getUnitType();
+			unit.setSubClass(ut);
+			return;
+		}
+	}
 
 	public String getRenderText(double simTime) {
 		if( outputName.getValue() == null )
