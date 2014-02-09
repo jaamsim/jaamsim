@@ -104,6 +104,16 @@ public class ContinuousDistribution extends Distribution {
 	}
 
 	@Override
+	public double getMinValue() {
+		return Math.max( valueListInput.getValue().get(0), minValueInput.getValue());
+	}
+
+	@Override
+	public double getMaxValue() {
+		return Math.min( valueListInput.getValue().lastElement(), maxValueInput.getValue());
+	}
+
+	@Override
 	protected double getMeanValue() {
 		double sum = 0.0;
 		DoubleVector cumList = cumulativeProbabilityListInput.getValue();
