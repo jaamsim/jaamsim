@@ -47,6 +47,7 @@ import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Palette;
 
@@ -309,6 +310,19 @@ public class ObjectSelector extends FrameBox {
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 			String newName = (String)node.getUserObject();
+
+			// Remove any spaces in the entity's new name
+			newName = newName.replace(" ", "");
+
+			// Check that the name has not been used already
+			Entity existingEnt = Input.tryParseEntity(newName, Entity.class);
+			if( existingEnt != null ) {
+				InputAgent.logWarning("Entity name: %s is already in use.", newName);
+				node.setUserObject(currentEntity);
+				return;
+			}
+
+			// Rename the entity
 			currentEntity.setInputName(newName);
 			node.setUserObject(currentEntity);
 			FrameBox.setSelectedEntity(currentEntity);
