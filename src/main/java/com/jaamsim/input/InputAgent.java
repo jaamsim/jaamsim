@@ -803,7 +803,7 @@ public class InputAgent {
 		// If the original configuration file is the same as the file to save, and there were no added records,
 		// then do not save the file because it would be recursive, i.e. contain "include <fileName>"
 
-		if( configFilePath.equalsIgnoreCase( fileName ) ) {
+		if( fileName.equalsIgnoreCase( configFilePath ) ) {
 			if( !InputAgent.hasAddedRecords() )  {
 				if( saveOrLoadType == FileDialog.SAVE) {
 					// recursive -- if can't overwrite base file, 'save as'
@@ -845,7 +845,7 @@ public class InputAgent {
 		sessionEdited = false;
 
 		//TODOalan set directory of model.. ?
-		InputAgent.setConfigFileName(shortName(fileName));
+		InputAgent.setConfigFileName(fileName);
 
 		// Set the title bar to match the new run name
 		gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
