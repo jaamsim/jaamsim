@@ -28,6 +28,7 @@ import javax.swing.table.TableColumnModel;
 
 import com.jaamsim.controllers.RenderManager;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class FrameBox extends JFrame {
@@ -83,7 +84,8 @@ public class FrameBox extends JFrame {
 		RenderManager.setSelection(ent);
 	}
 
-	public static final void timeUpdate(double time) {
+	public static final void timeUpdate(long tick) {
+		double time = Process.ticksToSeconds(tick);
 		valueUpdater.scheduleUpdate(time);
 		RenderManager.updateTime(time);
 	}

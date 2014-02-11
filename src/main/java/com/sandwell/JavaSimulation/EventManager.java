@@ -16,10 +16,9 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.events.EventErrorListener;
+import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.ui.ExceptionBox;
-import com.jaamsim.ui.FrameBox;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Class EventManager - Sandwell Discrete Event Simulation
@@ -78,6 +77,8 @@ public final class EventManager implements Runnable {
 	private boolean rebaseRealTime;   // TRUE if the time keeping for Real Time model needs re-basing
 	private int realTimeFactor;       // target ratio of elapsed simulation time to elapsed wall clock time
 
+	private EventTimeListener timelistener;
+	private EventErrorListener errListener;
 	private EventTraceRecord traceRecord;
 
 	static final int PRIO_DEFAULT = 5;
@@ -118,12 +119,32 @@ public final class EventManager implements Runnable {
 		executeRealTime = false;
 		realTimeFactor = 1;
 		rebaseRealTime = true;
+		setTimeListener(null);
+		setErrorListener(null);
 	}
 
 	static EventManager initEventManager(String name) {
 		EventManager evtman = new EventManager(name);
 		evtman.eventManagerThread.start();
 		return evtman;
+	}
+
+	public final void setTimeListener(EventTimeListener l) {
+		synchronized (lockObject) {
+			if (l != null)
+				timelistener = l;
+			else
+				timelistener = new DefaultTimeListener();
+		}
+	}
+
+	public final void setErrorListener(EventErrorListener l) {
+		synchronized (lockObject) {
+			if (l != null)
+				errListener = l;
+			else
+				errListener = new DefaultErrorListener();
+		}
 	}
 
 	void clear() {
@@ -183,8 +204,9 @@ public final class EventManager implements Runnable {
 				}
 
 				if (eventState == EVENTS_STOPPED) {
-					GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_PAUSED);
+					timelistener.timeRunning(false);
 					this.threadWait();
+					timelistener.timeRunning(true);
 					continue;
 				}
 
@@ -233,7 +255,7 @@ public final class EventManager implements Runnable {
 					if (realTick < nextTick) {
 						// Update the displayed simulation time
 						currentTick = realTick;
-						FrameBox.timeUpdate(Process.ticksToSeconds(currentTick));
+						timelistener.tickUpdate(currentTick);
 						//Halt the thread for 20ms and then reevaluate the loop
 						try { lockObject.wait(20); } catch( InterruptedException e ) {}
 						continue;
@@ -242,7 +264,7 @@ public final class EventManager implements Runnable {
 
 				// advance time
 				currentTick = nextTick;
-				FrameBox.timeUpdate(Process.ticksToSeconds(currentTick));
+				timelistener.tickUpdate(currentTick);
 			}
 		}
 	}
@@ -696,22 +718,21 @@ public final class EventManager implements Runnable {
 	}
 
 	void handleProcessError(Throwable t) {
-		if (t instanceof OutOfMemoryError) {
-			OutOfMemoryError e = (OutOfMemoryError)t;
-			System.err.println("Out of Memory use the -Xmx flag during execution for more memory");
-			System.err.println("Further debug information:");
-			System.err.println("Error: " + e.getMessage());
-			for (StackTraceElement each : e.getStackTrace())
-				System.out.println(each.toString());
-			GUIFrame.shutdown(1);
-			return;
+		this.pause();
+		synchronized (lockObject) {
+			errListener.handleError(t, currentTick);
 		}
-		else {
-			this.pause();
-			double curSec = Process.ticksToSeconds(currentTick);
-			System.err.format("EXCEPTION AT TIME: %f s%n", curSec);
-			ExceptionBox exp = ExceptionBox.instance();
-			exp.setError(t);
-		}
+	}
+
+	private static class DefaultTimeListener implements EventTimeListener {
+		@Override
+		public void tickUpdate(long tick) {}
+		@Override
+		public void timeRunning(boolean running) {}
+	}
+
+	private static class DefaultErrorListener implements EventErrorListener {
+		@Override
+		public void handleError(Throwable t, long currentTick) {}
 	}
 }

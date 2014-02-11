@@ -66,18 +66,23 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.events.EventErrorListener;
+import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
+import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
+import com.sandwell.JavaSimulation.EventManager;
 import com.sandwell.JavaSimulation.FileEntity;
+import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Tester;
 
@@ -85,7 +90,7 @@ import com.sandwell.JavaSimulation.Tester;
  * The main window for a Graphical Simulation.  It provides the controls for managing then
  * EventManager (run, pause, ...) and the graphics (zoom, pan, ...)
  */
-public class GUIFrame extends JFrame {
+public class GUIFrame extends JFrame implements EventTimeListener, EventErrorListener {
 	private static GUIFrame instance;
 
 	// global shutdown flag
@@ -250,7 +255,7 @@ public class GUIFrame extends JFrame {
 		RenderManager.clear();
 
 		this.updateForSimulationState(GUIFrame.SIM_STATE_LOADED);
-		FrameBox.timeUpdate(0.0d);
+		FrameBox.timeUpdate(0);
 
 		// Clear the title bar
 		setTitle(Simulation.getModelName());
@@ -590,7 +595,7 @@ public class GUIFrame extends JFrame {
 				// stop only if yes
 				if (userOption == JOptionPane.YES_OPTION) {
 					GUIFrame.this.stopSimulation();
-					FrameBox.timeUpdate(0.0d);
+					FrameBox.timeUpdate(0);
 					lastSimTimeHours = 0.0d;
 					lastSystemTime = System.currentTimeMillis();
 					setSpeedUp(0.0d);
@@ -1319,9 +1324,10 @@ public class GUIFrame extends JFrame {
 		System.out.println( "Loading Simulation Environment ... " );
 		System.out.flush();
 
-		Entity.initEVT();
+		EventManager evt = Entity.initEVT();
 		GUIFrame gui = GUIFrame.instance();
 		gui.updateForSimulationState(SIM_STATE_LOADED);
+		evt.setTimeListener(gui);
 
 		System.out.println( "Simulation Environment Loaded" );
 
@@ -1439,4 +1445,38 @@ public class GUIFrame extends JFrame {
 		System.exit(errorCode);
 	}
 
+	@Override
+	public void tickUpdate(long tick) {
+		FrameBox.timeUpdate(tick);
+	}
+
+	@Override
+	public void timeRunning(boolean running) {
+		if (running) {
+
+		}
+		else {
+			updateForSimulationState(SIM_STATE_PAUSED);
+		}
+	}
+
+	@Override
+	public void handleError(Throwable t, long currentTick) {
+		if (t instanceof OutOfMemoryError) {
+			OutOfMemoryError e = (OutOfMemoryError)t;
+			System.err.println("Out of Memory use the -Xmx flag during execution for more memory");
+			System.err.println("Further debug information:");
+			System.err.println("Error: " + e.getMessage());
+			for (StackTraceElement each : e.getStackTrace())
+				System.out.println(each.toString());
+			GUIFrame.shutdown(1);
+			return;
+		}
+		else {
+			double curSec = Process.ticksToSeconds(currentTick);
+			System.err.format("EXCEPTION AT TIME: %f s%n", curSec);
+			ExceptionBox exp = ExceptionBox.instance();
+			exp.setError(t);
+		}
+	}
 }
