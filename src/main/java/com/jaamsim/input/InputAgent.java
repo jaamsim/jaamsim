@@ -58,10 +58,10 @@ public class InputAgent {
 
 	private static double lastTimeForTrace;
 
-	private static String configFileName;
+	private static String configFileName;  // absolute file path and file name for the present configuration file
 	private static boolean batchRun;
 	private static boolean sessionEdited;
-	private static boolean addedRecordFound;
+	private static boolean addedRecordFound;  // TRUE if the "added records" marker is found in the configuration file
 	private static boolean recordEdits;
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
@@ -106,6 +106,7 @@ public class InputAgent {
 
 	public static void setConfigFileName(String name) {
 		configFileName = name;
+		System.out.println("configFileName set to: "+configFileName);
 	}
 
 	public static String getConfigFileName() {
@@ -717,7 +718,8 @@ public class InputAgent {
 		chooser.setFilenameFilter(new ConfigFileFilter());
 		chooser.setFile(InputAgent.getConfigFileName());
 
-		chooser.setVisible(true); // display the dialog, waits for selection
+		 // Display the dialog and wait for selection
+		chooser.setVisible(true);
 
 		String file = chooser.getFile();
 		if (file == null)
@@ -787,9 +789,9 @@ public class InputAgent {
 	}
 
 	/**
-	 *  saves the cfg/pos file.  checks for 'save' and 'save as', recursively goes to 'save as' if 'save' is not possible.
-	 *  updates runname and filename of file.
-	 *  if editbox is open and unaccepted, accepts changes.
+	 * Saves the configuration file.
+	 * @param gui = Control Panel window for JaamSim
+	 * @param fileName = absolute file path and file name for the file to be saved
 	 */
 	private static void setSaveFile(GUIFrame gui, String fileName) {
 
@@ -797,19 +799,13 @@ public class InputAgent {
 		File temp = new File(fileName);
 		FileEntity.setRootDirectory( temp.getParentFile() );
 
-		//saveFile = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
-		//simulation.printNewConfigurationFileOn( saveFile );
+		// Save the configuration file
 		InputAgent.printNewConfigurationFileWithName( fileName );
 		sessionEdited = false;
-
-		//TODOalan set directory of model.. ?
 		InputAgent.setConfigFileName(fileName);
 
 		// Set the title bar to match the new run name
 		gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
-
-		// close the window
-		//dispose();
 	}
 
 	/*
