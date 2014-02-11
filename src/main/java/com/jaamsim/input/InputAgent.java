@@ -727,6 +727,15 @@ public class InputAgent {
 
 		String absFile = chooser.getDirectory() + file;
 
+		// Compensate for an error in FileDialog under Java 7:
+		// - If the new name is shorter than the old name, then the method getDirectory() returns the absolute path and
+		//   the file name. The method getFile() returns a corrupted version of the old file name.
+		// - If the new name is the same length or longer than the new name then both methods work properly.
+		// Expected to be fixed in Java 8.
+		if( System.getProperty("java.version").startsWith("1.7.") )
+			if( absFile.length() < InputAgent.getConfigFileName().length() ) // If corrupted, the new absolute file name is one character shorter than the old absolute file name
+				absFile = chooser.getDirectory();
+
 		// Add the file extension ".cfg" if needed
 		absFile = absFile.trim();
 		if( ! absFile.endsWith(".cfg") )
