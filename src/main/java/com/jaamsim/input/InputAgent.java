@@ -31,8 +31,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
@@ -65,8 +63,6 @@ public class InputAgent {
 	private static boolean sessionEdited;
 	private static boolean addedRecordFound;
 	private static boolean recordEdits;
-	// ConfigurationFile load and save variables
-	final protected static int SAVE_ONLY = 2;
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 
@@ -708,7 +704,7 @@ public class InputAgent {
 	public static void save(GUIFrame gui) {
 		LogBox.logLine("Saving...");
 		if( InputAgent.getConfigFileName() != null ) {
-			setSaveFile(gui, InputAgent.getConfigFileName(), SAVE_ONLY );
+			setSaveFile(gui, InputAgent.getConfigFileName() );
 		}
 		else {
 			saveAs( gui );
@@ -728,8 +724,14 @@ public class InputAgent {
 			return;
 
 		String absFile = chooser.getDirectory() + file;
+
+		// Add the file extension ".cfg" if needed
 		absFile = absFile.trim();
-		setSaveFile(gui, absFile, FileDialog.SAVE);
+		if( ! absFile.endsWith(".cfg") )
+			absFile = absFile.concat(".cfg");
+
+		// Save the configuration file
+		setSaveFile(gui, absFile);
 	}
 
 	public static void configure(GUIFrame gui, String configFileName) {
@@ -753,6 +755,7 @@ public class InputAgent {
 			// show the present state in the user interface
 			gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+			gui.enableSave(addedRecordFound);
 		}
 		catch( Throwable t ) {
 			ExceptionBox.instance().setError(t);
@@ -788,55 +791,10 @@ public class InputAgent {
 	 *  updates runname and filename of file.
 	 *  if editbox is open and unaccepted, accepts changes.
 	 */
-	private static void setSaveFile(GUIFrame gui, String fileName, int saveOrLoadType) {
-		String configFilePath = InputAgent.getConfigFileName();
+	private static void setSaveFile(GUIFrame gui, String fileName) {
 
-		// check ending string of filename, force cfg onto end if needed
-		if (!(fileName.endsWith(".cfg"))) {
-			fileName = fileName.concat(".cfg");
-		}
-
+		// Set root directory
 		File temp = new File(fileName);
-
-		//System.out.println("fileName is " + fileName);
-
-		// If the original configuration file is the same as the file to save, and there were no added records,
-		// then do not save the file because it would be recursive, i.e. contain "include <fileName>"
-
-		if( fileName.equalsIgnoreCase( configFilePath ) ) {
-			if( !InputAgent.hasAddedRecords() )  {
-				if( saveOrLoadType == FileDialog.SAVE) {
-					// recursive -- if can't overwrite base file, 'save as'
-
-					// Ask if appending to base configuration is ok
-					int appendOption = JOptionPane.showConfirmDialog( null,
-							"Cannot overwrite base configuration file.  Do you wish to append changes?",
-							"Confirm Append",
-							JOptionPane.YES_OPTION,
-							JOptionPane.WARNING_MESSAGE );
-
-					// Perform append only if yes
-					if (appendOption == JOptionPane.YES_OPTION) {
-						FileEntity configFile = new FileEntity( fileName, FileEntity.FILE_WRITE, true );
-						configFile.write( "\n" + addedRecordMarker );
-						addedRecordFound = true;
-					}
-					else {
-						InputAgent.saveAs(gui);
-						return;
-					}
-				}
-				else {
-					InputAgent.saveAs(gui);
-					return;
-				}
-
-			} else if ( saveOrLoadType == SAVE_ONLY) {
-				System.out.println("Saving...");
-			}
-		}
-
-		// set root directory
 		FileEntity.setRootDirectory( temp.getParentFile() );
 
 		//saveFile = new FileEntity( fileName, FileEntity.FILE_WRITE, false );

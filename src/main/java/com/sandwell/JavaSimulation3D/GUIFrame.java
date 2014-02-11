@@ -105,6 +105,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JCheckBoxMenuItem tooltip;
 	private JCheckBoxMenuItem graphicsDebug;
 	private JMenuItem printInputItem;
+	private JMenuItem saveConfigurationMenuItem;  // "Save"
 	private JLabel clockDisplay;
 	private JLabel speedUpDisplay;
 	private JLabel remainingDisplay;
@@ -337,7 +338,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		fileMenu.add( configMenuItem );
 
-		JMenuItem saveConfigurationMenuItem = new JMenuItem( "Save" );
+		saveConfigurationMenuItem = new JMenuItem( "Save" );
 		saveConfigurationMenuItem.setMnemonic( 'S' );
 		saveConfigurationMenuItem.addActionListener( new ActionListener() {
 
@@ -1215,6 +1216,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		locatorPos.setVisible( show );
 		locatorLabel.setText( "Pos: " );
 		locatorPos.setText( "(-, -, -)" );
+	}
+
+	public void enableSave(boolean bool) {
+		saveConfigurationMenuItem.setEnabled(bool);
 	}
 
 	private static void calcWindowDefaults() {
