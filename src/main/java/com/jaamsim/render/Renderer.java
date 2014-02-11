@@ -1116,11 +1116,13 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 					// Draw a window specific performance counter
 					gl.glDisable(GL2GL3.GL_DEPTH_TEST);
 					_drawContext = drawable.getContext();
-					StringBuilder perf = new StringBuilder("Objects Culled: ").append(pi.objectsCulled);
-					perf.append(" VRAM: ").append(_usedVRAM/(1024.0*1024.0)).append("MB");
-					perf.append(" Frame time (ms) :").append(_lastFrameNanos / 1000000.0);
-					perf.append(" SceneTime: ").append(_sceneTimeMS);
-					perf.append(" Loop Time: ").append(_loopTimeMS);
+					StringBuilder perf = new StringBuilder();
+					perf.append( String.format( "Objects Culled: %s", pi.objectsCulled) );
+					perf.append( String.format( "   VRAM (MB): %.0f", _usedVRAM/(1024.0*1024.0)) );
+					perf.append( String.format( "   Frame time (ms): %.3f", _lastFrameNanos/1000000.0) );
+					perf.append( String.format( "   SceneTime (ms): %.3f", _sceneTimeMS) );
+					perf.append( String.format( "   Loop Time (ms): %.3f", _loopTimeMS) );
+
 					TessFont defFont = getTessFont(_defaultBoldFontKey);
 					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
 					                                     10, 10, 15, false, false, DisplayModel.ALWAYS);
