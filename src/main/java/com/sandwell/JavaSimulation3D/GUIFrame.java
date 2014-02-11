@@ -384,6 +384,21 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		viewMenu = new JMenu( "Tools" );
 		viewMenu.setMnemonic( 'T' );
 
+		JMenuItem showBasicToolsMenuItem = new JMenuItem( "Show Basic Tools" );
+		showBasicToolsMenuItem.setMnemonic( 'B' );
+		showBasicToolsMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				EntityPallet.getInstance().setVisible(true);
+				ObjectSelector.getInstance().setVisible(true);
+				EditBox.getInstance().makeVisible();
+				OutputBox.getInstance().makeVisible();
+				FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
+			}
+		} );
+		viewMenu.add( showBasicToolsMenuItem );
+
 		JMenuItem objectPalletMenuItem = new JMenuItem( "Model Builder" );
 		objectPalletMenuItem.setMnemonic( 'O' );
 		objectPalletMenuItem.addActionListener( new ActionListener() {
