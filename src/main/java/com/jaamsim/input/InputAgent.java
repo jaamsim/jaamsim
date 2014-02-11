@@ -35,6 +35,7 @@ import javax.swing.JOptionPane;
 
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.LogBox;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
@@ -537,8 +538,8 @@ public class InputAgent {
 		if (!batchRun)
 			return;
 
-		System.out.println("An error occurred in the simulation environment.  Please check inputs for an error:");
-		System.out.println(e);
+		LogBox.logLine("An error occurred in the simulation environment.  Please check inputs for an error:");
+		LogBox.logLine(e.toString());
 		GUIFrame.shutdown(1);
 	}
 
@@ -687,7 +688,7 @@ public class InputAgent {
 	}
 
 	public static void load(GUIFrame gui) {
-		System.out.println("Loading...");
+		LogBox.logLine("Loading...");
 
 		FileDialog chooser = new FileDialog(gui, "Load Configuration File", FileDialog.LOAD);
 		chooser.setFilenameFilter(new ConfigFileFilter());
@@ -705,7 +706,7 @@ public class InputAgent {
 	}
 
 	public static void save(GUIFrame gui) {
-		System.out.println("Saving...");
+		LogBox.logLine("Saving...");
 		if( InputAgent.getConfigFileName() != null ) {
 			setSaveFile(gui, InputAgent.getConfigFileName(), SAVE_ONLY );
 		}
@@ -715,7 +716,7 @@ public class InputAgent {
 	}
 
 	public static void saveAs(GUIFrame gui) {
-		System.out.println("Save As...");
+		LogBox.logLine("Save As...");
 		FileDialog chooser = new FileDialog(gui, "Save Configuration File As", FileDialog.SAVE);
 		chooser.setFilenameFilter(new ConfigFileFilter());
 		chooser.setFile(InputAgent.getConfigFileName());
@@ -744,10 +745,10 @@ public class InputAgent {
 				if (!batchRun)
 					ExceptionBox.instance().setErrorBox(iee.getMessage());
 				else
-					System.out.println( iee.getMessage() );
+					LogBox.logLine( iee.getMessage() );
 			}
 
-			System.out.println("Configuration File Loaded");
+			LogBox.logLine("Configuration File Loaded");
 
 			// show the present state in the user interface
 			gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );

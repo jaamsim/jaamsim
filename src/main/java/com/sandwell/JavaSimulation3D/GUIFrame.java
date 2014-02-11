@@ -73,7 +73,6 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
-import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.OutputBox;
@@ -153,7 +152,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
 		catch (Exception e) {
-			System.err.println("Unable to change look and feel.");
+			LogBox.logLine("Unable to change look and feel.");
 		}
 
 		try {
@@ -161,7 +160,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			iconImage = Toolkit.getDefaultToolkit().getImage(file);
 		}
 		catch (Exception e) {
-			System.err.println("Unable to load icon file.");
+			LogBox.logLine("Unable to load icon file.");
 			iconImage = null;
 		}
 
@@ -1333,15 +1332,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		FileEntity.setRootDirectory(System.getProperty("user.dir"));
 
 		// create a graphic simulation
-		System.out.println( "Loading Simulation Environment ... " );
-		System.out.flush();
+		LogBox.logLine("Loading Simulation Environment ... ");
 
 		EventManager evt = Entity.initEVT();
 		GUIFrame gui = GUIFrame.instance();
 		gui.updateForSimulationState(SIM_STATE_LOADED);
 		evt.setTimeListener(gui);
 
-		System.out.println( "Simulation Environment Loaded" );
+		LogBox.logLine("Simulation Environment Loaded");
 
 		if (batch)
 			InputAgent.setBatch(true);
@@ -1476,19 +1474,18 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public void handleError(Throwable t, long currentTick) {
 		if (t instanceof OutOfMemoryError) {
 			OutOfMemoryError e = (OutOfMemoryError)t;
-			System.err.println("Out of Memory use the -Xmx flag during execution for more memory");
-			System.err.println("Further debug information:");
-			System.err.println("Error: " + e.getMessage());
+			LogBox.logLine("Out of Memory use the -Xmx flag during execution for more memory");
+			LogBox.logLine("Further debug information:");
+			LogBox.logLine("Error: " + e.getMessage());
 			for (StackTraceElement each : e.getStackTrace())
-				System.out.println(each.toString());
+				LogBox.logLine(each.toString());
 			GUIFrame.shutdown(1);
 			return;
 		}
 		else {
 			double curSec = Process.ticksToSeconds(currentTick);
-			System.err.format("EXCEPTION AT TIME: %f s%n", curSec);
-			ExceptionBox exp = ExceptionBox.instance();
-			exp.setError(t);
+			LogBox.format("EXCEPTION AT TIME: %f s%n", curSec);
+			LogBox.getInstance().setVisible(true);
 		}
 	}
 }
