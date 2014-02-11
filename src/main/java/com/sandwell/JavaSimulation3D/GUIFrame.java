@@ -399,6 +399,21 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		viewMenu.add( showBasicToolsMenuItem );
 
+		JMenuItem closeAllToolsMenuItem = new JMenuItem( "Close All Tools" );
+		closeAllToolsMenuItem.setMnemonic( 'C' );
+		closeAllToolsMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				EntityPallet.getInstance().setVisible(false);
+				ObjectSelector.getInstance().setVisible(false);
+				EditBox.getInstance().setVisible(false);
+				OutputBox.getInstance().setVisible(false);
+				PropertyBox.getInstance().setVisible(false);
+			}
+		} );
+		viewMenu.add( closeAllToolsMenuItem );
+
 		JMenuItem objectPalletMenuItem = new JMenuItem( "Model Builder" );
 		objectPalletMenuItem.setMnemonic( 'O' );
 		objectPalletMenuItem.addActionListener( new ActionListener() {
