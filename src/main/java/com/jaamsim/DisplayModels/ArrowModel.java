@@ -17,6 +17,7 @@ package com.jaamsim.DisplayModels;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Transform;
@@ -25,10 +26,17 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
+import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation3D.Arrow;
 
 public class ArrowModel extends ScreenPointsModel {
+	@Keyword(description = "A set of { x, y, z } numbers that define the size of the arrowhead " +
+	        "in those directions at the end of the connector.",
+	 example = "Arrow1 ArrowSize { 0.165 0.130 0.0 m }")
+	private final Vec3dInput arrowHeadSize;
+
 	private static List<Vec4d> arrowHeadVerts;
 
 	static {
@@ -38,14 +46,15 @@ public class ArrowModel extends ScreenPointsModel {
 		arrowHeadVerts.add(new Vec4d(1.0,  0.5, 0.0, 1.0d));
 	}
 
-	@Override
-	public DisplayModelBinding getBinding(Entity ent) {
-		return new Binding(ent, this);
+	{
+		arrowHeadSize = new Vec3dInput("ArrowSize", "Basic Graphics", new Vec3d(0.1d, 0.1d, 0.0d));
+		arrowHeadSize.setUnitType(DistanceUnit.class);
+		this.addInput(arrowHeadSize, true);
 	}
 
 	@Override
-	public boolean canDisplayEntity(Entity ent) {
-		return (ent instanceof Arrow);
+	public DisplayModelBinding getBinding(Entity ent) {
+		return new Binding(ent, this);
 	}
 
 	private class Binding extends ScreenPointsModel.Binding {
@@ -62,12 +71,8 @@ public class ArrowModel extends ScreenPointsModel {
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
-			try {
+			if (observee instanceof Arrow)
 				arrowObservee = (Arrow)observee;
-			} catch (ClassCastException e) {
-				// The observee is not a display entity
-				arrowObservee = null;
-			}
 		}
 
 		private void updateHead() {
@@ -103,7 +108,10 @@ public class ArrowModel extends ScreenPointsModel {
 
 			Mat4d trans = new Mat4d();
 			trans.setEuler3(zRot);
-			trans.scaleCols3(arrowObservee.getArrowHeadSize());
+			if (arrowObservee != null)
+				trans.scaleCols3(arrowObservee.getArrowHeadSize());
+			else
+				trans.scaleCols3(arrowHeadSize.getValue());
 			trans.setTranslate3(startPoint);
 
 			headPoints = new ArrayList<Vec4d>(arrowHeadVerts.size());
@@ -114,13 +122,13 @@ public class ArrowModel extends ScreenPointsModel {
 			}
 
 			cachedProxy = new PolygonProxy(headPoints, Transform.ident, DisplayModel.ONES, color,
-			        false, 1, getVisibilityInfo(), arrowObservee.getEntityNumber());
+			        false, 1, getVisibilityInfo(), observee.getEntityNumber());
 		}
 
 		@Override
 		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
 
-			if (arrowObservee == null || !arrowObservee.getShow()) {
+			if (displayObservee == null || !displayObservee.getShow()) {
 				return;
 			}
 
