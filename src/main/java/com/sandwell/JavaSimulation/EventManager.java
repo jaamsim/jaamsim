@@ -48,18 +48,12 @@ import com.jaamsim.events.ProcessTarget;
  * all entities will schedule themselves with the same event manager.
  */
 public final class EventManager implements Runnable {
-	private int eventState;
-	private static final int EVENTS_STOPPED = 0;
-	private static final int EVENTS_RUNNING = 1;
-
 	final String name;
 
 	private final Object lockObject; // Object used as global lock for synchronization
 	private final ArrayList<Event> eventStack;
-	/*
-	 * eventStack is a list of all future events for this eventManager in order
-	 * of execution.  The next event to be executed is found at position 0.
-	 */
+	private boolean executeEvents;
+
 	private final ArrayList<Process> conditionalList; // List of all conditionally waiting processes
 	private final Thread eventManagerThread;
 
@@ -103,7 +97,7 @@ public final class EventManager implements Runnable {
 		eventStack = new ArrayList<Event>();
 		conditionalList = new ArrayList<Process>();
 
-		eventState = EVENTS_STOPPED;
+		executeEvents = false;
 		executeRealTime = false;
 		realTimeFactor = 1;
 		rebaseRealTime = true;
@@ -188,10 +182,10 @@ public final class EventManager implements Runnable {
 			while (true) {
 				if (eventStack.isEmpty() ||
 				    eventStack.get(0).schedTick >= targetTick) {
-					eventState = EVENTS_STOPPED;
+					executeEvents = false;
 				}
 
-				if (eventState == EVENTS_STOPPED) {
+				if (!executeEvents) {
 					timelistener.timeRunning(false);
 					this.threadWait();
 					timelistener.timeRunning(true);
@@ -351,7 +345,6 @@ public final class EventManager implements Runnable {
 				if (each.schedTick == eventTime &&
 				    each.priority == eventPriority &&
 				    each.target == t) {
-					//System.out.println("Suppressed duplicate event:" +Process.currentTick() + " " + each.target.getDescription());
 					Process.current().getEventManager().traceSchedProcess(each);
 					return;
 				}
@@ -585,7 +578,7 @@ public final class EventManager implements Runnable {
 	 */
 	void pause() {
 		synchronized (lockObject) {
-			eventState = EVENTS_STOPPED;
+			executeEvents = false;
 		}
 	}
 
@@ -600,10 +593,10 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			targetTick = targetTicks;
 			rebaseRealTime = true;
-			if (eventState != EVENTS_STOPPED)
+			if (executeEvents)
 				return;
 
-			eventState = EventManager.EVENTS_RUNNING;
+			executeEvents = true;
 			eventManagerThread.interrupt();
 		}
 	}
