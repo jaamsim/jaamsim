@@ -602,7 +602,7 @@ public final class EventManager implements Runnable {
 	}
 
 	void scheduleProcess(long waitLength, int eventPriority, ProcessTarget t) {
-		long schedTick = currentTick + waitLength;
+		long schedTick = calculateEventTime(currentTick, waitLength);
 		Event e = new Event(currentTick, schedTick, eventPriority, null, t);
 		this.traceSchedProcess(e);
 		addEventToStack(e);
