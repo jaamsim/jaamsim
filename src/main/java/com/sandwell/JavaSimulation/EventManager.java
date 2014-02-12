@@ -396,13 +396,7 @@ public final class EventManager implements Runnable {
 	/**
 	 * Adds a new event to the event stack.  This method will add an event to
 	 * the event stack based on its scheduled time, priority, and in stack
-	 * order otherwise.  Called from scheduleWait in order to abstract the
-	 * underlying data structure and event scheduling routines if necessary.
-	 * This implementation utilizes a stack structure, but his could be
-	 * replaced with a heap or other basic structure.
-	 * @param waitLength is the length of time in the future to schedule the
-	 * event.
-	 * @param eventPriority is the priority of the event, default 0
+	 * order for equal time/priority.
 	 */
 	private void addEventToStack(Event newEvent) {
 		synchronized (lockObject) {
@@ -410,18 +404,12 @@ public final class EventManager implements Runnable {
 				throw new ErrorException("Going back in time");
 			}
 
-			int i;
-			// skip all event that happen before the new event
-			for (i = 0; i < eventStack.size(); i++) {
+			int i = 0;
+			for (; i < eventStack.size(); i++) {
+				// skip all event that happen before the new event
 				if (eventStack.get(i).schedTick < newEvent.schedTick) {
 					continue;
-				} else {
-					break;
 				}
-			}
-
-			// skip all events at an equal time that have higher priority
-			for (; i < eventStack.size(); i++) {
 				// next stack event happens at a later time, i is the insertion index
 				if (eventStack.get(i).schedTick > newEvent.schedTick) {
 					break;
@@ -476,15 +464,14 @@ public final class EventManager implements Runnable {
 
 	void waitUntilEnded(int priority) {
 		synchronized (lockObject) {
-			if (!conditionalList.remove(Process.current())) {
-				// Do not wait at all if we never actually were on the waitUntilStack
-				// ie. we never called waitUntil
+			// Do not wait at all if we never actually were on the waitUntilStack
+			// ie. we never called waitUntil
+			if (!conditionalList.remove(Process.current()))
 				return;
-			} else {
-				traceWaitUntil(1);
-				Process.current().clearFlag(Process.COND_WAIT);
-				waitTicks(0, priority);
-			}
+
+			traceWaitUntil(1);
+			Process.current().clearFlag(Process.COND_WAIT);
+			waitTicks(0, priority);
 		}
 	}
 
