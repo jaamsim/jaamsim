@@ -1338,6 +1338,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		GUIFrame gui = GUIFrame.instance();
 		gui.updateForSimulationState(SIM_STATE_LOADED);
 		evt.setTimeListener(gui);
+		evt.setErrorListener(gui);
 
 		LogBox.logLine("Simulation Environment Loaded");
 
@@ -1485,6 +1486,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		else {
 			double curSec = Process.ticksToSeconds(currentTick);
 			LogBox.format("EXCEPTION AT TIME: %f s%n", curSec);
+			LogBox.logLine("Error: " + t.getMessage());
+			for (StackTraceElement each : t.getStackTrace())
+				LogBox.logLine(each.toString());
 			LogBox.getInstance().setVisible(true);
 		}
 	}
