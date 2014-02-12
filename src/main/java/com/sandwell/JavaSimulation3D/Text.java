@@ -84,8 +84,9 @@ public class Text extends DisplayEntity {
 		super.updateForInput(in);
 
 		if (in == outputName) {
-			Class<? extends Unit> ut = outputName.getOutputHandle(0.0).getUnitType();
-			unit.setSubClass(ut);
+			OutputHandle h = outputName.getOutputHandle(0.0);
+			if (h != null)
+				unit.setSubClass(h.getUnitType());
 			return;
 		}
 	}
