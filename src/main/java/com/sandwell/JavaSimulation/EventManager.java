@@ -494,6 +494,27 @@ public final class EventManager implements Runnable {
 		}
 	}
 
+	/**
+	 *	Removes an event from the pending list and executes it immediately.
+	 */
+	void interrupt(ProcessTarget t) {
+		synchronized (lockObject) {
+			assertNotWaitUntil();
+
+			for (int i = 0; i < eventStack.size(); i++) {
+				if (eventStack.get(i).target == t) {
+					Event interruptEvent = eventStack.remove(i);
+					traceInterrupt(interruptEvent);
+					Process proc = Process.allocate(this, interruptEvent.target);
+					proc.setNextProcess(Process.current());
+					switchThread(interruptEvent.process);
+					return;
+				}
+			}
+			throw new ErrorException("Tried to interrupt a thread in %s that couldn't be found", name);
+		}
+	}
+
 	void terminateThread( Process killThread ) {
 		synchronized (lockObject) {
 			if (killThread.testFlag(Process.ACTIVE)) {
@@ -519,6 +540,24 @@ public final class EventManager implements Runnable {
 			}
 		}
 		throw new ErrorException("Tried to terminate a thread in %s that couldn't be found", name);
+	}
+
+	/**
+	 *	Removes an event from the pending list and executes it immediately.
+	 */
+	void terminate(ProcessTarget t) {
+		synchronized (lockObject) {
+			assertNotWaitUntil();
+
+			for( int i = 0; i < eventStack.size(); i++ ) {
+				if (eventStack.get(i).target == t) {
+					Event temp = eventStack.remove(i);
+					traceKill(temp);
+					return;
+				}
+			}
+		}
+		throw new ErrorException("Tried to terminate a target in %s that couldn't be found", name);
 	}
 
 	long currentTick() {
