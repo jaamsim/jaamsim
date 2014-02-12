@@ -63,6 +63,11 @@ public class Entity {
 	         example = "Ent Description { 'A very useful entity' }")
 	private final StringInput desc;
 
+	// constants used when scheduling events using the Entity wrappers
+	public static final int PRIO_DEFAULT = 5;
+	static final int PRIO_LASTLIFO = 11;
+	static final int PRIO_LASTFIFO = 12;
+
 	static {
 		allInstances = new ArrayList<Entity>(100);
 		namedEntities = new HashMap<String, Entity>(100);
@@ -409,7 +414,7 @@ public class Entity {
 	}
 
 	public final void scheduleProcess(ProcessTarget t) {
-		getEventManager().scheduleProcess(0, EventManager.PRIO_DEFAULT, t);
+		getEventManager().scheduleProcess(0, Entity.PRIO_DEFAULT, t);
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t) {
@@ -418,7 +423,7 @@ public class Entity {
 	}
 
 	public final void scheduleSingleProcess(ProcessTarget t) {
-		getEventManager().scheduleSingleProcess(0, EventManager.PRIO_LASTFIFO, t);
+		getEventManager().scheduleSingleProcess(0, Entity.PRIO_LASTFIFO, t);
 	}
 
 	public final void scheduleSingleProcess(ProcessTarget t, int priority) {
@@ -430,7 +435,7 @@ public class Entity {
 	 * @param secs
 	 */
 	public final void simWait(double secs) {
-		simWait(secs, EventManager.PRIO_DEFAULT);
+		simWait(secs, Entity.PRIO_DEFAULT);
 	}
 
 	/**
@@ -448,7 +453,7 @@ public class Entity {
 	 * @param secs
 	 */
 	public final void simWaitTicks(long ticks) {
-		simWaitTicks(ticks, EventManager.PRIO_DEFAULT);
+		simWaitTicks(ticks, Entity.PRIO_DEFAULT);
 	}
 
 	/**
@@ -470,7 +475,7 @@ public class Entity {
 		long waitLength = calculateDelayLength(duration);
 		if (waitLength == 0)
 			return;
-		getEventManager().waitTicks(waitLength, EventManager.PRIO_DEFAULT);
+		getEventManager().waitTicks(waitLength, Entity.PRIO_DEFAULT);
 	}
 
 	/**
@@ -492,7 +497,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastFIFO() {
-		getEventManager().waitTicks(0, EventManager.PRIO_LASTFIFO);
+		getEventManager().waitTicks(0, Entity.PRIO_LASTFIFO);
 	}
 
 	/**
@@ -500,7 +505,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastLIFO() {
-		getEventManager().waitTicks(0, EventManager.PRIO_LASTLIFO);
+		getEventManager().waitTicks(0, Entity.PRIO_LASTLIFO);
 	}
 
 	public final void waitUntil() {
@@ -508,7 +513,7 @@ public class Entity {
 	}
 
 	public final void waitUntilEnded() {
-		getEventManager().waitUntilEnded();
+		getEventManager().waitUntilEnded(PRIO_LASTFIFO);
 	}
 
 	// ******************************************************************************************************

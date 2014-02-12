@@ -238,7 +238,7 @@ public class Simulation extends Entity {
 		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
 		endTime = startTime + Simulation.getInitializationHours() + Simulation.getRunDurationHours();
 
-		root.scheduleProcess(0, EventManager.PRIO_DEFAULT, new InitModelTarget());
+		root.scheduleProcess(0, Entity.PRIO_DEFAULT, new InitModelTarget());
 	}
 
 
@@ -304,10 +304,10 @@ public class Simulation extends Entity {
 			}
 
 			long startTick = calculateDelayLength(Simulation.getStartHours());
-			root.scheduleProcess(startTick, EventManager.PRIO_DEFAULT, new StartModelTarget());
+			root.scheduleProcess(startTick, Entity.PRIO_DEFAULT, new StartModelTarget());
 
 			long endTick = calculateDelayLength(Simulation.getEndHours());
-			root.scheduleProcess(endTick, EventManager.PRIO_DEFAULT, new EndModelTarget());
+			root.scheduleProcess(endTick, Entity.PRIO_DEFAULT, new EndModelTarget());
 		}
 	}
 

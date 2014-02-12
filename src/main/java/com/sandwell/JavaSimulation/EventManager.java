@@ -81,10 +81,6 @@ public final class EventManager implements Runnable {
 	private EventErrorListener errListener;
 	private EventTraceRecord traceRecord;
 
-	static final int PRIO_DEFAULT = 5;
-	static final int PRIO_LASTLIFO = 11;
-	static final int PRIO_LASTFIFO = 12;
-
 	static final int STATE_WAITING = 0;
 	static final int STATE_EXITED = 1;
 	static final int STATE_INTERRUPTED = 2;
@@ -437,7 +433,7 @@ public final class EventManager implements Runnable {
 				// scheduleLastFIFO is special because it adds in queue, rather
 				// than stack ordering, so keep going until we find an event that
 				// happens at a later time without regard to priority
-				if (newEvent.priority != PRIO_LASTFIFO) {
+				if (newEvent.priority != Entity.PRIO_LASTFIFO) {
 					break;
 				}
 			}
@@ -478,7 +474,7 @@ public final class EventManager implements Runnable {
 		popThread();
 	}
 
-	void waitUntilEnded() {
+	void waitUntilEnded(int priority) {
 		synchronized (lockObject) {
 			if (!conditionalList.remove(Process.current())) {
 				// Do not wait at all if we never actually were on the waitUntilStack
@@ -487,7 +483,7 @@ public final class EventManager implements Runnable {
 			} else {
 				traceWaitUntil(1);
 				Process.current().clearFlag(Process.COND_WAIT);
-				waitTicks(0, PRIO_LASTFIFO);
+				waitTicks(0, priority);
 			}
 		}
 	}
