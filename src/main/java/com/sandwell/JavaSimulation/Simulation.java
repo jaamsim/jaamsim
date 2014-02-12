@@ -181,6 +181,7 @@ public class Simulation extends Entity {
 		printInputReport.reset();
 		realTimeFactor.reset();
 		realTime.reset();
+		updateRealTime();
 		exitAtStop.reset();
 
 		startDate.reset();

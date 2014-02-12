@@ -48,8 +48,6 @@ import com.jaamsim.events.ProcessTarget;
  * all entities will schedule themselves with the same event manager.
  */
 public final class EventManager implements Runnable {
-	boolean traceEvents = false;
-
 	private int eventState;
 	private static final int EVENTS_STOPPED = 0;
 	private static final int EVENTS_RUNNING = 1;
@@ -79,15 +77,9 @@ public final class EventManager implements Runnable {
 
 	private EventTimeListener timelistener;
 	private EventErrorListener errListener;
-	private EventTraceRecord traceRecord;
 
-	static final int STATE_WAITING = 0;
-	static final int STATE_EXITED = 1;
-	static final int STATE_INTERRUPTED = 2;
-	static final int STATE_TERMINATED = 3;
-	/*
-	 * Used to communicate with the eventViewer about the status of a given event
-	 */
+	boolean traceEvents = false;
+	private EventTraceRecord traceRecord;
 
 	/**
 	 * Allocates a new EventManager with the given parent and name
@@ -210,7 +202,7 @@ public final class EventManager implements Runnable {
 				if (eventStack.get(0).schedTick == currentTick) {
 					// Remove the event from the future events
 					Event nextEvent = eventStack.remove(0);
-					traceEvent(nextEvent, STATE_EXITED);
+					traceEvent(nextEvent);
 					Process p = nextEvent.process;
 					if (p == null)
 						p = Process.allocate(this, nextEvent.target);
@@ -388,7 +380,7 @@ public final class EventManager implements Runnable {
 		long nextEventTime = calculateEventTime(Process.currentTick(), ticks);
 
 		Event temp = new Event(currentTick(), nextEventTime, priority, Process.current(), null);
-		Process.current().getEventManager().traceEvent(temp, STATE_WAITING);
+		Process.current().getEventManager().traceWait(temp);
 		addEventToStack(temp);
 		popThread();
 	}
@@ -454,7 +446,7 @@ public final class EventManager implements Runnable {
 	void waitUntil() {
 		synchronized (lockObject) {
 			if (!conditionalList.contains(Process.current())) {
-				Process.current().getEventManager().traceWaitUntil(0);
+				Process.current().getEventManager().traceWaitUntil();
 				Process.current().setFlag(Process.COND_WAIT);
 				conditionalList.add(Process.current());
 			}
@@ -469,7 +461,7 @@ public final class EventManager implements Runnable {
 			if (!conditionalList.remove(Process.current()))
 				return;
 
-			traceWaitUntil(1);
+			traceWaitUntilEnded();
 			Process.current().clearFlag(Process.COND_WAIT);
 			waitTicks(0, priority);
 		}
@@ -499,7 +491,7 @@ public final class EventManager implements Runnable {
 			for (int i = 0; i < eventStack.size(); i++) {
 				if (eventStack.get(i).process == intThread) {
 					Event interruptEvent = eventStack.remove(i);
-					traceEvent(interruptEvent, STATE_INTERRUPTED);
+					traceInterrupt(interruptEvent);
 					interruptEvent.process.setNextProcess(Process.current());
 					switchThread(interruptEvent.process);
 					return;
@@ -526,7 +518,7 @@ public final class EventManager implements Runnable {
 			for( int i = 0; i < eventStack.size(); i++ ) {
 				if (eventStack.get(i).process == killThread) {
 					Event temp = eventStack.remove(i);
-					traceEvent(temp, STATE_TERMINATED);
+					traceKill(temp);
 					killThread.setFlag(Process.TERMINATE);
 					killThread.interrupt();
 					return;
@@ -624,8 +616,20 @@ public final class EventManager implements Runnable {
 		EventTracer.verifyAllEvents(this, enable);
 	}
 
-	private void traceEvent(Event evt, int reason) {
-		if (traceEvents) traceRecord.formatEventTrace(name, evt, reason);
+	private void traceWait(Event evt) {
+		if (traceEvents) traceRecord.traceWait(name, evt);
+	}
+
+	private void traceEvent(Event evt) {
+		if (traceEvents) traceRecord.traceEvent(name, evt);
+	}
+
+	private void traceInterrupt(Event evt) {
+		if (traceEvents) traceRecord.traceInterrupt(name, evt);
+	}
+
+	private void traceKill(Event evt) {
+		if (traceEvents) traceRecord.traceKill(name, evt);
 	}
 
 	private void traceProcessStart(ProcessTarget t) {
@@ -640,8 +644,12 @@ public final class EventManager implements Runnable {
 		if (traceEvents) traceRecord.formatSchedProcessTrace(name, currentTick, target);
 	}
 
-	private void traceWaitUntil(int reason) {
-		if (traceEvents) traceRecord.formatWaitUntilTrace(name, currentTick, reason);
+	private void traceWaitUntil() {
+		if (traceEvents) traceRecord.traceWaitUntil(name, currentTick);
+	}
+
+	private void traceWaitUntilEnded() {
+		if (traceEvents) traceRecord.traceWaitUntilEnded(name, currentTick);
 	}
 
 	/**

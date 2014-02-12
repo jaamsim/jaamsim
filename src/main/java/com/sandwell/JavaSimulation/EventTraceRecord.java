@@ -102,30 +102,52 @@ class EventTraceRecord extends ArrayList<String> {
 		clear();
 	}
 
-	private static final String[] eventStates = {"Wait", "Event", "Int", "Kill"};
-	synchronized void formatEventTrace(String name, Event evt, int reason) {
+	synchronized void traceWait(String name, Event evt) {
 		this.addHeader(name, evt.schedTick);
-		if (reason == 0)
-			traceLevel--;
+		traceLevel--;
 
-		this.append(String.format("%s\t%d\t%d\t%s", eventStates[reason],
+		this.append(String.format("Wait\t%d\t%d\t%s",
 		            evt.schedTick, evt.priority, evt.getDesc()));
-
-		if (reason == 1 || reason == 2)
-			traceLevel++;
 
 		this.finish();
 	}
 
-	synchronized void formatWaitUntilTrace(String name, long currentTime, int reason) {
+	synchronized void traceEvent(String name, Event evt) {
+		this.addHeader(name, evt.schedTick);
+		this.append(String.format("Event\t%d\t%d\t%s",
+		            evt.schedTick, evt.priority, evt.getDesc()));
+
+		traceLevel++;
+		this.finish();
+	}
+
+	synchronized void traceInterrupt(String name, Event evt) {
+		this.addHeader(name, evt.schedTick);
+		this.append(String.format("Int\t%d\t%d\t%s",
+		            evt.schedTick, evt.priority, evt.getDesc()));
+
+		traceLevel++;
+		this.finish();
+	}
+
+	synchronized void traceKill(String name, Event evt) {
+		this.addHeader(name, evt.schedTick);
+		this.append(String.format("Kill\t%d\t%d\t%s",
+		            evt.schedTick, evt.priority, evt.getDesc()));
+		this.finish();
+	}
+
+	synchronized void traceWaitUntil(String name, long currentTime) {
 		this.addHeader(name, currentTime);
-		if (reason == 0) {
-			traceLevel--;
-			this.append("WaitUntil");
-		} else {
-			this.append("Event-WaitUntilEnded");
-			traceLevel++;
-		}
+		traceLevel--;
+		this.append("WaitUntil");
+		this.finish();
+	}
+
+	synchronized void traceWaitUntilEnded(String name, long currentTime) {
+		this.addHeader(name, currentTime);
+		this.append("Event-WaitUntilEnded");
+		traceLevel++;
 		this.finish();
 	}
 
