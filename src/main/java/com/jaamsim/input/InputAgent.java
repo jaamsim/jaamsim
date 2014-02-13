@@ -106,7 +106,6 @@ public class InputAgent {
 
 	public static void setConfigFileName(String name) {
 		configFileName = name;
-		System.out.println("configFileName set to: "+configFileName);
 	}
 
 	public static String getConfigFileName() {
