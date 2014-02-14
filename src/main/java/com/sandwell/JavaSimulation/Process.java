@@ -87,38 +87,6 @@ public class Process extends Thread {
 		return Process.current().getEventManager().currentTick();
 	}
 
-	public static final void terminate(Process proc) {
-		// Just return if given a null Process
-		if (proc == null)
-			return;
-
-		Process.current().getEventManager().terminateThread(proc);
-	}
-
-	public static final void terminate(ProcessTarget t) {
-		// Just return if given a null target
-		if (t == null)
-			return;
-
-		Process.current().getEventManager().terminate(t);
-	}
-
-	public static final void interrupt(Process proc) {
-		// Just return if given a null Process
-		if (proc == null)
-			return;
-
-		Process.current().getEventManager().interrupt(proc);
-	}
-
-	public static final void interrupt(ProcessTarget t) {
-		// Just return if given a null target
-		if (t == null)
-			return;
-
-		Process.current().getEventManager().interrupt(t);
-	}
-
 	/**
 	 * Run method invokes the method on the target with the given arguments.
 	 * A process loops endlessly after it is created executing the method on the

@@ -176,7 +176,7 @@ public class VideoRecorderEntity extends Entity {
 
 		// If the capture network is already in progress, then stop the previous network
 		if( captureThread != null ) {
-			Process.terminate(captureThread);
+			killEvent(captureThread);
 			captureThread = null;
 		}
 

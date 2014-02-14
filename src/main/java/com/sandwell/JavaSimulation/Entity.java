@@ -516,6 +516,38 @@ public class Entity {
 		getEventManager().waitUntilEnded(PRIO_LASTFIFO);
 	}
 
+	public final void killEvent(Process proc) {
+		// Just return if given a null Process
+		if (proc == null)
+			return;
+
+		getEventManager().terminateThread(proc);
+	}
+
+	public final void killEvent(ProcessTarget t) {
+		// Just return if given a null target
+		if (t == null)
+			return;
+
+		getEventManager().terminate(t);
+	}
+
+	public final void interruptEvent(Process proc) {
+		// Just return if given a null Process
+		if (proc == null)
+			return;
+
+		getEventManager().interrupt(proc);
+	}
+
+	public final void interruptEvent(ProcessTarget t) {
+		// Just return if given a null target
+		if (t == null)
+			return;
+
+		getEventManager().interrupt(t);
+	}
+
 	// ******************************************************************************************************
 	// EDIT TABLE METHODS
 	// ******************************************************************************************************
