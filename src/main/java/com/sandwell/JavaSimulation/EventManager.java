@@ -214,7 +214,7 @@ public final class EventManager implements Runnable {
 				if (eventStack.get(0).schedTick == currentTick) {
 					// Remove the event from the future events
 					Event nextEvent = eventStack.remove(0);
-					traceEvent(nextEvent);
+					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
 					Process p = nextEvent.process;
 					if (p == null)
 						p = Process.allocate(this, nextEvent.target);
@@ -363,14 +363,14 @@ public final class EventManager implements Runnable {
 				if (each.schedTick == eventTime &&
 				    each.priority == eventPriority &&
 				    each.target == t) {
-					Process.current().getEventManager().traceSchedProcess(each);
+					if (trcListener != null) trcListener.traceSchedProcess(this, each);
 					return;
 				}
 			}
 
 			// Create an event for the new process at the present time, and place it on the event stack
 			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, null, t);
-			Process.current().getEventManager().traceSchedProcess(newEvent);
+			if (trcListener != null) trcListener.traceSchedProcess(this, newEvent);
 			addEventToStack(newEvent);
 		}
 	}
@@ -391,7 +391,9 @@ public final class EventManager implements Runnable {
 		long nextEventTime = calculateEventTime(Process.currentTick(), ticks);
 
 		Event temp = new Event(currentTick(), nextEventTime, priority, Process.current(), null);
-		Process.current().getEventManager().traceWait(temp);
+		synchronized (lockObject) {
+			if (trcListener != null) trcListener.traceWait(this, temp);
+		}
 		addEventToStack(temp);
 		popThread();
 	}
@@ -624,7 +626,9 @@ public final class EventManager implements Runnable {
 	void scheduleProcess(long waitLength, int eventPriority, ProcessTarget t) {
 		long schedTick = calculateEventTime(currentTick, waitLength);
 		Event e = new Event(currentTick, schedTick, eventPriority, null, t);
-		this.traceSchedProcess(e);
+		synchronized (lockObject) {
+			if (trcListener != null) trcListener.traceSchedProcess(this, e);
+		}
 		addEventToStack(e);
 	}
 
@@ -666,18 +670,6 @@ public final class EventManager implements Runnable {
 
 	public void verifyAllEvents(boolean enable) {
 		EventTracer.verifyAllEvents(this, enable);
-	}
-
-	private void traceWait(Event evt) {
-		if (traceEvents) traceRecord.traceWait(name, evt);
-	}
-
-	private void traceEvent(Event evt) {
-		if (traceEvents) traceRecord.traceEvent(name, evt);
-	}
-
-	private void traceSchedProcess(Event target) {
-		if (traceEvents) traceRecord.formatSchedProcessTrace(name, currentTick, target);
 	}
 
 	/**

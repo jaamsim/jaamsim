@@ -103,8 +103,9 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		clear();
 	}
 
-	synchronized void traceWait(String name, Event evt) {
-		this.addHeader(name, evt.schedTick);
+	@Override
+	public synchronized void traceWait(EventManager e, Event evt) {
+		this.addHeader(e.name, evt.schedTick);
 		traceLevel--;
 
 		this.append(String.format("Wait\t%d\t%d\t%s",
@@ -113,8 +114,9 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.finish();
 	}
 
-	synchronized void traceEvent(String name, Event evt) {
-		this.addHeader(name, evt.schedTick);
+	@Override
+	public synchronized void traceEvent(EventManager e, Event evt) {
+		this.addHeader(e.name, evt.schedTick);
 		this.append(String.format("Event\t%d\t%d\t%s",
 		            evt.schedTick, evt.priority, evt.getDesc()));
 
@@ -172,8 +174,9 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.finish();
 	}
 
-	synchronized void formatSchedProcessTrace(String name, long currentTime, Event evt) {
-		this.addHeader(name, currentTime);
+	@Override
+	public synchronized void traceSchedProcess(EventManager e, Event evt) {
+		this.addHeader(e.name, e.currentTick());
 		this.append(String.format("SchedProcess\t%d\t%d\t%s",
 		            evt.schedTick, evt.priority, evt.getDesc()));
 		this.finish();
