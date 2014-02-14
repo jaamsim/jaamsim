@@ -80,6 +80,7 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.ObjectType;
+import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -142,7 +143,7 @@ public class RenderManager implements DragSourceListener {
 
 	private DisplayEntity _selectedEntity = null;
 
-	private double _simTime = 0.0d;
+	private long simTick = 0;
 
 	private long _dragHandleID = 0;
 	private Vec3d _dragCollisionPoint;
@@ -223,11 +224,11 @@ public class RenderManager implements DragSourceListener {
 		_popupLock = new Object();
 	}
 
-	public static final void updateTime(double simTime) {
+	public static final void updateTime(long simTick) {
 		if (!RenderManager.isGood())
 			return;
 
-		RenderManager.inst()._simTime = simTime;
+		RenderManager.inst().simTick = simTick;
 		RenderManager.inst().queueRedraw();
 	}
 
@@ -359,7 +360,7 @@ public class RenderManager implements DragSourceListener {
 				DisplayModelBinding.clearCacheMissData();
 
 				boolean screenShotThisFrame = _screenshot.get();
-				double renderTime = _simTime;
+				double renderTime = Process.ticksToSeconds(simTick);
 
 				long startNanos = System.nanoTime();
 
@@ -873,6 +874,7 @@ public class RenderManager implements DragSourceListener {
 		                             dragInfo.x - dragInfo.dx,
 		                             dragInfo.y - dragInfo.dy);
 
+		double _simTime = Process.ticksToSeconds(simTick);
 		Transform trans = dispEnt.getGlobalTrans(_simTime);
 
 		Vec3d size = dispEnt.getSize();

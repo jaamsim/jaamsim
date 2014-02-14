@@ -85,9 +85,8 @@ public class FrameBox extends JFrame {
 	}
 
 	public static final void timeUpdate(long tick) {
-		double time = Process.ticksToSeconds(tick);
-		valueUpdater.scheduleUpdate(time);
-		RenderManager.updateTime(time);
+		valueUpdater.scheduleUpdate(tick);
+		RenderManager.updateTime(tick);
 	}
 
 	public static final void valueUpdate() {
@@ -134,7 +133,7 @@ public class FrameBox extends JFrame {
 
 	private static class FrameBoxValueUpdater implements Runnable {
 		private boolean scheduled;
-		private double simTime;
+		private long simTick;
 
 		FrameBoxValueUpdater() {
 			scheduled = false;
@@ -149,13 +148,13 @@ public class FrameBox extends JFrame {
 			}
 		}
 
-		public void scheduleUpdate(double simTime) {
+		public void scheduleUpdate(long simTick) {
 			synchronized (this) {
 				if (!scheduled)
 					SwingUtilities.invokeLater(this);
 
 				scheduled = true;
-				this.simTime = simTime;
+				this.simTick = simTick;
 			}
 		}
 
@@ -164,7 +163,7 @@ public class FrameBox extends JFrame {
 			double callBackTime;
 			synchronized (this) {
 				scheduled = false;
-				callBackTime = simTime;
+				callBackTime = Process.ticksToSeconds(simTick);
 			}
 
 			GUIFrame.instance().setClock(callBackTime);
