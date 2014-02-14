@@ -292,9 +292,9 @@ public final class EventManager implements Runnable {
 	 * the threadStack one level.
 	 */
 	void releaseProcess() {
-		traceProcessEnd();
 		synchronized (lockObject) {
 			assertNotWaitUntil();
+			if (trcListener != null) trcListener.traceProcessEnd(this);
 			Process next = Process.current().getNextProcess();
 
 			if (next != null) {
@@ -481,7 +481,9 @@ public final class EventManager implements Runnable {
 	void start(ProcessTarget t) {
 		Process newProcess = Process.allocate(this, t);
 		// Notify the eventManager that a new process has been started
-		traceProcessStart(t);
+		synchronized (lockObject) {
+			if (trcListener != null) trcListener.traceProcessStart(this, t);
+		}
 
 		// Transfer control to the new process
 		newProcess.setNextProcess(Process.current());
@@ -672,14 +674,6 @@ public final class EventManager implements Runnable {
 
 	private void traceEvent(Event evt) {
 		if (traceEvents) traceRecord.traceEvent(name, evt);
-	}
-
-	private void traceProcessStart(ProcessTarget t) {
-		if (traceEvents) traceRecord.formatBegin(name, currentTick, t);
-	}
-
-	private void traceProcessEnd() {
-		if (traceEvents) traceRecord.formatExit(name, currentTick);
 	}
 
 	private void traceSchedProcess(Event target) {

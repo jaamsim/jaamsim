@@ -19,6 +19,9 @@ import com.sandwell.JavaSimulation.EventManager.Event;
 
 public interface EventTraceListener {
 
+public void traceProcessStart(EventManager e, ProcessTarget t);
+public void traceProcessEnd(EventManager e);
+
 public void traceInterrupt(EventManager e, Event evt);
 public void traceKill(EventManager e, Event evt);
 

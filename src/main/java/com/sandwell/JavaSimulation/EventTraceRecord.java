@@ -156,15 +156,17 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.finish();
 	}
 
-	synchronized void formatBegin(String name, long currentTime, ProcessTarget t) {
-		this.addHeader(name, currentTime);
+	@Override
+	public synchronized void traceProcessStart(EventManager e, ProcessTarget t) {
+		this.addHeader(e.name, e.currentTick());
 		this.append(String.format("StartProcess\t%s", t.getDescription()));
 		traceLevel++;
 		this.finish();
 	}
 
-	synchronized void formatExit(String name, long currentTime) {
-		this.addHeader(name, currentTime);
+	@Override
+	public synchronized void traceProcessEnd(EventManager e) {
+		this.addHeader(e.name, e.currentTick());
 		traceLevel--;
 		this.append("Exit");
 		this.finish();
