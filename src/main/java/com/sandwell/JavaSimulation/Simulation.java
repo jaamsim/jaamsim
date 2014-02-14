@@ -171,7 +171,9 @@ public class Simulation extends Entity {
 	}
 
 	public static void clear() {
+		EventTracer.init();
 		root.clear();
+		root.setTraceListener(null);
 
 		initializationTime.reset();
 		runDuration.reset();
@@ -223,13 +225,15 @@ public class Simulation extends Entity {
 			}
 		}
 
+		EventTracer.init();
 		root.clear();
+		root.setTraceListener(null);
 
 		if( traceEventsInput.getValue() ) {
-			root.traceAllEvents(traceEventsInput.getValue());
+			EventTracer.traceAllEvents(root, traceEventsInput.getValue());
 		}
 		else if( verifyEventsInput.getValue() ) {
-			root.verifyAllEvents(verifyEventsInput.getValue());
+			EventTracer.verifyAllEvents(root, verifyEventsInput.getValue());
 		}
 		Process.setSimTimeScale(simTimeScaleInput.getValue());
 		if( startDate.getValue() != null ) {

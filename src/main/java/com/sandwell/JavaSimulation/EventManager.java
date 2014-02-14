@@ -74,9 +74,6 @@ public final class EventManager implements Runnable {
 	private EventErrorListener errListener;
 	private EventTraceListener trcListener;
 
-	private boolean traceEvents = false;
-	private EventTraceRecord traceRecord;
-
 	/**
 	 * Allocates a new EventManager with the given parent and name
 	 *
@@ -90,8 +87,6 @@ public final class EventManager implements Runnable {
 
 		// Initialize the thread which processes events from this EventManager
 		eventManagerThread = new Thread(this, "evt-" + name);
-
-		traceRecord = new EventTraceRecord();
 
 		// Initialize and event lists and timekeeping variables
 		currentTick = 0;
@@ -131,16 +126,6 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	public final void setTrace(boolean enable) {
-		synchronized (lockObject) {
-			traceEvents = enable;
-			if (traceEvents)
-				trcListener = traceRecord;
-			else
-				trcListener = null;
-		}
-	}
-
 	public final void setTraceListener(EventTraceListener l) {
 		synchronized (lockObject) {
 			trcListener = l;
@@ -153,11 +138,7 @@ public final class EventManager implements Runnable {
 		targetTick = Long.MAX_VALUE;
 		rebaseRealTime = true;
 
-		traceRecord.clearTrace();
-		EventTracer.init();
-
 		synchronized (lockObject) {
-			setTrace(false);
 			// Kill threads on the event stack
 			for (Event each : eventStack) {
 				if (each.process == null)
@@ -662,14 +643,6 @@ public final class EventManager implements Runnable {
 			executeEvents = true;
 			eventManagerThread.interrupt();
 		}
-	}
-
-	public void traceAllEvents(boolean enable) {
-		EventTracer.traceAllEvents(this, enable);
-	}
-
-	public void verifyAllEvents(boolean enable) {
-		EventTracer.verifyAllEvents(this, enable);
 	}
 
 	/**

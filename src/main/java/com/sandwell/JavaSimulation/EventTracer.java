@@ -70,12 +70,12 @@ class EventTracer {
 		if (enable) {
 			verifyAllEvents(evt, false);
 			eventTraceFile = new FileEntity(InputAgent.getRunName() + ".evt", FileEntity.FILE_WRITE, false);
+			evt.setTraceListener(new EventTraceRecord());
 		} else if (eventTraceFile != null) {
 			eventTraceFile.close();
 			eventTraceFile = null;
+			evt.setTraceListener(null);
 		}
-
-		evt.setTrace(enable);
 	}
 
 	static void verifyAllEvents(EventManager evt, boolean enable) {
@@ -84,12 +84,12 @@ class EventTracer {
 			eventBuffer.clear();
 			bufferTime = 0;
 			eventVerifyFile = new FileEntity(InputAgent.getRunName() + ".evt", FileEntity.FILE_READ, false);
+			evt.setTraceListener(new EventTraceRecord());
 		} else if (eventVerifyFile != null) {
 			eventVerifyFile.close();
 			eventVerifyFile = null;
+			evt.setTraceListener(null);
 		}
-
-		evt.setTrace(enable);
 	}
 
 	private static void findEventInBuffer(EventTraceRecord record) {
