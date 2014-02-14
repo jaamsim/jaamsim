@@ -15,8 +15,12 @@
 package com.jaamsim.events;
 
 import com.sandwell.JavaSimulation.EventManager;
+import com.sandwell.JavaSimulation.EventManager.Event;
 
 public interface EventTraceListener {
+
+public void traceInterrupt(EventManager e, Event evt);
+public void traceKill(EventManager e, Event evt);
 
 public void traceWaitUntil(EventManager e);
 public void traceWaitUntilEnded(EventManager e);

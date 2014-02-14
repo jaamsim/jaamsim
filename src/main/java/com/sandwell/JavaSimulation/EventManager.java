@@ -502,7 +502,7 @@ public final class EventManager implements Runnable {
 			for (int i = 0; i < eventStack.size(); i++) {
 				if (eventStack.get(i).process == intThread) {
 					Event interruptEvent = eventStack.remove(i);
-					traceInterrupt(interruptEvent);
+					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
 					interruptEvent.process.setNextProcess(Process.current());
 					switchThread(interruptEvent.process);
 					return;
@@ -522,7 +522,7 @@ public final class EventManager implements Runnable {
 			for (int i = 0; i < eventStack.size(); i++) {
 				if (eventStack.get(i).target == t) {
 					Event interruptEvent = eventStack.remove(i);
-					traceInterrupt(interruptEvent);
+					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
 					Process proc = Process.allocate(this, interruptEvent.target);
 					proc.setNextProcess(Process.current());
 					switchThread(interruptEvent.process);
@@ -550,7 +550,7 @@ public final class EventManager implements Runnable {
 			for( int i = 0; i < eventStack.size(); i++ ) {
 				if (eventStack.get(i).process == killThread) {
 					Event temp = eventStack.remove(i);
-					traceKill(temp);
+					if (trcListener != null) trcListener.traceKill(this, temp);
 					killThread.setFlag(Process.TERMINATE);
 					killThread.interrupt();
 					return;
@@ -570,7 +570,7 @@ public final class EventManager implements Runnable {
 			for( int i = 0; i < eventStack.size(); i++ ) {
 				if (eventStack.get(i).target == t) {
 					Event temp = eventStack.remove(i);
-					traceKill(temp);
+					if (trcListener != null) trcListener.traceKill(this, temp);
 					return;
 				}
 			}
@@ -674,14 +674,6 @@ public final class EventManager implements Runnable {
 		if (traceEvents) traceRecord.traceEvent(name, evt);
 	}
 
-	private void traceInterrupt(Event evt) {
-		if (traceEvents) traceRecord.traceInterrupt(name, evt);
-	}
-
-	private void traceKill(Event evt) {
-		if (traceEvents) traceRecord.traceKill(name, evt);
-	}
-
 	private void traceProcessStart(ProcessTarget t) {
 		if (traceEvents) traceRecord.formatBegin(name, currentTick, t);
 	}
@@ -698,10 +690,10 @@ public final class EventManager implements Runnable {
 	 * Holder class for event data used by the event monitor to schedule future
 	 * events.
 	 */
-	static class Event {
-		final long addedTick; // The tick at which this event was queued to execute
-		final long schedTick; // The tick at which this event will execute
-		final int priority;   // The schedule priority of this event
+	public static class Event {
+		public final long addedTick; // The tick at which this event was queued to execute
+		public final long schedTick; // The tick at which this event will execute
+		public final int priority;   // The schedule priority of this event
 
 		final ProcessTarget target;
 		final Process process;

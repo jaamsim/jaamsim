@@ -122,8 +122,9 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.finish();
 	}
 
-	synchronized void traceInterrupt(String name, Event evt) {
-		this.addHeader(name, evt.schedTick);
+	@Override
+	public synchronized void traceInterrupt(EventManager e, Event evt) {
+		this.addHeader(e.name, evt.schedTick);
 		this.append(String.format("Int\t%d\t%d\t%s",
 		            evt.schedTick, evt.priority, evt.getDesc()));
 
@@ -131,8 +132,9 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.finish();
 	}
 
-	synchronized void traceKill(String name, Event evt) {
-		this.addHeader(name, evt.schedTick);
+	@Override
+	public synchronized void traceKill(EventManager e, Event evt) {
+		this.addHeader(e.name, evt.schedTick);
 		this.append(String.format("Kill\t%d\t%d\t%s",
 		            evt.schedTick, evt.priority, evt.getDesc()));
 		this.finish();
