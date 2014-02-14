@@ -32,7 +32,7 @@ import com.jaamsim.events.ProcessTarget;
  * the eventManager's lock while holding the Process's lock as this can cause a
  * deadlock with other threads trying to wake you from the threadPool.
  */
-public class Process extends Thread {
+public final class Process extends Thread {
 	// Properties required to manage the pool of available Processes
 	private static final ArrayList<Process> pool; // storage for all available Processes
 	private static final int maxPoolSize = 100; // Maximum number of Processes allowed to be pooled at a given time
@@ -83,7 +83,7 @@ public class Process extends Thread {
 		return (Thread.currentThread() instanceof Process);
 	}
 
-	static long currentTick() {
+	public static final long currentTick() {
 		return Process.current().getEventManager().currentTick();
 	}
 
@@ -243,9 +243,7 @@ public class Process extends Thread {
 		return timeScale;
 	}
 
-
 	public static double getEventTolerance() {
 		return (1.0d / getSimTimeFactor());
 	}
-
 }
