@@ -30,6 +30,7 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Action;
 import com.jaamsim.render.Armature;
 import com.jaamsim.render.RenderException;
+import com.jaamsim.ui.LogBox;
 import com.jaamsim.xml.XmlNode;
 import com.jaamsim.xml.XmlParser;
 
@@ -48,7 +49,7 @@ public class MeshReader {
 			return reader.getMeshData();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogBox.renderLogException(e);
 			throw new RenderException(e.getMessage());
 		}
 	}

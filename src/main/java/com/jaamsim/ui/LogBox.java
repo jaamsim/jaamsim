@@ -14,6 +14,9 @@
  */
 package com.jaamsim.ui;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -91,6 +94,33 @@ public class LogBox extends FrameBox {
 				}
 			});
 		}
+	}
+
+	public static void formatRenderLog(String format, Object... args) {
+		logLine(String.format(format, args));
+	}
+
+	public static void renderLog(String line) {
+		logLine(line);
+	}
+
+	/**
+	 * Effectively prints the stack trace of 'ex' to the log
+	 * @param ex
+	 */
+	public static void logException(Throwable ex) {
+		// Below is some ugly java goofiness, but it works
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter( sw );
+		ex.printStackTrace( pw );
+		pw.flush();
+
+		String stackTrace = sw.toString();
+		logLine(stackTrace);
+	}
+
+	public static void renderLogException(Throwable ex) {
+		logException(ex);
 	}
 
 }

@@ -36,6 +36,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.media.opengl.GL2GL3;
 import javax.media.opengl.GLException;
 
+import com.jaamsim.ui.LogBox;
 import com.jogamp.opengl.GLExtensions;
 
 /**
@@ -185,7 +186,7 @@ public class TexCache {
 		Dimension dim = getImageDimension(imageURL);
 		if (dim == null) {
 			// Could not load image
-			System.out.printf("Could not load image URL: %s\n", imageURL.toString());
+			LogBox.formatRenderLog("Could not load image URL: %s\n", imageURL.toString());
 			return null;
 		}
 
@@ -225,12 +226,12 @@ public class TexCache {
 			mappedBuffer = gl.glMapBuffer(GL2GL3.GL_PIXEL_UNPACK_BUFFER, GL2GL3.GL_WRITE_ONLY);
 		} catch (GLException ex) {
 			// A GL Exception here is most likely caused by an out of memory, this is recoverable and simply use the bad texture
-			System.out.printf("Out of GRAM for image URL: %s\n", imageURL.toString());
+			LogBox.formatRenderLog("Out of GRAM for image URL: %s\n", imageURL.toString());
 			return null;
 		}
 		// Explicitly check for an error (we may not be using a DebugGL implementation, so the exception may not be thrown)
 		if (gl.glGetError() != GL2GL3.GL_NO_ERROR) {
-			System.out.printf("GL Error loading image URL: %s\n", imageURL.toString());
+			LogBox.formatRenderLog("GL Error loading image URL: %s\n", imageURL.toString());
 			return null;
 		}
 

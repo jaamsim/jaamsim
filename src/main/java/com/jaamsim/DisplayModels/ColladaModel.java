@@ -41,6 +41,7 @@ import com.jaamsim.render.MeshProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
+import com.jaamsim.ui.LogBox;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
@@ -299,10 +300,10 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 			FileOutputStream outStream = new FileOutputStream(outFile);
 			BlockWriter.writeBlock(outStream, block);
 
-			System.out.printf("Successfully exported: %s\n", outputName);
+			LogBox.formatRenderLog("Successfully exported: %s\n", outputName);
 		} catch (Exception ex) {
-			System.out.printf("Could not export model. Error: %s\n", ex.getMessage());
-			ex.printStackTrace();
+			LogBox.formatRenderLog("Could not export model. Error: %s\n", ex.getMessage());
+			LogBox.renderLogException(ex);
 		}
 
 	}

@@ -21,6 +21,8 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
+import com.jaamsim.ui.LogBox;
+
 public class AviWriter {
 
 	private static class FrameEntry {
@@ -58,7 +60,7 @@ public class AviWriter {
 		} catch (IOException ex) {
 			fc = null;
 			// TODO log this error
-			ex.printStackTrace();
+			LogBox.renderLogException(ex);
 		}
 	}
 
@@ -97,7 +99,7 @@ public class AviWriter {
 			fc = null;
 		} catch (IOException ex) {
 			// Ignore for now...
-			ex.printStackTrace();
+			LogBox.renderLogException(ex);
 		}
 	}
 
@@ -119,7 +121,7 @@ public class AviWriter {
 		try {
 			fc.write(buff);
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			LogBox.renderLogException(ex);
 			throw new RuntimeException(ex);
 		}
 	}
@@ -271,7 +273,7 @@ public class AviWriter {
 
 
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			LogBox.renderLogException(ex);
 			throw new RuntimeException(ex);
 		}
 

@@ -32,6 +32,7 @@ import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.RenderException;
+import com.jaamsim.ui.LogBox;
 import com.jaamsim.xml.XmlNode;
 import com.jaamsim.xml.XmlParser;
 
@@ -57,7 +58,7 @@ public class ColParser {
 			return colParser.getData();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogBox.renderLogException(e);
 			throw new RenderException(e.getMessage());
 		}
 	}
@@ -201,7 +202,7 @@ public class ColParser {
 		double sceneDurMS = (sceneTime - geoTime)/1000000.0;
 
 		if (SHOW_COL_DEBUG) {
-			System.out.printf("%s Parse: %.1f Geo: %.1f, Scene: %.1f\n", _contextURL.toString(), parseDurMS, geoDurMS, sceneDurMS);
+			LogBox.formatRenderLog("%s Parse: %.1f Geo: %.1f, Scene: %.1f\n", _contextURL.toString(), parseDurMS, geoDurMS, sceneDurMS);
 		}
 	}
 
@@ -735,7 +736,7 @@ public class ColParser {
 			ret.texture = new URL(_contextURL, img);
 			ret.relTexture = img;
 		} catch (MalformedURLException ex) {
-			ex.printStackTrace();
+			LogBox.renderLogException(ex);
 			parseAssert(false);
 		}
 		return ret;

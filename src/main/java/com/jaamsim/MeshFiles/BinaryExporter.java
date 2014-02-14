@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.net.URL;
 
 import com.jaamsim.collada.ColParser;
+import com.jaamsim.ui.LogBox;
 
 public class BinaryExporter {
 
@@ -25,7 +26,7 @@ public class BinaryExporter {
 			FileOutputStream outStream = new FileOutputStream(outFile);
 			BlockWriter.writeBlock(outStream, block);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LogBox.renderLogException(ex);
 		}
 	}
 }

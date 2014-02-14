@@ -73,6 +73,7 @@ import com.jaamsim.render.TessFontKey;
 import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.render.util.ExceptionLogger;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
@@ -328,7 +329,9 @@ public class RenderManager implements DragSourceListener {
 				if (_renderer.hasFatalError()) {
 					// Well, something went horribly wrong
 					_fatalError.set(true);
-					System.out.printf("Renderer failed with error: %s\n", _renderer.getErrorString());
+					LogBox.formatRenderLog("Renderer failed with error: %s\n", _renderer.getErrorString());
+
+					LogBox.getInstance().setVisible(true);
 
 					// Do some basic cleanup
 					_windowControls.clear();
@@ -819,9 +822,9 @@ public class RenderManager implements DragSourceListener {
 
 		// Only print the exception log periodically (this can get a bit spammy)
 		if (numberOfExceptions % EXCEPTION_PRINT_RATE == 0) {
-			System.out.println("Recoverable Exceptions from RenderManager: ");
+			LogBox.renderLog("Recoverable Exceptions from RenderManager: ");
 			_exceptionLogger.printExceptionLog();
-			System.out.println("");
+			LogBox.renderLog("");
 		}
 	}
 

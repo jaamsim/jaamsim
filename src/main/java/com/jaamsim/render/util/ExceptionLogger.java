@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.jaamsim.ui.LogBox;
+
 /**
  * This is a utility class that will keep statistical track of exceptions
  * @author matt.chudleigh
@@ -63,7 +65,7 @@ public class ExceptionLogger {
 		}
 
 		if (count + 1 == stackDumpThreshold) {
-			t.printStackTrace();
+			LogBox.renderLogException(t);
 		}
 
 		//Otherwise increment the count for this element
@@ -79,7 +81,7 @@ public class ExceptionLogger {
 		for (Map.Entry<StackTraceElement, Integer> e : exceptions) {
 			StackTraceElement st = e.getKey();
 			int count = e.getValue();
-			System.out.println(st.getFileName() + ":" + st.getLineNumber() + " In: " + st.getClassName() + "." + st.getMethodName() + " " + count + " exceptions");
+			LogBox.renderLog(st.getFileName() + ":" + st.getLineNumber() + " In: " + st.getClassName() + "." + st.getMethodName() + " " + count + " exceptions");
 		}
 	}
 

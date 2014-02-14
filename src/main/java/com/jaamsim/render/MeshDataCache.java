@@ -24,6 +24,7 @@ import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.MeshFiles.MeshReader;
 import com.jaamsim.MeshFiles.ObjReader;
 import com.jaamsim.collada.ColParser;
+import com.jaamsim.ui.LogBox;
 
 public class MeshDataCache {
 	private static HashMap<MeshProtoKey, MeshData> dataMap = new HashMap<MeshProtoKey, MeshData>();
@@ -88,7 +89,7 @@ public class MeshDataCache {
 				assert(false);
 			}
 		} catch (Exception ex) {
-			System.out.printf("Could not load mesh: %s \n Error: %s\n", key.getURL().toString(), ex.getMessage());
+			LogBox.formatRenderLog("Could not load mesh: %s \n Error: %s\n", key.getURL().toString(), ex.getMessage());
 			synchronized (badMeshLock) {
 				badMeshSet.add(key);
 				return getBadMesh();

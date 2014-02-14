@@ -34,6 +34,7 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.ui.LogBox;
 
 /**
  * A big pile of static methods that currently don't have a better place to live. All Rendering specific
@@ -529,7 +530,7 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 			MeshProtoKey ret = new MeshProtoKey(meshURL);
 			return ret;
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			LogBox.renderLogException(e);
 			assert (false);
 		} catch (IOException e) {
 			assert (false);

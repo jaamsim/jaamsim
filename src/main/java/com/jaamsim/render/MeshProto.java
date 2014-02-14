@@ -31,6 +31,7 @@ import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.ui.LogBox;
 
 /**
  * A basic wrapper around mesh data and the OpenGL calls that go with it
@@ -609,7 +610,7 @@ public void loadGPUAssets(GL2GL3 gl, Renderer renderer) {
 			loadGPUMaterial(gl, renderer, mat);
 		}
 	} catch (GLException ex) {
-		ex.printStackTrace();
+		LogBox.renderLogException(ex);
 		return; // The loader will detect that this did not load cleanly
 	}
 

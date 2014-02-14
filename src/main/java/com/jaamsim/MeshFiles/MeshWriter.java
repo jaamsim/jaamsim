@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.LogBox;
 
 
 public class MeshWriter {
@@ -41,7 +42,7 @@ public class MeshWriter {
 
 			baseDirURI = new File(filename).toURI().resolve(".");
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LogBox.renderLogException(ex);
 			return;
 		}
 		isGood = true;
@@ -100,7 +101,7 @@ public class MeshWriter {
 
 			out.close();
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			LogBox.renderLogException(ex);
 			return false;
 		}
 
@@ -167,7 +168,7 @@ public class MeshWriter {
 				URI tex = baseDirURI.relativize(mat.colorTex.toURI());
 				out.write(tex.toString());
 			} catch (URISyntaxException ex) {
-				ex.printStackTrace();
+				LogBox.renderLogException(ex);
 			}
 			out.write("\n");
 			endTag("</Texture>");

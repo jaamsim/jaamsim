@@ -131,13 +131,13 @@ private static class CharTesselator extends GLUtessellatorCallbackAdapter {
 		vertsInPrim = 0;
 		oddStrip = false;
 //		if (type == GL.GL_TRIANGLES) {
-//			System.out.println("New Triangles");
+//			LogBox.formatRenderLog("New Triangles");
 //		}
 //		if (type == GL.GL_TRIANGLE_FAN) {
-//			System.out.println("New Fan");
+//			LogBox.formatRenderLog("New Fan");
 //		}
 //		if (type == GL.GL_TRIANGLE_STRIP) {
-//			System.out.println("New Strip");
+//			LogBox.formatRenderLog("New Strip");
 //		}
 	}
 
@@ -230,11 +230,11 @@ private static class CharTesselator extends GLUtessellatorCallbackAdapter {
 //		zeroToOne.cross(oneToTwo, cross);
 //		if (cross.data[2] < 0) {
 //			// This triangle is backwards wound
-//			System.out.println("Triangle is wound backwards for: " + type);
+//			LogBox.formatRenderLog("Triangle is wound backwards for: " + type);
 //		}
 //		else
 //		{
-//			System.out.println("Triangle is good for: " + type);
+//			LogBox.formatRenderLog("Triangle is good for: " + type);
 //		}
 //	}
 

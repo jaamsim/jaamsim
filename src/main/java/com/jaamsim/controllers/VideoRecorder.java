@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.OffscreenTarget;
+import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
 import com.jaamsim.video.AviWriter;
 import com.jaamsim.video.vp8.Encoder;
@@ -163,9 +164,9 @@ public class VideoRecorder {
 				out.close();
 
 			} catch (FileNotFoundException ex) {
-				ex.printStackTrace();
+				LogBox.renderLogException(ex);
 			} catch (IOException ex) {
-				ex.printStackTrace();
+				LogBox.renderLogException(ex);
 			}
 		}
 		_sampleNumber++;
@@ -176,7 +177,7 @@ public class VideoRecorder {
 //		double compositeTimeMS = (composite - renders) * 0.000001;
 //		double writeoutTimeMS = (writeout - composite) * 0.000001;
 //
-//		System.out.printf("Render: %f Composite: %f Writeout %f\n", renderTimeMS, compositeTimeMS, writeoutTimeMS);
+//		LogBox.formatRenderLog("Render: %f Composite: %f Writeout %f\n", renderTimeMS, compositeTimeMS, writeoutTimeMS);
 	}
 
 	public void freeResources() {

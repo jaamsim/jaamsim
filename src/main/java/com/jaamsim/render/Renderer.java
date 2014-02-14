@@ -63,6 +63,7 @@ import com.jaamsim.math.Ray;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.util.ExceptionLogger;
+import com.jaamsim.ui.LogBox;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.event.WindowListener;
 import com.jogamp.newt.event.WindowUpdateEvent;
@@ -214,7 +215,7 @@ public class Renderer implements GLAnimatorControl {
 
 //			long endNanos = System.nanoTime();
 //			long ms = (endNanos - startNanos) /1000000L;
-//			System.out.println("Creating shared context at:" + ms + "ms");
+//			LogBox.formatRenderLog("Creating shared context at:" + ms + "ms");
 
 			checkForIntelDriver();
 
@@ -231,8 +232,8 @@ public class Renderer implements GLAnimatorControl {
 			_fatalError.set(true);
 			_errorString = e.getLocalizedMessage();
 			_fatalStackTrace = e.getStackTrace();
-			System.out.println("Renderer encountered a fatal error:");
-			e.printStackTrace();
+			LogBox.renderLog("Renderer encountered a fatal error:");
+			LogBox.renderLogException(e);
 		} finally {
 			if (_sharedContext != null && _sharedContext.isCurrent())
 				_sharedContext.release();
@@ -241,7 +242,7 @@ public class Renderer implements GLAnimatorControl {
 
 //		endNanos = System.nanoTime();
 //		ms = (endNanos - startNanos) /1000000L;
-//		System.out.println("Started renderer loop after:" + ms + "ms");
+//		LogBox.formatRenderLog("Started renderer loop after:" + ms + "ms");
 
 		long lastLoopEnd = System.nanoTime();
 
@@ -763,7 +764,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 				// This did not load cleanly, clear it out and use the default bad mesh asset
 				proto.freeResources(gl);
 
-				System.out.printf("Could not load GPU assset: %s\n", key.getURL().toString());
+				LogBox.formatRenderLog("Could not load GPU assset: %s\n", key.getURL().toString());
 
 				proto = badProto;
 			}
@@ -774,7 +775,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 //		long endNanos = System.nanoTime();
 //		long ms = (endNanos - startNanos) /1000000L;
-//		System.out.println("LoadMeshProtoImp time:" + ms + "ms");
+//		LogBox.formatRenderLog("LoadMeshProtoImp time:" + ms + "ms");
 
 	}
 
@@ -1272,15 +1273,15 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		// For now print a synopsis for all exceptions thrown
 		printExceptionLog();
-		t.printStackTrace();
+		LogBox.renderLogException(t);
 	}
 
 	private void printExceptionLog() {
-		System.out.println("Exceptions from Renderer: ");
+		LogBox.renderLog("Exceptions from Renderer: ");
 
 		_exceptionLogger.printExceptionLog();
 
-		System.out.println("");
+		LogBox.renderLog("");
 
 	}
 

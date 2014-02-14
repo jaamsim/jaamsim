@@ -28,6 +28,7 @@ import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.RenderException;
+import com.jaamsim.ui.LogBox;
 
 public class ObjReader {
 	public static MeshData parse(URL asset) throws RenderException {
@@ -39,7 +40,7 @@ public class ObjReader {
 			return reader.getMeshData();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogBox.renderLogException(e);
 			throw new RenderException(e.getMessage());
 		}
 	}
