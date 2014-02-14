@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventTimeListener;
+import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
 
 /**
@@ -48,7 +49,7 @@ import com.jaamsim.events.ProcessTarget;
  * all entities will schedule themselves with the same event manager.
  */
 public final class EventManager implements Runnable {
-	final String name;
+	public final String name;
 
 	private final Object lockObject; // Object used as global lock for synchronization
 	private final ArrayList<Event> eventStack;
@@ -71,8 +72,9 @@ public final class EventManager implements Runnable {
 
 	private EventTimeListener timelistener;
 	private EventErrorListener errListener;
+	private EventTraceListener trcListener;
 
-	boolean traceEvents = false;
+	private boolean traceEvents = false;
 	private EventTraceRecord traceRecord;
 
 	/**
@@ -129,6 +131,22 @@ public final class EventManager implements Runnable {
 		}
 	}
 
+	public final void setTrace(boolean enable) {
+		synchronized (lockObject) {
+			traceEvents = enable;
+			if (traceEvents)
+				trcListener = traceRecord;
+			else
+				trcListener = null;
+		}
+	}
+
+	public final void setTraceListener(EventTraceListener l) {
+		synchronized (lockObject) {
+			trcListener = l;
+		}
+	}
+
 	void clear() {
 		currentTick = 0;
 		nextTick = 0;
@@ -137,9 +155,9 @@ public final class EventManager implements Runnable {
 
 		traceRecord.clearTrace();
 		EventTracer.init();
-		traceEvents = false;
 
 		synchronized (lockObject) {
+			setTrace(false);
 			// Kill threads on the event stack
 			for (Event each : eventStack) {
 				if (each.process == null)
@@ -439,7 +457,7 @@ public final class EventManager implements Runnable {
 	void waitUntil() {
 		synchronized (lockObject) {
 			if (!conditionalList.contains(Process.current())) {
-				Process.current().getEventManager().traceWaitUntil();
+				if (trcListener != null) trcListener.traceWaitUntil(this);
 				Process.current().setFlag(Process.COND_WAIT);
 				conditionalList.add(Process.current());
 			}
@@ -454,7 +472,7 @@ public final class EventManager implements Runnable {
 			if (!conditionalList.remove(Process.current()))
 				return;
 
-			traceWaitUntilEnded();
+			if (trcListener != null) trcListener.traceWaitUntilEnded(this);
 			Process.current().clearFlag(Process.COND_WAIT);
 			waitTicks(0, priority);
 		}
@@ -674,14 +692,6 @@ public final class EventManager implements Runnable {
 
 	private void traceSchedProcess(Event target) {
 		if (traceEvents) traceRecord.formatSchedProcessTrace(name, currentTick, target);
-	}
-
-	private void traceWaitUntil() {
-		if (traceEvents) traceRecord.traceWaitUntil(name, currentTick);
-	}
-
-	private void traceWaitUntilEnded() {
-		if (traceEvents) traceRecord.traceWaitUntilEnded(name, currentTick);
 	}
 
 	/**

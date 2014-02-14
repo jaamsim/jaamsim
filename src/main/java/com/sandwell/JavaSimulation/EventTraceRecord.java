@@ -16,10 +16,11 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
 import com.sandwell.JavaSimulation.EventManager.Event;
 
-class EventTraceRecord extends ArrayList<String> {
+class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	private String eventManagerName;
 	private long internalTime;
 	private String targetName;
@@ -137,15 +138,17 @@ class EventTraceRecord extends ArrayList<String> {
 		this.finish();
 	}
 
-	synchronized void traceWaitUntil(String name, long currentTime) {
-		this.addHeader(name, currentTime);
+	@Override
+	public synchronized void traceWaitUntil(EventManager e) {
+		this.addHeader(e.name, e.currentTick());
 		traceLevel--;
 		this.append("WaitUntil");
 		this.finish();
 	}
 
-	synchronized void traceWaitUntilEnded(String name, long currentTime) {
-		this.addHeader(name, currentTime);
+	@Override
+	public synchronized void traceWaitUntilEnded(EventManager e) {
+		this.addHeader(e.name, e.currentTick());
 		this.append("Event-WaitUntilEnded");
 		traceLevel++;
 		this.finish();

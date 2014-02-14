@@ -75,7 +75,7 @@ class EventTracer {
 			eventTraceFile = null;
 		}
 
-		evt.traceEvents = enable;
+		evt.setTrace(enable);
 	}
 
 	static void verifyAllEvents(EventManager evt, boolean enable) {
@@ -89,7 +89,7 @@ class EventTracer {
 			eventVerifyFile = null;
 		}
 
-		evt.traceEvents = enable;
+		evt.setTrace(enable);
 	}
 
 	private static void findEventInBuffer(EventTraceRecord record) {
