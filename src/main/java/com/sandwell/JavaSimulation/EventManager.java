@@ -456,6 +456,13 @@ public final class EventManager implements Runnable {
 				return;
 
 			Process cur = Process.current();
+//			if (!cur.testFlag(Process.COND_WAIT)) {
+//				System.out.println("ERROR - waitUntil without waitUntilEnded " + cur);
+//				for (StackTraceElement elem : cur.getStackTrace()) {
+//					System.out.println(elem.toString());
+//				}
+//			}
+
 			cur.clearFlag(Process.COND_WAIT);
 			Event temp = new Event(currentTick(), currentTick(), priority, cur, null);
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
