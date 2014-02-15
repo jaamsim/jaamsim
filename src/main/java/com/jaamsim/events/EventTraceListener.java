@@ -30,6 +30,6 @@ public void traceInterrupt(EventManager e, Event evt);
 public void traceKill(EventManager e, Event evt);
 
 public void traceWaitUntil(EventManager e);
-public void traceWaitUntilEnded(EventManager e);
+public void traceWaitUntilEnded(EventManager e, Event evt);
 
 }

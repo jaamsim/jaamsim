@@ -47,10 +47,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 			return;
 		}
 
-		// We need to look one line further for the Wait line that accompanies a
-		// conditonal wait wakeup
-		if (temp[0].endsWith("Event-WaitUntilEnded")) {
-			temp = this.get(2).split("\t");
+		if (temp[0].endsWith("WaitUntilEnded")) {
 			targetName = temp[3];
 			return;
 		}
@@ -151,10 +148,11 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public synchronized void traceWaitUntilEnded(EventManager e) {
+	public synchronized void traceWaitUntilEnded(EventManager e, Event evt) {
 		this.addHeader(e.name, e.currentTick());
-		this.append("Event-WaitUntilEnded");
-		traceLevel++;
+		this.append(String.format("WaitUntilEnded\t%d\t%d\t%s",
+		            evt.schedTick, evt.priority, evt.getDesc()));
+
 		this.finish();
 	}
 

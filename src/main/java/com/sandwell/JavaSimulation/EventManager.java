@@ -455,8 +455,12 @@ public final class EventManager implements Runnable {
 			if (!conditionalList.remove(Process.current()))
 				return;
 
-			if (trcListener != null) trcListener.traceWaitUntilEnded(this);
-			Process.current().clearFlag(Process.COND_WAIT);
+			Process cur = Process.current();
+			cur.clearFlag(Process.COND_WAIT);
+			Event temp = new Event(currentTick(), currentTick(), priority, cur, null);
+			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
+			addEventToStack(temp);
+			popThread();
 			waitTicks(0, priority);
 		}
 	}
