@@ -336,7 +336,7 @@ public final class EventManager implements Runnable {
 		return nextEventTime;
 	}
 
-	void scheduleSingleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
+	public void scheduleSingleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
 		assertNotWaitUntil();
 		synchronized (lockObject) {
 			long eventTime = calculateEventTime(waitLength);
@@ -370,7 +370,7 @@ public final class EventManager implements Runnable {
 	 * @param ticks the number of discrete ticks from now to schedule the event.
 	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
-	void waitTicks(long ticks, int priority, boolean fifo) {
+	public void waitTicks(long ticks, int priority, boolean fifo) {
 		assertNotWaitUntil();
 		synchronized (lockObject) {
 			long nextEventTime = calculateEventTime(ticks);
@@ -436,7 +436,7 @@ public final class EventManager implements Runnable {
 	 * thread to the conditional stack, then wakes the next waiting thread on
 	 * the thread stack.
 	 */
-	void waitUntil() {
+	public void waitUntil() {
 		synchronized (lockObject) {
 			if (!conditionalList.contains(Process.current())) {
 				if (trcListener != null) trcListener.traceWaitUntil(this);
@@ -447,7 +447,7 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	void waitUntilEnded() {
+	public void waitUntilEnded() {
 		synchronized (lockObject) {
 			// Do not wait at all if we never actually were on the waitUntilStack
 			// ie. we never called waitUntil
@@ -470,7 +470,7 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	void start(ProcessTarget t) {
+	public void start(ProcessTarget t) {
 		Process newProcess = Process.allocate(this, t);
 		// Notify the eventManager that a new process has been started
 		synchronized (lockObject) {
@@ -484,7 +484,7 @@ public final class EventManager implements Runnable {
 	/**
 	 *	Removes the thread from the pending list and executes it immediately
 	 */
-	void interrupt( Process intThread ) {
+	public void interrupt( Process intThread ) {
 		synchronized (lockObject) {
 			if (intThread.testFlag(Process.ACTIVE)) {
 				throw new ErrorException( "Cannot interrupt an active thread" );
@@ -508,7 +508,7 @@ public final class EventManager implements Runnable {
 	/**
 	 *	Removes an event from the pending list and executes it immediately.
 	 */
-	void interrupt(ProcessTarget t) {
+	public void interrupt(ProcessTarget t) {
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 
@@ -526,7 +526,7 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	void terminateThread( Process killThread ) {
+	public void terminateThread( Process killThread ) {
 		synchronized (lockObject) {
 			if (killThread.testFlag(Process.ACTIVE)) {
 				throw new ErrorException( "Cannot terminate an active thread" );
@@ -556,7 +556,7 @@ public final class EventManager implements Runnable {
 	/**
 	 *	Removes an event from the pending list and executes it immediately.
 	 */
-	void terminate(ProcessTarget t) {
+	public void terminate(ProcessTarget t) {
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 
@@ -571,7 +571,7 @@ public final class EventManager implements Runnable {
 		throw new ErrorException("Tried to terminate a target in %s that couldn't be found", name);
 	}
 
-	long currentTick() {
+	public long currentTick() {
 		synchronized (lockObject) {
 			return currentTick;
 		}
@@ -614,7 +614,7 @@ public final class EventManager implements Runnable {
 
 	}
 
-	void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
+	public void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
 			Event e = new Event(currentTick, schedTick, eventPriority, null, t);
@@ -630,7 +630,7 @@ public final class EventManager implements Runnable {
 	 * guaranteed in this state that there is an empty thread stack and the
 	 * thread referenced in activeThread is the eventManager thread.
 	 */
-	void pause() {
+	public void pause() {
 		synchronized (lockObject) {
 			executeEvents = false;
 		}
@@ -643,7 +643,7 @@ public final class EventManager implements Runnable {
 	 * resume the event execution loop.  This prevents the model being resumed
 	 * from an inconsistent state.
 	 */
-	void resume(long targetTicks) {
+	public void resume(long targetTicks) {
 		synchronized (lockObject) {
 			targetTick = targetTicks;
 			rebaseRealTime = true;
