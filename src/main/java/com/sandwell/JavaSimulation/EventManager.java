@@ -310,11 +310,13 @@ public final class EventManager implements Runnable {
 		Process.current().wake(this);
 	}
 
+	/**
+	 * Must hold the lockObject when calling this method
+	 * @param next
+	 */
 	private void switchThread(Thread next) {
-		synchronized (lockObject) {
-			next.interrupt();
-			threadWait();
-		}
+		next.interrupt();
+		threadWait();
 	}
 
 	/**
@@ -473,11 +475,10 @@ public final class EventManager implements Runnable {
 		// Notify the eventManager that a new process has been started
 		synchronized (lockObject) {
 			if (trcListener != null) trcListener.traceProcessStart(this, t);
+			// Transfer control to the new process
+			newProcess.setNextProcess(Process.current());
+			switchThread(newProcess);
 		}
-
-		// Transfer control to the new process
-		newProcess.setNextProcess(Process.current());
-		switchThread(newProcess);
 	}
 
 	/**
