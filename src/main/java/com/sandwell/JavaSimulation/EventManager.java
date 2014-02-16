@@ -319,10 +319,15 @@ public final class EventManager implements Runnable {
 
 	/**
 	 * Calculate the time for an event taking into account numeric overflow.
+	 * Must hold the lockObject when calling this method
 	 */
-	private long calculateEventTime(long base, long waitLength) {
+	private long calculateEventTime(long waitLength) {
+		// Test for negative duration schedule wait length
+		if(waitLength < 0)
+			throw new ErrorException("Negative duration wait is invalid (wait length specified to be %d )", waitLength);
+
 		// Check for numeric overflow of internal time
-		long nextEventTime = base + waitLength;
+		long nextEventTime = currentTick + waitLength;
 		if (nextEventTime < 0)
 			nextEventTime = Long.MAX_VALUE;
 
@@ -331,9 +336,8 @@ public final class EventManager implements Runnable {
 
 	void scheduleSingleProcess(long waitLength, int eventPriority, ProcessTarget t) {
 		assertNotWaitUntil();
-
-		long eventTime = calculateEventTime(Process.currentTick(), waitLength);
 		synchronized (lockObject) {
+			long eventTime = calculateEventTime(waitLength);
 			for (int i = 0; i < eventStack.size(); i++) {
 				Event each = eventStack.get(i);
 				// We passed where any duplicate could be, break out to the
@@ -351,7 +355,7 @@ public final class EventManager implements Runnable {
 			}
 
 			// Create an event for the new process at the present time, and place it on the event stack
-			Event newEvent = new Event(this.currentTick(), eventTime, eventPriority, null, t);
+			Event newEvent = new Event(currentTick, eventTime, eventPriority, null, t);
 			if (trcListener != null) trcListener.traceSchedProcess(this, newEvent);
 			addEventToStack(newEvent);
 		}
@@ -365,15 +369,10 @@ public final class EventManager implements Runnable {
 	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
 	void waitTicks(long ticks, int priority) {
-		// Test for negative duration schedule wait length
-		if(ticks < 0)
-			throw new ErrorException("Negative duration wait is invalid (wait length specified to be %d )", ticks);
-
 		assertNotWaitUntil();
-		long nextEventTime = calculateEventTime(Process.currentTick(), ticks);
-
-		Event temp = new Event(currentTick(), nextEventTime, priority, Process.current(), null);
 		synchronized (lockObject) {
+			long nextEventTime = calculateEventTime(ticks);
+			Event temp = new Event(currentTick, nextEventTime, priority, Process.current(), null);
 			if (trcListener != null) trcListener.traceWait(this, temp);
 			addEventToStack(temp);
 			popThread();
@@ -388,10 +387,6 @@ public final class EventManager implements Runnable {
 	 * Must hold the lockObject when calling this method.
 	 */
 	private void addEventToStack(Event newEvent) {
-		if (newEvent.schedTick < currentTick) {
-			throw new ErrorException("Going back in time");
-		}
-
 		int i = 0;
 		for (; i < eventStack.size(); i++) {
 			// skip all event that happen before the new event
@@ -465,7 +460,7 @@ public final class EventManager implements Runnable {
 //			}
 
 			cur.clearFlag(Process.COND_WAIT);
-			Event temp = new Event(currentTick(), currentTick(), priority, cur, null);
+			Event temp = new Event(currentTick, currentTick, priority, cur, null);
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
 			addEventToStack(temp);
 			popThread();
@@ -576,7 +571,9 @@ public final class EventManager implements Runnable {
 	}
 
 	long currentTick() {
-		return currentTick;
+		synchronized (lockObject) {
+			return currentTick;
+		}
 	}
 
 	void setExecuteRealTime(boolean useRealTime, int factor) {
@@ -617,9 +614,9 @@ public final class EventManager implements Runnable {
 	}
 
 	void scheduleProcess(long waitLength, int eventPriority, ProcessTarget t) {
-		long schedTick = calculateEventTime(currentTick, waitLength);
-		Event e = new Event(currentTick, schedTick, eventPriority, null, t);
 		synchronized (lockObject) {
+			long schedTick = calculateEventTime(waitLength);
+			Event e = new Event(currentTick, schedTick, eventPriority, null, t);
 			if (trcListener != null) trcListener.traceSchedProcess(this, e);
 			addEventToStack(e);
 		}
