@@ -464,7 +464,6 @@ public final class EventManager implements Runnable {
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
 			addEventToStack(temp);
 			popThread();
-			waitTicks(0, priority);
 		}
 	}
 
