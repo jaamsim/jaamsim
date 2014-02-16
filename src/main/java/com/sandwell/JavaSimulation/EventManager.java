@@ -102,7 +102,7 @@ public final class EventManager implements Runnable {
 		setErrorListener(null);
 	}
 
-	static EventManager initEventManager(String name) {
+	public static EventManager initEventManager(String name) {
 		EventManager evtman = new EventManager(name);
 		evtman.eventManagerThread.start();
 		return evtman;
@@ -132,13 +132,13 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	void clear() {
-		currentTick = 0;
-		nextTick = 0;
-		targetTick = Long.MAX_VALUE;
-		rebaseRealTime = true;
-
+	public void clear() {
 		synchronized (lockObject) {
+			currentTick = 0;
+			nextTick = 0;
+			targetTick = Long.MAX_VALUE;
+			rebaseRealTime = true;
+
 			// Kill threads on the event stack
 			for (Event each : eventStack) {
 				if (each.process == null)
@@ -577,11 +577,13 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	void setExecuteRealTime(boolean useRealTime, int factor) {
-		executeRealTime = useRealTime;
-		realTimeFactor = factor;
-		if (useRealTime)
-			rebaseRealTime = true;
+	public void setExecuteRealTime(boolean useRealTime, int factor) {
+		synchronized (lockObject) {
+			executeRealTime = useRealTime;
+			realTimeFactor = factor;
+			if (useRealTime)
+				rebaseRealTime = true;
+		}
 	}
 
 	/**
