@@ -287,26 +287,27 @@ public final class EventManager implements Runnable {
 		}
 	}
 
+	/**
 	// Pause the current active thread and restart the next thread on the
 	// active thread list. For this case, a future event or conditional event
 	// has been created for the current thread.  Called by
 	// eventManager.scheduleWait() and related methods, and by
 	// eventManager.waitUntil().
 	// restorePreviousActiveThread()
+	 * Must hold the lockObject when calling this method.
+	 */
 	private void popThread() {
-		synchronized (lockObject) {
-			Process next = Process.current().getNextProcess();
+		Process next = Process.current().getNextProcess();
 
-			Process.current().clearFlag(Process.ACTIVE);
-			if (next != null) {
-				Process.current().setNextProcess(null);
-				switchThread(next);
-			} else {
-				// TODO: check for the switching of eventmanagers
-				switchThread(Process.current().getEventManager().eventManagerThread);
-			}
-			Process.current().wake(this);
+		Process.current().clearFlag(Process.ACTIVE);
+		if (next != null) {
+			Process.current().setNextProcess(null);
+			switchThread(next);
+		} else {
+			// TODO: check for the switching of eventmanagers
+			switchThread(Process.current().getEventManager().eventManagerThread);
 		}
+		Process.current().wake(this);
 	}
 
 	private void switchThread(Thread next) {
@@ -374,46 +375,46 @@ public final class EventManager implements Runnable {
 		Event temp = new Event(currentTick(), nextEventTime, priority, Process.current(), null);
 		synchronized (lockObject) {
 			if (trcListener != null) trcListener.traceWait(this, temp);
+			addEventToStack(temp);
+			popThread();
 		}
-		addEventToStack(temp);
-		popThread();
 	}
 
 	/**
 	 * Adds a new event to the event stack.  This method will add an event to
 	 * the event stack based on its scheduled time, priority, and in stack
 	 * order for equal time/priority.
+	 *
+	 * Must hold the lockObject when calling this method.
 	 */
 	private void addEventToStack(Event newEvent) {
-		synchronized (lockObject) {
-			if (newEvent.schedTick < currentTick) {
-				throw new ErrorException("Going back in time");
-			}
-
-			int i = 0;
-			for (; i < eventStack.size(); i++) {
-				// skip all event that happen before the new event
-				if (eventStack.get(i).schedTick < newEvent.schedTick) {
-					continue;
-				}
-				// next stack event happens at a later time, i is the insertion index
-				if (eventStack.get(i).schedTick > newEvent.schedTick) {
-					break;
-				}
-				// skip the higher priority events at the same time
-				if (eventStack.get(i).priority < newEvent.priority) {
-					continue;
-				}
-				// scheduleLastFIFO is special because it adds in queue, rather
-				// than stack ordering, so keep going until we find an event that
-				// happens at a later time without regard to priority
-				if (newEvent.priority != Entity.PRIO_LASTFIFO) {
-					break;
-				}
-			}
-			// Insert the event in the stack
-			eventStack.add(i, newEvent);
+		if (newEvent.schedTick < currentTick) {
+			throw new ErrorException("Going back in time");
 		}
+
+		int i = 0;
+		for (; i < eventStack.size(); i++) {
+			// skip all event that happen before the new event
+			if (eventStack.get(i).schedTick < newEvent.schedTick) {
+				continue;
+			}
+			// next stack event happens at a later time, i is the insertion index
+			if (eventStack.get(i).schedTick > newEvent.schedTick) {
+				break;
+			}
+			// skip the higher priority events at the same time
+			if (eventStack.get(i).priority < newEvent.priority) {
+				continue;
+			}
+			// scheduleLastFIFO is special because it adds in queue, rather
+			// than stack ordering, so keep going until we find an event that
+			// happens at a later time without regard to priority
+			if (newEvent.priority != Entity.PRIO_LASTFIFO) {
+				break;
+			}
+		}
+		// Insert the event in the stack
+		eventStack.add(i, newEvent);
 	}
 
 	/**
@@ -444,8 +445,8 @@ public final class EventManager implements Runnable {
 				Process.current().setFlag(Process.COND_WAIT);
 				conditionalList.add(Process.current());
 			}
+			popThread();
 		}
-		popThread();
 	}
 
 	void waitUntilEnded(int priority) {
@@ -620,8 +621,8 @@ public final class EventManager implements Runnable {
 		Event e = new Event(currentTick, schedTick, eventPriority, null, t);
 		synchronized (lockObject) {
 			if (trcListener != null) trcListener.traceSchedProcess(this, e);
+			addEventToStack(e);
 		}
-		addEventToStack(e);
 	}
 
 	/**
