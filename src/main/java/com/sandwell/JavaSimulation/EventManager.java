@@ -334,7 +334,7 @@ public final class EventManager implements Runnable {
 		return nextEventTime;
 	}
 
-	void scheduleSingleProcess(long waitLength, int eventPriority, ProcessTarget t) {
+	void scheduleSingleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
 		assertNotWaitUntil();
 		synchronized (lockObject) {
 			long eventTime = calculateEventTime(waitLength);
@@ -357,7 +357,7 @@ public final class EventManager implements Runnable {
 			// Create an event for the new process at the present time, and place it on the event stack
 			Event newEvent = new Event(currentTick, eventTime, eventPriority, null, t);
 			if (trcListener != null) trcListener.traceSchedProcess(this, newEvent);
-			addEventToStack(newEvent);
+			addEventToStack(newEvent, fifo);
 		}
 	}
 
@@ -368,13 +368,13 @@ public final class EventManager implements Runnable {
 	 * @param ticks the number of discrete ticks from now to schedule the event.
 	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
-	void waitTicks(long ticks, int priority) {
+	void waitTicks(long ticks, int priority, boolean fifo) {
 		assertNotWaitUntil();
 		synchronized (lockObject) {
 			long nextEventTime = calculateEventTime(ticks);
 			Event temp = new Event(currentTick, nextEventTime, priority, Process.current(), null);
 			if (trcListener != null) trcListener.traceWait(this, temp);
-			addEventToStack(temp);
+			addEventToStack(temp, fifo);
 			popThread();
 		}
 	}
@@ -386,27 +386,28 @@ public final class EventManager implements Runnable {
 	 *
 	 * Must hold the lockObject when calling this method.
 	 */
-	private void addEventToStack(Event newEvent) {
+	private void addEventToStack(Event newEvent, boolean fifo) {
 		int i = 0;
 		for (; i < eventStack.size(); i++) {
-			// skip all event that happen before the new event
-			if (eventStack.get(i).schedTick < newEvent.schedTick) {
+			// skip the events that happen at an earlier time
+			if (eventStack.get(i).schedTick < newEvent.schedTick)
 				continue;
+
+			// events at the same time use priority as a tie-breaker
+			if (eventStack.get(i).schedTick == newEvent.schedTick) {
+				// skip the events that happen at an earlier priority
+				if (eventStack.get(i).priority < newEvent.priority)
+					continue;
+
+				if (eventStack.get(i).priority == newEvent.priority) {
+					// events of equal time and priority are scheduled in LIFO order, so this is
+					// the insertion point, unless we are explicitly doing FIFO ordering
+					if (fifo) continue;
+				}
 			}
-			// next stack event happens at a later time, i is the insertion index
-			if (eventStack.get(i).schedTick > newEvent.schedTick) {
-				break;
-			}
-			// skip the higher priority events at the same time
-			if (eventStack.get(i).priority < newEvent.priority) {
-				continue;
-			}
-			// scheduleLastFIFO is special because it adds in queue, rather
-			// than stack ordering, so keep going until we find an event that
-			// happens at a later time without regard to priority
-			if (newEvent.priority != Entity.PRIO_LASTFIFO) {
-				break;
-			}
+
+			// We fell through all checks, we are at the insertion index, break out
+			break;
 		}
 		// Insert the event in the stack
 		eventStack.add(i, newEvent);
@@ -444,7 +445,7 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	void waitUntilEnded(int priority) {
+	void waitUntilEnded() {
 		synchronized (lockObject) {
 			// Do not wait at all if we never actually were on the waitUntilStack
 			// ie. we never called waitUntil
@@ -460,9 +461,9 @@ public final class EventManager implements Runnable {
 //			}
 
 			cur.clearFlag(Process.COND_WAIT);
-			Event temp = new Event(currentTick, currentTick, priority, cur, null);
+			Event temp = new Event(currentTick, currentTick, 0, cur, null);
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
-			addEventToStack(temp);
+			addEventToStack(temp, true);
 			popThread();
 		}
 	}
@@ -612,12 +613,12 @@ public final class EventManager implements Runnable {
 
 	}
 
-	void scheduleProcess(long waitLength, int eventPriority, ProcessTarget t) {
+	void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
 			Event e = new Event(currentTick, schedTick, eventPriority, null, t);
 			if (trcListener != null) trcListener.traceSchedProcess(this, e);
-			addEventToStack(e);
+			addEventToStack(e, fifo);
 		}
 	}
 
