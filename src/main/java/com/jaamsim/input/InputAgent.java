@@ -158,10 +158,40 @@ public class InputAgent {
 		return addedRecordFound;
 	}
 
+	/**
+	 * Returns the "RecordEdits" mode for the InputAgent.
+	 * <p>
+	 * When RecordEdits is TRUE, any model inputs that are changed and any objects that
+	 * are defined are marked as "edited". When FALSE, model inputs and object
+	 * definitions are marked as "unedited".
+	 * <p>
+	 * RecordEdits mode is used to determine the way JaamSim saves a configuration file
+	 * through the graphical user interface. Object definitions and model inputs
+	 * that are marked as unedited will be copied exactly as they appear in the original
+	 * configuration file that was first loaded.  Object definitions and model inputs
+	 * that are marked as edited will be generated automatically by the program.
+	 *
+	 * @return the RecordEdits mode for the InputAgent.
+	 */
 	public static boolean recordEdits() {
 		return recordEdits;
 	}
 
+	/**
+	 * Sets the "RecordEdits" mode for the InputAgent.
+	 * <p>
+	 * When RecordEdits is TRUE, any model inputs that are changed and any objects that
+	 * are defined are marked as "edited". When FALSE, model inputs and object
+	 * definitions are marked as "unedited".
+	 * <p>
+	 * RecordEdits mode is used to determine the way JaamSim saves a configuration file
+	 * through the graphical user interface. Object definitions and model inputs
+	 * that are marked as unedited will be copied exactly as they appear in the original
+	 * configuration file that was first loaded.  Object definitions and model inputs
+	 * that are marked as edited will be generated automatically by the program.
+	 *
+	 * @param b - boolean value for the RecordEdits mode
+	 */
 	public static void setRecordEdits(boolean b) {
 		recordEdits = b;
 	}
@@ -319,6 +349,7 @@ public class InputAgent {
 				// Set flag if found " *** Added Records ***
 				if ( line.trim().equalsIgnoreCase( addedRecordMarker ) ) {
 					addedRecordFound = true;
+					InputAgent.setRecordEdits(true);
 				}
 
 				int previousRecordSize = record.size();
@@ -404,7 +435,7 @@ public class InputAgent {
 
 		// Loop over all the new Entity names
 		for (int i = 3; i < record.size() - 1; i++) {
-			InputAgent.defineEntity(proto, record.get(i), addedRecordFound);
+			InputAgent.defineEntity(proto, record.get(i), InputAgent.recordEdits());
 		}
 	}
 
@@ -639,7 +670,7 @@ public class InputAgent {
 		in.parse(data, kw.context);
 
 		// Only mark the keyword edited if we have finished initial configuration
-		if (InputAgent.hasAddedRecords() || InputAgent.recordEdits())
+		if ( InputAgent.recordEdits() )
 			in.setEdited(true);
 
 		ent.updateForInput(in);
