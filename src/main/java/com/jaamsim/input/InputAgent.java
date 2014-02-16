@@ -104,10 +104,24 @@ public class InputAgent {
 		f.mkdirs();
 	}
 
+	/**
+	 * Sets the full file path and name of the present configuration file.
+	 *
+	 * @param name - full file path and name of the present configuration file.
+	 */
 	public static void setConfigFileName(String name) {
 		configFileName = name;
 	}
 
+	/**
+	 * Returns the full file path and name of the present configuration file. Null is
+	 * returned if no configuration file has been loaded.
+	 * <p>
+	 * The configuration file name is set when the file is first loaded or when a new
+	 * configuration file is saved via the graphical user interface.
+	 *
+	 * @return the full file path and name for the present configuration file.
+	 */
 	public static String getConfigFileName() {
 		return configFileName;
 	}
@@ -1097,11 +1111,11 @@ public class InputAgent {
 	public static void printNewConfigurationFileWithName( String fileName ) {
 
 		ArrayList<String> preAddedRecordLines = new ArrayList<String>();
-		String configFilePath = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + InputAgent.getConfigFileName();
-		if( InputAgent.hasAddedRecords() && FileEntity.fileExists( configFilePath ) ) {
+		if( InputAgent.getConfigFileName() != null && InputAgent.hasAddedRecords() &&
+				FileEntity.fileExists(InputAgent.getConfigFileName()) ) {
 			// Store the original configuration file lines up to added records
 			try {
-				BufferedReader in = new BufferedReader( new FileReader( configFilePath ) );
+				BufferedReader in = new BufferedReader( new FileReader(InputAgent.getConfigFileName()) );
 
 				String line;
 				while ( ( line = in.readLine() ) != null ) {
