@@ -99,9 +99,37 @@ public final class EventManager implements Runnable {
 		setErrorListener(null);
 	}
 
+	// Used to handshake with the calling thread and make sure the evt thread
+	// has made it to the first wait state
+	private static class InitListener implements EventTimeListener {
+		final Thread waitThread;
+
+		InitListener() {
+			waitThread = Thread.currentThread();
+		}
+
+		@Override
+		public void tickUpdate(long tick) {}
+		@Override
+		public void timeRunning(boolean running) {
+			synchronized (this) {
+				waitThread.interrupt();
+			}
+		}
+	}
+
 	public static EventManager initEventManager(String name) {
 		EventManager evtman = new EventManager(name);
-		evtman.eventManagerThread.start();
+		InitListener e = new InitListener();
+		synchronized (e) {
+			evtman.setTimeListener(e);
+			evtman.eventManagerThread.start();
+			try {
+				e.wait();
+			}
+			catch (InterruptedException e2) {}
+			evtman.setTimeListener(null);
+		}
 		return evtman;
 	}
 
