@@ -271,7 +271,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		InputAgent.clear();
 		InputAgent.setRecordEdits(false);
 		InputAgent.readResource("inputs/autoload.cfg");
-		InputAgent.setRecordEdits(true);
 	}
 
 	public void initializeMenus() {
@@ -306,6 +305,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 					}
 				}
 				clear();
+				InputAgent.setRecordEdits(true);
 				InputAgent.loadDefault();
 				displayWindows(false);
 			}
@@ -1383,28 +1383,35 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (minimize)
 			gui.setExtendedState(JFrame.ICONIFIED);
 
+		// Show the Control Panel
 		gui.setVisible(true);
 		GUIFrame.calcWindowDefaults();
 
+		// Load the autoload file
 		InputAgent.setRecordEdits(false);
 		InputAgent.readResource("inputs/autoload.cfg");
+		gui.setTitle(Simulation.getModelName());
 
+		// Process any configuration files passed on command line
+		// (Multiple configuration files are not supported at present)
+		for (int i = 0; i < configFiles.size(); i++) {
+			InputAgent.configure(gui, configFiles.get(i));
+		}
+
+		// If no configuration files were specified on the command line, then load the default configuration file
 		if( configFiles.size() == 0 ) {
+			InputAgent.setRecordEdits(true);
 			InputAgent.loadDefault();
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
-		gui.setTitle(Simulation.getModelName());
-		// Process any config files passed on command line
-		for (int i = 0; i < configFiles.size(); i++) {
-			// Consume regular configuration files
-			InputAgent.configure(gui, configFiles.get(i));
-			continue;
-		}
 
-		InputAgent.setRecordEdits(true);
+		// Show the view windows and tools
 		if(!quiet && !batch) {
 			displayWindows(false);
 		}
+
+		// Set RecordEdits mode (if it has not already been set in the configuration file)
+		InputAgent.setRecordEdits(true);
 
 		// Hide the splash screen
 		if (splashScreen != null) {

@@ -1141,20 +1141,18 @@ public class InputAgent {
 	 */
 	public static void printNewConfigurationFileWithName( String fileName ) {
 
+		// Copy the original configuration file up to the "added records" marker (if present)
+		// Temporary storage for the copied lines is needed in case the original file is to be overwritten
 		ArrayList<String> preAddedRecordLines = new ArrayList<String>();
-		if( InputAgent.getConfigFileName() != null && InputAgent.hasAddedRecords() &&
-				FileEntity.fileExists(InputAgent.getConfigFileName()) ) {
-			// Store the original configuration file lines up to added records
+		if( InputAgent.getConfigFileName() != null && FileEntity.fileExists(InputAgent.getConfigFileName()) ) {
 			try {
 				BufferedReader in = new BufferedReader( new FileReader(InputAgent.getConfigFileName()) );
 
 				String line;
 				while ( ( line = in.readLine() ) != null ) {
+					preAddedRecordLines.add( line );
 					if ( line.startsWith( addedRecordMarker ) ) {
 						break;
-					}
-					else {
-						preAddedRecordLines.add( line );
 					}
 				}
 				in.close();
@@ -1165,26 +1163,15 @@ public class InputAgent {
 		}
 
 		FileEntity file = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
-
-		// include the original configuration file
-		if (!InputAgent.hasAddedRecords()) {
-			file.format( "\" File: %s%n%n", file.getFileName() );
-			file.format( "include %s%n%n", InputAgent.getConfigFileName() );
-		}
-		else {
-			for( int i=0; i < preAddedRecordLines.size(); i++ ) {
-				String line = preAddedRecordLines.get( i );
-				if( line.startsWith( "\" File: " ) ) {
-					file.format( "\" File: %s%n", file.getFileName() );
-				}
-				else {
-					file.format("%s%n", line);
-				}
-			}
+		for( int i=0; i < preAddedRecordLines.size(); i++ ) {
+			file.format("%s%n", preAddedRecordLines.get( i ));
 		}
 
-		file.format("%s%n", addedRecordMarker);
-		addedRecordFound = true;
+		// If not already present, insert the added records marker at the end of the original configuration file
+		if( !addedRecordFound ) {
+			file.format("%n%s%n", addedRecordMarker);
+			addedRecordFound = true;
+		}
 
 		// Determine all the new classes that were created
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<Class<? extends Entity>>();
@@ -1197,7 +1184,11 @@ public class InputAgent {
 				newClasses.add(ent.getClass());
 		}
 
-		// Print the define statements for each new class
+		// Add a blank line before the first object definition
+		if( !newClasses.isEmpty() )
+			file.format("%n");
+
+		// Identify the object types for which new instances were defined
 		for( Class<? extends Entity> newClass : newClasses ) {
 			for (ObjectType o : ObjectType.getAll()) {
 				if (o.getJavaClass() == newClass) {
@@ -1218,13 +1209,13 @@ public class InputAgent {
 			file.format("}%n");
 		}
 
-		// List all the changes that were saved for each edited entity
+		// Identify the entities whose inputs were edited
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			Entity ent = Entity.getAll().get(i);
-			if (!ent.testFlag(Entity.FLAG_EDITED))
-				continue;
-
-			writeInputsOnFile_ForEntity( file, ent );
+			if (ent.testFlag(Entity.FLAG_EDITED)) {
+				file.format("%n");
+				writeInputsOnFile_ForEntity( file, ent );
+			}
 		}
 
 		file.flush();
@@ -1232,8 +1223,6 @@ public class InputAgent {
 	}
 
 	static void writeInputsOnFile_ForEntity( FileEntity file, Entity ent ) {
-		// Write new configuration file for non-appendable keywords
-		file.format("\n");
 		for( int j=0; j < ent.getEditableInputs().size(); j++ ) {
 			Input<?> in = ent.getEditableInputs().get( j );
 			if (!in.isEdited())
@@ -1279,9 +1268,18 @@ public class InputAgent {
 		file.format("%s %s { '%s' }%n", ent.getInputName(), in.getKeyword(), inputURI.getPath());
 	}
 
+	/**
+	 * Loads the default configuration file.
+	 */
 	public static void loadDefault() {
+
 		// Read the default configuration file
 		InputAgent.readResource("inputs/default.cfg");
+
+		// An added records entry in the default configuration must be ignored
+		addedRecordFound = false;
+
+		// Set the model state to unedited
 		sessionEdited = false;
 	}
 
