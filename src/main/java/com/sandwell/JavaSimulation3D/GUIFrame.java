@@ -295,7 +295,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				if (InputAgent.isSessionEdited()) {
 
 					int userOption = JOptionPane.showConfirmDialog( null,
-					"A new simulation will overwrite the existing simulation without saving changes.  Do you wish to continue with a new simulation?",
+					"A new simulation will overwrite the existing simulation without saving changes.\n" +
+					"Do you wish to continue with a new simulation?",
 					"Confirm New Simulation",
 					JOptionPane.YES_OPTION,
 					JOptionPane.WARNING_MESSAGE );
@@ -324,7 +325,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				if (InputAgent.isSessionEdited()) {
 
 					int userOption = JOptionPane.showConfirmDialog( null,
-							"Opening a simulation will overwrite the existing simulation without saving changes.  Do you wish to continue opening a simulation?",
+							"Opening a simulation will overwrite the existing simulation without saving changes.\n" +
+							"Do you wish to continue opening a simulation?",
 							"Confirm Open",
 							JOptionPane.YES_OPTION,
 							JOptionPane.WARNING_MESSAGE );
@@ -629,7 +631,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				}
 				int userOption = JOptionPane.showConfirmDialog( null,
 						"WARNING: If you stop the run, it can only be re-started from time 0.\n" +
-						"                       Do you really want to stop?",
+						"Do you really want to stop?",
 						"Confirm Stop",
 						JOptionPane.YES_OPTION,
 						JOptionPane.WARNING_MESSAGE );
