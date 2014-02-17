@@ -14,6 +14,7 @@
  */
 package com.jaamsim.Thresholds;
 
+import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -25,7 +26,6 @@ import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.TimeSeriesInput;
 import com.sandwell.JavaSimulation.TimeSeriesProvider;
 

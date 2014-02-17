@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
+import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -31,7 +32,6 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
-import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation.StringInput;
 
 public class VideoRecorderEntity extends Entity {

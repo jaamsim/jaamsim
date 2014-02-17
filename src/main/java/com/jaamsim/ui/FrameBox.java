@@ -27,8 +27,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.events.Process;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Process;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class FrameBox extends JFrame {

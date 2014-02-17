@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2002-2014 Ausenco Engineering Canada Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,11 +12,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.events;
 
 import java.util.ArrayList;
 
-import com.jaamsim.events.ProcessTarget;
+import com.sandwell.JavaSimulation.ErrorException;
 
 /**
  * Process is a subclass of Thread that can be managed by the discrete event

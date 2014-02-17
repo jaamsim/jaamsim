@@ -19,6 +19,8 @@ import java.util.HashMap;
 
 import com.jaamsim.basicsim.ClonesOfIterable;
 import com.jaamsim.basicsim.InstanceIterable;
+import com.jaamsim.events.EventManager;
+import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.input.InputAgent;

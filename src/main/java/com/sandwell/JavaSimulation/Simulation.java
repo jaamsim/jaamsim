@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 
+import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;

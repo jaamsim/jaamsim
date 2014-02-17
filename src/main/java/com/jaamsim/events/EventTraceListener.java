@@ -14,8 +14,6 @@
  */
 package com.jaamsim.events;
 
-import com.sandwell.JavaSimulation.EventManager;
-import com.sandwell.JavaSimulation.EventManager.Event;
 
 public interface EventTraceListener {
 

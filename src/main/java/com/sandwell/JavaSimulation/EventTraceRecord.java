@@ -16,9 +16,10 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.events.Event;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
-import com.sandwell.JavaSimulation.EventManager.Event;
 
 class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	private String eventManagerName;

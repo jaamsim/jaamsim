@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2002-2014 Ausenco Engineering Canada Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,14 +12,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.events;
 
 import java.util.ArrayList;
 
-import com.jaamsim.events.EventErrorListener;
-import com.jaamsim.events.EventTimeListener;
-import com.jaamsim.events.EventTraceListener;
-import com.jaamsim.events.ProcessTarget;
+import com.sandwell.JavaSimulation.ErrorException;
 
 /**
  * Class EventManager - Sandwell Discrete Event Simulation
@@ -654,57 +651,6 @@ public final class EventManager implements Runnable {
 
 			executeEvents = true;
 			eventManagerThread.interrupt();
-		}
-	}
-
-	/**
-	 * Holder class for event data used by the event monitor to schedule future
-	 * events.
-	 */
-	public static class Event {
-		public final long addedTick; // The tick at which this event was queued to execute
-		public final long schedTick; // The tick at which this event will execute
-		public final int priority;   // The schedule priority of this event
-
-		final ProcessTarget target;
-		final Process process;
-
-		/**
-		 * Constructs a new event object.
-		 * @param currentTick the current simulation tick
-		 * @param scheduleTick the simulation tick the event is schedule for
-		 * @param prio the event priority for scheduling purposes
-		 * @param caller
-		 * @param process
-		 */
-		Event(long currentTick, long scheduleTick, int prio, Process process, ProcessTarget target) {
-			addedTick = currentTick;
-			schedTick = scheduleTick;
-			priority = prio;
-
-			this.target = target;
-			this.process = process;
-		}
-
-		public String getDesc() {
-			if (target != null)
-				return target.getDescription();
-
-			StackTraceElement[] callStack = process.getStackTrace();
-			boolean seenEntity = false;
-			for (int i = 0; i < callStack.length; i++) {
-				if (callStack[i].getClassName().equals("com.sandwell.JavaSimulation.Entity")) {
-					seenEntity = true;
-					continue;
-				}
-
-				if (seenEntity)
-					return String.format("%s:%s", callStack[i].getClassName(), callStack[i].getMethodName());
-			}
-
-			// Possible the process hasn't started running yet, check the Process target
-			// state
-			return "Unknown Method State";
 		}
 	}
 

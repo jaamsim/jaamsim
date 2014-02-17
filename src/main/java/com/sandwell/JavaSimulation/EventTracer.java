@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 
 class EventTracer {
