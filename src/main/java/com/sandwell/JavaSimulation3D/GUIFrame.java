@@ -526,7 +526,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 
-		tooltip = new JCheckBoxMenuItem( "Tooltip", true );
+		/*tooltip = new JCheckBoxMenuItem( "Tooltip", true );
 		tooltip.setMnemonic( 'L' );
 		optionMenu.add( tooltip );
 		tooltip.addActionListener( new ActionListener() {
@@ -534,7 +534,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			public void actionPerformed( ActionEvent e ) {
 				// TODO Needs to be implemented for the new Renderer
 			}
-		} );
+		} );*/
 
 		graphicsDebug = new JCheckBoxMenuItem( "Graphics Debug Info", false );
 		graphicsDebug.setMnemonic( 'G' );
