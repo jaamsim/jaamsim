@@ -282,7 +282,7 @@ public final class EventManager implements Runnable {
 				next.interrupt();
 			} else {
 				// TODO: check for the switching of eventmanagers
-				Process.current().getEventManager().eventManagerThread.interrupt();
+				eventManagerThread.interrupt();
 			}
 		}
 	}
@@ -305,7 +305,7 @@ public final class EventManager implements Runnable {
 			switchThread(next);
 		} else {
 			// TODO: check for the switching of eventmanagers
-			switchThread(Process.current().getEventManager().eventManagerThread);
+			switchThread(eventManagerThread);
 		}
 		Process.current().wake(this);
 	}
@@ -686,7 +686,7 @@ public final class EventManager implements Runnable {
 			this.process = process;
 		}
 
-		String getDesc() {
+		public String getDesc() {
 			if (target != null)
 				return target.getDescription();
 

@@ -84,7 +84,7 @@ public final class Process extends Thread {
 	}
 
 	public static final long currentTick() {
-		return Process.current().getEventManager().currentTick();
+		return Process.current().eventManager.currentTick();
 	}
 
 	/**
@@ -196,10 +196,6 @@ public final class Process extends Thread {
 		return nextProcess;
 	}
 
-	synchronized EventManager getEventManager() {
-		return eventManager;
-	}
-
 	synchronized void wake(EventManager eventManager) {
 		this.setFlag(Process.ACTIVE);
 		this.eventManager = eventManager;
@@ -219,7 +215,7 @@ public final class Process extends Thread {
 		return (flags & flag) != 0;
 	}
 
-	static void setSimTimeScale(double scale) {
+	public static void setSimTimeScale(double scale) {
 		timeScale = scale;
 		ticksPerSecond = scale / 3600.0d;
 		secondsPerTick = 3600.0d / scale;
