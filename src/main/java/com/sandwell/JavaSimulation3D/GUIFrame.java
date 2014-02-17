@@ -1277,7 +1277,16 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		VIEW_HEIGHT = winSize.height - TOP_START - LOWER_HEIGHT;
 	}
 
+	/**
+	 * Displays the view windows and tools on startup.
+	 *
+	 * @param viewOnly - boolean that determines whether the tools are to be displayed.
+	 *                   TRUE  - show just the view windows.
+	 *                   FALSE - show the view windows and the tools.
+	 */
 	public static void displayWindows(boolean viewOnly) {
+
+		// Show the view windows specified in the configuration file
 		for (View v : View.getAll()) {
 			if (v.showOnStart())
 				RenderManager.inst().createWindow(v);
@@ -1286,11 +1295,13 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (viewOnly)
 			return;
 
-		EntityPallet.getInstance().setVisible(true);
-		ObjectSelector.getInstance().setVisible(true);
-		EditBox.getInstance().setVisible(true);
-		OutputBox.getInstance().setVisible(true);
+		// Show the four basic tools
+		EntityPallet.getInstance().setVisible(true);    // Model Builder
+		ObjectSelector.getInstance().setVisible(true);  // Object Selector
+		EditBox.getInstance().setVisible(true);         // Input Editor
+		OutputBox.getInstance().setVisible(true);       // Output Viewer
 
+		// Set the selected entity to the first view window
 		if (View.getAll().size() > 0)
 			FrameBox.setSelectedEntity(View.getAll().get(0));
 	}

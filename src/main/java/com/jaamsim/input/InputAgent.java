@@ -60,9 +60,9 @@ public class InputAgent {
 
 	private static String configFileName;  // absolute file path and file name for the present configuration file
 	private static boolean batchRun;
-	private static boolean sessionEdited;
+	private static boolean sessionEdited;     // TRUE if any inputs have been changed after loading a configuration file
 	private static boolean addedRecordFound;  // TRUE if the "added records" marker is found in the configuration file
-	private static boolean recordEdits;
+	private static boolean recordEdits;       // TRUE if input changes are to be marked as edited.
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 
@@ -1137,7 +1137,9 @@ public class InputAgent {
 	}
 
 	/**
-	 * Print out a configuration file with all the edited changes attached
+	 * Prints the present state of the model to a new configuration file.
+	 *
+	 * @param fileName - the full path and file name for the new configuration file.
 	 */
 	public static void printNewConfigurationFileWithName( String fileName ) {
 
@@ -1147,7 +1149,6 @@ public class InputAgent {
 		if( InputAgent.getConfigFileName() != null && FileEntity.fileExists(InputAgent.getConfigFileName()) ) {
 			try {
 				BufferedReader in = new BufferedReader( new FileReader(InputAgent.getConfigFileName()) );
-
 				String line;
 				while ( ( line = in.readLine() ) != null ) {
 					preAddedRecordLines.add( line );
@@ -1162,6 +1163,7 @@ public class InputAgent {
 			}
 		}
 
+		// Create the new configuration file and copy the saved lines
 		FileEntity file = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
 		for( int i=0; i < preAddedRecordLines.size(); i++ ) {
 			file.format("%s%n", preAddedRecordLines.get( i ));
@@ -1192,11 +1194,14 @@ public class InputAgent {
 		for( Class<? extends Entity> newClass : newClasses ) {
 			for (ObjectType o : ObjectType.getAll()) {
 				if (o.getJavaClass() == newClass) {
+
+					// Print the first part of the "Define" statement for this object type
 					file.format("Define %s {", o.getInputName());
 					break;
 				}
 			}
 
+			// Print the new instances that were defined
 			for (int i = 0; i < Entity.getAll().size(); i++) {
 				Entity ent = Entity.getAll().get(i);
 				if (!ent.testFlag(Entity.FLAG_ADDED))
@@ -1206,6 +1211,7 @@ public class InputAgent {
 					file.format(" %s ", ent.getInputName());
 
 			}
+			// Close the define statement
 			file.format("}%n");
 		}
 
@@ -1218,21 +1224,32 @@ public class InputAgent {
 			}
 		}
 
+		// Close the new configuration file
 		file.flush();
 		file.close();
 	}
 
+	/**
+	 * Prints the configuration file entries for Entity ent to the FileEntity file.
+	 *
+	 * @param file - the target configuration file.
+	 * @param ent  - the entity whose configuration file entries are to be written.
+	 */
 	static void writeInputsOnFile_ForEntity( FileEntity file, Entity ent ) {
+
+		// Loop through the keywords for this entity
 		for( int j=0; j < ent.getEditableInputs().size(); j++ ) {
 			Input<?> in = ent.getEditableInputs().get( j );
 			if (!in.isEdited())
 				continue;
 
+			// Identify and print keywords that specify a file
 			if (in instanceof FileInput) {
 				writeFileInput((FileInput)in, file, ent);
 				continue;
 			}
 
+			// Print all other type of keywords
 			String value = in.getValueString();
 			ArrayList<String> tokens = new ArrayList<String>();
 			Parser.tokenize(tokens, value);
@@ -1243,6 +1260,13 @@ public class InputAgent {
 		}
 	}
 
+	/**
+	 * Prints a configuration file entry for a keyword with a file name argument.
+	 *
+	 * @param in   - the FileInput corresponding to the keyword.
+	 * @param file - the target configuration file.
+	 * @param ent  - the Entity whose FileInput is to be printed.
+	 */
 	static private void writeFileInput(FileInput in, FileEntity file, Entity ent) {
 		URI fileURI = file.getFileURI();
 
