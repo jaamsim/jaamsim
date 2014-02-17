@@ -19,10 +19,10 @@ import java.util.HashMap;
 
 import com.jaamsim.basicsim.ClonesOfIterable;
 import com.jaamsim.basicsim.InstanceIterable;
+import com.jaamsim.basicsim.ReflectionTarget;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.events.ReflectionTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
