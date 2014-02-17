@@ -50,7 +50,7 @@ import com.sandwell.JavaSimulation.Util;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class InputAgent {
-	private static final String addedRecordMarker = "\" *** Added Records ***";
+	private static final String recordEditsMarker = "RecordEdits";
 
 	private static int numErrors = 0;
 	private static int numWarnings = 0;
@@ -61,7 +61,7 @@ public class InputAgent {
 	private static String configFileName;  // absolute file path and file name for the present configuration file
 	private static boolean batchRun;
 	private static boolean sessionEdited;     // TRUE if any inputs have been changed after loading a configuration file
-	private static boolean addedRecordFound;  // TRUE if the "added records" marker is found in the configuration file
+	private static boolean recordEditsFound;  // TRUE if the "RecordEdits" marker is found in the configuration file
 	private static boolean recordEdits;       // TRUE if input changes are to be marked as edited.
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
@@ -69,7 +69,7 @@ public class InputAgent {
 	private static String reportDirectory;
 
 	static {
-		addedRecordFound = false;
+		recordEditsFound = false;
 		sessionEdited = false;
 		batchRun = false;
 		configFileName = null;
@@ -81,7 +81,7 @@ public class InputAgent {
 		logFile = null;
 		numErrors = 0;
 		numWarnings = 0;
-		addedRecordFound = false;
+		recordEditsFound = false;
 		sessionEdited = false;
 		configFileName = null;
 		reportDirectory = "";
@@ -154,8 +154,22 @@ public class InputAgent {
 		return runName;
 	}
 
-	public static boolean hasAddedRecords() {
-		return addedRecordFound;
+	/**
+	 * Specifies whether a RecordEdits marker was found in the present configuration file.
+	 *
+	 * @param bool - TRUE if a RecordEdits marker was found.
+	 */
+	public static void setRecordEditsFound(boolean bool) {
+		recordEditsFound = bool;
+	}
+
+	/**
+	 * Indicates whether a RecordEdits marker was found in the present configuration file.
+	 *
+	 * @return - TRUE if a RecordEdits marker was found.
+	 */
+	public static boolean getRecordEditsFound() {
+		return recordEditsFound;
 	}
 
 	/**
@@ -346,12 +360,6 @@ public class InputAgent {
 				if (line == null)
 					break;
 
-				// Set flag if found " *** Added Records ***
-				if ( line.trim().equalsIgnoreCase( addedRecordMarker ) ) {
-					addedRecordFound = true;
-					InputAgent.setRecordEdits(true);
-				}
-
 				int previousRecordSize = record.size();
 				Parser.tokenize(record, line, true);
 				braceDepth = InputAgent.getBraceDepth(record, braceDepth, previousRecordSize);
@@ -376,6 +384,13 @@ public class InputAgent {
 					catch (URISyntaxException ex) {
 						rethrowWrapped(ex);
 					}
+					record.clear();
+					continue;
+				}
+
+				if ("RECORDEDITS".equalsIgnoreCase(record.get(0))) {
+					InputAgent.setRecordEditsFound(true);
+					InputAgent.setRecordEdits(true);
 					record.clear();
 					continue;
 				}
@@ -811,7 +826,7 @@ public class InputAgent {
 			// show the present state in the user interface
 			gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
-			gui.enableSave(addedRecordFound);
+			gui.enableSave(InputAgent.getRecordEditsFound());
 		}
 		catch( Throwable t ) {
 			ExceptionBox.instance().setError(t);
@@ -1144,7 +1159,7 @@ public class InputAgent {
 	 */
 	public static void printNewConfigurationFileWithName( String fileName ) {
 
-		// Copy the original configuration file up to the "added records" marker (if present)
+		// Copy the original configuration file up to the "RecordEdits" marker (if present)
 		// Temporary storage for the copied lines is needed in case the original file is to be overwritten
 		ArrayList<String> preAddedRecordLines = new ArrayList<String>();
 		if( InputAgent.getConfigFileName() != null && FileEntity.fileExists(InputAgent.getConfigFileName()) ) {
@@ -1153,7 +1168,7 @@ public class InputAgent {
 				String line;
 				while ( ( line = in.readLine() ) != null ) {
 					preAddedRecordLines.add( line );
-					if ( line.startsWith( addedRecordMarker ) ) {
+					if ( line.startsWith( recordEditsMarker ) ) {
 						break;
 					}
 				}
@@ -1170,10 +1185,10 @@ public class InputAgent {
 			file.format("%s%n", preAddedRecordLines.get( i ));
 		}
 
-		// If not already present, insert the added records marker at the end of the original configuration file
-		if( !addedRecordFound ) {
-			file.format("%n%s%n", addedRecordMarker);
-			addedRecordFound = true;
+		// If not already present, insert the "RecordEdits" marker at the end of the original configuration file
+		if( ! InputAgent.getRecordEditsFound() ) {
+			file.format("%n%s%n", recordEditsMarker);
+			InputAgent.setRecordEditsFound(true);
 		}
 
 		// Determine all the new classes that were created
@@ -1301,8 +1316,8 @@ public class InputAgent {
 		// Read the default configuration file
 		InputAgent.readResource("inputs/default.cfg");
 
-		// An added records entry in the default configuration must be ignored
-		addedRecordFound = false;
+		// A RecordEdits marker in the default configuration must be ignored
+		InputAgent.setRecordEditsFound(false);
 
 		// Set the model state to unedited
 		sessionEdited = false;
