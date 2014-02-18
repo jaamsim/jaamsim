@@ -102,7 +102,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JMenu optionMenu;
 	private JCheckBoxMenuItem showPosition;
 	private JCheckBoxMenuItem alwaysTop;
-	private JCheckBoxMenuItem tooltip;
+	//private JCheckBoxMenuItem tooltip;
 	private JCheckBoxMenuItem graphicsDebug;
 	private JMenuItem printInputItem;
 	private JMenuItem saveConfigurationMenuItem;  // "Save"
