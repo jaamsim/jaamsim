@@ -103,10 +103,6 @@ public class DisplayEntity extends Entity {
 	         example = "Object1 Movable { FALSE }")
 	private final BooleanInput movable;
 
-	@Keyword(description = "If TRUE, tool tips are displayed for the object on mouseover during the simulation run.",
-	         example = "Simulation ToolTip { FALSE }")
-	protected BooleanInput showToolTip;
-
 	private ArrayList<DisplayModelBinding> modelBindings;
 
 	public static class TagSet {
@@ -229,9 +225,6 @@ public class DisplayEntity extends Entity {
 
 		movable = new BooleanInput("Movable", "Basic Graphics", true);
 		this.addInput(movable, true);
-
-		showToolTip = new BooleanInput("ToolTip", "Basic Graphics", true);
-		this.addInput(showToolTip, true);
 
 		tags = new TagSet();
 	}
@@ -584,10 +577,6 @@ public class DisplayEntity extends Entity {
 
 	public boolean isMovable() {
 		return movable.getValue();
-	}
-
-	public boolean showToolTip() {
-		return showToolTip.getValue();
 	}
 
 	/**

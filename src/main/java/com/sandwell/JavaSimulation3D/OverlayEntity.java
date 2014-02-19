@@ -64,7 +64,6 @@ public abstract class OverlayEntity extends DisplayEntity {
 		getInput("active").setHidden(true);
 		getInput("show").setHidden(true);
 		getInput("movable").setHidden(true);
-		getInput("tooltip").setHidden(true);
 	}
 
 	public boolean getAlignRight() {
