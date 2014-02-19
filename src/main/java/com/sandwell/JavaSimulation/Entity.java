@@ -165,17 +165,12 @@ public class Entity {
 		synchronized (allInstances) {
 			allInstances.remove(this);
 		}
-		if (namedEntities.get(this.getInputName()) == this)
-			namedEntities.remove(this.getInputName());
+		removeInputName();
 
 		setFlag(FLAG_DEAD);
 	}
 
 	public void doEnd() {}
-
-	public static Entity getNamedEntity(String name) {
-		return namedEntities.get(name);
-	}
 
 	public static long getEntitySequence() {
 		long seq = (long)allInstances.size() << 32;
@@ -329,13 +324,30 @@ public class Entity {
 		return getInputName();
 	}
 
+	public static Entity getNamedEntity(String name) {
+		synchronized (namedEntities) {
+			return namedEntities.get(name);
+		}
+	}
+
+	private void removeInputName() {
+		synchronized (namedEntities) {
+			if (namedEntities.get(entityInputName) == this)
+				namedEntities.remove(entityInputName);
+
+			entityInputName = null;
+		}
+	}
+
 	/**
 	 * Method to set the input name of the entity.
 	 */
 	public void setInputName(String newName) {
-		entityInputName = newName;
-		namedEntities.put(newName, this);
-
+		synchronized (namedEntities) {
+			namedEntities.remove(entityInputName);
+			entityInputName = newName;
+			namedEntities.put(entityInputName, this);
+		}
 		String name = newName;
 		if (newName.contains("/"))
 			name = newName.substring(newName.indexOf("/") + 1);
