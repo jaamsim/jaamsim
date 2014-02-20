@@ -76,14 +76,14 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null)
+		if (defValue == null || defValue.size() == 0)
 			return NO_VALUE;
 		return this.getInputString(defValue);
 	}
 
 	@Override
 	public String getValueString() {
-		if (value == null)
+		if (value == null || value.size() == 0)
 			return "";
 		return this.getInputString(value);
 	}
