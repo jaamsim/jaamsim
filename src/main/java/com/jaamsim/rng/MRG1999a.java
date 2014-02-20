@@ -25,18 +25,18 @@ import java.util.ArrayList;
  * version provided in Simulation Modelling and Analyis 4th Ed. Averill M. Law. (Appendix 7B)
  */
 public class MRG1999a {
-	static final long[] seeds;
+	static final int[] seeds;
 	private static final long m1 = 4294967087l;
 	private static final long m2 = 4294944443l;
 	private static final double norm   = 2.328306549295727688e-10d; // 1.0 / (m1 + 1)
 
-	// The internal state machine is held in 6 long values
-	long s0, s1, s2, s3, s4, s5;
+	// The internal state machine is held in 6 integer values (treat as unsigned)
+	int s0, s1, s2, s3, s4, s5;
 
 	static {
 		InputStream s = MRG1999a.class.getResourceAsStream("MRG1999a.seed");
 		BufferedReader buf =  new BufferedReader(new InputStreamReader(s));
-		ArrayList<long[]> tempseeds = new ArrayList<long[]>(10001);
+		ArrayList<int[]> tempseeds = new ArrayList<int[]>(10001);
 
 		while (true) {
 			String line = null;
@@ -52,18 +52,18 @@ public class MRG1999a {
 			String[] split = line.split(",");
 			if (split.length != 6)
 				throw new RuntimeException("Corrupt seed (need 6 values) found in MRG1999a.seed");
-			long[] d = new long[6];
+			int[] d = new int[6];
 			for (int i = 0; i < 6; i++)
-				d[i] = Long.parseLong(split[i]);
+				d[i] = (int)Long.parseLong(split[i]);
 			tempseeds.add(d);
 		}
 		try { buf.close(); } catch (IOException e) {}
 		buf = null;
 
-		seeds = new long[tempseeds.size() * 6];
+		seeds = new int[tempseeds.size() * 6];
 		for (int i = 0; i < tempseeds.size(); i++) {
 			int offset = i * 6;
-			long[] each = tempseeds.get(i);
+			int[] each = tempseeds.get(i);
 			for (int j = 0; j < 6; j++)
 				seeds[offset + j] = each[j];
 		}
@@ -99,6 +99,15 @@ public class MRG1999a {
 	}
 
 	/**
+	 * Return an integer as a long, treating the int as unsigned
+	 * @param i
+	 * @return
+	 */
+	private long uint(int i) {
+		return i & 0xffffffffl;
+	}
+
+	/**
 	 * Seed the MRG with values form the given stream number.
 	 * @param stream
 	 */
@@ -109,8 +118,8 @@ public class MRG1999a {
 		if (offset >= seeds.length)
 			throw new IllegalArgumentException("Maximum stream number is " + seeds.length / 6);
 
-		setSeed(seeds[offset + 0], seeds[offset + 1], seeds[offset + 2],
-				seeds[offset + 3], seeds[offset + 4], seeds[offset + 5]);
+		setSeed(uint(seeds[offset + 0]), uint(seeds[offset + 1]), uint(seeds[offset + 2]),
+		        uint(seeds[offset + 3]), uint(seeds[offset + 4]), uint(seeds[offset + 5]));
 	}
 
 	public void setSeed(long s0, long s1, long s2, long s3, long s4, long s5) {
@@ -124,36 +133,35 @@ public class MRG1999a {
 			throw new IllegalArgumentException("The last three seeds must be < " + m2);
 		if (s0 < 0 || s1 < 0 || s2 < 0 || s3 < 0 || s4 < 0 || s5 < 0)
 			throw new IllegalArgumentException("All seeds must be > 0");
-		this.s0 = s0; this.s1 = s1; this.s2 = s2;
-		this.s3 = s3; this.s4 = s4; this.s5 = s5;
+		this.s0 = (int)s0; this.s1 = (int)s1; this.s2 = (int)s2;
+		this.s3 = (int)s3; this.s4 = (int)s4; this.s5 = (int)s5;
 	}
 
 	/**
-	 * Get the next uniformly distributed doubel value U(0,1)
+	 * Get the next uniformly distributed double value U(0,1)
 	 * @return
 	 */
 	public double getUniform() {
-		long p;
-
 		// Mix the first half of the state
-		p = 1403580l * s1 - 810728l * s0;
-		p = p % m1;
-		if (p < 0) p += m1;
-		s0 = s1; s1 = s2; s2 = p;
+		long p1 = 1403580l * uint(s1) - 810728l * uint(s0);
+		p1 = p1 % m1;
+		if (p1 < 0) p1 += m1;
+		s0 = s1; s1 = s2; s2 = (int)p1;
 
 		// Mix the second half of the state
-		p = 527612l * s5 - 1370589l * s3;
-		p = p % m2;
-		if (p < 0) p += m2;
-		s3 = s4; s4 = s5; s5 = p;
+		long p2 = 527612l * uint(s5) - 1370589l * uint(s3);
+		p2 = p2 % m2;
+		if (p2 < 0) p2 += m2;
+		s3 = s4; s4 = s5; s5 = (int)p2;
 
-		p = s2 - s5;
+		long p = p1 - p2;
 		if (p <= 0) p += m1;
 		return p * norm;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%d, %d, %d, %d, %d, %d", s0, s1, s2, s3, s4, s5);
+		return String.format("%d, %d, %d, %d, %d, %d",
+		                     uint(s0), uint(s1), uint(s2), uint(s3), uint(s4), uint(s5));
 	}
 }

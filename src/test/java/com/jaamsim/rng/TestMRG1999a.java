@@ -25,6 +25,11 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 public class TestMRG1999a {
+
+	private static long uint(int i) {
+		return i & 0xffffffffl;
+	}
+
 	@Test
 	public void testSeedTable() {
 		InputStream s = MRG1999a.class.getResourceAsStream("MRG1999a.seed");
@@ -46,12 +51,12 @@ public class TestMRG1999a {
 
 		for (int i = 0; i < lines.size(); i++) {
 			int offset = i * 6;
-			long s0 = MRG1999a.seeds[offset + 0];
-			long s1 = MRG1999a.seeds[offset + 1];
-			long s2 = MRG1999a.seeds[offset + 2];
-			long s3 = MRG1999a.seeds[offset + 3];
-			long s4 = MRG1999a.seeds[offset + 4];
-			long s5 = MRG1999a.seeds[offset + 5];
+			long s0 = uint(MRG1999a.seeds[offset + 0]);
+			long s1 = uint(MRG1999a.seeds[offset + 1]);
+			long s2 = uint(MRG1999a.seeds[offset + 2]);
+			long s3 = uint(MRG1999a.seeds[offset + 3]);
+			long s4 = uint(MRG1999a.seeds[offset + 4]);
+			long s5 = uint(MRG1999a.seeds[offset + 5]);
 			String fmtLine = String.format("%d,%d,%d,%d,%d,%d", s0, s1, s2, s3, s4, s5);
 			assertTrue(lines.get(i).equals(fmtLine));
 		}
