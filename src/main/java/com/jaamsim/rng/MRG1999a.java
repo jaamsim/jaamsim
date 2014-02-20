@@ -26,12 +26,12 @@ import java.util.ArrayList;
  */
 public class MRG1999a {
 	static final long[] seeds;
-	private static final double m1 = 4294967087l;
-	private static final double m2 = 4294944443l;
+	private static final long m1 = 4294967087l;
+	private static final long m2 = 4294944443l;
 	private static final double norm   = 2.328306549295727688e-10d; // 1.0 / (m1 + 1)
 
 	// The internal state machine is held in 6 long values
-	double s0, s1, s2, s3, s4, s5;
+	long s0, s1, s2, s3, s4, s5;
 
 	static {
 		InputStream s = MRG1999a.class.getResourceAsStream("MRG1999a.seed");
@@ -128,31 +128,32 @@ public class MRG1999a {
 		this.s3 = s3; this.s4 = s4; this.s5 = s5;
 	}
 
+	/**
+	 * Get the next uniformly distributed doubel value U(0,1)
+	 * @return
+	 */
 	public double getUniform() {
-		long k;
-		double p;
+		long p;
 
 		// Mix the first half of the state
-		p = 1403580.0d * s1 - 810728.0d * s0;
-		k = (long)(p / m1); p -= k * m1;
+		p = 1403580l * s1 - 810728l * s0;
+		p = p % m1;
 		if (p < 0) p += m1;
 		s0 = s1; s1 = s2; s2 = p;
 
 		// Mix the second half of the state
-		p = 527612.0d * s5 - 1370589.0d * s3;
-		k = (long)(p / m2); p -= k * m2;
+		p = 527612l * s5 - 1370589l * s3;
+		p = p % m2;
 		if (p < 0) p += m2;
 		s3 = s4; s4 = s5; s5 = p;
 
-		if (s2 <= s5)
-			return (s2 - s5 + m1) * norm;
-		else
-			return(s2 - s5) * norm;
+		p = s2 - s5;
+		if (p <= 0) p += m1;
+		return p * norm;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%.0f, %.0f, %.0f, %.0f, %.0f, %.0f", s0, s1, s2, s3, s4, s5);
-		//return String.format("%d, %d, %d, %d, %d, %d", s0, s1, s2, s3, s4, s5);
+		return String.format("%d, %d, %d, %d, %d, %d", s0, s1, s2, s3, s4, s5);
 	}
 }
