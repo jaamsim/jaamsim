@@ -12,14 +12,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#version 130
+#version 120
 
 uniform float C;
 uniform float FC;
-in float interpZ;
+varying float interpZ;
 
 //layout(location = 0) out vec4 output;
-out vec4 outColour;
+//out vec4 outColour;
 
 void main()
 {
@@ -27,11 +27,11 @@ void main()
         discard;
 
     if (gl_FrontFacing) {
-      outColour.rgb = vec3(0, 0.5, 0);
+      gl_FragColor.rgb = vec3(0, 0.5, 0);
     } else {
-      outColour.rgb = vec3(0.5, 0, 0);
+      gl_FragColor.rgb = vec3(0.5, 0, 0);
     }
-    outColour.a = 0.5;
+    gl_FragColor.a = 0.5;
 
     gl_FragDepth = log(interpZ*C+1)*FC;
 

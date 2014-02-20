@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#version 130
+#version 120
 
 uniform mat4 bindSpaceMat;
 uniform mat4 bindSpaceNorMat;
@@ -22,23 +22,23 @@ uniform mat4 normalMat;
 
 uniform int maxNumBones;
 
-in vec3 position;
-in vec4 normal;
-in vec2 texCoord;
+attribute vec3 position;
+attribute vec4 normal;
+attribute vec2 texCoord;
 
-in vec4 boneIndices;
-in vec4 boneWeights;
+attribute vec4 boneIndices;
+attribute vec4 boneWeights;
 
 const int MAX_BONES = 100;
 uniform mat4 boneMatrices[MAX_BONES];
 
-out vec2 texCoordFrag;
-out vec3 normalFrag;
+varying vec2 texCoordFrag;
+varying vec3 normalFrag;
 
 uniform float C;
 uniform float FC;
-out float interpZ;
-out vec3 viewDir;
+varying float interpZ;
+varying vec3 viewDir;
 
 void main()
 {

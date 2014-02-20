@@ -12,11 +12,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#version 130
+#version 120
 
-in vec2 texCoordFrag;
+varying vec2 texCoordFrag;
 
-out vec4 outColour;
+//out vec4 outColour;
 
 uniform sampler2D tex;
 
@@ -26,8 +26,8 @@ uniform bool useTex;
 void main()
 {
     if (useTex) {
-        outColour = texture2D(tex, texCoordFrag);
+        gl_FragColor = texture2D(tex, texCoordFrag);
     } else {
-        outColour = color;
+        gl_FragColor = color;
     }
 }

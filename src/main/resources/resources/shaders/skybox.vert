@@ -12,13 +12,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#version 130
+#version 120
 
 uniform mat4 projMat;
 uniform mat4 invViewMat;
 
-in vec4 position;
-out vec3 interpPos;
+attribute vec4 position;
+varying vec3 interpPos;
 
 void main()
 {

@@ -12,17 +12,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#version 130
+#version 120
 
 uniform mat4 modelViewProjMat;
 
 uniform float advance;
 
-in vec2 position;
+attribute vec2 position;
 
 uniform float C;
 uniform float FC;
-out float interpZ;
+varying float interpZ;
 
 void main()
 {

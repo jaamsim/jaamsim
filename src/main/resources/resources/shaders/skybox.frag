@@ -12,13 +12,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#version 130
+#version 120
 
 #define PI 3.1415926
 
-out vec4 outColor;
+//out vec4 outColor;
 
-in vec3 interpPos;
+varying vec3 interpPos;
 uniform sampler2D tex;
 
 float atan2(in float x, in float y) {
@@ -35,5 +35,5 @@ void main()
     texCoords.x = (-atan2(interpPos.x, interpPos.y) + PI) / (2*PI);
     texCoords.y = (atan(interpPos.z / length(interpPos.xy)) + (PI/2)) / (PI);
 
-    outColor = texture2D(tex, texCoords);
+    gl_FragColor = texture2D(tex, texCoords);
 }

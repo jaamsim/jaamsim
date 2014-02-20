@@ -12,15 +12,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#version 130
+#version 120
 
 uniform vec2 offset;
 uniform vec2 size;
 
-in vec2 position;
-in vec2 texCoordVert;
+attribute vec2 position;
+attribute vec2 texCoordVert;
 
-out vec2 texCoordFrag;
+varying vec2 texCoordFrag;
 
 void main()
 {

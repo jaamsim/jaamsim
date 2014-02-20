@@ -12,14 +12,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#version 130
+#version 120
 
 //layout(location = 0) out vec4 output;
-out vec4 outColour;
+//out vec4 outColour;
 
 uniform vec4 color;
 
 void main() 
 {
-    outColour = color;
+    gl_FragColor = color;
 }

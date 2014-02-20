@@ -12,12 +12,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#version 130
+#version 120
 
 uniform vec2 offset;
 uniform vec2 scale;
 
-in vec2 position;
+attribute vec2 position;
 
 void main()
 {

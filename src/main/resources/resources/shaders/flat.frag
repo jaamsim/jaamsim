@@ -12,20 +12,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-#version 130
+#version 120
 
 // This will be replaced with appropriate defines as a macro expansion
 @DEFINES@
 
-in vec2 texCoordFrag;
-in vec3 normalFrag;
+varying vec2 texCoordFrag;
+varying vec3 normalFrag;
 
 uniform float C;
 uniform float FC;
-in float interpZ;
+varying float interpZ;
 
 //layout(location = 0) out vec4 output;
-out vec4 outColour;
+//out vec4 outColour;
 
 #ifdef DIFF_TEX
 // Use a diffuse texture
@@ -45,7 +45,7 @@ uniform vec3 lightDir[MAX_LIGHTS];
 uniform float lightIntensity[MAX_LIGHTS];
 uniform int numLights;
 
-in vec3 viewDir;
+varying vec3 viewDir;
 
 uniform vec3 ambientColor;
 uniform vec3 specColor;
@@ -53,12 +53,12 @@ uniform float shininess;
 
 void main()
 {
-    outColour.a = 1;
+    gl_FragColor.a = 1;
 
     vec3 n = normalize(normalFrag);
 
     vec4 dColor = DIFF_VAL;
-    outColour.a = dColor.a;
+    gl_FragColor.a = dColor.a;
 
     vec3 d = vec3(0, 0, 0);
     vec3 s = vec3(0, 0, 0);
@@ -78,7 +78,7 @@ void main()
         }
     }
 
-    outColour.rgb = s + d + ambientColor * 0.1;
+    gl_FragColor.rgb = s + d + ambientColor * 0.1;
 
     gl_FragDepth = log(interpZ*C+1)*FC;
 }
