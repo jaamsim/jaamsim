@@ -34,7 +34,7 @@ public class MRG1999a {
 	int s0, s1, s2, s3, s4, s5;
 
 	static {
-		InputStream s = MRG1999a.class.getResourceAsStream("MRG1999a.seed");
+		InputStream s = MRG1999a.class.getResourceAsStream("/resources/seeds/MRG1999a.seed");
 		BufferedReader buf =  new BufferedReader(new InputStreamReader(s));
 		ArrayList<int[]> tempseeds = new ArrayList<int[]>(10001);
 
