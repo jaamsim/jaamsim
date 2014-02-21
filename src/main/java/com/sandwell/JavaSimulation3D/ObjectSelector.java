@@ -43,6 +43,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GraphicBox;
+import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
@@ -324,7 +325,8 @@ public class ObjectSelector extends FrameBox {
 			// Check that the name has not been used already
 			Entity existingEnt = Input.tryParseEntity(newName, Entity.class);
 			if( existingEnt != null ) {
-				InputAgent.logWarning("Entity name: %s is already in use.", newName);
+				LogBox.format("Error: Entity name: %s is already in use.", newName);
+				LogBox.getInstance().setVisible(true);
 				node.setUserObject(currentEntity);
 				return;
 			}
