@@ -32,7 +32,7 @@ public class TestMRG1999a {
 
 	@Test
 	public void testSeedTable() {
-		InputStream s = MRG1999a.class.getResourceAsStream("MRG1999a.seed");
+		InputStream s = MRG1999a.class.getResourceAsStream("/resources/seeds/MRG1999a.seed");
 		BufferedReader buf =  new BufferedReader(new InputStreamReader(s));
 		ArrayList<String> lines = new ArrayList<String>();
 
