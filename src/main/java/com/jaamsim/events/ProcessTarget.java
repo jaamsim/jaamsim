@@ -15,6 +15,8 @@
 package com.jaamsim.events;
 
 public abstract class ProcessTarget {
+	Process getProcess() { return null; }
+
 	public abstract String getDescription();
 	public abstract void process();
 }

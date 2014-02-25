@@ -166,15 +166,16 @@ public final class EventManager implements Runnable {
 
 			// Kill threads on the event stack
 			for (Event each : eventStack) {
-				if (each.process == null)
+				Process proc = each.target.getProcess();
+				if (proc == null)
 					continue;
 
-				if (each.process.testFlag(Process.ACTIVE)) {
+				if (proc.testFlag(Process.ACTIVE)) {
 					throw new ErrorException( "Cannot terminate an active thread" );
 				}
 
-				each.process.setFlag(Process.TERMINATE);
-				each.process.interrupt();
+				proc.setFlag(Process.TERMINATE);
+				proc.interrupt();
 			}
 			eventStack.clear();
 
@@ -221,7 +222,7 @@ public final class EventManager implements Runnable {
 					// Remove the event from the future events
 					Event nextEvent = eventStack.remove(eventStack.size() - 1);
 					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
-					Process p = nextEvent.process;
+					Process p = nextEvent.target.getProcess();
 					if (p == null)
 						p = Process.allocate(this, nextEvent.target);
 					// Pass control to this event's thread
@@ -382,7 +383,7 @@ public final class EventManager implements Runnable {
 			}
 
 			// Create an event for the new process at the present time, and place it on the event stack
-			Event newEvent = new Event(currentTick, eventTime, eventPriority, null, t);
+			Event newEvent = new Event(currentTick, eventTime, eventPriority, t);
 			if (trcListener != null) trcListener.traceSchedProcess(this, newEvent);
 			addEventToStack(newEvent, fifo);
 		}
@@ -399,7 +400,8 @@ public final class EventManager implements Runnable {
 		assertNotWaitUntil();
 		synchronized (lockObject) {
 			long nextEventTime = calculateEventTime(ticks);
-			Event temp = new Event(currentTick, nextEventTime, priority, Process.current(), null);
+			WaitTarget t = new WaitTarget(Process.current());
+			Event temp = new Event(currentTick, nextEventTime, priority, t);
 			if (trcListener != null) trcListener.traceWait(this, temp);
 			addEventToStack(temp, fifo);
 			popThread();
@@ -488,7 +490,8 @@ public final class EventManager implements Runnable {
 //			}
 
 			cur.clearFlag(Process.COND_WAIT);
-			Event temp = new Event(currentTick, currentTick, 0, cur, null);
+			WaitTarget t = new WaitTarget(cur);
+			Event temp = new Event(currentTick, currentTick, 0, t);
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
 			addEventToStack(temp, true);
 			popThread();
@@ -518,11 +521,12 @@ public final class EventManager implements Runnable {
 			assertNotWaitUntil();
 
 			for (int i = eventStack.size() - 1; i >= 0; i--) {
-				if (eventStack.get(i).process == intThread) {
+				if (eventStack.get(i).target.getProcess() == intThread) {
 					Event interruptEvent = eventStack.remove(i);
+					Process proc = interruptEvent.target.getProcess();
 					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
-					interruptEvent.process.setNextProcess(Process.current());
-					switchThread(interruptEvent.process);
+					proc.setNextProcess(Process.current());
+					switchThread(proc);
 					return;
 				}
 			}
@@ -566,7 +570,7 @@ public final class EventManager implements Runnable {
 			}
 
 			for (int i = eventStack.size() - 1; i >= 0; i--) {
-				if (eventStack.get(i).process == killThread) {
+				if (eventStack.get(i).target.getProcess() == killThread) {
 					Event temp = eventStack.remove(i);
 					if (trcListener != null) trcListener.traceKill(this, temp);
 					killThread.setFlag(Process.TERMINATE);
@@ -644,7 +648,7 @@ public final class EventManager implements Runnable {
 	public void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
-			Event e = new Event(currentTick, schedTick, eventPriority, null, t);
+			Event e = new Event(currentTick, schedTick, eventPriority, t);
 			if (trcListener != null) trcListener.traceSchedProcess(this, e);
 			addEventToStack(e, fifo);
 		}

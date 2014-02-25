@@ -24,7 +24,6 @@ public class Event {
 	public final int priority;   // The schedule priority of this event
 
 	final ProcessTarget target;
-	final Process process;
 
 	/**
 	 * Constructs a new event object.
@@ -34,33 +33,15 @@ public class Event {
 	 * @param caller
 	 * @param process
 	 */
-	Event(long currentTick, long scheduleTick, int prio, Process process, ProcessTarget target) {
+	Event(long currentTick, long scheduleTick, int prio, ProcessTarget target) {
 		addedTick = currentTick;
 		schedTick = scheduleTick;
 		priority = prio;
 
 		this.target = target;
-		this.process = process;
 	}
 
 	public String getDesc() {
-		if (target != null)
-			return target.getDescription();
-
-		StackTraceElement[] callStack = process.getStackTrace();
-		boolean seenEntity = false;
-		for (int i = 0; i < callStack.length; i++) {
-			if (callStack[i].getClassName().equals("com.sandwell.JavaSimulation.Entity")) {
-				seenEntity = true;
-				continue;
-			}
-
-			if (seenEntity)
-				return String.format("%s:%s", callStack[i].getClassName(), callStack[i].getMethodName());
-		}
-
-		// Possible the process hasn't started running yet, check the Process target
-		// state
-		return "Unknown Method State";
+		return target.getDescription();
 	}
 }
