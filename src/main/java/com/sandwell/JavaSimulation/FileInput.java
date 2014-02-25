@@ -44,8 +44,11 @@ public class FileInput extends Input<URI> {
 			throw new InputErrorException("File Entity parse error: %s", ex.getMessage());
 		}
 
-		if (temp == null || temp.getPath() == null)
+		if (temp == null)
 			throw new InputErrorException("Unable to parse the file path:\n%s", input.get(0));
+
+		 if (!temp.isOpaque() && temp.getPath() == null)
+			 throw new InputErrorException("Unable to parse the file path:\n%s", input.get(0));
 
 		if (!isValidExtension(temp))
 			throw new InputErrorException("Invalid file extension: %s.\nValid extensions are: %s",
