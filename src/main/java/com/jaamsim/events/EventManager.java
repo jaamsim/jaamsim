@@ -543,7 +543,7 @@ public final class EventManager implements Runnable {
 					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
 					Process proc = Process.allocate(this, interruptEvent.target);
 					proc.setNextProcess(Process.current());
-					switchThread(interruptEvent.process);
+					switchThread(proc);
 					return;
 				}
 			}
