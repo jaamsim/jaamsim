@@ -205,7 +205,7 @@ public final class EventManager implements Runnable {
 			// Loop continuously
 			while (true) {
 				if (eventStack.isEmpty() ||
-				    eventStack.get(0).schedTick >= targetTick) {
+				    eventStack.get(eventStack.size() - 1).schedTick >= targetTick) {
 					executeEvents = false;
 				}
 
@@ -217,9 +217,9 @@ public final class EventManager implements Runnable {
 				}
 
 				// If the next event is at the current tick, execute it
-				if (eventStack.get(0).schedTick == currentTick) {
+				if (eventStack.get(eventStack.size() - 1).schedTick == currentTick) {
 					// Remove the event from the future events
-					Event nextEvent = eventStack.remove(0);
+					Event nextEvent = eventStack.remove(eventStack.size() - 1);
 					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
 					Process p = nextEvent.process;
 					if (p == null)
@@ -232,7 +232,7 @@ public final class EventManager implements Runnable {
 
 				// If the next event would require us to advance the time, check the
 				// conditonal events
-				if (eventStack.get(0).schedTick > nextTick) {
+				if (eventStack.get(eventStack.size() - 1).schedTick > nextTick) {
 					if (conditionalList.size() > 0) {
 						// Loop through the conditions in reverse order and add to the linked
 						// list of active threads
@@ -249,7 +249,7 @@ public final class EventManager implements Runnable {
 					// If a conditional event was satisfied, we will have a new event at the
 					// beginning of the eventStack for the current tick, go back to the
 					// beginning, otherwise fall through to the time-advance
-					nextTick = eventStack.get(0).schedTick;
+					nextTick = eventStack.get(eventStack.size() - 1).schedTick;
 					if (nextTick == currentTick)
 						continue;
 				}
@@ -365,7 +365,7 @@ public final class EventManager implements Runnable {
 		assertNotWaitUntil();
 		synchronized (lockObject) {
 			long eventTime = calculateEventTime(waitLength);
-			for (int i = 0; i < eventStack.size(); i++) {
+			for (int i = eventStack.size() - 1; i >= 0; i--) {
 				Event each = eventStack.get(i);
 				// We passed where any duplicate could be, break out to the
 				// insertion part
@@ -414,8 +414,8 @@ public final class EventManager implements Runnable {
 	 * Must hold the lockObject when calling this method.
 	 */
 	private void addEventToStack(Event newEvent, boolean fifo) {
-		int i = 0;
-		for (; i < eventStack.size(); i++) {
+		int i = eventStack.size() - 1;
+		for (; i >= 0; i--) {
 			// skip the events that happen at an earlier time
 			if (eventStack.get(i).schedTick < newEvent.schedTick)
 				continue;
@@ -437,7 +437,7 @@ public final class EventManager implements Runnable {
 			break;
 		}
 		// Insert the event in the stack
-		eventStack.add(i, newEvent);
+		eventStack.add(i + 1, newEvent);
 	}
 
 	/**
@@ -517,7 +517,7 @@ public final class EventManager implements Runnable {
 
 			assertNotWaitUntil();
 
-			for (int i = 0; i < eventStack.size(); i++) {
+			for (int i = eventStack.size() - 1; i >= 0; i--) {
 				if (eventStack.get(i).process == intThread) {
 					Event interruptEvent = eventStack.remove(i);
 					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
@@ -537,7 +537,7 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 
-			for (int i = 0; i < eventStack.size(); i++) {
+			for (int i = eventStack.size() - 1; i >= 0; i--) {
 				if (eventStack.get(i).target == t) {
 					Event interruptEvent = eventStack.remove(i);
 					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
@@ -565,7 +565,7 @@ public final class EventManager implements Runnable {
 				return;
 			}
 
-			for( int i = 0; i < eventStack.size(); i++ ) {
+			for (int i = eventStack.size() - 1; i >= 0; i--) {
 				if (eventStack.get(i).process == killThread) {
 					Event temp = eventStack.remove(i);
 					if (trcListener != null) trcListener.traceKill(this, temp);
@@ -585,7 +585,7 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 
-			for( int i = 0; i < eventStack.size(); i++ ) {
+			for (int i = eventStack.size() - 1; i >= 0; i--) {
 				if (eventStack.get(i).target == t) {
 					Event temp = eventStack.remove(i);
 					if (trcListener != null) trcListener.traceKill(this, temp);
