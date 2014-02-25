@@ -19,11 +19,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractCellEditor;
@@ -57,6 +60,8 @@ import com.jaamsim.input.Parser;
 import com.jaamsim.math.Color4d;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.FileEntity;
+import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
@@ -273,6 +278,85 @@ public static class StringEditor extends CellEditor implements TableCellEditor {
 	@Override
 	public String getValue() {
 		return text.getText();
+	}
+}
+
+public static class FileEditor extends CellEditor
+implements TableCellEditor, ActionListener {
+
+	private final JPanel jPanel;
+	private final JTextField text;
+	private final JButton fileButton;
+	private FileDialog fileChooser;
+	private FileInput fileInput;
+
+	public FileEditor(JTable table) {
+		super(table);
+
+		jPanel = new JPanel(new BorderLayout());
+
+		text = new JTextField();
+		jPanel.add(text, BorderLayout.WEST);
+
+		fileButton = new JButton(new ImageIcon(
+			GUIFrame.class.getResource("/resources/images/dropdown.png")));
+		fileButton.addActionListener(this);
+		fileButton.setActionCommand("button");
+
+		jPanel.add(fileButton, BorderLayout.EAST);
+	}
+
+	private void setFileInput(FileInput in) {
+		fileInput = in;
+	}
+
+	@Override
+	public String getValue() {
+		return text.getText();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if("button".equals(e.getActionCommand())) {
+			if(fileChooser == null) {
+				fileChooser = new FileDialog(myInstance, "Select File Name", FileDialog.LOAD);
+				fileChooser.setFile(fileInput.getValidExtensionsString());
+
+				 // Display the dialog and wait for selection
+				fileChooser.setVisible(true);
+
+				String file = fileChooser.getFile();
+				if (file == null)
+					return;
+
+				String absFile = fileChooser.getDirectory() + file;
+				absFile = absFile.trim();
+
+				text.setText( absFile );
+			}
+		}
+	}
+
+	@Override
+	public Component getTableCellEditorComponent(JTable table,
+			Object value, boolean isSelected, int row, int column) {
+
+		// set the value
+		input = (FileInput)value;
+		text.setText( input.getValueString() );
+
+		// right size for jPanel and its components
+		Dimension dim = new Dimension(
+			  table.getColumnModel().getColumn( VALUE_COLUMN ).getWidth() -
+			  table.getColumnModel().getColumnMargin(),
+			  table.getRowHeight());
+		jPanel.setPreferredSize(dim);
+		dim = new Dimension(dim.width - (dim.height), dim.height);
+		text.setPreferredSize(dim);
+		dim = new Dimension(dim.height, dim.height);
+		fileButton.setPreferredSize(dim);
+
+		return jPanel;
 	}
 }
 
@@ -629,29 +713,57 @@ public static class CellListener implements CellEditorListener {
 		if ( in.getValueString().equals(editor.getValue()) )
 			return;
 
+		// Adjust the user's entry to standardise the syntax or to restore the default
 		try {
 			String str = editor.getValue().trim();
-			if (in.getClass() == StringInput.class) {
-				if (Parser.needsQuoting(str) && !Parser.isQuoted(str))
+			Class<?> klass = in.getClass();
+
+			// 1) StringInput
+			if (klass == StringInput.class) {
+				if (!Parser.isQuoted(str))
 					str = String.format("'%s'", str);
 			}
 
-			if( str.isEmpty() ) {
+			// 2) FileInput
+			if (klass == FileInput.class) {
+				try {
+					// Confirm that the file path is valid
+					URI rootURI = InputAgent.getFileURI(null, FileEntity.getRootDirectory(), null);
+					URI fileURI = InputAgent.getFileURI(rootURI, str, null);
 
-				// Back to default value
+					// Confirm that the file exists
+					if (!InputAgent.fileExists(fileURI))
+						throw new InputErrorException("The specified file does not exist.\n" +
+								"File path = %s", fileURI.getPath());
+
+					// Convert the file path to standard form
+					str = fileURI.getPath();
+					str = String.format("'%s'", str);
+				}
+				catch (URISyntaxException ex) {
+					throw new InputErrorException("The specified file path is invalid.\n" +
+							"File path = %s\n" +
+							"Parser error message: %s", str, ex.getMessage());
+				}
+			}
+
+			// 3) Blank Entry - restore the default value
+			if( str.isEmpty() ) {
 				str = in.getDefaultString();
 			}
+			// Process the new data for the keyword
 			InputAgent.processEntity_Keyword_Value(EditBox.getInstance().getCurrentEntity(), in, str);
-		} catch (InputErrorException exep) {
+
+		}
+		catch (InputErrorException exep) {
 			JOptionPane.showMessageDialog(EditBox.getInstance(),
-			   String.format( "%s. \nValue will be cleared.", exep.getMessage() ),
+			   String.format( "%s\n" + "Value will be cleared.", exep.getMessage() ),
 			   "Input Error", JOptionPane.ERROR_MESSAGE);
 
 			FrameBox.valueUpdate();
 			return;
 
 		}
-
 	}
 }
 
@@ -752,14 +864,21 @@ public static class EditTable extends JTable {
 			return colorEditor;
 		}
 
-		// 2) Normal text
+		// 2) File input
+		if(in instanceof FileInput) {
+			FileEditor fileEditor = new FileEditor(this);
+			fileEditor.setFileInput((FileInput)in);
+			return fileEditor;
+		}
+
+		// 3) Normal text
 		ArrayList<String> array = in.getValidOptions();
 		if(array == null) {
 			StringEditor stringEditor = new StringEditor(this);
 			return stringEditor;
 		}
 
-		// 3) Multiple selections from a List
+		// 4) Multiple selections from a List
 		if(in instanceof ListInput) {
 			if(listEditor == null) {
 				listEditor = new ListEditor(this);

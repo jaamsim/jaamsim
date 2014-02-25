@@ -89,4 +89,20 @@ public class FileInput extends Input<URI> {
 	public void parse(StringVector input) throws InputErrorException {
 		throw new InputErrorException("FileInput.parse() deprecated method called.");
 	}
+
+	/**
+	 * Returns a String containing the valid file extensions suitable for use
+	 * with FileDialog.  For example, "*.png; *.jpg".
+	 *
+	 * @return - String containing the valid extensions.
+	 */
+	public String getValidExtensionsString() {
+		StringBuilder validString = new StringBuilder(45);
+		for( int i=0; i<validExtensions.length; i++) {
+			validString.append("*.").append(validExtensions[i]);
+			if(i < validExtensions.length - 1)
+				validString.append("; ");
+		}
+		return validString.toString();
+	}
 }
