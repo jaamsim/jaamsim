@@ -34,22 +34,23 @@ public class FileInput extends Input<URI> {
 		Input.assertCount(input, 1);
 		URI temp = null;
 		try {
-			String slashy = input.get(0).replaceAll("\\\\", "/");
 			if (context != null)
-				temp = InputAgent.getFileURI(context.context, slashy, context.jail);
+				temp = InputAgent.getFileURI(context.context, input.get(0), context.jail);
 			else
-				temp = InputAgent.getFileURI(null, slashy, null);
+				temp = InputAgent.getFileURI(null, input.get(0), null);
 
 		}
 		catch (URISyntaxException ex) {
 			throw new InputErrorException("File Entity parse error: %s", ex.getMessage());
 		}
 
-		if (temp == null)
-			throw new InputErrorException("Unable to parse a valid file");
+		if (temp == null || temp.getPath() == null)
+			throw new InputErrorException("Unable to parse the file path:\n%s", input.get(0));
 
 		if (!isValidExtension(temp))
-			throw new InputErrorException("Invalid file extension, valid extensions are: " + Arrays.toString(validExtensions));
+			throw new InputErrorException("Invalid file extension: %s.\nValid extensions are: %s",
+					temp.getPath(), Arrays.toString(validExtensions));
+
 		value = temp;
 	}
 

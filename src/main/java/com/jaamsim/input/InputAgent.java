@@ -1358,25 +1358,50 @@ public class InputAgent {
 	}
 
 	/**
-	 * This is the heart of path handling, find a file relative to a root 'context' and then check that
-	 * the normalized URI matches the jail prefix, otherwise reject it
-	 * @param context
-	 * @param path
-	 * @param jailPrefix
-	 * @return
+	 * Converts a file path String to a URI.
+	 * <p>
+	 * The specified file path can be either relative or absolute. In the case
+	 * of a relative file path, a 'context' folder must be specified. A context
+	 * of null indicates an absolute file path.
+	 * <p>
+	 * To avoid bad input accessing an inappropriate file, a 'jail' folder can
+	 * be specified. The URI to be returned must include the jail folder for it
+	 * to be valid.
+	 * <p>
+	 * @param context - full file path for the folder that is the reference for relative file paths.
+	 * @param filePath - string to be resolved to a URI.
+	 * @param jailPrefix - file path to a base folder from which a relative cannot escape.
+	 * @return the URI corresponding to the context and filePath.
 	 */
-	public static URI getFileURI(URI context, String path, String jailPrefix) throws URISyntaxException {
+	public static URI getFileURI(URI context, String filePath, String jailPrefix) throws URISyntaxException {
+
+		// Remove any quotation marks that were provided
+		String path = filePath.replaceAll("\'", "");
+
+		// Replace all backslashes with slashes
+		path = path.replaceAll("\\\\", "/");
+
+		int colon = path.indexOf(':');
 		int openBrace = path.indexOf('<');
 		int closeBrace = path.indexOf('>');
 		int firstSlash = path.indexOf('/');
+
+		// Add a leading slash if needed to convert from Windows format (e.g. from "C:" to "/C:")
+		if (colon == 1)
+			path = String.format("/%s", path);
+
+		// 1) File path starts with a tagged folder, using the syntax "<tagName>/"
 		URI ret = null;
 		if (openBrace == 0 && closeBrace != -1 && firstSlash == closeBrace + 1) {
-			// Special path format, expand the resource
 			String specPath = path.substring(openBrace + 1, closeBrace);
+
+			// Resources folder in the Jar file
 			if (specPath.equals("res")) {
 				ret = new URI(resRoot.getScheme(), resRoot.getSchemeSpecificPart() + path.substring(closeBrace+2), null).normalize();
 			}
-		} else {
+		}
+		// 2) Normal file path
+		else {
 			URI pathURI = new URI(null, path, null).normalize();
 
 			if (context != null) {
@@ -1401,8 +1426,10 @@ public class InputAgent {
 			}
 		}
 
+		// Check that the file path includes the jail folder
 		if (jailPrefix != null && ret.toString().indexOf(jailPrefix) != 0) {
-			System.out.printf("Failed jail test: %s in jail: %s context: %s\n", ret.toString(), jailPrefix, context.toString());
+			LogBox.format("Failed jail test: %s in jail: %s context: %s\n", ret.toString(), jailPrefix, context.toString());
+			LogBox.getInstance().setVisible(true);
 			return null; // This resolved URI is not in our jail
 		}
 
