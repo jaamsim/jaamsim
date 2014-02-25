@@ -1435,4 +1435,25 @@ public class InputAgent {
 
 		return ret;
 	}
+
+	/**
+	 * Determines whether or not a file exists.
+	 * <p>
+	 * @param filePath - URI for the file to be tested.
+	 * @return true if the file exists, false if it does not.
+	 */
+	public static boolean fileExists(URI filePath) {
+
+		try {
+			InputStream in = filePath.toURL().openStream();
+			in.close();
+			return true;
+		}
+		catch (MalformedURLException ex) {
+			return false;
+		}
+		catch (IOException ex) {
+			return false;
+		}
+	}
 }
