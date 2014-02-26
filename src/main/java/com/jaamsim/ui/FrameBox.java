@@ -124,8 +124,16 @@ public class FrameBox extends JFrame {
 				scheduled = false;
 			}
 
-			for (FrameBox each : allInstances) {
-				each.setEntity(selectedEnt);
+			for (int i = 0; i < allInstances.size(); i++) {
+				try {
+					FrameBox each = allInstances.get(i);
+					each.setEntity(selectedEnt);
+				}
+				catch (IndexOutOfBoundsException e) {
+					// reschedule and try again
+					this.scheduleUpdate(selectedEnt);
+					return;
+				}
 			}
 			FrameBox.valueUpdate();
 		}
@@ -167,8 +175,16 @@ public class FrameBox extends JFrame {
 			}
 
 			GUIFrame.instance().setClock(callBackTime);
-			for (FrameBox each : allInstances) {
-				each.updateValues(callBackTime);
+			for (int i = 0; i < allInstances.size(); i++) {
+				try {
+					FrameBox each = allInstances.get(i);
+					each.updateValues(callBackTime);
+				}
+				catch (IndexOutOfBoundsException e) {
+					// reschedule and try again
+					this.scheduleUpdate();
+					return;
+				}
 			}
 		}
 	}
