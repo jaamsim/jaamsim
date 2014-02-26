@@ -59,6 +59,8 @@ public final class EventManager implements Runnable {
 	private long nextTick; // The next tick to execute events at
 	private long targetTick; // the largest time we will execute events for (run to time)
 
+	private double ticksPerSecond; // The number of discrete ticks per simulated second
+
 	// Real time execution state
 	private long realTimeTick;    // the simulation tick corresponding to the wall-clock millis value
 	private long realTimeMillis;  // the wall-clock time in millis
@@ -88,6 +90,8 @@ public final class EventManager implements Runnable {
 		// Initialize and event lists and timekeeping variables
 		currentTick = 0;
 		nextTick = 0;
+
+		ticksPerSecond = 1000000.0d;
 		eventStack = new ArrayList<Event>();
 		conditionalList = new ArrayList<Process>();
 
@@ -290,7 +294,7 @@ public final class EventManager implements Runnable {
 		}
 
 		double simElapsedsec = ((curMS - realTimeMillis) * realTimeFactor) / 1000.0d;
-		long simElapsedTicks = Process.secondsToTicks(simElapsedsec);
+		long simElapsedTicks = secondsToNearestTick(simElapsedsec);
 		return realTimeTick + simElapsedTicks;
 	}
 
@@ -703,13 +707,21 @@ public final class EventManager implements Runnable {
 
 
 	public final void setSimTimeScale(double scale) {
+		ticksPerSecond = scale / 3600.0d;
 		Process.setSimTimeScale(scale);
+	}
+
+	/**
+	 * Convert the number of seconds rounded to the nearest tick.
+	 */
+	public final long secondsToNearestTick(double seconds) {
+		return Math.round(seconds * ticksPerSecond);
 	}
 
 	void handleProcessError(Throwable t) {
 		this.pause();
 		synchronized (lockObject) {
-			errListener.handleError(t, currentTick);
+			errListener.handleError(this, t, currentTick);
 		}
 	}
 
@@ -722,6 +734,6 @@ public final class EventManager implements Runnable {
 
 	private static class DefaultErrorListener implements EventErrorListener {
 		@Override
-		public void handleError(Throwable t, long currentTick) {}
+		public void handleError(EventManager evt, Throwable t, long currentTick) {}
 	}
 }

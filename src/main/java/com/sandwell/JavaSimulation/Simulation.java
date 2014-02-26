@@ -14,8 +14,6 @@
  */
 package com.sandwell.JavaSimulation;
 
-
-import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -249,7 +247,7 @@ public class Simulation extends Entity {
 
 
 	public static final void resume(double secs) {
-		long ticks = Process.secondsToTicks(secs);
+		long ticks = root.secondsToNearestTick(secs);
 		root.resume(ticks);
 	}
 

@@ -1527,7 +1527,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	@Override
-	public void handleError(Throwable t, long currentTick) {
+	public void handleError(EventManager evt, Throwable t, long currentTick) {
 		if (t instanceof OutOfMemoryError) {
 			OutOfMemoryError e = (OutOfMemoryError)t;
 			LogBox.logLine("Out of Memory use the -Xmx flag during execution for more memory");

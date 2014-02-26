@@ -431,7 +431,7 @@ public class Entity {
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t) {
-		long ticks = Process.secondsToTicks(secs);
+		long ticks = root.secondsToNearestTick(secs);
 		getEventManager().scheduleProcess(ticks, priority, false, t);
 	}
 
@@ -457,7 +457,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWait(double secs, int priority) {
-		long ticks = Process.secondsToTicks(secs);
+		long ticks = root.secondsToNearestTick(secs);
 		this.simWaitTicks(ticks, priority);
 	}
 
@@ -559,6 +559,10 @@ public class Entity {
 			return;
 
 		getEventManager().interrupt(t);
+	}
+
+	public final long secondsToNearestTick(double seconds) {
+		return root.secondsToNearestTick(seconds);
 	}
 
 	// ******************************************************************************************************

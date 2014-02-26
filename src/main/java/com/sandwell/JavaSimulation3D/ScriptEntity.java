@@ -16,7 +16,6 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
-import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -100,7 +99,7 @@ public class ScriptEntity extends Entity {
 			tokens.clear();
 
 			// If a "Time" record was read, then wait until the time
-			long delayTicks = Process.secondsToTicks(scriptTime.getValue()) - getSimTicks();
+			long delayTicks = secondsToNearestTick(scriptTime.getValue()) - getSimTicks();
 			if (delayTicks > 0)
 				simWaitTicks(delayTicks);
 		}

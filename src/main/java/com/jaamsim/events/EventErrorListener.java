@@ -16,6 +16,6 @@ package com.jaamsim.events;
 
 public interface EventErrorListener {
 
-public void handleError(Throwable t, long currentTick);
+public void handleError(EventManager evt, Throwable t, long currentTick);
 
 }
