@@ -173,7 +173,15 @@ public class ObjectSelector extends FrameBox {
 			catch (IndexOutOfBoundsException e) {}
 		}
 
-		for (Palette p : Palette.getAll()) {
+		for (int k = 0; k < Palette.getAll().size(); k++) {
+			Palette p = null;
+			try {
+				p = Palette.getAll().get(k);
+			}
+			catch (IndexOutOfBoundsException e) {
+				break;
+			}
+
 			DefaultMutableTreeNode palNode = getNodeFor_In(p.getName(), top);
 			for (int j = 0; j < ObjectType.getAll().size(); j++) {
 				ObjectType type = null;
