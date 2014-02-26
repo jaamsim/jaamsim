@@ -134,12 +134,16 @@ public final class Process extends Thread {
 			// Notify the event manager that the process has been completed
 			synchronized (this) {
 				eventManager.releaseProcess();
+				eventManager = null;
 			}
 			return;
 		}
 		catch (ThreadKilledException e) {
 			// If the process was killed by a terminateThread method then
 			// return to the beginning of the process loop
+			this.clearFlag(ACTIVE);
+			this.clearFlag(TERMINATE);
+			eventManager = null;
 			return;
 		}
 		catch (Throwable e) {

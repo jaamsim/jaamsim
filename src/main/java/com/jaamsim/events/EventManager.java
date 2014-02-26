@@ -302,7 +302,10 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 			if (trcListener != null) trcListener.traceProcessEnd(this);
-			Process next = Process.current().getNextProcess();
+			Process cur = Process.current();
+			Process next = cur.getNextProcess();
+			cur.setNextProcess(null);
+			cur.clearFlag(Process.ACTIVE);
 
 			if (next != null) {
 				next.interrupt();
@@ -322,18 +325,28 @@ public final class EventManager implements Runnable {
 	// restorePreviousActiveThread()
 	 * Must hold the lockObject when calling this method.
 	 */
-	private void popThread() {
-		Process next = Process.current().getNextProcess();
+	private void popProcess() {
+		Process cur = Process.current();
+		Process next = cur.getNextProcess();
 
-		Process.current().clearFlag(Process.ACTIVE);
-		if (next != null) {
-			Process.current().setNextProcess(null);
+		cur.clearFlag(Process.ACTIVE);
+		cur.setNextProcess(null);
+		if (next != null)
 			switchThread(next);
-		} else {
-			// TODO: check for the switching of eventmanagers
+		else
 			switchThread(eventManagerThread);
-		}
-		Process.current().wake(this);
+		cur.wake(this);
+	}
+
+	/**
+	 * Push another thread onto the Process stack and wait for it to complete
+	 * Must hold the lockObject when calling this method.
+	 * @param next
+	 */
+	private void pushProcess(Process next) {
+		next.setNextProcess(Process.current());
+		next.interrupt();
+		threadWait();
 	}
 
 	/**
@@ -404,7 +417,7 @@ public final class EventManager implements Runnable {
 			Event temp = new Event(currentTick, nextEventTime, priority, t);
 			if (trcListener != null) trcListener.traceWait(this, temp);
 			addEventToStack(temp, fifo);
-			popThread();
+			popProcess();
 		}
 	}
 
@@ -470,7 +483,7 @@ public final class EventManager implements Runnable {
 				Process.current().setFlag(Process.COND_WAIT);
 				conditionalList.add(Process.current());
 			}
-			popThread();
+			popProcess();
 		}
 	}
 
@@ -494,7 +507,7 @@ public final class EventManager implements Runnable {
 			Event temp = new Event(currentTick, currentTick, 0, t);
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
 			addEventToStack(temp, true);
-			popThread();
+			popProcess();
 		}
 	}
 
@@ -504,8 +517,7 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			if (trcListener != null) trcListener.traceProcessStart(this, t);
 			// Transfer control to the new process
-			newProcess.setNextProcess(Process.current());
-			switchThread(newProcess);
+			pushProcess(newProcess);
 		}
 	}
 
@@ -525,8 +537,7 @@ public final class EventManager implements Runnable {
 					Event interruptEvent = eventStack.remove(i);
 					Process proc = interruptEvent.target.getProcess();
 					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
-					proc.setNextProcess(Process.current());
-					switchThread(proc);
+					pushProcess(proc);
 					return;
 				}
 			}
@@ -546,8 +557,7 @@ public final class EventManager implements Runnable {
 					Event interruptEvent = eventStack.remove(i);
 					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
 					Process proc = Process.allocate(this, interruptEvent.target);
-					proc.setNextProcess(Process.current());
-					switchThread(proc);
+					pushProcess(proc);
 					return;
 				}
 			}
