@@ -236,7 +236,7 @@ public class Simulation extends Entity {
 		else if( verifyEventsInput.getValue() ) {
 			EventTracer.verifyAllEvents(root, verifyEventsInput.getValue());
 		}
-		Process.setSimTimeScale(simTimeScaleInput.getValue());
+		root.setSimTimeScale(simTimeScaleInput.getValue());
 		if( startDate.getValue() != null ) {
 			Clock.getStartingDateFromString( startDate.getValue() );
 		}

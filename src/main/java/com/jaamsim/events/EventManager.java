@@ -701,6 +701,11 @@ public final class EventManager implements Runnable {
 		return name;
 	}
 
+
+	public final void setSimTimeScale(double scale) {
+		Process.setSimTimeScale(scale);
+	}
+
 	void handleProcessError(Throwable t) {
 		this.pause();
 		synchronized (lockObject) {

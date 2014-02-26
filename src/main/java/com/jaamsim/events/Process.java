@@ -219,7 +219,7 @@ public final class Process extends Thread {
 		return (flags & flag) != 0;
 	}
 
-	public static void setSimTimeScale(double scale) {
+	static void setSimTimeScale(double scale) {
 		timeScale = scale;
 		ticksPerSecond = scale / 3600.0d;
 		secondsPerTick = 3600.0d / scale;
