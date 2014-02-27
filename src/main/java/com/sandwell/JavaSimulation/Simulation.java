@@ -263,6 +263,7 @@ public class Simulation extends Entity {
 	 */
 	public static final void stop() {
 		root.pause();
+		root.clear();
 		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_STOPPED);
 
 		// kill all generated objects

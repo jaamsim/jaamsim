@@ -143,6 +143,8 @@ public final class EventManager implements Runnable {
 				timelistener = l;
 			else
 				timelistener = new DefaultTimeListener();
+
+			timelistener.tickUpdate(currentTick);
 		}
 	}
 
@@ -166,6 +168,7 @@ public final class EventManager implements Runnable {
 			currentTick = 0;
 			nextTick = 0;
 			targetTick = Long.MAX_VALUE;
+			timelistener.tickUpdate(currentTick);
 			rebaseRealTime = true;
 
 			// Kill threads on the event stack

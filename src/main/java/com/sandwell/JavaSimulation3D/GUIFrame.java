@@ -256,7 +256,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		RenderManager.clear();
 
 		this.updateForSimulationState(GUIFrame.SIM_STATE_LOADED);
-		FrameBox.timeUpdate(0);
 
 		// Clear the title bar
 		setTitle(Simulation.getModelName());
@@ -639,7 +638,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				// stop only if yes
 				if (userOption == JOptionPane.YES_OPTION) {
 					GUIFrame.this.stopSimulation();
-					FrameBox.timeUpdate(0);
 					lastSimTimeHours = 0.0d;
 					lastSystemTime = System.currentTimeMillis();
 					setSpeedUp(0.0d);
