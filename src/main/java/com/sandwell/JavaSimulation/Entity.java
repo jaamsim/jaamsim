@@ -22,6 +22,7 @@ import com.jaamsim.basicsim.InstanceIterable;
 import com.jaamsim.basicsim.ReflectionTarget;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.Process;
+import com.jaamsim.events.ProcessError;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -186,7 +187,7 @@ public class Entity {
 		try {
 			return Process.currentTick();
 		}
-		catch (ErrorException e) {
+		catch (ProcessError e) {
 			return root.currentTick();
 		}
 	}

@@ -16,8 +16,6 @@ package com.jaamsim.events;
 
 import java.util.ArrayList;
 
-import com.sandwell.JavaSimulation.ErrorException;
-
 /**
  * Process is a subclass of Thread that can be managed by the discrete event
  * simulation.
@@ -75,7 +73,7 @@ public final class Process extends Thread {
 		if (cur instanceof Process)
 			return (Process)cur;
 
-		throw new ErrorException("Non-process thread called for Process.current()");
+		throw new ProcessError("Non-process thread called Process.current()");
 	}
 
 	public static final boolean isModelProcess() {

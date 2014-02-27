@@ -16,8 +16,6 @@ package com.jaamsim.events;
 
 import java.util.ArrayList;
 
-import com.sandwell.JavaSimulation.ErrorException;
-
 /**
  * Class EventManager - Sandwell Discrete Event Simulation
  * <p>
@@ -178,7 +176,7 @@ public final class EventManager implements Runnable {
 					continue;
 
 				if (proc.testFlag(Process.ACTIVE)) {
-					throw new ErrorException( "Cannot terminate an active thread" );
+					throw new ProcessError("EVT:%s - Cannot terminate an active thread", name);
 				}
 
 				proc.setFlag(Process.TERMINATE);
@@ -189,7 +187,7 @@ public final class EventManager implements Runnable {
 			// Kill conditional threads
 			for (Process each : conditionalList) {
 				if (each.testFlag(Process.ACTIVE)) {
-					throw new ErrorException( "Cannot terminate an active thread" );
+					throw new ProcessError("EVT:%s - Cannot terminate an active thread", name);
 				}
 
 				each.setFlag(Process.TERMINATE);
@@ -372,7 +370,7 @@ public final class EventManager implements Runnable {
 	private long calculateEventTime(long waitLength) {
 		// Test for negative duration schedule wait length
 		if(waitLength < 0)
-			throw new ErrorException("Negative duration wait is invalid (wait length specified to be %d )", waitLength);
+			throw new ProcessError("Negative duration wait is invalid (wait length specified to be %d )", waitLength);
 
 		// Check for numeric overflow of internal time
 		long nextEventTime = currentTick + waitLength;
@@ -534,7 +532,7 @@ public final class EventManager implements Runnable {
 	public void interrupt( Process intThread ) {
 		synchronized (lockObject) {
 			if (intThread.testFlag(Process.ACTIVE)) {
-				throw new ErrorException( "Cannot interrupt an active thread" );
+				throw new ProcessError("EVT:%s - Cannot interrupt an active thread", name);
 			}
 
 			assertNotWaitUntil();
@@ -548,7 +546,7 @@ public final class EventManager implements Runnable {
 					return;
 				}
 			}
-			throw new ErrorException("Tried to interrupt a thread in %s that couldn't be found", name);
+			throw new ProcessError("EVT:%s - Tried to interrupt a Process that couldn't be found in event list", name);
 		}
 	}
 
@@ -568,14 +566,14 @@ public final class EventManager implements Runnable {
 					return;
 				}
 			}
-			throw new ErrorException("Tried to interrupt a thread in %s that couldn't be found", name);
+			throw new ProcessError("EVT:%s - Tried to interrupt a ProcessTarget that couldn't be found in event list", name);
 		}
 	}
 
 	public void terminateThread( Process killThread ) {
 		synchronized (lockObject) {
 			if (killThread.testFlag(Process.ACTIVE)) {
-				throw new ErrorException( "Cannot terminate an active thread" );
+				throw new ProcessError("EVT:%s - Cannot terminate an active thread", name);
 			}
 
 			assertNotWaitUntil();
@@ -596,7 +594,7 @@ public final class EventManager implements Runnable {
 				}
 			}
 		}
-		throw new ErrorException("Tried to terminate a thread in %s that couldn't be found", name);
+		throw new ProcessError("EVT:%s - Tried to terminate a Process that couldn't be found in event list", name);
 	}
 
 	/**
@@ -614,7 +612,7 @@ public final class EventManager implements Runnable {
 				}
 			}
 		}
-		throw new ErrorException("Tried to terminate a target in %s that couldn't be found", name);
+		throw new ProcessError("EVT:%s - Tried to terminate a ProcessTarget that couldn't be found in event list", name);
 	}
 
 	public long currentTick() {
