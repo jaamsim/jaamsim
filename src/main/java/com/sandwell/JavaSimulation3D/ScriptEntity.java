@@ -27,8 +27,6 @@ import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.FileInput;
 
 public class ScriptEntity extends Entity {
-
-
 	@Keyword(description = "The name of the script file for the script entity.",
 	         example = "ScriptEntity Script { test.scr }")
 	private final FileInput scriptFileName;
@@ -37,6 +35,9 @@ public class ScriptEntity extends Entity {
 	                "time at which the next set of commands in the script are implemented.",
 	         example = "ScriptEntity Time { 24.0 h }")
 	private final ValueInput scriptTime; // the time that has been read in the script
+
+	private final ArrayList<ArrayList<String>> tokens;
+	private int lastTokenIdx;
 
 	{
 		scriptFileName = new FileInput( "Script", "Key Inputs", null );
@@ -48,7 +49,38 @@ public class ScriptEntity extends Entity {
 		this.addInput(scriptTime, false);
 	}
 
-	public ScriptEntity() {}
+	public ScriptEntity() {
+		tokens = new ArrayList<ArrayList<String>>();
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		tokens.clear();
+		lastTokenIdx = -1;
+
+		// If there is no script file, do nothing
+		if (scriptFileName.getValue() == null)
+			return;
+
+		// If the script file exists, open it
+		FileEntity scriptFile = scriptFileName.getFileEntity(FileEntity.FILE_READ, true);
+		ArrayList<String> rec = new ArrayList<String>();
+		while (true) {
+			String line = scriptFile.readLine();
+			if (line == null)
+				break;
+
+			Parser.tokenize(rec, line, true);
+			if (rec.size() == 0)
+				continue;
+
+			tokens.add(rec);
+			rec = new ArrayList<String>();
+		}
+		scriptFile.close();
+	}
 
 	private static class ScriptTarget extends ProcessTarget {
 		final ScriptEntity script;
@@ -67,41 +99,25 @@ public class ScriptEntity extends Entity {
 			script.doScript();
 		}
 	}
+	private final ProcessTarget targ = new ScriptTarget(this);
 
 	@Override
 	public void startUp() {
-		startProcess(new ScriptTarget(this));
+		doScript();
 	}
 
 	/**
 	 * Read the script
 	 */
 	public void doScript() {
-
-		// If there is no script file, do nothing
-		if( scriptFileName.getValue() == null ) {
-			return;
-		}
-
-		// If the script file exists, open it
-		FileEntity scriptFile = scriptFileName.getFileEntity(FileEntity.FILE_READ, true);
-		ArrayList<String> tokens = new ArrayList<String>();
-		while (true) {
-			String line = scriptFile.readLine();
-			if (line == null)
-				break;
-
-			Parser.tokenize(tokens, line, true);
-			if (tokens.size() == 0)
-				continue;
-
-			InputAgent.processKeywordRecord(tokens, null);
-			tokens.clear();
-
+		for (lastTokenIdx++; lastTokenIdx < tokens.size(); lastTokenIdx++) {
+			InputAgent.processKeywordRecord(tokens.get(lastTokenIdx), null);
 			// If a "Time" record was read, then wait until the time
 			long delayTicks = secondsToNearestTick(scriptTime.getValue()) - getSimTicks();
-			if (delayTicks > 0)
-				simWaitTicks(delayTicks);
+			if (delayTicks > 0) {
+				scheduleProcessTicks(delayTicks, PRIO_DEFAULT, targ);
+				break;
+			}
 		}
 	}
 }

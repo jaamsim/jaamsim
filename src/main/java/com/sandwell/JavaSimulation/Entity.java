@@ -435,6 +435,10 @@ public class Entity {
 		getEventManager().scheduleProcess(ticks, priority, false, t);
 	}
 
+	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
+		getEventManager().scheduleProcess(ticks, priority, false, t);
+	}
+
 	public final void scheduleSingleProcess(ProcessTarget t) {
 		getEventManager().scheduleSingleProcess(0, Entity.PRIO_LOWEST, true, t);
 	}
