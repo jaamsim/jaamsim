@@ -15,6 +15,7 @@
 package com.jaamsim.events;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Class EventManager - Sandwell Discrete Event Simulation
@@ -47,7 +48,9 @@ public final class EventManager implements Runnable {
 	public final String name;
 
 	private final Object lockObject; // Object used as global lock for synchronization
-	private final ArrayList<Event> eventStack;
+	private Event[] eventList;
+	private int headEvtIdx;
+
 	private boolean executeEvents;
 
 	private final ArrayList<Process> conditionalList; // List of all conditionally waiting processes
@@ -90,7 +93,9 @@ public final class EventManager implements Runnable {
 		nextTick = 0;
 
 		ticksPerSecond = 1000000.0d;
-		eventStack = new ArrayList<Event>();
+
+		eventList = new Event[10000];
+		headEvtIdx = -1;
 		conditionalList = new ArrayList<Process>();
 
 		executeEvents = false;
@@ -170,8 +175,8 @@ public final class EventManager implements Runnable {
 			rebaseRealTime = true;
 
 			// Kill threads on the event stack
-			for (Event each : eventStack) {
-				Process proc = each.target.getProcess();
+			for (int i = 0; i <= headEvtIdx; i++) {
+				Process proc = eventList[i].target.getProcess();
 				if (proc == null)
 					continue;
 
@@ -182,7 +187,8 @@ public final class EventManager implements Runnable {
 				proc.setFlag(Process.TERMINATE);
 				proc.interrupt();
 			}
-			eventStack.clear();
+			Arrays.fill(eventList, null);
+			headEvtIdx = -1;
 
 			// Kill conditional threads
 			for (Process each : conditionalList) {
@@ -210,8 +216,8 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			// Loop continuously
 			while (true) {
-				if (eventStack.isEmpty() ||
-				    eventStack.get(eventStack.size() - 1).schedTick >= targetTick) {
+				if (headEvtIdx == -1 ||
+				    eventList[headEvtIdx].schedTick >= targetTick) {
 					executeEvents = false;
 				}
 
@@ -223,9 +229,12 @@ public final class EventManager implements Runnable {
 				}
 
 				// If the next event is at the current tick, execute it
-				if (eventStack.get(eventStack.size() - 1).schedTick == currentTick) {
+				if (eventList[headEvtIdx].schedTick == currentTick) {
 					// Remove the event from the future events
-					Event nextEvent = eventStack.remove(eventStack.size() - 1);
+					Event nextEvent = eventList[headEvtIdx];
+					eventList[headEvtIdx] = null;
+					headEvtIdx--;
+
 					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
 					Process p = nextEvent.target.getProcess();
 					if (p == null)
@@ -238,7 +247,7 @@ public final class EventManager implements Runnable {
 
 				// If the next event would require us to advance the time, check the
 				// conditonal events
-				if (eventStack.get(eventStack.size() - 1).schedTick > nextTick) {
+				if (eventList[headEvtIdx].schedTick > nextTick) {
 					if (conditionalList.size() > 0) {
 						// Loop through the conditions in reverse order and add to the linked
 						// list of active threads
@@ -255,7 +264,7 @@ public final class EventManager implements Runnable {
 					// If a conditional event was satisfied, we will have a new event at the
 					// beginning of the eventStack for the current tick, go back to the
 					// beginning, otherwise fall through to the time-advance
-					nextTick = eventStack.get(eventStack.size() - 1).schedTick;
+					nextTick = eventList[headEvtIdx].schedTick;
 					if (nextTick == currentTick)
 						continue;
 				}
@@ -384,8 +393,8 @@ public final class EventManager implements Runnable {
 		assertNotWaitUntil();
 		synchronized (lockObject) {
 			long eventTime = calculateEventTime(waitLength);
-			for (int i = eventStack.size() - 1; i >= 0; i--) {
-				Event each = eventStack.get(i);
+			for (int i = headEvtIdx; i >= 0; i--) {
+				Event each = eventList[i];
 				// We passed where any duplicate could be, break out to the
 				// insertion part
 				if (each.schedTick > eventTime)
@@ -434,19 +443,19 @@ public final class EventManager implements Runnable {
 	 * Must hold the lockObject when calling this method.
 	 */
 	private void addEventToStack(Event newEvent, boolean fifo) {
-		int i = eventStack.size() - 1;
+		int i = headEvtIdx;
 		for (; i >= 0; i--) {
 			// skip the events that happen at an earlier time
-			if (eventStack.get(i).schedTick < newEvent.schedTick)
+			if (eventList[i].schedTick < newEvent.schedTick)
 				continue;
 
 			// events at the same time use priority as a tie-breaker
-			if (eventStack.get(i).schedTick == newEvent.schedTick) {
+			if (eventList[i].schedTick == newEvent.schedTick) {
 				// skip the events that happen at an earlier priority
-				if (eventStack.get(i).priority < newEvent.priority)
+				if (eventList[i].priority < newEvent.priority)
 					continue;
 
-				if (eventStack.get(i).priority == newEvent.priority) {
+				if (eventList[i].priority == newEvent.priority) {
 					// events of equal time and priority are scheduled in LIFO order, so this is
 					// the insertion point, unless we are explicitly doing FIFO ordering
 					if (fifo) continue;
@@ -456,8 +465,18 @@ public final class EventManager implements Runnable {
 			// We fell through all checks, we are at the insertion index, break out
 			break;
 		}
-		// Insert the event in the stack
-		eventStack.add(i + 1, newEvent);
+
+		// Expand the eventList by doubling the size
+		if (eventList.length - 1 == headEvtIdx) {
+			eventList = Arrays.copyOf(eventList, eventList.length * 2);
+		}
+
+		// Insert the event in the stack, only copy array elements if not prepending
+		if (i < headEvtIdx)
+			System.arraycopy(eventList, i + 1, eventList, i + 2, (headEvtIdx - i));
+
+		eventList[i + 1] = newEvent;
+		headEvtIdx++;
 	}
 
 	/**
@@ -527,6 +546,18 @@ public final class EventManager implements Runnable {
 	}
 
 	/**
+	 * Remove an event from the eventList, must hold the lockObject.
+	 * @param idx
+	 * @return
+	 */
+	private Event removeEvent(int idx) {
+		Event e = eventList[idx];
+		System.arraycopy(eventList, idx + 1, eventList, idx, headEvtIdx - idx);
+		eventList[headEvtIdx] = null;
+		headEvtIdx--;
+		return e;
+	}
+	/**
 	 *	Removes the thread from the pending list and executes it immediately
 	 */
 	public void interrupt( Process intThread ) {
@@ -537,9 +568,9 @@ public final class EventManager implements Runnable {
 
 			assertNotWaitUntil();
 
-			for (int i = eventStack.size() - 1; i >= 0; i--) {
-				if (eventStack.get(i).target.getProcess() == intThread) {
-					Event interruptEvent = eventStack.remove(i);
+			for (int i = headEvtIdx; i >= 0; i--) {
+				if (eventList[i].target.getProcess() == intThread) {
+					Event interruptEvent = removeEvent(i);
 					Process proc = interruptEvent.target.getProcess();
 					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
 					pushProcess(proc);
@@ -557,9 +588,9 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 
-			for (int i = eventStack.size() - 1; i >= 0; i--) {
-				if (eventStack.get(i).target == t) {
-					Event interruptEvent = eventStack.remove(i);
+			for (int i = headEvtIdx; i >= 0; i--) {
+				if (eventList[i].target == t) {
+					Event interruptEvent = removeEvent(i);
 					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
 					Process proc = Process.allocate(this, interruptEvent.target);
 					pushProcess(proc);
@@ -584,9 +615,9 @@ public final class EventManager implements Runnable {
 				return;
 			}
 
-			for (int i = eventStack.size() - 1; i >= 0; i--) {
-				if (eventStack.get(i).target.getProcess() == killThread) {
-					Event temp = eventStack.remove(i);
+			for (int i = headEvtIdx; i >= 0; i--) {
+				if (eventList[i].target.getProcess() == killThread) {
+					Event temp = removeEvent(i);
 					if (trcListener != null) trcListener.traceKill(this, temp);
 					killThread.setFlag(Process.TERMINATE);
 					killThread.interrupt();
@@ -604,9 +635,9 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 
-			for (int i = eventStack.size() - 1; i >= 0; i--) {
-				if (eventStack.get(i).target == t) {
-					Event temp = eventStack.remove(i);
+			for (int i = headEvtIdx; i >= 0; i--) {
+				if (eventList[i].target == t) {
+					Event temp = removeEvent(i);
 					if (trcListener != null) trcListener.traceKill(this, temp);
 					return;
 				}
