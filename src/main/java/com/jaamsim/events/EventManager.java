@@ -443,27 +443,40 @@ public final class EventManager implements Runnable {
 	 * Must hold the lockObject when calling this method.
 	 */
 	private void addEventToStack(Event newEvent, boolean fifo) {
-		int i = headEvtIdx;
-		for (; i >= 0; i--) {
-			// skip the events that happen at an earlier time
-			if (eventList[i].schedTick < newEvent.schedTick)
+		int lowIdx = 0;
+		int highIdx = headEvtIdx;
+
+		while (lowIdx <= highIdx) {
+			int testIdx = (lowIdx + highIdx) >>> 1; // use unsigned shift to avoid overflow
+
+			// Compare events by scheduled time first
+			if (eventList[testIdx].schedTick < newEvent.schedTick) {
+				highIdx = testIdx - 1;
 				continue;
-
-			// events at the same time use priority as a tie-breaker
-			if (eventList[i].schedTick == newEvent.schedTick) {
-				// skip the events that happen at an earlier priority
-				if (eventList[i].priority < newEvent.priority)
-					continue;
-
-				if (eventList[i].priority == newEvent.priority) {
-					// events of equal time and priority are scheduled in LIFO order, so this is
-					// the insertion point, unless we are explicitly doing FIFO ordering
-					if (fifo) continue;
-				}
 			}
 
-			// We fell through all checks, we are at the insertion index, break out
-			break;
+			if (eventList[testIdx].schedTick > newEvent.schedTick) {
+				lowIdx = testIdx + 1;
+				continue;
+			}
+
+			// events at the same time use priority as a tie-breaker
+			if (eventList[testIdx].priority < newEvent.priority) {
+				highIdx = testIdx - 1;
+				continue;
+			}
+
+			if (eventList[testIdx].priority > newEvent.priority) {
+				lowIdx = testIdx + 1;
+				continue;
+			}
+
+			// Events at equal time and priority are done in fifo or lifo order
+			// depending on the passed in policy
+			if (fifo)
+				highIdx = testIdx - 1;
+			else
+				lowIdx = testIdx + 1;
 		}
 
 		// Expand the eventList by doubling the size
@@ -472,10 +485,10 @@ public final class EventManager implements Runnable {
 		}
 
 		// Insert the event in the stack, only copy array elements if not prepending
-		if (i < headEvtIdx)
-			System.arraycopy(eventList, i + 1, eventList, i + 2, (headEvtIdx - i));
+		if (lowIdx <= headEvtIdx)
+			System.arraycopy(eventList, lowIdx, eventList, lowIdx + 1, (headEvtIdx - lowIdx + 1));
 
-		eventList[i + 1] = newEvent;
+		eventList[lowIdx] = newEvent;
 		headEvtIdx++;
 	}
 
