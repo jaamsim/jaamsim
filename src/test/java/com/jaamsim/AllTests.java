@@ -20,6 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	com.jaamsim.events.TestEventManager.class,
 	com.jaamsim.math.TestAABB.class,
 	com.jaamsim.math.TestQuaternion.class,
 	com.jaamsim.math.TestTransform.class,
