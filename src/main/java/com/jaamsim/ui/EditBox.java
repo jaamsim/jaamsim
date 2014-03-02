@@ -25,8 +25,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractCellEditor;
@@ -60,7 +58,6 @@ import com.jaamsim.input.Parser;
 import com.jaamsim.math.Color4d;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -718,36 +715,13 @@ public static class CellListener implements CellEditorListener {
 			String str = editor.getValue().trim();
 			Class<?> klass = in.getClass();
 
-			// 1) StringInput
-			if (klass == StringInput.class) {
+			// 1) Add single quotes to String inputs
+			if (klass == StringInput.class || klass == FileInput.class) {
 				if (!Parser.isQuoted(str))
 					str = String.format("'%s'", str);
 			}
 
-			// 2) FileInput
-			if (klass == FileInput.class) {
-				try {
-					// Confirm that the file path is valid
-					URI rootURI = InputAgent.getFileURI(null, FileEntity.getRootDirectory(), null);
-					URI fileURI = InputAgent.getFileURI(rootURI, str, null);
-
-					// Confirm that the file exists
-					if (!InputAgent.fileExists(fileURI))
-						throw new InputErrorException("The specified file does not exist.\n" +
-								"File path = %s", fileURI.getPath());
-
-					// Convert the file path to standard form
-					str = fileURI.getPath();
-					str = String.format("'%s'", str);
-				}
-				catch (URISyntaxException ex) {
-					throw new InputErrorException("The specified file path is invalid.\n" +
-							"File path = %s\n" +
-							"Parser error message: %s", str, ex.getMessage());
-				}
-			}
-
-			// 3) Blank Entry - restore the default value
+			// 2) Blank Entry - restore the default value
 			if( str.isEmpty() ) {
 				str = in.getDefaultString();
 			}

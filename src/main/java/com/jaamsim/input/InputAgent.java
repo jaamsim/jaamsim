@@ -1375,11 +1375,8 @@ public class InputAgent {
 	 */
 	public static URI getFileURI(URI context, String filePath, String jailPrefix) throws URISyntaxException {
 
-		// Remove any quotation marks that were provided
-		String path = filePath.replaceAll("\'", "");
-
 		// Replace all backslashes with slashes
-		path = path.replaceAll("\\\\", "/");
+		String path = filePath.replaceAll("\\\\", "/");
 
 		int colon = path.indexOf(':');
 		int openBrace = path.indexOf('<');

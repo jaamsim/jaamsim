@@ -32,13 +32,14 @@ public class FileInput extends Input<URI> {
 	public void parse(StringVector input, Input.ParseContext context)
 	throws InputErrorException {
 		Input.assertCount(input, 1);
+
+		// Convert the file path to a URI
 		URI temp = null;
 		try {
 			if (context != null)
 				temp = InputAgent.getFileURI(context.context, input.get(0), context.jail);
 			else
 				temp = InputAgent.getFileURI(null, input.get(0), null);
-
 		}
 		catch (URISyntaxException ex) {
 			throw new InputErrorException("File Entity parse error: %s", ex.getMessage());
@@ -47,14 +48,26 @@ public class FileInput extends Input<URI> {
 		if (temp == null)
 			throw new InputErrorException("Unable to parse the file path:\n%s", input.get(0));
 
-		 if (!temp.isOpaque() && temp.getPath() == null)
+		if (!temp.isOpaque() && temp.getPath() == null)
 			 throw new InputErrorException("Unable to parse the file path:\n%s", input.get(0));
+
+		// Confirm that the file exists
+		if (!InputAgent.fileExists(temp))
+			throw new InputErrorException("The specified file does not exist.\n" +
+					"File path = %s", input.get(0));
 
 		if (!isValidExtension(temp))
 			throw new InputErrorException("Invalid file extension: %s.\nValid extensions are: %s",
 					temp.getPath(), Arrays.toString(validExtensions));
 
 		value = temp;
+	}
+
+	@Override
+	public String getValueString() {
+		if( value.isOpaque() )
+			return valueString;
+		return String.format("'%s'", value.getPath());
 	}
 
 	public FileEntity getFileEntity(int io_status, boolean append) {
