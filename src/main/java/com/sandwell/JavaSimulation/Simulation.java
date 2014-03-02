@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.units.TimeUnit;
@@ -425,5 +426,11 @@ public class Simulation extends Entity {
 
 	public static boolean getPrintInputReport() {
 		return printInputReport.getValue();
+	}
+
+	@Output(name = "Configuration File",
+			 description = "The present configuration file.")
+	public String getConfigFileName(double simTime) {
+		return InputAgent.getConfigFileName();
 	}
 }

@@ -37,7 +37,6 @@ import com.jaamsim.ui.LogBox;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Input.ParseContext;
@@ -110,7 +109,13 @@ public class InputAgent {
 	 * @param name - full file path and name of the present configuration file.
 	 */
 	public static void setConfigFileName(String name) {
-		configFileName = name;
+
+		// Put the file path into standard form
+		try {
+			configFileName = InputAgent.getFileURI(null, name, null).getPath();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -1259,13 +1264,7 @@ public class InputAgent {
 			if (!in.isEdited())
 				continue;
 
-			// Identify and print keywords that specify a file
-			if (in instanceof FileInput) {
-				writeFileInput((FileInput)in, file, ent);
-				continue;
-			}
-
-			// Print all other type of keywords
+			// Print the keywords and values
 			String value = in.getValueString();
 			ArrayList<String> tokens = new ArrayList<String>();
 			Parser.tokenize(tokens, value);
@@ -1277,35 +1276,32 @@ public class InputAgent {
 	}
 
 	/**
-	 * Prints a configuration file entry for a keyword with a file name argument.
-	 *
-	 * @param in   - the FileInput corresponding to the keyword.
-	 * @param file - the target configuration file.
-	 * @param ent  - the Entity whose FileInput is to be printed.
+	 * Returns the relative file path for the specified URI.
+	 * <p>
+	 * The path can start from either the folder containing the present
+	 * configuration file or from the resources folder.
+	 * <p>
+	 * @param uri - the URI to be relativized.
+	 * @return the relative file path.
 	 */
-	static private void writeFileInput(FileInput in, FileEntity file, Entity ent) {
-		URI fileURI = file.getFileURI();
+	static public String getRelativeFilePath(URI uri) {
 
-		URI inputURI = in.getValue();
-
+		// Relativize the file path against the resources folder
 		String resString = resRoot.toString();
-		String inputString = inputURI.toString();
-		// Check if this is a resource
-		if (inputString.indexOf(resString) == 0) {
-			file.format("%s %s { '<res>/%s' }%n", ent.getInputName(), in.getKeyword(), inputString.substring(resString.length()));
-			return;
+		String inputString = uri.toString();
+		if (inputString.startsWith(resString)) {
+			return String.format("'<res>/%s'", inputString.substring(resString.length()));
 		}
 
-		// Try to relativize this URL to the current file
+		// Relativize the file path against the configuration file
 		try {
-			String filePath = fileURI.getPath();
-			URI dirURI = new URI(fileURI.getScheme(), filePath.substring(0, filePath.lastIndexOf('/') + 1), null);
-			inputURI = dirURI.relativize(inputURI);
-		} catch (Exception ex) {
-			// We failed, just spit out an absolute URI
+			String configDir = configFileName.substring(0, configFileName.lastIndexOf('/') + 1);
+			URI configDirURI = new URI("file", configDir, null);
+			return String.format("'%s'", configDirURI.relativize(uri).getPath());
 		}
-
-		file.format("%s %s { '%s' }%n", ent.getInputName(), in.getKeyword(), inputURI.getPath());
+		catch (Exception ex) {
+			return String.format("'%s'", uri.getPath());
+		}
 	}
 
 	/**

@@ -65,9 +65,7 @@ public class FileInput extends Input<URI> {
 
 	@Override
 	public String getValueString() {
-		if( value.isOpaque() )
-			return valueString;
-		return String.format("'%s'", value.getPath());
+		return InputAgent.getRelativeFilePath(value);
 	}
 
 	public FileEntity getFileEntity(int io_status, boolean append) {
