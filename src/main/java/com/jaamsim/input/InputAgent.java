@@ -803,7 +803,7 @@ public class InputAgent {
 
 		// Add the file extension ".cfg" if needed
 		absFile = absFile.trim();
-		if( ! absFile.endsWith(".cfg") )
+		if( ! absFile.substring(absFile.length()-4).equalsIgnoreCase(".cfg") )
 			absFile = absFile.concat(".cfg");
 
 		// Save the configuration file
