@@ -170,18 +170,6 @@ public class DoubleVector {
 	}
 
 	/**
-	 * Subtract the specified vector from this vector.
-	 */
-	public void sub( DoubleVector vec ) {
-		if( this.size() != vec.size() ) {
-			throw new ErrorException( "Both vectors should have the same size" );
-		}
-		for( int i = 0; i < this.size(); i++ ) {
-			subAt( vec.get( i ), i );
-		}
-	}
-
-	/**
 	 * Add the specified vector to this vector.
 	 */
 	public void add( DoubleVector vec ) {
@@ -226,15 +214,6 @@ public class DoubleVector {
 		ensureCapacity(entries);
 		Arrays.fill(storage, value);
 		numElements = entries;
-	}
-
-	public IntegerVector toIntegerVector() {
-		IntegerVector iV = new IntegerVector(this.size());
-
-		for (int i = 0; i < this.size(); i++) {
-			iV.add((int)this.get(i));
-		}
-		return iV;
 	}
 
 	/**
@@ -321,15 +300,6 @@ public class DoubleVector {
 	public int indexOf( double testValue ) {
 		for (int i = 0; i < numElements; i++) {
 			if (storage[i] == testValue) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	public int indexOfTime( double time ) {
-		for (int i = 0; i < numElements; i++) {
-			if (Tester.equalCheckTimeStep(storage[i], time)) {
 				return i;
 			}
 		}
