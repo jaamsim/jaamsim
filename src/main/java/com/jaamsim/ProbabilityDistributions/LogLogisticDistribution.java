@@ -16,6 +16,7 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -34,6 +35,8 @@ public class LogLogisticDistribution extends Distribution {
 	         example = "LogLogisticDist-1 Shape { 1.0 }")
 	private final ValueInput shapeInput;
 
+	private final MRG1999a rng = new MRG1999a();
+
 	{
 		minValueInput.setDefaultValue(0.0);
 
@@ -48,6 +51,14 @@ public class LogLogisticDistribution extends Distribution {
 		this.addInput(shapeInput, true);
 	}
 
+	public LogLogisticDistribution() {}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		rng.setSeedStream(getStreamNumber());
+	}
+
 	@Override
 	protected void setUnitType(Class<? extends Unit> ut) {
 		super.setUnitType(ut);
@@ -58,7 +69,7 @@ public class LogLogisticDistribution extends Distribution {
 	protected double getNextSample() {
 
 		// Inverse transform method
-		double u = randomGenerator1.nextDouble();
+		double u = rng.nextUniform();
 		return scaleInput.getValue() * Math.pow( u / (1 - u), 1.0 / shapeInput.getValue() );
 	}
 

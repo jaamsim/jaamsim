@@ -16,6 +16,7 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleListInput;
@@ -40,6 +41,8 @@ public class DiscreteDistribution extends Distribution {
 	         example = "DiscreteDist-1 ProbabilityList { 0.3  0.7 }")
 	private final DoubleListInput probabilityListInput;
 
+	private final MRG1999a rng = new MRG1999a();
+
 	{
 		valueListInput = new ValueListInput( "ValueList", "Key Inputs", null);
 		valueListInput.setUnitType(UserSpecifiedUnit.class);
@@ -49,6 +52,8 @@ public class DiscreteDistribution extends Distribution {
 		probabilityListInput.setValidSum(1.0d);
 		this.addInput( probabilityListInput, true);
 	}
+
+	public DiscreteDistribution() {}
 
 	@Override
 	public void validate() {
@@ -61,6 +66,12 @@ public class DiscreteDistribution extends Distribution {
 	}
 
 	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		rng.setSeedStream(getStreamNumber());
+	}
+
+	@Override
 	protected void setUnitType(Class<? extends Unit> specified) {
 		super.setUnitType(specified);
 		valueListInput.setUnitType(specified);
@@ -69,7 +80,7 @@ public class DiscreteDistribution extends Distribution {
 	@Override
 	protected double getNextSample() {
 
-		double rand = randomGenerator1.nextDouble();
+		double rand = rng.nextUniform();
 		double cumProb = 0.0;
 		DoubleVector probList = probabilityListInput.getValue();
 		for( int i=0; i<probList.size(); i++) {

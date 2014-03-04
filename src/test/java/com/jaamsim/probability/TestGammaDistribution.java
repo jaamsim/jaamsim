@@ -34,6 +34,7 @@ public class TestGammaDistribution {
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "2.0");
+		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");
 		dist.validate();
 		dist.earlyInit();
 
@@ -58,6 +59,7 @@ public class TestGammaDistribution {
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "0.5");
+		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");
 		dist.earlyInit();
 
 		for(int i = 0; i<1000000; i++) {

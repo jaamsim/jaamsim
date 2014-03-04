@@ -14,10 +14,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import java.util.Random;
-
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -36,7 +35,8 @@ public class LogNormalDistribution extends Distribution {
 	         example = "LogNormalDist-1 NormalStandardDeviation { 2.0 }")
 	private final ValueInput normalStandardDeviationInput;
 
-	protected final Random randomGenerator2; // second random generator for picking values
+	private final MRG1999a rng1 = new MRG1999a();
+	private final MRG1999a rng2 = new MRG1999a();
 
 	{
 		minValueInput.setDefaultValue(0.0);
@@ -51,18 +51,14 @@ public class LogNormalDistribution extends Distribution {
 		this.addInput(normalStandardDeviationInput, true);
 	}
 
-
-	public LogNormalDistribution() {
-		randomGenerator2 = new Random();
-	}
+	public LogNormalDistribution() {}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 
-		// Set the seed for the second random generator
-		int seed = (int) ( randomGenerator1.nextDouble() * 10000.0 );
-		randomGenerator2.setSeed( seed );
+		rng1.setSeedStream(getStreamNumber());
+		rng2.setSeedStream(getStreamNumber() + 1);
 	}
 
 	@Override
@@ -78,8 +74,8 @@ public class LogNormalDistribution extends Distribution {
 		// Loop until we have a random x-y coordinate in the unit circle
 		double w, v1, v2, sample;
 		do {
-			v1 = 2.0 * randomGenerator1.nextDouble() - 1.0;
-			v2 = 2.0 * randomGenerator2.nextDouble() - 1.0;
+			v1 = 2.0 * rng1.nextUniform() - 1.0;
+			v2 = 2.0 * rng2.nextUniform() - 1.0;
 			w = ( v1 * v1 ) + ( v2 * v2 );
 		} while( w > 1.0 || w == 0.0 );
 

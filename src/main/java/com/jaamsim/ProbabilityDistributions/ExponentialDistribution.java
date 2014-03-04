@@ -16,6 +16,7 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -29,6 +30,8 @@ public class ExponentialDistribution extends Distribution {
 	         example = "ExponentialDist-1 Mean { 5.0 }")
 	private final ValueInput meanInput;
 
+	private final MRG1999a rng = new MRG1999a();
+
 	{
 		minValueInput.setDefaultValue(0.0);
 
@@ -36,6 +39,14 @@ public class ExponentialDistribution extends Distribution {
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(meanInput, true);
+	}
+
+	public ExponentialDistribution() {}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		rng.setSeedStream(getStreamNumber());
 	}
 
 	@Override
@@ -48,7 +59,7 @@ public class ExponentialDistribution extends Distribution {
 	protected double getNextSample() {
 
 		// Inverse transform method
-		return (- meanInput.getValue() * Math.log( randomGenerator1.nextDouble() ) );
+		return (-meanInput.getValue() * Math.log(rng.nextUniform()));
 	}
 
 	@Override

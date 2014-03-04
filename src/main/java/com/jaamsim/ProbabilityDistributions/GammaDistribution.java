@@ -14,10 +14,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import java.util.Random;
-
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleInput;
@@ -38,7 +37,8 @@ public class GammaDistribution extends Distribution {
 	         example = "GammaDist-1 Shape { 2.0 }")
 	private final DoubleInput shapeInput;
 
-	protected final Random randomGenerator2; // second random generator for picking values
+	private final MRG1999a rng1 = new MRG1999a();
+	private final MRG1999a rng2 = new MRG1999a();
 
 	{
 		minValueInput.setDefaultValue(0.0);
@@ -53,17 +53,14 @@ public class GammaDistribution extends Distribution {
 		this.addInput(shapeInput, true);
 	}
 
-	public GammaDistribution() {
-		randomGenerator2 = new Random();
-	}
+	public GammaDistribution() {}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 
-		// Set the seed for the second random generator
-		int seed = (int) ( randomGenerator1.nextDouble() * 10000.0 );
-		randomGenerator2.setSeed( seed );
+		rng1.setSeedStream(getStreamNumber());
+		rng2.setSeedStream(getStreamNumber() + 1);
 	}
 
 	@Override
@@ -81,8 +78,8 @@ public class GammaDistribution extends Distribution {
 			double threshold;
 			b = 1.0 + ( shapeInput.getValue() / Math.E );
 			do {
-				double p = b * randomGenerator2.nextDouble();
-				u2 = randomGenerator1.nextDouble();
+				double p = b * rng2.nextUniform();
+				u2 = rng1.nextUniform();
 
 				if( p <= 1.0 ) {
 					sample = Math.pow( p, 1.0/shapeInput.getValue() );
@@ -104,8 +101,8 @@ public class GammaDistribution extends Distribution {
 			double q = shapeInput.getValue() + ( 1.0 / a );
 			double d = 1.0 + Math.log( 4.5 );
 			do {
-				u1 = randomGenerator1.nextDouble();
-				u2 = randomGenerator2.nextDouble();
+				u1 = rng1.nextUniform();
+				u2 = rng2.nextUniform();
 				double v = a * Math.log( u1 / ( 1.0 - u1 ) );
 				sample = shapeInput.getValue() * Math.exp( v );
 				z = u1 * u1 * u2;

@@ -14,17 +14,28 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.rng.MRG1999a;
+
 /**
  * Uniform Distribution.
  * Adapted from A.M. Law, "Simulation Modelling and Analysis, 4th Edition", page 448.
  */
 public class UniformDistribution extends Distribution {
+	private final MRG1999a rng = new MRG1999a();
+
+	public UniformDistribution() {}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		rng.setSeedStream(getStreamNumber());
+	}
 
 	@Override
 	protected double getNextSample() {
 
 		// Select the sample from a uniform distribution between the min and max values
-		return this.getMinValue() + randomGenerator1.nextDouble() * ( this.getMaxValue() - this.getMinValue() );
+		return this.getMinValue() + rng.nextUniform() * ( this.getMaxValue() - this.getMinValue() );
 	}
 
 	@Override

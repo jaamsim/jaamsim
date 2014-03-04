@@ -14,8 +14,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import java.util.Random;
-
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -54,8 +52,6 @@ implements SampleProvider {
 	         example = "ProbDist1 MaxValue { 200.0 }")
 	protected final ValueInput maxValueInput;
 
-	protected final Random randomGenerator1; // first random generator for picking values
-
 	private int sampleCount;
 	private double sampleSum;
 	private double sampleSquaredSum;
@@ -66,8 +62,8 @@ implements SampleProvider {
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(unitType, true);
 
-		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 1);
-		randomSeedInput.setValidRange( 1, Integer.MAX_VALUE);
+		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 0);
+		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(randomSeedInput, true);
 
 		minValueInput = new ValueInput("MinValue", "Key Inputs", Double.NEGATIVE_INFINITY);
@@ -79,9 +75,7 @@ implements SampleProvider {
 		this.addInput(maxValueInput, true);
 	}
 
-	public Distribution() {
-		randomGenerator1 = new Random();
-	}
+	public Distribution() {}
 
 	@Override
 	public void validate() {
@@ -96,9 +90,6 @@ implements SampleProvider {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-
-		// Set the seed for the first random generator
-		randomGenerator1.setSeed( randomSeedInput.getValue() );
 
 		// Initialise the sample statistics
 		sampleCount = 0;
@@ -140,6 +131,14 @@ implements SampleProvider {
 	protected void setUnitType(Class<? extends Unit> ut) {
 		minValueInput.setUnitType(ut);
 		maxValueInput.setUnitType(ut);
+	}
+
+	protected int getStreamNumber() {
+		return randomSeedInput.getValue();
+	}
+
+	protected int getSubstreamNumber() {
+		return 0;
 	}
 
 	/**

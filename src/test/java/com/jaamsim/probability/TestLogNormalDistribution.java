@@ -31,6 +31,7 @@ public class TestLogNormalDistribution {
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "NormalMean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "NormalStandardDeviation", "2.0");
+		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");
 		dist.validate();
 		dist.earlyInit();
 
@@ -39,7 +40,7 @@ public class TestLogNormalDistribution {
 		double mean = total / numSamples;
 
 		assertTrue( Math.abs( dist.getSampleMean(0.0) - mean ) < 0.001 );
-		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.001 );
-		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.005 );
+		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.0025 );
+		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.0125 );
 	}
 }

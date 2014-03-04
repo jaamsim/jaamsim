@@ -16,6 +16,7 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -36,6 +37,8 @@ public class WeibullDistribution extends Distribution {
 	         example = "WeibullDist-1 Shape { 1.0 }")
 	private final ValueInput shapeInput;
 
+	private final MRG1999a rng = new MRG1999a();
+
 	{
 		minValueInput.setDefaultValue(0.0);
 
@@ -50,6 +53,14 @@ public class WeibullDistribution extends Distribution {
 		this.addInput(shapeInput, true);
 	}
 
+	public WeibullDistribution() {}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		rng.setSeedStream(getStreamNumber());
+	}
+
 	@Override
 	protected void setUnitType(Class<? extends Unit> ut) {
 		super.setUnitType(ut);
@@ -60,7 +71,7 @@ public class WeibullDistribution extends Distribution {
 	protected double getNextSample() {
 
 		// Inverse transform method
-		return  scaleInput.getValue() * Math.pow( - Math.log( randomGenerator1.nextDouble() ), 1.0/shapeInput.getValue() );
+		return  scaleInput.getValue() * Math.pow( - Math.log( rng.nextUniform() ), 1.0/shapeInput.getValue() );
 	}
 
 	@Override

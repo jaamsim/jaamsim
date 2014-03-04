@@ -16,6 +16,7 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.IntegerInput;
@@ -36,6 +37,8 @@ public class ErlangDistribution extends Distribution {
 	         example = "ErlangDist-1 Shape { 2 }")
 	private final IntegerInput shapeInput;
 
+	private final MRG1999a rng = new MRG1999a();
+
 	{
 		minValueInput.setDefaultValue(0.0);
 
@@ -47,6 +50,14 @@ public class ErlangDistribution extends Distribution {
 		shapeInput = new IntegerInput("Shape", "Key Inputs", 1);
 		shapeInput.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput(shapeInput, true);
+	}
+
+	public ErlangDistribution() {}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		rng.setSeedStream(getStreamNumber());
 	}
 
 	@Override
@@ -62,7 +73,7 @@ public class ErlangDistribution extends Distribution {
 		double u = 1.0;
 		int k = shapeInput.getValue();
 		for( int i=0; i<k; i++) {
-			u *= randomGenerator1.nextDouble();
+			u *= rng.nextUniform();
 		}
 
 		// Inverse transform method

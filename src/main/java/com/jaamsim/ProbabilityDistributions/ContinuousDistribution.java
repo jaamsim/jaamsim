@@ -16,6 +16,7 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleListInput;
@@ -41,6 +42,8 @@ public class ContinuousDistribution extends Distribution {
 	         example = "ContinuousDist-1 CumulativeProbabilityList { 0.0  0.6  1.0 }")
 	private final DoubleListInput cumulativeProbabilityListInput;
 
+	private final MRG1999a rng = new MRG1999a();
+
 	{
 		valueListInput = new ValueListInput("ValueList", "Key Inputs", null);
 		valueListInput.setUnitType(UserSpecifiedUnit.class);
@@ -49,6 +52,8 @@ public class ContinuousDistribution extends Distribution {
 		cumulativeProbabilityListInput = new DoubleListInput( "CumulativeProbabilityList", "Key Inputs", null);
 		this.addInput( cumulativeProbabilityListInput, true);
 	}
+
+	public ContinuousDistribution() {}
 
 	@Override
 	public void validate() {
@@ -81,6 +86,12 @@ public class ContinuousDistribution extends Distribution {
 	}
 
 	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		rng.setSeedStream(getStreamNumber());
+	}
+
+	@Override
 	protected void setUnitType(Class<? extends Unit> specified) {
 		super.setUnitType(specified);
 		valueListInput.setUnitType(specified);
@@ -89,7 +100,7 @@ public class ContinuousDistribution extends Distribution {
 	@Override
 	protected double getNextSample() {
 
-		double rand = randomGenerator1.nextDouble();
+		double rand = rng.nextUniform();
 		DoubleVector cumList = cumulativeProbabilityListInput.getValue();
 		for( int i=1; i<cumList.size(); i++) {
 			if( rand < cumList.get(i) ) {

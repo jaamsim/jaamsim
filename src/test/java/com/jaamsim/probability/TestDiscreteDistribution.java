@@ -31,6 +31,7 @@ public class TestDiscreteDistribution {
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "ValueList", "1.0  3.0  10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "ProbabilityList", "0.5  0.3  0.2");
+		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");
 		dist.validate();
 		dist.earlyInit();
 

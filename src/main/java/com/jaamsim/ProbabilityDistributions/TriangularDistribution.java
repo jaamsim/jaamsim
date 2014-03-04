@@ -16,6 +16,7 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -30,11 +31,15 @@ public class TriangularDistribution extends Distribution {
 	         example = "TriangularDist-1 Mode { 5.0 }")
 	private final ValueInput modeInput;
 
+	private final MRG1999a rng = new MRG1999a();
+
 	{
 		modeInput = new ValueInput("Mode", "Key Inputs", 1.0d);
 		modeInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(modeInput, true);
 	}
+
+	public TriangularDistribution() {}
 
 	@Override
 	public void validate() {
@@ -47,6 +52,12 @@ public class TriangularDistribution extends Distribution {
 		if( this.getMaxValue() < modeInput.getValue() ) {
 			throw new InputErrorException( "The input for Mode must be <= than that for MaxValue.");
 		}
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		rng.setSeedStream(getStreamNumber());
 	}
 
 	@Override
@@ -63,7 +74,7 @@ public class TriangularDistribution extends Distribution {
 		double max = this.getMaxValue();
 
 		// Select the random value
-		double rand = randomGenerator1.nextDouble();
+		double rand = rng.nextUniform();
 
 		// Calculate the normalised mode
 		double m = ( modeInput.getValue() - min )/ ( max - min );
