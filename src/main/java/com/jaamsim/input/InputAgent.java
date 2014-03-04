@@ -342,7 +342,7 @@ public class InputAgent {
 
 			Input.ParseContext pc = new Input.ParseContext();
 			pc.jail = root;
-			pc.context = path;
+			pc.context = resolved;
 
 			while (true) {
 				String line = buf.readLine();
