@@ -99,7 +99,7 @@ public class MRG1999a {
 	 * Get the next uniformly distributed double value U(0,1)
 	 * @return
 	 */
-	public double getUniform() {
+	public double nextUniform() {
 		// Mix the first half of the state
 		long p1 = 1403580l * uint(s1) - 810728l * uint(s0);
 		p1 = p1 % m1;

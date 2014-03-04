@@ -136,7 +136,7 @@ public class TestMRG1999a {
 		};
 		assertTrue(test1.toString().equals(known1[0]));
 		for (int i = 1; i < known1.length; i++) {
-			test1.getUniform(); // advance the state
+			test1.nextUniform(); // advance the state
 			assertTrue(test1.toString().equals(known1[i]));
 		}
 
@@ -156,7 +156,7 @@ public class TestMRG1999a {
 		};
 		assertTrue(test2.toString().equals(known2[0]));
 		for (int i = 1; i < known2.length; i++) {
-			test2.getUniform(); // advance the state
+			test2.nextUniform(); // advance the state
 			assertTrue(test2.toString().equals(known2[i]));
 		}
 	}
