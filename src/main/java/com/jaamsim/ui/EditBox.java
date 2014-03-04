@@ -323,13 +323,17 @@ implements TableCellEditor, ActionListener {
 				fileChooser.setVisible(true);
 
 				String file = fileChooser.getFile();
-				if (file == null)
-					return;
+				if (file != null) {
+					String absFile = fileChooser.getDirectory() + file;
+					absFile = absFile.trim();
+					text.setText( absFile );
+				}
 
-				String absFile = fileChooser.getDirectory() + file;
-				absFile = absFile.trim();
+				// Apply editing
+				stopCellEditing();
 
-				text.setText( absFile );
+				// Focus the cell
+				propTable.requestFocusInWindow();
 			}
 		}
 	}
