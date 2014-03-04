@@ -339,25 +339,6 @@ public class Tester {
 		}
 	}
 
-	/**
-	 * Checks whether or not the specified filename, which may be specified with relative
-	 * or absolute path, exists.
-	 *
-	 * @param filePath a file being checked for existence; it may be given with relative
-	 * or absolure path
-	 * @return true if the specified file exists
-	 * @exception InputErrorException if the specified file does not exist
-	 * @author SS
-	 * *checked*
-	 */
-	public static boolean checkFileExists( String filePath ) throws InputErrorException {
-		if ( !FileEntity.fileExists( filePath ) ) {
-			throw new InputErrorException( "The file " + filePath + " does not exist." );
-		}
-		return true;
-	}
-
-
 	public static double min( double... values ) {
 
 		double min = Double.POSITIVE_INFINITY;
