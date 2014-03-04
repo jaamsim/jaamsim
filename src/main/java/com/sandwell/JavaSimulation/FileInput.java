@@ -65,7 +65,10 @@ public class FileInput extends Input<URI> {
 
 	@Override
 	public String getValueString() {
-		return InputAgent.getRelativeFilePath(value);
+		if (value != null)
+			return InputAgent.getRelativeFilePath(value);
+		else
+			return "";
 	}
 
 	public FileEntity getFileEntity(int io_status, boolean append) {
