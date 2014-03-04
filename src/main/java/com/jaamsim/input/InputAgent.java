@@ -369,7 +369,7 @@ public class InputAgent {
 
 				if ("INCLUDE".equalsIgnoreCase(record.get(0))) {
 					try {
-						InputAgent.processIncludeRecord(pc.jail, resolved, record);
+						InputAgent.processIncludeRecord(pc, record);
 					}
 					catch (URISyntaxException ex) {
 						rethrowWrapped(ex);
@@ -405,12 +405,12 @@ public class InputAgent {
 		return true;
 	}
 
-	private static void processIncludeRecord(String root, URI path, ArrayList<String> record) throws URISyntaxException {
+	private static void processIncludeRecord(ParseContext pc, ArrayList<String> record) throws URISyntaxException {
 		if (record.size() != 2) {
 			InputAgent.logError("Bad Include record, should be: Include <File>");
 			return;
 		}
-		InputAgent.readStream(root, path, record.get(1).replaceAll("\\\\", "/"));
+		InputAgent.readStream(pc.jail, pc.context, record.get(1).replaceAll("\\\\", "/"));
 	}
 
 	private static void processDefineRecord(ArrayList<String> record) {
