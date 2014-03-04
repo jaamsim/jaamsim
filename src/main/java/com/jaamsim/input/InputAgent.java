@@ -57,7 +57,7 @@ public class InputAgent {
 
 	private static double lastTimeForTrace;
 
-	private static String configFileName;  // absolute file path and file name for the present configuration file
+	private static File configFile;           // present configuration file
 	private static boolean batchRun;
 	private static boolean sessionEdited;     // TRUE if any inputs have been changed after loading a configuration file
 	private static boolean recordEditsFound;  // TRUE if the "RecordEdits" marker is found in the configuration file
@@ -71,7 +71,7 @@ public class InputAgent {
 		recordEditsFound = false;
 		sessionEdited = false;
 		batchRun = false;
-		configFileName = null;
+		configFile = null;
 		reportDirectory = "";
 		lastTimeForTrace = -1.0d;
 	}
@@ -82,7 +82,7 @@ public class InputAgent {
 		numWarnings = 0;
 		recordEditsFound = false;
 		sessionEdited = false;
-		configFileName = null;
+		configFile = null;
 		reportDirectory = "";
 		lastTimeForTrace = -1.0d;
 	}
@@ -104,59 +104,44 @@ public class InputAgent {
 	}
 
 	/**
-	 * Sets the full file path and name of the present configuration file.
+	 * Sets the present configuration file.
 	 *
-	 * @param name - full file path and name of the present configuration file.
+	 * @param file - the present configuration file.
 	 */
-	public static void setConfigFileName(String name) {
-
-		// Put the file path into standard form
-		try {
-			configFileName = InputAgent.getFileURI(null, name, null).getPath();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+	public static void setConfigFile(File file) {
+		configFile = file;
 	}
 
 	/**
-	 * Returns the full file path and name of the present configuration file. Null is
-	 * returned if no configuration file has been loaded.
+	 * Returns the present configuration file.
 	 * <p>
-	 * The configuration file name is set when the file is first loaded or when a new
-	 * configuration file is saved via the graphical user interface.
-	 *
-	 * @return the full file path and name for the present configuration file.
+	 * Null is returned if no configuration file has been loaded or saved yet.
+	 * <p>
+	 * @return the present configuration file.
 	 */
-	public static String getConfigFileName() {
-		return configFileName;
+	public static File getConfigFile() {
+		return configFile;
 	}
 
 	/**
-	 * if ( fileFullName = "C:\Projects\A01.cfg" ), returns "A01.cfg"
-	 * if ( fileFullName = "A01.cfg" ), returns "A01.cfg"
+	 * Returns the name of the simulation run.
+	 * <p>
+	 * For example, if the configuration file name is "case1.cfg", then the
+	 * run name is "case1".
+	 * <p>
+	 * @return the name of simulation run.
 	 */
-	private static String shortName(String fileFullName) {
-		int idx = Math.max(fileFullName.lastIndexOf('\\'), fileFullName.lastIndexOf('/'));
-		// if idx is -1, we return the entire string
-		return fileFullName.substring(idx + 1);
-	}
-
 	public static String getRunName() {
-		String runName;
-		if( InputAgent.getConfigFileName() == null ) {
-			runName = "";
-		}
-		else {
-			String shortName = shortName(InputAgent.getConfigFileName());
-			int index = shortName.indexOf( "." );
-			if( index > -1 ) {
-				runName = shortName.substring( 0, index );
-			}
-			else {
-				runName = shortName;
-			}
-		}
-		return runName;
+
+		if( InputAgent.getConfigFile() == null )
+			return "";
+
+		String name = InputAgent.getConfigFile().getName();
+		int index = name.indexOf( "." );
+		if( index == -1 )
+			return name;
+
+		return name.substring( 0, index );
 	}
 
 	/**
@@ -752,8 +737,8 @@ public class InputAgent {
 
 	public static void save(GUIFrame gui) {
 		LogBox.logLine("Saving...");
-		if( InputAgent.getConfigFileName() != null ) {
-			setSaveFile(gui, InputAgent.getConfigFileName() );
+		if( InputAgent.getConfigFile() != null ) {
+			setSaveFile(gui, InputAgent.getConfigFile().getPath() );
 		}
 		else {
 			saveAs( gui );
@@ -764,7 +749,7 @@ public class InputAgent {
 		LogBox.logLine("Save As...");
 		FileDialog chooser = new FileDialog(gui, "Save Configuration File As", FileDialog.SAVE);
 		chooser.setFilenameFilter(new ConfigFileFilter());
-		chooser.setFile(InputAgent.getConfigFileName());
+		chooser.setFile(InputAgent.getConfigFile().getPath());
 
 		 // Display the dialog and wait for selection
 		chooser.setVisible(true);
@@ -799,7 +784,7 @@ public class InputAgent {
 	public static void configure(GUIFrame gui, File file) {
 		try {
 			gui.clear();
-			InputAgent.setConfigFileName(file.getPath());
+			InputAgent.setConfigFile(file);
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_UNCONFIGURED);
 
 			try {
@@ -860,7 +845,7 @@ public class InputAgent {
 		// Save the configuration file
 		InputAgent.printNewConfigurationFileWithName( fileName );
 		sessionEdited = false;
-		InputAgent.setConfigFileName(fileName);
+		InputAgent.setConfigFile(temp);
 
 		// Set the title bar to match the new run name
 		gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
@@ -1151,9 +1136,9 @@ public class InputAgent {
 		// Copy the original configuration file up to the "RecordEdits" marker (if present)
 		// Temporary storage for the copied lines is needed in case the original file is to be overwritten
 		ArrayList<String> preAddedRecordLines = new ArrayList<String>();
-		if( InputAgent.getConfigFileName() != null && FileEntity.fileExists(InputAgent.getConfigFileName()) ) {
+		if( InputAgent.getConfigFile() != null ) {
 			try {
-				BufferedReader in = new BufferedReader( new FileReader(InputAgent.getConfigFileName()) );
+				BufferedReader in = new BufferedReader( new FileReader(InputAgent.getConfigFile()) );
 				String line;
 				while ( ( line = in.readLine() ) != null ) {
 					preAddedRecordLines.add( line );
@@ -1279,8 +1264,7 @@ public class InputAgent {
 
 		// Relativize the file path against the configuration file
 		try {
-			String configDir = configFileName.substring(0, configFileName.lastIndexOf('/') + 1);
-			URI configDirURI = new URI("file", configDir, null);
+			URI configDirURI = InputAgent.getConfigFile().getParentFile().toURI();
 			return String.format("'%s'", configDirURI.relativize(uri).getPath());
 		}
 		catch (Exception ex) {

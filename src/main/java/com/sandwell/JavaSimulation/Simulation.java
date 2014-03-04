@@ -431,6 +431,6 @@ public class Simulation extends Entity {
 	@Output(name = "Configuration File",
 			 description = "The present configuration file.")
 	public String getConfigFileName(double simTime) {
-		return InputAgent.getConfigFileName();
+		return InputAgent.getConfigFile().getPath();
 	}
 }
