@@ -33,6 +33,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -1406,7 +1407,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// Process any configuration files passed on command line
 		// (Multiple configuration files are not supported at present)
 		for (int i = 0; i < configFiles.size(); i++) {
-			InputAgent.configure(gui, configFiles.get(i));
+			InputAgent.configure(gui, new File(configFiles.get(i)));
 		}
 
 		// If no configuration files were specified on the command line, then load the default configuration file

@@ -605,14 +605,14 @@ public class InputAgent {
 	}
 
 	// Load the run file
-	public static void loadConfigurationFile( String fileName) throws URISyntaxException {
+	public static void loadConfigurationFile( File file) throws URISyntaxException {
 
 		String inputTraceFileName = InputAgent.getRunName() + ".log";
 		// Initializing the tracing for the model
 		try {
 			System.out.println( "Creating trace file" );
 
-			URI confURI = new File(fileName).toURI();
+			URI confURI = file.toURI();
 			URI logURI = confURI.resolve(new URI(null, inputTraceFileName, null)); // The new URI here effectively escapes the file name
 
 			// Set and open the input trace file name
@@ -622,7 +622,13 @@ public class InputAgent {
 			InputAgent.logWarning("Could not create trace file");
 		}
 
-		InputAgent.loadConfigurationFile(fileName, true);
+		URI dirURI = file.getParentFile().toURI();
+		InputAgent.readStream("", dirURI, file.getName());
+
+		FileEntity.setRootDirectory(dirURI.getPath());
+
+		GUIFrame.instance().setProgressText(null);
+		GUIFrame.instance().setProgress(0);
 
 		// At this point configuration file is loaded
 
@@ -644,30 +650,6 @@ public class InputAgent {
 
 		if (Simulation.getPrintInputReport())
 			InputAgent.printInputFileKeywords();
-	}
-
-	/**
-	 *
-	 * @param fileName
-	 * @param firstTime ( true => this is the main config file (run file);  false => this is an included file within  main config file or another included file )
-	 */
-	public static void loadConfigurationFile( String rawFileName, boolean firstTime ) throws URISyntaxException {
-
-		URI fileURI = new File(rawFileName).toURI();
-
-		String path = fileURI.getPath();
-
-		String dir = path.substring(0, path.lastIndexOf('/')+1);
-		URI dirURI = new URI("file", dir, null);
-		String fileName = path.substring(path.lastIndexOf('/') + 1, path.length());
-
-		readStream("", dirURI, fileName);
-
-		FileEntity.setRootDirectory(dir);
-
-		GUIFrame.instance().setProgressText(null);
-		GUIFrame.instance().setProgress(0);
-
 	}
 
 	public static final void apply(Entity ent, KeywordIndex kw) {
@@ -763,7 +745,9 @@ public class InputAgent {
 
 		String absFile = chooser.getDirectory() + file;
 		absFile = absFile.trim();
-		setLoadFile(gui, absFile);
+
+		File temp = new File(absFile);
+		InputAgent.setLoadFile(gui, temp);
 	}
 
 	public static void save(GUIFrame gui) {
@@ -810,14 +794,14 @@ public class InputAgent {
 		setSaveFile(gui, absFile);
 	}
 
-	public static void configure(GUIFrame gui, String configFileName) {
+	public static void configure(GUIFrame gui, File file) {
 		try {
 			gui.clear();
-			InputAgent.setConfigFileName(configFileName);
+			InputAgent.setConfigFileName(file.getPath());
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_UNCONFIGURED);
 
 			try {
-				InputAgent.loadConfigurationFile(configFileName);
+				InputAgent.loadConfigurationFile(file);
 			}
 			catch( InputErrorException iee ) {
 				if (!batchRun)
@@ -839,23 +823,21 @@ public class InputAgent {
 	}
 
 	/**
-	 *  Loads configuration file , calls GraphicSimulation.configure() method
+	 * Loads the configuration file.
+	 * <p>
+	 * @param gui - the Control Panel.
+	 * @param file - the configuration file to be loaded.
 	 */
-	private static void setLoadFile(final GUIFrame gui, String fileName) {
-		final String chosenFileName = fileName;
+	private static void setLoadFile(final GUIFrame gui, File file) {
+
+		final File chosenfile = file;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				File temp = new File(chosenFileName);
+				InputAgent.setRecordEdits(false);
+				InputAgent.configure(gui, chosenfile);
+				InputAgent.setRecordEdits(true);
 
-				if( temp.isAbsolute() ) {
-					InputAgent.setRecordEdits(false);
-					InputAgent.configure(gui, chosenFileName);
-					InputAgent.setRecordEdits(true);
-				}
-				else {
-					System.out.printf("Error: loading a relative file: %s\n", chosenFileName);
-				}
 				GUIFrame.displayWindows(true);
 				FrameBox.valueUpdate();
 			}
