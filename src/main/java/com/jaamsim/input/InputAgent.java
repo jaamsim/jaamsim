@@ -780,10 +780,12 @@ public class InputAgent {
 		//   the file name. The method getFile() returns a corrupted version of the old file name.
 		// - If the new name is the same length or longer than the new name then both methods work properly.
 		// Expected to be fixed in Java 8.
-		if( System.getProperty("java.version").startsWith("1.7.") )
-			// If corrupted, the new absolute file name is one character shorter than the old absolute file name
-			if( InputAgent.getConfigFileName() != null && absFile.length() < InputAgent.getConfigFileName().length() )
-				absFile = chooser.getDirectory();
+		if( System.getProperty("java.version").startsWith("1.7.") ) {
+			String dir = chooser.getDirectory();
+			if( InputAgent.getConfigFile() != null && !dir.endsWith("\\") && !dir.endsWith("/") ) {
+				absFile = dir;
+			}
+		}
 
 		// Add the file extension ".cfg" if needed
 		absFile = absFile.trim();
