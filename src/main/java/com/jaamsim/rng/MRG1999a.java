@@ -164,4 +164,73 @@ public class MRG1999a {
 		return String.format("%d, %d, %d, %d, %d, %d",
 		                     uint(s0), uint(s1), uint(s2), uint(s3), uint(s4), uint(s5));
 	}
+
+	private static long ulong_mod(long val, long mod) {
+		if (val < 0) {
+			val &= Long.MAX_VALUE;
+			val = (val % mod) - (Long.MIN_VALUE % mod);
+		}
+
+		return val % mod;
+	}
+
+	private static long mixHalf1(long[] a, long[] s) {
+		long tmp;
+		tmp = ulong_mod(a[0] * s[0]      , m1);
+		tmp = ulong_mod(a[1] * s[1] + tmp, m1);
+		tmp = ulong_mod(a[2] * s[2] + tmp, m1);
+		return tmp;
+	}
+
+	private static long mixHalf2(long[] a, long[] s) {
+		long tmp;
+		tmp = ulong_mod(a[0] * s[3]      , m2);
+		tmp = ulong_mod(a[1] * s[4] + tmp, m2);
+		tmp = ulong_mod(a[2] * s[5] + tmp, m2);
+		return tmp;
+	}
+
+	private static final long streamAdvance[][] = {
+		{ 2427906178L, 3580155704L,  949770784L },
+		{  226153695L, 1230515664L, 3580155704L },
+		{ 1988835001L,  986791581L, 1230515664L },
+		{ 1464411153L,  277697599L, 1610723613L },
+		{   32183930L, 1464411153L, 1022607788L },
+		{ 2824425944L,   32183930L, 2093834863L }
+	};
+
+	private static final long substreamAdvance[][] = {
+		{   82758667L, 1871391091L, 4127413238L },
+		{ 3672831523L,   69195019L, 1871391091L },
+		{ 3672091415L, 3528743235L,   69195019L },
+		{ 1511326704L, 3759209742L, 1610795712L },
+		{ 4292754251L, 1511326704L, 3889917532L },
+		{ 3859662829L, 4292754251L, 3708466080L }
+	};
+
+	public static void advanceStream(long[] seeds) {
+		long s0 = mixHalf1(streamAdvance[0], seeds);
+		long s1 = mixHalf1(streamAdvance[1], seeds);
+		long s2 = mixHalf1(streamAdvance[2], seeds);
+
+		long s3 = mixHalf2(streamAdvance[3], seeds);
+		long s4 = mixHalf2(streamAdvance[4], seeds);
+		long s5 = mixHalf2(streamAdvance[5], seeds);
+
+		seeds[0] = s0; seeds[1] = s1; seeds[2] = s2;
+		seeds[3] = s3; seeds[4] = s4; seeds[5] = s5;
+	}
+
+	public static void advanceSubstream(long[] seeds) {
+		long s0 = mixHalf1(substreamAdvance[0], seeds);
+		long s1 = mixHalf1(substreamAdvance[1], seeds);
+		long s2 = mixHalf1(substreamAdvance[2], seeds);
+
+		long s3 = mixHalf2(substreamAdvance[3], seeds);
+		long s4 = mixHalf2(substreamAdvance[4], seeds);
+		long s5 = mixHalf2(substreamAdvance[5], seeds);
+
+		seeds[0] = s0; seeds[1] = s1; seeds[2] = s2;
+		seeds[3] = s3; seeds[4] = s4; seeds[5] = s5;
+	}
 }
