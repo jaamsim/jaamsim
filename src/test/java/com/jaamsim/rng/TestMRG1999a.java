@@ -16,63 +16,110 @@ package com.jaamsim.rng;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-
 import org.junit.Test;
 
 public class TestMRG1999a {
 
-	private static long uint(int i) {
-		return i & 0xffffffffl;
-	}
-
-	@Test
-	public void testSeedTable() {
-		InputStream s = MRG1999a.class.getResourceAsStream("/resources/seeds/MRG1999a.seed");
-		BufferedReader buf =  new BufferedReader(new InputStreamReader(s));
-		ArrayList<String> lines = new ArrayList<String>();
-
-		while (true) {
-			String line = null;
-			try {
-				line = buf.readLine();
-			}
-			catch (IOException e) {
-				throw new RuntimeException("Could not read all seeds for MRG1999a");
-			}
-
-			if (line == null) break;
-			lines.add(line);
-		}
-
-		for (int i = 0; i < lines.size(); i++) {
-			int offset = i * 6;
-			long s0 = uint(MRG1999a.seeds[offset + 0]);
-			long s1 = uint(MRG1999a.seeds[offset + 1]);
-			long s2 = uint(MRG1999a.seeds[offset + 2]);
-			long s3 = uint(MRG1999a.seeds[offset + 3]);
-			long s4 = uint(MRG1999a.seeds[offset + 4]);
-			long s5 = uint(MRG1999a.seeds[offset + 5]);
-			String fmtLine = String.format("%d,%d,%d,%d,%d,%d", s0, s1, s2, s3, s4, s5);
-			assertTrue(lines.get(i).equals(fmtLine));
-		}
-	}
-
-	@Test
-	public void testAllSeedsTable() {
-		MRG1999a tmp = new MRG1999a();
-		int numStreams = MRG1999a.seeds.length / 6;
-		for (int i = 0; i < numStreams; i++) {
-			tmp.setSeedStream(i);
-		}
-	}
-
 	@Test
 	public void testKnownStreams() {
+		long[] seeds1 = { 0, 0, 1, 0, 0, 1 };
+
+		String[] known1 = {
+		"0, 0, 1, 0, 0, 1",
+		"949770784, 3580155704, 1230515664, 1610723613, 1022607788, 2093834863",
+		"3106427820, 3199155377, 4290900039, 3167429889, 3572939265, 698814233",
+		"693938118, 3153461912, 1636264737, 2581649800, 1834943086, 290967548",
+		"3188270128, 1934119675, 826363896, 4070445105, 1933248566, 3962062826",
+		"3757485922, 572568472, 2395114552, 3590438463, 538674679, 2165238291",
+		"4075809725, 1035961073, 56103715, 329763193, 1230302420, 3869031993",
+		"687667041, 1179017059, 5861898, 3354556565, 1742222303, 2941424961",
+		"2481284279, 4288164505, 1177260757, 567967482, 784865788, 3134382704",
+		"1515873698, 4089072055, 163684167, 1094056604, 3798743924, 3295131466",
+		"920035025, 408996081, 2433373148, 673478093, 1620020757, 2269902114"
+		};
+		String test1 = String.format("%d, %d, %d, %d, %d, %d", seeds1[0], seeds1[1], seeds1[2], seeds1[3], seeds1[4], seeds1[5]);
+		assertTrue(test1.equals(known1[0]));
+		for (int i = 1; i < known1.length; i++) {
+			MRG1999a.advanceStream(seeds1);
+			test1 = String.format("%d, %d, %d, %d, %d, %d", seeds1[0], seeds1[1], seeds1[2], seeds1[3], seeds1[4], seeds1[5]);
+			assertTrue(test1.equals(known1[i]));
+		}
+
+		String[] known2 = {
+		"12345, 12345, 12345, 12345, 12345, 12345",
+		"3692455944, 1366884236, 2968912127, 335948734, 4161675175, 475798818",
+		"1015873554, 1310354410, 2249465273, 994084013, 2912484720, 3876682925",
+		"2338701263, 1119171942, 2570676563, 317077452, 3194180850, 618832124",
+		"1597262096, 3906379055, 3312112953, 1016013135, 4099474108, 275305423",
+		"97147054, 3131372450, 829345164, 3691032523, 3006063034, 4259826321",
+		"796079799, 2105258207, 955365076, 2923159030, 4116632677, 3067683584",
+		"3281794178, 2616230133, 1457051261, 2762791137, 2480527362, 2282316169",
+		"3777646647, 1837464056, 4204654757, 664239048, 4190510072, 2959195122",
+		"4215590817, 3862461878, 1087200967, 1544910132, 936383720, 1611370123",
+		"1683636369, 362165168, 814316280, 869382050, 980203903, 2062101717"
+		};
+
+		long[] seeds2 = { 12345, 12345, 12345, 12345, 12345, 12345 };
+		String test2 = String.format("%d, %d, %d, %d, %d, %d", seeds2[0], seeds2[1], seeds2[2], seeds2[3], seeds2[4], seeds2[5]);
+		assertTrue(test2.equals(known2[0]));
+		for (int i = 1; i < known2.length; i++) {
+			MRG1999a.advanceStream(seeds2);
+			test2 = String.format("%d, %d, %d, %d, %d, %d", seeds2[0], seeds2[1], seeds2[2], seeds2[3], seeds2[4], seeds2[5]);
+			assertTrue(test2.equals(known2[i]));
+		}
+	}
+
+	@Test
+	public void testKnownSubstreams() {
+		long[] seeds1 = { 0, 0, 1, 0, 0, 1 };
+
+		String[] known1 = {
+		"0, 0, 1, 0, 0, 1",
+		"4127413238, 1871391091, 69195019, 1610795712, 3889917532, 3708466080",
+		"99651939, 2329303404, 2931758910, 878035866, 1926628839, 3196114006",
+		"230171794, 3210181465, 3536018417, 2865846472, 1249197731, 3331097822",
+		"1314332382, 1588259595, 2508077280, 3182508868, 3038399593, 2980208068",
+		"4010413858, 401645099, 2106045662, 384279948, 1923026173, 564222425",
+		"2307614257, 2703042396, 2823695054, 2384208331, 3412123799, 1365035178",
+		"520437440, 4210727080, 3707259965, 804702670, 2645232736, 4072194992",
+		"4049009082, 4183591379, 1453913233, 4095757548, 789475914, 2145357457",
+		"2828141255, 752526256, 2097509046, 2724043008, 84549310, 1412103825",
+		"2040707498, 3221815101, 1825015381, 3287341287, 2602801723, 4228411920"
+		};
+		String test1 = String.format("%d, %d, %d, %d, %d, %d", seeds1[0], seeds1[1], seeds1[2], seeds1[3], seeds1[4], seeds1[5]);
+		assertTrue(test1.equals(known1[0]));
+		for (int i = 1; i < known1.length; i++) {
+			MRG1999a.advanceSubstream(seeds1);
+			test1 = String.format("%d, %d, %d, %d, %d, %d", seeds1[0], seeds1[1], seeds1[2], seeds1[3], seeds1[4], seeds1[5]);
+			assertTrue(test1.equals(known1[i]));
+		}
+
+		String[] known2 = {
+		"12345, 12345, 12345, 12345, 12345, 12345",
+		"870504860, 2641697727, 884013853, 339352413, 2374306706, 3651603887",
+		"460387934, 1532391390, 877287553, 120103512, 2153115941, 335837774",
+		"3775110060, 3208296044, 1257177538, 378684317, 2867112178, 2201306083",
+		"1870130441, 490396226, 1081325149, 3685085721, 2348042618, 1094489500",
+		"934940479, 1950100692, 4183308048, 1834563867, 1457690863, 2911850358",
+		"36947768, 3877286680, 1490366786, 2869536097, 1753150659, 575546150",
+		"2591627614, 2744298060, 626085041, 644044487, 2091171169, 3539660345",
+		"2906523984, 140710505, 1144258739, 2076719571, 1742524362, 768984958",
+		"2483450279, 3767309577, 2486764677, 4056403678, 792164890, 998062628",
+		"1065618315, 827657608, 299165607, 461289958, 2074659312, 274796520"
+		};
+
+		long[] seeds2 = { 12345, 12345, 12345, 12345, 12345, 12345 };
+		String test2 = String.format("%d, %d, %d, %d, %d, %d", seeds2[0], seeds2[1], seeds2[2], seeds2[3], seeds2[4], seeds2[5]);
+		assertTrue(test2.equals(known2[0]));
+		for (int i = 1; i < known2.length; i++) {
+			MRG1999a.advanceSubstream(seeds2);
+			test2 = String.format("%d, %d, %d, %d, %d, %d", seeds2[0], seeds2[1], seeds2[2], seeds2[3], seeds2[4], seeds2[5]);
+			assertTrue(test2.equals(known2[i]));
+		}
+	}
+
+	@Test
+	public void testKnownStates() {
 		MRG1999a test1 = new MRG1999a(0, 0, 1, 0, 0, 1);
 		String[] known1 = {
 		"0, 0, 1, 0, 0, 1",
@@ -87,13 +134,6 @@ public class TestMRG1999a {
 		"2758233149, 939574583, 3228066636, 3280220074, 361718588, 951529882",
 		"939574583, 3228066636, 513534955, 361718588, 951529882, 856588367"
 		};
-		assertTrue(test1.toString().equals(known1[0]));
-		for (int i = 1; i < known1.length; i++) {
-			test1.getUniform(); // advance the state
-			assertTrue(test1.toString().equals(known1[i]));
-		}
-
-		test1.setSeedStream(0); // we know stream 0 is {0,0,1,0,0,1}
 		assertTrue(test1.toString().equals(known1[0]));
 		for (int i = 1; i < known1.length; i++) {
 			test1.getUniform(); // advance the state
@@ -118,38 +158,6 @@ public class TestMRG1999a {
 		for (int i = 1; i < known2.length; i++) {
 			test2.getUniform(); // advance the state
 			assertTrue(test2.toString().equals(known2[i]));
-		}
-	}
-
-	@Test
-	public void testAllStreams() {
-		InputStream s = MRG1999a.class.getResourceAsStream("MRGKnownStreams.txt");
-		BufferedReader buf =  new BufferedReader(new InputStreamReader(s));
-		ArrayList<String> lines = new ArrayList<String>(110011);
-
-		while (true) {
-			String line = null;
-			try {
-				line = buf.readLine();
-			}
-			catch (IOException e) {
-				throw new RuntimeException("Could not read all seeds for MRG1999a");
-			}
-
-			if (line == null) break;
-			lines.add(line);
-		}
-
-		MRG1999a tmp = new MRG1999a();
-		int numStreams = MRG1999a.seeds.length / 6;
-		for (int i = 0; i < numStreams; i++) {
-			tmp.setSeedStream(i);
-			int knownStreamIdx = i * 11;
-			assertTrue(tmp.toString().equals(lines.get(knownStreamIdx)));
-			for (int j = 1; j < 11; j++) {
-				tmp.getUniform(); // advance the state
-				assertTrue(tmp.toString().equals(lines.get(knownStreamIdx + j)));
-			}
 		}
 	}
 }
