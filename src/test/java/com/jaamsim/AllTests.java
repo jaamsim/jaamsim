@@ -38,6 +38,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.video.vp8.TestTransforms.class,
 	com.jaamsim.video.vp8.TestYUV.class,
 	com.jaamsim.input.TestKeyedVec3dCurve.class,
+	com.jaamsim.input.TestExpParser.class,
 	com.jaamsim.input.TestParser.class,
 	com.jaamsim.input.TestOutput.class,
 	com.jaamsim.probability.TestContinuousDistribution.class,
