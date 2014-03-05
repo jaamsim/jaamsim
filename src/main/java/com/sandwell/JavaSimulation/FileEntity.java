@@ -537,23 +537,9 @@ public class FileEntity {
 		return rootDirectory;
 	}
 
-	public static void setRootDirectoryFromFile( String fileName ) {
-		File tempRootDirectory = new File( fileName ).getParentFile();
-		if( tempRootDirectory == null ) {
-			return;
-		}
-		rootDirectory = tempRootDirectory.getAbsolutePath();
-	}
-
 	public static void setRootDirectory( File newDir ) {
 		rootDirectory = newDir.getAbsolutePath();
 		//        System.out.println( rootDirectory );
-	}
-
-	public void setRootDirectory() {
-		if( backingFileObject != null ) {
-			rootDirectory = backingFileObject.getParentFile().getAbsolutePath();
-		}
 	}
 
 	public static boolean fileExists( String fileName ) {
