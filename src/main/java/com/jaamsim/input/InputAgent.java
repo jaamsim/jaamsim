@@ -65,14 +65,14 @@ public class InputAgent {
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
 
-	private static String reportDirectory;
+	private static File reportDir;
 
 	static {
 		recordEditsFound = false;
 		sessionEdited = false;
 		batchRun = false;
 		configFile = null;
-		reportDirectory = "";
+		reportDir = null;
 		lastTimeForTrace = -1.0d;
 	}
 
@@ -83,24 +83,37 @@ public class InputAgent {
 		recordEditsFound = false;
 		sessionEdited = false;
 		configFile = null;
-		reportDirectory = "";
+		reportDir = null;
 		lastTimeForTrace = -1.0d;
 	}
 
 	public static String getReportDirectory() {
-		return reportDirectory;
+		if (reportDir != null)
+			return reportDir.getPath() + File.separator;
+
+		if (configFile != null)
+			return configFile.getParentFile().getPath() + File.separator;
+
+		return null;
+	}
+
+	public static String getReportFileName(String name) {
+		return getReportDirectory() + name;
 	}
 
 	public static void setReportDirectory(String dir) {
-		reportDirectory = Util.getAbsoluteFilePath(dir);
+		String reportDirectory = Util.getAbsoluteFilePath(dir);
 		if (!reportDirectory.substring(reportDirectory.length() - 1).equals("\\"))
 			reportDirectory = reportDirectory + "\\";
 
 		// Create the report directory if it does not already exist
 		// This code should probably be added to FileEntity someday to
 		// create necessary folders on demand.
-		File f = new File(reportDirectory);
-		f.mkdirs();
+		reportDir = new File(reportDirectory);
+	}
+
+	public static void prepareReportDirectory() {
+		if (reportDir != null) reportDir.mkdirs();
 	}
 
 	/**
@@ -864,7 +877,7 @@ public class InputAgent {
 	public static void printInputFileKeywords() {
 		// Create report file for the inputs
 		FileEntity	inputReportFile;
-		String inputReportFileName = InputAgent.getReportDirectory() + InputAgent.getRunName() + ".inp";
+		String inputReportFileName = InputAgent.getReportFileName(InputAgent.getRunName() + ".inp");
 
 		if( FileEntity.fileExists( inputReportFileName ) ) {
 			inputReportFile = new FileEntity( inputReportFileName, FileEntity.FILE_WRITE, false );

@@ -225,6 +225,7 @@ public class Simulation extends Entity {
 			}
 		}
 
+		InputAgent.prepareReportDirectory();
 		EventTracer.init();
 		root.clear();
 		root.setTraceListener(null);
