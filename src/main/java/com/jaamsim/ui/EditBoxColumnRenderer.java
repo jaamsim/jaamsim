@@ -22,14 +22,12 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import com.sandwell.JavaSimulation.CompatInput;
 import com.sandwell.JavaSimulation.Input;
 
 public class EditBoxColumnRenderer extends DefaultTableCellRenderer {
 
 private final Border border;
 private final Border focusBorder;
-private final Color compatKeyword;
 
 public EditBoxColumnRenderer() {
 	border = BorderFactory.createEmptyBorder(0, 10, 0, 0);
@@ -39,8 +37,6 @@ public EditBoxColumnRenderer() {
 	Border lineBorder = BorderFactory.createLineBorder(Color.BLUE);
 	Border insetBorder = BorderFactory.createEmptyBorder(0, 9, 0, 0);
 	focusBorder = BorderFactory.createCompoundBorder(lineBorder, insetBorder);
-
-	compatKeyword = new Color(255, 0, 0);
 }
 
 @Override
@@ -67,11 +63,6 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 		cell.setBackground(FrameBox.TABLE_SELECT);
 	else
 		cell.setBackground(null);
-
-	if (value instanceof CompatInput && column == 0)
-		cell.setForeground(compatKeyword);
-	else
-		cell.setForeground(null);
 
 	if (hasFocus)
 		this.setBorder(focusBorder);
