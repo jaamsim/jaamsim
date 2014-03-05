@@ -87,7 +87,7 @@ public class InputAgent {
 		lastTimeForTrace = -1.0d;
 	}
 
-	public static String getReportDirectory() {
+	private static String getReportDirectory() {
 		if (reportDir != null)
 			return reportDir.getPath() + File.separator;
 
