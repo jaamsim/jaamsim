@@ -876,17 +876,10 @@ public class InputAgent {
 	 */
 	public static void printInputFileKeywords() {
 		// Create report file for the inputs
-		FileEntity	inputReportFile;
 		String inputReportFileName = InputAgent.getReportFileName(InputAgent.getRunName() + ".inp");
 
-		if( FileEntity.fileExists( inputReportFileName ) ) {
-			inputReportFile = new FileEntity( inputReportFileName, FileEntity.FILE_WRITE, false );
-			inputReportFile.flush();
-		}
-		else
-		{
-			inputReportFile = new FileEntity( inputReportFileName, FileEntity.FILE_WRITE, false );
-		}
+		FileEntity inputReportFile = new FileEntity( inputReportFileName, FileEntity.FILE_WRITE, false );
+		inputReportFile.flush();
 
 		// Loop through the entity classes printing Define statements
 		for (ObjectType type : ObjectType.getAll()) {
