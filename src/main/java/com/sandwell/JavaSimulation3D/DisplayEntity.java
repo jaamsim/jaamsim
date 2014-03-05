@@ -512,6 +512,10 @@ public class DisplayEntity extends Entity {
 		Vec3d localPos = new Vec3d();
 		invReg.multAndTrans(pos, localPos);
 
+		DisplayEntity entity = this.getRelativeEntity();
+		if(entity != null && entity != this)
+			localPos.sub3(entity.position);
+
 		setPosition(localPos);
 		Locale loc = null;
 		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format(loc, "%.6f %.6f %.6f m", localPos.x, localPos.y, localPos.z ));
