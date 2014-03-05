@@ -16,6 +16,8 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputAgent;
+
 public class CompatInput extends Input<String> {
 	Entity target;
 	private boolean appendable;
@@ -31,7 +33,7 @@ public class CompatInput extends Input<String> {
 	public void parse(StringVector input)
 	throws InputErrorException {
 		if (isAppendable()) {
-			ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+			ArrayList<StringVector> split = InputAgent.splitStringVectorByBraces(input);
 			for (StringVector each : split)
 				this.innerParse(each);
 		}

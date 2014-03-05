@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -36,7 +37,7 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 	throws InputErrorException {
 
 		// Check if number of outer lists violate minCount or maxCount
-		ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
 		if (splitData.size() < minCount || splitData.size() > maxCount)
 			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, input.toString());
 

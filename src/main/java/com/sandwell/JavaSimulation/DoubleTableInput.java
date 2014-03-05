@@ -16,6 +16,8 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputAgent;
+
 public class DoubleTableInput extends Input<ArrayList<DoubleVector>> {
 	protected double minValue = Double.NEGATIVE_INFINITY;
 	protected double maxValue = Double.POSITIVE_INFINITY;
@@ -32,7 +34,7 @@ public class DoubleTableInput extends Input<ArrayList<DoubleVector>> {
 
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
-		ArrayList<StringVector> temp = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> temp = InputAgent.splitStringVectorByBraces(input);
 		ArrayList<DoubleVector> tab = new ArrayList<DoubleVector>(temp.size());
 		for (StringVector each : temp) {
 			DoubleVector vec = Input.parseDoubleVector(each, minValue, maxValue, unitString);

@@ -22,7 +22,6 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.StringVector;
-import com.sandwell.JavaSimulation.Util;
 
 /**
  * OutputListInput is an object for parsing inputs consisting of a list of OutputInputs using the syntax:\n
@@ -43,7 +42,7 @@ public class OutputListInput<T> extends ListInput<ArrayList<OutputHandle>> {
 
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
-		ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
 		ArrayList<OutputHandle> temp = new ArrayList<OutputHandle>(splitData.size());
 		for (int i = 0; i < splitData.size(); i++) {
 			try {

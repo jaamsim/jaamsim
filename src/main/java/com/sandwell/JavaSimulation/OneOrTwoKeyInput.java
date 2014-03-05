@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 /**
@@ -56,7 +57,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
-		ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> split = InputAgent.splitStringVectorByBraces(input);
 		for (StringVector each : split)
 			this.innerParse(each);
 	}

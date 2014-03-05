@@ -17,6 +17,8 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.input.InputAgent;
+
 /**
  * Class TwoKeyInput for storing objects of class V (e.g. Double or DoubleVector),
  * with two mandatory keys of class K1 and K2
@@ -48,7 +50,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
-		ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> split = InputAgent.splitStringVectorByBraces(input);
 		for (StringVector each : split)
 			this.innerParse(each);
 	}

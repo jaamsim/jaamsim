@@ -16,6 +16,8 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.InputAgent;
+
 public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<ArrayList<T>>> {
 	private Class<T> entClass;
 	private boolean unique; // flag to determine if inner lists must be unique or not
@@ -31,7 +33,7 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 	throws InputErrorException {
 
 		// Check if number of outer lists violate minCount or maxCount
-		ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
 		if (splitData.size() < minCount || splitData.size() > maxCount)
 			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, input.toString());
 

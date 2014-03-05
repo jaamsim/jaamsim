@@ -17,6 +17,8 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.input.InputAgent;
+
 /**
  * Class KeyListInput for storing a list of entities of class V, with an optional key of class K1
  */
@@ -36,7 +38,7 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
-		ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> split = InputAgent.splitStringVectorByBraces(input);
 		for (StringVector each : split)
 			this.innerParse(each);
 	}

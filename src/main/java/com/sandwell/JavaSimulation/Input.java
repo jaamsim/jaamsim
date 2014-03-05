@@ -387,7 +387,7 @@ public abstract class Input<T> {
 	throws InputErrorException {
 		ArrayList<Color4d> temp = new ArrayList<Color4d>(input.size());
 
-		ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
 		for (int i = 0; i < splitData.size(); i++) {
 			try {
 				Color4d element = Input.parseColour(splitData.get(i));
@@ -1002,7 +1002,7 @@ public abstract class Input<T> {
 	throws InputErrorException {
 		ArrayList<ArrayList<T>> temp = new ArrayList<ArrayList<T>>( input.size() );
 
-		ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
 		for (int i = 0; i < splitData.size(); i++) {
 			try {
 				ArrayList<T> element = Input.parseEntityList(splitData.get(i), aClass, unique);

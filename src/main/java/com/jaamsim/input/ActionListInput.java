@@ -21,7 +21,6 @@ import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.StringVector;
-import com.sandwell.JavaSimulation.Util;
 
 public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 
@@ -31,7 +30,7 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
-		ArrayList<StringVector> splitData = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
 		ArrayList<Action.Binding> bindings = new ArrayList<Action.Binding>(splitData.size());
 		for (int i = 0; i < splitData.size(); i++) {
 			try {

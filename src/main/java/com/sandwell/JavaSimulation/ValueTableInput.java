@@ -44,7 +44,7 @@ public class ValueTableInput<T extends Entity> extends Input<ValueTable<T>> {
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
-		ArrayList<StringVector> split = Util.splitStringVectorByBraces(input);
+		ArrayList<StringVector> split = InputAgent.splitStringVectorByBraces(input);
 		for (StringVector each : split)
 			this.innerParse(each);
 	}
