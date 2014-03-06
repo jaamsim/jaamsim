@@ -1098,6 +1098,21 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
 	}
 
+	public static void validateIndexedLists(IntegerVector keys, DoubleVector values, String keyName, String valueName)
+	throws InputErrorException {
+		// If no values set, no validation to be done
+		if (values == null || values.size() == 0 )
+			return;
+
+		// values are set but indexed list has not
+		if (keys == null || keys.size() == 0 )
+			throw new InputErrorException(INP_VAL_LISTSET, valueName, keyName);
+
+		// Both are set, but of differing size
+		if (keys.size() != values.size())
+			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
+	}
+
 	public static void validateIndexedLists(DoubleVector keys, ArrayList<Color4d> values, String keyName, String valueName)
 	throws InputErrorException {
 		// If no values set, no validation to be done
