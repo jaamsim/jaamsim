@@ -285,6 +285,15 @@ private TessOutput tesselateString(String s) {
 	GLU.gluTessCallback(tess, GLU.GLU_TESS_COMBINE, tessAdapt);
 	GLU.gluTessCallback(tess, GLU.GLU_TESS_ERROR, tessAdapt);
 
+	int winding = pIt.getWindingRule();
+
+	if (winding == PathIterator.WIND_EVEN_ODD)
+		GLU.gluTessProperty(tess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_ODD);
+	else if (winding == PathIterator.WIND_NON_ZERO)
+		GLU.gluTessProperty(tess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_NONZERO);
+	else
+		assert(false); // PathIterator should only return these two winding rules
+
 	GLU.gluBeginPolygon(tess);
 	GLU.gluTessNormal(tess, 0, 0, 1);
 	double[] first = null;
