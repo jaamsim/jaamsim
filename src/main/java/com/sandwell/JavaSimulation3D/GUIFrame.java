@@ -251,7 +251,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Clear the simulation
 		Simulation.clear();
-
 		FrameBox.clear();
 		EntityPallet.clear();
 		RenderManager.clear();

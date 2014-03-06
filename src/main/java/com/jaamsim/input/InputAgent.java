@@ -84,6 +84,7 @@ public class InputAgent {
 		configFile = null;
 		reportDir = null;
 		lastTimeForTrace = -1.0d;
+		setReportDirectory(null);
 	}
 
 	private static String getReportDirectory() {
@@ -100,45 +101,8 @@ public class InputAgent {
 		return getReportDirectory() + name;
 	}
 
-	private static String getAbsoluteFilePath( String filePath ) {
-		try {
-			java.io.File absFile = new java.io.File( filePath );
-			if( absFile.isAbsolute() ) {
-				String absPath = absFile.getCanonicalPath();
-
-				if(absFile.isFile()) {
-					return "file:/" + absPath;
-				}
-
-				// Not a file, so this must be a directory?
-				return absPath + System.getProperty( "file.separator" );
-			}
-
-			// For absolute files inside the resource folder of the jar file
-			if (Simulation.class.getResource(filePath) != null) {
-				return Simulation.class.getResource(filePath).toString();
-			}
-
-			String absPath = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + filePath;
-			if(FileEntity.fileExists(absPath)) {
-				absPath = "file:/" + absPath;
-			}
-			return absPath;
-		}
-		catch( Exception e ) {
-			throw new ErrorException( e );
-		}
-	}
-
-	public static void setReportDirectory(String dir) {
-		String reportDirectory = getAbsoluteFilePath(dir);
-		if (!reportDirectory.substring(reportDirectory.length() - 1).equals("\\"))
-			reportDirectory = reportDirectory + "\\";
-
-		// Create the report directory if it does not already exist
-		// This code should probably be added to FileEntity someday to
-		// create necessary folders on demand.
-		reportDir = new File(reportDirectory);
+	public static void setReportDirectory(File dir) {
+		reportDir = dir;
 	}
 
 	public static void prepareReportDirectory() {
