@@ -32,7 +32,7 @@ import com.sandwell.JavaSimulation.Simulation;
 public class AboutBox extends FrameBox implements ActionListener {
 	private static AboutBox instance;
 
-	public static final String version = "2014-09";
+	public static final String version = "2014-10";
 	public static final String copyright = "Copyright (C) 2014 Ausenco Engineering Canada Inc.";
 
 	public AboutBox() {
