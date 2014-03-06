@@ -314,12 +314,6 @@ public class InputAgent {
 		GUIFrame.instance().setProgressText(shortName);
 		URI resolved = getFileURI(path, file, root);
 
-		String resolvedPath = resolved.getSchemeSpecificPart();
-		String currentDir = resolvedPath.substring(0, resolvedPath.lastIndexOf('/') + 1);
-
-		String oldRoot = FileEntity.getRootDirectory();
-		FileEntity.setRootDirectory(currentDir);
-
 		URL url = null;
 		try {
 			url = resolved.normalize().toURL();
@@ -405,8 +399,6 @@ public class InputAgent {
 			// Make best effort to ensure it closes
 			try { buf.close(); } catch (IOException e2) {}
 		}
-
-		FileEntity.setRootDirectory(oldRoot);
 
 		return true;
 	}
@@ -615,8 +607,6 @@ public class InputAgent {
 
 		URI dirURI = file.getParentFile().toURI();
 		InputAgent.readStream("", dirURI, file.getName());
-
-		FileEntity.setRootDirectory(dirURI.getPath());
 
 		GUIFrame.instance().setProgressText(null);
 		GUIFrame.instance().setProgress(0);
@@ -846,7 +836,6 @@ public class InputAgent {
 
 		// Set root directory
 		File temp = new File(fileName);
-		FileEntity.setRootDirectory( temp.getParentFile() );
 
 		// Save the configuration file
 		InputAgent.printNewConfigurationFileWithName( fileName );

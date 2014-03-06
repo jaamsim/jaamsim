@@ -29,9 +29,6 @@ import java.text.DecimalFormat;
  * Class encapsulating file input/output methods and file access.
  */
 public class FileEntity {
-
-	private static String rootDirectory;
-
 	public static int ALIGNMENT_LEFT = 0;
 	public static int ALIGNMENT_RIGHT = 1;
 
@@ -90,13 +87,6 @@ public class FileEntity {
 
 		// Check if absolute file name was passed, otherwise use root directory
 		backingFileObject = new File( fileName);
-		if( backingFileObject.isAbsolute() ) {
-			// comment out for efficiency, already set
-			//backingFileObject = new File( fileName );
-		}
-		else {
-			backingFileObject = new File( rootDirectory, fileName );
-		}
 
 		init(io_status, append);
 	}
@@ -521,54 +511,6 @@ public class FileEntity {
 			catch( IOException e ) {
 				throw new ErrorException( "Unable to reset FileEntity to start: " + e );
 			}
-		}
-	}
-
-	public static void setRootDirectory( String newDir ) {
-		//rootDirectory = new File( newDir );
-		rootDirectory = newDir;
-	}
-
-	/**
-	 * @return Canonical path to the root directory, where root directory is the
-	 *         directory where the *.cfg file is located.
-	 */
-	public static String getRootDirectory() {
-		return rootDirectory;
-	}
-
-	public static void setRootDirectory( File newDir ) {
-		rootDirectory = newDir.getAbsolutePath();
-		//        System.out.println( rootDirectory );
-	}
-
-	public static boolean fileExists( String fileName ) {
-		if( fileName.length() == 0 ) {
-			return false;
-		}
-
-		// Check if the file exists inside the jar file
-		try {
-			// If the file name begins with "file:/", return true
-			if( fileName.contains( "file:/" ) ) {
-				return true;
-			}
-
-			// an absolute reference to a file inside the resources
-			if (Simulation.class.getResource(fileName) != null) {
-				return true;
-			}
-		}
-		catch( Exception e ) {
-			throw new ErrorException( "Could not find " + fileName );
-		}
-
-		File aFile = new File( fileName );
-		if( new File( rootDirectory, fileName ).exists() || (aFile.isAbsolute() && aFile.isFile()) ) {
-			return true;
-		}
-		else {
-			return false;
 		}
 	}
 

@@ -83,7 +83,6 @@ import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
-import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Tester;
 
@@ -1374,8 +1373,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			// Begin initializing the rendering system
 			RenderManager.initialize(SAFE_GRAPHICS);
 		}
-
-		FileEntity.setRootDirectory(System.getProperty("user.dir"));
 
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
