@@ -26,10 +26,9 @@ import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
+import com.sandwell.JavaSimulation.DirInput;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Input;
-import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
@@ -43,10 +42,10 @@ public class ColladaEntityFactory extends Entity {
 	@Keyword(description = "A file to scan for collada or jsm files to use to create display entities. " +
 	                       "Note: This is currently an experimental feature!",
 	         example = "Factory CreateFromDirectory { './models' }")
-	private final StringInput directoryInput;
+	private final DirInput directoryInput;
 
 	{
-		directoryInput = new StringInput("CreateFromDirectory", "Entity Creation", null);
+		directoryInput = new DirInput("CreateFromDirectory", "Entity Creation", null);
 		this.addInput(directoryInput, true);
 	}
 
@@ -60,10 +59,9 @@ public class ColladaEntityFactory extends Entity {
 	}
 
 	private void updateForDirectoryInput() {
-
-		String dir = FileEntity.getRootDirectory() + System.getProperty( "file.separator" ) + directoryInput.getValue();
-
-		File dirFile = new File(dir);
+		File dirFile = directoryInput.getDir();
+		if (dirFile == null)
+			return;
 
 		File[] files = dirFile.listFiles();
 
