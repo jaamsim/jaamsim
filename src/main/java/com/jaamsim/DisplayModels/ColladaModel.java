@@ -61,19 +61,19 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
 	private static HashMap<URI, MeshProtoKey> _cachedKeys = new HashMap<URI, MeshProtoKey>();
 
-	private static final String[] validFileExtentions;
+	private static final String[] validFileExtensions;
 	static {
-		validFileExtentions = new String[5];
-		validFileExtentions[0] = "DAE";
-		validFileExtentions[1] = "ZIP";
-		validFileExtentions[2] = "JSM";
-		validFileExtentions[3] = "JSB";
-		validFileExtentions[4] = "OBJ";
+		validFileExtensions = new String[5];
+		validFileExtensions[0] = "DAE";
+		validFileExtensions[1] = "ZIP";
+		validFileExtensions[2] = "JSM";
+		validFileExtensions[3] = "JSB";
+		validFileExtensions[4] = "OBJ";
 	}
 
 	{
 		colladaFile = new FileInput( "ColladaFile", "DisplayModel", null );
-		colladaFile.setValidExtensions(validFileExtentions);
+		colladaFile.setValidExtensions(validFileExtensions);
 		this.addInput( colladaFile, true);
 
 		actions = new ActionListInput("Actions", "DisplayModel", new ArrayList<Action.Binding>());

@@ -49,19 +49,19 @@ public class ImageModel extends DisplayModel {
 	         example = "WorldMap CompressedTexture { TRUE }")
 	private final BooleanInput compressedTexture;
 
-	private static final String[] validFileExtentions;
+	private static final String[] validFileExtensions;
 	static {
-		validFileExtentions = new String[5];
-		validFileExtentions[0] = "BMP";
-		validFileExtentions[1] = "JPG";
-		validFileExtentions[2] = "PNG";
-		validFileExtentions[3] = "PCX";
-		validFileExtentions[4] = "GIF";
+		validFileExtensions = new String[5];
+		validFileExtensions[0] = "BMP";
+		validFileExtensions[1] = "JPG";
+		validFileExtensions[2] = "PNG";
+		validFileExtensions[3] = "PCX";
+		validFileExtensions[4] = "GIF";
 	}
 
 	{
 		imageFile = new FileInput( "ImageFile", "DisplayModel", null );
-		imageFile.setValidExtensions(validFileExtentions);
+		imageFile.setValidExtensions(validFileExtensions);
 		this.addInput( imageFile, true);
 
 		transparent = new BooleanInput("Transparent", "DisplayModel", false);
