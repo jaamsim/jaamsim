@@ -745,7 +745,8 @@ public class InputAgent {
 		LogBox.logLine("Save As...");
 		FileDialog chooser = new FileDialog(gui, "Save Configuration File As", FileDialog.SAVE);
 		chooser.setFilenameFilter(new ConfigFileFilter());
-		chooser.setFile(InputAgent.getConfigFile().getPath());
+		if (InputAgent.getConfigFile() != null)
+			chooser.setFile(InputAgent.getConfigFile().getPath());
 
 		 // Display the dialog and wait for selection
 		chooser.setVisible(true);
