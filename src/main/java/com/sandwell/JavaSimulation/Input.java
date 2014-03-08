@@ -130,6 +130,15 @@ public abstract class Input<T> {
 		return tmp.toString();
 	}
 
+	/**
+	 * Returns the input String used to designate no value or null.
+	 *
+	 * @return - the NO_VALUE input String.
+	 */
+	public static String getNoValue() {
+		return NO_VALUE;
+	}
+
 	public T getValue() {
 		return value;
 	}

@@ -1092,17 +1092,41 @@ public class InputAgent {
 		InputAgent.logMessage(inpErrPrefix, msg);
 	}
 
+	/**
+	 * Prepares the keyword and input value for processing.
+	 *
+	 * @param ent - the entity whose keyword and value have been entered.
+	 * @param in - the input object for the keyword.
+	 * @param value - the input value String for the keyword.
+	 */
 	public static void processEntity_Keyword_Value(Entity ent, Input<?> in, String value){
 		processEntity_Keyword_Value(ent, in.getKeyword(), value);
 	}
 
+	/**
+	 * Prepares the keyword and input value for processing.
+	 *
+	 * @param ent - the entity whose keyword and value has been entered.
+	 * @param keyword - the keyword.
+	 * @param value - the input value String for the keyword.
+	 */
 	public static void processEntity_Keyword_Value(Entity ent, String keyword, String value){
+
+		// Keyword
 		ArrayList<String> tokens = new ArrayList<String>();
 		tokens.add(keyword);
+
+		// Opening brace
 		tokens.add("{");
-		Parser.tokenize(tokens, value, true);
+
+		// Value
+		if (!value.equals(Input.getNoValue()))
+			Parser.tokenize(tokens, value, true);
+
+		// Closing brace
 		tokens.add("}");
 
+		// Parse the keyword inputs
 		KeywordIndex kw = new KeywordIndex(tokens, 0, tokens.size() - 1, null);
 		InputAgent.processKeyword(ent, kw);
 	}
