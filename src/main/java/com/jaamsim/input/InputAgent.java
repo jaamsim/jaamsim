@@ -1093,16 +1093,8 @@ public class InputAgent {
 	}
 
 	public static void processEntity_Keyword_Value(Entity ent, Input<?> in, String value){
-		ArrayList<String> tokens = new ArrayList<String>();
-		tokens.add(in.getKeyword());
-		tokens.add("{");
-		Parser.tokenize(tokens, value, true);
-		tokens.add("}");
-
-		KeywordIndex kw = new KeywordIndex(tokens, 0, tokens.size() - 1, null);
-		InputAgent.processKeyword(ent, kw);
+		processEntity_Keyword_Value(ent, in.getKeyword(), value);
 	}
-
 
 	public static void processEntity_Keyword_Value(Entity ent, String keyword, String value){
 		ArrayList<String> tokens = new ArrayList<String>();
