@@ -98,8 +98,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 	private JMenu fileMenu;
 	private JMenu viewMenu;
+	private JMenu windowMenu;
 	private JMenu windowList;
 	private JMenu optionMenu;
+	private JMenu helpMenu;
 	private JCheckBoxMenuItem showPosition;
 	private JCheckBoxMenuItem alwaysTop;
 	//private JCheckBoxMenuItem tooltip;
@@ -271,16 +273,41 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		InputAgent.readResource("inputs/autoload.cfg");
 	}
 
+	/**
+	 * Sets up the Control Panel's menu bar.
+	 */
 	public void initializeMenus() {
 
-		// Initialize main menus
+		// Set up the individual menus
+		this.initializeFileMenu();
+		this.initializeViewMenu();
+		this.initializeWindowMenu();
+		this.initializeOptionsMenu();
+		this.initializeHelpMenu();
+
+		// Add the individual menu to the main menu
 		JMenuBar mainMenuBar = new JMenuBar();
+		mainMenuBar.add( fileMenu );
+		mainMenuBar.add( viewMenu );
+		mainMenuBar.add( windowMenu );
+		mainMenuBar.add( optionMenu );
+		mainMenuBar.add( helpMenu );
+
+		// Add main menu to the window
+		setJMenuBar( mainMenuBar );
+	}
+
+	/**
+	 * Sets up the File menu in the Control Panel's menu bar.
+	 */
+	private void initializeFileMenu() {
 
 		// File menu creation
 		fileMenu = new JMenu( "File" );
 		fileMenu.setMnemonic( 'F' );
 		fileMenu.setEnabled( false );
 
+		// 1) "New" menu item
 		JMenuItem newMenuItem = new JMenuItem( "New" );
 		newMenuItem.setMnemonic( 'N' );
 		newMenuItem.addActionListener( new ActionListener() {
@@ -311,6 +338,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		fileMenu.add( newMenuItem );
 
+		// 2) "Open" menu item
 		JMenuItem configMenuItem = new JMenuItem( "Open..." );
 		configMenuItem.setMnemonic( 'O' );
 		configMenuItem.addActionListener( new ActionListener() {
@@ -338,6 +366,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		fileMenu.add( configMenuItem );
 
+		// 3) "Save" menu item
 		saveConfigurationMenuItem = new JMenuItem( "Save" );
 		saveConfigurationMenuItem.setMnemonic( 'S' );
 		saveConfigurationMenuItem.addActionListener( new ActionListener() {
@@ -349,6 +378,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		fileMenu.add( saveConfigurationMenuItem );
 
+		// 4) "Save As..." menu item
 		JMenuItem saveConfigurationAsMenuItem = new JMenuItem( "Save As..." );
 		saveConfigurationAsMenuItem.setMnemonic( 'V' );
 		saveConfigurationAsMenuItem.addActionListener( new ActionListener() {
@@ -372,18 +402,23 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		fileMenu.add( printInputItem );
 
+		// 5) "Exit" menu item
 		JMenuItem exitMenuItem = new JMenuItem( "Exit" );
 		exitMenuItem.setMnemonic( 'x' );
 		exitMenuItem.addActionListener(new CloseListener());
 		fileMenu.add( exitMenuItem );
+	}
 
-		mainMenuBar.add( fileMenu );
-		// End File menu creation
+	/**
+	 * Sets up the View menu in the Control Panel's menu bar.
+	 */
+	private void initializeViewMenu() {
 
 		// View menu creation
 		viewMenu = new JMenu( "Tools" );
 		viewMenu.setMnemonic( 'T' );
 
+		// 1) "Show Basic Tools" menu item
 		JMenuItem showBasicToolsMenuItem = new JMenuItem( "Show Basic Tools" );
 		showBasicToolsMenuItem.setMnemonic( 'B' );
 		showBasicToolsMenuItem.addActionListener( new ActionListener() {
@@ -399,6 +434,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		viewMenu.add( showBasicToolsMenuItem );
 
+		// 2) "Close All Tools" menu item
 		JMenuItem closeAllToolsMenuItem = new JMenuItem( "Close All Tools" );
 		closeAllToolsMenuItem.setMnemonic( 'C' );
 		closeAllToolsMenuItem.addActionListener( new ActionListener() {
@@ -410,10 +446,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				EditBox.getInstance().setVisible(false);
 				OutputBox.getInstance().setVisible(false);
 				PropertyBox.getInstance().setVisible(false);
+				LogBox.getInstance().setVisible(false);
 			}
 		} );
 		viewMenu.add( closeAllToolsMenuItem );
 
+		// 3) "Model Builder" menu item
 		JMenuItem objectPalletMenuItem = new JMenuItem( "Model Builder" );
 		objectPalletMenuItem.setMnemonic( 'O' );
 		objectPalletMenuItem.addActionListener( new ActionListener() {
@@ -425,6 +463,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		viewMenu.add( objectPalletMenuItem );
 
+		// 4) "Object Selector" menu item
 		JMenuItem objectSelectorMenuItem = new JMenuItem( "Object Selector" );
 		objectSelectorMenuItem.setMnemonic( 'S' );
 		objectSelectorMenuItem.addActionListener( new ActionListener() {
@@ -436,6 +475,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		viewMenu.add( objectSelectorMenuItem );
 
+		// 5) "Input Editor" menu item
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
 		inputEditorMenuItem.setMnemonic( 'I' );
 		inputEditorMenuItem.addActionListener( new ActionListener() {
@@ -449,6 +489,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		viewMenu.add( inputEditorMenuItem );
 
+		// 6) "Output Viewer" menu item
 		JMenuItem outputMenuItem = new JMenuItem( "Output Viewer" );
 		outputMenuItem.setMnemonic( 'U' );
 		outputMenuItem.addActionListener( new ActionListener() {
@@ -462,6 +503,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		viewMenu.add( outputMenuItem );
 
+		// 7) "Property Viewer" menu item
 		JMenuItem propertiesMenuItem = new JMenuItem( "Property Viewer" );
 		propertiesMenuItem.setMnemonic( 'P' );
 		propertiesMenuItem.addActionListener( new ActionListener() {
@@ -475,6 +517,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		viewMenu.add( propertiesMenuItem );
 
+		// 8) "Log Viewer" menu item
 		JMenuItem logMenuItem = new JMenuItem( "Log Viewer" );
 		logMenuItem.setMnemonic( 'L' );
 		logMenuItem.addActionListener( new ActionListener() {
@@ -485,30 +528,44 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 		viewMenu.add( logMenuItem );
+	}
 
-		mainMenuBar.add( viewMenu );
-		// End File menu creation
+	/**
+	 * Sets up the Window menu in the Control Panel's menu bar.
+	 */
+	private void initializeWindowMenu() {
 
 		// Window menu creation
-		JMenu windowMenu = new NewRenderWindowMenu("Views");
+		windowMenu = new NewRenderWindowMenu("Views");
 		windowMenu.setMnemonic( 'V' );
 
 		// Initialize list of windows
 		windowList = new WindowMenu("Select Window");
 		windowList.setMnemonic( 'S' );
 		//windowMenu.add( windowList );
+	}
 
-		mainMenuBar.add( windowMenu );
-		// End window menu creation
+	/**
+	 * Sets up the Options menu in the Control Panel's menu bar.
+	 */
+	private void initializeOptionsMenu() {
 
 		optionMenu = new JMenu( "Options" );
 		optionMenu.setMnemonic( 'O' );
-		mainMenuBar.add( optionMenu );
 
+		// 1) "Show Position" check box
 		showPosition = new JCheckBoxMenuItem( "Show Position", true );
 		showPosition.setMnemonic( 'P' );
 		optionMenu.add( showPosition );
+		showPosition.addActionListener( new ActionListener() {
 
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				setShowPositionXY();
+			}
+		} );
+
+		// 2) "Always on top" check box
 		alwaysTop = new JCheckBoxMenuItem( "Always on top", false );
 		alwaysTop.setMnemonic( 'A' );
 		optionMenu.add( alwaysTop );
@@ -534,6 +591,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );*/
 
+		// 3) "Graphics Debug Info" check box
 		graphicsDebug = new JCheckBoxMenuItem( "Graphics Debug Info", false );
 		graphicsDebug.setMnemonic( 'G' );
 		optionMenu.add( graphicsDebug );
@@ -543,19 +601,18 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				RenderManager.setDebugInfo(graphicsDebug.getState());
 			}
 		} );
+	}
 
-		showPosition.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent e ) {
-				setShowPositionXY();
-			}
-		} );
+	/**
+	 * Sets up the Help menu in the Control Panel's menu bar.
+	 */
+	private void initializeHelpMenu() {
 
 		// Help menu creation
-		JMenu helpMenu = new JMenu( "Help" );
+		helpMenu = new JMenu( "Help" );
 		helpMenu.setMnemonic( 'H' );
 
+		// 1) "About" menu item
 		JMenuItem aboutMenu = new JMenuItem( "About" );
 		aboutMenu.setMnemonic( 'A' );
 		aboutMenu.addActionListener( new ActionListener() {
@@ -566,12 +623,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 		helpMenu.add( aboutMenu );
-
-		mainMenuBar.add( helpMenu );
-		// End help menu creation
-
-		// Add main menu to the window
-		setJMenuBar( mainMenuBar );
 	}
 
 	/**
