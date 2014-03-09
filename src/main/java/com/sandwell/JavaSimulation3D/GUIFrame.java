@@ -778,9 +778,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		JLabel viewLabel = new JLabel( "   View Control:   " );
 		mainToolBar.add( viewLabel );
 
-		// add a button to show isometric view in windows
-		toolButtonIsometric = new JButton( "Isometric" );
-		toolButtonIsometric.setToolTipText( "Set Isometric View" );
+		// 6a) Perspective button
+		toolButtonIsometric = new JButton( "Perspective" );
+		toolButtonIsometric.setToolTipText( "Set Perspective View" );
 		toolButtonIsometric.addActionListener( new ActionListener() {
 
 			@Override
@@ -791,7 +791,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		mainToolBar.add( toolButtonIsometric );
 
-		// add a button to show xy-plane view in windows
+		// 6b) XY-Plane button
 		toolButtonXYPlane = new JButton( "XY-Plane" );
 		toolButtonXYPlane.setToolTipText( "Set XY-Plane View" );
 		toolButtonXYPlane.addActionListener( new ActionListener() {
