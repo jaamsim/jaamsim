@@ -21,10 +21,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-public class LogBox extends FrameBox {
+import com.sandwell.JavaSimulation3D.GUIFrame;
 
-	private static final int LOGBOX_WIDTH = 800;
-	private static final int LOGBOX_HEIGHT = 600;
+public class LogBox extends FrameBox {
 
 	private static LogBox myInstance;
 
@@ -46,7 +45,8 @@ public class LogBox extends FrameBox {
 
 		getContentPane().add( scrollPane );
 
-		setSize(LOGBOX_WIDTH, LOGBOX_HEIGHT);
+		setLocation(GUIFrame.COL3_START, GUIFrame.LOWER_START);
+		setSize(GUIFrame.COL3_WIDTH, GUIFrame.LOWER_HEIGHT);
 	}
 
 	/**
