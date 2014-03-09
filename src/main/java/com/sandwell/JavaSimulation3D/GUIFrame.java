@@ -634,8 +634,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		return (int)bounds.getWidth();
 	}
 
+	/**
+	 * Sets up the Control Panel's main tool bar.
+	 */
 	public void initializeMainToolBars() {
-
 
 		// Insets used in setting the toolbar components
 		Insets noMargin = new Insets( 0, 0, 0, 0 );
@@ -646,7 +648,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.setMargin( smallMargin );
 		mainToolBar.setFloatable(false);
 
-		// Create Run Label and run control buttons
+		// 1) Run/Pause button
 		controlStartResume = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/run.png")));
 		controlStartResume.setSelectedIcon(
 				new ImageIcon(GUIFrame.class.getResource("/resources/images/pause.png")));
@@ -667,6 +669,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 
+		// 2) Stop button
 		controlStop = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/stop.png")));
 		controlStop.setToolTipText( "Stop" );
 		controlStop.setMargin( noMargin );
@@ -705,6 +708,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( controlStop );
 
+		// 3) Pause Time box
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		JLabel pauseAt = new JLabel( "Pause at:" );
 		mainToolBar.add(pauseAt);
@@ -742,6 +746,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		pauseTime.setText(infinitySign);
 		pauseTime.setHorizontalAlignment(JTextField.CENTER);
 
+		// 4) Real Time button
+		mainToolBar.addSeparator(separatorDim);
+		controlRealTime = new JToggleButton( "Real Time" );
+		controlRealTime.setToolTipText( "Toggle Real Time" );
+		controlRealTime.setMargin( smallMargin );
+		controlRealTime.addActionListener(new RealTimeActionListener());
+
+		mainToolBar.add( controlRealTime );
+		mainToolBar.add(Box.createRigidArea(gapDim));
+
+		// 5) Speed Up spinner
 		SpinnerNumberModel numberModel =
 				new SpinnerModel(Simulation.DEFAULT_REAL_TIME_FACTOR,
 				   Simulation.MIN_REAL_TIME_FACTOR, Simulation.MAX_REAL_TIME_FACTOR, 1);
@@ -756,20 +771,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		spinner.setMaximumSize(dim);
 
 		spinner.addChangeListener(new SpeedFactorListener());
-
-		mainToolBar.addSeparator(separatorDim);
-		controlRealTime = new JToggleButton( "Real Time" );
-		controlRealTime.setToolTipText( "Toggle Real Time" );
-		controlRealTime.setMargin( smallMargin );
-		controlRealTime.addActionListener(new RealTimeActionListener());
-
-		mainToolBar.add( controlRealTime );
-		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( spinner );
-		mainToolBar.addSeparator(separatorDim);
-		// End creation of real-time label and menu
 
-		// Create view control label and controls
+		// 6) View Control buttons
+		mainToolBar.addSeparator(separatorDim);
 		JLabel viewLabel = new JLabel( "   View Control:   " );
 		mainToolBar.add( viewLabel );
 
@@ -799,9 +804,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		mainToolBar.add( toolButtonXYPlane );
 
+		// 7) Undo/Redo buttons (not used at present)
 		mainToolBar.addSeparator(separatorDim);
-
-		// add a button to undo the last step ( viewer and window )
 		toolButtonUndo = new JButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/previous.png")));
 		toolButtonUndo.setToolTipText( "Previous view" );
 		toolButtonUndo.setEnabled( false );
@@ -951,8 +955,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 	}
 
+	/**
+	 * Sets up the Control Panel's status bar.
+	 */
 	public void initializeStatusBar() {
-
 
 		// Create the status bar
 		JPanel statusBar = new JPanel();
@@ -1009,6 +1015,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private long lastSystemTime = System.currentTimeMillis();
 	private double lastSimTimeHours = 0.0d;
 
+	/**
+	 * Sets the values for the simulation time, run progress, speedup factor,
+	 * and remaining run time in the Control Panel's status bar.
+	 *
+	 * @param simTime - the present simulation time in seconds.
+	 */
 	public void setClock(double simTime) {
 		double clockContents = simTime / 3600.0d;
 		clockDisplay.setText(String.format("%.2f", clockContents));
@@ -1035,6 +1047,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 	}
 
+	/**
+	 * Displays the given value on the Control Panel's progress bar.
+	 *
+	 * @param val - the percent of the run that has completed.
+	 */
 	public void setProgress( int val ) {
 		if (lastValue == val)
 			return;
@@ -1049,18 +1066,36 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 	}
 
+	/**
+	 * Write the given text on the Control Panel's progress bar.
+	 *
+	 * @param txt - the text to write.
+	 */
 	public void setProgressText( String txt ) {
 		progressBar.setString( txt );
 	}
 
+	/**
+	 * Write the given value on the Control Panel's speed up factor box.
+	 *
+	 * @param val - the speed up factor to write.
+	 */
 	public void setSpeedUp( double val ) {
 		speedUpDisplay.setText(String.format("%,.0f", val));
 	}
 
+	/**
+	 * Write the given value on the Control Panel's remaining run time box.
+	 *
+	 * @param val - the remaining run time in minutes.
+	 */
 	public void setRemaining( double val ) {
 		remainingDisplay.setText(String.format("%.1f", val));
 	}
 
+	/**
+	 * Starts or resumes the simulation run.
+	 */
 	private void startSimulation() {
 
 		// pause at a time
@@ -1125,6 +1160,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
 	}
 
+	/**
+	 * Pauses the simulation run.
+	 */
 	private void pauseSimulation() {
 		if( getSimState() == SIM_STATE_RUNNING )
 			Simulation.pause();
@@ -1132,6 +1170,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			throw new ErrorException( "Invalid Simulation State for pause" );
 	}
 
+	/**
+	 * Stops the simulation run.
+	 */
 	private void stopSimulation() {
 		if( getSimState() == SIM_STATE_RUNNING ||
 		    getSimState() == SIM_STATE_PAUSED )
@@ -1159,6 +1200,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		return simState;
 	}
 
+	/**
+	 * Sets the state of the simulation run to the given state value.
+	 *
+	 * @param state - an index that designates the state of the simulation run.
+	 */
 	public void updateForSimulationState(int state) {
 		simState = state;
 
@@ -1302,6 +1348,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		saveConfigurationMenuItem.setEnabled(bool);
 	}
 
+	/**
+	 * Sets variables used to determine the position and size of various
+	 * windows based on the size of the computer display being used.
+	 */
 	private static void calcWindowDefaults() {
 		Dimension guiSize = GUIFrame.instance().getSize();
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
