@@ -283,43 +283,6 @@ public abstract class Input<T> {
 			return aClass.cast( value );
 		}
 
-		if( aClass == TimeValue.class ) {
-
-			TimeValue value;
-			Input.assertCount(data, 1, 2, 12, 13);
-
-			// If there are 2 or 13 entries, assume the last entry is a unit
-			if( data.size() == 2 || data.size() == 13 ) {
-
-				// Determine the units
-				Unit unit = Input.parseUnits(data.get(data.size()- 1));
-
-				// Determine the default units
-				Unit defaultUnit = Input.tryParseEntity( units.replaceAll("[()]", "").trim(), Unit.class );
-				if( defaultUnit == null ) {
-					throw new InputErrorException( "Could not determine default units " + units );
-				}
-
-				if (defaultUnit.getClass() != unit.getClass())
-					throw new InputErrorException( "Cannot convert from %s to %s", defaultUnit.getName(), unit.getName());
-
-				// Determine the conversion factor to the default units
-				double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
-
-				// Parse and convert the values
-				StringVector temp = data.subString(0,data.size()-2);
-				value = Input.parseTimeValue(temp, minValue, maxValue, conversionFactor);
-			}
-			else {
-				// Parse the values
-				value = Input.parseTimeValue(data, minValue, maxValue);
-
-				if( units.length() > 0 )
-					InputAgent.logWarning( "Missing units.  Assuming %s.", units );
-			}
-			return aClass.cast( value );
-		}
-
 		if( Entity.class.isAssignableFrom(aClass) ) {
 			Class<? extends Entity> temp = aClass.asSubclass(Entity.class);
 			Input.assertCount(data, 1, 1);
@@ -642,41 +605,6 @@ public abstract class Input<T> {
 			}
 		}
 		return temp;
-	}
-
-	public static TimeValue parseTimeValue(StringVector input, double minValue, double maxValue)
-	throws InputErrorException {
-		return Input.parseTimeValue(input, minValue, maxValue, 1.0);
-	}
-
-	public static TimeValue parseTimeValue(StringVector input, double minValue, double maxValue, double factor)
-	throws InputErrorException {
-		Input.assertCount(input, 1, 12);
-
-		if (input.size() == 12) {
-			try {
-				return new TimeValue(Input.parseDoubleVector(input, minValue, maxValue, factor));
-			} catch (InputErrorException e) {}
-			try {
-				TimeValue tval = new TimeValue(Input.parseEntityList(input, ProbabilityDistribution.class, false));
-				tval.setProbScaleFactor( factor );
-				return tval;
-			} catch (InputErrorException e) {}
-		}
-		else {
-
-			// Attempt to parse as a double, but catch the error
-			try {
-				return new TimeValue(Input.parseTime(input.get(0), minValue, maxValue, factor));
-			} catch (InputErrorException e) {}
-
-			try {
-				TimeValue tval = new TimeValue(Input.parseEntity(input.get(0), ProbabilityDistribution.class));
-				tval.setProbScaleFactor( factor );
-				return tval;
-			} catch (InputErrorException e) {}
-		}
-		throw new InputErrorException(INP_ERR_TIMEVALUE, input.toString());
 	}
 
 	public static double parseDouble(String data)

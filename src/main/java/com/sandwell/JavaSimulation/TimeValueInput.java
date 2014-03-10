@@ -61,15 +61,46 @@ public class TimeValueInput extends Input<TimeValue> {
 
 			// Parse and convert the values
 			StringVector temp = input.subString(0,input.size()-2);
-			value = Input.parseTimeValue(temp, minValue, maxValue, conversionFactor);
+			value = parseTimeValue(temp, minValue, maxValue, conversionFactor);
 		}
 		else {
 			// Parse the values
-			value = Input.parseTimeValue(input, minValue, maxValue);
+			value = parseTimeValue(input, minValue, maxValue, 1.0d);
 
 			if( unitString.length() > 0 )
 				InputAgent.logWarning( "Missing units.  Assuming %s.", unitString );
 		}
+	}
+
+
+	private  static TimeValue parseTimeValue(StringVector input, double minValue, double maxValue, double factor)
+	throws InputErrorException {
+		Input.assertCount(input, 1, 12);
+
+		if (input.size() == 12) {
+			try {
+				return new TimeValue(Input.parseDoubleVector(input, minValue, maxValue, factor));
+			} catch (InputErrorException e) {}
+			try {
+				TimeValue tval = new TimeValue(Input.parseEntityList(input, ProbabilityDistribution.class, false));
+				tval.setProbScaleFactor( factor );
+				return tval;
+			} catch (InputErrorException e) {}
+		}
+		else {
+
+			// Attempt to parse as a double, but catch the error
+			try {
+				return new TimeValue(Input.parseTime(input.get(0), minValue, maxValue, factor));
+			} catch (InputErrorException e) {}
+
+			try {
+				TimeValue tval = new TimeValue(Input.parseEntity(input.get(0), ProbabilityDistribution.class));
+				tval.setProbScaleFactor( factor );
+				return tval;
+			} catch (InputErrorException e) {}
+		}
+		throw new InputErrorException(INP_ERR_TIMEVALUE, input.toString());
 	}
 
 	public void setValidRange(double min, double max) {
