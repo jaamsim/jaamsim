@@ -1501,10 +1501,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		InputAgent.readResource("inputs/autoload.cfg");
 		gui.setTitle(Simulation.getModelName());
 
+		// Resolve all input arguments against the current working directory
+		File user = new File(System.getProperty("user.dir"));
 		// Process any configuration files passed on command line
 		// (Multiple configuration files are not supported at present)
 		for (int i = 0; i < configFiles.size(); i++) {
-			InputAgent.configure(gui, new File(configFiles.get(i)));
+			//InputAgent.configure(gui, new File(configFiles.get(i)));
+			File abs = new File((File)null, configFiles.get(i));
+			if (abs.exists())
+				InputAgent.configure(gui, abs);
+			else
+				InputAgent.configure(gui, new File(user, configFiles.get(i)));
 		}
 
 		// If no configuration files were specified on the command line, then load the default configuration file
