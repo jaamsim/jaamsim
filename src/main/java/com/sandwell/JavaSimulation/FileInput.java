@@ -119,11 +119,6 @@ public class FileInput extends Input<URI> {
 
 	}
 
-
-	public FileEntity getFileEntity(int io_status, boolean append) {
-		return new FileEntity(value, io_status, append);
-	}
-
 	public void setValidExtensions(String... ext) {
 		validExtensions = ext;
 	}
