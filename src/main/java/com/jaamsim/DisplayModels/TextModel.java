@@ -192,7 +192,7 @@ public class TextModel extends DisplayModel {
 
 			String text = labelObservee.getCachedText();
 			double height = labelObservee.getTextHeight();
-			Color4d color = fontColor.getValue();
+			Color4d color = getFontColorForText(text);
 			TessFontKey fk = new TessFontKey(fontName.getChoice(), style);
 
 			Vec3d textSize = RenderManager.inst().getRenderedStringSize(fk, height, text);
@@ -298,7 +298,7 @@ public class TextModel extends DisplayModel {
 
 			String text = labelObservee.getCachedText();
 
-			Color4d color = fontColor.getValue();
+			Color4d color = getFontColorForText(text);
 			IntegerVector pos = labelObservee.getScreenPosition();
 			int height = labelObservee.getTextHeight();
 
@@ -413,7 +413,7 @@ public class TextModel extends DisplayModel {
 
 			String text = labelObservee.getCachedText();
 
-			Color4d color = fontColor.getValue();
+			Color4d color = getFontColorForText(text);
 			int height = (int)labelObservee.getTextHeight();
 
 			TessFontKey fk = new TessFontKey(fontName.getChoice(), style);
@@ -484,6 +484,10 @@ public class TextModel extends DisplayModel {
 
 	public static TessFontKey getDefaultTessFontKey() {
 		return new TessFontKey("Verdana", Font.PLAIN);
+	}
+
+	public Color4d getFontColorForText(String text) {
+		return fontColor.getValue();
 	}
 
 	public Color4d getFontColor() {
