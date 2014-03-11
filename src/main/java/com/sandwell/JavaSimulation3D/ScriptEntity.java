@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.Parser;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.FileInput;
 
 public class ScriptEntity extends Entity {
@@ -36,7 +34,7 @@ public class ScriptEntity extends Entity {
 	         example = "ScriptEntity Time { 24.0 h }")
 	private final ValueInput scriptTime; // the time that has been read in the script
 
-	private final ArrayList<ArrayList<String>> tokens;
+	private ArrayList<ArrayList<String>> tokens;
 	private int lastTokenIdx;
 
 	{
@@ -65,21 +63,7 @@ public class ScriptEntity extends Entity {
 			return;
 
 		// If the script file exists, open it
-		FileEntity scriptFile = scriptFileName.getFileEntity(FileEntity.FILE_READ, true);
-		ArrayList<String> rec = new ArrayList<String>();
-		while (true) {
-			String line = scriptFile.readLine();
-			if (line == null)
-				break;
-
-			Parser.tokenize(rec, line, true);
-			if (rec.size() == 0)
-				continue;
-
-			tokens.add(rec);
-			rec = new ArrayList<String>();
-		}
-		scriptFile.close();
+		tokens = FileInput.getTokensFromURI(scriptFileName.getValue());
 	}
 
 	private static class ScriptTarget extends ProcessTarget {

@@ -14,11 +14,18 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Parser;
 
 public class FileInput extends Input<URI> {
 	private String[] validExtensions;
@@ -70,6 +77,48 @@ public class FileInput extends Input<URI> {
 		else
 			return "";
 	}
+
+
+
+	public static ArrayList<ArrayList<String>> getTokensFromURI(URI uri){
+
+		ArrayList<ArrayList<String>> tokens = new ArrayList<ArrayList<String>>();
+		ArrayList<String> rec = new ArrayList<String>();
+
+		BufferedReader b = null;
+		try {
+			InputStream r = uri.toURL().openStream();
+			b = new BufferedReader(new InputStreamReader(r));
+
+			while (true) {
+				String line = null;
+				line = b.readLine();
+
+				if (line == null)
+					break;
+
+				Parser.tokenize(rec, line, true);
+				if (rec.size() == 0)
+					continue;
+
+				tokens.add(rec);
+				rec = new ArrayList<String>();
+			}
+			b.close();
+			return tokens;
+		}
+		catch (MalformedURLException e) {}
+		catch (IOException e) {
+			try {
+				if (b != null) b.close();
+			}
+			catch (IOException e2) {}
+		}
+
+		return null;
+
+	}
+
 
 	public FileEntity getFileEntity(int io_status, boolean append) {
 		return new FileEntity(value, io_status, append);
