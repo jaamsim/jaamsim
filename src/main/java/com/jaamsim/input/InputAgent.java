@@ -143,7 +143,7 @@ public class InputAgent {
 			return "";
 
 		String name = InputAgent.getConfigFile().getName();
-		int index = name.indexOf( "." );
+		int index = name.lastIndexOf( "." );
 		if( index == -1 )
 			return name;
 
