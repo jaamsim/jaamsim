@@ -59,8 +59,8 @@ public class GammaDistribution extends Distribution {
 	public void earlyInit() {
 		super.earlyInit();
 
-		rng1.setSeedStream(getStreamNumber());
-		rng2.setSeedStream(getStreamNumber() + 1);
+		rng1.setSeedStream(getStreamNumber()    , getSubstreamNumber());
+		rng2.setSeedStream(getStreamNumber() + 1, getSubstreamNumber());
 	}
 
 	@Override

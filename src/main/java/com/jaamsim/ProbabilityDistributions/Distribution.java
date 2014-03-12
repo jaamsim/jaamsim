@@ -36,6 +36,10 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public abstract class Distribution extends DisplayEntity
 implements SampleProvider {
+	@Keyword(description = "Global seed to advance all substreams.",
+	         example = "ProbDist1 GlobalSubstreamSeed { 547 }")
+	private static final IntegerInput globalSeedInput;
+
 	@Keyword(description = "The unit type that the distribution returns values in.",
 	         example = "ProbDist1 UnitType { DistanceUnit }")
 	private final UnitTypeInput unitType;
@@ -58,7 +62,14 @@ implements SampleProvider {
 	private double sampleMin;
 	private double sampleMax;
 
+	static {
+		globalSeedInput = new IntegerInput("GlobalSubstreamSeed", "Key Inputs", 0);
+		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
+	}
+
 	{
+		this.addInput(globalSeedInput, true);
+
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(unitType, true);
 
@@ -138,7 +149,7 @@ implements SampleProvider {
 	}
 
 	protected int getSubstreamNumber() {
-		return 0;
+		return globalSeedInput.getValue();
 	}
 
 	/**

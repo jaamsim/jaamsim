@@ -32,15 +32,15 @@ public class MRG1999a {
 	 * table.
 	 */
 	public MRG1999a() {
-		this(0);
+		this(0, 0);
 	}
 
 	/**
 	 * Constructs a random generator seeded with values from the given stream number.
 	 * @param stream the number of the desired stream to seed the generator
 	 */
-	public MRG1999a(int stream) {
-		setSeedStream(stream);
+	public MRG1999a(int stream, int substream) {
+		setSeedStream(stream, substream);
 	}
 
 	/**
@@ -69,13 +69,19 @@ public class MRG1999a {
 	 * Seed the MRG with values form the given stream number.
 	 * @param stream
 	 */
-	public void setSeedStream(int stream) {
+	public void setSeedStream(int stream, int substream) {
 		if (stream < 0)
 			throw new IllegalArgumentException("Stream numbers must be positive");
+
+		if (substream < 0)
+			throw new IllegalArgumentException("Substream numbers must be positive");
 
 		long seeds[] = { 12345, 12345, 12345, 12345, 12345, 12345 };
 		for (int i = 0; i < stream; i++)
 			advanceStream(seeds);
+
+		for (int i = 0; i < substream; i++)
+			advanceSubstream(seeds);
 
 		setSeed(seeds[0], seeds[1], seeds[2], seeds[3], seeds[4], seeds[5]);
 	}

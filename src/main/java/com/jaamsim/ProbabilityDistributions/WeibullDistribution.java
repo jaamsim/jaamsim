@@ -58,7 +58,7 @@ public class WeibullDistribution extends Distribution {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		rng.setSeedStream(getStreamNumber());
+		rng.setSeedStream(getStreamNumber(), getSubstreamNumber());
 	}
 
 	@Override
