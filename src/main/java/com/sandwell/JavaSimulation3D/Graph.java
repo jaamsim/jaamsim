@@ -325,6 +325,10 @@ public class Graph extends GraphBasics  {
 		// Give processing time to sub-classes
 		extraProcessing();
 
+		// stop the processing loop
+		if (primarySeries.isEmpty() && secondarySeries.isEmpty())
+			return;
+
 		// Calculate values for the primary y-axis
 		for (SeriesInfo info : primarySeries) {
 			processGraph(info);
