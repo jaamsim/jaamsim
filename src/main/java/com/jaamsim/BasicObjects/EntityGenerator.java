@@ -92,6 +92,8 @@ public class EntityGenerator extends LinkedComponent {
 
 	@Override
 	public void earlyInit() {
+		super.earlyInit();
+
 		numberGenerated = 0;
 	}
 
