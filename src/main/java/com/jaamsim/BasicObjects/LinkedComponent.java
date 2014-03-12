@@ -71,16 +71,17 @@ public abstract class LinkedComponent extends DisplayEntity {
 	@Output(name = "NumberAdded",
 	 description = "The number of entities received from upstream.",
 	    unitType = DimensionlessUnit.class)
-	public Integer getNumberAdded(double simTime) {
-		return numberAdded;
+	public Double getNumberAdded(double simTime) {
+		return (double)numberAdded;
 	}
 
 	@Output(name = "NumberProcessed",
 	 description = "The number of entities processed by this component.",
 	    unitType = DimensionlessUnit.class)
-	public Integer getNumberProcessed(double simTime) {
-		return numberProcessed;
+	public Double getNumberProcessed(double simTime) {
+		return (double)numberProcessed;
 	}
+
 	@Output(name = "ProcessingRate",
 	 description = "The number of entities processed per unit time by this component.",
 	    unitType = RateUnit.class)
