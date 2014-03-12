@@ -91,11 +91,6 @@ public class FileEntity {
 		init(io_status, append);
 	}
 
-	public FileEntity(URI file, int io_status, boolean append) {
-		backingFileObject = new File(file);
-		init(io_status, append);
-	}
-
 	private void init(int io_status, boolean append) {
 
 		// Case 2) the file does not exist inside the jar file
