@@ -36,6 +36,7 @@ public class OutputInput<T> extends Input<String> {
 	public void parse(StringVector input) throws InputErrorException {
 
 		if( input.isEmpty() ) {
+			value = null;
 			ent = null;
 			outputName = "";
 			out = null;
