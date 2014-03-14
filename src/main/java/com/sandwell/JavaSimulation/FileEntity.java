@@ -20,6 +20,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
+import com.jaamsim.ui.LogBox;
+
 /**
  * Class encapsulating file input/output methods and file access.
  */
@@ -66,10 +68,12 @@ public class FileEntity {
 			if( outputStream != null ) {
 				outputStream.flush();
 				outputStream.close();
+				outputStream = null;
 			}
 		}
 		catch( IOException e ) {
-			throw new ErrorException( "Unable to close FileEntity: " + e );
+			outputStream = null;
+			LogBox.logLine( "Unable to close FileEntity: " + backingFileObject.getName() );
 		}
 	}
 
