@@ -48,7 +48,7 @@ public class QueueRecorder extends DisplayEntity {
 		String outputFileName = InputAgent.getReportFileName(String.format("%s-%s.%s",
 		                                                     InputAgent.getRunName(), getName(), "que"));
 
-		outputFile = new FileEntity( outputFileName, FileEntity.FILE_WRITE, false );
+		outputFile = new FileEntity( outputFileName);
 		this.printOutputFileHeader();
 		outputFile.flush();
 	}

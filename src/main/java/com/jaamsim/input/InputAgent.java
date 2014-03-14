@@ -599,7 +599,7 @@ public class InputAgent {
 			URI logURI = confURI.resolve(new URI(null, inputTraceFileName, null)); // The new URI here effectively escapes the file name
 
 			// Set and open the input trace file name
-			logFile = new FileEntity( logURI.getPath(), FileEntity.FILE_WRITE, false );
+			logFile = new FileEntity( logURI.getPath());
 		}
 		catch( Exception e ) {
 			InputAgent.logWarning("Could not create trace file");
@@ -621,7 +621,7 @@ public class InputAgent {
 			if (InputAgent.numWarnings == 0 && InputAgent.numErrors == 0) {
 				logFile.close();
 				logFile.delete();
-				logFile = new FileEntity( inputTraceFileName, FileEntity.FILE_WRITE, false );
+				logFile = new FileEntity( inputTraceFileName);
 			}
 		}
 
@@ -861,7 +861,7 @@ public class InputAgent {
 		// Create report file for the inputs
 		String inputReportFileName = InputAgent.getReportFileName(InputAgent.getRunName() + ".inp");
 
-		FileEntity inputReportFile = new FileEntity( inputReportFileName, FileEntity.FILE_WRITE, false );
+		FileEntity inputReportFile = new FileEntity( inputReportFileName);
 		inputReportFile.flush();
 
 		// Loop through the entity classes printing Define statements
@@ -1159,7 +1159,7 @@ public class InputAgent {
 		}
 
 		// Create the new configuration file and copy the saved lines
-		FileEntity file = new FileEntity( fileName, FileEntity.FILE_WRITE, false );
+		FileEntity file = new FileEntity( fileName);
 		for( int i=0; i < preAddedRecordLines.size(); i++ ) {
 			file.format("%s%n", preAddedRecordLines.get( i ));
 		}

@@ -77,7 +77,7 @@ class EventTracer {
 	static void traceAllEvents(EventManager evt, boolean enable) {
 		if (enable) {
 			verifyAllEvents(evt, false);
-			eventTraceFile = new FileEntity(InputAgent.getConfigFile().getParentFile()+ File.separator+ InputAgent.getRunName() + ".evt", FileEntity.FILE_WRITE, false);
+			eventTraceFile = new FileEntity(InputAgent.getConfigFile().getParentFile()+ File.separator+ InputAgent.getRunName() + ".evt");
 			evt.setTraceListener(new EventTraceRecord());
 		} else if (eventTraceFile != null) {
 			eventTraceFile.close();

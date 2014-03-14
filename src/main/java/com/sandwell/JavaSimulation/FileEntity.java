@@ -27,15 +27,17 @@ public class FileEntity {
 	public static int ALIGNMENT_LEFT = 0;
 	public static int ALIGNMENT_RIGHT = 1;
 
-	public static int FILE_WRITE = 1;
-
 	private File backingFileObject;
 	private BufferedWriter outputStream;
 
 	private DecimalFormat formatter;
 	private static DecimalFormat staticFormatter;
 
-	public FileEntity( String fileName, int io_status, boolean append ) {
+	public FileEntity(String fileName) {
+		this(fileName, false);
+	}
+
+	public FileEntity(String fileName, boolean append) {
 		backingFileObject = new File( fileName);
 
 		// Case 2) the file does not exist inside the jar file
