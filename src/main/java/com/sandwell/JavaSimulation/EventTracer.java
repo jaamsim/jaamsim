@@ -14,14 +14,20 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.ui.LogBox;
 
 class EventTracer {
 	private static FileEntity eventTraceFile;
-	private static FileEntity eventVerifyFile;
+	private static BufferedReader eventVerifyReader;
 	private static long bufferTime; // Internal sim time buffer has been filled to
 	private static final ArrayList<EventTraceRecord> eventBuffer;
 
@@ -32,9 +38,6 @@ class EventTracer {
 	private EventTracer() {}
 
 	static void init() {
-		if (eventVerifyFile != null)
-			eventVerifyFile.toStart();
-
 		eventBuffer.clear();
 		bufferTime = 0;
 	}
@@ -44,7 +47,11 @@ class EventTracer {
 			// Read a full trace record form the file, terminated at a blank line
 			EventTraceRecord temp = new EventTraceRecord();
 			while (true) {
-				String line = eventVerifyFile.readLine();
+				String line = null;
+				try {
+					line = eventVerifyReader.readLine();
+				}
+				catch (IOException e) {}
 
 				if (line == null)
 					break;
@@ -70,7 +77,7 @@ class EventTracer {
 	static void traceAllEvents(EventManager evt, boolean enable) {
 		if (enable) {
 			verifyAllEvents(evt, false);
-			eventTraceFile = new FileEntity(InputAgent.getRunName() + ".evt", FileEntity.FILE_WRITE, false);
+			eventTraceFile = new FileEntity(InputAgent.getConfigFile().getParentFile()+ File.separator+ InputAgent.getRunName() + ".evt", FileEntity.FILE_WRITE, false);
 			evt.setTraceListener(new EventTraceRecord());
 		} else if (eventTraceFile != null) {
 			eventTraceFile.close();
@@ -84,11 +91,20 @@ class EventTracer {
 			traceAllEvents(evt, false);
 			eventBuffer.clear();
 			bufferTime = 0;
-			eventVerifyFile = new FileEntity(InputAgent.getRunName() + ".evt", FileEntity.FILE_READ, false);
+			File evtFile = new File(InputAgent.getConfigFile().getParentFile(), InputAgent.getRunName() + ".evt");
+			try {
+				eventVerifyReader = new BufferedReader(new FileReader(evtFile));
+			}
+			catch (FileNotFoundException e) {}
+			if (eventVerifyReader == null)
+				LogBox.logLine("Unable to open an event verification file.");
 			evt.setTraceListener(new EventTraceRecord());
-		} else if (eventVerifyFile != null) {
-			eventVerifyFile.close();
-			eventVerifyFile = null;
+		} else if (eventVerifyReader != null) {
+			try {
+				eventVerifyReader.close();
+			}
+			catch (IOException e) {}
+			eventVerifyReader = null;
 			evt.setTraceListener(null);
 		}
 	}
@@ -161,8 +177,8 @@ class EventTracer {
 			}
 		}
 
-		if (eventVerifyFile != null) {
-			synchronized (eventVerifyFile) {
+		if (eventVerifyReader != null) {
+			synchronized (eventVerifyReader) {
 				EventTracer.findEventInBuffer(traceRecord);
 			}
 		}
