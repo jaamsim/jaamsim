@@ -14,15 +14,10 @@
  */
 package com.sandwell.JavaSimulation;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
 import java.text.DecimalFormat;
 
 /**
@@ -32,66 +27,16 @@ public class FileEntity {
 	public static int ALIGNMENT_LEFT = 0;
 	public static int ALIGNMENT_RIGHT = 1;
 
-	public static int FILE_READ = 0;
 	public static int FILE_WRITE = 1;
 
 	private File backingFileObject;
 	private BufferedWriter outputStream;
-	private BufferedReader inputStream;
 
 	private DecimalFormat formatter;
 	private static DecimalFormat staticFormatter;
 
-	private long fileLength = -1;
-	private long charsRead = 0;
-
-	private String fname;
-
 	public FileEntity( String fileName, int io_status, boolean append ) {
-
-		// Case 1) the file exists inside the jar file
-		try {
-			// Check if the absolute file name exists
-			if( fileName.contains( "file:/" ) ) {
-				if(fileName.contains(".jar!")) {
-					fname = fileName.replace( "%20", " " );
-					int firstIndex = fname.indexOf( ".jar!" ) + ".jar!".length();
-					String relativeURL = fname.substring( firstIndex );
-					InputStream inStream = this.getClass().getResourceAsStream( relativeURL );
-					inputStream = new BufferedReader( new InputStreamReader( inStream ) );
-					inputStream.mark( 4096 );
-					outputStream = null;
-					fileLength = inStream.available();
-					charsRead = 0;
-					return;
-				}
-				fileName = fileName.replace("file:/", "");
-			}
-
-			// Check if the relative file name exists
-			if (Simulation.class.getResource(fileName) != null) {
-				fname = fileName;
-				InputStream inStream = this.getClass().getResourceAsStream( fileName );
-
-				inputStream = new BufferedReader( new InputStreamReader( inStream ) );
-				inputStream.mark( 4096 );
-				outputStream = null;
-				fileLength = inStream.available();
-				charsRead = 0;
-				return;
-			}
-		}
-		catch( Exception e ) {
-			throw new ErrorException( e );
-		}
-
-		// Check if absolute file name was passed, otherwise use root directory
 		backingFileObject = new File( fileName);
-
-		init(io_status, append);
-	}
-
-	private void init(int io_status, boolean append) {
 
 		// Case 2) the file does not exist inside the jar file
 		if( staticFormatter == null ) {
@@ -99,21 +44,9 @@ public class FileEntity {
 		}
 		formatter = new DecimalFormat( "##0.00" );
 
-		fname = backingFileObject.getName();
 		try {
 			backingFileObject.createNewFile();
-			if( io_status == FILE_WRITE ) {
-				outputStream = new BufferedWriter( new FileWriter( backingFileObject, append ) );
-				inputStream = null;
-			}
-
-			if( io_status == FILE_READ ) {
-				inputStream = new BufferedReader( new FileReader( backingFileObject ) );
-				inputStream.mark( 4096 );
-				outputStream = null;
-				fileLength = backingFileObject.length();
-				charsRead = 0;
-			}
+			outputStream = new BufferedWriter( new FileWriter( backingFileObject, append ) );
 		}
 		catch( IOException e ) {
 			throw new InputErrorException( "IOException thrown trying to open FileEntity: " + e );
@@ -128,10 +61,6 @@ public class FileEntity {
 
 	public void close() {
 		try {
-			if( inputStream != null ) {
-				inputStream.close();
-			}
-
 			if( outputStream != null ) {
 				outputStream.flush();
 				outputStream.close();
@@ -164,10 +93,6 @@ public class FileEntity {
 
 	public void format(String format, Object... args) {
 		putString(String.format(format, args));
-	}
-
-	public URI getFileURI() {
-		return backingFileObject.toURI();
 	}
 
 	/**
@@ -351,49 +276,6 @@ public class FileEntity {
 		}
 	}
 
-	public String readLine() {
-		String line = null;
-		try {
-			line = inputStream.readLine();
-		} catch (IOException e) {}
-
-		return line;
-	}
-
-	public void toStart() {
-		if( inputStream != null ) {
-			try {
-				if( backingFileObject != null ) {
-					inputStream = new BufferedReader( new FileReader( backingFileObject ) );
-					inputStream.mark( 4096 );
-					return;
-				}
-			}
-			catch( IOException e ) {
-				// Done to re-open file reader if mark has gone too far
-			}
-
-			try {
-				inputStream.close();
-				inputStream = null;
-
-				if( fname.contains( "file:/" ) ) {
-					int firstIndex = fname.indexOf( ".jar!" ) + ".jar!".length();
-					String relativeURL = fname.substring( firstIndex );
-					InputStream inStream = this.getClass().getResourceAsStream( relativeURL );
-					inputStream = new BufferedReader( new InputStreamReader( inStream ) );
-				}
-				else {
-					inputStream = new BufferedReader( new FileReader( backingFileObject ) );
-				}
-				inputStream.mark( 4096 );
-			}
-			catch( IOException e ) {
-				throw new ErrorException( "Unable to reset FileEntity to start: " + e );
-			}
-		}
-	}
-
 	public void putStringTabs( String input, int tabs ) {
 		putString( input );
 		putTabs( tabs );
@@ -404,54 +286,18 @@ public class FileEntity {
 	}
 
 	/**
-	 * Mark the current file position
-	 */
-	public void markCurrentPosition() {
-		try {
-			inputStream.mark( (int) fileLength );
-		}
-		catch( IOException e ) {
-			throw new InputErrorException( "IOException thrown trying to mark FileEntity: " + e );
-		}
-	}
-
-	/**
-	 * Go to the last marked position in the file
-	 */
-	public void goToLastMarkedPosition() {
-		try {
-			inputStream.reset();
-		}
-		catch( IOException e ) {
-			throw new InputErrorException( "IOException thrown trying to reset FileEntity: " + e + "  to a marked position" );
-		}
-	}
-
-	public long getLength() {
-		return fileLength;
-	}
-
-	public long getNumRead() {
-		return charsRead;
-	}
-
-	public String getFileName() {
-		return fname;
-	}
-
-	/**
 	 * Delete the file
 	 */
 	public void delete() {
 		try {
 			if( backingFileObject.exists() ) {
 				if( !backingFileObject.delete() ) {
-					throw new ErrorException( "Failed to delete " + fname );
+					throw new ErrorException( "Failed to delete " + backingFileObject.getName() );
 				}
 			}
 		}
 		catch( SecurityException e ) {
-			throw new ErrorException( "Unable to delete " + fname + "(" + e.getMessage() + ")" );
+			throw new ErrorException( "Unable to delete " + backingFileObject.getName() + "(" + e.getMessage() + ")" );
 		}
 	}
 }
