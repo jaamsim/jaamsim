@@ -33,7 +33,6 @@ public class FileEntity {
 	private BufferedWriter outputStream;
 
 	private DecimalFormat formatter;
-	private static DecimalFormat staticFormatter;
 
 	public FileEntity(String fileName) {
 		this(fileName, false);
@@ -41,11 +40,6 @@ public class FileEntity {
 
 	public FileEntity(String fileName, boolean append) {
 		backingFileObject = new File( fileName);
-
-		// Case 2) the file does not exist inside the jar file
-		if( staticFormatter == null ) {
-			staticFormatter = new DecimalFormat( "##0.00" );
-		}
 		formatter = new DecimalFormat( "##0.00" );
 
 		try {
@@ -207,16 +201,6 @@ public class FileEntity {
 		putTabs( tabs );
 	}
 
-	public static String getDoubleWithDecimals( double putDouble, int decimalPlaces ) {
-		StringBuilder pattern = new StringBuilder("##0.");
-		for( int i = 0; i < decimalPlaces; i++ ) {
-			pattern.append("0");
-		}
-		staticFormatter.applyPattern(pattern.toString());
-
-		return staticFormatter.format( putDouble );
-	}
-
 	public void putAll( String putString ) {
 
 		try {
@@ -285,10 +269,6 @@ public class FileEntity {
 	public void putStringTabs( String input, int tabs ) {
 		putString( input );
 		putTabs( tabs );
-	}
-
-	public void putDoublePercentWithDecimals( double percent, int decDigits ) {
-		putString( getDoubleWithDecimals( (percent * 100.0), decDigits ) + "%" );
 	}
 
 	/**
