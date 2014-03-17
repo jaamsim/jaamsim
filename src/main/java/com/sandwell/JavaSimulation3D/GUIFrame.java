@@ -1509,7 +1509,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			//InputAgent.configure(gui, new File(configFiles.get(i)));
 			File abs = new File((File)null, configFiles.get(i));
 			if (abs.exists())
-				InputAgent.configure(gui, abs);
+				InputAgent.configure(gui, abs.getAbsoluteFile());
 			else
 				InputAgent.configure(gui, new File(user, configFiles.get(i)));
 		}
