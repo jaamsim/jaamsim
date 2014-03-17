@@ -18,6 +18,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -50,13 +52,22 @@ public class ImageModel extends DisplayModel {
 	private final BooleanInput compressedTexture;
 
 	private static final String[] validFileExtensions;
+	private static final String[] validFileDescriptions;
 	static {
 		validFileExtensions = new String[5];
-		validFileExtensions[0] = "BMP";
-		validFileExtensions[1] = "JPG";
-		validFileExtensions[2] = "PNG";
-		validFileExtensions[3] = "PCX";
-		validFileExtensions[4] = "GIF";
+		validFileDescriptions = new String[5];
+
+		validFileExtensions[0] = "JPG";
+		validFileExtensions[1] = "PNG";
+		validFileExtensions[2] = "GIF";
+		validFileExtensions[3] = "BMP";
+		validFileExtensions[4] = "PCX";
+
+		validFileDescriptions[0] = "JPEG Image (*.jpg)";
+		validFileDescriptions[1] = "Portable Network Graphics (*.png)";
+		validFileDescriptions[2] = "Graphics Interchange Format (*.gif)";
+		validFileDescriptions[3] = "Windows Bitmap (*.bmp)";
+		validFileDescriptions[4] = "Personal Computer Exchange (*.pcx)";
 	}
 
 	{
@@ -89,6 +100,55 @@ public class ImageModel extends DisplayModel {
 
 	public URI getImageFile() {
 		return imageFile.getValue();
+	}
+
+	/**
+	 * Compares the specified file extension to the list of valid extensions.
+	 *
+	 * @param str - the file extension to be tested.
+	 * @return TRUE if the extension is valid.
+	 */
+	public static boolean isValidExtension(String str) {
+
+		for (String ext : validFileExtensions) {
+			if (str.equalsIgnoreCase(ext))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a file name extension filter for "all supported file types".
+	 *
+	 * @return a file name extension filter.
+	 */
+	public static FileNameExtensionFilter getFileNameExtensionFilter() {
+
+		StringBuilder desc = new StringBuilder(45);
+		desc.append("All Supported Image Files (");
+
+		for( int i=0; i<validFileExtensions.length; i++) {
+			desc.append("*.").append(validFileExtensions[i].toLowerCase());
+			if(i < validFileExtensions.length - 1)
+				desc.append("; ");
+			}
+		desc.append(")");
+
+		return new FileNameExtensionFilter(desc.toString(), validFileExtensions);
+	}
+
+	/**
+	 * Returns a file name extension filter for each of the supported file types.
+	 *
+	 * @return an array of file name extension filters.
+	 */
+	public static FileNameExtensionFilter[] getFileNameExtensionFilters() {
+
+		FileNameExtensionFilter[] filters = new FileNameExtensionFilter[validFileExtensions.length];
+		for (int i=0; i<validFileExtensions.length; i++) {
+			filters[i] = new FileNameExtensionFilter(validFileDescriptions[i], validFileExtensions[i]);
+		}
+		return filters;
 	}
 
 	private class Binding extends DisplayModelBinding {

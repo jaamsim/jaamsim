@@ -74,6 +74,7 @@ import com.jaamsim.events.Process;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
+import com.jaamsim.ui.DisplayEntityFactory;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
@@ -391,6 +392,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		fileMenu.add( saveConfigurationAsMenuItem );
 
+		// 5) "Import..." menu item
+		JMenuItem importGraphicsMenuItem = new JMenuItem( "Import..." );
+		importGraphicsMenuItem.setMnemonic( 'I' );
+		importGraphicsMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				DisplayEntityFactory.importGraphics(GUIFrame.this);
+
+			}
+		} );
+		fileMenu.add( importGraphicsMenuItem );
+
+		// 6) "Print Input Report" menu item
 		printInputItem = new JMenuItem( "Print Input Report" );
 		printInputItem.setMnemonic( 'I' );
 		printInputItem.addActionListener( new ActionListener() {
@@ -402,7 +417,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		fileMenu.add( printInputItem );
 
-		// 5) "Exit" menu item
+		// 7) "Exit" menu item
 		JMenuItem exitMenuItem = new JMenuItem( "Exit" );
 		exitMenuItem.setMnemonic( 'x' );
 		exitMenuItem.addActionListener(new CloseListener());

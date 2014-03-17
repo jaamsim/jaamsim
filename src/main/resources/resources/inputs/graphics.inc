@@ -9,7 +9,6 @@ Define ObjectType {
                     ImageModel
                     ColladaModel
                     DisplayModel
-                    ColladaFactory
                     }
 
 ArrowModel             JavaClass { com.jaamsim.DisplayModels.ArrowModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
@@ -19,7 +18,6 @@ TextModel              JavaClass { com.jaamsim.DisplayModels.TextModel          
 ImageModel             JavaClass { com.jaamsim.DisplayModels.ImageModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
 ColladaModel           JavaClass { com.jaamsim.DisplayModels.ColladaModel             } Palette { 'Display Models' }    DragAndDrop { FALSE }
 DisplayModel           JavaClass { com.sandwell.JavaSimulation3D.DisplayModelCompat   } Palette { 'Display Models' }    DragAndDrop { FALSE }
-ColladaFactory         JavaClass { com.jaamsim.collada.ColladaEntityFactory           }                                 DragAndDrop { FALSE }
 
 Define Palette { 'Graphics Objects' }
 

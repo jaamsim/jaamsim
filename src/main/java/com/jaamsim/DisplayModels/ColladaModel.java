@@ -21,6 +21,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import com.jaamsim.MeshFiles.BlockWriter;
 import com.jaamsim.MeshFiles.DataBlock;
 import com.jaamsim.MeshFiles.MeshData;
@@ -62,13 +64,22 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 	private static HashMap<URI, MeshProtoKey> _cachedKeys = new HashMap<URI, MeshProtoKey>();
 
 	private static final String[] validFileExtensions;
+	private static final String[] validFileDescriptions;
 	static {
 		validFileExtensions = new String[5];
-		validFileExtensions[0] = "DAE";
-		validFileExtensions[1] = "ZIP";
-		validFileExtensions[2] = "JSM";
-		validFileExtensions[3] = "JSB";
-		validFileExtensions[4] = "OBJ";
+		validFileDescriptions = new String[5];
+
+		validFileExtensions[0] = "ZIP";
+		validFileExtensions[1] = "DAE";
+		validFileExtensions[2] = "OBJ";
+		validFileExtensions[3] = "JSM";
+		validFileExtensions[4] = "JSB";
+
+		validFileDescriptions[0] = "Zipped 3D Files (*.zip)";
+		validFileDescriptions[1] = "COLLADA Files (*.dae)";
+		validFileDescriptions[2] = "Wavefront Files (*.obj)";
+		validFileDescriptions[3] = "JaamSim 3D Files (*.jsm)";
+		validFileDescriptions[4] = "JaamSim 3D Binary Files (*.jsb)";
 	}
 
 	{
@@ -94,6 +105,55 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
 	public URI getColladaFile() {
 		return colladaFile.getValue();
+	}
+
+	/**
+	 * Compares the specified file extension to the list of valid extensions.
+	 *
+	 * @param str - the file extension to be tested.
+	 * @return - TRUE if the extension is valid.
+	 */
+	public static boolean isValidExtension(String str) {
+
+		for (String ext : validFileExtensions) {
+			if (str.equalsIgnoreCase(ext))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a file name extension filter for "all supported file types".
+	 *
+	 * @return a file name extension filter.
+	 */
+	public static FileNameExtensionFilter getFileNameExtensionFilter() {
+
+		StringBuilder desc = new StringBuilder(45);
+		desc.append("All Supported 3D Files (");
+
+		for( int i=0; i<validFileExtensions.length; i++) {
+			desc.append("*.").append(validFileExtensions[i].toLowerCase());
+			if(i < validFileExtensions.length - 1)
+				desc.append("; ");
+			}
+		desc.append(")");
+
+		return new FileNameExtensionFilter(desc.toString(), validFileExtensions);
+	}
+
+	/**
+	 * Returns a file name extension filter for each of the supported file types.
+	 *
+	 * @return an array of file name extension filters.
+	 */
+	public static FileNameExtensionFilter[] getFileNameExtensionFilters() {
+
+		FileNameExtensionFilter[] filters = new FileNameExtensionFilter[validFileExtensions.length];
+		for (int i=0; i<validFileExtensions.length; i++) {
+			filters[i] = new FileNameExtensionFilter(validFileDescriptions[i], validFileExtensions[i]);
+		}
+		return filters;
 	}
 
 	public static MeshProtoKey getCachedMeshKey(URI shapeURI) {
