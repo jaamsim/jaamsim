@@ -31,6 +31,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
@@ -714,21 +717,24 @@ public class InputAgent {
 	public static void load(GUIFrame gui) {
 		LogBox.logLine("Loading...");
 
-		FileDialog chooser = new FileDialog(gui, "Load Configuration File", FileDialog.LOAD);
-		chooser.setFilenameFilter(new ConfigFileFilter());
-		chooser.setFile("*.cfg");
+		// Create a file chooser
+		final JFileChooser chooser = new JFileChooser(InputAgent.getConfigFile());
 
-		chooser.setVisible(true); // display the dialog, waits for selection
+		// Set the file extension filters
+		chooser.setAcceptAllFileFilterUsed(true);
+		FileNameExtensionFilter cfgFilter =
+				new FileNameExtensionFilter("JaamSim Configuration File (*.cfg)", "CFG");
+		chooser.addChoosableFileFilter(cfgFilter);
+		chooser.setFileFilter(cfgFilter);
 
-		String file = chooser.getFile();
-		if (file == null)
-			return;
+		// Show the file chooser and wait for selection
+		int returnVal = chooser.showOpenDialog(gui);
 
-		String absFile = chooser.getDirectory() + file;
-		absFile = absFile.trim();
-
-		File temp = new File(absFile);
-		InputAgent.setLoadFile(gui, temp);
+		// Load the selected file
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File temp = chooser.getSelectedFile();
+    		InputAgent.setLoadFile(gui, temp);
+        }
 	}
 
 	public static void save(GUIFrame gui) {
