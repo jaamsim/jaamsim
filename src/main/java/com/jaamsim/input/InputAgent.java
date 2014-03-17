@@ -14,7 +14,6 @@
  */
 package com.jaamsim.input;
 
-import java.awt.FileDialog;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -749,39 +748,33 @@ public class InputAgent {
 
 	public static void saveAs(GUIFrame gui) {
 		LogBox.logLine("Save As...");
-		FileDialog chooser = new FileDialog(gui, "Save Configuration File As", FileDialog.SAVE);
-		chooser.setFilenameFilter(new ConfigFileFilter());
-		if (InputAgent.getConfigFile() != null)
-			chooser.setFile(InputAgent.getConfigFile().getPath());
 
-		 // Display the dialog and wait for selection
-		chooser.setVisible(true);
+		// Create a file chooser
+		final JFileChooser chooser = new JFileChooser(InputAgent.getConfigFile());
 
-		String file = chooser.getFile();
-		if (file == null)
-			return;
+		// Set the file extension filters
+		chooser.setAcceptAllFileFilterUsed(true);
+		FileNameExtensionFilter cfgFilter =
+				new FileNameExtensionFilter("JaamSim Configuration File (*.cfg)", "CFG");
+		chooser.addChoosableFileFilter(cfgFilter);
+		chooser.setFileFilter(cfgFilter);
 
-		String absFile = chooser.getDirectory() + file;
+		// Show the file chooser and wait for selection
+		int returnVal = chooser.showSaveDialog(gui);
 
-		// Compensate for an error in FileDialog under Java 7:
-		// - If the new name is shorter than the old name, then the method getDirectory() returns the absolute path and
-		//   the file name. The method getFile() returns a corrupted version of the old file name.
-		// - If the new name is the same length or longer than the new name then both methods work properly.
-		// Expected to be fixed in Java 8.
-		if( System.getProperty("java.version").startsWith("1.7.") ) {
-			String dir = chooser.getDirectory();
-			if( InputAgent.getConfigFile() != null && !dir.endsWith("\\") && !dir.endsWith("/") ) {
-				absFile = dir;
-			}
+		// Load the selected file
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = chooser.getSelectedFile();
+			String filePath = file.getPath();
+
+			// Add the file extension ".cfg" if needed
+			filePath = filePath.trim();
+			if (filePath.indexOf(".") == -1)
+				filePath = filePath.concat(".cfg");
+
+			// Save the configuration file
+			InputAgent.setSaveFile(gui, filePath);
 		}
-
-		// Add the file extension ".cfg" if needed
-		absFile = absFile.trim();
-		if( ! absFile.substring(absFile.length()-4).equalsIgnoreCase(".cfg") )
-			absFile = absFile.concat(".cfg");
-
-		// Save the configuration file
-		setSaveFile(gui, absFile);
 	}
 
 	public static void configure(GUIFrame gui, File file) {
