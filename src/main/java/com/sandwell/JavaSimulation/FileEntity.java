@@ -140,14 +140,6 @@ public class FileEntity {
 		putString( string, putLength, ALIGNMENT_RIGHT );
 	}
 
-	public void putInt( int putInteger ) {
-		putString( Integer.toString( putInteger ), Integer.toString( putInteger ).length(), ALIGNMENT_LEFT );
-	}
-
-	public void putIntRight( int putInteger, int putLength ) {
-		putString( Integer.toString( putInteger ), putLength, ALIGNMENT_RIGHT );
-	}
-
 	public void putDoublePadLeft( double putDouble, int decimalPlaces, int putLength ) {
 		StringBuilder pattern = new StringBuilder("###");
 		if( decimalPlaces > 0 ) {
