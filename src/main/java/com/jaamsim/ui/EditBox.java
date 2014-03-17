@@ -19,11 +19,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -36,6 +36,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -47,6 +48,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -255,6 +257,10 @@ public class EditBox extends FrameBox {
 		return currentEntity;
 	}
 
+/**
+ * Handles inputs that are edited in place.
+ *
+ */
 public static class StringEditor extends CellEditor implements TableCellEditor {
 	private final JTextField text;
 
@@ -278,14 +284,18 @@ public static class StringEditor extends CellEditor implements TableCellEditor {
 	}
 }
 
+/**
+ * Handles file inputs.
+ *
+ */
 public static class FileEditor extends CellEditor
 implements TableCellEditor, ActionListener {
 
 	private final JPanel jPanel;
 	private final JTextField text;
 	private final JButton fileButton;
-	private FileDialog fileChooser;
 	private FileInput fileInput;
+	private static File lastDir;  // last directory accessed by the file chooser
 
 	public FileEditor(JTable table) {
 		super(table);
@@ -315,26 +325,46 @@ implements TableCellEditor, ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if("button".equals(e.getActionCommand())) {
-			if(fileChooser == null) {
-				fileChooser = new FileDialog(myInstance, "Select File Name", FileDialog.LOAD);
-				fileChooser.setFile(fileInput.getValidExtensionsString());
 
-				 // Display the dialog and wait for selection
-				fileChooser.setVisible(true);
+			// Create a file chooser
+			if (lastDir == null)
+				lastDir = InputAgent.getConfigFile();
+			JFileChooser fileChooser = new JFileChooser(lastDir);
 
-				String file = fileChooser.getFile();
-				if (file != null) {
-					String absFile = fileChooser.getDirectory() + file;
-					absFile = absFile.trim();
-					text.setText( absFile );
+			// Set the file extension filters
+			FileNameExtensionFilter filter = fileInput.getFileNameExtensionFilter();
+			FileNameExtensionFilter[] filters = fileInput.getFileNameExtensionFilters();
+			if (filter != null && filters != null) {
+
+				// Turn off the "All Files" filter
+				fileChooser.setAcceptAllFileFilterUsed(false);
+
+				// Include the "All Supported Files" filter if there are more
+				// than one supported extensions
+				if (filters.length > 1)
+					fileChooser.addChoosableFileFilter(filter);
+
+				// Include a separate filter for each extension
+				for (FileNameExtensionFilter f : filters) {
+					fileChooser.addChoosableFileFilter(f);
 				}
-
-				// Apply editing
-				stopCellEditing();
-
-				// Focus the cell
-				propTable.requestFocusInWindow();
 			}
+
+			// Show the file chooser and wait for selection
+			int returnVal = fileChooser.showDialog(null, "Load");
+
+			// Process the selected file
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+	            File file = fileChooser.getSelectedFile();
+				lastDir = fileChooser.getCurrentDirectory();
+				text.setText(file.getPath());
+	        }
+
+			// Apply editing
+			stopCellEditing();
+
+			// Focus the cell
+			propTable.requestFocusInWindow();
 		}
 	}
 
@@ -361,6 +391,10 @@ implements TableCellEditor, ActionListener {
 	}
 }
 
+/**
+ * Handles colour inputs.
+ *
+ */
 public static class ColorEditor extends CellEditor
 implements TableCellEditor, ActionListener {
 
@@ -447,6 +481,10 @@ implements TableCellEditor, ActionListener {
 	}
 }
 
+/**
+ * Handles inputs with drop-down menus.
+ *
+ */
 public static class DropDownMenuEditor extends CellEditor
 implements TableCellEditor, ActionListener {
 
@@ -497,6 +535,10 @@ implements TableCellEditor, ActionListener {
 	}
 }
 
+/**
+ * Handles inputs where a list of entities can be selected.
+ *
+ */
 public static class ListEditor extends CellEditor
 implements TableCellEditor, ActionListener {
 
@@ -869,7 +911,7 @@ public static class EditTable extends JTable {
 			return listEditor;
 		}
 
-		// 4) Single selection from a drop down box
+		// 5) Single selection from a drop down box
 		return new DropDownMenuEditor(this, array);
 	}
 

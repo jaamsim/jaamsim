@@ -72,7 +72,9 @@ public class ImageModel extends DisplayModel {
 
 	{
 		imageFile = new FileInput( "ImageFile", "DisplayModel", null );
-		imageFile.setValidExtensions(validFileExtensions);
+		imageFile.setFileType("Image");
+		imageFile.setValidFileExtensions(validFileExtensions);
+		imageFile.setValidFileDescriptions(validFileDescriptions);
 		this.addInput( imageFile, true);
 
 		transparent = new BooleanInput("Transparent", "DisplayModel", false);
@@ -118,23 +120,12 @@ public class ImageModel extends DisplayModel {
 	}
 
 	/**
-	 * Returns a file name extension filter for "all supported file types".
+	 * Returns a file name extension filter for "All Supported Image Files".
 	 *
 	 * @return a file name extension filter.
 	 */
 	public static FileNameExtensionFilter getFileNameExtensionFilter() {
-
-		StringBuilder desc = new StringBuilder(45);
-		desc.append("All Supported Image Files (");
-
-		for( int i=0; i<validFileExtensions.length; i++) {
-			desc.append("*.").append(validFileExtensions[i].toLowerCase());
-			if(i < validFileExtensions.length - 1)
-				desc.append("; ");
-			}
-		desc.append(")");
-
-		return new FileNameExtensionFilter(desc.toString(), validFileExtensions);
+		return FileInput.getFileNameExtensionFilter("Image", validFileExtensions);
 	}
 
 	/**
@@ -143,12 +134,7 @@ public class ImageModel extends DisplayModel {
 	 * @return an array of file name extension filters.
 	 */
 	public static FileNameExtensionFilter[] getFileNameExtensionFilters() {
-
-		FileNameExtensionFilter[] filters = new FileNameExtensionFilter[validFileExtensions.length];
-		for (int i=0; i<validFileExtensions.length; i++) {
-			filters[i] = new FileNameExtensionFilter(validFileDescriptions[i], validFileExtensions[i]);
-		}
-		return filters;
+		return FileInput.getFileNameExtensionFilters(validFileExtensions, validFileDescriptions);
 	}
 
 	private class Binding extends DisplayModelBinding {

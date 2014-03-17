@@ -24,15 +24,21 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Parser;
 
 public class FileInput extends Input<URI> {
-	private String[] validExtensions;
+	private String fileType;  // the type of file, e.g. "Image" or "3D"
+	private String[] validFileExtensions;  // supported file extensions
+	private String[] validFileDescriptions;  // description of each supported file extension
 
 	public FileInput(String key, String cat, URI def) {
 		super(key, cat, def);
-		validExtensions = null;
+		fileType = null;
+		validFileExtensions = null;
+		validFileDescriptions = null;
 	}
 
 	@Override
@@ -65,7 +71,7 @@ public class FileInput extends Input<URI> {
 
 		if (!isValidExtension(temp))
 			throw new InputErrorException("Invalid file extension: %s.\nValid extensions are: %s",
-					temp.getPath(), Arrays.toString(validExtensions));
+					temp.getPath(), Arrays.toString(validFileExtensions));
 
 		value = temp;
 	}
@@ -77,8 +83,6 @@ public class FileInput extends Input<URI> {
 		else
 			return "";
 	}
-
-
 
 	public static ArrayList<ArrayList<String>> getTokensFromURI(URI uri){
 
@@ -119,10 +123,32 @@ public class FileInput extends Input<URI> {
 
 	}
 
-	public void setValidExtensions(String... ext) {
-		validExtensions = ext;
+	/**
+	 * Set the file type description for this file input.
+	 *
+	 * @param type - description of the file type, for example "Image" or "3D".
+	 */
+	public void setFileType(String type) {
+		fileType = type;
 	}
 
+	/**
+	 * Sets the list of supported file extensions for this file input.
+	 *
+	 * @param ext - array of supported file extensions.
+	 */
+	public void setValidFileExtensions(String... ext) {
+		validFileExtensions = ext;
+	}
+
+	/**
+	 * Sets the list of descriptions for the supported file extensions.
+	 *
+	 * @param desc - array of descriptions for the supported file extensions.
+	 */
+	public void setValidFileDescriptions(String... desc) {
+		validFileDescriptions = desc;
+	}
 
 	private String getFileExtention(URI u) {
 		String name = u.toString();
@@ -134,11 +160,11 @@ public class FileInput extends Input<URI> {
 	}
 
 	private boolean isValidExtension(URI u) {
-		if (validExtensions == null)
+		if (validFileExtensions == null)
 			return true;
 
 		String ext = getFileExtention(u);
-		for (String val : validExtensions) {
+		for (String val : validFileExtensions) {
 			if (val.equalsIgnoreCase(ext))
 				return true;
 		}
@@ -146,24 +172,75 @@ public class FileInput extends Input<URI> {
 		return false;
 	}
 
+	/**
+	 * Returns a file name extension filter for a type of file that has
+	 * multiple supported extensions.
+	 *
+	 * @return the file name extension filter for this type of file.
+	 */
+	public FileNameExtensionFilter getFileNameExtensionFilter() {
+		return getFileNameExtensionFilter(fileType, validFileExtensions);
+	}
+
+	/**
+	 * Returns a file name extension filter for a type of file that has
+	 * multiple supported extensions.
+	 *
+	 * @param type - the type of file, for example "Image" or "3D".
+	 * @param fileExt - the valid file extensions for this type of file.
+	 * @return the file name extension filter for this type of file.
+	 */
+	public static FileNameExtensionFilter getFileNameExtensionFilter(String type, String[] fileExt) {
+
+		if (type == null || fileExt == null)
+			return null;
+
+		StringBuilder desc = new StringBuilder(45);
+		desc.append("All Supported ").append(type).append(" Files (");
+
+		for( int i=0; i<fileExt.length; i++) {
+			desc.append("*.").append(fileExt[i].toLowerCase());
+			if(i < fileExt.length - 1)
+				desc.append("; ");
+			}
+		desc.append(")");
+
+		return new FileNameExtensionFilter(desc.toString(), fileExt);
+	}
+
+	/**
+	 * Returns an array of file name extension filters, one for each of the
+	 * supported file types.
+	 *
+	 * @return an array of file extension filters.
+	 */
+	public FileNameExtensionFilter[] getFileNameExtensionFilters() {
+		return getFileNameExtensionFilters(validFileExtensions, validFileDescriptions);
+	}
+
+	/**
+	 * Returns an array of file name extension filters, one for each of the
+	 * supported file types.
+	 *
+	 * @param fileExt - the valid file extension for each type of file.
+	 * @param fileDesc - the description field for each type of file.
+	 * @return an array of file extension filters.
+	 */
+	public static FileNameExtensionFilter[] getFileNameExtensionFilters(String[] fileExt, String[] fileDesc) {
+
+		if (fileExt == null || fileDesc == null)
+			return null;
+
+		FileNameExtensionFilter[] filters = new FileNameExtensionFilter[fileExt.length];
+		for (int i=0; i<fileExt.length; i++) {
+			filters[i] = new FileNameExtensionFilter(fileDesc[i], fileExt[i]);
+		}
+		return filters;
+	}
+
 	@Override
 	public void parse(StringVector input) throws InputErrorException {
 		throw new InputErrorException("FileInput.parse() deprecated method called.");
 	}
 
-	/**
-	 * Returns a String containing the valid file extensions suitable for use
-	 * with FileDialog.  For example, "*.png; *.jpg".
-	 *
-	 * @return - String containing the valid extensions.
-	 */
-	public String getValidExtensionsString() {
-		StringBuilder validString = new StringBuilder(45);
-		for( int i=0; i<validExtensions.length; i++) {
-			validString.append("*.").append(validExtensions[i]);
-			if(i < validExtensions.length - 1)
-				validString.append("; ");
-		}
-		return validString.toString();
-	}
 }

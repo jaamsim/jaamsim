@@ -84,7 +84,9 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
 	{
 		colladaFile = new FileInput( "ColladaFile", "DisplayModel", null );
-		colladaFile.setValidExtensions(validFileExtensions);
+		colladaFile.setFileType("3D");
+		colladaFile.setValidFileExtensions(validFileExtensions);
+		colladaFile.setValidFileDescriptions(validFileDescriptions);
 		this.addInput( colladaFile, true);
 
 		actions = new ActionListInput("Actions", "DisplayModel", new ArrayList<Action.Binding>());
@@ -123,23 +125,12 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 	}
 
 	/**
-	 * Returns a file name extension filter for "all supported file types".
+	 * Returns a file name extension filter for "All Supported 3D Files".
 	 *
 	 * @return a file name extension filter.
 	 */
 	public static FileNameExtensionFilter getFileNameExtensionFilter() {
-
-		StringBuilder desc = new StringBuilder(45);
-		desc.append("All Supported 3D Files (");
-
-		for( int i=0; i<validFileExtensions.length; i++) {
-			desc.append("*.").append(validFileExtensions[i].toLowerCase());
-			if(i < validFileExtensions.length - 1)
-				desc.append("; ");
-			}
-		desc.append(")");
-
-		return new FileNameExtensionFilter(desc.toString(), validFileExtensions);
+		return FileInput.getFileNameExtensionFilter("3D", validFileExtensions);
 	}
 
 	/**
@@ -148,12 +139,7 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 	 * @return an array of file name extension filters.
 	 */
 	public static FileNameExtensionFilter[] getFileNameExtensionFilters() {
-
-		FileNameExtensionFilter[] filters = new FileNameExtensionFilter[validFileExtensions.length];
-		for (int i=0; i<validFileExtensions.length; i++) {
-			filters[i] = new FileNameExtensionFilter(validFileDescriptions[i], validFileExtensions[i]);
-		}
-		return filters;
+		return FileInput.getFileNameExtensionFilters(validFileExtensions, validFileDescriptions);
 	}
 
 	public static MeshProtoKey getCachedMeshKey(URI shapeURI) {
