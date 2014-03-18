@@ -199,10 +199,10 @@ public class FileInput extends Input<URI> {
 		desc.append("All Supported ").append(type).append(" Files (");
 
 		for( int i=0; i<fileExt.length; i++) {
-			desc.append("*.").append(fileExt[i].toLowerCase());
-			if(i < fileExt.length - 1)
+			if(i > 0)
 				desc.append("; ");
-			}
+			desc.append("*.").append(fileExt[i].toLowerCase());
+		}
 		desc.append(")");
 
 		return new FileNameExtensionFilter(desc.toString(), fileExt);
