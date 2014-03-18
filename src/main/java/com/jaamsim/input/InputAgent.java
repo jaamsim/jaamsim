@@ -17,7 +17,6 @@ package com.jaamsim.input;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -704,13 +703,6 @@ public class InputAgent {
 		for( int i = 0; i < grp.getList().size(); i++ ) {
 			Entity ent = grp.getList().get( i );
 			InputAgent.apply(ent, key);
-		}
-	}
-
-	private static class ConfigFileFilter implements FilenameFilter {
-		@Override
-		public boolean accept(File inFile, String fileName) {
-			return fileName.endsWith("[cC][fF][gG]");
 		}
 	}
 
