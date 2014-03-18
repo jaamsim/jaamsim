@@ -17,7 +17,7 @@ package com.jaamsim.rng;
 
 /**
  * Combined MRG based on L'Ecuyer (1999a), implementation ported from the ANSI C
- * version provided in Simulation Modelling and Analyis 4th Ed. Averill M. Law. (Appendix 7B)
+ * version provided in Simulation Modeling and Analysis 5th Ed. Averill M. Law. (Appendix 7B)
  */
 public class MRG1999a {
 	private static final long m1 = 4294967087l;
