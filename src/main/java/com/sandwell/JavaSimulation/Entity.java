@@ -58,7 +58,7 @@ public class Entity {
 	protected boolean traceFlag = false;
 
 	private final ArrayList<Input<?>> editableInputs = new ArrayList<Input<?>>();
-	private final HashMap<String, Input<?>> inputMap = new HashMap<String, Input<?>>();
+	private final ArrayList<SynRecord> synonyms = new ArrayList<SynRecord>();
 
 	private final BooleanInput trace;
 
@@ -205,23 +205,61 @@ public class Entity {
 		return ticks / Process.getSimTimeFactor();
 	}
 
-	protected void mapInput(Input<?> in, String key) {
-		if (inputMap.put(key.toUpperCase().intern(), in) != null) {
-			System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), key);
-		}
-	}
-
 	protected void addInput(Input<?> in) {
-		this.mapInput(in, in.getKeyword());
+		for (int i = 0; i < editableInputs.size(); i++) {
+			Input<?> ein = editableInputs.get(i);
+			if (ein.getKeyword().equalsIgnoreCase(in.getKeyword())) {
+				System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), in.getKeyword());
+				return;
+			}
+		}
+
 		editableInputs.add(in);
 	}
 
+	private static class SynRecord {
+		final String syn;
+		final Input<?> in;
+
+		SynRecord(String s, Input<?> i) {
+			syn = s;
+			in = i;
+		}
+	}
+
 	protected void addSynonym(Input<?> in, String synonym) {
-		this.mapInput(in, synonym);
+		for (int i = 0; i < editableInputs.size(); i++) {
+			Input<?> ein = editableInputs.get(i);
+			if (ein.getKeyword().equalsIgnoreCase(synonym)) {
+				System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), synonym);
+				return;
+			}
+		}
+
+		for (int i = 0; i < synonyms.size(); i++) {
+			SynRecord rec = synonyms.get(i);
+			if (rec.syn.equalsIgnoreCase(synonym)) {
+				System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), synonym);
+				return;
+			}
+		}
+		synonyms.add(new SynRecord(synonym, in));
 	}
 
 	public Input<?> getInput(String key) {
-		return inputMap.get(key.toUpperCase());
+		for (int i = 0; i < editableInputs.size(); i++) {
+			Input<?> in = editableInputs.get(i);
+			if (in.getKeyword().equalsIgnoreCase(key))
+				return in;
+		}
+
+		for (int i = 0; i < synonyms.size(); i++) {
+			SynRecord rec = synonyms.get(i);
+			if (rec.syn.equalsIgnoreCase(key))
+				return rec.in;
+		}
+
+		return null;
 	}
 
 	/**
