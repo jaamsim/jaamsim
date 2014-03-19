@@ -16,7 +16,6 @@ package com.jaamsim.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -33,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -41,6 +41,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
@@ -62,7 +63,7 @@ public class GraphicBox extends JDialog {
 	final ImageIcon previewIcon = new ImageIcon();
 	private static DisplayEntity currentEntity;
 	private final static JList displayModelList; // All defined DisplayModels
-
+	private File lastDir;  // last directory accessed by the file chooser
 
 	private final JCheckBox useModelSize;
 	private final JCheckBox useModelPosition;
@@ -139,46 +140,61 @@ public class GraphicBox extends JDialog {
 					return;
 				}
 
-				StringBuilder validString = new StringBuilder(45);
-				validString.append("*.dae;");
-				validString.append("*.jsm;");
-				validString.append("*.jsb;");
-				validString.append("*.obj;");
-				validString.append("*.zip");
+				// Create a file chooser
+				final JFileChooser chooser = new JFileChooser(lastDir);
 
-				FileDialog chooser = new FileDialog(myInstance, "New DisplayModel", FileDialog.LOAD );
-				chooser.setFile(validString.toString());
-				chooser.setVisible(true);
+				// Set the file extension filters
+				chooser.setAcceptAllFileFilterUsed(false);
+				chooser.addChoosableFileFilter(ColladaModel.getFileNameExtensionFilter());
+				for (FileNameExtensionFilter filter : ColladaModel.getFileNameExtensionFilters()) {
+					chooser.addChoosableFileFilter(filter);
+				}
 
-				// A file has not been selected
-				if( chooser.getFile() == null )
-					return;
+				// Show the file chooser and wait for selection
+				int returnVal = chooser.showDialog(null, "Import");
 
-				String fileName = chooser.getFile();
-				File f = new File(chooser.getDirectory() + fileName);
+				// Create the selected graphics files
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+		            File f = chooser.getSelectedFile();
+		            lastDir = chooser.getCurrentDirectory();
 
-				int to = fileName.contains(".") ? fileName.indexOf(".") : fileName.length()-1;
-				String entityName = fileName.substring(0, to); // File name without the extension
-				entityName = entityName.replaceAll(" ", ""); // Space is not allowed for Entity Name
+					// Determine the file name and extension
+					String fileName = f.getName();
+					int i = fileName.lastIndexOf('.');
+					if (i <= 0 || i >= fileName.length() - 1) {
+						LogBox.format("File name: %s is invalid.", f.getName());
+						LogBox.getInstance().setVisible(true);
+						return;
+					}
+					String extension = fileName.substring(i+1).toLowerCase();
 
-				DisplayModel newModel = InputAgent.defineEntityWithUniqueName(ColladaModel.class, entityName, true);
+					// Set the entity name
+					String entityName = fileName.substring(0, i);
+					entityName = entityName.replaceAll(" ", ""); // Space is not allowed for Entity Name
 
-				ArrayList<String> tokens = new ArrayList<String>();
-				tokens.add(newModel.getInputName());
-				tokens.add("ColladaFile");
-				tokens.add("{");
-				tokens.add(f.toURI().getPath());
-				tokens.add("}");
+					// Check for a valid extension
+					if (!ColladaModel.isValidExtension(extension)) {
+						LogBox.format("File name: %s is invalid.", f.getName());
+						LogBox.getInstance().setVisible(true);
+						return;
+					}
 
-				KeywordIndex kw = new KeywordIndex(tokens, 1, tokens.size() - 1, null);
-				InputAgent.apply(newModel, kw);
-				myInstance.refresh(); // Add the new DisplayModel to the List
-				FrameBox.valueUpdate();
+					// Create the ColladaModel
+					String modelName = entityName + "-model";
+					ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, true);
 
-				// Scroll to selection and ensure it is visible
-				int index = displayModelList.getModel().getSize() - 1;
-				displayModelList.setSelectedIndex(index);
-				displayModelList.ensureIndexIsVisible(index);
+					// Load the 3D content to the ColladaModel
+					InputAgent.processEntity_Keyword_Value(dm, "ColladaFile", "'" + f.getPath() + "'");
+
+					 // Add the new DisplayModel to the List
+					myInstance.refresh();
+					FrameBox.valueUpdate();
+
+					// Scroll to selection and ensure it is visible
+					int index = displayModelList.getModel().getSize() - 1;
+					displayModelList.setSelectedIndex(index);
+					displayModelList.ensureIndexIsVisible(index);
+				}
 			}
 		} );
 
