@@ -91,7 +91,8 @@ public class VideoRecorderEntity extends Entity {
 		this.addInput(captureInterval);
 
 		videoBGColor = new ColourInput("VideoBackgroundColor", "Key Inputs", ColourInput.WHITE);
-		this.addInput(videoBGColor, "Colour");
+		this.addInput(videoBGColor);
+		this.addSynonym(videoBGColor, "Colour");
 
 		captureFrames = new IntegerInput("CaptureFrames", "Key Inputs", 0);
 		captureFrames.setValidRange(0, 30000);

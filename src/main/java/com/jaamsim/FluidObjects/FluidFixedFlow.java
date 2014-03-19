@@ -78,7 +78,8 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 		this.addInput(widthInput);
 
 		colourInput = new ColourInput("Colour", "Key Inputs", ColourInput.BLACK);
-		this.addInput(colourInput, "Color");
+		this.addInput(colourInput);
+		this.addSynonym(colourInput, "Color");
 	}
 
 	@Override

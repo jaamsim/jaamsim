@@ -99,7 +99,8 @@ public class TextModel extends DisplayModel {
 		this.addInput(fontName);
 
 		fontColor = new ColourInput("FontColour", "Key Inputs", ColourInput.BLACK);
-		this.addInput(fontColor, "FontColor");
+		this.addInput(fontColor);
+		this.addSynonym(fontColor, "FontColor");
 
 		fontStyle = new StringListInput("FontStyle", "Key Inputs", new StringVector());
 		fontStyle.setValidOptions(validStyles);
@@ -110,7 +111,8 @@ public class TextModel extends DisplayModel {
 		this.addInput( dropShadow );
 
 		dropShadowColor = new ColourInput("DropShadowColour", "Key Inputs", ColourInput.BLACK);
-		this.addInput(dropShadowColor, "DropShadowColor");
+		this.addInput(dropShadowColor);
+		this.addSynonym(dropShadowColor, "DropShadowColor");
 
 		dropShadowOffset = new Vec3dInput("DropShadowOffset", "Key Inputs", new Vec3d(-0.1d, -0.1d, -0.001d));
 		this.addInput(dropShadowOffset);

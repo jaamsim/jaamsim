@@ -56,10 +56,12 @@ public abstract class Threshold extends DisplayEntity {
 
 	{
 		openColour = new ColourInput( "OpenColour", "Graphics", ColourInput.GREEN );
-		this.addInput( openColour, "OpenColor" );
+		this.addInput( openColour );
+		this.addSynonym( openColour, "OpenColor" );
 
 		closedColour = new ColourInput( "ClosedColour", "Graphics", ColourInput.RED );
-		this.addInput( closedColour, "ClosedColor" );
+		this.addInput( closedColour );
+		this.addSynonym( closedColour, "ClosedColor" );
 
 		showWhenOpen = new BooleanInput("ShowWhenOpen", "Graphics", true);
 		this.addInput(showWhenOpen);

@@ -89,7 +89,8 @@ public class Graph extends GraphBasics  {
 		defLineColor.add(ColourInput.getColorWithName("red"));
 		lineColorsList = new ColorListInput("LineColours", "Key Inputs", defLineColor);
 		lineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
-		this.addInput(lineColorsList, "LineColors");
+		this.addInput(lineColorsList);
+		this.addSynonym(lineColorsList, "LineColors");
 
 		DoubleVector defLineWidths = new DoubleVector();
 		defLineWidths.add(1.0);
@@ -104,7 +105,8 @@ public class Graph extends GraphBasics  {
 		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
 		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", "Key Inputs", defSecondaryLineColor);
 		secondaryLineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
-		this.addInput(secondaryLineColorsList, "SecondaryLineColors");
+		this.addInput(secondaryLineColorsList);
+		this.addSynonym(secondaryLineColorsList, "SecondaryLineColors");
 
 		DoubleVector defSecondaryLineWidths = new DoubleVector();
 		defSecondaryLineWidths.add(1.0);

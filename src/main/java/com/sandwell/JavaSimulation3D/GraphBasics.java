@@ -204,7 +204,8 @@ public abstract class GraphBasics extends DisplayEntity {
 		ArrayList<Color4d> defXlinesColor = new ArrayList<Color4d>(0);
 		defXlinesColor.add(ColourInput.getColorWithName("gray50"));
 		xLinesColor = new ColorListInput("XLinesColor", "X-Axis", defXlinesColor);
-		this.addInput(xLinesColor, "XLinesColour");
+		this.addInput(xLinesColor);
+		this.addSynonym(xLinesColor, "XLinesColour");
 
 		// Y-Axis category
 
@@ -242,7 +243,8 @@ public abstract class GraphBasics extends DisplayEntity {
 		ArrayList<Color4d> defYlinesColor = new ArrayList<Color4d>(0);
 		defYlinesColor.add(ColourInput.getColorWithName("gray50"));
 		yLinesColor = new ColorListInput("YLinesColor", "Y-Axis", defYlinesColor);
-		this.addInput(yLinesColor, "YLinesColour");
+		this.addInput(yLinesColor);
+		this.addSynonym(yLinesColor, "YLinesColour");
 
 		// Secondary Y-Axis category
 

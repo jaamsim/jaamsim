@@ -58,7 +58,8 @@ public class Fluid extends DisplayEntity {
 		this.addInput( viscosityInput);
 
 		colourInput = new ColourInput( "Colour", "Key Inputs", ColourInput.RED);
-		this.addInput(colourInput, "Color");
+		this.addInput(colourInput);
+		this.addSynonym(colourInput, "Color");
 
 		gravityInput = new ValueInput( "Gravity", "Key Inputs", 9.81d);
 		gravityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);

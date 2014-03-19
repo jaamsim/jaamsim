@@ -199,13 +199,16 @@ public class GraphModel extends DisplayModel {
 		this.addInput(labelTextModel);
 
 		graphColor = new ColourInput("GraphColor", "Key Inputs", ColourInput.getColorWithName("ivory"));
-		this.addInput(graphColor, "GraphColour");
+		this.addInput(graphColor);
+		this.addSynonym(graphColor, "GraphColour");
 
 		backgroundColor = new ColourInput("BackgroundColor", "Key Inputs", ColourInput.getColorWithName("gray95"));
-		this.addInput(backgroundColor, "BackgroundColour");
+		this.addInput(backgroundColor);
+		this.addSynonym(backgroundColor, "BackgroundColour");
 
 		borderColor = new ColourInput("BorderColor", "Key Inputs", ColourInput.BLACK);
-		this.addInput(borderColor, "BorderColour");
+		this.addInput(borderColor);
+		this.addSynonym(borderColor, "BorderColour");
 	}
 
 	@Override

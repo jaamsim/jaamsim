@@ -69,7 +69,8 @@ public class XYGraph extends GraphBasics {
 		defSeriesColor.add(ColourInput.getColorWithName("red"));
 		seriesColorsList = new ColorListInput("SeriesColours", "Key Inputs", defSeriesColor);
 		seriesColorsList.setValidCountRange(1, Integer.MAX_VALUE);
-		this.addInput(seriesColorsList, "LineColors");
+		this.addInput(seriesColorsList);
+		this.addSynonym(seriesColorsList, "LineColors");
 
 		showBars = new BooleanInput("ShowBars", "Key Inputs", false);
 		this.addInput(showBars);
@@ -81,7 +82,8 @@ public class XYGraph extends GraphBasics {
 		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
 		secondarySeriesColorsList = new ColorListInput("SecondarySeriesColours", "Key Inputs", defSecondaryLineColor);
 		secondarySeriesColorsList.setValidCountRange(1, Integer.MAX_VALUE);
-		this.addInput(secondarySeriesColorsList, "SecondaryLineColors");
+		this.addInput(secondarySeriesColorsList);
+		this.addSynonym(secondarySeriesColorsList, "SecondaryLineColors");
 
 		secondaryShowBars = new BooleanInput("SecondaryShowBars", "Key Inputs", false);
 		this.addInput(secondaryShowBars);

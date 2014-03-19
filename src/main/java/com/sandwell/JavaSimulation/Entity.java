@@ -211,13 +211,13 @@ public class Entity {
 		}
 	}
 
-	protected void addInput(Input<?> in, String... synonyms) {
+	protected void addInput(Input<?> in) {
 		this.mapInput(in, in.getKeyword());
-
 		editableInputs.add(in);
+	}
 
-		for (String each : synonyms)
-			this.mapInput(in, each);
+	protected void addSynonym(Input<?> in, String synonym) {
+		this.mapInput(in, synonym);
 	}
 
 	public Input<?> getInput(String key) {

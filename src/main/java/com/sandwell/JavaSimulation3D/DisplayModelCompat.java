@@ -126,10 +126,12 @@ public class DisplayModelCompat extends DisplayModel {
 		this.addInput(shape);
 
 		fillColour = new ColourInput("FillColour", "DisplayModel", ColourInput.MED_GREY);
-		this.addInput(fillColour, "FillColor");
+		this.addInput(fillColour);
+		this.addSynonym(fillColour, "FillColor");
 
 		outlineColour = new ColourInput("OutlineColour", "DisplayModel", ColourInput.BLACK);
-		this.addInput(outlineColour, "OutlineColor");
+		this.addInput(outlineColour);
+		this.addSynonym(outlineColour, "OutlineColor");
 
 		filled = new BooleanInput("Filled", "DisplayModel", true);
 		this.addInput(filled);

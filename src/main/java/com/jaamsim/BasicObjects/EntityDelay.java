@@ -85,7 +85,8 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		this.addInput(widthInput);
 
 		colorInput = new ColourInput("Color", "Key Inputs", ColourInput.BLACK);
-		this.addInput(colorInput, "Colour");
+		this.addInput(colorInput);
+		this.addSynonym(colorInput, "Colour");
 	}
 
 	public EntityDelay() {
