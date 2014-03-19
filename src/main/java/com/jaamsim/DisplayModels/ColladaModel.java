@@ -14,13 +14,14 @@
  */
 package com.jaamsim.DisplayModels;
 
-import java.awt.FileDialog;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.MeshFiles.BlockWriter;
@@ -356,16 +357,52 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
 	@Override
 	public void gatherMenuItems(ArrayList<ObjectSelector.DEMenuItem> list, int x, int y) {
-		list.add(new DEMenuItem("Export Binary Mesh") {
+		list.add(new DEMenuItem("Export 3D Binary File (*.jsb)") {
 
 			@Override
 			public void action() {
-				FileDialog chooser = new FileDialog(ObjectSelector.getInstance(), "New DisplayModel", FileDialog.LOAD );
-				chooser.setFile("*.jsb");
-				chooser.setVisible(true);
 
-				if (chooser.getFile() != null)
-					exportBinaryMesh(chooser.getDirectory() + chooser.getFile());
+				// Create a file chooser
+				File colFile = new File(colladaFile.getValue());
+				final JFileChooser chooser = new JFileChooser(colFile);
+
+				// Set the file extension filters
+				chooser.setAcceptAllFileFilterUsed(true);
+				FileNameExtensionFilter jsbFilter = new FileNameExtensionFilter("JaamSim 3D Binary Files (*.jsb)", "JSB");
+				chooser.addChoosableFileFilter(jsbFilter);
+				chooser.setFileFilter(jsbFilter);
+
+				// Show the file chooser and wait for selection
+				int returnVal = chooser.showDialog(null, "Export");
+
+				// Create the selected graphics files
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+		            File file = chooser.getSelectedFile();
+					String filePath = file.getPath();
+
+					// Add the file extension ".jsb" if needed
+					filePath = filePath.trim();
+					if (filePath.indexOf(".") == -1)
+						filePath = filePath.concat(".jsb");
+
+					// Confirm overwrite if file already exists
+					File temp = new File(filePath);
+					if (temp.exists()) {
+
+						int userOption = JOptionPane.showConfirmDialog( null,
+								file.getName() + " already exists.\n" +
+								"Do you wish to replace it?", "Confirm Save As",
+								JOptionPane.YES_NO_OPTION,
+								JOptionPane.WARNING_MESSAGE );
+
+						if (userOption == JOptionPane.NO_OPTION) {
+							return;
+						}
+					}
+
+					// Export the JSB file
+		            exportBinaryMesh(temp.getPath());
+		        }
 			}
 		});
 	}
