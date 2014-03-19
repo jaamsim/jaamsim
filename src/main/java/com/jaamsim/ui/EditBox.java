@@ -805,16 +805,29 @@ private static class CategoryInputs {
 }
 
 	private static ArrayList<CategoryInputs> getInputs(Entity ent) {
-
-		String cat = "";
-		ArrayList<CategoryInputs> catInputsList = new ArrayList<CategoryInputs>(0);
-		ArrayList<Input<?>> inputs = new ArrayList<Input<?>>();
-
-		// assuming that editable inputs of the same category are adjacent
+		// create a list of Inputs sorted by category
+		ArrayList<Input<?>> sortedInputs = new ArrayList<Input<?>>();
 		for (Input<?> in : ent.getEditableInputs()) {
 			if (in.getHidden() || in.isLocked())
 				continue;
 
+			int index = sortedInputs.size();
+			for (int i = sortedInputs.size() - 1; i >= 0; i--) {
+				Input<?> ei = sortedInputs.get(i);
+				if (ei.getCategory().equals(in.getCategory())) {
+					index = i + 1;
+					break;
+				}
+			}
+			sortedInputs.add(index, in);
+		}
+
+		String cat = "";
+		ArrayList<CategoryInputs> catInputsList = new ArrayList<CategoryInputs>();
+		ArrayList<Input<?>> inputs = new ArrayList<Input<?>>();
+
+		// assuming that editable inputs of the same category are adjacent
+		for (Input<?> in : sortedInputs) {
 			// the first time entering the loop
 			if (cat.isEmpty())
 				cat = in.getCategory();

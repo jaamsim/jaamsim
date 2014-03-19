@@ -214,17 +214,7 @@ public class Entity {
 	protected void addInput(Input<?> in, String... synonyms) {
 		this.mapInput(in, in.getKeyword());
 
-		// Editable inputs are sorted by category
-		int index = editableInputs.size();
-		for (int i = editableInputs.size() - 1; i >= 0; i--) {
-			Input<?> ei = editableInputs.get(i);
-			if (ei.getCategory().equals(in.getCategory())) {
-				index = i + 1;
-				break;
-			}
-		}
-
-		editableInputs.add(index, in);
+		editableInputs.add(in);
 
 		for (String each : synonyms)
 			this.mapInput(in, each);
