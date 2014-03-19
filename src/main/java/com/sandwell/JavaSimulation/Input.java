@@ -69,7 +69,6 @@ public abstract class Input<T> {
 	protected T defValue;
 	protected T value;
 
-	private boolean locked; // indicates if input is locked for this entity
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean hidden; // Hide this input from the EditBox
 	protected String valueString; // value from .cfg file
@@ -84,7 +83,6 @@ public abstract class Input<T> {
 		category = cat;
 		setDefaultValue(def);
 
-		locked = false;
 		edited = false;
 		hidden = false;
 		valueString = "";
@@ -141,14 +139,6 @@ public abstract class Input<T> {
 
 	public T getValue() {
 		return value;
-	}
-
-	public void setLocked(boolean bool) {
-		locked = bool;
-	}
-
-	public boolean isLocked() {
-		return locked;
 	}
 
 	public void setHidden(boolean hide) {
