@@ -50,20 +50,20 @@ public class FluidCentrifugalPump extends FluidComponent {
 		maxFlowRateInput = new ValueInput( "MaxFlowRate", "Key Inputs", 1.0d);
 		maxFlowRateInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		maxFlowRateInput.setUnitType( VolumeFlowUnit.class );
-		this.addInput( maxFlowRateInput, true);
+		this.addInput( maxFlowRateInput);
 
 		maxPressureInput = new ValueInput( "MaxPressure", "Key Inputs", 1.0d);
 		maxPressureInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		maxPressureInput.setUnitType( PressureUnit.class );
-		this.addInput( maxPressureInput, true);
+		this.addInput( maxPressureInput);
 
 		maxPressureLossInput = new ValueInput( "MaxPressureLoss", "Key Inputs", 1.0d);
 		maxPressureLossInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		maxPressureLossInput.setUnitType( PressureUnit.class );
-		this.addInput( maxPressureLossInput, true);
+		this.addInput( maxPressureLossInput);
 
 		speedControllerInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "SpeedController", "Key Inputs", null);
-		this.addInput( speedControllerInput, true);
+		this.addInput( speedControllerInput);
 	}
 
 	@Override

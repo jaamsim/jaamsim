@@ -46,10 +46,10 @@ public abstract class Unit extends Entity {
 		conversionFactorToSI = new DoubleListInput("ConversionFactorToSI", "Key Inputs", defFactors);
 		conversionFactorToSI.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
 		conversionFactorToSI.setValidCountRange( 1, 2 );
-		this.addInput( conversionFactorToSI, true );
+		this.addInput( conversionFactorToSI );
 
 		prefInput = getPrefInput(this.getClass());
-		this.addInput(prefInput, true);
+		this.addInput(prefInput);
 	}
 
 	public Unit() {}

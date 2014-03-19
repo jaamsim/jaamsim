@@ -32,7 +32,7 @@ public class QueueRecorder extends DisplayEntity {
 
 	{
 		queueList = new EntityListInput<Queue>( Queue.class, "QueueList", "Key Inputs", null );
-		this.addInput( queueList, true );
+		this.addInput( queueList );
 	}
 
 	public QueueRecorder() {

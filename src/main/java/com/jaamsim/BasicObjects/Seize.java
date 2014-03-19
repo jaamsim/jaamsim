@@ -41,15 +41,15 @@ public class Seize extends LinkedComponent {
 
 	{
 		resourceList = new EntityListInput<Resource>(Resource.class, "Resource", "Key Inputs", null);
-		this.addInput( resourceList, true);
+		this.addInput( resourceList);
 
 		IntegerVector defNum = new IntegerVector();
 		defNum.add(1);
 		numberOfUnitsList = new IntegerListInput("NumberOfUnits", "Key Inputs", defNum);
-		this.addInput( numberOfUnitsList, true);
+		this.addInput( numberOfUnitsList);
 
 		waitQueue = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput( waitQueue, true);
+		this.addInput( waitQueue);
 	}
 
 	@Override

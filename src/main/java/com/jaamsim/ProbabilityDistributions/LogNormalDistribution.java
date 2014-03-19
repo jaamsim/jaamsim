@@ -43,12 +43,12 @@ public class LogNormalDistribution extends Distribution {
 
 		normalMeanInput = new ValueInput("NormalMean", "Key Inputs", 0.0d);
 		normalMeanInput.setUnitType(UserSpecifiedUnit.class);
-		this.addInput(normalMeanInput, true);
+		this.addInput(normalMeanInput);
 
 		normalStandardDeviationInput = new ValueInput("NormalStandardDeviation", "Key Inputs", 1.0d);
 		normalStandardDeviationInput.setUnitType(UserSpecifiedUnit.class);
 		normalStandardDeviationInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(normalStandardDeviationInput, true);
+		this.addInput(normalStandardDeviationInput);
 	}
 
 	public LogNormalDistribution() {}

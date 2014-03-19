@@ -59,10 +59,10 @@ public class OverlayClock extends OverlayText {
 		unit.setHidden(true);
 
 		startingYear = new IntegerInput("StartingYear", "Key Inputs", 1970);
-		this.addInput(startingYear, true);
+		this.addInput(startingYear);
 
 		dateFormatInput = new StringInput("DateFormat", "Key Inputs", "yyyy-MMM-dd HH:mm:ss.SSS");
-		this.addInput(dateFormatInput, true);
+		this.addInput(dateFormatInput);
 	}
 
 	public OverlayClock() {

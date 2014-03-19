@@ -37,7 +37,7 @@ public abstract class LinkedComponent extends DisplayEntity {
 
 	{
 		nextComponentInput = new EntityInput<LinkedComponent>( LinkedComponent.class, "NextComponent", "Key Inputs", null);
-		this.addInput( nextComponentInput, true);
+		this.addInput( nextComponentInput);
 	}
 
 	@Override

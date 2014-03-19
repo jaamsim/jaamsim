@@ -62,7 +62,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 		flowRateInput = new ValueInput( "FlowRate", "Key Inputs", 0.0d);
 		flowRateInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		flowRateInput.setUnitType( VolumeFlowUnit.class );
-		this.addInput( flowRateInput, true);
+		this.addInput( flowRateInput);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
@@ -70,15 +70,15 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);
 		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
 		pointsInput.setUnitType(DistanceUnit.class);
-		this.addInput(pointsInput, true);
+		this.addInput(pointsInput);
 
 		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		widthInput.setUnitType( DimensionlessUnit.class );
-		this.addInput(widthInput, true);
+		this.addInput(widthInput);
 
 		colourInput = new ColourInput("Colour", "Key Inputs", ColourInput.BLACK);
-		this.addInput(colourInput, true, "Color");
+		this.addInput(colourInput, "Color");
 	}
 
 	@Override

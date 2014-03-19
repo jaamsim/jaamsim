@@ -36,7 +36,7 @@ public class RandomSelector extends ObjectSelector {
 	{
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 1);
 		randomSeedInput.setValidRange( 1, Integer.MAX_VALUE);
-		this.addInput(randomSeedInput, true);
+		this.addInput(randomSeedInput);
 	}
 
 	public RandomSelector() {

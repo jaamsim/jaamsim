@@ -50,11 +50,11 @@ implements SampleProvider {
 
 	{
 		unitType = new UnitTypeInput( "UnitType", "Key Inputs", UserSpecifiedUnit.class);
-		this.addInput(unitType, true);
+		this.addInput(unitType);
 
 		inputValue = new SampleInput( "InputValue", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
 		inputValue.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( inputValue, true);
+		this.addInput( inputValue);
 	}
 
 	@Override

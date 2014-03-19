@@ -83,25 +83,25 @@ public class VideoRecorderEntity extends Entity {
 		captureStartTime = new ValueInput("CaptureStartTime", "Key Inputs", 0.0d);
 		captureStartTime.setUnitType(TimeUnit.class);
 		captureStartTime.setValidRange(0, Double.POSITIVE_INFINITY);
-		this.addInput(captureStartTime, true);
+		this.addInput(captureStartTime);
 
 		captureInterval = new ValueInput("CaptureInterval", "Key Inputs", 3600.0d);
 		captureInterval.setUnitType(TimeUnit.class);
 		captureInterval.setValidRange(0.1d, Double.POSITIVE_INFINITY);
-		this.addInput(captureInterval, true);
+		this.addInput(captureInterval);
 
 		videoBGColor = new ColourInput("VideoBackgroundColor", "Key Inputs", ColourInput.WHITE);
-		this.addInput(videoBGColor, true, "Colour");
+		this.addInput(videoBGColor, "Colour");
 
 		captureFrames = new IntegerInput("CaptureFrames", "Key Inputs", 0);
 		captureFrames.setValidRange(0, 30000);
-		this.addInput(captureFrames, true);
+		this.addInput(captureFrames);
 
 		saveImages = new BooleanInput("SaveImages", "Key Inputs", false);
-		this.addInput(saveImages, true);
+		this.addInput(saveImages);
 
 		saveVideo = new BooleanInput("SaveVideo", "Key Inputs", false);
-		this.addInput(saveVideo, true);
+		this.addInput(saveVideo);
 
 		IntegerVector defArea = new IntegerVector(2);
 		defArea.add(1000);
@@ -109,16 +109,16 @@ public class VideoRecorderEntity extends Entity {
 		captureArea = new IntegerListInput("CaptureArea", "Key Inputs", defArea);
 		captureArea.setValidCount(2);
 		captureArea.setValidRange(0, 3000);
-		this.addInput(captureArea, true);
+		this.addInput(captureArea);
 
 		captureViews = new EntityListInput<View>(View.class, "CaptureViews", "Key Inputs", new ArrayList<View>(0));
-		this.addInput(captureViews, true);
+		this.addInput(captureViews);
 
 		videoName = new StringInput("VideoName", "Key Inputs", "");
-		this.addInput(videoName, true);
+		this.addInput(videoName);
 
 		videoCapture = new BooleanInput("VideoCapture", "Key Inputs", false);
-		this.addInput(videoCapture, true);
+		this.addInput(videoCapture);
 	}
 
 	@Override

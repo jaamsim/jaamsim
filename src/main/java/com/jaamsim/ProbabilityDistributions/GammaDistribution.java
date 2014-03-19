@@ -46,11 +46,11 @@ public class GammaDistribution extends Distribution {
 		meanInput = new ValueInput("Mean", "Key Inputs", 1.0d);
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(meanInput, true);
+		this.addInput(meanInput);
 
 		shapeInput = new DoubleInput("Shape", "Key Inputs", 1.0);
 		shapeInput.setValidRange( 1.0e-10d, Integer.MAX_VALUE);
-		this.addInput(shapeInput, true);
+		this.addInput(shapeInput);
 	}
 
 	public GammaDistribution() {}

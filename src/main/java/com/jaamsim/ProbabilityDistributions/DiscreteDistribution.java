@@ -46,11 +46,11 @@ public class DiscreteDistribution extends Distribution {
 	{
 		valueListInput = new ValueListInput( "ValueList", "Key Inputs", null);
 		valueListInput.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( valueListInput, true);
+		this.addInput( valueListInput);
 
 		probabilityListInput = new DoubleListInput( "ProbabilityList", "Key Inputs", null);
 		probabilityListInput.setValidSum(1.0d);
-		this.addInput( probabilityListInput, true);
+		this.addInput( probabilityListInput);
 	}
 
 	public DiscreteDistribution() {}

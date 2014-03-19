@@ -139,73 +139,73 @@ public class GraphModel extends DisplayModel {
 	{
 		titleTextHeight = new ValueInput("TitleTextHeight", "Key Inputs", 0.05d);
 		titleTextHeight.setUnitType(DimensionlessUnit.class);
-		this.addInput(titleTextHeight, true);
+		this.addInput(titleTextHeight);
 
 		xAxisTitleTextHeight = new ValueInput("XAxisTitleTextHeight", "Key Inputs", 0.05d);
 		xAxisTitleTextHeight.setUnitType(DimensionlessUnit.class);
-		this.addInput(xAxisTitleTextHeight, true);
+		this.addInput(xAxisTitleTextHeight);
 
 		yAxisTitleTextHeight = new ValueInput("YAxisTitleTextHeight", "Key Inputs", 0.05d);
 		yAxisTitleTextHeight.setUnitType(DimensionlessUnit.class);
-		this.addInput(yAxisTitleTextHeight, true);
+		this.addInput(yAxisTitleTextHeight);
 
 		labelTextHeight = new ValueInput("LabelTextHeight", "Key Inputs", 0.025d);
 		labelTextHeight.setUnitType(DimensionlessUnit.class);
-		this.addInput(labelTextHeight, true);
+		this.addInput(labelTextHeight);
 
 		titleGap = new ValueInput("TitleGap", "Key Inputs", 0.05d);
 		titleGap.setUnitType(DimensionlessUnit.class);
-		this.addInput(titleGap, true);
+		this.addInput(titleGap);
 
 		xAxisTitleGap = new ValueInput("XAxisTitleGap", "Key Inputs", 0.025d);
 		xAxisTitleGap.setUnitType(DimensionlessUnit.class);
-		this.addInput(xAxisTitleGap, true);
+		this.addInput(xAxisTitleGap);
 
 		xAxisLabelGap = new ValueInput("XAxisLabelGap", "Key Inputs", 0.025d);
 		xAxisLabelGap.setUnitType(DimensionlessUnit.class);
-		this.addInput(xAxisLabelGap, true);
+		this.addInput(xAxisLabelGap);
 
 		yAxisTitleGap = new ValueInput("YAxisTitleGap", "Key Inputs", 0.025d);
 		yAxisTitleGap.setUnitType(DimensionlessUnit.class);
-		this.addInput(yAxisTitleGap, true);
+		this.addInput(yAxisTitleGap);
 
 		yAxisLabelGap = new ValueInput("YAxisLabelGap", "Key Inputs", 0.025d);
 		yAxisLabelGap.setUnitType(DimensionlessUnit.class);
-		this.addInput(yAxisLabelGap, true);
+		this.addInput(yAxisLabelGap);
 
 		topMargin = new ValueInput("TopMargin", "Key Inputs", 0.15d);
 		topMargin.setUnitType(DimensionlessUnit.class);
-		this.addInput(topMargin, true);
+		this.addInput(topMargin);
 
 		bottomMargin = new ValueInput("BottomMargin", "Key Inputs", 0.175d);
 		bottomMargin.setUnitType(DimensionlessUnit.class);
-		this.addInput(bottomMargin, true);
+		this.addInput(bottomMargin);
 
 		leftMargin = new ValueInput("LeftMargin", "Key Inputs", 0.21d);
 		leftMargin.setUnitType(DimensionlessUnit.class);
-		this.addInput(leftMargin, true);
+		this.addInput(leftMargin);
 
 		rightMargin = new ValueInput("RightMargin", "Key Inputs", 0.21d);
 		rightMargin.setUnitType(DimensionlessUnit.class);
-		this.addInput(rightMargin, true);
+		this.addInput(rightMargin);
 
 		titleTextModel = new EntityInput<TextModel>(TextModel.class, "TitleTextModel", "Key Inputs", null);
-		this.addInput(titleTextModel, true);
+		this.addInput(titleTextModel);
 
 		axisTitleTextModel = new EntityInput<TextModel>(TextModel.class, "AxisTitleTextModel", "Key Inputs", null);
-		this.addInput(axisTitleTextModel, true);
+		this.addInput(axisTitleTextModel);
 
 		labelTextModel = new EntityInput<TextModel>(TextModel.class, "LabelTextModel", "Key Inputs", null);
-		this.addInput(labelTextModel, true);
+		this.addInput(labelTextModel);
 
 		graphColor = new ColourInput("GraphColor", "Key Inputs", ColourInput.getColorWithName("ivory"));
-		this.addInput(graphColor, true, "GraphColour");
+		this.addInput(graphColor, "GraphColour");
 
 		backgroundColor = new ColourInput("BackgroundColor", "Key Inputs", ColourInput.getColorWithName("gray95"));
-		this.addInput(backgroundColor, true, "BackgroundColour");
+		this.addInput(backgroundColor, "BackgroundColour");
 
 		borderColor = new ColourInput("BorderColor", "Key Inputs", ColourInput.BLACK);
-		this.addInput(borderColor, true, "BorderColour");
+		this.addInput(borderColor, "BorderColour");
 	}
 
 	@Override

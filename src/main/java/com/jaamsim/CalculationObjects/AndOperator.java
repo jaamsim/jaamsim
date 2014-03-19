@@ -36,10 +36,10 @@ public class AndOperator extends BooleanCalculation {
 
 	{
 	entityList = new EntityListInput<BooleanCalculation>( BooleanCalculation.class, "EntityList", "Key Inputs", null);
-		this.addInput( entityList, true);
+		this.addInput( entityList);
 
 		negationList = new BooleanListInput( "NegationList", "Key Inputs", null);
-		this.addInput( negationList, true);
+		this.addInput( negationList);
 	}
 
 	@Override

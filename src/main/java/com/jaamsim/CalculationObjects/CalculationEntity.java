@@ -43,12 +43,12 @@ public abstract class CalculationEntity extends DisplayEntity {
 
 	{
 		controller = new EntityInput<Controller>( Controller.class, "Controller", "Key Inputs", null);
-		this.addInput( controller, true);
+		this.addInput( controller);
 
 		sequenceNumber = new ValueInput( "SequenceNumber", "Key Inputs", 0.0);
 		sequenceNumber.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		sequenceNumber.setUnitType(DimensionlessUnit.class);
-		this.addInput( sequenceNumber, true);
+		this.addInput( sequenceNumber);
 	}
 
 	@Override

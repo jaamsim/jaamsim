@@ -32,10 +32,10 @@ public class EntitySignal extends LinkedComponent {
 
 	{
 		targetGate = new EntityInput<EntityGate>( EntityGate.class, "TargetGate", "Key Inputs", null);
-		this.addInput( targetGate, true);
+		this.addInput( targetGate);
 
 		newState = new BooleanInput( "NewState", "Key Inputs", true);
-		this.addInput( newState, true);
+		this.addInput( newState);
 	}
 
 	@Override

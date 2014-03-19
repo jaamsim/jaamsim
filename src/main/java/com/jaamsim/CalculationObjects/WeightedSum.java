@@ -45,13 +45,13 @@ public class WeightedSum extends DoubleCalculation {
 
 		inputValueList = new SampleListInput( "InputValueList", "Key Inputs", null);
 		inputValueList.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( inputValueList, true);
+		this.addInput( inputValueList);
 
 		DoubleVector defList = new DoubleVector();
 		defList.add(1.0);
 		coefficientList = new ValueListInput( "CoefficientList", "Key Inputs", defList);
 		coefficientList.setUnitType(DimensionlessUnit.class);
-		this.addInput( coefficientList, true);
+		this.addInput( coefficientList);
 	}
 
 	@Override

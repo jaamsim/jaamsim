@@ -52,15 +52,15 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 
 	{
 		unitType = new UnitTypeInput( "UnitType", "Key Inputs", UserSpecifiedUnit.class );
-		this.addInput( unitType, true );
+		this.addInput( unitType );
 
 		value = new TimeSeriesDataInput("Value", "Key Inputs", null);
 		value.setUnitType(UserSpecifiedUnit.class);
-		this.addInput(value, true);
+		this.addInput(value);
 
 		cycleTime = new ValueInput( "CycleTime", "Key Inputs", Double.POSITIVE_INFINITY );
 		cycleTime.setUnitType(TimeUnit.class);
-		this.addInput( cycleTime, true );
+		this.addInput( cycleTime );
 	}
 
 	public TimeSeries() { }

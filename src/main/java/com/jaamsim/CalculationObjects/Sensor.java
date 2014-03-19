@@ -33,7 +33,7 @@ public class Sensor extends DoubleCalculation {
 		inputValue.setHidden(true);
 
 		sensedOutput = new OutputInput<Double>( Double.class, "SensedOutput", "Key Inputs", null);
-		this.addInput(sensedOutput, true);
+		this.addInput(sensedOutput);
 	}
 
 	@Override

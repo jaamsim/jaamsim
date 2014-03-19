@@ -42,7 +42,7 @@ public class Controller extends DisplayEntity {
 		samplingTime = new ValueInput("SamplingTime", "Key Inputs", 1.0d);
 		samplingTime.setUnitType(TimeUnit.class);
 		samplingTime.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		this.addInput(samplingTime, true);
+		this.addInput(samplingTime);
 	}
 
 	public Controller() {

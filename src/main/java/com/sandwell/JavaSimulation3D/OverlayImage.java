@@ -36,7 +36,7 @@ public class OverlayImage extends OverlayEntity {
 		size = new IntegerListInput("ImageSize", "Basic Graphics", defSize);
 		size.setValidCount(2);
 		size.setValidRange(0, 2500);
-		this.addInput(size, true);
+		this.addInput(size);
 	}
 
 	public IntegerVector getImageSize() {

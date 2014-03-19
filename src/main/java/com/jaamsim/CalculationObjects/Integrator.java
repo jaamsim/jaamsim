@@ -48,11 +48,11 @@ public class Integrator extends DoubleCalculation {
 
 		initialValue = new ValueInput( "InitialValue", "Key Inputs", 0.0d);
 		initialValue.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( initialValue, true);
+		this.addInput( initialValue);
 
 		integralTime = new SampleInput( "IntegralTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
 		integralTime.setUnitType(TimeUnit.class);
-		this.addInput( integralTime, true);
+		this.addInput( integralTime);
 	}
 
 	@Override

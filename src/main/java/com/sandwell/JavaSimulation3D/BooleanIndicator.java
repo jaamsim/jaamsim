@@ -18,13 +18,13 @@ public class BooleanIndicator extends DisplayEntity {
 
 	{
 		boolProp = new OutputInput<Boolean>(Boolean.class, "OutputName", "Key Inputs", null);
-		this.addInput(boolProp, true);
+		this.addInput(boolProp);
 
 		trueColor = new ColourInput("TrueColour", "Key Inputs", ColourInput.GREEN);
-		this.addInput(trueColor, true, "TrueColor");
+		this.addInput(trueColor, "TrueColor");
 
 		falseColor = new ColourInput("FalseColour", "Key Inputs", ColourInput.RED);
-		this.addInput(falseColor, true, "FalseColor");
+		this.addInput(falseColor, "FalseColor");
 	}
 
 	public BooleanIndicator() {

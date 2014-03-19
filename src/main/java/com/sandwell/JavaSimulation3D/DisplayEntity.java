@@ -193,38 +193,38 @@ public class DisplayEntity extends Entity {
 	{
 		positionInput = new Vec3dInput("Position", "Basic Graphics", new Vec3d());
 		positionInput.setUnitType(DistanceUnit.class);
-		this.addInput(positionInput, true);
+		this.addInput(positionInput);
 
 		alignmentInput = new Vec3dInput("Alignment", "Basic Graphics", new Vec3d());
-		this.addInput(alignmentInput, true);
+		this.addInput(alignmentInput);
 
 		sizeInput = new Vec3dInput("Size", "Basic Graphics", new Vec3d(1.0d, 1.0d, 1.0d));
 		sizeInput.setUnitType(DistanceUnit.class);
-		this.addInput(sizeInput, true);
+		this.addInput(sizeInput);
 
 		orientationInput = new Vec3dInput("Orientation", "Basic Graphics", new Vec3d());
 		orientationInput.setUnitType(AngleUnit.class);
-		this.addInput(orientationInput, true);
+		this.addInput(orientationInput);
 
 		regionInput = new EntityInput<Region>(Region.class, "Region", "Basic Graphics", null);
-		this.addInput(regionInput, true);
+		this.addInput(regionInput);
 
 		relativeEntity = new EntityInput<DisplayEntity>(DisplayEntity.class, "RelativeEntity", "Basic Graphics", null);
 		relativeEntity.setInvalidEntities(this);
-		this.addInput(relativeEntity, true);
+		this.addInput(relativeEntity);
 
 		displayModelList = new EntityListInput<DisplayModel>( DisplayModel.class, "DisplayModel", "Basic Graphics", null);
-		this.addInput(displayModelList, true);
+		this.addInput(displayModelList);
 		displayModelList.setUnique(false);
 
 		active = new BooleanInput("Active", "Basic Graphics", true);
-		this.addInput(active, true);
+		this.addInput(active);
 
 		show = new BooleanInput("Show", "Basic Graphics", true);
-		this.addInput(show, true);
+		this.addInput(show);
 
 		movable = new BooleanInput("Movable", "Basic Graphics", true);
-		this.addInput(movable, true);
+		this.addInput(movable);
 
 		tags = new TagSet();
 	}

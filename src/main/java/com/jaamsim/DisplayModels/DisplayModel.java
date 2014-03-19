@@ -57,17 +57,17 @@ public abstract class DisplayModel extends Entity {
 
 	{
 		visibleViews = new EntityListInput<View>(View.class, "VisibleViews", "Basic Graphics", null);
-		this.addInput(visibleViews, true);
+		this.addInput(visibleViews);
 
 		drawRange = new ValueListInput("DrawRange", "Basic Graphics", defRange);
 		drawRange.setUnitType(DistanceUnit.class);
 		drawRange.setValidCount(2);
 		drawRange.setValidRange(0, Double.POSITIVE_INFINITY);
-		this.addInput(drawRange, true);
+		this.addInput(drawRange);
 
 		modelScale = new Vec3dInput( "ModelScale", "Basic Graphics", new Vec3d(1, 1, 1));
 		modelScale.setValidRange( 0.0001, 10000);
-		this.addInput( modelScale, true);
+		this.addInput( modelScale);
 
 	}
 

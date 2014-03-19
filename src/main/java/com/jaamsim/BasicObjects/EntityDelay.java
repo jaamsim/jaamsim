@@ -70,7 +70,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	{
 		duration = new SampleInput( "Duration", "Key Inputs", null);
 		duration.setUnitType(TimeUnit.class);
-		this.addInput( duration, true);
+		this.addInput( duration);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
@@ -78,14 +78,14 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);
 		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
 		pointsInput.setUnitType(DistanceUnit.class);
-		this.addInput(pointsInput, true);
+		this.addInput(pointsInput);
 
 		widthInput = new DoubleInput("Width", "Key Inputs", 1.0d);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
-		this.addInput(widthInput, true);
+		this.addInput(widthInput);
 
 		colorInput = new ColourInput("Color", "Key Inputs", ColourInput.BLACK);
-		this.addInput(colorInput, true, "Colour");
+		this.addInput(colorInput, "Colour");
 	}
 
 	public EntityDelay() {

@@ -44,15 +44,15 @@ public class EntityGate extends LinkedComponent {
 
 	{
 		waitQueue = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput( waitQueue, true);
+		this.addInput( waitQueue);
 
 		releaseDelay = new ValueInput( "ReleaseDelay", "Key Inputs", null);
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		this.addInput( releaseDelay, true);
+		this.addInput( releaseDelay);
 
 		initialState = new BooleanInput( "InitialState", "Key Inputs", true);
-		this.addInput( initialState, true);
+		this.addInput( initialState);
 	}
 
 	@Override

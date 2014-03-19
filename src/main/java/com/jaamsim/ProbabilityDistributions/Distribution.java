@@ -68,22 +68,22 @@ implements SampleProvider {
 	}
 
 	{
-		this.addInput(globalSeedInput, true);
+		this.addInput(globalSeedInput);
 
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
-		this.addInput(unitType, true);
+		this.addInput(unitType);
 
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 0);
 		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
-		this.addInput(randomSeedInput, true);
+		this.addInput(randomSeedInput);
 
 		minValueInput = new ValueInput("MinValue", "Key Inputs", Double.NEGATIVE_INFINITY);
 		minValueInput.setUnitType(UserSpecifiedUnit.class);
-		this.addInput(minValueInput, true);
+		this.addInput(minValueInput);
 
 		maxValueInput = new ValueInput("MaxValue", "Key Inputs", Double.POSITIVE_INFINITY);
 		maxValueInput.setUnitType(UserSpecifiedUnit.class);
-		this.addInput(maxValueInput, true);
+		this.addInput(maxValueInput);
 	}
 
 	public Distribution() {}

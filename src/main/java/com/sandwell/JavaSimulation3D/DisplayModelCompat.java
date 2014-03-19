@@ -123,22 +123,22 @@ public class DisplayModelCompat extends DisplayModel {
 
 	{
 		shape = new EnumInput<ValidShapes>(ValidShapes.class, "Shape", "DisplayModel", ValidShapes.CIRCLE);
-		this.addInput(shape, true);
+		this.addInput(shape);
 
 		fillColour = new ColourInput("FillColour", "DisplayModel", ColourInput.MED_GREY);
-		this.addInput(fillColour, true, "FillColor");
+		this.addInput(fillColour, "FillColor");
 
 		outlineColour = new ColourInput("OutlineColour", "DisplayModel", ColourInput.BLACK);
-		this.addInput(outlineColour, true, "OutlineColor");
+		this.addInput(outlineColour, "OutlineColor");
 
 		filled = new BooleanInput("Filled", "DisplayModel", true);
-		this.addInput(filled, true);
+		this.addInput(filled);
 
 		dashed = new BooleanInput("Dashed", "DisplayModel", false);
-		this.addInput(dashed, true);
+		this.addInput(dashed);
 
 		bold = new BooleanInput("Bold", "DisplayModel", false);
-		this.addInput(bold, true);
+		this.addInput(bold);
 	}
 
 	public DisplayModelCompat() {}

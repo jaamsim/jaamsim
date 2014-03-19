@@ -58,18 +58,18 @@ public class EntityGenerator extends LinkedComponent {
 	{
 		firstArrivalTime = new SampleInput( "FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType( TimeUnit.class );
-		this.addInput( firstArrivalTime, true);
+		this.addInput( firstArrivalTime);
 
 		interArrivalTime = new SampleInput( "InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
 		interArrivalTime.setUnitType( TimeUnit.class );
-		this.addInput( interArrivalTime, true);
+		this.addInput( interArrivalTime);
 
 		prototypeEntity = new EntityInput<DisplayEntity>( DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
-		this.addInput( prototypeEntity, true);
+		this.addInput( prototypeEntity);
 
 		maxNumber = new IntegerInput( "MaxNumber", "Key Inputs", null);
 		maxNumber.setValidRange(1, Integer.MAX_VALUE);
-		this.addInput( maxNumber, true);
+		this.addInput( maxNumber);
 	}
 
 	public EntityGenerator() {

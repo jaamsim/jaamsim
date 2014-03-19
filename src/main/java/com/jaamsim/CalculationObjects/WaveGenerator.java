@@ -51,20 +51,20 @@ public abstract class WaveGenerator extends DoubleCalculation {
 		amplitude = new ValueInput( "Amplitude", "Key Inputs", 1.0d);
 		amplitude.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		amplitude.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( amplitude, true);
+		this.addInput( amplitude);
 
 		period = new ValueInput("Period", "Key Inputs", 1.0d);
 		period.setUnitType(TimeUnit.class);
 		period.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(period, true);
+		this.addInput(period);
 
 		phaseAngle = new ValueInput( "PhaseAngle", "Key Inputs", 0.0d);
 		phaseAngle.setUnitType( AngleUnit.class );
-		this.addInput( phaseAngle, true);
+		this.addInput( phaseAngle);
 
 		offset = new ValueInput( "Offset", "Key Inputs", 0.0d);
 		offset.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( offset, true);
+		this.addInput( offset);
 	}
 
 

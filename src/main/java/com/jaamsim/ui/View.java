@@ -108,15 +108,15 @@ static {
 
 {
 	region = new EntityInput<Region>(Region.class, "Region", "Graphics", null);
-	this.addInput(region, true);
+	this.addInput(region);
 
 	center = new Vec3dInput("ViewCenter", "Graphics", new Vec3d());
 	center.setUnitType(DistanceUnit.class);
-	this.addInput(center, true);
+	this.addInput(center);
 
 	position = new Vec3dInput("ViewPosition", "Graphics", new Vec3d(5.0d, -5.0d, 5.0d));
 	position.setUnitType(DistanceUnit.class);
-	this.addInput(position, true);
+	this.addInput(position);
 
 	IntegerVector defSize = new IntegerVector(2);
 	defSize.add(GUIFrame.VIEW_WIDTH);
@@ -124,7 +124,7 @@ static {
 	windowSize = new IntegerListInput("WindowSize", "Graphics", defSize);
 	windowSize.setValidCount(2);
 	windowSize.setValidRange(1, 8192);
-	this.addInput(windowSize, true);
+	this.addInput(windowSize);
 
 	IntegerVector defPos = new IntegerVector(2);
 	defPos.add(GUIFrame.COL2_START);
@@ -132,30 +132,30 @@ static {
 	windowPos = new IntegerListInput("WindowPosition", "Graphics", defPos);
 	windowPos.setValidCount(2);
 	windowPos.setValidRange(-8192, 8192);
-	this.addInput(windowPos, true);
+	this.addInput(windowPos);
 
 	titleBar = new StringInput("TitleBarText", "Graphics", null);
-	this.addInput(titleBar, true);
+	this.addInput(titleBar);
 
 	showOnStartup = new BooleanInput("ShowWindow", "Graphics", false);
-	this.addInput(showOnStartup, true);
+	this.addInput(showOnStartup);
 
 	movable = new BooleanInput("Movable", "Graphics", true);
-	this.addInput(movable, true);
+	this.addInput(movable);
 
 	followEntityInput = new EntityInput<DisplayEntity>(DisplayEntity.class, "FollowEntity", "Graphics", null);
-	this.addInput(followEntityInput, true);
+	this.addInput(followEntityInput);
 
 	positionScriptInput = new KeyedVec3dInput("ScriptedViewPosition", "Graphics");
 	positionScriptInput.setUnitType(DistanceUnit.class);
-	this.addInput(positionScriptInput, true);
+	this.addInput(positionScriptInput);
 
 	centerScriptInput = new KeyedVec3dInput("ScriptedViewCenter", "Graphics");
 	centerScriptInput.setUnitType(DistanceUnit.class);
-	this.addInput(centerScriptInput, true);
+	this.addInput(centerScriptInput);
 
 	skyboxImage = new FileInput("SkyboxImage", "Graphics", null);
-	this.addInput(skyboxImage, true);
+	this.addInput(skyboxImage);
 
 }
 

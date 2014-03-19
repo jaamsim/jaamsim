@@ -36,10 +36,10 @@ private final EntityListInput<Entity> entities;
 	startTime = new ValueInput("StartTime", "Key Inputs", 0.0d);
 	startTime.setUnitType(TimeUnit.class);
 	startTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-	this.addInput(startTime, true);
+	this.addInput(startTime);
 
 	entities = new EntityListInput<Entity>(Entity.class, "Entities", "Key Inputs", new ArrayList<Entity>(0));
-	this.addInput(entities, true);
+	this.addInput(entities);
 }
 
 public EntityTracer() {}

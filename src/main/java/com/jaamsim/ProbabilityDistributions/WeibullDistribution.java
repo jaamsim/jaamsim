@@ -45,12 +45,12 @@ public class WeibullDistribution extends Distribution {
 		scaleInput = new ValueInput("Scale", "Key Inputs", 1.0d);
 		scaleInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		scaleInput.setUnitType( UserSpecifiedUnit.class );
-		this.addInput(scaleInput, true);
+		this.addInput(scaleInput);
 
 		shapeInput = new ValueInput("Shape", "Key Inputs", 1.0d);
 		shapeInput.setValidRange( 1.0e-10d, Double.POSITIVE_INFINITY);
 		shapeInput.setUnitType( DimensionlessUnit.class );
-		this.addInput(shapeInput, true);
+		this.addInput(shapeInput);
 	}
 
 	public WeibullDistribution() {}

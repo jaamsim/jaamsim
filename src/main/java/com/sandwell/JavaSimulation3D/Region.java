@@ -39,11 +39,11 @@ private final Vec3dInput orientationInput;
 {
 	originInput = new Vec3dInput("Origin", "Basic Graphics", null);
 	originInput.setUnitType(DistanceUnit.class);
-	this.addInput(originInput, true);
+	this.addInput(originInput);
 
 	orientationInput = new Vec3dInput("Orientation", "Basic Graphics", null);
 	orientationInput.setUnitType(AngleUnit.class);
-	this.addInput(orientationInput, true);
+	this.addInput(orientationInput);
 }
 
 	/**

@@ -47,11 +47,11 @@ public class Polynomial extends DoubleCalculation {
 		defList.add(0.0);
 		coefficientList = new ValueListInput( "CoefficientList", "Key Inputs", defList);
 		coefficientList.setUnitType(DimensionlessUnit.class);
-		this.addInput( coefficientList, true);
+		this.addInput( coefficientList);
 
 		scale = new SampleInput( "Scale", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 1.0d));
 		scale.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( scale, true);
+		this.addInput( scale);
 	}
 
 	@Override

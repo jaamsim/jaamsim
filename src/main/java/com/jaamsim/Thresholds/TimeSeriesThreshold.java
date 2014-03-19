@@ -61,27 +61,27 @@ public class TimeSeriesThreshold extends Threshold {
 
 	{
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
-		this.addInput(unitType, true);
+		this.addInput(unitType);
 
 		timeSeries = new TimeSeriesInput("TimeSeries", "Key Inputs", null);
 		timeSeries.setUnitType(UserSpecifiedUnit.class);
-		this.addInput(timeSeries, true);
+		this.addInput(timeSeries);
 
 		maxOpenLimit = new TimeSeriesInput( "MaxOpenLimit", "Key Inputs", null );
 		maxOpenLimit.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( maxOpenLimit, true );
+		this.addInput( maxOpenLimit );
 
 		minOpenLimit = new TimeSeriesInput( "MinOpenLimit", "Key Inputs", null );
 		minOpenLimit.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( minOpenLimit, true );
+		this.addInput( minOpenLimit );
 
 		lookAhead = new ValueInput( "LookAhead", "Key Inputs", 0.0d );
 		lookAhead.setUnitType(TimeUnit.class);
-		this.addInput( lookAhead, true );
+		this.addInput( lookAhead );
 
 		offset = new ValueInput( "Offset", "Key Inputs", 0.0d );
 		offset.setUnitType(TimeUnit.class);
-		this.addInput( offset, true );
+		this.addInput( offset );
 	}
 
 	@Override

@@ -46,10 +46,10 @@ public class Server extends LinkedComponent {
 	{
 		serviceTimeInput = new SampleInput( "ServiceTime", "Key Inputs", null);
 		serviceTimeInput.setUnitType( TimeUnit.class );
-		this.addInput( serviceTimeInput, true);
+		this.addInput( serviceTimeInput);
 
 		waitQueueInput = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput( waitQueueInput, true);
+		this.addInput( waitQueueInput);
 	}
 
 	@Override

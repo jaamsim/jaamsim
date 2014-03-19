@@ -78,10 +78,10 @@ public class Entity {
 	{
 		trace = new BooleanInput("Trace", "Key Inputs", false);
 		trace.setHidden(true);
-		this.addInput(trace, true);
+		this.addInput(trace);
 
 		desc = new StringInput("Description", "Key Inputs", "");
-		this.addInput(desc, true);
+		this.addInput(desc);
 	}
 
 	/**
@@ -211,23 +211,20 @@ public class Entity {
 		}
 	}
 
-	protected void addInput(Input<?> in, boolean editable, String... synonyms) {
+	protected void addInput(Input<?> in, String... synonyms) {
 		this.mapInput(in, in.getKeyword());
 
 		// Editable inputs are sorted by category
-		if (editable) {
-
-			int index = editableInputs.size();
-			for( int i = editableInputs.size() - 1; i >= 0; i-- ) {
-				Input<?> ei = editableInputs.get( i );
-				if( ei.getCategory().equals( in.getCategory() ) ) {
-					index = i+1;
-					break;
-				}
+		int index = editableInputs.size();
+		for (int i = editableInputs.size() - 1; i >= 0; i--) {
+			Input<?> ei = editableInputs.get(i);
+			if (ei.getCategory().equals(in.getCategory())) {
+				index = i + 1;
+				break;
 			}
-
-			editableInputs.add(index, in);
 		}
+
+		editableInputs.add(index, in);
 
 		for (String each : synonyms)
 			this.mapInput(in, each);
@@ -587,7 +584,7 @@ public class Entity {
 			// Create a new input object
 			CompatInput in = new CompatInput(this, keyword, category, defaultValue);
 			in.setAppendable( append );
-			this.addInput(in, true);
+			this.addInput(in);
 		} else {
 			System.out.format("Edited keyword added twice %s:%s%n", this.getClass().getName(), keyword);
 		}

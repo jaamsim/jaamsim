@@ -35,12 +35,12 @@ public class Release extends LinkedComponent {
 
 	{
 		resourceList = new EntityListInput<Resource>(Resource.class, "Resource", "Key Inputs", null);
-		this.addInput( resourceList, true);
+		this.addInput( resourceList);
 
 		IntegerVector defNum = new IntegerVector();
 		defNum.add(1);
 		numberOfUnitsList = new IntegerListInput("NumberOfUnits", "Key Inputs", defNum);
-		this.addInput( numberOfUnitsList, true);
+		this.addInput( numberOfUnitsList);
 	}
 
 	@Override

@@ -70,28 +70,28 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		pointsInput = new Vec3dListInput("Points", "Arrow Graphics", defPoints);
 		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
 		pointsInput.setUnitType(DistanceUnit.class);
-		this.addInput(pointsInput, true);
+		this.addInput(pointsInput);
 
 		width = new DoubleInput("Width", "Arrow Graphics", 1.0d);
 		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(width, true);
+		this.addInput(width);
 
 		arrowHeadSize = new Vec3dInput( "ArrowSize", "Arrow Graphics", new Vec3d(0.1d, 0.1d, 0.0d) );
 		arrowHeadSize.setUnitType(DistanceUnit.class);
-		this.addInput( arrowHeadSize, true );
+		this.addInput( arrowHeadSize );
 
 		color = new ColourInput("Color", "Arrow Graphics", ColourInput.BLACK);
-		this.addInput(color, true, "Colour");
+		this.addInput(color, "Colour");
 
 		dropShadow = new BooleanInput( "DropShadow", "Arrow Graphics", false );
-		this.addInput( dropShadow, true );
+		this.addInput( dropShadow );
 
 		dropShadowColor = new ColourInput("DropShadowColour", "Arrow Graphics", ColourInput.BLACK);
-		this.addInput(dropShadowColor, true, "DropShadowColor");
+		this.addInput(dropShadowColor, "DropShadowColor");
 
 		dropShadowOffset = new Vec3dInput( "DropShadowOffset", "Arrow Graphics", new Vec3d() );
 		dropShadowOffset.setUnitType(DistanceUnit.class);
-		this.addInput( dropShadowOffset, true );
+		this.addInput( dropShadowOffset );
 	}
 
 	public Arrow() {}

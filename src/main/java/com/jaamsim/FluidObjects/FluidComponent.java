@@ -51,12 +51,12 @@ public class FluidComponent extends DisplayEntity {
 
 	{
 		previousInput = new EntityInput<FluidComponent>( FluidComponent.class, "Previous", "Key Inputs", null);
-		this.addInput( previousInput, true);
+		this.addInput( previousInput);
 
 		diameterInput = new ValueInput( "Diameter", "Key Inputs", Double.POSITIVE_INFINITY);
 		diameterInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		diameterInput.setUnitType( DistanceUnit.class );
-		this.addInput( diameterInput, true);
+		this.addInput( diameterInput);
 	}
 
 	@Override

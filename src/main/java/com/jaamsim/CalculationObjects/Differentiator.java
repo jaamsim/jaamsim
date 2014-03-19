@@ -40,7 +40,7 @@ public class Differentiator extends DoubleCalculation {
 
 		derivativeTime = new SampleInput( "DerivativeTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0) );
 		derivativeTime.setUnitType(TimeUnit.class);
-		this.addInput( derivativeTime, true);
+		this.addInput( derivativeTime);
 	}
 
 	@Override

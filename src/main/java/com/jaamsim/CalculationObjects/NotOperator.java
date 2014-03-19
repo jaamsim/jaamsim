@@ -29,7 +29,7 @@ public class NotOperator extends BooleanCalculation {
 	private final EntityInput<BooleanCalculation> entity;
 	{
 	entity = new EntityInput<BooleanCalculation>( BooleanCalculation.class, "Entity", "Key Inputs", null);
-		this.addInput( entity, true);
+		this.addInput( entity);
 	}
 
 	@Override

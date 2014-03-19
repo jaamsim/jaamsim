@@ -47,13 +47,13 @@ public abstract class OverlayEntity extends DisplayEntity {
 		screenPosition = new IntegerListInput("ScreenPosition", "Basic Graphics", defPos);
 		screenPosition.setValidCount(2);
 		screenPosition.setValidRange(0, 2500);
-		this.addInput(screenPosition, true);
+		this.addInput(screenPosition);
 
 		alignRight = new BooleanInput("AlignRight", "Basic Graphics", false);
-		this.addInput(alignRight, true);
+		this.addInput(alignRight);
 
 		alignBottom = new BooleanInput("AlignBottom", "Basic Graphics", false);
-		this.addInput(alignBottom, true);
+		this.addInput(alignBottom);
 
 		getInput("position").setHidden(true);
 		getInput("alignment").setHidden(true);

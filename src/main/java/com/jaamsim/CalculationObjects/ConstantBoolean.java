@@ -30,7 +30,7 @@ public class ConstantBoolean extends BooleanCalculation {
 
 	{
 		valueInput = new BooleanInput( "Value", "Key Inputs", true);
-		this.addInput( valueInput, true);
+		this.addInput( valueInput);
 	}
 
 	@Override

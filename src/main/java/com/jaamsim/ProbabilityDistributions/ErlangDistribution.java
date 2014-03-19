@@ -45,11 +45,11 @@ public class ErlangDistribution extends Distribution {
 		meanInput = new ValueInput("Mean", "Key Inputs", 1.0d);
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(meanInput, true);
+		this.addInput(meanInput);
 
 		shapeInput = new IntegerInput("Shape", "Key Inputs", 1);
 		shapeInput.setValidRange( 1, Integer.MAX_VALUE);
-		this.addInput(shapeInput, true);
+		this.addInput(shapeInput);
 	}
 
 	public ErlangDistribution() {}

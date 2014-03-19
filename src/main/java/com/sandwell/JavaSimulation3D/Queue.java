@@ -58,11 +58,11 @@ public class Queue extends DisplayEntity {
 		spacingInput = new ValueInput("Spacing", "Key Inputs", 0.0d);
 		spacingInput.setUnitType(DistanceUnit.class);
 		spacingInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(spacingInput, true);
+		this.addInput(spacingInput);
 
 		maxPerLineInput = new IntegerInput("MaxPerLine", "Key Inputs", Integer.MAX_VALUE);
 		maxPerLineInput.setValidRange( 1, Integer.MAX_VALUE);
-		this.addInput(maxPerLineInput, true);
+		this.addInput(maxPerLineInput);
 	}
 
 	public Queue() {

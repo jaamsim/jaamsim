@@ -78,22 +78,22 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		lengthInput = new ValueInput( "Length", "Key Inputs", 1.0d);
 		lengthInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		lengthInput.setUnitType( DistanceUnit.class );
-		this.addInput( lengthInput, true);
+		this.addInput( lengthInput);
 
 		heightChangeInput = new ValueInput( "HeightChange", "Key Inputs", 0.0d);
 		heightChangeInput.setValidRange( Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 		heightChangeInput.setUnitType( DistanceUnit.class );
-		this.addInput( heightChangeInput, true);
+		this.addInput( heightChangeInput);
 
 		roughnessInput = new ValueInput( "Roughness", "Key Inputs", 0.0d);
 		roughnessInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		roughnessInput.setUnitType( DistanceUnit.class );
-		this.addInput( roughnessInput, true);
+		this.addInput( roughnessInput);
 
 		pressureLossCoefficientInput = new ValueInput( "PressureLossCoefficient", "Key Inputs", 0.0d);
 		pressureLossCoefficientInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		pressureLossCoefficientInput.setUnitType( DimensionlessUnit.class );
-		this.addInput( pressureLossCoefficientInput, true);
+		this.addInput( pressureLossCoefficientInput);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
@@ -101,15 +101,15 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);
 		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
 		pointsInput.setUnitType(DistanceUnit.class);
-		this.addInput(pointsInput, true);
+		this.addInput(pointsInput);
 
 		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		widthInput.setUnitType( DimensionlessUnit.class );
-		this.addInput(widthInput, true);
+		this.addInput(widthInput);
 
 		colourInput = new ColourInput("Colour", "Key Inputs", ColourInput.BLACK);
-		this.addInput(colourInput, true, "Color");
+		this.addInput(colourInput, "Color");
 	}
 
 	@Override

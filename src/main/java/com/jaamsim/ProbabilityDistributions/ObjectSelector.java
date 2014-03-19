@@ -43,10 +43,10 @@ public abstract class ObjectSelector extends DisplayEntity {
 
 	{
 		entityListInput = new EntityListInput<DisplayEntity>( DisplayEntity.class, "EntityList", "Key Inputs", null);
-		this.addInput( entityListInput, true);
+		this.addInput( entityListInput);
 
 		probabilityListInput = new DoubleListInput( "ProbabilityList", "Key Inputs", null);
-		this.addInput( probabilityListInput, true);
+		this.addInput( probabilityListInput);
 	}
 
 	@Override

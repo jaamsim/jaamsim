@@ -129,24 +129,24 @@ public class Simulation extends Entity {
 	}
 
 	{
-		this.addInput(runDuration, true);
-		this.addInput(initializationTime, true);
+		this.addInput(runDuration);
+		this.addInput(initializationTime);
 
-		this.addInput(startDate, true);
+		this.addInput(startDate);
 
-		this.addInput(startTimeInput, true);
+		this.addInput(startTimeInput);
 
-		this.addInput(simTimeScaleInput, true);
+		this.addInput(simTimeScaleInput);
 
-		this.addInput(traceEventsInput, false);
-		this.addInput(verifyEventsInput, false);
+		this.addInput(traceEventsInput);
+		this.addInput(verifyEventsInput);
 
-		this.addInput(printInputReport, true);
+		this.addInput(printInputReport);
 
-		this.addInput(realTimeFactor, true);
-		this.addInput(realTime, true);
+		this.addInput(realTimeFactor);
+		this.addInput(realTime);
 
-		this.addInput(exitAtStop, true);
+		this.addInput(exitAtStop);
 	}
 
 	public Simulation() {}

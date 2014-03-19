@@ -90,43 +90,43 @@ public class PIDController extends DoubleCalculation {
 		inputValue.setHidden(true);
 
 		setPointUnitType = new UnitTypeInput( "SetPointUnitType", "Key Inputs", UserSpecifiedUnit.class);
-		this.addInput(setPointUnitType, true);
+		this.addInput(setPointUnitType);
 
 		setPoint = new SampleInput( "SetPoint", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
 		setPoint.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( setPoint, true);
+		this.addInput( setPoint);
 
 		processVariable = new SampleInput( "ProcessVariable", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
 		processVariable.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( processVariable, true);
+		this.addInput( processVariable);
 
 		proportionalGain = new ValueInput( "ProportionalGain", "Key Inputs", 1.0d);
 		proportionalGain.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		proportionalGain.setUnitType(DimensionlessUnit.class);
-		this.addInput( proportionalGain, true);
+		this.addInput( proportionalGain);
 
 		scaleConversionCoefficient = new ValueInput( "ScaleConversionCoefficient", "Key Inputs", 1.0d);
 		scaleConversionCoefficient.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		scaleConversionCoefficient.setUnitType(DimensionlessUnit.class);
-		this.addInput( scaleConversionCoefficient, true);
+		this.addInput( scaleConversionCoefficient);
 
 		integralTime = new ValueInput( "IntegralTime", "Key Inputs", 1.0d);
 		integralTime.setValidRange( 1.0e-10, Double.POSITIVE_INFINITY);
 		integralTime.setUnitType( TimeUnit.class );
-		this.addInput( integralTime, true);
+		this.addInput( integralTime);
 
 		derivativeTime = new ValueInput( "DerivativeTime", "Key Inputs", 0.0d);
 		derivativeTime.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
 		derivativeTime.setUnitType( TimeUnit.class );
-		this.addInput( derivativeTime, true);
+		this.addInput( derivativeTime);
 
 		outputLow = new ValueInput( "OutputLow", "Key Inputs", Double.NEGATIVE_INFINITY);
 		outputLow.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( outputLow, true);
+		this.addInput( outputLow);
 
 		outputHigh = new ValueInput( "OutputHigh", "Key Inputs", Double.POSITIVE_INFINITY);
 		outputHigh.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( outputHigh, true);
+		this.addInput( outputHigh);
 	}
 
 	@Override

@@ -52,7 +52,7 @@ public class Resource extends DisplayEntity {
 	{
 		capacity = new SampleInput( "Capacity", "Key Inputs", null);
 		capacity.setUnitType(DimensionlessUnit.class);
-		this.addInput( capacity, true);
+		this.addInput( capacity);
 	}
 
 	public Resource() {

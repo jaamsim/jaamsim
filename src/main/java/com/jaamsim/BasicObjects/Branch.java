@@ -37,11 +37,11 @@ public class Branch extends LinkedComponent {
 		nextComponentInput.setHidden(true);
 
 		nextComponentList = new EntityListInput<LinkedComponent>( LinkedComponent.class, "NextComponentList", "Key Inputs", null);
-		this.addInput( nextComponentList, true);
+		this.addInput( nextComponentList);
 
 		choice = new SampleInput( "Choice", "Key Inputs", null);
 		choice.setUnitType( DimensionlessUnit.class );
-		this.addInput( choice, true);
+		this.addInput( choice);
 	}
 
 	@Override

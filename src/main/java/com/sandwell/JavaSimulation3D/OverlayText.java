@@ -58,20 +58,20 @@ public class OverlayText extends OverlayEntity {
 
 	{
 		formatText = new StringInput("Format", "Key Inputs", "abc");
-		this.addInput(formatText, true);
+		this.addInput(formatText);
 
 		outputName = new OutputInput<Object>(Object.class, "OutputName", "Key Inputs", null);
-		this.addInput(outputName, true);
+		this.addInput(outputName);
 
 		unit = new EntityInput<Unit>( Unit.class, "Unit", "Key Inputs", null);
-		this.addInput(unit, true);
+		this.addInput(unit);
 
 		textHeight = new IntegerInput("TextHeight", "Key Inputs", 15);
 		textHeight.setValidRange(0, 1000);
-		this.addInput(textHeight, true);
+		this.addInput(textHeight);
 
 		failText = new StringInput("FailText", "Key Inputs", "");
-		this.addInput(failText, true);
+		this.addInput(failText);
 	}
 
 	public String getRenderText(double simTime) {

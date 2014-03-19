@@ -44,7 +44,7 @@ public class Group extends Entity {
 		addEditableKeyword( "GroupType",  "",   "", false, "Key Inputs" );
 
 		reportable = new BooleanInput("Reportable", "Key Inputs", true);
-		this.addInput(reportable, true);
+		this.addInput(reportable);
 	}
 
 	public Group() {

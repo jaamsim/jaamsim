@@ -39,12 +39,12 @@ public class ScriptEntity extends Entity {
 
 	{
 		scriptFileName = new FileInput( "Script", "Key Inputs", null );
-		this.addInput( scriptFileName, true );
+		this.addInput( scriptFileName );
 
 		scriptTime = new ValueInput("Time", "Key Inputs", 0.0d);
 		scriptTime.setUnitType(TimeUnit.class);
 		scriptTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(scriptTime, false);
+		this.addInput(scriptTime);
 	}
 
 	public ScriptEntity() {

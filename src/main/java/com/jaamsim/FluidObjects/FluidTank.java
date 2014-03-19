@@ -52,21 +52,21 @@ public class FluidTank extends FluidComponent {
 		capacityInput = new ValueInput( "Capacity", "Key Inputs", 1.0d);
 		capacityInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		capacityInput.setUnitType( VolumeUnit.class );
-		this.addInput( capacityInput, true);
+		this.addInput( capacityInput);
 
 		initialVolumeInput = new ValueInput( "InitialVolume", "Key Inputs", 0.0d);
 		initialVolumeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		initialVolumeInput.setUnitType( VolumeUnit.class );
-		this.addInput( initialVolumeInput, true);
+		this.addInput( initialVolumeInput);
 
 		ambientPressureInput = new ValueInput( "AmbientPressure", "Key Inputs", 0.0d);
 		ambientPressureInput.setUnitType( PressureUnit.class );
-		this.addInput( ambientPressureInput, true);
+		this.addInput( ambientPressureInput);
 
 		inletHeightInput = new ValueInput( "InletHeight", "Key Inputs", 0.0d);
 		inletHeightInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		inletHeightInput.setUnitType( DistanceUnit.class );
-		this.addInput( inletHeightInput, true);
+		this.addInput( inletHeightInput);
 	}
 
 	@Override

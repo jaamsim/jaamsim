@@ -44,16 +44,16 @@ public class ObjectType extends Entity {
 
 	{
 		javaClass = new ClassInput( "JavaClass", "Key Inputs", null );
-		this.addInput( javaClass, true );
+		this.addInput( javaClass );
 
 		palette = new EntityInput<Palette>( Palette.class, "Palette", "Key Inputs", null );
-		this.addInput( palette, true );
+		this.addInput( palette );
 
 		defaultDisplayModel = new EntityInput<DisplayModel>(DisplayModel.class, "DefaultDisplayModel", "Key Inputs", null);
-		this.addInput(defaultDisplayModel, true);
+		this.addInput(defaultDisplayModel);
 
 		dragAndDrop = new BooleanInput("DragAndDrop", "Key inputs", true);
-		this.addInput(dragAndDrop, true);
+		this.addInput(dragAndDrop);
 	}
 
 	public ObjectType() {

@@ -36,13 +36,13 @@ private final StringListInput arguments;
 
 {
 	target = new EntityInput<Entity>(Entity.class, "Target", "Outputs", null);
-	this.addInput(target, true);
+	this.addInput(target);
 
 	method = new StringInput("Method", "Outputs", null);
-	this.addInput(method, true);
+	this.addInput(method);
 
 	arguments = new StringListInput("Arguments", "Outputs", null);
-	this.addInput(arguments, true);
+	this.addInput(arguments);
 }
 
 public OutputMethod() {}

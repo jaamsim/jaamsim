@@ -45,13 +45,13 @@ public abstract class FluidFlowCalculation extends CalculationEntity {
 
 	{
 		fluidInput = new EntityInput<Fluid>( Fluid.class, "Fluid", "Key Inputs", null);
-		this.addInput( fluidInput, true);
+		this.addInput( fluidInput);
 
 		sourceInput = new EntityInput<FluidComponent>( FluidComponent.class, "Source", "Key Inputs", null);
-		this.addInput( sourceInput, true);
+		this.addInput( sourceInput);
 
 		destinationInput = new EntityInput<FluidComponent>( FluidComponent.class, "Destination", "Key Inputs", null);
-		this.addInput( destinationInput, true);
+		this.addInput( destinationInput);
 	}
 
 	@Override

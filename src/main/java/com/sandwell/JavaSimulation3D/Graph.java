@@ -80,37 +80,37 @@ public class Graph extends GraphBasics  {
 
 		numberOfPoints = new IntegerInput("NumberOfPoints", "Key Inputs", 100);
 		numberOfPoints.setValidRange(0, Integer.MAX_VALUE);
-		this.addInput(numberOfPoints, true);
+		this.addInput(numberOfPoints);
 
 		dataSource = new OutputListInput<Double>(Double.class, "DataSource", "Key Inputs", null);
-		this.addInput(dataSource, true);
+		this.addInput(dataSource);
 
 		ArrayList<Color4d> defLineColor = new ArrayList<Color4d>(0);
 		defLineColor.add(ColourInput.getColorWithName("red"));
 		lineColorsList = new ColorListInput("LineColours", "Key Inputs", defLineColor);
 		lineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
-		this.addInput(lineColorsList, true, "LineColors");
+		this.addInput(lineColorsList, "LineColors");
 
 		DoubleVector defLineWidths = new DoubleVector();
 		defLineWidths.add(1.0);
 		lineWidths = new DoubleListInput("LineWidths", "Key Inputs", defLineWidths);
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
-		this.addInput(lineWidths, true);
+		this.addInput(lineWidths);
 
 		secondaryDataSource = new OutputListInput<Double>(Double.class, "SecondaryDataSource", "Key Inputs", null);
-		this.addInput(secondaryDataSource, true);
+		this.addInput(secondaryDataSource);
 
 		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<Color4d>(0);
 		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
 		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", "Key Inputs", defSecondaryLineColor);
 		secondaryLineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
-		this.addInput(secondaryLineColorsList, true, "SecondaryLineColors");
+		this.addInput(secondaryLineColorsList, "SecondaryLineColors");
 
 		DoubleVector defSecondaryLineWidths = new DoubleVector();
 		defSecondaryLineWidths.add(1.0);
 		secondaryLineWidths = new DoubleListInput("SecondaryLineWidths", "Key Inputs", defSecondaryLineWidths);
 		secondaryLineWidths.setValidCountRange(1, Integer.MAX_VALUE);
-		this.addInput(secondaryLineWidths, true);
+		this.addInput(secondaryLineWidths);
 	}
 
 	public Graph() {

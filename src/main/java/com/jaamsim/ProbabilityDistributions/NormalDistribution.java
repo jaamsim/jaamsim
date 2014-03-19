@@ -41,12 +41,12 @@ public class NormalDistribution extends Distribution {
 	{
 		meanInput = new ValueInput("Mean", "Key Inputs", 0.0d);
 		meanInput.setUnitType(UserSpecifiedUnit.class);
-		this.addInput(meanInput, true);
+		this.addInput(meanInput);
 
 		standardDeviationInput = new ValueInput("StandardDeviation", "Key Inputs", 1.0d);
 		standardDeviationInput.setUnitType(UserSpecifiedUnit.class);
 		standardDeviationInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(standardDeviationInput, true);
+		this.addInput(standardDeviationInput);
 	}
 
 	public NormalDistribution() {}
