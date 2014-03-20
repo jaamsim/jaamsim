@@ -64,6 +64,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.util.ExceptionLogger;
 import com.jaamsim.ui.LogBox;
+import com.jogamp.common.util.VersionNumber;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.event.WindowListener;
 import com.jogamp.newt.event.WindowUpdateEvent;
@@ -614,6 +615,20 @@ private void createShader(ShaderHandle sh, String vert, String frag, GL2GL3 gl) 
 	throw new RenderException("Shader failed: " + sh.toString() + " " + failure);
 }
 
+private void createCoreShader(ShaderHandle sh, String vert, String frag, GL2GL3 gl, String version) {
+	String vertsrc = readSource(vert).replaceAll("@VERSION@", version);
+	String fragsrc = readSource(frag).replaceAll("@VERSION@", version);
+
+	Shader s = new Shader(vertsrc, fragsrc, gl);
+	if (s.isGood()) {
+		_shaders.put(sh, s);
+		return;
+	}
+
+	String failure = s.getFailureLog();
+	throw new RenderException("Shader failed: " + sh.toString() + " " + failure);
+}
+
 private String getMeshShaderDefines(int i) {
 	StringBuilder defines = new StringBuilder();
 	if ((i & DIFF_TEX_FLAG) != 0) {
@@ -672,6 +687,56 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	}
 }
 
+/**
+ * Create and compile all the shaders
+ */
+private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
+	_shaders = new EnumMap<ShaderHandle, Shader>(ShaderHandle.class);
+	String vert, frag;
+
+	vert = "/resources/shaders_core/font.vert";
+	frag = "/resources/shaders_core/font.frag";
+	createCoreShader(ShaderHandle.FONT, vert, frag, gl, version);
+
+	vert = "/resources/shaders_core/hull.vert";
+	frag = "/resources/shaders_core/hull.frag";
+	createCoreShader(ShaderHandle.HULL, vert, frag, gl, version);
+
+	vert = "/resources/shaders_core/overlay-font.vert";
+	frag = "/resources/shaders_core/overlay-font.frag";
+	createCoreShader(ShaderHandle.OVERLAY_FONT, vert, frag, gl, version);
+
+	vert = "/resources/shaders_core/overlay-flat.vert";
+	frag = "/resources/shaders_core/overlay-flat.frag";
+	createCoreShader(ShaderHandle.OVERLAY_FLAT, vert, frag, gl, version);
+
+	vert = "/resources/shaders_core/debug.vert";
+	frag = "/resources/shaders_core/debug.frag";
+	createCoreShader(ShaderHandle.DEBUG, vert, frag, gl, version);
+
+	vert = "/resources/shaders/skybox.vert";
+	frag = "/resources/shaders/skybox.frag";
+	createCoreShader(ShaderHandle.SKYBOX, vert, frag, gl, version);
+
+	String meshVertSrc = readSource("/resources/shaders/flat.vert");
+	String meshFragSrc = readSource("/resources/shaders/flat.frag");
+
+	// Create the mesh shaders
+	for (int i = 0; i < NUM_MESH_SHADERS; ++i) {
+		String defines = getMeshShaderDefines(i);
+
+		String definedFragSrc = meshFragSrc.replaceAll("@DEFINES@", defines).replaceAll("@VERSION@", version);
+
+		Shader s = new Shader(meshVertSrc, definedFragSrc, gl);
+		if (!s.isGood()) {
+			String failure = s.getFailureLog();
+			throw new RenderException("Mesh Shader failed, flags: " + i + " " + failure);
+		}
+
+		meshShaders[i] = s;
+	}
+}
+
 	/**
 	 * Basic message dispatch
 	 *
@@ -717,8 +782,14 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 
 		LogBox.formatRenderLog("Found OpenGL version: %s", _sharedContext.getGLVersion());
 		LogBox.formatRenderLog("Found GLSL: %s", _sharedContext.getGLSLVersionString());
+		VersionNumber vn = _sharedContext.getGLVersionNumber();
+		boolean isCore = _sharedContext.isGLCoreProfile();
+		LogBox.formatRenderLog("OpenGL Major: %d Minor: %d IsCore:%s", vn.getMajor(), vn.getMinor(), isCore);
 		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
-		initShaders(gl);
+		if (!isCore)
+			initShaders(gl);
+		else
+			initCoreShaders(gl, _sharedContext.getGLSLVersionString());
 
 		// Sub system specific intitializations
 		DebugUtils.init(this, gl);
