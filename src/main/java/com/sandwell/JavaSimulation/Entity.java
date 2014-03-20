@@ -22,7 +22,6 @@ import com.jaamsim.basicsim.InstanceIterable;
 import com.jaamsim.basicsim.ReflectionTarget;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.Process;
-import com.jaamsim.events.ProcessError;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -184,12 +183,7 @@ public class Entity {
 	 * @return the current simulation tick
 	 */
 	public final long getSimTicks() {
-		try {
-			return Process.currentTick();
-		}
-		catch (ProcessError e) {
-			return root.currentTick();
-		}
+		return Process.currentTick();
 	}
 
 	/**
