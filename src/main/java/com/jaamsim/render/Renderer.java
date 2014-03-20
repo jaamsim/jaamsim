@@ -714,12 +714,12 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	frag = "/resources/shaders_core/debug.frag";
 	createCoreShader(ShaderHandle.DEBUG, vert, frag, gl, version);
 
-	vert = "/resources/shaders/skybox.vert";
-	frag = "/resources/shaders/skybox.frag";
+	vert = "/resources/shaders_core/skybox.vert";
+	frag = "/resources/shaders_core/skybox.frag";
 	createCoreShader(ShaderHandle.SKYBOX, vert, frag, gl, version);
 
-	String meshVertSrc = readSource("/resources/shaders/flat.vert");
-	String meshFragSrc = readSource("/resources/shaders/flat.frag");
+	String meshVertSrc = readSource("/resources/shaders_core/flat.vert");
+	String meshFragSrc = readSource("/resources/shaders_core/flat.frag");
 
 	// Create the mesh shaders
 	for (int i = 0; i < NUM_MESH_SHADERS; ++i) {
