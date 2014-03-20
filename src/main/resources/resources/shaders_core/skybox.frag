@@ -35,5 +35,5 @@ void main()
     texCoords.x = (-atan2(interpPos.x, interpPos.y) + PI) / (2*PI);
     texCoords.y = (atan(interpPos.z / length(interpPos.xy)) + (PI/2)) / (PI);
 
-    outColor = texture2D(tex, texCoords);
+    outColor = texture(tex, texCoords);
 }

@@ -30,7 +30,7 @@ out vec4 outColour;
 #ifdef DIFF_TEX
 // Use a diffuse texture
 uniform sampler2D diffuseTex;
-#define DIFF_VAL texture2D(diffuseTex, texCoordFrag)
+#define DIFF_VAL texture(diffuseTex, texCoordFrag)
 
 #else
 // Constant diffuse color

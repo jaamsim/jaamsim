@@ -26,7 +26,7 @@ uniform bool useTex;
 void main()
 {
     if (useTex) {
-        outColour = texture2D(tex, texCoordFrag);
+        outColour = texture(tex, texCoordFrag);
     } else {
         outColour = color;
     }
