@@ -715,6 +715,8 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 			_sharedContext.setGL(new DebugGL4bc((GL4bc)_sharedContext.getGL().getGL2GL3()));
 		}
 
+		LogBox.formatRenderLog("Found OpenGL version: %s", _sharedContext.getGLVersion());
+		LogBox.formatRenderLog("Found GLSL: %s", _sharedContext.getGLSLVersionString());
 		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
 		initShaders(gl);
 
