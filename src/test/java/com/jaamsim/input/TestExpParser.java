@@ -92,43 +92,43 @@ public class TestExpParser {
 
 		ValLookup vl = new ValLookup();
 
-		ExpParser.Expression exp = ExpParser.parse("2*5 + 3*5*(3-1)+2");
+		ExpParser.Expression exp = ExpParser.parseExpression("2*5 + 3*5*(3-1)+2");
 		double val = exp.evaluate(vl);
 		assertTrue(val == 42);
 
-		exp = ExpParser.parse("max(3, 42)");
+		exp = ExpParser.parseExpression("max(3, 42)");
 		val = exp.evaluate(vl);
 		assertTrue(val == 42);
 
-		exp = ExpParser.parse("abs(-42)");
+		exp = ExpParser.parseExpression("abs(-42)");
 		val = exp.evaluate(vl);
 		assertTrue(val == 42);
 
-		exp = ExpParser.parse("foo*bar");
+		exp = ExpParser.parseExpression("foo*bar");
 		val = exp.evaluate(vl);
 		assertTrue(val == 12);
 
-		exp = ExpParser.parse("50/2/5"); // left associative
+		exp = ExpParser.parseExpression("50/2/5"); // left associative
 		val = exp.evaluate(vl);
 		assertTrue(val == 5);
 
-		exp = ExpParser.parse("2^2^3"); // right associative
+		exp = ExpParser.parseExpression("2^2^3"); // right associative
 		val = exp.evaluate(vl);
 		assertTrue(val == 256);
 
-		exp = ExpParser.parse("1 + 2^2*4 + 2*foo");
+		exp = ExpParser.parseExpression("1 + 2^2*4 + 2*foo");
 		val = exp.evaluate(vl);
 		assertTrue(val == 25);
 
-		exp = ExpParser.parse("1 + 2^(2*4) + 2");
+		exp = ExpParser.parseExpression("1 + 2^(2*4) + 2");
 		val = exp.evaluate(vl);
 		assertTrue(val == 259);
 
-		exp = ExpParser.parse("2----2"); // A quadruple negative
+		exp = ExpParser.parseExpression("2----2"); // A quadruple negative
 		val = exp.evaluate(vl);
 		assertTrue(val == 4);
 
-		exp = ExpParser.parse("(((((1+1)))*5))");
+		exp = ExpParser.parseExpression("(((((1+1)))*5))");
 		val = exp.evaluate(vl);
 		assertTrue(val == 10);
 
@@ -149,23 +149,23 @@ public class TestExpParser {
 		}
 		ValLookup vl = new ValLookup();
 
-		ExpParser.Expression exp = ExpParser.parse("foo.bar.baz");
+		ExpParser.Expression exp = ExpParser.parseExpression("foo.bar.baz");
 		double val = exp.evaluate(vl);
 		assertTrue(val == 4);
 
-		exp = ExpParser.parse("foo.bar.baz*4");
+		exp = ExpParser.parseExpression("foo.bar.baz*4");
 		val = exp.evaluate(vl);
 		assertTrue(val == 16);
 
-		exp = ExpParser.parse("foo.bonk");
+		exp = ExpParser.parseExpression("foo.bonk");
 		val = exp.evaluate(vl);
 		assertTrue(val == 5);
 
-		exp = ExpParser.parse("bob.is.your.uncle");
+		exp = ExpParser.parseExpression("bob.is.your.uncle");
 		val = exp.evaluate(vl);
 		assertTrue(val == 0);
 
-		exp = ExpParser.parse("foo");
+		exp = ExpParser.parseExpression("foo");
 		val = exp.evaluate(vl);
 		assertTrue(val == -1);
 

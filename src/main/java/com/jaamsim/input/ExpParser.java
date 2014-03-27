@@ -300,7 +300,7 @@ public class ExpParser {
 	 * The main entry point to the expression parsing system, will either return a valid
 	 * expression that can be evaluated, or throw an error.
 	 */
-	public static Expression parse(String input) throws Error {
+	public static Expression parseExpression(String input) throws Error {
 		ArrayList<ExpTokenizer.Token> ts;
 		try {
 			ts = ExpTokenizer.tokenize(input);
@@ -310,7 +310,7 @@ public class ExpParser {
 
 		TokenList tokens = new TokenList(ts);
 
-		Expression exp = parseExpression(tokens, 0);
+		Expression exp = parseExp(tokens, 0);
 
 		// Make sure we've parsed all the tokens
 		ExpTokenizer.Token peeked = tokens.peek();
@@ -321,7 +321,7 @@ public class ExpParser {
 		return exp;
 	}
 
-	private static Expression parseExpression(TokenList tokens, double bindPower) throws Error {
+	private static Expression parseExp(TokenList tokens, double bindPower) throws Error {
 		Expression lhs = parseOpeningExp(tokens, bindPower);
 		// Now peek for a binary op to modify this expression
 
@@ -339,7 +339,7 @@ public class ExpParser {
 
 			// For right associative operators, we weaken the binding power a bit at application time (but not testing time)
 			double assocMod = oe.rAssoc ? -0.5 : 0;
-			Expression rhs = parseExpression(tokens, oe.bindingPower + assocMod);
+			Expression rhs = parseExp(tokens, oe.bindingPower + assocMod);
 			//currentPower = oe.bindingPower;
 
 			lhs = new BinaryOp(lhs, rhs, oe.function);
@@ -377,14 +377,14 @@ public class ExpParser {
 
 		// handle parenthesis
 		if (nextTok.value.equals("(")) {
-			Expression exp = parseExpression(tokens, 0);
+			Expression exp = parseExp(tokens, 0);
 			tokens.expect(ExpTokenizer.SYM_TYPE, ")"); // Expect the closing paren
 			return exp;
 		}
 
 		UnaryOpEntry oe = getUnaryOp(nextTok.value);
 		if (oe != null) {
-			Expression exp = parseExpression(tokens, bindPower);
+			Expression exp = parseExp(tokens, bindPower);
 			return new UnaryOp(exp, oe.function);
 		}
 
@@ -409,7 +409,7 @@ public class ExpParser {
 		}
 
 		while (!isEmpty) {
-			Expression nextArg = parseExpression(tokens, 0);
+			Expression nextArg = parseExp(tokens, 0);
 			arguments.add(nextArg);
 
 			ExpTokenizer.Token nextTok = tokens.next();
