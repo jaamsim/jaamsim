@@ -171,4 +171,22 @@ public class TestExpParser {
 
 	}
 
+	@Test
+	public void testAssignment() throws ExpParser.Error {
+
+		class ValLookup implements ExpParser.VarTable {
+			@Override
+			public double getVariableValue(String[] name) {
+				return -1;
+			}
+		}
+		ValLookup vl = new ValLookup();
+
+		ExpParser.Assignment assign = ExpParser.parseAssignment("foo.bar = 40 + 2");
+
+		assertTrue(assign.destination.length == 2);
+		assertTrue(assign.destination[0].equals("foo"));
+		assertTrue(assign.destination[1].equals("bar"));
+		assertTrue(assign.value.evaluate(vl) == 42);
+	}
 }

@@ -111,6 +111,11 @@ public class ExpParser {
 		}
 	}
 
+	public static class Assignment {
+		public String[] destination;
+		public Expression value;
+	}
+
 	///////////////////////////////////////////////////////////
 	// Entries for user definable operators and functions
 
@@ -347,6 +352,35 @@ public class ExpParser {
 
 		// We have bound as many operators as we can, return it
 		return lhs;
+	}
+
+	public static Assignment parseAssignment(String input) throws Error {
+		ArrayList<ExpTokenizer.Token> ts;
+		try {
+			ts = ExpTokenizer.tokenize(input);
+		} catch (ExpTokenizer.Error ex){
+			throw new Error(ex.getMessage());
+		}
+
+		TokenList tokens = new TokenList(ts);
+
+		ExpTokenizer.Token nextTok = tokens.next();
+		if (nextTok == null || nextTok.type != ExpTokenizer.VAR_TYPE) {
+			throw new Error("Assignments must start with an identifier");
+		}
+		ArrayList<String> destination = parseIdentifier(nextTok, tokens);
+
+		nextTok = tokens.next();
+		if (nextTok == null || nextTok.type != ExpTokenizer.SYM_TYPE || !nextTok.value.equals("=")) {
+			throw new Error("Expected '=' in assignment");
+		}
+
+		Expression exp = parseExp(tokens, 0);
+
+		Assignment ret = new Assignment();
+		ret.destination = destination.toArray(STRING_ARRAY_TYPE);
+		ret.value = exp;
+		return ret;
 	}
 
 	// Static array to make ArrayList.toArray work
