@@ -31,7 +31,7 @@ public class ExpParser {
 	}
 
 	public interface VarTable {
-		public double getVariableValue(String name);
+		public double getVariableValue(String[] names);
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -53,13 +53,13 @@ public class ExpParser {
 	}
 
 	public static class Variable implements Expression {
-		private String val;
-		public Variable(String val) {
-			this.val = val;
+		private String[] vals;
+		public Variable(String[] vals) {
+			this.vals = vals;
 		}
 		@Override
 		public double evaluate(VarTable vars) {
-			return vars.getVariableValue(val);
+			return vars.getVariableValue(vals);
 		}
 	}
 
@@ -349,6 +349,9 @@ public class ExpParser {
 		return lhs;
 	}
 
+	// Static array to make ArrayList.toArray work
+	private static final String[] STRING_ARRAY_TYPE = new String[0];
+
 	// The first half of expression parsing, parse a simple expression based on the next token
 	private static Expression parseOpeningExp(TokenList tokens, double bindPower) throws Error{
 		ExpTokenizer.Token nextTok = tokens.next(); // consume the first token
@@ -366,7 +369,8 @@ public class ExpParser {
 				return parseFuncCall(nextTok.value, tokens);
 			}
 			// If not a function call, must be variable evaluation
-			return new Variable(nextTok.value);
+			ArrayList<String> vals = parseIdentifier(nextTok, tokens);
+			return new Variable(vals.toArray(STRING_ARRAY_TYPE));
 		}
 
 		// The next token must be a symbol
@@ -436,4 +440,25 @@ public class ExpParser {
 		return new FuncCall(fe.function, arguments);
 	}
 
+	private static ArrayList<String> parseIdentifier(ExpTokenizer.Token firstName, TokenList tokens) throws Error {
+		ArrayList<String> vals = new ArrayList<String>();
+		vals.add(firstName.value);
+		while (true) {
+			ExpTokenizer.Token peeked = tokens.peek();
+			if (peeked == null || peeked.type != ExpTokenizer.SYM_TYPE || !peeked.value.equals(".")) {
+				break;
+			}
+			// Next token is a '.' so parse another name
+
+			tokens.next(); // consume
+			ExpTokenizer.Token nextName = tokens.next();
+			if (nextName == null || nextName.type != ExpTokenizer.VAR_TYPE) {
+				throw new Error(String.format("Expected Identifier after '.' at pos: %d", peeked.pos));
+			}
+
+			vals.add(nextName.value);
+		}
+
+		return vals;
+	}
 }

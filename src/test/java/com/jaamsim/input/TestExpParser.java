@@ -83,9 +83,9 @@ public class TestExpParser {
 	public void testParser() throws ExpParser.Error {
 		class ValLookup implements ExpParser.VarTable {
 			@Override
-			public double getVariableValue(String name) {
-				if (name.equals("foo")) return 4;
-				if (name.equals("bar")) return 3;
+			public double getVariableValue(String[] name) {
+				if (name[0].equals("foo")) return 4;
+				if (name[0].equals("bar")) return 3;
 				return 1;
 			}
 		}
@@ -133,4 +133,42 @@ public class TestExpParser {
 		assertTrue(val == 10);
 
 	}
+
+	@Test
+	public void testVariables() throws ExpParser.Error {
+		class ValLookup implements ExpParser.VarTable {
+			@Override
+			public double getVariableValue(String[] name) {
+				if (name.length < 1 || !name[0].equals("foo")) return 0;
+
+				if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return 4;
+				if (name.length >= 2 && name[1].equals("bonk")) return 5;
+
+				return -1;
+			}
+		}
+		ValLookup vl = new ValLookup();
+
+		ExpParser.Expression exp = ExpParser.parse("foo.bar.baz");
+		double val = exp.evaluate(vl);
+		assertTrue(val == 4);
+
+		exp = ExpParser.parse("foo.bar.baz*4");
+		val = exp.evaluate(vl);
+		assertTrue(val == 16);
+
+		exp = ExpParser.parse("foo.bonk");
+		val = exp.evaluate(vl);
+		assertTrue(val == 5);
+
+		exp = ExpParser.parse("bob.is.your.uncle");
+		val = exp.evaluate(vl);
+		assertTrue(val == 0);
+
+		exp = ExpParser.parse("foo");
+		val = exp.evaluate(vl);
+		assertTrue(val == -1);
+
+	}
+
 }
