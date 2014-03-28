@@ -829,7 +829,7 @@ public class InputAgent {
 				InputAgent.configure(gui, chosenfile);
 				InputAgent.setRecordEdits(true);
 
-				GUIFrame.displayWindows(true);
+				GUIFrame.displayWindows();
 				FrameBox.valueUpdate();
 			}
 		}).start();

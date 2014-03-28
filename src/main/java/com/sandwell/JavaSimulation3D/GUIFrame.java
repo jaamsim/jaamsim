@@ -334,7 +334,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				clear();
 				InputAgent.setRecordEdits(true);
 				InputAgent.loadDefault();
-				displayWindows(false);
+				displayWindows();
 			}
 		} );
 		fileMenu.add( newMenuItem );
@@ -1398,22 +1398,13 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 *                   TRUE  - show just the view windows.
 	 *                   FALSE - show the view windows and the tools.
 	 */
-	public static void displayWindows(boolean viewOnly) {
+	public static void displayWindows() {
 
 		// Show the view windows specified in the configuration file
 		for (View v : View.getAll()) {
 			if (v.showOnStart())
 				RenderManager.inst().createWindow(v);
 		}
-
-		if (viewOnly)
-			return;
-
-		// Show the four basic tools
-		EntityPallet.getInstance().setVisible(true);    // Model Builder
-		ObjectSelector.getInstance().setVisible(true);  // Object Selector
-		EditBox.getInstance().setVisible(true);         // Input Editor
-		OutputBox.getInstance().setVisible(true);       // Output Viewer
 
 		// Set the selected entity to the first view window
 		if (View.getAll().size() > 0)
@@ -1537,7 +1528,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Show the view windows and tools
 		if(!quiet && !batch) {
-			displayWindows(false);
+			displayWindows();
 		}
 
 		// Set RecordEdits mode (if it has not already been set in the configuration file)
