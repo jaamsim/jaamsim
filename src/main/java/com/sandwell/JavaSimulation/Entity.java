@@ -23,6 +23,7 @@ import com.jaamsim.basicsim.ReflectionTarget;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -59,11 +60,18 @@ public class Entity {
 	private final ArrayList<Input<?>> editableInputs = new ArrayList<Input<?>>();
 	private final ArrayList<SynRecord> synonyms = new ArrayList<SynRecord>();
 
+	private final HashMap<String, Double> attributeMap = new HashMap<String, Double>();
+
 	private final BooleanInput trace;
 
 	@Keyword(description = "A free form string describing the Entity",
 	         example = "Ent Description { 'A very useful entity' }")
 	private final StringInput desc;
+
+	@Keyword(description = "The list of user defined attributes for this entity and default values."
+			+ " Input must be a name followed by an initial value.",
+	         example = "Ent Attributes { Attrib-1 20.0 Attrib-2 42 }")
+	private final StringListInput attributesInput;
 
 	// constants used when scheduling events using the Entity wrappers
 	public static final int PRIO_DEFAULT = 5;
@@ -81,6 +89,9 @@ public class Entity {
 
 		desc = new StringInput("Description", "Key Inputs", "");
 		this.addInput(desc);
+
+		attributesInput = new StringListInput("Attributes", "Key Inputs", new StringVector());
+		this.addInput(attributesInput);
 	}
 
 	/**
@@ -400,6 +411,35 @@ public class Entity {
 
 			return;
 		}
+		if (in == attributesInput) {
+			StringVector vals = attributesInput.getValue();
+			if (vals.size() % 2 == 1) {
+				throw new InputErrorException("Attributes must be a list of pairs of attribute names and values");
+			}
+			// Try to parse first to check for formatting errors
+			for (int i = 0; i < vals.size(); i+=2) {
+				String name = vals.get(i);
+				String valueString = vals.get(i+1);
+				try {
+					Double.valueOf(valueString);
+				} catch (NumberFormatException e) {
+					throw new InputErrorException("Could not parse value from attribute string: %s", valueString);
+				}
+				if (OutputHandle.hasOutput(this.getClass(), name)) {
+					throw new InputErrorException("Attribute name is the same as existing output name: %s", name);
+				}
+			}
+			// Everything parsed, now there's no going back
+			attributeMap.clear();
+
+			for (int i = 0; i < vals.size(); i+=2) {
+				String name = vals.get(i);
+				double value = Double.valueOf(vals.get(i+1));
+
+				addAttribute(name, value);
+			}
+			return;
+		}
 	}
 
 	/**
@@ -678,11 +718,22 @@ public class Entity {
 	}
 
 	public OutputHandle getOutputHandle(String outputName) {
-		return new OutputHandle(this, outputName);
+		if (hasAttribute(outputName))
+			return new AttributeHandle(this, outputName);
+
+		if (hasOutput(outputName))
+			return new OutputHandle(this, outputName);
+
+		return null;
 	}
 
 	public boolean hasOutput(String outputName) {
-		return OutputHandle.hasOutput(this.getClass(), outputName);
+		if (OutputHandle.hasOutput(this.getClass(), outputName))
+			return true;
+		if (attributeMap.containsKey(outputName))
+			return true;
+
+		return false;
 	}
 
 	@Output(name = "Name",
@@ -695,5 +746,36 @@ public class Entity {
 	        description="A string describing this entity.")
 	public String getDescription(double simTime) {
 		return desc.getValue();
+	}
+
+	public double getAttribute(String name) {
+		Double val = attributeMap.get(name);
+		if (val == null) return 0; // TODO: how should this be handled?
+		return val.doubleValue();
+	}
+
+	private void addAttribute(String name, double initialValue) {
+		attributeMap.put(name, initialValue);
+	}
+
+	public boolean hasAttribute(String name) {
+		return attributeMap.containsKey(name);
+	}
+
+	public void setAttribute(String name, double value) {
+		if (!attributeMap.containsKey(name)) {
+			// TODO: report this as an error?
+			return;
+		}
+
+		attributeMap.put(name, value);
+	}
+
+	public ArrayList<String> getAttributeNames(){
+		ArrayList<String> ret = new ArrayList<String>();
+		for (String name : attributeMap.keySet()) {
+			ret.add(name);
+		}
+		return ret;
 	}
 }

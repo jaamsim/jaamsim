@@ -49,6 +49,10 @@ public class OutputHandle {
 		unitType = pair.annotation.unitType();
 	}
 
+	protected OutputHandle(Entity e) {
+		ent = e;
+	}
+
 	private static class OutputPair {
 		public Method method;
 		public Output annotation;
@@ -59,6 +63,8 @@ public class OutputHandle {
 		}
 	}
 
+	// Note: this method will not include attributes in the list. For a complete list use
+	// Entity.hasOutput()
 	public static Boolean hasOutput(Class<? extends Entity> klass, String outputName) {
 		return OutputHandle.getOutputPair(klass, outputName) != null;
 	}
@@ -108,6 +114,11 @@ public class OutputHandle {
 		for( OutputPair p : list ) {
 			//ret.add( new OutputHandle(e, p) );
 			ret.add( e.getOutputHandle(p.annotation.name()) );  // required to get the correct unit type for the output
+		}
+
+		// And the attributes
+		for (String attribName : e.getAttributeNames()) {
+			ret.add(e.getOutputHandle(attribName));
 		}
 
 		Collections.sort(ret, new OutputHandleComparator());
