@@ -43,12 +43,9 @@ import javax.swing.tree.TreeSelectionModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GraphicBox;
 import com.jaamsim.ui.LogBox;
-import com.jaamsim.ui.OutputBox;
-import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
@@ -389,7 +386,7 @@ static class InputMenuItem extends DEMenuItem {
 
 	@Override
 	public void action() {
-		EditBox.getInstance().makeVisible();
+		InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowInputEditor", "TRUE");
 		FrameBox.setSelectedEntity(ent);
 	}
 }
@@ -403,7 +400,7 @@ static class PropertyMenuItem extends DEMenuItem {
 
 	@Override
 	public void action() {
-		PropertyBox.getInstance().makeVisible();
+		InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowPropertyViewer", "TRUE");
 		FrameBox.setSelectedEntity(ent);
 	}
 }
@@ -417,7 +414,7 @@ static class OutputMenuItem extends DEMenuItem {
 
 	@Override
 	public void action() {
-		OutputBox.getInstance().makeVisible();
+		InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowOutputViewer", "TRUE");
 		FrameBox.setSelectedEntity(ent);
 	}
 }
