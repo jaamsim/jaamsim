@@ -440,10 +440,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				EntityPallet.getInstance().setVisible(true);
-				ObjectSelector.getInstance().setVisible(true);
-				EditBox.getInstance().makeVisible();
-				OutputBox.getInstance().makeVisible();
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowModelBuilder", "TRUE");
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowObjectSelector", "TRUE");
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowInputEditor", "TRUE");
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowOutputViewer", "TRUE");
 				FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
 		} );
@@ -456,12 +456,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				EntityPallet.getInstance().setVisible(false);
-				ObjectSelector.getInstance().setVisible(false);
-				EditBox.getInstance().setVisible(false);
-				OutputBox.getInstance().setVisible(false);
-				PropertyBox.getInstance().setVisible(false);
-				LogBox.getInstance().setVisible(false);
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowModelBuilder", "FALSE");
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowObjectSelector", "FALSE");
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowInputEditor", "FALSE");
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowOutputViewer", "FALSE");
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowPropertyViewer", "FALSE");
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowLogViewer", "FALSE");
 			}
 		} );
 		viewMenu.add( closeAllToolsMenuItem );
@@ -473,7 +473,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				EntityPallet.getInstance().setVisible(true);
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowModelBuilder", "TRUE");
 			}
 		} );
 		viewMenu.add( objectPalletMenuItem );
@@ -485,7 +485,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				ObjectSelector.getInstance().setVisible(true);
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowObjectSelector", "TRUE");
 			}
 		} );
 		viewMenu.add( objectSelectorMenuItem );
@@ -497,7 +497,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				EditBox.getInstance().makeVisible();
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowInputEditor", "TRUE");
 				if(ObjectSelector.getInstance().isVisible())
 					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
@@ -511,7 +511,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				OutputBox.getInstance().makeVisible();
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowOutputViewer", "TRUE");
 				if(ObjectSelector.getInstance().isVisible())
 					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
@@ -525,7 +525,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				PropertyBox.getInstance().makeVisible();
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowPropertyViewer", "TRUE");
 				if(ObjectSelector.getInstance().isVisible())
 					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
@@ -539,7 +539,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				LogBox.getInstance().makeVisible();
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowLogViewer", "TRUE");
 			}
 		} );
 		viewMenu.add( logMenuItem );
