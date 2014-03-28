@@ -102,6 +102,11 @@ public class FrameBox extends JFrame {
 		RenderManager.setSelection(ent);
 	}
 
+	// This is equivalent to calling setSelectedEntity again with the same entity as used previously
+	public static final void reSelectEntity() {
+		updater.rescheduleUpdate();
+	}
+
 	public static final void timeUpdate(long tick) {
 		valueUpdater.scheduleUpdate(tick);
 		RenderManager.updateTime(tick);
@@ -123,6 +128,10 @@ public class FrameBox extends JFrame {
 			scheduled = false;
 		}
 
+		public void rescheduleUpdate() {
+			scheduleUpdate(entity);
+		}
+
 		public void scheduleUpdate(Entity ent) {
 			synchronized (this) {
 				entity = ent;
@@ -138,7 +147,6 @@ public class FrameBox extends JFrame {
 			Entity selectedEnt;
 			synchronized (this) {
 				selectedEnt = entity;
-				entity = null;
 				scheduled = false;
 			}
 

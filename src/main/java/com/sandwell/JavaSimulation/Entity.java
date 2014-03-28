@@ -28,6 +28,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
+import com.jaamsim.ui.FrameBox;
 
 /**
  * Abstract class that encapsulates the methods and data needed to create a
@@ -438,6 +439,9 @@ public class Entity {
 
 				addAttribute(name, value);
 			}
+
+			// Reselect the current entity (this is needed to update the OutputBox)
+			FrameBox.reSelectEntity();
 			return;
 		}
 	}
