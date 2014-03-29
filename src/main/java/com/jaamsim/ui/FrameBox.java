@@ -67,12 +67,6 @@ public class FrameBox extends JFrame {
 		}
 	}
 
-	public void makeVisible() {
-		this.setVisible(true);
-		this.setExtendedState(JFrame.NORMAL);
-		this.toFront();
-	}
-
 	@Override
 	public void dispose() {
 		allInstances.remove(this);
