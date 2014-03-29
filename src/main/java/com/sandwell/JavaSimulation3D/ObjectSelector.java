@@ -501,8 +501,7 @@ static class LabelMenuItem extends DEMenuItem {
 
 	@Override
 	public void action() {
-		Text label = InputAgent.defineEntityWithUniqueName(Text.class,
-		                  String.format("Label_for_%s", ent.getInputName()), true);
+		Text label = InputAgent.defineEntityWithUniqueName(Text.class, "Text", true);
 
 		InputAgent.processEntity_Keyword_Value(label, "RelativeEntity", ent.getInputName() );
 		if (ent.getCurrentRegion() != null)
