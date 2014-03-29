@@ -67,7 +67,7 @@ public class FrameBox extends JFrame {
 
 	public FrameBox(String title) {
 		super(title);
-		setIconImage(GUIFrame.getWindowIcon());
+		setType(Type.UTILITY);
 		allInstances.add(this);
 	}
 
