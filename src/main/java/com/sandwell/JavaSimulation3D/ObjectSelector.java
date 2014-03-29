@@ -507,7 +507,8 @@ static class LabelMenuItem extends DEMenuItem {
 		if (ent.getCurrentRegion() != null)
 			InputAgent.processEntity_Keyword_Value(label, "Region", ent.getCurrentRegion().getInputName());
 
-		InputAgent.processEntity_Keyword_Value(label, "Position", "0.0 -1.0 0.0 m" );
+		InputAgent.processEntity_Keyword_Value(label, "Position", "0.0 -0.65 0.0 m" );
+		InputAgent.processEntity_Keyword_Value(label, "TextHeight", "0.15 m" );
 		InputAgent.processEntity_Keyword_Value(label, "Format", "%s");
 		InputAgent.processEntity_Keyword_Value(label, "OutputName", String.format("%s  Name", ent.getInputName()) );
 
