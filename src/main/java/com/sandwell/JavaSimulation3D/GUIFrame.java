@@ -1560,21 +1560,13 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
 
-		// Show the view windows and tools
+		// Show the view windows
 		if(!quiet && !batch) {
 			displayWindows();
 		}
 
 		// Set RecordEdits mode (if it has not already been set in the configuration file)
 		InputAgent.setRecordEdits(true);
-
-		// Hide the splash screen
-		if (splashScreen != null) {
-			try { Thread.sleep(1000); } catch (InterruptedException e) {}
-			splashScreen.dispose();
-			splashScreen = null;
-			gui.toFront();
-		}
 
 		// Start the model if in batch mode
 		if (batch) {
@@ -1583,7 +1575,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			Simulation.start();
 			Simulation.resume(Double.POSITIVE_INFINITY);
 			GUIFrame.instance.updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
+			return;
 		}
+
+		// Wait to allow the renderer time to finish initialisation
+		try { Thread.sleep(1000); } catch (InterruptedException e) {}
+
+		// Hide the splash screen
+		if (splashScreen != null) {
+			splashScreen.dispose();
+			splashScreen = null;
+		}
+
+		// Bring the Control Panel to the front (along with any open Tools)
+		gui.toFront();
 	}
 
 	public static class SpeedFactorListener implements ChangeListener {
