@@ -105,7 +105,7 @@ public class ObjectSelector extends FrameBox {
 
 	@Override
 	public void setEntity(Entity ent) {
-		if(ent == currentEntity || ! this.isVisible())
+		if (ent == currentEntity)
 			return;
 
 		currentEntity = ent;
