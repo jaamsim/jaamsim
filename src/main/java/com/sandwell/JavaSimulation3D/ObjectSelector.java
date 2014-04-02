@@ -20,10 +20,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Locale;
 
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -51,6 +54,7 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Palette;
+import com.sandwell.JavaSimulation.Simulation;
 
 public class ObjectSelector extends FrameBox {
 	private static ObjectSelector myInstance;
@@ -66,7 +70,8 @@ public class ObjectSelector extends FrameBox {
 
 	public ObjectSelector() {
 		super( "Object Selector" );
-		setDefaultCloseOperation( FrameBox.HIDE_ON_CLOSE );
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new CloseListener());
 
 		top = new DefaultMutableTreeNode( "Defined Objects");
 		treeModel = new DefaultTreeModel(top);
@@ -88,6 +93,17 @@ public class ObjectSelector extends FrameBox {
 
 		tree.addMouseListener(new MyMouseListener());
 		tree.addKeyListener(new MyKeyListener());
+	}
+
+	/**
+	 * Listens for window events for the GUI.
+	 *
+	 */
+	private class CloseListener extends WindowAdapter {
+		@Override
+		public void windowClosing(WindowEvent e) {
+			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowObjectSelector", "FALSE");
+		}
 	}
 
 	@Override

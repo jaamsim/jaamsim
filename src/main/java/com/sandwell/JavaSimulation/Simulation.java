@@ -119,6 +119,8 @@ public class Simulation extends Entity {
 	private static double startTime;
 	private static double endTime;
 
+	private static Simulation myInstance;
+
 	private static String modelName = "JaamSim";
 
 	static {
@@ -195,6 +197,18 @@ public class Simulation extends Entity {
 	}
 
 	public Simulation() {}
+
+	public static Simulation getInstance() {
+		if (myInstance == null) {
+			for (Entity ent : Entity.getAll()) {
+				if (ent instanceof Simulation ) {
+					myInstance = (Simulation) ent;
+					break;
+				}
+			}
+		}
+		return myInstance;
+	}
 
 	@Override
 	public void validate() {

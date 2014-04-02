@@ -25,6 +25,8 @@ import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -40,10 +42,12 @@ import javax.swing.tree.TreeSelectionModel;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.RenderUtils;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Palette;
+import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class EntityPallet extends JFrame implements DragGestureListener {
@@ -61,7 +65,8 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		super( "Model Builder" );
 		setIconImage(GUIFrame.getWindowIcon());
 		// Make the x button do the same as the close button
-		setDefaultCloseOperation(FrameBox.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new CloseListener());
 
 		tree = new MyTree();
 		tree.setRootVisible(false);
@@ -86,6 +91,17 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 
 		setLocation(GUIFrame.COL1_START, GUIFrame.TOP_START);
 		setSize(GUIFrame.COL1_WIDTH, GUIFrame.HALF_TOP);
+	}
+
+	/**
+	 * Listens for window events for the GUI.
+	 *
+	 */
+	private class CloseListener extends WindowAdapter {
+		@Override
+		public void windowClosing(WindowEvent e) {
+			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowModelBuilder", "FALSE");
+		}
 	}
 
 	@Override
