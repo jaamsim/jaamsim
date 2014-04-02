@@ -19,10 +19,16 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.ui.EditBox;
+import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.ExceptionBox;
+import com.jaamsim.ui.LogBox;
+import com.jaamsim.ui.OutputBox;
+import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.Clock;
 import com.sandwell.JavaSimulation3D.GUIFrame;
+import com.sandwell.JavaSimulation3D.ObjectSelector;
 
 /**
  * Class Simulation - Sandwell Discrete Event Simulation
@@ -85,6 +91,31 @@ public class Simulation extends Entity {
 	         example = "This is placeholder example text")
 	private static final BooleanInput exitAtStop;
 
+	@Keyword(description = "Indicates whether the Model Builder tool should be shown on startup.",
+	         example = "Simulation ShowModelBuilder { TRUE }")
+	private static final BooleanInput showModelBuilder;
+
+	@Keyword(description = "Indicates whether the Object Selector tool should be shown on startup.",
+	         example = "Simulation ShowObjectSelector { TRUE }")
+	private static final BooleanInput showObjectSelector;
+
+	@Keyword(description = "Indicates whether the Input Editor tool should be shown on startup.",
+	         example = "Simulation ShowInputEditor { TRUE }")
+	private static final BooleanInput showInputEditor;
+
+	@Keyword(description = "Indicates whether the Output Viewer tool should be shown on startup.",
+	         example = "Simulation ShowOutputViewer { TRUE }")
+	private static final BooleanInput showOutputViewer;
+
+	@Keyword(description = "Indicates whether the Output Viewer tool should be shown on startup.",
+	         example = "Simulation ShowPropertyViewer { TRUE }")
+	private static final BooleanInput showPropertyViewer;
+
+	@Keyword(description = "Indicates whether the Log Viewer tool should be shown on startup.",
+	         example = "Simulation ShowLogViewer { TRUE }")
+	private static final BooleanInput showLogViewer;
+
+
 	private static double startTime;
 	private static double endTime;
 
@@ -120,6 +151,13 @@ public class Simulation extends Entity {
 
 		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
 
+		showModelBuilder = new BooleanInput("ShowModelBuilder", "Key Inputs", false);
+		showObjectSelector = new BooleanInput("ShowObjectSelector", "Key Inputs", false);
+		showInputEditor = new BooleanInput("ShowInputEditor", "Key Inputs", false);
+		showOutputViewer = new BooleanInput("ShowOutputViewer", "Key Inputs", false);
+		showPropertyViewer = new BooleanInput("ShowPropertyViewer", "Key Inputs", false);
+		showLogViewer = new BooleanInput("ShowLogViewer", "Key Inputs", false);
+
 		// Create clock
 		Clock.setStartDate(2000, 1, 1);
 
@@ -147,6 +185,13 @@ public class Simulation extends Entity {
 		this.addInput(realTime);
 
 		this.addInput(exitAtStop);
+
+		this.addInput(showModelBuilder);
+		this.addInput(showObjectSelector);
+		this.addInput(showInputEditor);
+		this.addInput(showOutputViewer);
+		this.addInput(showPropertyViewer);
+		this.addInput(showLogViewer);
 	}
 
 	public Simulation() {}
@@ -166,6 +211,42 @@ public class Simulation extends Entity {
 
 		if(in == realTimeFactor || in == realTime) {
 			updateRealTime();
+			return;
+		}
+
+		if (in == showModelBuilder) {
+			EntityPallet.getInstance().setVisible(showModelBuilder.getValue());
+			EntityPallet.getInstance().toFront();
+			return;
+		}
+
+		if (in == showObjectSelector) {
+			ObjectSelector.getInstance().setVisible(showObjectSelector.getValue());
+			ObjectSelector.getInstance().toFront();
+			return;
+		}
+
+		if (in == showInputEditor) {
+			EditBox.getInstance().setVisible(showInputEditor.getValue());
+			EditBox.getInstance().toFront();
+			return;
+		}
+
+		if (in == showOutputViewer) {
+			OutputBox.getInstance().setVisible(showOutputViewer.getValue());
+			OutputBox.getInstance().toFront();
+			return;
+		}
+
+		if (in == showPropertyViewer) {
+			PropertyBox.getInstance().setVisible(showPropertyViewer.getValue());
+			PropertyBox.getInstance().toFront();
+			return;
+		}
+
+		if (in == showLogViewer) {
+			LogBox.getInstance().setVisible(showLogViewer.getValue());
+			LogBox.getInstance().toFront();
 			return;
 		}
 	}
@@ -188,6 +269,13 @@ public class Simulation extends Entity {
 
 		startDate.reset();
 		startTimeInput.reset();
+
+		showModelBuilder.reset();
+		showObjectSelector.reset();
+		showInputEditor.reset();
+		showOutputViewer.reset();
+		showPropertyViewer.reset();
+		showLogViewer.reset();
 
 		// Create clock
 		Clock.setStartDate(2000, 1, 1);
