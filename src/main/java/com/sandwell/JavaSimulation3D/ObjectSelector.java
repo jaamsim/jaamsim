@@ -61,7 +61,7 @@ public class ObjectSelector extends FrameBox {
 	private final DefaultTreeModel treeModel;
 	private final JTree tree;
 	private final JScrollPane treeView;
-	protected static Entity currentEntity;
+	public static Entity currentEntity;
 
 	private long entSequence;
 

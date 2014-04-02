@@ -22,6 +22,7 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.ExceptionBox;
+import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
@@ -243,24 +244,28 @@ public class Simulation extends Entity {
 		if (in == showInputEditor) {
 			EditBox.getInstance().setVisible(showInputEditor.getValue());
 			EditBox.getInstance().toFront();
+			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			return;
 		}
 
 		if (in == showOutputViewer) {
 			OutputBox.getInstance().setVisible(showOutputViewer.getValue());
 			OutputBox.getInstance().toFront();
+			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			return;
 		}
 
 		if (in == showPropertyViewer) {
 			PropertyBox.getInstance().setVisible(showPropertyViewer.getValue());
 			PropertyBox.getInstance().toFront();
+			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			return;
 		}
 
 		if (in == showLogViewer) {
 			LogBox.getInstance().setVisible(showLogViewer.getValue());
 			LogBox.getInstance().toFront();
+			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			return;
 		}
 	}

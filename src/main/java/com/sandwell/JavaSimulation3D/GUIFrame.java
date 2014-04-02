@@ -444,7 +444,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowObjectSelector", "TRUE");
 				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowInputEditor", "TRUE");
 				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowOutputViewer", "TRUE");
-				FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
 		} );
 		viewMenu.add( showBasicToolsMenuItem );
@@ -498,8 +497,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowInputEditor", "TRUE");
-				if(ObjectSelector.getInstance().isVisible())
-					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
 		} );
 		viewMenu.add( inputEditorMenuItem );
@@ -512,8 +509,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowOutputViewer", "TRUE");
-				if(ObjectSelector.getInstance().isVisible())
-					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
 		} );
 		viewMenu.add( outputMenuItem );
@@ -526,8 +521,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowPropertyViewer", "TRUE");
-				if(ObjectSelector.getInstance().isVisible())
-					FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			}
 		} );
 		viewMenu.add( propertiesMenuItem );
