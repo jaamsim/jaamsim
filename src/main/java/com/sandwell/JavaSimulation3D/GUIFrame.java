@@ -225,7 +225,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			// Re-open the view windows
 			for (View v : View.getAll()) {
-				if (v.showOnStart())
+				if (v.showWindow())
 					RenderManager.inst().createWindow(v);
 			}
 
@@ -1436,7 +1436,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Show the view windows specified in the configuration file
 		for (View v : View.getAll()) {
-			if (v.showOnStart())
+			if (v.showWindow())
 				RenderManager.inst().createWindow(v);
 		}
 

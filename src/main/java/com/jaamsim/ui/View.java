@@ -77,7 +77,7 @@ private final StringInput titleBar;
 @Keyword(description = "A Boolean indicating whether the view should show a window" +
                 "after all inputs have been loaded",
          example = "View1 ShowWindow { FALSE }")
-private final BooleanInput showOnStartup;
+private final BooleanInput showWindow;
 
 @Keyword(description = "A Boolean indicating whether the view position can be moved (panned or rotated)",
  example = "View1 Movable { FALSE }")
@@ -139,8 +139,8 @@ static {
 	titleBar = new StringInput("TitleBarText", "Graphics", null);
 	this.addInput(titleBar);
 
-	showOnStartup = new BooleanInput("ShowWindow", "Graphics", false);
-	this.addInput(showOnStartup);
+	showWindow = new BooleanInput("ShowWindow", "Graphics", false);
+	this.addInput(showWindow);
 
 	movable = new BooleanInput("Movable", "Graphics", true);
 	this.addInput(movable);
@@ -268,8 +268,8 @@ public String getTitle() {
 		return this.getInputName();
 }
 
-public boolean showOnStart() {
-	return showOnStartup.getValue();
+public boolean showWindow() {
+	return showWindow.getValue();
 }
 
 public Region getRegion() {
