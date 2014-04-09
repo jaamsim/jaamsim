@@ -969,7 +969,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				}
 			}
 
+			InputAgent.processEntity_Keyword_Value(view, "ShowWindow", "TRUE");
 			RenderManager.inst().createWindow(view);
+			FrameBox.setSelectedEntity(view);
 		}
 	}
 
@@ -993,6 +995,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			View tmp = InputAgent.defineEntityWithUniqueName(View.class, "View", true);
 			RenderManager.inst().createWindow(tmp);
 			FrameBox.setSelectedEntity(tmp);
+			InputAgent.processEntity_Keyword_Value(tmp, "ShowWindow", "TRUE");
 		}
 	}
 
