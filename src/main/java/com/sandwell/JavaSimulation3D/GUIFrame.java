@@ -205,6 +205,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		return instance;
 	}
 
+	/**
+	 * Listens for window events for the GUI.
+	 *
+	 */
 	private class CloseListener extends WindowAdapter implements ActionListener {
 		@Override
 		public void windowClosing(WindowEvent e) {
@@ -214,6 +218,35 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		@Override
 		public void actionPerformed( ActionEvent event ) {
 			GUIFrame.this.close();
+		}
+
+		@Override
+		public void windowDeiconified(WindowEvent e) {
+
+			// Re-open the view windows
+			for (View v : View.getAll()) {
+				if (v.showOnStart())
+					RenderManager.inst().createWindow(v);
+			}
+
+			// Re-open the tools
+			Simulation.showActiveTools();
+			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
+		}
+
+		@Override
+		public void windowIconified(WindowEvent e) {
+
+			// Close all the tools
+			EntityPallet.getInstance().setVisible(false);
+			ObjectSelector.getInstance().setVisible(false);
+			EditBox.getInstance().setVisible(false);
+			OutputBox.getInstance().setVisible(false);
+			PropertyBox.getInstance().setVisible(false);
+			LogBox.getInstance().setVisible(false);
+
+			// Close all the view windows
+			RenderManager.clear();
 		}
 	}
 

@@ -536,6 +536,30 @@ public class Simulation extends Entity {
 		return printInputReport.getValue();
 	}
 
+	/**
+	 * Re-open any Tools windows that have been closed temporarily.
+	 */
+	public static void showActiveTools() {
+
+		EntityPallet.getInstance().setVisible( showModelBuilder.getValue() );
+		EntityPallet.getInstance().toFront();
+
+		ObjectSelector.getInstance().setVisible( showObjectSelector.getValue() );
+		ObjectSelector.getInstance().toFront();
+
+		EditBox.getInstance().setVisible( showInputEditor.getValue() );
+		EditBox.getInstance().toFront();
+
+		OutputBox.getInstance().setVisible( showOutputViewer.getValue() );
+		OutputBox.getInstance().toFront();
+
+		PropertyBox.getInstance().setVisible( showPropertyViewer.getValue() );
+		PropertyBox.getInstance().toFront();
+
+		LogBox.getInstance().setVisible( showLogViewer.getValue() );
+		LogBox.getInstance().toFront();
+	}
+
 	@Output(name = "Configuration File",
 			 description = "The present configuration file.")
 	public String getConfigFileName(double simTime) {
