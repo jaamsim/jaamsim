@@ -217,9 +217,10 @@ public static class ClockTime {
 		if( startingVal.length < 3 ) {
 			throw new InputErrorException( "Starting date string not formatted correctly" );
 		}
-		startingYear = Integer.valueOf( startingVal[0] ).intValue();
-		startingMonth = Integer.valueOf( startingVal[1] ).intValue();
-		startingDay = Integer.valueOf( startingVal[2] ).intValue();
+
+		startingYear = Integer.parseInt( startingVal[0] );
+		startingMonth = Integer.parseInt( startingVal[1] );
+		startingDay = Integer.parseInt( startingVal[2] );
 	}
 
 	/**
