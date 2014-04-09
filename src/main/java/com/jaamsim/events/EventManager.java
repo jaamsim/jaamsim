@@ -318,9 +318,9 @@ public final class EventManager implements Runnable {
 	 */
 	void releaseProcess() {
 		synchronized (lockObject) {
-			assertNotWaitUntil();
-			if (trcListener != null) trcListener.traceProcessEnd(this);
 			Process cur = Process.current();
+			cur.assertNotWaitUntil();
+			if (trcListener != null) trcListener.traceProcessEnd(this);
 			Process next = cur.getNextProcess();
 			cur.setNextProcess(null);
 			cur.clearFlag(Process.ACTIVE);
@@ -394,8 +394,8 @@ public final class EventManager implements Runnable {
 	}
 
 	public void scheduleSingleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
-		assertNotWaitUntil();
 		synchronized (lockObject) {
+			Process.current().assertNotWaitUntil();
 			long eventTime = calculateEventTime(waitLength);
 			for (int i = headEvtIdx; i >= 0; i--) {
 				Event each = eventList[i];
@@ -428,10 +428,11 @@ public final class EventManager implements Runnable {
 	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
 	public void waitTicks(long ticks, int priority, boolean fifo) {
-		assertNotWaitUntil();
 		synchronized (lockObject) {
+			Process cur = Process.current();
+			cur.assertNotWaitUntil();
 			long nextEventTime = calculateEventTime(ticks);
-			WaitTarget t = new WaitTarget(Process.current());
+			WaitTarget t = new WaitTarget(cur);
 			Event temp = new Event(currentTick, nextEventTime, priority, t);
 			if (trcListener != null) trcListener.traceWait(this, temp);
 			addEventToStack(temp, fifo);
@@ -494,22 +495,6 @@ public final class EventManager implements Runnable {
 
 		eventList[lowIdx] = newEvent;
 		headEvtIdx++;
-	}
-
-	/**
-	 * Debugging aid to test that we are not executing a conditional event, useful
-	 * to try and catch places where a waitUntil was missing a waitUntilEnded.
-	 * While not fatal, it will print out a stack dump to try and find where the
-	 * waitUntilEnded was missed.
-	 */
-	private void assertNotWaitUntil() {
-		Process process = Process.current();
-		if (process.testFlag(Process.COND_WAIT)) {
-			System.out.println("AUDIT - waitUntil without waitUntilEnded " + process);
-			for (StackTraceElement elem : process.getStackTrace()) {
-				System.out.println(elem.toString());
-			}
-		}
 	}
 
 	/**
@@ -583,7 +568,7 @@ public final class EventManager implements Runnable {
 				throw new ProcessError("EVT:%s - Cannot interrupt an active thread", name);
 			}
 
-			assertNotWaitUntil();
+			Process.current().assertNotWaitUntil();
 
 			for (int i = headEvtIdx; i >= 0; i--) {
 				if (eventList[i].target.getProcess() == intThread) {
@@ -603,7 +588,7 @@ public final class EventManager implements Runnable {
 	 */
 	public void interrupt(ProcessTarget t) {
 		synchronized (lockObject) {
-			assertNotWaitUntil();
+			Process.current().assertNotWaitUntil();
 
 			for (int i = headEvtIdx; i >= 0; i--) {
 				if (eventList[i].target == t) {
@@ -624,7 +609,7 @@ public final class EventManager implements Runnable {
 				throw new ProcessError("EVT:%s - Cannot terminate an active thread", name);
 			}
 
-			assertNotWaitUntil();
+			Process.current().assertNotWaitUntil();
 
 			if (conditionalList.remove(killThread)) {
 				killThread.setFlag(Process.TERMINATE);
@@ -650,7 +635,7 @@ public final class EventManager implements Runnable {
 	 */
 	public void terminate(ProcessTarget t) {
 		synchronized (lockObject) {
-			assertNotWaitUntil();
+			Process.current().assertNotWaitUntil();
 
 			for (int i = headEvtIdx; i >= 0; i--) {
 				if (eventList[i].target == t) {

@@ -204,6 +204,22 @@ public final class Process extends Thread {
 			throw new ThreadKilledException("Thread killed");
 	}
 
+	/**
+	 * Debugging aid to test that we are not executing a conditional event, useful
+	 * to try and catch places where a waitUntil was missing a waitUntilEnded.
+	 * While not fatal, it will print out a stack dump to try and find where the
+	 * waitUntilEnded was missed.
+	 */
+	void assertNotWaitUntil() {
+		if (!this.testFlag(Process.COND_WAIT))
+			return;
+
+		System.out.println("AUDIT - waitUntil without waitUntilEnded " + this);
+		for (StackTraceElement elem : this.getStackTrace()) {
+			System.out.println(elem.toString());
+		}
+	}
+
 	synchronized void setFlag(int flag) {
 		flags |= flag;
 	}
