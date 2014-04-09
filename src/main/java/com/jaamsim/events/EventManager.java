@@ -217,7 +217,7 @@ public final class EventManager implements Runnable {
 			// Loop continuously
 			while (true) {
 				if (headEvtIdx == -1 ||
-				    eventList[headEvtIdx].schedTick >= targetTick) {
+				    currentTick >= targetTick) {
 					executeEvents = false;
 				}
 
@@ -273,7 +273,7 @@ public final class EventManager implements Runnable {
 				if (executeRealTime) {
 					// Loop until the next event time is reached
 					long realTick = this.calcRealTimeTick();
-					if (realTick < nextTick) {
+					if (realTick < nextTick && realTick < targetTick) {
 						// Update the displayed simulation time
 						currentTick = realTick;
 						timelistener.tickUpdate(currentTick);
@@ -284,7 +284,11 @@ public final class EventManager implements Runnable {
 				}
 
 				// advance time
-				currentTick = nextTick;
+				if (targetTick < nextTick)
+					currentTick = targetTick;
+				else
+					currentTick = nextTick;
+
 				timelistener.tickUpdate(currentTick);
 			}
 		}
