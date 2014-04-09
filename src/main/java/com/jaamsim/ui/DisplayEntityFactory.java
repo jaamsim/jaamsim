@@ -161,12 +161,9 @@ public class DisplayEntityFactory extends Entity {
 		Vec3d modelSize = new Vec3d(modelBounds.radius);
 		modelSize.scale3(2);
 
-		// Ensure that floating point numbers are written with a decimal point, not a comma
-		Locale loc = null;
-
 		// Set the DisplayEntity's position, size, and alignment
-		String pos = String.format(loc, "%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z);
-		String size = String.format(loc, "%.6f %.6f %.6f m", modelSize.x, modelSize.y, modelSize.z);
+		String pos = String.format((Locale)null, "%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z);
+		String size = String.format((Locale)null, "%.6f %.6f %.6f m", modelSize.x, modelSize.y, modelSize.z);
 		InputAgent.processEntity_Keyword_Value(de, "Position", pos);
 		InputAgent.processEntity_Keyword_Value(de, "Alignment", "0 0 0");
 		InputAgent.processEntity_Keyword_Value(de, "Size", size);

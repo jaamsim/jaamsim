@@ -911,7 +911,6 @@ public class RenderManager implements DragSourceListener {
 
 		Vec3d entSpaceDelta = new Vec3d();
 		entSpaceDelta.sub3(entSpaceCurrent, entSpaceLast);
-		Locale loc = null;
 
 		// Handle each handle by type...
 		if (_dragHandleID == MOVE_PICK_ID) {
@@ -1036,7 +1035,7 @@ public class RenderManager implements DragSourceListener {
 			dispEnt.setGlobalPosition(pos);
 
 			Vec3d vec = dispEnt.getSize();
-			InputAgent.processEntity_Keyword_Value(dispEnt, "Size", String.format(loc, "%.6f %.6f %.6f %s", vec.x, vec.y, vec.z, "m" ));
+			InputAgent.processEntity_Keyword_Value(dispEnt, "Size", String.format((Locale)null, "%.6f %.6f %.6f %s", vec.x, vec.y, vec.z, "m" ));
 			FrameBox.valueUpdate();
 			return true;
 		}
@@ -1061,7 +1060,7 @@ public class RenderManager implements DragSourceListener {
 
 			Vec3d orient = dispEnt.getOrientation();
 			orient.z += theta;
-			InputAgent.processEntity_Keyword_Value(dispEnt, "Orientation", String.format(loc, "%f %f %f rad", orient.x, orient.y, orient.z));
+			InputAgent.processEntity_Keyword_Value(dispEnt, "Orientation", String.format((Locale)null, "%f %f %f rad", orient.x, orient.y, orient.z));
 			FrameBox.valueUpdate();
 			return true;
 		}
@@ -1128,7 +1127,7 @@ public class RenderManager implements DragSourceListener {
 			StringBuilder sb = new StringBuilder();
 			String pointFormatter = " { %.3f %.3f %.3f m }";
 			for(Vec3d pt : screenPoints) {
-				sb.append(String.format(loc, pointFormatter, pt.x, pt.y, pt.z));
+				sb.append(String.format((Locale)null, pointFormatter, pt.x, pt.y, pt.z));
 			}
 
 			InputAgent.processEntity_Keyword_Value(dispEnt, pointsInput, sb.toString());
@@ -1423,9 +1422,8 @@ public class RenderManager implements DragSourceListener {
 			tokens.add(dEntity.getInputName());
 			tokens.add("Size");
 			tokens.add("{");
-			Locale loc = null;
-			tokens.add(String.format(loc, "%.3f", size.x));
-			tokens.add(String.format(loc, "%.3f", size.y));
+			tokens.add(String.format((Locale)null, "%.3f", size.x));
+			tokens.add(String.format((Locale)null, "%.3f", size.y));
 			tokens.add("0.0");
 			tokens.add("m");
 			tokens.add("}");

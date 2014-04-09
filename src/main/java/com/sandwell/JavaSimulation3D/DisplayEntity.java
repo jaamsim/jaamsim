@@ -517,8 +517,7 @@ public class DisplayEntity extends Entity {
 			localPos.sub3(entity.position);
 
 		setPosition(localPos);
-		Locale loc = null;
-		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format(loc, "%.6f %.6f %.6f m", localPos.x, localPos.y, localPos.z ));
+		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format((Locale)null, "%.6f %.6f %.6f m", localPos.x, localPos.y, localPos.z ));
 		FrameBox.valueUpdate();
 	}
 
@@ -566,8 +565,7 @@ public class DisplayEntity extends Entity {
 		this.setPosition(newPos);
 
 		// inform simulation and editBox of new positions
-		Locale loc = null;
-		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format(loc, "%.6f %.6f %.6f m", newPos.x, newPos.y, newPos.z ));
+		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format((Locale)null, "%.6f %.6f %.6f m", newPos.x, newPos.y, newPos.z ));
 		FrameBox.valueUpdate();
 	}
 

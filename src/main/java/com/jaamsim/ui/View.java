@@ -279,21 +279,18 @@ public void setRegion(Region reg) {
 }
 
 public void setPosition(Vec3d pos) {
-	Locale loc = null;
-	String val = String.format(loc, "%f %f %f m", pos.x, pos.y, pos.z);
+	String val = String.format((Locale)null, "%f %f %f m", pos.x, pos.y, pos.z);
 	InputAgent.processEntity_Keyword_Value(this, this.position, val);
 }
 
 public void setCenter(Vec3d cent) {
-	Locale loc = null;
-	String val = String.format(loc, "%f %f %f m", cent.x, cent.y, cent.z);
+	String val = String.format((Locale)null, "%f %f %f m", cent.x, cent.y, cent.z);
 	InputAgent.processEntity_Keyword_Value(this, this.center, val);
 }
 
 public void setWindowPos(int x, int y, int width, int height) {
-	Locale loc = null;
-	String posVal = String.format(loc, "%d %d", x, y);
-	String sizeVal = String.format(loc, "%d %d", width, height);
+	String posVal = String.format((Locale)null, "%d %d", x, y);
+	String sizeVal = String.format((Locale)null, "%d %d", width, height);
 	InputAgent.processEntity_Keyword_Value(this, this.windowPos, posVal);
 	InputAgent.processEntity_Keyword_Value(this, this.windowSize, sizeVal);
 

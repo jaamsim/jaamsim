@@ -1343,8 +1343,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 		else {
 			if( showPosition.getState() ) {
-				Locale loc = null;
-				locatorPos.setText(String.format(loc, "(%.3f, %.3f, %.3f)",
+				locatorPos.setText(String.format((Locale)null, "(%.3f, %.3f, %.3f)",
 					pos.x, pos.y, pos.z));
 			}
 		}

@@ -431,9 +431,8 @@ static class DuplicateMenuItem extends DEMenuItem {
 
 			dEnt.setPosition(pos);
 
-			Locale loc = null;
 			// Set the input for the "Position" keyword to the new value
-			InputAgent.processEntity_Keyword_Value(dEnt, "Position", String.format(loc, "%.6f %.6f %.6f m", pos.x, pos.y, pos.z ));
+			InputAgent.processEntity_Keyword_Value(dEnt, "Position", String.format((Locale)null, "%.6f %.6f %.6f m", pos.x, pos.y, pos.z ));
 			FrameBox.valueUpdate();
 		}
 

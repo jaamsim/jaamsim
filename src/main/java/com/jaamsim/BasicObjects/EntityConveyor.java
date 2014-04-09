@@ -267,9 +267,8 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		}
 
 		StringBuilder tmp = new StringBuilder();
-		Locale loc = null;
 		for (Vec3d v : vec) {
-			tmp.append(String.format(loc, " { %.3f %.3f %.3f m }", v.x, v.y, v.z));
+			tmp.append(String.format((Locale)null, " { %.3f %.3f %.3f m }", v.x, v.y, v.z));
 		}
 		InputAgent.processEntity_Keyword_Value(this, pointsInput, tmp.toString());
 
