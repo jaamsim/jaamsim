@@ -321,8 +321,7 @@ public final class EventManager implements Runnable {
 			Process cur = Process.current();
 			cur.assertNotWaitUntil();
 			if (trcListener != null) trcListener.traceProcessEnd(this);
-			Process next = cur.getNextProcess();
-			cur.setNextProcess(null);
+			Process next = cur.getAndClearNextProcess();
 			cur.clearFlag(Process.ACTIVE);
 
 			if (next != null) {
@@ -345,10 +344,9 @@ public final class EventManager implements Runnable {
 	 */
 	private void popProcess() {
 		Process cur = Process.current();
-		Process next = cur.getNextProcess();
-
+		Process next = cur.getAndClearNextProcess();
 		cur.clearFlag(Process.ACTIVE);
-		cur.setNextProcess(null);
+
 		if (next != null)
 			switchThread(next);
 		else

@@ -193,8 +193,13 @@ public final class Process extends Thread {
 		nextProcess = next;
 	}
 
-	synchronized Process getNextProcess() {
-		return nextProcess;
+	/**
+	 * Return the next process and set it to null as we are about to switch to that process.
+	 */
+	synchronized Process getAndClearNextProcess() {
+		Process p = nextProcess;
+		nextProcess = null;
+		return p;
 	}
 
 	synchronized void wake(EventManager eventManager) {
