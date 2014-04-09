@@ -245,6 +245,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			PropertyBox.getInstance().setVisible(false);
 			LogBox.getInstance().setVisible(false);
 
+			// Save whether each window is open or closed
+			for (View v : View.getAll()) {
+				v.setKeepWindowOpen(v.showWindow());
+			}
+
 			// Close all the view windows
 			RenderManager.clear();
 		}

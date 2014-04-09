@@ -47,6 +47,8 @@ private static int nextID = 1;
 
 private final int viewID;
 
+private boolean keepWindowOpen;  // used by GUIFrame to determine whether a window is open or closed
+
 @Keyword(description = "The Region this View is within.",
          example = "View1 Region { Region1 }")
 private final EntityInput<Region> region;
@@ -304,6 +306,14 @@ public IntegerVector getWindowPos() {
 
 public IntegerVector getWindowSize() {
 	return windowSize.getValue();
+}
+
+public void setKeepWindowOpen(boolean b) {
+	keepWindowOpen = b;
+}
+
+public boolean getKeepWindowOpen() {
+	return keepWindowOpen;
 }
 
 public int getID() {

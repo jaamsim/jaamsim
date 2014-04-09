@@ -302,6 +302,13 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public void windowClosed(int windowID) {
+
+		// Update the state of the window in the input file
+		View v = _windowToViewMap.get(windowID);
+		if (!v.getKeepWindowOpen())
+			InputAgent.processEntity_Keyword_Value(v, "ShowWindow", "FALSE");
+		v.setKeepWindowOpen(false);
+
 		_windowControls.remove(windowID);
 		_windowToViewMap.remove(windowID);
 	}
