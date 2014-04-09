@@ -351,7 +351,10 @@ public final class EventManager implements Runnable {
 			switchThread(next);
 		else
 			switchThread(eventManagerThread);
-		cur.wake(this);
+
+		cur.setFlag(Process.ACTIVE);
+		if (cur.testFlag(Process.TERMINATE))
+			throw new ThreadKilledException("Thread killed");
 	}
 
 	/**

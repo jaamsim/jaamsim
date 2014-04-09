@@ -202,13 +202,6 @@ public final class Process extends Thread {
 		return p;
 	}
 
-	synchronized void wake(EventManager eventManager) {
-		this.setFlag(Process.ACTIVE);
-		this.eventManager = eventManager;
-		if (this.testFlag(Process.TERMINATE))
-			throw new ThreadKilledException("Thread killed");
-	}
-
 	/**
 	 * Debugging aid to test that we are not executing a conditional event, useful
 	 * to try and catch places where a waitUntil was missing a waitUntilEnded.
