@@ -266,8 +266,8 @@ public class InputAgent {
 				tokens.clear();
 			}
 
-			if (braceDepth > 2) {
-				InputAgent.logBadInput(tokens, "Maximum brace depth (2) exceeded");
+			if (braceDepth > 3) {
+				InputAgent.logBadInput(tokens, "Maximum brace depth (3) exceeded");
 				tokens.clear();
 			}
 		}
