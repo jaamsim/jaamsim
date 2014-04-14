@@ -23,8 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -66,7 +64,6 @@ import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -101,7 +98,7 @@ public class EditBox extends FrameBox {
 	private EditBox() {
 		super( "Input Editor" );
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
-		this.addWindowListener(new CloseListener());
+		addWindowListener(FrameBox.getCloseListener("ShowInputEditor"));
 
 		// Set the preferred size of the panes
 		jTabbedFrame = new JTabbedPane();
@@ -110,17 +107,6 @@ public class EditBox extends FrameBox {
 
 		setLocation(GUIFrame.COL2_START, GUIFrame.LOWER_START);
 		setSize(GUIFrame.COL2_WIDTH, GUIFrame.LOWER_HEIGHT);
-	}
-
-	/**
-	 * Listens for window events for the GUI.
-	 *
-	 */
-	private class CloseListener extends WindowAdapter {
-		@Override
-		public void windowClosing(WindowEvent e) {
-			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowInputEditor", "FALSE");
-		}
 	}
 
 	public synchronized static EditBox getInstance() {

@@ -14,8 +14,6 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,9 +29,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import com.jaamsim.input.InputAgent;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
@@ -48,24 +44,13 @@ public class PropertyBox extends FrameBox {
 	public PropertyBox() {
 		super("Property Viewer");
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
-		this.addWindowListener(new CloseListener());
+		addWindowListener(FrameBox.getCloseListener("ShowPropertyViewer"));
 
 		jTabbedFrame.addChangeListener(new TabListener());
 		getContentPane().add(jTabbedFrame);
 
 		setLocation(GUIFrame.COL2_START, GUIFrame.LOWER_START);
 		setSize(GUIFrame.COL2_WIDTH, GUIFrame.LOWER_HEIGHT);
-	}
-
-	/**
-	 * Listens for window events for the GUI.
-	 *
-	 */
-	private class CloseListener extends WindowAdapter {
-		@Override
-		public void windowClosing(WindowEvent e) {
-			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowPropertyViewer", "FALSE");
-		}
 	}
 
 	/**

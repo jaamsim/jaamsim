@@ -14,8 +14,6 @@
  */
 package com.jaamsim.ui;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -23,8 +21,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-import com.jaamsim.input.InputAgent;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class LogBox extends FrameBox {
@@ -39,7 +35,7 @@ public class LogBox extends FrameBox {
 	public LogBox() {
 		super( "Log Viewer" );
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
-		this.addWindowListener(new CloseListener());
+		addWindowListener(FrameBox.getCloseListener("ShowLogViewer"));
 
 		synchronized(logLock) {
 			logArea = new JTextArea(logBuilder.toString());
@@ -52,17 +48,6 @@ public class LogBox extends FrameBox {
 
 		setLocation(GUIFrame.COL3_START, GUIFrame.LOWER_START);
 		setSize(GUIFrame.COL3_WIDTH, GUIFrame.LOWER_HEIGHT);
-	}
-
-	/**
-	 * Listens for window events for the GUI.
-	 *
-	 */
-	private class CloseListener extends WindowAdapter {
-		@Override
-		public void windowClosing(WindowEvent e) {
-			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowLogViewer", "FALSE");
-		}
 	}
 
 	/**

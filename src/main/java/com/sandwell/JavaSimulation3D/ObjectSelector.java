@@ -20,8 +20,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -68,7 +66,7 @@ public class ObjectSelector extends FrameBox {
 	public ObjectSelector() {
 		super( "Object Selector" );
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		this.addWindowListener(new CloseListener());
+		addWindowListener(FrameBox.getCloseListener("ShowObjectSelector"));
 
 		top = new DefaultMutableTreeNode( "Defined Objects");
 		treeModel = new DefaultTreeModel(top);
@@ -90,17 +88,6 @@ public class ObjectSelector extends FrameBox {
 
 		tree.addMouseListener(new MyMouseListener());
 		tree.addKeyListener(new MyKeyListener());
-	}
-
-	/**
-	 * Listens for window events for the GUI.
-	 *
-	 */
-	private class CloseListener extends WindowAdapter {
-		@Override
-		public void windowClosing(WindowEvent e) {
-			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowObjectSelector", "FALSE");
-		}
 	}
 
 	@Override

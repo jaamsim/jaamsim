@@ -16,6 +16,8 @@ package com.jaamsim.ui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -28,7 +30,9 @@ import javax.swing.table.TableColumnModel;
 
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.events.Process;
+import com.jaamsim.input.InputAgent;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class FrameBox extends JFrame {
@@ -64,6 +68,26 @@ public class FrameBox extends JFrame {
 		ArrayList<FrameBox> boxes = new ArrayList<FrameBox>(allInstances);
 		for (FrameBox each : boxes) {
 			each.dispose();
+		}
+	}
+
+	public static WindowAdapter getCloseListener(String key) {
+		return new CloseListener(key);
+	}
+
+	/**
+	 * Listens for window events for the GUI and sets the appropriate keyword
+	 * controlling visibility.
+	 */
+	private static class CloseListener extends WindowAdapter {
+		final String keyword;
+		public CloseListener(String keyword) {
+			this.keyword = keyword;
+		}
+
+		@Override
+		public void windowClosing(WindowEvent e) {
+			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), keyword, "FALSE");
 		}
 	}
 

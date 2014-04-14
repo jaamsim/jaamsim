@@ -16,8 +16,6 @@ package com.jaamsim.ui;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
@@ -25,12 +23,10 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class OutputBox extends FrameBox {
@@ -43,7 +39,7 @@ public class OutputBox extends FrameBox {
 	public OutputBox() {
 		super( "Output Viewer" );
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
-		this.addWindowListener(new CloseListener());
+		addWindowListener(FrameBox.getCloseListener("ShowOutputViewer"));
 
 		tableModel = new OutputTableModel();
 		OutputTable table = new OutputTable(tableModel);
@@ -55,17 +51,6 @@ public class OutputBox extends FrameBox {
 
 		setLocation(GUIFrame.COL3_START, GUIFrame.LOWER_START);
 		setSize(GUIFrame.COL3_WIDTH, GUIFrame.LOWER_HEIGHT);
-	}
-
-	/**
-	 * Listens for window events for the GUI.
-	 *
-	 */
-	private class CloseListener extends WindowAdapter {
-		@Override
-		public void windowClosing(WindowEvent e) {
-			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "ShowOutputViewer", "FALSE");
-		}
 	}
 
 	/**
