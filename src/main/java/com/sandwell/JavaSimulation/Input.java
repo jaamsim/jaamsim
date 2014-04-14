@@ -1237,14 +1237,6 @@ public abstract class Input<T> {
 				tmp.append(SEPARATOR);
 				tmp.append(def.get(i));
 			}
-		} else if (defValue.getClass() == TimeValue.class) {
-			String val = ((TimeValue)defValue).getString();
-
-			// no need for unit if infinity
-			if (isInfinity(val))
-				return val;
-
-			tmp.append(val);
 		} else if ( Entity.class.isAssignableFrom( defValue.getClass() ) ) {
 			tmp.append(((Entity)defValue).getInputName());
 		}
