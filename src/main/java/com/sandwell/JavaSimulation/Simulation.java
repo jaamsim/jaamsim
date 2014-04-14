@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import javax.swing.JFrame;
+
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -230,41 +232,35 @@ public class Simulation extends Entity {
 		}
 
 		if (in == showModelBuilder) {
-			EntityPallet.getInstance().setVisible(showModelBuilder.getValue());
-			EntityPallet.getInstance().toFront();
+			setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
 			return;
 		}
 
 		if (in == showObjectSelector) {
-			ObjectSelector.getInstance().setVisible(showObjectSelector.getValue());
-			ObjectSelector.getInstance().toFront();
+			setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
 			return;
 		}
 
 		if (in == showInputEditor) {
-			EditBox.getInstance().setVisible(showInputEditor.getValue());
-			EditBox.getInstance().toFront();
+			setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
 			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			return;
 		}
 
 		if (in == showOutputViewer) {
-			OutputBox.getInstance().setVisible(showOutputViewer.getValue());
-			OutputBox.getInstance().toFront();
+			setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
 			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			return;
 		}
 
 		if (in == showPropertyViewer) {
-			PropertyBox.getInstance().setVisible(showPropertyViewer.getValue());
-			PropertyBox.getInstance().toFront();
+			setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
 			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			return;
 		}
 
 		if (in == showLogViewer) {
-			LogBox.getInstance().setVisible(showLogViewer.getValue());
-			LogBox.getInstance().toFront();
+			setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
 			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
 			return;
 		}
@@ -536,28 +532,22 @@ public class Simulation extends Entity {
 		return printInputReport.getValue();
 	}
 
+	private static void setWindowVisible(JFrame f, boolean visible) {
+		f.setVisible(visible);
+		if (visible)
+			f.toFront();
+	}
+
 	/**
 	 * Re-open any Tools windows that have been closed temporarily.
 	 */
 	public static void showActiveTools() {
-
-		EntityPallet.getInstance().setVisible( showModelBuilder.getValue() );
-		EntityPallet.getInstance().toFront();
-
-		ObjectSelector.getInstance().setVisible( showObjectSelector.getValue() );
-		ObjectSelector.getInstance().toFront();
-
-		EditBox.getInstance().setVisible( showInputEditor.getValue() );
-		EditBox.getInstance().toFront();
-
-		OutputBox.getInstance().setVisible( showOutputViewer.getValue() );
-		OutputBox.getInstance().toFront();
-
-		PropertyBox.getInstance().setVisible( showPropertyViewer.getValue() );
-		PropertyBox.getInstance().toFront();
-
-		LogBox.getInstance().setVisible( showLogViewer.getValue() );
-		LogBox.getInstance().toFront();
+		setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
+		setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
+		setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
+		setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
+		setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
+		setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
 	}
 
 	@Output(name = "Configuration File",
