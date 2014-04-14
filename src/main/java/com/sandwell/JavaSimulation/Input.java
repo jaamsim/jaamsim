@@ -1227,6 +1227,8 @@ public abstract class Input<T> {
 				return NEGATIVE_INFINITY;
 
 			tmp.append(defValue);
+		} else if (defValue.getClass() == SampleConstant.class ) {
+			return defValue.toString();
 		} else if (defValue.getClass() == DoubleVector.class) {
 			DoubleVector def = (DoubleVector)defValue;
 			if (def.size() == 0)
