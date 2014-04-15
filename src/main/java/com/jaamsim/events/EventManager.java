@@ -203,6 +203,26 @@ public final class EventManager implements Runnable {
 		}
 	}
 
+	void execute() {
+		try {
+			ProcessTarget t = Process.current().getAndClearNextTarget();
+			// Execute the method
+			t.process();
+
+			// Notify the event manager that the process has been completed
+			this.releaseProcess();
+			return;
+		}
+		catch (ThreadKilledException e) {
+			// If the process was killed by a terminateThread method then
+			// return to the beginning of the process loop
+			return;
+		}
+		catch (Throwable e) {
+			this.handleProcessError(e);
+		}
+	}
+
 	/**
 	 * Main event processing loop for the eventManager.
 	 *

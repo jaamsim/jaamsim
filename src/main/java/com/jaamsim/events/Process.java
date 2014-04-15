@@ -110,7 +110,8 @@ public final class Process extends Thread {
 			}
 
 			// Process has been woken up, execute the method we have been assigned
-			this.execute();
+			EventManager evt = getEventManager();
+			evt.execute();
 
 			// Ensure all state is cleared before returning to the pool
 			synchronized (this) {
@@ -119,36 +120,6 @@ public final class Process extends Thread {
 				target = null;
 				flags = 0;
 			}
-		}
-	}
-
-	private void execute() {
-		ProcessTarget procTarget;
-
-		// Save a locally-consistent processTarget, synchronized
-		// against against a call to allocate() from a separate thread
-		synchronized (this) {
-			procTarget = this.target;
-			this.target = null;
-		}
-
-		try {
-			// Execute the method
-			procTarget.process();
-
-			// Notify the event manager that the process has been completed
-			synchronized (this) {
-				eventManager.releaseProcess();
-			}
-			return;
-		}
-		catch (ThreadKilledException e) {
-			// If the process was killed by a terminateThread method then
-			// return to the beginning of the process loop
-			return;
-		}
-		catch (Throwable e) {
-			eventManager.handleProcessError(e);
 		}
 	}
 
@@ -193,6 +164,10 @@ public final class Process extends Thread {
 		}
 	}
 
+	synchronized EventManager getEventManager() {
+		return eventManager;
+	}
+
 	synchronized void setNextProcess(Process next) {
 		nextProcess = next;
 	}
@@ -204,6 +179,15 @@ public final class Process extends Thread {
 		Process p = nextProcess;
 		nextProcess = null;
 		return p;
+	}
+
+	/**
+	 * Return the next process and set it to null as we are about to switch to that process.
+	 */
+	synchronized ProcessTarget getAndClearNextTarget() {
+		ProcessTarget t = target;
+		target = null;
+		return t;
 	}
 
 	/**
