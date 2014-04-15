@@ -114,15 +114,6 @@ implements SampleProvider {
 		valueFactor = 1.0;
 	}
 
-	// initialize a new Probability distribution which always returns a single double
-	public ProbabilityDistribution( double aDouble ) {
-		this();
-
-		probList.add ( 1.0 );
-		valueList.add( aDouble );
-
-	}
-
 	public static ArrayList<? extends ProbabilityDistribution> getAll() {
 		return allInstances;
 	}
