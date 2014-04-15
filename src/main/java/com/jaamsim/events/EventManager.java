@@ -363,8 +363,7 @@ public final class EventManager implements Runnable {
 	// restorePreviousActiveThread()
 	 * Must hold the lockObject when calling this method.
 	 */
-	private void popProcess() {
-		Process cur = Process.current();
+	private void captureProcess(Process cur) {
 		Process next = cur.getAndClearNextProcess();
 		cur.clearFlag(Process.ACTIVE);
 
@@ -447,7 +446,7 @@ public final class EventManager implements Runnable {
 			Event temp = new Event(currentTick, nextEventTime, priority, t);
 			if (trcListener != null) trcListener.traceWait(this, temp);
 			addEventToStack(temp, fifo);
-			popProcess();
+			captureProcess(cur);
 		}
 	}
 
@@ -515,12 +514,13 @@ public final class EventManager implements Runnable {
 	 */
 	public void waitUntil() {
 		synchronized (lockObject) {
-			if (!conditionalList.contains(Process.current())) {
+			Process cur = Process.current();
+			if (!conditionalList.contains(cur)) {
 				if (trcListener != null) trcListener.traceWaitUntil(this);
-				Process.current().setFlag(Process.COND_WAIT);
-				conditionalList.add(Process.current());
+				cur.setFlag(Process.COND_WAIT);
+				conditionalList.add(cur);
 			}
-			popProcess();
+			captureProcess(cur);
 		}
 	}
 
@@ -528,10 +528,10 @@ public final class EventManager implements Runnable {
 		synchronized (lockObject) {
 			// Do not wait at all if we never actually were on the waitUntilStack
 			// ie. we never called waitUntil
-			if (!conditionalList.remove(Process.current()))
+			Process cur = Process.current();
+			if (!conditionalList.remove(cur))
 				return;
 
-			Process cur = Process.current();
 //			if (!cur.testFlag(Process.COND_WAIT)) {
 //				System.out.println("ERROR - waitUntil without waitUntilEnded " + cur);
 //				for (StackTraceElement elem : cur.getStackTrace()) {
@@ -544,7 +544,7 @@ public final class EventManager implements Runnable {
 			Event temp = new Event(currentTick, currentTick, 0, t);
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
 			addEventToStack(temp, true);
-			popProcess();
+			captureProcess(cur);
 		}
 	}
 
