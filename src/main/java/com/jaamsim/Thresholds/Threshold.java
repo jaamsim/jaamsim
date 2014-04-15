@@ -31,13 +31,11 @@ import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
 public abstract class Threshold extends DisplayEntity {
 
-	@Keyword(description = "The colour of the threshold graphic when the present time series value is less than or equal to the MaxOpenLimit and " +
-					"greater than or equal to the MinOpenLimit.",
+	@Keyword(description = "The colour of the threshold graphic when the threshold is open.",
 	         example = "Threshold1  OpenColour { green }")
 	private final ColourInput openColour;
 
-	@Keyword(description = "The colour of the threshold graphic when the present time series value is greater than the MaxOpenLimit " +
-					" or less than the MinOpenLimit.",
+	@Keyword(description = "The colour of the threshold graphic when the threshold is closed.",
 			example = "Threshold1  ClosedColour { red }")
 	private final ColourInput closedColour;
 
