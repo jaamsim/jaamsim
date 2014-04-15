@@ -39,10 +39,9 @@ public final class Process extends Thread {
 	private static double timeScale; // the scale from discrete to continuous time
 	private static double secondsPerTick; // The reciprocal of ticksPerSecond
 
-	private ProcessTarget target; // The entity whose method is to be executed
-
 	private EventManager eventManager; // The EventManager that is currently managing this Process
 	private Process nextProcess; // The Process from which the present process was created
+	private ProcessTarget target; // The entity whose method is to be executed
 
 	private int flags;  // Present execution state of the process
 	static final int TERMINATE = 0x01;  // The process should terminate immediately
@@ -111,7 +110,11 @@ public final class Process extends Thread {
 
 			// Process has been woken up, execute the method we have been assigned
 			EventManager evt = getEventManager();
-			evt.execute();
+			ProcessTarget t = getAndClearNextTarget();
+			if (t != null)
+				evt.executeTarget(t);
+			else
+				evt.executeEvents(this);
 
 			// Ensure all state is cleared before returning to the pool
 			synchronized (this) {
@@ -132,9 +135,9 @@ public final class Process extends Thread {
 
 		// Setup the process state for execution
 		synchronized (newProcess) {
+			newProcess.eventManager = eventManager;
 			newProcess.nextProcess = next;
 			newProcess.target = proc;
-			newProcess.eventManager = eventManager;
 			newProcess.flags = 0;
 		}
 

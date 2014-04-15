@@ -44,7 +44,7 @@ import java.util.Arrays;
  * EventManager is held as a static member of class entity, this ensures that
  * all entities will schedule themselves with the same event manager.
  */
-public final class EventManager implements Runnable {
+public final class EventManager {
 	public final String name;
 
 	private final Object lockObject; // Object used as global lock for synchronization
@@ -52,9 +52,9 @@ public final class EventManager implements Runnable {
 	private int headEvtIdx;
 
 	private boolean executeEvents;
+	private boolean processRunning;
 
 	private final ArrayList<Process> conditionalList; // List of all conditionally waiting processes
-	private final Thread eventManagerThread;
 
 	private long currentTick; // Master simulation time (long)
 	private long nextTick; // The next tick to execute events at
@@ -85,9 +85,6 @@ public final class EventManager implements Runnable {
 		this.name = name;
 		lockObject = new Object();
 
-		// Initialize the thread which processes events from this EventManager
-		eventManagerThread = new Thread(this, "evt-" + name);
-
 		// Initialize and event lists and timekeeping variables
 		currentTick = 0;
 		nextTick = 0;
@@ -99,6 +96,7 @@ public final class EventManager implements Runnable {
 		conditionalList = new ArrayList<Process>();
 
 		executeEvents = false;
+		processRunning = false;
 		executeRealTime = false;
 		realTimeFactor = 1;
 		rebaseRealTime = true;
@@ -106,37 +104,8 @@ public final class EventManager implements Runnable {
 		setErrorListener(null);
 	}
 
-	// Used to handshake with the calling thread and make sure the evt thread
-	// has made it to the first wait state
-	private static class InitListener implements EventTimeListener {
-		final Thread waitThread;
-
-		InitListener() {
-			waitThread = Thread.currentThread();
-		}
-
-		@Override
-		public void tickUpdate(long tick) {}
-		@Override
-		public void timeRunning(boolean running) {
-			synchronized (this) {
-				waitThread.interrupt();
-			}
-		}
-	}
-
 	public static EventManager initEventManager(String name) {
 		EventManager evtman = new EventManager(name);
-		InitListener e = new InitListener();
-		synchronized (e) {
-			evtman.setTimeListener(e);
-			evtman.eventManagerThread.start();
-			try {
-				e.wait();
-			}
-			catch (InterruptedException e2) {}
-			evtman.setTimeListener(null);
-		}
 		return evtman;
 	}
 
@@ -203,23 +172,22 @@ public final class EventManager implements Runnable {
 		}
 	}
 
-	void execute() {
+	boolean executeTarget(ProcessTarget t) {
 		try {
-			ProcessTarget t = Process.current().getAndClearNextTarget();
 			// Execute the method
 			t.process();
 
 			// Notify the event manager that the process has been completed
-			this.releaseProcess();
-			return;
+			return this.releaseProcess();
 		}
 		catch (ThreadKilledException e) {
 			// If the process was killed by a terminateThread method then
 			// return to the beginning of the process loop
-			return;
+			return false;
 		}
 		catch (Throwable e) {
 			this.handleProcessError(e);
+			return false;
 		}
 	}
 
@@ -231,9 +199,14 @@ public final class EventManager implements Runnable {
 	 * It is only paused and restarted as required. The run method is called by
 	 * eventManager.start().
 	 */
-	@Override
-	public void run() {
+	void executeEvents(Process cur) {
 		synchronized (lockObject) {
+			if (processRunning)
+				return;
+
+			processRunning = true;
+			timelistener.timeRunning(true);
+
 			// Loop continuously
 			while (true) {
 				if (headEvtIdx == -1 ||
@@ -242,10 +215,9 @@ public final class EventManager implements Runnable {
 				}
 
 				if (!executeEvents) {
+					processRunning = false;
 					timelistener.timeRunning(false);
-					this.threadWait();
-					timelistener.timeRunning(true);
-					continue;
+					return;
 				}
 
 				// If the next event is at the current tick, execute it
@@ -256,14 +228,21 @@ public final class EventManager implements Runnable {
 					headEvtIdx--;
 
 					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
+
+					// If the event has a captured process, pass control to it
 					Process p = nextEvent.target.getProcess();
-					if (p == null)
-						p = Process.allocate(this, null, nextEvent.target);
-					else
-						p.setNextProcess(null);
-					// Pass control to this event's thread
-					switchThread(p);
-					continue;
+					if (p != null) {
+						p.setNextProcess(cur);
+						switchThread(p);
+						continue;
+					}
+
+					// the return from execute target informs whether or not this
+					// thread should grab an new Event, or return to the pool
+					if (executeTarget(nextEvent.target))
+						continue;
+
+					return;
 				}
 
 				// If the next event would require us to advance the time, check the
@@ -275,7 +254,7 @@ public final class EventManager implements Runnable {
 						for (int i = 0; i < conditionalList.size() - 1; i++) {
 							conditionalList.get(i).setNextProcess(conditionalList.get(i + 1));
 						}
-						conditionalList.get(conditionalList.size() - 1).setNextProcess(null);
+						conditionalList.get(conditionalList.size() - 1).setNextProcess(cur);
 
 						// Wake up the first conditional thread to be tested
 						// at this point, nextThread == conditionalList.get(0)
@@ -337,7 +316,7 @@ public final class EventManager implements Runnable {
 	 * Called when a process has finished invoking a model method and unwinds
 	 * the threadStack one level.
 	 */
-	private void releaseProcess() {
+	private boolean releaseProcess() {
 		synchronized (lockObject) {
 			Process cur = Process.current();
 			cur.assertNotWaitUntil();
@@ -347,9 +326,10 @@ public final class EventManager implements Runnable {
 
 			if (next != null) {
 				next.interrupt();
-			} else {
-				// TODO: check for the switching of eventmanagers
-				eventManagerThread.interrupt();
+				return false;
+			}
+			else {
+				return true;
 			}
 		}
 	}
@@ -368,10 +348,13 @@ public final class EventManager implements Runnable {
 		cur.clearFlag(Process.ACTIVE);
 
 		if (next != null)
-			switchThread(next);
-		else
-			switchThread(eventManagerThread);
+			next.interrupt();
+		else {
+			processRunning = false;
+			Process.allocate(this, null, null).interrupt();
+		}
 
+		threadWait();
 		cur.setFlag(Process.ACTIVE);
 		if (cur.testFlag(Process.TERMINATE))
 			throw new ThreadKilledException("Thread killed");
@@ -744,7 +727,7 @@ public final class EventManager implements Runnable {
 				return;
 
 			executeEvents = true;
-			eventManagerThread.interrupt();
+			Process.allocate(this, null, null).interrupt();
 		}
 	}
 
