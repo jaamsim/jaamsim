@@ -258,9 +258,10 @@ public final class EventManager implements Runnable {
 					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
 					Process p = nextEvent.target.getProcess();
 					if (p == null)
-						p = Process.allocate(this, nextEvent.target);
+						p = Process.allocate(this, null, nextEvent.target);
+					else
+						p.setNextProcess(null);
 					// Pass control to this event's thread
-					p.setNextProcess(null);
 					switchThread(p);
 					continue;
 				}
@@ -336,7 +337,7 @@ public final class EventManager implements Runnable {
 	 * Called when a process has finished invoking a model method and unwinds
 	 * the threadStack one level.
 	 */
-	void releaseProcess() {
+	private void releaseProcess() {
 		synchronized (lockObject) {
 			Process cur = Process.current();
 			cur.assertNotWaitUntil();
@@ -375,17 +376,6 @@ public final class EventManager implements Runnable {
 		cur.setFlag(Process.ACTIVE);
 		if (cur.testFlag(Process.TERMINATE))
 			throw new ThreadKilledException("Thread killed");
-	}
-
-	/**
-	 * Push another thread onto the Process stack and wait for it to complete
-	 * Must hold the lockObject when calling this method.
-	 * @param next
-	 */
-	private void pushProcess(Process next) {
-		next.setNextProcess(Process.current());
-		next.interrupt();
-		threadWait();
 	}
 
 	/**
@@ -559,12 +549,12 @@ public final class EventManager implements Runnable {
 	}
 
 	public void start(ProcessTarget t) {
-		Process newProcess = Process.allocate(this, t);
+		Process newProcess = Process.allocate(this, Process.current(), t);
 		// Notify the eventManager that a new process has been started
 		synchronized (lockObject) {
 			if (trcListener != null) trcListener.traceProcessStart(this, t);
 			// Transfer control to the new process
-			pushProcess(newProcess);
+			switchThread(newProcess);
 		}
 	}
 
@@ -589,14 +579,16 @@ public final class EventManager implements Runnable {
 				throw new ProcessError("EVT:%s - Cannot interrupt an active thread", name);
 			}
 
-			Process.current().assertNotWaitUntil();
+			Process cur = Process.current();
+			cur.assertNotWaitUntil();
 
 			for (int i = headEvtIdx; i >= 0; i--) {
 				if (eventList[i].target.getProcess() == intThread) {
 					Event interruptEvent = removeEvent(i);
 					Process proc = interruptEvent.target.getProcess();
 					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
-					pushProcess(proc);
+					proc.setNextProcess(cur);
+					switchThread(proc);
 					return;
 				}
 			}
@@ -609,14 +601,15 @@ public final class EventManager implements Runnable {
 	 */
 	public void interrupt(ProcessTarget t) {
 		synchronized (lockObject) {
-			Process.current().assertNotWaitUntil();
+			Process cur = Process.current();
+			cur.assertNotWaitUntil();
 
 			for (int i = headEvtIdx; i >= 0; i--) {
 				if (eventList[i].target == t) {
 					Event interruptEvent = removeEvent(i);
 					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
-					Process proc = Process.allocate(this, interruptEvent.target);
-					pushProcess(proc);
+					Process proc = Process.allocate(this, cur, interruptEvent.target);
+					switchThread(proc);
 					return;
 				}
 			}

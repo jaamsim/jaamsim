@@ -125,13 +125,14 @@ public final class Process extends Thread {
 
 	// Set up a new process for the given entity, method, and arguments
 	// Called from Process.start() and from EventManager.startExternalProcess()
-	static Process allocate(EventManager eventManager, ProcessTarget proc) {
+	static Process allocate(EventManager eventManager, Process next, ProcessTarget proc) {
 
 		// Create the new process
 		Process newProcess = Process.getProcess();
 
 		// Setup the process state for execution
 		synchronized (newProcess) {
+			newProcess.nextProcess = next;
 			newProcess.target = proc;
 			newProcess.eventManager = eventManager;
 			newProcess.flags = 0;
