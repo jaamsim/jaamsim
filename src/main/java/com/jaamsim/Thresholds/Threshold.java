@@ -18,11 +18,14 @@ import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileEntity;
+import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
@@ -46,6 +49,14 @@ public abstract class Threshold extends DisplayEntity {
 	         example = "Threshold1 ShowWhenClosed { FALSE }")
 	private final BooleanInput showWhenClosed;
 
+	@Keyword(description = "The string displayed by the Text output when the threshold is open.",
+	         example = "Threshold1 OpenText { 'Open for Weather' }")
+	private final StringInput openText;
+
+	@Keyword(description = "The string displayed by the Text output when the threshold is closed.",
+	         example = "Threshold1 ClosedText { 'Closed for Weather' }")
+	private final StringInput closedText;
+
 	protected final ArrayList<ThresholdUser> userList;
 
 	protected boolean closed;
@@ -68,6 +79,12 @@ public abstract class Threshold extends DisplayEntity {
 
 		showWhenClosed = new BooleanInput("ShowWhenClosed", "Graphics", true);
 		this.addInput(showWhenClosed);
+
+		openText = new StringInput("OpenText", "Graphics", "Open");
+		this.addInput(openText);
+
+		closedText = new StringInput("ClosedText", "Graphics", "Closed");
+		this.addInput(closedText);
 	}
 
 	public Threshold() {
@@ -196,5 +213,15 @@ public abstract class Threshold extends DisplayEntity {
 		// Print percentage of time closed
 		fraction = closedSimTime/totalSimTime;
 		anOut.format("%.1f%%\t", fraction * 100.0d);
+	}
+
+	@Output(name = "Text",
+	 description = "If open, then return OpenText.  If closed, then return ClosedText.",
+	    unitType = DimensionlessUnit.class)
+	public String getText(double simTime) {
+		if( closed )
+			return closedText.getValue();
+		else
+			return openText.getValue();
 	}
 }
