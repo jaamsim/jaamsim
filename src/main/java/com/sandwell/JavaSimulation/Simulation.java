@@ -414,26 +414,12 @@ public class Simulation extends Entity {
 			}
 
 			long startTick = calculateDelayLength(Simulation.getStartHours());
-			root.scheduleProcess(startTick, Entity.PRIO_DEFAULT, false, new StartModelTarget());
+			for (int i = Entity.getAll().size() - 1; i >= 0; i--) {
+				root.scheduleProcess(startTick, 0, false, new StartUpTarget(Entity.getAll().get(i)));
+			}
 
 			long endTick = calculateDelayLength(Simulation.getEndHours());
 			root.scheduleProcess(endTick, Entity.PRIO_DEFAULT, false, new EndModelTarget());
-		}
-	}
-
-	private static class StartModelTarget extends ProcessTarget {
-		StartModelTarget() {}
-
-		@Override
-		public String getDescription() {
-			return "SimulationStart";
-		}
-
-		@Override
-		public void process() {
-			for (int i = 0; i < Entity.getAll().size(); i++) {
-				root.start(new StartUpTarget(Entity.getAll().get(i)));
-			}
 		}
 	}
 
