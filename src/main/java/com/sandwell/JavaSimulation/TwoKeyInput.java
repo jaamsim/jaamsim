@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 
 /**
  * Class TwoKeyInput for storing objects of class V (e.g. Double or DoubleVector),
@@ -25,6 +27,7 @@ import com.jaamsim.input.InputAgent;
  */
 public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<V> {
 
+	private Class<? extends Unit> unitType = DimensionlessUnit.class;
 	protected double minValue = Double.NEGATIVE_INFINITY;
 	protected double maxValue = Double.POSITIVE_INFINITY;
 	private Class<K1> key1Class;
@@ -47,6 +50,11 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		unitString = units;
 	}
 
+	public void setUnitType(Class<? extends Unit> units) {
+		unitType = units;
+		unitString = null;
+	}
+
 	@Override
 	public void parse(StringVector input)
 	throws InputErrorException {
@@ -63,7 +71,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, null );
+			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 			this.setDefaultValue( defValue );
 			return;
 		}
@@ -74,7 +82,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		ArrayList<K2> list2 = Input.parseEntityList(input.subString(1, 1), key2Class, true);
 
 		// Determine the value
-		V val = Input.parse( input.subString(2,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, null );
+		V val = Input.parse( input.subString(2,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {
