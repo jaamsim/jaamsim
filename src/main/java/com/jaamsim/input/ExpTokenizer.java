@@ -87,7 +87,7 @@ public class ExpTokenizer {
 		return res;
 	}
 
-	private static int getVarToken(ArrayList<Token> res, int startPos, String input) throws Error {
+	private static int getVarToken(ArrayList<Token> res, int startPos, String input) {
 		Token newTok = new Token();
 		newTok.type = VAR_TYPE;
 		newTok.pos = startPos;
@@ -161,7 +161,7 @@ public class ExpTokenizer {
 		return pos;
 	}
 
-	private static int getSymbolToken(ArrayList<Token> res, int startPos, String input) throws Error {
+	private static int getSymbolToken(ArrayList<Token> res, int startPos, String input) {
 		// For now, tokens are single character strings that are not numbers, variables or whitespace
 		Token newTok = new Token();
 		newTok.type = SYM_TYPE;
