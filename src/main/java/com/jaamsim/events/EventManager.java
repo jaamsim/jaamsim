@@ -51,7 +51,7 @@ public final class EventManager {
 	private Event[] eventList;
 	private int headEvtIdx;
 
-	private boolean executeEvents;
+	private volatile boolean executeEvents;
 	private boolean processRunning;
 
 	private final ArrayList<Process> conditionalList; // List of all conditionally waiting processes
@@ -707,9 +707,7 @@ public final class EventManager {
 	 * thread referenced in activeThread is the eventManager thread.
 	 */
 	public void pause() {
-		synchronized (lockObject) {
-			executeEvents = false;
-		}
+		executeEvents = false;
 	}
 
 	/**
