@@ -1,1 +1,2 @@
+Class-Path: jogl-all.jar gluegen-rt.jar
 Main-Class: com.sandwell.JavaSimulation3D.GUIFrame
