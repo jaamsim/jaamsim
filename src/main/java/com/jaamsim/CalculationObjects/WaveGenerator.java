@@ -73,7 +73,7 @@ public abstract class WaveGenerator extends DoubleCalculation {
 		super.setUnitType(ut);
 		amplitude.setUnitType(ut);
 		offset.setUnitType(ut);
-		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
+		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 	}
 
 	@Override

@@ -255,25 +255,25 @@ public class Simulation extends Entity {
 
 		if (in == showInputEditor) {
 			setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
-			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
+			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showOutputViewer) {
 			setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
-			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
+			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showPropertyViewer) {
 			setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
-			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
+			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showLogViewer) {
 			setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
-			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
+			FrameBox.reSelectEntity();
 			return;
 		}
 	}

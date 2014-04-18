@@ -142,7 +142,7 @@ implements SampleProvider {
 
 	protected void setUnitType(Class<? extends Unit> ut) {
 		inputValue.setUnitType(ut);
-		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
+		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 	}
 
 	@Override

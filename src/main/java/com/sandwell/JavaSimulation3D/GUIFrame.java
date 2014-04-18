@@ -231,7 +231,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			// Re-open the tools
 			Simulation.showActiveTools();
-			FrameBox.setSelectedEntity(ObjectSelector.currentEntity);
+			FrameBox.reSelectEntity();
 		}
 
 		@Override

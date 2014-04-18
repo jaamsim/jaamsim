@@ -116,7 +116,7 @@ implements SampleProvider {
 
 		if (in == unitType) {
 			setUnitType(getUnitType());
-			FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
+			FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 			return;
 		}
 	}

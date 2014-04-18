@@ -58,7 +58,7 @@ public class WeightedSum extends DoubleCalculation {
 	protected void setUnitType(Class<? extends Unit> ut) {
 		super.setUnitType(ut);
 		inputValueList.setUnitType(ut);
-		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
+		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 	}
 
 	@Override

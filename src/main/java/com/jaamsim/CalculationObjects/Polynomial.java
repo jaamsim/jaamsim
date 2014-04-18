@@ -64,7 +64,7 @@ public class Polynomial extends DoubleCalculation {
 	protected void setUnitType(Class<? extends Unit> ut) {
 		super.setUnitType(ut);
 		scale.setUnitType(ut);
-		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
+		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 	}
 
 	@Override

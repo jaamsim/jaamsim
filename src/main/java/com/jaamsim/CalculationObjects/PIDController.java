@@ -170,13 +170,13 @@ public class PIDController extends DoubleCalculation {
 		super.setUnitType(ut);
 		outputLow.setUnitType(ut);
 		outputHigh.setUnitType(ut);
-		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
+		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 	}
 
 	private void setSPUnitType(Class<? extends Unit> ut) {
 		setPoint.setUnitType(ut);
 		processVariable.setUnitType(ut);
-		FrameBox.setSelectedEntity(this);  // Update the units in the Output Viewer
+		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 	}
 
 	@Override
