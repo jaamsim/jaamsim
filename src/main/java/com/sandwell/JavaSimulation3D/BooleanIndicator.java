@@ -20,11 +20,11 @@ public class BooleanIndicator extends DisplayEntity {
 		boolProp = new OutputInput<Boolean>(Boolean.class, "OutputName", "Key Inputs", null);
 		this.addInput(boolProp);
 
-		trueColor = new ColourInput("TrueColour", "Key Inputs", ColourInput.GREEN);
+		trueColor = new ColourInput("TrueColour", "Graphics", ColourInput.GREEN);
 		this.addInput(trueColor);
 		this.addSynonym(trueColor, "TrueColor");
 
-		falseColor = new ColourInput("FalseColour", "Key Inputs", ColourInput.RED);
+		falseColor = new ColourInput("FalseColour", "Graphics", ColourInput.RED);
 		this.addInput(falseColor);
 		this.addSynonym(falseColor, "FalseColor");
 	}
