@@ -341,13 +341,6 @@ public class Entity {
 	}
 
 	/**
-	 * Method to set the name of the entity to prefix+entityNumber.
-	 */
-	public void setNamePrefix(String prefix) {
-		entityName = prefix + entityNumber;
-	}
-
-	/**
 	 * Method to return the unique identifier of the entity. Used when building Edit tree labels
 	 * @return entityName
 	 */
