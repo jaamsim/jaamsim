@@ -18,7 +18,9 @@ import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
@@ -194,5 +196,12 @@ public abstract class Threshold extends DisplayEntity {
 		// Print percentage of time closed
 		fraction = closedSimTime/totalSimTime;
 		anOut.format("%.1f%%\t", fraction * 100.0d);
+	}
+
+	@Output(name = "Open",
+	 description = "If open, then return TRUE.  Otherwise, return FALSE.",
+	    unitType = DimensionlessUnit.class)
+	public Boolean getOpen(double simTime) {
+		return !closed;
 	}
 }
