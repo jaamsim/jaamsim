@@ -13,7 +13,7 @@ public class BooleanIndicator extends DisplayEntity {
 	private final ColourInput trueColor;
 
 	@Keyword(description = "The colour of the indicator when the property is false",
-	         example = "BinLevel TrueColor { green }")
+	         example = "BinLevel FalseColor { red }")
 	private final ColourInput falseColor;
 
 	{
