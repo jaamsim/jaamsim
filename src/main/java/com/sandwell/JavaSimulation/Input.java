@@ -498,7 +498,9 @@ public abstract class Input<T> {
 
 	private static final Pattern is8601date = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
 	private static final Pattern is8601time = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}:\\d{2}");
+	private static final Pattern is8601full = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}:\\d{2}\\.\\d{1,6}");
 	private static final Pattern isextendtime = Pattern.compile("\\d{1,}:\\d{2}:\\d{2}");
+	private static final Pattern isextendfull = Pattern.compile("\\d{1,}:\\d{2}:\\d{2}.\\d{1,6}");
 	private static final long usPerSec = 1000000;
 	private static final long usPerMin = 60 * usPerSec;
 	private static final long usPerHr  = 60 * usPerMin;
@@ -523,14 +525,36 @@ public abstract class Input<T> {
 			int hh = Integer.parseInt(input.substring(11, 13));
 			int mm = Integer.parseInt(input.substring(14, 16));
 			int ss = Integer.parseInt(input.substring(17, 19));
-			return getUS(input, YY, MM, DD, hh, mm, ss);
+			return getUS(input, YY, MM, DD, hh, mm, ss, 0);
+		}
+
+		if (is8601full.matcher(input).matches()) {
+			int YY = Integer.parseInt(input.substring(0, 4));
+			int MM = Integer.parseInt(input.substring(5, 7));
+			int DD = Integer.parseInt(input.substring(8, 10));
+			int hh = Integer.parseInt(input.substring(11, 13));
+			int mm = Integer.parseInt(input.substring(14, 16));
+			int ss = Integer.parseInt(input.substring(17, 19));
+
+			// grab the us values and zero-pad to a full 6-digit number
+			String usChars =  input.substring(20, input.length());
+			int us = 0;
+			switch (usChars.length()) {
+			case 1: us =  Integer.parseInt(usChars) * 100000; break;
+			case 2: us =  Integer.parseInt(usChars) *  10000; break;
+			case 3: us =  Integer.parseInt(usChars) *   1000; break;
+			case 4: us =  Integer.parseInt(usChars) *    100; break;
+			case 5: us =  Integer.parseInt(usChars) *     10; break;
+			case 6: us =  Integer.parseInt(usChars) *      1; break;
+			}
+			return getUS(input, YY, MM, DD, hh, mm, ss, us);
 		}
 
 		if (is8601date.matcher(input).matches()) {
 			int YY = Integer.parseInt(input.substring(0, 4));
 			int MM = Integer.parseInt(input.substring(5, 7));
 			int DD = Integer.parseInt(input.substring(8, 10));
-			return getUS(input, YY, MM, DD, 0, 0, 0);
+			return getUS(input, YY, MM, DD, 0, 0, 0, 0);
 		}
 
 		if (isextendtime.matcher(input).matches()) {
@@ -549,10 +573,38 @@ public abstract class Input<T> {
 			return ret;
 		}
 
+		if (isextendfull.matcher(input).matches()) {
+			int len = input.indexOf(".");
+			int hh = Integer.parseInt(input.substring(0, len - 6));
+			int mm = Integer.parseInt(input.substring(len - 5, len - 3));
+			int ss = Integer.parseInt(input.substring(len - 2, len));
+
+			if (mm < 0 || mm > 59 || ss < 0 || ss > 59)
+				throw new InputErrorException(INP_ERR_BADDATE, input);
+
+			// grab the us values and zero-pad to a full 6-digit number
+			String usChars =  input.substring(len + 1, input.length());
+			int us = 0;
+			switch (usChars.length()) {
+			case 1: us =  Integer.parseInt(usChars) * 100000; break;
+			case 2: us =  Integer.parseInt(usChars) *  10000; break;
+			case 3: us =  Integer.parseInt(usChars) *   1000; break;
+			case 4: us =  Integer.parseInt(usChars) *    100; break;
+			case 5: us =  Integer.parseInt(usChars) *     10; break;
+			case 6: us =  Integer.parseInt(usChars) *      1; break;
+			}
+			long ret = 0;
+			ret += hh * usPerHr;
+			ret += mm * usPerMin;
+			ret += ss * usPerSec;
+			ret += us;
+			return ret;
+		}
+
 		throw new InputErrorException(INP_ERR_BADDATE, input);
 	}
 
-	private static final long getUS(String input, int YY, int MM, int DD, int hh, int mm, int ss) {
+	private static final long getUS(String input, int YY, int MM, int DD, int hh, int mm, int ss, int us) {
 		// Validate ranges
 		if (MM <= 0 || MM > 12)
 			throw new InputErrorException(INP_ERR_BADDATE, input);
@@ -573,6 +625,7 @@ public abstract class Input<T> {
 		ret += hh * usPerHr;
 		ret += mm * usPerMin;
 		ret += ss * usPerSec;
+		ret += us;
 
 		return ret;
 	}
