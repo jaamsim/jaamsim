@@ -400,18 +400,10 @@ public class DisplayModelCompat extends DisplayModel {
 
 			DoubleVector sizes = tags.sizes.get(DisplayModelCompat.TAG_CONTENTS);
 			Color4d[] colours = tags.colours.get(DisplayModelCompat.TAG_CONTENTS);
-			Color4d[] outlineColour = tags.colours.get(DisplayModelCompat.TAG_OUTLINES);
-			Color4d[] backgroundColour = tags.colours.get(DisplayModelCompat.TAG_BODY);
+			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d backgroundColour = tags.getTagColourUtil(DisplayModelCompat.TAG_BODY, ColourInput.WHITE);
 			if (sizes == null) {
 				sizes = new DoubleVector();
-			}
-			if (outlineColour == null || outlineColour.length < 1) {
-				outlineColour = new Color4d[1];
-				outlineColour[0] = ColourInput.BLACK;
-			}
-			if (backgroundColour == null || backgroundColour.length < 1) {
-				backgroundColour = new Color4d[1];
-				backgroundColour[0] = ColourInput.WHITE;
 			}
 
 			double width = 1.0;
@@ -421,8 +413,8 @@ public class DisplayModelCompat extends DisplayModel {
 			}
 
 			// Add the background and outline
-			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, backgroundColour[0], false, 1, getVisibilityInfo(), pickingID));
-			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, outlineColour[0], true, 1, getVisibilityInfo(), pickingID));
+			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, backgroundColour, false, 1, getVisibilityInfo(), pickingID));
+			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
 
 			if (colours == null || colours.length < sizes.size()) {
 				return;
