@@ -342,7 +342,10 @@ public class DebugUtils {
 		gl.glUniform1f(_cVar, Camera.C);
 		gl.glUniform1f(_fcVar, Camera.FC);
 
-		gl.glLineWidth((float)lineWidth);
+		if (!gl.isGLcore())
+			gl.glLineWidth((float)lineWidth);
+		else
+			gl.glLineWidth(1.0f);
 
 		// Build up a float buffer to pass to GL
 

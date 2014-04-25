@@ -182,7 +182,11 @@ public class Polygon implements Renderable {
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
 
-		gl.glLineWidth((float)lineWidth);
+		if (!gl.isGLcore())
+			gl.glLineWidth((float)lineWidth);
+		else
+			gl.glLineWidth(1.0f);
+
 		gl.glDrawArrays(GL2GL3.GL_LINE_LOOP, 0, _points.size());
 
 		gl.glLineWidth(1.0f);
