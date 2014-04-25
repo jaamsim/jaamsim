@@ -70,7 +70,6 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
-import com.jaamsim.events.Process;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
@@ -1690,7 +1689,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			return;
 		}
 		else {
-			double curSec = Process.ticksToSeconds(currentTick);
+			double curSec = evt.ticksToSeconds(currentTick);
 			LogBox.format("EXCEPTION AT TIME: %f s%n", curSec);
 			LogBox.logLine("Error: " + t.getMessage());
 			for (StackTraceElement each : t.getStackTrace())

@@ -61,6 +61,7 @@ public final class EventManager {
 	private long targetTick; // the largest time we will execute events for (run to time)
 
 	private double ticksPerSecond; // The number of discrete ticks per simulated second
+	private double secsPerTick;    // The length of time in seconds each tick represents
 
 	// Real time execution state
 	private long realTimeTick;    // the simulation tick corresponding to the wall-clock millis value
@@ -90,6 +91,7 @@ public final class EventManager {
 		nextTick = 0;
 
 		ticksPerSecond = 1000000.0d;
+		secsPerTick = 1.0d / ticksPerSecond;
 
 		eventList = new Event[10000];
 		headEvtIdx = -1;
@@ -737,6 +739,7 @@ public final class EventManager {
 
 	public final void setSimTimeScale(double scale) {
 		ticksPerSecond = scale / 3600.0d;
+		secsPerTick = 3600.0d / scale;
 		Process.setSimTimeScale(scale);
 	}
 
@@ -745,6 +748,13 @@ public final class EventManager {
 	 */
 	public final long secondsToNearestTick(double seconds) {
 		return Math.round(seconds * ticksPerSecond);
+	}
+
+	/**
+	 * Convert the number of ticks into a value in seconds.
+	 */
+	public final double ticksToSeconds(long ticks) {
+		return ticks * secsPerTick;
 	}
 
 	void handleProcessError(Throwable t) {

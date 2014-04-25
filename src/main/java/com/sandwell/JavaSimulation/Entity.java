@@ -203,7 +203,7 @@ public class Entity {
 	 * @return the current time in seconds
 	 */
 	public final double getSimTime() {
-		return Process.ticksToSeconds(getSimTicks());
+		return root.ticksToSeconds(getSimTicks());
 	}
 
 	public final double getCurrentTime() {
