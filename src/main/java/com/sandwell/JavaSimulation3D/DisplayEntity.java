@@ -409,7 +409,7 @@ public class DisplayEntity extends Entity {
 		ret.merge(ret, alignTrans);
 
 		if (currentRegion != null) {
-			Transform regionTrans = currentRegion.getRegionTrans(simTime);
+			Transform regionTrans = currentRegion.getRegionTrans();
 			ret.merge(regionTrans, ret);
 		}
 		return ret;
@@ -450,7 +450,7 @@ public class DisplayEntity extends Entity {
 		}
 
 		if (currentRegion != null) {
-			Transform regionTrans = currentRegion.getRegionTrans(getCurrentTime());
+			Transform regionTrans = currentRegion.getRegionTrans();
 			regionTrans.multAndTrans(localPos, localPos);
 		}
 
@@ -505,7 +505,7 @@ public class DisplayEntity extends Entity {
 		Transform invReg = new Transform();
 
 		if (currentRegion != null) {
-			Transform regionTrans = currentRegion.getRegionTrans(getCurrentTime());
+			Transform regionTrans = currentRegion.getRegionTrans();
 			regionTrans.inverse(invReg);
 		}
 

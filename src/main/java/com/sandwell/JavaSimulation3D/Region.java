@@ -51,7 +51,7 @@ private final Vec3dInput orientationInput;
 	 */
 	public Region() {}
 
-	public Transform getRegionTrans(double simTime) {
+	public Transform getRegionTrans() {
 		Quaternion rot = null;
 		Vec3d temp = orientationInput.getValue();
 		if (temp != null) {

@@ -195,7 +195,7 @@ public Vec3d getGlobalPosition() {
 		Vec3d tmp = position.getValue();
 		Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 		if (region.getValue() != null) {
-			Transform regTrans = region.getValue().getRegionTrans(0);
+			Transform regTrans = region.getValue().getRegionTrans();
 			regTrans.apply(ret, ret);
 		}
 		return ret;
@@ -218,7 +218,7 @@ public Vec3d getGlobalCenter() {
 		Vec3d tmp = center.getValue();
 		Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
 		if (region.getValue() != null) {
-			Transform regTrans = region.getValue().getRegionTrans(0);
+			Transform regTrans = region.getValue().getRegionTrans();
 			regTrans.apply(ret, ret);
 		}
 		return ret;
@@ -241,7 +241,7 @@ public void updateCenterAndPos(Vec3d center, Vec3d pos) {
 		Vec3d tempCent = new Vec3d(center);
 
 		if (region.getValue() != null) {
-			Transform regTrans = region.getValue().getRegionTrans(0);
+			Transform regTrans = region.getValue().getRegionTrans();
 			regTrans.inverse(regTrans);
 			regTrans.multAndTrans(pos, tempPos);
 			regTrans.multAndTrans(center, tempCent);

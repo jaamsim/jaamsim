@@ -83,7 +83,7 @@ public class ScreenPointsModel extends DisplayModel {
 
 			Transform regionTrans = null;
 			if (displayObservee.getCurrentRegion() != null) {
-				regionTrans = displayObservee.getCurrentRegion().getRegionTrans(simTime);
+				regionTrans = displayObservee.getCurrentRegion().getRegionTrans();
 			}
 
 			VisibilityInfo vi = getVisibilityInfo();

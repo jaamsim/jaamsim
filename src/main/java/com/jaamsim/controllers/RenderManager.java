@@ -1091,7 +1091,7 @@ public class RenderManager implements DragSourceListener {
 			Region reg = dispEnt.getCurrentRegion();
 			Transform regionInvTrans = new Transform();
 			if (reg != null) {
-				regionInvTrans = reg.getRegionTrans(0.0d);
+				regionInvTrans = reg.getRegionTrans();
 				regionInvTrans.inverse(regionInvTrans);
 			}
 			Vec3d localDelta = new Vec3d();
