@@ -15,6 +15,7 @@
 package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import com.jaamsim.Samples.SampleInput;
@@ -56,9 +57,9 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	         example = "Delay-1 Color { red }")
 	private final ColourInput colorInput;
 
-	private final ArrayList<DisplayEntity> entityList;  // List of the entities being handled
-	private final ArrayList<Double> startTimeList;  // List of times at which the entities started their delay
-	private final ArrayList<Double> durationList;  // List of durations for the entities
+	private final HashMap<Long, DisplayEntity> entityMap = new HashMap<Long, DisplayEntity>();  // List of the entities being handled
+	private final HashMap<Long, Double> startTimeMap = new HashMap<Long, Double>();  // List of the entities being handled
+	private final HashMap<Long, Double> durationMap = new HashMap<Long, Double>();  // List of the entities being handled
 
 	private double totalLength;  // Graphical length of the path
 	private final ArrayList<Double> lengthList;  // Length of each segment of the path
@@ -90,9 +91,6 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	}
 
 	public EntityDelay() {
-		entityList = new ArrayList<DisplayEntity>();
-		startTimeList = new ArrayList<Double>();
-		durationList = new ArrayList<Double>();
 		lengthList = new ArrayList<Double>();
 		cumLengthList = new ArrayList<Double>();
 	}
@@ -101,9 +99,9 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	public void earlyInit() {
 		super.earlyInit();
 
-		entityList.clear();
-		startTimeList.clear();
-		durationList.clear();
+		entityMap.clear();
+		startTimeMap.clear();
+		durationMap.clear();
 
 	    // Initialize the segment length data
 		lengthList.clear();
@@ -128,9 +126,9 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		// Add the entity to the list of entities being delayed
 		double simTime = this.getSimTime();
 		double dur = duration.getValue().getNextSample(simTime);
-		entityList.add( ent );
-		startTimeList.add(simTime);
-		durationList.add(dur);
+		entityMap.put(ent.getEntityNumber(), ent );
+		startTimeMap.put(ent.getEntityNumber(), simTime);
+		durationMap.put(ent.getEntityNumber(), dur);
 
 		this.scheduleProcess(dur, 5, new RemoveDisplayEntityTarget(this, "removeDisplayEntity", ent));
 	}
@@ -160,10 +158,9 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	public void removeDisplayEntity(DisplayEntity ent) {
 
 		// Remove the entity from the lists
-		int index = entityList.indexOf(ent);
-		entityList.remove(index);
-		startTimeList.remove(index);
-		durationList.remove(index);
+		entityMap.remove(ent.getEntityNumber());
+		startTimeMap.remove(ent.getEntityNumber());
+		durationMap.remove(ent.getEntityNumber());
 
 		// Send the entity to the next component
 		this.sendToNextComponent(ent);
@@ -218,14 +215,13 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	public void updateGraphics( double simTime ) {
 
 		// Loop through the entities on the path
-		for( int i = 0; i < entityList.size(); i++) {
-			DisplayEntity each = entityList.get( i );
-
+		for (DisplayEntity ent : entityMap.values()) {
+			long entNum = ent.getEntityNumber();
 			// Calculate the distance travelled by this entity
-			double dist = ( simTime - startTimeList.get(i) ) / durationList.get(i) * totalLength;
+			double dist = ( simTime - startTimeMap.get(entNum) ) / durationMap.get(entNum) * totalLength;
 
 			// Set the position for the entity
-			each.setPosition( this.getPositionForDistance( dist) );
+			ent.setPosition( this.getPositionForDistance( dist) );
 		}
 	}
 
