@@ -618,26 +618,6 @@ public final class EventManager {
 		}
 	}
 
-	/**
-	 *	Removes an event from the pending list and executes it immediately.
-	 */
-	public void interrupt(ProcessTarget t) {
-		synchronized (lockObject) {
-			Process cur = assertNotWaitUntil();
-
-			for (int i = headEvtIdx; i >= 0; i--) {
-				if (eventList[i].target == t) {
-					Event interruptEvent = removeEvent(i);
-					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
-					Process proc = Process.allocate(this, cur, interruptEvent.target);
-					switchThread(proc);
-					return;
-				}
-			}
-			throw new ProcessError("EVT:%s - Tried to interrupt a ProcessTarget that couldn't be found in event list", name);
-		}
-	}
-
 	public void terminateThread( Process killThread ) {
 		synchronized (lockObject) {
 			if (killThread.testFlag(Process.ACTIVE)) {
@@ -666,14 +646,18 @@ public final class EventManager {
 	}
 
 	/**
-	 *	Removes an event from the pending list and executes it immediately.
+	 *	Removes an event from the pending list without executing it.
 	 */
-	public void terminate(ProcessTarget t) {
+	public void killEvent(EventHandle handle) {
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 
+			Event evt = handle.event;
+			if (evt == null)
+				return;
+
 			for (int i = headEvtIdx; i >= 0; i--) {
-				if (eventList[i].target == t) {
+				if (evt == eventList[i]) {
 					Event temp = removeEvent(i);
 					if (trcListener != null) trcListener.traceKill(this, temp);
 					return;
@@ -729,9 +713,20 @@ public final class EventManager {
 	}
 
 	public void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
+		this.scheduleProcess(waitLength, eventPriority, fifo, t, null);
+	}
+
+	public void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
 			Event e = new Event(currentTick, schedTick, eventPriority, t);
+			if (handle != null) {
+				if (handle.event != null)
+					throw new ProcessError("EVT:%s - Tried to schedule using an EventHandler already in use", name);
+
+				handle.event = e;
+				e.handle = handle;
+			}
 			if (trcListener != null) trcListener.traceSchedProcess(this, e);
 			addEventToStack(e, fifo);
 		}

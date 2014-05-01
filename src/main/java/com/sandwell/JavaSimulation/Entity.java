@@ -20,6 +20,7 @@ import java.util.HashMap;
 import com.jaamsim.basicsim.ClonesOfIterable;
 import com.jaamsim.basicsim.InstanceIterable;
 import com.jaamsim.basicsim.ReflectionTarget;
+import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
@@ -492,6 +493,11 @@ public class Entity {
 		getEventManager().scheduleProcess(ticks, priority, false, t);
 	}
 
+	public final void scheduleProcess(double secs, int priority, ProcessTarget t, EventHandle handle) {
+		long ticks = root.secondsToNearestTick(secs);
+		getEventManager().scheduleProcess(ticks, priority, false, t, handle);
+	}
+
 	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
 		getEventManager().scheduleProcess(ticks, priority, false, t);
 	}
@@ -594,6 +600,10 @@ public class Entity {
 		getEventManager().waitUntilEnded();
 	}
 
+	public final void killEvent(EventHandle handle) {
+		getEventManager().killEvent(handle);
+	}
+
 	public final void killEvent(Process proc) {
 		// Just return if given a null Process
 		if (proc == null)
@@ -602,28 +612,12 @@ public class Entity {
 		getEventManager().terminateThread(proc);
 	}
 
-	public final void killEvent(ProcessTarget t) {
-		// Just return if given a null target
-		if (t == null)
-			return;
-
-		getEventManager().terminate(t);
-	}
-
 	public final void interruptEvent(Process proc) {
 		// Just return if given a null Process
 		if (proc == null)
 			return;
 
 		getEventManager().interrupt(proc);
-	}
-
-	public final void interruptEvent(ProcessTarget t) {
-		// Just return if given a null target
-		if (t == null)
-			return;
-
-		getEventManager().interrupt(t);
 	}
 
 	public final long secondsToNearestTick(double seconds) {
