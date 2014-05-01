@@ -604,6 +604,10 @@ public class Entity {
 		getEventManager().killEvent(handle);
 	}
 
+	public final void interruptEvent(EventHandle handle) {
+		getEventManager().interruptEvent(handle);
+	}
+
 	public final void killEvent(Process proc) {
 		// Just return if given a null Process
 		if (proc == null)

@@ -717,6 +717,27 @@ public final class EventManager {
 		}
 	}
 
+	/**
+	 *	Removes an event from the pending list and executes it.
+	 */
+	public void interruptEvent(EventHandle handle) {
+		synchronized (lockObject) {
+			Process cur = assertNotWaitUntil();
+
+			Event evt = handle.event;
+			if (evt == null)
+				return;
+
+			removeEvent(evt);
+			if (trcListener != null) trcListener.traceInterrupt(this, evt);
+			Process proc = evt.target.getProcess();
+			if (proc == null)
+				proc = Process.allocate(this, cur, evt.target);
+			proc.setNextProcess(cur);
+			switchThread(proc);
+		}
+	}
+
 	public long currentTick() {
 		synchronized (lockObject) {
 			return currentTick;
