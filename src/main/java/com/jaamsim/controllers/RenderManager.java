@@ -45,7 +45,6 @@ import javax.swing.JPopupMenu;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.TextModel;
-import com.jaamsim.events.Process;
 import com.jaamsim.font.TessFont;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputAgent.KeywordIndex;
@@ -367,7 +366,7 @@ public class RenderManager implements DragSourceListener {
 				DisplayModelBinding.clearCacheMissData();
 
 				boolean screenShotThisFrame = _screenshot.get();
-				double renderTime = Process.ticksToSeconds(simTick);
+				double renderTime = FrameBox.ticksToSeconds(simTick);
 
 				long startNanos = System.nanoTime();
 
@@ -882,7 +881,7 @@ public class RenderManager implements DragSourceListener {
 		                             dragInfo.x - dragInfo.dx,
 		                             dragInfo.y - dragInfo.dy);
 
-		double _simTime = Process.ticksToSeconds(simTick);
+		double _simTime = FrameBox.ticksToSeconds(simTick);
 		Transform trans = dispEnt.getGlobalTrans(_simTime);
 
 		Vec3d size = dispEnt.getSize();

@@ -340,6 +340,8 @@ public class Simulation extends Entity {
 			EventTracer.verifyAllEvents(root, verifyEventsInput.getValue());
 		}
 		root.setSimTimeScale(simTimeScaleInput.getValue());
+		FrameBox.setSecondsPerTick(3600.0d / simTimeScaleInput.getValue());
+
 		if( startDate.getValue() != null ) {
 			Clock.getStartingDateFromString( startDate.getValue() );
 		}

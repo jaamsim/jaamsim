@@ -37,7 +37,6 @@ public final class Process extends Thread {
 	private static int numProcesses = 0; // Total of all created processes to date (used to name new Processes)
 
 	private static double timeScale; // the scale from discrete to continuous time
-	private static double secondsPerTick; // The reciprocal of ticksPerSecond
 
 	private EventManager eventManager; // The EventManager that is currently managing this Process
 	private Process nextProcess; // The Process from which the present process was created
@@ -224,14 +223,6 @@ public final class Process extends Thread {
 
 	static void setSimTimeScale(double scale) {
 		timeScale = scale;
-		secondsPerTick = 3600.0d / scale;
-	}
-
-	/**
-	 * Return the number of seconds represented by the given number of ticks.
-	 */
-	public static final double ticksToSeconds(long ticks) {
-		return ticks * secondsPerTick;
 	}
 
 	public static double getSimTimeFactor() {

@@ -29,7 +29,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.events.Process;
 import com.jaamsim.input.InputAgent;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Simulation;
@@ -46,6 +45,7 @@ public class FrameBox extends JFrame {
 
 	protected static final Font boldFont;
 	protected static final TableCellRenderer colRenderer;
+	private static double secondsPerTick;
 
 	static {
 		allInstances = new ArrayList<FrameBox>();
@@ -69,6 +69,17 @@ public class FrameBox extends JFrame {
 		for (FrameBox each : boxes) {
 			each.dispose();
 		}
+	}
+
+	public static void setSecondsPerTick(double secsPerTick) {
+		secondsPerTick = secsPerTick;
+	}
+
+	/**
+	 * Return the number of seconds represented by the given number of ticks.
+	 */
+	public static final double ticksToSeconds(long ticks) {
+		return ticks * secondsPerTick;
 	}
 
 	public static WindowAdapter getCloseListener(String key) {
@@ -197,7 +208,7 @@ public class FrameBox extends JFrame {
 			double callBackTime;
 			synchronized (this) {
 				scheduled = false;
-				callBackTime = Process.ticksToSeconds(simTick);
+				callBackTime = FrameBox.ticksToSeconds(simTick);
 			}
 
 			GUIFrame.instance().setClock(callBackTime);
