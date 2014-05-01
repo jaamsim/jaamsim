@@ -577,6 +577,20 @@ public class Entity {
 	}
 
 	/**
+	 * Wrapper of eventManager.scheduleWait(). Used as a syntax nicity for
+	 * calling the wait method.
+	 *
+	 * @param duration The duration to wait
+	 * @param priority The relative priority of the event scheduled
+	 */
+	public final void scheduleWait( double duration, int priority, EventHandle handle ) {
+		long waitLength = calculateDelayLength(duration);
+		if (waitLength == 0)
+			return;
+		getEventManager().waitTicks(waitLength, priority, false, handle);
+	}
+
+	/**
 	 * Schedules an event to happen as the last event at the current time.
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
