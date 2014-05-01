@@ -72,10 +72,6 @@ public final class Process extends Thread {
 		throw new ProcessError("Non-process thread called Process.current()");
 	}
 
-	public static final boolean isModelProcess() {
-		return (Thread.currentThread() instanceof Process);
-	}
-
 	public static final long currentTick() {
 		return Process.current().eventManager.currentTick();
 	}

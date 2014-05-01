@@ -736,6 +736,13 @@ public final class EventManager {
 		return name;
 	}
 
+	/**
+	 * Returns true if the calling thread has a current eventManager (ie. it is inside a model)
+	 * @return
+	 */
+	public static final boolean hasCurrent() {
+		return (Thread.currentThread() instanceof Process);
+	}
 
 	public final void setSimTimeScale(double scale) {
 		ticksPerSecond = scale / 3600.0d;
