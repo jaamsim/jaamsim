@@ -14,7 +14,6 @@
  */
 package com.sandwell.JavaSimulation;
 
-import com.jaamsim.events.Process;
 
 /**
  * Class used to implement Audition-style string format tests.
@@ -187,7 +186,7 @@ public class Tester {
 	}
 
 	private static long calculateEventTime(double time) {
-		return Math.round(time * Process.getSimTimeFactor());
+		return Math.round(time * Simulation.getSimTimeFactor());
 	}
 
 	public static String toTimeString( double timeValue ) {

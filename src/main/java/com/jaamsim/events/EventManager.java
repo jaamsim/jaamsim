@@ -740,7 +740,6 @@ public final class EventManager {
 	public final void setSimTimeScale(double scale) {
 		ticksPerSecond = scale / 3600.0d;
 		secsPerTick = 3600.0d / scale;
-		Process.setSimTimeScale(scale);
 	}
 
 	/**

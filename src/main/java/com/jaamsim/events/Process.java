@@ -36,8 +36,6 @@ public final class Process extends Thread {
 	private static final int maxPoolSize = 100; // Maximum number of Processes allowed to be pooled at a given time
 	private static int numProcesses = 0; // Total of all created processes to date (used to name new Processes)
 
-	private static double timeScale; // the scale from discrete to continuous time
-
 	private EventManager eventManager; // The EventManager that is currently managing this Process
 	private Process nextProcess; // The Process from which the present process was created
 	private ProcessTarget target; // The entity whose method is to be executed
@@ -219,17 +217,5 @@ public final class Process extends Thread {
 
 	synchronized boolean testFlag(int flag) {
 		return (flags & flag) != 0;
-	}
-
-	static void setSimTimeScale(double scale) {
-		timeScale = scale;
-	}
-
-	public static double getSimTimeFactor() {
-		return timeScale;
-	}
-
-	public static double getEventTolerance() {
-		return (1.0d / getSimTimeFactor());
 	}
 }

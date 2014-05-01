@@ -208,7 +208,7 @@ public class Entity {
 
 	public final double getCurrentTime() {
 		long ticks = getSimTicks();
-		return ticks / Process.getSimTimeFactor();
+		return ticks / Simulation.getSimTimeFactor();
 	}
 
 	protected void addInput(Input<?> in) {
@@ -451,27 +451,27 @@ public class Entity {
 	}
 
 	static long calculateDelayLength(double waitLength) {
-		return Math.round(waitLength * Process.getSimTimeFactor());
+		return Math.round(waitLength * Simulation.getSimTimeFactor());
 	}
 
 	public double calculateDiscreteTime(double time) {
 		long discTime = calculateDelayLength(time);
-		return discTime / Process.getSimTimeFactor();
+		return discTime / Simulation.getSimTimeFactor();
 	}
 
 	public double calculateEventTime(double waitLength) {
 		long eventTime = Process.currentTick() + calculateDelayLength(waitLength);
-		return eventTime / Process.getSimTimeFactor();
+		return eventTime / Simulation.getSimTimeFactor();
 	}
 
 	public double calculateEventTimeBefore(double waitLength) {
-		long eventTime = Process.currentTick() + (long)Math.floor(waitLength * Process.getSimTimeFactor());
-		return eventTime / Process.getSimTimeFactor();
+		long eventTime = Process.currentTick() + (long)Math.floor(waitLength * Simulation.getSimTimeFactor());
+		return eventTime / Simulation.getSimTimeFactor();
 	}
 
 	public double calculateEventTimeAfter(double waitLength) {
-		long eventTime = Process.currentTick() + (long)Math.ceil(waitLength * Process.getSimTimeFactor());
-		return eventTime / Process.getSimTimeFactor();
+		long eventTime = Process.currentTick() + (long)Math.ceil(waitLength * Simulation.getSimTimeFactor());
+		return eventTime / Simulation.getSimTimeFactor();
 	}
 
 	public final void startProcess(String methodName, Object... args) {

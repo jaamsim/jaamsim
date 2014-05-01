@@ -14,7 +14,6 @@
  */
 package com.jaamsim.Thresholds;
 
-import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -26,6 +25,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
+import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.TimeSeriesInput;
 import com.sandwell.JavaSimulation.TimeSeriesProvider;
 
@@ -398,7 +398,7 @@ public class TimeSeriesThreshold extends Threshold {
 
 				// if the time required is 0.0, the lookahead window is equal to the time until the next closed point.
 				// Need to wait at least one clock tick before closing again.
-				return Math.max(timeUntilClose, Process.getEventTolerance());
+				return Math.max(timeUntilClose, Simulation.getEventTolerance());
 			}
 		}
 	}

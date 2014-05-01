@@ -118,7 +118,7 @@ public class Simulation extends Entity {
 	         example = "Simulation ShowLogViewer { TRUE }")
 	private static final BooleanInput showLogViewer;
 
-
+	private static double timeScale; // the scale from discrete to continuous time
 	private static double startTime;
 	private static double endTime;
 
@@ -340,6 +340,7 @@ public class Simulation extends Entity {
 			EventTracer.verifyAllEvents(root, verifyEventsInput.getValue());
 		}
 		root.setSimTimeScale(simTimeScaleInput.getValue());
+		setSimTimeScale(simTimeScaleInput.getValue());
 		FrameBox.setSecondsPerTick(3600.0d / simTimeScaleInput.getValue());
 
 		if( startDate.getValue() != null ) {
@@ -352,6 +353,18 @@ public class Simulation extends Entity {
 		root.scheduleProcess(0, Entity.PRIO_DEFAULT, false, new InitModelTarget());
 	}
 
+
+	static void setSimTimeScale(double scale) {
+		timeScale = scale;
+	}
+
+	public static double getSimTimeFactor() {
+		return timeScale;
+	}
+
+	public static double getEventTolerance() {
+		return (1.0d / getSimTimeFactor());
+	}
 
 	public static final void resume(double secs) {
 		long ticks = root.secondsToNearestTick(secs);
