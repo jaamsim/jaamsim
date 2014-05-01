@@ -57,9 +57,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	         example = "Delay-1 Color { red }")
 	private final ColourInput colorInput;
 
-	private final HashMap<Long, DisplayEntity> entityMap = new HashMap<Long, DisplayEntity>();  // List of the entities being handled
-	private final HashMap<Long, Double> startTimeMap = new HashMap<Long, Double>();  // List of the entities being handled
-	private final HashMap<Long, Double> durationMap = new HashMap<Long, Double>();  // List of the entities being handled
+	private final HashMap<Long, EntityDelayEntry> entityMap = new HashMap<Long, EntityDelayEntry>();  // List of the entities being handled
 
 	private double totalLength;  // Graphical length of the path
 	private final ArrayList<Double> lengthList;  // Length of each segment of the path
@@ -100,10 +98,8 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		super.earlyInit();
 
 		entityMap.clear();
-		startTimeMap.clear();
-		durationMap.clear();
 
-	    // Initialize the segment length data
+		// Initialize the segment length data
 		lengthList.clear();
 		cumLengthList.clear();
 		totalLength = 0.0;
@@ -119,6 +115,12 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		}
 	}
 
+	private static class EntityDelayEntry {
+		DisplayEntity ent;
+		double startTime;
+		double duration;
+	}
+
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
 		super.addDisplayEntity(ent);
@@ -126,9 +128,12 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		// Add the entity to the list of entities being delayed
 		double simTime = this.getSimTime();
 		double dur = duration.getValue().getNextSample(simTime);
-		entityMap.put(ent.getEntityNumber(), ent );
-		startTimeMap.put(ent.getEntityNumber(), simTime);
-		durationMap.put(ent.getEntityNumber(), dur);
+
+		EntityDelayEntry entry = new EntityDelayEntry();
+		entry.ent = ent;
+		entry.startTime = simTime;
+		entry.duration = dur;
+		entityMap.put(ent.getEntityNumber(), entry);
 
 		this.scheduleProcess(dur, 5, new RemoveDisplayEntityTarget(this, "removeDisplayEntity", ent));
 	}
@@ -156,11 +161,8 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	}
 
 	public void removeDisplayEntity(DisplayEntity ent) {
-
 		// Remove the entity from the lists
 		entityMap.remove(ent.getEntityNumber());
-		startTimeMap.remove(ent.getEntityNumber());
-		durationMap.remove(ent.getEntityNumber());
 
 		// Send the entity to the next component
 		this.sendToNextComponent(ent);
@@ -215,13 +217,12 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	public void updateGraphics( double simTime ) {
 
 		// Loop through the entities on the path
-		for (DisplayEntity ent : entityMap.values()) {
-			long entNum = ent.getEntityNumber();
+		for (EntityDelayEntry entry : entityMap.values()) {
 			// Calculate the distance travelled by this entity
-			double dist = ( simTime - startTimeMap.get(entNum) ) / durationMap.get(entNum) * totalLength;
+			double dist = ( simTime - entry.startTime ) / entry.duration * totalLength;
 
 			// Set the position for the entity
-			ent.setPosition( this.getPositionForDistance( dist) );
+			entry.ent.setPosition( this.getPositionForDistance( dist) );
 		}
 	}
 
