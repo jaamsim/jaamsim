@@ -147,7 +147,13 @@ public final class EventManager {
 
 			// Kill threads on the event stack
 			for (int i = 0; i <= headEvtIdx; i++) {
-				Process proc = eventList[i].target.getProcess();
+				Event evt = eventList[i];
+				if (evt.handle != null) {
+					evt.handle.event = null;
+					evt.handle = null;
+				}
+
+				Process proc = evt.target.getProcess();
 				if (proc == null)
 					continue;
 
@@ -230,7 +236,10 @@ public final class EventManager {
 					headEvtIdx--;
 
 					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
-
+					if (nextEvent.handle != null) {
+						nextEvent.handle.event = null;
+						nextEvent.handle = null;
+					}
 					// If the event has a captured process, pass control to it
 					Process p = nextEvent.target.getProcess();
 					if (p != null) {
@@ -421,12 +430,19 @@ public final class EventManager {
 	 * @param ticks the number of discrete ticks from now to schedule the event.
 	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
-	public void waitTicks(long ticks, int priority, boolean fifo) {
+	public void waitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
 		synchronized (lockObject) {
 			Process cur = assertNotWaitUntil();
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);
 			Event temp = new Event(currentTick, nextEventTime, priority, t);
+			if (handle != null) {
+				if (handle.event != null)
+					throw new ProcessError("EVT:%s - Tried to schedule using an EventHandler already in use", name);
+
+				handle.event = temp;
+				temp.handle = handle;
+			}
 			if (trcListener != null) trcListener.traceWait(this, temp);
 			addEventToStack(temp, fifo);
 			captureProcess(cur);
@@ -566,11 +582,16 @@ public final class EventManager {
 	 * @return
 	 */
 	private Event removeEvent(int idx) {
-		Event e = eventList[idx];
+		Event evt = eventList[idx];
 		System.arraycopy(eventList, idx + 1, eventList, idx, headEvtIdx - idx);
 		eventList[headEvtIdx] = null;
 		headEvtIdx--;
-		return e;
+
+		if (evt.handle != null) {
+			evt.handle.event = null;
+			evt.handle = null;
+		}
+		return evt;
 	}
 	/**
 	 *	Removes the thread from the pending list and executes it immediately

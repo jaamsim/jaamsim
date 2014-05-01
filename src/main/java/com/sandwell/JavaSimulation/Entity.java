@@ -540,7 +540,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWaitTicks(long ticks, int priority) {
-		getEventManager().waitTicks(ticks, priority, false);
+		getEventManager().waitTicks(ticks, priority, false, null);
 	}
 
 	/**
@@ -553,7 +553,7 @@ public class Entity {
 		long waitLength = calculateDelayLength(duration);
 		if (waitLength == 0)
 			return;
-		getEventManager().waitTicks(waitLength, Entity.PRIO_DEFAULT, false);
+		getEventManager().waitTicks(waitLength, Entity.PRIO_DEFAULT, false, null);
 	}
 
 	/**
@@ -567,7 +567,7 @@ public class Entity {
 		long waitLength = calculateDelayLength(duration);
 		if (waitLength == 0)
 			return;
-		getEventManager().waitTicks(waitLength, priority, false);
+		getEventManager().waitTicks(waitLength, priority, false, null);
 	}
 
 	/**
@@ -575,7 +575,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastFIFO() {
-		getEventManager().waitTicks(0, Entity.PRIO_LOWEST, true);
+		getEventManager().waitTicks(0, Entity.PRIO_LOWEST, true, null);
 	}
 
 	/**
@@ -583,7 +583,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastLIFO() {
-		getEventManager().waitTicks(0, Entity.PRIO_LOWEST, false);
+		getEventManager().waitTicks(0, Entity.PRIO_LOWEST, false, null);
 	}
 
 	public final void waitUntil() {

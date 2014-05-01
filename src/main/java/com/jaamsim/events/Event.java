@@ -24,6 +24,7 @@ public class Event {
 	int priority;   // The schedule priority of this event
 
 	final ProcessTarget target;
+	EventHandle handle;
 
 	/**
 	 * Constructs a new event object.
@@ -39,6 +40,7 @@ public class Event {
 		priority = prio;
 
 		this.target = target;
+		this.handle = null;
 	}
 
 	/**
