@@ -593,6 +593,62 @@ public final class EventManager {
 		}
 		return evt;
 	}
+
+	/**
+	 * Remove an event from the eventList, must hold the lockObject.
+	 * @param idx
+	 * @return
+	 */
+	private void removeEvent(Event evt) {
+		int lowIdx = 0;
+		int highIdx = headEvtIdx;
+
+		while (lowIdx <= highIdx) {
+			int testIdx = (lowIdx + highIdx) >>> 1; // use unsigned shift to avoid overflow
+
+			// Compare events by scheduled time first
+			if (eventList[testIdx].schedTick < evt.schedTick) {
+				highIdx = testIdx - 1;
+				continue;
+			}
+
+			if (eventList[testIdx].schedTick > evt.schedTick) {
+				lowIdx = testIdx + 1;
+				continue;
+			}
+
+			// events at the same time use priority as a tie-breaker
+			if (eventList[testIdx].priority < evt.priority) {
+				highIdx = testIdx - 1;
+				continue;
+			}
+
+			if (eventList[testIdx].priority > evt.priority) {
+				lowIdx = testIdx + 1;
+				continue;
+			}
+
+			// Always compare as lifo in order to find the first event at a given
+			// time and priority, scan linearly from there
+			lowIdx = testIdx + 1;
+		}
+
+		for (int i = lowIdx - 1; i >= 0; i--) {
+			if (eventList[i] == evt) {
+				if (evt.handle != null) {
+					evt.handle.event = null;
+					evt.handle = null;
+				}
+				System.arraycopy(eventList, i + 1, eventList, i, headEvtIdx - i);
+				eventList[headEvtIdx] = null;
+				headEvtIdx--;
+				return;
+			}
+		}
+
+		throw new ProcessError("EVT:%s - Tried to remove an event that could not be found", name);
+	}
+
 	/**
 	 *	Removes the thread from the pending list and executes it immediately
 	 */
@@ -656,15 +712,9 @@ public final class EventManager {
 			if (evt == null)
 				return;
 
-			for (int i = headEvtIdx; i >= 0; i--) {
-				if (evt == eventList[i]) {
-					Event temp = removeEvent(i);
-					if (trcListener != null) trcListener.traceKill(this, temp);
-					return;
-				}
-			}
+			removeEvent(evt);
+			if (trcListener != null) trcListener.traceKill(this, evt);
 		}
-		throw new ProcessError("EVT:%s - Tried to terminate a ProcessTarget that couldn't be found in event list", name);
 	}
 
 	public long currentTick() {
