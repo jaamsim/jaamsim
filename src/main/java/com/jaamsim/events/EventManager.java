@@ -67,9 +67,9 @@ public final class EventManager {
 	private long realTimeTick;    // the simulation tick corresponding to the wall-clock millis value
 	private long realTimeMillis;  // the wall-clock time in millis
 
-	private boolean executeRealTime;  // TRUE if the simulation is to be executed in Real Time mode
-	private boolean rebaseRealTime;   // TRUE if the time keeping for Real Time model needs re-basing
-	private int realTimeFactor;       // target ratio of elapsed simulation time to elapsed wall clock time
+	private volatile boolean executeRealTime;  // TRUE if the simulation is to be executed in Real Time mode
+	private volatile boolean rebaseRealTime;   // TRUE if the time keeping for Real Time model needs re-basing
+	private volatile int realTimeFactor;       // target ratio of elapsed simulation time to elapsed wall clock time
 
 	private EventTimeListener timelistener;
 	private EventErrorListener errListener;
@@ -745,12 +745,10 @@ public final class EventManager {
 	}
 
 	public void setExecuteRealTime(boolean useRealTime, int factor) {
-		synchronized (lockObject) {
-			executeRealTime = useRealTime;
-			realTimeFactor = factor;
-			if (useRealTime)
-				rebaseRealTime = true;
-		}
+		executeRealTime = useRealTime;
+		realTimeFactor = factor;
+		if (useRealTime)
+			rebaseRealTime = true;
 	}
 
 	/**
