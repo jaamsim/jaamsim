@@ -21,6 +21,7 @@ public class ExpTokenizer {
 	public static final int VAR_TYPE = 0;
 	public static final int NUM_TYPE = 1;
 	public static final int SYM_TYPE = 2;
+	public static final int SQ_TYPE = 3; // Square quoted tokens
 
 	public static class Token {
 		public int type;
@@ -71,6 +72,12 @@ public class ExpTokenizer {
 				continue;
 			}
 
+			if (c == '[') {
+				// This is the beginning of a square quoted string
+				pos = getSQToken(res, pos, input);
+				continue;
+			}
+
 			if (isVarStartChar(c)) {
 				pos = getVarToken(res, pos, input);
 				continue;
@@ -107,6 +114,31 @@ public class ExpTokenizer {
 		newTok.value = sb.toString();
 		res.add(newTok);
 		return pos;
+	}
+
+	private static int getSQToken(ArrayList<Token> res, int startPos, String input) throws Error {
+		Token newTok = new Token();
+		newTok.type = SQ_TYPE;
+		newTok.pos = startPos;
+
+		int closePos = startPos + 1;
+		while (closePos < input.length()) {
+			char c = input.charAt(closePos);
+			if (c == '[')
+				throw new Error(String.format("Nested square quotes at pos: %d", closePos));
+			if (c == ']')
+				break;
+
+			closePos++;
+		}
+
+		if (closePos == input.length()) {
+			throw new Error(String.format("No closing square brace for brace at pos: %d", startPos));
+		}
+
+		newTok.value = input.substring(startPos + 1, closePos);
+		res.add(newTok);
+		return closePos + 1;
 	}
 
 	// TODO: Should this include 'f' or 'd' as in the java convention? Also, should we support hex?

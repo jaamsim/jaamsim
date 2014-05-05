@@ -77,6 +77,11 @@ public class TestExpParser {
 		testToken(tokens.get(0), ExpTokenizer.SYM_TYPE, "-");
 		testToken(tokens.get(1), ExpTokenizer.NUM_TYPE, "42.3E-6");
 
+		tokens = ExpTokenizer.tokenize("[123][abc]   [+-  2]");
+		assertTrue(tokens.size() == 3);
+		testToken(tokens.get(0), ExpTokenizer.SQ_TYPE, "123");
+		testToken(tokens.get(1), ExpTokenizer.SQ_TYPE, "abc");
+		testToken(tokens.get(2), ExpTokenizer.SQ_TYPE, "+-  2");
 	}
 
 	@Test
