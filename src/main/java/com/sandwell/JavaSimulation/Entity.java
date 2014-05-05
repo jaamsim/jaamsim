@@ -641,14 +641,6 @@ public class Entity {
 		getEventManager().terminateThread(proc);
 	}
 
-	public final void interruptEvent(Process proc) {
-		// Just return if given a null Process
-		if (proc == null)
-			return;
-
-		getEventManager().interrupt(proc);
-	}
-
 	public final long secondsToNearestTick(double seconds) {
 		return root.secondsToNearestTick(seconds);
 	}

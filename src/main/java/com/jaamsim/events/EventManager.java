@@ -649,31 +649,6 @@ public final class EventManager {
 		throw new ProcessError("EVT:%s - Tried to remove an event that could not be found", name);
 	}
 
-	/**
-	 *	Removes the thread from the pending list and executes it immediately
-	 */
-	public void interrupt( Process intThread ) {
-		synchronized (lockObject) {
-			if (intThread.testFlag(Process.ACTIVE)) {
-				throw new ProcessError("EVT:%s - Cannot interrupt an active thread", name);
-			}
-
-			Process cur = assertNotWaitUntil();
-
-			for (int i = headEvtIdx; i >= 0; i--) {
-				if (eventList[i].target.getProcess() == intThread) {
-					Event interruptEvent = removeEvent(i);
-					Process proc = interruptEvent.target.getProcess();
-					if (trcListener != null) trcListener.traceInterrupt(this, interruptEvent);
-					proc.setNextProcess(cur);
-					switchThread(proc);
-					return;
-				}
-			}
-			throw new ProcessError("EVT:%s - Tried to interrupt a Process that couldn't be found in event list", name);
-		}
-	}
-
 	public void terminateThread( Process killThread ) {
 		synchronized (lockObject) {
 			if (killThread.testFlag(Process.ACTIVE)) {
