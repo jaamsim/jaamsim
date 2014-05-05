@@ -142,7 +142,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 
 	@Override
 	public synchronized void traceWaitUntil(EventManager e) {
-		this.addHeader(e.name, e.currentTick());
+		this.addHeader(e.name, e.getSimTicks());
 		traceLevel--;
 		this.append("WaitUntil");
 		this.finish();
@@ -150,7 +150,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 
 	@Override
 	public synchronized void traceWaitUntilEnded(EventManager e, Event evt) {
-		this.addHeader(e.name, e.currentTick());
+		this.addHeader(e.name, e.getSimTicks());
 		this.append(String.format("WaitUntilEnded\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
 
@@ -159,7 +159,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 
 	@Override
 	public synchronized void traceProcessStart(EventManager e, ProcessTarget t) {
-		this.addHeader(e.name, e.currentTick());
+		this.addHeader(e.name, e.getSimTicks());
 		this.append(String.format("StartProcess\t%s", t.getDescription()));
 		traceLevel++;
 		this.finish();
@@ -167,7 +167,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 
 	@Override
 	public synchronized void traceProcessEnd(EventManager e) {
-		this.addHeader(e.name, e.currentTick());
+		this.addHeader(e.name, e.getSimTicks());
 		traceLevel--;
 		this.append("Exit");
 		this.finish();
@@ -175,7 +175,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 
 	@Override
 	public synchronized void traceSchedProcess(EventManager e, Event evt) {
-		this.addHeader(e.name, e.currentTick());
+		this.addHeader(e.name, e.getSimTicks());
 		this.append(String.format("SchedProcess\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
 		this.finish();

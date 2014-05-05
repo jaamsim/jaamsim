@@ -196,7 +196,7 @@ public class Entity {
 	 * @return the current simulation tick
 	 */
 	public final long getSimTicks() {
-		return EventManager.current().currentTick();
+		return EventManager.current().getSimTicks();
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class Entity {
 	 * @return the current time in seconds
 	 */
 	public final double getSimTime() {
-		return root.ticksToSeconds(getSimTicks());
+		return EventManager.current().getSimSeconds();
 	}
 
 	public final double getCurrentTime() {
@@ -312,7 +312,7 @@ public class Entity {
 	 * Static method to get the eventManager for all entities.
 	 */
 	private EventManager getEventManager() {
-		return root;
+		return EventManager.current();
 	}
 
 	/**
@@ -489,13 +489,15 @@ public class Entity {
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t) {
-		long ticks = root.secondsToNearestTick(secs);
-		getEventManager().scheduleProcess(ticks, priority, false, t);
+		EventManager evt = getEventManager();
+		long ticks = evt.secondsToNearestTick(secs);
+		evt.scheduleProcess(ticks, priority, false, t);
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t, EventHandle handle) {
-		long ticks = root.secondsToNearestTick(secs);
-		getEventManager().scheduleProcess(ticks, priority, false, t, handle);
+		EventManager evt = getEventManager();
+		long ticks = evt.secondsToNearestTick(secs);
+		evt.scheduleProcess(ticks, priority, false, t, handle);
 	}
 
 	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
@@ -519,7 +521,7 @@ public class Entity {
 	 * @param secs
 	 */
 	public final void simWait(double secs) {
-		simWait(secs, Entity.PRIO_DEFAULT);
+		this.simWait(secs, Entity.PRIO_DEFAULT, false, null);
 	}
 
 	/**
@@ -528,8 +530,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWait(double secs, int priority) {
-		long ticks = root.secondsToNearestTick(secs);
-		this.simWaitTicks(ticks, priority);
+		this.simWait(secs, priority, false, null);
 	}
 
 	/**
@@ -538,8 +539,18 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWait(double secs, int priority, EventHandle handle) {
-		long ticks = root.secondsToNearestTick(secs);
-		this.simWaitTicks(ticks, priority, false, handle);
+		this.simWait(secs, priority, false, handle);
+	}
+
+	/**
+	 * Wait a number of simulated seconds and a given priority.
+	 * @param secs
+	 * @param priority
+	 */
+	public final void simWait(double secs, int priority, boolean fifo, EventHandle handle) {
+		EventManager evt = getEventManager();
+		long ticks = evt.secondsToNearestTick(secs);
+		evt.waitTicks(ticks, priority, fifo, handle);
 	}
 
 	/**
@@ -547,7 +558,7 @@ public class Entity {
 	 * @param secs
 	 */
 	public final void simWaitTicks(long ticks) {
-		simWaitTicks(ticks, Entity.PRIO_DEFAULT);
+		this.simWaitTicks(ticks, Entity.PRIO_DEFAULT);
 	}
 
 	/**
@@ -556,7 +567,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWaitTicks(long ticks, int priority) {
-		getEventManager().waitTicks(ticks, priority, false, null);
+		this.simWaitTicks(ticks, priority, false, null);
 	}
 
 	/**
@@ -580,7 +591,7 @@ public class Entity {
 		long waitLength = calculateDelayLength(duration);
 		if (waitLength == 0)
 			return;
-		getEventManager().waitTicks(waitLength, Entity.PRIO_DEFAULT, false, null);
+		this.simWaitTicks(waitLength, Entity.PRIO_DEFAULT, false, null);
 	}
 
 	/**
@@ -594,7 +605,7 @@ public class Entity {
 		long waitLength = calculateDelayLength(duration);
 		if (waitLength == 0)
 			return;
-		getEventManager().waitTicks(waitLength, priority, false, null);
+		this.simWaitTicks(waitLength, priority, false, null);
 	}
 
 	/**
@@ -608,7 +619,7 @@ public class Entity {
 		long waitLength = calculateDelayLength(duration);
 		if (waitLength == 0)
 			return;
-		getEventManager().waitTicks(waitLength, priority, false, handle);
+		this.simWaitTicks(waitLength, priority, false, handle);
 	}
 
 	/**
@@ -616,7 +627,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastFIFO() {
-		getEventManager().waitTicks(0, Entity.PRIO_LOWEST, true, null);
+		this.simWaitTicks(0, Entity.PRIO_LOWEST, true, null);
 	}
 
 	/**
@@ -624,7 +635,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastLIFO() {
-		getEventManager().waitTicks(0, Entity.PRIO_LOWEST, false, null);
+		this.simWaitTicks(0, Entity.PRIO_LOWEST, false, null);
 	}
 
 	public final void waitUntil() {
@@ -649,10 +660,6 @@ public class Entity {
 			return;
 
 		getEventManager().terminateThread(proc);
-	}
-
-	public final long secondsToNearestTick(double seconds) {
-		return root.secondsToNearestTick(seconds);
 	}
 
 	// ******************************************************************************************************

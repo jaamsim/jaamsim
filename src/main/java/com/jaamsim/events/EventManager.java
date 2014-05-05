@@ -713,11 +713,18 @@ public final class EventManager {
 		}
 	}
 
-	public long currentTick() {
+	public long getSimTicks() {
 		synchronized (lockObject) {
 			return currentTick;
 		}
 	}
+
+	public double getSimSeconds() {
+		synchronized (lockObject) {
+			return currentTick * secsPerTick;
+		}
+	}
+
 
 	public void setExecuteRealTime(boolean useRealTime, int factor) {
 		executeRealTime = useRealTime;
