@@ -550,6 +550,17 @@ public class Entity {
 	}
 
 	/**
+	 * Wait a number of discrete simulation ticks and a given priority.
+	 * @param secs
+	 * @param priority
+	 * @param fifo
+	 * @param handle
+	 */
+	public final void simWaitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
+		getEventManager().waitTicks(ticks, priority, fifo, handle);
+	}
+
+	/**
 	 * Wrapper of eventManager.scheduleWait(). Used as a syntax nicity for
 	 * calling the wait method.
 	 *
