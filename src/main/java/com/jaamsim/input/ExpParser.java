@@ -278,6 +278,10 @@ public class ExpParser {
 		}
 
 		public void expect(int type, String val) throws Error {
+			if (pos == tokens.size()) {
+				throw new Error(String.format("Expected \"%s\", past the end of input", val));
+			}
+
 			ExpTokenizer.Token nextTok = tokens.get(pos);
 
 			if (nextTok.type != type || !nextTok.value.equals(val)) {
