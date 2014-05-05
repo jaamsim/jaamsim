@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import javax.swing.JFrame;
 
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -211,6 +212,13 @@ public class Simulation extends Entity {
 			}
 		}
 		return myInstance;
+	}
+
+	private static EventManager root;
+	public static synchronized final EventManager initEVT() {
+		if (root != null) return root;
+		root = EventManager.initEventManager("DefaultEventManager");
+		return root;
 	}
 
 	@Override

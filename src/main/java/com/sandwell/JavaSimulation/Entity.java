@@ -37,8 +37,6 @@ import com.jaamsim.ui.FrameBox;
  * event execution.
  */
 public class Entity {
-	static EventManager root;
-
 	private static long entityCount = 0;
 	private static final ArrayList<Entity> allInstances;
 	private static final HashMap<String, Entity> namedEntities;
@@ -116,12 +114,6 @@ public class Entity {
 		synchronized(allInstances) {
 			return allInstances;
 		}
-	}
-
-	public static synchronized final EventManager initEVT() {
-		if (root != null) return root;
-		root = EventManager.initEventManager("DefaultEventManager");
-		return root;
 	}
 
 	public static <T extends Entity> ArrayList<T> getInstancesOf(Class<T> proto) {

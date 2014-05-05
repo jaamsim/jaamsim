@@ -81,7 +81,6 @@ import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Tester;
@@ -1516,7 +1515,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
 
-		EventManager evt = Entity.initEVT();
+		EventManager evt = Simulation.initEVT();
 		GUIFrame gui = GUIFrame.instance();
 		gui.updateForSimulationState(SIM_STATE_LOADED);
 		evt.setTimeListener(gui);
