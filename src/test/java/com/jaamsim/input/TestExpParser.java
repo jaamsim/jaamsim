@@ -88,53 +88,53 @@ public class TestExpParser {
 	public void testParser() throws ExpParser.Error {
 		class ValLookup implements ExpParser.VarTable {
 			@Override
-			public double getVariableValue(String[] name) {
-				if (name[0].equals("foo")) return 4;
-				if (name[0].equals("bar")) return 3;
-				return 1;
+			public ExpResult getVariableValue(String[] name) {
+				if (name[0].equals("foo")) return new ExpResult(4);
+				if (name[0].equals("bar")) return new ExpResult(3);
+				return new ExpResult(1);
 			}
 		}
 
 		ValLookup vl = new ValLookup();
 
 		ExpParser.Expression exp = ExpParser.parseExpression("2*5 + 3*5*(3-1)+2");
-		double val = exp.evaluate(vl);
+		double val = exp.evaluate(vl).value;
 		assertTrue(val == 42);
 
 		exp = ExpParser.parseExpression("max(3, 42)");
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 42);
 
 		exp = ExpParser.parseExpression("abs(-42)");
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 42);
 
 		exp = ExpParser.parseExpression("[foo]*[bar]");
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 12);
 
 		exp = ExpParser.parseExpression("50/2/5"); // left associative
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 5);
 
 		exp = ExpParser.parseExpression("2^2^3"); // right associative
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 256);
 
 		exp = ExpParser.parseExpression("1 + 2^2*4 + 2*[foo]");
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 25);
 
 		exp = ExpParser.parseExpression("1 + 2^(2*4) + 2");
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 259);
 
 		exp = ExpParser.parseExpression("2----2"); // A quadruple negative
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 4);
 
 		exp = ExpParser.parseExpression("(((((1+1)))*5))");
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 10);
 
 	}
@@ -143,35 +143,35 @@ public class TestExpParser {
 	public void testVariables() throws ExpParser.Error {
 		class ValLookup implements ExpParser.VarTable {
 			@Override
-			public double getVariableValue(String[] name) {
-				if (name.length < 1 || !name[0].equals("foo")) return 0;
+			public ExpResult getVariableValue(String[] name) {
+				if (name.length < 1 || !name[0].equals("foo")) return new ExpResult(0);
 
-				if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return 4;
-				if (name.length >= 2 && name[1].equals("bonk")) return 5;
+				if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return new ExpResult(4);
+				if (name.length >= 2 && name[1].equals("bonk")) return new ExpResult(5);
 
-				return -1;
+				return new ExpResult(-1);
 			}
 		}
 		ValLookup vl = new ValLookup();
 
 		ExpParser.Expression exp = ExpParser.parseExpression("[foo].bar.baz");
-		double val = exp.evaluate(vl);
+		double val = exp.evaluate(vl).value;
 		assertTrue(val == 4);
 
 		exp = ExpParser.parseExpression("[foo].bar.baz*4");
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 16);
 
 		exp = ExpParser.parseExpression("[foo].bonk");
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 5);
 
 		exp = ExpParser.parseExpression("[bob].is.your.uncle");
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression("[foo]");
-		val = exp.evaluate(vl);
+		val = exp.evaluate(vl).value;
 		assertTrue(val == -1);
 
 	}
@@ -181,8 +181,8 @@ public class TestExpParser {
 
 		class ValLookup implements ExpParser.VarTable {
 			@Override
-			public double getVariableValue(String[] name) {
-				return -1;
+			public ExpResult getVariableValue(String[] name) {
+				return new ExpResult(-1);
 			}
 		}
 		ValLookup vl = new ValLookup();
@@ -192,6 +192,6 @@ public class TestExpParser {
 		assertTrue(assign.destination.length == 2);
 		assertTrue(assign.destination[0].equals("foo"));
 		assertTrue(assign.destination[1].equals("bar"));
-		assertTrue(assign.value.evaluate(vl) == 42);
+		assertTrue(assign.value.evaluate(vl).value == 42);
 	}
 }

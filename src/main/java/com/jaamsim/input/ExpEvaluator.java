@@ -72,7 +72,7 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public double getVariableValue(String[] names) {
+		public ExpResult getVariableValue(String[] names) {
 			try {
 				errorString = null;
 				Entity ent = getEntity(names, simTime, thisEnt, objEnt);
@@ -80,34 +80,34 @@ public class ExpEvaluator {
 				OutputHandle oh = ent.getOutputHandle(outputName);
 				if (oh == null) {
 					errorString = String.format("Could not find output '%s' on entity '%s'", outputName, ent.getInputName());
-					return 0;
+					return null;
 				}
-				return oh.getValueAsDouble(simTime, 0);
+				return new ExpResult(oh.getValueAsDouble(simTime, 0));
 
 			} catch (Exception e) {
 				errorString = e.getMessage();
 			}
-			return 0;
+			return null;
 		}
 	}
 
 	public static void runAssignment(ExpParser.Assignment assign, double simTime, Entity thisEnt, Entity objEnt) throws Error {
 		Entity assignmentEnt = getEntity(assign.destination, simTime, thisEnt, objEnt);
 
-		double value = evaluateExpression(assign.value, simTime, thisEnt, objEnt);
+		ExpResult result = evaluateExpression(assign.value, simTime, thisEnt, objEnt);
 
 		String attribName = assign.destination[assign.destination.length-1];
 		if (!assignmentEnt.hasAttribute(attribName)) {
 			throw new Error(String.format("Entity '%s' does not have attribute '%s'", assignmentEnt, attribName));
 		}
-		assignmentEnt.setAttribute(attribName, value);
+		assignmentEnt.setAttribute(attribName, result.value);
 	}
 
-	public static double evaluateExpression(ExpParser.Expression exp, double simTime, Entity thisEnt, Entity objEnt) throws Error
+	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime, Entity thisEnt, Entity objEnt) throws Error
 	{
 		EntityLookup el = new EntityLookup(simTime, thisEnt, objEnt);
 
-		double value = exp.evaluate(el);
+		ExpResult value = exp.evaluate(el);
 		if (el.errorString != null)
 			throw new Error(el.errorString);
 

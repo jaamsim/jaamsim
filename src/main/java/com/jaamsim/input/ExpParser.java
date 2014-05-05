@@ -19,35 +19,35 @@ import java.util.ArrayList;
 public class ExpParser {
 
 	public interface UnOpFunc {
-		public double apply(double val);
+		public ExpResult apply(ExpResult val);
 	}
 
 	public interface BinOpFunc {
-		public double apply(double lval, double rval);
+		public ExpResult apply(ExpResult lval, ExpResult rval);
 	}
 
 	public interface CallableFunc {
-		public double call(double[] args);
+		public ExpResult call(ExpResult[] args);
 	}
 
 	public interface VarTable {
-		public double getVariableValue(String[] names);
+		public ExpResult getVariableValue(String[] names);
 	}
 
 	////////////////////////////////////////////////////////////////////
 	// Expression types
 
 	public interface Expression {
-		public double evaluate(VarTable vars);
+		public ExpResult evaluate(VarTable vars);
 	}
 
 	public static class Constant implements Expression {
-		private double val;
-		public Constant(double val) {
+		private ExpResult val;
+		public Constant(ExpResult val) {
 			this.val = val;
 		}
 		@Override
-		public double evaluate(VarTable vars) {
+		public ExpResult evaluate(VarTable vars) {
 			return val;
 		}
 	}
@@ -58,7 +58,7 @@ public class ExpParser {
 			this.vals = vals;
 		}
 		@Override
-		public double evaluate(VarTable vars) {
+		public ExpResult evaluate(VarTable vars) {
 			return vars.getVariableValue(vals);
 		}
 	}
@@ -72,7 +72,7 @@ public class ExpParser {
 		}
 
 		@Override
-		public double evaluate(VarTable vars) {
+		public ExpResult evaluate(VarTable vars) {
 			return func.apply(subExp.evaluate(vars));
 		}
 	}
@@ -88,7 +88,7 @@ public class ExpParser {
 		}
 
 		@Override
-		public double evaluate(VarTable vars) {
+		public ExpResult evaluate(VarTable vars) {
 			return func.apply(lSubExp.evaluate(vars), rSubExp.evaluate(vars));
 		}
 	}
@@ -102,8 +102,8 @@ public class ExpParser {
 		}
 
 		@Override
-		public double evaluate(VarTable vars) {
-			double[] argVals = new double[args.size()];
+		public ExpResult evaluate(VarTable vars) {
+			ExpResult[] argVals = new ExpResult[args.size()];
 			for (int i = 0; i < args.size(); ++i) {
 				argVals[i] = args.get(i).evaluate(vars);
 			}
@@ -195,64 +195,64 @@ public class ExpParser {
 	static {
 		addUnaryOp("-", new UnOpFunc() {
 			@Override
-			public double apply(double val){
-				return val * -1;
+			public ExpResult apply(ExpResult val){
+				return new ExpResult(-val.value);
 			}
 		});
 
 		addBinaryOp("+", 10, false, new BinOpFunc() {
 			@Override
-			public double apply(double lval, double rval){
-				return lval + rval;
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(lval.value + rval.value);
 			}
 		});
 
 		addBinaryOp("-", 10, false, new BinOpFunc() {
 			@Override
-			public double apply(double lval, double rval){
-				return lval - rval;
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(lval.value - rval.value);
 			}
 		});
 
 		addBinaryOp("*", 20, false, new BinOpFunc() {
 			@Override
-			public double apply(double lval, double rval){
-				return lval * rval;
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(lval.value * rval.value);
 			}
 		});
 
 		addBinaryOp("/", 20, false, new BinOpFunc() {
 			@Override
-			public double apply(double lval, double rval){
-				return lval / rval;
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(lval.value / rval.value);
 			}
 		});
 
 		addBinaryOp("^", 30, true, new BinOpFunc() {
 			@Override
-			public double apply(double lval, double rval){
-				return Math.pow(lval, rval);
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(Math.pow(lval.value, rval.value));
 			}
 		});
 
 		addFunction("max", 2, new CallableFunc() {
 			@Override
-			public double call(double[] args) {
-				return Math.max(args[0], args[1]);
+			public ExpResult call(ExpResult[] args) {
+				return new ExpResult(Math.max(args[0].value, args[1].value));
 			}
 		});
 
 		addFunction("min", 2, new CallableFunc() {
 			@Override
-			public double call(double[] args) {
-				return Math.min(args[0], args[1]);
+			public ExpResult call(ExpResult[] args) {
+				return new ExpResult(Math.min(args[0].value, args[1].value));
 			}
 		});
 
 		addFunction("abs", 1, new CallableFunc() {
 			@Override
-			public double call(double[] args) {
-				return Math.abs(args[0]);
+			public ExpResult call(ExpResult[] args) {
+				return new ExpResult(Math.abs(args[0].value));
 			}
 		});
 
@@ -399,7 +399,7 @@ public class ExpParser {
 		}
 
 		if (nextTok.type == ExpTokenizer.NUM_TYPE) {
-			return new Constant(Double.parseDouble(nextTok.value));
+			return new Constant(new ExpResult(Double.parseDouble(nextTok.value)));
 		}
 		if (nextTok.type == ExpTokenizer.VAR_TYPE) {
 			return parseFuncCall(nextTok.value, tokens);
