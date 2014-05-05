@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
-import com.jaamsim.events.Process;
+import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -77,7 +77,7 @@ public class VideoRecorderEntity extends Entity {
 
 	private boolean hasRunStartup;
 	private int numFramesWritten;
-	private Process captureThread;
+	private final EventHandle captureHandle = new EventHandle();
 
 	{
 		captureStartTime = new ValueInput("CaptureStartTime", "Key Inputs", 0.0d);
@@ -128,7 +128,6 @@ public class VideoRecorderEntity extends Entity {
 
 		hasRunStartup = false;
 		numFramesWritten = 0;
-		captureThread = null;
 	}
 
 	@Override
@@ -176,12 +175,8 @@ public class VideoRecorderEntity extends Entity {
 	public void doCaptureNetwork() {
 
 		// If the capture network is already in progress, then stop the previous network
-		if( captureThread != null ) {
-			killEvent(captureThread);
-			captureThread = null;
-		}
-
-		simWait(captureStartTime.getValue(), 10);
+		killEvent(captureHandle);
+		simWait(captureStartTime.getValue(), 10, captureHandle);
 
 		if (!RenderManager.isGood()) {
 			RenderManager.initialize(false);
@@ -209,9 +204,7 @@ public class VideoRecorderEntity extends Entity {
 
 			// Wait until the next time to capture a frame
 			// (priority 10 is used to allow higher priority events to complete first)
-			captureThread = Process.current();
-			simWait(captureInterval.getValue(), 10);
-			captureThread = null;
+			simWait(captureInterval.getValue(), 10, captureHandle);
 		}
 
 		recorder.freeResources();
