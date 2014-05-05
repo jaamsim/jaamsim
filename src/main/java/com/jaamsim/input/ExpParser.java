@@ -369,7 +369,7 @@ public class ExpParser {
 		TokenList tokens = new TokenList(ts);
 
 		ExpTokenizer.Token nextTok = tokens.next();
-		if (nextTok == null || nextTok.type != ExpTokenizer.VAR_TYPE) {
+		if (nextTok == null || nextTok.type != ExpTokenizer.SQ_TYPE) {
 			throw new Error("Assignments must start with an identifier");
 		}
 		ArrayList<String> destination = parseIdentifier(nextTok, tokens);
@@ -402,11 +402,9 @@ public class ExpParser {
 			return new Constant(Double.parseDouble(nextTok.value));
 		}
 		if (nextTok.type == ExpTokenizer.VAR_TYPE) {
-			ExpTokenizer.Token peeked = tokens.peek();
-			if (peeked != null && peeked.type == ExpTokenizer.SYM_TYPE && peeked.value.equals("(")) {
-				return parseFuncCall(nextTok.value, tokens);
-			}
-			// If not a function call, must be variable evaluation
+			return parseFuncCall(nextTok.value, tokens);
+		}
+		if (nextTok.type == ExpTokenizer.SQ_TYPE) {
 			ArrayList<String> vals = parseIdentifier(nextTok, tokens);
 			return new Variable(vals.toArray(STRING_ARRAY_TYPE));
 		}

@@ -109,7 +109,7 @@ public class TestExpParser {
 		val = exp.evaluate(vl);
 		assertTrue(val == 42);
 
-		exp = ExpParser.parseExpression("foo*bar");
+		exp = ExpParser.parseExpression("[foo]*[bar]");
 		val = exp.evaluate(vl);
 		assertTrue(val == 12);
 
@@ -121,7 +121,7 @@ public class TestExpParser {
 		val = exp.evaluate(vl);
 		assertTrue(val == 256);
 
-		exp = ExpParser.parseExpression("1 + 2^2*4 + 2*foo");
+		exp = ExpParser.parseExpression("1 + 2^2*4 + 2*[foo]");
 		val = exp.evaluate(vl);
 		assertTrue(val == 25);
 
@@ -154,23 +154,23 @@ public class TestExpParser {
 		}
 		ValLookup vl = new ValLookup();
 
-		ExpParser.Expression exp = ExpParser.parseExpression("foo.bar.baz");
+		ExpParser.Expression exp = ExpParser.parseExpression("[foo].bar.baz");
 		double val = exp.evaluate(vl);
 		assertTrue(val == 4);
 
-		exp = ExpParser.parseExpression("foo.bar.baz*4");
+		exp = ExpParser.parseExpression("[foo].bar.baz*4");
 		val = exp.evaluate(vl);
 		assertTrue(val == 16);
 
-		exp = ExpParser.parseExpression("foo.bonk");
+		exp = ExpParser.parseExpression("[foo].bonk");
 		val = exp.evaluate(vl);
 		assertTrue(val == 5);
 
-		exp = ExpParser.parseExpression("bob.is.your.uncle");
+		exp = ExpParser.parseExpression("[bob].is.your.uncle");
 		val = exp.evaluate(vl);
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("foo");
+		exp = ExpParser.parseExpression("[foo]");
 		val = exp.evaluate(vl);
 		assertTrue(val == -1);
 
@@ -187,7 +187,7 @@ public class TestExpParser {
 		}
 		ValLookup vl = new ValLookup();
 
-		ExpParser.Assignment assign = ExpParser.parseAssignment("foo.bar = 40 + 2");
+		ExpParser.Assignment assign = ExpParser.parseAssignment("[foo].bar = 40 + 2");
 
 		assertTrue(assign.destination.length == 2);
 		assertTrue(assign.destination[0].equals("foo"));
