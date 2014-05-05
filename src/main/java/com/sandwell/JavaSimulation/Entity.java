@@ -533,6 +533,16 @@ public class Entity {
 	}
 
 	/**
+	 * Wait a number of simulated seconds and a given priority.
+	 * @param secs
+	 * @param priority
+	 */
+	public final void simWait(double secs, int priority, EventHandle handle) {
+		long ticks = root.secondsToNearestTick(secs);
+		this.simWaitTicks(ticks, priority, false, handle);
+	}
+
+	/**
 	 * Wait a number of discrete simulation ticks.
 	 * @param secs
 	 */
