@@ -60,6 +60,17 @@ public class ExpTokenizer {
 		}
 	}
 
+	// List of 'long' symbols to check for, in order
+	private static ArrayList<String> longSymbols = new ArrayList<String>();
+
+	static {
+		longSymbols.add("==");
+		longSymbols.add("<=");
+		longSymbols.add(">=");
+		longSymbols.add("&&");
+		longSymbols.add("||");
+	}
+
 	public static ArrayList<Token> tokenize(String input) throws Error {
 		int pos = 0;
 
@@ -198,9 +209,21 @@ public class ExpTokenizer {
 		Token newTok = new Token();
 		newTok.type = SYM_TYPE;
 		newTok.pos = startPos;
-		newTok.value = new String(input.substring(startPos, startPos + 1));
+
+		for (String s : longSymbols) {
+			if (input.length() - startPos >= s.length() &&
+				  input.substring(startPos, startPos + s.length()).equals(s)) {
+				// This option matches the current long symbol
+				newTok.value = s;
+			}
+		}
+		if (newTok.value == null) {
+			// Use a simple one character symbol
+			newTok.value = input.substring(startPos, startPos + 1);
+		}
+
 		res.add(newTok);
-		return startPos + 1;
+		return startPos + newTok.value.length();
 
 	}
 }

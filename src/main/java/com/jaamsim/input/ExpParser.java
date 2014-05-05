@@ -193,6 +193,7 @@ public class ExpParser {
 	// Statically initialize the operators and functions
 
 	static {
+
 		addUnaryOp("-", new UnOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult val){

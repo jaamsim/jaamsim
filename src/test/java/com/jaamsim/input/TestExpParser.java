@@ -29,7 +29,6 @@ public class TestExpParser {
 
 	@Test
 	public void testTokenize() throws ExpTokenizer.Error {
-
 		ArrayList<ExpTokenizer.Token> tokens = ExpTokenizer.tokenize(" a b c 1 2 3 + -");
 
 		assertTrue(tokens.size() == 8);
@@ -82,6 +81,18 @@ public class TestExpParser {
 		testToken(tokens.get(0), ExpTokenizer.SQ_TYPE, "123");
 		testToken(tokens.get(1), ExpTokenizer.SQ_TYPE, "abc");
 		testToken(tokens.get(2), ExpTokenizer.SQ_TYPE, "+-  2");
+
+		// Test long symbol parsing
+		tokens = ExpTokenizer.tokenize("&&||==<==&|");
+		assertTrue(tokens.size() == 7);
+		testToken(tokens.get(0), ExpTokenizer.SYM_TYPE, "&&");
+		testToken(tokens.get(1), ExpTokenizer.SYM_TYPE, "||");
+		testToken(tokens.get(2), ExpTokenizer.SYM_TYPE, "==");
+		testToken(tokens.get(3), ExpTokenizer.SYM_TYPE, "<=");
+		testToken(tokens.get(4), ExpTokenizer.SYM_TYPE, "=");
+		testToken(tokens.get(5), ExpTokenizer.SYM_TYPE, "&");
+		testToken(tokens.get(6), ExpTokenizer.SYM_TYPE, "|");
+
 	}
 
 	@Test
