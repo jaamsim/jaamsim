@@ -819,6 +819,13 @@ public final class EventManager {
 		return (Thread.currentThread() instanceof Process);
 	}
 
+	/**
+	 * Returns the eventManager that is currently executing events for this thread.
+	 */
+	public static final EventManager current() {
+		return Process.current().getEventManager();
+	}
+
 	public final void setSimTimeScale(double scale) {
 		ticksPerSecond = scale / 3600.0d;
 		secsPerTick = 3600.0d / scale;

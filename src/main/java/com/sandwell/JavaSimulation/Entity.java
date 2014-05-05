@@ -196,7 +196,7 @@ public class Entity {
 	 * @return the current simulation tick
 	 */
 	public final long getSimTicks() {
-		return Process.currentTick();
+		return EventManager.current().currentTick();
 	}
 
 	/**
@@ -461,17 +461,17 @@ public class Entity {
 	}
 
 	public double calculateEventTime(double waitLength) {
-		long eventTime = Process.currentTick() + calculateDelayLength(waitLength);
+		long eventTime = getSimTicks() + calculateDelayLength(waitLength);
 		return eventTime / Simulation.getSimTimeFactor();
 	}
 
 	public double calculateEventTimeBefore(double waitLength) {
-		long eventTime = Process.currentTick() + (long)Math.floor(waitLength * Simulation.getSimTimeFactor());
+		long eventTime = getSimTicks() + (long)Math.floor(waitLength * Simulation.getSimTimeFactor());
 		return eventTime / Simulation.getSimTimeFactor();
 	}
 
 	public double calculateEventTimeAfter(double waitLength) {
-		long eventTime = Process.currentTick() + (long)Math.ceil(waitLength * Simulation.getSimTimeFactor());
+		long eventTime = getSimTicks() + (long)Math.ceil(waitLength * Simulation.getSimTimeFactor());
 		return eventTime / Simulation.getSimTimeFactor();
 	}
 

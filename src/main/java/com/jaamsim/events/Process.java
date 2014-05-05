@@ -72,10 +72,6 @@ public final class Process extends Thread {
 		throw new ProcessError("Non-process thread called Process.current()");
 	}
 
-	public static final long currentTick() {
-		return Process.current().eventManager.currentTick();
-	}
-
 	/**
 	 * Run method invokes the method on the target with the given arguments.
 	 * A process loops endlessly after it is created executing the method on the
