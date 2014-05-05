@@ -339,23 +339,28 @@ public class ExpParser {
 			if (peeked == null || peeked.type != ExpTokenizer.SYM_TYPE) {
 				break;
 			}
-			BinaryOpEntry oe = getBinaryOp(peeked.value);
-			if (oe == null || oe.bindingPower <= bindPower) {
-				break;
+			BinaryOpEntry binOp = getBinaryOp(peeked.value);
+			if (binOp != null && binOp.bindingPower > bindPower) {
+				// The next token is a binary op and powerful enough to bind us
+				lhs = handleBinOp(tokens, lhs, binOp);
+				continue;
 			}
-			// The next token is a binary op and powerful enough to bind us
-			tokens.next(); // Consume the operator
-
-			// For right associative operators, we weaken the binding power a bit at application time (but not testing time)
-			double assocMod = oe.rAssoc ? -0.5 : 0;
-			Expression rhs = parseExp(tokens, oe.bindingPower + assocMod);
-			//currentPower = oe.bindingPower;
-
-			lhs = new BinaryOp(lhs, rhs, oe.function);
+			break;
 		}
 
 		// We have bound as many operators as we can, return it
 		return lhs;
+	}
+
+	private static Expression handleBinOp(TokenList tokens, Expression lhs, BinaryOpEntry binOp) throws Error {
+		tokens.next(); // Consume the operator
+
+		// For right associative operators, we weaken the binding power a bit at application time (but not testing time)
+		double assocMod = binOp.rAssoc ? -0.5 : 0;
+		Expression rhs = parseExp(tokens, binOp.bindingPower + assocMod);
+		//currentPower = oe.bindingPower;
+
+		return new BinaryOp(lhs, rhs, binOp.function);
 	}
 
 	public static Assignment parseAssignment(String input) throws Error {
