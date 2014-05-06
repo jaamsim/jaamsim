@@ -45,51 +45,60 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 	// a commented portion, the division point is the first " character, if no
 	// quoting in a record, the entire line is contents for tokenizing
 	final int cIndex = rec.indexOf("\"");
-	final String contents;
-	if (cIndex == -1)
-		contents = rec;
-	else
-		contents = rec.substring(0, cIndex);
+	final int endOfRec = cIndex == -1 ? rec.length() : cIndex;
 
-	// Split the contents along single-quoted substring boundaries to allow
-	// us to parse quoted and unquoted sections separately
-	String[] substring = contents.split("'", -1);
-	for (int i = 0; i < substring.length; i++) {
-		// Odd indices were single-quoted strings in the original record
-		// append the whole string as a single token even if there was nothing
-		// between the quotes (an empty string)
-		if (i % 2 != 0) {
-			tokens.add(substring[i]);
+	int tokStart = -1;
+	int quoteStart = -1;
+	for (int i = 0; i < endOfRec; i++) {
+		char c = rec.charAt(i);
+		if (c == '\'') {
+			// end the current token
+			if (tokStart != -1) {
+				if (i - tokStart > 0) tokens.add(rec.substring(tokStart, i));
+				tokStart = -1;
+			}
+
+			// Set the quoting state
+			if (quoteStart != -1) {
+				tokens.add(rec.substring(quoteStart + 1, i));
+				quoteStart = -1;
+			}
+			else {
+				quoteStart = i;
+			}
 			continue;
 		}
 
-		// The even-index strings need tokenizing, we allow spaces, tabs and
-		// commas to delimit token boundaries, we also want all braces {} to
-		// appear as a single token
-		// Ensure { or } has tabs separating if from adjacent characters
-		String temp = substring[i].replaceAll("([\\{\\}])", "\t$1\t");
-		// Split along space, comma and tab characters, treat consecutive
-		// characters as one delimiter
-		String[] delimTokens = temp.split("[ \t]+", 0);
-		// Append the new tokens that have greater than zero length
-		for (String each : delimTokens) {
-			if (each.length() == 0)
-				continue;
+		// we are currently quoted, skip
+		if (quoteStart > -1)
+			continue;
 
-			if (each.length() == 1) {
-				if ("{".equals(each)) {
-					tokens.add("{");
-					continue;
-				}
-				if ("}".equals(each)) {
-					tokens.add("}");
-					continue;
-				}
+		// handle delimiter chars
+		if (c == '{' || c == '}' || c == ' ' || c == '\t') {
+			if (tokStart != -1 && i - tokStart > 0) {
+				tokens.add(rec.substring(tokStart, i));
+				tokStart = -1;
 			}
 
-			tokens.add(each);
+			if (c == '{')
+				tokens.add("{");
+
+			if (c == '}')
+				tokens.add("}");
+
+			continue;
 		}
+
+		// start a new token
+		if (tokStart == -1) tokStart = i;
 	}
+
+	// clean up the final trailing token
+	if (tokStart != -1)
+		tokens.add(rec.substring(tokStart, endOfRec));
+
+	if (quoteStart != -1)
+		tokens.add(rec.substring(quoteStart + 1, endOfRec));
 
 	// add comments if they exist including the leading " to denote it as commented
 	if (!stripComments && cIndex > -1)
