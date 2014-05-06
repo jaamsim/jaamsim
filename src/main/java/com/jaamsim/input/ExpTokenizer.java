@@ -65,6 +65,7 @@ public class ExpTokenizer {
 
 	static {
 		longSymbols.add("==");
+		longSymbols.add("!=");
 		longSymbols.add("<=");
 		longSymbols.add(">=");
 		longSymbols.add("&&");

@@ -194,6 +194,8 @@ public class ExpParser {
 
 	static {
 
+		///////////////////////////////////////////////////
+		// Unary Operators
 		addUnaryOp("-", new UnOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult val){
@@ -201,41 +203,115 @@ public class ExpParser {
 			}
 		});
 
-		addBinaryOp("+", 10, false, new BinOpFunc() {
+		addUnaryOp("+", new UnOpFunc() {
+			@Override
+			public ExpResult apply(ExpResult val){
+				return new ExpResult(val.value);
+			}
+		});
+
+		addUnaryOp("!", new UnOpFunc() {
+			@Override
+			public ExpResult apply(ExpResult val){
+				return new ExpResult(val.value == 0 ? 1 : 0);
+			}
+		});
+
+		///////////////////////////////////////////////////
+		// Binary operators
+		addBinaryOp("+", 20, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
 				return new ExpResult(lval.value + rval.value);
 			}
 		});
 
-		addBinaryOp("-", 10, false, new BinOpFunc() {
+		addBinaryOp("-", 20, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
 				return new ExpResult(lval.value - rval.value);
 			}
 		});
 
-		addBinaryOp("*", 20, false, new BinOpFunc() {
+		addBinaryOp("*", 30, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
 				return new ExpResult(lval.value * rval.value);
 			}
 		});
 
-		addBinaryOp("/", 20, false, new BinOpFunc() {
+		addBinaryOp("/", 30, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
 				return new ExpResult(lval.value / rval.value);
 			}
 		});
 
-		addBinaryOp("^", 30, true, new BinOpFunc() {
+		addBinaryOp("^", 40, true, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
 				return new ExpResult(Math.pow(lval.value, rval.value));
 			}
 		});
 
+		addBinaryOp("==", 10, false, new BinOpFunc() {
+			@Override
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(lval.value == rval.value ? 1 : 0);
+			}
+		});
+
+		addBinaryOp("!=", 10, false, new BinOpFunc() {
+			@Override
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(lval.value != rval.value ? 1 : 0);
+			}
+		});
+
+		addBinaryOp("&&", 8, false, new BinOpFunc() {
+			@Override
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult((lval.value!=0) && (rval.value!=0) ? 1 : 0);
+			}
+		});
+
+		addBinaryOp("||", 6, false, new BinOpFunc() {
+			@Override
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult((lval.value!=0) || (rval.value!=0) ? 1 : 0);
+			}
+		});
+
+		addBinaryOp("<", 12, false, new BinOpFunc() {
+			@Override
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(lval.value < rval.value ? 1 : 0);
+			}
+		});
+
+		addBinaryOp("<=", 12, false, new BinOpFunc() {
+			@Override
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(lval.value <= rval.value ? 1 : 0);
+			}
+		});
+
+		addBinaryOp(">", 12, false, new BinOpFunc() {
+			@Override
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(lval.value > rval.value ? 1 : 0);
+			}
+		});
+
+		addBinaryOp(">=", 12, false, new BinOpFunc() {
+			@Override
+			public ExpResult apply(ExpResult lval, ExpResult rval){
+				return new ExpResult(lval.value >= rval.value ? 1 : 0);
+			}
+		});
+
+		////////////////////////////////////////////////////
+		// Functions
 		addFunction("max", 2, new CallableFunc() {
 			@Override
 			public ExpResult call(ExpResult[] args) {

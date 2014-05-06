@@ -120,6 +120,10 @@ public class TestExpParser {
 		val = exp.evaluate(vl).value;
 		assertTrue(val == 42);
 
+		exp = ExpParser.parseExpression("abs(+42)");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 42);
+
 		exp = ExpParser.parseExpression("[foo]*[bar]");
 		val = exp.evaluate(vl).value;
 		assertTrue(val == 12);
@@ -144,9 +148,108 @@ public class TestExpParser {
 		val = exp.evaluate(vl).value;
 		assertTrue(val == 4);
 
+		exp = ExpParser.parseExpression("2---+-2"); // Still a quadruple negative
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 4);
+
 		exp = ExpParser.parseExpression("(((((1+1)))*5))");
 		val = exp.evaluate(vl).value;
 		assertTrue(val == 10);
+
+		exp = ExpParser.parseExpression("!42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+
+		exp = ExpParser.parseExpression("!0");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+
+		exp = ExpParser.parseExpression("42 == 42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+
+		exp = ExpParser.parseExpression("42 == 41");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+
+		exp = ExpParser.parseExpression("42 != 42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+
+		exp = ExpParser.parseExpression("42 != 41");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+
+		exp = ExpParser.parseExpression("42 || 0");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+
+		exp = ExpParser.parseExpression("0 || 42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+
+		exp = ExpParser.parseExpression("0 || 0");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+
+		exp = ExpParser.parseExpression("42 && 0");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+
+		exp = ExpParser.parseExpression("0 && 42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+
+		exp = ExpParser.parseExpression("1 && 2");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+
+		exp = ExpParser.parseExpression("!(1&&42)");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+
+		exp = ExpParser.parseExpression("!!(1&&42)");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+
+		exp = ExpParser.parseExpression("42<41");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+		exp = ExpParser.parseExpression("41<42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+		exp = ExpParser.parseExpression("42>41");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+		exp = ExpParser.parseExpression("41>42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+
+		exp = ExpParser.parseExpression("42<=41");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+		exp = ExpParser.parseExpression("41<=42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+		exp = ExpParser.parseExpression("42>=41");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+		exp = ExpParser.parseExpression("41>=42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+
+		exp = ExpParser.parseExpression("42>=42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+		exp = ExpParser.parseExpression("42>=42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 1);
+		exp = ExpParser.parseExpression("42>42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+		exp = ExpParser.parseExpression("42>42");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
 
 	}
 
