@@ -14,7 +14,7 @@
  */
 package com.jaamsim.events;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
@@ -204,6 +204,26 @@ public class TestEventManager {
 		@Override
 		public void process() {
 			log.add("Target:" + num);
+		}
+	}
+
+	@Test
+	public void testRBTree() {
+		EventTree tree = new EventTree();
+		Event e = new Event(0, 0, 0, null);
+
+		for (int i = 0; i < 10000; ++i) {
+			tree.insertEvent(e, i, 0);
+			tree.verify();
+			int eventCount = tree.verifyEventCount();
+			assertTrue((i+1) == eventCount);
+		}
+		tree = new EventTree();
+		for (int i = 10000; i > 0; --i) {
+			tree.insertEvent(e, i, 0);
+			tree.verify();
+			int eventCount = tree.verifyEventCount();
+			assertTrue((10001-i) == eventCount);
 		}
 	}
 }
