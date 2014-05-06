@@ -417,7 +417,7 @@ public final class EventManager {
 			}
 
 			// Create an event for the new process at the present time, and place it on the event stack
-			Event newEvent = new Event(currentTick, eventTime, eventPriority, t);
+			Event newEvent = new Event(eventTime, eventPriority, t);
 			if (trcListener != null) trcListener.traceSchedProcess(this, newEvent);
 			addEventToStack(newEvent, fifo);
 		}
@@ -435,7 +435,7 @@ public final class EventManager {
 			Process cur = assertNotWaitUntil();
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);
-			Event temp = new Event(currentTick, nextEventTime, priority, t);
+			Event temp = new Event(nextEventTime, priority, t);
 			if (handle != null) {
 				if (handle.event != null)
 					throw new ProcessError("EVT:%s - Tried to schedule using an EventHandler already in use", name);
@@ -559,7 +559,7 @@ public final class EventManager {
 
 			cur.clearFlag(Process.COND_WAIT);
 			WaitTarget t = new WaitTarget(cur);
-			Event temp = new Event(currentTick, currentTick, 0, t);
+			Event temp = new Event(currentTick, 0, t);
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
 			addEventToStack(temp, true);
 			captureProcess(cur);
@@ -770,7 +770,7 @@ public final class EventManager {
 	public void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
-			Event e = new Event(currentTick, schedTick, eventPriority, t);
+			Event e = new Event(schedTick, eventPriority, t);
 			if (handle != null) {
 				if (handle.event != null)
 					throw new ProcessError("EVT:%s - Tried to schedule using an EventHandler already in use", name);

@@ -19,11 +19,10 @@ package com.jaamsim.events;
  * events.
  */
 public class Event {
-	long addedTick; // The tick at which this event was queued to execute
 	long schedTick; // The tick at which this event will execute
 	int priority;   // The schedule priority of this event
 
-	final ProcessTarget target;
+	ProcessTarget target;
 	EventHandle handle;
 
 	/**
@@ -34,21 +33,12 @@ public class Event {
 	 * @param caller
 	 * @param process
 	 */
-	Event(long currentTick, long scheduleTick, int prio, ProcessTarget target) {
-		addedTick = currentTick;
+	Event(long scheduleTick, int prio, ProcessTarget target) {
 		schedTick = scheduleTick;
 		priority = prio;
 
 		this.target = target;
 		this.handle = null;
-	}
-
-	/**
-	 * Returns the tick from when this event was created.
-	 * @return
-	 */
-	public long getCreationTick() {
-		return addedTick;
 	}
 
 	/**
