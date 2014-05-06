@@ -70,7 +70,7 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 		String temp = substring[i].replaceAll("([\\{\\}])", "\t$1\t");
 		// Split along space, comma and tab characters, treat consecutive
 		// characters as one delimiter
-		String[] delimTokens = temp.split("[ ,\t]+", 0);
+		String[] delimTokens = temp.split("[ \t]+", 0);
 		// Append the new tokens that have greater than zero length
 		for (String each : delimTokens) {
 			if (each.length() == 0)
@@ -96,7 +96,7 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 		tokens.add(rec.substring(cIndex, rec.length()));
 }
 
-private static final Pattern quoted = Pattern.compile("[ ,\t{}]");
+private static final Pattern quoted = Pattern.compile("[ \t{}]");
 public static final boolean needsQuoting(String s) {
 	return quoted.matcher(s).find();
 }

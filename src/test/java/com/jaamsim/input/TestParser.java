@@ -30,19 +30,19 @@ public void testTokenize() {
 	// Test the basic delimiter handling, runs of [ ,\t] are one delimiter
 	tok.clear();
 	Parser.tokenize(tok, "A A,A\tA  A,,A\t\tA ,\tA");
-	tokenMatch(tok, "A", "A", "A", "A", "A", "A", "A", "A");
+	tokenMatch(tok, "A", "A,A", "A", "A,,A", "A", ",", "A");
 
 	tok.clear();
 	Parser.tokenize(tok, " A A,A\tA  A,,A\t\tA ,\tA\t,  ");
-	tokenMatch(tok, "A", "A", "A", "A", "A", "A", "A", "A");
+	tokenMatch(tok, "A", "A,A", "A", "A,,A", "A", ",", "A", ",");
 
 	tok.clear();
 	Parser.tokenize(tok, "OBJECT KEYWORD{ ARG}KEYWORD\t{ARG ARG,}");
-	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG", "}", "KEYWORD", "{", "ARG", "ARG", "}");
+	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG", "}", "KEYWORD", "{", "ARG", "ARG,", "}");
 
 	tok.clear();
 	Parser.tokenize(tok, "OBJECT KEYWORD{ 'ARG  '}KEYWORD\t{ARG' ARG',}");
-	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG  ", "}", "KEYWORD", "{", "ARG", " ARG", "}");
+	tokenMatch(tok, "OBJECT", "KEYWORD", "{", "ARG  ", "}", "KEYWORD", "{", "ARG", " ARG", ",", "}");
 
 	tok.clear();
 	Parser.tokenize(tok, "OBJECT KEYWORD{ ARG }\"FOO ,\t     ");
@@ -81,7 +81,6 @@ private static void tokenMatch(ArrayList<String> toks, String... expected) {
 @Test
 public void testQuoting() {
 	assertTrue(Parser.needsQuoting("a "));
-	assertTrue(Parser.needsQuoting("abraca,dabra"));
 	assertTrue(Parser.needsQuoting("abraca}}dabra"));
 	assertTrue(!Parser.needsQuoting("abracadabra"));
 }
