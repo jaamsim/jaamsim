@@ -251,6 +251,13 @@ public class TestExpParser {
 		val = exp.evaluate(vl).value;
 		assertTrue(val == 0);
 
+		exp = ExpParser.parseExpression("1==0?42:24");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 24);
+		exp = ExpParser.parseExpression("1==1?42:24");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 42);
+
 	}
 
 	@Test

@@ -93,6 +93,25 @@ public class ExpParser {
 		}
 	}
 
+	public static class Conditional implements Expression {
+		private Expression condExp;
+		private Expression trueExp;
+		private Expression falseExp;
+		public Conditional(Expression c, Expression t, Expression f) {
+			condExp = c;
+			trueExp = t;
+			falseExp =f;
+		}
+		@Override
+		public ExpResult evaluate(VarTable vars) {
+			ExpResult condRes = condExp.evaluate(vars);
+			if (condRes.value == 0)
+				return falseExp.evaluate(vars);
+			else
+				return trueExp.evaluate(vars);
+		}
+	}
+
 	public static class FuncCall implements Expression {
 		private ArrayList<Expression> args;
 		private CallableFunc function;
@@ -422,6 +441,11 @@ public class ExpParser {
 				lhs = handleBinOp(tokens, lhs, binOp);
 				continue;
 			}
+			// Specific check for binding the conditional (?:) operator
+			if (peeked.value.equals("?") && bindPower == 0) {
+				lhs = handleConditional(tokens, lhs);
+				continue;
+			}
 			break;
 		}
 
@@ -438,6 +462,18 @@ public class ExpParser {
 		//currentPower = oe.bindingPower;
 
 		return new BinaryOp(lhs, rhs, binOp.function);
+	}
+
+	private static Expression handleConditional(TokenList tokens, Expression lhs) throws Error {
+		tokens.next(); // Consume the '?'
+
+		Expression trueExp = parseExp(tokens, 0);
+
+		tokens.expect(ExpTokenizer.SYM_TYPE, ":");
+
+		Expression falseExp = parseExp(tokens , 0);
+
+		return new Conditional(lhs, trueExp, falseExp);
 	}
 
 	public static Assignment parseAssignment(String input) throws Error {
