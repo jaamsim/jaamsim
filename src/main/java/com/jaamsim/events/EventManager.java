@@ -332,7 +332,6 @@ public final class EventManager {
 			Process cur = assertNotWaitUntil();
 			if (trcListener != null) trcListener.traceProcessEnd(this);
 			Process next = cur.getAndClearNextProcess();
-			cur.clearFlag(Process.ACTIVE);
 
 			if (next != null) {
 				next.interrupt();
@@ -355,7 +354,6 @@ public final class EventManager {
 	 */
 	private void captureProcess(Process cur) {
 		Process next = cur.getAndClearNextProcess();
-		cur.clearFlag(Process.ACTIVE);
 
 		if (next != null)
 			next.interrupt();

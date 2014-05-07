@@ -171,6 +171,7 @@ public final class Process extends Thread {
 	synchronized Process getAndClearNextProcess() {
 		Process p = nextProcess;
 		nextProcess = null;
+		this.clearFlag(Process.ACTIVE);
 		return p;
 	}
 
@@ -183,15 +184,15 @@ public final class Process extends Thread {
 		return t;
 	}
 
-	synchronized void setFlag(int flag) {
+	synchronized final void setFlag(int flag) {
 		flags |= flag;
 	}
 
-	synchronized void clearFlag(int flag) {
+	synchronized final void clearFlag(int flag) {
 		flags &= ~flag;
 	}
 
-	synchronized boolean testFlag(int flag) {
+	synchronized final boolean testFlag(int flag) {
 		return (flags & flag) != 0;
 	}
 }
