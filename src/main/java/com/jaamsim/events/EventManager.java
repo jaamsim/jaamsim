@@ -186,7 +186,19 @@ public final class EventManager {
 			t.process();
 
 			// Notify the event manager that the process has been completed
-			return this.releaseProcess();
+			synchronized (lockObject) {
+				Process cur = assertNotWaitUntil();
+				if (trcListener != null) trcListener.traceProcessEnd(this);
+				Process next = cur.getAndClearNextProcess();
+
+				if (next != null) {
+					next.interrupt();
+					return false;
+				}
+				else {
+					return true;
+				}
+			}
 		}
 		catch (ThreadKilledException e) {
 			// If the process was killed by a terminateThread method then
@@ -321,26 +333,6 @@ public final class EventManager {
 		double simElapsedsec = ((curMS - realTimeMillis) * realTimeFactor) / 1000.0d;
 		long simElapsedTicks = secondsToNearestTick(simElapsedsec);
 		return realTimeTick + simElapsedTicks;
-	}
-
-	/**
-	 * Called when a process has finished invoking a model method and unwinds
-	 * the threadStack one level.
-	 */
-	private boolean releaseProcess() {
-		synchronized (lockObject) {
-			Process cur = assertNotWaitUntil();
-			if (trcListener != null) trcListener.traceProcessEnd(this);
-			Process next = cur.getAndClearNextProcess();
-
-			if (next != null) {
-				next.interrupt();
-				return false;
-			}
-			else {
-				return true;
-			}
-		}
 	}
 
 	/**
