@@ -147,9 +147,17 @@ class EventTree {
 
 			this.right = oldMid;
 		}
+
+		void cloneFrom(Node source) {
+			this.first = source.first;
+			this.last = source.last;
+			this.schedTick = source.schedTick;
+			this.priority = source.priority;
+		}
+
 	}
 
-	private Node root;
+	private Node root = nilNode;
 	private Node lowest;
 
 	private static final Node nilNode;
@@ -173,6 +181,7 @@ class EventTree {
 	private void dropScratch(int n) {
 		scratchPos = Math.max(0, scratchPos - n);
 	}
+	// Get the 'nth' node from the end of the scratch (1 being the first)
 	private Node getScratch(int n) {
 		return (scratchPos >= n) ? scratch[scratchPos - n] : null;
 	}
@@ -197,7 +206,7 @@ class EventTree {
 	}
 
 	public void insertEvent(Event e, long schedTick, int priority) {
-		if (root == null) {
+		if (root == nilNode) {
 			root = new Node(schedTick, priority);
 			root.addFront(e);
 			return;
@@ -286,9 +295,166 @@ class EventTree {
 
 	}
 
+	public boolean removeNode(long schedTick, int priority) {
+		// First find the node to remove
+		resetScratch();
+
+		Node current = root;
+		while (true) {
+			int comp = current.compare(schedTick, priority);
+
+			if (comp == 0) break;
+
+			pushScratch(current);
+			if (comp > 0)
+				current = current.left;
+			else
+				current = current.right;
+			if (current == nilNode) {
+				return false; // Node not found
+			}
+		}
+		// We have the node to remove
+		if (current.left != nilNode && current.right != nilNode) {
+			current = swapToLeaf(current);
+		}
+
+//		// Verify we have a proper parent list (testing only)
+//		if (scratchPos > 0 && scratch[0] != root) throw new RuntimeException("Bad parent list");
+//		for (int i = 1; i < scratchPos; ++i) {
+//			// Check the current node is a child of the previous
+//			Node child = scratch[i];
+//			Node parent = scratch[i-1];
+//			if (parent.left != child && parent.right != child) {
+//				throw new RuntimeException("Bad parent list");
+//			}
+//		}
+
+		Node child = current.left != nilNode ? current.left : current.right;
+
+		Node parent = getScratch(1);
+
+		// Drop the node
+		if (parent != null) {
+			if (parent.left == current)
+				parent.left = child;
+			else
+				parent.right = child;
+		}
+
+		if (current == root)
+			root = child;
+
+
+		if (current.red) {
+			return true; // We swapped out a red node, there's nothing else to do
+		}
+		if (child.red) {
+			child.red = false;
+			return true; // traded a red for a black, still all good.
+		}
+
+		// We removed a black node with a black child, we need to re-balance the tree
+		deleteBalance(child);
+		root.red = false;
+
+		return true;
+	}
+
+	private Node swapToLeaf(Node node) {
+		pushScratch(node);
+		Node curr = node.left;
+		while (curr.right != nilNode) {
+			pushScratch(curr);
+			curr = curr.right;
+		}
+		node.cloneFrom(curr);
+		return curr;
+	}
+
+	private void deleteBalance(Node n) {
+		// At all times the scratch space should contain the parent list (but not n)
+		Node parent = getScratch(1);
+		if (parent == null)
+			return;
+
+		Node sib = (parent.left == n) ? parent.right : parent.left;
+		Node gp = getScratch(2);
+
+		// case 2
+		if (sib.red) {
+			sib.red = false;
+			parent.red = true;
+			if (n == parent.left)
+				parent.rotateLeft(gp);
+			else
+				parent.rotateRight(gp);
+			if (root == parent)
+				root = sib;
+
+			// update the parent list after the rotation
+			dropScratch(1);
+			pushScratch(sib);
+			pushScratch(parent);
+
+			// update the sibling
+			sib = (parent.left == n) ? parent.right : parent.left;
+		}
+
+		// case 3
+		if (!parent.red && !sib.left.red && !sib.right.red) {
+			sib.red = true;
+			dropScratch(1);
+			deleteBalance(parent);
+			return;
+		}
+
+		// case 4
+		if (parent.red && !sib.left.red && !sib.right.red) {
+			parent.red = false;
+			sib.red = true;
+			return;
+		}
+
+		// case 5
+		if (parent.left == n &&
+		    !sib.right.red &&
+		    sib.left.red) {
+
+			sib.red = true;
+			sib.left.red = false;
+			sib.rotateRight(parent);
+
+			sib = sib.left;
+		} else if (parent.right == n &&
+		           !sib.left.red &&
+		           sib.right.red) {
+
+			sib.red = true;
+			sib.right.red = false;
+			sib.rotateLeft(parent);
+
+			sib = sib.left;
+		}
+
+		// case 6
+		sib.red = parent.red;
+		parent.red = false;
+		if (n == parent.left) {
+			sib.right.red = false;
+			parent.rotateLeft(gp);
+		} else {
+			sib.left.red = false;
+			parent.rotateRight(gp);
+		}
+		if (root == parent) {
+			root = sib;
+		}
+	}
+
 	// Verify the sorting structure and return the number of nodes
 	public int verify() {
-		if (root == null) return 0;
+		if (root == nilNode) return 0;
 		return verifyNode(root);
 	}
 
@@ -357,6 +523,7 @@ class EventTree {
 		return count;
 	}
 	public int verifyNodeCount() {
+		if (root == nilNode) return 0;
 		return countNodes(root);
 	}
 	private int countNodes(Node n) {

@@ -222,6 +222,13 @@ public class TestEventManager {
 			assertTrue(tree.find(i,  0));
 		}
 
+		for (int i = 0; i < 10000; ++i) {
+			tree.removeNode(i, 0);
+			tree.verify();
+			int nodeCount = tree.verifyNodeCount();
+			assertTrue(nodeCount == 10000 - i - 1);
+		}
+
 		tree = new EventTree();
 		for (int i = 10000; i > 0; --i) {
 			tree.insertEvent(e, i, 0);
@@ -232,6 +239,13 @@ public class TestEventManager {
 
 		for (int i = 1; i <= 10000; ++i) {
 			assertTrue(tree.find(i,  0));
+		}
+
+		for (int i = 10000; i > 0; --i) {
+			tree.removeNode(i, 0);
+			tree.verify();
+			int nodeCount = tree.verifyNodeCount();
+			assertTrue(nodeCount == i - 1);
 		}
 
 	}
