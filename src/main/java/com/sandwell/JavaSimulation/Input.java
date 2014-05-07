@@ -267,10 +267,16 @@ public abstract class Input<T> {
 		}
 
 		if( aClass == DoubleVector.class ) {
-			DoubleVector value = Input.parseDoubleVector( data, minValue, maxValue, units);
-			if (value.size() < minCount || value.size() > maxCount)
-				throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, data);
-			return aClass.cast( value );
+			if( units != null ){
+				DoubleVector value = Input.parseDoubleVector( data, minValue, maxValue, units);
+				if (value.size() < minCount || value.size() > maxCount)
+					throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, data);
+				return aClass.cast( value );
+			}
+			else {
+				DoubleVector tmp = Input.parseDoubles( data, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType );
+				return aClass.cast( tmp );
+			}
 		}
 
 		if( Entity.class.isAssignableFrom(aClass) ) {
