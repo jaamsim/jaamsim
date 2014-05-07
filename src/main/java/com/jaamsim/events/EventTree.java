@@ -39,6 +39,8 @@ class EventTree {
 		Node(long schedTick, int priority) {
 			this.schedTick = schedTick;
 			this.priority = priority;
+			this.right = nilNode;
+			this.left = nilNode;
 		}
 
 		Event popFront() {
@@ -150,6 +152,15 @@ class EventTree {
 	private Node root;
 	private Node lowest;
 
+	private static final Node nilNode;
+
+	static {
+		nilNode = new Node(0, 0);
+		nilNode.left = null;
+		nilNode.right = null;
+		nilNode.red = false;
+	}
+
 	///////////////////////////////////////////
 	// Scratch space, used instead of having parent pointers
 
@@ -179,7 +190,7 @@ class EventTree {
 			return;
 
 		Node current = root;
-		while (current.left != null)
+		while (current.left != nilNode)
 			current = current.left;
 
 		lowest = current;
@@ -207,7 +218,7 @@ class EventTree {
 				return null; // No new node added
 			}
 			Node next = comp > 0 ? n.left : n.right;
-			if (next != null) {
+			if (next != nilNode) {
 				pushScratch(n);
 				n = next;
 				continue;
@@ -237,7 +248,7 @@ class EventTree {
 		if (gp == null) return;
 
 		Node uncle = (gp.left == parent ? gp.right : gp.left);
-		if (uncle != null && uncle.red) {
+		if (uncle.red) {
 			// Both parent and uncle are red
 			// case 2
 			parent.red = false;
@@ -285,21 +296,21 @@ class EventTree {
 		int lBlacks = 0;
 		int rBlacks = 0;
 
-		if (n.left != null) {
+		if (n.left != nilNode) {
 			if (n.compareToNode(n.left) != 1)
 				throw new RuntimeException("RB tree order verify failed");
 			lBlacks = verifyNode(n.left);
 		}
-		if (n.right != null) {
+		if (n.right != nilNode) {
 			if (n.compareToNode(n.right) != -1)
 				throw new RuntimeException("RB tree order verify failed");
 			rBlacks = verifyNode(n.right);
 		}
 
 		if (n.red) {
-			if (n.left != null && n.left.red)
+			if (n.left.red)
 				throw new RuntimeException("RB tree red-red child verify failed");
-			if (n.right != null && n.right.red)
+			if (n.right.red)
 				throw new RuntimeException("RB tree red-red child verify failed");
 		}
 
@@ -317,11 +328,11 @@ class EventTree {
 				return true;
 			}
 			if (comp < 0) {
-				if (curr.right == null) return false;
+				if (curr.right == nilNode) return false;
 				curr = curr.right;
 				continue;
 			}
-			if (curr.left == null) return false;
+			if (curr.left == nilNode) return false;
 			curr = curr.left;
 			continue;
 		}
@@ -338,9 +349,9 @@ class EventTree {
 			count++;
 			e = e.next;
 		}
-		if (n.left != null)
+		if (n.left != nilNode)
 			count += countEvents(n.left);
-		if (n.right != null)
+		if (n.right != nilNode)
 			count += countEvents(n.right);
 
 		return count;
@@ -350,9 +361,9 @@ class EventTree {
 	}
 	private int countNodes(Node n) {
 		int count = 1;
-		if (n.left != null)
+		if (n.left != nilNode)
 			count += countNodes(n.left);
-		if (n.right != null)
+		if (n.right != nilNode)
 			count += countNodes(n.right);
 
 		return count;
