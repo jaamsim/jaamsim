@@ -14,6 +14,7 @@
  */
 package com.jaamsim.events;
 
+
 /**
  * EventTree is a custom red-black tree implementation intended to be used as the priority queue
  * storing Jaamsim's discrete events
@@ -29,7 +30,6 @@ class EventTree {
 	static class Node {
 		Event first;
 		Event last;
-		Node parent;
 		Node left;
 		Node right;
 		long schedTick;
@@ -118,21 +118,8 @@ class EventTree {
 
 			return 0;
 		}
-		Node grandParent() {
-			if (parent == null) return null;
 
-			return parent.parent;
-		}
-		Node uncle() {
-			Node gp = grandParent();
-			if (gp == null) return null;
-
-			if (gp.left == parent) return gp.right;
-
-			return gp.left;
-		}
-
-		void rotateRight() {
+		void rotateRight(Node parent) {
 			if (parent != null) {
 				if (parent.left == this)
 					parent.left = left;
@@ -143,14 +130,9 @@ class EventTree {
 			Node oldMid = left.right;
 			left.right = this;
 
-			left.parent = parent;
-			this.parent = left;
-
 			this.left = oldMid;
-			if (oldMid != null)
-				oldMid.parent = this;
 		}
-		void rotateLeft() {
+		void rotateLeft(Node parent) {
 			if (parent != null) {
 				if (parent.left == this)
 					parent.left = right;
@@ -161,17 +143,31 @@ class EventTree {
 			Node oldMid = right.left;
 			right.left = this;
 
-			right.parent = parent;
-			this.parent = right;
-
 			this.right = oldMid;
-			if (oldMid != null)
-				oldMid.parent = this;
 		}
 	}
 
 	private Node root;
 	private Node lowest;
+
+	///////////////////////////////////////////
+	// Scratch space, used instead of having parent pointers
+
+	private Node[] scratch = new Node[32];
+	private int scratchPos = 0;
+
+	private void pushScratch(Node n) {
+		scratch[scratchPos++] = n;
+	}
+	private void dropScratch(int n) {
+		scratchPos = Math.max(0, scratchPos - n);
+	}
+	private Node getScratch(int n) {
+		return (scratchPos >= n) ? scratch[scratchPos - n] : null;
+	}
+	private void resetScratch() {
+		scratchPos = 0;
+	}
 
 	Node getNextNode() {
 		if (lowest == null) updateLowest();
@@ -195,6 +191,7 @@ class EventTree {
 			root.addFront(e);
 			return;
 		}
+		resetScratch();
 		Node newNode = insertInTree(root, e, schedTick, priority);
 		if (newNode != null) {
 			insertBalance(newNode);
@@ -203,68 +200,78 @@ class EventTree {
 	}
 
 	private Node insertInTree(Node n, Event e, long schedTick, int priority) {
-		int comp = n.compare(schedTick, priority);
-		if (comp == 0) {
-			n.addFront(e);
-			return null; // No new node added
-		}
-		Node next = comp > 0 ? n.left : n.right;
-		if (next != null)
-			return insertInTree(next, e, schedTick, priority);
+		while (true) {
+			int comp = n.compare(schedTick, priority);
+			if (comp == 0) {
+				n.addFront(e);
+				return null; // No new node added
+			}
+			Node next = comp > 0 ? n.left : n.right;
+			if (next != null) {
+				pushScratch(n);
+				n = next;
+				continue;
+			}
 
-		// There is no current node for this time/priority
-		Node newNode = new Node(schedTick, priority);
-		newNode.parent = n;
-		newNode.addFront(e);
-		newNode.red = true;
-		if (comp > 0)
-			n.left = newNode;
-		else
-			n.right = newNode;
-		return newNode;
+			// There is no current node for this time/priority
+			Node newNode = new Node(schedTick, priority);
+			pushScratch(n);
+			newNode.addFront(e);
+			newNode.red = true;
+			if (comp > 0)
+				n.left = newNode;
+			else
+				n.right = newNode;
+			return newNode;
+		}
 	}
 
 	private void insertBalance(Node n) {
 		// See the wikipedia page for red-black trees to understand the case numbers
 
-		if (n.parent == null || !n.parent.red) return; // case 2
+		Node parent = getScratch(1);
+		if (parent == null || !parent.red) return; // case 2
 
-		Node uncle = n.uncle();
+		// case 4
+		Node gp = getScratch(2);
+		if (gp == null) return;
+
+		Node uncle = (gp.left == parent ? gp.right : gp.left);
 		if (uncle != null && uncle.red) {
 			// Both parent and uncle are red
 			// case 2
-			n.parent.red = false;
+			parent.red = false;
 			uncle.red = false;
-			Node gp = n.grandParent();
 			gp.red = true;
+			dropScratch(2);
 			insertBalance(gp);
 			return;
 		}
 
-		// case 4
-		Node gp = n.grandParent();
-		if (gp == null) return;
-
-		if (n == n.parent.right && gp != null && n.parent == gp.left) {
+		if (n == parent.right && gp != null && parent == gp.left) {
 			// Right child of a left parent, rotate left at parent
-			n.parent.rotateLeft();
+			parent.rotateLeft(gp);
 			n = n.left;
 		}
-		if (n == n.parent.left && gp != null && n.parent == gp.right) {
+		if (n == parent.left && gp != null && parent == gp.right) {
 			// left child of right parent, rotate right at parent
-			n.parent.rotateRight();
+			parent.rotateRight(gp);
 			n = n.right;
 		}
 
+		Node ggp = getScratch(3);
 		// case 5
 		gp.red = true;
-		n.parent.red = false;
-		if (n.parent.left == n)
-			gp.rotateRight();
-		else
-			gp.rotateLeft();
-
-		if (gp == root) root = gp.parent;
+		parent.red = false;
+		if (parent.left == n) {
+			if (gp == root)
+				root = gp.left;
+			gp.rotateRight(ggp);
+		} else {
+			if (gp == root)
+				root = gp.right;
+			gp.rotateLeft(ggp);
+		}
 
 	}
 
@@ -281,15 +288,11 @@ class EventTree {
 		if (n.left != null) {
 			if (n.compareToNode(n.left) != 1)
 				throw new RuntimeException("RB tree order verify failed");
-			if (n.left.parent != n)
-				throw new RuntimeException("Left branch parent pointer verify failed");
 			lBlacks = verifyNode(n.left);
 		}
 		if (n.right != null) {
 			if (n.compareToNode(n.right) != -1)
 				throw new RuntimeException("RB tree order verify failed");
-			if (n.right.parent != n)
-				throw new RuntimeException("Right branch parent pointer verify failed");
 			rBlacks = verifyNode(n.right);
 		}
 
@@ -305,10 +308,28 @@ class EventTree {
 		return lBlacks + (n.red ? 0 : 1);
 	}
 
+	// Search the tree and return true if this node is found
+	public boolean find(long schedTick, int priority) {
+		Node curr = root;
+		while (true) {
+			int comp = curr.compare(schedTick, priority);
+			if (comp == 0) {
+				return true;
+			}
+			if (comp < 0) {
+				if (curr.right == null) return false;
+				curr = curr.right;
+				continue;
+			}
+			if (curr.left == null) return false;
+			curr = curr.left;
+			continue;
+		}
+	}
+
 	public int verifyEventCount() {
 		return countEvents(root);
 	}
-
 
 	private int countEvents(Node n) {
 		Event e = n.first;

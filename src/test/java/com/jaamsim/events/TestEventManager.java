@@ -218,6 +218,10 @@ public class TestEventManager {
 			int eventCount = tree.verifyEventCount();
 			assertTrue((i+1) == eventCount);
 		}
+		for (int i = 0; i < 10000; ++i) {
+			assertTrue(tree.find(i,  0));
+		}
+
 		tree = new EventTree();
 		for (int i = 10000; i > 0; --i) {
 			tree.insertEvent(e, i, 0);
@@ -225,5 +229,10 @@ public class TestEventManager {
 			int eventCount = tree.verifyEventCount();
 			assertTrue((10001-i) == eventCount);
 		}
+
+		for (int i = 1; i <= 10000; ++i) {
+			assertTrue(tree.find(i,  0));
+		}
+
 	}
 }
