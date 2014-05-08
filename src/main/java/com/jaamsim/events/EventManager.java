@@ -643,6 +643,9 @@ public final class EventManager {
 				return;
 
 			removeEvent(evt);
+			Process proc = evt.target.getProcess();
+			if (proc != null)
+				proc.kill();
 			if (trcListener != null) trcListener.traceKill(this, evt);
 		}
 	}
