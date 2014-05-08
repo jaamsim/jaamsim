@@ -157,9 +157,6 @@ public final class EventManager {
 				if (proc == null)
 					continue;
 
-				if (proc.testFlag(Process.ACTIVE)) {
-					throw new ProcessError("EVT:%s - Cannot terminate an active thread", name);
-				}
 				proc.kill();
 			}
 			Arrays.fill(eventList, null);
@@ -167,10 +164,6 @@ public final class EventManager {
 
 			// Kill conditional threads
 			for (Process each : conditionalList) {
-				if (each.testFlag(Process.ACTIVE)) {
-					throw new ProcessError("EVT:%s - Cannot terminate an active thread", name);
-				}
-
 				each.kill();
 			}
 			conditionalList.clear();
@@ -341,9 +334,8 @@ public final class EventManager {
 		}
 
 		threadWait();
-		cur.setFlag(Process.ACTIVE);
-		if (cur.testFlag(Process.TERMINATE))
-			throw new ThreadKilledException("Thread killed");
+		if (cur.shouldDie()) throw new ThreadKilledException("Thread killed");
+		cur.setActive();
 	}
 
 	/**
@@ -627,10 +619,6 @@ public final class EventManager {
 
 	public void terminateThread( Process killThread ) {
 		synchronized (lockObject) {
-			if (killThread.testFlag(Process.ACTIVE)) {
-				throw new ProcessError("EVT:%s - Cannot terminate an active thread", name);
-			}
-
 			assertNotWaitUntil();
 
 			if (conditionalList.remove(killThread)) {

@@ -40,9 +40,10 @@ public final class Process extends Thread {
 	private Process nextProcess; // The Process from which the present process was created
 	private ProcessTarget target; // The entity whose method is to be executed
 
+	private boolean dieFlag;
+	private boolean activeFlag;
+
 	private int flags;  // Present execution state of the process
-	static final int TERMINATE = 0x01;  // The process should terminate immediately
-	static final int ACTIVE = 0x02;     // The process is currently executing code
 	static final int COND_WAIT = 0x04;  // The process is waiting for a condition to be satisfied
 	static final int SCHED_WAIT = 0x08; // The process is waiting until a future simulation time
 	// Note: The ACTIVE, COND_WAIT, and SCED_WAIT flags are mutually exclusive.
@@ -59,6 +60,8 @@ public final class Process extends Thread {
 		super(name);
 		// Initialize the state flags
 		flags = 0;
+		dieFlag = false;
+		activeFlag = false;
 	}
 
 	/**
@@ -98,8 +101,14 @@ public final class Process extends Thread {
 			}
 
 			// Process has been woken up, execute the method we have been assigned
-			EventManager evt = getEventManager();
-			ProcessTarget t = getAndClearNextTarget();
+			EventManager evt;
+			ProcessTarget t;
+			synchronized (this) {
+				evt = eventManager;
+				t = target;
+				target = null;
+				activeFlag = true;
+			}
 			if (t != null)
 				evt.executeTarget(t);
 			else
@@ -111,6 +120,8 @@ public final class Process extends Thread {
 				nextProcess = null;
 				target = null;
 				flags = 0;
+				activeFlag = false;
+				dieFlag = false;
 			}
 		}
 	}
@@ -127,6 +138,8 @@ public final class Process extends Thread {
 			newProcess.eventManager = eventManager;
 			newProcess.nextProcess = next;
 			newProcess.target = proc;
+			newProcess.activeFlag = false;
+			newProcess.dieFlag = false;
 			newProcess.flags = 0;
 		}
 
@@ -171,7 +184,7 @@ public final class Process extends Thread {
 	synchronized boolean wakeNextProcess() {
 		Process p = nextProcess;
 		nextProcess = null;
-		this.clearFlag(Process.ACTIVE);
+		activeFlag = false;
 		if (p != null) {
 			p.interrupt();
 			return true;
@@ -181,17 +194,18 @@ public final class Process extends Thread {
 	}
 
 	synchronized void kill() {
-		this.setFlag(Process.TERMINATE);
+		if (activeFlag)
+			throw new ProcessError("Cannot terminate an active thread");
+		dieFlag = true;
 		this.interrupt();
 	}
 
-	/**
-	 * Return the next process and set it to null as we are about to switch to that process.
-	 */
-	synchronized ProcessTarget getAndClearNextTarget() {
-		ProcessTarget t = target;
-		target = null;
-		return t;
+	synchronized boolean shouldDie() {
+		return dieFlag;
+	}
+
+	synchronized void setActive() {
+		activeFlag = true;
 	}
 
 	synchronized final void setFlag(int flag) {
