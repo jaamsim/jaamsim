@@ -54,6 +54,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.probability.TestWeibullDistribution.class,
 	com.jaamsim.probability.TestEntitlementSelector.class,
 	com.jaamsim.probability.TestRandomSelector.class,
+	com.jaamsim.probability.TestBooleanSelector.class,
 	com.jaamsim.MeshFiles.TestVertexMap.class,
 	com.jaamsim.MeshFiles.TestDataBlocks.class,
 })
