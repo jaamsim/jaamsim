@@ -483,7 +483,7 @@ public final class EventManager {
 	 */
 	private Process assertNotWaitUntil() {
 		Process cur = Process.current();
-		if (!cur.testFlag(Process.COND_WAIT))
+		if (!cur.isCondWait())
 			return cur;
 
 		System.out.println("AUDIT - waitUntil without waitUntilEnded " + this);
@@ -503,7 +503,7 @@ public final class EventManager {
 			Process cur = Process.current();
 			if (!conditionalList.contains(cur)) {
 				if (trcListener != null) trcListener.traceWaitUntil(this);
-				cur.setFlag(Process.COND_WAIT);
+				cur.setCondWait(true);
 				conditionalList.add(cur);
 			}
 			captureProcess(cur);
@@ -518,14 +518,7 @@ public final class EventManager {
 			if (!conditionalList.remove(cur))
 				return;
 
-//			if (!cur.testFlag(Process.COND_WAIT)) {
-//				System.out.println("ERROR - waitUntil without waitUntilEnded " + cur);
-//				for (StackTraceElement elem : cur.getStackTrace()) {
-//					System.out.println(elem.toString());
-//				}
-//			}
-
-			cur.clearFlag(Process.COND_WAIT);
+			cur.setCondWait(false);
 			WaitTarget t = new WaitTarget(cur);
 			Event temp = new Event(currentTick, 0, t);
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);

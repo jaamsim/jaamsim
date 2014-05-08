@@ -42,13 +42,7 @@ public final class Process extends Thread {
 
 	private boolean dieFlag;
 	private boolean activeFlag;
-
-	private int flags;  // Present execution state of the process
-	static final int COND_WAIT = 0x04;  // The process is waiting for a condition to be satisfied
-	static final int SCHED_WAIT = 0x08; // The process is waiting until a future simulation time
-	// Note: The ACTIVE, COND_WAIT, and SCED_WAIT flags are mutually exclusive.
-	// The TERMINATE flag can only be set at the same time as COND_WAIT or a
-	// SCHED_WAIT flag.
+	private boolean condWait;
 
 	// Initialize the storage for the pooled Processes
 	static {
@@ -59,9 +53,9 @@ public final class Process extends Thread {
 		// Construct a thread with the given name
 		super(name);
 		// Initialize the state flags
-		flags = 0;
 		dieFlag = false;
 		activeFlag = false;
+		condWait = false;
 	}
 
 	/**
@@ -119,9 +113,9 @@ public final class Process extends Thread {
 				eventManager = null;
 				nextProcess = null;
 				target = null;
-				flags = 0;
 				activeFlag = false;
 				dieFlag = false;
+				condWait = false;
 			}
 		}
 	}
@@ -140,7 +134,7 @@ public final class Process extends Thread {
 			newProcess.target = proc;
 			newProcess.activeFlag = false;
 			newProcess.dieFlag = false;
-			newProcess.flags = 0;
+			newProcess.condWait = false;
 		}
 
 		return newProcess;
@@ -208,15 +202,11 @@ public final class Process extends Thread {
 		activeFlag = true;
 	}
 
-	synchronized final void setFlag(int flag) {
-		flags |= flag;
+	synchronized void setCondWait(boolean b) {
+		condWait = b;
 	}
 
-	synchronized final void clearFlag(int flag) {
-		flags &= ~flag;
-	}
-
-	synchronized final boolean testFlag(int flag) {
-		return (flags & flag) != 0;
+	synchronized boolean isCondWait() {
+		return condWait;
 	}
 }
