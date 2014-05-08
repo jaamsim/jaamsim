@@ -14,6 +14,7 @@ Define ObjectType {
 					ContinuousDistribution
 					EntitlementSelector
 					RandomSelector
+					BooleanSelector
                     }
 
 UniformDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.UniformDistribution		} Palette { 'Probability Distributions' }
@@ -29,6 +30,7 @@ DiscreteDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteD
 ContinuousDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ContinuousDistribution		} Palette { 'Probability Distributions' }
 EntitlementSelector			JavaClass { com.jaamsim.ProbabilityDistributions.EntitlementSelector		} Palette { 'Probability Distributions' }
 RandomSelector				JavaClass { com.jaamsim.ProbabilityDistributions.RandomSelector				} Palette { 'Probability Distributions' }
+BooleanSelector				JavaClass { com.jaamsim.ProbabilityDistributions.BooleanSelector			} Palette { 'Probability Distributions' }
 
 Define	ImageModel {
 					ProbabilityDistributionIconModel
@@ -65,6 +67,7 @@ DiscreteDistribution		DefaultDisplayModel { DiscreteDistributionIconModel    }
 ContinuousDistribution		DefaultDisplayModel { ContinuousDistributionIconModel  }
 EntitlementSelector			DefaultDisplayModel { SelectorIconModel                }
 RandomSelector				DefaultDisplayModel { SelectorIconModel                }
+BooleanSelector				DefaultDisplayModel { SelectorIconModel                }
 
 UniformDistribution      Description { 'Generates random numbers from a uniform probability density function.' }
 TriangularDistribution   Description { 'Generates random numbers from a triangular probability density function.' }
@@ -79,3 +82,4 @@ DiscreteDistribution     Description { 'Generates random numbers from a user-spe
 ContinuousDistribution   Description { 'Generates random numbers from a user-specified probability density function.' }
 EntitlementSelector      Description { 'Selects on the basis of entitlement from a given set of entities and proportions.' }
 RandomSelector           Description { 'Randomly selects from a given set of entities and probabilities.' }
+BooleanSelector          Description { 'Randomly selects true/false with a user-selectable probability of true.' }

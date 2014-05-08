@@ -148,7 +148,7 @@ implements SampleProvider {
 		return randomSeedInput.getValue();
 	}
 
-	protected int getSubstreamNumber() {
+	protected static int getSubstreamNumber() {
 		return globalSeedInput.getValue();
 	}
 
