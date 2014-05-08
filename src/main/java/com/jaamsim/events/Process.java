@@ -166,13 +166,23 @@ public final class Process extends Thread {
 	}
 
 	/**
-	 * Return the next process and set it to null as we are about to switch to that process.
+	 * Returns true if we woke a next Process, otherwise return false.
 	 */
-	synchronized Process getAndClearNextProcess() {
+	synchronized boolean wakeNextProcess() {
 		Process p = nextProcess;
 		nextProcess = null;
 		this.clearFlag(Process.ACTIVE);
-		return p;
+		if (p != null) {
+			p.interrupt();
+			return true;
+		}
+
+		return false;
+	}
+
+	synchronized void kill() {
+		this.setFlag(Process.TERMINATE);
+		this.interrupt();
 	}
 
 	/**

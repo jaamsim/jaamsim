@@ -160,9 +160,7 @@ public final class EventManager {
 				if (proc.testFlag(Process.ACTIVE)) {
 					throw new ProcessError("EVT:%s - Cannot terminate an active thread", name);
 				}
-
-				proc.setFlag(Process.TERMINATE);
-				proc.interrupt();
+				proc.kill();
 			}
 			Arrays.fill(eventList, null);
 			headEvtIdx = -1;
@@ -173,8 +171,7 @@ public final class EventManager {
 					throw new ProcessError("EVT:%s - Cannot terminate an active thread", name);
 				}
 
-				each.setFlag(Process.TERMINATE);
-				each.interrupt();
+				each.kill();
 			}
 			conditionalList.clear();
 		}
@@ -189,15 +186,7 @@ public final class EventManager {
 			synchronized (lockObject) {
 				Process cur = assertNotWaitUntil();
 				if (trcListener != null) trcListener.traceProcessEnd(this);
-				Process next = cur.getAndClearNextProcess();
-
-				if (next != null) {
-					next.interrupt();
-					return false;
-				}
-				else {
-					return true;
-				}
+				return !cur.wakeNextProcess();
 			}
 		}
 		catch (ThreadKilledException e) {
@@ -345,11 +334,8 @@ public final class EventManager {
 	 * Must hold the lockObject when calling this method.
 	 */
 	private void captureProcess(Process cur) {
-		Process next = cur.getAndClearNextProcess();
-
-		if (next != null)
-			next.interrupt();
-		else {
+		// if we don't wake a new process, take one from the pool
+		if (!cur.wakeNextProcess()) {
 			processRunning = false;
 			Process.allocate(this, null, null).interrupt();
 		}
@@ -364,7 +350,7 @@ public final class EventManager {
 	 * Must hold the lockObject when calling this method
 	 * @param next
 	 */
-	private void switchThread(Thread next) {
+	private void switchThread(Process next) {
 		next.interrupt();
 		threadWait();
 	}
@@ -648,8 +634,7 @@ public final class EventManager {
 			assertNotWaitUntil();
 
 			if (conditionalList.remove(killThread)) {
-				killThread.setFlag(Process.TERMINATE);
-				killThread.interrupt();
+				killThread.kill();
 				return;
 			}
 
@@ -657,8 +642,7 @@ public final class EventManager {
 				if (eventList[i].target.getProcess() == killThread) {
 					Event temp = removeEvent(i);
 					if (trcListener != null) trcListener.traceKill(this, temp);
-					killThread.setFlag(Process.TERMINATE);
-					killThread.interrupt();
+					killThread.kill();
 					return;
 				}
 			}
