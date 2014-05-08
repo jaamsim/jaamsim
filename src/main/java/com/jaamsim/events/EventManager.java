@@ -785,7 +785,7 @@ public final class EventManager {
 	 * Returns the eventManager that is currently executing events for this thread.
 	 */
 	public static final EventManager current() {
-		return Process.current().getEventManager();
+		return Process.currentEVT();
 	}
 
 	public final void setSimTimeScale(double scale) {

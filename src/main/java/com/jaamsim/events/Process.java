@@ -40,6 +40,10 @@ public final class Process extends Thread {
 	private Process nextProcess; // The Process from which the present process was created
 	private ProcessTarget target; // The entity whose method is to be executed
 
+	// This is a very special reference that is only safe to use form the currently
+	// executing Process, it is essentiall a Threadlocal variable
+	private EventManager currentEVT;
+
 	private boolean dieFlag;
 	private boolean activeFlag;
 	private boolean condWait;
@@ -52,10 +56,6 @@ public final class Process extends Thread {
 	private Process(String name) {
 		// Construct a thread with the given name
 		super(name);
-		// Initialize the state flags
-		dieFlag = false;
-		activeFlag = false;
-		condWait = false;
 	}
 
 	/**
@@ -95,24 +95,24 @@ public final class Process extends Thread {
 			}
 
 			// Process has been woken up, execute the method we have been assigned
-			EventManager evt;
 			ProcessTarget t;
 			synchronized (this) {
-				evt = eventManager;
+				currentEVT = eventManager;
 				t = target;
 				target = null;
 				activeFlag = true;
 			}
 			if (t != null)
-				evt.executeTarget(t);
+				currentEVT.executeTarget(t);
 			else
-				evt.executeEvents(this);
+				currentEVT.executeEvents(this);
 
 			// Ensure all state is cleared before returning to the pool
 			synchronized (this) {
 				eventManager = null;
 				nextProcess = null;
 				target = null;
+				currentEVT = null;
 				activeFlag = false;
 				dieFlag = false;
 				condWait = false;
@@ -164,8 +164,8 @@ public final class Process extends Thread {
 		}
 	}
 
-	synchronized EventManager getEventManager() {
-		return eventManager;
+	static EventManager currentEVT() {
+		return Process.current().currentEVT;
 	}
 
 	synchronized void setNextProcess(Process next) {
