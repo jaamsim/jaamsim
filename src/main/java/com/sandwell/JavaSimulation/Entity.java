@@ -20,9 +20,9 @@ import java.util.HashMap;
 import com.jaamsim.basicsim.ClonesOfIterable;
 import com.jaamsim.basicsim.InstanceIterable;
 import com.jaamsim.basicsim.ReflectionTarget;
+import com.jaamsim.events.ConditionalHandle;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.events.Process;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.InputAgent;
@@ -631,7 +631,11 @@ public class Entity {
 	}
 
 	public final void waitUntil() {
-		getEventManager().waitUntil();
+		getEventManager().waitUntil(null);
+	}
+
+	public final void waitUntil(ConditionalHandle handle) {
+		getEventManager().waitUntil(handle);
 	}
 
 	public final void waitUntilEnded() {
@@ -642,16 +646,12 @@ public class Entity {
 		getEventManager().killEvent(handle);
 	}
 
-	public final void interruptEvent(EventHandle handle) {
-		getEventManager().interruptEvent(handle);
+	public final void killEvent(ConditionalHandle handle) {
+		getEventManager().killEvent(handle);
 	}
 
-	public final void killEvent(Process proc) {
-		// Just return if given a null Process
-		if (proc == null)
-			return;
-
-		getEventManager().terminateThread(proc);
+	public final void interruptEvent(EventHandle handle) {
+		getEventManager().interruptEvent(handle);
 	}
 
 	// ******************************************************************************************************

@@ -55,6 +55,7 @@ public final class EventManager {
 	private boolean processRunning;
 
 	private final ArrayList<Process> conditionalList; // List of all conditionally waiting processes
+	private final ArrayList<ConditionalHandle> conditionalHandles; // List of any handles tracking conditional events
 
 	private long currentTick; // Master simulation time (long)
 	private long nextTick; // The next tick to execute events at
@@ -96,6 +97,7 @@ public final class EventManager {
 		eventList = new Event[10000];
 		headEvtIdx = -1;
 		conditionalList = new ArrayList<Process>();
+		conditionalHandles = new ArrayList<ConditionalHandle>();
 
 		executeEvents = false;
 		processRunning = false;
@@ -163,10 +165,14 @@ public final class EventManager {
 			headEvtIdx = -1;
 
 			// Kill conditional threads
-			for (Process each : conditionalList) {
-				each.kill();
+			for (int i = 0; i < conditionalList.size(); i++) {
+				conditionalList.get(i).kill();
+				if (conditionalHandles.get(i) != null) {
+					conditionalHandles.get(i).proc = null;
+				}
 			}
 			conditionalList.clear();
+			conditionalHandles.clear();
 		}
 	}
 
@@ -498,13 +504,20 @@ public final class EventManager {
 	 * thread to the conditional stack, then wakes the next waiting thread on
 	 * the thread stack.
 	 */
-	public void waitUntil() {
+	public void waitUntil(ConditionalHandle handle) {
 		synchronized (lockObject) {
 			Process cur = Process.current();
 			if (!conditionalList.contains(cur)) {
+				if (handle != null) {
+					if (handle.proc != null)
+						throw new ProcessError("EVT:%s - Tried to waitUntil using a handle already in use", name);
+					handle.proc = cur;
+				}
+
 				if (trcListener != null) trcListener.traceWaitUntil(this);
 				cur.setCondWait(true);
 				conditionalList.add(cur);
+				conditionalHandles.add(handle);
 			}
 			captureProcess(cur);
 		}
@@ -515,8 +528,13 @@ public final class EventManager {
 			// Do not wait at all if we never actually were on the waitUntilStack
 			// ie. we never called waitUntil
 			Process cur = Process.current();
-			if (!conditionalList.remove(cur))
+			int index = conditionalList.indexOf(cur);
+			if (index == -1)
 				return;
+
+			conditionalList.remove(index);
+			ConditionalHandle handle = conditionalHandles.remove(index);
+			if (handle != null) handle.proc = null;
 
 			cur.setCondWait(false);
 			WaitTarget t = new WaitTarget(cur);
@@ -535,24 +553,6 @@ public final class EventManager {
 			// Transfer control to the new process
 			switchThread(newProcess);
 		}
-	}
-
-	/**
-	 * Remove an event from the eventList, must hold the lockObject.
-	 * @param idx
-	 * @return
-	 */
-	private Event removeEvent(int idx) {
-		Event evt = eventList[idx];
-		System.arraycopy(eventList, idx + 1, eventList, idx, headEvtIdx - idx);
-		eventList[headEvtIdx] = null;
-		headEvtIdx--;
-
-		if (evt.handle != null) {
-			evt.handle.event = null;
-			evt.handle = null;
-		}
-		return evt;
 	}
 
 	/**
@@ -610,25 +610,24 @@ public final class EventManager {
 		throw new ProcessError("EVT:%s - Tried to remove an event that could not be found", name);
 	}
 
-	public void terminateThread( Process killThread ) {
+	public void killEvent(ConditionalHandle handle) {
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 
-			if (conditionalList.remove(killThread)) {
-				killThread.kill();
+			Process p = handle.proc;
+			if (p == null)
 				return;
-			}
 
-			for (int i = headEvtIdx; i >= 0; i--) {
-				if (eventList[i].target.getProcess() == killThread) {
-					Event temp = removeEvent(i);
-					if (trcListener != null) trcListener.traceKill(this, temp);
-					killThread.kill();
-					return;
-				}
-			}
+			int index = conditionalList.indexOf(p);
+			if (index == -1)
+				throw new ProcessError("EVT:%s - Tried to terminate a waitUntil that couldn't be found", name);
+
+			conditionalList.remove(index);
+			conditionalHandles.remove(index);
+			handle.proc = null;
+
+			p.kill();
 		}
-		throw new ProcessError("EVT:%s - Tried to terminate a Process that couldn't be found in event list", name);
 	}
 
 	/**
