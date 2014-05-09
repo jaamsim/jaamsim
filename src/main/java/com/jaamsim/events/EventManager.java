@@ -48,8 +48,8 @@ public final class EventManager {
 	public final String name;
 
 	private final Object lockObject; // Object used as global lock for synchronization
-	private Event[] eventList;
-	private int headEvtIdx;
+	private EventNode[] nodeList;
+	private int nodeIdx;
 
 	private volatile boolean executeEvents;
 	private boolean processRunning;
@@ -94,8 +94,9 @@ public final class EventManager {
 		ticksPerSecond = 1000000.0d;
 		secsPerTick = 1.0d / ticksPerSecond;
 
-		eventList = new Event[10000];
-		headEvtIdx = -1;
+		nodeList = new EventNode[10000];
+		nodeIdx = -1;
+
 		conditionalList = new ArrayList<Process>();
 		conditionalHandles = new ArrayList<ConditionalHandle>();
 
@@ -148,21 +149,24 @@ public final class EventManager {
 			rebaseRealTime = true;
 
 			// Kill threads on the event stack
-			for (int i = 0; i <= headEvtIdx; i++) {
-				Event evt = eventList[i];
-				if (evt.handle != null) {
-					evt.handle.event = null;
-					evt.handle = null;
+			for (int i = 0; i <= nodeIdx; i++) {
+				EventNode node = nodeList[i];
+				Event each = node.head;
+				while (each != null) {
+					if (each.handle != null) {
+						each.handle.event = null;
+						each.handle = null;
+					}
+
+					Process proc = each.target.getProcess();
+					if (proc != null)
+						proc.kill();
+
+					each = each.next;
 				}
-
-				Process proc = evt.target.getProcess();
-				if (proc == null)
-					continue;
-
-				proc.kill();
 			}
-			Arrays.fill(eventList, null);
-			headEvtIdx = -1;
+			Arrays.fill(nodeList, null);
+			nodeIdx = -1;
 
 			// Kill conditional threads
 			for (int i = 0; i < conditionalList.size(); i++) {
@@ -217,7 +221,7 @@ public final class EventManager {
 
 			// Loop continuously
 			while (true) {
-				if (headEvtIdx == -1 ||
+				if (nodeIdx == -1 ||
 				    currentTick >= targetTick) {
 					executeEvents = false;
 				}
@@ -229,17 +233,24 @@ public final class EventManager {
 				}
 
 				// If the next event is at the current tick, execute it
-				if (eventList[headEvtIdx].schedTick == currentTick) {
+				if (nodeList[nodeIdx].schedTick == currentTick) {
 					// Remove the event from the future events
-					Event nextEvent = eventList[headEvtIdx];
-					eventList[headEvtIdx] = null;
-					headEvtIdx--;
+					EventNode node = nodeList[nodeIdx];
+					Event nextEvent = node.head;
+					node.head = nextEvent.next;
+					// check for an empty node
+					if (nextEvent.next == null) {
+						nodeList[nodeIdx] = null;
+						nodeIdx--;
+					}
 
 					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
 					if (nextEvent.handle != null) {
 						nextEvent.handle.event = null;
 						nextEvent.handle = null;
 					}
+					nextEvent.next = null;
+
 					// If the event has a captured process, pass control to it
 					Process p = nextEvent.target.getProcess();
 					if (p != null) {
@@ -258,7 +269,7 @@ public final class EventManager {
 
 				// If the next event would require us to advance the time, check the
 				// conditonal events
-				if (eventList[headEvtIdx].schedTick > nextTick) {
+				if (nodeList[nodeIdx].schedTick > nextTick) {
 					if (conditionalList.size() > 0) {
 						// Loop through the conditions in reverse order and add to the linked
 						// list of active threads
@@ -275,7 +286,7 @@ public final class EventManager {
 					// If a conditional event was satisfied, we will have a new event at the
 					// beginning of the eventStack for the current tick, go back to the
 					// beginning, otherwise fall through to the time-advance
-					nextTick = eventList[headEvtIdx].schedTick;
+					nextTick = nodeList[nodeIdx].schedTick;
 					if (nextTick == currentTick)
 						continue;
 				}
@@ -374,26 +385,20 @@ public final class EventManager {
 		synchronized (lockObject) {
 			assertNotWaitUntil();
 			long eventTime = calculateEventTime(waitLength);
-			for (int i = headEvtIdx; i >= 0; i--) {
-				Event each = eventList[i];
-				// We passed where any duplicate could be, break out to the
-				// insertion part
-				if (each.schedTick > eventTime)
-					break;
-
-				// if we have an exact match, do not schedule another event
-				if (each.schedTick == eventTime &&
-				    each.priority == eventPriority &&
-				    each.target == t) {
+			EventNode node = getEventNode(eventTime, eventPriority);
+			Event each = node.head;
+			while (each != null) {
+				if (each.target == t) {
 					if (trcListener != null) trcListener.traceSchedProcess(this, each);
 					return;
 				}
+				each = each.next;
 			}
 
 			// Create an event for the new process at the present time, and place it on the event stack
-			Event newEvent = new Event(eventTime, eventPriority, t);
+			Event newEvent = new Event(node, t);
 			if (trcListener != null) trcListener.traceSchedProcess(this, newEvent);
-			addEventToStack(newEvent, fifo);
+			node.addEvent(newEvent, fifo);
 		}
 	}
 
@@ -409,7 +414,8 @@ public final class EventManager {
 			Process cur = assertNotWaitUntil();
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);
-			Event temp = new Event(nextEventTime, priority, t);
+			EventNode node = getEventNode(nextEventTime, priority);
+			Event temp = new Event(node, t);
 			if (handle != null) {
 				if (handle.event != null)
 					throw new ProcessError("EVT:%s - Tried to schedule using an EventHandler already in use", name);
@@ -418,66 +424,61 @@ public final class EventManager {
 				temp.handle = handle;
 			}
 			if (trcListener != null) trcListener.traceWait(this, temp);
-			addEventToStack(temp, fifo);
+			node.addEvent(temp, fifo);
 			captureProcess(cur);
 		}
 	}
 
 	/**
-	 * Adds a new event to the event stack.  This method will add an event to
-	 * the event stack based on its scheduled time, priority, and in stack
-	 * order for equal time/priority.
-	 *
-	 * Must hold the lockObject when calling this method.
+	 * Find an eventNode in the list, if a node is not found, create one and
+	 * insert it.
 	 */
-	private void addEventToStack(Event newEvent, boolean fifo) {
+	private EventNode getEventNode(long tick, int prio) {
 		int lowIdx = 0;
-		int highIdx = headEvtIdx;
+		int highIdx = nodeIdx;
 
 		while (lowIdx <= highIdx) {
-			int testIdx = (lowIdx + highIdx) >>> 1; // use unsigned shift to avoid overflow
+			final int testIdx = (lowIdx + highIdx) >>> 1; // use unsigned shift to avoid overflow
 
 			// Compare events by scheduled time first
-			if (eventList[testIdx].schedTick < newEvent.schedTick) {
+			if (nodeList[testIdx].schedTick < tick) {
 				highIdx = testIdx - 1;
 				continue;
 			}
 
-			if (eventList[testIdx].schedTick > newEvent.schedTick) {
+			if (nodeList[testIdx].schedTick > tick) {
 				lowIdx = testIdx + 1;
 				continue;
 			}
 
 			// events at the same time use priority as a tie-breaker
-			if (eventList[testIdx].priority < newEvent.priority) {
+			if (nodeList[testIdx].priority < prio) {
 				highIdx = testIdx - 1;
 				continue;
 			}
 
-			if (eventList[testIdx].priority > newEvent.priority) {
+			if (nodeList[testIdx].priority > prio) {
 				lowIdx = testIdx + 1;
 				continue;
 			}
 
-			// Events at equal time and priority are done in fifo or lifo order
-			// depending on the passed in policy
-			if (fifo)
-				highIdx = testIdx - 1;
-			else
-				lowIdx = testIdx + 1;
+			// we found a matching node, return it
+			return nodeList[testIdx];
 		}
 
 		// Expand the eventList by doubling the size
-		if (eventList.length - 1 == headEvtIdx) {
-			eventList = Arrays.copyOf(eventList, eventList.length * 2);
+		if (nodeList.length - 1 == nodeIdx) {
+			nodeList = Arrays.copyOf(nodeList, nodeList.length * 2);
 		}
 
 		// Insert the event in the stack, only copy array elements if not prepending
-		if (lowIdx <= headEvtIdx)
-			System.arraycopy(eventList, lowIdx, eventList, lowIdx + 1, (headEvtIdx - lowIdx + 1));
+		if (lowIdx <= nodeIdx)
+			System.arraycopy(nodeList, lowIdx, nodeList, lowIdx + 1, (nodeIdx - lowIdx + 1));
 
-		eventList[lowIdx] = newEvent;
-		headEvtIdx++;
+		EventNode node = new EventNode(tick, prio);
+		nodeList[lowIdx] = node;
+		nodeIdx++;
+		return node;
 	}
 
 	/**
@@ -538,9 +539,10 @@ public final class EventManager {
 
 			cur.setCondWait(false);
 			WaitTarget t = new WaitTarget(cur);
-			Event temp = new Event(currentTick, 0, t);
+			EventNode node = getEventNode(currentTick, 0);
+			Event temp = new Event(node, t);
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
-			addEventToStack(temp, true);
+			node.addEvent(temp, true);
 			captureProcess(cur);
 		}
 	}
@@ -561,50 +563,66 @@ public final class EventManager {
 	 * @return
 	 */
 	private void removeEvent(Event evt) {
+		EventNode node = evt.node;
+		evt.handle.event = null;
+		evt.handle = null;
+		// quick case where we are the head event
+		if (node.head == evt) {
+			node.head = evt.next;
+			if (evt.next == null) {
+				node.tail = null;
+				removeNode(node);
+			}
+			evt.next = null;
+			return;
+		}
+
+		Event prev = node.head;
+		while (prev.next != evt) {
+			prev = prev.next;
+		}
+
+		prev.next = evt.next;
+		if (evt.next == null)
+			node.tail = prev;
+
+		evt.next = null;
+	}
+
+	private void removeNode(EventNode node) {
 		int lowIdx = 0;
-		int highIdx = headEvtIdx;
+		int highIdx = nodeIdx;
 
 		while (lowIdx <= highIdx) {
-			int testIdx = (lowIdx + highIdx) >>> 1; // use unsigned shift to avoid overflow
+			final int testIdx = (lowIdx + highIdx) >>> 1; // use unsigned shift to avoid overflow
 
 			// Compare events by scheduled time first
-			if (eventList[testIdx].schedTick < evt.schedTick) {
+			if (nodeList[testIdx].schedTick < node.schedTick) {
 				highIdx = testIdx - 1;
 				continue;
 			}
 
-			if (eventList[testIdx].schedTick > evt.schedTick) {
+			if (nodeList[testIdx].schedTick > node.schedTick) {
 				lowIdx = testIdx + 1;
 				continue;
 			}
 
 			// events at the same time use priority as a tie-breaker
-			if (eventList[testIdx].priority < evt.priority) {
+			if (nodeList[testIdx].priority < node.priority) {
 				highIdx = testIdx - 1;
 				continue;
 			}
 
-			if (eventList[testIdx].priority > evt.priority) {
+			if (nodeList[testIdx].priority > node.priority) {
 				lowIdx = testIdx + 1;
 				continue;
 			}
 
-			// Always compare as lifo in order to find the first event at a given
-			// time and priority, scan linearly from there
-			lowIdx = testIdx + 1;
-		}
-
-		for (int i = lowIdx - 1; i >= 0; i--) {
-			if (eventList[i] == evt) {
-				if (evt.handle != null) {
-					evt.handle.event = null;
-					evt.handle = null;
-				}
-				System.arraycopy(eventList, i + 1, eventList, i, headEvtIdx - i);
-				eventList[headEvtIdx] = null;
-				headEvtIdx--;
-				return;
-			}
+			// we found the node's location, remove it
+			System.arraycopy(nodeList, testIdx + 1, nodeList, testIdx, nodeIdx - testIdx);
+			nodeList[nodeIdx] = null;
+			nodeIdx--;
+			return;
 		}
 
 		throw new ProcessError("EVT:%s - Tried to remove an event that could not be found", name);
@@ -727,7 +745,8 @@ public final class EventManager {
 	public void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
-			Event e = new Event(schedTick, eventPriority, t);
+			EventNode node = getEventNode(schedTick, eventPriority);
+			Event e = new Event(node, t);
 			if (handle != null) {
 				if (handle.event != null)
 					throw new ProcessError("EVT:%s - Tried to schedule using an EventHandler already in use", name);
@@ -736,7 +755,7 @@ public final class EventManager {
 				e.handle = handle;
 			}
 			if (trcListener != null) trcListener.traceSchedProcess(this, e);
-			addEventToStack(e, fifo);
+			node.addEvent(e, fifo);
 		}
 	}
 

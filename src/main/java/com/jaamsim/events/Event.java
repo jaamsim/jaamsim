@@ -19,11 +19,10 @@ package com.jaamsim.events;
  * events.
  */
 public class Event {
-	long schedTick; // The tick at which this event will execute
-	int priority;   // The schedule priority of this event
-
+	EventNode node;
 	ProcessTarget target;
 	EventHandle handle;
+	Event next;
 
 	/**
 	 * Constructs a new event object.
@@ -33,10 +32,8 @@ public class Event {
 	 * @param caller
 	 * @param process
 	 */
-	Event(long scheduleTick, int prio, ProcessTarget target) {
-		schedTick = scheduleTick;
-		priority = prio;
-
+	Event(EventNode node, ProcessTarget target) {
+		this.node = node;
 		this.target = target;
 		this.handle = null;
 	}
@@ -46,7 +43,7 @@ public class Event {
 	 * @return
 	 */
 	public long getScheduledTick() {
-		return schedTick;
+		return node.schedTick;
 	}
 
 	/**
@@ -54,7 +51,7 @@ public class Event {
 	 * @return
 	 */
 	public int getScheduledPriority() {
-		return priority;
+		return node.priority;
 	}
 
 	public String getDesc() {
