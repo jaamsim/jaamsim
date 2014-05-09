@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * the eventManager's lock while holding the Process's lock as this can cause a
  * deadlock with other threads trying to wake you from the threadPool.
  */
-public final class Process extends Thread {
+final class Process extends Thread {
 	// Properties required to manage the pool of available Processes
 	private static final ArrayList<Process> pool; // storage for all available Processes
 	private static final int maxPoolSize = 100; // Maximum number of Processes allowed to be pooled at a given time
@@ -61,7 +61,7 @@ public final class Process extends Thread {
 	/**
 	 * Returns the currently executing Process.
 	 */
-	public static final Process current() {
+	static final Process current() {
 		Thread cur = Thread.currentThread();
 		if (cur instanceof Process)
 			return (Process)cur;
