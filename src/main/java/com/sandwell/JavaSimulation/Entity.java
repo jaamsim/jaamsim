@@ -164,8 +164,20 @@ public class Entity {
 	// This is defined for handlers only
 	public void validate() throws InputErrorException {}
 
+	/**
+	 * Initialises the entity prior to the start of the model run.
+	 * <p>
+	 * This method must not depend on any other entities so that it can be
+	 * called for each entity in any sequence.
+	 */
 	public void earlyInit() {}
 
+	/**
+	 * Starts the execution of the model run for this entity.
+	 * <p>
+	 * If required, initialisation that depends on another entity can be
+	 * performed in this method. It is called after earlyInit().
+	 */
 	public void startUp() {}
 
 	public void kill() {
@@ -392,6 +404,7 @@ public class Entity {
 	 * This method updates the Entity for changes in the given input
 	 */
 	public void updateForInput( Input<?> in ) {
+
 		if (in == trace) {
 			if (trace.getValue())
 				this.setTraceFlag();
