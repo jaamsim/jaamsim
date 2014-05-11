@@ -36,9 +36,6 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public abstract class Distribution extends DisplayEntity
 implements SampleProvider {
-	@Keyword(description = "Global seed to advance all substreams.",
-	         example = "ProbDist1 GlobalSubstreamSeed { 547 }")
-	private static final IntegerInput globalSeedInput;
 
 	@Keyword(description = "The unit type that the distribution returns values in.",
 	         example = "ProbDist1 UnitType { DistanceUnit }")
@@ -47,6 +44,10 @@ implements SampleProvider {
 	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
 			 example = "ProbDist1 RandomSeed { 547 }")
 	private final IntegerInput randomSeedInput;
+
+	@Keyword(description = "Global seed that sets the substream for each probability distribution.",
+	         example = "ProbDist1 GlobalSubstreamSeed { 5 }")
+	private static final IntegerInput globalSeedInput;
 
 	@Keyword(description = "Minimum value that can be returned.  Smaller values are rejected and resampled.",
 	         example = "ProbDist1 MinValue { 0.0 }")
@@ -68,14 +69,14 @@ implements SampleProvider {
 	}
 
 	{
-		this.addInput(globalSeedInput);
-
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(unitType);
 
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 0);
 		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(randomSeedInput);
+
+		this.addInput(globalSeedInput);
 
 		minValueInput = new ValueInput("MinValue", "Key Inputs", Double.NEGATIVE_INFINITY);
 		minValueInput.setUnitType(UserSpecifiedUnit.class);
