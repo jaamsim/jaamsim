@@ -1614,8 +1614,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		@Override
 		public void stateChanged( ChangeEvent e ) {
 			String factorRT = String.format("%d", ((JSpinner)e.getSource()).getValue());
-			Simulation.setRealTimeFactor(factorRT);
-			FrameBox.valueUpdate();
+			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "RealTimeFactor", factorRT);
 		}
 	}
 
@@ -1657,8 +1656,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public static class RealTimeActionListener implements ActionListener {
 		@Override
 		public void actionPerformed( ActionEvent event ) {
-			Simulation.setRealTime(((JToggleButton)event.getSource()).isSelected());
-			FrameBox.valueUpdate();
+			if (((JToggleButton)event.getSource()).isSelected())
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "RealTime", "TRUE");
+			else
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "RealTime", "FALSE");
 		}
 	}
 

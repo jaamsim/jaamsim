@@ -14,8 +14,6 @@
  */
 package com.sandwell.JavaSimulation;
 
-import java.util.ArrayList;
-
 import javax.swing.JFrame;
 
 import com.jaamsim.events.EventManager;
@@ -23,7 +21,6 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.EditBox;
@@ -476,33 +473,6 @@ public class Simulation extends Entity {
 	static void updateRealTime() {
 		root.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
 		GUIFrame.instance().updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
-	}
-
-	public static void setRealTime(boolean rt) {
-		ArrayList<String> toks = new ArrayList<String>(5);
-		toks.add(realTime.getKeyword());
-
-		toks.add("{");
-		if (rt)
-			toks.add("TRUE");
-		else
-			toks.add("FALSE");
-		toks.add("}");
-		KeywordIndex kw = new KeywordIndex(toks, 0, toks.size() - 1, null);
-		realTime.parse(kw);
-		updateRealTime();
-	}
-
-	public static void setRealTimeFactor(String fac) {
-		ArrayList<String> toks = new ArrayList<String>(5);
-		toks.add(realTime.getKeyword());
-
-		toks.add("{");
-		toks.add(fac);
-		toks.add("}");
-		KeywordIndex kw = new KeywordIndex(toks, 0, toks.size() - 1, null);
-		realTimeFactor.parse(kw);
-		updateRealTime();
 	}
 
 	public static void setModelName(String newModelName) {
