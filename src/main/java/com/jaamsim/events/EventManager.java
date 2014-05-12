@@ -15,7 +15,6 @@
 package com.jaamsim.events;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Class EventManager - Sandwell Discrete Event Simulation
@@ -48,8 +47,8 @@ public final class EventManager {
 	public final String name;
 
 	private final Object lockObject; // Object used as global lock for synchronization
-	private EventNode[] nodeList;
-	private int nodeIdx;
+
+	private EventTree eventTree;
 
 	private volatile boolean executeEvents;
 	private boolean processRunning;
@@ -94,8 +93,7 @@ public final class EventManager {
 		ticksPerSecond = 1000000.0d;
 		secsPerTick = 1.0d / ticksPerSecond;
 
-		nodeList = new EventNode[10000];
-		nodeIdx = -1;
+		eventTree = new EventTree();
 
 		conditionalList = new ArrayList<Process>();
 		conditionalHandles = new ArrayList<ConditionalHandle>();
@@ -148,25 +146,28 @@ public final class EventManager {
 			timelistener.tickUpdate(currentTick);
 			rebaseRealTime = true;
 
-			// Kill threads on the event stack
-			for (int i = 0; i <= nodeIdx; i++) {
-				EventNode node = nodeList[i];
-				Event each = node.head;
-				while (each != null) {
-					if (each.handle != null) {
-						each.handle.event = null;
-						each.handle = null;
+			eventTree.runOnAllNodes(new EventNode.Runner() {
+
+				@Override
+				public void runOnNode(EventNode node) {
+					Event each = node.head;
+					while (each != null) {
+						if (each.handle != null) {
+							each.handle.event = null;
+							each.handle = null;
+						}
+
+						Process proc = each.target.getProcess();
+						if (proc != null)
+							proc.kill();
+
+						each = each.next;
 					}
-
-					Process proc = each.target.getProcess();
-					if (proc != null)
-						proc.kill();
-
-					each = each.next;
 				}
-			}
-			Arrays.fill(nodeList, null);
-			nodeIdx = -1;
+
+			});
+
+			eventTree.reset();
 
 			// Kill conditional threads
 			for (int i = 0; i < conditionalList.size(); i++) {
@@ -221,7 +222,8 @@ public final class EventManager {
 
 			// Loop continuously
 			while (true) {
-				if (nodeIdx == -1 ||
+				EventNode nextNode = eventTree.getNextNode();
+				if (nextNode == null ||
 				    currentTick >= targetTick) {
 					executeEvents = false;
 				}
@@ -233,15 +235,14 @@ public final class EventManager {
 				}
 
 				// If the next event is at the current tick, execute it
-				if (nodeList[nodeIdx].schedTick == currentTick) {
+				if (nextNode.schedTick == currentTick) {
 					// Remove the event from the future events
-					EventNode node = nodeList[nodeIdx];
-					Event nextEvent = node.head;
-					node.head = nextEvent.next;
+					Event nextEvent = nextNode.head;
+					nextNode.head = nextEvent.next;
 					// check for an empty node
 					if (nextEvent.next == null) {
-						nodeList[nodeIdx] = null;
-						nodeIdx--;
+						nextNode.tail = null;
+						eventTree.removeNode(nextNode.schedTick, nextNode.priority);
 					}
 
 					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
@@ -269,7 +270,7 @@ public final class EventManager {
 
 				// If the next event would require us to advance the time, check the
 				// conditonal events
-				if (nodeList[nodeIdx].schedTick > nextTick) {
+				if (eventTree.getNextNode().schedTick > nextTick) {
 					if (conditionalList.size() > 0) {
 						// Loop through the conditions in reverse order and add to the linked
 						// list of active threads
@@ -286,7 +287,7 @@ public final class EventManager {
 					// If a conditional event was satisfied, we will have a new event at the
 					// beginning of the eventStack for the current tick, go back to the
 					// beginning, otherwise fall through to the time-advance
-					nextTick = nodeList[nodeIdx].schedTick;
+					nextTick = eventTree.getNextNode().schedTick;
 					if (nextTick == currentTick)
 						continue;
 				}
@@ -434,51 +435,11 @@ public final class EventManager {
 	 * insert it.
 	 */
 	private EventNode getEventNode(long tick, int prio) {
-		int lowIdx = 0;
-		int highIdx = nodeIdx;
+		EventNode foundNode = eventTree.find(tick, prio);
+		if (foundNode != null)
+			return foundNode;
 
-		while (lowIdx <= highIdx) {
-			final int testIdx = (lowIdx + highIdx) >>> 1; // use unsigned shift to avoid overflow
-
-			// Compare events by scheduled time first
-			if (nodeList[testIdx].schedTick < tick) {
-				highIdx = testIdx - 1;
-				continue;
-			}
-
-			if (nodeList[testIdx].schedTick > tick) {
-				lowIdx = testIdx + 1;
-				continue;
-			}
-
-			// events at the same time use priority as a tie-breaker
-			if (nodeList[testIdx].priority < prio) {
-				highIdx = testIdx - 1;
-				continue;
-			}
-
-			if (nodeList[testIdx].priority > prio) {
-				lowIdx = testIdx + 1;
-				continue;
-			}
-
-			// we found a matching node, return it
-			return nodeList[testIdx];
-		}
-
-		// Expand the eventList by doubling the size
-		if (nodeList.length - 1 == nodeIdx) {
-			nodeList = Arrays.copyOf(nodeList, nodeList.length * 2);
-		}
-
-		// Insert the event in the stack, only copy array elements if not prepending
-		if (lowIdx <= nodeIdx)
-			System.arraycopy(nodeList, lowIdx, nodeList, lowIdx + 1, (nodeIdx - lowIdx + 1));
-
-		EventNode node = new EventNode(tick, prio);
-		nodeList[lowIdx] = node;
-		nodeIdx++;
-		return node;
+		return eventTree.createNode(tick, prio);
 	}
 
 	/**
@@ -590,42 +551,11 @@ public final class EventManager {
 	}
 
 	private void removeNode(EventNode node) {
-		int lowIdx = 0;
-		int highIdx = nodeIdx;
+		boolean removed = eventTree.removeNode(node.schedTick, node.priority);
 
-		while (lowIdx <= highIdx) {
-			final int testIdx = (lowIdx + highIdx) >>> 1; // use unsigned shift to avoid overflow
-
-			// Compare events by scheduled time first
-			if (nodeList[testIdx].schedTick < node.schedTick) {
-				highIdx = testIdx - 1;
-				continue;
-			}
-
-			if (nodeList[testIdx].schedTick > node.schedTick) {
-				lowIdx = testIdx + 1;
-				continue;
-			}
-
-			// events at the same time use priority as a tie-breaker
-			if (nodeList[testIdx].priority < node.priority) {
-				highIdx = testIdx - 1;
-				continue;
-			}
-
-			if (nodeList[testIdx].priority > node.priority) {
-				lowIdx = testIdx + 1;
-				continue;
-			}
-
-			// we found the node's location, remove it
-			System.arraycopy(nodeList, testIdx + 1, nodeList, testIdx, nodeIdx - testIdx);
-			nodeList[nodeIdx] = null;
-			nodeIdx--;
-			return;
+		if (!removed) {
+			throw new ProcessError("EVT:%s - Tried to remove an event that could not be found", name);
 		}
-
-		throw new ProcessError("EVT:%s - Tried to remove an event that could not be found", name);
 	}
 
 	public void killEvent(ConditionalHandle handle) {

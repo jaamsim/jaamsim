@@ -82,7 +82,7 @@ class EventTree {
 		insertBalance(newNode);
 		root.red = false;
 
-		if (newNode.compareToNode(lowest) < 0) {
+		if (lowest != null && newNode.compareToNode(lowest) < 0) {
 			lowest = newNode;
 		}
 		return newNode;
@@ -169,6 +169,7 @@ class EventTree {
 	public boolean removeNode(long schedTick, int priority) {
 		// First find the node to remove
 		resetScratch();
+		lowest = null;
 
 		EventNode current = root;
 		while (true) {
@@ -185,6 +186,11 @@ class EventTree {
 				return false; // Node not found
 			}
 		}
+
+		// Debugging
+		if (current.head != null || current.tail != null)
+			throw new RuntimeException("Removing non-empy node");
+
 		// We have the node to remove
 		if (current.left != EventNode.nilNode && current.right != EventNode.nilNode) {
 			current = swapToLeaf(current);
@@ -218,19 +224,16 @@ class EventTree {
 
 
 		if (current.red) {
-			updateLowest();
 			return true; // We swapped out a red node, there's nothing else to do
 		}
 		if (child.red) {
 			child.red = false;
-			updateLowest();
 			return true; // traded a red for a black, still all good.
 		}
 
 		// We removed a black node with a black child, we need to re-balance the tree
 		deleteBalance(child);
 		root.red = false;
-		updateLowest();
 		return true;
 	}
 
@@ -324,6 +327,21 @@ class EventTree {
 		if (root == parent) {
 			root = sib;
 		}
+	}
+
+	public void runOnAllNodes(EventNode.Runner runner) {
+		runOnNode(root, runner);
+	}
+
+	private void runOnNode(EventNode node, EventNode.Runner runner) {
+		if (node == EventNode.nilNode)
+			return;
+
+		runOnNode(node.left, runner);
+
+		runner.runOnNode(node);
+
+		runOnNode(node.right, runner);
 	}
 
 	// Verify the sorting structure and return the number of nodes

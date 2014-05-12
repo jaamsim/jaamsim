@@ -15,6 +15,11 @@
 package com.jaamsim.events;
 
 public class EventNode {
+
+	interface Runner {
+		void runOnNode(EventNode node);
+	}
+
 	long schedTick; // The tick at which this event will execute
 	int priority;   // The schedule priority of this event
 	Event head;
@@ -96,6 +101,11 @@ public class EventNode {
 		this.tail = source.tail;
 		this.schedTick = source.schedTick;
 		this.priority = source.priority;
+		Event next = this.head;
+		while (next != null) {
+			next.node = this;
+			next = next.next;
+		}
 	}
 
 	static final EventNode nilNode;
