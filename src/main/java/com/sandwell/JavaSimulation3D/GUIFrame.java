@@ -1191,17 +1191,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				InputAgent.saveAs(this);
 			}
 			Simulation.start();
-			Simulation.resume(runToSecs);
+			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
 			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
-			Simulation.resume(runToSecs);
+			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
 			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
 		else if( getSimState() == SIM_STATE_STOPPED ) {
 			updateForSimulationState(SIM_STATE_CONFIGURED);
 			Simulation.start();
-			Simulation.resume(runToSecs);
+			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
 			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
 		else
@@ -1261,7 +1261,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	EventManager currentEvt;
-	private void setEventManager(EventManager e) {
+	public void setEventManager(EventManager e) {
 		currentEvt = e;
 	}
 
@@ -1590,7 +1590,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			if (InputAgent.numErrors() > 0)
 				GUIFrame.shutdown(0);
 			Simulation.start();
-			Simulation.resume(Double.POSITIVE_INFINITY);
+			evt.resume(Long.MAX_VALUE);
 			GUIFrame.instance.updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 			return;
 		}

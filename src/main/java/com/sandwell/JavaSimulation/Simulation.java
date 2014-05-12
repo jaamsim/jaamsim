@@ -374,11 +374,6 @@ public class Simulation extends Entity {
 		return (1.0d / getSimTimeFactor());
 	}
 
-	public static final void resume(double secs) {
-		long ticks = root.secondsToNearestTick(secs);
-		root.resume(ticks);
-	}
-
 	private static class StartUpTarget extends ProcessTarget {
 		final Entity ent;
 
