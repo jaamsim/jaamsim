@@ -18,10 +18,15 @@ import com.sandwell.JavaSimulation.Entity;
 
 public class AttributeHandle extends OutputHandle {
 	private String attributeName;
+	private double value;
 
 	public AttributeHandle(Entity e, String outputName) {
 		super(e);
 		this.attributeName = outputName;
+	}
+
+	public void setValue(double val) {
+		value = val;
 	}
 
 	@Override
@@ -32,16 +37,11 @@ public class AttributeHandle extends OutputHandle {
 		if (!double.class.equals(klass)) {
 			return null;
 		}
-		// This is kind of messy
-		return klass.cast(ent.getAttribute(attributeName));
+		return klass.cast(value);
 	}
 	@Override
 	public double getValueAsDouble(double simTime, double def) {
-		if (!ent.hasAttribute(attributeName)) {
-			return def;
-		}
-
-		return ent.getAttribute(attributeName);
+		return value;
 	}
 
 	@Override

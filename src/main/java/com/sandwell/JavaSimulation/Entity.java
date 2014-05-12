@@ -62,7 +62,7 @@ public class Entity {
 	private final ArrayList<Input<?>> editableInputs = new ArrayList<Input<?>>();
 	private final ArrayList<SynRecord> synonyms = new ArrayList<SynRecord>();
 
-	private final HashMap<String, Double> attributeMap = new HashMap<String, Double>();
+	private final HashMap<String, AttributeHandle> attributeMap = new HashMap<String, AttributeHandle>();
 
 	private final BooleanInput trace;
 
@@ -437,8 +437,9 @@ public class Entity {
 			for (int i = 0; i < vals.size(); i+=2) {
 				String name = vals.get(i);
 				double value = Double.valueOf(vals.get(i+1));
-
-				addAttribute(name, value);
+				AttributeHandle h = new AttributeHandle(this, name);
+				h.setValue(value);
+				addAttribute(name, h);
 			}
 
 			// Reselect the current entity (this is needed to update the OutputBox)
@@ -761,7 +762,7 @@ public class Entity {
 
 	public OutputHandle getOutputHandle(String outputName) {
 		if (hasAttribute(outputName))
-			return new AttributeHandle(this, outputName);
+			return attributeMap.get(outputName);
 
 		if (hasOutput(outputName))
 			return new OutputHandle(this, outputName);
@@ -790,14 +791,8 @@ public class Entity {
 		return desc.getValue();
 	}
 
-	public double getAttribute(String name) {
-		Double val = attributeMap.get(name);
-		if (val == null) return 0; // TODO: how should this be handled?
-		return val.doubleValue();
-	}
-
-	private void addAttribute(String name, double initialValue) {
-		attributeMap.put(name, initialValue);
+	private void addAttribute(String name, AttributeHandle h) {
+		attributeMap.put(name, h);
 	}
 
 	public boolean hasAttribute(String name) {
@@ -805,12 +800,9 @@ public class Entity {
 	}
 
 	public void setAttribute(String name, double value) {
-		if (!attributeMap.containsKey(name)) {
-			// TODO: report this as an error?
-			return;
-		}
-
-		attributeMap.put(name, value);
+		AttributeHandle h = attributeMap.get(name);
+		if (h == null) return;  // TODO: report this as an error?
+		h.setValue(value);
 	}
 
 	public ArrayList<String> getAttributeNames(){
