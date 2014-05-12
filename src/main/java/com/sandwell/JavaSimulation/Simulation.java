@@ -382,13 +382,6 @@ public class Simulation extends Entity {
 	/**
 	 *	Requests the EventManager to stop processing events.
 	 */
-	public static final void pause() {
-		root.pause();
-	}
-
-	/**
-	 *	Requests the EventManager to stop processing events.
-	 */
 	public static final void stop() {
 		root.pause();
 		root.clear();

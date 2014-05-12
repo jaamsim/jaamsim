@@ -84,13 +84,13 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		traceLevel++;
 	}
 
-	private void finish() {
+	private void finish(EventManager e) {
 		if(traceLevel != 1)
 			return;
 
 		this.add("");
 		this.parse();
-		EventTracer.processTraceData(this);
+		EventTracer.processTraceData(e, this);
 		this.clear();
 		traceLevel--;
 	}
@@ -109,7 +109,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.append(String.format("Wait\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
 
-		this.finish();
+		this.finish(e);
 	}
 
 	@Override
@@ -119,7 +119,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
 
 		traceLevel++;
-		this.finish();
+		this.finish(e);
 	}
 
 	@Override
@@ -129,7 +129,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
 
 		traceLevel++;
-		this.finish();
+		this.finish(e);
 	}
 
 	@Override
@@ -137,7 +137,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.addHeader(e.name, evt.getScheduledTick());
 		this.append(String.format("Kill\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
-		this.finish();
+		this.finish(e);
 	}
 
 	@Override
@@ -145,7 +145,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.addHeader(e.name, e.getSimTicks());
 		traceLevel--;
 		this.append("WaitUntil");
-		this.finish();
+		this.finish(e);
 	}
 
 	@Override
@@ -154,7 +154,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.append(String.format("WaitUntilEnded\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
 
-		this.finish();
+		this.finish(e);
 	}
 
 	@Override
@@ -162,7 +162,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.addHeader(e.name, e.getSimTicks());
 		this.append(String.format("StartProcess\t%s", t.getDescription()));
 		traceLevel++;
-		this.finish();
+		this.finish(e);
 	}
 
 	@Override
@@ -170,7 +170,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.addHeader(e.name, e.getSimTicks());
 		traceLevel--;
 		this.append("Exit");
-		this.finish();
+		this.finish(e);
 	}
 
 	@Override
@@ -178,7 +178,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.addHeader(e.name, e.getSimTicks());
 		this.append(String.format("SchedProcess\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
-		this.finish();
+		this.finish(e);
 	}
 
 	boolean isDefaultEventManager() {

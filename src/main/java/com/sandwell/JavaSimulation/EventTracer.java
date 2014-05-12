@@ -109,7 +109,7 @@ class EventTracer {
 		}
 	}
 
-	private static void findEventInBuffer(EventTraceRecord record) {
+	private static void findEventInBuffer(EventManager e, EventTraceRecord record) {
 		// Ensure we have read enough from the log to find this record
 		EventTracer.fillBufferUntil(record.getInternalTime());
 
@@ -136,7 +136,7 @@ class EventTracer {
 					System.out.println("R:" + record.get(i));
 					System.out.println("E:" + each.get(i));
 
-					Simulation.pause();
+					e.pause();
 					new Throwable().printStackTrace();
 					break;
 				}
@@ -159,7 +159,7 @@ class EventTracer {
 			}
 			System.out.println();
 		}
-		Simulation.pause();
+		e.pause();
 	}
 
 	private static void writeEventToBuffer(EventTraceRecord record) {
@@ -170,7 +170,7 @@ class EventTracer {
 		eventTraceFile.flush();
 	}
 
-	static void processTraceData(EventTraceRecord traceRecord) {
+	static void processTraceData(EventManager e, EventTraceRecord traceRecord) {
 		if (eventTraceFile != null) {
 			synchronized (eventTraceFile) {
 				EventTracer.writeEventToBuffer(traceRecord);
@@ -179,7 +179,7 @@ class EventTracer {
 
 		if (eventVerifyReader != null) {
 			synchronized (eventVerifyReader) {
-				EventTracer.findEventInBuffer(traceRecord);
+				EventTracer.findEventInBuffer(e, traceRecord);
 			}
 		}
 	}
