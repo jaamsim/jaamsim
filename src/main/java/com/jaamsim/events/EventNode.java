@@ -20,9 +20,15 @@ public class EventNode {
 	Event head;
 	Event tail;
 
+	boolean red;
+	EventNode left;
+	EventNode right;
+
 	EventNode(long tick, int prio) {
 		schedTick = tick;
 		priority = prio;
+		left = nilNode;
+		right = nilNode;
 	}
 
 	void addEvent(Event e, boolean fifo) {
@@ -43,4 +49,62 @@ public class EventNode {
 			head = e;
 		}
 	}
+
+	int compareToNode(EventNode other) {
+		return compare(other.schedTick, other.priority);
+	}
+
+	int compare(long schedTick, int priority) {
+		if (this.schedTick < schedTick) return -1;
+		if (this.schedTick > schedTick) return  1;
+
+		if (this.priority < priority) return -1;
+		if (this.priority > priority) return  1;
+
+		return 0;
+	}
+
+	void rotateRight(EventNode parent) {
+		if (parent != null) {
+			if (parent.left == this)
+				parent.left = left;
+			else
+				parent.right = left;
+		}
+
+		EventNode oldMid = left.right;
+		left.right = this;
+
+		this.left = oldMid;
+	}
+	void rotateLeft(EventNode parent) {
+		if (parent != null) {
+			if (parent.left == this)
+				parent.left = right;
+			else
+				parent.right = right;
+		}
+
+		EventNode oldMid = right.left;
+		right.left = this;
+
+		this.right = oldMid;
+	}
+
+	void cloneFrom(EventNode source) {
+		this.head = source.head;
+		this.tail = source.tail;
+		this.schedTick = source.schedTick;
+		this.priority = source.priority;
+	}
+
+	static final EventNode nilNode;
+
+	static {
+		nilNode = new EventNode(0, 0);
+		nilNode.left = null;
+		nilNode.right = null;
+		nilNode.red = false;
+	}
+
 }
