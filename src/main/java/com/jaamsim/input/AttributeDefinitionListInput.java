@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.StringVector;
@@ -89,6 +88,44 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 
 		// Save the data for each attribute
 		value = temp;
+		setValueString(getInputString(value));
+	}
+
+	@Override
+	public String getDefaultString() {
+		if (defValue == null || defValue.isEmpty()) return NO_VALUE;
+		return this.getInputString(defValue);
+	}
+
+	public String getInputString(ArrayList<AttributeHandle> handleList) {
+
+		StringBuilder tmp = new StringBuilder();
+		for (int i = 0; i < handleList.size(); i++) {
+			if (i > 0) tmp.append(SEPARATOR);
+			AttributeHandle h = handleList.get(i);
+			tmp.append("{ ");
+			tmp.append(h.getName());
+			tmp.append(SEPARATOR);
+
+			double val = h.getInitialValue();
+			String unitString = Unit.getSIUnit(h.getUnitType());
+
+			// Check for a preferred unit
+			Unit unit = Unit.getPreferredUnit(h.getUnitType());
+			if (unit != null) {
+				unitString = unit.toString();
+				val = h.getValueAsDouble(0.0d, 0.0d, unit);
+			}
+			tmp.append(val);
+
+			// Print the unit unless it is dimensionless
+			if (h.getUnitType() != DimensionlessUnit.class) {
+				tmp.append(SEPARATOR);
+				tmp.append(unitString);
+			}
+			tmp.append(" }");
+		}
+		return tmp.toString();
 	}
 
 }
