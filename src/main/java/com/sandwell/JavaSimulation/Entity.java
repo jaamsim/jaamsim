@@ -25,6 +25,7 @@ import com.jaamsim.events.ConditionalHandle;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.AttributeDefinitionListInput;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -70,10 +71,11 @@ public class Entity {
 	         example = "Ent Description { 'A very useful entity' }")
 	private final StringInput desc;
 
-	@Keyword(description = "The list of user defined attributes for this entity and default values."
-			+ " Input must be a name followed by an initial value.",
-	         example = "Ent Attributes { Attrib-1 20.0 Attrib-2 42 }")
-	private final StringListInput attributesInput;
+	@Keyword(description = "The list of user defined attributes for this entity.\n" +
+			" The attribute name is followed by its initial value. The unit provided for" +
+			"this value will determine the attribute's unit type.",
+	         example = "Entity-1 AttributeDefinitionList { { A 20.0 s } { alpha 42 } }")
+	private final AttributeDefinitionListInput attributeDefinitionList;
 
 	// constants used when scheduling events using the Entity wrappers
 	public static final int PRIO_DEFAULT = 5;
@@ -92,8 +94,9 @@ public class Entity {
 		desc = new StringInput("Description", "Key Inputs", "");
 		this.addInput(desc);
 
-		attributesInput = new StringListInput("Attributes", "Key Inputs", new StringVector());
-		this.addInput(attributesInput);
+		attributeDefinitionList = new AttributeDefinitionListInput(this, "AttributeDefinitionList",
+				"Key Inputs", new ArrayList<AttributeHandle>());
+		this.addInput(attributeDefinitionList);
 	}
 
 	/**
@@ -413,36 +416,14 @@ public class Entity {
 
 			return;
 		}
-		if (in == attributesInput) {
-			StringVector vals = attributesInput.getValue();
-			if (vals.size() % 2 == 1) {
-				throw new InputErrorException("Attributes must be a list of pairs of attribute names and values");
-			}
-			// Try to parse first to check for formatting errors
-			for (int i = 0; i < vals.size(); i+=2) {
-				String name = vals.get(i);
-				String valueString = vals.get(i+1);
-				try {
-					Double.valueOf(valueString);
-				} catch (NumberFormatException e) {
-					throw new InputErrorException("Could not parse value from attribute string: %s", valueString);
-				}
-				if (OutputHandle.hasOutput(this.getClass(), name)) {
-					throw new InputErrorException("Attribute name is the same as existing output name: %s", name);
-				}
-			}
-			// Everything parsed, now there's no going back
+
+		if (in == attributeDefinitionList) {
 			attributeMap.clear();
-
-			for (int i = 0; i < vals.size(); i+=2) {
-				String name = vals.get(i);
-				double value = Double.valueOf(vals.get(i+1));
-				AttributeHandle h = new AttributeHandle(this, name);
-				h.setValue(value);
-				addAttribute(name, h);
+			for (AttributeHandle h : attributeDefinitionList.getValue()) {
+				this.addAttribute(h.getName(), h);
 			}
 
-			// Reselect the current entity (this is needed to update the OutputBox)
+			// Update the OutputBox
 			FrameBox.reSelectEntity();
 			return;
 		}
