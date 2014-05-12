@@ -276,9 +276,6 @@ public class Simulation extends Entity {
 
 	public static void clear() {
 		EventTracer.init();
-		root.clear();
-		root.setTraceListener(null);
-
 		initializationTime.reset();
 		runDuration.reset();
 		simTimeScaleInput.reset();

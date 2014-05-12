@@ -287,7 +287,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * Clears the simulation and user interface for a new run
 	 */
 	public void clear() {
-
+		currentEvt.clear();
+		currentEvt.setTraceListener(null);
 		// Clear the simulation
 		Simulation.clear();
 		FrameBox.clear();
