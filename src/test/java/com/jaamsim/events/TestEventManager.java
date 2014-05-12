@@ -210,16 +210,15 @@ public class TestEventManager {
 	@Test
 	public void testRBTree() {
 		EventTree tree = new EventTree();
-		Event e = new Event(0, 0, 0, null);
 
 		for (int i = 0; i < 10000; ++i) {
-			tree.insertEvent(e, i, 0);
+			tree.createNode(i, 0);
 			tree.verify();
-			int eventCount = tree.verifyEventCount();
-			assertTrue((i+1) == eventCount);
+			int nodeCount = tree.verifyNodeCount();
+			assertTrue((i+1) == nodeCount);
 		}
 		for (int i = 0; i < 10000; ++i) {
-			assertTrue(tree.find(i,  0));
+			assertTrue(tree.find(i,  0) != null);
 		}
 
 		for (int i = 0; i < 10000; ++i) {
@@ -231,14 +230,14 @@ public class TestEventManager {
 
 		tree = new EventTree();
 		for (int i = 10000; i > 0; --i) {
-			tree.insertEvent(e, i, 0);
+			tree.createNode(i, 0);
 			tree.verify();
-			int eventCount = tree.verifyEventCount();
-			assertTrue((10001-i) == eventCount);
+			int nodeCount = tree.verifyNodeCount();
+			assertTrue((10001-i) == nodeCount);
 		}
 
 		for (int i = 1; i <= 10000; ++i) {
-			assertTrue(tree.find(i,  0));
+			assertTrue(tree.find(i,  0) != null);
 		}
 
 		for (int i = 10000; i > 0; --i) {
@@ -246,6 +245,24 @@ public class TestEventManager {
 			tree.verify();
 			int nodeCount = tree.verifyNodeCount();
 			assertTrue(nodeCount == i - 1);
+		}
+
+		for (int i = 10000; i > 0; --i) {
+			tree.createNode(i, 0);
+			tree.verify();
+			tree.createNode(-i, 0);
+			tree.verify();
+			int nodeCount = tree.verifyNodeCount();
+			assertTrue(((10001-i)*2) == nodeCount);
+		}
+
+		for (int i = 0; i > 10000; --i) {
+			tree.removeNode(i, 0);
+			tree.verify();
+			tree.removeNode(-i, 0);
+			tree.verify();
+			int nodeCount = tree.verifyNodeCount();
+			assertTrue((20000-2-2*i) == nodeCount);
 		}
 
 	}

@@ -158,7 +158,7 @@ class EventTree {
 	}
 
 	private Node root = nilNode;
-	private Node lowest;
+	private Node lowest = null;
 
 	private static final Node nilNode;
 
@@ -194,10 +194,16 @@ class EventTree {
 		return lowest;
 	}
 
-	private void updateLowest() {
-		if (root == null)
-			return;
+	public void reset() {
+		root = nilNode;
+		lowest = null;
+	}
 
+	private void updateLowest() {
+		if (root == nilNode) {
+			lowest = null;
+			return;
+		}
 		Node current = root;
 		while (current.left != nilNode)
 			current = current.left;
@@ -205,25 +211,32 @@ class EventTree {
 		lowest = current;
 	}
 
-	public void insertEvent(Event e, long schedTick, int priority) {
+	public Node createNode(long schedTick, int priority) {
 		if (root == nilNode) {
 			root = new Node(schedTick, priority);
-			root.addFront(e);
-			return;
+			lowest = root;
+			return root;
 		}
 		resetScratch();
-		Node newNode = insertInTree(root, e, schedTick, priority);
-		if (newNode != null) {
-			insertBalance(newNode);
-			root.red = false;
+		Node newNode = insertInTree(schedTick, priority);
+		if (newNode == null) {
+			return null;
 		}
+		insertBalance(newNode);
+		root.red = false;
+
+		if (newNode.compareToNode(lowest) < 0) {
+			lowest = newNode;
+		}
+		return newNode;
 	}
 
-	private Node insertInTree(Node n, Event e, long schedTick, int priority) {
+	private Node insertInTree(long schedTick, int priority) {
+		Node n = root;
+
 		while (true) {
 			int comp = n.compare(schedTick, priority);
 			if (comp == 0) {
-				n.addFront(e);
 				return null; // No new node added
 			}
 			Node next = comp > 0 ? n.left : n.right;
@@ -236,7 +249,6 @@ class EventTree {
 			// There is no current node for this time/priority
 			Node newNode = new Node(schedTick, priority);
 			pushScratch(n);
-			newNode.addFront(e);
 			newNode.red = true;
 			if (comp > 0)
 				n.left = newNode;
@@ -250,9 +262,8 @@ class EventTree {
 		// See the wikipedia page for red-black trees to understand the case numbers
 
 		Node parent = getScratch(1);
-		if (parent == null || !parent.red) return; // case 2
+		if (parent == null || !parent.red) return; // cases 1 and 2
 
-		// case 4
 		Node gp = getScratch(2);
 		if (gp == null) return;
 
@@ -268,14 +279,17 @@ class EventTree {
 			return;
 		}
 
+		// case 4
 		if (n == parent.right && gp != null && parent == gp.left) {
 			// Right child of a left parent, rotate left at parent
 			parent.rotateLeft(gp);
+			parent = n;
 			n = n.left;
 		}
-		if (n == parent.left && gp != null && parent == gp.right) {
+		else if (n == parent.left && gp != null && parent == gp.right) {
 			// left child of right parent, rotate right at parent
 			parent.rotateRight(gp);
+			parent = n;
 			n = n.right;
 		}
 
@@ -347,17 +361,19 @@ class EventTree {
 
 
 		if (current.red) {
+			updateLowest();
 			return true; // We swapped out a red node, there's nothing else to do
 		}
 		if (child.red) {
 			child.red = false;
+			updateLowest();
 			return true; // traded a red for a black, still all good.
 		}
 
 		// We removed a black node with a black child, we need to re-balance the tree
 		deleteBalance(child);
 		root.red = false;
-
+		updateLowest();
 		return true;
 	}
 
@@ -396,6 +412,7 @@ class EventTree {
 			dropScratch(1);
 			pushScratch(sib);
 			pushScratch(parent);
+			gp = getScratch(2);
 
 			// update the sibling
 			sib = (parent.left == n) ? parent.right : parent.left;
@@ -425,7 +442,7 @@ class EventTree {
 			sib.left.red = false;
 			sib.rotateRight(parent);
 
-			sib = sib.left;
+			sib = parent.right;
 		} else if (parent.right == n &&
 		           !sib.left.red &&
 		           sib.right.red) {
@@ -434,7 +451,7 @@ class EventTree {
 			sib.right.red = false;
 			sib.rotateLeft(parent);
 
-			sib = sib.left;
+			sib = parent.left;
 		}
 
 		// case 6
@@ -455,6 +472,9 @@ class EventTree {
 	// Verify the sorting structure and return the number of nodes
 	public int verify() {
 		if (root == nilNode) return 0;
+
+		if (nilNode.red == true)
+			throw new RuntimeException("nil node corrupted, turned red");
 		return verifyNode(root);
 	}
 
@@ -486,19 +506,18 @@ class EventTree {
 	}
 
 	// Search the tree and return true if this node is found
-	public boolean find(long schedTick, int priority) {
+	public Node find(long schedTick, int priority) {
 		Node curr = root;
 		while (true) {
+			if (curr == nilNode) return null;
 			int comp = curr.compare(schedTick, priority);
 			if (comp == 0) {
-				return true;
+				return curr;
 			}
 			if (comp < 0) {
-				if (curr.right == nilNode) return false;
 				curr = curr.right;
 				continue;
 			}
-			if (curr.left == nilNode) return false;
 			curr = curr.left;
 			continue;
 		}
