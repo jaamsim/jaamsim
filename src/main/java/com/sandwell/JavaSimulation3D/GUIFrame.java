@@ -351,7 +351,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				Simulation.pause();
+				currentEvt.pause();
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
@@ -382,7 +382,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				Simulation.pause();
+				currentEvt.pause();
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
@@ -1212,7 +1212,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 */
 	private void pauseSimulation() {
 		if( getSimState() == SIM_STATE_RUNNING )
-			Simulation.pause();
+			currentEvt.pause();
 		else
 			throw new ErrorException( "Invalid Simulation State for pause" );
 	}
@@ -1245,6 +1245,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private int simState;
 	public int getSimState() {
 		return simState;
+	}
+
+	EventManager currentEvt;
+	private void setEventManager(EventManager e) {
+		currentEvt = e;
 	}
 
 	/**
@@ -1517,6 +1522,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		EventManager evt = Simulation.initEVT();
 		GUIFrame gui = GUIFrame.instance();
+		gui.setEventManager(evt);
 		gui.updateForSimulationState(SIM_STATE_LOADED);
 		evt.setTimeListener(gui);
 		evt.setErrorListener(gui);

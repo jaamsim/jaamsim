@@ -457,7 +457,7 @@ public class Simulation extends Entity {
 
 		@Override
 		public void process() {
-			Simulation.pause();
+			EventManager.current().pause();
 			for (int i = 0; i < Entity.getAll().size(); i++) {
 				Entity.getAll().get(i).doEnd();
 			}
@@ -469,8 +469,7 @@ public class Simulation extends Entity {
 			if (Simulation.getExitAtStop() || InputAgent.getBatch())
 				GUIFrame.shutdown(0);
 
-			Simulation.pause();
-
+			EventManager.current().pause();
 		}
 	}
 
