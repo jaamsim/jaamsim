@@ -539,6 +539,18 @@ public class Simulation extends Entity {
 		setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
 	}
 
+	/**
+	 * Closes all the Tools windows temporarily.
+	 */
+	public static void closeAllTools() {
+		setWindowVisible(EntityPallet.getInstance(), false);
+		setWindowVisible(ObjectSelector.getInstance(), false);
+		setWindowVisible(EditBox.getInstance(), false);
+		setWindowVisible(OutputBox.getInstance(), false);
+		setWindowVisible(PropertyBox.getInstance(), false);
+		setWindowVisible(LogBox.getInstance(), false);
+	}
+
 	@Output(name = "Configuration File",
 			 description = "The present configuration file.")
 	public String getConfigFileName(double simTime) {

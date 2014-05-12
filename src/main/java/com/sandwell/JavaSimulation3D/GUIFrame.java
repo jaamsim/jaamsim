@@ -74,13 +74,9 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.DisplayEntityFactory;
-import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
-import com.jaamsim.ui.ObjectSelector;
-import com.jaamsim.ui.OutputBox;
-import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
@@ -238,12 +234,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		public void windowIconified(WindowEvent e) {
 
 			// Close all the tools
-			EntityPallet.getInstance().setVisible(false);
-			ObjectSelector.getInstance().setVisible(false);
-			EditBox.getInstance().setVisible(false);
-			OutputBox.getInstance().setVisible(false);
-			PropertyBox.getInstance().setVisible(false);
-			LogBox.getInstance().setVisible(false);
+			Simulation.closeAllTools();
 
 			// Save whether each window is open or closed
 			for (View v : View.getAll()) {
@@ -1583,6 +1574,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if(!quiet && !batch) {
 			displayWindows();
 		}
+
+		// If in batch or quiet mode, close the any tools that were opened
+		if (quiet || batch)
+			Simulation.closeAllTools();
 
 		// Set RecordEdits mode (if it has not already been set in the configuration file)
 		InputAgent.setRecordEdits(true);
