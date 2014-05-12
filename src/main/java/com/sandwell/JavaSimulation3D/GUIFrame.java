@@ -81,6 +81,7 @@ import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;
+import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Tester;
@@ -1222,8 +1223,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 */
 	private void stopSimulation() {
 		if( getSimState() == SIM_STATE_RUNNING ||
-		    getSimState() == SIM_STATE_PAUSED )
-			Simulation.stop();
+		    getSimState() == SIM_STATE_PAUSED ) {
+			currentEvt.pause();
+			currentEvt.clear();
+			this.updateForSimulationState(GUIFrame.SIM_STATE_STOPPED);
+
+			// kill all generated objects
+			for (int i = 0; i < Entity.getAll().size();) {
+				Entity ent = Entity.getAll().get(i);
+				if (ent.testFlag(Entity.FLAG_GENERATED))
+					ent.kill();
+				else
+					i++;
+			}
+		}
 		else
 			throw new ErrorException( "Invalid Simulation State for stop" );
 	}

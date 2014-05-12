@@ -379,24 +379,6 @@ public class Simulation extends Entity {
 		root.resume(ticks);
 	}
 
-	/**
-	 *	Requests the EventManager to stop processing events.
-	 */
-	public static final void stop() {
-		root.pause();
-		root.clear();
-		GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_STOPPED);
-
-		// kill all generated objects
-		for (int i = 0; i < Entity.getAll().size();) {
-			Entity ent = Entity.getAll().get(i);
-			if (ent.testFlag(Entity.FLAG_GENERATED))
-				ent.kill();
-			else
-				i++;
-		}
-	}
-
 	private static class StartUpTarget extends ProcessTarget {
 		final Entity ent;
 
