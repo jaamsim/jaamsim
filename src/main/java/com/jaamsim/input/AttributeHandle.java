@@ -18,11 +18,20 @@ import com.sandwell.JavaSimulation.Entity;
 
 public class AttributeHandle extends OutputHandle {
 	private String attributeName;
+	private double initialValue;
 	private double value;
 
 	public AttributeHandle(Entity e, String outputName) {
 		super(e);
 		this.attributeName = outputName;
+	}
+
+	public void setInitialValue(double val) {
+		initialValue = val;
+	}
+
+	public double getInitialValue() {
+		return initialValue;
 	}
 
 	public void setValue(double val) {

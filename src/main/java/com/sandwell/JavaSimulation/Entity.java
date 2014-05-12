@@ -173,7 +173,13 @@ public class Entity {
 	 * This method must not depend on any other entities so that it can be
 	 * called for each entity in any sequence.
 	 */
-	public void earlyInit() {}
+	public void earlyInit() {
+
+		// Reset the attributes to their initial values
+		for (AttributeHandle h : attributeMap.values()) {
+			h.setValue(h.getInitialValue());
+		}
+	}
 
 	/**
 	 * Starts the execution of the model run for this entity.
