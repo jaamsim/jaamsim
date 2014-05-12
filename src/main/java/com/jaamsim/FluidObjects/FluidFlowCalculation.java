@@ -17,8 +17,8 @@ package com.jaamsim.FluidObjects;
 import com.jaamsim.CalculationObjects.CalculationEntity;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.sandwell.JavaSimulation.EntityInput;
 import com.jaamsim.units.VolumeFlowUnit;
+import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 
 /**

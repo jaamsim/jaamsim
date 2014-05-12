@@ -15,9 +15,10 @@
 package com.jaamsim.FluidObjects;
 
 import java.util.ArrayList;
+
 import com.jaamsim.input.Output;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ErrorException;
+import com.sandwell.JavaSimulation.InputErrorException;
 
 /**
  * FluidFlow tracks the flow rate between a source and a destination.

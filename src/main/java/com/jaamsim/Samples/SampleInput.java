@@ -17,7 +17,6 @@ package com.jaamsim.Samples;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
