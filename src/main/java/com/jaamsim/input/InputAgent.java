@@ -647,12 +647,7 @@ public class InputAgent {
 	}
 
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
-		StringVector data = new StringVector(kw.end - kw.start);
-		for (int i = kw.start + 2; i < kw.end; i++) {
-			data.add(kw.input.get(i));
-		}
-
-		in.parse(data, kw.context);
+		in.parse(kw);
 
 		// Only mark the keyword edited if we have finished initial configuration
 		if ( InputAgent.recordEdits() )
@@ -663,16 +658,16 @@ public class InputAgent {
 		if(ent.testFlag(Entity.FLAG_GENERATED))
 			return;
 
-		StringBuilder out = new StringBuilder(data.size() * 6);
-		for (int i = 0; i < data.size(); i++) {
-			String dat = data.get(i);
+		StringBuilder out = new StringBuilder((kw.end - kw.start) * 6);
+		for (int i = kw.start + 2; i < kw.end; i++) {
+			String dat = kw.input.get(i);
+			if (i < kw.end - 1)
+				out.append("  ");
+
 			if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
 				out.append("'").append(dat).append("'");
 			else
 				out.append(dat);
-
-			if( i < data.size() - 1 )
-				out.append("  ");
 		}
 
 		if(in.isEdited()) {

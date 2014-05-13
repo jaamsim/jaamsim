@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputAgent.KeywordIndex;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
@@ -163,6 +164,15 @@ public abstract class Input<T> {
 
 	public void setValueString(String str) {
 		valueString = str;
+	}
+
+	public void parse(KeywordIndex kw) throws InputErrorException {
+		StringVector data = new StringVector(kw.end - kw.start);
+		for (int i = kw.start + 2; i < kw.end; i++) {
+			data.add(kw.input.get(i));
+		}
+
+		parse(data, kw.context);
 	}
 
 	public abstract void parse(StringVector input) throws InputErrorException;
