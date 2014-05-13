@@ -78,6 +78,7 @@ import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
+import com.jaamsim.ui.ObjectSelector;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.ui.View;

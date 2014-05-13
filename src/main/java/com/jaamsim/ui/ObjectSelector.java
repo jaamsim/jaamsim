@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,15 +41,14 @@ import javax.swing.tree.TreeSelectionModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.GraphicBox;
-import com.jaamsim.ui.LogBox;
-import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Palette;
 import com.sandwell.JavaSimulation.Simulation;
+import com.sandwell.JavaSimulation3D.DisplayEntity;
+import com.sandwell.JavaSimulation3D.GUIFrame;
+import com.sandwell.JavaSimulation3D.Text;
 
 public class ObjectSelector extends FrameBox {
 	private static ObjectSelector myInstance;
@@ -354,17 +353,7 @@ public class ObjectSelector extends FrameBox {
 	}
 
 
-public static abstract class DEMenuItem {
-	public String menuName;
-
-	public DEMenuItem(String name) {
-		menuName = name;
-	}
-
-	public abstract void action();
-}
-
-static class InputMenuItem extends DEMenuItem {
+static class InputMenuItem extends MenuItem {
 	private final Entity ent;
 	public InputMenuItem(Entity ent) {
 		super("Input Editor");
@@ -378,7 +367,7 @@ static class InputMenuItem extends DEMenuItem {
 	}
 }
 
-static class PropertyMenuItem extends DEMenuItem {
+static class PropertyMenuItem extends MenuItem {
 	private final Entity ent;
 	public PropertyMenuItem(Entity ent) {
 		super("Property Viewer");
@@ -392,7 +381,7 @@ static class PropertyMenuItem extends DEMenuItem {
 	}
 }
 
-static class OutputMenuItem extends DEMenuItem {
+static class OutputMenuItem extends MenuItem {
 	private final Entity ent;
 	public OutputMenuItem(Entity ent) {
 		super("Output Viewer");
@@ -406,7 +395,7 @@ static class OutputMenuItem extends DEMenuItem {
 	}
 }
 
-static class DuplicateMenuItem extends DEMenuItem {
+static class DuplicateMenuItem extends MenuItem {
 	private final Entity ent;
 	public DuplicateMenuItem(Entity ent) {
 		super("Duplicate");
@@ -441,7 +430,7 @@ static class DuplicateMenuItem extends DEMenuItem {
 	}
 }
 
-static class DeleteMenuItem extends DEMenuItem {
+static class DeleteMenuItem extends MenuItem {
 	private final Entity ent;
 	public DeleteMenuItem(Entity ent) {
 		super("Delete");
@@ -455,7 +444,7 @@ static class DeleteMenuItem extends DEMenuItem {
 	}
 }
 
-static class GraphicsMenuItem extends DEMenuItem {
+static class GraphicsMenuItem extends MenuItem {
 	private final DisplayEntity ent;
 	private final int x;
 	private final int y;
@@ -478,7 +467,7 @@ static class GraphicsMenuItem extends DEMenuItem {
 	}
 }
 
-static class LabelMenuItem extends DEMenuItem {
+static class LabelMenuItem extends MenuItem {
 	private final DisplayEntity ent;
 
 	public LabelMenuItem(DisplayEntity ent) {
@@ -503,7 +492,7 @@ static class LabelMenuItem extends DEMenuItem {
 	}
 }
 
-static class CenterInViewMenuItem extends DEMenuItem {
+static class CenterInViewMenuItem extends MenuItem {
 	private final DisplayEntity ent;
 	private final View v;
 
@@ -526,9 +515,9 @@ static class CenterInViewMenuItem extends DEMenuItem {
 
 	private static class JActionMenuItem extends JMenuItem
 	implements ActionListener {
-		private final DEMenuItem de;
+		private final MenuItem de;
 
-		public JActionMenuItem(DEMenuItem item) {
+		public JActionMenuItem(MenuItem item) {
 			super(item.menuName);
 			de = item;
 			this.addActionListener(this);
@@ -546,14 +535,14 @@ static class CenterInViewMenuItem extends DEMenuItem {
 	 * @param menuItems
 	 */
 	public static void populateMenu(JPopupMenu menu, Entity ent, int x, int y) {
-		ArrayList<DEMenuItem> menuItems = getMenuItems(ent, x, y);
-		for (ObjectSelector.DEMenuItem item : menuItems) {
+		ArrayList<MenuItem> menuItems = getMenuItems(ent, x, y);
+		for (MenuItem item : menuItems) {
 			menu.add(new JActionMenuItem(item));
 		}
 	}
 
-	private static ArrayList<DEMenuItem> getMenuItems(Entity ent, int x, int y) {
-		ArrayList<DEMenuItem> list = new ArrayList<DEMenuItem>();
+	private static ArrayList<MenuItem> getMenuItems(Entity ent, int x, int y) {
+		ArrayList<MenuItem> list = new ArrayList<MenuItem>();
 		list.add(new InputMenuItem(ent));
 		list.add(new OutputMenuItem(ent));
 		list.add(new PropertyMenuItem(ent));

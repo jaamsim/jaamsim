@@ -12,10 +12,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.ui;
 
 import java.util.ArrayList;
 
 public interface MenuItemEntity {
-	void gatherMenuItems(ArrayList<ObjectSelector.DEMenuItem> list, int x, int y);
+	void gatherMenuItems(ArrayList<MenuItem> list, int x, int y);
 }

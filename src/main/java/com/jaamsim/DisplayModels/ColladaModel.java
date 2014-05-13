@@ -44,13 +44,12 @@ import com.jaamsim.render.MeshProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
+import com.jaamsim.ui.MenuItem;
 import com.jaamsim.ui.LogBox;
+import com.jaamsim.ui.MenuItemEntity;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
-import com.sandwell.JavaSimulation3D.MenuItemEntity;
-import com.sandwell.JavaSimulation3D.ObjectSelector;
-import com.sandwell.JavaSimulation3D.ObjectSelector.DEMenuItem;
 
 public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
@@ -356,8 +355,8 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 	}
 
 	@Override
-	public void gatherMenuItems(ArrayList<ObjectSelector.DEMenuItem> list, int x, int y) {
-		list.add(new DEMenuItem("Export 3D Binary File (*.jsb)") {
+	public void gatherMenuItems(ArrayList<MenuItem> list, int x, int y) {
+		list.add(new MenuItem("Export 3D Binary File (*.jsb)") {
 
 			@Override
 			public void action() {
