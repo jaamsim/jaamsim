@@ -435,11 +435,7 @@ public final class EventManager {
 	 * insert it.
 	 */
 	private EventNode getEventNode(long tick, int prio) {
-		EventNode foundNode = eventTree.find(tick, prio);
-		if (foundNode != null)
-			return foundNode;
-
-		return eventTree.createNode(tick, prio);
+		return eventTree.createOrFindNode(tick, prio);
 	}
 
 	/**

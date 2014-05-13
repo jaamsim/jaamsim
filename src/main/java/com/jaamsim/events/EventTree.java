@@ -69,33 +69,22 @@ class EventTree {
 		lowest = current;
 	}
 
-	public EventNode createNode(long schedTick, int priority) {
+	public EventNode createOrFindNode(long schedTick, int priority) {
+
 		if (root == EventNode.nilNode) {
 			root = getNewNode(schedTick, priority);
 			lowest = root;
 			return root;
 		}
 		resetScratch();
-		EventNode newNode = insertInTree(schedTick, priority);
-		if (newNode == null) {
-			return null;
-		}
-		insertBalance(newNode);
-		root.red = false;
 
-		if (lowest != null && newNode.compareToNode(lowest) < 0) {
-			lowest = newNode;
-		}
-		return newNode;
-	}
-
-	private EventNode insertInTree(long schedTick, int priority) {
 		EventNode n = root;
+		EventNode newNode = null;
 
 		while (true) {
 			int comp = n.compare(schedTick, priority);
 			if (comp == 0) {
-				return null; // No new node added
+				return n; // Found existing node
 			}
 			EventNode next = comp > 0 ? n.left : n.right;
 			if (next != EventNode.nilNode) {
@@ -105,15 +94,24 @@ class EventTree {
 			}
 
 			// There is no current node for this time/priority
-			EventNode newNode = getNewNode(schedTick, priority);
+			newNode = getNewNode(schedTick, priority);
 			pushScratch(n);
 			newNode.red = true;
 			if (comp > 0)
 				n.left = newNode;
 			else
 				n.right = newNode;
-			return newNode;
+			break;
 		}
+
+		insertBalance(newNode);
+		root.red = false;
+
+		if (lowest != null && newNode.compareToNode(lowest) < 0) {
+			lowest = newNode;
+		}
+		return newNode;
+
 	}
 
 	private void insertBalance(EventNode n) {
