@@ -127,7 +127,7 @@ public class EntityGenerator extends LinkedComponent {
 		// Create the new entity
 		numberGenerated++;
 		DisplayEntity proto = prototypeEntity.getValue();
-		String name = String.format("Copy_of_%s-%s", proto.getInputName(), numberGenerated);
+		String name = "Copy_of_" + proto.getInputName() + "-" + numberGenerated;
 		DisplayEntity ent = InputAgent.defineEntityWithUniqueName(proto.getClass(), name, true);
 		ent.copyInputs(proto);
 		ent.setFlag(Entity.FLAG_GENERATED);
