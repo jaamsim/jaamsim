@@ -630,6 +630,7 @@ public class InputAgent {
 	}
 
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
+		in.setValueString(kw.argString()); // This needs to be set before parsing, as parsing may overwrite it
 		in.parse(kw);
 
 		// Only mark the keyword edited if we have finished initial configuration
@@ -645,7 +646,6 @@ public class InputAgent {
 			ent.setFlag(Entity.FLAG_EDITED);
 			sessionEdited = true;
 		}
-		in.setValueString(kw.argString());
 	}
 
 	private static void processKeyword(Entity entity, KeywordIndex key) {

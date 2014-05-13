@@ -39,6 +39,7 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 			}
 		}
 		value = bindings;
+		setValueString(genValueString());
 	}
 
 	private Action.Binding parseBinding(StringVector tokens) throws InputErrorException {
@@ -49,8 +50,7 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 		return binding;
 	}
 
-	@Override
-	public String getValueString() {
+	private String genValueString() {
 		if (value == null)
 			return "";
 

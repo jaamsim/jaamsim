@@ -81,7 +81,7 @@ public abstract class Input<T> {
 
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean hidden; // Hide this input from the EditBox
-	protected String valueString; // value from .cfg file
+	private String valueString; // value from .cfg file
 
 	public static class ParseContext {
 		public URI context;
@@ -167,7 +167,7 @@ public abstract class Input<T> {
 		return edited;
 	}
 
-	public String getValueString() {
+	public final String getValueString() {
 		return valueString;
 	}
 

@@ -60,6 +60,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		}
 
 		value = temp;
+		setValueString(genValueString());
 	}
 
 	@Override
@@ -74,8 +75,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		return list;
 	}
 
-	@Override
-	public String getValueString() {
+	private String genValueString() {
 		if( value == null)
 			return "";
 

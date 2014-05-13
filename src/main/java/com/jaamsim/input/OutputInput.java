@@ -74,6 +74,7 @@ public class OutputInput<T> extends Input<String> {
 				value += "." + name;
 			}
 		}
+		setValueString(genValueString());
 	}
 
 	public OutputHandle getOutputHandle(double simTime) {
@@ -107,8 +108,7 @@ public class OutputInput<T> extends Input<String> {
 		return o.getValueAsDouble(simTime, def);
 	}
 
-	@Override
-	public String getValueString() {
+	private String genValueString() {
 		if (ent == null)
 			return "";
 

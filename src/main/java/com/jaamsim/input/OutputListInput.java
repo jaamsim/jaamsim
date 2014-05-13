@@ -65,14 +65,14 @@ public class OutputListInput<T> extends ListInput<ArrayList<OutputHandle>> {
 			}
 		}
 		value = temp;
+		setValueString(genValueString());
 	}
 
 	public T getOutputValue(int i, double simTime) {
 		return value.get(i).getValue(simTime, klass);
 	}
 
-	@Override
-	public String getValueString() {
+	private String genValueString() {
 		if( value == null)
 			return "";
 
