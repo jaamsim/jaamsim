@@ -70,7 +70,7 @@ class EventTree {
 
 	public EventNode createNode(long schedTick, int priority) {
 		if (root == EventNode.nilNode) {
-			root = new EventNode(schedTick, priority);
+			root = EventNode.getNewNode(schedTick, priority);
 			lowest = root;
 			return root;
 		}
@@ -104,7 +104,7 @@ class EventTree {
 			}
 
 			// There is no current node for this time/priority
-			EventNode newNode = new EventNode(schedTick, priority);
+			EventNode newNode = EventNode.getNewNode(schedTick, priority);
 			pushScratch(n);
 			newNode.red = true;
 			if (comp > 0)
@@ -222,6 +222,7 @@ class EventTree {
 		if (current == root)
 			root = child;
 
+		EventNode.reuseNode(current);
 
 		if (current.red) {
 			return true; // We swapped out a red node, there's nothing else to do
