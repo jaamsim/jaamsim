@@ -105,9 +105,13 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 		tokens.add(rec.substring(cIndex, rec.length()));
 }
 
-private static final Pattern quoted = Pattern.compile("[ \t{}]");
 public static final boolean needsQuoting(String s) {
-	return quoted.matcher(s).find();
+	for (int i = 0; i < s.length(); ++i) {
+		char c = s.charAt(i);
+		if (c == ' ' || c == '\t' || c == '{' || c == '}')
+			return true;
+	}
+	return false;
 }
 
 private static final Pattern isquoted = Pattern.compile("'.*'");
