@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputAgent.KeywordIndex;
 
 public class DirInput extends Input<URI> {
 	public DirInput(String key, String cat, URI def) {
@@ -26,32 +27,33 @@ public class DirInput extends Input<URI> {
 	}
 
 	@Override
-	public void parse(StringVector input, Input.ParseContext context)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(input, 1);
+		Input.assertCount(kw, 1);
 
+		String arg = kw.input.get(kw.start + 2);
 		// Convert the file path to a URI
 		URI temp = null;
 		try {
-			if (context != null)
-				temp = InputAgent.getFileURI(context.context, input.get(0), context.jail);
+			if (kw.context != null)
+				temp = InputAgent.getFileURI(kw.context.context, arg, kw.context.jail);
 			else
-				temp = InputAgent.getFileURI(null, input.get(0), null);
+				temp = InputAgent.getFileURI(null, arg, null);
 		}
 		catch (URISyntaxException ex) {
 			throw new InputErrorException("File Entity parse error: %s", ex.getMessage());
 		}
 
 		if (temp == null)
-			throw new InputErrorException("Unable to parse the file path:\n%s", input.get(0));
+			throw new InputErrorException("Unable to parse the file path:\n%s", arg);
 
 		try {
 			File f = new File(temp);
 			if (f.exists() && !f.isDirectory())
-				throw new InputErrorException("File Entity parse error: %s is not a directory", input.get(0));
+				throw new InputErrorException("File Entity parse error: %s is not a directory", arg);
 		}
 		catch (IllegalArgumentException e) {
-			throw new InputErrorException("Unable to parse the directory:\n%s", input.get(0));
+			throw new InputErrorException("Unable to parse the directory:\n%s", arg);
 		}
 
 		value = temp;

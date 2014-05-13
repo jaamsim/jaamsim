@@ -544,6 +544,21 @@ public class InputAgent {
 		public int numArgs() {
 			return end - start - 2;
 		}
+
+		public String argString() {
+			StringBuilder sb = new StringBuilder();
+			for (int i = start + 2; i < end; i++) {
+				String dat = this.input.get(i);
+				if (i < this.end - 1)
+					sb.append("  ");
+
+				if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
+					sb.append("'").append(dat).append("'");
+				else
+					sb.append(dat);
+			}
+			return sb.toString();
+		}
 	}
 
 	private static ArrayList<KeywordIndex> getKeywords(ArrayList<String> input, ParseContext context) {
@@ -662,23 +677,11 @@ public class InputAgent {
 		if(ent.testFlag(Entity.FLAG_GENERATED))
 			return;
 
-		StringBuilder out = new StringBuilder((kw.end - kw.start) * 6);
-		for (int i = kw.start + 2; i < kw.end; i++) {
-			String dat = kw.input.get(i);
-			if (i < kw.end - 1)
-				out.append("  ");
-
-			if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
-				out.append("'").append(dat).append("'");
-			else
-				out.append(dat);
-		}
-
 		if(in.isEdited()) {
 			ent.setFlag(Entity.FLAG_EDITED);
 			sessionEdited = true;
 		}
-		in.setValueString(out.toString());
+		in.setValueString(kw.argString());
 	}
 
 	private static void processKeyword(Entity entity, KeywordIndex key) {

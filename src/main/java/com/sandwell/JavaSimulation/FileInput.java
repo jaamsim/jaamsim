@@ -28,6 +28,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Parser;
+import com.jaamsim.input.InputAgent.KeywordIndex;
 
 public class FileInput extends Input<URI> {
 	private String fileType;  // the type of file, e.g. "Image" or "3D"
@@ -42,32 +43,34 @@ public class FileInput extends Input<URI> {
 	}
 
 	@Override
-	public void parse(StringVector input, Input.ParseContext context)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(input, 1);
+		Input.assertCount(kw, 1);
+
+		String arg = kw.input.get(kw.start + 2);
 
 		// Convert the file path to a URI
 		URI temp = null;
 		try {
-			if (context != null)
-				temp = InputAgent.getFileURI(context.context, input.get(0), context.jail);
+			if (kw.context != null)
+				temp = InputAgent.getFileURI(kw.context.context, arg, kw.context.jail);
 			else
-				temp = InputAgent.getFileURI(null, input.get(0), null);
+				temp = InputAgent.getFileURI(null, arg, null);
 		}
 		catch (URISyntaxException ex) {
 			throw new InputErrorException("File Entity parse error: %s", ex.getMessage());
 		}
 
 		if (temp == null)
-			throw new InputErrorException("Unable to parse the file path:\n%s", input.get(0));
+			throw new InputErrorException("Unable to parse the file path:\n%s", arg);
 
 		if (!temp.isOpaque() && temp.getPath() == null)
-			 throw new InputErrorException("Unable to parse the file path:\n%s", input.get(0));
+			 throw new InputErrorException("Unable to parse the file path:\n%s", arg);
 
 		// Confirm that the file exists
 		if (!InputAgent.fileExists(temp))
 			throw new InputErrorException("The specified file does not exist.\n" +
-					"File path = %s", input.get(0));
+					"File path = %s", arg);
 
 		if (!isValidExtension(temp))
 			throw new InputErrorException("Invalid file extension: %s.\nValid extensions are: %s",
