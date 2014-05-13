@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -31,7 +32,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 	}
 
 	@Override
-	public void parse(StringVector input) throws InputErrorException {
+	public void parse(KeywordIndex kw) throws InputErrorException {
 
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
@@ -39,27 +40,27 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 		long startingYearOffset = -1;
 		long lastTime = -1;
 
-		DoubleVector times = new DoubleVector(input.size()/4);
-		DoubleVector values = new DoubleVector(input.size()/4);
+		DoubleVector times = new DoubleVector(kw.numArgs()/4);
+		DoubleVector values = new DoubleVector(kw.numArgs()/4);
 
 		// Determine records in the time series
 		// Records have form: (e.g.) yyyy-MM-dd HH:mm value units
 		// where units are optional
 		StringVector each = new StringVector();
-		for (int i=0; i < input.size(); i++) {
+		for (int i=0; i < kw.numArgs(); i++) {
 
 			//skip over opening brace if present
-			if (input.get(i).equals("{") )
+			if (kw.getArg(i).equals("{") )
 				continue;
 
 			each.clear();
 
 			// Load one record into 'each' containing an individual timeseries record
-			for (int j = i; j < input.size(); j++, i++){
-				if (input.get(j).equals("}"))
+			for (int j = i; j < kw.numArgs(); j++, i++){
+				if (kw.getArg(j).equals("}"))
 					break;
 
-				each.add(input.get(j));
+				each.add(kw.getArg(j));
 			}
 
 			// Check the number of entries in the record
