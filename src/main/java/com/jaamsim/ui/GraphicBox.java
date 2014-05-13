@@ -47,7 +47,7 @@ import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.InputAgent.KeywordIndex;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.Future;

@@ -16,6 +16,8 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.Input;
+
 public class EnumInput<T extends Enum<T>> extends Input<T> {
 	private final Class<T> type;
 

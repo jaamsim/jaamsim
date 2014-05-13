@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 
 public class CompatInput extends Input<String> {

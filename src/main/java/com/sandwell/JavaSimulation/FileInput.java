@@ -26,9 +26,10 @@ import java.util.Arrays;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
-import com.jaamsim.input.InputAgent.KeywordIndex;
 
 public class FileInput extends Input<URI> {
 	private String fileType;  // the type of file, e.g. "Image" or "3D"

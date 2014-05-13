@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.Input;
+
 public abstract class ListInput<T> extends Input<T> {
 	protected int minCount;
 	protected int maxCount;

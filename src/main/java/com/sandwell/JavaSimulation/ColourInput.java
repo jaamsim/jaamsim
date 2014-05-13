@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.HashMap;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.math.Color4d;
 
 public class ColourInput extends Input<Color4d> {

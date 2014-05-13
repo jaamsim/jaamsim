@@ -21,7 +21,6 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.DoubleVector;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringVector;
 

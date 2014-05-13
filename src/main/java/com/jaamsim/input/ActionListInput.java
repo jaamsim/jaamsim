@@ -17,7 +17,6 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.render.Action;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.StringVector;

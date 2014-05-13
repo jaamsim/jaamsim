@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
@@ -28,7 +29,6 @@ import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 

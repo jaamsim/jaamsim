@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.Input;
+
 public class StringInput extends Input<String> {
 
 	public StringInput(String key, String cat, String def) {

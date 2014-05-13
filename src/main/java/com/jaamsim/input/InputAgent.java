@@ -33,6 +33,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.input.Input.ParseContext;
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
@@ -40,8 +41,6 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Group;
-import com.sandwell.JavaSimulation.Input;
-import com.sandwell.JavaSimulation.Input.ParseContext;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Palette;
@@ -523,41 +522,6 @@ public class InputAgent {
 			catch (Throwable e) {
 				InputAgent.logInpError("Entity: %s, Keyword: %s - %s", ent.getInputName(), keyword.keyword, e.getMessage());
 			}
-		}
-	}
-
-	public static class KeywordIndex {
-		public final ArrayList<String> input;
-		public final String keyword;
-		public final int start;
-		public final int end;
-		public final ParseContext context;
-
-		public KeywordIndex(ArrayList<String> inp, int s, int e, ParseContext ctxt) {
-			input = inp;
-			keyword = input.get(s);
-			start = s;
-			end = e;
-			context = ctxt;
-		}
-
-		public int numArgs() {
-			return end - start - 2;
-		}
-
-		public String argString() {
-			StringBuilder sb = new StringBuilder();
-			for (int i = start + 2; i < end; i++) {
-				String dat = this.input.get(i);
-				if (i < this.end - 1)
-					sb.append("  ");
-
-				if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
-					sb.append("'").append(dat).append("'");
-				else
-					sb.append(dat);
-			}
-			return sb.toString();
 		}
 	}
 

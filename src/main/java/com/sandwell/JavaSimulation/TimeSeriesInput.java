@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;

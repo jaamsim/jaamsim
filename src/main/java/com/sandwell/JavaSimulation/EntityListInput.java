@@ -17,6 +17,8 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.input.Input;
+
 public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	private Class<T> entClass;
 	private boolean unique; // flag to determine if list must be unique or not

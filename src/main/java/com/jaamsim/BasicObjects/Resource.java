@@ -18,12 +18,12 @@ import java.util.ArrayList;
 
 import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;

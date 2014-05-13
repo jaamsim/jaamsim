@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 
 public class DeprecatedInput extends Input<String> {

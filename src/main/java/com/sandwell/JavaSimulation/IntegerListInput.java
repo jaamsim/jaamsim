@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.Input;
+
 public class IntegerListInput extends ListInput<IntegerVector> {
 	private int minValue = Integer.MIN_VALUE;
 	private int maxValue = Integer.MAX_VALUE;

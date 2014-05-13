@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;

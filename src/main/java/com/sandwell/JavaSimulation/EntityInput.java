@@ -17,6 +17,8 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.input.Input;
+
 public class EntityInput<T extends Entity> extends Input<T> {
 
 	private Class<T> entClass;

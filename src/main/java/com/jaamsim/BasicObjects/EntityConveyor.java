@@ -17,6 +17,7 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
@@ -28,7 +29,6 @@ import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.ErrorException;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 

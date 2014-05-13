@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.Input;
+
 public class ClassInput extends Input<Class<? extends Entity>>{
 
 	public ClassInput(String key, String cat, Class<? extends Entity> def) {

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;

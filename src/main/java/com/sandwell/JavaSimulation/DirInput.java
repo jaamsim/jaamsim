@@ -18,8 +18,9 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.InputAgent.KeywordIndex;
+import com.jaamsim.input.KeywordIndex;
 
 public class DirInput extends Input<URI> {
 	public DirInput(String key, String cat, URI def) {

@@ -22,7 +22,7 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import com.sandwell.JavaSimulation.Input;
+import com.jaamsim.input.Input;
 
 public class EditBoxColumnRenderer extends DefaultTableCellRenderer {
 

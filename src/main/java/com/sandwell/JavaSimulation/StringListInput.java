@@ -16,6 +16,8 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.Input;
+
 public class StringListInput extends ListInput<StringVector> {
 	private ArrayList<String> validOptions;
 

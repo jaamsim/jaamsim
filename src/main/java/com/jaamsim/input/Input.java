@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,15 +20,24 @@ import java.util.regex.Pattern;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleProvider;
-import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.InputAgent.KeywordIndex;
-import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation.BooleanVector;
+import com.sandwell.JavaSimulation.ColourInput;
+import com.sandwell.JavaSimulation.DoubleListInput;
+import com.sandwell.JavaSimulation.DoubleVector;
+import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.EntityListInput;
+import com.sandwell.JavaSimulation.Group;
+import com.sandwell.JavaSimulation.InputErrorException;
+import com.sandwell.JavaSimulation.IntegerVector;
+import com.sandwell.JavaSimulation.ObjectType;
+import com.sandwell.JavaSimulation.StringVector;
+import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation3D.Clock;
 
 public abstract class Input<T> {
@@ -422,7 +431,7 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	protected static boolean isInteger(String val) {
+	public static boolean isInteger(String val) {
 		try {
 			Integer.parseInt(val);
 			return true;

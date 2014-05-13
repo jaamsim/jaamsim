@@ -16,6 +16,8 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.Input;
+
 public class BooleanInput extends Input<Boolean> {
 
 	private static final ArrayList<String> validOptions;

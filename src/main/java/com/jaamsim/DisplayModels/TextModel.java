@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
@@ -34,7 +35,6 @@ import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.StringChoiceInput;
 import com.sandwell.JavaSimulation.StringListInput;

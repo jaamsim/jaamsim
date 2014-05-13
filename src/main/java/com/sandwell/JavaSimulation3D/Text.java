@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.OutputInput;
@@ -21,7 +22,6 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.StringInput;
 
 /**

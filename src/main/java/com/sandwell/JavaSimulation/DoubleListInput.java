@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.Input;
+
 public class DoubleListInput extends ListInput<DoubleVector> {
 	protected double minValue = Double.NEGATIVE_INFINITY;
 	protected double maxValue = Double.POSITIVE_INFINITY;

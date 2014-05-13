@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;

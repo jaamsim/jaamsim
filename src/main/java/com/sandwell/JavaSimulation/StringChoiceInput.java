@@ -16,6 +16,8 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.Input;
+
 public class StringChoiceInput extends IntegerInput {
 	private ArrayList<String> choices;
 

@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.Input;
+
 public class DoubleInput extends Input<Double> {
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;

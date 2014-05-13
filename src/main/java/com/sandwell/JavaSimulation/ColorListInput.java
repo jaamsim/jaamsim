@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.math.Color4d;
 
 public class ColorListInput extends ListInput<ArrayList<Color4d>>  {

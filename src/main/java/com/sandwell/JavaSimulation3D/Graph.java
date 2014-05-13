@@ -18,6 +18,7 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.OutputListInput;
@@ -28,7 +29,6 @@ import com.sandwell.JavaSimulation.ColorListInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
 

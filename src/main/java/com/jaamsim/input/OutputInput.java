@@ -15,7 +15,6 @@
 package com.jaamsim.input;
 
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringVector;
 

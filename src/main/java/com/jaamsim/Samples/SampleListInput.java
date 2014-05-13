@@ -17,11 +17,11 @@ package com.jaamsim.Samples;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.StringVector;
