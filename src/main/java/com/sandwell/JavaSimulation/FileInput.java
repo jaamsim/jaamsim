@@ -48,7 +48,7 @@ public class FileInput extends Input<URI> {
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 
-		String arg = kw.input.get(kw.start + 2);
+		String arg = kw.getArg(0);
 
 		// Convert the file path to a URI
 		URI temp = null;
@@ -241,10 +241,4 @@ public class FileInput extends Input<URI> {
 		}
 		return filters;
 	}
-
-	@Override
-	public void parse(StringVector input) throws InputErrorException {
-		throw new InputErrorException("FileInput.parse() deprecated method called.");
-	}
-
 }

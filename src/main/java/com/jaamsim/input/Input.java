@@ -184,7 +184,9 @@ public abstract class Input<T> {
 		parse(data);
 	}
 
-	public abstract void parse(StringVector input) throws InputErrorException;
+	public void parse(StringVector input) throws InputErrorException {
+		return;
+	}
 
 	public static void assertCount(DoubleVector input, int... counts)
 	throws InputErrorException {
@@ -202,7 +204,7 @@ public abstract class Input<T> {
 		throw new InputErrorException(INP_ERR_COUNT, Arrays.toString(counts), input.toString());
 	}
 
-	public static void assertCount(KeywordIndex input, int... counts)
+	public static void assertCount(KeywordIndex kw, int... counts)
 	throws InputErrorException {
 		// If there is no constraint on the element count, return
 		if (counts.length == 0)
@@ -210,12 +212,24 @@ public abstract class Input<T> {
 
 		// If there is an exact constraint, check the count
 		for (int each : counts) {
-			if (each == input.numArgs())
+			if (each == kw.numArgs())
 				return;
 		}
 
 		// Input size is not equal to any of the specified counts
-		throw new InputErrorException(INP_ERR_COUNT, Arrays.toString(counts), input.argString());
+		throw new InputErrorException(INP_ERR_COUNT, Arrays.toString(counts), kw.argString());
+	}
+
+	public static void assertCountRange(KeywordIndex kw, int min, int max)
+	throws InputErrorException {
+		// For a range with a single value, fall back to the exact test
+		if (min == max) {
+			Input.assertCount(kw, min);
+			return;
+		}
+
+		if (kw.numArgs() < min || kw.numArgs() > max)
+			throw new InputErrorException(INP_ERR_RANGECOUNT, min, max, kw.argString());
 	}
 
 	public static void assertCount(StringVector input, int... counts)
@@ -365,6 +379,21 @@ public abstract class Input<T> {
 		}
 
 		throw new InputErrorException(INP_ERR_BOOLEAN, data);
+	}
+
+	public static BooleanVector parseBooleanVector(KeywordIndex kw)
+	throws InputErrorException {
+		BooleanVector temp = new BooleanVector(kw.numArgs());
+
+		for (int i = 0; i < kw.numArgs(); i++) {
+			try {
+				boolean element = Input.parseBoolean(kw.getArg(i));
+				temp.add(element);
+			} catch (InputErrorException e) {
+				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+			}
+		}
+		return temp;
 	}
 
 	public static BooleanVector parseBooleanVector(StringVector input)

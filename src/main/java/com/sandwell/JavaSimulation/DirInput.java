@@ -32,7 +32,7 @@ public class DirInput extends Input<URI> {
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 
-		String arg = kw.input.get(kw.start + 2);
+		String arg = kw.getArg(0);
 		// Convert the file path to a URI
 		URI temp = null;
 		try {
@@ -80,10 +80,5 @@ public class DirInput extends Input<URI> {
 		catch (IllegalArgumentException e) {}
 
 		return null;
-	}
-
-	@Override
-	public void parse(StringVector input) throws InputErrorException {
-		throw new InputErrorException("FileInput.parse() deprecated method called.");
 	}
 }

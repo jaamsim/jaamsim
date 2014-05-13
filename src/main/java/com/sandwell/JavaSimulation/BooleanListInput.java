@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 
 public class BooleanListInput extends ListInput<BooleanVector> {
 
@@ -23,10 +24,10 @@ public class BooleanListInput extends ListInput<BooleanVector> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCountRange(input, minCount, maxCount);
-		value = Input.parseBooleanVector(input);
+		Input.assertCountRange(kw, minCount, maxCount);
+		value = Input.parseBooleanVector(kw);
 	}
 
 	@Override

@@ -51,4 +51,10 @@ public class KeywordIndex {
 		}
 		return sb.toString();
 	}
+
+	public String getArg(int index) {
+		if (index < 0 || index >= numArgs())
+			throw new IndexOutOfBoundsException("Index out of range:" + index);
+		return input.get(start + index + 2);
+	}
 }
