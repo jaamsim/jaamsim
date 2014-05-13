@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
 
 import com.jaamsim.events.EventManager;
@@ -21,6 +23,7 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.EditBox;
@@ -476,13 +479,17 @@ public class Simulation extends Entity {
 	}
 
 	public static void setRealTime(boolean rt) {
-		StringVector t = new StringVector(1);
-		if (rt)
-			t.add("TRUE");
-		else
-			t.add("FALSE");
+		ArrayList<String> toks = new ArrayList<String>(5);
+		toks.add(realTime.getKeyword());
 
-		realTime.parse(t);
+		toks.add("{");
+		if (rt)
+			toks.add("TRUE");
+		else
+			toks.add("FALSE");
+		toks.add("}");
+		KeywordIndex kw = new KeywordIndex(toks, 0, toks.size() - 1, null);
+		realTime.parse(kw);
 		updateRealTime();
 	}
 
