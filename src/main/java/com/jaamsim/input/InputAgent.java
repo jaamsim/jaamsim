@@ -540,6 +540,10 @@ public class InputAgent {
 			end = e;
 			context = ctxt;
 		}
+
+		public int numArgs() {
+			return end - start - 2;
+		}
 	}
 
 	private static ArrayList<KeywordIndex> getKeywords(ArrayList<String> input, ParseContext context) {
