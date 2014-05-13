@@ -54,6 +54,7 @@ class EventTree {
 	public void reset() {
 		root = EventNode.nilNode;
 		lowest = null;
+		clearFreeList();
 	}
 
 	private void updateLowest() {
@@ -70,7 +71,7 @@ class EventTree {
 
 	public EventNode createNode(long schedTick, int priority) {
 		if (root == EventNode.nilNode) {
-			root = EventNode.getNewNode(schedTick, priority);
+			root = getNewNode(schedTick, priority);
 			lowest = root;
 			return root;
 		}
@@ -104,7 +105,7 @@ class EventTree {
 			}
 
 			// There is no current node for this time/priority
-			EventNode newNode = EventNode.getNewNode(schedTick, priority);
+			EventNode newNode = getNewNode(schedTick, priority);
 			pushScratch(n);
 			newNode.red = true;
 			if (comp > 0)
@@ -222,9 +223,11 @@ class EventTree {
 		if (current == root)
 			root = child;
 
-		EventNode.reuseNode(current);
+		boolean currentIsRed = current.red;
 
-		if (current.red) {
+		reuseNode(current);
+
+		if (currentIsRed) {
 			return true; // We swapped out a red node, there's nothing else to do
 		}
 		if (child.red) {
@@ -412,4 +415,42 @@ class EventTree {
 
 		return count;
 	}
+
+	private EventNode freeList = null;
+
+	private EventNode getNewNode(long schedTick, int priority) {
+		if (freeList == null) {
+			return new EventNode(schedTick, priority);
+		}
+
+		EventNode ret = freeList;
+		freeList = freeList.left;
+
+		ret.schedTick = schedTick;
+		ret.priority = priority;
+		ret.head = null;
+		ret.tail = null;
+
+		ret.left = EventNode.nilNode;
+		ret.right = EventNode.nilNode;
+		ret.red = false;
+
+		return ret;
+	}
+
+	private void reuseNode(EventNode node) {
+		// Clear the node
+		node.left = null;
+		node.right = null;
+		node.head = null;
+		node.tail = null;
+
+		node.left = freeList;
+		freeList = node;
+	}
+
+	private void clearFreeList() {
+		freeList = null;
+	}
+
 }

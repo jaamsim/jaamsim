@@ -29,7 +29,7 @@ public class EventNode {
 	EventNode left;
 	EventNode right;
 
-	private EventNode(long tick, int prio) {
+	EventNode(long tick, int prio) {
 		schedTick = tick;
 		priority = prio;
 		left = nilNode;
@@ -115,42 +115,5 @@ public class EventNode {
 		nilNode.left = null;
 		nilNode.right = null;
 		nilNode.red = false;
-	}
-
-	private static EventNode freeList = null;
-
-	public static EventNode getNewNode(long schedTick, int priority) {
-		if (freeList == null) {
-			return new EventNode(schedTick, priority);
-		}
-
-		EventNode ret = freeList;
-		freeList = freeList.left;
-
-		ret.schedTick = schedTick;
-		ret.priority = priority;
-		ret.head = null;
-		ret.tail = null;
-
-		ret.left = nilNode;
-		ret.right = nilNode;
-		ret.red = false;
-
-		return ret;
-	}
-
-	public static void reuseNode(EventNode node) {
-		// Clear the node
-		node.left = null;
-		node.right = null;
-		node.head = null;
-		node.tail = null;
-
-		node.left = freeList;
-		freeList = node;
-	}
-
-	public static void clearFreeList() {
-		freeList = null;
 	}
 }
