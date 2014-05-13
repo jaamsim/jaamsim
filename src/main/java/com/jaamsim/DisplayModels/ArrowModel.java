@@ -24,6 +24,7 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
+import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.units.DistanceUnit;
@@ -79,7 +80,11 @@ public class ArrowModel extends ScreenPointsModel {
 
 			Vec4d startPoint = selectionPoints.get(selectionPoints.size() - 1);
 			Vec4d fromPoint = selectionPoints.get(selectionPoints.size() - 2);
-			Color4d color = screenPointObservee.getScreenPoints()[0].color;
+			HasScreenPoints.PointsInfo[] pointInfos = screenPointObservee.getScreenPoints();
+			if (pointInfos == null || pointInfos.length == 0)
+				return;
+
+			Color4d color = pointInfos[0].color;
 
 			boolean dirty = false;
 

@@ -1076,8 +1076,11 @@ public class RenderManager implements DragSourceListener {
 
 			if (dragInfo.shiftDown()) {
 				ArrayList<Vec3d> screenPoints = null;
-				if (dispEnt instanceof HasScreenPoints)
-					screenPoints = ((HasScreenPoints)dispEnt).getScreenPoints()[0].points;
+				if (dispEnt instanceof HasScreenPoints) {
+					HasScreenPoints.PointsInfo[] pointInfos = ((HasScreenPoints)dispEnt).getScreenPoints();
+					if (pointInfos != null && pointInfos.length != 0)
+						screenPoints = pointInfos[0].points;
+				}
 				if (screenPoints == null || screenPoints.size() == 0) return true; // just ignore this
 				// Find the geometric median of the points
 				Vec4d medPoint = RenderUtils.getGeometricMedian(screenPoints);
@@ -1103,8 +1106,11 @@ public class RenderManager implements DragSourceListener {
 		if (dragHandleID <= LINENODE_PICK_ID) {
 			int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
 			ArrayList<Vec3d> screenPoints = null;
-			if (dispEnt instanceof HasScreenPoints)
-				screenPoints = ((HasScreenPoints)dispEnt).getScreenPoints()[0].points;
+			if (dispEnt instanceof HasScreenPoints) {
+				HasScreenPoints.PointsInfo[] pointInfos = ((HasScreenPoints)dispEnt).getScreenPoints();
+				if (pointInfos != null && pointInfos.length != 0)
+					screenPoints = pointInfos[0].points;
+			}
 
 			// Note: screenPoints is not a defensive copy, but we'll put it back into itself
 			// in a second so everything should be safe
@@ -1153,7 +1159,10 @@ public class RenderManager implements DragSourceListener {
 		HasScreenPoints hsp = (HasScreenPoints)selectedEntity;
 		assert(hsp != null);
 
-		ArrayList<Vec3d> points = hsp.getScreenPoints()[0].points;
+		HasScreenPoints.PointsInfo[] pointInfos = hsp.getScreenPoints();
+		assert(pointInfos != null && pointInfos.length == 0);
+
+		ArrayList<Vec3d> points = pointInfos[0].points;
 
 		int splitInd = 0;
 		Vec4d nearPoint = null;
@@ -1207,7 +1216,11 @@ public class RenderManager implements DragSourceListener {
 		HasScreenPoints hsp = (HasScreenPoints)selectedEntity;
 		assert(hsp != null);
 
-		ArrayList<Vec3d> points = hsp.getScreenPoints()[0].points;
+		HasScreenPoints.PointsInfo[] pointInfos = hsp.getScreenPoints();
+		if (pointInfos == null || pointInfos.length == 0)
+			return;
+
+		ArrayList<Vec3d> points = pointInfos[0].points;
 		// Find a point that is within the threshold
 
 		if (points.size() <= 2) {

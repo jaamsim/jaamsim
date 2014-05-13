@@ -80,6 +80,8 @@ public class ScreenPointsModel extends DisplayModel {
 		protected void updateProxies(double simTime) {
 
 			HasScreenPoints.PointsInfo[] pis = screenPointObservee.getScreenPoints();
+			if (pis == null || pis.length == 0)
+				return;
 
 			Transform regionTrans = null;
 			if (displayObservee.getCurrentRegion() != null) {
