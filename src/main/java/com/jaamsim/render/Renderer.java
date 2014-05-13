@@ -85,14 +85,14 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	static private Object idLock = new Object();
-	static private int _nextID = 1;
+	static private int nextID = 1;
 	/**
 	 * Get a system wide unique ID
 	 * @return
 	 */
 	public static int getAssetID() {
 		synchronized(idLock) {
-			return _nextID++;
+			return nextID++;
 		}
 	}
 
@@ -101,89 +101,86 @@ public class Renderer implements GLAnimatorControl {
 	public static int DIFF_TEX_FLAG = 1;
 	public static int NUM_MESH_SHADERS = 2; // Should be 2^(max_flag)
 
-	private EnumMap<ShaderHandle, Shader> _shaders;
+	private EnumMap<ShaderHandle, Shader> shaders;
 	private Shader[] meshShaders = new Shader[NUM_MESH_SHADERS];
 
-	// Display _display = null;
-	// Screen _screen = null;
-	private GLContext _sharedContext = null;
-	Map<Integer, Integer> _sharedVaoMap = new HashMap<Integer, Integer>();
-	int _sharedContextID = getAssetID();
-	GLWindow _dummyWindow;
-	private GLCapabilities _caps = null;
+	private GLContext sharedContext = null;
+	Map<Integer, Integer> sharedVaoMap = new HashMap<Integer, Integer>();
+	int sharedContextID = getAssetID();
+	GLWindow dummyWindow;
+	private GLCapabilities caps = null;
 
-	private TexCache _texCache = new TexCache(this);
+	private TexCache texCache = new TexCache(this);
 
 	// An initalization time flag specifying if the 'safest' graphical techniques should be used
-	private boolean _safeGraphics;
+	private boolean safeGraphics;
 
-	private final Thread _renderThread;
-	private final Object _rendererLock = new Object();
+	private final Thread renderThread;
+	private final Object rendererLock = new Object();
 
-	private final Map<MeshProtoKey, MeshProto> _protoCache;
-	private final Map<TessFontKey, TessFont> _fontCache;
+	private final Map<MeshProtoKey, MeshProto> protoCache;
+	private final Map<TessFontKey, TessFont> fontCache;
 
-	private final HashMap<Integer, RenderWindow> _openWindows;
+	private final HashMap<Integer, RenderWindow> openWindows;
 
-	private final Queue<RenderMessage> _renderMessages = new ArrayDeque<RenderMessage>();
+	private final Queue<RenderMessage> renderMessages = new ArrayDeque<RenderMessage>();
 
-	private final AtomicBoolean _displayNeeded = new AtomicBoolean(true);
-	private final AtomicBoolean _initialized = new AtomicBoolean(false);
-	private final AtomicBoolean _shutdown = new AtomicBoolean(false);
-	private final AtomicBoolean _fatalError = new AtomicBoolean(false);
+	private final AtomicBoolean displayNeeded = new AtomicBoolean(true);
+	private final AtomicBoolean initialized = new AtomicBoolean(false);
+	private final AtomicBoolean shutdown = new AtomicBoolean(false);
+	private final AtomicBoolean fatalError = new AtomicBoolean(false);
 
-	private String _errorString; // This is the string that caused the fatal error
-	private StackTraceElement[] _fatalStackTrace; // the stack trace from the fatal error
+	private String errorString; // This is the string that caused the fatal error
+	private StackTraceElement[] fatalStackTrace; // the stack trace from the fatal error
 
-	private final ExceptionLogger _exceptionLogger;
+	private final ExceptionLogger exceptionLogger;
 
-	private TessFontKey _defaultFontKey = new TessFontKey(Font.SANS_SERIF, Font.PLAIN);
-	private TessFontKey _defaultBoldFontKey = new TessFontKey(Font.SANS_SERIF, Font.BOLD);
+	private TessFontKey defaultFontKey = new TessFontKey(Font.SANS_SERIF, Font.PLAIN);
+	private TessFontKey defaultBoldFontKey = new TessFontKey(Font.SANS_SERIF, Font.BOLD);
 
-	private final Object _sceneLock = new Object();
-	private ArrayList<RenderProxy> _proxyScene = new ArrayList<RenderProxy>();
+	private final Object sceneLock = new Object();
+	private ArrayList<RenderProxy> proxyScene = new ArrayList<RenderProxy>();
 
-	private boolean _allowDelayedTextures;
-	private double _sceneTimeMS;
-	private double _loopTimeMS;
+	private boolean allowDelayedTextures;
+	private double sceneTimeMS;
+	private double loopTimeMS;
 
-	private final Object _settingsLock = new Object();
-	private boolean _showDebugInfo = false;
+	private final Object settingsLock = new Object();
+	private boolean showDebugInfo = false;
 
-	private long _usedVRAM = 0;
+	private long usedVRAM = 0;
 
 	// A flag to track JOGL's GLAnimatorControl pause feature
 	private boolean isPaused = false;
 
 	// This may not be the best way to cache this
-	//private GL2GL3 _currentGL = null;
-	private GLContext _drawContext = null;
+	private GLContext drawContext = null;
 
-	private Skybox _skybox;
+	private Skybox skybox;
 
 	private MeshData badData;
 	private MeshProto badProto;
 
 	// A cache of the current scene, needed by the individual windows to render
-	private ArrayList<Renderable> _currentScene = new ArrayList<Renderable>();
-	private ArrayList<OverlayRenderable> _currentOverlay = new ArrayList<OverlayRenderable>();
+	private ArrayList<Renderable> currentScene = new ArrayList<Renderable>();
+	private ArrayList<OverlayRenderable> currentOverlay = new ArrayList<OverlayRenderable>();
 
 	public Renderer(boolean safeGraphics) throws RenderException {
-		_safeGraphics = safeGraphics;
-		_protoCache = new HashMap<MeshProtoKey, MeshProto>();
-		_fontCache = new HashMap<TessFontKey, TessFont>();
+		this.safeGraphics = safeGraphics;
+		protoCache = new HashMap<MeshProtoKey, MeshProto>();
+		fontCache = new HashMap<TessFontKey, TessFont>();
 
-		_exceptionLogger = new ExceptionLogger(1); // Print the call stack on the first exception of any kind
+		exceptionLogger = new ExceptionLogger(1); // Print the call stack on the first exception of any kind
 
-		_openWindows = new HashMap<Integer, RenderWindow>();
+		openWindows = new HashMap<Integer, RenderWindow>();
 
-		_renderThread = new Thread(new Runnable() {
+		renderThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				mainRenderLoop();
 			}
 		}, "RenderThread");
-		_renderThread.start();
+		renderThread.start();
 
 	}
 
@@ -194,25 +191,25 @@ public class Renderer implements GLAnimatorControl {
 		try {
 			// GLProfile.initSingleton();
 			GLProfile glp = GLProfile.get(GLProfile.GL2GL3);
-			_caps = new GLCapabilities(glp);
-			_caps.setSampleBuffers(true);
-			_caps.setNumSamples(4);
-			_caps.setDepthBits(24);
+			caps = new GLCapabilities(glp);
+			caps.setSampleBuffers(true);
+			caps.setNumSamples(4);
+			caps.setDepthBits(24);
 
 			// Create a dummy window
-			_dummyWindow = GLWindow.create(_caps);
-			_dummyWindow.setSize(128, 128);
-			_dummyWindow.setPosition(-2000, -2000);
+			dummyWindow = GLWindow.create(caps);
+			dummyWindow.setSize(128, 128);
+			dummyWindow.setPosition(-2000, -2000);
 
 			// This is unfortunately necessary due to JOGL's (newt's?) involved
 			// startup code
 			// I can not find a way to make a context valid without a visible window
-			_dummyWindow.setVisible(true);
+			dummyWindow.setVisible(true);
 
-			_sharedContext = _dummyWindow.getContext();
-			assert (_sharedContext != null);
+			sharedContext = dummyWindow.getContext();
+			assert (sharedContext != null);
 
-			_dummyWindow.setVisible(false);
+			dummyWindow.setVisible(false);
 
 //			long endNanos = System.nanoTime();
 //			long ms = (endNanos - startNanos) /1000000L;
@@ -223,21 +220,21 @@ public class Renderer implements GLAnimatorControl {
 			initSharedContext();
 
 			// Notify the main thread we're done
-			synchronized (_initialized) {
-				_initialized.set(true);
-				_initialized.notifyAll();
+			synchronized (initialized) {
+				initialized.set(true);
+				initialized.notifyAll();
 			}
 
 		} catch (Exception e) {
 
-			_fatalError.set(true);
-			_errorString = e.getLocalizedMessage();
-			_fatalStackTrace = e.getStackTrace();
+			fatalError.set(true);
+			errorString = e.getLocalizedMessage();
+			fatalStackTrace = e.getStackTrace();
 			LogBox.renderLog("Renderer encountered a fatal error:");
 			LogBox.renderLogException(e);
 		} finally {
-			if (_sharedContext != null && _sharedContext.isCurrent())
-				_sharedContext.release();
+			if (sharedContext != null && sharedContext.isCurrent())
+				sharedContext.release();
 		}
 
 
@@ -253,7 +250,7 @@ public class Renderer implements GLAnimatorControl {
 			public void run() {
 				// Block JOGL shutting down until we're dead
 				shutdown();
-				while (_renderThread.isAlive()) {
+				while (renderThread.isAlive()) {
 					synchronized (this) {
 						try {
 							queueRedraw(); // Just in case the render thread got stalled somewhere
@@ -264,14 +261,14 @@ public class Renderer implements GLAnimatorControl {
 			}
 		});
 
-		while (!_shutdown.get()) {
+		while (!shutdown.get()) {
 			try {
 
 				// If a fatal error was encountered, clean up the renderer
-				if (_fatalError.get()) {
+				if (fatalError.get()) {
 					// We should clean up everything we can, then die
 					try {
-						for (Entry<Integer, RenderWindow> entry : _openWindows.entrySet()){
+						for (Entry<Integer, RenderWindow> entry : openWindows.entrySet()){
 							entry.getValue().getGLWindowRef().destroy();
 							entry.getValue().getAWTFrameRef().dispose();
 						}
@@ -279,19 +276,19 @@ public class Renderer implements GLAnimatorControl {
 
 
 					try {
-						_dummyWindow.destroy();
-						_sharedContext.destroy();
-						_dummyWindow = null;
-						_sharedContext = null;
-						_openWindows.clear();
+						dummyWindow.destroy();
+						sharedContext.destroy();
+						dummyWindow = null;
+						sharedContext = null;
+						openWindows.clear();
 
-						_currentScene = null;
-						_currentOverlay = null;
-						_caps = null;
+						currentScene = null;
+						currentOverlay = null;
+						caps = null;
 
-						_fontCache.clear();
-						_protoCache.clear();
-						_shaders.clear();
+						fontCache.clear();
+						protoCache.clear();
+						shaders.clear();
 
 					} catch (Exception e) { }
 
@@ -304,9 +301,9 @@ public class Renderer implements GLAnimatorControl {
 					// Only lock the queue while reading messages, release it while
 					// processing them
 					message = null;
-					synchronized (_renderMessages) {
-						if (!_renderMessages.isEmpty()) {
-							message = _renderMessages.remove();
+					synchronized (renderMessages) {
+						if (!renderMessages.isEmpty()) {
+							message = renderMessages.remove();
 						}
 					}
 					if (message != null) {
@@ -318,21 +315,21 @@ public class Renderer implements GLAnimatorControl {
 						}
 					}
 
-				} while (!_renderMessages.isEmpty());
+				} while (!renderMessages.isEmpty());
 
-				if (_displayNeeded.compareAndSet(true, false)) {
+				if (displayNeeded.compareAndSet(true, false)) {
 					updateRenderableScene();
 
 					// Defensive copy the window list (in case a window is closed while we render)
 					HashMap<Integer, RenderWindow> winds;
-					synchronized (_openWindows) {
-						winds = new HashMap<Integer, RenderWindow>(_openWindows);
+					synchronized (openWindows) {
+						winds = new HashMap<Integer, RenderWindow>(openWindows);
 					}
 					if (!isPaused) {
 						for (RenderWindow wind : winds.values()) {
 							try {
 								GLContext context = wind.getGLWindowRef().getContext();
-								if (context != null && !_shutdown.get())
+								if (context != null && !shutdown.get())
 								{
 									wind.getGLWindowRef().display();
 								}
@@ -345,13 +342,13 @@ public class Renderer implements GLAnimatorControl {
 				}
 
 				long loopEnd = System.nanoTime();
-				_loopTimeMS = (loopEnd - lastLoopEnd) / 1000000;
+				loopTimeMS = (loopEnd - lastLoopEnd) / 1000000;
 				lastLoopEnd = loopEnd;
 
 				try {
-					synchronized (_displayNeeded) {
-						if (!_displayNeeded.get()) {
-							_displayNeeded.wait();
+					synchronized (displayNeeded) {
+						if (!displayNeeded.get()) {
+							displayNeeded.wait();
 						}
 					}
 				} catch (InterruptedException e) {
@@ -371,7 +368,7 @@ public class Renderer implements GLAnimatorControl {
 	 * @return
 	 */
 	public Shader getShader(ShaderHandle h) {
-		return _shaders.get(h);
+		return shaders.get(h);
 	}
 
 	public Shader getMeshShader(int flags) {
@@ -385,49 +382,49 @@ public class Renderer implements GLAnimatorControl {
 	 * @return
 	 */
 	public MeshProto getProto(MeshProtoKey key) {
-		MeshProto proto = _protoCache.get(key);
+		MeshProto proto = protoCache.get(key);
 		if (proto == null) {
 			// This prototype needs to be lazily loaded
 			loadMeshProtoImp(key);
 		}
-		return _protoCache.get(key);
+		return protoCache.get(key);
 	}
 
 	public TessFont getTessFont(TessFontKey key) {
-		if (!_fontCache.containsKey(key)) {
+		if (!fontCache.containsKey(key)) {
 			loadTessFontImp(key); // Try lazy initialization for now
 		}
 
-		return _fontCache.get(key);
+		return fontCache.get(key);
 	}
 
 	public void setScene(ArrayList<RenderProxy> scene) {
-		synchronized (_sceneLock) {
-			_proxyScene = scene;
+		synchronized (sceneLock) {
+			proxyScene = scene;
 		}
 	}
 
 	public void queueRedraw() {
-		synchronized(_displayNeeded) {
-			_displayNeeded.set(true);
-			_displayNeeded.notifyAll();
+		synchronized(displayNeeded) {
+			displayNeeded.set(true);
+			displayNeeded.notifyAll();
 		}
 	}
 
 	private void addRenderMessage(RenderMessage msg) {
-		_renderMessages.add(msg);
+		renderMessages.add(msg);
 		queueRedraw();
 	}
 
 	public void setCameraInfoForWindow(int windowID, CameraInfo info) {
-		synchronized (_renderMessages) {
+		synchronized (renderMessages) {
 			addRenderMessage(new SetCameraMessage(windowID, info));
 		}
 	}
 
 	private void setCameraInfoImp(SetCameraMessage mes) {
-		synchronized (_openWindows) {
-			RenderWindow w = _openWindows.get(mes.windowID);
+		synchronized (openWindows) {
+			RenderWindow w = openWindows.get(mes.windowID);
 			if (w != null) {
 				w.getCameraRef().setInfo(mes.cameraInfo);
 			}
@@ -439,12 +436,12 @@ public class Renderer implements GLAnimatorControl {
 	 * immediately but the renderer will shutdown after the next redraw
 	 */
 	public void shutdown() {
-		_shutdown.set(true);
+		shutdown.set(true);
 		queueRedraw();
 	}
 
 	public GL2GL3 getGL() {
-		return _drawContext.getGL().getGL2GL3();
+		return drawContext.getGL().getGL2GL3();
 	}
 
 	/**
@@ -452,10 +449,10 @@ public class Renderer implements GLAnimatorControl {
 	 * @return
 	 */
 	public ArrayList<Integer> getOpenWindowIDs() {
-		synchronized(_openWindows) {
+		synchronized(openWindows) {
 
 			ArrayList<Integer> ret = new ArrayList<Integer>();
-			for (int id : _openWindows.keySet()) {
+			for (int id : openWindows.keySet()) {
 				ret.add(id);
 			}
 			return ret;
@@ -463,8 +460,8 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	public String getWindowName(int windowID) {
-		synchronized(_openWindows) {
-			RenderWindow win = _openWindows.get(windowID);
+		synchronized(openWindows) {
+			RenderWindow win = openWindows.get(windowID);
 			if (win == null) {
 				return null;
 			}
@@ -473,8 +470,8 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	public Frame getAWTFrame(int windowID) {
-		synchronized(_openWindows) {
-			RenderWindow win = _openWindows.get(windowID);
+		synchronized(openWindows) {
+			RenderWindow win = openWindows.get(windowID);
 			if (win == null) {
 				return null;
 			}
@@ -483,8 +480,8 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	public void focusWindow(int windowID) {
-		synchronized(_openWindows) {
-			RenderWindow win = _openWindows.get(windowID);
+		synchronized(openWindows) {
+			RenderWindow win = openWindows.get(windowID);
 			if (win == null) {
 				return;
 			}
@@ -506,16 +503,16 @@ public class Renderer implements GLAnimatorControl {
 		RenderWindow window = new RenderWindow(message.x, message.y,
 		                                       message.width, message.height,
 		                                       message.title, message.name,
-		                                       _sharedContext,
-		                                       _caps, listener,
+		                                       sharedContext,
+		                                       caps, listener,
 		                                       message.icon,
 		                                       message.windowID,
 		                                       message.viewID,
 		                                       message.listener);
 		listener.setWindow(window);
 
-		synchronized (_openWindows) {
-			_openWindows.put(message.windowID, window);
+		synchronized (openWindows) {
+			openWindows.put(message.windowID, window);
 		}
 
 		window.getGLWindowRef().setAnimator(this);
@@ -533,7 +530,7 @@ public class Renderer implements GLAnimatorControl {
 
 	public int createWindow(int x, int y, int width, int height, int viewID, String title, String name, Image icon,
 	                         WindowInteractionListener listener) {
-		synchronized (_renderMessages) {
+		synchronized (renderMessages) {
 			int windowID = getAssetID();
 			addRenderMessage(new CreateWindowMessage(x, y, width, height, title,
 					name, windowID, viewID, icon, listener));
@@ -542,8 +539,8 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	public void setWindowDebugInfo(int windowID, String debugString, ArrayList<Long> debugIDs) {
-		synchronized(_openWindows) {
-			RenderWindow w = _openWindows.get(windowID);
+		synchronized(openWindows) {
+			RenderWindow w = openWindows.get(windowID);
 
 			if (w != null) {
 				w.setDebugString(debugString);
@@ -553,14 +550,14 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	public int getNumOpenWindows() {
-		synchronized(_openWindows) {
-			return _openWindows.size();
+		synchronized(openWindows) {
+			return openWindows.size();
 		}
 	}
 
 	public void closeWindow(int windowID) {
 
-		synchronized (_renderMessages) {
+		synchronized (renderMessages) {
 			addRenderMessage(new CloseWindowMessage(windowID));
 		}
 
@@ -568,8 +565,8 @@ public class Renderer implements GLAnimatorControl {
 
 	private void closeWindowImp(CloseWindowMessage msg) {
 		RenderWindow window;
-		synchronized(_openWindows) {
-			window = _openWindows.get(msg.windowID);
+		synchronized(openWindows) {
+			window = openWindows.get(msg.windowID);
 			if (window == null) {
 				return;
 			}
@@ -607,7 +604,7 @@ private void createShader(ShaderHandle sh, String vert, String frag, GL2GL3 gl) 
 
 	Shader s = new Shader(vertsrc, fragsrc, gl);
 	if (s.isGood()) {
-		_shaders.put(sh, s);
+		shaders.put(sh, s);
 		return;
 	}
 
@@ -621,7 +618,7 @@ private void createCoreShader(ShaderHandle sh, String vert, String frag, GL2GL3 
 
 	Shader s = new Shader(vertsrc, fragsrc, gl);
 	if (s.isGood()) {
-		_shaders.put(sh, s);
+		shaders.put(sh, s);
 		return;
 	}
 
@@ -641,7 +638,7 @@ private String getMeshShaderDefines(int i) {
  * Create and compile all the shaders
  */
 private void initShaders(GL2GL3 gl) throws RenderException {
-	_shaders = new EnumMap<ShaderHandle, Shader>(ShaderHandle.class);
+	shaders = new EnumMap<ShaderHandle, Shader>(ShaderHandle.class);
 	String vert, frag;
 
 	vert = "/resources/shaders/font.vert";
@@ -691,7 +688,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
  * Create and compile all the shaders
  */
 private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
-	_shaders = new EnumMap<ShaderHandle, Shader>(ShaderHandle.class);
+	shaders = new EnumMap<ShaderHandle, Shader>(ShaderHandle.class);
 	String vert, frag;
 
 	vert = "/resources/shaders_core/font.vert";
@@ -742,7 +739,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	 * @param message
 	 */
 	private void handleMessage(RenderMessage message) {
-		assert (Thread.currentThread() == _renderThread);
+		assert (Thread.currentThread() == renderThread);
 
 		if (message instanceof CreateWindowMessage) {
 			createWindowImp((CreateWindowMessage) message);
@@ -769,57 +766,57 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	private void initSharedContext() {
-		assert (Thread.currentThread() == _renderThread);
-		assert (_drawContext == null);
+		assert (Thread.currentThread() == renderThread);
+		assert (drawContext == null);
 
-		int res = _sharedContext.makeCurrent();
+		int res = sharedContext.makeCurrent();
 		assert (res == GLContext.CONTEXT_CURRENT);
 
 		if (USE_DEBUG_GL) {
-			_sharedContext.setGL(new DebugGL4bc((GL4bc)_sharedContext.getGL().getGL2GL3()));
+			sharedContext.setGL(new DebugGL4bc((GL4bc)sharedContext.getGL().getGL2GL3()));
 		}
 
-		LogBox.formatRenderLog("Found OpenGL version: %s", _sharedContext.getGLVersion());
-		LogBox.formatRenderLog("Found GLSL: %s", _sharedContext.getGLSLVersionString());
-		VersionNumber vn = _sharedContext.getGLVersionNumber();
-		boolean isCore = _sharedContext.isGLCoreProfile();
+		LogBox.formatRenderLog("Found OpenGL version: %s", sharedContext.getGLVersion());
+		LogBox.formatRenderLog("Found GLSL: %s", sharedContext.getGLSLVersionString());
+		VersionNumber vn = sharedContext.getGLVersionNumber();
+		boolean isCore = sharedContext.isGLCoreProfile();
 		LogBox.formatRenderLog("OpenGL Major: %d Minor: %d IsCore:%s", vn.getMajor(), vn.getMinor(), isCore);
-		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
+		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
 		if (!isCore)
 			initShaders(gl);
 		else
-			initCoreShaders(gl, _sharedContext.getGLSLVersionString());
+			initCoreShaders(gl, sharedContext.getGLSLVersionString());
 
 		// Sub system specific intitializations
 		DebugUtils.init(this, gl);
 		Polygon.init(this, gl);
 		MeshProto.init(this, gl);
-		_texCache.init(gl);
+		texCache.init(gl);
 
 		// Load the bad mesh proto
 		badData = MeshDataCache.getBadMesh();
-		badProto = new MeshProto(badData, _safeGraphics, !_safeGraphics);
+		badProto = new MeshProto(badData, safeGraphics, !safeGraphics);
 		badProto.loadGPUAssets(gl, this);
 
-		_skybox = new Skybox();
+		skybox = new Skybox();
 
-		_sharedContext.release();
+		sharedContext.release();
 	}
 
 	private void loadMeshProtoImp(final MeshProtoKey key) {
 
 		//long startNanos = System.nanoTime();
 
-		assert(_drawContext == null || !_drawContext.isCurrent());
+		assert(drawContext == null || !drawContext.isCurrent());
 
-		if (_protoCache.get(key) != null) {
+		if (protoCache.get(key) != null) {
 			return; // This mesh has already been loaded
 		}
 
-		int res = _sharedContext.makeCurrent();
+		int res = sharedContext.makeCurrent();
 		assert (res == GLContext.CONTEXT_CURRENT);
 
-		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
+		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
 
 		MeshProto proto;
 
@@ -827,7 +824,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		if (data == badData) {
 			proto = badProto;
 		} else {
-			proto = new MeshProto(data, _safeGraphics, !_safeGraphics);
+			proto = new MeshProto(data, safeGraphics, !safeGraphics);
 
 			assert (proto != null);
 			proto.loadGPUAssets(gl, this);
@@ -841,9 +838,9 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				proto = badProto;
 			}
 		}
-		_protoCache.put(key, proto);
+		protoCache.put(key, proto);
 
-		_sharedContext.release();
+		sharedContext.release();
 
 //		long endNanos = System.nanoTime();
 //		long ms = (endNanos - startNanos) /1000000L;
@@ -852,23 +849,23 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	private void loadTessFontImp(TessFontKey key) {
-		if (_fontCache.get(key) != null) {
+		if (fontCache.get(key) != null) {
 			return; // This font has already been loaded
 		}
 
 		TessFont tf = new TessFont(key);
 
-		_fontCache.put(key, tf);
+		fontCache.put(key, tf);
 	}
 
 	public int generateVAO(int contextID, GL2GL3 gl) {
-		assert(Thread.currentThread() == _renderThread);
+		assert(Thread.currentThread() == renderThread);
 
 		int[] vaos = new int[1];
 		gl.glGenVertexArrays(1, vaos, 0);
 		int vao = vaos[0];
 
-		RenderWindow wind = _openWindows.get(contextID);
+		RenderWindow wind = openWindows.get(contextID);
 		if (wind != null) {
 			wind.addVAO(vao);
 		}
@@ -877,19 +874,19 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 	// Recreate the internal scene based on external input
 	private void updateRenderableScene() {
-		synchronized (_sceneLock) {
+		synchronized (sceneLock) {
 			long sceneStart = System.nanoTime();
 
-			_currentScene = new ArrayList<Renderable>();
-			_currentOverlay = new ArrayList<OverlayRenderable>();
+			currentScene = new ArrayList<Renderable>();
+			currentOverlay = new ArrayList<OverlayRenderable>();
 
-			for (RenderProxy proxy : _proxyScene) {
-				proxy.collectRenderables(this, _currentScene);
-				proxy.collectOverlayRenderables(this, _currentOverlay);
+			for (RenderProxy proxy : proxyScene) {
+				proxy.collectRenderables(this, currentScene);
+				proxy.collectOverlayRenderables(this, currentOverlay);
 			}
 
 			long sceneTime = System.nanoTime() - sceneStart;
-			_sceneTimeMS = sceneTime / 1000000.0;
+			sceneTimeMS = sceneTime / 1000000.0;
 		}
 	}
 
@@ -912,13 +909,13 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		// Do not update the scene while a pick is underway
 		ArrayList<PickResult> ret = new ArrayList<PickResult>();
 
-		if (_currentScene == null) {
+		if (currentScene == null) {
 			return ret;
 		}
 
 
 		Camera cam = null;
-		for (RenderWindow wind : _openWindows.values()) {
+		for (RenderWindow wind : openWindows.values()) {
 			if (wind.getViewID() == viewID) {
 				cam = wind.getCameraRef();
 				break;
@@ -929,8 +926,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			return ret;
 		}
 
-		synchronized (_sceneLock) {
-			for (Renderable r : _currentScene) {
+		synchronized (sceneLock) {
+			for (Renderable r : currentScene) {
 				double rayDist = r.getCollisionDist(pickRay, precise);
 				if (rayDist >= 0.0) {
 
@@ -957,8 +954,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	 * @return
 	 */
 	public WindowMouseInfo getMouseInfo(int windowID) {
-		synchronized(_openWindows) {
-			RenderWindow w = _openWindows.get(windowID);
+		synchronized(openWindows) {
+			RenderWindow w = openWindows.get(windowID);
 
 			if (w == null) {
 				return null; // Not a valid window ID, or the window has closed
@@ -980,8 +977,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	public CameraInfo getCameraInfo(int windowID) {
-		synchronized(_openWindows) {
-			RenderWindow w = _openWindows.get(windowID);
+		synchronized(openWindows) {
+			RenderWindow w = openWindows.get(windowID);
 
 			if (w == null) {
 				return null; // Not a valid window ID, or the window has closed
@@ -994,14 +991,14 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	// Common cleanup code for window closing. Applies to both user closed and programatically closed windows
 	private void windowCleanup(int windowID) {
 		RenderWindow w;
-		synchronized(_openWindows) {
+		synchronized(openWindows) {
 
-			w = _openWindows.get(windowID);
+			w = openWindows.get(windowID);
 			if (w == null) {
 				return;
 			}
 
-			_openWindows.remove(windowID);
+			openWindows.remove(windowID);
 		}
 
 		w.getAWTFrameRef().setVisible(false);
@@ -1014,14 +1011,14 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 	private class GLWindowListener implements WindowListener, ComponentListener {
 
-		private int _windowID;
+		private int windowID;
 		public GLWindowListener(int id) {
-			_windowID = id;
+			windowID = id;
 		}
 
 		private WindowInteractionListener getListener() {
-			synchronized(_openWindows) {
-				RenderWindow w = _openWindows.get(_windowID);
+			synchronized(openWindows) {
+				RenderWindow w = openWindows.get(windowID);
 
 				if (w == null) {
 					return null; // Not a valid window ID, or the window has closed
@@ -1033,7 +1030,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		@Override
 		public void windowDestroyNotify(WindowEvent we) {
-			windowCleanup(_windowID);
+			windowCleanup(windowID);
 		}
 
 		@Override
@@ -1066,8 +1063,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		private void updateWindowSizeAndPos() {
 			RenderWindow w;
-			synchronized(_openWindows) {
-				w = _openWindows.get(_windowID);
+			synchronized(openWindows) {
+				w = openWindows.get(windowID);
 				if (w == null) {
 					return;
 				}
@@ -1097,16 +1094,16 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 	private class RenderGLListener implements GLEventListener {
 
-		private RenderWindow _window;
-		private long _lastFrameNanos = 0;
+		private RenderWindow window;
+		private long lastFrameNanos = 0;
 
 		public void setWindow(RenderWindow win) {
-			_window = win;
+			window = win;
 		}
 
 		@Override
 		public void init(GLAutoDrawable drawable) {
-			synchronized (_rendererLock) {
+			synchronized (rendererLock) {
 				// Per window initialization
 				if (USE_DEBUG_GL) {
 					drawable.setGL(new DebugGL4bc((GL4bc)drawable.getGL().getGL2GL3()));
@@ -1134,11 +1131,11 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		@Override
 		public void dispose(GLAutoDrawable drawable) {
-			synchronized (_rendererLock) {
+			synchronized (rendererLock) {
 
 				GL2GL3 gl = drawable.getGL().getGL2GL3();
 
-				ArrayList<Integer> vaoArray = _window.getVAOs();
+				ArrayList<Integer> vaoArray = window.getVAOs();
 
 				int[] vaos = new int[vaoArray.size()];
 				int index = 0;
@@ -1153,62 +1150,62 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		@Override
 		public void display(GLAutoDrawable drawable) {
-			synchronized (_rendererLock) {
+			synchronized (rendererLock) {
 
-				Camera cam = _window.getCameraRef();
+				Camera cam = window.getCameraRef();
 
 				// The ray of the current mouse position (or null if the mouse is not hovering over the window)
-				Ray pickRay = RenderUtils.getPickRay(getMouseInfo(_window.getWindowID()));
+				Ray pickRay = RenderUtils.getPickRay(getMouseInfo(window.getWindowID()));
 
 				PerfInfo pi = new PerfInfo();
 
 				long startNanos = System.nanoTime();
 
-				_allowDelayedTextures = true;
+				allowDelayedTextures = true;
 
 				// Cache the current scene. This way we don't need to lock it for the full render
-				ArrayList<Renderable> scene = new ArrayList<Renderable>(_currentScene.size());
-				ArrayList<OverlayRenderable> overlay = new ArrayList<OverlayRenderable>(_currentOverlay.size());
-				synchronized(_sceneLock) {
-					scene.addAll(_currentScene);
-					overlay.addAll(_currentOverlay);
+				ArrayList<Renderable> scene = new ArrayList<Renderable>(currentScene.size());
+				ArrayList<OverlayRenderable> overlay = new ArrayList<OverlayRenderable>(currentOverlay.size());
+				synchronized(sceneLock) {
+					scene.addAll(currentScene);
+					overlay.addAll(currentOverlay);
 				}
 
-				renderScene(drawable.getContext(), _window.getWindowID(),
+				renderScene(drawable.getContext(), window.getWindowID(),
 				            scene, overlay,
-				            cam, _window.getViewableWidth(), _window.getViewableHeight(),
-				            pickRay, _window.getViewID(), pi);
+				            cam, window.getViewableWidth(), window.getViewableHeight(),
+				            pickRay, window.getViewID(), pi);
 
 				GL2GL3 gl = drawable.getContext().getGL().getGL2GL3(); // Just to clean up the code below
 
 				boolean showDebug;
-				synchronized(_settingsLock) {
-					showDebug = _showDebugInfo;
+				synchronized(settingsLock) {
+					showDebug = showDebugInfo;
 				}
 				if (showDebug) {
 					// Draw a window specific performance counter
 					gl.glDisable(GL2GL3.GL_DEPTH_TEST);
-					_drawContext = drawable.getContext();
+					drawContext = drawable.getContext();
 					StringBuilder perf = new StringBuilder();
 					perf.append( String.format( "Objects Culled: %s", pi.objectsCulled) );
-					perf.append( String.format( "   VRAM (MB): %.0f", _usedVRAM/(1024.0*1024.0)) );
-					perf.append( String.format( "   Frame time (ms): %.3f", _lastFrameNanos/1000000.0) );
-					perf.append( String.format( "   SceneTime (ms): %.3f", _sceneTimeMS) );
-					perf.append( String.format( "   Loop Time (ms): %.3f", _loopTimeMS) );
+					perf.append( String.format( "   VRAM (MB): %.0f", usedVRAM/(1024.0*1024.0)) );
+					perf.append( String.format( "   Frame time (ms): %.3f", lastFrameNanos/1000000.0) );
+					perf.append( String.format( "   SceneTime (ms): %.3f", sceneTimeMS) );
+					perf.append( String.format( "   Loop Time (ms): %.3f", loopTimeMS) );
 
-					TessFont defFont = getTessFont(_defaultBoldFontKey);
+					TessFont defFont = getTessFont(defaultBoldFontKey);
 					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
 					                                     10, 10, 15, false, false, DisplayModel.ALWAYS);
-					os.render(_window.getWindowID(), Renderer.this,
-					          _window.getViewableWidth(), _window.getViewableHeight(), cam, null);
+					os.render(window.getWindowID(), Renderer.this,
+					          window.getViewableWidth(), window.getViewableHeight(), cam, null);
 
 					// Also draw this window's debug string
-					os = new OverlayString(defFont, _window.getDebugString(), ColourInput.BLACK,
+					os = new OverlayString(defFont, window.getDebugString(), ColourInput.BLACK,
 					                       10, 10, 30, false, false, DisplayModel.ALWAYS);
-					os.render(_window.getWindowID(), Renderer.this,
-					          _window.getViewableWidth(), _window.getViewableHeight(), cam, null);
+					os.render(window.getWindowID(), Renderer.this,
+					          window.getViewableWidth(), window.getViewableHeight(), cam, null);
 
-					_drawContext = null;
+					drawContext = null;
 					gl.glEnable(GL2GL3.GL_DEPTH_TEST);
 
 				}
@@ -1216,7 +1213,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				gl.glFinish();
 
 				long endNanos = System.nanoTime();
-				_lastFrameNanos = endNanos - startNanos;
+				lastFrameNanos = endNanos - startNanos;
 			}
 		}
 
@@ -1225,7 +1222,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				int height) {
 
 			//_window.resized(width, height);
-			Camera cam = _window.getCameraRef();
+			Camera cam = window.getCameraRef();
 			cam.setAspectRatio((double) width / (double) height);
 		}
 
@@ -1301,7 +1298,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	public TexCache getTexCache() {
-		return _texCache;
+		return texCache;
 	}
 
 	public static boolean debugDrawHulls() {
@@ -1317,31 +1314,31 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	public boolean isInitialized() {
-		 return _initialized.get() && !_fatalError.get();
+		 return initialized.get() && !fatalError.get();
 	}
 
 	public boolean hasFatalError() {
-		return _fatalError.get();
+		return fatalError.get();
 	}
 
 	public String getErrorString() {
-		return _errorString;
+		return errorString;
 	}
 
 	public StackTraceElement[] getFatalStackTrace() {
-		return _fatalStackTrace;
+		return fatalStackTrace;
 	}
 
 	public TessFontKey getDefaultFont() {
-		return _defaultFontKey;
+		return defaultFontKey;
 	}
 
 	public boolean allowDelayedTextures() {
-		return _allowDelayedTextures;
+		return allowDelayedTextures;
 	}
 
 	private void logException(Throwable t) {
-		_exceptionLogger.logException(t);
+		exceptionLogger.logException(t);
 
 		// For now print a synopsis for all exceptions thrown
 		printExceptionLog();
@@ -1351,7 +1348,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	private void printExceptionLog() {
 		LogBox.renderLog("Exceptions from Renderer: ");
 
-		_exceptionLogger.printExceptionLog();
+		exceptionLogger.printExceptionLog();
 
 		LogBox.renderLog("");
 
@@ -1371,13 +1368,13 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		Camera cam = new Camera(camInfo, (double)width/(double)height);
 
-		synchronized (_renderMessages) {
+		synchronized (renderMessages) {
 			addRenderMessage(new OffScreenMessage(scene, viewID, cam, width, height, result, target));
 		}
 
-		synchronized (_displayNeeded) {
-			_displayNeeded.set(true);
-			_displayNeeded.notifyAll();
+		synchronized (displayNeeded) {
+			displayNeeded.set(true);
+			displayNeeded.notifyAll();
 		}
 
 		return result;
@@ -1386,7 +1383,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	public OffscreenTarget createOffscreenTarget(int width, int height) {
 		OffscreenTarget ret = new OffscreenTarget(width, height);
 
-		synchronized (_renderMessages) {
+		synchronized (renderMessages) {
 			CreateOffscreenTargetMessage msg = new CreateOffscreenTargetMessage();
 			msg.target = ret;
 			addRenderMessage(msg);
@@ -1395,7 +1392,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	}
 
 	public void freeOffscreenTarget(OffscreenTarget target) {
-		synchronized (_renderMessages) {
+		synchronized (renderMessages) {
 			FreeOffscreenTargetMessage msg = new FreeOffscreenTargetMessage();
 			msg.target = target;
 			addRenderMessage(msg);
@@ -1411,12 +1408,12 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		int width = target.getWidth();
 		int height = target.getHeight();
 
-		_sharedContext.makeCurrent();
-		GL3 gl = _sharedContext.getGL().getGL3(); // Just to clean up the code below
+		sharedContext.makeCurrent();
+		GL3 gl = sharedContext.getGL().getGL3(); // Just to clean up the code below
 
 		// This does not support opengl 3, so for now we don't support off screen rendering
 		if (gl == null) {
-			_sharedContext.release();
+			sharedContext.release();
 			return;
 		}
 
@@ -1458,7 +1455,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		target.load(drawFBO, drawTex, depthBuf, blitFBO, blitTex);
 
-		_sharedContext.release();
+		sharedContext.release();
 
 	}
 
@@ -1466,8 +1463,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		if (!target.isLoaded()) {
 			return; // Nothing to free
 		}
-		_sharedContext.makeCurrent();
-		GL2GL3 gl = _sharedContext.getGL().getGL2GL3(); // Just to clean up the code below
+		sharedContext.makeCurrent();
+		GL2GL3 gl = sharedContext.getGL().getGL2GL3(); // Just to clean up the code below
 
 		int[] temp = new int[2];
 
@@ -1484,12 +1481,12 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		target.free();
 
-		_sharedContext.release();
+		sharedContext.release();
 	}
 
 	private void offScreenImp(OffScreenMessage message) {
 
-		synchronized(_rendererLock) {
+		synchronized(rendererLock) {
 		try {
 
 			boolean isTempTarget;
@@ -1527,14 +1524,14 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				}
 			} else {
 				// Use the current current scene if one is not provided
-				synchronized(_sceneLock) {
-					renderables = new ArrayList<Renderable>(_currentScene);
-					overlay = new ArrayList<OverlayRenderable>(_currentOverlay);
+				synchronized(sceneLock) {
+					renderables = new ArrayList<Renderable>(currentScene);
+					overlay = new ArrayList<OverlayRenderable>(currentOverlay);
 				}
 			}
 
-			_sharedContext.makeCurrent();
-			GL2GL3 gl = _sharedContext.getGL().getGL2GL3(); // Just to clean up the code below
+			sharedContext.makeCurrent();
+			GL2GL3 gl = sharedContext.getGL().getGL2GL3(); // Just to clean up the code below
 
 			gl.glBindFramebuffer(GL2GL3.GL_DRAW_FRAMEBUFFER, target.getDrawFBO());
 
@@ -1543,11 +1540,11 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			gl.glEnable(GL2GL3.GL_DEPTH_TEST);
 			gl.glDepthFunc(GL2GL3.GL_LEQUAL);
 
-			_allowDelayedTextures = false;
+			allowDelayedTextures = false;
 
 			PerfInfo perfInfo = new PerfInfo();
 			// Okay, now actually render this thing...
-			renderScene(_sharedContext, _sharedContextID, renderables, overlay, message.cam,
+			renderScene(sharedContext, sharedContextID, renderables, overlay, message.cam,
 			            width, height, null, message.viewID, perfInfo);
 
 			gl.glFinish();
@@ -1586,8 +1583,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		} catch (GLException ex){
 			message.result.setFailed(ex.getMessage());
 		} finally {
-			if (_sharedContext.isCurrent())
-				_sharedContext.release();
+			if (sharedContext.isCurrent())
+				sharedContext.release();
 		}
 		} // synchronized(_rendererLock)
 	}
@@ -1597,7 +1594,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	 * @return
 	 */
 	public boolean isRenderThread() {
-		return (Thread.currentThread() == _renderThread);
+		return (Thread.currentThread() == renderThread);
 	}
 
 	private static class PerfInfo {
@@ -1626,9 +1623,9 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 		final Vec3d temp = new Vec3d();
 
-		assert (_drawContext == null);
-		_drawContext = context;
-		GL2GL3 gl = _drawContext.getGL().getGL2GL3(); // Just to clean up the code below
+		assert (drawContext == null);
+		drawContext = context;
+		GL2GL3 gl = drawContext.getGL().getGL2GL3(); // Just to clean up the code below
 
 		gl.glClear(GL2GL3.GL_COLOR_BUFFER_BIT
 				| GL2GL3.GL_DEPTH_BUFFER_BIT);
@@ -1677,8 +1674,8 @@ private static class TransSortable implements Comparable<TransSortable> {
 		gl.glDepthMask(false);
 
 		// Draw the skybox after
-		_skybox.setTexture(cam.getInfoRef().skyboxTexture);
-		_skybox.render(contextID, this, cam);
+		skybox.setTexture(cam.getInfoRef().skyboxTexture);
+		skybox.render(contextID, this, cam);
 
 		Collections.sort(transparents);
 		for (TransSortable ts : transparents) {
@@ -1726,11 +1723,11 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 		gl.glBindVertexArray(0);
 
-		_drawContext = null;
+		drawContext = null;
 	}
 
 	public void usingVRAM(long bytes) {
-		_usedVRAM += bytes;
+		usedVRAM += bytes;
 	}
 
 	/////////////////////////////////////////////////////////////////////
@@ -1803,7 +1800,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 	@Override
 	public Thread getThread() {
-		return _renderThread;
+		return renderThread;
 	}
 
 	@Override
@@ -1814,7 +1811,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 	@Override
 	public boolean isPaused() {
-		synchronized (_rendererLock) { // Make sure we aren't currently rendering
+		synchronized (rendererLock) { // Make sure we aren't currently rendering
 			return isPaused;
 		}
 	}
@@ -1826,7 +1823,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 
 	@Override
 	public boolean pause() {
-		synchronized(_rendererLock) {
+		synchronized(rendererLock) {
 			isPaused = true;
 			return true;
 		}
@@ -1860,23 +1857,23 @@ private static class TransSortable implements Comparable<TransSortable> {
 	}
 
 	private void checkForIntelDriver() {
-		int res = _sharedContext.makeCurrent();
+		int res = sharedContext.makeCurrent();
 		assert (res == GLContext.CONTEXT_CURRENT);
 
-		GL2GL3 gl = _sharedContext.getGL().getGL2GL3();
+		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
 		String vendorString = gl.glGetString(GL2GL3.GL_VENDOR).toLowerCase();
 		boolean intelDriver = vendorString.indexOf("intel") != -1;
 		if (intelDriver) {
-			_safeGraphics = true;
+			safeGraphics = true;
 		}
 
-		_sharedContext.release();
+		sharedContext.release();
 
 	}
 
 	public void setDebugInfo(boolean showDebug) {
-		synchronized(_settingsLock) {
-			_showDebugInfo = showDebug;
+		synchronized(settingsLock) {
+			showDebugInfo = showDebug;
 		}
 	}
 }
