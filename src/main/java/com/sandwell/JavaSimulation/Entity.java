@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.basicsim.ClonesOfIterable;
 import com.jaamsim.basicsim.InstanceIterable;
@@ -38,7 +39,7 @@ import com.jaamsim.ui.FrameBox;
  * event execution.
  */
 public class Entity {
-	private static long entityCount = 0;
+	private static AtomicLong entityCount = new AtomicLong(0);
 	private static final ArrayList<Entity> allInstances;
 	private static final HashMap<String, Entity> namedEntities;
 
@@ -107,8 +108,8 @@ public class Entity {
 		flags = 0;
 	}
 
-	private static synchronized long getNextID() {
-		return ++entityCount;
+	private static long getNextID() {
+		return entityCount.incrementAndGet();
 	}
 
 	public static ArrayList<? extends Entity> getAll() {
@@ -180,7 +181,7 @@ public class Entity {
 
 	public static long getEntitySequence() {
 		long seq = (long)allInstances.size() << 32;
-		seq += entityCount;
+		seq += entityCount.get();
 		return seq;
 	}
 
