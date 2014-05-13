@@ -110,51 +110,51 @@ public class RenderManager implements DragSourceListener {
 
 	public static RenderManager inst() { return s_instance; }
 
-	private final Thread _managerThread;
-	private final Renderer _renderer;
-	private final AtomicBoolean _finished = new AtomicBoolean(false);
-	private final AtomicBoolean _fatalError = new AtomicBoolean(false);
-	private final AtomicBoolean _redraw = new AtomicBoolean(false);
+	private final Thread managerThread;
+	private final Renderer renderer;
+	private final AtomicBoolean finished = new AtomicBoolean(false);
+	private final AtomicBoolean fatalError = new AtomicBoolean(false);
+	private final AtomicBoolean redraw = new AtomicBoolean(false);
 
-	private final AtomicBoolean _screenshot = new AtomicBoolean(false);
+	private final AtomicBoolean screenshot = new AtomicBoolean(false);
 
 	// These values are used to limit redraw rate, the stored values are time in milliseconds
 	// returned by System.currentTimeMillis()
-	private final AtomicLong _lastDraw = new AtomicLong(0);
-	private final AtomicLong _scheduledDraw = new AtomicLong(0);
+	private final AtomicLong lastDraw = new AtomicLong(0);
+	private final AtomicLong scheduledDraw = new AtomicLong(0);
 
-	private final ExceptionLogger _exceptionLogger;
+	private final ExceptionLogger exceptionLogger;
 
 	private final static double FPS = 60;
-	private final Timer _timer;
+	private final Timer timer;
 
-	private final HashMap<Integer, CameraControl> _windowControls = new HashMap<Integer, CameraControl>();
-	private final HashMap<Integer, View> _windowToViewMap= new HashMap<Integer, View>();
-	private int _activeWindowID = -1;
+	private final HashMap<Integer, CameraControl> windowControls = new HashMap<Integer, CameraControl>();
+	private final HashMap<Integer, View> windowToViewMap= new HashMap<Integer, View>();
+	private int activeWindowID = -1;
 
-	private final Object _popupLock;
-	private JPopupMenu _lastPopup;
+	private final Object popupLock;
+	private JPopupMenu lastPopup;
 
 	/**
 	 * The last scene rendered
 	 */
-	private ArrayList<RenderProxy> _cachedScene;
+	private ArrayList<RenderProxy> cachedScene;
 
-	private DisplayEntity _selectedEntity = null;
+	private DisplayEntity selectedEntity = null;
 
 	private long simTick = 0;
 
-	private long _dragHandleID = 0;
-	private Vec3d _dragCollisionPoint;
+	private long dragHandleID = 0;
+	private Vec3d dragCollisionPoint;
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
-	private ObjectType _dndObjectType;
-	private long _dndDropTime = 0;
+	private ObjectType dndObjectType;
+	private long dndDropTime = 0;
 
 	// The video recorder to sample
-	private VideoRecorder _recorder;
+	private VideoRecorder recorder;
 
-	private PreviewCache _previewCache = new PreviewCache();
+	private PreviewCache previewCache = new PreviewCache();
 
 	// Below are special PickingIDs for resizing and dragging handles
 	public static final long MOVE_PICK_ID = -1;
@@ -178,49 +178,49 @@ public class RenderManager implements DragSourceListener {
 	public static final long LINENODE_PICK_ID = -12;
 
 	private RenderManager(boolean safeGraphics) {
-		_renderer = new Renderer(safeGraphics);
+		renderer = new Renderer(safeGraphics);
 
-		_exceptionLogger = new ExceptionLogger(EXCEPTION_STACK_THRESHOLD);
+		exceptionLogger = new ExceptionLogger(EXCEPTION_STACK_THRESHOLD);
 
-		_managerThread = new Thread(new Runnable() {
+		managerThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				renderManagerLoop();
 			}
 		}, "RenderManagerThread");
-		_managerThread.start();
+		managerThread.start();
 
 		// Start the display timer
-		_timer = new Timer("RedrawThread");
+		timer = new Timer("RedrawThread");
 		TimerTask displayTask = new TimerTask() {
 			@Override
 			public void run() {
 
 				// Is a redraw scheduled
-				long lastRedraw = _lastDraw.get();
-				long scheduledTime = _scheduledDraw.get();
+				long lastRedraw = lastDraw.get();
+				long scheduledTime = scheduledDraw.get();
 				long currentTime = System.currentTimeMillis();
 
 				// Only draw if the scheduled time is before now and after the last redraw
 				// but never skip a draw if a screen shot is requested
-				if (!_screenshot.get() && (scheduledTime < lastRedraw || currentTime < scheduledTime)) {
+				if (!screenshot.get() && (scheduledTime < lastRedraw || currentTime < scheduledTime)) {
 					return;
 				}
 
-				synchronized(_redraw) {
-					if (_renderer.getNumOpenWindows() == 0 && !_screenshot.get()) {
+				synchronized(redraw) {
+					if (renderer.getNumOpenWindows() == 0 && !screenshot.get()) {
 						return; // Do not queue a redraw if there are no open windows
 					}
-					_redraw.set(true);
-					_redraw.notifyAll();
+					redraw.set(true);
+					redraw.notifyAll();
 				}
-				_lastDraw.set(currentTime);
+				lastDraw.set(currentTime);
 			}
 		};
 
-		_timer.scheduleAtFixedRate(displayTask, 0, (long) (1000 / (FPS*2)));
+		timer.scheduleAtFixedRate(displayTask, 0, (long) (1000 / (FPS*2)));
 
-		_popupLock = new Object();
+		popupLock = new Object();
 	}
 
 	public static final void updateTime(long simTick) {
@@ -238,8 +238,8 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void queueRedraw() {
-		long scheduledTime = _scheduledDraw.get();
-		long lastRedraw = _lastDraw.get();
+		long scheduledTime = scheduledDraw.get();
+		long lastRedraw = lastDraw.get();
 		long currentTime = System.currentTimeMillis();
 
 		if (scheduledTime > lastRedraw) {
@@ -253,13 +253,13 @@ public class RenderManager implements DragSourceListener {
 			// This would be scheduled too soon
 			newDraw = lastRedraw + frameTime;
 		}
-		_scheduledDraw.set(newDraw);
+		scheduledDraw.set(newDraw);
 	}
 
 	public void createWindow(View view) {
 
 		// First see if this window has already been opened
-		for (Map.Entry<Integer, CameraControl> entry : _windowControls.entrySet()) {
+		for (Map.Entry<Integer, CameraControl> entry : windowControls.entrySet()) {
 			if (entry.getValue().getView() == view) {
 				// This view has a window, just reshow that one
 				focusWindow(entry.getKey());
@@ -272,17 +272,17 @@ public class RenderManager implements DragSourceListener {
 
 		Image icon = GUIFrame.getWindowIcon();
 
-		CameraControl control = new CameraControl(_renderer, view);
+		CameraControl control = new CameraControl(renderer, view);
 
-		int windowID = _renderer.createWindow(windPos.get(0), windPos.get(1),
+		int windowID = renderer.createWindow(windPos.get(0), windPos.get(1),
 		                                      windSize.get(0), windSize.get(1),
 		                                      view.getID(),
 		                                      view.getTitle(), view.getInputName(),
 		                                      icon, control);
 
 		control.setWindowID(windowID);
-		_windowControls.put(windowID, control);
-		_windowToViewMap.put(windowID, view);
+		windowControls.put(windowID, control);
+		windowToViewMap.put(windowID, view);
 
 		queueRedraw();
 	}
@@ -294,30 +294,30 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void closeAllWindows() {
-		ArrayList<Integer> windIDs = _renderer.getOpenWindowIDs();
+		ArrayList<Integer> windIDs = renderer.getOpenWindowIDs();
 		for (int id : windIDs) {
-			_renderer.closeWindow(id);
+			renderer.closeWindow(id);
 		}
 	}
 
 	public void windowClosed(int windowID) {
 
 		// Update the state of the window in the input file
-		View v = _windowToViewMap.get(windowID);
+		View v = windowToViewMap.get(windowID);
 		if (!v.getKeepWindowOpen())
 			InputAgent.processEntity_Keyword_Value(v, "ShowWindow", "FALSE");
 		v.setKeepWindowOpen(false);
 
-		_windowControls.remove(windowID);
-		_windowToViewMap.remove(windowID);
+		windowControls.remove(windowID);
+		windowToViewMap.remove(windowID);
 	}
 
 	public void setActiveWindow(int windowID) {
-		_activeWindowID = windowID;
+		activeWindowID = windowID;
 	}
 
 	public static boolean isGood() {
-		return (s_instance != null && !s_instance._finished.get() && !s_instance._fatalError.get());
+		return (s_instance != null && !s_instance.finished.get() && !s_instance.fatalError.get());
 	}
 
 	/**
@@ -330,26 +330,26 @@ public class RenderManager implements DragSourceListener {
 
 	private void renderManagerLoop() {
 
-		while (!_finished.get() && !_fatalError.get()) {
+		while (!finished.get() && !fatalError.get()) {
 			try {
 
-				if (_renderer.hasFatalError()) {
+				if (renderer.hasFatalError()) {
 					// Well, something went horribly wrong
-					_fatalError.set(true);
-					LogBox.formatRenderLog("Renderer failed with error: %s\n", _renderer.getErrorString());
+					fatalError.set(true);
+					LogBox.formatRenderLog("Renderer failed with error: %s\n", renderer.getErrorString());
 
 					LogBox.getInstance().setVisible(true);
 
 					// Do some basic cleanup
-					_windowControls.clear();
-					_previewCache.clear();
+					windowControls.clear();
+					previewCache.clear();
 
-					_timer.cancel();
+					timer.cancel();
 
 					break;
 				}
 
-				if (!_renderer.isInitialized()) {
+				if (!renderer.isInitialized()) {
 					// Give the renderer a chance to initialize
 					try {
 						Thread.sleep(100);
@@ -357,15 +357,15 @@ public class RenderManager implements DragSourceListener {
 					continue;
 				}
 
-				for (CameraControl cc : _windowControls.values()) {
+				for (CameraControl cc : windowControls.values()) {
 					cc.checkForUpdate();
 				}
 
-				_cachedScene = new ArrayList<RenderProxy>();
+				cachedScene = new ArrayList<RenderProxy>();
 				DisplayModelBinding.clearCacheCounters();
 				DisplayModelBinding.clearCacheMissData();
 
-				boolean screenShotThisFrame = _screenshot.get();
+				boolean screenShotThisFrame = screenshot.get();
 				double renderTime = FrameBox.ticksToSeconds(simTick);
 
 				long startNanos = System.nanoTime();
@@ -411,8 +411,8 @@ public class RenderManager implements DragSourceListener {
 					for (DisplayModelBinding binding : de.getDisplayBindings()) {
 						try {
 							totalBindings++;
-							binding.collectProxies(renderTime, _cachedScene);
-							if (binding.isBoundTo(_selectedEntity)) {
+							binding.collectProxies(renderTime, cachedScene);
+							if (binding.isBoundTo(selectedEntity)) {
 								selectedBindings.add(binding);
 							}
 						} catch (Throwable t) {
@@ -425,7 +425,7 @@ public class RenderManager implements DragSourceListener {
 				// Collect selection proxies second so they always appear on top
 				for (DisplayModelBinding binding : selectedBindings) {
 					try {
-						binding.collectSelectionProxies(renderTime, _cachedScene);
+						binding.collectSelectionProxies(renderTime, cachedScene);
 					} catch (Throwable t) {
 						// Log the exception in the exception list
 						logException(t);
@@ -434,7 +434,7 @@ public class RenderManager implements DragSourceListener {
 
 				long endNanos = System.nanoTime();
 
-				_renderer.setScene(_cachedScene);
+				renderer.setScene(cachedScene);
 
 				String cacheString = " Hits: " + DisplayModelBinding.getCacheHits() + " Misses: " + DisplayModelBinding.getCacheMisses() +
 				                     " Total: " + totalBindings;
@@ -445,13 +445,13 @@ public class RenderManager implements DragSourceListener {
 				String timeString = "Gather time (ms): " + gatherMS + " Update time (ms): " + updateMS;
 
 				// Do some picking debug
-				ArrayList<Integer> windowIDs = _renderer.getOpenWindowIDs();
+				ArrayList<Integer> windowIDs = renderer.getOpenWindowIDs();
 				for (int id : windowIDs) {
-					Renderer.WindowMouseInfo mouseInfo = _renderer.getMouseInfo(id);
+					Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(id);
 
 					if (mouseInfo == null || !mouseInfo.mouseInWindow) {
 						// Not currently picking for this window
-						_renderer.setWindowDebugInfo(id, cacheString + " Not picking. " + timeString, new ArrayList<Long>());
+						renderer.setWindowDebugInfo(id, cacheString + " Not picking. " + timeString, new ArrayList<Long>());
 						continue;
 					}
 
@@ -472,15 +472,15 @@ public class RenderManager implements DragSourceListener {
 					}
 					dbgMsg.append(timeString);
 
-					_renderer.setWindowDebugInfo(id, dbgMsg.toString(), debugIDs);
+					renderer.setWindowDebugInfo(id, dbgMsg.toString(), debugIDs);
 				}
 
 				if (GUIFrame.getShuttingDownFlag()) {
 					shutdown();
 				}
 
-				_renderer.queueRedraw();
-				_redraw.set(false);
+				renderer.queueRedraw();
+				redraw.set(false);
 
 				if (screenShotThisFrame) {
 					takeScreenShot();
@@ -492,17 +492,17 @@ public class RenderManager implements DragSourceListener {
 			}
 
 			// Wait for a redraw request
-			synchronized(_redraw) {
-				while (!_redraw.get()) {
+			synchronized(redraw) {
+				while (!redraw.get()) {
 					try {
-						_redraw.wait();
+						redraw.wait();
 					} catch (InterruptedException e) {}
 				}
 			}
 
 		}
 
-		_exceptionLogger.printExceptionLog();
+		exceptionLogger.printExceptionLog();
 
 	}
 
@@ -525,15 +525,15 @@ public class RenderManager implements DragSourceListener {
 	// Temporary dumping ground until I find a better place for this
 	// Note: this is intentionally package private to be called by an inner class
 	void popupMenuImp(int windowID) {
-		synchronized (_popupLock) {
+		synchronized (popupLock) {
 
-			Renderer.WindowMouseInfo mouseInfo = _renderer.getMouseInfo(windowID);
+			Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 			if (mouseInfo == null) {
 				// Somehow this window was closed along the way, just ignore this click
 				return;
 			}
 
-			final Frame awtFrame = _renderer.getAWTFrame(windowID);
+			final Frame awtFrame = renderer.getAWTFrame(windowID);
 			if (awtFrame == null) {
 				return;
 			}
@@ -560,7 +560,7 @@ public class RenderManager implements DragSourceListener {
 			}
 
 			final JPopupMenu menu = new JPopupMenu();
-			_lastPopup = menu;
+			lastPopup = menu;
 
 			menu.setLightWeightPopupEnabled(false);
 			final int menuX = mouseInfo.x + awtFrame.getInsets().left;
@@ -614,7 +614,7 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// If no entity is found, set the selected entity to the view window
-		FrameBox.setSelectedEntity(_windowToViewMap.get(windowID));
+		FrameBox.setSelectedEntity(windowToViewMap.get(windowID));
 		queueRedraw();
 	}
 
@@ -626,9 +626,9 @@ public class RenderManager implements DragSourceListener {
 	 * @return
 	 */
 	private List<PickData> pickForMouse(int windowID, boolean precise) {
-		Renderer.WindowMouseInfo mouseInfo = _renderer.getMouseInfo(windowID);
+		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 
-		View view = _windowToViewMap.get(windowID);
+		View view = windowToViewMap.get(windowID);
 		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
 			// The mouse is not actually in the window, or the window was closed along the way
 			return new ArrayList<PickData>(); // empty set
@@ -739,9 +739,9 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public Vec3d getNearestPick(int windowID) {
-		Renderer.WindowMouseInfo mouseInfo = _renderer.getMouseInfo(windowID);
+		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 
-		View view = _windowToViewMap.get(windowID);
+		View view = windowToViewMap.get(windowID);
 		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
 			// The mouse is not actually in the window, or the window was closed along the way
 			return null;
@@ -749,7 +749,7 @@ public class RenderManager implements DragSourceListener {
 
 		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
 
-		List<Renderer.PickResult> picks = _renderer.pick(pickRay, view.getID(), true);
+		List<Renderer.PickResult> picks = renderer.pick(pickRay, view.getID(), true);
 
 		if (picks.size() == 0) {
 			return null;
@@ -776,7 +776,7 @@ public class RenderManager implements DragSourceListener {
 	 * @return
 	 */
 	private List<PickData> pickForRay(Ray pickRay, int viewID, boolean precise) {
-		List<Renderer.PickResult> picks = _renderer.pick(pickRay, viewID, precise);
+		List<Renderer.PickResult> picks = renderer.pick(pickRay, viewID, precise);
 
 		List<PickData> uniquePicks = new ArrayList<PickData>();
 
@@ -809,7 +809,7 @@ public class RenderManager implements DragSourceListener {
 	 * @return
 	 */
 	private Ray getRayForMouse(int windowID, int x, int y) {
-		Renderer.WindowMouseInfo mouseInfo = _renderer.getMouseInfo(windowID);
+		Renderer.WindowMouseInfo mouseInfo = renderer.getMouseInfo(windowID);
 		if (mouseInfo == null) {
 			return new Ray();
 		}
@@ -818,20 +818,20 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public Vec3d getRenderedStringSize(TessFontKey fontKey, double textHeight, String string) {
-		TessFont font = _renderer.getTessFont(fontKey);
+		TessFont font = renderer.getTessFont(fontKey);
 
 		return font.getStringSize(textHeight, string);
 	}
 
 	private void logException(Throwable t) {
-		_exceptionLogger.logException(t);
+		exceptionLogger.logException(t);
 
 		numberOfExceptions++;
 
 		// Only print the exception log periodically (this can get a bit spammy)
 		if (numberOfExceptions % EXCEPTION_PRINT_RATE == 0) {
 			LogBox.renderLog("Recoverable Exceptions from RenderManager: ");
-			_exceptionLogger.printExceptionLog();
+			exceptionLogger.printExceptionLog();
 			LogBox.renderLog("");
 		}
 	}
@@ -845,9 +845,9 @@ public class RenderManager implements DragSourceListener {
 
 	private void setSelectEntity(Entity ent) {
 		if (ent instanceof DisplayEntity)
-			_selectedEntity = (DisplayEntity)ent;
+			selectedEntity = (DisplayEntity)ent;
 		else
-			_selectedEntity = null;
+			selectedEntity = null;
 
 		queueRedraw();
 	}
@@ -865,11 +865,11 @@ public class RenderManager implements DragSourceListener {
 			return false;
 		}
 
-		if (_dragHandleID == 0) {
+		if (dragHandleID == 0) {
 			return true;
 		}
 
-		DisplayEntity dispEnt = _selectedEntity;
+		DisplayEntity dispEnt = selectedEntity;
 		if (dispEnt == null || !dispEnt.isMovable()) {
 			return true;
 		}
@@ -881,12 +881,12 @@ public class RenderManager implements DragSourceListener {
 		                             dragInfo.x - dragInfo.dx,
 		                             dragInfo.y - dragInfo.dy);
 
-		double _simTime = FrameBox.ticksToSeconds(simTick);
-		Transform trans = dispEnt.getGlobalTrans(_simTime);
+		double simTime = FrameBox.ticksToSeconds(simTick);
+		Transform trans = dispEnt.getGlobalTrans(simTime);
 
 		Vec3d size = dispEnt.getSize();
-		Mat4d transMat = dispEnt.getTransMatrix(_simTime);
-		Mat4d invTransMat = dispEnt.getInvTransMatrix(_simTime);
+		Mat4d transMat = dispEnt.getTransMatrix(simTime);
+		Mat4d invTransMat = dispEnt.getInvTransMatrix(simTime);
 
 		Plane entityPlane = new Plane(); // Defaults to XY
 		entityPlane.transform(trans, entityPlane, new Vec3d()); // Transform the plane to world space
@@ -894,7 +894,7 @@ public class RenderManager implements DragSourceListener {
 		double currentDist = entityPlane.collisionDist(currentRay);
 		double lastDist = entityPlane.collisionDist(lastRay);
 
-		if (_dragHandleID != MOVE_PICK_ID &&
+		if (dragHandleID != MOVE_PICK_ID &&
 		    (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
 		        lastDist < 0 ||    lastDist == Double.POSITIVE_INFINITY))
 		{
@@ -920,16 +920,16 @@ public class RenderManager implements DragSourceListener {
 		entSpaceDelta.sub3(entSpaceCurrent, entSpaceLast);
 
 		// Handle each handle by type...
-		if (_dragHandleID == MOVE_PICK_ID) {
+		if (dragHandleID == MOVE_PICK_ID) {
 			// We are dragging
 
 			// Dragging may not happen in the entity's XY plane, so we need to re-do some of the work above
-			Plane dragPlane = new Plane(new Vec3d(0, 0, 1), _dragCollisionPoint.z); // XY plane at collistion point
+			Plane dragPlane = new Plane(new Vec3d(0, 0, 1), dragCollisionPoint.z); // XY plane at collistion point
 
 			if (dragInfo.shiftDown()) {
 				Vec3d entPos = dispEnt.getGlobalPosition();
 
-				double zDiff = RenderUtils.getZDiff(_dragCollisionPoint, currentRay, lastRay);
+				double zDiff = RenderUtils.getZDiff(dragCollisionPoint, currentRay, lastRay);
 
 				entPos.z += zDiff;
 				dispEnt.setGlobalPosition(entPos);
@@ -957,47 +957,47 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// Handle resize
-		if (_dragHandleID <= RESIZE_POSX_PICK_ID &&
-		    _dragHandleID >= RESIZE_NXNY_PICK_ID) {
+		if (dragHandleID <= RESIZE_POSX_PICK_ID &&
+		    dragHandleID >= RESIZE_NXNY_PICK_ID) {
 
 			Vec3d pos = dispEnt.getGlobalPosition();
 			Vec3d scale = dispEnt.getSize();
 			Vec4d fixedPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 
-			if (_dragHandleID == RESIZE_POSX_PICK_ID) {
+			if (dragHandleID == RESIZE_POSX_PICK_ID) {
 				//scale.x = 2*entSpaceCurrent.x() * size.x();
 				scale.x += entSpaceDelta.x * size.x;
 				fixedPoint = new Vec4d(-0.5,  0.0, 0.0, 1.0d);
 			}
-			if (_dragHandleID == RESIZE_POSY_PICK_ID) {
+			if (dragHandleID == RESIZE_POSY_PICK_ID) {
 				scale.y += entSpaceDelta.y * size.y;
 				fixedPoint = new Vec4d( 0.0, -0.5, 0.0, 1.0d);
 			}
-			if (_dragHandleID == RESIZE_NEGX_PICK_ID) {
+			if (dragHandleID == RESIZE_NEGX_PICK_ID) {
 				scale.x -= entSpaceDelta.x * size.x;
 				fixedPoint = new Vec4d( 0.5,  0.0, 0.0, 1.0d);
 			}
-			if (_dragHandleID == RESIZE_NEGY_PICK_ID) {
+			if (dragHandleID == RESIZE_NEGY_PICK_ID) {
 				scale.y -= entSpaceDelta.y * size.y;
 				fixedPoint = new Vec4d( 0.0,  0.5, 0.0, 1.0d);
 			}
 
-			if (_dragHandleID == RESIZE_PXPY_PICK_ID) {
+			if (dragHandleID == RESIZE_PXPY_PICK_ID) {
 				scale.x += entSpaceDelta.x * size.x;
 				scale.y += entSpaceDelta.y * size.y;
 				fixedPoint = new Vec4d(-0.5, -0.5, 0.0, 1.0d);
 			}
-			if (_dragHandleID == RESIZE_PXNY_PICK_ID) {
+			if (dragHandleID == RESIZE_PXNY_PICK_ID) {
 				scale.x += entSpaceDelta.x * size.x;
 				scale.y -= entSpaceDelta.y * size.y;
 				fixedPoint = new Vec4d(-0.5,  0.5, 0.0, 1.0d);
 			}
-			if (_dragHandleID == RESIZE_NXPY_PICK_ID) {
+			if (dragHandleID == RESIZE_NXPY_PICK_ID) {
 				scale.x -= entSpaceDelta.x * size.x;
 				scale.y += entSpaceDelta.y * size.y;
 				fixedPoint = new Vec4d( 0.5, -0.5, 0.0, 1.0d);
 			}
-			if (_dragHandleID == RESIZE_NXNY_PICK_ID) {
+			if (dragHandleID == RESIZE_NXNY_PICK_ID) {
 				scale.x -= entSpaceDelta.x * size.x;
 				scale.y -= entSpaceDelta.y * size.y;
 				fixedPoint = new Vec4d( 0.5,  0.5, 0.0, 1.0d);
@@ -1007,30 +1007,30 @@ public class RenderManager implements DragSourceListener {
 			// and swap the currently selected handle
 			if (scale.x <= 0.00005) {
 				scale.x = 0.0001;
-				if (_dragHandleID == RESIZE_POSX_PICK_ID) { _dragHandleID = RESIZE_NEGX_PICK_ID; }
-				else if (_dragHandleID == RESIZE_NEGX_PICK_ID) { _dragHandleID = RESIZE_POSX_PICK_ID; }
+				if (dragHandleID == RESIZE_POSX_PICK_ID) { dragHandleID = RESIZE_NEGX_PICK_ID; }
+				else if (dragHandleID == RESIZE_NEGX_PICK_ID) { dragHandleID = RESIZE_POSX_PICK_ID; }
 
-				else if (_dragHandleID == RESIZE_PXPY_PICK_ID) { _dragHandleID = RESIZE_NXPY_PICK_ID; }
-				else if (_dragHandleID == RESIZE_PXNY_PICK_ID) { _dragHandleID = RESIZE_NXNY_PICK_ID; }
-				else if (_dragHandleID == RESIZE_NXPY_PICK_ID) { _dragHandleID = RESIZE_PXPY_PICK_ID; }
-				else if (_dragHandleID == RESIZE_NXNY_PICK_ID) { _dragHandleID = RESIZE_PXNY_PICK_ID; }
+				else if (dragHandleID == RESIZE_PXPY_PICK_ID) { dragHandleID = RESIZE_NXPY_PICK_ID; }
+				else if (dragHandleID == RESIZE_PXNY_PICK_ID) { dragHandleID = RESIZE_NXNY_PICK_ID; }
+				else if (dragHandleID == RESIZE_NXPY_PICK_ID) { dragHandleID = RESIZE_PXPY_PICK_ID; }
+				else if (dragHandleID == RESIZE_NXNY_PICK_ID) { dragHandleID = RESIZE_PXNY_PICK_ID; }
 			}
 
 			if (scale.y <= 0.00005) {
 				scale.y = 0.0001;
-				if (_dragHandleID == RESIZE_POSY_PICK_ID) { _dragHandleID = RESIZE_NEGY_PICK_ID; }
-				else if (_dragHandleID == RESIZE_NEGY_PICK_ID) { _dragHandleID = RESIZE_POSY_PICK_ID; }
+				if (dragHandleID == RESIZE_POSY_PICK_ID) { dragHandleID = RESIZE_NEGY_PICK_ID; }
+				else if (dragHandleID == RESIZE_NEGY_PICK_ID) { dragHandleID = RESIZE_POSY_PICK_ID; }
 
-				else if (_dragHandleID == RESIZE_PXPY_PICK_ID) { _dragHandleID = RESIZE_PXNY_PICK_ID; }
-				else if (_dragHandleID == RESIZE_PXNY_PICK_ID) { _dragHandleID = RESIZE_PXPY_PICK_ID; }
-				else if (_dragHandleID == RESIZE_NXPY_PICK_ID) { _dragHandleID = RESIZE_NXNY_PICK_ID; }
-				else if (_dragHandleID == RESIZE_NXNY_PICK_ID) { _dragHandleID = RESIZE_NXPY_PICK_ID; }
+				else if (dragHandleID == RESIZE_PXPY_PICK_ID) { dragHandleID = RESIZE_PXNY_PICK_ID; }
+				else if (dragHandleID == RESIZE_PXNY_PICK_ID) { dragHandleID = RESIZE_PXPY_PICK_ID; }
+				else if (dragHandleID == RESIZE_NXPY_PICK_ID) { dragHandleID = RESIZE_NXNY_PICK_ID; }
+				else if (dragHandleID == RESIZE_NXNY_PICK_ID) { dragHandleID = RESIZE_NXPY_PICK_ID; }
 			}
 
 			Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			oldFixed.mult4(transMat, fixedPoint);
 			dispEnt.setSize(scale);
-			transMat = dispEnt.getTransMatrix(_simTime); // Get the new matrix
+			transMat = dispEnt.getTransMatrix(simTime); // Get the new matrix
 
 			Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			newFixed.mult4(transMat, fixedPoint);
@@ -1047,7 +1047,7 @@ public class RenderManager implements DragSourceListener {
 			return true;
 		}
 
-		if (_dragHandleID == ROTATE_PICK_ID) {
+		if (dragHandleID == ROTATE_PICK_ID) {
 
 			Vec3d align = dispEnt.getAlignment();
 
@@ -1071,7 +1071,7 @@ public class RenderManager implements DragSourceListener {
 			FrameBox.valueUpdate();
 			return true;
 		}
-		if (_dragHandleID == LINEDRAG_PICK_ID) {
+		if (dragHandleID == LINEDRAG_PICK_ID) {
 			// Dragging a line object
 
 			if (dragInfo.shiftDown()) {
@@ -1100,8 +1100,8 @@ public class RenderManager implements DragSourceListener {
 			return true;
 		}
 
-		if (_dragHandleID <= LINENODE_PICK_ID) {
-			int nodeIndex = (int)(-1*(_dragHandleID - LINENODE_PICK_ID));
+		if (dragHandleID <= LINENODE_PICK_ID) {
+			int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
 			ArrayList<Vec3d> screenPoints = null;
 			if (dispEnt instanceof HasScreenPoints)
 				screenPoints = ((HasScreenPoints)dispEnt).getScreenPoints()[0].points;
@@ -1150,7 +1150,7 @@ public class RenderManager implements DragSourceListener {
 
 		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
 
-		HasScreenPoints hsp = (HasScreenPoints)_selectedEntity;
+		HasScreenPoints hsp = (HasScreenPoints)selectedEntity;
 		assert(hsp != null);
 
 		ArrayList<Vec3d> points = hsp.getScreenPoints()[0].points;
@@ -1194,8 +1194,8 @@ public class RenderManager implements DragSourceListener {
 			sb.append(String.format(loc, pointFormatter, pt.x, pt.y, pt.z));
 		}
 
-		Input<?> pointsInput = _selectedEntity.getInput("Points");
-		InputAgent.processEntity_Keyword_Value(_selectedEntity, pointsInput, sb.toString());
+		Input<?> pointsInput = selectedEntity.getInput("Points");
+		InputAgent.processEntity_Keyword_Value(selectedEntity, pointsInput, sb.toString());
 		FrameBox.valueUpdate();
 	}
 
@@ -1204,7 +1204,7 @@ public class RenderManager implements DragSourceListener {
 
 		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
 
-		HasScreenPoints hsp = (HasScreenPoints)_selectedEntity;
+		HasScreenPoints hsp = (HasScreenPoints)selectedEntity;
 		assert(hsp != null);
 
 		ArrayList<Vec3d> points = hsp.getScreenPoints()[0].points;
@@ -1244,8 +1244,8 @@ public class RenderManager implements DragSourceListener {
 			sb.append(String.format(loc, pointFormatter, pt.x, pt.y, pt.z));
 		}
 
-		Input<?> pointsInput = _selectedEntity.getInput("Points");
-		InputAgent.processEntity_Keyword_Value(_selectedEntity, pointsInput, sb.toString());
+		Input<?> pointsInput = selectedEntity.getInput("Points");
+		InputAgent.processEntity_Keyword_Value(selectedEntity, pointsInput, sb.toString());
 		FrameBox.valueUpdate();
 	}
 
@@ -1260,7 +1260,7 @@ public class RenderManager implements DragSourceListener {
 		if (button != 1) { return false; }
 		if (!isDown) {
 			// Click released
-			_dragHandleID = 0;
+			dragHandleID = 0;
 			return true; // handled
 		}
 
@@ -1269,7 +1269,7 @@ public class RenderManager implements DragSourceListener {
 
 		if (controlDown && altDown) {
 			// Check if we can split a line segment
-			if (_selectedEntity != null && _selectedEntity instanceof HasScreenPoints) {
+			if (selectedEntity != null && selectedEntity instanceof HasScreenPoints) {
 				if ((modifiers & WindowInteractionListener.MOD_SHIFT) != 0) {
 					removeLineNode(windowID, x, y);
 				} else {
@@ -1285,7 +1285,7 @@ public class RenderManager implements DragSourceListener {
 
 		Ray pickRay = getRayForMouse(windowID, x, y);
 
-		View view = _windowToViewMap.get(windowID);
+		View view = windowToViewMap.get(windowID);
 		if (view == null) {
 			return false;
 		}
@@ -1304,10 +1304,10 @@ public class RenderManager implements DragSourceListener {
 		for (PickData pd : picks) {
 			if (isMouseHandleID(pd.id) && mouseHandleDist == Double.POSITIVE_INFINITY) {
 				// this is a mouse handle, remember the handle for future drag events
-				_dragHandleID = pd.id;
+				dragHandleID = pd.id;
 				mouseHandleDist = pd.dist;
 			}
-			if (_selectedEntity != null && pd.id == _selectedEntity.getEntityNumber()) {
+			if (selectedEntity != null && pd.id == selectedEntity.getEntityNumber()) {
 				// We clicked on the selected entity
 				entityDist = pd.dist;
 			}
@@ -1316,16 +1316,16 @@ public class RenderManager implements DragSourceListener {
 		// any mouse handle other than the move handle
 		if (entityDist != Double.POSITIVE_INFINITY &&
 		    entityDist < mouseHandleDist &&
-		    (_dragHandleID == 0 || _dragHandleID == MOVE_PICK_ID)) {
+		    (dragHandleID == 0 || dragHandleID == MOVE_PICK_ID)) {
 
 			// Use the entity collision point for dragging instead of the handle collision point
-			_dragCollisionPoint = pickRay.getPointAtDist(entityDist);
-			_dragHandleID = MOVE_PICK_ID;
+			dragCollisionPoint = pickRay.getPointAtDist(entityDist);
+			dragHandleID = MOVE_PICK_ID;
 			return true;
 		}
 		if (mouseHandleDist != Double.POSITIVE_INFINITY) {
 			// We hit a mouse handle
-			_dragCollisionPoint = pickRay.getPointAtDist(mouseHandleDist);
+			dragCollisionPoint = pickRay.getPointAtDist(mouseHandleDist);
 			return true;
 		}
 
@@ -1333,17 +1333,17 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public void clearSelection() {
-		_selectedEntity = null;
+		selectedEntity = null;
 	}
 
 	public void hideExistingPopups() {
-		synchronized (_popupLock) {
-			if (_lastPopup == null) {
+		synchronized (popupLock) {
+			if (lastPopup == null) {
 				return;
 			}
 
-			_lastPopup.setVisible(false);
-			_lastPopup = null;
+			lastPopup.setVisible(false);
+			lastPopup = null;
 		}
 	}
 
@@ -1351,12 +1351,12 @@ public class RenderManager implements DragSourceListener {
 		// This is such a brutal hack to work around newt's lack of drag and drop support
 		// Claim we are still dragging for up to 10ms after the last drop failed...
 		long currTime = System.nanoTime();
-		return _dndObjectType != null &&
-		       ((currTime - _dndDropTime) < 100000000); // Did the last 'drop' happen less than 100 ms ago?
+		return dndObjectType != null &&
+		       ((currTime - dndDropTime) < 100000000); // Did the last 'drop' happen less than 100 ms ago?
 	}
 
 	public void startDragAndDrop(ObjectType ot) {
-		_dndObjectType = ot;
+		dndObjectType = ot;
 	}
 
 	public void mouseMoved(int windowID, int x, int y) {
@@ -1386,12 +1386,12 @@ public class RenderManager implements DragSourceListener {
 		Vec3d creationPoint = currentRay.getPointAtDist(dist);
 
 		// Create a new instance
-		Class<? extends Entity> proto  = _dndObjectType.getJavaClass();
+		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
 		String name = proto.getSimpleName();
 		Entity ent = InputAgent.defineEntityWithUniqueName(proto, name, true);
 
 		// We are no longer drag-and-dropping
-		_dndObjectType = null;
+		dndObjectType = null;
 		FrameBox.setSelectedEntity(ent);
 
 		if (!(ent instanceof DisplayEntity)) {
@@ -1456,7 +1456,7 @@ public class RenderManager implements DragSourceListener {
 	@Override
 	public void dragDropEnd(DragSourceDropEvent arg0) {
 		// Clear the dragging flag
-		_dndDropTime = System.nanoTime();
+		dndDropTime = System.nanoTime();
 	}
 
 	@Override
@@ -1495,7 +1495,7 @@ public class RenderManager implements DragSourceListener {
 	 * Set the current windows camera to an isometric view
 	 */
 	public void setIsometricView() {
-		CameraControl control = _windowControls.get(_activeWindowID);
+		CameraControl control = windowControls.get(activeWindowID);
 		if (control == null) return;
 
 		// The constant is acos(1/sqrt(3))
@@ -1506,7 +1506,7 @@ public class RenderManager implements DragSourceListener {
 	 * Set the current windows camera to an XY plane view
 	 */
 	public void setXYPlaneView() {
-		CameraControl control = _windowControls.get(_activeWindowID);
+		CameraControl control = windowControls.get(activeWindowID);
 		if (control == null) return;
 
 		// Do not look straight down the Z axis as that is actually a degenerate state
@@ -1514,19 +1514,19 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public View getActiveView() {
-		return _windowToViewMap.get(_activeWindowID);
+		return windowToViewMap.get(activeWindowID);
 	}
 
 	public ArrayList<Integer> getOpenWindowIDs() {
-		return _renderer.getOpenWindowIDs();
+		return renderer.getOpenWindowIDs();
 	}
 
 	public String getWindowName(int windowID) {
-		return _renderer.getWindowName(windowID);
+		return renderer.getWindowName(windowID);
 	}
 
 	public void focusWindow(int windowID) {
-		_renderer.focusWindow(windowID);
+		renderer.focusWindow(windowID);
 	}
 
 	/**
@@ -1539,7 +1539,7 @@ public class RenderManager implements DragSourceListener {
 	 */
 	public Future<BufferedImage> renderOffscreen(ArrayList<RenderProxy> scene, CameraInfo camInfo, int viewID,
 	                                   int width, int height, Runnable runWhenDone) {
-		return _renderer.renderOffscreen(scene, viewID, camInfo, width, height, runWhenDone, null);
+		return renderer.renderOffscreen(scene, viewID, camInfo, width, height, runWhenDone, null);
 	}
 
 	/**
@@ -1580,53 +1580,53 @@ public class RenderManager implements DragSourceListener {
 
 		CameraInfo camInfo = new CameraInfo(Math.PI/3, viewDist*0.1, viewDist*10, trans, null);
 
-		return _renderer.renderOffscreen(null, viewID, camInfo, width, height, null, target);
+		return renderer.renderOffscreen(null, viewID, camInfo, width, height, null, target);
 	}
 
 	public Future<BufferedImage> getPreviewForDisplayModel(DisplayModel dm, Runnable notifier) {
-		return _previewCache.getPreview(dm, notifier);
+		return previewCache.getPreview(dm, notifier);
 	}
 
 	public OffscreenTarget createOffscreenTarget(int width, int height) {
-		return _renderer.createOffscreenTarget(width, height);
+		return renderer.createOffscreenTarget(width, height);
 	}
 
 	public void freeOffscreenTarget(OffscreenTarget target) {
-		_renderer.freeOffscreenTarget(target);
+		renderer.freeOffscreenTarget(target);
 	}
 
 	private void takeScreenShot() {
 
-		if (_recorder != null)
-			_recorder.sample();
+		if (recorder != null)
+			recorder.sample();
 
-		synchronized(_screenshot) {
-			_screenshot.set(false);
-			_recorder = null;
-			_screenshot.notifyAll();
+		synchronized(screenshot) {
+			screenshot.set(false);
+			recorder = null;
+			screenshot.notifyAll();
 		}
 	}
 
 	public void blockOnScreenShot(VideoRecorder recorder) {
-		assert(!_screenshot.get());
+		assert(!screenshot.get());
 
-		synchronized (_screenshot) {
-			_screenshot.set(true);
-			_recorder = recorder;
+		synchronized (screenshot) {
+			screenshot.set(true);
+			this.recorder = recorder;
 			queueRedraw();
-			while (_screenshot.get()) {
+			while (screenshot.get()) {
 				try {
-					_screenshot.wait();
+					screenshot.wait();
 				} catch (InterruptedException ex) {}
 			}
 		}
 	}
 
 	public void shutdown() {
-		_timer.cancel();
-		_finished.set(true);
-		if (_renderer != null) {
-			_renderer.shutdown();
+		timer.cancel();
+		finished.set(true);
+		if (renderer != null) {
+			renderer.shutdown();
 		}
 	}
 
@@ -1634,10 +1634,10 @@ public class RenderManager implements DragSourceListener {
 	 * Delete the currently selected entity
 	 */
 	public void deleteSelected() {
-		if (_selectedEntity == null) {
+		if (selectedEntity == null) {
 			return;
 		}
-		_selectedEntity.kill();
+		selectedEntity.kill();
 		FrameBox.setSelectedEntity(null);
 	}
 
@@ -1645,7 +1645,7 @@ public class RenderManager implements DragSourceListener {
 		if (!isGood()) {
 			return;
 		}
-		s_instance._renderer.setDebugInfo(showDebug);
+		s_instance.renderer.setDebugInfo(showDebug);
 		s_instance.queueRedraw();
 	}
 }
