@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 
 public class StringChoiceInput extends IntegerInput {
 	private ArrayList<String> choices;
@@ -30,10 +31,10 @@ public class StringChoiceInput extends IntegerInput {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(input, 1);
-		String temp = Input.parseString(input.get(0), choices);
+		Input.assertCount(kw, 1);
+		String temp = Input.parseString(kw.getArg(0), choices);
 		value = choices.indexOf( temp );
 	}
 

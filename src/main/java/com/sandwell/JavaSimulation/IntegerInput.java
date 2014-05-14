@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 
 public class IntegerInput extends Input<Integer> {
 	private int minValue = Integer.MIN_VALUE;
@@ -25,10 +26,10 @@ public class IntegerInput extends Input<Integer> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(input, 1);
-		value = Input.parseInteger(input.get(0), minValue, maxValue);
+		Input.assertCount(kw, 1);
+		value = Input.parseInteger(kw.getArg(0), minValue, maxValue);
 	}
 
 	public void setValidRange(int min, int max) {

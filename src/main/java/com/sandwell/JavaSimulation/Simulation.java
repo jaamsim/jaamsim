@@ -494,9 +494,14 @@ public class Simulation extends Entity {
 	}
 
 	public static void setRealTimeFactor(String fac) {
-		StringVector t = new StringVector(1);
-		t.add(fac);
-		realTimeFactor.parse(t);
+		ArrayList<String> toks = new ArrayList<String>(5);
+		toks.add(realTime.getKeyword());
+
+		toks.add("{");
+		toks.add(fac);
+		toks.add("}");
+		KeywordIndex kw = new KeywordIndex(toks, 0, toks.size() - 1, null);
+		realTimeFactor.parse(kw);
 		updateRealTime();
 	}
 
