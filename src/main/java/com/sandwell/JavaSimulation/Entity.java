@@ -722,8 +722,11 @@ public class Entity {
 	 * Print an error message.
 	 */
 	public void error( String meth, String text1, String text2 ) {
+		double time = 0.0d;
+		if (EventManager.hasCurrent())
+			time = getCurrentTime();
 		InputAgent.logError("Time:%.5f Entity:%s%n%s%n%s%n%s%n",
-							getCurrentTime(), getName(),
+		                    time, getName(),
 							meth, text1, text2);
 
 		// We don't want the model to keep executing, throw an exception and let
@@ -735,8 +738,11 @@ public class Entity {
 	 * Print a warning message.
 	 */
 	public void warning( String meth, String text1, String text2 ) {
+		double time = 0.0d;
+		if (EventManager.hasCurrent())
+			time = getCurrentTime();
 		InputAgent.logWarning("Time:%.5f Entity:%s%n%s%n%s%n%s%n",
-				getCurrentTime(), getName(),
+				time, getName(),
 				meth, text1, text2);
 	}
 
