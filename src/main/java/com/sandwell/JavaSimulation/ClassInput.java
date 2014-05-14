@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 
 public class ClassInput extends Input<Class<? extends Entity>>{
 
@@ -23,10 +24,10 @@ public class ClassInput extends Input<Class<? extends Entity>>{
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(input, 1);
-		value = Input.parseClass(input.get(0));
+		Input.assertCount(kw, 1);
+		value = Input.parseClass(kw.getArg(0));
 	}
 
 }

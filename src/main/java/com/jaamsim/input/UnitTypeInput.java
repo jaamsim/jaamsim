@@ -21,7 +21,6 @@ import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation.StringVector;
 
 public class UnitTypeInput extends Input<ObjectType> {
 	private Class<? extends Unit> unitType;
@@ -32,13 +31,13 @@ public class UnitTypeInput extends Input<ObjectType> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(input, 1);
+		Input.assertCount(kw, 1);
 		if (value != null)
 			throw new InputErrorException("Value has already been set to %s", value.getInputName());
 
-		ObjectType t = Input.parseEntity(input.get(0), ObjectType.class);
+		ObjectType t = Input.parseEntity(kw.getArg(0), ObjectType.class);
 		Class<? extends Unit> type = Input.checkCast(t.getJavaClass(), Unit.class);
 
 		value = t;
