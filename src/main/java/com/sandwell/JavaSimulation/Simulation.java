@@ -221,7 +221,7 @@ public class Simulation extends Entity {
 	private static EventManager root;
 	public static synchronized final EventManager initEVT() {
 		if (root != null) return root;
-		root = EventManager.initEventManager("DefaultEventManager");
+		root = new EventManager("DefaultEventManager");
 		return root;
 	}
 

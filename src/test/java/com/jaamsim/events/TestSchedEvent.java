@@ -19,7 +19,7 @@ import org.junit.Test;
 public class TestSchedEvent {
 	@Test
 	public void testLIFOEvents() {
-		EventManager evt = EventManager.initEventManager("TestEVT");
+		EventManager evt = new EventManager("TestEVT");
 		evt.clear();
 
 		System.out.println("LIFO Events");
@@ -51,7 +51,7 @@ public class TestSchedEvent {
 
 	@Test
 	public void testFIFOEvents() {
-		EventManager evt = EventManager.initEventManager("TestEVT");
+		EventManager evt = new EventManager("TestEVT");
 		evt.clear();
 
 		System.out.println("FIFO Events");
@@ -83,7 +83,7 @@ public class TestSchedEvent {
 
 	@Test
 	public void testPriorityEvents() {
-		EventManager evt = EventManager.initEventManager("TestEVT");
+		EventManager evt = new EventManager("TestEVT");
 		evt.clear();
 
 		System.out.println("Different Priority Events");
@@ -115,7 +115,7 @@ public class TestSchedEvent {
 
 	@Test
 	public void testTimeEvents() {
-		EventManager evt = EventManager.initEventManager("TestEVT");
+		EventManager evt = new EventManager("TestEVT");
 		evt.clear();
 
 		System.out.println("Different Time Events");

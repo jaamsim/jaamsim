@@ -24,7 +24,7 @@ public class TestEventManager {
 
 	@Test
 	public void testScheduleTime() {
-		EventManager evt = EventManager.initEventManager("TestEVT");
+		EventManager evt = new EventManager("TestScheduleTimeEVT");
 		evt.clear();
 
 		ArrayList<String> log = new ArrayList<String>();
@@ -51,7 +51,7 @@ public class TestEventManager {
 
 	@Test
 	public void testSchedulePriority() {
-		EventManager evt = EventManager.initEventManager("TestEVT");
+		EventManager evt = new EventManager("testSchedulePriorityEVT");
 		evt.clear();
 
 		ArrayList<String> log = new ArrayList<String>();
@@ -81,7 +81,7 @@ public class TestEventManager {
 	 */
 	@Test
 	public void testScheduleLIFO() {
-		EventManager evt = EventManager.initEventManager("TestEVT");
+		EventManager evt = new EventManager("testScheduleLIFOEVT");
 		evt.clear();
 
 		ArrayList<String> log = new ArrayList<String>();
@@ -111,7 +111,7 @@ public class TestEventManager {
 	 */
 	@Test
 	public void testScheduleFIFO() {
-		EventManager evt = EventManager.initEventManager("TestEVT");
+		EventManager evt = new EventManager("testScheduleFIFOEVT");
 		evt.clear();
 
 		ArrayList<String> log = new ArrayList<String>();
@@ -141,7 +141,7 @@ public class TestEventManager {
 	 */
 	@Test
 	public void testScheduleMixed() {
-		EventManager evt = EventManager.initEventManager("TestEVT");
+		EventManager evt = new EventManager("testScheduleMixedEVT");
 		evt.clear();
 
 		ArrayList<String> log = new ArrayList<String>();

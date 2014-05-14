@@ -81,7 +81,7 @@ public final class EventManager {
 	 * @param parent the connection point for this EventManager in the tree
 	 * @param name the name this EventManager should use
 	 */
-	private EventManager(String name) {
+	public EventManager(String name) {
 		// Basic initialization
 		this.name = name;
 		lockObject = new Object();
@@ -105,11 +105,6 @@ public final class EventManager {
 		rebaseRealTime = true;
 		setTimeListener(null);
 		setErrorListener(null);
-	}
-
-	public static EventManager initEventManager(String name) {
-		EventManager evtman = new EventManager(name);
-		return evtman;
 	}
 
 	public final void setTimeListener(EventTimeListener l) {
