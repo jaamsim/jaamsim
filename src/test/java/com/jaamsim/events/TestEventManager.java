@@ -188,6 +188,65 @@ public class TestEventManager {
 		}
 	}
 
+	/**
+	 * Schedule events at the same time and test LIFO for the tiebreaker.
+	 */
+	@Test
+	public void testScheduleWait() {
+		EventManager evt = new EventManager("testScheduleWaitEVT");
+		evt.clear();
+
+		final ArrayList<String> log = new ArrayList<String>();
+		evt.scheduleProcess(0, 0, false, new ProcessTarget() {
+			@Override
+			public String getDescription() { return ""; }
+
+			@Override
+			public void process() {
+				log.add("Wait1:" + EventManager.current().getSimTicks());
+				EventManager.current().waitTicks(1, 0, true, null);
+				log.add("Wait1:" + EventManager.current().getSimTicks());
+				EventManager.current().waitTicks(1, 0, true, null);
+				log.add("Wait1:" + EventManager.current().getSimTicks());
+				EventManager.current().waitTicks(1, 0, false, null);
+				log.add("Wait1:" + EventManager.current().getSimTicks());
+			}
+		});
+
+		evt.scheduleProcess(0, 0, false, new ProcessTarget() {
+			@Override
+			public String getDescription() { return ""; }
+
+			@Override
+			public void process() {
+				log.add("Wait2:" + EventManager.current().getSimTicks());
+				EventManager.current().waitTicks(1, 0, true, null);
+				log.add("Wait2:" + EventManager.current().getSimTicks());
+				EventManager.current().waitTicks(1, 0, true, null);
+				log.add("Wait2:" + EventManager.current().getSimTicks());
+				EventManager.current().waitTicks(1, 0, true, null);
+				log.add("Wait2:" + EventManager.current().getSimTicks());
+			}
+		});
+
+		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
+
+		ArrayList<String> expected = new ArrayList<String>();
+		expected.add("Wait2:0");
+		expected.add("Wait1:0");
+		expected.add("Wait2:1");
+		expected.add("Wait1:1");
+		expected.add("Wait2:2");
+		expected.add("Wait1:2");
+		expected.add("Wait1:3");
+		expected.add("Wait2:3");
+
+		assertTrue(expected.size() == log.size());
+		for (int i = 0; i < expected.size(); i++) {
+			assertTrue(expected.get(i).equals(log.get(i)));
+		}
+	}
+
 	private static class LogTarget extends ProcessTarget {
 		final ArrayList<String> log;
 		final int num;
