@@ -6,6 +6,7 @@ Define ObjectType {
                     EntitySink
                     EntityConveyor
 					EntityDelay
+					Assign
                     Queue
 					Seize
 					Release
@@ -27,6 +28,7 @@ Define	ImageModel {
 			SourceIconModel
 			SinkIconModel
 			ServerIconModel
+			AssignModel
 			ResourceIconModel
 			SeizeIconModel
 			ReleaseIconModel
@@ -39,6 +41,7 @@ Define	ImageModel {
 SourceIconModel         ImageFile { '<res>/images/Source-256.png' }      Transparent { TRUE }
 SinkIconModel           ImageFile { '<res>/images/Sink-256.png'   }      Transparent { TRUE }
 ServerIconModel         ImageFile { '<res>/images/Server-256.png' }      Transparent { TRUE }
+AssignModel             ImageFile { '<res>/images/Assign-256.png' }      Transparent { TRUE }
 ResourceIconModel       ImageFile { '<res>/images/Resource-256.png' }    Transparent { TRUE }
 SeizeIconModel          ImageFile { '<res>/images/Seize-256.png'  }      Transparent { TRUE }
 ReleaseIconModel        ImageFile { '<res>/images/Release-256.png' }     Transparent { TRUE }
@@ -52,6 +55,7 @@ Server                  JavaClass { com.jaamsim.BasicObjects.Server             
 EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SinkIconModel 		}
 EntityConveyor          JavaClass { com.jaamsim.BasicObjects.EntityConveyor             } Palette { 'Basic Objects' } DefaultDisplayModel	{ ScreenPointsModelDefault			}
 EntityDelay             JavaClass { com.jaamsim.BasicObjects.EntityDelay                } Palette { 'Basic Objects' } DefaultDisplayModel	{ ScreenPointsModelDefault			}
+Assign                  JavaClass { com.jaamsim.BasicObjects.Assign                     } Palette { 'Basic Objects' } DefaultDisplayModel	{ AssignModel			}
 Queue                   JavaClass { com.sandwell.JavaSimulation3D.Queue	                } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Triangle 				}
 Seize                   JavaClass { com.jaamsim.BasicObjects.Seize                      } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SeizeIconModel		}
 Release                 JavaClass { com.jaamsim.BasicObjects.Release                    } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ReleaseIconModel 		}
@@ -73,6 +77,7 @@ Server             Description { 'Processes a received entity over a specified d
 EntitySink         Description { 'Destroys any entity it receives.' }
 EntityConveyor     Description { 'Transports a received entity along a specified path at a fixed speed.' }
 EntityDelay        Description { 'Delays a received entity by a specified duration.' }
+Assign             Description { 'Assigns new values to attributes.' }
 Queue              Description { 'Stores received entities in first-in-first-out order until they are needed.' }
 Seize              Description { 'Seizes one or more units of a Resource.' }
 Release            Description { 'Releases one or more units of a Resource.' }
