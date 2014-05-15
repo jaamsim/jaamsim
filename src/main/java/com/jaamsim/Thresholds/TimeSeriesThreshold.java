@@ -151,7 +151,6 @@ public class TimeSeriesThreshold extends Threshold {
 			for( ThresholdUser user : userList ) {
 				if (!userUpdate.users.contains(user))
 					userUpdate.users.add(user);
-				user.thresholdClosed();
 			}
 			if (!userUpdate.users.isEmpty())
 				this.scheduleSingleProcess(userUpdate, 2);
@@ -163,7 +162,6 @@ public class TimeSeriesThreshold extends Threshold {
 			for( ThresholdUser user : userList ) {
 				if (!userUpdate.users.contains(user))
 					userUpdate.users.add(user);
-				user.thresholdOpen();
 			}
 			if (!userUpdate.users.isEmpty())
 				this.scheduleSingleProcess(userUpdate, 2);
