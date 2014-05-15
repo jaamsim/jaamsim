@@ -198,8 +198,7 @@ public class TimeSeriesThreshold extends Threshold {
 	/**
 	 * Return the time in hours during which the threshold is closed starting from the given time.
 	 */
-	@Override
-	public double calcClosedTimeFromTime( double startTime ) {
+	private double calcClosedTimeFromTime( double startTime ) {
 
 		// If the series is always outside the limits, the threshold is closed forever
 		if (isAlwaysClosed())

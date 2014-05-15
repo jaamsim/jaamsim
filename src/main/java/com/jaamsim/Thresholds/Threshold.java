@@ -138,8 +138,6 @@ public abstract class Threshold extends DisplayEntity {
 		return closed;
 	}
 
-	public abstract double calcClosedTimeFromTime( double startTime );
-
 	@Override
 	public void updateGraphics( double time ) {
 		super.updateGraphics(time);
