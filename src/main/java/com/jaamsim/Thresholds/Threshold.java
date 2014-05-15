@@ -46,7 +46,7 @@ public abstract class Threshold extends DisplayEntity {
 	         example = "Threshold1 ShowWhenClosed { FALSE }")
 	private final BooleanInput showWhenClosed;
 
-	protected final ArrayList<ThresholdUser> userList;
+	private final ArrayList<ThresholdUser> userList;
 
 	protected boolean closed;
 
@@ -99,8 +99,8 @@ public abstract class Threshold extends DisplayEntity {
 
 	public abstract void doOpenClose();
 
-	protected static final DoThresholdChanged userUpdate = new DoThresholdChanged();
-	protected static class DoThresholdChanged extends ProcessTarget {
+	private static final DoThresholdChanged userUpdate = new DoThresholdChanged();
+	private static class DoThresholdChanged extends ProcessTarget {
 		public final ArrayList<ThresholdUser> users = new ArrayList<ThresholdUser>();
 
 		public DoThresholdChanged() {}
@@ -116,6 +116,21 @@ public abstract class Threshold extends DisplayEntity {
 		@Override
 		public String getDescription() {
 			return "UpdateAllThresholdUsers";
+		}
+	}
+
+	protected void scheduleChangedCallback() {
+		for (ThresholdUser user : userList) {
+			if (!userUpdate.users.contains(user))
+				userUpdate.users.add(user);
+		}
+		if (!userUpdate.users.isEmpty())
+			this.scheduleSingleProcess(userUpdate, 2);
+	}
+
+	protected void thresholdChangedCallback() {
+		for (ThresholdUser user : userList) {
+			user.thresholdChanged();
 		}
 	}
 

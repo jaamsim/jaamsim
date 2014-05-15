@@ -148,23 +148,13 @@ public class TimeSeriesThreshold extends Threshold {
 		if( this.isClosedAtTime( getCurrentTime() ) ) {
 			closed = true;
 			if( traceFlag ) this.trace( "Closed" );
-			for( ThresholdUser user : userList ) {
-				if (!userUpdate.users.contains(user))
-					userUpdate.users.add(user);
-			}
-			if (!userUpdate.users.isEmpty())
-				this.scheduleSingleProcess(userUpdate, 2);
+			this.scheduleChangedCallback();
 			wait = this.calcClosedTimeFromTime( getCurrentTime() );
 		}
 		else {
 			closed = false;
 			if( traceFlag ) this.trace( "Open" );
-			for( ThresholdUser user : userList ) {
-				if (!userUpdate.users.contains(user))
-					userUpdate.users.add(user);
-			}
-			if (!userUpdate.users.isEmpty())
-				this.scheduleSingleProcess(userUpdate, 2);
+			this.scheduleChangedCallback();
 			wait = this.calcOpenTimeFromTime( getCurrentTime() );
 		}
 
