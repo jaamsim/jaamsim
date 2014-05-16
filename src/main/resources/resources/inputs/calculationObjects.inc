@@ -10,10 +10,6 @@ Define ObjectType {
 					Sensor
 					SineWave
 					SquareWave
-					ConstantBoolean
-					AndOperator
-					OrOperator
-					NotOperator
                     }
 
 Controller              JavaClass { com.jaamsim.CalculationObjects.Controller          } Palette { 'Calculation Objects' }
@@ -27,10 +23,6 @@ MovingAverage           JavaClass { com.jaamsim.CalculationObjects.MovingAverage
 Sensor                  JavaClass { com.jaamsim.CalculationObjects.Sensor              } Palette { 'Calculation Objects' }
 SineWave                JavaClass { com.jaamsim.CalculationObjects.SineWave            } Palette { 'Calculation Objects' }
 SquareWave              JavaClass { com.jaamsim.CalculationObjects.SquareWave          } Palette { 'Calculation Objects' }
-ConstantBoolean         JavaClass { com.jaamsim.CalculationObjects.ConstantBoolean     } Palette { 'Calculation Objects' }
-AndOperator             JavaClass { com.jaamsim.CalculationObjects.AndOperator         } Palette { 'Calculation Objects' }
-OrOperator              JavaClass { com.jaamsim.CalculationObjects.OrOperator          } Palette { 'Calculation Objects' }
-NotOperator             JavaClass { com.jaamsim.CalculationObjects.NotOperator         } Palette { 'Calculation Objects' }
 
 Define	ImageModel {
 			ControllerIconModel
@@ -44,10 +36,6 @@ Define	ImageModel {
 			SensorIconModel
 			SineWaveIconModel
 			SquareWaveIconModel
-			ConstantBooleanIconModel
-			AndOperatorIconModel
-			OrOperatorIconModel
-			NotOperatorIconModel
 		}
 
 ControllerIconModel      ImageFile { '<res>/images/Controller-256.png' }      Transparent { TRUE }
@@ -61,10 +49,6 @@ MovingAverageIconModel   ImageFile { '<res>/images/AVG-256.png' }             Tr
 SensorIconModel          ImageFile { '<res>/images/Sensor-256.png' }          Transparent { TRUE }
 SineWaveIconModel        ImageFile { '<res>/images/SineWave-256.png' }        Transparent { TRUE }
 SquareWaveIconModel      ImageFile { '<res>/images/SquareWave-256.png' }      Transparent { TRUE }
-ConstantBooleanIconModel ImageFile { '<res>/images/ConstantValue-256.png' }   Transparent { TRUE }
-AndOperatorIconModel     ImageFile { '<res>/images/AND-256.png' }             Transparent { TRUE }
-OrOperatorIconModel      ImageFile { '<res>/images/OR-256.png' }              Transparent { TRUE }
-NotOperatorIconModel     ImageFile { '<res>/images/NOT-256.png' }             Transparent { TRUE }
 
 Controller              DefaultDisplayModel 	{ ControllerIconModel }
 WeightedSum             DefaultDisplayModel 	{ WeightedSumIconModel }
@@ -77,10 +61,6 @@ MovingAverage           DefaultDisplayModel 	{ MovingAverageIconModel }
 Sensor                  DefaultDisplayModel 	{ SensorIconModel }
 SineWave                DefaultDisplayModel 	{ SineWaveIconModel }
 SquareWave              DefaultDisplayModel 	{ SquareWaveIconModel }
-ConstantBoolean         DefaultDisplayModel 	{ ConstantBooleanIconModel }
-AndOperator             DefaultDisplayModel 	{ AndOperatorIconModel }
-OrOperator              DefaultDisplayModel 	{ OrOperatorIconModel }
-NotOperator             DefaultDisplayModel 	{ NotOperatorIconModel }
 
 Controller       Description { 'Signals the updating of each component in the specified sequence.' }
 WeightedSum      Description { 'Calculates the weighted sum of the input values.' }
@@ -93,7 +73,3 @@ MovingAverage    Description { 'Calculates a moving average of the input value o
 Sensor           Description { 'Allows the numerical output value for an entity to be used as an input to a calculation.' }
 SineWave         Description { 'Generates a sinusoidal wave.' }
 SquareWave       Description { 'Generates a square wave.' }
-ConstantBoolean  Description { 'Provides a fixed Boolean value (TRUE or FALSE).' }
-AndOperator      Description { 'Calculates the AND function on the Boolean inputs.' }
-OrOperator       Description { 'Calculates the OR function on the Boolean inputs.' }
-NotOperator      Description { 'Calculates the NOT function on a Boolean input.' }
