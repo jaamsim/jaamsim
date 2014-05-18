@@ -111,6 +111,14 @@ implements SampleProvider {
 		return value;
 	}
 
+	/**
+	 * Calculates and returns the output value at the given simulation time.
+	 * <p>
+	 * This method returns an output value that varies smoothly between the
+	 * values stored at each update.
+	 * @param simTime - the specified simulation time.
+	 * @return the output value at the specified simulation time.
+	 */
 	protected abstract double calculateValue(double simTime);
 
 	@Override
@@ -166,6 +174,12 @@ implements SampleProvider {
 		return value;
 	}
 
+	/**
+	 * Returns the value for the input to this calculation object at the
+	 * specified simulation time.
+	 * @param simTime - the specified simulation time.
+	 * @return the input value to this calculation object.
+	 */
 	public double getInputValue( double simTime ) {
 		return inputValue.getValue().getNextSample(simTime);
 	}
