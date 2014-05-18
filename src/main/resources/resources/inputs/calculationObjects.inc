@@ -7,7 +7,6 @@ Define ObjectType {
 					PIDController
 					Lag
 					MovingAverage
-					Sensor
 					SineWave
 					SquareWave
                     }
@@ -20,7 +19,6 @@ Differentiator          JavaClass { com.jaamsim.CalculationObjects.Differentiato
 PIDController           JavaClass { com.jaamsim.CalculationObjects.PIDController       } Palette { 'Calculation Objects' }
 Lag                     JavaClass { com.jaamsim.CalculationObjects.Lag                 } Palette { 'Calculation Objects' }
 MovingAverage           JavaClass { com.jaamsim.CalculationObjects.MovingAverage       } Palette { 'Calculation Objects' }
-Sensor                  JavaClass { com.jaamsim.CalculationObjects.Sensor              } Palette { 'Calculation Objects' }
 SineWave                JavaClass { com.jaamsim.CalculationObjects.SineWave            } Palette { 'Calculation Objects' }
 SquareWave              JavaClass { com.jaamsim.CalculationObjects.SquareWave          } Palette { 'Calculation Objects' }
 
@@ -33,7 +31,6 @@ Define	ImageModel {
 			PIDControllerIconModel
 			LagIconModel
 			MovingAverageIconModel
-			SensorIconModel
 			SineWaveIconModel
 			SquareWaveIconModel
 		}
@@ -46,7 +43,6 @@ DifferentiatorIconModel  ImageFile { '<res>/images/Differentiator-256.png' }  Tr
 PIDControllerIconModel   ImageFile { '<res>/images/PID-256.png' }             Transparent { TRUE }
 LagIconModel             ImageFile { '<res>/images/LAG-256.png' }             Transparent { TRUE }
 MovingAverageIconModel   ImageFile { '<res>/images/AVG-256.png' }             Transparent { TRUE }
-SensorIconModel          ImageFile { '<res>/images/Sensor-256.png' }          Transparent { TRUE }
 SineWaveIconModel        ImageFile { '<res>/images/SineWave-256.png' }        Transparent { TRUE }
 SquareWaveIconModel      ImageFile { '<res>/images/SquareWave-256.png' }      Transparent { TRUE }
 
@@ -58,7 +54,6 @@ Differentiator          DefaultDisplayModel 	{ DifferentiatorIconModel }
 PIDController           DefaultDisplayModel 	{ PIDControllerIconModel }
 Lag                     DefaultDisplayModel 	{ LagIconModel }
 MovingAverage           DefaultDisplayModel 	{ MovingAverageIconModel }
-Sensor                  DefaultDisplayModel 	{ SensorIconModel }
 SineWave                DefaultDisplayModel 	{ SineWaveIconModel }
 SquareWave              DefaultDisplayModel 	{ SquareWaveIconModel }
 
@@ -70,6 +65,5 @@ Differentiator   Description { 'Differentiates the input value over time.' }
 PIDController    Description { 'Proportional-Integral-Differential controller.' }
 Lag              Description { 'Calculates the LAG operation for the input value.' }
 MovingAverage    Description { 'Calculates a moving average of the input value over a specified range of time.' }
-Sensor           Description { 'Allows the numerical output value for an entity to be used as an input to a calculation.' }
 SineWave         Description { 'Generates a sinusoidal wave.' }
 SquareWave       Description { 'Generates a square wave.' }
