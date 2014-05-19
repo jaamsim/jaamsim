@@ -523,6 +523,10 @@ public class InputAgent {
 			}
 		}
 
+		if (ret.size() == 0)
+			throw new InputErrorException("The input for a keyword must be enclosed by braces. " +
+					"Should be <keyword> { <args> }");
+
 		// Look for a leftover keyword at the end of line
 		KeywordIndex last = ret.get(ret.size() - 1);
 		if (last.end != input.size() - 1) {
