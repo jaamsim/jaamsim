@@ -28,11 +28,11 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class LogLogisticDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Log-Logistic distribution.",
-	         example = "LogLogisticDist-1 Scale { 3.0 }")
+	         example = "LogLogisticDist1 Scale { 3.0 }")
 	private final ValueInput scaleInput;
 
 	@Keyword(description = "The shape parameter for the Log-Logistic distribution.  A decimal value > 0.0.",
-	         example = "LogLogisticDist-1 Shape { 1.0 }")
+	         example = "LogLogisticDist1 Shape { 1.0 }")
 	private final ValueInput shapeInput;
 
 	private final MRG1999a rng = new MRG1999a();

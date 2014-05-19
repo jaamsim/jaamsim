@@ -28,7 +28,7 @@ import com.sandwell.JavaSimulation.InputErrorException;
 public class TriangularDistribution extends Distribution {
 
 	@Keyword(description = "The mode of the triangular distribution, i.e. the value with the highest probability.",
-	         example = "TriangularDist-1 Mode { 5.0 }")
+	         example = "TriangularDist1 Mode { 5.0 }")
 	private final ValueInput modeInput;
 
 	private final MRG1999a rng = new MRG1999a();

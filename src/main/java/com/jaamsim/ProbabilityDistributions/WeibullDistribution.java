@@ -28,7 +28,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class WeibullDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Weibull distribution.",
-	         example = "WeibullDist-1 Scale { 3.0 h }")
+	         example = "WeibullDist1 Scale { 3.0 h }")
 	private final ValueInput scaleInput;
 
 	@Keyword(description = "The shape parameter for the Weibull distribution.  A decimal value > 0.0.  " +

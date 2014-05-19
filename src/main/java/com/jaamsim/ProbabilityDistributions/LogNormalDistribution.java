@@ -28,11 +28,11 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class LogNormalDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the normal distribution (not the mean of the lognormal).",
-	         example = "LogNormalDist-1 NormalMean { 5.0 }")
+	         example = "LogNormalDist1 NormalMean { 5.0 }")
 	private final ValueInput normalMeanInput;
 
 	@Keyword(description = "The standard deviation of the normal distribution (not the standard deviation of the lognormal).",
-	         example = "LogNormalDist-1 NormalStandardDeviation { 2.0 }")
+	         example = "LogNormalDist1 NormalStandardDeviation { 2.0 }")
 	private final ValueInput normalStandardDeviationInput;
 
 	private final MRG1999a rng1 = new MRG1999a();

@@ -30,11 +30,11 @@ import com.sandwell.JavaSimulation.DoubleInput;
 public class GammaDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the Gamma distribution.",
-	         example = "GammaDist-1 Mean { 5.0 }")
+	         example = "GammaDist1 Mean { 5.0 }")
 	private final ValueInput meanInput;
 
 	@Keyword(description = "The shape parameter for the Gamma distribution.  A decimal value > 0.0.",
-	         example = "GammaDist-1 Shape { 2.0 }")
+	         example = "GammaDist1 Shape { 2.0 }")
 	private final DoubleInput shapeInput;
 
 	private final MRG1999a rng1 = new MRG1999a();

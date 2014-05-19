@@ -33,13 +33,13 @@ import com.sandwell.JavaSimulation.InputErrorException;
 public class ContinuousDistribution extends Distribution {
 
 	@Keyword(description = "The list of values for the user-defined cumulative probability distribution.",
-	         example = "ContinuousDist-1 ValueList { 2.0  4.3  8.9 }")
+	         example = "ContinuousDist1 ValueList { 2.0  4.3  8.9 }")
 	private final ValueListInput valueListInput;
 
 	@Keyword(description = "The list of cumulative probabilities corresponding to the values in the ValueList.  " +
 			"The cumulative probabilities must be given in increasing order.  The first value must be exactly 0.0.  " +
 			"The last value must be exactly 1.0.",
-	         example = "ContinuousDist-1 CumulativeProbabilityList { 0.0  0.6  1.0 }")
+	         example = "ContinuousDist1 CumulativeProbabilityList { 0.0  0.6  1.0 }")
 	private final DoubleListInput cumulativeProbabilityListInput;
 
 	private final MRG1999a rng = new MRG1999a();

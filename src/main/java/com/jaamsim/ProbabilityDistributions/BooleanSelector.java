@@ -23,11 +23,11 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class BooleanSelector extends DisplayEntity {
 	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
-	         example = "RandomSelector-1 RandomSeed { 547 }")
+	         example = "RandomSelector1 RandomSeed { 547 }")
 	private IntegerInput randomSeedInput;
 
 	@Keyword(description = "The probability of the Selector returning true.",
-	         example = "RandomSelector-1 TrueProbability { 0.5 }")
+	         example = "RandomSelector1 TrueProbability { 0.5 }")
 	private ValueInput trueProbInput;
 
 	private final MRG1999a rng = new MRG1999a();
