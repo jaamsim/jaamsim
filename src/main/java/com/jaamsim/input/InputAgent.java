@@ -218,36 +218,6 @@ public class InputAgent {
 		return batchRun;
 	}
 
-	/**
-	 * returns true if the first and last tokens are matched braces
-	 **/
-	public static boolean enclosedByBraces(ArrayList<String> tokens) {
-		if(tokens.size() < 2 || tokens.indexOf("{") < 0) // no braces
-			return false;
-
-		int level =1;
-		int i = 1;
-		for(String each: tokens.subList(1, tokens.size())) {
-			if(each.equals("{")) {
-				level++;
-			}
-			if(each.equals("}")) {
-				level--;
-
-				// Matching close brace found
-				if(level == 0)
-					break;
-			}
-			i++;
-		}
-
-		if(level == 0 && i == tokens.size()-1) {
-			return true;
-		}
-
-		return false;
-	}
-
 	private static int getBraceDepth(ArrayList<String> tokens, int startingBraceDepth, int startingIndex) {
 		int braceDepth = startingBraceDepth;
 		for (int i = startingIndex; i < tokens.size(); i++) {
@@ -1217,10 +1187,7 @@ public class InputAgent {
 				String value = in.getValueString();
 				ArrayList<String> tokens = new ArrayList<String>();
 				Parser.tokenize(tokens, value);
-				if (!InputAgent.enclosedByBraces(tokens))
-					file.format("%s %s { %s }%n", ent.getInputName(), in.getKeyword(), value);
-				else
-					file.format("%s %s %s%n", ent.getInputName(), in.getKeyword(), value);
+				file.format("%s %s { %s }%n", ent.getInputName(), in.getKeyword(), value);
 			}
 		}
 
@@ -1230,10 +1197,7 @@ public class InputAgent {
 				String value = in.getValueString();
 				ArrayList<String> tokens = new ArrayList<String>();
 				Parser.tokenize(tokens, value);
-				if (!InputAgent.enclosedByBraces(tokens))
-					file.format("%s %s { %s }%n", ent.getInputName(), in.getKeyword(), value);
-				else
-					file.format("%s %s %s%n", ent.getInputName(), in.getKeyword(), value);
+				file.format("%s %s { %s }%n", ent.getInputName(), in.getKeyword(), value);
 			}
 		}
 	}
