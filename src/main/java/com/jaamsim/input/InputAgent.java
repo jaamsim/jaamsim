@@ -1211,20 +1211,30 @@ public class InputAgent {
 	 */
 	static void writeInputsOnFile_ForEntity( FileEntity file, Entity ent ) {
 
-		// Loop through the keywords for this entity
-		for( int j=0; j < ent.getEditableInputs().size(); j++ ) {
-			Input<?> in = ent.getEditableInputs().get( j );
-			if (!in.isEdited())
-				continue;
+		// Print keywords for this entity that are in the "Key Inputs" category
+		for (Input<?> in : ent.getEditableInputs()) {
+			if (in.isEdited() && in.getCategory().equals("Key Inputs")) {
+				String value = in.getValueString();
+				ArrayList<String> tokens = new ArrayList<String>();
+				Parser.tokenize(tokens, value);
+				if (!InputAgent.enclosedByBraces(tokens))
+					file.format("%s %s { %s }%n", ent.getInputName(), in.getKeyword(), value);
+				else
+					file.format("%s %s %s%n", ent.getInputName(), in.getKeyword(), value);
+			}
+		}
 
-			// Print the keywords and values
-			String value = in.getValueString();
-			ArrayList<String> tokens = new ArrayList<String>();
-			Parser.tokenize(tokens, value);
-			if (!InputAgent.enclosedByBraces(tokens))
-				file.format("%s %s { %s }%n", ent.getInputName(), in.getKeyword(), value);
-			else
-				file.format("%s %s %s%n", ent.getInputName(), in.getKeyword(), value);
+		// Print keywords for this entity that are NOT in the "Key Inputs" category
+		for (Input<?> in : ent.getEditableInputs()) {
+			if (in.isEdited() && !in.getCategory().equals("Key Inputs")) {
+				String value = in.getValueString();
+				ArrayList<String> tokens = new ArrayList<String>();
+				Parser.tokenize(tokens, value);
+				if (!InputAgent.enclosedByBraces(tokens))
+					file.format("%s %s { %s }%n", ent.getInputName(), in.getKeyword(), value);
+				else
+					file.format("%s %s %s%n", ent.getInputName(), in.getKeyword(), value);
+			}
 		}
 	}
 
