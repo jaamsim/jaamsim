@@ -39,7 +39,7 @@ import com.sandwell.JavaSimulation.Vec3dListInput;
 public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoints {
 
 	@Keyword(description = "Volumetric flow rate.",
-	         example = "FluidFixedFlow-1 FlowRate { 1.0 m3/s }")
+	         example = "FluidFixedFlow1 FlowRate { 1.0 m3/s }")
 	private final ValueInput flowRateInput;
 
     @Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
