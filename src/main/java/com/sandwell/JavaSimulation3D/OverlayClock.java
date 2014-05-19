@@ -31,13 +31,13 @@ import com.sandwell.JavaSimulation.StringInput;
 public class OverlayClock extends OverlayText {
 
 	@Keyword(description = "The year in which the simulation will begin.",
-	         example = "OverlayClock-1 StartingYear { 2000 }")
+	         example = "OverlayClock1 StartingYear { 2000 }")
 	private final IntegerInput startingYear;
 
 	@Keyword(description = "The Java date format in which the date and time are to be displayed.  " +
 			"If spaces are included, enclose the text in single quotes.  " +
 			 "e.g. 'yyyy-MMM-dd H:mm:ss.SSS'",
-	         example = "OverlayClock-1 DateFormat { 'yyyy-MMM-dd HH:mm:ss.SSS' }")
+	         example = "OverlayClock1 DateFormat { 'yyyy-MMM-dd HH:mm:ss.SSS' }")
 	protected final StringInput dateFormatInput;
 
 	private Calendar calendar;

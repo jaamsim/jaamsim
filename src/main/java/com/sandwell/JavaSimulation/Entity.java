@@ -69,13 +69,13 @@ public class Entity {
 	private final BooleanInput trace;
 
 	@Keyword(description = "A free form string describing the Entity",
-	         example = "Ent Description { 'A very useful entity' }")
+	         example = "Entity1 Description { 'A very useful entity' }")
 	private final StringInput desc;
 
 	@Keyword(description = "The list of user defined attributes for this entity.\n" +
 			" The attribute name is followed by its initial value. The unit provided for" +
 			"this value will determine the attribute's unit type.",
-	         example = "Entity-1 AttributeDefinitionList { { A 20.0 s } { alpha 42 } }")
+	         example = "Entity1 AttributeDefinitionList { { A 20.0 s } { alpha 42 } }")
 	private final AttributeDefinitionListInput attributeDefinitionList;
 
 	// constants used when scheduling events using the Entity wrappers

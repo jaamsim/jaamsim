@@ -29,15 +29,15 @@ public abstract class OverlayEntity extends DisplayEntity {
 
 	@Keyword(description = "The position of the overlay, from the upper left corner of the window to the upper left corner " +
 	                "of the overlay. Value is in pixels",
-	         example = "Overlay-1 ScreenPosition { 20 20 }")
+	         example = "Overlay1 ScreenPosition { 20 20 }")
 	private final IntegerListInput screenPosition;
 
 	@Keyword(description = "If this overlay should be aligned from the right edge of the window (instead of the left)",
-	         example = "Overlay-1 AlignRight { TRUE }")
+	         example = "Overlay1 AlignRight { TRUE }")
 	private final BooleanInput alignRight;
 
 	@Keyword(description = "If this overlay should be aligned from the bottom edge of the window (instead of the top)",
-	         example = "Overlay-1 AlignBottom { TRUE }")
+	         example = "Overlay1 AlignBottom { TRUE }")
 	private final BooleanInput alignBottom;
 
 	{

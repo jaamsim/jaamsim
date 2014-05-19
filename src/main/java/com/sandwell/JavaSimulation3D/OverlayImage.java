@@ -26,7 +26,7 @@ import com.sandwell.JavaSimulation.IntegerVector;
 public class OverlayImage extends OverlayEntity {
 
 	@Keyword(description = "The size of the image. Value is in pixels",
-	         example = "OverlayImage-1 ImageSize { 200 100 }")
+	         example = "OverlayImage1 ImageSize { 200 100 }")
 	private final IntegerListInput size;
 
 	{

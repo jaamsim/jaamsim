@@ -43,7 +43,7 @@ public class Graph extends GraphBasics  {
 
 	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
 			"Each source is graphed as a separate line and is specified by an Entity and its Output.",
-     example = "Graph1 DataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
+     example = "Graph1 DataSource { { Entity1 Output1 } { Entity2 Output2 } }")
 	protected final OutputListInput<Double> dataSource;
 
 	@Keyword(description = "A list of colors for the line series to be displayed.\n" +
@@ -60,7 +60,7 @@ public class Graph extends GraphBasics  {
 
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
 			"Each source is graphed as a separate line and is specified by an Entity and its Output.",
-     example = "Graph1 SecondaryDataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
+     example = "Graph1 SecondaryDataSource { { Entity1 Output1 } { Entity2 Output2 } }")
 	protected final OutputListInput<Double> secondaryDataSource;
 
 	@Keyword(description = "A list of colors for the secondary line series to be displayed.\n" +

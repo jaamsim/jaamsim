@@ -34,26 +34,26 @@ public class Text extends DisplayEntity {
 	@Keyword(description = "The fixed and variable text to be displayed.  If spaces are included, enclose the text in single quotes.  " +
 			"If variable text is to be displayed using the OutputName keyword, include the appropriate Java format in the text, " +
 			"e.g. %s, %.6f, %.6g",
-	         example = "Text-1 Format { 'Present speed = %.3f m/s' }")
+	         example = "Text1 Format { 'Present speed = %.3f m/s' }")
 	protected final StringInput formatText;
 
 	@Keyword(description = "The output value chain that returns the variable text to be displayed. " +
 			"If more than one output value is given, all outputs but the last should point to an entity output to query" +
 			" for the next output. The example returns the name of the product in a tank",
-	         example = "Text-1 OutputName { Tank1 Product Name }")
+	         example = "Text1 OutputName { Tank1 Product Name }")
 	protected final OutputInput<Object> outputName;
 
 	@Keyword(description = "The unit in which to express the output value",
-	         example = "Text-1 Unit { m/s }")
+	         example = "Text1 Unit { m/s }")
 	protected final EntityInput<Unit> unit;
 
 	@Keyword(description = "The height of the font as displayed in the view window.",
-	         example = "Text-1 TextHeight { 15 m }")
+	         example = "Text1 TextHeight { 15 m }")
 	protected final ValueInput textHeight;
 
 	@Keyword(description = "The text to display if there is any failure while formatting" +
 	                       "the dynamic text, or while reading the output's value.",
-	         example = "Text-1 FailText { '' }")
+	         example = "Text1 FailText { '' }")
 	private final StringInput failText;
 
 	protected String renderText = "";

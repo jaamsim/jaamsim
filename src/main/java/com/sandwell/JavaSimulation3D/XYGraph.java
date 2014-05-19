@@ -29,34 +29,34 @@ public class XYGraph extends GraphBasics {
 
 	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
 			"Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
-     example = "XYGraph-1 DataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
+     example = "XYGraph1 DataSource { { Entity1 Output1 } { Entity2 Output2 } }")
 	protected final OutputListInput<Double> dataSource;
 
 	@Keyword(description = "A list of colors for the primary series to be displayed.\n" +
 			"Each color can be specified by either a color keyword or an RGB value.\n" +
 			"For multiple series, each color must be enclosed in braces.\n" +
 			"If only one color is provided, it is used for all the series.",
-	         example = "XYGraph-1 SeriesColors { { red } { green } }")
+	         example = "XYGraph1 SeriesColors { { red } { green } }")
 	protected final ColorListInput seriesColorsList;
 
 	@Keyword(description = "Set to TRUE if the primary series are to be shown as bars instead of lines.",
-     example = "XYGraph-1 ShowBars { TRUE }")
+     example = "XYGraph1 ShowBars { TRUE }")
 	protected final BooleanInput showBars;
 
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
 			"Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
-     example = "XYGraph-1 SecondaryDataSource { { Entity-1 Output-1 } { Entity-2 Output-2 } }")
+     example = "XYGraph1 SecondaryDataSource { { Entity1 Output1 } { Entity2 Output2 } }")
 	protected final OutputListInput<Double> secondaryDataSource;
 
 	@Keyword(description = "A list of colors for the secondary series to be displayed.\n" +
 			"Each color can be specified by either a color keyword or an RGB value.\n" +
 			"For multiple series, each color must be enclosed in braces.\n" +
 			"If only one color is provided, it is used for all the series.",
-	         example = "XYGraph-1 SecondarySeriesColors { { red } { green } }")
+	         example = "XYGraph1 SecondarySeriesColors { { red } { green } }")
 	protected final ColorListInput secondarySeriesColorsList;
 
 	@Keyword(description = "Set to TRUE if the secondary series are to be shown as bars instead of lines.",
-     example = "XYGraph-1 SecondaryShowBars { TRUE }")
+     example = "XYGraph1 SecondaryShowBars { TRUE }")
 	protected final BooleanInput secondaryShowBars;
 
 	{
