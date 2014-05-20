@@ -141,6 +141,7 @@ public class ExpParser {
 	private static class UnaryOpEntry {
 		public String symbol;
 		public UnOpFunc function;
+		public double bindingPower;
 	}
 
 	private static class BinaryOpEntry {
@@ -160,10 +161,11 @@ public class ExpParser {
 	private static ArrayList<BinaryOpEntry> binaryOps = new ArrayList<BinaryOpEntry>();
 	private static ArrayList<FunctionEntry> functions = new ArrayList<FunctionEntry>();
 
-	private static void addUnaryOp(String symbol, UnOpFunc func) {
+	private static void addUnaryOp(String symbol, double bindPower, UnOpFunc func) {
 		UnaryOpEntry oe = new UnaryOpEntry();
 		oe.symbol = symbol;
 		oe.function = func;
+		oe.bindingPower = bindPower;
 		unaryOps.add(oe);
 	}
 
@@ -215,21 +217,21 @@ public class ExpParser {
 
 		///////////////////////////////////////////////////
 		// Unary Operators
-		addUnaryOp("-", new UnOpFunc() {
+		addUnaryOp("-", 50, new UnOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult val){
 				return new ExpResult(-val.value);
 			}
 		});
 
-		addUnaryOp("+", new UnOpFunc() {
+		addUnaryOp("+", 50, new UnOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult val){
 				return new ExpResult(val.value);
 			}
 		});
 
-		addUnaryOp("!", new UnOpFunc() {
+		addUnaryOp("!", 50, new UnOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult val){
 				return new ExpResult(val.value == 0 ? 1 : 0);
@@ -538,7 +540,7 @@ public class ExpParser {
 
 		UnaryOpEntry oe = getUnaryOp(nextTok.value);
 		if (oe != null) {
-			Expression exp = parseExp(tokens, bindPower);
+			Expression exp = parseExp(tokens, oe.bindingPower);
 			return new UnaryOp(exp, oe.function);
 		}
 

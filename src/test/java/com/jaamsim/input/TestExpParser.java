@@ -152,6 +152,10 @@ public class TestExpParser {
 		val = exp.evaluate(vl).value;
 		assertTrue(val == 4);
 
+		exp = ExpParser.parseExpression("-1+1");
+		val = exp.evaluate(vl).value;
+		assertTrue(val == 0);
+
 		exp = ExpParser.parseExpression("(((((1+1)))*5))");
 		val = exp.evaluate(vl).value;
 		assertTrue(val == 10);
