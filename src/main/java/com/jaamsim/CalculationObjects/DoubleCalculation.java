@@ -16,7 +16,7 @@ package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
@@ -44,7 +44,7 @@ implements SampleProvider {
 	@Keyword(description = "The input value for the present calculation.\n" +
 			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
 	         example = "Calc-1 InputValue { Calc-2 }")
-	protected final SampleInput inputValue;
+	protected final SampleExpInput inputValue;
 
 	private double value;  // Present value for this calculation
 
@@ -52,8 +52,9 @@ implements SampleProvider {
 		unitType = new UnitTypeInput( "UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(unitType);
 
-		inputValue = new SampleInput( "InputValue", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
+		inputValue = new SampleExpInput( "InputValue", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
 		inputValue.setUnitType(UserSpecifiedUnit.class);
+		inputValue.setEntity(this);
 		this.addInput( inputValue);
 	}
 

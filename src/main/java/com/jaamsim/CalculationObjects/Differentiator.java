@@ -16,7 +16,7 @@ package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.TimeUnit;
 
@@ -30,7 +30,7 @@ public class Differentiator extends DoubleCalculation {
 	@Keyword(description = "The time scale for the derivative:  derivative = DerivativeTime * dx/dt\n" +
 			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
 	         example = "Differentiator-1 DerivativeTime { 5 s }")
-	protected final SampleInput derivativeTime;
+	protected final SampleExpInput derivativeTime;
 
 	private double lastUpdateTime;  // The time at which the last update was performed
 	private double lastInputValue;  // The input value for the last update
@@ -38,8 +38,9 @@ public class Differentiator extends DoubleCalculation {
 	{
 		controllerRequired = true;
 
-		derivativeTime = new SampleInput( "DerivativeTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0) );
+		derivativeTime = new SampleExpInput( "DerivativeTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0) );
 		derivativeTime.setUnitType(TimeUnit.class);
+		derivativeTime.setEntity(this);
 		this.addInput( derivativeTime);
 	}
 

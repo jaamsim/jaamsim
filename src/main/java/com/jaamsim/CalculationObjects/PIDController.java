@@ -16,7 +16,7 @@ package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -45,12 +45,12 @@ public class PIDController extends DoubleCalculation {
 	@Keyword(description = "The set point for the PID controller.\n" +
 			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
 	         example = "PIDController-1 SetPoint { Calc-1 }")
-	private final SampleInput setPoint;
+	private final SampleExpInput setPoint;
 
 	@Keyword(description = "The process variable feedback to the PID controller.\n" +
 			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
 	         example = "PIDController-1 ProcessVariable { Calc-1 }")
-	private final SampleInput processVariable;
+	private final SampleExpInput processVariable;
 
 	@Keyword(description = "The scale coefficient applied to the output signal.\n" +
 			"This coefficient converts from the units for the setpoint and process variable to the units for the " +
@@ -92,12 +92,14 @@ public class PIDController extends DoubleCalculation {
 		setPointUnitType = new UnitTypeInput( "SetPointUnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(setPointUnitType);
 
-		setPoint = new SampleInput( "SetPoint", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
+		setPoint = new SampleExpInput( "SetPoint", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
 		setPoint.setUnitType(UserSpecifiedUnit.class);
+		setPoint.setEntity(this);
 		this.addInput( setPoint);
 
-		processVariable = new SampleInput( "ProcessVariable", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
+		processVariable = new SampleExpInput( "ProcessVariable", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
 		processVariable.setUnitType(UserSpecifiedUnit.class);
+		processVariable.setEntity(this);
 		this.addInput( processVariable);
 
 		proportionalGain = new ValueInput( "ProportionalGain", "Key Inputs", 1.0d);
