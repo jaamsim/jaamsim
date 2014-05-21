@@ -30,11 +30,6 @@ public class ProbabilityDistribution extends Entity
 implements SampleProvider {
 	private static final ArrayList<ProbabilityDistribution> allInstances;
 
-
-	@Keyword(description = "The probability of a non-zero value.",
-	         example = "ProbDist1 NonZeroProb { 0.2 }")
-	protected DoubleInput nonZeroProb;
-
 	@Keyword(description = "A list of probabilities whose size and ordering must be the same as the list of outcomes in ValueList.",
 	         example = "ProbDist1 ProbList { 0.1 0.5 0.3 0.1 }")
 	protected DoubleVector probList; // list of probabilities
@@ -89,10 +84,6 @@ implements SampleProvider {
 		addEditableKeyword( "ValueList",    "", "",      false, "Key Inputs" );
 		addEditableKeyword( "ProbList",     "", "",      false, "Key Inputs" );
 		addEditableKeyword( "ValueFactor",  "", "1.0",   false, "Key Inputs" );
-
-		nonZeroProb = new DoubleInput("NonZeroProb", "Key Inputs", 1.0d);
-		nonZeroProb.setValidRange(0.0d, 1.0d);
-		this.addInput(nonZeroProb);
 	}
 
 	public ProbabilityDistribution() {
@@ -303,17 +294,6 @@ implements SampleProvider {
 
 		if( objectList.size() == 0 ) {
 
-			// Adjust for the probability of a value being zero, if required
-			if (nonZeroProb.getValue() < 1.0d) {
-				if( probList.size() > 0 ) {
-					probList.add(0, (1.0 - nonZeroProb.getValue()));
-					for( int i = 1; i < probList.size(); i++ ) {
-						probList.set(i, (probList.get( i ) * nonZeroProb.getValue()));
-					}
-				}
-				valueList.add(0, 0.0);
-			}
-
 			counts.fillWithEntriesOf( valueList.size(), 0 );
 
 			// Calculate the expected value
@@ -442,15 +422,6 @@ implements SampleProvider {
 		// Select a random number that is uniformly distributed between 0 and 1.
 		double rand = randomGenerator.nextDouble();
 
-		// Should the value be zero?
-		if (rand < (1.0d - nonZeroProb.getValue())) {
-			return 0.0;
-		}
-		else {
-			// Adjust the random number so that it is again between 0 and 1
-			rand = (rand - (1.0d - nonZeroProb.getValue())) / nonZeroProb.getValue();
-		}
-
 		// Compare the random number to the cummulative probabilities calculated from the distribution.
 		double cumProb = 0.0;
 		for( int i = 0; i < probs.size(); i++ ) {
@@ -503,15 +474,6 @@ implements SampleProvider {
 
 		//  Select a random number from 0 to 1.
 		double rand = randomGenerator.nextDouble();
-
-		// Should the value be zero?
-		if (rand < (1.0d - nonZeroProb.getValue())) {
-			return 0.0;
-		}
-		else {
-			// Adjust the random number so that it is again between 0 and 1
-			rand = (rand - (1.0d - nonZeroProb.getValue())) / nonZeroProb.getValue();
-		}
 
 		//  Determine the first bin whose cumulative probability is greater than or equal to the random number
 		int bin = -1;
