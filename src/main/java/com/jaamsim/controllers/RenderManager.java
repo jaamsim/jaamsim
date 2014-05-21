@@ -1161,7 +1161,7 @@ public class RenderManager implements DragSourceListener {
 		assert(hsp != null);
 
 		HasScreenPoints.PointsInfo[] pointInfos = hsp.getScreenPoints();
-		assert(pointInfos != null && pointInfos.length == 0);
+		assert(pointInfos != null && pointInfos.length != 0);
 
 		ArrayList<Vec3d> points = pointInfos[0].points;
 
