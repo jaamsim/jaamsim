@@ -122,6 +122,7 @@ public class Renderer implements GLAnimatorControl {
 	private final Map<TessFontKey, TessFont> fontCache;
 
 	private final HashMap<Integer, RenderWindow> openWindows;
+	private final HashMap<Integer, Camera> cameras;
 
 	private final Queue<RenderMessage> renderMessages = new ArrayDeque<RenderMessage>();
 
@@ -173,6 +174,7 @@ public class Renderer implements GLAnimatorControl {
 		exceptionLogger = new ExceptionLogger(1); // Print the call stack on the first exception of any kind
 
 		openWindows = new HashMap<Integer, RenderWindow>();
+		cameras = new HashMap<Integer, Camera>();
 
 		renderThread = new Thread(new Runnable() {
 			@Override
@@ -297,6 +299,7 @@ public class Renderer implements GLAnimatorControl {
 
 				// Run all render messages
 				RenderMessage message;
+				boolean moreMessages = false;
 				do {
 					// Only lock the queue while reading messages, release it while
 					// processing them
@@ -304,6 +307,7 @@ public class Renderer implements GLAnimatorControl {
 					synchronized (renderMessages) {
 						if (!renderMessages.isEmpty()) {
 							message = renderMessages.remove();
+							moreMessages = !renderMessages.isEmpty();
 						}
 					}
 					if (message != null) {
@@ -315,7 +319,7 @@ public class Renderer implements GLAnimatorControl {
 						}
 					}
 
-				} while (!renderMessages.isEmpty());
+				} while (moreMessages);
 
 				if (displayNeeded.compareAndSet(true, false)) {
 					updateRenderableScene();
@@ -424,10 +428,12 @@ public class Renderer implements GLAnimatorControl {
 
 	private void setCameraInfoImp(SetCameraMessage mes) {
 		synchronized (openWindows) {
-			RenderWindow w = openWindows.get(mes.windowID);
-			if (w != null) {
-				w.getCameraRef().setInfo(mes.cameraInfo);
+			Camera cam = cameras.get(mes.windowID);
+			if (cam == null) {
+				// Bad windowID
+				throw new RuntimeException("Bad window ID");
 			}
+			cam.setInfo(mes.cameraInfo);
 		}
 	}
 
@@ -511,8 +517,11 @@ public class Renderer implements GLAnimatorControl {
 		                                       message.listener);
 		listener.setWindow(window);
 
+		Camera camera = new Camera(Math.PI/3.0, 1, 0.1, 1000);
+
 		synchronized (openWindows) {
 			openWindows.put(message.windowID, window);
+			cameras.put(message.windowID, camera);
 		}
 
 		window.getGLWindowRef().setAnimator(this);
@@ -865,9 +874,11 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		gl.glGenVertexArrays(1, vaos, 0);
 		int vao = vaos[0];
 
-		RenderWindow wind = openWindows.get(contextID);
-		if (wind != null) {
-			wind.addVAO(vao);
+		synchronized(openWindows) {
+			RenderWindow wind = openWindows.get(contextID);
+			if (wind != null) {
+				wind.addVAO(vao);
+			}
 		}
 		return vao;
 	}
@@ -906,37 +917,40 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	 * @return
 	 */
 	public List<PickResult> pick(Ray pickRay, int viewID, boolean precise) {
-		// Do not update the scene while a pick is underway
-		ArrayList<PickResult> ret = new ArrayList<PickResult>();
 
-		if (currentScene == null) {
-			return ret;
-		}
+		synchronized(openWindows) {
+			ArrayList<PickResult> ret = new ArrayList<PickResult>();
 
-
-		Camera cam = null;
-		for (RenderWindow wind : openWindows.values()) {
-			if (wind.getViewID() == viewID) {
-				cam = wind.getCameraRef();
-				break;
+			if (currentScene == null) {
+				return ret;
 			}
-		}
-		if (cam == null) {
-			// Invalid view
-			return ret;
-		}
 
-		synchronized (sceneLock) {
-			for (Renderable r : currentScene) {
-				double rayDist = r.getCollisionDist(pickRay, precise);
-				if (rayDist >= 0.0) {
 
-					if (r.renderForView(viewID, cam)) {
-						ret.add(new PickResult(rayDist, r.getPickingID()));
-					}
+			Camera cam = null;
+			for (RenderWindow wind : openWindows.values()) {
+				if (wind.getViewID() == viewID) {
+					cam = cameras.get(wind.getWindowID());
+					break;
 				}
 			}
-			return ret;
+			if (cam == null) {
+				// Invalid view
+				return ret;
+			}
+
+			// Do not update the scene while a pick is underway
+			synchronized (sceneLock) {
+				for (Renderable r : currentScene) {
+					double rayDist = r.getCollisionDist(pickRay, precise);
+					if (rayDist >= 0.0) {
+
+						if (r.renderForView(viewID, cam)) {
+							ret.add(new PickResult(rayDist, r.getPickingID()));
+						}
+					}
+				}
+				return ret;
+			}
 		}
 	}
 
@@ -970,7 +984,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			info.viewableX = w.getViewableX();
 			info.viewableY = w.getViewableY();
 			info.mouseInWindow = w.isMouseInWindow();
-			info.cameraInfo = w.getCameraRef().getInfo();
+			info.cameraInfo = cameras.get(windowID).getInfo();
 
 			return info;
 		}
@@ -978,13 +992,13 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 	public CameraInfo getCameraInfo(int windowID) {
 		synchronized(openWindows) {
-			RenderWindow w = openWindows.get(windowID);
+			Camera cam = cameras.get(windowID);
 
-			if (w == null) {
-				return null; // Not a valid window ID, or the window has closed
+			if (cam == null) {
+				return null; // Not a valid window ID
 			}
 
-			return w.getCameraRef().getInfo();
+			return cam.getInfo();
 		}
 	}
 
@@ -1152,7 +1166,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		public void display(GLAutoDrawable drawable) {
 			synchronized (rendererLock) {
 
-				Camera cam = window.getCameraRef();
+				Camera cam = cameras.get(window.getWindowID());
 
 				// The ray of the current mouse position (or null if the mouse is not hovering over the window)
 				Ray pickRay = RenderUtils.getPickRay(getMouseInfo(window.getWindowID()));
@@ -1222,7 +1236,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				int height) {
 
 			//_window.resized(width, height);
-			Camera cam = window.getCameraRef();
+			Camera cam = cameras.get(window.getWindowID());
 			cam.setAspectRatio((double) width / (double) height);
 		}
 

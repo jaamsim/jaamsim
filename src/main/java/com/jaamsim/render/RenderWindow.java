@@ -31,7 +31,6 @@ public class RenderWindow {
 	private GLWindow _window;
 	private int _windowID;
 	private int _viewID;
-	private Camera _camera;
 	private String _name;
 
 	private final WindowInteractionListener _appListener;
@@ -47,8 +46,6 @@ public class RenderWindow {
 	             GLCapabilitiesImmutable caps,
 	             GLEventListener glListener, Image icon, int windowID, int viewID,
 	             WindowInteractionListener appListener) {
-
-		_camera = new Camera(Math.PI/3.0, 1, 0.1, 1000);
 
 		_window = GLWindow.create(caps);
 
@@ -71,10 +68,6 @@ public class RenderWindow {
 
 		_name = name;
 
-	}
-
-	public Camera getCameraRef() {
-		return _camera;
 	}
 
 	public GLWindow getGLWindowRef() {
