@@ -181,7 +181,7 @@ public class GraphicBox extends JDialog {
 
 					// Create the ColladaModel
 					String modelName = entityName + "-model";
-					ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, true);
+					ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, "", true);
 
 					// Load the 3D content to the ColladaModel
 					InputAgent.processEntity_Keyword_Value(dm, "ColladaFile", "'" + f.getPath() + "'");

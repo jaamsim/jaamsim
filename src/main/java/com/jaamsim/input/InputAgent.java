@@ -439,24 +439,29 @@ public class InputAgent {
 		}
 	}
 
+	public static <T extends Entity> T defineEntityWithUniqueName(Class<T> proto, String key, boolean addedEntity) {
+		return InputAgent.defineEntityWithUniqueName(proto, key, "-", addedEntity);
+	}
+
 	/**
 	 * Like defineEntity(), but will generate a unique name if a name collision exists
 	 * @param proto
 	 * @param key
+	 * @param sep
 	 * @param addedEntity
 	 * @return
 	 */
-	public static <T extends Entity> T defineEntityWithUniqueName(Class<T> proto, String key, boolean addedEntity) {
+	public static <T extends Entity> T defineEntityWithUniqueName(Class<T> proto, String key, String sep, boolean addedEntity) {
 
 		// Has the provided name been used already?
 		if (Entity.getNamedEntity(key) == null) {
 			return defineEntity(proto, key, addedEntity);
 		}
 
-		// Try the provided name plus "-1", "-2", etc. until an unused name is found
+		// Try the provided name plus "1", "2", etc. until an unused name is found
 		int entityNum = 1;
 		while(true) {
-			String name = String.format("%s-%d", key, entityNum);
+			String name = String.format("%s%s%d", key, sep, entityNum);
 			if (Entity.getNamedEntity(name) == null) {
 				return defineEntity(proto, name, addedEntity);
 			}

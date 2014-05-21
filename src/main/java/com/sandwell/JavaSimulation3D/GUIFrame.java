@@ -989,7 +989,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				}
 			}
 
-			View tmp = InputAgent.defineEntityWithUniqueName(View.class, "View", true);
+			View tmp = InputAgent.defineEntityWithUniqueName(View.class, "View", "", true);
 			RenderManager.inst().createWindow(tmp);
 			FrameBox.setSelectedEntity(tmp);
 			InputAgent.processEntity_Keyword_Value(tmp, "ShowWindow", "TRUE");

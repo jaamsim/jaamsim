@@ -1403,7 +1403,7 @@ public class RenderManager implements DragSourceListener {
 		// Create a new instance
 		Class<? extends Entity> proto  = dndObjectType.getJavaClass();
 		String name = proto.getSimpleName();
-		Entity ent = InputAgent.defineEntityWithUniqueName(proto, name, true);
+		Entity ent = InputAgent.defineEntityWithUniqueName(proto, name, "", true);
 
 		// We are no longer drag-and-dropping
 		dndObjectType = null;

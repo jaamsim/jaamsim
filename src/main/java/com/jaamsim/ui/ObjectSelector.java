@@ -414,7 +414,7 @@ static class DuplicateMenuItem extends MenuItem {
 	@Override
 	public void action() {
 		Entity copiedEntity = InputAgent.defineEntityWithUniqueName(ent.getClass(),
-				String.format("Copy_of_%s", ent.getInputName()), true);
+				ent.getInputName(), "_Copy", true);
 
 		// Match all the inputs
 		copiedEntity.copyInputs(ent);
@@ -486,7 +486,7 @@ static class LabelMenuItem extends MenuItem {
 
 	@Override
 	public void action() {
-		Text label = InputAgent.defineEntityWithUniqueName(Text.class, "Text", true);
+		Text label = InputAgent.defineEntityWithUniqueName(Text.class, "Text", "", true);
 
 		InputAgent.processEntity_Keyword_Value(label, "RelativeEntity", ent.getInputName() );
 		if (ent.getCurrentRegion() != null)

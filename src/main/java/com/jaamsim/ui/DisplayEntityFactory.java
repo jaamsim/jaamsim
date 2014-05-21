@@ -143,13 +143,13 @@ public class DisplayEntityFactory extends Entity {
 
 		// Create the ColladaModel
 		String modelName = entityName + "-model";
-		ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, true);
+		ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, "", true);
 
 		// Load the 3D content to the ColladaModel
 		InputAgent.processEntity_Keyword_Value(dm, "ColladaFile", "'" + f.getPath() + "'");
 
 		// Create the DisplayEntity
-		DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, true);
+		DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
 
 		// Assign the ColladaModel to the new DisplayEntity
 		InputAgent.processEntity_Keyword_Value(de, "DisplayModel", dm.getInputName());
@@ -179,13 +179,13 @@ public class DisplayEntityFactory extends Entity {
 
 		// Create the ImageModel
 		String modelName = entityName + "-model";
-		ImageModel dm = InputAgent.defineEntityWithUniqueName(ImageModel.class, modelName, true);
+		ImageModel dm = InputAgent.defineEntityWithUniqueName(ImageModel.class, modelName, "", true);
 
 		// Load the image to the ImageModel
 		InputAgent.processEntity_Keyword_Value(dm, "ImageFile", "'" + f.getPath() + "'");
 
 		// Create the DisplayEntity
-		DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, true);
+		DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
 
 		// Assign the ImageModel to the new DisplayEntity
 		InputAgent.processEntity_Keyword_Value(de, "DisplayModel", dm.getInputName());
