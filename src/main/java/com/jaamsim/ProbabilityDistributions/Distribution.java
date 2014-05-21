@@ -149,7 +149,7 @@ implements SampleProvider {
 		return randomSeedInput.getValue();
 	}
 
-	protected static int getSubstreamNumber() {
+	public static int getSubstreamNumber() {
 		return globalSeedInput.getValue();
 	}
 
