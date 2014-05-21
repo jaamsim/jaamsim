@@ -44,7 +44,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.Vec3d;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation.Palette;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -172,16 +171,22 @@ public class ObjectSelector extends FrameBox {
 			catch (IndexOutOfBoundsException e) {}
 		}
 
-		for (int k = 0; k < Palette.getAll().size(); k++) {
-			Palette p = null;
+		ArrayList<String> palettes = new ArrayList<String>();
+		for (int j = 0; j < ObjectType.getAll().size(); j++) {
+			ObjectType type = null;
 			try {
-				p = Palette.getAll().get(k);
+				type = ObjectType.getAll().get(j);
 			}
 			catch (IndexOutOfBoundsException e) {
 				break;
 			}
+			if (!palettes.contains(type.getPaletteName()))
+				palettes.add(type.getPaletteName());
+		}
 
-			DefaultMutableTreeNode palNode = getNodeFor_In(p.getName(), top);
+		for (int k = 0; k < palettes.size(); k++) {
+			String palName = palettes.get(k);
+			DefaultMutableTreeNode palNode = getNodeFor_In(palName, top);
 			for (int j = 0; j < ObjectType.getAll().size(); j++) {
 				ObjectType type = null;
 				try {
@@ -190,7 +195,7 @@ public class ObjectSelector extends FrameBox {
 				catch (IndexOutOfBoundsException e) {
 					break;
 				}
-				if( type.getPalette() != p )
+				if(!palName.equals( type.getPaletteName()))
 					continue;
 
 				Class<? extends Entity> proto = type.getJavaClass();
