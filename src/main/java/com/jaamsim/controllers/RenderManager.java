@@ -358,6 +358,14 @@ public class RenderManager implements DragSourceListener {
 					continue;
 				}
 
+				double renderTime = FrameBox.ticksToSeconds(simTick);
+				redraw.set(false);
+
+				for (int i = 0; i < View.getAll().size(); i++) {
+					View v = View.getAll().get(i);
+					v.update(renderTime);
+				}
+
 				for (CameraControl cc : windowControls.values()) {
 					cc.checkForUpdate();
 				}
@@ -367,14 +375,8 @@ public class RenderManager implements DragSourceListener {
 				DisplayModelBinding.clearCacheMissData();
 
 				boolean screenShotThisFrame = screenshot.get();
-				double renderTime = FrameBox.ticksToSeconds(simTick);
 
 				long startNanos = System.nanoTime();
-
-				for (int i = 0; i < View.getAll().size(); i++) {
-					View v = View.getAll().get(i);
-					v.update(renderTime);
-				}
 
 				ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<DisplayModelBinding>();
 
@@ -481,7 +483,6 @@ public class RenderManager implements DragSourceListener {
 				}
 
 				renderer.queueRedraw();
-				redraw.set(false);
 
 				if (screenShotThisFrame) {
 					takeScreenShot();
