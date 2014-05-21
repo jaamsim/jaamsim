@@ -29,7 +29,7 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
 public abstract class LinkedComponent extends DisplayEntity {
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
-	         example = "EntityGenerator-1 NextComponent { Server-1 }")
+	         example = "EntityGenerator1 NextComponent { Server1 }")
 	protected final EntityInput<LinkedComponent> nextComponentInput;
 
 	private int numberAdded;     // Number of entities added to this component from upstream

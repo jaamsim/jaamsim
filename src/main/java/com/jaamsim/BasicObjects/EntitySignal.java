@@ -23,11 +23,11 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
 public class EntitySignal extends LinkedComponent {
 
 	@Keyword(description = "The EntityGate controlled by this Signal.",
-	         example = "EntitySignal-1 TargetGate { Gate-1 }")
+	         example = "EntitySignal1 TargetGate { Gate1 }")
 	private final EntityInput<EntityGate> targetGate;
 
 	@Keyword(description = "The new state for the target EntityGate: TRUE = Open, FALSE = Closed.",
-	         example = "EntitySignal-1 NewState { FALSE }")
+	         example = "EntitySignal1 NewState { FALSE }")
 	private final BooleanInput newState;
 
 	{

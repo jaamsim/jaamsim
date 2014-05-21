@@ -35,22 +35,22 @@ public class EntityGenerator extends LinkedComponent {
 
 	@Keyword(description = "The arrival time for the first generated entity.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
-	         example = "EntityGenerator-1 FirstArrivalTime { 1.0 h }")
+	         example = "EntityGenerator1 FirstArrivalTime { 1.0 h }")
 	private final SampleExpInput firstArrivalTime;
 
 	@Keyword(description = "The inter-arrival time between generated entities.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
-	         example = "EntityGenerator-1 InterArrivalTime { 1.5 h }")
+	         example = "EntityGenerator1 InterArrivalTime { 1.5 h }")
 	private final SampleExpInput interArrivalTime;
 
 	@Keyword(description = "The prototype for entities to be generated.\n" +
 			"The generated entities will be copies of this entity.",
-	         example = "EntityGenerator-1 PrototypeEntity { Ship }")
+	         example = "EntityGenerator1 PrototypeEntity { Ship }")
 	private final EntityInput<DisplayEntity> prototypeEntity;
 
 	@Keyword(description = "The maximum number of entities to be generated.\n" +
 			"Default is no limit.",
-	         example = "EntityGenerator-1 MaxNumber { 3 }")
+	         example = "EntityGenerator1 MaxNumber { 3 }")
 	private final IntegerInput maxNumber;
 
 	int numberGenerated = 0;  // Number of entities generated so far

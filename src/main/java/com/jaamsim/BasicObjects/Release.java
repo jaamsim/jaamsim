@@ -26,11 +26,11 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
 public class Release extends LinkedComponent {
 
 	@Keyword(description = "The Resource(s) to be released.",
-	         example = "Release-1 Resource { Resource-1 }")
+	         example = "Release1 Resource { Resource1 }")
 	private final EntityListInput<Resource> resourceList;
 
 	@Keyword(description = "The number of units to release from the Resource(s).",
-	         example = "Release-1 NumberOfUnits { 2 }")
+	         example = "Release1 NumberOfUnits { 2 }")
 	private final IntegerListInput numberOfUnitsList;
 
 	{

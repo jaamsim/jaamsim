@@ -28,15 +28,15 @@ import com.sandwell.JavaSimulation3D.Queue;
 public class Seize extends LinkedComponent {
 
 	@Keyword(description = "The Resource(s) to be seized.",
-	         example = "Seize-1 Resource { Resource-1 Resource-2 }")
+	         example = "Seize1 Resource { Resource1 Resource2 }")
 	private final EntityListInput<Resource> resourceList;
 
 	@Keyword(description = "The number of units to seize from the Resource(s).",
-	         example = "Seize-1 NumberOfUnits { 2 1 }")
+	         example = "Seize1 NumberOfUnits { 2 1 }")
 	private final IntegerListInput numberOfUnitsList;
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
-	         example = "Seize-1 WaitQueue { Queue-1 }")
+	         example = "Seize1 WaitQueue { Queue1 }")
 	private final EntityInput<Queue> waitQueue;
 
 	{

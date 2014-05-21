@@ -32,11 +32,11 @@ import com.sandwell.JavaSimulation.IntegerInput;
 public class Queue extends DisplayEntity {
 
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
-	         example = "Queue-1 Spacing { 1 }")
+	         example = "Queue1 Spacing { 1 }")
 	private final ValueInput spacingInput;
 
 	@Keyword(description = "The number of queuing entities in each row.",
-			example = "Queue-1 MaxPerLine { 4 }")
+			example = "Queue1 MaxPerLine { 4 }")
 	protected final IntegerInput maxPerLineInput; // maximum items per sub line-up of queue
 
 	protected ArrayList<DisplayEntity> itemList;

@@ -34,7 +34,7 @@ public class Assign extends LinkedComponent {
 			"- this entity -- [this].AttributeName\n" +
 			"- the entity received -- [obj].AttributeName\n" +
 			"- another entity -- [EntityName].AttributeName",
-	         example = "Assign-1 AttributeAssignmentList { {'[this].A = [this].A + 1'} {'[obj].B = 1'} {'[Ent-1].C = 0'} }")
+	         example = "Assign1 AttributeAssignmentList { {'[this].A = [this].A + 1'} {'[obj].B = 1'} {'[Ent1].C = 0'} }")
 	private final AssignmentListInput assignmentList;
 
 	{

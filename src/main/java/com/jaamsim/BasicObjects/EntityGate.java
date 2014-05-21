@@ -27,16 +27,16 @@ import com.sandwell.JavaSimulation3D.Queue;
 public class EntityGate extends LinkedComponent {
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
-	         example = "EntityGate-1 WaitQueue { Queue-1 }")
+	         example = "EntityGate1 WaitQueue { Queue1 }")
 	private final EntityInput<Queue> waitQueue;
 
 	@Keyword(description = "The time delay before each queued entity is released.\n" +
 			"Entities arriving at an open gate are not delayed.",
-	         example = "EntityGate-1 ReleaseDelay { 5.0 s }")
+	         example = "EntityGate1 ReleaseDelay { 5.0 s }")
 	private final ValueInput releaseDelay;
 
 	@Keyword(description = "The initial state of the EntityGate: TRUE = Open, FALSE = Closed.",
-	         example = "EntityGate-1 InitialState { FALSE }")
+	         example = "EntityGate1 InitialState { FALSE }")
 	private final BooleanInput initialState;
 
 	private boolean gateOpen;  // TRUE if the gate is open
