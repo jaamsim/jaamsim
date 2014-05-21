@@ -1,5 +1,3 @@
-Define Palette { 'Basic Objects' }
-
 Define ObjectType {
                     EntityGenerator
                     Server

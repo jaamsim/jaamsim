@@ -1,6 +1,3 @@
-
-Define Palette { 'Display Models' }
-
 Define ObjectType {
                     ArrowModel
                     GraphModel
@@ -18,8 +15,6 @@ TextModel              JavaClass { com.jaamsim.DisplayModels.TextModel          
 ImageModel             JavaClass { com.jaamsim.DisplayModels.ImageModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
 ColladaModel           JavaClass { com.jaamsim.DisplayModels.ColladaModel             } Palette { 'Display Models' }    DragAndDrop { FALSE }
 DisplayModel           JavaClass { com.sandwell.JavaSimulation3D.DisplayModelCompat   } Palette { 'Display Models' }    DragAndDrop { FALSE }
-
-Define Palette { 'Graphics Objects' }
 
 Define ArrowModel          { ArrowModelDefault          }
 Define GraphModel          { GraphModelDefault          }

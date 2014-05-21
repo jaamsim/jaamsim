@@ -1,5 +1,3 @@
-Define Palette { 'Probability Distributions' }
-
 Define ObjectType {
 					UniformDistribution
 					TriangularDistribution

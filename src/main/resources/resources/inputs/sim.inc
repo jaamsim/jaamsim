@@ -1,5 +1,3 @@
-Define Palette { 'Simulation Controls' }
-
 Define ObjectType {
                     GraphicSimulation
                     EntityTracer

@@ -43,7 +43,6 @@ import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation.Palette;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -422,10 +421,7 @@ public class InputAgent {
 
 		Class<? extends Entity> proto = null;
 		try {
-			if( record.get( 1 ).equalsIgnoreCase( "Palette" ) ) {
-				proto = Palette.class;
-			}
-			else if( record.get( 1 ).equalsIgnoreCase( "ObjectType" ) ) {
+			if( record.get( 1 ).equalsIgnoreCase( "ObjectType" ) ) {
 				proto = ObjectType.class;
 			}
 			else {

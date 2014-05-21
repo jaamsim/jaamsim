@@ -1,5 +1,3 @@
-Define Palette { 'Calculation Objects' }
-
 Define ObjectType {
                     Controller
 					WeightedSum

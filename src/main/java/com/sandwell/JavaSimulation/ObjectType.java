@@ -28,7 +28,7 @@ public class ObjectType extends Entity {
 
 	@Keyword(description = "The package to which the object type belongs",
 	         example = "This is placeholder example text")
-	private final EntityInput<Palette> palette;
+	private final StringInput palette;
 
 	@Keyword(description = "Only for DisplayEntity",
 	         example = "This is placeholder example text")
@@ -46,7 +46,7 @@ public class ObjectType extends Entity {
 		javaClass = new ClassInput( "JavaClass", "Key Inputs", null );
 		this.addInput( javaClass );
 
-		palette = new EntityInput<Palette>( Palette.class, "Palette", "Key Inputs", null );
+		palette = new StringInput("Palette", "Key Inputs", null);
 		this.addInput( palette );
 
 		defaultDisplayModel = new EntityInput<DisplayModel>(DisplayModel.class, "DefaultDisplayModel", "Key Inputs", null);
@@ -91,14 +91,10 @@ public class ObjectType extends Entity {
 		return javaClass.getValue();
 	}
 
-	public Palette getPalette() {
-		return palette.getValue();
-	}
-
 	public String getPaletteName() {
-		Palette p = palette.getValue();
-		if (p != null)
-			return p.getName();
+		String s = palette.getValue();
+		if (s != null)
+			return s;
 
 		return "Default";
 	}

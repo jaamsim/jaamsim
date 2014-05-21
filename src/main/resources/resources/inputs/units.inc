@@ -1,7 +1,5 @@
 " Input file for unit conversion
 
-Define Palette { Units }
-
 Define ObjectType  { TimeUnit
                      DistanceUnit
                      SpeedUnit

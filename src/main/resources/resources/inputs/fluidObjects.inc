@@ -1,5 +1,3 @@
-Define Palette { 'Fluid Objects' }
-
 Define ObjectType {
                     Fluid
 					FluidFlow
