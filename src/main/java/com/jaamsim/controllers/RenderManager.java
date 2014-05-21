@@ -37,7 +37,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -120,8 +119,9 @@ public class RenderManager implements DragSourceListener {
 
 	// These values are used to limit redraw rate, the stored values are time in milliseconds
 	// returned by System.currentTimeMillis()
-	private final AtomicLong lastDraw = new AtomicLong(0);
-	private final AtomicLong scheduledDraw = new AtomicLong(0);
+	private long lastDraw = 0;
+	private long scheduledDraw = 0;
+	private final Object timingLock = new Object();
 
 	private final ExceptionLogger exceptionLogger;
 
@@ -196,25 +196,26 @@ public class RenderManager implements DragSourceListener {
 			@Override
 			public void run() {
 
-				// Is a redraw scheduled
-				long lastRedraw = lastDraw.get();
-				long scheduledTime = scheduledDraw.get();
-				long currentTime = System.currentTimeMillis();
+				synchronized(timingLock) {
+					// Is a redraw scheduled
+					long currentTime = System.currentTimeMillis();
 
-				// Only draw if the scheduled time is before now and after the last redraw
-				// but never skip a draw if a screen shot is requested
-				if (!screenshot.get() && (scheduledTime < lastRedraw || currentTime < scheduledTime)) {
-					return;
-				}
-
-				synchronized(redraw) {
-					if (renderer.getNumOpenWindows() == 0 && !screenshot.get()) {
-						return; // Do not queue a redraw if there are no open windows
+					// Only draw if the scheduled time is before now and after the last redraw
+					// but never skip a draw if a screen shot is requested
+					if (!screenshot.get() && (scheduledDraw < lastDraw || currentTime < scheduledDraw)) {
+						return;
 					}
-					redraw.set(true);
-					redraw.notifyAll();
+
+					lastDraw = currentTime;
+
+					synchronized(redraw) {
+						if (renderer.getNumOpenWindows() == 0 && !screenshot.get()) {
+							return; // Do not queue a redraw if there are no open windows
+						}
+						redraw.set(true);
+						redraw.notifyAll();
+					}
 				}
-				lastDraw.set(currentTime);
 			}
 		};
 
@@ -238,22 +239,22 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void queueRedraw() {
-		long scheduledTime = scheduledDraw.get();
-		long lastRedraw = lastDraw.get();
-		long currentTime = System.currentTimeMillis();
+		synchronized(timingLock) {
+			long currentTime = System.currentTimeMillis();
 
-		if (scheduledTime > lastRedraw) {
-			// A draw is scheduled
-			return;
-		}
+			if (scheduledDraw > lastDraw) {
+				// A draw is scheduled
+				return;
+			}
 
-		long newDraw = currentTime;
-		long frameTime = (long)(1000.0/FPS);
-		if (newDraw < lastRedraw + frameTime) {
-			// This would be scheduled too soon
-			newDraw = lastRedraw + frameTime;
+			long newDraw = currentTime;
+			long frameTime = (long)(1000.0/FPS);
+			if (newDraw < lastDraw + frameTime) {
+				// This would be scheduled too soon
+				newDraw = lastDraw + frameTime;
+			}
+			scheduledDraw = newDraw;
 		}
-		scheduledDraw.set(newDraw);
 	}
 
 	public void createWindow(View view) {
