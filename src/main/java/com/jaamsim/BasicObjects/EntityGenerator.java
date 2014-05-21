@@ -15,7 +15,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -36,12 +36,12 @@ public class EntityGenerator extends LinkedComponent {
 	@Keyword(description = "The arrival time for the first generated entity.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         example = "EntityGenerator-1 FirstArrivalTime { 1.0 h }")
-	private final SampleInput firstArrivalTime;
+	private final SampleExpInput firstArrivalTime;
 
 	@Keyword(description = "The inter-arrival time between generated entities.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         example = "EntityGenerator-1 InterArrivalTime { 1.5 h }")
-	private final SampleInput interArrivalTime;
+	private final SampleExpInput interArrivalTime;
 
 	@Keyword(description = "The prototype for entities to be generated.\n" +
 			"The generated entities will be copies of this entity.",
@@ -56,12 +56,14 @@ public class EntityGenerator extends LinkedComponent {
 	int numberGenerated = 0;  // Number of entities generated so far
 
 	{
-		firstArrivalTime = new SampleInput( "FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		firstArrivalTime = new SampleExpInput( "FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType( TimeUnit.class );
+		firstArrivalTime.setEntity(this);
 		this.addInput( firstArrivalTime);
 
-		interArrivalTime = new SampleInput( "InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
+		interArrivalTime = new SampleExpInput( "InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
 		interArrivalTime.setUnitType( TimeUnit.class );
+		interArrivalTime.setEntity(this);
 		this.addInput( interArrivalTime);
 
 		prototypeEntity = new EntityInput<DisplayEntity>( DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);

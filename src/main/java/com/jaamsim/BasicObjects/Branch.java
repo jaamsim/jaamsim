@@ -14,7 +14,7 @@
  */
 package com.jaamsim.BasicObjects;
 
-import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.EntityListInput;
@@ -31,7 +31,7 @@ public class Branch extends LinkedComponent {
 			"     1 = first branch, 2 = second branch, etc.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         example = "Branch-1 Choice { 2 }")
-	private final SampleInput choice;
+	private final SampleExpInput choice;
 
 	{
 		nextComponentInput.setHidden(true);
@@ -39,8 +39,9 @@ public class Branch extends LinkedComponent {
 		nextComponentList = new EntityListInput<LinkedComponent>( LinkedComponent.class, "NextComponentList", "Key Inputs", null);
 		this.addInput( nextComponentList);
 
-		choice = new SampleInput( "Choice", "Key Inputs", null);
+		choice = new SampleExpInput( "Choice", "Key Inputs", null);
 		choice.setUnitType( DimensionlessUnit.class );
+		choice.setEntity(this);
 		this.addInput( choice);
 	}
 

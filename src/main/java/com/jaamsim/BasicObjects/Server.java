@@ -14,7 +14,7 @@
  */
 package com.jaamsim.BasicObjects;
 
-import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.TimeUnit;
@@ -34,7 +34,7 @@ public class Server extends LinkedComponent {
 	@Keyword(description = "The service time required to process an entity.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         example = "Server1 ServiceTime { 3.0 h }")
-	private final SampleInput serviceTimeInput;
+	private final SampleExpInput serviceTimeInput;
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         example = "Server1 WaitQueue { Queue1 }")
@@ -44,8 +44,9 @@ public class Server extends LinkedComponent {
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
 
 	{
-		serviceTimeInput = new SampleInput( "ServiceTime", "Key Inputs", null);
+		serviceTimeInput = new SampleExpInput( "ServiceTime", "Key Inputs", null);
 		serviceTimeInput.setUnitType( TimeUnit.class );
+		serviceTimeInput.setEntity(this);
 		this.addInput( serviceTimeInput);
 
 		waitQueueInput = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);

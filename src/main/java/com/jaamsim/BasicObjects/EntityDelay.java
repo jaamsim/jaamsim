@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
-import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -41,7 +41,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	@Keyword(description = "The delay time for the path.\n" +
 			"The input can be a constant value, a time series of values, or a probability distribution to be sampled.",
 	         example = "Delay-1 Duration { 10.0 s }")
-	private final SampleInput duration;
+	private final SampleExpInput duration;
 
     @Keyword(description = "A list of { x, y, z } coordinates defining the line segments that" +
             "make up the path.  When two coordinates are given it is assumed that z = 0." ,
@@ -67,8 +67,9 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	private HasScreenPoints.PointsInfo[] cachedPointInfo;
 
 	{
-		duration = new SampleInput( "Duration", "Key Inputs", null);
+		duration = new SampleExpInput( "Duration", "Key Inputs", null);
 		duration.setUnitType(TimeUnit.class);
+		duration.setEntity(this);
 		this.addInput( duration);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
