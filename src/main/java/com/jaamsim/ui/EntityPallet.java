@@ -26,6 +26,7 @@ import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -43,7 +44,6 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.RenderUtils;
 import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation.Palette;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class EntityPallet extends JFrame implements DragGestureListener {
@@ -124,18 +124,21 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 
 		// Create a tree that allows one selection at a time
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+		HashMap<String, DefaultMutableTreeNode> paletteNodes = new HashMap<String, DefaultMutableTreeNode>();
+		for (ObjectType type : ObjectType.getAll()) {
+			if (!type.isDragAndDrop())
+				continue;
 
-		for (Palette p : Palette.getAll()) {
-			DefaultMutableTreeNode packNode = new DefaultMutableTreeNode(p.getName(), true);
-			for( ObjectType type : ObjectType.getAll() ) {
-				if( type.getPalette() != p || ! type.isDragAndDrop() )
-					continue;
-
-				DefaultMutableTreeNode classNode = new DefaultMutableTreeNode(type, true);
-				packNode.add(classNode);
+			String pName = type.getPaletteName();
+			DefaultMutableTreeNode palNode = paletteNodes.get(pName);
+			if (palNode == null) {
+				palNode = new DefaultMutableTreeNode(pName, true);
+				paletteNodes.put(pName, palNode);
+				root.add(palNode);
 			}
-			if(!packNode.isLeaf())
-				root.add(packNode);
+
+			DefaultMutableTreeNode classNode = new DefaultMutableTreeNode(type, true);
+			palNode.add(classNode);
 		}
 
 		return root;

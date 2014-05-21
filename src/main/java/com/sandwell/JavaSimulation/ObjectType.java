@@ -95,6 +95,14 @@ public class ObjectType extends Entity {
 		return palette.getValue();
 	}
 
+	public String getPaletteName() {
+		Palette p = palette.getValue();
+		if (p != null)
+			return p.getName();
+
+		return "Default";
+	}
+
 	public DisplayModel getDefaultDisplayModel(){
 		return defaultDisplayModel.getValue();
 	}
