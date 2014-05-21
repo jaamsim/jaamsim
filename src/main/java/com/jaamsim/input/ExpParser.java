@@ -489,7 +489,9 @@ public class ExpParser {
 		TokenList tokens = new TokenList(ts);
 
 		ExpTokenizer.Token nextTok = tokens.next();
-		if (nextTok == null || nextTok.type != ExpTokenizer.SQ_TYPE) {
+		if (nextTok == null || (nextTok.type != ExpTokenizer.SQ_TYPE &&
+			                    !nextTok.value.equals("this") &&
+			                    !nextTok.value.equals("obj"))) {
 			throw new Error("Assignments must start with an identifier");
 		}
 		ArrayList<String> destination = parseIdentifier(nextTok, tokens);
@@ -521,10 +523,14 @@ public class ExpParser {
 		if (nextTok.type == ExpTokenizer.NUM_TYPE) {
 			return new Constant(new ExpResult(Double.parseDouble(nextTok.value)));
 		}
-		if (nextTok.type == ExpTokenizer.VAR_TYPE) {
+		if (nextTok.type == ExpTokenizer.VAR_TYPE &&
+				!nextTok.value.equals("this") &&
+				!nextTok.value.equals("obj")) {
 			return parseFuncCall(nextTok.value, tokens);
 		}
-		if (nextTok.type == ExpTokenizer.SQ_TYPE) {
+		if (nextTok.type == ExpTokenizer.SQ_TYPE ||
+				nextTok.value.equals("this") ||
+				nextTok.value.equals("obj")) {
 			ArrayList<String> vals = parseIdentifier(nextTok, tokens);
 			return new Variable(vals.toArray(STRING_ARRAY_TYPE));
 		}

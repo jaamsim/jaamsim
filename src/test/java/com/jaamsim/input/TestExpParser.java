@@ -299,6 +299,26 @@ public class TestExpParser {
 		val = exp.evaluate(vl).value;
 		assertTrue(val == -1);
 
+
+		class ThisLookup implements ExpParser.VarTable {
+			@Override
+			public ExpResult getVariableValue(String[] name) {
+				if (name[0].equals("this")) return new ExpResult(42);
+				if (name[0].equals("obj")) return new ExpResult(24);
+
+				return new ExpResult(-1);
+			}
+		}
+		ThisLookup tl = new ThisLookup();
+
+		exp = ExpParser.parseExpression("this.stuff");
+		val = exp.evaluate(tl).value;
+		assertTrue(val == 42);
+
+		exp = ExpParser.parseExpression("obj.things");
+		val = exp.evaluate(tl).value;
+		assertTrue(val == 24);
+
 	}
 
 	@Test
@@ -318,5 +338,18 @@ public class TestExpParser {
 		assertTrue(assign.destination[0].equals("foo"));
 		assertTrue(assign.destination[1].equals("bar"));
 		assertTrue(assign.value.evaluate(vl).value == 42);
+
+		assign = ExpParser.parseAssignment("this.bar = 40 + 2");
+		assertTrue(assign.destination.length == 2);
+		assertTrue(assign.destination[0].equals("this"));
+		assertTrue(assign.destination[1].equals("bar"));
+		assertTrue(assign.value.evaluate(vl).value == 42);
+
+		assign = ExpParser.parseAssignment("obj.bar = 40 + 2");
+		assertTrue(assign.destination.length == 2);
+		assertTrue(assign.destination[0].equals("obj"));
+		assertTrue(assign.destination[1].equals("bar"));
+		assertTrue(assign.value.evaluate(vl).value == 42);
+
 	}
 }
