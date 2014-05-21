@@ -78,10 +78,10 @@ public class FileInput extends Input<URI> {
 					temp.getPath(), Arrays.toString(validFileExtensions));
 
 		value = temp;
-		setValueString(genValueString());
 	}
 
-	private String genValueString() {
+	@Override
+	public String getValueString() {
 		if (value != null)
 			return InputAgent.getRelativeFilePath(value);
 		else

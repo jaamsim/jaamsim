@@ -58,10 +58,10 @@ public class DirInput extends Input<URI> {
 		}
 
 		value = temp;
-		setValueString(genValueString());
 	}
 
-	private String genValueString() {
+	@Override
+	public String getValueString() {
 		if (value != null)
 			return InputAgent.getRelativeFilePath(value);
 		else

@@ -39,7 +39,6 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 			Input.assertCountEven(input);
 
 		value = Input.parseEntityList(input, entClass, unique);
-		setValueString(genValueString());
 	}
 
 	public void setUnique(boolean unique) {
@@ -84,7 +83,8 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		return this.getInputString(defValue);
 	}
 
-	private String genValueString() {
+	@Override
+	public String getValueString() {
 		if (value == null || value.size() == 0)
 			return "";
 		return this.getInputString(value);

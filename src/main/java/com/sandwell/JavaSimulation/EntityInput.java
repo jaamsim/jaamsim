@@ -50,7 +50,6 @@ public class EntityInput<T extends Entity> extends Input<T> {
 
 			value = tmp;
 		}
-		setValueString(genValueString());
 	}
 
 	@Override
@@ -69,7 +68,8 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		return list;
 	}
 
-	private String genValueString() {
+	@Override
+	public String getValueString() {
 		if( value == null )
 			return "";
 		return value.getInputName();

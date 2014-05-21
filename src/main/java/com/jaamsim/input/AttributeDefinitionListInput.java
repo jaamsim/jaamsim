@@ -88,7 +88,12 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 
 		// Save the data for each attribute
 		value = temp;
-		setValueString(getInputString(value));
+	}
+
+	@Override
+	public String getValueString() {
+		if( value == null) return "";
+		return this.getInputString(value);
 	}
 
 	@Override
@@ -97,7 +102,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 		return this.getInputString(defValue);
 	}
 
-	public String getInputString(ArrayList<AttributeHandle> handleList) {
+	private String getInputString(ArrayList<AttributeHandle> handleList) {
 
 		StringBuilder tmp = new StringBuilder();
 		for (int i = 0; i < handleList.size(); i++) {

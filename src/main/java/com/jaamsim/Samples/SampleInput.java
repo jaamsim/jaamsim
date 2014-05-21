@@ -58,7 +58,6 @@ public class SampleInput extends Input<SampleProvider> {
 		if( s.getUnitType() != UserSpecifiedUnit.class )
 			Input.assertUnitsMatch(unitType, s.getUnitType());
 		value = s;
-		setValueString(genValueString());
 	}
 
 	@Override
@@ -73,7 +72,8 @@ public class SampleInput extends Input<SampleProvider> {
 		return list;
 	}
 
-	private String genValueString() {
+	@Override
+	public String getValueString() {
 		if (value == null || defValue == value)
 			return "";
 		return value.toString();
