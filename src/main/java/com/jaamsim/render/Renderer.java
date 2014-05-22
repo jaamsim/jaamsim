@@ -297,6 +297,8 @@ public class Renderer implements GLAnimatorControl {
 					break; // Exiting the loop will end the thread
 				}
 
+				displayNeeded.set(false);
+
 				// Run all render messages
 				RenderMessage message;
 				boolean moreMessages = false;
@@ -321,26 +323,24 @@ public class Renderer implements GLAnimatorControl {
 
 				} while (moreMessages);
 
-				if (displayNeeded.compareAndSet(true, false)) {
-					updateRenderableScene();
+				updateRenderableScene();
 
-					// Defensive copy the window list (in case a window is closed while we render)
-					HashMap<Integer, RenderWindow> winds;
-					synchronized (openWindows) {
-						winds = new HashMap<Integer, RenderWindow>(openWindows);
-					}
-					if (!isPaused) {
-						for (RenderWindow wind : winds.values()) {
-							try {
-								GLContext context = wind.getGLWindowRef().getContext();
-								if (context != null && !shutdown.get())
-								{
-									wind.getGLWindowRef().display();
-								}
-							} catch (Throwable t) {
-								// Log it, but move on to the other windows
-								logException(t);
+				// Defensive copy the window list (in case a window is closed while we render)
+				HashMap<Integer, RenderWindow> winds;
+				synchronized (openWindows) {
+					winds = new HashMap<Integer, RenderWindow>(openWindows);
+				}
+				if (!isPaused) {
+					for (RenderWindow wind : winds.values()) {
+						try {
+							GLContext context = wind.getGLWindowRef().getContext();
+							if (context != null && !shutdown.get())
+							{
+								wind.getGLWindowRef().display();
 							}
+						} catch (Throwable t) {
+							// Log it, but move on to the other windows
+							logException(t);
 						}
 					}
 				}
