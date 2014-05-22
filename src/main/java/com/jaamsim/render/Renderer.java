@@ -416,8 +416,10 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	private void addRenderMessage(RenderMessage msg) {
-		renderMessages.add(msg);
-		queueRedraw();
+		synchronized(renderMessages) {
+			renderMessages.add(msg);
+			queueRedraw();
+		}
 	}
 
 	public void setCameraInfoForWindow(int windowID, CameraInfo info) {
