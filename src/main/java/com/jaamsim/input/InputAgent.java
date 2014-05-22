@@ -481,6 +481,11 @@ public class InputAgent {
 			return null;
 		}
 
+		if (key.contains(" ") || key.contains("\t") || key.contains("{") || key.contains("}")) {
+			InputAgent.logError("Entity names cannot contain spaces, tabs, { or }: %s", key);
+			return null;
+		}
+
 		T ent = null;
 		try {
 			ent = proto.newInstance();

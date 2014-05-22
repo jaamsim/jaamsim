@@ -329,10 +329,14 @@ public class ObjectSelector extends FrameBox {
 		public void treeNodesChanged( TreeModelEvent e ) {
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-			String newName = (String)node.getUserObject();
+			String newName = ((String)node.getUserObject()).trim();
 
-			// Remove any spaces in the entity's new name
-			newName = newName.replace(" ", "");
+			if (newName.contains(" ") || newName.contains("\t") || newName.contains("{") || newName.contains("}")) {
+				LogBox.format("Error: Entity names cannot contain spaces, tabs, { or }: %s", newName);
+				LogBox.getInstance().setVisible(true);
+				node.setUserObject(currentEntity);
+				return;
+			}
 
 			// Check that the name has not been used already
 			Entity existingEnt = Input.tryParseEntity(newName, Entity.class);
