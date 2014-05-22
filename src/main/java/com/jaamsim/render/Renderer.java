@@ -332,13 +332,16 @@ public class Renderer implements GLAnimatorControl {
 				}
 				if (!isPaused) {
 					for (RenderWindow wind : winds.values()) {
+						if (shutdown.get())
+							break;
+
 						try {
-							GLContext context = wind.getGLWindowRef().getContext();
-							if (context != null && !shutdown.get())
-							{
-								wind.getGLWindowRef().display();
-							}
-						} catch (Throwable t) {
+							GLWindow glWin = wind.getGLWindowRef();
+							GLContext context = glWin.getContext();
+							if (context != null)
+								glWin.display();
+						}
+						catch (Throwable t) {
 							// Log it, but move on to the other windows
 							logException(t);
 						}

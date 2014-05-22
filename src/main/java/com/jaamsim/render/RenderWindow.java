@@ -28,7 +28,7 @@ import com.jogamp.newt.opengl.GLWindow;
 public class RenderWindow {
 
 	private Frame _awtFrame;
-	private GLWindow _window;
+	private final GLWindow _window;
 	private int _windowID;
 	private int _viewID;
 	private String _name;
