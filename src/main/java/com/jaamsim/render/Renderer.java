@@ -1380,10 +1380,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			addRenderMessage(new OffScreenMessage(scene, viewID, cam, width, height, result, target));
 		}
 
-		synchronized (displayNeeded) {
-			displayNeeded.set(true);
-			displayNeeded.notifyAll();
-		}
+		queueRedraw();
 
 		return result;
 	}
