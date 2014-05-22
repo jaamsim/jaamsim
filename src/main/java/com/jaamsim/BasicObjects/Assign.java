@@ -31,10 +31,10 @@ public class Assign extends LinkedComponent {
 
 	@Keyword(description = "A list of attribute assignments that are triggered when an entity is received.\n\n" +
 			"The attributes for various entities can be used in an assignment expression:\n" +
-			"- this entity -- [this].AttributeName\n" +
-			"- the entity received -- [obj].AttributeName\n" +
+			"- this entity -- this.AttributeName\n" +
+			"- the entity received -- this.obj.AttributeName\n" +
 			"- another entity -- [EntityName].AttributeName",
-	         example = "Assign1 AttributeAssignmentList { {'[this].A = [this].A + 1'} {'[obj].B = 1'} {'[Ent1].C = 0'} }")
+	         example = "Assign1 AttributeAssignmentList { {'this.A = this.A + 1'} {'this.obj.B = 1'} {'[Ent1].C = 0'} }")
 	private final AssignmentListInput assignmentList;
 
 	{
