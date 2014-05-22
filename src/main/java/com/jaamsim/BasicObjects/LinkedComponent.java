@@ -34,6 +34,7 @@ public abstract class LinkedComponent extends DisplayEntity {
 
 	private int numberAdded;     // Number of entities added to this component from upstream
 	private int numberProcessed; // Number of entities processed by this component
+	private DisplayEntity receivedEntity; // Entity most recently received by this component
 
 	{
 		nextComponentInput = new EntityInput<LinkedComponent>( LinkedComponent.class, "NextComponent", "Key Inputs", null);
@@ -58,6 +59,7 @@ public abstract class LinkedComponent extends DisplayEntity {
 	}
 
 	public void addDisplayEntity( DisplayEntity ent ) {
+		receivedEntity = ent;
 		numberAdded++;
 	}
 
@@ -66,6 +68,12 @@ public abstract class LinkedComponent extends DisplayEntity {
 			nextComponentInput.getValue().addDisplayEntity(ent);
 
 		numberProcessed++;
+	}
+
+	@Output(name = "obj",
+	 description = "The entity that was received most recently.")
+	public DisplayEntity getReceivedEntity(double simTime) {
+		return receivedEntity;
 	}
 
 	@Output(name = "NumberAdded",
