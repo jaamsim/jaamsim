@@ -558,12 +558,6 @@ public class Renderer implements GLAnimatorControl {
 		}
 	}
 
-	public int getNumOpenWindows() {
-		synchronized(openWindows) {
-			return openWindows.size();
-		}
-	}
-
 	public void closeWindow(int windowID) {
 
 		synchronized (renderMessages) {

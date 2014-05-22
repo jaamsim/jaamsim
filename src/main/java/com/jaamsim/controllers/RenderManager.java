@@ -209,7 +209,7 @@ public class RenderManager implements DragSourceListener {
 					lastDraw = currentTime;
 
 					synchronized(redraw) {
-						if (renderer.getNumOpenWindows() == 0 && !screenshot.get()) {
+						if (windowControls.size() == 0 && !screenshot.get()) {
 							return; // Do not queue a redraw if there are no open windows
 						}
 						redraw.set(true);
