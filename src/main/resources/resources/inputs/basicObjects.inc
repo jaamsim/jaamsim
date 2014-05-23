@@ -13,7 +13,6 @@ Define ObjectType {
 					EntityGate
 					EntitySignal
                     QueueRecorder
-                    ProbabilityDistribution
                     Group
                     ScriptEntity
                     Output
@@ -62,7 +61,6 @@ Branch                  JavaClass { com.jaamsim.BasicObjects.Branch             
 EntityGate              JavaClass { com.jaamsim.BasicObjects.EntityGate                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ EntityGateIconModel   }
 EntitySignal            JavaClass { com.jaamsim.BasicObjects.EntitySignal               } Palette { 'Basic Objects' } DefaultDisplayModel 	{ EntitySignalIconModel }
 QueueRecorder           JavaClass { com.sandwell.JavaSimulation3D.QueueRecorder         } Palette { 'Basic Objects' } DefaultDisplayModel	{ Cube 					}	DragAndDrop 	{ FALSE 	}
-ProbabilityDistribution JavaClass { com.sandwell.JavaSimulation.ProbabilityDistribution } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 Group                   JavaClass { com.sandwell.JavaSimulation.Group                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 ScriptEntity            JavaClass { com.sandwell.JavaSimulation3D.ScriptEntity          } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 Output                  JavaClass { com.sandwell.JavaSimulation.OutputMethod            } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
@@ -84,7 +82,6 @@ Branch             Description { 'Directs received entities to an assortment of 
 EntityGate         Description { 'Blocks received entities from progressing further until the Gate is opened by a Signal.' }
 EntitySignal       Description { 'On receipt of an entity, a specified Gate is opened or closed.' }
 QueueRecorder      Description { 'Logs an entry every time the specified queue receives or releases an entity.' }
-ProbabilityDistribution  Description { 'Obsolete probability distribution retained for backwards compatibity with TLS.' }
 Group              Description { 'Collection of entities used as an convenience for specifying model inputs.' }
 ScriptEntity       Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
 Output             Description { '???' }
