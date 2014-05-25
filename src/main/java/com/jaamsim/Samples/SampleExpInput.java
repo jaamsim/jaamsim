@@ -102,7 +102,7 @@ public class SampleExpInput extends Input<SampleProvider> {
 		if (value == null || defValue == value)
 			return "";
 		if (value instanceof SampleExpression)
-			return getValueString();
+			return super.getValueString();
 		return value.toString();
 	}
 
