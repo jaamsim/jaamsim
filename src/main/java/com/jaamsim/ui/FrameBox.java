@@ -140,17 +140,27 @@ public class FrameBox extends JFrame {
 		}
 
 		public void rescheduleUpdate() {
-			scheduleUpdate(entity);
+			synchronized (this) {
+				schedUpdate();
+			}
 		}
 
 		public void scheduleUpdate(Entity ent) {
 			synchronized (this) {
 				entity = ent;
-				if (!scheduled)
-					SwingUtilities.invokeLater(this);
-
-				scheduled = true;
+				schedUpdate();
 			}
+		}
+
+		/**
+		 * Must be called inside a synchronized block to protect the reference
+		 * to scheduled.
+		 */
+		private void schedUpdate() {
+			if (!scheduled)
+				SwingUtilities.invokeLater(this);
+
+			scheduled = true;
 		}
 
 		@Override
