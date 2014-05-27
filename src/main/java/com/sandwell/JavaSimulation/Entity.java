@@ -436,17 +436,6 @@ public class Entity {
 		}
 	}
 
-	/**
-	 * Interpret the input data in the given buffer of strings corresponding to the given keyword.
-	 * Reads keyword from a configuration file:
-	 *  @param data - Vector of Strings containing data to be parsed
-	 *  @param keyword - the keyword to determine what the data represents
-	 */
-	public void readData_ForKeyword(StringVector data, String keyword)
-	throws InputErrorException {
-		throw new InputErrorException( "Invalid keyword " + keyword );
-	}
-
 	static long calculateDelayLength(double waitLength) {
 		return Math.round(waitLength * Simulation.getSimTimeFactor());
 	}
