@@ -1008,6 +1008,42 @@ public abstract class Input<T> {
 		return Input.castEntity(Entity.getNamedEntity(choice), aClass);
 	}
 
+	public static <T extends Entity> ArrayList<T> parseEntityList(KeywordIndex kw, Class<T> aClass, boolean unique)
+	throws InputErrorException {
+		ArrayList<T> temp = new ArrayList<T>(kw.numArgs());
+
+		for (int i = 0; i < kw.numArgs(); i++) {
+			Entity ent = Entity.getNamedEntity(kw.getArg(i));
+			if (ent == null) {
+				throw new InputErrorException(INP_ERR_ENTNAME, kw.getArg(i));
+			}
+
+			// If we found a group, expand the list of Entities
+			if (ent instanceof Group) {
+				ArrayList<Entity> gList = ((Group)ent).getList();
+				for (int j = 0; j < gList.size(); j++) {
+					T t = Input.castEntity(gList.get(j), aClass);
+					if (t == null) {
+						throw new InputErrorException(INP_ERR_ENTCLASS, aClass.getSimpleName(), gList.get(j), gList.get(j).getClass().getSimpleName());
+					}
+					temp.add(t);
+				}
+			} else {
+				T t = Input.castEntity(ent, aClass);
+				if (t == null) {
+					throw new InputErrorException(INP_ERR_ENTCLASS, aClass.getSimpleName(), kw.getArg(i), ent.getClass().getSimpleName());
+				}
+				temp.add(t);
+			}
+		}
+
+		if (unique)
+			Input.assertUnique(temp);
+
+		return temp;
+	}
+
+
 	public static <T extends Entity> ArrayList<T> parseEntityList(StringVector input, Class<T> aClass, boolean unique)
 	throws InputErrorException {
 		ArrayList<T> temp = new ArrayList<T>(input.size());

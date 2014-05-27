@@ -40,9 +40,9 @@ public class Group extends Entity {
 	private final ArrayList<Entity> list; // list of objects in group
 
 	{
-		addEditableKeyword( "List",       "",   "", false, "Key Inputs" );
-		addEditableKeyword( "AppendList", "",   "", true,  "Key Inputs" );
-		addEditableKeyword( "GroupType",  "",   "", false, "Key Inputs" );
+		this.addInput(new Group.GroupListInput());
+		this.addInput(new Group.GroupAppendListInput());
+		this.addInput(new Group.GroupTypeInput());
 
 		reportable = new BooleanInput("Reportable", "Key Inputs", true);
 		this.addInput(reportable);
@@ -54,56 +54,60 @@ public class Group extends Entity {
 		groupKeywordValues = new ArrayList<KeywordIndex>();
 	}
 
-	/**
-	 * Processes the input data corresponding to the specified keyword. If syntaxOnly is true,
-	 * checks input syntax only; otherwise, checks input syntax and process the input values.
-	 */
-	@Override
-	public void readData_ForKeyword(StringVector data, String keyword)
-	throws InputErrorException {
-
-
-		try {
-			if( "List".equalsIgnoreCase( keyword ) ) {
-				ArrayList<Entity> temp = Input.parseEntityList(data, Entity.class, true);
-				list.clear();
-				list.addAll(temp);
-				this.checkType();
-				return;
-			}
-			if( "AppendList".equalsIgnoreCase( keyword ) ) {
-				int originalListSize = list.size();
-				ArrayList<Entity> temp = Input.parseEntityList(data, Entity.class, true);
-				for (Entity each : temp) {
-					if (!list.contains(each))
-						list.add(each);
-				}
-				this.checkType();
-				// set values of appended objects to the group values
-				if ( type != null ) {
-					for ( int i = originalListSize; i < list.size(); i ++ ) {
-						Entity ent = list.get( i );
-						for ( int j = 0; j < groupKeywordValues.size(); j++  ) {
-							KeywordIndex kw = groupKeywordValues.get(j);
-							InputAgent.apply(ent, kw);
-						}
-					}
-				}
-
-				return;
-			}
-
-			if( "GroupType".equalsIgnoreCase( keyword ) ) {
-				Input.assertCount(data, 1);
-				type = Input.parseEntityType(data.get(0));
-				this.checkType();
-				return;
-			}
+	private class GroupListInput extends Input<String> {
+		public GroupListInput() {
+			super("List", "Key Inputs", null);
 		}
-		catch( Exception e ) {
-			InputAgent.logError("Entity: %s Keyword: %s - %s", this.getName(), keyword, e.getMessage());
+
+		@Override
+		public void parse(KeywordIndex kw) {
+			ArrayList<Entity> temp = Input.parseEntityList(kw, Entity.class, true);
+			list.clear();
+			list.addAll(temp);
+			Group.this.checkType();
 		}
 	}
+
+	private class GroupAppendListInput extends Input<String> {
+		public GroupAppendListInput() {
+			super("AppendList", "Key Inputs", null);
+		}
+
+		@Override
+		public void parse(KeywordIndex kw) {
+			int originalListSize = list.size();
+			ArrayList<Entity> temp = Input.parseEntityList(kw, Entity.class, true);
+			for (Entity each : temp) {
+				if (!list.contains(each))
+					list.add(each);
+			}
+			Group.this.checkType();
+			// set values of appended objects to the group values
+			if ( type != null ) {
+				for ( int i = originalListSize; i < list.size(); i ++ ) {
+					Entity ent = list.get( i );
+					for ( int j = 0; j < groupKeywordValues.size(); j++  ) {
+						KeywordIndex grpkw = groupKeywordValues.get(j);
+						InputAgent.apply(ent, grpkw);
+					}
+				}
+			}
+		}
+	}
+
+	private class GroupTypeInput extends Input<String> {
+		public GroupTypeInput() {
+			super("GroupType", "Key Inputs", null);
+		}
+
+		@Override
+		public void parse(KeywordIndex kw) {
+			Input.assertCount(kw, 1);
+			type = Input.parseEntityType(kw.getArg(0));
+			Group.this.checkType();
+		}
+	}
+
 
 	public void saveGroupKeyword(KeywordIndex key) {
 		ArrayList<String> toks = new ArrayList<String>(key.end - key.start + 2);
