@@ -17,6 +17,16 @@ package com.jaamsim.Thresholds;
 import java.util.ArrayList;
 
 public interface ThresholdUser {
+
+	/**
+	 * Returns the Thresholds used by this object.
+	 * @return the Threshold list.
+	 */
 	public abstract ArrayList<Threshold> getThresholds();
+
+	/**
+	 * Called whenever one of the Thresholds used by this object has changed
+	 * its state from either open to closed or from closed to open.
+	 */
 	public abstract void thresholdChanged();
 }
