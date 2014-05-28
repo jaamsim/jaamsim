@@ -16,6 +16,7 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -54,6 +55,8 @@ public class EntityGenerator extends LinkedComponent {
 	private final IntegerInput maxNumber;
 
 	private int numberGenerated = 0;  // Number of entities generated so far
+	private boolean busy;
+
 
 	{
 		firstArrivalTime = new SampleExpInput( "FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
@@ -99,6 +102,7 @@ public class EntityGenerator extends LinkedComponent {
 		super.earlyInit();
 
 		numberGenerated = 0;
+		busy = false;
 	}
 
 	@Override
@@ -121,10 +125,40 @@ public class EntityGenerator extends LinkedComponent {
 		}
 	}
 
+	@Override
+	public void thresholdChanged() {
+
+		// Is restart required?
+		if (busy) return;
+
+		// Are all the thresholds satisfied?
+		for( Threshold thr : this.getThresholds() ) {
+			if( thr.isClosed() ) return;
+		}
+
+		// Has the last entity been generated?
+		if( maxNumber.getValue() != null && numberGenerated >= maxNumber.getValue() )
+			return;
+
+		// Restart entity creation
+		double dt = interArrivalTime.getValue().getNextSample(getSimTime());
+		this.scheduleProcess(dt, 5, new CreateNextEntityTarget(this, "createNextEntity"));
+	}
+
 	/**
 	* Loop recursively to generate each entity
 	*/
 	public void createNextEntity() {
+
+		// Do any of the thresholds stop the generator?
+		for( Threshold thr : this.getThresholds() ) {
+			if( thr.isClosed() ) {
+				busy = false;
+				return;
+			}
+		}
+
+		busy = true;
 
 		// Create the new entity
 		numberGenerated++;
