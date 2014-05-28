@@ -53,7 +53,7 @@ public class EntityGenerator extends LinkedComponent {
 	         example = "EntityGenerator1 MaxNumber { 3 }")
 	private final IntegerInput maxNumber;
 
-	int numberGenerated = 0;  // Number of entities generated so far
+	private int numberGenerated = 0;  // Number of entities generated so far
 
 	{
 		firstArrivalTime = new SampleExpInput( "FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
