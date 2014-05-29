@@ -47,19 +47,19 @@ public class ExpressionThreshold extends Threshold {
 	private void doOpenClose() {
 
 		// Set the present state
-		closed = !this.getOpenConditionValue(this.getSimTime());
+		setOpen(this.getOpenConditionValue(this.getSimTime()));
 
 		// Loop endlessly
 		while (true) {
 
 			// Wait until the state has changed
-			while( this.getOpenConditionValue(this.getSimTime()) != closed ) {
+			while( this.getOpenConditionValue(this.getSimTime()) == isOpen() ) {
 				waitUntil();
 			}
 			waitUntilEnded();
 
 			// Set the present state
-			closed = !this.getOpenConditionValue(this.getSimTime());
+			setOpen(this.getOpenConditionValue(this.getSimTime()));
 
 			// Notify the users of this threshold
 			this.scheduleChangedCallback();

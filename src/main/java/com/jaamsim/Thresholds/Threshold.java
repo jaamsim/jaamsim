@@ -48,7 +48,7 @@ public class Threshold extends DisplayEntity {
 
 	private final ArrayList<ThresholdUser> userList;
 
-	protected boolean closed;
+	private boolean open;
 
 	protected double simTimeOfLastUpdate; // Simulation time in seconds of last update
 	protected double openSimTime; // Number of seconds open
@@ -78,7 +78,7 @@ public class Threshold extends DisplayEntity {
 	public void earlyInit() {
 		super.earlyInit();
 		userUpdate.users.clear();
-		closed = false;
+		open = true;
 
 		userList.clear();
 		for (Entity each : Entity.getAll()) {
@@ -131,8 +131,12 @@ public class Threshold extends DisplayEntity {
 		}
 	}
 
+	public boolean isOpen() {
+		return open;
+	}
+
 	public boolean isClosed() {
-		return closed;
+		return !open;
 	}
 
 	@Override
@@ -141,18 +145,16 @@ public class Threshold extends DisplayEntity {
 
 		// Determine the colour for the square
 		Color4d col;
-		if( closed )
-			col = closedColour.getValue();
-		else
+		if (open) {
 			col = openColour.getValue();
-
-		if (closed) {
-			setTagVisibility(DisplayModelCompat.TAG_CONTENTS, showWhenClosed.getValue());
-			setTagVisibility(DisplayModelCompat.TAG_OUTLINES, showWhenClosed.getValue());
-		}
-		else {
 			setTagVisibility(DisplayModelCompat.TAG_CONTENTS, showWhenOpen.getValue());
 			setTagVisibility(DisplayModelCompat.TAG_OUTLINES, showWhenOpen.getValue());
+		}
+		else {
+			col = closedColour.getValue();
+			setTagVisibility(DisplayModelCompat.TAG_CONTENTS, showWhenClosed.getValue());
+			setTagVisibility(DisplayModelCompat.TAG_OUTLINES, showWhenClosed.getValue());
+
 		}
 
 		setTagColour( DisplayModelCompat.TAG_CONTENTS, col );
@@ -169,13 +171,20 @@ public class Threshold extends DisplayEntity {
 		simTimeOfLastUpdate = getSimTime();
 	}
 
-	public void update() {
-		if( closed )
-			closedSimTime += getSimTime() - simTimeOfLastUpdate;
-		else
+	public final void setOpen(boolean open) {
+		// If setting to the same value as current, return
+		if (this.open == open)
+			return;
+
+		if (this.open) {
 			openSimTime += getSimTime() - simTimeOfLastUpdate;
+		}
+		else {
+			closedSimTime += getSimTime() - simTimeOfLastUpdate;
+		}
 
 		simTimeOfLastUpdate = getSimTime();
+		this.open = open;
 	}
 
 	/**
@@ -191,27 +200,30 @@ public class Threshold extends DisplayEntity {
 	 * Print the threshold name and percentage of time open and closed
 	 */
 	public void printUtilizationOn( FileEntity anOut ) {
-		this.update();
-
-		double totalSimTime = openSimTime + closedSimTime;
+		double curTime = getSimTime() - simTimeOfLastUpdate;
+		double totalSimTime = openSimTime + closedSimTime + curTime;
 		if (totalSimTime == 0.0d)
 			return;
 
 		anOut.format( "%s\t", getName() );
 
+		double totOpen = openSimTime;
+		double totClosed = closedSimTime;
+		if (isClosed())
+			totClosed += curTime;
+		else
+			totOpen += curTime;
 		// Print percentage of time open
-		double fraction = openSimTime/totalSimTime;
-		anOut.format("%.1f%%\t", fraction * 100.0d);
+		anOut.format("%.1f%%\t", (totOpen / totalSimTime) * 100.0d);
 
 		// Print percentage of time closed
-		fraction = closedSimTime/totalSimTime;
-		anOut.format("%.1f%%\t", fraction * 100.0d);
+		anOut.format("%.1f%%\t", (totClosed / totalSimTime ) * 100.0d);
 	}
 
 	@Output(name = "Open",
 	 description = "If open, then return TRUE.  Otherwise, return FALSE.",
 	    unitType = DimensionlessUnit.class)
 	public Boolean getOpen(double simTime) {
-		return !closed;
+		return open;
 	}
 }
