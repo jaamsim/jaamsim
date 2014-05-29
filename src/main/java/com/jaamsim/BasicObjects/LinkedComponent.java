@@ -14,11 +14,16 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
+import com.jaamsim.Thresholds.Threshold;
+import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.RateUnit;
 import com.sandwell.JavaSimulation.EntityInput;
+import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
@@ -26,11 +31,15 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  * LinkedComponents are used to form a chain of components that process DisplayEntities that pass through the system.
  * Sub-classes for EntityGenerator, Server, and EntitySink.
  */
-public abstract class LinkedComponent extends DisplayEntity {
+public abstract class LinkedComponent extends DisplayEntity implements ThresholdUser {
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
-	         example = "EntityGenerator1 NextComponent { Server1 }")
+			example = "EntityGenerator1 NextComponent { Server1 }")
 	protected final EntityInput<LinkedComponent> nextComponentInput;
+
+	@Keyword(description = "A list of thresholds that must be satisified for the entity to operate.",
+			example = "EntityGenerator1 OperatingThresholdList { Server1 }")
+	protected final EntityListInput<Threshold> operatingThresholdList;
 
 	private int numberAdded;     // Number of entities added to this component from upstream
 	private int numberProcessed; // Number of entities processed by this component
@@ -39,6 +48,9 @@ public abstract class LinkedComponent extends DisplayEntity {
 	{
 		nextComponentInput = new EntityInput<LinkedComponent>( LinkedComponent.class, "NextComponent", "Key Inputs", null);
 		this.addInput( nextComponentInput);
+
+		operatingThresholdList = new EntityListInput<Threshold>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
+		this.addInput( operatingThresholdList);
 	}
 
 	@Override
@@ -57,6 +69,14 @@ public abstract class LinkedComponent extends DisplayEntity {
 		numberAdded = 0;
 		numberProcessed = 0;
 	}
+
+	@Override
+	public ArrayList<Threshold> getThresholds() {
+		return operatingThresholdList.getValue();
+	}
+
+	@Override
+	public void thresholdChanged() {}
 
 	public void addDisplayEntity( DisplayEntity ent ) {
 		receivedEntity = ent;
