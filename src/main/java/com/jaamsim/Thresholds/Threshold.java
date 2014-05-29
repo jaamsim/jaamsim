@@ -50,9 +50,9 @@ public class Threshold extends DisplayEntity {
 
 	private boolean open;
 
-	protected double simTimeOfLastUpdate; // Simulation time in seconds of last update
-	protected double openSimTime; // Number of seconds open
-	protected double closedSimTime; // Number of seconds closed
+	private long lastTickUpdate;
+	private long openTicks;
+	private long closedTicks;
 
 	{
 		openColour = new ColourInput( "OpenColour", "Graphics", ColourInput.GREEN );
@@ -79,6 +79,9 @@ public class Threshold extends DisplayEntity {
 		super.earlyInit();
 		userUpdate.users.clear();
 		open = true;
+		lastTickUpdate = getSimTicks();
+		openTicks = 0;
+		closedTicks = 0;
 
 		userList.clear();
 		for (Entity each : Entity.getAll()) {
@@ -166,9 +169,9 @@ public class Threshold extends DisplayEntity {
     // ********************************************************************************
 
 	public void clearStatistics() {
-		openSimTime = 0.0;
-		closedSimTime = 0.0;
-		simTimeOfLastUpdate = getSimTime();
+		openTicks = 0;
+		closedTicks = 0;
+		lastTickUpdate = getSimTicks();
 	}
 
 	public final void setOpen_Sched(boolean open, boolean sched) {
@@ -177,13 +180,13 @@ public class Threshold extends DisplayEntity {
 			return;
 
 		if (this.open) {
-			openSimTime += getSimTime() - simTimeOfLastUpdate;
+			openTicks += getSimTicks() - lastTickUpdate;
 		}
 		else {
-			closedSimTime += getSimTime() - simTimeOfLastUpdate;
+			closedTicks += getSimTicks() - lastTickUpdate;
 		}
 
-		simTimeOfLastUpdate = getSimTime();
+		lastTickUpdate = getSimTicks();
 		this.open = open;
 
 		if (sched)
@@ -209,24 +212,24 @@ public class Threshold extends DisplayEntity {
 	 * Print the threshold name and percentage of time open and closed
 	 */
 	public void printUtilizationOn( FileEntity anOut ) {
-		double curTime = getSimTime() - simTimeOfLastUpdate;
-		double totalSimTime = openSimTime + closedSimTime + curTime;
-		if (totalSimTime == 0.0d)
+		long durTicks = getSimTicks() - lastTickUpdate;
+		long totalSimTicks = openTicks + closedTicks + durTicks;
+		if (totalSimTicks == 0)
 			return;
 
 		anOut.format( "%s\t", getName() );
 
-		double totOpen = openSimTime;
-		double totClosed = closedSimTime;
+		long totOpen = openTicks;
+		long totClosed = closedTicks;
 		if (isClosed())
-			totClosed += curTime;
+			totClosed += durTicks;
 		else
-			totOpen += curTime;
+			totOpen += durTicks;
 		// Print percentage of time open
-		anOut.format("%.1f%%\t", (totOpen / totalSimTime) * 100.0d);
+		anOut.format("%.1f%%\t", (totOpen * 100 / (double)totalSimTicks));
 
 		// Print percentage of time closed
-		anOut.format("%.1f%%\t", (totClosed / totalSimTime ) * 100.0d);
+		anOut.format("%.1f%%\t", (totClosed * 100 / (double)totalSimTicks));
 	}
 
 	@Output(name = "Open",
