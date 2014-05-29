@@ -89,5 +89,5 @@ ScriptEntity       Description { 'Executes a series of commands in simulated tim
 Output             Description { '???' }
 BooleanIndicator   Description { 'Circular entity that changes color to indicate TRUE and FALSE' }
 TimeSeries         Description { 'Provides a floating point number that changes in simulated time following a series of input values.' }
-TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries for which ship movement is permitted.' }
+TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries for which an activity is permitted.' }
 ExpressionThreshold Description { 'Specifies a logical condition for which an activity is permitted.' }
