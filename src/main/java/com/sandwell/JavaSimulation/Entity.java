@@ -485,6 +485,10 @@ public class Entity {
 		evt.scheduleProcess(ticks, priority, false, t, handle);
 	}
 
+	public final void scheduleProcessTicks(long ticks, int priority, boolean fifo, ProcessTarget t, EventHandle h) {
+		getEventManager().scheduleProcess(ticks, priority, fifo, t, h);
+	}
+
 	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
 		getEventManager().scheduleProcess(ticks, priority, false, t);
 	}
