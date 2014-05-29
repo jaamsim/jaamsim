@@ -125,12 +125,18 @@ public class TimeSeriesThreshold extends Threshold {
 			InputAgent.logWarning( "Threshold %s is closed forever.  MinOpenLimit = %f Min TimeSeries Value = %f", this, this.getMaxMinOpenLimit(), this.getTimeSeries().getMinValue() );
 	}
 
+	@Override
+	public void startUp() {
+		super.startUp();
+		this.doOpenClose();
+	}
+
 	public Class<? extends Unit> getUnitType() {
 		return unitType.getUnitType();
 	}
 
-	private static class DoOpenCloseTarget extends EntityTarget<Threshold> {
-		public DoOpenCloseTarget(Threshold ent, String method) {
+	private static class DoOpenCloseTarget extends EntityTarget<TimeSeriesThreshold> {
+		public DoOpenCloseTarget(TimeSeriesThreshold ent, String method) {
 			super(ent, method);
 		}
 
@@ -141,7 +147,7 @@ public class TimeSeriesThreshold extends Threshold {
 	}
 
 	private final ProcessTarget doOpenClose = new DoOpenCloseTarget(this, "doOpenClose");
-	@Override
+
 	public void doOpenClose() {
 		this.update();
 		double wait;

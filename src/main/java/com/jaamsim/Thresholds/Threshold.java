@@ -28,7 +28,7 @@ import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
-public abstract class Threshold extends DisplayEntity {
+public class Threshold extends DisplayEntity {
 
 	@Keyword(description = "The colour of the threshold graphic when the threshold is open.",
 	         example = "Threshold1  OpenColour { green }")
@@ -94,10 +94,7 @@ public abstract class Threshold extends DisplayEntity {
 	public void startUp() {
 		super.startUp();
 		this.clearStatistics();
-		this.doOpenClose();
 	}
-
-	public abstract void doOpenClose();
 
 	private static final DoThresholdChanged userUpdate = new DoThresholdChanged();
 	private static class DoThresholdChanged extends ProcessTarget {
