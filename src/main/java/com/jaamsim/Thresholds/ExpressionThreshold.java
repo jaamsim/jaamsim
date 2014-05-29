@@ -60,9 +60,6 @@ public class ExpressionThreshold extends Threshold {
 
 			// Set the present state
 			setOpen(this.getOpenConditionValue(this.getSimTime()));
-
-			// Notify the users of this threshold
-			this.scheduleChangedCallback();
 		}
 	}
 

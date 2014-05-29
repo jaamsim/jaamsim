@@ -152,14 +152,10 @@ public class TimeSeriesThreshold extends Threshold {
 		double wait;
 		if( this.isClosedAtTime( getCurrentTime() ) ) {
 			setOpen(false);
-			if( traceFlag ) this.trace( "Closed" );
-			this.scheduleChangedCallback();
 			wait = this.calcClosedTimeFromTime( getCurrentTime() );
 		}
 		else {
 			setOpen(true);
-			if( traceFlag ) this.trace( "Open" );
-			this.scheduleChangedCallback();
 			wait = this.calcOpenTimeFromTime( getCurrentTime() );
 		}
 
