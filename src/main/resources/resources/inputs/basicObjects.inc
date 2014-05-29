@@ -19,6 +19,7 @@ Define ObjectType {
                     BooleanIndicator
                     TimeSeries
                     TimeSeriesThreshold
+                    ExpressionThreshold
                   }
 
 Define	ImageModel {
@@ -66,7 +67,8 @@ ScriptEntity            JavaClass { com.sandwell.JavaSimulation3D.ScriptEntity  
 Output                  JavaClass { com.sandwell.JavaSimulation.OutputMethod            } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 BooleanIndicator        JavaClass { com.sandwell.JavaSimulation3D.BooleanIndicator      } Palette { 'Basic Objects' } DefaultDisplayModel { Circle                   }
 TimeSeries              JavaClass { com.sandwell.JavaSimulation.TimeSeries              } Palette { 'Basic Objects' } DefaultDisplayModel 	{ TimeSeriesIconModel    }
-TimeSeriesThreshold	JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		} Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
+TimeSeriesThreshold	    JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
+ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 
 EntityGenerator    Description { 'Creates copies of a specified entity at specified intervals.' }
 Server             Description { 'Processes a received entity over a specified duration.' }
@@ -88,3 +90,4 @@ Output             Description { '???' }
 BooleanIndicator   Description { 'Circular entity that changes color to indicate TRUE and FALSE' }
 TimeSeries         Description { 'Provides a floating point number that changes in simulated time following a series of input values.' }
 TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries for which ship movement is permitted.' }
+ExpressionThreshold Description { 'Specifies a logical condition for which an activity is permitted.' }
