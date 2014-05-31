@@ -31,6 +31,8 @@ public class EntitySignal extends LinkedComponent {
 	private final BooleanInput newState;
 
 	{
+		operatingThresholdList.setHidden(true);
+
 		targetGate = new EntityInput<EntityGate>( EntityGate.class, "TargetGate", "Key Inputs", null);
 		this.addInput( targetGate);
 

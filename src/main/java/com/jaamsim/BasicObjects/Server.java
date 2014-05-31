@@ -44,6 +44,8 @@ public class Server extends LinkedComponent {
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
 
 	{
+		operatingThresholdList.setHidden(true);
+
 		serviceTimeInput = new SampleExpInput( "ServiceTime", "Key Inputs", null);
 		serviceTimeInput.setUnitType( TimeUnit.class );
 		serviceTimeInput.setEntity(this);

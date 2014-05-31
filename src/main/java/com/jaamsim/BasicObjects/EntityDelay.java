@@ -67,6 +67,8 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	private HasScreenPoints.PointsInfo[] cachedPointInfo;
 
 	{
+		operatingThresholdList.setHidden(true);
+
 		duration = new SampleExpInput( "Duration", "Key Inputs", null);
 		duration.setUnitType(TimeUnit.class);
 		duration.setEntity(this);

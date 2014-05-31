@@ -43,6 +43,8 @@ public class EntityGate extends LinkedComponent {
 	private boolean busy;  // TRUE if the process of emptying the queue has started
 
 	{
+		operatingThresholdList.setHidden(true);
+
 		waitQueue = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput( waitQueue);
 

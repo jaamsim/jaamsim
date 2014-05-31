@@ -65,6 +65,8 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 	private HasScreenPoints.PointsInfo[] cachedPointInfo;
 
 	{
+		operatingThresholdList.setHidden(true);
+
 		travelTimeInput = new ValueInput( "TravelTime", "Key Inputs", 0.0d);
 		travelTimeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		travelTimeInput.setUnitType(TimeUnit.class);
