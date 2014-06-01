@@ -110,14 +110,14 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 	/**
 	 * Close the gate.
 	 */
-	public void close() {
+	private void close() {
 		gateOpen = false;
 	}
 
 	/**
 	 * Open the gate and release any entities in the queue.
 	 */
-	public void open() {
+	private void open() {
 		gateOpen = true;
 
 		// Release any entities that are in the queue
