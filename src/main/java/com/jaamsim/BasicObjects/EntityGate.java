@@ -43,7 +43,7 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 		waitQueue = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput( waitQueue);
 
-		releaseDelay = new ValueInput( "ReleaseDelay", "Key Inputs", null);
+		releaseDelay = new ValueInput( "ReleaseDelay", "Key Inputs", 0.0);
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput( releaseDelay);
