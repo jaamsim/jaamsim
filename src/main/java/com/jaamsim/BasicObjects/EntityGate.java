@@ -124,7 +124,7 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 		if( busy || waitQueue.getValue().getCount() == 0 )
 			return;
 		busy = true;
-		this.scheduleProcess(releaseDelay.getValue(), 5, new ReleaseQueuedEntityTarget(this, "removeDisplayEntity"));
+		this.scheduleProcess(releaseDelay.getValue(), 5, new ReleaseQueuedEntityTarget(this, "releaseQueuedEntity"));
 	}
 
 	private static class ReleaseQueuedEntityTarget extends EntityTarget<EntityGate> {
@@ -162,7 +162,7 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 		}
 
 		// Continue the recursive loop by scheduling the release of the next queued entity
-		this.scheduleProcess(releaseDelay.getValue(), 5, new ReleaseQueuedEntityTarget(this, "removeDisplayEntity"));
+		this.scheduleProcess(releaseDelay.getValue(), 5, new ReleaseQueuedEntityTarget(this, "releaseQueuedEntity"));
 	}
 
 }
