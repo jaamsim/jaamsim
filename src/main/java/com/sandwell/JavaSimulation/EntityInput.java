@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 
 public class EntityInput<T extends Entity> extends Input<T> {
 
@@ -37,14 +38,14 @@ public class EntityInput<T extends Entity> extends Input<T> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(input, 0, 1);
-		if (input.size() == 0) {
+		Input.assertCount(kw, 0, 1);
+		if (kw.numArgs() == 0) {
 			value = null;
 		}
 		else {
-			T tmp = Input.parseEntity(input.get(0), entClass);
+			T tmp = Input.parseEntity(kw.getArg(0), entClass);
 			if (!isValid(tmp))
 				throw new InputErrorException("%s is not a valid entity", tmp.getInputName());
 

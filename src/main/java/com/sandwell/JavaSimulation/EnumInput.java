@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 
 public class EnumInput<T extends Enum<T>> extends Input<T> {
 	private final Class<T> type;
@@ -27,10 +28,10 @@ public class EnumInput<T extends Enum<T>> extends Input<T> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(input, 1);
-		value = Input.parseEnum(type, input.get(0));
+		Input.assertCount(kw, 1);
+		value = Input.parseEnum(type, kw.getArg(0));
 	}
 
 	@Override

@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 
 public class DeprecatedInput extends Input<String> {
 	private boolean fatal;
@@ -31,7 +32,7 @@ public class DeprecatedInput extends Input<String> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 		if (fatal)
 			throw new InputErrorException(value);

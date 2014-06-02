@@ -16,7 +16,6 @@ package com.jaamsim.input;
 
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.StringVector;
 
 public class FormatInput extends StringInput {
 	public FormatInput(String key, String cat, String def) {
@@ -24,9 +23,9 @@ public class FormatInput extends StringInput {
 	}
 
 	@Override
-	public void parse(StringVector input) throws InputErrorException {
-		Input.assertCount(input, 1);
-		String temp = input.get(0);
+	public void parse(KeywordIndex kw) throws InputErrorException {
+		Input.assertCount(kw, 1);
+		String temp = kw.getArg(0);
 		try {
 			String.format(temp, 0.0d);
 		}

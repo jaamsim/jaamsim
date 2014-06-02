@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 
 public class StringInput extends Input<String> {
 
@@ -23,8 +24,8 @@ public class StringInput extends Input<String> {
 	}
 
 	@Override
-	public void parse(StringVector input) throws InputErrorException {
-		Input.assertCount(input, 1);
-		value = input.firstElement();
+	public void parse(KeywordIndex kw) throws InputErrorException {
+		Input.assertCount(kw, 1);
+		value = kw.getArg(0);
 	}
 }
