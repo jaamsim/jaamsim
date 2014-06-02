@@ -21,6 +21,7 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
@@ -222,5 +223,33 @@ public class Threshold extends DisplayEntity {
 	    unitType = DimensionlessUnit.class)
 	public Boolean getOpen(double simTime) {
 		return open;
+	}
+
+	@Output(name = "OpenFraction",
+	 description = "The fraction of total simulation time that the threshold is open.",
+	    unitType = DimensionlessUnit.class)
+	public double getOpenFraction(double simTime) {
+		double dur = simTime - FrameBox.ticksToSeconds(lastTickUpdate);
+		double openTime = FrameBox.ticksToSeconds(openTicks);
+		double closedTime = FrameBox.ticksToSeconds(closedTicks);
+		double totalTime = openTime + closedTime + dur;
+		if (isOpen())
+			return (openTime + dur) / totalTime;
+		else
+			return openTime / totalTime;
+	}
+
+	@Output(name = "ClosedFraction",
+	 description = "The fraction of total simulation time that the threshold is closed.",
+	    unitType = DimensionlessUnit.class)
+	public double getClosedFraction(double simTime) {
+		double dur = simTime - FrameBox.ticksToSeconds(lastTickUpdate);
+		double openTime = FrameBox.ticksToSeconds(openTicks);
+		double closedTime = FrameBox.ticksToSeconds(closedTicks);
+		double totalTime = openTime + closedTime + dur;
+		if (isClosed())
+			return (closedTime + dur) / totalTime;
+		else
+			return closedTime / totalTime;
 	}
 }
