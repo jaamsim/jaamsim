@@ -1,6 +1,7 @@
 package com.sandwell.JavaSimulation;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -19,9 +20,9 @@ public class Vec3dInput extends Input<Vec3d> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		DoubleVector temp = Input.parseDoubles(input, minValue, maxValue, unitType);
+		DoubleVector temp = Input.parseDoubles(kw, minValue, maxValue, unitType);
 		Input.assertCountRange(temp, 1, 3);
 
 		// pad the vector to have 3 elements

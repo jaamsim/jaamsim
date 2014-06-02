@@ -17,17 +17,16 @@ package com.jaamsim.Samples;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.StringVector;
 
 public class SampleExpInput extends Input<SampleProvider> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;
@@ -48,13 +47,13 @@ public class SampleExpInput extends Input<SampleProvider> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 
 		// Try parsing a SampleProvider
 		try {
-			Input.assertCount(input, 1);
-			Entity ent = Input.parseEntity(input.get(0), Entity.class);
+			Input.assertCount(kw, 1);
+			Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
 			SampleProvider s = Input.castImplements(ent, SampleProvider.class);
 			if( s.getUnitType() != UserSpecifiedUnit.class )
 				Input.assertUnitsMatch(unitType, s.getUnitType());
@@ -65,7 +64,7 @@ public class SampleExpInput extends Input<SampleProvider> {
 
 		// Try parsing a constant value
 		try {
-			DoubleVector tmp = Input.parseDoubles(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+			DoubleVector tmp = Input.parseDoubles(kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 			Input.assertCount(tmp, 1);
 			value = new SampleConstant(unitType, tmp.get(0));
 			return;
@@ -74,8 +73,8 @@ public class SampleExpInput extends Input<SampleProvider> {
 
 		// Try parsing an expression
 		try {
-			Input.assertCount(input, 1);
-			Expression exp = ExpParser.parseExpression(input.get(0));
+			Input.assertCount(kw, 1);
+			Expression exp = ExpParser.parseExpression(kw.getArg(0));
 			// Assume that the expression returns the correct unit type
 			//Input.assertUnitsMatch(unitType, DimensionlessUnit.class);
 			value = new SampleExpression(exp, thisEnt);

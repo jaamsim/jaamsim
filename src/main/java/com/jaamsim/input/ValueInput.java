@@ -18,7 +18,6 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.StringVector;
 
 public class ValueInput extends Input<Double> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;
@@ -34,9 +33,9 @@ public class ValueInput extends Input<Double> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		DoubleVector temp = Input.parseDoubles(input, minValue, maxValue, unitType);
+		DoubleVector temp = Input.parseDoubles(kw, minValue, maxValue, unitType);
 		Input.assertCount(temp, 1);
 		value = Double.valueOf(temp.get(0));
 	}

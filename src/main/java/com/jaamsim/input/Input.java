@@ -806,6 +806,50 @@ public abstract class Input<T> {
 	/**
 	 * Convert the given StringVector to a DoubleVector and apply the given conversion factor
 	 */
+	public static DoubleVector parseDoubles(KeywordIndex kw, double minValue, double maxValue, Class<? extends Unit> unitType)
+	throws InputErrorException {
+		if (unitType == UserSpecifiedUnit.class)
+			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
+
+		double factor = 1.0d;
+		int numDoubles = kw.numArgs();
+
+		// If not a Dimensionless value, a unit is mandatory
+		if (unitType != DimensionlessUnit.class) {
+			Entity ent = Entity.getNamedEntity(kw.getArg(kw.numArgs() - 1));
+			if (ent == null)
+				throw new InputErrorException(INP_ERR_NOUNITFOUND, kw.getArg(kw.numArgs() - 1), unitType.getSimpleName());
+
+			Unit unit = Input.castEntity(ent, unitType);
+			if (unit == null)
+				throw new InputErrorException(INP_ERR_ENTCLASS, unitType.getSimpleName(), ent.getInputName(), ent.getClass().getSimpleName());
+
+			factor = unit.getConversionFactorToSI();
+			numDoubles = kw.numArgs() - 1;
+		}
+
+		DoubleVector temp = new DoubleVector(numDoubles);
+		for (int i = 0; i < numDoubles; i++) {
+			try {
+				// Allow a special syntax for time-based inputs
+				if (unitType == TimeUnit.class) {
+					double element = Input.parseSeconds(kw.getArg(i), minValue, maxValue, factor);
+					temp.add(element);
+				}
+				else {
+					double element = Input.parseDouble(kw.getArg(i), minValue, maxValue, factor);
+					temp.add(element);
+				}
+			} catch (InputErrorException e) {
+				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+			}
+		}
+		return temp;
+	}
+
+	/**
+	 * Convert the given StringVector to a DoubleVector and apply the given conversion factor
+	 */
 	public static DoubleVector parseDoubles(StringVector input, double minValue, double maxValue, Class<? extends Unit> unitType)
 	throws InputErrorException {
 		if (unitType == UserSpecifiedUnit.class)

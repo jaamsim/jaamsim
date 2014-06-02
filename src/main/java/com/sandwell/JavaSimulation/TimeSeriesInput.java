@@ -15,6 +15,7 @@
 package com.sandwell.JavaSimulation;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -31,13 +32,13 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCountRange(input, 1, 2);
+		Input.assertCountRange(kw, 1, 2);
 
 		// Try to parse as a constant value
 		try {
-			DoubleVector tmp = Input.parseDoubles(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+			DoubleVector tmp = Input.parseDoubles(kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 			Input.assertCount(tmp, 1);
 			value = new TimeSeriesConstantDouble(unitType, tmp.get(0));
 			return;
@@ -45,8 +46,8 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 		catch (InputErrorException e) {}
 
 		// If not a constant, try parsing a TimeSeriesProvider
-		Input.assertCount(input, 1);
-		Entity ent = Input.parseEntity(input.get(0), Entity.class);
+		Input.assertCount(kw, 1);
+		Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
 		TimeSeriesProvider s = Input.castImplements(ent, TimeSeriesProvider.class);
 		if( s.getUnitType() != UserSpecifiedUnit.class )
 			Input.assertUnitsMatch(unitType, s.getUnitType());
