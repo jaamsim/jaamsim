@@ -16,6 +16,7 @@ package com.jaamsim.Thresholds;
 
 import java.util.ArrayList;
 
+import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -99,6 +100,7 @@ public class Threshold extends DisplayEntity {
 		this.clearStatistics();
 	}
 
+	private static final EventHandle updateHandle = new EventHandle();
 	private static final DoThresholdChanged userUpdate = new DoThresholdChanged();
 	private static class DoThresholdChanged extends ProcessTarget {
 		public final ArrayList<ThresholdUser> users = new ArrayList<ThresholdUser>();
@@ -178,8 +180,8 @@ public class Threshold extends DisplayEntity {
 			if (!userUpdate.users.contains(user))
 				userUpdate.users.add(user);
 		}
-		if (!userUpdate.users.isEmpty())
-			this.scheduleSingleProcess(userUpdate, 2);
+		if (!userUpdate.users.isEmpty() && !updateHandle.isScheduled())
+			this.scheduleProcessTicks(0, 2, false, userUpdate, updateHandle);
 	}
 
 	/**
