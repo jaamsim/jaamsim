@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
-import com.sandwell.JavaSimulation.StringVector;
 
 /**
  * SampleListInput is an object for parsing inputs consisting of a list of SampleProviders using the syntax:\n
@@ -45,13 +45,13 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 
-		ArrayList<SampleProvider> temp = new ArrayList<SampleProvider>(input.size());
-		for (int i = 0; i < input.size(); i++) {
+		ArrayList<SampleProvider> temp = new ArrayList<SampleProvider>(kw.numArgs());
+		for (int i = 0; i < kw.numArgs(); i++) {
 
-			Entity ent = Input.parseEntity(input.get(i), Entity.class);
+			Entity ent = Input.parseEntity(kw.getArg(i), Entity.class);
 			SampleProvider s = Input.castImplements(ent, SampleProvider.class);
 			if( s.getUnitType() != UserSpecifiedUnit.class )
 				Input.assertUnitsMatch(unitType, s.getUnitType());
