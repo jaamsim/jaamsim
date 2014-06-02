@@ -24,7 +24,6 @@ public class TessFontKey {
 	/**
 	 * Font name and style, identical to what would be used to create an AWT font
 	 * @param fontName
-	 * @param fontStyle
 	 */
 	public TessFontKey(String fontName) {
 		this(fontName, Font.PLAIN);

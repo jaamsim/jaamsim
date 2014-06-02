@@ -38,7 +38,6 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.StringChoiceInput;
 import com.sandwell.JavaSimulation.StringListInput;
-import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation3D.BillboardText;
 import com.sandwell.JavaSimulation3D.OverlayText;
@@ -102,7 +101,7 @@ public class TextModel extends DisplayModel {
 		this.addInput(fontColor);
 		this.addSynonym(fontColor, "FontColor");
 
-		fontStyle = new StringListInput("FontStyle", "Key Inputs", new StringVector());
+		fontStyle = new StringListInput("FontStyle", "Key Inputs", new ArrayList<String>(0));
 		fontStyle.setValidOptions(validStyles);
 		fontStyle.setCaseSensitive(false);
 		this.addInput(fontStyle);
