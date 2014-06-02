@@ -119,21 +119,6 @@ public class Threshold extends DisplayEntity {
 		}
 	}
 
-	private void scheduleChangedCallback() {
-		for (ThresholdUser user : userList) {
-			if (!userUpdate.users.contains(user))
-				userUpdate.users.add(user);
-		}
-		if (!userUpdate.users.isEmpty())
-			this.scheduleSingleProcess(userUpdate, 2);
-	}
-
-	private void thresholdChangedCallback() {
-		for (ThresholdUser user : userList) {
-			user.thresholdChanged();
-		}
-	}
-
 	public boolean isOpen() {
 		return open;
 	}
@@ -174,7 +159,7 @@ public class Threshold extends DisplayEntity {
 		lastTickUpdate = getSimTicks();
 	}
 
-	public final void setOpen_Sched(boolean open, boolean sched) {
+	public final void setOpen(boolean open) {
 		// If setting to the same value as current, return
 		if (this.open == open)
 			return;
@@ -189,14 +174,12 @@ public class Threshold extends DisplayEntity {
 		lastTickUpdate = getSimTicks();
 		this.open = open;
 
-		if (sched)
-			this.scheduleChangedCallback();
-		else
-			this.thresholdChangedCallback();
-	}
-
-	public final void setOpen(boolean open) {
-		this.setOpen_Sched(open, true);
+		for (ThresholdUser user : this.userList) {
+			if (!userUpdate.users.contains(user))
+				userUpdate.users.add(user);
+		}
+		if (!userUpdate.users.isEmpty())
+			this.scheduleSingleProcess(userUpdate, 2);
 	}
 
 	/**
