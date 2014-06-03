@@ -57,4 +57,29 @@ public class KeywordIndex {
 			throw new IndexOutOfBoundsException("Index out of range:" + index);
 		return input.get(start + index);
 	}
+
+	public ArrayList<KeywordIndex> getSubArgs() {
+		ArrayList<KeywordIndex> subArgs = new ArrayList<KeywordIndex>();
+		for (int i= 0; i < this.numArgs(); i++) {
+			//skip over opening brace if present
+			if (this.getArg(i).equals("{"))
+				i++;
+
+			//iterate until closing brace, or end of entry
+			int subArgStart = i;
+			int subArgEnd = i;
+			for (int j = i; j < this.numArgs(); j++, i++){
+				if (this.getArg(j).equals("}")) {
+					break;
+				}
+
+				subArgEnd++;
+			}
+
+			KeywordIndex subArg = new KeywordIndex(this.input, keyword, subArgStart + start, subArgEnd + start, context);
+			subArgs.add(subArg);
+		}
+
+		return subArgs;
+	}
 }
