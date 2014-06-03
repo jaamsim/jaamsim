@@ -483,6 +483,21 @@ public abstract class Input<T> {
 		return temp;
 	}
 
+	public static IntegerVector parseIntegerVector(KeywordIndex kw, int minValue, int maxValue)
+	throws InputErrorException {
+		IntegerVector temp = new IntegerVector(kw.numArgs());
+
+		for (int i = 0; i <kw.numArgs(); i++) {
+			try {
+				int element = Input.parseInteger(kw.getArg(i), minValue, maxValue);
+				temp.add(element);
+			} catch (InputErrorException e) {
+				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+			}
+		}
+		return temp;
+	}
+
 	public static double parseTime(String data, double minValue, double maxValue)
 	throws InputErrorException {
 		return Input.parseTime(data, minValue, maxValue, 1.0);
