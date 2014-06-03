@@ -66,6 +66,14 @@ public class OutputListInput<T> extends ListInput<ArrayList<OutputHandle>> {
 		value = temp;
 	}
 
+	@Override
+	public int getListSize() {
+		if (value == null)
+			return 0;
+		else
+			return value.size();
+	}
+
 	public T getOutputValue(int i, double simTime) {
 		return value.get(i).getValue(simTime, klass);
 	}

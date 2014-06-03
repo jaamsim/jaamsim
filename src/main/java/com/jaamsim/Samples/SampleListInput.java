@@ -63,6 +63,14 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	@Override
+	public int getListSize() {
+		if (value == null)
+			return 0;
+		else
+			return value.size();
+	}
+
+	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<String>();
 		for (Entity each: Entity.getAll()) {

@@ -41,6 +41,14 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		value = Input.parseEntityList(input, entClass, unique);
 	}
 
+	@Override
+	public int getListSize() {
+		if (value == null)
+			return 0;
+		else
+			return value.size();
+	}
+
 	public void setUnique(boolean unique) {
 		this.unique = unique;
 	}

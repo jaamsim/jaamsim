@@ -47,6 +47,14 @@ public class StringListInput extends ListInput<ArrayList<String>> {
 		value = tmp;
 	}
 
+	@Override
+	public int getListSize() {
+		if (value == null)
+			return 0;
+		else
+			return value.size();
+	}
+
 	public void setValidOptions(ArrayList<String> list) {
 		validOptions = list;
 	}

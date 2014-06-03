@@ -37,4 +37,6 @@ public abstract class ListInput<T> extends Input<T> {
 		minCount = min;
 		maxCount = max;
 	}
+
+	public abstract int getListSize();
 }

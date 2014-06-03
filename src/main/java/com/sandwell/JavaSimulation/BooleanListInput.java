@@ -31,6 +31,14 @@ public class BooleanListInput extends ListInput<BooleanVector> {
 	}
 
 	@Override
+	public int getListSize() {
+		if (value == null)
+			return 0;
+		else
+			return value.size();
+	}
+
+	@Override
 	public String getDefaultString() {
 		if (defValue == null)
 			return NO_VALUE;

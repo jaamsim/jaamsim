@@ -48,6 +48,14 @@ public class ValueListInput extends ListInput<DoubleVector> {
 		value = temp;
 	}
 
+	@Override
+	public int getListSize() {
+		if (value == null)
+			return 0;
+		else
+			return value.size();
+	}
+
 	public void setValidRange(double min, double max) {
 		minValue = min;
 		maxValue = max;

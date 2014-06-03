@@ -53,6 +53,14 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 	}
 
 	@Override
+	public int getListSize() {
+		if (value == null)
+			return 0;
+		else
+			return value.size();
+	}
+
+	@Override
 	public String getDefaultString() {
 		return NO_VALUE;
 	}

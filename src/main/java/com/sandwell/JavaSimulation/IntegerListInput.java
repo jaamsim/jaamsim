@@ -35,6 +35,14 @@ public class IntegerListInput extends ListInput<IntegerVector> {
 		value = Input.parseIntegerVector(kw, minValue, maxValue);
 	}
 
+	@Override
+	public int getListSize() {
+		if (value == null)
+			return 0;
+		else
+			return value.size();
+	}
+
 	public void setValidRange(int min, int max) {
 		minValue = min;
 		maxValue = max;
