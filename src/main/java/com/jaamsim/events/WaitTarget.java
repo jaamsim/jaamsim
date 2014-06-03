@@ -26,22 +26,7 @@ class WaitTarget extends ProcessTarget {
 
 	@Override
 	public String getDescription() {
-		StackTraceElement[] callStack = proc.getStackTrace();
-		boolean seenEntity = false;
-		for (int i = 0; i < callStack.length; i++) {
-			if (callStack[i].getClassName().equals("com.sandwell.JavaSimulation.Entity")) {
-				seenEntity = true;
-				continue;
-			}
-
-			if (seenEntity)
-				return String.format("%s:%s", callStack[i].getClassName(), callStack[i].getMethodName());
-		}
-
-		// Possible the process hasn't started running yet, check the Process target
-		// state
-		return "Unknown Method State";
-
+		return "Waiting";
 	}
 
 	@Override
