@@ -505,7 +505,7 @@ public class InputAgent {
 		ArrayList<KeywordIndex> ret = new ArrayList<KeywordIndex>();
 
 		int braceDepth = 0;
-		int index = 1;
+		int keyWordIdx = 1;
 		for (int i = 1; i < input.size(); i++) {
 			String tok = input.get(i);
 			if ("{".equals(tok)) {
@@ -516,29 +516,20 @@ public class InputAgent {
 			if ("}".equals(tok)) {
 				braceDepth--;
 				if (braceDepth == 0) {
-					ret.add(new KeywordIndex(input, index, i, context));
-					index = i + 1;
+					// validate keyword form
+					String keyword = input.get(keyWordIdx);
+					if (keyword.equals("{") || keyword.equals("}") || !input.get(keyWordIdx + 1).equals("{"))
+						throw new InputErrorException("The input for a keyword must be enclosed by braces. Should be <keyword> { <args> }");
+
+					ret.add(new KeywordIndex(input, keyword, keyWordIdx, i, context));
+					keyWordIdx = i + 1;
 					continue;
 				}
 			}
 		}
 
-		if (ret.size() == 0)
-			throw new InputErrorException("The input for a keyword must be enclosed by braces. " +
-					"Should be <keyword> { <args> }");
-
-		// Look for a leftover keyword at the end of line
-		KeywordIndex last = ret.get(ret.size() - 1);
-		if (last.end != input.size() - 1) {
-			ret.add(new KeywordIndex(input, last.end + 1, input.size() - 1, context));
-		}
-
-		for (KeywordIndex kw : ret) {
-			if (!"{".equals(input.get(kw.start + 1)) ||
-			    !"}".equals(input.get(kw.end))) {
-				throw new InputErrorException("Keyword %s not valid, should be <keyword> { <args> }", kw.keyword);
-			}
-		}
+		if (keyWordIdx != input.size())
+			throw new InputErrorException("The input for a keyword must be enclosed by braces. Should be <keyword> { <args> }");
 
 		return ret;
 	}
@@ -1080,7 +1071,7 @@ public class InputAgent {
 		tokens.add("}");
 
 		// Parse the keyword inputs
-		KeywordIndex kw = new KeywordIndex(tokens, 0, tokens.size() - 1, null);
+		KeywordIndex kw = new KeywordIndex(tokens, keyword, 0, tokens.size() - 1, null);
 		InputAgent.processKeyword(ent, kw);
 	}
 

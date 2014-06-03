@@ -118,7 +118,7 @@ public class Group extends Entity {
 			toks.add(kw.getArg(i));
 		toks.add("}");
 
-		KeywordIndex saved = new KeywordIndex(toks, 1, toks.size() - 1, kw.context);
+		KeywordIndex saved = new KeywordIndex(toks, kw.keyword, 1, toks.size() - 1, kw.context);
 		groupKeywordValues.add(saved);
 
 		// If there can never be elements in the group, throw a warning

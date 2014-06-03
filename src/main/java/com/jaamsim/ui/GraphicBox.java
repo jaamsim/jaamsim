@@ -212,7 +212,7 @@ public class GraphicBox extends JDialog {
 				tokens.add(dm.getInputName());
 				tokens.add("}");
 
-				KeywordIndex kw = new KeywordIndex(tokens, 1, tokens.size() - 1, null);
+				KeywordIndex kw = new KeywordIndex(tokens, "DisplayModel", 1, tokens.size() - 1, null);
 				InputAgent.apply(currentEntity, kw);
 
 				if (!RenderManager.isGood()) {
