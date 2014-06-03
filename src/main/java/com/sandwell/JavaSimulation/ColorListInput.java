@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Color4d;
 
 public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
@@ -26,10 +27,10 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCountRange(input, minCount, maxCount);
-		value = Input.parseColorVector(input);
+		Input.assertCountRange(kw, minCount, maxCount);
+		value = Input.parseColorVector(kw);
 	}
 
 	@Override

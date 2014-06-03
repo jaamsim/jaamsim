@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.HashMap;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Color4d;
 
 public class ColourInput extends Input<Color4d> {
@@ -49,10 +50,10 @@ static {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(input, 1, 3);
-		value = Input.parseColour(input);
+		Input.assertCount(kw, 1, 3);
+		value = Input.parseColour(kw);
 	}
 
 public static Color4d getColorWithName(String colorName) {

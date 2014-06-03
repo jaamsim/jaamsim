@@ -411,14 +411,14 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	public static ArrayList<Color4d> parseColorVector(StringVector input)
+	public static ArrayList<Color4d> parseColorVector(KeywordIndex kw)
 	throws InputErrorException {
-		ArrayList<Color4d> temp = new ArrayList<Color4d>(input.size());
+		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
+		ArrayList<Color4d> temp = new ArrayList<Color4d>(subArgs.size());
 
-		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
-		for (int i = 0; i < splitData.size(); i++) {
+		for (int i = 0; i < subArgs.size(); i++) {
 			try {
-				Color4d element = Input.parseColour(splitData.get(i));
+				Color4d element = Input.parseColour(subArgs.get(i));
 				temp.add(element);
 			} catch (InputErrorException e) {
 				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
@@ -1140,15 +1140,15 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	public static Color4d parseColour( StringVector input ) {
+	public static Color4d parseColour(KeywordIndex kw) {
 
-		Input.assertCount(input, 1, 3);
+		Input.assertCount(kw, 1, 3);
 
 		// Color names
-		if( input.size() == 1 ) {
-			Color4d colAtt = ColourInput.getColorWithName(input.get(0).toLowerCase());
+		if (kw.numArgs() == 1) {
+			Color4d colAtt = ColourInput.getColorWithName(kw.getArg(0).toLowerCase());
 			if( colAtt == null ) {
-				throw new InputErrorException( "Color " + input.get( 0 ) + " not found" );
+				throw new InputErrorException( "Color " + kw.getArg( 0 ) + " not found" );
 			}
 			else {
 				return colAtt;
@@ -1157,7 +1157,7 @@ public abstract class Input<T> {
 
 		// RGB
 		else {
-			DoubleVector dbuf = Input.parseDoubleVector(input, 0.0d, 255.0d);
+			DoubleVector dbuf = Input.parseDoubles(kw, 0.0d, 255.0d, DimensionlessUnit.class);
 			double r = dbuf.get(0);
 			double g = dbuf.get(1);
 			double b = dbuf.get(2);
