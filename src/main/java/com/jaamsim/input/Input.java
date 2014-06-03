@@ -946,8 +946,16 @@ public abstract class Input<T> {
 
 	public static String parseString(String input, ArrayList<String> validList)
 	throws InputErrorException {
+		return parseString(input, validList, false);
+	}
+
+	public static String parseString(String input, ArrayList<String> validList, boolean caseSensitive)
+	throws InputErrorException {
 		for (String valid : validList) {
-			if (valid.equalsIgnoreCase(input))
+			if (caseSensitive && valid.equals(input))
+				return valid;
+
+			if (!caseSensitive && valid.equalsIgnoreCase(input))
 				return valid;
 		}
 
@@ -961,6 +969,21 @@ public abstract class Input<T> {
 		for (int i = 0; i < input.size(); i++) {
 			try {
 				String element = Input.parseString(input.get(i), validList);
+				temp.add(element);
+			} catch (InputErrorException e) {
+				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+			}
+		}
+		return temp;
+	}
+
+	public static ArrayList<String> parseStrings(KeywordIndex kw, ArrayList<String> validList, boolean caseSensitive)
+	throws InputErrorException {
+		ArrayList<String> temp = new ArrayList<String>(kw.numArgs());
+
+		for (int i = 0; i < kw.numArgs(); i++) {
+			try {
+				String element = Input.parseString(kw.getArg(i), validList);
 				temp.add(element);
 			} catch (InputErrorException e) {
 				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());

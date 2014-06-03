@@ -35,6 +35,11 @@ public class StringListInput extends ListInput<ArrayList<String>> {
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCountRange(kw, minCount, maxCount);
+		if (validOptions != null) {
+			value = Input.parseStrings(kw, validOptions, caseSensitive);
+			return;
+		}
+
 		ArrayList<String> tmp = new ArrayList<String>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++) {
 			tmp.add(kw.getArg(i));
