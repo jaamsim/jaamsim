@@ -285,13 +285,11 @@ public abstract class GraphBasics extends DisplayEntity {
 	throws InputErrorException {
 		super.validate();
 
-		if(yLinesColor.getValue().size() > 1) {
-			Input.validateIndexedLists(yLines.getValue(), yLinesColor.getValue(), "YLines", "YLinesColor");
-		}
+		if (yLinesColor.getValue().size() > 1)
+			Input.validateIndexedLists(yLines, yLinesColor);
 
-		if(xLinesColor.getValue().size() > 1) {
-			Input.validateIndexedLists(xLines.getValue(), xLinesColor.getValue(), "XLines", "XLinesColor");
-		}
+		if (xLinesColor.getValue().size() > 1)
+			Input.validateIndexedLists(xLines, xLinesColor);
 
 		for( int i = 0; i < yLines.getValue().size(); i++ ) {
 			double y = yLines.getValue().get( i );

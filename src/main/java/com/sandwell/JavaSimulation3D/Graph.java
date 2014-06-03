@@ -186,23 +186,17 @@ public class Graph extends GraphBasics  {
 	throws InputErrorException {
 		super.validate();
 
-		if(lineColorsList.getValue().size() > 1){
-			Input.validateIndexedLists(dataSource.getValue(), lineColorsList.getValue(),
-					"DataSource", "LinesColor");
-		}
+		if (lineColorsList.getValue().size() > 1)
+			Input.validateIndexedLists(dataSource, lineColorsList);
 
-		if(secondaryLineColorsList.getValue().size() > 1){
-			Input.validateIndexedLists(secondaryDataSource.getValue(), secondaryLineColorsList.getValue(),
-					"SecondaryTargetEntityList", "SecondaryLinesColor");
-		}
+		if (secondaryLineColorsList.getValue().size() > 1)
+			Input.validateIndexedLists(secondaryDataSource, secondaryLineColorsList);
 
-		if(lineWidths.getValue().size() > 1)
-			Input.validateIndexedLists(dataSource.getValue(), lineWidths.getValue(),
-					"DataSource", "LineWidths");
+		if (lineWidths.getValue().size() > 1)
+			Input.validateIndexedLists(dataSource, lineWidths);
 
-		if(secondaryLineWidths.getValue().size() > 1)
-			Input.validateIndexedLists(secondaryDataSource.getValue(), secondaryLineWidths.getValue(),
-					"SecondaryDataSource", "SecondaryLineWidths");
+		if (secondaryLineWidths.getValue().size() > 1)
+			Input.validateIndexedLists(secondaryDataSource, secondaryLineWidths);
 	}
 
 	@Override
