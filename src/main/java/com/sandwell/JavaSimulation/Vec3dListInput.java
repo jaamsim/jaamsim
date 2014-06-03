@@ -17,7 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -34,17 +34,17 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 
 		// Check if number of outer lists violate minCount or maxCount
-		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
-		if (splitData.size() < minCount || splitData.size() > maxCount)
-			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, input.toString());
+		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
+		if (subArgs.size() < minCount || subArgs.size() > maxCount)
+			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, kw.argString());
 
-		ArrayList<Vec3d> tempValue = new ArrayList<Vec3d>();
-		for (StringVector innerInput : splitData) {
-			DoubleVector temp = Input.parseDoubles(innerInput, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+		ArrayList<Vec3d> tempValue = new ArrayList<Vec3d>(subArgs.size());
+		for (KeywordIndex subArg : subArgs) {
+			DoubleVector temp = Input.parseDoubles(subArg, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 			// pad the vector to have 3 elements
 			while (temp.size() < 3) {
 				temp.add(0.0d);

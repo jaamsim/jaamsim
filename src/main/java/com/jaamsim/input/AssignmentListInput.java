@@ -16,10 +16,8 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.Input;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
-import com.sandwell.JavaSimulation.StringVector;
 
 public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignment>> {
 
@@ -28,20 +26,19 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 	}
 
 	@Override
-	public void parse(StringVector input) throws InputErrorException {
+	public void parse(KeywordIndex kw) throws InputErrorException {
 
 		// Divide up the inputs by the inner braces
-		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
-		ArrayList<ExpParser.Assignment> temp = new ArrayList<ExpParser.Assignment>(splitData.size());
+		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
+		ArrayList<ExpParser.Assignment> temp = new ArrayList<ExpParser.Assignment>(subArgs.size());
 
 		// Parse the inputs within each inner brace
-		for (int i = 0; i < splitData.size(); i++) {
+		for (int i = 0; i < subArgs.size(); i++) {
+			KeywordIndex subArg = subArgs.get(i);
+			Input.assertCount(subArg, 1);
 			try {
-				StringVector data = splitData.get(i);
-				Input.assertCount(data, 1);
-
 				// Parse the assignment expression
-				ExpParser.Assignment ass = ExpParser.parseAssignment(data.get(0));
+				ExpParser.Assignment ass = ExpParser.parseAssignment(subArg.getArg(0));
 
 				// Save the data for this assignment
 				temp.add(ass);

@@ -20,7 +20,6 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation.StringVector;
 
 /**
  * OutputListInput is an object for parsing inputs consisting of a list of OutputInputs using the syntax:\n
@@ -40,17 +39,17 @@ public class OutputListInput<T> extends ListInput<ArrayList<OutputHandle>> {
 	}
 
 	@Override
-	public void parse(StringVector input) throws InputErrorException {
-		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
-		ArrayList<OutputHandle> temp = new ArrayList<OutputHandle>(splitData.size());
-		for (int i = 0; i < splitData.size(); i++) {
+	public void parse(KeywordIndex kw) throws InputErrorException {
+		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
+		ArrayList<OutputHandle> temp = new ArrayList<OutputHandle>(subArgs.size());
+		for (int i = 0; i < subArgs.size(); i++) {
+			KeywordIndex subArg = subArgs.get(i);
+			Input.assertCount(subArg, 2);
 			try {
-				StringVector data = splitData.get(i);
-				Input.assertCount(data, 2);
-				Entity ent = Input.parseEntity(data.get(0), Entity.class);
+				Entity ent = Input.parseEntity(subArg.getArg(0), Entity.class);
 				if (ent instanceof ObjectType)
 					throw new InputErrorException("%s is the name of a class, not an instance", ent.getName());
-				String outputName = data.get(1);
+				String outputName = subArg.getArg(1);
 				if (!ent.hasOutput(outputName)) {
 					throw new InputErrorException("Output named %s not found for Entity %s", outputName, ent.getName());
 				}

@@ -21,7 +21,6 @@ import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
-import com.sandwell.JavaSimulation.StringVector;
 
 /**
  * AttributeDefinitionListInput is an object for parsing inputs consisting of a list of
@@ -39,20 +38,19 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 	}
 
 	@Override
-	public void parse(StringVector input) throws InputErrorException {
+	public void parse(KeywordIndex kw) throws InputErrorException {
 
 		// Divide up the inputs by the inner braces
-		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
-		ArrayList<AttributeHandle> temp = new ArrayList<AttributeHandle>(splitData.size());
+		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
+		ArrayList<AttributeHandle> temp = new ArrayList<AttributeHandle>(subArgs.size());
 
 		// Parse the inputs within each inner brace
-		for (int i = 0; i < splitData.size(); i++) {
+		for (int i = 0; i < subArgs.size(); i++) {
+			KeywordIndex subArg = subArgs.get(i);
+			Input.assertCount(subArg, 2, 3);
 			try {
-				StringVector data = splitData.get(i);
-				Input.assertCount(data, 2, 3);
-
 				// Parse the attribute name
-				String name = data.get(0);
+				String name = subArg.getArg(0);
 				if (OutputHandle.hasOutput(ent.getClass(), name)) {
 					throw new InputErrorException("Attribute name is the same as existing output name: %s", name);
 				}
@@ -60,8 +58,8 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				// Parse the unit type
 				double factor = 1.0;
 				Class<? extends Unit> unitType = DimensionlessUnit.class;
-				if (data.size() == 3) {
-					Unit unit = Input.parseUnits(data.get(2));
+				if (subArg.numArgs() == 3) {
+					Unit unit = Input.parseUnits(subArg.getArg(2));
 					unitType = unit.getClass();
 					factor = unit.getConversionFactorToSI();
 				}
@@ -69,9 +67,9 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				// Parse the initial value
 				double val;
 				try {
-					val = factor * Double.valueOf(data.get(1));
+					val = factor * Double.valueOf(subArg.getArg(1));
 				} catch (Exception e) {
-					throw new InputErrorException(INP_ERR_DOUBLE, data.get(1));
+					throw new InputErrorException(INP_ERR_DOUBLE, subArg.getArg(1));
 				}
 
 				// Save the data for this attribute

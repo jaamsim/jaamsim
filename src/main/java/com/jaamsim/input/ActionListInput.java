@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import com.jaamsim.render.Action;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ListInput;
-import com.sandwell.JavaSimulation.StringVector;
 
 public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 
@@ -28,12 +27,12 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 	}
 
 	@Override
-	public void parse(StringVector input) throws InputErrorException {
-		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
-		ArrayList<Action.Binding> bindings = new ArrayList<Action.Binding>(splitData.size());
-		for (int i = 0; i < splitData.size(); i++) {
+	public void parse(KeywordIndex kw) throws InputErrorException {
+		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
+		ArrayList<Action.Binding> bindings = new ArrayList<Action.Binding>(subArgs.size());
+		for (int i = 0; i < subArgs.size(); i++) {
 			try {
-				bindings.add(parseBinding(splitData.get(i)));
+				bindings.add(parseBinding(subArgs.get(i)));
 			} catch (InputErrorException e) {
 				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
 			}
@@ -41,11 +40,11 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 		value = bindings;
 	}
 
-	private Action.Binding parseBinding(StringVector tokens) throws InputErrorException {
-		Input.assertCount(tokens, 2);
+	private Action.Binding parseBinding(KeywordIndex kw) throws InputErrorException {
+		Input.assertCount(kw, 2);
 		Action.Binding binding = new Action.Binding();
-		binding.actionName = tokens.get(0);
-		binding.outputName = tokens.get(1);
+		binding.actionName = kw.getArg(0);
+		binding.outputName = kw.getArg(1);
 		return binding;
 	}
 
