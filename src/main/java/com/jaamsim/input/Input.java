@@ -1226,36 +1226,6 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
 	}
 
-	public static void validateIndexedLists(ArrayList<?> keys, BooleanVector values, String keyName, String valueName)
-	throws InputErrorException {
-		// If no values set, no validation to be done
-		if (values == null)
-			return;
-
-		// values are set but indexed list has not
-		if (keys == null)
-			throw new InputErrorException(INP_VAL_LISTSET, valueName, keyName);
-
-		// Both are set, but of differing size
-		if (keys.size() != values.size())
-			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
-	}
-
-	public static void validateIndexedLists(ArrayList<?> keys, IntegerVector values, String keyName, String valueName)
-	throws InputErrorException {
-		// If no values set, no validation to be done
-		if (values == null)
-			return;
-
-		// values are set but indexed list has not
-		if (keys == null)
-			throw new InputErrorException(INP_VAL_LISTSET, valueName, keyName);
-
-		// Both are set, but of differing size
-		if (keys.size() != values.size())
-			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
-	}
-
 	public static void validateIndexedLists(ArrayList<?> keys, DoubleVector values, String keyName, String valueName)
 	throws InputErrorException {
 		// If no values set, no validation to be done
@@ -1302,21 +1272,6 @@ public abstract class Input<T> {
 	}
 
 	public static void validateIndexedLists(DoubleVector keys, BooleanVector values, String keyName, String valueName)
-	throws InputErrorException {
-		// If no values set, no validation to be done
-		if (values == null)
-			return;
-
-		// values are set but indexed list has not
-		if (keys == null)
-			throw new InputErrorException(INP_VAL_LISTSET, valueName, keyName);
-
-		// Both are set, but of differing size
-		if (keys.size() != values.size())
-			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
-	}
-
-	public static void validateIndexedLists(IntegerVector keys, IntegerVector values, String keyName, String valueName)
 	throws InputErrorException {
 		// If no values set, no validation to be done
 		if (values == null)
