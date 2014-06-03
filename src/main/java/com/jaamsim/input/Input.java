@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -943,28 +942,6 @@ public abstract class Input<T> {
 
 		// Parse and convert the values
 		return Input.parseDoubleVector( numericData, minValue, maxValue, conversionFactor);
-	}
-
-	public static Vec3d parseVec3d(StringVector input)
-	throws InputErrorException {
-		return Input.parseVec3d(input, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-	}
-
-	public static Vec3d parseVec3d(StringVector input, double min, double max)
-	throws InputErrorException {
-		Input.assertCountRange(input, 1, 3);
-		DoubleVector temp = Input.parseDoubleVector(input, min, max);
-
-		Vec3d ret = new Vec3d();
-
-		ret.x = temp.get(0);
-		if (temp.size() > 1)
-			ret.y = temp.get(1);
-
-		if (temp.size() > 2)
-			ret.z = temp.get(2);
-
-		return ret;
 	}
 
 	public static String parseString(String input, ArrayList<String> validList)
