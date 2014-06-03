@@ -1124,14 +1124,14 @@ public abstract class Input<T> {
 	}
 
 
-	public static <T extends Entity> ArrayList<ArrayList<T>> parseListOfEntityLists(StringVector input, Class<T> aClass, boolean unique)
+	public static <T extends Entity> ArrayList<ArrayList<T>> parseListOfEntityLists(KeywordIndex kw, Class<T> aClass, boolean unique)
 	throws InputErrorException {
-		ArrayList<ArrayList<T>> temp = new ArrayList<ArrayList<T>>( input.size() );
+		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
+		ArrayList<ArrayList<T>> temp = new ArrayList<ArrayList<T>>(subArgs.size());
 
-		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
-		for (int i = 0; i < splitData.size(); i++) {
+		for (int i = 0; i < subArgs.size(); i++) {
 			try {
-				ArrayList<T> element = Input.parseEntityList(splitData.get(i), aClass, unique);
+				ArrayList<T> element = Input.parseEntityList(subArgs.get(i), aClass, unique);
 				temp.add(element);
 			} catch (InputErrorException e) {
 				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());

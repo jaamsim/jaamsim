@@ -17,7 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.util.ArrayList;
 
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 
 public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<ArrayList<T>>> {
 	private Class<T> entClass;
@@ -30,15 +30,14 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-
+		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
 		// Check if number of outer lists violate minCount or maxCount
-		ArrayList<StringVector> splitData = InputAgent.splitStringVectorByBraces(input);
-		if (splitData.size() < minCount || splitData.size() > maxCount)
-			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, input.toString());
+		if (subArgs.size() < minCount || subArgs.size() > maxCount)
+			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, kw.argString());
 
-		value = Input.parseListOfEntityLists(input, entClass, unique);
+		value = Input.parseListOfEntityLists(kw, entClass, unique);
 	}
 
 	public void setUnique(boolean unique) {
