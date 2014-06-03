@@ -177,8 +177,8 @@ public abstract class Input<T> {
 
 	public void parse(KeywordIndex kw) throws InputErrorException {
 		StringVector data = new StringVector(kw.numArgs());
-		for (int i = kw.start + 2; i < kw.end; i++) {
-			data.add(kw.input.get(i));
+		for (int i = 0; i < kw.numArgs(); i++) {
+			data.add(kw.getArg(i));
 		}
 
 		parse(data);

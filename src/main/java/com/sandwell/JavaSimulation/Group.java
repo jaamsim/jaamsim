@@ -109,18 +109,21 @@ public class Group extends Entity {
 	}
 
 
-	public void saveGroupKeyword(KeywordIndex key) {
-		ArrayList<String> toks = new ArrayList<String>(key.end - key.start + 2);
-		toks.add(key.input.get(0));
-		for (int i = key.start; i <= key.end; i++)
-			toks.add(key.input.get(i));
+	public void saveGroupKeyword(KeywordIndex kw) {
+		ArrayList<String> toks = new ArrayList<String>(kw.numArgs() + 4);
+		toks.add(kw.input.get(0));
+		toks.add(kw.keyword);
+		toks.add("{");
+		for (int i = 0; i < kw.numArgs(); i++)
+			toks.add(kw.getArg(i));
+		toks.add("}");
 
-		KeywordIndex saved = new KeywordIndex(toks, 1, toks.size() - 1, key.context);
+		KeywordIndex saved = new KeywordIndex(toks, 1, toks.size() - 1, kw.context);
 		groupKeywordValues.add(saved);
 
 		// If there can never be elements in the group, throw a warning
 		if( type == null && list.size() == 0 ) {
-			InputAgent.logWarning("The group %s has no elements to apply keyword: %s", this, key.keyword);
+			InputAgent.logWarning("The group %s has no elements to apply keyword: %s", this, kw.keyword);
 		}
 	}
 
