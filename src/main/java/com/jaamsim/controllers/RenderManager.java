@@ -1441,28 +1441,20 @@ public class RenderManager implements DragSourceListener {
 			Vec3d size = dEntity.getSize();
 
 			ArrayList<String> tokens = new ArrayList<String>();
-			tokens.add(dEntity.getInputName());
-			tokens.add("Size");
-			tokens.add("{");
 			tokens.add(String.format((Locale)null, "%.3f", size.x));
 			tokens.add(String.format((Locale)null, "%.3f", size.y));
 			tokens.add("0.0");
 			tokens.add("m");
-			tokens.add("}");
 
-			KeywordIndex kw = new KeywordIndex(tokens, "Size", 1, tokens.size() - 1, null);
+			KeywordIndex kw = new KeywordIndex(tokens, "Size", 0, tokens.size(), null);
 			InputAgent.apply(dEntity, kw);
 		} else {
 			ArrayList<String> tokens = new ArrayList<String>();
-			tokens.add(dEntity.getInputName());
-			tokens.add("Alignment");
-			tokens.add("{");
 			tokens.add("0.0");
 			tokens.add("0.0");
 			tokens.add("-0.5");
-			tokens.add("}");
 
-			KeywordIndex kw = new KeywordIndex(tokens, "Alignment", 1, tokens.size() - 1, null);
+			KeywordIndex kw = new KeywordIndex(tokens, "Alignment", 0, tokens.size(), null);
 			InputAgent.apply(dEntity, kw);
 		}
 		FrameBox.valueUpdate();

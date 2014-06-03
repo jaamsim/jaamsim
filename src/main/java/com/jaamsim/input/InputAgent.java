@@ -521,7 +521,7 @@ public class InputAgent {
 					if (keyword.equals("{") || keyword.equals("}") || !input.get(keyWordIdx + 1).equals("{"))
 						throw new InputErrorException("The input for a keyword must be enclosed by braces. Should be <keyword> { <args> }");
 
-					ret.add(new KeywordIndex(input, keyword, keyWordIdx, i, context));
+					ret.add(new KeywordIndex(input, keyword, keyWordIdx + 2, i, context));
 					keyWordIdx = i + 1;
 					continue;
 				}
@@ -1058,20 +1058,13 @@ public class InputAgent {
 
 		// Keyword
 		ArrayList<String> tokens = new ArrayList<String>();
-		tokens.add(keyword);
-
-		// Opening brace
-		tokens.add("{");
 
 		// Value
 		if (!value.equals(Input.getNoValue()))
 			Parser.tokenize(tokens, value, true);
 
-		// Closing brace
-		tokens.add("}");
-
 		// Parse the keyword inputs
-		KeywordIndex kw = new KeywordIndex(tokens, keyword, 0, tokens.size() - 1, null);
+		KeywordIndex kw = new KeywordIndex(tokens, keyword, 0, tokens.size(), null);
 		InputAgent.processKeyword(ent, kw);
 	}
 

@@ -205,14 +205,10 @@ public class GraphicBox extends JDialog {
 				setEnabled(false); // Don't accept any interaction
 				DisplayModel dm = (DisplayModel) displayModelList.getSelectedValue();
 
-				ArrayList<String> tokens = new ArrayList<String>();
-				tokens.add(currentEntity.getInputName());
-				tokens.add("DisplayModel");
-				tokens.add("{");
+				ArrayList<String> tokens = new ArrayList<String>(1);
 				tokens.add(dm.getInputName());
-				tokens.add("}");
 
-				KeywordIndex kw = new KeywordIndex(tokens, "DisplayModel", 1, tokens.size() - 1, null);
+				KeywordIndex kw = new KeywordIndex(tokens, "DisplayModel", 0, tokens.size(), null);
 				InputAgent.apply(currentEntity, kw);
 
 				if (!RenderManager.isGood()) {
