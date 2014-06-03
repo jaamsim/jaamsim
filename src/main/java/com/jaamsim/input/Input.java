@@ -961,21 +961,6 @@ public abstract class Input<T> {
 		throw new InputErrorException(INP_ERR_BADCHOICE, validList.toString(), input);
 	}
 
-	public static ArrayList<String> parseStringVector(StringVector input, ArrayList<String> validList)
-	throws InputErrorException {
-		ArrayList<String> temp = new ArrayList<String>(input.size());
-
-		for (int i = 0; i < input.size(); i++) {
-			try {
-				String element = Input.parseString(input.get(i), validList);
-				temp.add(element);
-			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
-			}
-		}
-		return temp;
-	}
-
 	public static ArrayList<String> parseStrings(KeywordIndex kw, ArrayList<String> validList, boolean caseSensitive)
 	throws InputErrorException {
 		ArrayList<String> temp = new ArrayList<String>(kw.numArgs());
@@ -1258,10 +1243,6 @@ public abstract class Input<T> {
 		catch(InputErrorException ex) {
 			throw new InputErrorException(String.format("Could not find a unit named: %s", str));
 		}
-	}
-
-	public boolean isInfinity(String str) {
-		return (str.equals(POSITIVE_INFINITY) || str.equals(NEGATIVE_INFINITY));
 	}
 
 	public String getDefaultStringForKeyInputs(String unitString) {
