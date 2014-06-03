@@ -80,14 +80,14 @@ public class ExpEvaluator {
 				OutputHandle oh = ent.getOutputHandle(outputName);
 				if (oh == null) {
 					errorString = String.format("Could not find output '%s' on entity '%s'", outputName, ent.getInputName());
-					return null;
+					return new ExpResult(Double.NaN);
 				}
 				return new ExpResult(oh.getValueAsDouble(simTime, 0));
 
 			} catch (Exception e) {
 				errorString = e.getMessage();
 			}
-			return null;
+			return new ExpResult(Double.NaN);
 		}
 	}
 
