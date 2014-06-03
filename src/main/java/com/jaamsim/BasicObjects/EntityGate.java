@@ -14,17 +14,18 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.Thresholds.Threshold;
+import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;
 
-public class EntityGate extends LinkedComponent {
+public class EntityGate extends LinkedComponent implements ThresholdUser {
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         example = "EntityGate1 WaitQueue { Queue1 }")
@@ -35,16 +36,10 @@ public class EntityGate extends LinkedComponent {
 	         example = "EntityGate1 ReleaseDelay { 5.0 s }")
 	private final ValueInput releaseDelay;
 
-	@Keyword(description = "The initial state of the EntityGate: TRUE = Open, FALSE = Closed.",
-	         example = "EntityGate1 InitialState { FALSE }")
-	private final BooleanInput initialState;
-
 	private boolean gateOpen;  // TRUE if the gate is open
 	private boolean busy;  // TRUE if the process of emptying the queue has started
 
 	{
-		operatingThresholdList.setHidden(true);
-
 		waitQueue = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput( waitQueue);
 
@@ -52,9 +47,6 @@ public class EntityGate extends LinkedComponent {
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		this.addInput( releaseDelay);
-
-		initialState = new BooleanInput( "InitialState", "Key Inputs", true);
-		this.addInput( initialState);
 	}
 
 	@Override
@@ -71,7 +63,6 @@ public class EntityGate extends LinkedComponent {
 	public void earlyInit() {
 		super.earlyInit();
 		busy = false;
-		gateOpen = initialState.getValue();
 	}
 
 	/**
@@ -93,18 +84,27 @@ public class EntityGate extends LinkedComponent {
 		this.sendToNextComponent( ent );
 	}
 
-	/**
-	 * Set the gate to the given state (open or closed).
-	 * @param bool = new state (true = open, false = closed)
-	 */
-	public void setState(boolean bool) {
-		if( bool ) {
-			if( !gateOpen )
-				this.open();
+	@Override
+	public void thresholdChanged() {
+
+		// Are any of the thresholds closed?
+		boolean threshOpen = true;
+		for( Threshold thr : this.getThresholds() ) {
+			if( thr.isClosed() ) {
+				threshOpen = false;
+				break;
+			}
 		}
-		else {
+
+		// Should the gate's state be changed?
+		if( threshOpen == gateOpen )
+			return;
+
+		// Open or close the gate
+		if (threshOpen)
+			this.open();
+		else
 			this.close();
-		}
 	}
 
 	/**
