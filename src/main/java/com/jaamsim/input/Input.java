@@ -27,13 +27,12 @@ import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.BooleanVector;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerVector;
+import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Tester;
@@ -1197,6 +1196,36 @@ public abstract class Input<T> {
 			}
 		}
 	}
+
+	public static void validateIndexedLists(ListInput<?> keys, ListInput<?> vals)
+	throws InputErrorException {
+		// If no values set, no validation to be done
+		if (vals.getValue() == null)
+			return;
+
+		// values are set but indexed list has not
+		if (keys.getValue() == null)
+			throw new InputErrorException(INP_VAL_LISTSET, keys.getKeyword(), vals.getKeyword());
+
+		// Both are set, but of differing size
+		if (keys.getListSize() != vals.getListSize())
+			throw new InputErrorException(INP_VAL_LISTSIZE, keys.getKeyword(), vals.getKeyword());
+	}
+
+	public static void validateInputSize(ListInput<?> list1, ListInput<?> list2)
+	throws InputErrorException {
+		// One list is set but not the other
+		if (list1.getValue() != null && list2.getValue() == null)
+			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword());
+
+		if (list1.getValue() == null && list2.getValue() != null)
+			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword());
+
+		// Both are set, but of differing size
+		if (list1.getListSize() != list2.getListSize())
+			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
+	}
+
 	public static void validateIndexedLists(ArrayList<?> keys, BooleanVector values, String keyName, String valueName)
 	throws InputErrorException {
 		// If no values set, no validation to be done
@@ -1345,54 +1374,6 @@ public abstract class Input<T> {
 		// Both are set, but of differing size
 		if (keys.size() != values.size())
 			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
-	}
-
-	public static void validateInputSize(DoubleListInput list1, DoubleListInput list2)
-	throws InputErrorException {
-
-		// One list is set but not the other
-		if( list1.getValue() != null && list2.getValue() == null )
-			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
-
-		if( list1.getValue() == null && list2.getValue() != null )
-			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
-
-		// Both are set, but of differing size
-		if (list1.getValue().size() != list2.getValue().size())
-			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
-
-	}
-
-	public static void validateInputSize(ValueListInput list1, DoubleListInput list2)
-	throws InputErrorException {
-
-		// One list is set but not the other
-		if( list1.getValue() != null && list2.getValue() == null )
-			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
-
-		if( list1.getValue() == null && list2.getValue() != null )
-			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
-
-		// Both are set, but of differing size
-		if (list1.getValue().size() != list2.getValue().size())
-			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
-
-	}
-
-	public static <T extends Entity> void validateInputSize(DoubleListInput list1, EntityListInput<T> list2)
-	throws InputErrorException {
-
-		// One list is set but not the other
-		if( list1.getValue() != null && list2.getValue() == null )
-			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
-
-		if( list1.getValue() == null && list2.getValue() != null )
-			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
-
-		// Both are set, but of differing size
-		if (list1.getValue().size() != list2.getValue().size())
-			throw new InputErrorException(INP_VAL_LISTSIZE, list1.getKeyword(), list2.getKeyword() );
-
 	}
 
 	/*
