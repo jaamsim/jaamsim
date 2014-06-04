@@ -16,7 +16,8 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.sandwell.JavaSimulation.DoubleListInput;
+import com.jaamsim.input.ValueListInput;
+import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.InputErrorException;
@@ -34,7 +35,7 @@ public abstract class ObjectSelector extends DisplayEntity {
 
 	@Keyword(description = "The list of probabilities corresponding to the entities in the EntityList.  Must sum to 1.0.",
 	         example = "ObjectDist1 ProbabilityList { 0.3  0.7 }")
-	private final DoubleListInput probabilityListInput;
+	private final ValueListInput probabilityListInput;
 
 	private int presentIndex;  // the index for entity that has been selected at present
 	private int totalCount;  // the total number of samples that have been selected
@@ -45,7 +46,8 @@ public abstract class ObjectSelector extends DisplayEntity {
 		entityListInput = new EntityListInput<DisplayEntity>( DisplayEntity.class, "EntityList", "Key Inputs", null);
 		this.addInput( entityListInput);
 
-		probabilityListInput = new DoubleListInput( "ProbabilityList", "Key Inputs", null);
+		probabilityListInput = new ValueListInput( "ProbabilityList", "Key Inputs", null);
+		probabilityListInput.setUnitType(DimensionlessUnit.class);
 		this.addInput( probabilityListInput);
 	}
 

@@ -22,12 +22,13 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.OutputListInput;
+import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.ColorListInput;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerInput;
@@ -56,7 +57,7 @@ public class Graph extends GraphBasics  {
 	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.\n" +
 			"If only one line width is provided, it is used for all the lines.",
 	         example = "Graph1 LineWidths { 2 1 }")
-	protected final DoubleListInput lineWidths;
+	protected final ValueListInput lineWidths;
 
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
 			"Each source is graphed as a separate line and is specified by an Entity and its Output.",
@@ -73,7 +74,7 @@ public class Graph extends GraphBasics  {
 	@Keyword(description = "A list of line widths (in pixels) for the seconardy line series to be displayed.\n" +
 			"If only one line width is provided, it is used for all the lines.",
 	         example = "Graph1 SecondaryLineWidths { 2 1 }")
-	protected final DoubleListInput secondaryLineWidths;
+	protected final ValueListInput secondaryLineWidths;
 
 	{
 		// Key Inputs category
@@ -92,9 +93,10 @@ public class Graph extends GraphBasics  {
 		this.addInput(lineColorsList);
 		this.addSynonym(lineColorsList, "LineColors");
 
-		DoubleVector defLineWidths = new DoubleVector();
+		DoubleVector defLineWidths = new DoubleVector(1);
 		defLineWidths.add(1.0);
-		lineWidths = new DoubleListInput("LineWidths", "Key Inputs", defLineWidths);
+		lineWidths = new ValueListInput("LineWidths", "Key Inputs", defLineWidths);
+		lineWidths.setUnitType(DimensionlessUnit.class);
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(lineWidths);
 
@@ -108,9 +110,10 @@ public class Graph extends GraphBasics  {
 		this.addInput(secondaryLineColorsList);
 		this.addSynonym(secondaryLineColorsList, "SecondaryLineColors");
 
-		DoubleVector defSecondaryLineWidths = new DoubleVector();
+		DoubleVector defSecondaryLineWidths = new DoubleVector(1);
 		defSecondaryLineWidths.add(1.0);
-		secondaryLineWidths = new DoubleListInput("SecondaryLineWidths", "Key Inputs", defSecondaryLineWidths);
+		secondaryLineWidths = new ValueListInput("SecondaryLineWidths", "Key Inputs", defSecondaryLineWidths);
+		secondaryLineWidths.setUnitType(DimensionlessUnit.class);
 		secondaryLineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(secondaryLineWidths);
 	}

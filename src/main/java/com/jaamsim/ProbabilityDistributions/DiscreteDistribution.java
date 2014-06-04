@@ -17,9 +17,9 @@ package com.jaamsim.ProbabilityDistributions;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.rng.MRG1999a;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.InputErrorException;
 
@@ -39,7 +39,7 @@ public class DiscreteDistribution extends Distribution {
 
 	@Keyword(description = "The list of probabilities corresponding to the discrete values in the ValueList.  Must sum to 1.0.",
 	         example = "DiscreteDist1 ProbabilityList { 0.3  0.7 }")
-	private final DoubleListInput probabilityListInput;
+	private final ValueListInput probabilityListInput;
 
 	private final MRG1999a rng = new MRG1999a();
 
@@ -48,8 +48,9 @@ public class DiscreteDistribution extends Distribution {
 		valueListInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( valueListInput);
 
-		probabilityListInput = new DoubleListInput( "ProbabilityList", "Key Inputs", null);
-		probabilityListInput.setValidSum(1.0d);
+		probabilityListInput = new ValueListInput( "ProbabilityList", "Key Inputs", null);
+		probabilityListInput.setUnitType(DimensionlessUnit.class);
+		probabilityListInput.setValidSum(1.0d, 0.001d);
 		this.addInput( probabilityListInput);
 	}
 

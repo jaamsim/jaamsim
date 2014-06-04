@@ -17,9 +17,9 @@ package com.jaamsim.ProbabilityDistributions;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.rng.MRG1999a;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.DoubleListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.InputErrorException;
 
@@ -40,7 +40,7 @@ public class ContinuousDistribution extends Distribution {
 			"The cumulative probabilities must be given in increasing order.  The first value must be exactly 0.0.  " +
 			"The last value must be exactly 1.0.",
 	         example = "ContinuousDist1 CumulativeProbabilityList { 0.0  0.6  1.0 }")
-	private final DoubleListInput cumulativeProbabilityListInput;
+	private final ValueListInput cumulativeProbabilityListInput;
 
 	private final MRG1999a rng = new MRG1999a();
 
@@ -49,7 +49,9 @@ public class ContinuousDistribution extends Distribution {
 		valueListInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( valueListInput);
 
-		cumulativeProbabilityListInput = new DoubleListInput( "CumulativeProbabilityList", "Key Inputs", null);
+		cumulativeProbabilityListInput = new ValueListInput( "CumulativeProbabilityList", "Key Inputs", null);
+		cumulativeProbabilityListInput.setUnitType(DimensionlessUnit.class);
+		cumulativeProbabilityListInput.setValidRange(0.0d, 1.0d);
 		this.addInput( cumulativeProbabilityListInput);
 	}
 

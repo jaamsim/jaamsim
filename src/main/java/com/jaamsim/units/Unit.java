@@ -17,7 +17,7 @@ package com.jaamsim.units;
 import java.util.HashMap;
 
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation.DoubleListInput;
+import com.jaamsim.input.ValueListInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
@@ -28,7 +28,7 @@ public abstract class Unit extends Entity {
 					"For example, to convert from miles per hour to m/s, the first factor is 1609.344 (meters in one mile) and " +
 					"the second factor is 3600 (seconds in one hour).",
 			example = "mph  ConversionFactorToSI { 1609.344  3600 }")
-	private final DoubleListInput conversionFactorToSI;
+	private final ValueListInput conversionFactorToSI;
 
 	@Keyword(description = "The preferred unit for formatting output values in the OutputViewer for " +
 	                       "this type of Unit.",
@@ -43,7 +43,8 @@ public abstract class Unit extends Entity {
 	}
 
 	{
-		conversionFactorToSI = new DoubleListInput("ConversionFactorToSI", "Key Inputs", defFactors);
+		conversionFactorToSI = new ValueListInput("ConversionFactorToSI", "Key Inputs", defFactors);
+		conversionFactorToSI.setUnitType(DimensionlessUnit.class);
 		conversionFactorToSI.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
 		conversionFactorToSI.setValidCountRange( 1, 2 );
 		this.addInput( conversionFactorToSI );
