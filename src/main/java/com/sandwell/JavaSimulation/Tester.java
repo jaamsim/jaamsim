@@ -261,42 +261,6 @@ public class Tester {
 		}
 	}
 
-	/**
-	 *
-	 */
-	public static DoubleVector parseDoubleVector( StringVector vec ) {
-		DoubleVector doubleVec = new DoubleVector( 1, 1 );
-
-		try {
-			for ( int i = 0; i < vec.size(); i++ ) {
-				doubleVec.add( Tester.parseDouble( vec.get( i ) ) );
-			}
-		}
-		catch ( NumberFormatException e ) {
-			throw new InputErrorException( "The values must be numbers." );
-		}
-
-		return doubleVec;
-	}
-
-	/**
-	 *
-	 */
-	public static DoubleVector parseDouble( StringVector vec ) {
-		DoubleVector doubleVec = new DoubleVector( 1, 1 );
-
-		try {
-			for ( int i = 0; i < vec.size(); i++ ) {
-				doubleVec.add( Tester.parseDouble( vec.get( i ) ) );
-			}
-		}
-		catch ( NumberFormatException e ) {
-			throw new InputErrorException( "The values must be numbers." );
-		}
-
-		return doubleVec;
-	}
-
 	/********************************************************************************
 	 * METHODS FOR INPUT SYNTAX CHECK: check range of values in a DoubleVector
 	 ********************************************************************************/
