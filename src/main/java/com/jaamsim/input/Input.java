@@ -709,26 +709,6 @@ public abstract class Input<T> {
 		return ret;
 	}
 
-	public static DoubleVector parseTimeVector(StringVector input, double minValue, double maxValue)
-	throws InputErrorException {
-		return parseTimeVector(input, minValue, maxValue, 1.0d);
-	}
-
-	public static DoubleVector parseTimeVector(StringVector input, double minValue, double maxValue, double factor)
-	throws InputErrorException {
-		DoubleVector temp = new DoubleVector(input.size());
-
-		for (int i = 0; i < input.size(); i++) {
-			try {
-				double element = Input.parseTime(input.get(i), minValue, maxValue, factor);
-				temp.add(element);
-			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
-			}
-		}
-		return temp;
-	}
-
 	public static double parseDouble(String data)
 	throws InputErrorException {
 		return Input.parseDouble(data, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
