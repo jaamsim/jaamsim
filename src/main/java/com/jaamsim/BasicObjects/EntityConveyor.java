@@ -23,10 +23,10 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Vec3dListInput;
@@ -48,7 +48,7 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",
 	         example = "Conveyor1 Width { 1 }")
-	private final DoubleInput widthInput;
+	private final ValueInput widthInput;
 
 	@Keyword(description = "The colour of the arrow, defined using a colour keyword or RGB values.",
 	         example = "Conveyor1 Color { red }")
@@ -80,7 +80,8 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput);
 
-		widthInput = new DoubleInput("Width", "Key Inputs", 1.0d);
+		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
+		widthInput.setUnitType(DimensionlessUnit.class);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		this.addInput(widthInput);
 

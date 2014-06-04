@@ -31,6 +31,7 @@ import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.ObjectSelector;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.Clock;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -66,7 +67,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The number of discrete time units in one hour.",
 	         example = "Simulation SimulationTimeScale { 4500 }")
-	private static final DoubleInput simTimeScaleInput;
+	private static final ValueInput simTimeScaleInput;
 
 	@Keyword(description = "If the value is TRUE, then the input report file will be printed after loading the " +
 	                "configuration file.  The input report can always be generated when needed by selecting " +
@@ -143,7 +144,8 @@ public class Simulation extends Entity {
 		startTimeInput.setUnitType(TimeUnit.class);
 		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
-		simTimeScaleInput = new DoubleInput("SimulationTimeScale", "Key Inputs", 4000.0d);
+		simTimeScaleInput = new ValueInput("SimulationTimeScale", "Key Inputs", 4000.0d);
+		simTimeScaleInput.setUnitType(DimensionlessUnit.class);
 		simTimeScaleInput.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
 
 		traceEventsInput = new BooleanInput("TraceEvents", "Key Inputs", false);

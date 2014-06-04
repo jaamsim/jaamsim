@@ -20,12 +20,13 @@ import java.util.Locale;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 
@@ -49,7 +50,7 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",
 	         example = "Arrow1 Width { 1 }")
-	private final DoubleInput width;
+	private final ValueInput width;
 
 	@Keyword(description = "A set of { x, y, z } numbers that define the size of the arrowhead " +
 	                "in those directions at the end of the connector.",
@@ -72,7 +73,8 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput);
 
-		width = new DoubleInput("Width", "Arrow Graphics", 1.0d);
+		width = new ValueInput("Width", "Arrow Graphics", 1.0d);
+		width.setUnitType(DimensionlessUnit.class);
 		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(width);
 

@@ -23,12 +23,13 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.DoubleInput;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
@@ -50,7 +51,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 
 	@Keyword(description = "The width of the path in pixels.",
 	         example = "Delay1 Width { 1 }")
-	private final DoubleInput widthInput;
+	private final ValueInput widthInput;
 
 	@Keyword(description = "The colour of the path.\n" +
 			"The input can be a colour keyword or RGB value.",
@@ -82,7 +83,8 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput);
 
-		widthInput = new DoubleInput("Width", "Key Inputs", 1.0d);
+		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
+		widthInput.setUnitType(DimensionlessUnit.class);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
 		this.addInput(widthInput);
 

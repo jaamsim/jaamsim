@@ -17,9 +17,9 @@ package com.jaamsim.ProbabilityDistributions;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.DoubleInput;
 
 /**
  * Gamma Distribution.
@@ -35,7 +35,7 @@ public class GammaDistribution extends Distribution {
 
 	@Keyword(description = "The shape parameter for the Gamma distribution.  A decimal value > 0.0.",
 	         example = "GammaDist1 Shape { 2.0 }")
-	private final DoubleInput shapeInput;
+	private final ValueInput shapeInput;
 
 	private final MRG1999a rng1 = new MRG1999a();
 	private final MRG1999a rng2 = new MRG1999a();
@@ -48,7 +48,8 @@ public class GammaDistribution extends Distribution {
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(meanInput);
 
-		shapeInput = new DoubleInput("Shape", "Key Inputs", 1.0);
+		shapeInput = new ValueInput("Shape", "Key Inputs", 1.0);
+		shapeInput.setUnitType(DimensionlessUnit.class);
 		shapeInput.setValidRange( 1.0e-10d, Integer.MAX_VALUE);
 		this.addInput(shapeInput);
 	}
