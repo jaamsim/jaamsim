@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 
 public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	private Class<T> entClass;
@@ -32,13 +33,13 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCountRange(input, minCount, maxCount);
+		Input.assertCountRange(kw, minCount, maxCount);
 		if( even )
-			Input.assertCountEven(input);
+			Input.assertCountEven(kw);
 
-		value = Input.parseEntityList(input, entClass, unique);
+		value = Input.parseEntityList(kw, entClass, unique);
 	}
 
 	@Override

@@ -270,16 +270,16 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_ERR_RANGECOUNT, min, max, input.toString());
 	}
 
-	public static void assertCountEven( StringVector input )
+	public static void assertCountEven(KeywordIndex kw)
 	throws InputErrorException {
-		if ( ( input.size() % 2 ) != 0 )
-			throw new InputErrorException(INP_ERR_EVENCOUNT, input.toString());
+		if ((kw.numArgs() % 2) != 0)
+			throw new InputErrorException(INP_ERR_EVENCOUNT, kw.argString());
 	}
 
-	public static void assertCountOdd( StringVector input )
+	public static void assertCountOdd(KeywordIndex kw)
 	throws InputErrorException {
-		if ( ( input.size() % 2 ) == 0 )
-			throw new InputErrorException(INP_ERR_ODDCOUNT, input.toString());
+		if ((kw.numArgs() % 2) == 0)
+			throw new InputErrorException(INP_ERR_ODDCOUNT, kw.argString());
 	}
 
 	public static <T extends Entity> void assertNotPresent(ArrayList<? super T> list, T ent)
