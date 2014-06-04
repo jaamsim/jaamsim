@@ -164,6 +164,24 @@ final class Process extends Thread {
 		}
 	}
 
+	/**
+	 * We override this method to prevent user code from breaking the event state machine.
+	 * If user code explicitly interrupted a Process it would likely run event code
+	 * much earlier than intended.
+	 */
+	@Override
+	public void interrupt() {
+		new Throwable("AUDIT: direct call of Process.interrupt").printStackTrace();
+	}
+
+	/**
+	 * This is the wrapper to allow internal code to advance the state machine by waking
+	 * a Process.
+	 */
+	final void wake() {
+		super.interrupt();
+	}
+
 	static EventManager currentEVT() {
 		return Process.current().currentEVT;
 	}
@@ -180,7 +198,7 @@ final class Process extends Thread {
 		nextProcess = null;
 		activeFlag = false;
 		if (p != null) {
-			p.interrupt();
+			p.wake();
 			return true;
 		}
 
@@ -191,7 +209,7 @@ final class Process extends Thread {
 		if (activeFlag)
 			throw new ProcessError("Cannot terminate an active thread");
 		dieFlag = true;
-		this.interrupt();
+		this.wake();
 	}
 
 	synchronized boolean shouldDie() {

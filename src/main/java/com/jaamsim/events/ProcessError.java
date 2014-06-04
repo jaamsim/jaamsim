@@ -17,7 +17,7 @@ package com.jaamsim.events;
 /**
  * Custom exception thrown when a program error is encountered.
  */
-public class ProcessError extends RuntimeException {
+class ProcessError extends RuntimeException {
 	public ProcessError(String format, Object... args) {
 		super(String.format(format, args));
 	}

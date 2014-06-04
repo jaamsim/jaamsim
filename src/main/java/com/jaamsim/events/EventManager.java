@@ -251,7 +251,8 @@ public final class EventManager {
 					Process p = nextEvent.target.getProcess();
 					if (p != null) {
 						p.setNextProcess(cur);
-						switchThread(p);
+						p.wake();
+						threadWait();
 						continue;
 					}
 
@@ -276,7 +277,8 @@ public final class EventManager {
 
 						// Wake up the first conditional thread to be tested
 						// at this point, nextThread == conditionalList.get(0)
-						switchThread(conditionalList.get(0));
+						conditionalList.get(0).wake();
+						threadWait();
 					}
 
 					// If a conditional event was satisfied, we will have a new event at the
@@ -343,21 +345,12 @@ public final class EventManager {
 		// if we don't wake a new process, take one from the pool
 		if (!cur.wakeNextProcess()) {
 			processRunning = false;
-			Process.allocate(this, null, null).interrupt();
+			Process.allocate(this, null, null).wake();
 		}
 
 		threadWait();
 		if (cur.shouldDie()) throw new ThreadKilledException("Thread killed");
 		cur.setActive();
-	}
-
-	/**
-	 * Must hold the lockObject when calling this method
-	 * @param next
-	 */
-	private void switchThread(Process next) {
-		next.interrupt();
-		threadWait();
 	}
 
 	/**
@@ -505,7 +498,8 @@ public final class EventManager {
 		synchronized (lockObject) {
 			if (trcListener != null) trcListener.traceProcessStart(this, t);
 			// Transfer control to the new process
-			switchThread(newProcess);
+			newProcess.wake();
+			threadWait();
 		}
 	}
 
@@ -605,7 +599,8 @@ public final class EventManager {
 			if (proc == null)
 				proc = Process.allocate(this, cur, evt.target);
 			proc.setNextProcess(cur);
-			switchThread(proc);
+			proc.wake();
+			threadWait();
 		}
 	}
 
@@ -706,7 +701,7 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			Process.allocate(this, null, null).interrupt();
+			Process.allocate(this, null, null).wake();
 		}
 	}
 
