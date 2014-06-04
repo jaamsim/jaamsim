@@ -14,9 +14,10 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
+
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.StringVector;
 
 public class OutputInput<T> extends Input<String> {
 
@@ -24,7 +25,7 @@ public class OutputInput<T> extends Input<String> {
 	private Entity ent;  // The Entity against which to apply the first Output name
 	private String outputName;  // The first Output name in the chain
 	private OutputHandle out;  // The OutputHandle for the first Output in the chain
-	private StringVector outputNameList;  // The names of the second, third, etc. Outputs in the chain.
+	private ArrayList<String> outputNameList;  // The names of the second, third, etc. Outputs in the chain.
 
 	public OutputInput(Class<T> klass, String key, String cat, String def) {
 		super(key, cat, def);
@@ -32,9 +33,9 @@ public class OutputInput<T> extends Input<String> {
 	}
 
 	@Override
-	public void parse(StringVector input) throws InputErrorException {
+	public void parse(KeywordIndex kw) throws InputErrorException {
 
-		if( input.isEmpty() ) {
+		if (kw.numArgs() == 0) {
 			value = null;
 			ent = null;
 			outputName = "";
@@ -43,9 +44,9 @@ public class OutputInput<T> extends Input<String> {
 			return;
 		}
 
-		Input.assertCountRange(input, 2, Integer.MAX_VALUE);
-		Entity tmp = Input.parseEntity(input.get(0), Entity.class);
-		String outName = input.get(1);
+		Input.assertCountRange(kw, 2, Integer.MAX_VALUE);
+		Entity tmp = Input.parseEntity(kw.getArg(0), Entity.class);
+		String outName = kw.getArg(1);
 		if (!tmp.hasOutput(outName)) {
 			throw new InputErrorException("Output named %s not found for Entity %s", outName, tmp.getName());
 		}
@@ -54,12 +55,13 @@ public class OutputInput<T> extends Input<String> {
 		outputName = outName;
 		out = ent.getOutputHandle(outputName);
 
-		outputNameList = new StringVector();
-		if( input.size() > 2 )
-			outputNameList = input.subString(2, input.size()-1);
+		outputNameList = new ArrayList<String>(kw.numArgs() - 2);
+		// grab any input strings after the first two, if there are any
+		for (int i = 2; i < kw.numArgs(); i++)
+			outputNameList.add(kw.getArg(i));
 
 		Class<?> retClass = out.getReturnType();
-		if( input.size() == 2 ) {
+		if( kw.numArgs() == 2 ) {
 			if ( klass != Object.class && !klass.isAssignableFrom(retClass) )
 				throw new InputErrorException("OutputInput class mismatch. Expected: %s, got: %s", klass.toString(), retClass.toString());
 		}
@@ -69,7 +71,7 @@ public class OutputInput<T> extends Input<String> {
 		}
 
 		value = String.format("%s.%s", ent.getInputName(), outputName);
-		if( input.size() > 2 ) {
+		if( kw.numArgs() > 2 ) {
 			for( String name: outputNameList ) {
 				value += "." + name;
 			}
