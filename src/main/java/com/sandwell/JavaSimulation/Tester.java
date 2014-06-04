@@ -57,20 +57,6 @@ public class Tester {
 	}
 
 	/**
-	 * Implements a string parsing method to test for an integer value using the
-	 * Audition semantics for integer formatting.
-	 */
-	public static boolean isInteger( String testInteger ) {
-		try {
-			Integer.parseInt( testInteger );
-			return true;
-		}
-		catch( NumberFormatException e ) {
-			return false;
-		}
-	}
-
-	/**
 	 * Implements a string parsing method to test for a date value using the
 	 * Audition semantics for date formatting.
 	 */
@@ -187,24 +173,6 @@ public class Tester {
 
 	private static long calculateEventTime(double time) {
 		return Math.round(time * Simulation.getSimTimeFactor());
-	}
-
-	public static String toTimeString( double timeValue ) {
-		String hour = Integer.toString( (int)Math.floor( timeValue ) );
-		hour = hour.trim();
-
-		//while( hour.length() < 2 ) {
-		//hour = "0" + hour;
-		//}
-
-		String minute = Integer.toString( (int)(Math.round( (timeValue - Math.floor( timeValue )) * 60.0 ) % 60.0) );
-		minute = minute.trim();
-
-		while( minute.length() < 2 ) {
-			minute = "0" + minute;
-		}
-
-		return hour + ":" + minute;
 	}
 
 	/********************************************************************************
