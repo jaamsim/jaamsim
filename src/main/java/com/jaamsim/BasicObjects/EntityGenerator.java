@@ -84,11 +84,6 @@ public class EntityGenerator extends LinkedComponent {
 	public void validate() {
 		super.validate();
 
-		// Confirm that probability distribution has been specified
-		if( interArrivalTime.getValue() == null ) {
-			throw new InputErrorException( "The keyword InterArrivalTime must be set." );
-		}
-
 		// Confirm that prototype entity has been specified
 		if( prototypeEntity.getValue() == null ) {
 			throw new InputErrorException( "The keyword PrototypeEntity must be set." );
