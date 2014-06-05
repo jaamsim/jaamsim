@@ -10,6 +10,7 @@ Define ObjectType {
 					Release
 					Resource
 					Branch
+					Assemble
 					EntityGate
 					EntitySignal
                     QueueRecorder
@@ -32,6 +33,7 @@ Define	ImageModel {
 			SeizeIconModel
 			ReleaseIconModel
 			BranchIconModel
+			AssembleIconModel
 			EntityGateIconModel
 			EntitySignalIconModel
 			TimeSeriesIconModel
@@ -45,6 +47,7 @@ ResourceIconModel       ImageFile { '<res>/images/Resource-256.png' }    Transpa
 SeizeIconModel          ImageFile { '<res>/images/Seize-256.png'  }      Transparent { TRUE }
 ReleaseIconModel        ImageFile { '<res>/images/Release-256.png' }     Transparent { TRUE }
 BranchIconModel         ImageFile { '<res>/images/Branch-256.png' }      Transparent { TRUE }
+AssembleIconModel       ImageFile { '<res>/images/Assemble-256.png' }      Transparent { TRUE }
 EntityGateIconModel     ImageFile { '<res>/images/Gate-256.png' }        Transparent { TRUE }
 EntitySignalIconModel   ImageFile { '<res>/images/Signal-256.png' }      Transparent { TRUE }
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
@@ -60,6 +63,7 @@ Seize                   JavaClass { com.jaamsim.BasicObjects.Seize              
 Release                 JavaClass { com.jaamsim.BasicObjects.Release                    } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ReleaseIconModel 		}
 Resource                JavaClass { com.jaamsim.BasicObjects.Resource                   } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ResourceIconModel		}
 Branch                  JavaClass { com.jaamsim.BasicObjects.Branch                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ BranchIconModel       }
+Assemble                JavaClass { com.jaamsim.BasicObjects.Assemble                   } Palette { 'Basic Objects' } DefaultDisplayModel 	{ AssembleIconModel     }
 EntityGate              JavaClass { com.jaamsim.BasicObjects.EntityGate                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ EntityGateIconModel   }
 EntitySignal            JavaClass { com.jaamsim.BasicObjects.EntitySignal               } Palette { 'Basic Objects' } DefaultDisplayModel 	{ EntitySignalIconModel }
 QueueRecorder           JavaClass { com.sandwell.JavaSimulation3D.QueueRecorder         } Palette { 'Basic Objects' } DefaultDisplayModel	{ Cube 					}	DragAndDrop 	{ FALSE 	}
@@ -83,6 +87,7 @@ Seize              Description { 'Seizes one or more units of a Resource.' }
 Release            Description { 'Releases one or more units of a Resource.' }
 Resource           Description { 'Set of identical resource units that be seized and released by various process.' }
 Branch             Description { 'Directs received entities to an assortment of destinations.' }
+Assemble           Description { 'Combines sub-components to create an assembled part.' }
 EntityGate         Description { 'Blocks received entities from progressing further until the Gate is opened by a Signal.' }
 EntitySignal       Description { 'On receipt of an entity, a specified Gate is opened or closed.' }
 QueueRecorder      Description { 'Logs an entry every time the specified queue receives or releases an entity.' }
