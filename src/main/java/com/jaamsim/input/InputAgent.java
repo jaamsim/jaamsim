@@ -1110,7 +1110,7 @@ public class InputAgent {
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<Class<? extends Entity>>();
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			Entity ent = Entity.getAll().get(i);
-			if (!ent.testFlag(Entity.FLAG_ADDED))
+			if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
 
 			if (!newClasses.contains(ent.getClass()))
@@ -1135,7 +1135,7 @@ public class InputAgent {
 			// Print the new instances that were defined
 			for (int i = 0; i < Entity.getAll().size(); i++) {
 				Entity ent = Entity.getAll().get(i);
-				if (!ent.testFlag(Entity.FLAG_ADDED))
+				if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 					continue;
 
 				if (ent.getClass() == newClass)
@@ -1149,7 +1149,7 @@ public class InputAgent {
 		// Identify the entities whose inputs were edited
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			Entity ent = Entity.getAll().get(i);
-			if (ent.testFlag(Entity.FLAG_EDITED)) {
+			if (ent.testFlag(Entity.FLAG_EDITED) && !ent.testFlag(Entity.FLAG_GENERATED)) {
 				file.format("%n");
 				writeInputsOnFile_ForEntity( file, ent );
 			}
