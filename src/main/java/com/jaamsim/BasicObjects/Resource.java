@@ -203,14 +203,16 @@ public class Resource extends DisplayEntity {
 
 	@Output(name = "UnitsSeized",
 	 description = "The total number of resource units that have been seized.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public int getUnitsSeized(double simTime) {
 		return unitsSeized;
 	}
 
 	@Output(name = "UnitsReleased",
 	 description = "The total number of resource units that have been released.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public int getUnitsReleased(double simTime) {
 		return unitsReleased;
 	}
@@ -224,7 +226,8 @@ public class Resource extends DisplayEntity {
 
 	@Output(name = "UnitsInUseAverage",
 	 description = "The average number of resource units that are in use.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public double getUnitsInUseAverage(double simTime) {
 		double dt = simTime - timeOfLastUpdate;
 		double totalTime = simTime - startOfStatisticsCollection;
@@ -236,7 +239,8 @@ public class Resource extends DisplayEntity {
 
 	@Output(name = "UnitsInUseStandardDeviation",
 	 description = "The standard deviation of the number of resource units that are in use.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public double getUnitsInUseStandardDeviation(double simTime) {
 		double dt = simTime - timeOfLastUpdate;
 		double mean = this.getUnitsInUseAverage(simTime);
@@ -249,14 +253,16 @@ public class Resource extends DisplayEntity {
 
 	@Output(name = "UnitsInUseMinimum",
 	 description = "The minimum number of resource units that are in use.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public int getUnitsInUseMinimum(double simTime) {
 		return minUnitsInUse;
 	}
 
 	@Output(name = "UnitsInUseMaximum",
 	 description = "The maximum number of resource units that are in use.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public int getUnitsInUseMaximum(double simTime) {
 		// A unit that is seized and released immediately
 		// does not count as a non-zero maximum in use
@@ -267,7 +273,8 @@ public class Resource extends DisplayEntity {
 
 	@Output(name = "UnitsInUseDistribution",
 	 description = "The fraction of time that the number of resource units in use was 0, 1, 2, etc.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public DoubleVector getUnitsInUseDistribution(double simTime) {
 		DoubleVector ret = new DoubleVector(unitsInUseDist);
 		double dt = simTime - timeOfLastUpdate;

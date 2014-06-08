@@ -326,14 +326,16 @@ public class Queue extends DisplayEntity {
 
 	@Output(name = "NumberAdded",
 	 description = "The number of entities that have been added to the queue.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public Integer getNumberAdded(double simTime) {
 		return numberAdded;
 	}
 
 	@Output(name = "NumberRemoved",
 	 description = "The number of entities that have been removed from the queue.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public Integer getNumberRemoved(double simTime) {
 		return numberRemoved;
 	}
@@ -347,7 +349,8 @@ public class Queue extends DisplayEntity {
 
 	@Output(name = "QueueLengthAverage",
 	 description = "The average number of entities in the queue.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public double getQueueLengthAverage(double simTime) {
 		double dt = simTime - timeOfLastUpdate;
 		int queueSize = itemList.size();
@@ -360,7 +363,8 @@ public class Queue extends DisplayEntity {
 
 	@Output(name = "QueueLengthStandardDeviation",
 	 description = "The standard deviation of the number of entities in the queue.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public double getQueueLengthStandardDeviation(double simTime) {
 		double dt = simTime - timeOfLastUpdate;
 		int queueSize = itemList.size();
@@ -374,14 +378,16 @@ public class Queue extends DisplayEntity {
 
 	@Output(name = "QueueLengthMinimum",
 	 description = "The minimum number of entities in the queue.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public Integer getQueueLengthMinimum(double simTime) {
 		return minElements;
 	}
 
 	@Output(name = "QueueLengthMaximum",
 	 description = "The maximum number of entities in the queue.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public Integer getQueueLengthMaximum(double simTime) {
 		// An entity that is added to an empty queue and removed immediately
 		// does not count as a non-zero queue length
@@ -392,7 +398,8 @@ public class Queue extends DisplayEntity {
 
 	@Output(name = "QueueLengthDistribution",
 	 description = "The fraction of time that the queue has length 0, 1, 2, etc.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public DoubleVector getQueueLengthDistribution(double simTime) {
 		DoubleVector ret = new DoubleVector(queueLengthDist);
 		double dt = simTime - timeOfLastUpdate;
@@ -415,7 +422,8 @@ public class Queue extends DisplayEntity {
 	@Output(name = "AverageQueueTime",
 	 description = "The average time each entity waits in the queue.  Calculated as total queue time to date divided " +
 			"by the total number of entities added to the queue.",
-	    unitType = TimeUnit.class)
+	    unitType = TimeUnit.class,
+	  reportable = true)
 	public double getAverageQueueTime(double simTime) {
 		if( numberAdded == 0 )
 			return 0.0;

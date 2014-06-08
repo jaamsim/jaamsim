@@ -98,21 +98,24 @@ public abstract class LinkedComponent extends DisplayEntity implements Threshold
 
 	@Output(name = "NumberAdded",
 	 description = "The number of entities received from upstream.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public Double getNumberAdded(double simTime) {
 		return (double)numberAdded;
 	}
 
 	@Output(name = "NumberProcessed",
 	 description = "The number of entities processed by this component.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
 	public Double getNumberProcessed(double simTime) {
 		return (double)numberProcessed;
 	}
 
 	@Output(name = "ProcessingRate",
 	 description = "The number of entities processed per unit time by this component.",
-	    unitType = RateUnit.class)
+	    unitType = RateUnit.class,
+	  reportable = true)
 	public Double getProcessingRate( double simTime) {
 		return numberProcessed/simTime;
 	}
