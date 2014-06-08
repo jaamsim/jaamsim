@@ -76,7 +76,7 @@ public class Entity {
 			" The attribute name is followed by its initial value. The unit provided for" +
 			"this value will determine the attribute's unit type.",
 	         example = "Entity1 AttributeDefinitionList { { A 20.0 s } { alpha 42 } }")
-	private final AttributeDefinitionListInput attributeDefinitionList;
+	public final AttributeDefinitionListInput attributeDefinitionList;
 
 	// constants used when scheduling events using the Entity wrappers
 	public static final int PRIO_DEFAULT = 5;
@@ -189,6 +189,11 @@ public class Entity {
 	 * performed in this method. It is called after earlyInit().
 	 */
 	public void startUp() {}
+
+	/**
+	 * Resets the statistics collected by the entity.
+	 */
+	public void clearStatistics() {}
 
 	public void kill() {
 		synchronized (allInstances) {

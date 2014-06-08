@@ -163,6 +163,7 @@ public class Resource extends DisplayEntity {
 	/**
 	 * Clear queue statistics
 	 */
+	@Override
 	public void clearStatistics() {
 		double simTime = this.getSimTime();
 		startOfStatisticsCollection = simTime;

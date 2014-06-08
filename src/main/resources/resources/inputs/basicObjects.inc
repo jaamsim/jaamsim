@@ -1,4 +1,5 @@
 Define ObjectType {
+                    ReportGenerator
                     EntityGenerator
                     Server
                     EntitySink
@@ -25,6 +26,7 @@ Define ObjectType {
                   }
 
 Define	ImageModel {
+            ReportGeneratorIconModel
 			SourceIconModel
 			SinkIconModel
 			ServerIconModel
@@ -39,6 +41,7 @@ Define	ImageModel {
 			TimeSeriesIconModel
 			}
 			
+ReportGeneratorIconModel  ImageFile { '<res>/images/Reports-256.png' }   Transparent { TRUE }
 SourceIconModel         ImageFile { '<res>/images/Source-256.png' }      Transparent { TRUE }
 SinkIconModel           ImageFile { '<res>/images/Sink-256.png'   }      Transparent { TRUE }
 ServerIconModel         ImageFile { '<res>/images/Server-256.png' }      Transparent { TRUE }
@@ -52,6 +55,7 @@ EntityGateIconModel     ImageFile { '<res>/images/Gate-256.png' }        Transpa
 EntitySignalIconModel   ImageFile { '<res>/images/Signal-256.png' }      Transparent { TRUE }
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
 
+ReportGenerator         JavaClass { com.jaamsim.BasicObjects.ReportGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ReportGeneratorIconModel }
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
 Server                  JavaClass { com.jaamsim.BasicObjects.Server                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
 EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SinkIconModel 		}
@@ -76,6 +80,7 @@ SignalThreshold         JavaClass { com.jaamsim.Thresholds.SignalThreshold      
 TimeSeriesThreshold	    JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 
+ReportGenerator    Description { 'Determines initialization, run duration, and prints the output report.' }
 EntityGenerator    Description { 'Creates copies of a specified entity at specified intervals.' }
 Server             Description { 'Processes a received entity over a specified duration.' }
 EntitySink         Description { 'Destroys any entity it receives.' }

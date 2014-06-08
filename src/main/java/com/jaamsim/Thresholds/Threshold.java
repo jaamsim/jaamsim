@@ -156,6 +156,7 @@ public class Threshold extends DisplayEntity {
     // Reporting
     // ********************************************************************************
 
+	@Override
 	public void clearStatistics() {
 		openTicks = 0;
 		closedTicks = 0;
