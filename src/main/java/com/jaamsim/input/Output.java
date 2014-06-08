@@ -28,4 +28,5 @@ public @interface Output {
 	public String name();
 	public String description() default "";
 	public Class<? extends Unit> unitType() default Unit.class;
+	public boolean reportable() default false;
 }

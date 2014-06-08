@@ -69,4 +69,8 @@ public class AttributeHandle extends OutputHandle {
 	public String getName() {
 		return attributeName;
 	}
+	@Override
+	public boolean isReportable() {
+		return true;
+	}
 }

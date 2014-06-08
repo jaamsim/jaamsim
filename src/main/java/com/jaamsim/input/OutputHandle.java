@@ -281,4 +281,9 @@ public class OutputHandle {
 		return pair.annotation.name();
 	}
 
+	public boolean isReportable() {
+		assert (pair.annotation != null);
+		return pair.annotation.reportable();
+	}
+
 }
