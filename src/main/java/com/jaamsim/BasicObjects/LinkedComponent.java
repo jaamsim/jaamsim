@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -33,6 +34,11 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  */
 public abstract class LinkedComponent extends DisplayEntity implements ThresholdUser {
 
+	@Keyword(description = "The prototype for entities that will be received by this object.\n" +
+			"This input must be set if the expression 'this.obj' is used in the input to any keywords.",
+	         example = "Statistics1 TestEntity { Proto }")
+	protected final EntityInput<DisplayEntity> testEntity;
+
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 			example = "EntityGenerator1 NextComponent { Server1 }")
 	protected final EntityInput<LinkedComponent> nextComponentInput;
@@ -46,11 +52,24 @@ public abstract class LinkedComponent extends DisplayEntity implements Threshold
 	private DisplayEntity receivedEntity; // Entity most recently received by this component
 
 	{
+		testEntity = new EntityInput<DisplayEntity>( DisplayEntity.class, "TestEntity", "Key Inputs", null);
+		this.addInput( testEntity);
+
 		nextComponentInput = new EntityInput<LinkedComponent>( LinkedComponent.class, "NextComponent", "Key Inputs", null);
 		this.addInput( nextComponentInput);
 
 		operatingThresholdList = new EntityListInput<Threshold>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
 		this.addInput( operatingThresholdList);
+	}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == testEntity) {
+			receivedEntity = testEntity.getValue();
+			return;
+		}
 	}
 
 	@Override
@@ -89,6 +108,10 @@ public abstract class LinkedComponent extends DisplayEntity implements Threshold
 
 		numberProcessed++;
 	}
+
+	// ******************************************************************************************************
+	// OUTPUT METHODS
+	// ******************************************************************************************************
 
 	@Output(name = "obj",
 	 description = "The entity that was received most recently.")
