@@ -23,6 +23,7 @@ Define ObjectType {
 					SignalThreshold
                     TimeSeriesThreshold
                     ExpressionThreshold
+					Statistics
                   }
 
 Define	ImageModel {
@@ -39,6 +40,7 @@ Define	ImageModel {
 			EntityGateIconModel
 			EntitySignalIconModel
 			TimeSeriesIconModel
+			StatisticsIconModel
 			}
 			
 ReportGeneratorIconModel  ImageFile { '<res>/images/Reports-256.png' }   Transparent { TRUE }
@@ -54,6 +56,7 @@ AssembleIconModel       ImageFile { '<res>/images/Assemble-256.png' }      Trans
 EntityGateIconModel     ImageFile { '<res>/images/Gate-256.png' }        Transparent { TRUE }
 EntitySignalIconModel   ImageFile { '<res>/images/Signal-256.png' }      Transparent { TRUE }
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
+StatisticsIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
 
 ReportGenerator         JavaClass { com.jaamsim.BasicObjects.ReportGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ReportGeneratorIconModel }
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
@@ -79,6 +82,7 @@ TimeSeries              JavaClass { com.sandwell.JavaSimulation.TimeSeries      
 SignalThreshold         JavaClass { com.jaamsim.Thresholds.SignalThreshold              } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 TimeSeriesThreshold	    JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
+Statistics              JavaClass { com.jaamsim.BasicObjects.Statistics                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ StatisticsIconModel    }
 
 ReportGenerator    Description { 'Determines initialization, run duration, and prints the output report.' }
 EntityGenerator    Description { 'Creates copies of a specified entity at specified intervals.' }
@@ -104,3 +108,4 @@ TimeSeries         Description { 'Provides a floating point number that changes 
 TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries for which an activity is permitted.' }
 SignalThreshold     Description { 'Threshold that is opened and closed directly by an EntitySignal object.' }
 ExpressionThreshold Description { 'Specifies a logical condition for which an activity is permitted.' }
+Statistics          Description { 'Collects statistics from the received entities.' }
