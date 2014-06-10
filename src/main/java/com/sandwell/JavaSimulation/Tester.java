@@ -175,64 +175,6 @@ public class Tester {
 		return Math.round(time * Simulation.getSimTimeFactor());
 	}
 
-	/********************************************************************************
-	 * METHODS FOR INPUT SYNTAX CHECK: parse values
-	 ********************************************************************************/
-
-	/**
-	 * Implements a string parsing method to parse a string into a double value
-	 * using the Audition semantics for string conversion.
-	 */
-	public static double parseDouble( String inputDouble ) {
-		// Parse string as time value represented as dd:mm:ss, where dd is in degrees(or hours) and mm is
-		// in minutes and ss in seconds
-		if( inputDouble.indexOf( ":" ) > -1 ) {
-			String[] splitDouble = inputDouble.split( ":" );
-			if( splitDouble.length > 3 ) {
-				throw new InputErrorException( "The value must contain two colon (:) at most." );
-			}
-
-			try {
-
-				// dd:mm
-				if( splitDouble.length == 2 ) {
-					if( Double.parseDouble( splitDouble[0] ) >= 0 ) {
-						return Double.parseDouble( splitDouble[0] )  + Double.parseDouble( splitDouble[1] ) / 60;
-					}
-					else {
-						return Double.parseDouble( splitDouble[0] )  - Double.parseDouble( splitDouble[1] ) / 60;
-					}
-				}
-
-				// dd:mm:ss
-				else {
-					if( Double.parseDouble( splitDouble[0] ) >= 0 ) {
-						return Double.parseDouble( splitDouble[0] )  + Double.parseDouble( splitDouble[1] ) / 60 + Double.parseDouble( splitDouble[2] ) / (60*60);
-					}
-					else {
-						return Double.parseDouble( splitDouble[0] )  - Double.parseDouble( splitDouble[1] ) / 60 - Double.parseDouble( splitDouble[2] ) / (60*60);
-					}
-				}
-			}
-			catch ( NumberFormatException e ) {
-				throw new InputErrorException( "" );
-			}
-		}
-		// Parse string as a double
-		else {
-			try {
-				return Double.parseDouble( inputDouble );
-			}
-			catch ( NumberFormatException e ) {
-				throw new InputErrorException( "The value must be a number.  Value = " + inputDouble );
-			}
-		}
-	}
-
-	/********************************************************************************
-	 * METHODS FOR INPUT SYNTAX CHECK: check range of values in a DoubleVector
-	 ********************************************************************************/
-
 	public static void checkValueOrderAscending( DoubleVector vec ) throws InputErrorException {
 		for ( int i = 0; i < vec.size() - 1; i++ ) {
 			if ( vec.get( i ) >= vec.get( i + 1 ) ) {
