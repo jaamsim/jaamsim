@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.util.ArrayList;
+
 import com.jaamsim.input.Input;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
@@ -46,7 +48,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 		// Determine records in the time series
 		// Records have form: (e.g.) yyyy-MM-dd HH:mm value units
 		// where units are optional
-		StringVector each = new StringVector();
+		ArrayList<String> each = new ArrayList<String>();
 		for (int i=0; i < kw.numArgs(); i++) {
 
 			//skip over opening brace if present

@@ -41,7 +41,7 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		StringVector input = new StringVector(kw.numArgs());
+		ArrayList<String> input = new ArrayList<String>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 		// If two entity keys are not provided, set the default value
@@ -51,18 +51,18 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			ArrayList<V> defValue = Input.parseEntityList( input.subString(0,input.size()-1), valClass, true );
+			ArrayList<V> defValue = Input.parseEntityList( input, valClass, true );
 			this.setDefaultValue( defValue );
 			return;
 		}
 
 		// The input is of the form: <Key1> <Key2> <Value>
 		// Determine the key(s)
-		ArrayList<K1> list = Input.parseEntityList(input.subString(0, 0), key1Class, true);
-		ArrayList<K2> list2 = Input.parseEntityList(input.subString(1, 1), key2Class, true);
+		ArrayList<K1> list = Input.parseEntityList(input.subList(0, 1), key1Class, true);
+		ArrayList<K2> list2 = Input.parseEntityList(input.subList(1, 2), key2Class, true);
 
 		// Determine the value
-		ArrayList<V> val = Input.parseEntityList( input.subString(2,input.size()-1), valClass, true );
+		ArrayList<V> val = Input.parseEntityList( input.subList(2,input.size()), valClass, true );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {

@@ -63,7 +63,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 	}
 
 	private void innerParse(KeywordIndex kw) {
-		StringVector input = new StringVector(kw.numArgs());
+		ArrayList<String> input = new ArrayList<String>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 
@@ -76,13 +76,13 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		}
 
 		if( ent1 == null ) {
-			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
+			V defValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 			this.setDefaultValue( defValue );
 			return;
 		}
 
 		// Determine the keys
-		ArrayList<K1> list = Input.parseEntityList(input.subString(0, 0), key1Class, true);
+		ArrayList<K1> list = Input.parseEntityList(input.subList(0, 1), key1Class, true);
 		ArrayList<K2> list2;
 
 		// If ent2 is null, assume the line is of the form <Key1> <Value>
@@ -104,11 +104,11 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 			// Otherwise assume the line is of the form <Key1> <Key2> <Value>
 			// The second key was given.  Store the second key.
 			numKeys = 2;
-			list2 = Input.parseEntityList(input.subString(1, 1), key2Class, true);
+			list2 = Input.parseEntityList(input.subList(1, 2), key2Class, true);
 		}
 
 		// Determine the value
-		V val = Input.parse( input.subString(numKeys,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
+		V val = Input.parse( input.subList(numKeys,input.size()), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {

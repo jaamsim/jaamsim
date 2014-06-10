@@ -64,7 +64,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 	}
 
 	private void innerParse(KeywordIndex kw) {
-		StringVector input = new StringVector(kw.numArgs());
+		ArrayList<String> input = new ArrayList<String>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 
@@ -75,18 +75,18 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			V defValue = Input.parse( input.subString(0,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
+			V defValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 			this.setDefaultValue( defValue );
 			return;
 		}
 
 		// The input is of the form: <Key1> <Key2> <Value>
 		// Determine the key(s)
-		ArrayList<K1> list = Input.parseEntityList(input.subString(0, 0), key1Class, true);
-		ArrayList<K2> list2 = Input.parseEntityList(input.subString(1, 1), key2Class, true);
+		ArrayList<K1> list = Input.parseEntityList(input.subList(0, 1), key1Class, true);
+		ArrayList<K2> list2 = Input.parseEntityList(input.subList(1, 2), key2Class, true);
 
 		// Determine the value
-		V val = Input.parse( input.subString(2,input.size()-1), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
+		V val = Input.parse( input.subList(2,input.size()), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {
