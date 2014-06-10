@@ -174,18 +174,8 @@ public abstract class Input<T> {
 		valueString = str;
 	}
 
-	public void parse(KeywordIndex kw) throws InputErrorException {
-		StringVector data = new StringVector(kw.numArgs());
-		for (int i = 0; i < kw.numArgs(); i++) {
-			data.add(kw.getArg(i));
-		}
+	public abstract void parse(KeywordIndex kw) throws InputErrorException;
 
-		parse(data);
-	}
-
-	public void parse(StringVector input) throws InputErrorException {
-		return;
-	}
 
 	public static void assertCount(DoubleVector input, int... counts)
 	throws InputErrorException {

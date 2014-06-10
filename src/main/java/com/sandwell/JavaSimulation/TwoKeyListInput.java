@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.KeywordIndex;
 
 /**
  * Class TwoKeyListInput for storing a list of entities of class V, with optional keys of class K1 and K2
@@ -38,9 +39,11 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-
+		StringVector input = new StringVector(kw.numArgs());
+		for (int i = 0; i < kw.numArgs(); i++)
+			input.add(kw.getArg(i));
 		// If two entity keys are not provided, set the default value
 		Entity ent1 = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		Entity ent2 = null;

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -54,14 +54,17 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		ArrayList<StringVector> split = InputAgent.splitStringVectorByBraces(input);
-		for (StringVector each : split)
+		for (KeywordIndex each : kw.getSubArgs())
 			this.innerParse(each);
 	}
 
-	private void innerParse(StringVector input) {
+	private void innerParse(KeywordIndex kw) {
+		StringVector input = new StringVector(kw.numArgs());
+		for (int i = 0; i < kw.numArgs(); i++)
+			input.add(kw.getArg(i));
+
 		// If an entity key is not provided, set the default value
 		Entity ent = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		if( ent == null || input.size() == 1 ) {

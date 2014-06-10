@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 
 /**
  * Class TwoOrThreeKeyInput for storing objects of class V (e.g. Double or DoubleVector),
@@ -51,14 +51,17 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 	}
 
 	@Override
-	public void parse(StringVector input)
+	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		ArrayList<StringVector> split = InputAgent.splitStringVectorByBraces(input);
-		for (StringVector each : split)
+		for (KeywordIndex each : kw.getSubArgs())
 			this.innerParse(each);
 	}
 
-	private void innerParse(StringVector input) {
+	private void innerParse(KeywordIndex kw) {
+		StringVector input = new StringVector(kw.numArgs());
+		for (int i = 0; i < kw.numArgs(); i++)
+			input.add(kw.getArg(i));
+
 		// If two entity keys are not provided, set the default value
 		Entity ent1 = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		Entity ent2 = null;

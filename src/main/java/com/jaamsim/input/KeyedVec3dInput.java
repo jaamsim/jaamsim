@@ -37,10 +37,10 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 	}
 
 	@Override
-	public void parse(StringVector input) throws InputErrorException {
-		ArrayList<String> strings = new ArrayList<String>(input.size());
-		for (String s : input) {
-			strings.add(s);
+	public void parse(KeywordIndex kw) throws InputErrorException {
+		ArrayList<String> strings = new ArrayList<String>(kw.numArgs());
+		for (int i = 0; i < kw.numArgs(); i++) {
+			strings.add(kw.getArg(i));
 		}
 		ArrayList<ArrayList<String>> keys = InputAgent.splitForNestedBraces(strings);
 		for( ArrayList<String> key : keys) {
