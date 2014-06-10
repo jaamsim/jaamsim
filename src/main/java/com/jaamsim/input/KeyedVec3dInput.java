@@ -22,7 +22,6 @@ import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.StringVector;
 
 public class KeyedVec3dInput extends Input<Vec3d> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;
@@ -68,13 +67,8 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 			throw new InputErrorException("Value entry not formated correctly: %s", valInput.toString());
 		}
 
-		StringVector temp = new StringVector();
-		temp.addAll(timeInput.subList(1, 3));
-		DoubleVector time = Input.parseDoubles(temp, 0.0d, Double.POSITIVE_INFINITY, TimeUnit.class);
-
-		temp.clear();
-		temp.addAll(valInput.subList(1, 5));
-		DoubleVector vals = Input.parseDoubles(temp, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+		DoubleVector time = Input.parseDoubles(timeInput.subList(1, 3), 0.0d, Double.POSITIVE_INFINITY, TimeUnit.class);
+		DoubleVector vals = Input.parseDoubles(valInput.subList(1, 5), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 		Vec3d val = new Vec3d(vals.get(0), vals.get(1), vals.get(2));
 		curve.addKey(time.get(0), val);
 	}

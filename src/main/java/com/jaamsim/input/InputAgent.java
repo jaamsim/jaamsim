@@ -44,7 +44,6 @@ import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Simulation;
-import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class InputAgent {
@@ -1267,40 +1266,6 @@ public class InputAgent {
 		return inputs;
 	}
 
-
-	/**
-	 * Expects a StringVector of one of two forms:
-	 * 1.  { entry entry entry } { entry entry entry }
-	 * 2.  entry entry entry
-	 * If format 1, returns a vector of stringvectors without braces.
-	 * if format 2, returns a vector of a stringvector, size1.
-	 * @param data
-	 * @return
-	 */
-	public static ArrayList<StringVector> splitStringVectorByBraces(StringVector data) {
-		ArrayList<StringVector> newData = new ArrayList<StringVector>();
-		for (int i=0; i < data.size(); i++) {
-
-			//skip over opening brace if present
-			if (data.get(i).equals("{") )
-				continue;
-
-			StringVector cmd = new StringVector();
-
-			//iterate until closing brace, or end of entry
-			for (int j = i; j < data.size(); j++, i++){
-				if (data.get(j).equals("}"))
-					break;
-
-				cmd.add(data.get(j));
-			}
-
-			//add to vector
-			newData.add(cmd);
-		}
-
-		return newData;
-	}
 
 	/**
 	 * Converts a file path String to a URI.
