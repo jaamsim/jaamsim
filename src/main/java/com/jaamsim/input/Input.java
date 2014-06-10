@@ -35,7 +35,6 @@ import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation.ListInput;
 import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation.StringVector;
 import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation3D.Clock;
 
@@ -288,7 +287,7 @@ public abstract class Input<T> {
 		throw new InputErrorException(INP_ERR_BADSUM, sum, vec.sum());
 	}
 
-	public static <T> T parse(StringVector data, Class<T> aClass, String units, double minValue, double maxValue, int minCount, int maxCount, Class<? extends Unit> unitType) {
+	public static <T> T parse(List<String> data, Class<T> aClass, String units, double minValue, double maxValue, int minCount, int maxCount, Class<? extends Unit> unitType) {
 
 		if( aClass == Double.class ) {
 			if( units != null )
@@ -385,7 +384,7 @@ public abstract class Input<T> {
 		return temp;
 	}
 
-	public static BooleanVector parseBooleanVector(StringVector input)
+	public static BooleanVector parseBooleanVector(List<String> input)
 	throws InputErrorException {
 		BooleanVector temp = new BooleanVector(input.size());
 
@@ -457,7 +456,7 @@ public abstract class Input<T> {
 		catch (NumberFormatException e) { return false; }
 	}
 
-	public static IntegerVector parseIntegerVector(StringVector input, int minValue, int maxValue)
+	public static IntegerVector parseIntegerVector(List<String> input, int minValue, int maxValue)
 	throws InputErrorException {
 		IntegerVector temp = new IntegerVector(input.size());
 
@@ -765,7 +764,7 @@ public abstract class Input<T> {
 	}
 
 	/**
-	 * Convert the given StringVector to a DoubleVector and apply the given conversion factor
+	 * Convert the given input to a DoubleVector and apply the given conversion factor
 	 */
 	public static DoubleVector parseDoubleVector(List<String> input, double minValue, double maxValue, double factor)
 	throws InputErrorException {
@@ -783,7 +782,7 @@ public abstract class Input<T> {
 	}
 
 	/**
-	 * Convert the given StringVector to a DoubleVector and apply the given conversion factor
+	 * Convert the given input to a DoubleVector and apply the given conversion factor
 	 */
 	public static DoubleVector parseDoubles(KeywordIndex kw, double minValue, double maxValue, Class<? extends Unit> unitType)
 	throws InputErrorException {
@@ -827,7 +826,7 @@ public abstract class Input<T> {
 	}
 
 	/**
-	 * Convert the given StringVector to a DoubleVector and apply the given conversion factor
+	 * Convert the given input to a DoubleVector and apply the given conversion factor
 	 */
 	public static DoubleVector parseDoubles(List<String> input, double minValue, double maxValue, Class<? extends Unit> unitType)
 	throws InputErrorException {
@@ -871,7 +870,7 @@ public abstract class Input<T> {
 	}
 
 	/**
-	 * Convert the given StringVector to a DoubleVector including a unit conversion, if necessary
+	 * Convert the given input to a DoubleVector including a unit conversion, if necessary
 	 */
 	public static DoubleVector parseDoubleVector(List<String> data, double minValue, double maxValue, String defaultUnitString)
 	throws InputErrorException {
