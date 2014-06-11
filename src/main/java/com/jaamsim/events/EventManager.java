@@ -141,27 +141,7 @@ public final class EventManager {
 			timelistener.tickUpdate(currentTick);
 			rebaseRealTime = true;
 
-			eventTree.runOnAllNodes(new EventNode.Runner() {
-
-				@Override
-				public void runOnNode(EventNode node) {
-					Event each = node.head;
-					while (each != null) {
-						if (each.handle != null) {
-							each.handle.event = null;
-							each.handle = null;
-						}
-
-						Process proc = each.target.getProcess();
-						if (proc != null)
-							proc.kill();
-
-						each = each.next;
-					}
-				}
-
-			});
-
+			eventTree.runOnAllNodes(new KillAllEvents());
 			eventTree.reset();
 
 			// Kill conditional threads
@@ -173,6 +153,25 @@ public final class EventManager {
 			}
 			conditionalList.clear();
 			conditionalHandles.clear();
+		}
+	}
+
+	private static class KillAllEvents implements EventNode.Runner {
+		@Override
+		public void runOnNode(EventNode node) {
+			Event each = node.head;
+			while (each != null) {
+				if (each.handle != null) {
+					each.handle.event = null;
+					each.handle = null;
+				}
+
+				Process proc = each.target.getProcess();
+				if (proc != null)
+					proc.kill();
+
+				each = each.next;
+			}
 		}
 	}
 
