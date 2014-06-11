@@ -331,18 +331,10 @@ implements TableCellEditor, ActionListener {
 			JFileChooser fileChooser = new JFileChooser(lastDir);
 
 			// Set the file extension filters
-			FileNameExtensionFilter filter = fileInput.getFileNameExtensionFilter();
 			FileNameExtensionFilter[] filters = fileInput.getFileNameExtensionFilters();
-			if (filter != null && filters != null) {
-
+			if (filters.length > 0) {
 				// Turn off the "All Files" filter
 				fileChooser.setAcceptAllFileFilterUsed(false);
-
-				// Include the "All Supported Files" filter if there are more
-				// than one supported extensions
-				if (filters.length > 1)
-					fileChooser.addChoosableFileFilter(filter);
-
 				// Include a separate filter for each extension
 				for (FileNameExtensionFilter f : filters) {
 					fileChooser.addChoosableFileFilter(f);

@@ -125,21 +125,12 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 	}
 
 	/**
-	 * Returns a file name extension filter for "All Supported 3D Files".
-	 *
-	 * @return a file name extension filter.
-	 */
-	public static FileNameExtensionFilter getFileNameExtensionFilter() {
-		return FileInput.getFileNameExtensionFilter("3D", validFileExtensions);
-	}
-
-	/**
 	 * Returns a file name extension filter for each of the supported file types.
 	 *
 	 * @return an array of file name extension filters.
 	 */
 	public static FileNameExtensionFilter[] getFileNameExtensionFilters() {
-		return FileInput.getFileNameExtensionFilters(validFileExtensions, validFileDescriptions);
+		return FileInput.getFileNameExtensionFilters("3D", validFileExtensions, validFileDescriptions);
 	}
 
 	public static MeshProtoKey getCachedMeshKey(URI shapeURI) {

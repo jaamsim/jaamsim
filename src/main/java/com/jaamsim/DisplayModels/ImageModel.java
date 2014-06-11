@@ -120,21 +120,12 @@ public class ImageModel extends DisplayModel {
 	}
 
 	/**
-	 * Returns a file name extension filter for "All Supported Image Files".
-	 *
-	 * @return a file name extension filter.
-	 */
-	public static FileNameExtensionFilter getFileNameExtensionFilter() {
-		return FileInput.getFileNameExtensionFilter("Image", validFileExtensions);
-	}
-
-	/**
 	 * Returns a file name extension filter for each of the supported file types.
 	 *
 	 * @return an array of file name extension filters.
 	 */
 	public static FileNameExtensionFilter[] getFileNameExtensionFilters() {
-		return FileInput.getFileNameExtensionFilters(validFileExtensions, validFileDescriptions);
+		return FileInput.getFileNameExtensionFilters("Image", validFileExtensions, validFileDescriptions);
 	}
 
 	private class Binding extends DisplayModelBinding {

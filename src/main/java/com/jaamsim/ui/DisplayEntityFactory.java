@@ -55,14 +55,14 @@ public class DisplayEntityFactory extends Entity {
 
 		// Set the file extension filters
 		chooser.setAcceptAllFileFilterUsed(false);
-		chooser.addChoosableFileFilter(ColladaModel.getFileNameExtensionFilter());
-		chooser.addChoosableFileFilter(ImageModel.getFileNameExtensionFilter());
-		for (FileNameExtensionFilter filter : ColladaModel.getFileNameExtensionFilters()) {
-			chooser.addChoosableFileFilter(filter);
-		}
-		for (FileNameExtensionFilter filter : ImageModel.getFileNameExtensionFilters()) {
-			chooser.addChoosableFileFilter(filter);
-		}
+		FileNameExtensionFilter[] colFilters = ColladaModel.getFileNameExtensionFilters();
+		FileNameExtensionFilter[] imgFilters = ImageModel.getFileNameExtensionFilters();
+		chooser.addChoosableFileFilter(colFilters[0]);
+		chooser.addChoosableFileFilter(imgFilters[0]);
+		for (int i = 1; i < colFilters.length; i++)
+			chooser.addChoosableFileFilter(colFilters[i]);
+		for (int i = 1; i < imgFilters.length; i++)
+			chooser.addChoosableFileFilter(imgFilters[i]);
 
 		// Show the file chooser and wait for selection
 		int returnVal = chooser.showDialog(gui, "Import");

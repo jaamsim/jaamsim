@@ -177,49 +177,13 @@ public class FileInput extends Input<URI> {
 	}
 
 	/**
-	 * Returns a file name extension filter for a type of file that has
-	 * multiple supported extensions.
-	 *
-	 * @return the file name extension filter for this type of file.
-	 */
-	public FileNameExtensionFilter getFileNameExtensionFilter() {
-		return getFileNameExtensionFilter(fileType, validFileExtensions);
-	}
-
-	/**
-	 * Returns a file name extension filter for a type of file that has
-	 * multiple supported extensions.
-	 *
-	 * @param type - the type of file, for example "Image" or "3D".
-	 * @param fileExt - the valid file extensions for this type of file.
-	 * @return the file name extension filter for this type of file.
-	 */
-	public static FileNameExtensionFilter getFileNameExtensionFilter(String type, String[] fileExt) {
-
-		if (type == null || fileExt == null)
-			return null;
-
-		StringBuilder desc = new StringBuilder(45);
-		desc.append("All Supported ").append(type).append(" Files (");
-
-		for( int i=0; i<fileExt.length; i++) {
-			if(i > 0)
-				desc.append("; ");
-			desc.append("*.").append(fileExt[i].toLowerCase());
-		}
-		desc.append(")");
-
-		return new FileNameExtensionFilter(desc.toString(), fileExt);
-	}
-
-	/**
 	 * Returns an array of file name extension filters, one for each of the
 	 * supported file types.
 	 *
 	 * @return an array of file extension filters.
 	 */
 	public FileNameExtensionFilter[] getFileNameExtensionFilters() {
-		return getFileNameExtensionFilters(validFileExtensions, validFileDescriptions);
+		return getFileNameExtensionFilters(fileType, validFileExtensions, validFileDescriptions);
 	}
 
 	/**
@@ -230,15 +194,52 @@ public class FileInput extends Input<URI> {
 	 * @param fileDesc - the description field for each type of file.
 	 * @return an array of file extension filters.
 	 */
-	public static FileNameExtensionFilter[] getFileNameExtensionFilters(String[] fileExt, String[] fileDesc) {
+	public static FileNameExtensionFilter[] getFileNameExtensionFilters(String type, String[] fileExt, String[] fileDesc) {
+		FileNameExtensionFilter typeFilter = null;
+		if (type != null && fileExt != null) {
+			StringBuilder desc = new StringBuilder(45);
+			desc.append("All Supported ").append(type).append(" Files (");
 
-		if (fileExt == null || fileDesc == null)
-			return null;
+			for (int i = 0; i < fileExt.length; i++) {
+				if (i > 0)
+					desc.append("; ");
+				desc.append("*.").append(fileExt[i].toLowerCase());
+			}
+			desc.append(")");
 
-		FileNameExtensionFilter[] filters = new FileNameExtensionFilter[fileExt.length];
-		for (int i=0; i<fileExt.length; i++) {
-			filters[i] = new FileNameExtensionFilter(fileDesc[i], fileExt[i]);
+			typeFilter = new FileNameExtensionFilter(desc.toString(), fileExt);
 		}
-		return filters;
+
+		FileNameExtensionFilter[] temp = null;
+		if (fileExt != null && fileDesc != null) {
+			temp = new FileNameExtensionFilter[fileExt.length];
+			for (int i = 0; i < fileExt.length; i++) {
+				temp[i] = new FileNameExtensionFilter(fileDesc[i], fileExt[i]);
+			}
+		}
+
+		int len = 0;
+		if (typeFilter != null)
+			len += 1;
+
+		if (temp != null)
+			len += temp.length;
+
+		FileNameExtensionFilter[] ret = new FileNameExtensionFilter[len];
+
+		int idx = 0;
+		if (typeFilter != null) {
+			ret[idx] = typeFilter;
+			idx++;
+		}
+
+		if (temp != null) {
+			for (int i = 0; i < temp.length; i++) {
+				ret[idx] = temp[i];
+				idx++;
+			}
+		}
+
+		return ret;
 	}
 }

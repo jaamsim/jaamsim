@@ -145,7 +145,6 @@ public class GraphicBox extends JDialog {
 
 				// Set the file extension filters
 				chooser.setAcceptAllFileFilterUsed(false);
-				chooser.addChoosableFileFilter(ColladaModel.getFileNameExtensionFilter());
 				for (FileNameExtensionFilter filter : ColladaModel.getFileNameExtensionFilters()) {
 					chooser.addChoosableFileFilter(filter);
 				}
