@@ -370,27 +370,6 @@ public final class EventManager {
 		return nextEventTime;
 	}
 
-	public void scheduleSingleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
-		synchronized (lockObject) {
-			assertNotWaitUntil();
-			long eventTime = calculateEventTime(waitLength);
-			EventNode node = getEventNode(eventTime, eventPriority);
-			Event each = node.head;
-			while (each != null) {
-				if (each.target == t) {
-					if (trcListener != null) trcListener.traceSchedProcess(this, each);
-					return;
-				}
-				each = each.next;
-			}
-
-			// Create an event for the new process at the present time, and place it on the event stack
-			Event newEvent = new Event(node, t);
-			if (trcListener != null) trcListener.traceSchedProcess(this, newEvent);
-			node.addEvent(newEvent, fifo);
-		}
-	}
-
 	/**
 	 * Schedules a future event to occur with a given priority.  Lower priority
 	 * events will be executed preferentially over higher priority.  This is

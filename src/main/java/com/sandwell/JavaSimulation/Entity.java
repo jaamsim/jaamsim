@@ -499,10 +499,6 @@ public class Entity {
 		getEventManager().scheduleProcess(ticks, priority, false, t);
 	}
 
-	public final void scheduleSingleProcess(ProcessTarget t, int priority, boolean fifo) {
-		getEventManager().scheduleSingleProcess(0, priority, fifo, t);
-	}
-
 	/**
 	 * Wait a number of simulated seconds.
 	 * @param secs
