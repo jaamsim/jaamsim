@@ -499,14 +499,6 @@ public class Entity {
 		getEventManager().scheduleProcess(ticks, priority, false, t);
 	}
 
-	public final void scheduleSingleProcess(ProcessTarget t) {
-		getEventManager().scheduleSingleProcess(0, Entity.PRIO_LOWEST, true, t);
-	}
-
-	public final void scheduleSingleProcess(ProcessTarget t, int priority) {
-		getEventManager().scheduleSingleProcess(0, priority, false, t);
-	}
-
 	public final void scheduleSingleProcess(ProcessTarget t, int priority, boolean fifo) {
 		getEventManager().scheduleSingleProcess(0, priority, fifo, t);
 	}
