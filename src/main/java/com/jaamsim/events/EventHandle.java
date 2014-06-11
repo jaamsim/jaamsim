@@ -15,9 +15,9 @@
 package com.jaamsim.events;
 
 /**
- * An Eventhandle provides a means to remember a future scheduled event in order
+ * An EventHandle provides a means to remember a future scheduled event in order
  * to manage it's execution.  Examples of this control would be killing the event
- * or executing it earlier than otherwise scheudled.
+ * or executing it earlier than otherwise scheduled.
  */
 public class EventHandle {
 	Event event;
