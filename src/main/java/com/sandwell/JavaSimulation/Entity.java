@@ -485,6 +485,12 @@ public class Entity {
 		evt.scheduleProcess(ticks, priority, false, t, handle);
 	}
 
+	public final void scheduleProcess(double secs, int priority, boolean fifo, ProcessTarget t, EventHandle handle) {
+		EventManager evt = getEventManager();
+		long ticks = evt.secondsToNearestTick(secs);
+		evt.scheduleProcess(ticks, priority, fifo, t, handle);
+	}
+
 	public final void scheduleProcessTicks(long ticks, int priority, boolean fifo, ProcessTarget t, EventHandle h) {
 		getEventManager().scheduleProcess(ticks, priority, fifo, t, h);
 	}
@@ -495,12 +501,6 @@ public class Entity {
 
 	public final void scheduleSingleProcess(ProcessTarget t) {
 		getEventManager().scheduleSingleProcess(0, Entity.PRIO_LOWEST, true, t);
-	}
-
-	public final void scheduleSingleProcess(ProcessTarget t, double secs) {
-		EventManager evt = getEventManager();
-		long ticks = evt.secondsToNearestTick(secs);
-		getEventManager().scheduleSingleProcess(ticks, Entity.PRIO_LOWEST, true, t);
 	}
 
 	public final void scheduleSingleProcess(ProcessTarget t, int priority) {
