@@ -470,13 +470,13 @@ public class Entity {
 	}
 
 	public final void scheduleProcess(ProcessTarget t) {
-		getEventManager().scheduleProcess(0, Entity.PRIO_DEFAULT, false, t);
+		getEventManager().scheduleProcess(0, Entity.PRIO_DEFAULT, false, t, null);
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t) {
 		EventManager evt = getEventManager();
 		long ticks = evt.secondsToNearestTick(secs);
-		evt.scheduleProcess(ticks, priority, false, t);
+		evt.scheduleProcess(ticks, priority, false, t, null);
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t, EventHandle handle) {
@@ -496,7 +496,7 @@ public class Entity {
 	}
 
 	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
-		getEventManager().scheduleProcess(ticks, priority, false, t);
+		getEventManager().scheduleProcess(ticks, priority, false, t, null);
 	}
 
 	/**

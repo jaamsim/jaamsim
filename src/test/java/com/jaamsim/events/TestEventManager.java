@@ -28,11 +28,11 @@ public class TestEventManager {
 		evt.clear();
 
 		ArrayList<String> log = new ArrayList<String>();
-		evt.scheduleProcess(0, 0, false, new LogTarget(0, log));
-		evt.scheduleProcess(1, 0, false, new LogTarget(1, log));
-		evt.scheduleProcess(2, 0, false, new LogTarget(2, log));
-		evt.scheduleProcess(3, 0, false, new LogTarget(3, log));
-		evt.scheduleProcess(4, 0, false, new LogTarget(4, log));
+		evt.scheduleProcess(0, 0, false, new LogTarget(0, log), null);
+		evt.scheduleProcess(1, 0, false, new LogTarget(1, log), null);
+		evt.scheduleProcess(2, 0, false, new LogTarget(2, log), null);
+		evt.scheduleProcess(3, 0, false, new LogTarget(3, log), null);
+		evt.scheduleProcess(4, 0, false, new LogTarget(4, log), null);
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
@@ -55,11 +55,11 @@ public class TestEventManager {
 		evt.clear();
 
 		ArrayList<String> log = new ArrayList<String>();
-		evt.scheduleProcess(0, 0, false, new LogTarget(0, log));
-		evt.scheduleProcess(0, 1, false, new LogTarget(1, log));
-		evt.scheduleProcess(0, 2, false, new LogTarget(2, log));
-		evt.scheduleProcess(0, 3, false, new LogTarget(3, log));
-		evt.scheduleProcess(0, 4, false, new LogTarget(4, log));
+		evt.scheduleProcess(0, 0, false, new LogTarget(0, log), null);
+		evt.scheduleProcess(0, 1, false, new LogTarget(1, log), null);
+		evt.scheduleProcess(0, 2, false, new LogTarget(2, log), null);
+		evt.scheduleProcess(0, 3, false, new LogTarget(3, log), null);
+		evt.scheduleProcess(0, 4, false, new LogTarget(4, log), null);
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
@@ -85,11 +85,11 @@ public class TestEventManager {
 		evt.clear();
 
 		ArrayList<String> log = new ArrayList<String>();
-		evt.scheduleProcess(0, 0, false, new LogTarget(0, log));
-		evt.scheduleProcess(0, 0, false, new LogTarget(1, log));
-		evt.scheduleProcess(0, 0, false, new LogTarget(2, log));
-		evt.scheduleProcess(0, 0, false, new LogTarget(3, log));
-		evt.scheduleProcess(0, 0, false, new LogTarget(4, log));
+		evt.scheduleProcess(0, 0, false, new LogTarget(0, log), null);
+		evt.scheduleProcess(0, 0, false, new LogTarget(1, log), null);
+		evt.scheduleProcess(0, 0, false, new LogTarget(2, log), null);
+		evt.scheduleProcess(0, 0, false, new LogTarget(3, log), null);
+		evt.scheduleProcess(0, 0, false, new LogTarget(4, log), null);
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
@@ -115,11 +115,11 @@ public class TestEventManager {
 		evt.clear();
 
 		ArrayList<String> log = new ArrayList<String>();
-		evt.scheduleProcess(0, 0, true, new LogTarget(0, log));
-		evt.scheduleProcess(0, 0, true, new LogTarget(1, log));
-		evt.scheduleProcess(0, 0, true, new LogTarget(2, log));
-		evt.scheduleProcess(0, 0, true, new LogTarget(3, log));
-		evt.scheduleProcess(0, 0, true, new LogTarget(4, log));
+		evt.scheduleProcess(0, 0, true, new LogTarget(0, log), null);
+		evt.scheduleProcess(0, 0, true, new LogTarget(1, log), null);
+		evt.scheduleProcess(0, 0, true, new LogTarget(2, log), null);
+		evt.scheduleProcess(0, 0, true, new LogTarget(3, log), null);
+		evt.scheduleProcess(0, 0, true, new LogTarget(4, log), null);
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
@@ -145,23 +145,23 @@ public class TestEventManager {
 		evt.clear();
 
 		ArrayList<String> log = new ArrayList<String>();
-		evt.scheduleProcess(0, 0, false, new LogTarget(0, log));
-		evt.scheduleProcess(1, 0, false, new LogTarget(1, log));
-		evt.scheduleProcess(2, 0, false, new LogTarget(2, log));
-		evt.scheduleProcess(3, 0, false, new LogTarget(3, log));
-		evt.scheduleProcess(4, 0, false, new LogTarget(4, log));
+		evt.scheduleProcess(0, 0, false, new LogTarget(0, log), null);
+		evt.scheduleProcess(1, 0, false, new LogTarget(1, log), null);
+		evt.scheduleProcess(2, 0, false, new LogTarget(2, log), null);
+		evt.scheduleProcess(3, 0, false, new LogTarget(3, log), null);
+		evt.scheduleProcess(4, 0, false, new LogTarget(4, log), null);
 
-		evt.scheduleProcess(0, 0, true, new LogTarget(10, log));
-		evt.scheduleProcess(1, 0, true, new LogTarget(11, log));
-		evt.scheduleProcess(2, 0, true, new LogTarget(12, log));
-		evt.scheduleProcess(3, 0, true, new LogTarget(13, log));
-		evt.scheduleProcess(4, 0, true, new LogTarget(14, log));
+		evt.scheduleProcess(0, 0, true, new LogTarget(10, log), null);
+		evt.scheduleProcess(1, 0, true, new LogTarget(11, log), null);
+		evt.scheduleProcess(2, 0, true, new LogTarget(12, log), null);
+		evt.scheduleProcess(3, 0, true, new LogTarget(13, log), null);
+		evt.scheduleProcess(4, 0, true, new LogTarget(14, log), null);
 
-		evt.scheduleProcess(0, 0, false, new LogTarget(20, log));
-		evt.scheduleProcess(1, 0, false, new LogTarget(21, log));
-		evt.scheduleProcess(2, 0, false, new LogTarget(22, log));
-		evt.scheduleProcess(3, 0, false, new LogTarget(23, log));
-		evt.scheduleProcess(4, 0, false, new LogTarget(24, log));
+		evt.scheduleProcess(0, 0, false, new LogTarget(20, log), null);
+		evt.scheduleProcess(1, 0, false, new LogTarget(21, log), null);
+		evt.scheduleProcess(2, 0, false, new LogTarget(22, log), null);
+		evt.scheduleProcess(3, 0, false, new LogTarget(23, log), null);
+		evt.scheduleProcess(4, 0, false, new LogTarget(24, log), null);
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
@@ -211,7 +211,7 @@ public class TestEventManager {
 				EventManager.current().waitTicks(1, 0, false, null);
 				log.add("Wait1:" + EventManager.current().getSimTicks());
 			}
-		});
+		}, null);
 
 		evt.scheduleProcess(0, 0, false, new ProcessTarget() {
 			@Override
@@ -227,7 +227,7 @@ public class TestEventManager {
 				EventManager.current().waitTicks(1, 0, true, null);
 				log.add("Wait2:" + EventManager.current().getSimTicks());
 			}
-		});
+		}, null);
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 

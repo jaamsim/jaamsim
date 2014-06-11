@@ -633,10 +633,6 @@ public final class EventManager {
 
 	}
 
-	public void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t) {
-		this.scheduleProcess(waitLength, eventPriority, fifo, t, null);
-	}
-
 	public void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
