@@ -56,7 +56,7 @@ AssembleIconModel       ImageFile { '<res>/images/Assemble-256.png' }      Trans
 EntityGateIconModel     ImageFile { '<res>/images/Gate-256.png' }        Transparent { TRUE }
 EntitySignalIconModel   ImageFile { '<res>/images/Signal-256.png' }      Transparent { TRUE }
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
-StatisticsIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
+StatisticsIconModel     ImageFile { '<res>/images/Statistics-256.png' }  Transparent { TRUE }
 
 ReportGenerator         JavaClass { com.jaamsim.BasicObjects.ReportGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ReportGeneratorIconModel }
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
