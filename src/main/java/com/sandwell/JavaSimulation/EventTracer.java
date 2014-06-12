@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.jaamsim.events.EventManager;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.ui.LogBox;
 
 class EventTracer {
@@ -39,6 +38,12 @@ class EventTracer {
 	static void init() {
 		eventBuffer.clear();
 		bufferTime = 0;
+		try {
+			if (eventVerifyReader != null)
+				eventVerifyReader.close();
+		}
+		catch (IOException e) {}
+		eventVerifyReader = null;
 	}
 
 	private static void fillBufferUntil(long internalTime) {
@@ -73,26 +78,17 @@ class EventTracer {
 		}
 	}
 
-	static void verifyAllEvents(EventManager evt, boolean enable) {
-		if (enable) {
-			eventBuffer.clear();
-			bufferTime = 0;
-			File evtFile = new File(InputAgent.getConfigFile().getParentFile(), InputAgent.getRunName() + ".evt");
-			try {
-				eventVerifyReader = new BufferedReader(new FileReader(evtFile));
-			}
-			catch (FileNotFoundException e) {}
-			if (eventVerifyReader == null)
-				LogBox.logLine("Unable to open an event verification file.");
-			evt.setTraceListener(new EventTraceRecord());
-		} else if (eventVerifyReader != null) {
-			try {
-				eventVerifyReader.close();
-			}
-			catch (IOException e) {}
-			eventVerifyReader = null;
-			evt.setTraceListener(null);
+	static void verifyAllEvents(EventManager evt, String evtName) {
+		eventBuffer.clear();
+		bufferTime = 0;
+		File evtFile = new File(evtName);
+		try {
+			eventVerifyReader = new BufferedReader(new FileReader(evtFile));
 		}
+		catch (FileNotFoundException e) {}
+		if (eventVerifyReader == null)
+			LogBox.logLine("Unable to open an event verification file.");
+		evt.setTraceListener(new EventTraceRecord());
 	}
 
 	private static void findEventInBuffer(EventManager e, EventTraceRecord record) {

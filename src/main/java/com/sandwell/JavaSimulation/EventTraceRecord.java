@@ -95,12 +95,6 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		traceLevel--;
 	}
 
-
-	synchronized void clearTrace() {
-		traceLevel = 0;
-		clear();
-	}
-
 	@Override
 	public synchronized void traceWait(EventManager e, Event evt) {
 		this.addHeader(e.name, evt.getScheduledTick());

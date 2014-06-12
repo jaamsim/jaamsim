@@ -349,7 +349,8 @@ public class Simulation extends Entity {
 			root.setTraceListener(rec);
 		}
 		else if( verifyEventsInput.getValue() ) {
-			EventTracer.verifyAllEvents(root, verifyEventsInput.getValue());
+			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
+			EventTracer.verifyAllEvents(root, evtName);
 		}
 		root.setSimTimeScale(simTimeScaleInput.getValue());
 		setSimTimeScale(simTimeScaleInput.getValue());
