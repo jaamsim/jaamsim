@@ -26,7 +26,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.ui.LogBox;
 
 class EventTracer {
-	private static FileEntity eventTraceFile;
 	private static BufferedReader eventVerifyReader;
 	private static long bufferTime; // Internal sim time buffer has been filled to
 	private static final ArrayList<EventTraceRecord> eventBuffer;
@@ -74,21 +73,8 @@ class EventTracer {
 		}
 	}
 
-	static void traceAllEvents(EventManager evt, boolean enable) {
-		if (enable) {
-			verifyAllEvents(evt, false);
-			eventTraceFile = new FileEntity(InputAgent.getConfigFile().getParentFile()+ File.separator+ InputAgent.getRunName() + ".evt");
-			evt.setTraceListener(new EventTraceRecord());
-		} else if (eventTraceFile != null) {
-			eventTraceFile.close();
-			eventTraceFile = null;
-			evt.setTraceListener(null);
-		}
-	}
-
 	static void verifyAllEvents(EventManager evt, boolean enable) {
 		if (enable) {
-			traceAllEvents(evt, false);
 			eventBuffer.clear();
 			bufferTime = 0;
 			File evtFile = new File(InputAgent.getConfigFile().getParentFile(), InputAgent.getRunName() + ".evt");
@@ -162,25 +148,9 @@ class EventTracer {
 		e.pause();
 	}
 
-	private static void writeEventToBuffer(EventTraceRecord record) {
-		for (String each : record) {
-			eventTraceFile.putString(each);
-			eventTraceFile.newLine();
-		}
-		eventTraceFile.flush();
-	}
-
 	static void processTraceData(EventManager e, EventTraceRecord traceRecord) {
-		if (eventTraceFile != null) {
-			synchronized (eventTraceFile) {
-				EventTracer.writeEventToBuffer(traceRecord);
-			}
-		}
-
-		if (eventVerifyReader != null) {
-			synchronized (eventVerifyReader) {
-				EventTracer.findEventInBuffer(e, traceRecord);
-			}
+		synchronized (eventVerifyReader) {
+			EventTracer.findEventInBuffer(e, traceRecord);
 		}
 	}
 }

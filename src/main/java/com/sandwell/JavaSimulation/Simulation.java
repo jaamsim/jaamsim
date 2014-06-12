@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import java.io.File;
+
 import javax.swing.JFrame;
 
 import com.jaamsim.events.EventManager;
@@ -342,7 +344,9 @@ public class Simulation extends Entity {
 		root.setTraceListener(null);
 
 		if( traceEventsInput.getValue() ) {
-			EventTracer.traceAllEvents(root, traceEventsInput.getValue());
+			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
+			EventRecorder rec = new EventRecorder(evtName);
+			root.setTraceListener(rec);
 		}
 		else if( verifyEventsInput.getValue() ) {
 			EventTracer.verifyAllEvents(root, verifyEventsInput.getValue());
