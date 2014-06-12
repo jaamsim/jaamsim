@@ -280,7 +280,6 @@ public class Simulation extends Entity {
 	}
 
 	public static void clear() {
-		EventTracer.init();
 		initializationTime.reset();
 		runDuration.reset();
 		simTimeScaleInput.reset();
@@ -339,7 +338,6 @@ public class Simulation extends Entity {
 		}
 
 		InputAgent.prepareReportDirectory();
-		EventTracer.init();
 		root.clear();
 		root.setTraceListener(null);
 
@@ -350,8 +348,10 @@ public class Simulation extends Entity {
 		}
 		else if( verifyEventsInput.getValue() ) {
 			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
-			EventTracer.verifyAllEvents(root, evtName);
+			EventTracer trc = new EventTracer(evtName);
+			root.setTraceListener(trc);
 		}
+
 		root.setSimTimeScale(simTimeScaleInput.getValue());
 		setSimTimeScale(simTimeScaleInput.getValue());
 		FrameBox.setSecondsPerTick(3600.0d / simTimeScaleInput.getValue());

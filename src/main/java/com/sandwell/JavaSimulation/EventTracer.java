@@ -21,32 +21,33 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.jaamsim.events.Event;
 import com.jaamsim.events.EventManager;
+import com.jaamsim.events.EventTraceListener;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.ui.LogBox;
 
-class EventTracer {
-	private static BufferedReader eventVerifyReader;
-	private static long bufferTime; // Internal sim time buffer has been filled to
-	private static final ArrayList<EventTraceRecord> eventBuffer;
+class EventTracer implements EventTraceListener {
+	private BufferedReader eventVerifyReader;
+	private EventTraceRecord reader;
+	private long bufferTime; // Internal sim time buffer has been filled to
+	private final ArrayList<EventTraceRecord> eventBuffer;
 
-	static {
+	public EventTracer(String evtName) {
 		eventBuffer = new ArrayList<EventTraceRecord>();
-	}
-
-	private EventTracer() {}
-
-	static void init() {
-		eventBuffer.clear();
 		bufferTime = 0;
+		File evtFile = new File(evtName);
 		try {
-			if (eventVerifyReader != null)
-				eventVerifyReader.close();
+			eventVerifyReader = new BufferedReader(new FileReader(evtFile));
 		}
-		catch (IOException e) {}
-		eventVerifyReader = null;
+		catch (FileNotFoundException e) {}
+		if (eventVerifyReader == null)
+			LogBox.logLine("Unable to open an event verification file.");
+
+		reader = new EventTraceRecord();
 	}
 
-	private static void fillBufferUntil(long internalTime) {
+	private void fillBufferUntil(long internalTime) {
 		while (bufferTime <= internalTime) {
 			// Read a full trace record form the file, terminated at a blank line
 			EventTraceRecord temp = new EventTraceRecord();
@@ -78,22 +79,9 @@ class EventTracer {
 		}
 	}
 
-	static void verifyAllEvents(EventManager evt, String evtName) {
-		eventBuffer.clear();
-		bufferTime = 0;
-		File evtFile = new File(evtName);
-		try {
-			eventVerifyReader = new BufferedReader(new FileReader(evtFile));
-		}
-		catch (FileNotFoundException e) {}
-		if (eventVerifyReader == null)
-			LogBox.logLine("Unable to open an event verification file.");
-		evt.setTraceListener(new EventTraceRecord());
-	}
-
-	private static void findEventInBuffer(EventManager e, EventTraceRecord record) {
+	private void findEventInBuffer(EventManager e, EventTraceRecord record) {
 		// Ensure we have read enough from the log to find this record
-		EventTracer.fillBufferUntil(record.getInternalTime());
+		this.fillBufferUntil(record.getInternalTime());
 
 		// Try an optimistic approach first looking for exact matches
 		for (EventTraceRecord each : eventBuffer) {
@@ -144,9 +132,68 @@ class EventTracer {
 		e.pause();
 	}
 
-	static void processTraceData(EventManager e, EventTraceRecord traceRecord) {
-		synchronized (eventVerifyReader) {
-			EventTracer.findEventInBuffer(e, traceRecord);
-		}
+	private void finish(EventManager e) {
+		if (reader.traceLevel != 1)
+			return;
+
+		reader.add("");
+		reader.parse();
+		findEventInBuffer(e, reader);
+		reader.clear();
+		reader.traceLevel--;
+	}
+
+	@Override
+	public void traceWait(EventManager e, Event evt) {
+		reader.traceWait(e, evt);
+		this.finish(e);
+	}
+
+	@Override
+	public void traceEvent(EventManager e, Event evt) {
+		reader.traceEvent(e, evt);
+		this.finish(e);
+	}
+
+	@Override
+	public void traceSchedProcess(EventManager e, Event evt) {
+		reader.traceSchedProcess(e, evt);
+		this.finish(e);
+	}
+
+	@Override
+	public void traceProcessStart(EventManager e, ProcessTarget t) {
+		reader.traceProcessStart(e, t);
+		this.finish(e);
+	}
+
+	@Override
+	public void traceProcessEnd(EventManager e) {
+		reader.traceProcessEnd(e);
+		this.finish(e);
+	}
+
+	@Override
+	public void traceInterrupt(EventManager e, Event evt) {
+		reader.traceInterrupt(e, evt);
+		this.finish(e);
+	}
+
+	@Override
+	public void traceKill(EventManager e, Event evt) {
+		reader.traceKill(e, evt);
+		this.finish(e);
+	}
+
+	@Override
+	public void traceWaitUntil(EventManager e) {
+		reader.traceWaitUntil(e);
+		this.finish(e);
+	}
+
+	@Override
+	public void traceWaitUntilEnded(EventManager e, Event evt) {
+		reader.traceWaitUntilEnded(e, evt);
+		this.finish(e);
 	}
 }
