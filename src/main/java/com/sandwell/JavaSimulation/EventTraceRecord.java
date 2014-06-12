@@ -85,7 +85,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public synchronized void traceWait(EventManager e, Event evt) {
+	public void traceWait(EventManager e, Event evt) {
 		this.addHeader(e.name, evt.getScheduledTick());
 		traceLevel--;
 
@@ -94,7 +94,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public synchronized void traceEvent(EventManager e, Event evt) {
+	public void traceEvent(EventManager e, Event evt) {
 		this.addHeader(e.name, evt.getScheduledTick());
 		this.append(String.format("Event\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
@@ -103,7 +103,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public synchronized void traceInterrupt(EventManager e, Event evt) {
+	public void traceInterrupt(EventManager e, Event evt) {
 		this.addHeader(e.name, evt.getScheduledTick());
 		this.append(String.format("Int\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
@@ -112,42 +112,42 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public synchronized void traceKill(EventManager e, Event evt) {
+	public void traceKill(EventManager e, Event evt) {
 		this.addHeader(e.name, evt.getScheduledTick());
 		this.append(String.format("Kill\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
 	}
 
 	@Override
-	public synchronized void traceWaitUntil(EventManager e) {
+	public void traceWaitUntil(EventManager e) {
 		this.addHeader(e.name, e.getSimTicks());
 		traceLevel--;
 		this.append("WaitUntil");
 	}
 
 	@Override
-	public synchronized void traceWaitUntilEnded(EventManager e, Event evt) {
+	public void traceWaitUntilEnded(EventManager e, Event evt) {
 		this.addHeader(e.name, e.getSimTicks());
 		this.append(String.format("WaitUntilEnded\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
 	}
 
 	@Override
-	public synchronized void traceProcessStart(EventManager e, ProcessTarget t) {
+	public void traceProcessStart(EventManager e, ProcessTarget t) {
 		this.addHeader(e.name, e.getSimTicks());
 		this.append(String.format("StartProcess\t%s", t.getDescription()));
 		traceLevel++;
 	}
 
 	@Override
-	public synchronized void traceProcessEnd(EventManager e) {
+	public void traceProcessEnd(EventManager e) {
 		this.addHeader(e.name, e.getSimTicks());
 		traceLevel--;
 		this.append("Exit");
 	}
 
 	@Override
-	public synchronized void traceSchedProcess(EventManager e, Event evt) {
+	public void traceSchedProcess(EventManager e, Event evt) {
 		this.addHeader(e.name, e.getSimTicks());
 		this.append(String.format("SchedProcess\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
