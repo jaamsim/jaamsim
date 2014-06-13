@@ -102,10 +102,8 @@ final class Process extends Thread {
 				target = null;
 				activeFlag = true;
 			}
-			if (t != null)
-				currentEVT.executeTarget(t);
-			else
-				currentEVT.executeEvents(this);
+
+			currentEVT.executeTarget(this, t);
 
 			// Ensure all state is cleared before returning to the pool
 			synchronized (this) {

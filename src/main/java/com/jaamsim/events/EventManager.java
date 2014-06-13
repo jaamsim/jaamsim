@@ -175,14 +175,18 @@ public final class EventManager {
 		}
 	}
 
-	boolean executeTarget(ProcessTarget t) {
+	boolean executeTarget(Process cur, ProcessTarget t) {
+		if (t == null) {
+			executeEvents(cur);
+			return false;
+		}
 		try {
 			// Execute the method
 			t.process();
 
 			// Notify the event manager that the process has been completed
 			synchronized (lockObject) {
-				Process cur = assertNotWaitUntil();
+				assertNotWaitUntil(cur);
 				if (trcListener != null) trcListener.traceProcessEnd(this);
 				return !cur.wakeNextProcess();
 			}
@@ -206,7 +210,7 @@ public final class EventManager {
 	 * It is only paused and restarted as required. The run method is called by
 	 * eventManager.start().
 	 */
-	void executeEvents(Process cur) {
+	private void executeEvents(Process cur) {
 		synchronized (lockObject) {
 			if (processRunning)
 				return;
@@ -257,7 +261,7 @@ public final class EventManager {
 
 					// the return from execute target informs whether or not this
 					// thread should grab an new Event, or return to the pool
-					if (executeTarget(nextEvent.target))
+					if (executeTarget(cur, nextEvent.target))
 						continue;
 
 					return;
@@ -378,7 +382,8 @@ public final class EventManager {
 	 */
 	public void waitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
 		synchronized (lockObject) {
-			Process cur = assertNotWaitUntil();
+			Process cur = Process.current();
+			assertNotWaitUntil(cur);
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);
 			EventNode node = getEventNode(nextEventTime, priority);
@@ -411,16 +416,14 @@ public final class EventManager {
 	 * waitUntilEnded was missed.
 	 * @return the current model Process
 	 */
-	private Process assertNotWaitUntil() {
-		Process cur = Process.current();
+	private void assertNotWaitUntil(Process cur) {
 		if (!cur.isCondWait())
-			return cur;
+			return;
 
 		System.out.println("AUDIT - waitUntil without waitUntilEnded " + this);
 		for (StackTraceElement elem : cur.getStackTrace()) {
 			System.out.println(elem.toString());
 		}
-		return cur;
 	}
 
 	public static final void waitUntil() {
@@ -536,7 +539,7 @@ public final class EventManager {
 
 	public void killEvent(ConditionalHandle handle) {
 		synchronized (lockObject) {
-			assertNotWaitUntil();
+			assertNotWaitUntil(Process.current());
 
 			Process p = handle.proc;
 			if (p == null)
@@ -559,7 +562,7 @@ public final class EventManager {
 	 */
 	public void killEvent(EventHandle handle) {
 		synchronized (lockObject) {
-			assertNotWaitUntil();
+			assertNotWaitUntil(Process.current());
 
 			Event evt = handle.event;
 			if (evt == null)
@@ -578,7 +581,8 @@ public final class EventManager {
 	 */
 	public void interruptEvent(EventHandle handle) {
 		synchronized (lockObject) {
-			Process cur = assertNotWaitUntil();
+			Process cur = Process.current();
+			assertNotWaitUntil(cur);
 
 			Event evt = handle.event;
 			if (evt == null)
