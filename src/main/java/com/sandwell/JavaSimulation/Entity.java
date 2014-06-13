@@ -626,18 +626,6 @@ public class Entity {
 		this.simWaitTicks(0, Entity.PRIO_LOWEST, false, null);
 	}
 
-	public final void waitUntil() {
-		getEventManager().waitUntil(null);
-	}
-
-	public final void waitUntil(ConditionalHandle handle) {
-		getEventManager().waitUntil(handle);
-	}
-
-	public final void waitUntilEnded() {
-		getEventManager().waitUntilEnded();
-	}
-
 	public final void killEvent(EventHandle handle) {
 		getEventManager().killEvent(handle);
 	}

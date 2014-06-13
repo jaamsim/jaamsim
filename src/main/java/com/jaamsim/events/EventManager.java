@@ -423,14 +423,28 @@ public final class EventManager {
 		return cur;
 	}
 
+	public static final void waitUntil() {
+		Process cur = Process.current();
+		cur.currentEVT.waitUntil(cur, null);
+	}
+
+	public static final void waitUntil(ConditionalHandle handle) {
+		Process cur = Process.current();
+		cur.currentEVT.waitUntil(cur, handle);
+	}
+
+	public static final void endWaitUntil() {
+		Process cur = Process.current();
+		cur.currentEVT.waitUntilEnded(cur);
+	}
+
 	/**
 	 * Used to achieve conditional waits in the simulation.  Adds the calling
 	 * thread to the conditional stack, then wakes the next waiting thread on
 	 * the thread stack.
 	 */
-	public void waitUntil(ConditionalHandle handle) {
+	private void waitUntil(Process cur, ConditionalHandle handle) {
 		synchronized (lockObject) {
-			Process cur = Process.current();
 			if (!conditionalList.contains(cur)) {
 				if (handle != null) {
 					if (handle.proc != null)
@@ -447,11 +461,10 @@ public final class EventManager {
 		}
 	}
 
-	public void waitUntilEnded() {
+	private void waitUntilEnded(Process cur) {
 		synchronized (lockObject) {
 			// Do not wait at all if we never actually were on the waitUntilStack
 			// ie. we never called waitUntil
-			Process cur = Process.current();
 			int index = conditionalList.indexOf(cur);
 			if (index == -1)
 				return;

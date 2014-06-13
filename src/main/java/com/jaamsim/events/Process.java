@@ -42,7 +42,7 @@ final class Process extends Thread {
 
 	// This is a very special reference that is only safe to use form the currently
 	// executing Process, it is essentiall a Threadlocal variable
-	private EventManager currentEVT;
+	EventManager currentEVT;
 
 	private boolean dieFlag;
 	private boolean activeFlag;
