@@ -41,8 +41,8 @@ final class Process extends Thread {
 	private ProcessTarget target; // The entity whose method is to be executed
 
 	// This is a very special reference that is only safe to use form the currently
-	// executing Process, it is essentiall a Threadlocal variable
-	EventManager currentEVT;
+	// executing Process, it is essentially a Threadlocal variable
+	EventManager evt;
 
 	private boolean dieFlag;
 	private boolean activeFlag;
@@ -97,20 +97,20 @@ final class Process extends Thread {
 			// Process has been woken up, execute the method we have been assigned
 			ProcessTarget t;
 			synchronized (this) {
-				currentEVT = eventManager;
+				evt = eventManager;
 				t = target;
 				target = null;
 				activeFlag = true;
 			}
 
-			currentEVT.executeTarget(this, t);
+			evt.executeTarget(this, t);
 
 			// Ensure all state is cleared before returning to the pool
 			synchronized (this) {
 				eventManager = null;
 				nextProcess = null;
 				target = null;
-				currentEVT = null;
+				evt = null;
 				activeFlag = false;
 				dieFlag = false;
 				condWait = false;
@@ -180,10 +180,6 @@ final class Process extends Thread {
 		super.interrupt();
 	}
 
-	static EventManager currentEVT() {
-		return Process.current().currentEVT;
-	}
-
 	synchronized void setNextProcess(Process next) {
 		nextProcess = next;
 	}
@@ -192,11 +188,10 @@ final class Process extends Thread {
 	 * Returns true if we woke a next Process, otherwise return false.
 	 */
 	synchronized boolean wakeNextProcess() {
-		Process p = nextProcess;
-		nextProcess = null;
 		activeFlag = false;
-		if (p != null) {
-			p.wake();
+		if (nextProcess != null) {
+			nextProcess.wake();
+			nextProcess = null;
 			return true;
 		}
 

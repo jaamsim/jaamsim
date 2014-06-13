@@ -428,17 +428,17 @@ public final class EventManager {
 
 	public static final void waitUntil() {
 		Process cur = Process.current();
-		cur.currentEVT.waitUntil(cur, null);
+		cur.evt.waitUntil(cur, null);
 	}
 
 	public static final void waitUntil(ConditionalHandle handle) {
 		Process cur = Process.current();
-		cur.currentEVT.waitUntil(cur, handle);
+		cur.evt.waitUntil(cur, handle);
 	}
 
 	public static final void endWaitUntil() {
 		Process cur = Process.current();
-		cur.currentEVT.waitUntilEnded(cur);
+		cur.evt.waitUntilEnded(cur);
 	}
 
 	/**
@@ -713,7 +713,7 @@ public final class EventManager {
 	 * Returns the eventManager that is currently executing events for this thread.
 	 */
 	public static final EventManager current() {
-		return Process.currentEVT();
+		return Process.current().evt;
 	}
 
 	public final void setSimTimeScale(double scale) {
