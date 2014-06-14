@@ -42,7 +42,7 @@ final class Process extends Thread {
 
 	// This is a very special reference that is only safe to use form the currently
 	// executing Process, it is essentially a Threadlocal variable
-	EventManager evt;
+	private EventManager evt;
 
 	private boolean dieFlag;
 	private boolean activeFlag;
@@ -116,6 +116,10 @@ final class Process extends Thread {
 				condWait = false;
 			}
 		}
+	}
+
+	final EventManager evt() {
+		return evt;
 	}
 
 	// Set up a new process for the given entity, method, and arguments
