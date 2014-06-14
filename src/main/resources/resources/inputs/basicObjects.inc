@@ -43,7 +43,7 @@ Define	ImageModel {
 			StatisticsIconModel
 			}
 			
-ReportGeneratorIconModel  ImageFile { '<res>/images/Reports-256.png' }   Transparent { TRUE }
+ReportGeneratorIconModel  ImageFile { '<res>/images/ReportGenerator-256.png' }   Transparent { TRUE }
 SourceIconModel         ImageFile { '<res>/images/Source-256.png' }      Transparent { TRUE }
 SinkIconModel           ImageFile { '<res>/images/Sink-256.png'   }      Transparent { TRUE }
 ServerIconModel         ImageFile { '<res>/images/Server-256.png' }      Transparent { TRUE }
