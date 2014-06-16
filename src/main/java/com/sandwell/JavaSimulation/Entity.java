@@ -627,15 +627,19 @@ public class Entity {
 	}
 
 	public final void killEvent(EventHandle handle) {
-		getEventManager().killEvent(handle);
+		EventManager.killEvent(handle);
 	}
 
 	public final void killEvent(ConditionalHandle handle) {
-		getEventManager().killEvent(handle);
+		EventManager.killEvent(handle);
 	}
 
 	public final void interruptEvent(EventHandle handle) {
-		getEventManager().interruptEvent(handle);
+		EventManager.interruptEvent(handle);
+	}
+
+	public final void interruptEvent(ConditionalHandle handle) {
+		EventManager.interruptEvent(handle);
 	}
 
 	// ******************************************************************************************************

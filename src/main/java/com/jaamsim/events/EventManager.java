@@ -542,9 +542,14 @@ public final class EventManager {
 		}
 	}
 
-	public void killEvent(ConditionalHandle handle) {
+	public static final void killEvent(ConditionalHandle handle) {
+		Process cur = Process.current();
+		cur.evt().killEvent(cur, handle);
+	}
+
+	private void killEvent(Process cur, ConditionalHandle handle) {
 		synchronized (lockObject) {
-			assertNotWaitUntil(Process.current());
+			assertNotWaitUntil(cur);
 
 			Process p = handle.proc;
 			if (p == null)
@@ -562,12 +567,16 @@ public final class EventManager {
 		}
 	}
 
+	public static final void interruptEvent(ConditionalHandle handle) {
+		Process cur = Process.current();
+		cur.evt().interruptEvent(cur, handle);
+	}
+
 	/**
 	 * Causes a conditional event to be evaluated immediately..
 	 */
-	public void interruptEvent(ConditionalHandle handle) {
+	private void interruptEvent(Process cur, ConditionalHandle handle) {
 		synchronized (lockObject) {
-			Process cur = Process.current();
 			assertNotWaitUntil(cur);
 
 			Process p = handle.proc;
@@ -584,12 +593,17 @@ public final class EventManager {
 		}
 	}
 
+	public static final void killEvent(EventHandle handle) {
+		Process cur = Process.current();
+		cur.evt().killEvent(cur, handle);
+	}
+
 	/**
 	 *	Removes an event from the pending list without executing it.
 	 */
-	public void killEvent(EventHandle handle) {
+	private void killEvent(Process cur, EventHandle handle) {
 		synchronized (lockObject) {
-			assertNotWaitUntil(Process.current());
+			assertNotWaitUntil(cur);
 
 			Event evt = handle.event;
 			if (evt == null)
@@ -603,12 +617,16 @@ public final class EventManager {
 		}
 	}
 
+	public static final void interruptEvent(EventHandle handle) {
+		Process cur = Process.current();
+		cur.evt().interruptEvent(cur, handle);
+	}
+
 	/**
 	 *	Removes an event from the pending list and executes it.
 	 */
-	public void interruptEvent(EventHandle handle) {
+	private void interruptEvent(Process cur, EventHandle handle) {
 		synchronized (lockObject) {
-			Process cur = Process.current();
 			assertNotWaitUntil(cur);
 
 			Event evt = handle.event;
