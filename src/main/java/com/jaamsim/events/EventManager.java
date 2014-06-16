@@ -558,6 +558,28 @@ public final class EventManager {
 	}
 
 	/**
+	 * Causes a conditional event to be evaluated immediately..
+	 */
+	public void interruptEvent(ConditionalHandle handle) {
+		synchronized (lockObject) {
+			Process cur = Process.current();
+			assertNotWaitUntil(cur);
+
+			Process p = handle.proc;
+			if (p == null)
+				return;
+
+			int index = conditionalList.indexOf(p);
+			if (index == -1)
+				throw new ProcessError("EVT:%s - Tried to interrupt a waitUntil that couldn't be found", name);
+
+			p.setNextProcess(cur);
+			p.wake();
+			threadWait();
+		}
+	}
+
+	/**
 	 *	Removes an event from the pending list without executing it.
 	 */
 	public void killEvent(EventHandle handle) {
