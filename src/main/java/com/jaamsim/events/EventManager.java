@@ -486,8 +486,13 @@ public final class EventManager {
 		}
 	}
 
-	public void start(ProcessTarget t) {
-		Process newProcess = Process.allocate(this, Process.current(), t);
+	public static final void startProcess(ProcessTarget t) {
+		Process cur = Process.current();
+		cur.evt().start(cur, t);
+	}
+
+	private void start(Process cur, ProcessTarget t) {
+		Process newProcess = Process.allocate(this, cur, t);
 		// Notify the eventManager that a new process has been started
 		synchronized (lockObject) {
 			if (trcListener != null) trcListener.traceProcessStart(this, t);

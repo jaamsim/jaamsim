@@ -471,7 +471,7 @@ public class Entity {
 	}
 
 	public final void startProcess(ProcessTarget t) {
-		getEventManager().start(t);
+		EventManager.startProcess(t);
 	}
 
 	public final void scheduleProcess(ProcessTarget t) {
