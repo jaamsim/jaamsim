@@ -21,16 +21,15 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
-public class Threshold extends DisplayEntity {
+public class Threshold extends StateEntity {
 
 	@Keyword(description = "The colour of the threshold graphic when the threshold is open.",
 	         example = "Threshold1  OpenColour { green }")
@@ -51,10 +50,6 @@ public class Threshold extends DisplayEntity {
 	private final ArrayList<ThresholdUser> userList;
 
 	private boolean open;
-
-	private long lastTickUpdate;
-	private long openTicks;
-	private long closedTicks;
 
 	{
 		openColour = new ColourInput( "OpenColour", "Graphics", ColourInput.GREEN );
@@ -81,9 +76,6 @@ public class Threshold extends DisplayEntity {
 		super.earlyInit();
 		userUpdate.users.clear();
 		open = true;
-		lastTickUpdate = getSimTicks();
-		openTicks = 0;
-		closedTicks = 0;
 
 		userList.clear();
 		for (Entity each : Entity.getAll()) {
@@ -95,10 +87,34 @@ public class Threshold extends DisplayEntity {
 		}
 	}
 
+	/**
+	 * Get the name of the initial state this Entity will be initialized with.
+	 * @return
+	 */
 	@Override
-	public void startUp() {
-		super.startUp();
-		this.clearStatistics();
+	public String getInitialState() {
+		return "Open";
+	}
+
+	/**
+	 * Tests the given state name to see if it is valid for this Entity.
+	 * @param state
+	 * @return
+	 */
+	@Override
+	public boolean isValidState(String state) {
+		return "Open".equals(state) || "Closed".equals(state);
+	}
+
+	/**
+	 * Tests the given state name to see if it is counted as working hours when in
+	 * that state..
+	 * @param state
+	 * @return
+	 */
+	@Override
+	public boolean isValidWorkingState(String state) {
+		return "Open".equals(state);
 	}
 
 	private static final EventHandle updateHandle = new EventHandle();
@@ -152,31 +168,16 @@ public class Threshold extends DisplayEntity {
 		setTagColour( DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK );
 	}
 
-	// ********************************************************************************
-    // Reporting
-    // ********************************************************************************
-
-	@Override
-	public void clearStatistics() {
-		openTicks = 0;
-		closedTicks = 0;
-		lastTickUpdate = getSimTicks();
-	}
-
 	public final void setOpen(boolean open) {
 		// If setting to the same value as current, return
 		if (this.open == open)
 			return;
 
-		if (this.open) {
-			openTicks += getSimTicks() - lastTickUpdate;
-		}
-		else {
-			closedTicks += getSimTicks() - lastTickUpdate;
-		}
-
-		lastTickUpdate = getSimTicks();
 		this.open = open;
+		if (this.open)
+			setPresentState("Open");
+		else
+			setPresentState("Closed");
 
 		for (ThresholdUser user : this.userList) {
 			if (!userUpdate.users.contains(user))
@@ -184,39 +185,6 @@ public class Threshold extends DisplayEntity {
 		}
 		if (!userUpdate.users.isEmpty() && !updateHandle.isScheduled())
 			this.scheduleProcessTicks(0, 2, false, userUpdate, updateHandle);
-	}
-
-	/**
-	 * Prints the header for the statistics
-	 */
-	public void printUtilizationHeaderOn( FileEntity anOut ) {
-		anOut.format( "Name\t" );
-		anOut.format( "Open\t" );
-		anOut.format( "Closed\t" );
-	}
-
-	/**
-	 * Print the threshold name and percentage of time open and closed
-	 */
-	public void printUtilizationOn( FileEntity anOut ) {
-		long durTicks = getSimTicks() - lastTickUpdate;
-		long totalSimTicks = openTicks + closedTicks + durTicks;
-		if (totalSimTicks == 0)
-			return;
-
-		anOut.format( "%s\t", getName() );
-
-		long totOpen = openTicks;
-		long totClosed = closedTicks;
-		if (isClosed())
-			totClosed += durTicks;
-		else
-			totOpen += durTicks;
-		// Print percentage of time open
-		anOut.format("%.1f%%\t", (totOpen * 100 / (double)totalSimTicks));
-
-		// Print percentage of time closed
-		anOut.format("%.1f%%\t", (totClosed * 100 / (double)totalSimTicks));
 	}
 
 	@Output(name = "Open",
@@ -230,27 +198,23 @@ public class Threshold extends DisplayEntity {
 	 description = "The fraction of total simulation time that the threshold is open.",
 	    unitType = DimensionlessUnit.class)
 	public double getOpenFraction(double simTime) {
-		double dur = simTime - FrameBox.ticksToSeconds(lastTickUpdate);
-		double openTime = FrameBox.ticksToSeconds(openTicks);
-		double closedTime = FrameBox.ticksToSeconds(closedTicks);
-		double totalTime = openTime + closedTime + dur;
-		if (isOpen())
-			return (openTime + dur) / totalTime;
-		else
-			return openTime / totalTime;
+		long simTicks = FrameBox.secondsToTicks(simTime);
+		long openTicks = this.getTicksInState(simTicks, getState("Open"));
+		long closedTicks = this.getTicksInState(simTicks, getState("Closed"));
+		long totTicks = openTicks + closedTicks;
+
+		return (double)openTicks / totTicks;
 	}
 
 	@Output(name = "ClosedFraction",
 	 description = "The fraction of total simulation time that the threshold is closed.",
 	    unitType = DimensionlessUnit.class)
 	public double getClosedFraction(double simTime) {
-		double dur = simTime - FrameBox.ticksToSeconds(lastTickUpdate);
-		double openTime = FrameBox.ticksToSeconds(openTicks);
-		double closedTime = FrameBox.ticksToSeconds(closedTicks);
-		double totalTime = openTime + closedTime + dur;
-		if (isClosed())
-			return (closedTime + dur) / totalTime;
-		else
-			return closedTime / totalTime;
+		long simTicks = FrameBox.secondsToTicks(simTime);
+		long openTicks = this.getTicksInState(simTicks, getState("Open"));
+		long closedTicks = this.getTicksInState(simTicks, getState("Closed"));
+		long totTicks = openTicks + closedTicks;
+
+		return (double)closedTicks / totTicks;
 	}
 }

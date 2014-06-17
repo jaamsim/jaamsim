@@ -226,6 +226,23 @@ public class StateEntity extends DisplayEntity {
 		return presentState.working;
 	}
 
+	/**
+	 * A helper used to implement some of the state-based outputs, likely not
+	 * useful for model code.
+	 * @param simTicks
+	 * @param state
+	 * @return
+	 */
+	public long getTicksInState(long simTicks, StateRecord state) {
+		if (state == null)
+			return 0;
+
+		long ticks = state.totalTicks;
+		if (getState() == state)
+			ticks += (simTicks - lastStateCollectionTick);
+		return ticks;
+	}
+
 	public long getTicksInState(StateRecord state) {
 		if (state == null)
 			return 0;

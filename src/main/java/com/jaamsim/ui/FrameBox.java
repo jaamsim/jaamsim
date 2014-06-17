@@ -82,6 +82,13 @@ public class FrameBox extends JFrame {
 		return ticks * secondsPerTick;
 	}
 
+	/**
+	 * Return the number of seconds represented by the given number of ticks.
+	 */
+	public static final long secondsToTicks(double seconds) {
+		return Math.round(seconds / secondsPerTick);
+	}
+
 	public static WindowAdapter getCloseListener(String key) {
 		return new CloseListener(key);
 	}
