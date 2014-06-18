@@ -181,23 +181,17 @@ public final class EventManager {
 			return false;
 		}
 		try {
-			// Execute the method
-			t.process();
-
-			// Notify the event manager that the process has been completed
 			synchronized (lockObject) {
+				// Execute the method
+				t.process();
 				assertNotWaitUntil(cur);
+				// Notify the event manager that the process has been completed
 				if (trcListener != null) trcListener.traceProcessEnd(this);
 				return !cur.wakeNextProcess();
 			}
 		}
-		catch (ThreadKilledException e) {
-			// If the process was killed by a terminateThread method then
-			// return to the beginning of the process loop
-			return false;
-		}
 		catch (Throwable e) {
-			this.handleProcessError(e);
+			handleProcessError(e);
 			return false;
 		}
 	}
@@ -780,7 +774,11 @@ public final class EventManager {
 		return ticks * secsPerTick;
 	}
 
-	void handleProcessError(Throwable t) {
+	private void handleProcessError(Throwable t) {
+		// This is how kill() is implemented for sleeping processes.
+		if (t instanceof ThreadKilledException)
+			return;
+
 		this.pause();
 		synchronized (lockObject) {
 			errListener.handleError(this, t, currentTick);
