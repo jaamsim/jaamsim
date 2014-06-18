@@ -14,7 +14,6 @@
  */
 package com.jaamsim.BasicObjects;
 
-import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
@@ -36,7 +35,6 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 	         example = "EntityGate1 ReleaseDelay { 5.0 s }")
 	private final ValueInput releaseDelay;
 
-	private boolean gateOpen;  // TRUE if the gate is open
 	private boolean busy;  // TRUE if the process of emptying the queue has started
 
 	{
@@ -75,7 +73,7 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 
 		// If the gate is closed or other entities are already queued, then add the entity to the queue
 		Queue queue = waitQueue.getValue();
-		if( queue.getCount() > 0 || !gateOpen ) {
+		if( queue.getCount() > 0 || this.isClosed() ) {
 			queue.addLast( ent );
 			return;
 		}
@@ -87,44 +85,11 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 	@Override
 	public void thresholdChanged() {
 
-		// Are any of the thresholds closed?
-		boolean threshOpen = true;
-		for( Threshold thr : this.getThresholds() ) {
-			if( thr.isClosed() ) {
-				threshOpen = false;
-				break;
-			}
+		// If the gate is open, process any entities that are waiting
+		if (this.isOpen() && !busy && waitQueue.getValue().getCount() > 0) {
+			busy = true;
+			this.scheduleProcess(releaseDelay.getValue(), 5, new ReleaseQueuedEntityTarget(this, "releaseQueuedEntity"));
 		}
-
-		// Should the gate's state be changed?
-		if( threshOpen == gateOpen )
-			return;
-
-		// Open or close the gate
-		if (threshOpen)
-			this.open();
-		else
-			this.close();
-	}
-
-	/**
-	 * Close the gate.
-	 */
-	private void close() {
-		gateOpen = false;
-	}
-
-	/**
-	 * Open the gate and release any entities in the queue.
-	 */
-	private void open() {
-		gateOpen = true;
-
-		// Release any entities that are in the queue
-		if( busy || waitQueue.getValue().getCount() == 0 )
-			return;
-		busy = true;
-		this.scheduleProcess(releaseDelay.getValue(), 5, new ReleaseQueuedEntityTarget(this, "releaseQueuedEntity"));
 	}
 
 	private static class ReleaseQueuedEntityTarget extends EntityTarget<EntityGate> {
@@ -146,7 +111,7 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 
 		// Stop the recursive loop if the gate has closed or the queue has become empty
 		Queue queue = waitQueue.getValue();
-		if( !gateOpen || queue.getCount() == 0 ) {
+		if( this.isClosed() || queue.getCount() == 0 ) {
 			busy = false;
 			return;
 		}
