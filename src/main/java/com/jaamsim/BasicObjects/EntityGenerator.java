@@ -16,7 +16,6 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
-import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -126,12 +125,8 @@ public class EntityGenerator extends LinkedComponent {
 	public void thresholdChanged() {
 
 		// Is restart required?
-		if (busy) return;
-
-		// Are all the thresholds satisfied?
-		for( Threshold thr : this.getThresholds() ) {
-			if( thr.isClosed() ) return;
-		}
+		if (busy || this.isClosed())
+			return;
 
 		// Has the last entity been generated?
 		if( maxNumber.getValue() != null && numberGenerated >= maxNumber.getValue() )
@@ -148,11 +143,9 @@ public class EntityGenerator extends LinkedComponent {
 	public void createNextEntity() {
 
 		// Do any of the thresholds stop the generator?
-		for( Threshold thr : this.getThresholds() ) {
-			if( thr.isClosed() ) {
-				busy = false;
-				return;
-			}
+		if (this.isClosed()) {
+			busy = false;
+			return;
 		}
 
 		busy = true;

@@ -136,11 +136,9 @@ public class Assemble extends LinkedComponent {
 		}
 
 		// Do any of the thresholds stop the generator?
-		for (Threshold thr : this.getThresholds()) {
-			if (thr.isClosed()) {
-				busy = false;
-				return;
-			}
+		if (this.isClosed()) {
+			busy = false;
+			return;
 		}
 
 		// Remove and destroy one entity from each queue
