@@ -177,6 +177,15 @@ public final class EventManager {
 
 	private boolean executeTarget(Process cur, ProcessTarget t) {
 		try {
+			// If the event has a captured process, pass control to it
+			Process p = t.getProcess();
+			if (p != null) {
+				p.setNextProcess(cur);
+				p.wake();
+				threadWait();
+				return true;
+			}
+
 			// Execute the method
 			t.process();
 			assertNotWaitUntil(cur);
@@ -246,15 +255,6 @@ public final class EventManager {
 						nextEvent.handle = null;
 					}
 					nextEvent.next = null;
-
-					// If the event has a captured process, pass control to it
-					Process p = nextEvent.target.getProcess();
-					if (p != null) {
-						p.setNextProcess(cur);
-						p.wake();
-						threadWait();
-						continue;
-					}
 
 					// the return from execute target informs whether or not this
 					// thread should grab an new Event, or return to the pool
