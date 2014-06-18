@@ -238,6 +238,11 @@ public class OutputHandle {
 			if (val == null) return def;
 			return val.charValue();
 		}
+		if (retType == Boolean.class) {
+			Boolean val = getValue(simTime, Boolean.class);
+			if (val == null) return def;
+			return val.booleanValue() ? 1.0d : 0.0d;
+		}
 
 		if (retType == float.class)
 			return this.getValue(simTime, float.class);
@@ -249,6 +254,8 @@ public class OutputHandle {
 			return this.getValue(simTime, short.class);
 		if (retType == char.class)
 			return this.getValue(simTime, char.class);
+		if (retType == boolean.class)
+			return this.getValue(simTime, boolean.class) ? 1.0d : 0.0d;
 
 		return def;
 	}
