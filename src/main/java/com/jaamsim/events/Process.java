@@ -103,7 +103,7 @@ final class Process extends Thread {
 				activeFlag = true;
 			}
 
-			evt.executeTarget(this, t);
+			evt.execute(this, t);
 
 			// Ensure all state is cleared before returning to the pool
 			synchronized (this) {

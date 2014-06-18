@@ -175,20 +175,14 @@ public final class EventManager {
 		}
 	}
 
-	final boolean executeTarget(Process cur, ProcessTarget t) {
-		if (t == null) {
-			executeEvents(cur);
-			return false;
-		}
+	private boolean executeTarget(Process cur, ProcessTarget t) {
 		try {
-			synchronized (lockObject) {
-				// Execute the method
-				t.process();
-				assertNotWaitUntil(cur);
-				// Notify the event manager that the process has been completed
-				if (trcListener != null) trcListener.traceProcessEnd(this);
-				return !cur.wakeNextProcess();
-			}
+			// Execute the method
+			t.process();
+			assertNotWaitUntil(cur);
+			// Notify the event manager that the process has been completed
+			if (trcListener != null) trcListener.traceProcessEnd(this);
+			return !cur.wakeNextProcess();
 		}
 		catch (Throwable e) {
 			handleProcessError(e);
@@ -197,15 +191,18 @@ public final class EventManager {
 	}
 
 	/**
-	 * Main event processing loop for the eventManager.
-	 *
-	 * Each eventManager runs its loop continuous throughout the simulation run
-	 * with its own thread. The loop for each eventManager is never terminated.
-	 * It is only paused and restarted as required. The run method is called by
-	 * eventManager.start().
+	 * Main event execution method the eventManager, this is the only entrypoint
+	 * for Process objects taken out of the pool.
 	 */
-	private void executeEvents(Process cur) {
+	final void execute(Process cur, ProcessTarget t) {
 		synchronized (lockObject) {
+			// This occurs in the startProcess or interrupt case where we start
+			// a process with a target already assigned
+			if (t != null) {
+				executeTarget(cur, t);
+				return;
+			}
+
 			if (processRunning)
 				return;
 
