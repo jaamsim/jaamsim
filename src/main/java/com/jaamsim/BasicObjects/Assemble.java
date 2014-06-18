@@ -16,7 +16,6 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
-import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
