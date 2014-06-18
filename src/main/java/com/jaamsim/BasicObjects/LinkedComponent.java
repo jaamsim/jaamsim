@@ -109,6 +109,26 @@ public abstract class LinkedComponent extends DisplayEntity implements Threshold
 		numberProcessed++;
 	}
 
+	/**
+	 * Tests whether all the thresholds are open.
+	 * @return true if all the thresholds are open.
+	 */
+	public boolean isOpen() {
+		for (Threshold thr : operatingThresholdList.getValue()) {
+			if (thr.isClosed())
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Test whether any of the thresholds are closed.
+	 * @return true if any threshold is closed.
+	 */
+	public boolean isClosed() {
+		return !this.isOpen();
+	}
+
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************
