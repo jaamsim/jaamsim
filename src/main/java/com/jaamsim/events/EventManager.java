@@ -185,7 +185,13 @@ public final class EventManager {
 			return !cur.wakeNextProcess();
 		}
 		catch (Throwable e) {
-			handleProcessError(e);
+			// This is how kill() is implemented for sleeping processes.
+			if (e instanceof ThreadKilledException)
+				return false;
+
+			// TODO: This is where Process cleanup code needs adding
+			executeEvents = false;
+			errListener.handleError(this, e, currentTick);
 			return false;
 		}
 	}
@@ -254,8 +260,8 @@ public final class EventManager {
 					// thread should grab an new Event, or return to the pool
 					if (executeTarget(cur, nextEvent.target))
 						continue;
-
-					return;
+					else
+						return;
 				}
 
 				// If the next event would require us to advance the time, check the
@@ -769,17 +775,6 @@ public final class EventManager {
 	 */
 	public final double ticksToSeconds(long ticks) {
 		return ticks * secsPerTick;
-	}
-
-	private void handleProcessError(Throwable t) {
-		// This is how kill() is implemented for sleeping processes.
-		if (t instanceof ThreadKilledException)
-			return;
-
-		this.pause();
-		synchronized (lockObject) {
-			errListener.handleError(this, t, currentTick);
-		}
 	}
 
 	private static class DefaultTimeListener implements EventTimeListener {
