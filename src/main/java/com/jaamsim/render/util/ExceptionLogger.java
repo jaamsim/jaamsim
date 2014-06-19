@@ -20,7 +20,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.jaamsim.ui.LogBox;
 
@@ -31,23 +30,36 @@ import com.jaamsim.ui.LogBox;
  */
 public class ExceptionLogger {
 
-	private final Map<StackTraceElement, Integer> _exceptionStats;
+	private final Map<StackTraceElement, ExceptionCount> _exceptionStats;
 	private int stackDumpThreshold;
 
 	public ExceptionLogger(int dumpThreshold) {
-		_exceptionStats = new HashMap<StackTraceElement, Integer>();
+		_exceptionStats = new HashMap<StackTraceElement, ExceptionCount>();
 		stackDumpThreshold = dumpThreshold;
 	}
 
-	// Sort exceptions list in descending order (most common first)
-	private static class ExceptionSorter implements Comparator<Map.Entry<StackTraceElement, Integer>> {
-
+	private static final Comparator<ExceptionCount> sorter = new ExceptionCountComparator();
+	private static class ExceptionCountComparator implements Comparator<ExceptionCount> {
 		@Override
-		public int compare(Entry<StackTraceElement, Integer> arg0,
-				Entry<StackTraceElement, Integer> arg1) {
-			return arg1.getValue().compareTo(arg0.getValue());
+		public int compare(ExceptionCount arg0, ExceptionCount arg1) {
+			int diff = arg1.count - arg0.count;
+			if (diff < 0)
+				return -1;
+			else if (diff > 0)
+				return 1;
+			else
+				return 0;
 		}
+	}
 
+	private static class ExceptionCount {
+		final StackTraceElement elem;
+		int count;
+
+		ExceptionCount(StackTraceElement ste) {
+			elem = ste;
+			count = 0;
+		}
 	}
 
 	public void logException(Throwable t) {
@@ -57,30 +69,27 @@ public class ExceptionLogger {
 			return; // Something went oddly wrong here...
 		}
 
-		StackTraceElement key = callStack[0]; // We only care about the original throw for now
-		Integer count = _exceptionStats.get(key);
-		if (count == null) {
-			// First time
-			count = new Integer(0);
+		ExceptionCount counter = _exceptionStats.get(callStack[0]); // We only care about the original throw for now
+		if (counter == null) {
+			counter = new ExceptionCount(callStack[0]);
+			_exceptionStats.put(counter.elem, counter);
 		}
 
-		if (count + 1 == stackDumpThreshold) {
+		counter.count++;
+		if (counter.count == stackDumpThreshold) {
 			LogBox.renderLogException(t);
 		}
-
-		//Otherwise increment the count for this element
-		_exceptionStats.put(key, count + 1);
 	}
 
 	public void printExceptionLog() {
 		// Build up a list of the values to be sorted
-		List<Map.Entry<StackTraceElement, Integer>> exceptions = new ArrayList<Map.Entry<StackTraceElement, Integer>>(_exceptionStats.entrySet());
+		List<ExceptionCount> exceptions = new ArrayList<ExceptionCount>(_exceptionStats.values());
 		// Now sort it, then print it
-		Collections.sort(exceptions, new ExceptionSorter());
+		Collections.sort(exceptions, sorter);
 
-		for (Map.Entry<StackTraceElement, Integer> e : exceptions) {
-			StackTraceElement st = e.getKey();
-			int count = e.getValue();
+		for (ExceptionCount e : exceptions) {
+			StackTraceElement st = e.elem;
+			int count = e.count;
 			LogBox.renderLog(st.getFileName() + ":" + st.getLineNumber() + " In: " + st.getClassName() + "." + st.getMethodName() + " " + count + " exceptions");
 		}
 	}
