@@ -30,6 +30,7 @@ import javax.swing.table.TableColumnModel;
 
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
@@ -98,14 +99,16 @@ public class FrameBox extends JFrame {
 	 * controlling visibility.
 	 */
 	private static class CloseListener extends WindowAdapter {
-		final String keyword;
+		final KeywordIndex kw;
 		public CloseListener(String keyword) {
-			this.keyword = keyword;
+			ArrayList<String> arg = new ArrayList<String>(1);
+			arg.add("FALSE");
+			kw = new KeywordIndex(keyword, arg, null);
 		}
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), keyword, "FALSE");
+			InputAgent.processKeyword(Simulation.getInstance(), kw);
 		}
 	}
 
