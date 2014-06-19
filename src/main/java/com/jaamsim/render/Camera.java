@@ -300,6 +300,7 @@ private void updateFrustum() {
 		p.transform(_info.trans, p, v);
 	}
 
+	_frustumDirty = false;
 }
 
 public CameraInfo getInfo() {
