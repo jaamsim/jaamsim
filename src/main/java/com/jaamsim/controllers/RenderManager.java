@@ -1558,11 +1558,13 @@ public class RenderManager implements DragSourceListener {
 	 * @param target - optional target to prevent re-allocating GPU resources
 	 * @return
 	 */
-	public Future<BufferedImage> renderScreenShot(Vec3d cameraPos, Vec3d viewCenter, int viewID,
-	                                              int width, int height, OffscreenTarget target) {
+	public Future<BufferedImage> renderScreenShot(View view, int width, int height, OffscreenTarget target) {
+
+		Vec3d cameraPos = view.getGlobalPosition();
+		Vec3d cameraCenter = view.getGlobalCenter();
 
 		Vec3d viewDiff = new Vec3d();
-		viewDiff.sub3(cameraPos, viewCenter);
+		viewDiff.sub3(cameraPos, cameraCenter);
 
 		double rotZ = Math.atan2(viewDiff.x, -viewDiff.y);
 
@@ -1584,9 +1586,9 @@ public class RenderManager implements DragSourceListener {
 
 		Transform trans = new Transform(cameraPos, rot, 1);
 
-		CameraInfo camInfo = new CameraInfo(Math.PI/3, trans, null);
+		CameraInfo camInfo = new CameraInfo(Math.PI/3, trans, view.getSkyboxTexture());
 
-		return renderer.renderOffscreen(null, viewID, camInfo, width, height, null, target);
+		return renderer.renderOffscreen(null, view.getID(), camInfo, width, height, null, target);
 	}
 
 	public Future<BufferedImage> getPreviewForDisplayModel(DisplayModel dm, Runnable notifier) {

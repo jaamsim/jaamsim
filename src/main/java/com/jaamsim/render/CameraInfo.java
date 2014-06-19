@@ -55,6 +55,12 @@ public class CameraInfo {
 		boolean isSame = true;
 		isSame = isSame && MathUtils.near(other.FOV, FOV);
 		isSame = isSame && other.trans.equals(trans);
+
+		if (other.skyboxTexture != null)
+			isSame = isSame && other.skyboxTexture.equals(skyboxTexture);
+		else if (skyboxTexture != null) // Handle other.skyboxTexture == null, but this.skyboxTexture != null
+			isSame = false;
+
 		return isSame;
 	}
 }

@@ -119,10 +119,7 @@ public class VideoRecorder {
 
 		ArrayList<Future<BufferedImage>> images = new ArrayList<Future<BufferedImage>>();
 		for (ViewInfo vi : _views) {
-			images.add(RenderManager.inst().renderScreenShot(vi.view.getGlobalPosition(),
-			                                                 vi.view.getGlobalCenter(),
-			                                                 vi.view.getID(),
-			                                                 vi.width, vi.height, vi.renderTarget));
+			images.add(RenderManager.inst().renderScreenShot(vi.view, vi.width, vi.height, vi.renderTarget));
 		}
 
 		// Make sure all the renders are queued up before waiting for any of them.
