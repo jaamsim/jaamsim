@@ -618,7 +618,7 @@ public class InputAgent {
 		in.setValueString(kw.argString());
 	}
 
-	private static void processKeyword(Entity entity, KeywordIndex key) {
+	public static void processKeyword(Entity entity, KeywordIndex key) {
 		if (entity.testFlag(Entity.FLAG_LOCKED))
 			throw new InputErrorException("Entity: %s is locked and cannot be modified", entity.getName());
 

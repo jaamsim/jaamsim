@@ -25,6 +25,10 @@ public class KeywordIndex {
 	private final int end;
 	public final ParseContext context;
 
+	public KeywordIndex(String word, ArrayList<String> arg, ParseContext ctxt) {
+		this(arg, word, 0, arg.size(), ctxt);
+	}
+
 	public KeywordIndex(ArrayList<String> inp, String word, int s, int e, ParseContext ctxt) {
 		input = inp;
 		keyword = word;
