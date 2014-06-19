@@ -29,24 +29,18 @@ import com.jaamsim.math.Transform;
 public class CameraInfo {
 
 	public double FOV;
-	public double nearDist;
-	public double farDist;
 	public Transform trans;
 	public URL skyboxTexture;
 
 	public CameraInfo(CameraInfo ci) {
 		this.FOV = ci.FOV;
-		this.nearDist = ci.nearDist;
-		this.farDist = ci.farDist;
 		this.skyboxTexture = ci.skyboxTexture;
 
 		this.trans = new Transform(ci.trans);
 	}
 
-	public CameraInfo(double FOV, double nearDist, double farDist, Transform transRef, URL skyboxTexture) {
+	public CameraInfo(double FOV, Transform transRef, URL skyboxTexture) {
 		this.FOV = FOV;
-		this.nearDist = nearDist;
-		this.farDist = farDist;
 		this.skyboxTexture = skyboxTexture;
 
 		this.trans = new Transform(transRef);
@@ -60,8 +54,6 @@ public class CameraInfo {
 	public boolean isSame(CameraInfo other) {
 		boolean isSame = true;
 		isSame = isSame && MathUtils.near(other.FOV, FOV);
-		isSame = isSame && MathUtils.near(other.nearDist, nearDist);
-		isSame = isSame && MathUtils.near(other.farDist, farDist);
 		isSame = isSame && other.trans.equals(trans);
 		return isSame;
 	}

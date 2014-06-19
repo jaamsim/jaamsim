@@ -163,7 +163,7 @@ public class PreviewCache {
 			}
 
 
-			CameraInfo camInfo = new CameraInfo(Math.PI/3, 1, 10, camTrans, null);
+			CameraInfo camInfo = new CameraInfo(Math.PI/3, camTrans, null);
 
 			Future<BufferedImage> fi = RenderManager.inst().renderOffscreen(proxies, camInfo, View.NO_VIEW_ID, 180, 180, notifier);
 

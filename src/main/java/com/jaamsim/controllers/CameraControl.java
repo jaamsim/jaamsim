@@ -23,7 +23,6 @@ import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
-import com.jaamsim.render.Camera;
 import com.jaamsim.render.CameraInfo;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
@@ -374,8 +373,6 @@ public class CameraControl implements WindowInteractionListener {
 
 		info.trans = finalTrans;
 
-		info.nearDist = Camera.near;
-		info.farDist = Camera.far;
 		info.skyboxTexture = _updateView.getSkyboxTexture();
 
 		_renderer.setCameraInfoForWindow(_windowID, info);

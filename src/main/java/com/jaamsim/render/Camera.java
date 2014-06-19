@@ -39,7 +39,6 @@ public class Camera {
 // http://outerra.blogspot.ca/2012/11/maximizing-depth-buffer-range-and.html
 public static final float C = 1.0f;
 public static final float FC;
-public static final float near = 0.0001f;
 public static final float far = 100000000f;
 static {
 	FC = (float)(1.0/Math.log(far*C + 1));
@@ -64,7 +63,7 @@ private final Plane[] _frustum;
 private boolean _frustumDirty = true;
 
 {
-	_frustum = new Plane[5];
+	_frustum = new Plane[4];
 	for (int i = 0; i < _frustum.length; i++)
 		_frustum[i] = new Plane();
 }
@@ -78,7 +77,7 @@ private boolean _frustumDirty = true;
  * @param far
  */
 public Camera(double FOV, double aspectRatio, double near, double far) {
-	_info = new CameraInfo(FOV, near, far, Transform.ident, null);
+	_info = new CameraInfo(FOV, Transform.ident, null);
 
 	_aspectRatio = aspectRatio;
 	_info.trans.inverse(invTrans);
@@ -139,7 +138,6 @@ private void updateProjMat() {
 	_projMat.zero();
 
 	double f = 1/Math.tan(_info.FOV/2);
-	double denom = 1 / (_info.nearDist - _info.farDist);
 
 	double fx, fy;
 	if(_aspectRatio > 1) {
@@ -152,9 +150,9 @@ private void updateProjMat() {
 
 	_projMat.d00 = fx;
 	_projMat.d11 = fy;
-	_projMat.d22 = (_info.farDist + _info.nearDist) * denom;
+	_projMat.d22 = -1;
 	_projMat.d32 = -1;
-	_projMat.d23 = 2*_info.nearDist*_info.farDist * denom;
+	_projMat.d23 = -2;
 
 	_projMatDirty = false;
 }
@@ -189,12 +187,6 @@ public void getViewTrans(Transform transOut) {
 	transOut.copyFrom(invTrans);
 }
 
-public double getNear() {
-	return _info.nearDist;
-}
-public double getFar() {
-	return _info.farDist;
-}
 public double getAspectRatio() {
 	return _aspectRatio;
 }
@@ -204,20 +196,6 @@ public double getAspectRatio() {
  */
 public double getFOV() {
 	return _info.FOV;
-}
-
-public void setNear(double near) {
-	boolean dirty =  !MathUtils.near(_info.nearDist, near);
-	_frustumDirty = dirty || _frustumDirty;
-	_projMatDirty = dirty || _projMatDirty;
-	_info.nearDist = near;
-}
-
-public void setFar(double far) {
-	boolean dirty = !MathUtils.near(_info.farDist, far);
-	_frustumDirty = dirty || _frustumDirty;
-	_projMatDirty = dirty || _projMatDirty;
-	_info.farDist = far;
 }
 
 public void setAspectRatio(double aspect) {
@@ -316,10 +294,6 @@ private void updateFrustum() {
 	// -X
 	v.set3(-cosX, 0, -sinX);
 	_frustum[3].set(v, 0.0d);
-
-	// -Z
-	v.set3(0.0d, 0.0d, 1.0d);
-	_frustum[4].set(v, -_info.farDist);
 
 	// Apply the current transform to the planes. Puts the planes in world space
 	for (Plane p : _frustum) {

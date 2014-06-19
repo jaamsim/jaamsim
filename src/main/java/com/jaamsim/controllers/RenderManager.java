@@ -1574,7 +1574,6 @@ public class RenderManager implements DragSourceListener {
 			rotZ = 0; // Don't rotate if we are looking straight up or down
 		}
 
-		double viewDist = viewDiff.mag3();
 		Quaternion rot = new Quaternion();
 		rot.setRotZAxis(rotZ);
 
@@ -1585,7 +1584,7 @@ public class RenderManager implements DragSourceListener {
 
 		Transform trans = new Transform(cameraPos, rot, 1);
 
-		CameraInfo camInfo = new CameraInfo(Math.PI/3, viewDist*0.1, viewDist*10, trans, null);
+		CameraInfo camInfo = new CameraInfo(Math.PI/3, trans, null);
 
 		return renderer.renderOffscreen(null, viewID, camInfo, width, height, null, target);
 	}
