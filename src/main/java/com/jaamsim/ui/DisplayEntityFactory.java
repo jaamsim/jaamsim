@@ -64,6 +64,8 @@ public class DisplayEntityFactory extends Entity {
 		for (int i = 1; i < imgFilters.length; i++)
 			chooser.addChoosableFileFilter(imgFilters[i]);
 
+		chooser.setFileFilter(colFilters[0]);
+
 		// Show the file chooser and wait for selection
 		int returnVal = chooser.showDialog(gui, "Import");
 
