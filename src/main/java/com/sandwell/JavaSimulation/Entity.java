@@ -457,6 +457,11 @@ public class Entity {
 
 	public double calculateEventTimeBefore(double waitLength) {
 		long eventTime = getSimTicks() + (long)Math.floor(waitLength * Simulation.getSimTimeFactor());
+
+		if( eventTime < 0 ) {
+			eventTime = Long.MAX_VALUE;
+		}
+
 		return eventTime / Simulation.getSimTimeFactor();
 	}
 
