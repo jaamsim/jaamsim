@@ -227,6 +227,7 @@ public class ImageModel extends DisplayModel {
 		private IntegerVector sizeCache;
 		private boolean alignBottomCache;
 		private boolean alignRightCache;
+		private boolean transpCache;
 		private VisibilityInfo viCache;
 
 		public OverlayBinding(Entity ent, DisplayModel dm) {
@@ -251,6 +252,7 @@ public class ImageModel extends DisplayModel {
 
 			boolean alignRight = imageObservee.getAlignRight();
 			boolean alignBottom = imageObservee.getAlignBottom();
+			boolean transp = transparent.getValue();
 
 			VisibilityInfo vi = getVisibilityInfo();
 
@@ -261,6 +263,7 @@ public class ImageModel extends DisplayModel {
 			dirty = dirty || !compare(sizeCache, size);
 			dirty = dirty || alignRightCache != alignRight;
 			dirty = dirty || alignBottomCache != alignBottom;
+			dirty = dirty || transpCache != transp;
 			dirty = dirty || !compare(viCache, vi);
 
 			filenameCache = filename;
@@ -268,6 +271,7 @@ public class ImageModel extends DisplayModel {
 			sizeCache = size;
 			alignRightCache = alignRight;
 			alignBottomCache = alignBottom;
+			transpCache = transp;
 			viCache = vi;
 
 			if (cachedProxy != null && !dirty) {
@@ -283,7 +287,7 @@ public class ImageModel extends DisplayModel {
 			try {
 				cachedProxy = new OverlayTextureProxy(pos.get(0), pos.get(1), size.get(0), size.get(1),
 				                                      filename.toURL(),
-				                                      transparent.getValue(), false,
+				                                      transp, false,
 				                                      alignRight, alignBottom, vi);
 
 				out.add(cachedProxy);
