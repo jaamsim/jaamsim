@@ -339,7 +339,12 @@ public class RenderManager implements DragSourceListener {
 					fatalError.set(true);
 					LogBox.formatRenderLog("Renderer failed with error: %s\n", renderer.getErrorString());
 
-					LogBox.getInstance().setVisible(true);
+					EventQueue.invokeAndWait(new Runnable() {
+						@Override
+						public void run() {
+							LogBox.getInstance().setVisible(true);
+						}
+					});
 
 					// Do some basic cleanup
 					windowControls.clear();
