@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -527,12 +528,15 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 				}
 			}
 
-			MeshProtoKey ret = new MeshProtoKey(meshURL);
+			MeshProtoKey ret = new MeshProtoKey(meshURL.toURI());
 			return ret;
 		} catch (MalformedURLException e) {
 			LogBox.renderLogException(e);
 			assert (false);
 		} catch (IOException e) {
+			assert (false);
+		} catch (URISyntaxException e) {
+			LogBox.renderLogException(e);
 			assert (false);
 		}
 		return null;

@@ -38,13 +38,13 @@ import com.jaamsim.xml.XmlParser;
 
 public class MeshReader {
 
-	public static MeshData parse(URL asset) throws RenderException {
+	public static MeshData parse(URI asset) throws RenderException {
 
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setValidating(false);
 
 		try {
-			MeshReader reader = new MeshReader(asset);
+			MeshReader reader = new MeshReader(asset.toURL());
 			reader.processContent();
 
 

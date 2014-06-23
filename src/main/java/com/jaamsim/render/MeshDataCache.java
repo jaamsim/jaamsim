@@ -14,6 +14,7 @@
  */
 package com.jaamsim.render;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,7 +38,15 @@ public class MeshDataCache {
 	private static Object badMeshLock = new Object();
 	private static MeshData badMesh = null;
 
-	public static final MeshProtoKey BAD_MESH_KEY = new MeshProtoKey(TexCache.class.getResource("/resources/shapes/bad-mesh.jsm"));
+	public static final MeshProtoKey BAD_MESH_KEY;
+
+	static {
+		try {
+			BAD_MESH_KEY = new MeshProtoKey(TexCache.class.getResource("/resources/shapes/bad-mesh.jsm").toURI());
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	// Fetch, or lazily initialize the mesh data
 	public static MeshData getMeshData(MeshProtoKey key) {
@@ -71,25 +80,25 @@ public class MeshDataCache {
 		}
 
 		// Release the lock long enough to load the model
-		String fileString = key.getURL().toString();
+		String fileString = key.getURI().toString();
 		String ext = fileString.substring(fileString.length() - 3, fileString.length());
 
 		MeshData data = null;
 		try {
 			if (ext.toUpperCase().equals("DAE")) {
-				data = ColParser.parse(key.getURL());
+				data = ColParser.parse(key.getURI());
 			} else if (ext.toUpperCase().equals("JSM")) {
-				data = MeshReader.parse(key.getURL());
+				data = MeshReader.parse(key.getURI());
 			} else if (ext.toUpperCase().equals("JSB")) {
-				DataBlock block = BlockReader.readBlockFromURL(key.getURL());
-				data = new MeshData(false, block, key.getURL());
+				DataBlock block = BlockReader.readBlockFromURI(key.getURI());
+				data = new MeshData(false, block, key.getURI().toURL());
 			} else if (ext.toUpperCase().equals("OBJ")) {
-				data = ObjReader.parse(key.getURL());
+				data = ObjReader.parse(key.getURI());
 			} else {
 				assert(false);
 			}
 		} catch (Exception ex) {
-			LogBox.formatRenderLog("Could not load mesh: %s \n Error: %s\n", key.getURL().toString(), ex.getMessage());
+			LogBox.formatRenderLog("Could not load mesh: %s \n Error: %s\n", key.getURI().toString(), ex.getMessage());
 			synchronized (badMeshLock) {
 				badMeshSet.add(key);
 				return getBadMesh();
@@ -138,7 +147,7 @@ public class MeshDataCache {
 	// Lazily load the bad mesh data
 	public synchronized static MeshData getBadMesh() {
 		if (badMesh == null) {
-			badMesh = MeshReader.parse(BAD_MESH_KEY.getURL());
+			badMesh = MeshReader.parse(BAD_MESH_KEY.getURI());
 		}
 		return badMesh;
 	}

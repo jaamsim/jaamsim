@@ -16,7 +16,7 @@ package com.jaamsim.MeshFiles;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.zip.CRC32;
 
@@ -24,8 +24,8 @@ public class BlockReader {
 
 	private static final boolean CHECK_PAYLOAD_CRC = false;
 
-	public static DataBlock readBlockFromURL(URL fileURL) throws Exception {
-		InputStream inStream = fileURL.openStream();
+	public static DataBlock readBlockFromURI(URI fileURI) throws Exception {
+		InputStream inStream = fileURI.toURL().openStream();
 		return readBlock(inStream);
 	}
 

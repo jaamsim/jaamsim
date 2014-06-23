@@ -33,10 +33,10 @@ import com.jaamsim.render.RenderException;
 import com.jaamsim.ui.LogBox;
 
 public class ObjReader {
-	public static MeshData parse(URL asset) throws RenderException {
+	public static MeshData parse(URI asset) throws RenderException {
 
 		try {
-			ObjReader reader = new ObjReader(asset);
+			ObjReader reader = new ObjReader(asset.toURL());
 			reader.processContent();
 
 			return reader.getMeshData();

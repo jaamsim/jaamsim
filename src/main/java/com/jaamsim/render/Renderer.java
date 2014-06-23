@@ -844,7 +844,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				// This did not load cleanly, clear it out and use the default bad mesh asset
 				proto.freeResources(gl);
 
-				LogBox.formatRenderLog("Could not load GPU assset: %s\n", key.getURL().toString());
+				LogBox.formatRenderLog("Could not load GPU assset: %s\n", key.getURI().toString());
 
 				proto = badProto;
 			}

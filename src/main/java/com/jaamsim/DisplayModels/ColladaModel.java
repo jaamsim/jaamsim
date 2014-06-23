@@ -331,7 +331,7 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
 		try {
 			ColParser.setKeepData(true);
-			MeshData data = ColParser.parse(meshKey.getURL());
+			MeshData data = ColParser.parse(meshKey.getURI());
 			DataBlock block = data.getDataAsBlock();
 			File outFile = new File(outputName);
 			FileOutputStream outStream = new FileOutputStream(outFile);

@@ -50,10 +50,10 @@ public class ColParser {
 		keepRuntimeData = keepData;
 	}
 
-	public static MeshData parse(URL asset) throws RenderException {
+	public static MeshData parse(URI asset) throws RenderException {
 
 		try {
-			ColParser colParser = new ColParser(asset);
+			ColParser colParser = new ColParser(asset.toURL());
 
 			colParser.processContent();
 

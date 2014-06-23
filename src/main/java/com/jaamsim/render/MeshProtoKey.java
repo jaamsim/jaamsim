@@ -14,7 +14,7 @@
  */
 package com.jaamsim.render;
 
-import java.net.URL;
+import java.net.URI;
 
 /**
  * Key for a mesh prototype
@@ -22,16 +22,16 @@ import java.net.URL;
  *
  */
 public class MeshProtoKey {
-	private URL _fileURL;
-	private String _urlString; // Use this string for comparison purposes
+	private URI _fileURI;
+	private String _uriString; // Use this string for comparison purposes
 
-	public MeshProtoKey(URL url) {
-		_fileURL = url;
-		_urlString = url.toString();
+	public MeshProtoKey(URI uri) {
+		_fileURI = uri;
+		_uriString = uri.toString();
 	}
 
-	public URL getURL() {
-		return _fileURL;
+	public URI getURI() {
+		return _fileURI;
 	}
 
 	@Override
@@ -39,11 +39,11 @@ public class MeshProtoKey {
 		if (!(o instanceof MeshProtoKey)) {
 			return false;
 		}
-		return ((MeshProtoKey)o)._urlString.equals(_urlString);
+		return ((MeshProtoKey)o)._uriString.equals(_uriString);
 	}
 
 	@Override
 	public int hashCode() {
-		return _urlString.hashCode();
+		return _uriString.hashCode();
 	}
 }

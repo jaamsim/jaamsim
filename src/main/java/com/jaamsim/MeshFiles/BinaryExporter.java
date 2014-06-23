@@ -2,7 +2,7 @@ package com.jaamsim.MeshFiles;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.net.URL;
+import java.net.URI;
 
 import com.jaamsim.collada.ColParser;
 import com.jaamsim.ui.LogBox;
@@ -20,7 +20,7 @@ public class BinaryExporter {
 
 		try {
 			ColParser.setKeepData(true);
-			MeshData data = ColParser.parse(new URL("file:///" + inputName));
+			MeshData data = ColParser.parse(new URI("file:///" + inputName));
 			DataBlock block = data.getDataAsBlock();
 			File outFile = new File(outputName);
 			FileOutputStream outStream = new FileOutputStream(outFile);
