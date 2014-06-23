@@ -18,6 +18,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +66,7 @@ public class ObjReader {
 		public Color4d ambient;
 		public Color4d spec;
 		public Color4d diffuse;
-		public URL diffuseTex;
+		public URI diffuseTex;
 		public String relDiffuseTex;
 		public double shininess = 1.0;
 		public double alpha = 1.0;
@@ -371,7 +373,11 @@ public class ObjReader {
 			if (tokens.length == 1) return; // Ignore empty tags
 			parseAssert(tokens.length == 2);
 			parseAssert(parsingMat != null);
-			parsingMat.diffuseTex = new URL(contentURL, tokens[1]);
+			try {
+				parsingMat.diffuseTex = new URL(contentURL, tokens[1]).toURI();
+			} catch (URISyntaxException e) {
+				parseAssert(false);
+			}
 			parsingMat.relDiffuseTex = tokens[1];
 		}
 	}

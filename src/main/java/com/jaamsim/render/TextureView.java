@@ -14,7 +14,7 @@
  */
 package com.jaamsim.render;
 
-import java.net.URL;
+import java.net.URI;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +36,7 @@ import com.jaamsim.math.Vec4d;
  */
 public class TextureView implements Renderable {
 
-	private URL _imageURL;
+	private URI _imageURI;
 	private Transform _trans;
 	private Vec3d _scale;
 	private long _pickingID;
@@ -91,9 +91,9 @@ public class TextureView implements Renderable {
 		identMat[ 3] = 0.0f; identMat[ 7] = 0.0f; identMat[11] = 0.0f; identMat[15] = 1.0f;
 	}
 
-	public TextureView(URL imageURL, Transform trans, Vec3d scale, boolean isTransparent, boolean isCompressed,
+	public TextureView(URI imageURI, Transform trans, Vec3d scale, boolean isTransparent, boolean isCompressed,
 	                   VisibilityInfo visInfo, long pickingID) {
-		_imageURL = imageURL;
+		_imageURI = imageURI;
 		_trans = trans;
 		_scale = scale;
 		_scale.z = 1; // This object can only be scaled in X, Y
@@ -268,7 +268,7 @@ public class TextureView implements Renderable {
 
 		GL2GL3 gl = renderer.getGL();
 
-		int textureID = renderer.getTexCache().getTexID(gl, _imageURL, _isTransparent, _isCompressed, false);
+		int textureID = renderer.getTexCache().getTexID(gl, _imageURI, _isTransparent, _isCompressed, false);
 
 		if (textureID == TexCache.LOADING_TEX_ID) {
 			return; // This texture is not ready yet

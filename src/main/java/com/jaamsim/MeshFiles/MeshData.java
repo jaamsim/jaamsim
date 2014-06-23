@@ -15,6 +15,8 @@
 package com.jaamsim.MeshFiles;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +60,7 @@ public class MeshData {
 		public Color4d specColor;
 		public double shininess;
 
-		public URL colorTex;
+		public URI colorTex;
 		// TODO Properly relativize this one day
 		public String relColorTex; // the 'relative' name for this texture, used by the binary exporter
 
@@ -227,7 +229,7 @@ public class MeshData {
 		_subLineInstances.add(inst);
 	}
 
-	public void addMaterial(URL colorTex,
+	public void addMaterial(URI colorTex,
 	                        String relTexString,
 	                        Color4d diffuseColor,
 	                        Color4d ambientColor,
@@ -781,19 +783,21 @@ public class MeshData {
 			Color4d transColor = readColorFromBlock(colorBlock);
 			int transType = colorBlock.readInt();
 
-			URL texURL = null;
+			URI texURI = null;
 			String texString = null;
 			DataBlock textureBlock = matBlock.findChildByName("DiffuseTexture");
 			if (textureBlock != null) {
 				texString = textureBlock.readString();
 				try {
-					texURL = new URL(contextURL, texString);
+					texURI = new URL(contextURL, texString).toURI();
 				} catch (MalformedURLException ex){
+					throw new RenderException(String.format("Error with texture URL: %s", texString));
+				} catch (URISyntaxException e) {
 					throw new RenderException(String.format("Error with texture URL: %s", texString));
 				}
 			}
 
-			addMaterial(texURL, texString, diffuse, ambient, specular, shininess, transType, transColor);
+			addMaterial(texURI, texString, diffuse, ambient, specular, shininess, transType, transColor);
 		}
 
 		// Now for the instances

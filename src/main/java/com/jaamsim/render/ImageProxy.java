@@ -14,7 +14,7 @@
  */
 package com.jaamsim.render;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 
 import com.jaamsim.math.Transform;
@@ -22,7 +22,7 @@ import com.jaamsim.math.Vec3d;
 
 public class ImageProxy implements RenderProxy {
 
-	private URL _imageURL;
+	private URI _imageURI;
 	private Transform _trans;
 	private Vec3d _scale;
 	private long _pickingID;
@@ -32,9 +32,9 @@ public class ImageProxy implements RenderProxy {
 
 	private TextureView cached;
 
-	public ImageProxy(URL url, Transform trans, Vec3d scale, boolean isTransparent, boolean isCompressed,
+	public ImageProxy(URI url, Transform trans, Vec3d scale, boolean isTransparent, boolean isCompressed,
 	                  VisibilityInfo visInfo, long pickingID) {
-		_imageURL = url;
+		_imageURI = url;
 		_trans = trans;
 		_scale = RenderUtils.fixupScale(scale);
 		_isTransparent = isTransparent;
@@ -47,7 +47,7 @@ public class ImageProxy implements RenderProxy {
 	@Override
 	public void collectRenderables(Renderer r, ArrayList<Renderable> outList) {
 		if (cached == null) {
-			cached = new TextureView(_imageURL, _trans, _scale, _isTransparent, _isCompressed, _visInfo, _pickingID);
+			cached = new TextureView(_imageURI, _trans, _scale, _isTransparent, _isCompressed, _visInfo, _pickingID);
 		}
 		outList.add(cached);
 

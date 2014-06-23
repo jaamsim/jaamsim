@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 
 import com.jaamsim.math.Vec2d;
@@ -164,12 +163,8 @@ public class MeshWriter {
 		} else {
 			startTag("<Texture coordIndex='0'>");
 			indent();
-			try {
-				URI tex = baseDirURI.relativize(mat.colorTex.toURI());
-				out.write(tex.toString());
-			} catch (URISyntaxException ex) {
-				LogBox.renderLogException(ex);
-			}
+			URI tex = baseDirURI.relativize(mat.colorTex);
+			out.write(tex.toString());
 			out.write("\n");
 			endTag("</Texture>");
 		}

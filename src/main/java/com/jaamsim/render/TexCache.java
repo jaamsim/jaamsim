@@ -21,7 +21,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class TexCache {
 
 	private static class LoadingEntry {
 		public int bufferID;
-		public URL imageURL;
+		public URI imageURI;
 		public boolean hasAlpha;
 		public boolean compressed;
 		public boolean forcedCompressed; // The user did not request a compressed texture, but we compressed it anyway
@@ -74,8 +75,8 @@ public class TexCache {
 		public AtomicBoolean failed = new AtomicBoolean(false);
 		public final Object lock = new Object();
 
-		public LoadingEntry(URL url, ByteBuffer data, boolean alpha, boolean compressed, boolean forcedCompressed) {
-			this.imageURL = url;
+		public LoadingEntry(URI uri, ByteBuffer data, boolean alpha, boolean compressed, boolean forcedCompressed) {
+			this.imageURI = uri;
 			this.data = data;
 			this.hasAlpha = alpha;
 			this.compressed = compressed;
@@ -90,13 +91,17 @@ public class TexCache {
 
 	private Renderer _renderer;
 
-	public static final URL BAD_TEXTURE;
+	public static final URI BAD_TEXTURE;
 	private int badTextureID = -1;
 
 	public static final int LOADING_TEX_ID = -2;
 
 	static {
-		BAD_TEXTURE = TexCache.class.getResource("/resources/images/bad-texture.png");
+		try {
+			BAD_TEXTURE = TexCache.class.getResource("/resources/images/bad-texture.png").toURI();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public TexCache(Renderer r) {
@@ -114,7 +119,11 @@ public class TexCache {
 		assert(badTextureID != -1); // Hopefully OpenGL never naturally returns -1, but I don't think it should
 	}
 
-	public int getTexID(GL2GL3 gl, URL imageURL, boolean withAlpha, boolean compressed, boolean waitUntilLoaded) {
+	public int getTexID(GL2GL3 gl, URI imageURI, boolean withAlpha, boolean compressed, boolean waitUntilLoaded) {
+
+		if (imageURI == null) {
+			return badTextureID;
+		}
 
 		// Scan the list of textures and load any that are ready
 		ArrayList<String> loadedStrings = new ArrayList<String>();
@@ -123,18 +132,18 @@ public class TexCache {
 			if (le.done.get()) {
 				loadedStrings.add(entry.getKey());
 				int glTexID = loadGLTexture(gl, le);
-				_texMap.put(le.imageURL.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed, le.forcedCompressed));
+				_texMap.put(le.imageURI.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed, le.forcedCompressed));
 			}
 		}
 		for (String s : loadedStrings) {
 			_loadingMap.remove(s);
 		}
 
-		String imageURLKey = imageURL.toString();
-		if (_texMap.containsKey(imageURLKey)) {
+		String imageURIKey = imageURI.toString();
+		if (_texMap.containsKey(imageURIKey)) {
 
 			// There is an entry in the cache, but let's check the other attributes
-			TexEntry entry = _texMap.get(imageURLKey);
+			TexEntry entry = _texMap.get(imageURIKey);
 			boolean found = true;
 			if (withAlpha && !entry.hasAlpha) {
 				found = false; // This entry does not have an alpha channel
@@ -153,17 +162,17 @@ public class TexCache {
 			texIDs[0] = entry.texID;
 			gl.glDeleteTextures(1, texIDs, 0);
 
-			_texMap.remove(imageURLKey);
+			_texMap.remove(imageURIKey);
 		}
 
-		boolean isLoading = _loadingMap.containsKey(imageURLKey);
+		boolean isLoading = _loadingMap.containsKey(imageURIKey);
 		LoadingEntry le = null;
 		if (!isLoading) {
-			le = launchLoadImage(gl, imageURL, withAlpha, compressed);
+			le = launchLoadImage(gl, imageURI, withAlpha, compressed);
 
 			if (le == null) {
 				// The image could not be found
-				_texMap.put(imageURLKey, new TexEntry(badTextureID, withAlpha, compressed, false));
+				_texMap.put(imageURIKey, new TexEntry(badTextureID, withAlpha, compressed, false));
 				return badTextureID;
 			}
 		}
@@ -173,20 +182,20 @@ public class TexCache {
 		}
 
 		waitForTex(le);
-		_loadingMap.remove(imageURLKey);
+		_loadingMap.remove(imageURIKey);
 
 		int glTexID = loadGLTexture(gl, le);
-		_texMap.put(le.imageURL.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed, le.forcedCompressed));
+		_texMap.put(le.imageURI.toString(), new TexEntry(glTexID, le.hasAlpha, le.compressed, le.forcedCompressed));
 
 		return glTexID;
 	}
 
-	private LoadingEntry launchLoadImage(GL2GL3 gl, final URL imageURL, boolean transparent, boolean compressed) {
+	private LoadingEntry launchLoadImage(GL2GL3 gl, final URI imageURI, boolean transparent, boolean compressed) {
 
-		Dimension dim = getImageDimension(imageURL);
+		Dimension dim = getImageDimension(imageURI);
 		if (dim == null) {
 			// Could not load image
-			LogBox.formatRenderLog("Could not load image URL: %s\n", imageURL.toString());
+			LogBox.formatRenderLog("Could not load image URL: %s\n", imageURI.toString());
 			return null;
 		}
 
@@ -226,21 +235,21 @@ public class TexCache {
 			mappedBuffer = gl.glMapBuffer(GL2GL3.GL_PIXEL_UNPACK_BUFFER, GL2GL3.GL_WRITE_ONLY);
 		} catch (GLException ex) {
 			// A GL Exception here is most likely caused by an out of memory, this is recoverable and simply use the bad texture
-			LogBox.formatRenderLog("Out of GRAM for image URL: %s\n", imageURL.toString());
+			LogBox.formatRenderLog("Out of GRAM for image URL: %s\n", imageURI.toString());
 			return null;
 		}
 		// Explicitly check for an error (we may not be using a DebugGL implementation, so the exception may not be thrown)
 		if (gl.glGetError() != GL2GL3.GL_NO_ERROR) {
-			LogBox.formatRenderLog("GL Error loading image URL: %s\n", imageURL.toString());
+			LogBox.formatRenderLog("GL Error loading image URL: %s\n", imageURI.toString());
 			return null;
 		}
 
 		gl.glBindBuffer(GL2GL3.GL_PIXEL_UNPACK_BUFFER, 0);
 
-		final LoadingEntry le = new LoadingEntry(imageURL, mappedBuffer, transparent, compressed, forcedCompressed);
+		final LoadingEntry le = new LoadingEntry(imageURI, mappedBuffer, transparent, compressed, forcedCompressed);
 		le.bufferID = ids[0];
 
-		_loadingMap.put(imageURL.toString(), le);
+		_loadingMap.put(imageURI.toString(), le);
 
 		entryLoader.loadEntry(le);
 		return le;
@@ -317,10 +326,10 @@ public class TexCache {
 		return glTexID;
 	}
 
-	private Dimension getImageDimension(URL imageURL) {
+	private Dimension getImageDimension(URI imageURI) {
 		ImageInputStream inStream = null;
 		try {
-			inStream = ImageIO.createImageInputStream(imageURL.openStream());
+			inStream = ImageIO.createImageInputStream(imageURI.toURL().openStream());
 			Iterator<ImageReader> it = ImageIO.getImageReaders(inStream);
 			if (it.hasNext()) {
 				ImageReader reader = it.next();
@@ -370,7 +379,7 @@ public class TexCache {
 	private void loadImage(LoadingEntry le) {
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(le.imageURL);
+			img = ImageIO.read(le.imageURI.toURL());
 		}
 		catch(Exception e) {
 			le.failed.set(true);

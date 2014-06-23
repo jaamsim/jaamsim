@@ -14,9 +14,7 @@
  */
 package com.jaamsim.ui;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -332,16 +330,12 @@ public boolean isScripted() {
 	return positionScriptInput.hasKeys() || centerScriptInput.hasKeys();
 }
 
-public URL getSkyboxTexture() {
-	try {
-		URI file = skyboxImage.getValue();
-		if (file == null || file.toString().equals("")) {
-			return null;
-		}
-		return file.toURL();
-	} catch (MalformedURLException ex) {
+public URI getSkyboxTexture() {
+	URI file = skyboxImage.getValue();
+	if (file == null || file.toString().equals("")) {
 		return null;
 	}
+	return file;
 }
 
 public void update(double simTime) {

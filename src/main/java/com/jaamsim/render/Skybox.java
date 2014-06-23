@@ -14,7 +14,7 @@
  */
 package com.jaamsim.render;
 
-import java.net.URL;
+import java.net.URI;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 
@@ -24,7 +24,7 @@ import com.jaamsim.math.Mat4d;
 
 public class Skybox {
 
-	private URL textureURL;
+	private URI textureURI;
 
 	private static HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
 	private static int vertBuff;
@@ -36,8 +36,8 @@ public class Skybox {
 
 	private static boolean isLoaded;
 
-	public void setTexture(URL texURL) {
-		textureURL = texURL;
+	public void setTexture(URI texURI) {
+		textureURI = texURI;
 	}
 
 	public static void loadGPUAssets(Renderer r) {
@@ -74,7 +74,7 @@ public class Skybox {
 
 	public void render(int contextID, Renderer renderer, Camera cam) {
 
-		if (textureURL == null) {
+		if (textureURI == null) {
 			return;
 		}
 
@@ -87,7 +87,7 @@ public class Skybox {
 
 		GL2GL3 gl = renderer.getGL();
 
-		int textureID = renderer.getTexCache().getTexID(gl, textureURL, false, false, false);
+		int textureID = renderer.getTexCache().getTexID(gl, textureURI, false, false, false);
 		if (textureID == TexCache.LOADING_TEX_ID) {
 			// Sky box is not ready yet, get it next time
 			return;

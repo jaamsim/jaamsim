@@ -15,6 +15,8 @@
 package com.jaamsim.collada;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -733,9 +735,12 @@ public class ColParser {
 		String img = _images.get(imageName);
 		parseAssert(img != null);
 		try {
-			ret.texture = new URL(_contextURL, img);
+			ret.texture = new URL(_contextURL, img).toURI();
 			ret.relTexture = img;
 		} catch (MalformedURLException ex) {
+			LogBox.renderLogException(ex);
+			parseAssert(false);
+		} catch (URISyntaxException ex) {
 			LogBox.renderLogException(ex);
 			parseAssert(false);
 		}
@@ -1454,7 +1459,7 @@ public class ColParser {
 	 */
 	private static class ColorTex {
 		public Color4d color;
-		public URL texture;
+		public URI texture;
 		public String relTexture;
 	}
 

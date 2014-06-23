@@ -14,7 +14,6 @@
  */
 package com.jaamsim.DisplayModels;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
 
@@ -27,7 +26,6 @@ import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.ImageProxy;
 import com.jaamsim.render.OverlayTextureProxy;
 import com.jaamsim.render.RenderProxy;
-import com.jaamsim.render.TexCache;
 import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.Entity;
@@ -193,13 +191,8 @@ public class ImageModel extends DisplayModel {
 			// Gather some inputs
 
 			cachedProxies = new ArrayList<RenderProxy>();
-			try {
-				cachedProxies.add(new ImageProxy(imageName.toURL(), trans,
-				                       scale, transp, compressed, vi, pickingID));
-			} catch (MalformedURLException e) {
-				cachedProxies.add(new ImageProxy(TexCache.BAD_TEXTURE, trans, scale,
-				                                 transp, compressed, vi, pickingID));
-			}
+			cachedProxies.add(new ImageProxy(imageName, trans,
+			                       scale, transp, compressed, vi, pickingID));
 
 		}
 
@@ -286,13 +279,11 @@ public class ImageModel extends DisplayModel {
 
 			try {
 				cachedProxy = new OverlayTextureProxy(pos.get(0), pos.get(1), size.get(0), size.get(1),
-				                                      filename.toURL(),
+				                                      filename,
 				                                      transp, false,
 				                                      alignRight, alignBottom, vi);
 
 				out.add(cachedProxy);
-			} catch (MalformedURLException ex) {
-				cachedProxy = null;
 			} catch (ErrorException ex) {
 				cachedProxy = null;
 			}
