@@ -789,6 +789,9 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		VersionNumber vn = sharedContext.getGLVersionNumber();
 		boolean isCore = sharedContext.isGLCoreProfile();
 		LogBox.formatRenderLog("OpenGL Major: %d Minor: %d IsCore:%s", vn.getMajor(), vn.getMinor(), isCore);
+		if (vn.getMajor() < 2) {
+			throw new RenderException("OpenGL version is too low. OpenGL >= 2.1 is required.");
+		}
 		GL2GL3 gl = sharedContext.getGL().getGL2GL3();
 		if (!isCore)
 			initShaders(gl);
