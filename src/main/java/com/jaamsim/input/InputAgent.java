@@ -615,7 +615,8 @@ public class InputAgent {
 			ent.setFlag(Entity.FLAG_EDITED);
 			sessionEdited = true;
 		}
-		in.setValueString(kw.argString());
+		if (kw.numArgs() < 1000)
+			in.setValueString(kw.argString());
 	}
 
 	public static void processKeyword(Entity entity, KeywordIndex key) {
@@ -958,20 +959,14 @@ public class InputAgent {
 	private static void echoInputRecord(ArrayList<String> tokens) {
 		if (logFile == null)
 			return;
-		StringBuilder line = new StringBuilder();
-		for (int i = 0; i < tokens.size(); i++) {
-			line.append("  ").append(tokens.get(i));
-			if (tokens.get(i).startsWith("\"")) {
-				logFile.write(line.toString());
-				logFile.newLine();
-				line.setLength(0);
-			}
-		}
 
-		// Leftover input
-		if (line.length() > 0) {
-			logFile.write(line.toString());
-			logFile.newLine();
+		for (int i = 0; i < tokens.size(); i++) {
+			if (i > 0)
+				logFile.write("  ");
+			String tok = tokens.get(i);
+			logFile.write(tok);
+			if (tok.startsWith("\""))
+				logFile.newLine();
 		}
 		logFile.flush();
 	}
