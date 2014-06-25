@@ -214,6 +214,20 @@ final class Process extends Thread {
 		this.wake();
 	}
 
+	/**
+	 * This is used to tear down a live threadstack when an error is received from
+	 * the model.
+	 */
+	synchronized Process forceKillNext() {
+		Process ret = nextProcess;
+		nextProcess = null;
+		if (ret != null) {
+			ret.dieFlag = true;
+			ret.wake();
+		}
+		return ret;
+	}
+
 	synchronized boolean shouldDie() {
 		return dieFlag;
 	}

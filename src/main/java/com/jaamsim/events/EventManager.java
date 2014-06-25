@@ -198,8 +198,13 @@ public final class EventManager {
 			if (e instanceof ThreadKilledException)
 				return false;
 
-			// TODO: This is where Process cleanup code needs adding
+			// Tear down any threads waiting for this to finish
+			Process next = cur.forceKillNext();
+			while (next != null) {
+				next = next.forceKillNext();
+			}
 			executeEvents = false;
+			processRunning = false;
 			errListener.handleError(this, e, currentTick);
 			return false;
 		}
@@ -278,6 +283,8 @@ public final class EventManager {
 						// Wake up the first conditional thread to be tested
 						// at this point, nextThread == conditionalList.get(0)
 						conditionalList.get(0).wake();
+						// TODO: the error handing for errors received during conditional
+						// execution still needs to be done
 						threadWait(cur);
 					}
 
@@ -349,7 +356,6 @@ public final class EventManager {
 		}
 
 		threadWait(cur);
-		if (cur.shouldDie()) throw new ThreadKilledException("Thread killed");
 		cur.setActive();
 	}
 
@@ -688,7 +694,8 @@ public final class EventManager {
 		}
 		// Catch the exception when the thread is interrupted
 		catch( InterruptedException e ) {}
-
+		if (cur.shouldDie())
+			throw new ThreadKilledException("Thread killed");
 	}
 
 	public void scheduleProcess(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
