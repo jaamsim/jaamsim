@@ -182,7 +182,7 @@ public final class EventManager {
 			if (p != null) {
 				p.setNextProcess(cur);
 				p.wake();
-				threadWait();
+				threadWait(cur);
 				return true;
 			}
 
@@ -278,7 +278,7 @@ public final class EventManager {
 						// Wake up the first conditional thread to be tested
 						// at this point, nextThread == conditionalList.get(0)
 						conditionalList.get(0).wake();
-						threadWait();
+						threadWait(cur);
 					}
 
 					// If a conditional event was satisfied, we will have a new event at the
@@ -348,7 +348,7 @@ public final class EventManager {
 			Process.allocate(this, null, null).wake();
 		}
 
-		threadWait();
+		threadWait(cur);
 		if (cur.shouldDie()) throw new ThreadKilledException("Thread killed");
 		cur.setActive();
 	}
@@ -495,7 +495,7 @@ public final class EventManager {
 			if (trcListener != null) trcListener.traceProcessStart(this, t);
 			// Transfer control to the new process
 			newProcess.wake();
-			threadWait();
+			threadWait(cur);
 		}
 	}
 
@@ -586,7 +586,7 @@ public final class EventManager {
 
 			p.setNextProcess(cur);
 			p.wake();
-			threadWait();
+			threadWait(cur);
 		}
 	}
 
@@ -637,7 +637,7 @@ public final class EventManager {
 				proc = Process.allocate(this, cur, evt.target);
 			proc.setNextProcess(cur);
 			proc.wake();
-			threadWait();
+			threadWait(cur);
 		}
 	}
 
@@ -674,7 +674,7 @@ public final class EventManager {
 	 * There is a synchronized block of code that will acquire the global lock
 	 * and then wait() the current thread.
 	 */
-	private void threadWait() {
+	private void threadWait(Process cur) {
 		// Ensure that the thread owns the global thread lock
 		try {
 			/*
