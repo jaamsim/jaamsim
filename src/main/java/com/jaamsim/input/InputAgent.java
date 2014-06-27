@@ -1166,22 +1166,21 @@ public class InputAgent {
 		// Print keywords for this entity that are in the "Key Inputs" category
 		for (Input<?> in : ent.getEditableInputs()) {
 			if (in.isEdited() && in.getCategory().equals("Key Inputs")) {
-				String value = in.getValueString();
-				ArrayList<String> tokens = new ArrayList<String>();
-				Parser.tokenize(tokens, value);
-				file.format("%s %s { %s }%n", ent.getInputName(), in.getKeyword(), value);
+				writeInputOnFile_ForEntity(in, file, ent);
 			}
 		}
 
 		// Print keywords for this entity that are NOT in the "Key Inputs" category
 		for (Input<?> in : ent.getEditableInputs()) {
 			if (in.isEdited() && !in.getCategory().equals("Key Inputs")) {
-				String value = in.getValueString();
-				ArrayList<String> tokens = new ArrayList<String>();
-				Parser.tokenize(tokens, value);
-				file.format("%s %s { %s }%n", ent.getInputName(), in.getKeyword(), value);
+				writeInputOnFile_ForEntity(in, file, ent);
 			}
 		}
+	}
+
+	static void writeInputOnFile_ForEntity(Input<?> in, FileEntity file, Entity ent) {
+		file.format("%s %s { %s }%n",
+				ent.getInputName(), in.getKeyword(), in.getValueString());
 	}
 
 	/**
