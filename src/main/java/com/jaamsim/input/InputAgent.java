@@ -1069,6 +1069,8 @@ public class InputAgent {
 	 */
 	public static void printNewConfigurationFileWithName( String fileName ) {
 
+		// 1) WRITE LINES FROM THE ORIGINAL CONFIGURATION FILE
+
 		// Copy the original configuration file up to the "RecordEdits" marker (if present)
 		// Temporary storage for the copied lines is needed in case the original file is to be overwritten
 		ArrayList<String> preAddedRecordLines = new ArrayList<String>();
@@ -1101,10 +1103,11 @@ public class InputAgent {
 			InputAgent.setRecordEditsFound(true);
 		}
 
+		// 2) WRITE THE DEFINITION STATEMENTS FOR NEW OBJECTS
+
 		// Determine all the new classes that were created
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<Class<? extends Entity>>();
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity ent = Entity.getAll().get(i);
+		for (Entity ent : Entity.getAll()) {
 			if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
 
@@ -1128,8 +1131,7 @@ public class InputAgent {
 			}
 
 			// Print the new instances that were defined
-			for (int i = 0; i < Entity.getAll().size(); i++) {
-				Entity ent = Entity.getAll().get(i);
+			for (Entity ent : Entity.getAll()) {
 				if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 					continue;
 
@@ -1140,6 +1142,8 @@ public class InputAgent {
 			// Close the define statement
 			file.format("}%n");
 		}
+
+		// 3) WRITE THE ATTRIBUTE DEFINITIONS
 
 		boolean blankLinePrinted = false;
 		for (Entity ent : Entity.getAll()) {
@@ -1156,9 +1160,10 @@ public class InputAgent {
 			}
 		}
 
+		// 4) WRITE THE INPUTS FOR KEYWORDS THAT WERE EDITED
+
 		// Identify the entities whose inputs were edited
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity ent = Entity.getAll().get(i);
+		for (Entity ent : Entity.getAll()) {
 			if (ent.testFlag(Entity.FLAG_EDITED) && !ent.testFlag(Entity.FLAG_GENERATED)) {
 				file.format("%n");
 				writeInputsOnFile_ForEntity( file, ent );
