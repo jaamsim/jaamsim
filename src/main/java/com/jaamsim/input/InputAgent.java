@@ -1141,6 +1141,21 @@ public class InputAgent {
 			file.format("}%n");
 		}
 
+		boolean blankLinePrinted = false;
+		for (Entity ent : Entity.getAll()) {
+			if (ent.testFlag(Entity.FLAG_EDITED) && !ent.testFlag(Entity.FLAG_GENERATED)) {
+				for (Input<?> in : ent.getEditableInputs()) {
+					if (in.isEdited() && in.getKeyword().equals("AttributeDefinitionList")) {
+						if (!blankLinePrinted) {
+							file.format("%n");
+							blankLinePrinted = true;
+						}
+						writeInputOnFile_ForEntity(in, file, ent);
+					}
+				}
+			}
+		}
+
 		// Identify the entities whose inputs were edited
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			Entity ent = Entity.getAll().get(i);
@@ -1165,7 +1180,8 @@ public class InputAgent {
 
 		// Print keywords for this entity that are in the "Key Inputs" category
 		for (Input<?> in : ent.getEditableInputs()) {
-			if (in.isEdited() && in.getCategory().equals("Key Inputs")) {
+			if (in.isEdited() && in.getCategory().equals("Key Inputs")
+					&& !in.getKeyword().equals("AttributeDefinitionList")) {
 				writeInputOnFile_ForEntity(in, file, ent);
 			}
 		}
