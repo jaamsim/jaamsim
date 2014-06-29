@@ -16,12 +16,12 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityTarget;
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;
@@ -43,6 +43,8 @@ public class Server extends LinkedComponent {
 
 	private boolean busy;  				// true if the server is busy serving a DisplayEntity
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
+
+	private final ProcessTarget removeDisplayEntity = new RemoveDisplayEntityTarget(this);
 
 	{
 		operatingThresholdList.setHidden(true);
@@ -87,51 +89,41 @@ public class Server extends LinkedComponent {
 		waitQueueInput.getValue().addLast( ent );
 
 		// If necessary, wake up the server
-		if ( !busy ) {
-			startProcess(new ProcessEntitiesTarget(this));
+		if (!busy) {
+			busy = true;
+			servedEntity = waitQueueInput.getValue().removeFirst();
+			double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
+			this.scheduleProcess(dt, 5, removeDisplayEntity);
 		}
 	}
 
-	private static class ProcessEntitiesTarget extends EntityTarget<Server> {
-		ProcessEntitiesTarget(Server ent) {
-			super(ent, "processEntities");
+	private static class RemoveDisplayEntityTarget extends EntityTarget<Server> {
+		RemoveDisplayEntityTarget(Server ent) {
+			super(ent, "removeDisplayEntity");
 		}
 
 		@Override
 		public void process() {
-			ent.processEntities();
+			ent.removeDisplayEntity();
 		}
 	}
 
-	/**
-	* Process DisplayEntities from the Queue
-	*/
-	public void processEntities() {
+	public void removeDisplayEntity() {
 
-		// Server should not be busy already
-		if( busy ) {
-			throw new ErrorException( "Server should not be busy already." );
-		}
-		busy = true;
+		// Send the entity to the next component in the chain
+		this.sendToNextComponent(servedEntity);
 
-
-		// Loop through the queued entities
-		while( waitQueueInput.getValue().getCount() > 0 ) {
-
-			// Remove the first entity from the queue
-			servedEntity = waitQueueInput.getValue().removeFirst();
-
-			// Select the processing time and wait for it to be completed
-			double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
-			this.simWait( dt );
-
-			// Send the entity to the next component in the chain
-			this.sendToNextComponent( servedEntity );
+		// Stop if the queue is empty
+		if (waitQueueInput.getValue().getCount() == 0) {
 			servedEntity = null;
+			busy = false;
+			return;
 		}
 
-		// Queue is empty, stop work
-		busy = false;
+		// Remove the next entity from the queue and start processing
+		servedEntity = waitQueueInput.getValue().removeFirst();
+		double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
+		this.scheduleProcess(dt, 5, removeDisplayEntity);
 	}
 
 	@Override
