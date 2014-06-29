@@ -16,6 +16,7 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -56,6 +57,7 @@ public class EntityGenerator extends LinkedComponent {
 	private int numberGenerated = 0;  // Number of entities generated so far
 	private boolean busy;
 
+	private final ProcessTarget createNextEntity = new CreateNextEntityTarget(this);
 
 	{
 		testEntity.setHidden(true);
@@ -107,12 +109,12 @@ public class EntityGenerator extends LinkedComponent {
 
 		// Generate the first entity and start the recursive loop to continue the process
 		double dt = firstArrivalTime.getValue().getNextSample(0.0);
-		this.scheduleProcess(dt, 5, new CreateNextEntityTarget(this, "createNextEntity"));
+		this.scheduleProcess(dt, 5, createNextEntity);
 	}
 
 	private static class CreateNextEntityTarget extends EntityTarget<EntityGenerator> {
-		public CreateNextEntityTarget(EntityGenerator ent, String method) {
-			super(ent, method);
+		public CreateNextEntityTarget(EntityGenerator ent) {
+			super(ent, "createNextEntity");
 		}
 
 		@Override
@@ -134,7 +136,7 @@ public class EntityGenerator extends LinkedComponent {
 
 		// Restart entity creation
 		double dt = interArrivalTime.getValue().getNextSample(getSimTime());
-		this.scheduleProcess(dt, 5, new CreateNextEntityTarget(this, "createNextEntity"));
+		this.scheduleProcess(dt, 5, createNextEntity);
 	}
 
 	/**
@@ -168,7 +170,7 @@ public class EntityGenerator extends LinkedComponent {
 
 		// Schedule the next entity to be generated
 		double dt = interArrivalTime.getValue().getNextSample(getSimTime());
-		this.scheduleProcess(dt, 5, new CreateNextEntityTarget(this, "createNextEntity"));
+		this.scheduleProcess(dt, 5, createNextEntity);
 	}
 
 	@Output(name = "NumberGenerated",
