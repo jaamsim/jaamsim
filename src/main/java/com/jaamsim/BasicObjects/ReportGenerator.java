@@ -17,6 +17,7 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.events.EventManager;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -53,6 +54,9 @@ public class ReportGenerator extends DisplayEntity {
 			example = "ReportGenerator1 RunDuration { 8760 h }")
 	private final ValueInput runDuration;
 
+	private final ProcessTarget performInitialisation = new PerformInitialisationTarget(this);
+	private final ProcessTarget performRunEnd = new PerformRunEndTarget(this);
+
 	{
 		attributeDefinitionList.setHidden(true);
 
@@ -86,16 +90,16 @@ public class ReportGenerator extends DisplayEntity {
 
 		// Wait for the end of initialisation
 		double dt = initializationDuration.getValue();
-		this.scheduleProcess(dt, 5, new PerformInitialisationTarget(this, "performInitialisation"));
+		this.scheduleProcess(dt, 5, performInitialisation);
 
 		// Wait for the end of the run
 		dt += runDuration.getValue();
-		this.scheduleProcess(dt, 5, new PerformRunEndTarget(this, "performRunEnd"));
+		this.scheduleProcess(dt, 5, performRunEnd);
 	}
 
 	private static class PerformInitialisationTarget extends EntityTarget<ReportGenerator> {
-		public PerformInitialisationTarget(ReportGenerator gen, String method) {
-			super(gen, method);
+		public PerformInitialisationTarget(ReportGenerator gen) {
+			super(gen, "performInitialisation");
 		}
 
 		@Override
@@ -113,8 +117,8 @@ public class ReportGenerator extends DisplayEntity {
 	}
 
 	private static class PerformRunEndTarget extends EntityTarget<ReportGenerator> {
-		public PerformRunEndTarget(ReportGenerator gen, String method) {
-			super(gen, method);
+		public PerformRunEndTarget(ReportGenerator gen) {
+			super(gen, "performRunEnd");
 		}
 
 		@Override
