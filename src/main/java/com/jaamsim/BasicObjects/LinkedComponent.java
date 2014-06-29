@@ -97,11 +97,19 @@ public abstract class LinkedComponent extends DisplayEntity implements Threshold
 	@Override
 	public void thresholdChanged() {}
 
-	public void addDisplayEntity( DisplayEntity ent ) {
+	/**
+	 * Receives the specified entity from an upstream component.
+	 * @param ent - the entity received from upstream.
+	 */
+	public void addDisplayEntity(DisplayEntity ent ) {
 		receivedEntity = ent;
 		numberAdded++;
 	}
 
+	/**
+	 * Sends the specified entity to the next component downstream.
+	 * @param ent - the entity to be sent downstream.
+	 */
 	public void sendToNextComponent(DisplayEntity ent) {
 		if( nextComponentInput.getValue() != null )
 			nextComponentInput.getValue().addDisplayEntity(ent);
