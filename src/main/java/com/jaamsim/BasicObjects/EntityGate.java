@@ -15,6 +15,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Thresholds.ThresholdUser;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
@@ -36,6 +37,8 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 	private final ValueInput releaseDelay;
 
 	private boolean busy;  // TRUE if the process of emptying the queue has started
+
+	private final ProcessTarget releaseQueuedEntity = new ReleaseQueuedEntityTarget(this);
 
 	{
 		waitQueue = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
@@ -84,14 +87,14 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 		// If the gate is open, process any entities that are waiting
 		if (this.isOpen() && !busy && waitQueue.getValue().getCount() > 0) {
 			busy = true;
-			this.scheduleProcess(releaseDelay.getValue(), 5, new ReleaseQueuedEntityTarget(this, "releaseQueuedEntity"));
+			this.scheduleProcess(releaseDelay.getValue(), 5, releaseQueuedEntity);
 		}
 	}
 
 	private static class ReleaseQueuedEntityTarget extends EntityTarget<EntityGate> {
 
-		public ReleaseQueuedEntityTarget(EntityGate gate, String method) {
-			super(gate,method);
+		public ReleaseQueuedEntityTarget(EntityGate gate) {
+			super(gate, "releaseQueuedEntity");
 		}
 
 		@Override
@@ -123,7 +126,7 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 		}
 
 		// Continue the recursive loop by scheduling the release of the next queued entity
-		this.scheduleProcess(releaseDelay.getValue(), 5, new ReleaseQueuedEntityTarget(this, "releaseQueuedEntity"));
+		this.scheduleProcess(releaseDelay.getValue(), 5, releaseQueuedEntity);
 	}
 
 }
