@@ -28,7 +28,7 @@ import com.sandwell.JavaSimulation3D.Queue;
 
 /**
  * Server processes entities one by one from a queue.  When finished with an entity, it passes it to the next
- * LinkedEntity in the chain.
+ * LinkedComponent in the chain.
  */
 public class Server extends LinkedComponent {
 
@@ -75,14 +75,11 @@ public class Server extends LinkedComponent {
 		super.earlyInit();
 
 		busy = false;
-		if( servedEntity != null ) {
-			servedEntity.kill();
-		}
 		servedEntity = null;
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
+	public void addDisplayEntity(DisplayEntity ent ) {
 		super.addDisplayEntity(ent);
 
 		// Add the entity to the queue
@@ -127,13 +124,12 @@ public class Server extends LinkedComponent {
 	}
 
 	@Override
-	public void updateGraphics( double simTime ) {
+	public void updateGraphics(double simTime) {
 
 		// If an entity is being served, show it at the center of the Server
-		if( servedEntity != null ) {
-
+		if (servedEntity != null) {
 			Vec3d serverCenter = this.getPositionForAlignment(new Vec3d());
-			servedEntity.setPosition( serverCenter);
+			servedEntity.setPosition(serverCenter);
 		}
 	}
 }
