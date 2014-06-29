@@ -55,10 +55,6 @@ public class Release extends LinkedComponent {
 		}
 	}
 
-	/**
-	 * Add a DisplayEntity from upstream
-	 * @param ent = entity to be added
-	 */
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
 		super.addDisplayEntity(ent);

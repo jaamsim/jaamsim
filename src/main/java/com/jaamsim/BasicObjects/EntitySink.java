@@ -27,9 +27,6 @@ public class EntitySink extends LinkedComponent {
 		testEntity.setHidden(true);
 	}
 
-	/**
-	 * Add a DisplayEntity from upstream
-	 */
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
 		super.addDisplayEntity(ent);

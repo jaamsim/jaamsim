@@ -63,10 +63,6 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 		busy = false;
 	}
 
-	/**
-	 * Add a DisplayEntity from upstream
-	 * @param ent = entity to be added
-	 */
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
 		super.addDisplayEntity(ent);

@@ -99,9 +99,6 @@ public class Assemble extends LinkedComponent {
 		numberGenerated = 0;
 	}
 
-	/**
-	 * Add a DisplayEntity from upstream
-	 */
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
 		super.addDisplayEntity(ent);

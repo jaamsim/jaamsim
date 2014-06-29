@@ -79,9 +79,6 @@ public class Server extends LinkedComponent {
 		servedEntity = null;
 	}
 
-	/**
-	 * Add a DisplayEntity from upstream
-	 */
 	@Override
 	public void addDisplayEntity( DisplayEntity ent ) {
 		super.addDisplayEntity(ent);
