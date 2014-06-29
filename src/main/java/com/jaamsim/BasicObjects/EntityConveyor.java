@@ -17,6 +17,7 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -28,7 +29,6 @@ import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.EntityTarget;
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
@@ -63,6 +63,8 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 	private Object screenPointLock = new Object();
 	private HasScreenPoints.PointsInfo[] cachedPointInfo;
+
+	private final ProcessTarget removeDisplayEntity = new RemoveDisplayEntityTarget(this);
 
 	{
 		operatingThresholdList.setHidden(true);
@@ -131,50 +133,42 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 		// If necessary, wake up the conveyor
 		if ( !busy ) {
-			startProcess( new ProcessEntitiesTarget(this, "processEntities") );
+			busy = true;
+			double dt = travelTimeInput.getValue();
+			this.scheduleProcess(dt, 5, removeDisplayEntity);
 		}
 	}
 
-	private static class ProcessEntitiesTarget extends EntityTarget<EntityConveyor> {
+	private static class RemoveDisplayEntityTarget extends EntityTarget<EntityConveyor> {
 
-		ProcessEntitiesTarget(EntityConveyor ent, String method) {
-			super(ent, method);
+		RemoveDisplayEntityTarget(EntityConveyor ent) {
+			super(ent, "removeDisplayEntity");
 		}
 
 		@Override
 		public void process() {
-			ent.processEntities();
+			ent.removeDisplayEntity();
 		}
 	}
 
-	/**
-	* Process DisplayEntities from the Queue
-	*/
-	public void processEntities() {
+	public void removeDisplayEntity() {
 
-		// Conveyor should not be busy already
-		if( busy ) {
-			throw new ErrorException( "Conveyor should not be busy already." );
-		}
-		busy = true;
+		// Remove the entity from the conveyor
+		DisplayEntity ent = entityList.remove(0);
+		startTimeList.remove(0);
 
-		// Loop until the conveyor is empty
-		while( entityList.size() > 0 ) {
+		// Send the entity to the next component
+		this.sendToNextComponent(ent);
 
-			// Wait for the first entity to reach the end
-			double dt = startTimeList.get(0) + travelTimeInput.getValue() - this.getSimTime();
-			this.simWait( dt);
-
-			// Remove the entity from the conveyor
-			DisplayEntity ent = entityList.remove(0);
-			startTimeList.remove(0);
-
-			// Send the entity to the next component
-			this.sendToNextComponent(ent);
+		// Stop if the conveyor is empty
+		if (entityList.isEmpty()) {
+			busy = false;
+			return;
 		}
 
-		// Queue is empty, stop work
-		busy = false;
+		// Schedule the next entity to reach the end of the conveyor
+		double dt = startTimeList.get(0) + travelTimeInput.getValue() - this.getSimTime();
+		this.scheduleProcess(dt, 5, removeDisplayEntity);
 	}
 
 	/**
