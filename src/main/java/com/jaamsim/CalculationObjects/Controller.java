@@ -18,10 +18,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
@@ -37,6 +39,8 @@ public class Controller extends DisplayEntity {
 
 	private final ArrayList<CalculationEntity> calculationEntityList;  // List of the CalculationEntities controller by this Controller.
 	private int count;  // Number of times that the controller has initiated its calculations.
+
+	private final ProcessTarget doUpdate = new DoUpdateTarget(this);
 
 	{
 		samplingTime = new ValueInput("SamplingTime", "Key Inputs", 1.0d);
@@ -77,21 +81,34 @@ public class Controller extends DisplayEntity {
 	public void startUp() {
 		super.startUp();
 
-		//Loop infinitely over the calculation entities
-		while( true ) {
+		// Schedule the first update
+		this.scheduleProcess(samplingTime.getValue(), 5, doUpdate);
+	}
 
-			// Wait for the samplingTime
-			this.simWait( samplingTime.getValue() );
-
-			// Update the last value for each entity
-			double simTime = this.getSimTime();
-			for( CalculationEntity ent : calculationEntityList ) {
-				ent.update(simTime);
-			}
-
-			// Increment the number of cycles
-			count++;
+	private static class DoUpdateTarget extends EntityTarget<Controller> {
+		DoUpdateTarget(Controller ent) {
+			super(ent, "doUpdate");
 		}
+
+		@Override
+		public void process() {
+			ent.doUpdate();
+		}
+	}
+
+	public void doUpdate() {
+
+		// Update the last value for each entity
+		double simTime = this.getSimTime();
+		for (CalculationEntity ent : calculationEntityList) {
+			ent.update(simTime);
+		}
+
+		// Increment the number of cycles
+		count++;
+
+		// Schedule the next update
+		this.scheduleProcess(samplingTime.getValue(), 5, doUpdate);
 	}
 
 	public int getCount() {
