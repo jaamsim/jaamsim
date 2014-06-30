@@ -20,6 +20,7 @@ GNU General Public License for more details.
   <property name="jogl.lib"      location="jar/jogl-all.jar"/>
   <property name="gluegen.lib"   location="jar/gluegen-rt.jar"/>
   <property name="class.dir"     location="${build.dir}/classes"/>
+  <property name="jars.dir"      location="${build.dir}/jars"/>
   
   <target name="clean">
     <delete dir="${build.dir}"/>
@@ -39,7 +40,7 @@ GNU General Public License for more details.
   </target>
 
   <target name="jar" depends="compile">
-    <jar jarfile="${build.dir}/jars/JaamSim.jar" manifest="Manifest.MF"
+    <jar jarfile="${jars.dir}/JaamSim.jar" manifest="Manifest.MF"
          compress="true">
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
