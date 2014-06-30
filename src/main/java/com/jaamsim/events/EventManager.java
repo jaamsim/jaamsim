@@ -366,7 +366,7 @@ public final class EventManager {
 	private long calculateEventTime(long waitLength) {
 		// Test for negative duration schedule wait length
 		if(waitLength < 0)
-			throw new ProcessError("Negative duration wait is invalid (wait length specified to be %d )", waitLength);
+			throw new ProcessError("Negative duration wait is invalid, waitLength = " + waitLength);
 
 		// Check for numeric overflow of internal time
 		long nextEventTime = currentTick + waitLength;
@@ -447,7 +447,7 @@ public final class EventManager {
 			if (!conditionalList.contains(cur)) {
 				if (handle != null) {
 					if (handle.proc != null)
-						throw new ProcessError("EVT:%s - Tried to waitUntil using a handle already in use", name);
+						throw new ProcessError("Tried to waitUntil using a handle already in use");
 					handle.proc = cur;
 				}
 
@@ -534,7 +534,7 @@ public final class EventManager {
 		boolean removed = eventTree.removeNode(node.schedTick, node.priority);
 
 		if (!removed) {
-			throw new ProcessError("EVT:%s - Tried to remove an event that could not be found", name);
+			throw new ProcessError("Tried to remove an event that could not be found");
 		}
 	}
 
@@ -553,7 +553,7 @@ public final class EventManager {
 
 			int index = conditionalList.indexOf(p);
 			if (index == -1)
-				throw new ProcessError("EVT:%s - Tried to terminate a waitUntil that couldn't be found", name);
+				throw new ProcessError("Tried to terminate a waitUntil that couldn't be found");
 
 			conditionalList.remove(index);
 			conditionalHandles.remove(index);
@@ -581,7 +581,7 @@ public final class EventManager {
 
 			int index = conditionalList.indexOf(p);
 			if (index == -1)
-				throw new ProcessError("EVT:%s - Tried to interrupt a waitUntil that couldn't be found", name);
+				throw new ProcessError("Tried to interrupt a waitUntil that couldn't be found");
 
 			p.setNextProcess(cur);
 			p.wake();

@@ -21,8 +21,4 @@ final class ProcessError extends RuntimeException {
 	ProcessError(String msg) {
 		super(msg);
 	}
-
-	ProcessError(String format, Object... args) {
-		super(String.format(format, args));
-	}
 }
