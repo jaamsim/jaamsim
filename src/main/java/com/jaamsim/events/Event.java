@@ -18,24 +18,25 @@ package com.jaamsim.events;
  * Holder class for event data used by the event monitor to schedule future
  * events.
  */
-public class Event {
+public final class Event {
 	EventNode node;
 	ProcessTarget target;
 	EventHandle handle;
 	Event next;
 
 	/**
-	 * Constructs a new event object.
-	 * @param currentTick the current simulation tick
-	 * @param scheduleTick the simulation tick the event is schedule for
-	 * @param prio the event priority for scheduling purposes
-	 * @param caller
-	 * @param process
+	 * Constructs a new event object for the given node, target and (optional) handle
 	 */
-	Event(EventNode node, ProcessTarget target) {
-		this.node = node;
-		this.target = target;
-		this.handle = null;
+	Event(EventNode n, ProcessTarget t, EventHandle h) {
+		node = n;
+		target = t;
+		handle = h;
+		if (h != null) {
+			if (h.event == null)
+				handle.event = this;
+			else
+				throw new ProcessError("Tried to schedule using an EventHandle already in use");
+		}
 	}
 
 	/**

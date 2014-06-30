@@ -390,14 +390,7 @@ public final class EventManager {
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);
 			EventNode node = getEventNode(nextEventTime, priority);
-			Event temp = new Event(node, t);
-			if (handle != null) {
-				if (handle.event != null)
-					throw new ProcessError("EVT:%s - Tried to schedule using an EventHandler already in use", name);
-
-				handle.event = temp;
-				temp.handle = handle;
-			}
+			Event temp = new Event(node, t, handle);
 			if (trcListener != null) trcListener.traceWait(this, temp);
 			node.addEvent(temp, fifo);
 			captureProcess(cur);
@@ -482,7 +475,7 @@ public final class EventManager {
 			cur.setCondWait(false);
 			WaitTarget t = new WaitTarget(cur);
 			EventNode node = getEventNode(currentTick, 0);
-			Event temp = new Event(node, t);
+			Event temp = new Event(node, t, null);
 			if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
 			node.addEvent(temp, true);
 			captureProcess(cur);
@@ -702,14 +695,7 @@ public final class EventManager {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
 			EventNode node = getEventNode(schedTick, eventPriority);
-			Event e = new Event(node, t);
-			if (handle != null) {
-				if (handle.event != null)
-					throw new ProcessError("EVT:%s - Tried to schedule using an EventHandler already in use", name);
-
-				handle.event = e;
-				e.handle = handle;
-			}
+			Event e = new Event(node, t, handle);
 			if (trcListener != null) trcListener.traceSchedProcess(this, e);
 			node.addEvent(e, fifo);
 		}
