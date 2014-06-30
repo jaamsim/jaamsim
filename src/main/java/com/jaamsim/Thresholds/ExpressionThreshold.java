@@ -18,6 +18,8 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.InputErrorException;
 
 public class ExpressionThreshold extends Threshold {
@@ -72,6 +74,14 @@ public class ExpressionThreshold extends Threshold {
 		} catch(ExpEvaluator.Error e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Output(name = "Open",
+	 description = "If open, then return TRUE.  Otherwise, return FALSE.",
+	    unitType = DimensionlessUnit.class)
+	@Override
+	public Boolean getOpen(double simTime) {
+		return this.getOpenConditionValue(simTime);
 	}
 
 }
