@@ -21,12 +21,15 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.input.ValueListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.DirInput;
+import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.FileEntity;
@@ -44,15 +47,20 @@ public class ReportGenerator extends DisplayEntity {
 			"The model will run for the initialization period and then clear " +
 			"the statistics and execute for the specified run duration. The " +
 			"total length of the simulation run will be the sum of the inputs " +
-			"for InitializationDuration and RunDuration.",
+			"for InitializationDuration and RunDurationList.",
 			example = "ReportGenerator1 InitializationDuration { 720 h }")
 	private final ValueInput initializationDuration;
 
-	@Keyword(description = "The duration over which all statistics will be recorded.\n" +
+	@Keyword(description = "A list of run durations over which statistics will be recorded.\n" +
+			"If a list of N durations are provided, then N separate report files will be generated. " +
 			"The total length of the simulation run will be the sum of the inputs " +
-			"for InitializationDuration and RunDuration.",
-			example = "ReportGenerator1 RunDuration { 8760 h }")
-	private final ValueInput runDuration;
+			"for InitializationDuration and RunDurationList.",
+			example = "ReportGenerator1 RunDurationList { 1  1  1  y }")
+	private final ValueListInput runDurationList;
+
+	private int reportNumber;
+	private double reportStartTime;
+	private double reportEndTime;
 
 	private final ProcessTarget performInitialisation = new PerformInitialisationTarget(this);
 	private final ProcessTarget performRunEnd = new PerformRunEndTarget(this);
@@ -68,10 +76,12 @@ public class ReportGenerator extends DisplayEntity {
 		initializationDuration.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(initializationDuration);
 
-		runDuration = new ValueInput("RunDuration", "Key Inputs", 31536000.0d);
-		runDuration.setUnitType(TimeUnit.class);
-		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
-		this.addInput(runDuration);
+		DoubleVector def = new DoubleVector();
+		def.add(31536000.0d);
+		runDurationList = new ValueListInput("RunDurationList", "Key Inputs", def);
+		runDurationList.setUnitType(TimeUnit.class);
+		runDurationList.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
+		this.addInput(runDurationList);
 	}
 
 	@Override
@@ -85,6 +95,14 @@ public class ReportGenerator extends DisplayEntity {
 	}
 
 	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		reportNumber = 1;
+		reportStartTime = initializationDuration.getValue();
+		reportEndTime = reportStartTime + runDurationList.getValue().get(0);
+	}
+
+	@Override
 	public void startUp() {
 		super.startUp();
 
@@ -92,8 +110,8 @@ public class ReportGenerator extends DisplayEntity {
 		double dt = initializationDuration.getValue();
 		this.scheduleProcess(dt, 5, performInitialisation);
 
-		// Wait for the end of the run
-		dt += runDuration.getValue();
+		// Wait for the first report
+		dt += runDurationList.getValue().get(0);
 		this.scheduleProcess(dt, 5, performRunEnd);
 	}
 
@@ -132,22 +150,41 @@ public class ReportGenerator extends DisplayEntity {
 		// Print the output report
 		this.printReport(this.getSimTime());
 
-		// Close warning/error trace file
-		InputAgent.closeLogFile();
+		// Stop if no more reports are to be printed
+		if (reportNumber == runDurationList.getValue().size()) {
 
-		// Stop the run if in batch mode
-		if (InputAgent.getBatch())
-			GUIFrame.shutdown(0);
+			// Terminate the run if in batch mode
+			if (InputAgent.getBatch()) {
+				InputAgent.closeLogFile();
+				GUIFrame.shutdown(0);
+			}
 
-		// Otherwise, just pause the run
-		EventManager.current().pause();
+			// Otherwise, just pause the run
+			EventManager.current().pause();
+			return;
+		}
+
+		// Re-initialise the statistics
+		this.performInitialisation();
+
+		// Schedule the next report
+		reportNumber++;
+		reportStartTime = this.getSimTime();
+		double dt = runDurationList.getValue().get(reportNumber-1);
+		reportEndTime = reportStartTime + dt;
+		this.scheduleProcess(dt, 5, performRunEnd);
 	}
 
 	private void printReport(double simTime) {
 
 		// Create the report file
-		String fileName = InputAgent.getReportFileName(InputAgent.getRunName() + ".rep");
-		FileEntity file = new FileEntity(fileName);
+		StringBuilder tmp = new StringBuilder("");
+		tmp.append(InputAgent.getReportFileName(InputAgent.getRunName()));
+		if (runDurationList.getValue().size() > 1) {
+			tmp.append("-").append(reportNumber);
+		}
+		tmp.append(".rep");
+		FileEntity file = new FileEntity(tmp.toString());
 
 		// Identify the classes that were used in the model
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<Class<? extends Entity>>();
@@ -216,6 +253,30 @@ public class ReportGenerator extends DisplayEntity {
 		// Close the report file
 		file.flush();
 		file.close();
+	}
+
+	@Output(name = "ReportNumber",
+	 description = "The index for the present report.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true)
+	public int getReportNumber(double simTime) {
+		return reportNumber;
+	}
+
+	@Output(name = "ReportStartTime",
+	 description = "The time at which statistics began to be collected for the present report.",
+	    unitType = TimeUnit.class,
+	  reportable = true)
+	public double getReportStartTime(double simTime) {
+		return reportStartTime;
+	}
+
+	@Output(name = "ReportEndTime",
+	 description = "The time at which statistics finished being collected for the present report.",
+	    unitType = TimeUnit.class,
+	  reportable = true)
+	public double getReportEndTime(double simTime) {
+		return reportEndTime;
 	}
 
 }
