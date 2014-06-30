@@ -1144,29 +1144,54 @@ public class InputAgent {
 		}
 
 		// 3) WRITE THE ATTRIBUTE DEFINITIONS
-
 		boolean blankLinePrinted = false;
 		for (Entity ent : Entity.getAll()) {
-			if (ent.testFlag(Entity.FLAG_EDITED) && !ent.testFlag(Entity.FLAG_GENERATED)) {
-				for (Input<?> in : ent.getEditableInputs()) {
-					if (in.isEdited() && in.getKeyword().equals("AttributeDefinitionList")) {
-						if (!blankLinePrinted) {
-							file.format("%n");
-							blankLinePrinted = true;
-						}
-						writeInputOnFile_ForEntity(in, file, ent);
-					}
-				}
+			if (!ent.testFlag(Entity.FLAG_EDITED))
+				continue;
+			if (ent.testFlag(Entity.FLAG_GENERATED))
+				continue;
+
+			final Input<?> in = ent.getInput("AttributeDefinitionList");
+			if (in == null || !in.isEdited())
+				continue;
+
+			if (!blankLinePrinted) {
+				file.format("%n");
+				blankLinePrinted = true;
 			}
+			writeInputOnFile_ForEntity(file, ent, in);
 		}
 
 		// 4) WRITE THE INPUTS FOR KEYWORDS THAT WERE EDITED
 
 		// Identify the entities whose inputs were edited
 		for (Entity ent : Entity.getAll()) {
-			if (ent.testFlag(Entity.FLAG_EDITED) && !ent.testFlag(Entity.FLAG_GENERATED)) {
-				file.format("%n");
-				writeInputsOnFile_ForEntity( file, ent );
+			if (!ent.testFlag(Entity.FLAG_EDITED))
+				continue;
+			if (ent.testFlag(Entity.FLAG_GENERATED))
+				continue;
+
+			file.format("%n");
+
+			ArrayList<Input<?>> deferredInputs = new ArrayList<Input<?>>();
+			// Print the key inputs first
+			for (Input<?> in : ent.getEditableInputs()) {
+				if (!in.isEdited())
+					continue;
+				if ("AttributeDefinitionList".equals(in.getKeyword()))
+					continue;
+
+				// defer all inputs outside the Key Inputs category
+				if (!"Key Inputs".equals(in.getCategory())) {
+					deferredInputs.add(in);
+					continue;
+				}
+
+				writeInputOnFile_ForEntity(file, ent, in);
+			}
+
+			for (Input<?> in : deferredInputs) {
+				writeInputOnFile_ForEntity(file, ent, in);
 			}
 		}
 
@@ -1175,33 +1200,9 @@ public class InputAgent {
 		file.close();
 	}
 
-	/**
-	 * Prints the configuration file entries for Entity ent to the FileEntity file.
-	 *
-	 * @param file - the target configuration file.
-	 * @param ent  - the entity whose configuration file entries are to be written.
-	 */
-	static void writeInputsOnFile_ForEntity( FileEntity file, Entity ent ) {
-
-		// Print keywords for this entity that are in the "Key Inputs" category
-		for (Input<?> in : ent.getEditableInputs()) {
-			if (in.isEdited() && in.getCategory().equals("Key Inputs")
-					&& !in.getKeyword().equals("AttributeDefinitionList")) {
-				writeInputOnFile_ForEntity(in, file, ent);
-			}
-		}
-
-		// Print keywords for this entity that are NOT in the "Key Inputs" category
-		for (Input<?> in : ent.getEditableInputs()) {
-			if (in.isEdited() && !in.getCategory().equals("Key Inputs")) {
-				writeInputOnFile_ForEntity(in, file, ent);
-			}
-		}
-	}
-
-	static void writeInputOnFile_ForEntity(Input<?> in, FileEntity file, Entity ent) {
+	static void writeInputOnFile_ForEntity(FileEntity file, Entity ent, Input<?> in) {
 		file.format("%s %s { %s }%n",
-				ent.getInputName(), in.getKeyword(), in.getValueString());
+		            ent.getInputName(), in.getKeyword(), in.getValueString());
 	}
 
 	/**
