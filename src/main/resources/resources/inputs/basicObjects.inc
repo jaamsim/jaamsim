@@ -1,5 +1,6 @@
 Define ObjectType {
-                    ReportGenerator
+                    SimEntity
+					ReportGenerator
                     EntityGenerator
                     Server
                     EntitySink
@@ -58,6 +59,7 @@ EntitySignalIconModel   ImageFile { '<res>/images/Signal-256.png' }      Transpa
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
 StatisticsIconModel     ImageFile { '<res>/images/Statistics-256.png' }  Transparent { TRUE }
 
+SimEntity               JavaClass { com.jaamsim.BasicObjects.SimEntity                  } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Sphere                }
 ReportGenerator         JavaClass { com.jaamsim.BasicObjects.ReportGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ReportGeneratorIconModel }
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
 Server                  JavaClass { com.jaamsim.BasicObjects.Server                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
@@ -84,6 +86,7 @@ TimeSeriesThreshold	    JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		
 ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 Statistics              JavaClass { com.jaamsim.BasicObjects.Statistics                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ StatisticsIconModel    }
 
+SimEntity          Description { 'A basic entity for use in a process flow type model.' }
 ReportGenerator    Description { 'Determines initialization, run duration, and prints the output report.' }
 EntityGenerator    Description { 'Creates copies of a specified entity at specified intervals.' }
 Server             Description { 'Processes a received entity over a specified duration.' }
