@@ -76,6 +76,7 @@ public class Server extends LinkedComponent {
 
 		busy = false;
 		servedEntity = null;
+		this.setPresentState();
 	}
 
 	@Override
@@ -88,9 +89,19 @@ public class Server extends LinkedComponent {
 		// If necessary, wake up the server
 		if (!busy) {
 			busy = true;
+			this.setPresentState();
 			servedEntity = waitQueueInput.getValue().removeFirst();
 			double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
 			this.scheduleProcess(dt, 5, removeDisplayEntity);
+		}
+	}
+
+	private void setPresentState() {
+		if (busy) {
+			this.setPresentState("Working");
+		}
+		else {
+			this.setPresentState("Idle");
 		}
 	}
 
@@ -114,6 +125,7 @@ public class Server extends LinkedComponent {
 		if (waitQueueInput.getValue().getCount() == 0) {
 			servedEntity = null;
 			busy = false;
+			this.setPresentState();
 			return;
 		}
 
