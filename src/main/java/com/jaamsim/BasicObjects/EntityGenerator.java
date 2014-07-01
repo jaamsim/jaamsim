@@ -108,8 +108,29 @@ public class EntityGenerator extends LinkedComponent {
 		super.startUp();
 
 		// Generate the first entity and start the recursive loop to continue the process
+		busy = true;
+		this.setPresentState();
 		double dt = firstArrivalTime.getValue().getNextSample(0.0);
 		this.scheduleProcess(dt, 5, createNextEntity);
+	}
+
+	private void setPresentState() {
+		if (this.isOpen()) {
+			if (busy) {
+				this.setPresentState("Working");
+			}
+			else {
+				this.setPresentState("Idle");
+			}
+		}
+		else {
+			if (busy) {
+				this.setPresentState("Clearing_while_Stopped");
+			}
+			else {
+				this.setPresentState("Stopped");
+			}
+		}
 	}
 
 	private static class CreateNextEntityTarget extends EntityTarget<EntityGenerator> {
@@ -127,14 +148,21 @@ public class EntityGenerator extends LinkedComponent {
 	public void thresholdChanged() {
 
 		// Is restart required?
-		if (busy || this.isClosed())
+		if (busy || this.isClosed()) {
+			this.setPresentState();
 			return;
+		}
 
 		// Has the last entity been generated?
-		if( maxNumber.getValue() != null && numberGenerated >= maxNumber.getValue() )
+		if( maxNumber.getValue() != null && numberGenerated >= maxNumber.getValue() ) {
+			busy = false;
+			this.setPresentState();
 			return;
+		}
 
 		// Restart entity creation
+		busy = true;
+		this.setPresentState();
 		double dt = interArrivalTime.getValue().getNextSample(getSimTime());
 		this.scheduleProcess(dt, 5, createNextEntity);
 	}
@@ -147,10 +175,9 @@ public class EntityGenerator extends LinkedComponent {
 		// Do any of the thresholds stop the generator?
 		if (this.isClosed()) {
 			busy = false;
+			this.setPresentState();
 			return;
 		}
-
-		busy = true;
 
 		// Create the new entity
 		numberGenerated++;
