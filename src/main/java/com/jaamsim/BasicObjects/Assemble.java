@@ -97,6 +97,7 @@ public class Assemble extends LinkedComponent {
 		busy = false;
 		assembledEntity = null;
 		numberGenerated = 0;
+		this.setPresentState();
 	}
 
 	@Override
@@ -114,6 +115,7 @@ public class Assemble extends LinkedComponent {
 		// If necessary, wake up the server
 		if (!busy) {
 			busy = true;
+			this.setPresentState();
 			this.processEntities();
 		}
 	}
@@ -126,7 +128,8 @@ public class Assemble extends LinkedComponent {
 		// Do all the queues have at least one entity?
 		for (Queue que : waitQueueList.getValue()) {
 			if (que.getCount() == 0) {
-				busy =false;
+				busy = false;
+				this.setPresentState();
 				return;
 			}
 		}
@@ -134,6 +137,7 @@ public class Assemble extends LinkedComponent {
 		// Do any of the thresholds stop the generator?
 		if (this.isClosed()) {
 			busy = false;
+			this.setPresentState();
 			return;
 		}
 
@@ -159,6 +163,25 @@ public class Assemble extends LinkedComponent {
 		// Schedule the completion of processing
 		double dt = serviceTime.getValue().getNextSample(getSimTime());
 		this.scheduleProcess(dt, 5, completeProcessing);
+	}
+
+	private void setPresentState() {
+		if (this.isOpen()) {
+			if (busy) {
+				this.setPresentState("Working");
+			}
+			else {
+				this.setPresentState("Idle");
+			}
+		}
+		else {
+			if (busy) {
+				this.setPresentState("Clearing_while_Stopped");
+			}
+			else {
+				this.setPresentState("Stopped");
+			}
+		}
 	}
 
 	private static class CompletionOfProcessingTarget extends EntityTarget<Assemble> {
@@ -189,7 +212,11 @@ public class Assemble extends LinkedComponent {
 		// Restart processing, if necessary
 		if (!busy) {
 			busy = true;
+			this.setPresentState();
 			this.processEntities();
+		}
+		else {
+			this.setPresentState();
 		}
 	}
 }
