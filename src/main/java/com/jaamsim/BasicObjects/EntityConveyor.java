@@ -106,6 +106,7 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		entityList.clear();
 		startTimeList.clear();
 		busy = false;
+		this.setPresentState();
 
 	    // Initialize the segment length data
 		lengthList.clear();
@@ -132,10 +133,20 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		startTimeList.add( this.getSimTime() );
 
 		// If necessary, wake up the conveyor
-		if ( !busy ) {
+		if (!busy) {
 			busy = true;
+			this.setPresentState();
 			double dt = travelTimeInput.getValue();
 			this.scheduleProcess(dt, 5, removeDisplayEntity);
+		}
+	}
+
+	private void setPresentState() {
+		if (busy) {
+			this.setPresentState("Working");
+		}
+		else {
+			this.setPresentState("Idle");
 		}
 	}
 
@@ -163,6 +174,7 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		// Stop if the conveyor is empty
 		if (entityList.isEmpty()) {
 			busy = false;
+			this.setPresentState();
 			return;
 		}
 
