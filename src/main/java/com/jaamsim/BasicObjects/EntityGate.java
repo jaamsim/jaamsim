@@ -64,6 +64,7 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 	public void earlyInit() {
 		super.earlyInit();
 		busy = false;
+		this.setPresentState();
 	}
 
 	@Override
@@ -87,7 +88,30 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 		// If the gate is open, process any entities that are waiting
 		if (this.isOpen() && !busy && waitQueue.getValue().getCount() > 0) {
 			busy = true;
+			this.setPresentState();
 			this.scheduleProcess(releaseDelay.getValue(), 5, releaseQueuedEntity);
+		}
+		else {
+			this.setPresentState();
+		}
+	}
+
+	private void setPresentState() {
+		if (this.isOpen()) {
+			if (busy) {
+				this.setPresentState("Clearing_while_Open");
+			}
+			else {
+				this.setPresentState("Open");
+			}
+		}
+		else {
+			if (busy) {
+				this.setPresentState("Clearing_while_Closed");
+			}
+			else {
+				this.setPresentState("Closed");
+			}
 		}
 	}
 
@@ -110,18 +134,20 @@ public class EntityGate extends LinkedComponent implements ThresholdUser {
 
 		// Stop the recursive loop if the gate has closed or the queue has become empty
 		Queue queue = waitQueue.getValue();
-		if( this.isClosed() || queue.getCount() == 0 ) {
+		if (this.isClosed() || queue.getCount() == 0) {
 			busy = false;
+			this.setPresentState();
 			return;
 		}
 
 		// Release the first element in the queue and send to the next component
 		DisplayEntity ent = queue.removeFirst();
-		this.sendToNextComponent( ent );
+		this.sendToNextComponent(ent);
 
 		// Stop the recursive loop if the queue is now empty
-		if( queue.getCount() == 0 ) {
+		if (queue.getCount() == 0) {
 			busy = false;
+			this.setPresentState();
 			return;
 		}
 
