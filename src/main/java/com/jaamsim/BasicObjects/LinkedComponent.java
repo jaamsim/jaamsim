@@ -21,6 +21,7 @@ import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.RateUnit;
 import com.sandwell.JavaSimulation.EntityInput;
@@ -32,7 +33,7 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  * LinkedComponents are used to form a chain of components that process DisplayEntities that pass through the system.
  * Sub-classes for EntityGenerator, Server, and EntitySink.
  */
-public abstract class LinkedComponent extends DisplayEntity implements ThresholdUser {
+public abstract class LinkedComponent extends StateEntity implements ThresholdUser {
 
 	@Keyword(description = "The prototype for entities that will be received by this object.\n" +
 			"This input must be set if the expression 'this.obj' is used in the input to any keywords.",
@@ -96,6 +97,11 @@ public abstract class LinkedComponent extends DisplayEntity implements Threshold
 
 	@Override
 	public void thresholdChanged() {}
+
+	@Override
+	public boolean isValidState(String state) {
+		return true;
+	}
 
 	/**
 	 * Receives the specified entity from an upstream component.
