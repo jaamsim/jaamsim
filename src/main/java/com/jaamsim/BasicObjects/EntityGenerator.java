@@ -61,6 +61,7 @@ public class EntityGenerator extends LinkedComponent {
 
 	{
 		testEntity.setHidden(true);
+		stateAssignment.setHidden(true);
 
 		firstArrivalTime = new SampleExpInput( "FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType( TimeUnit.class );

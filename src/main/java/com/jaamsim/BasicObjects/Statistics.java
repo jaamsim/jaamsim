@@ -41,6 +41,7 @@ public class Statistics extends LinkedComponent {
 	{
 		operatingThresholdList.setHidden(true);
 		attributeDefinitionList.setHidden(true);
+		stateAssignment.setHidden(true);
 
 		sampleValue = new ExpressionInput("SampleValue", "Key Inputs", null);
 		sampleValue.setEntity(this);

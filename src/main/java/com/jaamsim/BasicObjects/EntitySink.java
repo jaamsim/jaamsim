@@ -25,6 +25,7 @@ public class EntitySink extends LinkedComponent {
 		nextComponentInput.setHidden(true);
 		operatingThresholdList.setHidden(true);
 		testEntity.setHidden(true);
+		stateAssignment.setHidden(true);
 	}
 
 	@Override
