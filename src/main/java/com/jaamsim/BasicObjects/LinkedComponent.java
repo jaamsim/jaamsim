@@ -27,6 +27,7 @@ import com.jaamsim.units.RateUnit;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.InputErrorException;
+import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
@@ -48,6 +49,11 @@ public abstract class LinkedComponent extends StateEntity implements ThresholdUs
 			example = "EntityGenerator1 OperatingThresholdList { Server1 }")
 	protected final EntityListInput<Threshold> operatingThresholdList;
 
+	@Keyword(description = "The state to be assigned to each entity on arrival at this object.\n" +
+			"No state is assigned if the entry is blank.",
+	         example = "Server1 StateAssignment { Service }")
+	protected final StringInput stateAssignment;
+
 	private int numberAdded;     // Number of entities added to this component from upstream
 	private int numberProcessed; // Number of entities processed by this component
 	private DisplayEntity receivedEntity; // Entity most recently received by this component
@@ -61,6 +67,9 @@ public abstract class LinkedComponent extends StateEntity implements ThresholdUs
 
 		operatingThresholdList = new EntityListInput<Threshold>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
 		this.addInput( operatingThresholdList);
+
+		stateAssignment = new StringInput("StateAssignment", "Key Inputs", "");
+		this.addInput( stateAssignment);
 	}
 
 	@Override
@@ -80,6 +89,13 @@ public abstract class LinkedComponent extends StateEntity implements ThresholdUs
 		// Confirm that the next entity in the chain has been specified
 		if( ! nextComponentInput.getHidden() &&	nextComponentInput.getValue() == null ) {
 			throw new InputErrorException( "The keyword NextComponent must be set." );
+		}
+
+		// If a state is to be assigned, ensure that the prototype is a StateEntity
+		if (testEntity.getValue() != null && !stateAssignment.getValue().isEmpty()) {
+			if (!(testEntity.getValue() instanceof StateEntity)) {
+				throw new InputErrorException( "Only a SimEntity can be specified for the TestEntity keyword if a state is be be assigned." );
+			}
 		}
 	}
 
@@ -108,8 +124,13 @@ public abstract class LinkedComponent extends StateEntity implements ThresholdUs
 	 * @param ent - the entity received from upstream.
 	 */
 	public void addDisplayEntity(DisplayEntity ent ) {
+
 		receivedEntity = ent;
 		numberAdded++;
+
+		// Assign a new state to the received entity
+		if (!stateAssignment.getValue().isEmpty() && ent instanceof StateEntity)
+			((StateEntity)ent).setPresentState(stateAssignment.getValue());
 	}
 
 	/**

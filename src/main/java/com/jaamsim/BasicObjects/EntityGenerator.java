@@ -187,6 +187,7 @@ public class EntityGenerator extends LinkedComponent {
 		DisplayEntity ent = InputAgent.defineEntityWithUniqueName(proto.getClass(), sb.toString(),"_", true);
 		ent.copyInputs(proto);
 		ent.setFlag(Entity.FLAG_GENERATED);
+		ent.earlyInit();
 
 		// Send the entity to the next element in the chain
 		this.sendToNextComponent( ent );

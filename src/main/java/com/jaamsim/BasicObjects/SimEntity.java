@@ -18,4 +18,9 @@ import com.jaamsim.states.StateEntity;
 
 public class SimEntity extends StateEntity {
 
+	@Override
+	public boolean isValidState(String state) {
+		return true;
+	}
+
 }
