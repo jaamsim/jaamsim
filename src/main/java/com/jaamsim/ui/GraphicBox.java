@@ -45,10 +45,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.AABB;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.MeshProtoKey;
@@ -245,6 +247,17 @@ public class GraphicBox extends JDialog {
 					entitySize = new Vec3d(modelSize);
 					entitySize.scale3(ratio);
 					InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format(loc, "%.6f %.6f %.6f m", entitySize.x, entitySize.y, entitySize.z));
+				}
+
+				if (dm instanceof ImageModel) {
+					ImageModel im = (ImageModel)dm;
+					Vec2d imageDims = RenderManager.inst().getImageDims(im.getImageFile());
+					if (imageDims != null && useModelSize.isSelected()) {
+						// Keep the y size the same, but use the image's proportions. We can't really use the model size, as it is in pixels
+						double scale = currentEntity.getSize().y / imageDims.y;
+						InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format(loc, "%.6f %.6f %.6f m", imageDims.x*scale, imageDims.y*scale, 1.0, 0.0));
+
+					}
 				}
 
 				if (useModelPosition.isSelected()) {
