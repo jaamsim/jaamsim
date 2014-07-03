@@ -14,6 +14,7 @@
  */
 package com.jaamsim.controllers;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Image;
@@ -25,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,6 +57,7 @@ import com.jaamsim.math.Plane;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Action;
@@ -70,6 +73,7 @@ import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.TessFontKey;
+import com.jaamsim.render.TexCache;
 import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.render.util.ExceptionLogger;
 import com.jaamsim.ui.FrameBox;
@@ -1501,6 +1505,16 @@ public class RenderManager implements DragSourceListener {
 		// The mesh is not loaded and we are non-blocking, so trigger a mesh load and return
 		MeshDataCache.loadMesh(key, new AtomicBoolean());
 		return null;
+	}
+
+	public Vec2d getImageDims(URI imageURI) {
+		if (imageURI == null)
+			return null;
+		Dimension dim = TexCache.getImageDimension(imageURI);
+		if (dim == null)
+			return null;
+
+		return new Vec2d(dim.getWidth(), dim.getHeight());
 	}
 
 	/**

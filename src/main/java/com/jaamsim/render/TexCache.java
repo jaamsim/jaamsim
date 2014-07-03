@@ -326,7 +326,7 @@ public class TexCache {
 		return glTexID;
 	}
 
-	private Dimension getImageDimension(URI imageURI) {
+	public static Dimension getImageDimension(URI imageURI) {
 		ImageInputStream inStream = null;
 		try {
 			inStream = ImageIO.createImageInputStream(imageURI.toURL().openStream());
