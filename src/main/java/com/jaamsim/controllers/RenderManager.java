@@ -1102,15 +1102,18 @@ public class RenderManager implements DragSourceListener {
 			}
 
 			Region reg = dispEnt.getCurrentRegion();
-			Transform regionInvTrans = new Transform();
 			if (reg != null) {
-				regionInvTrans = reg.getRegionTrans();
+				Transform regionInvTrans = reg.getRegionTrans();
 				regionInvTrans.inverse(regionInvTrans);
-			}
-			Vec3d localDelta = new Vec3d();
-			regionInvTrans.multAndTrans(delta, localDelta);
 
-			dispEnt.dragged(localDelta);
+				Vec3d localLast = new Vec3d();
+				regionInvTrans.multAndTrans(lastPoint, localLast);
+				Vec3d localCurr = new Vec3d();
+				regionInvTrans.multAndTrans(currentPoint, localCurr);
+				delta.sub3(localCurr, localLast);
+			}
+
+			dispEnt.dragged(delta);
 			return true;
 		}
 
