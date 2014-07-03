@@ -268,6 +268,10 @@ public class CameraControl implements WindowInteractionListener {
 
 	@Override
 	public void mouseWheelMoved(int windowID, int x, int y, int wheelRotation, int modifiers) {
+		if (!_updateView.isMovable() || _updateView.isScripted()) {
+			return;
+		}
+
 		Vec3d camPos = _updateView.getGlobalPosition();
 		Vec3d center = _updateView.getGlobalCenter();
 
