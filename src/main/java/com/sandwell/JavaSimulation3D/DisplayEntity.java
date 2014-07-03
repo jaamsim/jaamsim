@@ -200,6 +200,7 @@ public class DisplayEntity extends Entity {
 
 		sizeInput = new Vec3dInput("Size", "Basic Graphics", new Vec3d(1.0d, 1.0d, 1.0d));
 		sizeInput.setUnitType(DistanceUnit.class);
+		sizeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(sizeInput);
 
 		orientationInput = new Vec3dInput("Orientation", "Basic Graphics", new Vec3d());
