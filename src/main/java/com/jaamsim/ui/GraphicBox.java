@@ -255,7 +255,7 @@ public class GraphicBox extends JDialog {
 					if (imageDims != null && useModelSize.isSelected()) {
 						// Keep the y size the same, but use the image's proportions. We can't really use the model size, as it is in pixels
 						double scale = currentEntity.getSize().y / imageDims.y;
-						InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format(loc, "%.6f %.6f %.6f m", imageDims.x*scale, imageDims.y*scale, 1.0, 0.0));
+						InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format(loc, "%.6f %.6f %.6f m", imageDims.x*scale, imageDims.y*scale, 1.0));
 
 					}
 				}
