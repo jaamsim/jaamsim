@@ -155,6 +155,7 @@ public class Assemble extends LinkedComponent {
 		assembledEntity = InputAgent.defineEntityWithUniqueName(proto.getClass(), sb.toString(),"_", true);
 		assembledEntity.copyInputs(proto);
 		assembledEntity.setFlag(Entity.FLAG_GENERATED);
+		assembledEntity.earlyInit();
 
 		// Position the assembled part over the Assemble object
 		Vec3d pos = this.getPositionForAlignment(new Vec3d());
