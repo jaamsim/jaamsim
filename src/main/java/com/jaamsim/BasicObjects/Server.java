@@ -47,8 +47,6 @@ public class Server extends LinkedComponent {
 	private final ProcessTarget removeDisplayEntity = new RemoveDisplayEntityTarget(this);
 
 	{
-		operatingThresholdList.setHidden(true);
-
 		serviceTimeInput = new SampleExpInput( "ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTimeInput.setUnitType( TimeUnit.class );
 		serviceTimeInput.setEntity(this);
@@ -87,21 +85,39 @@ public class Server extends LinkedComponent {
 		waitQueueInput.getValue().addLast( ent );
 
 		// If necessary, wake up the server
-		if (!busy) {
+		if (!busy && this.isOpen()) {
 			busy = true;
 			this.setPresentState();
-			servedEntity = waitQueueInput.getValue().removeFirst();
-			double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
-			this.scheduleProcess(dt, 5, removeDisplayEntity);
+			this.processQueuedEntity();
 		}
 	}
 
+	private void processQueuedEntity() {
+
+		// Remove the first entity from the queue
+		servedEntity = waitQueueInput.getValue().removeFirst();
+		double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
+
+		// Schedule the completion of service
+		this.scheduleProcess(dt, 5, removeDisplayEntity);
+	}
+
 	private void setPresentState() {
-		if (busy) {
-			this.setPresentState("Working");
+		if (this.isOpen()) {
+			if (busy) {
+				this.setPresentState("Working");
+			}
+			else {
+				this.setPresentState("Idle");
+			}
 		}
 		else {
-			this.setPresentState("Idle");
+			if (busy) {
+				this.setPresentState("Clearing_while_Stopped");
+			}
+			else {
+				this.setPresentState("Stopped");
+			}
 		}
 	}
 
@@ -116,13 +132,28 @@ public class Server extends LinkedComponent {
 		}
 	}
 
+	@Override
+	public void thresholdChanged() {
+
+		// Is restart required?
+		if (busy || this.isClosed()) {
+			this.setPresentState();
+			return;
+		}
+
+		// Restart operation
+		busy = true;
+		this.setPresentState();
+		this.processQueuedEntity();
+	}
+
 	public void removeDisplayEntity() {
 
 		// Send the entity to the next component in the chain
 		this.sendToNextComponent(servedEntity);
 
-		// Stop if the queue is empty
-		if (waitQueueInput.getValue().getCount() == 0) {
+		// Stop if the queue is empty or a threshold is closed
+		if (waitQueueInput.getValue().getCount() == 0 || this.isClosed()) {
 			servedEntity = null;
 			busy = false;
 			this.setPresentState();
@@ -130,9 +161,7 @@ public class Server extends LinkedComponent {
 		}
 
 		// Remove the next entity from the queue and start processing
-		servedEntity = waitQueueInput.getValue().removeFirst();
-		double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
-		this.scheduleProcess(dt, 5, removeDisplayEntity);
+		this.processQueuedEntity();
 	}
 
 	@Override
