@@ -47,6 +47,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	com.jaamsim.probability.TestErlangDistribution.class,
 	com.jaamsim.probability.TestExponentialDistribution.class,
 	com.jaamsim.probability.TestGammaDistribution.class,
+	com.jaamsim.probability.TestBetaDistribution.class,
 	com.jaamsim.probability.TestLogLogisticDistribution.class,
 	com.jaamsim.probability.TestLogNormalDistribution.class,
 	com.jaamsim.probability.TestNormalDistribution.class,

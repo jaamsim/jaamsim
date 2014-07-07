@@ -5,6 +5,7 @@ Define ObjectType {
 					ExponentialDistribution
 					ErlangDistribution
 					GammaDistribution
+					BetaDistribution
 					WeibullDistribution
 					LogNormalDistribution
 					LogLogisticsDistribution
@@ -21,6 +22,7 @@ NormalDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.NormalDist
 ExponentialDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ExponentialDistribution	} Palette { 'Probability Distributions' }
 ErlangDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.ErlangDistribution			} Palette { 'Probability Distributions' }
 GammaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.GammaDistribution			} Palette { 'Probability Distributions' }
+BetaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.BetaDistribution			} Palette { 'Probability Distributions' }
 WeibullDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.WeibullDistribution		} Palette { 'Probability Distributions' }
 LogNormalDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.LogNormalDistribution		} Palette { 'Probability Distributions' }
 LogLogisticsDistribution	JavaClass { com.jaamsim.ProbabilityDistributions.LogLogisticDistribution	} Palette { 'Probability Distributions' }
@@ -58,6 +60,7 @@ NormalDistribution			DefaultDisplayModel { NormalDistributionIconModel      }
 ExponentialDistribution		DefaultDisplayModel { ExponentialDistributionIconModel }
 ErlangDistribution			DefaultDisplayModel { ErlangDistributionIconModel      }
 GammaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
+BetaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 WeibullDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogLogisticsDistribution	DefaultDisplayModel { ProbabilityDistributionIconModel }
@@ -73,6 +76,7 @@ NormalDistribution       Description { 'Generates random numbers from a normal p
 ExponentialDistribution  Description { 'Generates random numbers from a negative exponential probability density function.' }
 ErlangDistribution       Description { 'Generates random numbers from an Erlang probability density function.' }
 GammaDistribution        Description { 'Generates random numbers from a gamma probability density function.' }
+BetaDistribution        Description { 'Generates random numbers from a beta probability density function.' }
 WeibullDistribution      Description { 'Generates random numbers from a Weibull probability density function.' }
 LogNormalDistribution    Description { 'Generates random numbers from a log-normal probability density function.' }
 LogLogisticsDistribution Description { 'Generates random numbers from a log-logistical probability density function.' }
