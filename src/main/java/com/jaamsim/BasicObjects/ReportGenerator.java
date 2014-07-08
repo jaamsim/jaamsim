@@ -212,21 +212,20 @@ public class ReportGenerator extends DisplayEntity {
 					continue;
 
 				// Print the outputs
-				this.printOutputs(file, ent, simTime);
+				ReportGenerator.printOutputs(file, ent, simTime);
 
 				// Print the states
 				if ( !(ent instanceof StateEntity) )
 					continue;
-				this.printStates(file, (StateEntity)ent);
+				ReportGenerator.printStates(file, (StateEntity)ent);
 			}
 		}
 
 		// Close the report file
-		file.flush();
 		file.close();
 	}
 
-	private void printOutputs(FileEntity file, Entity ent, double simTime) {
+	public static void printOutputs(FileEntity file, Entity ent, double simTime) {
 
 		// Loop through the outputs
 		boolean blankLine = false;
@@ -274,7 +273,7 @@ public class ReportGenerator extends DisplayEntity {
 		}
 	}
 
-	private void printStates(FileEntity file, StateEntity ent) {
+	public static void printStates(FileEntity file, StateEntity ent) {
 
 		long totalTicks = 0;
 		long workingTicks = 0;

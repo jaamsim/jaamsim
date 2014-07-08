@@ -1,6 +1,7 @@
 Define ObjectType {
                     SimEntity
 					ReportGenerator
+					EntityLogger
                     EntityGenerator
                     Server
                     EntitySink
@@ -29,6 +30,7 @@ Define ObjectType {
 
 Define	ImageModel {
             ReportGeneratorIconModel
+			EntityLoggerIconModel
 			SourceIconModel
 			SinkIconModel
 			ServerIconModel
@@ -45,6 +47,7 @@ Define	ImageModel {
 			}
 			
 ReportGeneratorIconModel  ImageFile { '<res>/images/ReportGenerator-256.png' }   Transparent { TRUE }
+EntityLoggerIconModel     ImageFile { '<res>/images/EntityLogger-256.png' }      Transparent { TRUE }
 SourceIconModel         ImageFile { '<res>/images/Source-256.png' }      Transparent { TRUE }
 SinkIconModel           ImageFile { '<res>/images/Sink-256.png'   }      Transparent { TRUE }
 ServerIconModel         ImageFile { '<res>/images/Server-256.png' }      Transparent { TRUE }
@@ -61,6 +64,7 @@ StatisticsIconModel     ImageFile { '<res>/images/Statistics-256.png' }  Transpa
 
 SimEntity               JavaClass { com.jaamsim.BasicObjects.SimEntity                  } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Sphere                }
 ReportGenerator         JavaClass { com.jaamsim.BasicObjects.ReportGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ReportGeneratorIconModel }
+EntityLogger            JavaClass { com.jaamsim.BasicObjects.EntityLogger               } Palette { 'Basic Objects' } DefaultDisplayModel 	{ EntityLoggerIconModel }
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SourceIconModel		}
 Server                  JavaClass { com.jaamsim.BasicObjects.Server                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ServerIconModel		}
 EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SinkIconModel 		}
@@ -88,6 +92,7 @@ Statistics              JavaClass { com.jaamsim.BasicObjects.Statistics         
 
 SimEntity          Description { 'A basic entity for use in a process flow type model.' }
 ReportGenerator    Description { 'Determines initialization, run duration, and prints the output report.' }
+EntityLogger       Description { 'Records the output and state data for a generated entity in an output log.' }
 EntityGenerator    Description { 'Creates copies of a specified entity at specified intervals.' }
 Server             Description { 'Processes a received entity over a specified duration.' }
 EntitySink         Description { 'Destroys any entity it receives.' }
