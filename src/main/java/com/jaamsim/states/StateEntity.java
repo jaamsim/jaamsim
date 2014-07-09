@@ -95,14 +95,18 @@ public class StateEntity extends DisplayEntity {
 		if (presentState.name.equals(state))
 			return;
 
-		StateRecord nextState = this.getState(state);
-		if (nextState == null) {
+		int stateIdx = this.stateIdx(state);
+		StateRecord nextState;
+		if (stateIdx < 0) {
 			if (!isValidState(state))
 				throw new ErrorException("Specified state: %s is not valid for Entity: %s",
 				                         state, this.getName());
 
 			nextState = new StateRecord(state, isValidWorkingState(state));
-			states.add(nextState);
+			states.add(-stateIdx - 1, nextState);
+		}
+		else {
+			nextState = states.get(stateIdx);
 		}
 
 		updateStateStats();
@@ -201,14 +205,38 @@ public class StateEntity extends DisplayEntity {
 		return presentState.name;
 	}
 
-	public StateRecord getState(String state) {
-		for (StateRecord each : states) {
-			if (each.name.equals(state)) {
-				return each;
+	/**
+	 * Return the index of the given state, or (-insertionPoint - 1), see Arrays.binarySearach
+	 * @param state
+	 * @return
+	 */
+	private int stateIdx(String state) {
+		int lowIdx = 0;
+		int highIdx = states.size() - 1;
+
+		while (lowIdx <= highIdx) {
+			final int testIdx = (lowIdx + highIdx) >>> 1; // use unsigned shift to avoid overflow
+			final int comp = states.get(testIdx).name.compareTo(state);
+			if (comp < 0) {
+				lowIdx = testIdx + 1;
+			}
+			else if (comp > 0) {
+				highIdx = testIdx - 1;
+			}
+			else {
+				return testIdx;
 			}
 		}
 
-		return null;
+		return -(lowIdx + 1);
+	}
+
+	public StateRecord getState(String state) {
+		int idx = stateIdx(state);
+		if (idx < 0)
+			return null;
+
+		return states.get(idx);
 	}
 
 	public StateRecord getState() {
