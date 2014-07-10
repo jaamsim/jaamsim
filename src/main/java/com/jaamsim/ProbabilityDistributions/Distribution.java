@@ -161,6 +161,9 @@ implements SampleProvider {
 	/**
 	 * Returns the next sample from the probability distribution.
 	 */
+	@Output(name = "Value",
+	        description = "The last sampled value in the distribution.",
+	        unitType = UserSpecifiedUnit.class)
 	@Override
 	public final double getNextSample(double simTime) {
 		// If we are not in a model context, do not perturb the distribution by sampling,
@@ -260,13 +263,4 @@ implements SampleProvider {
 	public double getSampleMax( double simTime ) {
 		return sampleMax;
 	}
-
-	@Output( name="Value",
-			 description="The next sampled value in the distribution.",
-			 unitType=UserSpecifiedUnit.class)
-	public double getValue( double simTime ) {
-		return getNextSample(simTime);
-	}
-
 }
-
