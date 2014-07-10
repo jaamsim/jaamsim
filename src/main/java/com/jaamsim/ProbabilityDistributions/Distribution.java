@@ -15,6 +15,7 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -63,6 +64,8 @@ implements SampleProvider {
 	private double sampleMin;
 	private double sampleMax;
 
+	private double lastSample = 0;
+
 	static {
 		globalSeedInput = new IntegerInput("GlobalSubstreamSeed", "Key Inputs", 0);
 		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
@@ -109,6 +112,8 @@ implements SampleProvider {
 		sampleSquaredSum = 0.0;
 		sampleMin = Double.POSITIVE_INFINITY;
 		sampleMax = Double.NEGATIVE_INFINITY;
+
+		lastSample = getMeanValue(0);
 	}
 
 	@Override
@@ -158,6 +163,12 @@ implements SampleProvider {
 	 */
 	@Override
 	public final double getNextSample(double simTime) {
+		// If we are not in a model context, do not perturb the distribution by sampling,
+		// instead simply return the last sampled value
+		if (!EventManager.hasCurrent()) {
+			return lastSample;
+		}
+
 		// Loop until the select sample falls within the desired min and max values
 		double nextSample;
 		do {
@@ -165,6 +176,8 @@ implements SampleProvider {
 		}
 		while (nextSample < this.minValueInput.getValue() ||
 		       nextSample > this.maxValueInput.getValue());
+
+		lastSample = nextSample;
 
 		// Collect statistics on the sampled values
 		sampleCount++;
@@ -247,5 +260,13 @@ implements SampleProvider {
 	public double getSampleMax( double simTime ) {
 		return sampleMax;
 	}
+
+	@Output( name="Value",
+			 description="The next sampled value in the distribution.",
+			 unitType=UserSpecifiedUnit.class)
+	public double getValue( double simTime ) {
+		return getNextSample(simTime);
+	}
+
 }
 
