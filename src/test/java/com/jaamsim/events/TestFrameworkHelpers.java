@@ -16,7 +16,7 @@ package com.jaamsim.events;
 
 
 public class TestFrameworkHelpers {
-	static void runEventsToTick(EventManager evt, long tick, long timeoutMS) {
+	public static void runEventsToTick(EventManager evt, long tick, long timeoutMS) {
 		TestTimeListener tl = new TestTimeListener();
 		tl.waitforstop(evt, tick, timeoutMS);
 	}

@@ -15,20 +15,48 @@
 package com.jaamsim.probability;
 
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
+
 import com.jaamsim.ProbabilityDistributions.ContinuousDistribution;
 import com.jaamsim.ProbabilityDistributions.Distribution;
+import com.jaamsim.events.EventManager;
+import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.InputAgent;
 import com.sandwell.JavaSimulation.ObjectType;
 
 public class TestContinuousDistribution {
+	static class SampleDistribution extends ProcessTarget {
+		final Distribution dist;
+		final int numSamples;
+		double total;
+
+		public SampleDistribution(Distribution dist, int numSamples) {
+			this.dist = dist;
+			this.numSamples = numSamples;
+		}
+		@Override
+		public String getDescription() {
+			return "DistibutionUnitTest";
+		}
+
+		@Override
+		public void process() {
+			total = 0.0d;
+			for (int i = 0; i < numSamples; i++)
+				total += dist.getNextSample(0.0d);
+		}
+	}
 
 	static double sampleDistribution(Distribution dist, int numSamples) {
-		double total = 0.0d;
-		for (int i = 0; i < numSamples; i++)
-			total += dist.getNextSample(0.0d);
+		SampleDistribution target = new SampleDistribution(dist, numSamples);
+		EventManager evt = new EventManager("DistibutionUnitTest");
+		evt.clear();
 
-		return total;
+		evt.scheduleProcess(0, 0, false, target, null);
+		TestFrameworkHelpers.runEventsToTick(evt, Long.MAX_VALUE, 100000000);
+		return target.total;
 	}
 
 	@Test

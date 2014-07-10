@@ -62,9 +62,8 @@ public class TestGammaDistribution {
 		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");
 		dist.earlyInit();
 
-		for(int i = 0; i<1000000; i++) {
-			dist.getNextSample(0.0d);
-		}
+		int numSamples = 1000000;
+		TestContinuousDistribution.sampleDistribution(dist, numSamples);
 		assertTrue( Math.abs( dist.getSampleMean(0.0) / dist.getMeanValue(0.0) - 1.0 ) < 0.005 );
 		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.005 );
 	}
