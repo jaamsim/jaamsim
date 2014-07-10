@@ -36,8 +36,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JMenuItem;
@@ -121,16 +119,10 @@ public class RenderManager implements DragSourceListener {
 
 	private final AtomicBoolean screenshot = new AtomicBoolean(false);
 
-	// These values are used to limit redraw rate, the stored values are time in milliseconds
-	// returned by System.currentTimeMillis()
-	private long lastDraw = 0;
-	private long scheduledDraw = 0;
-	private final Object timingLock = new Object();
-
 	private final ExceptionLogger exceptionLogger;
 
 	private final static double FPS = 60;
-	private final Timer timer;
+	private final RateLimiter rateLimiter;
 
 	private final HashMap<Integer, CameraControl> windowControls = new HashMap<Integer, CameraControl>();
 	private final HashMap<Integer, View> windowToViewMap= new HashMap<Integer, View>();
@@ -194,36 +186,20 @@ public class RenderManager implements DragSourceListener {
 		}, "RenderManagerThread");
 		managerThread.start();
 
-		// Start the display timer
-		timer = new Timer("RedrawThread");
-		TimerTask displayTask = new TimerTask() {
+		rateLimiter = new RateLimiter(FPS);
+
+		rateLimiter.registerCallback(new Runnable() {
 			@Override
 			public void run() {
-
-				synchronized(timingLock) {
-					// Is a redraw scheduled
-					long currentTime = System.currentTimeMillis();
-
-					// Only draw if the scheduled time is before now and after the last redraw
-					// but never skip a draw if a screen shot is requested
-					if (!screenshot.get() && (scheduledDraw < lastDraw || currentTime < scheduledDraw)) {
-						return;
+				synchronized(redraw) {
+					if (windowControls.size() == 0 && !screenshot.get()) {
+						return; // Do not queue a redraw if there are no open windows
 					}
-
-					lastDraw = currentTime;
-
-					synchronized(redraw) {
-						if (windowControls.size() == 0 && !screenshot.get()) {
-							return; // Do not queue a redraw if there are no open windows
-						}
-						redraw.set(true);
-						redraw.notifyAll();
-					}
+					redraw.set(true);
+					redraw.notifyAll();
 				}
 			}
-		};
-
-		timer.scheduleAtFixedRate(displayTask, 0, (long) (1000 / (FPS*2)));
+		});
 
 		popupLock = new Object();
 	}
@@ -243,22 +219,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void queueRedraw() {
-		synchronized(timingLock) {
-			long currentTime = System.currentTimeMillis();
-
-			if (scheduledDraw > lastDraw) {
-				// A draw is scheduled
-				return;
-			}
-
-			long newDraw = currentTime;
-			long frameTime = (long)(1000.0/FPS);
-			if (newDraw < lastDraw + frameTime) {
-				// This would be scheduled too soon
-				newDraw = lastDraw + frameTime;
-			}
-			scheduledDraw = newDraw;
-		}
+		rateLimiter.queueUpdate();
 	}
 
 	public void createWindow(View view) {
@@ -354,7 +315,7 @@ public class RenderManager implements DragSourceListener {
 					windowControls.clear();
 					previewCache.clear();
 
-					timer.cancel();
+					rateLimiter.cancel();
 
 					break;
 				}
@@ -1653,7 +1614,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public void shutdown() {
-		timer.cancel();
+		rateLimiter.cancel();
 		finished.set(true);
 		if (renderer != null) {
 			renderer.shutdown();
