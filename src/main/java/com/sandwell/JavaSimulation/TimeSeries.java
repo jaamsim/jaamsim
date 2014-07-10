@@ -100,7 +100,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		return out;
 	}
 
-	@Output(name = "Value",
+	@Output(name = "PresentValue",
 	        description = "The time series value for the present time.",
 	        unitType = UserSpecifiedUnit.class)
 	@Override
