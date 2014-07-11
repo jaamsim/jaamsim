@@ -55,11 +55,11 @@ public class RateLimiter {
 				}
 
 				lastTime = currentTime;
+			}
 
-				synchronized (callbacks) {
-					for (Runnable r : callbacks) {
-						r.run();
-					}
+			synchronized (callbacks) {
+				for (Runnable r : callbacks) {
+					r.run();
 				}
 			}
 		}
