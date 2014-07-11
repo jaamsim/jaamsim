@@ -67,13 +67,12 @@ public class RateLimiter {
 
 	public void queueUpdate() {
 		synchronized(timingLock) {
-			long currentTime = System.currentTimeMillis();
-
 			if (scheduledTime > lastTime) {
 				// A draw is scheduled
 				return;
 			}
 
+			long currentTime = System.currentTimeMillis();
 			long newDraw = currentTime;
 			long frameTime = (long)(1000.0/ups);
 			if (newDraw < lastTime + frameTime) {
