@@ -24,45 +24,45 @@ import java.util.TimerTask;
  *
  */
 public class RateLimiter {
-
 	private final Timer timer;
+	private final RateLimitedTimerTask task;
 
 	private long lastTime = 0;
 	private long scheduledTime = 0;
 	private final Object timingLock = new Object();
 	private final double ups;
 
-	private Object callbackLock = new Object();
-	private ArrayList<Runnable> callbacks = new ArrayList<Runnable>();
-
 	public RateLimiter(double updatesPerSecond) {
 		// Start the display timer
 		ups = updatesPerSecond;
 		timer = new Timer("UpdateThread", true);
-		TimerTask displayTask = new TimerTask() {
-			@Override
-			public void run() {
+		task = new RateLimitedTimerTask();
+		timer.scheduleAtFixedRate(task, 0, (long) (1000 / (ups*2)));
+	}
 
-				synchronized(timingLock) {
-					// Is a redraw scheduled
-					long currentTime = System.currentTimeMillis();
+	private class RateLimitedTimerTask extends TimerTask {
+		final ArrayList<Runnable> callbacks = new ArrayList<Runnable>();
 
-					// Only update if the scheduled time is before now and after the last update
-					if ((scheduledTime < lastTime || currentTime < scheduledTime)) {
-						return;
-					}
+		@Override
+		public void run() {
+			synchronized(timingLock) {
+				// Is a redraw scheduled
+				long currentTime = System.currentTimeMillis();
 
-					lastTime = currentTime;
+				// Only update if the scheduled time is before now and after the last update
+				if ((scheduledTime < lastTime || currentTime < scheduledTime)) {
+					return;
+				}
 
-					synchronized (callbackLock) {
-						for (Runnable r : callbacks) {
-							r.run();
-						}
+				lastTime = currentTime;
+
+				synchronized (callbacks) {
+					for (Runnable r : callbacks) {
+						r.run();
 					}
 				}
 			}
-		};
-		timer.scheduleAtFixedRate(displayTask, 0, (long) (1000 / (ups*2)));
+		}
 	}
 
 	public void queueUpdate() {
@@ -84,9 +84,9 @@ public class RateLimiter {
 		}
 	}
 
-	public void  registerCallback(Runnable r) {
-		synchronized (callbackLock) {
-			callbacks.add(r);
+	public void registerCallback(Runnable r) {
+		synchronized (task.callbacks) {
+			task.callbacks.add(r);
 		}
 	}
 
