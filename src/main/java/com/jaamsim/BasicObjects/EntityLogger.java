@@ -22,9 +22,8 @@ import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class EntityLogger extends LinkedComponent {
-
-	FileEntity file;
-	double logTime;
+	private FileEntity file;
+	private double logTime;
 
 	{
 		operatingThresholdList.setHidden(true);
@@ -32,25 +31,29 @@ public class EntityLogger extends LinkedComponent {
 		testEntity.setHidden(true);
 	}
 
+	public EntityLogger() {}
+
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 
+		logTime = 0.0d;
+
 		// Close the file if it is already open
 		if (file != null) {
 			file.close();
+			file = null;
 		}
 
 		// Create the report file
-		StringBuilder tmp = new StringBuilder("");
-		tmp.append(InputAgent.getReportFileName(InputAgent.getRunName()));
+		StringBuilder tmp = new StringBuilder(InputAgent.getReportFileName(InputAgent.getRunName()));
 		tmp.append("-").append(this.getName());
 		tmp.append(".log");
 		file = new FileEntity(tmp.toString());
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
+	public void addDisplayEntity(DisplayEntity ent) {
 		super.addDisplayEntity(ent);
 
 		// Log the entity's outputs
@@ -75,5 +78,4 @@ public class EntityLogger extends LinkedComponent {
 	public double getLogTime(double simTime) {
 		return logTime;
 	}
-
 }
