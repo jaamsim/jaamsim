@@ -224,7 +224,7 @@ public class Queue extends DisplayEntity {
 			distanceX += 0.5d * itemSize.x;
 
 			// Set Position
-			Vec3d itemCenter = this.getPositionForAlignment(tmp);
+			Vec3d itemCenter = this.getGlobalPositionForAlignment(tmp);
 			item.setPositionForAlignment(new Vec3d(), itemCenter);
 		}
 	}

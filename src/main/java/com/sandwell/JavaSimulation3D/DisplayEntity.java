@@ -343,6 +343,18 @@ public class DisplayEntity extends Entity {
 		return temp;
 	}
 
+	public Vec3d getGlobalPositionForAlignment(Vec3d alignment) {
+		Vec3d temp = new Vec3d(alignment);
+		synchronized (position) {
+			temp.sub3(align);
+			temp.mul3(size);
+			calculateEulerRotation(temp, orient);
+			temp.add3(this.getGlobalPosition());
+		}
+
+		return temp;
+	}
+
 	public Vec3d getOrientation() {
 		synchronized (position) {
 			return new Vec3d(orient);
