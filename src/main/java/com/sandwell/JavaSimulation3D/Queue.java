@@ -186,10 +186,6 @@ public class Queue extends DisplayEntity {
 	@Override
 	public void updateGraphics( double simTime ) {
 
-		//int max = itemList.size();
-		// If set, limit the number of items per sub-lane
-		//if (maxPerLine > 0)
-		//	max = maxPerLine;
 		Vec3d queueOrientation = getOrientation();
 		Vec3d qSize = this.getSize();
 		Vec3d tmp = new Vec3d();
