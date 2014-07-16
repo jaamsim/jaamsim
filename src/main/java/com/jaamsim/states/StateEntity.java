@@ -51,10 +51,7 @@ public class StateEntity extends DisplayEntity {
 		states.add(init);
 
 		stateListeners.clear();
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-			if (!(ent instanceof StateEntityListener))
-				continue;
-
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class, StateEntityListener.class)) {
 			StateEntityListener sel = (StateEntityListener)ent;
 			if (sel.isWatching(this))
 				stateListeners.add(sel);
