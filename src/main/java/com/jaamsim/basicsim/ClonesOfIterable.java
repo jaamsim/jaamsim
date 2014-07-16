@@ -14,69 +14,15 @@
  */
 package com.jaamsim.basicsim;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 import com.sandwell.JavaSimulation.Entity;
 
-public class ClonesOfIterable<T extends Entity> implements Iterable<T>, Iterator<T> {
-
-	private final ArrayList<? extends Entity> allInstances = Entity.getAll();
-	private final Class<T> entClass;
-	private int curPos;
-	private int nextPos;
-
+public class ClonesOfIterable<T extends Entity> extends EntityIterator<T> {
 	public ClonesOfIterable(Class<T> aClass) {
-		entClass = aClass;
-		curPos = -1;
-		nextPos = -1;
-	}
-
-	private void updatePos() {
-		if (nextPos >= allInstances.size())
-			return;
-
-		while (++nextPos < allInstances.size()) {
-			// If we find a match, break out
-			if ( entClass.isAssignableFrom(allInstances.get(nextPos).getClass()))
-				break;
-		}
+		super(aClass);
 	}
 
 	@Override
-	public boolean hasNext() {
-		if (curPos == nextPos)
-			updatePos();
-
-		if (nextPos < allInstances.size())
-			return true;
-		else
-			return false;
+	public boolean matches(Class<?> entklass) {
+		return entClass.isAssignableFrom(entklass);
 	}
-
-	@Override
-	public T next() {
-		if (curPos == nextPos)
-			updatePos();
-
-		if (nextPos < allInstances.size()) {
-			curPos = nextPos;
-			return entClass.cast(allInstances.get(curPos));
-		}
-		else {
-			throw new NoSuchElementException();
-		}
-	}
-
-	@Override
-	public void remove() {
-		 throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Iterator<T> iterator(){
-		return this;
-	}
-
 }

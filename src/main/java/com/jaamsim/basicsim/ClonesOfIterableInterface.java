@@ -14,72 +14,17 @@
  */
 package com.jaamsim.basicsim;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 import com.sandwell.JavaSimulation.Entity;
 
-public class ClonesOfIterableInterface<T extends Entity> implements Iterable<T>, Iterator<T> {
-	private final ArrayList<? extends Entity> allInstances = Entity.getAll();
-	private final Class<T> entClass;
+public class ClonesOfIterableInterface<T extends Entity> extends EntityIterator<T> {
 	private final Class<?> ifaceClass;
-	private int curPos;
-	private int nextPos;
-
 	public ClonesOfIterableInterface(Class<T> aClass, Class<?> iface) {
-		entClass = aClass;
+		super(aClass);
 		ifaceClass = iface;
-		curPos = -1;
-		nextPos = -1;
-	}
-
-	private void updatePos() {
-		if (nextPos >= allInstances.size())
-			return;
-
-		while (++nextPos < allInstances.size()) {
-			// If we find a match, break out
-			Class<?> klass = allInstances.get(nextPos).getClass();
-			if (entClass.isAssignableFrom(klass) &&
-			    ifaceClass.isAssignableFrom(klass))
-				break;
-		}
 	}
 
 	@Override
-	public boolean hasNext() {
-		if (curPos == nextPos)
-			updatePos();
-
-		if (nextPos < allInstances.size())
-			return true;
-		else
-			return false;
+	public boolean matches(Class<?> entklass) {
+		return entClass.isAssignableFrom(entklass) && ifaceClass.isAssignableFrom(entklass);
 	}
-
-	@Override
-	public T next() {
-		if (curPos == nextPos)
-			updatePos();
-
-		if (nextPos < allInstances.size()) {
-			curPos = nextPos;
-			return entClass.cast(allInstances.get(curPos));
-		}
-		else {
-			throw new NoSuchElementException();
-		}
-	}
-
-	@Override
-	public void remove() {
-		 throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Iterator<T> iterator(){
-		return this;
-	}
-
 }
