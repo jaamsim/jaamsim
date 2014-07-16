@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.basicsim.ClonesOfIterable;
+import com.jaamsim.basicsim.ClonesOfIterableInterface;
 import com.jaamsim.basicsim.InstanceIterable;
 import com.jaamsim.basicsim.ReflectionTarget;
 import com.jaamsim.events.ConditionalHandle;
@@ -140,6 +141,15 @@ public class Entity {
 
 	public static <T extends Entity> ClonesOfIterable<T> getClonesOfIterator(Class<T> proto){
 		return new ClonesOfIterable<T>(proto);
+	}
+
+	/**
+	 * Returns an iterator over the given proto class, but also filters only those
+	 * objects that implement the given interface class.
+	 * @return
+	 */
+	public static <T extends Entity> ClonesOfIterableInterface<T> getClonesOfIterator(Class<T> proto, Class<?> iface){
+		return new ClonesOfIterableInterface<T>(proto, iface);
 	}
 
 	public static <T extends Entity> ArrayList<T> getClonesOf(Class<T> proto) {
