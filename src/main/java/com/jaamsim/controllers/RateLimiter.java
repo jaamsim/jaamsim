@@ -15,8 +15,6 @@
 package com.jaamsim.controllers;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * A class to limit updates to a set rate in real time
@@ -24,43 +22,59 @@ import java.util.TimerTask;
  *
  */
 public class RateLimiter {
-	private final Timer timer;
-	private final RateLimitedTimerTask task;
+	private final Thread refreshThread;
 
 	private long lastTime = 0;
 	private long scheduledTime = 0;
 	private final Object timingLock = new Object();
 	private final double ups;
+	private volatile boolean running = true;
+
+	private final ArrayList<Runnable> callbacks = new ArrayList<Runnable>();
 
 	public RateLimiter(double updatesPerSecond) {
 		// Start the display timer
 		ups = updatesPerSecond;
-		timer = new Timer("UpdateThread", true);
-		task = new RateLimitedTimerTask();
-		timer.scheduleAtFixedRate(task, 0, (long) (1000 / (ups*2)));
+
+		refreshThread = new Thread(new Runner(), "RefreshThread");
+		refreshThread.setDaemon(true);
+		refreshThread.start();
 	}
 
-	private class RateLimitedTimerTask extends TimerTask {
-		final ArrayList<Runnable> callbacks = new ArrayList<Runnable>();
+	private class Runner implements Runnable {
 
 		@Override
 		public void run() {
-			synchronized(timingLock) {
-				// Is a redraw scheduled
-				long currentTime = System.currentTimeMillis();
+			while(running) {
+				synchronized(timingLock) {
+					// Is a redraw scheduled
+					long currentTime = System.currentTimeMillis();
+					try {
+						if (scheduledTime > currentTime) {
+							// We have a scheduled time, wait until then
+							timingLock.wait(scheduledTime - currentTime);
+						} else {
+							// No draw is scheduled, wait until notified
+							timingLock.wait();
+						}
+					} catch(InterruptedException ex) {}
 
-				// Only update if the scheduled time is before now and after the last update
-				if ((scheduledTime < lastTime || currentTime < scheduledTime)) {
-					return;
+					currentTime = System.currentTimeMillis();
+
+					// Only update if the scheduled time is before now and after the last update
+					if ((scheduledTime < lastTime || currentTime < scheduledTime)) {
+						continue;
+					}
+
+					lastTime = currentTime;
 				}
 
-				lastTime = currentTime;
-			}
-
-			synchronized (callbacks) {
-				for (Runnable r : callbacks) {
-					r.run();
+				synchronized (callbacks) {
+					for (Runnable r : callbacks) {
+						r.run();
+					}
 				}
+
 			}
 		}
 	}
@@ -80,16 +94,17 @@ public class RateLimiter {
 				newDraw = lastTime + frameTime;
 			}
 			scheduledTime = newDraw;
+			timingLock.notify();
 		}
 	}
 
 	public void registerCallback(Runnable r) {
-		synchronized (task.callbacks) {
-			task.callbacks.add(r);
+		synchronized (callbacks) {
+			callbacks.add(r);
 		}
 	}
 
 	public void cancel() {
-		timer.cancel();
+		running = false;
 	}
 }
