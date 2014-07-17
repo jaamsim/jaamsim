@@ -24,8 +24,8 @@ import java.util.ArrayList;
 public class RateLimiter implements Runnable {
 	private final Thread refreshThread;
 
-	private long lastTime = 0;
-	private long scheduledTime = 0;
+	private long lastCallbackTime = 0;
+	private long scheduledTime = Long.MAX_VALUE;
 	private final Object timingLock = new Object();
 	private final double ups;
 	private boolean running = true;
@@ -52,29 +52,17 @@ public class RateLimiter implements Runnable {
 			while(running) {
 				// Is a redraw scheduled
 				long currentTime = System.currentTimeMillis();
-				try {
-					if (scheduledTime > currentTime) {
+				if (scheduledTime > currentTime) {
+					try {
 						// We have a scheduled time, wait until then
 						timingLock.wait(scheduledTime - currentTime);
-					} else {
-						// No draw is scheduled, wait until notified
-						timingLock.wait();
 					}
-				} catch(InterruptedException ex) {}
-
-				// Check the current scheduled state
-				currentTime = System.currentTimeMillis();
-
-				boolean scheduled = scheduledTime > lastTime; // Do we have a currently scheduled draw?
-				boolean timeToUpdate = currentTime >= scheduledTime;
-
-				// Don't do anything if we do not have a scheduled update, or it is not time for the one we have
-				if ((!scheduled || !timeToUpdate)) {
+					catch(InterruptedException ex) {}
 					continue;
 				}
 
-				lastTime = currentTime;
-
+				lastCallbackTime = currentTime;
+				scheduledTime = Long.MAX_VALUE;
 				for (Runnable r : callbacks) {
 					r.run();
 				}
@@ -84,19 +72,14 @@ public class RateLimiter implements Runnable {
 
 	public void queueUpdate() {
 		synchronized(timingLock) {
-			if (scheduledTime > lastTime) {
-				// A draw is scheduled
-				timingLock.notify();
+			// If we already are schedule to run, don't wake the thread
+			if (scheduledTime != Long.MAX_VALUE)
 				return;
-			}
 
-			long currentTime = System.currentTimeMillis();
-			scheduledTime = currentTime;
-			long frameTime = (long)(1000.0/ups);
-			if (scheduledTime < (lastTime+frameTime) ) {
-				// This would be scheduled too soon
-				scheduledTime = lastTime+frameTime;
-			}
+			// Set a new target callback time based on the last time a callback was
+			// actually done
+			long frameTime = (long)(1000.0d / ups);
+			scheduledTime = lastCallbackTime + frameTime;
 			timingLock.notify();
 		}
 	}
