@@ -39,6 +39,7 @@ import com.sandwell.JavaSimulation.EnumInput;
 public class DisplayModelCompat extends DisplayModel {
 	// IMPORTANT: If you add a tag here, make sure to add it to the validTags
 	public static final String TAG_CONTENTS = "CONTENTS";
+	public static final String TAG_CAPACITY = "CAPACITY";
 	public static final String TAG_OUTLINES = "OUTLINES";
 	public static final String TAG_TRACKFILL = "TRACKFILL";
 	public static final String TAG_BODY = "BODY";
@@ -399,6 +400,7 @@ public class DisplayModelCompat extends DisplayModel {
 			DisplayEntity.TagSet tags = getTags();
 
 			DoubleVector sizes = tags.sizes.get(DisplayModelCompat.TAG_CONTENTS);
+			DoubleVector capacities = tags.sizes.get(DisplayModelCompat.TAG_CAPACITY);
 			Color4d[] colours = tags.colours.get(DisplayModelCompat.TAG_CONTENTS);
 			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
 			Color4d backgroundColour = tags.getTagColourUtil(DisplayModelCompat.TAG_BODY, ColourInput.WHITE);
@@ -406,11 +408,18 @@ public class DisplayModelCompat extends DisplayModel {
 				sizes = new DoubleVector();
 			}
 
-			double width = 1.0;
-
-			if (sizes.size() != 0) {
-				width = 1.0 / sizes.size();
+			if (capacities == null || capacities.size() != sizes.size()) {
+				capacities = new DoubleVector(sizes.size());
+				for (int i = 0; i < sizes.size(); ++i) {
+					capacities.add(1.0);
+				}
 			}
+
+			double totalCap = 0;
+			for (int i = 0; i < capacities.size(); ++i) {
+				totalCap += capacities.get(i);
+			}
+			if (totalCap == 0) totalCap = 1; // Guard against div by 0
 
 			// Add the background and outline
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, backgroundColour, false, 1, getVisibilityInfo(), pickingID));
@@ -420,13 +429,17 @@ public class DisplayModelCompat extends DisplayModel {
 				return;
 			} // Bail out, not properly initialized
 
+			double accumWidth = 0;
 			for (int i = 0; i < sizes.size(); ++i) {
 				// Add a rectangle for each size
 
 				double size = sizes.get(i);
+				double width = capacities.get(i)/totalCap;
 
-				double startX = i*width - 0.5;
-				double endX = (i+1)*width - 0.5;
+				double startX = accumWidth - 0.5;
+				double endX = accumWidth + width - 0.5;
+
+				accumWidth += width;
 
 				double startY = -0.5;
 				double endY = size - 0.5;
