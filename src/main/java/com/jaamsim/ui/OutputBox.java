@@ -65,9 +65,6 @@ public class OutputBox extends FrameBox {
 
 	@Override
 	public void setEntity( Entity entity ) {
-		if (currentEntity == entity)
-			return;
-
 		currentEntity = entity;
 		if (currentEntity == null) {
 			setTitle("Output Viewer");
