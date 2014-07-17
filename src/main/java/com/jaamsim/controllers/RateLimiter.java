@@ -62,10 +62,14 @@ public class RateLimiter implements Runnable {
 					}
 				} catch(InterruptedException ex) {}
 
+				// Check the current scheduled state
 				currentTime = System.currentTimeMillis();
 
-				// Only update if the scheduled time is before now and after the last update
-				if ((scheduledTime < lastTime || currentTime < scheduledTime)) {
+				boolean scheduled = scheduledTime > lastTime; // Do we have a currently scheduled draw?
+				boolean timeToUpdate = currentTime >= scheduledTime;
+
+				// Don't do anything if we do not have a scheduled update, or it is not time for the one we have
+				if ((!scheduled || !timeToUpdate)) {
 					continue;
 				}
 
@@ -87,13 +91,12 @@ public class RateLimiter implements Runnable {
 			}
 
 			long currentTime = System.currentTimeMillis();
-			long newDraw = currentTime;
+			scheduledTime = currentTime;
 			long frameTime = (long)(1000.0/ups);
-			if (newDraw < lastTime + frameTime) {
+			if (scheduledTime < (lastTime+frameTime) ) {
 				// This would be scheduled too soon
-				newDraw = lastTime + frameTime;
+				scheduledTime = lastTime+frameTime;
 			}
-			scheduledTime = newDraw;
 			timingLock.notify();
 		}
 	}
