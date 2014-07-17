@@ -960,14 +960,22 @@ public class InputAgent {
 		if (logFile == null)
 			return;
 
+		boolean beginLine = true;
 		for (int i = 0; i < tokens.size(); i++) {
-			if (i > 0)
+			if (!beginLine)
 				logFile.write("  ");
 			String tok = tokens.get(i);
 			logFile.write(tok);
-			if (tok.startsWith("\""))
+			beginLine = false;
+			if (tok.startsWith("\"")) {
 				logFile.newLine();
+				beginLine = true;
+			}
 		}
+		// If there were any leftover string written out, make sure the line gets terminated
+		if (!beginLine)
+			logFile.newLine();
+
 		logFile.flush();
 	}
 
