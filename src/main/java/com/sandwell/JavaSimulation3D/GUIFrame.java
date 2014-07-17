@@ -66,6 +66,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import com.jaamsim.controllers.RateLimiter;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
@@ -129,6 +130,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JProgressBar progressBar;
 	private static Image iconImage;
 
+	private RateLimiter rateLimiter;
+
 	private static boolean SAFE_GRAPHICS;
 
 	// Collection of default window parameters
@@ -171,6 +174,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private GUIFrame() {
 		super();
 
+		rateLimiter = new RateLimiter(60); // Limit to 60 FPS
+
 		getContentPane().setLayout( new BorderLayout() );
 		setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
 		this.addWindowListener(new CloseListener());
@@ -200,6 +205,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			instance = new GUIFrame();
 
 		return instance;
+	}
+
+	public RateLimiter getRateLimiter() {
+		return rateLimiter;
 	}
 
 	/**

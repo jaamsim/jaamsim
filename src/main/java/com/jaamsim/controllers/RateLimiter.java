@@ -83,6 +83,7 @@ public class RateLimiter {
 		synchronized(timingLock) {
 			if (scheduledTime > lastTime) {
 				// A draw is scheduled
+				timingLock.notify();
 				return;
 			}
 

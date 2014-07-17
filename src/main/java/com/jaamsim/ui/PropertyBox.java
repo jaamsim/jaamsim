@@ -66,6 +66,9 @@ public class PropertyBox extends FrameBox {
 	@Override
 	public void setEntity(Entity entity) {
 
+		if (currentEntity == entity)
+			return;
+
 		jTabbedFrame.removeAll();
 
 		currentEntity = entity;

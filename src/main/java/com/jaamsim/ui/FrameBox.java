@@ -39,22 +39,28 @@ public class FrameBox extends JFrame {
 
 	private static final ArrayList<FrameBox> allInstances;
 
-	private static final FrameBoxUpdater updater;
-	private static final FrameBoxValueUpdater valueUpdater;
+	private static volatile Entity selectedEntity;
+	private static volatile long simTicks;
 
 	protected static final Color TABLE_SELECT = new Color(255, 250, 180);
 
 	protected static final Font boldFont;
 	protected static final TableCellRenderer colRenderer;
-	private static double secondsPerTick;
+	private static volatile double secondsPerTick;
+
+	private static final UIUpdater uiUpdater = new UIUpdater();
 
 	static {
 		allInstances = new ArrayList<FrameBox>();
 
 		boldFont = UIManager.getDefaults().getFont("TabbedPane.font").deriveFont(Font.BOLD);
 
-		updater = new FrameBoxUpdater();
-		valueUpdater = new FrameBoxValueUpdater();
+		GUIFrame.instance().getRateLimiter().registerCallback(new Runnable() {
+			@Override
+			public void run() {
+				SwingUtilities.invokeLater(uiUpdater);
+			}
+		});
 
 		colRenderer = new DefaultCellRenderer();
 	}
@@ -119,127 +125,52 @@ public class FrameBox extends JFrame {
 	}
 
 	public static final void setSelectedEntity(Entity ent) {
-		updater.scheduleUpdate(ent);
+		if (ent == selectedEntity)
+			return;
+
+		selectedEntity = ent;
 		RenderManager.setSelection(ent);
+		valueUpdate();
 	}
 
 	// This is equivalent to calling setSelectedEntity again with the same entity as used previously
 	public static final void reSelectEntity() {
-		updater.rescheduleUpdate();
+		valueUpdate();
 	}
 
 	public static final void timeUpdate(long tick) {
-		valueUpdater.scheduleUpdate(tick);
+		if (tick == simTicks)
+			return;
+
+		simTicks = tick;
 		RenderManager.updateTime(tick);
+		valueUpdate();
 	}
 
 	public static final void valueUpdate() {
-		valueUpdater.scheduleUpdate();
-		RenderManager.redraw();
+		GUIFrame.instance().getRateLimiter().queueUpdate();
 	}
 
 	public void setEntity(Entity ent) {}
 	public void updateValues(double simTime) {}
 
-	private static class FrameBoxUpdater implements Runnable {
-		private boolean scheduled;
-		private Entity entity;
-
-		FrameBoxUpdater() {
-			scheduled = false;
-		}
-
-		public void rescheduleUpdate() {
-			synchronized (this) {
-				schedUpdate();
-			}
-		}
-
-		public void scheduleUpdate(Entity ent) {
-			synchronized (this) {
-				entity = ent;
-				schedUpdate();
-			}
-		}
-
-		/**
-		 * Must be called inside a synchronized block to protect the reference
-		 * to scheduled.
-		 */
-		private void schedUpdate() {
-			if (!scheduled)
-				SwingUtilities.invokeLater(this);
-
-			scheduled = true;
-		}
+	private static class UIUpdater  implements Runnable {
 
 		@Override
 		public void run() {
-			Entity selectedEnt;
-			synchronized (this) {
-				selectedEnt = entity;
-				scheduled = false;
-			}
-
-			for (int i = 0; i < allInstances.size(); i++) {
-				try {
-					FrameBox each = allInstances.get(i);
-					each.setEntity(selectedEnt);
-				}
-				catch (IndexOutOfBoundsException e) {
-					// reschedule and try again
-					this.scheduleUpdate(selectedEnt);
-					return;
-				}
-			}
-			FrameBox.valueUpdate();
-		}
-	}
-
-	private static class FrameBoxValueUpdater implements Runnable {
-		private boolean scheduled;
-		private long simTick;
-
-		FrameBoxValueUpdater() {
-			scheduled = false;
-		}
-
-		public void scheduleUpdate() {
-			synchronized (this) {
-				if (!scheduled)
-					SwingUtilities.invokeLater(this);
-
-				scheduled = true;
-			}
-		}
-
-		public void scheduleUpdate(long simTick) {
-			synchronized (this) {
-				if (!scheduled)
-					SwingUtilities.invokeLater(this);
-
-				scheduled = true;
-				this.simTick = simTick;
-			}
-		}
-
-		@Override
-		public void run() {
-			double callBackTime;
-			synchronized (this) {
-				scheduled = false;
-				callBackTime = FrameBox.ticksToSeconds(simTick);
-			}
+			double callBackTime = FrameBox.ticksToSeconds(simTicks);
 
 			GUIFrame.instance().setClock(callBackTime);
+
 			for (int i = 0; i < allInstances.size(); i++) {
 				try {
 					FrameBox each = allInstances.get(i);
+					each.setEntity(selectedEntity);
 					each.updateValues(callBackTime);
 				}
 				catch (IndexOutOfBoundsException e) {
 					// reschedule and try again
-					this.scheduleUpdate();
+					valueUpdate();
 					return;
 				}
 			}

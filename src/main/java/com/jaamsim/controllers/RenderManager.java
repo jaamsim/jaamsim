@@ -121,9 +121,6 @@ public class RenderManager implements DragSourceListener {
 
 	private final ExceptionLogger exceptionLogger;
 
-	private final static double FPS = 60;
-	private final RateLimiter rateLimiter;
-
 	private final HashMap<Integer, CameraControl> windowControls = new HashMap<Integer, CameraControl>();
 	private final HashMap<Integer, View> windowToViewMap= new HashMap<Integer, View>();
 	private int activeWindowID = -1;
@@ -186,7 +183,7 @@ public class RenderManager implements DragSourceListener {
 		}, "RenderManagerThread");
 		managerThread.start();
 
-		rateLimiter = new RateLimiter(FPS);
+		RateLimiter rateLimiter = GUIFrame.instance().getRateLimiter();
 
 		rateLimiter.registerCallback(new Runnable() {
 			@Override
@@ -219,7 +216,7 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	private void queueRedraw() {
-		rateLimiter.queueUpdate();
+		GUIFrame.instance().getRateLimiter().queueUpdate();
 	}
 
 	public void createWindow(View view) {
@@ -314,8 +311,6 @@ public class RenderManager implements DragSourceListener {
 					// Do some basic cleanup
 					windowControls.clear();
 					previewCache.clear();
-
-					rateLimiter.cancel();
 
 					break;
 				}
@@ -1614,7 +1609,6 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public void shutdown() {
-		rateLimiter.cancel();
 		finished.set(true);
 		if (renderer != null) {
 			renderer.shutdown();
