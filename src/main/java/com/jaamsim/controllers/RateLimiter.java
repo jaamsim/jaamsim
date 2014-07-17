@@ -21,60 +21,59 @@ import java.util.ArrayList;
  * @author matt.chudleigh
  *
  */
-public class RateLimiter {
+public class RateLimiter implements Runnable {
 	private final Thread refreshThread;
 
 	private long lastTime = 0;
 	private long scheduledTime = 0;
 	private final Object timingLock = new Object();
 	private final double ups;
-	private volatile boolean running = true;
+	private boolean running = true;
 
 	private final ArrayList<Runnable> callbacks = new ArrayList<Runnable>();
 
-	public RateLimiter(double updatesPerSecond) {
+	public static RateLimiter create(double updatesPerSecond) {
+		RateLimiter ret = new RateLimiter(updatesPerSecond);
+		ret.refreshThread.start();
+		return ret;
+	}
+
+	private RateLimiter(double updatesPerSecond) {
 		// Start the display timer
 		ups = updatesPerSecond;
 
-		refreshThread = new Thread(new Runner(), "RefreshThread");
+		refreshThread = new Thread(this, "RefreshThread");
 		refreshThread.setDaemon(true);
-		refreshThread.start();
 	}
 
-	private class Runner implements Runnable {
-
-		@Override
-		public void run() {
+	@Override
+	public void run() {
+		synchronized(timingLock) {
 			while(running) {
-				synchronized(timingLock) {
-					// Is a redraw scheduled
-					long currentTime = System.currentTimeMillis();
-					try {
-						if (scheduledTime > currentTime) {
-							// We have a scheduled time, wait until then
-							timingLock.wait(scheduledTime - currentTime);
-						} else {
-							// No draw is scheduled, wait until notified
-							timingLock.wait();
-						}
-					} catch(InterruptedException ex) {}
-
-					currentTime = System.currentTimeMillis();
-
-					// Only update if the scheduled time is before now and after the last update
-					if ((scheduledTime < lastTime || currentTime < scheduledTime)) {
-						continue;
+				// Is a redraw scheduled
+				long currentTime = System.currentTimeMillis();
+				try {
+					if (scheduledTime > currentTime) {
+						// We have a scheduled time, wait until then
+						timingLock.wait(scheduledTime - currentTime);
+					} else {
+						// No draw is scheduled, wait until notified
+						timingLock.wait();
 					}
+				} catch(InterruptedException ex) {}
 
-					lastTime = currentTime;
+				currentTime = System.currentTimeMillis();
+
+				// Only update if the scheduled time is before now and after the last update
+				if ((scheduledTime < lastTime || currentTime < scheduledTime)) {
+					continue;
 				}
 
-				synchronized (callbacks) {
-					for (Runnable r : callbacks) {
-						r.run();
-					}
-				}
+				lastTime = currentTime;
 
+				for (Runnable r : callbacks) {
+					r.run();
+				}
 			}
 		}
 	}
@@ -100,12 +99,14 @@ public class RateLimiter {
 	}
 
 	public void registerCallback(Runnable r) {
-		synchronized (callbacks) {
+		synchronized (timingLock) {
 			callbacks.add(r);
 		}
 	}
 
 	public void cancel() {
-		running = false;
+		synchronized (timingLock) {
+			running = false;
+		}
 	}
 }

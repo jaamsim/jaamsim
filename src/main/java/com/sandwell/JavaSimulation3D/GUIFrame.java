@@ -174,7 +174,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private GUIFrame() {
 		super();
 
-		rateLimiter = new RateLimiter(60); // Limit to 60 FPS
+		rateLimiter = RateLimiter.create(60); // Limit to 60 FPS
 
 		getContentPane().setLayout( new BorderLayout() );
 		setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
