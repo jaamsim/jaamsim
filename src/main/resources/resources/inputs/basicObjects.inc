@@ -26,6 +26,7 @@ Define ObjectType {
                     TimeSeriesThreshold
                     ExpressionThreshold
 					Statistics
+					ExpressionEntity
                   }
 
 Define	ImageModel {
@@ -89,6 +90,7 @@ SignalThreshold         JavaClass { com.jaamsim.Thresholds.SignalThreshold      
 TimeSeriesThreshold	    JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 Statistics              JavaClass { com.jaamsim.BasicObjects.Statistics                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ StatisticsIconModel    }
+ExpressionEntity              JavaClass { com.jaamsim.basicsim.ExpressionEntity                 } Palette { 'Basic Objects' }
 
 SimEntity          Description { 'A basic entity for use in a process flow type model.' }
 ReportGenerator    Description { 'Determines initialization, run duration, and prints the output report.' }
