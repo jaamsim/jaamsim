@@ -18,15 +18,22 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Gamma;
 import com.jaamsim.rng.MRG1999a;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class BetaDistribution extends Distribution {
-
 	@Keyword(description = "The alpha tuning parameter.",
-	         example = "ExponentialDist1 AlphaParam { 5.0 }")
+	         example = "BetaDist1 AlphaParam { 5.0 }")
 	private final ValueInput alphaInput;
+
 	@Keyword(description = "The beta tuning parameter.",
-	         example = "ExponentialDist1 BetaParam { 5.0 }")
+	         example = "BetaDist1 BetaParam { 5.0 }")
 	private final ValueInput betaInput;
+
+	@Keyword(description = "The scale parameter for the distribution.  This scales the " +
+	                       "value of the distribution so it return values between 0 and scale.",
+	         example = "BetaDist1 Scale { 3.0 h }")
+	private final ValueInput scaleInput;
 
 	private final MRG1999a rng = new MRG1999a();
 
@@ -40,12 +47,25 @@ public class BetaDistribution extends Distribution {
 		betaInput = new ValueInput("BetaParam", "Key Inputs", 1.0d);
 		betaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(betaInput);
+
+		scaleInput = new ValueInput("Scale", "Key Inputs", 1.0d);
+		scaleInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		scaleInput.setUnitType(UserSpecifiedUnit.class);
+		this.addInput(scaleInput);
 	}
+
+	public BetaDistribution() {}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		rng.setSeedStream(getStreamNumber(), getSubstreamNumber());
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> ut) {
+		super.setUnitType(ut);
+		scaleInput.setUnitType(ut);
 	}
 
 	@Override
@@ -68,7 +88,7 @@ public class BetaDistribution extends Distribution {
 					Integer.MAX_VALUE);
 
 			if (near(val, attempt, 1E-9)) {
-				return guess;
+				return guess * scaleInput.getValue();
 			}
 
 			if (val < attempt) {
@@ -89,7 +109,7 @@ public class BetaDistribution extends Distribution {
 		double alpha = alphaInput.getValue();
 		double beta = betaInput.getValue();
 
-		return alpha / (alpha + beta);
+		return (alpha / (alpha + beta)) * scaleInput.getValue();
 	}
 
 	@Override
@@ -98,7 +118,7 @@ public class BetaDistribution extends Distribution {
 		double beta = betaInput.getValue();
 
 		double apbSqrd = (alpha + beta) * (alpha + beta);
-		return Math.sqrt(alpha * beta / (apbSqrd * (alpha + beta + 1)));
+		return (Math.sqrt(alpha * beta / (apbSqrd * (alpha + beta + 1)))) * scaleInput.getValue();
 	}
 
 	/*
