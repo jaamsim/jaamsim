@@ -41,6 +41,8 @@ public class ExpParser {
 	public interface ParseContext {
 		public ExpResult getVariableValue(String[] names);
 		public UnitData getUnitByName(String name);
+		public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a, Class<? extends Unit> b);
+		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num, Class<? extends Unit> denom);
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -282,12 +284,8 @@ public class ExpParser {
 		addBinaryOp("*", 30, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
-				Class<? extends Unit> newType;
-				if (lval.unitType == DimensionlessUnit.class) {
-					newType = rval.unitType;
-				} else if (rval.unitType == DimensionlessUnit.class) {
-					newType = lval.unitType;
-				} else {
+				Class<? extends Unit> newType = context.multUnitTypes(lval.unitType, rval.unitType);
+				if (newType == null) {
 					return ExpResult.BAD_RESULT;
 				}
 				return new ExpResult(lval.value * rval.value, newType);
@@ -297,10 +295,11 @@ public class ExpParser {
 		addBinaryOp("/", 30, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
-				if (rval.unitType != DimensionlessUnit.class) {
+				Class<? extends Unit> newType = context.divUnitTypes(lval.unitType, rval.unitType);
+				if (newType == null) {
 					return ExpResult.BAD_RESULT;
 				}
-				return new ExpResult(lval.value / rval.value, lval.unitType);
+				return new ExpResult(lval.value / rval.value, newType);
 			}
 		});
 

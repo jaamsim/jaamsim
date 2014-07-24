@@ -21,9 +21,12 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import com.jaamsim.input.ExpParser.UnitData;
+import com.jaamsim.units.AreaUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.SpeedUnit;
 import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
 
 public class TestExpParser {
 
@@ -109,10 +112,19 @@ public class TestExpParser {
 				if (name[0].equals("bar")) return new ExpResult(3, DimensionlessUnit.class);
 				return new ExpResult(1, DimensionlessUnit.class);
 			}
-
 			@Override
 			public UnitData getUnitByName(String name) {
 				return null;
+			}
+			@Override
+			public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
+					Class<? extends Unit> b) {
+				return DimensionlessUnit.class;
+			}
+			@Override
+			public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
+					Class<? extends Unit> denom) {
+				return DimensionlessUnit.class;
 			}
 		}
 
@@ -286,10 +298,19 @@ public class TestExpParser {
 
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
-
 			@Override
 			public UnitData getUnitByName(String name) {
 				return null;
+			}
+			@Override
+			public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
+					Class<? extends Unit> b) {
+				return DimensionlessUnit.class;
+			}
+			@Override
+			public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
+					Class<? extends Unit> denom) {
+				return DimensionlessUnit.class;
 			}
 		}
 		PC pc = new PC();
@@ -323,10 +344,19 @@ public class TestExpParser {
 
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
-
 			@Override
 			public UnitData getUnitByName(String name) {
 				return null;
+			}
+			@Override
+			public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
+					Class<? extends Unit> b) {
+				return DimensionlessUnit.class;
+			}
+			@Override
+			public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
+					Class<? extends Unit> denom) {
+				return DimensionlessUnit.class;
 			}
 		}
 		ThisPC tpc = new ThisPC();
@@ -379,6 +409,18 @@ public class TestExpParser {
 				}
 				return null;
 			}
+			@Override
+			public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
+					Class<? extends Unit> b) {
+				return Unit.getMultUnitType(a, b);
+			}
+
+			@Override
+			public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
+					Class<? extends Unit> denom) {
+				return Unit.getDivUnitType(num, denom);
+			}
+
 		}
 		PC pc = new PC();
 
@@ -414,6 +456,16 @@ public class TestExpParser {
 		}
 		assertTrue(threw);
 
+		exp = ExpParser.parseExpression(pc, "1[m]/1[s]");
+		res = exp.evaluate();
+		assertTrue(res.value == 1);
+		assertTrue(res.unitType == SpeedUnit.class);
+
+		exp = ExpParser.parseExpression(pc, "5[m]*1[km]");
+		res = exp.evaluate();
+		assertTrue(res.value == 5000);
+		assertTrue(res.unitType == AreaUnit.class);
+
 	}
 
 	@Test
@@ -424,10 +476,19 @@ public class TestExpParser {
 			public ExpResult getVariableValue(String[] name) {
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
-
 			@Override
 			public UnitData getUnitByName(String name) {
 				return null;
+			}
+			@Override
+			public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
+					Class<? extends Unit> b) {
+				return DimensionlessUnit.class;
+			}
+			@Override
+			public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
+					Class<? extends Unit> denom) {
+				return DimensionlessUnit.class;
 			}
 		}
 		PC pc = new PC();

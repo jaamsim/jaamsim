@@ -127,4 +127,89 @@ public abstract class Unit extends Entity {
 		double f2 = unit.getConversionFactorToSI();
 		return f1 / f2 ;
 	}
+
+	private static class MultPair {
+		Class<? extends Unit> a;
+		Class<? extends Unit> b;
+		public MultPair(Class<? extends Unit> a, Class<? extends Unit> b) {
+			this.a = a;
+			this.b = b;
+		}
+		@Override
+		public int hashCode() {
+			return a.hashCode() ^ b.hashCode();
+		}
+		@Override
+		public boolean equals(Object other) {
+			if (!(other instanceof MultPair)) return false;
+			MultPair op = (MultPair)other;
+			return (a == op.a && b == op.b) ||
+			       (a == op.b && a == op.b); // swapped order is still equal
+		}
+	}
+
+	private static class DivPair {
+		Class<? extends Unit> a;
+		Class<? extends Unit> b;
+		public DivPair(Class<? extends Unit> a, Class<? extends Unit> b) {
+			this.a = a;
+			this.b = b;
+		}
+		@Override
+		public int hashCode() {
+			return a.hashCode() ^ b.hashCode();
+		}
+		@Override
+		public boolean equals(Object other) {
+			if (!(other instanceof DivPair)) return false;
+			DivPair op = (DivPair)other;
+			return (a == op.a && b == op.b);
+		}
+	}
+
+	private static HashMap<MultPair, Class<? extends Unit>> multRules;
+	private static HashMap<DivPair, Class<? extends Unit>> divRules;
+
+	static {
+		multRules = new HashMap<MultPair, Class<? extends Unit>>();
+		divRules = new HashMap<DivPair, Class<? extends Unit>>();
+
+		addMultRule(DistanceUnit.class, DistanceUnit.class,          AreaUnit.class);
+		addMultRule(DistanceUnit.class,     AreaUnit.class,        VolumeUnit.class);
+
+		addMultRule(DistanceUnit.class,      RateUnit.class,        SpeedUnit.class);
+		addMultRule(   SpeedUnit.class,      RateUnit.class, AccelerationUnit.class);
+
+		addDivRule(DistanceUnit.class,       TimeUnit.class,        SpeedUnit.class);
+		addDivRule(   SpeedUnit.class,       TimeUnit.class, AccelerationUnit.class);
+
+	}
+
+	public static void addMultRule(Class<? extends Unit> a, Class<? extends Unit> b, Class<? extends Unit> product) {
+		MultPair key = new MultPair(a, b);
+		multRules.put(key, product);
+	}
+
+	public static void addDivRule(Class<? extends Unit> num, Class<? extends Unit> denom, Class<? extends Unit> product) {
+		DivPair key = new DivPair(num, denom);
+		divRules.put(key, product);
+	}
+
+	// Get the new unit type resulting from multiplying two unit types
+	public static Class<? extends Unit> getMultUnitType(Class<? extends Unit> a, Class<? extends Unit> b) {
+		if (a == DimensionlessUnit.class)
+			return b;
+		if (b == DimensionlessUnit.class)
+			return a;
+
+		return multRules.get(new MultPair(a, b));
+	}
+
+	// Get the new unit type resulting from dividing two unit types
+	public static Class<? extends Unit> getDivUnitType(Class<? extends Unit> num, Class<? extends Unit> denom) {
+		if (denom == DimensionlessUnit.class)
+			return num;
+
+		return divRules.get(new DivPair(num, denom));
+	}
 }

@@ -106,6 +106,18 @@ public class ExpEvaluator {
 
 			return ret;
 		}
+
+		@Override
+		public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
+				Class<? extends Unit> b) {
+			return Unit.getMultUnitType(a, b);
+		}
+
+		@Override
+		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
+				Class<? extends Unit> denom) {
+			return Unit.getDivUnitType(num, denom);
+		}
 	}
 
 	private static EntityContext EC = new EntityContext();
