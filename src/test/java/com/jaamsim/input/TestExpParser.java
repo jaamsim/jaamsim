@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.jaamsim.input.ExpParser.UnitData;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class TestExpParser {
@@ -99,176 +100,181 @@ public class TestExpParser {
 
 	@Test
 	public void testParser() throws ExpParser.Error {
-		class ValLookup implements ExpParser.VarTable {
+		class PC implements ExpParser.ParseContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
 				if (name[0].equals("foo")) return new ExpResult(4, DimensionlessUnit.class);
 				if (name[0].equals("bar")) return new ExpResult(3, DimensionlessUnit.class);
 				return new ExpResult(1, DimensionlessUnit.class);
 			}
+
+			@Override
+			public UnitData getUnitByName(String name) {
+				return null;
+			}
 		}
 
-		ValLookup vl = new ValLookup();
+		PC pc = new PC();
 
-		ExpParser.Expression exp = ExpParser.parseExpression("2*5 + 3*5*(3-1)+2");
-		double val = exp.evaluate(vl).value;
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "2*5 + 3*5*(3-1)+2");
+		double val = exp.evaluate().value;
 		assertTrue(val == 42);
 
-		exp = ExpParser.parseExpression("max(3, 42)");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "max(3, 42)");
+		val = exp.evaluate().value;
 		assertTrue(val == 42);
 
-		exp = ExpParser.parseExpression("abs(-42)");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "abs(-42)");
+		val = exp.evaluate().value;
 		assertTrue(val == 42);
 
-		exp = ExpParser.parseExpression("abs(+42)");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "abs(+42)");
+		val = exp.evaluate().value;
 		assertTrue(val == 42);
 
-		exp = ExpParser.parseExpression("[foo]*[bar]");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "[foo]*[bar]");
+		val = exp.evaluate().value;
 		assertTrue(val == 12);
 
-		exp = ExpParser.parseExpression("50/2/5"); // left associative
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "50/2/5"); // left associative
+		val = exp.evaluate().value;
 		assertTrue(val == 5);
 
-		exp = ExpParser.parseExpression("2^2^3"); // right associative
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "2^2^3"); // right associative
+		val = exp.evaluate().value;
 		assertTrue(val == 256);
 
-		exp = ExpParser.parseExpression("1 + 2^2*4 + 2*[foo]");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "1 + 2^2*4 + 2*[foo]");
+		val = exp.evaluate().value;
 		assertTrue(val == 25);
 
-		exp = ExpParser.parseExpression("1 + 2^(2*4) + 2");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "1 + 2^(2*4) + 2");
+		val = exp.evaluate().value;
 		assertTrue(val == 259);
 
-		exp = ExpParser.parseExpression("2----2"); // A quadruple negative
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "2----2"); // A quadruple negative
+		val = exp.evaluate().value;
 		assertTrue(val == 4);
 
-		exp = ExpParser.parseExpression("2---+-2"); // Still a quadruple negative
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "2---+-2"); // Still a quadruple negative
+		val = exp.evaluate().value;
 		assertTrue(val == 4);
 
-		exp = ExpParser.parseExpression("-1+1");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "-1+1");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("(((((1+1)))*5))");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "(((((1+1)))*5))");
+		val = exp.evaluate().value;
 		assertTrue(val == 10);
 
-		exp = ExpParser.parseExpression("!42");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "!42");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("!0");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "!0");
+		val = exp.evaluate().value;
 		assertTrue(val == 1);
 
-		exp = ExpParser.parseExpression("42 == 42");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "42 == 42");
+		val = exp.evaluate().value;
 		assertTrue(val == 1);
 
-		exp = ExpParser.parseExpression("42 == 41");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "42 == 41");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("42 != 42");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "42 != 42");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("42 != 41");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "42 != 41");
+		val = exp.evaluate().value;
 		assertTrue(val == 1);
 
-		exp = ExpParser.parseExpression("42 || 0");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "42 || 0");
+		val = exp.evaluate().value;
 		assertTrue(val == 1);
 
-		exp = ExpParser.parseExpression("0 || 42");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "0 || 42");
+		val = exp.evaluate().value;
 		assertTrue(val == 1);
 
-		exp = ExpParser.parseExpression("0 || 0");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "0 || 0");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("42 && 0");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "42 && 0");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("0 && 42");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "0 && 42");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("1 && 2");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "1 && 2");
+		val = exp.evaluate().value;
 		assertTrue(val == 1);
 
-		exp = ExpParser.parseExpression("!(1&&42)");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "!(1&&42)");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("!!(1&&42)");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "!!(1&&42)");
+		val = exp.evaluate().value;
 		assertTrue(val == 1);
 
-		exp = ExpParser.parseExpression("42<41");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "42<41");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
-		exp = ExpParser.parseExpression("41<42");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "41<42");
+		val = exp.evaluate().value;
 		assertTrue(val == 1);
-		exp = ExpParser.parseExpression("42>41");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "42>41");
+		val = exp.evaluate().value;
 		assertTrue(val == 1);
-		exp = ExpParser.parseExpression("41>42");
-		val = exp.evaluate(vl).value;
-		assertTrue(val == 0);
-
-		exp = ExpParser.parseExpression("42<=41");
-		val = exp.evaluate(vl).value;
-		assertTrue(val == 0);
-		exp = ExpParser.parseExpression("41<=42");
-		val = exp.evaluate(vl).value;
-		assertTrue(val == 1);
-		exp = ExpParser.parseExpression("42>=41");
-		val = exp.evaluate(vl).value;
-		assertTrue(val == 1);
-		exp = ExpParser.parseExpression("41>=42");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "41>42");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("42>=42");
-		val = exp.evaluate(vl).value;
-		assertTrue(val == 1);
-		exp = ExpParser.parseExpression("42>=42");
-		val = exp.evaluate(vl).value;
-		assertTrue(val == 1);
-		exp = ExpParser.parseExpression("42>42");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "42<=41");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
-		exp = ExpParser.parseExpression("42>42");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "41<=42");
+		val = exp.evaluate().value;
+		assertTrue(val == 1);
+		exp = ExpParser.parseExpression(pc, "42>=41");
+		val = exp.evaluate().value;
+		assertTrue(val == 1);
+		exp = ExpParser.parseExpression(pc, "41>=42");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("1==0?42:24");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "42>=42");
+		val = exp.evaluate().value;
+		assertTrue(val == 1);
+		exp = ExpParser.parseExpression(pc, "42>=42");
+		val = exp.evaluate().value;
+		assertTrue(val == 1);
+		exp = ExpParser.parseExpression(pc, "42>42");
+		val = exp.evaluate().value;
+		assertTrue(val == 0);
+		exp = ExpParser.parseExpression(pc, "42>42");
+		val = exp.evaluate().value;
+		assertTrue(val == 0);
+
+		exp = ExpParser.parseExpression(pc, "1==0?42:24");
+		val = exp.evaluate().value;
 		assertTrue(val == 24);
-		exp = ExpParser.parseExpression("1==1?42:24");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "1==1?42:24");
+		val = exp.evaluate().value;
 		assertTrue(val == 42);
 
 	}
 
 	@Test
 	public void testVariables() throws ExpParser.Error {
-		class ValLookup implements ExpParser.VarTable {
+		class PC implements ExpParser.ParseContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
 				if (name.length < 1 || !name[0].equals("foo")) return new ExpResult(0, DimensionlessUnit.class);
@@ -278,31 +284,36 @@ public class TestExpParser {
 
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
-		}
-		ValLookup vl = new ValLookup();
 
-		ExpParser.Expression exp = ExpParser.parseExpression("[foo].bar.baz");
-		double val = exp.evaluate(vl).value;
+			@Override
+			public UnitData getUnitByName(String name) {
+				return null;
+			}
+		}
+		PC pc = new PC();
+
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "[foo].bar.baz");
+		double val = exp.evaluate().value;
 		assertTrue(val == 4);
 
-		exp = ExpParser.parseExpression("[foo].bar.baz*4");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "[foo].bar.baz*4");
+		val = exp.evaluate().value;
 		assertTrue(val == 16);
 
-		exp = ExpParser.parseExpression("[foo].bonk");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "[foo].bonk");
+		val = exp.evaluate().value;
 		assertTrue(val == 5);
 
-		exp = ExpParser.parseExpression("[bob].is.your.uncle");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "[bob].is.your.uncle");
+		val = exp.evaluate().value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression("[foo]");
-		val = exp.evaluate(vl).value;
+		exp = ExpParser.parseExpression(pc, "[foo]");
+		val = exp.evaluate().value;
 		assertTrue(val == -1);
 
 
-		class ThisLookup implements ExpParser.VarTable {
+		class ThisPC implements ExpParser.ParseContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
 				if (name[0].equals("this")) return new ExpResult(42, DimensionlessUnit.class);
@@ -310,15 +321,20 @@ public class TestExpParser {
 
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
-		}
-		ThisLookup tl = new ThisLookup();
 
-		exp = ExpParser.parseExpression("this.stuff");
-		val = exp.evaluate(tl).value;
+			@Override
+			public UnitData getUnitByName(String name) {
+				return null;
+			}
+		}
+		ThisPC tpc = new ThisPC();
+
+		exp = ExpParser.parseExpression(tpc, "this.stuff");
+		val = exp.evaluate().value;
 		assertTrue(val == 42);
 
-		exp = ExpParser.parseExpression("obj.things");
-		val = exp.evaluate(tl).value;
+		exp = ExpParser.parseExpression(tpc, "obj.things");
+		val = exp.evaluate().value;
 		assertTrue(val == 24);
 
 	}
@@ -326,32 +342,37 @@ public class TestExpParser {
 	@Test
 	public void testAssignment() throws ExpParser.Error {
 
-		class ValLookup implements ExpParser.VarTable {
+		class PC implements ExpParser.ParseContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
-		}
-		ValLookup vl = new ValLookup();
 
-		ExpParser.Assignment assign = ExpParser.parseAssignment("[foo].bar = 40 + 2");
+			@Override
+			public UnitData getUnitByName(String name) {
+				return null;
+			}
+		}
+		PC pc = new PC();
+
+		ExpParser.Assignment assign = ExpParser.parseAssignment(pc, "[foo].bar = 40 + 2");
 
 		assertTrue(assign.destination.length == 2);
 		assertTrue(assign.destination[0].equals("foo"));
 		assertTrue(assign.destination[1].equals("bar"));
-		assertTrue(assign.value.evaluate(vl).value == 42);
+		assertTrue(assign.value.evaluate().value == 42);
 
-		assign = ExpParser.parseAssignment("this.bar = 40 + 2");
+		assign = ExpParser.parseAssignment(pc, "this.bar = 40 + 2");
 		assertTrue(assign.destination.length == 2);
 		assertTrue(assign.destination[0].equals("this"));
 		assertTrue(assign.destination[1].equals("bar"));
-		assertTrue(assign.value.evaluate(vl).value == 42);
+		assertTrue(assign.value.evaluate().value == 42);
 
-		assign = ExpParser.parseAssignment("obj.bar = 40 + 2");
+		assign = ExpParser.parseAssignment(pc, "obj.bar = 40 + 2");
 		assertTrue(assign.destination.length == 2);
 		assertTrue(assign.destination[0].equals("obj"));
 		assertTrue(assign.destination[1].equals("bar"));
-		assertTrue(assign.value.evaluate(vl).value == 42);
+		assertTrue(assign.value.evaluate().value == 42);
 
 	}
 }

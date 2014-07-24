@@ -14,6 +14,7 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.input.ExpParser.UnitData;
 import com.sandwell.JavaSimulation.Entity;
 
 /**
@@ -58,14 +59,16 @@ public class ExpEvaluator {
 		return ent;
 	}
 
-	private static class EntityLookup implements ExpParser.VarTable {
+	private static class EntityContext implements ExpParser.ParseContext {
 
 		public String errorString; // Used to mark an error during lookup because 'throws' screws with the interface
+
+		// These are updated in updateContext() which must be called before any expression are evaluated
 		private double simTime;
 		private Entity thisEnt;
 		private Entity objEnt;
 
-		public EntityLookup(double simTime, Entity thisEnt, Entity objEnt) {
+		public void updateContext(double simTime, Entity thisEnt, Entity objEnt) {
 			this.simTime = simTime;
 			this.thisEnt = thisEnt;
 			this.objEnt = objEnt;
@@ -89,6 +92,18 @@ public class ExpEvaluator {
 			}
 			return ExpResult.BAD_RESULT;
 		}
+
+		@Override
+		public UnitData getUnitByName(String name) {
+			// TODO
+			return null;
+		}
+	}
+
+	private static EntityContext EC = new EntityContext();
+
+	public static ExpParser.ParseContext getContext() {
+		return EC;
 	}
 
 	public static void runAssignment(ExpParser.Assignment assign, double simTime, Entity thisEnt, Entity objEnt) throws Error {
@@ -105,11 +120,11 @@ public class ExpEvaluator {
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime, Entity thisEnt, Entity objEnt) throws Error
 	{
-		EntityLookup el = new EntityLookup(simTime, thisEnt, objEnt);
+		EC.updateContext(simTime, thisEnt, objEnt);
 
-		ExpResult value = exp.evaluate(el);
-		if (el.errorString != null)
-			throw new Error(el.errorString);
+		ExpResult value = exp.evaluate();
+		if (EC.errorString != null)
+			throw new Error(EC.errorString);
 
 		return value;
 	}

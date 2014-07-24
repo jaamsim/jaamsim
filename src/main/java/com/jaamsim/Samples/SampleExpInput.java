@@ -17,6 +17,7 @@ package com.jaamsim.Samples;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.Input;
@@ -74,7 +75,7 @@ public class SampleExpInput extends Input<SampleProvider> {
 		// Try parsing an expression
 		try {
 			Input.assertCount(kw, 1);
-			Expression exp = ExpParser.parseExpression(kw.getArg(0));
+			Expression exp = ExpParser.parseExpression(ExpEvaluator.getContext(), kw.getArg(0));
 			// Assume that the expression returns the correct unit type
 			//Input.assertUnitsMatch(unitType, DimensionlessUnit.class);
 			value = new SampleExpression(exp, thisEnt);
