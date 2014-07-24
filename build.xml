@@ -26,6 +26,23 @@ GNU General Public License for more details.
     <delete dir="${build.dir}"/>
   </target>
 
+  <exec dir="." executable="git" logError="false" failonerror="false" failifexecutionfails="false"
+        outputproperty="git.branch.raw" resultproperty="git.branch.ret">
+        <arg line="symbolic-ref -q --short HEAD"/>
+  </exec>
+  <condition property="git.branch" value="${git.branch.raw}" else="(none)">
+    <not> <isfailure code="${git.branch.ret}"/> </not>
+  </condition>
+
+  <exec dir="." executable="git" logError="false" failonerror="false" failifexecutionfails="false"
+        outputproperty="git.commit.raw" resultproperty="git.commit.ret">
+        <arg line="rev-parse HEAD"/>
+  </exec>
+  <condition property="git.commit" value="${git.commit.raw}" else="(none)">
+    <not> <isfailure code="${git.commit.ret}"/> </not>
+  </condition>
+  <echo message="Branch:${git.branch} Commit:${git.commit}" />
+
   <target name="compile">
     <mkdir dir="${class.dir}"/>
 
