@@ -16,6 +16,9 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
+
 public class ExpParser {
 
 	public interface UnOpFunc {
@@ -220,21 +223,21 @@ public class ExpParser {
 		addUnaryOp("-", 50, new UnOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult val){
-				return new ExpResult(-val.value);
+				return new ExpResult(-val.value, val.unitType);
 			}
 		});
 
 		addUnaryOp("+", 50, new UnOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult val){
-				return new ExpResult(val.value);
+				return new ExpResult(val.value, val.unitType);
 			}
 		});
 
 		addUnaryOp("!", 50, new UnOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult val){
-				return new ExpResult(val.value == 0 ? 1 : 0);
+				return new ExpResult(val.value == 0 ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
@@ -243,91 +246,132 @@ public class ExpParser {
 		addBinaryOp("+", 20, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(lval.value + rval.value);
+				if (lval.unitType != rval.unitType) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(lval.value + rval.value, lval.unitType);
 			}
 		});
 
 		addBinaryOp("-", 20, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(lval.value - rval.value);
+				if (lval.unitType != rval.unitType) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(lval.value - rval.value, lval.unitType);
 			}
 		});
 
 		addBinaryOp("*", 30, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(lval.value * rval.value);
+				Class<? extends Unit> newType;
+				if (lval.unitType == DimensionlessUnit.class) {
+					newType = rval.unitType;
+				} else if (rval.unitType == DimensionlessUnit.class) {
+					newType = lval.unitType;
+				} else {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(lval.value * rval.value, newType);
 			}
 		});
 
 		addBinaryOp("/", 30, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(lval.value / rval.value);
+				if (rval.unitType != DimensionlessUnit.class) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(lval.value / rval.value, lval.unitType);
 			}
 		});
 
 		addBinaryOp("^", 40, true, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(Math.pow(lval.value, rval.value));
+				if (lval.unitType != DimensionlessUnit.class ||
+				    rval.unitType != DimensionlessUnit.class) {
+
+					return ExpResult.BAD_RESULT;
+				}
+
+				return new ExpResult(Math.pow(lval.value, rval.value), DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("==", 10, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(lval.value == rval.value ? 1 : 0);
+				if (lval.unitType != rval.unitType) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(lval.value == rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("!=", 10, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(lval.value != rval.value ? 1 : 0);
+				if (lval.unitType != rval.unitType) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(lval.value != rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("&&", 8, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult((lval.value!=0) && (rval.value!=0) ? 1 : 0);
+				return new ExpResult((lval.value!=0) && (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("||", 6, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult((lval.value!=0) || (rval.value!=0) ? 1 : 0);
+				return new ExpResult((lval.value!=0) || (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("<", 12, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(lval.value < rval.value ? 1 : 0);
+				if (lval.unitType != rval.unitType) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(lval.value < rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("<=", 12, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(lval.value <= rval.value ? 1 : 0);
+				if (lval.unitType != rval.unitType) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(lval.value <= rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp(">", 12, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(lval.value > rval.value ? 1 : 0);
+				if (lval.unitType != rval.unitType) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(lval.value > rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp(">=", 12, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ExpResult lval, ExpResult rval){
-				return new ExpResult(lval.value >= rval.value ? 1 : 0);
+				if (lval.unitType != rval.unitType) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(lval.value >= rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
@@ -336,21 +380,27 @@ public class ExpParser {
 		addFunction("max", 2, new CallableFunc() {
 			@Override
 			public ExpResult call(ExpResult[] args) {
-				return new ExpResult(Math.max(args[0].value, args[1].value));
+				if (args[0].unitType != args[1].unitType) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(Math.max(args[0].value, args[1].value), args[0].unitType);
 			}
 		});
 
 		addFunction("min", 2, new CallableFunc() {
 			@Override
 			public ExpResult call(ExpResult[] args) {
-				return new ExpResult(Math.min(args[0].value, args[1].value));
+				if (args[0].unitType != args[1].unitType) {
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(Math.min(args[0].value, args[1].value), args[0].unitType);
 			}
 		});
 
 		addFunction("abs", 1, new CallableFunc() {
 			@Override
 			public ExpResult call(ExpResult[] args) {
-				return new ExpResult(Math.abs(args[0].value));
+				return new ExpResult(Math.abs(args[0].value), args[0].unitType);
 			}
 		});
 
@@ -521,7 +571,7 @@ public class ExpParser {
 		}
 
 		if (nextTok.type == ExpTokenizer.NUM_TYPE) {
-			return new Constant(new ExpResult(Double.parseDouble(nextTok.value)));
+			return new Constant(new ExpResult(Double.parseDouble(nextTok.value), DimensionlessUnit.class));
 		}
 		if (nextTok.type == ExpTokenizer.VAR_TYPE &&
 				!nextTok.value.equals("this") &&

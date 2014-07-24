@@ -20,6 +20,8 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.jaamsim.units.DimensionlessUnit;
+
 public class TestExpParser {
 
 	private static void testToken(ExpTokenizer.Token tok, int type, String val) {
@@ -100,9 +102,9 @@ public class TestExpParser {
 		class ValLookup implements ExpParser.VarTable {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
-				if (name[0].equals("foo")) return new ExpResult(4);
-				if (name[0].equals("bar")) return new ExpResult(3);
-				return new ExpResult(1);
+				if (name[0].equals("foo")) return new ExpResult(4, DimensionlessUnit.class);
+				if (name[0].equals("bar")) return new ExpResult(3, DimensionlessUnit.class);
+				return new ExpResult(1, DimensionlessUnit.class);
 			}
 		}
 
@@ -269,12 +271,12 @@ public class TestExpParser {
 		class ValLookup implements ExpParser.VarTable {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
-				if (name.length < 1 || !name[0].equals("foo")) return new ExpResult(0);
+				if (name.length < 1 || !name[0].equals("foo")) return new ExpResult(0, DimensionlessUnit.class);
 
-				if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return new ExpResult(4);
-				if (name.length >= 2 && name[1].equals("bonk")) return new ExpResult(5);
+				if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return new ExpResult(4, DimensionlessUnit.class);
+				if (name.length >= 2 && name[1].equals("bonk")) return new ExpResult(5, DimensionlessUnit.class);
 
-				return new ExpResult(-1);
+				return new ExpResult(-1, DimensionlessUnit.class);
 			}
 		}
 		ValLookup vl = new ValLookup();
@@ -303,10 +305,10 @@ public class TestExpParser {
 		class ThisLookup implements ExpParser.VarTable {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
-				if (name[0].equals("this")) return new ExpResult(42);
-				if (name[0].equals("obj")) return new ExpResult(24);
+				if (name[0].equals("this")) return new ExpResult(42, DimensionlessUnit.class);
+				if (name[0].equals("obj")) return new ExpResult(24, DimensionlessUnit.class);
 
-				return new ExpResult(-1);
+				return new ExpResult(-1, DimensionlessUnit.class);
 			}
 		}
 		ThisLookup tl = new ThisLookup();
@@ -327,7 +329,7 @@ public class TestExpParser {
 		class ValLookup implements ExpParser.VarTable {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
-				return new ExpResult(-1);
+				return new ExpResult(-1, DimensionlessUnit.class);
 			}
 		}
 		ValLookup vl = new ValLookup();
