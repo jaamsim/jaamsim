@@ -180,6 +180,7 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 		// Schedule the next entity to reach the end of the conveyor
 		double dt = startTimeList.get(0) + travelTimeInput.getValue() - this.getSimTime();
+		dt = Math.max(dt, 0);  // Round-off to the nearest tick can cause a negative value
 		this.scheduleProcess(dt, 5, removeDisplayEntity);
 	}
 
