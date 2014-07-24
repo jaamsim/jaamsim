@@ -22,15 +22,15 @@ import com.jaamsim.units.Unit;
 public class ExpParser {
 
 	public interface UnOpFunc {
-		public ExpResult apply(ExpResult val);
+		public ExpResult apply(ParseContext context, ExpResult val);
 	}
 
 	public interface BinOpFunc {
-		public ExpResult apply(ExpResult lval, ExpResult rval);
+		public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval);
 	}
 
 	public interface CallableFunc {
-		public ExpResult call(ExpResult[] args);
+		public ExpResult call(ParseContext context, ExpResult[] args);
 	}
 
 	public static class UnitData {
@@ -89,7 +89,7 @@ public class ExpParser {
 
 		@Override
 		public ExpResult evaluate() {
-			return func.apply(subExp.evaluate());
+			return func.apply(context, subExp.evaluate());
 		}
 	}
 
@@ -106,7 +106,7 @@ public class ExpParser {
 
 		@Override
 		public ExpResult evaluate() {
-			return func.apply(lSubExp.evaluate(), rSubExp.evaluate());
+			return func.apply(context, lSubExp.evaluate(), rSubExp.evaluate());
 		}
 	}
 
@@ -145,7 +145,7 @@ public class ExpParser {
 			for (int i = 0; i < args.size(); ++i) {
 				argVals[i] = args.get(i).evaluate();
 			}
-			return function.call(argVals);
+			return function.call(context, argVals);
 		}
 	}
 
@@ -238,21 +238,21 @@ public class ExpParser {
 		// Unary Operators
 		addUnaryOp("-", 50, new UnOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult val){
+			public ExpResult apply(ParseContext context, ExpResult val){
 				return new ExpResult(-val.value, val.unitType);
 			}
 		});
 
 		addUnaryOp("+", 50, new UnOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult val){
+			public ExpResult apply(ParseContext context, ExpResult val){
 				return new ExpResult(val.value, val.unitType);
 			}
 		});
 
 		addUnaryOp("!", 50, new UnOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult val){
+			public ExpResult apply(ParseContext context, ExpResult val){
 				return new ExpResult(val.value == 0 ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
@@ -261,7 +261,7 @@ public class ExpParser {
 		// Binary operators
 		addBinaryOp("+", 20, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				if (lval.unitType != rval.unitType) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -271,7 +271,7 @@ public class ExpParser {
 
 		addBinaryOp("-", 20, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				if (lval.unitType != rval.unitType) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -281,7 +281,7 @@ public class ExpParser {
 
 		addBinaryOp("*", 30, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				Class<? extends Unit> newType;
 				if (lval.unitType == DimensionlessUnit.class) {
 					newType = rval.unitType;
@@ -296,7 +296,7 @@ public class ExpParser {
 
 		addBinaryOp("/", 30, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				if (rval.unitType != DimensionlessUnit.class) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -306,7 +306,7 @@ public class ExpParser {
 
 		addBinaryOp("^", 40, true, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				if (lval.unitType != DimensionlessUnit.class ||
 				    rval.unitType != DimensionlessUnit.class) {
 
@@ -319,7 +319,7 @@ public class ExpParser {
 
 		addBinaryOp("==", 10, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				if (lval.unitType != rval.unitType) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -329,7 +329,7 @@ public class ExpParser {
 
 		addBinaryOp("!=", 10, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				if (lval.unitType != rval.unitType) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -339,21 +339,21 @@ public class ExpParser {
 
 		addBinaryOp("&&", 8, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				return new ExpResult((lval.value!=0) && (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("||", 6, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				return new ExpResult((lval.value!=0) || (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("<", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				if (lval.unitType != rval.unitType) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -363,7 +363,7 @@ public class ExpParser {
 
 		addBinaryOp("<=", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				if (lval.unitType != rval.unitType) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -373,7 +373,7 @@ public class ExpParser {
 
 		addBinaryOp(">", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				if (lval.unitType != rval.unitType) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -383,7 +383,7 @@ public class ExpParser {
 
 		addBinaryOp(">=", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
 				if (lval.unitType != rval.unitType) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -395,7 +395,7 @@ public class ExpParser {
 		// Functions
 		addFunction("max", 2, new CallableFunc() {
 			@Override
-			public ExpResult call(ExpResult[] args) {
+			public ExpResult call(ParseContext context, ExpResult[] args) {
 				if (args[0].unitType != args[1].unitType) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -405,7 +405,7 @@ public class ExpParser {
 
 		addFunction("min", 2, new CallableFunc() {
 			@Override
-			public ExpResult call(ExpResult[] args) {
+			public ExpResult call(ParseContext context, ExpResult[] args) {
 				if (args[0].unitType != args[1].unitType) {
 					return ExpResult.BAD_RESULT;
 				}
@@ -415,7 +415,7 @@ public class ExpParser {
 
 		addFunction("abs", 1, new CallableFunc() {
 			@Override
-			public ExpResult call(ExpResult[] args) {
+			public ExpResult call(ParseContext context, ExpResult[] args) {
 				return new ExpResult(Math.abs(args[0].value), args[0].unitType);
 			}
 		});
