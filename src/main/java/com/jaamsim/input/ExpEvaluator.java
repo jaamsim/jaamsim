@@ -14,7 +14,7 @@
  */
 package com.jaamsim.input;
 
-import com.jaamsim.input.ExpParser.UnitData;
+import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 
 /**
@@ -94,9 +94,17 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public UnitData getUnitByName(String name) {
-			// TODO
-			return null;
+		public ExpParser.UnitData getUnitByName(String name) {
+			Unit unit = Input.tryParseEntity(name, Unit.class);
+			if (unit == null) {
+				return null;
+			}
+
+			ExpParser.UnitData ret = new ExpParser.UnitData();
+			ret.scaleFactor = unit.getConversionFactorToSI();
+			ret.unitType = unit.getClass();
+
+			return ret;
 		}
 	}
 

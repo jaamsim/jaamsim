@@ -22,6 +22,8 @@ import org.junit.Test;
 
 import com.jaamsim.input.ExpParser.UnitData;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.DistanceUnit;
+import com.jaamsim.units.TimeUnit;
 
 public class TestExpParser {
 
@@ -336,6 +338,81 @@ public class TestExpParser {
 		exp = ExpParser.parseExpression(tpc, "obj.things");
 		val = exp.evaluate().value;
 		assertTrue(val == 24);
+
+	}
+
+	@Test
+	public void testUnits() throws ExpParser.Error {
+		class PC implements ExpParser.ParseContext {
+			@Override
+			public ExpResult getVariableValue(String[] name) {
+				return ExpResult.BAD_RESULT;
+			}
+
+			@Override
+			public UnitData getUnitByName(String name) {
+				UnitData ret = new UnitData();
+				if (name.equals("s")) {
+					ret.scaleFactor = 1;
+					ret.unitType = TimeUnit.class;
+					return ret;
+				}
+				if (name.equals("min")) {
+					ret.scaleFactor = 60;
+					ret.unitType = TimeUnit.class;
+					return ret;
+				}
+				if (name.equals("hr")) {
+					ret.scaleFactor = 3600;
+					ret.unitType = TimeUnit.class;
+					return ret;
+				}
+				if (name.equals("m")) {
+					ret.scaleFactor = 1;
+					ret.unitType = DistanceUnit.class;
+					return ret;
+				}
+				if (name.equals("km")) {
+					ret.scaleFactor = 1000;
+					ret.unitType = DistanceUnit.class;
+					return ret;
+				}
+				return null;
+			}
+		}
+		PC pc = new PC();
+
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "1[km] + 1[m]");
+		ExpResult res = exp.evaluate();
+		assertTrue(res.value == 1001);
+		assertTrue(res.unitType == DistanceUnit.class);
+
+		exp = ExpParser.parseExpression(pc, "1[hr] + 1[min] + 5[s]");
+		res = exp.evaluate();
+		assertTrue(res.value == 3665);
+		assertTrue(res.unitType == TimeUnit.class);
+
+		exp = ExpParser.parseExpression(pc, "1[hr] + 1[m]");
+		res = exp.evaluate();
+		assertTrue(res.isBad());
+
+		exp = ExpParser.parseExpression(pc, "max(1[hr], 1[s])");
+		res = exp.evaluate();
+		assertTrue(res.value == 3600);
+		assertTrue(res.unitType == TimeUnit.class);
+
+		exp = ExpParser.parseExpression(pc, "6*1[km]");
+		res = exp.evaluate();
+		assertTrue(res.value == 6000);
+		assertTrue(res.unitType == DistanceUnit.class);
+
+		boolean threw = false;
+		try {
+			exp = ExpParser.parseExpression(pc, "1[parsec]");
+		} catch(ExpParser.Error ex) {
+			threw = true;
+		}
+		assertTrue(threw);
 
 	}
 

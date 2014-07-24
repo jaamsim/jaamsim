@@ -587,7 +587,7 @@ public class ExpParser {
 		}
 
 		if (nextTok.type == ExpTokenizer.NUM_TYPE) {
-			return new Constant(context, new ExpResult(Double.parseDouble(nextTok.value), DimensionlessUnit.class));
+			return parseConstant(context, nextTok.value, tokens);
 		}
 		if (nextTok.type == ExpTokenizer.VAR_TYPE &&
 				!nextTok.value.equals("this") &&
@@ -619,6 +619,29 @@ public class ExpParser {
 		// We're all out of tricks here, this is an unknown expression
 		throw new Error(String.format("Can not parse expression at %d", nextTok.pos));
 	}
+
+	private static Expression parseConstant(ParseContext context, String constant, TokenList tokens) throws Error {
+		double mult = 1;
+		Class<? extends Unit> ut = DimensionlessUnit.class;
+
+		ExpTokenizer.Token peeked = tokens.peek();
+
+		if (peeked != null && peeked.type == ExpTokenizer.SQ_TYPE) {
+			// This constant is followed by a square quoted token, it must be the unit
+
+			tokens.next(); // Consume unit token
+
+			UnitData unit = context.getUnitByName(peeked.value);
+			if (unit == null) {
+				throw new Error(String.format("Unknown unit: %s", peeked.value));
+			}
+			mult = unit.scaleFactor;
+			ut = unit.unitType;
+		}
+
+		return new Constant(context, new ExpResult(Double.parseDouble(constant)*mult, ut));
+	}
+
 
 	private static Expression parseFuncCall(ParseContext context, String funcName, TokenList tokens) throws Error {
 
