@@ -14,6 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 -->
 <project name="jaamsim" basedir="." default="jar">
+  <property name="ver"           value="2014-30"/>
   <property name="src.dir"       location="src/main"/>
   <property name="res.dir"       location="src/main/resources"/>
   <property name="build.dir"     location="build"/>
@@ -57,7 +58,7 @@ GNU General Public License for more details.
   </target>
 
   <target name="jar" depends="compile">
-    <jar jarfile="${jars.dir}/JaamSim.jar" manifest="Manifest.MF"
+    <jar jarfile="${jars.dir}/JaamSim${ver}.jar" manifest="Manifest.MF"
          compress="true">
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
