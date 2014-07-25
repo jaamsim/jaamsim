@@ -43,11 +43,8 @@ http://jaamsim.com
 A copy of all dependencies is shipped in the jar/ folder and are as follows:
 - JOGL2 (from jogamp.org)
 
-Simply run the build.sh script from the top level to produce a functional jar 'JaamSim.jar',
-you'll need to have the prerequisites from the jar/ folder in your classpath.
-
-To build it in another environment, link the jar/ folder as an external 
-classpath folder, or download your own copy of JOGL2.
+Run the ant build tool in the topmost directory to produce build products
+in build/jars/
 
 # License
 

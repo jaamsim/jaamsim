@@ -58,8 +58,18 @@ GNU General Public License for more details.
   </target>
 
   <target name="jar" depends="compile">
-    <jar jarfile="${jars.dir}/JaamSim${ver}.jar" manifest="Manifest.MF"
-         compress="true">
+    <jar jarfile="${jars.dir}/JaamSim${ver}-bare.jar" compress="true">
+      <manifest>
+        <attribute name="Main-Class" value="com.sandwell.JavaSimulation3D.GUIFrame"/>
+        <attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar"/>
+      </manifest>
+      <fileset dir="${class.dir}"/>
+      <fileset dir="${res.dir}"/>
+    </jar>
+    <jar jarfile="${jars.dir}/JaamSim${ver}.jar" compress="true">
+      <manifest>
+        <attribute name="Main-Class" value="com.sandwell.JavaSimulation3D.GUIFrame"/>
+      </manifest>
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>
       <zipfileset src="jar/gluegen-rt.jar"     includes="jogamp/**/*,com/**/*"/>

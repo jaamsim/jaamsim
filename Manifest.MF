@@ -1,1 +1,0 @@
-Main-Class: com.sandwell.JavaSimulation3D.GUIFrame
