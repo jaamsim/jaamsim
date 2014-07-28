@@ -27,6 +27,7 @@ import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
 public class Threshold extends StateEntity {
@@ -181,6 +182,42 @@ public class Threshold extends StateEntity {
 		}
 		if (!userUpdate.users.isEmpty() && !updateHandle.isScheduled())
 			this.scheduleProcessTicks(0, 2, false, userUpdate, updateHandle);
+	}
+
+	private static class DoOpenTarget extends EntityTarget<Threshold> {
+		public DoOpenTarget(Threshold ent, String method) {
+			super(ent, method);
+		}
+
+		@Override
+		public void process() {
+			ent.doOpen();
+		}
+	}
+
+	public final ProcessTarget doOpen = new DoOpenTarget(this, "doOpen");
+
+	public void doOpen() {
+		this.trace( "open" );
+		this.setOpen( true );
+	}
+
+	private static class DoCloseTarget extends EntityTarget<Threshold> {
+		public DoCloseTarget(Threshold ent, String method) {
+			super(ent, method);
+		}
+
+		@Override
+		public void process() {
+			ent.doClose();
+		}
+	}
+
+	public final ProcessTarget doClose = new DoCloseTarget(this, "doClose");
+
+	public void doClose() {
+		this.trace( "close" );
+		this.setOpen( false );
 	}
 
 	@Output(name = "Open",
