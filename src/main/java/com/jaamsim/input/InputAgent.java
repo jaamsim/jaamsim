@@ -292,7 +292,7 @@ public class InputAgent {
 		}
 
 		if (url == null) {
-			InputAgent.logWarning("Unable to resolve path %s%s - %s", root, path.toString(), file);
+			InputAgent.logError("Unable to resolve path %s%s - %s", root, path.toString(), file);
 			return false;
 		}
 
@@ -301,7 +301,7 @@ public class InputAgent {
 			InputStream in = url.openStream();
 			buf = new BufferedReader(new InputStreamReader(in));
 		} catch (IOException e) {
-			InputAgent.logWarning("Could not read from %s", url.toString());
+			InputAgent.logError("Could not read from %s", url.toString());
 			return false;
 		}
 
