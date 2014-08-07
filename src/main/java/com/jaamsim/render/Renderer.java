@@ -1889,4 +1889,12 @@ private static class TransSortable implements Comparable<TransSortable> {
 			showDebugInfo = showDebug;
 		}
 	}
+
+	@Override
+	public UncaughtExceptionHandler getUncaughtExceptionHandler() {
+		return null;
+	}
+
+	@Override
+	public void setUncaughtExceptionHandler(UncaughtExceptionHandler arg0) {}
 }
