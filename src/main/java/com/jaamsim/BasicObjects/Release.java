@@ -34,8 +34,6 @@ public class Release extends LinkedComponent {
 	private final IntegerListInput numberOfUnitsList;
 
 	{
-		operatingThresholdList.setHidden(true);
-
 		resourceList = new EntityListInput<Resource>(Resource.class, "Resource", "Key Inputs", null);
 		this.addInput( resourceList);
 

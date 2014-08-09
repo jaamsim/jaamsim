@@ -14,10 +14,6 @@
  */
 package com.jaamsim.BasicObjects;
 
-import java.util.ArrayList;
-
-import com.jaamsim.Thresholds.Threshold;
-import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -25,7 +21,6 @@ import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.RateUnit;
 import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.StringInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
@@ -34,7 +29,7 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
  * LinkedComponents are used to form a chain of components that process DisplayEntities that pass through the system.
  * Sub-classes for EntityGenerator, Server, and EntitySink.
  */
-public abstract class LinkedComponent extends StateEntity implements ThresholdUser {
+public abstract class LinkedComponent extends StateEntity {
 
 	@Keyword(description = "The prototype for entities that will be received by this object.\n" +
 			"This input must be set if the expression 'this.obj' is used in the input to any keywords.",
@@ -44,10 +39,6 @@ public abstract class LinkedComponent extends StateEntity implements ThresholdUs
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 			example = "EntityGenerator1 NextComponent { Server1 }")
 	protected final EntityInput<LinkedComponent> nextComponentInput;
-
-	@Keyword(description = "A list of thresholds that must be satisified for the entity to operate.",
-			example = "EntityGenerator1 OperatingThresholdList { Server1 }")
-	protected final EntityListInput<Threshold> operatingThresholdList;
 
 	@Keyword(description = "The state to be assigned to each entity on arrival at this object.\n" +
 			"No state is assigned if the entry is blank.",
@@ -64,9 +55,6 @@ public abstract class LinkedComponent extends StateEntity implements ThresholdUs
 
 		nextComponentInput = new EntityInput<LinkedComponent>( LinkedComponent.class, "NextComponent", "Key Inputs", null);
 		this.addInput( nextComponentInput);
-
-		operatingThresholdList = new EntityListInput<Threshold>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
-		this.addInput( operatingThresholdList);
 
 		stateAssignment = new StringInput("StateAssignment", "Key Inputs", "");
 		this.addInput( stateAssignment);
@@ -107,14 +95,6 @@ public abstract class LinkedComponent extends StateEntity implements ThresholdUs
 	}
 
 	@Override
-	public ArrayList<Threshold> getThresholds() {
-		return operatingThresholdList.getValue();
-	}
-
-	@Override
-	public void thresholdChanged() {}
-
-	@Override
 	public boolean isValidState(String state) {
 		return true;
 	}
@@ -142,26 +122,6 @@ public abstract class LinkedComponent extends StateEntity implements ThresholdUs
 			nextComponentInput.getValue().addDisplayEntity(ent);
 
 		numberProcessed++;
-	}
-
-	/**
-	 * Tests whether all the thresholds are open.
-	 * @return true if all the thresholds are open.
-	 */
-	public boolean isOpen() {
-		for (Threshold thr : operatingThresholdList.getValue()) {
-			if (thr.isClosed())
-				return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Test whether any of the thresholds are closed.
-	 * @return true if any threshold is closed.
-	 */
-	public boolean isClosed() {
-		return !this.isOpen();
 	}
 
 	// ******************************************************************************************************

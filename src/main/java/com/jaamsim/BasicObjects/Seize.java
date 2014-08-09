@@ -40,8 +40,6 @@ public class Seize extends LinkedComponent {
 	private final EntityInput<Queue> waitQueue;
 
 	{
-		operatingThresholdList.setHidden(true);
-
 		resourceList = new EntityListInput<Resource>(Resource.class, "Resource", "Key Inputs", null);
 		this.addInput( resourceList);
 

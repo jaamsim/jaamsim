@@ -38,8 +38,6 @@ public class Assign extends LinkedComponent {
 	private final AssignmentListInput assignmentList;
 
 	{
-		operatingThresholdList.setHidden(true);
-
 		assignmentList = new AssignmentListInput("AttributeAssignmentList", "Key Inputs", new ArrayList<ExpParser.Assignment>());
 		this.addInput(assignmentList);
 	}

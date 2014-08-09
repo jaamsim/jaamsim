@@ -14,13 +14,28 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
+import com.jaamsim.Thresholds.Threshold;
+import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.Keyword;
+import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 
-public abstract class LinkedService extends LinkedComponent {
+public abstract class LinkedService extends LinkedComponent implements ThresholdUser {
+
+	@Keyword(description = "A list of thresholds that must be satisified for the entity to operate.",
+			example = "EntityGenerator1 OperatingThresholdList { Server1 }")
+	protected final EntityListInput<Threshold> operatingThresholdList;
 
 	private boolean busy;
 	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
+
+	{
+		operatingThresholdList = new EntityListInput<Threshold>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
+		this.addInput( operatingThresholdList);
+	}
 
 	public LinkedService() {}
 
@@ -54,6 +69,11 @@ public abstract class LinkedService extends LinkedComponent {
 	public abstract void endAction();
 
 	@Override
+	public ArrayList<Threshold> getThresholds() {
+		return operatingThresholdList.getValue();
+	}
+
+	@Override
 	public void thresholdChanged() {
 
 		// If necessary, restart processing
@@ -65,6 +85,26 @@ public abstract class LinkedService extends LinkedComponent {
 			this.setPresentState();
 			this.startAction();
 		}
+	}
+
+	/**
+	 * Tests whether all the thresholds are open.
+	 * @return true if all the thresholds are open.
+	 */
+	public boolean isOpen() {
+		for (Threshold thr : operatingThresholdList.getValue()) {
+			if (thr.isClosed())
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Test whether any of the thresholds are closed.
+	 * @return true if any threshold is closed.
+	 */
+	public boolean isClosed() {
+		return !this.isOpen();
 	}
 
 	protected void setPresentState() {

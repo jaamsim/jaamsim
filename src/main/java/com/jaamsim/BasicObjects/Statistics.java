@@ -39,7 +39,6 @@ public class Statistics extends LinkedComponent {
 	private double totalSquaredValue;
 
 	{
-		operatingThresholdList.setHidden(true);
 		attributeDefinitionList.setHidden(true);
 		stateAssignment.setHidden(true);
 

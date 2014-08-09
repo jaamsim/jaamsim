@@ -26,7 +26,6 @@ public class EntityLogger extends LinkedComponent {
 	private double logTime;
 
 	{
-		operatingThresholdList.setHidden(true);
 		stateAssignment.setHidden(true);
 		testEntity.setHidden(true);
 	}
