@@ -459,6 +459,11 @@ public class Entity {
 
 	public double calculateEventTime(double waitLength) {
 		long eventTime = getSimTicks() + calculateDelayLength(waitLength);
+
+		if( eventTime < 0 ) {
+			eventTime = Long.MAX_VALUE;
+		}
+
 		return eventTime / Simulation.getSimTimeFactor();
 	}
 
