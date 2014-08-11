@@ -58,34 +58,33 @@ public class EntityGenerator extends LinkedService {
 		testEntity.setHidden(true);
 		stateAssignment.setHidden(true);
 
-		firstArrivalTime = new SampleExpInput( "FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
-		firstArrivalTime.setUnitType( TimeUnit.class );
+		firstArrivalTime = new SampleExpInput("FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		firstArrivalTime.setUnitType(TimeUnit.class);
 		firstArrivalTime.setEntity(this);
-		this.addInput( firstArrivalTime);
+		this.addInput(firstArrivalTime);
 
-		interArrivalTime = new SampleExpInput( "InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
-		interArrivalTime.setUnitType( TimeUnit.class );
+		interArrivalTime = new SampleExpInput("InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
+		interArrivalTime.setUnitType(TimeUnit.class);
 		interArrivalTime.setEntity(this);
-		this.addInput( interArrivalTime);
+		this.addInput(interArrivalTime);
 
-		prototypeEntity = new EntityInput<DisplayEntity>( DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
-		this.addInput( prototypeEntity);
+		prototypeEntity = new EntityInput<DisplayEntity>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		this.addInput(prototypeEntity);
 
-		maxNumber = new IntegerInput( "MaxNumber", "Key Inputs", null);
+		maxNumber = new IntegerInput("MaxNumber", "Key Inputs", null);
 		maxNumber.setValidRange(1, Integer.MAX_VALUE);
-		this.addInput( maxNumber);
+		this.addInput(maxNumber);
 	}
 
-	public EntityGenerator() {
-	}
+	public EntityGenerator() {}
 
 	@Override
 	public void validate() {
 		super.validate();
 
 		// Confirm that prototype entity has been specified
-		if( prototypeEntity.getValue() == null ) {
-			throw new InputErrorException( "The keyword PrototypeEntity must be set." );
+		if (prototypeEntity.getValue() == null) {
+			throw new InputErrorException("The keyword PrototypeEntity must be set.");
 		}
 
 		interArrivalTime.verifyUnit();
@@ -147,7 +146,7 @@ public class EntityGenerator extends LinkedService {
 		ent.earlyInit();
 
 		// Send the entity to the next element in the chain
-		this.sendToNextComponent( ent );
+		this.sendToNextComponent(ent);
 
 		// Try to generate another entity
 		this.startAction();
