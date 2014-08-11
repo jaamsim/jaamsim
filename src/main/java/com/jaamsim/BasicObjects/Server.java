@@ -42,22 +42,24 @@ public class Server extends LinkedService {
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
 
 	{
-		serviceTimeInput = new SampleExpInput( "ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
-		serviceTimeInput.setUnitType( TimeUnit.class );
+		serviceTimeInput = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		serviceTimeInput.setUnitType(TimeUnit.class);
 		serviceTimeInput.setEntity(this);
-		this.addInput( serviceTimeInput);
+		this.addInput(serviceTimeInput);
 
-		waitQueueInput = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput( waitQueueInput);
+		waitQueueInput = new EntityInput<Queue>(Queue.class, "WaitQueue", "Key Inputs", null);
+		this.addInput(waitQueueInput);
 	}
+
+	public Server() {}
 
 	@Override
 	public void validate() {
 		super.validate();
 
 		// Confirm that the target queue has been specified
-		if( waitQueueInput.getValue() == null ) {
-			throw new InputErrorException( "The keyword WaitQueue must be set." );
+		if (waitQueueInput.getValue() == null) {
+			throw new InputErrorException("The keyword WaitQueue must be set.");
 		}
 
 		serviceTimeInput.verifyUnit();
@@ -66,17 +68,16 @@ public class Server extends LinkedService {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-
 		servedEntity = null;
 		this.setPresentState();
 	}
 
 	@Override
-	public void addDisplayEntity(DisplayEntity ent ) {
+	public void addDisplayEntity(DisplayEntity ent) {
 		super.addDisplayEntity(ent);
 
 		// Add the entity to the queue
-		waitQueueInput.getValue().addLast( ent );
+		waitQueueInput.getValue().addLast(ent);
 
 		// If necessary, wake up the server
 		if (!this.isBusy() && this.isOpen()) {
