@@ -32,7 +32,7 @@ import com.sandwell.JavaSimulation.IntegerInput;
 public class Queue extends DisplayEntity {
 
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
-	         example = "Queue1 Spacing { 1 }")
+	         example = "Queue1 Spacing { 1 m }")
 	private final ValueInput spacingInput;
 
 	@Keyword(description = "The number of queuing entities in each row.",
