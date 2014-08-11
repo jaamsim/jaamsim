@@ -52,7 +52,7 @@ public class Assemble extends LinkedService {
 
 	{
 		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
-		serviceTime.setUnitType(TimeUnit.class );
+		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
 		this.addInput(serviceTime);
 
@@ -60,7 +60,7 @@ public class Assemble extends LinkedService {
 		this.addInput(waitQueueList);
 
 		choice = new SampleExpInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1));
-		choice.setUnitType(DimensionlessUnit.class );
+		choice.setUnitType(DimensionlessUnit.class);
 		choice.setEntity(this);
 		this.addInput(choice);
 
@@ -68,18 +68,20 @@ public class Assemble extends LinkedService {
 		this.addInput(prototypeEntity);
 	}
 
+	public Assemble() {}
+
 	@Override
 	public void validate() {
 		super.validate();
 
 		// Confirm that the waiting queues have been specified
-		if( waitQueueList.getValue() == null ) {
-			throw new InputErrorException( "The keyword WaitQueueList must be set." );
+		if (waitQueueList.getValue() == null) {
+			throw new InputErrorException("The keyword WaitQueueList must be set.");
 		}
 
 		// Confirm that prototype entity has been specified
-		if( prototypeEntity.getValue() == null ) {
-			throw new InputErrorException( "The keyword PrototypeEntity must be set." );
+		if (prototypeEntity.getValue() == null) {
+			throw new InputErrorException("The keyword PrototypeEntity must be set.");
 		}
 
 		serviceTime.verifyUnit();
