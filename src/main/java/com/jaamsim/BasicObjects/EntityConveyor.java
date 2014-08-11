@@ -64,16 +64,16 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 	{
 		operatingThresholdList.setHidden(true);
 
-		travelTimeInput = new ValueInput( "TravelTime", "Key Inputs", 0.0d);
-		travelTimeInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
+		travelTimeInput = new ValueInput("TravelTime", "Key Inputs", 0.0d);
+		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		travelTimeInput.setUnitType(TimeUnit.class);
-		this.addInput( travelTimeInput);
+		this.addInput(travelTimeInput);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
 		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
 		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);
-		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
+		pointsInput.setValidCountRange(2, Integer.MAX_VALUE );
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput);
 
@@ -106,25 +106,25 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 		lengthList.clear();
 		cumLengthList.clear();
 		totalLength = 0.0;
-		for( int i = 1; i < pointsInput.getValue().size(); i++ ) {
+		for (int i = 1; i < pointsInput.getValue().size(); i++) {
 			// Get length between points
 			Vec3d vec = new Vec3d();
-			vec.sub3( pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
+			vec.sub3(pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
 			double length = vec.mag3();
 
-			lengthList.add( length);
+			lengthList.add(length);
 			totalLength += length;
-			cumLengthList.add( totalLength);
+			cumLengthList.add(totalLength);
 		}
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
+	public void addDisplayEntity(DisplayEntity ent ) {
 		super.addDisplayEntity(ent);
 
 		// Add the entity to the conveyor
-		entityList.add( ent );
-		startTimeList.add( this.getSimTime() );
+		entityList.add(ent);
+		startTimeList.add(this.getSimTime());
 
 		// If necessary, wake up the conveyor
 		if (!this.isBusy()) {
@@ -169,12 +169,12 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 	 * @param dist = distance along the conveyor.
 	 * @return position coordinates
 	 */
-	private Vec3d getPositionForDistance( double dist) {
+	private Vec3d getPositionForDistance(double dist) {
 
 		// Find the present segment
 		int seg = 0;
-		for( int i = 0; i < cumLengthList.size(); i++) {
-			if( dist <= cumLengthList.get(i)) {
+		for (int i = 0; i < cumLengthList.size(); i++) {
+			if (dist <= cumLengthList.get(i)) {
 				seg = i;
 				break;
 			}
@@ -182,14 +182,14 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 
 		// Interpolate between the start and end of the segment
 		double frac = 0.0;
-		if( seg == 0 ) {
+		if (seg == 0) {
 			frac = dist / lengthList.get(0);
 		}
 		else {
 			frac = ( dist - cumLengthList.get(seg-1) ) / lengthList.get(seg);
 		}
-		if( frac < 0.0 )  frac = 0.0;
-		else if( frac > 1.0 )  frac = 1.0;
+		if (frac < 0.0)  frac = 0.0;
+		else if (frac > 1.0)  frac = 1.0;
 
 		Vec3d vec = new Vec3d();
 		vec.interpolate3(pointsInput.getValue().get(seg), pointsInput.getValue().get(seg+1), frac);
@@ -197,11 +197,11 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 	}
 
 	@Override
-	public void updateForInput( Input<?> in ) {
+	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
 		// If Points were input, then use them to set the start and end coordinates
-		if( in == pointsInput || in == colorInput || in == widthInput ) {
+		if (in == pointsInput || in == colorInput || in == widthInput) {
 			synchronized(screenPointLock) {
 				cachedPointInfo = null;
 			}
@@ -210,17 +210,17 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 	}
 
 	@Override
-	public void updateGraphics( double simTime ) {
+	public void updateGraphics(double simTime) {
 
 		// Loop through the entities on the conveyor
-		for( int i = 0; i < entityList.size(); i++) {
-			DisplayEntity each = entityList.get( i );
+		for (int i = 0; i < entityList.size(); i++) {
+			DisplayEntity each = entityList.get(i);
 
 			// Calculate the distance travelled by this entity
-			double dist = ( simTime - startTimeList.get(i) ) / travelTimeInput.getValue() * totalLength;
+			double dist = (simTime - startTimeList.get(i)) / travelTimeInput.getValue() * totalLength;
 
 			// Set the position for the entity
-			each.setPosition( this.getPositionForDistance( dist) );
+			each.setPosition(this.getPositionForDistance( dist));
 		}
 	}
 
