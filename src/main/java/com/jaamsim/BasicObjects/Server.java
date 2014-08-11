@@ -16,12 +16,10 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
-import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;
@@ -30,7 +28,7 @@ import com.sandwell.JavaSimulation3D.Queue;
  * Server processes entities one by one from a queue.  When finished with an entity, it passes it to the next
  * LinkedComponent in the chain.
  */
-public class Server extends LinkedComponent {
+public class Server extends LinkedService {
 
 	@Keyword(description = "The service time required to process an entity.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
@@ -41,10 +39,7 @@ public class Server extends LinkedComponent {
 	         example = "Server1 WaitQueue { Queue1 }")
 	private final EntityInput<Queue> waitQueueInput;
 
-	private boolean busy;  				// true if the server is busy serving a DisplayEntity
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
-
-	private final ProcessTarget removeDisplayEntity = new RemoveDisplayEntityTarget(this);
 
 	{
 		serviceTimeInput = new SampleExpInput( "ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
@@ -72,7 +67,6 @@ public class Server extends LinkedComponent {
 	public void earlyInit() {
 		super.earlyInit();
 
-		busy = false;
 		servedEntity = null;
 		this.setPresentState();
 	}
@@ -85,83 +79,40 @@ public class Server extends LinkedComponent {
 		waitQueueInput.getValue().addLast( ent );
 
 		// If necessary, wake up the server
-		if (!busy && this.isOpen()) {
-			busy = true;
+		if (!this.isBusy() && this.isOpen()) {
+			this.setBusy(true);
 			this.setPresentState();
-			this.processQueuedEntity();
+			this.startAction();
 		}
 	}
 
-	private void processQueuedEntity() {
+	@Override
+	public void startAction() {
+
+		// Stop if the queue is empty or a threshold is closed
+		if (waitQueueInput.getValue().getCount() == 0 || this.isClosed()) {
+			servedEntity = null;
+			this.setBusy(false);
+			this.setPresentState();
+			return;
+		}
 
 		// Remove the first entity from the queue
 		servedEntity = waitQueueInput.getValue().removeFirst();
 		double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
 
 		// Schedule the completion of service
-		this.scheduleProcess(dt, 5, removeDisplayEntity);
-	}
-
-	private void setPresentState() {
-		if (this.isOpen()) {
-			if (busy) {
-				this.setPresentState("Working");
-			}
-			else {
-				this.setPresentState("Idle");
-			}
-		}
-		else {
-			if (busy) {
-				this.setPresentState("Clearing_while_Stopped");
-			}
-			else {
-				this.setPresentState("Stopped");
-			}
-		}
-	}
-
-	private static class RemoveDisplayEntityTarget extends EntityTarget<Server> {
-		RemoveDisplayEntityTarget(Server ent) {
-			super(ent, "removeDisplayEntity");
-		}
-
-		@Override
-		public void process() {
-			ent.removeDisplayEntity();
-		}
+		this.scheduleProcess(dt, 5, endActionTarget);
 	}
 
 	@Override
-	public void thresholdChanged() {
-
-		// Is restart required?
-		if (busy || this.isClosed()) {
-			this.setPresentState();
-			return;
-		}
-
-		// Restart operation
-		busy = true;
-		this.setPresentState();
-		this.processQueuedEntity();
-	}
-
-	public void removeDisplayEntity() {
+	public void endAction() {
 
 		// Send the entity to the next component in the chain
 		this.sendToNextComponent(servedEntity);
 
-		// Stop if the queue is empty or a threshold is closed
-		if (waitQueueInput.getValue().getCount() == 0 || this.isClosed()) {
-			servedEntity = null;
-			busy = false;
-			this.setPresentState();
-			return;
-		}
-
 		// Remove the next entity from the queue and start processing
-		this.processQueuedEntity();
+		this.startAction();
 	}
 
 	@Override
@@ -173,4 +124,5 @@ public class Server extends LinkedComponent {
 			servedEntity.setPosition(serverCenter);
 		}
 	}
+
 }
