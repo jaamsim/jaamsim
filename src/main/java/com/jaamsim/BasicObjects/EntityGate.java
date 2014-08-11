@@ -34,22 +34,24 @@ public class EntityGate extends LinkedService {
 	private final ValueInput releaseDelay;
 
 	{
-		waitQueue = new EntityInput<Queue>( Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput( waitQueue);
+		waitQueue = new EntityInput<Queue>(Queue.class, "WaitQueue", "Key Inputs", null);
+		this.addInput(waitQueue);
 
-		releaseDelay = new ValueInput( "ReleaseDelay", "Key Inputs", 0.0);
+		releaseDelay = new ValueInput("ReleaseDelay", "Key Inputs", 0.0);
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
-		this.addInput( releaseDelay);
+		this.addInput(releaseDelay);
 	}
+
+	public EntityGate() {}
 
 	@Override
 	public void validate() {
 		super.validate();
 
 		// Confirm that the target queue has been specified
-		if( waitQueue.getValue() == null ) {
-			throw new InputErrorException( "The keyword WaitQueue must be set." );
+		if (waitQueue.getValue() == null) {
+			throw new InputErrorException("The keyword WaitQueue must be set.");
 		}
 	}
 
@@ -60,18 +62,18 @@ public class EntityGate extends LinkedService {
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
+	public void addDisplayEntity(DisplayEntity ent) {
 		super.addDisplayEntity(ent);
 
 		// If the gate is closed or other entities are already queued, then add the entity to the queue
 		Queue queue = waitQueue.getValue();
-		if( queue.getCount() > 0 || this.isClosed() ) {
-			queue.addLast( ent );
+		if (queue.getCount() > 0 || this.isClosed()) {
+			queue.addLast(ent);
 			return;
 		}
 
 		// If the gate is open and there are no other entities still in the queue, then send the entity to the next component
-		this.sendToNextComponent( ent );
+		this.sendToNextComponent(ent);
 	}
 
 	@Override
