@@ -17,7 +17,6 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -28,14 +27,13 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.Vec3dListInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
  * Moves one or more Entities along a path at a constant speed.
  */
-public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
+public class EntityConveyor extends LinkedService implements HasScreenPoints {
 
 	@Keyword(description = "The travel time for the conveyor.",
 	         example = "Conveyor1 TravelTime { 10.0 s }")
@@ -56,15 +54,12 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 	private final ArrayList<DisplayEntity> entityList;  // List of the entities being conveyed
 	private final ArrayList<Double> startTimeList;  // List of times at which the entities entered the conveyor
-	private boolean busy;  // True if there are any DisplayEntities being conveyed
 	private double totalLength;  // Graphical length of the conveyor
 	private final ArrayList<Double> lengthList;  // Length of each segment of the conveyor
 	private final ArrayList<Double> cumLengthList;  // Total length to the end of each segment
 
 	private Object screenPointLock = new Object();
 	private HasScreenPoints.PointsInfo[] cachedPointInfo;
-
-	private final ProcessTarget removeDisplayEntity = new RemoveDisplayEntityTarget(this);
 
 	{
 		operatingThresholdList.setHidden(true);
@@ -105,7 +100,6 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 		entityList.clear();
 		startTimeList.clear();
-		busy = false;
 		this.setPresentState();
 
 	    // Initialize the segment length data
@@ -133,36 +127,24 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 		startTimeList.add( this.getSimTime() );
 
 		// If necessary, wake up the conveyor
-		if (!busy) {
-			busy = true;
+		if (!this.isBusy()) {
+			this.setBusy(true);
 			this.setPresentState();
-			double dt = travelTimeInput.getValue();
-			this.scheduleProcess(dt, 5, removeDisplayEntity);
+			this.startAction();
 		}
 	}
 
-	private void setPresentState() {
-		if (busy) {
-			this.setPresentState("Working");
-		}
-		else {
-			this.setPresentState("Idle");
-		}
+	@Override
+	public void startAction() {
+
+		// Schedule the next entity to reach the end of the conveyor
+		double dt = startTimeList.get(0) + travelTimeInput.getValue() - this.getSimTime();
+		dt = Math.max(dt, 0);  // Round-off to the nearest tick can cause a negative value
+		this.scheduleProcess(dt, 5, endActionTarget);
 	}
 
-	private static class RemoveDisplayEntityTarget extends EntityTarget<EntityConveyor> {
-
-		RemoveDisplayEntityTarget(EntityConveyor ent) {
-			super(ent, "removeDisplayEntity");
-		}
-
-		@Override
-		public void process() {
-			ent.removeDisplayEntity();
-		}
-	}
-
-	public void removeDisplayEntity() {
+	@Override
+	public void endAction() {
 
 		// Remove the entity from the conveyor
 		DisplayEntity ent = entityList.remove(0);
@@ -173,15 +155,13 @@ public class EntityConveyor extends LinkedComponent implements HasScreenPoints {
 
 		// Stop if the conveyor is empty
 		if (entityList.isEmpty()) {
-			busy = false;
+			this.setBusy(false);
 			this.setPresentState();
 			return;
 		}
 
 		// Schedule the next entity to reach the end of the conveyor
-		double dt = startTimeList.get(0) + travelTimeInput.getValue() - this.getSimTime();
-		dt = Math.max(dt, 0);  // Round-off to the nearest tick can cause a negative value
-		this.scheduleProcess(dt, 5, removeDisplayEntity);
+		this.startAction();
 	}
 
 	/**
