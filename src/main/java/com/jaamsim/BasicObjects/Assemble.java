@@ -16,7 +16,6 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
-import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
@@ -25,12 +24,11 @@ import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation.EntityListInput;
-import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;
 
-public class Assemble extends LinkedComponent {
+public class Assemble extends LinkedService {
 
 	@Keyword(description = "The service time required to perform the assembly process.",
 	         example = "EntityAssemble1 ServiceTime { 3.0 h }")
@@ -49,10 +47,8 @@ public class Assemble extends LinkedComponent {
 	         example = "EntityAssemble1 PrototypeEntity { Proto }")
 	private final EntityInput<DisplayEntity> prototypeEntity;
 
-	private boolean busy;
 	private DisplayEntity assembledEntity;	// the generated entity representing the assembled part
 	private int numberGenerated = 0;  // Number of entities generated so far
-	private final ProcessTarget completeProcessing = new CompletionOfProcessingTarget(this);
 
 	{
 		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
@@ -94,7 +90,6 @@ public class Assemble extends LinkedComponent {
 	public void earlyInit() {
 		super.earlyInit();
 
-		busy = false;
 		assembledEntity = null;
 		numberGenerated = 0;
 		this.setPresentState();
@@ -113,22 +108,23 @@ public class Assemble extends LinkedComponent {
 		waitQueueList.getValue().get(ind-1).addLast(ent);
 
 		// If necessary, wake up the server
-		if (!busy) {
-			busy = true;
+		if (!this.isBusy()) {
+			this.setBusy(true);
 			this.setPresentState();
-			this.processEntities();
+			this.startAction();
 		}
 	}
 
 	/**
 	* Process DisplayEntities from the Queue
 	*/
-	public void processEntities() {
+	@Override
+	public void startAction() {
 
 		// Do all the queues have at least one entity?
 		for (Queue que : waitQueueList.getValue()) {
 			if (que.getCount() == 0) {
-				busy = false;
+				this.setBusy(false);
 				this.setPresentState();
 				return;
 			}
@@ -136,7 +132,7 @@ public class Assemble extends LinkedComponent {
 
 		// Do any of the thresholds stop the generator?
 		if (this.isClosed()) {
-			busy = false;
+			this.setBusy(false);
 			this.setPresentState();
 			return;
 		}
@@ -163,61 +159,18 @@ public class Assemble extends LinkedComponent {
 
 		// Schedule the completion of processing
 		double dt = serviceTime.getValue().getNextSample(getSimTime());
-		this.scheduleProcess(dt, 5, completeProcessing);
+		this.scheduleProcess(dt, 5, endActionTarget);
 	}
 
-	private void setPresentState() {
-		if (this.isOpen()) {
-			if (busy) {
-				this.setPresentState("Working");
-			}
-			else {
-				this.setPresentState("Idle");
-			}
-		}
-		else {
-			if (busy) {
-				this.setPresentState("Clearing_while_Stopped");
-			}
-			else {
-				this.setPresentState("Stopped");
-			}
-		}
-	}
-
-	private static class CompletionOfProcessingTarget extends EntityTarget<Assemble> {
-		CompletionOfProcessingTarget(Assemble ent) {
-			super(ent, "completionOfProcessing");
-		}
-
-		@Override
-		public void process() {
-			ent.completionOfProcessing();
-		}
-	}
-
-	public void completionOfProcessing() {
+	@Override
+	public void endAction() {
 
 		// Send the assembled part to the next element in the chain
 		this.sendToNextComponent(assembledEntity);
 		assembledEntity = null;
 
 		// Try to assemble another part
-		this.processEntities();
-
+		this.startAction();
 	}
 
-	@Override
-	public void thresholdChanged() {
-
-		// Restart processing, if necessary
-		if (!busy) {
-			busy = true;
-			this.setPresentState();
-			this.processEntities();
-		}
-		else {
-			this.setPresentState();
-		}
-	}
 }
