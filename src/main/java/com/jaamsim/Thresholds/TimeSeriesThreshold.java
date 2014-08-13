@@ -26,6 +26,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.Simulation;
+import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation.TimeSeriesInput;
 import com.sandwell.JavaSimulation.TimeSeriesProvider;
 
@@ -237,7 +238,7 @@ public class TimeSeriesThreshold extends Threshold {
 			}
 
 			// if have already searched the longest cycle, the threshold will never open
-			if( changeTime > startTime + maxTimeValueFromTimeSeries + this.getLookAhead() )
+			if( Tester.greaterCheckTolerance( changeTime, startTime + maxTimeValueFromTimeSeries + this.getLookAhead() ) )
 				return Double.POSITIVE_INFINITY;
 
 			// Closed index
