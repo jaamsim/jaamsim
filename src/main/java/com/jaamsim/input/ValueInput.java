@@ -14,9 +14,9 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.DoubleVector;
 
 public class ValueInput extends Input<Double> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;

@@ -16,10 +16,10 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.TimeSeriesData;
 
 public class TimeSeriesDataInput extends Input<TimeSeriesData> {

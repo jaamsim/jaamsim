@@ -14,6 +14,7 @@
  */
 package com.jaamsim.DisplayModels;
 
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
@@ -24,7 +25,6 @@ import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
-import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation3D.DisplayEntity;

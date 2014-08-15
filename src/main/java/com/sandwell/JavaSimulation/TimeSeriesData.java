@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.datatypes.DoubleVector;
+
 public class TimeSeriesData {
 	final double[] timeList;
 	final double[] valueList;

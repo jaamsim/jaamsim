@@ -14,7 +14,7 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import com.sandwell.JavaSimulation.DoubleVector;
+import com.jaamsim.datatypes.DoubleVector;
 
 /**
  * EntitlementSelector selects the next entity to return based on the difference between the expected and actual numbers

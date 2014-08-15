@@ -14,10 +14,10 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation.IntegerVector;
 
 /**
  * OverlayEntity is the superclass for DisplayEntities that have 2D overlay graphics instead of 3D graphics.  Overlay graphics

@@ -15,6 +15,7 @@
 package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.Samples.SampleListInput;
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
@@ -22,7 +23,6 @@ import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.DoubleVector;
 
 /**
  * The WeightedSum object returns a weighted sum of its input values.

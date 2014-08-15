@@ -16,10 +16,10 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.DoubleVector;
 
 public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;

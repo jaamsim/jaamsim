@@ -14,10 +14,10 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.TimeSeriesConstantDouble;
 import com.sandwell.JavaSimulation.TimeSeriesProvider;

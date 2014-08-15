@@ -14,7 +14,7 @@
  */
 package com.jaamsim.input;
 
-import com.sandwell.JavaSimulation.IntegerVector;
+import com.jaamsim.datatypes.IntegerVector;
 
 public class IntegerListInput extends ListInput<IntegerVector> {
 	private int minValue = Integer.MIN_VALUE;

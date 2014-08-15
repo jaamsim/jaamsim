@@ -14,6 +14,7 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.InputErrorException;
 
 

@@ -14,7 +14,7 @@
  */
 package com.jaamsim.input;
 
-import com.sandwell.JavaSimulation.BooleanVector;
+import com.jaamsim.datatypes.BooleanVector;
 
 public class BooleanListInput extends ListInput<BooleanVector> {
 
