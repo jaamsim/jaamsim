@@ -882,7 +882,7 @@ public abstract class Input<T> {
 			Unit unit = Input.parseUnits(unitString);
 
 			// Determine the default units
-			Unit defaultUnit = Input.tryParseEntity( defaultUnitString.replaceAll("[()]", "").trim(), Unit.class );
+			Unit defaultUnit = Input.tryParseEntity( defaultUnitString, Unit.class );
 			if( defaultUnit == null ) {
 				throw new InputErrorException( "Could not determine default units " + defaultUnitString );
 			}
