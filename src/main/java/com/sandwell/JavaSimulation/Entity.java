@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.basicsim.ClonesOfIterable;
 import com.jaamsim.basicsim.ClonesOfIterableInterface;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.InstanceIterable;
 import com.jaamsim.basicsim.ReflectionTarget;
 import com.jaamsim.events.ConditionalHandle;

@@ -16,7 +16,7 @@ package com.jaamsim.datatypes;
 
 import java.util.ArrayList;
 
-import com.sandwell.JavaSimulation.ErrorException;
+import com.jaamsim.basicsim.ErrorException;
 
 /**
  * This class implements a 2-dimensional table of doubles with a DoubleVector.

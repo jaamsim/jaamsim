@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.Arrays;
 
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;

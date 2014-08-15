@@ -16,7 +16,7 @@ package com.jaamsim.datatypes;
 
 import java.util.Arrays;
 
-import com.sandwell.JavaSimulation.ErrorException;
+import com.jaamsim.basicsim.ErrorException;
 
 /**
  * This class stores integer values in an array.

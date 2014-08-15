@@ -16,10 +16,10 @@ package com.jaamsim.states;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class StateEntity extends DisplayEntity {

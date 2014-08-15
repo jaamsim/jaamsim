@@ -17,6 +17,7 @@ package com.jaamsim.FluidObjects;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -28,7 +29,6 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
-import com.sandwell.JavaSimulation.ErrorException;
 
 /**
  * FluidPipe is a pipe through which fluid can flow.

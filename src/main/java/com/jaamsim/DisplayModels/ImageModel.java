@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.FileInput;
@@ -31,7 +32,6 @@ import com.jaamsim.render.OverlayTextureProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.VisibilityInfo;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.OverlayImage;
 

@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.ui.LogBox;
 

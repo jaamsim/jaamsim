@@ -66,6 +66,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.controllers.RateLimiter;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.events.EventErrorListener;
@@ -81,7 +82,6 @@ import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Tester;
 

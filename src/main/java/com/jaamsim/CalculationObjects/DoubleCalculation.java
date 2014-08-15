@@ -18,6 +18,7 @@ import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -27,7 +28,6 @@ import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.ErrorException;
 
 /**
  * DoubleCalculation is the super-class for all calculations that return a double.

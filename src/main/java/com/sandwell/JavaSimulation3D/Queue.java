@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -26,7 +27,6 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.ErrorException;
 import com.sandwell.JavaSimulation.FileEntity;
 
 public class Queue extends DisplayEntity {

@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.ErrorException;
 
 /**
  * OutputHandle is a class that represents all the useful runtime information for an output,
