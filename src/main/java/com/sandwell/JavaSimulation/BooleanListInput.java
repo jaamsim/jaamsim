@@ -40,20 +40,12 @@ public class BooleanListInput extends ListInput<BooleanVector> {
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null)
-			return NO_VALUE;
-
-		if (defValue.size() == 0)
+		if (defValue == null || defValue.size() == 0)
 			return NO_VALUE;
 
 		StringBuilder tmp = new StringBuilder();
-		if (defValue.get(0))
-			tmp.append("TRUE");
-		else
-			tmp.append("FALSE");
-
-		for (int i = 1; i < defValue.size(); i++) {
-			tmp.append(SEPARATOR);
+		for (int i = 0; i < defValue.size(); i++) {
+			if (i > 0) tmp.append(SEPARATOR);
 
 			if (defValue.get(i))
 				tmp.append("TRUE");
