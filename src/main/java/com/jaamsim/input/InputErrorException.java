@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,22 +12,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
-
-public class ClassInput extends Input<Class<? extends Entity>>{
-
-	public ClassInput(String key, String cat, Class<? extends Entity> def) {
-		super(key, cat, def);
+/**
+ * Custom exception thrown when an error due to bad input is encountered.
+ */
+public class InputErrorException extends RuntimeException {
+	public InputErrorException(String format, Object... args) {
+		super(String.format(format, args));
 	}
-
-	@Override
-	public void parse(KeywordIndex kw)
-	throws InputErrorException {
-		Input.assertCount(kw, 1);
-		value = Input.parseClass(kw.getArg(0));
-	}
-
 }

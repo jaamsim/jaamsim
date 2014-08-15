@@ -19,7 +19,6 @@ import java.util.Collections;
 
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation.ObjectType;
 
 public class UnitTypeInput extends Input<ObjectType> {

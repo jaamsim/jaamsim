@@ -16,11 +16,11 @@ package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.EntityListInput;
 
 public class EntityTracer extends Entity {
 

@@ -17,6 +17,8 @@ package com.jaamsim.ProbabilityDistributions;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
@@ -26,8 +28,6 @@ import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.IntegerInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**

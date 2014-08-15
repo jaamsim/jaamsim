@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation.EntityListInput;
 import com.sandwell.JavaSimulation.EntityTarget;
 
 public abstract class LinkedService extends LinkedComponent implements ThresholdUser {

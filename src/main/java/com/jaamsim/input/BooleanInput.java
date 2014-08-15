@@ -12,46 +12,49 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
+import java.util.ArrayList;
 
-public class BooleanListInput extends ListInput<BooleanVector> {
 
-	public BooleanListInput(String key, String cat, BooleanVector def) {
-		super(key, cat, def);
+public class BooleanInput extends Input<Boolean> {
+
+	private static final ArrayList<String> validOptions;
+
+	static {
+		validOptions = new ArrayList<String>();
+		validOptions.add("TRUE");
+		validOptions.add("FALSE");
+	}
+
+	/**
+	 * Creates a new Boolean Input with the given keyword, category, units, and
+	 * default value.
+	 */
+	public BooleanInput(String key, String cat, boolean def) {
+		super(key, cat, Boolean.valueOf(def));
 	}
 
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCountRange(kw, minCount, maxCount);
-		value = Input.parseBooleanVector(kw);
+		Input.assertCount(kw, 1);
+		value = Boolean.valueOf(Input.parseBoolean(kw.getArg(0)));
 	}
 
 	@Override
-	public int getListSize() {
-		if (value == null)
-			return 0;
-		else
-			return value.size();
+	public ArrayList<String> getValidOptions() {
+		return validOptions;
 	}
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null || defValue.size() == 0)
+		if (defValue == null)
 			return NO_VALUE;
 
-		StringBuilder tmp = new StringBuilder();
-		for (int i = 0; i < defValue.size(); i++) {
-			if (i > 0) tmp.append(SEPARATOR);
+		if (defValue)
+			return "TRUE";
 
-			if (defValue.get(i))
-				tmp.append("TRUE");
-			else
-				tmp.append("FALSE");
-		}
-		return tmp.toString();
+		return "FALSE";
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2012 Ausenco Engineering Canada Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,31 +12,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.KeywordIndex;
+import java.util.ArrayList;
 
-public class DeprecatedInput extends Input<String> {
-	private boolean fatal;
 
-	public DeprecatedInput(String key, String msg) {
-		super(key, "", "");
-		value = msg;
-		fatal = true;
-	}
+public class EnumInput<T extends Enum<T>> extends Input<T> {
+	private final Class<T> type;
 
-	public void setFatal(boolean fatal) {
-		this.fatal = fatal;
+	public EnumInput(Class<T> atype, String key, String cat, T def) {
+		super(key, cat, def);
+		type = atype;
 	}
 
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		if (fatal)
-			throw new InputErrorException(value);
+		Input.assertCount(kw, 1);
+		value = Input.parseEnum(type, kw.getArg(0));
+	}
 
-		InputAgent.logWarning("%s - %s", this.getKeyword(), value);
+	@Override
+	public ArrayList<String> getValidOptions() {
+		ArrayList<String> tmp = new ArrayList<String>();
+		for (T each : type.getEnumConstants())
+			tmp.add(each.name());
+		return tmp;
 	}
 }

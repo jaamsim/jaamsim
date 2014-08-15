@@ -19,8 +19,8 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.render.DebugLine;
-import com.sandwell.JavaSimulation.ColourInput;
 
 public class TestRay {
 	private static final Vec4d ORIGIN = new Vec4d(0, 0, 0, 1.0d);

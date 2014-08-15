@@ -19,6 +19,7 @@ import java.util.Collections;
 
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.KeywordIndex;
@@ -27,7 +28,6 @@ import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.InputErrorException;
 
 public class SampleExpInput extends Input<SampleProvider> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;

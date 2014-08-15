@@ -12,51 +12,59 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
 
-public class BooleanInput extends Input<Boolean> {
+public class StringChoiceInput extends IntegerInput {
+	private ArrayList<String> choices;
 
-	private static final ArrayList<String> validOptions;
-
-	static {
-		validOptions = new ArrayList<String>();
-		validOptions.add("TRUE");
-		validOptions.add("FALSE");
+	{
+		choices = new ArrayList<String>();
 	}
 
-	/**
-	 * Creates a new Boolean Input with the given keyword, category, units, and
-	 * default value.
-	 */
-	public BooleanInput(String key, String cat, boolean def) {
-		super(key, cat, Boolean.valueOf(def));
+	public StringChoiceInput(String key, String cat, Integer def) {
+		super(key, cat, def);
 	}
 
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
-		value = Boolean.valueOf(Input.parseBoolean(kw.getArg(0)));
+		String temp = Input.parseString(kw.getArg(0), choices);
+		value = choices.indexOf( temp );
+	}
+
+	public void addChoice(String choice) {
+		if (!choices.contains(choice))
+			choices.add(choice);
+	}
+
+	public String getChoice() {
+		return choices.get(value);
+	}
+
+	public String getDefaultChoice() {
+		if (defValue.intValue() == -1)
+			return "";
+		return choices.get(defValue);
+	}
+
+	public void setChoices(ArrayList<String> list) {
+		choices = list;
 	}
 
 	@Override
 	public ArrayList<String> getValidOptions() {
-		return validOptions;
+		return choices;
 	}
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null)
+		if (getDefaultChoice().isEmpty())
 			return NO_VALUE;
 
-		if (defValue)
-			return "TRUE";
-
-		return "FALSE";
+		return String.format("%s", getDefaultChoice());
 	}
 }

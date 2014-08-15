@@ -16,10 +16,10 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.input.EntityListInput;
+import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation.EntityListInput;
-import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 

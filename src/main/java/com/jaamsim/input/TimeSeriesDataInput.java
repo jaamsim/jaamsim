@@ -12,15 +12,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation.DoubleVector;
+import com.sandwell.JavaSimulation.TimeSeriesData;
 
 public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 	private Class<? extends Unit> unitType;

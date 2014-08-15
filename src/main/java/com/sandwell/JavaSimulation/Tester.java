@@ -14,6 +14,8 @@
  */
 package com.sandwell.JavaSimulation;
 
+import com.jaamsim.input.InputErrorException;
+
 
 /**
  * Class used to implement Audition-style string format tests.

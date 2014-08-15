@@ -14,9 +14,9 @@
  */
 package com.sandwell.JavaSimulation3D;
 
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.IntegerListInput;
 import com.sandwell.JavaSimulation.IntegerVector;
 
 /**

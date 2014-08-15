@@ -14,6 +14,7 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
@@ -22,7 +23,6 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.PressureUnit;
 import com.jaamsim.units.SpeedUnit;
-import com.sandwell.JavaSimulation.EntityInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**

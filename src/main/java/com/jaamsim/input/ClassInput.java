@@ -12,20 +12,21 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
+import com.sandwell.JavaSimulation.Entity;
 
-public class StringInput extends Input<String> {
+public class ClassInput extends Input<Class<? extends Entity>>{
 
-	public StringInput(String key, String cat, String def) {
+	public ClassInput(String key, String cat, Class<? extends Entity> def) {
 		super(key, cat, def);
 	}
 
 	@Override
-	public void parse(KeywordIndex kw) throws InputErrorException {
+	public void parse(KeywordIndex kw)
+	throws InputErrorException {
 		Input.assertCount(kw, 1);
-		value = kw.getArg(0);
+		value = Input.parseClass(kw.getArg(0));
 	}
+
 }

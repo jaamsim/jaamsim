@@ -16,9 +16,9 @@ package com.jaamsim.ProbabilityDistributions;
 
 import java.util.Random;
 
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.sandwell.JavaSimulation.DoubleVector;
-import com.sandwell.JavaSimulation.IntegerInput;
 
 /**
  * RandomSelector randomly selects the next entity to return based on the given probabilities.

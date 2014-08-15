@@ -12,24 +12,34 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
+import com.sandwell.JavaSimulation.IntegerVector;
 
-public class IntegerInput extends Input<Integer> {
+public class IntegerListInput extends ListInput<IntegerVector> {
 	private int minValue = Integer.MIN_VALUE;
 	private int maxValue = Integer.MAX_VALUE;
+	protected int[] validCounts; // valid list sizes not including units
 
-	public IntegerInput(String key, String cat, Integer def) {
+	public IntegerListInput(String key, String cat, IntegerVector def) {
 		super(key, cat, def);
+		validCounts = new int[] { };
 	}
 
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(kw, 1);
-		value = Input.parseInteger(kw.getArg(0), minValue, maxValue);
+		Input.assertCountRange(kw, minCount, maxCount);
+		Input.assertCount(kw, validCounts);
+		value = Input.parseIntegerVector(kw, minValue, maxValue);
+	}
+
+	@Override
+	public int getListSize() {
+		if (value == null)
+			return 0;
+		else
+			return value.size();
 	}
 
 	public void setValidRange(int min, int max) {
@@ -37,18 +47,24 @@ public class IntegerInput extends Input<Integer> {
 		maxValue = max;
 	}
 
+	public void setValidCounts(int... list) {
+		validCounts = list;
+	}
+
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
 			return NO_VALUE;
 
-		if (defValue.intValue() == Integer.MAX_VALUE)
-			return POSITIVE_INFINITY;
+		if (defValue.size() == 0)
+			return NO_VALUE;
 
-		if (defValue.intValue() == Integer.MIN_VALUE)
-			return NEGATIVE_INFINITY;
-
-		StringBuilder tmp = new StringBuilder(defValue.toString());
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(defValue.get(0));
+		for (int i = 1; i < defValue.size(); i++) {
+			tmp.append(SEPARATOR);
+			tmp.append(defValue.get(i));
+		}
 
 		return tmp.toString();
 	}

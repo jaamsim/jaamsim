@@ -14,7 +14,7 @@
  */
 package com.sandwell.JavaSimulation3D;
 
-import com.sandwell.JavaSimulation.InputErrorException;
+import com.jaamsim.input.InputErrorException;
 
 /**
  * Class to implement Audition-style clock calculations. Re-implementing the

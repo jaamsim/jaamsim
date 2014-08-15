@@ -30,6 +30,7 @@ import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.collada.ColParser;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ActionListInput;
+import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.AABB;
@@ -48,7 +49,6 @@ import com.jaamsim.ui.MenuItem;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.MenuItemEntity;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.FileInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class ColladaModel extends DisplayModel implements MenuItemEntity {

@@ -14,13 +14,13 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.AccelerationUnit;
 import com.jaamsim.units.DensityUnit;
 import com.jaamsim.units.ViscosityUnit;
-import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**

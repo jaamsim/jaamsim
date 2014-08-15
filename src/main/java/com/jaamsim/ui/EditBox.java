@@ -54,18 +54,18 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.ListInput;
 import com.jaamsim.input.Parser;
+import com.jaamsim.input.StringInput;
+import com.jaamsim.input.StringListInput;
 import com.jaamsim.math.Color4d;
-import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.FileInput;
-import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.ListInput;
-import com.sandwell.JavaSimulation.StringInput;
-import com.sandwell.JavaSimulation.StringListInput;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**

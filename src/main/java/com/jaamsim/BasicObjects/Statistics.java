@@ -16,10 +16,10 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation.InputErrorException;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**

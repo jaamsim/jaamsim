@@ -18,14 +18,14 @@ import java.util.ArrayList;
 
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.ColourInput;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 

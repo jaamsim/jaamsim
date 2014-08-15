@@ -12,17 +12,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
-import java.util.ArrayList;
+import com.sandwell.JavaSimulation.BooleanVector;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.math.Color4d;
+public class BooleanListInput extends ListInput<BooleanVector> {
 
-public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
-
-	public ColorListInput(String key, String cat, ArrayList<Color4d> def) {
+	public BooleanListInput(String key, String cat, BooleanVector def) {
 		super(key, cat, def);
 	}
 
@@ -30,7 +26,7 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCountRange(kw, minCount, maxCount);
-		value = Input.parseColorVector(kw);
+		value = Input.parseBooleanVector(kw);
 	}
 
 	@Override
@@ -43,29 +39,18 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null)
-			return NO_VALUE;
-
-		if (defValue.size() == 0)
+		if (defValue == null || defValue.size() == 0)
 			return NO_VALUE;
 
 		StringBuilder tmp = new StringBuilder();
 		for (int i = 0; i < defValue.size(); i++) {
+			if (i > 0) tmp.append(SEPARATOR);
 
-			// blank space between elements
-			if (tmp.length() > 0)
-				tmp.append(SEPARATOR);
-
-			Color4d col = defValue.get(i);
-			if (col == null) {
-				tmp.append(NO_VALUE);
-				continue;
-			}
-
-			tmp.append( String.format("{%s%.0f%s%.0f%s%.0f%s}", SEPARATOR, col.r * 255,
-			   SEPARATOR, col.g * 255, SEPARATOR, col.b * 255, SEPARATOR ));
+			if (defValue.get(i))
+				tmp.append("TRUE");
+			else
+				tmp.append("FALSE");
 		}
-
 		return tmp.toString();
 	}
 }

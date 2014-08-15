@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Transform;
@@ -29,7 +30,6 @@ import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.Vec3dInput;
 import com.sandwell.JavaSimulation3D.Arrow;
 
 public class ArrowModel extends ScreenPointsModel {

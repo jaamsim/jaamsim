@@ -16,8 +16,6 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
-import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.ListInput;
 
 public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignment>> {
 

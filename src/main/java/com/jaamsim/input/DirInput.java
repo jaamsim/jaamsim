@@ -12,15 +12,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.KeywordIndex;
 
 public class DirInput extends Input<URI> {
 	public DirInput(String key, String cat, URI def) {

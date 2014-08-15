@@ -57,6 +57,7 @@ import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.font.OverlayString;
 import com.jaamsim.font.TessFont;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Ray;
@@ -69,7 +70,6 @@ import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.event.WindowListener;
 import com.jogamp.newt.event.WindowUpdateEvent;
 import com.jogamp.newt.opengl.GLWindow;
-import com.sandwell.JavaSimulation.ColourInput;
 
 /**
  * The central renderer for JaamSim Renderer, Contains references to all context

@@ -24,6 +24,7 @@ import com.jaamsim.events.Event;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.InputErrorException;
 
 public class EventRecorder implements EventTraceListener {
 	private BufferedWriter outputStream;

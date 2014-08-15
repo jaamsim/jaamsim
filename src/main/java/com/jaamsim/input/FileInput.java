@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,10 +26,6 @@ import java.util.Arrays;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.input.Parser;
 
 public class FileInput extends Input<URI> {
 	private String fileType;  // the type of file, e.g. "Image" or "3D"

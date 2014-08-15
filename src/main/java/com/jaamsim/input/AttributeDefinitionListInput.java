@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.ListInput;
 
 /**
  * AttributeDefinitionListInput is an object for parsing inputs consisting of a list of

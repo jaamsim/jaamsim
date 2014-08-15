@@ -12,13 +12,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
+import com.sandwell.JavaSimulation.Entity;
 
 /**
  * Class TwoKeyListInput for storing a list of entities of class V, with optional keys of class K1 and K2

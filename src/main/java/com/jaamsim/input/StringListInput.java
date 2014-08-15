@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2010-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2011 Ausenco Engineering Canada Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,27 +12,37 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
+import java.util.ArrayList;
 
-public class IntegerListInput extends ListInput<IntegerVector> {
-	private int minValue = Integer.MIN_VALUE;
-	private int maxValue = Integer.MAX_VALUE;
-	protected int[] validCounts; // valid list sizes not including units
 
-	public IntegerListInput(String key, String cat, IntegerVector def) {
+public class StringListInput extends ListInput<ArrayList<String>> {
+	private ArrayList<String> validOptions;
+
+	 // If true convert all the the items to uppercase
+	private boolean caseSensitive;
+
+	public StringListInput(String key, String cat, ArrayList<String> def) {
 		super(key, cat, def);
-		validCounts = new int[] { };
+		validOptions = null;
+		caseSensitive = true;
 	}
 
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCountRange(kw, minCount, maxCount);
-		Input.assertCount(kw, validCounts);
-		value = Input.parseIntegerVector(kw, minValue, maxValue);
+		if (validOptions != null) {
+			value = Input.parseStrings(kw, validOptions, caseSensitive);
+			return;
+		}
+
+		ArrayList<String> tmp = new ArrayList<String>(kw.numArgs());
+		for (int i = 0; i < kw.numArgs(); i++) {
+			tmp.add(kw.getArg(i));
+		}
+		value = tmp;
 	}
 
 	@Override
@@ -43,13 +53,21 @@ public class IntegerListInput extends ListInput<IntegerVector> {
 			return value.size();
 	}
 
-	public void setValidRange(int min, int max) {
-		minValue = min;
-		maxValue = max;
+	public void setValidOptions(ArrayList<String> list) {
+		validOptions = list;
 	}
 
-	public void setValidCounts(int... list) {
-		validCounts = list;
+	public void setCaseSensitive(boolean bool) {
+		caseSensitive = bool;
+	}
+
+	public boolean getCaseSensitive() {
+		return caseSensitive;
+	}
+
+	@Override
+	public ArrayList<String> getValidOptions() {
+		return validOptions;
 	}
 
 	@Override
@@ -60,8 +78,7 @@ public class IntegerListInput extends ListInput<IntegerVector> {
 		if (defValue.size() == 0)
 			return NO_VALUE;
 
-		StringBuilder tmp = new StringBuilder();
-		tmp.append(defValue.get(0));
+		StringBuilder tmp = new StringBuilder(defValue.get(0));
 		for (int i = 1; i < defValue.size(); i++) {
 			tmp.append(SEPARATOR);
 			tmp.append(defValue.get(i));

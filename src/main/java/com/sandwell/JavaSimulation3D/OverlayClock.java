@@ -19,9 +19,9 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import com.jaamsim.input.Input;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation.IntegerInput;
-import com.sandwell.JavaSimulation.StringInput;
+import com.jaamsim.input.StringInput;
 
 /**
  * An overlay display of time and/or date.

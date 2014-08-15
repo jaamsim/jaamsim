@@ -20,10 +20,15 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
@@ -35,13 +40,8 @@ import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
-import com.sandwell.JavaSimulation.BooleanInput;
 import com.sandwell.JavaSimulation.DoubleVector;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.EntityInput;
-import com.sandwell.JavaSimulation.EntityListInput;
-import com.sandwell.JavaSimulation.InputErrorException;
-import com.sandwell.JavaSimulation.Vec3dInput;
 
 /**
  * Encapsulates the methods and data needed to display a simulation object in the 3D environment.

@@ -12,13 +12,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
+import com.sandwell.JavaSimulation.Entity;
 
 public class EntityInput<T extends Entity> extends Input<T> {
 

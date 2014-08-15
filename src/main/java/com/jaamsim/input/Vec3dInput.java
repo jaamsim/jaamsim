@@ -1,10 +1,9 @@
-package com.sandwell.JavaSimulation;
+package com.jaamsim.input;
 
-import com.jaamsim.input.Input;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
+import com.sandwell.JavaSimulation.DoubleVector;
 
 public class Vec3dInput extends Input<Vec3d> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;

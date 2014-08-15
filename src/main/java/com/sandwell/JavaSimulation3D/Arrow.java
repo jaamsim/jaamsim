@@ -17,18 +17,18 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.input.Vec3dInput;
+import com.jaamsim.input.Vec3dListInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
-import com.sandwell.JavaSimulation.BooleanInput;
-import com.sandwell.JavaSimulation.ColourInput;
-import com.sandwell.JavaSimulation.Vec3dInput;
-import com.sandwell.JavaSimulation.Vec3dListInput;
 
 public class Arrow extends DisplayEntity implements HasScreenPoints {
 	@Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +

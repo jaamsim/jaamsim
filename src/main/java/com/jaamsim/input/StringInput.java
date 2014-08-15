@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2011 Ausenco Engineering Canada Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,22 +15,15 @@
 package com.jaamsim.input;
 
 
-public class FormatInput extends StringInput {
-	public FormatInput(String key, String cat, String def) {
+public class StringInput extends Input<String> {
+
+	public StringInput(String key, String cat, String def) {
 		super(key, cat, def);
 	}
 
 	@Override
 	public void parse(KeywordIndex kw) throws InputErrorException {
 		Input.assertCount(kw, 1);
-		String temp = kw.getArg(0);
-		try {
-			String.format(temp, 0.0d);
-		}
-		catch (Throwable e) {
-			throw new InputErrorException("Invalid Java format string: %s", temp);
-		}
-
-		value = temp;
+		value = kw.getArg(0);
 	}
 }

@@ -16,7 +16,6 @@ package com.jaamsim.input;
 
 import com.jaamsim.input.ExpParser.Expression;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.InputErrorException;
 
 public class ExpressionInput extends Input<ExpParser.Expression> {
 	private Entity thisEnt;

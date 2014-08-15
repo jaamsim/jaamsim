@@ -17,7 +17,6 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.InputErrorException;
 
 public class OutputInput<T> extends Input<String> {
 
