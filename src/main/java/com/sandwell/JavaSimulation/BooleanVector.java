@@ -40,16 +40,6 @@ public class BooleanVector {
 	}
 
 	/**
-	 * Construct a copy of the given Boolean Vector
-	 */
-	public BooleanVector( BooleanVector original ) {
-		numElements = original.numElements;
-		capIncrement = 1;
-		storage = new boolean[numElements];
-		System.arraycopy(original.storage, 0, storage, 0, numElements);
-	}
-
-	/**
 	 * Construct an empty vector with the given initial capacity and capacity
 	 * increment.
 	 */

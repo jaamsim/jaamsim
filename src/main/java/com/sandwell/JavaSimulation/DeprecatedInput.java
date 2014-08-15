@@ -36,7 +36,7 @@ public class DeprecatedInput extends Input<String> {
 	throws InputErrorException {
 		if (fatal)
 			throw new InputErrorException(value);
-		else
-			InputAgent.logWarning("%s - %s", this.getKeyword(), value);
+
+		InputAgent.logWarning("%s - %s", this.getKeyword(), value);
 	}
 }
