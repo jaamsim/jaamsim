@@ -178,7 +178,7 @@ public class TimeSeriesThreshold extends Threshold {
 		double changeTime = time;
 
 		// if the current point is closed, we are done
-		if( this.isPointClosed(changeTime) ) {
+		if( this.isPointClosedAtHours(changeTime) ) {
 			return true;
 		}
 
@@ -191,7 +191,7 @@ public class TimeSeriesThreshold extends Threshold {
 
 			// If the next point is closed, determine if open long enough too satisfy lookahead
 			changeTime = this.getNextChangeTimeAfterHours(changeTime);
-			if( this.isPointClosed(changeTime) ) {
+			if( this.isPointClosedAtHours(changeTime) ) {
 				return (changeTime - this.getLookAheadInHours()) < time;
 			}
 		}
@@ -242,7 +242,7 @@ public class TimeSeriesThreshold extends Threshold {
 				return Double.POSITIVE_INFINITY;
 
 			// Closed index
-			if( this.isPointClosed(changeTime) ) {
+			if( this.isPointClosedAtHours(changeTime) ) {
 
 				// If an open point has not been found yet, keep looking
 				if( openTime == -1 ) {
@@ -381,7 +381,7 @@ public class TimeSeriesThreshold extends Threshold {
 				return Double.POSITIVE_INFINITY;
 
 			// Closed index
-			if( this.isPointClosed(changeTime) ) {
+			if( this.isPointClosedAtHours(changeTime) ) {
 
 				double timeUntilClose = changeTime - this.getLookAheadInHours() - startTime;
 
@@ -430,16 +430,17 @@ public class TimeSeriesThreshold extends Threshold {
 	 * Return TRUE if, at the given time, the TimeSeries input value falls outside of the values for MaxOpenLimit and
 	 * MinOpenLimit.
 	 */
-	public boolean isPointClosed( double time ) {
-		double value = this.getTimeSeries().getValueForTimeHours(time);
+	public boolean isPointClosedAtHours( double time ) {
+		double secs = time * 3600.0d;
+		double value = this.getTimeSeries().getNextSample(secs);
 
 		double minOpenLimitVal = Double.NEGATIVE_INFINITY;
 		if (minOpenLimit.getValue() != null)
-			minOpenLimitVal = minOpenLimit.getValue().getValueForTimeHours(time);
+			minOpenLimitVal = minOpenLimit.getValue().getNextSample(secs);
 
 		double maxOpenLimitVal = Double.POSITIVE_INFINITY;
 		if (maxOpenLimit.getValue() != null)
-			maxOpenLimitVal = maxOpenLimit.getValue().getValueForTimeHours(time);
+			maxOpenLimitVal = maxOpenLimit.getValue().getNextSample(secs);
 
 		// Error check that threshold limits remain consistent
 		if (minOpenLimitVal > maxOpenLimitVal)
