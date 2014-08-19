@@ -1215,7 +1215,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			if (InputAgent.isSessionEdited()) {
 				InputAgent.saveAs(this);
 			}
-			Simulation.start();
+			Simulation.start(currentEvt);
 			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
 			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
@@ -1225,7 +1225,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 		else if( getSimState() == SIM_STATE_STOPPED ) {
 			updateForSimulationState(SIM_STATE_CONFIGURED);
-			Simulation.start();
+			Simulation.start(currentEvt);
 			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
 			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
@@ -1396,6 +1396,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * updates RealTime button and Spinner
 	 */
 	public void updateForRealTime(boolean executeRT, int factorRT) {
+		currentEvt.setExecuteRealTime(executeRT, factorRT);
 		controlRealTime.setSelected(executeRT);
 		spinner.setValue(factorRT);
 	}
@@ -1558,7 +1559,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
 
-		EventManager evt = Simulation.initEVT();
+		EventManager evt = new EventManager("DefaultEventManager");
 		GUIFrame gui = GUIFrame.instance();
 		gui.setEventManager(evt);
 		gui.updateForSimulationState(SIM_STATE_LOADED);
@@ -1618,7 +1619,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (batch) {
 			if (InputAgent.numErrors() > 0)
 				GUIFrame.shutdown(0);
-			Simulation.start();
+			Simulation.start(evt);
 			evt.resume(Long.MAX_VALUE);
 			GUIFrame.instance.updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 			return;

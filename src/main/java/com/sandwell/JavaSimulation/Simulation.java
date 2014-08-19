@@ -223,13 +223,6 @@ public class Simulation extends Entity {
 		return myInstance;
 	}
 
-	private static EventManager root;
-	public static synchronized final EventManager initEVT() {
-		if (root != null) return root;
-		root = new EventManager("DefaultEventManager");
-		return root;
-	}
-
 	@Override
 	public void validate() {
 		super.validate();
@@ -328,7 +321,7 @@ public class Simulation extends Entity {
 	 *		2) calls startModel() to allow the model to add its starting events to EventManager
 	 *		3) start EventManager processing events
 	 */
-	public static void start() {
+	public static void start(EventManager evt) {
 		// Validate each entity based on inputs only
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			try {
@@ -342,21 +335,21 @@ public class Simulation extends Entity {
 		}
 
 		InputAgent.prepareReportDirectory();
-		root.clear();
-		root.setTraceListener(null);
+		evt.clear();
+		evt.setTraceListener(null);
 
 		if( Simulation.traceEvents() ) {
 			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
 			EventRecorder rec = new EventRecorder(evtName);
-			root.setTraceListener(rec);
+			evt.setTraceListener(rec);
 		}
 		else if( Simulation.verifyEvents() ) {
 			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
 			EventTracer trc = new EventTracer(evtName);
-			root.setTraceListener(trc);
+			evt.setTraceListener(trc);
 		}
 
-		root.setSimTimeScale(simTimeScaleInput.getValue());
+		evt.setSimTimeScale(simTimeScaleInput.getValue());
 		setSimTimeScale(simTimeScaleInput.getValue());
 		FrameBox.setSecondsPerTick(3600.0d / simTimeScaleInput.getValue());
 
@@ -367,7 +360,7 @@ public class Simulation extends Entity {
 		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
 		endTime = startTime + Simulation.getInitializationHours() + Simulation.getRunDurationHours();
 
-		root.scheduleProcess(0, Entity.PRIO_DEFAULT, false, new InitModelTarget(), null);
+		evt.scheduleProcess(0, Entity.PRIO_DEFAULT, false, new InitModelTarget(), null);
 	}
 
 	public static boolean traceEvents() {
@@ -489,7 +482,6 @@ public class Simulation extends Entity {
 	}
 
 	static void updateRealTime() {
-		root.setExecuteRealTime(realTime.getValue(), realTimeFactor.getValue());
 		GUIFrame.instance().updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
 	}
 
