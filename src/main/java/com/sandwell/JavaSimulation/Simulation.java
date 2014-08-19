@@ -345,12 +345,12 @@ public class Simulation extends Entity {
 		root.clear();
 		root.setTraceListener(null);
 
-		if( traceEventsInput.getValue() ) {
+		if( Simulation.traceEvents() ) {
 			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
 			EventRecorder rec = new EventRecorder(evtName);
 			root.setTraceListener(rec);
 		}
-		else if( verifyEventsInput.getValue() ) {
+		else if( Simulation.verifyEvents() ) {
 			String evtName = InputAgent.getConfigFile().getParentFile() + File.separator + InputAgent.getRunName() + ".evt";
 			EventTracer trc = new EventTracer(evtName);
 			root.setTraceListener(trc);
@@ -370,6 +370,13 @@ public class Simulation extends Entity {
 		root.scheduleProcess(0, Entity.PRIO_DEFAULT, false, new InitModelTarget(), null);
 	}
 
+	public static boolean traceEvents() {
+		return traceEventsInput.getValue();
+	}
+
+	public static boolean verifyEvents() {
+		return verifyEventsInput.getValue();
+	}
 
 	static void setSimTimeScale(double scale) {
 		timeScale = scale;
