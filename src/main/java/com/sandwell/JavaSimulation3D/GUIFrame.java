@@ -726,6 +726,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				JToggleButton startResume = (JToggleButton)event.getSource();
+				startResume.setEnabled(false);
 				if(startResume.isSelected()) {
 					GUIFrame.this.startSimulation();
 				}
@@ -1205,8 +1206,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 						"error", JOptionPane.ERROR_MESSAGE);
 
 				// it is not running any more
-				controlStartResume.setSelected(!
-						controlStartResume.isSelected() );
+				controlStartResume.setSelected(!controlStartResume.isSelected());
 				return;
 			}
 		}
@@ -1217,17 +1217,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 			Simulation.start(currentEvt);
 			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
-			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
 			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
-			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
 		else if( getSimState() == SIM_STATE_STOPPED ) {
 			updateForSimulationState(SIM_STATE_CONFIGURED);
 			Simulation.start(currentEvt);
 			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
-			updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
@@ -1721,7 +1718,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	@Override
 	public void timeRunning(boolean running) {
 		if (running) {
-
+			updateForSimulationState(SIM_STATE_RUNNING);
 		}
 		else {
 			updateForSimulationState(SIM_STATE_PAUSED);
