@@ -423,10 +423,15 @@ public final class EventManager {
 	}
 
 	public static final void waitUntil(Conditional cond) {
+		waitUntil(cond, null);
+	}
+
+	public static final void waitUntil(Conditional cond, ConditionalHandle handle) {
+		Process cur = Process.current();
 		while (!cond.evaluate()) {
-			waitUntil();
+			cur.evt().waitUntil(cur, handle);
 		}
-		endWaitUntil();
+		cur.evt().waitUntilEnded(cur);
 	}
 
 	public static final void waitUntil() {
