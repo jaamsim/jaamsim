@@ -422,6 +422,13 @@ public final class EventManager {
 		}
 	}
 
+	public static final void waitUntil(Conditional cond) {
+		while (!cond.evaluate()) {
+			waitUntil();
+		}
+		endWaitUntil();
+	}
+
 	public static final void waitUntil() {
 		Process cur = Process.current();
 		cur.evt().waitUntil(cur, null);

@@ -14,6 +14,7 @@
  */
 package com.jaamsim.Thresholds;
 
+import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
@@ -47,6 +48,14 @@ public class ExpressionThreshold extends Threshold {
 		doOpenClose();
 	}
 
+	class OpenChangedConditional extends Conditional {
+		@Override
+		public boolean evaluate() {
+			return ExpressionThreshold.this.getOpenConditionValue(ExpressionThreshold.this.getSimTime()) != ExpressionThreshold.this.isOpen();
+		}
+	}
+	private final Conditional openChanged = new OpenChangedConditional();
+
 	private void doOpenClose() {
 
 		// Set the present state
@@ -54,12 +63,7 @@ public class ExpressionThreshold extends Threshold {
 
 		// Loop endlessly
 		while (true) {
-
-			// Wait until the state has changed
-			while( this.getOpenConditionValue(this.getSimTime()) == isOpen() ) {
-				EventManager.waitUntil();
-			}
-			EventManager.endWaitUntil();
+			EventManager.waitUntil(openChanged);
 
 			// Set the present state
 			setOpen(this.getOpenConditionValue(this.getSimTime()));
