@@ -466,6 +466,11 @@ public class TestExpParser {
 		assertTrue(res.value == 5000);
 		assertTrue(res.unitType == AreaUnit.class);
 
+		exp = ExpParser.parseExpression(pc, "5[m]/1[m]");
+		res = exp.evaluate();
+		assertTrue(res.value == 5);
+		assertTrue(res.unitType == DimensionlessUnit.class);
+
 	}
 
 	@Test

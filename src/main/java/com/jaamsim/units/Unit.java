@@ -207,8 +207,12 @@ public abstract class Unit extends Entity {
 
 	// Get the new unit type resulting from dividing two unit types
 	public static Class<? extends Unit> getDivUnitType(Class<? extends Unit> num, Class<? extends Unit> denom) {
+
 		if (denom == DimensionlessUnit.class)
 			return num;
+
+		if (num == denom)
+			return DimensionlessUnit.class;
 
 		return divRules.get(new DivPair(num, denom));
 	}
