@@ -434,21 +434,6 @@ public final class EventManager {
 		cur.evt().waitUntilEnded(cur);
 	}
 
-	public static final void waitUntil() {
-		Process cur = Process.current();
-		cur.evt().waitUntil(cur, null);
-	}
-
-	public static final void waitUntil(ConditionalHandle handle) {
-		Process cur = Process.current();
-		cur.evt().waitUntil(cur, handle);
-	}
-
-	public static final void endWaitUntil() {
-		Process cur = Process.current();
-		cur.evt().waitUntilEnded(cur);
-	}
-
 	/**
 	 * Used to achieve conditional waits in the simulation.  Adds the calling
 	 * thread to the conditional stack, then wakes the next waiting thread on
