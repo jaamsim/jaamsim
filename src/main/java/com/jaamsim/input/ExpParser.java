@@ -45,6 +45,11 @@ public class ExpParser {
 		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num, Class<? extends Unit> denom);
 	}
 
+	private interface ExpressionWalker {
+		public void visit(Expression exp);
+		public Expression updateRef(Expression exp);
+	}
+
 	////////////////////////////////////////////////////////////////////
 	// Expression types
 
@@ -54,10 +59,11 @@ public class ExpParser {
 		public Expression(ParseContext context) {
 			this.context = context;
 		}
+		abstract void walk(ExpressionWalker w);
 	}
 
-	public static class Constant extends Expression {
-		private ExpResult val;
+	private static class Constant extends Expression {
+		public ExpResult val;
 		public Constant(ParseContext context, ExpResult val) {
 			super(context);
 			this.val = val;
@@ -65,6 +71,10 @@ public class ExpParser {
 		@Override
 		public ExpResult evaluate() {
 			return val;
+		}
+		@Override
+		void walk(ExpressionWalker w) {
+			w.visit(this);
 		}
 	}
 
@@ -78,10 +88,14 @@ public class ExpParser {
 		public ExpResult evaluate() {
 			return context.getVariableValue(vals);
 		}
+		@Override
+		void walk(ExpressionWalker w) {
+			w.visit(this);
+		}
 	}
 
-	public static class UnaryOp extends Expression {
-		private Expression subExp;
+	private static class UnaryOp extends Expression {
+		public Expression subExp;
 		private UnOpFunc func;
 		UnaryOp(ParseContext context, Expression subExp, UnOpFunc func) {
 			super(context);
@@ -93,11 +107,22 @@ public class ExpParser {
 		public ExpResult evaluate() {
 			return func.apply(context, subExp.evaluate());
 		}
+		@Override
+		void walk(ExpressionWalker w) {
+			subExp.walk(w);
+
+			subExp = w.updateRef(subExp);
+
+			w.visit(this);
+		}
 	}
 
-	public static class BinaryOp extends Expression {
-		private Expression lSubExp;
-		private Expression rSubExp;
+	private static class BinaryOp extends Expression {
+		public Expression lSubExp;
+		public Expression rSubExp;
+		public ExpResult lConstVal;
+		public ExpResult rConstVal;
+
 		private BinOpFunc func;
 		BinaryOp(ParseContext context, Expression lSubExp, Expression rSubExp, BinOpFunc func) {
 			super(context);
@@ -108,7 +133,20 @@ public class ExpParser {
 
 		@Override
 		public ExpResult evaluate() {
-			return func.apply(context, lSubExp.evaluate(), rSubExp.evaluate());
+			ExpResult lRes = lConstVal != null ? lConstVal : lSubExp.evaluate();
+			ExpResult rRes = rConstVal != null ? rConstVal : rSubExp.evaluate();
+			return func.apply(context, lRes, rRes);
+		}
+
+		@Override
+		void walk(ExpressionWalker w) {
+			lSubExp.walk(w);
+			rSubExp.walk(w);
+
+			lSubExp = w.updateRef(lSubExp);
+			rSubExp = w.updateRef(rSubExp);
+
+			w.visit(this);
 		}
 	}
 
@@ -116,6 +154,9 @@ public class ExpParser {
 		private Expression condExp;
 		private Expression trueExp;
 		private Expression falseExp;
+		private ExpResult constCondRes;
+		private ExpResult constTrueRes;
+		private ExpResult constFalseRes;
 		public Conditional(ParseContext context, Expression c, Expression t, Expression f) {
 			super(context);
 			condExp = c;
@@ -124,30 +165,60 @@ public class ExpParser {
 		}
 		@Override
 		public ExpResult evaluate() {
-			ExpResult condRes = condExp.evaluate();
+			ExpResult condRes = constCondRes != null ? constCondRes : condExp.evaluate();
 			if (condRes.value == 0)
-				return falseExp.evaluate();
+				return constFalseRes != null ? constFalseRes : falseExp.evaluate();
 			else
-				return trueExp.evaluate();
+				return constTrueRes != null ? constTrueRes : trueExp.evaluate();
+		}
+		@Override
+		void walk(ExpressionWalker w) {
+			condExp.walk(w);
+			trueExp.walk(w);
+			falseExp.walk(w);
+
+			condExp = w.updateRef(condExp);
+			trueExp = w.updateRef(trueExp);
+			falseExp = w.updateRef(falseExp);
+
+			w.visit(this);
 		}
 	}
 
 	public static class FuncCall extends Expression {
 		private ArrayList<Expression> args;
+		private ArrayList<ExpResult> constResults;
 		private CallableFunc function;
 		public FuncCall(ParseContext context, CallableFunc function, ArrayList<Expression> args) {
 			super(context);
 			this.function = function;
 			this.args = args;
+			constResults = new ArrayList<ExpResult>(args.size());
+			for (int i = 0; i < args.size(); ++i) {
+				constResults.add(null);
+			}
 		}
 
 		@Override
 		public ExpResult evaluate() {
 			ExpResult[] argVals = new ExpResult[args.size()];
 			for (int i = 0; i < args.size(); ++i) {
-				argVals[i] = args.get(i).evaluate();
+				ExpResult constArg = constResults.get(i);
+				argVals[i] = constArg != null ? constArg : args.get(i).evaluate();
 			}
 			return function.call(context, argVals);
+		}
+		@Override
+		void walk(ExpressionWalker w) {
+			for (int i = 0; i < args.size(); ++i) {
+				args.get(i).walk(w);
+			}
+
+			for (int i = 0; i < args.size(); ++i) {
+				args.set(i, w.updateRef(args.get(i)));
+			}
+
+			w.visit(this);
 		}
 	}
 
@@ -468,6 +539,70 @@ public class ExpParser {
 		}
 	}
 
+	private static class ConstOptimizer implements ExpressionWalker {
+
+		@Override
+		public void visit(Expression exp) {
+			if (exp instanceof BinaryOp) {
+				BinaryOp bo = (BinaryOp)exp;
+				if (bo.lSubExp instanceof Constant) {
+					// Just the left is a constant, store it in the binop
+					bo.lConstVal = bo.lSubExp.evaluate();
+				}
+				if (bo.rSubExp instanceof Constant) {
+					// Just the right is a constant, store it in the binop
+					bo.rConstVal = bo.rSubExp.evaluate();
+				}
+			}
+			if (exp instanceof Conditional) {
+				Conditional cond = (Conditional)exp;
+				if (cond.condExp instanceof Constant) {
+					cond.constCondRes = cond.condExp.evaluate();
+				}
+				if (cond.trueExp instanceof Constant) {
+					cond.constTrueRes = cond.trueExp.evaluate();
+				}
+				if (cond.falseExp instanceof Constant) {
+					cond.constFalseRes = cond.falseExp.evaluate();
+				}
+			}
+			if (exp instanceof FuncCall) {
+				FuncCall fc = (FuncCall)exp;
+				for (int i = 0; i < fc.args.size(); ++i) {
+					if (fc.args.get(i) instanceof Constant) {
+						fc.constResults.set(i, fc.args.get(i).evaluate());
+					}
+				}
+			}
+		}
+
+		/**
+		 * Give a node a chance to swap itself out with a different subtree.
+		 */
+		@Override
+		public Expression updateRef(Expression exp) {
+			if (exp instanceof UnaryOp) {
+				UnaryOp uo = (UnaryOp)exp;
+				if (uo.subExp instanceof Constant) {
+					// This is an unary operation on a constant, we can replace it with a constant
+					ExpResult val = uo.evaluate();
+					return new Constant(uo.context, val);
+				}
+			}
+			if (exp instanceof BinaryOp) {
+				BinaryOp bo = (BinaryOp)exp;
+				if ((bo.lSubExp instanceof Constant) && (bo.rSubExp instanceof Constant)) {
+					// both sub expressions are constants, so replace the binop with a constant
+					ExpResult val = bo.evaluate();
+					return new Constant(bo.context, val);
+				}
+			}
+			return exp;
+		}
+	}
+
+	private static ConstOptimizer CONST_OP = new ConstOptimizer();
+
 	/**
 	 * The main entry point to the expression parsing system, will either return a valid
 	 * expression that can be evaluated, or throw an error.
@@ -490,6 +625,8 @@ public class ExpParser {
 			throw new Error(String.format("Unexpected additional values at position: %d", peeked.pos));
 		}
 
+		exp.walk(CONST_OP);
+		exp = CONST_OP.updateRef(exp); // Finally, give the entire expression a chance to optimize itself into a constant
 		return exp;
 	}
 
