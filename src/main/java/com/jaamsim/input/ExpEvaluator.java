@@ -77,8 +77,8 @@ public class ExpEvaluator {
 		@Override
 		public ExpResult getVariableValue(String[] names) {
 			try {
-				errorString = null;
 				Entity ent = getEntity(names, simTime, thisEnt, objEnt);
+
 				String outputName = names[names.length-1];
 				OutputHandle oh = ent.getOutputHandle(outputName);
 				if (oh == null) {
@@ -140,6 +140,7 @@ public class ExpEvaluator {
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime, Entity thisEnt, Entity objEnt) throws Error
 	{
+		EC.errorString = null;
 		EC.updateContext(simTime, thisEnt, objEnt);
 
 		ExpResult value = exp.evaluate();
