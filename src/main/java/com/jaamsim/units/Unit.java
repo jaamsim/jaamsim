@@ -144,7 +144,7 @@ public abstract class Unit extends Entity {
 			if (!(other instanceof MultPair)) return false;
 			MultPair op = (MultPair)other;
 			return (a == op.a && b == op.b) ||
-			       (a == op.b && a == op.b); // swapped order is still equal
+			       (a == op.b && b == op.a); // swapped order is still equal
 		}
 	}
 
