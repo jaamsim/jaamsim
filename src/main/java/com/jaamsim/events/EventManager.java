@@ -618,15 +618,11 @@ public final class EventManager {
 	}
 
 	public long getSimTicks() {
-		synchronized (lockObject) {
-			return currentTick;
-		}
+		return currentTick;
 	}
 
 	public double getSimSeconds() {
-		synchronized (lockObject) {
-			return currentTick * secsPerTick;
-		}
+		return currentTick * secsPerTick;
 	}
 
 
