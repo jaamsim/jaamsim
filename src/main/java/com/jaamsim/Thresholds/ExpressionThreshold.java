@@ -31,6 +31,7 @@ public class ExpressionThreshold extends Threshold {
 
 	{
 		openCondition = new ExpressionInput("OpenCondition", "Key Inputs", null);
+		openCondition.setEntity(this);
 		this.addInput(openCondition);
 	}
 
