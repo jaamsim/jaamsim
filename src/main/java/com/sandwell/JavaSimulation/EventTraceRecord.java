@@ -119,36 +119,36 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWaitUntil(EventManager e) {
-		this.addHeader(e.name, e.getSimTicks());
+	public void traceWaitUntil(EventManager e, long tick) {
+		this.addHeader(e.name, tick);
 		traceLevel--;
 		this.append("WaitUntil");
 	}
 
 	@Override
-	public void traceWaitUntilEnded(EventManager e, Event evt) {
-		this.addHeader(e.name, e.getSimTicks());
+	public void traceWaitUntilEnded(EventManager e, Event evt, long tick) {
+		this.addHeader(e.name, tick);
 		this.append(String.format("WaitUntilEnded\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
 	}
 
 	@Override
-	public void traceProcessStart(EventManager e, ProcessTarget t) {
-		this.addHeader(e.name, e.getSimTicks());
+	public void traceProcessStart(EventManager e, ProcessTarget t, long tick) {
+		this.addHeader(e.name, tick);
 		this.append(String.format("StartProcess\t%s", t.getDescription()));
 		traceLevel++;
 	}
 
 	@Override
-	public void traceProcessEnd(EventManager e) {
-		this.addHeader(e.name, e.getSimTicks());
+	public void traceProcessEnd(EventManager e, long tick) {
+		this.addHeader(e.name, tick);
 		traceLevel--;
 		this.append("Exit");
 	}
 
 	@Override
-	public void traceSchedProcess(EventManager e, Event evt) {
-		this.addHeader(e.name, e.getSimTicks());
+	public void traceSchedProcess(EventManager e, Event evt, long tick) {
+		this.addHeader(e.name, tick);
 		this.append(String.format("SchedProcess\t%d\t%d\t%s",
 		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
 	}

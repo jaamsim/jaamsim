@@ -186,7 +186,7 @@ public final class EventManager {
 			t.process();
 			assertNotWaitUntil(cur);
 			// Notify the event manager that the process has been completed
-			if (trcListener != null) trcListener.traceProcessEnd(this);
+			if (trcListener != null) trcListener.traceProcessEnd(this, currentTick);
 			return !cur.wakeNextProcess();
 		}
 		catch (Throwable e) {
@@ -277,7 +277,7 @@ public final class EventManager {
 									c.hand.evt = null;
 								EventNode node = getEventNode(currentTick, 0);
 								Event temp = new Event(node, c.t, null);
-								if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp);
+								if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp, currentTick);
 								node.addEvent(temp, true);
 								condEvents.remove(i);
 								continue;
@@ -449,7 +449,7 @@ public final class EventManager {
 			if (handle != null)
 				handle.evt = evt;
 			condEvents.add(evt);
-			if (trcListener != null) trcListener.traceWaitUntil(this);
+			if (trcListener != null) trcListener.traceWaitUntil(this, currentTick);
 			captureProcess(cur);
 		}
 	}
@@ -463,7 +463,7 @@ public final class EventManager {
 		Process newProcess = Process.allocate(this, cur, t);
 		// Notify the eventManager that a new process has been started
 		synchronized (lockObject) {
-			if (trcListener != null) trcListener.traceProcessStart(this, t);
+			if (trcListener != null) trcListener.traceProcessStart(this, t, currentTick);
 			// Transfer control to the new process
 			newProcess.wake();
 			threadWait(cur);
@@ -617,15 +617,6 @@ public final class EventManager {
 		}
 	}
 
-	public long getSimTicks() {
-		return currentTick;
-	}
-
-	public double getSimSeconds() {
-		return currentTick * secsPerTick;
-	}
-
-
 	public void setExecuteRealTime(boolean useRealTime, int factor) {
 		executeRealTime = useRealTime;
 		realTimeFactor = factor;
@@ -669,7 +660,7 @@ public final class EventManager {
 			long schedTick = calculateEventTime(waitLength);
 			EventNode node = getEventNode(schedTick, eventPriority);
 			Event e = new Event(node, t, handle);
-			if (trcListener != null) trcListener.traceSchedProcess(this, e);
+			if (trcListener != null) trcListener.traceSchedProcess(this, e, currentTick);
 			node.addEvent(e, fifo);
 		}
 	}
@@ -722,6 +713,26 @@ public final class EventManager {
 	 */
 	public static final EventManager current() {
 		return Process.current().evt();
+	}
+
+	/**
+	 * Returns the current simulation tick for the eventManager that is
+	 * currently executing events for this thread.
+	 */
+	public static final long simTicks() {
+		return Process.current().evt().currentTick;
+	}
+
+	private double getSeconds() {
+		return currentTick * secsPerTick;
+	}
+
+	/**
+	 * Returns the current simulation time in seconds  for the eventManager that is
+	 * currently executing events for this thread.
+	 */
+	public static final double simSeconds() {
+		return Process.current().evt().getSeconds();
 	}
 
 	public final void setSimTimeScale(double scale) {

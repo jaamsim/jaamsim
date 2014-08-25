@@ -156,20 +156,20 @@ class EventTracer implements EventTraceListener {
 	}
 
 	@Override
-	public void traceSchedProcess(EventManager e, Event evt) {
-		reader.traceSchedProcess(e, evt);
+	public void traceSchedProcess(EventManager e, Event evt, long tick) {
+		reader.traceSchedProcess(e, evt, tick);
 		this.finish(e);
 	}
 
 	@Override
-	public void traceProcessStart(EventManager e, ProcessTarget t) {
-		reader.traceProcessStart(e, t);
+	public void traceProcessStart(EventManager e, ProcessTarget t, long tick) {
+		reader.traceProcessStart(e, t, tick);
 		this.finish(e);
 	}
 
 	@Override
-	public void traceProcessEnd(EventManager e) {
-		reader.traceProcessEnd(e);
+	public void traceProcessEnd(EventManager e, long tick) {
+		reader.traceProcessEnd(e, tick);
 		this.finish(e);
 	}
 
@@ -186,14 +186,14 @@ class EventTracer implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWaitUntil(EventManager e) {
-		reader.traceWaitUntil(e);
+	public void traceWaitUntil(EventManager e, long tick) {
+		reader.traceWaitUntil(e, tick);
 		this.finish(e);
 	}
 
 	@Override
-	public void traceWaitUntilEnded(EventManager e, Event evt) {
-		reader.traceWaitUntilEnded(e, evt);
+	public void traceWaitUntilEnded(EventManager e, Event evt, long tick) {
+		reader.traceWaitUntilEnded(e, evt, tick);
 		this.finish(e);
 	}
 }

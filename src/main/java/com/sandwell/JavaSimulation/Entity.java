@@ -231,7 +231,7 @@ public class Entity {
 	 * @return the current simulation tick
 	 */
 	public final long getSimTicks() {
-		return EventManager.current().getSimTicks();
+		return EventManager.simTicks();
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class Entity {
 	 * @return the current time in seconds
 	 */
 	public final double getSimTime() {
-		return EventManager.current().getSimSeconds();
+		return EventManager.simSeconds();
 	}
 
 	public final double getCurrentTime() {
