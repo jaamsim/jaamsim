@@ -52,7 +52,7 @@ public class ExpressionThreshold extends Threshold {
 	class OpenChangedConditional extends Conditional {
 		@Override
 		public boolean evaluate() {
-			return ExpressionThreshold.this.getOpenConditionValue(ExpressionThreshold.this.getSimTime()) != ExpressionThreshold.this.isOpen();
+			return ExpressionThreshold.this.openStateChanged();
 		}
 	}
 	private final Conditional openChanged = new OpenChangedConditional();
@@ -79,6 +79,15 @@ public class ExpressionThreshold extends Threshold {
 		} catch(ExpEvaluator.Error e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public boolean isOpen() {
+		return this.getOpenConditionValue(getSimTime());
+	}
+
+	boolean openStateChanged() {
+		return getOpenConditionValue(getSimTime()) != super.isOpen();
 	}
 
 	@Output(name = "Open",
