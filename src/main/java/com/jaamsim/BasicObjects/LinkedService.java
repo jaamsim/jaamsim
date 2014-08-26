@@ -93,7 +93,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 */
 	public boolean isOpen() {
 		for (Threshold thr : operatingThresholdList.getValue()) {
-			if (thr.isClosed())
+			if (!thr.isOpen())
 				return false;
 		}
 		return true;

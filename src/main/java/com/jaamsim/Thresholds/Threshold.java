@@ -142,10 +142,6 @@ public class Threshold extends StateEntity {
 		return open;
 	}
 
-	public boolean isClosed() {
-		return !open;
-	}
-
 	@Override
 	public void updateGraphics( double time ) {
 		super.updateGraphics(time);
