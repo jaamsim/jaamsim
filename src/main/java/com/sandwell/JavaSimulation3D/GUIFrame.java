@@ -130,7 +130,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JProgressBar progressBar;
 	private static Image iconImage;
 
-	private RateLimiter rateLimiter;
+	private static final RateLimiter rateLimiter;
 
 	private static boolean SAFE_GRAPHICS;
 
@@ -169,12 +169,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 
 		shuttingDown = new AtomicBoolean(false);
+		rateLimiter = RateLimiter.create(60);
 	}
 
 	private GUIFrame() {
 		super();
-
-		rateLimiter = RateLimiter.create(60); // Limit to 60 FPS
 
 		getContentPane().setLayout( new BorderLayout() );
 		setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
@@ -207,7 +206,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		return instance;
 	}
 
-	public RateLimiter getRateLimiter() {
+	public static final RateLimiter getRateLimiter() {
 		return rateLimiter;
 	}
 

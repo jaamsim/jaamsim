@@ -28,6 +28,7 @@ public class RateLimiter implements Runnable {
 	private long scheduledTime = Long.MAX_VALUE;
 	private final Object timingLock = new Object();
 	private final double ups;
+	private final long frameTime;
 	private boolean running = true;
 
 	private final ArrayList<Runnable> callbacks = new ArrayList<Runnable>();
@@ -41,6 +42,7 @@ public class RateLimiter implements Runnable {
 	private RateLimiter(double updatesPerSecond) {
 		// Start the display timer
 		ups = updatesPerSecond;
+		frameTime = (long)(1000.0d / ups);
 
 		refreshThread = new Thread(this, "RefreshThread");
 		refreshThread.setDaemon(true);
@@ -78,7 +80,6 @@ public class RateLimiter implements Runnable {
 
 			// Set a new target callback time based on the last time a callback was
 			// actually done
-			long frameTime = (long)(1000.0d / ups);
 			scheduledTime = lastCallbackTime + frameTime;
 			timingLock.notify();
 		}

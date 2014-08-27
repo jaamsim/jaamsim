@@ -55,7 +55,7 @@ public class FrameBox extends JFrame {
 
 		boldFont = UIManager.getDefaults().getFont("TabbedPane.font").deriveFont(Font.BOLD);
 
-		GUIFrame.instance().getRateLimiter().registerCallback(new Runnable() {
+		GUIFrame.getRateLimiter().registerCallback(new Runnable() {
 			@Override
 			public void run() {
 				SwingUtilities.invokeLater(uiUpdater);
@@ -148,7 +148,7 @@ public class FrameBox extends JFrame {
 	}
 
 	public static final void valueUpdate() {
-		GUIFrame.instance().getRateLimiter().queueUpdate();
+		GUIFrame.getRateLimiter().queueUpdate();
 	}
 
 	public void setEntity(Entity ent) {}
