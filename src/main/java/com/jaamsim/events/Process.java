@@ -62,11 +62,12 @@ final class Process extends Thread {
 	 * Returns the currently executing Process.
 	 */
 	static final Process current() {
-		Thread cur = Thread.currentThread();
-		if (cur instanceof Process)
-			return (Process)cur;
-
-		throw new ProcessError("Non-process thread called Process.current()");
+		try {
+			return (Process)Thread.currentThread();
+		}
+		catch (ClassCastException e) {
+			throw new ProcessError("Non-process thread called Process.current()");
+		}
 	}
 
 	/**
