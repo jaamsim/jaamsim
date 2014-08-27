@@ -34,19 +34,19 @@ import com.sandwell.JavaSimulation.Entity;
 public class OutputHandle {
 
 	public Entity ent;
-	public OutputPair pair;
+	public OutputStaticInfo outputInfo;
 	public Class<? extends Unit> unitType;
 
-	private static final HashMap<Class<? extends Entity>, ArrayList<OutputPair>> outputPairCache;
+	private static final HashMap<Class<? extends Entity>, ArrayList<OutputStaticInfo>> outputInfoCache;
 
 	static {
-		outputPairCache = new HashMap<Class<? extends Entity>, ArrayList<OutputPair>>();
+		outputInfoCache = new HashMap<Class<? extends Entity>, ArrayList<OutputStaticInfo>>();
 	}
 
 	public OutputHandle(Entity e, String outputName) {
 		ent = e;
-		pair = OutputHandle.getOutputPair(e.getClass(), outputName);
-		unitType = pair.unitType;
+		outputInfo = OutputHandle.getOutputInfo(e.getClass(), outputName);
+		unitType = outputInfo.unitType;
 	}
 
 	/**
@@ -57,22 +57,25 @@ public class OutputHandle {
 	 */
 	public OutputHandle(Entity e, String outputName, int dummy) {
 		ent = e;
-		pair = OutputHandle.getOutputPairInterned(e.getClass(), outputName);
-		unitType = pair.unitType;
+		outputInfo = OutputHandle.getOutputInfoInterned(e.getClass(), outputName);
+		unitType = outputInfo.unitType;
 	}
 
 	protected OutputHandle(Entity e) {
 		ent = e;
 	}
 
-	private static final class OutputPair {
+	/**
+	 * A data class containing the 'static' (ie: class derived) information for a single output
+	 */
+	private static final class OutputStaticInfo {
 		public Method method;
 		public final String name;
 		public final String desc;
 		public final boolean reportable;
 		public final Class<? extends Unit> unitType;
 
-		public OutputPair(Method m, Output a) {
+		public OutputStaticInfo(Method m, Output a) {
 			method = m;
 			desc = a.description();
 			reportable = a.reportable();
@@ -84,36 +87,36 @@ public class OutputHandle {
 	// Note: this method will not include attributes in the list. For a complete list use
 	// Entity.hasOutput()
 	public static Boolean hasOutput(Class<? extends Entity> klass, String outputName) {
-		return OutputHandle.getOutputPair(klass, outputName) != null;
+		return OutputHandle.getOutputInfo(klass, outputName) != null;
 	}
 
 	public static Boolean hasOutputInterned(Class<? extends Entity> klass, String outputName) {
-		return OutputHandle.getOutputPairInterned(klass, outputName) != null;
+		return OutputHandle.getOutputInfoInterned(klass, outputName) != null;
 	}
 
-	private static OutputPair getOutputPair(Class<? extends Entity> klass, String outputName) {
-		for (OutputPair p : getOutputPairImp(klass)) {
+	private static OutputStaticInfo getOutputInfo(Class<? extends Entity> klass, String outputName) {
+		for (OutputStaticInfo p : getOutputInfoImp(klass)) {
 			if( p.name.equals(outputName) )
 				return p;
 		}
 		return null;
 	}
 
-	private static OutputPair getOutputPairInterned(Class<? extends Entity> klass, String outputName) {
-		for (OutputPair p : getOutputPairImp(klass)) {
+	private static OutputStaticInfo getOutputInfoInterned(Class<? extends Entity> klass, String outputName) {
+		for (OutputStaticInfo p : getOutputInfoImp(klass)) {
 			if( p.name == outputName )
 				return p;
 		}
 		return null;
 	}
 
-	private static ArrayList<OutputPair> getOutputPairImp(Class<? extends Entity> klass) {
-		ArrayList<OutputPair> ret = outputPairCache.get(klass);
+	private static ArrayList<OutputStaticInfo> getOutputInfoImp(Class<? extends Entity> klass) {
+		ArrayList<OutputStaticInfo> ret = outputInfoCache.get(klass);
 		if (ret != null)
 			return ret;
 
-		// klass has not been cached yet, generate pairs
-		ret = new ArrayList<OutputPair>();
+		// klass has not been cached yet, generate info
+		ret = new ArrayList<OutputStaticInfo>();
 		for (Method m : klass.getMethods()) {
 			Output a = m.getAnnotation(Output.class);
 			if (a == null)
@@ -126,9 +129,9 @@ public class OutputHandle {
 				continue;
 			}
 
-			ret.add(new OutputPair(m, a));
+			ret.add(new OutputStaticInfo(m, a));
 		}
-		outputPairCache.put(klass, ret);
+		outputInfoCache.put(klass, ret);
 		return ret;
 	}
 
@@ -139,9 +142,9 @@ public class OutputHandle {
 	 */
 	public static ArrayList<OutputHandle> getOutputHandleList(Entity e) {
 		Class<? extends Entity> klass = e.getClass();
-		ArrayList<OutputPair> list = getOutputPairImp(klass);
+		ArrayList<OutputStaticInfo> list = getOutputInfoImp(klass);
 		ArrayList<OutputHandle> ret = new ArrayList<OutputHandle>(list.size());
-		for( OutputPair p : list ) {
+		for( OutputStaticInfo p : list ) {
 			//ret.add( new OutputHandle(e, p) );
 			ret.add( e.getOutputHandle(p.name) );  // required to get the correct unit type for the output
 		}
@@ -174,15 +177,15 @@ public class OutputHandle {
 
 	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
 	public <T> T getValue(double simTime, Class<T> klass) {
-		if( pair.method == null )
+		if( outputInfo.method == null )
 			return null;
 
 		T ret = null;
 		try {
-			if (!klass.isAssignableFrom(pair.method.getReturnType()))
+			if (!klass.isAssignableFrom(outputInfo.method.getReturnType()))
 				return null;
 
-			ret = (T)pair.method.invoke(ent, simTime);
+			ret = (T)outputInfo.method.invoke(ent, simTime);
 		}
 		catch (InvocationTargetException ex) {}
 		catch (IllegalAccessException ex) {}
@@ -291,13 +294,13 @@ public class OutputHandle {
 	}
 
 	public Class<?> getReturnType() {
-		assert (pair.method != null);
-		return pair.method.getReturnType();
+		assert (outputInfo.method != null);
+		return outputInfo.method.getReturnType();
 	}
 
 	public Class<?> getDeclaringClass() {
-		assert (pair.method != null);
-		return pair.method.getDeclaringClass();
+		assert (outputInfo.method != null);
+		return outputInfo.method.getDeclaringClass();
 	}
 
 	public void setUnitType(Class<? extends Unit> ut) {
@@ -309,15 +312,15 @@ public class OutputHandle {
 	}
 
 	public String getDescription() {
-		return pair.desc;
+		return outputInfo.desc;
 	}
 
 	public String getName() {
-		return pair.name;
+		return outputInfo.name;
 	}
 
 	public boolean isReportable() {
-		return pair.reportable;
+		return outputInfo.reportable;
 	}
 
 }
