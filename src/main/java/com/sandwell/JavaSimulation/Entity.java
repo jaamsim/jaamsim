@@ -739,6 +739,21 @@ public class Entity {
 		return null;
 	}
 
+	/**
+	 * Optimized version of getOutputHandle() for output names that are known to be interned
+	 * @param outputName
+	 * @return
+	 */
+	public final OutputHandle getOutputHandleInterned(String outputName) {
+		if (hasAttribute(outputName))
+			return attributeMap.get(outputName);
+
+		if (OutputHandle.hasOutputInterned(this.getClass(), outputName) || attributeMap.containsKey(outputName))
+			return new OutputHandle(this, outputName, 0);
+
+		return null;
+	}
+
 	public boolean hasOutput(String outputName) {
 		if (OutputHandle.hasOutput(this.getClass(), outputName))
 			return true;
