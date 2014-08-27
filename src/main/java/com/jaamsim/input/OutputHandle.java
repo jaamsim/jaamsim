@@ -46,20 +46,38 @@ public class OutputHandle {
 	public OutputHandle(Entity e, String outputName) {
 		ent = e;
 		pair = OutputHandle.getOutputPair(e.getClass(), outputName);
-		unitType = pair.annotation.unitType();
+		unitType = pair.unitType;
+	}
+
+	/**
+	 * A custom constructor for an interned string parameter
+	 * @param e
+	 * @param outputName
+	 * @param dummy
+	 */
+	public OutputHandle(Entity e, String outputName, int dummy) {
+		ent = e;
+		pair = OutputHandle.getOutputPairInterned(e.getClass(), outputName);
+		unitType = pair.unitType;
 	}
 
 	protected OutputHandle(Entity e) {
 		ent = e;
 	}
 
-	private static class OutputPair {
+	private static final class OutputPair {
 		public Method method;
-		public Output annotation;
+		public final String name;
+		public final String desc;
+		public final boolean reportable;
+		public final Class<? extends Unit> unitType;
 
 		public OutputPair(Method m, Output a) {
 			method = m;
-			annotation = a;
+			desc = a.description();
+			reportable = a.reportable();
+			name = a.name().intern();
+			unitType = a.unitType();
 		}
 	}
 
@@ -69,15 +87,27 @@ public class OutputHandle {
 		return OutputHandle.getOutputPair(klass, outputName) != null;
 	}
 
+	public static Boolean hasOutputInterned(Class<? extends Entity> klass, String outputName) {
+		return OutputHandle.getOutputPairInterned(klass, outputName) != null;
+	}
+
 	private static OutputPair getOutputPair(Class<? extends Entity> klass, String outputName) {
-		for (OutputPair p : getOutputPair(klass)) {
-			if( p.annotation.name().equals(outputName) )
+		for (OutputPair p : getOutputPairImp(klass)) {
+			if( p.name.equals(outputName) )
 				return p;
 		}
 		return null;
 	}
 
-	private static ArrayList<OutputPair> getOutputPair(Class<? extends Entity> klass) {
+	private static OutputPair getOutputPairInterned(Class<? extends Entity> klass, String outputName) {
+		for (OutputPair p : getOutputPairImp(klass)) {
+			if( p.name == outputName )
+				return p;
+		}
+		return null;
+	}
+
+	private static ArrayList<OutputPair> getOutputPairImp(Class<? extends Entity> klass) {
 		ArrayList<OutputPair> ret = outputPairCache.get(klass);
 		if (ret != null)
 			return ret;
@@ -109,11 +139,11 @@ public class OutputHandle {
 	 */
 	public static ArrayList<OutputHandle> getOutputHandleList(Entity e) {
 		Class<? extends Entity> klass = e.getClass();
-		ArrayList<OutputPair> list = getOutputPair(klass);
+		ArrayList<OutputPair> list = getOutputPairImp(klass);
 		ArrayList<OutputHandle> ret = new ArrayList<OutputHandle>(list.size());
 		for( OutputPair p : list ) {
 			//ret.add( new OutputHandle(e, p) );
-			ret.add( e.getOutputHandle(p.annotation.name()) );  // required to get the correct unit type for the output
+			ret.add( e.getOutputHandle(p.name) );  // required to get the correct unit type for the output
 		}
 
 		// And the attributes
@@ -279,18 +309,15 @@ public class OutputHandle {
 	}
 
 	public String getDescription() {
-		assert (pair.annotation != null);
-		return pair.annotation.description();
+		return pair.desc;
 	}
 
 	public String getName() {
-		assert (pair.annotation != null);
-		return pair.annotation.name();
+		return pair.name;
 	}
 
 	public boolean isReportable() {
-		assert (pair.annotation != null);
-		return pair.annotation.reportable();
+		return pair.reportable;
 	}
 
 }
