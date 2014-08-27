@@ -123,7 +123,7 @@ public class ExpParser {
 		public ExpResult lConstVal;
 		public ExpResult rConstVal;
 
-		private BinOpFunc func;
+		private final BinOpFunc func;
 		BinaryOp(ParseContext context, Expression lSubExp, Expression rSubExp, BinOpFunc func) {
 			super(context);
 			this.lSubExp = lSubExp;
@@ -829,7 +829,7 @@ public class ExpParser {
 
 	private static ArrayList<String> parseIdentifier(ExpTokenizer.Token firstName, TokenList tokens) throws Error {
 		ArrayList<String> vals = new ArrayList<String>();
-		vals.add(firstName.value);
+		vals.add(firstName.value.intern());
 		while (true) {
 			ExpTokenizer.Token peeked = tokens.peek();
 			if (peeked == null || peeked.type != ExpTokenizer.SYM_TYPE || !peeked.value.equals(".")) {
@@ -843,7 +843,7 @@ public class ExpParser {
 				throw new Error(String.format("Expected Identifier after '.' at pos: %d", peeked.pos));
 			}
 
-			vals.add(nextName.value);
+			vals.add(nextName.value.intern());
 		}
 
 		return vals;
