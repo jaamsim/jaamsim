@@ -454,6 +454,28 @@ public final class EventManager {
 		}
 	}
 
+	public static final void scheduleUntil(ProcessTarget t, Conditional cond, ConditionalHandle handle) {
+		Process cur = Process.current();
+		cur.evt().schedUntil(cur, t, cond, handle);
+	}
+
+	private void schedUntil(Process cur, ProcessTarget t, Conditional cond, ConditionalHandle handle) {
+		synchronized (lockObject) {
+			if (handle != null && handle.isScheduled())
+				throw new ProcessError("Tried to waitUntil using a handle already in use");
+
+			// if the condition is already true, do not wait
+			if (cond.evaluate())
+				return;
+
+			ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
+			if (handle != null)
+				handle.evt = evt;
+			condEvents.add(evt);
+			if (trcListener != null) trcListener.traceWaitUntil(this, currentTick);
+		}
+	}
+
 	public static final void startProcess(ProcessTarget t) {
 		Process cur = Process.current();
 		cur.evt().start(cur, t);

@@ -16,6 +16,7 @@ package com.jaamsim.Thresholds;
 
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InputErrorException;
@@ -46,6 +47,7 @@ public class ExpressionThreshold extends Threshold {
 	@Override
     public void startUp() {
 		super.startUp();
+
 		doOpenClose();
 	}
 
@@ -57,18 +59,23 @@ public class ExpressionThreshold extends Threshold {
 	}
 	private final Conditional openChanged = new OpenChangedConditional();
 
-	private void doOpenClose() {
+	class DoOpenCloseTarget extends ProcessTarget {
+		@Override
+		public String getDescription() {
+			return ExpressionThreshold.this.getInputName() + ".doOpenClose";
+		}
 
+		@Override
+		public void process() {
+			doOpenClose();
+		}
+	}
+	private final ProcessTarget doOpenClose = new DoOpenCloseTarget();
+
+	void doOpenClose() {
 		// Set the present state
 		setOpen(this.getOpenConditionValue(this.getSimTime()));
-
-		// Loop endlessly
-		while (true) {
-			EventManager.waitUntil(openChanged);
-
-			// Set the present state
-			setOpen(this.getOpenConditionValue(this.getSimTime()));
-		}
+		EventManager.scheduleUntil(doOpenClose, openChanged, null);
 	}
 
 	private boolean getOpenConditionValue(double simTime) {
