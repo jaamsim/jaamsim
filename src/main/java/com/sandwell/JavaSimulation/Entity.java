@@ -344,13 +344,6 @@ public class Entity {
 	}
 
 	/**
-	 * Static method to get the eventManager for all entities.
-	 */
-	private EventManager getEventManager() {
-		return EventManager.current();
-	}
-
-	/**
 	 * Method to return the name of the entity.
 	 * Note that the name of the entity may not be the unique identifier used in the namedEntityHashMap; see Entity.toString()
 	 */
@@ -494,33 +487,33 @@ public class Entity {
 	}
 
 	public final void scheduleProcess(ProcessTarget t) {
-		getEventManager().scheduleProcess(0, Entity.PRIO_DEFAULT, false, t, null);
+		EventManager.current().scheduleProcess(0, Entity.PRIO_DEFAULT, false, t, null);
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t) {
-		EventManager evt = getEventManager();
+		EventManager evt = EventManager.current();
 		long ticks = evt.secondsToNearestTick(secs);
 		evt.scheduleProcess(ticks, priority, false, t, null);
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t, EventHandle handle) {
-		EventManager evt = getEventManager();
+		EventManager evt = EventManager.current();
 		long ticks = evt.secondsToNearestTick(secs);
 		evt.scheduleProcess(ticks, priority, false, t, handle);
 	}
 
 	public final void scheduleProcess(double secs, int priority, boolean fifo, ProcessTarget t, EventHandle handle) {
-		EventManager evt = getEventManager();
+		EventManager evt = EventManager.current();
 		long ticks = evt.secondsToNearestTick(secs);
 		evt.scheduleProcess(ticks, priority, fifo, t, handle);
 	}
 
 	public final void scheduleProcessTicks(long ticks, int priority, boolean fifo, ProcessTarget t, EventHandle h) {
-		getEventManager().scheduleProcess(ticks, priority, fifo, t, h);
+		EventManager.current().scheduleProcess(ticks, priority, fifo, t, h);
 	}
 
 	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
-		getEventManager().scheduleProcess(ticks, priority, false, t, null);
+		EventManager.current().scheduleProcess(ticks, priority, false, t, null);
 	}
 
 	/**
@@ -555,7 +548,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWait(double secs, int priority, boolean fifo, EventHandle handle) {
-		EventManager evt = getEventManager();
+		EventManager evt = EventManager.current();
 		long ticks = evt.secondsToNearestTick(secs);
 		evt.waitTicks(ticks, priority, fifo, handle);
 	}
@@ -585,7 +578,7 @@ public class Entity {
 	 * @param handle
 	 */
 	public final void simWaitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
-		getEventManager().waitTicks(ticks, priority, fifo, handle);
+		EventManager.current().waitTicks(ticks, priority, fifo, handle);
 	}
 
 	/**
