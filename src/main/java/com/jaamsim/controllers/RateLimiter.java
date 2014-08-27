@@ -15,6 +15,7 @@
 package com.jaamsim.controllers;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A class to limit updates to a set rate in real time
@@ -25,7 +26,7 @@ public class RateLimiter implements Runnable {
 	private final Thread refreshThread;
 
 	private long lastCallbackTime = 0;
-	private long scheduledTime = Long.MAX_VALUE;
+	private final AtomicLong schedTime = new AtomicLong(Long.MAX_VALUE);
 	private final Object timingLock = new Object();
 	private final double ups;
 	private final long frameTime;
@@ -54,17 +55,18 @@ public class RateLimiter implements Runnable {
 			while(running) {
 				// Is a redraw scheduled
 				long currentTime = System.currentTimeMillis();
-				if (scheduledTime > currentTime) {
+				long waitLength = schedTime.get() - currentTime;
+				if (waitLength > 0) {
 					try {
 						// We have a scheduled time, wait until then
-						timingLock.wait(scheduledTime - currentTime);
+						timingLock.wait(waitLength);
 					}
 					catch(InterruptedException ex) {}
 					continue;
 				}
 
 				lastCallbackTime = currentTime;
-				scheduledTime = Long.MAX_VALUE;
+				schedTime.set(Long.MAX_VALUE);
 				for (Runnable r : callbacks) {
 					r.run();
 				}
@@ -73,14 +75,14 @@ public class RateLimiter implements Runnable {
 	}
 
 	public void queueUpdate() {
-		synchronized(timingLock) {
-			// If we already are schedule to run, don't wake the thread
-			if (scheduledTime != Long.MAX_VALUE)
-				return;
+		// If we already are schedule to run, don't wake the thread
+		if (schedTime.get() != Long.MAX_VALUE)
+			return;
 
+		synchronized(timingLock) {
 			// Set a new target callback time based on the last time a callback was
 			// actually done
-			scheduledTime = lastCallbackTime + frameTime;
+			schedTime.set(lastCallbackTime + frameTime);
 			timingLock.notify();
 		}
 	}
