@@ -204,11 +204,11 @@ public class TestEventManager {
 			@Override
 			public void process() {
 				log.add("Wait1:" + EventManager.simTicks());
-				EventManager.current().waitTicks(1, 0, true, null);
+				EventManager.waitTicks(1, 0, true, null);
 				log.add("Wait1:" + EventManager.simTicks());
-				EventManager.current().waitTicks(1, 0, true, null);
+				EventManager.waitTicks(1, 0, true, null);
 				log.add("Wait1:" + EventManager.simTicks());
-				EventManager.current().waitTicks(1, 0, false, null);
+				EventManager.waitTicks(1, 0, false, null);
 				log.add("Wait1:" + EventManager.simTicks());
 			}
 		}, null);
@@ -220,11 +220,11 @@ public class TestEventManager {
 			@Override
 			public void process() {
 				log.add("Wait2:" + EventManager.simTicks());
-				EventManager.current().waitTicks(1, 0, true, null);
+				EventManager.waitTicks(1, 0, true, null);
 				log.add("Wait2:" + EventManager.simTicks());
-				EventManager.current().waitTicks(1, 0, true, null);
+				EventManager.waitTicks(1, 0, true, null);
 				log.add("Wait2:" + EventManager.simTicks());
-				EventManager.current().waitTicks(1, 0, true, null);
+				EventManager.waitTicks(1, 0, true, null);
 				log.add("Wait2:" + EventManager.simTicks());
 			}
 		}, null);

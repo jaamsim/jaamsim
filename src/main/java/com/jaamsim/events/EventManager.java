@@ -375,6 +375,17 @@ public final class EventManager {
 		return nextEventTime;
 	}
 
+	public static final void waitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
+		Process cur = Process.current();
+		cur.evt().waitTicks(cur, ticks, priority, fifo, handle);
+	}
+
+	public static final void waitSeconds(double secs, int priority, boolean fifo, EventHandle handle) {
+		Process cur = Process.current();
+		long ticks = cur.evt().secondsToNearestTick(secs);
+		cur.evt().waitTicks(cur, ticks, priority, fifo, handle);
+	}
+
 	/**
 	 * Schedules a future event to occur with a given priority.  Lower priority
 	 * events will be executed preferentially over higher priority.  This is
@@ -382,9 +393,8 @@ public final class EventManager {
 	 * @param ticks the number of discrete ticks from now to schedule the event.
 	 * @param priority the priority of the scheduled event: 1 is the highest priority (default is priority 5)
 	 */
-	public void waitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
+	private void waitTicks(Process cur, long ticks, int priority, boolean fifo, EventHandle handle) {
 		synchronized (lockObject) {
-			Process cur = Process.current();
 			assertNotWaitUntil(cur);
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);

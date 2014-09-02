@@ -548,9 +548,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWait(double secs, int priority, boolean fifo, EventHandle handle) {
-		EventManager evt = EventManager.current();
-		long ticks = evt.secondsToNearestTick(secs);
-		evt.waitTicks(ticks, priority, fifo, handle);
+		EventManager.waitSeconds(secs, priority, fifo, handle);
 	}
 
 	/**
@@ -578,7 +576,7 @@ public class Entity {
 	 * @param handle
 	 */
 	public final void simWaitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
-		EventManager.current().waitTicks(ticks, priority, fifo, handle);
+		EventManager.waitTicks(ticks, priority, fifo, handle);
 	}
 
 	/**
