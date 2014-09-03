@@ -697,6 +697,25 @@ public final class EventManager {
 		}
 	}
 
+	public static final void scheduleTicks(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
+		Process cur = Process.current();
+		cur.evt().scheduleTicks(cur, waitLength, eventPriority, fifo, t, handle);
+	}
+
+	public static final void scheduleSeconds(double secs, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
+		Process cur = Process.current();
+		long ticks = cur.evt().secondsToNearestTick(secs);
+		cur.evt().scheduleTicks(cur, ticks, eventPriority, fifo, t, handle);
+	}
+
+	private void scheduleTicks(Process cur, long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
+		long schedTick = calculateEventTime(waitLength);
+		EventNode node = getEventNode(schedTick, eventPriority);
+		Event e = new Event(node, t, handle);
+		if (trcListener != null) trcListener.traceSchedProcess(this, e, currentTick);
+		node.addEvent(e, fifo);
+	}
+
 	/**
 	 * Sets the value that is tested in the doProcess loop to determine if the
 	 * next event should be executed.  If set to false, the eventManager will

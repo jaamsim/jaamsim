@@ -415,14 +415,13 @@ public class Simulation extends Entity {
 				Entity.getAll().get(i).earlyInit();
 			}
 
-			EventManager cur = EventManager.current();
 			long startTick = calculateDelayLength(Simulation.getStartHours());
 			for (int i = Entity.getAll().size() - 1; i >= 0; i--) {
-				cur.scheduleProcessExternal(startTick, 0, false, new StartUpTarget(Entity.getAll().get(i)), null);
+				EventManager.scheduleTicks(startTick, 0, false, new StartUpTarget(Entity.getAll().get(i)), null);
 			}
 
 			long endTick = calculateDelayLength(Simulation.getEndHours());
-			cur.scheduleProcessExternal(endTick, Entity.PRIO_DEFAULT, false, new EndModelTarget(), null);
+			EventManager.scheduleTicks(endTick, Entity.PRIO_DEFAULT, false, new EndModelTarget(), null);
 		}
 	}
 

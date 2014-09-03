@@ -487,33 +487,27 @@ public class Entity {
 	}
 
 	public final void scheduleProcess(ProcessTarget t) {
-		EventManager.current().scheduleProcessExternal(0, Entity.PRIO_DEFAULT, false, t, null);
+		EventManager.scheduleTicks(0, Entity.PRIO_DEFAULT, false, t, null);
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t) {
-		EventManager evt = EventManager.current();
-		long ticks = evt.secondsToNearestTick(secs);
-		evt.scheduleProcessExternal(ticks, priority, false, t, null);
+		EventManager.scheduleSeconds(secs, priority, false, t, null);
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t, EventHandle handle) {
-		EventManager evt = EventManager.current();
-		long ticks = evt.secondsToNearestTick(secs);
-		evt.scheduleProcessExternal(ticks, priority, false, t, handle);
+		EventManager.scheduleSeconds(secs, priority, false, t, handle);
 	}
 
 	public final void scheduleProcess(double secs, int priority, boolean fifo, ProcessTarget t, EventHandle handle) {
-		EventManager evt = EventManager.current();
-		long ticks = evt.secondsToNearestTick(secs);
-		evt.scheduleProcessExternal(ticks, priority, fifo, t, handle);
+		EventManager.scheduleSeconds(secs, priority, fifo, t, handle);
 	}
 
 	public final void scheduleProcessTicks(long ticks, int priority, boolean fifo, ProcessTarget t, EventHandle h) {
-		EventManager.current().scheduleProcessExternal(ticks, priority, fifo, t, h);
+		EventManager.scheduleTicks(ticks, priority, fifo, t, h);
 	}
 
 	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
-		EventManager.current().scheduleProcessExternal(ticks, priority, false, t, null);
+		EventManager.scheduleTicks(ticks, priority, false, t, null);
 	}
 
 	/**
