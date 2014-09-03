@@ -521,7 +521,7 @@ public class Entity {
 	 * @param secs
 	 */
 	public final void simWait(double secs) {
-		this.simWait(secs, Entity.PRIO_DEFAULT, false, null);
+		EventManager.waitSeconds(secs, Entity.PRIO_DEFAULT, false, null);
 	}
 
 	/**
@@ -530,7 +530,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWait(double secs, int priority) {
-		this.simWait(secs, priority, false, null);
+		EventManager.waitSeconds(secs, priority, false, null);
 	}
 
 	/**
@@ -539,7 +539,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWait(double secs, int priority, EventHandle handle) {
-		this.simWait(secs, priority, false, handle);
+		EventManager.waitSeconds(secs, priority, false, handle);
 	}
 
 	/**
@@ -556,7 +556,7 @@ public class Entity {
 	 * @param secs
 	 */
 	public final void simWaitTicks(long ticks) {
-		this.simWaitTicks(ticks, Entity.PRIO_DEFAULT);
+		EventManager.waitTicks(ticks, Entity.PRIO_DEFAULT, false, null);
 	}
 
 	/**
@@ -565,7 +565,7 @@ public class Entity {
 	 * @param priority
 	 */
 	public final void simWaitTicks(long ticks, int priority) {
-		this.simWaitTicks(ticks, priority, false, null);
+		EventManager.waitTicks(ticks, priority, false, null);
 	}
 
 	/**
@@ -589,7 +589,7 @@ public class Entity {
 		long waitLength = calculateDelayLength(duration);
 		if (waitLength == 0)
 			return;
-		this.simWaitTicks(waitLength, Entity.PRIO_DEFAULT, false, null);
+		EventManager.waitTicks(waitLength, Entity.PRIO_DEFAULT, false, null);
 	}
 
 	/**
@@ -603,7 +603,7 @@ public class Entity {
 		long waitLength = calculateDelayLength(duration);
 		if (waitLength == 0)
 			return;
-		this.simWaitTicks(waitLength, priority, false, null);
+		EventManager.waitTicks(waitLength, priority, false, null);
 	}
 
 	/**
@@ -617,7 +617,7 @@ public class Entity {
 		long waitLength = calculateDelayLength(duration);
 		if (waitLength == 0)
 			return;
-		this.simWaitTicks(waitLength, priority, false, handle);
+		EventManager.waitTicks(waitLength, priority, false, handle);
 	}
 
 	/**
@@ -625,7 +625,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastFIFO() {
-		this.simWaitTicks(0, Entity.PRIO_LOWEST, true, null);
+		EventManager.waitTicks(0, Entity.PRIO_LOWEST, true, null);
 	}
 
 	/**
@@ -633,7 +633,7 @@ public class Entity {
 	 * Additional calls to scheduleLast will place a new event as the last event.
 	 */
 	public final void scheduleLastLIFO() {
-		this.simWaitTicks(0, Entity.PRIO_LOWEST, false, null);
+		EventManager.waitTicks(0, Entity.PRIO_LOWEST, false, null);
 	}
 
 	public final void killEvent(EventHandle handle) {
