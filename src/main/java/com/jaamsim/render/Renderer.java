@@ -16,6 +16,7 @@ package com.jaamsim.render;
 
 //import com.jaamsim.math.*;
 
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
@@ -511,7 +512,7 @@ public class Renderer implements GLAnimatorControl {
 
 		RenderGLListener listener = new RenderGLListener();
 
-		RenderWindow window = new RenderWindow(message.x, message.y,
+		final RenderWindow window = new RenderWindow(message.x, message.y,
 		                                       message.width, message.height,
 		                                       message.title, message.name,
 		                                       sharedContext,
@@ -537,7 +538,13 @@ public class Renderer implements GLAnimatorControl {
 		window.getGLWindowRef().addMouseListener(new MouseHandler(window, message.listener));
 		window.getGLWindowRef().addKeyListener(message.listener);
 
-		window.getAWTFrameRef().setVisible(true);
+
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				window.getAWTFrameRef().setVisible(true);
+			}
+		});
 
 		queueRedraw();
 	}
