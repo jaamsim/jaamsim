@@ -184,7 +184,7 @@ public final class EventManager {
 
 			// Execute the method
 			t.process();
-			assertNotWaitUntil(cur);
+
 			// Notify the event manager that the process has been completed
 			if (trcListener != null) trcListener.traceProcessEnd(this, currentTick);
 			return !cur.wakeNextProcess();
@@ -447,6 +447,7 @@ public final class EventManager {
 	 */
 	private void waitUntil(Process cur, Conditional cond, ConditionalHandle handle) {
 		synchronized (lockObject) {
+			assertNotWaitUntil(cur);
 			if (handle != null && handle.isScheduled())
 				throw new ProcessError("Tried to waitUntil using a handle already in use");
 
@@ -709,6 +710,7 @@ public final class EventManager {
 	}
 
 	private void scheduleTicks(Process cur, long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
+		assertNotWaitUntil(cur);
 		long schedTick = calculateEventTime(waitLength);
 		EventNode node = getEventNode(schedTick, eventPriority);
 		Event e = new Event(node, t, handle);
