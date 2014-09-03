@@ -34,7 +34,7 @@ public class TestSchedEvent {
 				System.out.format("%7d - %12d ns (%f ns/evt)%n", i, deltns, perevt);
 				lastnanos = nanos;
 			}
-			evt.scheduleProcess(0, 0, false, targ, null);
+			evt.scheduleProcessExternal(0, 0, false, targ, null);
 		}
 
 		long endSchedNanos = System.nanoTime();
@@ -66,7 +66,7 @@ public class TestSchedEvent {
 				System.out.format("%7d - %12d ns (%f ns/evt)%n", i, deltns, perevt);
 				lastnanos = nanos;
 			}
-			evt.scheduleProcess(0, 0, true, targ, null);
+			evt.scheduleProcessExternal(0, 0, true, targ, null);
 		}
 
 		long endSchedNanos = System.nanoTime();
@@ -98,7 +98,7 @@ public class TestSchedEvent {
 				System.out.format("%7d - %12d ns (%f ns/evt)%n", i, deltns, perevt);
 				lastnanos = nanos;
 			}
-			evt.scheduleProcess(0, i, false, targ, null);
+			evt.scheduleProcessExternal(0, i, false, targ, null);
 		}
 
 		long endSchedNanos = System.nanoTime();
@@ -130,7 +130,7 @@ public class TestSchedEvent {
 				System.out.format("%7d - %12d ns (%f ns/evt)%n", i, deltns, perevt);
 				lastnanos = nanos;
 			}
-			evt.scheduleProcess(i, 0, false, targ, null);
+			evt.scheduleProcessExternal(i, 0, false, targ, null);
 		}
 
 		long endSchedNanos = System.nanoTime();

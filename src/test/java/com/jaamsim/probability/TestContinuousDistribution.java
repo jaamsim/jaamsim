@@ -54,7 +54,7 @@ public class TestContinuousDistribution {
 		EventManager evt = new EventManager("DistibutionUnitTest");
 		evt.clear();
 
-		evt.scheduleProcess(0, 0, false, target, null);
+		evt.scheduleProcessExternal(0, 0, false, target, null);
 		TestFrameworkHelpers.runEventsToTick(evt, Long.MAX_VALUE, 100000000);
 		return target.total;
 	}
