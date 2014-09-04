@@ -1102,6 +1102,41 @@ public abstract class Input<T> {
 		return temp;
 	}
 
+	public static <T> ArrayList<T> parseInterfaceEntityList(KeywordIndex kw, Class<T> aClass, boolean unique)
+	throws InputErrorException {
+		ArrayList<T> temp = new ArrayList<T>(kw.numArgs());
+
+		for (int i = 0; i < kw.numArgs(); i++) {
+			Entity ent = Entity.getNamedEntity(kw.getArg(i));
+			if (ent == null) {
+				throw new InputErrorException(INP_ERR_ENTNAME, kw.getArg(i));
+			}
+
+			// If we found a group, expand the list of Entities
+			if (ent instanceof Group) {
+				ArrayList<Entity> gList = ((Group)ent).getList();
+				for (int j = 0; j < gList.size(); j++) {
+					T t = Input.castImplements(gList.get(j), aClass);
+					if (t == null) {
+						throw new InputErrorException(INP_ERR_ENTCLASS, aClass.getSimpleName(), gList.get(j), gList.get(j).getClass().getSimpleName());
+					}
+					temp.add(t);
+				}
+			} else {
+				T t = Input.castImplements(ent, aClass);
+				if (t == null) {
+					throw new InputErrorException(INP_ERR_ENTCLASS, aClass.getSimpleName(), kw.getArg(i), ent.getClass().getSimpleName());
+				}
+				temp.add(t);
+			}
+		}
+
+		if (unique)
+			Input.assertUniqueInterface(temp);
+
+		return temp;
+	}
+
 	public static Color4d parseColour(KeywordIndex kw) {
 
 		Input.assertCount(kw, 1, 3);
@@ -1137,6 +1172,17 @@ public abstract class Input<T> {
 	private static void assertUnique(ArrayList<? extends Entity> list) {
 		for (int i = 0; i < list.size(); i++) {
 			Entity ent = list.get(i);
+			for (int j = i + 1; j < list.size(); j++) {
+				if (ent == list.get(j)) {
+					throw new InputErrorException(INP_ERR_NOTUNIQUE, ent.getName());
+				}
+			}
+		}
+	}
+
+	private static void assertUniqueInterface(ArrayList<?> list) {
+		for (int i = 0; i < list.size(); i++) {
+			Entity ent = (Entity)list.get(i);
 			for (int j = i + 1; j < list.size(); j++) {
 				if (ent == list.get(j)) {
 					throw new InputErrorException(INP_ERR_NOTUNIQUE, ent.getName());
