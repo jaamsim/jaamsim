@@ -264,7 +264,7 @@ public final class EventManager {
 				// conditonal events
 				if (eventTree.getNextNode().schedTick > nextTick) {
 					if (condEvents.size() > 0) {
-						cur.setCondWait(true);
+						cur.begCondWait();
 						for (int i = 0; i < condEvents.size();) {
 							ConditionalEvent c = condEvents.get(i);
 							if (c.c.evaluate()) {
@@ -279,7 +279,7 @@ public final class EventManager {
 							}
 							i++;
 						}
-						cur.setCondWait(false);
+						cur.endCondWait();
 					}
 
 					// If a conditional event was satisfied, we will have a new event at the
@@ -390,7 +390,7 @@ public final class EventManager {
 	 */
 	private void waitTicks(Process cur, long ticks, int priority, boolean fifo, EventHandle handle) {
 		synchronized (lockObject) {
-			assertNotWaitUntil(cur);
+			if (cur.isCondWait()) assertWaitUntil(cur);
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);
 			EventNode node = getEventNode(nextEventTime, priority);
@@ -414,16 +414,12 @@ public final class EventManager {
 	 * to try and catch places where a waitUntil was missing a waitUntilEnded.
 	 * While not fatal, it will print out a stack dump to try and find where the
 	 * waitUntilEnded was missed.
-	 * @return the current model Process
 	 */
-	private void assertNotWaitUntil(Process cur) {
-		if (!cur.isCondWait())
-			return;
-
-		System.out.println("AUDIT - waitUntil without waitUntilEnded " + this);
-		for (StackTraceElement elem : cur.getStackTrace()) {
-			System.out.println(elem.toString());
-		}
+	private void assertWaitUntil(Process cur) {
+		executeEvents = false;
+		processRunning = false;
+		Throwable e = new ProcessError("Event Control attempted from inside a Conditional callback");
+		errListener.handleError(this, e, currentTick);
 	}
 
 	public static final void waitUntil(Conditional cond) {
@@ -442,7 +438,7 @@ public final class EventManager {
 	 */
 	private void waitUntil(Process cur, Conditional cond, ConditionalHandle handle) {
 		synchronized (lockObject) {
-			assertNotWaitUntil(cur);
+			if (cur.isCondWait()) assertWaitUntil(cur);
 			if (handle != null && handle.isScheduled())
 				throw new ProcessError("Tried to waitUntil using a handle already in use");
 
@@ -545,7 +541,7 @@ public final class EventManager {
 
 	private void killEvent(Process cur, ConditionalHandle handle) {
 		synchronized (lockObject) {
-			assertNotWaitUntil(cur);
+			if (cur.isCondWait()) assertWaitUntil(cur);
 
 			ConditionalEvent evt = handle.evt;
 			if (evt == null)
@@ -571,7 +567,7 @@ public final class EventManager {
 	 */
 	private void interruptEvent(Process cur, ConditionalHandle handle) {
 		synchronized (lockObject) {
-			assertNotWaitUntil(cur);
+			if (cur.isCondWait()) assertWaitUntil(cur);
 
 			ConditionalEvent evt = handle.evt;
 			if (evt == null)
@@ -602,7 +598,7 @@ public final class EventManager {
 	 */
 	private void killEvent(Process cur, EventHandle handle) {
 		synchronized (lockObject) {
-			assertNotWaitUntil(cur);
+			if (cur.isCondWait()) assertWaitUntil(cur);
 
 			Event evt = handle.event;
 			if (evt == null)
@@ -624,7 +620,7 @@ public final class EventManager {
 	 */
 	private void interruptEvent(Process cur, EventHandle handle) {
 		synchronized (lockObject) {
-			assertNotWaitUntil(cur);
+			if (cur.isCondWait()) assertWaitUntil(cur);
 
 			Event evt = handle.event;
 			if (evt == null)
@@ -701,7 +697,7 @@ public final class EventManager {
 	}
 
 	private void scheduleTicks(Process cur, long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
-		assertNotWaitUntil(cur);
+		if (cur.isCondWait()) assertWaitUntil(cur);
 		long schedTick = calculateEventTime(waitLength);
 		EventNode node = getEventNode(schedTick, eventPriority);
 		Event e = new Event(node, t, handle);

@@ -254,11 +254,15 @@ final class Process extends Thread {
 		activeFlag = true;
 	}
 
-	synchronized void setCondWait(boolean b) {
-		condWait = b;
+	final void begCondWait() {
+		condWait = true;
 	}
 
-	synchronized boolean isCondWait() {
+	final void endCondWait() {
+		condWait = false;
+	}
+
+	final boolean isCondWait() {
 		return condWait;
 	}
 }

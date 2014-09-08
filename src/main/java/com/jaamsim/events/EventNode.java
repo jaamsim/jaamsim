@@ -14,7 +14,7 @@
  */
 package com.jaamsim.events;
 
-public class EventNode {
+class EventNode {
 
 	interface Runner {
 		void runOnNode(EventNode node);
