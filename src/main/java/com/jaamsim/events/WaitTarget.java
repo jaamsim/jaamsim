@@ -25,6 +25,11 @@ class WaitTarget extends ProcessTarget {
 	Process getProcess() { return proc; }
 
 	@Override
+	void kill() {
+		proc.kill();
+	}
+
+	@Override
 	public String getDescription() {
 		return "Waiting";
 	}

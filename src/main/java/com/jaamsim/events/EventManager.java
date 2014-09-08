@@ -142,9 +142,7 @@ public final class EventManager {
 			eventTree.reset();
 
 			for (int i = 0; i < condEvents.size(); i++) {
-				Process p = condEvents.get(i).t.getProcess();
-				if (p != null)
-					p.kill();
+				condEvents.get(i).t.kill();
 				if (condEvents.get(i).hand != null)
 					condEvents.get(i).hand.evt = null;
 			}
@@ -162,10 +160,7 @@ public final class EventManager {
 					each.handle = null;
 				}
 
-				Process proc = each.target.getProcess();
-				if (proc != null)
-					proc.kill();
-
+				each.target.kill();
 				each = each.next;
 			}
 		}
@@ -562,9 +557,7 @@ public final class EventManager {
 
 			condEvents.remove(index);
 			handle.evt = null;
-			Process p = evt.t.getProcess();
-			if (p != null)
-				p.kill();
+			evt.t.kill();
 		}
 	}
 
@@ -616,9 +609,7 @@ public final class EventManager {
 				return;
 
 			removeEvent(evt);
-			Process proc = evt.target.getProcess();
-			if (proc != null)
-				proc.kill();
+			evt.target.kill();
 			if (trcListener != null) trcListener.traceKill(this, evt);
 		}
 	}
