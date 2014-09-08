@@ -128,6 +128,23 @@ final class Process extends Thread {
 		}
 	}
 
+	// Pull a process from the pool and have it attempt to execute events from the
+	// given eventManager
+	static void processEvents(EventManager evt) {
+		// Create the new process
+		Process newProcess = Process.getProcess();
+		// Setup the process state for execution
+		synchronized (newProcess) {
+			newProcess.eventManager = evt;
+			newProcess.nextProcess = null;
+			newProcess.target = null;
+			newProcess.activeFlag = false;
+			newProcess.dieFlag = false;
+			newProcess.condWait = false;
+		}
+		newProcess.wake();
+	}
+
 	// Set up a new process for the given entity, method, and arguments
 	// Called from Process.start() and from EventManager.startExternalProcess()
 	static Process allocate(EventManager eventManager, Process next, ProcessTarget proc) {

@@ -351,7 +351,7 @@ public final class EventManager {
 		// if we don't wake a new process, take one from the pool
 		if (!cur.wakeNextProcess()) {
 			processRunning = false;
-			Process.allocate(this, null, null).wake();
+			Process.processEvents(this);
 		}
 
 		threadWait(cur);
@@ -744,7 +744,7 @@ public final class EventManager {
 				return;
 
 			executeEvents = true;
-			Process.allocate(this, null, null).wake();
+			Process.processEvents(this);
 		}
 	}
 
