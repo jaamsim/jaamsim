@@ -487,6 +487,7 @@ public final class EventManager {
 		Process newProcess = Process.allocate(this, cur, t);
 		// Notify the eventManager that a new process has been started
 		synchronized (lockObject) {
+			if (cur.isCondWait()) assertWaitUntil(cur);
 			if (trcListener != null) trcListener.traceProcessStart(this, t, currentTick);
 			// Transfer control to the new process
 			newProcess.wake();
