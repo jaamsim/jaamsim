@@ -18,7 +18,7 @@ package com.jaamsim.events;
  * Holder class for event data used by the event monitor to schedule future
  * events.
  */
-public final class Event {
+final class Event {
 	EventNode node;
 	ProcessTarget target;
 	EventHandle handle;

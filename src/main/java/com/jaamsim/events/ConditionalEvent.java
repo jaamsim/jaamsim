@@ -14,7 +14,7 @@
  */
 package com.jaamsim.events;
 
-public class ConditionalEvent {
+final class ConditionalEvent {
 	Conditional c;
 	ProcessTarget t;
 	ConditionalHandle hand;
