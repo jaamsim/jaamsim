@@ -16,7 +16,6 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 
-import com.jaamsim.events.Event;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
@@ -85,37 +84,32 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWait(EventManager e, Event evt) {
-		this.addHeader(e.name, evt.getScheduledTick());
+	public void traceWait(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		this.addHeader(e.name, curTick);
 		traceLevel--;
 
-		this.append(String.format("Wait\t%d\t%d\t%s",
-		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
+		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, t.getDescription()));
 	}
 
 	@Override
-	public void traceEvent(EventManager e, Event evt) {
-		this.addHeader(e.name, evt.getScheduledTick());
-		this.append(String.format("Event\t%d\t%d\t%s",
-		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
+	public void traceEvent(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		this.addHeader(e.name, curTick);
+		this.append(String.format("Event\t%d\t%d\t%s", tick, priority, t.getDescription()));
 
 		traceLevel++;
 	}
 
 	@Override
-	public void traceInterrupt(EventManager e, Event evt) {
-		this.addHeader(e.name, evt.getScheduledTick());
-		this.append(String.format("Int\t%d\t%d\t%s",
-		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
-
+	public void traceInterrupt(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		this.addHeader(e.name, curTick);
+		this.append(String.format("Int\t%d\t%d\t%s", tick, priority, t.getDescription()));
 		traceLevel++;
 	}
 
 	@Override
-	public void traceKill(EventManager e, Event evt) {
-		this.addHeader(e.name, evt.getScheduledTick());
-		this.append(String.format("Kill\t%d\t%d\t%s",
-		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
+	public void traceKill(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		this.addHeader(e.name, curTick);
+		this.append(String.format("Kill\t%d\t%d\t%s", tick, priority, t.getDescription()));
 	}
 
 	@Override
@@ -126,10 +120,9 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWaitUntilEnded(EventManager e, Event evt, long tick) {
-		this.addHeader(e.name, tick);
-		this.append(String.format("WaitUntilEnded\t%d\t%d\t%s",
-		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
+	public void traceWaitUntilEnded(EventManager e, long curTick, ProcessTarget t) {
+		this.addHeader(e.name, curTick);
+		this.append(String.format("WaitUntilEnded\t%s", t.getDescription()));
 	}
 
 	@Override
@@ -147,10 +140,9 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	}
 
 	@Override
-	public void traceSchedProcess(EventManager e, Event evt, long tick) {
-		this.addHeader(e.name, tick);
-		this.append(String.format("SchedProcess\t%d\t%d\t%s",
-		            evt.getScheduledTick(), evt.getScheduledPriority(), evt.getDesc()));
+	public void traceSchedProcess(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		this.addHeader(e.name, curTick);
+		this.append(String.format("SchedProcess\t%d\t%d\t%s", tick, priority, t.getDescription()));
 	}
 
 	boolean isDefaultEventManager() {

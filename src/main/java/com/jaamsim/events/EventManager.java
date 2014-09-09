@@ -239,15 +239,16 @@ public final class EventManager {
 				if (nextNode.schedTick == currentTick) {
 					// Remove the event from the future events
 					Event nextEvent = nextNode.head;
+					ProcessTarget nextTarget = nextEvent.target;
+					if (trcListener != null) trcListener.traceEvent(this, currentTick, nextNode.schedTick, nextNode.priority, nextTarget);
+
+					// clean up the node and event structures
 					nextNode.head = nextEvent.next;
 					// check for an empty node
 					if (nextEvent.next == null) {
 						nextNode.tail = null;
 						eventTree.removeNode(nextNode.schedTick, nextNode.priority);
 					}
-
-					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
-					ProcessTarget nextTarget = nextEvent.target;
 					reuseEvent(nextEvent);
 
 					// the return from execute target informs whether or not this
@@ -270,7 +271,7 @@ public final class EventManager {
 									c.hand.evt = null;
 								EventNode node = getEventNode(currentTick, 0);
 								Event temp = getEvent(node, c.t, null);
-								if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp, currentTick);
+								if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick, c.t);
 								node.addEvent(temp, true);
 								condEvents.remove(i);
 								continue;
@@ -393,7 +394,7 @@ public final class EventManager {
 			WaitTarget t = new WaitTarget(cur);
 			EventNode node = getEventNode(nextEventTime, priority);
 			Event temp = getEvent(node, t, handle);
-			if (trcListener != null) trcListener.traceWait(this, temp);
+			if (trcListener != null) trcListener.traceWait(this, currentTick, nextEventTime, priority, t);
 			node.addEvent(temp, fifo);
 			captureProcess(cur);
 		}
@@ -634,9 +635,10 @@ public final class EventManager {
 			if (evt == null)
 				return;
 
+			if (trcListener != null) trcListener.traceKill(this, currentTick, evt.node.schedTick, evt.node.priority, evt.target);
+
 			removeEvent(evt);
 			evt.target.kill();
-			if (trcListener != null) trcListener.traceKill(this, evt);
 		}
 	}
 
@@ -656,8 +658,9 @@ public final class EventManager {
 			if (evt == null)
 				return;
 
+			if (trcListener != null) trcListener.traceInterrupt(this, currentTick, evt.node.schedTick, evt.node.priority, evt.target);
+
 			removeEvent(evt);
-			if (trcListener != null) trcListener.traceInterrupt(this, evt);
 			Process proc = evt.target.getProcess();
 			if (proc == null)
 				proc = Process.allocate(this, cur, evt.target);
@@ -710,7 +713,7 @@ public final class EventManager {
 			long schedTick = calculateEventTime(waitLength);
 			EventNode node = getEventNode(schedTick, eventPriority);
 			Event e = getEvent(node, t, handle);
-			if (trcListener != null) trcListener.traceSchedProcess(this, e, currentTick);
+			if (trcListener != null) trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
 			node.addEvent(e, fifo);
 		}
 	}
@@ -731,7 +734,7 @@ public final class EventManager {
 		long schedTick = calculateEventTime(waitLength);
 		EventNode node = getEventNode(schedTick, eventPriority);
 		Event e = getEvent(node, t, handle);
-		if (trcListener != null) trcListener.traceSchedProcess(this, e, currentTick);
+		if (trcListener != null) trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
 		node.addEvent(e, fifo);
 	}
 

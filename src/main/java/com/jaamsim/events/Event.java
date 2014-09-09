@@ -32,24 +32,4 @@ public final class Event {
 		target = t;
 		handle = h;
 	}
-
-	/**
-	 * Returns the tick this event was scheduled to execute at.
-	 * @return
-	 */
-	public long getScheduledTick() {
-		return node.schedTick;
-	}
-
-	/**
-	 * Returns the priority this event was scheduled at.
-	 * @return
-	 */
-	public int getScheduledPriority() {
-		return node.priority;
-	}
-
-	public String getDesc() {
-		return target.getDescription();
-	}
 }

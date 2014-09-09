@@ -21,7 +21,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.jaamsim.events.Event;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
@@ -144,20 +143,20 @@ class EventTracer implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWait(EventManager e, Event evt) {
-		reader.traceWait(e, evt);
+	public void traceWait(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		reader.traceWait(e, curTick, tick, priority, t);
 		this.finish(e);
 	}
 
 	@Override
-	public void traceEvent(EventManager e, Event evt) {
-		reader.traceEvent(e, evt);
+	public void traceEvent(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		reader.traceEvent(e, curTick, tick, priority, t);
 		this.finish(e);
 	}
 
 	@Override
-	public void traceSchedProcess(EventManager e, Event evt, long tick) {
-		reader.traceSchedProcess(e, evt, tick);
+	public void traceSchedProcess(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		reader.traceSchedProcess(e, curTick, tick, priority, t);
 		this.finish(e);
 	}
 
@@ -174,14 +173,14 @@ class EventTracer implements EventTraceListener {
 	}
 
 	@Override
-	public void traceInterrupt(EventManager e, Event evt) {
-		reader.traceInterrupt(e, evt);
+	public void traceInterrupt(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		reader.traceInterrupt(e, curTick, tick, priority, t);
 		this.finish(e);
 	}
 
 	@Override
-	public void traceKill(EventManager e, Event evt) {
-		reader.traceKill(e, evt);
+	public void traceKill(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
+		reader.traceKill(e, curTick, tick, priority, t);
 		this.finish(e);
 	}
 
@@ -192,8 +191,8 @@ class EventTracer implements EventTraceListener {
 	}
 
 	@Override
-	public void traceWaitUntilEnded(EventManager e, Event evt, long tick) {
-		reader.traceWaitUntilEnded(e, evt, tick);
+	public void traceWaitUntilEnded(EventManager e, long curTick, ProcessTarget t) {
+		reader.traceWaitUntilEnded(e, curTick, t);
 		this.finish(e);
 	}
 }
