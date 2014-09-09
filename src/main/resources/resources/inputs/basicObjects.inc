@@ -64,7 +64,7 @@ ResourceIconModel       ImageFile { '<res>/images/Resource-256.png' }    Transpa
 SeizeIconModel          ImageFile { '<res>/images/Seize-256.png'  }      Transparent { TRUE }
 ReleaseIconModel        ImageFile { '<res>/images/Release-256.png' }     Transparent { TRUE }
 BranchIconModel         ImageFile { '<res>/images/Branch-256.png' }      Transparent { TRUE }
-DuplicateIconModel      ImageFile { '<res>/images/Branch-256.png' }      Transparent { TRUE }
+DuplicateIconModel      ImageFile { '<res>/images/Duplicate-256.png' }   Transparent { TRUE }
 AssembleIconModel       ImageFile { '<res>/images/Assemble-256.png' }      Transparent { TRUE }
 EntityGateIconModel     ImageFile { '<res>/images/Gate-256.png' }        Transparent { TRUE }
 EntitySignalIconModel   ImageFile { '<res>/images/Signal-256.png' }      Transparent { TRUE }
