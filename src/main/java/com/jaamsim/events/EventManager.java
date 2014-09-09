@@ -271,7 +271,7 @@ public final class EventManager {
 								if (c.hand != null)
 									c.hand.evt = null;
 								EventNode node = getEventNode(currentTick, 0);
-								Event temp = new Event(node, c.t, null);
+								Event temp = getEvent(node, c.t, null);
 								if (trcListener != null) trcListener.traceWaitUntilEnded(this, temp, currentTick);
 								node.addEvent(temp, true);
 								condEvents.remove(i);
@@ -394,7 +394,7 @@ public final class EventManager {
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);
 			EventNode node = getEventNode(nextEventTime, priority);
-			Event temp = new Event(node, t, handle);
+			Event temp = getEvent(node, t, handle);
 			if (trcListener != null) trcListener.traceWait(this, temp);
 			node.addEvent(temp, fifo);
 			captureProcess(cur);
@@ -407,6 +407,18 @@ public final class EventManager {
 	 */
 	private EventNode getEventNode(long tick, int prio) {
 		return eventTree.createOrFindNode(tick, prio);
+	}
+
+	private Event getEvent(EventNode n, ProcessTarget t, EventHandle h) {
+		Event evt = new Event(n, t, h);
+		if (h != null ) {
+			if (h.event == null)
+				h.event = evt;
+			else
+				throw new ProcessError("Tried to schedule using an EventHandle already in use");
+		}
+
+		return evt;
 	}
 
 	/**
@@ -673,7 +685,7 @@ public final class EventManager {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
 			EventNode node = getEventNode(schedTick, eventPriority);
-			Event e = new Event(node, t, handle);
+			Event e = getEvent(node, t, handle);
 			if (trcListener != null) trcListener.traceSchedProcess(this, e, currentTick);
 			node.addEvent(e, fifo);
 		}
@@ -694,7 +706,7 @@ public final class EventManager {
 		if (cur.isCondWait()) assertWaitUntil(cur);
 		long schedTick = calculateEventTime(waitLength);
 		EventNode node = getEventNode(schedTick, eventPriority);
-		Event e = new Event(node, t, handle);
+		Event e = getEvent(node, t, handle);
 		if (trcListener != null) trcListener.traceSchedProcess(this, e, currentTick);
 		node.addEvent(e, fifo);
 	}

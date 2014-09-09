@@ -31,12 +31,6 @@ public final class Event {
 		node = n;
 		target = t;
 		handle = h;
-		if (h != null) {
-			if (h.event == null)
-				handle.event = this;
-			else
-				throw new ProcessError("Tried to schedule using an EventHandle already in use");
-		}
 	}
 
 	/**
