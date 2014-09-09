@@ -140,6 +140,7 @@ public final class EventManager {
 
 			eventTree.runOnAllNodes(new KillAllEvents());
 			eventTree.reset();
+			clearFreeList();
 
 			for (int i = 0; i < condEvents.size(); i++) {
 				condEvents.get(i).t.kill();
@@ -246,15 +247,12 @@ public final class EventManager {
 					}
 
 					if (trcListener != null) trcListener.traceEvent(this, nextEvent);
-					if (nextEvent.handle != null) {
-						nextEvent.handle.event = null;
-						nextEvent.handle = null;
-					}
-					nextEvent.next = null;
+					ProcessTarget nextTarget = nextEvent.target;
+					reuseEvent(nextEvent);
 
 					// the return from execute target informs whether or not this
 					// thread should grab an new Event, or return to the pool
-					if (executeTarget(cur, nextEvent.target))
+					if (executeTarget(cur, nextTarget))
 						continue;
 					else
 						return;
@@ -409,8 +407,19 @@ public final class EventManager {
 		return eventTree.createOrFindNode(tick, prio);
 	}
 
+	private Event freeEvents = null;
 	private Event getEvent(EventNode n, ProcessTarget t, EventHandle h) {
-		Event evt = new Event(n, t, h);
+		Event evt = freeEvents;
+		if (evt != null) {
+			freeEvents = evt.next;
+			evt.node = n;
+			evt.target = t;
+			evt.handle = h;
+		}
+		else {
+			evt = new Event(n, t, h);
+		}
+
 		if (h != null ) {
 			if (h.event == null)
 				h.event = evt;
@@ -421,6 +430,21 @@ public final class EventManager {
 		return evt;
 	}
 
+	private void reuseEvent(Event evt) {
+		evt.node = null;
+		evt.target = null;
+		if (evt.handle != null) {
+			evt.handle.event = null;
+			evt.handle = null;
+		}
+
+		evt.next = freeEvents;
+		freeEvents = evt;
+	}
+
+	private void clearFreeList() {
+		freeEvents = null;
+	}
 	/**
 	 * Debugging aid to test that we are not executing a conditional event, useful
 	 * to try and catch places where a waitUntil was missing a waitUntilEnded.
