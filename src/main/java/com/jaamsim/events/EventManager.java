@@ -509,7 +509,8 @@ public final class EventManager {
 			node.head = evt.next;
 			if (evt.next == null) {
 				node.tail = null;
-				removeNode(node);
+				if (!eventTree.removeNode(node.schedTick, node.priority))
+					throw new ProcessError("Tried to remove an event that could not be found");
 			}
 			evt.next = null;
 			return;
@@ -525,14 +526,6 @@ public final class EventManager {
 			node.tail = prev;
 
 		evt.next = null;
-	}
-
-	private void removeNode(EventNode node) {
-		boolean removed = eventTree.removeNode(node.schedTick, node.priority);
-
-		if (!removed) {
-			throw new ProcessError("Tried to remove an event that could not be found");
-		}
 	}
 
 	public static final void killEvent(ConditionalHandle handle) {
