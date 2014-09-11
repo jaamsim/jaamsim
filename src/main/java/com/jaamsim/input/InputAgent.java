@@ -687,6 +687,7 @@ public class InputAgent {
 				new FileNameExtensionFilter("JaamSim Configuration File (*.cfg)", "CFG");
 		chooser.addChoosableFileFilter(cfgFilter);
 		chooser.setFileFilter(cfgFilter);
+		chooser.setSelectedFile(InputAgent.getConfigFile());
 
 		// Show the file chooser and wait for selection
 		int returnVal = chooser.showSaveDialog(gui);
