@@ -362,6 +362,10 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 				chooser.addChoosableFileFilter(jsbFilter);
 				chooser.setFileFilter(jsbFilter);
 
+				// Set the default name for the binary file
+				String defName = colFile.getName().concat(".jsb");
+				chooser.setSelectedFile(new File(defName));
+
 				// Show the file chooser and wait for selection
 				int returnVal = chooser.showDialog(null, "Export");
 
