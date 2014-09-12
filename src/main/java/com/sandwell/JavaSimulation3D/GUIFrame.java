@@ -1183,9 +1183,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 						throw new NumberFormatException
 						("Date string must be of form yyyy-mm-dd");
 					}
-					int year = Integer.valueOf(str[0]).intValue();
-					int month = Integer.valueOf(str[1]).intValue();
-					int day = Integer.valueOf(str[2]).intValue();
+					int year = Integer.parseInt(str[0]);
+					int month = Integer.parseInt(str[1]);
+					int day = Integer.parseInt(str[2]);
 					double time =
 							Clock.calcTimeForYear_Month_Day_Hour(year, month, day, 0.0);
 
