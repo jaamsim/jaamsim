@@ -278,15 +278,15 @@ public class OutputHandle {
 		}
 
 		if (retType == float.class)
-			return this.getValue(simTime, float.class);
+			return this.getValue(simTime, float.class).doubleValue();
 		if (retType == int.class)
-			return this.getValue(simTime, int.class);
+			return this.getValue(simTime, int.class).doubleValue();
 		if (retType == long.class)
-			return this.getValue(simTime, long.class);
+			return this.getValue(simTime, long.class).doubleValue();
 		if (retType == short.class)
-			return this.getValue(simTime, short.class);
+			return this.getValue(simTime, short.class).doubleValue();
 		if (retType == char.class)
-			return this.getValue(simTime, char.class);
+			return this.getValue(simTime, char.class).charValue();
 		if (retType == boolean.class)
 			return this.getValue(simTime, boolean.class) ? 1.0d : 0.0d;
 
