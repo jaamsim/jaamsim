@@ -138,18 +138,8 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		entry.startTime = simTime;
 		entry.duration = dur;
 		entityMap.put(ent.getEntityNumber(), entry);
-		this.setPresentState();
 
 		this.scheduleProcess(dur, 5, new RemoveDisplayEntityTarget(this, ent));
-	}
-
-	private void setPresentState() {
-		if (entityMap.isEmpty()) {
-			this.setPresentState("Idle");
-		}
-		else {
-			this.setPresentState("Working");
-		}
 	}
 
 	private static class RemoveDisplayEntityTarget extends EntityTarget<EntityDelay> {
@@ -169,7 +159,6 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	public void removeDisplayEntity(DisplayEntity ent) {
 		// Remove the entity from the lists
 		entityMap.remove(ent.getEntityNumber());
-		this.setPresentState();
 
 		// Send the entity to the next component
 		this.sendToNextComponent(ent);
