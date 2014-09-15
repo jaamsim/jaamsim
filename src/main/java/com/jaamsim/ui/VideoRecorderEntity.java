@@ -20,6 +20,7 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventHandle;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
@@ -175,7 +176,7 @@ public class VideoRecorderEntity extends Entity {
 	public void doCaptureNetwork() {
 
 		// If the capture network is already in progress, then stop the previous network
-		killEvent(captureHandle);
+		EventManager.killEvent(captureHandle);
 		simWait(captureStartTime.getValue(), 10, captureHandle);
 
 		if (!RenderManager.isGood()) {

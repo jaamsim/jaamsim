@@ -629,14 +629,6 @@ public class Entity {
 		EventManager.waitTicks(0, Entity.PRIO_LOWEST, false, null);
 	}
 
-	public final void killEvent(EventHandle handle) {
-		EventManager.killEvent(handle);
-	}
-
-	public final void interruptEvent(EventHandle handle) {
-		EventManager.interruptEvent(handle);
-	}
-
 	// ******************************************************************************************************
 	// EDIT TABLE METHODS
 	// ******************************************************************************************************
