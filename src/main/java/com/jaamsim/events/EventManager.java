@@ -589,8 +589,7 @@ public final class EventManager {
 				removeEvent(evt);
 			}
 			else if (handle.condEvent != null) {
-				int index = condEvents.indexOf(handle.condEvent);
-				condEvents.remove(index);
+				condEvents.remove(handle.condEvent);
 				t = handle.condEvent.t;
 				handle.condEvent = null;
 			}
