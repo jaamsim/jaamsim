@@ -829,6 +829,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		pauseTime.setText(infinitySign);
 		pauseTime.setHorizontalAlignment(JTextField.CENTER);
+		pauseTime.setToolTipText( "Time at which to pause the run, e.g. 3 h, 10 s, etc." );
 
 		// 4) Real Time button
 		mainToolBar.addSeparator(separatorDim);
@@ -855,6 +856,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		spinner.setMaximumSize(dim);
 
 		spinner.addChangeListener(new SpeedFactorListener());
+		spinner.setToolTipText( "Target ratio of simulation time to wall clock time when Real Time mode is selected." );
 		mainToolBar.add( spinner );
 
 		// 6) View Control buttons
