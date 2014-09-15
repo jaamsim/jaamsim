@@ -96,15 +96,8 @@ final class Process extends Thread {
 			evt.execute(this, t);
 
 			// Ensure all state is cleared before returning to the pool
-			synchronized (this) {
-				eventManager = null;
-				nextProcess = null;
-				target = null;
-				evt = null;
-				activeFlag = false;
-				dieFlag = false;
-				condWait = false;
-			}
+			evt = null;
+			setup(null, null, null);
 		}
 	}
 
@@ -128,40 +121,31 @@ final class Process extends Thread {
 		}
 	}
 
+	/*
+	 * Setup the process state for execution.
+	 */
+	private synchronized void setup(EventManager evt, Process next, ProcessTarget targ) {
+		eventManager = evt;
+		nextProcess = next;
+		target = targ;
+		activeFlag = false;
+		dieFlag = false;
+		condWait = false;
+	}
+
 	// Pull a process from the pool and have it attempt to execute events from the
 	// given eventManager
 	static void processEvents(EventManager evt) {
-		// Create the new process
 		Process newProcess = Process.getProcess();
-		// Setup the process state for execution
-		synchronized (newProcess) {
-			newProcess.eventManager = evt;
-			newProcess.nextProcess = null;
-			newProcess.target = null;
-			newProcess.activeFlag = false;
-			newProcess.dieFlag = false;
-			newProcess.condWait = false;
-		}
+		newProcess.setup(evt, null, null);
 		newProcess.wake();
 	}
 
 	// Set up a new process for the given entity, method, and arguments
 	// Called from Process.start() and from EventManager.startExternalProcess()
 	static Process allocate(EventManager eventManager, Process next, ProcessTarget proc) {
-
-		// Create the new process
 		Process newProcess = Process.getProcess();
-
-		// Setup the process state for execution
-		synchronized (newProcess) {
-			newProcess.eventManager = eventManager;
-			newProcess.nextProcess = next;
-			newProcess.target = proc;
-			newProcess.activeFlag = false;
-			newProcess.dieFlag = false;
-			newProcess.condWait = false;
-		}
-
+		newProcess.setup(eventManager, next, proc);
 		return newProcess;
 	}
 
