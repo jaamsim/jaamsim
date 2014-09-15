@@ -566,7 +566,7 @@ public final class EventManager {
 		if (evt.next == null)
 			node.tail = prev;
 
-		evt.next = null;
+		reuseEvent(evt);
 	}
 
 	public static final void killEvent(EventHandle handle) {
@@ -585,8 +585,8 @@ public final class EventManager {
 			if (handle.event != null) {
 				Event evt = handle.event;
 				if (trcListener != null) trcListener.traceKill(this, currentTick, evt.node.schedTick, evt.node.priority, evt.target);
-				removeEvent(evt);
 				t = evt.target;
+				removeEvent(evt);
 			}
 			else if (handle.condEvent != null) {
 				int index = condEvents.indexOf(handle.condEvent);
@@ -619,8 +619,8 @@ public final class EventManager {
 			if (handle.event != null) {
 				Event evt = handle.event;
 				if (trcListener != null) trcListener.traceInterrupt(this, currentTick, evt.node.schedTick, evt.node.priority, evt.target);
-				removeEvent(evt);
 				t = evt.target;
+				removeEvent(evt);
 			}
 			else if (handle.condEvent != null) {
 				condEvents.remove(handle.condEvent);
