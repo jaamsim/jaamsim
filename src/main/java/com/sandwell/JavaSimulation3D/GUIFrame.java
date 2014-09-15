@@ -834,7 +834,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// 4) Real Time button
 		mainToolBar.addSeparator(separatorDim);
 		controlRealTime = new JToggleButton( "Real Time" );
-		controlRealTime.setToolTipText( "Toggle Real Time" );
+		controlRealTime.setToolTipText( "Toggle Real Time mode. When selected, the simulation runs at a fixed multiple of wall clock time." );
 		controlRealTime.setMargin( smallMargin );
 		controlRealTime.addActionListener(new RealTimeActionListener());
 
