@@ -1397,6 +1397,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		spinner.setValue(factorRT);
 	}
 
+	/**
+	 * updates PauseTime entry
+	 */
+	public void updateForPauseTime(Double t, String valueString) {
+		if (t == Double.POSITIVE_INFINITY) {
+			pauseTime.setText(infinitySign);
+			pauseTime.setHorizontalAlignment(JTextField.CENTER);
+		}
+		else {
+			pauseTime.setText(valueString);
+			pauseTime.setHorizontalAlignment(JTextField.RIGHT);
+		}
+	}
+
 	public static Image getWindowIcon() {
 		return iconImage;
 	}

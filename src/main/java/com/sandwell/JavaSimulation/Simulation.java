@@ -71,6 +71,10 @@ public class Simulation extends Entity {
 	         example = "Simulation Duration { 8760 h }")
 	private static final ValueInput runDuration;
 
+	@Keyword(description = "The time at which the simulation will be paused.",
+	         example = "Simulation PauseTime { 200 h }")
+	private static final ValueInput pauseTime;
+
 	@Keyword(description = "The number of discrete time units in one hour.",
 	         example = "Simulation SimulationTimeScale { 4500 }")
 	private static final ValueInput simTimeScaleInput;
@@ -146,6 +150,10 @@ public class Simulation extends Entity {
 		runDuration.setUnitType(TimeUnit.class);
 		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
 
+		pauseTime = new ValueInput("PauseTime", "Key Inputs", Double.POSITIVE_INFINITY);
+		pauseTime.setUnitType(TimeUnit.class);
+		pauseTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+
 		startDate = new StringInput("StartDate", "Key Inputs", null);
 
 		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
@@ -186,6 +194,7 @@ public class Simulation extends Entity {
 	{
 		this.addInput(runDuration);
 		this.addInput(initializationTime);
+		this.addInput(pauseTime);
 
 		this.addInput(startDate);
 
@@ -250,6 +259,11 @@ public class Simulation extends Entity {
 			return;
 		}
 
+		if (in == pauseTime) {
+			updatePauseTime();
+			return;
+		}
+
 		if (in == showModelBuilder) {
 			setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
 			return;
@@ -288,6 +302,7 @@ public class Simulation extends Entity {
 	public static void clear() {
 		initializationTime.reset();
 		runDuration.reset();
+		pauseTime.reset();
 		simTimeScaleInput.reset();
 		traceEventsInput.reset();
 		verifyEventsInput.reset();
@@ -392,6 +407,10 @@ public class Simulation extends Entity {
 		return (1.0d / getSimTimeFactor());
 	}
 
+	public static double getPauseTime() {
+		return pauseTime.getValue();
+	}
+
 	private static class StartUpTarget extends ProcessTarget {
 		final Entity ent;
 
@@ -491,6 +510,10 @@ public class Simulation extends Entity {
 
 	static void updateRealTime() {
 		GUIFrame.instance().updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
+	}
+
+	static void updatePauseTime() {
+		GUIFrame.instance().updateForPauseTime(pauseTime.getValue(), pauseTime.getValueString());
 	}
 
 	public static void setModelName(String newModelName) {
