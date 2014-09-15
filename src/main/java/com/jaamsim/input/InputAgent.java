@@ -599,23 +599,27 @@ public class InputAgent {
 	}
 
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
-		in.parse(kw);
+		// If the input value is blank, restore the default
+		if (kw.numArgs() == 0) {
+			in.reset();
+		}
+		else {
+			in.parse(kw);
+			if (kw.numArgs() < 1000)
+				in.setValueString(kw.argString());
+			else
+				in.setValueString("");
+		}
 
 		// Only mark the keyword edited if we have finished initial configuration
-		if ( InputAgent.recordEdits() )
+		if (InputAgent.recordEdits()) {
 			in.setEdited(true);
+			ent.setFlag(Entity.FLAG_EDITED);
+			if (!ent.testFlag(Entity.FLAG_GENERATED))
+				sessionEdited = true;
+		}
 
 		ent.updateForInput(in);
-
-		if(ent.testFlag(Entity.FLAG_GENERATED))
-			return;
-
-		if(in.isEdited()) {
-			ent.setFlag(Entity.FLAG_EDITED);
-			sessionEdited = true;
-		}
-		if (kw.numArgs() < 1000)
-			in.setValueString(kw.argString());
 	}
 
 	public static void processKeyword(Entity entity, KeywordIndex key) {
