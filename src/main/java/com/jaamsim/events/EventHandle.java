@@ -20,16 +20,15 @@ package com.jaamsim.events;
  * or executing it earlier than otherwise scheduled.
  */
 public class EventHandle {
-	Event event;
+	Event event = null;
+	ConditionalEvent condEvent = null;
 
-	public EventHandle() {
-		event = null;
-	}
+	public EventHandle() {}
 
 	/**
 	 * Returns true if this handle is currently tracking a future event.
 	 */
-	public boolean isScheduled() {
-		return event != null;
+	public final boolean isScheduled() {
+		return event != null || condEvent != null;
 	}
 }

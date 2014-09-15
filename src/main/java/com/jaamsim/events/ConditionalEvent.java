@@ -17,9 +17,9 @@ package com.jaamsim.events;
 final class ConditionalEvent {
 	Conditional c;
 	ProcessTarget t;
-	ConditionalHandle hand;
+	EventHandle hand;
 
-	ConditionalEvent(Conditional c, ProcessTarget t, ConditionalHandle hand) {
+	ConditionalEvent(Conditional c, ProcessTarget t, EventHandle hand) {
 		this.c = c;
 		this.t = t;
 		this.hand = hand;

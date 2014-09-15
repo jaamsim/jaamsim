@@ -23,7 +23,6 @@ import com.jaamsim.basicsim.ClonesOfIterableInterface;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.InstanceIterable;
 import com.jaamsim.basicsim.ReflectionTarget;
-import com.jaamsim.events.ConditionalHandle;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -634,15 +633,7 @@ public class Entity {
 		EventManager.killEvent(handle);
 	}
 
-	public final void killEvent(ConditionalHandle handle) {
-		EventManager.killEvent(handle);
-	}
-
 	public final void interruptEvent(EventHandle handle) {
-		EventManager.interruptEvent(handle);
-	}
-
-	public final void interruptEvent(ConditionalHandle handle) {
 		EventManager.interruptEvent(handle);
 	}
 
