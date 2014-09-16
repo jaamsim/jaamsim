@@ -243,14 +243,7 @@ public final class EventManager {
 					ProcessTarget nextTarget = nextEvent.target;
 					if (trcListener != null) trcListener.traceEvent(this, currentTick, nextNode.schedTick, nextNode.priority, nextTarget);
 
-					// clean up the node and event structures
-					nextNode.head = nextEvent.next;
-					// check for an empty node
-					if (nextEvent.next == null) {
-						nextNode.tail = null;
-						eventTree.removeNode(nextNode.schedTick, nextNode.priority);
-					}
-					reuseEvent(nextEvent);
+					removeEvent(nextEvent);
 
 					// the return from execute target informs whether or not this
 					// thread should grab an new Event, or return to the pool
@@ -435,18 +428,6 @@ public final class EventManager {
 		return evt;
 	}
 
-	private void reuseEvent(Event evt) {
-		evt.node = null;
-		evt.target = null;
-		if (evt.handle != null) {
-			evt.handle.event = null;
-			evt.handle = null;
-		}
-
-		evt.next = freeEvents;
-		freeEvents = evt;
-	}
-
 	private void clearFreeList() {
 		freeEvents = null;
 	}
@@ -564,7 +545,16 @@ public final class EventManager {
 				node.tail = prev;
 		}
 
-		reuseEvent(evt);
+		// Clear the event to reuse it
+		evt.node = null;
+		evt.target = null;
+		if (evt.handle != null) {
+			evt.handle.event = null;
+			evt.handle = null;
+		}
+
+		evt.next = freeEvents;
+		freeEvents = evt;
 	}
 
 	private ProcessTarget rem(EventHandle handle) {
