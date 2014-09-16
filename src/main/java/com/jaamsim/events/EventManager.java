@@ -552,17 +552,17 @@ public final class EventManager {
 					throw new ProcessError("Tried to remove an event that could not be found");
 			}
 			evt.next = null;
-			return;
 		}
+		else {
+			Event prev = node.head;
+			while (prev.next != evt) {
+				prev = prev.next;
+			}
 
-		Event prev = node.head;
-		while (prev.next != evt) {
-			prev = prev.next;
+			prev.next = evt.next;
+			if (evt.next == null)
+				node.tail = prev;
 		}
-
-		prev.next = evt.next;
-		if (evt.next == null)
-			node.tail = prev;
 
 		reuseEvent(evt);
 	}
