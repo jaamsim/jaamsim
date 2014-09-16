@@ -143,9 +143,9 @@ public final class EventManager {
 			clearFreeList();
 
 			for (int i = 0; i < condEvents.size(); i++) {
-				condEvents.get(i).t.kill();
-				if (condEvents.get(i).hand != null) {
-					condEvents.get(i).hand.event = null;
+				condEvents.get(i).target.kill();
+				if (condEvents.get(i).handle != null) {
+					condEvents.get(i).handle.event = null;
 				}
 			}
 			condEvents.clear();
@@ -304,11 +304,11 @@ public final class EventManager {
 		for (int i = 0; i < condEvents.size();) {
 			ConditionalEvent c = condEvents.get(i);
 			if (c.c.evaluate()) {
-				if (c.hand != null)
-					c.hand.event = null;
+				if (c.handle != null)
+					c.handle.event = null;
 				EventNode node = getEventNode(currentTick, 0);
-				Event temp = getEvent(node, c.t, c.hand);
-				if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick, c.t);
+				Event temp = getEvent(node, c.target, c.handle);
+				if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick, c.target);
 				node.addEvent(temp, true);
 				condEvents.remove(i);
 				continue;
@@ -543,8 +543,6 @@ public final class EventManager {
 	 */
 	private void removeEvent(Event evt) {
 		EventNode node = evt.node;
-		evt.handle.event = null;
-		evt.handle = null;
 		// quick case where we are the head event
 		if (node.head == evt) {
 			node.head = evt.next;
@@ -569,6 +567,20 @@ public final class EventManager {
 		reuseEvent(evt);
 	}
 
+	private ProcessTarget rem(EventHandle handle) {
+		ProcessTarget t = handle.event.target;
+		BaseEvent base = handle.event;
+		handle.event = null;
+		base.handle = null;
+		if (base instanceof Event) {
+			removeEvent((Event)base);
+		}
+		else {
+			condEvents.remove(base);
+		}
+		return t;
+	}
+
 	public static final void killEvent(EventHandle handle) {
 		Process cur = Process.current();
 		cur.evt().killEvent(cur, handle);
@@ -585,24 +597,20 @@ public final class EventManager {
 			if (handle.event == null)
 				return;
 
-			ProcessTarget t;
-			if (handle.event instanceof Event) {
-				Event evt = (Event)handle.event;
-				if (trcListener != null) trcListener.traceKill(this, currentTick, evt.node.schedTick, evt.node.priority, evt.target);
-				t = evt.target;
-				removeEvent(evt);
-			}
-			else if (handle.event instanceof ConditionalEvent) {
-				ConditionalEvent evt = (ConditionalEvent)handle.event;
-				condEvents.remove(evt);
-				t = evt.t;
-				handle.event = null;
-			}
-			else {
-				throw new ProcessError("Internal error: handle points to non-event object");
-			}
+			if (trcListener != null) trcKill(handle.event);
+			ProcessTarget t = rem(handle);
 
 			t.kill();
+		}
+	}
+
+	private void trcKill(BaseEvent event) {
+		if (event instanceof Event) {
+			EventNode node = ((Event)event).node;
+			trcListener.traceKill(this, currentTick, node.schedTick, node.priority, event.target);
+		}
+		else {
+			trcListener.traceKill(this, currentTick, -1, -1, event.target);
 		}
 	}
 
@@ -622,22 +630,8 @@ public final class EventManager {
 			if (handle.event == null)
 				return;
 
-			ProcessTarget t;
-			if (handle.event instanceof Event) {
-				Event evt = (Event)handle.event;
-				if (trcListener != null) trcListener.traceInterrupt(this, currentTick, evt.node.schedTick, evt.node.priority, evt.target);
-				t = evt.target;
-				removeEvent(evt);
-			}
-			else if (handle.event instanceof ConditionalEvent) {
-				ConditionalEvent evt = (ConditionalEvent)handle.event;
-				condEvents.remove(evt);
-				t = evt.t;
-				handle.event = null;
-			}
-			else {
-				throw new ProcessError("Internal error: handle points to non-event object");
-			}
+			if (trcListener != null) trcInterrupt(handle.event);
+			ProcessTarget t = rem(handle);
 
 			Process proc = t.getProcess();
 			if (proc == null)
@@ -645,6 +639,16 @@ public final class EventManager {
 			proc.setNextProcess(cur);
 			proc.wake();
 			threadWait(cur);
+		}
+	}
+
+	private void trcInterrupt(BaseEvent event) {
+		if (event instanceof Event) {
+			EventNode node = ((Event)event).node;
+			trcListener.traceInterrupt(this, currentTick, node.schedTick, node.priority, event.target);
+		}
+		else {
+			trcListener.traceInterrupt(this, currentTick, -1, -1, event.target);
 		}
 	}
 

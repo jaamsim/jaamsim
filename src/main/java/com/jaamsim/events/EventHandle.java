@@ -20,7 +20,7 @@ package com.jaamsim.events;
  * or executing it earlier than otherwise scheduled.
  */
 public class EventHandle {
-	Object event = null;
+	BaseEvent event = null;
 
 	public EventHandle() {}
 

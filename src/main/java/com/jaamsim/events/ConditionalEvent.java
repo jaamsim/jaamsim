@@ -14,14 +14,11 @@
  */
 package com.jaamsim.events;
 
-final class ConditionalEvent {
+final class ConditionalEvent extends BaseEvent {
 	Conditional c;
-	ProcessTarget t;
-	EventHandle hand;
 
 	ConditionalEvent(Conditional c, ProcessTarget t, EventHandle hand) {
+		super(t, hand);
 		this.c = c;
-		this.t = t;
-		this.hand = hand;
 	}
 }
