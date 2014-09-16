@@ -145,7 +145,7 @@ public final class EventManager {
 			for (int i = 0; i < condEvents.size(); i++) {
 				condEvents.get(i).t.kill();
 				if (condEvents.get(i).hand != null) {
-					condEvents.get(i).hand.condEvent = null;
+					condEvents.get(i).hand.event = null;
 				}
 			}
 			condEvents.clear();
@@ -305,7 +305,7 @@ public final class EventManager {
 			ConditionalEvent c = condEvents.get(i);
 			if (c.c.evaluate()) {
 				if (c.hand != null)
-					c.hand.condEvent = null;
+					c.hand.event = null;
 				EventNode node = getEventNode(currentTick, 0);
 				Event temp = getEvent(node, c.t, c.hand);
 				if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick, c.t);
@@ -490,7 +490,7 @@ public final class EventManager {
 			WaitTarget t = new WaitTarget(cur);
 			ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 			if (handle != null)
-				handle.condEvent = evt;
+				handle.event = evt;
 			condEvents.add(evt);
 			if (trcListener != null) trcListener.traceWaitUntil(this, currentTick);
 			captureProcess(cur);
@@ -513,7 +513,7 @@ public final class EventManager {
 
 			ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 			if (handle != null)
-				handle.condEvent = evt;
+				handle.event = evt;
 			condEvents.add(evt);
 			if (trcListener != null) trcListener.traceWaitUntil(this, currentTick);
 		}
@@ -581,21 +581,25 @@ public final class EventManager {
 		synchronized (lockObject) {
 			if (cur.isCondWait()) assertWaitUntil(cur);
 
+			// Handle was not scheduled, nothing to do
+			if (handle.event == null)
+				return;
+
 			ProcessTarget t;
-			if (handle.event != null) {
-				Event evt = handle.event;
+			if (handle.event instanceof Event) {
+				Event evt = (Event)handle.event;
 				if (trcListener != null) trcListener.traceKill(this, currentTick, evt.node.schedTick, evt.node.priority, evt.target);
 				t = evt.target;
 				removeEvent(evt);
 			}
-			else if (handle.condEvent != null) {
-				condEvents.remove(handle.condEvent);
-				t = handle.condEvent.t;
-				handle.condEvent = null;
+			else if (handle.event instanceof ConditionalEvent) {
+				ConditionalEvent evt = (ConditionalEvent)handle.event;
+				condEvents.remove(evt);
+				t = evt.t;
+				handle.event = null;
 			}
 			else {
-				// Handle was not scheduled, nothing to do
-				return;
+				throw new ProcessError("Internal error: handle points to non-event object");
 			}
 
 			t.kill();
@@ -614,21 +618,25 @@ public final class EventManager {
 		synchronized (lockObject) {
 			if (cur.isCondWait()) assertWaitUntil(cur);
 
+			// Handle was not scheduled, nothing to do
+			if (handle.event == null)
+				return;
+
 			ProcessTarget t;
-			if (handle.event != null) {
-				Event evt = handle.event;
+			if (handle.event instanceof Event) {
+				Event evt = (Event)handle.event;
 				if (trcListener != null) trcListener.traceInterrupt(this, currentTick, evt.node.schedTick, evt.node.priority, evt.target);
 				t = evt.target;
 				removeEvent(evt);
 			}
-			else if (handle.condEvent != null) {
-				condEvents.remove(handle.condEvent);
-				t = handle.condEvent.t;
-				handle.condEvent = null;
+			else if (handle.event instanceof ConditionalEvent) {
+				ConditionalEvent evt = (ConditionalEvent)handle.event;
+				condEvents.remove(evt);
+				t = evt.t;
+				handle.event = null;
 			}
 			else {
-				// Handle was not scheduled, nothing to do
-				return;
+				throw new ProcessError("Internal error: handle points to non-event object");
 			}
 
 			Process proc = t.getProcess();
