@@ -560,12 +560,12 @@ public final class EventManager {
 	private ProcessTarget rem(EventHandle handle) {
 		ProcessTarget t = handle.event.target;
 		BaseEvent base = handle.event;
-		handle.event = null;
-		base.handle = null;
 		if (base instanceof Event) {
 			removeEvent((Event)base);
 		}
 		else {
+			handle.event = null;
+			base.handle = null;
 			condEvents.remove(base);
 		}
 		return t;
