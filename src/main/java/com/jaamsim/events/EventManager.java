@@ -444,10 +444,6 @@ public final class EventManager {
 		errListener.handleError(this, e, currentTick);
 	}
 
-	public static final void waitUntil(Conditional cond) {
-		waitUntil(cond, null);
-	}
-
 	public static final void waitUntil(Conditional cond, EventHandle handle) {
 		Process cur = Process.current();
 		cur.evt().waitUntil(cur, cond, handle);
@@ -463,10 +459,6 @@ public final class EventManager {
 			if (cur.isCondWait()) assertWaitUntil(cur);
 			if (handle != null && handle.isScheduled())
 				throw new ProcessError("Tried to waitUntil using a handle already in use");
-
-			// if the condition is already true, do not wait
-			if (cond.evaluate())
-				return;
 
 			WaitTarget t = new WaitTarget(cur);
 			ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
@@ -485,12 +477,9 @@ public final class EventManager {
 
 	private void schedUntil(Process cur, ProcessTarget t, Conditional cond, EventHandle handle) {
 		synchronized (lockObject) {
+			if (cur.isCondWait()) assertWaitUntil(cur);
 			if (handle != null && handle.isScheduled())
 				throw new ProcessError("Tried to waitUntil using a handle already in use");
-
-			// if the condition is already true, do not wait
-			if (cond.evaluate())
-				return;
 
 			ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 			if (handle != null)
