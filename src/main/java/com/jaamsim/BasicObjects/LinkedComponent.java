@@ -95,6 +95,11 @@ public abstract class LinkedComponent extends StateEntity {
 	}
 
 	@Override
+	public String getInitialState() {
+		return "None";
+	}
+
+	@Override
 	public boolean isValidState(String state) {
 		return true;
 	}
