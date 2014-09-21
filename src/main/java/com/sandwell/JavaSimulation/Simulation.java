@@ -90,17 +90,19 @@ public class Simulation extends Entity {
 	private static final BooleanInput verifyEventsInput;
 
 	@Keyword(description = "The real time speed up factor",
-	         example = "RunControl RealTimeFactor { 1200 }")
+	         example = "Simulation RealTimeFactor { 1200 }")
 	private static final IntegerInput realTimeFactor;
+
 	public static final int DEFAULT_REAL_TIME_FACTOR = 10000;
 	public static final int MIN_REAL_TIME_FACTOR = 1;
 	public static final int MAX_REAL_TIME_FACTOR= 1000000;
+
 	@Keyword(description = "A Boolean to turn on or off real time in the simulation run",
-	         example = "RunControl RealTime { TRUE }")
+	         example = "Simulation RealTime { TRUE }")
 	private static final BooleanInput realTime;
 
-	@Keyword(description = "This is placeholder description text",
-	         example = "This is placeholder example text")
+	@Keyword(description = "Indicates whether to close the program on completion of the simulation run.",
+	         example = "Simulation ExitAtStop { TRUE }")
 	private static final BooleanInput exitAtStop;
 
 	@Keyword(description = "Indicates whether the Model Builder tool should be shown on startup.",
