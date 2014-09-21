@@ -70,4 +70,14 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 		Collections.sort(list);
 		return list;
 	}
+
+	@Override
+	public String getValueString() {
+		if (value == null || defValue == value)
+			return "";
+		if (value instanceof TimeSeriesConstantDouble)
+			return super.getValueString();
+		return value.toString();
+	}
+
 }
