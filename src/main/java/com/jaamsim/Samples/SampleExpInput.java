@@ -101,7 +101,7 @@ public class SampleExpInput extends Input<SampleProvider> {
 	public String getValueString() {
 		if (value == null || defValue == value)
 			return "";
-		if (value instanceof SampleExpression)
+		if (value instanceof SampleExpression || value instanceof SampleConstant)
 			return super.getValueString();
 		return value.toString();
 	}
