@@ -1235,11 +1235,12 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_VAL_LISTSIZE, keyName, valueName);
 	}
 
-	/*
-	 * return a list of valid options if the input has limited number of
-	 * choices(e.g true or false for BooleanUinput).
-	 * if an input needs to be shown as a dropdown box  in Input Editor, it has
-	 * to override this method.
+	/**
+	 * Returns a list of valid options if the input has limited number of
+	 * choices (e.g TRUE or FALSE for BooleanInput).
+	 * <p>
+	 * This method must be overridden for an input to be shown with a drop-down
+	 * menu in the Input Editor.
 	 */
 	public ArrayList<String> getValidOptions() {
 		return null;
