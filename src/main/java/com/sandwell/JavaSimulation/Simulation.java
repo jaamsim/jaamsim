@@ -209,6 +209,13 @@ public class Simulation extends Entity {
 		this.addInput(showOutputViewer);
 		this.addInput(showPropertyViewer);
 		this.addInput(showLogViewer);
+
+		attributeDefinitionList.setHidden(true);
+		startDate.setHidden(true);
+		startTimeInput.setHidden(true);
+		traceEventsInput.setHidden(true);
+		verifyEventsInput.setHidden(true);
+		printInputReport.setHidden(true);
 	}
 
 	public Simulation() {}
