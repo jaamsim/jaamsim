@@ -857,7 +857,16 @@ public class ColParser {
 			String target = instMat.getAttrib("target");
 			parseAssert(symbol != null && target != null);
 			instInfo.materialMap.put(symbol, target);
-			// TODO, properly handle rebinding vertex inputs
+			// Make sure that if the asset is requesting a particular texture coordinate set, that it's set 0 (the only one we support)
+			for (XmlNode sub : instMat.children()) {
+				if (!sub.getTag().equals("bind_vertex_input")) {
+					continue;
+				}
+				String inputSet = sub.getAttrib("input_set");
+				if (inputSet != null && !inputSet.equals("0")) {
+					throw new RenderException("Collada model using a texture coordinate set that is not 0. This is not currently supported");
+				}
+			}
 		}
 		return instInfo;
 	}
@@ -1329,8 +1338,12 @@ public class ColParser {
 				smd.normDesc.source = source;
 				smd.normDesc.offset = offset;
 			}
-			if (semantic.equals("TEXCOORD") ||
-			    semantic.equals("TEXCOORD0")) {
+
+			String set =  input.getAttrib("set");
+
+			// We specifically only support texture coordinate set 0, which can be expressed in an annoying combination of ways
+			if (semantic.equals("TEXCOORD0") ||
+			    ((semantic.equals("TEXCOORD")) && (set == null || set.equals("0")))) {
 				smd.texCoordDesc = new DataDesc();
 				smd.texCoordDesc.source = source;
 				smd.texCoordDesc.offset = offset;
