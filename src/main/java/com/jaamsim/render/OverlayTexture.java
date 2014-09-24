@@ -169,6 +169,8 @@ public class OverlayTexture implements OverlayRenderable {
 
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
 		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, textureID);
+		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_S, GL2GL3.GL_CLAMP_TO_EDGE);
+		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_T, GL2GL3.GL_CLAMP_TO_EDGE);
 		gl.glUniform1i(texVar, 0);
 
 		if (_isTransparent) {

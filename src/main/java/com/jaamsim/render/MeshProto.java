@@ -471,6 +471,8 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
 	if (mat._texHandle != 0) {
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
 		gl.glBindTexture(GL2GL3.GL_TEXTURE_2D, mat._texHandle);
+		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_S, GL2GL3.GL_REPEAT);
+		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_T, GL2GL3.GL_REPEAT);
 		gl.glUniform1i(si.texVar, 0);
 	} else {
 		gl.glUniform4fv(si.diffuseColorVar, 1, mat._diffuseColor.toFloats(), 0);
