@@ -133,4 +133,15 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		values.add(this.getDefaultValue());
 		return values;
 	}
+
+	public ArrayList<K1> getAllKeys() {
+
+		ArrayList<K1> keys = new ArrayList<K1>();
+
+		for( K1 each : hashMap.keySet() ) {
+			keys.add(each);
+		}
+
+		return keys;
+	}
 }
