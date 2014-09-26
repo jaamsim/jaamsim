@@ -1169,11 +1169,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	/**
 	 * Starts or resumes the simulation run.
 	 */
-	private void startSimulation() {
+	public void startSimulation() {
 
 		// pause at a time
 		double runToSecs = Double.POSITIVE_INFINITY;
-		if(! pauseTime.getText().equalsIgnoreCase(infinitySign)) {
+		if(! pauseTime.getText().equalsIgnoreCase(infinitySign) && pauseTime.getText().length() > 0 ) {
 
 			try {
 				if (Tester.isDate(pauseTime.getText())) {
@@ -1242,7 +1242,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	/**
 	 * Stops the simulation run.
 	 */
-	private void stopSimulation() {
+	public void stopSimulation() {
 		if( getSimState() == SIM_STATE_RUNNING ||
 		    getSimState() == SIM_STATE_PAUSED ) {
 			currentEvt.pause();
