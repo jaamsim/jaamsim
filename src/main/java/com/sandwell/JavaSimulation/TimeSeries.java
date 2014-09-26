@@ -166,6 +166,11 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		}
 	}
 
+	@Override
+	public double getNextTimeAfter(double simTime) {
+		return getNextChangeTimeAfterHours(simTime / 3600.0d) * 3600.0d;
+	}
+
 	/**
 	 * Return the first time that the value will be updated, after the given time.
 	 */

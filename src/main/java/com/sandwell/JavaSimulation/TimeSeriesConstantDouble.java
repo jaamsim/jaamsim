@@ -46,6 +46,11 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	}
 
 	@Override
+	public double getNextTimeAfter(double simTime) {
+		return Double.POSITIVE_INFINITY;
+	}
+
+	@Override
 	public double getMaxValue() {
 		return val;
 	}

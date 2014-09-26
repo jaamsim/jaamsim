@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import com.jaamsim.Samples.SampleProvider;
 
 public interface TimeSeriesProvider extends SampleProvider {
+	public double getNextTimeAfter(double simTime);
 	public double getNextChangeTimeAfterHours( double simTime );
 	public double getMaxTimeValue();
 }
