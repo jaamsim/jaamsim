@@ -20,9 +20,9 @@ import java.util.Collections;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -88,10 +88,10 @@ public class SampleExpInput extends Input<SampleProvider> {
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<String>();
-		for (Entity each: Entity.getAll()) {
-			if( (SampleProvider.class).isAssignableFrom(each.getClass()) ) {
-			    list.add(each.getInputName());
-			}
+		for (Entity each : Entity.getClonesOfIterator(Entity.class, SampleProvider.class)) {
+			SampleProvider sp = (SampleProvider)each;
+			if (sp.getUnitType() == unitType)
+				list.add(each.getInputName());
 		}
 		Collections.sort(list);
 		return list;
