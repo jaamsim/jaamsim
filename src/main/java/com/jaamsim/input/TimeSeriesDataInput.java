@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.TimeSeriesData;
@@ -65,10 +66,28 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 				each.add(kw.getArg(j));
 			}
 
-			// Check the number of entries in the record
-			Input.assertCountRange(each, 2, 3);
+			// Time input in RFC8601 date/time format
+			long recordus;
+			if (Input.isRFC8601DateTime(each.get(0))) {
+				Input.assertCountRange(each, 2, 3);
+				recordus = Input.parseRFC8601DateTime(each.get(0));
+				each.remove(0);
+			}
+			// Time input in number/unit format
+			else {
+				// Parse the unit portion of the time input
+				Input.assertCountRange(each, 3, 4);
+				TimeUnit unit = Input.tryParseEntity(each.get(1), TimeUnit.class);
+				if (unit == null)
+					throw new InputErrorException(INP_ERR_NOUNITFOUND, each.get(1), "TimeUnit");
 
-			long recordus = Input.parseRFC8601DateTime(each.get(0));
+				// Parse the numeric portion of the time input
+				double factor = unit.getConversionFactorToSI();
+				recordus = (long) (Input.parseDouble(each.get(0), 0.0, Double.POSITIVE_INFINITY, factor)*1e6);
+				each.remove(0);
+				each.remove(0);
+			}
+
 			// Make sure the times are in increasing order
 			if (recordus <= lastTime)
 				throw new InputErrorException( "The times must be given in increasing order on " + each.get(0));
@@ -83,9 +102,10 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 			long usOffset = recordus - startingYearOffset;
 
-			each.remove(0);  // We've finished parsing the date at this point
+			// Value portion of the record
 			DoubleVector v = Input.parseDoubles(each, minValue, maxValue, unitType);
 
+			// Store the time and value for this record
 			times.add(usOffset / 3.6e9d); // convert to hours 3600 secs * 1e6 us
 			values.add(v.get(0));
 		}
