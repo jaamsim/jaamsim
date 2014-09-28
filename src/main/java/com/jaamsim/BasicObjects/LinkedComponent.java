@@ -23,6 +23,7 @@ import com.jaamsim.input.StringInput;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.RateUnit;
+import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
@@ -48,6 +49,7 @@ public abstract class LinkedComponent extends StateEntity {
 	private int numberAdded;     // Number of entities added to this component from upstream
 	private int numberProcessed; // Number of entities processed by this component
 	private DisplayEntity receivedEntity; // Entity most recently received by this component
+	private double releaseTime = Double.NaN;
 
 	{
 		testEntity = new EntityInput<DisplayEntity>( DisplayEntity.class, "TestEntity", "Key Inputs", null);
@@ -93,6 +95,7 @@ public abstract class LinkedComponent extends StateEntity {
 		numberAdded = 0;
 		numberProcessed = 0;
 		receivedEntity = null;
+		releaseTime = Double.NaN;
 	}
 
 	@Override
@@ -125,6 +128,7 @@ public abstract class LinkedComponent extends StateEntity {
 	 */
 	public void sendToNextComponent(DisplayEntity ent) {
 		numberProcessed++;
+		releaseTime = this.getSimTime();
 		if( nextComponentInput.getValue() != null )
 			nextComponentInput.getValue().addDisplayEntity(ent);
 	}
@@ -161,6 +165,13 @@ public abstract class LinkedComponent extends StateEntity {
 	  reportable = true)
 	public Double getProcessingRate( double simTime) {
 		return numberProcessed/simTime;
+	}
+
+	@Output(name = "ReleaseTime",
+	 description = "The time at which the last entity was released.",
+	    unitType = TimeUnit.class)
+	public Double getReleaseTime(double simTime) {
+		return releaseTime;
 	}
 
 }
