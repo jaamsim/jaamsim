@@ -92,6 +92,7 @@ public abstract class LinkedComponent extends StateEntity {
 		super.earlyInit();
 		numberAdded = 0;
 		numberProcessed = 0;
+		receivedEntity = null;
 	}
 
 	@Override
@@ -123,10 +124,9 @@ public abstract class LinkedComponent extends StateEntity {
 	 * @param ent - the entity to be sent downstream.
 	 */
 	public void sendToNextComponent(DisplayEntity ent) {
+		numberProcessed++;
 		if( nextComponentInput.getValue() != null )
 			nextComponentInput.getValue().addDisplayEntity(ent);
-
-		numberProcessed++;
 	}
 
 	// ******************************************************************************************************
