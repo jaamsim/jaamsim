@@ -52,14 +52,14 @@ public abstract class LinkedComponent extends StateEntity {
 	private double releaseTime = Double.NaN;
 
 	{
-		testEntity = new EntityInput<DisplayEntity>( DisplayEntity.class, "TestEntity", "Key Inputs", null);
-		this.addInput( testEntity);
+		testEntity = new EntityInput<DisplayEntity>(DisplayEntity.class, "TestEntity", "Key Inputs", null);
+		this.addInput(testEntity);
 
-		nextComponentInput = new EntityInput<LinkedComponent>( LinkedComponent.class, "NextComponent", "Key Inputs", null);
-		this.addInput( nextComponentInput);
+		nextComponentInput = new EntityInput<LinkedComponent>(LinkedComponent.class, "NextComponent", "Key Inputs", null);
+		this.addInput(nextComponentInput);
 
 		stateAssignment = new StringInput("StateAssignment", "Key Inputs", "");
-		this.addInput( stateAssignment);
+		this.addInput(stateAssignment);
 	}
 
 	@Override
@@ -77,14 +77,14 @@ public abstract class LinkedComponent extends StateEntity {
 		super.validate();
 
 		// Confirm that the next entity in the chain has been specified
-		if( ! nextComponentInput.getHidden() &&	nextComponentInput.getValue() == null ) {
-			throw new InputErrorException( "The keyword NextComponent must be set." );
+		if (!nextComponentInput.getHidden() &&	nextComponentInput.getValue() == null) {
+			throw new InputErrorException("The keyword NextComponent must be set.");
 		}
 
 		// If a state is to be assigned, ensure that the prototype is a StateEntity
 		if (testEntity.getValue() != null && !stateAssignment.getValue().isEmpty()) {
 			if (!(testEntity.getValue() instanceof StateEntity)) {
-				throw new InputErrorException( "Only a SimEntity can be specified for the TestEntity keyword if a state is be be assigned." );
+				throw new InputErrorException("Only a SimEntity can be specified for the TestEntity keyword if a state is be be assigned.");
 			}
 		}
 	}
@@ -112,7 +112,7 @@ public abstract class LinkedComponent extends StateEntity {
 	 * Receives the specified entity from an upstream component.
 	 * @param ent - the entity received from upstream.
 	 */
-	public void addDisplayEntity(DisplayEntity ent ) {
+	public void addDisplayEntity(DisplayEntity ent) {
 
 		receivedEntity = ent;
 		numberAdded++;
