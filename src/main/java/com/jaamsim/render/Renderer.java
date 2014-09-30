@@ -300,6 +300,8 @@ public class Renderer implements GLAnimatorControl {
 
 				displayNeeded.set(false);
 
+				updateRenderableScene();
+
 				// Run all render messages
 				RenderMessage message;
 				boolean moreMessages = false;
@@ -323,8 +325,6 @@ public class Renderer implements GLAnimatorControl {
 					}
 
 				} while (moreMessages);
-
-				updateRenderableScene();
 
 				// Defensive copy the window list (in case a window is closed while we render)
 				HashMap<Integer, RenderWindow> winds;
