@@ -200,11 +200,16 @@ public class ScreenPointsModel extends DisplayModel {
 			out.add(lp);
 
 			for (int i = 0; i < nodePoints.size(); ++i) {
-				addPoint(nodePoints.get(i), ColourInput.GREEN, ColourInput.LIGHT_GREY, RenderManager.LINENODE_PICK_ID - i, out);
+
+				Color4d col = ColourInput.GREEN;
+				if (i == 0)
+					col = ColourInput.BLUE;
+				if (i == nodePoints.size() -1)
+					col = ColourInput.YELLOW;
+
+				addPoint(nodePoints.get(i), col, ColourInput.LIGHT_GREY, RenderManager.LINENODE_PICK_ID - i, out);
 			}
-
 		}
-
 	}
 
 	private void addPoint(Vec4d p, Color4d col, Color4d hovCol, long pickID, ArrayList<RenderProxy> out) {
