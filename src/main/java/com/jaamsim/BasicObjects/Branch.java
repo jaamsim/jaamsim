@@ -15,6 +15,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -66,6 +67,8 @@ public class Branch extends LinkedComponent {
 
 		// Choose the next component for this entity
 		int i = (int) choice.getValue().getNextSample(this.getSimTime());
+		if (i<1 || i>nextComponentList.getValue().size())
+			throw new ErrorException("Chosen index i=%s is out of range for NextComponentList: %s.", i, nextComponentList.getValue());
 
 		// Pass the entity to the next component
 		nextComponentList.getValue().get(i-1).addDisplayEntity(ent);
