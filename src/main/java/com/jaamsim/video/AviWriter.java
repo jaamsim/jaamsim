@@ -51,6 +51,7 @@ public class AviWriter {
 			this.numFrames = numFrames;
 
 			raf = new RandomAccessFile(filename, "rw");
+			raf.setLength(0);
 			fc = raf.getChannel();
 
 			writeHeader();
