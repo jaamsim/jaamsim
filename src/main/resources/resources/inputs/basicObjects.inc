@@ -29,6 +29,7 @@ Define ObjectType {
 					SignalThreshold
                     TimeSeriesThreshold
                     ExpressionThreshold
+					SetGraphics
 					Statistics
 					ExpressionEntity
                   }
@@ -51,6 +52,7 @@ Define	ImageModel {
 			PackIconModel
 			UnpackIconModel
 			TimeSeriesIconModel
+			SetGraphicsIconModel
 			StatisticsIconModel
 			}
 			
@@ -71,6 +73,7 @@ EntitySignalIconModel   ImageFile { '<res>/images/Signal-256.png' }      Transpa
 PackIconModel           ImageFile { '<res>/images/Pack-256.png' }        Transparent { TRUE }
 UnpackIconModel         ImageFile { '<res>/images/Unpack-256.png' }      Transparent { TRUE }
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
+SetGraphicsIconModel    ImageFile { '<res>/images/SetGraphics-256.png' } Transparent { TRUE }
 StatisticsIconModel     ImageFile { '<res>/images/Statistics-256.png' }  Transparent { TRUE }
 
 SimEntity               JavaClass { com.jaamsim.BasicObjects.SimEntity                  } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Sphere                }
@@ -103,6 +106,7 @@ TimeSeries              JavaClass { com.sandwell.JavaSimulation.TimeSeries      
 SignalThreshold         JavaClass { com.jaamsim.Thresholds.SignalThreshold              } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 TimeSeriesThreshold	    JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
+SetGraphics             JavaClass { com.jaamsim.BasicObjects.SetGraphics                } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SetGraphicsIconModel   }
 Statistics              JavaClass { com.jaamsim.BasicObjects.Statistics                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ StatisticsIconModel    }
 ExpressionEntity              JavaClass { com.jaamsim.basicsim.ExpressionEntity                 } Palette { 'Basic Objects' }
 
@@ -136,4 +140,5 @@ TimeSeries         Description { 'Provides a floating point number that changes 
 TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries for which an activity is permitted.' }
 SignalThreshold     Description { 'Threshold that is opened and closed directly by an EntitySignal object.' }
 ExpressionThreshold Description { 'Specifies a logical condition for which an activity is permitted.' }
+SetGraphics         Description { 'Changes the appearance of the received entity.' }
 Statistics          Description { 'Collects statistics from the received entities.' }
