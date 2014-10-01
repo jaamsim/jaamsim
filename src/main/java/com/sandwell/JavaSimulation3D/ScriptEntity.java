@@ -65,6 +65,19 @@ public class ScriptEntity extends Entity {
 
 		// If the script file exists, open it
 		tokens = FileInput.getTokensFromURI(scriptFileName.getValue());
+
+		// Read records until a Time record is read
+		// Restarts will work for simple scripts with a record at Time 0
+		// Restarts should work for all scripts provided the script has initial inputs before the first Time record
+		for (lastTokenIdx++; lastTokenIdx < tokens.size(); lastTokenIdx++) {
+			InputAgent.processKeywordRecord(tokens.get(lastTokenIdx), null);
+			if( tokens.get(lastTokenIdx).get( 0 ).equals( this.getName() ) ) {
+				if( tokens.get( lastTokenIdx ).get( 1 ).equals( "Time" ) ) {
+					lastTokenIdx--;
+					return;
+				}
+			}
+		}
 	}
 
 	private static class ScriptTarget extends ProcessTarget {
