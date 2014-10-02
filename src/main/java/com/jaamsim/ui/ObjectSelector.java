@@ -22,7 +22,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Locale;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -41,6 +40,7 @@ import javax.swing.tree.TreeSelectionModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ObjectType;
@@ -430,8 +430,8 @@ static class DuplicateMenuItem extends MenuItem {
 			dEnt.setPosition(pos);
 
 			// Set the input for the "Position" keyword to the new value
-			InputAgent.processEntity_Keyword_Value(dEnt, "Position", String.format((Locale)null, "%.6f %.6f %.6f m", pos.x, pos.y, pos.z ));
-			FrameBox.valueUpdate();
+			KeywordIndex kw = InputAgent.formatPointInputs("Position", pos, "m");
+			InputAgent.apply(dEnt, kw);
 		}
 
 		// Show the duplicated entity in the editors and viewers
