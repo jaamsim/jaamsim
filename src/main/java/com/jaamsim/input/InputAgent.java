@@ -1277,6 +1277,17 @@ public class InputAgent {
 		return new KeywordIndex(tokens, keyword, 0, tokens.size(), null);
 	}
 
+	public static KeywordIndex formatPointInputs(String keyword, Vec3d point) {
+		ArrayList<String> tokens = new ArrayList<String>(4);
+		tokens.add(String.format((Locale)null, "%.6f", point.x));
+		tokens.add(String.format((Locale)null, "%.6f", point.y));
+		tokens.add(String.format((Locale)null, "%.6f", point.z));
+		tokens.add("m");
+
+		// Parse the keyword inputs
+		return new KeywordIndex(tokens, keyword, 0, tokens.size(), null);
+	}
+
 	/**
 	 * Split an input (list of strings) down to a single level of nested braces, this may then be called again for
 	 * further nesting.

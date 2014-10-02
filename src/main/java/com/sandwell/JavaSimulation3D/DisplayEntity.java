@@ -16,7 +16,6 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import com.jaamsim.DisplayModels.DisplayModel;
@@ -28,6 +27,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
@@ -37,7 +37,6 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.RenderUtils;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -530,8 +529,8 @@ public class DisplayEntity extends Entity {
 			localPos.sub3(entity.position);
 
 		setPosition(localPos);
-		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format((Locale)null, "%.6f %.6f %.6f m", localPos.x, localPos.y, localPos.z ));
-		FrameBox.valueUpdate();
+		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), localPos);
+		InputAgent.processKeyword(this, kw);
 	}
 
 	/*
@@ -577,9 +576,8 @@ public class DisplayEntity extends Entity {
 		newPos.add3(distance);
 		this.setPosition(newPos);
 
-		// inform simulation and editBox of new positions
-		InputAgent.processEntity_Keyword_Value(this, positionInput, String.format((Locale)null, "%.6f %.6f %.6f m", newPos.x, newPos.y, newPos.z ));
-		FrameBox.valueUpdate();
+		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), newPos);
+		InputAgent.processKeyword(this, kw);
 	}
 
 	public boolean isActive() {

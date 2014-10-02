@@ -26,6 +26,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.KeyedVec3dInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Transform;
@@ -251,11 +252,10 @@ public void updateCenterAndPos(Vec3d center, Vec3d pos) {
 			tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
 		}
 
-		Locale loc = null;
-		String posVal = String.format(loc, "%f %f %f m", tempPos.x, tempPos.y, tempPos.z);
-		InputAgent.processEntity_Keyword_Value(this, this.position, posVal);
-		String cenVal = String.format(loc, "%f %f %f m", tempCent.x, tempCent.y, tempCent.z);
-		InputAgent.processEntity_Keyword_Value(this, this.center, cenVal);
+		KeywordIndex kw = InputAgent.formatPointInputs(this.position.getKeyword(), tempPos);
+		InputAgent.processKeyword(this, kw);
+		kw = InputAgent.formatPointInputs(this.center.getKeyword(), tempCent);
+		InputAgent.processKeyword(this, kw);
 	}
 }
 
@@ -279,13 +279,13 @@ public void setRegion(Region reg) {
 }
 
 public void setPosition(Vec3d pos) {
-	String val = String.format((Locale)null, "%f %f %f m", pos.x, pos.y, pos.z);
-	InputAgent.processEntity_Keyword_Value(this, this.position, val);
+	KeywordIndex kw = InputAgent.formatPointInputs(position.getKeyword(), pos);
+	InputAgent.processKeyword(this, kw);
 }
 
 public void setCenter(Vec3d cent) {
-	String val = String.format((Locale)null, "%f %f %f m", cent.x, cent.y, cent.z);
-	InputAgent.processEntity_Keyword_Value(this, this.center, val);
+	KeywordIndex kw = InputAgent.formatPointInputs(center.getKeyword(), cent);
+	InputAgent.processKeyword(this, kw);
 }
 
 public void setWindowPos(int x, int y, int width, int height) {
