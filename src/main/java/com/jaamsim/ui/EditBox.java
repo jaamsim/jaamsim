@@ -760,11 +760,6 @@ public static class CellListener implements CellEditorListener {
 				if (!Parser.isQuoted(str))
 					str = String.format("'%s'", str);
 			}
-
-			// 2) Blank Entry - restore the default value
-			if( str.isEmpty() ) {
-				str = in.getDefaultString();
-			}
 			// Process the new data for the keyword
 			InputAgent.processEntity_Keyword_Value(EditBox.getInstance().getCurrentEntity(), in, str);
 
