@@ -482,10 +482,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				Simulation sim = Simulation.getInstance();
 				ArrayList<String> arg = new ArrayList<String>(1);
 				arg.add("TRUE");
-				InputAgent.processKeyword(sim, new KeywordIndex("ShowModelBuilder", arg, null));
-				InputAgent.processKeyword(sim, new KeywordIndex("ShowObjectSelector", arg, null));
-				InputAgent.processKeyword(sim, new KeywordIndex("ShowInputEditor", arg, null));
-				InputAgent.processKeyword(sim, new KeywordIndex("ShowOutputViewer", arg, null));
+				InputAgent.apply(sim, new KeywordIndex("ShowModelBuilder", arg, null));
+				InputAgent.apply(sim, new KeywordIndex("ShowObjectSelector", arg, null));
+				InputAgent.apply(sim, new KeywordIndex("ShowInputEditor", arg, null));
+				InputAgent.apply(sim, new KeywordIndex("ShowOutputViewer", arg, null));
 			}
 		} );
 		viewMenu.add( showBasicToolsMenuItem );
@@ -500,12 +500,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				Simulation sim = Simulation.getInstance();
 				ArrayList<String> arg = new ArrayList<String>(1);
 				arg.add("FALSE");
-				InputAgent.processKeyword(sim, new KeywordIndex("ShowModelBuilder", arg, null));
-				InputAgent.processKeyword(sim, new KeywordIndex("ShowObjectSelector", arg, null));
-				InputAgent.processKeyword(sim, new KeywordIndex("ShowInputEditor", arg, null));
-				InputAgent.processKeyword(sim, new KeywordIndex("ShowOutputViewer", arg, null));
-				InputAgent.processKeyword(sim, new KeywordIndex("ShowPropertyViewer", arg, null));
-				InputAgent.processKeyword(sim, new KeywordIndex("ShowLogViewer", arg, null));
+				InputAgent.apply(sim, new KeywordIndex("ShowModelBuilder", arg, null));
+				InputAgent.apply(sim, new KeywordIndex("ShowObjectSelector", arg, null));
+				InputAgent.apply(sim, new KeywordIndex("ShowInputEditor", arg, null));
+				InputAgent.apply(sim, new KeywordIndex("ShowOutputViewer", arg, null));
+				InputAgent.apply(sim, new KeywordIndex("ShowPropertyViewer", arg, null));
+				InputAgent.apply(sim, new KeywordIndex("ShowLogViewer", arg, null));
 			}
 		} );
 		viewMenu.add( closeAllToolsMenuItem );
@@ -519,7 +519,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			public void actionPerformed( ActionEvent event ) {
 				ArrayList<String> arg = new ArrayList<String>(1);
 				arg.add("TRUE");
-				InputAgent.processKeyword(Simulation.getInstance(), new KeywordIndex("ShowModelBuilder", arg, null));
+				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowModelBuilder", arg, null));
 			}
 		} );
 		viewMenu.add( objectPalletMenuItem );
@@ -533,7 +533,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			public void actionPerformed( ActionEvent event ) {
 				ArrayList<String> arg = new ArrayList<String>(1);
 				arg.add("TRUE");
-				InputAgent.processKeyword(Simulation.getInstance(), new KeywordIndex("ShowObjectSelector", arg, null));
+				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowObjectSelector", arg, null));
 			}
 		} );
 		viewMenu.add( objectSelectorMenuItem );
@@ -547,7 +547,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			public void actionPerformed( ActionEvent event ) {
 				ArrayList<String> arg = new ArrayList<String>(1);
 				arg.add("TRUE");
-				InputAgent.processKeyword(Simulation.getInstance(), new KeywordIndex("ShowInputEditor", arg, null));
+				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowInputEditor", arg, null));
 			}
 		} );
 		viewMenu.add( inputEditorMenuItem );
@@ -561,7 +561,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			public void actionPerformed( ActionEvent event ) {
 				ArrayList<String> arg = new ArrayList<String>(1);
 				arg.add("TRUE");
-				InputAgent.processKeyword(Simulation.getInstance(), new KeywordIndex("ShowOutputViewer", arg, null));
+				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowOutputViewer", arg, null));
 			}
 		} );
 		viewMenu.add( outputMenuItem );
@@ -575,7 +575,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			public void actionPerformed( ActionEvent event ) {
 				ArrayList<String> arg = new ArrayList<String>(1);
 				arg.add("TRUE");
-				InputAgent.processKeyword(Simulation.getInstance(), new KeywordIndex("ShowPropertyViewer", arg, null));
+				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowPropertyViewer", arg, null));
 			}
 		} );
 		viewMenu.add( propertiesMenuItem );
@@ -589,7 +589,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			public void actionPerformed( ActionEvent event ) {
 				ArrayList<String> arg = new ArrayList<String>(1);
 				arg.add("TRUE");
-				InputAgent.processKeyword(Simulation.getInstance(), new KeywordIndex("ShowLogViewer", arg, null));
+				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowLogViewer", arg, null));
 			}
 		} );
 		viewMenu.add( logMenuItem );
@@ -996,7 +996,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			ArrayList<String> arg = new ArrayList<String>(1);
 			arg.add("TRUE");
-			InputAgent.processKeyword(view, new KeywordIndex("ShowWindow", arg, null));
+			InputAgent.apply(view, new KeywordIndex("ShowWindow", arg, null));
 			RenderManager.inst().createWindow(view);
 			FrameBox.setSelectedEntity(view);
 		}
@@ -1024,7 +1024,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			FrameBox.setSelectedEntity(tmp);
 			ArrayList<String> arg = new ArrayList<String>(1);
 			arg.add("TRUE");
-			InputAgent.processKeyword(tmp, new KeywordIndex("ShowWindow", arg, null));
+			InputAgent.apply(tmp, new KeywordIndex("ShowWindow", arg, null));
 		}
 	}
 
@@ -1644,7 +1644,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		public void stateChanged( ChangeEvent e ) {
 			ArrayList<String> arg = new ArrayList<String>(1);
 			arg.add(String.format("%d", ((JSpinner)e.getSource()).getValue()));
-			InputAgent.processKeyword(Simulation.getInstance(), new KeywordIndex("RealTimeFactor", arg, null));
+			InputAgent.apply(Simulation.getInstance(), new KeywordIndex("RealTimeFactor", arg, null));
 		}
 	}
 
@@ -1691,7 +1691,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				arg.add("TRUE");
 			else
 				arg.add("FALSE");
-			InputAgent.processKeyword(Simulation.getInstance(), new KeywordIndex("RealTime", arg, null));
+			InputAgent.apply(Simulation.getInstance(), new KeywordIndex("RealTime", arg, null));
 		}
 	}
 

@@ -252,10 +252,10 @@ public void updateCenterAndPos(Vec3d center, Vec3d pos) {
 			tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
 		}
 
-		KeywordIndex kw = InputAgent.formatPointInputs(this.position.getKeyword(), tempPos);
-		InputAgent.processKeyword(this, kw);
-		kw = InputAgent.formatPointInputs(this.center.getKeyword(), tempCent);
-		InputAgent.processKeyword(this, kw);
+		KeywordIndex kw = InputAgent.formatPointInputs(this.position.getKeyword(), tempPos, "m");
+		InputAgent.apply(this, kw);
+		kw = InputAgent.formatPointInputs(this.center.getKeyword(), tempCent, "m");
+		InputAgent.apply(this, kw);
 	}
 }
 
@@ -282,13 +282,13 @@ public void setRegion(Region reg) {
 }
 
 public void setPosition(Vec3d pos) {
-	KeywordIndex kw = InputAgent.formatPointInputs(position.getKeyword(), pos);
-	InputAgent.processKeyword(this, kw);
+	KeywordIndex kw = InputAgent.formatPointInputs(position.getKeyword(), pos, "m");
+	InputAgent.apply(this, kw);
 }
 
 public void setCenter(Vec3d cent) {
-	KeywordIndex kw = InputAgent.formatPointInputs(center.getKeyword(), cent);
-	InputAgent.processKeyword(this, kw);
+	KeywordIndex kw = InputAgent.formatPointInputs(center.getKeyword(), cent, "m");
+	InputAgent.apply(this, kw);
 }
 
 public void setWindowPos(int x, int y, int width, int height) {

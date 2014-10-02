@@ -114,7 +114,7 @@ public class FrameBox extends JFrame {
 
 		@Override
 		public void windowClosing(WindowEvent e) {
-			InputAgent.processKeyword(Simulation.getInstance(), kw);
+			InputAgent.apply(Simulation.getInstance(), kw);
 		}
 	}
 

@@ -1006,9 +1006,8 @@ public class RenderManager implements DragSourceListener {
 			pos.add3(posAdjust);
 			dispEnt.setGlobalPosition(pos);
 
-			Vec3d vec = dispEnt.getSize();
-			InputAgent.processEntity_Keyword_Value(dispEnt, "Size", String.format((Locale)null, "%.6f %.6f %.6f %s", vec.x, vec.y, vec.z, "m" ));
-			FrameBox.valueUpdate();
+			KeywordIndex kw = InputAgent.formatPointInputs("Size", dispEnt.getSize(), "m");
+			InputAgent.apply(dispEnt, kw);
 			return true;
 		}
 
@@ -1032,8 +1031,8 @@ public class RenderManager implements DragSourceListener {
 
 			Vec3d orient = dispEnt.getOrientation();
 			orient.z += theta;
-			InputAgent.processEntity_Keyword_Value(dispEnt, "Orientation", String.format((Locale)null, "%f %f %f rad", orient.x, orient.y, orient.z));
-			FrameBox.valueUpdate();
+			KeywordIndex kw = InputAgent.formatPointInputs("Orientation", orient, "rad");
+			InputAgent.apply(dispEnt, kw);
 			return true;
 		}
 		if (dragHandleID == LINEDRAG_PICK_ID) {
@@ -1106,7 +1105,7 @@ public class RenderManager implements DragSourceListener {
 			}
 
 			KeywordIndex kw = InputAgent.formatPointsInputs("Points", screenPoints, new Vec3d());
-			InputAgent.processKeyword(dispEnt, kw);
+			InputAgent.apply(dispEnt, kw);
 			return true;
 		}
 
@@ -1157,7 +1156,7 @@ public class RenderManager implements DragSourceListener {
 			splitPoints.add(points.get(i));
 		}
 		KeywordIndex kw = InputAgent.formatPointsInputs("Points", splitPoints, new Vec3d());
-		InputAgent.processKeyword(selectedEntity, kw);
+		InputAgent.apply(selectedEntity, kw);
 	}
 
 	private void removeLineNode(int windowID, int x, int y) {
@@ -1202,7 +1201,7 @@ public class RenderManager implements DragSourceListener {
 			splitPoints.add(points.get(i));
 		}
 		KeywordIndex kw = InputAgent.formatPointsInputs("Points", splitPoints, new Vec3d());
-		InputAgent.processKeyword(selectedEntity, kw);
+		InputAgent.apply(selectedEntity, kw);
 	}
 
 	private boolean isMouseHandleID(long id) {

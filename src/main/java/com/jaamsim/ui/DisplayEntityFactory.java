@@ -15,7 +15,6 @@
 package com.jaamsim.ui;
 
 import java.io.File;
-import java.util.Locale;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -24,6 +23,7 @@ import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.MeshProtoKey;
@@ -164,11 +164,13 @@ public class DisplayEntityFactory extends Entity {
 		modelSize.scale3(2);
 
 		// Set the DisplayEntity's position, size, and alignment
-		String pos = String.format((Locale)null, "%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z);
-		String size = String.format((Locale)null, "%.6f %.6f %.6f m", modelSize.x, modelSize.y, modelSize.z);
-		InputAgent.processEntity_Keyword_Value(de, "Position", pos);
-		InputAgent.processEntity_Keyword_Value(de, "Alignment", "0 0 0");
-		InputAgent.processEntity_Keyword_Value(de, "Size", size);
+		KeywordIndex kw;
+		kw = InputAgent.formatPointInputs("Position", entityPos, "m");
+		InputAgent.apply(de, kw);
+		kw = InputAgent.formatPointInputs("Alignment", new Vec3d(), null);
+		InputAgent.apply(de, kw);
+		kw = InputAgent.formatPointInputs("Size", modelSize, "m");
+		InputAgent.apply(de, kw);
 	}
 
 	/**

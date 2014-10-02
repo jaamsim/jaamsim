@@ -130,7 +130,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 	@Override
 	public void dragged(Vec3d dist) {
 		KeywordIndex kw = InputAgent.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
-		InputAgent.processKeyword(this, kw);
+		InputAgent.apply(this, kw);
 
 		super.dragged(dist);
 	}

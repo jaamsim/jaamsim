@@ -1266,12 +1266,13 @@ public class InputAgent {
 		return new KeywordIndex(tokens, keyword, 0, tokens.size(), null);
 	}
 
-	public static KeywordIndex formatPointInputs(String keyword, Vec3d point) {
+	public static KeywordIndex formatPointInputs(String keyword, Vec3d point, String unit) {
 		ArrayList<String> tokens = new ArrayList<String>(4);
 		tokens.add(String.format((Locale)null, "%.6f", point.x));
 		tokens.add(String.format((Locale)null, "%.6f", point.y));
 		tokens.add(String.format((Locale)null, "%.6f", point.z));
-		tokens.add("m");
+		if (unit != null)
+			tokens.add(unit);
 
 		// Parse the keyword inputs
 		return new KeywordIndex(tokens, keyword, 0, tokens.size(), null);

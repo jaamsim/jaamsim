@@ -529,8 +529,8 @@ public class DisplayEntity extends Entity {
 			localPos.sub3(entity.position);
 
 		setPosition(localPos);
-		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), localPos);
-		InputAgent.processKeyword(this, kw);
+		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), localPos, "m");
+		InputAgent.apply(this, kw);
 	}
 
 	/*
@@ -576,8 +576,8 @@ public class DisplayEntity extends Entity {
 		newPos.add3(distance);
 		this.setPosition(newPos);
 
-		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), newPos);
-		InputAgent.processKeyword(this, kw);
+		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), newPos, "m");
+		InputAgent.apply(this, kw);
 	}
 
 	public boolean isActive() {
