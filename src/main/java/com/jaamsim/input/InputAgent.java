@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -35,6 +36,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.Input.ParseContext;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
@@ -1258,6 +1260,21 @@ public class InputAgent {
 
 		// Set the model state to unedited
 		sessionEdited = false;
+	}
+
+	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
+		ArrayList<String> tokens = new ArrayList<String>(points.size() * 6);
+		for (Vec3d v : points) {
+			tokens.add("{");
+			tokens.add(String.format((Locale)null, "%.3f", v.x + offset.x));
+			tokens.add(String.format((Locale)null, "%.3f", v.y + offset.y));
+			tokens.add(String.format((Locale)null, "%.3f", v.z + offset.z));
+			tokens.add("m");
+			tokens.add("}");
+		}
+
+		// Parse the keyword inputs
+		return new KeywordIndex(tokens, keyword, 0, tokens.size(), null);
 	}
 
 	/**

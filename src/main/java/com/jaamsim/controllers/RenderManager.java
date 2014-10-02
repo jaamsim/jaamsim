@@ -1105,14 +1105,8 @@ public class RenderManager implements DragSourceListener {
 				return true;
 			}
 
-			StringBuilder sb = new StringBuilder();
-			String pointFormatter = " { %.3f %.3f %.3f m }";
-			for(Vec3d pt : screenPoints) {
-				sb.append(String.format((Locale)null, pointFormatter, pt.x, pt.y, pt.z));
-			}
-
-			InputAgent.processEntity_Keyword_Value(dispEnt, pointsInput, sb.toString());
-			FrameBox.valueUpdate();
+			KeywordIndex kw = InputAgent.formatPointsInputs("Points", screenPoints, new Vec3d());
+			InputAgent.processKeyword(dispEnt, kw);
 			return true;
 		}
 
@@ -1154,26 +1148,16 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// If we are here, we have a segment to split, at index i
-
-		StringBuilder sb = new StringBuilder();
-		Locale loc = null;
-		String pointFormatter = " { %.3f %.3f %.3f m }";
-
+		ArrayList<Vec3d> splitPoints = new ArrayList<Vec3d>();
 		for(int i = 0; i <= splitInd; ++i) {
-			Vec3d pt = points.get(i);
-			sb.append(String.format(loc, pointFormatter, pt.x, pt.y, pt.z));
+			splitPoints.add(points.get(i));
 		}
-
-		sb.append(String.format(loc, pointFormatter, nearPoint.x, nearPoint.y, nearPoint.z));
-
+		splitPoints.add(nearPoint);
 		for (int i = splitInd+1; i < points.size(); ++i) {
-			Vec3d pt = points.get(i);
-			sb.append(String.format(loc, pointFormatter, pt.x, pt.y, pt.z));
+			splitPoints.add(points.get(i));
 		}
-
-		Input<?> pointsInput = selectedEntity.getInput("Points");
-		InputAgent.processEntity_Keyword_Value(selectedEntity, pointsInput, sb.toString());
-		FrameBox.valueUpdate();
+		KeywordIndex kw = InputAgent.formatPointsInputs("Points", splitPoints, new Vec3d());
+		InputAgent.processKeyword(selectedEntity, kw);
 	}
 
 	private void removeLineNode(int windowID, int x, int y) {
@@ -1212,25 +1196,14 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 
-		StringBuilder sb = new StringBuilder();
-		Locale loc = null;
-		String pointFormatter = " { %.3f %.3f %.3f m }";
-
+		ArrayList<Vec3d> splitPoints = new ArrayList<Vec3d>();
 		for(int i = 0; i < points.size(); ++i) {
-			if (i == removeInd) {
-				continue;
-			}
-
-			Vec3d pt = points.get(i);
-			sb.append(String.format(loc, pointFormatter, pt.x, pt.y, pt.z));
+			if (i == removeInd) continue;
+			splitPoints.add(points.get(i));
 		}
-
-		Input<?> pointsInput = selectedEntity.getInput("Points");
-		InputAgent.processEntity_Keyword_Value(selectedEntity, pointsInput, sb.toString());
-		FrameBox.valueUpdate();
+		KeywordIndex kw = InputAgent.formatPointsInputs("Points", splitPoints, new Vec3d());
+		InputAgent.processKeyword(selectedEntity, kw);
 	}
-
-
 
 	private boolean isMouseHandleID(long id) {
 		return (id < 0); // For now all negative IDs are mouse handles, this may change
