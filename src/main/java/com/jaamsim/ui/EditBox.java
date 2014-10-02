@@ -761,7 +761,7 @@ public static class CellListener implements CellEditorListener {
 					str = String.format("'%s'", str);
 			}
 			// Process the new data for the keyword
-			InputAgent.processEntity_Keyword_Value(EditBox.getInstance().getCurrentEntity(), in, str);
+			InputAgent.processEntity_Keyword_Value(EditBox.getInstance().getCurrentEntity(), in.getKeyword(), str);
 
 		}
 		catch (InputErrorException exep) {

@@ -275,7 +275,10 @@ public Region getRegion() {
 }
 
 public void setRegion(Region reg) {
-	InputAgent.processEntity_Keyword_Value(this, this.region, reg.getInputName());
+	ArrayList<String> tokens = new ArrayList<String>(1);
+	tokens.add(reg.getInputName());
+	KeywordIndex kw = new KeywordIndex(tokens, region.getKeyword(), 0, tokens.size(), null);
+	InputAgent.apply(this, kw);
 }
 
 public void setPosition(Vec3d pos) {
@@ -289,13 +292,17 @@ public void setCenter(Vec3d cent) {
 }
 
 public void setWindowPos(int x, int y, int width, int height) {
-	String posVal = String.format((Locale)null, "%d %d", x, y);
-	String sizeVal = String.format((Locale)null, "%d %d", width, height);
-	InputAgent.processEntity_Keyword_Value(this, this.windowPos, posVal);
-	InputAgent.processEntity_Keyword_Value(this, this.windowSize, sizeVal);
+	ArrayList<String> tokens = new ArrayList<String>(2);
+	tokens.add(String.format((Locale)null, "%d", x));
+	tokens.add(String.format((Locale)null, "%d", y));
+	KeywordIndex kw = new KeywordIndex(tokens, this.windowPos.getKeyword(), 0, tokens.size(), null);
+	InputAgent.apply(this, kw);
 
-	FrameBox.valueUpdate();
-
+	tokens.clear();
+	tokens.add(String.format((Locale)null, "%d", width));
+	tokens.add(String.format((Locale)null, "%d", height));
+	kw = new KeywordIndex(tokens, this.windowSize.getKeyword(), 0, tokens.size(), null);
+	InputAgent.apply(this, kw);
 }
 
 public IntegerVector getWindowPos() {

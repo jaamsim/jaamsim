@@ -318,7 +318,7 @@ public class Entity {
 					targetInput.reset();
 			}
 			else {
-				InputAgent.processEntity_Keyword_Value(this, targetInput, val);
+				InputAgent.processEntity_Keyword_Value(this, targetInput.getKeyword(), val);
 			}
 		}
 	}

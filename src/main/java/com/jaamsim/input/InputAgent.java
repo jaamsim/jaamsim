@@ -1047,17 +1047,6 @@ public class InputAgent {
 	/**
 	 * Prepares the keyword and input value for processing.
 	 *
-	 * @param ent - the entity whose keyword and value have been entered.
-	 * @param in - the input object for the keyword.
-	 * @param value - the input value String for the keyword.
-	 */
-	public static void processEntity_Keyword_Value(Entity ent, Input<?> in, String value){
-		processEntity_Keyword_Value(ent, in.getKeyword(), value);
-	}
-
-	/**
-	 * Prepares the keyword and input value for processing.
-	 *
 	 * @param ent - the entity whose keyword and value has been entered.
 	 * @param keyword - the keyword.
 	 * @param value - the input value String for the keyword.
