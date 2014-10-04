@@ -106,11 +106,7 @@ public class ObjectSelector extends FrameBox {
 			return;
 		}
 
-		// if the entity is an added entity, allow renaming.  otherwise, do not.
-		if (currentEntity.testFlag(Entity.FLAG_ADDED))
-			tree.setEditable(true);
-		else
-			tree.setEditable(false);
+		tree.setEditable(true);
 
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
 		Enumeration<?> e = root.depthFirstEnumeration();
@@ -331,6 +327,14 @@ public class ObjectSelector extends FrameBox {
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 			String newName = ((String)node.getUserObject()).trim();
+
+			// Check that the entity was defined AFTER the RecordEdits command
+			if (!currentEntity.testFlag(Entity.FLAG_ADDED)) {
+				JOptionPane.showMessageDialog(null, "Cannot rename an entity that was defined before the RecordEdits command.",
+						"Input Error", JOptionPane.ERROR_MESSAGE);
+				node.setUserObject(currentEntity);
+				return;
+			}
 
 			// Check that the new name is valid
 			if (newName.contains(" ") || newName.contains("\t") || newName.contains("{") || newName.contains("}")) {
