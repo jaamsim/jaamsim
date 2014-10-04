@@ -25,6 +25,7 @@ import java.util.Enumeration;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -331,18 +332,19 @@ public class ObjectSelector extends FrameBox {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 			String newName = ((String)node.getUserObject()).trim();
 
+			// Check that the new name is valid
 			if (newName.contains(" ") || newName.contains("\t") || newName.contains("{") || newName.contains("}")) {
-				LogBox.format("Error: Entity names cannot contain spaces, tabs, { or }: %s", newName);
-				LogBox.getInstance().setVisible(true);
+				JOptionPane.showMessageDialog(null, "Entity names cannot contain spaces, tabs, or braces ({}).",
+						"Input Error", JOptionPane.ERROR_MESSAGE);
 				node.setUserObject(currentEntity);
 				return;
 			}
 
 			// Check that the name has not been used already
 			Entity existingEnt = Input.tryParseEntity(newName, Entity.class);
-			if( existingEnt != null ) {
-				LogBox.format("Error: Entity name: %s is already in use.", newName);
-				LogBox.getInstance().setVisible(true);
+			if (existingEnt != null) {
+				JOptionPane.showMessageDialog(null, String.format("Entity name: %s is already in use.", newName),
+						"Input Error", JOptionPane.ERROR_MESSAGE);
 				node.setUserObject(currentEntity);
 				return;
 			}
