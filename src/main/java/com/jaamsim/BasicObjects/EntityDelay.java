@@ -68,10 +68,10 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	private HasScreenPoints.PointsInfo[] cachedPointInfo;
 
 	{
-		duration = new SampleExpInput( "Duration", "Key Inputs", null);
+		duration = new SampleExpInput("Duration", "Key Inputs", null);
 		duration.setUnitType(TimeUnit.class);
 		duration.setEntity(this);
-		this.addInput( duration);
+		this.addInput(duration);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
@@ -107,15 +107,15 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		lengthList.clear();
 		cumLengthList.clear();
 		totalLength = 0.0;
-		for( int i = 1; i < pointsInput.getValue().size(); i++ ) {
+		for (int i = 1; i < pointsInput.getValue().size(); i++) {
 			// Get length between points
 			Vec3d vec = new Vec3d();
-			vec.sub3( pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
+			vec.sub3(pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
 			double length = vec.mag3();
 
-			lengthList.add( length);
+			lengthList.add(length);
 			totalLength += length;
-			cumLengthList.add( totalLength);
+			cumLengthList.add(totalLength);
 		}
 	}
 
@@ -126,7 +126,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
+	public void addDisplayEntity(DisplayEntity ent) {
 		super.addDisplayEntity(ent);
 
 		// Add the entity to the list of entities being delayed
@@ -169,12 +169,12 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	 * @param dist = distance along the path.
 	 * @return position coordinates
 	 */
-	private Vec3d getPositionForDistance( double dist) {
+	private Vec3d getPositionForDistance(double dist) {
 
 		// Find the present segment
 		int seg = 0;
-		for( int i = 0; i < cumLengthList.size(); i++) {
-			if( dist <= cumLengthList.get(i)) {
+		for (int i = 0; i < cumLengthList.size(); i++) {
+			if (dist <= cumLengthList.get(i)) {
 				seg = i;
 				break;
 			}
@@ -182,14 +182,14 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 
 		// Interpolate between the start and end of the segment
 		double frac = 0.0;
-		if( seg == 0 ) {
+		if (seg == 0) {
 			frac = dist / lengthList.get(0);
 		}
 		else {
 			frac = ( dist - cumLengthList.get(seg-1) ) / lengthList.get(seg);
 		}
-		if( frac < 0.0 )  frac = 0.0;
-		else if( frac > 1.0 )  frac = 1.0;
+		if (frac < 0.0)  frac = 0.0;
+		else if (frac > 1.0)  frac = 1.0;
 
 		Vec3d vec = new Vec3d();
 		vec.interpolate3(pointsInput.getValue().get(seg), pointsInput.getValue().get(seg+1), frac);
@@ -197,11 +197,11 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	}
 
 	@Override
-	public void updateForInput( Input<?> in ) {
+	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
 		// If Points were input, then use them to set the start and end coordinates
-		if( in == pointsInput || in == colorInput || in == widthInput ) {
+		if (in == pointsInput || in == colorInput || in == widthInput) {
 			synchronized(screenPointLock) {
 				cachedPointInfo = null;
 			}
@@ -210,7 +210,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	}
 
 	@Override
-	public void updateGraphics( double simTime ) {
+	public void updateGraphics(double simTime) {
 
 		// Loop through the entities on the path
 		for (EntityDelayEntry entry : entityMap.values()) {
@@ -218,7 +218,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 			double dist = ( simTime - entry.startTime ) / entry.duration * totalLength;
 
 			// Set the position for the entity
-			entry.ent.setPosition( this.getPositionForDistance( dist) );
+			entry.ent.setPosition(this.getPositionForDistance( dist));
 		}
 	}
 
