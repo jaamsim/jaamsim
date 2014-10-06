@@ -48,8 +48,6 @@ import com.sandwell.JavaSimulation.Entity;
  * components like the eventManager.
  */
 public class DisplayEntity extends Entity {
-	private static final ArrayList<DisplayEntity> allInstances;
-
 	@Keyword(description = "The point in the region at which the alignment point of the object is positioned.",
 	         example = "Object1 Position { -3.922 -1.830 0.000 m }")
 	private final Vec3dInput positionInput;
@@ -185,10 +183,6 @@ public class DisplayEntity extends Entity {
 
 	private TagSet tags;
 
-	static {
-		allInstances = new ArrayList<DisplayEntity>(100);
-	}
-
 	{
 		positionInput = new Vec3dInput("Position", "Basic Graphics", new Vec3d());
 		positionInput.setUnitType(DistanceUnit.class);
@@ -237,18 +231,12 @@ public class DisplayEntity extends Entity {
 
 		setRegion(null);
 
-		allInstances.add(this);
-
 		DisplayModel dm = DisplayModel.getDefaultDisplayModelForClass(this.getClass());
 		if(dm != null) {
 			ArrayList<DisplayModel> defList = new ArrayList<DisplayModel>();
 			defList.add(dm);
 			displayModelList.setDefaultValue(defList);
 		}
-	}
-
-	public static ArrayList<? extends DisplayEntity> getAll() {
-		return allInstances;
 	}
 
 	@Override
@@ -276,7 +264,6 @@ public class DisplayEntity extends Entity {
 	public void kill() {
 		super.kill();
 
-		allInstances.remove(this);
 		currentRegion = null;
 	}
 

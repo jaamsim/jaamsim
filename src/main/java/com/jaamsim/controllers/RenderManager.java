@@ -344,10 +344,15 @@ public class RenderManager implements DragSourceListener {
 				ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<DisplayModelBinding>();
 
 				// Update all graphical entities in the simulation
-				for (int i = 0; i < DisplayEntity.getAll().size(); i++) {
+				final ArrayList<? extends Entity> allEnts = Entity.getAll();
+				for (int i = 0; i < allEnts.size(); i++) {
 					DisplayEntity de;
 					try {
-						de = DisplayEntity.getAll().get(i);
+						Entity e = allEnts.get(i);
+						if (e instanceof DisplayEntity)
+							de = (DisplayEntity)e;
+						else
+							continue;
 					}
 					catch (IndexOutOfBoundsException e) {
 						break;
@@ -365,12 +370,16 @@ public class RenderManager implements DragSourceListener {
 				long updateNanos = System.nanoTime();
 
 				int totalBindings = 0;
-				for (int i = 0; i < DisplayEntity.getAll().size(); i++) {
+				for (int i = 0; i < allEnts.size(); i++) {
 					DisplayEntity de;
 					try {
-						de = DisplayEntity.getAll().get(i);
-					} catch (IndexOutOfBoundsException ex) {
-						// This is probably the end of the list, so just move on
+						Entity e = allEnts.get(i);
+						if (e instanceof DisplayEntity)
+							de = (DisplayEntity)e;
+						else
+							continue;
+					}
+					catch (IndexOutOfBoundsException e) {
 						break;
 					}
 
