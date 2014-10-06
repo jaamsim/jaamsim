@@ -603,6 +603,7 @@ public class InputAgent {
 		}
 		else {
 			in.parse(kw);
+			in.setIsDefault(false);
 			if (kw.numArgs() < 1000)
 				in.setValueString(kw.argString());
 			else

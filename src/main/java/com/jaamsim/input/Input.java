@@ -76,6 +76,7 @@ public abstract class Input<T> {
 
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean hidden; // Hide this input from the EditBox
+	private boolean isDef; // Is this input still the default value?
 	protected String valueString; // value from .cfg file
 
 	public static class ParseContext {
@@ -89,6 +90,7 @@ public abstract class Input<T> {
 		setDefaultValue(def);
 
 		edited = false;
+		isDef = true;
 		hidden = false;
 		valueString = "";
 	}
@@ -97,6 +99,7 @@ public abstract class Input<T> {
 		this.setDefaultValue( this.getDefaultValue() );
 		valueString = "";
 		edited = false;
+		isDef = true;
 	}
 
 	@Override
@@ -160,6 +163,14 @@ public abstract class Input<T> {
 
 	public boolean isEdited() {
 		return edited;
+	}
+
+	public void setIsDefault(boolean bool) {
+		isDef = bool;
+	}
+
+	public boolean isDefault() {
+		return isDef;
 	}
 
 	public String getValueString() {

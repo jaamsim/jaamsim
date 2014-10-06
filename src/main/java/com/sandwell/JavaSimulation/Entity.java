@@ -284,7 +284,10 @@ public class Entity {
 	 * @param ent = entity whose inputs are to be copied
 	 */
 	public void copyInputs(Entity ent) {
-		for(Input<?> sourceInput: ent.getEditableInputs() ){
+		for (Input<?> sourceInput : ent.inputs.values()) {
+			if (sourceInput.isDefault()) {
+				continue;
+			}
 			Input<?> targetInput = this.getInput(sourceInput.getKeyword());
 			String val = sourceInput.getValueString();
 			if( val.isEmpty() ) {
