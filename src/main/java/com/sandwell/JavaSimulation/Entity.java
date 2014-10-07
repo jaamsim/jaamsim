@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.basicsim.ClonesOfIterable;
@@ -247,7 +248,7 @@ public class Entity {
 	}
 
 	protected void addInput(Input<?> in) {
-		String key = in.getKeyword().toLowerCase().intern();
+		String key = in.getKeyword();
 		if (inputs.get(key) != null) {
 			System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), in.getKeyword());
 			return;
@@ -256,7 +257,7 @@ public class Entity {
 	}
 
 	protected void addSynonym(Input<?> in, String synonym) {
-		String key = synonym.toLowerCase().intern();
+		String key = synonym;
 		if (inputs.get(key) != null) {
 			System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), synonym);
 			return;
@@ -265,7 +266,16 @@ public class Entity {
 	}
 
 	public final Input<?> getInput(String key) {
-		return inputs.get(key.toLowerCase());
+		Input<?> inp = inputs.get(key);
+		if (inp != null)
+			return inp;
+
+		for (Map.Entry<String, Input<?>> each : inputs.entrySet()) {
+			if (each.getKey().equalsIgnoreCase(key))
+				return each.getValue();
+		}
+
+		return null;
 	}
 
 	/**
