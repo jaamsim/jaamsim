@@ -66,8 +66,7 @@ public class Entity {
 	private int flags;
 	protected boolean traceFlag = false;
 
-	private final ArrayList<Input<?>> editableInputs = new ArrayList<Input<?>>();
-	private final ArrayList<SynRecord> synonyms = new ArrayList<SynRecord>();
+	private final HashMap<String, Input<?>> inputs = new HashMap<String, Input<?>>();
 
 	private final HashMap<String, AttributeHandle> attributeMap = new HashMap<String, AttributeHandle>();
 
@@ -248,60 +247,25 @@ public class Entity {
 	}
 
 	protected void addInput(Input<?> in) {
-		for (int i = 0; i < editableInputs.size(); i++) {
-			Input<?> ein = editableInputs.get(i);
-			if (ein.getKeyword().equalsIgnoreCase(in.getKeyword())) {
-				System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), in.getKeyword());
-				return;
-			}
+		String key = in.getKeyword().toLowerCase().intern();
+		if (inputs.get(key) != null) {
+			System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), in.getKeyword());
+			return;
 		}
-
-		editableInputs.add(in);
-	}
-
-	private static class SynRecord {
-		final String syn;
-		final Input<?> in;
-
-		SynRecord(String s, Input<?> i) {
-			syn = s;
-			in = i;
-		}
+		inputs.put(key, in);
 	}
 
 	protected void addSynonym(Input<?> in, String synonym) {
-		for (int i = 0; i < editableInputs.size(); i++) {
-			Input<?> ein = editableInputs.get(i);
-			if (ein.getKeyword().equalsIgnoreCase(synonym)) {
-				System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), synonym);
-				return;
-			}
+		String key = synonym.toLowerCase().intern();
+		if (inputs.get(key) != null) {
+			System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), synonym);
+			return;
 		}
-
-		for (int i = 0; i < synonyms.size(); i++) {
-			SynRecord rec = synonyms.get(i);
-			if (rec.syn.equalsIgnoreCase(synonym)) {
-				System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), synonym);
-				return;
-			}
-		}
-		synonyms.add(new SynRecord(synonym, in));
+		inputs.put(key, in);
 	}
 
-	public Input<?> getInput(String key) {
-		for (int i = 0; i < editableInputs.size(); i++) {
-			Input<?> in = editableInputs.get(i);
-			if (in.getKeyword().equalsIgnoreCase(key))
-				return in;
-		}
-
-		for (int i = 0; i < synonyms.size(); i++) {
-			SynRecord rec = synonyms.get(i);
-			if (rec.syn.equalsIgnoreCase(key))
-				return rec.in;
-		}
-
-		return null;
+	public final Input<?> getInput(String key) {
+		return inputs.get(key.toLowerCase());
 	}
 
 	/**
@@ -646,7 +610,12 @@ public class Entity {
 	// ******************************************************************************************************
 
 	public ArrayList<Input<?>> getEditableInputs() {
-		return editableInputs;
+		ArrayList<Input<?>> list = new ArrayList<Input<?>>();
+		for (Input<?> each : inputs.values()) {
+			if (!list.contains(each))
+				list.add(each);
+		}
+		return list;
 	}
 
 	// ******************************************************************************************************
