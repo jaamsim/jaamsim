@@ -27,7 +27,7 @@ import com.jaamsim.units.DimensionlessUnit;
 public class ExpressionThreshold extends Threshold {
 
 	@Keyword(description = "The logical condition for which the Threshold is open.",
-	         example = "ExpressionThreshold1  OpenCondition { '[Queue1].QueueLength < 3' }")
+	         example = "ExpressionThreshold1  OpenCondition { '[Queue1].QueueLength &gt 3' }")
 	private final ExpressionInput openCondition;
 
 	{
