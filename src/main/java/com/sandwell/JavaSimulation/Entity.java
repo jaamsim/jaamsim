@@ -250,7 +250,7 @@ public class Entity {
 	protected void addInput(Input<?> in) {
 		String key = in.getKeyword();
 		if (inputs.get(key) != null) {
-			System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), in.getKeyword());
+			InputAgent.logWarning("keyword:%s handled twice for class %s", key, this.getClass().getName());
 			return;
 		}
 		inputs.put(key, in);
@@ -259,7 +259,7 @@ public class Entity {
 	protected void addSynonym(Input<?> in, String synonym) {
 		String key = synonym;
 		if (inputs.get(key) != null) {
-			System.out.format("WARN: keyword handled twice, %s:%s\n", this.getClass().getName(), synonym);
+			InputAgent.logWarning("keyword:%s handled twice for class %s", key, this.getClass().getName());
 			return;
 		}
 		inputs.put(key, in);
