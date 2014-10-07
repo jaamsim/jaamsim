@@ -24,15 +24,13 @@ public class TestRandomSelector {
 
 	@Test
 	public void EntityCounts() {
-		DisplayEntity entA = new DisplayEntity();
-		DisplayEntity entB = new DisplayEntity();
-		DisplayEntity entC = new DisplayEntity();
-		entA.setInputName( "A" );
-		entB.setInputName( "B" );
-		entC.setInputName( "C" );
+		DisplayEntity entA = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, "A", "-", true);
+		DisplayEntity entB = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, "B", "-", true);
+		DisplayEntity entC = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, "C", "-", true);
 
 		RandomSelector selector = InputAgent.defineEntityWithUniqueName(RandomSelector.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( selector, "EntityList", "A  B  C");
+		String testStr = entA.getName() + " " + entB.getName() + " " + entC.getName();
+		InputAgent.processEntity_Keyword_Value( selector, "EntityList", testStr);
 		InputAgent.processEntity_Keyword_Value( selector, "ProbabilityList", "0.5  0.3  0.2");
 		selector.validate();
 		selector.earlyInit();
