@@ -31,7 +31,7 @@ public class TestRandomSelector {
 		entB.setInputName( "B" );
 		entC.setInputName( "C" );
 
-		RandomSelector selector = InputAgent.defineEntityWithUniqueName(RandomSelector.class, "Dist", true);
+		RandomSelector selector = InputAgent.defineEntityWithUniqueName(RandomSelector.class, "Dist", "-", true);
 		InputAgent.processEntity_Keyword_Value( selector, "EntityList", "A  B  C");
 		InputAgent.processEntity_Keyword_Value( selector, "ProbabilityList", "0.5  0.3  0.2");
 		selector.validate();

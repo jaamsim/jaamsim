@@ -409,10 +409,6 @@ public class InputAgent {
 		}
 	}
 
-	public static <T extends Entity> T defineEntityWithUniqueName(Class<T> proto, String key, boolean addedEntity) {
-		return InputAgent.defineEntityWithUniqueName(proto, key, "-", addedEntity);
-	}
-
 	/**
 	 * Like defineEntity(), but will generate a unique name if a name collision exists
 	 * @param proto

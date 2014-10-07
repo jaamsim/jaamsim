@@ -24,10 +24,10 @@ public class TestUniformDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		UniformDistribution dist = InputAgent.defineEntityWithUniqueName(UniformDistribution.class, "Dist", true);
+		UniformDistribution dist = InputAgent.defineEntityWithUniqueName(UniformDistribution.class, "Dist", "-", true);
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "MinValue", "2.0");
 		InputAgent.processEntity_Keyword_Value( dist, "MaxValue", "5.0");

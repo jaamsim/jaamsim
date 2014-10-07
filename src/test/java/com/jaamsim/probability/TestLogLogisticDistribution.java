@@ -24,10 +24,10 @@ public class TestLogLogisticDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		LogLogisticDistribution dist = InputAgent.defineEntityWithUniqueName(LogLogisticDistribution.class, "Dist", true);
+		LogLogisticDistribution dist = InputAgent.defineEntityWithUniqueName(LogLogisticDistribution.class, "Dist", "-", true);
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Scale", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "4.0");

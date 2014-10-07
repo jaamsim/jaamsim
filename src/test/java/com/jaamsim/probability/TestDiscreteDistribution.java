@@ -24,10 +24,10 @@ public class TestDiscreteDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		DiscreteDistribution dist = InputAgent.defineEntityWithUniqueName(DiscreteDistribution.class, "Dist", true);
+		DiscreteDistribution dist = InputAgent.defineEntityWithUniqueName(DiscreteDistribution.class, "Dist", "-", true);
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "ValueList", "1.0  3.0  10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "ProbabilityList", "0.5  0.3  0.2");

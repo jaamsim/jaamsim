@@ -24,10 +24,10 @@ public class TestExponentialDistribution {
 
 	@Test
 	public void MeanAndStandardDeviation() {
-		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", true);
+		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
-		ExponentialDistribution dist = InputAgent.defineEntityWithUniqueName(ExponentialDistribution.class, "Dist", true);
+		ExponentialDistribution dist = InputAgent.defineEntityWithUniqueName(ExponentialDistribution.class, "Dist", "-", true);
 		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		dist.validate();
