@@ -379,12 +379,7 @@ public class Entity {
 			entityInputName = newName;
 			namedEntities.put(entityInputName, this);
 		}
-		String name = newName;
-		if (newName.contains("/"))
-			name = newName.substring(newName.indexOf("/") + 1);
-
-		this.setName(name);
-
+		this.setName(newName);
 	}
 
 	/**
