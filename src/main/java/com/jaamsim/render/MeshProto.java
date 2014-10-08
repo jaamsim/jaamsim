@@ -483,9 +483,7 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
 	gl.glUniform1f(si.shininessVar, (float)mat._shininess);
 
 	if (mat._transType != MeshData.NO_TRANS) {
-		gl.glEnable(GL2GL3.GL_BLEND);
 		gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
-		gl.glDepthMask(false);
 
 		if (mat._transType != MeshData.DIFF_ALPHA_TRANS) {
 			gl.glBlendColor((float)mat._transColour.r,
@@ -503,9 +501,6 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
 		} else {
 			assert(false); // Unknown transparency type
 		}
-	} else {
-		// Just in case this was missed somewhere
-		gl.glDisable(GL2GL3.GL_BLEND);
 	}
 
 	// Build up the pose matrices
@@ -530,11 +525,6 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
 		gl.glDrawElements(GL2GL3.GL_TRIANGLES, subMesh._numVerts, GL2GL3.GL_UNSIGNED_INT, 0);
 	}
 	gl.glEnable(GL2GL3.GL_CULL_FACE);
-
-	if (mat._transType != MeshData.NO_TRANS) {
-		gl.glDisable(GL2GL3.GL_BLEND);
-		gl.glDepthMask(true);
-	}
 
 	gl.glBindVertexArray(0);
 

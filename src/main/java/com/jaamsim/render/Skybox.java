@@ -111,9 +111,7 @@ public class Skybox {
 
 		gl.glUniform1i(texVar, 0);
 
-		gl.glDepthMask(false);
 		gl.glDrawArrays(GL2GL3.GL_TRIANGLES, 0, 6);
-		gl.glDepthMask(true);
 
 		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_MIN_FILTER, GL2GL3.GL_LINEAR_MIPMAP_LINEAR );
 
