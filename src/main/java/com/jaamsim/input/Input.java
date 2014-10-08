@@ -351,10 +351,14 @@ public abstract class Input<T> {
 			return aClass.cast(s);
 		}
 
-		// TODO - parse other classes
-//		if( aClass == IntegerVector.class ) {
-//		}
+		if( aClass == IntegerVector.class ) {
+			IntegerVector value = Input.parseIntegerVector(data, (int)minValue, (int)maxValue);
+			if (value.size() < minCount || value.size() > maxCount)
+				throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, data);
+			return aClass.cast(value);
+		}
 
+		// TODO - parse other classes
 		throw new InputErrorException("%s is not supported for parsing yet", aClass);
 	}
 
