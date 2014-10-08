@@ -211,7 +211,12 @@ public class Entity {
 
 	public void kill() {
 		synchronized (allInstances) {
-			allInstances.remove(this);
+			for (int i = 0; i < allInstances.size(); i++) {
+				if (allInstances.get(i) == this) {
+					allInstances.remove(i);
+					break;
+				}
+			}
 		}
 		removeInputName();
 
