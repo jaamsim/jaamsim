@@ -24,7 +24,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;
 
@@ -150,9 +149,8 @@ public class Assemble extends LinkedService {
 		DisplayEntity proto = prototypeEntity.getValue();
 		StringBuilder sb = new StringBuilder();
 		sb.append(proto.getInputName()).append("_Copy").append(numberGenerated);
-		assembledEntity = InputAgent.defineEntityWithUniqueName(proto.getClass(), sb.toString(),"_", true);
+		assembledEntity = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
 		assembledEntity.copyInputs(proto);
-		assembledEntity.setFlag(Entity.FLAG_GENERATED);
 		assembledEntity.earlyInit();
 
 		// Position the assembled part over the Assemble object

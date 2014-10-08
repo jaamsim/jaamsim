@@ -17,7 +17,6 @@ package com.jaamsim.BasicObjects;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class Duplicate extends LinkedComponent {
@@ -45,9 +44,8 @@ public class Duplicate extends LinkedComponent {
 			// Create the duplicated entity
 			StringBuilder sb = new StringBuilder();
 			sb.append(ent.getInputName()).append("_Dup").append(n);
-			DisplayEntity dup = InputAgent.defineEntityWithUniqueName(ent.getClass(), sb.toString(), "_", true);
+			DisplayEntity dup = InputAgent.generateEntityWithName(ent.getClass(), sb.toString());
 			dup.copyInputs(ent);
-			dup.setFlag(Entity.FLAG_GENERATED);
 			dup.earlyInit();
 
 			// Send the duplicate to the target component

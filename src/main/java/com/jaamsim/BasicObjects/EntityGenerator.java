@@ -24,7 +24,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
@@ -140,9 +139,8 @@ public class EntityGenerator extends LinkedService {
 		DisplayEntity proto = prototypeEntity.getValue();
 		StringBuilder sb = new StringBuilder();
 		sb.append(proto.getInputName()).append("_Copy").append(numberGenerated);
-		DisplayEntity ent = InputAgent.defineEntityWithUniqueName(proto.getClass(), sb.toString(),"_", true);
+		DisplayEntity ent = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
 		ent.copyInputs(proto);
-		ent.setFlag(Entity.FLAG_GENERATED);
 		ent.earlyInit();
 
 		// Send the entity to the next element in the chain

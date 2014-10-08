@@ -23,7 +23,6 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.Queue;
 
@@ -132,9 +131,8 @@ public class Pack extends LinkedService {
 			EntityContainer proto = prototypeEntityContainer.getValue();
 			StringBuilder sb = new StringBuilder();
 			sb.append(proto.getInputName()).append("_Copy").append(numberGenerated);
-			container = InputAgent.defineEntityWithUniqueName(proto.getClass(), sb.toString(),"_", true);
+			container = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
 			container.copyInputs(proto);
-			container.setFlag(Entity.FLAG_GENERATED);
 			container.earlyInit();
 			numberInserted = 0;
 
