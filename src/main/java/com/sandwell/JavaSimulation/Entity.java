@@ -249,11 +249,11 @@ public class Entity {
 
 	protected void addInput(Input<?> in) {
 		String key = in.getKeyword();
-		if (inputs.get(key) != null) {
+		Input<?> exist = inputs.put(key, in);
+		if (exist != null) {
 			InputAgent.logWarning("keyword:%s handled twice for class %s", key, this.getClass().getName());
-			return;
+			inputs.put(key, exist);
 		}
-		inputs.put(key, in);
 	}
 
 	protected void addSynonym(Input<?> in, String synonym) {
