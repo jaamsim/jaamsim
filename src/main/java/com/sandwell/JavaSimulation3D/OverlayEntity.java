@@ -55,15 +55,15 @@ public abstract class OverlayEntity extends DisplayEntity {
 		alignBottom = new BooleanInput("AlignBottom", "Basic Graphics", false);
 		this.addInput(alignBottom);
 
-		getInput("position").setHidden(true);
-		getInput("alignment").setHidden(true);
-		getInput("size").setHidden(true);
-		getInput("orientation").setHidden(true);
-		getInput("region").setHidden(true);
-		getInput("relativeentity").setHidden(true);
-		getInput("active").setHidden(true);
-		getInput("show").setHidden(true);
-		getInput("movable").setHidden(true);
+		getInput("Position").setHidden(true);
+		getInput("Alignment").setHidden(true);
+		getInput("Size").setHidden(true);
+		getInput("Orientation").setHidden(true);
+		getInput("Region").setHidden(true);
+		getInput("RelativeEntity").setHidden(true);
+		getInput("Active").setHidden(true);
+		getInput("Show").setHidden(true);
+		getInput("Movable").setHidden(true);
 	}
 
 	public boolean getAlignRight() {
