@@ -271,8 +271,10 @@ public class Entity {
 			return inp;
 
 		for (Map.Entry<String, Input<?>> each : inputs.entrySet()) {
-			if (each.getKey().equalsIgnoreCase(key))
+			if (each.getKey().equalsIgnoreCase(key)) {
+				InputAgent.logWarning("Slow-path keyword lookup for Entity:%s keyword:%s, Type:%s", this.getName(), key, this.getClass().getSimpleName());
 				return each.getValue();
+			}
 		}
 
 		return null;
