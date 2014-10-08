@@ -409,6 +409,29 @@ public class InputAgent {
 		}
 	}
 
+	public static <T extends Entity> T generateEntityWithName(Class<T> proto, String key) {
+		if (key.contains(" ") || key.contains("\t") || key.contains("{") || key.contains("}")) {
+			InputAgent.logError("Entity names cannot contain spaces, tabs, { or }: %s", key);
+			return null;
+		}
+
+		T ent = null;
+		try {
+			ent = proto.newInstance();
+			ent.setFlag(Entity.FLAG_GENERATED);
+			ent.setName(key);
+		}
+		catch (InstantiationException e) {}
+		catch (IllegalAccessException e) {}
+		finally {
+			if (ent == null) {
+				InputAgent.logError("Could not create new Entity: %s", key);
+				return null;
+			}
+		}
+		return ent;
+	}
+
 	/**
 	 * Like defineEntity(), but will generate a unique name if a name collision exists
 	 * @param proto
