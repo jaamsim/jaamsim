@@ -121,9 +121,6 @@ public class EditBox extends FrameBox {
 		if (entity == currentEntity)
 			return;
 
-		if(entity != null && entity.testFlag(Entity.FLAG_GENERATED))
-			entity = null;
-
 		if (currentEntity != null) {
 			int idx = jTabbedFrame.getSelectedIndex();
 			if (idx > -1)
