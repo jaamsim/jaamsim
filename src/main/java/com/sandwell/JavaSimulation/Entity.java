@@ -68,6 +68,7 @@ public class Entity {
 	protected boolean traceFlag = false;
 
 	private final HashMap<String, Input<?>> inputs = new HashMap<String, Input<?>>();
+	private final ArrayList<Input<?>> inpList = new ArrayList<Input<?>>();
 
 	private final HashMap<String, AttributeHandle> attributeMap = new HashMap<String, AttributeHandle>();
 
@@ -255,7 +256,10 @@ public class Entity {
 	protected void addInput(Input<?> in) {
 		String key = in.getKeyword();
 		Input<?> exist = inputs.put(key, in);
-		if (exist != null) {
+		if (exist == null) {
+			inpList.add(in);
+		}
+		else {
 			InputAgent.logWarning("keyword:%s handled twice for class %s", key, this.getClass().getName());
 			inputs.put(key, exist);
 		}
@@ -291,7 +295,7 @@ public class Entity {
 	 * @param ent = entity whose inputs are to be copied
 	 */
 	public void copyInputs(Entity ent) {
-		for (Input<?> sourceInput : ent.inputs.values()) {
+		for (Input<?> sourceInput : ent.inpList) {
 			if (sourceInput.isDefault()) {
 				continue;
 			}
@@ -625,12 +629,7 @@ public class Entity {
 	// ******************************************************************************************************
 
 	public ArrayList<Input<?>> getEditableInputs() {
-		ArrayList<Input<?>> list = new ArrayList<Input<?>>();
-		for (Input<?> each : inputs.values()) {
-			if (!list.contains(each))
-				list.add(each);
-		}
-		return list;
+		return inpList;
 	}
 
 	// ******************************************************************************************************
