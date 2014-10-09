@@ -73,6 +73,7 @@ import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
@@ -83,7 +84,6 @@ import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Simulation;
-import com.sandwell.JavaSimulation.Tester;
 
 /**
  * The main window for a Graphical Simulation.  It provides the controls for managing then
@@ -781,20 +781,38 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		pauseTime = new JTextField("2000-00-00") {
 			@Override
-			protected void processFocusEvent( FocusEvent fe ) {
-				if ( fe.getID() == FocusEvent.FOCUS_GAINED ) {
-					if(getText().equals(infinitySign)) {
+			protected void processFocusEvent(FocusEvent fe) {
+
+				// Focus gained
+				if (fe.getID() == FocusEvent.FOCUS_GAINED) {
+
+					// Convert an infinity sign to blank for editing
+					if (getText().equals(infinitySign)) {
 						this.setHorizontalAlignment(JTextField.RIGHT);
 						this.setText("");
 					}
-
-					// select entire text string
-					selectAll();
 				}
+
+				// Focus lost
 				else if (fe.getID() == FocusEvent.FOCUS_LOST) {
-					if(getText().isEmpty()) {
+
+					// Process the new entry
+					if (!this.getText().equals(infinitySign)) {
+						try {
+							InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "PauseTime", this.getText());
+						} catch (InputErrorException e) {
+							JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
+							this.setText(Simulation.getInstance().getInput("PauseTime").getValueString());
+						}
+					}
+
+					// If the entry is infinity, show the infinity sign
+					if (Simulation.getPauseTime() == Double.POSITIVE_INFINITY) {
 						this.setText(infinitySign);
 						this.setHorizontalAlignment(JTextField.CENTER);
+					}
+					else {
+						this.setHorizontalAlignment(JTextField.RIGHT);
 					}
 				}
 				super.processFocusEvent( fe );
@@ -1172,43 +1190,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public void startSimulation() {
 
 		// pause at a time
-		double runToSecs = Double.POSITIVE_INFINITY;
-		if(! pauseTime.getText().equalsIgnoreCase(infinitySign) && pauseTime.getText().length() > 0 ) {
-
-			try {
-				if (Tester.isDate(pauseTime.getText())) {
-					String[] str = pauseTime.getText().split("-");
-
-					if (str.length < 3) {
-						throw new NumberFormatException
-						("Date string must be of form yyyy-mm-dd");
-					}
-					int year = Integer.parseInt(str[0]);
-					int month = Integer.parseInt(str[1]);
-					int day = Integer.parseInt(str[2]);
-					double time =
-							Clock.calcTimeForYear_Month_Day_Hour(year, month, day, 0.0);
-
-					int startingYear = Clock.getStartingYear();
-					int startingMonth = Clock.getStartingMonth();
-					int startingDay = Clock.getStartingDay();
-					double startingTime = Clock.calcTimeForYear_Month_Day_Hour(
-							startingYear, startingMonth, startingDay, 0.0);
-
-					runToSecs = (time - startingTime) * 3600.0d;
-				} else {
-					runToSecs = Double.parseDouble(pauseTime.getText()) * 3600.0d;
-				}
-			} catch (NumberFormatException nfe) {
-				JOptionPane.showMessageDialog(this,	String.format(
-						"Invalid time \n %s", pauseTime.getText()),
-						"error", JOptionPane.ERROR_MESSAGE);
-
-				// it is not running any more
-				controlStartResume.setSelected(!controlStartResume.isSelected());
-				return;
-			}
-		}
+		double runToSecs = Simulation.getPauseTime();
 
 		if( getSimState() <= SIM_STATE_CONFIGURED ) {
 			if (InputAgent.isSessionEdited()) {
