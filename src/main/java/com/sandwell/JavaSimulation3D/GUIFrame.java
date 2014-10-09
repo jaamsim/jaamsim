@@ -795,25 +795,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 				// Focus lost
 				else if (fe.getID() == FocusEvent.FOCUS_LOST) {
-
-					// Process the new entry
-					if (!this.getText().equals(infinitySign)) {
-						try {
-							InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "PauseTime", this.getText());
-						} catch (InputErrorException e) {
-							JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
-							this.setText(Simulation.getInstance().getInput("PauseTime").getValueString());
-						}
-					}
-
-					// If the entry is infinity, show the infinity sign
-					if (Simulation.getPauseTime() == Double.POSITIVE_INFINITY) {
-						this.setText(infinitySign);
-						this.setHorizontalAlignment(JTextField.CENTER);
-					}
-					else {
-						this.setHorizontalAlignment(JTextField.RIGHT);
-					}
+					GUIFrame.instance.setPauseTime(this.getText());
 				}
 				super.processFocusEvent( fe );
 			}
@@ -826,6 +808,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		pauseTime.setPreferredSize(pauseTime.getPreferredSize());
 
 		mainToolBar.add(pauseTime);
+		pauseTime.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				GUIFrame.instance.setPauseTime(pauseTime.getText());
+			}
+		});
 
 		pauseTime.setText(infinitySign);
 		pauseTime.setHorizontalAlignment(JTextField.CENTER);
@@ -1391,6 +1379,31 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 		else {
 			pauseTime.setText(valueString);
+			pauseTime.setHorizontalAlignment(JTextField.RIGHT);
+		}
+	}
+
+	/**
+	 * Sets the PauseTime keyword for Simulation.
+	 * @param str - value to assign.
+	 */
+	private void setPauseTime(String str) {
+
+		if (!str.equals(infinitySign)) {
+			try {
+				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "PauseTime", str);
+			} catch (InputErrorException e) {
+				pauseTime.setText(Simulation.getInstance().getInput("PauseTime").getValueString());
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
+		// If the entry is infinity, show the infinity sign
+		if (Simulation.getPauseTime() == Double.POSITIVE_INFINITY) {
+			pauseTime.setText(infinitySign);
+			pauseTime.setHorizontalAlignment(JTextField.CENTER);
+		}
+		else {
 			pauseTime.setHorizontalAlignment(JTextField.RIGHT);
 		}
 	}
