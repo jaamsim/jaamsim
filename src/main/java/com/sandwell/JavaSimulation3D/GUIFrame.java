@@ -812,6 +812,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				GUIFrame.instance.setPauseTime(pauseTime.getText());
+				controlStartResume.grabFocus();
 			}
 		});
 
