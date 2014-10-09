@@ -536,43 +536,6 @@ public abstract class Input<T> {
 		return value;
 	}
 
-	/**
-	 * Convert the given String to a double and apply the given conversion factor
-	 */
-	public static double parseSeconds(String data, double minValue, double maxValue, double factor )
-	throws InputErrorException {
-		double value = 0.0d;
-
-		// check for hh:mm:ss or hh:mm
-		if (data.indexOf(":") > -1) {
-			String[] splitDouble = data.split( ":" );
-			if (splitDouble.length != 2 && splitDouble.length != 3)
-				throw new InputErrorException(INP_ERR_TIME, data);
-
-			try {
-				double hour = Double.valueOf(splitDouble[0]);
-				double min = Double.valueOf(splitDouble[1]);
-				double sec = 0.0d;
-
-				if (splitDouble.length == 3)
-					sec = Double.valueOf(splitDouble[2]);
-
-				value = hour * 3600.0d + min * 60.0d + sec;
-			}
-			catch (NumberFormatException e) {
-				throw new InputErrorException(INP_ERR_TIME, data);
-			}
-		} else {
-			value = Input.parseDouble(data);
-			value = value * factor;
-		}
-
-		if (value < minValue || value > maxValue)
-			throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, value);
-
-		return value;
-	}
-
 	private static final Pattern is8601date = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
 	private static final Pattern is8601time = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}:\\d{2}");
 	private static final Pattern is8601full = Pattern.compile("\\d{4}-\\d{2}-\\d{2}[ T]\\d{2}:\\d{2}:\\d{2}\\.\\d{1,6}");
@@ -583,6 +546,16 @@ public abstract class Input<T> {
 	private static final long usPerHr  = 60 * usPerMin;
 	private static final long usPerDay = 24 * usPerHr;
 	public static final long usPerYr  = 365 * usPerDay;
+
+	public static boolean isRFC8601DateTime(String input) {
+		if (is8601time.matcher(input).matches()) return true;
+		if (is8601full.matcher(input).matches()) return true;
+		if (is8601date.matcher(input).matches()) return true;
+		if (isextendtime.matcher(input).matches()) return true;
+		if (isextendfull.matcher(input).matches()) return true;
+		return false;
+	}
+
 	/**
 	 * Parse an RFC8601 date time and return it as an offset in microseconds from
 	 * 0AD. This assumes a very simple concept of a 365 day year with no leap years
@@ -794,40 +767,57 @@ public abstract class Input<T> {
 	 */
 	public static DoubleVector parseDoubles(KeywordIndex kw, double minValue, double maxValue, Class<? extends Unit> unitType)
 	throws InputErrorException {
+
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
 
 		double factor = 1.0d;
 		int numDoubles = kw.numArgs();
 
-		// If not a Dimensionless value, a unit is mandatory
-		if (unitType != DimensionlessUnit.class) {
-			Entity ent = Entity.getNamedEntity(kw.getArg(kw.numArgs() - 1));
-			if (ent == null)
-				throw new InputErrorException(INP_ERR_NOUNITFOUND, kw.getArg(kw.numArgs() - 1), unitType.getSimpleName());
+		// Parse the unit portion of the input
+		Unit unit = Input.tryParseEntity(kw.getArg(numDoubles-1), unitType);
 
-			Unit unit = Input.castEntity(ent, unitType);
-			if (unit == null)
-				throw new InputErrorException(INP_ERR_ENTCLASS, unitType.getSimpleName(), ent.getInputName(), ent.getClass().getSimpleName());
+		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
+		if (unit == null && unitType != DimensionlessUnit.class && unitType != TimeUnit.class)
+			throw new InputErrorException(INP_ERR_NOUNITFOUND, kw.getArg(numDoubles-1), unitType.getSimpleName());
 
+		if (unit != null) {
 			factor = unit.getConversionFactorToSI();
-			numDoubles = kw.numArgs() - 1;
+			numDoubles = numDoubles - 1;
 		}
 
+		// Parse the numeric portion of the input
 		DoubleVector temp = new DoubleVector(numDoubles);
 		for (int i = 0; i < numDoubles; i++) {
 			try {
-				// Allow a special syntax for time-based inputs
+				// Time input
 				if (unitType == TimeUnit.class) {
-					double element = Input.parseSeconds(kw.getArg(i), minValue, maxValue, factor);
-					temp.add(element);
+
+					// RFC8601 date/time format
+					if (Input.isRFC8601DateTime(kw.getArg(i))) {
+						double element = Input.parseRFC8601DateTime(kw.getArg(i))/1e6;
+						if (element < minValue || element > maxValue)
+							throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, temp);
+						temp.add(element);
+					}
+					// Normal format
+					else {
+						if (unit == null)
+							throw new InputErrorException(INP_ERR_NOUNITFOUND, kw.getArg(numDoubles-1), unitType.getSimpleName());
+						double element = Input.parseDouble(kw.getArg(i), minValue, maxValue, factor);
+						temp.add(element);
+					}
 				}
+				// Non-time input
 				else {
 					double element = Input.parseDouble(kw.getArg(i), minValue, maxValue, factor);
 					temp.add(element);
 				}
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				if (numDoubles == 1)
+					throw e;
+				else
+					throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
 			}
 		}
 		return temp;
@@ -838,40 +828,57 @@ public abstract class Input<T> {
 	 */
 	public static DoubleVector parseDoubles(List<String> input, double minValue, double maxValue, Class<? extends Unit> unitType)
 	throws InputErrorException {
+
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
 
 		double factor = 1.0d;
 		int numDoubles = input.size();
 
-		// If not a Dimensionless value, a unit is mandatory
-		if (unitType != DimensionlessUnit.class) {
-			Entity ent = Entity.getNamedEntity(input.get(input.size() - 1));
-			if (ent == null)
-				throw new InputErrorException(INP_ERR_NOUNITFOUND, input.get(input.size() - 1), unitType.getSimpleName());
+		// Parse the unit portion of the input
+		Unit unit = Input.tryParseEntity(input.get(numDoubles-1), unitType);
 
-			Unit unit = Input.castEntity(ent, unitType);
-			if (unit == null)
-				throw new InputErrorException(INP_ERR_ENTCLASS, unitType.getSimpleName(), ent.getInputName(), ent.getClass().getSimpleName());
+		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
+		if (unit == null && unitType != DimensionlessUnit.class && unitType != TimeUnit.class)
+			throw new InputErrorException(INP_ERR_NOUNITFOUND, input.get(numDoubles-1), unitType.getSimpleName());
 
+		if (unit != null) {
 			factor = unit.getConversionFactorToSI();
-			numDoubles = input.size() - 1;
+			numDoubles = numDoubles - 1;
 		}
 
+		// Parse the numeric portion of the input
 		DoubleVector temp = new DoubleVector(numDoubles);
 		for (int i = 0; i < numDoubles; i++) {
 			try {
-				// Allow a special syntax for time-based inputs
+				// Time input
 				if (unitType == TimeUnit.class) {
-					double element = Input.parseSeconds(input.get(i), minValue, maxValue, factor);
-					temp.add(element);
+
+					// RFC8601 date/time format
+					if (Input.isRFC8601DateTime(input.get(i))) {
+						double element = Input.parseRFC8601DateTime(input.get(i))/1e6;
+						if (element < minValue || element > maxValue)
+							throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, temp);
+						temp.add(element);
+					}
+					// Normal format
+					else {
+						if (unit == null)
+							throw new InputErrorException(INP_ERR_NOUNITFOUND, input.get(numDoubles-1), unitType.getSimpleName());
+						double element = Input.parseDouble(input.get(i), minValue, maxValue, factor);
+						temp.add(element);
+					}
 				}
+				// Non-time input
 				else {
 					double element = Input.parseDouble(input.get(i), minValue, maxValue, factor);
 					temp.add(element);
 				}
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				if (numDoubles == 1)
+					throw e;
+				else
+					throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
 			}
 		}
 		return temp;
