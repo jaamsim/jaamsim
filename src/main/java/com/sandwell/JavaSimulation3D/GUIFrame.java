@@ -82,8 +82,6 @@ import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
-import com.jaamsim.units.TimeUnit;
-import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Simulation;
 
