@@ -82,6 +82,8 @@ import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
+import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Simulation;
 
@@ -150,7 +152,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public static int VIEW_HEIGHT;
 	public static int VIEW_WIDTH;
 
-	static final String infinitySign = "\u221e";
 	static {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -782,19 +783,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		pauseTime = new JTextField("2000-00-00") {
 			@Override
 			protected void processFocusEvent(FocusEvent fe) {
-
-				// Focus gained
-				if (fe.getID() == FocusEvent.FOCUS_GAINED) {
-
-					// Convert an infinity sign to blank for editing
-					if (getText().equals(infinitySign)) {
-						this.setHorizontalAlignment(JTextField.RIGHT);
-						this.setText("");
-					}
-				}
-
-				// Focus lost
-				else if (fe.getID() == FocusEvent.FOCUS_LOST) {
+				if (fe.getID() == FocusEvent.FOCUS_LOST) {
 					GUIFrame.instance.setPauseTime(this.getText());
 				}
 				super.processFocusEvent( fe );
@@ -816,8 +805,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		});
 
-		pauseTime.setText(infinitySign);
-		pauseTime.setHorizontalAlignment(JTextField.CENTER);
+		pauseTime.setText("");
+		pauseTime.setHorizontalAlignment(JTextField.RIGHT);
 		pauseTime.setToolTipText( "Time at which to pause the run, e.g. 3 h, 10 s, etc." );
 
 		// 4) Real Time button
@@ -1373,15 +1362,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	/**
 	 * updates PauseTime entry
 	 */
-	public void updateForPauseTime(Double t, String valueString) {
-		if (t == Double.POSITIVE_INFINITY) {
-			pauseTime.setText(infinitySign);
-			pauseTime.setHorizontalAlignment(JTextField.CENTER);
-		}
-		else {
-			pauseTime.setText(valueString);
-			pauseTime.setHorizontalAlignment(JTextField.RIGHT);
-		}
+	public void updateForPauseTime(String str) {
+		pauseTime.setText(str);
 	}
 
 	/**
@@ -1389,23 +1371,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * @param str - value to assign.
 	 */
 	private void setPauseTime(String str) {
-
-		if (!str.equals(infinitySign)) {
-			try {
-				InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "PauseTime", str);
-			} catch (InputErrorException e) {
-				pauseTime.setText(Simulation.getInstance().getInput("PauseTime").getValueString());
-				JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-
-		// If the entry is infinity, show the infinity sign
-		if (Simulation.getPauseTime() == Double.POSITIVE_INFINITY) {
-			pauseTime.setText(infinitySign);
-			pauseTime.setHorizontalAlignment(JTextField.CENTER);
-		}
-		else {
-			pauseTime.setHorizontalAlignment(JTextField.RIGHT);
+		try {
+			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "PauseTime", str);
+		} catch (InputErrorException e) {
+			pauseTime.setText(Simulation.getInstance().getInput("PauseTime").getValueString());
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

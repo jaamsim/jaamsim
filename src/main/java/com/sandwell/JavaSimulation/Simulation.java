@@ -513,7 +513,7 @@ public class Simulation extends Entity {
 	}
 
 	static void updatePauseTime() {
-		GUIFrame.instance().updateForPauseTime(pauseTime.getValue(), pauseTime.getValueString());
+		GUIFrame.instance().updateForPauseTime(pauseTime.getValueString());
 	}
 
 	public static void setModelName(String newModelName) {
