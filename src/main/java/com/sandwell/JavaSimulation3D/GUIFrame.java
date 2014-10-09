@@ -82,6 +82,7 @@ import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
@@ -306,7 +307,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		setProgress( 0 );
 		speedUpDisplay.setText("------");
 		remainingDisplay.setText("------");
-		locatorPos.setText( "(-, -, -)" );
+		locatorPos.setText( "------" );
 
 		// Read the autoload configuration file
 		InputAgent.clear();
@@ -1072,10 +1073,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		statusBar.add( remainingLabel );
 		statusBar.add( remainingDisplay );
 
-		locatorPos = new JLabel( "(-, -, -)" );
+		locatorPos = new JLabel( "------" );
 		locatorPos.setPreferredSize( new Dimension( 140, 16 ) );
 		locatorPos.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-		locatorLabel = new JLabel( "Pos:     " );
+		locatorLabel = new JLabel( "Position:  " );
 		statusBar.add( locatorLabel );
 		statusBar.add( locatorPos );
 
@@ -1401,12 +1402,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public void showLocatorPosition(Vec3d pos) {
 		// null indicates nothing to display
 		if( pos == null ) {
-			locatorPos.setText( "(-, -, -)" );
+			locatorPos.setText( "-------" );
 		}
 		else {
 			if( showPosition.getState() ) {
-				locatorPos.setText(String.format((Locale)null, "(%.3f, %.3f, %.3f)",
-					pos.x, pos.y, pos.z));
+				DistanceUnit u = (DistanceUnit) Unit.getPreferredUnit(DistanceUnit.class);
+				if (u == null) {
+					locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
+							pos.x, pos.y, pos.z, Unit.getSIUnit(DistanceUnit.class)));
+				}
+				else {
+					double factor = u.getConversionFactorToSI();
+					locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
+							pos.x/factor, pos.y/factor, pos.z/factor, u.getInputName()));
+				}
 			}
 		}
 	}
@@ -1416,8 +1425,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		showPosition.setState( show );
 		locatorLabel.setVisible( show );
 		locatorPos.setVisible( show );
-		locatorLabel.setText( "Pos: " );
-		locatorPos.setText( "(-, -, -)" );
+		locatorLabel.setText( "Position:  " );
+		locatorPos.setText( "------" );
 	}
 
 	public void enableSave(boolean bool) {
