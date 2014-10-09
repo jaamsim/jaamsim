@@ -82,6 +82,8 @@ import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.View;
+import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Simulation;
 
@@ -1035,10 +1037,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		statusBar.setLayout( new FlowLayout( FlowLayout.LEFT, 10, 5 ) );
 
 		// Create the display clock and label
-		JLabel clockLabel = new JLabel( "Simulation Time (hrs):" );
+		JLabel clockLabel = new JLabel( "Simulation Time:" );
 
-		clockDisplay = new JLabel( "------.--", JLabel.RIGHT );
-		clockDisplay.setPreferredSize( new Dimension( 55, 16 ) );
+		clockDisplay = new JLabel( "", JLabel.RIGHT );
+		clockDisplay.setPreferredSize( new Dimension( 85, 16 ) );
 		clockDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
 
 		statusBar.add( clockLabel );
@@ -1091,14 +1093,22 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * @param simTime - the present simulation time in seconds.
 	 */
 	public void setClock(double simTime) {
-		double clockContents = simTime / 3600.0d;
-		clockDisplay.setText(String.format("%.2f", clockContents));
 
+		// Set the simulation time display
+		TimeUnit u = (TimeUnit) Unit.getPreferredUnit(TimeUnit.class);
+		if (u == null)
+			clockDisplay.setText(String.format("%,.2f  %s", simTime, Unit.getSIUnit(TimeUnit.class)));
+		else
+			clockDisplay.setText(String.format("%,.2f  %s", simTime/u.getConversionFactorToSI(), u.getInputName()));
+
+		// Set the run progress bar display
 		long cTime = System.currentTimeMillis();
 		double duration = Simulation.getRunDurationHours() + Simulation.getInitializationHours();
-		double timeElapsed = clockContents - Simulation.getStartHours();
+		double timeElapsed = simTime/3600.0 - Simulation.getStartHours();
 		int progress = (int)(timeElapsed * 100.0d / duration);
 		this.setProgress(progress);
+
+		// Set the speedup factor display
 		if (cTime - lastSystemTime > 5000) {
 			long elapsedMillis = cTime - lastSystemTime;
 			double elapsedSimHours = timeElapsed - lastSimTimeHours;
