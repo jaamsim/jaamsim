@@ -35,8 +35,10 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
+import com.jaamsim.input.Parser;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.TimeUnit;
@@ -295,19 +297,15 @@ public class Entity {
 	 * @param ent = entity whose inputs are to be copied
 	 */
 	public void copyInputs(Entity ent) {
+		ArrayList<String> tmp = new ArrayList<String>();
 		for (Input<?> sourceInput : ent.inpList) {
 			if (sourceInput.isDefault()) {
 				continue;
 			}
-			Input<?> targetInput = this.getInput(sourceInput.getKeyword());
-			String val = sourceInput.getValueString();
-			if( val.isEmpty() ) {
-				if( ! targetInput.getValueString().isEmpty() )
-					targetInput.reset();
-			}
-			else {
-				InputAgent.processEntity_Keyword_Value(this, targetInput.getKeyword(), val);
-			}
+			tmp.clear();
+			Parser.tokenize(tmp, sourceInput.getValueString(), true);
+			KeywordIndex kw = new KeywordIndex(sourceInput.getKeyword(), tmp, null);
+			InputAgent.apply(this, kw);
 		}
 	}
 
