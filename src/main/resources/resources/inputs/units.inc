@@ -84,7 +84,7 @@ Define TimeUnit { s min h d w y ms us ns }
 
 s      ConversionFactorToSI { 1        }  Description { 'Seconds' }
 min    ConversionFactorToSI { 60       }  Description { 'Minutes' }
-h      ConversionFactorToSI { 3600     }  Description { 'Hours' }
+h      ConversionFactorToSI { 3600     }  Description { 'Hours' }  PreferredUnit { h }
 d      ConversionFactorToSI { 86400    }  Description { 'Days' }
 w      ConversionFactorToSI { 604800   }  Description { 'Weeks' }
 y      ConversionFactorToSI { 31536000 }  Description { 'Years' }
