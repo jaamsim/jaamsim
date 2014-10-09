@@ -73,7 +73,7 @@ public class Seize extends LinkedComponent {
 
 		// If other entities are queued already or insufficient units are available, then add the entity to the queue
 		if( queue.getCount() > 0 || !this.checkResources() ) {
-			queue.addLast( ent );
+			queue.addDisplayEntity(ent);
 			return;
 		}
 

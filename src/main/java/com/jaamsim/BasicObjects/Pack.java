@@ -103,7 +103,7 @@ public class Pack extends LinkedService {
 		super.addDisplayEntity(ent);
 
 		// Add the entity to the queue
-		waitQueue.getValue().addLast(ent);
+		waitQueue.getValue().addDisplayEntity(ent);
 
 		// If necessary, restart processing
 		if (!this.isBusy()) {

@@ -106,7 +106,7 @@ public class Assemble extends LinkedService {
 		ind = Math.min(ind, waitQueueList.getValue().size());
 
 		// Add the entity to the queue
-		waitQueueList.getValue().get(ind-1).addLast(ent);
+		waitQueueList.getValue().get(ind-1).addDisplayEntity(ent);
 
 		// If necessary, wake up the server
 		if (!this.isBusy()) {

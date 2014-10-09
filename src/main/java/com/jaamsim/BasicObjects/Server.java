@@ -76,7 +76,7 @@ public class Server extends LinkedService {
 		super.addDisplayEntity(ent);
 
 		// Add the entity to the queue
-		waitQueueInput.getValue().addLast(ent);
+		waitQueueInput.getValue().addDisplayEntity(ent);
 
 		// If necessary, wake up the server
 		if (!this.isBusy() && this.isOpen()) {
