@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -48,6 +49,11 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
             "make up the path.  When two coordinates are given it is assumed that z = 0." ,
              example = "Delay1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
 	private final Vec3dListInput pointsInput;
+
+	@Keyword(description = "If TRUE, a delayed entity is moved along the " +
+			"specified path to indicate its progression through the delay.",
+	         example = "Delay1 Animation { TRUE }")
+	private final BooleanInput animation;
 
 	@Keyword(description = "The width of the path in pixels.",
 	         example = "Delay1 Width { 1 }")
@@ -81,6 +87,9 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput);
 
+		animation = new BooleanInput("Animation", "Key Inputs", true);
+		this.addInput(animation);
+
 		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
 		widthInput.setUnitType(DimensionlessUnit.class);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);
@@ -97,9 +106,28 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	}
 
 	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput( in );
+
+		// If animation is turned off, clear the list of entities to be displayed
+		if (in == animation) {
+			if (!animation.getValue())
+				entityMap.clear();
+			return;
+		}
+
+		// If Points were input, then use them to set the start and end coordinates
+		if (in == pointsInput || in == colorInput || in == widthInput) {
+			synchronized(screenPointLock) {
+				cachedPointInfo = null;
+			}
+			return;
+		}
+	}
+
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		this.setPresentState("Idle");
 
 		entityMap.clear();
 
@@ -129,15 +157,18 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	public void addDisplayEntity(DisplayEntity ent) {
 		super.addDisplayEntity(ent);
 
-		// Add the entity to the list of entities being delayed
+		// Select the delay time for this entity
 		double simTime = this.getSimTime();
 		double dur = duration.getValue().getNextSample(simTime);
 
-		EntityDelayEntry entry = new EntityDelayEntry();
-		entry.ent = ent;
-		entry.startTime = simTime;
-		entry.duration = dur;
-		entityMap.put(ent.getEntityNumber(), entry);
+		// Add the entity to the list of entities being delayed
+		if (animation.getValue()) {
+			EntityDelayEntry entry = new EntityDelayEntry();
+			entry.ent = ent;
+			entry.startTime = simTime;
+			entry.duration = dur;
+			entityMap.put(ent.getEntityNumber(), entry);
+		}
 
 		this.scheduleProcess(dur, 5, new RemoveDisplayEntityTarget(this, ent));
 	}
@@ -157,8 +188,10 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	}
 
 	public void removeDisplayEntity(DisplayEntity ent) {
+
 		// Remove the entity from the lists
-		entityMap.remove(ent.getEntityNumber());
+		if (animation.getValue())
+			entityMap.remove(ent.getEntityNumber());
 
 		// Send the entity to the next component
 		this.sendToNextComponent(ent);
@@ -194,19 +227,6 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		Vec3d vec = new Vec3d();
 		vec.interpolate3(pointsInput.getValue().get(seg), pointsInput.getValue().get(seg+1), frac);
 		return vec;
-	}
-
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		// If Points were input, then use them to set the start and end coordinates
-		if (in == pointsInput || in == colorInput || in == widthInput) {
-			synchronized(screenPointLock) {
-				cachedPointInfo = null;
-			}
-			return;
-		}
 	}
 
 	@Override
