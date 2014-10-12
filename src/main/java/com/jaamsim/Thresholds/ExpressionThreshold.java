@@ -17,12 +17,16 @@ package com.jaamsim.Thresholds;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
+import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
 public class ExpressionThreshold extends Threshold {
 
@@ -30,10 +34,33 @@ public class ExpressionThreshold extends Threshold {
 	         example = "ExpressionThreshold1  OpenCondition { '[Queue1].QueueLength &gt 3' }")
 	private final ExpressionInput openCondition;
 
+	@Keyword(description = "The colour of the threshold graphic when the threshold condition is open, but the gate is still closed.",
+	         example = "ExpressionThreshold1  PendingOpenColour { yellow }")
+	private final ColourInput pendingOpenColour;
+
+	@Keyword(description = "The colour of the threshold graphic when the threshold condition is closed, but the gate is still open.",
+	         example = "ExpressionThreshold1  PendingClosedColour { yellow }")
+	private final ColourInput pendingClosedColour;
+
+	@Keyword(description = "A Boolean value.  If TRUE, the threshold displayed distinguishes the pending open and pending closed states.",
+	         example = "Threshold1 ShowPendingStates { FALSE }")
+	private final BooleanInput showPendingStates;
+
 	{
 		openCondition = new ExpressionInput("OpenCondition", "Key Inputs", null);
 		openCondition.setEntity(this);
 		this.addInput(openCondition);
+
+		pendingOpenColour = new ColourInput("PendingOpenColour", "Graphics", ColourInput.YELLOW);
+		this.addInput(pendingOpenColour);
+		this.addSynonym(pendingOpenColour, "PendingOpenColor");
+
+		pendingClosedColour = new ColourInput("PendingClosedColour", "Graphics", ColourInput.PURPLE);
+		this.addInput(pendingClosedColour);
+		this.addSynonym(pendingClosedColour, "PendingClosedColor");
+
+		showPendingStates = new BooleanInput("ShowPendingStates", "Graphics", true);
+		this.addInput(showPendingStates);
 	}
 
 	@Override
@@ -89,12 +116,38 @@ public class ExpressionThreshold extends Threshold {
 	}
 
 	@Override
+	public void updateGraphics(double simTime) {
+		super.updateGraphics(simTime);
+
+		// Trap the pending cases
+		if (!showPendingStates.getValue() || !openStateChanged(simTime))
+			return;
+
+		// Select the colour
+		Color4d col;
+		if (super.isOpen())
+			col = pendingClosedColour.getValue();
+		else
+			col = pendingOpenColour.getValue();
+
+		// Display the threshold icon
+		setTagVisibility(DisplayModelCompat.TAG_CONTENTS, true);
+		setTagVisibility(DisplayModelCompat.TAG_OUTLINES, true);
+		setTagColour(DisplayModelCompat.TAG_CONTENTS, col);
+		setTagColour(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+	}
+
+	@Override
 	public boolean isOpen() {
 		return this.getOpenConditionValue(getSimTime());
 	}
 
 	boolean openStateChanged() {
 		return getOpenConditionValue(getSimTime()) != super.isOpen();
+	}
+
+	boolean openStateChanged(double simTime) {
+		return getOpenConditionValue(simTime) != super.isOpen();
 	}
 
 	@Output(name = "Open",
