@@ -139,7 +139,8 @@ public class ExpressionThreshold extends Threshold {
 
 	@Override
 	public boolean isOpen() {
-		return this.getOpenConditionValue(getSimTime());
+		this.setOpen(this.getOpenConditionValue(getSimTime()));
+		return super.isOpen();
 	}
 
 	boolean openStateChanged() {
