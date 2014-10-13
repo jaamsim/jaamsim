@@ -77,13 +77,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	public void thresholdChanged() {
 
 		// If necessary, restart processing
-		if (this.isBusy()) {
-			this.setPresentState();
-		}
-		else {
+		if (this.isOpen() && !this.isBusy()) {
 			this.setBusy(true);
 			this.setPresentState();
 			this.startAction();
+		}
+		else {
+			this.setPresentState();
 		}
 	}
 
