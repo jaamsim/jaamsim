@@ -93,7 +93,6 @@ public class Assemble extends LinkedService {
 
 		assembledEntity = null;
 		numberGenerated = 0;
-		this.setPresentState();
 	}
 
 	@Override

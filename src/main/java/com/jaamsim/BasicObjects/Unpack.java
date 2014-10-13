@@ -64,7 +64,6 @@ public class Unpack extends LinkedService {
 	public void earlyInit() {
 		super.earlyInit();
 		container = null;
-		this.setPresentState();
 	}
 
 	@Override

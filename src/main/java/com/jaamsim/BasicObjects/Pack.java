@@ -88,7 +88,6 @@ public class Pack extends LinkedService {
 		container = null;
 		numberGenerated = 0;
 		numberInserted = 0;
-		this.setPresentState();
 	}
 
 	@Override

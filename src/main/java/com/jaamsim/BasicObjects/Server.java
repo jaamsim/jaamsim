@@ -69,7 +69,6 @@ public class Server extends LinkedService {
 	public void earlyInit() {
 		super.earlyInit();
 		servedEntity = null;
-		this.setPresentState();
 	}
 
 	@Override

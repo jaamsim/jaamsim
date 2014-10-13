@@ -100,7 +100,6 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 
 		entityList.clear();
 		startTimeList.clear();
-		this.setPresentState();
 
 	    // Initialize the segment length data
 		lengthList.clear();

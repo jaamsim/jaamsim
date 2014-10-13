@@ -56,12 +56,6 @@ public class EntityGate extends LinkedService {
 	}
 
 	@Override
-	public void earlyInit() {
-		super.earlyInit();
-		this.setPresentState();
-	}
-
-	@Override
 	public void addDisplayEntity(DisplayEntity ent) {
 		super.addDisplayEntity(ent);
 
