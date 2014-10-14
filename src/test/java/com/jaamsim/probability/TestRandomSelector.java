@@ -16,7 +16,8 @@ package com.jaamsim.probability;
 
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import com.jaamsim.ProbabilityDistributions.RandomSelector;
+
+import com.jaamsim.BasicObjects.RandomSelector;
 import com.jaamsim.input.InputAgent;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 

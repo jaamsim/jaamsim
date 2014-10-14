@@ -11,8 +11,6 @@ Define ObjectType {
 					LogLogisticsDistribution
 					DiscreteDistribution
 					ContinuousDistribution
-					EntitlementSelector
-					RandomSelector
 					BooleanSelector
                     }
 
@@ -28,8 +26,6 @@ LogNormalDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.LogNorma
 LogLogisticsDistribution	JavaClass { com.jaamsim.ProbabilityDistributions.LogLogisticDistribution	} Palette { 'Probability Distributions' }
 DiscreteDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteDistribution		} Palette { 'Probability Distributions' }
 ContinuousDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ContinuousDistribution		} Palette { 'Probability Distributions' }
-EntitlementSelector			JavaClass { com.jaamsim.ProbabilityDistributions.EntitlementSelector		} Palette { 'Probability Distributions' }
-RandomSelector				JavaClass { com.jaamsim.ProbabilityDistributions.RandomSelector				} Palette { 'Probability Distributions' }
 BooleanSelector				JavaClass { com.jaamsim.ProbabilityDistributions.BooleanSelector			} Palette { 'Probability Distributions' }
 
 Define	ImageModel {
@@ -41,7 +37,7 @@ Define	ImageModel {
 					ErlangDistributionIconModel
 					DiscreteDistributionIconModel
 					ContinuousDistributionIconModel
-					SelectorIconModel
+					BooleanSelectorIconModel
 					}
 
 ProbabilityDistributionIconModel	ImageFile { '<res>/images/ErlangDist-256.png'    }   Transparent { TRUE }
@@ -52,7 +48,7 @@ TriangularDistributionIconModel		ImageFile { '<res>/images/TriangleDist-256.png'
 ErlangDistributionIconModel			ImageFile { '<res>/images/ErlangDist-256.png'    }   Transparent { TRUE }
 DiscreteDistributionIconModel       ImageFile { '<res>/images/DiscreteDist-256.png'  }   Transparent { TRUE }
 ContinuousDistributionIconModel     ImageFile { '<res>/images/ContinuousDist-256.png' }  Transparent { TRUE }
-SelectorIconModel                   ImageFile { '<res>/images/Selector-256.png'      }   Transparent { TRUE }
+BooleanSelectorIconModel            ImageFile { '<res>/images/Selector-256.png'      }   Transparent { TRUE }
 
 UniformDistribution			DefaultDisplayModel { UniformDistributionIconModel     }
 TriangularDistribution		DefaultDisplayModel { TriangularDistributionIconModel  }
@@ -66,9 +62,7 @@ LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogLogisticsDistribution	DefaultDisplayModel { ProbabilityDistributionIconModel }
 DiscreteDistribution		DefaultDisplayModel { DiscreteDistributionIconModel    }
 ContinuousDistribution		DefaultDisplayModel { ContinuousDistributionIconModel  }
-EntitlementSelector			DefaultDisplayModel { SelectorIconModel                }
-RandomSelector				DefaultDisplayModel { SelectorIconModel                }
-BooleanSelector				DefaultDisplayModel { SelectorIconModel                }
+BooleanSelector				DefaultDisplayModel { BooleanSelectorIconModel         }
 
 UniformDistribution      Description { 'Generates random numbers from a uniform probability density function.' }
 TriangularDistribution   Description { 'Generates random numbers from a triangular probability density function.' }
@@ -82,6 +76,4 @@ LogNormalDistribution    Description { 'Generates random numbers from a log-norm
 LogLogisticsDistribution Description { 'Generates random numbers from a log-logistical probability density function.' }
 DiscreteDistribution     Description { 'Generates random numbers from a user-specified set of values and probabilities.' }
 ContinuousDistribution   Description { 'Generates random numbers from a user-specified probability density function.' }
-EntitlementSelector      Description { 'Selects on the basis of entitlement from a given set of entities and proportions.' }
-RandomSelector           Description { 'Randomly selects from a given set of entities and probabilities.' }
 BooleanSelector          Description { 'Randomly selects true/false with a user-selectable probability of true.' }
