@@ -716,7 +716,7 @@ public class Entity {
 		if (hasAttribute(outputName))
 			return attributeMap.get(outputName);
 
-		if (OutputHandle.hasOutputInterned(this.getClass(), outputName) || attributeMap.containsKey(outputName))
+		if (OutputHandle.hasOutputInterned(this.getClass(), outputName))
 			return new OutputHandle(this, outputName, 0);
 
 		return null;
