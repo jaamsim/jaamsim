@@ -863,9 +863,7 @@ public class ColParser {
 					continue;
 				}
 				String inputSet = sub.getAttrib("input_set");
-				if (inputSet != null && !inputSet.equals("0")) {
-					throw new RenderException("Collada model using a texture coordinate set that is not 0. This is not currently supported");
-				}
+				// TODO: handle texture set binding
 			}
 		}
 		return instInfo;
@@ -1011,7 +1009,7 @@ public class ColParser {
 		}
 
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
-		boolean hasTexCoords = (smd.texCoordDesc != null);
+		boolean hasTexCoords = (smd.texCoordMap.size() != 0);
 		FaceSubGeo fsg = new FaceSubGeo(numVerts);
 
 		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
@@ -1020,9 +1018,13 @@ public class ColParser {
 		if (hasNormal) {
 			normData = getDataArrayFromSource(smd.normDesc.source);
 		}
+
+		DataDesc texSetDesc = null;
 		Vec4d[] texCoordData = null;
-		if (hasTexCoords)
-			texCoordData = getDataArrayFromSource(smd.texCoordDesc.source);
+		if (hasTexCoords) {
+			texSetDesc = smd.texCoordMap.get(smd.lowestTexSet);
+			texCoordData = getDataArrayFromSource(texSetDesc.source);
+		}
 
 		fsg.materialSymbol = material;
 
@@ -1066,7 +1068,7 @@ public class ColParser {
 
 			Vec2d texCoord = null;
 			if (hasTexCoords) {
-				texCoord = new Vec2d(texCoordData[smd.texCoordDesc.indices[i]]);
+				texCoord = new Vec2d(texCoordData[texSetDesc.indices[i]]);
 			}
 			fsg.indices[i] = fsg.vMap.getVertIndex(pos, normal, texCoord);
 		}
@@ -1163,8 +1165,9 @@ public class ColParser {
 		if (smd.normDesc != null) {
 			smd.normDesc.indices = new int[count*3];
 		}
-		if (smd.texCoordDesc != null) {
-			smd.texCoordDesc.indices = new int[count*3];
+
+		for (DataDesc texDesc : smd.texCoordMap.values()) {
+			texDesc.indices = new int[count*3];
 		}
 
 		for (int i = 0; i < count * 3; ++i) {
@@ -1173,8 +1176,8 @@ public class ColParser {
 			if (smd.normDesc != null) {
 				smd.normDesc.indices[i] = ps[offset + smd.normDesc.offset];
 			}
-			if (smd.texCoordDesc != null) {
-				smd.texCoordDesc.indices[i] = ps[offset + smd.texCoordDesc.offset];
+			for (DataDesc texDesc : smd.texCoordMap.values()) {
+				texDesc.indices[i] = ps[offset + texDesc.offset];
 			}
 		}
 	}
@@ -1211,8 +1214,9 @@ public class ColParser {
 		if (smd.normDesc != null) {
 			smd.normDesc.indices = new int[numTriangles * 3];
 		}
-		if (smd.texCoordDesc != null) {
-			smd.texCoordDesc.indices = new int[numTriangles * 3];
+
+		for (DataDesc texDesc : smd.texCoordMap.values()) {
+			texDesc.indices = new int[numTriangles*3];
 		}
 
 		int nextWriteVert = 0;
@@ -1232,8 +1236,8 @@ public class ColParser {
 				if (smd.normDesc != null) {
 					smd.normDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.normDesc.offset];
 				}
-				if (smd.texCoordDesc != null) {
-					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.texCoordDesc.offset];
+				for (DataDesc texDesc : smd.texCoordMap.values()) {
+					texDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + texDesc.offset];
 				}
 				nextWriteVert++;
 
@@ -1241,8 +1245,8 @@ public class ColParser {
 				if (smd.normDesc != null) {
 					smd.normDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.normDesc.offset];
 				}
-				if (smd.texCoordDesc != null) {
-					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.texCoordDesc.offset];
+				for (DataDesc texDesc : smd.texCoordMap.values()) {
+					texDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + texDesc.offset];
 				}
 				nextWriteVert++;
 
@@ -1250,8 +1254,8 @@ public class ColParser {
 				if (smd.normDesc != null) {
 					smd.normDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.normDesc.offset];
 				}
-				if (smd.texCoordDesc != null) {
-					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.texCoordDesc.offset];
+				for (DataDesc texDesc : smd.texCoordMap.values()) {
+					texDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + texDesc.offset];
 				}
 				nextWriteVert++;
 			}
@@ -1281,8 +1285,9 @@ public class ColParser {
 		if (smd.normDesc != null) {
 			smd.normDesc.indices = new int[numTriangles * 3];
 		}
-		if (smd.texCoordDesc != null) {
-			smd.texCoordDesc.indices = new int[numTriangles * 3];
+
+		for (DataDesc texDesc : smd.texCoordMap.values()) {
+			texDesc.indices = new int[numTriangles*3];
 		}
 
 		int nextWriteVert = 0;
@@ -1302,8 +1307,8 @@ public class ColParser {
 				if (smd.normDesc != null) {
 					smd.normDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.normDesc.offset];
 				}
-				if (smd.texCoordDesc != null) {
-					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + smd.texCoordDesc.offset];
+				for (DataDesc texDesc : smd.texCoordMap.values()) {
+					texDesc.indices[nextWriteVert] = ps[(vert0*smd.stride) + texDesc.offset];
 				}
 				nextWriteVert++;
 
@@ -1311,8 +1316,8 @@ public class ColParser {
 				if (smd.normDesc != null) {
 					smd.normDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.normDesc.offset];
 				}
-				if (smd.texCoordDesc != null) {
-					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + smd.texCoordDesc.offset];
+				for (DataDesc texDesc : smd.texCoordMap.values()) {
+					texDesc.indices[nextWriteVert] = ps[(vert1*smd.stride) + texDesc.offset];
 				}
 				nextWriteVert++;
 
@@ -1320,8 +1325,8 @@ public class ColParser {
 				if (smd.normDesc != null) {
 					smd.normDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.normDesc.offset];
 				}
-				if (smd.texCoordDesc != null) {
-					smd.texCoordDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + smd.texCoordDesc.offset];
+				for (DataDesc texDesc : smd.texCoordMap.values()) {
+					texDesc.indices[nextWriteVert] = ps[(vert2*smd.stride) + texDesc.offset];
 				}
 				nextWriteVert++;
 			}
@@ -1354,14 +1359,19 @@ public class ColParser {
 				smd.normDesc.offset = offset;
 			}
 
-			String set =  input.getAttrib("set");
+			String setString = input.getAttrib("set");
+			int set = 0;
 
-			// We specifically only support texture coordinate set 0, which can be expressed in an annoying combination of ways
-			if (semantic.equals("TEXCOORD0") ||
-			    ((semantic.equals("TEXCOORD")) && (set == null || set.equals("0")))) {
-				smd.texCoordDesc = new DataDesc();
-				smd.texCoordDesc.source = source;
-				smd.texCoordDesc.offset = offset;
+			if (setString != null)
+				set = Integer.parseInt(setString);
+
+			if (semantic.equals("TEXCOORD") || semantic.equals("TEXCOORD0")) {
+				DataDesc texDesc = new DataDesc();
+				texDesc.source = source;
+				texDesc.offset = offset;
+				smd.texCoordMap.put(set, texDesc);
+				// Use the lowest texture set for now
+				smd.lowestTexSet = Math.min(set, smd.lowestTexSet);
 			}
 		}
 
@@ -1451,7 +1461,8 @@ public class ColParser {
 	private static class SubMeshDesc {
 		public DataDesc posDesc;
 		public DataDesc normDesc;
-		public DataDesc texCoordDesc;
+		public HashMap<Integer, DataDesc> texCoordMap = new HashMap<Integer, DataDesc>();
+		public int lowestTexSet = Integer.MAX_VALUE;
 		public int stride;
 	}
 
