@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.Vector;
 
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.MeshFiles.Vertex;
@@ -130,8 +129,8 @@ public class ColParser {
 	private static class Geometry {
 		// Note: the face information is lazily baked when it is first referenced because that is the first time we
 		// know which texture coordinate set to use (then error if it is later referenced with different coordinate sets)
-		public final Vector<SubMeshDesc> faceSubDescs = new Vector<SubMeshDesc>();
-		public final Vector<LineSubGeo> lineSubGeos = new Vector<LineSubGeo>();
+		public final ArrayList<SubMeshDesc> faceSubDescs = new ArrayList<SubMeshDesc>();
+		public final ArrayList<LineSubGeo> lineSubGeos = new ArrayList<LineSubGeo>();
 	}
 
 	private final URL _contextURL;
