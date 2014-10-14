@@ -26,6 +26,7 @@ import java.util.Stack;
 import java.util.Vector;
 
 import com.jaamsim.MeshFiles.MeshData;
+import com.jaamsim.MeshFiles.Vertex;
 import com.jaamsim.MeshFiles.VertexMap;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -106,7 +107,6 @@ public class ColParser {
 	private static class FaceSubGeo {
 		public VertexMap vMap;
 		int[] indices;
-		public String materialSymbol;
 
 		public FaceSubGeo(int size) {
 			vMap = new VertexMap();
@@ -128,7 +128,9 @@ public class ColParser {
 	}
 
 	private static class Geometry {
-		public final Vector<FaceSubGeo> faceSubGeos = new Vector<FaceSubGeo>();
+		// Note: the face information is lazily baked when it is first referenced because that is the first time we
+		// know which texture coordinate set to use (then error if it is later referenced with different coordinate sets)
+		public final Vector<SubMeshDesc> faceSubDescs = new Vector<SubMeshDesc>();
 		public final Vector<LineSubGeo> lineSubGeos = new Vector<LineSubGeo>();
 	}
 
@@ -146,7 +148,7 @@ public class ColParser {
 
 	// This list tracks the combinations of sub geometries and effects loaded in the mesh proto and defines an implicit
 	// index into the mesh proto. This should probably be made more explicit later
-	private final ArrayList<FaceSubGeo> _loadedFaceGeos = new ArrayList<FaceSubGeo>();
+	private final ArrayList<SubMeshDesc> _loadedFaceGeos = new ArrayList<SubMeshDesc>();
 	private final ArrayList<Effect> _loadedEffects = new ArrayList<Effect>();
 	private final ArrayList<LineGeoEffectPair> _loadedLineGeos = new ArrayList<LineGeoEffectPair>();
 
@@ -313,6 +315,10 @@ public class ColParser {
 		String materialId = materialMap.get(symbol);
 		parseAssert(materialId != null);
 
+		return getEffectForMat(materialId);
+	}
+
+	private Effect getEffectForMat(String materialId) {
 		parseAssert(materialId.charAt(0) == '#');
 		String effectId = _materials.get(materialId.substring(1));
 		parseAssert(effectId != null);
@@ -328,9 +334,19 @@ public class ColParser {
 		parseAssert(geoInfo.geoName.charAt(0) == '#');
 		Geometry geo = _geos.get(geoInfo.geoName.substring(1));
 
-		for (FaceSubGeo subGeo : geo.faceSubGeos) {
+		for (SubMeshDesc subGeo : geo.faceSubDescs) {
 			// Check if this geometry and material pair has been loaded yet
-			Effect effect = geoBindingToEffect(geoInfo.materialMap, subGeo.materialSymbol);
+			Effect effect = geoBindingToEffect(geoInfo.materialMap, subGeo.material);
+
+			// Check that this instance of the subgeometry uses the same texture coordinate set as any previous
+			if (geoInfo.usedTexSet != null) {
+				if (subGeo.usedTexSet != null) {
+					parseAssert(geoInfo.usedTexSet.intValue() == subGeo.usedTexSet.intValue());
+				}
+				subGeo.usedTexSet = geoInfo.usedTexSet;
+			} else {
+				subGeo.usedTexSet = 0;
+			}
 
 			int geoID;
 			if (_loadedFaceGeos.contains(subGeo)) {
@@ -338,7 +354,15 @@ public class ColParser {
 			} else {
 				geoID = _loadedFaceGeos.size();
 				_loadedFaceGeos.add(subGeo);
-				_finalData.addSubMesh(subGeo.vMap.getVertList(), subGeo.indices);
+
+				// Finally bake the face geometry information into a runtime format
+				FaceSubGeo fsg = getFaceSubGeo(subGeo);
+				if (fsg == null) {
+					// Add a blank submesh
+					_finalData.addSubMesh(new ArrayList<Vertex>(), new int[0]);
+				} else {
+					_finalData.addSubMesh(fsg.vMap.getVertList(), fsg.indices);
+				}
 			}
 
 			int matID;
@@ -711,6 +735,9 @@ public class ColParser {
 
 		// Now we have the fun dealing with COLLADA's incredible indirectness
 		String texName = valNode.getAttrib("texture");
+
+		String texCoord = valNode.getAttrib("texcoord");
+
 		// Find this sampler in the map
 		XmlNode sampler = paramMap.get(texName);
 		parseAssert(sampler != null);
@@ -737,6 +764,7 @@ public class ColParser {
 		try {
 			ret.texture = new URL(_contextURL, img).toURI();
 			ret.relTexture = img;
+			ret.texCoordName = texCoord;
 		} catch (MalformedURLException ex) {
 			LogBox.renderLogException(ex);
 			parseAssert(false);
@@ -857,13 +885,40 @@ public class ColParser {
 			String target = instMat.getAttrib("target");
 			parseAssert(symbol != null && target != null);
 			instInfo.materialMap.put(symbol, target);
+
+			Effect eff = getEffectForMat(target);
 			// Make sure that if the asset is requesting a particular texture coordinate set, that it's set 0 (the only one we support)
 			for (XmlNode sub : instMat.children()) {
 				if (!sub.getTag().equals("bind_vertex_input")) {
 					continue;
 				}
-				String inputSet = sub.getAttrib("input_set");
-				// TODO: handle texture set binding
+
+				if (eff.diffuse.texture == null) {
+					// This effect does not use a diffuse texture, we do not care
+					continue;
+				}
+
+				// Find the texcoord we want for this material
+				String texCoordName = eff.diffuse.texCoordName;
+				String semantic = sub.getAttrib("semantic");
+
+				if (texCoordName == null || !texCoordName.equals(semantic)) {
+					// We don't care about this binding
+					continue;
+				}
+
+				int texSet = 0;
+				String texSetString = sub.getAttrib("input_set");
+				if (texSetString != null) {
+					texSet = Integer.parseInt(texSetString);
+				}
+
+				if (instInfo.usedTexSet != null) {
+					// For now only one texture set can be used per instance
+					parseAssert(instInfo.usedTexSet == texSet);
+				}
+
+				instInfo.usedTexSet = texSet;
 			}
 		}
 		return instInfo;
@@ -976,9 +1031,9 @@ public class ColParser {
 		String material = subGeo.getAttrib("material");
 		parseAssert(material != null);
 
-		FaceSubGeo fsg = getFaceSubGeo(smd, material);
-		if (fsg != null)
-			geoData.faceSubGeos.add(fsg);
+		smd.material = material;
+
+		geoData.faceSubDescs.add(smd);
 	}
 
 	private SubMeshDesc getSubMeshDesc(XmlNode subGeo, Geometry geoData) {
@@ -999,7 +1054,7 @@ public class ColParser {
 		return smd;
 	}
 
-	private FaceSubGeo getFaceSubGeo(SubMeshDesc smd, String material) {
+	private FaceSubGeo getFaceSubGeo(SubMeshDesc smd) {
 		boolean hasNormal = smd.normDesc != null;
 
 		int numVerts = smd.posDesc.indices.length;
@@ -1009,7 +1064,6 @@ public class ColParser {
 		}
 
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
-		boolean hasTexCoords = (smd.texCoordMap.size() != 0);
 		FaceSubGeo fsg = new FaceSubGeo(numVerts);
 
 		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
@@ -1019,14 +1073,17 @@ public class ColParser {
 			normData = getDataArrayFromSource(smd.normDesc.source);
 		}
 
+		boolean hasTexCoords = false;
+
 		DataDesc texSetDesc = null;
 		Vec4d[] texCoordData = null;
-		if (hasTexCoords) {
-			texSetDesc = smd.texCoordMap.get(smd.lowestTexSet);
-			texCoordData = getDataArrayFromSource(texSetDesc.source);
+		if (smd.usedTexSet != null) {
+			texSetDesc = smd.texCoordMap.get(smd.usedTexSet);
+			if (texSetDesc != null) {
+				hasTexCoords = true;
+				texCoordData = getDataArrayFromSource(texSetDesc.source);
+			}
 		}
-
-		fsg.materialSymbol = material;
 
 		Vec4d t0 = new Vec4d();
 		Vec4d t1 = new Vec4d();
@@ -1370,8 +1427,6 @@ public class ColParser {
 				texDesc.source = source;
 				texDesc.offset = offset;
 				smd.texCoordMap.put(set, texDesc);
-				// Use the lowest texture set for now
-				smd.lowestTexSet = Math.min(set, smd.lowestTexSet);
 			}
 		}
 
@@ -1462,8 +1517,9 @@ public class ColParser {
 		public DataDesc posDesc;
 		public DataDesc normDesc;
 		public HashMap<Integer, DataDesc> texCoordMap = new HashMap<Integer, DataDesc>();
-		public int lowestTexSet = Integer.MAX_VALUE;
+		public Integer usedTexSet = null;
 		public int stride;
+		public String material;
 	}
 
 	/**
@@ -1474,6 +1530,7 @@ public class ColParser {
 	private static class GeoInstInfo {
 		public String geoName;
 		public final Map<String, String> materialMap = new HashMap<String, String>();
+		public Integer usedTexSet = null;
 	}
 
 	/**
@@ -1500,6 +1557,7 @@ public class ColParser {
 		public Color4d color;
 		public URI texture;
 		public String relTexture;
+		public String texCoordName;
 	}
 
 	private static class Effect {
