@@ -41,7 +41,10 @@ import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.Parser;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Abstract class that encapsulates the methods and data needed to create a
@@ -697,12 +700,27 @@ public class Entity {
 				meth, text1, text2);
 	}
 
-	public OutputHandle getOutputHandle(String outputName) {
+	/**
+	 * Returns a user specific unit type. This is needed for entity types like distributions that may change the unit type
+	 * that is returned at runtime.
+	 * @return
+	 */
+	public Class<? extends Unit> getUserUnitType() {
+		return DimensionlessUnit.class;
+	}
+
+
+	public final OutputHandle getOutputHandle(String outputName) {
 		if (hasAttribute(outputName))
 			return attributeMap.get(outputName);
 
-		if (hasOutput(outputName))
-			return new OutputHandle(this, outputName);
+		if (hasOutput(outputName)) {
+			OutputHandle ret = new OutputHandle(this, outputName);
+			if (ret.getUnitType() == UserSpecifiedUnit.class)
+				ret.setUnitType(getUserUnitType());
+
+			return ret;
+		}
 
 		return null;
 	}
@@ -716,8 +734,13 @@ public class Entity {
 		if (hasAttribute(outputName))
 			return attributeMap.get(outputName);
 
-		if (OutputHandle.hasOutputInterned(this.getClass(), outputName))
-			return new OutputHandle(this, outputName, 0);
+		if (OutputHandle.hasOutputInterned(this.getClass(), outputName)) {
+			OutputHandle ret = new OutputHandle(this, outputName);
+			if (ret.getUnitType() == UserSpecifiedUnit.class)
+				ret.setUnitType(getUserUnitType());
+
+			return ret;
+		}
 
 		return null;
 	}

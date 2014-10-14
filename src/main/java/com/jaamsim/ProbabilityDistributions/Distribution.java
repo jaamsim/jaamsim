@@ -21,7 +21,6 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.FrameBox;
@@ -128,11 +127,8 @@ implements SampleProvider {
 	}
 
 	@Override
-	public OutputHandle getOutputHandle(String outputName) {
-		OutputHandle out = super.getOutputHandle(outputName);
-		if( out.getUnitType() == UserSpecifiedUnit.class )
-			out.setUnitType( unitType.getUnitType() );
-		return out;
+	public Class<? extends Unit> getUserUnitType() {
+		return unitType.getUnitType();
 	}
 
 	/**
