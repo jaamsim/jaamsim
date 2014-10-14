@@ -973,11 +973,20 @@ public class ColParser {
 	}
 
 	private void generateTriangleGeo(XmlNode subGeo, Geometry geoData) {
+		SubMeshDesc smd = getSubMeshDesc(subGeo, geoData);
+
+		String material = subGeo.getAttrib("material");
+		parseAssert(material != null);
+
+		FaceSubGeo fsg = getFaceSubGeo(smd, material);
+		if (fsg != null)
+			geoData.faceSubGeos.add(fsg);
+	}
+
+	private SubMeshDesc getSubMeshDesc(XmlNode subGeo, Geometry geoData) {
 		String geoTag = subGeo.getTag();
 
 		SubMeshDesc smd = readGeometryInputs(subGeo);
-
-		boolean hasNormal = smd.normDesc != null;
 
 		if (geoTag.equals("triangles")) {
 			parseTriangles(smd, subGeo);
@@ -989,10 +998,16 @@ public class ColParser {
 			parsePolygons(smd, subGeo);
 		}
 
+		return smd;
+	}
+
+	private FaceSubGeo getFaceSubGeo(SubMeshDesc smd, String material) {
+		boolean hasNormal = smd.normDesc != null;
+
 		int numVerts = smd.posDesc.indices.length;
 		parseAssert(numVerts % 3 == 0);
 		if (numVerts == 0) {
-			return;
+			return null;
 		}
 
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
@@ -1009,8 +1024,7 @@ public class ColParser {
 		if (hasTexCoords)
 			texCoordData = getDataArrayFromSource(smd.texCoordDesc.source);
 
-		fsg.materialSymbol = subGeo.getAttrib("material");
-		parseAssert(fsg.materialSymbol != null);
+		fsg.materialSymbol = material;
 
 		Vec4d t0 = new Vec4d();
 		Vec4d t1 = new Vec4d();
@@ -1056,7 +1070,8 @@ public class ColParser {
 			}
 			fsg.indices[i] = fsg.vMap.getVertIndex(pos, normal, texCoord);
 		}
-		geoData.faceSubGeos.add(fsg);
+
+		return fsg;
 	}
 
 	private void readVertices(SubMeshDesc smd, int offset, XmlNode vertices) {
