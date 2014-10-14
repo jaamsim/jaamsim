@@ -72,6 +72,7 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.events.EventErrorListener;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTimeListener;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -1380,10 +1381,15 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * @param str - value to assign.
 	 */
 	private void setPauseTime(String str) {
+		Input<?> pause = Simulation.getInstance().getInput("PauseTime");
+		String prevVal = pause.getValueString();
+		if (prevVal.equals(str))
+			return;
+
 		try {
 			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "PauseTime", str);
 		} catch (InputErrorException e) {
-			pauseTime.setText(Simulation.getInstance().getInput("PauseTime").getValueString());
+			pauseTime.setText(prevVal);
 			JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
