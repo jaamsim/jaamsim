@@ -309,9 +309,7 @@ public class InputAgent {
 			ArrayList<String> record = new ArrayList<String>();
 			int braceDepth = 0;
 
-			ParseContext pc = new ParseContext();
-			pc.jail = root;
-			pc.context = resolved;
+			ParseContext pc = new ParseContext(resolved, root);
 
 			while (true) {
 				String line = buf.readLine();

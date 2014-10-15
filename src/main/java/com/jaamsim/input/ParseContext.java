@@ -17,6 +17,11 @@ package com.jaamsim.input;
 import java.net.URI;
 
 public class ParseContext {
-	public URI context;
-	public String jail;
+	public final URI context;
+	public final String jail;
+
+	ParseContext(URI ctxt, String jail) {
+		context = ctxt;
+		this.jail = jail;
+	}
 }
