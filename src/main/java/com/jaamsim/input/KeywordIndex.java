@@ -16,7 +16,6 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.Input.ParseContext;
 
 public class KeywordIndex {
 	private final ArrayList<String> input;

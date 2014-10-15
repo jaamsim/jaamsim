@@ -35,7 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.basicsim.ErrorException;
-import com.jaamsim.input.Input.ParseContext;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
@@ -310,7 +309,7 @@ public class InputAgent {
 			ArrayList<String> record = new ArrayList<String>();
 			int braceDepth = 0;
 
-			Input.ParseContext pc = new Input.ParseContext();
+			ParseContext pc = new ParseContext();
 			pc.jail = root;
 			pc.context = resolved;
 
@@ -501,7 +500,7 @@ public class InputAgent {
 		return ent;
 	}
 
-	public static void processKeywordRecord(ArrayList<String> record, Input.ParseContext context) {
+	public static void processKeywordRecord(ArrayList<String> record, ParseContext context) {
 		Entity ent = Input.tryParseEntity(record.get(0), Entity.class);
 		if (ent == null) {
 			InputAgent.logError("Could not find Entity: %s", record.get(0));

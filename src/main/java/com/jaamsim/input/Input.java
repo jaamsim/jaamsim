@@ -13,7 +13,6 @@
  * GNU General Public License for more details.
  */
 package com.jaamsim.input;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,11 +77,6 @@ public abstract class Input<T> {
 	private boolean hidden; // Hide this input from the EditBox
 	private boolean isDef; // Is this input still the default value?
 	protected String valueString; // value from .cfg file
-
-	public static class ParseContext {
-		public URI context;
-		public String jail;
-	}
 
 	public Input(String key, String cat, T def) {
 		keyword = key;
