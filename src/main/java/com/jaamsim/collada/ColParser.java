@@ -85,6 +85,7 @@ public class ColParser {
 		DOUBLE_ARRAY_TAGS.add("lookat");
 		DOUBLE_ARRAY_TAGS.add("matrix");
 		DOUBLE_ARRAY_TAGS.add("color");
+		DOUBLE_ARRAY_TAGS.add("bind_shape_matrix");
 
 		INT_ARRAY_TAGS = new ArrayList<String>();
 		INT_ARRAY_TAGS.add("int_array");
@@ -125,6 +126,11 @@ public class ColParser {
 		public final ArrayList<SceneNode> nodes = new ArrayList<SceneNode>();
 	}
 
+	private static class Controller {
+		private Mat4d bindSpaceMat;
+		private String geometry;
+	}
+
 	private static class Geometry {
 		// Note: the face information is lazily baked when it is first referenced because that is the first time we
 		// know which texture coordinate set to use (then error if it is later referenced with different coordinate sets)
@@ -140,6 +146,7 @@ public class ColParser {
 	private final HashMap<String, Effect> _effects = new HashMap<String, Effect>(); // List of known effects
 	private final HashMap<String, SceneNode> _namedNodes = new HashMap<String, SceneNode>();
 	private final HashMap<String, VisualScene> _visualScenes = new HashMap<String, VisualScene>();
+	private final HashMap<String, Controller> _controllers = new HashMap<String, Controller>();
 
 	// This stack is used to track node loops
 	private final  Stack<SceneNode> _nodeStack = new Stack<SceneNode>();
@@ -192,6 +199,7 @@ public class ColParser {
 		processMaterials();
 		processEffects();
 		processNodes();
+		processControllers();
 
 		processVisualScenes();
 
@@ -419,6 +427,45 @@ public class ColParser {
 				vs.nodes.add(node);
 			}
 		}
+	}
+
+	private void processControllers() {
+		XmlNode libControllers = _colladaNode.findChildTag("library_controllers", false);
+		if (libControllers == null)
+			return; // No effects
+
+		for (XmlNode child : libControllers.children()) {
+			if (child.getTag().equals("controller")) {
+				processController(child);
+			}
+		}
+	}
+
+	private void processController(XmlNode controller) {
+		XmlNode skin = controller.findChildTag("skin", false);
+
+		String id = controller.getFragID();
+		if (skin == null) {
+			return; // We do not handle 'morph' controllers for now
+		}
+
+		Controller cont = new Controller();
+
+		String source = skin.getAttrib("source");
+		parseAssert(source != null);
+
+		cont.geometry = source;
+
+		XmlNode bindMat = skin.findChildTag("bind_space_matrix", false);
+		if (bindMat == null) {
+			cont.bindSpaceMat = new Mat4d(); // Default to identity
+		} else {
+			double[] data = (double[])bindMat.getContent();
+			parseAssert(data.length == 16);
+			cont.bindSpaceMat = new Mat4d(data);
+		}
+
+		_controllers.put(id, cont);
 	}
 
 	private void processImages() {
@@ -848,6 +895,10 @@ public class ColParser {
 				GeoInstInfo geoInfo = processInstGeo(child);
 				sn.subGeo.add(geoInfo);
 			}
+			if (childTag.equals("instance_controller")) {
+				SceneNode contNode = processInstController(child);
+				sn.subNodes.add(contNode);
+			}
 			if (childTag.equals("instance_node")) {
 				String nodeID = child.getAttrib("url");
 				parseAssert(nodeID != null);
@@ -860,12 +911,42 @@ public class ColParser {
 		return sn;
 	}
 
+	private SceneNode processInstController(XmlNode instCont) {
+		String controllerURL = instCont.getAttrib("url");
+
+		parseAssert(controllerURL.charAt(0) == '#');
+
+		Controller cont = _controllers.get(controllerURL.substring(1));
+
+		GeoInstInfo instInfo = new GeoInstInfo();
+		instInfo.geoName = cont.geometry;
+		XmlNode bindMat = instCont.findChildTag("bind_material", false);
+
+		if (bindMat != null) {
+			addMatInfoToGetInst(bindMat, instInfo);
+		}
+
+		// Now we need to add in an extra scene not to accommodate the bind space matrix held in the controller
+		SceneNode sn = new SceneNode();
+		sn.trans.set4(cont.bindSpaceMat);
+		sn.subGeo.add(instInfo);
+
+		return sn;
+	}
+
 	private GeoInstInfo processInstGeo(XmlNode instGeo) {
 		GeoInstInfo instInfo = new GeoInstInfo();
 		instInfo.geoName = instGeo.getAttrib("url");
-
 		XmlNode bindMat = instGeo.findChildTag("bind_material", false);
-		if (bindMat == null) return instInfo;
+
+		if (bindMat != null) {
+			addMatInfoToGetInst(bindMat, instInfo);
+		}
+
+		return instInfo;
+	}
+
+	private void addMatInfoToGetInst(XmlNode bindMat, GeoInstInfo instInfo) {
 
 		XmlNode techCommon = bindMat.findChildTag("technique_common", false);
 		parseAssert(techCommon != null);
@@ -914,7 +995,6 @@ public class ColParser {
 				instInfo.usedTexSet = texSet;
 			}
 		}
-		return instInfo;
 	}
 
 	private Mat4d transToMat(XmlNode transNode) {
