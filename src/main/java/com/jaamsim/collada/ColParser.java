@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Stack;
 
 import com.jaamsim.MeshFiles.MeshData;
-import com.jaamsim.MeshFiles.Vertex;
 import com.jaamsim.MeshFiles.VertexMap;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -356,12 +355,7 @@ public class ColParser {
 
 				// Finally bake the face geometry information into a runtime format
 				FaceSubGeo fsg = getFaceSubGeo(subGeo);
-				if (fsg == null) {
-					// Add a blank submesh
-					_finalData.addSubMesh(new ArrayList<Vertex>(), new int[0]);
-				} else {
-					_finalData.addSubMesh(fsg.vMap.getVertList(), fsg.indices);
-				}
+				_finalData.addSubMesh(fsg.vMap.getVertList(), fsg.indices);
 			}
 
 			int matID;
@@ -1026,6 +1020,10 @@ public class ColParser {
 
 	private void generateTriangleGeo(XmlNode subGeo, Geometry geoData) {
 		SubMeshDesc smd = getSubMeshDesc(subGeo, geoData);
+
+		if (smd.posDesc.indices.length == 0) {
+			return; // There is no actual geometry here
+		}
 
 		String material = subGeo.getAttrib("material");
 		parseAssert(material != null);
