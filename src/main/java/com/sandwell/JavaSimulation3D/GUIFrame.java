@@ -127,8 +127,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 	JButton toolButtonIsometric;
 	JButton toolButtonXYPlane;
-	JButton toolButtonUndo;
-	JButton toolButtonRedo;
 
 	private int lastValue = -1;
 	private JProgressBar progressBar;
@@ -872,31 +870,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// 7) Undo/Redo buttons (not used at present)
 		mainToolBar.addSeparator(separatorDim);
-		toolButtonUndo = new JButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/previous.png")));
-		toolButtonUndo.setToolTipText( "Previous view" );
-		toolButtonUndo.setEnabled( false );
-		toolButtonUndo.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				// Not implemented
-			}
-		} );
-		//mainToolBar.add( toolButtonUndo );
-
-		// add a button to redo the last step ( viewer and window )
-		toolButtonRedo = new JButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/next.png")));
-		toolButtonRedo.setToolTipText( "Next view" );
-		toolButtonRedo.setEnabled( false );
-		toolButtonRedo.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				// Not implemented
-			}
-		} );
-		//mainToolBar.add( toolButtonRedo );
-		//mainToolBar.addSeparator(separatorDim);
 
 		// End creation of view control label and buttons
 
