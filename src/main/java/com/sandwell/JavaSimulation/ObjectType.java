@@ -93,19 +93,6 @@ public class ObjectType extends Entity {
 		allInstances.remove(this);
 	}
 
-	public static ObjectType getFor(Class<? extends Entity> jClass) {
-		synchronized (allInstances) {
-			ObjectType type = null;
-			for(ObjectType each: allInstances) {
-				if(each.getJavaClass() == jClass) {
-					type = each;
-					break;
-				}
-			}
-			return type;
-		}
-	}
-
 	public Class<? extends Entity> getJavaClass() {
 		return javaClass.getValue();
 	}
