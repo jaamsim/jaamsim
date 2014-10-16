@@ -26,6 +26,7 @@ import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
@@ -197,11 +198,11 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 			if (!RenderManager.isGood())
 				return this;
 
-			DisplayModel dm = type.getDefaultDisplayModel();
-			if (dm == null)
+			ArrayList<DisplayModel> dm = type.getDefaultDisplayModel();
+			if (dm.isEmpty())
 				return this;
 
-			Future<BufferedImage> fi = RenderManager.inst().getPreviewForDisplayModel(dm, notifier);
+			Future<BufferedImage> fi = RenderManager.inst().getPreviewForDisplayModel(dm.get(0), notifier);
 			if (fi.failed() || !fi.isDone())
 				return this;
 

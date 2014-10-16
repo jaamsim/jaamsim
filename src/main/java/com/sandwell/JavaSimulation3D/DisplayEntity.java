@@ -41,6 +41,7 @@ import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.Entity;
+import com.sandwell.JavaSimulation.ObjectType;
 
 /**
  * Encapsulates the methods and data needed to display a simulation object in the 3D environment.
@@ -227,15 +228,11 @@ public class DisplayEntity extends Entity {
 	 * Constructor: initializing the DisplayEntity's graphics
 	 */
 	public DisplayEntity() {
-		super();
-
-		setRegion(null);
-
-		DisplayModel dm = DisplayModel.getDefaultDisplayModelForClass(this.getClass());
-		if(dm != null) {
-			ArrayList<DisplayModel> defList = new ArrayList<DisplayModel>();
-			defList.add(dm);
-			displayModelList.setDefaultValue(defList);
+		for (ObjectType type : ObjectType.getAll()) {
+			if (type.getJavaClass() == this.getClass()) {
+				displayModelList.setDefaultValue(type.getDefaultDisplayModel());
+				break;
+			}
 		}
 	}
 

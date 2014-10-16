@@ -26,8 +26,6 @@ import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
 import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.ObjectType;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public abstract class DisplayModel extends Entity {
 	public static final VisibilityInfo ALWAYS = new VisibilityInfo(null, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -76,15 +74,6 @@ public abstract class DisplayModel extends Entity {
 	public abstract DisplayModelBinding getBinding(Entity ent);
 
 	public abstract boolean canDisplayEntity(Entity ent);
-
-	public static DisplayModel getDefaultDisplayModelForClass(Class<? extends DisplayEntity> theClass) {
-		for( ObjectType type : ObjectType.getAll() ) {
-			if(type.getJavaClass() == theClass) {
-				return type.getDefaultDisplayModel();
-			}
-		}
-		return null;
-	}
 
 	@Override
 	public void updateForInput( Input<?> in ) {

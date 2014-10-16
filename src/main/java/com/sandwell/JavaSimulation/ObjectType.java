@@ -20,6 +20,7 @@ import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ClassInput;
 import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
 
@@ -41,6 +42,8 @@ public class ObjectType extends Entity {
 	@Keyword(description = "This is placeholder description text",
 	         example = "This is placeholder example text")
 	private final BooleanInput dragAndDrop;
+
+	private final ArrayList<DisplayModel> displayEntityDefault = new ArrayList<DisplayModel>(1);
 
 	static {
 		allInstances = new ArrayList<ObjectType>();
@@ -64,6 +67,18 @@ public class ObjectType extends Entity {
 		synchronized (allInstances) {
 			allInstances.add(this);
 		}
+	}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		if (in == defaultDisplayModel) {
+			displayEntityDefault.clear();
+			if (defaultDisplayModel.getValue() != null)
+				displayEntityDefault.add(defaultDisplayModel.getValue());
+			return;
+		}
+
+		super.updateForInput(in);
 	}
 
 	public static ArrayList<ObjectType> getAll() {
@@ -103,8 +118,8 @@ public class ObjectType extends Entity {
 		return "Default";
 	}
 
-	public DisplayModel getDefaultDisplayModel(){
-		return defaultDisplayModel.getValue();
+	public ArrayList<DisplayModel> getDefaultDisplayModel() {
+		return displayEntityDefault;
 	}
 
 	public boolean isDragAndDrop() {
