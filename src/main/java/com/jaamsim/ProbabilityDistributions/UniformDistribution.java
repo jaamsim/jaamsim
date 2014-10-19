@@ -35,7 +35,9 @@ public class UniformDistribution extends Distribution {
 	protected double getNextSample() {
 
 		// Select the sample from a uniform distribution between the min and max values
-		return this.getMinValue() + rng.nextUniform() * ( this.getMaxValue() - this.getMinValue() );
+		double min = this.getMinValue();
+		double max = this.getMaxValue();
+		return min + rng.nextUniform() * (max - min);
 	}
 
 	@Override
