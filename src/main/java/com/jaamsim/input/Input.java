@@ -1272,7 +1272,7 @@ public abstract class Input<T> {
 		}
 	}
 
-	public String getDefaultStringForKeyInputs(String unitString) {
+	public String getDefaultStringForKeyInputs(Class<? extends Unit> unitType, String unitString) {
 
 		if (defValue == null)
 			return NO_VALUE;
@@ -1325,7 +1325,11 @@ public abstract class Input<T> {
 			return "?????";
 		}
 
-		if (unitString == null || !unitString.isEmpty()) {
+		if (unitString==null) {
+			tmp.append(SEPARATOR);
+			tmp.append(Unit.getSIUnit(unitType));
+		}
+		else {
 			tmp.append(SEPARATOR);
 			tmp.append(unitString);
 		}

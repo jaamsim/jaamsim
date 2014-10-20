@@ -120,7 +120,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 
 	@Override
 	public String getDefaultString() {
-		return getDefaultStringForKeyInputs(unitString);
+		return getDefaultStringForKeyInputs(unitType, unitString);
 	}
 
 	public ArrayList<V> getAllValues() {

@@ -190,6 +190,6 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 
 	@Override
 	public String getDefaultString() {
-		return getDefaultStringForKeyInputs(unitString);
+		return getDefaultStringForKeyInputs(unitType, unitString);
 	}
 }

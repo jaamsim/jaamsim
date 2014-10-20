@@ -141,6 +141,6 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 
 	@Override
 	public String getDefaultString() {
-		return getDefaultStringForKeyInputs(unitString);
+		return getDefaultStringForKeyInputs(unitType, unitString);
 	}
 }

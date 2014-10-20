@@ -192,6 +192,6 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 
 	@Override
 	public String getDefaultString() {
-		return getDefaultStringForKeyInputs(unitString);
+		return getDefaultStringForKeyInputs(unitType, unitString);
 	}
 }
