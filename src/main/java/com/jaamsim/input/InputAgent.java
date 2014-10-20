@@ -608,7 +608,7 @@ public class InputAgent {
 	public static final void apply(Entity ent, KeywordIndex kw) {
 		Input<?> in = ent.getInput(kw.keyword);
 		if (in == null) {
-			InputAgent.logWarning("Keyword %s could not be found for Entity %s.", kw.keyword, ent.getInputName());
+			InputAgent.logError("Keyword %s could not be found for Entity %s.", kw.keyword, ent.getInputName());
 			return;
 		}
 

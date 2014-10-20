@@ -16,7 +16,6 @@ package com.sandwell.JavaSimulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.basicsim.ClonesOfIterable;
@@ -280,18 +279,7 @@ public class Entity {
 	}
 
 	public final Input<?> getInput(String key) {
-		Input<?> inp = inputs.get(key);
-		if (inp != null)
-			return inp;
-
-		for (Map.Entry<String, Input<?>> each : inputs.entrySet()) {
-			if (each.getKey().equalsIgnoreCase(key)) {
-				InputAgent.logWarning("Slow-path keyword lookup for Entity:%s keyword:%s, Type:%s", this.getName(), key, this.getClass().getSimpleName());
-				return each.getValue();
-			}
-		}
-
-		return null;
+		return inputs.get(key);
 	}
 
 	/**
