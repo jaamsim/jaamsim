@@ -32,6 +32,7 @@ import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Tester;
+import com.sandwell.JavaSimulation.TimeSeriesConstantDouble;
 import com.sandwell.JavaSimulation3D.Clock;
 
 public abstract class Input<T> {
@@ -1294,10 +1295,21 @@ public abstract class Input<T> {
 				return NEGATIVE_INFINITY;
 
 			tmp.append(defValue);
-		} else if (defValue.getClass() == SampleConstant.class ) {
+		} else if (defValue.getClass() == SampleConstant.class ||
+					defValue.getClass() == TimeSeriesConstantDouble.class ) {
 			return defValue.toString();
 		} else if (defValue.getClass() == DoubleVector.class) {
 			DoubleVector def = (DoubleVector)defValue;
+			if (def.size() == 0)
+				return NO_VALUE;
+
+			tmp.append(def.get(0));
+			for (int i = 1; i < def.size(); i++) {
+				tmp.append(SEPARATOR);
+				tmp.append(def.get(i));
+			}
+		} else if (defValue.getClass() == IntegerVector.class) {
+			IntegerVector def = (IntegerVector)defValue;
 			if (def.size() == 0)
 				return NO_VALUE;
 
