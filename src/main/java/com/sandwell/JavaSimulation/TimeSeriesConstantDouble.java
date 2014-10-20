@@ -69,4 +69,13 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	public double getMeanValue(double simTime) {
 		return val;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(val);
+		if (unitType != Unit.class)
+			tmp.append("  ").append(Unit.getSIUnit(unitType));
+		return tmp.toString();
+	}
 }
