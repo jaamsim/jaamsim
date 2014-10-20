@@ -17,6 +17,8 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.Entity;
 
 /**
@@ -25,6 +27,7 @@ import com.sandwell.JavaSimulation.Entity;
  */
 public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends Entity, V> extends Input<V> {
 
+	private Class<? extends Unit> unitType = DimensionlessUnit.class;
 	protected double minValue = Double.NEGATIVE_INFINITY;
 	protected double maxValue = Double.POSITIVE_INFINITY;
 	private Class<K1> key1Class;
@@ -49,6 +52,11 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		unitString = units;
 	}
 
+	public void setUnitType(Class<? extends Unit> units) {
+		unitType = units;
+		unitString = null;
+	}
+
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
@@ -68,7 +76,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			V defValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, null );
+			V defValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 			this.setDefaultValue( defValue );
 			return;
 		}
@@ -95,7 +103,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		}
 
 		// Determine the value
-		V val = Input.parse( input.subList(numKeys,input.size()), valClass, unitString, minValue, maxValue, minCount, maxCount, null );
+		V val = Input.parse( input.subList(numKeys,input.size()), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {
