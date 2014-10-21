@@ -45,14 +45,8 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		hashMap = new HashMap<K1,HashMap<K2,V>>();
 	}
 
-	private String unitString = "";
-	public void setUnits(String units) {
-		unitString = units;
-	}
-
 	public void setUnitType(Class<? extends Unit> units) {
 		unitType = units;
-		unitString = null;
 	}
 
 	@Override
@@ -76,7 +70,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		}
 
 		if( ent1 == null ) {
-			V defValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
+			V defValue = Input.parse( input, valClass, null, minValue, maxValue, minCount, maxCount, unitType );
 			this.setDefaultValue( defValue );
 			return;
 		}
@@ -108,7 +102,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		}
 
 		// Determine the value
-		V val = Input.parse( input.subList(numKeys,input.size()), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
+		V val = Input.parse( input.subList(numKeys,input.size()), valClass, null, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {
@@ -190,6 +184,6 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 
 	@Override
 	public String getDefaultString() {
-		return getDefaultStringForKeyInputs(unitType, unitString);
+		return getDefaultStringForKeyInputs(unitType, null);
 	}
 }
