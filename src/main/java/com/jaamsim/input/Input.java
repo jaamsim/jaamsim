@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.Samples.TimeSeriesConstantDouble;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.ObjectType;
@@ -32,7 +33,6 @@ import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.Tester;
-import com.sandwell.JavaSimulation.TimeSeriesConstantDouble;
 import com.sandwell.JavaSimulation3D.Clock;
 
 public abstract class Input<T> {

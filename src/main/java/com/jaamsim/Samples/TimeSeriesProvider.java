@@ -12,9 +12,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.Samples;
 
-import com.jaamsim.Samples.SampleProvider;
 
 public interface TimeSeriesProvider extends SampleProvider {
 	public double getNextTimeAfter(double simTime);

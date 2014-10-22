@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.Samples;
 
 import java.util.Arrays;
 
@@ -27,6 +27,7 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation.Tester;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {

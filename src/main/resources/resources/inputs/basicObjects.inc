@@ -106,7 +106,7 @@ Group                   JavaClass { com.jaamsim.basicsim.Group                  
 ScriptEntity            JavaClass { com.sandwell.JavaSimulation3D.ScriptEntity          } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 Output                  JavaClass { com.jaamsim.basicsim.OutputMethod                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 BooleanIndicator        JavaClass { com.sandwell.JavaSimulation3D.BooleanIndicator      } Palette { 'Basic Objects' } DefaultDisplayModel { Circle                   }
-TimeSeries              JavaClass { com.sandwell.JavaSimulation.TimeSeries              } Palette { 'Basic Objects' } DefaultDisplayModel 	{ TimeSeriesIconModel    }
+TimeSeries              JavaClass { com.jaamsim.Samples.TimeSeries                      } Palette { 'Basic Objects' } DefaultDisplayModel 	{ TimeSeriesIconModel    }
 SignalThreshold         JavaClass { com.jaamsim.Thresholds.SignalThreshold              } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 TimeSeriesThreshold	    JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }

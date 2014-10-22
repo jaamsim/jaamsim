@@ -17,13 +17,13 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.Samples.TimeSeriesConstantDouble;
+import com.jaamsim.Samples.TimeSeriesProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.TimeSeriesConstantDouble;
-import com.sandwell.JavaSimulation.TimeSeriesProvider;
 
 public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 	private Class<? extends Unit> unitType = DimensionlessUnit.class;
