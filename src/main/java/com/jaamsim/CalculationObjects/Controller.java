@@ -18,12 +18,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**

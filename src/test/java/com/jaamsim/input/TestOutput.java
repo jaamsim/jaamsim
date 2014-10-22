@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
-import com.sandwell.JavaSimulation.Entity;
+import com.jaamsim.basicsim.Entity;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class TestOutput {

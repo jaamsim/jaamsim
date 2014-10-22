@@ -54,6 +54,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
@@ -65,7 +66,6 @@ import com.jaamsim.input.Parser;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.StringListInput;
 import com.jaamsim.math.Color4d;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**

@@ -34,12 +34,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.ObjectType;

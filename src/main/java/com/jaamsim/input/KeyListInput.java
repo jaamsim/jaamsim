@@ -17,7 +17,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.sandwell.JavaSimulation.Entity;
+import com.jaamsim.basicsim.Entity;
 
 /**
  * Class KeyListInput for storing a list of entities of class V, with an optional key of class K1

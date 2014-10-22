@@ -17,7 +17,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.sandwell.JavaSimulation.Entity;
+import com.jaamsim.basicsim.Entity;
 
 /**
  * Class TwoKeyListInput for storing a list of entities of class V, with optional keys of class K1 and K2

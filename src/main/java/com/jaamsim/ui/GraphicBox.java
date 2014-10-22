@@ -46,6 +46,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
@@ -55,7 +56,6 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 

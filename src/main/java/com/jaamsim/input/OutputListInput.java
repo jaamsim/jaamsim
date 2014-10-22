@@ -16,7 +16,7 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
-import com.sandwell.JavaSimulation.Entity;
+import com.jaamsim.basicsim.Entity;
 import com.sandwell.JavaSimulation.ObjectType;
 
 /**

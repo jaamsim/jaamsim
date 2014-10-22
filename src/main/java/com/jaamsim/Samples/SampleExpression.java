@@ -14,12 +14,12 @@
  */
 package com.jaamsim.Samples;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.Entity;
 
 public class SampleExpression implements SampleProvider {
 	private final ExpParser.Expression exp;

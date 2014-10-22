@@ -16,9 +16,9 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.Entity;
 
 /**
  * AttributeDefinitionListInput is an object for parsing inputs consisting of a list of

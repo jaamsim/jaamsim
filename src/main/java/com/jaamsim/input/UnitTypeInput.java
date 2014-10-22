@@ -17,8 +17,8 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.ObjectType;
 
 public class UnitTypeInput extends Input<ObjectType> {

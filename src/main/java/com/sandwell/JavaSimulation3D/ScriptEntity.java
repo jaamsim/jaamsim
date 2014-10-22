@@ -16,6 +16,7 @@ package com.sandwell.JavaSimulation3D;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.FileInput;
@@ -23,7 +24,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.Entity;
 
 public class ScriptEntity extends Entity {
 	@Keyword(description = "The name of the script file for the script entity.",

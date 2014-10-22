@@ -17,9 +17,9 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.Entity;
 
 /**
  * Class KeyInput for storing objects of class V (e.g. Double or DoubleVector), with an optional key of class K1

@@ -16,6 +16,8 @@ package com.jaamsim.Thresholds;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
@@ -26,8 +28,6 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation.Entity;
-import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
 public class Threshold extends StateEntity {

@@ -20,7 +20,6 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.Entity;
 
 public class EntityTracer extends Entity {
 

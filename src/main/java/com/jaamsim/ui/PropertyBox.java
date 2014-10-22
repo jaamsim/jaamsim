@@ -29,7 +29,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import com.sandwell.JavaSimulation.Entity;
+import com.jaamsim.basicsim.Entity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**

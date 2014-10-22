@@ -14,6 +14,7 @@
  */
 package com.jaamsim.DisplayModels;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
@@ -25,7 +26,6 @@ import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
-import com.sandwell.JavaSimulation.Entity;
 
 public abstract class DisplayModel extends Entity {
 	public static final VisibilityInfo ALWAYS = new VisibilityInfo(null, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);

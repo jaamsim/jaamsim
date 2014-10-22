@@ -17,6 +17,7 @@ package com.sandwell.JavaSimulation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;

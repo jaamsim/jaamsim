@@ -17,7 +17,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.sandwell.JavaSimulation.Entity;
+import com.jaamsim.basicsim.Entity;
 
 public class EntityInput<T extends Entity> extends Input<T> {
 

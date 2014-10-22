@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
@@ -31,7 +32,6 @@ import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.EntityTarget;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**

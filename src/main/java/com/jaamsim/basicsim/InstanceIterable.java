@@ -14,7 +14,6 @@
  */
 package com.jaamsim.basicsim;
 
-import com.sandwell.JavaSimulation.Entity;
 
 public class InstanceIterable<T extends Entity> extends EntityIterator<T> {
 	public InstanceIterable(Class<T> aClass) {

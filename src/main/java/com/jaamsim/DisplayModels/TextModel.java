@@ -19,6 +19,7 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
@@ -38,7 +39,6 @@ import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.StringProxy;
 import com.jaamsim.render.TessFontKey;
 import com.jaamsim.render.VisibilityInfo;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.BillboardText;
 import com.sandwell.JavaSimulation3D.OverlayText;
 import com.sandwell.JavaSimulation3D.Text;

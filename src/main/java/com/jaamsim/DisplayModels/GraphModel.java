@@ -17,6 +17,7 @@ package com.jaamsim.DisplayModels;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.ColourInput;
@@ -38,7 +39,6 @@ import com.jaamsim.render.StringProxy;
 import com.jaamsim.render.TessFontKey;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation3D.Graph;
 
 public class GraphModel extends DisplayModel {

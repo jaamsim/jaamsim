@@ -17,6 +17,7 @@ package com.jaamsim.Samples;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -24,7 +25,6 @@ import com.jaamsim.input.ListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.Entity;
 
 /**
  * SampleListInput is an object for parsing inputs consisting of a list of SampleProviders using the syntax:\n

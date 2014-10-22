@@ -12,17 +12,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.jaamsim.basicsim.ClonesOfIterable;
-import com.jaamsim.basicsim.ClonesOfIterableInterface;
-import com.jaamsim.basicsim.ErrorException;
-import com.jaamsim.basicsim.InstanceIterable;
-import com.jaamsim.basicsim.ReflectionTarget;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
@@ -44,6 +39,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation.Simulation;
 
 /**
  * Abstract class that encapsulates the methods and data needed to create a

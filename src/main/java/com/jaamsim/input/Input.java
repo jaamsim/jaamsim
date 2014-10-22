@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.BooleanVector;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
@@ -28,7 +29,6 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Group;
 import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Tester;

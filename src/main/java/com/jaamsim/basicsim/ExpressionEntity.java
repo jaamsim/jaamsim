@@ -19,7 +19,6 @@ import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation.Entity;
 
 public class ExpressionEntity extends Entity {
 	@Keyword(description = "The variable for which statistics will be collected.",

@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.jaamsim.events.ProcessTarget;
-import com.sandwell.JavaSimulation.Entity;
 
 public class ReflectionTarget extends ProcessTarget {
 	private final Entity target; // The entity whose method is to be executed

@@ -18,8 +18,9 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.InitModelTarget;
 import com.jaamsim.events.EventManager;
-import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -409,74 +410,6 @@ public class Simulation extends Entity {
 
 	public static double getPauseTime() {
 		return pauseTime.getValue();
-	}
-
-	private static class StartUpTarget extends ProcessTarget {
-		final Entity ent;
-
-		StartUpTarget(Entity ent) {
-			this.ent = ent;
-		}
-
-		@Override
-		public String getDescription() {
-			return ent.getInputName() + ".startUp";
-		}
-
-		@Override
-		public void process() {
-			ent.startUp();
-		}
-	}
-
-	private static class InitModelTarget extends ProcessTarget {
-		InitModelTarget() {}
-
-		@Override
-		public String getDescription() {
-			return "SimulationInit";
-		}
-
-		@Override
-		public void process() {
-			for (int i = 0; i < Entity.getAll().size(); i++) {
-				Entity.getAll().get(i).earlyInit();
-			}
-
-			long startTick = calculateDelayLength(Simulation.getStartHours());
-			for (int i = Entity.getAll().size() - 1; i >= 0; i--) {
-				EventManager.scheduleTicks(startTick, 0, false, new StartUpTarget(Entity.getAll().get(i)), null);
-			}
-
-			long endTick = calculateDelayLength(Simulation.getEndHours());
-			EventManager.scheduleTicks(endTick, Entity.PRIO_DEFAULT, false, new EndModelTarget(), null);
-		}
-	}
-
-	private static class EndModelTarget extends ProcessTarget {
-		EndModelTarget() {}
-
-		@Override
-		public String getDescription() {
-			return "SimulationEnd";
-		}
-
-		@Override
-		public void process() {
-			EventManager.current().pause();
-			for (int i = 0; i < Entity.getAll().size(); i++) {
-				Entity.getAll().get(i).doEnd();
-			}
-
-			System.out.println( "Made it to do end at" );
-			// close warning/error trace file
-			InputAgent.closeLogFile();
-
-			if (Simulation.getExitAtStop() || InputAgent.getBatch())
-				GUIFrame.shutdown(0);
-
-			EventManager.current().pause();
-		}
 	}
 
 	/**

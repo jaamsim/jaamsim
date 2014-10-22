@@ -14,16 +14,22 @@
  */
 package com.jaamsim.basicsim;
 
+import com.jaamsim.events.ProcessTarget;
 
-public class ClonesOfIterableInterface<T extends Entity> extends EntityIterator<T> {
-	private final Class<?> ifaceClass;
-	public ClonesOfIterableInterface(Class<T> aClass, Class<?> iface) {
-		super(aClass);
-		ifaceClass = iface;
+class StartUpTarget extends ProcessTarget {
+	final Entity ent;
+
+	StartUpTarget(Entity ent) {
+		this.ent = ent;
 	}
 
 	@Override
-	public boolean matches(Class<?> entklass) {
-		return entClass.isAssignableFrom(entklass) && ifaceClass.isAssignableFrom(entklass);
+	public String getDescription() {
+		return ent.getInputName() + ".startUp";
+	}
+
+	@Override
+	public void process() {
+		ent.startUp();
 	}
 }

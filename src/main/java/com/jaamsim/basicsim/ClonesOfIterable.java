@@ -14,7 +14,6 @@
  */
 package com.jaamsim.basicsim;
 
-import com.sandwell.JavaSimulation.Entity;
 
 public class ClonesOfIterable<T extends Entity> extends EntityIterator<T> {
 	public ClonesOfIterable(Class<T> aClass) {

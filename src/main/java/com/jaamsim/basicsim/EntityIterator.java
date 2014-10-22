@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.sandwell.JavaSimulation.Entity;
 
 public abstract class EntityIterator<T extends Entity> implements Iterable<T>, Iterator<T> {
 	private final ArrayList<? extends Entity> allInstances = Entity.getAll();

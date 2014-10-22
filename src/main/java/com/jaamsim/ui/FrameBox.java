@@ -28,10 +28,10 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
-import com.sandwell.JavaSimulation.Entity;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 

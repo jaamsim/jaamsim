@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
@@ -34,7 +35,6 @@ import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
-import com.sandwell.JavaSimulation.Entity;
 
 public class DisplayModelCompat extends DisplayModel {
 	// IMPORTANT: If you add a tag here, make sure to add it to the validTags

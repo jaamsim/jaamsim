@@ -16,7 +16,7 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
-import com.sandwell.JavaSimulation.Entity;
+import com.jaamsim.basicsim.Entity;
 
 public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<ArrayList<T>>> {
 	private Class<T> entClass;

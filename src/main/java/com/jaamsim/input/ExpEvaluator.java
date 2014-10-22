@@ -14,8 +14,8 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.Entity;
 
 /**
  * Utility class to bridge the expression parser and attribute assignment
