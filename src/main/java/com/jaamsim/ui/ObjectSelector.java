@@ -39,12 +39,12 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
-import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;

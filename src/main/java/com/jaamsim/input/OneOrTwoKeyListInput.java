@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
-import com.sandwell.JavaSimulation.Group;
+import com.jaamsim.basicsim.Group;
 /**
  * Class OneOrTwoKeyInput for storing objects of class V (e.g. Double or DoubleVector),
  * with one mandatory key of class K1 and one optional key of class K2

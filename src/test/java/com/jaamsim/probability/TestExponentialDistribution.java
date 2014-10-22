@@ -17,8 +17,8 @@ package com.jaamsim.probability;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import com.jaamsim.ProbabilityDistributions.ExponentialDistribution;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.InputAgent;
-import com.sandwell.JavaSimulation.ObjectType;
 
 public class TestExponentialDistribution {
 

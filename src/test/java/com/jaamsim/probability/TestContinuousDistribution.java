@@ -20,11 +20,11 @@ import org.junit.Test;
 
 import com.jaamsim.ProbabilityDistributions.ContinuousDistribution;
 import com.jaamsim.ProbabilityDistributions.Distribution;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.events.TestFrameworkHelpers;
 import com.jaamsim.input.InputAgent;
-import com.sandwell.JavaSimulation.ObjectType;
 
 public class TestContinuousDistribution {
 	static class SampleDistribution extends ProcessTarget {

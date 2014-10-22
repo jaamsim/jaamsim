@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
@@ -41,7 +42,6 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
-import com.sandwell.JavaSimulation.ObjectType;
 
 /**
  * Encapsulates the methods and data needed to display a simulation object in the 3D environment.

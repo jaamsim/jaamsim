@@ -12,12 +12,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.basicsim;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;

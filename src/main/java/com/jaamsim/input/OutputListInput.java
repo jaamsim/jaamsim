@@ -17,7 +17,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
-import com.sandwell.JavaSimulation.ObjectType;
+import com.jaamsim.basicsim.ObjectType;
 
 /**
  * OutputListInput is an object for parsing inputs consisting of a list of OutputInputs using the syntax:\n

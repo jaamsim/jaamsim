@@ -12,11 +12,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
 
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;

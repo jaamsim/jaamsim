@@ -102,9 +102,9 @@ EntityContainer         JavaClass { com.jaamsim.BasicObjects.EntityContainer    
 Pack                    JavaClass { com.jaamsim.BasicObjects.Pack                       } Palette { 'Basic Objects' } DefaultDisplayModel 	{ PackIconModel         }
 Unpack                  JavaClass { com.jaamsim.BasicObjects.Unpack                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ UnpackIconModel       }
 QueueRecorder           JavaClass { com.sandwell.JavaSimulation3D.QueueRecorder         } Palette { 'Basic Objects' } DefaultDisplayModel	{ Cube 					}	DragAndDrop 	{ FALSE 	}
-Group                   JavaClass { com.sandwell.JavaSimulation.Group                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
+Group                   JavaClass { com.jaamsim.basicsim.Group                          } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 ScriptEntity            JavaClass { com.sandwell.JavaSimulation3D.ScriptEntity          } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
-Output                  JavaClass { com.sandwell.JavaSimulation.OutputMethod            } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
+Output                  JavaClass { com.jaamsim.basicsim.OutputMethod                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 BooleanIndicator        JavaClass { com.sandwell.JavaSimulation3D.BooleanIndicator      } Palette { 'Basic Objects' } DefaultDisplayModel { Circle                   }
 TimeSeries              JavaClass { com.sandwell.JavaSimulation.TimeSeries              } Palette { 'Basic Objects' } DefaultDisplayModel 	{ TimeSeriesIconModel    }
 SignalThreshold         JavaClass { com.jaamsim.Thresholds.SignalThreshold              } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }

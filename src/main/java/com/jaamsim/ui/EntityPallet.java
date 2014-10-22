@@ -41,10 +41,10 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.RenderUtils;
-import com.sandwell.JavaSimulation.ObjectType;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class EntityPallet extends JFrame implements DragGestureListener {
