@@ -15,6 +15,9 @@
 package com.jaamsim.states;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -24,14 +27,14 @@ import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class StateEntity extends DisplayEntity {
 	private StateRecord presentState; // The present state of the entity
-	private final ArrayList<StateRecord> states;
+	private final HashMap<String, StateRecord> states;
 	private final ArrayList<StateEntityListener> stateListeners;
 
 	private long lastStateCollectionTick;
 	private long workingTicks;
 
 	public StateEntity() {
-		states = new ArrayList<StateRecord>();
+		states = new HashMap<String, StateRecord>();
 		stateListeners = new ArrayList<StateEntityListener>();
 	}
 
@@ -44,11 +47,11 @@ public class StateEntity extends DisplayEntity {
 		workingTicks = 0;
 		states.clear();
 
-		String initState = getInitialState();
+		String initState = getInitialState().intern();
 		StateRecord init = new StateRecord(initState, isValidWorkingState(initState));
 		init.startTick = lastStateCollectionTick;
 		presentState = init;
-		states.add(init);
+		states.put(init.name, init);
 
 		stateListeners.clear();
 		for (Entity ent : Entity.getClonesOfIterator(Entity.class, StateEntityListener.class)) {
@@ -92,18 +95,15 @@ public class StateEntity extends DisplayEntity {
 		if (presentState.name.equals(state))
 			return;
 
-		int stateIdx = this.stateIdx(state);
-		StateRecord nextState;
-		if (stateIdx < 0) {
+		StateRecord nextState = states.get(state);
+		if (nextState == null) {
 			if (!isValidState(state))
 				throw new ErrorException("Specified state: %s is not valid for Entity: %s",
 				                         state, this.getName());
 
-			nextState = new StateRecord(state, isValidWorkingState(state));
-			states.add(-stateIdx - 1, nextState);
-		}
-		else {
-			nextState = states.get(stateIdx);
+			String intState = state.intern();
+			nextState = new StateRecord(intState, isValidWorkingState(intState));
+			states.put(nextState.name, nextState);
 		}
 
 		updateStateStats();
@@ -150,7 +150,7 @@ public class StateEntity extends DisplayEntity {
 	public void collectInitializationStats() {
 		updateStateStats();
 
-		for (StateRecord each : getStateRecs()) {
+		for (StateRecord each : states.values()) {
 			each.initTicks = each.totalTicks;
 			each.totalTicks = 0;
 			each.completedCycleTicks = 0;
@@ -164,7 +164,7 @@ public class StateEntity extends DisplayEntity {
 		updateStateStats();
 
 		// clear totalHours for each state record
-		for (StateRecord each : getStateRecs()) {
+		for (StateRecord each : states.values()) {
 			each.totalTicks = 0;
 			each.completedCycleTicks = 0;
 		}
@@ -177,7 +177,7 @@ public class StateEntity extends DisplayEntity {
 		updateStateStats();
 
 		// clear current cycle hours for each state record
-		for (StateRecord each : getStateRecs()) {
+		for (StateRecord each : states.values()) {
 			each.currentCycleTicks = 0;
 		}
 	}
@@ -189,7 +189,7 @@ public class StateEntity extends DisplayEntity {
 		updateStateStats();
 
 		// finalize cycle for each state record
-		for (StateRecord each : getStateRecs()) {
+		for (StateRecord each : states.values()) {
 			each.completedCycleTicks += each.currentCycleTicks;
 			each.currentCycleTicks = 0;
 		}
@@ -202,46 +202,27 @@ public class StateEntity extends DisplayEntity {
 		return presentState.name;
 	}
 
-	/**
-	 * Return the index of the given state, or (-insertionPoint - 1), see Arrays.binarySearach
-	 * @param state
-	 * @return
-	 */
-	private int stateIdx(String state) {
-		int lowIdx = 0;
-		int highIdx = states.size() - 1;
-
-		while (lowIdx <= highIdx) {
-			final int testIdx = (lowIdx + highIdx) >>> 1; // use unsigned shift to avoid overflow
-			final int comp = states.get(testIdx).name.compareTo(state);
-			if (comp < 0) {
-				lowIdx = testIdx + 1;
-			}
-			else if (comp > 0) {
-				highIdx = testIdx - 1;
-			}
-			else {
-				return testIdx;
-			}
-		}
-
-		return -(lowIdx + 1);
-	}
-
 	public StateRecord getState(String state) {
-		int idx = stateIdx(state);
-		if (idx < 0)
-			return null;
-
-		return states.get(idx);
+		return states.get(state);
 	}
 
 	public StateRecord getState() {
 		return presentState;
 	}
 
+	private static class StateRecSort implements Comparator<StateRecord> {
+		@Override
+		public int compare(StateRecord sr1, StateRecord sr2) {
+			return sr1.name.compareTo(sr2.name);
+		}
+	}
+
 	public ArrayList<StateRecord> getStateRecs() {
-		return states;
+		ArrayList<StateRecord> recs = new ArrayList<StateRecord>(states.size());
+		for (StateRecord rec : states.values())
+			recs.add(rec);
+		Collections.sort(recs, new StateRecSort());
+		return recs;
 	}
 
 	/**
