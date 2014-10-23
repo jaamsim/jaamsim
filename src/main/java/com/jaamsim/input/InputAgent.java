@@ -465,7 +465,7 @@ public class InputAgent {
 	 * @param key
 	 * @param addedEntity
 	 */
-	public static <T extends Entity> T defineEntity(Class<T> proto, String key, boolean addedEntity) {
+	private static <T extends Entity> T defineEntity(Class<T> proto, String key, boolean addedEntity) {
 		Entity existingEnt = Input.tryParseEntity(key, Entity.class);
 		if (existingEnt != null) {
 			InputAgent.logError(INP_ERR_DEFINEUSED, key, existingEnt.getClass().getSimpleName());
