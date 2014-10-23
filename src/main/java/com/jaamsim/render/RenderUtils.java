@@ -47,7 +47,6 @@ public class RenderUtils {
 	public static List<Vec4d> CIRCLE_POINTS;
 	public static List<Vec4d> RECT_POINTS;
 	public static List<Vec4d> TRIANGLE_POINTS;
-	public static List<Vec4d> DIAMOND_POINTS;
 
 	static {
 		CIRCLE_POINTS = getCirclePoints(32);
@@ -66,12 +65,6 @@ public class RenderUtils {
 		TRIANGLE_POINTS.add(new Vec4d( 0.5, -0.5, 0, 1.0d));
 		TRIANGLE_POINTS.add(new Vec4d( 0.5,  0.5, 0, 1.0d));
 		TRIANGLE_POINTS.add(new Vec4d(-0.5,  0.0, 0, 1.0d));
-
-		DIAMOND_POINTS = new ArrayList<Vec4d>();
-		DIAMOND_POINTS.add(new Vec4d(  1,  0, 0, 1.0d));
-		DIAMOND_POINTS.add(new Vec4d(  0,  1, 0, 1.0d));
-		DIAMOND_POINTS.add(new Vec4d( -1,  0, 0, 1.0d));
-		DIAMOND_POINTS.add(new Vec4d(  0, -1, 0, 1.0d));
 	}
 
 	// Transform the list of points in place
