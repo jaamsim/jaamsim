@@ -16,6 +16,7 @@ package com.jaamsim.Samples;
 
 import java.util.Arrays;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -28,7 +29,6 @@ import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.Tester;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 

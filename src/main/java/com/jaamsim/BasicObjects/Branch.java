@@ -14,13 +14,13 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class Branch extends LinkedComponent {
 

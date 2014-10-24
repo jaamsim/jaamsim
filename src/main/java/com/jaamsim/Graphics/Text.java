@@ -23,7 +23,6 @@ import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
  * The "Text" object displays written text within the 3D model universe.  Both fixed and variable text can be displayed.

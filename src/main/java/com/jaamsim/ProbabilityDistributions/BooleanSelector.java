@@ -14,12 +14,12 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class BooleanSelector extends DisplayEntity {
 	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",

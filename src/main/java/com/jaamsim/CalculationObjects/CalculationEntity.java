@@ -14,12 +14,12 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
  * CalculationEntity is the super-class for all Calculation Objects.

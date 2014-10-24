@@ -16,6 +16,7 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -28,7 +29,6 @@ import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
  * Moves one or more Entities along a path at a constant speed.

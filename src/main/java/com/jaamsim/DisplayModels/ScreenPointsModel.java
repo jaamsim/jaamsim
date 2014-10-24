@@ -17,6 +17,7 @@ package com.jaamsim.DisplayModels;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ColourInput;
@@ -31,7 +32,6 @@ import com.jaamsim.render.PointProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class ScreenPointsModel extends DisplayModel {
 

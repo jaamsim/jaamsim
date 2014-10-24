@@ -14,6 +14,7 @@
  */
 package com.jaamsim.Thresholds;
 
+import com.jaamsim.Graphics.DisplayModelCompat;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -26,7 +27,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
 public class ExpressionThreshold extends Threshold {
 

@@ -14,12 +14,12 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Output;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class EntityLogger extends LinkedComponent {
 	private FileEntity file;

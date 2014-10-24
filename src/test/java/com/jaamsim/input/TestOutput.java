@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class TestOutput {
 

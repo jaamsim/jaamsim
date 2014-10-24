@@ -16,11 +16,11 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.AssignmentListInput;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
  * Assigns values to Attributes.

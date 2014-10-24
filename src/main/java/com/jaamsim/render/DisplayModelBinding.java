@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ColourInput;
@@ -28,7 +29,6 @@ import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
  * Represents the One-to-one mapping of DisplayModels to Entities

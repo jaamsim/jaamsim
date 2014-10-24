@@ -19,11 +19,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class StateEntity extends DisplayEntity {
 	private StateRecord presentState; // The present state of the entity

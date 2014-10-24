@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.OverlayImage;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -33,7 +34,6 @@ import com.jaamsim.render.ImageProxy;
 import com.jaamsim.render.OverlayTextureProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.VisibilityInfo;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class ImageModel extends DisplayModel {
 

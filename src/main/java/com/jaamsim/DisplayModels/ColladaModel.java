@@ -24,6 +24,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.MeshFiles.BlockWriter;
 import com.jaamsim.MeshFiles.DataBlock;
 import com.jaamsim.MeshFiles.MeshData;
@@ -49,7 +50,6 @@ import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.MenuItem;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.MenuItemEntity;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class ColladaModel extends DisplayModel implements MenuItemEntity {
 

@@ -14,12 +14,12 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Thresholds.SignalThreshold;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class EntitySignal extends LinkedComponent {
 

@@ -14,6 +14,7 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
@@ -27,7 +28,6 @@ import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
  * ProbablityDistribution is the super-class for the various probability distributions implemented in JaamSim.

@@ -14,13 +14,13 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.Graphics.DisplayModelCompat;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.PressureUnit;
 import com.jaamsim.units.VolumeUnit;
-import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 
 /**
  * FluidTank is a storage tank that contains a fluid.

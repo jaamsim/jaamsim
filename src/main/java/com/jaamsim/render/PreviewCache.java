@@ -27,14 +27,14 @@ import javax.imageio.ImageIO;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
+import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.DisplayModelCompat;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.ui.View;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
-import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class PreviewCache {

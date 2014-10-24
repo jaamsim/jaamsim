@@ -14,7 +14,7 @@
  */
 package com.jaamsim.BasicObjects;
 
-import com.sandwell.JavaSimulation3D.DisplayEntity;
+import com.jaamsim.Graphics.DisplayEntity;
 
 /**
  * EntitySink kills the DisplayEntities sent to it.

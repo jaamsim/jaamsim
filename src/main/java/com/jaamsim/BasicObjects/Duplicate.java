@@ -14,10 +14,10 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class Duplicate extends LinkedComponent {
 

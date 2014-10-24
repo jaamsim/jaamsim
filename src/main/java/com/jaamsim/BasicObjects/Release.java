@@ -16,12 +16,12 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class Release extends LinkedComponent {
 

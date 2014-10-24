@@ -32,7 +32,6 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public abstract class GraphBasics extends DisplayEntity {
 

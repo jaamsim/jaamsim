@@ -18,8 +18,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.jaamsim.BasicObjects.EntitlementSelector;
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.InputAgent;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class TestEntitlementSelector {
 

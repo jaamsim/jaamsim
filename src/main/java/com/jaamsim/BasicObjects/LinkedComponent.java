@@ -14,6 +14,7 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -24,7 +25,6 @@ import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.RateUnit;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 /**
  * LinkedComponents are used to form a chain of components that process DisplayEntities that pass through the system.
