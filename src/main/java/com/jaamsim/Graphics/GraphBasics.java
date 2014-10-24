@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
@@ -32,6 +32,7 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public abstract class GraphBasics extends DisplayEntity {
 

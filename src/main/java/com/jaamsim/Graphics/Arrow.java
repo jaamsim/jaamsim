@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
@@ -29,6 +29,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
+import com.sandwell.JavaSimulation3D.DisplayEntity;
 
 public class Arrow extends DisplayEntity implements HasScreenPoints {
 	@Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +

@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2009-2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2013 Ausenco Engineering Canada Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,51 +12,49 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.Graphics;
 
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.Input;
+import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.OutputInput;
 import com.jaamsim.input.StringInput;
-import com.jaamsim.input.ValueInput;
-import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
 
 /**
- * The "Text" object displays written text within the 3D model universe.  Both fixed and variable text can be displayed.
+ * OverylayText displays written text as a 2D overlay on a View window.
  * @author Harry King
  *
  */
-public class Text extends DisplayEntity {
+public class OverlayText extends OverlayEntity {
 
 	@Keyword(description = "The fixed and variable text to be displayed.  If spaces are included, enclose the text in single quotes.  " +
 			"If variable text is to be displayed using the OutputName keyword, include the appropriate Java format in the text, " +
 			"e.g. %s, %.6f, %.6g",
-	         example = "Text1 Format { 'Present speed = %.3f m/s' }")
+	         example = "OverlayText1 Format { 'Present speed = %.3f m/s' }")
 	protected final StringInput formatText;
 
 	@Keyword(description = "The output value chain that returns the variable text to be displayed. " +
 			"If more than one output value is given, all outputs but the last should point to an entity output to query" +
 			" for the next output. The example returns the name of the product in a tank",
-	         example = "Text1 OutputName { Tank1 Product Name }")
+	         example = "OverlayText1 OutputName { Tank1 Product Name }")
 	protected final OutputInput<Object> outputName;
 
-	@Keyword(description = "The unit in which to express the output value",
-	         example = "Text1 Unit { m/s }")
+	@Keyword(description = "The unit inwhich to express the output value",
+	         example = "OverlayText1 Unit { m/s }")
 	protected final EntityInput<Unit> unit;
 
-	@Keyword(description = "The height of the font as displayed in the view window.",
-	         example = "Text1 TextHeight { 15 m }")
-	protected final ValueInput textHeight;
+	@Keyword(description = "The height of the font as displayed in the view window. Unit is in pixels.",
+	         example = "OverlayText1 TextHeight { 15 }")
+	private final IntegerInput textHeight;
 
 	@Keyword(description = "The text to display if there is any failure while formatting" +
 	                       "the dynamic text, or while reading the output's value.",
-	         example = "Text1 FailText { '' }")
+	             example = "Text1 FailText { '' }")
 	private final StringInput failText;
 
-	protected String renderText = "";
+	private String renderText;
 
 	{
 		formatText = new StringInput("Format", "Key Inputs", "abc");
@@ -68,30 +66,16 @@ public class Text extends DisplayEntity {
 		unit = new EntityInput<Unit>( Unit.class, "Unit", "Key Inputs", null);
 		this.addInput(unit);
 
-		textHeight = new ValueInput("TextHeight", "Key Inputs", 0.3d);
-		textHeight.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		textHeight.setUnitType(DistanceUnit.class);
+		textHeight = new IntegerInput("TextHeight", "Key Inputs", 15);
+		textHeight.setValidRange(0, 1000);
 		this.addInput(textHeight);
 
 		failText = new StringInput("FailText", "Key Inputs", "");
 		this.addInput(failText);
 	}
 
-	public Text() {}
-
-	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == outputName) {
-			OutputHandle h = outputName.getOutputHandle(0.0);
-			if (h != null)
-				unit.setSubClass(h.getUnitType());
-			return;
-		}
-	}
-
 	public String getRenderText(double simTime) {
+
 		if( outputName.getValue() == null )
 			return formatText.getValue();
 
@@ -112,6 +96,7 @@ public class Text extends DisplayEntity {
 		catch (Throwable e) {
 			return failText.getValue();
 		}
+
 	}
 
 	@Override
@@ -134,8 +119,8 @@ public class Text extends DisplayEntity {
 		return renderText;
 	}
 
-	public double getTextHeight() {
-		return textHeight.getValue().doubleValue();
+	public int getTextHeight() {
+		return textHeight.getValue();
 	}
 
 }

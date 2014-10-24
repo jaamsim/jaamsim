@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.Graphics;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,6 +22,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
+import com.sandwell.JavaSimulation3D.Clock;
 
 /**
  * An overlay display of time and/or date.

@@ -38,6 +38,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.jaamsim.Graphics.Text;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.controllers.RenderManager;
@@ -48,7 +49,6 @@ import com.jaamsim.math.Vec3d;
 import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.GUIFrame;
-import com.sandwell.JavaSimulation3D.Text;
 
 public class ObjectSelector extends FrameBox {
 	private static ObjectSelector myInstance;

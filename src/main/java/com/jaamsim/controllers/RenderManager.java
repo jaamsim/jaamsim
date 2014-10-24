@@ -44,6 +44,7 @@ import javax.swing.JPopupMenu;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.TextModel;
+import com.jaamsim.Graphics.Graph;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.datatypes.IntegerVector;
@@ -85,7 +86,6 @@ import com.jaamsim.ui.View;
 import com.sandwell.JavaSimulation3D.DisplayEntity;
 import com.sandwell.JavaSimulation3D.DisplayModelCompat;
 import com.sandwell.JavaSimulation3D.GUIFrame;
-import com.sandwell.JavaSimulation3D.Graph;
 import com.sandwell.JavaSimulation3D.Region;
 
 /**
