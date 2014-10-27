@@ -39,6 +39,7 @@ import com.jaamsim.render.VisibilityInfo;
 public class DisplayModelCompat extends DisplayModel {
 	// IMPORTANT: If you add a tag here, make sure to add it to the validTags
 	public static final String TAG_CONTENTS = "CONTENTS";
+	public static final String TAG_CONTENTS2 = "CONTENTS2";
 	public static final String TAG_CAPACITY = "CAPACITY";
 	public static final String TAG_OUTLINES = "OUTLINES";
 	public static final String TAG_TRACKFILL = "TRACKFILL";
@@ -402,6 +403,8 @@ public class DisplayModelCompat extends DisplayModel {
 			DoubleVector sizes = tags.sizes.get(DisplayModelCompat.TAG_CONTENTS);
 			DoubleVector capacities = tags.sizes.get(DisplayModelCompat.TAG_CAPACITY);
 			Color4d[] colours = tags.colours.get(DisplayModelCompat.TAG_CONTENTS);
+			DoubleVector rescapacities = tags.sizes.get(DisplayModelCompat.TAG_CONTENTS2);
+			Color4d[] rescolours = tags.colours.get(DisplayModelCompat.TAG_CONTENTS2);
 			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
 			Color4d backgroundColour = tags.getTagColourUtil(DisplayModelCompat.TAG_BODY, ColourInput.WHITE);
 			if (sizes == null) {
@@ -452,6 +455,17 @@ public class DisplayModelCompat extends DisplayModel {
 
 				cachedProxies.add(new PolygonProxy(contentsPoints, trans, scale, colours[i], false, 1, getVisibilityInfo(), pickingID));
 
+				if (rescapacities != null) {
+					double startResY = endY;
+					double endResY = startResY + rescapacities.get(i);
+					List<Vec4d> rescontentsPoints = new ArrayList<Vec4d>();
+					rescontentsPoints.add(new Vec4d(  endX, startResY, 0, 1.0d));
+					rescontentsPoints.add(new Vec4d(  endX,   endResY, 0, 1.0d));
+					rescontentsPoints.add(new Vec4d(startX,   endResY, 0, 1.0d));
+					rescontentsPoints.add(new Vec4d(startX, startResY, 0, 1.0d));
+
+					cachedProxies.add(new PolygonProxy(rescontentsPoints, trans, scale, rescolours[i], false, 1, getVisibilityInfo(), pickingID));
+				}
 			}
 		}
 
