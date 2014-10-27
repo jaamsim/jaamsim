@@ -53,7 +53,10 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 		str = in.getDefaultString();
 	}
 	else {
-		str = in.getValueString();
+		if (in.isDefault())
+			str = "";
+		else
+			str = in.getValueString();
 	}
 
 	// Pass along the keyword string, not the input itself
