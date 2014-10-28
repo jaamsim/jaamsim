@@ -494,7 +494,7 @@ public class InputAgent {
 			}
 		}
 
-		ent.setInputName(key);
+		ent.setName(key);
 		return ent;
 	}
 

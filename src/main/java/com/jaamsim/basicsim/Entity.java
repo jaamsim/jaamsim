@@ -52,7 +52,6 @@ public class Entity {
 	private static final HashMap<String, Entity> namedEntities;
 
 	private String entityName;
-	private String entityInputName; // Name input by user
 	private final long entityNumber;
 
 	//public static final int FLAG_TRACE = 0x01; // reserved in case we want to treat tracing like the other flags
@@ -219,7 +218,14 @@ public class Entity {
 				}
 			}
 		}
-		removeInputName();
+		if (!testFlag(FLAG_GENERATED)) {
+			synchronized (namedEntities) {
+				if (namedEntities.get(entityName) == this)
+					namedEntities.remove(entityName);
+
+				entityName = null;
+			}
+		}
 
 		setFlag(FLAG_DEAD);
 	}
@@ -316,15 +322,15 @@ public class Entity {
 		traceFlag = false;
 	}
 
+	public final String getInputName() {
+		return getName();
+	}
 	/**
 	 * Method to return the name of the entity.
 	 * Note that the name of the entity may not be the unique identifier used in the namedEntityHashMap; see Entity.toString()
 	 */
-	public String getName() {
-		if (entityName == null)
-			return "Entity-" + entityNumber;
-		else
-			return entityName;
+	public final String getName() {
+		return entityName;
 	}
 
 	/**
@@ -336,19 +342,12 @@ public class Entity {
 	}
 
 	/**
-	 * Method to set the name of the entity.
-	 */
-	public void setName(String newName) {
-		entityName = newName;
-	}
-
-	/**
 	 * Method to return the unique identifier of the entity. Used when building Edit tree labels
 	 * @return entityName
 	 */
 	@Override
 	public String toString() {
-		return getInputName();
+		return getName();
 	}
 
 	public static Entity getNamedEntity(String name) {
@@ -357,36 +356,19 @@ public class Entity {
 		}
 	}
 
-	private void removeInputName() {
-		synchronized (namedEntities) {
-			if (namedEntities.get(entityInputName) == this)
-				namedEntities.remove(entityInputName);
-
-			entityInputName = null;
-		}
-	}
-
 	/**
 	 * Method to set the input name of the entity.
 	 */
-	public void setInputName(String newName) {
-		synchronized (namedEntities) {
-			namedEntities.remove(entityInputName);
-			entityInputName = newName;
-			namedEntities.put(entityInputName, this);
+	public void setName(String newName) {
+		if (testFlag(FLAG_GENERATED)) {
+			entityName = newName;
+			return;
 		}
-		this.setName(newName);
-	}
 
-	/**
-	 * Method to get the input name of the entity.
-	 */
-	public String getInputName() {
-		if (entityInputName == null) {
-			return this.getName();
-		}
-		else {
-			return entityInputName;
+		synchronized (namedEntities) {
+			namedEntities.remove(entityName);
+			entityName = newName;
+			namedEntities.put(entityName, this);
 		}
 	}
 

@@ -354,7 +354,7 @@ public class ObjectSelector extends FrameBox {
 			}
 
 			// Rename the entity
-			currentEntity.setInputName(newName);
+			currentEntity.setName(newName);
 			node.setUserObject(currentEntity);
 			FrameBox.setSelectedEntity(currentEntity);
 		}
