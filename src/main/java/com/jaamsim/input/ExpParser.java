@@ -39,10 +39,13 @@ public class ExpParser {
 	}
 
 	public interface ParseContext {
-		public ExpResult getVariableValue(String[] names);
 		public UnitData getUnitByName(String name);
 		public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a, Class<? extends Unit> b);
 		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num, Class<? extends Unit> denom);
+	}
+
+	public interface EvalContext {
+		public ExpResult getVariableValue(String[] names);
 	}
 
 	private interface ExpressionWalker {
@@ -55,7 +58,7 @@ public class ExpParser {
 
 	public abstract static class Expression {
 		public ParseContext context;
-		public abstract ExpResult evaluate();
+		public abstract ExpResult evaluate(EvalContext ec);
 		public Expression(ParseContext context) {
 			this.context = context;
 		}
@@ -69,7 +72,7 @@ public class ExpParser {
 			this.val = val;
 		}
 		@Override
-		public ExpResult evaluate() {
+		public ExpResult evaluate(EvalContext ec) {
 			return val;
 		}
 		@Override
@@ -85,8 +88,8 @@ public class ExpParser {
 			this.vals = vals;
 		}
 		@Override
-		public ExpResult evaluate() {
-			return context.getVariableValue(vals);
+		public ExpResult evaluate(EvalContext ec) {
+			return ec.getVariableValue(vals);
 		}
 		@Override
 		void walk(ExpressionWalker w) {
@@ -104,8 +107,8 @@ public class ExpParser {
 		}
 
 		@Override
-		public ExpResult evaluate() {
-			return func.apply(context, subExp.evaluate());
+		public ExpResult evaluate(EvalContext ec) {
+			return func.apply(context, subExp.evaluate(ec));
 		}
 		@Override
 		void walk(ExpressionWalker w) {
@@ -132,9 +135,9 @@ public class ExpParser {
 		}
 
 		@Override
-		public ExpResult evaluate() {
-			ExpResult lRes = lConstVal != null ? lConstVal : lSubExp.evaluate();
-			ExpResult rRes = rConstVal != null ? rConstVal : rSubExp.evaluate();
+		public ExpResult evaluate(EvalContext ec) {
+			ExpResult lRes = lConstVal != null ? lConstVal : lSubExp.evaluate(ec);
+			ExpResult rRes = rConstVal != null ? rConstVal : rSubExp.evaluate(ec);
 			return func.apply(context, lRes, rRes);
 		}
 
@@ -164,12 +167,12 @@ public class ExpParser {
 			falseExp =f;
 		}
 		@Override
-		public ExpResult evaluate() {
-			ExpResult condRes = constCondRes != null ? constCondRes : condExp.evaluate();
+		public ExpResult evaluate(EvalContext ec) {
+			ExpResult condRes = constCondRes != null ? constCondRes : condExp.evaluate(ec);
 			if (condRes.value == 0)
-				return constFalseRes != null ? constFalseRes : falseExp.evaluate();
+				return constFalseRes != null ? constFalseRes : falseExp.evaluate(ec);
 			else
-				return constTrueRes != null ? constTrueRes : trueExp.evaluate();
+				return constTrueRes != null ? constTrueRes : trueExp.evaluate(ec);
 		}
 		@Override
 		void walk(ExpressionWalker w) {
@@ -200,11 +203,11 @@ public class ExpParser {
 		}
 
 		@Override
-		public ExpResult evaluate() {
+		public ExpResult evaluate(EvalContext ec) {
 			ExpResult[] argVals = new ExpResult[args.size()];
 			for (int i = 0; i < args.size(); ++i) {
 				ExpResult constArg = constResults.get(i);
-				argVals[i] = constArg != null ? constArg : args.get(i).evaluate();
+				argVals[i] = constArg != null ? constArg : args.get(i).evaluate(ec);
 			}
 			return function.call(context, argVals);
 		}
@@ -543,34 +546,37 @@ public class ExpParser {
 
 		@Override
 		public void visit(Expression exp) {
+			// Note: Below we are passing 'null' as an EvalContext, this is not typically
+			// acceptable, but is 'safe enough' when we know the expression is a constant
+
 			if (exp instanceof BinaryOp) {
 				BinaryOp bo = (BinaryOp)exp;
 				if (bo.lSubExp instanceof Constant) {
 					// Just the left is a constant, store it in the binop
-					bo.lConstVal = bo.lSubExp.evaluate();
+					bo.lConstVal = bo.lSubExp.evaluate(null);
 				}
 				if (bo.rSubExp instanceof Constant) {
 					// Just the right is a constant, store it in the binop
-					bo.rConstVal = bo.rSubExp.evaluate();
+					bo.rConstVal = bo.rSubExp.evaluate(null);
 				}
 			}
 			if (exp instanceof Conditional) {
 				Conditional cond = (Conditional)exp;
 				if (cond.condExp instanceof Constant) {
-					cond.constCondRes = cond.condExp.evaluate();
+					cond.constCondRes = cond.condExp.evaluate(null);
 				}
 				if (cond.trueExp instanceof Constant) {
-					cond.constTrueRes = cond.trueExp.evaluate();
+					cond.constTrueRes = cond.trueExp.evaluate(null);
 				}
 				if (cond.falseExp instanceof Constant) {
-					cond.constFalseRes = cond.falseExp.evaluate();
+					cond.constFalseRes = cond.falseExp.evaluate(null);
 				}
 			}
 			if (exp instanceof FuncCall) {
 				FuncCall fc = (FuncCall)exp;
 				for (int i = 0; i < fc.args.size(); ++i) {
 					if (fc.args.get(i) instanceof Constant) {
-						fc.constResults.set(i, fc.args.get(i).evaluate());
+						fc.constResults.set(i, fc.args.get(i).evaluate(null));
 					}
 				}
 			}
@@ -585,7 +591,7 @@ public class ExpParser {
 				UnaryOp uo = (UnaryOp)exp;
 				if (uo.subExp instanceof Constant) {
 					// This is an unary operation on a constant, we can replace it with a constant
-					ExpResult val = uo.evaluate();
+					ExpResult val = uo.evaluate(null);
 					return new Constant(uo.context, val);
 				}
 			}
@@ -593,7 +599,7 @@ public class ExpParser {
 				BinaryOp bo = (BinaryOp)exp;
 				if ((bo.lSubExp instanceof Constant) && (bo.rSubExp instanceof Constant)) {
 					// both sub expressions are constants, so replace the binop with a constant
-					ExpResult val = bo.evaluate();
+					ExpResult val = bo.evaluate(null);
 					return new Constant(bo.context, val);
 				}
 			}

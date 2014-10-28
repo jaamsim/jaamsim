@@ -59,39 +59,7 @@ public class ExpEvaluator {
 		return ent;
 	}
 
-	private static class EntityContext implements ExpParser.ParseContext {
-
-		public String errorString; // Used to mark an error during lookup because 'throws' screws with the interface
-
-		// These are updated in updateContext() which must be called before any expression are evaluated
-		private double simTime;
-		private Entity thisEnt;
-		private Entity objEnt;
-
-		public void updateContext(double simTime, Entity thisEnt, Entity objEnt) {
-			this.simTime = simTime;
-			this.thisEnt = thisEnt;
-			this.objEnt = objEnt;
-		}
-
-		@Override
-		public ExpResult getVariableValue(String[] names) {
-			try {
-				Entity ent = getEntity(names, simTime, thisEnt, objEnt);
-
-				String outputName = names[names.length-1];
-				OutputHandle oh = ent.getOutputHandleInterned(outputName);
-				if (oh == null) {
-					errorString = String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName());
-					return ExpResult.BAD_RESULT;
-				}
-				return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
-
-			} catch (Exception e) {
-				errorString = e.getMessage();
-			}
-			return ExpResult.BAD_RESULT;
-		}
+	private static class EntityParseContext implements ExpParser.ParseContext {
 
 		@Override
 		public ExpParser.UnitData getUnitByName(String name) {
@@ -120,9 +88,43 @@ public class ExpEvaluator {
 		}
 	}
 
-	private static EntityContext EC = new EntityContext();
+	private static EntityParseContext EC = new EntityParseContext();
 
-	public static ExpParser.ParseContext getContext() {
+	private static class EntityEvalContext implements ExpParser.EvalContext {
+
+		public String errorString; // Used to mark an error during lookup because 'throws' screws with the interface
+
+		// These are updated in updateContext() which must be called before any expression are evaluated
+		private double simTime;
+		private Entity thisEnt;
+		private Entity objEnt;
+
+		public EntityEvalContext(double simTime, Entity thisEnt, Entity objEnt) {
+			this.simTime = simTime;
+			this.thisEnt = thisEnt;
+			this.objEnt = objEnt;
+		}
+
+		@Override
+		public ExpResult getVariableValue(String[] names) {
+			try {
+				Entity ent = getEntity(names, simTime, thisEnt, objEnt);
+
+				String outputName = names[names.length-1];
+				OutputHandle oh = ent.getOutputHandleInterned(outputName);
+				if (oh == null) {
+					errorString = String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName());
+					return ExpResult.BAD_RESULT;
+				}
+				return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
+
+			} catch (Exception e) {
+				errorString = e.getMessage();
+			}
+			return ExpResult.BAD_RESULT;
+		}
+	}
+	public static ExpParser.ParseContext getParseContext() {
 		return EC;
 	}
 
@@ -140,12 +142,11 @@ public class ExpEvaluator {
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime, Entity thisEnt, Entity objEnt) throws Error
 	{
-		EC.errorString = null;
-		EC.updateContext(simTime, thisEnt, objEnt);
+		EntityEvalContext evalContext = new EntityEvalContext(simTime, thisEnt, objEnt);
 
-		ExpResult value = exp.evaluate();
-		if (EC.errorString != null)
-			throw new Error(EC.errorString);
+		ExpResult value = exp.evaluate(evalContext);
+		if (evalContext.errorString != null)
+			throw new Error(evalContext.errorString);
 
 		return value;
 	}

@@ -30,6 +30,26 @@ import com.jaamsim.units.Unit;
 
 public class TestExpParser {
 
+	private static class PC implements ExpParser.ParseContext {
+		@Override
+		public UnitData getUnitByName(String name) {
+			return null;
+		}
+		@Override
+		public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
+				Class<? extends Unit> b) {
+			return DimensionlessUnit.class;
+		}
+		@Override
+		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
+				Class<? extends Unit> denom) {
+			return DimensionlessUnit.class;
+		}
+	}
+
+	static PC pc = new PC();
+
+
 	private static void testToken(ExpTokenizer.Token tok, int type, String val) {
 		assertTrue(tok.type == type);
 		assertTrue(tok.value.equals(val));
@@ -105,190 +125,175 @@ public class TestExpParser {
 
 	@Test
 	public void testParser() throws ExpParser.Error {
-		class PC implements ExpParser.ParseContext {
+		class EC implements ExpParser.EvalContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
 				if (name[0].equals("foo")) return new ExpResult(4, DimensionlessUnit.class);
 				if (name[0].equals("bar")) return new ExpResult(3, DimensionlessUnit.class);
 				return new ExpResult(1, DimensionlessUnit.class);
 			}
-			@Override
-			public UnitData getUnitByName(String name) {
-				return null;
-			}
-			@Override
-			public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
-					Class<? extends Unit> b) {
-				return DimensionlessUnit.class;
-			}
-			@Override
-			public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
-					Class<? extends Unit> denom) {
-				return DimensionlessUnit.class;
-			}
 		}
-
-		PC pc = new PC();
+		EC ec = new EC();
 
 		ExpParser.Expression exp = ExpParser.parseExpression(pc, "2*5 + 3*5*(3-1)+2");
-		double val = exp.evaluate().value;
+		double val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 
 		exp = ExpParser.parseExpression(pc, "max(3, 42)");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 
 		exp = ExpParser.parseExpression(pc, "abs(-42)");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 
 		exp = ExpParser.parseExpression(pc, "abs(+42)");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 
 		exp = ExpParser.parseExpression(pc, "[foo]*[bar]");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 12);
 
 		exp = ExpParser.parseExpression(pc, "50/2/5"); // left associative
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 5);
 
 		exp = ExpParser.parseExpression(pc, "2^2^3"); // right associative
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 256);
 
 		exp = ExpParser.parseExpression(pc, "1 + 2^2*4 + 2*[foo]");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 25);
 
 		exp = ExpParser.parseExpression(pc, "1 + 2^(2*4) + 2");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 259);
 
 		exp = ExpParser.parseExpression(pc, "2----2"); // A quadruple negative
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 4);
 
 		exp = ExpParser.parseExpression(pc, "2---+-2"); // Still a quadruple negative
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 4);
 
 		exp = ExpParser.parseExpression(pc, "-1+1");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "(((((1+1)))*5))");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 10);
 
 		exp = ExpParser.parseExpression(pc, "!42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "!0");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 
 		exp = ExpParser.parseExpression(pc, "42 == 42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 
 		exp = ExpParser.parseExpression(pc, "42 == 41");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "42 != 42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "42 != 41");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 
 		exp = ExpParser.parseExpression(pc, "42 || 0");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 
 		exp = ExpParser.parseExpression(pc, "0 || 42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 
 		exp = ExpParser.parseExpression(pc, "0 || 0");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "42 && 0");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "0 && 42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "1 && 2");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 
 		exp = ExpParser.parseExpression(pc, "!(1&&42)");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "!!(1&&42)");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 
 		exp = ExpParser.parseExpression(pc, "42<41");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 		exp = ExpParser.parseExpression(pc, "41<42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 		exp = ExpParser.parseExpression(pc, "42>41");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 		exp = ExpParser.parseExpression(pc, "41>42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "42<=41");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 		exp = ExpParser.parseExpression(pc, "41<=42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 		exp = ExpParser.parseExpression(pc, "42>=41");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 		exp = ExpParser.parseExpression(pc, "41>=42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "42>=42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 		exp = ExpParser.parseExpression(pc, "42>=42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 1);
 		exp = ExpParser.parseExpression(pc, "42>42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 		exp = ExpParser.parseExpression(pc, "42>42");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "1==0?42:24");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 24);
 		exp = ExpParser.parseExpression(pc, "1==1?42:24");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 
 	}
 
 	@Test
 	public void testVariables() throws ExpParser.Error {
-		class PC implements ExpParser.ParseContext {
+		class EC implements ExpParser.EvalContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
 				if (name.length < 1 || !name[0].equals("foo")) return new ExpResult(0, DimensionlessUnit.class);
@@ -298,45 +303,30 @@ public class TestExpParser {
 
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
-			@Override
-			public UnitData getUnitByName(String name) {
-				return null;
-			}
-			@Override
-			public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
-					Class<? extends Unit> b) {
-				return DimensionlessUnit.class;
-			}
-			@Override
-			public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
-					Class<? extends Unit> denom) {
-				return DimensionlessUnit.class;
-			}
 		}
-		PC pc = new PC();
+		EC ec = new EC();
 
 		ExpParser.Expression exp = ExpParser.parseExpression(pc, "[foo].bar.baz");
-		double val = exp.evaluate().value;
+		double val = exp.evaluate(ec).value;
 		assertTrue(val == 4);
 
 		exp = ExpParser.parseExpression(pc, "[foo].bar.baz*4");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 16);
 
 		exp = ExpParser.parseExpression(pc, "[foo].bonk");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 5);
 
 		exp = ExpParser.parseExpression(pc, "[bob].is.your.uncle");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
 		exp = ExpParser.parseExpression(pc, "[foo]");
-		val = exp.evaluate().value;
+		val = exp.evaluate(ec).value;
 		assertTrue(val == -1);
 
-
-		class ThisPC implements ExpParser.ParseContext {
+		class ThisEC implements ExpParser.EvalContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
 				if (name[0].equals("this")) return new ExpResult(42, DimensionlessUnit.class);
@@ -344,41 +334,22 @@ public class TestExpParser {
 
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
-			@Override
-			public UnitData getUnitByName(String name) {
-				return null;
-			}
-			@Override
-			public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
-					Class<? extends Unit> b) {
-				return DimensionlessUnit.class;
-			}
-			@Override
-			public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
-					Class<? extends Unit> denom) {
-				return DimensionlessUnit.class;
-			}
 		}
-		ThisPC tpc = new ThisPC();
+		ThisEC tec = new ThisEC();
 
-		exp = ExpParser.parseExpression(tpc, "this.stuff");
-		val = exp.evaluate().value;
+		exp = ExpParser.parseExpression(pc, "this.stuff");
+		val = exp.evaluate(tec).value;
 		assertTrue(val == 42);
 
-		exp = ExpParser.parseExpression(tpc, "obj.things");
-		val = exp.evaluate().value;
+		exp = ExpParser.parseExpression(pc, "obj.things");
+		val = exp.evaluate(tec).value;
 		assertTrue(val == 24);
 
 	}
 
 	@Test
 	public void testUnits() throws ExpParser.Error {
-		class PC implements ExpParser.ParseContext {
-			@Override
-			public ExpResult getVariableValue(String[] name) {
-				return ExpResult.BAD_RESULT;
-			}
-
+		class UnitPC implements ExpParser.ParseContext {
 			@Override
 			public UnitData getUnitByName(String name) {
 				UnitData ret = new UnitData();
@@ -422,52 +393,60 @@ public class TestExpParser {
 			}
 
 		}
-		PC pc = new PC();
+		UnitPC upc = new UnitPC();
 
-		ExpParser.Expression exp = ExpParser.parseExpression(pc, "1[km] + 1[m]");
-		ExpResult res = exp.evaluate();
+		class EC implements ExpParser.EvalContext {
+			@Override
+			public ExpResult getVariableValue(String[] name) {
+				return ExpResult.BAD_RESULT;
+			}
+		}
+		EC ec = new EC();
+
+		ExpParser.Expression exp = ExpParser.parseExpression(upc, "1[km] + 1[m]");
+		ExpResult res = exp.evaluate(ec);
 		assertTrue(res.value == 1001);
 		assertTrue(res.unitType == DistanceUnit.class);
 
-		exp = ExpParser.parseExpression(pc, "1[hr] + 1[min] + 5[s]");
-		res = exp.evaluate();
+		exp = ExpParser.parseExpression(upc, "1[hr] + 1[min] + 5[s]");
+		res = exp.evaluate(ec);
 		assertTrue(res.value == 3665);
 		assertTrue(res.unitType == TimeUnit.class);
 
-		exp = ExpParser.parseExpression(pc, "1[hr] + 1[m]");
-		res = exp.evaluate();
+		exp = ExpParser.parseExpression(upc, "1[hr] + 1[m]");
+		res = exp.evaluate(ec);
 		assertTrue(res.isBad());
 
-		exp = ExpParser.parseExpression(pc, "max(1[hr], 1[s])");
-		res = exp.evaluate();
+		exp = ExpParser.parseExpression(upc, "max(1[hr], 1[s])");
+		res = exp.evaluate(ec);
 		assertTrue(res.value == 3600);
 		assertTrue(res.unitType == TimeUnit.class);
 
-		exp = ExpParser.parseExpression(pc, "6*1[km]");
-		res = exp.evaluate();
+		exp = ExpParser.parseExpression(upc, "6*1[km]");
+		res = exp.evaluate(ec);
 		assertTrue(res.value == 6000);
 		assertTrue(res.unitType == DistanceUnit.class);
 
 		boolean threw = false;
 		try {
-			exp = ExpParser.parseExpression(pc, "1[parsec]");
+			exp = ExpParser.parseExpression(upc, "1[parsec]");
 		} catch(ExpParser.Error ex) {
 			threw = true;
 		}
 		assertTrue(threw);
 
-		exp = ExpParser.parseExpression(pc, "1[m]/1[s]");
-		res = exp.evaluate();
+		exp = ExpParser.parseExpression(upc, "1[m]/1[s]");
+		res = exp.evaluate(ec);
 		assertTrue(res.value == 1);
 		assertTrue(res.unitType == SpeedUnit.class);
 
-		exp = ExpParser.parseExpression(pc, "5[m]*1[km]");
-		res = exp.evaluate();
+		exp = ExpParser.parseExpression(upc, "5[m]*1[km]");
+		res = exp.evaluate(ec);
 		assertTrue(res.value == 5000);
 		assertTrue(res.unitType == AreaUnit.class);
 
-		exp = ExpParser.parseExpression(pc, "5[m]/1[m]");
-		res = exp.evaluate();
+		exp = ExpParser.parseExpression(upc, "5[m]/1[m]");
+		res = exp.evaluate(ec);
 		assertTrue(res.value == 5);
 		assertTrue(res.unitType == DimensionlessUnit.class);
 
@@ -476,46 +455,32 @@ public class TestExpParser {
 	@Test
 	public void testAssignment() throws ExpParser.Error {
 
-		class PC implements ExpParser.ParseContext {
+		class EC implements ExpParser.EvalContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
-			@Override
-			public UnitData getUnitByName(String name) {
-				return null;
-			}
-			@Override
-			public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a,
-					Class<? extends Unit> b) {
-				return DimensionlessUnit.class;
-			}
-			@Override
-			public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num,
-					Class<? extends Unit> denom) {
-				return DimensionlessUnit.class;
-			}
 		}
-		PC pc = new PC();
+		EC ec = new EC();
 
 		ExpParser.Assignment assign = ExpParser.parseAssignment(pc, "[foo].bar = 40 + 2");
 
 		assertTrue(assign.destination.length == 2);
 		assertTrue(assign.destination[0].equals("foo"));
 		assertTrue(assign.destination[1].equals("bar"));
-		assertTrue(assign.value.evaluate().value == 42);
+		assertTrue(assign.value.evaluate(ec).value == 42);
 
 		assign = ExpParser.parseAssignment(pc, "this.bar = 40 + 2");
 		assertTrue(assign.destination.length == 2);
 		assertTrue(assign.destination[0].equals("this"));
 		assertTrue(assign.destination[1].equals("bar"));
-		assertTrue(assign.value.evaluate().value == 42);
+		assertTrue(assign.value.evaluate(ec).value == 42);
 
 		assign = ExpParser.parseAssignment(pc, "obj.bar = 40 + 2");
 		assertTrue(assign.destination.length == 2);
 		assertTrue(assign.destination[0].equals("obj"));
 		assertTrue(assign.destination[1].equals("bar"));
-		assertTrue(assign.value.evaluate().value == 42);
+		assertTrue(assign.value.evaluate(ec).value == 42);
 
 	}
 }

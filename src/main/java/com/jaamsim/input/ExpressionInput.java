@@ -33,7 +33,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 		try {
-			Expression exp = ExpParser.parseExpression(ExpEvaluator.getContext(), kw.getArg(0));
+			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(), kw.getArg(0));
 
 			// Test whether the expression can be evaluated
 			try {
