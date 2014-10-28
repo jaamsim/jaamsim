@@ -31,7 +31,7 @@ public class TestGammaDistribution {
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		GammaDistribution dist = InputAgent.defineEntityWithUniqueName(GammaDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "2.0");
 		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");
@@ -56,7 +56,7 @@ public class TestGammaDistribution {
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		GammaDistribution dist = InputAgent.defineEntityWithUniqueName(GammaDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "0.5");
 		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");

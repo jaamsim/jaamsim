@@ -306,7 +306,7 @@ public class Graph extends GraphBasics  {
 
 		@Override
 		public String getDescription() {
-			return graph.getInputName() + ".processGraph";
+			return graph.getName() + ".processGraph";
 		}
 
 		@Override

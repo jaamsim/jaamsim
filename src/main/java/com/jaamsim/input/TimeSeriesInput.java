@@ -65,7 +65,7 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 		for (Entity each : Entity.getClonesOfIterator(Entity.class, TimeSeriesProvider.class)) {
 			TimeSeriesProvider tsp = (TimeSeriesProvider)each;
 			if (tsp.getUnitType() == unitType)
-				list.add(each.getInputName());
+				list.add(each.getName());
 		}
 		Collections.sort(list);
 		return list;

@@ -25,7 +25,7 @@ class StartUpTarget extends ProcessTarget {
 
 	@Override
 	public String getDescription() {
-		return ent.getInputName() + ".startUp";
+		return ent.getName() + ".startUp";
 	}
 
 	@Override

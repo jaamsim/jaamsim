@@ -1074,7 +1074,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (u == null)
 			clockDisplay.setText(String.format("%,.2f  %s", simTime, Unit.getSIUnit(TimeUnit.class)));
 		else
-			clockDisplay.setText(String.format("%,.2f  %s", simTime/u.getConversionFactorToSI(), u.getInputName()));
+			clockDisplay.setText(String.format("%,.2f  %s", simTime/u.getConversionFactorToSI(), u.getName()));
 
 		// Set the run progress bar display
 		long cTime = System.currentTimeMillis();
@@ -1393,7 +1393,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				else {
 					double factor = u.getConversionFactorToSI();
 					locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
-							pos.x/factor, pos.y/factor, pos.z/factor, u.getInputName()));
+							pos.x/factor, pos.y/factor, pos.z/factor, u.getName()));
 				}
 			}
 		}

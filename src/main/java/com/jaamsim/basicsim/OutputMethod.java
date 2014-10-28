@@ -53,7 +53,7 @@ public OutputMethod() {}
 
 public String getReportLine() {
 	StringBuilder str = new StringBuilder();
-	str.append(target.getValue().getInputName());
+	str.append(target.getValue().getName());
 	str.append(" ");
 	str.append(method.getValue());
 	if (arguments.getValue() != null) {

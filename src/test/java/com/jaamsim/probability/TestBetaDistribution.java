@@ -16,7 +16,7 @@ public class TestBetaDistribution {
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		BetaDistribution dist = InputAgent.defineEntityWithUniqueName(BetaDistribution.class, "Dist2", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
 		InputAgent.processEntity_Keyword_Value( dist, "AlphaParam", "2.0");
 		InputAgent.processEntity_Keyword_Value( dist, "BetaParam", "2.0");
 		dist.validate();

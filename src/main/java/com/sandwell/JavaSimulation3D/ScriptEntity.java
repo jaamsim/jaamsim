@@ -89,7 +89,7 @@ public class ScriptEntity extends Entity {
 
 		@Override
 		public String getDescription() {
-			return script.getInputName() + ".doScript";
+			return script.getName() + ".doScript";
 		}
 
 		@Override

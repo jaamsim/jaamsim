@@ -157,10 +157,10 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 		if (defValue.size() == 0)
 			return NO_VALUE;
 
-		StringBuilder tmp = new StringBuilder(defValue.get(0).getInputName());
+		StringBuilder tmp = new StringBuilder(defValue.get(0).getName());
 		for (int i = 1; i < defValue.size(); i ++) {
 			tmp.append(SEPARATOR);
-			tmp.append(defValue.get(i).getInputName());
+			tmp.append(defValue.get(i).getName());
 		}
 
 		return tmp.toString();

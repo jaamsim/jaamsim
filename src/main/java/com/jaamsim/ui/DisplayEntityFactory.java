@@ -154,7 +154,7 @@ public class DisplayEntityFactory extends Entity {
 		DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
 
 		// Assign the ColladaModel to the new DisplayEntity
-		InputAgent.processEntity_Keyword_Value(de, "DisplayModel", dm.getInputName());
+		InputAgent.processEntity_Keyword_Value(de, "DisplayModel", dm.getName());
 
 		// Calculate the DisplayEntity's size and position from the ColladaModel
 		MeshProtoKey meshKey = RenderUtils.FileNameToMeshProtoKey(f.toURI());
@@ -192,7 +192,7 @@ public class DisplayEntityFactory extends Entity {
 		DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
 
 		// Assign the ImageModel to the new DisplayEntity
-		InputAgent.processEntity_Keyword_Value(de, "DisplayModel", dm.getInputName());
+		InputAgent.processEntity_Keyword_Value(de, "DisplayModel", dm.getName());
 
 		// Set the DisplayEntity's position, size, and alignment
 		InputAgent.processEntity_Keyword_Value(de, "Position", "0 0 0 m");

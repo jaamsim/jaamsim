@@ -53,7 +53,7 @@ public class ReflectionTarget extends ProcessTarget {
 
 	@Override
 	public String getDescription() {
-		return String.format("%s.%s", target.getInputName(), method.getName());
+		return String.format("%s.%s", target.getName(), method.getName());
 	}
 
 	// Look up the method with the given name for the given entity and argument list.

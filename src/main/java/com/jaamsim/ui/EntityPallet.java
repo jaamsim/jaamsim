@@ -192,7 +192,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 				return this;
 
 			ObjectType type = (ObjectType)userObj;
-			this.setText(type.getInputName());
+			this.setText(type.getName());
 			this.setPreferredSize(prefSize);
 
 			if (!RenderManager.isGood())

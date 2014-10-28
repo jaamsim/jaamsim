@@ -70,7 +70,7 @@ public class QueueRecorder extends DisplayEntity {
 	 * Record the addition of the given object to the given queue
 	 */
 	public void add( DisplayEntity ent, Queue queue ) {
-		outputFile.format( "%.3f\t%s\t%s\tAdd\n", getCurrentTime(), queue.getInputName(), ent.getName() );
+		outputFile.format( "%.3f\t%s\t%s\tAdd\n", getCurrentTime(), queue.getName(), ent.getName() );
 		outputFile.flush();
 	}
 
@@ -78,7 +78,7 @@ public class QueueRecorder extends DisplayEntity {
 	 * Record the removal of the given object from the given queue
 	 */
 	public void remove( DisplayEntity ent, Queue queue ) {
-		outputFile.format( "%.3f\t%s\t%s\tRemove\n", getCurrentTime(), queue.getInputName(), ent.getName() );
+		outputFile.format( "%.3f\t%s\t%s\tRemove\n", getCurrentTime(), queue.getName(), ent.getName() );
 		outputFile.flush();
 	}
 }

@@ -30,7 +30,7 @@ public class TestErlangDistribution {
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		ErlangDistribution dist = InputAgent.defineEntityWithUniqueName(ErlangDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
 		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "2");
 		dist.validate();

@@ -89,7 +89,7 @@ public class ExpressionThreshold extends Threshold {
 	class DoOpenCloseTarget extends ProcessTarget {
 		@Override
 		public String getDescription() {
-			return ExpressionThreshold.this.getInputName() + ".doOpenClose";
+			return ExpressionThreshold.this.getName() + ".doOpenClose";
 		}
 
 		@Override

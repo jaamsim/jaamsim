@@ -28,7 +28,7 @@ public class TestLogLogisticDistribution {
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		LogLogisticDistribution dist = InputAgent.defineEntityWithUniqueName(LogLogisticDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
 		InputAgent.processEntity_Keyword_Value( dist, "Scale", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "Shape", "4.0");
 		dist.validate();

@@ -1000,7 +1000,7 @@ public abstract class Input<T> {
 			return klass.cast(ent);
 		}
 		catch (ClassCastException e) {
-			throw new InputErrorException(INP_ERR_INTERFACE, klass.getName(), ent.getInputName());
+			throw new InputErrorException(INP_ERR_INTERFACE, klass.getName(), ent.getName());
 		}
 	}
 
@@ -1319,7 +1319,7 @@ public abstract class Input<T> {
 				tmp.append(def.get(i));
 			}
 		} else if ( Entity.class.isAssignableFrom( defValue.getClass() ) ) {
-			tmp.append(((Entity)defValue).getInputName());
+			tmp.append(((Entity)defValue).getName());
 		}
 		else {
 			return "?????";

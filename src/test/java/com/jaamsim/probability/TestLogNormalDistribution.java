@@ -28,7 +28,7 @@ public class TestLogNormalDistribution {
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		LogNormalDistribution dist = InputAgent.defineEntityWithUniqueName(LogNormalDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
 		InputAgent.processEntity_Keyword_Value( dist, "NormalMean", "10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "NormalStandardDeviation", "2.0");
 		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");

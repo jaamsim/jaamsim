@@ -147,7 +147,7 @@ public class Assemble extends LinkedService {
 		numberGenerated++;
 		DisplayEntity proto = prototypeEntity.getValue();
 		StringBuilder sb = new StringBuilder();
-		sb.append(proto.getInputName()).append("_Copy").append(numberGenerated);
+		sb.append(proto.getName()).append("_Copy").append(numberGenerated);
 		assembledEntity = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
 		assembledEntity.copyInputs(proto);
 		assembledEntity.earlyInit();

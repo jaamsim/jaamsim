@@ -69,7 +69,7 @@ public class OutputInput<T> extends Input<String> {
 				throw new InputErrorException("OutputInput class mismatch. The first output in the output chain must return an Entity");
 		}
 
-		value = String.format("%s.%s", ent.getInputName(), outputName);
+		value = String.format("%s.%s", ent.getName(), outputName);
 		if( kw.numArgs() > 2 ) {
 			for( String name: outputNameList ) {
 				value += "." + name;
@@ -114,7 +114,7 @@ public class OutputInput<T> extends Input<String> {
 			return "";
 
 		StringBuilder tmp = new StringBuilder();
-		tmp.append(ent.getInputName());
+		tmp.append(ent.getName());
 		tmp.append(SEPARATOR);
 		tmp.append(outputName);
 		for( String name : outputNameList ) {

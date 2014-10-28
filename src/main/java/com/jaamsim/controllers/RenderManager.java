@@ -238,7 +238,7 @@ public class RenderManager implements DragSourceListener {
 		int windowID = renderer.createWindow(windPos.get(0), windPos.get(1),
 		                                      windSize.get(0), windSize.get(1),
 		                                      view.getID(),
-		                                      view.getTitle(), view.getInputName(),
+		                                      view.getTitle(), view.getName(),
 		                                      icon, control);
 
 		control.setWindowID(windowID);
@@ -440,7 +440,7 @@ public class RenderManager implements DragSourceListener {
 					for (PickData pd : picks) {
 						Entity ent = Entity.idToEntity(pd.id);
 						if (ent != null)
-							dbgMsg.append(ent.getInputName());
+							dbgMsg.append(ent.getName());
 
 						dbgMsg.append(", ");
 						debugIDs.add(pd.id);
@@ -548,7 +548,7 @@ public class RenderManager implements DragSourceListener {
 			else {
 				// Several entities, let the user pick the interesting entity first
 				for (final DisplayEntity de : ents) {
-					JMenuItem thisItem = new JMenuItem(de.getInputName());
+					JMenuItem thisItem = new JMenuItem(de.getName());
 					thisItem.addActionListener( new ActionListener() {
 
 						@Override

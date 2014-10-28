@@ -134,7 +134,7 @@ public class EditBox extends FrameBox {
 			setTitle("Input Editor");
 			return;
 		}
-		setTitle("Input Editor - " + currentEntity.getInputName());
+		setTitle("Input Editor - " + currentEntity.getName());
 
 		int initialTab = 0;
 		int curTab = 0;

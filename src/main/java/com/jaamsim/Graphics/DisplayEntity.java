@@ -248,7 +248,7 @@ public class DisplayEntity extends Entity {
 		if (getDisplayModelList() != null) {
 			for (DisplayModel dm : getDisplayModelList()) {
 				if (!dm.canDisplayEntity(this)) {
-					this.error("validate()", String.format("Invalid Display model: %s for Entity", dm.getInputName()), "");
+					this.error("validate()", String.format("Invalid Display model: %s for Entity", dm.getName()), "");
 				}
 			}
 		}

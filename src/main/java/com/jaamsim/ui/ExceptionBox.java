@@ -90,7 +90,7 @@ public class ExceptionBox extends FrameBox {
 	public void setInputError(Entity ent, Throwable e) {
 		JOptionPane.showMessageDialog(EditBox.getInstance(),
 				   String.format("Reason: %-70s", e.getMessage()),
-				   String.format("Input Validation Failure - %s", ent.getInputName()),
+				   String.format("Input Validation Failure - %s", ent.getName()),
 				   JOptionPane.ERROR_MESSAGE);
 	}
 }

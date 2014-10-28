@@ -65,7 +65,7 @@ public class TestContinuousDistribution {
 		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		ContinuousDistribution dist = InputAgent.defineEntityWithUniqueName(ContinuousDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getInputName());
+		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
 		InputAgent.processEntity_Keyword_Value( dist, "ValueList", "1.0  3.0  5.0  10.0");
 		InputAgent.processEntity_Keyword_Value( dist, "CumulativeProbabilityList", "0.0  0.5  0.8  1.0");
 		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");

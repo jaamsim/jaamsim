@@ -512,7 +512,7 @@ public class InputAgent {
 				InputAgent.processKeyword(ent, keyword);
 			}
 			catch (Throwable e) {
-				InputAgent.logInpError("Entity: %s, Keyword: %s - %s", ent.getInputName(), keyword.keyword, e.getMessage());
+				InputAgent.logInpError("Entity: %s, Keyword: %s - %s", ent.getName(), keyword.keyword, e.getMessage());
 			}
 		}
 	}
@@ -608,7 +608,7 @@ public class InputAgent {
 	public static final void apply(Entity ent, KeywordIndex kw) {
 		Input<?> in = ent.getInput(kw.keyword);
 		if (in == null) {
-			InputAgent.logError("Keyword %s could not be found for Entity %s.", kw.keyword, ent.getInputName());
+			InputAgent.logError("Keyword %s could not be found for Entity %s.", kw.keyword, ent.getName());
 			return;
 		}
 
@@ -850,11 +850,11 @@ public class InputAgent {
 				}
 
 				if (hasinput) {
-					String entityName = ent.getInputName();
+					String entityName = ent.getName();
 					if ((count - 1) % 5 == 0) {
 						inputReportFile.putString("Define");
 						inputReportFile.putTab();
-						inputReportFile.putString(type.getInputName());
+						inputReportFile.putString(type.getName());
 						inputReportFile.putTab();
 						inputReportFile.putString("{ " + entityName);
 						inputReportFile.putTab();
@@ -896,7 +896,7 @@ public class InputAgent {
 			Collections.sort(cloneList, new Comparator<Entity>() {
 				@Override
 				public int compare(Entity a, Entity b) {
-					return a.getInputName().compareTo(b.getInputName());
+					return a.getName().compareTo(b.getName());
 				}
 			});
 
@@ -906,7 +906,7 @@ public class InputAgent {
 				// Make sure the clone is an instance of the class (and not an instance of a subclass)
 				if (cloneList.get(j).getClass() == each) {
 					Entity ent = cloneList.get(j);
-					String entityName = ent.getInputName();
+					String entityName = ent.getName();
 					boolean hasinput = false;
 
 					// Loop through the editable keywords for this instance
@@ -1144,7 +1144,7 @@ public class InputAgent {
 				if (o.getJavaClass() == newClass) {
 
 					// Print the first part of the "Define" statement for this object type
-					file.format("Define %s {", o.getInputName());
+					file.format("Define %s {", o.getName());
 					break;
 				}
 			}
@@ -1155,7 +1155,7 @@ public class InputAgent {
 					continue;
 
 				if (ent.getClass() == newClass)
-					file.format(" %s ", ent.getInputName());
+					file.format(" %s ", ent.getName());
 
 			}
 			// Close the define statement
@@ -1221,7 +1221,7 @@ public class InputAgent {
 
 	static void writeInputOnFile_ForEntity(FileEntity file, Entity ent, Input<?> in) {
 		file.format("%s %s { %s }%n",
-		            ent.getInputName(), in.getKeyword(), in.getValueString());
+		            ent.getName(), in.getKeyword(), in.getValueString());
 	}
 
 	/**

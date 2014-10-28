@@ -129,7 +129,7 @@ public class Pack extends LinkedService {
 			numberGenerated++;
 			EntityContainer proto = prototypeEntityContainer.getValue();
 			StringBuilder sb = new StringBuilder();
-			sb.append(proto.getInputName()).append("_Copy").append(numberGenerated);
+			sb.append(proto.getName()).append("_Copy").append(numberGenerated);
 			container = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
 			container.copyInputs(proto);
 			container.earlyInit();

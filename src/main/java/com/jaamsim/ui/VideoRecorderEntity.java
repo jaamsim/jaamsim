@@ -162,7 +162,7 @@ public class VideoRecorderEntity extends Entity {
 
 		@Override
 		public String getDescription() {
-			return rec.getInputName() + ".doCaptureNetwork";
+			return rec.getName() + ".doCaptureNetwork";
 		}
 
 		@Override

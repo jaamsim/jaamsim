@@ -27,6 +27,6 @@ public abstract class EntityTarget<T extends Entity> extends ProcessTarget {
 
 	@Override
 	public String getDescription() {
-		return ent.getInputName() + "." + desc;
+		return ent.getName() + "." + desc;
 	}
 }

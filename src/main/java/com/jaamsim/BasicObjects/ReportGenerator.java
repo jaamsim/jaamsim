@@ -248,7 +248,7 @@ public class ReportGenerator extends DisplayEntity {
 			double factor = 1.0;
 			Unit u = Unit.getPreferredUnit(ut);
 			if (u != null) {
-				unitString = u.getInputName();
+				unitString = u.getName();
 				factor = u.getConversionFactorToSI();
 			}
 

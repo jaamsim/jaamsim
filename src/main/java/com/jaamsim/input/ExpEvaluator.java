@@ -48,7 +48,7 @@ public class ExpEvaluator {
 			String outputName = names[i];
 			OutputHandle oh = ent.getOutputHandleInterned(outputName);
 			if (oh == null) {
-				throw new Error(String.format("Output '%s' not found on entity '%s'", outputName, ent.getInputName()));
+				throw new Error(String.format("Output '%s' not found on entity '%s'", outputName, ent.getName()));
 			}
 			if (!Entity.class.isAssignableFrom(oh.getReturnType())) {
 				throw new Error(String.format("Output '%s' is not an entity output", outputName));
@@ -82,7 +82,7 @@ public class ExpEvaluator {
 				String outputName = names[names.length-1];
 				OutputHandle oh = ent.getOutputHandleInterned(outputName);
 				if (oh == null) {
-					errorString = String.format("Could not find output '%s' on entity '%s'", outputName, ent.getInputName());
+					errorString = String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName());
 					return ExpResult.BAD_RESULT;
 				}
 				return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);

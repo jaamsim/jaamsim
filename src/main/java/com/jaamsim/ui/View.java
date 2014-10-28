@@ -262,8 +262,8 @@ public void updateCenterAndPos(Vec3d center, Vec3d pos) {
 public String getTitle() {
 	if (titleBar.getValue() != null)
 		return titleBar.getValue();
-	else
-		return this.getInputName();
+    else
+	    return this.getName();
 }
 
 public boolean showWindow() {
@@ -276,7 +276,7 @@ public Region getRegion() {
 
 public void setRegion(Region reg) {
 	ArrayList<String> tokens = new ArrayList<String>(1);
-	tokens.add(reg.getInputName());
+	tokens.add(reg.getName());
 	KeywordIndex kw = new KeywordIndex(tokens, region.getKeyword(), 0, tokens.size(), null);
 	InputAgent.apply(this, kw);
 }

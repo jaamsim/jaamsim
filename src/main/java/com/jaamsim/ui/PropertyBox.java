@@ -76,7 +76,7 @@ public class PropertyBox extends FrameBox {
 			setTitle("Property Viewer");
 			return;
 		}
-		setTitle("Property Viewer - " + currentEntity.getInputName());
+		setTitle("Property Viewer - " + currentEntity.getName());
 
 		ArrayList<ClassFields> cFields = getFields(entity);
 		for (int i = 0; i < cFields.size(); i++) {
@@ -163,7 +163,7 @@ private static class ClassFields implements Comparator<Field> {
 			return "<null>";
 
 		if (value instanceof Entity)
-			return ((Entity)value).getInputName();
+	        return ((Entity)value).getName();
 
 		if (value instanceof double[])
 			return Arrays.toString((double[])value);

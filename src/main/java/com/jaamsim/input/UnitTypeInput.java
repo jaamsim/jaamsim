@@ -34,7 +34,7 @@ public class UnitTypeInput extends Input<ObjectType> {
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 		if (value != null)
-			throw new InputErrorException("Value has already been set to %s", value.getInputName());
+			throw new InputErrorException("Value has already been set to %s", value.getName());
 
 		ObjectType t = Input.parseEntity(kw.getArg(0), ObjectType.class);
 		Class<? extends Unit> type = Input.checkCast(t.getJavaClass(), Unit.class);
@@ -52,7 +52,7 @@ public class UnitTypeInput extends Input<ObjectType> {
 				continue;
 
 			if (Unit.class.isAssignableFrom(klass))
-				list.add(each.getInputName());
+				list.add(each.getName());
 		}
 		Collections.sort(list);
 		return list;

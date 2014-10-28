@@ -43,7 +43,7 @@ public class Duplicate extends LinkedComponent {
 
 			// Create the duplicated entity
 			StringBuilder sb = new StringBuilder();
-			sb.append(ent.getInputName()).append("_Dup").append(n);
+			sb.append(ent.getName()).append("_Dup").append(n);
 			DisplayEntity dup = InputAgent.generateEntityWithName(ent.getClass(), sb.toString());
 			dup.copyInputs(ent);
 			dup.earlyInit();

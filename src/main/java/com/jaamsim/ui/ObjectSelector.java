@@ -429,7 +429,7 @@ static class DuplicateMenuItem extends MenuItem {
 	@Override
 	public void action() {
 		Entity copiedEntity = InputAgent.defineEntityWithUniqueName(ent.getClass(),
-				ent.getInputName(), "_Copy", true);
+				ent.getName(), "_Copy", true);
 
 		// Match all the inputs
 		copiedEntity.copyInputs(ent);
@@ -503,14 +503,14 @@ static class LabelMenuItem extends MenuItem {
 	public void action() {
 		Text label = InputAgent.defineEntityWithUniqueName(Text.class, "Text", "", true);
 
-		InputAgent.processEntity_Keyword_Value(label, "RelativeEntity", ent.getInputName() );
+		InputAgent.processEntity_Keyword_Value(label, "RelativeEntity", ent.getName() );
 		if (ent.getCurrentRegion() != null)
-			InputAgent.processEntity_Keyword_Value(label, "Region", ent.getCurrentRegion().getInputName());
+			InputAgent.processEntity_Keyword_Value(label, "Region", ent.getCurrentRegion().getName());
 
 		InputAgent.processEntity_Keyword_Value(label, "Position", "0.0 -0.65 0.0 m" );
 		InputAgent.processEntity_Keyword_Value(label, "TextHeight", "0.15 m" );
 		InputAgent.processEntity_Keyword_Value(label, "Format", "%s");
-		InputAgent.processEntity_Keyword_Value(label, "OutputName", String.format("%s  Name", ent.getInputName()) );
+		InputAgent.processEntity_Keyword_Value(label, "OutputName", String.format("%s  Name", ent.getName()) );
 
 		FrameBox.setSelectedEntity(label);
 	}

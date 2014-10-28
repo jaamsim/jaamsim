@@ -78,7 +78,7 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 			tmp.append("{");
 			tmp.append(SEPARATOR);
 			for (T ent:each) {
-				tmp.append(ent.getInputName());
+				tmp.append(ent.getName());
 				tmp.append(SEPARATOR);
 			}
 			tmp.append("}");

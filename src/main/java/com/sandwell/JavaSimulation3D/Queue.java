@@ -306,7 +306,7 @@ public class Queue extends DisplayEntity {
 	public void printUtilizationOn( FileEntity anOut ) {
 
 		if (isActive()) {
-			anOut.format( "%s\t", getInputName() );
+			anOut.format( "%s\t", getName() );
 			anOut.format( "%d\t", this.getQueueLengthMinimum(0.0) );
 			anOut.format( "%d\t", this.getQueueLengthMaximum(0.0) );
 			anOut.format( "%.0f\t", this.getQueueLength(0.0) );

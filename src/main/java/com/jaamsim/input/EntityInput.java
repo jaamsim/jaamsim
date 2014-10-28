@@ -46,7 +46,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		else {
 			T tmp = Input.parseEntity(kw.getArg(0), entClass);
 			if (!isValid(tmp))
-				throw new InputErrorException("%s is not a valid entity", tmp.getInputName());
+				throw new InputErrorException("%s is not a valid entity", tmp.getName());
 
 			value = tmp;
 		}
@@ -62,7 +62,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 			if (!isValid(each))
 				continue;
 
-			list.add(each.getInputName());
+			list.add(each.getName());
 		}
 		Collections.sort(list);
 		return list;
@@ -72,7 +72,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 	public String getValueString() {
 		if( value == null )
 			return "";
-		return value.getInputName();
+		return value.getName();
 	}
 
 	public void setInvalidEntities(T... list) {

@@ -71,7 +71,7 @@ public class OutputBox extends FrameBox {
 			entries.clear();
 			return;
 		}
-		setTitle("Output Viewer - " + currentEntity.getInputName());
+		setTitle("Output Viewer - " + currentEntity.getName());
 
 		// Build up the row list, leaving extra rows for entity names
 		Class<?> currClass = null;
@@ -213,7 +213,7 @@ private class OutputTableModel extends AbstractTableModel {
 						if (u == null)
 							return String.format("%g  %s", d, Unit.getSIUnit(ut));
 						else
-							return String.format("%g  %s", d / u.getConversionFactorToSI(), u.getInputName());
+							return String.format("%g  %s", d / u.getConversionFactorToSI(), u.getName());
 					}
 				}
 

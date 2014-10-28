@@ -322,9 +322,6 @@ public class Entity {
 		traceFlag = false;
 	}
 
-	public final String getInputName() {
-		return getName();
-	}
 	/**
 	 * Method to return the name of the entity.
 	 * Note that the name of the entity may not be the unique identifier used in the namedEntityHashMap; see Entity.toString()

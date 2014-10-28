@@ -86,7 +86,7 @@ public class OutputListInput<T> extends ListInput<ArrayList<OutputHandle>> {
 			if (i > 0) tmp.append(SEPARATOR);
 			OutputHandle out = value.get(i);
 			tmp.append("{ ");
-			tmp.append(out.ent.getInputName());
+			tmp.append(out.ent.getName());
 			tmp.append(SEPARATOR);
 			tmp.append(out.getName());
 			tmp.append(" }");

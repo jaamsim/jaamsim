@@ -75,7 +75,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		ArrayList<String> list = new ArrayList<String>();
 		for (Entity each: Entity.getAll()) {
 			if( (SampleProvider.class).isAssignableFrom(each.getClass()) ) {
-			    list.add(each.getInputName());
+			    list.add(each.getName());
 			}
 		}
 		Collections.sort(list);

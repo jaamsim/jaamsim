@@ -63,7 +63,7 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 			if(each.testFlag(Entity.FLAG_GENERATED))
 				continue;
 
-			list.add(each.getInputName());
+			list.add(each.getName());
 		}
 		Collections.sort(list);
 		return list;
@@ -75,10 +75,10 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 			return NO_VALUE;
 
 		StringBuilder tmp = new StringBuilder();
-		tmp.append(((Entity)val.get(0)).getInputName());
+		tmp.append(((Entity)val.get(0)).getName());
 		for (int i = 1; i < val.size(); i++) {
 			tmp.append(SEPARATOR);
-			tmp.append(((Entity)val.get(i)).getInputName());
+			tmp.append(((Entity)val.get(i)).getName());
 		}
 		return tmp.toString();
 	}
