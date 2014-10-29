@@ -312,6 +312,8 @@ public class TexCache {
 				gl.glGenerateMipmap(GL2GL3.GL_TEXTURE_2D);
 		} catch (GLException ex) {
 			// We do not have enough texture memory
+			LogBox.renderLog(String.format("Error loading texture: %s", le.imageURI.toString()));
+			LogBox.renderLog(String.format("  %s", ex.toString()));
 			return badTextureID;
 		}
 
