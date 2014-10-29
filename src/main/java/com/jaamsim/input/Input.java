@@ -724,7 +724,7 @@ public abstract class Input<T> {
 		if( input.size() == 2 ) {
 
 			// Determine the units
-			Unit unit = Input.parseUnits( input.get(1) );
+			Unit unit = Input.parseUnit( input.get(1) );
 
 			// Determine the default units
 			Unit defaultUnit = Input.tryParseEntity( defaultUnitString.replaceAll("[()]", "").trim(), Unit.class );
@@ -774,7 +774,7 @@ public abstract class Input<T> {
 		int numDoubles = kw.numArgs();
 
 		// Parse the unit portion of the input
-		Unit unit = Input.tryParseEntity(kw.getArg(numDoubles-1), unitType);
+		Unit unit = Input.tryParseUnit(kw.getArg(numDoubles-1), unitType);
 
 		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
 		if (unit == null && unitType != DimensionlessUnit.class && unitType != TimeUnit.class)
@@ -835,7 +835,7 @@ public abstract class Input<T> {
 		int numDoubles = input.size();
 
 		// Parse the unit portion of the input
-		Unit unit = Input.tryParseEntity(input.get(numDoubles-1), unitType);
+		Unit unit = Input.tryParseUnit(input.get(numDoubles-1), unitType);
 
 		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
 		if (unit == null && unitType != DimensionlessUnit.class && unitType != TimeUnit.class)
@@ -893,10 +893,10 @@ public abstract class Input<T> {
 		if( data.size() > 1 && !Tester.isDouble(unitString) ) {
 
 			// Determine the units
-			Unit unit = Input.parseUnits(unitString);
+			Unit unit = Input.parseUnit(unitString);
 
 			// Determine the default units
-			Unit defaultUnit = Input.tryParseEntity( defaultUnitString, Unit.class );
+			Unit defaultUnit = Input.tryParseUnit( defaultUnitString, Unit.class );
 			if( defaultUnit == null ) {
 				throw new InputErrorException( "Could not determine default units " + defaultUnitString );
 			}
@@ -1029,6 +1029,19 @@ public abstract class Input<T> {
 
 	public static <T extends Entity> T tryParseEntity(String choice, Class<T> aClass) {
 		return Input.castEntity(Entity.getNamedEntity(choice), aClass);
+	}
+
+	public static <T extends Unit> T tryParseUnit(String choice, Class<T> aClass) {
+		return Input.castEntity(Entity.getNamedEntity(choice), aClass);
+	}
+
+	public static Unit parseUnit(String str)
+	throws InputErrorException {
+		Unit u = Input.tryParseUnit(str, Unit.class);
+		if (u == null)
+			throw new InputErrorException("Could not find a unit named: %s", str);
+
+		return u;
 	}
 
 	public static <T extends Entity> ArrayList<T> parseEntityList(KeywordIndex kw, Class<T> aClass, boolean unique)
@@ -1261,15 +1274,6 @@ public abstract class Input<T> {
 	 */
 	public ArrayList<String> getValidOptions() {
 		return null;
-	}
-
-	public static Unit parseUnits(String str) {
-		try {
-			return Input.parseEntity(str, Unit.class);
-		}
-		catch(InputErrorException ex) {
-			throw new InputErrorException(String.format("Could not find a unit named: %s", str));
-		}
 	}
 
 	public String getDefaultStringForKeyInputs(Class<? extends Unit> unitType, String unitString) {

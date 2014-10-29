@@ -57,7 +57,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				double factor = 1.0;
 				Class<? extends Unit> unitType = DimensionlessUnit.class;
 				if (subArg.numArgs() == 3) {
-					Unit unit = Input.parseUnits(subArg.getArg(2));
+					Unit unit = Input.parseUnit(subArg.getArg(2));
 					unitType = unit.getClass();
 					factor = unit.getConversionFactorToSI();
 				}

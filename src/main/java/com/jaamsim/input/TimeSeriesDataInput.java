@@ -77,7 +77,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			else {
 				// Parse the unit portion of the time input
 				Input.assertCountRange(each, 3, 4);
-				TimeUnit unit = Input.tryParseEntity(each.get(1), TimeUnit.class);
+				TimeUnit unit = Input.tryParseUnit(each.get(1), TimeUnit.class);
 				if (unit == null)
 					throw new InputErrorException(INP_ERR_NOUNITFOUND, each.get(1), "TimeUnit");
 
