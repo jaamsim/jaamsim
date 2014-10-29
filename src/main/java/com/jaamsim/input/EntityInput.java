@@ -39,17 +39,11 @@ public class EntityInput<T extends Entity> extends Input<T> {
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(kw, 0, 1);
-		if (kw.numArgs() == 0) {
-			value = null;
-		}
-		else {
-			T tmp = Input.parseEntity(kw.getArg(0), entClass);
-			if (!isValid(tmp))
-				throw new InputErrorException("%s is not a valid entity", tmp.getName());
-
-			value = tmp;
-		}
+		Input.assertCount(kw, 1);
+		T tmp = Input.parseEntity(kw.getArg(0), entClass);
+		if (!isValid(tmp))
+			throw new InputErrorException("%s is not a valid entity", tmp.getName());
+		value = tmp;
 	}
 
 	@Override
