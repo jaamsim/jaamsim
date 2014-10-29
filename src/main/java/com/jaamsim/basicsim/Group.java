@@ -16,11 +16,9 @@ package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
 
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
-import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 
 /**
@@ -31,11 +29,6 @@ import com.jaamsim.input.KeywordIndex;
  * If the group appears as the value in a line of input, then the list of objects is used as the value.
  */
 public class Group extends Entity {
-	@Keyword(description = "If TRUE show the members of the group as a seperate table in the output " +
-	                "reports, including an entry for \"Total\"",
-	         example = "Group1 Reportable { TRUE }")
-	private final BooleanInput reportable;
-
 	private Class<?> type;
 	private final ArrayList<KeywordIndex> groupKeywordValues;
 
@@ -45,9 +38,6 @@ public class Group extends Entity {
 		this.addInput(new Group.GroupListInput());
 		this.addInput(new Group.GroupAppendListInput());
 		this.addInput(new Group.GroupTypeInput());
-
-		reportable = new BooleanInput("Reportable", "Key Inputs", true);
-		this.addInput(reportable);
 	}
 
 	public Group() {
@@ -141,9 +131,5 @@ public class Group extends Entity {
 
 	public ArrayList<Entity> getList() {
 		return list;
-	}
-
-	public boolean isReportable() {
-		return reportable.getValue();
 	}
 }
