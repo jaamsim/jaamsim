@@ -64,13 +64,13 @@ public class GraphicBox extends JDialog {
 	private final  JLabel previewLabel; // preview DisplayModel as a picture
 	final ImageIcon previewIcon = new ImageIcon();
 	private static DisplayEntity currentEntity;
-	private final static JList displayModelList; // All defined DisplayModels
+	private final static JList<DisplayModel> displayModelList; // All defined DisplayModels
 	private File lastDir;  // last directory accessed by the file chooser
 
 	private final JCheckBox useModelSize;
 	private final JCheckBox useModelPosition;
 	static {
-		displayModelList = new JList();
+		displayModelList = new JList<DisplayModel>();
 	}
 
 	private GraphicBox() {
