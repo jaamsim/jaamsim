@@ -674,12 +674,12 @@ implements TableCellEditor, ActionListener {
 /*
  * renderer for the JList so it shows its items as JCheckBoxes
  */
-public static class ListRenderer implements ListCellRenderer {
+public static class ListRenderer implements ListCellRenderer<JCheckBox> {
 	private JCheckBox checkBox;
 	@Override
-	public Component getListCellRendererComponent(JList list, Object value,
+	public Component getListCellRendererComponent(JList<? extends JCheckBox> list, JCheckBox value,
 			int index, boolean isSelected, boolean cellHasFocus) {
-		checkBox = (JCheckBox)value;
+		checkBox = value;
 		if (isSelected) {
 			checkBox.setBackground(list.getSelectionBackground());
 			checkBox.setForeground(list.getSelectionForeground());
@@ -700,15 +700,15 @@ public static class CheckBoxMouseAdapter extends MouseAdapter {
 	private Object obj;
 	@Override
 	public void mousePressed(MouseEvent e) {
-		i = ((JList)e.getSource()).locationToIndex(e.getPoint());
+		i = ((JList<?>)e.getSource()).locationToIndex(e.getPoint());
 		if(i == -1)
 			return;
 
-		obj = ((JList)e.getSource()).getModel().getElementAt(i);
+		obj = ((JList<?>)e.getSource()).getModel().getElementAt(i);
 		if (obj instanceof JCheckBox) {
 			JCheckBox checkbox = (JCheckBox) obj;
 			checkbox.setSelected(!checkbox.isSelected());
-			((JList)e.getSource()).repaint();
+			((JList<?>)e.getSource()).repaint();
 		}
 	}
 }
