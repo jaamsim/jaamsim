@@ -110,7 +110,7 @@ public class GraphicBox extends JDialog {
 					return;
 
 				// Selected DisplayModel
-				DisplayModel dm = (DisplayModel) ((JList)e.getSource()).getSelectedValue();
+				DisplayModel dm = (DisplayModel)((JList<?>)e.getSource()).getSelectedValue();
 
 				if (!RenderManager.isGood()) { return; }
 
