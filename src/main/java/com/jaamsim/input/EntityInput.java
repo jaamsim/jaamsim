@@ -69,15 +69,8 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		return value.getName();
 	}
 
-	public void setInvalidEntities(T... list) {
-		if (list == null) {
-			invalidEntities = null;
-			return;
-		}
-
-		invalidEntities = new ArrayList<T>(list.length);
-		for (T each: list)
-			invalidEntities.add(each);
+	public void setInvalidEntities(ArrayList<T> list) {
+		invalidEntities = list;
 	}
 
 	private boolean isValid(T ent) {

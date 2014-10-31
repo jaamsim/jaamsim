@@ -205,7 +205,9 @@ public class DisplayEntity extends Entity {
 		this.addInput(regionInput);
 
 		relativeEntity = new EntityInput<DisplayEntity>(DisplayEntity.class, "RelativeEntity", "Basic Graphics", null);
-		relativeEntity.setInvalidEntities(this);
+		ArrayList<DisplayEntity> invalid = new ArrayList<DisplayEntity>(1);
+		invalid.add(this);
+		relativeEntity.setInvalidEntities(invalid);
 		this.addInput(relativeEntity);
 
 		displayModelList = new EntityListInput<DisplayModel>( DisplayModel.class, "DisplayModel", "Basic Graphics", null);
