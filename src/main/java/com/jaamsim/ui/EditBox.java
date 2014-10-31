@@ -479,14 +479,14 @@ implements TableCellEditor, ActionListener {
 public static class DropDownMenuEditor extends CellEditor
 implements TableCellEditor, ActionListener {
 
-	private final JComboBox dropDown;
+	private final JComboBox<String> dropDown;
 
 	public DropDownMenuEditor(JTable table, ArrayList<String> aList) {
 		super(table);
 
-		dropDown = new JComboBox();
+		dropDown = new JComboBox<String>();
 		dropDown.setEditable(true);
-		DefaultComboBoxModel model = (DefaultComboBoxModel) dropDown.getModel();
+		DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) dropDown.getModel();
 
 		// Populate the items in the combo box
 		for(String each: aList) {
@@ -538,10 +538,10 @@ implements TableCellEditor, ActionListener {
 	private final JButton listButton;
 	private JDialog dialog;
 	private JScrollPane jScroll;
-	private JList list;
+	private JList<JCheckBox> list;
 
 	private ArrayList<String> tokens;
-	private DefaultListModel listModel;
+	private DefaultListModel<JCheckBox> listModel;
 	private CheckBoxMouseAdapter checkBoxMouseAdapter;
 	private int i;
 	private boolean caseSensitive;
@@ -576,10 +576,10 @@ implements TableCellEditor, ActionListener {
 			dialog.setVisible(false);
 			String value = "";
 			for(int i = 0; i < list.getModel().getSize(); i++) {
-				if(!((JCheckBox)list.getModel().getElementAt(i)).isSelected())
+				if(!list.getModel().getElementAt(i).isSelected())
 					continue;
 				value = String.format("%s%s ", value,
-					((JCheckBox)list.getModel().getElementAt(i)).getText());
+					list.getModel().getElementAt(i).getText());
 			}
 			text.setText(String.format(" %s", value));
 		}
@@ -614,7 +614,7 @@ implements TableCellEditor, ActionListener {
 
 		// checkmark according to the value input
 		for(i = 0; i < list.getModel().getSize(); i++) {
-			JCheckBox box = (JCheckBox)list.getModel().getElementAt(i);
+			JCheckBox box = list.getModel().getElementAt(i);
 			box.setSelected(tokens.contains(box.getText()));
 		}
 		dialog.setLocationRelativeTo((Component)e.getSource());
@@ -630,8 +630,8 @@ implements TableCellEditor, ActionListener {
 	// Set the items in the list
 	public void setListData(ArrayList<String> aList) {
 		if(list == null) {
-			listModel = new DefaultListModel();
-			list = new JList(listModel);
+			listModel = new DefaultListModel<JCheckBox>();
+			list = new JList<JCheckBox>(listModel);
 
 			// render items as JCheckBox and make clicking work for them
 			list.setCellRenderer( new ListRenderer() );
