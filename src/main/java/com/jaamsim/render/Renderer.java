@@ -20,6 +20,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
+import java.awt.Window.Type;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
@@ -537,7 +538,7 @@ public class Renderer implements GLAnimatorControl {
 		window.getAWTFrameRef().addComponentListener(wl);
 		window.getGLWindowRef().addMouseListener(new MouseHandler(window, message.listener));
 		window.getGLWindowRef().addKeyListener(message.listener);
-
+		window.getAWTFrameRef().setType(Type.UTILITY);
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
