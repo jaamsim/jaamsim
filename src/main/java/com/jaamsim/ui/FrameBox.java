@@ -68,6 +68,7 @@ public class FrameBox extends JFrame {
 	public FrameBox(String title) {
 		super(title);
 		setType(Type.UTILITY);
+		setAutoRequestFocus(false);
 		allInstances.add(this);
 	}
 

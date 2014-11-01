@@ -61,6 +61,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 
 		super( "Model Builder" );
 		setType(Type.UTILITY);
+		setAutoRequestFocus(false);
 		// Make the x button do the same as the close button
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(FrameBox.getCloseListener("ShowModelBuilder"));

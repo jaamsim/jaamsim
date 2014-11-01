@@ -539,6 +539,7 @@ public class Renderer implements GLAnimatorControl {
 		window.getGLWindowRef().addMouseListener(new MouseHandler(window, message.listener));
 		window.getGLWindowRef().addKeyListener(message.listener);
 		window.getAWTFrameRef().setType(Type.UTILITY);
+		window.getAWTFrameRef().setAutoRequestFocus(false);
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
