@@ -230,6 +230,9 @@ public class Entity {
 		setFlag(FLAG_DEAD);
 	}
 
+	/**
+	 * Performs any actions that are required at the end of the simulation run, e.g. to create an output report.
+	 */
 	public void doEnd() {}
 
 	public static long getEntitySequence() {
