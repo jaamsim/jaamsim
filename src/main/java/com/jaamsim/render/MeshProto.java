@@ -108,7 +108,16 @@ private static class SubMesh {
 	public Vec3d _center;
 
 	public int _numVerts;
-	public HashMap<Integer, Integer>[] vaoMaps;
+	public final HashMap<Integer, Integer>[] vaoMaps;
+
+	@SuppressWarnings("unchecked")  // initializing the vaoMaps array
+	SubMesh(int[] usedShaders) {
+		vaoMaps = new HashMap[Renderer.NUM_MESH_SHADERS];
+		for (int i = 0; i < usedShaders.length; ++i) {
+			int shaderID = usedShaders[i];
+			vaoMaps[shaderID] = new HashMap<>();
+		}
+	}
 }
 
 private static class Material {
@@ -680,18 +689,12 @@ public static void init(Renderer r, GL2GL3 gl) {
 
 }
 
-@SuppressWarnings("unchecked") // Suppresses a warning due to the array of hash maps
 private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData data) {
 
 	boolean hasTex = data.texCoords != null;
 	boolean hasBoneInfo = data.boneIndices != null;
 
-	SubMesh sub = new SubMesh();
-	sub.vaoMaps = new HashMap[Renderer.NUM_MESH_SHADERS]; // This would generate a warning
-	for (int i = 0; i < usedShaders.length; ++i) {
-		int shaderID = usedShaders[i];
-		sub.vaoMaps[shaderID] = new HashMap<>();
-	}
+	SubMesh sub = new SubMesh(usedShaders);
 
 	int[] is = new int[3];
 	gl.glGenBuffers(3, is, 0);
