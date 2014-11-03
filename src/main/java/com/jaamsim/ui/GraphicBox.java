@@ -204,7 +204,7 @@ public class GraphicBox extends JDialog {
 			@Override
 			public void actionPerformed( ActionEvent e ) {
 				setEnabled(false); // Don't accept any interaction
-				DisplayModel dm = (DisplayModel) displayModelList.getSelectedValue();
+				DisplayModel dm = displayModelList.getSelectedValue();
 
 				ArrayList<String> tokens = new ArrayList<>(1);
 				tokens.add(dm.getName());
