@@ -196,7 +196,7 @@ public class ExpParser {
 			super(context);
 			this.function = function;
 			this.args = args;
-			constResults = new ArrayList<ExpResult>(args.size());
+			constResults = new ArrayList<>(args.size());
 			for (int i = 0; i < args.size(); ++i) {
 				constResults.add(null);
 			}
@@ -252,9 +252,9 @@ public class ExpParser {
 		public int numArgs;
 	}
 
-	private static ArrayList<UnaryOpEntry> unaryOps = new ArrayList<UnaryOpEntry>();
-	private static ArrayList<BinaryOpEntry> binaryOps = new ArrayList<BinaryOpEntry>();
-	private static ArrayList<FunctionEntry> functions = new ArrayList<FunctionEntry>();
+	private static ArrayList<UnaryOpEntry> unaryOps = new ArrayList<>();
+	private static ArrayList<BinaryOpEntry> binaryOps = new ArrayList<>();
+	private static ArrayList<FunctionEntry> functions = new ArrayList<>();
 
 	private static void addUnaryOp(String symbol, double bindPower, UnOpFunc func) {
 		UnaryOpEntry oe = new UnaryOpEntry();
@@ -788,7 +788,7 @@ public class ExpParser {
 	private static Expression parseFuncCall(ParseContext context, String funcName, TokenList tokens) throws Error {
 
 		tokens.expect(ExpTokenizer.SYM_TYPE, "(");
-		ArrayList<Expression> arguments = new ArrayList<Expression>();
+		ArrayList<Expression> arguments = new ArrayList<>();
 
 		ExpTokenizer.Token peeked = tokens.peek();
 		if (peeked == null) {
@@ -834,7 +834,7 @@ public class ExpParser {
 	}
 
 	private static ArrayList<String> parseIdentifier(ExpTokenizer.Token firstName, TokenList tokens) throws Error {
-		ArrayList<String> vals = new ArrayList<String>();
+		ArrayList<String> vals = new ArrayList<>();
 		vals.add(firstName.value.intern());
 		while (true) {
 			ExpTokenizer.Token peeked = tokens.peek();

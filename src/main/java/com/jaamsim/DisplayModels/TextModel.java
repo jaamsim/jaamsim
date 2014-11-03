@@ -80,14 +80,14 @@ public class TextModel extends DisplayModel {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		String[ ] fontNames = ge.getAvailableFontFamilyNames();
 		Arrays.sort(fontNames);
-		validFontNames = new ArrayList<String>(Arrays.asList(fontNames));
+		validFontNames = new ArrayList<>(Arrays.asList(fontNames));
 		int def = validFontNames.indexOf("Verdana");
 		if (def > -1)
 			defFont = def;
 		else
 			defFont = 0;
 
-		validStyles = new ArrayList<String>();
+		validStyles = new ArrayList<>();
 		validStyles.add("BOLD");
 		validStyles.add("ITALIC");
 	}
@@ -240,7 +240,7 @@ public class TextModel extends DisplayModel {
 				return;
 			}
 
-			cachedProxies = new ArrayList<RenderProxy>();
+			cachedProxies = new ArrayList<>();
 
 			cachedProxies.add(new StringProxy(text, fk, color, trans, height, vi, labelObservee.getEntityNumber()));
 
@@ -353,7 +353,7 @@ public class TextModel extends DisplayModel {
 
 			registerCacheMiss("OverlayText");
 
-			cachedProxies = new ArrayList<RenderProxy>();
+			cachedProxies = new ArrayList<>();
 
 			if (ds) {
 
@@ -462,7 +462,7 @@ public class TextModel extends DisplayModel {
 
 			registerCacheMiss("OverlayText");
 
-			cachedProxies = new ArrayList<RenderProxy>();
+			cachedProxies = new ArrayList<>();
 
 			if (ds) {
 				cachedProxies.add(new BillboardStringProxy(text, fk, dsColor, height, pos, dsOffset.x, dsOffset.y, vi));

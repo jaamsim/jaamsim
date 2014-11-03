@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class Vec3dInterner {
 
 	private int nextIndex = 0;
-	private ArrayList<Vec3d> orderedValues = new ArrayList<Vec3d>();
+	private ArrayList<Vec3d> orderedValues = new ArrayList<>();
 
 	private static class VecWrapper {
 		public Vec3d val;
@@ -50,7 +50,7 @@ public class Vec3dInterner {
 		}
 	}
 
-	private HashMap<VecWrapper, VecWrapper> map = new HashMap<VecWrapper, VecWrapper>();
+	private HashMap<VecWrapper, VecWrapper> map = new HashMap<>();
 
 	/**
 	 * intern will return a pointer to a Vec3d (which may differ from input 'v') that is mathematically equal but

@@ -40,7 +40,7 @@ public class OutputHandle {
 	private static final HashMap<Class<? extends Entity>, ArrayList<OutputStaticInfo>> outputInfoCache;
 
 	static {
-		outputInfoCache = new HashMap<Class<? extends Entity>, ArrayList<OutputStaticInfo>>();
+		outputInfoCache = new HashMap<>();
 	}
 
 	public OutputHandle(Entity e, String outputName) {
@@ -116,7 +116,7 @@ public class OutputHandle {
 			return ret;
 
 		// klass has not been cached yet, generate info
-		ret = new ArrayList<OutputStaticInfo>();
+		ret = new ArrayList<>();
 		for (Method m : klass.getMethods()) {
 			Output a = m.getAnnotation(Output.class);
 			if (a == null)
@@ -143,7 +143,7 @@ public class OutputHandle {
 	public static ArrayList<OutputHandle> getOutputHandleList(Entity e) {
 		Class<? extends Entity> klass = e.getClass();
 		ArrayList<OutputStaticInfo> list = getOutputInfoImp(klass);
-		ArrayList<OutputHandle> ret = new ArrayList<OutputHandle>(list.size());
+		ArrayList<OutputHandle> ret = new ArrayList<>(list.size());
 		for( OutputStaticInfo p : list ) {
 			//ret.add( new OutputHandle(e, p) );
 			ret.add( e.getOutputHandle(p.name) );  // required to get the correct unit type for the output

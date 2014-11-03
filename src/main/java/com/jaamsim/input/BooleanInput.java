@@ -22,7 +22,7 @@ public class BooleanInput extends Input<Boolean> {
 	private static final ArrayList<String> validOptions;
 
 	static {
-		validOptions = new ArrayList<String>();
+		validOptions = new ArrayList<>();
 		validOptions.add("TRUE");
 		validOptions.add("FALSE");
 	}

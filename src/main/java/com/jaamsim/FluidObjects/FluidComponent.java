@@ -50,7 +50,7 @@ public class FluidComponent extends DisplayEntity {
 	private double flowArea;  // The cross-section area of the flow.
 
 	{
-		previousInput = new EntityInput<FluidComponent>( FluidComponent.class, "Previous", "Key Inputs", null);
+		previousInput = new EntityInput<>( FluidComponent.class, "Previous", "Key Inputs", null);
 		this.addInput( previousInput);
 
 		diameterInput = new ValueInput( "Diameter", "Key Inputs", Double.POSITIVE_INFINITY);

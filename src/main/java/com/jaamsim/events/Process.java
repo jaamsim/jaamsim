@@ -50,7 +50,7 @@ final class Process extends Thread {
 
 	// Initialize the storage for the pooled Processes
 	static {
-		pool = new ArrayList<Process>(maxPoolSize);
+		pool = new ArrayList<>(maxPoolSize);
 	}
 
 	private Process(String name) {

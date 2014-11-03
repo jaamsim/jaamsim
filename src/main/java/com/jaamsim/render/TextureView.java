@@ -53,7 +53,7 @@ public class TextureView implements Renderable {
 	static private int vertBuff;
 	static private int texCoordBuff;
 	static private int normalBuff;
-	static private HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
+	static private HashMap<Integer, Integer> VAOMap = new HashMap<>();
 
 	static private int boneBuff;
 
@@ -105,7 +105,7 @@ public class TextureView implements Renderable {
 
 		Mat4d modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
 
-		ArrayList<Vec4d> vs = new ArrayList<Vec4d>(4);
+		ArrayList<Vec4d> vs = new ArrayList<>(4);
 		vs.add(new Vec4d( 0.5,  0.5, 0, 1.0d));
 		vs.add(new Vec4d(-0.5,  0.5, 0, 1.0d));
 		vs.add(new Vec4d(-0.5, -0.5, 0, 1.0d));

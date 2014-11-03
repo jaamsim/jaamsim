@@ -48,7 +48,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 
-		ArrayList<SampleProvider> temp = new ArrayList<SampleProvider>(kw.numArgs());
+		ArrayList<SampleProvider> temp = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++) {
 
 			Entity ent = Input.parseEntity(kw.getArg(i), Entity.class);
@@ -72,7 +72,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 
 	@Override
 	public ArrayList<String> getValidOptions() {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		for (Entity each: Entity.getAll()) {
 			if( (SampleProvider.class).isAssignableFrom(each.getClass()) ) {
 			    list.add(each.getName());

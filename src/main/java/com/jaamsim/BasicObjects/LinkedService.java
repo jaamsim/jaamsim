@@ -33,7 +33,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
 
 	{
-		operatingThresholdList = new EntityListInput<Threshold>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
+		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
 		this.addInput( operatingThresholdList);
 	}
 

@@ -28,7 +28,7 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 
 		// Divide up the inputs by the inner braces
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
-		ArrayList<ExpParser.Assignment> temp = new ArrayList<ExpParser.Assignment>(subArgs.size());
+		ArrayList<ExpParser.Assignment> temp = new ArrayList<>(subArgs.size());
 
 		// Parse the inputs within each inner brace
 		for (int i = 0; i < subArgs.size(); i++) {

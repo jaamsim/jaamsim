@@ -25,7 +25,7 @@ public class TestParser {
 
 @Test
 public void testTokenize() {
-	ArrayList<String> tok = new ArrayList<String>();
+	ArrayList<String> tok = new ArrayList<>();
 
 	// Test the basic delimiter handling, runs of [ ,\t] are one delimiter
 	tok.clear();

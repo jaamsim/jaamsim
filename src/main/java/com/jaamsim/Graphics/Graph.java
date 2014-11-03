@@ -83,10 +83,10 @@ public class Graph extends GraphBasics  {
 		numberOfPoints.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(numberOfPoints);
 
-		dataSource = new OutputListInput<Double>(Double.class, "DataSource", "Key Inputs", null);
+		dataSource = new OutputListInput<>(Double.class, "DataSource", "Key Inputs", null);
 		this.addInput(dataSource);
 
-		ArrayList<Color4d> defLineColor = new ArrayList<Color4d>(0);
+		ArrayList<Color4d> defLineColor = new ArrayList<>(0);
 		defLineColor.add(ColourInput.getColorWithName("red"));
 		lineColorsList = new ColorListInput("LineColours", "Key Inputs", defLineColor);
 		lineColorsList.setValidCountRange(1, Integer.MAX_VALUE);
@@ -100,10 +100,10 @@ public class Graph extends GraphBasics  {
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(lineWidths);
 
-		secondaryDataSource = new OutputListInput<Double>(Double.class, "SecondaryDataSource", "Key Inputs", null);
+		secondaryDataSource = new OutputListInput<>(Double.class, "SecondaryDataSource", "Key Inputs", null);
 		this.addInput(secondaryDataSource);
 
-		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<Color4d>(0);
+		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
 		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
 		secondaryLineColorsList = new ColorListInput("SecondaryLineColours", "Key Inputs", defSecondaryLineColor);
 		secondaryLineColorsList.setValidCountRange(1, Integer.MAX_VALUE);

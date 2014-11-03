@@ -54,7 +54,7 @@ public class OutputInput<T> extends Input<String> {
 		outputName = outName;
 		out = ent.getOutputHandle(outputName);
 
-		outputNameList = new ArrayList<String>(kw.numArgs() - 2);
+		outputNameList = new ArrayList<>(kw.numArgs() - 2);
 		// grab any input strings after the first two, if there are any
 		for (int i = 2; i < kw.numArgs(); i++)
 			outputNameList.add(kw.getArg(i));

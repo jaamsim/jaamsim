@@ -40,7 +40,7 @@ public class OverlayString implements OverlayRenderable {
 	private boolean _alignRight, _alignBottom;
 	private VisibilityInfo _visInfo;
 
-	private static HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
+	private static HashMap<Integer, Integer> VAOMap = new HashMap<>();
 
 	public OverlayString(TessFont font, String contents, Color4d color,
 	                     double height, double x, double y,

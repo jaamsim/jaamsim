@@ -61,7 +61,7 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 
 	@Override
 	public ArrayList<String> getValidOptions() {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		for (Entity each : Entity.getClonesOfIterator(Entity.class, TimeSeriesProvider.class)) {
 			TimeSeriesProvider tsp = (TimeSeriesProvider)each;
 			if (tsp.getUnitType() == unitType)

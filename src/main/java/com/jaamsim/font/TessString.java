@@ -55,7 +55,7 @@ private int[] starts;
 private int[] numVerts;
 private double[] advances;
 
-private static HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
+private static HashMap<Integer, Integer> VAOMap = new HashMap<>();
 
 public TessString(TessFont font, String contents, Color4d color,
         Transform trans, double textHeight, VisibilityInfo visInfo, long pickingID) {
@@ -103,7 +103,7 @@ public TessString(TessFont font, String contents, Color4d color,
 	align.setTranslate3(new Vec4d(-width/2, -height/2, 0, 1.0d));
 	_trans.mult4(align);
 
-	ArrayList<Vec4d> vs = new ArrayList<Vec4d>(4);
+	ArrayList<Vec4d> vs = new ArrayList<>(4);
 
 	vs.add(new Vec4d( width,  height, 0, 1.0d));
 	vs.add(new Vec4d(     0,  height, 0, 1.0d));

@@ -46,7 +46,7 @@ public class TestRay {
 
 	@Test
 	public void TestLineCollision() {
-		ArrayList<Vec4d> lineVerts = new ArrayList<Vec4d>(4);
+		ArrayList<Vec4d> lineVerts = new ArrayList<>(4);
 		lineVerts.add(new Vec4d(1, 1, 1, 1.0d));
 		lineVerts.add(new Vec4d(-1, -1, 1, 1.0d));
 

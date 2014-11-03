@@ -28,7 +28,7 @@ public abstract class KeyedCurve<T> {
 	private boolean isSorted;
 
 	public KeyedCurve() {
-		keys = new ArrayList<Key>();
+		keys = new ArrayList<>();
 		isSorted = true;
 	}
 

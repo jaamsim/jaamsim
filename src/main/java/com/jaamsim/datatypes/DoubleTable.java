@@ -43,7 +43,7 @@ public class DoubleTable {
 		columns = c;
 
 		// Create the table
-		table = new ArrayList<DoubleVector>(r);
+		table = new ArrayList<>(r);
 
 		for( int i = 0; i < r; i++ ) {
 			DoubleVector newRow = new DoubleVector( c, 1 );

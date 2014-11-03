@@ -34,7 +34,7 @@ public class EntityGate extends LinkedService {
 	private final ValueInput releaseDelay;
 
 	{
-		waitQueue = new EntityInput<Queue>(Queue.class, "WaitQueue", "Key Inputs", null);
+		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput(waitQueue);
 
 		releaseDelay = new ValueInput("ReleaseDelay", "Key Inputs", 0.0);

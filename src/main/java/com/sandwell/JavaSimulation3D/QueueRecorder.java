@@ -32,7 +32,7 @@ public class QueueRecorder extends DisplayEntity {
 	private FileEntity outputFile; // the output file for the queue recorder
 
 	{
-		queueList = new EntityListInput<Queue>( Queue.class, "QueueList", "Key Inputs", null );
+		queueList = new EntityListInput<>( Queue.class, "QueueList", "Key Inputs", null );
 		this.addInput( queueList );
 	}
 

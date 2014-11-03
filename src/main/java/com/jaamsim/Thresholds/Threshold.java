@@ -69,7 +69,7 @@ public class Threshold extends StateEntity {
 	}
 
 	public Threshold() {
-		userList = new ArrayList<ThresholdUser>();
+		userList = new ArrayList<>();
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class Threshold extends StateEntity {
 	private static final EventHandle updateHandle = new EventHandle();
 	private static final DoThresholdChanged userUpdate = new DoThresholdChanged();
 	private static class DoThresholdChanged extends ProcessTarget {
-		public final ArrayList<ThresholdUser> users = new ArrayList<ThresholdUser>();
+		public final ArrayList<ThresholdUser> users = new ArrayList<>();
 
 		public DoThresholdChanged() {}
 

@@ -32,7 +32,7 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 		super(keyword, cat, def);
 		keyClass = kClass;
 		valClass = vClass;
-		hashMap = new HashMap<K1,ArrayList<V>>();
+		hashMap = new HashMap<>();
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 	}
 
 	private void innerParse(KeywordIndex kw) {
-		ArrayList<String> input = new ArrayList<String>(kw.numArgs());
+		ArrayList<String> input = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 

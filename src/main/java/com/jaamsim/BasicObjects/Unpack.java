@@ -35,7 +35,7 @@ public class Unpack extends LinkedService {
 	private final SampleExpInput serviceTime;
 
 	{
-		waitQueue = new EntityInput<Queue>(Queue.class, "WaitQueue", "Key Inputs", null);
+		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput(waitQueue);
 
 		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));

@@ -52,10 +52,10 @@ public abstract class LinkedComponent extends StateEntity {
 	private double releaseTime = Double.NaN;
 
 	{
-		testEntity = new EntityInput<DisplayEntity>(DisplayEntity.class, "TestEntity", "Key Inputs", null);
+		testEntity = new EntityInput<>(DisplayEntity.class, "TestEntity", "Key Inputs", null);
 		this.addInput(testEntity);
 
-		nextComponentInput = new EntityInput<LinkedComponent>(LinkedComponent.class, "NextComponent", "Key Inputs", null);
+		nextComponentInput = new EntityInput<>(LinkedComponent.class, "NextComponent", "Key Inputs", null);
 		this.addInput(nextComponentInput);
 
 		stateAssignment = new StringInput("StateAssignment", "Key Inputs", "");

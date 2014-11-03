@@ -78,7 +78,7 @@ public class MeshReader {
 	static final List<String> BOOLEAN_ARRAY_TAGS;
 
 	static {
-		DOUBLE_ARRAY_TAGS = new ArrayList<String>();
+		DOUBLE_ARRAY_TAGS = new ArrayList<>();
 		DOUBLE_ARRAY_TAGS.add("Positions");
 		DOUBLE_ARRAY_TAGS.add("Normals");
 		DOUBLE_ARRAY_TAGS.add("TexCoords");
@@ -92,13 +92,13 @@ public class MeshReader {
 		DOUBLE_ARRAY_TAGS.add("Y");
 		DOUBLE_ARRAY_TAGS.add("Z");
 
-		INT_ARRAY_TAGS = new ArrayList<String>();
+		INT_ARRAY_TAGS = new ArrayList<>();
 		INT_ARRAY_TAGS.add("Faces");
 
-		STRING_ARRAY_TAGS = new ArrayList<String>();
+		STRING_ARRAY_TAGS = new ArrayList<>();
 		STRING_ARRAY_TAGS.add("BoneNames");
 
-		BOOLEAN_ARRAY_TAGS = new ArrayList<String>();
+		BOOLEAN_ARRAY_TAGS = new ArrayList<>();
 
 	}
 
@@ -231,7 +231,7 @@ public class MeshReader {
 		int[] indices = (int[])faceNode.getContent();
 		parseAssert(numTriangles*3 == indices.length);
 
-		ArrayList<Vertex> verts = new ArrayList<Vertex>(numVerts);
+		ArrayList<Vertex> verts = new ArrayList<>(numVerts);
 
 		for (int i = 0; i < numVerts; ++i) {
 			Vec3d posVec = new Vec3d(positions[i*3+0], positions[i*3+1], positions[i*3+2]);
@@ -356,13 +356,13 @@ public class MeshReader {
 
 		XmlNode rotNode = node.findChildTag("Rotation", false);
 		if (rotNode != null) {
-			chan.rotKeys = new ArrayList<Action.RotKey>();
+			chan.rotKeys = new ArrayList<>();
 			parseKeys(rotNode, chan, false);
 		}
 
 		XmlNode transNode = node.findChildTag("Location", false);
 		if (transNode != null) {
-			chan.transKeys = new ArrayList<Action.TransKey>();
+			chan.transKeys = new ArrayList<>();
 			parseKeys(transNode, chan, true);
 		}
 
@@ -424,7 +424,7 @@ public class MeshReader {
 		parseAssert(act.name != null);
 
 		// Submesh Instance actions can only have a single channel
-		act.channels = new ArrayList<Action.Channel>(1);
+		act.channels = new ArrayList<>(1);
 		Action.Channel chan = new Action.Channel();
 		populateChannel(actNode, chan);
 		act.channels.add(chan);
@@ -458,7 +458,7 @@ public class MeshReader {
 		XmlNode actionsNode = instNode.findChildTag("Actions", false);
 		ArrayList<Action> actions = null;
 		if (actionsNode != null) {
-			actions = new ArrayList<Action>();
+			actions = new ArrayList<>();
 			for (XmlNode child : actionsNode.children()) {
 				if (!child.getTag().equals("Action")) {
 					continue;

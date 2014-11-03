@@ -61,7 +61,7 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 	         example = "Ship3DModel Actions { { ContentAction Contents } { BoomAngleAction BoomAngle } }")
 	private final ActionListInput actions;
 
-	private static HashMap<URI, MeshProtoKey> _cachedKeys = new HashMap<URI, MeshProtoKey>();
+	private static HashMap<URI, MeshProtoKey> _cachedKeys = new HashMap<>();
 
 	private static final String[] validFileExtensions;
 	private static final String[] validFileDescriptions;
@@ -184,7 +184,7 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
 			URI filename = colladaFile.getValue();
 
-			ArrayList<Action.Queue> aqList = new ArrayList<Action.Queue>();
+			ArrayList<Action.Queue> aqList = new ArrayList<>();
 			for (Action.Binding b : actions.getValue()) {
 				Action.Queue aq = new Action.Queue();
 				aq.name = b.actionName;
@@ -217,7 +217,7 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
 			registerCacheMiss("ColladaModel");
 
-			cachedProxies = new ArrayList<RenderProxy>();
+			cachedProxies = new ArrayList<>();
 
 			MeshProtoKey meshKey = getCachedMeshKey(filename);
 

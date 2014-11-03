@@ -58,7 +58,7 @@ public class Resource extends DisplayEntity {
 
 	public Resource() {
 		unitsInUseDist = new DoubleVector();
-		seizeList = new ArrayList<Seize>();
+		seizeList = new ArrayList<>();
 	}
 
 	@Override

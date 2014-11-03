@@ -190,7 +190,7 @@ public class ImageModel extends DisplayModel {
 			registerCacheMiss("ImageModel");
 			// Gather some inputs
 
-			cachedProxies = new ArrayList<RenderProxy>();
+			cachedProxies = new ArrayList<>();
 			cachedProxies.add(new ImageProxy(imageName, trans,
 			                       scale, transp, compressed, vi, pickingID));
 

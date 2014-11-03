@@ -41,7 +41,7 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 		if (subArgs.size() < minCount || subArgs.size() > maxCount)
 			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, kw.argString());
 
-		ArrayList<Vec3d> tempValue = new ArrayList<Vec3d>(subArgs.size());
+		ArrayList<Vec3d> tempValue = new ArrayList<>(subArgs.size());
 		for (KeywordIndex subArg : subArgs) {
 			DoubleVector temp = Input.parseDoubles(subArg, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 			// pad the vector to have 3 elements

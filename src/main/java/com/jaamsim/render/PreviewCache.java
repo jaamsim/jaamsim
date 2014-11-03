@@ -44,7 +44,7 @@ public class PreviewCache {
 	private DisplayEntity dummyEntity;
 
 	public PreviewCache() {
-		_imageCache = new HashMap<DisplayModel, Future<BufferedImage>>();
+		_imageCache = new HashMap<>();
 
 
 		if (GUIFrame.instance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
@@ -75,7 +75,7 @@ public class PreviewCache {
 			if (dm instanceof ImageModel) {
 				ImageModel im = (ImageModel)dm;
 				URI file = im.getImageFile();
-				Future<BufferedImage> ret = new Future<BufferedImage>(null);
+				Future<BufferedImage> ret = new Future<>(null);
 				try {
 					URL imageURL = file.toURL();
 					BufferedImage image = ImageIO.read(imageURL);
@@ -98,7 +98,7 @@ public class PreviewCache {
 
 			// Otherwise we need to load it....
 
-			ArrayList<RenderProxy> proxies = new ArrayList<RenderProxy>();
+			ArrayList<RenderProxy> proxies = new ArrayList<>();
 
 			// Collect the render proxies for a dummy version of this DisplayModel,
 			// This will all need to be refactored soonish.
@@ -109,14 +109,14 @@ public class PreviewCache {
 					dummyEntity.kill();
 				} else {
 					// The simulation is running so we can't make the dummy entity
-					Future<BufferedImage> ret = new Future<BufferedImage>(null);
+					Future<BufferedImage> ret = new Future<>(null);
 					ret.setFailed("Simulation running");
 					return ret;
 				}
 			}
 
 			if (dm == null || !dm.canDisplayEntity(dummyEntity)) {
-				Future<BufferedImage> ret = new Future<BufferedImage>(null);
+				Future<BufferedImage> ret = new Future<>(null);
 				ret.setFailed("Cannot render preview");
 				return ret;
 			}

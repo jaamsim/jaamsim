@@ -36,7 +36,7 @@ public class OverlayTexture implements OverlayRenderable {
 	static private boolean staticInit = false;
 	static private int vertBuff;
 	static private int texCoordBuff;
-	static private HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
+	static private HashMap<Integer, Integer> VAOMap = new HashMap<>();
 
 	static private int progHandle;
 

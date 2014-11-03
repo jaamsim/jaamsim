@@ -64,7 +64,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	         example = "Delay1 Color { red }")
 	private final ColourInput colorInput;
 
-	private final HashMap<Long, EntityDelayEntry> entityMap = new HashMap<Long, EntityDelayEntry>();  // List of the entities being handled
+	private final HashMap<Long, EntityDelayEntry> entityMap = new HashMap<>();  // List of the entities being handled
 
 	private double totalLength;  // Graphical length of the path
 	private final ArrayList<Double> lengthList;  // Length of each segment of the path
@@ -79,7 +79,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		duration.setEntity(this);
 		this.addInput(duration);
 
-		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
+		ArrayList<Vec3d> defPoints =  new ArrayList<>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
 		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
 		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);
@@ -101,8 +101,8 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	}
 
 	public EntityDelay() {
-		lengthList = new ArrayList<Double>();
-		cumLengthList = new ArrayList<Double>();
+		lengthList = new ArrayList<>();
+		cumLengthList = new ArrayList<>();
 	}
 
 	@Override

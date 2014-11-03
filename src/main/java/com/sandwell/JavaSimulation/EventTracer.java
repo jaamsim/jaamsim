@@ -33,7 +33,7 @@ class EventTracer implements EventTraceListener {
 	private final ArrayList<EventTraceRecord> eventBuffer;
 
 	public EventTracer(String evtName) {
-		eventBuffer = new ArrayList<EventTraceRecord>();
+		eventBuffer = new ArrayList<>();
 		bufferTime = 0;
 		File evtFile = new File(evtName);
 		try {

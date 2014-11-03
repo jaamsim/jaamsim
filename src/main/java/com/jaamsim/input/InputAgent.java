@@ -306,7 +306,7 @@ public class InputAgent {
 		}
 
 		try {
-			ArrayList<String> record = new ArrayList<String>();
+			ArrayList<String> record = new ArrayList<>();
 			int braceDepth = 0;
 
 			ParseContext pc = new ParseContext(resolved, root);
@@ -521,7 +521,7 @@ public class InputAgent {
 	}
 
 	private static ArrayList<KeywordIndex> getKeywords(ArrayList<String> input, ParseContext context) {
-		ArrayList<KeywordIndex> ret = new ArrayList<KeywordIndex>();
+		ArrayList<KeywordIndex> ret = new ArrayList<>();
 
 		int braceDepth = 0;
 		int keyWordIdx = 1;
@@ -1073,7 +1073,7 @@ public class InputAgent {
 	public static void processEntity_Keyword_Value(Entity ent, String keyword, String value){
 
 		// Keyword
-		ArrayList<String> tokens = new ArrayList<String>();
+		ArrayList<String> tokens = new ArrayList<>();
 
 		// Value
 		if (!value.equals(Input.getNoValue()))
@@ -1095,7 +1095,7 @@ public class InputAgent {
 
 		// Copy the original configuration file up to the "RecordEdits" marker (if present)
 		// Temporary storage for the copied lines is needed in case the original file is to be overwritten
-		ArrayList<String> preAddedRecordLines = new ArrayList<String>();
+		ArrayList<String> preAddedRecordLines = new ArrayList<>();
 		if( InputAgent.getConfigFile() != null ) {
 			try {
 				BufferedReader in = new BufferedReader( new FileReader(InputAgent.getConfigFile()) );
@@ -1128,7 +1128,7 @@ public class InputAgent {
 		// 2) WRITE THE DEFINITION STATEMENTS FOR NEW OBJECTS
 
 		// Determine all the new classes that were created
-		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<Class<? extends Entity>>();
+		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
 		for (Entity ent : Entity.getAll()) {
 			if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
@@ -1195,7 +1195,7 @@ public class InputAgent {
 
 			file.format("%n");
 
-			ArrayList<Input<?>> deferredInputs = new ArrayList<Input<?>>();
+			ArrayList<Input<?>> deferredInputs = new ArrayList<>();
 			// Print the key inputs first
 			for (Input<?> in : ent.getEditableInputs()) {
 				if (!in.isEdited())
@@ -1271,7 +1271,7 @@ public class InputAgent {
 	}
 
 	public static KeywordIndex formatPointsInputs(String keyword, ArrayList<Vec3d> points, Vec3d offset) {
-		ArrayList<String> tokens = new ArrayList<String>(points.size() * 6);
+		ArrayList<String> tokens = new ArrayList<>(points.size() * 6);
 		for (Vec3d v : points) {
 			tokens.add("{");
 			tokens.add(String.format((Locale)null, "%.3f", v.x + offset.x));
@@ -1286,7 +1286,7 @@ public class InputAgent {
 	}
 
 	public static KeywordIndex formatPointInputs(String keyword, Vec3d point, String unit) {
-		ArrayList<String> tokens = new ArrayList<String>(4);
+		ArrayList<String> tokens = new ArrayList<>(4);
 		tokens.add(String.format((Locale)null, "%.6f", point.x));
 		tokens.add(String.format((Locale)null, "%.6f", point.y));
 		tokens.add(String.format((Locale)null, "%.6f", point.z));
@@ -1304,13 +1304,13 @@ public class InputAgent {
 	 * @return
 	 */
 	public static ArrayList<ArrayList<String>> splitForNestedBraces(List<String> input) {
-		ArrayList<ArrayList<String>> inputs = new ArrayList<ArrayList<String>>();
+		ArrayList<ArrayList<String>> inputs = new ArrayList<>();
 
 		int braceDepth = 0;
 		ArrayList<String> currentLine = null;
 		for (int i = 0; i < input.size(); i++) {
 			if (currentLine == null)
-				currentLine = new ArrayList<String>();
+				currentLine = new ArrayList<>();
 
 			currentLine.add(input.get(i));
 			if (input.get(i).equals("{")) {

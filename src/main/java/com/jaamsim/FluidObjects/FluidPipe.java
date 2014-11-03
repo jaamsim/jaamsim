@@ -95,7 +95,7 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		pressureLossCoefficientInput.setUnitType( DimensionlessUnit.class );
 		this.addInput( pressureLossCoefficientInput);
 
-		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
+		ArrayList<Vec3d> defPoints =  new ArrayList<>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
 		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
 		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);

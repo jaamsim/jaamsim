@@ -42,7 +42,7 @@ public abstract class CalculationEntity extends DisplayEntity {
 	protected boolean controllerRequired = false;  // TRUE if the Controller keyword must be set
 
 	{
-		controller = new EntityInput<Controller>( Controller.class, "Controller", "Key Inputs", null);
+		controller = new EntityInput<>( Controller.class, "Controller", "Key Inputs", null);
 		this.addInput( controller);
 
 		sequenceNumber = new ValueInput( "SequenceNumber", "Key Inputs", 0.0);

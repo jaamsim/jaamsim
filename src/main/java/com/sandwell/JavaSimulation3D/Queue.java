@@ -67,8 +67,8 @@ public class Queue extends DisplayEntity {
 	}
 
 	public Queue() {
-		itemList = new ArrayList<DisplayEntity>();
-		timeAddedList = new ArrayList<Double>();
+		itemList = new ArrayList<>();
+		timeAddedList = new ArrayList<>();
 		queueLengthDist = new DoubleVector(10,10);
 	}
 
@@ -83,7 +83,7 @@ public class Queue extends DisplayEntity {
 		// Clear statistics
 		this.clearStatistics();
 
-		recorderList = new ArrayList<QueueRecorder>();
+		recorderList = new ArrayList<>();
 		for( QueueRecorder rec : Entity.getClonesOfIterator( QueueRecorder.class ) ) {
 			if( rec.getQueueList().contains( this ) ) {
 				recorderList.add( rec );

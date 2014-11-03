@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class Vec4dInterner {
 
 	private int nextIndex = 0;
-	private ArrayList<Vec4d> orderedValues = new ArrayList<Vec4d>();
+	private ArrayList<Vec4d> orderedValues = new ArrayList<>();
 
 	private static class VecWrapper {
 		public Vec4d val;
@@ -51,7 +51,7 @@ public class Vec4dInterner {
 		}
 	}
 
-	private HashMap<VecWrapper, VecWrapper> map = new HashMap<VecWrapper, VecWrapper>();
+	private HashMap<VecWrapper, VecWrapper> map = new HashMap<>();
 
 	/**
 	 * intern will return a pointer to a Vec4d (which may differ from input 'v') that is mathematically equal but

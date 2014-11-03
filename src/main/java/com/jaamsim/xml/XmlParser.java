@@ -44,7 +44,7 @@ public class XmlParser  extends DefaultHandler{
 	private StringBuilder contentBuilder = new StringBuilder();
 
 	// The _nodeIDMap is a mapping of fragment IDs to nodes to make data analysis easier
-	private HashMap<String, XmlNode> nodeIDMap = new HashMap<String, XmlNode>();
+	private HashMap<String, XmlNode> nodeIDMap = new HashMap<>();
 
 	private List<String> doubleArrayTags;
 	private List<String> intArrayTags;

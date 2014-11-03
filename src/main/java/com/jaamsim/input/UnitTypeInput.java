@@ -45,7 +45,7 @@ public class UnitTypeInput extends Input<ObjectType> {
 
 	@Override
 	public ArrayList<String> getValidOptions() {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		for (ObjectType each: Entity.getClonesOfIterator(ObjectType.class)) {
 			Class<? extends Entity> klass = each.getJavaClass();
 			if (klass == null)

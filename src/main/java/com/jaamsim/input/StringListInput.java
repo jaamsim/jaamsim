@@ -38,7 +38,7 @@ public class StringListInput extends ListInput<ArrayList<String>> {
 			return;
 		}
 
-		ArrayList<String> tmp = new ArrayList<String>(kw.numArgs());
+		ArrayList<String> tmp = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++) {
 			tmp.add(kw.getArg(i));
 		}

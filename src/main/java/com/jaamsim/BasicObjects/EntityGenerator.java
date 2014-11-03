@@ -67,7 +67,7 @@ public class EntityGenerator extends LinkedService {
 		interArrivalTime.setEntity(this);
 		this.addInput(interArrivalTime);
 
-		prototypeEntity = new EntityInput<DisplayEntity>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
 		this.addInput(prototypeEntity);
 
 		maxNumber = new IntegerInput("MaxNumber", "Key Inputs", null);

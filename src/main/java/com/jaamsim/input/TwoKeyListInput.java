@@ -34,13 +34,13 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 		key1Class = k1Class;
 		key2Class = k2Class;
 		valClass = vClass;
-		hashMap = new HashMap<K1,HashMap<K2,ArrayList<V>>>();
+		hashMap = new HashMap<>();
 	}
 
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		ArrayList<String> input = new ArrayList<String>(kw.numArgs());
+		ArrayList<String> input = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 		// If two entity keys are not provided, set the default value
@@ -67,7 +67,7 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 		for( int i = 0; i < list.size(); i++ ) {
 			HashMap<K2,ArrayList<V>> h1 = hashMap.get( list.get( i ) );
 			if( h1 == null ) {
-				h1 = new HashMap<K2,ArrayList<V>>();
+				h1 = new HashMap<>();
 				hashMap.put( list.get( i ), h1 );
 			}
 			for( int j = 0; j < list2.size(); j++ ) {

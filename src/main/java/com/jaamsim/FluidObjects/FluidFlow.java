@@ -35,7 +35,7 @@ public class FluidFlow extends FluidFlowCalculation {
 	private double destinationTargetInletPressure;  // The desired inlet pressure at the destination's inlet.
 
 	public FluidFlow() {
-		routeList = new ArrayList<FluidComponent>();
+		routeList = new ArrayList<>();
 	}
 
 	@Override

@@ -113,7 +113,7 @@ public class VideoRecorderEntity extends Entity {
 		captureArea.setValidRange(0, 3000);
 		this.addInput(captureArea);
 
-		captureViews = new EntityListInput<View>(View.class, "CaptureViews", "Key Inputs", new ArrayList<View>(0));
+		captureViews = new EntityListInput<>(View.class, "CaptureViews", "Key Inputs", new ArrayList<View>(0));
 		this.addInput(captureViews);
 
 		videoName = new StringInput("VideoName", "Key Inputs", "");

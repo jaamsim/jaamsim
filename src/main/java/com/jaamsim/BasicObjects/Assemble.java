@@ -55,7 +55,7 @@ public class Assemble extends LinkedService {
 		serviceTime.setEntity(this);
 		this.addInput(serviceTime);
 
-		waitQueueList = new EntityListInput<Queue>(Queue.class, "WaitQueueList", "Key Inputs", null);
+		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", "Key Inputs", null);
 		this.addInput(waitQueueList);
 
 		choice = new SampleExpInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1));
@@ -63,7 +63,7 @@ public class Assemble extends LinkedService {
 		choice.setEntity(this);
 		this.addInput(choice);
 
-		prototypeEntity = new EntityInput<DisplayEntity>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
 		this.addInput(prototypeEntity);
 	}
 

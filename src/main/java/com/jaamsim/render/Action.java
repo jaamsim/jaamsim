@@ -71,7 +71,7 @@ public class Action {
 	// Actual members of Action
 	public String name;
 	public double duration;
-	public ArrayList<Channel> channels = new ArrayList<Channel>();
+	public ArrayList<Channel> channels = new ArrayList<>();
 
 	// Calculate the interpolated rotation for this channel at time
 	private static Quaternion interpRot(Action.Channel ch, double time) {

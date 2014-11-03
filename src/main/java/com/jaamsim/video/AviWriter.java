@@ -56,7 +56,7 @@ public class AviWriter {
 
 			writeHeader();
 
-			index = new ArrayList<FrameEntry>(numFrames);
+			index = new ArrayList<>(numFrames);
 
 		} catch (IOException ex) {
 			fc = null;

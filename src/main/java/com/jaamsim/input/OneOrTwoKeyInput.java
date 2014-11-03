@@ -42,7 +42,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		key1Class = k1Class;
 		key2Class = k2Class;
 		valClass = vClass;
-		hashMap = new HashMap<K1,HashMap<K2,V>>();
+		hashMap = new HashMap<>();
 	}
 
 	public void setUnitType(Class<? extends Unit> units) {
@@ -57,7 +57,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 	}
 
 	private void innerParse(KeywordIndex kw) {
-		ArrayList<String> input = new ArrayList<String>(kw.numArgs());
+		ArrayList<String> input = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 
@@ -91,7 +91,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 
 		if( ent2 == null ) {
 			numKeys = 1;
-			list2 = new ArrayList<K2>();
+			list2 = new ArrayList<>();
 			list2.add( null );
 		}
 		else {
@@ -108,7 +108,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		for( int i = 0; i < list.size(); i++ ) {
 			HashMap<K2,V> h1 = hashMap.get( list.get( i ) );
 			if( h1 == null ) {
-				h1 = new HashMap<K2,V>();
+				h1 = new HashMap<>();
 				hashMap.put( list.get( i ), h1 );
 			}
 			for( int j = 0; j < list2.size(); j++ ) {
@@ -171,7 +171,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 	 */
 	public ArrayList<V> getAllValues() {
 
-		ArrayList<V> values = new ArrayList<V>();
+		ArrayList<V> values = new ArrayList<>();
 
 		for( HashMap<K2,V> each : hashMap.values() ) {
 			values.addAll( each.values() );

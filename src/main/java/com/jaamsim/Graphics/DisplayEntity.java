@@ -109,15 +109,15 @@ public class DisplayEntity extends Entity {
 		public final Map<String, Boolean> visibility;
 
 		public TagSet() {
-			colours = new HashMap<String, Color4d[]>();
-			sizes = new HashMap<String, DoubleVector>();
-			visibility = new HashMap<String, Boolean>();
+			colours = new HashMap<>();
+			sizes = new HashMap<>();
+			visibility = new HashMap<>();
 		}
 
 		public TagSet(TagSet in) {
-			colours = new HashMap<String, Color4d[]>(in.colours);
-			sizes = new HashMap<String, DoubleVector>(in.sizes);
-			visibility = new HashMap<String, Boolean>(in.visibility);
+			colours = new HashMap<>(in.colours);
+			sizes = new HashMap<>(in.sizes);
+			visibility = new HashMap<>(in.visibility);
 		}
 
 		/**
@@ -201,16 +201,16 @@ public class DisplayEntity extends Entity {
 		orientationInput.setUnitType(AngleUnit.class);
 		this.addInput(orientationInput);
 
-		regionInput = new EntityInput<Region>(Region.class, "Region", "Basic Graphics", null);
+		regionInput = new EntityInput<>(Region.class, "Region", "Basic Graphics", null);
 		this.addInput(regionInput);
 
-		relativeEntity = new EntityInput<DisplayEntity>(DisplayEntity.class, "RelativeEntity", "Basic Graphics", null);
-		ArrayList<DisplayEntity> invalid = new ArrayList<DisplayEntity>(1);
+		relativeEntity = new EntityInput<>(DisplayEntity.class, "RelativeEntity", "Basic Graphics", null);
+		ArrayList<DisplayEntity> invalid = new ArrayList<>(1);
 		invalid.add(this);
 		relativeEntity.setInvalidEntities(invalid);
 		this.addInput(relativeEntity);
 
-		displayModelList = new EntityListInput<DisplayModel>( DisplayModel.class, "DisplayModel", "Basic Graphics", null);
+		displayModelList = new EntityListInput<>( DisplayModel.class, "DisplayModel", "Basic Graphics", null);
 		this.addInput(displayModelList);
 		displayModelList.setUnique(false);
 
@@ -545,10 +545,10 @@ public class DisplayEntity extends Entity {
 		if (modelBindings == null) {
 			// Populate the model binding list
 			if (getDisplayModelList() == null) {
-				modelBindings = new ArrayList<DisplayModelBinding>();
+				modelBindings = new ArrayList<>();
 				return modelBindings;
 			}
-			modelBindings = new ArrayList<DisplayModelBinding>(getDisplayModelList().size());
+			modelBindings = new ArrayList<>(getDisplayModelList().size());
 			for (int i = 0; i < getDisplayModelList().size(); ++i) {
 				DisplayModel dm = getDisplayModelList().get(i);
 				modelBindings.add(dm.getBinding(this));

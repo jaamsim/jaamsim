@@ -36,7 +36,7 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 
 	@Override
 	public void parse(KeywordIndex kw) throws InputErrorException {
-		ArrayList<String> strings = new ArrayList<String>(kw.numArgs());
+		ArrayList<String> strings = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++) {
 			strings.add(kw.getArg(i));
 		}

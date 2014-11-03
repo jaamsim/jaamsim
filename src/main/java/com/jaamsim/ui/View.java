@@ -104,11 +104,11 @@ private Object setLock = new Object();
 private double cachedSimTime = 0;
 
 static {
-	allInstances = new ArrayList<View>();
+	allInstances = new ArrayList<>();
 }
 
 {
-	region = new EntityInput<Region>(Region.class, "Region", "Graphics", null);
+	region = new EntityInput<>(Region.class, "Region", "Graphics", null);
 	this.addInput(region);
 
 	center = new Vec3dInput("ViewCenter", "Graphics", new Vec3d());
@@ -144,7 +144,7 @@ static {
 	movable = new BooleanInput("Movable", "Graphics", true);
 	this.addInput(movable);
 
-	followEntityInput = new EntityInput<DisplayEntity>(DisplayEntity.class, "FollowEntity", "Graphics", null);
+	followEntityInput = new EntityInput<>(DisplayEntity.class, "FollowEntity", "Graphics", null);
 	this.addInput(followEntityInput);
 
 	positionScriptInput = new KeyedVec3dInput("ScriptedViewPosition", "Graphics");
@@ -275,7 +275,7 @@ public Region getRegion() {
 }
 
 public void setRegion(Region reg) {
-	ArrayList<String> tokens = new ArrayList<String>(1);
+	ArrayList<String> tokens = new ArrayList<>(1);
 	tokens.add(reg.getName());
 	KeywordIndex kw = new KeywordIndex(tokens, region.getKeyword(), 0, tokens.size(), null);
 	InputAgent.apply(this, kw);
@@ -292,7 +292,7 @@ public void setCenter(Vec3d cent) {
 }
 
 public void setWindowPos(int x, int y, int width, int height) {
-	ArrayList<String> tokens = new ArrayList<String>(2);
+	ArrayList<String> tokens = new ArrayList<>(2);
 	tokens.add(String.format((Locale)null, "%d", x));
 	tokens.add(String.format((Locale)null, "%d", y));
 	KeywordIndex kw = new KeywordIndex(tokens, this.windowPos.getKeyword(), 0, tokens.size(), null);

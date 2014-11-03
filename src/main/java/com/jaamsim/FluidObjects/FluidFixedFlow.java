@@ -64,7 +64,7 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 		flowRateInput.setUnitType( VolumeFlowUnit.class );
 		this.addInput( flowRateInput);
 
-		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
+		ArrayList<Vec3d> defPoints =  new ArrayList<>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
 		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
 		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);

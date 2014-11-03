@@ -49,7 +49,7 @@ public class ScriptEntity extends Entity {
 	}
 
 	public ScriptEntity() {
-		tokens = new ArrayList<ArrayList<String>>();
+		tokens = new ArrayList<>();
 	}
 
 	@Override

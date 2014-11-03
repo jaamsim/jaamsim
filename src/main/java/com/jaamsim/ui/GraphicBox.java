@@ -70,7 +70,7 @@ public class GraphicBox extends JDialog {
 	private final JCheckBox useModelSize;
 	private final JCheckBox useModelPosition;
 	static {
-		displayModelList = new JList<DisplayModel>();
+		displayModelList = new JList<>();
 	}
 
 	private GraphicBox() {
@@ -206,7 +206,7 @@ public class GraphicBox extends JDialog {
 				setEnabled(false); // Don't accept any interaction
 				DisplayModel dm = (DisplayModel) displayModelList.getSelectedValue();
 
-				ArrayList<String> tokens = new ArrayList<String>(1);
+				ArrayList<String> tokens = new ArrayList<>(1);
 				tokens.add(dm.getName());
 
 				KeywordIndex kw = new KeywordIndex(tokens, "DisplayModel", 0, tokens.size(), null);

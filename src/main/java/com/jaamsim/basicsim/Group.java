@@ -41,9 +41,9 @@ public class Group extends Entity {
 	}
 
 	public Group() {
-		list = new ArrayList<Entity>();
+		list = new ArrayList<>();
 		type = null;
-		groupKeywordValues = new ArrayList<KeywordIndex>();
+		groupKeywordValues = new ArrayList<>();
 	}
 
 	private class GroupListInput extends Input<String> {
@@ -102,7 +102,7 @@ public class Group extends Entity {
 
 
 	public void saveGroupKeyword(KeywordIndex kw) {
-		ArrayList<String> toks = new ArrayList<String>(kw.numArgs() + 4);
+		ArrayList<String> toks = new ArrayList<>(kw.numArgs() + 4);
 		for (int i = 0; i < kw.numArgs(); i++)
 			toks.add(kw.getArg(i));
 

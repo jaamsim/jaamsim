@@ -48,7 +48,7 @@ public class DebugUtils {
 	private static int _cVar;
 	private static int _fcVar;
 
-	private static HashMap<Integer, Integer> _debugVAOMap = new HashMap<Integer, Integer>();
+	private static HashMap<Integer, Integer> _debugVAOMap = new HashMap<>();
 
 
 	/**

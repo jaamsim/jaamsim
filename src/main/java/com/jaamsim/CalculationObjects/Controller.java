@@ -50,7 +50,7 @@ public class Controller extends DisplayEntity {
 	}
 
 	public Controller() {
-		calculationEntityList = new ArrayList<CalculationEntity>();
+		calculationEntityList = new ArrayList<>();
 	}
 
 	@Override

@@ -47,7 +47,7 @@ public class Server extends LinkedService {
 		serviceTimeInput.setEntity(this);
 		this.addInput(serviceTimeInput);
 
-		waitQueueInput = new EntityInput<Queue>(Queue.class, "WaitQueue", "Key Inputs", null);
+		waitQueueInput = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput(waitQueueInput);
 	}
 

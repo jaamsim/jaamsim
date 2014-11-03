@@ -41,7 +41,7 @@ public class ArrowModel extends ScreenPointsModel {
 	private static List<Vec4d> arrowHeadVerts;
 
 	static {
-		arrowHeadVerts = new ArrayList<Vec4d>(3);
+		arrowHeadVerts = new ArrayList<>(3);
 		arrowHeadVerts.add(new Vec4d(0.0,  0.0, 0.0, 1.0d));
 		arrowHeadVerts.add(new Vec4d(1.0, -0.5, 0.0, 1.0d));
 		arrowHeadVerts.add(new Vec4d(1.0,  0.5, 0.0, 1.0d));
@@ -125,7 +125,7 @@ public class ArrowModel extends ScreenPointsModel {
 			trans.scaleCols3(arrowSize);
 			trans.setTranslate3(startPoint);
 
-			headPoints = new ArrayList<Vec4d>(arrowHeadVerts.size());
+			headPoints = new ArrayList<>(arrowHeadVerts.size());
 			for (Vec4d v : arrowHeadVerts) {
 				Vec4d tmp = new Vec4d();
 				tmp.mult4(trans, v);

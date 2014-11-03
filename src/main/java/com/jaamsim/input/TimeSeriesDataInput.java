@@ -49,7 +49,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 		// Determine records in the time series
 		// Records have form: (e.g.) yyyy-MM-dd HH:mm value units
 		// where units are optional
-		ArrayList<String> each = new ArrayList<String>();
+		ArrayList<String> each = new ArrayList<>();
 		for (int i=0; i < kw.numArgs(); i++) {
 
 			//skip over opening brace if present

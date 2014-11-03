@@ -45,7 +45,7 @@ public class BillboardString implements OverlayRenderable {
 	private final Mat4d tempViewMat = new Mat4d();
 	private final Vec4d tempPos = new Vec4d();
 
-	private static HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
+	private static HashMap<Integer, Integer> VAOMap = new HashMap<>();
 
 	public BillboardString(TessFont font, String contents, Color4d color,
             double height, Vec3d pos, double xOffset, double yOffset, VisibilityInfo visInfo) {

@@ -50,7 +50,7 @@ public class Polygon implements Renderable {
 	private static int _cVar;
 	private static int _fcVar;
 
-	private static HashMap<Integer, Integer> _VAOMap = new HashMap<Integer, Integer>();
+	private static HashMap<Integer, Integer> _VAOMap = new HashMap<>();
 
 	private static boolean _hasInitialized;
 
@@ -80,8 +80,8 @@ public class Polygon implements Renderable {
 		this._visInfo = visInfo;
 
 		// Points includes the scale, but not the transform
-		_points = new ArrayList<Vec3d>(points.size());
-		ArrayList<Vec3d> boundsPoints = new ArrayList<Vec3d>(points.size());
+		_points = new ArrayList<>(points.size());
+		ArrayList<Vec3d> boundsPoints = new ArrayList<>(points.size());
 		for (Vec4d p : points) {
 			Vec3d temp = new Vec3d(p);
 			temp.mul3(scale);

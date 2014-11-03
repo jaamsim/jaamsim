@@ -43,7 +43,7 @@ public abstract class ObjectSelector extends DisplayEntity {
 	private double[] sampleDifference;  // (actual number of samples) - (expected number)
 
 	{
-		entityListInput = new EntityListInput<DisplayEntity>( DisplayEntity.class, "EntityList", "Key Inputs", null);
+		entityListInput = new EntityListInput<>( DisplayEntity.class, "EntityList", "Key Inputs", null);
 		this.addInput( entityListInput);
 
 		probabilityListInput = new ValueListInput( "ProbabilityList", "Key Inputs", null);

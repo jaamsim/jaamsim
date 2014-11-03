@@ -62,7 +62,7 @@ public class KeywordIndex {
 	}
 
 	public ArrayList<KeywordIndex> getSubArgs() {
-		ArrayList<KeywordIndex> subArgs = new ArrayList<KeywordIndex>();
+		ArrayList<KeywordIndex> subArgs = new ArrayList<>();
 		for (int i= 0; i < this.numArgs(); i++) {
 			//skip over opening brace if present
 			if (this.getArg(i).equals("{"))

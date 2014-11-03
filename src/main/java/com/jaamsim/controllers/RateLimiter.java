@@ -32,7 +32,7 @@ public class RateLimiter implements Runnable {
 	private final long frameTime;
 	private boolean running = true;
 
-	private final ArrayList<Runnable> callbacks = new ArrayList<Runnable>();
+	private final ArrayList<Runnable> callbacks = new ArrayList<>();
 
 	public static RateLimiter create(double updatesPerSecond) {
 		RateLimiter ret = new RateLimiter(updatesPerSecond);

@@ -34,8 +34,8 @@ public class StateEntity extends DisplayEntity {
 	private long workingTicks;
 
 	public StateEntity() {
-		states = new HashMap<String, StateRecord>();
-		stateListeners = new ArrayList<StateEntityListener>();
+		states = new HashMap<>();
+		stateListeners = new ArrayList<>();
 	}
 
 	@Override
@@ -218,7 +218,7 @@ public class StateEntity extends DisplayEntity {
 	}
 
 	public ArrayList<StateRecord> getStateRecs() {
-		ArrayList<StateRecord> recs = new ArrayList<StateRecord>(states.size());
+		ArrayList<StateRecord> recs = new ArrayList<>(states.size());
 		for (StateRecord rec : states.values())
 			recs.add(rec);
 		Collections.sort(recs, new StateRecSort());

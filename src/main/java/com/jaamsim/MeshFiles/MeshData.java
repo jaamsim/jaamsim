@@ -95,7 +95,7 @@ public class MeshData {
 	}
 
 	public static class SubLineData {
-		public ArrayList<Vec3d> verts = new ArrayList<Vec3d>();
+		public ArrayList<Vec3d> verts = new ArrayList<>();
 		public Color4d diffuseColor;
 
 		public ConvexHull hull;
@@ -156,14 +156,14 @@ public class MeshData {
 		public Mat4d transform;
 	}
 
-	private ArrayList<SubMeshData> _subMeshesData = new ArrayList<SubMeshData>();
-	private ArrayList<SubLineData> _subLinesData = new ArrayList<SubLineData>();
-	private ArrayList<Material> _materials = new ArrayList<Material>();
+	private ArrayList<SubMeshData> _subMeshesData = new ArrayList<>();
+	private ArrayList<SubLineData> _subLinesData = new ArrayList<>();
+	private ArrayList<Material> _materials = new ArrayList<>();
 
-	private ArrayList<Armature> _armatures = new ArrayList<Armature>();
+	private ArrayList<Armature> _armatures = new ArrayList<>();
 
-	private ArrayList<SubMeshInstance> _subMeshInstances = new ArrayList<SubMeshInstance>();
-	private ArrayList<SubLineInstance> _subLineInstances = new ArrayList<SubLineInstance>();
+	private ArrayList<SubMeshInstance> _subMeshInstances = new ArrayList<>();
+	private ArrayList<SubLineInstance> _subLineInstances = new ArrayList<>();
 
 	private ConvexHull _staticHull;
 	// The AABB of this mesh with no transform applied
@@ -316,7 +316,7 @@ public class MeshData {
 	                       int[] indices) {
 
 		if (vertices.size() < 3) {
-			vertices = new ArrayList<Vertex>();
+			vertices = new ArrayList<>();
 			indices = new int[0];
 		}
 
@@ -340,15 +340,15 @@ public class MeshData {
 		// Assume if there is one tex coordinate, there will be all of them
 		boolean hasTexCoords = vertices.size() > 0 && vertices.get(0).getTexCoord() != null;
 
-		sub.verts = new ArrayList<Vec3d>(vertices.size());
-		sub.normals = new ArrayList<Vec3d>(vertices.size());
+		sub.verts = new ArrayList<>(vertices.size());
+		sub.normals = new ArrayList<>(vertices.size());
 
 		if (hasTexCoords) {
-			sub.texCoords = new ArrayList<Vec2d>(vertices.size());
+			sub.texCoords = new ArrayList<>(vertices.size());
 		}
 		if (hasBoneInfo) {
-			sub.boneIndices = new ArrayList<Vec4d>(vertices.size());
-			sub.boneWeights = new ArrayList<Vec4d>(vertices.size());
+			sub.boneIndices = new ArrayList<>(vertices.size());
+			sub.boneWeights = new ArrayList<>(vertices.size());
 		}
 		int maxBoneIndex = -1;
 		for (Vertex v : vertices) {
@@ -376,9 +376,9 @@ public class MeshData {
 
 		if (hasBoneInfo) {
 			// Generate the per-bone convex hulls
-			sub.boneHulls = new ArrayList<ConvexHull>(maxBoneIndex + 1);
+			sub.boneHulls = new ArrayList<>(maxBoneIndex + 1);
 			for(int i = 0; i < maxBoneIndex + 1; ++i) {
-				ArrayList<Vec3d> boneVerts = new ArrayList<Vec3d>();
+				ArrayList<Vec3d> boneVerts = new ArrayList<>();
 				// Scan all vertices, and if it is influenced by this bone, add it to the hull
 				for (Vertex v : vertices) {
 					Vec4d boneIndices = v.getBoneIndices();
@@ -401,7 +401,7 @@ public class MeshData {
 				sub.boneHulls.add(boneHull);
 			}
 			// Lastly, make a convex hull of any vertices that are influenced by no bones
-			ArrayList<Vec3d> bonelessVerts = new ArrayList<Vec3d>();
+			ArrayList<Vec3d> bonelessVerts = new ArrayList<>();
 			for (Vertex v : vertices) {
 				Vec4d boneIndices = v.getBoneIndices();
 				if (boneIndices.x == -1) {
@@ -441,7 +441,7 @@ public class MeshData {
 	 * Builds the convex hull of the current mesh based on all the existing sub meshes.
 	 */
 	public void finalizeData() {
-		ArrayList<Vec3d> totalHullPoints = new ArrayList<Vec3d>();
+		ArrayList<Vec3d> totalHullPoints = new ArrayList<>();
 		// Collect all the points from the hulls of the individual sub meshes
 		for (SubMeshInstance subInst : _subMeshInstances) {
 
@@ -462,7 +462,7 @@ public class MeshData {
 		_staticHull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 		_defaultBounds = _staticHull.getAABB(new Mat4d());
 
-		_actionDesc = new ArrayList<Action.Description>();
+		_actionDesc = new ArrayList<>();
 		// Add all the actions found in the armatures
 		for (Armature arm : _armatures) {
 			for (Action act : arm.getActions()) {
@@ -495,7 +495,7 @@ public class MeshData {
 		if (actions == null || actions.size() == 0)
 			return _staticHull;
 
-		ArrayList<ConvexHull> subInstHulls = new ArrayList<ConvexHull>(_subMeshInstances.size());
+		ArrayList<ConvexHull> subInstHulls = new ArrayList<>(_subMeshInstances.size());
 		for (SubMeshInstance subInst : _subMeshInstances) {
 			ConvexHull subHull = getSubInstHull(subInst, actions);
 			subInstHulls.add(subHull);
@@ -511,7 +511,7 @@ public class MeshData {
 			return _staticHull;
 
 		// Otherwise, we need to calculate a new hull
-		ArrayList<Vec3d> hullPoints = new ArrayList<Vec3d>();
+		ArrayList<Vec3d> hullPoints = new ArrayList<>();
 
 		for (ConvexHull subHull : subInstHulls) {
 			hullPoints.addAll(subHull.getVertices());
@@ -540,7 +540,7 @@ public class MeshData {
 
 	private ConvexHull getSubInstHull(SubMeshInstance subInst, ArrayList<Action.Queue> actions) {
 
-		ArrayList<Vec3d> hullPoints = new ArrayList<Vec3d>();
+		ArrayList<Vec3d> hullPoints = new ArrayList<>();
 		Mat4d animatedTransform = subInst.getAnimatedTransform(actions);
 
 		if (actions == null || actions.size() == 0 || subInst.armatureIndex == -1) {
@@ -579,7 +579,7 @@ public class MeshData {
 
 	public ArrayList<ConvexHull> getSubHulls(ArrayList<Action.Queue> actions) {
 
-		ArrayList<ConvexHull> ret = new ArrayList<ConvexHull>(_subMeshInstances.size());
+		ArrayList<ConvexHull> ret = new ArrayList<>(_subMeshInstances.size());
 
 		for (SubMeshInstance subInst : _subMeshInstances) {
 
@@ -705,7 +705,7 @@ public class MeshData {
 
 			DataBlock vertBlock = subMeshBlock.findChildByName("Vertices");
 			if (vertBlock == null) throw new RenderException("Missing vertices in submesh");
-			subData.verts = new ArrayList<Vec3d>(vertBlock.getDataSize() / 4);
+			subData.verts = new ArrayList<>(vertBlock.getDataSize() / 4);
 			for (int i = 0; i < vertBlock.getDataSize() / 4; ++i) {
 				int vertInd = vertBlock.readInt();
 				subData.verts.add(vec3ds[vertInd]);
@@ -713,7 +713,7 @@ public class MeshData {
 
 			DataBlock normBlock = subMeshBlock.findChildByName("Normals");
 			if (normBlock == null) throw new RenderException("Missing normals in submesh");
-			subData.normals = new ArrayList<Vec3d>(normBlock.getDataSize() / 4);
+			subData.normals = new ArrayList<>(normBlock.getDataSize() / 4);
 			for (int i = 0; i < normBlock.getDataSize() / 4; ++i) {
 				int normInd = normBlock.readInt();
 				subData.normals.add(vec3ds[normInd]);
@@ -721,7 +721,7 @@ public class MeshData {
 
 			DataBlock texCoordBlock = subMeshBlock.findChildByName("TexCoords");
 			if (texCoordBlock != null) {
-				subData.texCoords = new ArrayList<Vec2d>(texCoordBlock.getDataSize() / 4);
+				subData.texCoords = new ArrayList<>(texCoordBlock.getDataSize() / 4);
 				for (int i = 0; i < texCoordBlock.getDataSize() / 4; ++i) {
 					int texInd = texCoordBlock.readInt();
 					subData.texCoords.add(vec2ds[texInd]);
@@ -751,7 +751,7 @@ public class MeshData {
 
 			DataBlock vertBlock = subLineBlock.findChildByName("Vertices");
 			if (vertBlock == null) throw new RenderException("Missing vertices in subline");
-			subLine.verts = new ArrayList<Vec3d>(vertBlock.getDataSize() / 4);
+			subLine.verts = new ArrayList<>(vertBlock.getDataSize() / 4);
 			for (int i = 0; i < vertBlock.getDataSize() / 4; ++i) {
 				int vertInd = vertBlock.readInt();
 				subLine.verts.add(vec3ds[vertInd]);
@@ -1033,7 +1033,7 @@ public class MeshData {
 	 * @return
 	 */
 	public int[] getUsedMeshShaders() {
-		ArrayList<Integer> shaderIDs = new ArrayList<Integer>();
+		ArrayList<Integer> shaderIDs = new ArrayList<>();
 		for (SubMeshInstance smi : _subMeshInstances) {
 			int shaderID = _materials.get(smi.materialIndex).getShaderID();
 

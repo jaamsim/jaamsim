@@ -27,7 +27,7 @@ public class Duplicate extends LinkedComponent {
 	protected final EntityListInput<LinkedComponent> targetComponentList;
 
 	{
-		targetComponentList = new EntityListInput<LinkedComponent>( LinkedComponent.class, "TargetComponentList", "Key Inputs", null);
+		targetComponentList = new EntityListInput<>( LinkedComponent.class, "TargetComponentList", "Key Inputs", null);
 		this.addInput( targetComponentList);
 	}
 

@@ -34,7 +34,7 @@ public class EnumInput<T extends Enum<T>> extends Input<T> {
 
 	@Override
 	public ArrayList<String> getValidOptions() {
-		ArrayList<String> tmp = new ArrayList<String>();
+		ArrayList<String> tmp = new ArrayList<>();
 		for (T each : type.getEnumConstants())
 			tmp.add(each.name());
 		return tmp;

@@ -52,7 +52,7 @@ public class XmlNode {
 	}
 
 	private XmlNode _parent;
-	private HashMap<String, String> _attribs = new HashMap<String, String>();
+	private HashMap<String, String> _attribs = new HashMap<>();
 
 	private String _tag;
 	private String _fragID;
@@ -69,7 +69,7 @@ public class XmlNode {
 		_tag = tag;
 		_fragID = fragID;
 
-		_children = new ArrayList<XmlNode>();
+		_children = new ArrayList<>();
 	}
 
 	public void addAttrib(String name, String value) {

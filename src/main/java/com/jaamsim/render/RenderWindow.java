@@ -37,9 +37,9 @@ public class RenderWindow {
 
 	// These two members are almost certainly a bad idea and are just around to debug the picking
 	private String _debugString = "";
-	private ArrayList<Long> _debugIDs = new ArrayList<Long>();
+	private ArrayList<Long> _debugIDs = new ArrayList<>();
 
-	private ArrayList<Integer> _VAOs = new ArrayList<Integer>();
+	private ArrayList<Integer> _VAOs = new ArrayList<>();
 
 	RenderWindow(int x, int y, int width, int height, String title, String name,
 	             GLContext sharedContext,

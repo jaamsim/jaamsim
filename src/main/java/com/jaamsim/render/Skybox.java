@@ -26,7 +26,7 @@ public class Skybox {
 
 	private URI textureURI;
 
-	private static HashMap<Integer, Integer> VAOMap = new HashMap<Integer, Integer>();
+	private static HashMap<Integer, Integer> VAOMap = new HashMap<>();
 	private static int vertBuff;
 	private static int progHandle;
 

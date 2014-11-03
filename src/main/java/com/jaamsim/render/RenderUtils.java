@@ -55,13 +55,13 @@ public class RenderUtils {
 			CIRCLE_POINTS.get(i).scale3(0.5);
 		}
 
-		RECT_POINTS = new ArrayList<Vec4d>();
+		RECT_POINTS = new ArrayList<>();
 		RECT_POINTS.add(new Vec4d( 0.5,  0.5, 0, 1.0d));
 		RECT_POINTS.add(new Vec4d(-0.5,  0.5, 0, 1.0d));
 		RECT_POINTS.add(new Vec4d(-0.5, -0.5, 0, 1.0d));
 		RECT_POINTS.add(new Vec4d( 0.5, -0.5, 0, 1.0d));
 
-		TRIANGLE_POINTS = new ArrayList<Vec4d>();
+		TRIANGLE_POINTS = new ArrayList<>();
 		TRIANGLE_POINTS.add(new Vec4d( 0.5, -0.5, 0, 1.0d));
 		TRIANGLE_POINTS.add(new Vec4d( 0.5,  0.5, 0, 1.0d));
 		TRIANGLE_POINTS.add(new Vec4d(-0.5,  0.0, 0, 1.0d));
@@ -75,7 +75,7 @@ public class RenderUtils {
 	}
 
 	public static List<Vec4d> transformPoints(Mat4d mat, List<Vec4d> points, int dummy) {
-		List<Vec4d> ret = new ArrayList<Vec4d>();
+		List<Vec4d> ret = new ArrayList<>();
 		for (Vec4d p : points) {
 			Vec4d v = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 			v.mult4(mat, p);
@@ -85,7 +85,7 @@ public class RenderUtils {
 	}
 
 	public static List<Vec3d> transformPointsWithTrans(Mat4d mat, List<Vec3d> points) {
-		List<Vec3d> ret = new ArrayList<Vec3d>();
+		List<Vec3d> ret = new ArrayList<>();
 		for (Vec3d p : points) {
 			Vec3d v = new Vec3d();
 			v.multAndTrans3(mat, p);
@@ -120,7 +120,7 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 		if (numSegments < 3) {
 			return null;
 		}
-		ArrayList<Vec4d> ret = new ArrayList<Vec4d>();
+		ArrayList<Vec4d> ret = new ArrayList<>();
 
 		double thetaStep = 2 * Math.PI / numSegments;
 		for (int i = 0; i < numSegments + 1; ++i) {
@@ -139,7 +139,7 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 	 * @return
 	 */
 	public static ArrayList<Vec4d> getRoundedRectPoints(double width, double height, int numSegments) {
-		ArrayList<Vec4d> ret = new ArrayList<Vec4d>();
+		ArrayList<Vec4d> ret = new ArrayList<>();
 
 
 		// Create semi circles on the ends
@@ -184,7 +184,7 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 			return null;
 		}
 
-		ArrayList<Vec4d> ret = new ArrayList<Vec4d>();
+		ArrayList<Vec4d> ret = new ArrayList<>();
 
 		double thetaStep = (startAngle - endAngle) / numSegments;
 		for (int i = 0; i < numSegments; ++i) {

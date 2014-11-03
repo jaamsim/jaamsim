@@ -195,7 +195,7 @@ public class ReportGenerator extends DisplayEntity {
 		FileEntity file = new FileEntity(tmp.toString());
 
 		// Identify the classes that were used in the model
-		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<Class<? extends Entity>>();
+		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
 		for (Entity ent : Entity.getAll()) {
 			if (ent.testFlag(Entity.FLAG_GENERATED))
 				continue;

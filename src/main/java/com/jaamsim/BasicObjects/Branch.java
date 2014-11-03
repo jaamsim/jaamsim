@@ -37,7 +37,7 @@ public class Branch extends LinkedComponent {
 	{
 		nextComponentInput.setHidden(true);
 
-		nextComponentList = new EntityListInput<LinkedComponent>( LinkedComponent.class, "NextComponentList", "Key Inputs", null);
+		nextComponentList = new EntityListInput<>( LinkedComponent.class, "NextComponentList", "Key Inputs", null);
 		this.addInput( nextComponentList);
 
 		choice = new SampleExpInput( "Choice", "Key Inputs", null);

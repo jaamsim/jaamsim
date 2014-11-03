@@ -27,7 +27,7 @@ public class TestEventManager {
 		EventManager evt = new EventManager("TestScheduleTimeEVT");
 		evt.clear();
 
-		ArrayList<String> log = new ArrayList<String>();
+		ArrayList<String> log = new ArrayList<>();
 		evt.scheduleProcessExternal(0, 0, false, new LogTarget(0, log), null);
 		evt.scheduleProcessExternal(1, 0, false, new LogTarget(1, log), null);
 		evt.scheduleProcessExternal(2, 0, false, new LogTarget(2, log), null);
@@ -36,7 +36,7 @@ public class TestEventManager {
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
-		ArrayList<String> expected = new ArrayList<String>();
+		ArrayList<String> expected = new ArrayList<>();
 		expected.add("Target:0");
 		expected.add("Target:1");
 		expected.add("Target:2");
@@ -54,7 +54,7 @@ public class TestEventManager {
 		EventManager evt = new EventManager("testSchedulePriorityEVT");
 		evt.clear();
 
-		ArrayList<String> log = new ArrayList<String>();
+		ArrayList<String> log = new ArrayList<>();
 		evt.scheduleProcessExternal(0, 0, false, new LogTarget(0, log), null);
 		evt.scheduleProcessExternal(0, 1, false, new LogTarget(1, log), null);
 		evt.scheduleProcessExternal(0, 2, false, new LogTarget(2, log), null);
@@ -63,7 +63,7 @@ public class TestEventManager {
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
-		ArrayList<String> expected = new ArrayList<String>();
+		ArrayList<String> expected = new ArrayList<>();
 		expected.add("Target:0");
 		expected.add("Target:1");
 		expected.add("Target:2");
@@ -84,7 +84,7 @@ public class TestEventManager {
 		EventManager evt = new EventManager("testScheduleLIFOEVT");
 		evt.clear();
 
-		ArrayList<String> log = new ArrayList<String>();
+		ArrayList<String> log = new ArrayList<>();
 		evt.scheduleProcessExternal(0, 0, false, new LogTarget(0, log), null);
 		evt.scheduleProcessExternal(0, 0, false, new LogTarget(1, log), null);
 		evt.scheduleProcessExternal(0, 0, false, new LogTarget(2, log), null);
@@ -93,7 +93,7 @@ public class TestEventManager {
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
-		ArrayList<String> expected = new ArrayList<String>();
+		ArrayList<String> expected = new ArrayList<>();
 		expected.add("Target:4");
 		expected.add("Target:3");
 		expected.add("Target:2");
@@ -114,7 +114,7 @@ public class TestEventManager {
 		EventManager evt = new EventManager("testScheduleFIFOEVT");
 		evt.clear();
 
-		ArrayList<String> log = new ArrayList<String>();
+		ArrayList<String> log = new ArrayList<>();
 		evt.scheduleProcessExternal(0, 0, true, new LogTarget(0, log), null);
 		evt.scheduleProcessExternal(0, 0, true, new LogTarget(1, log), null);
 		evt.scheduleProcessExternal(0, 0, true, new LogTarget(2, log), null);
@@ -123,7 +123,7 @@ public class TestEventManager {
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
-		ArrayList<String> expected = new ArrayList<String>();
+		ArrayList<String> expected = new ArrayList<>();
 		expected.add("Target:0");
 		expected.add("Target:1");
 		expected.add("Target:2");
@@ -144,7 +144,7 @@ public class TestEventManager {
 		EventManager evt = new EventManager("testScheduleMixedEVT");
 		evt.clear();
 
-		ArrayList<String> log = new ArrayList<String>();
+		ArrayList<String> log = new ArrayList<>();
 		evt.scheduleProcessExternal(0, 0, false, new LogTarget(0, log), null);
 		evt.scheduleProcessExternal(1, 0, false, new LogTarget(1, log), null);
 		evt.scheduleProcessExternal(2, 0, false, new LogTarget(2, log), null);
@@ -165,7 +165,7 @@ public class TestEventManager {
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
-		ArrayList<String> expected = new ArrayList<String>();
+		ArrayList<String> expected = new ArrayList<>();
 		expected.add("Target:20");
 		expected.add("Target:0");
 		expected.add("Target:10");
@@ -196,7 +196,7 @@ public class TestEventManager {
 		EventManager evt = new EventManager("testScheduleWaitEVT");
 		evt.clear();
 
-		final ArrayList<String> log = new ArrayList<String>();
+		final ArrayList<String> log = new ArrayList<>();
 		evt.scheduleProcessExternal(0, 0, false, new ProcessTarget() {
 			@Override
 			public String getDescription() { return ""; }
@@ -231,7 +231,7 @@ public class TestEventManager {
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, 1000);
 
-		ArrayList<String> expected = new ArrayList<String>();
+		ArrayList<String> expected = new ArrayList<>();
 		expected.add("Wait2:0");
 		expected.add("Wait1:0");
 		expected.add("Wait2:1");

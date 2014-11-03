@@ -69,7 +69,7 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 		travelTimeInput.setUnitType(TimeUnit.class);
 		this.addInput(travelTimeInput);
 
-		ArrayList<Vec3d> defPoints =  new ArrayList<Vec3d>();
+		ArrayList<Vec3d> defPoints =  new ArrayList<>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
 		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
 		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);
@@ -88,10 +88,10 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 	}
 
 	public EntityConveyor() {
-		entityList = new ArrayList<DisplayEntity>();
-		startTimeList = new ArrayList<Double>();
-		lengthList = new ArrayList<Double>();
-		cumLengthList = new ArrayList<Double>();
+		entityList = new ArrayList<>();
+		startTimeList = new ArrayList<>();
+		lengthList = new ArrayList<>();
+		cumLengthList = new ArrayList<>();
 	}
 
 	@Override

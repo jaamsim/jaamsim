@@ -33,7 +33,7 @@ public class Armature {
 		private Bone parent;
 		private double length;
 		private int index;
-		private final ArrayList<Bone> children = new ArrayList<Bone>();
+		private final ArrayList<Bone> children = new ArrayList<>();
 		public Bone(String name, Mat4d mat, Bone parent, double length, int index) {
 			this.name = name;
 			this.mat = new Mat4d(mat);
@@ -70,8 +70,8 @@ public class Armature {
 		}
 	}
 
-	private final ArrayList<Bone> bones = new ArrayList<Bone>();
-	private final ArrayList<Action> actions = new ArrayList<Action>();
+	private final ArrayList<Bone> bones = new ArrayList<>();
+	private final ArrayList<Action> actions = new ArrayList<>();
 
 	public void addAction(Action act) {
 		actions.add(act);
@@ -105,7 +105,7 @@ public class Armature {
 	}
 
 	public ArrayList<Bone> getRootBones() {
-		ArrayList<Bone> ret = new ArrayList<Bone>();
+		ArrayList<Bone> ret = new ArrayList<>();
 		for (Bone b : bones) {
 			if (b.parent == null) {
 				ret.add(b);
@@ -145,10 +145,10 @@ public class Armature {
 	 */
 	public ArrayList<Mat4d> getPose(ArrayList<Action.Queue> actions) {
 		if (actions == null) {
-			actions = new ArrayList<Action.Queue>();
+			actions = new ArrayList<>();
 		}
 
-		ArrayList<Mat4d> poseTransforms = new ArrayList<Mat4d>(bones.size());
+		ArrayList<Mat4d> poseTransforms = new ArrayList<>(bones.size());
 		for (int i = 0; i < bones.size(); ++i)
 			poseTransforms.add(new Mat4d());
 
@@ -166,7 +166,7 @@ public class Armature {
 			}
 		}
 
-		ArrayList<Mat4d> ret = new ArrayList<Mat4d>(bones.size());
+		ArrayList<Mat4d> ret = new ArrayList<>(bones.size());
 
 		// We have the interpolated transform per bone, now build up a list of model space transforms per bone
 		for (int i = 0; i < bones.size(); ++i) {

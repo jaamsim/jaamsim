@@ -43,10 +43,10 @@ public class ObjectType extends Entity {
 	         example = "This is placeholder example text")
 	private final BooleanInput dragAndDrop;
 
-	private final ArrayList<DisplayModel> displayEntityDefault = new ArrayList<DisplayModel>(1);
+	private final ArrayList<DisplayModel> displayEntityDefault = new ArrayList<>(1);
 
 	static {
-		allInstances = new ArrayList<ObjectType>();
+		allInstances = new ArrayList<>();
 	}
 
 	{
@@ -56,7 +56,7 @@ public class ObjectType extends Entity {
 		palette = new StringInput("Palette", "Key Inputs", null);
 		this.addInput( palette );
 
-		defaultDisplayModel = new EntityInput<DisplayModel>(DisplayModel.class, "DefaultDisplayModel", "Key Inputs", null);
+		defaultDisplayModel = new EntityInput<>(DisplayModel.class, "DefaultDisplayModel", "Key Inputs", null);
 		this.addInput(defaultDisplayModel);
 
 		dragAndDrop = new BooleanInput("DragAndDrop", "Key inputs", true);

@@ -158,7 +158,7 @@ public class ObjectSelector extends FrameBox {
 
 		// Make a best-effort attempt to find all used classes...can race with
 		// object creation/deletion, but that's ok
-		ArrayList<Class<? extends Entity>> used = new ArrayList<Class<? extends Entity>>();
+		ArrayList<Class<? extends Entity>> used = new ArrayList<>();
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			try {
 				Class<? extends Entity> klass = Entity.getAll().get(i).getClass();
@@ -168,7 +168,7 @@ public class ObjectSelector extends FrameBox {
 			catch (IndexOutOfBoundsException e) {}
 		}
 
-		ArrayList<String> palettes = new ArrayList<String>();
+		ArrayList<String> palettes = new ArrayList<>();
 		for (int j = 0; j < ObjectType.getAll().size(); j++) {
 			ObjectType type = null;
 			try {
@@ -377,7 +377,7 @@ static class InputMenuItem extends MenuItem {
 
 	@Override
 	public void action() {
-		ArrayList<String> arg = new ArrayList<String>(1);
+		ArrayList<String> arg = new ArrayList<>(1);
 		arg.add("TRUE");
 		KeywordIndex kw = new KeywordIndex("ShowInputEditor", arg, null);
 		InputAgent.apply(Simulation.getInstance(), kw);
@@ -394,7 +394,7 @@ static class PropertyMenuItem extends MenuItem {
 
 	@Override
 	public void action() {
-		ArrayList<String> arg = new ArrayList<String>(1);
+		ArrayList<String> arg = new ArrayList<>(1);
 		arg.add("TRUE");
 		KeywordIndex kw = new KeywordIndex("ShowPropertyViewer", arg, null);
 		InputAgent.apply(Simulation.getInstance(), kw);
@@ -411,7 +411,7 @@ static class OutputMenuItem extends MenuItem {
 
 	@Override
 	public void action() {
-		ArrayList<String> arg = new ArrayList<String>(1);
+		ArrayList<String> arg = new ArrayList<>(1);
 		arg.add("TRUE");
 		KeywordIndex kw = new KeywordIndex("ShowOutputViewer", arg, null);
 		InputAgent.apply(Simulation.getInstance(), kw);
@@ -566,7 +566,7 @@ static class CenterInViewMenuItem extends MenuItem {
 	}
 
 	private static ArrayList<MenuItem> getMenuItems(Entity ent, int x, int y) {
-		ArrayList<MenuItem> list = new ArrayList<MenuItem>();
+		ArrayList<MenuItem> list = new ArrayList<>();
 		list.add(new InputMenuItem(ent));
 		list.add(new OutputMenuItem(ent));
 		list.add(new PropertyMenuItem(ent));

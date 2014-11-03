@@ -35,7 +35,7 @@ public class HullProto {
 	private ConvexHull _hull;
 	boolean _isLoadedGPU = false;
 
-	private HashMap<Integer, Integer> _vaoMap = new HashMap<Integer, Integer>();
+	private HashMap<Integer, Integer> _vaoMap = new HashMap<>();
 
 	public HullProto(ConvexHull hull) {
 		_hull = hull;

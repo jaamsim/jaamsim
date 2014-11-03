@@ -27,7 +27,7 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 	@Override
 	public void parse(KeywordIndex kw) throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
-		ArrayList<Action.Binding> bindings = new ArrayList<Action.Binding>(subArgs.size());
+		ArrayList<Action.Binding> bindings = new ArrayList<>(subArgs.size());
 		for (int i = 0; i < subArgs.size(); i++) {
 			try {
 				bindings.add(parseBinding(subArgs.get(i)));

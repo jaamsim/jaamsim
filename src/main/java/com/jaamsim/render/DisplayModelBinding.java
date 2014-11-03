@@ -44,7 +44,7 @@ public abstract class DisplayModelBinding {
 	private static final Color4d MINT = ColourInput.getColorWithName("mint");
 
 	private static final boolean _saveCacheMissData = false;
-	private static final HashMap<String, CacheCounter> cacheMissData = new HashMap<String, CacheCounter>();
+	private static final HashMap<String, CacheCounter> cacheMissData = new HashMap<>();
 
 	//protected DisplayEntity _dispObservee;
 
@@ -61,7 +61,7 @@ public abstract class DisplayModelBinding {
 	static {
 		// NOTE: the order of the points corresponds to the list of static picking IDs in RenderManager,
 		// both need to be changed together
-		HANDLE_POINTS = new ArrayList<Vec4d>(8);
+		HANDLE_POINTS = new ArrayList<>(8);
 		// Sides
 		HANDLE_POINTS.add(new Vec4d( 0.5,    0, 0, 1.0d));
 		HANDLE_POINTS.add(new Vec4d(-0.5,    0, 0, 1.0d));
@@ -74,7 +74,7 @@ public abstract class DisplayModelBinding {
 		HANDLE_POINTS.add(new Vec4d(-0.5,  0.5, 0, 1.0d));
 		HANDLE_POINTS.add(new Vec4d(-0.5, -0.5, 0, 1.0d));
 
-		ROTATE_POINTS = new ArrayList<Vec4d>(2);
+		ROTATE_POINTS = new ArrayList<>(2);
 		// Sides
 		ROTATE_POINTS.add(new Vec4d(1.0, 0, 0, 1.0d));
 		ROTATE_POINTS.add(new Vec4d(0.5, 0, 0, 1.0d));
@@ -141,7 +141,7 @@ public abstract class DisplayModelBinding {
 
 		for (int i = 0; i < 8; ++i) {
 
-			List<Vec4d> pl = new ArrayList<Vec4d>(1);
+			List<Vec4d> pl = new ArrayList<>(1);
 
 			pl.add(handlePoints.get(i));
 			PointProxy point = new PointProxy(pl, ColourInput.GREEN, 8, getVisibilityInfo(), RenderManager.RESIZE_POSX_PICK_ID - i);
@@ -150,7 +150,7 @@ public abstract class DisplayModelBinding {
 		}
 
 		// Add the rotate handle
-		List<Vec4d> pl = new ArrayList<Vec4d>(1);
+		List<Vec4d> pl = new ArrayList<>(1);
 		pl.add(new Vec4d(rotateHandlePoints.get(0)));
 		PointProxy point = new PointProxy(pl, ColourInput.GREEN, 8, getVisibilityInfo(), RenderManager.ROTATE_PICK_ID);
 		point.setHoverColour(ColourInput.LIGHT_GREY);

@@ -39,7 +39,7 @@ private final StringInput method;
 private final StringListInput arguments;
 
 {
-	target = new EntityInput<Entity>(Entity.class, "Target", "Outputs", null);
+	target = new EntityInput<>(Entity.class, "Target", "Outputs", null);
 	this.addInput(target);
 
 	method = new StringInput("Method", "Outputs", null);

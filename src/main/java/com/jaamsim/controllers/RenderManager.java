@@ -121,8 +121,8 @@ public class RenderManager implements DragSourceListener {
 
 	private final ExceptionLogger exceptionLogger;
 
-	private final HashMap<Integer, CameraControl> windowControls = new HashMap<Integer, CameraControl>();
-	private final HashMap<Integer, View> windowToViewMap= new HashMap<Integer, View>();
+	private final HashMap<Integer, CameraControl> windowControls = new HashMap<>();
+	private final HashMap<Integer, View> windowToViewMap= new HashMap<>();
 	private int activeWindowID = -1;
 
 	private final Object popupLock;
@@ -333,7 +333,7 @@ public class RenderManager implements DragSourceListener {
 					cc.checkForUpdate();
 				}
 
-				cachedScene = new ArrayList<RenderProxy>();
+				cachedScene = new ArrayList<>();
 				DisplayModelBinding.clearCacheCounters();
 				DisplayModelBinding.clearCacheMissData();
 
@@ -341,7 +341,7 @@ public class RenderManager implements DragSourceListener {
 
 				long startNanos = System.nanoTime();
 
-				ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<DisplayModelBinding>();
+				ArrayList<DisplayModelBinding> selectedBindings = new ArrayList<>();
 
 				// Update all graphical entities in the simulation
 				final ArrayList<? extends Entity> allEnts = Entity.getAll();
@@ -431,7 +431,7 @@ public class RenderManager implements DragSourceListener {
 					}
 
 					List<PickData> picks = pickForMouse(id, false);
-					ArrayList<Long> debugIDs = new ArrayList<Long>(picks.size());
+					ArrayList<Long> debugIDs = new ArrayList<>(picks.size());
 
 					StringBuilder dbgMsg = new StringBuilder(cacheString);
 					dbgMsg.append(" Picked ").append(picks.size());
@@ -514,7 +514,7 @@ public class RenderManager implements DragSourceListener {
 
 			List<PickData> picks = pickForMouse(windowID, false);
 
-			ArrayList<DisplayEntity> ents = new ArrayList<DisplayEntity>();
+			ArrayList<DisplayEntity> ents = new ArrayList<>();
 
 			for (PickData pd : picks) {
 				if (!pd.isEntity) { continue; }
@@ -605,7 +605,7 @@ public class RenderManager implements DragSourceListener {
 		View view = windowToViewMap.get(windowID);
 		if (mouseInfo == null || view == null || !mouseInfo.mouseInWindow) {
 			// The mouse is not actually in the window, or the window was closed along the way
-			return new ArrayList<PickData>(); // empty set
+			return new ArrayList<>(); // empty set
 		}
 
 		Ray pickRay = RenderUtils.getPickRay(mouseInfo);
@@ -752,10 +752,10 @@ public class RenderManager implements DragSourceListener {
 	private List<PickData> pickForRay(Ray pickRay, int viewID, boolean precise) {
 		List<Renderer.PickResult> picks = renderer.pick(pickRay, viewID, precise);
 
-		List<PickData> uniquePicks = new ArrayList<PickData>();
+		List<PickData> uniquePicks = new ArrayList<>();
 
 		// IDs that have already been added
-		Set<Long> knownIDs = new HashSet<Long>();
+		Set<Long> knownIDs = new HashSet<>();
 
 		for (Renderer.PickResult pick : picks) {
 			if (knownIDs.contains(pick.pickingID)) {
@@ -1156,7 +1156,7 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// If we are here, we have a segment to split, at index i
-		ArrayList<Vec3d> splitPoints = new ArrayList<Vec3d>();
+		ArrayList<Vec3d> splitPoints = new ArrayList<>();
 		for(int i = 0; i <= splitInd; ++i) {
 			splitPoints.add(points.get(i));
 		}
@@ -1204,7 +1204,7 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 
-		ArrayList<Vec3d> splitPoints = new ArrayList<Vec3d>();
+		ArrayList<Vec3d> splitPoints = new ArrayList<>();
 		for(int i = 0; i < points.size(); ++i) {
 			if (i == removeInd) continue;
 			splitPoints.add(points.get(i));
@@ -1387,7 +1387,7 @@ public class RenderManager implements DragSourceListener {
 		if (isFlat) {
 			Vec3d size = dEntity.getSize();
 
-			ArrayList<String> tokens = new ArrayList<String>();
+			ArrayList<String> tokens = new ArrayList<>();
 			tokens.add(String.format((Locale)null, "%.3f", size.x));
 			tokens.add(String.format((Locale)null, "%.3f", size.y));
 			tokens.add("0.0");
@@ -1396,7 +1396,7 @@ public class RenderManager implements DragSourceListener {
 			KeywordIndex kw = new KeywordIndex(tokens, "Size", 0, tokens.size(), null);
 			InputAgent.apply(dEntity, kw);
 		} else {
-			ArrayList<String> tokens = new ArrayList<String>();
+			ArrayList<String> tokens = new ArrayList<>();
 			tokens.add("0.0");
 			tokens.add("0.0");
 			tokens.add("-0.5");

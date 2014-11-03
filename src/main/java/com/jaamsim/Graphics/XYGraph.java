@@ -62,10 +62,10 @@ public class XYGraph extends GraphBasics {
 	{
 		// Key Inputs category
 
-		dataSource = new OutputListInput<Double>(Double.class, "DataSource", "Key Inputs", null);
+		dataSource = new OutputListInput<>(Double.class, "DataSource", "Key Inputs", null);
 		this.addInput(dataSource);
 
-		ArrayList<Color4d> defSeriesColor = new ArrayList<Color4d>(0);
+		ArrayList<Color4d> defSeriesColor = new ArrayList<>(0);
 		defSeriesColor.add(ColourInput.getColorWithName("red"));
 		seriesColorsList = new ColorListInput("SeriesColours", "Key Inputs", defSeriesColor);
 		seriesColorsList.setValidCountRange(1, Integer.MAX_VALUE);
@@ -75,10 +75,10 @@ public class XYGraph extends GraphBasics {
 		showBars = new BooleanInput("ShowBars", "Key Inputs", false);
 		this.addInput(showBars);
 
-		secondaryDataSource = new OutputListInput<Double>(Double.class, "SecondaryDataSource", "Key Inputs", null);
+		secondaryDataSource = new OutputListInput<>(Double.class, "SecondaryDataSource", "Key Inputs", null);
 		this.addInput(secondaryDataSource);
 
-		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<Color4d>(0);
+		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
 		defSecondaryLineColor.add(ColourInput.getColorWithName("black"));
 		secondarySeriesColorsList = new ColorListInput("SecondarySeriesColours", "Key Inputs", defSecondaryLineColor);
 		secondarySeriesColorsList.setValidCountRange(1, Integer.MAX_VALUE);

@@ -28,13 +28,13 @@ import com.jaamsim.collada.ColParser;
 import com.jaamsim.ui.LogBox;
 
 public class MeshDataCache {
-	private static HashMap<MeshProtoKey, MeshData> dataMap = new HashMap<MeshProtoKey, MeshData>();
+	private static HashMap<MeshProtoKey, MeshData> dataMap = new HashMap<>();
 	private static Object mapLock = new Object();
 
-	private static HashMap<MeshProtoKey, AtomicBoolean> loadingMap = new HashMap<MeshProtoKey, AtomicBoolean>();
+	private static HashMap<MeshProtoKey, AtomicBoolean> loadingMap = new HashMap<>();
 	private static Object loadingLock = new Object();
 
-	private static HashSet<MeshProtoKey> badMeshSet = new HashSet<MeshProtoKey>();
+	private static HashSet<MeshProtoKey> badMeshSet = new HashSet<>();
 	private static Object badMeshLock = new Object();
 	private static MeshData badMesh = null;
 

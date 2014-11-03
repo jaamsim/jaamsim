@@ -66,10 +66,10 @@ public class Entity {
 	private int flags;
 	protected boolean traceFlag = false;
 
-	private final HashMap<String, Input<?>> inputs = new HashMap<String, Input<?>>();
-	private final ArrayList<Input<?>> inpList = new ArrayList<Input<?>>();
+	private final HashMap<String, Input<?>> inputs = new HashMap<>();
+	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
-	private final HashMap<String, AttributeHandle> attributeMap = new HashMap<String, AttributeHandle>();
+	private final HashMap<String, AttributeHandle> attributeMap = new HashMap<>();
 
 	private final BooleanInput trace;
 
@@ -88,8 +88,8 @@ public class Entity {
 	public static final int PRIO_LOWEST = 11;
 
 	static {
-		allInstances = new ArrayList<Entity>(100);
-		namedEntities = new HashMap<String, Entity>(100);
+		allInstances = new ArrayList<>(100);
+		namedEntities = new HashMap<>(100);
 	}
 
 	{
@@ -128,7 +128,7 @@ public class Entity {
 	}
 
 	public static <T extends Entity> ArrayList<T> getInstancesOf(Class<T> proto) {
-		ArrayList<T> instanceList = new ArrayList<T>();
+		ArrayList<T> instanceList = new ArrayList<>();
 
 		for (Entity each : allInstances) {
 			if (proto == each.getClass()) {
@@ -140,11 +140,11 @@ public class Entity {
 	}
 
 	public static <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
-		return new InstanceIterable<T>(proto);
+		return new InstanceIterable<>(proto);
 	}
 
 	public static <T extends Entity> ClonesOfIterable<T> getClonesOfIterator(Class<T> proto){
-		return new ClonesOfIterable<T>(proto);
+		return new ClonesOfIterable<>(proto);
 	}
 
 	/**
@@ -153,11 +153,11 @@ public class Entity {
 	 * @return
 	 */
 	public static <T extends Entity> ClonesOfIterableInterface<T> getClonesOfIterator(Class<T> proto, Class<?> iface){
-		return new ClonesOfIterableInterface<T>(proto, iface);
+		return new ClonesOfIterableInterface<>(proto, iface);
 	}
 
 	public static <T extends Entity> ArrayList<T> getClonesOf(Class<T> proto) {
-		ArrayList<T> cloneList = new ArrayList<T>();
+		ArrayList<T> cloneList = new ArrayList<>();
 
 		for (Entity each : allInstances) {
 			if (proto.isAssignableFrom(each.getClass())) {
@@ -290,7 +290,7 @@ public class Entity {
 	 * @param ent = entity whose inputs are to be copied
 	 */
 	public void copyInputs(Entity ent) {
-		ArrayList<String> tmp = new ArrayList<String>();
+		ArrayList<String> tmp = new ArrayList<>();
 		for (Input<?> sourceInput : ent.inpList) {
 			if (sourceInput.isDefault()) {
 				continue;
@@ -751,7 +751,7 @@ public class Entity {
 	}
 
 	public ArrayList<String> getAttributeNames(){
-		ArrayList<String> ret = new ArrayList<String>();
+		ArrayList<String> ret = new ArrayList<>();
 		for (String name : attributeMap.keySet()) {
 			ret.add(name);
 		}

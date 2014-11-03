@@ -44,7 +44,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		key2Class = k2Class;
 		key3Class = k3Class;
 		valClass = vClass;
-		hashMap = new HashMap<K1,HashMap<K2,HashMap<K3,V>>>();
+		hashMap = new HashMap<>();
 	}
 
 	private String unitString = "";
@@ -65,7 +65,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 	}
 
 	private void innerParse(KeywordIndex kw) {
-		ArrayList<String> input = new ArrayList<String>(kw.numArgs());
+		ArrayList<String> input = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 
@@ -92,7 +92,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		Entity ent3 = Input.tryParseEntity( input.get( 2 ), Entity.class );
 		if( ent3 == null ) {
 			numKeys = 2;
-			list3 = new ArrayList<K3>();
+			list3 = new ArrayList<>();
 			list3.add( null );
 		}
 		else {
@@ -109,13 +109,13 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		for( int i = 0; i < list.size(); i++ ) {
 			HashMap<K2,HashMap<K3,V>> h1 = hashMap.get( list.get( i ) );
 			if( h1 == null ) {
-				h1 = new HashMap<K2,HashMap<K3,V>>();
+				h1 = new HashMap<>();
 				hashMap.put( list.get( i ), h1 );
 			}
 			for( int j = 0; j < list2.size(); j++ ) {
 				HashMap<K3,V> h2 = h1.get( list2.get( j ) );
 				if( h2 == null ) {
-					h2 = new HashMap<K3,V>();
+					h2 = new HashMap<>();
 					h1.put( list2.get( j ), h2 );
 				}
 				for( int k = 0; k < list3.size(); k++ ) {

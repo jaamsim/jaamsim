@@ -111,7 +111,7 @@ public class DisplayModelCompat extends DisplayModel {
 	private final BooleanInput bold;
 
 	static {
-		validTags = new ArrayList<String>();
+		validTags = new ArrayList<>();
 		validTags.add(TAG_CONTENTS);
 		validTags.add(TAG_OUTLINES);
 		validTags.add(TAG_TRACKFILL);
@@ -124,7 +124,7 @@ public class DisplayModelCompat extends DisplayModel {
 	}
 
 	{
-		shape = new EnumInput<ValidShapes>(ValidShapes.class, "Shape", "DisplayModel", ValidShapes.CIRCLE);
+		shape = new EnumInput<>(ValidShapes.class, "Shape", "DisplayModel", ValidShapes.CIRCLE);
 		this.addInput(shape);
 
 		fillColour = new ColourInput("FillColour", "DisplayModel", ColourInput.MED_GREY);
@@ -212,7 +212,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 			registerCacheMiss("DisplayModelCompat");
 
-			cachedProxies = new ArrayList<RenderProxy>();
+			cachedProxies = new ArrayList<>();
 
 			List<Vec4d> points = null;
 			switch (shapeCache) {
@@ -447,7 +447,7 @@ public class DisplayModelCompat extends DisplayModel {
 				double startY = -0.5;
 				double endY = size - 0.5;
 
-				List<Vec4d> contentsPoints = new ArrayList<Vec4d>();
+				List<Vec4d> contentsPoints = new ArrayList<>();
 				contentsPoints.add(new Vec4d(  endX, startY, 0, 1.0d));
 				contentsPoints.add(new Vec4d(  endX,   endY, 0, 1.0d));
 				contentsPoints.add(new Vec4d(startX,   endY, 0, 1.0d));
@@ -458,7 +458,7 @@ public class DisplayModelCompat extends DisplayModel {
 				if (rescapacities != null) {
 					double startResY = endY;
 					double endResY = startResY + rescapacities.get(i);
-					List<Vec4d> rescontentsPoints = new ArrayList<Vec4d>();
+					List<Vec4d> rescontentsPoints = new ArrayList<>();
 					rescontentsPoints.add(new Vec4d(  endX, startResY, 0, 1.0d));
 					rescontentsPoints.add(new Vec4d(  endX,   endResY, 0, 1.0d));
 					rescontentsPoints.add(new Vec4d(startX,   endResY, 0, 1.0d));
@@ -617,12 +617,12 @@ public class DisplayModelCompat extends DisplayModel {
 		// This class needs to either die or get refactored
 		private List<RenderProxy> buildContents(DoubleVector sizes, Color4d[] colours, Mat4d subTrans,
 		                                        Transform trans, Vec3d scale, long pickingID) {
-			List<RenderProxy> ret = new ArrayList<RenderProxy>();
+			List<RenderProxy> ret = new ArrayList<>();
 
 			if (sizes == null || colours == null || sizes.size() != colours.length) {
 				// We are either out of sync or this is a ShipType, either way draw an empty cargo hold
 				// Add a single grey rectangle
-				List<Vec4d> contentsPoints = new ArrayList<Vec4d>();
+				List<Vec4d> contentsPoints = new ArrayList<>();
 				contentsPoints.add(new Vec4d( 1, -0.5, 0.001, 1.0d));
 				contentsPoints.add(new Vec4d( 1,  0.5, 0.001, 1.0d));
 				contentsPoints.add(new Vec4d( 0,  0.5, 0.001, 1.0d));
@@ -643,7 +643,7 @@ public class DisplayModelCompat extends DisplayModel {
 				double start = sizeOffset / totalSize;
 				double end = (sizeOffset + size) / totalSize;
 
-				List<Vec4d> contentsPoints = new ArrayList<Vec4d>();
+				List<Vec4d> contentsPoints = new ArrayList<>();
 				contentsPoints.add(new Vec4d(  end, -0.5, 0.001, 1.0d));
 				contentsPoints.add(new Vec4d(  end,  0.5, 0.001, 1.0d));
 				contentsPoints.add(new Vec4d(start,  0.5, 0.001, 1.0d));
@@ -700,7 +700,7 @@ public class DisplayModelCompat extends DisplayModel {
 	private static Mat4d truckContentsTrans;
 
 	static {
-		hullVerts = new ArrayList<Vec4d>(20);
+		hullVerts = new ArrayList<>(20);
 		hullVerts.add(new Vec4d(-0.35625d, -0.5d, 0.0d, 1.0d));
 		hullVerts.add(new Vec4d(0.35d, -0.5d, 0.0d, 1.0d));
 		hullVerts.add(new Vec4d(0.40625d, -0.42d, 0.0d, 1.0d));
@@ -735,18 +735,18 @@ public class DisplayModelCompat extends DisplayModel {
 		truckContentsTrans.setTranslate3(new Vec3d(-0.5, 0.0, 0.0));
 		truckContentsTrans.scaleCols3(new Vec3d(0.75, 1, 1));
 
-		arrowHeadVerts = new ArrayList<Vec4d>(3);
+		arrowHeadVerts = new ArrayList<>(3);
 		arrowHeadVerts.add(new Vec4d(-0.5,  0.0, 0.0, 1.0d));
 		arrowHeadVerts.add(new Vec4d(-0.1, -0.5, 0.0, 1.0d));
 		arrowHeadVerts.add(new Vec4d(-0.1,  0.5, 0.0, 1.0d));
 
-		arrowTailVerts = new ArrayList<Vec4d>(4);
+		arrowTailVerts = new ArrayList<>(4);
 		arrowTailVerts.add(new Vec4d(-0.1, -0.2, 0.0, 1.0d));
 		arrowTailVerts.add(new Vec4d( 0.5, -0.2, 0.0, 1.0d));
 		arrowTailVerts.add(new Vec4d( 0.5,  0.2, 0.0, 1.0d));
 		arrowTailVerts.add(new Vec4d(-0.1,  0.2, 0.0, 1.0d));
 
-		arrowOutlineVerts = new ArrayList<Vec4d>(7);
+		arrowOutlineVerts = new ArrayList<>(7);
 		arrowOutlineVerts.add(new Vec4d(-0.5,  0.0, 0.0, 1.0d));
 		arrowOutlineVerts.add(new Vec4d(-0.1, -0.5, 0.0, 1.0d));
 		arrowOutlineVerts.add(new Vec4d(-0.1, -0.2, 0.0, 1.0d));
@@ -755,25 +755,25 @@ public class DisplayModelCompat extends DisplayModel {
 		arrowOutlineVerts.add(new Vec4d(-0.1,  0.2, 0.0, 1.0d));
 		arrowOutlineVerts.add(new Vec4d(-0.1,  0.5, 0.0, 1.0d));
 
-		truckCabVerts = new ArrayList<Vec4d>(4);
+		truckCabVerts = new ArrayList<>(4);
 		truckCabVerts.add(new Vec4d( 0.5,  0.5, 0.0, 1.0d));
 		truckCabVerts.add(new Vec4d(0.25,  0.5, 0.0, 1.0d));
 		truckCabVerts.add(new Vec4d(0.25, -0.5, 0.0, 1.0d));
 		truckCabVerts.add(new Vec4d( 0.5, -0.5, 0.0, 1.0d));
 
-		crushingPlantBotVerts = new ArrayList<Vec4d>(4);
+		crushingPlantBotVerts = new ArrayList<>(4);
 		crushingPlantBotVerts.add(new Vec4d( -0.17659f, -0.5f, 0.0f, 1.0d ));
 		crushingPlantBotVerts.add(new Vec4d( 0.15675f, -0.5f, 0.0f, 1.0d ));
 		crushingPlantBotVerts.add(new Vec4d( 0.15675f, -0.1f, 0.0f, 1.0d ));
 		crushingPlantBotVerts.add(new Vec4d( -0.17659f, -0.1f, 0.0f, 1.0d ));
 
-		crushingPlantTopVerts = new ArrayList<Vec4d>(4);
+		crushingPlantTopVerts = new ArrayList<>(4);
 		crushingPlantTopVerts.add(new Vec4d( -0.17659f, 0f, 0.0f, 1.0d ));
 		crushingPlantTopVerts.add(new Vec4d( 0.15675f, 0f, 0.0f, 1.0d ));
 		crushingPlantTopVerts.add(new Vec4d( 0.49008f, 0.5f, 0.0f, 1.0d ));
 		crushingPlantTopVerts.add(new Vec4d( -0.50992f, 0.5f, 0.0f, 1.0d ));
 
-		singleQuadLinePoints = new ArrayList<Vec4d>();
+		singleQuadLinePoints = new ArrayList<>();
 		singleQuadLinePoints.add(new Vec4d( 0.4,  0.5, 0.0, 1.0d));
 		singleQuadLinePoints.add(new Vec4d(-0.4,  0.0, 0.0, 1.0d));
 
@@ -785,14 +785,14 @@ public class DisplayModelCompat extends DisplayModel {
 		                                                          Math.PI *  0.75, 10);
 		singleQuadLinePoints.addAll(singleArcPoints);
 
-		singleQuadRectVerts = new ArrayList<Vec4d>();
+		singleQuadRectVerts = new ArrayList<>();
 		singleQuadRectVerts.add(new Vec4d( 0.5, -0.0833333, 0.0, 1.0d));
 		singleQuadRectVerts.add(new Vec4d( 0.5,  0.0833333, 0.0, 1.0d));
 
 		singleQuadRectVerts.add(new Vec4d(-0.5,  0.0833333, 0.0, 1.0d));
 		singleQuadRectVerts.add(new Vec4d(-0.5, -0.0833333, 0.0, 1.0d));
 
-		dualQuadLinePoints = new ArrayList<Vec4d>();
+		dualQuadLinePoints = new ArrayList<>();
 		dualQuadLinePoints.add(new Vec4d(0.4, 0.045454545, 0.0, 1.0d));
 		dualQuadLinePoints.add(new Vec4d(-0.4, -0.227272727, 0.0, 1.0d));
 
@@ -813,7 +813,7 @@ public class DisplayModelCompat extends DisplayModel {
 		                                         Math.PI *  0.75, 10);
 		dualQuadLinePoints.addAll(dualArcPoints);
 
-		dualQuadOutlineVerts = new ArrayList<Vec4d>();
+		dualQuadOutlineVerts = new ArrayList<>();
 		dualQuadOutlineVerts.add(new Vec4d(-0.5, -0.272727273, 0.0, 1.0d));
 		dualQuadOutlineVerts.add(new Vec4d(-0.5, 0.272727273, 0.0, 1.0d));
 		dualQuadOutlineVerts.add(new Vec4d(0.5, 0.272727273, 0.0, 1.0d));
@@ -824,60 +824,60 @@ public class DisplayModelCompat extends DisplayModel {
 		dualQuadOutlineVerts.add(new Vec4d(0.5, -0.272727273, 0.0, 1.0d));
 
 
-		dualQuadRect0Verts = new ArrayList<Vec4d>();
+		dualQuadRect0Verts = new ArrayList<>();
 		dualQuadRect0Verts.add(new Vec4d(-0.5, -0.272727273, 0.0, 1.0d));
 		dualQuadRect0Verts.add(new Vec4d(0.5, -0.272727273, 0.0, 1.0d));
 		dualQuadRect0Verts.add(new Vec4d(0.5, -0.181818182, 0.0, 1.0d));
 		dualQuadRect0Verts.add(new Vec4d(-0.5, -0.181818182, 0.0, 1.0d));
 
-		dualQuadRect1Verts = new ArrayList<Vec4d>();
+		dualQuadRect1Verts = new ArrayList<>();
 		dualQuadRect1Verts.add(new Vec4d(-0.5, -0.181818182, 0.0, 1.0d));
 		dualQuadRect1Verts.add(new Vec4d(-0.3, -0.181818182, 0.0, 1.0d));
 		dualQuadRect1Verts.add(new Vec4d(-0.3, 0.181818182, 0.0, 1.0d));
 		dualQuadRect1Verts.add(new Vec4d(-0.5, 0.181818182, 0.0, 1.0d));
 
-		dualQuadRect2Verts = new ArrayList<Vec4d>();
+		dualQuadRect2Verts = new ArrayList<>();
 		dualQuadRect2Verts.add(new Vec4d(-0.5, 0.181818182, 0.0, 1.0d));
 		dualQuadRect2Verts.add(new Vec4d(0.5, 0.181818182, 0.0, 1.0d));
 		dualQuadRect2Verts.add(new Vec4d(0.5, 0.272727273, 0.0, 1.0d));
 		dualQuadRect2Verts.add(new Vec4d(-0.5, 0.272727273, 0.0, 1.0d));
 
-		travellingRect1Verts = new ArrayList<Vec4d>();
+		travellingRect1Verts = new ArrayList<>();
 		travellingRect1Verts.add(new Vec4d(-0.2, -0.3, 0, 1.0d));
 		travellingRect1Verts.add(new Vec4d( 0.2, -0.3, 0, 1.0d));
 		travellingRect1Verts.add(new Vec4d( 0.2,  0.1, 0, 1.0d));
 		travellingRect1Verts.add(new Vec4d(-0.2,  0.1, 0, 1.0d));
 
-		travellingRect2Verts = new ArrayList<Vec4d>();
+		travellingRect2Verts = new ArrayList<>();
 		travellingRect2Verts.add(new Vec4d(-0.5, -0.1, 0, 1.0d));
 		travellingRect2Verts.add(new Vec4d( 0.5, -0.1, 0, 1.0d));
 		travellingRect2Verts.add(new Vec4d( 0.5,  0.1, 0, 1.0d));
 		travellingRect2Verts.add(new Vec4d(-0.5,  0.1, 0, 1.0d));
 
-		travellingRect3Verts = new ArrayList<Vec4d>();
+		travellingRect3Verts = new ArrayList<>();
 		travellingRect3Verts.add(new Vec4d(-0.1, -0.5, 0, 1.0d));
 		travellingRect3Verts.add(new Vec4d( 0.1, -0.5, 0, 1.0d));
 		travellingRect3Verts.add(new Vec4d( 0.1,  0.1, 0, 1.0d));
 		travellingRect3Verts.add(new Vec4d(-0.1,  0.1, 0, 1.0d));
 
-		stackerRect1Verts = new ArrayList<Vec4d>();
+		stackerRect1Verts = new ArrayList<>();
 		stackerRect1Verts.add(new Vec4d( 0.3, -0.3, 0.1, 1.0d));
 		stackerRect1Verts.add(new Vec4d( 0.3,  0.3, 0.1, 1.0d));
 		stackerRect1Verts.add(new Vec4d(-0.3,  0.3, 0.1, 1.0d));
 		stackerRect1Verts.add(new Vec4d(-0.3, -0.3, 0.1, 1.0d));
 
-		stackerRect2Verts = new ArrayList<Vec4d>();
+		stackerRect2Verts = new ArrayList<>();
 		stackerRect2Verts.add(new Vec4d(-0.1,  0.0, 0.1, 1.0d));
 		stackerRect2Verts.add(new Vec4d(-0.1, -0.5, 0.1, 1.0d));
 		stackerRect2Verts.add(new Vec4d( 0.1, -0.5, 0.1, 1.0d));
 		stackerRect2Verts.add(new Vec4d( 0.1,  0.0, 0.1, 1.0d));
 
-		crusher2DVerts = new ArrayList<Vec4d>();
+		crusher2DVerts = new ArrayList<>();
 		crusher2DVerts.add(new Vec4d( 0.45, -0.45, 0.0, 1.0));
 		crusher2DVerts.add(new Vec4d(  0.0,  0.25, 0.0, 1.0));
 		crusher2DVerts.add(new Vec4d(-0.45, -0.45, 0.0, 1.0));
 
-		crusher2DLines = new ArrayList<Vec4d>();
+		crusher2DLines = new ArrayList<>();
 		crusher2DLines.add(new Vec4d(-0.45, -0.30, 0.0, 1.0));
 		crusher2DLines.add(new Vec4d(-0.10,  0.25, 0.0, 1.0));
 

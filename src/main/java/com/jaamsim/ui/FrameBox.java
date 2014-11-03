@@ -51,7 +51,7 @@ public class FrameBox extends JFrame {
 	private static final UIUpdater uiUpdater = new UIUpdater();
 
 	static {
-		allInstances = new ArrayList<FrameBox>();
+		allInstances = new ArrayList<>();
 
 		boldFont = UIManager.getDefaults().getFont("TabbedPane.font").deriveFont(Font.BOLD);
 
@@ -72,7 +72,7 @@ public class FrameBox extends JFrame {
 	}
 
 	public static void clear() {
-		ArrayList<FrameBox> boxes = new ArrayList<FrameBox>(allInstances);
+		ArrayList<FrameBox> boxes = new ArrayList<>(allInstances);
 		for (FrameBox each : boxes) {
 			each.dispose();
 		}
@@ -107,7 +107,7 @@ public class FrameBox extends JFrame {
 	private static class CloseListener extends WindowAdapter {
 		final KeywordIndex kw;
 		public CloseListener(String keyword) {
-			ArrayList<String> arg = new ArrayList<String>(1);
+			ArrayList<String> arg = new ArrayList<>(1);
 			arg.add("FALSE");
 			kw = new KeywordIndex(keyword, arg, null);
 		}

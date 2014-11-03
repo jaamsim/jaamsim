@@ -48,7 +48,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 
 	@Override
 	public ArrayList<String> getValidOptions() {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		for (T each: Entity.getClonesOfIterator(entSubClass)) {
 			if (each.testFlag(Entity.FLAG_GENERATED))
 				continue;

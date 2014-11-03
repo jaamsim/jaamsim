@@ -28,7 +28,7 @@ import com.jaamsim.input.InputErrorException;
 public class EventRecorder implements EventTraceListener {
 	private BufferedWriter outputStream;
 	private int traceLevel;
-	private final ArrayList<String> traces = new ArrayList<String>();
+	private final ArrayList<String> traces = new ArrayList<>();
 
 	public EventRecorder(String fileName) {
 		traceLevel = 0;

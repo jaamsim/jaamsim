@@ -484,7 +484,7 @@ implements TableCellEditor, ActionListener {
 	public DropDownMenuEditor(JTable table, ArrayList<String> aList) {
 		super(table);
 
-		dropDown = new JComboBox<String>();
+		dropDown = new JComboBox<>();
 		dropDown.setEditable(true);
 		DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) dropDown.getModel();
 
@@ -600,7 +600,7 @@ implements TableCellEditor, ActionListener {
 			dialog.getContentPane().add("South", okButton);
 			dialog.setIconImage(GUIFrame.getWindowIcon());
 			dialog.setAlwaysOnTop(true);
-			tokens = new ArrayList<String>();
+			tokens = new ArrayList<>();
 		}
 
 		// break the value into single options
@@ -630,8 +630,8 @@ implements TableCellEditor, ActionListener {
 	// Set the items in the list
 	public void setListData(ArrayList<String> aList) {
 		if(list == null) {
-			listModel = new DefaultListModel<JCheckBox>();
-			list = new JList<JCheckBox>(listModel);
+			listModel = new DefaultListModel<>();
+			list = new JList<>(listModel);
 
 			// render items as JCheckBox and make clicking work for them
 			list.setCellRenderer( new ListRenderer() );
@@ -792,7 +792,7 @@ private static class CategoryInputs {
 
 	private static ArrayList<CategoryInputs> getInputs(Entity ent) {
 		// create a list of Inputs sorted by category
-		ArrayList<Input<?>> sortedInputs = new ArrayList<Input<?>>();
+		ArrayList<Input<?>> sortedInputs = new ArrayList<>();
 		for (Input<?> in : ent.getEditableInputs()) {
 			if (in.getHidden())
 				continue;
@@ -809,8 +809,8 @@ private static class CategoryInputs {
 		}
 
 		String cat = "";
-		ArrayList<CategoryInputs> catInputsList = new ArrayList<CategoryInputs>();
-		ArrayList<Input<?>> inputs = new ArrayList<Input<?>>();
+		ArrayList<CategoryInputs> catInputsList = new ArrayList<>();
+		ArrayList<Input<?>> inputs = new ArrayList<>();
 
 		// assuming that editable inputs of the same category are adjacent
 		for (Input<?> in : sortedInputs) {
@@ -821,7 +821,7 @@ private static class CategoryInputs {
 			// new category (the previous category inputs is done so add it to the list)
 			if ( !cat.equals(in.getCategory()) ) {
 				add(catInputsList, inputs, cat);
-				inputs = new ArrayList<Input<?>>();
+				inputs = new ArrayList<>();
 				cat = in.getCategory();
 			}
 			inputs.add(in);

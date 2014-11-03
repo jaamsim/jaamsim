@@ -37,7 +37,7 @@ private final EntityListInput<Entity> entities;
 	startTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 	this.addInput(startTime);
 
-	entities = new EntityListInput<Entity>(Entity.class, "Entities", "Key Inputs", new ArrayList<Entity>(0));
+	entities = new EntityListInput<>(Entity.class, "Entities", "Key Inputs", new ArrayList<Entity>(0));
 	this.addInput(entities);
 }
 

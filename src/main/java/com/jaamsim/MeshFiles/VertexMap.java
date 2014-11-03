@@ -27,8 +27,8 @@ import com.jaamsim.math.Vec3d;
  */
 public class VertexMap {
 
-	private HashMap<Vertex, Integer> vertMap = new HashMap<Vertex, Integer>();
-	private ArrayList<Vertex> verts = new ArrayList<Vertex>();
+	private HashMap<Vertex, Integer> vertMap = new HashMap<>();
+	private ArrayList<Vertex> verts = new ArrayList<>();
 
 	/**
 	 * Checks if the current vertex is unique. Returns the existing index if present, or adds the vertex if unique

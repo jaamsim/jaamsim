@@ -34,7 +34,7 @@ public class Release extends LinkedComponent {
 	private final IntegerListInput numberOfUnitsList;
 
 	{
-		resourceList = new EntityListInput<Resource>(Resource.class, "Resource", "Key Inputs", null);
+		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
 		this.addInput( resourceList);
 
 		IntegerVector defNum = new IntegerVector();

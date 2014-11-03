@@ -66,7 +66,7 @@ public abstract class Unit extends Entity {
 
 
 	private static final HashMap<Class<? extends Unit>, String>
-		siUnit = new HashMap<Class<? extends Unit>, String>();
+		siUnit = new HashMap<>();
 
 	public static final void setSIUnit(Class<? extends Unit> unitType, String si) {
 		siUnit.put(unitType, si);
@@ -86,12 +86,12 @@ public abstract class Unit extends Entity {
 	}
 
 	private static final HashMap<Class<? extends Unit>, EntityInput<? extends Unit>>
-		prefUnit = new HashMap<Class<? extends Unit>, EntityInput<? extends Unit>>();
+		prefUnit = new HashMap<>();
 
 	private static final <T extends Unit> EntityInput<? extends Unit> getPrefInput(Class<T> type) {
 		EntityInput<? extends Unit> inp = prefUnit.get(type);
 		if (inp == null) {
-			inp = new EntityInput<T>(type, "PreferredUnit", "Key Inputs", null);
+			inp = new EntityInput<>(type, "PreferredUnit", "Key Inputs", null);
 			prefUnit.put(type, inp);
 		}
 		return inp;
@@ -171,8 +171,8 @@ public abstract class Unit extends Entity {
 	private static HashMap<DivPair, Class<? extends Unit>> divRules;
 
 	static {
-		multRules = new HashMap<MultPair, Class<? extends Unit>>();
-		divRules = new HashMap<DivPair, Class<? extends Unit>>();
+		multRules = new HashMap<>();
+		divRules = new HashMap<>();
 
 		addMultRule(DistanceUnit.class, DistanceUnit.class,          AreaUnit.class);
 		addMultRule(DistanceUnit.class,     AreaUnit.class,        VolumeUnit.class);

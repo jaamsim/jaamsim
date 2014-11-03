@@ -189,13 +189,13 @@ public class GraphModel extends DisplayModel {
 		rightMargin.setUnitType(DimensionlessUnit.class);
 		this.addInput(rightMargin);
 
-		titleTextModel = new EntityInput<TextModel>(TextModel.class, "TitleTextModel", "Key Inputs", null);
+		titleTextModel = new EntityInput<>(TextModel.class, "TitleTextModel", "Key Inputs", null);
 		this.addInput(titleTextModel);
 
-		axisTitleTextModel = new EntityInput<TextModel>(TextModel.class, "AxisTitleTextModel", "Key Inputs", null);
+		axisTitleTextModel = new EntityInput<>(TextModel.class, "AxisTitleTextModel", "Key Inputs", null);
 		this.addInput(axisTitleTextModel);
 
-		labelTextModel = new EntityInput<TextModel>(TextModel.class, "LabelTextModel", "Key Inputs", null);
+		labelTextModel = new EntityInput<>(TextModel.class, "LabelTextModel", "Key Inputs", null);
 		this.addInput(labelTextModel);
 
 		graphColor = new ColourInput("GraphColor", "Key Inputs", ColourInput.getColorWithName("ivory"));
@@ -408,7 +408,7 @@ public class GraphModel extends DisplayModel {
 				yVals[i] = MathUtils.bound((series.yValues[i] - yMinimum) / yRange, 0, 1) - 0.5;
 			}
 
-			ArrayList<Vec4d> seriesPoints = new ArrayList<Vec4d>((series.numPoints-1)*2);
+			ArrayList<Vec4d> seriesPoints = new ArrayList<>((series.numPoints-1)*2);
 			for (int i = 0; i < series.numPoints - 1; i++) {
 				seriesPoints.add(new Vec4d(xVals[i  ], yVals[i  ], zBump, 1.0d));
 				seriesPoints.add(new Vec4d(xVals[i+1], yVals[i+1], zBump, 1.0d));
@@ -450,7 +450,7 @@ public class GraphModel extends DisplayModel {
 		private void drawXAxis(ArrayList<RenderProxy> out) {
 
 			String xAxisFormat = graphObservee.getXAxisLabelFormat();
-			ArrayList<Vec4d> tickPoints = new ArrayList<Vec4d>();
+			ArrayList<Vec4d> tickPoints = new ArrayList<>();
 
 			double xAxisFactor = 1.0;
 			if( graphObservee.getXAxisUnit() != null )
@@ -510,7 +510,7 @@ public class GraphModel extends DisplayModel {
 			if( yAxisUnit != null )
 				yAxisFactor = yAxisUnit.getConversionFactorToSI();
 
-			ArrayList<Vec4d> tickPoints = new ArrayList<Vec4d>();
+			ArrayList<Vec4d> tickPoints = new ArrayList<>();
 
 			double minYLabelXPos = graphOrigin.x;
 
@@ -562,7 +562,7 @@ public class GraphModel extends DisplayModel {
 
 		private void drawSecondaryYAxis(ArrayList<RenderProxy> out) {
 
-			ArrayList<Vec4d> tickPoints = new ArrayList<Vec4d>();
+			ArrayList<Vec4d> tickPoints = new ArrayList<>();
 
 			// Secondary Y-Axis Labels and Tick Marks
 			String secYAxisLabelFormat = graphObservee.getSecondaryYAxisLabelFormat();
@@ -627,7 +627,7 @@ public class GraphModel extends DisplayModel {
 			for (int i = 0; i < xLines.size(); ++i) {
 				double xPos = (xLines.get(i) - xMin) / xRange - 0.5;
 
-				ArrayList<Vec4d> linePoints = new ArrayList<Vec4d>(2);
+				ArrayList<Vec4d> linePoints = new ArrayList<>(2);
 
 				linePoints.add(new Vec4d(xPos, -0.5, zBump, 1.0d));
 				linePoints.add(new Vec4d(xPos,  0.5, zBump, 1.0d));
@@ -656,7 +656,7 @@ public class GraphModel extends DisplayModel {
 
 			for (int i = 0; i < yLines.size(); ++i) {
 				double yPos = (yLines.get(i) - yMin) / yRange - 0.5;
-				ArrayList<Vec4d> linePoints = new ArrayList<Vec4d>(2);
+				ArrayList<Vec4d> linePoints = new ArrayList<>(2);
 
 				linePoints.add(new Vec4d(-0.5, yPos, zBump, 1.0d));
 				linePoints.add(new Vec4d( 0.5, yPos, zBump, 1.0d));

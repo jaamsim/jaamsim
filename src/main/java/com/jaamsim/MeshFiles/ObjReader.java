@@ -74,12 +74,12 @@ public class ObjReader {
 
 	private Material parsingMat;
 
-	private HashMap<String, Material> materialMap = new HashMap<String, Material>();
+	private HashMap<String, Material> materialMap = new HashMap<>();
 
-	private ArrayList<Vec3d> vertices = new ArrayList<Vec3d>();
-	private ArrayList<Vec2d> texCoords = new ArrayList<Vec2d>();
-	private ArrayList<Vec3d> normals = new ArrayList<Vec3d>();
-	private ArrayList<FaceVert> faces = new ArrayList<FaceVert>();
+	private ArrayList<Vec3d> vertices = new ArrayList<>();
+	private ArrayList<Vec2d> texCoords = new ArrayList<>();
+	private ArrayList<Vec3d> normals = new ArrayList<>();
+	private ArrayList<FaceVert> faces = new ArrayList<>();
 
 	private String activeMat = null;
 
@@ -87,7 +87,7 @@ public class ObjReader {
 
 	private int lineNum = 0;
 
-	private HashMap<String, Integer> loadedMaterials = new HashMap<String, Integer>();
+	private HashMap<String, Integer> loadedMaterials = new HashMap<>();
 
 	public ObjReader(URL asset) {
 		contentURL = asset;

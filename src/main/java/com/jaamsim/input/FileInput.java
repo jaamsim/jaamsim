@@ -86,8 +86,8 @@ public class FileInput extends Input<URI> {
 
 	public static ArrayList<ArrayList<String>> getTokensFromURI(URI uri){
 
-		ArrayList<ArrayList<String>> tokens = new ArrayList<ArrayList<String>>();
-		ArrayList<String> rec = new ArrayList<String>();
+		ArrayList<ArrayList<String>> tokens = new ArrayList<>();
+		ArrayList<String> rec = new ArrayList<>();
 
 		BufferedReader b = null;
 		try {
@@ -106,7 +106,7 @@ public class FileInput extends Input<URI> {
 					continue;
 
 				tokens.add(rec);
-				rec = new ArrayList<String>();
+				rec = new ArrayList<>();
 			}
 			b.close();
 			return tokens;

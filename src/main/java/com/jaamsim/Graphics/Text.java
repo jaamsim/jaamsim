@@ -62,10 +62,10 @@ public class Text extends DisplayEntity {
 		formatText = new StringInput("Format", "Key Inputs", "abc");
 		this.addInput(formatText);
 
-		outputName = new OutputInput<Object>(Object.class, "OutputName", "Key Inputs", null);
+		outputName = new OutputInput<>(Object.class, "OutputName", "Key Inputs", null);
 		this.addInput(outputName);
 
-		unit = new EntityInput<Unit>( Unit.class, "Unit", "Key Inputs", null);
+		unit = new EntityInput<>( Unit.class, "Unit", "Key Inputs", null);
 		this.addInput(unit);
 
 		textHeight = new ValueInput("TextHeight", "Key Inputs", 0.3d);

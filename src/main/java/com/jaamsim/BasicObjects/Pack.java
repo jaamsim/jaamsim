@@ -50,10 +50,10 @@ public class Pack extends LinkedService {
 	private int numberInserted;   // Number of entities inserted to the EntityContainer
 
 	{
-		prototypeEntityContainer = new EntityInput<EntityContainer>(EntityContainer.class, "PrototypeEntityContainer", "Key Inputs", null);
+		prototypeEntityContainer = new EntityInput<>(EntityContainer.class, "PrototypeEntityContainer", "Key Inputs", null);
 		this.addInput(prototypeEntityContainer);
 
-		waitQueue = new EntityInput<Queue>(Queue.class, "WaitQueue", "Key Inputs", null);
+		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput(waitQueue);
 
 		numberOfEntities = new IntegerInput("NumberOfEntities", "Key Inputs", 1);

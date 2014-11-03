@@ -141,7 +141,7 @@ private static class SubLine {
 	public ConvexHull _hull;
 
 	public int _numVerts;
-	public HashMap<Integer, Integer> vaoMap = new HashMap<Integer, Integer>();
+	public HashMap<Integer, Integer> vaoMap = new HashMap<>();
 }
 
 private MeshData data;
@@ -166,9 +166,9 @@ public MeshProto(MeshData data, boolean flattenBuffers, boolean useZeroBuffer) {
 	this.flattenBuffers = flattenBuffers;
 	this.useZeroBuffer = useZeroBuffer;
 	this.data = data;
-	_subMeshes = new ArrayList<SubMesh>();
-	_subLines = new ArrayList<SubLine>();
-	_materials = new ArrayList<Material>();
+	_subMeshes = new ArrayList<>();
+	_subLines = new ArrayList<>();
+	_materials = new ArrayList<>();
 
 	usedShaders = data.getUsedMeshShaders();
 }
@@ -198,7 +198,7 @@ public void render(int contextID, Renderer renderer,
 	if (actions != null) {
 		ArrayList<Armature> arms = data.getArmatures();
 		// Run the actions through all armatures attached to this mesh
-		poses = new ArrayList<ArrayList<Mat4d>>(arms.size());
+		poses = new ArrayList<>(arms.size());
 		for (int i = 0; i < arms.size(); ++i) {
 			Armature arm = arms.get(i);
 			ArrayList<Mat4d> pose = arm.getPose(actions);
@@ -282,7 +282,7 @@ public void renderTransparent(int contextID, Renderer renderer,
 
 	Mat4d subModelView = new Mat4d();
 
-	ArrayList<TransSortable> transparents = new ArrayList<TransSortable>();
+	ArrayList<TransSortable> transparents = new ArrayList<>();
 	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
 		MeshData.SubMeshInstance subInst = data.getSubMeshInstances().get(i);
 
@@ -314,7 +314,7 @@ public void renderTransparent(int contextID, Renderer renderer,
 	if (actions != null) {
 		ArrayList<Armature> arms = data.getArmatures();
 		// Run the actions through all armatures attached to this mesh
-		poses = new ArrayList<ArrayList<Mat4d>>(arms.size());
+		poses = new ArrayList<>(arms.size());
 		for (int i = 0; i < arms.size(); ++i) {
 			Armature arm = arms.get(i);
 			ArrayList<Mat4d> pose = arm.getPose(actions);
@@ -690,7 +690,7 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	sub.vaoMaps = new HashMap[Renderer.NUM_MESH_SHADERS]; // This would generate a warning
 	for (int i = 0; i < usedShaders.length; ++i) {
 		int shaderID = usedShaders[i];
-		sub.vaoMaps[shaderID] = new HashMap<Integer, Integer>();
+		sub.vaoMaps[shaderID] = new HashMap<>();
 	}
 
 	int[] is = new int[3];

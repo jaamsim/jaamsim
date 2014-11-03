@@ -62,7 +62,7 @@ public class SampleInput extends Input<SampleProvider> {
 
 	@Override
 	public ArrayList<String> getValidOptions() {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		for (Entity each : Entity.getClonesOfIterator(Entity.class, SampleProvider.class)) {
 			SampleProvider sp = (SampleProvider)each;
 			if (sp.getUnitType() == unitType)

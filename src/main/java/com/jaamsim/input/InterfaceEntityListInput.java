@@ -58,7 +58,7 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 
 	@Override
 	public ArrayList<String> getValidOptions() {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		for(Entity each: Entity.getClonesOfIterator(Entity.class, entClass) ) {
 			if(each.testFlag(Entity.FLAG_GENERATED))
 				continue;

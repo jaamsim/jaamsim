@@ -61,7 +61,7 @@ public class ExpTokenizer {
 	}
 
 	// List of 'long' symbols to check for, in order
-	private static ArrayList<String> longSymbols = new ArrayList<String>();
+	private static ArrayList<String> longSymbols = new ArrayList<>();
 
 	static {
 		longSymbols.add("==");
@@ -75,7 +75,7 @@ public class ExpTokenizer {
 	public static ArrayList<Token> tokenize(String input) throws Error {
 		int pos = 0;
 
-		ArrayList<Token> res = new ArrayList<Token>();
+		ArrayList<Token> res = new ArrayList<>();
 
 		while (pos < input.length()) {
 			char c = input.charAt(pos);

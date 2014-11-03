@@ -93,7 +93,7 @@ public final class EventManager {
 		secsPerTick = 1.0d / ticksPerSecond;
 
 		eventTree = new EventTree();
-		condEvents = new ArrayList<ConditionalEvent>();
+		condEvents = new ArrayList<>();
 
 		executeEvents = false;
 		processRunning = false;

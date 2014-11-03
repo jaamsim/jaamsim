@@ -42,7 +42,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		key1Class = k1Class;
 		key2Class = k2Class;
 		valClass = vClass;
-		hashMap = new HashMap<K1,HashMap<K2,V>>();
+		hashMap = new HashMap<>();
 	}
 
 	private String unitString = "";
@@ -63,7 +63,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 	}
 
 	private void innerParse(KeywordIndex kw) {
-		ArrayList<String> input = new ArrayList<String>(kw.numArgs());
+		ArrayList<String> input = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 
@@ -91,7 +91,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		for( int i = 0; i < list.size(); i++ ) {
 			HashMap<K2,V> h1 = hashMap.get( list.get( i ) );
 			if( h1 == null ) {
-				h1 = new HashMap<K2,V>();
+				h1 = new HashMap<>();
 				hashMap.put( list.get( i ), h1 );
 			}
 			for( int j = 0; j < list2.size(); j++ ) {

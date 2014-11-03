@@ -37,7 +37,7 @@ public class SetGraphics extends LinkedComponent {
 	private final SampleExpInput choice;
 
 	{
-		graphicsList = new EntityListInput<DisplayEntity>( DisplayEntity.class, "GraphicsList", "Key Inputs", null);
+		graphicsList = new EntityListInput<>( DisplayEntity.class, "GraphicsList", "Key Inputs", null);
 		this.addInput( graphicsList);
 
 		choice = new SampleExpInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));

@@ -54,7 +54,7 @@ public abstract class DisplayModel extends Entity {
 	}
 
 	{
-		visibleViews = new EntityListInput<View>(View.class, "VisibleViews", "Basic Graphics", null);
+		visibleViews = new EntityListInput<>(View.class, "VisibleViews", "Basic Graphics", null);
 		this.addInput(visibleViews);
 
 		drawRange = new ValueListInput("DrawRange", "Basic Graphics", defRange);

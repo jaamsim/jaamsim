@@ -21,7 +21,7 @@ public class StringChoiceInput extends IntegerInput {
 	private ArrayList<String> choices;
 
 	{
-		choices = new ArrayList<String>();
+		choices = new ArrayList<>();
 	}
 
 	public StringChoiceInput(String key, String cat, Integer def) {

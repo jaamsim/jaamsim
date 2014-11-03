@@ -106,7 +106,7 @@ public class Renderer implements GLAnimatorControl {
 	private Shader[] meshShaders = new Shader[NUM_MESH_SHADERS];
 
 	private GLContext sharedContext = null;
-	Map<Integer, Integer> sharedVaoMap = new HashMap<Integer, Integer>();
+	Map<Integer, Integer> sharedVaoMap = new HashMap<>();
 	int sharedContextID = getAssetID();
 	GLWindow dummyWindow;
 	private GLCapabilities caps = null;
@@ -125,7 +125,7 @@ public class Renderer implements GLAnimatorControl {
 	private final HashMap<Integer, RenderWindow> openWindows;
 	private final HashMap<Integer, Camera> cameras;
 
-	private final Queue<RenderMessage> renderMessages = new ArrayDeque<RenderMessage>();
+	private final Queue<RenderMessage> renderMessages = new ArrayDeque<>();
 
 	private final AtomicBoolean displayNeeded = new AtomicBoolean(true);
 	private final AtomicBoolean initialized = new AtomicBoolean(false);
@@ -141,7 +141,7 @@ public class Renderer implements GLAnimatorControl {
 	private TessFontKey defaultBoldFontKey = new TessFontKey(Font.SANS_SERIF, Font.BOLD);
 
 	private final Object sceneLock = new Object();
-	private ArrayList<RenderProxy> proxyScene = new ArrayList<RenderProxy>();
+	private ArrayList<RenderProxy> proxyScene = new ArrayList<>();
 
 	private boolean allowDelayedTextures;
 	private double sceneTimeMS;
@@ -164,18 +164,18 @@ public class Renderer implements GLAnimatorControl {
 	private MeshProto badProto;
 
 	// A cache of the current scene, needed by the individual windows to render
-	private ArrayList<Renderable> currentScene = new ArrayList<Renderable>();
-	private ArrayList<OverlayRenderable> currentOverlay = new ArrayList<OverlayRenderable>();
+	private ArrayList<Renderable> currentScene = new ArrayList<>();
+	private ArrayList<OverlayRenderable> currentOverlay = new ArrayList<>();
 
 	public Renderer(boolean safeGraphics) throws RenderException {
 		this.safeGraphics = safeGraphics;
-		protoCache = new HashMap<MeshProtoKey, MeshProto>();
-		fontCache = new HashMap<TessFontKey, TessFont>();
+		protoCache = new HashMap<>();
+		fontCache = new HashMap<>();
 
 		exceptionLogger = new ExceptionLogger(1); // Print the call stack on the first exception of any kind
 
-		openWindows = new HashMap<Integer, RenderWindow>();
-		cameras = new HashMap<Integer, Camera>();
+		openWindows = new HashMap<>();
+		cameras = new HashMap<>();
 
 		renderThread = new Thread(new Runnable() {
 			@Override
@@ -329,7 +329,7 @@ public class Renderer implements GLAnimatorControl {
 				// Defensive copy the window list (in case a window is closed while we render)
 				HashMap<Integer, RenderWindow> winds;
 				synchronized (openWindows) {
-					winds = new HashMap<Integer, RenderWindow>(openWindows);
+					winds = new HashMap<>(openWindows);
 				}
 				if (!isPaused) {
 					for (RenderWindow wind : winds.values()) {
@@ -463,7 +463,7 @@ public class Renderer implements GLAnimatorControl {
 	public ArrayList<Integer> getOpenWindowIDs() {
 		synchronized(openWindows) {
 
-			ArrayList<Integer> ret = new ArrayList<Integer>();
+			ArrayList<Integer> ret = new ArrayList<>();
 			for (int id : openWindows.keySet()) {
 				ret.add(id);
 			}
@@ -653,7 +653,7 @@ private String getMeshShaderDefines(int i) {
  * Create and compile all the shaders
  */
 private void initShaders(GL2GL3 gl) throws RenderException {
-	shaders = new EnumMap<ShaderHandle, Shader>(ShaderHandle.class);
+	shaders = new EnumMap<>(ShaderHandle.class);
 	String vert, frag;
 
 	vert = "/resources/shaders/font.vert";
@@ -703,7 +703,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
  * Create and compile all the shaders
  */
 private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
-	shaders = new EnumMap<ShaderHandle, Shader>(ShaderHandle.class);
+	shaders = new EnumMap<>(ShaderHandle.class);
 	String vert, frag;
 
 	vert = "/resources/shaders_core/font.vert";
@@ -897,8 +897,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		synchronized (sceneLock) {
 			long sceneStart = System.nanoTime();
 
-			currentScene = new ArrayList<Renderable>();
-			currentOverlay = new ArrayList<OverlayRenderable>();
+			currentScene = new ArrayList<>();
+			currentOverlay = new ArrayList<>();
 
 			for (RenderProxy proxy : proxyScene) {
 				proxy.collectRenderables(this, currentScene);
@@ -928,7 +928,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	public List<PickResult> pick(Ray pickRay, int viewID, boolean precise) {
 
 		synchronized(openWindows) {
-			ArrayList<PickResult> ret = new ArrayList<PickResult>();
+			ArrayList<PickResult> ret = new ArrayList<>();
 
 			if (currentScene == null) {
 				return ret;
@@ -1187,8 +1187,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				allowDelayedTextures = true;
 
 				// Cache the current scene. This way we don't need to lock it for the full render
-				ArrayList<Renderable> scene = new ArrayList<Renderable>(currentScene.size());
-				ArrayList<OverlayRenderable> overlay = new ArrayList<OverlayRenderable>(currentOverlay.size());
+				ArrayList<Renderable> scene = new ArrayList<>(currentScene.size());
+				ArrayList<OverlayRenderable> overlay = new ArrayList<>(currentOverlay.size());
 				synchronized(sceneLock) {
 					scene.addAll(currentScene);
 					overlay.addAll(currentOverlay);
@@ -1387,7 +1387,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	 */
 	public Future<BufferedImage> renderOffscreen(ArrayList<RenderProxy> scene, int viewID, CameraInfo camInfo,
 	                                   int width, int height, Runnable runWhenDone, OffscreenTarget target) {
-		Future<BufferedImage> result = new Future<BufferedImage>(runWhenDone);
+		Future<BufferedImage> result = new Future<>(runWhenDone);
 
 		Camera cam = new Camera(camInfo, (double)width/(double)height);
 
@@ -1536,8 +1536,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			ArrayList<OverlayRenderable> overlay;
 
 			if (message.scene != null) {
-				renderables = new ArrayList<Renderable>();
-				overlay = new ArrayList<OverlayRenderable>();
+				renderables = new ArrayList<>();
+				overlay = new ArrayList<>();
 				for (RenderProxy p : message.scene) {
 					p.collectRenderables(this, renderables);
 					p.collectOverlayRenderables(this, overlay);
@@ -1545,8 +1545,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			} else {
 				// Use the current current scene if one is not provided
 				synchronized(sceneLock) {
-					renderables = new ArrayList<Renderable>(currentScene);
-					overlay = new ArrayList<OverlayRenderable>(currentOverlay);
+					renderables = new ArrayList<>(currentScene);
+					overlay = new ArrayList<>(currentOverlay);
 				}
 			}
 
@@ -1653,7 +1653,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 		// The 'height' of a pixel 1 unit from the viewer
 		double unitPixelHeight = 2 * Math.tan(cam.getFOV()/2.0) / height;
 
-		ArrayList<TransSortable> transparents = new ArrayList<TransSortable>();
+		ArrayList<TransSortable> transparents = new ArrayList<>();
 
 		if (scene == null)
 			return;

@@ -34,7 +34,7 @@ public class OutputBox extends FrameBox {
 	private Entity currentEntity;
 	OutputTableModel tableModel;
 
-	private final ArrayList<Object> entries = new ArrayList<Object>();
+	private final ArrayList<Object> entries = new ArrayList<>();
 
 	public OutputBox() {
 		super( "Output Viewer" );

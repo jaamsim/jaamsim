@@ -76,7 +76,7 @@ public class ColParser {
 	static final List<String> BOOLEAN_ARRAY_TAGS;
 
 	static {
-		DOUBLE_ARRAY_TAGS = new ArrayList<String>();
+		DOUBLE_ARRAY_TAGS = new ArrayList<>();
 		DOUBLE_ARRAY_TAGS.add("float_array");
 		DOUBLE_ARRAY_TAGS.add("float");
 		DOUBLE_ARRAY_TAGS.add("rotate");
@@ -87,18 +87,18 @@ public class ColParser {
 		DOUBLE_ARRAY_TAGS.add("color");
 		DOUBLE_ARRAY_TAGS.add("bind_shape_matrix");
 
-		INT_ARRAY_TAGS = new ArrayList<String>();
+		INT_ARRAY_TAGS = new ArrayList<>();
 		INT_ARRAY_TAGS.add("int_array");
 		INT_ARRAY_TAGS.add("vcount");
 		INT_ARRAY_TAGS.add("p");
 		INT_ARRAY_TAGS.add("h");
 		INT_ARRAY_TAGS.add("v");
 
-		STRING_ARRAY_TAGS = new ArrayList<String>();
+		STRING_ARRAY_TAGS = new ArrayList<>();
 		STRING_ARRAY_TAGS.add("Name_array");
 		STRING_ARRAY_TAGS.add("IDREF_array");
 
-		BOOLEAN_ARRAY_TAGS = new ArrayList<String>();
+		BOOLEAN_ARRAY_TAGS = new ArrayList<>();
 		BOOLEAN_ARRAY_TAGS.add("boolean_array");
 
 	}
@@ -123,7 +123,7 @@ public class ColParser {
 	}
 
 	private static class VisualScene {
-		public final ArrayList<SceneNode> nodes = new ArrayList<SceneNode>();
+		public final ArrayList<SceneNode> nodes = new ArrayList<>();
 	}
 
 	private static class Controller {
@@ -134,32 +134,32 @@ public class ColParser {
 	private static class Geometry {
 		// Note: the face information is lazily baked when it is first referenced because that is the first time we
 		// know which texture coordinate set to use (then error if it is later referenced with different coordinate sets)
-		public final ArrayList<SubMeshDesc> faceSubDescs = new ArrayList<SubMeshDesc>();
-		public final ArrayList<LineSubGeo> lineSubGeos = new ArrayList<LineSubGeo>();
+		public final ArrayList<SubMeshDesc> faceSubDescs = new ArrayList<>();
+		public final ArrayList<LineSubGeo> lineSubGeos = new ArrayList<>();
 	}
 
 	private final URL _contextURL;
 
-	private final HashMap<String, Geometry> _geos = new HashMap<String, Geometry>();
-	private final HashMap<String, String> _images = new HashMap<String, String>(); // Maps image names to files
-	private final HashMap<String, String> _materials = new HashMap<String, String>(); // Maps materials to effects
-	private final HashMap<String, Effect> _effects = new HashMap<String, Effect>(); // List of known effects
-	private final HashMap<String, SceneNode> _namedNodes = new HashMap<String, SceneNode>();
-	private final HashMap<String, VisualScene> _visualScenes = new HashMap<String, VisualScene>();
-	private final HashMap<String, Controller> _controllers = new HashMap<String, Controller>();
+	private final HashMap<String, Geometry> _geos = new HashMap<>();
+	private final HashMap<String, String> _images = new HashMap<>(); // Maps image names to files
+	private final HashMap<String, String> _materials = new HashMap<>(); // Maps materials to effects
+	private final HashMap<String, Effect> _effects = new HashMap<>(); // List of known effects
+	private final HashMap<String, SceneNode> _namedNodes = new HashMap<>();
+	private final HashMap<String, VisualScene> _visualScenes = new HashMap<>();
+	private final HashMap<String, Controller> _controllers = new HashMap<>();
 
 	// This stack is used to track node loops
-	private final  Stack<SceneNode> _nodeStack = new Stack<SceneNode>();
+	private final  Stack<SceneNode> _nodeStack = new Stack<>();
 
 	// This list tracks the combinations of sub geometries and effects loaded in the mesh proto and defines an implicit
 	// index into the mesh proto. This should probably be made more explicit later
-	private final ArrayList<SubMeshDesc> _loadedFaceGeos = new ArrayList<SubMeshDesc>();
-	private final ArrayList<Effect> _loadedEffects = new ArrayList<Effect>();
-	private final ArrayList<LineGeoEffectPair> _loadedLineGeos = new ArrayList<LineGeoEffectPair>();
+	private final ArrayList<SubMeshDesc> _loadedFaceGeos = new ArrayList<>();
+	private final ArrayList<Effect> _loadedEffects = new ArrayList<>();
+	private final ArrayList<LineGeoEffectPair> _loadedLineGeos = new ArrayList<>();
 
 	private MeshData _finalData = new MeshData(keepRuntimeData);
 
-	private HashMap<String, Vec4d[]> _dataSources = new HashMap<String, Vec4d[]>();
+	private HashMap<String, Vec4d[]> _dataSources = new HashMap<>();
 
 	private XmlNode _colladaNode;
 	private XmlParser _parser;
@@ -563,7 +563,7 @@ public class ColParser {
 
 		scanNodeForImages(profCommon);
 
-		HashMap<String, XmlNode> paramMap = new HashMap<String, XmlNode>();
+		HashMap<String, XmlNode> paramMap = new HashMap<>();
 
 		// Start by building a table of all params
 		for (XmlNode child : profCommon.children()) {
@@ -1593,7 +1593,7 @@ public class ColParser {
 	private static class SubMeshDesc {
 		public DataDesc posDesc;
 		public DataDesc normDesc;
-		public HashMap<Integer, DataDesc> texCoordMap = new HashMap<Integer, DataDesc>();
+		public HashMap<Integer, DataDesc> texCoordMap = new HashMap<>();
 		public Integer usedTexSet = null;
 		public int stride;
 		public String material;
@@ -1606,7 +1606,7 @@ public class ColParser {
 	 */
 	private static class GeoInstInfo {
 		public String geoName;
-		public final Map<String, String> materialMap = new HashMap<String, String>();
+		public final Map<String, String> materialMap = new HashMap<>();
 		public Integer usedTexSet = null;
 	}
 
@@ -1620,9 +1620,9 @@ public class ColParser {
 		public String id;
 		public final Mat4d trans = new Mat4d();
 
-		public final ArrayList<SceneNode> subNodes = new ArrayList<SceneNode>();
-		public final ArrayList<String> subInstanceNames = new ArrayList<String>();
-		public final ArrayList<GeoInstInfo> subGeo = new ArrayList<GeoInstInfo>();
+		public final ArrayList<SceneNode> subNodes = new ArrayList<>();
+		public final ArrayList<String> subInstanceNames = new ArrayList<>();
+		public final ArrayList<GeoInstInfo> subGeo = new ArrayList<>();
 	}
 
 	/**

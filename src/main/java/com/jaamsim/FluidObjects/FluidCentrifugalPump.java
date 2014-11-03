@@ -62,7 +62,7 @@ public class FluidCentrifugalPump extends FluidComponent {
 		maxPressureLossInput.setUnitType( PressureUnit.class );
 		this.addInput( maxPressureLossInput);
 
-		speedControllerInput = new EntityInput<DoubleCalculation>( DoubleCalculation.class, "SpeedController", "Key Inputs", null);
+		speedControllerInput = new EntityInput<>( DoubleCalculation.class, "SpeedController", "Key Inputs", null);
 		this.addInput( speedControllerInput);
 	}
 

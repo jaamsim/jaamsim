@@ -84,8 +84,8 @@ public class TexCache {
 		}
 	}
 
-	private final Map<String, TexEntry> _texMap = new HashMap<String, TexEntry>();
-	private final Map<String, LoadingEntry> _loadingMap = new HashMap<String, LoadingEntry>();
+	private final Map<String, TexEntry> _texMap = new HashMap<>();
+	private final Map<String, LoadingEntry> _loadingMap = new HashMap<>();
 
 	private final EntryLoaderRunner entryLoader = new EntryLoaderRunner();
 
@@ -126,7 +126,7 @@ public class TexCache {
 		}
 
 		// Scan the list of textures and load any that are ready
-		ArrayList<String> loadedStrings = new ArrayList<String>();
+		ArrayList<String> loadedStrings = new ArrayList<>();
 		for (Map.Entry<String, LoadingEntry> entry : _loadingMap.entrySet()) {
 			LoadingEntry le = entry.getValue();
 			if (le.done.get()) {
@@ -348,7 +348,7 @@ public class TexCache {
 	}
 
 	private class EntryLoaderRunner implements Runnable {
-		final ArrayList<LoadingEntry> list = new ArrayList<LoadingEntry>();
+		final ArrayList<LoadingEntry> list = new ArrayList<>();
 		private Thread loadThread = null;
 
 		@Override

@@ -39,7 +39,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		super(keyword, cat, def);
 		keyClass = kClass;
 		valClass = vClass;
-		hashMap = new HashMap<K1,V>();
+		hashMap = new HashMap<>();
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
@@ -60,7 +60,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 	}
 
 	private void innerParse(KeywordIndex kw) {
-		ArrayList<String> input = new ArrayList<String>(kw.numArgs());
+		ArrayList<String> input = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 
@@ -125,7 +125,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 
 	public ArrayList<V> getAllValues() {
 
-		ArrayList<V> values = new ArrayList<V>();
+		ArrayList<V> values = new ArrayList<>();
 
 		for( V each : hashMap.values() ) {
 			values.add(each);
@@ -136,7 +136,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 
 	public ArrayList<K1> getAllKeys() {
 
-		ArrayList<K1> keys = new ArrayList<K1>();
+		ArrayList<K1> keys = new ArrayList<>();
 
 		for( K1 each : hashMap.keySet() ) {
 			keys.add(each);

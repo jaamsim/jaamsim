@@ -125,7 +125,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 
 		// Create a tree that allows one selection at a time
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-		HashMap<String, DefaultMutableTreeNode> paletteNodes = new HashMap<String, DefaultMutableTreeNode>();
+		HashMap<String, DefaultMutableTreeNode> paletteNodes = new HashMap<>();
 		for (ObjectType type : ObjectType.getAll()) {
 			if (!type.isDragAndDrop())
 				continue;

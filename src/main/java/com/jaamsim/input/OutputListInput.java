@@ -39,7 +39,7 @@ public class OutputListInput<T> extends ListInput<ArrayList<OutputHandle>> {
 	@Override
 	public void parse(KeywordIndex kw) throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
-		ArrayList<OutputHandle> temp = new ArrayList<OutputHandle>(subArgs.size());
+		ArrayList<OutputHandle> temp = new ArrayList<>(subArgs.size());
 		for (int i = 0; i < subArgs.size(); i++) {
 			KeywordIndex subArg = subArgs.get(i);
 			Input.assertCount(subArg, 2);

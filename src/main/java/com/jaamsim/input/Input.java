@@ -409,7 +409,7 @@ public abstract class Input<T> {
 	public static ArrayList<Color4d> parseColorVector(KeywordIndex kw)
 	throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
-		ArrayList<Color4d> temp = new ArrayList<Color4d>(subArgs.size());
+		ArrayList<Color4d> temp = new ArrayList<>(subArgs.size());
 
 		for (int i = 0; i < subArgs.size(); i++) {
 			try {
@@ -908,7 +908,7 @@ public abstract class Input<T> {
 			double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
 
 			// grab all but the final argument (the unit)
-			ArrayList<String> numericData = new ArrayList<String>(data.size() - 1);
+			ArrayList<String> numericData = new ArrayList<>(data.size() - 1);
 			for (int i = 0; i < data.size() -1; i++)
 				numericData.add(data.get(i));
 
@@ -943,7 +943,7 @@ public abstract class Input<T> {
 
 	public static ArrayList<String> parseStrings(KeywordIndex kw, ArrayList<String> validList, boolean caseSensitive)
 	throws InputErrorException {
-		ArrayList<String> temp = new ArrayList<String>(kw.numArgs());
+		ArrayList<String> temp = new ArrayList<>(kw.numArgs());
 
 		for (int i = 0; i < kw.numArgs(); i++) {
 			try {
@@ -1046,7 +1046,7 @@ public abstract class Input<T> {
 
 	public static <T extends Entity> ArrayList<T> parseEntityList(KeywordIndex kw, Class<T> aClass, boolean unique)
 	throws InputErrorException {
-		ArrayList<T> temp = new ArrayList<T>(kw.numArgs());
+		ArrayList<T> temp = new ArrayList<>(kw.numArgs());
 
 		for (int i = 0; i < kw.numArgs(); i++) {
 			Entity ent = Entity.getNamedEntity(kw.getArg(i));
@@ -1082,7 +1082,7 @@ public abstract class Input<T> {
 
 	public static <T extends Entity> ArrayList<T> parseEntityList(List<String> input, Class<T> aClass, boolean unique)
 	throws InputErrorException {
-		ArrayList<T> temp = new ArrayList<T>(input.size());
+		ArrayList<T> temp = new ArrayList<>(input.size());
 
 		for (int i = 0; i < input.size(); i++) {
 			Entity ent = Entity.getNamedEntity(input.get(i));
@@ -1119,7 +1119,7 @@ public abstract class Input<T> {
 	public static <T extends Entity> ArrayList<ArrayList<T>> parseListOfEntityLists(KeywordIndex kw, Class<T> aClass, boolean unique)
 	throws InputErrorException {
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
-		ArrayList<ArrayList<T>> temp = new ArrayList<ArrayList<T>>(subArgs.size());
+		ArrayList<ArrayList<T>> temp = new ArrayList<>(subArgs.size());
 
 		for (int i = 0; i < subArgs.size(); i++) {
 			try {
@@ -1134,7 +1134,7 @@ public abstract class Input<T> {
 
 	public static <T> ArrayList<T> parseInterfaceEntityList(KeywordIndex kw, Class<T> aClass, boolean unique)
 	throws InputErrorException {
-		ArrayList<T> temp = new ArrayList<T>(kw.numArgs());
+		ArrayList<T> temp = new ArrayList<>(kw.numArgs());
 
 		for (int i = 0; i < kw.numArgs(); i++) {
 			Entity ent = Entity.getNamedEntity(kw.getArg(i));

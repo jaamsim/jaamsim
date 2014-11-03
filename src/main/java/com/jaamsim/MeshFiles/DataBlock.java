@@ -44,7 +44,7 @@ public class DataBlock {
 	public DataBlock(String name, int bufferSize) {
 		this.name = name;
 		data = new byte[bufferSize];
-		children = new ArrayList<DataBlock>();
+		children = new ArrayList<>();
 	}
 
 	/**

@@ -79,7 +79,7 @@ public class BlockReader {
 				throw new DataBlock.Error("Header CRC mismatch");
 			}
 
-			ArrayList<DataBlock> children = new ArrayList<DataBlock>();
+			ArrayList<DataBlock> children = new ArrayList<>();
 
 			BlockUtils.CRCInputStream wrappedIn = new BlockUtils.CRCInputStream(in, CHECK_PAYLOAD_CRC);
 

@@ -173,7 +173,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		xAxisTitle = new StringInput("XAxisTitle", "X-Axis", "X-Axis Title");
 		this.addInput(xAxisTitle);
 
-		xAxisUnit = new EntityInput<Unit>(Unit.class, "XAxisUnit", "X-Axis", null);
+		xAxisUnit = new EntityInput<>(Unit.class, "XAxisUnit", "X-Axis", null);
 		this.addInput(xAxisUnit);
 
 		xAxisStart = new ValueInput("XAxisStart", "X-Axis", -60.0d);
@@ -201,7 +201,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		xLines.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(xLines);
 
-		ArrayList<Color4d> defXlinesColor = new ArrayList<Color4d>(0);
+		ArrayList<Color4d> defXlinesColor = new ArrayList<>(0);
 		defXlinesColor.add(ColourInput.getColorWithName("gray50"));
 		xLinesColor = new ColorListInput("XLinesColor", "X-Axis", defXlinesColor);
 		this.addInput(xLinesColor);
@@ -212,7 +212,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		yAxisTitle = new StringInput("YAxisTitle", "Y-Axis", "Y-Axis Title");
 		this.addInput(yAxisTitle);
 
-		yAxisUnit = new EntityInput<Unit>(Unit.class, "YAxisUnit", "Y-Axis", null);
+		yAxisUnit = new EntityInput<>(Unit.class, "YAxisUnit", "Y-Axis", null);
 		this.addInput(yAxisUnit);
 
 		yAxisStart = new ValueInput("YAxisStart", "Y-Axis", 0.0);
@@ -240,7 +240,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		yLines.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(yLines);
 
-		ArrayList<Color4d> defYlinesColor = new ArrayList<Color4d>(0);
+		ArrayList<Color4d> defYlinesColor = new ArrayList<>(0);
 		defYlinesColor.add(ColourInput.getColorWithName("gray50"));
 		yLinesColor = new ColorListInput("YLinesColor", "Y-Axis", defYlinesColor);
 		this.addInput(yLinesColor);
@@ -251,7 +251,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		secondaryYAxisTitle = new StringInput("SecondaryYAxisTitle", "Secondary Y-Axis", "Secondary Y-Axis Title");
 		this.addInput(secondaryYAxisTitle);
 
-		secondaryYAxisUnit = new EntityInput<Unit>(Unit.class, "SecondaryYAxisUnit", "Secondary Y-Axis", null);
+		secondaryYAxisUnit = new EntityInput<>(Unit.class, "SecondaryYAxisUnit", "Secondary Y-Axis", null);
 		this.addInput(secondaryYAxisUnit);
 
 		secondaryYAxisStart = new ValueInput("SecondaryYAxisStart", "Secondary Y-Axis", 0.0);
@@ -273,8 +273,8 @@ public abstract class GraphBasics extends DisplayEntity {
 
 	public GraphBasics() {
 
-		primarySeries = new ArrayList<SeriesInfo>();
-		secondarySeries = new ArrayList<SeriesInfo>();
+		primarySeries = new ArrayList<>();
+		secondarySeries = new ArrayList<>();
 
 		timeTrace = false;
 		showSecondaryYAxis = false;

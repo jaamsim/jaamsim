@@ -41,7 +41,7 @@ public class ConvexHull {
 
 	private boolean _isDegenerate = false;
 
-	private ArrayList<HullFace> _faces = new ArrayList<HullFace>();
+	private ArrayList<HullFace> _faces = new ArrayList<>();
 
 	public static ConvexHull TryBuildHull(ArrayList<Vec3d> verts, int numAttempts, int maxNumPoints, Vec3dInterner interner) {
 
@@ -88,8 +88,8 @@ public class ConvexHull {
 
 		// Start by finding 3 points to build the original faces, this may have a problem if there is only
 		// 3 points and all are in a line
-		ArrayList<TempHullFace> tempFaces = new ArrayList<TempHullFace>();
-		List<Integer> unclaimedPoints = new ArrayList<Integer>();
+		ArrayList<TempHullFace> tempFaces = new ArrayList<>();
+		List<Integer> unclaimedPoints = new ArrayList<>();
 
 		// Create two starting faces (both use the same verts but are wound backwards to face in both directions)
 
@@ -190,7 +190,7 @@ public class ConvexHull {
 			// Remove any faces that can see this point and orphan any points owned by these faces
 			Vec3d farVert = baseVerts.get(farInd);
 
-			ArrayList<TempHullFace> deadFaces = new ArrayList<TempHullFace>();
+			ArrayList<TempHullFace> deadFaces = new ArrayList<>();
 
 			for (Iterator<TempHullFace> it = tempFaces.iterator(); it.hasNext(); ) {
 				TempHullFace tempFace = it.next();
@@ -204,12 +204,12 @@ public class ConvexHull {
 			}
 
 			// The points that are no longer associated with a face
-			ArrayList<Integer> orphanedPoints = new ArrayList<Integer>();
+			ArrayList<Integer> orphanedPoints = new ArrayList<>();
 			orphanedPoints.addAll(unclaimedPoints);
 			unclaimedPoints.clear();
 
 			// Find all the open edges left by removing these faces
-			ArrayList<HullEdge> edges = new ArrayList<HullEdge>();
+			ArrayList<HullEdge> edges = new ArrayList<>();
 			for (TempHullFace df : deadFaces) {
 				orphanedPoints.addAll(df.points);
 
@@ -228,7 +228,7 @@ public class ConvexHull {
 //				return;
 //			}
 
-			ArrayList<TempHullFace> newFaces = new ArrayList<TempHullFace>();
+			ArrayList<TempHullFace> newFaces = new ArrayList<>();
 
 			// Build new faces from the remaining edges and assign all remaining points
 			for (HullEdge e : edges) {
@@ -277,7 +277,7 @@ public class ConvexHull {
 		buildTime += finalizeStart - buildStart;
 
 		// Now that we have all the faces we can create a real subset of points we care about
-		ArrayList<Vec3d> realVerts = new ArrayList<Vec3d>();
+		ArrayList<Vec3d> realVerts = new ArrayList<>();
 		for (TempHullFace tf : tempFaces) {
 			HullFace realFace = new HullFace();
 			for (int i = 0; i < 3; ++i) {
@@ -339,12 +339,12 @@ public class ConvexHull {
 	 * @return
 	 */
 	private static ArrayList<Vec3d> removeDoubles(List<Vec3d> orig) {
-		ArrayList<Vec3d> ret = new ArrayList<Vec3d>();
+		ArrayList<Vec3d> ret = new ArrayList<>();
 		if (orig.size() == 0) {
 			return ret;
 		}
 
-		final ArrayList<Vec3d> copy = new ArrayList<Vec3d>(orig);
+		final ArrayList<Vec3d> copy = new ArrayList<>(orig);
 
 		long sortStart = System.nanoTime();
 
@@ -526,7 +526,7 @@ public class ConvexHull {
 		public final Plane plane;
 		public double furthestDist = 0;
 		public int furthestInd = 0;
-		public final ArrayList<Integer> points = new ArrayList<Integer>();
+		public final ArrayList<Integer> points = new ArrayList<>();
 
 		public TempHullFace(int i0, int i1, int i2, ArrayList<Vec3d> verts) {
 			indices[0] = i0;
@@ -577,7 +577,7 @@ public class ConvexHull {
 	private void makeDegenerate(ArrayList<Vec3d> vs) {
 		_isDegenerate = true;
 		_verts = vs;
-		_faces = new ArrayList<HullFace>();
+		_faces = new ArrayList<>();
 		// Figure out a radius
 	}
 
@@ -633,14 +633,14 @@ public class ConvexHull {
 		if (facesBlock == null) throw new RenderException("Missing faces in ConvexHull");
 
 		int numVerts = vertsBlock.getDataSize() / 4;
-		ret._verts = new ArrayList<Vec3d>(numVerts);
+		ret._verts = new ArrayList<>(numVerts);
 		for (int i = 0; i < numVerts; ++i) {
 			int index = vertsBlock.readInt();
 			ret._verts.add(vecs[index]);
 		}
 
 		int numFaces = facesBlock.getDataSize() / (4*3);
-		ret._faces = new ArrayList<HullFace>(numFaces);
+		ret._faces = new ArrayList<>(numFaces);
 		for (int i = 0; i < numFaces; ++i) {
 			HullFace f = new HullFace();
 			f.indices[0] = facesBlock.readInt();

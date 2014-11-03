@@ -124,7 +124,7 @@ private static class ClassFields implements Comparator<Field> {
 		klass = aKlass;
 
 		Field[] myFields = klass.getDeclaredFields();
-		fields = new ArrayList<Field>(myFields.length);
+		fields = new ArrayList<>(myFields.length);
 		for (Field each : myFields) {
 			String name = each.getName();
 			// Static variables are all capitalized (ignore them)
@@ -144,14 +144,14 @@ private static class ClassFields implements Comparator<Field> {
 
 	private static ArrayList<ClassFields> getFields(Entity object) {
 		if (object == null)
-			return new ArrayList<ClassFields>(0);
+			return new ArrayList<>(0);
 
 		return getFields(object.getClass());
 	}
 
 	private static ArrayList<ClassFields> getFields(Class<?> klass) {
 		if (klass == null || klass.getSuperclass() == null)
-			return new ArrayList<ClassFields>();
+			return new ArrayList<>();
 
 		ArrayList<ClassFields> cFields = getFields(klass.getSuperclass());
 		cFields.add(new ClassFields(klass));

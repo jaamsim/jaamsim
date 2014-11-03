@@ -30,7 +30,7 @@ public class BooleanIndicator extends DisplayEntity {
 	private final StringInput falseText;
 
 	{
-		boolProp = new OutputInput<Boolean>(Boolean.class, "OutputName", "Key Inputs", null);
+		boolProp = new OutputInput<>(Boolean.class, "OutputName", "Key Inputs", null);
 		this.addInput(boolProp);
 
 		trueColor = new ColourInput("TrueColour", "Graphics", ColourInput.GREEN);

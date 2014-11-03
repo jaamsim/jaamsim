@@ -67,7 +67,7 @@ public Mesh(MeshProto proto, Transform trans, Vec3d scale,
 	_hull = _proto.getHull(_actions, _subMeshHulls);
 	_bounds = _hull.getAABB(_modelMat);
 
-	_subMeshBounds = new ArrayList<AABB>(_subMeshHulls.size());
+	_subMeshBounds = new ArrayList<>(_subMeshHulls.size());
 	for (ConvexHull subHull : _subMeshHulls) {
 		AABB subBounds = subHull.getAABB(_modelMat);
 		_subMeshBounds.add(subBounds);
@@ -172,7 +172,7 @@ public double getCollisionDist(Ray r, boolean precise)
 			Vec3d bindSpaceVert = new Vec3d();
 			Vec3d temp = new Vec3d();
 
-			vertices = new ArrayList<Vec3d>(subData.verts.size());
+			vertices = new ArrayList<>(subData.verts.size());
 			for (int i = 0; i < subData.verts.size(); ++i) {
 				Vec3d vert = subData.verts.get(i);
 				bindSpaceVert.multAndTrans3(bindMat, vert);

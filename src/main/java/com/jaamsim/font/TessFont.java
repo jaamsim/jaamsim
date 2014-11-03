@@ -74,9 +74,9 @@ public TessFont(TessFontKey key) {
 	_frc = new FontRenderContext(null, true, true);
 	_font = new Font(key.getFontName(), key.getFontStyle(), 1);
 	_key = key;
-	_vertices = new ArrayList<double[]>();
+	_vertices = new ArrayList<>();
 
-	_charMap = new HashMap<Integer, TessChar>();
+	_charMap = new HashMap<>();
 	// Originally support all the basic latin characters (will lazily add new ones as needed)
 	String initialChars= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890.,/<>?;':\"[]{}!@#$%^&*()_+-= \t";
 
@@ -121,7 +121,7 @@ private static class CharTesselator extends GLUtessellatorCallbackAdapter {
 	private double[] temp; // Used to build up a triangle fan or strip
 
 	public CharTesselator() {
-		_verts = new Vector<Double>();
+		_verts = new Vector<>();
 		temp = new double[4];
 	}
 

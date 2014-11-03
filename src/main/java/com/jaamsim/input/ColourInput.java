@@ -40,7 +40,7 @@ public static final Color4d DARK_PURPLE = new Color4d(0.75d, 0.0d, 0.75d);
 private static final HashMap<String, Color4d> colorMap;
 
 static {
-	colorMap = new HashMap<String, Color4d>();
+	colorMap = new HashMap<>();
 	initColors();
 }
 	public ColourInput(String key, String cat, Color4d def) {

@@ -34,7 +34,7 @@ public class ExceptionLogger {
 	private int stackDumpThreshold;
 
 	public ExceptionLogger(int dumpThreshold) {
-		_exceptionStats = new HashMap<StackTraceElement, ExceptionCount>();
+		_exceptionStats = new HashMap<>();
 		stackDumpThreshold = dumpThreshold;
 	}
 
@@ -83,7 +83,7 @@ public class ExceptionLogger {
 
 	public void printExceptionLog() {
 		// Build up a list of the values to be sorted
-		List<ExceptionCount> exceptions = new ArrayList<ExceptionCount>(_exceptionStats.values());
+		List<ExceptionCount> exceptions = new ArrayList<>(_exceptionStats.values());
 		// Now sort it, then print it
 		Collections.sort(exceptions, sorter);
 

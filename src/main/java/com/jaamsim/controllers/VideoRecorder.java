@@ -77,7 +77,7 @@ public class VideoRecorder {
 
 		_bgColor = bgColor;
 
-		_views = new ArrayList<ViewInfo>(views.size());
+		_views = new ArrayList<>(views.size());
 
 		// Cache the view position information and build the offscreen render targets
 		for (View v : views) {
@@ -117,7 +117,7 @@ public class VideoRecorder {
 
 //		long start = System.nanoTime();
 
-		ArrayList<Future<BufferedImage>> images = new ArrayList<Future<BufferedImage>>();
+		ArrayList<Future<BufferedImage>> images = new ArrayList<>();
 		for (ViewInfo vi : _views) {
 			images.add(RenderManager.inst().renderScreenShot(vi.view, vi.width, vi.height, vi.renderTarget));
 		}

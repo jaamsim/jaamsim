@@ -32,7 +32,7 @@ public class EntitySignal extends LinkedComponent {
 	private final BooleanInput newState;
 
 	{
-		targetSignalThreshold = new EntityInput<SignalThreshold>( SignalThreshold.class, "TargetSignalThreshold", "Key Inputs", null);
+		targetSignalThreshold = new EntityInput<>( SignalThreshold.class, "TargetSignalThreshold", "Key Inputs", null);
 		this.addInput( targetSignalThreshold);
 
 		newState = new BooleanInput( "NewState", "Key Inputs", true);

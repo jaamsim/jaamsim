@@ -47,7 +47,7 @@ public class EntityContainer extends SimEntity {
 	}
 
 	public EntityContainer() {
-		entityList = new ArrayList<DisplayEntity>();
+		entityList = new ArrayList<>();
 	}
 
 	@Override

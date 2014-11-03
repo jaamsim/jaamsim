@@ -481,7 +481,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				Simulation sim = Simulation.getInstance();
-				ArrayList<String> arg = new ArrayList<String>(1);
+				ArrayList<String> arg = new ArrayList<>(1);
 				arg.add("TRUE");
 				InputAgent.apply(sim, new KeywordIndex("ShowModelBuilder", arg, null));
 				InputAgent.apply(sim, new KeywordIndex("ShowObjectSelector", arg, null));
@@ -499,7 +499,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				Simulation sim = Simulation.getInstance();
-				ArrayList<String> arg = new ArrayList<String>(1);
+				ArrayList<String> arg = new ArrayList<>(1);
 				arg.add("FALSE");
 				InputAgent.apply(sim, new KeywordIndex("ShowModelBuilder", arg, null));
 				InputAgent.apply(sim, new KeywordIndex("ShowObjectSelector", arg, null));
@@ -518,7 +518,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				ArrayList<String> arg = new ArrayList<String>(1);
+				ArrayList<String> arg = new ArrayList<>(1);
 				arg.add("TRUE");
 				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowModelBuilder", arg, null));
 			}
@@ -532,7 +532,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				ArrayList<String> arg = new ArrayList<String>(1);
+				ArrayList<String> arg = new ArrayList<>(1);
 				arg.add("TRUE");
 				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowObjectSelector", arg, null));
 			}
@@ -546,7 +546,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				ArrayList<String> arg = new ArrayList<String>(1);
+				ArrayList<String> arg = new ArrayList<>(1);
 				arg.add("TRUE");
 				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowInputEditor", arg, null));
 			}
@@ -560,7 +560,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				ArrayList<String> arg = new ArrayList<String>(1);
+				ArrayList<String> arg = new ArrayList<>(1);
 				arg.add("TRUE");
 				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowOutputViewer", arg, null));
 			}
@@ -574,7 +574,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				ArrayList<String> arg = new ArrayList<String>(1);
+				ArrayList<String> arg = new ArrayList<>(1);
 				arg.add("TRUE");
 				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowPropertyViewer", arg, null));
 			}
@@ -588,7 +588,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				ArrayList<String> arg = new ArrayList<String>(1);
+				ArrayList<String> arg = new ArrayList<>(1);
 				arg.add("TRUE");
 				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("ShowLogViewer", arg, null));
 			}
@@ -967,7 +967,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				}
 			}
 
-			ArrayList<String> arg = new ArrayList<String>(1);
+			ArrayList<String> arg = new ArrayList<>(1);
 			arg.add("TRUE");
 			InputAgent.apply(view, new KeywordIndex("ShowWindow", arg, null));
 			RenderManager.inst().createWindow(view);
@@ -995,7 +995,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			View tmp = InputAgent.defineEntityWithUniqueName(View.class, "View", "", true);
 			RenderManager.inst().createWindow(tmp);
 			FrameBox.setSelectedEntity(tmp);
-			ArrayList<String> arg = new ArrayList<String>(1);
+			ArrayList<String> arg = new ArrayList<>(1);
 			arg.add("TRUE");
 			InputAgent.apply(tmp, new KeywordIndex("ShowWindow", arg, null));
 		}
@@ -1467,7 +1467,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 	public static void main( String args[] ) {
 		// Process the input arguments and filter out directives
-		ArrayList<String> configFiles = new ArrayList<String>(args.length);
+		ArrayList<String> configFiles = new ArrayList<>(args.length);
 		boolean batch = false;
 		boolean minimize = false;
 		boolean quiet = false;
@@ -1620,7 +1620,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		@Override
 		public void stateChanged( ChangeEvent e ) {
-			ArrayList<String> arg = new ArrayList<String>(1);
+			ArrayList<String> arg = new ArrayList<>(1);
 			arg.add(String.format("%d", ((JSpinner)e.getSource()).getValue()));
 			InputAgent.apply(Simulation.getInstance(), new KeywordIndex("RealTimeFactor", arg, null));
 		}
@@ -1664,7 +1664,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public static class RealTimeActionListener implements ActionListener {
 		@Override
 		public void actionPerformed( ActionEvent event ) {
-			ArrayList<String> arg = new ArrayList<String>(1);
+			ArrayList<String> arg = new ArrayList<>(1);
 			if (((JToggleButton)event.getSource()).isSelected())
 				arg.add("TRUE");
 			else
