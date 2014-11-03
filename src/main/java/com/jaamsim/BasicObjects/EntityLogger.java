@@ -17,7 +17,6 @@ package com.jaamsim.BasicObjects;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Output;
-import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.FileEntity;
 
@@ -58,11 +57,7 @@ public class EntityLogger extends LinkedComponent {
 		// Log the entity's outputs
 		file.format("%n");
 		logTime = this.getSimTime();
-		ReportGenerator.printOutputs(file, ent, logTime);
-
-		// Log the entity's states
-		if (ent instanceof StateEntity)
-			ReportGenerator.printStates(file, (StateEntity)ent);
+		ent.printReport(file, logTime);
 
 		// Empty the output buffer
 		file.flush();

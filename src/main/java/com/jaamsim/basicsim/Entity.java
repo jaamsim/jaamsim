@@ -38,6 +38,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
+import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Simulation;
 
 /**
@@ -717,6 +718,56 @@ public class Entity {
 			return true;
 
 		return false;
+	}
+
+	/**
+	 * Writes the entry in the output report for this entity.
+	 * @param file - the file in which the outputs are written
+	 * @param simTime - simulation time at which the outputs are evaluated
+	 */
+	public void printReport(FileEntity file, double simTime) {
+
+		// Loop through the outputs
+		boolean linePrinted = false;
+		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(this);
+		for (OutputHandle o : handles) {
+
+			// Should this output appear in the report?
+			if (!o.isReportable())
+				continue;
+
+			// Is there a preferred unit in which to display the output?
+			Class<? extends Unit> ut = o.getUnitType();
+			String unitString = Unit.getSIUnit(ut);
+			double factor = 1.0;
+			Unit u = Unit.getPreferredUnit(ut);
+			if (u != null) {
+				unitString = u.getName();
+				factor = u.getConversionFactorToSI();
+			}
+
+			// Is the output a number?
+			String s;
+			if (o.isNumericValue())
+				s = String.valueOf(o.getValueAsDouble(simTime, Double.NaN)/factor);
+			else {
+				unitString = Unit.getSIUnit(ut);  // lists of doubles are not converted to preferred units yet
+				s = o.getValue(simTime, o.getReturnType()).toString();
+			}
+
+			// Does the output require a unit to be shown?
+			linePrinted = true;
+			if (ut == Unit.class || ut == DimensionlessUnit.class) {
+				file.format("%s\tOutput[%s]\t%s%n",
+						this.getName(), o.getName(), s);
+			}
+			else {
+				file.format("%s\tOutput[%s, %s]\t%s%n",
+						this.getName(), o.getName(), unitString, s);
+			}
+		}
+		if (linePrinted)
+			file.format("%n");
 	}
 
 	@Output(name = "Name",

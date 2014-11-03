@@ -27,16 +27,12 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.states.StateEntity;
-import com.jaamsim.states.StateRecord;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
-import com.jaamsim.units.Unit;
 import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class ReportGenerator extends DisplayEntity {
@@ -210,90 +206,12 @@ public class ReportGenerator extends DisplayEntity {
 					continue;
 				if (ent.getClass() != newClass)
 					continue;
-
-				// Print the outputs
-				ReportGenerator.printOutputs(file, ent, simTime);
-
-				// Print the states
-				if ( !(ent instanceof StateEntity) )
-					continue;
-				ReportGenerator.printStates(file, (StateEntity)ent);
+				ent.printReport(file, simTime);
 			}
 		}
 
 		// Close the report file
 		file.close();
-	}
-
-	public static void printOutputs(FileEntity file, Entity ent, double simTime) {
-
-		// Loop through the outputs
-		boolean blankLine = false;
-		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(ent);
-		for (OutputHandle o : handles) {
-
-			// Should this output appear in the report?
-			if (!o.isReportable())
-				continue;
-
-			// Add a blank line before each new entity
-			if (!blankLine) {
-				file.format("%n");
-				blankLine = true;
-			}
-
-			// Is there a preferred unit in which to display the output?
-			Class<? extends Unit> ut = o.getUnitType();
-			String unitString = Unit.getSIUnit(ut);
-			double factor = 1.0;
-			Unit u = Unit.getPreferredUnit(ut);
-			if (u != null) {
-				unitString = u.getName();
-				factor = u.getConversionFactorToSI();
-			}
-
-			// Is the output a number?
-			String s;
-			if (o.isNumericValue())
-				s = String.valueOf(o.getValueAsDouble(simTime, Double.NaN)/factor);
-			else {
-				unitString = Unit.getSIUnit(ut);  // lists of doubles are not converted to preferred units yet
-				s = o.getValue(simTime, o.getReturnType()).toString();
-			}
-
-			// Does the output require a unit to be shown?
-			if (ut == Unit.class || ut == DimensionlessUnit.class) {
-				file.format("%s\tOutput[%s]\t%s%n",
-						ent.getName(), o.getName(), s);
-			}
-			else {
-				file.format("%s\tOutput[%s, %s]\t%s%n",
-						ent.getName(), o.getName(), unitString, s);
-			}
-		}
-	}
-
-	public static void printStates(FileEntity file, StateEntity ent) {
-
-		long totalTicks = 0;
-		long workingTicks = 0;
-
-		// Loop through the states
-		for (StateRecord st : ent.getStateRecs()) {
-			long ticks = ent.getTicksInState(st);
-			if (ticks == 0)
-				continue;
-
-			double hours = ticks / Simulation.getSimTimeFactor();
-			file.format("%s\tStateTime[%s, h]\t%f\n", ent.getName(), st.name, hours);
-
-			totalTicks += ticks;
-			if(st.working)
-				workingTicks += ticks;
-		}
-
-		file.format("%s\tStateTime[%s, h]\t%f\n", ent.getName(), "TotalTime", totalTicks / Simulation.getSimTimeFactor());
-		file.format("%s\tStateTime[%s, h]\t%f\n", ent.getName(), "WorkingTime", workingTicks / Simulation.getSimTimeFactor());
 	}
 
 	@Output(name = "ReportNumber",

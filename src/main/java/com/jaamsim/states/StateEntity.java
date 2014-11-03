@@ -24,6 +24,8 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
+import com.sandwell.JavaSimulation.FileEntity;
+import com.sandwell.JavaSimulation.Simulation;
 
 public class StateEntity extends DisplayEntity {
 	private StateRecord presentState; // The present state of the entity
@@ -59,6 +61,36 @@ public class StateEntity extends DisplayEntity {
 			if (sel.isWatching(this))
 				stateListeners.add(sel);
 		}
+	}
+
+	public ArrayList<StateEntityListener> getStateListeners() {
+		return stateListeners;
+	}
+
+	@Override
+	public void printReport(FileEntity file, double simTime) {
+		super.printReport(file, simTime);
+
+		long totalTicks = 0;
+		long workingTicks = 0;
+
+		// Loop through the states
+		for (StateRecord st : this.getStateRecs()) {
+			long ticks = this.getTicksInState(st);
+			if (ticks == 0)
+				continue;
+
+			double hours = ticks / Simulation.getSimTimeFactor();
+			file.format("%s\tStateTime[%s, h]\t%f\n", this.getName(), st.name, hours);
+
+			totalTicks += ticks;
+			if (st.working)
+				workingTicks += ticks;
+		}
+
+		file.format("%s\tStateTime[%s, h]\t%f\n", this.getName(), "TotalTime", totalTicks / Simulation.getSimTimeFactor());
+		file.format("%s\tStateTime[%s, h]\t%f\n", this.getName(), "WorkingTime", workingTicks / Simulation.getSimTimeFactor());
+		file.format("%n");
 	}
 
 	/**
