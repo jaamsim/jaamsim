@@ -47,8 +47,8 @@ import com.jaamsim.render.MeshProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
-import com.jaamsim.ui.MenuItem;
 import com.jaamsim.ui.LogBox;
+import com.jaamsim.ui.MenuItem;
 import com.jaamsim.ui.MenuItemEntity;
 
 public class ColladaModel extends DisplayModel implements MenuItemEntity {

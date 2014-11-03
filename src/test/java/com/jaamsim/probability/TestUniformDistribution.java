@@ -15,7 +15,9 @@
 package com.jaamsim.probability;
 
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
+
 import com.jaamsim.ProbabilityDistributions.UniformDistribution;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.InputAgent;
