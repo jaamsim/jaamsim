@@ -1637,7 +1637,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 
 		@Override
-		@SuppressWarnings("unchecked")
 		public Object getPreviousValue() {
 			value = this.getNumber().intValue() / 2;
 
@@ -1649,7 +1648,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 
 		@Override
-		@SuppressWarnings("unchecked")
 		public Object getNextValue() {
 			value = this.getNumber().intValue() * 2;
 
