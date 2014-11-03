@@ -48,7 +48,7 @@ GNU General Public License for more details.
     <mkdir dir="${class.dir}"/>
 
     <javac srcdir="${src.dir}" destdir="${class.dir}"
-           source="1.6" target="1.6"
+           source="1.7" target="1.7"
            debug="true"
            debuglevel="lines,source"
            deprecation="on"
