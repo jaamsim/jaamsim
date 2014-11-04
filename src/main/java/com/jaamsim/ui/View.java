@@ -293,16 +293,22 @@ public void setCenter(Vec3d cent) {
 
 public void setWindowPos(int x, int y, int width, int height) {
 	ArrayList<String> tokens = new ArrayList<>(2);
-	tokens.add(String.format((Locale)null, "%d", x));
-	tokens.add(String.format((Locale)null, "%d", y));
-	KeywordIndex kw = new KeywordIndex(tokens, this.windowPos.getKeyword(), 0, tokens.size(), null);
-	InputAgent.apply(this, kw);
+	IntegerVector pos = windowPos.getValue();
+	if (pos.get(0) != x || pos.get(1) != y) {
+		tokens.add(String.format((Locale)null, "%d", x));
+		tokens.add(String.format((Locale)null, "%d", y));
+		KeywordIndex kw = new KeywordIndex(this.windowPos.getKeyword(), tokens, null);
+		InputAgent.apply(this, kw);
+		tokens.clear();
+	}
 
-	tokens.clear();
-	tokens.add(String.format((Locale)null, "%d", width));
-	tokens.add(String.format((Locale)null, "%d", height));
-	kw = new KeywordIndex(tokens, this.windowSize.getKeyword(), 0, tokens.size(), null);
-	InputAgent.apply(this, kw);
+	IntegerVector size = windowSize.getValue();
+	if (size.get(0) != width || size.get(1) != height) {
+		tokens.add(String.format((Locale)null, "%d", width));
+		tokens.add(String.format((Locale)null, "%d", height));
+		KeywordIndex kw = new KeywordIndex(this.windowSize.getKeyword(), tokens, null);
+		InputAgent.apply(this, kw);
+	}
 }
 
 public IntegerVector getWindowPos() {
