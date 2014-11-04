@@ -77,7 +77,7 @@ public abstract class Input<T> {
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean hidden; // Hide this input from the EditBox
 	private boolean isDef; // Is this input still the default value?
-	protected String valueString; // value from .cfg file
+	private String valueString; // value from .cfg file
 
 	public Input(String key, String cat, T def) {
 		keyword = key;
@@ -160,8 +160,12 @@ public abstract class Input<T> {
 		return edited;
 	}
 
-	public void setIsDefault(boolean bool) {
-		isDef = bool;
+	public void setTokens(KeywordIndex kw) {
+		isDef = false;
+		if (kw.numArgs() < 1000)
+			valueString = kw.argString();
+		else
+			valueString = "";
 	}
 
 	public boolean isDefault() {
@@ -170,10 +174,6 @@ public abstract class Input<T> {
 
 	public String getValueString() {
 		return valueString;
-	}
-
-	public void setValueString(String str) {
-		valueString = str;
 	}
 
 	public abstract void parse(KeywordIndex kw) throws InputErrorException;
