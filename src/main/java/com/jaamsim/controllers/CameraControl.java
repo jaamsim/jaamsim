@@ -43,8 +43,6 @@ public class CameraControl implements WindowInteractionListener {
 	private int _windowID;
 	private View _updateView;
 
-	private int _windowPosSetsToIgnore = 4;
-
 	private final Vec3d POI = new Vec3d();
 
 	private static class PolarInfo {
@@ -457,14 +455,6 @@ public class CameraControl implements WindowInteractionListener {
 	@Override
 	public void windowMoved(int x, int y, int width, int height)
 	{
-		// HACK!
-		// Ignore the first 4 sets as these are spurious from the windowing system and we don't want to dirty
-		// the simulation state. This should die when we have better input change detection
-		if (_windowPosSetsToIgnore > 0) {
-			_windowPosSetsToIgnore--;
-			return;
-		}
-
 		// Filter out large negative values occuring from window minimize:
 		if (x < -30000 || y < - 30000)
 			return;
