@@ -77,20 +77,15 @@ public class OutputListInput<T> extends ListInput<ArrayList<OutputHandle>> {
 	}
 
 	@Override
-	public String getValueString() {
-		if( value == null)
-			return "";
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
 
-		StringBuilder tmp = new StringBuilder();
 		for (int i = 0; i < value.size(); i++) {
-			if (i > 0) tmp.append(SEPARATOR);
 			OutputHandle out = value.get(i);
-			tmp.append("{ ");
-			tmp.append(out.ent.getName());
-			tmp.append(SEPARATOR);
-			tmp.append(out.getName());
-			tmp.append(" }");
+			toks.add("{");
+			toks.add(out.ent.getName());
+			toks.add(out.getName());
+			toks.add("}");
 		}
-		return tmp.toString();
 	}
 }

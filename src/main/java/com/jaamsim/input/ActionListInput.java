@@ -55,23 +55,16 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 	}
 
 	@Override
-	public String getValueString() {
-		if (value == null)
-			return "";
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
 
-		StringBuilder tmp = new StringBuilder();
 		for (int i = 0; i < value.size(); i++) {
-			// Separate each action
-			if (i > 0) tmp.append(SEPARATOR);
-
 			Action.Binding b = value.get(i);
-			tmp.append("{ ");
-			tmp.append(b.actionName);
-			tmp.append(SEPARATOR);
-			tmp.append(b.outputName);
-			tmp.append(" }");
+			toks.add("{");
+			toks.add(b.actionName);
+			toks.add(b.outputName);
+			toks.add("}");
 		}
-		return tmp.toString();
 	}
 
 	@Override

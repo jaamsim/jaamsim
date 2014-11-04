@@ -109,19 +109,12 @@ public class OutputInput<T> extends Input<String> {
 	}
 
 	@Override
-	public String getValueString() {
-		if (ent == null)
-			return "";
-
-		StringBuilder tmp = new StringBuilder();
-		tmp.append(ent.getName());
-		tmp.append(SEPARATOR);
-		tmp.append(outputName);
-		for( String name : outputNameList ) {
-			tmp.append(SEPARATOR);
-			tmp.append(name);
+	public void getValueTokens(java.util.ArrayList<String> toks) {
+		if (ent == null) return;
+		toks.add(ent.getName());
+		toks.add(outputName);
+		for (String name : outputNameList) {
+			toks.add(name);
 		}
-		return tmp.toString();
 	}
-
 }

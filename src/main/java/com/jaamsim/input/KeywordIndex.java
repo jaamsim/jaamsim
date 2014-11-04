@@ -55,6 +55,14 @@ public class KeywordIndex {
 		return sb.toString();
 	}
 
+	public String[] getArgArray() {
+		String[] ret = new String[end - start];
+		for (int i = start; i < end; i++) {
+			ret[i - start] = this.input.get(i);
+		}
+		return ret;
+	}
+
 	public String getArg(int index) {
 		if (index < 0 || index >= numArgs())
 			throw new IndexOutOfBoundsException("Index out of range:" + index);

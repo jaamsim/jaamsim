@@ -97,13 +97,18 @@ public class SampleExpInput extends Input<SampleProvider> {
 		return list;
 	}
 
+
 	@Override
-	public String getValueString() {
-		if (value == null || defValue == value)
-			return "";
-		if (value instanceof SampleExpression || value instanceof SampleConstant)
-			return super.getValueString();
-		return value.toString();
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
+
+		if (value instanceof SampleExpression || value instanceof SampleConstant) {
+			super.getValueTokens(toks);
+			return;
+		}
+		else {
+			toks.add(((Entity)value).getName());
+		}
 	}
 
 	public void verifyUnit() {

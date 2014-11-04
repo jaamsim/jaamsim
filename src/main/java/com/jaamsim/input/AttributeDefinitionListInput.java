@@ -94,10 +94,32 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 			return value.size();
 	}
 
+
 	@Override
-	public String getValueString() {
-		if( value == null) return "";
-		return this.getInputString(value);
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
+
+		for (int i = 0; i < value.size(); i++) {
+			AttributeHandle h = value.get(i);
+			toks.add("{");
+			toks.add(h.getName());
+
+			double val = h.getInitialValue();
+			String unitString = Unit.getSIUnit(h.getUnitType());
+
+			// Check for a preferred unit
+			Unit unit = Unit.getPreferredUnit(h.getUnitType());
+			if (unit != null) {
+				unitString = unit.toString();
+				val = h.getValueAsDouble(0.0d, 0.0d, unit);
+			}
+			toks.add(Double.toString(val));
+
+			// Print the unit unless it is dimensionless
+			if (h.getUnitType() != DimensionlessUnit.class)
+				toks.add(unitString);
+			toks.add("}");
+		}
 	}
 
 	@Override

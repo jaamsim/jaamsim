@@ -69,6 +69,14 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		return list;
 	}
 
+	@Override
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
+
+		for (int i = 0; i < value.size(); i++)
+			toks.add(value.get(i).getName());
+	}
+
 	private String getInputString(ArrayList<T> val) {
 
 		if (val.size() == 0)
@@ -89,12 +97,5 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		if (defValue == null || defValue.size() == 0)
 			return NO_VALUE;
 		return this.getInputString(defValue);
-	}
-
-	@Override
-	public String getValueString() {
-		if (value == null || value.size() == 0)
-			return "";
-		return this.getInputString(value);
 	}
 }

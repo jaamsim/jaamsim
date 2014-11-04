@@ -63,10 +63,10 @@ public class EntityInput<T extends Entity> extends Input<T> {
 	}
 
 	@Override
-	public String getValueString() {
-		if( value == null )
-			return "";
-		return value.getName();
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
+
+		toks.add(value.getName());
 	}
 
 	public void setInvalidEntities(ArrayList<T> list) {

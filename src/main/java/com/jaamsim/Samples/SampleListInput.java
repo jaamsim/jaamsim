@@ -83,17 +83,11 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	@Override
-	public String getValueString() {
-		if( value == null)
-			return "";
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
 
-		StringBuilder tmp = new StringBuilder();
-		tmp.append(value.get(0).toString());
-		for (int i = 1; i < value.size(); i++) {
-			tmp.append(SEPARATOR);
-			tmp.append(value.get(i).toString());
+		for (int i = 0; i < value.size(); i++) {
+			toks.add(value.get(i).toString());
 		}
-		return tmp.toString();
 	}
-
 }

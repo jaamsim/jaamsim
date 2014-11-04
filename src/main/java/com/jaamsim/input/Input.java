@@ -77,7 +77,7 @@ public abstract class Input<T> {
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean hidden; // Hide this input from the EditBox
 	private boolean isDef; // Is this input still the default value?
-	private String valueString; // value from .cfg file
+	private String[] valueTokens; // value from .cfg file
 
 	public Input(String key, String cat, T def) {
 		keyword = key;
@@ -87,12 +87,12 @@ public abstract class Input<T> {
 		edited = false;
 		isDef = true;
 		hidden = false;
-		valueString = "";
+		valueTokens = null;
 	}
 
 	public void reset() {
 		this.setDefaultValue( this.getDefaultValue() );
-		valueString = "";
+		valueTokens = null;
 		edited = false;
 		isDef = true;
 	}
@@ -162,18 +162,44 @@ public abstract class Input<T> {
 
 	public void setTokens(KeywordIndex kw) {
 		isDef = false;
-		if (kw.numArgs() < 1000)
-			valueString = kw.argString();
-		else
-			valueString = "";
+		if (kw.numArgs() > 1000) {
+			valueTokens = null;
+			return;
+		}
+
+		valueTokens = kw.getArgArray();
 	}
 
 	public boolean isDefault() {
 		return isDef;
 	}
 
-	public String getValueString() {
-		return valueString;
+	public void getValueTokens(ArrayList<String> toks) {
+		if (valueTokens == null)
+			return;
+
+		for (String each : valueTokens)
+			toks.add(each);
+	}
+
+	public final String getValueString() {
+		ArrayList<String> tmp = new ArrayList<>();
+		getValueTokens(tmp);
+		if (tmp.size() == 0) return "";
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < tmp.size(); i++) {
+			String dat = tmp.get(i);
+			if (dat == null) continue;
+			if (i > 0)
+				sb.append("  ");
+
+			if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
+				sb.append("'").append(dat).append("'");
+			else
+				sb.append(dat);
+		}
+		return sb.toString();
 	}
 
 	public abstract void parse(KeywordIndex kw) throws InputErrorException;

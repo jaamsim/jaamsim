@@ -92,9 +92,11 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 	}
 
 	@Override
-	public String getValueString() {
-		if (value == null || value.size() == 0)
-			return "";
-		return this.getInputString(value);
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
+
+		for (int i = 0; i < value.size(); i++) {
+			toks.add(((Entity)value.get(i)).getName());
+		}
 	}
 }

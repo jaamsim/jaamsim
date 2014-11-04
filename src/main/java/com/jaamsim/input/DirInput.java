@@ -17,6 +17,7 @@ package com.jaamsim.input;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 
 public class DirInput extends Input<URI> {
@@ -58,11 +59,10 @@ public class DirInput extends Input<URI> {
 	}
 
 	@Override
-	public String getValueString() {
-		if (value != null)
-			return InputAgent.getRelativeFilePath(value);
-		else
-			return "";
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
+
+		toks.add(InputAgent.getRelativeFilePath(value));
 	}
 
 	public File getDir() {

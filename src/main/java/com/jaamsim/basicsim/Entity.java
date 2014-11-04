@@ -32,7 +32,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
-import com.jaamsim.input.Parser;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
@@ -299,7 +298,7 @@ public class Entity {
 				continue;
 			}
 			tmp.clear();
-			Parser.tokenize(tmp, sourceInput.getValueString(), true);
+			sourceInput.getValueTokens(tmp);
 			KeywordIndex kw = new KeywordIndex(sourceInput.getKeyword(), tmp, null);
 			InputAgent.apply(this, kw);
 		}

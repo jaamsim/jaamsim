@@ -77,11 +77,10 @@ public class FileInput extends Input<URI> {
 	}
 
 	@Override
-	public String getValueString() {
-		if (value != null)
-			return InputAgent.getRelativeFilePath(value);
-		else
-			return "";
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
+
+		toks.add(InputAgent.getRelativeFilePath(value));
 	}
 
 	public static ArrayList<ArrayList<String>> getTokensFromURI(URI uri){
