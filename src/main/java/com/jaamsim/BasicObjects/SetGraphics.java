@@ -14,14 +14,18 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.EntityListInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class SetGraphics extends LinkedComponent {
@@ -69,8 +73,13 @@ public class SetGraphics extends LinkedComponent {
 		DisplayEntity chosen = graphicsList.getValue().get(i-1);
 
 		// Set the graphics for the incoming entity to those for the chosen entity
-		String str = chosen.getInput("DisplayModel").getValueString();
-		InputAgent.processEntity_Keyword_Value(ent, "DisplayModel", str);
+		Input<?> inp = chosen.getInput("DisplayModel");
+		if (!inp.isDefault()) {
+			ArrayList<String> tmp = new ArrayList<>();
+			inp.getValueTokens(tmp);
+			KeywordIndex kw = new KeywordIndex(inp.getKeyword(), tmp, null);
+			InputAgent.apply(ent, kw);
+		}
 
 		ent.setSize(chosen.getSize());
 		ent.setOrientation(chosen.getOrientation());
