@@ -183,6 +183,8 @@ public abstract class Input<T> {
 	}
 
 	public final String getValueString() {
+		if (isDefault()) return "";
+
 		ArrayList<String> tmp = new ArrayList<>();
 		getValueTokens(tmp);
 		if (tmp.size() == 0) return "";
