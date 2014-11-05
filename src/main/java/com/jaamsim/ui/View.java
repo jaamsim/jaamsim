@@ -219,12 +219,16 @@ public void updateForInput( Input<?> in ) {
 	super.updateForInput( in );
 
 	if (in == windowPos) {
+		if (!RenderManager.isGood())
+			return;
 		final Frame window = RenderManager.inst().getOpenWindowForView(this);
 		if (window != null)
 			new WindowSizePosUpdater(window, windowPos.getValue(), null).doUpdate();
 		return;
 	}
 	if (in == windowSize) {
+		if (!RenderManager.isGood())
+			return;
 		final Frame window = RenderManager.inst().getOpenWindowForView(this);
 		if (window != null)
 			new WindowSizePosUpdater(window, null, windowSize.getValue()).doUpdate();
