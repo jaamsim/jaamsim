@@ -14,6 +14,9 @@
  */
 package com.jaamsim.ui;
 
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -21,10 +24,12 @@ import java.util.Locale;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.FileInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.KeyedVec3dInput;
@@ -174,6 +179,60 @@ public void kill() {
 	super.kill();
 	allInstances.remove(this);
 }
+
+
+private static class WindowSizePosUdpater implements Runnable {
+
+	private IntegerVector pos;
+	private IntegerVector size;
+	private Frame window;
+
+	public WindowSizePosUdpater(Frame w, IntegerVector p, IntegerVector s) {
+		window = w;
+		pos = p;
+		size = s;
+	}
+
+	@Override
+	public void run() {
+		if (pos != null)
+			window.setLocation(pos.get(0), pos.get(1));
+
+		if (size != null)
+			window.setSize(size.get(0), size.get(1));
+	}
+
+	void doUpdate() {
+		if (EventQueue.isDispatchThread()) {
+			this.run();
+		} else {
+			try {
+				EventQueue.invokeAndWait(this);
+			} catch (InvocationTargetException | InterruptedException e) {
+				// Ignore
+			}
+		}
+	}
+}
+
+@Override
+public void updateForInput( Input<?> in ) {
+	super.updateForInput( in );
+
+	if (in == windowPos) {
+		Frame window = RenderManager.inst().getOpenWindowForView(this);
+		IntegerVector pos = windowPos.getValue();
+		WindowSizePosUdpater updater = new WindowSizePosUdpater(window, pos, null);
+		updater.doUpdate();
+	}
+	if (in == windowSize) {
+		final Frame window = RenderManager.inst().getOpenWindowForView(this);
+		final IntegerVector size = windowSize.getValue();
+		WindowSizePosUdpater updater = new WindowSizePosUdpater(window, null, size);
+		updater.doUpdate();
+	}
+}
+
 
 public Vec3d getGlobalPosition() {
 	synchronized (setLock) {

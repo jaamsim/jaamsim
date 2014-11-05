@@ -1493,6 +1493,14 @@ public class RenderManager implements DragSourceListener {
 		renderer.focusWindow(windowID);
 	}
 
+	public Frame getOpenWindowForView(View view) {
+		for (Map.Entry<Integer, View> entry : windowToViewMap.entrySet()) {
+			if (entry.getValue() == view)
+				return renderer.getAWTFrame(entry.getKey());
+		}
+		return null;
+	}
+
 	/**
 	 * Queue up an off screen rendering, this simply passes the call directly to the renderer
 	 * @param scene
