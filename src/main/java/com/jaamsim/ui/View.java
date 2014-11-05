@@ -181,13 +181,12 @@ public void kill() {
 }
 
 
-private static class WindowSizePosUdpater implements Runnable {
+private static class WindowSizePosUpdater implements Runnable {
+	private final IntegerVector pos;
+	private final IntegerVector size;
+	private final Frame window;
 
-	private IntegerVector pos;
-	private IntegerVector size;
-	private Frame window;
-
-	public WindowSizePosUdpater(Frame w, IntegerVector p, IntegerVector s) {
+	public WindowSizePosUpdater(Frame w, IntegerVector p, IntegerVector s) {
 		window = w;
 		pos = p;
 		size = s;
@@ -205,13 +204,13 @@ private static class WindowSizePosUdpater implements Runnable {
 	void doUpdate() {
 		if (EventQueue.isDispatchThread()) {
 			this.run();
-		} else {
-			try {
-				EventQueue.invokeAndWait(this);
-			} catch (InvocationTargetException | InterruptedException e) {
-				// Ignore
-			}
+			return;
 		}
+
+		try {
+			EventQueue.invokeAndWait(this);
+		}
+		catch (InvocationTargetException | InterruptedException e) {} //ignore
 	}
 }
 
@@ -220,19 +219,18 @@ public void updateForInput( Input<?> in ) {
 	super.updateForInput( in );
 
 	if (in == windowPos) {
-		Frame window = RenderManager.inst().getOpenWindowForView(this);
-		IntegerVector pos = windowPos.getValue();
-		WindowSizePosUdpater updater = new WindowSizePosUdpater(window, pos, null);
-		updater.doUpdate();
+		final Frame window = RenderManager.inst().getOpenWindowForView(this);
+		if (window != null)
+			new WindowSizePosUpdater(window, windowPos.getValue(), null).doUpdate();
+		return;
 	}
 	if (in == windowSize) {
 		final Frame window = RenderManager.inst().getOpenWindowForView(this);
-		final IntegerVector size = windowSize.getValue();
-		WindowSizePosUdpater updater = new WindowSizePosUdpater(window, null, size);
-		updater.doUpdate();
+		if (window != null)
+			new WindowSizePosUpdater(window, null, windowSize.getValue()).doUpdate();
+		return;
 	}
 }
-
 
 public Vec3d getGlobalPosition() {
 	synchronized (setLock) {
