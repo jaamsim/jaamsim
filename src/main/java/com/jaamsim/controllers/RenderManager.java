@@ -1493,10 +1493,13 @@ public class RenderManager implements DragSourceListener {
 		renderer.focusWindow(windowID);
 	}
 
-	public Frame getOpenWindowForView(View view) {
-		for (Map.Entry<Integer, View> entry : windowToViewMap.entrySet()) {
+	public static Frame getOpenWindowForView(View view) {
+		if (!isGood()) return null;
+
+		RenderManager rman = RenderManager.inst();
+		for (Map.Entry<Integer, View> entry : rman.windowToViewMap.entrySet()) {
 			if (entry.getValue() == view)
-				return renderer.getAWTFrame(entry.getKey());
+				return rman.renderer.getAWTFrame(entry.getKey());
 		}
 		return null;
 	}
