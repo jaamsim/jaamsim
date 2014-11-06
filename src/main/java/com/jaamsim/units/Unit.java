@@ -17,10 +17,8 @@ package com.jaamsim.units;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueListInput;
 
 public abstract class Unit extends Entity {
 	@Keyword(description = "Factor to convert from the specified unit to the System International (SI) unit. " +
@@ -28,26 +26,16 @@ public abstract class Unit extends Entity {
 					"For example, to convert from miles per hour to m/s, the first factor is 1609.344 (meters in one mile) and " +
 					"the second factor is 3600 (seconds in one hour).",
 			example = "mph  ConversionFactorToSI { 1609.344  3600 }")
-	private final ValueListInput conversionFactorToSI;
+	private final SIUnitFactorInput conversionFactorToSI;
 
 	@Keyword(description = "The preferred unit for formatting output values in the OutputViewer for " +
 	                       "this type of Unit.",
 	         example = "mph PreferredUnit { km/h }")
 	private final EntityInput<? extends Unit> prefInput;
 
-	private static final DoubleVector defFactors;
-
-	static {
-		defFactors = new DoubleVector(1);
-		defFactors.add(1.0d);
-	}
-
 	{
-		conversionFactorToSI = new ValueListInput("ConversionFactorToSI", "Key Inputs", defFactors);
-		conversionFactorToSI.setUnitType(DimensionlessUnit.class);
-		conversionFactorToSI.setValidRange( 1e-15d, Double.POSITIVE_INFINITY );
-		conversionFactorToSI.setValidCountRange( 1, 2 );
-		this.addInput( conversionFactorToSI );
+		conversionFactorToSI = new SIUnitFactorInput("ConversionFactorToSI", "Key Inputs");
+		this.addInput(conversionFactorToSI);
 
 		prefInput = getPrefInput(this.getClass());
 		this.addInput(prefInput);
@@ -109,14 +97,7 @@ public abstract class Unit extends Entity {
 	 * Return the conversion factor to SI units
 	 */
 	public double getConversionFactorToSI() {
-		DoubleVector d = conversionFactorToSI.getValue();
-
-		// if the conversionFactorToSI input has one value, we assume a divisor
-		// of 1.0
-		if (d.size() == 1)
-			return d.get(0);
-
-		return d.get(0) / d.get(1);
+		return conversionFactorToSI.getSIFactor();
 	}
 
 	/**
