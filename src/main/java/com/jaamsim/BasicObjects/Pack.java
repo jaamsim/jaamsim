@@ -31,7 +31,7 @@ public class Pack extends LinkedService {
 	@Keyword(description = "The prototype for EntityContainers to be generated.\n" +
 			"The generated EntityContainers will be copies of this entity.",
 	         example = "Pack1 PrototypeEntityContainer { ProtoContainer }")
-	private final EntityInput<EntityContainer> prototypeEntityContainer;
+	protected final EntityInput<EntityContainer> prototypeEntityContainer;
 
 	@Keyword(description = "The queue in which the waiting entities will be placed.",
 	         example = "Pack1 WaitQueue { Queue1 }")
@@ -45,7 +45,7 @@ public class Pack extends LinkedService {
 	         example = "Pack1 ServiceTime { 3.0 h }")
 	private final SampleExpInput serviceTime;
 
-	private EntityContainer container;	// the generated EntityContainer
+	protected EntityContainer container;	// the generated EntityContainer
 	private int numberGenerated;  // Number of EntityContainers generated so far
 	private int numberInserted;   // Number of entities inserted to the EntityContainer
 
@@ -75,7 +75,7 @@ public class Pack extends LinkedService {
 		}
 
 		// Confirm that prototype entity has been specified
-		if (prototypeEntityContainer.getValue() == null) {
+		if (!prototypeEntityContainer.getHidden() && prototypeEntityContainer.getValue() == null) {
 			throw new InputErrorException("The keyword PrototypeEntityContainer must be set.");
 		}
 
@@ -105,6 +105,17 @@ public class Pack extends LinkedService {
 		}
 	}
 
+	protected EntityContainer getNextContainer() {
+		numberGenerated++;
+		EntityContainer proto = prototypeEntityContainer.getValue();
+		StringBuilder sb = new StringBuilder();
+		sb.append(proto.getName()).append("_Copy").append(numberGenerated);
+		EntityContainer ret = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
+		ret.copyInputs(proto);
+		ret.earlyInit();
+		return ret;
+	}
+
 	@Override
 	public void startAction() {
 
@@ -123,16 +134,9 @@ public class Pack extends LinkedService {
 			return;
 		}
 
+		// If necessary, get a new container
 		if (container == null) {
-
-			// Create the container
-			numberGenerated++;
-			EntityContainer proto = prototypeEntityContainer.getValue();
-			StringBuilder sb = new StringBuilder();
-			sb.append(proto.getName()).append("_Copy").append(numberGenerated);
-			container = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
-			container.copyInputs(proto);
-			container.earlyInit();
+			container = this.getNextContainer();
 			numberInserted = 0;
 
 			// Position the container over the pack object

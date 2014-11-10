@@ -20,6 +20,7 @@ Define ObjectType {
 					EntityContainer
 					Pack
 					Unpack
+					AddTo
                     QueueRecorder
                     Group
                     ScriptEntity
@@ -53,6 +54,7 @@ Define	ImageModel {
 			EntitySignalIconModel
 			PackIconModel
 			UnpackIconModel
+			AddToIconModel
 			TimeSeriesIconModel
 			SelectorIconModel
 			SetGraphicsIconModel
@@ -75,6 +77,7 @@ EntityGateIconModel     ImageFile { '<res>/images/Gate-256.png' }        Transpa
 EntitySignalIconModel   ImageFile { '<res>/images/Signal-256.png' }      Transparent { TRUE }
 PackIconModel           ImageFile { '<res>/images/Pack-256.png' }        Transparent { TRUE }
 UnpackIconModel         ImageFile { '<res>/images/Unpack-256.png' }      Transparent { TRUE }
+AddToIconModel          ImageFile { '<res>/images/AddTo-256.png' }       Transparent { TRUE }
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
 SelectorIconModel       ImageFile { '<res>/images/Selector-256.png'  }   Transparent { TRUE }
 SetGraphicsIconModel    ImageFile { '<res>/images/SetGraphics-256.png' } Transparent { TRUE }
@@ -101,6 +104,7 @@ EntitySignal            JavaClass { com.jaamsim.BasicObjects.EntitySignal       
 EntityContainer         JavaClass { com.jaamsim.BasicObjects.EntityContainer            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ Rectangle             }
 Pack                    JavaClass { com.jaamsim.BasicObjects.Pack                       } Palette { 'Basic Objects' } DefaultDisplayModel 	{ PackIconModel         }
 Unpack                  JavaClass { com.jaamsim.BasicObjects.Unpack                     } Palette { 'Basic Objects' } DefaultDisplayModel 	{ UnpackIconModel       }
+AddTo                   JavaClass { com.jaamsim.BasicObjects.AddTo                      } Palette { 'Basic Objects' } DefaultDisplayModel 	{ AddToIconModel        }
 QueueRecorder           JavaClass { com.sandwell.JavaSimulation3D.QueueRecorder         } Palette { 'Basic Objects' } DefaultDisplayModel	{ Cube 					}	DragAndDrop 	{ FALSE 	}
 Group                   JavaClass { com.jaamsim.basicsim.Group                          } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 ScriptEntity            JavaClass { com.sandwell.JavaSimulation3D.ScriptEntity          } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
@@ -135,8 +139,9 @@ Assemble           Description { 'Combines sub-components to create an assembled
 EntityGate         Description { 'Blocks received entities from progressing further until the Gate is opened by a Signal.' }
 EntitySignal       Description { 'On receipt of an entity, a specified Gate is opened or closed.' }
 EntityContainer    Description { 'Can be used to hold multiple entities.' }
-Pack               Description { 'Used to insert entities to an EntityContainer.' }
 Unpack             Description { 'Used to remove entities from an EntityContainer.' }
+Pack               Description { 'Insert entities to a new EntityContainer.' }
+AddTo              Description { 'Add entities to an existing EntityContainer.' }
 QueueRecorder      Description { 'Logs an entry every time the specified queue receives or releases an entity.' }
 Group              Description { 'Collection of entities used as an convenience for specifying model inputs.' }
 ScriptEntity       Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
