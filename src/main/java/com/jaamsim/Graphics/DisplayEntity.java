@@ -16,12 +16,10 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
-import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
@@ -103,86 +101,7 @@ public class DisplayEntity extends Entity {
 
 	private ArrayList<DisplayModelBinding> modelBindings;
 
-	public static class TagSet {
-		public final Map<String, Color4d[]> colours;
-		public final Map<String, DoubleVector> sizes;
-		public final Map<String, Boolean> visibility;
-
-		public TagSet() {
-			colours = new HashMap<>();
-			sizes = new HashMap<>();
-			visibility = new HashMap<>();
-		}
-
-		public TagSet(TagSet in) {
-			colours = new HashMap<>(in.colours);
-			sizes = new HashMap<>(in.sizes);
-			visibility = new HashMap<>(in.visibility);
-		}
-
-		/**
-		 * A purely utility method to get the first colour, or default if the first colour is not present
-		 */
-		public Color4d getTagColourUtil(String tagName, Color4d def) {
-			Color4d[] cs = colours.get(tagName);
-			if (cs != null && cs.length > 0) {
-				return cs[0];
-			}
-			return def;
-		}
-
-		public boolean isTagVisibleUtil(String tagName) {
-			Boolean isVisible = visibility.get(tagName);
-			return (isVisible == null || isVisible.booleanValue()); // Default to visible
-		}
-
-		// Explicitly compare the values in the TagSet
-		// This is as verbose as it is due to the non-comparable nature of the basic tag value types
-		public boolean isSame(TagSet other) {
-			if (other == null) return false;
-
-			if (colours.size() != other.colours.size()) return false;
-
-			for (String cName : colours.keySet()) {
-				if (!other.colours.containsKey(cName)) {
-					return false;
-				}
-				Color4d[] cs = colours.get(cName);
-				Color4d[] ocs = other.colours.get(cName);
-				if (cs.length != ocs.length) return false;
-				for (int i = 0; i < cs.length; ++i) {
-					if (!cs[i].equals(ocs[i])) return false;
-				}
-			}
-
-			if (sizes.size() != other.sizes.size()) return false;
-
-			for (String sName : sizes.keySet()) {
-				if (!other.sizes.containsKey(sName)) {
-					return false;
-				}
-				DoubleVector ss = sizes.get(sName);
-				DoubleVector oss = other.sizes.get(sName);
-				if (ss.size() != oss.size()) return false;
-				for (int i = 0; i < ss.size(); ++i) {
-					if (ss.get(i) != oss.get(i)) return false;
-				}
-			}
-
-			if (visibility.size() != other.visibility.size()) return false;
-
-			for (String vName : visibility.keySet()) {
-				if (!other.visibility.containsKey(vName)) {
-					return false;
-				}
-				if (visibility.get(vName) != other.visibility.get(vName)) return false;
-			}
-
-			return true;
-		}
-	}
-
-	private TagSet tags;
+	private final HashMap<String, Tag> tagMap = new HashMap<>();
 
 	{
 		positionInput = new Vec3dInput("Position", "Basic Graphics", new Vec3d());
@@ -222,8 +141,6 @@ public class DisplayEntity extends Entity {
 
 		movable = new BooleanInput("Movable", "Basic Graphics", true);
 		this.addInput(movable);
-
-		tags = new TagSet();
 	}
 
 	/**
@@ -610,41 +527,66 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
-	/////////////////////////////////
-	// Tag system
-
-	public void setTagColour(String tagName, Color4d ca) {
+	public final void setTagColour(String tagName, Color4d ca) {
 		Color4d cas[] = new Color4d[1] ;
 		cas[0] = ca;
 		setTagColours(tagName, cas);
 	}
 
-	public void setTagColours(String tagName, Color4d[] cas) {
+	public final void setTagColours(String tagName, Color4d[] cas) {
+		Tag t = tagMap.get(tagName);
+		if (t == null) {
+			t = new Tag(cas, null, true);
+			tagMap.put(tagName, t);
+			return;
+		}
 
-		tags.colours.put(tagName, cas);
-
+		if (t.colorsMatch(cas))
+			return;
+		else
+			tagMap.put(tagName, new Tag(cas, t.sizes, t.visible));
 	}
 
-	public void setTagSize(String tagName, double size) {
-		DoubleVector sizes = new DoubleVector();
-		sizes.add(size);
-		setTagSizes(tagName, sizes);
+	public final void setTagSize(String tagName, double size) {
+		double s[] = new double[1] ;
+		s[0] = size;
+		setTagSizes(tagName, s);
 	}
 
-	public void setTagSizes(String tagName, DoubleVector sizes) {
-		tags.sizes.put(tagName, sizes);
+	public final void setTagSizes(String tagName, double[] sizes) {
+		Tag t = tagMap.get(tagName);
+		if (t == null) {
+			t = new Tag(null, sizes, true);
+			tagMap.put(tagName, t);
+			return;
+		}
+
+		if (t.sizesMatch(sizes))
+			return;
+		else
+			tagMap.put(tagName, new Tag(t.colors, sizes, t.visible));
 	}
 
-	public void setTagVisibility(String tagName, boolean isVisible) {
-		tags.visibility.put(tagName, isVisible);
+	public final void setTagVisibility(String tagName, boolean isVisible) {
+		Tag t = tagMap.get(tagName);
+		if (t == null) {
+			t = new Tag(null, null, isVisible);
+			tagMap.put(tagName, t);
+			return;
+		}
+
+		if (t.visMatch(isVisible))
+			return;
+		else
+			tagMap.put(tagName, new Tag(t.colors, t.sizes, isVisible));
 	}
 
 	/**
 	 * Get all tags for this entity
 	 * @return
 	 */
-	public TagSet getTagSet() {
-		return tags;
+	public HashMap<String, Tag> getTagSet() {
+		return tagMap;
 	}
 
 	////////////////////////////////////////////////////////////////////////

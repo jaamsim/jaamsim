@@ -18,9 +18,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.Tag;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ColourInput;
@@ -252,6 +254,16 @@ public abstract class DisplayModelBinding {
 			return false;
 
 		return cache.equals(val);
+	}
+
+	protected static boolean dirty_tags(HashMap<String, Tag> cache, HashMap<String, Tag> val) {
+		if (cache.size() != val.size()) return true;
+
+		for (Entry<String, Tag> each : cache.entrySet()) {
+			if (val.get(each.getKey()) != each.getValue())
+				return true;
+		}
+		return false;
 	}
 
 	/**

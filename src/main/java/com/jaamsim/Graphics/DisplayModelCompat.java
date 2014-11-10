@@ -15,11 +15,11 @@
 package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EnumInput;
@@ -169,7 +169,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 		private Transform transCache;
 		private Vec3d scaleCache;
-		private DisplayEntity.TagSet tagsCache;
+		private HashMap<String, Tag> tagsCache = emptyTagSet;
 		private ValidShapes shapeCache;
 		private VisibilityInfo viCache;
 
@@ -186,7 +186,7 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
+			HashMap<String, Tag> tags = getTags();
 			VisibilityInfo vi = getVisibilityInfo();
 			ValidShapes sc = shape.getValue();
 
@@ -194,13 +194,13 @@ public class DisplayModelCompat extends DisplayModel {
 
 			dirty = dirty || !compare(transCache, trans);
 			dirty = dirty || dirty_vec3d(scaleCache, scale);
-			dirty = dirty || !tags.isSame(tagsCache);
+			dirty = dirty || dirty_tags(tagsCache, tags);
 			dirty = dirty || !compare(shapeCache, sc);
 			dirty = dirty || !compare(viCache, vi);
 
 			transCache = trans;
 			scaleCache = scale;
-			tagsCache = new DisplayEntity.TagSet(tags);
+			tagsCache = new HashMap<>(tags);
 			shapeCache = sc;
 			viCache = vi;
 
@@ -274,18 +274,29 @@ public class DisplayModelCompat extends DisplayModel {
 			}
 
 			// Gather some inputs
-
-			if (tags.isTagVisibleUtil(DisplayModelCompat.TAG_OUTLINES))
+			if (isTagVisible(DisplayModelCompat.TAG_OUTLINES))
 			{
-				Color4d colour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, outlineColour.getValue());
+				Color4d colour = getTagColor(DisplayModelCompat.TAG_OUTLINES, outlineColour.getValue());
 				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, true, (bold.getValue() ? 2 : 1), getVisibilityInfo(), pickingID));
 			}
 
-			if (filled.getValue() && tags.isTagVisibleUtil(DisplayModelCompat.TAG_CONTENTS))
+			if (filled.getValue() && isTagVisible(DisplayModelCompat.TAG_CONTENTS))
 			{
-				Color4d colour = tags.getTagColourUtil(DisplayModelCompat.TAG_CONTENTS, fillColour.getValue());
+				Color4d colour = getTagColor(DisplayModelCompat.TAG_CONTENTS, fillColour.getValue());
 				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, false, 1, getVisibilityInfo(), pickingID));
 			}
+		}
+
+		private boolean isTagVisible(String name) {
+			Tag t = tagsCache.get(name);
+			if (t == null) return true;
+			return t.visible;
+		}
+
+		private Color4d getTagColor(String name, Color4d def) {
+			Tag t = tagsCache.get(name);
+			if (t == null || t.colors == null || t.colors.length == 0) return def;
+			return t.colors[0];
 		}
 
 		@Override
@@ -321,7 +332,7 @@ public class DisplayModelCompat extends DisplayModel {
 			return dispEnt.getEntityNumber();
 		}
 
-		private DisplayEntity.TagSet getTags() {
+		private HashMap<String, Tag> getTags() {
 			if (dispEnt == null) {
 				return emptyTagSet;
 			}
@@ -333,14 +344,13 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
-			Color4d fillColour = tags.getTagColourUtil(DisplayModelCompat.TAG_CONTENTS, ColourInput.BLACK);
+			Color4d fillColour = getTagColor(DisplayModelCompat.TAG_CONTENTS, ColourInput.BLACK);
 
 			cachedProxies.add(new PolygonProxy(arrowHeadVerts, trans, scale, fillColour, false, 1, getVisibilityInfo(), pickingID));
 			cachedProxies.add(new PolygonProxy(arrowTailVerts, trans, scale, fillColour, false, 1, getVisibilityInfo(), pickingID));
 
-			Color4d outlineColour= tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d outlineColour= getTagColor(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
 			cachedProxies.add(new PolygonProxy(arrowOutlineVerts, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
 
 		}
@@ -351,16 +361,15 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
 			// Now this is very 'shippy' behaviour and basically hand copied from the old DisplayModels (and supporting cast)
 
 			// Hull
-			Color4d hullColour = tags.getTagColourUtil(DisplayModelCompat.TAG_BODY, ColourInput.LIGHT_GREY);
+			Color4d hullColour = getTagColor(DisplayModelCompat.TAG_BODY, ColourInput.LIGHT_GREY);
 			cachedProxies.add(new PolygonProxy(hullVerts, trans, scale, hullColour, false, 1, getVisibilityInfo(), pickingID));
 
 			// Outline
-			Color4d outlineColour= tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d outlineColour= getTagColor(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
 			cachedProxies.add(new PolygonProxy(hullVerts, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
 
 			Transform cabinTrans = new Transform(trans);
@@ -369,9 +378,13 @@ public class DisplayModelCompat extends DisplayModel {
 			cachedProxies.add(new PolygonProxy(shipCabinVerts, cabinTrans, scale, ColourInput.BLACK, false, 1, getVisibilityInfo(), pickingID));
 
 			// Add the contents parcels
-			DoubleVector sizes = tags.sizes.get(DisplayModelCompat.TAG_CONTENTS);
-			Color4d[] colours = tags.colours.get(DisplayModelCompat.TAG_CONTENTS);
-
+			Tag t = tagsCache.get(DisplayModelCompat.TAG_CONTENTS);
+			double[] sizes = null;
+			Color4d[] colours = null;
+			if (t != null) {
+				sizes = t.sizes;
+				colours = t.colors;
+			}
 			cachedProxies.addAll(buildContents(sizes, colours, shipContentsTrans, trans, scale, pickingID));
 		}
 
@@ -381,14 +394,17 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
 			// Add a yellow rectangle for the cab
 			cachedProxies.add(new PolygonProxy(truckCabVerts, trans, scale, ColourInput.YELLOW, false, 1, getVisibilityInfo(), pickingID));
 
-			DoubleVector sizes = tags.sizes.get(DisplayModelCompat.TAG_CONTENTS);
-			Color4d[] colours = tags.colours.get(DisplayModelCompat.TAG_CONTENTS);
-
+			Tag t = tagsCache.get(DisplayModelCompat.TAG_CONTENTS);
+			double[] sizes = null;
+			Color4d[] colours = null;
+			if (t != null) {
+				sizes = t.sizes;
+				colours = t.colors;
+			}
 			cachedProxies.addAll(buildContents(sizes, colours, truckContentsTrans, trans, scale, pickingID));
 		}
 
@@ -398,29 +414,40 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
-			DoubleVector sizes = tags.sizes.get(DisplayModelCompat.TAG_CONTENTS);
-			DoubleVector capacities = tags.sizes.get(DisplayModelCompat.TAG_CAPACITY);
-			Color4d[] colours = tags.colours.get(DisplayModelCompat.TAG_CONTENTS);
-			DoubleVector rescapacities = tags.sizes.get(DisplayModelCompat.TAG_CONTENTS2);
-			Color4d[] rescolours = tags.colours.get(DisplayModelCompat.TAG_CONTENTS2);
-			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
-			Color4d backgroundColour = tags.getTagColourUtil(DisplayModelCompat.TAG_BODY, ColourInput.WHITE);
-			if (sizes == null) {
-				sizes = new DoubleVector();
+			Tag tag_contents = tagsCache.get(DisplayModelCompat.TAG_CONTENTS);
+			double[] sizes;
+			if (tag_contents == null || tag_contents.sizes == null)
+				sizes = new double[0];
+			else
+				sizes = tag_contents.sizes;
+
+			Tag tag_contents2 = tagsCache.get(DisplayModelCompat.TAG_CONTENTS2);
+			double[] rescapacities = null;
+			Color4d[] rescolours = null;
+			if (tag_contents2 != null) {
+				rescapacities = tag_contents2.sizes;
+				rescolours = tag_contents2.colors;
 			}
+			Color4d outlineColour = getTagColor(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d backgroundColour = getTagColor(DisplayModelCompat.TAG_BODY, ColourInput.WHITE);
 
-			if (capacities == null || capacities.size() != sizes.size()) {
-				capacities = new DoubleVector(sizes.size());
-				for (int i = 0; i < sizes.size(); ++i) {
-					capacities.add(1.0);
+			Tag tag_cap = tagsCache.get(DisplayModelCompat.TAG_CAPACITY);
+			double[] capacities;
+			if (tag_cap == null || tag_cap.sizes == null || tag_cap.sizes.length != sizes.length) {
+				capacities = new double[sizes.length];
+				for (int i = 0; i < sizes.length; ++i) {
+					capacities[i] = 1.0d;
 				}
 			}
+			else {
+				capacities = tag_cap.sizes;
+			}
+
 
 			double totalCap = 0;
-			for (int i = 0; i < capacities.size(); ++i) {
-				totalCap += capacities.get(i);
+			for (int i = 0; i < capacities.length; ++i) {
+				totalCap += capacities[i];
 			}
 			if (totalCap == 0) totalCap = 1; // Guard against div by 0
 
@@ -428,16 +455,16 @@ public class DisplayModelCompat extends DisplayModel {
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, backgroundColour, false, 1, getVisibilityInfo(), pickingID));
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
 
-			if (colours == null || colours.length < sizes.size()) {
+			if (tag_contents.colors == null || tag_contents.colors.length < sizes.length) {
 				return;
 			} // Bail out, not properly initialized
 
 			double accumWidth = 0;
-			for (int i = 0; i < sizes.size(); ++i) {
+			for (int i = 0; i < sizes.length; ++i) {
 				// Add a rectangle for each size
 
-				double size = sizes.get(i);
-				double width = capacities.get(i)/totalCap;
+				double size = sizes[i];
+				double width = capacities[i]/totalCap;
 
 				double startX = accumWidth - 0.5;
 				double endX = accumWidth + width - 0.5;
@@ -453,11 +480,11 @@ public class DisplayModelCompat extends DisplayModel {
 				contentsPoints.add(new Vec4d(startX,   endY, 0, 1.0d));
 				contentsPoints.add(new Vec4d(startX, startY, 0, 1.0d));
 
-				cachedProxies.add(new PolygonProxy(contentsPoints, trans, scale, colours[i], false, 1, getVisibilityInfo(), pickingID));
+				cachedProxies.add(new PolygonProxy(contentsPoints, trans, scale, tag_contents.colors[i], false, 1, getVisibilityInfo(), pickingID));
 
 				if (rescapacities != null) {
 					double startResY = endY;
-					double endResY = startResY + rescapacities.get(i);
+					double endResY = startResY + rescapacities[i];
 					List<Vec4d> rescontentsPoints = new ArrayList<>();
 					rescontentsPoints.add(new Vec4d(  endX, startResY, 0, 1.0d));
 					rescontentsPoints.add(new Vec4d(  endX,   endResY, 0, 1.0d));
@@ -475,10 +502,9 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
-			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
-			Color4d fillColour = tags.getTagColourUtil(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
+			Color4d outlineColour = getTagColor(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d fillColour = getTagColor(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
 
 			// Top
 			cachedProxies.add(new PolygonProxy(crushingPlantTopVerts, trans, scale, fillColour, false, 1, getVisibilityInfo(), pickingID));
@@ -495,7 +521,6 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
 			// Add the lines
 			Mat4d lineTrans = new Mat4d();
@@ -504,8 +529,8 @@ public class DisplayModelCompat extends DisplayModel {
 			List<Vec4d> points = RenderUtils.transformPoints(lineTrans, singleQuadLinePoints, 0);
 			cachedProxies.add(new LineProxy(points, ColourInput.BLACK, 1, getVisibilityInfo(), pickingID));
 
-			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
-			Color4d fillColour = tags.getTagColourUtil(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
+			Color4d outlineColour = getTagColor(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d fillColour = getTagColor(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
 
 			cachedProxies.add(new PolygonProxy(singleQuadRectVerts, trans, scale, fillColour, false, 1, getVisibilityInfo(), pickingID));
 			cachedProxies.add(new PolygonProxy(singleQuadRectVerts, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
@@ -517,7 +542,6 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
 			// Add the lines
 			Mat4d lineTrans = new Mat4d();
@@ -526,8 +550,8 @@ public class DisplayModelCompat extends DisplayModel {
 			List<Vec4d> points = RenderUtils.transformPoints(lineTrans, dualQuadLinePoints, 0);
 			cachedProxies.add(new LineProxy(points, ColourInput.BLACK, 1, getVisibilityInfo(), pickingID));
 
-			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
-			Color4d fillColour = tags.getTagColourUtil(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
+			Color4d outlineColour = getTagColor(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d fillColour = getTagColor(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
 
 			cachedProxies.add(new PolygonProxy(dualQuadRect0Verts, trans, scale, fillColour, false, 1, getVisibilityInfo(), pickingID));
 			cachedProxies.add(new PolygonProxy(dualQuadRect1Verts, trans, scale, fillColour, false, 1, getVisibilityInfo(), pickingID));
@@ -543,12 +567,11 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
 
-			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
-			Color4d fillColour = tags.getTagColourUtil(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
-			Color4d trackColour = tags.getTagColourUtil(DisplayModelCompat.TAG_TRACKFILL, ColourInput.MED_GREY);
+			Color4d outlineColour = getTagColor(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d fillColour = getTagColor(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
+			Color4d trackColour = getTagColor(DisplayModelCompat.TAG_TRACKFILL, ColourInput.MED_GREY);
 
 			cachedProxies.add(new PolygonProxy(travellingRect1Verts, trans, scale, fillColour, false, 1, getVisibilityInfo(), pickingID));
 			cachedProxies.add(new PolygonProxy(travellingRect1Verts, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
@@ -566,13 +589,12 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
 			Transform contentsTrans = new Transform(trans);
 			contentsTrans.getTransRef().z += scale.y * 0.001;
 
-			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
-			Color4d contentsColour = tags.getTagColourUtil(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
+			Color4d outlineColour = getTagColor(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d contentsColour = getTagColor(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
 			Color4d trackColour = ColourInput.MED_GREY;
 
 			// This is gross, but until we have proper draw ordering it's the kind of thing we have to do to keep the
@@ -593,10 +615,9 @@ public class DisplayModelCompat extends DisplayModel {
 			Transform trans = getTransform(simTime);
 			Vec3d scale = getScale();
 			long pickingID = getPickingID();
-			DisplayEntity.TagSet tags = getTags();
 
-			Color4d outlineColour = tags.getTagColourUtil(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
-			Color4d contentsColour = tags.getTagColourUtil(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
+			Color4d outlineColour = getTagColor(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+			Color4d contentsColour = getTagColor(DisplayModelCompat.TAG_CONTENTS, ColourInput.MED_GREY);
 
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, contentsColour, false, 1, getVisibilityInfo(), pickingID));
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
@@ -615,11 +636,11 @@ public class DisplayModelCompat extends DisplayModel {
 
 		// A disturbingly deep helper to allow trucks and ships to share contents building code
 		// This class needs to either die or get refactored
-		private List<RenderProxy> buildContents(DoubleVector sizes, Color4d[] colours, Mat4d subTrans,
+		private List<RenderProxy> buildContents(double[] sizes, Color4d[] colours, Mat4d subTrans,
 		                                        Transform trans, Vec3d scale, long pickingID) {
 			List<RenderProxy> ret = new ArrayList<>();
 
-			if (sizes == null || colours == null || sizes.size() != colours.length) {
+			if (sizes == null || colours == null || sizes.length != colours.length) {
 				// We are either out of sync or this is a ShipType, either way draw an empty cargo hold
 				// Add a single grey rectangle
 				List<Vec4d> contentsPoints = new ArrayList<>();
@@ -634,12 +655,15 @@ public class DisplayModelCompat extends DisplayModel {
 				return ret;
 			}
 
-			double totalSize = sizes.sum();
+			double totalSize = 0.0d;
+			for (int i = 0; i < sizes.length; ++i) {
+				totalSize += sizes[i];
+			}
 			double sizeOffset = 0;
-			for (int i = 0; i < sizes.size(); ++i) {
+			for (int i = 0; i < sizes.length; ++i) {
 				// Add a rectangle for
 
-				double size = sizes.get(i);
+				double size = sizes[i];
 				double start = sizeOffset / totalSize;
 				double end = (sizeOffset + size) / totalSize;
 
@@ -662,7 +686,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 	}
 
-	private DisplayEntity.TagSet emptyTagSet = new DisplayEntity.TagSet();
+	private static final HashMap<String, Tag> emptyTagSet = new HashMap<>(0);
 
 	// Begin static data
 	// Since Arrows aren't convex, we need some more convoluted vertices
