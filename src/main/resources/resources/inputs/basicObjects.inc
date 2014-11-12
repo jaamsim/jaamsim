@@ -32,7 +32,6 @@ Define ObjectType {
                     TimeSeriesThreshold
                     ExpressionThreshold
 					EntitlementSelector
-					RandomSelector
 					SetGraphics
 					Statistics
 					ExpressionEntity
@@ -119,7 +118,6 @@ SignalThreshold         JavaClass { com.jaamsim.Thresholds.SignalThreshold      
 TimeSeriesThreshold	    JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle }
 EntitlementSelector		JavaClass { com.jaamsim.BasicObjects.EntitlementSelector		} Palette { 'Basic Objects' } DefaultDisplayModel   { SelectorIconModel }
-RandomSelector			JavaClass { com.jaamsim.BasicObjects.RandomSelector				} Palette { 'Basic Objects' } DefaultDisplayModel   { SelectorIconModel }
 SetGraphics             JavaClass { com.jaamsim.BasicObjects.SetGraphics                } Palette { 'Basic Objects' } DefaultDisplayModel 	{ SetGraphicsIconModel   }
 Statistics              JavaClass { com.jaamsim.BasicObjects.Statistics                 } Palette { 'Basic Objects' } DefaultDisplayModel 	{ StatisticsIconModel    }
 ExpressionEntity              JavaClass { com.jaamsim.basicsim.ExpressionEntity                 } Palette { 'Basic Objects' }
@@ -157,6 +155,5 @@ TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries
 SignalThreshold     Description { 'Threshold that is opened and closed directly by an EntitySignal object.' }
 ExpressionThreshold Description { 'Specifies a logical condition for which an activity is permitted.' }
 EntitlementSelector Description { 'Selects on the basis of entitlement from a given set of entities and proportions.' }
-RandomSelector      Description { 'Randomly selects from a given set of entities and probabilities.' }
 SetGraphics         Description { 'Changes the appearance of the received entity.' }
 Statistics          Description { 'Collects statistics from the received entities.' }
