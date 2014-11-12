@@ -249,7 +249,8 @@ public class ExpParser {
 	private static class FunctionEntry {
 		public String name;
 		public CallableFunc function;
-		public int numArgs;
+		public int numMinArgs;
+		public int numMaxArgs;
 	}
 
 	private static ArrayList<UnaryOpEntry> unaryOps = new ArrayList<>();
@@ -273,11 +274,12 @@ public class ExpParser {
 		binaryOps.add(oe);
 	}
 
-	private static void addFunction(String name, int numArgs, CallableFunc func) {
+	private static void addFunction(String name, int numMinArgs, int numMaxArgs, CallableFunc func) {
 		FunctionEntry fe = new FunctionEntry();
 		fe.name = name;
 		fe.function = func;
-		fe.numArgs = numArgs;
+		fe.numMinArgs = numMinArgs;
+		fe.numMaxArgs = numMaxArgs;
 		functions.add(fe);
 	}
 
@@ -466,27 +468,42 @@ public class ExpParser {
 
 		////////////////////////////////////////////////////
 		// Functions
-		addFunction("max", 2, new CallableFunc() {
+		addFunction("max", 2, -1, new CallableFunc() {
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args) {
-				if (args[0].unitType != args[1].unitType) {
-					return ExpResult.BAD_RESULT;
+				for (int i = 1; i < args.length; ++ i) {
+					if (args[0].unitType != args[i].unitType)
+						return ExpResult.BAD_RESULT;
 				}
-				return new ExpResult(Math.max(args[0].value, args[1].value), args[0].unitType);
+
+				ExpResult res = args[0];
+				for (int i = 1; i < args.length; ++ i) {
+					if (args[i].value > res.value)
+						res = args[i];
+				}
+				return res;
 			}
 		});
 
-		addFunction("min", 2, new CallableFunc() {
+		addFunction("min", 2, -1, new CallableFunc() {
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args) {
-				if (args[0].unitType != args[1].unitType) {
-					return ExpResult.BAD_RESULT;
+
+				for (int i = 1; i < args.length; ++ i) {
+					if (args[0].unitType != args[i].unitType)
+						return ExpResult.BAD_RESULT;
 				}
-				return new ExpResult(Math.min(args[0].value, args[1].value), args[0].unitType);
+
+				ExpResult res = args[0];
+				for (int i = 1; i < args.length; ++ i) {
+					if (args[i].value < res.value)
+						res = args[i];
+				}
+				return res;
 			}
 		});
 
-		addFunction("abs", 1, new CallableFunc() {
+		addFunction("abs", 1, 1, new CallableFunc() {
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args) {
 				return new ExpResult(Math.abs(args[0].value), args[0].unitType);
@@ -826,10 +843,16 @@ public class ExpParser {
 			throw new Error(String.format("Uknown function: \"%s\"", funcName));
 		}
 
-		if (fe.numArgs != arguments.size()){
-			throw new Error(String.format("Function \"%s\" expects %d arguments. %d provided.",
-					funcName, fe.numArgs, arguments.size()));
+		if (fe.numMinArgs > 0 && arguments.size() < fe.numMinArgs){
+			throw new Error(String.format("Function \"%s\" expects at least %d arguments. %d provided.",
+					funcName, fe.numMinArgs, arguments.size()));
 		}
+
+		if (fe.numMaxArgs > 0 && arguments.size() > fe.numMaxArgs){
+			throw new Error(String.format("Function \"%s\" expects at most %d arguments. %d provided.",
+					funcName, fe.numMaxArgs, arguments.size()));
+		}
+
 		return new FuncCall(context, fe.function, arguments);
 	}
 

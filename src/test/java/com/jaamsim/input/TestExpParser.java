@@ -143,6 +143,14 @@ public class TestExpParser {
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 
+		exp = ExpParser.parseExpression(pc, "min(3, 42, -5, 602)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == -5);
+
+		exp = ExpParser.parseExpression(pc, "max(3, 42, -5, 602)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 602);
+
 		exp = ExpParser.parseExpression(pc, "abs(-42)");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
