@@ -413,8 +413,8 @@ public class TestExpParser {
 
 		class EC implements ExpParser.EvalContext {
 			@Override
-			public ExpResult getVariableValue(String[] name) {
-				return ExpResult.BAD_RESULT;
+			public ExpResult getVariableValue(String[] name) throws ExpParser.Error {
+				throw new ExpParser.Error("Variables not supported in test");
 			}
 		}
 		EC ec = new EC();
@@ -429,9 +429,15 @@ public class TestExpParser {
 		assertTrue(res.value == 3665);
 		assertTrue(res.unitType == TimeUnit.class);
 
-		exp = ExpParser.parseExpression(upc, "1[hr] + 1[m]");
-		res = exp.evaluate(ec);
-		assertTrue(res.isBad());
+		boolean threw = false;
+		try {
+			exp = ExpParser.parseExpression(upc, "1[hr] + 1[m]");
+			res = exp.evaluate(ec);
+			assertTrue(false);
+		} catch (ExpParser.Error ex) {
+			threw = true;
+		}
+		assertTrue(threw);
 
 		exp = ExpParser.parseExpression(upc, "max(1[hr], 1[s])");
 		res = exp.evaluate(ec);
@@ -443,7 +449,7 @@ public class TestExpParser {
 		assertTrue(res.value == 6000);
 		assertTrue(res.unitType == DistanceUnit.class);
 
-		boolean threw = false;
+		threw = false;
 		try {
 			exp = ExpParser.parseExpression(upc, "1[parsec]");
 		} catch(ExpParser.Error ex) {

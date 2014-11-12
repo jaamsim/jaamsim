@@ -14,21 +14,14 @@
  */
 package com.jaamsim.input;
 
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class ExpResult {
-	public static final ExpResult BAD_RESULT = new ExpResult(Double.NaN, DimensionlessUnit.class);
-
 	public final double value;
 	public final Class<? extends Unit> unitType;
 
 	public ExpResult(double val, Class<? extends Unit> ut) {
 		value = val;
 		unitType = ut;
-	}
-
-	public boolean isBad() {
-		return this == BAD_RESULT;
 	}
 }

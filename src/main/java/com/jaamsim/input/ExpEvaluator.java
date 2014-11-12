@@ -92,8 +92,6 @@ public class ExpEvaluator {
 
 	private static class EntityEvalContext implements ExpParser.EvalContext {
 
-		public String errorString; // Used to mark an error during lookup because 'throws' screws with the interface
-
 		// These are updated in updateContext() which must be called before any expression are evaluated
 		private double simTime;
 		private Entity thisEnt;
@@ -106,22 +104,20 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public ExpResult getVariableValue(String[] names) {
+		public ExpResult getVariableValue(String[] names) throws ExpParser.Error {
 			try {
 				Entity ent = getEntity(names, simTime, thisEnt, objEnt);
 
 				String outputName = names[names.length-1];
 				OutputHandle oh = ent.getOutputHandleInterned(outputName);
 				if (oh == null) {
-					errorString = String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName());
-					return ExpResult.BAD_RESULT;
+					throw new ExpParser.Error(String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName()));
 				}
 				return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
 
 			} catch (Exception e) {
-				errorString = e.getMessage();
+				throw new ExpParser.Error(e);
 			}
-			return ExpResult.BAD_RESULT;
 		}
 	}
 	public static ExpParser.ParseContext getParseContext() {
@@ -144,10 +140,11 @@ public class ExpEvaluator {
 	{
 		EntityEvalContext evalContext = new EntityEvalContext(simTime, thisEnt, objEnt);
 
-		ExpResult value = exp.evaluate(evalContext);
-		if (evalContext.errorString != null)
-			throw new Error(evalContext.errorString);
 
-		return value;
+		try {
+			return exp.evaluate(evalContext);
+		} catch (ExpParser.Error e) {
+			throw new Error(e.getLocalizedMessage());
+		}
 	}
 }

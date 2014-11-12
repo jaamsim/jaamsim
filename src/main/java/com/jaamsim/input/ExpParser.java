@@ -22,15 +22,15 @@ import com.jaamsim.units.Unit;
 public class ExpParser {
 
 	public interface UnOpFunc {
-		public ExpResult apply(ParseContext context, ExpResult val);
+		public ExpResult apply(ParseContext context, ExpResult val) throws Error;
 	}
 
 	public interface BinOpFunc {
-		public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval);
+		public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error;
 	}
 
 	public interface CallableFunc {
-		public ExpResult call(ParseContext context, ExpResult[] args);
+		public ExpResult call(ParseContext context, ExpResult[] args) throws Error;
 	}
 
 	public static class UnitData {
@@ -45,12 +45,12 @@ public class ExpParser {
 	}
 
 	public interface EvalContext {
-		public ExpResult getVariableValue(String[] names);
+		public ExpResult getVariableValue(String[] names) throws Error;
 	}
 
 	private interface ExpressionWalker {
-		public void visit(Expression exp);
-		public Expression updateRef(Expression exp);
+		public void visit(Expression exp) throws Error;
+		public Expression updateRef(Expression exp) throws Error;
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -58,11 +58,11 @@ public class ExpParser {
 
 	public abstract static class Expression {
 		public ParseContext context;
-		public abstract ExpResult evaluate(EvalContext ec);
+		public abstract ExpResult evaluate(EvalContext ec) throws Error;
 		public Expression(ParseContext context) {
 			this.context = context;
 		}
-		abstract void walk(ExpressionWalker w);
+		abstract void walk(ExpressionWalker w) throws Error;
 	}
 
 	private static class Constant extends Expression {
@@ -76,7 +76,7 @@ public class ExpParser {
 			return val;
 		}
 		@Override
-		void walk(ExpressionWalker w) {
+		void walk(ExpressionWalker w) throws Error {
 			w.visit(this);
 		}
 	}
@@ -88,11 +88,11 @@ public class ExpParser {
 			this.vals = vals;
 		}
 		@Override
-		public ExpResult evaluate(EvalContext ec) {
+		public ExpResult evaluate(EvalContext ec) throws Error {
 			return ec.getVariableValue(vals);
 		}
 		@Override
-		void walk(ExpressionWalker w) {
+		void walk(ExpressionWalker w) throws Error {
 			w.visit(this);
 		}
 	}
@@ -107,11 +107,11 @@ public class ExpParser {
 		}
 
 		@Override
-		public ExpResult evaluate(EvalContext ec) {
+		public ExpResult evaluate(EvalContext ec) throws Error {
 			return func.apply(context, subExp.evaluate(ec));
 		}
 		@Override
-		void walk(ExpressionWalker w) {
+		void walk(ExpressionWalker w) throws Error {
 			subExp.walk(w);
 
 			subExp = w.updateRef(subExp);
@@ -135,14 +135,14 @@ public class ExpParser {
 		}
 
 		@Override
-		public ExpResult evaluate(EvalContext ec) {
+		public ExpResult evaluate(EvalContext ec) throws Error {
 			ExpResult lRes = lConstVal != null ? lConstVal : lSubExp.evaluate(ec);
 			ExpResult rRes = rConstVal != null ? rConstVal : rSubExp.evaluate(ec);
 			return func.apply(context, lRes, rRes);
 		}
 
 		@Override
-		void walk(ExpressionWalker w) {
+		void walk(ExpressionWalker w) throws Error {
 			lSubExp.walk(w);
 			rSubExp.walk(w);
 
@@ -167,7 +167,7 @@ public class ExpParser {
 			falseExp =f;
 		}
 		@Override
-		public ExpResult evaluate(EvalContext ec) {
+		public ExpResult evaluate(EvalContext ec) throws Error {
 			ExpResult condRes = constCondRes != null ? constCondRes : condExp.evaluate(ec);
 			if (condRes.value == 0)
 				return constFalseRes != null ? constFalseRes : falseExp.evaluate(ec);
@@ -175,7 +175,7 @@ public class ExpParser {
 				return constTrueRes != null ? constTrueRes : trueExp.evaluate(ec);
 		}
 		@Override
-		void walk(ExpressionWalker w) {
+		void walk(ExpressionWalker w) throws Error {
 			condExp.walk(w);
 			trueExp.walk(w);
 			falseExp.walk(w);
@@ -203,7 +203,7 @@ public class ExpParser {
 		}
 
 		@Override
-		public ExpResult evaluate(EvalContext ec) {
+		public ExpResult evaluate(EvalContext ec) throws Error {
 			ExpResult[] argVals = new ExpResult[args.size()];
 			for (int i = 0; i < args.size(); ++i) {
 				ExpResult constArg = constResults.get(i);
@@ -212,7 +212,7 @@ public class ExpParser {
 			return function.call(context, argVals);
 		}
 		@Override
-		void walk(ExpressionWalker w) {
+		void walk(ExpressionWalker w) throws Error {
 			for (int i = 0; i < args.size(); ++i) {
 				args.get(i).walk(w);
 			}
@@ -339,9 +339,9 @@ public class ExpParser {
 		// Binary operators
 		addBinaryOp("+", 20, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				if (lval.unitType != rval.unitType) {
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 				return new ExpResult(lval.value + rval.value, lval.unitType);
 			}
@@ -349,9 +349,9 @@ public class ExpParser {
 
 		addBinaryOp("-", 20, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				if (lval.unitType != rval.unitType) {
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 				return new ExpResult(lval.value - rval.value, lval.unitType);
 			}
@@ -359,10 +359,10 @@ public class ExpParser {
 
 		addBinaryOp("*", 30, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				Class<? extends Unit> newType = context.multUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 				return new ExpResult(lval.value * rval.value, newType);
 			}
@@ -370,10 +370,10 @@ public class ExpParser {
 
 		addBinaryOp("/", 30, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				Class<? extends Unit> newType = context.divUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 				return new ExpResult(lval.value / rval.value, newType);
 			}
@@ -381,11 +381,11 @@ public class ExpParser {
 
 		addBinaryOp("^", 40, true, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				if (lval.unitType != DimensionlessUnit.class ||
 				    rval.unitType != DimensionlessUnit.class) {
 
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 
 				return new ExpResult(Math.pow(lval.value, rval.value), DimensionlessUnit.class);
@@ -394,9 +394,9 @@ public class ExpParser {
 
 		addBinaryOp("==", 10, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				if (lval.unitType != rval.unitType) {
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 				return new ExpResult(lval.value == rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -404,9 +404,9 @@ public class ExpParser {
 
 		addBinaryOp("!=", 10, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				if (lval.unitType != rval.unitType) {
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 				return new ExpResult(lval.value != rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -428,9 +428,9 @@ public class ExpParser {
 
 		addBinaryOp("<", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				if (lval.unitType != rval.unitType) {
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 				return new ExpResult(lval.value < rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -438,9 +438,9 @@ public class ExpParser {
 
 		addBinaryOp("<=", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				if (lval.unitType != rval.unitType) {
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 				return new ExpResult(lval.value <= rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -448,9 +448,9 @@ public class ExpParser {
 
 		addBinaryOp(">", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				if (lval.unitType != rval.unitType) {
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 				return new ExpResult(lval.value > rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -458,9 +458,9 @@ public class ExpParser {
 
 		addBinaryOp(">=", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
 				if (lval.unitType != rval.unitType) {
-					return ExpResult.BAD_RESULT;
+					throw new Error("Unit mismatch");
 				}
 				return new ExpResult(lval.value >= rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -470,10 +470,10 @@ public class ExpParser {
 		// Functions
 		addFunction("max", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args) {
+			public ExpResult call(ParseContext context, ExpResult[] args) throws Error {
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						return ExpResult.BAD_RESULT;
+						throw new Error("Unit mismatch");
 				}
 
 				ExpResult res = args[0];
@@ -487,11 +487,11 @@ public class ExpParser {
 
 		addFunction("min", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args) {
+			public ExpResult call(ParseContext context, ExpResult[] args) throws Error {
 
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						return ExpResult.BAD_RESULT;
+						throw new Error("Unit mismatch");
 				}
 
 				ExpResult res = args[0];
@@ -512,10 +512,10 @@ public class ExpParser {
 
 		addFunction("indexOfMin", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args) {
+			public ExpResult call(ParseContext context, ExpResult[] args) throws Error {
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						return ExpResult.BAD_RESULT;
+						throw new Error("Unit mismatch");
 				}
 
 				ExpResult res = args[0];
@@ -532,10 +532,10 @@ public class ExpParser {
 
 		addFunction("indexOfMax", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args) {
+			public ExpResult call(ParseContext context, ExpResult[] args) throws Error {
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						return ExpResult.BAD_RESULT;
+						throw new Error("Unit mismatch");
 				}
 
 				ExpResult res = args[0];
@@ -554,6 +554,9 @@ public class ExpParser {
 	public static class Error extends Exception {
 		Error(String err) {
 			super(err);
+		}
+		Error(Throwable cause) {
+			super(cause);
 		}
 	}
 
@@ -601,7 +604,7 @@ public class ExpParser {
 	private static class ConstOptimizer implements ExpressionWalker {
 
 		@Override
-		public void visit(Expression exp) {
+		public void visit(Expression exp) throws Error {
 			// Note: Below we are passing 'null' as an EvalContext, this is not typically
 			// acceptable, but is 'safe enough' when we know the expression is a constant
 
@@ -642,7 +645,7 @@ public class ExpParser {
 		 * Give a node a chance to swap itself out with a different subtree.
 		 */
 		@Override
-		public Expression updateRef(Expression exp) {
+		public Expression updateRef(Expression exp) throws Error {
 			if (exp instanceof UnaryOp) {
 				UnaryOp uo = (UnaryOp)exp;
 				if (uo.subExp instanceof Constant) {
