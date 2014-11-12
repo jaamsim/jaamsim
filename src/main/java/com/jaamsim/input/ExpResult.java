@@ -20,8 +20,8 @@ import com.jaamsim.units.Unit;
 public class ExpResult {
 	public static final ExpResult BAD_RESULT = new ExpResult(Double.NaN, DimensionlessUnit.class);
 
-	public double value;
-	public Class<? extends Unit> unitType;
+	public final double value;
+	public final Class<? extends Unit> unitType;
 
 	public ExpResult(double val, Class<? extends Unit> ut) {
 		value = val;
