@@ -510,6 +510,45 @@ public class ExpParser {
 			}
 		});
 
+		addFunction("indexOfMin", 2, -1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args) {
+				for (int i = 1; i < args.length; ++ i) {
+					if (args[0].unitType != args[i].unitType)
+						return ExpResult.BAD_RESULT;
+				}
+
+				ExpResult res = args[0];
+				int index = 0;
+				for (int i = 1; i < args.length; ++ i) {
+					if (args[i].value < res.value) {
+						res = args[i];
+						index = i;
+					}
+				}
+				return new ExpResult(index + 1, DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("indexOfMax", 2, -1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args) {
+				for (int i = 1; i < args.length; ++ i) {
+					if (args[0].unitType != args[i].unitType)
+						return ExpResult.BAD_RESULT;
+				}
+
+				ExpResult res = args[0];
+				int index = 0;
+				for (int i = 1; i < args.length; ++ i) {
+					if (args[i].value > res.value) {
+						res = args[i];
+						index = i;
+					}
+				}
+				return new ExpResult(index + 1, DimensionlessUnit.class);
+			}
+		});
 	}
 
 	public static class Error extends Exception {
