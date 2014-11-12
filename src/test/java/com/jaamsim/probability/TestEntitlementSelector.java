@@ -19,32 +19,26 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.jaamsim.BasicObjects.EntitlementSelector;
-import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.InputAgent;
 
 public class TestEntitlementSelector {
 
 	@Test
 	public void EntityCounts() {
-		DisplayEntity entA = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, "A", "-", true);
-		DisplayEntity entB = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, "B", "-", true);
-		DisplayEntity entC = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, "C", "-", true);
 
 		EntitlementSelector selector = InputAgent.defineEntityWithUniqueName(EntitlementSelector.class, "Dist", "-", true);
-		String testStr = entA.getName() + " " + entB.getName() + " " + entC.getName();
-		InputAgent.processEntity_Keyword_Value( selector, "EntityList", testStr);
-		InputAgent.processEntity_Keyword_Value( selector, "ProbabilityList", "0.5  0.3  0.2");
+		InputAgent.processEntity_Keyword_Value( selector, "ProportionList", "0.5  0.3  0.2");
 		selector.validate();
 		selector.earlyInit();
 
-		for(int i = 0; i<1000000; i++) {
-			selector.nextValue();
-		}
+		int numSamples = 1000000;
+		TestContinuousDistribution.sampleDistribution(selector, numSamples);
 
 		double maxDiff = 0.0;
-		double[] diff = selector.getSampleDifference(0.0);
-		for( int i=0; i<diff.length; i++ ) {
-			maxDiff = Math.max( Math.abs( diff[i] ), maxDiff );
+		DoubleVector diff = selector.getSampleDifference(0.0);
+		for( int i=0; i<diff.size(); i++ ) {
+			maxDiff = Math.max( Math.abs( diff.get(i) ), maxDiff );
 		}
 
 		assertTrue( maxDiff <= 1.0 );

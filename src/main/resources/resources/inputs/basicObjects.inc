@@ -154,6 +154,6 @@ TimeSeries         Description { 'Provides a floating point number that changes 
 TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries for which an activity is permitted.' }
 SignalThreshold     Description { 'Threshold that is opened and closed directly by an EntitySignal object.' }
 ExpressionThreshold Description { 'Specifies a logical condition for which an activity is permitted.' }
-EntitlementSelector Description { 'Selects on the basis of entitlement from a given set of entities and proportions.' }
+EntitlementSelector Description { 'Selects an index on the basis of entitlement from a given set of proportions.' }
 SetGraphics         Description { 'Changes the appearance of the received entity.' }
 Statistics          Description { 'Collects statistics from the received entities.' }

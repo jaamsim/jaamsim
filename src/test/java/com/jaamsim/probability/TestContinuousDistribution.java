@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.jaamsim.ProbabilityDistributions.ContinuousDistribution;
-import com.jaamsim.ProbabilityDistributions.Distribution;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -28,11 +28,11 @@ import com.jaamsim.input.InputAgent;
 
 public class TestContinuousDistribution {
 	static class SampleDistribution extends ProcessTarget {
-		final Distribution dist;
+		final SampleProvider dist;
 		final int numSamples;
 		double total;
 
-		public SampleDistribution(Distribution dist, int numSamples) {
+		public SampleDistribution(SampleProvider dist, int numSamples) {
 			this.dist = dist;
 			this.numSamples = numSamples;
 		}
@@ -49,7 +49,7 @@ public class TestContinuousDistribution {
 		}
 	}
 
-	static double sampleDistribution(Distribution dist, int numSamples) {
+	static double sampleDistribution(SampleProvider dist, int numSamples) {
 		SampleDistribution target = new SampleDistribution(dist, numSamples);
 		EventManager evt = new EventManager("DistibutionUnitTest");
 		evt.clear();
