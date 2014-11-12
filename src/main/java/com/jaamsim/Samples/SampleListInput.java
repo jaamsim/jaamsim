@@ -27,9 +27,12 @@ import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
- * SampleListInput is an object for parsing inputs consisting of a list of SampleProviders using the syntax:\n
- * Entity keyword { SampleProvider-1  SampleProvider-2 ... }\n
- * where SampleProvider-1 is an Entity that implements the SampleProvider interface, etc.
+ * SampleListInput is an object for parsing inputs consisting of a list of
+ * SampleProviders using the syntax:
+ * <p>
+ * Entity keyword { SampleProvider1  SampleProvider2 ... }
+ * <p>
+ * where SampleProvider1, etc. are Entities that implement the SampleProvider interface.
  * @author Harry King
  */
 public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
@@ -73,10 +76,10 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<>();
-		for (Entity each: Entity.getAll()) {
-			if( (SampleProvider.class).isAssignableFrom(each.getClass()) ) {
-			    list.add(each.getName());
-			}
+		for (Entity each : Entity.getClonesOfIterator(Entity.class, SampleProvider.class)) {
+			SampleProvider samp = (SampleProvider)each;
+			if (samp.getUnitType() == unitType)
+				list.add(each.getName());
 		}
 		Collections.sort(list);
 		return list;
