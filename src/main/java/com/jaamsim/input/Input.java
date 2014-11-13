@@ -33,7 +33,6 @@ import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.Tester;
-import com.sandwell.JavaSimulation3D.Clock;
 
 public abstract class Input<T> {
 	protected static final String INP_ERR_COUNT = "Expected an input with %s value(s), received: %s";
@@ -681,12 +680,37 @@ public abstract class Input<T> {
 		throw new InputErrorException(INP_ERR_BADDATE, input);
 	}
 
+	private static final int[] daysInMonth;
+	private static final int[] firstDayOfMonth;
+
+	static {
+		daysInMonth = new int[12];
+		daysInMonth[0] = 31;
+		daysInMonth[1] = 28;
+		daysInMonth[2] = 31;
+		daysInMonth[3] = 30;
+		daysInMonth[4] = 31;
+		daysInMonth[5] = 30;
+		daysInMonth[6] = 31;
+		daysInMonth[7] = 31;
+		daysInMonth[8] = 30;
+		daysInMonth[9] = 31;
+		daysInMonth[10] = 30;
+		daysInMonth[11] = 31;
+
+		firstDayOfMonth = new int[12];
+		firstDayOfMonth[0] = 1;
+		for (int i = 1; i < firstDayOfMonth.length; i++) {
+			firstDayOfMonth[i] = firstDayOfMonth[i - 1] + daysInMonth[i - 1];
+		}
+	}
+
 	private static final long getUS(String input, int YY, int MM, int DD, int hh, int mm, int ss, int us) {
 		// Validate ranges
 		if (MM <= 0 || MM > 12)
 			throw new InputErrorException(INP_ERR_BADDATE, input);
 
-		if (DD <= 0 || DD > Clock.getDaysInMonth(MM))
+		if (DD <= 0 || DD > daysInMonth[MM - 1])
 			throw new InputErrorException(INP_ERR_BADDATE, input);
 
 		if (hh < 0 || hh > 23)
@@ -697,7 +721,7 @@ public abstract class Input<T> {
 
 		long ret = 0;
 		ret += YY * usPerYr;
-		ret += (Clock.getFirstDayOfMonth(MM) - 1) * usPerDay;
+		ret += (firstDayOfMonth[MM - 1] - 1) * usPerDay;
 		ret += (DD - 1) * usPerDay;
 		ret += hh * usPerHr;
 		ret += mm * usPerMin;
