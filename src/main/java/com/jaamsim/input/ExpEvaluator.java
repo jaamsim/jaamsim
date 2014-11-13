@@ -35,17 +35,17 @@ public class ExpEvaluator {
 			ent = Entity.getNamedEntity(names[0]);
 
 		if (ent == null) {
-			throw new ExpError(String.format("Could not find entity: %s", names[0]));
+			throw new ExpError(String.format("Could not find entity: %s", names[0]), null, 0);
 		}
 		// Run the output chain up to the second last name
 		for(int i = 1; i < names.length-1; ++i) {
 			String outputName = names[i];
 			OutputHandle oh = ent.getOutputHandleInterned(outputName);
 			if (oh == null) {
-				throw new ExpError(String.format("Output '%s' not found on entity '%s'", outputName, ent.getName()));
+				throw new ExpError(String.format("Output '%s' not found on entity '%s'", outputName, ent.getName()), null, 0);
 			}
 			if (!Entity.class.isAssignableFrom(oh.getReturnType())) {
-				throw new ExpError(String.format("Output '%s' is not an entity output", outputName));
+				throw new ExpError(String.format("Output '%s' is not an entity output", outputName), null, 0);
 			}
 
 			ent = oh.getValue(simTime, Entity.class);
@@ -104,7 +104,7 @@ public class ExpEvaluator {
 			String outputName = names[names.length-1];
 			OutputHandle oh = ent.getOutputHandleInterned(outputName);
 			if (oh == null) {
-				throw new ExpError(String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName()));
+				throw new ExpError(String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName()), null, 0);
 			}
 			return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
 
@@ -121,7 +121,7 @@ public class ExpEvaluator {
 
 		String attribName = assign.destination[assign.destination.length-1];
 		if (!assignmentEnt.hasAttribute(attribName)) {
-			throw new ExpError(String.format("Entity '%s' does not have attribute '%s'", assignmentEnt, attribName));
+			throw new ExpError(String.format("Entity '%s' does not have attribute '%s'", assignmentEnt, attribName), null, 0);
 		}
 		assignmentEnt.setAttribute(attribName, result.value);
 	}

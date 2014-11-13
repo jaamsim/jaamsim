@@ -15,7 +15,11 @@
 package com.jaamsim.input;
 
 public class ExpError extends Exception {
+	public final String source;
+	public final int pos;
 	ExpError(String err, String source, int pos) {
 		super(err);
+		this.source = source;
+		this.pos = pos;
 	}
 }

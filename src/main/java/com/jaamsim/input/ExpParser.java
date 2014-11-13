@@ -27,11 +27,11 @@ public class ExpParser {
 	}
 
 	public interface BinOpFunc {
-		public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError;
+		public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError;
 	}
 
 	public interface CallableFunc {
-		public ExpResult call(ParseContext context, ExpResult[] args, int pos) throws ExpError;
+		public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError;
 	}
 
 	public static class UnitData {
@@ -143,7 +143,7 @@ public class ExpParser {
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			ExpResult lRes = lConstVal != null ? lConstVal : lSubExp.evaluate(ec);
 			ExpResult rRes = rConstVal != null ? rConstVal : rSubExp.evaluate(ec);
-			return func.apply(context, lRes, rRes, tokenPos);
+			return func.apply(context, lRes, rRes, source, tokenPos);
 		}
 
 		@Override
@@ -214,7 +214,7 @@ public class ExpParser {
 				ExpResult constArg = constResults.get(i);
 				argVals[i] = constArg != null ? constArg : args.get(i).evaluate(ec);
 			}
-			return function.call(context, argVals, tokenPos);
+			return function.call(context, argVals, source, tokenPos);
 		}
 		@Override
 		void walk(ExpressionWalker w) throws ExpError {
@@ -344,9 +344,9 @@ public class ExpParser {
 		// Binary operators
 		addBinaryOp("+", 20, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 				return new ExpResult(lval.value + rval.value, lval.unitType);
 			}
@@ -354,9 +354,9 @@ public class ExpParser {
 
 		addBinaryOp("-", 20, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source,int pos) throws ExpError {
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 				return new ExpResult(lval.value - rval.value, lval.unitType);
 			}
@@ -364,10 +364,10 @@ public class ExpParser {
 
 		addBinaryOp("*", 30, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				Class<? extends Unit> newType = context.multUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 				return new ExpResult(lval.value * rval.value, newType);
 			}
@@ -375,10 +375,10 @@ public class ExpParser {
 
 		addBinaryOp("/", 30, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				Class<? extends Unit> newType = context.divUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 				return new ExpResult(lval.value / rval.value, newType);
 			}
@@ -386,11 +386,11 @@ public class ExpParser {
 
 		addBinaryOp("^", 40, true, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				if (lval.unitType != DimensionlessUnit.class ||
 				    rval.unitType != DimensionlessUnit.class) {
 
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 
 				return new ExpResult(Math.pow(lval.value, rval.value), DimensionlessUnit.class);
@@ -399,9 +399,9 @@ public class ExpParser {
 
 		addBinaryOp("==", 10, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 				return new ExpResult(lval.value == rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -409,9 +409,9 @@ public class ExpParser {
 
 		addBinaryOp("!=", 10, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 				return new ExpResult(lval.value != rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -419,23 +419,23 @@ public class ExpParser {
 
 		addBinaryOp("&&", 8, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos){
 				return new ExpResult((lval.value!=0) && (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("||", 6, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos){
 				return new ExpResult((lval.value!=0) || (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("<", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 				return new ExpResult(lval.value < rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -443,9 +443,9 @@ public class ExpParser {
 
 		addBinaryOp("<=", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 				return new ExpResult(lval.value <= rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -453,9 +453,9 @@ public class ExpParser {
 
 		addBinaryOp(">", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 				return new ExpResult(lval.value > rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -463,9 +463,9 @@ public class ExpParser {
 
 		addBinaryOp(">=", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws ExpError {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				if (lval.unitType != rval.unitType) {
-					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType, pos));
+					throw new ExpError(getUnitMismatchString(lval.unitType, rval.unitType), source, pos);
 				}
 				return new ExpResult(lval.value >= rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -475,10 +475,10 @@ public class ExpParser {
 		// Functions
 		addFunction("max", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, int pos) throws ExpError {
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						throw new ExpError(getUnitMismatchString(args[0].unitType, args[i].unitType, pos));
+						throw new ExpError(getUnitMismatchString(args[0].unitType, args[i].unitType), source, pos);
 				}
 
 				ExpResult res = args[0];
@@ -492,11 +492,11 @@ public class ExpParser {
 
 		addFunction("min", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, int pos) throws ExpError {
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
 
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						throw new ExpError(getUnitMismatchString(args[0].unitType, args[i].unitType, pos));
+						throw new ExpError(getUnitMismatchString(args[0].unitType, args[i].unitType), source, pos);
 				}
 
 				ExpResult res = args[0];
@@ -510,17 +510,17 @@ public class ExpParser {
 
 		addFunction("abs", 1, 1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, int pos) {
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
 				return new ExpResult(Math.abs(args[0].value), args[0].unitType);
 			}
 		});
 
 		addFunction("indexOfMin", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, int pos) throws ExpError {
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						throw new ExpError(getUnitMismatchString(args[0].unitType, args[i].unitType, pos));
+						throw new ExpError(getUnitMismatchString(args[0].unitType, args[i].unitType), source, pos);
 				}
 
 				ExpResult res = args[0];
@@ -537,10 +537,10 @@ public class ExpParser {
 
 		addFunction("indexOfMax", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args, int pos) throws ExpError {
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						throw new ExpError(getUnitMismatchString(args[0].unitType, args[i].unitType, pos));
+						throw new ExpError(getUnitMismatchString(args[0].unitType, args[i].unitType), source, pos);
 				}
 
 				ExpResult res = args[0];
@@ -565,11 +565,11 @@ public class ExpParser {
 		return "Unknown Unit";
 	}
 
-	private static String getUnitMismatchString(Class<? extends Unit> u0, Class<? extends Unit> u1, int pos) {
+	private static String getUnitMismatchString(Class<? extends Unit> u0, Class<? extends Unit> u1) {
 		String s0 = unitToString(u0);
 		String s1 = unitToString(u1);
 
-		return String.format("Unit mismatch: '%s' and '%s' are not compatible at position: %d", s0, s1, pos);
+		return String.format("Unit mismatch: '%s' and '%s' are not compatible", s0, s1);
 	}
 
 	/**
@@ -585,15 +585,15 @@ public class ExpParser {
 			this.pos = 0;
 		}
 
-		public void expect(int type, String val) throws ExpError {
+		public void expect(int type, String val, String source) throws ExpError {
 			if (pos == tokens.size()) {
-				throw new ExpError(String.format("Expected \"%s\", past the end of input", val));
+				throw new ExpError(String.format("Expected \"%s\", past the end of input", val), source, source.length());
 			}
 
 			ExpTokenizer.Token nextTok = tokens.get(pos);
 
 			if (nextTok.type != type || !nextTok.value.equals(val)) {
-				throw new ExpError(String.format("Expected \"%s\", got \"%s\" at position %d", val, nextTok.value, nextTok.pos));
+				throw new ExpError(String.format("Expected \"%s\", got \"%s\"", val, nextTok.value), source, nextTok.pos);
 			}
 			pos++;
 		}
@@ -695,7 +695,7 @@ public class ExpParser {
 		// Make sure we've parsed all the tokens
 		ExpTokenizer.Token peeked = tokens.peek();
 		if (peeked != null) {
-			throw new ExpError(String.format("Unexpected additional values at position: %d", peeked.pos));
+			throw new ExpError("Unexpected additional values", input, peeked.pos);
 		}
 
 		exp.walk(CONST_OP);
@@ -746,7 +746,7 @@ public class ExpParser {
 
 		Expression trueExp = parseExp(context, tokens, 0, source);
 
-		tokens.expect(ExpTokenizer.SYM_TYPE, ":");
+		tokens.expect(ExpTokenizer.SYM_TYPE, ":", source);
 
 		Expression falseExp = parseExp(context, tokens , 0, source);
 
@@ -763,13 +763,13 @@ public class ExpParser {
 		if (nextTok == null || (nextTok.type != ExpTokenizer.SQ_TYPE &&
 			                    !nextTok.value.equals("this") &&
 			                    !nextTok.value.equals("obj"))) {
-			throw new ExpError("Assignments must start with an identifier");
+			throw new ExpError("Assignments must start with an identifier", input, 0);
 		}
-		ArrayList<String> destination = parseIdentifier(nextTok, tokens);
+		ArrayList<String> destination = parseIdentifier(nextTok, tokens, input);
 
 		nextTok = tokens.next();
 		if (nextTok == null || nextTok.type != ExpTokenizer.SYM_TYPE || !nextTok.value.equals("=")) {
-			throw new ExpError("Expected '=' in assignment");
+			throw new ExpError("Expected '=' in assignment", input, nextTok.pos);
 		}
 
 		Expression exp = parseExp(context, tokens, 0, input);
@@ -788,7 +788,7 @@ public class ExpParser {
 		ExpTokenizer.Token nextTok = tokens.next(); // consume the first token
 
 		if (nextTok == null) {
-			throw new ExpError("Unexpected end of string");
+			throw new ExpError("Unexpected end of string", source, source.length());
 		}
 
 		if (nextTok.type == ExpTokenizer.NUM_TYPE) {
@@ -802,7 +802,7 @@ public class ExpParser {
 		if (nextTok.type == ExpTokenizer.SQ_TYPE ||
 				nextTok.value.equals("this") ||
 				nextTok.value.equals("obj")) {
-			ArrayList<String> vals = parseIdentifier(nextTok, tokens);
+			ArrayList<String> vals = parseIdentifier(nextTok, tokens, source);
 			return new Variable(context, vals.toArray(STRING_ARRAY_TYPE), source, nextTok.pos);
 		}
 
@@ -811,7 +811,7 @@ public class ExpParser {
 		// handle parenthesis
 		if (nextTok.value.equals("(")) {
 			Expression exp = parseExp(context, tokens, 0, source);
-			tokens.expect(ExpTokenizer.SYM_TYPE, ")"); // Expect the closing paren
+			tokens.expect(ExpTokenizer.SYM_TYPE, ")", source); // Expect the closing paren
 			return exp;
 		}
 
@@ -822,7 +822,7 @@ public class ExpParser {
 		}
 
 		// We're all out of tricks here, this is an unknown expression
-		throw new ExpError(String.format("Can not parse expression at %d", nextTok.pos));
+		throw new ExpError("Can not parse expression", source, nextTok.pos);
 	}
 
 	private static Expression parseConstant(ParseContext context, String constant, TokenList tokens, String source, int pos) throws ExpError {
@@ -838,7 +838,7 @@ public class ExpParser {
 
 			UnitData unit = context.getUnitByName(peeked.value);
 			if (unit == null) {
-				throw new ExpError(String.format("Unknown unit: %s", peeked.value));
+				throw new ExpError(String.format("Unknown unit: %s", peeked.value), source, peeked.pos);
 			}
 			mult = unit.scaleFactor;
 			ut = unit.unitType;
@@ -850,12 +850,12 @@ public class ExpParser {
 
 	private static Expression parseFuncCall(ParseContext context, String funcName, TokenList tokens, String source, int pos) throws ExpError {
 
-		tokens.expect(ExpTokenizer.SYM_TYPE, "(");
+		tokens.expect(ExpTokenizer.SYM_TYPE, "(", source);
 		ArrayList<Expression> arguments = new ArrayList<>();
 
 		ExpTokenizer.Token peeked = tokens.peek();
 		if (peeked == null) {
-			throw new ExpError("Unexpected end of input in argument list");
+			throw new ExpError("Unexpected end of input in argument list", source, source.length());
 		}
 		boolean isEmpty = false;
 		if (peeked.value.equals(")")) {
@@ -870,7 +870,7 @@ public class ExpParser {
 
 			ExpTokenizer.Token nextTok = tokens.next();
 			if (nextTok == null) {
-				throw new ExpError("Unexpected end of input in argument list.");
+				throw new ExpError("Unexpected end of input in argument list.", source, source.length());
 			}
 			if (nextTok.value.equals(")")) {
 				break;
@@ -881,28 +881,28 @@ public class ExpParser {
 			}
 
 			// Unexpected token
-			throw new ExpError(String.format("Unexpected token in arguement list at: %d", nextTok.pos));
+			throw new ExpError("Unexpected token in arguement list", source, nextTok.pos);
 		}
 
 		FunctionEntry fe = getFunctionEntry(funcName);
 		if (fe == null) {
-			throw new ExpError(String.format("Uknown function: \"%s\"", funcName));
+			throw new ExpError(String.format("Uknown function: \"%s\"", funcName), source, pos);
 		}
 
 		if (fe.numMinArgs > 0 && arguments.size() < fe.numMinArgs){
 			throw new ExpError(String.format("Function \"%s\" expects at least %d arguments. %d provided.",
-					funcName, fe.numMinArgs, arguments.size()));
+					funcName, fe.numMinArgs, arguments.size()), source, pos);
 		}
 
 		if (fe.numMaxArgs > 0 && arguments.size() > fe.numMaxArgs){
 			throw new ExpError(String.format("Function \"%s\" expects at most %d arguments. %d provided.",
-					funcName, fe.numMaxArgs, arguments.size()));
+					funcName, fe.numMaxArgs, arguments.size()), source, pos);
 		}
 
 		return new FuncCall(context, fe.function, arguments, source, pos);
 	}
 
-	private static ArrayList<String> parseIdentifier(ExpTokenizer.Token firstName, TokenList tokens) throws ExpError {
+	private static ArrayList<String> parseIdentifier(ExpTokenizer.Token firstName, TokenList tokens, String source) throws ExpError {
 		ArrayList<String> vals = new ArrayList<>();
 		vals.add(firstName.value.intern());
 		while (true) {
@@ -915,7 +915,7 @@ public class ExpParser {
 			tokens.next(); // consume
 			ExpTokenizer.Token nextName = tokens.next();
 			if (nextName == null || nextName.type != ExpTokenizer.VAR_TYPE) {
-				throw new ExpError(String.format("Expected Identifier after '.' at pos: %d", peeked.pos));
+				throw new ExpError("Expected Identifier after '.'", source, peeked.pos);
 			}
 
 			vals.add(nextName.value.intern());
