@@ -15,6 +15,7 @@
 package com.jaamsim.Samples;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.ui.LogBox;
@@ -40,7 +41,7 @@ public class SampleExpression implements SampleProvider {
 		double ret = 0.0;
 		try {
 			ret = ExpEvaluator.evaluateExpression(exp, simTime, thisEnt, null).value;
-		} catch(ExpEvaluator.Error e) {
+		} catch(ExpError e) {
 			LogBox.logException(e);
 		}
 		return ret;

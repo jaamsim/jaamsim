@@ -39,14 +39,14 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 			try {
 				@SuppressWarnings("unused")
 				double x = ExpEvaluator.evaluateExpression(exp, 0.0, thisEnt, null).value;
-			} catch (ExpEvaluator.Error e) {
+			} catch (ExpError e) {
 				throw new InputErrorException(e.toString());
 			}
 
 			// Save the expression
 			value = exp;
 
-		} catch (ExpParser.Error e) {
+		} catch (ExpError e) {
 			throw new InputErrorException(e.toString());
 		}
 	}

@@ -15,6 +15,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InputErrorException;
@@ -81,7 +82,7 @@ public class Statistics extends LinkedComponent {
 			// Evaluate the expression
 			double ret = ExpEvaluator.evaluateExpression(sampleValue.getValue(), simTime, this, null).value;
 			return ret;
-		} catch(ExpEvaluator.Error e) {
+		} catch(ExpError e) {
 			throw new RuntimeException(e);
 		}
 	}

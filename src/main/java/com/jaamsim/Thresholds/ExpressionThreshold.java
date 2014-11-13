@@ -20,6 +20,7 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.InputErrorException;
@@ -110,7 +111,7 @@ public class ExpressionThreshold extends Threshold {
 			// Evaluate the condition (0 = false, non-zero = true)
 			boolean ret = ExpEvaluator.evaluateExpression(openCondition.getValue(), simTime, this, null).value != 0;
 			return ret;
-		} catch(ExpEvaluator.Error e) {
+		} catch(ExpError e) {
 			throw new RuntimeException(e);
 		}
 	}

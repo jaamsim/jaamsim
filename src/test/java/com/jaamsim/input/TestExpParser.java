@@ -56,7 +56,7 @@ public class TestExpParser {
 	}
 
 	@Test
-	public void testTokenize() throws ExpTokenizer.Error {
+	public void testTokenize() throws ExpError {
 		ArrayList<ExpTokenizer.Token> tokens = ExpTokenizer.tokenize(" a b c 1 2 3 + -");
 
 		assertTrue(tokens.size() == 8);
@@ -124,7 +124,7 @@ public class TestExpParser {
 	}
 
 	@Test
-	public void testParser() throws ExpParser.Error {
+	public void testParser() throws ExpError {
 		class EC implements ExpParser.EvalContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
@@ -308,7 +308,7 @@ public class TestExpParser {
 	}
 
 	@Test
-	public void testVariables() throws ExpParser.Error {
+	public void testVariables() throws ExpError {
 		class EC implements ExpParser.EvalContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
@@ -364,7 +364,7 @@ public class TestExpParser {
 	}
 
 	@Test
-	public void testUnits() throws ExpParser.Error {
+	public void testUnits() throws ExpError {
 		class UnitPC implements ExpParser.ParseContext {
 			@Override
 			public UnitData getUnitByName(String name) {
@@ -413,8 +413,8 @@ public class TestExpParser {
 
 		class EC implements ExpParser.EvalContext {
 			@Override
-			public ExpResult getVariableValue(String[] name) throws ExpParser.Error {
-				throw new ExpParser.Error("Variables not supported in test");
+			public ExpResult getVariableValue(String[] name) throws ExpError {
+				throw new ExpError("Variables not supported in test");
 			}
 		}
 		EC ec = new EC();
@@ -434,7 +434,7 @@ public class TestExpParser {
 			exp = ExpParser.parseExpression(upc, "1[hr] + 1[m]");
 			res = exp.evaluate(ec);
 			assertTrue(false);
-		} catch (ExpParser.Error ex) {
+		} catch (ExpError ex) {
 			threw = true;
 		}
 		assertTrue(threw);
@@ -452,7 +452,7 @@ public class TestExpParser {
 		threw = false;
 		try {
 			exp = ExpParser.parseExpression(upc, "1[parsec]");
-		} catch(ExpParser.Error ex) {
+		} catch(ExpError ex) {
 			threw = true;
 		}
 		assertTrue(threw);
@@ -475,7 +475,7 @@ public class TestExpParser {
 	}
 
 	@Test
-	public void testAssignment() throws ExpParser.Error {
+	public void testAssignment() throws ExpError {
 
 		class EC implements ExpParser.EvalContext {
 			@Override

@@ -19,6 +19,7 @@ import java.util.Collections;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpParser.Expression;
@@ -80,7 +81,7 @@ public class SampleExpInput extends Input<SampleProvider> {
 			//Input.assertUnitsMatch(unitType, DimensionlessUnit.class);
 			value = new SampleExpression(exp, thisEnt);
 		}
-		catch (ExpParser.Error e) {
+		catch (ExpError e) {
 			throw new InputErrorException(e.toString());
 		}
 	}

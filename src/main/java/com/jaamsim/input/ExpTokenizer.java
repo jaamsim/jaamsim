@@ -54,12 +54,6 @@ public class ExpTokenizer {
 		return false;
 	}
 
-	public static class Error extends Exception {
-		public Error(String err) {
-			super(err);
-		}
-	}
-
 	// List of 'long' symbols to check for, in order
 	private static ArrayList<String> longSymbols = new ArrayList<>();
 
@@ -72,7 +66,7 @@ public class ExpTokenizer {
 		longSymbols.add("||");
 	}
 
-	public static ArrayList<Token> tokenize(String input) throws Error {
+	public static ArrayList<Token> tokenize(String input) throws ExpError {
 		int pos = 0;
 
 		ArrayList<Token> res = new ArrayList<>();
@@ -128,7 +122,7 @@ public class ExpTokenizer {
 		return pos;
 	}
 
-	private static int getSQToken(ArrayList<Token> res, int startPos, String input) throws Error {
+	private static int getSQToken(ArrayList<Token> res, int startPos, String input) throws ExpError {
 		Token newTok = new Token();
 		newTok.type = SQ_TYPE;
 		newTok.pos = startPos;
@@ -137,7 +131,7 @@ public class ExpTokenizer {
 		while (closePos < input.length()) {
 			char c = input.charAt(closePos);
 			if (c == '[')
-				throw new Error(String.format("Nested square quotes at pos: %d", closePos));
+				throw new ExpError(String.format("Nested square quotes at pos: %d", closePos));
 			if (c == ']')
 				break;
 
@@ -145,7 +139,7 @@ public class ExpTokenizer {
 		}
 
 		if (closePos == input.length()) {
-			throw new Error(String.format("No closing square brace for brace at pos: %d", startPos));
+			throw new ExpError(String.format("No closing square brace for brace at pos: %d", startPos));
 		}
 
 		newTok.value = input.substring(startPos + 1, closePos);
@@ -154,7 +148,7 @@ public class ExpTokenizer {
 	}
 
 	// TODO: Should this include 'f' or 'd' as in the java convention? Also, should we support hex?
-	private static int getNumToken(ArrayList<Token> res, int startPos, String input) throws Error {
+	private static int getNumToken(ArrayList<Token> res, int startPos, String input) throws ExpError {
 		Token newTok = new Token();
 		newTok.type = NUM_TYPE;
 		newTok.pos = startPos;
@@ -198,7 +192,7 @@ public class ExpTokenizer {
 		try {
 			Double.parseDouble(newTok.value);
 		} catch (NumberFormatException ex) {
-			throw new Error("Error parsing number literal: " + newTok.value);
+			throw new ExpError("Error parsing number literal: " + newTok.value);
 		}
 
 		res.add(newTok);

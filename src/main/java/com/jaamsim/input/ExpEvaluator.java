@@ -24,13 +24,7 @@ import com.jaamsim.units.Unit;
  */
 public class ExpEvaluator {
 
-	public static class Error extends Exception {
-		Error(String err) {
-			super(err);
-		}
-	}
-
-	private static Entity getEntity(String[] names, double simTime, Entity thisEnt, Entity objEnt) throws Error {
+	private static Entity getEntity(String[] names, double simTime, Entity thisEnt, Entity objEnt) throws ExpError {
 
 		Entity ent;
 		if (names[0] == "this")
@@ -41,17 +35,17 @@ public class ExpEvaluator {
 			ent = Entity.getNamedEntity(names[0]);
 
 		if (ent == null) {
-			throw new Error(String.format("Could not find entity: %s", names[0]));
+			throw new ExpError(String.format("Could not find entity: %s", names[0]));
 		}
 		// Run the output chain up to the second last name
 		for(int i = 1; i < names.length-1; ++i) {
 			String outputName = names[i];
 			OutputHandle oh = ent.getOutputHandleInterned(outputName);
 			if (oh == null) {
-				throw new Error(String.format("Output '%s' not found on entity '%s'", outputName, ent.getName()));
+				throw new ExpError(String.format("Output '%s' not found on entity '%s'", outputName, ent.getName()));
 			}
 			if (!Entity.class.isAssignableFrom(oh.getReturnType())) {
-				throw new Error(String.format("Output '%s' is not an entity output", outputName));
+				throw new ExpError(String.format("Output '%s' is not an entity output", outputName));
 			}
 
 			ent = oh.getValue(simTime, Entity.class);
@@ -104,47 +98,37 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public ExpResult getVariableValue(String[] names) throws ExpParser.Error {
-			try {
-				Entity ent = getEntity(names, simTime, thisEnt, objEnt);
+		public ExpResult getVariableValue(String[] names) throws ExpError {
+			Entity ent = getEntity(names, simTime, thisEnt, objEnt);
 
-				String outputName = names[names.length-1];
-				OutputHandle oh = ent.getOutputHandleInterned(outputName);
-				if (oh == null) {
-					throw new ExpParser.Error(String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName()));
-				}
-				return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
-
-			} catch (Exception e) {
-				throw new ExpParser.Error(e);
+			String outputName = names[names.length-1];
+			OutputHandle oh = ent.getOutputHandleInterned(outputName);
+			if (oh == null) {
+				throw new ExpError(String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName()));
 			}
+			return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
+
 		}
 	}
 	public static ExpParser.ParseContext getParseContext() {
 		return EC;
 	}
 
-	public static void runAssignment(ExpParser.Assignment assign, double simTime, Entity thisEnt, Entity objEnt) throws Error {
+	public static void runAssignment(ExpParser.Assignment assign, double simTime, Entity thisEnt, Entity objEnt) throws ExpError {
 		Entity assignmentEnt = getEntity(assign.destination, simTime, thisEnt, objEnt);
 
 		ExpResult result = evaluateExpression(assign.value, simTime, thisEnt, objEnt);
 
 		String attribName = assign.destination[assign.destination.length-1];
 		if (!assignmentEnt.hasAttribute(attribName)) {
-			throw new Error(String.format("Entity '%s' does not have attribute '%s'", assignmentEnt, attribName));
+			throw new ExpError(String.format("Entity '%s' does not have attribute '%s'", assignmentEnt, attribName));
 		}
 		assignmentEnt.setAttribute(attribName, result.value);
 	}
 
-	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime, Entity thisEnt, Entity objEnt) throws Error
+	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime, Entity thisEnt, Entity objEnt) throws ExpError
 	{
 		EntityEvalContext evalContext = new EntityEvalContext(simTime, thisEnt, objEnt);
-
-
-		try {
-			return exp.evaluate(evalContext);
-		} catch (ExpParser.Error e) {
-			throw new Error(e.getLocalizedMessage());
-		}
+		return exp.evaluate(evalContext);
 	}
 }
