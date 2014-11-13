@@ -160,10 +160,6 @@ public class DisplayEntity extends Entity {
 	throws InputErrorException {
 		super.validate();
 
-		if(getRelativeEntity() == this) {
-			this.warning("validate()", "Relative Entities should not be defined in a circular loop", "");
-		}
-
 		if (getDisplayModelList() != null) {
 			for (DisplayModel dm : getDisplayModelList()) {
 				if (!dm.canDisplayEntity(this)) {
