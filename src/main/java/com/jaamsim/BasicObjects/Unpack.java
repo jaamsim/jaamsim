@@ -45,6 +45,7 @@ public class Unpack extends LinkedService {
 	}
 
 	private EntityContainer container;	// the received EntityContainer
+	private int numberRemoved;   // Number of entities removed from the received EntityContainer
 
 	public Unpack() {}
 
@@ -64,6 +65,7 @@ public class Unpack extends LinkedService {
 	public void earlyInit() {
 		super.earlyInit();
 		container = null;
+		numberRemoved = 0;
 	}
 
 	@Override
@@ -84,7 +86,7 @@ public class Unpack extends LinkedService {
 	@Override
 	public void startAction() {
 
-		// Are there sufficient entities in the queue?
+		// Is there a container waiting to be unpacked?
 		Queue que = waitQueue.getValue();
 		if (container == null && que.getCount() == 0) {
 			this.setBusy(false);
@@ -103,6 +105,7 @@ public class Unpack extends LinkedService {
 
 			// Remove the container from the queue
 			container = (EntityContainer)que.removeFirst();
+			numberRemoved = 0;
 
 			// Position the container over the unpack object
 			Vec3d tmp = this.getPositionForAlignment(new Vec3d());
@@ -115,15 +118,24 @@ public class Unpack extends LinkedService {
 		this.scheduleProcess(dt, 5, endActionTarget);
 	}
 
+	protected void disposeContainer(EntityContainer c) {
+		c.kill();
+	}
+
+	protected int getNumberToRemove() {
+		return Integer.MAX_VALUE;
+	}
+
 	@Override
 	public void endAction() {
 
 		// Remove the next entity from the container
 		this.sendToNextComponent(container.removeEntity());
+		numberRemoved++;
 
-		// If all the entities have been removed, then destroy the container
-		if (container.getCount() == 0) {
-			container.kill();
+		// Stop when the desired number of entities have been removed
+		if (container.getCount() == 0 || numberRemoved == this.getNumberToRemove()) {
+			this.disposeContainer(container);
 			container = null;
 		}
 
