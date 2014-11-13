@@ -16,6 +16,7 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -26,11 +27,11 @@ public class ExpParser {
 	}
 
 	public interface BinOpFunc {
-		public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error;
+		public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error;
 	}
 
 	public interface CallableFunc {
-		public ExpResult call(ParseContext context, ExpResult[] args) throws Error;
+		public ExpResult call(ParseContext context, ExpResult[] args, int pos) throws Error;
 	}
 
 	public static class UnitData {
@@ -140,7 +141,7 @@ public class ExpParser {
 		public ExpResult evaluate(EvalContext ec) throws Error {
 			ExpResult lRes = lConstVal != null ? lConstVal : lSubExp.evaluate(ec);
 			ExpResult rRes = rConstVal != null ? rConstVal : rSubExp.evaluate(ec);
-			return func.apply(context, lRes, rRes);
+			return func.apply(context, lRes, rRes, tokenPos);
 		}
 
 		@Override
@@ -211,7 +212,7 @@ public class ExpParser {
 				ExpResult constArg = constResults.get(i);
 				argVals[i] = constArg != null ? constArg : args.get(i).evaluate(ec);
 			}
-			return function.call(context, argVals);
+			return function.call(context, argVals, tokenPos);
 		}
 		@Override
 		void walk(ExpressionWalker w) throws Error {
@@ -341,9 +342,9 @@ public class ExpParser {
 		// Binary operators
 		addBinaryOp("+", 20, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				if (lval.unitType != rval.unitType) {
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 				return new ExpResult(lval.value + rval.value, lval.unitType);
 			}
@@ -351,9 +352,9 @@ public class ExpParser {
 
 		addBinaryOp("-", 20, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				if (lval.unitType != rval.unitType) {
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 				return new ExpResult(lval.value - rval.value, lval.unitType);
 			}
@@ -361,10 +362,10 @@ public class ExpParser {
 
 		addBinaryOp("*", 30, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				Class<? extends Unit> newType = context.multUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 				return new ExpResult(lval.value * rval.value, newType);
 			}
@@ -372,10 +373,10 @@ public class ExpParser {
 
 		addBinaryOp("/", 30, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				Class<? extends Unit> newType = context.divUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 				return new ExpResult(lval.value / rval.value, newType);
 			}
@@ -383,11 +384,11 @@ public class ExpParser {
 
 		addBinaryOp("^", 40, true, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				if (lval.unitType != DimensionlessUnit.class ||
 				    rval.unitType != DimensionlessUnit.class) {
 
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 
 				return new ExpResult(Math.pow(lval.value, rval.value), DimensionlessUnit.class);
@@ -396,9 +397,9 @@ public class ExpParser {
 
 		addBinaryOp("==", 10, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				if (lval.unitType != rval.unitType) {
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 				return new ExpResult(lval.value == rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -406,9 +407,9 @@ public class ExpParser {
 
 		addBinaryOp("!=", 10, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				if (lval.unitType != rval.unitType) {
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 				return new ExpResult(lval.value != rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -416,23 +417,23 @@ public class ExpParser {
 
 		addBinaryOp("&&", 8, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos){
 				return new ExpResult((lval.value!=0) && (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("||", 6, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval){
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos){
 				return new ExpResult((lval.value!=0) || (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("<", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				if (lval.unitType != rval.unitType) {
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 				return new ExpResult(lval.value < rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -440,9 +441,9 @@ public class ExpParser {
 
 		addBinaryOp("<=", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				if (lval.unitType != rval.unitType) {
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 				return new ExpResult(lval.value <= rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -450,9 +451,9 @@ public class ExpParser {
 
 		addBinaryOp(">", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				if (lval.unitType != rval.unitType) {
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 				return new ExpResult(lval.value > rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -460,9 +461,9 @@ public class ExpParser {
 
 		addBinaryOp(">=", 12, false, new BinOpFunc() {
 			@Override
-			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval) throws Error {
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, int pos) throws Error {
 				if (lval.unitType != rval.unitType) {
-					throw new Error("Unit mismatch");
+					throw new Error(getUnitMismatchString(lval.unitType, rval.unitType, pos));
 				}
 				return new ExpResult(lval.value >= rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
@@ -472,10 +473,10 @@ public class ExpParser {
 		// Functions
 		addFunction("max", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args) throws Error {
+			public ExpResult call(ParseContext context, ExpResult[] args, int pos) throws Error {
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						throw new Error("Unit mismatch");
+						throw new Error(getUnitMismatchString(args[0].unitType, args[i].unitType, pos));
 				}
 
 				ExpResult res = args[0];
@@ -489,11 +490,11 @@ public class ExpParser {
 
 		addFunction("min", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args) throws Error {
+			public ExpResult call(ParseContext context, ExpResult[] args, int pos) throws Error {
 
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						throw new Error("Unit mismatch");
+						throw new Error(getUnitMismatchString(args[0].unitType, args[i].unitType, pos));
 				}
 
 				ExpResult res = args[0];
@@ -507,17 +508,17 @@ public class ExpParser {
 
 		addFunction("abs", 1, 1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args) {
+			public ExpResult call(ParseContext context, ExpResult[] args, int pos) {
 				return new ExpResult(Math.abs(args[0].value), args[0].unitType);
 			}
 		});
 
 		addFunction("indexOfMin", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args) throws Error {
+			public ExpResult call(ParseContext context, ExpResult[] args, int pos) throws Error {
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						throw new Error("Unit mismatch");
+						throw new Error(getUnitMismatchString(args[0].unitType, args[i].unitType, pos));
 				}
 
 				ExpResult res = args[0];
@@ -534,10 +535,10 @@ public class ExpParser {
 
 		addFunction("indexOfMax", 2, -1, new CallableFunc() {
 			@Override
-			public ExpResult call(ParseContext context, ExpResult[] args) throws Error {
+			public ExpResult call(ParseContext context, ExpResult[] args, int pos) throws Error {
 				for (int i = 1; i < args.length; ++ i) {
 					if (args[0].unitType != args[i].unitType)
-						throw new Error("Unit mismatch");
+						throw new Error(getUnitMismatchString(args[0].unitType, args[i].unitType, pos));
 				}
 
 				ExpResult res = args[0];
@@ -560,6 +561,22 @@ public class ExpParser {
 		Error(Throwable cause) {
 			super(cause);
 		}
+	}
+
+	private static String unitToString(Class<? extends Unit> unit) {
+		for (ObjectType type : ObjectType.getAll()) {
+			if (type.getJavaClass() == unit) {
+				return type.getName();
+			}
+		}
+		return "Unknown Unit";
+	}
+
+	private static String getUnitMismatchString(Class<? extends Unit> u0, Class<? extends Unit> u1, int pos) {
+		String s0 = unitToString(u0);
+		String s1 = unitToString(u1);
+
+		return String.format("Unit mismatch: '%s' and '%s' are not compatible at position: %d", s0, s1, pos);
 	}
 
 	/**
