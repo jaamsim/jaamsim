@@ -1719,10 +1719,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			LogBox.logLine("Error: " + t.getMessage());
 			for (StackTraceElement each : t.getStackTrace())
 				LogBox.logLine(each.toString());
-			LogBox.makeVisible();
 		}
 
 		if (InputAgent.getBatch())
 			GUIFrame.shutdown(1);
+
+
+		JOptionPane.showMessageDialog(null,
+				String.format("JaamSim has detected the following runtime error condition:\n\n" +
+						"%s\n\n" +
+						"Programmers can find more information by opening the Log Viewer.\n" +
+						"The simulation run must be stopped before it can be restarted.", t.getMessage()),
+				"Runtime Error", JOptionPane.ERROR_MESSAGE);
 	}
 }
