@@ -1359,6 +1359,16 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (prevVal.equals(str))
 			return;
 
+		// If necessary add the default time unit
+		str = str.trim();
+		if (!str.isEmpty() && !str.contains(" ")) {
+			Unit u = Unit.getPreferredUnit(TimeUnit.class);
+			if (u == null)
+				str = str + " " + Unit.getSIUnit(TimeUnit.class);
+			else
+				str = str + " " + u.getName();
+		}
+
 		try {
 			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "PauseTime", str);
 		} catch (InputErrorException e) {
