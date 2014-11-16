@@ -787,6 +787,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				if (fe.getID() == FocusEvent.FOCUS_LOST) {
 					GUIFrame.instance.setPauseTime(this.getText());
 				}
+				else if (fe.getID() == FocusEvent.FOCUS_GAINED) {
+					pauseTime.selectAll();
+				}
 				super.processFocusEvent( fe );
 			}
 		};
