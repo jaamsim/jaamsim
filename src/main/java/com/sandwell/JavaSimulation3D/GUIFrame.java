@@ -267,12 +267,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// check for unsaved changes
 		if (InputAgent.isSessionEdited()) {
-
-			int userOption = JOptionPane.showConfirmDialog( null,
-					"Do you want to save the changes?",
-					"Confirm Exit Without Saving",
-					JOptionPane.YES_NO_CANCEL_OPTION,
-					JOptionPane.WARNING_MESSAGE );
+			int userOption = GUIFrame.showSaveChangesDialog();
 
 			if (userOption == JOptionPane.YES_OPTION) {
 				InputAgent.save(this);
@@ -384,18 +379,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
-
-					int userOption = JOptionPane.showConfirmDialog( null,
-					"A new simulation will overwrite the existing simulation without saving changes.\n" +
-					"Do you wish to continue with a new simulation?",
-					"Confirm New Simulation",
-					JOptionPane.YES_OPTION,
-					JOptionPane.WARNING_MESSAGE );
-
-					if(userOption == JOptionPane.NO_OPTION) {
+					int userOption = GUIFrame.showSaveChangesDialog();
+					if (userOption == JOptionPane.YES_OPTION) {
+						InputAgent.save(GUIFrame.this);
+					} else if (userOption == JOptionPane.CANCEL_OPTION) {
 						return;
 					}
 				}
+
 				clear();
 				InputAgent.setRecordEdits(true);
 				InputAgent.loadDefault();
@@ -415,18 +406,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
-
-					int userOption = JOptionPane.showConfirmDialog( null,
-							"Opening a simulation will overwrite the existing simulation without saving changes.\n" +
-							"Do you wish to continue opening a simulation?",
-							"Confirm Open",
-							JOptionPane.YES_OPTION,
-							JOptionPane.WARNING_MESSAGE );
-
-					if (userOption == JOptionPane.NO_OPTION) {
+					int userOption = GUIFrame.showSaveChangesDialog();
+					if (userOption == JOptionPane.YES_OPTION) {
+						InputAgent.save(GUIFrame.this);
+					} else if (userOption == JOptionPane.CANCEL_OPTION) {
 						return;
 					}
 				}
+
 				InputAgent.load(GUIFrame.this);
 			}
 		} );
