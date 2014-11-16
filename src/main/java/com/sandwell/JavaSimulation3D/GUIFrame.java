@@ -287,6 +287,30 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	/**
+	 * Shows the "Save Changes" dialog box
+	 * @return integer representing the option chosen.
+	 */
+	static int showSaveChangesDialog() {
+
+		String message;
+		if (InputAgent.getConfigFile() == null)
+			message = "Do you want to save the changes you made?";
+		else
+			message = String.format("Do you want to save the changes you made to '%s'?", InputAgent.getConfigFile().getName());
+
+		Object[] options = {"Save", "Don't Save", "Cancel"};
+		int userOption = JOptionPane.showOptionDialog( null,
+				message,
+				"Save Changes",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.WARNING_MESSAGE,
+				null,
+				options,
+				options[0]);
+		return userOption;
+	}
+
+	/**
 	 * Clears the simulation and user interface for a new run
 	 */
 	public void clear() {
