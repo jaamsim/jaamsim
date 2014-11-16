@@ -747,15 +747,23 @@ public static class CellListener implements CellEditorListener {
 		if ( in.getValueString().equals(editor.getValue()) )
 			return;
 
-		// Adjust the user's entry to standardise the syntax or to restore the default
+		// Adjust the user's entry to standardise the syntax
 		try {
 			String str = editor.getValue().trim();
 			Class<?> klass = in.getClass();
 
 			// 1) Add single quotes to String inputs
 			if (klass == StringInput.class || klass == FileInput.class) {
-				if (!Parser.isQuoted(str))
-					str = String.format("'%s'", str);
+				if (Parser.needsQuoting(str) && !Parser.isQuoted(str)) {
+					StringBuilder sb = new StringBuilder();
+
+					if (!str.startsWith("'"))
+						sb.append("'");
+					sb.append(str);
+					if (!str.endsWith("'"))
+						sb.append("'");
+					str = sb.toString();
+				}
 			}
 			// Process the new data for the keyword
 			InputAgent.processEntity_Keyword_Value(EditBox.getInstance().getCurrentEntity(), in.getKeyword(), str);

@@ -15,7 +15,6 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 public class Parser {
 
@@ -105,7 +104,7 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 		tokens.add(rec.substring(cIndex, rec.length()));
 }
 
-public static final boolean needsQuoting(String s) {
+public static final boolean needsQuoting(CharSequence s) {
 	for (int i = 0; i < s.length(); ++i) {
 		char c = s.charAt(i);
 		if (c == ' ' || c == '\t' || c == '{' || c == '}')
@@ -114,9 +113,12 @@ public static final boolean needsQuoting(String s) {
 	return false;
 }
 
-private static final Pattern isquoted = Pattern.compile("'.*'");
-public static final boolean isQuoted(String s) {
-	return isquoted.matcher(s).matches();
+public static final boolean isQuoted(CharSequence s) {
+	if (s.length() < 2) return false;
+	if (s.charAt(0) != '\'') return false;
+	if (s.charAt(s.length() - 1) != '\'') return false;
+
+	return true;
 }
 
 /**
