@@ -734,6 +734,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				else {
 					GUIFrame.this.pauseSimulation();
 				}
+				controlStartResume.grabFocus();
 			}
 		} );
 
