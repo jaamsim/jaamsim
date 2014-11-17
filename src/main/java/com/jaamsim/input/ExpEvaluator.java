@@ -105,6 +105,11 @@ public class ExpEvaluator {
 			return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
 
 		}
+
+		@Override
+		public boolean eagerEval() {
+			return false;
+		}
 	}
 	public static ExpParser.ParseContext getParseContext() {
 		return EC;

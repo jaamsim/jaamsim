@@ -47,6 +47,7 @@ public class ExpParser {
 
 	public interface EvalContext {
 		public ExpResult getVariableValue(String[] names) throws ExpError;
+		public boolean eagerEval();
 	}
 
 	private interface ExpressionWalker {
@@ -173,12 +174,30 @@ public class ExpParser {
 		}
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			if (ec.eagerEval())
+				return eagerEval(ec);
+			else
+				return lazyEval(ec);
+		}
+
+		private ExpResult lazyEval(EvalContext ec) throws ExpError {
 			ExpResult condRes = constCondRes != null ? constCondRes : condExp.evaluate(ec);
 			if (condRes.value == 0)
 				return constFalseRes != null ? constFalseRes : falseExp.evaluate(ec);
 			else
 				return constTrueRes != null ? constTrueRes : trueExp.evaluate(ec);
 		}
+
+		private ExpResult eagerEval(EvalContext ec) throws ExpError {
+			ExpResult  condRes =  constCondRes != null ?  constCondRes :  condExp.evaluate(ec);
+			ExpResult  trueRes =  constTrueRes != null ?  constTrueRes :  trueExp.evaluate(ec);
+			ExpResult falseRes = constFalseRes != null ? constFalseRes : falseExp.evaluate(ec);
+			if (condRes.value == 0)
+				return falseRes;
+			else
+				return trueRes;
+		}
+
 		@Override
 		void walk(ExpressionWalker w) throws ExpError {
 			condExp.walk(w);

@@ -132,6 +132,8 @@ public class TestExpParser {
 				if (name[0].equals("bar")) return new ExpResult(3, DimensionlessUnit.class);
 				return new ExpResult(1, DimensionlessUnit.class);
 			}
+			@Override
+			public boolean eagerEval() { return true; }
 		}
 		EC ec = new EC();
 
@@ -319,6 +321,8 @@ public class TestExpParser {
 
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
+			@Override
+			public boolean eagerEval() { return true; }
 		}
 		EC ec = new EC();
 
@@ -349,6 +353,8 @@ public class TestExpParser {
 
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
+			@Override
+			public boolean eagerEval() { return true; }
 		}
 		ThisEC tec = new ThisEC();
 
@@ -410,6 +416,8 @@ public class TestExpParser {
 			public ExpResult getVariableValue(String[] name) throws ExpError {
 				throw new ExpError(null, 0, "Variables not supported in test");
 			}
+			@Override
+			public boolean eagerEval() { return true; }
 		}
 		EC ec = new EC();
 
@@ -476,6 +484,8 @@ public class TestExpParser {
 			public ExpResult getVariableValue(String[] name) {
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
+			@Override
+			public boolean eagerEval() { return true; }
 		}
 		EC ec = new EC();
 
