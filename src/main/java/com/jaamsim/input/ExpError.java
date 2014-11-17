@@ -27,4 +27,24 @@ public class ExpError extends Exception {
 	ExpError(String source, int pos, String fmt, Object... args) {
 		this(source, pos, String.format(fmt, args));
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.getMessage()).append("\n");
+
+		if (source == null)
+			return sb.toString();
+
+		// Otherwise, append the source expression and an 'arrow' pointing at the error
+		sb.append(source).append("\n");
+
+		for (int i = 0; i < pos; ++i) {
+			sb.append(" ");
+		}
+
+		sb.append("^\n");
+
+		return sb.toString();
+	}
 }
