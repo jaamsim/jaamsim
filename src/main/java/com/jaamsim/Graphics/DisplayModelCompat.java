@@ -416,11 +416,13 @@ public class DisplayModelCompat extends DisplayModel {
 			long pickingID = getPickingID();
 
 			Tag tag_contents = tagsCache.get(DisplayModelCompat.TAG_CONTENTS);
-			double[] sizes;
-			if (tag_contents == null || tag_contents.sizes == null)
-				sizes = new double[0];
-			else
-				sizes = tag_contents.sizes;
+			if (tag_contents == null || tag_contents.sizes == null || tag_contents.colors == null ||
+			    tag_contents.colors.length < tag_contents.sizes.length) {
+				// Bail out, not properly initialized
+				return;
+			}
+
+			double[] sizes = tag_contents.sizes;
 
 			Tag tag_contents2 = tagsCache.get(DisplayModelCompat.TAG_CONTENTS2);
 			double[] rescapacities = null;
@@ -454,10 +456,6 @@ public class DisplayModelCompat extends DisplayModel {
 			// Add the background and outline
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, backgroundColour, false, 1, getVisibilityInfo(), pickingID));
 			cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, trans, scale, outlineColour, true, 1, getVisibilityInfo(), pickingID));
-
-			if (tag_contents.colors == null || tag_contents.colors.length < sizes.length) {
-				return;
-			} // Bail out, not properly initialized
 
 			double accumWidth = 0;
 			for (int i = 0; i < sizes.length; ++i) {
