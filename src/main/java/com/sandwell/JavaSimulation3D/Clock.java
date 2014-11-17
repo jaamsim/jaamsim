@@ -25,7 +25,6 @@ public class Clock{
 	private static final int[] firstDayOfMonth;
 	private static final int[] daysInMonth;
 	private static final int[] secsInMonth;
-	private static final String monthNames[];
 
 	private static int startingYear;
 	private static int startingMonth;
@@ -67,8 +66,6 @@ public class Clock{
 		secsInMonth = new int[12];
 		for (int i = 0; i < daysInMonth.length; i++)
 			secsInMonth[i] = daysInMonth[i] * 24 * 60 * 60;
-
-		monthNames = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 	}
 
 	public static void setStartDate(int year, int month, int day) {
@@ -221,16 +218,6 @@ public static class ClockTime {
 		startingYear = Integer.parseInt( startingVal[0] );
 		startingMonth = Integer.parseInt( startingVal[1] );
 		startingDay = Integer.parseInt( startingVal[2] );
-	}
-
-	/**
-	 * Returns a formatted string to reflect the current simulation time.
-	 */
-	public static String getDateStringForTime(double time) {
-		ClockTime cTime = getClockTime(time);
-		int y = cTime.year + startingYear - 1;
-
-		return String.format("%04d-%s-%02d  %02d:%02d", y, monthNames[cTime.month - 1], cTime.day, getHourForTime( time ), getMinuteForTime( time ));
 	}
 
 	/**
