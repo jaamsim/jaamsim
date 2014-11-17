@@ -407,7 +407,7 @@ public class InputAgent {
 	}
 
 	public static <T extends Entity> T generateEntityWithName(Class<T> proto, String key) {
-		if (key != null && (key.contains(" ") || key.contains("\t") || key.contains("{") || key.contains("}"))) {
+		if (key != null && !isValidName(key)) {
 			InputAgent.logError("Entity names cannot contain spaces, tabs, { or }: %s", key);
 			return null;
 		}
@@ -459,6 +459,15 @@ public class InputAgent {
 		}
 	}
 
+	private static boolean isValidName(String key) {
+		for (int i = 0; i < key.length(); ++i) {
+			final char c = key.charAt(i);
+			if (c == ' ' || c == '\t' || c == '{' || c == '}')
+				return false;
+		}
+		return true;
+	}
+
 	/**
 	 * if addedEntity is true then this is an entity defined
 	 * by user interaction or after added record flag is found;
@@ -475,7 +484,7 @@ public class InputAgent {
 			return null;
 		}
 
-		if (key.contains(" ") || key.contains("\t") || key.contains("{") || key.contains("}")) {
+		if (!isValidName(key)) {
 			InputAgent.logError("Entity names cannot contain spaces, tabs, { or }: %s", key);
 			return null;
 		}
