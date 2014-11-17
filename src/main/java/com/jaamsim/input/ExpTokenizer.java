@@ -131,7 +131,7 @@ public class ExpTokenizer {
 		while (closePos < input.length()) {
 			char c = input.charAt(closePos);
 			if (c == '[')
-				throw new ExpError("Nested square quotes", input, closePos);
+				throw new ExpError(input, closePos, "Nested square quotes");
 			if (c == ']')
 				break;
 
@@ -139,7 +139,7 @@ public class ExpTokenizer {
 		}
 
 		if (closePos == input.length()) {
-			throw new ExpError("No closing square brace for brace", input, startPos);
+			throw new ExpError(input, startPos, "No closing square brace for brace");
 		}
 
 		newTok.value = input.substring(startPos + 1, closePos);
@@ -192,7 +192,7 @@ public class ExpTokenizer {
 		try {
 			Double.parseDouble(newTok.value);
 		} catch (NumberFormatException ex) {
-			throw new ExpError("Error parsing number literal: " + newTok.value, input, startPos);
+			throw new ExpError(input, startPos, "Error parsing number literal: " + newTok.value);
 		}
 
 		res.add(newTok);

@@ -414,7 +414,7 @@ public class TestExpParser {
 		class EC implements ExpParser.EvalContext {
 			@Override
 			public ExpResult getVariableValue(String[] name) throws ExpError {
-				throw new ExpError("Variables not supported in test", null, 0);
+				throw new ExpError(null, 0, "Variables not supported in test");
 			}
 		}
 		EC ec = new EC();
