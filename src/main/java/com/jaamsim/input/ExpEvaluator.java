@@ -24,13 +24,11 @@ import com.jaamsim.units.Unit;
  */
 public class ExpEvaluator {
 
-	private static Entity getEntity(String[] names, double simTime, Entity thisEnt, Entity objEnt) throws ExpError {
+	private static Entity getEntity(String[] names, double simTime, Entity thisEnt) throws ExpError {
 
 		Entity ent;
 		if (names[0] == "this")
 			ent = thisEnt;
-		else if (names[0] == "obj")
-			ent = objEnt;
 		else
 			ent = Entity.getNamedEntity(names[0]);
 
@@ -89,17 +87,15 @@ public class ExpEvaluator {
 		// These are updated in updateContext() which must be called before any expression are evaluated
 		private double simTime;
 		private Entity thisEnt;
-		private Entity objEnt;
 
-		public EntityEvalContext(double simTime, Entity thisEnt, Entity objEnt) {
+		public EntityEvalContext(double simTime, Entity thisEnt) {
 			this.simTime = simTime;
 			this.thisEnt = thisEnt;
-			this.objEnt = objEnt;
 		}
 
 		@Override
 		public ExpResult getVariableValue(String[] names) throws ExpError {
-			Entity ent = getEntity(names, simTime, thisEnt, objEnt);
+			Entity ent = getEntity(names, simTime, thisEnt);
 
 			String outputName = names[names.length-1];
 			OutputHandle oh = ent.getOutputHandleInterned(outputName);
@@ -114,10 +110,10 @@ public class ExpEvaluator {
 		return EC;
 	}
 
-	public static void runAssignment(ExpParser.Assignment assign, double simTime, Entity thisEnt, Entity objEnt) throws ExpError {
-		Entity assignmentEnt = getEntity(assign.destination, simTime, thisEnt, objEnt);
+	public static void runAssignment(ExpParser.Assignment assign, double simTime, Entity thisEnt) throws ExpError {
+		Entity assignmentEnt = getEntity(assign.destination, simTime, thisEnt);
 
-		ExpResult result = evaluateExpression(assign.value, simTime, thisEnt, objEnt);
+		ExpResult result = evaluateExpression(assign.value, simTime, thisEnt);
 
 		String attribName = assign.destination[assign.destination.length-1];
 		if (!assignmentEnt.hasAttribute(attribName)) {
@@ -126,9 +122,9 @@ public class ExpEvaluator {
 		assignmentEnt.setAttribute(attribName, result.value);
 	}
 
-	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime, Entity thisEnt, Entity objEnt) throws ExpError
+	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime, Entity thisEnt) throws ExpError
 	{
-		EntityEvalContext evalContext = new EntityEvalContext(simTime, thisEnt, objEnt);
+		EntityEvalContext evalContext = new EntityEvalContext(simTime, thisEnt);
 		return exp.evaluate(evalContext);
 	}
 }

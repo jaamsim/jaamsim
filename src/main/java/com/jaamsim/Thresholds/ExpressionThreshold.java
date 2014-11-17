@@ -109,7 +109,7 @@ public class ExpressionThreshold extends Threshold {
 	private boolean getOpenConditionValue(double simTime) {
 		try {
 			// Evaluate the condition (0 = false, non-zero = true)
-			boolean ret = ExpEvaluator.evaluateExpression(openCondition.getValue(), simTime, this, null).value != 0;
+			boolean ret = ExpEvaluator.evaluateExpression(openCondition.getValue(), simTime, this).value != 0;
 			return ret;
 		} catch(ExpError e) {
 			throw new RuntimeException(e);

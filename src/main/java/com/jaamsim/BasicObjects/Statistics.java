@@ -80,7 +80,7 @@ public class Statistics extends LinkedComponent {
 	private double getVariableValue(double simTime) {
 		try {
 			// Evaluate the expression
-			double ret = ExpEvaluator.evaluateExpression(sampleValue.getValue(), simTime, this, null).value;
+			double ret = ExpEvaluator.evaluateExpression(sampleValue.getValue(), simTime, this).value;
 			return ret;
 		} catch(ExpError e) {
 			throw new RuntimeException(e);

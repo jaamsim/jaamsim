@@ -40,7 +40,7 @@ public class SampleExpression implements SampleProvider {
 	public double getNextSample(double simTime) {
 		double ret = 0.0;
 		try {
-			ret = ExpEvaluator.evaluateExpression(exp, simTime, thisEnt, null).value;
+			ret = ExpEvaluator.evaluateExpression(exp, simTime, thisEnt).value;
 		} catch(ExpError e) {
 			LogBox.logException(e);
 		}

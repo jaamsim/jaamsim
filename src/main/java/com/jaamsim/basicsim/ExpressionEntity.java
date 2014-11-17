@@ -44,7 +44,7 @@ public class ExpressionEntity extends Entity {
 
 		try {
 			// Evaluate the expression
-			double ret = ExpEvaluator.evaluateExpression(sampleValue.getValue(), simTime, this, null).value;
+			double ret = ExpEvaluator.evaluateExpression(sampleValue.getValue(), simTime, this).value;
 			return ret;
 		} catch(ExpError e) {
 			return 0.0d;

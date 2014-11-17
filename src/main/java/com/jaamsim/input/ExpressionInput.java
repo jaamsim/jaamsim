@@ -39,7 +39,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 			// Test whether the expression can be evaluated
 			try {
 				@SuppressWarnings("unused")
-				double x = ExpEvaluator.evaluateExpression(exp, 0.0, thisEnt, null).value;
+				double x = ExpEvaluator.evaluateExpression(exp, 0.0, thisEnt).value;
 			} catch (ExpError e) {
 				throw new InputErrorException(e.toString());
 			}

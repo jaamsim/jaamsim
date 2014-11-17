@@ -346,7 +346,6 @@ public class TestExpParser {
 			@Override
 			public ExpResult getVariableValue(String[] name) {
 				if (name[0].equals("this")) return new ExpResult(42, DimensionlessUnit.class);
-				if (name[0].equals("obj")) return new ExpResult(24, DimensionlessUnit.class);
 
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
@@ -356,11 +355,6 @@ public class TestExpParser {
 		exp = ExpParser.parseExpression(pc, "this.stuff");
 		val = exp.evaluate(tec).value;
 		assertTrue(val == 42);
-
-		exp = ExpParser.parseExpression(pc, "obj.things");
-		val = exp.evaluate(tec).value;
-		assertTrue(val == 24);
-
 	}
 
 	@Test
@@ -495,12 +489,6 @@ public class TestExpParser {
 		assign = ExpParser.parseAssignment(pc, "this.bar = 40 + 2");
 		assertTrue(assign.destination.length == 2);
 		assertTrue(assign.destination[0].equals("this"));
-		assertTrue(assign.destination[1].equals("bar"));
-		assertTrue(assign.value.evaluate(ec).value == 42);
-
-		assign = ExpParser.parseAssignment(pc, "obj.bar = 40 + 2");
-		assertTrue(assign.destination.length == 2);
-		assertTrue(assign.destination[0].equals("obj"));
 		assertTrue(assign.destination[1].equals("bar"));
 		assertTrue(assign.value.evaluate(ec).value == 42);
 
