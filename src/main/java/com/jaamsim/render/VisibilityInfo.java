@@ -53,6 +53,9 @@ public class VisibilityInfo {
 		if (viewIDs.length == 0)
 			return true;
 
+		if (viewID < 0)
+			return true;
+
 		for (int i = 0; i < viewIDs.length; i++) {
 			if (viewIDs[i] == viewID)
 				return true;

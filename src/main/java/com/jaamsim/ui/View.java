@@ -46,6 +46,7 @@ import com.sandwell.JavaSimulation3D.GUIFrame;
 public class View extends Entity {
 private static final ArrayList<View> allInstances;
 
+public static final int OMNI_VIEW_ID = -1;
 public static final int NO_VIEW_ID = 0;
 private static int nextID = 1;
 
