@@ -16,11 +16,19 @@ package com.jaamsim.input;
 
 import java.util.ArrayList;
 
+import com.jaamsim.basicsim.Entity;
+
 
 public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignment>> {
 
+	private Entity thisEnt;
+
 	public AssignmentListInput(String key, String cat, ArrayList<ExpParser.Assignment> def){
 		super(key, cat, def);
+	}
+
+	public void setEntity(Entity ent) {
+		thisEnt = ent;
 	}
 
 	@Override
@@ -37,6 +45,7 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 			try {
 				// Parse the assignment expression
 				ExpParser.Assignment ass = ExpParser.parseAssignment(ExpEvaluator.getParseContext(), subArg.getArg(0));
+				ExpValidator.validateAssignment(ass, thisEnt);
 
 				// Save the data for this assignment
 				temp.add(ass);
