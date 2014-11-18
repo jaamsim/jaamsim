@@ -194,7 +194,10 @@ public class OutputHandle {
 	}
 
 	public boolean isNumericValue() {
-		Class<?> rtype = this.getReturnType();
+		return isNumericType(this.getReturnType());
+	}
+
+	public static boolean isNumericType(Class<?> rtype) {
 		if (rtype == Double.class) return true;
 		if (rtype == double.class) return true;
 		if (rtype == Float.class) return true;
@@ -321,6 +324,40 @@ public class OutputHandle {
 
 	public boolean isReportable() {
 		return outputInfo.reportable;
+	}
+
+	// Lookup an outputs return type from the class and output name only
+	public static Class<?> getStaticOutputType(Class<?> klass, String outputName) {
+		if (!Entity.class.isAssignableFrom(klass)) {
+			return null;
+		}
+
+		@SuppressWarnings("unchecked")
+		ArrayList<OutputStaticInfo> infos = getOutputInfoImp((Class<? extends Entity>)klass);
+
+		for (OutputStaticInfo info : infos) {
+			if (info.name.equals(outputName)) {
+				 return info.method.getReturnType();
+			}
+		}
+		return null;
+	}
+
+	// Lookup an outputs return type from the unit type
+	public static Class<? extends Unit> getStaticOutputUnitType(Class<?> klass, String outputName) {
+		if (!Entity.class.isAssignableFrom(klass)) {
+			return null;
+		}
+
+		@SuppressWarnings("unchecked")
+		ArrayList<OutputStaticInfo> infos = getOutputInfoImp((Class<? extends Entity>)klass);
+
+		for (OutputStaticInfo info : infos) {
+			if (info.name.equals(outputName)) {
+				 return info.unitType;
+			}
+		}
+		return null;
 	}
 
 }
