@@ -77,6 +77,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.Parser;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.DisplayEntityFactory;
@@ -1359,19 +1360,23 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (prevVal.equals(str))
 			return;
 
-		// If necessary add the default time unit
-		str = str.trim();
-		if (!str.isEmpty() && !str.contains(" ")) {
+		ArrayList<String> tokens = new ArrayList<>();
+		Parser.tokenize(tokens, str);
+		// if we only got one token, and it isn't RFC8601 - add a unit
+		if (tokens.size() == 1 && !tokens.get(0).contains(" ")) {
 			Unit u = Unit.getPreferredUnit(TimeUnit.class);
 			if (u == null)
-				str = str + " " + Unit.getSIUnit(TimeUnit.class);
+				tokens.add(Unit.getSIUnit(TimeUnit.class));
 			else
-				str = str + " " + u.getName();
+				tokens.add(u.getName());
 		}
 
 		try {
-			InputAgent.processEntity_Keyword_Value(Simulation.getInstance(), "PauseTime", str);
-		} catch (InputErrorException e) {
+			// Parse the keyword inputs
+			KeywordIndex kw = new KeywordIndex("PauseTime", tokens, null);
+			InputAgent.apply(Simulation.getInstance(), kw);
+		}
+		catch (InputErrorException e) {
 			pauseTime.setText(prevVal);
 			JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
 		}
