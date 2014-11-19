@@ -638,6 +638,14 @@ public class Entity {
 		this.trace( 1, text );
 	}
 
+	public void error(String fmt, Object... args)
+	throws ErrorException {
+		final StringBuilder sb = new StringBuilder(this.getName());
+		sb.append(": ");
+		sb.append(String.format(fmt, args));
+		throw new ErrorException(sb.toString());
+	}
+
 	/**
 	 * Print an error message.
 	 */
