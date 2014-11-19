@@ -51,19 +51,32 @@ public class ExpParser {
 	}
 
 	private interface ExpressionWalker {
-		public void visit(Expression exp) throws ExpError;
-		public Expression updateRef(Expression exp) throws ExpError;
+		public void visit(ExpNode exp) throws ExpError;
+		public ExpNode updateRef(ExpNode exp) throws ExpError;
 	}
 
 	////////////////////////////////////////////////////////////////////
 	// Expression types
 
-	public abstract static class Expression {
+	public static class Expression {
+		public final String source;
+
+		private final ExpNode rootNode;
+		public Expression(ExpNode rootNode, String source) {
+			this.source = source;
+			this.rootNode = rootNode;
+		}
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			return rootNode.evaluate(ec);
+		}
+	}
+
+	private abstract static class ExpNode {
 		public final ParseContext context;
 		public final String source;
 		public final int tokenPos;
 		public abstract ExpResult evaluate(EvalContext ec) throws ExpError;
-		public Expression(ParseContext context, String source, int pos) {
+		public ExpNode(ParseContext context, String source, int pos) {
 			this.context = context;
 			this.tokenPos = pos;
 			this.source = source;
@@ -71,7 +84,7 @@ public class ExpParser {
 		abstract void walk(ExpressionWalker w) throws ExpError;
 	}
 
-	private static class Constant extends Expression {
+	private static class Constant extends ExpNode {
 		public ExpResult val;
 		public Constant(ParseContext context, ExpResult val, String source, int pos) {
 			super(context, source, pos);
@@ -87,7 +100,7 @@ public class ExpParser {
 		}
 	}
 
-	public static class Variable extends Expression {
+	public static class Variable extends ExpNode {
 		private String[] vals;
 		public Variable(ParseContext context, String[] vals, String source, int pos) {
 			super(context, source, pos);
@@ -103,10 +116,10 @@ public class ExpParser {
 		}
 	}
 
-	private static class UnaryOp extends Expression {
-		public Expression subExp;
+	private static class UnaryOp extends ExpNode {
+		public ExpNode subExp;
 		private UnOpFunc func;
-		UnaryOp(ParseContext context, Expression subExp, UnOpFunc func, String source, int pos) {
+		UnaryOp(ParseContext context, ExpNode subExp, UnOpFunc func, String source, int pos) {
 			super(context, source, pos);
 			this.subExp = subExp;
 			this.func = func;
@@ -126,14 +139,14 @@ public class ExpParser {
 		}
 	}
 
-	private static class BinaryOp extends Expression {
-		public Expression lSubExp;
-		public Expression rSubExp;
+	private static class BinaryOp extends ExpNode {
+		public ExpNode lSubExp;
+		public ExpNode rSubExp;
 		public ExpResult lConstVal;
 		public ExpResult rConstVal;
 
 		private final BinOpFunc func;
-		BinaryOp(ParseContext context, Expression lSubExp, Expression rSubExp, BinOpFunc func, String source, int pos) {
+		BinaryOp(ParseContext context, ExpNode lSubExp, ExpNode rSubExp, BinOpFunc func, String source, int pos) {
 			super(context, source, pos);
 			this.lSubExp = lSubExp;
 			this.rSubExp = rSubExp;
@@ -159,14 +172,14 @@ public class ExpParser {
 		}
 	}
 
-	public static class Conditional extends Expression {
-		private Expression condExp;
-		private Expression trueExp;
-		private Expression falseExp;
+	public static class Conditional extends ExpNode {
+		private ExpNode condExp;
+		private ExpNode trueExp;
+		private ExpNode falseExp;
 		private ExpResult constCondRes;
 		private ExpResult constTrueRes;
 		private ExpResult constFalseRes;
-		public Conditional(ParseContext context, Expression c, Expression t, Expression f, String source, int pos) {
+		public Conditional(ParseContext context, ExpNode c, ExpNode t, ExpNode f, String source, int pos) {
 			super(context, source, pos);
 			condExp = c;
 			trueExp = t;
@@ -212,11 +225,11 @@ public class ExpParser {
 		}
 	}
 
-	public static class FuncCall extends Expression {
-		private ArrayList<Expression> args;
+	public static class FuncCall extends ExpNode {
+		private ArrayList<ExpNode> args;
 		private ArrayList<ExpResult> constResults;
 		private CallableFunc function;
-		public FuncCall(ParseContext context, CallableFunc function, ArrayList<Expression> args, String source, int pos) {
+		public FuncCall(ParseContext context, CallableFunc function, ArrayList<ExpNode> args, String source, int pos) {
 			super(context, source, pos);
 			this.function = function;
 			this.args = args;
@@ -635,7 +648,7 @@ public class ExpParser {
 	private static class ConstOptimizer implements ExpressionWalker {
 
 		@Override
-		public void visit(Expression exp) throws ExpError {
+		public void visit(ExpNode exp) throws ExpError {
 			// Note: Below we are passing 'null' as an EvalContext, this is not typically
 			// acceptable, but is 'safe enough' when we know the expression is a constant
 
@@ -676,7 +689,7 @@ public class ExpParser {
 		 * Give a node a chance to swap itself out with a different subtree.
 		 */
 		@Override
-		public Expression updateRef(Expression exp) throws ExpError {
+		public ExpNode updateRef(ExpNode exp) throws ExpError {
 			if (exp instanceof UnaryOp) {
 				UnaryOp uo = (UnaryOp)exp;
 				if (uo.subExp instanceof Constant) {
@@ -709,7 +722,7 @@ public class ExpParser {
 
 		TokenList tokens = new TokenList(ts);
 
-		Expression exp = parseExp(context, tokens, 0, input);
+		ExpNode exp = parseExp(context, tokens, 0, input);
 
 		// Make sure we've parsed all the tokens
 		ExpTokenizer.Token peeked = tokens.peek();
@@ -719,11 +732,11 @@ public class ExpParser {
 
 		exp.walk(CONST_OP);
 		exp = CONST_OP.updateRef(exp); // Finally, give the entire expression a chance to optimize itself into a constant
-		return exp;
+		return new Expression(exp, input);
 	}
 
-	private static Expression parseExp(ParseContext context, TokenList tokens, double bindPower, String source) throws ExpError {
-		Expression lhs = parseOpeningExp(context, tokens, bindPower, source);
+	private static ExpNode parseExp(ParseContext context, TokenList tokens, double bindPower, String source) throws ExpError {
+		ExpNode lhs = parseOpeningExp(context, tokens, bindPower, source);
 		// Now peek for a binary op to modify this expression
 
 		while (true) {
@@ -749,25 +762,25 @@ public class ExpParser {
 		return lhs;
 	}
 
-	private static Expression handleBinOp(ParseContext context, TokenList tokens, Expression lhs, BinaryOpEntry binOp, String source, int pos) throws ExpError {
+	private static ExpNode handleBinOp(ParseContext context, TokenList tokens, ExpNode lhs, BinaryOpEntry binOp, String source, int pos) throws ExpError {
 		tokens.next(); // Consume the operator
 
 		// For right associative operators, we weaken the binding power a bit at application time (but not testing time)
 		double assocMod = binOp.rAssoc ? -0.5 : 0;
-		Expression rhs = parseExp(context, tokens, binOp.bindingPower + assocMod, source);
+		ExpNode rhs = parseExp(context, tokens, binOp.bindingPower + assocMod, source);
 		//currentPower = oe.bindingPower;
 
 		return new BinaryOp(context, lhs, rhs, binOp.function, source, pos);
 	}
 
-	private static Expression handleConditional(ParseContext context, TokenList tokens, Expression lhs, String source, int pos) throws ExpError {
+	private static ExpNode handleConditional(ParseContext context, TokenList tokens, ExpNode lhs, String source, int pos) throws ExpError {
 		tokens.next(); // Consume the '?'
 
-		Expression trueExp = parseExp(context, tokens, 0, source);
+		ExpNode trueExp = parseExp(context, tokens, 0, source);
 
 		tokens.expect(ExpTokenizer.SYM_TYPE, ":", source);
 
-		Expression falseExp = parseExp(context, tokens , 0, source);
+		ExpNode falseExp = parseExp(context, tokens , 0, source);
 
 		return new Conditional(context, lhs, trueExp, falseExp, source, pos);
 	}
@@ -790,11 +803,11 @@ public class ExpParser {
 			throw new ExpError(input, nextTok.pos, "Expected '=' in assignment");
 		}
 
-		Expression exp = parseExp(context, tokens, 0, input);
+		ExpNode exp = parseExp(context, tokens, 0, input);
 
 		Assignment ret = new Assignment();
 		ret.destination = destination.toArray(STRING_ARRAY_TYPE);
-		ret.value = exp;
+		ret.value = new Expression(exp, input);
 		return ret;
 	}
 
@@ -802,7 +815,7 @@ public class ExpParser {
 	private static final String[] STRING_ARRAY_TYPE = new String[0];
 
 	// The first half of expression parsing, parse a simple expression based on the next token
-	private static Expression parseOpeningExp(ParseContext context, TokenList tokens, double bindPower, String source) throws ExpError{
+	private static ExpNode parseOpeningExp(ParseContext context, TokenList tokens, double bindPower, String source) throws ExpError{
 		ExpTokenizer.Token nextTok = tokens.next(); // consume the first token
 
 		if (nextTok == null) {
@@ -826,14 +839,14 @@ public class ExpParser {
 
 		// handle parenthesis
 		if (nextTok.value.equals("(")) {
-			Expression exp = parseExp(context, tokens, 0, source);
+			ExpNode exp = parseExp(context, tokens, 0, source);
 			tokens.expect(ExpTokenizer.SYM_TYPE, ")", source); // Expect the closing paren
 			return exp;
 		}
 
 		UnaryOpEntry oe = getUnaryOp(nextTok.value);
 		if (oe != null) {
-			Expression exp = parseExp(context, tokens, oe.bindingPower, source);
+			ExpNode exp = parseExp(context, tokens, oe.bindingPower, source);
 			return new UnaryOp(context, exp, oe.function, source, nextTok.pos);
 		}
 
@@ -841,7 +854,7 @@ public class ExpParser {
 		throw new ExpError(source, nextTok.pos, "Can not parse expression");
 	}
 
-	private static Expression parseConstant(ParseContext context, String constant, TokenList tokens, String source, int pos) throws ExpError {
+	private static ExpNode parseConstant(ParseContext context, String constant, TokenList tokens, String source, int pos) throws ExpError {
 		double mult = 1;
 		Class<? extends Unit> ut = DimensionlessUnit.class;
 
@@ -864,10 +877,10 @@ public class ExpParser {
 	}
 
 
-	private static Expression parseFuncCall(ParseContext context, String funcName, TokenList tokens, String source, int pos) throws ExpError {
+	private static ExpNode parseFuncCall(ParseContext context, String funcName, TokenList tokens, String source, int pos) throws ExpError {
 
 		tokens.expect(ExpTokenizer.SYM_TYPE, "(", source);
-		ArrayList<Expression> arguments = new ArrayList<>();
+		ArrayList<ExpNode> arguments = new ArrayList<>();
 
 		ExpTokenizer.Token peeked = tokens.peek();
 		if (peeked == null) {
@@ -881,7 +894,7 @@ public class ExpParser {
 		}
 
 		while (!isEmpty) {
-			Expression nextArg = parseExp(context, tokens, 0, source);
+			ExpNode nextArg = parseExp(context, tokens, 0, source);
 			arguments.add(nextArg);
 
 			ExpTokenizer.Token nextTok = tokens.next();
