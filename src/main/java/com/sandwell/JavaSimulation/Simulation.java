@@ -32,7 +32,6 @@ import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
-import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.ObjectSelector;
@@ -354,7 +353,9 @@ public class Simulation extends Entity {
 			}
 			catch (Throwable e) {
 				InputAgent.doError(e);
-				ExceptionBox.instance().setInputError(Entity.getAll().get(i), e);
+				InputAgent.showErrorDialog("Input Error Detected During Validation",
+				                           "%s: %-70s",
+				                           Entity.getAll().get(i).getName(), e.getMessage());
 				return;
 			}
 		}

@@ -14,10 +14,8 @@
  */
 package com.jaamsim.ui;
 
-import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.InputAgent;
 
 /**
@@ -85,12 +83,5 @@ public class ExceptionBox extends FrameBox {
 			instance = new ExceptionBox();
 
 		return instance;
-	}
-
-	public void setInputError(Entity ent, Throwable e) {
-		JOptionPane.showMessageDialog(EditBox.getInstance(),
-				   String.format("Reason: %-70s", e.getMessage()),
-				   String.format("Input Validation Failure - %s", ent.getName()),
-				   JOptionPane.ERROR_MESSAGE);
 	}
 }
