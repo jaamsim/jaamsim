@@ -33,7 +33,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -1368,40 +1367,26 @@ public class RenderManager implements DragSourceListener {
 		}
 		catch (InputErrorException e) {}
 
-		boolean isFlat = false;
+		boolean alignBottom = true;
 
 		// Shudder....
 		ArrayList<DisplayModel> displayModels = dEntity.getDisplayModelList();
 		if (displayModels != null && displayModels.size() > 0) {
 			DisplayModel dm0 = displayModels.get(0);
 			if (dm0 instanceof DisplayModelCompat || dm0 instanceof ImageModel || dm0 instanceof TextModel )
-				isFlat = true;
+				alignBottom = false;
 		}
-		if (dEntity instanceof HasScreenPoints) {
-			isFlat = true;
-		}
-		if (dEntity instanceof Graph) {
-			isFlat = true;
+		else if (dEntity instanceof Graph || dEntity instanceof HasScreenPoints) {
+			alignBottom = false;
 		}
 
-		if (isFlat) {
-			Vec3d size = dEntity.getSize();
-
-			ArrayList<String> tokens = new ArrayList<>();
-			tokens.add(String.format((Locale)null, "%.3f", size.x));
-			tokens.add(String.format((Locale)null, "%.3f", size.y));
-			tokens.add("0.0");
-			tokens.add("m");
-
-			KeywordIndex kw = new KeywordIndex(tokens, "Size", 0, tokens.size(), null);
-			InputAgent.apply(dEntity, kw);
-		} else {
+		if (alignBottom) {
 			ArrayList<String> tokens = new ArrayList<>();
 			tokens.add("0.0");
 			tokens.add("0.0");
 			tokens.add("-0.5");
 
-			KeywordIndex kw = new KeywordIndex(tokens, "Alignment", 0, tokens.size(), null);
+			KeywordIndex kw = new KeywordIndex("Alignment", tokens, null);
 			InputAgent.apply(dEntity, kw);
 		}
 		FrameBox.valueUpdate();
