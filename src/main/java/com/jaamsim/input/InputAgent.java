@@ -784,7 +784,6 @@ public class InputAgent {
 			InputAgent.showErrorDialog("Fatal Error",
 			                           "A fatal error has occured while loading the file '%s':\n\n%s",
 			                           file.getName(), t.getMessage());
-			GUIFrame.shutdown(1);
 		}
 	}
 
