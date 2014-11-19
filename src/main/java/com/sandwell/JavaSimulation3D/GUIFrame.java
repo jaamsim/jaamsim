@@ -261,31 +261,21 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * Perform exit window duties
 	 */
 	void close() {
-
-		// close warning/error trace file
-		InputAgent.closeLogFile();
-
 		// check for unsaved changes
 		if (InputAgent.isSessionEdited()) {
-			int userOption = GUIFrame.showSaveChangesDialog();
-
-			if (userOption == JOptionPane.YES_OPTION) {
-				InputAgent.save(this);
-				GUIFrame.shutdown(0);
-			} else if (userOption == JOptionPane.NO_OPTION) {
-				GUIFrame.shutdown(0);
-			}
-
-		} else {
-			GUIFrame.shutdown(0);
+			int userOption = this.showSaveChangesDialog();
+			if (userOption == JOptionPane.CANCEL_OPTION)
+				return;
 		}
+		InputAgent.closeLogFile();
+		GUIFrame.shutdown(0);
 	}
 
 	/**
 	 * Shows the "Save Changes" dialog box
 	 * @return integer representing the option chosen.
 	 */
-	static int showSaveChangesDialog() {
+	int showSaveChangesDialog() {
 
 		String message;
 		if (InputAgent.getConfigFile() == null)
@@ -302,6 +292,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				null,
 				options,
 				options[0]);
+
+		if (userOption == JOptionPane.YES_OPTION)
+			InputAgent.save(this);
+
 		return userOption;
 	}
 
@@ -379,10 +373,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
-					int userOption = GUIFrame.showSaveChangesDialog();
-					if (userOption == JOptionPane.YES_OPTION) {
-						InputAgent.save(GUIFrame.this);
-					} else if (userOption == JOptionPane.CANCEL_OPTION) {
+					int userOption = GUIFrame.this.showSaveChangesDialog();
+					if (userOption == JOptionPane.CANCEL_OPTION) {
 						return;
 					}
 				}
@@ -406,10 +398,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
-					int userOption = GUIFrame.showSaveChangesDialog();
-					if (userOption == JOptionPane.YES_OPTION) {
-						InputAgent.save(GUIFrame.this);
-					} else if (userOption == JOptionPane.CANCEL_OPTION) {
+					int userOption = GUIFrame.this.showSaveChangesDialog();
+					if (userOption == JOptionPane.CANCEL_OPTION) {
 						return;
 					}
 				}
