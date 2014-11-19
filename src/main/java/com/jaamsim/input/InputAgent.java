@@ -1433,4 +1433,9 @@ public class InputAgent {
 			return false;
 		}
 	}
+
+	public static void showErrorDialog(String title, String fmt, Object... args) {
+		final String msg = String.format(fmt,  args);
+		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+	}
 }
