@@ -777,7 +777,11 @@ public class InputAgent {
 			gui.enableSave(InputAgent.getRecordEditsFound());
 		}
 		catch( Throwable t ) {
-			ExceptionBox.instance().setError(t);
+			InputAgent.doError(t);
+			InputAgent.showErrorDialog("Fatal Error",
+			                           "A fatal error has occured while loading the file '%s':\n\n%s",
+			                           file.getName(), t.getMessage());
+			GUIFrame.shutdown(1);
 		}
 	}
 
