@@ -47,7 +47,7 @@ public class ExpressionEntity extends Entity {
 			double ret = ExpEvaluator.evaluateExpression(sampleValue.getValue(), simTime, this).value;
 			return ret;
 		} catch(ExpError e) {
-			return 0.0d;
+			throw new ErrorException(e);
 		}
 	}
 }

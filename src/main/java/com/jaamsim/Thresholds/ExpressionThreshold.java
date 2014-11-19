@@ -15,6 +15,7 @@
 package com.jaamsim.Thresholds;
 
 import com.jaamsim.Graphics.DisplayModelCompat;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -112,7 +113,7 @@ public class ExpressionThreshold extends Threshold {
 			boolean ret = ExpEvaluator.evaluateExpression(openCondition.getValue(), simTime, this).value != 0;
 			return ret;
 		} catch(ExpError e) {
-			throw new RuntimeException(e);
+			throw new ErrorException(e);
 		}
 	}
 

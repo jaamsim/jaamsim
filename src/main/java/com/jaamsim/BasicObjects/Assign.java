@@ -17,6 +17,7 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.AssignmentListInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -53,7 +54,7 @@ public class Assign extends LinkedComponent {
 			try {
 				ExpEvaluator.runAssignment(ass, getSimTime(), this);
 			} catch (ExpError err) {
-				throw new RuntimeException(err.getMessage());
+				throw new ErrorException(err);
 			}
 		}
 
