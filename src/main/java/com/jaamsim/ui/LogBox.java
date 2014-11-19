@@ -70,17 +70,6 @@ public class LogBox extends FrameBox {
 		super.dispose();
 	}
 
-	private static class ShowFrame implements Runnable {
-		@Override
-		public void run() {
-			LogBox.getInstance().setVisible(true);
-		}
-	}
-
-	public static void makeVisible() {
-		SwingUtilities.invokeLater(new ShowFrame());
-	}
-
 	/**
 	 * log a formated string, effectively wrapping String.format
 	 * @param format

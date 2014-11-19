@@ -753,14 +753,11 @@ public class InputAgent {
 				InputAgent.loadConfigurationFile(file);
 			}
 			catch( InputErrorException iee ) {
-				if (!batchRun) {
-					InputAgent.showErrorDialog("Input Error",
-					                           "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
-					                           "Check the log file '%s' for more information.",
-					                           file.getName(), iee.getMessage(), InputAgent.getRunName() + ".log");
-				}
-				else
-					LogBox.logLine( iee.getMessage() );
+				LogBox.logLine("Input Error: " + iee.getMessage());
+				InputAgent.showErrorDialog("Input Error",
+				                           "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
+				                           "Check the log file '%s' for more information.",
+				                           file.getName(), iee.getMessage(), InputAgent.getRunName() + ".log");
 			}
 
 			LogBox.logLine("Configuration File Loaded");
@@ -771,6 +768,7 @@ public class InputAgent {
 			gui.enableSave(InputAgent.getRecordEditsFound());
 		}
 		catch( Throwable t ) {
+			LogBox.format("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
 			InputAgent.showErrorDialog("Fatal Error",
 			                           "A fatal error has occured while loading the file '%s':\n\n%s",
 			                           file.getName(), t.getMessage());

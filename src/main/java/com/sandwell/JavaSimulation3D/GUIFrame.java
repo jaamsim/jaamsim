@@ -1729,7 +1729,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			LogBox.logLine("Error: " + e.getMessage());
 			for (StackTraceElement each : e.getStackTrace())
 				LogBox.logLine(each.toString());
-			LogBox.makeVisible();
 			GUIFrame.shutdown(1);
 			return;
 		}
