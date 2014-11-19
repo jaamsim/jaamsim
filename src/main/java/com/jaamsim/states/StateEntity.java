@@ -21,7 +21,6 @@ import java.util.HashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.FileEntity;
@@ -130,8 +129,7 @@ public class StateEntity extends DisplayEntity {
 		StateRecord nextState = states.get(state);
 		if (nextState == null) {
 			if (!isValidState(state))
-				throw new ErrorException("Specified state: %s is not valid for Entity: %s",
-				                         state, this.getName());
+				error("Specified state: %s is not valid", state);
 
 			String intState = state.intern();
 			nextState = new StateRecord(intState, isValidWorkingState(intState));

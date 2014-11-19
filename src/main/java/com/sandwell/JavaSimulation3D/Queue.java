@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -122,22 +121,20 @@ public class Queue extends DisplayEntity {
 	 * Removes the entity at the specified position in the queue
 	 */
 	public DisplayEntity remove(int i) {
-		if( i < itemList.size() && i >= 0 ) {
-			this.updateStatistics();  // update the queue length distribution
-			DisplayEntity out = itemList.remove(i);
-			//double queueTime = this.getSimTime() - timeAddedList.remove(i);
-			timeAddedList.remove(i);
-			this.updateStatistics();  // update the min and max queue length
-			numberRemoved++;
+		if (i >= itemList.size() || i < 0)
+			error("Index: %d is beyond the end of the queue.", i);
 
-			for( QueueRecorder rec : recorderList ) {
-				rec.remove( out, this );
-			}
-			return out;
+		this.updateStatistics();  // update the queue length distribution
+		DisplayEntity out = itemList.remove(i);
+		//double queueTime = this.getSimTime() - timeAddedList.remove(i);
+		timeAddedList.remove(i);
+		this.updateStatistics();  // update the min and max queue length
+		numberRemoved++;
+
+		for( QueueRecorder rec : recorderList ) {
+			rec.remove( out, this );
 		}
-		else {
-			throw new ErrorException( " Index is beyond the end of the queue. " );
-		}
+		return out;
 	}
 
 	/**
@@ -149,7 +146,7 @@ public class Queue extends DisplayEntity {
 			this.remove(i);
 
 		else
-			throw new ErrorException( "item not found in queue " );
+			error("Entity:%s not found in queue.", perf);
 	}
 
 	/**

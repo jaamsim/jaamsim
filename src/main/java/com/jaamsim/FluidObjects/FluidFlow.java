@@ -16,7 +16,6 @@ package com.jaamsim.FluidObjects;
 
 import java.util.ArrayList;
 
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Output;
 
@@ -117,7 +116,7 @@ public class FluidFlow extends FluidFlowCalculation {
 		double diff = destination.getInletPressure() /
 				destination.getTargetInletPressure() - 1.0;
 		if( Math.abs( diff ) > 1.0e-4 ) {
-			throw new ErrorException( "Pressure did not balance correctly.  Difference = " + diff );
+			error("Pressure did not balance correctly.  Difference = %f", diff);
 		}
 	}
 

@@ -18,7 +18,6 @@ import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.Samples.SampleProvider;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -131,10 +130,10 @@ implements SampleProvider {
 
 		// Has this method has already been called for this object
 		if( calculationInProgress ) {
-			if( this.getController() != null ) {
-				return value;
-			}
-			throw new ErrorException("A tight loop is present. Try setting the Controller keyword for object: %s.", this.getName());
+			if (this.getController() == null)
+				error("A tight loop is present. Try setting the Controller keyword.");
+
+			return value;
 		}
 
 		// Perform the calculation (calls getNextSample for all its inputs)

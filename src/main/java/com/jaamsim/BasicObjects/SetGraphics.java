@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -69,7 +68,7 @@ public class SetGraphics extends LinkedComponent {
 		// Choose the new graphics for this entity
 		int i = (int) choice.getValue().getNextSample(this.getSimTime());
 		if (i<1 || i>graphicsList.getValue().size())
-			throw new ErrorException("Chosen index i=%s is out of range for GraphicList: %s.", i, graphicsList.getValue());
+			error("Chosen index i=%s is out of range for GraphicList: %s.", i, graphicsList.getValue());
 		DisplayEntity chosen = graphicsList.getValue().get(i-1);
 
 		// Set the graphics for the incoming entity to those for the chosen entity

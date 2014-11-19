@@ -16,7 +16,6 @@ package com.jaamsim.FluidObjects;
 
 import java.util.ArrayList;
 
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -179,8 +178,8 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		}
 
 		if( n >= 20 ) {
-			throw new ErrorException( "Darcy Friction Factor iterations did not converge: " +
-					"lastx = " + lastx + "  x = " + x + "  n = " + n);
+			error("Darcy Friction Factor iterations did not converge: lastx = %f  x = %f  n = %d",
+			      lastx, x, n);
 		}
 
 		return 1.0 / ( x * x );

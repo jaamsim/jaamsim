@@ -17,7 +17,6 @@ package com.jaamsim.Samples;
 import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -156,9 +155,8 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 				else
 					// Otherwise, return the index before the insertion index
 					if( index == -1 )
-						throw new ErrorException( this + " does not have a value at time " + time );
-					else
-						return -index - 2;
+						error("No value found at time: %f hours", time);
+					return -index - 2;
 			}
 		}
 	}
