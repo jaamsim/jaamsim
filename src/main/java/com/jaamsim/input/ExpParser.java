@@ -61,12 +61,29 @@ public class ExpParser {
 	public static class Expression {
 		public final String source;
 
+		private final ArrayList<Thread> executingThreads = new ArrayList<>();
+
 		private ExpNode rootNode;
 		public Expression(String source) {
 			this.source = source;
 		}
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
-			return rootNode.evaluate(ec);
+			synchronized(executingThreads) {
+				if (executingThreads.contains(Thread.currentThread())) {
+					throw new ExpError(null, 0, "Expression recursion detected for expression: %s", source);
+				}
+
+				executingThreads.add(Thread.currentThread());
+			}
+			ExpResult res = null;
+			try {
+				res = rootNode.evaluate(ec);
+			} finally {
+				synchronized(executingThreads) {
+					executingThreads.remove(Thread.currentThread());
+				}
+			}
+			return res;
 		}
 		void setRootNode(ExpNode node) {
 			rootNode = node;
