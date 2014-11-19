@@ -1389,7 +1389,6 @@ public class RenderManager implements DragSourceListener {
 			KeywordIndex kw = new KeywordIndex("Alignment", tokens, null);
 			InputAgent.apply(dEntity, kw);
 		}
-		FrameBox.valueUpdate();
 	}
 
 	@Override
