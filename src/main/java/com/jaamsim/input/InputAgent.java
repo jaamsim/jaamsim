@@ -39,7 +39,6 @@ import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.ExceptionBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
 import com.sandwell.JavaSimulation.FileEntity;
@@ -611,7 +610,7 @@ public class InputAgent {
 
 		//  Check for found errors
 		if( InputAgent.numErrors > 0 )
-			throw new InputErrorException("%d input errors and %d warnings found, check %s", InputAgent.numErrors, InputAgent.numWarnings, inputTraceFileName);
+			throw new InputErrorException("%d input errors and %d warnings found", InputAgent.numErrors, InputAgent.numWarnings);
 
 		if (Simulation.getPrintInputReport())
 			InputAgent.printInputFileKeywords();
@@ -763,8 +762,12 @@ public class InputAgent {
 				InputAgent.loadConfigurationFile(file);
 			}
 			catch( InputErrorException iee ) {
-				if (!batchRun)
-					ExceptionBox.instance().setErrorBox(iee.getMessage());
+				if (!batchRun) {
+					InputAgent.showErrorDialog("Input Error",
+					                           "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
+					                           "Check the log file '%s' for more information.",
+					                           file.getName(), iee.getMessage(), InputAgent.getRunName() + ".log");
+				}
 				else
 					LogBox.logLine( iee.getMessage() );
 			}
