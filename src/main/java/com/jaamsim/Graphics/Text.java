@@ -59,7 +59,7 @@ public class Text extends DisplayEntity {
 	protected String renderText = "";
 
 	{
-		formatText = new StringInput("Format", "Key Inputs", "abc");
+		formatText = new StringInput("Format", "Key Inputs", "");
 		this.addInput(formatText);
 
 		outputName = new OutputInput<>(Object.class, "OutputName", "Key Inputs", null);

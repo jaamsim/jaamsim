@@ -46,7 +46,9 @@ import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.DisplayModelCompat;
 import com.jaamsim.Graphics.Graph;
+import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.Region;
+import com.jaamsim.Graphics.Text;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.datatypes.IntegerVector;
@@ -1387,6 +1389,14 @@ public class RenderManager implements DragSourceListener {
 			tokens.add("-0.5");
 
 			KeywordIndex kw = new KeywordIndex("Alignment", tokens, null);
+			InputAgent.apply(dEntity, kw);
+		}
+
+		if (dEntity instanceof Text || dEntity instanceof OverlayText) {
+			ArrayList<String> tokens = new ArrayList<>(1);
+			tokens.add(dEntity.getName());
+
+			KeywordIndex kw = new KeywordIndex("Format", tokens, null);
 			InputAgent.apply(dEntity, kw);
 		}
 	}
