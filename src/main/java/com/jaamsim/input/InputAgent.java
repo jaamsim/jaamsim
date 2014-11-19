@@ -561,15 +561,6 @@ public class InputAgent {
 		return ret;
 	}
 
-	public static void doError(Throwable e) {
-		if (!batchRun)
-			return;
-
-		LogBox.logLine("An error occurred in the simulation environment.  Please check inputs for an error:");
-		LogBox.logLine(e.toString());
-		GUIFrame.shutdown(1);
-	}
-
 	// Load the run file
 	public static void loadConfigurationFile( File file) throws URISyntaxException {
 
@@ -780,7 +771,6 @@ public class InputAgent {
 			gui.enableSave(InputAgent.getRecordEditsFound());
 		}
 		catch( Throwable t ) {
-			InputAgent.doError(t);
 			InputAgent.showErrorDialog("Fatal Error",
 			                           "A fatal error has occured while loading the file '%s':\n\n%s",
 			                           file.getName(), t.getMessage());
@@ -1441,6 +1431,8 @@ public class InputAgent {
 	}
 
 	public static void showErrorDialog(String title, String fmt, Object... args) {
+		if (batchRun) GUIFrame.shutdown(1);
+
 		final String msg = String.format(fmt,  args);
 		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
 	}
