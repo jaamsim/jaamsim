@@ -353,9 +353,9 @@ public class Simulation extends Entity {
 			}
 			catch (Throwable e) {
 				LogBox.format("%s: Validation error- %s", Entity.getAll().get(i).getName(), e.getMessage());
-				InputAgent.showErrorDialog("Input Error Detected During Validation",
-				                           "%s: %-70s",
-				                           Entity.getAll().get(i).getName(), e.getMessage());
+				GUIFrame.showErrorDialog("Input Error Detected During Validation",
+				                         "%s: %-70s",
+				                         Entity.getAll().get(i).getName(), e.getMessage());
 
 				return;
 			}

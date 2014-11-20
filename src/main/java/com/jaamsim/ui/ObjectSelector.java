@@ -25,7 +25,6 @@ import java.util.Enumeration;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -330,16 +329,16 @@ public class ObjectSelector extends FrameBox {
 
 			// Check that the entity was defined AFTER the RecordEdits command
 			if (!currentEntity.testFlag(Entity.FLAG_ADDED)) {
-				JOptionPane.showMessageDialog(null, "Cannot rename an entity that was defined before the RecordEdits command.",
-						"Input Error", JOptionPane.ERROR_MESSAGE);
+				GUIFrame.showErrorDialog("Input Error",
+						"Cannot rename an entity that was defined before the RecordEdits command.");
 				node.setUserObject(currentEntity);
 				return;
 			}
 
 			// Check that the new name is valid
 			if (newName.contains(" ") || newName.contains("\t") || newName.contains("{") || newName.contains("}")) {
-				JOptionPane.showMessageDialog(null, "Entity names cannot contain spaces, tabs, or braces ({}).",
-						"Input Error", JOptionPane.ERROR_MESSAGE);
+				GUIFrame.showErrorDialog("Input Error",
+						"Entity names cannot contain spaces, tabs, or braces ({}).");
 				node.setUserObject(currentEntity);
 				return;
 			}
@@ -347,8 +346,8 @@ public class ObjectSelector extends FrameBox {
 			// Check that the name has not been used already
 			Entity existingEnt = Input.tryParseEntity(newName, Entity.class);
 			if (existingEnt != null) {
-				JOptionPane.showMessageDialog(null, String.format("Entity name: %s is already in use.", newName),
-						"Input Error", JOptionPane.ERROR_MESSAGE);
+				GUIFrame.showErrorDialog("Input Error",
+						"Entity name: %s is already in use.", newName);
 				node.setUserObject(currentEntity);
 				return;
 			}

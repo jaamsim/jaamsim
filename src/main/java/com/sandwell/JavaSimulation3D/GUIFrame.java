@@ -1383,7 +1383,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 		catch (InputErrorException e) {
 			pauseTime.setText(prevVal);
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
+			GUIFrame.showErrorDialog("Input Error", e.getMessage());
 		}
 	}
 

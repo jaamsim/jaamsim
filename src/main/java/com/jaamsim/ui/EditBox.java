@@ -38,7 +38,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -770,9 +769,8 @@ public static class CellListener implements CellEditorListener {
 
 		}
 		catch (InputErrorException exep) {
-			JOptionPane.showMessageDialog(EditBox.getInstance(),
-			   String.format( "%s\n" + "Value will be cleared.", exep.getMessage() ),
-			   "Input Error", JOptionPane.ERROR_MESSAGE);
+			GUIFrame.showErrorDialog("Input Error",
+					"%s\n" + "Value will be cleared.", exep.getMessage());
 
 			FrameBox.valueUpdate();
 			return;
