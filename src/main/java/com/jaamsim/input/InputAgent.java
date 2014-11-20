@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.basicsim.Entity;
@@ -726,14 +725,8 @@ public class InputAgent {
 			// Confirm overwrite if file already exists
 			File temp = new File(filePath);
 			if (temp.exists()) {
-				int userOption = JOptionPane.showConfirmDialog( null,
-						String.format("The file '%s' already exists.\n" +
-								"Do you want to replace it?", file.getName()),
-						"Confirm Save As",
-						JOptionPane.YES_NO_OPTION,
-						JOptionPane.WARNING_MESSAGE);
-
-				if (userOption == JOptionPane.NO_OPTION) {
+				boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
+				if (!confirmed) {
 					return;
 				}
 			}

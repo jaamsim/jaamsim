@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.Graphics.DisplayEntity;
@@ -50,6 +49,7 @@ import com.jaamsim.render.VisibilityInfo;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.MenuItem;
 import com.jaamsim.ui.MenuItemEntity;
+import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
@@ -382,14 +382,8 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 					// Confirm overwrite if file already exists
 					File temp = new File(filePath);
 					if (temp.exists()) {
-
-						int userOption = JOptionPane.showConfirmDialog( null,
-								file.getName() + " already exists.\n" +
-								"Do you wish to replace it?", "Confirm Save As",
-								JOptionPane.YES_NO_OPTION,
-								JOptionPane.WARNING_MESSAGE );
-
-						if (userOption == JOptionPane.NO_OPTION) {
+						boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
+						if (!confirmed) {
 							return;
 						}
 					}

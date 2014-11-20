@@ -1733,6 +1733,21 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	/**
+	 * Shows the "Confirm Save As" dialog box
+	 * @param fileName - name of the file to be saved
+	 * @return true if the file is to be overwritten.
+	 */
+	public static boolean showSaveAsDialog(String fileName) {
+		int userOption = JOptionPane.showConfirmDialog(null,
+				String.format("The file '%s' already exists.\n" +
+						"Do you want to replace it?", fileName),
+				"Confirm Save As",
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE);
+		return (userOption == JOptionPane.YES_OPTION);
+	}
+
+	/**
 	 * Shows the "Save Changes" dialog box
 	 * @return true for any response other than Cancel.
 	 */
