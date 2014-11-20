@@ -754,10 +754,10 @@ public class InputAgent {
 			}
 			catch( InputErrorException iee ) {
 				LogBox.logLine("Input Error: " + iee.getMessage());
-				InputAgent.showErrorDialog("Input Error",
-				                           "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
-				                           "Check the log file '%s' for more information.",
-				                           file.getName(), iee.getMessage(), InputAgent.getRunName() + ".log");
+				GUIFrame.showErrorDialog("Input Error",
+				                         "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
+				                         "Check the log file '%s' for more information.",
+				                         file.getName(), iee.getMessage(), InputAgent.getRunName() + ".log");
 			}
 
 			LogBox.logLine("Configuration File Loaded");
@@ -769,9 +769,9 @@ public class InputAgent {
 		}
 		catch( Throwable t ) {
 			LogBox.format("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
-			InputAgent.showErrorDialog("Fatal Error",
-			                           "A fatal error has occured while loading the file '%s':\n\n%s",
-			                           file.getName(), t.getMessage());
+			GUIFrame.showErrorDialog("Fatal Error",
+			                         "A fatal error has occured while loading the file '%s':\n\n%s",
+			                         file.getName(), t.getMessage());
 		}
 	}
 
@@ -1428,10 +1428,4 @@ public class InputAgent {
 		}
 	}
 
-	public static void showErrorDialog(String title, String fmt, Object... args) {
-		if (batchRun) GUIFrame.shutdown(1);
-
-		final String msg = String.format(fmt,  args);
-		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
-	}
 }
