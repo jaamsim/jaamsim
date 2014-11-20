@@ -128,6 +128,8 @@ public class Unpack extends LinkedService {
 
 	@Override
 	public void endAction() {
+		if (container.getCount() == 0)
+			error("Tried to remove from an empty container: %s", container);
 
 		// Remove the next entity from the container
 		this.sendToNextComponent(container.removeEntity());
