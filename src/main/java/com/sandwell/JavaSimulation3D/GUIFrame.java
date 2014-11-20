@@ -723,20 +723,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				if( getSimState() == SIM_STATE_RUNNING ) {
 					GUIFrame.this.pauseSimulation();
 				}
-				int userOption = JOptionPane.showConfirmDialog( null,
-						"WARNING: If you stop the run, it can only be re-started from time 0.\n" +
-						"Do you really want to stop?",
-						"Confirm Stop",
-						JOptionPane.YES_OPTION,
-						JOptionPane.WARNING_MESSAGE );
+				boolean confirmed = GUIFrame.showConfirmStopDialog();
+				if (!confirmed)
+					return;
 
-				// stop only if yes
-				if (userOption == JOptionPane.YES_OPTION) {
-					GUIFrame.this.stopSimulation();
-					lastSimTimeHours = 0.0d;
-					lastSystemTime = System.currentTimeMillis();
-					setSpeedUp(0.0d);
-				}
+				GUIFrame.this.stopSimulation();
+				lastSimTimeHours = 0.0d;
+				lastSystemTime = System.currentTimeMillis();
+				setSpeedUp(0.0d);
 			}
 		} );
 
@@ -1744,6 +1738,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				"Confirm Save As",
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE);
+		return (userOption == JOptionPane.YES_OPTION);
+	}
+
+	/**
+	 * Shows the "Confirm Stop" dialog box.
+	 * @return true if the run is to be stopped.
+	 */
+	public static boolean showConfirmStopDialog() {
+		int userOption = JOptionPane.showConfirmDialog( null,
+				"WARNING: If you stop the run, it can only be re-started from time 0.\n" +
+				"Do you really want to stop?",
+				"Confirm Stop",
+				JOptionPane.YES_OPTION,
+				JOptionPane.WARNING_MESSAGE );
 		return (userOption == JOptionPane.YES_OPTION);
 	}
 
