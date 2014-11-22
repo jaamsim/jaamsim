@@ -155,6 +155,11 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
+	public void setDefaultSize(Vec3d s) {
+		sizeInput.setDefaultValue(s);
+		this.setSize(sizeInput.getValue());
+	}
+
 	@Override
 	public void validate()
 	throws InputErrorException {
