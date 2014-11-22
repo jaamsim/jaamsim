@@ -14,13 +14,18 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
@@ -124,6 +129,23 @@ implements SampleProvider {
 			FrameBox.reSelectEntity();  // Update the units in the Output Viewer
 			return;
 		}
+	}
+
+	@Override
+	public void setInputsForDragAndDrop() {
+		super.setInputsForDragAndDrop();
+
+		// Find the largest seed used so far
+		int seed = 0;
+		for (Distribution dist : Entity.getClonesOfIterator(Distribution.class)) {
+			seed = Math.max(seed, dist.getStreamNumber());
+		}
+
+		// Set the random number seed next unused value
+		ArrayList<String> tokens = new ArrayList<>();
+		tokens.add(String.format("%s", seed+1));
+		KeywordIndex kw = new KeywordIndex("RandomSeed", tokens, null);
+		InputAgent.apply(this, kw);
 	}
 
 	@Override
