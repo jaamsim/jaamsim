@@ -14,9 +14,16 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.states.StateEntity;
 
 public class SimEntity extends StateEntity {
+
+	{
+		this.setDefaultSize(new Vec3d(0.5, 0.5, 0.5));
+	}
+
+	public SimEntity() {}
 
 	@Override
 	public String getInitialState() {
