@@ -209,6 +209,12 @@ public class Entity {
 	 */
 	public void clearStatistics() {}
 
+	/**
+	 * Assigns input values that are helpful when the entity is dragged and
+	 * dropped into a model.
+	 */
+	public void setInputsForDragAndDrop() {}
+
 	public void kill() {
 		synchronized (allInstances) {
 			for (int i = 0; i < allInstances.size(); i++) {

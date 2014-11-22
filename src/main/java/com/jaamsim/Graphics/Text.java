@@ -14,9 +14,13 @@
  */
 package com.jaamsim.Graphics;
 
+import java.util.ArrayList;
+
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.OutputInput;
 import com.jaamsim.input.StringInput;
@@ -89,6 +93,17 @@ public class Text extends DisplayEntity {
 				unit.setSubClass(h.getUnitType());
 			return;
 		}
+	}
+
+	@Override
+	public void setInputsForDragAndDrop() {
+		super.setInputsForDragAndDrop();
+
+		// Set the displayed text to the entity's name
+		ArrayList<String> tokens = new ArrayList<>(1);
+		tokens.add(this.getName());
+		KeywordIndex kw = new KeywordIndex("Format", tokens, null);
+		InputAgent.apply(this, kw);
 	}
 
 	public String getRenderText(double simTime) {

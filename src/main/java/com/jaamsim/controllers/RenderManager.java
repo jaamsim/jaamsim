@@ -41,14 +41,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import com.jaamsim.DisplayModels.DisplayModel;
-import com.jaamsim.DisplayModels.ImageModel;
-import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.DisplayModelCompat;
-import com.jaamsim.Graphics.Graph;
-import com.jaamsim.Graphics.OverlayText;
 import com.jaamsim.Graphics.Region;
-import com.jaamsim.Graphics.Text;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.datatypes.IntegerVector;
@@ -1353,51 +1347,18 @@ public class RenderManager implements DragSourceListener {
 		String name = proto.getSimpleName();
 		Entity ent = InputAgent.defineEntityWithUniqueName(proto, name, "", true);
 
+		// Set input values for a dragged and dropped entity
+		ent.setInputsForDragAndDrop();
+
 		// We are no longer drag-and-dropping
 		dndObjectType = null;
 		FrameBox.setSelectedEntity(ent);
 
-		if (!(ent instanceof DisplayEntity)) {
-			// This object is not a display entity, so the rest of this method does not apply
-			return;
-		}
-
-		DisplayEntity dEntity  = (DisplayEntity) ent;
-
-		try {
-			dEntity.dragged(creationPoint);
-		}
-		catch (InputErrorException e) {}
-
-		boolean alignBottom = true;
-
-		// Shudder....
-		ArrayList<DisplayModel> displayModels = dEntity.getDisplayModelList();
-		if (displayModels != null && displayModels.size() > 0) {
-			DisplayModel dm0 = displayModels.get(0);
-			if (dm0 instanceof DisplayModelCompat || dm0 instanceof ImageModel || dm0 instanceof TextModel )
-				alignBottom = false;
-		}
-		else if (dEntity instanceof Graph || dEntity instanceof HasScreenPoints) {
-			alignBottom = false;
-		}
-
-		if (alignBottom) {
-			ArrayList<String> tokens = new ArrayList<>();
-			tokens.add("0.0");
-			tokens.add("0.0");
-			tokens.add("-0.5");
-
-			KeywordIndex kw = new KeywordIndex("Alignment", tokens, null);
-			InputAgent.apply(dEntity, kw);
-		}
-
-		if (dEntity instanceof Text || dEntity instanceof OverlayText) {
-			ArrayList<String> tokens = new ArrayList<>(1);
-			tokens.add(dEntity.getName());
-
-			KeywordIndex kw = new KeywordIndex("Format", tokens, null);
-			InputAgent.apply(dEntity, kw);
+		if (ent instanceof DisplayEntity) {
+			try {
+				((DisplayEntity)ent).dragged(creationPoint);
+			}
+			catch (InputErrorException e) {}
 		}
 	}
 

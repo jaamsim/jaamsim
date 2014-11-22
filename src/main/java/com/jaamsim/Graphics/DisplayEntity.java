@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.ImageModel;
+import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.BooleanInput;
@@ -36,6 +38,7 @@ import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
+import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
@@ -171,6 +174,32 @@ public class DisplayEntity extends Entity {
 					this.error("validate()", String.format("Invalid Display model: %s for Entity", dm.getName()), "");
 				}
 			}
+		}
+	}
+
+	@Override
+	public void setInputsForDragAndDrop() {
+
+		// Determine whether the entity should sit on top of the x-y plane
+		boolean alignBottom = true;
+		ArrayList<DisplayModel> displayModels = displayModelList.getValue();
+		if (displayModels != null && displayModels.size() > 0) {
+			DisplayModel dm0 = displayModels.get(0);
+			if (dm0 instanceof DisplayModelCompat || dm0 instanceof ImageModel || dm0 instanceof TextModel )
+				alignBottom = false;
+		}
+		else if (this instanceof Graph || this instanceof HasScreenPoints) {
+			alignBottom = false;
+		}
+
+		if (alignBottom) {
+			ArrayList<String> tokens = new ArrayList<>();
+			tokens.add("0.0");
+			tokens.add("0.0");
+			tokens.add("-0.5");
+
+			KeywordIndex kw = new KeywordIndex("Alignment", tokens, null);
+			InputAgent.apply(this, kw);
 		}
 	}
 
