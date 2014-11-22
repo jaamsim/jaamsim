@@ -506,7 +506,9 @@ static class LabelMenuItem extends MenuItem {
 		if (ent.getCurrentRegion() != null)
 			InputAgent.processEntity_Keyword_Value(label, "Region", ent.getCurrentRegion().getName());
 
-		InputAgent.processEntity_Keyword_Value(label, "Position", "0.0 -0.65 0.0 m" );
+		double ypos = -0.15 - 0.5*ent.getSize().y;
+		String pos = String.format("0.0 %s 0.0 m", ypos);
+		InputAgent.processEntity_Keyword_Value(label, "Position", pos );
 		InputAgent.processEntity_Keyword_Value(label, "TextHeight", "0.15 m" );
 		InputAgent.processEntity_Keyword_Value(label, "Format", "%s");
 		InputAgent.processEntity_Keyword_Value(label, "OutputName", String.format("%s  Name", ent.getName()) );
