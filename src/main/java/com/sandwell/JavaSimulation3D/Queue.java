@@ -55,6 +55,8 @@ public class Queue extends DisplayEntity {
 	protected ArrayList<QueueRecorder> recorderList;
 
 	{
+		this.setDefaultSize(new Vec3d(0.5, 0.5, 0.5));
+
 		spacingInput = new ValueInput("Spacing", "Key Inputs", 0.0d);
 		spacingInput.setUnitType(DistanceUnit.class);
 		spacingInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
