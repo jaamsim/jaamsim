@@ -46,7 +46,7 @@ implements SampleProvider {
 	         example = "ProbDist1 UnitType { DistanceUnit }")
 	private final UnitTypeInput unitType;
 
-	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
+	@Keyword(description = "Seed for the random number generator.  Must be an integer >= 0.",
 			 example = "ProbDist1 RandomSeed { 547 }")
 	private final IntegerInput randomSeedInput;
 
