@@ -730,7 +730,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 					return;
 
 				GUIFrame.this.stopSimulation();
-				lastSimTimeHours = 0.0d;
+				lastSimTime = 0.0d;
 				lastSystemTime = System.currentTimeMillis();
 				setSpeedUp(0.0d);
 			}
@@ -1033,7 +1033,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	private long lastSystemTime = System.currentTimeMillis();
-	private double lastSimTimeHours = 0.0d;
+	private double lastSimTime = 0.0d;
 
 	/**
 	 * Sets the values for the simulation time, run progress, speedup factor,
@@ -1052,26 +1052,26 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Set the run progress bar display
 		long cTime = System.currentTimeMillis();
-		double duration = Simulation.getRunDurationHours() + Simulation.getInitializationHours();
-		double timeElapsed = simTime/3600.0 - Simulation.getStartHours();
+		double duration = Simulation.getRunDuration() + Simulation.getInitializationTime();
+		double timeElapsed = simTime - Simulation.getStartHours()*3600.0d;
 		int progress = (int)(timeElapsed * 100.0d / duration);
 		this.setProgress(progress);
 
 		// Set the speedup factor display
 		if (cTime - lastSystemTime > 5000) {
 			long elapsedMillis = cTime - lastSystemTime;
-			double elapsedSimHours = timeElapsed - lastSimTimeHours;
+			double elapsedSimTime = timeElapsed - lastSimTime;
 
 			// Determine the speed-up factor
-			double speedUp = (elapsedSimHours * 3600000.0d) / elapsedMillis;
+			double speedUp = (elapsedSimTime * 1000.0d) / elapsedMillis;
 			setSpeedUp(speedUp);
 
 			double remainingSimTime = duration - timeElapsed;
-			double remainingMinutes = (remainingSimTime * 60.0d) / speedUp;
+			double remainingMinutes = (remainingSimTime / 60.0d) / speedUp;
 			setRemaining(remainingMinutes);
 
 			lastSystemTime = cTime;
-			lastSimTimeHours = timeElapsed;
+			lastSimTime = timeElapsed;
 		}
 	}
 
