@@ -14,23 +14,27 @@
  */
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputErrorException;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.units.DimensionlessUnit;
 
 public class RemoveFrom extends Unpack {
 
 	@Keyword(description = "The maximum number of entities to remove from the container.",
 	         example = "RemoveFrom1 NumberOfEntities { 2 }")
-	private final IntegerInput numberOfEntities;
+	private final SampleExpInput numberOfEntities;
 
 	@Keyword(description = "The next object to which the processed EntityContainer is passed.",
 			example = "RemoveFrom1 NextForContainers { Server1 }")
 	protected final EntityInput<LinkedComponent> nextForContainers;
 
 	{
-		numberOfEntities = new IntegerInput("NumberOfEntities", "Key Inputs", Integer.MAX_VALUE);
+		numberOfEntities = new SampleExpInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
+		numberOfEntities.setUnitType(DimensionlessUnit.class);
+		numberOfEntities.setEntity(this);
 		this.addInput(numberOfEntities);
 
 		nextForContainers = new EntityInput<>(LinkedComponent.class, "NextForContainers", "Key Inputs", null);
@@ -55,7 +59,7 @@ public class RemoveFrom extends Unpack {
 
 	@Override
 	protected int getNumberToRemove() {
-		return numberOfEntities.getValue();
+		return (int) numberOfEntities.getValue().getNextSample(this.getSimTime());
 	}
 
 }

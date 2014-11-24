@@ -34,6 +34,8 @@ public class Unpack extends LinkedService {
 	         example = "Pack1 ServiceTime { 3.0 h }")
 	private final SampleExpInput serviceTime;
 
+	private int numberToRemove;   // Number of entities to remove from the present EntityContainer
+
 	{
 		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput(waitQueue);
@@ -105,6 +107,7 @@ public class Unpack extends LinkedService {
 
 			// Remove the container from the queue
 			container = (EntityContainer)que.removeFirst();
+			numberToRemove = this.getNumberToRemove();
 			numberRemoved = 0;
 
 			// Position the container over the unpack object
@@ -114,7 +117,9 @@ public class Unpack extends LinkedService {
 		}
 
 		// Schedule the removal of the next entity
-		double dt = serviceTime.getValue().getNextSample(getSimTime());
+		double dt = 0.0;
+		if (numberRemoved < numberToRemove && container.getCount() > 0)
+			dt = serviceTime.getValue().getNextSample(getSimTime());
 		this.scheduleProcess(dt, 5, endActionTarget);
 	}
 
@@ -128,15 +133,15 @@ public class Unpack extends LinkedService {
 
 	@Override
 	public void endAction() {
-		if (container.getCount() == 0)
-			error("Tried to remove from an empty container: %s", container);
 
 		// Remove the next entity from the container
-		this.sendToNextComponent(container.removeEntity());
-		numberRemoved++;
+		if (numberRemoved < numberToRemove && container.getCount() > 0) {
+			this.sendToNextComponent(container.removeEntity());
+			numberRemoved++;
+		}
 
 		// Stop when the desired number of entities have been removed
-		if (container.getCount() == 0 || numberRemoved == this.getNumberToRemove()) {
+		if (container.getCount() == 0 || numberRemoved == numberToRemove) {
 			this.disposeContainer(container);
 			container = null;
 		}
