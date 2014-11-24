@@ -94,7 +94,7 @@ public abstract class LinkedComponent extends StateEntity {
 		super.earlyInit();
 		numberAdded = 0;
 		numberProcessed = 0;
-		receivedEntity = null;
+		receivedEntity = testEntity.getValue();
 		releaseTime = Double.NaN;
 	}
 
