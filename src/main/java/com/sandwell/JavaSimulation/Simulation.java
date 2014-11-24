@@ -426,7 +426,7 @@ public class Simulation extends Entity {
 	 * Return the run duration for the run (not including intialization)
 	 */
 	public static double getRunDurationHours() {
-		return runDuration.getValue() / 3600.0d;
+		return Simulation.getRunDuration() / 3600.0d;
 	}
 
 	/**
@@ -440,7 +440,21 @@ public class Simulation extends Entity {
 	 * Return the initialization duration in hours
 	 */
 	public static double getInitializationHours() {
-		return initializationTime.getValue() / 3600.0d;
+		return Simulation.getInitializationTime() / 3600.0d;
+	}
+
+	/**
+	 * Returns the duration of the run (not including intialization)
+	 */
+	public static double getRunDuration() {
+		return runDuration.getValue();
+	}
+
+	/**
+	 * Returns the duration of the initialization period
+	 */
+	public static double getInitializationTime() {
+		return initializationTime.getValue();
 	}
 
 	static void updateRealTime() {
