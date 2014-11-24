@@ -229,6 +229,9 @@ public class StateEntity extends DisplayEntity {
 	        description = "The present model state of the object",
 	        unitType = DimensionlessUnit.class)
 	public String getPresentState(double time) {
+		if (presentState == null) {
+			return "";
+		}
 		return presentState.name;
 	}
 
