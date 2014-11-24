@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
 public class EntityContainer extends SimEntity {
@@ -119,6 +121,14 @@ public class EntityContainer extends SimEntity {
 			// increment total distance
 			distanceX += 0.5*itemSize.x;
 		}
+	}
+
+	@Output(name = "Count",
+	 description = "The present number of entities in the EntityContainer.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = false)
+	public Double getCount(double simTime) {
+		return (double) entityList.size();
 	}
 
 }
