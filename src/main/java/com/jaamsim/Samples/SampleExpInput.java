@@ -23,6 +23,7 @@ import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
 import com.jaamsim.input.ExpParser.Expression;
+import com.jaamsim.input.ExpValidator;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -77,8 +78,9 @@ public class SampleExpInput extends Input<SampleProvider> {
 		try {
 			Input.assertCount(kw, 1);
 			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(), kw.getArg(0));
-			// Assume that the expression returns the correct unit type
-			//Input.assertUnitsMatch(unitType, DimensionlessUnit.class);
+
+			ExpValidator.validateExpression(exp, thisEnt);
+
 			value = new SampleExpression(exp, thisEnt);
 		}
 		catch (ExpError e) {
