@@ -19,21 +19,16 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
-import com.jaamsim.datatypes.DoubleVector;
-import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.DirInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
-import com.jaamsim.input.ValueListInput;
 import com.jaamsim.states.StateEntity;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation3D.GUIFrame;
+import com.sandwell.JavaSimulation.Simulation;
 
 public class ReportGenerator extends DisplayEntity {
 
@@ -42,45 +37,16 @@ public class ReportGenerator extends DisplayEntity {
 			example = "ReportGenerator1 ReportDirectory { 'c:\reports\' }")
 	private final DirInput reportDirectory;
 
-	@Keyword(description = "The initialization period for the simulation run.\n" +
-			"The model will run for the initialization period and then clear " +
-			"the statistics and execute for the specified run duration. The " +
-			"total length of the simulation run will be the sum of the inputs " +
-			"for InitializationDuration and RunDurationList.",
-			example = "ReportGenerator1 InitializationDuration { 720 h }")
-	private final ValueInput initializationDuration;
-
-	@Keyword(description = "A list of run durations over which statistics will be recorded.\n" +
-			"If a list of N durations are provided, then N separate report files will be generated. " +
-			"The total length of the simulation run will be the sum of the inputs " +
-			"for InitializationDuration and RunDurationList.",
-			example = "ReportGenerator1 RunDurationList { 1  1  1  y }")
-	private final ValueListInput runDurationList;
-
-	private int reportNumber;
 	private double reportStartTime;
 	private double reportEndTime;
 
 	private final ProcessTarget performInitialisation = new PerformInitialisationTarget(this);
-	private final ProcessTarget performRunEnd = new PerformRunEndTarget(this);
 
 	{
 		attributeDefinitionList.setHidden(true);
 
 		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
 		this.addInput(reportDirectory);
-
-		initializationDuration = new ValueInput("InitializationDuration", "Key Inputs", 0.0);
-		initializationDuration.setUnitType(TimeUnit.class);
-		initializationDuration.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(initializationDuration);
-
-		DoubleVector def = new DoubleVector();
-		def.add(31536000.0d);
-		runDurationList = new ValueListInput("RunDurationList", "Key Inputs", def);
-		runDurationList.setUnitType(TimeUnit.class);
-		runDurationList.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
-		this.addInput(runDurationList);
 	}
 
 	@Override
@@ -96,9 +62,8 @@ public class ReportGenerator extends DisplayEntity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		reportNumber = 1;
-		reportStartTime = initializationDuration.getValue();
-		reportEndTime = reportStartTime + runDurationList.getValue().get(0);
+		reportStartTime = Simulation.getInitializationTime();
+		reportEndTime = reportStartTime + Simulation.getRunDuration();
 	}
 
 	@Override
@@ -106,12 +71,8 @@ public class ReportGenerator extends DisplayEntity {
 		super.startUp();
 
 		// Wait for the end of initialisation
-		double dt = initializationDuration.getValue();
+		double dt = Simulation.getInitializationTime();
 		this.scheduleProcess(dt, 5, performInitialisation);
-
-		// Wait for the first report
-		dt += runDurationList.getValue().get(0);
-		this.scheduleProcess(dt, 5, performRunEnd);
 	}
 
 	private static class PerformInitialisationTarget extends EntityTarget<ReportGenerator> {
@@ -138,55 +99,12 @@ public class ReportGenerator extends DisplayEntity {
 		}
 	}
 
-	private static class PerformRunEndTarget extends EntityTarget<ReportGenerator> {
-		public PerformRunEndTarget(ReportGenerator gen) {
-			super(gen, "performRunEnd");
-		}
-
-		@Override
-		public void process() {
-			ent.performRunEnd();
-		}
-	}
-
-	void performRunEnd() {
-
-		// Print the output report
-		this.printReport(this.getSimTime());
-
-		// Stop if no more reports are to be printed
-		if (reportNumber == runDurationList.getValue().size()) {
-
-			// Terminate the run if in batch mode
-			if (InputAgent.getBatch()) {
-				InputAgent.closeLogFile();
-				GUIFrame.shutdown(0);
-			}
-
-			// Otherwise, just pause the run
-			EventManager.current().pause();
-			return;
-		}
-
-		// Re-initialise the statistics
-		this.performInitialisation();
-
-		// Schedule the next report
-		reportNumber++;
-		reportStartTime = this.getSimTime();
-		double dt = runDurationList.getValue().get(reportNumber-1);
-		reportEndTime = reportStartTime + dt;
-		this.scheduleProcess(dt, 5, performRunEnd);
-	}
-
-	private void printReport(double simTime) {
+	@Override
+	public void doEnd() {
 
 		// Create the report file
 		StringBuilder tmp = new StringBuilder("");
 		tmp.append(InputAgent.getReportFileName(InputAgent.getRunName()));
-		if (runDurationList.getValue().size() > 1) {
-			tmp.append("-").append(reportNumber);
-		}
 		tmp.append(".rep");
 		FileEntity file = new FileEntity(tmp.toString());
 
@@ -206,20 +124,12 @@ public class ReportGenerator extends DisplayEntity {
 					continue;
 				if (ent.getClass() != newClass)
 					continue;
-				ent.printReport(file, simTime);
+				ent.printReport(file, this.getSimTime());
 			}
 		}
 
 		// Close the report file
 		file.close();
-	}
-
-	@Output(name = "ReportNumber",
-	 description = "The index for the present report.",
-	    unitType = DimensionlessUnit.class,
-	  reportable = true)
-	public int getReportNumber(double simTime) {
-		return reportNumber;
 	}
 
 	@Output(name = "ReportStartTime",
