@@ -47,6 +47,21 @@ public class ExpEvaluator {
 			}
 
 			ent = oh.getValue(simTime, Entity.class);
+
+			if (ent == null) {
+				// Build up the entity chain
+				StringBuilder b = new StringBuilder();
+				if (names[0].equals("this"))
+					b.append("this");
+				else
+					b.append("[").append(names[0]).append("]");
+
+				for(int j = 1; j <= i; ++j) {
+					b.append(".").append(names[j]);
+				}
+
+				throw new ExpError(null, 0, "Null entity in expression chain: %s", b.toString());
+			}
 		}
 		return ent;
 	}
