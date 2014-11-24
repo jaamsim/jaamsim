@@ -134,8 +134,8 @@ public class Simulation extends Entity {
 	private static final BooleanInput showLogViewer;
 
 	private static double timeScale; // the scale from discrete to continuous time
-	private static double startTime;
-	private static double endTime;
+	private static double startTime; // simulation time (seconds) for the start of the run (not necessarily zero)
+	private static double endTime;   // simulation time (seconds) for the end of the run
 
 	private static Simulation myInstance;
 
@@ -188,7 +188,7 @@ public class Simulation extends Entity {
 
 		// Initialize basic model information
 		startTime = 0.0;
-		endTime = 8760.0;
+		endTime = 8760.0*3600.0;
 	}
 
 	{
@@ -327,7 +327,7 @@ public class Simulation extends Entity {
 
 		// Initialize basic model information
 		startTime = 0.0;
-		endTime = 8760.0;
+		endTime = 8760.0*3600.0;
 
 		// close warning/error trace file
 		InputAgent.closeLogFile();
@@ -384,8 +384,8 @@ public class Simulation extends Entity {
 			Clock.getStartingDateFromString( startDate.getValue() );
 		}
 		double startTimeHours = startTimeInput.getValue() / 3600.0d;
-		startTime = Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
-		endTime = startTime + Simulation.getInitializationHours() + Simulation.getRunDurationHours();
+		startTime = 3600.0d * Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
+		endTime = startTime + Simulation.getInitializationTime() + Simulation.getRunDuration();
 
 		evt.scheduleProcessExternal(0, Entity.PRIO_DEFAULT, false, new InitModelTarget(), null);
 	}
@@ -419,7 +419,7 @@ public class Simulation extends Entity {
 	 * @return double - the time the current run will stop
 	 */
 	public static double getEndHours() {
-		return endTime;
+		return endTime/3600.0d;
 	}
 
 	/**
@@ -433,7 +433,7 @@ public class Simulation extends Entity {
 	 * Returns the start time of the run.
 	 */
 	public static double getStartHours() {
-		return startTime;
+		return startTime/3600.0d;
 	}
 
 	/**
