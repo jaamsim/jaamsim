@@ -20,9 +20,9 @@ import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation3D.Queue;
 
@@ -39,7 +39,7 @@ public class Pack extends LinkedService {
 
 	@Keyword(description = "The number of entities to pack into the container.",
 	         example = "Pack1 NumberOfEntities { 2 }")
-	private final IntegerInput numberOfEntities;
+	private final SampleExpInput numberOfEntities;
 
 	@Keyword(description = "The service time required to pack each entity in the container.",
 	         example = "Pack1 ServiceTime { 3.0 h }")
@@ -48,6 +48,7 @@ public class Pack extends LinkedService {
 	protected EntityContainer container;	// the generated EntityContainer
 	private int numberGenerated;  // Number of EntityContainers generated so far
 	private int numberInserted;   // Number of entities inserted to the EntityContainer
+	private int numberToInsert;   // Number of entities to insert in the present EntityContainer
 
 	{
 		prototypeEntityContainer = new EntityInput<>(EntityContainer.class, "PrototypeEntityContainer", "Key Inputs", null);
@@ -56,7 +57,9 @@ public class Pack extends LinkedService {
 		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput(waitQueue);
 
-		numberOfEntities = new IntegerInput("NumberOfEntities", "Key Inputs", 1);
+		numberOfEntities = new SampleExpInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
+		numberOfEntities.setUnitType(DimensionlessUnit.class);
+		numberOfEntities.setEntity(this);
 		this.addInput(numberOfEntities);
 
 		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
@@ -120,11 +123,14 @@ public class Pack extends LinkedService {
 	public void startAction() {
 
 		// Are there sufficient entities in the queue?
-		Queue que = waitQueue.getValue();
-		if (container == null && que.getCount() < numberOfEntities.getValue()) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+		if (container == null) {
+			Queue que = waitQueue.getValue();
+			numberToInsert = (int) numberOfEntities.getValue().getNextSample(this.getSimTime());
+			if (que.getCount() < numberToInsert) {
+				this.setBusy(false);
+				this.setPresentState();
+				return;
+			}
 		}
 
 		// Do any of the thresholds stop the generator?
@@ -158,7 +164,7 @@ public class Pack extends LinkedService {
 		numberInserted++;
 
 		// If the container is full, send it to the next component
-		if (numberInserted == numberOfEntities.getValue()) {
+		if (numberInserted == numberToInsert) {
 			this.sendToNextComponent(container);
 			container = null;
 			numberInserted = 0;
