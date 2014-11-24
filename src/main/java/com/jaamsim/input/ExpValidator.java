@@ -61,7 +61,10 @@ public class ExpValidator {
 				if (oh == null) {
 					throw new ExpError(null, 0, String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName()));
 				}
-				if (!OutputHandle.isNumericType(oh.getReturnType())) {
+				Class<?> retType = oh.getReturnType();
+				if (    !OutputHandle.isNumericType(retType) &&
+				        retType != boolean.class &&
+				        retType != Boolean.class) {
 					throw new ExpError(null, 0, "Output: %s does not return a numeric type", names[1]);
 				}
 				return new ExpResult(0, oh.unitType);
