@@ -547,7 +547,7 @@ public class InputAgent {
 					if (keyword.equals("{") || keyword.equals("}") || !input.get(keyWordIdx + 1).equals("{"))
 						throw new InputErrorException("The input for a keyword must be enclosed by braces. Should be <keyword> { <args> }");
 
-					ret.add(new KeywordIndex(input, keyword, keyWordIdx + 2, i, context));
+					ret.add(new KeywordIndex(keyword, input, keyWordIdx + 2, i, context));
 					keyWordIdx = i + 1;
 					continue;
 				}

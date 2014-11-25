@@ -25,10 +25,10 @@ public class KeywordIndex {
 	public final ParseContext context;
 
 	public KeywordIndex(String word, ArrayList<String> arg, ParseContext ctxt) {
-		this(arg, word, 0, arg.size(), ctxt);
+		this(word, arg, 0, arg.size(), ctxt);
 	}
 
-	public KeywordIndex(ArrayList<String> inp, String word, int s, int e, ParseContext ctxt) {
+	public KeywordIndex(String word, ArrayList<String> inp, int s, int e, ParseContext ctxt) {
 		input = inp;
 		keyword = word;
 		start = s;
@@ -87,7 +87,7 @@ public class KeywordIndex {
 				subArgEnd++;
 			}
 
-			KeywordIndex subArg = new KeywordIndex(this.input, keyword, subArgStart + start, subArgEnd + start, context);
+			KeywordIndex subArg = new KeywordIndex(keyword, this.input, subArgStart + start, subArgEnd + start, context);
 			subArgs.add(subArg);
 		}
 
