@@ -736,36 +736,46 @@ public class InputAgent {
 		}
 	}
 
-	public static void configure(GUIFrame gui, File file) {
+	public static Throwable configure(GUIFrame gui, File file) {
+		gui.clear();
+		InputAgent.setConfigFile(file);
+		gui.updateForSimulationState(GUIFrame.SIM_STATE_UNCONFIGURED);
+
+		Throwable ret = null;
 		try {
-			gui.clear();
-			InputAgent.setConfigFile(file);
-			gui.updateForSimulationState(GUIFrame.SIM_STATE_UNCONFIGURED);
+			InputAgent.loadConfigurationFile(file);
+		}
+		catch (Throwable t) {
+			ret = t;
+		}
 
-			try {
-				InputAgent.loadConfigurationFile(file);
-			}
-			catch( InputErrorException iee ) {
-				LogBox.logLine("Input Error: " + iee.getMessage());
-				GUIFrame.showErrorDialog("Input Error",
-				                         "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
-				                         "Check the log file '%s' for more information.",
-				                         file.getName(), iee.getMessage(), InputAgent.getRunName() + ".log");
-			}
-
+		if (ret == null)
 			LogBox.logLine("Configuration File Loaded");
+		else
+			LogBox.logLine("Configuration File Loaded - errors found");
 
-			// show the present state in the user interface
-			gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
-			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
-			gui.enableSave(InputAgent.getRecordEditsFound());
+		// show the present state in the user interface
+		gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
+		gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+		gui.enableSave(InputAgent.getRecordEditsFound());
+
+		return ret;
+	}
+
+	public static void handleConfigError(Throwable t, File file) {
+		if (t instanceof InputErrorException) {
+			LogBox.logLine("Input Error: " + t.getMessage());
+			GUIFrame.showErrorDialog("Input Error",
+			                         "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
+			                         "Check the log file '%s' for more information.",
+			                         file.getName(), t.getMessage(), InputAgent.getRunName() + ".log");
+			return;
 		}
-		catch( Throwable t ) {
-			LogBox.format("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
-			GUIFrame.showErrorDialog("Fatal Error",
-			                         "A fatal error has occured while loading the file '%s':\n\n%s",
-			                         file.getName(), t.getMessage());
-		}
+
+		LogBox.format("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
+		GUIFrame.showErrorDialog("Fatal Error",
+		                         "A fatal error has occured while loading the file '%s':\n\n%s",
+		                         file.getName(), t.getMessage());
 	}
 
 	/**
@@ -781,7 +791,10 @@ public class InputAgent {
 			@Override
 			public void run() {
 				InputAgent.setRecordEdits(false);
-				InputAgent.configure(gui, chosenfile);
+				Throwable ret = InputAgent.configure(gui, chosenfile);
+				if (ret != null)
+					InputAgent.handleConfigError(ret, chosenfile);
+
 				InputAgent.setRecordEdits(true);
 
 				GUIFrame.displayWindows();

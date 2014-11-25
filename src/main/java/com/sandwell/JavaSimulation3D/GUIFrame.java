@@ -1550,10 +1550,21 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		for (int i = 0; i < configFiles.size(); i++) {
 			//InputAgent.configure(gui, new File(configFiles.get(i)));
 			File abs = new File((File)null, configFiles.get(i));
+			File loadFile;
 			if (abs.exists())
-				InputAgent.configure(gui, abs.getAbsoluteFile());
+				loadFile = abs.getAbsoluteFile();
 			else
-				InputAgent.configure(gui, new File(user, configFiles.get(i)));
+				loadFile = new File(user, configFiles.get(i));
+
+			Throwable t = InputAgent.configure(gui, loadFile);
+			if (t != null) {
+				// Hide the splash screen
+				if (splashScreen != null) {
+					splashScreen.dispose();
+					splashScreen = null;
+				}
+				InputAgent.handleConfigError(t, loadFile);
+			}
 		}
 
 		// If no configuration files were specified on the command line, then load the default configuration file
