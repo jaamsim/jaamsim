@@ -1072,7 +1072,7 @@ public class InputAgent {
 			Parser.tokenize(tokens, value, true);
 
 		// Parse the keyword inputs
-		KeywordIndex kw = new KeywordIndex(tokens, keyword, 0, tokens.size(), null);
+		KeywordIndex kw = new KeywordIndex(keyword, tokens, null);
 		InputAgent.processKeyword(ent, kw);
 	}
 
@@ -1274,7 +1274,7 @@ public class InputAgent {
 		}
 
 		// Parse the keyword inputs
-		return new KeywordIndex(tokens, keyword, 0, tokens.size(), null);
+		return new KeywordIndex(keyword, tokens, null);
 	}
 
 	public static KeywordIndex formatPointInputs(String keyword, Vec3d point, String unit) {
@@ -1286,7 +1286,7 @@ public class InputAgent {
 			tokens.add(unit);
 
 		// Parse the keyword inputs
-		return new KeywordIndex(tokens, keyword, 0, tokens.size(), null);
+		return new KeywordIndex(keyword, tokens, null);
 	}
 
 	/**

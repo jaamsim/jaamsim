@@ -102,11 +102,11 @@ public class Group extends Entity {
 
 
 	public void saveGroupKeyword(KeywordIndex kw) {
-		ArrayList<String> toks = new ArrayList<>(kw.numArgs() + 4);
+		ArrayList<String> toks = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			toks.add(kw.getArg(i));
 
-		KeywordIndex saved = new KeywordIndex(toks, kw.keyword, 0, toks.size(), kw.context);
+		KeywordIndex saved = new KeywordIndex(kw.keyword, toks, kw.context);
 		groupKeywordValues.add(saved);
 
 		// If there can never be elements in the group, throw a warning
