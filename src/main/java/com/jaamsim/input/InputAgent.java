@@ -662,29 +662,6 @@ public class InputAgent {
 		}
 	}
 
-	public static void load(GUIFrame gui) {
-		LogBox.logLine("Loading...");
-
-		// Create a file chooser
-		final JFileChooser chooser = new JFileChooser(InputAgent.getConfigFile());
-
-		// Set the file extension filters
-		chooser.setAcceptAllFileFilterUsed(true);
-		FileNameExtensionFilter cfgFilter =
-				new FileNameExtensionFilter("JaamSim Configuration File (*.cfg)", "CFG");
-		chooser.addChoosableFileFilter(cfgFilter);
-		chooser.setFileFilter(cfgFilter);
-
-		// Show the file chooser and wait for selection
-		int returnVal = chooser.showOpenDialog(gui);
-
-		// Load the selected file
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File temp = chooser.getSelectedFile();
-    		InputAgent.setLoadFile(gui, temp);
-        }
-	}
-
 	public static void save(GUIFrame gui) {
 		LogBox.logLine("Saving...");
 		if( InputAgent.getConfigFile() != null ) {
@@ -776,31 +753,6 @@ public class InputAgent {
 		GUIFrame.showErrorDialog("Fatal Error",
 		                         "A fatal error has occured while loading the file '%s':\n\n%s",
 		                         file.getName(), t.getMessage());
-	}
-
-	/**
-	 * Loads the configuration file.
-	 * <p>
-	 * @param gui - the Control Panel.
-	 * @param file - the configuration file to be loaded.
-	 */
-	private static void setLoadFile(final GUIFrame gui, File file) {
-
-		final File chosenfile = file;
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				InputAgent.setRecordEdits(false);
-				Throwable ret = InputAgent.configure(gui, chosenfile);
-				if (ret != null)
-					InputAgent.handleConfigError(ret, chosenfile);
-
-				InputAgent.setRecordEdits(true);
-
-				GUIFrame.displayWindows();
-				FrameBox.valueUpdate();
-			}
-		}).start();
 	}
 
 	/**

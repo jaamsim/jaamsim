@@ -44,6 +44,7 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -65,6 +66,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
@@ -376,7 +378,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 					}
 				}
 
-				InputAgent.load(GUIFrame.this);
+				GUIFrame.this.load();
 			}
 		} );
 		fileMenu.add( configMenuItem );
@@ -1735,6 +1737,44 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		final String msg = String.format(fmt,  args);
 		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+	}
+
+	void load() {
+		LogBox.logLine("Loading...");
+
+		// Create a file chooser
+		final JFileChooser chooser = new JFileChooser(InputAgent.getConfigFile());
+
+		// Set the file extension filters
+		chooser.setAcceptAllFileFilterUsed(true);
+		FileNameExtensionFilter cfgFilter =
+				new FileNameExtensionFilter("JaamSim Configuration File (*.cfg)", "CFG");
+		chooser.addChoosableFileFilter(cfgFilter);
+		chooser.setFileFilter(cfgFilter);
+
+		// Show the file chooser and wait for selection
+		int returnVal = chooser.showOpenDialog(this);
+
+		// Load the selected file
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File temp = chooser.getSelectedFile();
+			final GUIFrame gui1 = this;
+    		final File chosenfile = temp;
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					InputAgent.setRecordEdits(false);
+					Throwable ret = InputAgent.configure(gui1, chosenfile);
+					if (ret != null)
+						InputAgent.handleConfigError(ret, chosenfile);
+
+					InputAgent.setRecordEdits(true);
+
+					GUIFrame.displayWindows();
+					FrameBox.valueUpdate();
+				}
+			}).start();
+        }
 	}
 
 	/**
