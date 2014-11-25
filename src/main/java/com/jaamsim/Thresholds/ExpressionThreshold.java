@@ -15,7 +15,6 @@
 package com.jaamsim.Thresholds;
 
 import com.jaamsim.Graphics.DisplayModelCompat;
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -113,7 +112,8 @@ public class ExpressionThreshold extends Threshold {
 			boolean ret = ExpEvaluator.evaluateExpression(openCondition.getValue(), simTime, this).value != 0;
 			return ret;
 		} catch(ExpError e) {
-			throw new ErrorException(e);
+			error("%s", e.getMessage());
+			return false; //never hit, error() will throw
 		}
 	}
 
@@ -122,12 +122,22 @@ public class ExpressionThreshold extends Threshold {
 		super.updateGraphics(simTime);
 
 		// Trap the pending cases
-		if (!showPendingStates.getValue() || !openStateChanged(simTime))
+		if (!showPendingStates.getValue())
 			return;
+
+		boolean threshOpen = super.isOpen();
+		try {
+			if (getOpenConditionValue(simTime) == threshOpen)
+				return;
+		}
+		catch (Throwable t) {
+			return;
+		}
+
 
 		// Select the colour
 		Color4d col;
-		if (super.isOpen())
+		if (threshOpen)
 			col = pendingClosedColour.getValue();
 		else
 			col = pendingOpenColour.getValue();
@@ -147,10 +157,6 @@ public class ExpressionThreshold extends Threshold {
 
 	boolean openStateChanged() {
 		return getOpenConditionValue(getSimTime()) != super.isOpen();
-	}
-
-	boolean openStateChanged(double simTime) {
-		return getOpenConditionValue(simTime) != super.isOpen();
 	}
 
 	@Output(name = "Open",
