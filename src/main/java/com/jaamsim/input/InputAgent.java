@@ -1199,16 +1199,16 @@ public class InputAgent {
 		String resString = resRoot.toString();
 		String inputString = uri.toString();
 		if (inputString.startsWith(resString)) {
-			return String.format("'<res>/%s'", inputString.substring(resString.length()));
+			return String.format("<res>/%s", inputString.substring(resString.length()));
 		}
 
 		// Relativize the file path against the configuration file
 		try {
 			URI configDirURI = InputAgent.getConfigFile().getParentFile().toURI();
-			return String.format("'%s'", configDirURI.relativize(uri).getPath());
+			return String.format("%s", configDirURI.relativize(uri).getPath());
 		}
 		catch (Exception ex) {
-			return String.format("'%s'", uri.getPath());
+			return String.format("%s", uri.getPath());
 		}
 	}
 
