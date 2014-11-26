@@ -1210,7 +1210,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 *
 	 * @param state - an index that designates the state of the simulation run.
 	 */
-	public void updateForSimulationState(int state) {
+	private void updateForSimulationState(int state) {
 		simState = state;
 
 		switch( getSimState() ) {
@@ -1796,6 +1796,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			LogBox.logLine("Configuration File Loaded - errors found");
 
 		// show the present state in the user interface
+		this.setProgressText(null);
+		this.setProgress(0);
 		this.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
 		this.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 		this.enableSave(InputAgent.getRecordEditsFound());

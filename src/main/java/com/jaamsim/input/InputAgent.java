@@ -578,11 +578,6 @@ public class InputAgent {
 		URI dirURI = file.getParentFile().toURI();
 		InputAgent.readStream("", dirURI, file.getName());
 
-		GUIFrame.instance().setProgressText(null);
-		GUIFrame.instance().setProgress(0);
-
-		// At this point configuration file is loaded
-
 		// The session is not considered to be edited after loading a configuration file
 		sessionEdited = false;
 
