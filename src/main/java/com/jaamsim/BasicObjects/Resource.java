@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProbabilityDistributions.Distribution;
+import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
@@ -31,7 +32,7 @@ import com.sandwell.JavaSimulation3D.Queue;
 public class Resource extends DisplayEntity {
 
 	@Keyword(description = "The number of equivalent resource units that are available.\n" +
-			"The input can be a constant value or a time series of values.",
+			"The input can be a constant value, a time series, or an expression.",
 	         example = "Resource1 Capacity { 3 }")
 	private final SampleExpInput capacity;
 
@@ -50,7 +51,7 @@ public class Resource extends DisplayEntity {
 	protected DoubleVector unitsInUseDist;  // entry at position n is the total time that n units have been in use
 
 	{
-		capacity = new SampleExpInput( "Capacity", "Key Inputs", null);
+		capacity = new SampleExpInput( "Capacity", "Key Inputs", new SampleConstant(1.0));
 		capacity.setUnitType(DimensionlessUnit.class);
 		capacity.setEntity(this);
 		this.addInput( capacity);
