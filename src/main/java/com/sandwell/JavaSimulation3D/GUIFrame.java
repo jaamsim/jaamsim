@@ -390,7 +390,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.save(GUIFrame.this);
+				GUIFrame.this.save();
 			}
 		} );
 		fileMenu.add( saveConfigurationMenuItem );
@@ -402,7 +402,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				InputAgent.saveAs(GUIFrame.this);
+				GUIFrame.this.saveAs();
 
 			}
 		} );
@@ -1131,7 +1131,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		if( getSimState() <= SIM_STATE_CONFIGURED ) {
 			if (InputAgent.isSessionEdited()) {
-				InputAgent.saveAs(this);
+				this.saveAs();
 			}
 			Simulation.start(currentEvt);
 			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
@@ -1777,6 +1777,76 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
         }
 	}
 
+
+	/**
+	 * Saves the configuration file.
+	 * @param gui = Control Panel window for JaamSim
+	 * @param fileName = absolute file path and file name for the file to be saved
+	 */
+	private void setSaveFile(String fileName) {
+
+		// Set root directory
+		File temp = new File(fileName);
+
+		// Save the configuration file
+		InputAgent.printNewConfigurationFileWithName( fileName );
+		InputAgent.setConfigFile(temp);
+
+		// Set the title bar to match the new run name
+		this.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
+	}
+
+	void save() {
+		LogBox.logLine("Saving...");
+		if( InputAgent.getConfigFile() != null ) {
+			setSaveFile(InputAgent.getConfigFile().getPath());
+		}
+		else {
+			saveAs();
+		}
+	}
+
+	void saveAs() {
+		LogBox.logLine("Save As...");
+
+		// Create a file chooser
+		final JFileChooser chooser = new JFileChooser(InputAgent.getConfigFile());
+
+		// Set the file extension filters
+		chooser.setAcceptAllFileFilterUsed(true);
+		FileNameExtensionFilter cfgFilter =
+				new FileNameExtensionFilter("JaamSim Configuration File (*.cfg)", "CFG");
+		chooser.addChoosableFileFilter(cfgFilter);
+		chooser.setFileFilter(cfgFilter);
+		chooser.setSelectedFile(InputAgent.getConfigFile());
+
+		// Show the file chooser and wait for selection
+		int returnVal = chooser.showSaveDialog(this);
+
+		// Load the selected file
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = chooser.getSelectedFile();
+			String filePath = file.getPath();
+
+			// Add the file extension ".cfg" if needed
+			filePath = filePath.trim();
+			if (filePath.indexOf(".") == -1)
+				filePath = filePath.concat(".cfg");
+
+			// Confirm overwrite if file already exists
+			File temp = new File(filePath);
+			if (temp.exists()) {
+				boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
+				if (!confirmed) {
+					return;
+				}
+			}
+
+			// Save the configuration file
+			setSaveFile(filePath);
+		}
+	}
+
 	/**
 	 * Shows the "Confirm Save As" dialog box
 	 * @param fileName - name of the file to be saved
@@ -1829,7 +1899,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				options[0]);
 
 		if (userOption == JOptionPane.YES_OPTION)
-			InputAgent.save(GUIFrame.instance());
+			GUIFrame.instance().save();
 
 		return (userOption != JOptionPane.CANCEL_OPTION);
 	}

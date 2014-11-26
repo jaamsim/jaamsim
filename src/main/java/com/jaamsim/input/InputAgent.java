@@ -30,9 +30,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.Group;
@@ -662,57 +659,6 @@ public class InputAgent {
 		}
 	}
 
-	public static void save(GUIFrame gui) {
-		LogBox.logLine("Saving...");
-		if( InputAgent.getConfigFile() != null ) {
-			setSaveFile(gui, InputAgent.getConfigFile().getPath() );
-		}
-		else {
-			saveAs( gui );
-		}
-	}
-
-	public static void saveAs(GUIFrame gui) {
-		LogBox.logLine("Save As...");
-
-		// Create a file chooser
-		final JFileChooser chooser = new JFileChooser(InputAgent.getConfigFile());
-
-		// Set the file extension filters
-		chooser.setAcceptAllFileFilterUsed(true);
-		FileNameExtensionFilter cfgFilter =
-				new FileNameExtensionFilter("JaamSim Configuration File (*.cfg)", "CFG");
-		chooser.addChoosableFileFilter(cfgFilter);
-		chooser.setFileFilter(cfgFilter);
-		chooser.setSelectedFile(InputAgent.getConfigFile());
-
-		// Show the file chooser and wait for selection
-		int returnVal = chooser.showSaveDialog(gui);
-
-		// Load the selected file
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = chooser.getSelectedFile();
-			String filePath = file.getPath();
-
-			// Add the file extension ".cfg" if needed
-			filePath = filePath.trim();
-			if (filePath.indexOf(".") == -1)
-				filePath = filePath.concat(".cfg");
-
-			// Confirm overwrite if file already exists
-			File temp = new File(filePath);
-			if (temp.exists()) {
-				boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
-				if (!confirmed) {
-					return;
-				}
-			}
-
-			// Save the configuration file
-			InputAgent.setSaveFile(gui, filePath);
-		}
-	}
-
 	public static Throwable configure(GUIFrame gui, File file) {
 		gui.clear();
 		InputAgent.setConfigFile(file);
@@ -753,25 +699,6 @@ public class InputAgent {
 		GUIFrame.showErrorDialog("Fatal Error",
 		                         "A fatal error has occured while loading the file '%s':\n\n%s",
 		                         file.getName(), t.getMessage());
-	}
-
-	/**
-	 * Saves the configuration file.
-	 * @param gui = Control Panel window for JaamSim
-	 * @param fileName = absolute file path and file name for the file to be saved
-	 */
-	private static void setSaveFile(GUIFrame gui, String fileName) {
-
-		// Set root directory
-		File temp = new File(fileName);
-
-		// Save the configuration file
-		InputAgent.printNewConfigurationFileWithName( fileName );
-		sessionEdited = false;
-		InputAgent.setConfigFile(temp);
-
-		// Set the title bar to match the new run name
-		gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
 	}
 
 	/*
@@ -1177,6 +1104,8 @@ public class InputAgent {
 		// Close the new configuration file
 		file.flush();
 		file.close();
+
+		sessionEdited = false;
 	}
 
 	static void writeInputOnFile_ForEntity(FileEntity file, Entity ent, Input<?> in) {
