@@ -1558,14 +1558,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			else
 				loadFile = new File(user, configFiles.get(i));
 
-			Throwable t = InputAgent.configure(gui, loadFile);
+			Throwable t = gui.configure(loadFile);
 			if (t != null) {
 				// Hide the splash screen
 				if (splashScreen != null) {
 					splashScreen.dispose();
 					splashScreen = null;
 				}
-				InputAgent.handleConfigError(t, loadFile);
+				handleConfigError(t, loadFile);
 			}
 		}
 
@@ -1764,9 +1764,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				@Override
 				public void run() {
 					InputAgent.setRecordEdits(false);
-					Throwable ret = InputAgent.configure(gui1, chosenfile);
+					Throwable ret = gui1.configure(chosenfile);
 					if (ret != null)
-						InputAgent.handleConfigError(ret, chosenfile);
+						handleConfigError(ret, chosenfile);
 
 					InputAgent.setRecordEdits(true);
 
@@ -1777,6 +1777,47 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
         }
 	}
 
+	Throwable configure(File file) {
+		this.clear();
+		InputAgent.setConfigFile(file);
+		this.updateForSimulationState(GUIFrame.SIM_STATE_UNCONFIGURED);
+
+		Throwable ret = null;
+		try {
+			InputAgent.loadConfigurationFile(file);
+		}
+		catch (Throwable t) {
+			ret = t;
+		}
+
+		if (ret == null)
+			LogBox.logLine("Configuration File Loaded");
+		else
+			LogBox.logLine("Configuration File Loaded - errors found");
+
+		// show the present state in the user interface
+		this.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
+		this.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+		this.enableSave(InputAgent.getRecordEditsFound());
+
+		return ret;
+	}
+
+	static void handleConfigError(Throwable t, File file) {
+		if (t instanceof InputErrorException) {
+			LogBox.logLine("Input Error: " + t.getMessage());
+			GUIFrame.showErrorDialog("Input Error",
+			                         "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
+			                         "Check the log file '%s' for more information.",
+			                         file.getName(), t.getMessage(), InputAgent.getRunName() + ".log");
+			return;
+		}
+
+		LogBox.format("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
+		GUIFrame.showErrorDialog("Fatal Error",
+		                         "A fatal error has occured while loading the file '%s':\n\n%s",
+		                         file.getName(), t.getMessage());
+	}
 
 	/**
 	 * Saves the configuration file.
