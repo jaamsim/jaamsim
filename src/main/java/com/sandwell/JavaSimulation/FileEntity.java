@@ -85,16 +85,11 @@ public class FileEntity {
 	}
 
 	public void putString( String string ) {
-		try {
-			outputStream.write( string );
-		}
-		catch( IOException e ) {
-			return;
-		}
+		write(string);
 	}
 
 	public void format(String format, Object... args) {
-		putString(String.format(format, args));
+		write(String.format(format, args));
 	}
 
 	/**
@@ -174,16 +169,6 @@ public class FileEntity {
 		putTabs( tabs );
 	}
 
-	public void putAll( String putString ) {
-
-		try {
-			outputStream.write( putString );
-		}
-		catch( IOException e ) {
-			return;
-		}
-	}
-
 	public void newLine() {
 		try {
 			outputStream.newLine();
@@ -222,17 +207,6 @@ public class FileEntity {
 	public void write( String text ) {
 		try {
 			outputStream.write( text );
-		}
-		catch( IOException e ) {
-			return;
-		}
-	}
-
-	public void putSpaces( int numSpaces ) {
-		try {
-			for( int i = 0; i < numSpaces; i++ ) {
-				outputStream.write( " " );
-			}
 		}
 		catch( IOException e ) {
 			return;
