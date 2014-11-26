@@ -114,7 +114,7 @@ public class FileEntity {
 	/**
 	 * Generic string writing method.  All other methods will wrap this class.
 	 */
-	public void putString( String string, int putLength, int alignment ) {
+	private void putString( String string, int putLength, int alignment ) {
 		String spaces = "";
 
 		for( int i = 0; i < putLength - string.length(); i++ ) {
@@ -132,27 +132,6 @@ public class FileEntity {
 		catch( IOException e ) {
 			return;
 		}
-	}
-
-	public void putStringLeft( String string, int putLength ) {
-		putString( string, putLength, ALIGNMENT_LEFT );
-	}
-
-	public void putStringRight( String string, int putLength ) {
-		putString( string, putLength, ALIGNMENT_RIGHT );
-	}
-
-	public void putDoublePadLeft( double putDouble, int decimalPlaces, int putLength ) {
-		StringBuilder pattern = new StringBuilder("###");
-		if( decimalPlaces > 0 ) {
-			pattern.append(".");
-			for( int i = 0; i < decimalPlaces; i++ ) {
-				pattern.append("0");
-			}
-		}
-		formatter.applyPattern(pattern.toString());
-
-		putString( formatter.format( putDouble ), putLength, ALIGNMENT_LEFT );
 	}
 
 	public void putDoublePadRight( double putDouble, int decimalPlaces, int putLength ) {
