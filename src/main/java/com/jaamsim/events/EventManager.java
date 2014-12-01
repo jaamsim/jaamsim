@@ -256,8 +256,10 @@ public final class EventManager {
 				// If the next event would require us to advance the time, check the
 				// conditonal events
 				if (eventTree.getNextNode().schedTick > nextTick) {
-					if (condEvents.size() > 0)
+					if (condEvents.size() > 0) {
 						evaluateConditions(cur);
+						if (!executeEvents) continue;
+					}
 
 					// If a conditional event was satisfied, we will have a new event at the
 					// beginning of the eventStack for the current tick, go back to the
@@ -294,20 +296,28 @@ public final class EventManager {
 
 	private void evaluateConditions(Process cur) {
 		cur.begCondWait();
-		for (int i = 0; i < condEvents.size();) {
-			ConditionalEvent c = condEvents.get(i);
-			if (c.c.evaluate()) {
-				if (c.handle != null)
-					c.handle.event = null;
-				EventNode node = getEventNode(currentTick, 0);
-				Event temp = getEvent(node, c.target, c.handle);
-				if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick, c.target);
-				node.addEvent(temp, true);
-				condEvents.remove(i);
-				continue;
+		try {
+			for (int i = 0; i < condEvents.size();) {
+				ConditionalEvent c = condEvents.get(i);
+				if (c.c.evaluate()) {
+					if (c.handle != null)
+						c.handle.event = null;
+					EventNode node = getEventNode(currentTick, 0);
+					Event temp = getEvent(node, c.target, c.handle);
+					if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick, c.target);
+					node.addEvent(temp, true);
+					condEvents.remove(i);
+					continue;
+				}
+				i++;
 			}
-			i++;
 		}
+		catch (Throwable e) {
+			executeEvents = false;
+			processRunning = false;
+			errListener.handleError(this, e, currentTick);
+		}
+
 		cur.endCondWait();
 	}
 
