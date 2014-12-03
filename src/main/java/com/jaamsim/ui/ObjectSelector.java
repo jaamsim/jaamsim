@@ -158,39 +158,31 @@ public class ObjectSelector extends FrameBox {
 		// Make a best-effort attempt to find all used classes...can race with
 		// object creation/deletion, but that's ok
 		ArrayList<Class<? extends Entity>> used = new ArrayList<>();
+		ArrayList<ObjectType> types = new ArrayList<>();
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			try {
-				Class<? extends Entity> klass = Entity.getAll().get(i).getClass();
+				final Entity ent = Entity.getAll().get(i);
+				Class<? extends Entity> klass = ent.getClass();
 				if (!used.contains(klass))
 					used.add(klass);
+				if (ent instanceof ObjectType)
+					types.add((ObjectType)ent);
 			}
 			catch (IndexOutOfBoundsException e) {}
 		}
 
 		ArrayList<String> palettes = new ArrayList<>();
-		for (int j = 0; j < ObjectType.getAll().size(); j++) {
-			ObjectType type = null;
-			try {
-				type = ObjectType.getAll().get(j);
-			}
-			catch (IndexOutOfBoundsException e) {
-				break;
-			}
-			if (!palettes.contains(type.getPaletteName()))
-				palettes.add(type.getPaletteName());
+		for (int j = 0; j < types.size(); j++) {
+			String palName = types.get(j).getPaletteName();
+			if (!palettes.contains(palName))
+				palettes.add(palName);
 		}
 
 		for (int k = 0; k < palettes.size(); k++) {
 			String palName = palettes.get(k);
 			DefaultMutableTreeNode palNode = getNodeFor_In(palName, top);
-			for (int j = 0; j < ObjectType.getAll().size(); j++) {
-				ObjectType type = null;
-				try {
-					type = ObjectType.getAll().get(j);
-				}
-				catch (IndexOutOfBoundsException e) {
-					break;
-				}
+			for (int j = 0; j < types.size(); j++) {
+				ObjectType type = types.get(j);
 				if(!palName.equals( type.getPaletteName()))
 					continue;
 
