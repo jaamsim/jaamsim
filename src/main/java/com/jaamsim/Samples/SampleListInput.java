@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -52,6 +53,20 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 	throws InputErrorException {
 
 		ArrayList<SampleProvider> temp = new ArrayList<>(kw.numArgs());
+
+		// Try to parse as constant values
+		try {
+			DoubleVector tmp = Input.parseDoubles(kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+			Input.assertCount(tmp, kw.numArgs()-1);
+			for( int i = 0; i < tmp.size(); i++ ) {
+				SampleProvider s = new SampleConstant(unitType, tmp.get(i));
+				temp.add( s );
+			}
+			value = temp;
+			return;
+		}
+		catch (InputErrorException e) {}
+
 		for (int i = 0; i < kw.numArgs(); i++) {
 
 			Entity ent = Input.parseEntity(kw.getArg(i), Entity.class);
