@@ -21,6 +21,7 @@ import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -172,6 +173,12 @@ public class Pack extends LinkedService {
 
 		// Insert the next entity
 		this.startAction();
+	}
+
+	@Output(name = "Container",
+	 description = "The EntityContainer that is being filled.")
+	public DisplayEntity getContainer(double simTime) {
+		return container;
 	}
 
 }
