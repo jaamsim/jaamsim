@@ -50,6 +50,7 @@ public class Pack extends LinkedService {
 	private int numberGenerated;  // Number of EntityContainers generated so far
 	private int numberInserted;   // Number of entities inserted to the EntityContainer
 	private int numberToInsert;   // Number of entities to insert in the present EntityContainer
+	private boolean startedPacking;  // True if the packing process has already started
 
 	{
 		prototypeEntityContainer = new EntityInput<>(EntityContainer.class, "PrototypeEntityContainer", "Key Inputs", null);
@@ -92,6 +93,7 @@ public class Pack extends LinkedService {
 		container = null;
 		numberGenerated = 0;
 		numberInserted = 0;
+		startedPacking = false;
 	}
 
 	@Override
@@ -123,17 +125,6 @@ public class Pack extends LinkedService {
 	@Override
 	public void startAction() {
 
-		// Are there sufficient entities in the queue?
-		if (container == null) {
-			Queue que = waitQueue.getValue();
-			numberToInsert = (int) numberOfEntities.getValue().getNextSample(this.getSimTime());
-			if (que.getCount() < numberToInsert) {
-				this.setBusy(false);
-				this.setPresentState();
-				return;
-			}
-		}
-
 		// Do any of the thresholds stop the generator?
 		if (this.isClosed()) {
 			this.setBusy(false);
@@ -150,6 +141,17 @@ public class Pack extends LinkedService {
 			Vec3d tmp = this.getPositionForAlignment(new Vec3d());
 			tmp.add3(new Vec3d(0,0,0.01));
 			container.setPosition(tmp);
+		}
+
+		// Are there sufficient entities in the queue to start packing?
+		if (!startedPacking) {
+			numberToInsert = (int) numberOfEntities.getValue().getNextSample(this.getSimTime());
+			if (waitQueue.getValue().getCount() < numberToInsert) {
+				this.setBusy(false);
+				this.setPresentState();
+				return;
+			}
+			startedPacking = true;
 		}
 
 		// Schedule the insertion of the next entity
@@ -169,6 +171,7 @@ public class Pack extends LinkedService {
 			this.sendToNextComponent(container);
 			container = null;
 			numberInserted = 0;
+			startedPacking = false;
 		}
 
 		// Insert the next entity
