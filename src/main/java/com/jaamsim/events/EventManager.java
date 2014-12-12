@@ -48,7 +48,7 @@ public final class EventManager {
 
 	private final Object lockObject; // Object used as global lock for synchronization
 
-	private EventTree eventTree;
+	private final EventTree eventTree;
 
 	private volatile boolean executeEvents;
 	private boolean processRunning;
