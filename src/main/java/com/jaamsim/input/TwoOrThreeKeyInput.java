@@ -194,4 +194,10 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 	public String getDefaultString() {
 		return getDefaultStringForKeyInputs(unitType, unitString);
 	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		hashMap.clear();
+	}
 }

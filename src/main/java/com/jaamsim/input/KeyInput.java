@@ -144,4 +144,10 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 
 		return keys;
 	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		hashMap.clear();
+	}
 }

@@ -165,4 +165,10 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 
 		return tmp.toString();
 	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		hashMap.clear();
+	}
 }

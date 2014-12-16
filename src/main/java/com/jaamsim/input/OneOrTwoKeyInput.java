@@ -186,4 +186,10 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 	public String getDefaultString() {
 		return getDefaultStringForKeyInputs(unitType, null);
 	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		hashMap.clear();
+	}
 }

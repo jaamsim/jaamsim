@@ -143,4 +143,10 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 	public String getDefaultString() {
 		return getDefaultStringForKeyInputs(unitType, unitString);
 	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		hashMap.clear();
+	}
 }

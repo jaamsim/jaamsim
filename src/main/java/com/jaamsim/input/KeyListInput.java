@@ -99,4 +99,10 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 		}
 		return tmp.toString();
 	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		hashMap.clear();
+	}
 }

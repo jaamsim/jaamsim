@@ -113,4 +113,10 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 
 		return tmp.toString();
 	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		hashMap.clear();
+	}
 }
