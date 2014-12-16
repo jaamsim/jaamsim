@@ -21,18 +21,34 @@ import java.util.HashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 import com.sandwell.JavaSimulation.FileEntity;
 import com.sandwell.JavaSimulation.Simulation;
 
 public class StateEntity extends DisplayEntity {
+
+	@Keyword(description = "If TRUE, a log file (.trc) will be printed with the time of every state change during the run.",
+	         example = "Object1  TraceState { TRUE }")
+	private final BooleanInput traceState;
+
 	private StateRecord presentState; // The present state of the entity
 	private final HashMap<String, StateRecord> states;
 	private final ArrayList<StateEntityListener> stateListeners;
 
 	private long lastStateCollectionTick;
 	private long workingTicks;
+
+	protected FileEntity stateReportFile;        // The file to store the state information
+
+	{
+		traceState = new BooleanInput("TraceState", "Key Inputs", false);
+		traceState.setHidden(true);
+		this.addInput(traceState);
+	}
 
 	public StateEntity() {
 		states = new HashMap<>();
@@ -59,6 +75,12 @@ public class StateEntity extends DisplayEntity {
 			StateEntityListener sel = (StateEntityListener)ent;
 			if (sel.isWatching(this))
 				stateListeners.add(sel);
+		}
+
+		// Create state trace file if required
+		if (traceState.getValue()) {
+			String fileName = InputAgent.getReportFileName(InputAgent.getRunName() + "-" + this.getName() + ".trc");
+			stateReportFile = new FileEntity( fileName);
 		}
 	}
 
@@ -154,6 +176,16 @@ public class StateEntity extends DisplayEntity {
 	public void stateChanged(StateRecord prev, StateRecord next) {
 		for (StateEntityListener each : stateListeners) {
 			each.updateForStateChange(this, prev, next);
+		}
+
+		if (traceState.getValue()) {
+			long curTick = getSimTicks();
+			double duration = (curTick - prev.getStartTick()) / Simulation.getSimTimeFactor();
+			double timeOfPrevStart = prev.getStartTick() / Simulation.getSimTimeFactor();
+			stateReportFile.format("%.5f  %s.setState( \"%s\" ) dt = %g\n",
+			                       timeOfPrevStart, this.getName(),
+			                       prev.name, duration);
+			stateReportFile.flush();
 		}
 	}
 
