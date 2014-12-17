@@ -27,12 +27,14 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 	private Class<K1> keyClass;
 	private Class<V> valClass;
 	private HashMap<K1,ArrayList<V>> hashMap;
+	private ArrayList<V> noKeyValue; // the value when there is no key
 
 	public KeyListInput(Class<K1> kClass, Class<V> vClass, String keyword, String cat, ArrayList<V> def) {
 		super(keyword, cat, def);
 		keyClass = kClass;
 		valClass = vClass;
 		hashMap = new HashMap<>();
+		noKeyValue = def;
 	}
 
 	@Override
@@ -53,9 +55,8 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 			list = Input.parseEntityList(input.subList(0, 1), keyClass, true);
 		}
 		catch (InputErrorException e) {
-			// A key was not provided.  Set the default value
-			ArrayList<V> defValue = Input.parseEntityList( input, valClass, true );
-			this.setDefaultValue( defValue );
+			// A key was not provided.  Set the "no key" value
+			noKeyValue = Input.parseEntityList( input, valClass, true );
 			return;
 		}
 
@@ -77,7 +78,7 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 	public ArrayList<V> getValueFor( K1 k1 ) {
 		ArrayList<V> val = hashMap.get( k1 );
 		if( val == null ) {
-			return this.getDefaultValue();
+			return noKeyValue;
 		}
 		else {
 			return val;
@@ -104,5 +105,6 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 	public void reset() {
 		super.reset();
 		hashMap.clear();
+		noKeyValue = this.getDefaultValue();
 	}
 }

@@ -37,6 +37,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 	private HashMap<K1,HashMap<K2,HashMap<K3,V>>> hashMap;
 	private int minCount = 0;
 	private int maxCount = Integer.MAX_VALUE;
+	private V noKeyValue; // the value when there is no key
 
 	public TwoOrThreeKeyInput(Class<K1> k1Class, Class<K2> k2Class, Class<K3> k3Class, Class<V> vClass, String keyword, String cat, V def) {
 		super(keyword, cat, def);
@@ -45,6 +46,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		key3Class = k3Class;
 		valClass = vClass;
 		hashMap = new HashMap<>();
+		noKeyValue = def;
 	}
 
 	private String unitString = "";
@@ -69,15 +71,14 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 
-		// If two entity keys are not provided, set the default value
+		// If two entity keys are not provided, set the "no key" value
 		Entity ent1 = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		Entity ent2 = null;
 		if( input.size() > 1 ) {
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			V defValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
-			this.setDefaultValue( defValue );
+			noKeyValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 			return;
 		}
 
@@ -144,14 +145,14 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 
 		// Is k1 not in the table?
 		if( h1 == null ) {
-			return this.getDefaultValue();
+			return noKeyValue;
 		}
 		else {
 			HashMap<K3,V> h2 = h1.get( k2 );
 
 			// Is k2 not in the table?
 			if( h2 == null ) {
-				return this.getDefaultValue();
+				return noKeyValue;
 			}
 			else {
 				V val = h2.get( k3 );
@@ -163,8 +164,8 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 					V val2 = h2.get( null );
 					if( val2 == null ) {
 
-						// Return the default value;
-						return this.getDefaultValue();
+						// Return the "no key" value;
+						return noKeyValue;
 					}
 					else {
 
@@ -199,5 +200,6 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 	public void reset() {
 		super.reset();
 		hashMap.clear();
+		noKeyValue = this.getDefaultValue();
 	}
 }

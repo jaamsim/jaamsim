@@ -29,6 +29,7 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 	private Class<K2> key2Class;
 	private Class<V> valClass;
 	private HashMap<K1,HashMap<K2,ArrayList<V>>> hashMap;
+	private ArrayList<V> noKeyValue; // the value when there is no key
 
 	public OneOrTwoKeyListInput(Class<K1> k1Class, Class<K2> k2Class, Class<V> vClass, String keyword, String cat, ArrayList<V> def) {
 		super(keyword, cat, def);
@@ -36,6 +37,7 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 		key2Class = k2Class;
 		valClass = vClass;
 		hashMap = new HashMap<>();
+		noKeyValue = def;
 	}
 
 	@Override
@@ -59,8 +61,7 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 		}
 
 		if( ent1 == null ) {
-			ArrayList<V> defValue = Input.parseEntityList( input, valClass, true );
-			this.setDefaultValue( defValue );
+			noKeyValue = Input.parseEntityList( input, valClass, true );
 			return;
 		}
 
@@ -120,7 +121,7 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 
 		// Is k1 not in the table?
 		if( h1 == null ) {
-			return this.getDefaultValue();
+			return noKeyValue;
 		}
 		else {
 			ArrayList<V> val = h1.get( k2 );
@@ -133,7 +134,7 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 				if( val2 == null ) {
 
 					// Return the default value
-					return this.getDefaultValue();
+					return noKeyValue;
 				}
 				else {
 
@@ -170,5 +171,6 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 	public void reset() {
 		super.reset();
 		hashMap.clear();
+		noKeyValue = this.getDefaultValue();
 	}
 }

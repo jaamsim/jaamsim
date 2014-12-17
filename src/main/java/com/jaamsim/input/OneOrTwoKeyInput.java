@@ -36,6 +36,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 	private HashMap<K1,HashMap<K2,V>> hashMap;
 	private int minCount = 0;
 	private int maxCount = Integer.MAX_VALUE;
+	private V noKeyValue; // the value when there is no key
 
 	public OneOrTwoKeyInput(Class<K1> k1Class, Class<K2> k2Class, Class<V> vClass, String keyword, String cat, V def) {
 		super(keyword, cat, def);
@@ -43,6 +44,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		key2Class = k2Class;
 		valClass = vClass;
 		hashMap = new HashMap<>();
+		noKeyValue = def;
 	}
 
 	public void setUnitType(Class<? extends Unit> units) {
@@ -70,8 +72,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		}
 
 		if( ent1 == null ) {
-			V defValue = Input.parse( input, valClass, null, minValue, maxValue, minCount, maxCount, unitType );
-			this.setDefaultValue( defValue );
+			noKeyValue = Input.parse( input, valClass, null, minValue, maxValue, minCount, maxCount, unitType );
 			return;
 		}
 
@@ -136,7 +137,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 
 		// Is k1 not in the table?
 		if( h1 == null ) {
-			return this.getDefaultValue();
+			return noKeyValue;
 		}
 		else {
 			V val = h1.get( k2 );
@@ -149,7 +150,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 				if( val2 == null ) {
 
 					// Return the default value
-					return this.getDefaultValue();
+					return noKeyValue;
 				}
 				else {
 
@@ -177,7 +178,7 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 			values.addAll( each.values() );
 		}
 
-		values.add( this.getDefaultValue() );
+		values.add( noKeyValue );
 
 		return values;
 	}
@@ -191,5 +192,6 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 	public void reset() {
 		super.reset();
 		hashMap.clear();
+		noKeyValue = this.getDefaultValue();
 	}
 }

@@ -28,6 +28,7 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 	private Class<K2> key2Class;
 	private Class<V> valClass;
 	private HashMap<K1,HashMap<K2,ArrayList<V>>> hashMap;
+	private ArrayList<V> noKeyValue;
 
 	public TwoKeyListInput(Class<K1> k1Class, Class<K2> k2Class, Class<V> vClass, String keyword, String cat, ArrayList<V> def) {
 		super(keyword, cat, def);
@@ -35,6 +36,7 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 		key2Class = k2Class;
 		valClass = vClass;
 		hashMap = new HashMap<>();
+		noKeyValue = def;
 	}
 
 	@Override
@@ -43,15 +45,14 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 		ArrayList<String> input = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
-		// If two entity keys are not provided, set the default value
+		// If two entity keys are not provided, set the "no key" value
 		Entity ent1 = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		Entity ent2 = null;
 		if( input.size() > 1 ) {
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			ArrayList<V> defValue = Input.parseEntityList( input, valClass, true );
-			this.setDefaultValue( defValue );
+			noKeyValue = Input.parseEntityList( input, valClass, true );
 			return;
 		}
 
@@ -84,12 +85,12 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 	public ArrayList<V> getValueFor( K1 k1, K2 k2 ) {
 		HashMap<K2,ArrayList<V>> h1 = hashMap.get( k1 );
 		if( h1 == null ) {
-			return this.getDefaultValue();
+			return noKeyValue;
 		}
 		else {
 			ArrayList<V> val = h1.get( k2 );
 			if( val == null ) {
-				return this.getDefaultValue();
+				return noKeyValue;
 			}
 			else {
 				return val;
@@ -118,5 +119,6 @@ public class TwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Ent
 	public void reset() {
 		super.reset();
 		hashMap.clear();
+		noKeyValue = this.getDefaultValue();
 	}
 }

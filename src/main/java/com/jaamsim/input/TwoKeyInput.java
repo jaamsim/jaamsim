@@ -36,6 +36,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 	private HashMap<K1,HashMap<K2,V>> hashMap;
 	private int minCount = 0;
 	private int maxCount = Integer.MAX_VALUE;
+	private V noKeyValue; // the value when there is no key
 
 	public TwoKeyInput(Class<K1> k1Class, Class<K2> k2Class, Class<V> vClass, String keyword, String cat, V def) {
 		super(keyword, cat, def);
@@ -43,6 +44,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		key2Class = k2Class;
 		valClass = vClass;
 		hashMap = new HashMap<>();
+		noKeyValue = def;
 	}
 
 	private String unitString = "";
@@ -67,15 +69,14 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 
-		// If two entity keys are not provided, set the default value
+		// If two entity keys are not provided, set the "no key" value
 		Entity ent1 = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		Entity ent2 = null;
 		if( input.size() > 1 ) {
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			V defValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
-			this.setDefaultValue( defValue );
+			noKeyValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 			return;
 		}
 
@@ -117,12 +118,12 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 	public V getValueFor( K1 k1, K2 k2 ) {
 		HashMap<K2,V> h1 = hashMap.get( k1 );
 		if( h1 == null ) {
-			return this.getDefaultValue();
+			return noKeyValue;
 		}
 		else {
 			V val = h1.get( k2 );
 			if( val == null ) {
-				return this.getDefaultValue();
+				return noKeyValue;
 			}
 			else {
 				return val;
@@ -148,5 +149,10 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 	public void reset() {
 		super.reset();
 		hashMap.clear();
+		noKeyValue = this.getDefaultValue();
+	}
+
+	public V getNoKeyValue() {
+		return noKeyValue;
 	}
 }

@@ -34,12 +34,14 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 	private HashMap<K1,V> hashMap;
 	private int minCount = 0;
 	private int maxCount = Integer.MAX_VALUE;
+	private V noKeyValue; // the value when there is no key
 
 	public KeyInput(Class<K1> kClass, Class<V> vClass, String keyword, String cat, V def) {
 		super(keyword, cat, def);
 		keyClass = kClass;
 		valClass = vClass;
 		hashMap = new HashMap<>();
+		noKeyValue = def;
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
@@ -64,11 +66,10 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		for (int i = 0; i < kw.numArgs(); i++)
 			input.add(kw.getArg(i));
 
-		// If an entity key is not provided, set the default value
+		// If an entity key is not provided, set the "no key" value
 		Entity ent = Input.tryParseEntity( input.get( 0 ), Entity.class );
 		if( ent == null || input.size() == 1 ) {
-			V defValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
-			this.setDefaultValue( defValue );
+			noKeyValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
 			return;
 		}
 
@@ -98,7 +99,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 	public V getValueFor( K1 k1 ) {
 		V val = hashMap.get( k1 );
 		if( val == null ) {
-			return this.getDefaultValue();
+			return noKeyValue;
 		}
 		else {
 			return val;
@@ -130,7 +131,7 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		for( V each : hashMap.values() ) {
 			values.add(each);
 		}
-		values.add(this.getDefaultValue());
+		values.add(noKeyValue);
 		return values;
 	}
 
@@ -149,5 +150,10 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 	public void reset() {
 		super.reset();
 		hashMap.clear();
+		noKeyValue = this.getDefaultValue();
+	}
+
+	public V getNoKeyValue() {
+		return noKeyValue;
 	}
 }
