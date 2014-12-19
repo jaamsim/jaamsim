@@ -605,6 +605,22 @@ public class ExpParser {
 				return new ExpResult(index + 1, DimensionlessUnit.class);
 			}
 		});
+
+		///////////////////////////////////////////////////
+		// Mathematical Constants
+		addFunction("E", 0, 0, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				return new ExpResult(Math.E, DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("PI", 0, 0, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				return new ExpResult(Math.PI, DimensionlessUnit.class);
+			}
+		});
 	}
 
 	private static String unitToString(Class<? extends Unit> unit) {
@@ -945,12 +961,12 @@ public class ExpParser {
 			throw new ExpError(exp.source, pos, "Uknown function: \"%s\"", funcName);
 		}
 
-		if (fe.numMinArgs > 0 && arguments.size() < fe.numMinArgs){
+		if (fe.numMinArgs >= 0 && arguments.size() < fe.numMinArgs){
 			throw new ExpError(exp.source, pos, "Function \"%s\" expects at least %d arguments. %d provided.",
 							funcName, fe.numMinArgs, arguments.size());
 		}
 
-		if (fe.numMaxArgs > 0 && arguments.size() > fe.numMaxArgs){
+		if (fe.numMaxArgs >= 0 && arguments.size() > fe.numMaxArgs){
 			throw new ExpError(exp.source, pos, "Function \"%s\" expects at most %d arguments. %d provided.",
 							funcName, fe.numMaxArgs, arguments.size());
 		}
