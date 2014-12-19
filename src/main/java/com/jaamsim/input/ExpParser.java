@@ -651,6 +651,46 @@ public class ExpParser {
 				return new ExpResult(Math.tan(args[0].value), DimensionlessUnit.class);
 			}
 		});
+
+		///////////////////////////////////////////////////
+		// Inverse Trigonometric Functions
+		addFunction("asin", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
+				return new ExpResult(Math.asin(args[0].value), AngleUnit.class);
+			}
+		});
+
+		addFunction("acos", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
+				return new ExpResult(Math.acos(args[0].value), AngleUnit.class);
+			}
+		});
+
+		addFunction("atan", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
+				return new ExpResult(Math.atan(args[0].value), AngleUnit.class);
+			}
+		});
+
+		addFunction("atan2", 2, 2, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
+				if (args[1].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[1].unitType, DimensionlessUnit.class));
+				return new ExpResult(Math.atan2(args[0].value, args[1].value), AngleUnit.class);
+			}
+		});
 	}
 
 	private static String unitToString(Class<? extends Unit> unit) {
@@ -672,6 +712,15 @@ public class ExpParser {
 	private static String getInvalidTrigUnitString(Class<? extends Unit> u0) {
 		String s0 = unitToString(u0);
 		return String.format("Invalid unit: %s. The input to a trigonometric function must be dimensionless or an angle.", s0);
+	}
+
+	private static String getInvalidUnitString(Class<? extends Unit> u0, Class<? extends Unit> u1) {
+		String s0 = unitToString(u0);
+		String s1 = unitToString(u1);
+		if (u1 == DimensionlessUnit.class)
+			return String.format("Invalid unit: %s. A dimensionless number is required.", s0);
+
+		return String.format("Invalid unit: %s. Units of %s are required.", s0, s1);
 	}
 
 	/**
