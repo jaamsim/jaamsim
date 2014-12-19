@@ -17,6 +17,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -621,6 +622,35 @@ public class ExpParser {
 				return new ExpResult(Math.PI, DimensionlessUnit.class);
 			}
 		});
+
+		///////////////////////////////////////////////////
+		// Trigonometric Functions
+		addFunction("sin", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class && args[0].unitType != AngleUnit.class)
+					throw new ExpError(source, pos, getInvalidTrigUnitString(args[0].unitType));
+				return new ExpResult(Math.sin(args[0].value), DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("cos", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class && args[0].unitType != AngleUnit.class)
+					throw new ExpError(source, pos, getInvalidTrigUnitString(args[0].unitType));
+				return new ExpResult(Math.cos(args[0].value), DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("tan", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class && args[0].unitType != AngleUnit.class)
+					throw new ExpError(source, pos, getInvalidTrigUnitString(args[0].unitType));
+				return new ExpResult(Math.tan(args[0].value), DimensionlessUnit.class);
+			}
+		});
 	}
 
 	private static String unitToString(Class<? extends Unit> unit) {
@@ -637,6 +667,11 @@ public class ExpParser {
 		String s1 = unitToString(u1);
 
 		return String.format("Unit mismatch: '%s' and '%s' are not compatible", s0, s1);
+	}
+
+	private static String getInvalidTrigUnitString(Class<? extends Unit> u0) {
+		String s0 = unitToString(u0);
+		return String.format("Invalid unit: %s. The input to a trigonometric function must be dimensionless or an angle.", s0);
 	}
 
 	/**
