@@ -691,6 +691,35 @@ public class ExpParser {
 				return new ExpResult(Math.atan2(args[0].value, args[1].value), AngleUnit.class);
 			}
 		});
+
+		///////////////////////////////////////////////////
+		// Exponential Functions
+		addFunction("exp", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
+				return new ExpResult(Math.exp(args[0].value), DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("log", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
+				return new ExpResult(Math.log(args[0].value), DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("log10", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
+				return new ExpResult(Math.log10(args[0].value), DimensionlessUnit.class);
+			}
+		});
 	}
 
 	private static String unitToString(Class<? extends Unit> unit) {
