@@ -155,12 +155,45 @@ public abstract class Unit extends Entity {
 		multRules = new HashMap<>();
 		divRules = new HashMap<>();
 
-		addMultRule(DistanceUnit.class, DistanceUnit.class,          AreaUnit.class);
-		addMultRule(DistanceUnit.class,     AreaUnit.class,        VolumeUnit.class);
+		// Multiplication rules
+		addMultRule(                RateUnit.class,        TimeUnit.class,  DimensionlessUnit.class);
+		addMultRule(               SpeedUnit.class,        TimeUnit.class,       DistanceUnit.class);
+		addMultRule(        AccelerationUnit.class,        TimeUnit.class,          SpeedUnit.class);
+		addMultRule(            MassFlowUnit.class,        TimeUnit.class,           MassUnit.class);
+		addMultRule(          VolumeFlowUnit.class,        TimeUnit.class,         VolumeUnit.class);
+		addMultRule(        AngularSpeedUnit.class,        TimeUnit.class,          AngleUnit.class);
+		addMultRule(               PowerUnit.class,        TimeUnit.class,         EnergyUnit.class);
+		addMultRule(            CostRateUnit.class,        TimeUnit.class,           CostUnit.class);
+		addMultRule(           ViscosityUnit.class,        TimeUnit.class,  LinearDensityUnit.class);
 
-		addMultRule(DistanceUnit.class,      RateUnit.class,        SpeedUnit.class);
-		addMultRule(   SpeedUnit.class,      RateUnit.class, AccelerationUnit.class);
+		addMultRule(            DistanceUnit.class,        RateUnit.class,          SpeedUnit.class);
+		addMultRule(               SpeedUnit.class,        RateUnit.class,   AccelerationUnit.class);
+		addMultRule(                MassUnit.class,        RateUnit.class,       MassFlowUnit.class);
+		addMultRule(              VolumeUnit.class,        RateUnit.class,     VolumeFlowUnit.class);
+		addMultRule(               AngleUnit.class,        RateUnit.class,   AngularSpeedUnit.class);
+		addMultRule(              EnergyUnit.class,        RateUnit.class,          PowerUnit.class);
+		addMultRule(                CostUnit.class,        RateUnit.class,       CostRateUnit.class);
+		addMultRule(           ViscosityUnit.class,        RateUnit.class,       PressureUnit.class);
 
+		addMultRule(            DistanceUnit.class,    DistanceUnit.class,           AreaUnit.class);
+		addMultRule(       LinearDensityUnit.class,    DistanceUnit.class,           MassUnit.class);
+		addMultRule( LinearDensityVolumeUnit.class,    DistanceUnit.class,         VolumeUnit.class);
+		addMultRule(                AreaUnit.class,    DistanceUnit.class,         VolumeUnit.class);
+
+		addMultRule(               SpeedUnit.class,       SpeedUnit.class, SpecificEnergyUnit.class);
+		addMultRule(       LinearDensityUnit.class,       SpeedUnit.class,       MassFlowUnit.class);
+		addMultRule( LinearDensityVolumeUnit.class,       SpeedUnit.class,     VolumeFlowUnit.class);
+		addMultRule(                AreaUnit.class,       SpeedUnit.class,     VolumeFlowUnit.class);
+
+		addMultRule(       EnergyDensityUnit.class,      VolumeUnit.class,         EnergyUnit.class);
+		addMultRule(             DensityUnit.class,      VolumeUnit.class,           MassUnit.class);
+		addMultRule(            PressureUnit.class,      VolumeUnit.class,         EnergyUnit.class);
+
+		addMultRule(       EnergyDensityUnit.class,  VolumeFlowUnit.class,          PowerUnit.class);
+		addMultRule(             DensityUnit.class,  VolumeFlowUnit.class,       MassFlowUnit.class);
+		addMultRule(            PressureUnit.class,  VolumeFlowUnit.class,          PowerUnit.class);
+
+		// Division rules
 		addDivRule(DistanceUnit.class,       TimeUnit.class,        SpeedUnit.class);
 		addDivRule(   SpeedUnit.class,       TimeUnit.class, AccelerationUnit.class);
 
