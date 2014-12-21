@@ -192,16 +192,15 @@ public abstract class Unit extends Entity {
 		addMultRule(       EnergyDensityUnit.class,  VolumeFlowUnit.class,          PowerUnit.class);
 		addMultRule(             DensityUnit.class,  VolumeFlowUnit.class,       MassFlowUnit.class);
 		addMultRule(            PressureUnit.class,  VolumeFlowUnit.class,          PowerUnit.class);
-
-		// Division rules
-		addDivRule(DistanceUnit.class,       TimeUnit.class,        SpeedUnit.class);
-		addDivRule(   SpeedUnit.class,       TimeUnit.class, AccelerationUnit.class);
-
 	}
 
 	public static void addMultRule(Class<? extends Unit> a, Class<? extends Unit> b, Class<? extends Unit> product) {
 		MultPair key = new MultPair(a, b);
 		multRules.put(key, product);
+
+		// Add the corresponding division rules
+		addDivRule(product, a, b);
+		addDivRule(product, b, a);
 	}
 
 	public static void addDivRule(Class<? extends Unit> num, Class<? extends Unit> denom, Class<? extends Unit> product) {
