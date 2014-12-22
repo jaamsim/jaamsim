@@ -18,28 +18,34 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
-import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.input.ExpResult;
 import com.jaamsim.units.Unit;
 
 public class SampleExpression implements SampleProvider {
 	private final ExpParser.Expression exp;
 	private final Entity thisEnt;
+	private final Class<? extends Unit> unitType;
 
-	public SampleExpression(ExpParser.Expression e, Entity ent) {
+	public SampleExpression(ExpParser.Expression e, Entity ent, Class<? extends Unit> ut) {
 		exp = e;
 		thisEnt = ent;
+		unitType = ut;
 	}
 
 	@Override
 	public Class<? extends Unit> getUnitType() {
-		return DimensionlessUnit.class;
+		return unitType;
 	}
 
 	@Override
 	public double getNextSample(double simTime) {
 		double ret = 0.0;
 		try {
-			ret = ExpEvaluator.evaluateExpression(exp, simTime, thisEnt).value;
+			ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime, thisEnt);
+			if (res.unitType != unitType)
+				thisEnt.error("Invalid unit returned by an expression. Received: %s, expected: %s",
+						res.unitType.getSimpleName(), unitType.getSimpleName(), "");
+			ret = res.value;
 		}
 		catch(ExpError e) {
 			thisEnt.error("%s", e.getMessage());
