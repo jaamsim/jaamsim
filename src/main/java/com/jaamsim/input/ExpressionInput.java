@@ -37,7 +37,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(), kw.getArg(0));
 
 			// Test whether the expression can be evaluated
-			ExpValidator.validateExpression(exp, thisEnt);
+			ExpValidator.validateExpression(exp, thisEnt, null);
 
 			// Save the expression
 			value = exp;

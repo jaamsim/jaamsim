@@ -117,16 +117,20 @@ public class ExpValidator {
 		}
 		// Otherwise we do not validate assignment destination yet
 
-		validateExpression(assign.value, thisEnt);
+		validateExpression(assign.value, thisEnt, null);
 	}
 
 	// Validate an expression, if the expression is invalid, this will throw an ExpError detailing the problem
-	public static void validateExpression(ExpParser.Expression exp, Entity thisEnt) throws ExpError
+	public static void validateExpression(ExpParser.Expression exp, Entity thisEnt, Class<? extends Unit> ut) throws ExpError
 	{
 		EntityValidateContext valContext = new EntityValidateContext(thisEnt);
 		try {
-			exp.evaluate(valContext);
-		} catch (ExpError ex) {
+			ExpResult res = exp.evaluate(valContext);
+			if (ut != null && res.unitType != ut)
+				throw new InputErrorException("Expression returned an invalid unit for this input. Received: %s, expected: %s",
+						res.unitType.getSimpleName(), ut.getSimpleName());
+		}
+		catch (ExpError ex) {
 			if (valContext.undecidable) {
 				// We got an error, but can not be sure it is a validation problem
 				return;

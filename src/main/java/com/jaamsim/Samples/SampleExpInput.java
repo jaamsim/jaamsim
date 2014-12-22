@@ -78,7 +78,7 @@ public class SampleExpInput extends Input<SampleProvider> {
 		try {
 			Input.assertCount(kw, 1);
 			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(), kw.getArg(0));
-			ExpValidator.validateExpression(exp, thisEnt);
+			ExpValidator.validateExpression(exp, thisEnt, unitType);
 			value = new SampleExpression(exp, thisEnt, unitType);
 		}
 		catch (ExpError e) {
