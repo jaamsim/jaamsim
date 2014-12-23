@@ -109,15 +109,17 @@ public class ExpValidator {
 	public static void validateAssignment(ExpParser.Assignment assign, Entity thisEnt) throws ExpError {
 		String[] dest = assign.destination;
 		Entity ent = validateEntity(dest, thisEnt);
+		Class<? extends Unit> unitType = null;
 
 		if (dest.length == 2) {
 			if (!ent.hasAttribute(dest[1])) {
 				throw new ExpError(null, 0, String.format("Could not find attribute '%s' on entity '%s'", dest[1], dest[0]));
 			}
+			unitType = ent.getAttributeUnitType(dest[1]);
 		}
 		// Otherwise we do not validate assignment destination yet
 
-		validateExpression(assign.value, thisEnt, null);
+		validateExpression(assign.value, thisEnt, unitType);
 	}
 
 	// Validate an expression, if the expression is invalid, this will throw an ExpError detailing the problem

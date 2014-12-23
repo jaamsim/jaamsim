@@ -811,6 +811,13 @@ public class Entity {
 		return attributeMap.containsKey(name);
 	}
 
+	public Class<? extends Unit> getAttributeUnitType(String name) {
+		AttributeHandle h = attributeMap.get(name);
+		if (h == null)
+			return null;
+		return h.getUnitType();
+	}
+
 	public void setAttribute(String name, double value, Class<? extends Unit> ut) {
 		AttributeHandle h = attributeMap.get(name);
 		if (h == null)
