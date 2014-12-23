@@ -1051,6 +1051,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		else
 			clockDisplay.setText(String.format("%,.2f  %s", simTime/u.getConversionFactorToSI(), u.getName()));
 
+		if (getSimState() != SIM_STATE_RUNNING)
+			return;
+
 		// Set the run progress bar display
 		long cTime = System.currentTimeMillis();
 		double duration = Simulation.getRunDuration() + Simulation.getInitializationTime();
