@@ -1034,6 +1034,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 	private long lastSystemTime = System.currentTimeMillis();
 	private double lastSimTime = 0.0d;
+	private double speedUp = 0.0d;
 
 	/**
 	 * Sets the values for the simulation time, run progress, speedup factor,
@@ -1063,16 +1064,16 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			double elapsedSimTime = timeElapsed - lastSimTime;
 
 			// Determine the speed-up factor
-			double speedUp = (elapsedSimTime * 1000.0d) / elapsedMillis;
+			speedUp = (elapsedSimTime * 1000.0d) / elapsedMillis;
 			setSpeedUp(speedUp);
-
-			double remainingSimTime = duration - timeElapsed;
-			double remainingMinutes = (remainingSimTime / 60.0d) / speedUp;
-			setRemaining(remainingMinutes);
 
 			lastSystemTime = cTime;
 			lastSimTime = timeElapsed;
 		}
+
+		// Set the remaining time display
+		if (speedUp > 0.0)
+			setRemaining( (duration - timeElapsed)/speedUp );
 	}
 
 	/**
@@ -1115,10 +1116,13 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	/**
 	 * Write the given value on the Control Panel's remaining run time box.
 	 *
-	 * @param val - the remaining run time in minutes.
+	 * @param val - the remaining run time in seconds.
 	 */
 	public void setRemaining( double val ) {
-		remainingDisplay.setText(String.format("%.1f", val));
+		if (val > 60.0)
+			remainingDisplay.setText(String.format("%.1f  min", val/60.0));
+		else
+			remainingDisplay.setText(String.format("%.0f  s", val));
 	}
 
 	/**
