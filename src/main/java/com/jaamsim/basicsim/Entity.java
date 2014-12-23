@@ -811,9 +811,15 @@ public class Entity {
 		return attributeMap.containsKey(name);
 	}
 
-	public void setAttribute(String name, double value) {
+	public void setAttribute(String name, double value, Class<? extends Unit> ut) {
 		AttributeHandle h = attributeMap.get(name);
-		if (h == null) return;  // TODO: report this as an error?
+		if (h == null)
+			this.error("Invalid attribute name: %s", name);
+
+		if (h.getUnitType() != ut)
+			this.error("Invalid unit returned by an expression. Received: %s, expected: %s",
+					ut.getSimpleName(), h.getUnitType().getSimpleName(), "");
+
 		h.setValue(value);
 	}
 
