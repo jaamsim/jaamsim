@@ -1273,8 +1273,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				}
 
 				windowList.setEnabled( true );
-				speedUpDisplay.setEnabled( true );
-				remainingDisplay.setEnabled( true );
+				speedUpDisplay.setEnabled( false );
+				remainingDisplay.setEnabled( false );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText( "Run" );
@@ -1286,6 +1286,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				break;
 
 			case SIM_STATE_RUNNING:
+				speedUpDisplay.setEnabled( true );
+				remainingDisplay.setEnabled( true );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( true );
 				controlStartResume.setToolTipText( "Pause" );
@@ -1301,6 +1303,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				controlStop.setSelected( false );
 				break;
 			case SIM_STATE_STOPPED:
+				speedUpDisplay.setEnabled( false );
+				remainingDisplay.setEnabled( false );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText( "Run" );
