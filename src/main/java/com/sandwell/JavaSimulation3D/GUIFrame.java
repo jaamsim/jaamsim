@@ -292,9 +292,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Clear the status bar
 		setProgress( 0 );
-		speedUpDisplay.setText("------");
-		remainingDisplay.setText("------");
-		locatorPos.setText( "------" );
+		speedUpDisplay.setText("");
+		remainingDisplay.setText("");
+		locatorPos.setText( "" );
 
 		// Read the autoload configuration file
 		InputAgent.clear();
@@ -987,44 +987,39 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Create the display clock and label
 		JLabel clockLabel = new JLabel( "Simulation Time:" );
-
 		clockDisplay = new JLabel( "", JLabel.RIGHT );
 		clockDisplay.setPreferredSize( new Dimension( 85, 16 ) );
 		clockDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-
 		statusBar.add( clockLabel );
 		statusBar.add( clockDisplay );
-		//statusBar.addSeparator();
 
 		// Create the progress bar
 		progressBar = new JProgressBar( 0, 100 );
 		progressBar.setValue( 0 );
 		progressBar.setStringPainted( true );
-
-		// Add the progress bar to the status bar
 		statusBar.add( progressBar );
 
 		// Create a speed-up factor display
-		JLabel speedUpLabel = new JLabel( "Speed Up:" );
-		speedUpDisplay = new JLabel( "------", JLabel.RIGHT );
-		speedUpDisplay.setPreferredSize( new Dimension( 60, 16 ) );
+		JLabel speedUpLabel = new JLabel( "Speed Up: " );
+		speedUpDisplay = new JLabel( "", JLabel.LEFT );
+		speedUpDisplay.setPreferredSize( new Dimension( 70, 16 ) );
 		speedUpDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-
 		statusBar.add( speedUpLabel );
 		statusBar.add( speedUpDisplay );
 
 		// Create a remaining run time display
-		JLabel remainingLabel = new JLabel( "Time Remaining (mins):" );
-		remainingDisplay = new JLabel( "------", JLabel.RIGHT );
-		remainingDisplay.setPreferredSize( new Dimension( 40, 16 ) );
+		JLabel remainingLabel = new JLabel( "Time Remaining: " );
+		remainingDisplay = new JLabel( "", JLabel.LEFT );
+		remainingDisplay.setPreferredSize( new Dimension( 70, 16 ) );
 		remainingDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
 		statusBar.add( remainingLabel );
 		statusBar.add( remainingDisplay );
 
-		locatorPos = new JLabel( "------" );
+		// Create a cursor position display
+		locatorPos = new JLabel( "", JLabel.LEFT );
 		locatorPos.setPreferredSize( new Dimension( 140, 16 ) );
 		locatorPos.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-		locatorLabel = new JLabel( "Position:  " );
+		locatorLabel = new JLabel( "Position: " );
 		statusBar.add( locatorLabel );
 		statusBar.add( locatorPos );
 
