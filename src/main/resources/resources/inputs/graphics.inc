@@ -43,7 +43,7 @@ OverlayImage          JavaClass { com.jaamsim.Graphics.OverlayImage             
 OverlayText           JavaClass { com.jaamsim.Graphics.OverlayText                   } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 OverlayClock          JavaClass { com.jaamsim.Graphics.OverlayClock                  } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
 BillboardText         JavaClass { com.jaamsim.Graphics.BillboardText                 } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
-Arrow                 JavaClass { com.jaamsim.Graphics.Arrow                         } Palette { 'Graphics Objects' } DefaultDisplayModel { ArrowModelDefault        }
+Arrow                 JavaClass { com.jaamsim.Graphics.Arrow                         } Palette { 'Graphics Objects' } DefaultDisplayModel { ArrowModelDefault        } IconFile { '<res>/images/Arrow-24.png' }
 Graph                 JavaClass { com.jaamsim.Graphics.Graph                         } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        } IconFile { '<res>/images/Graph-24.png' }
 
 VideoRecorder         JavaClass { com.jaamsim.ui.VideoRecorderEntity                 } Palette { 'Graphics Objects' }    DragAndDrop { FALSE }
