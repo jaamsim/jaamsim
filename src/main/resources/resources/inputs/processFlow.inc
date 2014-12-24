@@ -84,7 +84,7 @@ Duplicate               JavaClass { com.jaamsim.BasicObjects.Duplicate          
 SetGraphics             JavaClass { com.jaamsim.BasicObjects.SetGraphics          }  Palette { 'Process Flow' }  DefaultDisplayModel { SetGraphicsIconModel     }
 EntityGate              JavaClass { com.jaamsim.BasicObjects.EntityGate           }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityGateIconModel      }
 EntitySignal            JavaClass { com.jaamsim.BasicObjects.EntitySignal         }  Palette { 'Process Flow' }  DefaultDisplayModel { EntitySignalIconModel    }
-SignalThreshold         JavaClass { com.jaamsim.Thresholds.SignalThreshold        }  Palette { 'Process Flow' }  DefaultDisplayModel { Rectangle                }
+SignalThreshold         JavaClass { com.jaamsim.Thresholds.SignalThreshold        }  Palette { 'Process Flow' }  DefaultDisplayModel { Rectangle                } IconFile { '<res>/images/Threshold-24.png' }
 Assemble                JavaClass { com.jaamsim.BasicObjects.Assemble             }  Palette { 'Process Flow' }  DefaultDisplayModel { AssembleIconModel        }
 EntityContainer         JavaClass { com.jaamsim.BasicObjects.EntityContainer      }  Palette { 'Process Flow' }  DefaultDisplayModel { Rectangle                }
 Pack                    JavaClass { com.jaamsim.BasicObjects.Pack                 }  Palette { 'Process Flow' }  DefaultDisplayModel { PackIconModel            }
