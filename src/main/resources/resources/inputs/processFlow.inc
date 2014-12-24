@@ -68,7 +68,7 @@ RemoveFromIconModel     ImageFile { '<res>/images/RemoveFrom-256.png'   }  Trans
 EntityLoggerIconModel   ImageFile { '<res>/images/EntityLogger-256.png' }  Transparent { TRUE }
 StatisticsIconModel     ImageFile { '<res>/images/Statistics-256.png'   }  Transparent { TRUE }
 
-SimEntity               JavaClass { com.jaamsim.BasicObjects.SimEntity            }  Palette { 'Process Flow' }  DefaultDisplayModel { Sphere                   }
+SimEntity               JavaClass { com.jaamsim.BasicObjects.SimEntity            }  Palette { 'Process Flow' }  DefaultDisplayModel { Sphere                   } IconFile { '<res>/images/SimEntity-24.png' }
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator      }  Palette { 'Process Flow' }  DefaultDisplayModel { SourceIconModel          }
 EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink           }  Palette { 'Process Flow' }  DefaultDisplayModel { SinkIconModel            }
 Server                  JavaClass { com.jaamsim.BasicObjects.Server               }  Palette { 'Process Flow' }  DefaultDisplayModel { ServerIconModel          }
