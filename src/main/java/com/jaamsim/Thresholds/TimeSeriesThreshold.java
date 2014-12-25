@@ -444,8 +444,8 @@ public class TimeSeriesThreshold extends Threshold {
 
 		// Error check that threshold limits remain consistent
 		if (minOpenLimitVal > maxOpenLimitVal)
-			this.error( "isPointClosed( "+time+" )", "MaxOpenLimit must be larger than MinOpenLimit", "MaxOpenLimit = "+maxOpenLimitVal+" MinOpenLimit = "+minOpenLimitVal );
-
+			error("MaxOpenLimit must be larger than MinOpenLimit. MaxOpenLimit: %s, MinOpenLimit: %s, time: %s",
+					maxOpenLimitVal, minOpenLimitVal, secs);
 
 		if (value > maxOpenLimitVal)
 			return true;
