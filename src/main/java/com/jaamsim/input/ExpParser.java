@@ -703,7 +703,7 @@ public class ExpParser {
 			}
 		});
 
-		addFunction("log", 1, 1, new CallableFunc() {
+		addFunction("ln", 1, 1, new CallableFunc() {
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				if (args[0].unitType != DimensionlessUnit.class)
@@ -712,7 +712,7 @@ public class ExpParser {
 			}
 		});
 
-		addFunction("log10", 1, 1, new CallableFunc() {
+		addFunction("log", 1, 1, new CallableFunc() {
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
 				if (args[0].unitType != DimensionlessUnit.class)
