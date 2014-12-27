@@ -50,6 +50,8 @@ public class RemoveFrom extends Unpack {
 		if (nextForContainers.getValue() == null) {
 			throw new InputErrorException("The keyword NextForContainers must be set.");
 		}
+
+		numberOfEntities.validate();
 	}
 
 	@Override

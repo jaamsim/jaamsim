@@ -140,10 +140,21 @@ public class SampleExpInput extends Input<SampleProvider> {
 		}
 	}
 
-	public void verifyUnit() {
-		// Assume that an expression has the correct unit type
-		if (value instanceof SampleExpression)
-			return;
-		Input.assertUnitsMatch( unitType, value.getUnitType());
+	public void validate() {
+
+		if (value instanceof SampleExpression) return;
+		if (value instanceof SampleConstant) return;
+
+		Input.assertUnitsMatch(unitType, value.getUnitType());
+
+		if (value.getMinValue() < minValue)
+			throw new InputErrorException("The minimum value allowed for keyword: '%s' is: %s.\n" +
+					"The specified entity: '%s' can return values as small as: %s.",
+					this.getKeyword(), minValue, ((Entity)value).getName(), value.getMinValue());
+
+		if (value.getMaxValue() > maxValue)
+			throw new InputErrorException("The maximum value allowed for keyword: '%s' is: %s.\n" +
+					"The specified entity: '%s' can return values as large as: %s.",
+					this.getKeyword(), maxValue, ((Entity)value).getName(), value.getMaxValue());
 	}
 }

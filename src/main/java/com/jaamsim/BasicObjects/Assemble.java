@@ -84,8 +84,8 @@ public class Assemble extends LinkedService {
 			throw new InputErrorException("The keyword PrototypeEntity must be set.");
 		}
 
-		serviceTime.verifyUnit();
-		choice.verifyUnit();
+		serviceTime.validate();
+		choice.validate();
 	}
 
 	@Override

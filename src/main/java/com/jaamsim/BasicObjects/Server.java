@@ -62,7 +62,7 @@ public class Server extends LinkedService {
 			throw new InputErrorException("The keyword WaitQueue must be set.");
 		}
 
-		serviceTimeInput.verifyUnit();
+		serviceTimeInput.validate();
 	}
 
 	@Override

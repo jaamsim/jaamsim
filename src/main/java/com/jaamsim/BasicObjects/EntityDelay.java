@@ -127,6 +127,13 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	}
 
 	@Override
+	public void validate() {
+		super.validate();
+
+		duration.validate();
+	}
+
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
 

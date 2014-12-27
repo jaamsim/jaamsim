@@ -60,6 +60,8 @@ public class SetGraphics extends LinkedComponent {
 		if (graphicsList.getValue() == null || graphicsList.getValue().isEmpty()) {
 			throw new InputErrorException("The keyword GraphicsList must be set.");
 		}
+
+		choice.validate();
 	}
 
 	@Override

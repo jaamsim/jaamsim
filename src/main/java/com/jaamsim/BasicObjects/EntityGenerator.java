@@ -99,7 +99,8 @@ public class EntityGenerator extends LinkedService {
 			throw new InputErrorException("The keyword PrototypeEntity must be set.");
 		}
 
-		interArrivalTime.verifyUnit();
+		firstArrivalTime.validate();
+		interArrivalTime.validate();
 	}
 
 	@Override

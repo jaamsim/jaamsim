@@ -60,7 +60,7 @@ public class Unpack extends LinkedService {
 			throw new InputErrorException("The keyword WaitQueue must be set.");
 		}
 
-		serviceTime.verifyUnit();
+		serviceTime.validate();
 	}
 
 	@Override

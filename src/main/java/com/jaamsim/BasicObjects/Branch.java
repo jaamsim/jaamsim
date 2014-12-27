@@ -59,6 +59,8 @@ public class Branch extends LinkedComponent {
 		if( choice.getValue() == null ) {
 			throw new InputErrorException( "The keyword Choice must be set." );
 		}
+
+		choice.validate();
 	}
 
 	@Override

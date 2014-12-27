@@ -85,7 +85,8 @@ public class Pack extends LinkedService {
 			throw new InputErrorException("The keyword PrototypeEntityContainer must be set.");
 		}
 
-		serviceTime.verifyUnit();
+		numberOfEntities.validate();
+		serviceTime.validate();
 	}
 
 	@Override

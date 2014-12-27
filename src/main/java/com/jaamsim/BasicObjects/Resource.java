@@ -71,6 +71,8 @@ public class Resource extends DisplayEntity {
 				throw new InputErrorException( "A probability distribution is not a valid input.");
 			return;
 		}
+
+		capacity.validate();
 	}
 
 	@Override
