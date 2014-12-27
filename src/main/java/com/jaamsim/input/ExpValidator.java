@@ -128,7 +128,7 @@ public class ExpValidator {
 		EntityValidateContext valContext = new EntityValidateContext(thisEnt);
 		try {
 			ExpResult res = exp.evaluate(valContext);
-			if (ut != null && res.unitType != ut)
+			if (!valContext.undecidable && ut != null && res.unitType != ut)
 				throw new InputErrorException("Expression returned an invalid unit for this input. Received: %s, expected: %s",
 						res.unitType.getSimpleName(), ut.getSimpleName());
 		}
