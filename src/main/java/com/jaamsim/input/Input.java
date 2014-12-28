@@ -222,6 +222,12 @@ public abstract class Input<T> {
 		throw new InputErrorException(INP_ERR_COUNT, Arrays.toString(counts), input.toString());
 	}
 
+	/**
+	 * Verifies that the correct number of inputs have been provided.
+	 * @param kw - object containing the inputs.
+	 * @param counts - list of valid numbers of inputs. All other numbers are invalid.
+	 * @throws InputErrorException
+	 */
 	public static void assertCount(KeywordIndex kw, int... counts)
 	throws InputErrorException {
 		// If there is no constraint on the element count, return
@@ -235,9 +241,26 @@ public abstract class Input<T> {
 		}
 
 		// Input size is not equal to any of the specified counts
-		throw new InputErrorException(INP_ERR_COUNT, Arrays.toString(counts), kw.argString());
+		if (counts.length == 1)
+			throw new InputErrorException(INP_ERR_COUNT, counts[0], kw.argString());
+		else {
+			StringBuilder sb = new StringBuilder();
+			sb.append(counts[0]);
+			for (int i=1; i<counts.length-1; i++) {
+				sb.append(", ").append(counts[i]);
+			}
+			sb.append(" or ").append(counts[counts.length-1]);
+			throw new InputErrorException(INP_ERR_COUNT, sb.toString(), kw.argString());
+		}
 	}
 
+	/**
+	 * Verifies that the correct number of inputs have been provided.
+	 * @param kw - object containing the inputs.
+	 * @param min - minimum number of inputs that are valid
+	 * @param max - maximum number of inputs that are valid
+	 * @throws InputErrorException
+	 */
 	public static void assertCountRange(KeywordIndex kw, int min, int max)
 	throws InputErrorException {
 		// For a range with a single value, fall back to the exact test
