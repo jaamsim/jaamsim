@@ -60,10 +60,21 @@ public class SampleExpInput extends Input<SampleProvider> {
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 
-		// Try parsing a SampleProvider
+		Input.assertCount(kw, 1, 2);
+
+		// If there are two inputs, it must be a number and its unit
+		if (kw.numArgs() == 2) {
+			DoubleVector tmp = null;
+			tmp = Input.parseDoubles(kw, minValue, maxValue, unitType);
+			value = new SampleConstant(unitType, tmp.get(0));
+			return;
+		}
+
+		// If there is only one input, it could be a SampleProvider, a dimensionless constant, or an expression
+
+		// 1) Try parsing a SampleProvider
 		SampleProvider s = null;
 		try {
-			Input.assertCount(kw, 1);
 			Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
 			s = Input.castImplements(ent, SampleProvider.class);
 		}
@@ -76,24 +87,24 @@ public class SampleExpInput extends Input<SampleProvider> {
 			return;
 		}
 
-		// Try parsing a constant value
+		// 2) Try parsing a constant value
 		DoubleVector tmp = null;
 		try {
-			tmp = Input.parseDoubles(kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
-			Input.assertCount(tmp, 1);
+			tmp = Input.parseDoubles(kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, DimensionlessUnit.class);
 		}
 		catch (InputErrorException e) {}
 
 		if (tmp != null) {
+			if (unitType != DimensionlessUnit.class)
+				throw new InputErrorException(INP_ERR_UNITNOTFOUND, unitType.getSimpleName());
 			if (tmp.get(0) < minValue || tmp.get(0) > maxValue)
 				throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, tmp.get(0));
 			value = new SampleConstant(unitType, tmp.get(0));
 			return;
 		}
 
-		// Try parsing an expression
+		// 3) Try parsing an expression
 		try {
-			Input.assertCount(kw, 1);
 			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(), kw.getArg(0));
 			ExpValidator.validateExpression(exp, thisEnt, unitType);
 			value = new SampleExpression(exp, thisEnt, unitType);

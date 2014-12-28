@@ -50,6 +50,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_ELEMENT = "Error parsing element %d: %s";
 	protected static final String INP_ERR_ENTNAME = "Could not find an Entity named: %s";
 	protected static final String INP_ERR_NOUNITFOUND = "A unit is required, could not parse '%s' as a %s";
+	protected static final String INP_ERR_UNITNOTFOUND = "A unit of type '%s' is required";
 	protected static final String INP_ERR_NOTUNIQUE = "List must contain unique entries, repeated entry: %s";
 	protected static final String INP_ERR_NOTVALIDENTRY = "List must not contain: %s";
 	protected static final String INP_ERR_ENTCLASS = "Expected a %s, %s is a %s";
@@ -830,18 +831,20 @@ public abstract class Input<T> {
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
 
 		double factor = 1.0d;
-		int numDoubles = kw.numArgs();
+		int numArgs = kw.numArgs();
+		int numDoubles = numArgs;
+		boolean includeIndex = true;
 
 		// Parse the unit portion of the input
-		Unit unit = Input.tryParseUnit(kw.getArg(numDoubles-1), unitType);
+		Unit unit = Input.tryParseUnit(kw.getArg(numArgs-1), unitType);
 
 		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
 		if (unit == null && unitType != DimensionlessUnit.class && unitType != TimeUnit.class)
-			throw new InputErrorException(INP_ERR_NOUNITFOUND, kw.getArg(numDoubles-1), unitType.getSimpleName());
+			throw new InputErrorException(INP_ERR_NOUNITFOUND, kw.getArg(numArgs-1), unitType.getSimpleName());
 
 		if (unit != null) {
 			factor = unit.getConversionFactorToSI();
-			numDoubles = numDoubles - 1;
+			numDoubles = numArgs - 1;
 		}
 
 		// Parse the numeric portion of the input
@@ -860,8 +863,10 @@ public abstract class Input<T> {
 					}
 					// Normal format
 					else {
-						if (unit == null)
-							throw new InputErrorException(INP_ERR_NOUNITFOUND, kw.getArg(numDoubles-1), unitType.getSimpleName());
+						if (unit == null) {
+							includeIndex = false;
+							throw new InputErrorException(INP_ERR_NOUNITFOUND, kw.getArg(numArgs-1), unitType.getSimpleName());
+						}
 						double element = Input.parseDouble(kw.getArg(i), minValue, maxValue, factor);
 						temp.add(element);
 					}
@@ -872,10 +877,10 @@ public abstract class Input<T> {
 					temp.add(element);
 				}
 			} catch (InputErrorException e) {
-				if (numDoubles == 1)
-					throw e;
-				else
+				if (includeIndex && numDoubles > 1)
 					throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				else
+					throw e;
 			}
 		}
 		return temp;
