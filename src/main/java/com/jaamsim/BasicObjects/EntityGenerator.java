@@ -41,6 +41,11 @@ public class EntityGenerator extends LinkedService {
 	         example = "EntityGenerator1 InterArrivalTime { 1.5 h }")
 	private final SampleExpInput interArrivalTime;
 
+	@Keyword(description = "The number of entities to be generated for each arrival.\n" +
+			"A constant value, a distribution to be sampled, or a time series can be entered.",
+	         example = "EntityGenerator1 EntitiesPerArrival { 3 }")
+	private final SampleExpInput entitiesPerArrival;
+
 	@Keyword(description = "The prototype for entities to be generated.\n" +
 			"The generated entities will be copies of this entity.",
 	         example = "EntityGenerator1 PrototypeEntity { Ship }")
@@ -66,6 +71,12 @@ public class EntityGenerator extends LinkedService {
 		interArrivalTime.setUnitType(TimeUnit.class);
 		interArrivalTime.setEntity(this);
 		this.addInput(interArrivalTime);
+
+		entitiesPerArrival = new SampleExpInput("EntitiesPerArrival", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));
+		entitiesPerArrival.setUnitType(DimensionlessUnit.class);
+		entitiesPerArrival.setEntity(this);
+		entitiesPerArrival.setValidRange(1, Double.POSITIVE_INFINITY);
+		this.addInput(entitiesPerArrival);
 
 		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
 		this.addInput(prototypeEntity);
@@ -134,17 +145,20 @@ public class EntityGenerator extends LinkedService {
 			return;
 		}
 
-		// Create the new entity
-		numberGenerated++;
-		DisplayEntity proto = prototypeEntity.getValue();
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.getName()).append("_").append(numberGenerated);
-		DisplayEntity ent = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
-		ent.copyInputs(proto);
-		ent.earlyInit();
+		// Create the new entities
+		int num = (int) entitiesPerArrival.getValue().getNextSample(getSimTime());
+		for (int i=0; i<num; i++) {
+			numberGenerated++;
+			DisplayEntity proto = prototypeEntity.getValue();
+			StringBuilder sb = new StringBuilder();
+			sb.append(this.getName()).append("_").append(numberGenerated);
+			DisplayEntity ent = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
+			ent.copyInputs(proto);
+			ent.earlyInit();
 
-		// Send the entity to the next element in the chain
-		this.sendToNextComponent(ent);
+			// Send the entity to the next element in the chain
+			this.sendToNextComponent(ent);
+		}
 
 		// Try to generate another entity
 		this.startAction();
