@@ -35,7 +35,7 @@ class EndModelTarget extends ProcessTarget {
 			Entity.getAll().get(i).doEnd();
 		}
 
-		System.out.println( "Made it to do end at" );
+		InputAgent.logMessage("Made it to do end at");
 		// close warning/error trace file
 		InputAgent.closeLogFile();
 
