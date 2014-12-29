@@ -1182,7 +1182,6 @@ public class InputAgent {
 		return inputs;
 	}
 
-
 	/**
 	 * Converts a file path String to a URI.
 	 * <p>

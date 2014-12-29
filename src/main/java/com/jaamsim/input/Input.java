@@ -13,6 +13,8 @@
  * GNU General Public License for more details.
  */
 package com.jaamsim.input;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -411,6 +413,39 @@ public abstract class Input<T> {
 
 		// TODO - parse other classes
 		throw new InputErrorException("%s is not supported for parsing yet", aClass);
+	}
+
+	/**
+	 * Converts a file path entry in a configuration file to a URI.
+	 * @param kw - keyword input containing the file path data
+	 * @return the URI corresponding to the file path data.
+	 * @throws InputErrorException
+	 */
+	public static URI parseURI(KeywordIndex kw)
+	throws InputErrorException {
+		Input.assertCount(kw, 1);
+
+		String arg = kw.getArg(0);
+
+		// Convert the file path to a URI
+		URI uri = null;
+		try {
+			if (kw.context != null)
+				uri = InputAgent.getFileURI(kw.context.context, arg, kw.context.jail);
+			else
+				uri = InputAgent.getFileURI(null, arg, null);
+		}
+		catch (URISyntaxException ex) {
+			throw new InputErrorException("File Entity parse error: %s", ex.getMessage());
+		}
+
+		if (uri == null)
+			throw new InputErrorException("Unable to parse the file path:\n%s", arg);
+
+		if (!uri.isOpaque() && uri.getPath() == null)
+			 throw new InputErrorException("Unable to parse the file path:\n%s", arg);
+
+		return uri;
 	}
 
 	public static boolean parseBoolean(String data)

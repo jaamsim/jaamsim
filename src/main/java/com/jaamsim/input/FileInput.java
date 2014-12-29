@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -42,32 +41,12 @@ public class FileInput extends Input<URI> {
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(kw, 1);
-
-		String arg = kw.getArg(0);
-
-		// Convert the file path to a URI
-		URI temp = null;
-		try {
-			if (kw.context != null)
-				temp = InputAgent.getFileURI(kw.context.context, arg, kw.context.jail);
-			else
-				temp = InputAgent.getFileURI(null, arg, null);
-		}
-		catch (URISyntaxException ex) {
-			throw new InputErrorException("File Entity parse error: %s", ex.getMessage());
-		}
-
-		if (temp == null)
-			throw new InputErrorException("Unable to parse the file path:\n%s", arg);
-
-		if (!temp.isOpaque() && temp.getPath() == null)
-			 throw new InputErrorException("Unable to parse the file path:\n%s", arg);
+		URI temp = Input.parseURI(kw);
 
 		// Confirm that the file exists
 		if (!InputAgent.fileExists(temp))
 			throw new InputErrorException("The specified file does not exist.\n" +
-					"File path = %s", arg);
+					"File path = %s", kw.getArg(0));
 
 		if (!isValidExtension(temp))
 			throw new InputErrorException("Invalid file extension: %s.\nValid extensions are: %s",

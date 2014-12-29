@@ -16,7 +16,6 @@ package com.jaamsim.input;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 
@@ -28,31 +27,14 @@ public class DirInput extends Input<URI> {
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(kw, 1);
-
-		String arg = kw.getArg(0);
-		// Convert the file path to a URI
-		URI temp = null;
-		try {
-			if (kw.context != null)
-				temp = InputAgent.getFileURI(kw.context.context, arg, kw.context.jail);
-			else
-				temp = InputAgent.getFileURI(null, arg, null);
-		}
-		catch (URISyntaxException ex) {
-			throw new InputErrorException("File Entity parse error: %s", ex.getMessage());
-		}
-
-		if (temp == null)
-			throw new InputErrorException("Unable to parse the file path:\n%s", arg);
-
+		URI temp = Input.parseURI(kw);
 		try {
 			File f = new File(temp);
 			if (f.exists() && !f.isDirectory())
-				throw new InputErrorException("File Entity parse error: %s is not a directory", arg);
+				throw new InputErrorException("File Entity parse error: %s is not a directory", kw.getArg(0));
 		}
 		catch (IllegalArgumentException e) {
-			throw new InputErrorException("Unable to parse the directory:\n%s", arg);
+			throw new InputErrorException("Unable to parse the directory:\n%s", kw.getArg(0));
 		}
 
 		value = temp;
