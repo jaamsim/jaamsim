@@ -31,11 +31,11 @@ public class Queue extends DisplayEntity {
 
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
 	         example = "Queue1 Spacing { 1 m }")
-	private final ValueInput spacingInput;
+	private final ValueInput spacing;
 
 	@Keyword(description = "The number of queuing entities in each row.",
 			example = "Queue1 MaxPerLine { 4 }")
-	protected final IntegerInput maxPerLineInput; // maximum items per sub line-up of queue
+	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
 	protected ArrayList<DisplayEntity> itemList;
 	private ArrayList<Double> timeAddedList;
@@ -54,14 +54,14 @@ public class Queue extends DisplayEntity {
 	{
 		this.setDefaultSize(new Vec3d(0.5, 0.5, 0.5));
 
-		spacingInput = new ValueInput("Spacing", "Key Inputs", 0.0d);
-		spacingInput.setUnitType(DistanceUnit.class);
-		spacingInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-		this.addInput(spacingInput);
+		spacing = new ValueInput("Spacing", "Key Inputs", 0.0d);
+		spacing.setUnitType(DistanceUnit.class);
+		spacing.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(spacing);
 
-		maxPerLineInput = new IntegerInput("MaxPerLine", "Key Inputs", Integer.MAX_VALUE);
-		maxPerLineInput.setValidRange( 1, Integer.MAX_VALUE);
-		this.addInput(maxPerLineInput);
+		maxPerLine = new IntegerInput("MaxPerLine", "Key Inputs", Integer.MAX_VALUE);
+		maxPerLine.setValidRange(1, Integer.MAX_VALUE);
+		this.addInput(maxPerLine);
 	}
 
 	public Queue() {
@@ -90,10 +90,10 @@ public class Queue extends DisplayEntity {
 	 * Inserts the specified element at the specified position in this Queue.
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
 	 */
-	public void add( int i, DisplayEntity perf ) {
+	private void add(int i, DisplayEntity ent) {
 		this.updateStatistics();  // update the queue length distribution
-		itemList.add( i, perf );
-		timeAddedList.add( i, this.getSimTime() );
+		itemList.add(i, ent);
+		timeAddedList.add(i, this.getSimTime());
 		this.updateStatistics();  // update the min and max queue length
 		numberAdded++;
 	}
@@ -101,8 +101,8 @@ public class Queue extends DisplayEntity {
 	/**
 	 * Add an entity to the end of the queue
 	 */
-	public void addLast( DisplayEntity perf ) {
-		this.add(itemList.size(), perf);
+	public void addLast(DisplayEntity ent) {
+		this.add(itemList.size(), ent);
 	}
 
 	/**
@@ -113,13 +113,11 @@ public class Queue extends DisplayEntity {
 			error("Index: %d is beyond the end of the queue.", i);
 
 		this.updateStatistics();  // update the queue length distribution
-		DisplayEntity out = itemList.remove(i);
-		//double queueTime = this.getSimTime() - timeAddedList.remove(i);
+		DisplayEntity ent = itemList.remove(i);
 		timeAddedList.remove(i);
 		this.updateStatistics();  // update the min and max queue length
 		numberRemoved++;
-
-		return out;
+		return ent;
 	}
 
 	/**
@@ -148,7 +146,7 @@ public class Queue extends DisplayEntity {
 	 * will line up according to the orientation of the queue.
 	 */
 	@Override
-	public void updateGraphics( double simTime ) {
+	public void updateGraphics(double simTime) {
 
 		Vec3d queueOrientation = getOrientation();
 		Vec3d qSize = this.getSize();
@@ -159,25 +157,26 @@ public class Queue extends DisplayEntity {
 		double maxWidth = 0;
 
 		// find widest vessel
-		if( itemList.size() >  maxPerLineInput.getValue()){
-			for (int j = 0; j < itemList.size(); j++) {
-				 maxWidth = Math.max(maxWidth, itemList.get(j).getSize().y);
+		if (itemList.size() >  maxPerLine.getValue()){
+			for (DisplayEntity ent : itemList) {
+				 maxWidth = Math.max(maxWidth, ent.getSize().y);
 			 }
 		}
+
 		// update item locations
 		for (int i = 0; i < itemList.size(); i++) {
 
 			// if new row is required, set reset distanceX and move distanceY up one row
-			if( i > 0 && i % maxPerLineInput.getValue() == 0 ){
+			if( i > 0 && i % maxPerLine.getValue() == 0 ){
 				 distanceX = 0.5d * qSize.x;
-				 distanceY += spacingInput.getValue() + maxWidth;
+				 distanceY += spacing.getValue() + maxWidth;
 			}
 
 			DisplayEntity item = itemList.get(i);
 			// Rotate each transporter about its center so it points to the right direction
 			item.setOrientation(queueOrientation);
 			Vec3d itemSize = item.getSize();
-			distanceX += spacingInput.getValue() + 0.5d * itemSize.x;
+			distanceX += spacing.getValue() + 0.5d * itemSize.x;
 			tmp.set3(-distanceX / qSize.x, distanceY/qSize.y, 0.0d);
 
 			// increment total distance
@@ -210,7 +209,7 @@ public class Queue extends DisplayEntity {
 		queueLengthDist.clear();
 	}
 
-	public void updateStatistics() {
+	private void updateStatistics() {
 
 		int queueSize = itemList.size();  // present number of entities in the queue
 		minElements = Math.min(queueSize, minElements);
@@ -218,13 +217,13 @@ public class Queue extends DisplayEntity {
 
 		// Add the necessary number of additional bins to the queue length distribution
 		int n = queueSize + 1 - queueLengthDist.size();
-		for( int i=0; i<n; i++ ) {
+		for (int i = 0; i < n; i++) {
 			queueLengthDist.add(0.0);
 		}
 
 		double simTime = this.getSimTime();
 		double dt = simTime - timeOfLastUpdate;
-		if( dt > 0.0 ) {
+		if (dt > 0.0) {
 			elementSeconds += dt * queueSize;
 			squaredElementSeconds += dt * queueSize * queueSize;
 			queueLengthDist.addAt(dt,queueSize);  // add dt to the entry at index queueSize
@@ -267,7 +266,7 @@ public class Queue extends DisplayEntity {
 		double dt = simTime - timeOfLastUpdate;
 		int queueSize = itemList.size();
 		double totalTime = simTime - startOfStatisticsCollection;
-		if( totalTime > 0.0 ) {
+		if (totalTime > 0.0) {
 			return (elementSeconds + dt*queueSize)/totalTime;
 		}
 		return 0.0;
@@ -282,7 +281,7 @@ public class Queue extends DisplayEntity {
 		int queueSize = itemList.size();
 		double mean = this.getQueueLengthAverage(simTime);
 		double totalTime = simTime - startOfStatisticsCollection;
-		if( totalTime > 0.0 ) {
+		if (totalTime > 0.0) {
 			return Math.sqrt( (squaredElementSeconds + dt*queueSize*queueSize)/totalTime - mean*mean );
 		}
 		return 0.0;
@@ -303,7 +302,7 @@ public class Queue extends DisplayEntity {
 	public Integer getQueueLengthMaximum(double simTime) {
 		// An entity that is added to an empty queue and removed immediately
 		// does not count as a non-zero queue length
-		if( maxElements == 1 && queueLengthDist.get(1) == 0.0 )
+		if (maxElements == 1 && queueLengthDist.get(1) == 0.0)
 			return 0;
 		return maxElements;
 	}
@@ -317,11 +316,11 @@ public class Queue extends DisplayEntity {
 		double dt = simTime - timeOfLastUpdate;
 		int queueSize = itemList.size();
 		double totalTime = simTime - startOfStatisticsCollection;
-		if( totalTime > 0.0 ) {
-			if( ret.size() == 0 )
+		if (totalTime > 0.0) {
+			if (ret.size() == 0)
 				ret.add(0.0);
 			ret.addAt(dt, queueSize);  // adds dt to the entry at index queueSize
-			for( int i=0; i<ret.size(); i++ ) {
+			for (int i = 0; i < ret.size(); i++) {
 				ret.set(i, ret.get(i)/totalTime);
 			}
 		}
@@ -337,7 +336,7 @@ public class Queue extends DisplayEntity {
 	    unitType = TimeUnit.class,
 	  reportable = true)
 	public double getAverageQueueTime(double simTime) {
-		if( numberAdded == 0 )
+		if (numberAdded == 0)
 			return 0.0;
 		double dt = simTime - timeOfLastUpdate;
 		int queueSize = itemList.size();
