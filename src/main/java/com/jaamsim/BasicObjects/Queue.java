@@ -27,7 +27,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class Queue extends DisplayEntity {
+public class Queue extends LinkedComponent {
 
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
 	         example = "Queue1 Spacing { 1 m }")
@@ -47,12 +47,12 @@ public class Queue extends DisplayEntity {
 	protected int maxElements; // maximum observed number of entities in the queue
 	protected double elementSeconds;  // total time that entities have spent in the queue
 	protected double squaredElementSeconds;  // total time for the square of the number of elements in the queue
-	protected int numberAdded;    // number of entities that have been added to the queue
-	protected int numberRemoved;  // number of entities that have been removed from the queue
 	protected DoubleVector queueLengthDist;  // entry at position n is the total time the queue has had length n
 
 	{
 		this.setDefaultSize(new Vec3d(0.5, 0.5, 0.5));
+		testEntity.setHidden(true);
+		nextComponentInput.setHidden(true);
 
 		spacing = new ValueInput("Spacing", "Key Inputs", 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
@@ -86,6 +86,12 @@ public class Queue extends DisplayEntity {
 	// QUEUE HANDLING METHODS
 	// ******************************************************************************************************
 
+	@Override
+	public void addDisplayEntity(DisplayEntity ent) {
+		super.addDisplayEntity(ent);
+		this.addLast(ent);
+	}
+
 	/**
 	 * Inserts the specified element at the specified position in this Queue.
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
@@ -95,7 +101,6 @@ public class Queue extends DisplayEntity {
 		itemList.add(i, ent);
 		timeAddedList.add(i, this.getSimTime());
 		this.updateStatistics();  // update the min and max queue length
-		numberAdded++;
 	}
 
 	/**
@@ -116,7 +121,7 @@ public class Queue extends DisplayEntity {
 		DisplayEntity ent = itemList.remove(i);
 		timeAddedList.remove(i);
 		this.updateStatistics();  // update the min and max queue length
-		numberRemoved++;
+		this.incrementNumberProcessed();
 		return ent;
 	}
 
@@ -204,8 +209,6 @@ public class Queue extends DisplayEntity {
 		maxElements = itemList.size();
 		elementSeconds = 0.0;
 		squaredElementSeconds = 0.0;
-		numberAdded = 0;
-		numberRemoved = 0;
 		queueLengthDist.clear();
 	}
 
@@ -234,22 +237,6 @@ public class Queue extends DisplayEntity {
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************
-
-	@Output(name = "NumberAdded",
-	 description = "The number of entities that have been added to the queue.",
-	    unitType = DimensionlessUnit.class,
-	  reportable = true)
-	public Integer getNumberAdded(double simTime) {
-		return numberAdded;
-	}
-
-	@Output(name = "NumberRemoved",
-	 description = "The number of entities that have been removed from the queue.",
-	    unitType = DimensionlessUnit.class,
-	  reportable = true)
-	public Integer getNumberRemoved(double simTime) {
-		return numberRemoved;
-	}
 
 	@Output(name = "QueueLength",
 	 description = "The present number of entities in the queue.",
@@ -336,11 +323,12 @@ public class Queue extends DisplayEntity {
 	    unitType = TimeUnit.class,
 	  reportable = true)
 	public double getAverageQueueTime(double simTime) {
-		if (numberAdded == 0)
+		int n = this.getNumberAdded();
+		if (n == 0)
 			return 0.0;
 		double dt = simTime - timeOfLastUpdate;
 		int queueSize = itemList.size();
-		return (elementSeconds + dt*queueSize)/numberAdded;
+		return (elementSeconds + dt*queueSize)/n;
 	}
 
 }

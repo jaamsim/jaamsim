@@ -133,6 +133,14 @@ public abstract class LinkedComponent extends StateEntity {
 			nextComponentInput.getValue().addDisplayEntity(ent);
 	}
 
+	public int getNumberAdded() {
+		return numberAdded;
+	}
+
+	public void incrementNumberProcessed() {
+		numberProcessed++;
+	}
+
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************
