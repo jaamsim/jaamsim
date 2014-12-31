@@ -17,7 +17,6 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -124,29 +123,10 @@ public class Queue extends DisplayEntity {
 	}
 
 	/**
-	 * Removes the specified entity from the queue
-	 */
-	public void remove( DisplayEntity perf ) {
-		int i = itemList.indexOf(perf);
-		if( i >= 0 )
-			this.remove(i);
-
-		else
-			error("Entity:%s not found in queue.", perf);
-	}
-
-	/**
 	 * Removes the first entity from the queue
 	 */
 	public DisplayEntity removeFirst() {
 		return this.remove(0);
-	}
-
-	/**
-	 * Removes the last entity from the queue
-	 */
-	public DisplayEntity removeLast() {
-		return this.remove( itemList.size()-1 );
 	}
 
 	/**
@@ -209,36 +189,6 @@ public class Queue extends DisplayEntity {
 		}
 	}
 
-	public ArrayList<DisplayEntity> getItemList() {
-		return itemList;
-	}
-
-	public double getPhysicalLength() {
-		double length;
-
-		length = 0.0;
-		for( int x = 0; x < itemList.size(); x++ ) {
-			DisplayEntity item = itemList.get( x );
-			length += item.getSize().x + spacingInput.getValue();
-		}
-		return length;
-	}
-
-	/**
-	 * Returns the position for a new entity at the end of the queue.
-	 */
-	public Vec3d getEndVector3dFor(DisplayEntity perf) {
-		Vec3d qSize = this.getSize();
-		double distance = 0.5d * qSize.x;
-		for (int x = 0; x < itemList.size(); x++) {
-			DisplayEntity item = itemList.get(x);
-			distance += spacingInput.getValue() + item.getSize().x;
-		}
-		distance += spacingInput.getValue() + 0.5d * perf.getSize().x;
-		Vec3d tempAlign = new Vec3d(-distance / qSize.x, 0.0d, 0.0d);
-		return this.getPositionForAlignment(tempAlign);
-	}
-
 	// *******************************************************************************************************
 	// STATISTICS
 	// *******************************************************************************************************
@@ -285,25 +235,6 @@ public class Queue extends DisplayEntity {
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************
-
-	public void printUtilizationOn( FileEntity anOut ) {
-
-		if (isActive()) {
-			anOut.format( "%s\t", getName() );
-			anOut.format( "%d\t", this.getQueueLengthMinimum(0.0) );
-			anOut.format( "%d\t", this.getQueueLengthMaximum(0.0) );
-			anOut.format( "%.0f\t", this.getQueueLength(0.0) );
-			anOut.format( "\n" );
-		}
-	}
-
-	public void printUtilizationHeaderOn( FileEntity anOut ) {
-		anOut.format( "Name\t" );
-		anOut.format( "Min Elements\t" );
-		anOut.format( "Max Elements\t" );
-		anOut.format( "Present Elements\t" );
-		anOut.format( "\n" );
-	}
 
 	@Output(name = "NumberAdded",
 	 description = "The number of entities that have been added to the queue.",
