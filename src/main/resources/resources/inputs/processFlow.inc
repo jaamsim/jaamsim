@@ -73,8 +73,8 @@ EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator    
 EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink           }  Palette { 'Process Flow' }  DefaultDisplayModel { SinkIconModel            }
 Server                  JavaClass { com.jaamsim.BasicObjects.Server               }  Palette { 'Process Flow' }  DefaultDisplayModel { ServerIconModel          }
 Queue                   JavaClass { com.jaamsim.BasicObjects.Queue                }  Palette { 'Process Flow' }  DefaultDisplayModel { Triangle                 } IconFile { '<res>/images/Queue-24.png' }
-EntityConveyor          JavaClass { com.jaamsim.BasicObjects.EntityConveyor       }  Palette { 'Process Flow' }  DefaultDisplayModel { ScreenPointsModelDefault }
-EntityDelay             JavaClass { com.jaamsim.BasicObjects.EntityDelay          }  Palette { 'Process Flow' }  DefaultDisplayModel { ScreenPointsModelDefault }
+EntityConveyor          JavaClass { com.jaamsim.BasicObjects.EntityConveyor       }  Palette { 'Process Flow' }  DefaultDisplayModel { ScreenPointsModelDefault } IconFile { '<res>/images/Line-24.png' }
+EntityDelay             JavaClass { com.jaamsim.BasicObjects.EntityDelay          }  Palette { 'Process Flow' }  DefaultDisplayModel { ScreenPointsModelDefault } IconFile { '<res>/images/Line-24.png' }
 Resource                JavaClass { com.jaamsim.BasicObjects.Resource             }  Palette { 'Process Flow' }  DefaultDisplayModel { ResourceIconModel        }
 Seize                   JavaClass { com.jaamsim.BasicObjects.Seize                }  Palette { 'Process Flow' }  DefaultDisplayModel { SeizeIconModel           }
 Release                 JavaClass { com.jaamsim.BasicObjects.Release              }  Palette { 'Process Flow' }  DefaultDisplayModel { ReleaseIconModel         }
