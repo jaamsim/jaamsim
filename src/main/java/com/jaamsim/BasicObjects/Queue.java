@@ -97,10 +97,10 @@ public class Queue extends LinkedComponent {
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
 	 */
 	private void add(int i, DisplayEntity ent) {
-		this.updateStatistics();  // update the queue length distribution
+		int queueSize = itemList.size();  // present number of entities in the queue
+		this.updateStatistics(queueSize, queueSize+1);
 		itemList.add(i, ent);
 		timeAddedList.add(i, this.getSimTime());
-		this.updateStatistics();  // update the min and max queue length
 	}
 
 	/**
@@ -117,10 +117,11 @@ public class Queue extends LinkedComponent {
 		if (i >= itemList.size() || i < 0)
 			error("Index: %d is beyond the end of the queue.", i);
 
-		this.updateStatistics();  // update the queue length distribution
+		int queueSize = itemList.size();  // present number of entities in the queue
+		this.updateStatistics(queueSize, queueSize-1);
+
 		DisplayEntity ent = itemList.remove(i);
 		timeAddedList.remove(i);
-		this.updateStatistics();  // update the min and max queue length
 		this.incrementNumberProcessed();
 		return ent;
 	}
@@ -212,14 +213,13 @@ public class Queue extends LinkedComponent {
 		queueLengthDist.clear();
 	}
 
-	private void updateStatistics() {
+	private void updateStatistics(int oldValue, int newValue) {
 
-		int queueSize = itemList.size();  // present number of entities in the queue
-		minElements = Math.min(queueSize, minElements);
-		maxElements = Math.max(queueSize, maxElements);
+		minElements = Math.min(newValue, minElements);
+		maxElements = Math.max(newValue, maxElements);
 
 		// Add the necessary number of additional bins to the queue length distribution
-		int n = queueSize + 1 - queueLengthDist.size();
+		int n = newValue + 1 - queueLengthDist.size();
 		for (int i = 0; i < n; i++) {
 			queueLengthDist.add(0.0);
 		}
@@ -227,9 +227,9 @@ public class Queue extends LinkedComponent {
 		double simTime = this.getSimTime();
 		double dt = simTime - timeOfLastUpdate;
 		if (dt > 0.0) {
-			elementSeconds += dt * queueSize;
-			squaredElementSeconds += dt * queueSize * queueSize;
-			queueLengthDist.addAt(dt,queueSize);  // add dt to the entry at index queueSize
+			elementSeconds += dt * oldValue;
+			squaredElementSeconds += dt * oldValue * oldValue;
+			queueLengthDist.addAt(dt,oldValue);  // add dt to the entry at index queueSize
 			timeOfLastUpdate = simTime;
 		}
 	}
