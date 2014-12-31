@@ -17,6 +17,8 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -29,6 +31,12 @@ import com.jaamsim.units.TimeUnit;
 
 public class Queue extends LinkedComponent {
 
+	@Keyword(description = "The priority for positioning the received entity in the queue.\n" +
+			"Priority is integer valued and a lower numerical value indicates a higher priority.\n" +
+			"For example, priority 3 is higher than 4, and priorities 3, 3.2, and 3.8 are equivalent.",
+	         example = "Queue1 Priority { this.obj.Attrib1 }")
+	private final SampleExpInput priority;
+
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
 	         example = "Queue1 Spacing { 1 m }")
 	private final ValueInput spacing;
@@ -37,8 +45,7 @@ public class Queue extends LinkedComponent {
 			example = "Queue1 MaxPerLine { 4 }")
 	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
-	protected ArrayList<DisplayEntity> itemList;
-	private ArrayList<Double> timeAddedList;
+	protected ArrayList<QueueEntry> itemList;
 
 	//	Statistics
 	protected double timeOfLastUpdate; // time at which the statistics were last updated
@@ -54,6 +61,12 @@ public class Queue extends LinkedComponent {
 		testEntity.setHidden(true);
 		nextComponentInput.setHidden(true);
 
+		priority = new SampleExpInput("Priority", "Key Inputs", new SampleConstant(0));
+		priority.setUnitType(DimensionlessUnit.class);
+		priority.setEntity(this);
+		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(priority);
+
 		spacing = new ValueInput("Spacing", "Key Inputs", 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
 		spacing.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -64,9 +77,14 @@ public class Queue extends LinkedComponent {
 		this.addInput(maxPerLine);
 	}
 
+	@Override
+	public void validate() {
+		super.validate();
+		priority.validate();
+	}
+
 	public Queue() {
 		itemList = new ArrayList<>();
-		timeAddedList = new ArrayList<>();
 		queueLengthDist = new DoubleVector(10,10);
 	}
 
@@ -76,10 +94,15 @@ public class Queue extends LinkedComponent {
 
 		// Clear the entries in the queue
 		itemList.clear();
-		timeAddedList.clear();
 
 		// Clear statistics
 		this.clearStatistics();
+	}
+
+	private static class QueueEntry {
+		DisplayEntity entity;
+		double timeAdded;
+		int priority;
 	}
 
 	// ******************************************************************************************************
@@ -89,25 +112,44 @@ public class Queue extends LinkedComponent {
 	@Override
 	public void addDisplayEntity(DisplayEntity ent) {
 		super.addDisplayEntity(ent);
-		this.addLast(ent);
+
+		int pri = (int) priority.getValue().getNextSample(getSimTime());
+		for (int i=itemList.size()-1; i>=0; i--) {
+			if (itemList.get(i).priority <= pri) {
+				this.add(i+1, ent, pri);
+				return;
+			}
+		}
+		this.add(0, ent, pri);
 	}
 
 	/**
 	 * Inserts the specified element at the specified position in this Queue.
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
 	 */
-	private void add(int i, DisplayEntity ent) {
+	private void add(int i, DisplayEntity ent, int pri) {
+
 		int queueSize = itemList.size();  // present number of entities in the queue
 		this.updateStatistics(queueSize, queueSize+1);
-		itemList.add(i, ent);
-		timeAddedList.add(i, this.getSimTime());
+
+		QueueEntry entry = new QueueEntry();
+		entry.entity = ent;
+		entry.timeAdded = this.getSimTime();
+		entry.priority = pri;
+		itemList.add(i, entry);
+	}
+
+	public void add(int i, DisplayEntity ent) {
+		int pri = (int) priority.getValue().getNextSample(getSimTime());
+		this.add(i, ent, pri);
 	}
 
 	/**
 	 * Add an entity to the end of the queue
 	 */
 	public void addLast(DisplayEntity ent) {
-		this.add(itemList.size(), ent);
+		int pri = (int) priority.getValue().getNextSample(getSimTime());
+		this.add(itemList.size(), ent, pri);
 	}
 
 	/**
@@ -120,8 +162,8 @@ public class Queue extends LinkedComponent {
 		int queueSize = itemList.size();  // present number of entities in the queue
 		this.updateStatistics(queueSize, queueSize-1);
 
-		DisplayEntity ent = itemList.remove(i);
-		timeAddedList.remove(i);
+		QueueEntry entry = itemList.remove(i);
+		DisplayEntity ent = entry.entity;
 		this.incrementNumberProcessed();
 		return ent;
 	}
@@ -144,7 +186,7 @@ public class Queue extends LinkedComponent {
 	 * Returns the number of seconds spent by the first object in the queue
 	 */
 	public double getQueueTime() {
-		return this.getSimTime() - timeAddedList.get(0);
+		return this.getSimTime() - itemList.get(0).timeAdded;
 	}
 
 	/**
@@ -164,8 +206,8 @@ public class Queue extends LinkedComponent {
 
 		// find widest vessel
 		if (itemList.size() >  maxPerLine.getValue()){
-			for (DisplayEntity ent : itemList) {
-				 maxWidth = Math.max(maxWidth, ent.getSize().y);
+			for (QueueEntry entry : itemList) {
+				 maxWidth = Math.max(maxWidth, entry.entity.getSize().y);
 			 }
 		}
 
@@ -178,7 +220,7 @@ public class Queue extends LinkedComponent {
 				 distanceY += spacing.getValue() + maxWidth;
 			}
 
-			DisplayEntity item = itemList.get(i);
+			DisplayEntity item = itemList.get(i).entity;
 			// Rotate each transporter about its center so it points to the right direction
 			item.setOrientation(queueOrientation);
 			Vec3d itemSize = item.getSize();
