@@ -14,7 +14,6 @@
  */
 package com.sandwell.JavaSimulation3D;
 
-import com.jaamsim.input.InputErrorException;
 
 /**
  * Class to implement Audition-style clock calculations. Re-implementing the
@@ -25,10 +24,6 @@ public class Clock{
 	private static final int[] firstDayOfMonth;
 	private static final int[] daysInMonth;
 	private static final int[] secsInMonth;
-
-	private static int startingYear;
-	private static int startingMonth;
-	private static int startingDay;
 
 	private static final double HOURS_PER_YEAR = 8760.0d;
 	private static final double HOURS_PER_DAY = 24.0d;
@@ -68,11 +63,6 @@ public class Clock{
 			secsInMonth[i] = daysInMonth[i] * 24 * 60 * 60;
 	}
 
-	public static void setStartDate(int year, int month, int day) {
-		startingYear = year;
-		startingMonth = month;
-		startingDay = day;
-	}
 
 public static class ClockTime {
 	public final int year;
@@ -181,18 +171,6 @@ public static class ClockTime {
 		return time % 24.0;
 	}
 
-	public static int getStartingYear() {
-		return startingYear;
-	}
-
-	public static int getStartingMonth() {
-		return startingMonth;
-	}
-
-	public static int getStartingDay() {
-		return startingDay;
-	}
-
 	/**
 	 * Return the number of days in the given month 1-12
 	 */
@@ -205,19 +183,6 @@ public static class ClockTime {
 	 */
 	public static int getSecsInMonthIdx(int idx) {
 		return secsInMonth[idx];
-	}
-
-	public static void getStartingDateFromString( String startingDate ) {
-
-		String[] startingVal = startingDate.split( "-" );
-
-		if( startingVal.length < 3 ) {
-			throw new InputErrorException( "Starting date string not formatted correctly" );
-		}
-
-		startingYear = Integer.parseInt( startingVal[0] );
-		startingMonth = Integer.parseInt( startingVal[1] );
-		startingDay = Integer.parseInt( startingVal[2] );
 	}
 
 	/**

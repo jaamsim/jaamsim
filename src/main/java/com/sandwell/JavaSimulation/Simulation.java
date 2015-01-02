@@ -24,11 +24,9 @@ import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
@@ -39,7 +37,6 @@ import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation3D.Clock;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
@@ -56,12 +53,6 @@ public class Simulation extends Entity {
 	                "simulation run will be the sum of Initialization and Duration.",
 	         example = "Simulation Initialization { 720 h }")
 	private static final ValueInput initializationTime;
-
-	@Keyword(description = "Date at which the simulation run is started (yyyy-mm-dd). This " +
-	                "input has no effect on the simulation results unless the seasonality " +
-	                "factors vary from month to month.",
-	         example = "Simulation StartDate { 2011-01-01 }")
-	private static final StringInput startDate;
 
 	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
 	         example = "Simulation StartTime { 2160 h }")
@@ -154,8 +145,6 @@ public class Simulation extends Entity {
 		pauseTime.setUnitType(TimeUnit.class);
 		pauseTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
-		startDate = new StringInput("StartDate", "Key Inputs", null);
-
 		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
 		startTimeInput.setUnitType(TimeUnit.class);
 		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -183,9 +172,6 @@ public class Simulation extends Entity {
 		showPropertyViewer = new BooleanInput("ShowPropertyViewer", "Key Inputs", false);
 		showLogViewer = new BooleanInput("ShowLogViewer", "Key Inputs", false);
 
-		// Create clock
-		Clock.setStartDate(2000, 1, 1);
-
 		// Initialize basic model information
 		startTime = 0.0;
 		endTime = 8760.0*3600.0;
@@ -195,8 +181,6 @@ public class Simulation extends Entity {
 		this.addInput(runDuration);
 		this.addInput(initializationTime);
 		this.addInput(pauseTime);
-
-		this.addInput(startDate);
 
 		this.addInput(startTimeInput);
 
@@ -220,7 +204,6 @@ public class Simulation extends Entity {
 		this.addInput(showLogViewer);
 
 		attributeDefinitionList.setHidden(true);
-		startDate.setHidden(true);
 		startTimeInput.setHidden(true);
 		traceEventsInput.setHidden(true);
 		verifyEventsInput.setHidden(true);
@@ -239,15 +222,6 @@ public class Simulation extends Entity {
 			}
 		}
 		return myInstance;
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		if( startDate.getValue() != null && !Tester.isDate( startDate.getValue() ) ) {
-			throw new InputErrorException("The value for Start Date must be a valid date.");
-		}
 	}
 
 	@Override
@@ -312,7 +286,6 @@ public class Simulation extends Entity {
 		updateRealTime();
 		exitAtStop.reset();
 
-		startDate.reset();
 		startTimeInput.reset();
 
 		showModelBuilder.reset();
@@ -321,9 +294,6 @@ public class Simulation extends Entity {
 		showOutputViewer.reset();
 		showPropertyViewer.reset();
 		showLogViewer.reset();
-
-		// Create clock
-		Clock.setStartDate(2000, 1, 1);
 
 		// Initialize basic model information
 		startTime = 0.0;
@@ -380,11 +350,7 @@ public class Simulation extends Entity {
 		setSimTimeScale(simTimeScaleInput.getValue());
 		FrameBox.setSecondsPerTick(3600.0d / simTimeScaleInput.getValue());
 
-		if( startDate.getValue() != null ) {
-			Clock.getStartingDateFromString( startDate.getValue() );
-		}
-		double startTimeHours = startTimeInput.getValue() / 3600.0d;
-		startTime = 3600.0d * Clock.calcTimeForYear_Month_Day_Hour(1, Clock.getStartingMonth(), Clock.getStartingDay(), startTimeHours);
+		startTime = startTimeInput.getValue();
 		endTime = startTime + Simulation.getInitializationTime() + Simulation.getRunDuration();
 
 		evt.scheduleProcessExternal(0, Entity.PRIO_DEFAULT, false, new InitModelTarget(), null);
