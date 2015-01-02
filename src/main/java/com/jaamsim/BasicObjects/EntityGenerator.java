@@ -65,11 +65,13 @@ public class EntityGenerator extends LinkedService {
 		firstArrivalTime = new SampleExpInput("FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType(TimeUnit.class);
 		firstArrivalTime.setEntity(this);
+		firstArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(firstArrivalTime);
 
 		interArrivalTime = new SampleExpInput("InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
 		interArrivalTime.setUnitType(TimeUnit.class);
 		interArrivalTime.setEntity(this);
+		interArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(interArrivalTime);
 
 		entitiesPerArrival = new SampleExpInput("EntitiesPerArrival", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));

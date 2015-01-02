@@ -52,6 +52,7 @@ public class Assemble extends LinkedService {
 		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
+		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
 
 		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", "Key Inputs", null);
@@ -60,6 +61,7 @@ public class Assemble extends LinkedService {
 		choice = new SampleExpInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1));
 		choice.setUnitType(DimensionlessUnit.class);
 		choice.setEntity(this);
+		choice.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(choice);
 
 		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);

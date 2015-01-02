@@ -44,6 +44,7 @@ public class Server extends LinkedService {
 		serviceTimeInput = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTimeInput.setUnitType(TimeUnit.class);
 		serviceTimeInput.setEntity(this);
+		serviceTimeInput.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTimeInput);
 
 		waitQueueInput = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);

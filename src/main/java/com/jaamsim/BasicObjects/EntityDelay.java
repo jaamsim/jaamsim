@@ -77,6 +77,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		duration = new SampleExpInput("Duration", "Key Inputs", null);
 		duration.setUnitType(TimeUnit.class);
 		duration.setEntity(this);
+		duration.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(duration);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<>();

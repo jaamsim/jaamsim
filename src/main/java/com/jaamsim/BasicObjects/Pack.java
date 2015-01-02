@@ -61,11 +61,13 @@ public class Pack extends LinkedService {
 		numberOfEntities = new SampleExpInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setEntity(this);
+		numberOfEntities.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
 		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
+		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
 	}
 

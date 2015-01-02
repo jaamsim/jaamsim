@@ -50,10 +50,11 @@ public class Resource extends DisplayEntity {
 	protected DoubleVector unitsInUseDist;  // entry at position n is the total time that n units have been in use
 
 	{
-		capacity = new SampleExpInput( "Capacity", "Key Inputs", new SampleConstant(1.0));
+		capacity = new SampleExpInput("Capacity", "Key Inputs", new SampleConstant(1.0));
 		capacity.setUnitType(DimensionlessUnit.class);
 		capacity.setEntity(this);
-		this.addInput( capacity);
+		capacity.setValidRange(0, Double.POSITIVE_INFINITY);
+		this.addInput(capacity);
 	}
 
 	public Resource() {

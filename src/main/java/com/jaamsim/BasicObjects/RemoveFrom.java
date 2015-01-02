@@ -35,6 +35,7 @@ public class RemoveFrom extends Unpack {
 		numberOfEntities = new SampleExpInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setEntity(this);
+		numberOfEntities.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
 		nextForContainers = new EntityInput<>(LinkedComponent.class, "NextForContainers", "Key Inputs", null);

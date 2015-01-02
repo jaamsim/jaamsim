@@ -36,13 +36,14 @@ public class Branch extends LinkedComponent {
 	{
 		nextComponentInput.setHidden(true);
 
-		nextComponentList = new EntityListInput<>( LinkedComponent.class, "NextComponentList", "Key Inputs", null);
-		this.addInput( nextComponentList);
+		nextComponentList = new EntityListInput<>(LinkedComponent.class, "NextComponentList", "Key Inputs", null);
+		this.addInput(nextComponentList);
 
-		choice = new SampleExpInput( "Choice", "Key Inputs", null);
-		choice.setUnitType( DimensionlessUnit.class );
+		choice = new SampleExpInput("Choice", "Key Inputs", null);
+		choice.setUnitType(DimensionlessUnit.class );
 		choice.setEntity(this);
-		this.addInput( choice);
+		choice.setValidRange(1, Double.POSITIVE_INFINITY);
+		this.addInput(choice);
 	}
 
 	@Override
