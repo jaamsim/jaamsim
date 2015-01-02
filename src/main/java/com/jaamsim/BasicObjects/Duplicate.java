@@ -34,8 +34,8 @@ public class Duplicate extends LinkedComponent {
 	public Duplicate() {}
 
 	@Override
-	public void addDisplayEntity(DisplayEntity ent) {
-		super.addDisplayEntity(ent);
+	public void addEntity(DisplayEntity ent) {
+		super.addEntity(ent);
 
 		// Make the duplicates and send them to the targets
 		int n = 1;
@@ -49,7 +49,7 @@ public class Duplicate extends LinkedComponent {
 			dup.earlyInit();
 
 			// Send the duplicate to the target component
-			target.addDisplayEntity(dup);
+			target.addEntity(dup);
 			n++;
 		}
 

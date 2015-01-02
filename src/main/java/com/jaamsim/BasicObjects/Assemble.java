@@ -97,8 +97,8 @@ public class Assemble extends LinkedService {
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
-		super.addDisplayEntity(ent);
+	public void addEntity( DisplayEntity ent ) {
+		super.addEntity(ent);
 
 		// Choose the queue in which to place the entity
 		int ind = (int) choice.getValue().getNextSample(getSimTime());
@@ -106,7 +106,7 @@ public class Assemble extends LinkedService {
 		ind = Math.min(ind, waitQueueList.getValue().size());
 
 		// Add the entity to the queue
-		waitQueueList.getValue().get(ind-1).addDisplayEntity(ent);
+		waitQueueList.getValue().get(ind-1).addEntity(ent);
 
 		// If necessary, wake up the server
 		if (!this.isBusy()) {

@@ -46,8 +46,8 @@ public class Assign extends LinkedComponent {
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
-		super.addDisplayEntity(ent);
+	public void addEntity( DisplayEntity ent ) {
+		super.addEntity(ent);
 
 		// Evaluate the assignment expressions
 		for (ExpParser.Assignment ass : assignmentList.getValue()) {

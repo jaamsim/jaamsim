@@ -72,11 +72,11 @@ public class Server extends LinkedService {
 	}
 
 	@Override
-	public void addDisplayEntity(DisplayEntity ent) {
-		super.addDisplayEntity(ent);
+	public void addEntity(DisplayEntity ent) {
+		super.addEntity(ent);
 
 		// Add the entity to the queue
-		waitQueueInput.getValue().addDisplayEntity(ent);
+		waitQueueInput.getValue().addEntity(ent);
 
 		// If necessary, wake up the server
 		if (!this.isBusy() && this.isOpen()) {

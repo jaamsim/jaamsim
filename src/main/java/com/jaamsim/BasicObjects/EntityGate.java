@@ -55,13 +55,13 @@ public class EntityGate extends LinkedService {
 	}
 
 	@Override
-	public void addDisplayEntity(DisplayEntity ent) {
-		super.addDisplayEntity(ent);
+	public void addEntity(DisplayEntity ent) {
+		super.addEntity(ent);
 
 		// If the gate is closed or other entities are already queued, then add the entity to the queue
 		Queue queue = waitQueue.getValue();
 		if (queue.getCount() > 0 || this.isClosed()) {
-			queue.addDisplayEntity(ent);
+			queue.addEntity(ent);
 			return;
 		}
 

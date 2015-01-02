@@ -51,8 +51,8 @@ public class EntityLogger extends LinkedComponent {
 	}
 
 	@Override
-	public void addDisplayEntity(DisplayEntity ent) {
-		super.addDisplayEntity(ent);
+	public void addEntity(DisplayEntity ent) {
+		super.addEntity(ent);
 
 		// Log the entity's outputs
 		file.format("%n");

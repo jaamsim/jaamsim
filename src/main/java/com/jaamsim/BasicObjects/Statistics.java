@@ -64,8 +64,8 @@ public class Statistics extends LinkedComponent {
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
-		super.addDisplayEntity(ent);
+	public void addEntity( DisplayEntity ent ) {
+		super.addEntity(ent);
 
 		// Update the statistics
 		double val = this.getVariableValue(this.getSimTime());

@@ -67,13 +67,13 @@ public class Seize extends LinkedComponent {
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
-		super.addDisplayEntity(ent);
+	public void addEntity( DisplayEntity ent ) {
+		super.addEntity(ent);
 		Queue queue = waitQueue.getValue();
 
 		// If other entities are queued already or insufficient units are available, then add the entity to the queue
 		if( queue.getCount() > 0 || !this.checkResources() ) {
-			queue.addDisplayEntity(ent);
+			queue.addEntity(ent);
 			return;
 		}
 

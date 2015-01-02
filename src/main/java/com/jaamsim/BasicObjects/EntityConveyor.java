@@ -118,8 +118,8 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 	}
 
 	@Override
-	public void addDisplayEntity(DisplayEntity ent ) {
-		super.addDisplayEntity(ent);
+	public void addEntity(DisplayEntity ent ) {
+		super.addEntity(ent);
 
 		// Add the entity to the conveyor
 		entityList.add(ent);

@@ -39,7 +39,7 @@ public abstract class LinkedComponent extends StateEntity {
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 			example = "EntityGenerator1 NextComponent { Server1 }")
-	protected final EntityInput<LinkedComponent> nextComponentInput;
+	protected final EntityInput<LinkedComponent> nextComponent;
 
 	@Keyword(description = "The state to be assigned to each entity on arrival at this object.\n" +
 			"No state is assigned if the entry is blank.",
@@ -55,8 +55,8 @@ public abstract class LinkedComponent extends StateEntity {
 		testEntity = new EntityInput<>(DisplayEntity.class, "TestEntity", "Key Inputs", null);
 		this.addInput(testEntity);
 
-		nextComponentInput = new EntityInput<>(LinkedComponent.class, "NextComponent", "Key Inputs", null);
-		this.addInput(nextComponentInput);
+		nextComponent = new EntityInput<>(LinkedComponent.class, "NextComponent", "Key Inputs", null);
+		this.addInput(nextComponent);
 
 		stateAssignment = new StringInput("StateAssignment", "Key Inputs", "");
 		this.addInput(stateAssignment);
@@ -77,7 +77,7 @@ public abstract class LinkedComponent extends StateEntity {
 		super.validate();
 
 		// Confirm that the next entity in the chain has been specified
-		if (!nextComponentInput.getHidden() &&	nextComponentInput.getValue() == null) {
+		if (!nextComponent.getHidden() && nextComponent.getValue() == null) {
 			throw new InputErrorException("The keyword NextComponent must be set.");
 		}
 
@@ -112,7 +112,7 @@ public abstract class LinkedComponent extends StateEntity {
 	 * Receives the specified entity from an upstream component.
 	 * @param ent - the entity received from upstream.
 	 */
-	public void addDisplayEntity(DisplayEntity ent) {
+	public void addEntity(DisplayEntity ent) {
 
 		receivedEntity = ent;
 		numberAdded++;
@@ -129,8 +129,8 @@ public abstract class LinkedComponent extends StateEntity {
 	public void sendToNextComponent(DisplayEntity ent) {
 		numberProcessed++;
 		releaseTime = this.getSimTime();
-		if( nextComponentInput.getValue() != null )
-			nextComponentInput.getValue().addDisplayEntity(ent);
+		if( nextComponent.getValue() != null )
+			nextComponent.getValue().addEntity(ent);
 	}
 
 	public int getNumberAdded() {

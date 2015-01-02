@@ -43,7 +43,7 @@ public class AddTo extends Pack {
 	}
 
 	@Override
-	public void addDisplayEntity(DisplayEntity ent) {
+	public void addEntity(DisplayEntity ent) {
 
 		// Add an incoming container to its queue
 		if (ent instanceof EntityContainer) {
@@ -57,7 +57,7 @@ public class AddTo extends Pack {
 			}
 		}
 		else {
-			super.addDisplayEntity(ent);
+			super.addEntity(ent);
 		}
 	}
 

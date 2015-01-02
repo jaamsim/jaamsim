@@ -99,11 +99,11 @@ public class Pack extends LinkedService {
 	}
 
 	@Override
-	public void addDisplayEntity(DisplayEntity ent) {
-		super.addDisplayEntity(ent);
+	public void addEntity(DisplayEntity ent) {
+		super.addEntity(ent);
 
 		// Add the entity to the queue
-		waitQueue.getValue().addDisplayEntity(ent);
+		waitQueue.getValue().addEntity(ent);
 
 		// If necessary, restart processing
 		if (!this.isBusy()) {

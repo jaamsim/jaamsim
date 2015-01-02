@@ -162,8 +162,8 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	}
 
 	@Override
-	public void addDisplayEntity(DisplayEntity ent) {
-		super.addDisplayEntity(ent);
+	public void addEntity(DisplayEntity ent) {
+		super.addEntity(ent);
 
 		// Select the delay time for this entity
 		double simTime = this.getSimTime();

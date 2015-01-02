@@ -65,8 +65,8 @@ public class SetGraphics extends LinkedComponent {
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
-		super.addDisplayEntity(ent);
+	public void addEntity( DisplayEntity ent ) {
+		super.addEntity(ent);
 
 		// Choose the new graphics for this entity
 		int i = (int) choice.getValue().getNextSample(this.getSimTime());

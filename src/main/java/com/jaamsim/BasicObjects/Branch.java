@@ -34,7 +34,7 @@ public class Branch extends LinkedComponent {
 	private final SampleExpInput choice;
 
 	{
-		nextComponentInput.setHidden(true);
+		nextComponent.setHidden(true);
 
 		nextComponentList = new EntityListInput<>(LinkedComponent.class, "NextComponentList", "Key Inputs", null);
 		this.addInput(nextComponentList);
@@ -64,8 +64,8 @@ public class Branch extends LinkedComponent {
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
-		super.addDisplayEntity(ent);
+	public void addEntity( DisplayEntity ent ) {
+		super.addEntity(ent);
 
 		// Choose the next component for this entity
 		int i = (int) choice.getValue().getNextSample(this.getSimTime());
@@ -74,7 +74,7 @@ public class Branch extends LinkedComponent {
 			      i, nextComponentList.getValue());
 
 		// Pass the entity to the next component
-		nextComponentList.getValue().get(i-1).addDisplayEntity(ent);
+		nextComponentList.getValue().get(i-1).addEntity(ent);
 	}
 
 }

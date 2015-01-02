@@ -50,8 +50,8 @@ public class EntitySignal extends LinkedComponent {
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
-		super.addDisplayEntity(ent);
+	public void addEntity( DisplayEntity ent ) {
+		super.addEntity(ent);
 
 		// Signal the target threshold
 		targetSignalThreshold.getValue().setOpen(newState.getValue());

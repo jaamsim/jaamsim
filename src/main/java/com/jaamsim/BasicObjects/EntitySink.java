@@ -22,14 +22,14 @@ import com.jaamsim.Graphics.DisplayEntity;
 public class EntitySink extends LinkedComponent {
 
 	{
-		nextComponentInput.setHidden(true);
+		nextComponent.setHidden(true);
 		testEntity.setHidden(true);
 		stateAssignment.setHidden(true);
 	}
 
 	@Override
-	public void addDisplayEntity( DisplayEntity ent ) {
-		super.addDisplayEntity(ent);
+	public void addEntity( DisplayEntity ent ) {
+		super.addEntity(ent);
 
 		// Only increments the number process when there is no next entity
 		this.sendToNextComponent(ent);

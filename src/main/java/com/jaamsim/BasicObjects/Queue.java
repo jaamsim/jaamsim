@@ -59,7 +59,7 @@ public class Queue extends LinkedComponent {
 	{
 		this.setDefaultSize(new Vec3d(0.5, 0.5, 0.5));
 		testEntity.setHidden(true);
-		nextComponentInput.setHidden(true);
+		nextComponent.setHidden(true);
 
 		priority = new SampleExpInput("Priority", "Key Inputs", new SampleConstant(0));
 		priority.setUnitType(DimensionlessUnit.class);
@@ -110,8 +110,8 @@ public class Queue extends LinkedComponent {
 	// ******************************************************************************************************
 
 	@Override
-	public void addDisplayEntity(DisplayEntity ent) {
-		super.addDisplayEntity(ent);
+	public void addEntity(DisplayEntity ent) {
+		super.addEntity(ent);
 
 		int pri = (int) priority.getValue().getNextSample(getSimTime());
 		for (int i=itemList.size()-1; i>=0; i--) {

@@ -57,7 +57,7 @@ public class RemoveFrom extends Unpack {
 	@Override
 	protected void disposeContainer(EntityContainer c) {
 		if( nextForContainers.getValue() != null )
-			nextForContainers.getValue().addDisplayEntity(c);
+			nextForContainers.getValue().addEntity(c);
 	}
 
 	@Override
