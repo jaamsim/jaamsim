@@ -1615,10 +1615,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Bring the Control Panel to the front (along with any open Tools)
 		gui.toFront();
-
-		// Trigger an extra redraw to ensure that the view windows are ready
-		if (View.getAll().size() > 0)
-			RenderManager.redraw();
 	}
 
 	public static class SpeedFactorListener implements ChangeListener {
