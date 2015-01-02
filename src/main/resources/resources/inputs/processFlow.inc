@@ -22,7 +22,6 @@ Define ObjectType {
 	Unpack
 	AddTo
 	RemoveFrom
-	QueueRecorder
 	EntityLogger
 	Statistics
 }
@@ -92,7 +91,6 @@ Pack                    JavaClass { com.jaamsim.BasicObjects.Pack               
 Unpack                  JavaClass { com.jaamsim.BasicObjects.Unpack               }  Palette { 'Process Flow' }  DefaultDisplayModel { UnpackIconModel          }
 AddTo                   JavaClass { com.jaamsim.BasicObjects.AddTo                }  Palette { 'Process Flow' }  DefaultDisplayModel { AddToIconModel           }
 RemoveFrom              JavaClass { com.jaamsim.BasicObjects.RemoveFrom           }  Palette { 'Process Flow' }  DefaultDisplayModel { RemoveFromIconModel      }
-QueueRecorder           JavaClass { com.sandwell.JavaSimulation3D.QueueRecorder   }  Palette { 'Process Flow' }  DefaultDisplayModel { Cube                     }  DragAndDrop { FALSE }
 EntityLogger            JavaClass { com.jaamsim.BasicObjects.EntityLogger         }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityLoggerIconModel    }
 Statistics              JavaClass { com.jaamsim.BasicObjects.Statistics           }  Palette { 'Process Flow' }  DefaultDisplayModel { StatisticsIconModel      }
 
@@ -119,7 +117,6 @@ Pack               Description { 'Insert entities to a new EntityContainer.' }
 Unpack             Description { 'Removes all the entities from an EntityContainer.' }
 AddTo              Description { 'Add entities to an existing EntityContainer.' }
 RemoveFrom         Description { 'Removes some or all of the entities in an EntityContainer.' }
-QueueRecorder      Description { 'Logs an entry every time the specified queue receives or releases an entity.' }
 EntityLogger       Description { 'Records the output and state data for a generated entity in an output log.' }
 Statistics         Description { 'Collects statistics from the received entities.' }
 

@@ -17,7 +17,6 @@ package com.sandwell.JavaSimulation3D;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -52,7 +51,6 @@ public class Queue extends DisplayEntity {
 	protected int numberAdded;    // number of entities that have been added to the queue
 	protected int numberRemoved;  // number of entities that have been removed from the queue
 	protected DoubleVector queueLengthDist;  // entry at position n is the total time the queue has had length n
-	protected ArrayList<QueueRecorder> recorderList;
 
 	{
 		this.setDefaultSize(new Vec3d(0.5, 0.5, 0.5));
@@ -83,13 +81,6 @@ public class Queue extends DisplayEntity {
 
 		// Clear statistics
 		this.clearStatistics();
-
-		recorderList = new ArrayList<>();
-		for( QueueRecorder rec : Entity.getClonesOfIterator( QueueRecorder.class ) ) {
-			if( rec.getQueueList().contains( this ) ) {
-				recorderList.add( rec );
-			}
-		}
 	}
 
 	// ******************************************************************************************************
@@ -106,10 +97,6 @@ public class Queue extends DisplayEntity {
 		timeAddedList.add( i, this.getSimTime() );
 		this.updateStatistics();  // update the min and max queue length
 		numberAdded++;
-
-		for( QueueRecorder rec : recorderList ) {
-			rec.add( perf, this );
-		}
 	}
 
 	/**
@@ -133,9 +120,6 @@ public class Queue extends DisplayEntity {
 		this.updateStatistics();  // update the min and max queue length
 		numberRemoved++;
 
-		for( QueueRecorder rec : recorderList ) {
-			rec.remove( out, this );
-		}
 		return out;
 	}
 
