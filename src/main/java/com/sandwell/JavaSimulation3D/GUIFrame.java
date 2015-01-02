@@ -1770,6 +1770,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				@Override
 				public void run() {
 					InputAgent.setRecordEdits(false);
+					gui1.clear();
 					Throwable ret = gui1.configure(chosenfile);
 					if (ret != null)
 						handleConfigError(ret, chosenfile);
@@ -1784,7 +1785,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	Throwable configure(File file) {
-		this.clear();
 		InputAgent.setConfigFile(file);
 		this.updateForSimulationState(GUIFrame.SIM_STATE_UNCONFIGURED);
 
