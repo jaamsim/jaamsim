@@ -22,7 +22,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
-import com.sandwell.JavaSimulation3D.Clock;
 
 /**
  * An overlay display of time and/or date.
@@ -83,6 +82,43 @@ public class OverlayClock extends OverlayText {
 		}
 	}
 
+	private static final int[] firstDayOfMonth;
+	static {
+		firstDayOfMonth = new int[13];
+		firstDayOfMonth[0] = 1;
+		firstDayOfMonth[1] = 32;
+		firstDayOfMonth[2] = 60;
+		firstDayOfMonth[3] = 91;
+		firstDayOfMonth[4] = 121;
+		firstDayOfMonth[5] = 152;
+		firstDayOfMonth[6] = 182;
+		firstDayOfMonth[7] = 213;
+		firstDayOfMonth[8] = 244;
+		firstDayOfMonth[9] = 274;
+		firstDayOfMonth[10] = 305;
+		firstDayOfMonth[11] = 335;
+		firstDayOfMonth[12] = 366;
+	}
+
+	/**
+	 * Return the month 1-12 for the given day of the year 1-365
+	 */
+	private static int getMonthForDay( int d ) {
+		for (int i = 1; i < firstDayOfMonth.length; i++) {
+			if (d < firstDayOfMonth[i]) {
+				return i;
+			}
+		}
+		return 12;
+	}
+
+	/**
+	 * Return the day of the year (1-365) that corresponds to the first day of the given month (1-12).
+	 */
+	private static int getFirstDayOfMonth(int month) {
+		return firstDayOfMonth[month-1];
+	}
+
 	@Override
 	public String getRenderText(double simTime) {
 
@@ -95,8 +131,8 @@ public class OverlayClock extends OverlayText {
 		second = (long)Math.floor(simTime) % 60;
 		milli = (long)Math.floor(simTime*1000.0d) % 1000;
 
-		month = Clock.getMonthForDay((int) dayOfYear);       // month = 1 - 12
-		dayOfMonth = (int)dayOfYear - Clock.getFirstDayOfMonth(month) + 1;
+		month = getMonthForDay((int) dayOfYear);       // month = 1 - 12
+		dayOfMonth = (int)dayOfYear - getFirstDayOfMonth(month) + 1;
 
 		calendar.set(Calendar.YEAR, (int) year + startingYear.getValue());
 		calendar.set(Calendar.MONTH, month - 1);  // Java months are 0 - 11
