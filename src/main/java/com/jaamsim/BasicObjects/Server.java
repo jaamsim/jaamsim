@@ -22,7 +22,6 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation3D.Queue;
 
 /**
  * Server processes entities one by one from a queue.  When finished with an entity, it passes it to the next

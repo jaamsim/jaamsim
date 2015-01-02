@@ -27,7 +27,6 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation3D.Queue;
 
 public class Resource extends DisplayEntity {
 

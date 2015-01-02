@@ -18,7 +18,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
-import com.sandwell.JavaSimulation3D.Queue;
 
 public class AddTo extends Pack {
 

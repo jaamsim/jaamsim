@@ -25,7 +25,6 @@ import com.jaamsim.input.Output;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation3D.Queue;
 
 public class Pack extends LinkedService {
 

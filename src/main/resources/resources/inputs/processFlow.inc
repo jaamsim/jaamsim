@@ -72,7 +72,7 @@ SimEntity               JavaClass { com.jaamsim.BasicObjects.SimEntity          
 EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator      }  Palette { 'Process Flow' }  DefaultDisplayModel { SourceIconModel          }
 EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink           }  Palette { 'Process Flow' }  DefaultDisplayModel { SinkIconModel            }
 Server                  JavaClass { com.jaamsim.BasicObjects.Server               }  Palette { 'Process Flow' }  DefaultDisplayModel { ServerIconModel          }
-Queue                   JavaClass { com.sandwell.JavaSimulation3D.Queue           }  Palette { 'Process Flow' }  DefaultDisplayModel { Triangle                 }
+Queue                   JavaClass { com.jaamsim.BasicObjects.Queue                }  Palette { 'Process Flow' }  DefaultDisplayModel { Triangle                 }
 EntityConveyor          JavaClass { com.jaamsim.BasicObjects.EntityConveyor       }  Palette { 'Process Flow' }  DefaultDisplayModel { ScreenPointsModelDefault }
 EntityDelay             JavaClass { com.jaamsim.BasicObjects.EntityDelay          }  Palette { 'Process Flow' }  DefaultDisplayModel { ScreenPointsModelDefault }
 Resource                JavaClass { com.jaamsim.BasicObjects.Resource             }  Palette { 'Process Flow' }  DefaultDisplayModel { ResourceIconModel        }
