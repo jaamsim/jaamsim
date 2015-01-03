@@ -32,23 +32,23 @@ public class Server extends LinkedService {
 	@Keyword(description = "The service time required to process an entity.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         example = "Server1 ServiceTime { 3.0 h }")
-	private final SampleExpInput serviceTimeInput;
+	private final SampleExpInput serviceTime;
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         example = "Server1 WaitQueue { Queue1 }")
-	private final EntityInput<Queue> waitQueueInput;
+	private final EntityInput<Queue> waitQueue;
 
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
 
 	{
-		serviceTimeInput = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
-		serviceTimeInput.setUnitType(TimeUnit.class);
-		serviceTimeInput.setEntity(this);
-		serviceTimeInput.setValidRange(0, Double.POSITIVE_INFINITY);
-		this.addInput(serviceTimeInput);
+		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		serviceTime.setUnitType(TimeUnit.class);
+		serviceTime.setEntity(this);
+		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
+		this.addInput(serviceTime);
 
-		waitQueueInput = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput(waitQueueInput);
+		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
+		this.addInput(waitQueue);
 	}
 
 	public Server() {}
@@ -58,11 +58,11 @@ public class Server extends LinkedService {
 		super.validate();
 
 		// Confirm that the target queue has been specified
-		if (waitQueueInput.getValue() == null) {
+		if (waitQueue.getValue() == null) {
 			throw new InputErrorException("The keyword WaitQueue must be set.");
 		}
 
-		serviceTimeInput.validate();
+		serviceTime.validate();
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class Server extends LinkedService {
 		super.addEntity(ent);
 
 		// Add the entity to the queue
-		waitQueueInput.getValue().addEntity(ent);
+		waitQueue.getValue().addEntity(ent);
 
 		// If necessary, wake up the server
 		if (!this.isBusy() && this.isOpen()) {
@@ -90,7 +90,7 @@ public class Server extends LinkedService {
 	public void startAction() {
 
 		// Stop if the queue is empty or a threshold is closed
-		if (waitQueueInput.getValue().getCount() == 0 || this.isClosed()) {
+		if (waitQueue.getValue().getCount() == 0 || this.isClosed()) {
 			servedEntity = null;
 			this.setBusy(false);
 			this.setPresentState();
@@ -98,8 +98,8 @@ public class Server extends LinkedService {
 		}
 
 		// Remove the first entity from the queue
-		servedEntity = waitQueueInput.getValue().removeFirst();
-		double dt = serviceTimeInput.getValue().getNextSample(getSimTime());
+		servedEntity = waitQueue.getValue().removeFirst();
+		double dt = serviceTime.getValue().getNextSample(getSimTime());
 
 		// Schedule the completion of service
 		this.scheduleProcess(dt, 5, endActionTarget);
