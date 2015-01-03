@@ -14,6 +14,8 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
@@ -26,7 +28,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class Pack extends LinkedService {
+public class Pack extends LinkedService implements QueueUser {
 
 	@Keyword(description = "The prototype for EntityContainers to be generated.\n" +
 			"The generated EntityContainers will be copies of this entity.",
@@ -104,6 +106,17 @@ public class Pack extends LinkedService {
 
 		// Add the entity to the queue
 		waitQueue.getValue().addEntity(ent);
+	}
+
+	@Override
+	public ArrayList<Queue> getQueues() {
+		ArrayList<Queue> ret = new ArrayList<>();
+		ret.add(waitQueue.getValue());
+		return ret;
+	}
+
+	@Override
+	public void queueChanged() {
 
 		// If necessary, restart processing
 		if (!this.isBusy()) {
@@ -111,6 +124,7 @@ public class Pack extends LinkedService {
 			this.setPresentState();
 			this.startAction();
 		}
+
 	}
 
 	protected EntityContainer getNextContainer() {
