@@ -14,6 +14,8 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputErrorException;
@@ -46,19 +48,18 @@ public class AddTo extends Pack {
 	public void addEntity(DisplayEntity ent) {
 
 		// Add an incoming container to its queue
-		if (ent instanceof EntityContainer) {
-			containerQueue.getValue().addLast(ent);
+		if (ent instanceof EntityContainer)
+			containerQueue.getValue().addEntity(ent);
+		else
+			waitQueue.getValue().addEntity(ent);
+	}
 
-			// If necessary, restart processing
-			if (!this.isBusy()) {
-				this.setBusy(true);
-				this.setPresentState();
-				this.startAction();
-			}
-		}
-		else {
-			super.addEntity(ent);
-		}
+	@Override
+	public ArrayList<Queue> getQueues() {
+		ArrayList<Queue> ret = new ArrayList<>();
+		ret.add(waitQueue.getValue());
+		ret.add(containerQueue.getValue());
+		return ret;
 	}
 
 	@Override

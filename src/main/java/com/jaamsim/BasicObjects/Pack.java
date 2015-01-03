@@ -37,7 +37,7 @@ public class Pack extends LinkedService implements QueueUser {
 
 	@Keyword(description = "The queue in which the waiting entities will be placed.",
 	         example = "Pack1 WaitQueue { Queue1 }")
-	private final EntityInput<Queue> waitQueue;
+	protected final EntityInput<Queue> waitQueue;
 
 	@Keyword(description = "The number of entities to pack into the container.",
 	         example = "Pack1 NumberOfEntities { 2 }")
