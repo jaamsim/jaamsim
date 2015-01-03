@@ -40,15 +40,15 @@ public class Seize extends LinkedComponent {
 
 	{
 		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
-		this.addInput( resourceList);
+		this.addInput(resourceList);
 
 		IntegerVector defNum = new IntegerVector();
 		defNum.add(1);
 		numberOfUnitsList = new IntegerListInput("NumberOfUnits", "Key Inputs", defNum);
-		this.addInput( numberOfUnitsList);
+		this.addInput(numberOfUnitsList);
 
-		waitQueue = new EntityInput<>( Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput( waitQueue);
+		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
+		this.addInput(waitQueue);
 	}
 
 	@Override
@@ -56,30 +56,30 @@ public class Seize extends LinkedComponent {
 		super.validate();
 
 		// Confirm that the target queue has been specified
-		if( waitQueue.getValue() == null ) {
-			throw new InputErrorException( "The keyword WaitQueue must be set." );
+		if (waitQueue.getValue() == null) {
+			throw new InputErrorException("The keyword WaitQueue must be set.");
 		}
 
 		// Confirm that the resource has been specified
-		if( resourceList.getValue() == null ) {
-			throw new InputErrorException( "The keyword Resource must be set." );
+		if (resourceList.getValue() == null) {
+			throw new InputErrorException("The keyword Resource must be set.");
 		}
 	}
 
 	@Override
-	public void addEntity( DisplayEntity ent ) {
+	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
 		Queue queue = waitQueue.getValue();
 
 		// If other entities are queued already or insufficient units are available, then add the entity to the queue
-		if( queue.getCount() > 0 || !this.checkResources() ) {
+		if (queue.getCount() > 0 || !this.checkResources()) {
 			queue.addEntity(ent);
 			return;
 		}
 
 		// If sufficient units are available, then seize them and pass the entity to the next component
 		this.seizeResources();
-		this.sendToNextComponent( ent );
+		this.sendToNextComponent(ent);
 	}
 
 	/**
@@ -89,8 +89,8 @@ public class Seize extends LinkedComponent {
 	public boolean checkResources() {
 		ArrayList<Resource> resList = resourceList.getValue();
 		IntegerVector numberList = numberOfUnitsList.getValue();
-		for(int i=0; i<resList.size(); i++) {
-			if( resList.get(i).getAvailableUnits() < numberList.get(i) )
+		for (int i=0; i<resList.size(); i++) {
+			if (resList.get(i).getAvailableUnits() < numberList.get(i))
 				return false;
 		}
 		return true;
@@ -103,7 +103,7 @@ public class Seize extends LinkedComponent {
 	public void seizeResources() {
 		ArrayList<Resource> resList = resourceList.getValue();
 		IntegerVector numberList = numberOfUnitsList.getValue();
-		for(int i=0; i<resList.size(); i++) {
+		for (int i=0; i<resList.size(); i++) {
 			resList.get(i).seize(numberList.get(i));
 		}
 	}
@@ -114,10 +114,10 @@ public class Seize extends LinkedComponent {
 	 */
 	public void processQueuedEntity(int i) {
 
-		if( this.checkResources() ) {
+		if (this.checkResources()) {
 			this.seizeResources();
 			DisplayEntity ent = waitQueue.getValue().remove(i);
-			this.sendToNextComponent( ent );
+			this.sendToNextComponent(ent);
 		}
 	}
 
