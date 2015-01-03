@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.events.EventHandle;
+import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -46,6 +49,7 @@ public class Queue extends LinkedComponent {
 	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
 	protected ArrayList<QueueEntry> itemList;
+	private final ArrayList<QueueUser> userList;  // other objects that use this queue
 
 	//	Statistics
 	protected double timeOfLastUpdate; // time at which the statistics were last updated
@@ -86,6 +90,7 @@ public class Queue extends LinkedComponent {
 	public Queue() {
 		itemList = new ArrayList<>();
 		queueLengthDist = new DoubleVector(10,10);
+		userList = new ArrayList<>();
 	}
 
 	@Override
@@ -97,12 +102,45 @@ public class Queue extends LinkedComponent {
 
 		// Clear statistics
 		this.clearStatistics();
+
+		// Identify the objects that use this queue
+		userUpdate.users.clear();
+		userList.clear();
+		for (Entity each : Entity.getAll()) {
+			if (each instanceof QueueUser) {
+				QueueUser u = (QueueUser)each;
+				if (u.getQueues().contains(this))
+					userList.add(u);
+			}
+		}
 	}
 
 	private static class QueueEntry {
 		DisplayEntity entity;
 		double timeAdded;
 		int priority;
+	}
+
+	private static final EventHandle updateHandle = new EventHandle();
+	private static final DoQueueChanged userUpdate = new DoQueueChanged();
+
+	private static class DoQueueChanged extends ProcessTarget {
+		public final ArrayList<QueueUser> users = new ArrayList<>();
+
+		public DoQueueChanged() {}
+
+		@Override
+		public void process() {
+			for (QueueUser each : users)
+				each.queueChanged();
+
+			users.clear();
+		}
+
+		@Override
+		public String getDescription() {
+			return "UpdateAllQueueUsers";
+		}
 	}
 
 	// ******************************************************************************************************
@@ -113,14 +151,26 @@ public class Queue extends LinkedComponent {
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
 
+		// Determine the entity's priority
 		int pri = (int) priority.getValue().getNextSample(getSimTime());
+
+		// Insert the entity in the correct position in the queue
+		int pos = 0;
 		for (int i=itemList.size()-1; i>=0; i--) {
 			if (itemList.get(i).priority <= pri) {
-				this.add(i+1, ent, pri);
-				return;
+				pos = i+1;
+				break;
 			}
 		}
-		this.add(0, ent, pri);
+		this.add(pos, ent, pri);
+
+		// Notify the users of this queue
+		for (QueueUser user : this.userList) {
+			if (!userUpdate.users.contains(user))
+				userUpdate.users.add(user);
+		}
+		if (!userUpdate.users.isEmpty() && !updateHandle.isScheduled())
+			this.scheduleProcessTicks(0, 2, false, userUpdate, updateHandle);
 	}
 
 	/**
