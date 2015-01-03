@@ -14,6 +14,8 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
@@ -27,7 +29,7 @@ import com.jaamsim.units.TimeUnit;
  * Server processes entities one by one from a queue.  When finished with an entity, it passes it to the next
  * LinkedComponent in the chain.
  */
-public class Server extends LinkedService {
+public class Server extends LinkedService implements QueueUser {
 
 	@Keyword(description = "The service time required to process an entity.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
@@ -77,6 +79,17 @@ public class Server extends LinkedService {
 
 		// Add the entity to the queue
 		waitQueue.getValue().addEntity(ent);
+	}
+
+	@Override
+	public ArrayList<Queue> getQueues() {
+		ArrayList<Queue> ret = new ArrayList<>();
+		ret.add(waitQueue.getValue());
+		return ret;
+	}
+
+	@Override
+	public void queueChanged() {
 
 		// If necessary, wake up the server
 		if (!this.isBusy() && this.isOpen()) {
