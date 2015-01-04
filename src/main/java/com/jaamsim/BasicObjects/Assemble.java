@@ -14,6 +14,8 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
@@ -26,7 +28,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class Assemble extends LinkedService {
+public class Assemble extends LinkedService implements QueueUser {
 
 	@Keyword(description = "The service time required to perform the assembly process.",
 	         example = "EntityAssemble1 ServiceTime { 3.0 h }")
@@ -107,6 +109,15 @@ public class Assemble extends LinkedService {
 
 		// Add the entity to the queue
 		waitQueueList.getValue().get(ind-1).addEntity(ent);
+	}
+
+	@Override
+	public ArrayList<Queue> getQueues() {
+		return waitQueueList.getValue();
+	}
+
+	@Override
+	public void queueChanged() {
 
 		// If necessary, wake up the server
 		if (!this.isBusy()) {
