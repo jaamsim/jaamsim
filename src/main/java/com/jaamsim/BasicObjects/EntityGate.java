@@ -14,6 +14,8 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputErrorException;
@@ -21,7 +23,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 
-public class EntityGate extends LinkedService {
+public class EntityGate extends LinkedService implements QueueUser {
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         example = "EntityGate1 WaitQueue { Queue1 }")
@@ -67,6 +69,24 @@ public class EntityGate extends LinkedService {
 
 		// If the gate is open and there are no other entities still in the queue, then send the entity to the next component
 		this.sendToNextComponent(ent);
+	}
+
+	@Override
+	public ArrayList<Queue> getQueues() {
+		ArrayList<Queue> ret = new ArrayList<>();
+		ret.add(waitQueue.getValue());
+		return ret;
+	}
+
+	@Override
+	public void queueChanged() {
+
+		// If necessary, restart processing
+		if (this.isOpen() && !this.isBusy()) {
+			this.setBusy(true);
+			this.setPresentState();
+			this.startAction();
+		}
 	}
 
 	@Override
