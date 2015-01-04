@@ -24,7 +24,7 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 
-public class Seize extends LinkedComponent {
+public class Seize extends LinkedComponent implements QueueUser {
 
 	@Keyword(description = "The Resource(s) to be seized.",
 	         example = "Seize1 Resource { Resource1 Resource2 }")
@@ -80,6 +80,20 @@ public class Seize extends LinkedComponent {
 		// If sufficient units are available, then seize them and pass the entity to the next component
 		this.seizeResources();
 		this.sendToNextComponent(ent);
+	}
+
+	@Override
+	public ArrayList<Queue> getQueues() {
+		ArrayList<Queue> ret = new ArrayList<>();
+		ret.add(waitQueue.getValue());
+		return ret;
+	}
+
+	@Override
+	public void queueChanged() {
+		if (waitQueue.getValue().getCount() == 0)
+			return;
+		this.processQueuedEntity(0);
 	}
 
 	/**
