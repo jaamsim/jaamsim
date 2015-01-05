@@ -16,6 +16,7 @@ package com.jaamsim.Thresholds;
 
 import com.jaamsim.Samples.TimeSeriesProvider;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -27,7 +28,6 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation.Tester;
 
 public class TimeSeriesThreshold extends Threshold {

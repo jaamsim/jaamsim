@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.DirInput;
 import com.jaamsim.input.Input;
@@ -28,7 +29,6 @@ import com.jaamsim.input.Output;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.TimeUnit;
 import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation.Simulation;
 
 public class ReportGenerator extends DisplayEntity {
 

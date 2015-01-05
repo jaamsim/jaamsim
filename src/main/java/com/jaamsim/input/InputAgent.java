@@ -34,11 +34,11 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.LogBox;
 import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class InputAgent {

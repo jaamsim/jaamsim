@@ -16,7 +16,6 @@ package com.jaamsim.basicsim;
 
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.sandwell.JavaSimulation.Simulation;
 
 public class InitModelTarget extends ProcessTarget {
 	public InitModelTarget() {}

@@ -70,6 +70,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RateLimiter;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.events.EventErrorListener;
@@ -90,7 +91,6 @@ import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation.Simulation;
 
 /**
  * The main window for a Graphical Simulation.  It provides the controls for managing then

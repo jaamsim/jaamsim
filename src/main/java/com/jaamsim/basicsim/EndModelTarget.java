@@ -17,7 +17,6 @@ package com.jaamsim.basicsim;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.InputAgent;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 class EndModelTarget extends ProcessTarget {

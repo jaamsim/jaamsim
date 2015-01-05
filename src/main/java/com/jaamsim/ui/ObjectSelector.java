@@ -41,12 +41,12 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Text;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
-import com.sandwell.JavaSimulation.Simulation;
 import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class ObjectSelector extends FrameBox {

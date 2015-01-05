@@ -39,7 +39,6 @@ import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 import com.sandwell.JavaSimulation.FileEntity;
-import com.sandwell.JavaSimulation.Simulation;
 
 /**
  * Abstract class that encapsulates the methods and data needed to create a

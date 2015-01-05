@@ -24,7 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
-import com.sandwell.JavaSimulation.Simulation;
+import com.jaamsim.basicsim.Simulation;
 
 /**
  * Class to display information about model objects.
