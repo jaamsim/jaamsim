@@ -41,16 +41,6 @@ public class Tester {
 	 * Audition semantics for double formatting.
 	 */
 	public static boolean isDouble( String testDouble ) {
-		String testString = testDouble.trim().replaceAll( "[0-9]", "" );
-
-		if( testString.startsWith( "-" ) ) {
-			testString = testString.replaceFirst( "-", "" );
-		}
-
-		if( testString.equals( ":" ) ) {
-			return true;
-		}
-
 		try {
 			Double.parseDouble( testDouble );
 			return true;
@@ -58,41 +48,6 @@ public class Tester {
 		catch( NumberFormatException e ) {
 			return false;
 		}
-	}
-
-	/**
-	 * Implements a string parsing method to test for a date value using the
-	 * Audition semantics for date formatting.
-	 */
-	public static boolean isDate( String testString ) {
-		String tempString = testString.trim();
-
-		if( !(tempString.length() == 8 || tempString.length() == 10) ) {
-			return false;
-		}
-
-		int dateLength = tempString.length();
-		String day = tempString.substring( dateLength - 3, dateLength );
-		String month = tempString.substring( dateLength - 6, dateLength - 3 );
-		String year = tempString.substring( 0, dateLength - 6 );
-
-		//check day
-		if( !(day.matches( "-[0-2][0-9]" ) || day.matches( "-3[0-1]" )) ) {
-			return false;
-		}
-
-		// check month
-		if( !(month.matches( "-0[0-9]" ) || month.matches( "-1[0-2]" )) ) {
-			return false;
-		}
-
-		// check year
-		if( !(year.matches( "[0-9][0-9]" ) || year.matches( "[0-9][0-9][0-9][0-9]" )) ) {
-			return false;
-		}
-
-		// Passed all tests return true
-		return true;
 	}
 
 	/**
