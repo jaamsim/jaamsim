@@ -24,7 +24,7 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 
-public class Seize extends LinkedComponent implements QueueUser {
+public class Seize extends LinkedService implements QueueUser {
 
 	@Keyword(description = "The Resource(s) to be seized.",
 	         example = "Seize1 Resource { Resource1 Resource2 }")
@@ -69,17 +69,7 @@ public class Seize extends LinkedComponent implements QueueUser {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
-		Queue queue = waitQueue.getValue();
-
-		// If other entities are queued already or insufficient units are available, then add the entity to the queue
-		if (queue.getCount() > 0 || !this.checkResources()) {
-			queue.addEntity(ent);
-			return;
-		}
-
-		// If sufficient units are available, then seize them and pass the entity to the next component
-		this.seizeResources();
-		this.sendToNextComponent(ent);
+		waitQueue.getValue().addEntity(ent);
 	}
 
 	@Override
@@ -91,9 +81,26 @@ public class Seize extends LinkedComponent implements QueueUser {
 
 	@Override
 	public void queueChanged() {
-		if (waitQueue.getValue().getCount() == 0)
-			return;
-		this.processQueuedEntity(0);
+		this.startAction();
+	}
+
+	@Override
+	public void startAction() {
+
+		// Stop if the queue is empty, there are insufficient resources, or a threshold is closed
+		while (waitQueue.getValue().getCount() != 0 && this.checkResources() && this.isOpen()) {
+
+			// If sufficient units are available, then seize them and pass the entity to the next component
+			this.seizeResources();
+			DisplayEntity ent = waitQueue.getValue().removeFirst();
+			this.sendToNextComponent(ent);
+		}
+		this.setBusy(false);
+	}
+
+	@Override
+	public void endAction() {
+		// not required
 	}
 
 	/**
@@ -119,19 +126,6 @@ public class Seize extends LinkedComponent implements QueueUser {
 		IntegerVector numberList = numberOfUnitsList.getValue();
 		for (int i=0; i<resList.size(); i++) {
 			resList.get(i).seize(numberList.get(i));
-		}
-	}
-
-	/**
-	 * Remove an object from the queue, seize the specified resources, and pass to the next component
-	 * @param i = position in the queue of the object to be removed
-	 */
-	public void processQueuedEntity(int i) {
-
-		if (this.checkResources()) {
-			this.seizeResources();
-			DisplayEntity ent = waitQueue.getValue().remove(i);
-			this.sendToNextComponent(ent);
 		}
 	}
 

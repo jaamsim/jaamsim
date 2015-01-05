@@ -155,7 +155,7 @@ public class Resource extends DisplayEntity {
 			// Ensure that the number of units needed by selected Seize object can be provided
 			if( selection == null || !selection.checkResources() )
 				return;
-			selection.processQueuedEntity(0);
+			selection.startAction();
 		}
 	}
 
