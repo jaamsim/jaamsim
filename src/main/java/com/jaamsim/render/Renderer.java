@@ -493,15 +493,13 @@ public class Renderer implements GLAnimatorControl {
 	}
 
 	public void focusWindow(int windowID) {
-		synchronized(openWindows) {
-			RenderWindow win = openWindows.get(windowID);
-			if (win == null) {
-				return;
-			}
-			win.getAWTFrameRef().setExtendedState(Frame.NORMAL);
-			win.getAWTFrameRef().toFront();
-		}
+		final Frame awtRef = getAWTFrame(windowID);
+		if (awtRef == null)
+			return;
+		awtRef.setExtendedState(Frame.NORMAL);
+		awtRef.toFront();
 	}
+
 	/**
 	 * Construct a new window (a NEWT window specifically)
 	 *
