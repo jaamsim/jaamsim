@@ -21,13 +21,13 @@ import java.util.HashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
-import com.sandwell.JavaSimulation.FileEntity;
 
 public class StateEntity extends DisplayEntity {
 

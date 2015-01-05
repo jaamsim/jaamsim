@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation;
+package com.jaamsim.basicsim;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,7 +20,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
-import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.ui.LogBox;
 

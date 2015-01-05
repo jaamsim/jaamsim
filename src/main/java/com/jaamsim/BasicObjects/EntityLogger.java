@@ -15,10 +15,10 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation.FileEntity;
 
 public class EntityLogger extends LinkedComponent {
 	private FileEntity file;
