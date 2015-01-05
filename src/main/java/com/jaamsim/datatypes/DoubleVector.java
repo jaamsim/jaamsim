@@ -17,7 +17,6 @@ package com.jaamsim.datatypes;
 import java.util.Arrays;
 
 import com.jaamsim.basicsim.ErrorException;
-import com.sandwell.JavaSimulation.Tester;
 
 /**
  * This class stores double values in an array.
@@ -307,86 +306,6 @@ public class DoubleVector {
 			}
 		}
 		return -1;
-	}
-
-	/**
-	 * Return the indices of elements closest to value, assuming items are in ascending order
-	 */
-	public int[] getClosestIndicesForValue( double value ) {
-		int[] indices = new int[2];
-
-		if( size() > 0 ) {
-			for( int i = 0; i < size(); i++ ) {
-				if( value <= get( i ) ) {
-
-					if( i == 0 ) {
-						indices[0] = 0;
-						indices[1] = 0;
-						return indices;
-					}
-					else {
-						if( Tester.equalCheckTolerance( value, get( i ) ) ) {
-							indices[0] = i;
-							indices[1] = i;
-							return indices;
-						}
-						else {
-							indices[0] = i - 1;
-							indices[1] = i;
-							return indices;
-						}
-					}
-				}
-			}
-			indices[0] = size() - 1;
-			indices[1] = size() - 1;
-			return indices;
-		}
-		else {
-			indices[0] = -1;
-			indices[1] = -1;
-			return indices;
-		}
-	}
-
-	/**
-	 * Return the indices of elements closest to value, assuming items are in descending value
-	 */
-	public int[] getClosestIndicesForDescendingValue( double value ) {
-		int[] indices = new int[2];
-
-		if( size() > 0 ) {
-			for( int i = 0; i < size(); i++ ) {
-				if( value >= get( i ) ) {
-
-					if( i == 0 ) {
-						indices[0] = 0;
-						indices[1] = 0;
-						return indices;
-					}
-					else {
-						if( Tester.equalCheckTolerance( value, get( i ) ) ) {
-							indices[0] = i;
-							indices[1] = i;
-							return indices;
-						}
-						else {
-							indices[0] = i - 1;
-							indices[1] = i;
-							return indices;
-						}
-					}
-				}
-			}
-			indices[0] = size() - 1;
-			indices[1] = size() - 1;
-			return indices;
-		}
-		else {
-			indices[0] = -1;
-			indices[1] = -1;
-			return indices;
-		}
 	}
 
 	/**
