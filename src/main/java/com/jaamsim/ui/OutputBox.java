@@ -27,7 +27,6 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class OutputBox extends FrameBox {
 	private static OutputBox myInstance;

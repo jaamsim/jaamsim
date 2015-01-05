@@ -41,7 +41,6 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.units.DistanceUnit;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class View extends Entity {
 private static final ArrayList<View> allInstances;

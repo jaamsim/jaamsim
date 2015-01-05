@@ -21,8 +21,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-import com.sandwell.JavaSimulation3D.GUIFrame;
-
 public class LogBox extends FrameBox {
 
 	private static LogBox myInstance;

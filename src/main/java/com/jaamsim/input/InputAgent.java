@@ -38,8 +38,8 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class InputAgent {
 	private static final String recordEditsMarker = "RecordEdits";

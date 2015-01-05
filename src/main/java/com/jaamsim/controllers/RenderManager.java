@@ -78,10 +78,10 @@ import com.jaamsim.render.TexCache;
 import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.render.util.ExceptionLogger;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.ObjectSelector;
 import com.jaamsim.ui.View;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Top level owner of the JaamSim renderer. This class both owns and drives the Renderer object, but is also

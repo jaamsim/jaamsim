@@ -57,7 +57,6 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.Future;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class GraphicBox extends JDialog {
 	private static GraphicBox myInstance;  // only one instance allowed to be open

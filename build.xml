@@ -60,7 +60,7 @@ GNU General Public License for more details.
   <target name="jar" depends="compile">
     <jar jarfile="${jars.dir}/JaamSim${ver}-bare.jar" compress="true">
       <manifest>
-        <attribute name="Main-Class" value="com.sandwell.JavaSimulation3D.GUIFrame"/>
+        <attribute name="Main-Class" value="com.jaamsim.ui.GUIFrame"/>
         <attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar"/>
       </manifest>
       <fileset dir="${class.dir}"/>
@@ -68,7 +68,7 @@ GNU General Public License for more details.
     </jar>
     <jar jarfile="${jars.dir}/JaamSim${ver}.jar" compress="true">
       <manifest>
-        <attribute name="Main-Class" value="com.sandwell.JavaSimulation3D.GUIFrame"/>
+        <attribute name="Main-Class" value="com.jaamsim.ui.GUIFrame"/>
       </manifest>
       <fileset dir="${class.dir}"/>
       <fileset dir="${res.dir}"/>

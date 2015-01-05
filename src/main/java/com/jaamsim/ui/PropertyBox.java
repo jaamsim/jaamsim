@@ -30,7 +30,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Class to display information about model objects. <br>

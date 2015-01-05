@@ -30,7 +30,6 @@ import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Creates entities from a 3D asset file (.DAE, .OBJ, etc.) or a image file (.png, .jpg, etc.).

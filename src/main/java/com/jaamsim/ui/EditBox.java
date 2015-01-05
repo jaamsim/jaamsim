@@ -65,7 +65,6 @@ import com.jaamsim.input.Parser;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.StringListInput;
 import com.jaamsim.math.Color4d;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Class to display information about model objects. <br>

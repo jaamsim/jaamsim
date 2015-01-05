@@ -34,8 +34,8 @@ import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.View;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class PreviewCache {
 

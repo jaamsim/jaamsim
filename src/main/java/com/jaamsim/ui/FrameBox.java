@@ -33,7 +33,6 @@ import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class FrameBox extends JFrame {
 

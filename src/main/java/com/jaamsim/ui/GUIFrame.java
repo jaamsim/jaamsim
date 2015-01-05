@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package com.sandwell.JavaSimulation3D;
+package com.jaamsim.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -82,12 +82,6 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Parser;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.AboutBox;
-import com.jaamsim.ui.DisplayEntityFactory;
-import com.jaamsim.ui.EntityPallet;
-import com.jaamsim.ui.FrameBox;
-import com.jaamsim.ui.LogBox;
-import com.jaamsim.ui.View;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;

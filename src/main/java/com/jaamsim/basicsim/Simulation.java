@@ -29,13 +29,13 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.ObjectSelector;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 /**
  * Class Simulation - Sandwell Discrete Event Simulation

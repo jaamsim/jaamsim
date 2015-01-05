@@ -47,7 +47,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
-import com.sandwell.JavaSimulation3D.GUIFrame;
 
 public class ObjectSelector extends FrameBox {
 	private static ObjectSelector myInstance;
