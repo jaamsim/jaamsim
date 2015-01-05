@@ -37,20 +37,6 @@ public class Tester {
 	}
 
 	/**
-	 * Implements a string parsing method to test for a double value using the
-	 * Audition semantics for double formatting.
-	 */
-	public static boolean isDouble( String testDouble ) {
-		try {
-			Double.parseDouble( testDouble );
-			return true;
-		}
-		catch( NumberFormatException e ) {
-			return false;
-		}
-	}
-
-	/**
 	 * Compare two double values and return true if they are within doubleTolerance
 	 * of each other.
 	 */

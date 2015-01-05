@@ -32,7 +32,6 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.Tester;
 
 public abstract class Input<T> {
 	protected static final String INP_ERR_COUNT = "Expected an input with %s value(s), received: %s";
@@ -490,6 +489,14 @@ public abstract class Input<T> {
 		catch (NumberFormatException e) { return false; }
 	}
 
+	public static boolean isDouble(String val) {
+		try {
+			Double.parseDouble(val);
+			return true;
+		}
+		catch (NumberFormatException e) { return false; }
+	}
+
 	public static IntegerVector parseIntegerVector(List<String> input, int minValue, int maxValue)
 	throws InputErrorException {
 		IntegerVector temp = new IntegerVector(input.size());
@@ -942,7 +949,7 @@ public abstract class Input<T> {
 	throws InputErrorException {
 		// If there is more than one value, and the last one is not a number, then assume it is a unit
 		String unitString = data.get( data.size()-1 );
-		if( data.size() > 1 && !Tester.isDouble(unitString) ) {
+		if( data.size() > 1 && !Input.isDouble(unitString) ) {
 
 			// Determine the units
 			Unit unit = Input.parseUnit(unitString);
