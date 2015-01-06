@@ -38,11 +38,10 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
- * Class Simulation - Sandwell Discrete Event Simulation
- * <p>
- * Class structure defining essential simulation objects.  Eventmanager is
- * instantiated to manage events generated in the simulation.  Function prototypes
- * are defined which any simulation must define in order to run.
+ * Simulation provides the basic structure for the Entity model lifetime of earlyInit,
+ * startUp and doEndAt.  The initial processtargets required to start the model are
+ * added to the eventmanager here.  This class also acts as a bridge to the UI by
+ * providing controls for the various windows.
  */
 public class Simulation extends Entity {
 	@Keyword(description = "The initialization period for the simulation run. The model will " +

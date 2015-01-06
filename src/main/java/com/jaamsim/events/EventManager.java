@@ -17,31 +17,22 @@ package com.jaamsim.events;
 import java.util.ArrayList;
 
 /**
- * Class EventManager - Sandwell Discrete Event Simulation
- * <p>
  * The EventManager is responsible for scheduling future events, controlling
  * conditional event evaluation, and advancing the simulation time. Events are
  * scheduled in based on:
  * <ul>
  * <li>1 - The execution time scheduled for the event
  * <li>2 - The priority of the event (if scheduled to occur at the same time)
- * <li>3 - If both 1) and 2) are equal, the order in which the event was
- * scheduled (FILO - Stack ordering)
+ * <li>3 - If both 1) and 2) are equal, the user specified FIFO or LIFO order
  * </ul>
  * <p>
  * The event time is scheduled using a backing long value. Double valued time is
  * taken in by the scheduleWait function and scaled to the nearest long value
  * using the simTimeFactor.
  * <p>
- * The EventManager thread is always the bottom thread on the threadStack, so
- * that after each event has finished, along with any spawned events, the
- * program control will pass back to the EventManager.
- * <p>
- * The runnable interface is implemented so that the eventManager runs as a
- * separate thread.
- * <p>
- * EventManager is held as a static member of class entity, this ensures that
- * all entities will schedule themselves with the same event manager.
+ * Most EventManager functionality is available through static methods that rely
+ * on being in a running model context which will access the eventmanager that is
+ * currently running, think of it like a thread-local variable for all model threads.
  */
 public final class EventManager {
 	public final String name;
