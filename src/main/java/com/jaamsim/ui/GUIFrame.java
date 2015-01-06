@@ -1636,8 +1636,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			value = this.getNumber().intValue() / 2;
 
 			// Avoid going beyond limit
-			if(this.getMinimum().compareTo(value) > 0 ) {
-				return this.getMinimum();
+			Integer min = (Integer)this.getMinimum();
+			if (min.intValue() > value) {
+				return min;
 			}
 			return value;
 		}
@@ -1647,8 +1648,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			value = this.getNumber().intValue() * 2;
 
 			// Avoid going beyond limit
-			if(this.getMaximum().compareTo(value) < 0 ) {
-				return this.getMaximum();
+			Integer max = (Integer)this.getMaximum();
+			if (max.intValue() < value) {
+				return max;
 			}
 			return value;
 		}
