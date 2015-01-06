@@ -53,8 +53,9 @@ GNU General Public License for more details.
            debuglevel="lines,source"
            deprecation="on"
            includeantruntime="false"
-           classpath="${jogl.lib}:${gluegen.lib}"
-    />
+           classpath="${jogl.lib}:${gluegen.lib}">
+      <compilerarg value="-Xlint:-serial"/>
+    </javac>
   </target>
 
   <target name="jar" depends="compile">
