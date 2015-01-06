@@ -17,6 +17,7 @@ package com.jaamsim.Samples;
 import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -115,6 +116,10 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		return valueList[ getIndexForTimeHours( time ) ];
 	}
 
+	private long hoursToTicks(double hours) {
+		return Math.round(hours * Simulation.getSimTimeFactor());
+	}
+
 	/**
 	 * Return the index for the given simulation time in hours
 	 */
@@ -132,7 +137,8 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		}
 
 		// If the time in the cycle is greater than the last time, return the last value
-		if( Tester.greaterOrEqualCheckTimeStep( timeInCycle, timeList[ timeList.length - 1 ] ) ) {
+		long ticksInCycle = hoursToTicks(timeInCycle);
+		if (ticksInCycle >= hoursToTicks(timeList[timeList.length - 1])) {
 			return timeList.length - 1;
 		}
 		else {
@@ -150,7 +156,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 				// or (insertion index) = -(index+1) = -index-1
 				// If the time at the insertion index is within one tick,
 				// then return it
-				if( Tester.equalCheckTimeStep( timeInCycle, timeList[-index - 1] ) )
+				if (ticksInCycle == hoursToTicks(timeList[-index - 1]))
 					return -index - 1;
 				else
 					// Otherwise, return the index before the insertion index
