@@ -28,7 +28,6 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.Tester;
 
 public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 
@@ -120,6 +119,11 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		return Math.round(hours * Simulation.getSimTimeFactor());
 	}
 
+	private static final double doubleTolerance = 1.0E-9;
+	private boolean equalCheckTolerance( double first, double second ) {
+		return (Math.abs( first - second ) < doubleTolerance);
+	}
+
 	/**
 	 * Return the index for the given simulation time in hours
 	 */
@@ -131,7 +135,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		if (this.getCycleLength() < Double.POSITIVE_INFINITY) {
 			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
 			timeInCycle -= completedCycles * this.getCycleTimeInHours();
-			if( Tester.equalCheckTolerance(timeInCycle, this.getCycleTimeInHours()) ) {
+			if( equalCheckTolerance(timeInCycle, this.getCycleTimeInHours()) ) {
 				timeInCycle = 0;
 			}
 		}
@@ -187,7 +191,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 
 		// Tolerance check for essentially through a cycle
 		double timeInCycle = time - (completedCycles * this.getCycleTimeInHours());
-		if( Tester.equalCheckTolerance(timeInCycle, this.getCycleTimeInHours()) ) {
+		if( equalCheckTolerance(timeInCycle, this.getCycleTimeInHours()) ) {
 			completedCycles++;
 		}
 

@@ -28,7 +28,6 @@ import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
-import com.sandwell.JavaSimulation.Tester;
 
 public class TimeSeriesThreshold extends Threshold {
 
@@ -197,6 +196,11 @@ public class TimeSeriesThreshold extends Threshold {
 		}
 	}
 
+	private static final double doubleTolerance = 1.0E-9;
+	private boolean greaterCheckTolerance( double first, double second ) {
+		return (first - doubleTolerance) >= second;
+	}
+
 	/**
 	 * Return the time in hours during which the threshold is closed starting from the given time.
 	 */
@@ -238,7 +242,7 @@ public class TimeSeriesThreshold extends Threshold {
 			}
 
 			// if have already searched the longest cycle, the threshold will never open
-			if( Tester.greaterCheckTolerance( changeTime, startTime + maxTimeValueFromTimeSeries + this.getLookAhead() ) )
+			if( greaterCheckTolerance( changeTime, startTime + maxTimeValueFromTimeSeries + this.getLookAhead() ) )
 				return Double.POSITIVE_INFINITY;
 
 			// Closed index
