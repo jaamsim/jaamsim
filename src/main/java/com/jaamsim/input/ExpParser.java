@@ -946,7 +946,8 @@ public class ExpParser {
 		                        !nextTok.value.equals("this"))) {
 			throw new ExpError(input, 0, "Assignments must start with an identifier");
 		}
-		ArrayList<String> destination = parseIdentifier(nextTok, tokens, new Expression(input));
+
+		String[] destination = parseIdentifier(nextTok, tokens, new Expression(input));
 
 		nextTok = tokens.next();
 		if (nextTok == null || nextTok.type != ExpTokenizer.SYM_TYPE || !nextTok.value.equals("=")) {
@@ -954,7 +955,7 @@ public class ExpParser {
 		}
 
 		Assignment ret = new Assignment();
-		ret.destination = destination.toArray(STRING_ARRAY_TYPE);
+		ret.destination = destination;
 		ret.value = new Expression(input);
 
 		ExpNode expNode = parseExp(context, tokens, 0, ret.value);
@@ -966,9 +967,6 @@ public class ExpParser {
 
 		return ret;
 	}
-
-	// Static array to make ArrayList.toArray work
-	private static final String[] STRING_ARRAY_TYPE = new String[0];
 
 	// The first half of expression parsing, parse a simple expression based on the next token
 	private static ExpNode parseOpeningExp(ParseContext context, TokenList tokens, double bindPower, Expression exp) throws ExpError{
@@ -987,8 +985,8 @@ public class ExpParser {
 		}
 		if (nextTok.type == ExpTokenizer.SQ_TYPE ||
 		    nextTok.value.equals("this")) {
-			ArrayList<String> vals = parseIdentifier(nextTok, tokens, exp);
-			return new Variable(context, vals.toArray(STRING_ARRAY_TYPE), exp, nextTok.pos);
+			String[] vals = parseIdentifier(nextTok, tokens, exp);
+			return new Variable(context, vals, exp, nextTok.pos);
 		}
 
 		// The next token must be a symbol
@@ -1087,7 +1085,7 @@ public class ExpParser {
 		return new FuncCall(context, fe.function, arguments, exp, pos);
 	}
 
-	private static ArrayList<String> parseIdentifier(ExpTokenizer.Token firstName, TokenList tokens, Expression exp) throws ExpError {
+	private static String[] parseIdentifier(ExpTokenizer.Token firstName, TokenList tokens, Expression exp) throws ExpError {
 		ArrayList<String> vals = new ArrayList<>();
 		vals.add(firstName.value.intern());
 		while (true) {
@@ -1106,6 +1104,9 @@ public class ExpParser {
 			vals.add(nextName.value.intern());
 		}
 
-		return vals;
+		String[] ret = new String[vals.size()];
+		for (int i = 0; i < ret.length; i++)
+			ret[i] = vals.get(i);
+		return ret;
 	}
 }
