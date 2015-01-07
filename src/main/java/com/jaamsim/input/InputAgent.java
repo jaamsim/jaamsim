@@ -1006,23 +1006,25 @@ public class InputAgent {
 			file.format("}%n");
 		}
 
-		// 3) WRITE THE ATTRIBUTE DEFINITIONS
-		boolean blankLinePrinted = false;
+		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
+		final String earlyKeywords[] = {"AttributeDefinitionList", "UnitType"};
 		for (Entity ent : Entity.getAll()) {
 			if (!ent.testFlag(Entity.FLAG_EDITED))
 				continue;
 			if (ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
 
-			final Input<?> in = ent.getInput("AttributeDefinitionList");
-			if (in == null || !in.isEdited())
-				continue;
-
-			if (!blankLinePrinted) {
-				file.format("%n");
-				blankLinePrinted = true;
+			boolean blankLinePrinted = false;
+			for (int i = 0; i < earlyKeywords.length; i++) {
+				final Input<?> in = ent.getInput(earlyKeywords[i]);
+				if (in != null && in.isEdited()) {
+					if (!blankLinePrinted) {
+						file.format("%n");
+						blankLinePrinted = true;
+					}
+					writeInputOnFile_ForEntity(file, ent, in);
+				}
 			}
-			writeInputOnFile_ForEntity(file, ent, in);
 		}
 
 		// 4) WRITE THE INPUTS FOR KEYWORDS THAT WERE EDITED
@@ -1039,9 +1041,7 @@ public class InputAgent {
 			ArrayList<Input<?>> deferredInputs = new ArrayList<>();
 			// Print the key inputs first
 			for (Input<?> in : ent.getEditableInputs()) {
-				if (!in.isEdited())
-					continue;
-				if ("AttributeDefinitionList".equals(in.getKeyword()))
+				if (!in.isEdited() || matchesKey(in.getKeyword(), earlyKeywords))
 					continue;
 
 				// defer all inputs outside the Key Inputs category
@@ -1063,6 +1063,14 @@ public class InputAgent {
 		file.close();
 
 		sessionEdited = false;
+	}
+
+	private static boolean matchesKey(String key, String[] keys) {
+		for (int i=0; i<keys.length; i++) {
+			if (keys[i].equals(key))
+				return true;
+		}
+		return false;
 	}
 
 	static void writeInputOnFile_ForEntity(FileEntity file, Entity ent, Input<?> in) {
