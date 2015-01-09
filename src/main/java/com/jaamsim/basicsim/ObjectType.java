@@ -14,12 +14,14 @@
  */
 package com.jaamsim.basicsim;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ClassInput;
 import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.ImageInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
@@ -43,6 +45,11 @@ public class ObjectType extends Entity {
 	         example = "This is placeholder example text")
 	private final BooleanInput dragAndDrop;
 
+	@Keyword(description = "The (optional) image to be used in the Model Builder as the icon for this object type." +
+			"The normal image size is 24x24 pixels.",
+	         example = "This is placeholder example text")
+	private final ImageInput iconFile;
+
 	private final ArrayList<DisplayModel> displayEntityDefault = new ArrayList<>(1);
 
 	static {
@@ -61,6 +68,9 @@ public class ObjectType extends Entity {
 
 		dragAndDrop = new BooleanInput("DragAndDrop", "Key inputs", true);
 		this.addInput(dragAndDrop);
+
+		iconFile = new ImageInput("IconFile", "Key inputs", null);
+		this.addInput(iconFile);
 	}
 
 	public ObjectType() {
@@ -71,6 +81,7 @@ public class ObjectType extends Entity {
 
 	@Override
 	public void updateForInput(Input<?> in) {
+
 		if (in == defaultDisplayModel) {
 			displayEntityDefault.clear();
 			if (defaultDisplayModel.getValue() != null)
@@ -112,4 +123,9 @@ public class ObjectType extends Entity {
 	public boolean isDragAndDrop() {
 		return dragAndDrop.getValue();
 	}
+
+	public BufferedImage getIconImage() {
+		return iconFile.getValue();
+	}
+
 }

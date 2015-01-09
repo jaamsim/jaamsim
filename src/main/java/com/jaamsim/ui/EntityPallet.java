@@ -198,6 +198,12 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 			if (!RenderManager.isGood())
 				return this;
 
+			if (type.getIconImage() != null) {
+				icon.setImage(type.getIconImage());
+				this.setIcon(icon);
+				return this;
+			}
+
 			ArrayList<DisplayModel> dm = type.getDefaultDisplayModel();
 			if (dm.isEmpty())
 				return this;
