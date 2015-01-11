@@ -25,7 +25,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 public class Assemble extends LinkedService {
@@ -37,11 +36,6 @@ public class Assemble extends LinkedService {
 	@Keyword(description = "A list of Queue objects in which to place the arriving sub-component entities.",
 	         example = "EntityAssemble1 WaitQueueList { Queue1 }")
 	private final EntityListInput<Queue> waitQueueList;
-
-	@Keyword(description = "An index that determines the Queue in which to place the incoming entity:" +
-			"1 = first queue, 2 = second queue, etc.",
-	         example = "EntityAssemble1 Choice { 1 }")
-	private final SampleExpInput choice;
 
 	@Keyword(description = "The prototype for entities representing the assembled part.",
 	         example = "EntityAssemble1 PrototypeEntity { Proto }")
@@ -61,12 +55,6 @@ public class Assemble extends LinkedService {
 
 		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", "Key Inputs", null);
 		this.addInput(waitQueueList);
-
-		choice = new SampleExpInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1));
-		choice.setUnitType(DimensionlessUnit.class);
-		choice.setEntity(this);
-		choice.setValidRange(1, Double.POSITIVE_INFINITY);
-		this.addInput(choice);
 
 		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
 		this.addInput(prototypeEntity);
@@ -89,7 +77,6 @@ public class Assemble extends LinkedService {
 		}
 
 		serviceTime.validate();
-		choice.validate();
 	}
 
 	@Override
@@ -104,13 +91,8 @@ public class Assemble extends LinkedService {
 	public void addEntity( DisplayEntity ent ) {
 		super.addEntity(ent);
 
-		// Choose the queue in which to place the entity
-		int ind = (int) choice.getValue().getNextSample(getSimTime());
-		ind = Math.max(ind, 1);
-		ind = Math.min(ind, waitQueueList.getValue().size());
-
-		// Add the entity to the queue
-		waitQueueList.getValue().get(ind-1).addEntity(ent);
+		// By default, add the entity to the first queue
+		waitQueueList.getValue().get(0).addEntity(ent);
 	}
 
 	@Override
