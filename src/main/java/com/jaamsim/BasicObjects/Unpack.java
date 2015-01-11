@@ -59,8 +59,7 @@ public class Unpack extends LinkedService {
 	public void startAction() {
 
 		// Is there a container waiting to be unpacked?
-		Queue que = waitQueue.getValue();
-		if (container == null && que.getCount() == 0) {
+		if (container == null && waitQueue.getValue().getCount() == 0) {
 			this.setBusy(false);
 			this.setPresentState();
 			return;
@@ -76,7 +75,7 @@ public class Unpack extends LinkedService {
 		if (container == null) {
 
 			// Remove the container from the queue
-			container = (EntityContainer)que.removeFirst();
+			container = (EntityContainer)this.getNextEntity();
 			numberToRemove = this.getNumberToRemove();
 			numberRemoved = 0;
 
