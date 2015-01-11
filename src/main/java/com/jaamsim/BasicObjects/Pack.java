@@ -46,6 +46,7 @@ public class Pack extends LinkedService {
 	private int numberInserted;   // Number of entities inserted to the EntityContainer
 	private int numberToInsert;   // Number of entities to insert in the present EntityContainer
 	private boolean startedPacking;  // True if the packing process has already started
+	private DisplayEntity packedEntity;  // the entity being packed
 
 	{
 		prototypeEntityContainer = new EntityInput<>(EntityContainer.class, "PrototypeEntityContainer", "Key Inputs", null);
@@ -84,6 +85,7 @@ public class Pack extends LinkedService {
 		numberGenerated = 0;
 		numberInserted = 0;
 		startedPacking = false;
+		packedEntity = null;
 	}
 
 	protected EntityContainer getNextContainer() {
@@ -130,6 +132,7 @@ public class Pack extends LinkedService {
 		}
 
 		// Schedule the insertion of the next entity
+		packedEntity = this.getNextEntity();
 		double dt = serviceTime.getValue().getNextSample(getSimTime());
 		this.scheduleProcess(dt, 5, endActionTarget);
 	}
@@ -138,7 +141,8 @@ public class Pack extends LinkedService {
 	public void endAction() {
 
 		// Remove the next entity from the queue and pack the container
-		container.addEntity(waitQueue.getValue().removeFirst());
+		container.addEntity(packedEntity);
+		packedEntity = null;
 		numberInserted++;
 
 		// If the container is full, send it to the next component
