@@ -69,7 +69,7 @@ public class Server extends LinkedService {
 		}
 
 		// Remove the first entity from the queue
-		servedEntity = waitQueue.getValue().removeFirst();
+		servedEntity = this.getNextEntity();
 		double dt = serviceTime.getValue().getNextSample(getSimTime());
 
 		// Schedule the completion of service
