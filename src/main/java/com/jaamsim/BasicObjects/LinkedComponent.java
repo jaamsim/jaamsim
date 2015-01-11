@@ -113,6 +113,10 @@ public abstract class LinkedComponent extends StateEntity {
 	 * @param ent - the entity received from upstream.
 	 */
 	public void addEntity(DisplayEntity ent) {
+		this.registerEntity(ent);
+	}
+
+	protected void registerEntity(DisplayEntity ent) {
 
 		receivedEntity = ent;
 		numberAdded++;

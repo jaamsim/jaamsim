@@ -67,11 +67,20 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
-		super.addEntity(ent);
 
 		// Add the entity to the queue
 		if (waitQueue.getValue() != null)
 			waitQueue.getValue().addEntity(ent);
+	}
+
+	/**
+	 * Removes the next entity to be processed from the queue.
+	 * @return the next entity for processing.
+	 */
+	protected DisplayEntity getNextEntity() {
+		DisplayEntity ent = waitQueue.getValue().removeFirst();
+		this.registerEntity(ent);
+		return ent;
 	}
 
 	@Override
