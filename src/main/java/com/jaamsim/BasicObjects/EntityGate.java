@@ -26,6 +26,8 @@ public class EntityGate extends LinkedService {
 	         example = "EntityGate1 ReleaseDelay { 5.0 s }")
 	private final ValueInput releaseDelay;
 
+	private DisplayEntity servedEntity; // the entity about to be released from the queue
+
 	{
 		releaseDelay = new ValueInput("ReleaseDelay", "Key Inputs", 0.0);
 		releaseDelay.setUnitType(TimeUnit.class);
@@ -34,6 +36,12 @@ public class EntityGate extends LinkedService {
 	}
 
 	public EntityGate() {}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+		servedEntity = null;
+	}
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
@@ -61,6 +69,7 @@ public class EntityGate extends LinkedService {
 		}
 
 		// Schedule the release of the next entity
+		servedEntity = this.getNextEntity();
 		this.scheduleProcess(releaseDelay.getValue(), 5, endActionTarget);
 	}
 
@@ -71,7 +80,8 @@ public class EntityGate extends LinkedService {
 	public void endAction() {
 
 		// Release the first element in the queue and send to the next component
-		this.sendToNextComponent(waitQueue.getValue().removeFirst());
+		this.sendToNextComponent(servedEntity);
+		servedEntity = null;
 
 		// Try to release another entity
 		this.startAction();
