@@ -16,14 +16,21 @@ package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 
-public abstract class LinkedService extends LinkedComponent implements ThresholdUser {
+public abstract class LinkedService extends LinkedComponent implements ThresholdUser, QueueUser {
+
+	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
+	         example = "Server1 WaitQueue { Queue1 }")
+	protected final EntityInput<Queue> waitQueue;
 
 	@Keyword(description = "A list of thresholds that must be satisified for the entity to operate.",
 			example = "EntityGenerator1 OperatingThresholdList { Server1 }")
@@ -33,6 +40,9 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
 
 	{
+		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
+		this.addInput(waitQueue);
+
 		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
 		this.addInput( operatingThresholdList);
 	}
@@ -40,9 +50,47 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	public LinkedService() {}
 
 	@Override
+	public void validate() {
+
+		// Confirm that the target queue has been specified
+		if (!waitQueue.getHidden() && waitQueue.getValue() == null) {
+			throw new InputErrorException("The keyword WaitQueue must be set.");
+		}
+
+	}
+
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		this.setBusy(false);
+	}
+
+	@Override
+	public void addEntity(DisplayEntity ent) {
+		super.addEntity(ent);
+
+		// Add the entity to the queue
+		if (waitQueue.getValue() != null)
+			waitQueue.getValue().addEntity(ent);
+	}
+
+	@Override
+	public ArrayList<Queue> getQueues() {
+		ArrayList<Queue> ret = new ArrayList<>();
+		if (waitQueue.getValue() != null)
+			ret.add(waitQueue.getValue());
+		return ret;
+	}
+
+	@Override
+	public void queueChanged() {
+
+		// If necessary, wake up the server
+		if (!this.isBusy() && this.isOpen()) {
+			this.setBusy(true);
+			this.setPresentState();
+			this.startAction();
+		}
 	}
 
 	private static class EndActionTarget extends EntityTarget<LinkedService> {

@@ -14,22 +14,13 @@
  */
 package com.jaamsim.BasicObjects;
 
-import java.util.ArrayList;
-
-import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
-import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.TimeUnit;
 
-public class Unpack extends LinkedService implements QueueUser {
-
-	@Keyword(description = "The queue in which the waiting containers will be placed.",
-	         example = "Pack1 WaitQueue { Queue1 }")
-	private final EntityInput<Queue> waitQueue;
+public class Unpack extends LinkedService {
 
 	@Keyword(description = "The service time required to unpacking each entity.",
 	         example = "Pack1 ServiceTime { 3.0 h }")
@@ -38,9 +29,6 @@ public class Unpack extends LinkedService implements QueueUser {
 	private int numberToRemove;   // Number of entities to remove from the present EntityContainer
 
 	{
-		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput(waitQueue);
-
 		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
@@ -57,11 +45,6 @@ public class Unpack extends LinkedService implements QueueUser {
 	public void validate() {
 		super.validate();
 
-		// Confirm that the waiting queue has been specified
-		if (waitQueue.getValue() == null) {
-			throw new InputErrorException("The keyword WaitQueue must be set.");
-		}
-
 		serviceTime.validate();
 	}
 
@@ -70,32 +53,6 @@ public class Unpack extends LinkedService implements QueueUser {
 		super.earlyInit();
 		container = null;
 		numberRemoved = 0;
-	}
-
-	@Override
-	public void addEntity(DisplayEntity ent) {
-		super.addEntity(ent);
-
-		// Add the entity to the queue
-		waitQueue.getValue().addEntity(ent);
-	}
-
-	@Override
-	public ArrayList<Queue> getQueues() {
-		ArrayList<Queue> ret = new ArrayList<>();
-		ret.add(waitQueue.getValue());
-		return ret;
-	}
-
-	@Override
-	public void queueChanged() {
-
-		// If necessary, restart processing
-		if (!this.isBusy()) {
-			this.setBusy(true);
-			this.setPresentState();
-			this.startAction();
-		}
 	}
 
 	@Override

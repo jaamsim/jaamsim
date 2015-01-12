@@ -61,6 +61,7 @@ public class EntityGenerator extends LinkedService {
 	{
 		testEntity.setHidden(true);
 		stateAssignment.setHidden(true);
+		waitQueue.setHidden(true);
 
 		firstArrivalTime = new SampleExpInput("FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType(TimeUnit.class);

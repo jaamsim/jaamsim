@@ -14,8 +14,6 @@
  */
 package com.jaamsim.BasicObjects;
 
-import java.util.ArrayList;
-
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
@@ -28,16 +26,12 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class Pack extends LinkedService implements QueueUser {
+public class Pack extends LinkedService {
 
 	@Keyword(description = "The prototype for EntityContainers to be generated.\n" +
 			"The generated EntityContainers will be copies of this entity.",
 	         example = "Pack1 PrototypeEntityContainer { ProtoContainer }")
 	protected final EntityInput<EntityContainer> prototypeEntityContainer;
-
-	@Keyword(description = "The queue in which the waiting entities will be placed.",
-	         example = "Pack1 WaitQueue { Queue1 }")
-	protected final EntityInput<Queue> waitQueue;
 
 	@Keyword(description = "The number of entities to pack into the container.",
 	         example = "Pack1 NumberOfEntities { 2 }")
@@ -57,9 +51,6 @@ public class Pack extends LinkedService implements QueueUser {
 		prototypeEntityContainer = new EntityInput<>(EntityContainer.class, "PrototypeEntityContainer", "Key Inputs", null);
 		this.addInput(prototypeEntityContainer);
 
-		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput(waitQueue);
-
 		numberOfEntities = new SampleExpInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setEntity(this);
@@ -77,11 +68,6 @@ public class Pack extends LinkedService implements QueueUser {
 	public void validate() {
 		super.validate();
 
-		// Confirm that the waiting queue has been specified
-		if (waitQueue.getValue() == null) {
-			throw new InputErrorException("The keyword WaitQueue must be set.");
-		}
-
 		// Confirm that prototype entity has been specified
 		if (!prototypeEntityContainer.getHidden() && prototypeEntityContainer.getValue() == null) {
 			throw new InputErrorException("The keyword PrototypeEntityContainer must be set.");
@@ -98,33 +84,6 @@ public class Pack extends LinkedService implements QueueUser {
 		numberGenerated = 0;
 		numberInserted = 0;
 		startedPacking = false;
-	}
-
-	@Override
-	public void addEntity(DisplayEntity ent) {
-		super.addEntity(ent);
-
-		// Add the entity to the queue
-		waitQueue.getValue().addEntity(ent);
-	}
-
-	@Override
-	public ArrayList<Queue> getQueues() {
-		ArrayList<Queue> ret = new ArrayList<>();
-		ret.add(waitQueue.getValue());
-		return ret;
-	}
-
-	@Override
-	public void queueChanged() {
-
-		// If necessary, restart processing
-		if (!this.isBusy()) {
-			this.setBusy(true);
-			this.setPresentState();
-			this.startAction();
-		}
-
 	}
 
 	protected EntityContainer getNextContainer() {

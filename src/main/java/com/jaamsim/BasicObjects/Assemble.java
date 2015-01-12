@@ -28,7 +28,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
-public class Assemble extends LinkedService implements QueueUser {
+public class Assemble extends LinkedService {
 
 	@Keyword(description = "The service time required to perform the assembly process.",
 	         example = "EntityAssemble1 ServiceTime { 3.0 h }")
@@ -51,6 +51,8 @@ public class Assemble extends LinkedService implements QueueUser {
 	private int numberGenerated = 0;  // Number of entities generated so far
 
 	{
+		waitQueue.setHidden(true);
+
 		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
@@ -114,17 +116,6 @@ public class Assemble extends LinkedService implements QueueUser {
 	@Override
 	public ArrayList<Queue> getQueues() {
 		return waitQueueList.getValue();
-	}
-
-	@Override
-	public void queueChanged() {
-
-		// If necessary, wake up the server
-		if (!this.isBusy()) {
-			this.setBusy(true);
-			this.setPresentState();
-			this.startAction();
-		}
 	}
 
 	/**

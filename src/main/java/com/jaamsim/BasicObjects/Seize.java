@@ -18,13 +18,12 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 
-public class Seize extends LinkedService implements QueueUser {
+public class Seize extends LinkedService {
 
 	@Keyword(description = "The Resource(s) to be seized.",
 	         example = "Seize1 Resource { Resource1 Resource2 }")
@@ -34,10 +33,6 @@ public class Seize extends LinkedService implements QueueUser {
 	         example = "Seize1 NumberOfUnits { 2 1 }")
 	private final IntegerListInput numberOfUnitsList;
 
-	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
-	         example = "Seize1 WaitQueue { Queue1 }")
-	private final EntityInput<Queue> waitQueue;
-
 	{
 		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
 		this.addInput(resourceList);
@@ -46,37 +41,16 @@ public class Seize extends LinkedService implements QueueUser {
 		defNum.add(1);
 		numberOfUnitsList = new IntegerListInput("NumberOfUnits", "Key Inputs", defNum);
 		this.addInput(numberOfUnitsList);
-
-		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput(waitQueue);
 	}
 
 	@Override
 	public void validate() {
 		super.validate();
 
-		// Confirm that the target queue has been specified
-		if (waitQueue.getValue() == null) {
-			throw new InputErrorException("The keyword WaitQueue must be set.");
-		}
-
 		// Confirm that the resource has been specified
 		if (resourceList.getValue() == null) {
 			throw new InputErrorException("The keyword Resource must be set.");
 		}
-	}
-
-	@Override
-	public void addEntity(DisplayEntity ent) {
-		super.addEntity(ent);
-		waitQueue.getValue().addEntity(ent);
-	}
-
-	@Override
-	public ArrayList<Queue> getQueues() {
-		ArrayList<Queue> ret = new ArrayList<>();
-		ret.add(waitQueue.getValue());
-		return ret;
 	}
 
 	@Override

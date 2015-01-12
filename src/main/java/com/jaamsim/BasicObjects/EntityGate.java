@@ -14,20 +14,12 @@
  */
 package com.jaamsim.BasicObjects;
 
-import java.util.ArrayList;
-
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 
-public class EntityGate extends LinkedService implements QueueUser {
-
-	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
-	         example = "EntityGate1 WaitQueue { Queue1 }")
-	private final EntityInput<Queue> waitQueue;
+public class EntityGate extends LinkedService {
 
 	@Keyword(description = "The time delay before each queued entity is released.\n" +
 			"Entities arriving at an open gate are not delayed.",
@@ -35,9 +27,6 @@ public class EntityGate extends LinkedService implements QueueUser {
 	private final ValueInput releaseDelay;
 
 	{
-		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
-		this.addInput(waitQueue);
-
 		releaseDelay = new ValueInput("ReleaseDelay", "Key Inputs", 0.0);
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
@@ -45,16 +34,6 @@ public class EntityGate extends LinkedService implements QueueUser {
 	}
 
 	public EntityGate() {}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the target queue has been specified
-		if (waitQueue.getValue() == null) {
-			throw new InputErrorException("The keyword WaitQueue must be set.");
-		}
-	}
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
@@ -69,24 +48,6 @@ public class EntityGate extends LinkedService implements QueueUser {
 
 		// If the gate is open and there are no other entities still in the queue, then send the entity to the next component
 		this.sendToNextComponent(ent);
-	}
-
-	@Override
-	public ArrayList<Queue> getQueues() {
-		ArrayList<Queue> ret = new ArrayList<>();
-		ret.add(waitQueue.getValue());
-		return ret;
-	}
-
-	@Override
-	public void queueChanged() {
-
-		// If necessary, restart processing
-		if (this.isOpen() && !this.isBusy()) {
-			this.setBusy(true);
-			this.setPresentState();
-			this.startAction();
-		}
 	}
 
 	@Override
