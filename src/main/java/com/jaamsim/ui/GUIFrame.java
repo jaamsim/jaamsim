@@ -1136,10 +1136,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		else if( getSimState() == SIM_STATE_PAUSED ) {
 			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
 		}
-		else if( getSimState() == SIM_STATE_STOPPED ) {
-			if (!Simulation.start(currentEvt, currentEvt.secondsToNearestTick(runToSecs)))
-				updateForSimulationState(SIM_STATE_CONFIGURED);
-		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
 	}
@@ -1162,7 +1158,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		    getSimState() == SIM_STATE_PAUSED ) {
 			currentEvt.pause();
 			currentEvt.clear();
-			this.updateForSimulationState(GUIFrame.SIM_STATE_STOPPED);
+			this.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 
 			// kill all generated objects
 			for (int i = 0; i < Entity.getAll().size();) {
@@ -1188,8 +1184,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public static final int SIM_STATE_RUNNING = 3;
 	/** model has run, but presently is paused */
 	public static final int SIM_STATE_PAUSED = 4;
-	/** model has run, but presently is stopped */
-	public static final int SIM_STATE_STOPPED = 5;
 
 	private int simState;
 	public int getSimState() {
@@ -1291,16 +1285,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				controlStop.setEnabled( true );
 				controlStop.setSelected( false );
 				break;
-			case SIM_STATE_STOPPED:
-				speedUpDisplay.setEnabled( false );
-				remainingDisplay.setEnabled( false );
-				controlStartResume.setEnabled( true );
-				controlStartResume.setSelected( false );
-				controlStartResume.setToolTipText( "Run" );
-				controlStop.setEnabled( false );
-				controlStop.setSelected( false );
-				break;
-
 			default:
 				throw new ErrorException( "Unrecognized Graphics State" );
 		}
