@@ -287,17 +287,16 @@ public class ObjectSelector extends FrameBox {
 		@Override
 		public void valueChanged( TreeSelectionEvent e ) {
 			JTree tree = (JTree) e.getSource();
-			if(tree.getLastSelectedPathComponent() == null) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+			if(node == null) {
 				// This occurs when we set no selected entity (null) and then
 				// force the tree to have a null selected node
 				return;
 			}
 
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-
-			if (node.getUserObject() instanceof Entity) {
-				Entity entity = (Entity)node.getUserObject();
-				FrameBox.setSelectedEntity(entity);
+			Object userObj = node.getUserObject();
+			if (userObj instanceof Entity) {
+				FrameBox.setSelectedEntity((Entity)userObj);
 			}
 			else {
 				FrameBox.setSelectedEntity(null);
