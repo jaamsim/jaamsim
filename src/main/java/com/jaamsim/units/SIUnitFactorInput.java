@@ -56,4 +56,9 @@ public class SIUnitFactorInput extends Input<double[]> {
 		super.setDefaultValue(val);
 		calculateSI(value);
 	}
+
+	@Override
+	public String getDefaultString() {
+		return "1.0";
+	}
 }
