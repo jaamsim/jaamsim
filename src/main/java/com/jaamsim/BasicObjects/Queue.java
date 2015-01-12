@@ -23,6 +23,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -39,6 +40,12 @@ public class Queue extends LinkedComponent {
 			"For example, priority 3 is higher than 4, and priorities 3, 3.2, and 3.8 are equivalent.",
 	         example = "Queue1 Priority { this.obj.Attrib1 }")
 	private final SampleExpInput priority;
+
+	@Keyword(description = "Determines the order in which entities are placed in the queue (FIFO or LIFO):\n" +
+			"TRUE = first in first out (FIFO) order (the default setting)," +
+			"FALSE = last in first out (LIFO) order.",
+	         example = "Queue1 FIFO { FALSE }")
+	private final BooleanInput fifo;
 
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
 	         example = "Queue1 Spacing { 1 m }")
@@ -70,6 +77,9 @@ public class Queue extends LinkedComponent {
 		priority.setEntity(this);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(priority);
+
+		fifo = new BooleanInput("FIFO", "Key Inputs", true);
+		this.addInput(fifo);
 
 		spacing = new ValueInput("Spacing", "Key Inputs", 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
@@ -155,11 +165,24 @@ public class Queue extends LinkedComponent {
 		int pri = (int) priority.getValue().getNextSample(getSimTime());
 
 		// Insert the entity in the correct position in the queue
+		// FIFO ordering
 		int pos = 0;
-		for (int i=itemList.size()-1; i>=0; i--) {
-			if (itemList.get(i).priority <= pri) {
-				pos = i+1;
-				break;
+		if (fifo.getValue()) {
+			for (int i=itemList.size()-1; i>=0; i--) {
+				if (itemList.get(i).priority <= pri) {
+					pos = i+1;
+					break;
+				}
+			}
+		}
+		// LIFO ordering
+		else {
+			pos = itemList.size();
+			for (int i=0; i<itemList.size(); i++) {
+				if (itemList.get(i).priority >= pri) {
+					pos = i;
+					break;
+				}
 			}
 		}
 		this.add(pos, ent, pri);
