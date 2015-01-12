@@ -1129,16 +1129,16 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			if (InputAgent.isSessionEdited()) {
 				this.saveAs();
 			}
-			Simulation.start(currentEvt);
-			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
+			if (!Simulation.start(currentEvt, currentEvt.secondsToNearestTick(runToSecs)))
+				updateForSimulationState(SIM_STATE_CONFIGURED);
+
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
 			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
 		}
 		else if( getSimState() == SIM_STATE_STOPPED ) {
-			updateForSimulationState(SIM_STATE_CONFIGURED);
-			Simulation.start(currentEvt);
-			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
+			if (!Simulation.start(currentEvt, currentEvt.secondsToNearestTick(runToSecs)))
+				updateForSimulationState(SIM_STATE_CONFIGURED);
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
@@ -1592,9 +1592,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (batch) {
 			if (InputAgent.numErrors() > 0)
 				GUIFrame.shutdown(0);
-			Simulation.start(evt);
-			evt.resume(Long.MAX_VALUE);
-			GUIFrame.instance.updateForSimulationState(GUIFrame.SIM_STATE_RUNNING);
+			Simulation.start(evt, Long.MAX_VALUE);
 			return;
 		}
 
