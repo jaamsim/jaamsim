@@ -183,6 +183,17 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		return values;
 	}
 
+	public ArrayList<K1> getAllKeys() {
+
+		ArrayList<K1> keys = new ArrayList<>();
+
+		for( K1 each : hashMap.keySet() ) {
+			keys.add(each);
+		}
+
+		return keys;
+	}
+
 	@Override
 	public String getDefaultString() {
 		return getDefaultStringForKeyInputs(unitType, null);
