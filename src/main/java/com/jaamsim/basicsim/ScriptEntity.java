@@ -114,8 +114,7 @@ public class ScriptEntity extends Entity {
 		for (lastTokenIdx++; lastTokenIdx < tokens.size(); lastTokenIdx++) {
 			InputAgent.processKeywordRecord(tokens.get(lastTokenIdx), null);
 			// If a "Time" record was read, then wait until the time
-			EventManager cur = EventManager.current();
-			long delayTicks = cur.secondsToNearestTick(scriptTime.getValue()) - getSimTicks();
+			long delayTicks = EventManager.secondsToTicks(scriptTime.getValue()) - getSimTicks();
 			if (delayTicks > 0) {
 				scheduleProcessTicks(delayTicks, PRIO_DEFAULT, targ);
 				break;
