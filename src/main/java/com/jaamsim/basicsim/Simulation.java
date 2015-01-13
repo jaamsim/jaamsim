@@ -312,7 +312,7 @@ public class Simulation extends Entity {
 	 *		2) calls startModel() to allow the model to add its starting events to EventManager
 	 *		3) start EventManager processing events
 	 */
-	public static boolean start(EventManager evt, long targetTicks) {
+	public static void start(EventManager evt) {
 		// Validate each entity based on inputs only
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			try {
@@ -324,7 +324,8 @@ public class Simulation extends Entity {
 				                         "%s: %-70s",
 				                         Entity.getAll().get(i).getName(), e.getMessage());
 
-				return false;
+				GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+				return;
 			}
 		}
 
@@ -351,8 +352,7 @@ public class Simulation extends Entity {
 		endTime = startTime + Simulation.getInitializationTime() + Simulation.getRunDuration();
 
 		evt.scheduleProcessExternal(0, Entity.PRIO_DEFAULT, false, new InitModelTarget(), null);
-		evt.resume(targetTicks);
-		return true;
+		evt.resume(evt.secondsToNearestTick(Simulation.getPauseTime()));
 	}
 
 	public static boolean traceEvents() {

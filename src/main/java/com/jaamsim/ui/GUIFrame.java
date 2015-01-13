@@ -1121,20 +1121,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * Starts or resumes the simulation run.
 	 */
 	public void startSimulation() {
-
-		// pause at a time
-		double runToSecs = Simulation.getPauseTime();
-
 		if( getSimState() <= SIM_STATE_CONFIGURED ) {
 			if (InputAgent.isSessionEdited()) {
 				this.saveAs();
 			}
-			if (!Simulation.start(currentEvt, currentEvt.secondsToNearestTick(runToSecs)))
-				updateForSimulationState(SIM_STATE_CONFIGURED);
-
+			Simulation.start(currentEvt);
 		}
 		else if( getSimState() == SIM_STATE_PAUSED ) {
-			currentEvt.resume(currentEvt.secondsToNearestTick(runToSecs));
+			currentEvt.resume(currentEvt.secondsToNearestTick(Simulation.getPauseTime()));
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for Start/Resume" );
@@ -1200,7 +1194,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 *
 	 * @param state - an index that designates the state of the simulation run.
 	 */
-	private void updateForSimulationState(int state) {
+	public void updateForSimulationState(int state) {
 		simState = state;
 
 		switch( getSimState() ) {
@@ -1576,7 +1570,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (batch) {
 			if (InputAgent.numErrors() > 0)
 				GUIFrame.shutdown(0);
-			Simulation.start(evt, Long.MAX_VALUE);
+			Simulation.start(evt);
 			return;
 		}
 
