@@ -100,7 +100,7 @@ public final class EventManager {
 			if (l != null)
 				timelistener = l;
 			else
-				timelistener = new DefaultTimeListener();
+				timelistener = new NoopListener();
 
 			timelistener.tickUpdate(currentTick);
 		}
@@ -111,7 +111,7 @@ public final class EventManager {
 			if (l != null)
 				errListener = l;
 			else
-				errListener = new DefaultErrorListener();
+				errListener = new NoopListener();
 		}
 	}
 
@@ -811,17 +811,5 @@ public final class EventManager {
 	 */
 	public final double ticksToSeconds(long ticks) {
 		return ticks * secsPerTick;
-	}
-
-	private static class DefaultTimeListener implements EventTimeListener {
-		@Override
-		public void tickUpdate(long tick) {}
-		@Override
-		public void timeRunning(boolean running) {}
-	}
-
-	private static class DefaultErrorListener implements EventErrorListener {
-		@Override
-		public void handleError(EventManager evt, Throwable t, long currentTick) {}
 	}
 }
