@@ -684,6 +684,15 @@ public final class EventManager {
 		return evt.ticksToSeconds(ticks);
 	}
 
+	public static final long calcSimTicks(double secs) {
+		EventManager evt = Process.current().evt();
+		long ticks = evt.secondsToNearestTick(secs) + evt.currentTick;
+		if (ticks < 0)
+			ticks = Long.MAX_VALUE;
+
+		return ticks;
+	}
+
 	public void scheduleProcessExternal(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
