@@ -34,7 +34,6 @@ import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.ObjectSelector;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -63,9 +62,9 @@ public class Simulation extends Entity {
 	         example = "Simulation PauseTime { 200 h }")
 	private static final ValueInput pauseTime;
 
-	@Keyword(description = "The number of discrete time units in one hour.",
-	         example = "Simulation SimulationTimeScale { 4500 }")
-	private static final ValueInput simTimeScaleInput;
+	@Keyword(description = "The length of time represented by one simulation tick.",
+	         example = "Simulation TickLength { 1e-6 s }")
+	private static final ValueInput tickLengthInput;
 
 	@Keyword(description = "If the value is TRUE, then the input report file will be printed after loading the " +
 	                "configuration file.  The input report can always be generated when needed by selecting " +
@@ -146,9 +145,9 @@ public class Simulation extends Entity {
 		startTimeInput.setUnitType(TimeUnit.class);
 		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
-		simTimeScaleInput = new ValueInput("SimulationTimeScale", "Key Inputs", 4000.0d);
-		simTimeScaleInput.setUnitType(DimensionlessUnit.class);
-		simTimeScaleInput.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
+		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 0.9d);
+		tickLengthInput.setUnitType(TimeUnit.class);
+		tickLengthInput.setValidRange(1e-9d, 5.0d);
 
 		traceEventsInput = new BooleanInput("TraceEvents", "Key Inputs", false);
 		verifyEventsInput = new BooleanInput("VerifyEvents", "Key Inputs", false);
@@ -181,7 +180,7 @@ public class Simulation extends Entity {
 
 		this.addInput(startTimeInput);
 
-		this.addInput(simTimeScaleInput);
+		this.addInput(tickLengthInput);
 
 		this.addInput(traceEventsInput);
 		this.addInput(verifyEventsInput);
@@ -274,7 +273,7 @@ public class Simulation extends Entity {
 		initializationTime.reset();
 		runDuration.reset();
 		pauseTime.reset();
-		simTimeScaleInput.reset();
+		tickLengthInput.reset();
 		traceEventsInput.reset();
 		verifyEventsInput.reset();
 		printInputReport.reset();
@@ -344,9 +343,9 @@ public class Simulation extends Entity {
 			evt.setTraceListener(trc);
 		}
 
-		evt.setSimTimeScale(simTimeScaleInput.getValue());
-		setSimTimeScale(simTimeScaleInput.getValue());
-		FrameBox.setSecondsPerTick(3600.0d / simTimeScaleInput.getValue());
+		evt.setTickLength(tickLengthInput.getValue());
+		setSimTimeScale(evt.secondsToNearestTick(3600.0d));
+		FrameBox.setSecondsPerTick(tickLengthInput.getValue());
 
 		startTime = startTimeInput.getValue();
 		endTime = startTime + Simulation.getInitializationTime() + Simulation.getRunDuration();

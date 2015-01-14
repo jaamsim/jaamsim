@@ -80,8 +80,7 @@ public final class EventManager {
 		currentTick = 0;
 		nextTick = 0;
 
-		ticksPerSecond = 1000000.0d;
-		secsPerTick = 1.0d / ticksPerSecond;
+		setTickLength(1e-6d);
 
 		eventTree = new EventTree();
 		condEvents = new ArrayList<>();
@@ -794,9 +793,9 @@ public final class EventManager {
 		return currentTick * secsPerTick;
 	}
 
-	public final void setSimTimeScale(double scale) {
-		ticksPerSecond = scale / 3600.0d;
-		secsPerTick = 3600.0d / scale;
+	public final void setTickLength(double tickLength) {
+		secsPerTick = tickLength;
+		ticksPerSecond = Math.round(1e9d / secsPerTick) / 1e9d;
 	}
 
 	/**
