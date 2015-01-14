@@ -15,12 +15,47 @@
 package com.jaamsim.events;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 
 import org.junit.Test;
 
 public class TestEventManager {
+	/**
+	 * Test the static EventManager methods that can only be called from a Process
+	 * thread throw a ProcessError when called from a non-Process thread.
+	 */
+	@Test
+	public void testExpectedStaticFailures() {
+		try {
+			EventManager.current();
+			fail("Did not throw an error.");
+		}
+		catch (ProcessError e) {}
+		catch (Throwable e) {
+			fail("Unknown error thrown.");
+		}
+
+		try {
+			EventManager.simTicks();
+			fail("Did not throw an error.");
+		}
+		catch (ProcessError e) {}
+		catch (Throwable e) {
+			fail("Unknown error thrown.");
+		}
+
+		try {
+			EventManager.simSeconds();
+			fail("Did not throw an error.");
+		}
+		catch (ProcessError e) {}
+		catch (Throwable e) {
+			fail("Unknown error thrown.");
+		}
+
+	}
 
 	@Test
 	public void testScheduleTime() {

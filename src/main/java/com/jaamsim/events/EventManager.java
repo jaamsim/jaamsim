@@ -759,38 +759,39 @@ public final class EventManager {
 	}
 
 	/**
-	 * Returns true if the calling thread has a current eventManager (ie. it is inside a model)
-	 * @return
+	 * Returns the controlling EventManager for the current Process, if called outside
+	 * of a Process context, returns null.
 	 */
 	public static final boolean hasCurrent() {
 		return (Thread.currentThread() instanceof Process);
 	}
 
 	/**
-	 * Returns the eventManager that is currently executing events for this thread.
+	 * Returns the controlling EventManager for the current Process.
+	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final EventManager current() {
 		return Process.current().evt();
 	}
 
 	/**
-	 * Returns the current simulation tick for the eventManager that is
-	 * currently executing events for this thread.
+	 * Returns the current simulation tick for the current Process.
+	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final long simTicks() {
 		return Process.current().evt().currentTick;
 	}
 
-	private double getSeconds() {
-		return currentTick * secsPerTick;
-	}
-
 	/**
-	 * Returns the current simulation time in seconds  for the eventManager that is
-	 * currently executing events for this thread.
+	 * Returns the current simulation time in seconds for the current Process.
+	 * @throws ProcessError if called outside of a Process context
 	 */
 	public static final double simSeconds() {
-		return Process.current().evt().getSeconds();
+		return Process.current().evt()._simSeconds();
+	}
+
+	private double _simSeconds() {
+		return currentTick * secsPerTick;
 	}
 
 	public final void setSimTimeScale(double scale) {
