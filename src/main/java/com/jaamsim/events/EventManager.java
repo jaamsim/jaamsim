@@ -702,11 +702,33 @@ public final class EventManager {
 		}
 	}
 
+	/**
+	 * Schedule a future event in the controlling EventManager for the current Process,
+	 * if called outside of a Process context, returns null.
+	 * @throws ProcessError if called outside of a Process context
+	 *
+	 * @param waitLength the number of ticks in the future to schedule this event
+	 * @param eventPriority the priority of the scheduled event
+	 * @param fifo break ties with previously scheduled events using FIFO/LIFO ordering
+	 * @param t the process target to run when the event is executed
+	 * @param handle an optional handle to hold onto the scheduled event
+	 */
 	public static final void scheduleTicks(long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		Process cur = Process.current();
 		cur.evt().scheduleTicks(cur, waitLength, eventPriority, fifo, t, handle);
 	}
 
+	/**
+	 * Schedule a future event in the controlling EventManager for the current Process,
+	 * if called outside of a Process context, returns null.
+	 * @throws ProcessError if called outside of a Process context
+	 *
+	 * @param secs the number of seconds in the future to schedule this event
+	 * @param eventPriority the priority of the scheduled event
+	 * @param fifo break ties with previously scheduled events using FIFO/LIFO ordering
+	 * @param t the process target to run when the event is executed
+	 * @param handle an optional handle to hold onto the scheduled event
+	 */
 	public static final void scheduleSeconds(double secs, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
 		Process cur = Process.current();
 		long ticks = cur.evt().secondsToNearestTick(secs);

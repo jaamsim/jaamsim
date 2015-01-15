@@ -55,6 +55,23 @@ public class TestEventManager {
 			fail("Unknown error thrown.");
 		}
 
+		try {
+			EventManager.scheduleTicks(0, 0, false, null, null);
+			fail("Did not throw an error.");
+		}
+		catch (ProcessError e) {}
+		catch (Throwable e) {
+			fail("Unknown error thrown.");
+		}
+
+		try {
+			EventManager.scheduleSeconds(0.0d, 0, false, null, null);
+			fail("Did not throw an error.");
+		}
+		catch (ProcessError e) {}
+		catch (Throwable e) {
+			fail("Unknown error thrown.");
+		}
 	}
 
 	@Test
