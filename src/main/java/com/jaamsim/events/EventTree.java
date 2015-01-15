@@ -14,6 +14,8 @@
  */
 package com.jaamsim.events;
 
+import java.util.Arrays;
+
 
 /**
  * EventTree is a custom red-black tree implementation intended to be used as the priority queue
@@ -55,6 +57,8 @@ class EventTree {
 		root = EventNode.nilNode;
 		lowest = null;
 		clearFreeList();
+		resetScratch();
+		Arrays.fill(scratch, null);
 	}
 
 	private void updateLowest() {
