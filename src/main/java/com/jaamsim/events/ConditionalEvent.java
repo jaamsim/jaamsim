@@ -18,7 +18,8 @@ final class ConditionalEvent extends BaseEvent {
 	Conditional c;
 
 	ConditionalEvent(Conditional c, ProcessTarget t, EventHandle hand) {
-		super(t, hand);
+		this.target = t;
+		this.handle = hand;
 		this.c = c;
 	}
 }

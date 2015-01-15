@@ -14,12 +14,7 @@
  */
 package com.jaamsim.events;
 
-class BaseEvent {
+abstract class BaseEvent {
 	ProcessTarget target;
 	EventHandle handle;
-
-	BaseEvent(ProcessTarget t, EventHandle h) {
-		target = t;
-		handle = h;
-	}
 }

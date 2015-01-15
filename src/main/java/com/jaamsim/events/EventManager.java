@@ -290,13 +290,19 @@ public final class EventManager {
 			for (int i = 0; i < condEvents.size();) {
 				ConditionalEvent c = condEvents.get(i);
 				if (c.c.evaluate()) {
-					if (c.handle != null)
-						c.handle.event = null;
-					EventNode node = getEventNode(currentTick, 0);
-					Event temp = getEvent(node, c.target, c.handle);
-					if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick, c.target);
-					node.addEvent(temp, true);
 					condEvents.remove(i);
+					EventNode node = getEventNode(currentTick, 0);
+					Event evt = getEvent();
+					evt.node = node;
+					evt.target = c.target;
+					evt.handle = c.handle;
+					if (evt.handle != null) {
+						// no need to check the handle.isScheduled as we just unscheduled it above
+						// and we immediately switch it to this event
+						evt.handle.event = evt;
+					}
+					if (trcListener != null) trcListener.traceWaitUntilEnded(this, currentTick, c.target);
+					node.addEvent(evt, true);
 					continue;
 				}
 				i++;
@@ -390,9 +396,18 @@ public final class EventManager {
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);
 			EventNode node = getEventNode(nextEventTime, priority);
-			Event temp = getEvent(node, t, handle);
+			Event evt = getEvent();
+			evt.node = node;
+			evt.target = t;
+			evt.handle = handle;
+			if (handle != null) {
+				if (handle.isScheduled())
+					throw new ProcessError("Tried to schedule using an EventHandle already in use");
+				handle.event = evt;
+			}
+
 			if (trcListener != null) trcListener.traceWait(this, currentTick, nextEventTime, priority, t);
-			node.addEvent(temp, fifo);
+			node.addEvent(evt, fifo);
 			captureProcess(cur);
 		}
 	}
@@ -406,26 +421,14 @@ public final class EventManager {
 	}
 
 	private Event freeEvents = null;
-	private Event getEvent(EventNode n, ProcessTarget t, EventHandle h) {
-		Event evt = freeEvents;
-		if (evt != null) {
+	private Event getEvent() {
+		if (freeEvents != null) {
+			Event evt = freeEvents;
 			freeEvents = evt.next;
-			evt.node = n;
-			evt.target = t;
-			evt.handle = h;
-		}
-		else {
-			evt = new Event(n, t, h);
+			return evt;
 		}
 
-		if (h != null) {
-			if (h.isScheduled())
-				throw new ProcessError("Tried to schedule using an EventHandle already in use");
-
-			h.event = evt;
-		}
-
-		return evt;
+		return new Event();
 	}
 
 	private void clearFreeList() {
@@ -467,7 +470,7 @@ public final class EventManager {
 		synchronized (lockObject) {
 			cur.checkCondWait();
 			if (handle != null && handle.isScheduled())
-				throw new ProcessError("Tried to waitUntil using a handle already in use");
+				throw new ProcessError("Tried to scheduleUntil using a handle already in use");
 
 			ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 			if (handle != null)
@@ -684,9 +687,17 @@ public final class EventManager {
 		synchronized (lockObject) {
 			long schedTick = calculateEventTime(waitLength);
 			EventNode node = getEventNode(schedTick, eventPriority);
-			Event e = getEvent(node, t, handle);
+			Event evt = getEvent();
+			evt.node = node;
+			evt.target = t;
+			evt.handle = handle;
+			if (handle != null) {
+				if (handle.isScheduled())
+					throw new ProcessError("Tried to schedule using an EventHandle already in use");
+				handle.event = evt;
+			}
 			if (trcListener != null) trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
-			node.addEvent(e, fifo);
+			node.addEvent(evt, fifo);
 		}
 	}
 
@@ -727,9 +738,17 @@ public final class EventManager {
 		cur.checkCondWait();
 		long schedTick = calculateEventTime(waitLength);
 		EventNode node = getEventNode(schedTick, eventPriority);
-		Event e = getEvent(node, t, handle);
+		Event evt = getEvent();
+		evt.node = node;
+		evt.target = t;
+		evt.handle = handle;
+		if (handle != null) {
+			if (handle.isScheduled())
+				throw new ProcessError("Tried to schedule using an EventHandle already in use");
+			handle.event = evt;
+		}
 		if (trcListener != null) trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
-		node.addEvent(e, fifo);
+		node.addEvent(evt, fifo);
 	}
 
 	/**

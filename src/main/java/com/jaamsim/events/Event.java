@@ -22,8 +22,5 @@ final class Event extends BaseEvent {
 	EventNode node;
 	Event next;
 
-	Event(EventNode n, ProcessTarget t, EventHandle h) {
-		super(t, h);
-		node = n;
-	}
+	Event() {}
 }
