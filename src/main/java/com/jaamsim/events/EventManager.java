@@ -386,7 +386,7 @@ public final class EventManager {
 	 */
 	private void waitTicks(Process cur, long ticks, int priority, boolean fifo, EventHandle handle) {
 		synchronized (lockObject) {
-			if (cur.isCondWait()) assertWaitUntil(cur);
+			cur.checkCondWait();
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);
 			EventNode node = getEventNode(nextEventTime, priority);
@@ -431,18 +431,6 @@ public final class EventManager {
 	private void clearFreeList() {
 		freeEvents = null;
 	}
-	/**
-	 * Debugging aid to test that we are not executing a conditional event, useful
-	 * to try and catch places where a waitUntil was missing a waitUntilEnded.
-	 * While not fatal, it will print out a stack dump to try and find where the
-	 * waitUntilEnded was missed.
-	 */
-	private void assertWaitUntil(Process cur) {
-		executeEvents = false;
-		processRunning = false;
-		Throwable e = new ProcessError("Event Control attempted from inside a Conditional callback");
-		errListener.handleError(this, e, currentTick);
-	}
 
 	public static final void waitUntil(Conditional cond, EventHandle handle) {
 		Process cur = Process.current();
@@ -456,7 +444,7 @@ public final class EventManager {
 	 */
 	private void waitUntil(Process cur, Conditional cond, EventHandle handle) {
 		synchronized (lockObject) {
-			if (cur.isCondWait()) assertWaitUntil(cur);
+			cur.checkCondWait();
 			if (handle != null && handle.isScheduled())
 				throw new ProcessError("Tried to waitUntil using a handle already in use");
 
@@ -477,7 +465,7 @@ public final class EventManager {
 
 	private void schedUntil(Process cur, ProcessTarget t, Conditional cond, EventHandle handle) {
 		synchronized (lockObject) {
-			if (cur.isCondWait()) assertWaitUntil(cur);
+			cur.checkCondWait();
 			if (handle != null && handle.isScheduled())
 				throw new ProcessError("Tried to waitUntil using a handle already in use");
 
@@ -498,7 +486,7 @@ public final class EventManager {
 		Process newProcess = Process.allocate(this, cur, t);
 		// Notify the eventManager that a new process has been started
 		synchronized (lockObject) {
-			if (cur.isCondWait()) assertWaitUntil(cur);
+			cur.checkCondWait();
 			if (trcListener != null) trcListener.traceProcessStart(this, t, currentTick);
 			// Transfer control to the new process
 			newProcess.wake();
@@ -570,7 +558,7 @@ public final class EventManager {
 	 */
 	private void killEvent(Process cur, EventHandle handle) {
 		synchronized (lockObject) {
-			if (cur.isCondWait()) assertWaitUntil(cur);
+			cur.checkCondWait();
 
 			// Handle was not scheduled, nothing to do
 			if (handle.event == null)
@@ -603,7 +591,7 @@ public final class EventManager {
 	 */
 	private void interruptEvent(Process cur, EventHandle handle) {
 		synchronized (lockObject) {
-			if (cur.isCondWait()) assertWaitUntil(cur);
+			cur.checkCondWait();
 
 			// Handle was not scheduled, nothing to do
 			if (handle.event == null)
@@ -736,7 +724,7 @@ public final class EventManager {
 	}
 
 	private void scheduleTicks(Process cur, long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
-		if (cur.isCondWait()) assertWaitUntil(cur);
+		cur.checkCondWait();
 		long schedTick = calculateEventTime(waitLength);
 		EventNode node = getEventNode(schedTick, eventPriority);
 		Event e = getEvent(node, t, handle);

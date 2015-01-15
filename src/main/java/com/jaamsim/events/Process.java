@@ -246,7 +246,8 @@ final class Process extends Thread {
 		condWait = false;
 	}
 
-	final boolean isCondWait() {
-		return condWait;
+	final void checkCondWait() {
+		if (condWait)
+			throw new ProcessError("Event Control attempted from inside a Conditional callback");
 	}
 }
