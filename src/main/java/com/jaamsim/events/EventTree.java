@@ -53,7 +53,7 @@ class EventTree {
 		return lowest;
 	}
 
-	public void reset() {
+	final void reset() {
 		root = EventNode.nilNode;
 		lowest = null;
 		clearFreeList();
@@ -73,7 +73,7 @@ class EventTree {
 		lowest = current;
 	}
 
-	public EventNode createOrFindNode(long schedTick, int priority) {
+	final EventNode createOrFindNode(long schedTick, int priority) {
 
 		if (root == EventNode.nilNode) {
 			root = getNewNode(schedTick, priority);
@@ -169,7 +169,7 @@ class EventTree {
 
 	}
 
-	public boolean removeNode(long schedTick, int priority) {
+	final boolean removeNode(long schedTick, int priority) {
 		// First find the node to remove
 		resetScratch();
 		lowest = null;
@@ -335,7 +335,7 @@ class EventTree {
 		}
 	}
 
-	public void runOnAllNodes(EventNode.Runner runner) {
+	final void runOnAllNodes(EventNode.Runner runner) {
 		runOnNode(root, runner);
 	}
 
@@ -351,7 +351,7 @@ class EventTree {
 	}
 
 	// Verify the sorting structure and return the number of nodes
-	public int verify() {
+	final int verify() {
 		if (root == EventNode.nilNode) return 0;
 
 		if (EventNode.nilNode.red == true)
@@ -387,7 +387,7 @@ class EventTree {
 	}
 
 	// Search the tree and return true if this node is found
-	public EventNode find(long schedTick, int priority) {
+	final EventNode find(long schedTick, int priority) {
 		EventNode curr = root;
 		while (true) {
 			if (curr == EventNode.nilNode) return null;
@@ -404,7 +404,7 @@ class EventTree {
 		}
 	}
 
-	public int verifyNodeCount() {
+	final int verifyNodeCount() {
 		if (root == EventNode.nilNode) return 0;
 		return countNodes(root);
 	}

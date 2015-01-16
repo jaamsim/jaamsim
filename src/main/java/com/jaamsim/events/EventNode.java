@@ -74,11 +74,11 @@ class EventNode {
 		}
 	}
 
-	int compareToNode(EventNode other) {
+	final int compareToNode(EventNode other) {
 		return compare(other.schedTick, other.priority);
 	}
 
-	int compare(long schedTick, int priority) {
+	final int compare(long schedTick, int priority) {
 		if (this.schedTick < schedTick) return -1;
 		if (this.schedTick > schedTick) return  1;
 
@@ -88,7 +88,7 @@ class EventNode {
 		return 0;
 	}
 
-	void rotateRight(EventNode parent) {
+	final void rotateRight(EventNode parent) {
 		if (parent != null) {
 			if (parent.left == this)
 				parent.left = left;
@@ -101,7 +101,7 @@ class EventNode {
 
 		this.left = oldMid;
 	}
-	void rotateLeft(EventNode parent) {
+	final void rotateLeft(EventNode parent) {
 		if (parent != null) {
 			if (parent.left == this)
 				parent.left = right;
@@ -115,7 +115,7 @@ class EventNode {
 		this.right = oldMid;
 	}
 
-	void cloneFrom(EventNode source) {
+	final void cloneFrom(EventNode source) {
 		this.head = source.head;
 		this.tail = source.tail;
 		this.schedTick = source.schedTick;
