@@ -36,7 +36,7 @@ class EventNode {
 		right = nilNode;
 	}
 
-	void addEvent(Event e, boolean fifo) {
+	final void addEvent(Event e, boolean fifo) {
 		if (head == null) {
 			head = e;
 			tail = e;
@@ -52,6 +52,25 @@ class EventNode {
 		else {
 			e.next = head;
 			head = e;
+		}
+	}
+
+	final void removeEvent(Event evt) {
+		// quick case where we are the head event
+		if (this.head == evt) {
+			this.head = evt.next;
+			if (evt.next == null)
+				this.tail = null;
+		}
+		else {
+			Event prev = this.head;
+			while (prev.next != evt) {
+				prev = prev.next;
+			}
+
+			prev.next = evt.next;
+			if (evt.next == null)
+				this.tail = prev;
 		}
 	}
 

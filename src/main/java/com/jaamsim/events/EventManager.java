@@ -504,25 +504,10 @@ public final class EventManager {
 	 */
 	private void removeEvent(Event evt) {
 		EventNode node = evt.node;
-		// quick case where we are the head event
-		if (node.head == evt) {
-			node.head = evt.next;
-			if (evt.next == null) {
-				node.tail = null;
-				if (!eventTree.removeNode(node.schedTick, node.priority))
-					throw new ProcessError("Tried to remove an event that could not be found");
-			}
-			evt.next = null;
-		}
-		else {
-			Event prev = node.head;
-			while (prev.next != evt) {
-				prev = prev.next;
-			}
-
-			prev.next = evt.next;
-			if (evt.next == null)
-				node.tail = prev;
+		node.removeEvent(evt);
+		if (node.head == null) {
+			if (!eventTree.removeNode(node.schedTick, node.priority))
+				throw new ProcessError("Tried to remove an eventnode that could not be found");
 		}
 
 		// Clear the event to reuse it
