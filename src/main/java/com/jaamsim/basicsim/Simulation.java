@@ -145,7 +145,7 @@ public class Simulation extends Entity {
 		startTimeInput.setUnitType(TimeUnit.class);
 		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
-		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 0.9d);
+		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
 		tickLengthInput.setValidRange(1e-9d, 5.0d);
 
