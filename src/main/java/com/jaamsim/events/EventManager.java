@@ -551,6 +551,11 @@ public final class EventManager {
 		return t;
 	}
 
+	/**
+	 * Removes the event held in the EventHandle and disposes of it, the ProcessTarget is not run.
+	 * If the handle does not currently hold a scheduled event, this method simply returns.
+	 * @throws ProcessError if called outside of a Process context
+	 */
 	public static final void killEvent(EventHandle handle) {
 		Process cur = Process.current();
 		cur.evt().killEvent(cur, handle);
@@ -584,6 +589,11 @@ public final class EventManager {
 		}
 	}
 
+	/**
+	 * Interrupts the event held in the EventHandle and immediately runs the ProcessTarget.
+	 * If the handle does not currently hold a scheduled event, this method simply returns.
+	 * @throws ProcessError if called outside of a Process context
+	 */
 	public static final void interruptEvent(EventHandle handle) {
 		Process cur = Process.current();
 		cur.evt().interruptEvent(cur, handle);

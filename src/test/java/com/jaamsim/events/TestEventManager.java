@@ -72,6 +72,24 @@ public class TestEventManager {
 		catch (Throwable e) {
 			fail("Unknown error thrown.");
 		}
+
+		try {
+			EventManager.interruptEvent(null);
+			fail("Did not throw an error.");
+		}
+		catch (ProcessError e) {}
+		catch (Throwable e) {
+			fail("Unknown error thrown.");
+		}
+
+		try {
+			EventManager.killEvent(null);
+			fail("Did not throw an error.");
+		}
+		catch (ProcessError e) {}
+		catch (Throwable e) {
+			fail("Unknown error thrown.");
+		}
 	}
 
 	@Test
