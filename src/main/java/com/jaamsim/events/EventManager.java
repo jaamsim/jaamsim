@@ -782,8 +782,9 @@ public final class EventManager {
 	}
 
 	/**
-	 * Returns the controlling EventManager for the current Process, if called outside
-	 * of a Process context, returns null.
+	 * Returns whether or not we are currently running in a Process context
+	 * that has a controlling EventManager.
+	 * @return true if we are in a Process context, false otherwise
 	 */
 	public static final boolean hasCurrent() {
 		return (Thread.currentThread() instanceof Process);
