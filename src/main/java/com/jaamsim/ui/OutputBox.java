@@ -90,6 +90,7 @@ public class OutputBox extends FrameBox {
 
 	@Override
 	public void updateValues(double simTime) {
+		if (tableModel == null) return;
 		tableModel.simTime = simTime;
 		tableModel.fireTableDataChanged();
 	}
