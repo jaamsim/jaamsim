@@ -60,6 +60,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ListInput;
 import com.jaamsim.input.Parser;
 import com.jaamsim.input.StringInput;
@@ -763,9 +764,13 @@ public static class CellListener implements CellEditorListener {
 					str = sb.toString();
 				}
 			}
-			// Process the new data for the keyword
-			InputAgent.processEntity_Keyword_Value(EditBox.getInstance().getCurrentEntity(), in.getKeyword(), str);
+			// Keyword
+			ArrayList<String> tokens = new ArrayList<>();
+			Parser.tokenize(tokens, str, true);
 
+			// Parse the keyword inputs
+			KeywordIndex kw = new KeywordIndex(in.getKeyword(), tokens, null);
+			InputAgent.processKeyword(EditBox.getInstance().getCurrentEntity(), kw);
 		}
 		catch (InputErrorException exep) {
 			GUIFrame.showErrorDialog("Input Error",

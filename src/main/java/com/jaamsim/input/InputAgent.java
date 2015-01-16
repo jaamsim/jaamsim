@@ -923,27 +923,6 @@ public class InputAgent {
 	}
 
 	/**
-	 * Prepares the keyword and input value for processing.
-	 *
-	 * @param ent - the entity whose keyword and value has been entered.
-	 * @param keyword - the keyword.
-	 * @param value - the input value String for the keyword.
-	 */
-	public static void processEntity_Keyword_Value(Entity ent, String keyword, String value){
-
-		// Keyword
-		ArrayList<String> tokens = new ArrayList<>();
-
-		// Value
-		if (!value.equals(Input.getNoValue()))
-			Parser.tokenize(tokens, value, true);
-
-		// Parse the keyword inputs
-		KeywordIndex kw = new KeywordIndex(keyword, tokens, null);
-		InputAgent.processKeyword(ent, kw);
-	}
-
-	/**
 	 * Prints the present state of the model to a new configuration file.
 	 *
 	 * @param fileName - the full path and file name for the new configuration file.
