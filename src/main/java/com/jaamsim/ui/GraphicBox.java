@@ -184,7 +184,7 @@ public class GraphicBox extends JDialog {
 					ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, "", true);
 
 					// Load the 3D content to the ColladaModel
-					InputAgent.processEntity_Keyword_Value(dm, "ColladaFile", "'" + f.getPath() + "'");
+					InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
 
 					 // Add the new DisplayModel to the List
 					myInstance.refresh();
@@ -245,7 +245,10 @@ public class GraphicBox extends JDialog {
 
 					entitySize = new Vec3d(modelSize);
 					entitySize.scale3(ratio);
-					InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format(loc, "%.6f %.6f %.6f m", entitySize.x, entitySize.y, entitySize.z));
+					InputAgent.applyArgs(currentEntity, "Size",
+		                                 String.format(loc, "%.6f", entitySize.x),
+		                                 String.format(loc, "%.6f", entitySize.y),
+		                                 String.format(loc, "%.6f", entitySize.z), "m");
 				}
 
 				if (dm instanceof ImageModel) {
@@ -254,8 +257,10 @@ public class GraphicBox extends JDialog {
 					if (imageDims != null && useModelSize.isSelected()) {
 						// Keep the y size the same, but use the image's proportions. We can't really use the model size, as it is in pixels
 						double scale = currentEntity.getSize().y / imageDims.y;
-						InputAgent.processEntity_Keyword_Value(currentEntity, "Size", String.format(loc, "%.6f %.6f %.6f m", imageDims.x*scale, imageDims.y*scale, 1.0));
-
+						InputAgent.applyArgs(currentEntity, "Size",
+						                     String.format(loc, "%.6f", imageDims.x * scale),
+						                     String.format(loc, "%.6f", imageDims.y * scale),
+						                     "1.0", "m");
 					}
 				}
 
@@ -263,8 +268,11 @@ public class GraphicBox extends JDialog {
 
 					Vec3d entityPos = modelBounds.center;
 
-					InputAgent.processEntity_Keyword_Value(currentEntity, "Position", String.format(loc, "%.6f %.6f %.6f m", entityPos.x, entityPos.y, entityPos.z));
-					InputAgent.processEntity_Keyword_Value(currentEntity, "Alignment", "0 0 0");
+					InputAgent.applyArgs(currentEntity, "Position",
+					                     String.format(loc, "%.6f", entityPos.x),
+					                     String.format(loc, "%.6f", entityPos.y),
+					                     String.format(loc, "%.6f", entityPos.z), "m");
+					InputAgent.applyArgs(currentEntity, "Alignment", "0", "0", "0");
 				}
 				FrameBox.valueUpdate();
 				myInstance.close();

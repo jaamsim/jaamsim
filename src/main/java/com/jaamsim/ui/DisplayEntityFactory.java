@@ -147,13 +147,13 @@ public class DisplayEntityFactory extends Entity {
 		ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, "", true);
 
 		// Load the 3D content to the ColladaModel
-		InputAgent.processEntity_Keyword_Value(dm, "ColladaFile", "'" + f.getPath() + "'");
+		InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
 
 		// Create the DisplayEntity
 		DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
 
 		// Assign the ColladaModel to the new DisplayEntity
-		InputAgent.processEntity_Keyword_Value(de, "DisplayModel", dm.getName());
+		InputAgent.applyArgs(de, "DisplayModel", dm.getName());
 
 		// Calculate the DisplayEntity's size and position from the ColladaModel
 		MeshProtoKey meshKey = RenderUtils.FileNameToMeshProtoKey(f.toURI());
@@ -185,18 +185,17 @@ public class DisplayEntityFactory extends Entity {
 		ImageModel dm = InputAgent.defineEntityWithUniqueName(ImageModel.class, modelName, "", true);
 
 		// Load the image to the ImageModel
-		InputAgent.processEntity_Keyword_Value(dm, "ImageFile", "'" + f.getPath() + "'");
+		InputAgent.applyArgs(dm, "ImageFile", f.getPath());
 
 		// Create the DisplayEntity
 		DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
 
 		// Assign the ImageModel to the new DisplayEntity
-		InputAgent.processEntity_Keyword_Value(de, "DisplayModel", dm.getName());
+		InputAgent.applyArgs(de, "DisplayModel", dm.getName());
 
 		// Set the DisplayEntity's position, size, and alignment
-		InputAgent.processEntity_Keyword_Value(de, "Position", "0 0 0 m");
-		InputAgent.processEntity_Keyword_Value(de, "Alignment", "0 0 0");
-		InputAgent.processEntity_Keyword_Value(de, "Size", "1 1 0 m");
+		InputAgent.applyArgs(de, "Position", "0", "0", "0", "m");
+		InputAgent.applyArgs(de, "Alignment", "0", "0", "0");
+		InputAgent.applyArgs(de, "Size", "1", "1", "0", "m");
 	}
-
 }

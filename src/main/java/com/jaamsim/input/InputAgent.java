@@ -602,6 +602,24 @@ public class InputAgent {
 			InputAgent.printInputFileKeywords();
 	}
 
+	/**
+	 * Prepares the keyword and input value for processing.
+	 *
+	 * @param ent - the entity whose keyword and value has been entered.
+	 * @param keyword - the keyword.
+	 * @param value - the input value String for the keyword.
+	 */
+	public static void applyArgs(Entity ent, String keyword, String... args){
+		// Keyword
+		ArrayList<String> tokens = new ArrayList<>(args.length);
+		for (String each : args)
+			tokens.add(each);
+
+		// Parse the keyword inputs
+		KeywordIndex kw = new KeywordIndex(keyword, tokens, null);
+		InputAgent.apply(ent, kw);
+	}
+
 	public static final void apply(Entity ent, KeywordIndex kw) {
 		Input<?> in = ent.getInput(kw.keyword);
 		if (in == null) {

@@ -27,12 +27,12 @@ public class TestNormalDistribution {
 	@Test
 	public void MeanAndStandardDeviation() {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
-		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		NormalDistribution dist = InputAgent.defineEntityWithUniqueName(NormalDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
-		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
-		InputAgent.processEntity_Keyword_Value( dist, "StandardDeviation", "2.0");
+		InputAgent.applyArgs(dist, "UnitType", t.getName());
+		InputAgent.applyArgs(dist, "Mean", "10.0");
+		InputAgent.applyArgs(dist, "StandardDeviation", "2.0");
 		dist.validate();
 		dist.earlyInit();
 

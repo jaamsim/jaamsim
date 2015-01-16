@@ -492,16 +492,15 @@ static class LabelMenuItem extends MenuItem {
 	public void action() {
 		Text label = InputAgent.defineEntityWithUniqueName(Text.class, "Text", "", true);
 
-		InputAgent.processEntity_Keyword_Value(label, "RelativeEntity", ent.getName() );
+		InputAgent.applyArgs(label, "RelativeEntity", ent.getName());
 		if (ent.getCurrentRegion() != null)
-			InputAgent.processEntity_Keyword_Value(label, "Region", ent.getCurrentRegion().getName());
+			InputAgent.applyArgs(label, "Region", ent.getCurrentRegion().getName());
 
 		double ypos = -0.15 - 0.5*ent.getSize().y;
-		String pos = String.format("0.0 %s 0.0 m", ypos);
-		InputAgent.processEntity_Keyword_Value(label, "Position", pos );
-		InputAgent.processEntity_Keyword_Value(label, "TextHeight", "0.15 m" );
-		InputAgent.processEntity_Keyword_Value(label, "Format", "%s");
-		InputAgent.processEntity_Keyword_Value(label, "OutputName", String.format("%s  Name", ent.getName()) );
+		InputAgent.applyArgs(label, "Position", "0.0", Double.toString(ypos), "0.0", "m");
+		InputAgent.applyArgs(label, "TextHeight", "0.15", "m");
+		InputAgent.applyArgs(label, "Format", "%s");
+		InputAgent.applyArgs(label, "OutputName", String.format("%s  Name", ent.getName()));
 
 		FrameBox.setSelectedEntity(label);
 	}

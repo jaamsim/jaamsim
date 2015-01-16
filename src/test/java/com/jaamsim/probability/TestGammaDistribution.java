@@ -30,13 +30,13 @@ public class TestGammaDistribution {
 	 */
 	public void MeanAndStandardDeviation1() {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
-		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		GammaDistribution dist = InputAgent.defineEntityWithUniqueName(GammaDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
-		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
-		InputAgent.processEntity_Keyword_Value( dist, "Shape", "2.0");
-		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");
+		InputAgent.applyArgs(dist, "UnitType", t.getName());
+		InputAgent.applyArgs(dist, "Mean", "10.0");
+		InputAgent.applyArgs(dist, "Shape", "2.0");
+		InputAgent.applyArgs(dist, "RandomSeed", "1");
 		dist.validate();
 		dist.earlyInit();
 
@@ -55,13 +55,13 @@ public class TestGammaDistribution {
 	 */
 	public void MeanAndStandardDeviation2() {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
-		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		GammaDistribution dist = InputAgent.defineEntityWithUniqueName(GammaDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
-		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
-		InputAgent.processEntity_Keyword_Value( dist, "Shape", "0.5");
-		InputAgent.processEntity_Keyword_Value( dist, "RandomSeed", "1");
+		InputAgent.applyArgs(dist, "UnitType", t.getName());
+		InputAgent.applyArgs(dist, "Mean", "10.0");
+		InputAgent.applyArgs(dist, "Shape", "0.5");
+		InputAgent.applyArgs(dist, "RandomSeed", "1");
 		dist.earlyInit();
 
 		int numSamples = 1000000;

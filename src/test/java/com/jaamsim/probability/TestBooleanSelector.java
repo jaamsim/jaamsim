@@ -44,7 +44,7 @@ public class TestBooleanSelector {
 	@Test
 	public void allFalse() {
 		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(BooleanSelector.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( selector, "TrueProbability", "0.0");
+		InputAgent.applyArgs(selector, "TrueProbability", "0.0");
 		selector.validate();
 		selector.earlyInit();
 
@@ -72,7 +72,7 @@ public class TestBooleanSelector {
 
 	private void testMix(double trueProb, int numSamples) {
 		BooleanSelector selector = InputAgent.defineEntityWithUniqueName(BooleanSelector.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( selector, "TrueProbability", Double.toString(trueProb));
+		InputAgent.applyArgs(selector, "TrueProbability", Double.toString(trueProb));
 		selector.validate();
 		selector.earlyInit();
 

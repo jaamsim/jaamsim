@@ -261,7 +261,8 @@ public class RenderManager implements DragSourceListener {
 		// Update the state of the window in the input file
 		View v = windowToViewMap.get(windowID);
 		if (!v.getKeepWindowOpen())
-			InputAgent.processEntity_Keyword_Value(v, "ShowWindow", "FALSE");
+			InputAgent.applyArgs(v, "ShowWindow", "FALSE");
+
 		v.setKeepWindowOpen(false);
 
 		windowControls.remove(windowID);

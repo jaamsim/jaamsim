@@ -27,12 +27,12 @@ public class TestWeibullDistribution {
 	@Test
 	public void MeanAndStandardDeviation() {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
-		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		WeibullDistribution dist = InputAgent.defineEntityWithUniqueName(WeibullDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
-		InputAgent.processEntity_Keyword_Value( dist, "Scale", "10.0");
-		InputAgent.processEntity_Keyword_Value( dist, "Shape", "2.0");
+		InputAgent.applyArgs(dist, "UnitType", t.getName());
+		InputAgent.applyArgs(dist, "Scale", "10.0");
+		InputAgent.applyArgs(dist, "Shape", "2.0");
 		dist.validate();
 		dist.earlyInit();
 
@@ -45,10 +45,10 @@ public class TestWeibullDistribution {
 		assertTrue( Math.abs( dist.getSampleStandardDeviation(0.0) / dist.getStandardDeviation(0.0) - 1.0 ) < 0.001 );
 
 		WeibullDistribution dist2 = InputAgent.defineEntityWithUniqueName(WeibullDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist2, "UnitType", t.getName());
-		InputAgent.processEntity_Keyword_Value( dist2, "Scale", "10.0");
-		InputAgent.processEntity_Keyword_Value( dist2, "Shape", "2.0");
-		InputAgent.processEntity_Keyword_Value( dist2, "Location", "100.0");
+		InputAgent.applyArgs(dist2, "UnitType", t.getName());
+		InputAgent.applyArgs(dist2, "Scale", "10.0");
+		InputAgent.applyArgs(dist2, "Shape", "2.0");
+		InputAgent.applyArgs(dist2, "Location", "100.0");
 		dist2.validate();
 		dist2.earlyInit();
 

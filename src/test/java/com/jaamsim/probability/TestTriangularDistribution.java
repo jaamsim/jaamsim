@@ -27,13 +27,13 @@ public class TestTriangularDistribution {
 	@Test
 	public void MeanAndStandardDeviation() {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
-		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		TriangularDistribution dist = InputAgent.defineEntityWithUniqueName(TriangularDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
-		InputAgent.processEntity_Keyword_Value( dist, "MinValue", "2.0");
-		InputAgent.processEntity_Keyword_Value( dist, "MaxValue", "5.0");
-		InputAgent.processEntity_Keyword_Value( dist, "Mode", "4.0");
+		InputAgent.applyArgs(dist, "UnitType", t.getName());
+		InputAgent.applyArgs(dist, "MinValue", "2.0");
+		InputAgent.applyArgs(dist, "MaxValue", "5.0");
+		InputAgent.applyArgs(dist, "Mode", "4.0");
 		dist.validate();
 		dist.earlyInit();
 

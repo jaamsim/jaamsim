@@ -28,7 +28,7 @@ public class TestEntitlementSelector {
 	public void EntityCounts() {
 
 		EntitlementSelector selector = InputAgent.defineEntityWithUniqueName(EntitlementSelector.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( selector, "ProportionList", "0.5  0.3  0.2");
+		InputAgent.applyArgs(selector, "ProportionList", "0.5", "0.3", "0.2");
 		selector.validate();
 		selector.earlyInit();
 

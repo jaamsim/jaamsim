@@ -27,12 +27,12 @@ public class TestErlangDistribution {
 	@Test
 	public void MeanAndStandardDeviation() {
 		ObjectType t = InputAgent.defineEntityWithUniqueName(ObjectType.class, "TestType", "-", true);
-		InputAgent.processEntity_Keyword_Value( t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
+		InputAgent.applyArgs(t, "JavaClass", "com.jaamsim.units.DimensionlessUnit");
 
 		ErlangDistribution dist = InputAgent.defineEntityWithUniqueName(ErlangDistribution.class, "Dist", "-", true);
-		InputAgent.processEntity_Keyword_Value( dist, "UnitType", t.getName());
-		InputAgent.processEntity_Keyword_Value( dist, "Mean", "10.0");
-		InputAgent.processEntity_Keyword_Value( dist, "Shape", "2");
+		InputAgent.applyArgs(dist, "UnitType", t.getName());
+		InputAgent.applyArgs(dist, "Mean", "10.0");
+		InputAgent.applyArgs(dist, "Shape", "2");
 		dist.validate();
 		dist.earlyInit();
 
