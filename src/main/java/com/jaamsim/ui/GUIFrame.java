@@ -149,6 +149,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public static int VIEW_HEIGHT;
 	public static int VIEW_WIDTH;
 
+	private static final String RUN_TOOLTIP = GUIFrame.formatToolTip("Run", "Starts or resumes the simulation run.");
+	private static final String PAUSE_TOOLTIP = GUIFrame.formatToolTip("Pause", "Pauses the simulation run.");
+
 	static {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -688,7 +691,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		controlStartResume = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/run.png")));
 		controlStartResume.setSelectedIcon(
 				new ImageIcon(GUIFrame.class.getResource("/resources/images/pause.png")));
-		controlStartResume.setToolTipText( "Run" );
+		controlStartResume.setToolTipText(RUN_TOOLTIP);
 		controlStartResume.setMargin( noMargin );
 		controlStartResume.setEnabled( false );
 		controlStartResume.addActionListener( new ActionListener() {
@@ -709,7 +712,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// 2) Stop button
 		controlStop = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/stop.png")));
-		controlStop.setToolTipText( "Stop" );
+		controlStop.setToolTipText(formatToolTip("Stop",
+				"Stops and resets the simulation run."));
 		controlStop.setMargin( noMargin );
 		controlStop.setEnabled( false );
 		controlStop.addActionListener( new ActionListener() {
@@ -775,12 +779,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		pauseTime.setText("");
 		pauseTime.setHorizontalAlignment(JTextField.RIGHT);
-		pauseTime.setToolTipText( "Time at which to pause the run, e.g. 3 h, 10 s, etc." );
+		pauseTime.setToolTipText(formatToolTip("Pause Time",
+				"Time at which to pause the run, e.g. 3 h, 10 s, etc."));
 
 		// 4) Real Time button
 		mainToolBar.addSeparator(separatorDim);
 		controlRealTime = new JToggleButton( "Real Time" );
-		controlRealTime.setToolTipText( "Toggle Real Time mode. When selected, the simulation runs at a fixed multiple of wall clock time." );
+		controlRealTime.setToolTipText(formatToolTip("Real Time Mode",
+				"When selected, the simulation runs at a fixed multiple of wall clock time."));
 		controlRealTime.setMargin( smallMargin );
 		controlRealTime.addActionListener(new RealTimeActionListener());
 
@@ -802,7 +808,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		spinner.setMaximumSize(dim);
 
 		spinner.addChangeListener(new SpeedFactorListener());
-		spinner.setToolTipText( "Target ratio of simulation time to wall clock time when Real Time mode is selected." );
+		spinner.setToolTipText(formatToolTip("Speed Multiplier (up/down key)",
+				"Target ratio of simulation time to wall clock time when Real Time mode is selected."));
 		mainToolBar.add( spinner );
 
 		// 6) View Control buttons
@@ -812,7 +819,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// 6a) Perspective button
 		toolButtonIsometric = new JButton( "Perspective" );
-		toolButtonIsometric.setToolTipText( "Set Perspective View" );
+		toolButtonIsometric.setToolTipText(formatToolTip("Perspective View",
+				"Sets the camera position to show an oblique view of the 3D scene."));
 		toolButtonIsometric.addActionListener( new ActionListener() {
 
 			@Override
@@ -825,7 +833,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// 6b) XY-Plane button
 		toolButtonXYPlane = new JButton( "XY-Plane" );
-		toolButtonXYPlane.setToolTipText( "Set XY-Plane View" );
+		toolButtonXYPlane.setToolTipText(formatToolTip("XY-Plane View",
+				"Sets the camera position to show a bird's eye view of the 3D scene."));
 		toolButtonXYPlane.addActionListener( new ActionListener() {
 
 			@Override
@@ -1211,7 +1220,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				remainingDisplay.setEnabled( false );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
-				controlStartResume.setToolTipText( "Run" );
+				controlStartResume.setToolTipText(RUN_TOOLTIP);
 				controlStop.setEnabled( false );
 				controlStop.setSelected( false );
 				toolButtonIsometric.setEnabled( true );
@@ -1254,7 +1263,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				remainingDisplay.setEnabled( false );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
-				controlStartResume.setToolTipText( "Run" );
+				controlStartResume.setToolTipText(RUN_TOOLTIP);
 				controlStop.setSelected( false );
 				controlStop.setEnabled( false );
 				toolButtonIsometric.setEnabled( true );
@@ -1267,7 +1276,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				remainingDisplay.setEnabled( true );
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( true );
-				controlStartResume.setToolTipText( "Pause" );
+				controlStartResume.setToolTipText(PAUSE_TOOLTIP);
 				controlStop.setEnabled( true );
 				controlStop.setSelected( false );
 				break;
@@ -1275,10 +1284,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			case SIM_STATE_PAUSED:
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
-				controlStartResume.setToolTipText( "Run" );
+				controlStartResume.setToolTipText(RUN_TOOLTIP);
 				controlStop.setEnabled( true );
 				controlStop.setSelected( false );
 				break;
+
 			default:
 				throw new ErrorException( "Unrecognized Graphics State" );
 		}
@@ -1919,6 +1929,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			GUIFrame.instance().save();
 
 		return (userOption != JOptionPane.CANCEL_OPTION);
+	}
+
+	public static String formatToolTip(String name, String desc) {
+		return String.format("<html><p width=\"200px\"><b>%s</b><br>%s</p></html>", name, desc);
 	}
 
 }
