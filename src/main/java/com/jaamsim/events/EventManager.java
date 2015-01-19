@@ -553,8 +553,8 @@ public final class EventManager {
 		synchronized (lockObject) {
 			cur.checkCondWait();
 
-			// Handle was not scheduled, nothing to do
-			if (handle.event == null)
+			// no handle given, or Handle was not scheduled, nothing to do
+			if (handle == null || handle.event == null)
 				return;
 
 			if (trcListener != null) trcKill(handle.event);
@@ -591,8 +591,8 @@ public final class EventManager {
 		synchronized (lockObject) {
 			cur.checkCondWait();
 
-			// Handle was not scheduled, nothing to do
-			if (handle.event == null)
+			// no handle given, or Handle was not scheduled, nothing to do
+			if (handle == null || handle.event == null)
 				return;
 
 			if (trcListener != null) trcInterrupt(handle.event);
