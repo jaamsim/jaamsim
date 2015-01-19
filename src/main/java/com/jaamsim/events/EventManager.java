@@ -372,11 +372,33 @@ public final class EventManager {
 		return nextEventTime;
 	}
 
+	/**
+	 * Pause the execution of the current Process and schedule it to wake up at a future
+	 * time in the controlling EventManager,
+	 * @throws ProcessError if called outside of a Process context
+	 *
+	 * @param waitLength the number of ticks in the future to wake at
+	 * @param eventPriority the priority of the scheduled wakeup event
+	 * @param fifo break ties with previously scheduled events using FIFO/LIFO ordering
+	 * @param t the process target to run when the event is executed
+	 * @param handle an optional handle to hold onto the scheduled event
+	 */
 	public static final void waitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
 		Process cur = Process.current();
 		cur.evt().waitTicks(cur, ticks, priority, fifo, handle);
 	}
 
+	/**
+	 * Pause the execution of the current Process and schedule it to wake up at a future
+	 * time in the controlling EventManager,
+	 * @throws ProcessError if called outside of a Process context
+	 *
+	 * @param secs the number of seconds in the future to wake at
+	 * @param eventPriority the priority of the scheduled wakeup event
+	 * @param fifo break ties with previously scheduled events using FIFO/LIFO ordering
+	 * @param t the process target to run when the event is executed
+	 * @param handle an optional handle to hold onto the scheduled event
+	 */
 	public static final void waitSeconds(double secs, int priority, boolean fifo, EventHandle handle) {
 		Process cur = Process.current();
 		long ticks = cur.evt().secondsToNearestTick(secs);
@@ -697,8 +719,7 @@ public final class EventManager {
 	}
 
 	/**
-	 * Schedule a future event in the controlling EventManager for the current Process,
-	 * if called outside of a Process context, returns null.
+	 * Schedule a future event in the controlling EventManager for the current Process.
 	 * @throws ProcessError if called outside of a Process context
 	 *
 	 * @param waitLength the number of ticks in the future to schedule this event
@@ -713,8 +734,7 @@ public final class EventManager {
 	}
 
 	/**
-	 * Schedule a future event in the controlling EventManager for the current Process,
-	 * if called outside of a Process context, returns null.
+	 * Schedule a future event in the controlling EventManager for the current Process.
 	 * @throws ProcessError if called outside of a Process context
 	 *
 	 * @param secs the number of seconds in the future to schedule this event
