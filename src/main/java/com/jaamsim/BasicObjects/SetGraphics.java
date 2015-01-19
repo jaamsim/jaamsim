@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -29,7 +30,11 @@ import com.jaamsim.units.DimensionlessUnit;
 
 public class SetGraphics extends LinkedComponent {
 
-	@Keyword(description = "List of entities whose graphics can chosen for assignment to the received entity.",
+	@Keyword(description = "The entity whose graphics are to be changed. Defaults to the entity that was received.",
+	         example = "SetGraphics1 TargetEntity{ Server1 }")
+	private final EntityInput<DisplayEntity> targetEntity;
+
+	@Keyword(description = "List of entities whose graphics can chosen for assignment to the target entity.",
 	         example = "SetGraphics1 GraphicsList{ DisplayEntity1 DisplayEntity2 }")
 	private final EntityListInput<DisplayEntity> graphicsList;
 
@@ -40,6 +45,9 @@ public class SetGraphics extends LinkedComponent {
 	private final SampleExpInput choice;
 
 	{
+		targetEntity = new EntityInput<>( DisplayEntity.class, "TargetEntity", "Key Inputs", null);
+		this.addInput( targetEntity);
+
 		graphicsList = new EntityListInput<>( DisplayEntity.class, "GraphicsList", "Key Inputs", null);
 		this.addInput( graphicsList);
 
@@ -68,6 +76,11 @@ public class SetGraphics extends LinkedComponent {
 	public void addEntity( DisplayEntity ent ) {
 		super.addEntity(ent);
 
+		// Identify the entity whose graphics are to be changed
+		DisplayEntity target = targetEntity.getValue();
+		if (target == null)
+			target = ent;
+
 		// Choose the new graphics for this entity
 		int i = (int) choice.getValue().getNextSample(this.getSimTime());
 		if (i<1 || i>graphicsList.getValue().size())
@@ -80,12 +93,12 @@ public class SetGraphics extends LinkedComponent {
 			ArrayList<String> tmp = new ArrayList<>();
 			inp.getValueTokens(tmp);
 			KeywordIndex kw = new KeywordIndex(inp.getKeyword(), tmp, null);
-			InputAgent.apply(ent, kw);
+			InputAgent.apply(target, kw);
 		}
 
-		ent.setSize(chosen.getSize());
-		ent.setOrientation(chosen.getOrientation());
-		ent.setAlignment(chosen.getAlignment());
+		target.setSize(chosen.getSize());
+		target.setOrientation(chosen.getOrientation());
+		target.setAlignment(chosen.getAlignment());
 
 		// Send the entity to the next component in the chain
 		this.sendToNextComponent(ent);
