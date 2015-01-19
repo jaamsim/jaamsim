@@ -21,7 +21,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
-import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.IntegerInput;
@@ -114,7 +113,6 @@ public class Queue extends LinkedComponent {
 		this.clearStatistics();
 
 		// Identify the objects that use this queue
-		userUpdate.users.clear();
 		userList.clear();
 		for (Entity each : Entity.getAll()) {
 			if (each instanceof QueueUser) {
@@ -131,25 +129,23 @@ public class Queue extends LinkedComponent {
 		int priority;
 	}
 
-	private static final EventHandle updateHandle = new EventHandle();
-	private static final DoQueueChanged userUpdate = new DoQueueChanged();
-
+	private final DoQueueChanged userUpdate = new DoQueueChanged(this);
 	private static class DoQueueChanged extends ProcessTarget {
-		public final ArrayList<QueueUser> users = new ArrayList<>();
+		private final Queue queue;
 
-		public DoQueueChanged() {}
+		public DoQueueChanged(Queue q) {
+			queue = q;
+		}
 
 		@Override
 		public void process() {
-			for (QueueUser each : users)
+			for (QueueUser each : queue.userList)
 				each.queueChanged();
-
-			users.clear();
 		}
 
 		@Override
 		public String getDescription() {
-			return "UpdateAllQueueUsers";
+			return queue.getName() + ".UpdateAllQueueUsers";
 		}
 	}
 
@@ -188,12 +184,7 @@ public class Queue extends LinkedComponent {
 		this.add(pos, ent, pri);
 
 		// Notify the users of this queue
-		for (QueueUser user : this.userList) {
-			if (!userUpdate.users.contains(user))
-				userUpdate.users.add(user);
-		}
-		if (!userUpdate.users.isEmpty() && !updateHandle.isScheduled())
-			this.scheduleProcessTicks(0, 2, false, userUpdate, updateHandle);
+		this.scheduleProcessTicks(0, 2, userUpdate);
 	}
 
 	/**
