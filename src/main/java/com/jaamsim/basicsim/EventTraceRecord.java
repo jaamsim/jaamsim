@@ -88,7 +88,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		this.addHeader(e.name, curTick);
 		traceLevel--;
 
-		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, t.getDescription()));
+		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, EventRecorder.getWaitDescription()));
 	}
 
 	@Override

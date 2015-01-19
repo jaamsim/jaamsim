@@ -89,12 +89,49 @@ public class EventRecorder implements EventTraceListener {
 		traceLevel--;
 	}
 
+	private static final String entClassName = Entity.class.getName();
+	private static final String evtManClassName = EventManager.class.getName();
+	static String getWaitDescription() {
+		StackTraceElement[] callStack = Thread.currentThread().getStackTrace();
+		int evtManIdx = -1;
+		// walk out of any EventManager methods
+		for (int i = 0; i < callStack.length; i++) {
+			if (callStack[i].getClassName().equals(evtManClassName)) {
+				evtManIdx = i;
+				continue;
+			}
+
+			// we have walked through the eventManager methods
+			if (evtManIdx != -1)
+				break;
+		}
+
+		// walk past any Entity methods
+		int entIdx = -1;
+		for (int i = evtManIdx + 1; i < callStack.length; i++) {
+			if (callStack[i].getClassName().equals(entClassName)) {
+				entIdx = i;
+				continue;
+			}
+
+			break;
+		}
+
+		StackTraceElement elem;
+		if (entIdx > -1)
+			elem = callStack[entIdx + 1];
+		else
+			elem = callStack[evtManIdx + 1];
+
+		return String.format("%s:%s", elem.getClassName(), elem.getMethodName());
+	}
+
 	@Override
 	public synchronized void traceWait(EventManager e, long curTick, long tick, int priority, ProcessTarget t) {
 		this.addHeader(e.name, curTick);
 		traceLevel--;
 
-		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, t.getDescription()));
+		this.append(String.format("Wait\t%d\t%d\t%s", tick, priority, getWaitDescription()));
 
 		this.finish(e);
 	}
