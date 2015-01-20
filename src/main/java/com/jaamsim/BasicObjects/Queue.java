@@ -21,6 +21,8 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.events.EventHandle;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.IntegerInput;
@@ -130,6 +132,7 @@ public class Queue extends LinkedComponent {
 	}
 
 	private final DoQueueChanged userUpdate = new DoQueueChanged(this);
+	private final EventHandle userUpdateHandle = new EventHandle();
 	private static class DoQueueChanged extends ProcessTarget {
 		private final Queue queue;
 
@@ -184,7 +187,8 @@ public class Queue extends LinkedComponent {
 		this.add(pos, ent, pri);
 
 		// Notify the users of this queue
-		this.scheduleProcessTicks(0, 2, userUpdate);
+		if (!userUpdateHandle.isScheduled())
+			EventManager.scheduleTicks(0, 2, false, userUpdate, userUpdateHandle);
 	}
 
 	/**
