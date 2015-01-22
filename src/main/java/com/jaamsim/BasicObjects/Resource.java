@@ -22,7 +22,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -63,25 +62,20 @@ public class Resource extends DisplayEntity {
 	}
 
 	@Override
-	public void updateForInput(Input<?> in) {
-		super.updateForInput(in);
-
-		if (in == capacity) {
-			if( capacity.getValue() instanceof Distribution )
-				throw new InputErrorException( "A probability distribution is not a valid input.");
-			return;
-		}
-
-		capacity.validate();
-	}
-
-	@Override
 	public void validate() {
+
+		boolean found = false;
 		for (Seize ent : Entity.getClonesOfIterator(Seize.class)) {
 			if( ent.requiresResource(this) )
-				return;
+				found = true;
 		}
-		throw new InputErrorException( "At least one Seize object must use this resource." );
+		if (!found)
+			throw new InputErrorException( "At least one Seize object must use this resource." );
+
+		if( capacity.getValue() instanceof Distribution )
+			throw new InputErrorException( "The Capacity keyword cannot accept a probability distribution.");
+
+		capacity.validate();
 	}
 
 	@Override
