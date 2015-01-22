@@ -174,7 +174,13 @@ public final class EventManager {
 
 			// Notify the event manager that the process has been completed
 			if (trcListener != null) trcListener.traceProcessEnd(this, currentTick);
-			return !cur.wakeNextProcess();
+			if (cur.hasNext()) {
+				cur.wakeNextProcess();
+				return false;
+			}
+			else {
+				return true;
+			}
 		}
 		catch (Throwable e) {
 			// This is how kill() is implemented for sleeping processes.
@@ -346,14 +352,17 @@ public final class EventManager {
 	 */
 	private void captureProcess(Process cur) {
 		// if we don't wake a new process, take one from the pool
-		if (!cur.wakeNextProcess()) {
+		Process next = cur.preCapture();
+		if (next == null) {
 			processRunning = false;
 			Process.processEvents(this);
 		}
+		else {
+			next.wake();
+		}
 
-		cur.setActive(false);
 		threadWait(cur);
-		cur.setActive(true);
+		cur.postCapture();
 	}
 
 	/**

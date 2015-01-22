@@ -40,9 +40,11 @@ final class Process extends Thread {
 	private Process nextProcess; // The Process from which the present process was created
 	private ProcessTarget target; // The entity whose method is to be executed
 
-	// This is a very special reference that is only safe to use form the currently
-	// executing Process, it is essentially a Threadlocal variable
+	// These are a very special references that is only safe to use from the currently
+	// executing Process, they are essentially Threadlocal variables that are only valid
+	// when activeFlag == true
 	private EventManager evt;
+	private boolean hasNext;
 
 	private boolean dieFlag;
 	private boolean activeFlag;
@@ -91,14 +93,20 @@ final class Process extends Thread {
 				t = target;
 				target = null;
 				activeFlag = true;
+				hasNext = (nextProcess != null);
 			}
 
 			evt.execute(this, t);
 
 			// Ensure all state is cleared before returning to the pool
 			evt = null;
+			hasNext = false;
 			setup(null, null, null);
 		}
+	}
+
+	final boolean hasNext() {
+		return hasNext;
 	}
 
 	final EventManager evt() {
@@ -198,14 +206,10 @@ final class Process extends Thread {
 	/**
 	 * Returns true if we woke a next Process, otherwise return false.
 	 */
-	synchronized boolean wakeNextProcess() {
-		if (nextProcess != null) {
-			nextProcess.wake();
-			nextProcess = null;
-			return true;
-		}
-
-		return false;
+	synchronized final void wakeNextProcess() {
+		nextProcess.wake();
+		nextProcess = null;
+		hasNext = false;
 	}
 
 	synchronized void kill() {
@@ -233,8 +237,17 @@ final class Process extends Thread {
 		return dieFlag;
 	}
 
-	synchronized void setActive(boolean b) {
-		activeFlag = b;
+	synchronized final Process preCapture() {
+		activeFlag = false;
+		Process ret = nextProcess;
+		nextProcess = null;
+		hasNext = false;
+		return ret;
+	}
+
+	synchronized final void postCapture() {
+		activeFlag = true;
+		hasNext = (nextProcess != null);
 	}
 
 	final void begCondWait() {
