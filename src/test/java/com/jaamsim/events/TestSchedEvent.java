@@ -17,36 +17,28 @@ package com.jaamsim.events;
 import org.junit.Test;
 
 public class TestSchedEvent {
+
 	@Test
 	public void testLIFOEvents() {
 		EventManager evt = new EventManager("TestEVT");
 		evt.clear();
 
-		System.out.println("LIFO Events");
 		ProcessTarget targ = new TestTarget(1);
-		long firstNano = System.nanoTime();
-		long lastnanos = firstNano;
+		long[] nanoStamps = new long[11];
 		for (int i = 0; i <= 1000000; i++) {
-			if (i % 100000 == 0 && i > 0) {
-				long nanos = System.nanoTime();
-				long deltns = (nanos - lastnanos);
-				double perevt = deltns / 100000.0d;
-				System.out.format("%7d - %12d ns (%f ns/evt)%n", i, deltns, perevt);
-				lastnanos = nanos;
+			if (i % 100000 == 0) {
+				int idx = i / 100000;
+				nanoStamps[idx] = System.nanoTime();
 			}
 			evt.scheduleProcessExternal(0, 0, false, targ, null);
 		}
-
 		long endSchedNanos = System.nanoTime();
-		System.out.format("Sched total - %d ns%n", (endSchedNanos - firstNano));
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, Long.MAX_VALUE);
 
 		long endExecNanos = System.nanoTime();
-		long execNanos = endExecNanos - endSchedNanos;
-		double perEvtExec = execNanos / 1000000.0d;
-		System.out.format("Done exec - %12d ns (%f ns/evt)%n", execNanos, perEvtExec);
-		System.out.println("Done all - " + (endExecNanos - firstNano) + " ns");
+
+		outputResults("LIFO Events", nanoStamps, endSchedNanos, endExecNanos);
 	}
 
 	@Test
@@ -54,31 +46,22 @@ public class TestSchedEvent {
 		EventManager evt = new EventManager("TestEVT");
 		evt.clear();
 
-		System.out.println("FIFO Events");
 		ProcessTarget targ = new TestTarget(1);
-		long firstNano = System.nanoTime();
-		long lastnanos = firstNano;
+		long[] nanoStamps = new long[11];
 		for (int i = 0; i <= 1000000; i++) {
-			if (i % 100000 == 0 && i > 0) {
-				long nanos = System.nanoTime();
-				long deltns = (nanos - lastnanos);
-				double perevt = deltns / 100000.0d;
-				System.out.format("%7d - %12d ns (%f ns/evt)%n", i, deltns, perevt);
-				lastnanos = nanos;
+			if (i % 100000 == 0) {
+				int idx = i / 100000;
+				nanoStamps[idx] = System.nanoTime();
 			}
 			evt.scheduleProcessExternal(0, 0, true, targ, null);
 		}
-
 		long endSchedNanos = System.nanoTime();
-		System.out.format("Sched total - %d ns%n", (endSchedNanos - firstNano));
 
 		TestFrameworkHelpers.runEventsToTick(evt, 100, Long.MAX_VALUE);
 
 		long endExecNanos = System.nanoTime();
-		long execNanos = endExecNanos - endSchedNanos;
-		double perEvtExec = execNanos / 1000000.0d;
-		System.out.format("Done exec - %12d ns (%f ns/evt)%n", execNanos, perEvtExec);
-		System.out.println("Done all - " + (endExecNanos - firstNano) + " ns");
+
+		outputResults("FIFO Events", nanoStamps, endSchedNanos, endExecNanos);
 	}
 
 	@Test
@@ -86,31 +69,22 @@ public class TestSchedEvent {
 		EventManager evt = new EventManager("TestEVT");
 		evt.clear();
 
-		System.out.println("Different Priority Events");
 		ProcessTarget targ = new TestTarget(1);
-		long firstNano = System.nanoTime();
-		long lastnanos = firstNano;
+		long[] nanoStamps = new long[11];
 		for (int i = 0; i <= 1000000; i++) {
-			if (i % 100000 == 0 && i > 0) {
-				long nanos = System.nanoTime();
-				long deltns = (nanos - lastnanos);
-				double perevt = deltns / 100000.0d;
-				System.out.format("%7d - %12d ns (%f ns/evt)%n", i, deltns, perevt);
-				lastnanos = nanos;
+			if (i % 100000 == 0) {
+				int idx = i / 100000;
+				nanoStamps[idx] = System.nanoTime();
 			}
 			evt.scheduleProcessExternal(0, i, false, targ, null);
 		}
-
 		long endSchedNanos = System.nanoTime();
-		System.out.format("Sched total - %d ns%n", (endSchedNanos - firstNano));
 
 		TestFrameworkHelpers.runEventsToTick(evt, 10000000, Long.MAX_VALUE);
 
 		long endExecNanos = System.nanoTime();
-		long execNanos = endExecNanos - endSchedNanos;
-		double perEvtExec = execNanos / 1000000.0d;
-		System.out.format("Done exec - %12d ns (%f ns/evt)%n", execNanos, perEvtExec);
-		System.out.println("Done all - " + (endExecNanos - firstNano) + " ns");
+
+		outputResults("Different Priority Events", nanoStamps, endSchedNanos, endExecNanos);
 	}
 
 	@Test
@@ -118,31 +92,38 @@ public class TestSchedEvent {
 		EventManager evt = new EventManager("TestEVT");
 		evt.clear();
 
-		System.out.println("Different Time Events");
 		ProcessTarget targ = new TestTarget(1);
-		long firstNano = System.nanoTime();
-		long lastnanos = firstNano;
+		long[] nanoStamps = new long[11];
 		for (int i = 0; i <= 1000000; i++) {
-			if (i % 100000 == 0 && i > 0) {
-				long nanos = System.nanoTime();
-				long deltns = (nanos - lastnanos);
-				double perevt = deltns / 100000.0d;
-				System.out.format("%7d - %12d ns (%f ns/evt)%n", i, deltns, perevt);
-				lastnanos = nanos;
+			if (i % 100000 == 0) {
+				int idx = i / 100000;
+				nanoStamps[idx] = System.nanoTime();
 			}
 			evt.scheduleProcessExternal(i, 0, false, targ, null);
 		}
-
 		long endSchedNanos = System.nanoTime();
-		System.out.format("Sched total - %d ns%n", (endSchedNanos - firstNano));
 
 		TestFrameworkHelpers.runEventsToTick(evt, 10000000, Long.MAX_VALUE);
 
 		long endExecNanos = System.nanoTime();
+
+		outputResults("Different Time Events", nanoStamps, endSchedNanos, endExecNanos);
+	}
+
+	private final void outputResults(String test, long[] nanoStamps, long endSchedNanos, long endExecNanos) {
 		long execNanos = endExecNanos - endSchedNanos;
 		double perEvtExec = execNanos / 1000000.0d;
+		System.out.println(test);
+
+		for (int i = 0; i < 10; i++) {
+			long deltns = nanoStamps[i + 1] - nanoStamps[i];
+			double perevt = deltns / 100000.0d;
+			System.out.format("%7d - %12d ns (%f ns/evt)%n", (i + 1) * 100000, deltns, perevt);
+		}
+
+		System.out.format("Sched total - %d ns%n", (endSchedNanos - nanoStamps[0]));
 		System.out.format("Done exec - %12d ns (%f ns/evt)%n", execNanos, perEvtExec);
-		System.out.println("Done all - " + (endExecNanos - firstNano) + " ns");
+		System.out.format("Done all - %d ns%n%n", (endExecNanos - nanoStamps[0]));
 	}
 
 	private static class TestTarget extends ProcessTarget {
