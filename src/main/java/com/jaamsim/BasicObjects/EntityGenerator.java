@@ -111,6 +111,11 @@ public class EntityGenerator extends LinkedService {
 	}
 
 	@Override
+	public void addEntity( DisplayEntity ent ) {
+		error("An entity cannot be sent to an EntityGenerator.");
+	}
+
+	@Override
 	public void startUp() {
 		super.startUp();
 
