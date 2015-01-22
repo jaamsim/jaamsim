@@ -351,8 +351,9 @@ public final class EventManager {
 			Process.processEvents(this);
 		}
 
+		cur.setActive(false);
 		threadWait(cur);
-		cur.setActive();
+		cur.setActive(true);
 	}
 
 	/**

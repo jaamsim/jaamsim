@@ -199,7 +199,6 @@ final class Process extends Thread {
 	 * Returns true if we woke a next Process, otherwise return false.
 	 */
 	synchronized boolean wakeNextProcess() {
-		activeFlag = false;
 		if (nextProcess != null) {
 			nextProcess.wake();
 			nextProcess = null;
@@ -234,8 +233,8 @@ final class Process extends Thread {
 		return dieFlag;
 	}
 
-	synchronized void setActive() {
-		activeFlag = true;
+	synchronized void setActive(boolean b) {
+		activeFlag = b;
 	}
 
 	final void begCondWait() {
