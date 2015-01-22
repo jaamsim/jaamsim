@@ -66,7 +66,7 @@ public class Seize extends LinkedService {
 
 			// If sufficient units are available, then seize them and pass the entity to the next component
 			this.seizeResources();
-			DisplayEntity ent = waitQueue.getValue().removeFirst();
+			DisplayEntity ent = this.getNextEntity();
 			this.sendToNextComponent(ent);
 		}
 		this.setBusy(false);

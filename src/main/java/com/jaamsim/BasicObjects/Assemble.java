@@ -89,10 +89,7 @@ public class Assemble extends LinkedService {
 
 	@Override
 	public void addEntity( DisplayEntity ent ) {
-		super.addEntity(ent);
-
-		// By default, add the entity to the first queue
-		waitQueueList.getValue().get(0).addEntity(ent);
+		error("An entity cannot be sent directly to an Assemble object. It must be sent to the appropriate queue.");
 	}
 
 	@Override
@@ -125,6 +122,7 @@ public class Assemble extends LinkedService {
 		// Remove and destroy one entity from each queue
 		for (Queue que : waitQueueList.getValue()) {
 			DisplayEntity ent = que.removeFirst();
+			this.registerEntity(ent);
 			ent.kill();
 		}
 

@@ -45,7 +45,6 @@ public class EntityGate extends LinkedService {
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
-		super.addEntity(ent);
 
 		// If the gate is closed or other entities are already queued, then add the entity to the queue
 		Queue queue = waitQueue.getValue();
@@ -55,6 +54,7 @@ public class EntityGate extends LinkedService {
 		}
 
 		// If the gate is open and there are no other entities still in the queue, then send the entity to the next component
+		this.registerEntity(ent);
 		this.sendToNextComponent(ent);
 	}
 
