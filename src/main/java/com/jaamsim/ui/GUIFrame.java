@@ -1940,4 +1940,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				key, desc, examp);
 	}
 
+	public static String formatOutputToolTip(String key, String desc) {
+		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s</p></html>", key, desc);
+	}
+
 }

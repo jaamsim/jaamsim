@@ -129,36 +129,12 @@ private class OutputTable extends JTable {
 		}
 
 		OutputHandle output = (OutputHandle)entries.get(row);
-
-		StringBuilder build = new StringBuilder();
-		build.append("<HTML>");
-		build.append("<b>Name:</b>  ");
-		build.append(output.getName());
-		build.append("<BR>");
-		String desc = output.getDescription();
-		if (!desc.isEmpty()) {
-			build.append("<BR>");
-			build.append("<b>Description:</b> ");
-			for (String line : desc.split("\n", 0)) {
-				// Replace all <> for html parsing
-				String tempLine = line.replaceAll("&", "&amp;");
-				tempLine = tempLine.replaceAll("<", "&lt;");
-				tempLine = tempLine.replaceAll(">", "&gt;");
-
-				int len = 0;
-				build.append("<BR>");
-				// Break the line at 100-char boundaries
-				for (String word : tempLine.split(" ", -1)) {
-					build.append(word).append(" ");
-					len += word.length() + 1;
-					if (len > 100) {
-						build.append("<BR>");
-						len = 0;
-					}
-				}
-			}
-		}
-		return build.toString();
+		String desc = new String(output.getDescription());
+		desc = desc.replaceAll("&", "&amp;");
+		desc = desc.replaceAll("<", "&lt;");
+		desc = desc.replaceAll(">", "&gt;");
+		desc = desc.replaceAll("\n", "<BR>");
+		return GUIFrame.formatOutputToolTip(output.getName(), desc);
 	}
 
 	@Override
