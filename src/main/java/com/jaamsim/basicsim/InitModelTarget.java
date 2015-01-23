@@ -27,16 +27,28 @@ public class InitModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
+
+		// Initialise each entity
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			Entity.getAll().get(i).earlyInit();
 		}
 
-		long startTick = Entity.calculateDelayLength(Simulation.getStartHours());
+		// Start each entity
+		double startTime = Simulation.getStartTime();
 		for (int i = Entity.getAll().size() - 1; i >= 0; i--) {
-			EventManager.scheduleTicks(startTick, 0, false, new StartUpTarget(Entity.getAll().get(i)), null);
+			EventManager.scheduleSeconds(startTime, 0, false, new StartUpTarget(Entity.getAll().get(i)), null);
 		}
 
-		long endTick = Entity.calculateDelayLength(Simulation.getEndHours());
-		EventManager.scheduleTicks(endTick, Entity.PRIO_DEFAULT, false, new EndModelTarget(), null);
+		// Schedule the initialisation period
+		if (Simulation.getPrintReport()) {   //TODO remove once TLS reports have been integrated with JaamSim
+			if (Simulation.getInitializationTime() > 0.0) {
+				double clearTime = startTime + Simulation.getInitializationTime();
+				EventManager.scheduleSeconds(clearTime, Entity.PRIO_DEFAULT, false, new ClearStatisticsTarget(), null);
+			}
+		}
+
+		// Schedule the end of the simulation run
+		double endTime = Simulation.getEndTime();
+		EventManager.scheduleSeconds(endTime, Entity.PRIO_DEFAULT, false, new EndModelTarget(), null);
 	}
 }

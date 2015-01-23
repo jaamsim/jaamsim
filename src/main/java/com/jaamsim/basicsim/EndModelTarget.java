@@ -34,6 +34,10 @@ class EndModelTarget extends ProcessTarget {
 			Entity.getAll().get(i).doEnd();
 		}
 
+		// Print the output report
+		if (Simulation.getPrintReport())
+			InputAgent.printReport(Simulation.getEndTime());
+
 		InputAgent.logMessage("Made it to do end at");
 		// close warning/error trace file
 		InputAgent.closeLogFile();

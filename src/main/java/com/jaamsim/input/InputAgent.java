@@ -1076,6 +1076,42 @@ public class InputAgent {
 	}
 
 	/**
+	 * Prints the output report for the simulation run.
+	 * @param simTime - simulation time at which the report is printed.
+	 */
+	public static void printReport(double simTime) {
+
+		// Create the report file
+		StringBuilder tmp = new StringBuilder("");
+		tmp.append(InputAgent.getReportFileName(InputAgent.getRunName()));
+		tmp.append(".rep");
+		FileEntity file = new FileEntity(tmp.toString());
+
+		// Identify the classes that were used in the model
+		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
+		for (Entity ent : Entity.getAll()) {
+			if (ent.testFlag(Entity.FLAG_GENERATED))
+				continue;
+			if (!newClasses.contains(ent.getClass()))
+				newClasses.add(ent.getClass());
+		}
+
+		// Loop through the classes and identify the instances
+		for (Class<? extends Entity> newClass : newClasses) {
+			for (Entity ent : Entity.getAll()) {
+				if (ent.testFlag(Entity.FLAG_GENERATED))
+					continue;
+				if (ent.getClass() != newClass)
+					continue;
+				ent.printReport(file, simTime);
+			}
+		}
+
+		// Close the report file
+		file.close();
+	}
+
+	/**
 	 * Returns the relative file path for the specified URI.
 	 * <p>
 	 * The path can start from either the folder containing the present

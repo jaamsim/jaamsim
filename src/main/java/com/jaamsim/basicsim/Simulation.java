@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.DirInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
@@ -61,6 +62,15 @@ public class Simulation extends Entity {
 	@Keyword(description = "The time at which the simulation will be paused.",
 	         example = "Simulation PauseTime { 200 h }")
 	private static final ValueInput pauseTime;
+
+	@Keyword(description = "Indicates whether an output report will be printed at the end of the simulation run.",
+	         example = "Simulation PrintReport { TRUE }")
+	private static final BooleanInput printReport;
+
+	@Keyword(description = "The directory in which to place the output report.\n" +
+			"Defaults to the directory containing the configuration file for the run.",
+			example = "ReportGenerator1 ReportDirectory { 'c:\reports\' }")
+	private static final DirInput reportDirectory;
 
 	@Keyword(description = "The length of time represented by one simulation tick.",
 	         example = "Simulation TickLength { 1e-6 s }")
@@ -141,6 +151,10 @@ public class Simulation extends Entity {
 		pauseTime.setUnitType(TimeUnit.class);
 		pauseTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
+		printReport = new BooleanInput("PrintReport", "Key Inputs", false);
+
+		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
+
 		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
 		startTimeInput.setUnitType(TimeUnit.class);
 		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -177,6 +191,8 @@ public class Simulation extends Entity {
 		this.addInput(runDuration);
 		this.addInput(initializationTime);
 		this.addInput(pauseTime);
+		this.addInput(printReport);
+		this.addInput(reportDirectory);
 
 		this.addInput(startTimeInput);
 
@@ -231,6 +247,11 @@ public class Simulation extends Entity {
 
 		if (in == pauseTime) {
 			updatePauseTime();
+			return;
+		}
+
+		if (in == reportDirectory) {
+			InputAgent.setReportDirectory(reportDirectory.getDir());
 			return;
 		}
 
@@ -354,6 +375,10 @@ public class Simulation extends Entity {
 		evt.resume(evt.secondsToNearestTick(Simulation.getPauseTime()));
 	}
 
+	public static boolean getPrintReport() {
+		return printReport.getValue();
+	}
+
 	public static boolean traceEvents() {
 		return traceEventsInput.getValue();
 	}
@@ -379,11 +404,19 @@ public class Simulation extends Entity {
 	}
 
 	/**
-	 * Returns the end time of the run.
-	 * @return double - the time the current run will stop
+	 * Returns the start time of the run.
+	 * @return - simulation time in seconds for the start of the run.
 	 */
-	public static double getEndHours() {
-		return endTime/3600.0d;
+	public static double getStartTime() {
+		return startTime;
+	}
+
+	/**
+	 * Returns the end time of the run.
+	 * @return - simulation time in seconds when the current run will stop.
+	 */
+	public static double getEndTime() {
+		return endTime;
 	}
 
 	/**
