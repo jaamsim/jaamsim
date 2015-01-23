@@ -1935,4 +1935,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		return String.format("<html><p width=\"200px\"><b>%s</b><br>%s</p></html>", name, desc);
 	}
 
+	public static String formatKeywordToolTip(String key, String desc, String examp) {
+		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s<br><br><u>Example:</u><br>%s</p></html>",
+				key, desc, examp);
+	}
+
 }

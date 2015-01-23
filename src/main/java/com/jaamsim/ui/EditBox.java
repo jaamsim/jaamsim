@@ -191,40 +191,16 @@ public class EditBox extends FrameBox {
 				if (key == null)
 					return null;
 
-				StringBuilder build = new StringBuilder();
-				build.append("<HTML>");
-				build.append("<b>Keyword:</b>  ");
-				build.append(in.getKeyword());
-				build.append("<BR>");
-				build.append("<b>Category:</b> ");
-				build.append(in.getCategory());
-				build.append("<BR><BR>");
-				build.append("<b>Description:</b> ");
-				for (String line : key.description().split("\n", 0)) {
-					// Replace all <> for html parsing
-					String tempLine = line.replaceAll("&", "&amp;");
-					tempLine = tempLine.replaceAll("<", "&lt;");
-					tempLine = tempLine.replaceAll(">", "&gt;");
+				String desc = new String(key.description());
+				desc = desc.replaceAll("&", "&amp;");
+				desc = desc.replaceAll("<", "&lt;");
+				desc = desc.replaceAll(">", "&gt;");
+				desc = desc.replaceAll("\n", "<BR>");
 
-					int len = 0;
-					build.append("<BR>");
-					// Break the line at 100-char boundaries
-					for (String word : tempLine.split(" ", -1)) {
-						build.append(word).append(" ");
-						len += word.length() + 1;
-						if (len > 100) {
-							build.append("<BR>");
-							len = 0;
-						}
-					}
-				}
-				if (key.example().length() > 0) {
-					build.append("<BR><BR><b>Example:</b> ");
-					for (String each : key.example().split("\n", 0))
-						build.append("<BR>").append(each);
-				}
+				String examp = new String(key.example());
+				examp = examp.replaceAll("\n", "<BR>");
 
-				return build.toString();
+				return GUIFrame.formatKeywordToolTip(in.getKeyword(), desc, examp);
 			}
 			catch (IllegalArgumentException e) {}
 			catch (IllegalAccessException e) {}
