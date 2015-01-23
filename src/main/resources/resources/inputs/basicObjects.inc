@@ -1,5 +1,4 @@
 Define ObjectType {
-					ReportGenerator
                     Group
                     ScriptEntity
                     Output
@@ -12,16 +11,13 @@ Define ObjectType {
                   }
 
 Define	ImageModel {
-            ReportGeneratorIconModel
 			TimeSeriesIconModel
 			SelectorIconModel
 			}
 			
-ReportGeneratorIconModel  ImageFile { '<res>/images/ReportGenerator-256.png' }   Transparent { TRUE }
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png' }  Transparent { TRUE }
 SelectorIconModel       ImageFile { '<res>/images/Selector-256.png'  }   Transparent { TRUE }
 
-ReportGenerator         JavaClass { com.jaamsim.BasicObjects.ReportGenerator            } Palette { 'Basic Objects' } DefaultDisplayModel 	{ ReportGeneratorIconModel }
 Group                   JavaClass { com.jaamsim.basicsim.Group                          } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 ScriptEntity            JavaClass { com.jaamsim.basicsim.ScriptEntity                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 Output                  JavaClass { com.jaamsim.basicsim.OutputMethod                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
@@ -32,7 +28,6 @@ ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		
 EntitlementSelector		JavaClass { com.jaamsim.BasicObjects.EntitlementSelector		} Palette { 'Basic Objects' } DefaultDisplayModel   { SelectorIconModel }
 ExpressionEntity              JavaClass { com.jaamsim.basicsim.ExpressionEntity                 } Palette { 'Basic Objects' }
 
-ReportGenerator    Description { 'Determines initialization, run duration, and prints the output report.' }
 Group              Description { 'Collection of entities used as an convenience for specifying model inputs.' }
 ScriptEntity       Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
 Output             Description { '???' }
