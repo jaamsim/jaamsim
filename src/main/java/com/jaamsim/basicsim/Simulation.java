@@ -147,7 +147,7 @@ public class Simulation extends Entity {
 		runDuration.setUnitType(TimeUnit.class);
 		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
 
-		pauseTime = new ValueInput("PauseTime", "Key Inputs", Double.POSITIVE_INFINITY);
+		pauseTime = new ValueInput("PauseTime", "GUI", Double.POSITIVE_INFINITY);
 		pauseTime.setUnitType(TimeUnit.class);
 		pauseTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
@@ -168,19 +168,19 @@ public class Simulation extends Entity {
 
 		printInputReport = new BooleanInput("PrintInputReport", "Key Inputs", false);
 
-		realTimeFactor = new IntegerInput("RealTimeFactor", "Key Inputs", DEFAULT_REAL_TIME_FACTOR);
+		realTimeFactor = new IntegerInput("RealTimeFactor", "GUI", DEFAULT_REAL_TIME_FACTOR);
 		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
 
-		realTime = new BooleanInput("RealTime", "Key Inputs", false);
+		realTime = new BooleanInput("RealTime", "GUI", false);
 
 		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
 
-		showModelBuilder = new BooleanInput("ShowModelBuilder", "Key Inputs", false);
-		showObjectSelector = new BooleanInput("ShowObjectSelector", "Key Inputs", false);
-		showInputEditor = new BooleanInput("ShowInputEditor", "Key Inputs", false);
-		showOutputViewer = new BooleanInput("ShowOutputViewer", "Key Inputs", false);
-		showPropertyViewer = new BooleanInput("ShowPropertyViewer", "Key Inputs", false);
-		showLogViewer = new BooleanInput("ShowLogViewer", "Key Inputs", false);
+		showModelBuilder = new BooleanInput("ShowModelBuilder", "GUI", false);
+		showObjectSelector = new BooleanInput("ShowObjectSelector", "GUI", false);
+		showInputEditor = new BooleanInput("ShowInputEditor", "GUI", false);
+		showOutputViewer = new BooleanInput("ShowOutputViewer", "GUI", false);
+		showPropertyViewer = new BooleanInput("ShowPropertyViewer", "GUI", false);
+		showLogViewer = new BooleanInput("ShowLogViewer", "GUI", false);
 
 		// Initialize basic model information
 		startTime = 0.0;
