@@ -19,7 +19,6 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.rng.MRG1999a;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -40,7 +39,7 @@ public class ContinuousDistribution extends Distribution {
 			"The cumulative probabilities must be given in increasing order.  The first value must be exactly 0.0.  " +
 			"The last value must be exactly 1.0.",
 	         example = "ContinuousDist1 CumulativeProbabilityList { 0.0  0.6  1.0 }")
-	private final ValueListInput cumulativeProbabilityListInput;
+	private final CumulativeProbInput cumulativeProbabilityListInput;
 
 	private final MRG1999a rng = new MRG1999a();
 
@@ -49,10 +48,8 @@ public class ContinuousDistribution extends Distribution {
 		valueListInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( valueListInput);
 
-		cumulativeProbabilityListInput = new ValueListInput( "CumulativeProbabilityList", "Key Inputs", null);
-		cumulativeProbabilityListInput.setUnitType(DimensionlessUnit.class);
-		cumulativeProbabilityListInput.setValidRange(0.0d, 1.0d);
-		this.addInput( cumulativeProbabilityListInput);
+		cumulativeProbabilityListInput = new CumulativeProbInput("CumulativeProbabilityList", "Key Inputs", null);
+		this.addInput(cumulativeProbabilityListInput);
 	}
 
 	public ContinuousDistribution() {}
@@ -64,26 +61,6 @@ public class ContinuousDistribution extends Distribution {
 		// The number of entries in the ValueList and CumulativeProbabilityList inputs must match
 		if( cumulativeProbabilityListInput.getValue().size() != valueListInput.getValue().size() ) {
 			throw new InputErrorException( "The number of entries for CumulativeProbabilityList and ValueList must be equal" );
-		}
-
-		// The first entry in the CumulativeProbabilityList must be 0.0
-		if( cumulativeProbabilityListInput.getValue().get(0) != 0.0 ) {
-			throw new InputErrorException( "The first entry for CumulativeProbabilityList must be exactly 0.0" );
-		}
-
-		// The last entry in the CumulativeProbabilityList must be 1.0
-		int n = cumulativeProbabilityListInput.getValue().size();
-		if( cumulativeProbabilityListInput.getValue().get(n-1) != 1.0 ) {
-			throw new InputErrorException( "The last entry for CumulativeProbabilityList must be exactly 1.0" );
-		}
-
-		// The entries in the CumulativeProbabilityList must be given in increasing order
-		double last = -1.0;
-		for( int i=0; i<n; i++) {
-			if( cumulativeProbabilityListInput.getValue().get(i) <= last ) {
-				throw new InputErrorException( "The entries for CumulativeProbabilityList must be given in increasing order" );
-			}
-			last = cumulativeProbabilityListInput.getValue().get(i);
 		}
 	}
 
