@@ -150,7 +150,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public static int VIEW_WIDTH;
 
 	private static final String RUN_TOOLTIP = GUIFrame.formatToolTip("Run", "Starts or resumes the simulation run.");
-	private static final String PAUSE_TOOLTIP = GUIFrame.formatToolTip("Pause", "Pauses the simulation run.");
+	private static final String PAUSE_TOOLTIP = "<html><b>Pause</b></html>";  // Use a small tooltip for Pause so that it does not block the simulation time display
 
 	static {
 		try {
