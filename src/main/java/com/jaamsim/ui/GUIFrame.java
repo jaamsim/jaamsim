@@ -1055,7 +1055,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// Set the run progress bar display
 		long cTime = System.currentTimeMillis();
 		double duration = Simulation.getRunDuration() + Simulation.getInitializationTime();
-		double timeElapsed = simTime - Simulation.getStartHours()*3600.0d;
+		double timeElapsed = simTime - Simulation.getStartTime();
 		int progress = (int)(timeElapsed * 100.0d / duration);
 		this.setProgress(progress);
 

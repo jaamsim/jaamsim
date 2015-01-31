@@ -420,27 +420,6 @@ public class Simulation extends Entity {
 	}
 
 	/**
-	 * Return the run duration for the run (not including intialization)
-	 */
-	public static double getRunDurationHours() {
-		return Simulation.getRunDuration() / 3600.0d;
-	}
-
-	/**
-	 * Returns the start time of the run.
-	 */
-	public static double getStartHours() {
-		return startTime/3600.0d;
-	}
-
-	/**
-	 * Return the initialization duration in hours
-	 */
-	public static double getInitializationHours() {
-		return Simulation.getInitializationTime() / 3600.0d;
-	}
-
-	/**
 	 * Returns the duration of the run (not including intialization)
 	 */
 	public static double getRunDuration() {
