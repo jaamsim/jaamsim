@@ -32,8 +32,8 @@ import com.jaamsim.basicsim.Simulation;
 public class AboutBox extends FrameBox implements ActionListener {
 	private static AboutBox instance;
 
-	public static final String version = "2015-03";
-	public static final String copyright = "Copyright (C) 2014 Ausenco Engineering Canada Inc.";
+	public static final String version = "2015-04";
+	public static final String copyright = "Copyright (C) 2015 Ausenco Engineering Canada Inc.";
 
 	public AboutBox() {
 		super("About");
