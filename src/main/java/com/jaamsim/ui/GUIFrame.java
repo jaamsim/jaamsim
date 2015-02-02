@@ -1687,20 +1687,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public void handleError(EventManager evt, Throwable t, long currentTick) {
 		if (t instanceof OutOfMemoryError) {
 			OutOfMemoryError e = (OutOfMemoryError)t;
-			LogBox.logLine("Out of Memory use the -Xmx flag during execution for more memory");
-			LogBox.logLine("Further debug information:");
-			LogBox.logLine("Error: " + e.getMessage());
+			InputAgent.logMessage("Out of Memory use the -Xmx flag during execution for more memory");
+			InputAgent.logMessage("Further debug information:");
+			InputAgent.logMessage("Error: %s", e.getMessage());
 			for (StackTraceElement each : e.getStackTrace())
-				LogBox.logLine(each.toString());
+				InputAgent.logMessage(each.toString());
 			GUIFrame.shutdown(1);
 			return;
 		}
 		else {
 			double curSec = evt.ticksToSeconds(currentTick);
-			LogBox.format("EXCEPTION AT TIME: %f s%n", curSec);
-			LogBox.logLine("Error: " + t.getMessage());
+			InputAgent.logMessage("EXCEPTION AT TIME: %f s", curSec);
+			InputAgent.logMessage("Error: %s", t.getMessage());
 			for (StackTraceElement each : t.getStackTrace())
-				LogBox.logLine(each.toString());
+				InputAgent.logMessage(each.toString());
 		}
 
 		GUIFrame.showErrorDialog("Runtime Error",
