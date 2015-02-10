@@ -500,7 +500,7 @@ static class LabelMenuItem extends MenuItem {
 		InputAgent.applyArgs(label, "Position", "0.0", Double.toString(ypos), "0.0", "m");
 		InputAgent.applyArgs(label, "TextHeight", "0.15", "m");
 		InputAgent.applyArgs(label, "Format", "%s");
-		InputAgent.applyArgs(label, "OutputName", String.format("%s  Name", ent.getName()));
+		InputAgent.applyArgs(label, "OutputName", ent.getName(), "Name");
 
 		FrameBox.setSelectedEntity(label);
 	}
