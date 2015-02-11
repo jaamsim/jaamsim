@@ -160,4 +160,40 @@ public class TestMRG1999a {
 			assertTrue(test2.toString().equals(known2[i]));
 		}
 	}
+
+	@Test
+	public void testCachedSeeds() {
+		MRG1999a test1 = new MRG1999a(0, 0);
+		MRG1999a test2 = new MRG1999a(12345, 12345, 12345, 12345, 12345, 12345);
+
+		assertTrue(test1.toString().equals(test2.toString()));
+
+		// test stream 1 for each
+		test1 = new MRG1999a(1, 0);
+		long[] seeds2 = { 12345, 12345, 12345, 12345, 12345, 12345 };
+		MRG1999a.advanceStream(seeds2);
+		test2 = new MRG1999a(seeds2[0], seeds2[1], seeds2[2], seeds2[3], seeds2[4], seeds2[5]);
+
+		assertTrue(test1.toString().equals(test2.toString()));
+
+		// test stream 10500 for each
+		test1 = new MRG1999a(10500, 0);
+		long[] seeds3 = { 12345, 12345, 12345, 12345, 12345, 12345 };
+		for (int i = 0; i < 10500; i++) {
+			MRG1999a.advanceStream(seeds3);
+		}
+		test2 = new MRG1999a(seeds3[0], seeds3[1], seeds3[2], seeds3[3], seeds3[4], seeds3[5]);
+
+		assertTrue(test1.toString().equals(test2.toString()));
+
+		// test stream 20000 for each
+		test1 = new MRG1999a(20000, 0);
+		long[] seeds4 = { 12345, 12345, 12345, 12345, 12345, 12345 };
+		for (int i = 0; i < 20000; i++) {
+			MRG1999a.advanceStream(seeds4);
+		}
+		test2 = new MRG1999a(seeds4[0], seeds4[1], seeds4[2], seeds4[3], seeds4[4], seeds4[5]);
+
+		assertTrue(test1.toString().equals(test2.toString()));
+	}
 }

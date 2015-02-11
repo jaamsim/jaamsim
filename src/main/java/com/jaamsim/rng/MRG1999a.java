@@ -51,12 +51,13 @@ public class MRG1999a {
 
 	static {
 		long seeds[] = { 12345, 12345, 12345, 12345, 12345, 12345 };
-		for( int i = 0; i <= ( seedCacheSize -1 ) * seedCacheIncrement; i++ ) {
-			if( i % seedCacheIncrement == 0 ) {
-				for( int j = 0; j < 6; j++ )
-					seedCache[i/seedCacheIncrement][j] = seeds[j];
+		for (int i = 0; i <= (seedCacheSize - 1) * seedCacheIncrement; i++) {
+			if (i % seedCacheIncrement == 0) {
+				int seedIdx = i / seedCacheIncrement;
+				for (int j = 0; j < seeds.length; j++)
+					seedCache[seedIdx][j] = seeds[j];
 			}
-			advanceStream( seeds );
+			advanceStream(seeds);
 		}
 	}
 
@@ -112,11 +113,11 @@ public class MRG1999a {
 		long seeds[] = new long[6];
 
 		// Find the cached seed with stream closest to, but not exceeding this stream
-		int indexOfClosestSeed = Math.min( stream / seedCacheIncrement, seedCacheSize - 1 );
-		for( int j = 0; j < 6; j++ )
-			seeds[j] = seedCache[indexOfClosestSeed][j];
+		int cacheSeedIdx = Math.min(stream / seedCacheIncrement, seedCacheSize - 1);
+		for (int j = 0; j < seeds.length; j++)
+			seeds[j] = seedCache[cacheSeedIdx][j];
 
-		for (int i = indexOfClosestSeed * seedCacheIncrement ; i < stream; i++)
+		for (int i = cacheSeedIdx * seedCacheIncrement; i < stream; i++)
 			advanceStream(seeds);
 
 		for (int i = 0; i < substream; i++)
