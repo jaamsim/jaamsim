@@ -27,6 +27,39 @@ public class MRG1999a {
 	// The internal state machine is held in 6 integer values (treat as unsigned)
 	int s0, s1, s2, s3, s4, s5;
 
+	private static final long streamAdvance[][] = {
+		{ 2427906178L, 3580155704L,  949770784L },
+		{  226153695L, 1230515664L, 3580155704L },
+		{ 1988835001L,  986791581L, 1230515664L },
+		{ 1464411153L,  277697599L, 1610723613L },
+		{   32183930L, 1464411153L, 1022607788L },
+		{ 2824425944L,   32183930L, 2093834863L }
+	};
+
+	private static final long substreamAdvance[][] = {
+		{   82758667L, 1871391091L, 4127413238L },
+		{ 3672831523L,   69195019L, 1871391091L },
+		{ 3672091415L, 3528743235L,   69195019L },
+		{ 1511326704L, 3759209742L, 1610795712L },
+		{ 4292754251L, 1511326704L, 3889917532L },
+		{ 3859662829L, 4292754251L, 3708466080L }
+	};
+
+	private static final int seedCacheSize = 20;
+	private static final int seedCacheIncrement = 5000;
+	private static final long seedCache[][] = new long[seedCacheSize][6];  // seeds after calling advanceStream
+
+	static {
+		long seeds[] = { 12345, 12345, 12345, 12345, 12345, 12345 };
+		for( int i = 0; i <= ( seedCacheSize -1 ) * seedCacheIncrement; i++ ) {
+			if( i % seedCacheIncrement == 0 ) {
+				for( int j = 0; j < 6; j++ )
+					seedCache[i/seedCacheIncrement][j] = seeds[j];
+			}
+			advanceStream( seeds );
+		}
+	}
+
 	/**
 	 * Constructs a random generator seeded with values the first entry in the seed
 	 * table.
@@ -76,8 +109,14 @@ public class MRG1999a {
 		if (substream < 0)
 			throw new IllegalArgumentException("Substream numbers must be positive");
 
-		long seeds[] = { 12345, 12345, 12345, 12345, 12345, 12345 };
-		for (int i = 0; i < stream; i++)
+		long seeds[] = new long[6];
+
+		// Find the cached seed with stream closest to, but not exceeding this stream
+		int indexOfClosestSeed = Math.min( stream / seedCacheIncrement, seedCacheSize - 1 );
+		for( int j = 0; j < 6; j++ )
+			seeds[j] = seedCache[indexOfClosestSeed][j];
+
+		for (int i = indexOfClosestSeed * seedCacheIncrement ; i < stream; i++)
 			advanceStream(seeds);
 
 		for (int i = 0; i < substream; i++)
@@ -153,24 +192,6 @@ public class MRG1999a {
 		tmp = ulong_mod(a[2] * s[5] + tmp, m2);
 		return tmp;
 	}
-
-	private static final long streamAdvance[][] = {
-		{ 2427906178L, 3580155704L,  949770784L },
-		{  226153695L, 1230515664L, 3580155704L },
-		{ 1988835001L,  986791581L, 1230515664L },
-		{ 1464411153L,  277697599L, 1610723613L },
-		{   32183930L, 1464411153L, 1022607788L },
-		{ 2824425944L,   32183930L, 2093834863L }
-	};
-
-	private static final long substreamAdvance[][] = {
-		{   82758667L, 1871391091L, 4127413238L },
-		{ 3672831523L,   69195019L, 1871391091L },
-		{ 3672091415L, 3528743235L,   69195019L },
-		{ 1511326704L, 3759209742L, 1610795712L },
-		{ 4292754251L, 1511326704L, 3889917532L },
-		{ 3859662829L, 4292754251L, 3708466080L }
-	};
 
 	static void advanceStream(long[] seeds) {
 		long s0 = mixHalf1(streamAdvance[0], seeds);
