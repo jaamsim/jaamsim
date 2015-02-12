@@ -40,6 +40,15 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 		noKeyValue = def;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+		OneOrTwoKeyListInput<K1, K2, V> inp = (OneOrTwoKeyListInput<K1, K2, V>) in;
+		hashMap = inp.hashMap;
+		noKeyValue = inp.noKeyValue;
+	}
+
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {

@@ -44,6 +44,15 @@ public class KeyInput<K1 extends Entity, V> extends Input<V> {
 		noKeyValue = def;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+		KeyInput<K1, V> inp = (KeyInput<K1, V>) in;
+		hashMap = inp.hashMap;
+		noKeyValue = inp.noKeyValue;
+	}
+
 	public void setUnitType(Class<? extends Unit> u) {
 		unitType = u;
 		unitString = null;

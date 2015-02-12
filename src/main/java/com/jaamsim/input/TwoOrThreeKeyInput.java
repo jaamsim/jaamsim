@@ -49,6 +49,15 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		noKeyValue = def;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+		TwoOrThreeKeyInput<K1, K2, K3, V> inp = (TwoOrThreeKeyInput<K1, K2, K3, V>) in;
+		hashMap = inp.hashMap;
+		noKeyValue = inp.noKeyValue;
+	}
+
 	private String unitString = "";
 	public void setUnits(String units) {
 		unitString = units;

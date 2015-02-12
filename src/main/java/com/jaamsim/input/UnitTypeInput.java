@@ -30,6 +30,13 @@ public class UnitTypeInput extends Input<ObjectType> {
 	}
 
 	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+		UnitTypeInput inp = (UnitTypeInput) in;
+		unitType = inp.unitType;
+	}
+
+	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);

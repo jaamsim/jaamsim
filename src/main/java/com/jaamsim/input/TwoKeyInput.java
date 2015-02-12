@@ -47,6 +47,15 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		noKeyValue = def;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+		TwoKeyInput<K1, K2, V> inp = (TwoKeyInput<K1, K2, V>) in;
+		hashMap = inp.hashMap;
+		noKeyValue = inp.noKeyValue;
+	}
+
 	private String unitString = "";
 	public void setUnits(String units) {
 		unitString = units;

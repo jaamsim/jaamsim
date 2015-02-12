@@ -37,6 +37,15 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 		noKeyValue = def;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+		KeyListInput<K1, V> inp = (KeyListInput<K1, V>) in;
+		hashMap = inp.hashMap;
+		noKeyValue = inp.noKeyValue;
+	}
+
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {

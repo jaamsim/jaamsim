@@ -98,6 +98,23 @@ public abstract class Input<T> {
 		isDef = true;
 	}
 
+	/**
+	 * Assigns the internal state for this input to the same values as the
+	 * specified input.
+	 * @param in - input object to be copied.
+	 */
+	public void copyFrom(Input<?> in) {
+
+		@SuppressWarnings("unchecked")
+		Input<T> inp = (Input<T>) in;
+
+		// Copy the internal state
+		value = inp.value;
+		valueTokens = inp.valueTokens;
+		isDef = false;
+		edited = true;
+	}
+
 	@Override
 	public String toString() {
 		return String.format("%s", value);

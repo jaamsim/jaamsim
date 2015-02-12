@@ -35,6 +35,12 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 	}
 
 	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+		curve = ((KeyedVec3dInput) in).curve;
+	}
+
+	@Override
 	public void parse(KeywordIndex kw) throws InputErrorException {
 		ArrayList<String> strings = new ArrayList<>(kw.numArgs());
 		for (int i = 0; i < kw.numArgs(); i++) {

@@ -51,6 +51,15 @@ public class OneOrTwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends I
 		unitType = units;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+		OneOrTwoKeyInput<K1, K2, V> inp = (OneOrTwoKeyInput<K1, K2, V>) in;
+		hashMap = inp.hashMap;
+		noKeyValue = inp.noKeyValue;
+	}
+
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {

@@ -31,6 +31,17 @@ public class OutputInput<T> extends Input<String> {
 		this.klass = klass;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+		OutputInput<T> inp = (OutputInput<T>) in;
+		ent = inp.ent;
+		outputName = inp.outputName;
+		out = inp.out;
+		outputNameList = inp.outputNameList;
+	}
+
 	@Override
 	public void parse(KeywordIndex kw) throws InputErrorException {
 
