@@ -131,7 +131,7 @@ public class Assemble extends LinkedService {
 		DisplayEntity proto = prototypeEntity.getValue();
 		StringBuilder sb = new StringBuilder();
 		sb.append(proto.getName()).append("_Copy").append(numberGenerated);
-		assembledEntity = (DisplayEntity) Entity.fastCopy(proto, sb.toString());
+		assembledEntity = Entity.fastCopy(proto, sb.toString());
 		assembledEntity.earlyInit();
 
 		// Position the assembled part over the Assemble object

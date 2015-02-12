@@ -161,7 +161,7 @@ public class EntityGenerator extends LinkedService {
 			DisplayEntity proto = prototypeEntity.getValue();
 			StringBuilder sb = new StringBuilder();
 			sb.append(this.getName()).append("_").append(numberGenerated);
-			DisplayEntity ent = (DisplayEntity) Entity.fastCopy(proto, sb.toString());
+			DisplayEntity ent = Entity.fastCopy(proto, sb.toString());
 			ent.earlyInit();
 
 			// Send the entity to the next element in the chain
