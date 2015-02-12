@@ -17,8 +17,8 @@ package com.jaamsim.BasicObjects;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -161,8 +161,7 @@ public class EntityGenerator extends LinkedService {
 			DisplayEntity proto = prototypeEntity.getValue();
 			StringBuilder sb = new StringBuilder();
 			sb.append(this.getName()).append("_").append(numberGenerated);
-			DisplayEntity ent = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
-			ent.copyInputs(proto);
+			DisplayEntity ent = (DisplayEntity) Entity.fastCopy(proto, sb.toString());
 			ent.earlyInit();
 
 			// Send the entity to the next element in the chain

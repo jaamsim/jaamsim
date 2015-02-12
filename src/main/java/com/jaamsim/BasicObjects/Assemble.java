@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.math.Vec3d;
@@ -131,8 +131,7 @@ public class Assemble extends LinkedService {
 		DisplayEntity proto = prototypeEntity.getValue();
 		StringBuilder sb = new StringBuilder();
 		sb.append(proto.getName()).append("_Copy").append(numberGenerated);
-		assembledEntity = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
-		assembledEntity.copyInputs(proto);
+		assembledEntity = (DisplayEntity) Entity.fastCopy(proto, sb.toString());
 		assembledEntity.earlyInit();
 
 		// Position the assembled part over the Assemble object

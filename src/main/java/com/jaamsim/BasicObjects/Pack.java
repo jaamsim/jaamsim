@@ -17,8 +17,8 @@ package com.jaamsim.BasicObjects;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -93,8 +93,7 @@ public class Pack extends LinkedService {
 		EntityContainer proto = prototypeEntityContainer.getValue();
 		StringBuilder sb = new StringBuilder();
 		sb.append(proto.getName()).append("_Copy").append(numberGenerated);
-		EntityContainer ret = InputAgent.generateEntityWithName(proto.getClass(), sb.toString());
-		ret.copyInputs(proto);
+		EntityContainer ret = (EntityContainer) Entity.fastCopy(proto, sb.toString());
 		ret.earlyInit();
 		return ret;
 	}
