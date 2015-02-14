@@ -161,9 +161,6 @@ private static class ClassFields implements Comparator<Field> {
 		if (value == null)
 			return "<null>";
 
-		if (value instanceof Entity)
-	        return ((Entity)value).getName();
-
 		if (value instanceof double[])
 			return Arrays.toString((double[])value);
 
