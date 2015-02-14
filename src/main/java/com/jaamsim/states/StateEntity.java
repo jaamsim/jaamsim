@@ -70,6 +70,9 @@ public class StateEntity extends DisplayEntity {
 		presentState = init;
 		states.put(init.name, init);
 
+		if (testFlag(FLAG_GENERATED))
+			return;
+
 		stateListeners.clear();
 		for (Entity ent : Entity.getClonesOfIterator(Entity.class, StateEntityListener.class)) {
 			StateEntityListener sel = (StateEntityListener)ent;
