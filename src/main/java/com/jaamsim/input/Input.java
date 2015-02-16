@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
 import com.jaamsim.basicsim.Entity;
@@ -29,6 +30,7 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.datatypes.BooleanVector;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
+import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -907,6 +909,7 @@ public abstract class Input<T> {
 		// Parse the unit portion of the input
 		Unit unit = Input.tryParseUnit(kw.getArg(numArgs-1), unitType);
 
+
 		// A unit is mandatory except for dimensionless values and time values in RFC8601 date/time format
 		if (unit == null && unitType != DimensionlessUnit.class && unitType != TimeUnit.class)
 			throw new InputErrorException(INP_ERR_NOUNITFOUND, kw.getArg(numArgs-1), unitType.getSimpleName());
@@ -1329,6 +1332,62 @@ public abstract class Input<T> {
 			}
 
 			return new Color4d(r, g, b);
+		}
+	}
+
+	public static SampleProvider parseSampleExp(KeywordIndex kw,
+			Entity thisEnt, double minValue, double maxValue, Class<? extends Unit> unitType) {
+
+		Input.assertCount(kw, 1, 2);
+
+		// If there are two inputs, it must be a number and its unit
+		if (kw.numArgs() == 2) {
+			if (unitType == DimensionlessUnit.class)
+				throw new InputErrorException(INP_ERR_COUNT, 1, kw.argString());
+			DoubleVector tmp = null;
+			tmp = Input.parseDoubles(kw, minValue, maxValue, unitType);
+			return new SampleConstant(unitType, tmp.get(0));
+		}
+
+		// If there is only one input, it could be a SampleProvider, a dimensionless constant, or an expression
+
+		// 1) Try parsing a SampleProvider
+		SampleProvider s = null;
+		try {
+			Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
+			s = Input.castImplements(ent, SampleProvider.class);
+		}
+		catch (InputErrorException e) {}
+
+		if (s != null) {
+			if (s.getUnitType() != UserSpecifiedUnit.class)
+				Input.assertUnitsMatch(unitType, s.getUnitType());
+			return s;
+		}
+
+		// 2) Try parsing a constant value
+		DoubleVector tmp = null;
+		try {
+			tmp = Input.parseDoubles(kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, DimensionlessUnit.class);
+		}
+		catch (InputErrorException e) {}
+
+		if (tmp != null) {
+			if (unitType != DimensionlessUnit.class)
+				throw new InputErrorException(INP_ERR_UNITNOTFOUND, unitType.getSimpleName());
+			if (tmp.get(0) < minValue || tmp.get(0) > maxValue)
+				throw new InputErrorException(INP_ERR_DOUBLERANGE, minValue, maxValue, tmp.get(0));
+			return new SampleConstant(unitType, tmp.get(0));
+		}
+
+		// 3) Try parsing an expression
+		try {
+			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(), kw.getArg(0));
+			ExpValidator.validateExpression(exp, thisEnt, unitType);
+			return new SampleExpression(exp, thisEnt, unitType);
+		}
+		catch (ExpError e) {
+			throw new InputErrorException(e.toString());
 		}
 	}
 
