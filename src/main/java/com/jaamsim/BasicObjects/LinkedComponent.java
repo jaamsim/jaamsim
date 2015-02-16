@@ -126,6 +126,10 @@ public abstract class LinkedComponent extends StateEntity {
 			((StateEntity)ent).setPresentState(stateAssignment.getValue());
 	}
 
+	protected void setReceivedEntity(DisplayEntity ent) {
+		receivedEntity = ent;
+	}
+
 	/**
 	 * Sends the specified entity to the next component downstream.
 	 * @param ent - the entity to be sent downstream.

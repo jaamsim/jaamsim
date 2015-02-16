@@ -86,10 +86,16 @@ public class Seize extends LinkedService {
 	 */
 	public boolean checkResources() {
 		double simTime = this.getSimTime();
+
+		// Temporarily set the obj entity to the first one in the queue
+		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
+		this.setReceivedEntity(waitQueue.getValue().getFirst());
+
 		ArrayList<Resource> resList = resourceList.getValue();
 		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 		for (int i=0; i<resList.size(); i++) {
 			if (resList.get(i).getAvailableUnits() < (int) numberList.get(i).getNextSample(simTime)) {
+				this.setReceivedEntity(oldEnt);
 				return false;
 			}
 		}

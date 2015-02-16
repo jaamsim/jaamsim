@@ -244,6 +244,14 @@ public class Queue extends LinkedComponent {
 	}
 
 	/**
+	 * Returns the first entity in the queue.
+	 * @return first entity in the queue.
+	 */
+	public DisplayEntity getFirst() {
+		return itemList.get(0).entity;
+	}
+
+	/**
 	 * Number of entities in the queue
 	 */
 	public int getCount() {
