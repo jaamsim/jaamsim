@@ -33,6 +33,11 @@ public class InitModelTarget extends ProcessTarget {
 			Entity.getAll().get(i).earlyInit();
 		}
 
+		// Initialise each entity a second time
+		for (int i = 0; i < Entity.getAll().size(); i++) {
+			Entity.getAll().get(i).lateInit();
+		}
+
 		// Start each entity
 		double startTime = Simulation.getStartTime();
 		for (int i = Entity.getAll().size() - 1; i >= 0; i--) {

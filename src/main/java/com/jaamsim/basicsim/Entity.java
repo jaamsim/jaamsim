@@ -195,6 +195,13 @@ public class Entity {
 	}
 
 	/**
+	 * Initialises the entity prior to the start of the model run.
+	 * <p>
+	 * This method assumes other entities have already called earlyInit.
+	 */
+	public void lateInit() {}
+
+	/**
 	 * Starts the execution of the model run for this entity.
 	 * <p>
 	 * If required, initialisation that depends on another entity can be
