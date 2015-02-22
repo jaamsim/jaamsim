@@ -78,6 +78,7 @@ public class Graph extends GraphBasics  {
 
 	{
 		this.setDefaultSize(new Vec3d(5, 3, 0));
+		attributeDefinitionList.setHidden(true);
 
 		// Key Inputs category
 
