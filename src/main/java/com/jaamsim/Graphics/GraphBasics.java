@@ -21,8 +21,6 @@ import com.jaamsim.input.ColorListInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.FormatInput;
-import com.jaamsim.input.Input;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.StringInput;
@@ -278,34 +276,6 @@ public abstract class GraphBasics extends DisplayEntity {
 
 		timeTrace = false;
 		showSecondaryYAxis = false;
-	}
-
-	@Override
-	public void validate()
-	throws InputErrorException {
-		super.validate();
-
-		if (yLinesColor.getValue().size() > 1)
-			Input.validateIndexedLists(yLines, yLinesColor);
-
-		if (xLinesColor.getValue().size() > 1)
-			Input.validateIndexedLists(xLines, xLinesColor);
-
-		for( int i = 0; i < yLines.getValue().size(); i++ ) {
-			double y = yLines.getValue().get( i );
-			if( y > yAxisEnd.getValue() || y < yAxisStart.getValue() ) {
-				throw new InputErrorException("value for yLines should be in (%f, %f) range -- it is (%f)",
-					yAxisStart.getValue(), yAxisEnd.getValue(), y);
-			}
-		}
-
-		for( int i = 0; i < xLines.getValue().size(); i++ ) {
-			double x = xLines.getValue().get( i );
-			if( x < xAxisStart.getValue() || x > xAxisEnd.getValue() ) {
-				throw new InputErrorException("value for xLines should be in (%f, %f) range -- it is (%f)",
-					xAxisStart.getValue(), xAxisEnd.getValue(), x);
-			}
-		}
 	}
 
 	protected void setXAxisUnit(Class<? extends Unit> unitType) {

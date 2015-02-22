@@ -632,12 +632,8 @@ public class GraphModel extends DisplayModel {
 				linePoints.add(new Vec4d(xPos, -0.5, zBump, 1.0d));
 				linePoints.add(new Vec4d(xPos,  0.5, zBump, 1.0d));
 
-				Color4d colour = ColourInput.LIGHT_GREY;
-				if (xLineColours.size() > i) {
-					colour = xLineColours.get(i);
-				} else if (xLineColours.size() >= 1) {
-					colour = xLineColours.get(0);
-				}
+				int ind = Math.min(i, xLineColours.size()-1);
+				Color4d colour = xLineColours.get(ind);
 
 				// Transform to world space
 				for (int j = 0; j < linePoints.size(); ++j) {
@@ -661,12 +657,8 @@ public class GraphModel extends DisplayModel {
 				linePoints.add(new Vec4d(-0.5, yPos, zBump, 1.0d));
 				linePoints.add(new Vec4d( 0.5, yPos, zBump, 1.0d));
 
-				Color4d colour = ColourInput.LIGHT_GREY;
-				if (yLineColours.size() > i) {
-					colour = yLineColours.get(i);
-				} else if (yLineColours.size() >= 1) {
-					colour = yLineColours.get(0);
-				}
+				int ind = Math.min(i, yLineColours.size()-1);
+				Color4d colour = yLineColours.get(ind);
 
 				// Transform to world space
 				for (int j = 0; j < linePoints.size(); ++j) {
