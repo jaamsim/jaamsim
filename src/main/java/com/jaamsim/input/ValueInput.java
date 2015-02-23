@@ -28,6 +28,8 @@ public class ValueInput extends Input<Double> {
 	}
 
 	public void setUnitType(Class<? extends Unit> units) {
+		if (units != unitType)
+			this.reset();
 		unitType = units;
 	}
 

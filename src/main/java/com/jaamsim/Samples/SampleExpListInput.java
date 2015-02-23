@@ -37,7 +37,10 @@ public class SampleExpListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
+		if (u != unitType)
+			this.reset();
 		unitType = u;
+
 		if (defValue == null)
 			return;
 		for (SampleProvider p : defValue) {

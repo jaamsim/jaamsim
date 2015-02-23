@@ -40,9 +40,6 @@ public class UnitTypeInput extends Input<ObjectType> {
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
-		if (value != null)
-			throw new InputErrorException("Value has already been set to %s", value.getName());
-
 		ObjectType t = Input.parseEntity(kw.getArg(0), ObjectType.class);
 		Class<? extends Unit> type = Input.checkCast(t.getJavaClass(), Unit.class);
 

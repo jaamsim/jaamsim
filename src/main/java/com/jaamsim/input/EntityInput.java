@@ -33,6 +33,8 @@ public class EntityInput<T extends Entity> extends Input<T> {
 	}
 
 	public void setSubClass(Class<? extends T> aClass) {
+		if (aClass != entSubClass)
+			this.reset();
 		entSubClass = aClass;
 	}
 

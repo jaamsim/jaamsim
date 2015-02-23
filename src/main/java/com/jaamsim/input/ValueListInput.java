@@ -31,6 +31,8 @@ public class ValueListInput extends ListInput<DoubleVector> {
 	}
 
 	public void setUnitType(Class<? extends Unit> units) {
+		if (units != unitType)
+			this.reset();
 		unitType = units;
 	}
 
