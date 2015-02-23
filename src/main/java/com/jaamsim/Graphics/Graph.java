@@ -22,7 +22,6 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.ColorListInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.OutputHandle;
@@ -184,24 +183,6 @@ public class Graph extends GraphBasics  {
 	}
 
 	@Override
-	public void validate()
-	throws InputErrorException {
-		super.validate();
-
-		if (lineColorsList.getValue().size() > 1)
-			Input.validateIndexedLists(dataSource, lineColorsList);
-
-		if (secondaryLineColorsList.getValue().size() > 1)
-			Input.validateIndexedLists(secondaryDataSource, secondaryLineColorsList);
-
-		if (lineWidths.getValue().size() > 1)
-			Input.validateIndexedLists(dataSource, lineWidths);
-
-		if (secondaryLineWidths.getValue().size() > 1)
-			Input.validateIndexedLists(secondaryDataSource, secondaryLineWidths);
-	}
-
-	@Override
 	public void earlyInit(){
 		super.earlyInit();
 
@@ -265,14 +246,12 @@ public class Graph extends GraphBasics  {
 	protected void extraStartGraph() {}
 
 	protected Color4d getLineColor(int index, ArrayList<Color4d> colorList) {
-		if (colorList.size() == 1)
-			return colorList.get(0);
+		index = Math.min(index, colorList.size()-1);
 		return colorList.get(index);
 	}
 
 	protected double getLineWidth(int index, DoubleVector widthList) {
-		if (widthList.size() == 1)
-			return widthList.get(0);
+		index = Math.min(index, widthList.size()-1);
 		return widthList.get(index);
 	}
 
