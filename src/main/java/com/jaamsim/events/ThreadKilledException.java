@@ -18,7 +18,7 @@ package com.jaamsim.events;
  * Custom exception thrown when a thread is killed prematurely with the
  * terminate thread call.
  */
-class ThreadKilledException extends RuntimeException {
+final class ThreadKilledException extends RuntimeException {
 	public ThreadKilledException(String message) {
 		super(message);
 	}
