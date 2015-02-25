@@ -17,10 +17,11 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.datatypes.IntegerVector;
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleExpListInput;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
-import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 
 public class Seize extends LinkedService {
@@ -30,16 +31,18 @@ public class Seize extends LinkedService {
 	private final EntityListInput<Resource> resourceList;
 
 	@Keyword(description = "The number of units to seize from the Resource(s).",
-	         example = "Seize1 NumberOfUnits { 2 1 }")
-	private final IntegerListInput numberOfUnitsList;
+	         example = "Seize1 NumberOfUnits { { 2 } { 1 } }")
+	private final SampleExpListInput numberOfUnitsList;
 
 	{
 		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
 		this.addInput(resourceList);
 
-		IntegerVector defNum = new IntegerVector();
-		defNum.add(1);
-		numberOfUnitsList = new IntegerListInput("NumberOfUnits", "Key Inputs", defNum);
+		ArrayList<SampleProvider> def = new ArrayList<>();
+		def.add(new SampleConstant(1));
+		numberOfUnitsList = new SampleExpListInput("NumberOfUnits", "Key Inputs", def);
+		numberOfUnitsList.setEntity(this);
+		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfUnitsList);
 	}
 
@@ -82,11 +85,13 @@ public class Seize extends LinkedService {
 	 * @return = TRUE if all the resources are available
 	 */
 	public boolean checkResources() {
+		double simTime = this.getSimTime();
 		ArrayList<Resource> resList = resourceList.getValue();
-		IntegerVector numberList = numberOfUnitsList.getValue();
+		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 		for (int i=0; i<resList.size(); i++) {
-			if (resList.get(i).getAvailableUnits() < numberList.get(i))
+			if (resList.get(i).getAvailableUnits() < (int) numberList.get(i).getNextSample(simTime)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -96,10 +101,11 @@ public class Seize extends LinkedService {
 	 * @return
 	 */
 	public void seizeResources() {
+		double simTime = this.getSimTime();
 		ArrayList<Resource> resList = resourceList.getValue();
-		IntegerVector numberList = numberOfUnitsList.getValue();
+		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 		for (int i=0; i<resList.size(); i++) {
-			resList.get(i).seize(numberList.get(i));
+			resList.get(i).seize((int)numberList.get(i).getNextSample(simTime));
 		}
 	}
 

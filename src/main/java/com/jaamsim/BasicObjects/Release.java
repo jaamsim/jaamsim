@@ -17,29 +17,32 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.datatypes.IntegerVector;
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleExpListInput;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
-import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 
 public class Release extends LinkedComponent {
 
 	@Keyword(description = "The Resource(s) to be released.",
-	         example = "Release1 Resource { Resource1 }")
+	         example = "Release1 Resource { Resource1 Resource2 }")
 	private final EntityListInput<Resource> resourceList;
 
 	@Keyword(description = "The number of units to release from the Resource(s).",
-	         example = "Release1 NumberOfUnits { 2 }")
-	private final IntegerListInput numberOfUnitsList;
+	         example = "Release1 NumberOfUnits { { 2 } { 1 } }")
+	private final SampleExpListInput numberOfUnitsList;
 
 	{
 		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
 		this.addInput( resourceList);
 
-		IntegerVector defNum = new IntegerVector();
-		defNum.add(1);
-		numberOfUnitsList = new IntegerListInput("NumberOfUnits", "Key Inputs", defNum);
+		ArrayList<SampleProvider> def = new ArrayList<>();
+		def.add(new SampleConstant(1));
+		numberOfUnitsList = new SampleExpListInput("NumberOfUnits", "Key Inputs", def);
+		numberOfUnitsList.setEntity(this);
+		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput( numberOfUnitsList);
 	}
 
@@ -65,12 +68,14 @@ public class Release extends LinkedComponent {
 	 * @return
 	 */
 	public void releaseResources() {
+		double simTime = this.getSimTime();
 		ArrayList<Resource> resList = resourceList.getValue();
-		IntegerVector numberList = numberOfUnitsList.getValue();
+		ArrayList<SampleProvider> numberList = numberOfUnitsList.getValue();
 
 		// Release the Resources
 		for(int i=0; i<resList.size(); i++) {
-			resList.get(i).release(numberList.get(i));
+			int n = (int) numberList.get(i).getNextSample(simTime);
+			resList.get(i).release(n);
 		}
 
 		// Notify any Seize objects that are waiting for these Resources
