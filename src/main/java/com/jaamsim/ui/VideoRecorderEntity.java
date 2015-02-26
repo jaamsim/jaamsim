@@ -149,7 +149,7 @@ public class VideoRecorderEntity extends Entity {
 			// Start the capture if we are already running and we set the input
 			// to true
 			if (hasRunStartup && videoCapture.getValue())
-				this.scheduleProcess(new CaptureNetworkTarget(this));
+				EventManager.scheduleTicks(0, 10, false, new CaptureNetworkTarget(this), null);
 		}
 	}
 

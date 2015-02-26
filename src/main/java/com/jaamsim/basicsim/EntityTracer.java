@@ -48,7 +48,7 @@ public void startUp() {
 	if (entities.getValue().isEmpty() || startTime.getValue() == 0.0d)
 		return;
 
-	simWait(startTime.getValue());
+	simWait(startTime.getValue(), 0);
 	for (Entity each : entities.getValue())
 		each.setTraceFlag();
 }

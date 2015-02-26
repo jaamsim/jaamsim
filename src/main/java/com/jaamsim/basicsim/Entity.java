@@ -483,10 +483,6 @@ public class Entity {
 		EventManager.startProcess(t);
 	}
 
-	public final void scheduleProcess(ProcessTarget t) {
-		EventManager.scheduleTicks(0, Entity.PRIO_DEFAULT, false, t, null);
-	}
-
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t) {
 		EventManager.scheduleSeconds(secs, priority, false, t, null);
 	}
