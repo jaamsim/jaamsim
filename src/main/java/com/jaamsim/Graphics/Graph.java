@@ -136,12 +136,8 @@ public class Graph extends GraphBasics  {
 			if (outs.isEmpty())
 				return;
 			Class<? extends Unit> temp = outs.get(0).getUnitType();
-			for (int i=1; i<outs.size(); i++) {
-				if( outs.get(i).getUnitType() != temp )
-					throw new InputErrorException("All inputs for keyword DataSource must have the same unit type./n" +
-							"The unit type for the first source is %s", temp);
-			}
 			this.setYAxisUnit(temp);
+			return;
 		}
 
 		if (in == secondaryDataSource) {
@@ -150,12 +146,8 @@ public class Graph extends GraphBasics  {
 			if (outs.isEmpty())
 				return;
 			Class<? extends Unit> temp = outs.get(0).getUnitType();
-			for (int i=1; i<outs.size(); i++) {
-				if( outs.get(i).getUnitType() != temp )
-					throw new InputErrorException("All inputs for keyword SecondaryDataSource must have the same unit type./n" +
-							"The unit type for the first source is %s", temp);
-			}
 			this.setSecondaryYAxisUnit(temp);
+			return;
 		}
 
 		if (in == lineColorsList) {
@@ -163,6 +155,7 @@ public class Graph extends GraphBasics  {
 				SeriesInfo info = primarySeries.get(i);
 				info.lineColour = getLineColor(i, lineColorsList.getValue());
 			}
+			return;
 		}
 
 		if (in == lineWidths) {
@@ -170,6 +163,7 @@ public class Graph extends GraphBasics  {
 				SeriesInfo info = primarySeries.get(i);
 				info.lineWidth = getLineWidth(i, lineWidths.getValue());
 			}
+			return;
 		}
 
 		if (in == secondaryLineColorsList) {
@@ -177,6 +171,7 @@ public class Graph extends GraphBasics  {
 				SeriesInfo info = secondarySeries.get(i);
 				info.lineColour = getLineColor(i, secondaryLineColorsList.getValue());
 			}
+			return;
 		}
 
 		if (in == secondaryLineWidths) {
@@ -184,6 +179,7 @@ public class Graph extends GraphBasics  {
 				SeriesInfo info = secondarySeries.get(i);
 				info.lineWidth = getLineWidth(i, secondaryLineWidths.getValue());
 			}
+			return;
 		}
 	}
 
