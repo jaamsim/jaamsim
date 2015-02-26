@@ -703,6 +703,8 @@ public class InputAgent {
 				boolean hasinput = false;
 
 				for (Input<?> in : ent.getEditableInputs()) {
+					if (in.isSynonym())
+						continue;
 					// If the keyword has been used, then add a record to the report
 					if (in.getValueString().length() != 0) {
 						hasinput = true;
@@ -773,6 +775,9 @@ public class InputAgent {
 
 					// Loop through the editable keywords for this instance
 					for (Input<?> in : ent.getEditableInputs()) {
+						if (in.isSynonym())
+							continue;
+
 						// If the keyword has been used, then add a record to the report
 						if (in.getValueString().length() != 0) {
 
@@ -1038,6 +1043,8 @@ public class InputAgent {
 			ArrayList<Input<?>> deferredInputs = new ArrayList<>();
 			// Print the key inputs first
 			for (Input<?> in : ent.getEditableInputs()) {
+				if (in.isSynonym())
+					continue;
 				if (!in.isEdited() || matchesKey(in.getKeyword(), earlyKeywords))
 					continue;
 

@@ -33,6 +33,7 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.StringInput;
+import com.jaamsim.input.SynonymInput;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -64,7 +65,6 @@ public class Entity {
 	private int flags;
 	protected boolean traceFlag = false;
 
-	private final HashMap<String, Input<?>> inputs = new HashMap<>();
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
 	private final HashMap<String, AttributeHandle> attributeMap = new HashMap<>();
@@ -274,28 +274,25 @@ public class Entity {
 	}
 
 	protected void addInput(Input<?> in) {
-		String key = in.getKeyword();
-		Input<?> exist = inputs.put(key, in);
-		if (exist == null) {
-			inpList.add(in);
-		}
-		else {
-			InputAgent.logWarning("keyword:%s handled twice for class %s", key, this.getClass().getName());
-			inputs.put(key, exist);
-		}
+		inpList.add(in);
 	}
 
 	protected void addSynonym(Input<?> in, String synonym) {
-		String key = synonym;
-		if (inputs.get(key) != null) {
-			InputAgent.logWarning("keyword:%s handled twice for class %s", key, this.getClass().getName());
-			return;
-		}
-		inputs.put(key, in);
+		inpList.add(new SynonymInput(synonym, in));
 	}
 
 	public final Input<?> getInput(String key) {
-		return inputs.get(key);
+		for (int i = 0; i < inpList.size(); i++) {
+			Input<?> in = inpList.get(i);
+			if (key.equals(in.getKeyword())) {
+				if (in.isSynonym())
+					return ((SynonymInput)in).input;
+				else
+					return in;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -306,7 +303,7 @@ public class Entity {
 	public void copyInputs(Entity ent) {
 		ArrayList<String> tmp = new ArrayList<>();
 		for (Input<?> sourceInput : ent.inpList) {
-			if (sourceInput.isDefault()) {
+			if (sourceInput.isDefault() || sourceInput.isSynonym()) {
 				continue;
 			}
 			tmp.clear();
@@ -332,7 +329,7 @@ public class Entity {
 			Input<?> sourceInput = orig.get(i);
 
 			// Default values do not need to be copied
-			if (sourceInput.isDefault())
+			if (sourceInput.isDefault() || sourceInput.isSynonym())
 				continue;
 
 			// Some keywords must be processed the long way by parsing the inputs

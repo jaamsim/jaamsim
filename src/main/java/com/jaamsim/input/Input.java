@@ -128,6 +128,10 @@ public abstract class Input<T> {
 		return category;
 	}
 
+	public boolean isSynonym() {
+		return false;
+	}
+
 	public void setDefaultValue(T val) {
 		defValue = val;
 		value = val;

@@ -780,7 +780,7 @@ private static class CategoryInputs {
 		// create a list of Inputs sorted by category
 		ArrayList<Input<?>> sortedInputs = new ArrayList<>();
 		for (Input<?> in : ent.getEditableInputs()) {
-			if (in.getHidden())
+			if (in.getHidden() || in.isSynonym())
 				continue;
 
 			int index = sortedInputs.size();
