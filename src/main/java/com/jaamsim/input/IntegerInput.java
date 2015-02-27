@@ -38,7 +38,7 @@ public class IntegerInput extends Input<Integer> {
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		if (defValue.intValue() == Integer.MAX_VALUE)
 			return POSITIVE_INFINITY;

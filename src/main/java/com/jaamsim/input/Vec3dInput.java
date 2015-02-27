@@ -40,7 +40,7 @@ public class Vec3dInput extends Input<Vec3d> {
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(defValue.x);

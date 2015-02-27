@@ -54,10 +54,10 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		if (defValue.size() ==0)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder();
 		for (ArrayList<T> each: defValue) {
@@ -67,11 +67,11 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 				tmp.append(SEPARATOR);
 
 			if (each == null) {
-				tmp.append(NO_VALUE);
+				tmp.append("");
 				continue;
 			}
 			if (each.isEmpty()) {
-				tmp.append(NO_VALUE);
+				tmp.append("");
 				continue;
 			}
 

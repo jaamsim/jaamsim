@@ -64,7 +64,6 @@ public abstract class Input<T> {
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
 
-	protected static final String NO_VALUE = "{ }";
 	protected static final String POSITIVE_INFINITY = "Infinity";
 	protected static final String NEGATIVE_INFINITY = "-Infinity";
 	protected static final String SEPARATOR = "  ";
@@ -143,12 +142,12 @@ public abstract class Input<T> {
 
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder(defValue.toString());
 
 		if (tmp.length() == 0)
-			return NO_VALUE;
+			return "";
 
 		return tmp.toString();
 	}
@@ -1413,7 +1412,7 @@ public abstract class Input<T> {
 	public String getDefaultStringForKeyInputs(Class<? extends Unit> unitType, String unitString) {
 
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		if (defValue.getClass() == Boolean.class) {
 			if((Boolean)defValue)
@@ -1439,7 +1438,7 @@ public abstract class Input<T> {
 		} else if (defValue.getClass() == DoubleVector.class) {
 			DoubleVector def = (DoubleVector)defValue;
 			if (def.size() == 0)
-				return NO_VALUE;
+				return "";
 
 			tmp.append(def.get(0));
 			for (int i = 1; i < def.size(); i++) {
@@ -1449,7 +1448,7 @@ public abstract class Input<T> {
 		} else if (defValue.getClass() == IntegerVector.class) {
 			IntegerVector def = (IntegerVector)defValue;
 			if (def.size() == 0)
-				return NO_VALUE;
+				return "";
 
 			tmp.append(def.get(0));
 			for (int i = 1; i < def.size(); i++) {

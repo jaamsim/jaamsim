@@ -69,7 +69,7 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 
 	@Override
 	public String getDefaultString() {
-		return NO_VALUE;
+		return "";
 	}
 
 }

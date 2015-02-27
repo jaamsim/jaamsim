@@ -63,7 +63,7 @@ public class StringChoiceInput extends IntegerInput {
 	@Override
 	public String getDefaultString() {
 		if (getDefaultChoice().isEmpty())
-			return NO_VALUE;
+			return "";
 
 		return String.format("%s", getDefaultChoice());
 	}

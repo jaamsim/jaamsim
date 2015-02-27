@@ -54,10 +54,10 @@ public class IntegerListInput extends ListInput<IntegerVector> {
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		if (defValue.size() == 0)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(defValue.get(0));

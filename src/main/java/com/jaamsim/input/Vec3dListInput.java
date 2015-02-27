@@ -66,10 +66,10 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		if (defValue.size() == 0)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder();
 		for (Vec3d each: defValue) {
@@ -79,7 +79,7 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 				tmp.append(SEPARATOR);
 
 			if (each == null) {
-				tmp.append(NO_VALUE);
+				tmp.append("");
 				continue;
 			}
 

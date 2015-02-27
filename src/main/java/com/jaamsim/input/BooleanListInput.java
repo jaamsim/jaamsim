@@ -40,7 +40,7 @@ public class BooleanListInput extends ListInput<BooleanVector> {
 	@Override
 	public String getDefaultString() {
 		if (defValue == null || defValue.size() == 0)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder();
 		for (int i = 0; i < defValue.size(); i++) {

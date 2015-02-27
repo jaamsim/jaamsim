@@ -47,7 +47,7 @@ public class ValueInput extends Input<Double> {
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder();
 		if (defValue.doubleValue() == Double.POSITIVE_INFINITY) {

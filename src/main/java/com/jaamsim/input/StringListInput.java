@@ -73,10 +73,10 @@ public class StringListInput extends ListInput<ArrayList<String>> {
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		if (defValue.size() == 0)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder(defValue.get(0));
 		for (int i = 1; i < defValue.size(); i++) {

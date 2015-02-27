@@ -42,10 +42,10 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		if (defValue.size() == 0)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder();
 		for (int i = 0; i < defValue.size(); i++) {
@@ -55,11 +55,6 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 				tmp.append(SEPARATOR);
 
 			Color4d col = defValue.get(i);
-			if (col == null) {
-				tmp.append(NO_VALUE);
-				continue;
-			}
-
 			tmp.append( String.format("{%s%.0f%s%.0f%s%.0f%s}", SEPARATOR, col.r * 255,
 			   SEPARATOR, col.g * 255, SEPARATOR, col.b * 255, SEPARATOR ));
 		}

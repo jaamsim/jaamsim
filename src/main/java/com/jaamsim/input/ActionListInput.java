@@ -70,7 +70,7 @@ public class ActionListInput extends ListInput<ArrayList<Action.Binding>>{
 	@Override
 	public String getDefaultString() {
 		if (defValue == null || defValue.isEmpty())
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder();
 		for (int i = 0; i < defValue.size(); i++) {

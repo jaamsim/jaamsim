@@ -96,7 +96,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null || defValue.isEmpty()) return NO_VALUE;
+		if (defValue == null || defValue.isEmpty()) return "";
 		return this.getInputString(defValue);
 	}
 

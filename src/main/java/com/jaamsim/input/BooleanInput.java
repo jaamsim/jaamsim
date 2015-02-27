@@ -50,7 +50,7 @@ public class BooleanInput extends Input<Boolean> {
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		if (defValue)
 			return "TRUE";

@@ -319,7 +319,7 @@ private static void initColors() {
 @Override
 public String getDefaultString() {
 	if (defValue == null)
-		return NO_VALUE;
+		return "";
 
 	return String.format("%.0f%s%.0f%s%.0f", defValue.r * 255, SEPARATOR,
 	   defValue.g * 255, SEPARATOR, defValue.b * 255);

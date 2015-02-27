@@ -72,7 +72,7 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 	private String getInputString(ArrayList<T> val) {
 
 		if (val.size() == 0)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(((Entity)val.get(0)).getName());
@@ -87,7 +87,7 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 	@Override
 	public String getDefaultString() {
 		if (defValue == null || defValue.size() == 0)
-			return NO_VALUE;
+			return "";
 		return this.getInputString(defValue);
 	}
 

@@ -97,10 +97,10 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 	@Override
 	public String getDefaultString() {
 		if (defValue == null)
-			return NO_VALUE;
+			return "";
 
 		if (defValue.size() == 0)
-			return NO_VALUE;
+			return "";
 
 		StringBuilder tmp = new StringBuilder(defValue.get(0).getName());
 		for (int i = 1; i < defValue.size(); i++) {
