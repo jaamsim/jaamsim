@@ -510,14 +510,6 @@ public class Entity {
 	}
 
 	/**
-	 * Wait a number of simulated seconds.
-	 * @param secs
-	 */
-	public final void simWait(double secs) {
-		EventManager.waitSeconds(secs, Entity.PRIO_DEFAULT, false, null);
-	}
-
-	/**
 	 * Wait a number of simulated seconds and a given priority.
 	 * @param secs
 	 * @param priority
@@ -545,14 +537,6 @@ public class Entity {
 	}
 
 	/**
-	 * Wait a number of discrete simulation ticks.
-	 * @param secs
-	 */
-	public final void simWaitTicks(long ticks) {
-		EventManager.waitTicks(ticks, Entity.PRIO_DEFAULT, false, null);
-	}
-
-	/**
 	 * Wait a number of discrete simulation ticks and a given priority.
 	 * @param secs
 	 * @param priority
@@ -570,19 +554,6 @@ public class Entity {
 	 */
 	public final void simWaitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
 		EventManager.waitTicks(ticks, priority, fifo, handle);
-	}
-
-	/**
-	 * Wrapper of eventManager.scheduleWait(). Used as a syntax nicity for
-	 * calling the wait method.
-	 *
-	 * @param duration The duration to wait
-	 */
-	public final void scheduleWait(double duration) {
-		long waitLength = calculateDelayLength(duration);
-		if (waitLength == 0)
-			return;
-		EventManager.waitTicks(waitLength, Entity.PRIO_DEFAULT, false, null);
 	}
 
 	/**
