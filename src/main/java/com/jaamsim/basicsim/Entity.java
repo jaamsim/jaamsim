@@ -81,8 +81,6 @@ public class Entity {
 	         example = "Entity1 AttributeDefinitionList { { A 20.0 s } { alpha 42 } }")
 	public final AttributeDefinitionListInput attributeDefinitionList;
 
-	// constants used when scheduling events using the Entity wrappers
-	public static final int PRIO_DEFAULT = 5;
 	static {
 		allInstances = new ArrayList<>(100);
 		namedEntities = new HashMap<>(100);

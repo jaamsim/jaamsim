@@ -48,12 +48,12 @@ public class InitModelTarget extends ProcessTarget {
 		if (Simulation.getPrintReport()) {   //TODO remove once TLS reports have been integrated with JaamSim
 			if (Simulation.getInitializationTime() > 0.0) {
 				double clearTime = startTime + Simulation.getInitializationTime();
-				EventManager.scheduleSeconds(clearTime, Entity.PRIO_DEFAULT, false, new ClearStatisticsTarget(), null);
+				EventManager.scheduleSeconds(clearTime, 5, false, new ClearStatisticsTarget(), null);
 			}
 		}
 
 		// Schedule the end of the simulation run
 		double endTime = Simulation.getEndTime();
-		EventManager.scheduleSeconds(endTime, Entity.PRIO_DEFAULT, false, new EndModelTarget(), null);
+		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(), null);
 	}
 }
