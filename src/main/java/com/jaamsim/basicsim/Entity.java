@@ -83,8 +83,6 @@ public class Entity {
 
 	// constants used when scheduling events using the Entity wrappers
 	public static final int PRIO_DEFAULT = 5;
-	public static final int PRIO_LOWEST = 11;
-
 	static {
 		allInstances = new ArrayList<>(100);
 		namedEntities = new HashMap<>(100);
@@ -617,22 +615,6 @@ public class Entity {
 		if (waitLength == 0)
 			return;
 		EventManager.waitTicks(waitLength, priority, false, handle);
-	}
-
-	/**
-	 * Schedules an event to happen as the last event at the current time.
-	 * Additional calls to scheduleLast will place a new event as the last event.
-	 */
-	public final void scheduleLastFIFO() {
-		EventManager.waitTicks(0, Entity.PRIO_LOWEST, true, null);
-	}
-
-	/**
-	 * Schedules an event to happen as the last event at the current time.
-	 * Additional calls to scheduleLast will place a new event as the last event.
-	 */
-	public final void scheduleLastLIFO() {
-		EventManager.waitTicks(0, Entity.PRIO_LOWEST, false, null);
 	}
 
 	// ******************************************************************************************************
