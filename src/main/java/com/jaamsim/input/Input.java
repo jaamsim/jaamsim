@@ -78,6 +78,7 @@ public abstract class Input<T> {
 	protected T value;
 
 	private boolean edited; // indicates if input has been edited for this entity
+	private boolean promptReqd; // indicates whether to prompt the user to save the configuration file
 	private boolean hidden; // Hide this input from the EditBox
 	private boolean isDef; // Is this input still the default value?
 	private String[] valueTokens; // value from .cfg file
@@ -88,6 +89,7 @@ public abstract class Input<T> {
 		setDefaultValue(def);
 
 		edited = false;
+		promptReqd = true;
 		isDef = true;
 		hidden = false;
 		valueTokens = null;
@@ -173,6 +175,14 @@ public abstract class Input<T> {
 
 	public boolean isEdited() {
 		return edited;
+	}
+
+	public void setPromptReqd(boolean bool) {
+		promptReqd = bool;
+	}
+
+	public boolean isPromptReqd() {
+		return promptReqd;
 	}
 
 	public void setTokens(KeywordIndex kw) {

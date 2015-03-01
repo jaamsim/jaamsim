@@ -150,6 +150,7 @@ public class Simulation extends Entity {
 		pauseTime = new ValueInput("PauseTime", "GUI", Double.POSITIVE_INFINITY);
 		pauseTime.setUnitType(TimeUnit.class);
 		pauseTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		pauseTime.setPromptReqd(false);
 
 		printReport = new BooleanInput("PrintReport", "Key Inputs", false);
 
@@ -170,8 +171,10 @@ public class Simulation extends Entity {
 
 		realTimeFactor = new IntegerInput("RealTimeFactor", "GUI", DEFAULT_REAL_TIME_FACTOR);
 		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
+		realTimeFactor.setPromptReqd(false);
 
 		realTime = new BooleanInput("RealTime", "GUI", false);
+		realTime.setPromptReqd(false);
 
 		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
 
@@ -181,6 +184,13 @@ public class Simulation extends Entity {
 		showOutputViewer = new BooleanInput("ShowOutputViewer", "GUI", false);
 		showPropertyViewer = new BooleanInput("ShowPropertyViewer", "GUI", false);
 		showLogViewer = new BooleanInput("ShowLogViewer", "GUI", false);
+
+		showModelBuilder.setPromptReqd(false);
+		showObjectSelector.setPromptReqd(false);
+		showInputEditor.setPromptReqd(false);
+		showOutputViewer.setPromptReqd(false);
+		showPropertyViewer.setPromptReqd(false);
+		showLogViewer.setPromptReqd(false);
 
 		// Initialize basic model information
 		startTime = 0.0;

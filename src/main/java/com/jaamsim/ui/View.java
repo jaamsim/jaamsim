@@ -118,10 +118,12 @@ static {
 
 	center = new Vec3dInput("ViewCenter", "Graphics", new Vec3d());
 	center.setUnitType(DistanceUnit.class);
+	center.setPromptReqd(false);
 	this.addInput(center);
 
 	position = new Vec3dInput("ViewPosition", "Graphics", new Vec3d(5.0d, -5.0d, 5.0d));
 	position.setUnitType(DistanceUnit.class);
+	position.setPromptReqd(false);
 	this.addInput(position);
 
 	IntegerVector defSize = new IntegerVector(2);
@@ -130,6 +132,7 @@ static {
 	windowSize = new IntegerListInput("WindowSize", "Graphics", defSize);
 	windowSize.setValidCount(2);
 	windowSize.setValidRange(1, 8192);
+	windowSize.setPromptReqd(false);
 	this.addInput(windowSize);
 
 	IntegerVector defPos = new IntegerVector(2);
@@ -138,12 +141,14 @@ static {
 	windowPos = new IntegerListInput("WindowPosition", "Graphics", defPos);
 	windowPos.setValidCount(2);
 	windowPos.setValidRange(-8192, 8192);
+	windowPos.setPromptReqd(false);
 	this.addInput(windowPos);
 
 	titleBar = new StringInput("TitleBarText", "Graphics", null);
 	this.addInput(titleBar);
 
 	showWindow = new BooleanInput("ShowWindow", "Graphics", false);
+	showWindow.setPromptReqd(false);
 	this.addInput(showWindow);
 
 	movable = new BooleanInput("Movable", "Graphics", true);

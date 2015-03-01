@@ -645,7 +645,7 @@ public class InputAgent {
 		if (InputAgent.recordEdits()) {
 			in.setEdited(true);
 			ent.setFlag(Entity.FLAG_EDITED);
-			if (!ent.testFlag(Entity.FLAG_GENERATED))
+			if (!ent.testFlag(Entity.FLAG_GENERATED) && in.isPromptReqd())
 				sessionEdited = true;
 		}
 
