@@ -16,7 +16,6 @@ package com.jaamsim.ui;
 
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -163,7 +162,6 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		}
 	}
 
-	private static final Dimension prefSize = new Dimension(220, 24);
 	private static final Runnable notifier = new PalletNotifier();
 	private static final class PalletNotifier implements Runnable {
 		@Override
@@ -193,7 +191,6 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 
 			ObjectType type = (ObjectType)userObj;
 			this.setText(type.getName());
-			this.setPreferredSize(prefSize);
 
 			if (!RenderManager.isGood())
 				return this;
