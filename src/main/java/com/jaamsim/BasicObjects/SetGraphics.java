@@ -14,18 +14,13 @@
  */
 package com.jaamsim.BasicObjects;
 
-import java.util.ArrayList;
-
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
-import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class SetGraphics extends LinkedComponent {
@@ -87,15 +82,7 @@ public class SetGraphics extends LinkedComponent {
 			error("Chosen index i=%s is out of range for GraphicList: %s.", i, graphicsList.getValue());
 		DisplayEntity chosen = graphicsList.getValue().get(i-1);
 
-		// Set the graphics for the incoming entity to those for the chosen entity
-		Input<?> inp = chosen.getInput("DisplayModel");
-		if (!inp.isDefault()) {
-			ArrayList<String> tmp = new ArrayList<>();
-			inp.getValueTokens(tmp);
-			KeywordIndex kw = new KeywordIndex(inp.getKeyword(), tmp, null);
-			InputAgent.apply(target, kw);
-		}
-
+		target.setDisplayModelList(chosen.getDisplayModelList());
 		target.setSize(chosen.getSize());
 		target.setOrientation(chosen.getOrientation());
 		target.setAlignment(chosen.getAlignment());

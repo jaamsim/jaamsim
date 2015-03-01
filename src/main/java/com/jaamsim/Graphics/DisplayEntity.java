@@ -78,6 +78,7 @@ public class DisplayEntity extends Entity {
 	private final Vec3d size = new Vec3d(1.0d, 1.0d, 1.0d);
 	private final Vec3d orient = new Vec3d();
 	private final Vec3d align = new Vec3d();
+	private final ArrayList<DisplayModel> displayModelList = new ArrayList<>();
 
 	private Region currentRegion;
 
@@ -153,6 +154,7 @@ public class DisplayEntity extends Entity {
 		for (ObjectType type : ObjectType.getAll()) {
 			if (type.getJavaClass() == this.getClass()) {
 				displayModelListInput.setDefaultValue(type.getDefaultDisplayModel());
+				this.setDisplayModelList(type.getDefaultDisplayModel());
 				break;
 			}
 		}
@@ -161,6 +163,18 @@ public class DisplayEntity extends Entity {
 	public void setDefaultSize(Vec3d s) {
 		sizeInput.setDefaultValue(s);
 		this.setSize(sizeInput.getValue());
+	}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		// reset the initial size, position, etc.
+		this.setPosition(positionInput.getValue());
+		this.setSize(sizeInput.getValue());
+		this.setAlignment(alignmentInput.getValue());
+		this.setOrientation(orientationInput.getValue());
+		this.setDisplayModelList(displayModelListInput.getValue());
 	}
 
 	@Override
@@ -481,7 +495,17 @@ public class DisplayEntity extends Entity {
 	}
 
 	public ArrayList<DisplayModel> getDisplayModelList() {
-		return displayModelListInput.getValue();
+		return displayModelList;
+	}
+
+	public void setDisplayModelList(ArrayList<DisplayModel> dmList) {
+		displayModelList.clear();
+		if (dmList == null)
+			return;
+		for (DisplayModel dm : dmList) {
+			displayModelList.add(dm);
+		}
+		clearBindings(); // Clear this on any change, and build it lazily later
 	}
 
 	public final void clearBindings() {
@@ -553,7 +577,7 @@ public class DisplayEntity extends Entity {
 		}
 
 		if (in == displayModelListInput) {
-			clearBindings(); // Clear this on any change, and build it lazily later
+			this.setDisplayModelList( displayModelListInput.getValue() );
 		}
 	}
 
