@@ -16,12 +16,13 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Samples.SampleExpListInput;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColorListInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.OutputListInput;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class XYGraph extends GraphBasics {
 
@@ -30,7 +31,7 @@ public class XYGraph extends GraphBasics {
 	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
 			"Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
      example = "XYGraph1 DataSource { { Entity1 Output1 } { Entity2 Output2 } }")
-	protected final OutputListInput<Double> dataSource;
+	protected final SampleExpListInput dataSource;
 
 	@Keyword(description = "A list of colors for the primary series to be displayed.\n" +
 			"Each color can be specified by either a color keyword or an RGB value.\n" +
@@ -46,7 +47,7 @@ public class XYGraph extends GraphBasics {
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
 			"Each source is graphed as a separate line or bar and is specified by an Entity and its Output.",
      example = "XYGraph1 SecondaryDataSource { { Entity1 Output1 } { Entity2 Output2 } }")
-	protected final OutputListInput<Double> secondaryDataSource;
+	protected final SampleExpListInput secondaryDataSource;
 
 	@Keyword(description = "A list of colors for the secondary series to be displayed.\n" +
 			"Each color can be specified by either a color keyword or an RGB value.\n" +
@@ -62,7 +63,9 @@ public class XYGraph extends GraphBasics {
 	{
 		// Key Inputs category
 
-		dataSource = new OutputListInput<>(Double.class, "DataSource", "Key Inputs", null);
+		dataSource = new SampleExpListInput("DataSource", "Key Inputs", null);
+		dataSource.setUnitType(UserSpecifiedUnit.class);
+		dataSource.setEntity(this);
 		this.addInput(dataSource);
 
 		ArrayList<Color4d> defSeriesColor = new ArrayList<>(0);
@@ -75,7 +78,9 @@ public class XYGraph extends GraphBasics {
 		showBars = new BooleanInput("ShowBars", "Key Inputs", false);
 		this.addInput(showBars);
 
-		secondaryDataSource = new OutputListInput<>(Double.class, "SecondaryDataSource", "Key Inputs", null);
+		secondaryDataSource = new SampleExpListInput("SecondaryDataSource", "Key Inputs", null);
+		secondaryDataSource.setUnitType(UserSpecifiedUnit.class);
+		secondaryDataSource.setEntity(this);
 		this.addInput(secondaryDataSource);
 
 		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
