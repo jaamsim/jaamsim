@@ -16,13 +16,13 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.ColorListInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.FormatInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
@@ -40,7 +40,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		public double[] yValues;
 		public double[] xValues;
 		public int numPoints; // number of points to be graphed
-		public OutputHandle out; // The source of the data for the series
+		public SampleProvider samp; // The source of the data for the series
 		public double lineWidth;
 		public Color4d lineColour;
 	}

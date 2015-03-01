@@ -17,6 +17,8 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.Samples.SampleExpListInput;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.ColorListInput;
@@ -24,14 +26,14 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.OutputHandle;
-import com.jaamsim.input.OutputListInput;
+import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class Graph extends GraphBasics  {
 
@@ -42,10 +44,16 @@ public class Graph extends GraphBasics  {
 	         example = "Graph1 NumberOfPoints { 200 }")
 	protected final IntegerInput numberOfPoints;
 
+	@Keyword(description = "The unit type for the primary y-axis.",
+	         example = "Graph1 UnitType { DistanceUnit }")
+	private final UnitTypeInput unitType;
+
 	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
-			"Each source is graphed as a separate line and is specified by an Entity and its Output.",
-     example = "Graph1 DataSource { { Entity1 Output1 } { Entity2 Output2 } }")
-	protected final OutputListInput<Double> dataSource;
+			"Each source is graphed as a separate line and is specified by an Expression. Also" +
+			"acceptable are: a constant value, a Probability Distribution, TimeSeries, or a " +
+			"Calculation Object.",
+     example = "Graph1 DataSource { { [Entity1].Output1 } { [Entity2].Output2 } }")
+	protected final SampleExpListInput dataSource;
 
 	@Keyword(description = "A list of colors for the line series to be displayed.\n" +
 			"Each color can be specified by either a color keyword or an RGB value.\n" +
@@ -59,10 +67,16 @@ public class Graph extends GraphBasics  {
 	         example = "Graph1 LineWidths { 2 1 }")
 	protected final ValueListInput lineWidths;
 
+	@Keyword(description = "The unit type for the secondary y-axis.",
+	         example = "Graph1 SecondaryUnitType { DistanceUnit }")
+	private final UnitTypeInput secondaryUnitType;
+
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
-			"Each source is graphed as a separate line and is specified by an Entity and its Output.",
-     example = "Graph1 SecondaryDataSource { { Entity1 Output1 } { Entity2 Output2 } }")
-	protected final OutputListInput<Double> secondaryDataSource;
+			"Each source is graphed as a separate line and is specified by an Expression. Also" +
+			"acceptable are: a constant value, a Probability Distribution, TimeSeries, or a " +
+			"Calculation Object.",
+     example = "Graph1 SecondaryDataSource { { [Entity1].Output1 } { [Entity2].Output2 } }")
+	protected final SampleExpListInput secondaryDataSource;
 
 	@Keyword(description = "A list of colors for the secondary line series to be displayed.\n" +
 			"Each color can be specified by either a color keyword or an RGB value.\n" +
@@ -86,7 +100,12 @@ public class Graph extends GraphBasics  {
 		numberOfPoints.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(numberOfPoints);
 
-		dataSource = new OutputListInput<>(Double.class, "DataSource", "Key Inputs", null);
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		this.addInput(unitType);
+
+		dataSource = new SampleExpListInput("DataSource", "Key Inputs", null);
+		dataSource.setUnitType(UserSpecifiedUnit.class);
+		dataSource.setEntity(this);
 		this.addInput(dataSource);
 
 		ArrayList<Color4d> defLineColor = new ArrayList<>(0);
@@ -103,7 +122,12 @@ public class Graph extends GraphBasics  {
 		lineWidths.setValidCountRange(1, Integer.MAX_VALUE);
 		this.addInput(lineWidths);
 
-		secondaryDataSource = new OutputListInput<>(Double.class, "SecondaryDataSource", "Key Inputs", null);
+		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", "Key Inputs", UserSpecifiedUnit.class);
+		this.addInput(secondaryUnitType);
+
+		secondaryDataSource = new SampleExpListInput("SecondaryDataSource", "Key Inputs", null);
+		secondaryDataSource.setUnitType(UserSpecifiedUnit.class);
+		secondaryDataSource.setEntity(this);
 		this.addInput(secondaryDataSource);
 
 		ArrayList<Color4d> defSecondaryLineColor = new ArrayList<>(0);
@@ -131,22 +155,44 @@ public class Graph extends GraphBasics  {
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 
+		if (in == unitType) {
+			Class<? extends Unit> ut = unitType.getUnitType();
+			dataSource.setUnitType(ut);
+			this.setYAxisUnit(ut);
+			return;
+		}
+
+		if (in == secondaryUnitType) {
+			Class<? extends Unit> ut = secondaryUnitType.getUnitType();
+			showSecondaryYAxis = (ut != UserSpecifiedUnit.class);
+			secondaryDataSource.setUnitType(ut);
+			this.setSecondaryYAxisUnit(ut);
+			return;
+		}
+
 		if (in == dataSource) {
-			ArrayList<OutputHandle> outs = dataSource.getValue();
-			if (outs.isEmpty())
-				return;
-			Class<? extends Unit> temp = outs.get(0).getUnitType();
-			this.setYAxisUnit(temp);
+			// Hack for backwards compatibility
+			// When an entity and output are entered, the unit type will be set automatically
+			// FIXME remove when backwards compatibility is no longer required
+			if (dataSource.getValue() != null && dataSource.getValue().size() > 0) {
+				Class<? extends Unit> ut = dataSource.getValue().get(0).getUnitType();
+				if (ut != null && ut != UserSpecifiedUnit.class)
+					this.setYAxisUnit(ut);
+			}
 			return;
 		}
 
 		if (in == secondaryDataSource) {
-			ArrayList<OutputHandle> outs = secondaryDataSource.getValue();
-			showSecondaryYAxis = ! outs.isEmpty();
-			if (outs.isEmpty())
-				return;
-			Class<? extends Unit> temp = outs.get(0).getUnitType();
-			this.setSecondaryYAxisUnit(temp);
+			// Hack for backwards compatibility
+			// When an entity and output are entered, the unit type will be set automatically
+			// FIXME remove when backwards compatibility is no longer required
+			if (secondaryDataSource.getValue() != null && secondaryDataSource.getValue().size() > 0) {
+				Class<? extends Unit> ut = secondaryDataSource.getValue().get(0).getUnitType();
+				if (ut != null && ut != UserSpecifiedUnit.class) {
+					this.setSecondaryYAxisUnit(ut);
+					showSecondaryYAxis = (ut != UserSpecifiedUnit.class);
+				}
+			}
 			return;
 		}
 
@@ -195,13 +241,13 @@ public class Graph extends GraphBasics  {
 		populateSeriesInfo(secondarySeries, secondaryDataSource);
 	}
 
-	private void populateSeriesInfo(ArrayList<SeriesInfo> infos, OutputListInput<Double> data) {
-		ArrayList<OutputHandle> outs = data.getValue();
-		if( outs == null )
+	private void populateSeriesInfo(ArrayList<SeriesInfo> infos, SampleExpListInput data) {
+		ArrayList<SampleProvider> sampList = data.getValue();
+		if( sampList == null )
 			return;
-		for (int outInd = 0; outInd < outs.size(); ++outInd) {
+		for (int i = 0; i < sampList.size(); ++i) {
 			SeriesInfo info = new SeriesInfo();
-			info.out = outs.get(outInd);
+			info.samp = sampList.get(i);
 			info.yValues = new double[numberOfPoints.getValue()];
 			info.xValues = new double[numberOfPoints.getValue()];
 
@@ -329,7 +375,7 @@ public class Graph extends GraphBasics  {
 	public void processGraph(SeriesInfo info) {
 
 		// Entity has been removed
-		if(info.out == null) {
+		if (info.samp == null) {
 			return;
 		}
 
@@ -353,7 +399,7 @@ public class Graph extends GraphBasics  {
 	 * @return double
 	 */
 	protected double getCurrentValue(double simTime, SeriesInfo info) {
-		return info.out.getValueAsDouble(simTime, 0.0);
+		return info.samp.getNextSample(simTime);
 	}
 
 	public ArrayList<SeriesInfo> getPrimarySeries() {
