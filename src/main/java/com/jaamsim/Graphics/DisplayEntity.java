@@ -84,7 +84,7 @@ public class DisplayEntity extends Entity {
 	@Keyword(description = "The graphic representation of the object.  Accepts a list of objects where the distances defined in " +
 	                "LevelOfDetail dictate which DisplayModel entry is used.",
 	         example = "Object1 DisplayModel { Pixels }")
-	private final EntityListInput<DisplayModel> displayModelList;
+	private final EntityListInput<DisplayModel> displayModelListInput;
 
 	@Keyword(description = "The name of an object with respect to which the Position keyword is referenced.",
 	         example ="Object1Label RelativeEntity { Object1 }")
@@ -132,9 +132,9 @@ public class DisplayEntity extends Entity {
 		relativeEntity.setInvalidEntities(invalid);
 		this.addInput(relativeEntity);
 
-		displayModelList = new EntityListInput<>( DisplayModel.class, "DisplayModel", "Basic Graphics", null);
-		this.addInput(displayModelList);
-		displayModelList.setUnique(false);
+		displayModelListInput = new EntityListInput<>( DisplayModel.class, "DisplayModel", "Basic Graphics", null);
+		this.addInput(displayModelListInput);
+		displayModelListInput.setUnique(false);
 
 		active = new BooleanInput("Active", "Basic Graphics", true);
 		this.addInput(active);
@@ -152,7 +152,7 @@ public class DisplayEntity extends Entity {
 	public DisplayEntity() {
 		for (ObjectType type : ObjectType.getAll()) {
 			if (type.getJavaClass() == this.getClass()) {
-				displayModelList.setDefaultValue(type.getDefaultDisplayModel());
+				displayModelListInput.setDefaultValue(type.getDefaultDisplayModel());
 				break;
 			}
 		}
@@ -182,7 +182,7 @@ public class DisplayEntity extends Entity {
 
 		// Determine whether the entity should sit on top of the x-y plane
 		boolean alignBottom = true;
-		ArrayList<DisplayModel> displayModels = displayModelList.getValue();
+		ArrayList<DisplayModel> displayModels = displayModelListInput.getValue();
 		if (displayModels != null && displayModels.size() > 0) {
 			DisplayModel dm0 = displayModels.get(0);
 			if (dm0 instanceof DisplayModelCompat || dm0 instanceof ImageModel || dm0 instanceof TextModel )
@@ -481,7 +481,7 @@ public class DisplayEntity extends Entity {
 	}
 
 	public ArrayList<DisplayModel> getDisplayModelList() {
-		return displayModelList.getValue();
+		return displayModelListInput.getValue();
 	}
 
 	public final void clearBindings() {
@@ -552,7 +552,7 @@ public class DisplayEntity extends Entity {
 			this.setRegion(regionInput.getValue());
 		}
 
-		if (in == displayModelList) {
+		if (in == displayModelListInput) {
 			clearBindings(); // Clear this on any change, and build it lazily later
 		}
 	}
