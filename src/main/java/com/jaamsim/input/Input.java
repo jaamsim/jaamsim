@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpression;
+import com.jaamsim.Samples.SampleOutput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
 import com.jaamsim.basicsim.Entity;
@@ -1340,8 +1341,16 @@ public abstract class Input<T> {
 
 		Input.assertCount(kw, 1, 2);
 
-		// If there are two inputs, it must be a number and its unit
+		// If there are two inputs, it could be a number and its unit or an entity and its output
 		if (kw.numArgs() == 2) {
+
+			// A) Try an entity and its output
+			try {
+				return Input.parseSampleOutput(kw, unitType);
+			}
+			catch (InputErrorException e) {}
+
+			// B) Try a number and its unit
 			if (unitType == DimensionlessUnit.class)
 				throw new InputErrorException(INP_ERR_COUNT, 1, kw.argString());
 			DoubleVector tmp = null;
@@ -1388,6 +1397,36 @@ public abstract class Input<T> {
 		}
 		catch (ExpError e) {
 			throw new InputErrorException(e.toString());
+		}
+	}
+
+	public static SampleOutput parseSampleOutput(KeywordIndex kw, Class<? extends Unit> unitType) {
+
+		Input.assertCount(kw, 2);
+		try {
+			Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
+			if (ent instanceof ObjectType)
+				throw new InputErrorException("%s is the name of a class, not an instance",
+						ent.getName());
+
+			String outputName = kw.getArg(1);
+			if (!ent.hasOutput(outputName))
+				throw new InputErrorException("Output named %s not found for Entity %s",
+						outputName, ent.getName());
+
+			OutputHandle out = ent.getOutputHandle(outputName);
+			if (!out.isNumericValue())
+				throw new InputErrorException("Output named %s for Entity %s is not a numeric value.",
+						outputName, ent.getName());
+
+			if (unitType != UserSpecifiedUnit.class && out.getUnitType() != unitType)
+				throw new InputErrorException("Output named %s for Entity %s has unit type of %s. Expected %s",
+						outputName, ent.getName(), out.getUnitType(), unitType);
+
+			return new SampleOutput(out);
+		}
+		catch (InputErrorException e) {
+			throw new InputErrorException(e.getMessage());
 		}
 	}
 

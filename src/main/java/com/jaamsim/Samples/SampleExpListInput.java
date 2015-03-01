@@ -24,6 +24,7 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 public class SampleExpListInput extends ListInput<ArrayList<SampleProvider>> {
 
@@ -37,7 +38,7 @@ public class SampleExpListInput extends ListInput<ArrayList<SampleProvider>> {
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
-		if (u != unitType)
+		if (u != unitType && unitType != UserSpecifiedUnit.class)
 			this.reset();
 		unitType = u;
 
