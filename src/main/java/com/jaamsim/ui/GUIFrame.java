@@ -115,7 +115,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JToggleButton controlRealTime;
 	private JSpinner spinner;
 
-	private JToggleButton controlStartResume;
+	private RoundToggleButton controlStartResume;
 	private JToggleButton controlStop;
 	private JTextField pauseTime;
 
@@ -688,9 +688,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.setFloatable(false);
 
 		// 1) Run/Pause button
-		controlStartResume = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/run.png")));
+		controlStartResume = new RoundToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/run-24.png")));
 		controlStartResume.setSelectedIcon(
-				new ImageIcon(GUIFrame.class.getResource("/resources/images/pause.png")));
+				new ImageIcon(GUIFrame.class.getResource("/resources/images/pause-24.png")));
 		controlStartResume.setToolTipText(RUN_TOOLTIP);
 		controlStartResume.setMargin( noMargin );
 		controlStartResume.setEnabled( false );
