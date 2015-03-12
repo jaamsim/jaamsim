@@ -220,7 +220,7 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 			double dist = (simTime - startTimeList.get(i)) / travelTimeInput.getValue() * totalLength;
 
 			// Set the position for the entity
-			each.setPosition(this.getPositionForDistance( dist));
+			each.setGlobalPosition(this.getPositionForDistance( dist));
 		}
 	}
 
