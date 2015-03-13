@@ -73,7 +73,10 @@ public class Branch extends LinkedComponent {
 			error("Chosen index i=%s is out of range for NextComponentList: %s.",
 			      i, nextComponentList.getValue());
 
-		// Pass the entity to the next component
+		// Set the standard outputs for a LinkedComponent
+		this.sendToNextComponent(ent);
+
+		// Pass the entity to the selected next component
 		nextComponentList.getValue().get(i-1).addEntity(ent);
 	}
 
