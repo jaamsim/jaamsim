@@ -494,6 +494,17 @@ public class DisplayEntity extends Entity {
 		setPosition(diff);
 	}
 
+	public void setGlobalPositionForAlignment(Vec3d alignment, Vec3d position) {
+		// Calculate the difference between the desired point and the current aligned position
+		Vec3d diff = this.getGlobalPositionForAlignment(alignment);
+		diff.sub3(position);
+		diff.scale3(-1.0d);
+
+		// add the difference to the current position and set the new position
+		diff.add3(getPosition());
+		setPosition(diff);
+	}
+
 	public ArrayList<DisplayModel> getDisplayModelList() {
 		return displayModelList;
 	}
