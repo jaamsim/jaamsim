@@ -114,9 +114,9 @@ public class Pack extends LinkedService {
 			numberInserted = 0;
 
 			// Position the container over the pack object
-			Vec3d tmp = this.getPositionForAlignment(new Vec3d());
+			Vec3d tmp = this.getGlobalPositionForAlignment(new Vec3d());
 			tmp.add3(new Vec3d(0,0,0.01));
-			container.setPosition(tmp);
+			container.setGlobalPosition(tmp);
 		}
 
 		// Are there sufficient entities in the queue to start packing?
