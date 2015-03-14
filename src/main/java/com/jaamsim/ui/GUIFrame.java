@@ -354,6 +354,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				InputAgent.setRecordEdits(true);
 				InputAgent.loadDefault();
 				displayWindows();
+				FrameBox.setSelectedEntity(Simulation.getInstance());
 			}
 		} );
 		fileMenu.add( newMenuItem );
@@ -1419,10 +1420,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 	/**
 	 * Displays the view windows and tools on startup.
-	 *
-	 * @param viewOnly - boolean that determines whether the tools are to be displayed.
-	 *                   TRUE  - show just the view windows.
-	 *                   FALSE - show the view windows and the tools.
 	 */
 	public static void displayWindows() {
 
@@ -1431,10 +1428,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			if (v.showWindow())
 				RenderManager.inst().createWindow(v);
 		}
-
-		// Set the selected entity to the first view window
-		if (View.getAll().size() > 0)
-			FrameBox.setSelectedEntity(View.getAll().get(0));
 	}
 
 	// ******************************************************************************************************
@@ -1595,6 +1588,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Bring the Control Panel to the front (along with any open Tools)
 		gui.toFront();
+
+		// Set the selected entity to the Simulation object
+		FrameBox.setSelectedEntity(Simulation.getInstance());
 	}
 
 	public static class SpeedFactorListener implements ChangeListener {
@@ -1756,7 +1752,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 					InputAgent.setRecordEdits(true);
 
 					GUIFrame.displayWindows();
-					FrameBox.valueUpdate();
+					FrameBox.setSelectedEntity(Simulation.getInstance());
 				}
 			}).start();
         }

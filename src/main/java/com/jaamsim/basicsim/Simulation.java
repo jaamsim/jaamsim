@@ -325,6 +325,7 @@ public class Simulation extends Entity {
 		// Initialize basic model information
 		startTime = 0.0;
 		endTime = 8760.0*3600.0;
+		myInstance = null;
 
 		// close warning/error trace file
 		InputAgent.closeLogFile();
