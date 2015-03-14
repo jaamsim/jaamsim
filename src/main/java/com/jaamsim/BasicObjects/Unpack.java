@@ -80,9 +80,9 @@ public class Unpack extends LinkedService {
 			numberRemoved = 0;
 
 			// Position the container over the unpack object
-			Vec3d tmp = this.getPositionForAlignment(new Vec3d());
+			Vec3d tmp = this.getGlobalPositionForAlignment(new Vec3d());
 			tmp.add3(new Vec3d(0,0,0.01));
-			container.setPosition(tmp);
+			container.setGlobalPosition(tmp);
 		}
 
 		// Schedule the removal of the next entity
