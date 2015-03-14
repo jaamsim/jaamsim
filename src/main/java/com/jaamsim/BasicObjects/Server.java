@@ -91,8 +91,8 @@ public class Server extends LinkedService {
 
 		// If an entity is being served, show it at the center of the Server
 		if (servedEntity != null) {
-			Vec3d serverCenter = this.getPositionForAlignment(new Vec3d());
-			servedEntity.setPosition(serverCenter);
+			Vec3d serverCenter = this.getGlobalPositionForAlignment(new Vec3d());
+			servedEntity.setGlobalPosition(serverCenter);
 		}
 	}
 
