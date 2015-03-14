@@ -135,9 +135,9 @@ public class Assemble extends LinkedService {
 		assembledEntity.earlyInit();
 
 		// Position the assembled part over the Assemble object
-		Vec3d pos = this.getPositionForAlignment(new Vec3d());
+		Vec3d pos = this.getGlobalPositionForAlignment(new Vec3d());
 		pos.add3(new Vec3d(0,0,0.01));
-		assembledEntity.setPosition(pos);
+		assembledEntity.setGlobalPosition(pos);
 
 		// Schedule the completion of processing
 		double dt = serviceTime.getValue().getNextSample(getSimTime());
