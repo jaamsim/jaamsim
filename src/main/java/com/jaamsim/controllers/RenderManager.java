@@ -902,7 +902,7 @@ public class RenderManager implements DragSourceListener {
 				double zDiff = RenderUtils.getZDiff(dragCollisionPoint, currentRay, lastRay);
 
 				entPos.z += zDiff;
-				dispEnt.setGlobalPosition(entPos);
+				dispEnt.setInputForGlobalPosition(entPos);
 
 				return true;
 			}
@@ -922,7 +922,7 @@ public class RenderManager implements DragSourceListener {
 
 			Vec3d pos = dispEnt.getGlobalPosition();
 			pos.add3(del);
-			dispEnt.setGlobalPosition(pos);
+			dispEnt.setInputForGlobalPosition(pos);
 			return true;
 		}
 
@@ -1009,7 +1009,7 @@ public class RenderManager implements DragSourceListener {
 			posAdjust.sub3(oldFixed, newFixed);
 
 			pos.add3(posAdjust);
-			dispEnt.setGlobalPosition(pos);
+			dispEnt.setInputForGlobalPosition(pos);
 
 			KeywordIndex kw = InputAgent.formatPointInputs("Size", dispEnt.getSize(), "m");
 			InputAgent.apply(dispEnt, kw);

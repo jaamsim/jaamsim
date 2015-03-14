@@ -460,24 +460,39 @@ public class DisplayEntity extends Entity {
 	 * transform and sets the local position accordingly
 	 * @param pos - The new position in the global coordinate system
 	 */
-	public void setGlobalPosition(Vec3d pos) {
-		Transform invReg = new Transform();
-
-		if (currentRegion != null) {
-			Transform regionTrans = currentRegion.getRegionTrans();
-			regionTrans.inverse(invReg);
-		}
-
-		Vec3d localPos = new Vec3d();
-		invReg.multAndTrans(pos, localPos);
-
-		DisplayEntity entity = this.getRelativeEntity();
-		if(entity != null && entity != this)
-			localPos.sub3(entity.position);
-
+	public void setInputForGlobalPosition(Vec3d pos) {
+		Vec3d localPos = this.getLocalPosition(pos);
 		setPosition(localPos);
 		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), localPos, "m");
 		InputAgent.apply(this, kw);
+	}
+
+	public void setGlobalPosition(Vec3d pos) {
+		setPosition(getLocalPosition(pos));
+	}
+
+	/**
+	 * Returns the local coordinates for this entity corresponding to the
+	 * specified global coordinates.
+	 * @param pos - a position in the global coordinate system
+	 */
+	public Vec3d getLocalPosition(Vec3d pos) {
+
+		Vec3d localPos = pos;
+
+		if (currentRegion != null) {
+			Transform invReg = new Transform();
+			Transform regionTrans = currentRegion.getRegionTrans();
+			regionTrans.inverse(invReg);
+			localPos = new Vec3d();
+			invReg.multAndTrans(pos, localPos);
+		}
+
+		DisplayEntity entity = relativeEntity.getValue();
+		if (entity != null && entity != this)
+			localPos.sub3(entity.position);
+
+		return localPos;
 	}
 
 	/*
