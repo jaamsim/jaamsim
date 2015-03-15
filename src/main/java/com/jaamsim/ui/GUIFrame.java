@@ -137,6 +137,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private static boolean SAFE_GRAPHICS;
 
 	// Collection of default window parameters
+	public static int DEFAULT_GUI_WIDTH = 1160;
 	public static int COL1_WIDTH;
 	public static int COL2_WIDTH;
 	public static int COL3_WIDTH;
@@ -192,6 +193,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		//Set window size and make visible
 		pack();
+		setSize(DEFAULT_GUI_WIDTH, getPreferredSize().height);
 		setResizable( false );
 
 		controlStartResume.setSelected( false );
