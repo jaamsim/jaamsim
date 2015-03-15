@@ -1317,6 +1317,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		currentEvt.setExecuteRealTime(executeRT, factorRT);
 		controlRealTime.setSelected(executeRT);
 		spinner.setValue(factorRT);
+		if (executeRT)
+			spinner.setEnabled(true);
+		else
+			spinner.setEnabled(false);
 	}
 
 	/**
