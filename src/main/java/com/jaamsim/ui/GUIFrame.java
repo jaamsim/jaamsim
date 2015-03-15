@@ -1227,6 +1227,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
+				setSpeedUp(0);
+				setRemaining(0);
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
@@ -1248,6 +1250,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
+				setSpeedUp(0);
+				setRemaining(0);
 				controlStartResume.setEnabled( false );
 				controlStartResume.setSelected( false );
 				controlStop.setSelected( false );
@@ -1270,6 +1274,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				windowList.setEnabled( true );
 				speedUpDisplay.setEnabled( false );
 				remainingDisplay.setEnabled( false );
+				setSpeedUp(0);
+				setRemaining(0);
 				controlStartResume.setEnabled( true );
 				controlStartResume.setSelected( false );
 				controlStartResume.setToolTipText(RUN_TOOLTIP);
