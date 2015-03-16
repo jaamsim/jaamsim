@@ -55,8 +55,12 @@ public class ColorListInput extends ListInput<ArrayList<Color4d>>  {
 				tmp.append(SEPARATOR);
 
 			Color4d col = defValue.get(i);
-			tmp.append( String.format("{%s%.0f%s%.0f%s%.0f%s}", SEPARATOR, col.r * 255,
-			   SEPARATOR, col.g * 255, SEPARATOR, col.b * 255, SEPARATOR ));
+			String colorName = ColourInput.getColorName(col);
+			if (colorName == null)
+				tmp.append( String.format("{%s%.0f%s%.0f%s%.0f%s}", SEPARATOR, col.r * 255,
+				   SEPARATOR, col.g * 255, SEPARATOR, col.b * 255, SEPARATOR ));
+			else
+				tmp.append( String.format("{%s%s%s}", SEPARATOR, colorName, SEPARATOR));
 		}
 
 		return tmp.toString();
