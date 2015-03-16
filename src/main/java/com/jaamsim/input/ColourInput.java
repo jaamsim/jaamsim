@@ -38,9 +38,11 @@ public static final Color4d DARK_YELLOW = new Color4d(0.75d, 0.75d, 0.0d);
 public static final Color4d DARK_PURPLE = new Color4d(0.75d, 0.0d, 0.75d);
 
 private static final HashMap<String, Color4d> colorMap;
+private static final HashMap<Color4d, String> colorNameMap;
 
 static {
 	colorMap = new HashMap<>();
+	colorNameMap = new HashMap<>();
 	initColors();
 }
 	public ColourInput(String key, String cat, Color4d def) {
@@ -58,14 +60,19 @@ public static Color4d getColorWithName(String colorName) {
 	return colorMap.get(colorName);
 }
 
+public static String getColorName(Color4d col) {
+	return colorNameMap.get(col);
+}
+
 private static void defColor(String colorName, int r, int g, int b) {
-	if (colorMap.put(colorName, new Color4d(r / 255.0f, g / 255.0f, b / 255.0f)) != null)
-		System.out.println("Color added twice " + colorName);
+	mapColor(colorName, new Color4d(r / 255.0f, g / 255.0f, b / 255.0f));
 }
 
 private static void mapColor(String colorName, Color4d col) {
 	if (colorMap.put(colorName, col) != null)
-		System.out.println("Color added twice " + colorName);
+		System.out.println(String.format("Color added twice: %s ", colorName));
+	if (colorNameMap.put(col, colorName) != null)
+		System.out.println(String.format("Color added twice: %s", col));
 }
 
 private static void initColors() {
@@ -320,6 +327,10 @@ private static void initColors() {
 public String getDefaultString() {
 	if (defValue == null)
 		return "";
+
+	String colorName = getColorName(defValue);
+	if (colorName != null)
+		return colorName;
 
 	return String.format("%.0f%s%.0f%s%.0f", defValue.r * 255, SEPARATOR,
 	   defValue.g * 255, SEPARATOR, defValue.b * 255);
