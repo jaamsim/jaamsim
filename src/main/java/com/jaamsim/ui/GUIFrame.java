@@ -326,6 +326,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		setJMenuBar( mainMenuBar );
 	}
 
+	// ******************************************************************************************************
+	// MENU BAR
+	// ******************************************************************************************************
+
 	/**
 	 * Sets up the File menu in the Control Panel's menu bar.
 	 */
@@ -715,6 +719,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		return (int)bounds.getWidth();
 	}
 
+	// ******************************************************************************************************
+	// TOOL BAR
+	// ******************************************************************************************************
+
 	/**
 	 * Sets up the Control Panel's main tool bar.
 	 */
@@ -896,6 +904,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		getContentPane().add( mainToolBar, BorderLayout.NORTH );
 	}
 
+	// ******************************************************************************************************
+	// VIEW WINDOWS
+	// ******************************************************************************************************
+
 	private static class WindowMenu extends JMenu implements MenuListener {
 
 		WindowMenu(String text) {
@@ -1072,6 +1084,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		getContentPane().add( statusBar, BorderLayout.SOUTH );
 	}
 
+	// ******************************************************************************************************
+	// RUN STATUS UPDATES
+	// ******************************************************************************************************
+
 	private long lastSystemTime = System.currentTimeMillis();
 	private double lastSimTime = 0.0d;
 	private double speedUp = 0.0d;
@@ -1175,6 +1191,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		else
 			remainingDisplay.setText(String.format("%.1f years left", val/(3600.0*8760.0)));
 	}
+
+	// ******************************************************************************************************
+	// SIMULATION CONTROLS
+	// ******************************************************************************************************
 
 	/**
 	 * Starts or resumes the simulation run.
@@ -1938,6 +1958,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 	}
 
+	// ******************************************************************************************************
+	// DIALOG BOXES
+	// ******************************************************************************************************
+
 	/**
 	 * Shows the "Confirm Save As" dialog box
 	 * @param fileName - name of the file to be saved
@@ -1994,6 +2018,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		return (userOption != JOptionPane.CANCEL_OPTION);
 	}
+
+	// ******************************************************************************************************
+	// TOOL TIPS
+	// ******************************************************************************************************
 
 	public static String formatToolTip(String name, String desc) {
 		return String.format("<html><p width=\"200px\"><b>%s</b><br>%s</p></html>", name, desc);
