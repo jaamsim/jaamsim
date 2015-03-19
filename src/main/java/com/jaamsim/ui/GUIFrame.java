@@ -759,6 +759,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				controlStartResume.grabFocus();
 			}
 		} );
+		mainToolBar.add( controlStartResume );
 
 		// 2) Stop button
 		controlStop = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/stop.png")));
@@ -784,22 +785,55 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 
+		int hght = controlStop.getPreferredSize().height;
+
 		// Separators have 5 pixels before and after and the preferred height of controlStartResume button
 		Dimension separatorDim = new Dimension(11, controlStartResume.getPreferredSize().height);
 
 		// dimension for 5 pixels gaps
 		Dimension gapDim = new Dimension(5, separatorDim.height);
 
-		mainToolBar.add( controlStartResume );
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( controlStop );
 
-		// 3) Pause Time box
+		// 3) Real time button
+		controlRealTime = new JToggleButton( " Real Time " );
+		controlRealTime.setToolTipText(formatToolTip("Real Time Mode",
+				"When selected, the simulation runs at a fixed multiple of wall clock time."));
+		controlRealTime.setMargin( smallMargin );
+		controlRealTime.addActionListener(new RealTimeActionListener());
+		mainToolBar.addSeparator(separatorDim);
+		mainToolBar.add( controlRealTime );
+
+		// 4) Speed Up spinner
+		SpinnerNumberModel numberModel =
+				new SpinnerModel(Simulation.DEFAULT_REAL_TIME_FACTOR,
+				   Simulation.MIN_REAL_TIME_FACTOR, Simulation.MAX_REAL_TIME_FACTOR, 1);
+		spinner = new JSpinner(numberModel);
+
+		// make sure spinner TextField is no wider than 9 digits
+		int diff =
+			((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().getPreferredSize().width -
+			getPixelWidthOfString_ForFont("9", spinner.getFont()) * 9;
+		Dimension dim = spinner.getPreferredSize();
+		dim.width -= diff;
+		dim.height = hght;
+		spinner.setMaximumSize(dim);
+
+		spinner.addChangeListener(new SpeedFactorListener());
+		spinner.setToolTipText(formatToolTip("Speed Multiplier (up/down key)",
+				"Target ratio of simulation time to wall clock time when Real Time mode is selected."));
+
 		mainToolBar.add(Box.createRigidArea(gapDim));
+		mainToolBar.add( spinner );
+
+		// 5) Pause time label
 		JLabel pauseAt = new JLabel( "Pause at:" );
+		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add(pauseAt);
-		mainToolBar.add(Box.createRigidArea(gapDim));
-		pauseTime = new JTextField("2000-00-00") {
+
+		// 6) Pause time value box
+		pauseTime = new JTextField("0000-00-00T00:00:00") {
 			@Override
 			protected void processFocusEvent(FocusEvent fe) {
 				if (fe.getID() == FocusEvent.FOCUS_LOST) {
@@ -815,10 +849,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// avoid height increase for pauseTime
 		pauseTime.setMaximumSize(pauseTime.getPreferredSize());
 
-		// avoid stretching for puaseTime when focusing in and out
-		pauseTime.setPreferredSize(pauseTime.getPreferredSize());
+		// avoid stretching for pauseTime when focusing in and out
+		pauseTime.setPreferredSize(new Dimension(pauseTime.getPreferredSize().width, hght));
 
-		mainToolBar.add(pauseTime);
 		pauseTime.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -832,43 +865,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		pauseTime.setToolTipText(formatToolTip("Pause Time",
 				"Time at which to pause the run, e.g. 3 h, 10 s, etc."));
 
-		// 4) Real Time button
-		mainToolBar.addSeparator(separatorDim);
-		controlRealTime = new JToggleButton( "Real Time" );
-		controlRealTime.setToolTipText(formatToolTip("Real Time Mode",
-				"When selected, the simulation runs at a fixed multiple of wall clock time."));
-		controlRealTime.setMargin( smallMargin );
-		controlRealTime.addActionListener(new RealTimeActionListener());
-
-		mainToolBar.add( controlRealTime );
 		mainToolBar.add(Box.createRigidArea(gapDim));
+		mainToolBar.add(pauseTime);
 
-		// 5) Speed Up spinner
-		SpinnerNumberModel numberModel =
-				new SpinnerModel(Simulation.DEFAULT_REAL_TIME_FACTOR,
-				   Simulation.MIN_REAL_TIME_FACTOR, Simulation.MAX_REAL_TIME_FACTOR, 1);
-		spinner = new JSpinner(numberModel);
-
-		// make sure spinner TextField is no wider than 9 digits
-		int diff =
-			((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().getPreferredSize().width -
-			getPixelWidthOfString_ForFont("9", spinner.getFont()) * 9;
-		Dimension dim = spinner.getPreferredSize();
-		dim.width -= diff;
-		spinner.setMaximumSize(dim);
-
-		spinner.addChangeListener(new SpeedFactorListener());
-		spinner.setToolTipText(formatToolTip("Speed Multiplier (up/down key)",
-				"Target ratio of simulation time to wall clock time when Real Time mode is selected."));
-		mainToolBar.add( spinner );
-
-		// 6) View Control buttons
+		// 7) View Control buttons
 		mainToolBar.addSeparator(separatorDim);
-		JLabel viewLabel = new JLabel( "   View Control:   " );
+		JLabel viewLabel = new JLabel( "View Control:" );
 		mainToolBar.add( viewLabel );
 
-		// 6a) Perspective button
+		// 8) Perspective button
 		toolButtonIsometric = new JButton( "Perspective" );
+		toolButtonIsometric.setMargin( smallMargin );
 		toolButtonIsometric.setToolTipText(formatToolTip("Perspective View",
 				"Sets the camera position to show an oblique view of the 3D scene."));
 		toolButtonIsometric.addActionListener( new ActionListener() {
@@ -879,10 +886,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 					RenderManager.inst().setIsometricView();
 			}
 		} );
+		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( toolButtonIsometric );
 
-		// 6b) XY-Plane button
+		// 9) XY-Plane button
 		toolButtonXYPlane = new JButton( "XY-Plane" );
+		toolButtonXYPlane.setMargin( smallMargin );
 		toolButtonXYPlane.setToolTipText(formatToolTip("XY-Plane View",
 				"Sets the camera position to show a bird's eye view of the 3D scene."));
 		toolButtonXYPlane.addActionListener( new ActionListener() {
@@ -893,14 +902,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 					RenderManager.inst().setXYPlaneView();
 			}
 		} );
+		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( toolButtonXYPlane );
 
-		// 7) Undo/Redo buttons (not used at present)
-		mainToolBar.addSeparator(separatorDim);
-
-		// End creation of view control label and buttons
-
-		// Add toolbar to the window
+		// Add the main tool bar to the display
 		getContentPane().add( mainToolBar, BorderLayout.NORTH );
 	}
 
@@ -1044,9 +1049,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Create the display clock and label
 		JLabel clockLabel = new JLabel( "Simulation Time:" );
-		clockDisplay = new JLabel( "", JLabel.RIGHT );
-		clockDisplay.setPreferredSize( new Dimension( 85, 16 ) );
+		clockDisplay = new JLabel( "", JLabel.CENTER );
+		clockDisplay.setPreferredSize( new Dimension( 90, 16 ) );
 		clockDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
+		clockDisplay.setToolTipText(formatToolTip("Simulation Time",
+				"The present simulation time"));
 		statusBar.add( clockLabel );
 		statusBar.add( clockDisplay );
 
@@ -1054,29 +1061,33 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		progressBar = new JProgressBar( 0, 100 );
 		progressBar.setValue( 0 );
 		progressBar.setStringPainted( true );
+		progressBar.setToolTipText(formatToolTip("Run Progress",
+				"Percent of the present simulation run that has been completed."));
 		statusBar.add( progressBar );
 
+		// Create a remaining run time display
+		remainingDisplay = new JLabel( "", JLabel.CENTER );
+		remainingDisplay.setPreferredSize( new Dimension( 90, 16 ) );
+		remainingDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
+		remainingDisplay.setToolTipText(formatToolTip("Remaining Time",
+				"The remaining time required to complete the present simulation run."));
+		statusBar.add( remainingDisplay );
+
 		// Create a speed-up factor display
-		JLabel speedUpLabel = new JLabel( "Speed Up: " );
-		speedUpDisplay = new JLabel( "", JLabel.LEFT );
-		speedUpDisplay.setPreferredSize( new Dimension( 70, 16 ) );
+		JLabel speedUpLabel = new JLabel( "Speed Up:" );
+		speedUpDisplay = new JLabel( "", JLabel.CENTER );
+		speedUpDisplay.setPreferredSize( new Dimension( 90, 16 ) );
 		speedUpDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
+		speedUpDisplay.setToolTipText(formatToolTip("Achieved Speedup",
+				"The ratio of elapsed simulation time to elasped wall clock time that was achieved."));
 		statusBar.add( speedUpLabel );
 		statusBar.add( speedUpDisplay );
-
-		// Create a remaining run time display
-		JLabel remainingLabel = new JLabel( "Time Remaining: " );
-		remainingDisplay = new JLabel( "", JLabel.LEFT );
-		remainingDisplay.setPreferredSize( new Dimension( 70, 16 ) );
-		remainingDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-		statusBar.add( remainingLabel );
-		statusBar.add( remainingDisplay );
 
 		// Create a cursor position display
 		locatorPos = new JLabel( "", JLabel.LEFT );
 		locatorPos.setPreferredSize( new Dimension( 140, 16 ) );
 		locatorPos.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-		locatorLabel = new JLabel( "Position: " );
+		locatorLabel = new JLabel( "Position:" );
 		statusBar.add( locatorLabel );
 		statusBar.add( locatorPos );
 
