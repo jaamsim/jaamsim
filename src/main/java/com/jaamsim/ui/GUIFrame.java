@@ -68,6 +68,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.Simulation;
@@ -103,6 +104,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JMenu optionMenu;
 	private JMenu helpMenu;
 	private JCheckBoxMenuItem showPosition;
+	private static JCheckBoxMenuItem xyzAxis;
+	private static JCheckBoxMenuItem grid;
 	private JCheckBoxMenuItem alwaysTop;
 	//private JCheckBoxMenuItem tooltip;
 	private JCheckBoxMenuItem graphicsDebug;
@@ -605,7 +608,45 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 
-		// 2) "Always on top" check box
+		// 2) "Show Axes" check box
+		xyzAxis = new JCheckBoxMenuItem( "Show Axes", true );
+		xyzAxis.setMnemonic( 'X' );
+		optionMenu.add( xyzAxis );
+		xyzAxis.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XYZ-Axis");
+				if (ent != null) {
+					ArrayList<String> arg = new ArrayList<>(1);
+					if (xyzAxis.isSelected())
+						arg.add("TRUE");
+					else
+						arg.add("FALSE");
+					InputAgent.apply(ent, new KeywordIndex("Show", arg, null));
+				}
+			}
+		} );
+
+		// 3) "Show Grid" check box
+		grid = new JCheckBoxMenuItem( "Show Grid", true );
+		grid.setMnemonic( 'G' );
+		optionMenu.add( grid );
+		grid.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
+				if (ent != null) {
+					ArrayList<String> arg = new ArrayList<>(1);
+					if (grid.isSelected())
+						arg.add("TRUE");
+					else
+						arg.add("FALSE");
+					InputAgent.apply(ent, new KeywordIndex("Show", arg, null));
+				}
+			}
+		} );
+
+		// 4) "Always on top" check box
 		alwaysTop = new JCheckBoxMenuItem( "Always on top", false );
 		alwaysTop.setMnemonic( 'A' );
 		optionMenu.add( alwaysTop );
@@ -631,9 +672,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );*/
 
-		// 3) "Graphics Debug Info" check box
+		// 5) "Graphics Debug Info" check box
 		graphicsDebug = new JCheckBoxMenuItem( "Graphics Debug Info", false );
-		graphicsDebug.setMnemonic( 'G' );
+		graphicsDebug.setMnemonic( 'D' );
 		optionMenu.add( graphicsDebug );
 		graphicsDebug.addActionListener( new ActionListener() {
 			@Override
@@ -1446,6 +1487,15 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			if (v.showWindow())
 				RenderManager.inst().createWindow(v);
 		}
+
+		// Set the initial state for the "Show Axes" and "Show Grid" check boxes
+		DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XYZ-Axis");
+		if (ent != null)
+			xyzAxis.setSelected(ent.getShow());
+
+		ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
+		if (ent != null)
+			grid.setSelected(ent.getShow());
 	}
 
 	// ******************************************************************************************************
