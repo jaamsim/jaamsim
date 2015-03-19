@@ -1121,10 +1121,18 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * @param val - the remaining run time in seconds.
 	 */
 	public void setRemaining( double val ) {
-		if (val > 60.0)
-			remainingDisplay.setText(String.format("%.1f  min", val/60.0));
+		if (val == 0.0)
+			remainingDisplay.setText("-");
+		else if (val < 60.0)
+			remainingDisplay.setText(String.format("%.0f seconds left", val));
+		else if (val < 3600.0)
+			remainingDisplay.setText(String.format("%.1f minutes left", val/60.0));
+		else if (val < 3600.0*24.0)
+			remainingDisplay.setText(String.format("%.1f hours left", val/3600.0));
+		else if (val < 3600.0*8760.0)
+			remainingDisplay.setText(String.format("%.1f days left", val/(3600.0*24.0)));
 		else
-			remainingDisplay.setText(String.format("%.0f  s", val));
+			remainingDisplay.setText(String.format("%.1f years left", val/(3600.0*8760.0)));
 	}
 
 	/**
