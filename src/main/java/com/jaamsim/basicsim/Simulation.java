@@ -94,7 +94,7 @@ public class Simulation extends Entity {
 	         example = "Simulation RealTimeFactor { 1200 }")
 	private static final IntegerInput realTimeFactor;
 
-	public static final int DEFAULT_REAL_TIME_FACTOR = 10000;
+	public static final int DEFAULT_REAL_TIME_FACTOR = 1;
 	public static final int MIN_REAL_TIME_FACTOR = 1;
 	public static final int MAX_REAL_TIME_FACTOR= 1000000;
 
