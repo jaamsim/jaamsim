@@ -103,7 +103,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JMenu windowList;
 	private JMenu optionMenu;
 	private JMenu helpMenu;
-	private JCheckBoxMenuItem showPosition;
 	private static JCheckBoxMenuItem xyzAxis;
 	private static JCheckBoxMenuItem grid;
 	private JCheckBoxMenuItem alwaysTop;
@@ -600,19 +599,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		optionMenu = new JMenu( "Options" );
 		optionMenu.setMnemonic( 'O' );
 
-		// 1) "Show Position" check box
-		showPosition = new JCheckBoxMenuItem( "Show Position", true );
-		showPosition.setMnemonic( 'P' );
-		optionMenu.add( showPosition );
-		showPosition.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent e ) {
-				setShowPositionXY();
-			}
-		} );
-
-		// 2) "Show Axes" check box
+		// 1) "Show Axes" check box
 		xyzAxis = new JCheckBoxMenuItem( "Show Axes", true );
 		xyzAxis.setMnemonic( 'X' );
 		optionMenu.add( xyzAxis );
@@ -631,7 +618,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 
-		// 3) "Show Grid" check box
+		// 2) "Show Grid" check box
 		grid = new JCheckBoxMenuItem( "Show Grid", true );
 		grid.setMnemonic( 'G' );
 		optionMenu.add( grid );
@@ -650,7 +637,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 
-		// 4) "Always on top" check box
+		// 3) "Always on top" check box
 		alwaysTop = new JCheckBoxMenuItem( "Always on top", false );
 		alwaysTop.setMnemonic( 'A' );
 		optionMenu.add( alwaysTop );
@@ -666,7 +653,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 
-		// 5) "Graphics Debug Info" check box
+		// 4) "Graphics Debug Info" check box
 		graphicsDebug = new JCheckBoxMenuItem( "Graphics Debug Info", false );
 		graphicsDebug.setMnemonic( 'D' );
 		optionMenu.add( graphicsDebug );
@@ -1321,8 +1308,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				toolButtonIsometric.setEnabled( true );
 				toolButtonXYPlane.setEnabled( true );
 				progressBar.setEnabled( false );
-				showPosition.setState( true );
-				setShowPositionXY();
 				break;
 
 			case SIM_STATE_CONFIGURED:
@@ -1436,33 +1421,22 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	public void showLocatorPosition(Vec3d pos) {
-		// null indicates nothing to display
+
 		if( pos == null ) {
-			locatorPos.setText( "-------" );
+			locatorPos.setText( "-" );
+			return;
+		}
+
+		DistanceUnit u = (DistanceUnit) Unit.getPreferredUnit(DistanceUnit.class);
+		if (u == null) {
+			locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
+					pos.x, pos.y, pos.z, Unit.getSIUnit(DistanceUnit.class)));
 		}
 		else {
-			if( showPosition.getState() ) {
-				DistanceUnit u = (DistanceUnit) Unit.getPreferredUnit(DistanceUnit.class);
-				if (u == null) {
-					locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
-							pos.x, pos.y, pos.z, Unit.getSIUnit(DistanceUnit.class)));
-				}
-				else {
-					double factor = u.getConversionFactorToSI();
-					locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
-							pos.x/factor, pos.y/factor, pos.z/factor, u.getName()));
-				}
-			}
+			double factor = u.getConversionFactorToSI();
+			locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
+					pos.x/factor, pos.y/factor, pos.z/factor, u.getName()));
 		}
-	}
-
-	public void setShowPositionXY() {
-		boolean show = showPosition.getState();
-		showPosition.setState( show );
-		locatorLabel.setVisible( show );
-		locatorPos.setVisible( show );
-		locatorLabel.setText( "Position:  " );
-		locatorPos.setText( "------" );
 	}
 
 	public void enableSave(boolean bool) {
