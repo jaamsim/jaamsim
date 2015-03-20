@@ -293,9 +293,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Clear the status bar
 		setProgress( 0 );
-		speedUpDisplay.setText("");
-		remainingDisplay.setText("");
-		locatorPos.setText( "" );
+		speedUpDisplay.setText("0");
+		remainingDisplay.setText("-");
+		locatorPos.setText( "-" );
 
 		// Read the autoload configuration file
 		InputAgent.clear();
