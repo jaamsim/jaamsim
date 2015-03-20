@@ -107,7 +107,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private static JCheckBoxMenuItem xyzAxis;
 	private static JCheckBoxMenuItem grid;
 	private JCheckBoxMenuItem alwaysTop;
-	//private JCheckBoxMenuItem tooltip;
 	private JCheckBoxMenuItem graphicsDebug;
 	private JMenuItem printInputItem;
 	private JMenuItem saveConfigurationMenuItem;  // "Save"
@@ -591,7 +590,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// Initialize list of windows
 		windowList = new WindowMenu("Select Window");
 		windowList.setMnemonic( 'S' );
-		//windowMenu.add( windowList );
 	}
 
 	/**
@@ -667,16 +665,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				}
 			}
 		} );
-
-		/*tooltip = new JCheckBoxMenuItem( "Tooltip", true );
-		tooltip.setMnemonic( 'L' );
-		optionMenu.add( tooltip );
-		tooltip.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed( ActionEvent e ) {
-				// TODO Needs to be implemented for the new Renderer
-			}
-		} );*/
 
 		// 5) "Graphics Debug Info" check box
 		graphicsDebug = new JCheckBoxMenuItem( "Graphics Debug Info", false );
