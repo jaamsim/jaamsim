@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -51,7 +50,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JSpinner;
@@ -185,7 +183,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// Initialize the working environment
 		initializeMenus();
 		initializeMainToolBars();
-		initializeStatusBar();
 
 		this.setIconImage(GUIFrame.getWindowIcon());
 
@@ -713,6 +710,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		JToolBar mainToolBar = new JToolBar();
 		mainToolBar.setMargin( smallMargin );
 		mainToolBar.setFloatable(false);
+		mainToolBar.setLayout( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
 
 		// 1) Run/Pause button
 		controlStartResume = new RoundToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/run-24.png")));
@@ -795,12 +793,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		Dimension dim = spinner.getPreferredSize();
 		dim.width -= diff;
 		dim.height = hght;
-		spinner.setMaximumSize(dim);
+		spinner.setPreferredSize(dim);
 
 		spinner.addChangeListener(new SpeedFactorListener());
 		spinner.setToolTipText(formatToolTip("Speed Multiplier (up/down key)",
 				"Target ratio of simulation time to wall clock time when Real Time mode is selected."));
-
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( spinner );
 
@@ -876,6 +873,55 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( toolButtonIsometric );
+
+		// 9) Create the display clock and label
+		clockDisplay = new JLabel( "", JLabel.CENTER );
+		clockDisplay.setPreferredSize( new Dimension( 90, 16 ) );
+		clockDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
+		clockDisplay.setToolTipText(formatToolTip("Simulation Time",
+				"The present simulation time"));
+		mainToolBar.addSeparator(separatorDim);
+		mainToolBar.add( clockDisplay );
+
+		// 10) Create the progress bar
+		progressBar = new JProgressBar( 0, 100 );
+		progressBar.setValue( 0 );
+		progressBar.setStringPainted( true );
+		progressBar.setToolTipText(formatToolTip("Run Progress",
+				"Percent of the present simulation run that has been completed."));
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		mainToolBar.add( progressBar );
+
+		// 11) Create a remaining run time display
+		remainingDisplay = new JLabel( "", JLabel.CENTER );
+		remainingDisplay.setPreferredSize( new Dimension( 90, 16 ) );
+		remainingDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
+		remainingDisplay.setToolTipText(formatToolTip("Remaining Time",
+				"The remaining time required to complete the present simulation run."));
+		mainToolBar.add(Box.createRigidArea(gapDim));
+		mainToolBar.add( remainingDisplay );
+
+		// 12) Create a speed-up factor display
+		JLabel speedUpLabel = new JLabel( "Speed Up:" );
+		speedUpDisplay = new JLabel( "", JLabel.CENTER );
+		speedUpDisplay.setPreferredSize( new Dimension( 90, 16 ) );
+		speedUpDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
+		speedUpDisplay.setToolTipText(formatToolTip("Achieved Speedup",
+				"The ratio of elapsed simulation time to elasped wall clock time that was achieved."));
+		mainToolBar.addSeparator(separatorDim);
+		mainToolBar.add( speedUpLabel );
+		mainToolBar.add( speedUpDisplay );
+
+		// 13) Create a cursor position display
+		locatorLabel = new JLabel( "Position:" );
+		locatorPos = new JLabel( "", JLabel.CENTER );
+		locatorPos.setPreferredSize( new Dimension( 140, 16 ) );
+		locatorPos.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
+		locatorPos.setToolTipText(formatToolTip("Cursor Position",
+				"The coordinates of the cursor on the x-y plane."));
+		mainToolBar.addSeparator(separatorDim);
+		mainToolBar.add( locatorLabel );
+		mainToolBar.add( locatorPos );
 
 		// Add the main tool bar to the display
 		getContentPane().add( mainToolBar, BorderLayout.NORTH );
@@ -1007,64 +1053,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			arg.add("TRUE");
 			InputAgent.apply(tmp, new KeywordIndex("ShowWindow", arg, null));
 		}
-	}
-
-	/**
-	 * Sets up the Control Panel's status bar.
-	 */
-	public void initializeStatusBar() {
-
-		// Create the status bar
-		JPanel statusBar = new JPanel();
-		statusBar.setBorder( BorderFactory.createLineBorder( Color.darkGray ) );
-		statusBar.setLayout( new FlowLayout( FlowLayout.LEFT, 10, 5 ) );
-
-		// Create the display clock and label
-		JLabel clockLabel = new JLabel( "Simulation Time:" );
-		clockDisplay = new JLabel( "", JLabel.CENTER );
-		clockDisplay.setPreferredSize( new Dimension( 90, 16 ) );
-		clockDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-		clockDisplay.setToolTipText(formatToolTip("Simulation Time",
-				"The present simulation time"));
-		statusBar.add( clockLabel );
-		statusBar.add( clockDisplay );
-
-		// Create the progress bar
-		progressBar = new JProgressBar( 0, 100 );
-		progressBar.setValue( 0 );
-		progressBar.setStringPainted( true );
-		progressBar.setToolTipText(formatToolTip("Run Progress",
-				"Percent of the present simulation run that has been completed."));
-		statusBar.add( progressBar );
-
-		// Create a remaining run time display
-		remainingDisplay = new JLabel( "", JLabel.CENTER );
-		remainingDisplay.setPreferredSize( new Dimension( 90, 16 ) );
-		remainingDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-		remainingDisplay.setToolTipText(formatToolTip("Remaining Time",
-				"The remaining time required to complete the present simulation run."));
-		statusBar.add( remainingDisplay );
-
-		// Create a speed-up factor display
-		JLabel speedUpLabel = new JLabel( "Speed Up:" );
-		speedUpDisplay = new JLabel( "", JLabel.CENTER );
-		speedUpDisplay.setPreferredSize( new Dimension( 90, 16 ) );
-		speedUpDisplay.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-		speedUpDisplay.setToolTipText(formatToolTip("Achieved Speedup",
-				"The ratio of elapsed simulation time to elasped wall clock time that was achieved."));
-		statusBar.add( speedUpLabel );
-		statusBar.add( speedUpDisplay );
-
-		// Create a cursor position display
-		locatorPos = new JLabel( "", JLabel.LEFT );
-		locatorPos.setPreferredSize( new Dimension( 140, 16 ) );
-		locatorPos.setForeground( new Color( 1.0f, 0.0f, 0.0f ) );
-		locatorLabel = new JLabel( "Position:" );
-		statusBar.add( locatorLabel );
-		statusBar.add( locatorPos );
-
-		// Add the status bar to the window
-		getContentPane().add( statusBar, BorderLayout.SOUTH );
 	}
 
 	// ******************************************************************************************************
