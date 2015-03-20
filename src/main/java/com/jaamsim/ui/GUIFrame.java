@@ -845,15 +845,26 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add(pauseTime);
 
-		// 7) View Control buttons
-		mainToolBar.addSeparator(separatorDim);
-		JLabel viewLabel = new JLabel( "View Control:" );
-		mainToolBar.add( viewLabel );
+		// 7) 2D button
+		toolButtonXYPlane = new JButton( "2D" );
+		toolButtonXYPlane.setMargin( smallMargin );
+		toolButtonXYPlane.setToolTipText(formatToolTip("2D View",
+				"Sets the camera position to show a bird's eye view of the 3D scene."));
+		toolButtonXYPlane.addActionListener( new ActionListener() {
 
-		// 8) Perspective button
-		toolButtonIsometric = new JButton( "Perspective" );
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				if (RenderManager.isGood())
+					RenderManager.inst().setXYPlaneView();
+			}
+		} );
+		mainToolBar.addSeparator(separatorDim);
+		mainToolBar.add( toolButtonXYPlane );
+
+		// 8) 3D button
+		toolButtonIsometric = new JButton( "3D" );
 		toolButtonIsometric.setMargin( smallMargin );
-		toolButtonIsometric.setToolTipText(formatToolTip("Perspective View",
+		toolButtonIsometric.setToolTipText(formatToolTip("3D View",
 				"Sets the camera position to show an oblique view of the 3D scene."));
 		toolButtonIsometric.addActionListener( new ActionListener() {
 
@@ -865,22 +876,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		} );
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( toolButtonIsometric );
-
-		// 9) XY-Plane button
-		toolButtonXYPlane = new JButton( "XY-Plane" );
-		toolButtonXYPlane.setMargin( smallMargin );
-		toolButtonXYPlane.setToolTipText(formatToolTip("XY-Plane View",
-				"Sets the camera position to show a bird's eye view of the 3D scene."));
-		toolButtonXYPlane.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				if (RenderManager.isGood())
-					RenderManager.inst().setXYPlaneView();
-			}
-		} );
-		mainToolBar.add(Box.createRigidArea(gapDim));
-		mainToolBar.add( toolButtonXYPlane );
 
 		// Add the main tool bar to the display
 		getContentPane().add( mainToolBar, BorderLayout.NORTH );
