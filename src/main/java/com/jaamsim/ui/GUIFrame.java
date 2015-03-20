@@ -1046,12 +1046,29 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				}
 			}
 
+			View lastView = null;
+			ArrayList<View> viewList = View.getAll();
+			if (!viewList.isEmpty())
+				lastView = viewList.get(viewList.size()-1);
+
 			View tmp = InputAgent.defineEntityWithUniqueName(View.class, "View", "", true);
 			RenderManager.inst().createWindow(tmp);
 			FrameBox.setSelectedEntity(tmp);
 			ArrayList<String> arg = new ArrayList<>(1);
 			arg.add("TRUE");
 			InputAgent.apply(tmp, new KeywordIndex("ShowWindow", arg, null));
+
+			// Use the same view position as the last view window
+			if (lastView == null)
+				return;
+
+			arg.clear();
+			lastView.getInput("ViewCenter").getValueTokens(arg);
+			InputAgent.apply(tmp, new KeywordIndex("ViewCenter", arg, null));
+
+			arg.clear();
+			lastView.getInput("ViewPosition").getValueTokens(arg);
+			InputAgent.apply(tmp, new KeywordIndex("ViewPosition", arg, null));
 		}
 	}
 
