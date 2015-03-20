@@ -1509,14 +1509,27 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				RenderManager.inst().createWindow(v);
 		}
 
-		// Set the initial state for the "Show Axes" and "Show Grid" check boxes
+		// Set the initial state for the "Show Axes" check box
 		DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XYZ-Axis");
-		if (ent != null)
+		if (ent == null) {
+			xyzAxis.setEnabled(false);
+			xyzAxis.setSelected(false);
+		}
+		else {
+			xyzAxis.setEnabled(true);
 			xyzAxis.setSelected(ent.getShow());
+		}
 
+		// Set the initial state for the "Show Grid" check box
 		ent = (DisplayEntity) Entity.getNamedEntity("XY-Grid");
-		if (ent != null)
+		if (ent == null) {
+			grid.setEnabled(false);
+			grid.setSelected(false);
+		}
+		else {
+			grid.setEnabled(true);
 			grid.setSelected(ent.getShow());
+		}
 	}
 
 	// ******************************************************************************************************
