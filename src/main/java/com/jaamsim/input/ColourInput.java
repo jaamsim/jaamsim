@@ -70,9 +70,9 @@ private static void defColor(String colorName, int r, int g, int b) {
 
 private static void mapColor(String colorName, Color4d col) {
 	if (colorMap.put(colorName, col) != null)
-		System.out.println(String.format("Color added twice: %s ", colorName));
+		System.out.println(String.format("ColorName added twice: %s ", colorName));
 	if (colorNameMap.put(col, colorName) != null)
-		System.out.println(String.format("Color added twice: %s", col));
+		System.out.println(String.format("Color4d added twice: %s", colorName));
 }
 
 private static void initColors() {
@@ -84,7 +84,7 @@ private static void initColors() {
 	mapColor("blue", BLUE);
 	mapColor("cyan", CYAN);
 	mapColor("yellow", YELLOW);
-	mapColor("purple", PURPLE);
+	//mapColor("purple", PURPLE); This RGB value is actually "magenta"
 
 	mapColor("darkred", DARK_RED);
 	mapColor("darkgreen", DARK_GREEN);
@@ -107,6 +107,7 @@ private static void initColors() {
 	defColor("orchid", 218, 112, 214);
 	defColor("violet", 238, 130, 238);
 	defColor("magenta", 255, 0, 255);
+	defColor("purple", 128, 0, 128);
 	defColor("mediumorchid", 186, 85, 211);
 	defColor("darkorchid", 153, 50, 204);
 	defColor("darkviolet", 148, 0, 211);
