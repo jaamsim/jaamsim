@@ -68,6 +68,11 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	}
 
 	@Override
+	public String getInitialState() {
+		return "Idle";
+	}
+
+	@Override
 	public void addEntity(DisplayEntity ent) {
 
 		// If there is no queue, then process the entity immediately
