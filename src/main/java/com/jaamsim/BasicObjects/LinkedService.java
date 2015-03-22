@@ -40,6 +40,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
 
 	{
+		stateGraphics.setHidden(false);
+
 		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput(waitQueue);
 
