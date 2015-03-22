@@ -27,9 +27,15 @@ import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.StringKeyInput;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class StateEntity extends DisplayEntity {
+
+	@Keyword(description = "A list of state/DisplayEntity pairs. For each state," +
+			" the graphics will be changed to those for the corresponding DisplayEntity.",
+	         example = "Object1  StateGraphics { { idle DisplayEntity1 } { working DisplayEntity2 }")
+	protected final StringKeyInput<DisplayEntity> stateGraphics;
 
 	@Keyword(description = "If TRUE, a log file (.trc) will be printed with the time of every state change during the run.",
 	         example = "Object1  TraceState { TRUE }")
@@ -45,6 +51,10 @@ public class StateEntity extends DisplayEntity {
 	protected FileEntity stateReportFile;        // The file to store the state information
 
 	{
+		stateGraphics = new StringKeyInput<>(DisplayEntity.class, "StateGraphics", "Key Inputs");
+		stateGraphics.setHidden(true);
+		this.addInput(stateGraphics);
+
 		traceState = new BooleanInput("TraceState", "Key Inputs", false);
 		traceState.setHidden(true);
 		this.addInput(traceState);
@@ -69,6 +79,7 @@ public class StateEntity extends DisplayEntity {
 		init.startTick = lastStateCollectionTick;
 		presentState = init;
 		states.put(init.name, init);
+		this.setGraphicsForState(initState);
 
 		if (testFlag(FLAG_GENERATED))
 			return;
@@ -161,12 +172,31 @@ public class StateEntity extends DisplayEntity {
 			states.put(nextState.name, nextState);
 		}
 
+		this.setGraphicsForState(state);
+
 		updateStateStats();
 		nextState.startTick = lastStateCollectionTick;
 
 		StateRecord prev = presentState;
 		presentState = nextState;
 		stateChanged(prev, presentState);
+	}
+
+	private void setGraphicsForState(String state) {
+
+		if (stateGraphics.getValue() == null)
+			return;
+
+		DisplayEntity ent = stateGraphics.getValueFor(state);
+		if (ent == null) {
+			this.resetGraphics();
+			return;
+		}
+
+		this.setDisplayModelList(ent.getDisplayModelList());
+		this.setSize(ent.getSize());
+		this.setOrientation(ent.getOrientation());
+		this.setAlignment(ent.getAlignment());
 	}
 
 	/**

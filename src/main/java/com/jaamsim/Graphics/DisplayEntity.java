@@ -168,8 +168,13 @@ public class DisplayEntity extends Entity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
+		this.resetGraphics();
+	}
 
-		// reset the initial size, position, etc.
+	/**
+	 * Restores the initial appearance of this entity.
+	 */
+	public void resetGraphics() {
 		this.setPosition(positionInput.getValue());
 		this.setSize(sizeInput.getValue());
 		this.setAlignment(alignmentInput.getValue());
