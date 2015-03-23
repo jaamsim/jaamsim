@@ -14,19 +14,19 @@ Define ObjectType {
 					BooleanSelector
                     }
 
-UniformDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.UniformDistribution		} Palette { 'Probability Distributions' }
-TriangularDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.TriangularDistribution		} Palette { 'Probability Distributions' }
-NormalDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.NormalDistribution			} Palette { 'Probability Distributions' }
-ExponentialDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ExponentialDistribution	} Palette { 'Probability Distributions' }
-ErlangDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.ErlangDistribution			} Palette { 'Probability Distributions' }
-GammaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.GammaDistribution			} Palette { 'Probability Distributions' }
-BetaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.BetaDistribution			} Palette { 'Probability Distributions' }
-WeibullDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.WeibullDistribution		} Palette { 'Probability Distributions' }
-LogNormalDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.LogNormalDistribution		} Palette { 'Probability Distributions' }
-LogLogisticsDistribution	JavaClass { com.jaamsim.ProbabilityDistributions.LogLogisticDistribution	} Palette { 'Probability Distributions' }
-DiscreteDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteDistribution		} Palette { 'Probability Distributions' }
-ContinuousDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ContinuousDistribution		} Palette { 'Probability Distributions' }
-BooleanSelector				JavaClass { com.jaamsim.ProbabilityDistributions.BooleanSelector			} Palette { 'Probability Distributions' }
+UniformDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.UniformDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/UniformDist-24.png'    }
+TriangularDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.TriangularDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/TriangleDist-24.png'   }
+NormalDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.NormalDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/Norm Dist-24.png'      }
+ExponentialDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ExponentialDistribution	} Palette { 'Probability Distributions' } IconFile { '<res>/images/Exp Dist-24.png'       }
+ErlangDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.ErlangDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
+GammaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.GammaDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
+BetaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.BetaDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
+WeibullDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.WeibullDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
+LogNormalDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.LogNormalDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
+LogLogisticsDistribution	JavaClass { com.jaamsim.ProbabilityDistributions.LogLogisticDistribution	} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
+DiscreteDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/DiscreteDist-24.png'   }
+ContinuousDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ContinuousDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ContinuousDist-24.png' }
+BooleanSelector				JavaClass { com.jaamsim.ProbabilityDistributions.BooleanSelector			} Palette { 'Probability Distributions' } IconFile { '<res>/images/Selector-24.png'       }
 
 Define	ImageModel {
 					ProbabilityDistributionIconModel
