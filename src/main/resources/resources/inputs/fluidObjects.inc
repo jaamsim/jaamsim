@@ -7,12 +7,12 @@ Define ObjectType {
 					FluidCentrifugalPump
                     }
 
-Fluid                   JavaClass { com.jaamsim.FluidObjects.Fluid                } Palette { 'Fluid Objects' }
-FluidFlow               JavaClass { com.jaamsim.FluidObjects.FluidFlow            } Palette { 'Fluid Objects' }
-FluidFixedFlow          JavaClass { com.jaamsim.FluidObjects.FluidFixedFlow       } Palette { 'Fluid Objects' }
-FluidTank               JavaClass { com.jaamsim.FluidObjects.FluidTank            } Palette { 'Fluid Objects' }
-FluidPipe               JavaClass { com.jaamsim.FluidObjects.FluidPipe            } Palette { 'Fluid Objects' }
-FluidCentrifugalPump    JavaClass { com.jaamsim.FluidObjects.FluidCentrifugalPump } Palette { 'Fluid Objects' }
+Fluid                   JavaClass { com.jaamsim.FluidObjects.Fluid                } Palette { 'Fluid Objects' } IconFile { '<res>/images/Fluid-24.png'     }
+FluidFlow               JavaClass { com.jaamsim.FluidObjects.FluidFlow            } Palette { 'Fluid Objects' } IconFile { '<res>/images/Flow-24.png'      }
+FluidFixedFlow          JavaClass { com.jaamsim.FluidObjects.FluidFixedFlow       } Palette { 'Fluid Objects' } IconFile { '<res>/images/Line-24.png'      }
+FluidTank               JavaClass { com.jaamsim.FluidObjects.FluidTank            } Palette { 'Fluid Objects' } IconFile { '<res>/images/FluidTank-24.png' }
+FluidPipe               JavaClass { com.jaamsim.FluidObjects.FluidPipe            } Palette { 'Fluid Objects' } IconFile { '<res>/images/Line-24.png'      }
+FluidCentrifugalPump    JavaClass { com.jaamsim.FluidObjects.FluidCentrifugalPump } Palette { 'Fluid Objects' } IconFile { '<res>/images/Pump-24.png'      }
 
 Define	ImageModel {
 			FluidIconModel
