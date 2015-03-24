@@ -95,12 +95,28 @@ public class DiscreteDistribution extends Distribution {
 
 	@Override
 	public double getMinValue() {
-		return Math.max( valueListInput.getValue().get(0), minValueInput.getValue());
+		double ret = Double.POSITIVE_INFINITY;
+		for( int i = 0; i < probabilityListInput.getValue().size(); i++ ) {
+			if( probabilityListInput.getValue().get(i) > 0.0 ) {
+				if( valueListInput.getValue().get(i) < ret ) {
+					ret = valueListInput.getValue().get(i);
+				}
+			}
+		}
+		return Math.max(ret, minValueInput.getValue());
 	}
 
 	@Override
 	public double getMaxValue() {
-		return Math.min( valueListInput.getValue().lastElement(), maxValueInput.getValue());
+		double ret = Double.NEGATIVE_INFINITY;
+		for( int i = 0; i < probabilityListInput.getValue().size(); i++ ) {
+			if( probabilityListInput.getValue().get(i) > 0.0 ) {
+				if( valueListInput.getValue().get(i) > ret ) {
+					ret = valueListInput.getValue().get(i);
+				}
+			}
+		}
+		return Math.min(ret,  maxValueInput.getValue());
 	}
 
 	@Override
