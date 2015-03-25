@@ -25,7 +25,7 @@ public class TimeSeriesData {
 	public TimeSeriesData( DoubleVector times, DoubleVector values ) {
 		usecList = new long[times.size()];
 		for (int i = 0; i < times.size(); i++) {
-			usecList[i] = Math.round(times.get(i)*3.6e9);
+			usecList[i] = Math.round(times.get(i));
 		}
 
 		valueList = new double[values.size()];

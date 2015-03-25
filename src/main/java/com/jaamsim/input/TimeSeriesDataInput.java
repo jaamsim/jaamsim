@@ -106,7 +106,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			DoubleVector v = Input.parseDoubles(each, minValue, maxValue, unitType);
 
 			// Store the time and value for this record
-			times.add(usOffset / 3.6e9d); // convert to hours 3600 secs * 1e6 us
+			times.add((double) usOffset);
 			values.add(v.get(0));
 		}
 
