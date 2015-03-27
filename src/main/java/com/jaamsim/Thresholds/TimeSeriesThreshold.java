@@ -173,6 +173,7 @@ public class TimeSeriesThreshold extends Threshold {
 
 		// Add offset from input
 		time += this.getOffsetInHours();
+		time = Math.max(time, 0.0);
 
 		double changeTime = time;
 
@@ -222,6 +223,7 @@ public class TimeSeriesThreshold extends Threshold {
 
 		// Add offset from input
 		startTime += this.getOffsetInHours();
+		startTime = Math.max(startTime, 0.0);
 
 		// Threshold is currently closed. Find the next open point
 		double openTime = -1;
@@ -370,6 +372,7 @@ public class TimeSeriesThreshold extends Threshold {
 
 		// Add offset from input
 		startTime += this.getOffsetInHours();
+		startTime = Math.max(startTime, 0.0);
 
 		// Find the next change point after startTime
 		double changeTime = startTime;
