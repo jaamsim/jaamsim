@@ -404,16 +404,17 @@ public class TimeSeriesThreshold extends Threshold {
 	 * @param time
 	 * @return
 	 */
-	public double getNextChangeTimeAfterHours( double time ) {
-		double firstChange = this.getTimeSeries().getNextChangeTimeAfterHours(time);
+	public double getNextChangeTimeAfterHours(double hours) {
+		double simTime = hours * 3600.0;
+		double firstChange = this.getTimeSeries().getNextTimeAfter(simTime);
 
 		if (maxOpenLimit.getValue() != null)
-			firstChange = Math.min(firstChange, maxOpenLimit.getValue().getNextChangeTimeAfterHours(time));
+			firstChange = Math.min(firstChange, maxOpenLimit.getValue().getNextTimeAfter(simTime));
 
 		if (minOpenLimit.getValue() != null)
-			firstChange = Math.min(firstChange, minOpenLimit.getValue().getNextChangeTimeAfterHours(time));
+			firstChange = Math.min(firstChange, minOpenLimit.getValue().getNextTimeAfter(simTime));
 
-		return firstChange;
+		return firstChange/3600.0;
 	}
 
 	/**
