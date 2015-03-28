@@ -25,6 +25,7 @@ import com.jaamsim.input.Output;
 import com.jaamsim.input.TimeSeriesDataInput;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -98,6 +99,98 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	public Class<? extends Unit> getUserUnitType() {
 		return unitType.getUnitType();
 	}
+
+	/**
+	 * Returns the value for time series at the given simulation time.
+	 * @param ticks - simulation time in microseconds.
+	 */
+	public double getValueForUsec(long usec) {
+		return value.getValue().valueList[ getIndexForUsec(usec) ];
+	}
+
+	/**
+	 * Converts the given simulation time in seconds to the nearest number of
+	 * microseconds.
+	 * @param simTime - simulation time in seconds.
+	 * @return simulation time in microseconds.
+	 */
+	public long getUsec(double simTime) {
+		return Math.round(simTime * 1.0e6);
+	}
+
+	private long getTicks(long usec) {
+		if (usec == Long.MAX_VALUE)
+			return Long.MAX_VALUE;
+		return FrameBox.secondsToTicks(usec / 1.0e6);
+	}
+
+	/**
+	 * Returns the index for the given simulation time in microseconds.
+	 * @param usec - simulation time in microseconds.
+	 * @return index in the times series for the given simulation time.
+	 */
+	private int getIndexForUsec(long usec) {
+
+		long[] usecList = value.getValue().usecList;
+		if (usec == Long.MAX_VALUE)
+			return usecList.length - 1;
+
+		// Find the time within the present cycle
+		long usecInCycle = usec % getUsec(cycleTime.getValue());
+
+		// If the time in the cycle is greater than the last time, return the last value
+		long ticksInCycle = getTicks(usecInCycle);
+		if (ticksInCycle >= getTicks(usecList[usecList.length - 1])) {
+			return usecList.length - 1;
+		}
+
+		// Find the index by binary search
+		int index = Arrays.binarySearch(usecList, usecInCycle);
+
+		// If the returned index is greater or equal to zero,
+		// then an exact match was found
+		if (index >= 0)
+			return index;
+
+		if (index == -1)
+			error("No value found at time: %f", usec/1.0e6);
+
+		// If the returned index is negative, then (insertion index) = -index-1
+
+		// If the time at the insertion index is within one tick, then return it
+		if (getTicks(usecInCycle) == getTicks(usecList[-index - 1]))
+			return -index - 1;
+
+		// Return the index before the insertion index
+		return -index - 2;
+	}
+
+	/**
+	 * Return the first time that the value will be updated, after the given
+	 * simulation time in microseconds.
+	 * @param usec - simulation time in microseconds.
+	 * @return simulation time in microseconds at which the time series value will change.
+	 */
+	public long getNextChangeAfterUsec(long usec) {
+
+		int index = this.getIndexForUsec(usec);
+		long[] usecList = value.getValue().usecList;
+		long cycleUsec = getUsec(cycleTime.getValue());
+		long startOfCycle = usec - (usec % cycleUsec);
+
+		// If the last entry in the list, then the next change is the end of the cycle
+		if (index == usecList.length-1) {
+			if (cycleUsec == Long.MAX_VALUE)
+				return Long.MAX_VALUE;
+			return startOfCycle + cycleUsec;
+		}
+
+		return startOfCycle + usecList[index+1];
+	}
+
+	// ************************************************************************
+	// Methods using times in hours - for compatibility with TLS objects
+	// ************************************************************************
 
 	@Output(name = "PresentValue",
 	        description = "The time series value for the present time.",
