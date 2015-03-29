@@ -61,7 +61,7 @@ public class Server extends LinkedService {
 	public void startAction() {
 
 		// Stop if the queue is empty or a threshold is closed
-		if (waitQueue.getValue().getCount() == 0 || this.isClosed()) {
+		if (waitQueue.getValue().getCount() == 0 || !this.isOpen()) {
 			servedEntity = null;
 			this.setBusy(false);
 			this.setPresentState();

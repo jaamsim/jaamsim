@@ -66,7 +66,7 @@ public class Unpack extends LinkedService {
 		}
 
 		// Do any of the thresholds stop the generator?
-		if (this.isClosed()) {
+		if (!this.isOpen()) {
 			this.setBusy(false);
 			this.setPresentState();
 			return;

@@ -168,14 +168,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		return true;
 	}
 
-	/**
-	 * Test whether any of the thresholds are closed.
-	 * @return true if any threshold is closed.
-	 */
-	public boolean isClosed() {
-		return !this.isOpen();
-	}
-
 	protected void setPresentState() {
 		if (this.isOpen()) {
 			if (this.isBusy()) {

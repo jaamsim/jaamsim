@@ -129,7 +129,7 @@ public class EntityGenerator extends LinkedService {
 	public void startAction() {
 
 		// Stop if the gate is closed or the last entity been generated
-		if (this.isClosed() || (maxNumber.getValue() != null && numberGenerated >= maxNumber.getValue())) {
+		if (!this.isOpen() || (maxNumber.getValue() != null && numberGenerated >= maxNumber.getValue())) {
 			this.setBusy(false);
 			this.setPresentState();
 			return;
@@ -148,7 +148,7 @@ public class EntityGenerator extends LinkedService {
 	public void endAction() {
 
 		// Do any of the thresholds stop the generator?
-		if (this.isClosed()) {
+		if (!this.isOpen()) {
 			this.setBusy(false);
 			this.setPresentState();
 			return;
