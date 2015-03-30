@@ -78,7 +78,7 @@ public class Threshold extends StateEntity {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		userUpdate.users.clear();
+		thresholdChangedTarget.users.clear();
 		open = true;
 
 		userList.clear();
@@ -121,12 +121,13 @@ public class Threshold extends StateEntity {
 		return "Open".equals(state);
 	}
 
-	private static final EventHandle updateHandle = new EventHandle();
-	private static final DoThresholdChanged userUpdate = new DoThresholdChanged();
-	private static class DoThresholdChanged extends ProcessTarget {
+	private static final EventHandle thresholdChangedHandle = new EventHandle();
+	private static final ThresholdChangedTarget thresholdChangedTarget = new ThresholdChangedTarget();
+
+	private static class ThresholdChangedTarget extends ProcessTarget {
 		public final ArrayList<ThresholdUser> users = new ArrayList<>();
 
-		public DoThresholdChanged() {}
+		public ThresholdChangedTarget() {}
 
 		@Override
 		public void process() {
@@ -146,45 +147,23 @@ public class Threshold extends StateEntity {
 		return open;
 	}
 
-	@Override
-	public void updateGraphics( double time ) {
-		super.updateGraphics(time);
-
-		// Determine the colour for the square
-		Color4d col;
-		if (open) {
-			col = openColour.getValue();
-			setTagVisibility(DisplayModelCompat.TAG_CONTENTS, showWhenOpen.getValue());
-			setTagVisibility(DisplayModelCompat.TAG_OUTLINES, showWhenOpen.getValue());
-		}
-		else {
-			col = closedColour.getValue();
-			setTagVisibility(DisplayModelCompat.TAG_CONTENTS, showWhenClosed.getValue());
-			setTagVisibility(DisplayModelCompat.TAG_OUTLINES, showWhenClosed.getValue());
-
-		}
-
-		setTagColour( DisplayModelCompat.TAG_CONTENTS, col );
-		setTagColour( DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK );
-	}
-
-	public final void setOpen(boolean open) {
+	public final void setOpen(boolean bool) {
 		// If setting to the same value as current, return
-		if (this.open == open)
+		if (open == bool)
 			return;
 
-		this.open = open;
-		if (this.open)
+		open = bool;
+		if (open)
 			setPresentState("Open");
 		else
 			setPresentState("Closed");
 
 		for (ThresholdUser user : this.userList) {
-			if (!userUpdate.users.contains(user))
-				userUpdate.users.add(user);
+			if (!thresholdChangedTarget.users.contains(user))
+				thresholdChangedTarget.users.add(user);
 		}
-		if (!userUpdate.users.isEmpty() && !updateHandle.isScheduled())
-			this.scheduleProcessTicks(0, 2, false, userUpdate, updateHandle);
+		if (!thresholdChangedTarget.users.isEmpty() && !thresholdChangedHandle.isScheduled())
+			this.scheduleProcessTicks(0, 2, false, thresholdChangedTarget, thresholdChangedHandle);
 	}
 
 	private static class DoOpenTarget extends EntityTarget<Threshold> {
@@ -221,6 +200,28 @@ public class Threshold extends StateEntity {
 	public void doClose() {
 		this.trace( "close" );
 		this.setOpen( false );
+	}
+
+	@Override
+	public void updateGraphics( double time ) {
+		super.updateGraphics(time);
+
+		// Determine the colour for the square
+		Color4d col;
+		if (open) {
+			col = openColour.getValue();
+			setTagVisibility(DisplayModelCompat.TAG_CONTENTS, showWhenOpen.getValue());
+			setTagVisibility(DisplayModelCompat.TAG_OUTLINES, showWhenOpen.getValue());
+		}
+		else {
+			col = closedColour.getValue();
+			setTagVisibility(DisplayModelCompat.TAG_CONTENTS, showWhenClosed.getValue());
+			setTagVisibility(DisplayModelCompat.TAG_OUTLINES, showWhenClosed.getValue());
+
+		}
+
+		setTagColour( DisplayModelCompat.TAG_CONTENTS, col );
+		setTagColour( DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK );
 	}
 
 	@Output(name = "Open",
