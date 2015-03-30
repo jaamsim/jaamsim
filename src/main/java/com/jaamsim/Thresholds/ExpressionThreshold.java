@@ -15,6 +15,7 @@
 package com.jaamsim.Thresholds;
 
 import com.jaamsim.Graphics.DisplayModelCompat;
+import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -151,8 +152,22 @@ public class ExpressionThreshold extends Threshold {
 
 	@Override
 	public boolean isOpen() {
-		this.setOpen(this.getOpenConditionValue(getSimTime()));
-		return super.isOpen();
+		boolean ret = this.getOpenConditionValue(getSimTime());
+		if (ret != super.isOpen())
+			this.scheduleProcessTicks(0, 2, setOpenTarget);
+		return ret;
+	}
+
+	private final SetOpenTarget setOpenTarget = new SetOpenTarget(this);
+	private static class SetOpenTarget extends EntityTarget<ExpressionThreshold> {
+		SetOpenTarget(ExpressionThreshold thresh) {
+			super(thresh, "setOpen");
+		}
+
+		@Override
+		public void process() {
+			ent.setOpen(ent.getOpenConditionValue(ent.getSimTime()));
+		}
 	}
 
 	boolean openStateChanged() {
