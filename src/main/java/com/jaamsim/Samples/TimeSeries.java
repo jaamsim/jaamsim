@@ -193,36 +193,17 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		return startOfCycle + usecList[index+1];
 	}
 
-	// ************************************************************************
-	// Methods using times in hours - for compatibility with TLS objects
-	// ************************************************************************
-
 	@Output(name = "PresentValue",
 	        description = "The time series value for the present time.",
 	        unitType = UserSpecifiedUnit.class)
 	@Override
 	public final double getNextSample(double simTime) {
-		return this.getValueForTimeHours(simTime / 3600.0);
-	}
-
-	/**
-	 * Return the value for the given simulation time in hours
-	 */
-	private double getValueForTimeHours( double time ) {
-		double[] valueList = value.getValue().valueList;
-		return valueList[ getIndexForTimeHours( time ) ];
-	}
-
-	/**
-	 * Return the index for the given simulation time in hours
-	 */
-	public int getIndexForTimeHours( double time ) {
-		return getIndexForUsec(getUsec(time*3600.0));
+		return value.getValue().valueList[ getIndexForUsec(getUsec(simTime)) ];
 	}
 
 	@Override
 	public double getNextTimeAfter(double simTime) {
-		return getNextChangeTimeAfterHours(simTime / 3600.0d) * 3600.0d;
+		return getSimTimeForUsec( getNextChangeAfterUsec(getUsec(simTime)) );
 	}
 
 	/**
@@ -234,18 +215,10 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		return getSimTimeForUsec(usec)/3600.0;
 	}
 
-	public double getCycleTimeInHours() {
-		return cycleTime.getValue() / 3600;
-	}
-
-	double getCycleLength() {
-		return cycleTime.getValue();
-	}
-
 	@Override
 	public double getMaxTimeValue() {
-		if (this.getCycleLength() < Double.POSITIVE_INFINITY)
-			return this.getCycleLength();
+		if (cycleTime.getValue() < Double.POSITIVE_INFINITY)
+			return cycleTime.getValue();
 
 		long[] usecList = value.getValue().usecList;
 		return getSimTimeForUsec( usecList[ usecList.length-1 ] );
