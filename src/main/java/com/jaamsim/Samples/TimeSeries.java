@@ -17,7 +17,6 @@ package com.jaamsim.Samples;
 import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -76,11 +75,11 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		if( unitType.getValue() == null )
 			throw new InputErrorException( "UnitType must be specified first" );
 
-		if( value.getValue() == null || value.getValue().timeList.length == 0 )
+		if( value.getValue() == null || value.getValue().usecList.length == 0 )
 			throw new InputErrorException( "Time series Value must be specified" );
 
-		double[] tList = value.getValue().timeList;
-		if (this.getCycleTimeInHours() < tList[tList.length - 1])
+		long[] usecList = value.getValue().usecList;
+		if (getUsec(cycleTime.getValue()) < usecList[usecList.length - 1])
 			throw new InputErrorException( "CycleTime must be larger than the last time in the series" );
 	}
 
@@ -122,6 +121,12 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		if (usec == Long.MAX_VALUE)
 			return Long.MAX_VALUE;
 		return FrameBox.secondsToTicks(usec / 1.0e6);
+	}
+
+	private double getSimTimeForUsec(long usec) {
+		if (usec == Long.MAX_VALUE)
+			return Double.POSITIVE_INFINITY;
+		return usec / 1.0e6;
 	}
 
 	/**
@@ -208,60 +213,11 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		return valueList[ getIndexForTimeHours( time ) ];
 	}
 
-	private long hoursToTicks(double hours) {
-		return Math.round(hours * Simulation.getSimTimeFactor());
-	}
-
-	private static final double doubleTolerance = 1.0E-9;
-	private boolean equalCheckTolerance( double first, double second ) {
-		return (Math.abs( first - second ) < doubleTolerance);
-	}
-
 	/**
 	 * Return the index for the given simulation time in hours
 	 */
 	public int getIndexForTimeHours( double time ) {
-		double[] timeList = value.getValue().timeList;
-
-		// Determine the time in the cycle for the given time
-		double timeInCycle = time;
-		if (this.getCycleLength() < Double.POSITIVE_INFINITY) {
-			int completedCycles = (int)Math.floor( time / this.getCycleTimeInHours() );
-			timeInCycle -= completedCycles * this.getCycleTimeInHours();
-			if( equalCheckTolerance(timeInCycle, this.getCycleTimeInHours()) ) {
-				timeInCycle = 0;
-			}
-		}
-
-		// If the time in the cycle is greater than the last time, return the last value
-		long ticksInCycle = hoursToTicks(timeInCycle);
-		if (ticksInCycle >= hoursToTicks(timeList[timeList.length - 1])) {
-			return timeList.length - 1;
-		}
-		else {
-			// Otherwise, find the index with a binary search
-			int index = Arrays.binarySearch(timeList, timeInCycle);
-
-			// If the returned index is greater or equal to zero,
-			// then an exact match was found
-			if( index >= 0 ) {
-				return index;
-			}
-			else {
-				// If the returned index is negative,
-				// then index = -(insertion index)-1
-				// or (insertion index) = -(index+1) = -index-1
-				// If the time at the insertion index is within one tick,
-				// then return it
-				if (ticksInCycle == hoursToTicks(timeList[-index - 1]))
-					return -index - 1;
-				else
-					// Otherwise, return the index before the insertion index
-					if( index == -1 )
-						error("No value found at time: %f hours", time);
-					return -index - 2;
-			}
-		}
+		return getIndexForUsec(getUsec(time*3600.0));
 	}
 
 	@Override
@@ -274,44 +230,8 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	 */
 	@Override
 	public double getNextChangeTimeAfterHours( double time ) {
-
-		// Collect parameters for the current time
-		int startIndex = this.getIndexForTimeHours(time)+1;
-		double cycleTime = this.getCycleTimeInHours();
-
-		// Determine how many cycles through the time series have been completed
-		int completedCycles = (int)Math.floor( time / cycleTime );
-
-		// Tolerance check for essentially through a cycle
-		double timeInCycle = time - (completedCycles * this.getCycleTimeInHours());
-		if( equalCheckTolerance(timeInCycle, this.getCycleTimeInHours()) ) {
-			completedCycles++;
-		}
-
-		double[] timeList = value.getValue().timeList;
-		// If this is the last point in the cycle, need to cycle around to get the next point
-		if( startIndex > timeList.length - 1 ) {
-
-			// If the series does not cycle, the value will never change
-			if( cycleTime == Double.POSITIVE_INFINITY ) {
-				return Double.POSITIVE_INFINITY;
-			}
-			else {
-				double cycleOffset = 0.0;
-				if( cycleTime != Double.POSITIVE_INFINITY ) {
-					cycleOffset = (completedCycles+1)*cycleTime;
-				}
-
-				return timeList[0] + cycleOffset;
-			}
-		}
-
-		// No cycling required, return the next value
-		double cycleOffset = 0.0;
-		if( cycleTime != Double.POSITIVE_INFINITY ) {
-			cycleOffset = (completedCycles)*cycleTime;
-		}
-		return timeList[startIndex] + cycleOffset;
+		long usec = getNextChangeAfterUsec(getUsec(time*3600.0));
+		return getSimTimeForUsec(usec)/3600.0;
 	}
 
 	public double getCycleTimeInHours() {
@@ -327,8 +247,8 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		if (this.getCycleLength() < Double.POSITIVE_INFINITY)
 			return this.getCycleLength();
 
-		double[] tList = value.getValue().timeList;
-		return tList[ tList.length-1 ] * 3600.0d;
+		long[] usecList = value.getValue().usecList;
+		return getSimTimeForUsec( usecList[ usecList.length-1 ] );
 	}
 
 	@Override

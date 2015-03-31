@@ -18,16 +18,13 @@ import com.jaamsim.datatypes.DoubleVector;
 
 public class TimeSeriesData {
 	final long[] usecList;    // time in microseconds corresponding to each value
-	final double[] timeList;
 	final double[] valueList;
 	private double maxValue;  // The maximum value that occurs in valueList
 	private double minValue;  // The minimum value that occurs in valueList
 
 	public TimeSeriesData( DoubleVector times, DoubleVector values ) {
-		timeList = new double[times.size()];
 		usecList = new long[times.size()];
 		for (int i = 0; i < times.size(); i++) {
-			timeList[i] = times.get(i);
 			usecList[i] = Math.round(times.get(i)*3.6e9);
 		}
 
