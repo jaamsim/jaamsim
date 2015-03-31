@@ -206,15 +206,6 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		return getSimTimeForUsec( getNextChangeAfterUsec(getUsec(simTime)) );
 	}
 
-	/**
-	 * Return the first time that the value will be updated, after the given time.
-	 */
-	@Override
-	public double getNextChangeTimeAfterHours( double time ) {
-		long usec = getNextChangeAfterUsec(getUsec(time*3600.0));
-		return getSimTimeForUsec(usec)/3600.0;
-	}
-
 	@Override
 	public double getMaxTimeValue() {
 		if (cycleTime.getValue() < Double.POSITIVE_INFINITY)

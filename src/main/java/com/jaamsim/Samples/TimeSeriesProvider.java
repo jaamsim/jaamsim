@@ -17,6 +17,5 @@ package com.jaamsim.Samples;
 
 public interface TimeSeriesProvider extends SampleProvider {
 	public double getNextTimeAfter(double simTime);
-	public double getNextChangeTimeAfterHours( double simTime );
 	public double getMaxTimeValue();
 }
