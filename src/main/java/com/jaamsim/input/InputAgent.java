@@ -1009,7 +1009,7 @@ public class InputAgent {
 		}
 
 		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
-		final String earlyKeywords[] = {"AttributeDefinitionList", "UnitType"};
+		final String earlyKeywords[] = {"AttributeDefinitionList", "UnitType", "CargoUnits", "TickLength"};
 		for (Entity ent : Entity.getAll()) {
 			if (!ent.testFlag(Entity.FLAG_EDITED))
 				continue;
