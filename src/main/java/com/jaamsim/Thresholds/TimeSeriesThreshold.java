@@ -14,7 +14,7 @@
  */
 package com.jaamsim.Thresholds;
 
-import com.jaamsim.Samples.TimeSeriesProvider;
+import com.jaamsim.Samples.TimeSeriesConstantDouble;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.ProcessTarget;
@@ -67,11 +67,11 @@ public class TimeSeriesThreshold extends Threshold {
 		timeSeries.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(timeSeries);
 
-		maxOpenLimit = new TimeSeriesInput( "MaxOpenLimit", "Key Inputs", null );
+		maxOpenLimit = new TimeSeriesInput("MaxOpenLimit", "Key Inputs", new TimeSeriesConstantDouble(Double.POSITIVE_INFINITY));
 		maxOpenLimit.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( maxOpenLimit );
 
-		minOpenLimit = new TimeSeriesInput( "MinOpenLimit", "Key Inputs", null );
+		minOpenLimit = new TimeSeriesInput("MinOpenLimit", "Key Inputs", new TimeSeriesConstantDouble(Double.NEGATIVE_INFINITY));
 		minOpenLimit.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( minOpenLimit );
 
@@ -99,30 +99,26 @@ public class TimeSeriesThreshold extends Threshold {
 	public void validate() throws InputErrorException {
 		super.validate();
 
-		if( unitType.getValue() == null )
+		if (unitType.getValue() == null)
 			throw new InputErrorException( "UnitType must be specified first" );
 
-		if( timeSeries.getValue() == null ) {
+		if (timeSeries.getValue() == null)
 			throw new InputErrorException( "Missing TimeSeries" );
-		}
-		if( (maxOpenLimit.getValue() == null) && (minOpenLimit.getValue() == null) ) {
-			throw new InputErrorException( "Missing Limit" );
-		}
 
-		if( maxOpenLimit.getValue() != null && minOpenLimit.getValue() != null ) {
-			if( this.getMaxMinOpenLimit() > this.getMaxMaxOpenLimit() ) {
-				throw new InputErrorException( "MaxOpenLimit must be larger than MinOpenLimit" );
-			}
-		}
+		if (minOpenLimit.getValue().getMaxValue() > maxOpenLimit.getValue().getMaxValue())
+			throw new InputErrorException("MaxOpenLimit must be larger than MinOpenLimit");
 
 		if( timeSeries.getValue().getUnitType() != this.getUnitType() )
-			throw new InputErrorException( "Time Series unitType ("+timeSeries.getValue().getUnitType()+") does not match the Threshold Unit type ("+this.getUnitType()+")" );
+			throw new InputErrorException("Time Series unitType (%s) does not match the Threshold Unit type (%s)",
+					timeSeries.getValue().getUnitType(), this.getUnitType());
 
-		if( this.getTimeSeries().getMinValue() > this.getMaxMaxOpenLimit() )
-			InputAgent.logWarning( "Threshold %s is closed forever.  MaxOpenLimit = %f Max TimeSeries Value = %f", this, this.getMaxMaxOpenLimit(), this.getTimeSeries().getMaxValue() );
+		if (timeSeries.getValue().getMinValue() > maxOpenLimit.getValue().getMaxValue())
+			InputAgent.logWarning("Threshold %s is closed forever.  MaxOpenLimit = %f Max TimeSeries Value = %f",
+					this, maxOpenLimit.getValue().getMaxValue(), timeSeries.getValue().getMaxValue());
 
-		if( this.getTimeSeries().getMaxValue() < this.getMaxMinOpenLimit() )
-			InputAgent.logWarning( "Threshold %s is closed forever.  MinOpenLimit = %f Min TimeSeries Value = %f", this, this.getMaxMinOpenLimit(), this.getTimeSeries().getMinValue() );
+		if (timeSeries.getValue().getMaxValue() < minOpenLimit.getValue().getMaxValue())
+			InputAgent.logWarning("Threshold %s is closed forever.  MinOpenLimit = %f Min TimeSeries Value = %f",
+					this, minOpenLimit.getValue().getMaxValue(), timeSeries.getValue().getMinValue());
 	}
 
 	@Override
@@ -172,7 +168,7 @@ public class TimeSeriesThreshold extends Threshold {
 	public boolean isClosedAtTime( double time ) {
 
 		// Add offset from input
-		time += this.getOffsetInHours();
+		time += offset.getValue()/3600.0;
 		time = Math.max(time, 0.0);
 
 		double changeTime = time;
@@ -186,13 +182,13 @@ public class TimeSeriesThreshold extends Threshold {
 
 			// Current point is open
 			// If there has already been lookahead hours since the given time, the threshold is open
-			if( changeTime - this.getLookAheadInHours() > time )
+			if (changeTime - lookAhead.getValue()/3600.0 > time)
 				return false;
 
 			// If the next point is closed, determine if open long enough too satisfy lookahead
 			changeTime = this.getNextChangeTimeAfterHours(changeTime);
 			if( this.isPointClosedAtHours(changeTime) ) {
-				return (changeTime - this.getLookAheadInHours()) < time;
+				return (changeTime - lookAhead.getValue()/3600.0) < time;
 			}
 		}
 	}
@@ -222,7 +218,7 @@ public class TimeSeriesThreshold extends Threshold {
 		}
 
 		// Add offset from input
-		startTime += this.getOffsetInHours();
+		startTime += offset.getValue()/3600.0;
 		startTime = Math.max(startTime, 0.0);
 
 		// Threshold is currently closed. Find the next open point
@@ -244,7 +240,7 @@ public class TimeSeriesThreshold extends Threshold {
 			}
 
 			// if have already searched the longest cycle, the threshold will never open
-			if( greaterCheckTolerance( changeTime, startTime + maxTimeValueFromTimeSeries + this.getLookAhead() ) )
+			if (greaterCheckTolerance(changeTime, startTime + maxTimeValueFromTimeSeries + lookAhead.getValue()/3600.0 ))
 				return Double.POSITIVE_INFINITY;
 
 			// Closed index
@@ -257,7 +253,7 @@ public class TimeSeriesThreshold extends Threshold {
 
 				// Has enough time been gathered to satisfy the lookahead?
 				double openDuration = changeTime - openTime;
-				if( openDuration >= this.getLookAheadInHours() ) {
+				if( openDuration >= lookAhead.getValue()/3600.0 ) {
 					return openTime - startTime;
 				}
 				// not enough time, need to start again
@@ -277,78 +273,23 @@ public class TimeSeriesThreshold extends Threshold {
 	}
 
 	public boolean isAlwaysOpen() {
-		double tsMin = this.getTimeSeries().getMinValue();
-		double tsMax = this.getTimeSeries().getMaxValue();
+		double tsMin = timeSeries.getValue().getMinValue();
+		double tsMax = timeSeries.getValue().getMaxValue();
 
-		double maxMinOpen = this.getMaxMinOpenLimit();
-		double minMaxOpen = this.getMinMaxOpenLimit();
+		double maxMinOpen = minOpenLimit.getValue().getMaxValue();
+		double minMaxOpen = maxOpenLimit.getValue().getMinValue();
 
-		if (tsMin >= maxMinOpen && tsMax <= minMaxOpen)
-			return true;
-		else
-			return false;
+		return (tsMin >= maxMinOpen && tsMax <= minMaxOpen);
 	}
 
 	public boolean isAlwaysClosed() {
-		double tsMin = this.getTimeSeries().getMinValue();
-		double tsMax = this.getTimeSeries().getMaxValue();
+		double tsMin = timeSeries.getValue().getMinValue();
+		double tsMax = timeSeries.getValue().getMaxValue();
 
-		double minMinOpen = this.getMinMinOpenLimit();
-		double maxMaxOpen = this.getMaxMaxOpenLimit();
+		double minMinOpen = minOpenLimit.getValue().getMinValue();
+		double maxMaxOpen = maxOpenLimit.getValue().getMaxValue();
 
-		if (tsMax < minMinOpen || tsMin > maxMaxOpen)
-			return true;
-		else
-			return false;
-	}
-
-	public double getLookAheadInHours() {
-		return lookAhead.getValue() / 3600;
-	}
-
-	public double getLookAhead() {
-		return lookAhead.getValue();
-	}
-
-	public double getOffsetInHours() {
-		return offset.getValue() / 3600;
-	}
-
-	public double getOffset() {
-		return offset.getValue();
-	}
-
-	private TimeSeriesProvider getTimeSeries() {
-		return timeSeries.getValue();
-	}
-
-	public double getMaxMinOpenLimit() {
-		if( minOpenLimit.getValue() == null )
-			return Double.NEGATIVE_INFINITY;
-
-		return minOpenLimit.getValue().getMaxValue();
-	}
-
-	public double getMinMinOpenLimit() {
-		if (minOpenLimit.getValue() == null)
-			return Double.NEGATIVE_INFINITY;
-
-		return minOpenLimit.getValue().getMinValue();
-	}
-
-
-	public double getMaxMaxOpenLimit() {
-		if (maxOpenLimit.getValue() == null)
-			return Double.POSITIVE_INFINITY;
-
-		return maxOpenLimit.getValue().getMaxValue();
-	}
-
-	public double getMinMaxOpenLimit() {
-		if (maxOpenLimit.getValue() == null)
-			return Double.POSITIVE_INFINITY;
-
-		return maxOpenLimit.getValue().getMinValue();
+		return (tsMax < minMinOpen || tsMin > maxMaxOpen);
 	}
 
 	/**
@@ -371,7 +312,7 @@ public class TimeSeriesThreshold extends Threshold {
 		}
 
 		// Add offset from input
-		startTime += this.getOffsetInHours();
+		startTime += offset.getValue()/3600.0;
 		startTime = Math.max(startTime, 0.0);
 
 		// Find the next change point after startTime
@@ -390,7 +331,7 @@ public class TimeSeriesThreshold extends Threshold {
 			// Closed index
 			if( this.isPointClosedAtHours(changeTime) ) {
 
-				double timeUntilClose = changeTime - this.getLookAheadInHours() - startTime;
+				double timeUntilClose = changeTime - lookAhead.getValue()/3600.0 - startTime;
 
 				// if the time required is 0.0, the lookahead window is equal to the time until the next closed point.
 				// Need to wait at least one clock tick before closing again.
@@ -406,14 +347,9 @@ public class TimeSeriesThreshold extends Threshold {
 	 */
 	public double getNextChangeTimeAfterHours(double hours) {
 		double simTime = hours * 3600.0;
-		double firstChange = this.getTimeSeries().getNextTimeAfter(simTime);
-
-		if (maxOpenLimit.getValue() != null)
-			firstChange = Math.min(firstChange, maxOpenLimit.getValue().getNextTimeAfter(simTime));
-
-		if (minOpenLimit.getValue() != null)
-			firstChange = Math.min(firstChange, minOpenLimit.getValue().getNextTimeAfter(simTime));
-
+		double firstChange = timeSeries.getValue().getNextTimeAfter(simTime);
+		firstChange = Math.min(firstChange, maxOpenLimit.getValue().getNextTimeAfter(simTime));
+		firstChange = Math.min(firstChange, minOpenLimit.getValue().getNextTimeAfter(simTime));
 		return firstChange/3600.0;
 	}
 
@@ -422,15 +358,9 @@ public class TimeSeriesThreshold extends Threshold {
 	 * determine whether the series has cycled around once while finding the next open/close time.
 	 */
 	public double getMaxTimeValueFromTimeSeries() {
-		double maxCycle = this.getTimeSeries().getMaxTimeValue();
-
-		if (maxOpenLimit.getValue() != null)
-			maxCycle = Math.max(maxCycle, maxOpenLimit.getValue().getMaxTimeValue());
-
-		if (minOpenLimit.getValue() != null)
-			maxCycle = Math.max(maxCycle, minOpenLimit.getValue().getMaxTimeValue());
-
-		// return in hours for now
+		double maxCycle = timeSeries.getValue().getMaxTimeValue();
+		maxCycle = Math.max(maxCycle, maxOpenLimit.getValue().getMaxTimeValue());
+		maxCycle = Math.max(maxCycle, minOpenLimit.getValue().getMaxTimeValue());
 		return maxCycle / 3600.0d;
 	}
 
@@ -439,29 +369,18 @@ public class TimeSeriesThreshold extends Threshold {
 	 * MinOpenLimit.
 	 */
 	public boolean isPointClosedAtHours( double time ) {
-		double secs = time * 3600.0d;
-		double value = this.getTimeSeries().getNextSample(secs);
+		double simTime = time * 3600.0d;
+		double value = timeSeries.getValue().getNextSample(simTime);
 
-		double minOpenLimitVal = Double.NEGATIVE_INFINITY;
-		if (minOpenLimit.getValue() != null)
-			minOpenLimitVal = minOpenLimit.getValue().getNextSample(secs);
-
-		double maxOpenLimitVal = Double.POSITIVE_INFINITY;
-		if (maxOpenLimit.getValue() != null)
-			maxOpenLimitVal = maxOpenLimit.getValue().getNextSample(secs);
+		double minOpenLimitVal = minOpenLimit.getValue().getNextSample(simTime);
+		double maxOpenLimitVal = maxOpenLimit.getValue().getNextSample(simTime);
 
 		// Error check that threshold limits remain consistent
 		if (minOpenLimitVal > maxOpenLimitVal)
 			error("MaxOpenLimit must be larger than MinOpenLimit. MaxOpenLimit: %s, MinOpenLimit: %s, time: %s",
-					maxOpenLimitVal, minOpenLimitVal, secs);
+					maxOpenLimitVal, minOpenLimitVal, simTime);
 
-		if (value > maxOpenLimitVal)
-			return true;
-
-		if (value < minOpenLimitVal)
-			return true;
-
-		return false;
+		return (value > maxOpenLimitVal) || (value < minOpenLimitVal);
 	}
 
 }
