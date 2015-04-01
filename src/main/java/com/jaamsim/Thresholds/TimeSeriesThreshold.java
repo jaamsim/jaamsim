@@ -105,6 +105,11 @@ public class TimeSeriesThreshold extends Threshold {
 		if (timeSeries.getValue() == null)
 			throw new InputErrorException( "Missing TimeSeries" );
 
+		if( (maxOpenLimit.getValue().getMinValue() == Double.POSITIVE_INFINITY) &&
+				(minOpenLimit.getValue().getMaxValue() == Double.NEGATIVE_INFINITY) ) {
+			throw new InputErrorException( "Missing Limit" );
+		}
+
 		if (minOpenLimit.getValue().getMaxValue() > maxOpenLimit.getValue().getMaxValue())
 			throw new InputErrorException("MaxOpenLimit must be larger than MinOpenLimit");
 
