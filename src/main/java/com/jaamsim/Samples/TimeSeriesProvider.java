@@ -18,4 +18,8 @@ package com.jaamsim.Samples;
 public interface TimeSeriesProvider extends SampleProvider {
 	public double getNextTimeAfter(double simTime);
 	public double getMaxTimeValue();
+
+	public double getValueForTicks(long ticks);
+	public long getNextChangeAfterTicks(long ticks);
+	public long getMaxTicksValue();
 }

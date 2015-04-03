@@ -41,8 +41,18 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	}
 
 	@Override
+	public double getValueForTicks(long ticks) {
+		return val;
+	}
+
+	@Override
 	public double getNextTimeAfter(double simTime) {
 		return Double.POSITIVE_INFINITY;
+	}
+
+	@Override
+	public long getNextChangeAfterTicks(long ticks) {
+		return Long.MAX_VALUE;
 	}
 
 	@Override
@@ -58,6 +68,11 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	@Override
 	public double getMaxTimeValue() {
 		return 0.0;
+	}
+
+	@Override
+	public long getMaxTicksValue() {
+		return 0;
 	}
 
 	@Override

@@ -119,6 +119,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	 * Returns the value for time series at the given simulation time.
 	 * @param ticks - simulation time in clock ticks.
 	 */
+	@Override
 	public double getValueForTicks(long ticks) {
 		return value.getValue().valueList[ getIndexForTicks(ticks) ];
 	}
@@ -164,6 +165,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	 * @param ticks - simulation time in clock ticks.
 	 * @return simulation time in clock ticks at which the time series value will change.
 	 */
+	@Override
 	public long getNextChangeAfterTicks(long ticks) {
 
 		int index = this.getIndexForTicks(ticks);
@@ -201,6 +203,15 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 
 		long[] ticksList = value.getValue().ticksList;
 		return getSimTime( ticksList[ ticksList.length-1 ] );
+	}
+
+	@Override
+	public long getMaxTicksValue() {
+		if (cycleTime.getValue() < Double.POSITIVE_INFINITY)
+			return getTicks(cycleTime.getValue());
+
+		long[] ticksList = value.getValue().ticksList;
+		return ticksList[ ticksList.length-1 ];
 	}
 
 	@Override
