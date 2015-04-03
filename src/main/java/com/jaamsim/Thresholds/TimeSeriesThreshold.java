@@ -151,20 +151,20 @@ public class TimeSeriesThreshold extends Threshold {
 	private final ProcessTarget doOpenClose = new DoOpenCloseTarget(this, "doOpenClose");
 
 	public void doOpenClose() {
-		double wait;
-		if( this.isClosedAtTime( getCurrentTime() ) ) {
-			setOpen(false);
-			wait = this.calcClosedTimeFromTime( getCurrentTime() );
+		long wait;
+		if (this.isOpenAtTicks(getSimTicks())) {
+			setOpen(true);
+			wait = this.calcOpenTicksFromTicks(getSimTicks());
 		}
 		else {
-			setOpen(true);
-			wait = this.calcOpenTimeFromTime( getCurrentTime() );
+			setOpen(false);
+			wait = this.calcClosedTicksFromTicks(getSimTicks());
 		}
 
-		if( wait == Double.POSITIVE_INFINITY )
+		if (wait == Long.MAX_VALUE)
 			return;
 
-		this.scheduleProcess(wait * 3600.0d, 1, doOpenClose);
+		this.scheduleProcessTicks(wait, 1, doOpenClose);
 	}
 
 	/**
