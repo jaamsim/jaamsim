@@ -17,15 +17,15 @@ package com.jaamsim.Samples;
 import com.jaamsim.datatypes.DoubleVector;
 
 public class TimeSeriesData {
-	final long[] usecList;    // time in microseconds corresponding to each value
+	final long[] ticksList;   // time in clock ticks corresponding to each value
 	final double[] valueList;
 	private double maxValue;  // The maximum value that occurs in valueList
 	private double minValue;  // The minimum value that occurs in valueList
 
 	public TimeSeriesData( DoubleVector times, DoubleVector values ) {
-		usecList = new long[times.size()];
+		ticksList = new long[times.size()];
 		for (int i = 0; i < times.size(); i++) {
-			usecList[i] = Math.round(times.get(i));
+			ticksList[i] = Math.round(times.get(i));
 		}
 
 		valueList = new double[values.size()];

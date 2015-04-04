@@ -17,6 +17,7 @@ package com.jaamsim.Samples;
 import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -75,11 +76,16 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		if( unitType.getValue() == null )
 			throw new InputErrorException( "UnitType must be specified first" );
 
-		if( value.getValue() == null || value.getValue().usecList.length == 0 )
+		if (value.getTickLength() != Simulation.getTickLength())
+			throw new InputErrorException("A new value was entered for the Simulation keyword TickLength " +
+					"after the TimeSeries data had been loaded.%n" +
+					"The configuration file must be saved and reloaded before the simulation can be executed.");
+
+		if( value.getValue() == null || value.getValue().ticksList.length == 0 )
 			throw new InputErrorException( "Time series Value must be specified" );
 
-		long[] usecList = value.getValue().usecList;
-		if (getUsec(cycleTime.getValue()) < usecList[usecList.length - 1])
+		long[] ticksList = value.getValue().ticksList;
+		if (getTicks(cycleTime.getValue()) < ticksList[ticksList.length - 1])
 			throw new InputErrorException( "CycleTime must be larger than the last time in the series" );
 	}
 
@@ -99,58 +105,45 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		return unitType.getUnitType();
 	}
 
+	private long getTicks(double simTime) {
+		return FrameBox.secondsToTicks(simTime);
+	}
+
+	private double getSimTime(long ticks) {
+		if (ticks == Long.MAX_VALUE)
+			return Double.POSITIVE_INFINITY;
+		return FrameBox.ticksToSeconds(ticks);
+	}
+
 	/**
 	 * Returns the value for time series at the given simulation time.
-	 * @param ticks - simulation time in microseconds.
+	 * @param ticks - simulation time in clock ticks.
 	 */
-	public double getValueForUsec(long usec) {
-		return value.getValue().valueList[ getIndexForUsec(usec) ];
+	public double getValueForTicks(long ticks) {
+		return value.getValue().valueList[ getIndexForTicks(ticks) ];
 	}
 
 	/**
-	 * Converts the given simulation time in seconds to the nearest number of
-	 * microseconds.
-	 * @param simTime - simulation time in seconds.
-	 * @return simulation time in microseconds.
-	 */
-	public long getUsec(double simTime) {
-		return Math.round(simTime * 1.0e6);
-	}
-
-	private long getTicks(long usec) {
-		if (usec == Long.MAX_VALUE)
-			return Long.MAX_VALUE;
-		return FrameBox.secondsToTicks(usec / 1.0e6);
-	}
-
-	private double getSimTimeForUsec(long usec) {
-		if (usec == Long.MAX_VALUE)
-			return Double.POSITIVE_INFINITY;
-		return usec / 1.0e6;
-	}
-
-	/**
-	 * Returns the index for the given simulation time in microseconds.
-	 * @param usec - simulation time in microseconds.
+	 * Returns the index in the time series for the given simulation time.
+	 * @param ticks - simulation time in clock ticks.
 	 * @return index in the times series for the given simulation time.
 	 */
-	private int getIndexForUsec(long usec) {
+	private int getIndexForTicks(long ticks) {
 
-		long[] usecList = value.getValue().usecList;
-		if (usec == Long.MAX_VALUE)
-			return usecList.length - 1;
+		long[] ticksList = value.getValue().ticksList;
+		if (ticks == Long.MAX_VALUE)
+			return ticksList.length - 1;
 
 		// Find the time within the present cycle
-		long usecInCycle = usec % getUsec(cycleTime.getValue());
+		long ticksInCycle = ticks % getTicks(cycleTime.getValue());
 
 		// If the time in the cycle is greater than the last time, return the last value
-		long ticksInCycle = getTicks(usecInCycle);
-		if (ticksInCycle >= getTicks(usecList[usecList.length - 1])) {
-			return usecList.length - 1;
+		if (ticksInCycle >= ticksList[ticksList.length - 1]) {
+			return ticksList.length - 1;
 		}
 
 		// Find the index by binary search
-		int index = Arrays.binarySearch(usecList, usecInCycle);
+		int index = Arrays.binarySearch(ticksList, ticksInCycle);
 
 		// If the returned index is greater or equal to zero,
 		// then an exact match was found
@@ -158,39 +151,34 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 			return index;
 
 		if (index == -1)
-			error("No value found at time: %f", usec/1.0e6);
+			error("No value found at time: %f", getSimTime(ticks));
 
 		// If the returned index is negative, then (insertion index) = -index-1
-
-		// If the time at the insertion index is within one tick, then return it
-		if (getTicks(usecInCycle) == getTicks(usecList[-index - 1]))
-			return -index - 1;
-
 		// Return the index before the insertion index
 		return -index - 2;
 	}
 
 	/**
 	 * Return the first time that the value will be updated, after the given
-	 * simulation time in microseconds.
-	 * @param usec - simulation time in microseconds.
-	 * @return simulation time in microseconds at which the time series value will change.
+	 * simulation time.
+	 * @param ticks - simulation time in clock ticks.
+	 * @return simulation time in clock ticks at which the time series value will change.
 	 */
-	public long getNextChangeAfterUsec(long usec) {
+	public long getNextChangeAfterTicks(long ticks) {
 
-		int index = this.getIndexForUsec(usec);
-		long[] usecList = value.getValue().usecList;
-		long cycleUsec = getUsec(cycleTime.getValue());
-		long startOfCycle = usec - (usec % cycleUsec);
+		int index = this.getIndexForTicks(ticks);
+		long[] ticksList = value.getValue().ticksList;
+		long cycleTimeInTicks = getTicks(cycleTime.getValue());
+		long startOfCycle = ticks - (ticks % cycleTimeInTicks);
 
 		// If the last entry in the list, then the next change is the end of the cycle
-		if (index == usecList.length-1) {
-			if (cycleUsec == Long.MAX_VALUE)
+		if (index == ticksList.length-1) {
+			if (cycleTimeInTicks == Long.MAX_VALUE)
 				return Long.MAX_VALUE;
-			return startOfCycle + cycleUsec;
+			return startOfCycle + cycleTimeInTicks;
 		}
 
-		return startOfCycle + usecList[index+1];
+		return startOfCycle + ticksList[index+1];
 	}
 
 	@Output(name = "PresentValue",
@@ -198,12 +186,12 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	        unitType = UserSpecifiedUnit.class)
 	@Override
 	public final double getNextSample(double simTime) {
-		return value.getValue().valueList[ getIndexForUsec(getUsec(simTime)) ];
+		return value.getValue().valueList[ getIndexForTicks(getTicks(simTime)) ];
 	}
 
 	@Override
 	public double getNextTimeAfter(double simTime) {
-		return getSimTimeForUsec( getNextChangeAfterUsec(getUsec(simTime)) );
+		return getSimTime( getNextChangeAfterTicks(getTicks(simTime)) );
 	}
 
 	@Override
@@ -211,8 +199,8 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		if (cycleTime.getValue() < Double.POSITIVE_INFINITY)
 			return cycleTime.getValue();
 
-		long[] usecList = value.getValue().usecList;
-		return getSimTimeForUsec( usecList[ usecList.length-1 ] );
+		long[] ticksList = value.getValue().ticksList;
+		return getSimTime( ticksList[ ticksList.length-1 ] );
 	}
 
 	@Override

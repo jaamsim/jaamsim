@@ -410,6 +410,10 @@ public class Simulation extends Entity {
 		return (1.0d / getSimTimeFactor());
 	}
 
+	public static double getTickLength() {
+		return tickLengthInput.getValue();
+	}
+
 	public static double getPauseTime() {
 		return pauseTime.getValue();
 	}

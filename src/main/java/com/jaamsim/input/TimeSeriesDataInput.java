@@ -17,6 +17,7 @@ package com.jaamsim.input;
 import java.util.ArrayList;
 
 import com.jaamsim.Samples.TimeSeriesData;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -25,7 +26,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 
 public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 	private Class<? extends Unit> unitType;
-
+	private double tickLength;  // simulation clock tick length used to convert times into ticks
 	private double maxValue = Double.POSITIVE_INFINITY;
 	private double minValue = Double.NEGATIVE_INFINITY;
 
@@ -36,6 +37,9 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 	@Override
 	public void parse(KeywordIndex kw) throws InputErrorException {
+
+		// Set the clock tick length
+		tickLength = Simulation.getTickLength();
 
 		if (unitType == UserSpecifiedUnit.class)
 			throw new InputErrorException(INP_ERR_UNITUNSPECIFIED);
@@ -106,7 +110,7 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			DoubleVector v = Input.parseDoubles(each, minValue, maxValue, unitType);
 
 			// Store the time and value for this record
-			times.add((double) usOffset);
+			times.add( usOffset/(1.0e6*tickLength) );
 			values.add(v.get(0));
 		}
 
@@ -116,5 +120,9 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 
 	public void setUnitType(Class<? extends Unit> u) {
 		unitType = u;
+	}
+
+	public double getTickLength() {
+		return tickLength;
 	}
 }
