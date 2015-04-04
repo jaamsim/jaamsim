@@ -195,9 +195,8 @@ public class TimeSeriesThreshold extends Threshold {
 		long changeTime = ticks;
 
 		// if the current point is closed, we are done
-		if( !this.isPointOpenAtTicks(changeTime) ) {
+		if (!this.isPointOpenAtTicks(changeTime))
 			return false;
-		}
 
 		// If there is no lookahead, then the threshold is open
 		long lookAheadInTicks = FrameBox.secondsToTicks(lookAhead.getValue());
@@ -233,10 +232,9 @@ public class TimeSeriesThreshold extends Threshold {
 			return 0;
 
 		// If the threshold is not closed at the given time, return 0.0
-		// This check must occur before adding the offset because isClosedAtTIme also adds the offset
-		if( this.isOpenAtTicks(ticks) ) {
+		// This check must occur before adding the offset because isClosedAtTicks also adds the offset
+		if (this.isOpenAtTicks(ticks))
 			return 0;
-		}
 
 		// Add offset from input
 		ticks += FrameBox.secondsToTicks(offset.getValue());
@@ -250,15 +248,11 @@ public class TimeSeriesThreshold extends Threshold {
 		while( true ) {
 			changeTime = this.getNextChangeAfterTicks(changeTime);
 
-			if( changeTime == Long.MAX_VALUE ) {
-
-				// If an open point was found, it will be open forever
-				if( openTime != -1 ) {
+			if (changeTime == Long.MAX_VALUE) {
+				if( openTime == -1 )
+					return Long.MAX_VALUE;
+				else
 					return openTime - ticks;
-				}
-
-				// Threshold will never be open
-				return Long.MAX_VALUE;
 			}
 
 			// if have already searched the longest cycle, the threshold will never open
@@ -266,30 +260,27 @@ public class TimeSeriesThreshold extends Threshold {
 				return Long.MAX_VALUE;
 
 			// Closed index
-			if( !this.isPointOpenAtTicks(changeTime) ) {
+			if (!this.isPointOpenAtTicks(changeTime)) {
 
 				// If an open point has not been found yet, keep looking
-				if( openTime == -1 ) {
+				if (openTime == -1)
 					continue;
-				}
 
 				// Has enough time been gathered to satisfy the lookahead?
-				long openDuration = changeTime - openTime;
-				if( openDuration >= lookAheadInTicks ) {
+				if (changeTime - openTime >= lookAheadInTicks)
 					return openTime - ticks;
-				}
+
 				// not enough time, need to start again
-				else {
+				else
 					openTime = -1;
-				}
 			}
+
 			// Open index
 			else {
 
 				// Keep track of the first open index.
-				if( openTime == -1 ) {
+				if (openTime == -1)
 					openTime = changeTime;
-				}
 			}
 		}
 	}
@@ -322,7 +313,7 @@ public class TimeSeriesThreshold extends Threshold {
 	private long calcOpenTicksFromTicks(long ticks) {
 
 		// If the series is always outside the limits, the threshold is closed forever
-		if(isAlwaysClosed())
+		if (isAlwaysClosed())
 			return 0;
 
 		// If the series is always within the limits, the threshold is open forever
@@ -331,9 +322,8 @@ public class TimeSeriesThreshold extends Threshold {
 
 		// If the threshold is closed at the given time, return 0.0
 		// This check must occur before adding the offset because isClosedAtTIme also adds the offset
-		if( !this.isOpenAtTicks(ticks) ) {
+		if (!this.isOpenAtTicks(ticks))
 			return 0;
-		}
 
 		// Add offset from input
 		ticks += FrameBox.secondsToTicks(offset.getValue());
