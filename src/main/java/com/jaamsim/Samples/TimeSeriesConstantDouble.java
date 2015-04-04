@@ -66,11 +66,6 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	}
 
 	@Override
-	public double getMaxTimeValue() {
-		return 0.0;
-	}
-
-	@Override
 	public long getMaxTicksValue() {
 		return 0;
 	}

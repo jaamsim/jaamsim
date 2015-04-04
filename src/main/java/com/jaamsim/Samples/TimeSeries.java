@@ -197,15 +197,6 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	}
 
 	@Override
-	public double getMaxTimeValue() {
-		if (cycleTime.getValue() < Double.POSITIVE_INFINITY)
-			return cycleTime.getValue();
-
-		long[] ticksList = value.getValue().ticksList;
-		return getSimTime( ticksList[ ticksList.length-1 ] );
-	}
-
-	@Override
 	public long getMaxTicksValue() {
 		if (cycleTime.getValue() < Double.POSITIVE_INFINITY)
 			return getTicks(cycleTime.getValue());
