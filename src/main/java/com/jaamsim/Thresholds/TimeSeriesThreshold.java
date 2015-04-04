@@ -16,7 +16,6 @@ package com.jaamsim.Thresholds;
 
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
 import com.jaamsim.basicsim.EntityTarget;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -167,42 +166,14 @@ public class TimeSeriesThreshold extends Threshold {
 		this.scheduleProcessTicks(wait, 1, doOpenClose);
 	}
 
-	/**
-	 * Return TRUE if the threshold is closed at the given time
-	 * @param time - The time in hours
-	 */
-	public boolean isClosedAtTime( double time ) {
-
-		// Add offset from input
-		time += offset.getValue()/3600.0;
-		time = Math.max(time, 0.0);
-
-		double changeTime = time;
-
-		// if the current point is closed, we are done
-		if( this.isPointClosedAtHours(changeTime) ) {
-			return true;
-		}
-
-		while( true ) {
-
-			// Current point is open
-			// If there has already been lookahead hours since the given time, the threshold is open
-			if (changeTime - lookAhead.getValue()/3600.0 > time)
-				return false;
-
-			// If the next point is closed, determine if open long enough too satisfy lookahead
-			changeTime = this.getNextChangeTimeAfterHours(changeTime);
-			if( this.isPointClosedAtHours(changeTime) ) {
-				return (changeTime - lookAhead.getValue()/3600.0) < time;
-			}
-		}
-	}
-
 	public boolean isOpenAtTime(double simTime) {
 		return isOpenAtTicks(FrameBox.secondsToTicks(simTime));
 	}
 
+	/**
+	 * Return TRUE if the threshold is open at the given time
+	 * @param ticks - simulation time in clock ticks
+	 */
 	public boolean isOpenAtTicks(long ticks) {
 
 		// Add offset from input
@@ -229,85 +200,6 @@ public class TimeSeriesThreshold extends Threshold {
 			changeTime = this.getNextChangeAfterTicks(changeTime);
 			if( !this.isPointOpenAtTicks(changeTime) ) {
 				return (changeTime - lookAheadInTicks) >= ticks;
-			}
-		}
-	}
-
-	private static final double doubleTolerance = 1.0E-9;
-	private boolean greaterCheckTolerance( double first, double second ) {
-		return (first - doubleTolerance) >= second;
-	}
-
-	/**
-	 * Return the time in hours during which the threshold is closed starting from the given time.
-	 */
-	private double calcClosedTimeFromTime( double startTime ) {
-
-		// If the series is always outside the limits, the threshold is closed forever
-		if (isAlwaysClosed())
-			return Double.POSITIVE_INFINITY;
-
-		// If the series is always within the limits, the threshold is open forever
-		if (this.isAlwaysOpen())
-			return 0.0;
-
-		// If the threshold is not closed at the given time, return 0.0
-		// This check must occur before adding the offset because isClosedAtTIme also adds the offset
-		if( ! this.isClosedAtTime(startTime) ) {
-			return 0.0;
-		}
-
-		// Add offset from input
-		startTime += offset.getValue()/3600.0;
-		startTime = Math.max(startTime, 0.0);
-
-		// Threshold is currently closed. Find the next open point
-		double openTime = -1;
-		double changeTime = startTime;
-		double maxTimeValueFromTimeSeries = this.getMaxTimeValueFromTimeSeries();
-		while( true ) {
-			changeTime = this.getNextChangeTimeAfterHours( changeTime );
-
-			if( changeTime == Double.POSITIVE_INFINITY ) {
-
-				// If an open point was found, it will be open forever
-				if( openTime != -1 ) {
-					return openTime - startTime;
-				}
-
-				// Threshold will never be open
-				return Double.POSITIVE_INFINITY;
-			}
-
-			// if have already searched the longest cycle, the threshold will never open
-			if (greaterCheckTolerance(changeTime, startTime + maxTimeValueFromTimeSeries + lookAhead.getValue()/3600.0 ))
-				return Double.POSITIVE_INFINITY;
-
-			// Closed index
-			if( this.isPointClosedAtHours(changeTime) ) {
-
-				// If an open point has not been found yet, keep looking
-				if( openTime == -1 ) {
-					continue;
-				}
-
-				// Has enough time been gathered to satisfy the lookahead?
-				double openDuration = changeTime - openTime;
-				if( openDuration >= lookAhead.getValue()/3600.0 ) {
-					return openTime - startTime;
-				}
-				// not enough time, need to start again
-				else {
-					openTime = -1;
-				}
-			}
-			// Open index
-			else {
-
-				// Keep track of the first open index.
-				if( openTime == -1 ) {
-					openTime = changeTime;
-				}
 			}
 		}
 	}
@@ -408,54 +300,6 @@ public class TimeSeriesThreshold extends Threshold {
 	}
 
 	/**
-	 * Return the time in hours during which the threshold is open starting from the given time.
-	 */
-	public double calcOpenTimeFromTime( double startTime ) {
-
-		// If the series is always outside the limits, the threshold is closed forever
-		if(isAlwaysClosed())
-			return 0.0;
-
-		// If the series is always within the limits, the threshold is open forever
-		if (this.isAlwaysOpen())
-			return Double.POSITIVE_INFINITY;
-
-		// If the threshold is closed at the given time, return 0.0
-		// This check must occur before adding the offset because isClosedAtTIme also adds the offset
-		if( this.isClosedAtTime(startTime) ) {
-			return 0.0;
-		}
-
-		// Add offset from input
-		startTime += offset.getValue()/3600.0;
-		startTime = Math.max(startTime, 0.0);
-
-		// Find the next change point after startTime
-		double changeTime = startTime;
-		double maxTimeValueFromTimeSeries = this.getMaxTimeValueFromTimeSeries();
-		while( true ) {
-			changeTime = this.getNextChangeTimeAfterHours( changeTime );
-
-			if( changeTime == Double.POSITIVE_INFINITY )
-				return Double.POSITIVE_INFINITY;
-
-			// if have already searched the longest cycle, the threshold will never close
-			if( changeTime > startTime + maxTimeValueFromTimeSeries )
-				return Double.POSITIVE_INFINITY;
-
-			// Closed index
-			if( this.isPointClosedAtHours(changeTime) ) {
-
-				double timeUntilClose = changeTime - lookAhead.getValue()/3600.0 - startTime;
-
-				// if the time required is 0.0, the lookahead window is equal to the time until the next closed point.
-				// Need to wait at least one clock tick before closing again.
-				return Math.max(timeUntilClose, Simulation.getEventTolerance());
-			}
-		}
-	}
-
-	/**
 	 * Return the time during which the threshold is open starting from the given time.
 	 */
 	public long calcOpenTicksFromTicks(long ticks) {
@@ -506,21 +350,6 @@ public class TimeSeriesThreshold extends Threshold {
 
 	/**
 	 * Return the next time that one of the parameters TimeSeries, MaxOpenLimit, or MinOpenLimit will change, after the given time.
-	 * @param time
-	 * @return
-	 */
-	public double getNextChangeTimeAfterHours(double hours) {
-		double simTime = hours * 3600.0;
-		double firstChange = timeSeries.getValue().getNextTimeAfter(simTime);
-		firstChange = Math.min(firstChange, maxOpenLimit.getValue().getNextTimeAfter(simTime));
-		firstChange = Math.min(firstChange, minOpenLimit.getValue().getNextTimeAfter(simTime));
-		return firstChange/3600.0;
-	}
-
-	/**
-	 * Return the next time that one of the parameters TimeSeries, MaxOpenLimit, or MinOpenLimit will change, after the given time.
-	 * @param ticks - simulation time in ticks.
-	 * @return
 	 */
 	public long getNextChangeAfterTicks(long ticks) {
 		long firstChange = timeSeries.getValue().getNextChangeAfterTicks(ticks);
@@ -533,41 +362,11 @@ public class TimeSeriesThreshold extends Threshold {
 	 * Return either the longest cycle, or the largest time in TimeSeries, MaxOpenLimit, and MinOpenLimit. This value is used to
 	 * determine whether the series has cycled around once while finding the next open/close time.
 	 */
-	public double getMaxTimeValueFromTimeSeries() {
-		double maxCycle = timeSeries.getValue().getMaxTimeValue();
-		maxCycle = Math.max(maxCycle, maxOpenLimit.getValue().getMaxTimeValue());
-		maxCycle = Math.max(maxCycle, minOpenLimit.getValue().getMaxTimeValue());
-		return maxCycle / 3600.0d;
-	}
-
-	/**
-	 * Return either the longest cycle, or the largest time in TimeSeries, MaxOpenLimit, and MinOpenLimit. This value is used to
-	 * determine whether the series has cycled around once while finding the next open/close time.
-	 */
 	public long getMaxTicksValueFromTimeSeries() {
 		long maxCycle = timeSeries.getValue().getMaxTicksValue();
 		maxCycle = Math.max(maxCycle, maxOpenLimit.getValue().getMaxTicksValue());
 		maxCycle = Math.max(maxCycle, minOpenLimit.getValue().getMaxTicksValue());
 		return maxCycle;
-	}
-
-	/**
-	 * Return TRUE if, at the given time, the TimeSeries input value falls outside of the values for MaxOpenLimit and
-	 * MinOpenLimit.
-	 */
-	public boolean isPointClosedAtHours( double time ) {
-		double simTime = time * 3600.0d;
-		double value = timeSeries.getValue().getNextSample(simTime);
-
-		double minOpenLimitVal = minOpenLimit.getValue().getNextSample(simTime);
-		double maxOpenLimitVal = maxOpenLimit.getValue().getNextSample(simTime);
-
-		// Error check that threshold limits remain consistent
-		if (minOpenLimitVal > maxOpenLimitVal)
-			error("MaxOpenLimit must be larger than MinOpenLimit. MaxOpenLimit: %s, MinOpenLimit: %s, time: %s",
-					maxOpenLimitVal, minOpenLimitVal, simTime);
-
-		return (value > maxOpenLimitVal) || (value < minOpenLimitVal);
 	}
 
 	/**
