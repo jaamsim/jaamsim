@@ -149,6 +149,9 @@ public class TimeSeriesThreshold extends Threshold {
 
 	private final ProcessTarget doOpenClose = new DoOpenCloseTarget(this, "doOpenClose");
 
+	/**
+	 * The process loop that opens and closes the threshold.
+	 */
 	public void doOpenClose() {
 		long wait;
 		if (this.isOpenAtTicks(getSimTicks())) {
@@ -166,6 +169,11 @@ public class TimeSeriesThreshold extends Threshold {
 		this.scheduleProcessTicks(wait, 1, doOpenClose);
 	}
 
+	/**
+	 * Return TRUE if the threshold is open at the given time
+	 * @param simTime - simulation time in seconds
+	 * @return TRUE if open, FALSE if closed
+	 */
 	public boolean isOpenAtTime(double simTime) {
 		return isOpenAtTicks(FrameBox.secondsToTicks(simTime));
 	}
@@ -173,8 +181,9 @@ public class TimeSeriesThreshold extends Threshold {
 	/**
 	 * Return TRUE if the threshold is open at the given time
 	 * @param ticks - simulation time in clock ticks
+	 * @return TRUE if open, FALSE if closed
 	 */
-	public boolean isOpenAtTicks(long ticks) {
+	private boolean isOpenAtTicks(long ticks) {
 
 		// Add offset from input
 		ticks += FrameBox.secondsToTicks(offset.getValue());
@@ -206,6 +215,8 @@ public class TimeSeriesThreshold extends Threshold {
 
 	/**
 	 * Return the time during which the threshold is closed starting from the given time.
+	 * @param ticks - simulation time in clock ticks
+	 * @return the time in clock ticks that the threshold is closed
 	 */
 	private long calcClosedTicksFromTicks(long ticks) {
 
@@ -279,7 +290,7 @@ public class TimeSeriesThreshold extends Threshold {
 		}
 	}
 
-	public boolean isAlwaysOpen() {
+	private boolean isAlwaysOpen() {
 		double tsMin = timeSeries.getValue().getMinValue();
 		double tsMax = timeSeries.getValue().getMaxValue();
 
@@ -289,7 +300,7 @@ public class TimeSeriesThreshold extends Threshold {
 		return (tsMin >= maxMinOpen && tsMax <= minMaxOpen);
 	}
 
-	public boolean isAlwaysClosed() {
+	private boolean isAlwaysClosed() {
 		double tsMin = timeSeries.getValue().getMinValue();
 		double tsMax = timeSeries.getValue().getMaxValue();
 
@@ -301,8 +312,10 @@ public class TimeSeriesThreshold extends Threshold {
 
 	/**
 	 * Return the time during which the threshold is open starting from the given time.
+	 * @param ticks - simulation time in clock ticks
+	 * @return the time in clock ticks that the threshold is open
 	 */
-	public long calcOpenTicksFromTicks(long ticks) {
+	private long calcOpenTicksFromTicks(long ticks) {
 
 		// If the series is always outside the limits, the threshold is closed forever
 		if(isAlwaysClosed())
@@ -349,9 +362,12 @@ public class TimeSeriesThreshold extends Threshold {
 	}
 
 	/**
-	 * Return the next time that one of the parameters TimeSeries, MaxOpenLimit, or MinOpenLimit will change, after the given time.
+	 * Returns the next time that one of the parameters TimeSeries, MaxOpenLimit, or MinOpenLimit
+	 * will change, after the given time.
+	 * @param ticks - simulation time in clock ticks.
+	 * @return the next time in clock ticks that a change will occur
 	 */
-	public long getNextChangeAfterTicks(long ticks) {
+	private long getNextChangeAfterTicks(long ticks) {
 		long firstChange = timeSeries.getValue().getNextChangeAfterTicks(ticks);
 		firstChange = Math.min(firstChange, maxOpenLimit.getValue().getNextChangeAfterTicks(ticks));
 		firstChange = Math.min(firstChange, minOpenLimit.getValue().getNextChangeAfterTicks(ticks));
@@ -359,10 +375,11 @@ public class TimeSeriesThreshold extends Threshold {
 	}
 
 	/**
-	 * Return either the longest cycle, or the largest time in TimeSeries, MaxOpenLimit, and MinOpenLimit. This value is used to
-	 * determine whether the series has cycled around once while finding the next open/close time.
+	 * Returns the largest time in TimeSeries, MaxOpenLimit, and MinOpenLimit time series.
+	 * This value is used to determine whether the series has cycled around once while finding the next open/close time.
+	 * @return the last time in clock ticks that a change will occur
 	 */
-	public long getMaxTicksValueFromTimeSeries() {
+	private long getMaxTicksValueFromTimeSeries() {
 		long maxCycle = timeSeries.getValue().getMaxTicksValue();
 		maxCycle = Math.max(maxCycle, maxOpenLimit.getValue().getMaxTicksValue());
 		maxCycle = Math.max(maxCycle, minOpenLimit.getValue().getMaxTicksValue());
@@ -371,9 +388,11 @@ public class TimeSeriesThreshold extends Threshold {
 
 	/**
 	 * Return TRUE if, at the given time, the TimeSeries input value falls outside of the values for MaxOpenLimit and
-	 * MinOpenLimit.
+	 * MinOpenLimit. Does not include the effect of the offset value.
+	 * @param ticks - simulation time in clock ticks.
+	 * @return TRUE if open, FALSE if closed
 	 */
-	public boolean isPointOpenAtTicks(long ticks) {
+	private boolean isPointOpenAtTicks(long ticks) {
 
 		double value = timeSeries.getValue().getValueForTicks(ticks);
 		double minOpenLimitVal = minOpenLimit.getValue().getValueForTicks(ticks);
