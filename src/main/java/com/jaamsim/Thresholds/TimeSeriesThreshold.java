@@ -199,6 +199,36 @@ public class TimeSeriesThreshold extends Threshold {
 		}
 	}
 
+	public boolean isOpenAtTicks(long ticks) {
+
+		// Add offset from input
+		ticks += FrameBox.secondsToTicks(offset.getValue());
+		ticks = Math.max(ticks, 0);
+
+		long changeTime = ticks;
+
+		// if the current point is closed, we are done
+		if( !this.isPointOpenAtTicks(changeTime) ) {
+			return false;
+		}
+
+		long lookAheadInTicks = FrameBox.secondsToTicks(lookAhead.getValue());
+
+		while( true ) {
+
+			// Current point is open
+			// If there has already been lookahead hours since the given time, the threshold is open
+			if (changeTime - lookAheadInTicks > ticks)
+				return true;
+
+			// If the next point is closed, determine if open long enough too satisfy lookahead
+			changeTime = this.getNextChangeAfterTicks(changeTime);
+			if( !this.isPointOpenAtTicks(changeTime) ) {
+				return (changeTime - lookAheadInTicks) >= ticks;
+			}
+		}
+	}
+
 	private static final double doubleTolerance = 1.0E-9;
 	private boolean greaterCheckTolerance( double first, double second ) {
 		return (first - doubleTolerance) >= second;
