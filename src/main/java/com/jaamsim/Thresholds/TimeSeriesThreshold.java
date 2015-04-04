@@ -179,7 +179,10 @@ public class TimeSeriesThreshold extends Threshold {
 	}
 
 	/**
-	 * Return TRUE if the threshold is open at the given time
+	 * Returns TRUE if the threshold is open at the given time.
+	 * <p>
+	 * Note: if lookahead > 0, the condition for open is that opentime >= lookahead.
+	 * However, if the lookahead == 0, the condition for open is that opentime > lookahead.
 	 * @param ticks - simulation time in clock ticks
 	 * @return TRUE if open, FALSE if closed
 	 */
@@ -196,20 +199,21 @@ public class TimeSeriesThreshold extends Threshold {
 			return false;
 		}
 
+		// If there is no lookahead, then the threshold is open
 		long lookAheadInTicks = FrameBox.secondsToTicks(lookAhead.getValue());
+		if (lookAheadInTicks == 0)
+			return true;
 
 		while( true ) {
 
-			// Current point is open
-			// If there has already been lookahead hours since the given time, the threshold is open
-			if (changeTime - lookAheadInTicks > ticks)
-				return true;
-
 			// If the next point is closed, determine if open long enough too satisfy lookahead
 			changeTime = this.getNextChangeAfterTicks(changeTime);
-			if( !this.isPointOpenAtTicks(changeTime) ) {
-				return (changeTime - lookAheadInTicks) >= ticks;
-			}
+			if (!this.isPointOpenAtTicks(changeTime))
+				return (changeTime - ticks >= lookAheadInTicks);
+
+			// The next point is open, determine whether the lookahead is already satisfied
+			if (changeTime - ticks >= lookAheadInTicks)
+				return true;
 		}
 	}
 
@@ -350,13 +354,11 @@ public class TimeSeriesThreshold extends Threshold {
 				return Long.MAX_VALUE;
 
 			// Closed index
-			if( !this.isPointOpenAtTicks(changeTime) ) {
-
-				long timeUntilClose = changeTime - lookAheadInTicks - ticks;
-
-				// if the time required is 0.0, the lookahead window is equal to the time until the next closed point.
-				// Need to wait at least one clock tick before closing again.
-				return Math.max(timeUntilClose, 1);
+			if (!this.isPointOpenAtTicks(changeTime)) {
+				if (lookAheadInTicks == 0)
+					return changeTime - ticks;
+				else
+					return changeTime - lookAheadInTicks - ticks + 1;
 			}
 		}
 	}
