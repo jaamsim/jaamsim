@@ -308,6 +308,81 @@ public class TimeSeriesThreshold extends Threshold {
 		}
 	}
 
+	/**
+	 * Return the time during which the threshold is closed starting from the given time.
+	 */
+	private long calcClosedTicksFromTicks(long ticks) {
+
+		// If the series is always outside the limits, the threshold is closed forever
+		if (isAlwaysClosed())
+			return Long.MAX_VALUE;
+
+		// If the series is always within the limits, the threshold is open forever
+		if (this.isAlwaysOpen())
+			return 0;
+
+		// If the threshold is not closed at the given time, return 0.0
+		// This check must occur before adding the offset because isClosedAtTIme also adds the offset
+		if( this.isOpenAtTicks(ticks) ) {
+			return 0;
+		}
+
+		// Add offset from input
+		ticks += FrameBox.secondsToTicks(offset.getValue());
+		ticks = Math.max(ticks, 0);
+
+		// Threshold is currently closed. Find the next open point
+		long openTime = -1;
+		long changeTime = ticks;
+		long maxTicksValueFromTimeSeries = this.getMaxTicksValueFromTimeSeries();
+		long lookAheadInTicks = FrameBox.secondsToTicks(lookAhead.getValue());
+		while( true ) {
+			changeTime = this.getNextChangeAfterTicks(changeTime);
+
+			if( changeTime == Long.MAX_VALUE ) {
+
+				// If an open point was found, it will be open forever
+				if( openTime != -1 ) {
+					return openTime - ticks;
+				}
+
+				// Threshold will never be open
+				return Long.MAX_VALUE;
+			}
+
+			// if have already searched the longest cycle, the threshold will never open
+			if (changeTime > ticks + maxTicksValueFromTimeSeries + lookAheadInTicks)
+				return Long.MAX_VALUE;
+
+			// Closed index
+			if( !this.isPointOpenAtTicks(changeTime) ) {
+
+				// If an open point has not been found yet, keep looking
+				if( openTime == -1 ) {
+					continue;
+				}
+
+				// Has enough time been gathered to satisfy the lookahead?
+				long openDuration = changeTime - openTime;
+				if( openDuration >= lookAheadInTicks ) {
+					return openTime - ticks;
+				}
+				// not enough time, need to start again
+				else {
+					openTime = -1;
+				}
+			}
+			// Open index
+			else {
+
+				// Keep track of the first open index.
+				if( openTime == -1 ) {
+					openTime = changeTime;
+				}
+			}
+		}
+	}
+
 	public boolean isAlwaysOpen() {
 		double tsMin = timeSeries.getValue().getMinValue();
 		double tsMax = timeSeries.getValue().getMaxValue();
@@ -372,6 +447,55 @@ public class TimeSeriesThreshold extends Threshold {
 				// if the time required is 0.0, the lookahead window is equal to the time until the next closed point.
 				// Need to wait at least one clock tick before closing again.
 				return Math.max(timeUntilClose, Simulation.getEventTolerance());
+			}
+		}
+	}
+
+	/**
+	 * Return the time during which the threshold is open starting from the given time.
+	 */
+	public long calcOpenTicksFromTicks(long ticks) {
+
+		// If the series is always outside the limits, the threshold is closed forever
+		if(isAlwaysClosed())
+			return 0;
+
+		// If the series is always within the limits, the threshold is open forever
+		if (this.isAlwaysOpen())
+			return Long.MAX_VALUE;
+
+		// If the threshold is closed at the given time, return 0.0
+		// This check must occur before adding the offset because isClosedAtTIme also adds the offset
+		if( !this.isOpenAtTicks(ticks) ) {
+			return 0;
+		}
+
+		// Add offset from input
+		ticks += FrameBox.secondsToTicks(offset.getValue());
+		ticks = Math.max(ticks, 0);
+
+		// Find the next change point after startTime
+		long changeTime = ticks;
+		long maxTicksValueFromTimeSeries = this.getMaxTicksValueFromTimeSeries();
+		long lookAheadInTicks = FrameBox.secondsToTicks(lookAhead.getValue());
+		while( true ) {
+			changeTime = this.getNextChangeAfterTicks(changeTime);
+
+			if( changeTime == Long.MAX_VALUE )
+				return Long.MAX_VALUE;
+
+			// if have already searched the longest cycle, the threshold will never close
+			if( changeTime > ticks + maxTicksValueFromTimeSeries )
+				return Long.MAX_VALUE;
+
+			// Closed index
+			if( !this.isPointOpenAtTicks(changeTime) ) {
+
+				long timeUntilClose = changeTime - lookAheadInTicks - ticks;
+
+				// if the time required is 0.0, the lookahead window is equal to the time until the next closed point.
+				// Need to wait at least one clock tick before closing again.
+				return Math.max(timeUntilClose, 1);
 			}
 		}
 	}
