@@ -42,15 +42,17 @@ public class Vec3dInput extends Input<Vec3d> {
 		if (defValue == null)
 			return "";
 
+		double factor = Unit.getDisplayedUnitFactor(unitType);
+
 		StringBuilder tmp = new StringBuilder();
-		tmp.append(defValue.x);
+		tmp.append(defValue.x/factor);
 		tmp.append(SEPARATOR);
-		tmp.append(defValue.y);
+		tmp.append(defValue.y/factor);
 		tmp.append(SEPARATOR);
-		tmp.append(defValue.z);
+		tmp.append(defValue.z/factor);
 		if (unitType != Unit.class) {
 			tmp.append(SEPARATOR);
-			tmp.append(Unit.getSIUnit(unitType));
+			tmp.append(Unit.getDisplayedUnit(unitType));
 		}
 
 		return tmp.toString();
