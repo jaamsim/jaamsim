@@ -727,18 +727,10 @@ public static class CellListener implements CellEditorListener {
 			String str = editor.getValue().trim();
 			Class<?> klass = in.getClass();
 
-			// 1) Add single quotes to String inputs
+			// Add single quotes to String inputs
 			if (klass == StringInput.class || klass == FileInput.class) {
-				if (Parser.needsQuoting(str) && !Parser.isQuoted(str)) {
-					StringBuilder sb = new StringBuilder();
-
-					if (!str.startsWith("'"))
-						sb.append("'");
-					sb.append(str);
-					if (!str.endsWith("'"))
-						sb.append("'");
-					str = sb.toString();
-				}
+				if (Parser.needsQuoting(str) && !Parser.isQuoted(str))
+					str = Parser.addQuotes(str);
 			}
 			// Keyword
 			ArrayList<String> tokens = new ArrayList<>();

@@ -121,6 +121,16 @@ public static final boolean isQuoted(CharSequence s) {
 	return true;
 }
 
+public static final String addQuotes(String str) {
+	StringBuilder sb = new StringBuilder();
+	if (!str.startsWith("'"))
+		sb.append("'");
+	sb.append(str);
+	if (!str.endsWith("'"))
+		sb.append("'");
+	return sb.toString();
+}
+
 /**
  * Remove all commented tokens (starting with the " character)
  * @param tokens
