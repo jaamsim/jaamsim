@@ -17,7 +17,7 @@ package com.jaamsim.Samples;
 import com.jaamsim.units.Unit;
 
 public class TimeSeriesConstantDouble implements TimeSeriesProvider {
-	private final Class<? extends Unit> unitType;
+	private Class<? extends Unit> unitType;
 	private final double val;
 
 	public TimeSeriesConstantDouble(Class<? extends Unit> unitType, double val) {
@@ -28,6 +28,10 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 	public TimeSeriesConstantDouble(double val) {
 		this.unitType = Unit.class;
 		this.val = val;
+	}
+
+	public void setUnitType(Class<? extends Unit> ut) {
+		unitType = ut;
 	}
 
 	@Override
