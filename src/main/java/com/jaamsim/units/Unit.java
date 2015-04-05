@@ -93,6 +93,20 @@ public abstract class Unit extends Entity {
 			return inp.getValue();
 	}
 
+	public static final <T extends Unit> String getDisplayedUnit(Class<T> ut) {
+		Unit u = Unit.getPreferredUnit(ut);
+		if (u == null)
+			return Unit.getSIUnit(ut);
+		return u.getName();
+	}
+
+	public static final <T extends Unit> double getDisplayedUnitFactor(Class<T> ut) {
+		Unit u = Unit.getPreferredUnit(ut);
+		if (u == null)
+			return 1.0;
+		return u.getConversionFactorToSI();
+	}
+
 	/**
 	 * Return the conversion factor to SI units
 	 */

@@ -1089,11 +1089,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public void setClock(double simTime) {
 
 		// Set the simulation time display
-		TimeUnit u = (TimeUnit) Unit.getPreferredUnit(TimeUnit.class);
-		if (u == null)
-			clockDisplay.setText(String.format("%,.2f  %s", simTime, Unit.getSIUnit(TimeUnit.class)));
-		else
-			clockDisplay.setText(String.format("%,.2f  %s", simTime/u.getConversionFactorToSI(), u.getName()));
+		String unit = Unit.getDisplayedUnit(TimeUnit.class);
+		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+		clockDisplay.setText(String.format("%,.2f  %s", simTime/factor, unit));
 
 		if (getSimState() != SIM_STATE_RUNNING)
 			return;
@@ -1398,13 +1396,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		ArrayList<String> tokens = new ArrayList<>();
 		Parser.tokenize(tokens, str);
 		// if we only got one token, and it isn't RFC8601 - add a unit
-		if (tokens.size() == 1 && !tokens.get(0).contains(" ")) {
-			Unit u = Unit.getPreferredUnit(TimeUnit.class);
-			if (u == null)
-				tokens.add(Unit.getSIUnit(TimeUnit.class));
-			else
-				tokens.add(u.getName());
-		}
+		if (tokens.size() == 1 && !tokens.get(0).contains("-") && !tokens.get(0).contains(":"))
+			tokens.add(Unit.getDisplayedUnit(TimeUnit.class));
 
 		try {
 			// Parse the keyword inputs
@@ -1435,16 +1428,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			return;
 		}
 
-		DistanceUnit u = (DistanceUnit) Unit.getPreferredUnit(DistanceUnit.class);
-		if (u == null) {
-			locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
-					pos.x, pos.y, pos.z, Unit.getSIUnit(DistanceUnit.class)));
-		}
-		else {
-			double factor = u.getConversionFactorToSI();
-			locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
-					pos.x/factor, pos.y/factor, pos.z/factor, u.getName()));
-		}
+		String unit = Unit.getDisplayedUnit(DistanceUnit.class);
+		double factor = Unit.getDisplayedUnitFactor(DistanceUnit.class);
+		locatorPos.setText(String.format((Locale)null, "%.3f  %.3f  %.3f  %s",
+				pos.x/factor, pos.y/factor, pos.z/factor, unit));
 	}
 
 	public void enableSave(boolean bool) {

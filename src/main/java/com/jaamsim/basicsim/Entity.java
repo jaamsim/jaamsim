@@ -737,13 +737,8 @@ public class Entity {
 
 			// Is there a preferred unit in which to display the output?
 			Class<? extends Unit> ut = o.getUnitType();
-			String unitString = Unit.getSIUnit(ut);
-			double factor = 1.0;
-			Unit u = Unit.getPreferredUnit(ut);
-			if (u != null) {
-				unitString = u.getName();
-				factor = u.getConversionFactorToSI();
-			}
+			String unitString = Unit.getDisplayedUnit(ut);
+			double factor = Unit.getDisplayedUnitFactor(ut);
 
 			// Is the output a number?
 			String s;

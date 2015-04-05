@@ -185,11 +185,8 @@ private class OutputTableModel extends AbstractTableModel {
 						return String.format("%g", d);
 					}
 					else {
-						Unit u = Unit.getPreferredUnit(ut);
-						if (u == null)
-							return String.format("%g  %s", d, Unit.getSIUnit(ut));
-						else
-							return String.format("%g  %s", d / u.getConversionFactorToSI(), u.getName());
+						return String.format("%g  %s",
+								d/Unit.getDisplayedUnitFactor(ut), Unit.getDisplayedUnit(ut));
 					}
 				}
 
