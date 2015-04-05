@@ -33,6 +33,8 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
+		if (u != unitType)
+			this.reset();
 		unitType = u;
 		if (defValue instanceof TimeSeriesConstantDouble)
 			((TimeSeriesConstantDouble)defValue).setUnitType(unitType);
