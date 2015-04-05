@@ -1390,6 +1390,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (prevVal.equals(str))
 			return;
 
+		// If the time is in RFC8601 format, enclose in single quotes
+		if (str.contains("-") || str.contains(":"))
+			if (Parser.needsQuoting(str) && !Parser.isQuoted(str))
+				str = Parser.addQuotes(str);
+
 		ArrayList<String> tokens = new ArrayList<>();
 		Parser.tokenize(tokens, str);
 		// if we only got one token, and it isn't RFC8601 - add a unit
