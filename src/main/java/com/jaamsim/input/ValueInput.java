@@ -59,12 +59,12 @@ public class ValueInput extends Input<Double> {
 			tmp.append(NEGATIVE_INFINITY);
 		}
 		else {
-			tmp.append(defValue.toString());
+			tmp.append(defValue/Unit.getDisplayedUnitFactor(unitType));
 		}
 
 		if (unitType != Unit.class) {
 			tmp.append(SEPARATOR);
-			tmp.append(Unit.getSIUnit(unitType));
+			tmp.append(Unit.getDisplayedUnit(unitType));
 		}
 
 		return tmp.toString();
