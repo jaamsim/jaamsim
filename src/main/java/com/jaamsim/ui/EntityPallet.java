@@ -24,8 +24,6 @@ import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
@@ -39,11 +37,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.render.Future;
-import com.jaamsim.render.RenderUtils;
 
 public class EntityPallet extends JFrame implements DragGestureListener {
 
@@ -159,14 +154,6 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		if (myInstance != null) {
 			myInstance.dispose();
 			myInstance = null;
-		}
-	}
-
-	private static final Runnable notifier = new PalletNotifier();
-	private static final class PalletNotifier implements Runnable {
-		@Override
-		public void run() {
-			EntityPallet.getInstance().repaint();
 		}
 	}
 
