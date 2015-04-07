@@ -44,24 +44,18 @@ import com.jaamsim.units.TimeUnit;
  * providing controls for the various windows.
  */
 public class Simulation extends Entity {
+
+	// Key Inputs tab
+	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
+	         example = "Simulation Duration { 8760 h }")
+	private static final ValueInput runDuration;
+
 	@Keyword(description = "The initialization period for the simulation run. The model will " +
 	                "run for the initialization period and then clear the statistics " +
 	                "and execute for the specified run duration. The total length of the " +
 	                "simulation run will be the sum of Initialization and Duration.",
 	         example = "Simulation Initialization { 720 h }")
 	private static final ValueInput initializationTime;
-
-	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
-	         example = "Simulation StartTime { 2160 h }")
-	private static final ValueInput startTimeInput;
-
-	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
-	         example = "Simulation Duration { 8760 h }")
-	private static final ValueInput runDuration;
-
-	@Keyword(description = "The time at which the simulation will be paused.",
-	         example = "Simulation PauseTime { 200 h }")
-	private static final ValueInput pauseTime;
 
 	@Keyword(description = "Indicates whether an output report will be printed at the end of the simulation run.",
 	         example = "Simulation PrintReport { TRUE }")
@@ -76,19 +70,14 @@ public class Simulation extends Entity {
 	         example = "Simulation TickLength { 1e-6 s }")
 	private static final ValueInput tickLengthInput;
 
-	@Keyword(description = "If the value is TRUE, then the input report file will be printed after loading the " +
-	                "configuration file.  The input report can always be generated when needed by selecting " +
-	                "\"Print Input Report\" under the File menu.",
-	         example = "Simulation PrintInputReport { TRUE }")
-	private static final BooleanInput printInputReport;
+	@Keyword(description = "Indicates whether to close the program on completion of the simulation run.",
+	         example = "Simulation ExitAtStop { TRUE }")
+	private static final BooleanInput exitAtStop;
 
-	@Keyword(description = "This is placeholder description text",
-	         example = "This is placeholder example text")
-	private static final BooleanInput traceEventsInput;
-
-	@Keyword(description = "This is placeholder description text",
-	         example = "This is placeholder example text")
-	private static final BooleanInput verifyEventsInput;
+	// GUI tab
+	@Keyword(description = "A Boolean to turn on or off real time in the simulation run",
+	         example = "Simulation RealTime { TRUE }")
+	private static final BooleanInput realTime;
 
 	@Keyword(description = "The real time speed up factor",
 	         example = "Simulation RealTimeFactor { 1200 }")
@@ -98,13 +87,9 @@ public class Simulation extends Entity {
 	public static final int MIN_REAL_TIME_FACTOR = 1;
 	public static final int MAX_REAL_TIME_FACTOR= 1000000;
 
-	@Keyword(description = "A Boolean to turn on or off real time in the simulation run",
-	         example = "Simulation RealTime { TRUE }")
-	private static final BooleanInput realTime;
-
-	@Keyword(description = "Indicates whether to close the program on completion of the simulation run.",
-	         example = "Simulation ExitAtStop { TRUE }")
-	private static final BooleanInput exitAtStop;
+	@Keyword(description = "The time at which the simulation will be paused.",
+	         example = "Simulation PauseTime { 200 h }")
+	private static final ValueInput pauseTime;
 
 	@Keyword(description = "Indicates whether the Model Builder tool should be shown on startup.",
 	         example = "Simulation ShowModelBuilder { TRUE }")
@@ -130,6 +115,25 @@ public class Simulation extends Entity {
 	         example = "Simulation ShowLogViewer { TRUE }")
 	private static final BooleanInput showLogViewer;
 
+	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
+	         example = "Simulation StartTime { 2160 h }")
+	private static final ValueInput startTimeInput;
+
+	// Hidden keywords
+	@Keyword(description = "If the value is TRUE, then the input report file will be printed after loading the " +
+	                "configuration file.  The input report can always be generated when needed by selecting " +
+	                "\"Print Input Report\" under the File menu.",
+	         example = "Simulation PrintInputReport { TRUE }")
+	private static final BooleanInput printInputReport;
+
+	@Keyword(description = "This is placeholder description text",
+	         example = "This is placeholder example text")
+	private static final BooleanInput traceEventsInput;
+
+	@Keyword(description = "This is placeholder description text",
+	         example = "This is placeholder example text")
+	private static final BooleanInput verifyEventsInput;
+
 	private static double timeScale; // the scale from discrete to continuous time
 	private static double startTime; // simulation time (seconds) for the start of the run (not necessarily zero)
 	private static double endTime;   // simulation time (seconds) for the end of the run
@@ -139,58 +143,66 @@ public class Simulation extends Entity {
 	private static String modelName = "JaamSim";
 
 	static {
+
+		// Key Inputs tab
+		runDuration = new ValueInput("RunDuration", "Key Inputs", 31536000.0d);
+		runDuration.setUnitType(TimeUnit.class);
+		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
+
 		initializationTime = new ValueInput("InitializationDuration", "Key Inputs", 0.0);
 		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
-		runDuration = new ValueInput("RunDuration", "Key Inputs", 31536000.0d);
-		runDuration.setUnitType(TimeUnit.class);
-		runDuration.setValidRange(1e-15d, Double.POSITIVE_INFINITY);
+		printReport = new BooleanInput("PrintReport", "Key Inputs", false);
+
+		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
+
+		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
+		tickLengthInput.setUnitType(TimeUnit.class);
+		tickLengthInput.setValidRange(1e-9d, 5.0d);
+
+		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
+
+		// GUI tab
+		realTime = new BooleanInput("RealTime", "GUI", false);
+		realTime.setPromptReqd(false);
+
+		realTimeFactor = new IntegerInput("RealTimeFactor", "GUI", DEFAULT_REAL_TIME_FACTOR);
+		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
+		realTimeFactor.setPromptReqd(false);
 
 		pauseTime = new ValueInput("PauseTime", "GUI", Double.POSITIVE_INFINITY);
 		pauseTime.setUnitType(TimeUnit.class);
 		pauseTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		pauseTime.setPromptReqd(false);
 
-		printReport = new BooleanInput("PrintReport", "Key Inputs", false);
+		showModelBuilder = new BooleanInput("ShowModelBuilder", "GUI", false);
+		showModelBuilder.setPromptReqd(false);
 
-		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
+		showObjectSelector = new BooleanInput("ShowObjectSelector", "GUI", false);
+		showObjectSelector.setPromptReqd(false);
 
+		showInputEditor = new BooleanInput("ShowInputEditor", "GUI", false);
+		showInputEditor.setPromptReqd(false);
+
+		showOutputViewer = new BooleanInput("ShowOutputViewer", "GUI", false);
+		showOutputViewer.setPromptReqd(false);
+
+		showPropertyViewer = new BooleanInput("ShowPropertyViewer", "GUI", false);
+		showPropertyViewer.setPromptReqd(false);
+
+		showLogViewer = new BooleanInput("ShowLogViewer", "GUI", false);
+		showLogViewer.setPromptReqd(false);
+
+		// Hidden keywords
 		startTimeInput = new ValueInput("StartTime", "Key Inputs", 0.0d);
 		startTimeInput.setUnitType(TimeUnit.class);
 		startTimeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-
-		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
-		tickLengthInput.setUnitType(TimeUnit.class);
-		tickLengthInput.setValidRange(1e-9d, 5.0d);
 
 		traceEventsInput = new BooleanInput("TraceEvents", "Key Inputs", false);
 		verifyEventsInput = new BooleanInput("VerifyEvents", "Key Inputs", false);
 
 		printInputReport = new BooleanInput("PrintInputReport", "Key Inputs", false);
-
-		realTimeFactor = new IntegerInput("RealTimeFactor", "GUI", DEFAULT_REAL_TIME_FACTOR);
-		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
-		realTimeFactor.setPromptReqd(false);
-
-		realTime = new BooleanInput("RealTime", "GUI", false);
-		realTime.setPromptReqd(false);
-
-		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
-
-		showModelBuilder = new BooleanInput("ShowModelBuilder", "GUI", false);
-		showObjectSelector = new BooleanInput("ShowObjectSelector", "GUI", false);
-		showInputEditor = new BooleanInput("ShowInputEditor", "GUI", false);
-		showOutputViewer = new BooleanInput("ShowOutputViewer", "GUI", false);
-		showPropertyViewer = new BooleanInput("ShowPropertyViewer", "GUI", false);
-		showLogViewer = new BooleanInput("ShowLogViewer", "GUI", false);
-
-		showModelBuilder.setPromptReqd(false);
-		showObjectSelector.setPromptReqd(false);
-		showInputEditor.setPromptReqd(false);
-		showOutputViewer.setPromptReqd(false);
-		showPropertyViewer.setPromptReqd(false);
-		showLogViewer.setPromptReqd(false);
 
 		// Initialize basic model information
 		startTime = 0.0;
@@ -198,26 +210,18 @@ public class Simulation extends Entity {
 	}
 
 	{
+		// Key Inputs tab
 		this.addInput(runDuration);
 		this.addInput(initializationTime);
-		this.addInput(pauseTime);
 		this.addInput(printReport);
 		this.addInput(reportDirectory);
-
-		this.addInput(startTimeInput);
-
 		this.addInput(tickLengthInput);
-
-		this.addInput(traceEventsInput);
-		this.addInput(verifyEventsInput);
-
-		this.addInput(printInputReport);
-
-		this.addInput(realTimeFactor);
-		this.addInput(realTime);
-
 		this.addInput(exitAtStop);
 
+		// GUI tab
+		this.addInput(realTime);
+		this.addInput(realTimeFactor);
+		this.addInput(pauseTime);
 		this.addInput(showModelBuilder);
 		this.addInput(showObjectSelector);
 		this.addInput(showInputEditor);
@@ -225,6 +229,13 @@ public class Simulation extends Entity {
 		this.addInput(showPropertyViewer);
 		this.addInput(showLogViewer);
 
+		// Hidden keywords
+		this.addInput(startTimeInput);
+		this.addInput(traceEventsInput);
+		this.addInput(verifyEventsInput);
+		this.addInput(printInputReport);
+
+		// Hide various keywords
 		attributeDefinitionList.setHidden(true);
 		startTimeInput.setHidden(true);
 		traceEventsInput.setHidden(true);
