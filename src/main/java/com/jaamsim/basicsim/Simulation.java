@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.DirInput;
+import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
@@ -36,6 +37,7 @@ import com.jaamsim.ui.ObjectSelector;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
 import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
 
 /**
  * Simulation provides the basic structure for the Entity model lifetime of earlyInit,
@@ -75,6 +77,10 @@ public class Simulation extends Entity {
 	private static final BooleanInput exitAtStop;
 
 	// GUI tab
+	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
+	         example = "Simulation DisplayedUnits { h kt }")
+	private static final EntityListInput<? extends Unit> displayedUnits;
+
 	@Keyword(description = "A Boolean to turn on or off real time in the simulation run",
 	         example = "Simulation RealTime { TRUE }")
 	private static final BooleanInput realTime;
@@ -164,6 +170,9 @@ public class Simulation extends Entity {
 		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
 
 		// GUI tab
+		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", "GUI", null);
+		displayedUnits.setPromptReqd(false);
+
 		realTime = new BooleanInput("RealTime", "GUI", false);
 		realTime.setPromptReqd(false);
 
@@ -219,6 +228,7 @@ public class Simulation extends Entity {
 		this.addInput(exitAtStop);
 
 		// GUI tab
+		this.addInput(displayedUnits);
 		this.addInput(realTime);
 		this.addInput(realTimeFactor);
 		this.addInput(pauseTime);
@@ -273,6 +283,15 @@ public class Simulation extends Entity {
 
 		if (in == reportDirectory) {
 			InputAgent.setReportDirectory(reportDirectory.getDir());
+			return;
+		}
+
+		if (in == displayedUnits) {
+			if (displayedUnits.getValue() == null)
+				return;
+			for (Unit u : displayedUnits.getValue()) {
+				Unit.setPreferredUnit(u.getClass(), u);
+			}
 			return;
 		}
 

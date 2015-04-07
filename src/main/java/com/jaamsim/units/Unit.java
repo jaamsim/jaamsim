@@ -17,7 +17,6 @@ package com.jaamsim.units;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 
 public abstract class Unit extends Entity {
@@ -28,30 +27,15 @@ public abstract class Unit extends Entity {
 			example = "mph  ConversionFactorToSI { 1609.344  3600 }")
 	private final SIUnitFactorInput conversionFactorToSI;
 
-	@Keyword(description = "The preferred unit for formatting output values in the OutputViewer for " +
-	                       "this type of Unit.",
-	         example = "mph PreferredUnit { km/h }")
-	private final EntityInput<? extends Unit> prefInput;
-
 	{
 		conversionFactorToSI = new SIUnitFactorInput("ConversionFactorToSI", "Key Inputs");
 		this.addInput(conversionFactorToSI);
-
-		prefInput = getPrefInput(this.getClass());
-		this.addInput(prefInput);
 	}
+
+	private static final HashMap<Class<? extends Unit>, Unit>
+		preferredUnit = new HashMap<>();
 
 	public Unit() {}
-
-	@Override
-	public void kill() {
-
-		if (prefInput.getValue() == this)
-			prefInput.reset();
-
-		super.kill();
-	}
-
 
 	private static final HashMap<Class<? extends Unit>, String>
 		siUnit = new HashMap<>();
@@ -73,24 +57,12 @@ public abstract class Unit extends Entity {
 		return "SI";
 	}
 
-	private static final HashMap<Class<? extends Unit>, EntityInput<? extends Unit>>
-		prefUnit = new HashMap<>();
-
-	private static final <T extends Unit> EntityInput<? extends Unit> getPrefInput(Class<T> type) {
-		EntityInput<? extends Unit> inp = prefUnit.get(type);
-		if (inp == null) {
-			inp = new EntityInput<>(type, "PreferredUnit", "Key Inputs", null);
-			prefUnit.put(type, inp);
-		}
-		return inp;
+	public static final void setPreferredUnit(Class<? extends Unit> type, Unit u) {
+		preferredUnit.put(type, u);
 	}
 
 	public static final <T extends Unit> Unit getPreferredUnit(Class<T> type) {
-		EntityInput<? extends Unit> inp = prefUnit.get(type);
-		if (inp == null)
-			return null;
-		else
-			return inp.getValue();
+		return preferredUnit.get(type);
 	}
 
 	public static final <T extends Unit> String getDisplayedUnit(Class<T> ut) {
