@@ -96,6 +96,7 @@ public class Entity {
 
 		attributeDefinitionList = new AttributeDefinitionListInput(this, "AttributeDefinitionList",
 				"Key Inputs", new ArrayList<AttributeHandle>());
+		attributeDefinitionList.setHidden(true);
 		this.addInput(attributeDefinitionList);
 	}
 

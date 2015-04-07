@@ -52,6 +52,8 @@ public abstract class LinkedComponent extends StateEntity {
 	private double releaseTime = Double.NaN;
 
 	{
+		attributeDefinitionList.setHidden(false);
+
 		testEntity = new EntityInput<>(DisplayEntity.class, "TestEntity", "Key Inputs", null);
 		this.addInput(testEntity);
 
