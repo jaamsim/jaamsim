@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -50,10 +51,6 @@ implements SampleProvider {
 			 example = "ProbDist1 RandomSeed { 547 }")
 	private final IntegerInput randomSeedInput;
 
-	@Keyword(description = "Global seed that sets the substream for each probability distribution.",
-	         example = "ProbDist1 GlobalSubstreamSeed { 5 }")
-	private static final IntegerInput globalSeedInput;
-
 	@Keyword(description = "Minimum value that can be returned.  Smaller values are rejected and resampled.",
 	         example = "ProbDist1 MinValue { 0.0 }")
 	protected final ValueInput minValueInput;
@@ -70,11 +67,6 @@ implements SampleProvider {
 
 	private double lastSample = 0;
 
-	static {
-		globalSeedInput = new IntegerInput("GlobalSubstreamSeed", "Key Inputs", 0);
-		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
-	}
-
 	{
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(unitType);
@@ -82,8 +74,6 @@ implements SampleProvider {
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 0);
 		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
 		this.addInput(randomSeedInput);
-
-		this.addInput(globalSeedInput);
 
 		minValueInput = new ValueInput("MinValue", "Key Inputs", Double.NEGATIVE_INFINITY);
 		minValueInput.setUnitType(UserSpecifiedUnit.class);
@@ -173,7 +163,7 @@ implements SampleProvider {
 	}
 
 	public static int getSubstreamNumber() {
-		return globalSeedInput.getValue();
+		return Simulation.getSubstreamNumber();
 	}
 
 	/**

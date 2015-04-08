@@ -76,6 +76,10 @@ public class Simulation extends Entity {
 	         example = "Simulation ExitAtStop { TRUE }")
 	private static final BooleanInput exitAtStop;
 
+	@Keyword(description = "Global seed that sets the substream for each probability distribution.",
+	         example = "Simulation GlobalSubstreamSeed { 5 }")
+	private static final IntegerInput globalSeedInput;
+
 	// GUI tab
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
 	         example = "Simulation DisplayedUnits { h kt }")
@@ -169,6 +173,9 @@ public class Simulation extends Entity {
 
 		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
 
+		globalSeedInput = new IntegerInput("GlobalSubstreamSeed", "Key Inputs", 0);
+		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
+
 		// GUI tab
 		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", "GUI", null);
 		displayedUnits.setPromptReqd(false);
@@ -226,6 +233,7 @@ public class Simulation extends Entity {
 		this.addInput(reportDirectory);
 		this.addInput(tickLengthInput);
 		this.addInput(exitAtStop);
+		this.addInput(globalSeedInput);
 
 		// GUI tab
 		this.addInput(displayedUnits);
@@ -414,6 +422,10 @@ public class Simulation extends Entity {
 
 		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(), null);
 		evt.resume(evt.secondsToNearestTick(Simulation.getPauseTime()));
+	}
+
+	public static int getSubstreamNumber() {
+		return globalSeedInput.getValue();
 	}
 
 	public static boolean getPrintReport() {
