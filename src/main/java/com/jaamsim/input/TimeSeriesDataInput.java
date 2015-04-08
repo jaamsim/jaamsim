@@ -119,6 +119,8 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
+		if (u != unitType)
+			this.reset();
 		unitType = u;
 	}
 
