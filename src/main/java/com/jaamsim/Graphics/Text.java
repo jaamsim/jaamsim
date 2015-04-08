@@ -77,7 +77,7 @@ public class Text extends DisplayEntity {
 		textHeight.setUnitType(DistanceUnit.class);
 		this.addInput(textHeight);
 
-		failText = new StringInput("FailText", "Key Inputs", "");
+		failText = new StringInput("FailText", "Key Inputs", "Input Error");
 		this.addInput(failText);
 	}
 

@@ -74,7 +74,7 @@ public class OverlayText extends OverlayEntity {
 		textHeight.setValidRange(0, 1000);
 		this.addInput(textHeight);
 
-		failText = new StringInput("FailText", "Key Inputs", "");
+		failText = new StringInput("FailText", "Key Inputs", "Input Error");
 		this.addInput(failText);
 	}
 
