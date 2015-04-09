@@ -25,6 +25,7 @@ import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 
 public abstract class LinkedService extends LinkedComponent implements ThresholdUser, QueueUser {
 
@@ -185,6 +186,26 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 				this.setPresentState("Stopped");
 			}
 		}
+	}
+
+	// ******************************************************************************************************
+	// OUTPUTS
+	// ******************************************************************************************************
+
+	@Output(name = "Open",
+	 description = "Returns TRUE if all the thresholds specified by the OperatingThresholdList keyword are open.")
+	public boolean getOpen(double simTime) {
+		for (Threshold thr : operatingThresholdList.getValue()) {
+			if (!thr.getOpen(simTime))
+				return false;
+		}
+		return true;
+	}
+
+	@Output(name = "Working",
+	 description = "Returns TRUE if entities are being processed.")
+	public boolean isBusy(double simTime) {
+		return isBusy();
 	}
 
 }
