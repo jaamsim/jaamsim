@@ -23,12 +23,14 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	private Class<T> entClass;
 	private boolean unique; // flag to determine if list must be unique or not
 	private boolean even;  // flag to determine if there must be an even number of entries
+	private boolean includeSubclasses;  // flag to determine if subclasses are valid
 
 	public EntityListInput(Class<T> aClass, String key, String cat, ArrayList<T> def) {
 		super(key, cat, def);
 		entClass = aClass;
 		unique = true;
 		even = false;
+		includeSubclasses = true;
 	}
 
 	@Override
@@ -55,6 +57,9 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	public void setEven(boolean bool) {
 		this.even = bool;
 	}
+	public void setIncludeSubclasses(boolean bool) {
+		this.includeSubclasses = bool;
+	}
 
 	@Override
 	public ArrayList<String> getValidOptions() {
@@ -62,6 +67,12 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		for(T each: Entity.getClonesOfIterator(entClass) ) {
 			if(each.testFlag(Entity.FLAG_GENERATED))
 				continue;
+
+			if(! includeSubclasses) {
+				if( each.getClass() != entClass ) {
+					continue;
+				}
+			}
 
 			list.add(each.getName());
 		}
