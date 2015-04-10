@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 
 /**
@@ -34,10 +35,29 @@ public class Group extends Entity {
 
 	private final ArrayList<Entity> list; // list of objects in group
 
+	@Keyword(description = "The list of objects included in the group.",
+	         example = "Group1 List { DisplayEntity1 DisplayEntity2 }")
+	private final GroupListInput groupListInput;
+
+	@Keyword(description = "A list of additional objects to be included in " +
+			 		"the already existing list of group objects.  The added " +
+			 		"objects will inherit all inputs previously set for the group.",
+	         example = "Group1 AppendList { DisplayEntity3 DisplayEntity4 }")
+	private final GroupAppendListInput groupAppendListInput;
+
+	@Keyword(description = "The object type for the group.",
+	         example = "Group1 GroupType { DisplayEntity }")
+	private final GroupTypeInput groupTypeInput;
+
 	{
-		this.addInput(new Group.GroupListInput());
-		this.addInput(new Group.GroupAppendListInput());
-		this.addInput(new Group.GroupTypeInput());
+		groupListInput = new Group.GroupListInput();
+		this.addInput(groupListInput);
+
+		groupAppendListInput = new Group.GroupAppendListInput();
+		this.addInput(groupAppendListInput);
+
+		groupTypeInput = new Group.GroupTypeInput();
+		this.addInput(groupTypeInput);
 	}
 
 	public Group() {
