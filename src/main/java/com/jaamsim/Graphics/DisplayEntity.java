@@ -364,10 +364,10 @@ public class DisplayEntity extends Entity {
 		rot.setEuler3(orient);
 
 		Vec3d transVect = new Vec3d(position);
-		DisplayEntity entity = this.getRelativeEntity();
-		if(entity != null && entity != this) {
-			transVect.add3(entity.position);
-		}
+		DisplayEntity ent = this.getRelativeEntity();
+		if (ent != null)
+			transVect.add3(ent.getGlobalPosition());
+
 		Transform ret = new Transform(transVect, rot, 1);
 		ret.merge(ret, alignTrans);
 
@@ -404,20 +404,18 @@ public class DisplayEntity extends Entity {
 	 * @return
 	 */
 	public Vec3d getGlobalPosition() {
-		Vec3d localPos = getPosition();
+		Vec3d ret = getPosition();
 
-		DisplayEntity entity = this.getRelativeEntity();
-		if(entity != null && entity != this) {
-			localPos.add3(entity.position);
-			return localPos;
-		}
+		DisplayEntity ent = this.getRelativeEntity();
+		if (ent != null)
+			ret.add3(ent.getGlobalPosition());
 
 		if (currentRegion != null) {
 			Transform regionTrans = currentRegion.getRegionTrans();
-			regionTrans.multAndTrans(localPos, localPos);
+			regionTrans.multAndTrans(ret, ret);
 		}
 
-		return localPos;
+		return ret;
 	}
 
 	/*
@@ -425,9 +423,9 @@ public class DisplayEntity extends Entity {
 	 */
 	public Vec3d getAbsoluteCenter() {
 		Vec3d cent = this.getPositionForAlignment(new Vec3d());
-		DisplayEntity entity = this.getRelativeEntity();
-		if(entity != null && entity != this)
-			cent.add3(entity.getPosition());
+		DisplayEntity ent = this.getRelativeEntity();
+		if (ent != null)
+			cent.add3(ent.getGlobalPosition());
 
 		return cent;
 	}
@@ -492,9 +490,9 @@ public class DisplayEntity extends Entity {
 			invReg.multAndTrans(pos, localPos);
 		}
 
-		DisplayEntity entity = relativeEntity.getValue();
-		if (entity != null && entity != this)
-			localPos.sub3(entity.position);
+		DisplayEntity ent = this.getRelativeEntity();
+		if (ent != null)
+			localPos.sub3(ent.getGlobalPosition());
 
 		return localPos;
 	}
