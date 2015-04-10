@@ -38,6 +38,8 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 	@Override
 	public void parse(KeywordIndex kw) throws InputErrorException {
 
+		boolean braceOpened = false;
+
 		// Set the clock tick length
 		tickLength = Simulation.getTickLength();
 
@@ -57,15 +59,22 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 		for (int i=0; i < kw.numArgs(); i++) {
 
 			//skip over opening brace if present
-			if (kw.getArg(i).equals("{") )
+			if (kw.getArg(i).equals("{") ) {
+				braceOpened = true;
 				continue;
+			}
 
 			each.clear();
 
 			// Load one record into 'each' containing an individual timeseries record
 			for (int j = i; j < kw.numArgs(); j++, i++){
-				if (kw.getArg(j).equals("}"))
+				if (kw.getArg(j).equals("}")) {
+					braceOpened = false;
 					break;
+				}
+
+				if (!braceOpened)
+					throw new InputErrorException("Expected an opening brace ( { ). Received: %s", kw.getArg(j));
 
 				each.add(kw.getArg(j));
 			}
@@ -113,6 +122,9 @@ public class TimeSeriesDataInput extends Input<TimeSeriesData> {
 			times.add( usOffset/(1.0e6*tickLength) );
 			values.add(v.get(0));
 		}
+
+		if (braceOpened)
+			throw new InputErrorException("Final closing brace ( } ) is missing.");
 
 		// Set the value to a new time series data object
 		value = new TimeSeriesData( times, values );
