@@ -254,7 +254,6 @@ public class Simulation extends Entity {
 		this.addInput(printInputReport);
 
 		// Hide various keywords
-		attributeDefinitionList.setHidden(true);
 		startTimeInput.setHidden(true);
 		traceEventsInput.setHidden(true);
 		verifyEventsInput.setHidden(true);

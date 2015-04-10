@@ -41,7 +41,6 @@ public class Statistics extends LinkedComponent {
 	private double totalSquaredValue;
 
 	{
-		attributeDefinitionList.setHidden(true);
 		stateAssignment.setHidden(true);
 
 		sampleValue = new ExpressionInput("SampleValue", "Key Inputs", null);
