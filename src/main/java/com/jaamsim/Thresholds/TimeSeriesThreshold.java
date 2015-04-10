@@ -199,6 +199,10 @@ public class TimeSeriesThreshold extends Threshold {
 		}
 	}
 
+	public boolean isOpenAtTime(double simTime) {
+		return isOpenAtTicks(FrameBox.secondsToTicks(simTime));
+	}
+
 	public boolean isOpenAtTicks(long ticks) {
 
 		// Add offset from input
