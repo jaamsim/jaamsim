@@ -24,6 +24,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	private boolean unique; // flag to determine if list must be unique or not
 	private boolean even;  // flag to determine if there must be an even number of entries
 	private boolean includeSubclasses;  // flag to determine if subclasses are valid
+	private ArrayList<Class<? extends Entity>> validClasses; // list of valid classes (including subclasses).  if empty, then all classes are valid
 
 	public EntityListInput(Class<T> aClass, String key, String cat, ArrayList<T> def) {
 		super(key, cat, def);
@@ -31,6 +32,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		unique = true;
 		even = false;
 		includeSubclasses = true;
+		validClasses = new ArrayList<>();
 	}
 
 	@Override
@@ -61,11 +63,18 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		this.includeSubclasses = bool;
 	}
 
+	public void setValidClasses(ArrayList<Class<? extends Entity>> classes ) {
+		validClasses = classes;
+	}
+
 	@Override
 	public ArrayList<String> getValidOptions() {
 		ArrayList<String> list = new ArrayList<>();
 		for(T each: Entity.getClonesOfIterator(entClass) ) {
 			if(each.testFlag(Entity.FLAG_GENERATED))
+				continue;
+
+			if( ! isValidClass( each ))
 				continue;
 
 			if(! includeSubclasses) {
@@ -108,5 +117,18 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		if (defValue == null || defValue.size() == 0)
 			return "";
 		return this.getInputString(defValue);
+	}
+
+	public boolean isValidClass( Entity ent ) {
+		if( validClasses.size() == 0 )
+			return true;
+
+		for( Class<? extends Entity> c : validClasses ) {
+			if( c.isAssignableFrom( ent.getClass() ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
