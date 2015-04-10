@@ -31,6 +31,7 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.RelativeEntityInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -89,7 +90,7 @@ public class DisplayEntity extends Entity {
 
 	@Keyword(description = "The name of an object with respect to which the Position keyword is referenced.",
 	         example ="Object1Label RelativeEntity { Object1 }")
-	private final EntityInput<DisplayEntity> relativeEntity;
+	private final RelativeEntityInput relativeEntity;
 
 	@Keyword(description = "If TRUE, the object is displayed in the simulation view windows.",
 	         example = "Object1 Show { FALSE }")
@@ -127,10 +128,8 @@ public class DisplayEntity extends Entity {
 		regionInput = new EntityInput<>(Region.class, "Region", "Basic Graphics", null);
 		this.addInput(regionInput);
 
-		relativeEntity = new EntityInput<>(DisplayEntity.class, "RelativeEntity", "Basic Graphics", null);
-		ArrayList<DisplayEntity> invalid = new ArrayList<>(1);
-		invalid.add(this);
-		relativeEntity.setInvalidEntities(invalid);
+		relativeEntity = new RelativeEntityInput("RelativeEntity", "Basic Graphics", null);
+		relativeEntity.setEntity(this);
 		this.addInput(relativeEntity);
 
 		displayModelListInput = new EntityListInput<>( DisplayModel.class, "DisplayModel", "Basic Graphics", null);
@@ -330,7 +329,7 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
-	DisplayEntity getRelativeEntity() {
+	public DisplayEntity getRelativeEntity() {
 		return relativeEntity.getValue();
 	}
 
