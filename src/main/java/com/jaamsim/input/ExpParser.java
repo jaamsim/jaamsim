@@ -449,6 +449,16 @@ public class ExpParser {
 			}
 		});
 
+		addBinaryOp("%", 30, false, new BinOpFunc() {
+			@Override
+			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
+				if (lval.unitType != rval.unitType) {
+					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+				}
+				return new ExpResult(lval.value % rval.value, lval.unitType);
+			}
+		});
+
 		addBinaryOp("==", 10, false, new BinOpFunc() {
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {

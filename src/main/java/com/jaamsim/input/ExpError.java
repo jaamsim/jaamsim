@@ -20,7 +20,7 @@ public class ExpError extends Exception {
 
 	ExpError(String source, int pos, String msg) {
 		super(msg);
-		this.source = source;
+		this.source = source.replaceAll("%", "%%");
 		this.pos = pos;
 	}
 
