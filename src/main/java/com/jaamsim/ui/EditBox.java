@@ -55,6 +55,7 @@ import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ColourInput;
+import com.jaamsim.input.ExpressionInput;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -728,7 +729,7 @@ public static class CellListener implements CellEditorListener {
 			Class<?> klass = in.getClass();
 
 			// Add single quotes to String inputs
-			if (klass == StringInput.class || klass == FileInput.class) {
+			if (klass == StringInput.class || klass == FileInput.class || klass == ExpressionInput.class) {
 				if (Parser.needsQuoting(str) && !Parser.isQuoted(str))
 					str = Parser.addQuotes(str);
 			}
