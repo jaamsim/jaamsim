@@ -150,6 +150,7 @@ public class DisplayEntity extends Entity {
 	 * Constructor: initializing the DisplayEntity's graphics
 	 */
 	public DisplayEntity() {
+
 		for (ObjectType type : ObjectType.getAll()) {
 			if (type.getJavaClass() == this.getClass()) {
 
@@ -163,11 +164,6 @@ public class DisplayEntity extends Entity {
 				break;
 			}
 		}
-	}
-
-	public void setDefaultSize(Vec3d s) {
-		sizeInput.setDefaultValue(s);
-		this.setSize(sizeInput.getValue());
 	}
 
 	@Override
