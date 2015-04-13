@@ -87,6 +87,21 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 	}
 
 	@Override
+	public void copyFrom(Input<?> in) {
+		super.copyFrom(in);
+		value = new ArrayList<>();
+		@SuppressWarnings("unchecked")
+		ArrayList<AttributeHandle> inValue = (ArrayList<AttributeHandle>) (in.value);
+		for (AttributeHandle h : inValue) {
+			AttributeHandle hNew = new AttributeHandle(ent, h.getName());
+			hNew.setUnitType(h.getUnitType());
+			hNew.setInitialValue(h.getInitialValue());
+			hNew.setValue(h.getValueAsDouble(0.0d, 0.0d));
+			value.add(hNew);
+		}
+	}
+
+	@Override
 	public int getListSize() {
 		if (value == null)
 			return 0;

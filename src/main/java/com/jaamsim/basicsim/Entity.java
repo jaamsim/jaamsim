@@ -329,15 +329,6 @@ public class Entity {
 			if (sourceInput.isDefault() || sourceInput.isSynonym())
 				continue;
 
-			// Some keywords must be processed the long way by parsing the inputs
-			if (sourceInput instanceof AttributeDefinitionListInput) {
-				ArrayList<String> tmp = new ArrayList<>();
-				sourceInput.getValueTokens(tmp);
-				KeywordIndex kw = new KeywordIndex(sourceInput.getKeyword(), tmp, null);
-				InputAgent.apply(ret, kw);
-				continue;
-			}
-
 			// Assign the value to the copied entity's input
 			Input<?> targetInput = ret.getEditableInputs().get(i);
 			targetInput.copyFrom(sourceInput);
