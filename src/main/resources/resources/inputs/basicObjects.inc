@@ -23,8 +23,8 @@ ScriptEntity            JavaClass { com.jaamsim.basicsim.ScriptEntity           
 Output                  JavaClass { com.jaamsim.basicsim.OutputMethod                   } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 BooleanIndicator        JavaClass { com.jaamsim.BasicObjects.BooleanIndicator           } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	} DefaultDisplayModel { Circle              }
 TimeSeries              JavaClass { com.jaamsim.Samples.TimeSeries                      } Palette { 'Basic Objects' } DefaultDisplayModel { TimeSeriesIconModel } IconFile { '<res>/images/TimeSeries-24.png' }
-TimeSeriesThreshold	    JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle           } IconFile { '<res>/images/Threshold-24.png'  }
-ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle           } IconFile { '<res>/images/Threshold-24.png'  }
+TimeSeriesThreshold	    JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle           } IconFile { '<res>/images/Threshold-24.png'  } DefaultSize { 0.5 0.5 0.0 m }
+ExpressionThreshold	    JavaClass { com.jaamsim.Thresholds.ExpressionThreshold		    } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle           } IconFile { '<res>/images/Threshold-24.png'  } DefaultSize { 0.5 0.5 0.0 m }
 EntitlementSelector		JavaClass { com.jaamsim.BasicObjects.EntitlementSelector		} Palette { 'Basic Objects' } DefaultDisplayModel { SelectorIconModel   } IconFile { '<res>/images/Selector-24.png'   }
 ExpressionEntity              JavaClass { com.jaamsim.basicsim.ExpressionEntity                 } Palette { 'Basic Objects' } DragAndDrop 			{ FALSE 	}
 

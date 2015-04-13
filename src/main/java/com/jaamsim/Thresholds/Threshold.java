@@ -26,7 +26,6 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
@@ -54,8 +53,6 @@ public class Threshold extends StateEntity {
 	private boolean open;
 
 	{
-		this.setDefaultSize(new Vec3d(0.5, 0.5, 0.5));
-
 		openColour = new ColourInput( "OpenColour", "Graphics", ColourInput.GREEN );
 		this.addInput( openColour );
 		this.addSynonym( openColour, "OpenColor" );
