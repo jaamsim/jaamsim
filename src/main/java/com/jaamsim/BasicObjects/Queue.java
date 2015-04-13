@@ -69,7 +69,6 @@ public class Queue extends LinkedComponent {
 	protected DoubleVector queueLengthDist;  // entry at position n is the total time the queue has had length n
 
 	{
-		this.setDefaultSize(new Vec3d(0.5, 0.5, 0.5));
 		testEntity.setHidden(true);
 		nextComponent.setHidden(true);
 
