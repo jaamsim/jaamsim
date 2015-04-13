@@ -23,14 +23,12 @@ public class EntityInput<T extends Entity> extends Input<T> {
 
 	private Class<T> entClass;
 	private Class<? extends T> entSubClass;  // a particular sub-class that can be set at runtime
-	private ArrayList<T> invalidEntities;
 	private boolean includeSubclasses;  // flag to determine if subclasses are valid
 
 	public EntityInput(Class<T> aClass, String key, String cat, T def) {
 		super(key, cat, def);
 		entClass = aClass;
 		entSubClass = aClass;
-		invalidEntities = null;
 		includeSubclasses = true;
 	}
 
@@ -73,10 +71,6 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		toks.add(value.getName());
 	}
 
-	public void setInvalidEntities(ArrayList<T> list) {
-		invalidEntities = list;
-	}
-
 	private boolean isValid(T ent) {
 		if(! includeSubclasses) {
 			if( ent.getClass() != entClass ) {
@@ -84,10 +78,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 			}
 		}
 
-		if (invalidEntities == null)
-			return true;
-
-		return !invalidEntities.contains(ent);
+		return true;
 	}
 
 	public void setIncludeSubclasses(boolean bool) {
