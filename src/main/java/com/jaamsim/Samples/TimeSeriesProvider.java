@@ -20,4 +20,23 @@ public interface TimeSeriesProvider extends SampleProvider {
 	public double getValueForTicks(long ticks);
 	public long getNextChangeAfterTicks(long ticks);
 	public long getMaxTicksValue();
+
+	/**
+	 * Returns the simulation time in ticks corresponding to the specified
+	 * value that it interpolated from the time series entries.
+	 * <p>
+	 * The time series values must increase monotonically.
+	 * @param val - specified value.
+	 * @return interpolated simulation time in clock ticks.
+	 */
+	public long getInterpolatedTicksForValue(double val);
+
+	/**
+	 * Returns the value corresponding to the specified simulation
+	 * time in simulation clock ticks that it interpolated from the
+	 * time series entries.
+	 * @param ticks - simulation time in clock ticks.
+	 * @return interpolated value.
+	 */
+	public double getInterpolatedCumulativeValueForTicks(long ticks);
 }

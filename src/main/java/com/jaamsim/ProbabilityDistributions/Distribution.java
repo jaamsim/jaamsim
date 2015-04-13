@@ -45,7 +45,7 @@ implements SampleProvider {
 
 	@Keyword(description = "The unit type that the distribution returns values in.",
 	         example = "ProbDist1 UnitType { DistanceUnit }")
-	private final UnitTypeInput unitType;
+	protected final UnitTypeInput unitType;
 
 	@Keyword(description = "Seed for the random number generator.  Must be an integer >= 0.",
 			 example = "ProbDist1 RandomSeed { 547 }")

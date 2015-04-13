@@ -183,14 +183,6 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		return startOfCycle + ticksList[index+1];
 	}
 
-	@Output(name = "PresentValue",
-	        description = "The time series value for the present time.",
-	        unitType = UserSpecifiedUnit.class)
-	@Override
-	public final double getNextSample(double simTime) {
-		return value.getValue().valueList[ getIndexForTicks(getTicks(simTime)) ];
-	}
-
 	@Override
 	public double getNextTimeAfter(double simTime) {
 		return getSimTime( getNextChangeAfterTicks(getTicks(simTime)) );
@@ -224,4 +216,227 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	public double getMeanValue(double simTime) {
 		return this.getNextSample(simTime);
 	}
+
+	// ******************************************************************************************************
+	// METHODS NEEDED FOR NON-STATEXPONENTIALDIST
+	// ******************************************************************************************************
+
+	/**
+	 * Returns the position in the time series that corresponds to the specified
+	 * time in simulation clock ticks.
+	 * <p>
+	 * The position returned is the largest one whose ticks value is less than
+	 * or equal to the specified ticks.
+	 * @param ticks - simulation time in clock ticks.
+	 * @return position in the TimeSeries.
+	 */
+	private TSPoint getTSPointForTicks(long ticks) {
+
+		long[] ticksList = value.getValue().ticksList;
+		if (ticks == Long.MAX_VALUE) {
+			if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
+				return new TSPoint(ticksList.length - 1, 0);
+			return new TSPoint(ticksList.length - 1, Long.MAX_VALUE);
+		}
+
+		// Find the time within the present cycle
+		long numberOfCycles = Math.round(ticks / getTicks(cycleTime.getValue()));
+		long ticksInCycle = ticks % getTicks(cycleTime.getValue());
+
+		// If the time in the cycle is greater than the last time, return the last value
+		if (ticksInCycle >= ticksList[ticksList.length - 1]) {
+			return new TSPoint(ticksList.length - 1, numberOfCycles);
+		}
+
+		// Find the index by binary search
+		int k = Arrays.binarySearch(ticksList, ticksInCycle);
+
+		// If the returned index is greater or equal to zero,
+		// then an exact match was found
+		if (k >= 0)
+			return new TSPoint(k, numberOfCycles);
+
+		if (k == -1)
+			error("No value found at time: %f", getSimTime(ticks));
+
+		// If the returned index is negative, then (insertion index) = -k-1
+		// Return the index before the insertion index
+		return new TSPoint(-k - 2, numberOfCycles);
+	}
+
+	/**
+	 * Returns the position in the time series that corresponds to the specified value.
+	 * <p>
+	 * The TimeSeries values must increase monotonically. The position returned
+	 * is the largest one whose value is less than or equal to the specified value.
+	 * @param val - specified value.
+	 * @return position in the TimeSeries.
+	 */
+	private TSPoint getTSPointForValue(double val) {
+
+		double[] valueList = value.getValue().valueList;
+		if (val > getMaxValue() && cycleTime.getValue() == Double.POSITIVE_INFINITY)
+			return new TSPoint(valueList.length - 1, 0);
+
+		// Find the value within the present cycle
+		double valInCycle = val % getMaxValue();
+		long numberOfCycles = Math.round((val - valInCycle) / getMaxValue());
+
+		// If the value in the cycle is greater than or equal to the last value, return the last index
+		if (valInCycle >= valueList[valueList.length - 1])
+			return new TSPoint(valueList.length - 1, numberOfCycles);
+
+		// Find the index by binary search
+		int k = Arrays.binarySearch(valueList, valInCycle);
+
+		// If the returned index is greater or equal to zero,
+		// then an exact match was found
+		if (k >= 0)
+			return new TSPoint(k, numberOfCycles);
+
+		if (k == -1)
+			error("No entry found for value: %f", val);
+
+		// If the returned index is negative, then (insertion index) = -k-1
+		// Return the index before the insertion index
+		return new TSPoint(-k - 2, numberOfCycles);
+	}
+
+	/**
+	 * Returns the simulation time in clock ticks for the specified position in
+	 * the time series.
+	 * @param pt - position in the time series.
+	 * @return simulation time in clock ticks.
+	 */
+	private long getTicks(TSPoint pt) {
+		if (pt.index == -1)
+			return Long.MAX_VALUE;
+		if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
+			return value.getValue().ticksList[pt.index];
+		return value.getValue().ticksList[pt.index] + pt.numberOfCycles*getTicks(cycleTime.getValue());
+	}
+
+	/**
+	 * Returns the time series value for the specified position in the time
+	 * series.
+	 * @param pt - position in the time series.
+	 * @return value for the time series.
+	 */
+	private double getValue(TSPoint pt) {
+		double valueList[] = value.getValue().valueList;
+		if (pt.index == -1)
+			return valueList[ valueList.length - 1 ];
+		return valueList[pt.index];
+	}
+
+	/**
+	 * Returns the total value for the time series at the specified position.
+	 * <p>
+	 * If a cycle time has been specified, then the total time increases
+	 * with each pass through the time series.
+	 * @param pt - position in the time series.
+	 * @return total value for the time series.
+	 */
+	private double getCumulativeValue(TSPoint pt) {
+		if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
+			return getValue(pt);
+		return getValue(pt) + pt.numberOfCycles*getMaxValue();
+	}
+
+	/**
+	 * Returns the position in the time series that follows the specified
+	 * position.
+	 * <p>
+	 * An index of -1 is returned if the specified position is a the end
+	 * of the time series data and a cycle time is not specified.
+	 * @param pt - specified position in the time series.
+	 * @return next position in the time series.
+	 */
+	private TSPoint getTSPointAfter(TSPoint pt) {
+		if (pt.index == -1)
+			return new TSPoint(pt.index, pt.numberOfCycles);
+
+		if (pt.index == value.getValue().ticksList.length - 1) {
+			if (cycleTime.getValue() == Double.POSITIVE_INFINITY)
+				return new TSPoint(-1, pt.numberOfCycles);
+
+			return new TSPoint(0, pt.numberOfCycles + 1);
+		}
+
+		return new TSPoint(pt.index + 1, pt.numberOfCycles);
+	}
+
+	@Override
+	public long getInterpolatedTicksForValue(double val) {
+
+		TSPoint low = getTSPointForValue(val);
+		TSPoint high = getTSPointAfter(low);
+		if (high.index == -1)
+			return Long.MAX_VALUE;
+
+		long ticksLow = getTicks(low);
+		long ticksHigh = getTicks(high);
+		double valueLow = getCumulativeValue(low);
+		double valueHigh = getCumulativeValue(high);
+
+		// The value at the end of the cycle is equal to the value at the start of the next cycle
+		if (valueHigh == valueLow) {
+			high = getTSPointAfter(high);
+			ticksHigh = getTicks(high);
+			valueHigh = getCumulativeValue(high);
+		}
+
+		return ticksLow + Math.round((val - valueLow)*(ticksHigh - ticksLow)/(valueHigh - valueLow));
+	}
+
+	@Override
+	public double getInterpolatedCumulativeValueForTicks(long ticks) {
+
+		TSPoint low = getTSPointForTicks(ticks);
+		TSPoint high = getTSPointAfter(low);
+		if (high.index == -1) {
+			double valueList[] = value.getValue().valueList;
+			return valueList[ valueList.length - 1 ];
+		}
+
+		long ticksLow = getTicks(low);
+		long ticksHigh = getTicks(high);
+		double valueLow = getCumulativeValue(low);
+		double valueHigh = getCumulativeValue(high);
+
+		// The value at the end of the cycle is equal to the value at the start of the next cycle
+		if (valueHigh == valueLow) {
+			high = getTSPointAfter(high);
+			ticksHigh = getTicks(high);
+			valueHigh = getCumulativeValue(high);
+		}
+
+		return valueLow + (ticks - ticksLow)*(valueHigh - valueLow)/(ticksHigh - ticksLow);
+	}
+
+	// ******************************************************************************************************
+	// TIME SERIES POINT
+	// ******************************************************************************************************
+	private class TSPoint {
+		private int index;            // index number for the time series point
+		private long numberOfCycles;  // number of passes through the time series data
+
+		private TSPoint(int ind, long n) {
+			index = ind;
+			numberOfCycles = n;
+		}
+	}
+
+	// ******************************************************************************************************
+	// OUTPUTS
+	// ******************************************************************************************************
+
+	@Output(name = "PresentValue",
+	        description = "The time series value for the present time.",
+	        unitType = UserSpecifiedUnit.class)
+	@Override
+	public final double getNextSample(double simTime) {
+		return value.getValue().valueList[ getIndexForTicks(getTicks(simTime)) ];
+	}
+
 }

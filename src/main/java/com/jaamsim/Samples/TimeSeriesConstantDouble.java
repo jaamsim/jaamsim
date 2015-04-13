@@ -87,4 +87,14 @@ public class TimeSeriesConstantDouble implements TimeSeriesProvider {
 			tmp.append("  ").append(Unit.getSIUnit(unitType));
 		return tmp.toString();
 	}
+
+	@Override
+	public long getInterpolatedTicksForValue(double val) {
+		return 0;
+	}
+
+	@Override
+	public double getInterpolatedCumulativeValueForTicks(long ticks) {
+		return val;
+	}
 }
