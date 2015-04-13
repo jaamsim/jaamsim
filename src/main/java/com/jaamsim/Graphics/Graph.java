@@ -29,7 +29,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -91,8 +90,6 @@ public class Graph extends GraphBasics  {
 	protected final ValueListInput secondaryLineWidths;
 
 	{
-		this.setDefaultSize(new Vec3d(5, 3, 0));
-
 		// Key Inputs category
 
 		numberOfPoints = new IntegerInput("NumberOfPoints", "Key Inputs", 100);
