@@ -25,6 +25,9 @@ import com.jaamsim.input.ImageInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.StringInput;
+import com.jaamsim.input.Vec3dInput;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DistanceUnit;
 
 public class ObjectType extends Entity {
 	private static final ArrayList<ObjectType> allInstances;
@@ -50,6 +53,10 @@ public class ObjectType extends Entity {
 	         example = "This is placeholder example text")
 	private final ImageInput iconFile;
 
+	@Keyword(description = "The default size for the instances of this class.",
+	         example = "DisplayEntity DefaultSize { 1.0 1.0 1.0 m }")
+	private final Vec3dInput defaultSize;
+
 	private final ArrayList<DisplayModel> displayEntityDefault = new ArrayList<>(1);
 
 	static {
@@ -71,6 +78,10 @@ public class ObjectType extends Entity {
 
 		iconFile = new ImageInput("IconFile", "Key inputs", null);
 		this.addInput(iconFile);
+
+		defaultSize = new Vec3dInput("DefaultSize", "Key inputs", new Vec3d(1.0d, 1.0d, 1.0d));
+		defaultSize.setUnitType(DistanceUnit.class);
+		this.addInput(defaultSize);
 	}
 
 	public ObjectType() {
@@ -126,6 +137,10 @@ public class ObjectType extends Entity {
 
 	public BufferedImage getIconImage() {
 		return iconFile.getValue();
+	}
+
+	public Vec3d getDefaultSize() {
+		return defaultSize.getValue();
 	}
 
 }

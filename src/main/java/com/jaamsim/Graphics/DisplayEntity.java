@@ -152,8 +152,14 @@ public class DisplayEntity extends Entity {
 	public DisplayEntity() {
 		for (ObjectType type : ObjectType.getAll()) {
 			if (type.getJavaClass() == this.getClass()) {
+
+				// Set the default DisplayModel
 				displayModelListInput.setDefaultValue(type.getDefaultDisplayModel());
 				this.setDisplayModelList(type.getDefaultDisplayModel());
+
+				// Set the default size
+				sizeInput.setDefaultValue(type.getDefaultSize());
+				this.setSize(type.getDefaultSize());
 				break;
 			}
 		}
