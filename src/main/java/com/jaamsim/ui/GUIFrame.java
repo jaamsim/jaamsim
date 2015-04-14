@@ -115,7 +115,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JSpinner spinner;
 
 	private RoundToggleButton controlStartResume;
-	private JToggleButton controlStop;
+	private ImageIcon runPressedIcon;
+	private ImageIcon pausePressedIcon;
+	private RoundToggleButton controlStop;
 	private JTextField pauseTime;
 
 	private JLabel locatorPos;
@@ -713,9 +715,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.setLayout( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
 
 		// 1) Run/Pause button
+		runPressedIcon = new ImageIcon(GUIFrame.class.getResource("/resources/images/run-pressed-24.png"));
+		pausePressedIcon = new ImageIcon(GUIFrame.class.getResource("/resources/images/pause-pressed-24.png"));
+
 		controlStartResume = new RoundToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/run-24.png")));
+		controlStartResume.setRolloverEnabled(true);
+		controlStartResume.setRolloverIcon(new ImageIcon(GUIFrame.class.getResource("/resources/images/run-rollover-24.png")));
+		controlStartResume.setPressedIcon(runPressedIcon);
 		controlStartResume.setSelectedIcon(
 				new ImageIcon(GUIFrame.class.getResource("/resources/images/pause-24.png")));
+		controlStartResume.setRolloverSelectedIcon(
+				new ImageIcon(GUIFrame.class.getResource("/resources/images/pause-rollover-24.png")));
 		controlStartResume.setToolTipText(RUN_TOOLTIP);
 		controlStartResume.setMargin( noMargin );
 		controlStartResume.setEnabled( false );
@@ -727,9 +737,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				startResume.setEnabled(false);
 				if(startResume.isSelected()) {
 					GUIFrame.this.startSimulation();
+					controlStartResume.setPressedIcon(pausePressedIcon);
 				}
 				else {
 					GUIFrame.this.pauseSimulation();
+					controlStartResume.setPressedIcon(runPressedIcon);
 				}
 				controlStartResume.grabFocus();
 			}
@@ -737,9 +749,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		mainToolBar.add( controlStartResume );
 
 		// 2) Stop button
-		controlStop = new JToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/stop.png")));
+		controlStop = new RoundToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/reset-16.png")));
 		controlStop.setToolTipText(formatToolTip("Stop",
 				"Stops and resets the simulation run."));
+		controlStop.setPressedIcon(new ImageIcon(GUIFrame.class.getResource("/resources/images/reset-pressed-16.png")));
+		controlStop.setRolloverEnabled( true );
+		controlStop.setRolloverIcon(new ImageIcon(GUIFrame.class.getResource("/resources/images/reset-rollover-16.png")));
 		controlStop.setMargin( noMargin );
 		controlStop.setEnabled( false );
 		controlStop.addActionListener( new ActionListener() {
