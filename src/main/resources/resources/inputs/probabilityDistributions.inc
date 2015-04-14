@@ -19,7 +19,7 @@ UniformDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.UniformDi
 TriangularDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.TriangularDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/TriangleDist-24.png'   }
 NormalDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.NormalDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/Norm Dist-24.png'      }
 ExponentialDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ExponentialDistribution	} Palette { 'Probability Distributions' } IconFile { '<res>/images/Exp Dist-24.png'       }
-NonStatExponentialDist		JavaClass { com.jaamsim.ProbabilityDistributions.NonStatExponentialDist		} Palette { 'Probability Distributions' } IconFile { '<res>/images/Exp Dist-24.png'       }
+NonStatExponentialDist		JavaClass { com.jaamsim.ProbabilityDistributions.NonStatExponentialDist		} Palette { 'Probability Distributions' } IconFile { '<res>/images/NSExpoDist-24.png'     }
 ErlangDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.ErlangDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 GammaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.GammaDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 BetaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.BetaDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
@@ -46,7 +46,7 @@ Define	ImageModel {
 ProbabilityDistributionIconModel	ImageFile { '<res>/images/ErlangDist-256.png'    }   Transparent { TRUE }
 NormalDistributionIconModel			ImageFile { '<res>/images/Norm Dist-256.png'     }   Transparent { TRUE }
 ExponentialDistributionIconModel	ImageFile { '<res>/images/Exp Dist-256.png'      }   Transparent { TRUE }
-NonStatExponentialDistIconModel		ImageFile { '<res>/images/Exp Dist-256.png'      }   Transparent { TRUE }
+NonStatExponentialDistIconModel		ImageFile { '<res>/images/NSExpoDist-256.png'    }   Transparent { TRUE }
 UniformDistributionIconModel		ImageFile { '<res>/images/UniformDist-256.png'   }   Transparent { TRUE }
 TriangularDistributionIconModel		ImageFile { '<res>/images/TriangleDist-256.png'  }   Transparent { TRUE }
 ErlangDistributionIconModel			ImageFile { '<res>/images/ErlangDist-256.png'    }   Transparent { TRUE }
