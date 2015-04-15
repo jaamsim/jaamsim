@@ -17,6 +17,7 @@ package com.jaamsim.ProbabilityDistributions;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -27,11 +28,15 @@ import com.jaamsim.units.UserSpecifiedUnit;
  */
 public class LogNormalDistribution extends Distribution {
 
-	@Keyword(description = "The mean of the normal distribution (not the mean of the lognormal).",
+	@Keyword(description = "The scale parameter for the Log-Normal distribution.",
+	         example = "LogNormalDist1 Scale { 3.0 h }")
+	private final ValueInput scaleInput;
+
+	@Keyword(description = "The mean of the dimensionless normal distribution (not the mean of the lognormal).",
 	         example = "LogNormalDist1 NormalMean { 5.0 }")
 	private final ValueInput normalMeanInput;
 
-	@Keyword(description = "The standard deviation of the normal distribution (not the standard deviation of the lognormal).",
+	@Keyword(description = "The standard deviation of the dimensionless normal distribution (not the standard deviation of the lognormal).",
 	         example = "LogNormalDist1 NormalStandardDeviation { 2.0 }")
 	private final ValueInput normalStandardDeviationInput;
 
@@ -41,12 +46,17 @@ public class LogNormalDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(0.0);
 
+		scaleInput = new ValueInput("Scale", "Key Inputs", 1.0d);
+		scaleInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
+		scaleInput.setUnitType( UserSpecifiedUnit.class );
+		this.addInput(scaleInput);
+
 		normalMeanInput = new ValueInput("NormalMean", "Key Inputs", 0.0d);
-		normalMeanInput.setUnitType(UserSpecifiedUnit.class);
+		normalMeanInput.setUnitType(DimensionlessUnit.class);
 		this.addInput(normalMeanInput);
 
 		normalStandardDeviationInput = new ValueInput("NormalStandardDeviation", "Key Inputs", 1.0d);
-		normalStandardDeviationInput.setUnitType(UserSpecifiedUnit.class);
+		normalStandardDeviationInput.setUnitType(DimensionlessUnit.class);
 		normalStandardDeviationInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(normalStandardDeviationInput);
 	}
@@ -64,8 +74,7 @@ public class LogNormalDistribution extends Distribution {
 	@Override
 	protected void setUnitType(Class<? extends Unit> specified) {
 		super.setUnitType(specified);
-		normalMeanInput.setUnitType(specified);
-		normalStandardDeviationInput.setUnitType(specified);
+		scaleInput.setUnitType(specified);
 	}
 
 	@Override
@@ -87,13 +96,13 @@ public class LogNormalDistribution extends Distribution {
 		sample = normalMeanInput.getValue() + ( sample * normalStandardDeviationInput.getValue() );
 
 		// Convert to lognormal
-		return Math.exp( sample );
+		return scaleInput.getValue() * Math.exp( sample );
 	}
 
 	@Override
 	protected double getMeanValue() {
 		double sd = normalStandardDeviationInput.getValue();
-		return Math.exp( normalMeanInput.getValue() + sd*sd/2.0 );
+		return scaleInput.getValue() * Math.exp( normalMeanInput.getValue() + sd*sd/2.0 );
 	}
 
 	@Override
