@@ -57,6 +57,10 @@ public class ObjectType extends Entity {
 	         example = "DisplayEntity DefaultSize { 1.0 1.0 1.0 m }")
 	private final Vec3dInput defaultSize;
 
+	@Keyword(description = "The default alignment for the instances of this class.",
+	         example = "DisplayEntity DefaultAlignment { 0.0 0.0 -0.5 m }")
+	private final Vec3dInput defaultAlignment;
+
 	private final ArrayList<DisplayModel> displayEntityDefault = new ArrayList<>(1);
 
 	static {
@@ -82,6 +86,9 @@ public class ObjectType extends Entity {
 		defaultSize = new Vec3dInput("DefaultSize", "Key inputs", new Vec3d(1.0d, 1.0d, 1.0d));
 		defaultSize.setUnitType(DistanceUnit.class);
 		this.addInput(defaultSize);
+
+		defaultAlignment = new Vec3dInput("DefaultAlignment", "Key inputs", new Vec3d(0.0d, 0.0d, 0.0d));
+		this.addInput(defaultAlignment);
 	}
 
 	public ObjectType() {
@@ -141,6 +148,10 @@ public class ObjectType extends Entity {
 
 	public Vec3d getDefaultSize() {
 		return defaultSize.getValue();
+	}
+
+	public Vec3d getDefaultAlignment() {
+		return defaultAlignment.getValue();
 	}
 
 }

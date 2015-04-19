@@ -161,6 +161,11 @@ public class DisplayEntity extends Entity {
 				// Set the default size
 				sizeInput.setDefaultValue(type.getDefaultSize());
 				this.setSize(type.getDefaultSize());
+
+				// Set the default Alignment
+				alignmentInput.setDefaultValue(type.getDefaultAlignment());
+				this.setAlignment(type.getDefaultAlignment());
+
 				break;
 			}
 		}
