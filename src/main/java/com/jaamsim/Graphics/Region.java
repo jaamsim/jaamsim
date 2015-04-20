@@ -14,37 +14,14 @@
  */
 package com.jaamsim.Graphics;
 
-import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.Keyword;
-import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
-import com.jaamsim.math.Vec3d;
-import com.jaamsim.units.AngleUnit;
-import com.jaamsim.units.DistanceUnit;
 
-/**
- * Entity which defines its own locale to add branch groups to. Analogous to
- * stage construct. Abstract class as it does not define the doProcess() method.
- */
-public class Region extends Entity {
-@Keyword(description = "The location of the origin (0,0,0) of the region in the world.",
-      example = "Region1 Origin { -3.922 -1.830 0.000 m }")
-private final Vec3dInput originInput;
+public class Region extends DisplayEntity {
 
-@Keyword(description = "Euler angles describing the orientation of the region's local coordinate system.",
-      example = "Region1 Orientation { 0 0 90 deg }")
-private final Vec3dInput orientationInput;
-
-{
-	originInput = new Vec3dInput("Origin", "Basic Graphics", null);
-	originInput.setUnitType(DistanceUnit.class);
-	this.addInput(originInput);
-
-	orientationInput = new Vec3dInput("Orientation", "Basic Graphics", null);
-	orientationInput.setUnitType(AngleUnit.class);
-	this.addInput(orientationInput);
-}
+	{
+		this.addSynonym(positionInput, "Origin");
+	}
 
 	/**
 	 * Constructor creating a new locale in the simulation universe.
@@ -52,14 +29,8 @@ private final Vec3dInput orientationInput;
 	public Region() {}
 
 	public Transform getRegionTrans() {
-		Quaternion rot = null;
-		Vec3d temp = orientationInput.getValue();
-		if (temp != null) {
-			rot = new Quaternion();
-			rot.setEuler3(temp);
-		}
-
-		temp = originInput.getValue();
-		return new Transform(temp, rot, 1.0d);
+		Quaternion rot = new Quaternion();
+		rot.setEuler3(getOrientation());
+		return new Transform(getPosition(), rot, 1.0d);
 	}
 }

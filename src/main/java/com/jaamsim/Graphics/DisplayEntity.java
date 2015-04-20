@@ -53,7 +53,7 @@ import com.jaamsim.units.DistanceUnit;
 public class DisplayEntity extends Entity {
 	@Keyword(description = "The point in the region at which the alignment point of the object is positioned.",
 	         example = "Object1 Position { -3.922 -1.830 0.000 m }")
-	private final Vec3dInput positionInput;
+	protected final Vec3dInput positionInput;
 
 	@Keyword(description = "The size of the object in { x, y, z } coordinates. If only the x and y coordinates are given " +
 	                "then the z dimension is assumed to be zero.",
@@ -213,7 +213,8 @@ public class DisplayEntity extends Entity {
 			if (dm0 instanceof DisplayModelCompat || dm0 instanceof ImageModel || dm0 instanceof TextModel )
 				alignBottom = false;
 		}
-		else if (this instanceof Graph || this instanceof HasScreenPoints) {
+
+		if (this instanceof Graph || this instanceof HasScreenPoints || this instanceof Region) {
 			alignBottom = false;
 		}
 

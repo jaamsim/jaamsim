@@ -16,10 +16,13 @@ ImageModel             JavaClass { com.jaamsim.DisplayModels.ImageModel         
 ColladaModel           JavaClass { com.jaamsim.DisplayModels.ColladaModel             } Palette { 'Display Models' }    DragAndDrop { FALSE }
 DisplayModel           JavaClass { com.jaamsim.Graphics.DisplayModelCompat            } Palette { 'Display Models' }    DragAndDrop { FALSE }
 
+Define ColladaModel        { RegionModelDefault         }
 Define ArrowModel          { ArrowModelDefault          }
 Define GraphModel          { GraphModelDefault          }
 Define ScreenPointsModel   { ScreenPointsModelDefault   }
 Define TextModel           { TextModelDefault           }
+
+RegionModelDefault ColladaFile { <res>/shapes/axis_text.dae }
 
 Define ObjectType {
                     View
@@ -36,7 +39,7 @@ Define ObjectType {
                     }
 
 View                  JavaClass { com.jaamsim.ui.View                                } Palette { 'Graphics Objects' }                                           DragAndDrop { FALSE }
-Region                JavaClass { com.jaamsim.Graphics.Region                        } Palette { 'Graphics Objects' }                                           DragAndDrop { FALSE }
+Region                JavaClass { com.jaamsim.Graphics.Region                        } Palette { 'Graphics Objects' } DefaultDisplayModel { RegionModelDefault       } IconFile { '<res>/images/Region-24.png' } DefaultSize { 1.125000 1.1568242 1.1266404 m } DefaultAlignment { -0.4393409 -0.4410096 -0.4394292 }
 DisplayEntity         JavaClass { com.jaamsim.Graphics.DisplayEntity                 } Palette { 'Graphics Objects' }
 Text                  JavaClass { com.jaamsim.Graphics.Text                          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
 OverlayImage          JavaClass { com.jaamsim.Graphics.OverlayImage                  } Palette { 'Graphics Objects' }
