@@ -350,8 +350,8 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
-	 *  This is a quirky method that returns the equivalent global transform for this entity as if 'sizeIn' where the actual
-	 *  size. This is needed for TextModels, but may be refactored soon.
+	 *  Returns the equivalent global transform for this entity as if 'sizeIn' where the actual
+	 *  size.
 	 * @param sizeIn
 	 * @param simTime
 	 * @return
@@ -363,26 +363,27 @@ public class DisplayEntity extends Entity {
 		// As size is a non-uniform scale it can not be represented by the jaamsim TRS Transform and therefore
 		// not actually included in this result, except to adjust the alignment
 
+		// Alignment and Size transformations
 		Vec3d temp = new Vec3d(sizeIn);
 		temp.mul3(align);
 		temp.scale3(-1.0d);
 		Transform alignTrans = new Transform(temp);
 
+		// Orientation transformation
 		Quaternion rot = new Quaternion();
 		rot.setEuler3(orient);
+		Transform ret = new Transform(null, rot, 1);
 
-		Vec3d transVect = new Vec3d(position);
-		DisplayEntity ent = this.getRelativeEntity();
-		if (ent != null)
-			transVect.add3(ent.getGlobalPosition());
-
-		Transform ret = new Transform(transVect, rot, 1);
+		// Combine the alignment, size, and orientation tranformations
 		ret.merge(ret, alignTrans);
 
-		if (currentRegion != null) {
-			Transform regionTrans = currentRegion.getRegionTrans();
-			ret.merge(regionTrans, ret);
-		}
+		// Convert the alignment/size/orientation transformation to the global coordinate system
+		if (currentRegion != null)
+			ret.merge(currentRegion.getRegionTransForVectors(), ret);
+
+		// Offset the transformation by the entity's global position vector
+		ret.getTransRef().add3(getGlobalPosition());
+
 		return ret;
 	}
 
@@ -414,14 +415,18 @@ public class DisplayEntity extends Entity {
 	public Vec3d getGlobalPosition() {
 		Vec3d ret = getPosition();
 
+		// Position is relative to another entity
 		DisplayEntity ent = this.getRelativeEntity();
-		if (ent != null)
+		if (ent != null) {
+			if (currentRegion != null)
+				currentRegion.getRegionTransForVectors().multAndTrans(ret, ret);
 			ret.add3(ent.getGlobalPosition());
-
-		if (currentRegion != null) {
-			Transform regionTrans = currentRegion.getRegionTrans();
-			regionTrans.multAndTrans(ret, ret);
+			return ret;
 		}
+
+		// Position is given in a local coordinate system
+		if (currentRegion != null)
+			currentRegion.getRegionTrans().multAndTrans(ret, ret);
 
 		return ret;
 	}
@@ -490,17 +495,18 @@ public class DisplayEntity extends Entity {
 
 		Vec3d localPos = pos;
 
-		if (currentRegion != null) {
-			Transform invReg = new Transform();
-			Transform regionTrans = currentRegion.getRegionTrans();
-			regionTrans.inverse(invReg);
-			localPos = new Vec3d();
-			invReg.multAndTrans(pos, localPos);
+		// Position is relative to another entity
+		DisplayEntity ent = this.getRelativeEntity();
+		if (ent != null) {
+			localPos.sub3(ent.getGlobalPosition());
+			if (currentRegion != null)
+				currentRegion.getInverseRegionTransForVectors().multAndTrans(localPos, localPos);
+			return localPos;
 		}
 
-		DisplayEntity ent = this.getRelativeEntity();
-		if (ent != null)
-			localPos.sub3(ent.getGlobalPosition());
+		// Position is given in a local coordinate system
+		if (currentRegion != null)
+			currentRegion.getInverseRegionTrans().multAndTrans(pos, localPos);
 
 		return localPos;
 	}

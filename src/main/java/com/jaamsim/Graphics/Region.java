@@ -23,14 +23,50 @@ public class Region extends DisplayEntity {
 		this.addSynonym(positionInput, "Origin");
 	}
 
-	/**
-	 * Constructor creating a new locale in the simulation universe.
-	 */
 	public Region() {}
 
+	/**
+	 * Return the transformation that converts the local coordinates for a
+	 * point to global coordinates.
+	 * @return transformation to global coordinates
+	 */
 	public Transform getRegionTrans() {
 		Quaternion rot = new Quaternion();
 		rot.setEuler3(getOrientation());
 		return new Transform(getPosition(), rot, 1.0d);
 	}
+
+	/**
+	 * Return the transformation that converts the local coordinates for a
+	 * vector to global coordinates.
+	 * @return transformation to global coordinates
+	 */
+	public Transform getRegionTransForVectors() {
+		Quaternion rot = new Quaternion();
+		rot.setEuler3(getOrientation());
+		return new Transform(null, rot, 1.0d);
+	}
+
+	/**
+	 * Return the transformation that converts the global coordinates for a
+	 * point to local coordinates for the region.
+	 * @return transformation to global coordinates
+	 */
+	public Transform getInverseRegionTrans() {
+		Transform trans = new Transform();
+		this.getRegionTrans().inverse(trans);
+		return trans;
+	}
+
+	/**
+	 * Return the transformation that converts the global coordinates for a
+	 * vector to local coordinates for the region.
+	 * @return transformation to global coordinates
+	 */
+	public Transform getInverseRegionTransForVectors() {
+		Transform trans = new Transform();
+		this.getRegionTransForVectors().inverse(trans);
+		return trans;
+	}
+
 }
