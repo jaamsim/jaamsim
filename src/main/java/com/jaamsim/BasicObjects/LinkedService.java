@@ -26,8 +26,15 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.Vec3dInput;
+import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DistanceUnit;
 
 public abstract class LinkedService extends LinkedComponent implements ThresholdUser, QueueUser {
+
+	@Keyword(description = "The position of the entity being processed relative to the processor.",
+	         example = "Object1 ProcessPosition { 1.0 0.0 0.01 m }")
+	protected final Vec3dInput processPosition;
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         example = "Server1 WaitQueue { Queue1 }")
@@ -42,6 +49,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	{
 		stateGraphics.setHidden(false);
+
+		processPosition = new Vec3dInput("ProcessPosition", "Key Inputs", new Vec3d(0.0d, 0.0d, 0.01d));
+		processPosition.setUnitType(DistanceUnit.class);
+		this.addInput(processPosition);
 
 		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput(waitQueue);
@@ -186,6 +197,12 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 				this.setPresentState("Stopped");
 			}
 		}
+	}
+
+	protected final void moveToProcessPosition(DisplayEntity ent) {
+		Vec3d pos = this.getGlobalPosition();
+		pos.add3(processPosition.getValue());
+		ent.setGlobalPosition(pos);
 	}
 
 	// ******************************************************************************************************
