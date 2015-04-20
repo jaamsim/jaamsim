@@ -186,6 +186,7 @@ public class DisplayEntity extends Entity {
 		this.setAlignment(alignmentInput.getValue());
 		this.setOrientation(orientationInput.getValue());
 		this.setDisplayModelList(displayModelListInput.getValue());
+		this.setRegion(regionInput.getValue());
 	}
 
 	@Override
