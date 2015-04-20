@@ -35,6 +35,8 @@ public class Seize extends LinkedService {
 	private final SampleExpListInput numberOfUnitsList;
 
 	{
+		processPosition.setHidden(true);
+
 		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
 		this.addInput(resourceList);
 

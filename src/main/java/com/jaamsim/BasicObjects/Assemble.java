@@ -24,7 +24,6 @@ import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.TimeUnit;
 
 public class Assemble extends LinkedService {
@@ -134,10 +133,8 @@ public class Assemble extends LinkedService {
 		assembledEntity = Entity.fastCopy(proto, sb.toString());
 		assembledEntity.earlyInit();
 
-		// Position the assembled part over the Assemble object
-		Vec3d pos = this.getGlobalPositionForAlignment(new Vec3d());
-		pos.add3(new Vec3d(0,0,0.01));
-		assembledEntity.setGlobalPosition(pos);
+		// Position the assembled part relative to the Assemble object
+		this.moveToProcessPosition(assembledEntity);
 
 		// Schedule the completion of processing
 		double dt = serviceTime.getValue().getNextSample(getSimTime());

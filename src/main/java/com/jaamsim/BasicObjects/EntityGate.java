@@ -70,6 +70,7 @@ public class EntityGate extends LinkedService {
 
 		// Schedule the release of the next entity
 		servedEntity = this.getNextEntity();
+		this.moveToProcessPosition(servedEntity);
 		this.scheduleProcess(releaseDelay.getValue(), 5, endActionTarget);
 	}
 

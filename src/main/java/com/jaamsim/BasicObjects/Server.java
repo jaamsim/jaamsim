@@ -70,9 +70,10 @@ public class Server extends LinkedService {
 
 		// Remove the first entity from the queue
 		servedEntity = this.getNextEntity();
-		double dt = serviceTime.getValue().getNextSample(getSimTime());
+		this.moveToProcessPosition(servedEntity);
 
 		// Schedule the completion of service
+		double dt = serviceTime.getValue().getNextSample(getSimTime());
 		this.scheduleProcess(dt, 5, endActionTarget);
 	}
 
@@ -84,16 +85,6 @@ public class Server extends LinkedService {
 
 		// Remove the next entity from the queue and start processing
 		this.startAction();
-	}
-
-	@Override
-	public void updateGraphics(double simTime) {
-
-		// If an entity is being served, show it at the center of the Server
-		if (servedEntity != null) {
-			Vec3d serverCenter = this.getGlobalPositionForAlignment(new Vec3d());
-			servedEntity.setGlobalPosition(serverCenter);
-		}
 	}
 
 }

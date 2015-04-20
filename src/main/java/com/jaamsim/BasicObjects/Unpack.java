@@ -17,7 +17,6 @@ package com.jaamsim.BasicObjects;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.TimeUnit;
 
 public class Unpack extends LinkedService {
@@ -80,9 +79,7 @@ public class Unpack extends LinkedService {
 			numberRemoved = 0;
 
 			// Position the container over the unpack object
-			Vec3d tmp = this.getGlobalPositionForAlignment(new Vec3d());
-			tmp.add3(new Vec3d(0,0,0.01));
-			container.setGlobalPosition(tmp);
+			this.moveToProcessPosition(container);
 		}
 
 		// Schedule the removal of the next entity

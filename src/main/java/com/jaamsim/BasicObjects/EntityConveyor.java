@@ -64,6 +64,7 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 	{
 		operatingThresholdList.setHidden(true);
 		waitQueue.setHidden(true);
+		processPosition.setHidden(true);
 
 		travelTimeInput = new ValueInput("TravelTime", "Key Inputs", 0.0d);
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);

@@ -22,7 +22,6 @@ import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -114,9 +113,7 @@ public class Pack extends LinkedService {
 			numberInserted = 0;
 
 			// Position the container over the pack object
-			Vec3d tmp = this.getGlobalPositionForAlignment(new Vec3d());
-			tmp.add3(new Vec3d(0,0,0.01));
-			container.setGlobalPosition(tmp);
+			this.moveToProcessPosition(container);
 		}
 
 		// Are there sufficient entities in the queue to start packing?
