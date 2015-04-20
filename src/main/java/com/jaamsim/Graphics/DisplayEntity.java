@@ -136,7 +136,8 @@ public class DisplayEntity extends Entity {
 		this.addInput(displayModelListInput);
 		displayModelListInput.setUnique(false);
 
-		active = new BooleanInput("Active", "Basic Graphics", true);
+		active = new BooleanInput("Active", "Key Inputs", true);
+		active.setHidden(true);
 		this.addInput(active);
 
 		show = new BooleanInput("Show", "Basic Graphics", true);
