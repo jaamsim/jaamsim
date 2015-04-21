@@ -524,6 +524,10 @@ public class InputAgent {
 			}
 			catch (Throwable e) {
 				InputAgent.logInpError("Entity: %s, Keyword: %s - %s", ent.getName(), keyword.keyword, e.getMessage());
+				if (e.getMessage() == null) {
+					for (StackTraceElement each : e.getStackTrace())
+						InputAgent.logMessage(each.toString());
+				}
 			}
 		}
 	}
