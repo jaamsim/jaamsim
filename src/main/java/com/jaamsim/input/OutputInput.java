@@ -29,6 +29,10 @@ public class OutputInput<T> extends Input<String> {
 	public OutputInput(Class<T> klass, String key, String cat, String def) {
 		super(key, cat, def);
 		this.klass = klass;
+		ent = null;
+		outputName = "";
+		out = null;
+		outputNameList = new ArrayList<>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -50,7 +54,7 @@ public class OutputInput<T> extends Input<String> {
 			ent = null;
 			outputName = "";
 			out = null;
-			outputNameList.clear();
+			outputNameList = new ArrayList<>();
 			return;
 		}
 
