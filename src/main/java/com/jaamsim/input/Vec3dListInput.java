@@ -38,8 +38,11 @@ public class Vec3dListInput extends ListInput<ArrayList<Vec3d>> {
 
 		// Check if number of outer lists violate minCount or maxCount
 		ArrayList<KeywordIndex> subArgs = kw.getSubArgs();
-		if (subArgs.size() < minCount || subArgs.size() > maxCount)
+		if (subArgs.size() < minCount || subArgs.size() > maxCount) {
+			if (maxCount == Integer.MAX_VALUE)
+				throw new InputErrorException(INP_ERR_RANGECOUNTMIN, minCount, kw.argString());
 			throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, kw.argString());
+		}
 
 		ArrayList<Vec3d> tempValue = new ArrayList<>(subArgs.size());
 		for (KeywordIndex subArg : subArgs) {

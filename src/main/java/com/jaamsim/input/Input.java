@@ -41,6 +41,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public abstract class Input<T> {
 	protected static final String INP_ERR_COUNT = "Expected an input with %s value(s), received: %s";
 	protected static final String INP_ERR_RANGECOUNT = "Expected an input with %d to %d values, received: %s";
+	protected static final String INP_ERR_RANGECOUNTMIN = "Expected an input with at least %d values, received: %s";
 	protected static final String INP_ERR_EVENCOUNT = "Expected an input with even number of values, received: %s";
 	protected static final String INP_ERR_ODDCOUNT = "Expected an input with odd number of values, received: %s";
 	protected static final String INP_ERR_BOOLEAN = "Expected a boolean value, received: %s";
@@ -295,8 +296,11 @@ public abstract class Input<T> {
 			return;
 		}
 
-		if (kw.numArgs() < min || kw.numArgs() > max)
+		if (kw.numArgs() < min || kw.numArgs() > max) {
+			if (max == Integer.MAX_VALUE)
+				throw new InputErrorException(INP_ERR_RANGECOUNTMIN, min, kw.argString());
 			throw new InputErrorException(INP_ERR_RANGECOUNT, min, max, kw.argString());
+		}
 	}
 
 	public static void assertCount(List<String> input, int... counts)
@@ -323,8 +327,11 @@ public abstract class Input<T> {
 			return;
 		}
 
-		if (input.size() < min || input.size() > max)
+		if (input.size() < min || input.size() > max) {
+			if (max == Integer.MAX_VALUE)
+				throw new InputErrorException(INP_ERR_RANGECOUNTMIN, min, input.toString());
 			throw new InputErrorException(INP_ERR_RANGECOUNT, min, max, input.toString());
+		}
 	}
 
 	public static void assertCountRange(List<String> input, int min, int max)
@@ -335,8 +342,11 @@ public abstract class Input<T> {
 			return;
 		}
 
-		if (input.size() < min || input.size() > max)
+		if (input.size() < min || input.size() > max) {
+			if (max == Integer.MAX_VALUE)
+				throw new InputErrorException(INP_ERR_RANGECOUNTMIN, min, input.toString());
 			throw new InputErrorException(INP_ERR_RANGECOUNT, min, max, input.toString());
+		}
 	}
 
 	public static void assertCountEven(KeywordIndex kw)
@@ -381,8 +391,11 @@ public abstract class Input<T> {
 		if( aClass == DoubleVector.class ) {
 			if( units != null ){
 				DoubleVector value = Input.parseDoubleVector( data, minValue, maxValue, units);
-				if (value.size() < minCount || value.size() > maxCount)
+				if (value.size() < minCount || value.size() > maxCount) {
+					if (maxCount == Integer.MAX_VALUE)
+						throw new InputErrorException(INP_ERR_RANGECOUNTMIN, minCount, data);
 					throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, data);
+				}
 				return aClass.cast( value );
 			}
 			else {
