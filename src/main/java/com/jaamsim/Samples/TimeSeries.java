@@ -121,42 +121,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	 */
 	@Override
 	public double getValueForTicks(long ticks) {
-		return value.getValue().valueList[ getIndexForTicks(ticks) ];
-	}
-
-	/**
-	 * Returns the index in the time series for the given simulation time.
-	 * @param ticks - simulation time in clock ticks.
-	 * @return index in the times series for the given simulation time.
-	 */
-	private int getIndexForTicks(long ticks) {
-
-		long[] ticksList = value.getValue().ticksList;
-		if (ticks == Long.MAX_VALUE)
-			return ticksList.length - 1;
-
-		// Find the time within the present cycle
-		long ticksInCycle = ticks % getTicks(cycleTime.getValue());
-
-		// If the time in the cycle is greater than the last time, return the last value
-		if (ticksInCycle >= ticksList[ticksList.length - 1]) {
-			return ticksList.length - 1;
-		}
-
-		// Find the index by binary search
-		int index = Arrays.binarySearch(ticksList, ticksInCycle);
-
-		// If the returned index is greater or equal to zero,
-		// then an exact match was found
-		if (index >= 0)
-			return index;
-
-		if (index == -1)
-			error("No value found at time: %f", getSimTime(ticks));
-
-		// If the returned index is negative, then (insertion index) = -index-1
-		// Return the index before the insertion index
-		return -index - 2;
+		return getValue(getTSPointForTicks(ticks));
 	}
 
 	/**
@@ -167,20 +132,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	 */
 	@Override
 	public long getNextChangeAfterTicks(long ticks) {
-
-		int index = this.getIndexForTicks(ticks);
-		long[] ticksList = value.getValue().ticksList;
-		long cycleTimeInTicks = getTicks(cycleTime.getValue());
-		long startOfCycle = ticks - (ticks % cycleTimeInTicks);
-
-		// If the last entry in the list, then the next change is the end of the cycle
-		if (index == ticksList.length-1) {
-			if (cycleTimeInTicks == Long.MAX_VALUE)
-				return Long.MAX_VALUE;
-			return startOfCycle + cycleTimeInTicks;
-		}
-
-		return startOfCycle + ticksList[index+1];
+		return getTicks(getTSPointAfter(getTSPointForTicks(ticks)));
 	}
 
 	@Override
@@ -216,10 +168,6 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	public double getMeanValue(double simTime) {
 		return this.getNextSample(simTime);
 	}
-
-	// ******************************************************************************************************
-	// METHODS NEEDED FOR NON-STATEXPONENTIALDIST
-	// ******************************************************************************************************
 
 	/**
 	 * Returns the position in the time series that corresponds to the specified
@@ -436,7 +384,7 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	        unitType = UserSpecifiedUnit.class)
 	@Override
 	public final double getNextSample(double simTime) {
-		return value.getValue().valueList[ getIndexForTicks(getTicks(simTime)) ];
+		return getValue(getTSPointForTicks(getTicks(simTime)));
 	}
 
 }
