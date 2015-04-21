@@ -21,11 +21,16 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
 public class EntityContainer extends SimEntity {
+
+	@Keyword(description = "The position of the first entity in the container relative to the container.",
+	         example = "Object1 PositionOffset { 1.0 0.0 0.01 m }")
+	protected final Vec3dInput positionOffset;
 
 	@Keyword(description = "The amount of graphical space shown between entities in the container.",
 	         example = "Container1 Spacing { 1 m }")
@@ -38,6 +43,10 @@ public class EntityContainer extends SimEntity {
 	private ArrayList<DisplayEntity> entityList;
 
 	{
+		positionOffset = new Vec3dInput("PositionOffset", "Key Inputs", new Vec3d(0.0d, 0.0d, 0.01d));
+		positionOffset.setUnitType(DistanceUnit.class);
+		this.addInput(positionOffset);
+
 		spacingInput = new ValueInput("Spacing", "Key Inputs", 0.0d);
 		spacingInput.setUnitType(DistanceUnit.class);
 		spacingInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -116,6 +125,7 @@ public class EntityContainer extends SimEntity {
 			distanceX += spacingInput.getValue() + 0.5*itemSize.x;
 			tmp.set3(distanceX/size.x, distanceY/size.y, 0.0d);
 			Vec3d itemCenter = this.getGlobalPositionForAlignment(tmp);
+			itemCenter.add3(positionOffset.getValue());
 			item.setGlobalPositionForAlignment(new Vec3d(), itemCenter);
 
 			// increment total distance
