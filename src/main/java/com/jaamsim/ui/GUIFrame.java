@@ -1981,8 +1981,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 */
 	public static boolean showConfirmStopDialog() {
 		int userOption = JOptionPane.showConfirmDialog( null,
-				"WARNING: If you stop the run, it can only be re-started from time 0.\n" +
-				"Do you really want to stop?",
+				"WARNING: Are you sure you want to reset the simulation time to 0?",
 				"Confirm Stop",
 				JOptionPane.YES_OPTION,
 				JOptionPane.WARNING_MESSAGE );
