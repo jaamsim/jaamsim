@@ -24,6 +24,9 @@ Define TextModel           { TextModelDefault           }
 
 RegionModelDefault ColladaFile { <res>/shapes/axis_text.dae }
 
+Define  ImageModel { VideoRecorderIconModel }
+VideoRecorderIconModel ImageFile { '<res>/images/record.png' }
+
 Define ObjectType {
                     View
                     Region
@@ -49,7 +52,7 @@ BillboardText         JavaClass { com.jaamsim.Graphics.BillboardText            
 Arrow                 JavaClass { com.jaamsim.Graphics.Arrow                         } Palette { 'Graphics Objects' } DefaultDisplayModel { ArrowModelDefault        } IconFile { '<res>/images/Arrow-24.png' }
 Graph                 JavaClass { com.jaamsim.Graphics.Graph                         } Palette { 'Graphics Objects' } DefaultDisplayModel { GraphModelDefault        } IconFile { '<res>/images/Graph-24.png' } DefaultSize { 5.0 3.0 0.0 m }
 
-VideoRecorder         JavaClass { com.jaamsim.ui.VideoRecorderEntity                 } Palette { 'Graphics Objects' }    DragAndDrop { FALSE }
+VideoRecorder         JavaClass { com.jaamsim.ui.VideoRecorderEntity                 } Palette { 'Graphics Objects' } DefaultDisplayModel { VideoRecorderIconModel   } IconFile { '<res>/images/record.png' } DefaultSize { 0.6 0.4 0.0 m }
 
 View          Description { 'Display window showing view of the 3D model universe.' }
 Region        Description { 'Local coordinate system.' }

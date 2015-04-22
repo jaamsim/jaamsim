@@ -16,7 +16,7 @@ package com.jaamsim.ui;
 
 import java.util.ArrayList;
 
-import com.jaamsim.basicsim.Entity;
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
 import com.jaamsim.datatypes.IntegerVector;
@@ -35,7 +35,7 @@ import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 
-public class VideoRecorderEntity extends Entity {
+public class VideoRecorderEntity extends DisplayEntity {
 	@Keyword(description = "Simulated time between screen captures",
 	         example = "This is placeholder example text")
 	private final ValueInput captureInterval;
