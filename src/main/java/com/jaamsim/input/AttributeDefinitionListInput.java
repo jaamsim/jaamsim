@@ -71,7 +71,9 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				}
 
 				// Save the data for this attribute
-				AttributeHandle h = new AttributeHandle(ent, name);
+				AttributeHandle h = (AttributeHandle) ent.getOutputHandle(name);
+				if (h == null)
+					h = new AttributeHandle(ent, name);
 				h.setUnitType(unitType);
 				h.setInitialValue(val);
 				h.setValue(val);
