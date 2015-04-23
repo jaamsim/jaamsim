@@ -28,6 +28,7 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
@@ -121,6 +122,14 @@ public class VideoRecorderEntity extends DisplayEntity {
 
 		videoCapture = new BooleanInput("VideoCapture", "Key Inputs", false);
 		this.addInput(videoCapture);
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+
+		if( ( saveImages.getValue() || saveVideo.getValue() ) && captureViews.getValue().size() == 0 )
+			throw new InputErrorException( "CaptureViews must be set when SaveImages or SaveVideo is TRUE" );
 	}
 
 	@Override
