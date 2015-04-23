@@ -15,6 +15,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
@@ -22,7 +23,7 @@ import com.jaamsim.basicsim.Entity;
 /**
  * Class KeyListInput for storing a list of entities of class V, with an optional key of class K1
  */
-public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<ArrayList<V>> {
+public class KeyListInput<K1 extends Entity, V extends Entity> extends ListInput<ArrayList<V>> {
 
 	private Class<K1> keyClass;
 	private Class<V> valClass;
@@ -115,5 +116,24 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends Input<Arr
 		super.reset();
 		hashMap.clear();
 		noKeyValue = this.getDefaultValue();
+	}
+
+	@Override
+	public int getListSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public ArrayList<String> getValidOptions() {
+		ArrayList<String> list = new ArrayList<>();
+		for(V each: Entity.getClonesOfIterator(valClass) ) {
+			if(each.testFlag(Entity.FLAG_GENERATED))
+				continue;
+
+			list.add(each.getName());
+		}
+		Collections.sort(list);
+		return list;
 	}
 }

@@ -15,6 +15,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import com.jaamsim.basicsim.Entity;
@@ -23,7 +24,7 @@ import com.jaamsim.basicsim.Group;
  * Class OneOrTwoKeyInput for storing objects of class V (e.g. Double or DoubleVector),
  * with one mandatory key of class K1 and one optional key of class K2
  */
-public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Entity> extends Input<ArrayList<V>> {
+public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extends Entity> extends ListInput<ArrayList<V>> {
 
 	private Class<K1> key1Class;
 	private Class<K2> key2Class;
@@ -181,5 +182,24 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 		super.reset();
 		hashMap.clear();
 		noKeyValue = this.getDefaultValue();
+	}
+
+	@Override
+	public int getListSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public ArrayList<String> getValidOptions() {
+		ArrayList<String> list = new ArrayList<>();
+		for(V each: Entity.getClonesOfIterator(valClass) ) {
+			if(each.testFlag(Entity.FLAG_GENERATED))
+				continue;
+
+			list.add(each.getName());
+		}
+		Collections.sort(list);
+		return list;
 	}
 }
