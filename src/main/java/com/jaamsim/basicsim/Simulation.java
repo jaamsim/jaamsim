@@ -513,7 +513,7 @@ public class Simulation extends Entity {
 		return printInputReport.getValue();
 	}
 
-	private static void setWindowVisible(JFrame f, boolean visible) {
+	public static void setWindowVisible(JFrame f, boolean visible) {
 		f.setVisible(visible);
 		if (visible)
 			f.toFront();

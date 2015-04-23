@@ -1792,19 +1792,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		                         t.getMessage());
 	}
 
-	/**
-	 * Shows the Error Message dialog box
-	 * @param title - text for the dialog box name
-	 * @param fmt - format string for the error message
-	 * @param args - inputs to the error message
-	 */
-	public static void showErrorDialog(String title, String fmt, Object... args) {
-		if (InputAgent.getBatch()) GUIFrame.shutdown(1);
-
-		final String msg = String.format(fmt,  args);
-		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
-	}
-
 	void load() {
 		LogBox.logLine("Loading...");
 
@@ -1874,9 +1861,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	static void handleConfigError(Throwable t, File file) {
 		if (t instanceof InputErrorException) {
 			LogBox.logLine("Input Error: " + t.getMessage());
-			GUIFrame.showErrorDialog("Input Error",
+			GUIFrame.showErrorOptionDialog("Input Error",
 			                         "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
-			                         "Check the log file '%s' for more information.",
+			                         "Open '%s' with Log Viewer?",
 			                         file.getName(), t.getMessage(), InputAgent.getRunName() + ".log");
 			return;
 		}
@@ -2014,6 +2001,45 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			GUIFrame.instance().save();
 
 		return (userOption != JOptionPane.CANCEL_OPTION);
+	}
+
+	/**
+	 * Shows the Error Message dialog box
+	 * @param title - text for the dialog box name
+	 * @param fmt - format string for the error message
+	 * @param args - inputs to the error message
+	 */
+	public static void showErrorDialog(String title, String fmt, Object... args) {
+		if (InputAgent.getBatch()) GUIFrame.shutdown(1);
+
+		final String msg = String.format(fmt,  args);
+		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+	}
+
+	/**
+	 * Shows the Error Message dialog box with option to open the Log Viewer
+	 * @param title - text for the dialog box name
+	 * @param fmt - format string for the error message
+	 * @param args - inputs to the error message
+	 */
+	public static void showErrorOptionDialog(String title, String fmt, Object... args) {
+		if (InputAgent.getBatch()) GUIFrame.shutdown(1);
+
+		final String msg = String.format(fmt,  args);
+
+		Object[] options = {"Yes", "No"};
+		int userOption = JOptionPane.showOptionDialog(null,
+				msg,
+				title,
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.ERROR_MESSAGE,
+				null,
+				options,
+				options[0]);
+
+		if (userOption == JOptionPane.YES_OPTION) {
+			Simulation.setWindowVisible(LogBox.getInstance(), true);
+		}
 	}
 
 	// ******************************************************************************************************
