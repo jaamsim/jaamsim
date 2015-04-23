@@ -16,17 +16,20 @@ package com.jaamsim.input;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
 
+public class DirInput extends StringInput {
+	private URI dir;
 
-public class DirInput extends Input<URI> {
-	public DirInput(String key, String cat, URI def) {
+	public DirInput(String key, String cat, String def) {
 		super(key, cat, def);
+		dir = null;
 	}
 
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
+		Input.assertCount(kw, 1);
+
 		URI temp = Input.parseURI(kw);
 		try {
 			File f = new File(temp);
@@ -37,23 +40,17 @@ public class DirInput extends Input<URI> {
 			throw new InputErrorException("Unable to parse the directory:\n%s", kw.getArg(0));
 		}
 
-		value = temp;
-	}
-
-	@Override
-	public void getValueTokens(ArrayList<String> toks) {
-		if (value == null) return;
-
-		toks.add(InputAgent.getRelativeFilePath(value));
+		value = kw.getArg(0);
+		dir = temp;
 	}
 
 	public File getDir() {
-		if (value == null) {
+		if (dir == null) {
 			return null;
 		}
 
 		try {
-			File f = new File(value);
+			File f = new File(dir);
 			return f;
 		}
 		catch (IllegalArgumentException e) {}
