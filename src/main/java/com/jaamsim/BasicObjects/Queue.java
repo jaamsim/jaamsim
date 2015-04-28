@@ -21,6 +21,7 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -279,6 +280,99 @@ public class Queue extends LinkedComponent {
 	 */
 	public double getQueueTime() {
 		return this.getSimTime() - itemList.get(0).timeAdded;
+	}
+
+	/**
+	 * Returns the number of times that the specified match value appears in
+	 * the queue. If the match value is null, then every entity is counted.
+	 * @param m - value to be matched.
+	 * @return number of entities that have this match value.
+	 */
+	public int getMatchCount(Integer m) {
+
+		if (m == null)
+			return getCount();
+
+		int ret = 0;
+		for (QueueEntry item : itemList) {
+			if (item.match == m)
+				ret++;
+		}
+		return ret;
+	}
+
+	/**
+	 * Returns the first entity in the queue whose match value is equal to the
+	 * specified value. The returned entity is removed from the queue.
+	 * If the match value is null, the first entity is removed.
+	 * @param m - value to be matched.
+	 * @return entity whose match value equals the specified value.
+	 */
+	public DisplayEntity removeFirstForMatch(Integer m) {
+
+		if (m == null)
+			return this.removeFirst();
+
+		for (int i=0; i<itemList.size(); i++) {
+			if (itemList.get(i).match == m)
+				return this.remove(i);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a match value that has sufficient numbers of entities in each
+	 * queue. The first match value that satisfies the criterion is selected.
+	 * If the numberList is too short, then the last value is used.
+	 * @param queueList - list of queues to check.
+	 * @param numberList - number of matches required for each queue.
+	 * @return match value.
+	 */
+	public static Integer selectMatchValue(ArrayList<Queue> queueList, IntegerVector numberList) {
+
+		// Find the shortest queue
+		Queue shortest = null;
+		int count = -1;
+		for (Queue que : queueList) {
+			if (que.getCount() > count) {
+				count = que.getCount();
+				shortest = que;
+			}
+		}
+
+		// Return the first match value that has sufficient entities in each queue
+		for (int m : shortest.getMatchValues(0.0)) {
+			if (Queue.sufficientEntities(queueList, numberList, m))
+				return m;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns true if each of the queues contains sufficient entities with
+	 * the specified match value for processing to begin.
+	 * If the numberList is too short, then the last value is used.
+	 * If the numberList is null, then one entity per queue is required.
+	 * If the match value m is null, then all the entities in each queue are counted.
+	 * @param queueList - list of queues to check.
+	 * @param numberList - number of matches required for each queue.
+	 * @param m - match value.
+	 * @return true if there are sufficient entities in each queue.
+	 */
+	public static boolean sufficientEntities(ArrayList<Queue> queueList, IntegerVector numberList, Integer m) {
+		int number;
+		for (int i=0; i<queueList.size(); i++) {
+			if (numberList == null) {
+				number = 1;
+			}
+			else {
+				int ind = Math.min(i, numberList.size()-1);
+				number = numberList.get(ind);
+			}
+			if (queueList.get(i).getMatchCount(m) < number)
+				return false;
+		}
+		return true;
 	}
 
 	/**
