@@ -42,6 +42,13 @@ public class Queue extends LinkedComponent {
 	         example = "Queue1 Priority { this.obj.Attrib1 }")
 	private final SampleExpInput priority;
 
+	@Keyword(description = "An expression that returns a dimensionless integer value that can be used to "
+			+ "match entities in separate queues. The expression is evaluated when the entity "
+			+ "first arrives at the queue. Since Match is integer valued, a value of 3.2 for one "
+			+ "queue and 3.6 for another queue are considered to be equal.",
+	         example = "Queue1 Match { this.obj.Attrib1 }")
+	private final SampleExpInput match;
+
 	@Keyword(description = "Determines the order in which entities are placed in the queue (FIFO or LIFO):\n" +
 			"TRUE = first in first out (FIFO) order (the default setting)," +
 			"FALSE = last in first out (LIFO) order.",
@@ -77,6 +84,11 @@ public class Queue extends LinkedComponent {
 		priority.setEntity(this);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(priority);
+
+		match = new SampleExpInput("Match", "Key Inputs", new SampleConstant(0));
+		match.setUnitType(DimensionlessUnit.class);
+		match.setEntity(this);
+		this.addInput(match);
 
 		fifo = new BooleanInput("FIFO", "Key Inputs", true);
 		this.addInput(fifo);
@@ -128,6 +140,7 @@ public class Queue extends LinkedComponent {
 		DisplayEntity entity;
 		double timeAdded;
 		int priority;
+		int match;
 	}
 
 	private final DoQueueChanged userUpdate = new DoQueueChanged(this);
@@ -159,8 +172,9 @@ public class Queue extends LinkedComponent {
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
 
-		// Determine the entity's priority
+		// Determine the entity's priority and match values
 		int pri = (int) priority.getValue().getNextSample(getSimTime());
+		int mtch = (int) match.getValue().getNextSample(getSimTime());
 
 		// Insert the entity in the correct position in the queue
 		// FIFO ordering
@@ -183,7 +197,7 @@ public class Queue extends LinkedComponent {
 				}
 			}
 		}
-		this.add(pos, ent, pri);
+		this.add(pos, ent, pri, mtch);
 
 		// Notify the users of this queue
 		if (!userUpdateHandle.isScheduled())
@@ -194,7 +208,7 @@ public class Queue extends LinkedComponent {
 	 * Inserts the specified element at the specified position in this Queue.
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
 	 */
-	private void add(int i, DisplayEntity ent, int pri) {
+	private void add(int i, DisplayEntity ent, int pri, int mtch) {
 
 		int queueSize = itemList.size();  // present number of entities in the queue
 		this.updateStatistics(queueSize, queueSize+1);
@@ -203,12 +217,14 @@ public class Queue extends LinkedComponent {
 		entry.entity = ent;
 		entry.timeAdded = this.getSimTime();
 		entry.priority = pri;
+		entry.match = mtch;
 		itemList.add(i, entry);
 	}
 
 	public void add(int i, DisplayEntity ent) {
 		int pri = (int) priority.getValue().getNextSample(getSimTime());
-		this.add(i, ent, pri);
+		int mtch = (int) match.getValue().getNextSample(getSimTime());
+		this.add(i, ent, pri, mtch);
 	}
 
 	/**
@@ -216,7 +232,8 @@ public class Queue extends LinkedComponent {
 	 */
 	public void addLast(DisplayEntity ent) {
 		int pri = (int) priority.getValue().getNextSample(getSimTime());
-		this.add(itemList.size(), ent, pri);
+		int mtch = (int) match.getValue().getNextSample(getSimTime());
+		this.add(itemList.size(), ent, pri, mtch);
 	}
 
 	/**
