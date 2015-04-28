@@ -20,10 +20,15 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.datatypes.IntegerVector;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 public class Assemble extends LinkedService {
@@ -36,12 +41,24 @@ public class Assemble extends LinkedService {
 	         example = "EntityAssemble1 WaitQueueList { Queue1 }")
 	private final EntityListInput<Queue> waitQueueList;
 
+	@Keyword(description = "The number of entities required from each queue for the assembly process to begin. "
+			+ "The last value in the list is used if the number of queues is greater than the number of values.",
+	         example = "EntityAssemble1 NumberRequired { 1 2 1 }")
+	private final IntegerListInput numberRequired;
+
+	@Keyword(description = "If TRUE, the all entities used in the assembly process must have the same Match value. "
+			+ "The match value for an entity determined by the Match keyword for each queue. The value is calculated "
+			+ "when the entity first arrives at its queue.",
+	         example = "EntityAssemble1 MatchRequired { TRUE }")
+	private final BooleanInput matchRequired;
+
 	@Keyword(description = "The prototype for entities representing the assembled part.",
 	         example = "EntityAssemble1 PrototypeEntity { Proto }")
 	private final EntityInput<DisplayEntity> prototypeEntity;
 
 	private DisplayEntity assembledEntity;	// the generated entity representing the assembled part
 	private int numberGenerated = 0;  // Number of entities generated so far
+	private Integer match;  // match value selected for entities to remove from the queues
 
 	{
 		waitQueue.setHidden(true);
@@ -54,6 +71,14 @@ public class Assemble extends LinkedService {
 
 		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", "Key Inputs", null);
 		this.addInput(waitQueueList);
+
+		IntegerVector def = new IntegerVector();
+		def.add(1);
+		numberRequired = new IntegerListInput("NumberRequired", "Key Inputs", def);
+		this.addInput(numberRequired);
+
+		matchRequired = new BooleanInput("MatchRequired", "Key Inputs", false);
+		this.addInput(matchRequired);
 
 		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
 		this.addInput(prototypeEntity);
@@ -84,6 +109,7 @@ public class Assemble extends LinkedService {
 
 		assembledEntity = null;
 		numberGenerated = 0;
+		match = null;
 	}
 
 	@Override
@@ -102,15 +128,6 @@ public class Assemble extends LinkedService {
 	@Override
 	public void startAction() {
 
-		// Do all the queues have at least one entity?
-		for (Queue que : waitQueueList.getValue()) {
-			if (que.getCount() == 0) {
-				this.setBusy(false);
-				this.setPresentState();
-				return;
-			}
-		}
-
 		// Do any of the thresholds stop the generator?
 		if (!this.isOpen()) {
 			this.setBusy(false);
@@ -118,11 +135,37 @@ public class Assemble extends LinkedService {
 			return;
 		}
 
-		// Remove and destroy one entity from each queue
-		for (Queue que : waitQueueList.getValue()) {
-			DisplayEntity ent = que.removeFirst();
-			this.registerEntity(ent);
-			ent.kill();
+		// Do the queues have enough entities?
+		ArrayList<Queue> queueList = waitQueueList.getValue();
+		if (matchRequired.getValue()) {
+			Integer m = Queue.selectMatchValue(queueList, numberRequired.getValue());
+			if (m == null) {
+				this.setBusy(false);
+				this.setPresentState();
+				return;
+			}
+			match = m;
+		}
+		else {
+			if (!Queue.sufficientEntities(queueList, numberRequired.getValue(), null)) {
+				this.setBusy(false);
+				this.setPresentState();
+				return;
+			}
+		}
+
+		// Remove the appropriate entities from each queue
+		for (int i=0; i<queueList.size(); i++) {
+			Queue que = queueList.get(i);
+			int ind = Math.min(i, numberRequired.getValue().size()-1);
+			for (int n=0; n<numberRequired.getValue().get(ind); n++) {
+				DisplayEntity ent;
+				ent = que.removeFirstForMatch(match);
+				if (ent == null)
+					error("An entity with the specified match value %s was not found in %s.", match, que);
+				this.registerEntity(ent);
+				ent.kill();
+			}
 		}
 
 		// Create the entity representing the assembled part
@@ -150,6 +193,17 @@ public class Assemble extends LinkedService {
 
 		// Try to assemble another part
 		this.startAction();
+	}
+
+	// ******************************************************************************************************
+	// OUTPUT METHODS
+	// ******************************************************************************************************
+
+	@Output(name = "MatchValue",
+	 description = "The match value for the last object that was assembled.",
+	    unitType = DimensionlessUnit.class)
+	public double getMatchValue(double simTime) {
+		return match;
 	}
 
 }
