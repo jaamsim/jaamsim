@@ -38,6 +38,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.prefs.Preferences;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -1259,6 +1260,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	/** model has run, but presently is paused */
 	public static final int SIM_STATE_PAUSED = 4;
 
+	private static final String LAST_USED_FOLDER = "";
+
 	private int simState;
 	public int getSimState() {
 		return simState;
@@ -1795,8 +1798,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	void load() {
 		LogBox.logLine("Loading...");
 
+		Preferences prefs = Preferences.userRoot().node(getClass().getName());
+
 		// Create a file chooser
-		final JFileChooser chooser = new JFileChooser(InputAgent.getConfigFile());
+		final JFileChooser chooser = new JFileChooser(prefs.get(LAST_USED_FOLDER,
+				new File(".").getAbsolutePath()));
 
 		// Set the file extension filters
 		chooser.setAcceptAllFileFilterUsed(true);
@@ -1828,6 +1834,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 					FrameBox.setSelectedEntity(Simulation.getInstance());
 				}
 			}).start();
+
+			prefs.put(LAST_USED_FOLDER, chosenfile.getParent());
         }
 	}
 
@@ -1905,8 +1913,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	void saveAs() {
 		LogBox.logLine("Save As...");
 
+		Preferences prefs = Preferences.userRoot().node(getClass().getName());
+
 		// Create a file chooser
-		final JFileChooser chooser = new JFileChooser(InputAgent.getConfigFile());
+		final JFileChooser chooser = new JFileChooser(prefs.get(LAST_USED_FOLDER,
+				new File(".").getAbsolutePath()));
 
 		// Set the file extension filters
 		chooser.setAcceptAllFileFilterUsed(true);
@@ -1941,6 +1952,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			// Save the configuration file
 			setSaveFile(filePath);
+
+			prefs.put(LAST_USED_FOLDER, file.getParent());
 		}
 	}
 
