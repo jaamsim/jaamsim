@@ -379,6 +379,39 @@ public class Queue extends LinkedComponent {
 		return itemList.size();
 	}
 
+	@Output(name = "QueueTimes",
+	 description = "The waiting time for each entity in the queue.",
+	    unitType = TimeUnit.class)
+	public ArrayList<Double> getQueueTimes(double simTime) {
+		ArrayList<Double> ret = new ArrayList<>(itemList.size());
+		for (QueueEntry item : itemList) {
+			ret.add(simTime - item.timeAdded);
+		}
+		return ret;
+	}
+
+	@Output(name = "PriorityValues",
+	 description = "The Priority expression value for each entity in the queue.",
+	    unitType = DimensionlessUnit.class)
+	public ArrayList<Integer> getPriorityValues(double simTime) {
+		ArrayList<Integer> ret = new ArrayList<>();
+		for (QueueEntry item : itemList) {
+			ret.add(item.priority);
+		}
+		return ret;
+	}
+
+	@Output(name = "MatchValues",
+	 description = "The Match expression value for each entity in the queue.",
+	    unitType = DimensionlessUnit.class)
+	public ArrayList<Integer> getMatchValues(double simTime) {
+		ArrayList<Integer> ret = new ArrayList<>();
+		for (QueueEntry item : itemList) {
+			ret.add(item.match);
+		}
+		return ret;
+	}
+
 	@Output(name = "QueueLengthAverage",
 	 description = "The average number of entities in the queue.",
 	    unitType = DimensionlessUnit.class,
