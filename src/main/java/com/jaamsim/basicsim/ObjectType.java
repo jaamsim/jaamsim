@@ -16,6 +16,7 @@ package com.jaamsim.basicsim;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.input.BooleanInput;
@@ -31,6 +32,7 @@ import com.jaamsim.units.DistanceUnit;
 
 public class ObjectType extends Entity {
 	private static final ArrayList<ObjectType> allInstances;
+	private static final HashMap<Class<? extends Entity>, ObjectType> objectTypeMap;
 
 	@Keyword(description = "The java class of the object type",
 	         example = "This is placeholder example text")
@@ -65,6 +67,7 @@ public class ObjectType extends Entity {
 
 	static {
 		allInstances = new ArrayList<>();
+		objectTypeMap = new HashMap<>();
 	}
 
 	{
@@ -107,6 +110,10 @@ public class ObjectType extends Entity {
 			return;
 		}
 
+		if (in == javaClass) {
+			objectTypeMap.put(javaClass.getValue(), this);
+		}
+
 		super.updateForInput(in);
 	}
 
@@ -116,10 +123,15 @@ public class ObjectType extends Entity {
 		}
 	}
 
+	public static ObjectType getObjectTypeForClass(Class<? extends Entity> klass) {
+		return objectTypeMap.get(klass);
+	}
+
 	@Override
 	public void kill() {
 		super.kill();
 		allInstances.remove(this);
+		objectTypeMap.remove(javaClass.getValue());
 	}
 
 	public Class<? extends Entity> getJavaClass() {
