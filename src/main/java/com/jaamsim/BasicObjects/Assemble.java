@@ -91,14 +91,12 @@ public class Assemble extends LinkedService {
 		super.validate();
 
 		// Confirm that the waiting queues have been specified
-		if (waitQueueList.getValue() == null) {
+		if (waitQueueList.getValue() == null)
 			throw new InputErrorException("The keyword WaitQueueList must be set.");
-		}
 
 		// Confirm that prototype entity has been specified
-		if (prototypeEntity.getValue() == null) {
+		if (prototypeEntity.getValue() == null)
 			throw new InputErrorException("The keyword PrototypeEntity must be set.");
-		}
 
 		serviceTime.validate();
 	}
