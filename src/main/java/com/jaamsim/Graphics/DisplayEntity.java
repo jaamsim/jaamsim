@@ -152,24 +152,21 @@ public class DisplayEntity extends Entity {
 	 */
 	public DisplayEntity() {
 
-		for (ObjectType type : ObjectType.getAll()) {
-			if (type.getJavaClass() == this.getClass()) {
+		ObjectType type = ObjectType.getObjectTypeForClass(this.getClass());
+		if (type == null)
+			return;
 
-				// Set the default DisplayModel
-				displayModelListInput.setDefaultValue(type.getDefaultDisplayModel());
-				this.setDisplayModelList(type.getDefaultDisplayModel());
+		// Set the default DisplayModel
+		displayModelListInput.setDefaultValue(type.getDefaultDisplayModel());
+		this.setDisplayModelList(type.getDefaultDisplayModel());
 
-				// Set the default size
-				sizeInput.setDefaultValue(type.getDefaultSize());
-				this.setSize(type.getDefaultSize());
+		// Set the default size
+		sizeInput.setDefaultValue(type.getDefaultSize());
+		this.setSize(type.getDefaultSize());
 
-				// Set the default Alignment
-				alignmentInput.setDefaultValue(type.getDefaultAlignment());
-				this.setAlignment(type.getDefaultAlignment());
-
-				break;
-			}
-		}
+		// Set the default Alignment
+		alignmentInput.setDefaultValue(type.getDefaultAlignment());
+		this.setAlignment(type.getDefaultAlignment());
 	}
 
 	@Override
