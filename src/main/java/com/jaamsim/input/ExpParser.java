@@ -733,12 +733,10 @@ public class ExpParser {
 	}
 
 	private static String unitToString(Class<? extends Unit> unit) {
-		for (ObjectType type : ObjectType.getAll()) {
-			if (type.getJavaClass() == unit) {
-				return type.getName();
-			}
-		}
-		return "Unknown Unit";
+		ObjectType type = ObjectType.getObjectTypeForClass(unit);
+		if (type == null)
+			return "Unknown Unit";
+		return type.getName();
 	}
 
 	private static String getUnitMismatchString(Class<? extends Unit> u0, Class<? extends Unit> u1) {
