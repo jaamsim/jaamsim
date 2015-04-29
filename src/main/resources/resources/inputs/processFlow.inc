@@ -12,6 +12,7 @@ Define ObjectType {
 	Assign
 	Branch
 	Duplicate
+	Combine
 	SetGraphics
 	EntityGate
 	EntitySignal
@@ -36,6 +37,7 @@ Define	ImageModel {
 	AssignModel
 	BranchIconModel
 	DuplicateIconModel
+	CombineIconModel
 	SetGraphicsIconModel
 	EntityGateIconModel
 	EntitySignalIconModel
@@ -57,6 +59,7 @@ ReleaseIconModel        ImageFile { '<res>/images/Release-256.png'      }  Trans
 AssignModel             ImageFile { '<res>/images/Assign-256.png'       }  Transparent { TRUE }
 BranchIconModel         ImageFile { '<res>/images/Branch-256.png'       }  Transparent { TRUE }
 DuplicateIconModel      ImageFile { '<res>/images/Duplicate-256.png'    }  Transparent { TRUE }
+CombineIconModel        ImageFile { '<res>/images/Combine-256.png'      }  Transparent { TRUE }
 SetGraphicsIconModel    ImageFile { '<res>/images/SetGraphics-256.png'  }  Transparent { TRUE }
 EntityGateIconModel     ImageFile { '<res>/images/Gate-256.png'         }  Transparent { TRUE }
 EntitySignalIconModel   ImageFile { '<res>/images/Signal-256.png'       }  Transparent { TRUE }
@@ -81,6 +84,7 @@ Release                 JavaClass { com.jaamsim.BasicObjects.Release            
 Assign                  JavaClass { com.jaamsim.BasicObjects.Assign               }  Palette { 'Process Flow' }  DefaultDisplayModel { AssignModel              } IconFile { '<res>/images/Assign-24.png'          }
 Branch                  JavaClass { com.jaamsim.BasicObjects.Branch               }  Palette { 'Process Flow' }  DefaultDisplayModel { BranchIconModel          } IconFile { '<res>/images/Branch-24.png'          }
 Duplicate               JavaClass { com.jaamsim.BasicObjects.Duplicate            }  Palette { 'Process Flow' }  DefaultDisplayModel { DuplicateIconModel       } IconFile { '<res>/images/Duplicate-24.png'       }
+Combine                 JavaClass { com.jaamsim.BasicObjects.Combine              }  Palette { 'Process Flow' }  DefaultDisplayModel { CombineIconModel         } IconFile { '<res>/images/Combine-24.png'         }
 SetGraphics             JavaClass { com.jaamsim.BasicObjects.SetGraphics          }  Palette { 'Process Flow' }  DefaultDisplayModel { SetGraphicsIconModel     } IconFile { '<res>/images/SetGraphics-24.png'     }
 EntityGate              JavaClass { com.jaamsim.BasicObjects.EntityGate           }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityGateIconModel      } IconFile { '<res>/images/Gate-24.png'            }
 EntitySignal            JavaClass { com.jaamsim.BasicObjects.EntitySignal         }  Palette { 'Process Flow' }  DefaultDisplayModel { EntitySignalIconModel    } IconFile { '<res>/images/Signal-24.png'          }
@@ -107,6 +111,7 @@ Release            Description { 'Releases one or more units of a Resource.' }
 Assign             Description { 'Assigns new values to attributes.' }
 Branch             Description { 'Directs received entities to an assortment of destinations.' }
 Duplicate          Description { 'Sends copies of the received entity to various destinations.' }
+Combine            Description { 'Matches entities from multiple queues. The entity from the first queue is passed on while the other entities are destroyed.' }
 SetGraphics        Description { 'Changes the appearance of the received entity.' }
 EntityGate         Description { 'Blocks received entities from progressing further until the Gate is opened by a Signal.' }
 EntitySignal       Description { 'On receipt of an entity, a specified Gate is opened or closed.' }
