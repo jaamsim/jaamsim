@@ -988,16 +988,12 @@ public class InputAgent {
 		if( !newClasses.isEmpty() )
 			file.format("%n");
 
-		// Identify the object types for which new instances were defined
+		// Print the first part of the "Define" statement for this object type
 		for( Class<? extends Entity> newClass : newClasses ) {
-			for (ObjectType o : ObjectType.getAll()) {
-				if (o.getJavaClass() == newClass) {
-
-					// Print the first part of the "Define" statement for this object type
-					file.format("Define %s {", o.getName());
-					break;
-				}
-			}
+			ObjectType o = ObjectType.getObjectTypeForClass(newClass);
+			if (o == null)
+				throw new ErrorException("Cannot find object type for class: " + newClass.getName());
+			file.format("Define %s {", o.getName());
 
 			// Print the new instances that were defined
 			for (Entity ent : Entity.getAll()) {
