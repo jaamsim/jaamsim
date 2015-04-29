@@ -65,11 +65,13 @@ public class ObjectSelector extends FrameBox {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(FrameBox.getCloseListener("ShowObjectSelector"));
 
-		top = new DefaultMutableTreeNode( "Defined Objects");
+		top = new DefaultMutableTreeNode();
 		treeModel = new DefaultTreeModel(top);
 		tree = new JTree();
 		tree.setModel(treeModel);
 		tree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
+		tree.setRootVisible(false);
+		tree.setShowsRootHandles(true);
 		updateTree();
 
 		treeView = new JScrollPane(tree);
