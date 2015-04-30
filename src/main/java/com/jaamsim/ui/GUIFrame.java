@@ -751,8 +751,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// 2) Stop button
 		controlStop = new RoundToggleButton(new ImageIcon(GUIFrame.class.getResource("/resources/images/reset-16.png")));
-		controlStop.setToolTipText(formatToolTip("Stop",
-				"Stops and resets the simulation run."));
+		controlStop.setToolTipText(formatToolTip("Reset",
+				"Resets the simulation run time to zero."));
 		controlStop.setPressedIcon(new ImageIcon(GUIFrame.class.getResource("/resources/images/reset-pressed-16.png")));
 		controlStop.setRolloverEnabled( true );
 		controlStop.setRolloverIcon(new ImageIcon(GUIFrame.class.getResource("/resources/images/reset-rollover-16.png")));
