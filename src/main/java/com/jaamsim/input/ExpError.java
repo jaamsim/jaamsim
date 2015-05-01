@@ -20,7 +20,7 @@ public class ExpError extends Exception {
 
 	ExpError(String source, int pos, String msg) {
 		super(msg);
-		this.source = source.replaceAll("%", "%%");
+		this.source = source;
 		this.pos = pos;
 	}
 
@@ -37,7 +37,8 @@ public class ExpError extends Exception {
 			return sb.toString();
 
 		// Otherwise, append the source expression and an 'arrow' pointing at the error
-		sb.append(source).append("\n");
+		String src = source.replaceAll("%", "%%");
+		sb.append(src).append("\n");
 
 		for (int i = 0; i < pos; ++i) {
 			sb.append(" ");
