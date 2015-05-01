@@ -31,6 +31,14 @@ public class DirInput extends StringInput {
 		Input.assertCount(kw, 1);
 
 		URI temp = Input.parseURI(kw);
+
+		// If there is no context (e.g. reading from Input Editor),
+		// and a config file exists, then resolve the config file uri against this one
+		if( kw.context == null && InputAgent.getConfigFile() != null ) {
+			URI configDirURI = InputAgent.getConfigFile().getParentFile().toURI();
+			temp = configDirURI.resolve(temp.getSchemeSpecificPart());
+		}
+
 		try {
 			File f = new File(temp);
 			if (f.exists() && !f.isDirectory())
