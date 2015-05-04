@@ -152,7 +152,7 @@ public class DisplayEntity extends Entity {
 	 */
 	public DisplayEntity() {
 
-		ObjectType type = ObjectType.getObjectTypeForClass(this.getClass());
+		ObjectType type = this.getObjectType();
 		if (type == null)
 			return;
 

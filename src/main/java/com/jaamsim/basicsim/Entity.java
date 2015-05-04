@@ -810,10 +810,14 @@ public class Entity {
 		return ret;
 	}
 
+	public ObjectType getObjectType() {
+		return ObjectType.getObjectTypeForClass(this.getClass());
+	}
+
 	@Output(name = "ObjectType",
 			description = "The class of objects that this entity belongs to.")
 	public String getObjectTypeName(double simTime) {
-		return ObjectType.getObjectTypeForClass(this.getClass()).getName();
+		return this.getObjectType().getName();
 	}
 
 }
