@@ -361,19 +361,6 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	}
 
 	// ******************************************************************************************************
-	// TIME SERIES POINT
-	// ******************************************************************************************************
-	private class TSPoint {
-		private int index;            // index number for the time series point
-		private long numberOfCycles;  // number of passes through the time series data
-
-		private TSPoint(int ind, long n) {
-			index = ind;
-			numberOfCycles = n;
-		}
-	}
-
-	// ******************************************************************************************************
 	// OUTPUTS
 	// ******************************************************************************************************
 
