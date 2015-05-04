@@ -37,6 +37,7 @@ public class NonStatExponentialDist extends Distribution {
 		minValueInput.setDefaultValue(0.0);
 
 		unitType.setHidden(true);
+		unitType.setDefaultValue(TimeUnit.class);
 		this.setUnitType(TimeUnit.class);
 
 		expectedArrivals = new TimeSeriesInput("ExpectedArrivals", "Key Inputs", null);

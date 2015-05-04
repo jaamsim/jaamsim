@@ -25,7 +25,12 @@ public class UnitTypeInput extends Input<ObjectType> {
 	private Class<? extends Unit> unitType;
 
 	public UnitTypeInput(String key, String cat, Class<? extends Unit> ut) {
-		super(key, cat, null);
+		super(key, cat, ObjectType.getObjectTypeForClass(ut));
+		unitType = ut;
+	}
+
+	public void setDefaultValue(Class<? extends Unit> ut) {
+		this.setDefaultValue(ObjectType.getObjectTypeForClass(ut));
 		unitType = ut;
 	}
 
