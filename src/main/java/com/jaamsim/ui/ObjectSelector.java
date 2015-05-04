@@ -101,6 +101,7 @@ public class ObjectSelector extends FrameBox {
 
 		if (currentEntity == null) {
 			tree.setSelectionPath(null);
+			tree.setEditable(false);
 			return;
 		}
 
