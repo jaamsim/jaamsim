@@ -338,7 +338,7 @@ public class ObjectSelector extends FrameBox {
 
 			// Check that the name has not been used already
 			Entity existingEnt = Input.tryParseEntity(newName, Entity.class);
-			if (existingEnt != null) {
+			if (existingEnt != null && existingEnt != currentEntity) {
 				GUIFrame.showErrorDialog("Input Error",
 						"Entity name: %s is already in use.", newName);
 				node.setUserObject(currentEntity);
