@@ -20,6 +20,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -64,6 +66,7 @@ public class ObjectSelector extends FrameBox {
 		super( "Object Selector" );
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(FrameBox.getCloseListener("ShowObjectSelector"));
+		addWindowFocusListener(new MyFocusListener());
 
 		top = new DefaultMutableTreeNode();
 		treeModel = new DefaultTreeModel(top);
@@ -72,6 +75,7 @@ public class ObjectSelector extends FrameBox {
 		tree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
+		tree.setInvokesStopCellEditing(true);
 		updateTree();
 
 		treeView = new JScrollPane(tree);
@@ -615,6 +619,7 @@ static class CenterInViewMenuItem extends MenuItem {
 		@Override
 		public void mouseReleased(MouseEvent e) {}
 	}
+
 	static class MyKeyListener implements KeyListener {
 		@Override
 		public void keyReleased(KeyEvent e) {
@@ -638,4 +643,16 @@ static class CenterInViewMenuItem extends MenuItem {
 		@Override
 		public void keyTyped(KeyEvent e) {}
 	}
+
+	static class MyFocusListener implements WindowFocusListener {
+		@Override
+		public void windowGainedFocus(WindowEvent arg0) {}
+
+		@Override
+		public void windowLostFocus(WindowEvent e) {
+			// Complete any editing that has started
+			ObjectSelector.myInstance.tree.stopEditing();
+		}
+	}
+
 }
