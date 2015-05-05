@@ -136,6 +136,8 @@ public class GraphModel extends DisplayModel {
 	         example = "Graph1 BorderColor { red }")
 	private final ColourInput borderColor;
 
+	private static final int maxTicks = 100;
+
 	{
 		titleTextHeight = new ValueInput("TitleTextHeight", "Key Inputs", 0.05d);
 		titleTextHeight.setUnitType(DimensionlessUnit.class);
@@ -458,6 +460,9 @@ public class GraphModel extends DisplayModel {
 
 			for (int i = 0; xMin + i*xAxisInterval <= xMax; ++i) {
 
+				if( i > maxTicks )
+					break;
+
 				double x = (xMin + i * xAxisInterval);
 				String text;
 				if( timeTrace && x == 0 ) {
@@ -515,6 +520,9 @@ public class GraphModel extends DisplayModel {
 			double minYLabelXPos = graphOrigin.x;
 
 			for (int i = 0; i * yAxisInterval <= yRange; ++i) {
+
+				if( i > maxTicks )
+					break;
 
 				String text = String.format( yAxisLabelFormat,  ( i * yAxisInterval + yMin )/yAxisFactor);
 				double yPos = graphOrigin.y + (i * yAxisInterval * graphSize.y )/yRange;
@@ -575,6 +583,9 @@ public class GraphModel extends DisplayModel {
 			double maxYLabelXPos = graphOrigin.x + graphSize.x;
 
 			for (int i = 0; i * secYAxisInterval <= secYRange; ++i) {
+
+				if( i > maxTicks )
+					break;
 
 				String text = String.format( secYAxisLabelFormat,  ( i * secYAxisInterval + secYMin )/secYAxisFactor);
 				double yPos = graphOrigin.y + (i * secYAxisInterval * graphSize.y )/secYRange;
