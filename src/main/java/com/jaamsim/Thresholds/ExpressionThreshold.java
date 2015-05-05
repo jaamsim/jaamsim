@@ -49,6 +49,8 @@ public class ExpressionThreshold extends Threshold {
 	private final BooleanInput showPendingStates;
 
 	{
+		attributeDefinitionList.setHidden(false);
+
 		openCondition = new ExpressionInput("OpenCondition", "Key Inputs", null);
 		openCondition.setEntity(this);
 		this.addInput(openCondition);
