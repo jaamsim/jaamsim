@@ -73,10 +73,6 @@ public class VideoRecorderEntity extends DisplayEntity {
 	         example = "This is placeholder example text")
 	private final StringInput videoName;
 
-	@Keyword(description = "Enable video capture",
-	         example = "VidRecorder VideoCapture { TRUE }")
-	private final BooleanInput videoCapture;
-
 	private boolean hasRunStartup;
 	private int numFramesWritten;
 	private final EventHandle captureHandle = new EventHandle();
@@ -119,9 +115,6 @@ public class VideoRecorderEntity extends DisplayEntity {
 
 		videoName = new StringInput("VideoName", "Key Inputs", "");
 		this.addInput(videoName);
-
-		videoCapture = new BooleanInput("VideoCapture", "Key Inputs", false);
-		this.addInput(videoCapture);
 	}
 
 	@Override
@@ -144,7 +137,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 	public void startUp() {
 		super.startUp();
 
-		if (videoCapture.getValue())
+		if (saveVideo.getValue())
 			startProcess(new CaptureNetworkTarget(this));
 
 		this.hasRunStartup = true;
@@ -154,10 +147,10 @@ public class VideoRecorderEntity extends DisplayEntity {
     public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
-		if (in == videoCapture) {
+		if (in == saveVideo) {
 			// Start the capture if we are already running and we set the input
 			// to true
-			if (hasRunStartup && videoCapture.getValue())
+			if (hasRunStartup && saveVideo.getValue())
 				EventManager.scheduleTicks(0, 10, false, new CaptureNetworkTarget(this), null);
 		}
 	}
@@ -203,7 +196,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 		                             saveImages.getValue(), saveVideo.getValue(), videoBGColor.getValue());
 
 		// Otherwise, start capturing
-		while (videoCapture.getValue()) {
+		while (saveVideo.getValue()) {
 
 			RenderManager.inst().blockOnScreenShot(recorder);
 			++numFramesWritten;
