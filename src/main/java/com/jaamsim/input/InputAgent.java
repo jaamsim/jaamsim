@@ -100,7 +100,7 @@ public class InputAgent {
 		if (reportDir == null)
 			return;
 		if (!reportDir.exists() && !reportDir.mkdirs())
-			logWarning("Was unable to create the Report Directory:%s", reportDir.toString());
+			throw new InputErrorException("Was unable to create the Report Directory: %s", reportDir.toString());
 	}
 
 	public static void prepareReportDirectory() {
