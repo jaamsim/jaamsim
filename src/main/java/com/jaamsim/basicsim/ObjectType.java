@@ -111,7 +111,9 @@ public class ObjectType extends Entity {
 		}
 
 		if (in == javaClass) {
-			objectTypeMap.put(javaClass.getValue(), this);
+			synchronized (objectTypeMap) {
+				objectTypeMap.put(javaClass.getValue(), this);
+			}
 		}
 
 		super.updateForInput(in);
@@ -124,7 +126,9 @@ public class ObjectType extends Entity {
 	}
 
 	public static ObjectType getObjectTypeForClass(Class<? extends Entity> klass) {
-		return objectTypeMap.get(klass);
+		synchronized (objectTypeMap) {
+			return objectTypeMap.get(klass);
+		}
 	}
 
 	@Override
