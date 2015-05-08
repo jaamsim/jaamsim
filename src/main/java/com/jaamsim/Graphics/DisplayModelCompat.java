@@ -677,7 +677,8 @@ public class DisplayModelCompat extends DisplayModel {
 				}
 
 				// Determine the end of the next hold
-				endOfNextHold = outlineSizes[0] / totalOutlineSize;
+				if( outlineSizes.length > 0 )
+					endOfNextHold = outlineSizes[0] / totalOutlineSize;
 			}
 
 			for (int i = 0; i < sizes.length; ++i) {
@@ -701,8 +702,10 @@ public class DisplayModelCompat extends DisplayModel {
 
 					// Update the end of the next hold
 					indexOfNextHold++;
-					if( indexOfNextHold < outlineSizes.length )
-						endOfNextHold += gapBetweenHolds + (outlineSizes[indexOfNextHold] / totalOutlineSize);
+					if( outlineSizes != null ) {
+						if( indexOfNextHold < outlineSizes.length )
+							endOfNextHold += gapBetweenHolds + (outlineSizes[indexOfNextHold] / totalOutlineSize);
+					}
 				}
 
 				for (int j = 0; j < contentsPoints.size(); ++j) {
