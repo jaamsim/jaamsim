@@ -46,8 +46,6 @@ public class OutputBox extends FrameBox {
 
 		getContentPane().add( scrollPane );
 
-		setEntity(null);
-
 		setLocation(GUIFrame.COL3_START, GUIFrame.LOWER_START);
 		setSize(GUIFrame.COL3_WIDTH, GUIFrame.LOWER_HEIGHT);
 	}
