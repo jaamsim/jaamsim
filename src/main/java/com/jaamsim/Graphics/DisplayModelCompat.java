@@ -385,7 +385,12 @@ public class DisplayModelCompat extends DisplayModel {
 				sizes = t.sizes;
 				colours = t.colors;
 			}
-			cachedProxies.addAll(buildContents(sizes, colours, shipContentsTrans, trans, scale, pickingID));
+			Tag t2 = tagsCache.get(DisplayModelCompat.TAG_OUTLINES);
+			double[] outlineSizes = null;
+			if(t2 != null ) {
+				outlineSizes = t2.sizes;
+			}
+			cachedProxies.addAll(buildContents(sizes, colours, outlineSizes, shipContentsTrans, trans, scale, pickingID));
 		}
 
 		private void addTruckProxies(double simTime) {
@@ -405,7 +410,7 @@ public class DisplayModelCompat extends DisplayModel {
 				sizes = t.sizes;
 				colours = t.colors;
 			}
-			cachedProxies.addAll(buildContents(sizes, colours, truckContentsTrans, trans, scale, pickingID));
+			cachedProxies.addAll(buildContents(sizes, colours, null, truckContentsTrans, trans, scale, pickingID));
 		}
 
 		private void addBarGaugeProxies(double simTime) {
@@ -634,7 +639,7 @@ public class DisplayModelCompat extends DisplayModel {
 
 		// A disturbingly deep helper to allow trucks and ships to share contents building code
 		// This class needs to either die or get refactored
-		private List<RenderProxy> buildContents(double[] sizes, Color4d[] colours, Mat4d subTrans,
+		private List<RenderProxy> buildContents(double[] sizes, Color4d[] colours, double[] outlineSizes, Mat4d subTrans,
 		                                        Transform trans, Vec3d scale, long pickingID) {
 			List<RenderProxy> ret = new ArrayList<>();
 
@@ -678,6 +683,37 @@ public class DisplayModelCompat extends DisplayModel {
 				}
 
 				ret.add(new PolygonProxy(contentsPoints, trans, scale, colours[i], false, 1, getVisibilityInfo(), pickingID));
+			}
+
+			if( outlineSizes != null ) {
+				double totalOutlineSize = 0.0d;
+				for (int i = 0; i < outlineSizes.length; i++) {
+					totalOutlineSize += outlineSizes[i];
+				}
+				double outlineSizeOffset = 0;
+
+				for (int i = 0; i < outlineSizes.length; i++) {
+					// Add a rectangle for
+
+					double outlineSize = outlineSizes[i];
+					double start = outlineSizeOffset / totalOutlineSize;
+					double end = (outlineSizeOffset + outlineSize) / totalOutlineSize;
+
+					List<Vec4d> outlinePoints = new ArrayList<>();
+					outlinePoints.add(new Vec4d(  end, -0.5, 0.001, 1.0d));
+					outlinePoints.add(new Vec4d(  end,  0.5, 0.001, 1.0d));
+					outlinePoints.add(new Vec4d(start,  0.5, 0.001, 1.0d));
+					outlinePoints.add(new Vec4d(start, -0.5, 0.001, 1.0d));
+
+					outlineSizeOffset += outlineSize;
+
+					for (int j = 0; j < outlinePoints.size(); ++j) {
+						outlinePoints.get(j).mult4(subTrans, outlinePoints.get(j));
+					}
+
+					ret.add(new PolygonProxy(outlinePoints, trans, scale, ColourInput.BLACK, true, 1, getVisibilityInfo(), pickingID));
+
+				}
 			}
 			return ret;
 		}
