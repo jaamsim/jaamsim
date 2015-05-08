@@ -76,7 +76,6 @@ public class ObjectSelector extends FrameBox {
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
 		tree.setInvokesStopCellEditing(true);
-		updateTree();
 
 		treeView = new JScrollPane(tree);
 		getContentPane().add(treeView);
