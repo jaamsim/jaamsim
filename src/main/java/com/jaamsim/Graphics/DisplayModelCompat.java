@@ -663,8 +663,25 @@ public class DisplayModelCompat extends DisplayModel {
 				totalSize += sizes[i];
 			}
 			double sizeOffset = 0;
+
+			double totalOutlineSize = 0.0d;
+			int indexOfNextHold = 0;
+
+			// The following properties are expressed as a fraction of total cargo
+			double endOfNextHold = 1.0;
+			double gapBetweenHolds = 0.0075;
+
+			if( outlineSizes != null ) {
+				for (int i = 0; i < outlineSizes.length; i++) {
+					totalOutlineSize += outlineSizes[i];
+				}
+
+				// Determine the end of the next hold
+				endOfNextHold = outlineSizes[0] / totalOutlineSize;
+			}
+
 			for (int i = 0; i < sizes.length; ++i) {
-				// Add a rectangle for
+				// Add a rectangle for each parcel
 
 				double size = sizes[i];
 				double start = sizeOffset / totalSize;
@@ -678,6 +695,16 @@ public class DisplayModelCompat extends DisplayModel {
 
 				sizeOffset += size;
 
+				// Is this parcel the end of the hold?
+				if( Math.abs( end - endOfNextHold ) < 1.0E-9 ) {
+					sizeOffset += (gapBetweenHolds * totalSize);
+
+					// Update the end of the next hold
+					indexOfNextHold++;
+					if( indexOfNextHold < outlineSizes.length )
+						endOfNextHold += gapBetweenHolds + (outlineSizes[indexOfNextHold] / totalOutlineSize);
+				}
+
 				for (int j = 0; j < contentsPoints.size(); ++j) {
 					contentsPoints.get(j).mult4(subTrans, contentsPoints.get(j));
 				}
@@ -686,14 +713,10 @@ public class DisplayModelCompat extends DisplayModel {
 			}
 
 			if( outlineSizes != null ) {
-				double totalOutlineSize = 0.0d;
-				for (int i = 0; i < outlineSizes.length; i++) {
-					totalOutlineSize += outlineSizes[i];
-				}
 				double outlineSizeOffset = 0;
 
 				for (int i = 0; i < outlineSizes.length; i++) {
-					// Add a rectangle for
+					// Add a rectangle for each hold
 
 					double outlineSize = outlineSizes[i];
 					double start = outlineSizeOffset / totalOutlineSize;
@@ -705,7 +728,7 @@ public class DisplayModelCompat extends DisplayModel {
 					outlinePoints.add(new Vec4d(start,  0.5, 0.001, 1.0d));
 					outlinePoints.add(new Vec4d(start, -0.5, 0.001, 1.0d));
 
-					outlineSizeOffset += outlineSize;
+					outlineSizeOffset += outlineSize + ( gapBetweenHolds * totalOutlineSize );
 
 					for (int j = 0; j < outlinePoints.size(); ++j) {
 						outlinePoints.get(j).mult4(subTrans, outlinePoints.get(j));
@@ -786,7 +809,7 @@ public class DisplayModelCompat extends DisplayModel {
 		shipCabinVerts = RenderUtils.transformPoints(shipCabinTrans, RenderUtils.RECT_POINTS, 0);
 
 		shipContentsTrans = new Mat4d();
-		shipContentsTrans.setTranslate3(new Vec3d(-0.225, 0.0, 0.0));
+		shipContentsTrans.setTranslate3(new Vec3d(-0.25, 0.0, 0.0));
 		shipContentsTrans.scaleCols3(new Vec3d(0.65, 0.6, 1));
 
 		truckContentsTrans = new Mat4d();
