@@ -94,10 +94,14 @@ public class ObjectSelector extends FrameBox {
 
 	@Override
 	public void setEntity(Entity ent) {
+
 		if (ent == currentEntity)
 			return;
-
 		currentEntity = ent;
+
+		if (tree == null)
+			return;
+
 		long curSequence = Entity.getEntitySequence();
 		if (entSequence != curSequence) {
 			entSequence = curSequence;
@@ -160,133 +164,180 @@ public class ObjectSelector extends FrameBox {
 
 	private void updateTree() {
 
-		// Make a best-effort attempt to find all used classes...can race with
-		// object creation/deletion, but that's ok
-		ArrayList<Class<? extends Entity>> used = new ArrayList<>();
-		ArrayList<ObjectType> types = new ArrayList<>();
-		for (int i = 0; i < Entity.getAll().size(); i++) {
+		if (tree == null || top == null)
+			return;
+
+		// Store all the expanded paths
+		Enumeration<TreePath> expandedPaths = tree.getExpandedDescendants(new TreePath(top));
+
+		// Identify the selected entity (cannot use currentEntity -- would race with setEntity)
+		Entity selectedEnt = null;
+		TreePath selectedPath = tree.getSelectionPath();
+		if (selectedPath != null) {
+			Object selectedObj = ((DefaultMutableTreeNode)selectedPath.getLastPathComponent()).getUserObject();
+			if (selectedObj instanceof Entity)
+				selectedEnt = (Entity)selectedObj;
+		}
+
+		// Clear the present tree
+		top.removeAllChildren();
+
+		// Create the tree structure for palettes and object types in the correct order
+		for (int i = 0; i < ObjectType.getAll().size(); i++) {
 			try {
-				final Entity ent = Entity.getAll().get(i);
-				Class<? extends Entity> klass = ent.getClass();
-				if (!used.contains(klass))
-					used.add(klass);
-				if (ent instanceof ObjectType)
-					types.add((ObjectType)ent);
+				final ObjectType type = ObjectType.getAll().get(i);
+				if (type == null)
+					continue;
+
+				// Find or create the node for the palette
+				DefaultMutableTreeNode paletteNode = getNodeFor_In(type.getPaletteName(), top);
+				if (paletteNode == null) {
+					paletteNode = new DefaultMutableTreeNode(type.getPaletteName());
+					top.add(paletteNode);
+				}
+
+				// Add the node for the Object Type to the palette
+				DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(type.getName(), true);
+				paletteNode.add(typeNode);
 			}
 			catch (IndexOutOfBoundsException e) {}
 		}
 
-		ArrayList<String> palettes = new ArrayList<>();
-		for (int j = 0; j < types.size(); j++) {
-			String palName = types.get(j).getPaletteName();
-			if (!palettes.contains(palName))
-				palettes.add(palName);
-		}
+		// Loop through the entities in the model
+		for (int i = 0; i < Entity.getAll().size(); i++) {
+			try {
+				final Entity ent = Entity.getAll().get(i);
 
-		for (int k = 0; k < palettes.size(); k++) {
-			String palName = palettes.get(k);
-			DefaultMutableTreeNode palNode = getNodeFor_In(palName, top);
-			for (int j = 0; j < types.size(); j++) {
-				ObjectType type = types.get(j);
-				if(!palName.equals( type.getPaletteName()))
+				// Skip an entity that is locked
+				if (ent.testFlag(Entity.FLAG_LOCKED))
 					continue;
 
-				Class<? extends Entity> proto = type.getJavaClass();
-				// skip unused classes
-				DefaultMutableTreeNode classNode = getNodeFor_In(proto.getSimpleName(), palNode);
-				if (!used.contains(proto)) {
-					if( classNode != null ) {
-						classNode.removeAllChildren();
-						classNode.removeFromParent();
-					}
+				// Determine the object type for this entity
+				final ObjectType type = ent.getObjectType();
+				if (type == null)
 					continue;
-				}
 
-				for (int i = 0; i < Entity.getAll().size(); i++) {
-					try {
-						Entity each = Entity.getAll().get(i);
+				// Find the pallete node for this entity
+				DefaultMutableTreeNode paletteNode = getNodeFor_In(type.getPaletteName(), top);
+				if (paletteNode == null)
+					continue;
 
-						// Skip all that do not match the current class
-						if (each.getClass() != proto)
-							continue;
+				// Find the object type node for this entity
+				DefaultMutableTreeNode typeNode = getNodeFor_In(type.getName(), paletteNode);
+				if (typeNode == null)
+					continue;
 
-						// skip locked Entities
-						if (each.testFlag(Entity.FLAG_LOCKED))
-							continue;
-						DefaultMutableTreeNode eachNode = getNodeFor_In(each, classNode);
-						if(classNode.getIndex(eachNode) < 0)
-							classNode.add(eachNode);
-					}
-					catch (IndexOutOfBoundsException e) {
-						continue;
-					}
-				}
-
-				// Remove the killed entities from the class node
-				Enumeration<?> enumeration = classNode.children();
-				while (enumeration.hasMoreElements ()) {
-					DefaultMutableTreeNode each = (DefaultMutableTreeNode) enumeration.nextElement();
-					if (!Entity.getAll().contains(each.getUserObject())) {
-						classNode.remove(each);
-					}
-				}
-				if(!classNode.isLeaf()) {
-
-					// Class node does not exist in the package node
-					if(palNode.getIndex(classNode) < 0) {
-						palNode.add(classNode);
-					}
-				}
-				else if( palNode.getIndex(classNode) >= 0) {
-					palNode.remove(classNode);
-				}
+				// Add the entity to the object type node
+				DefaultMutableTreeNode entityNode = new DefaultMutableTreeNode(ent, false);
+				typeNode.add(entityNode);
 			}
-
-			// Palette node is not empty
-			if(!palNode.isLeaf()) {
-				if(top.getIndex(palNode) < 0)
-					top.add(palNode);
-			}
-			else if(top.getIndex(palNode) >= 0) {
-				top.remove(palNode);
-			}
+			catch (IndexOutOfBoundsException e) {}
 		}
 
-		// Store all the expanded paths
-		Enumeration<TreePath> expandedPaths = tree.getExpandedDescendants(new TreePath(top));
-		TreePath selectedPath = tree.getSelectionPath();
+		// Remove any object type tree nodes that have no entities
+		ArrayList<DefaultMutableTreeNode> nodesToRemove = new ArrayList<>();
+		Enumeration<DefaultMutableTreeNode> paletteEnum = top.children();
+		while (paletteEnum.hasMoreElements()) {
+			DefaultMutableTreeNode paletteNode = paletteEnum.nextElement();
+			Enumeration<DefaultMutableTreeNode> typeEnum = paletteNode.children();
+			while (typeEnum.hasMoreElements()) {
+				DefaultMutableTreeNode typeNode = typeEnum.nextElement();
+				if (typeNode.isLeaf())
+					nodesToRemove.add(typeNode);
+			}
+			for (DefaultMutableTreeNode typeNode : nodesToRemove) {
+				paletteNode.remove(typeNode);
+			}
+			nodesToRemove.clear();
+		}
 
-		treeModel.reload(top); // refresh tree
+		// Remove any palettes that have no object types left
+		paletteEnum = top.children();
+		while (paletteEnum.hasMoreElements()) {
+			DefaultMutableTreeNode paletteNode = paletteEnum.nextElement();
+			if (paletteNode.isLeaf())
+				nodesToRemove.add(paletteNode);
+		}
+		for (DefaultMutableTreeNode paletteNode : nodesToRemove) {
+			top.remove(paletteNode);
+		}
 
-		// Restore all expanded paths and the selected path
-		tree.setSelectionPath(selectedPath);
-		while (expandedPaths != null && expandedPaths.hasMoreElements())
-		{
-			TreePath path = expandedPaths.nextElement();
-			tree.expandPath(path);
+		// Refresh the tree
+		treeModel.reload(top);
+
+		// Restore the path to the selected entity
+		if (selectedEnt != null) {
+			TreePath path = ObjectSelector.getPathToEntity(selectedEnt, top);
+			if (path != null)
+				tree.setSelectionPath(path);
+		}
+
+		// Restore all the expanded paths
+		while (expandedPaths != null && expandedPaths.hasMoreElements()) {
+			TreePath oldPath = expandedPaths.nextElement();
+			if (oldPath.getPathCount() < 2)
+				continue;
+
+			// Path to a palette
+			DefaultMutableTreeNode oldPaletteNode = (DefaultMutableTreeNode) (oldPath.getPath())[1];
+			String paletteName = (String) (oldPaletteNode.getUserObject());
+			DefaultMutableTreeNode paletteNode = getNodeFor_In(paletteName, top);
+			if (paletteNode == null)
+				continue;
+			if (oldPath.getPathCount() == 2) {
+				Object[] nodeList = { top, paletteNode };
+				tree.expandPath(new TreePath(nodeList));
+				continue;
+			}
+
+			// Path to an object type
+			DefaultMutableTreeNode oldTypeNode = (DefaultMutableTreeNode) (oldPath.getPath())[2];
+			String typeName = (String) (oldTypeNode.getUserObject());
+			DefaultMutableTreeNode typeNode = getNodeFor_In(typeName, paletteNode);
+			if (typeNode == null)
+				continue;
+			Object[] nodeList = { top, paletteNode, typeNode };
+			tree.expandPath(new TreePath(nodeList));
 		}
 	}
 
 	/**
-	 * Return a node of userObject in parent
+	 * Returns a tree node for the specified userObject in the specified parent.
+	 * If a node, already exists for this parent, it is returned. If it does
+	 * not exist, then null is returned.
+	 * @param userObject - object for the tree node.
+	 * @param parent - object's parent
+	 * @return tree node for the object.
 	 */
 	private static DefaultMutableTreeNode getNodeFor_In(Object userObject, DefaultMutableTreeNode parent) {
 
-		// obtain all the children in parent
-		Enumeration<?> enumeration = parent.children();
-
-		while (enumeration.hasMoreElements ()) {
-			DefaultMutableTreeNode eachNode = (DefaultMutableTreeNode) enumeration.nextElement();
-			if( eachNode.getUserObject() == userObject ||
-				userObject instanceof String && ((String) userObject).equals(eachNode.getUserObject()) ) {
-
-				// This child already exists in parent
+		// Loop through the parent's children
+		Enumeration<DefaultMutableTreeNode> enumeration = parent.children();
+		while (enumeration.hasMoreElements()) {
+			DefaultMutableTreeNode eachNode = enumeration.nextElement();
+			if (eachNode.getUserObject() == userObject ||
+					userObject instanceof String && ((String) userObject).equals(eachNode.getUserObject()) )
 				return eachNode;
-			}
 		}
 
-		// Child does not exist in parent; create it
-		return new DefaultMutableTreeNode(userObject, true);
+		return null;
+	}
+
+	private static TreePath getPathToEntity(Entity ent, DefaultMutableTreeNode root) {
+		final ObjectType type = ent.getObjectType();
+		if (type == null)
+			return null;
+		DefaultMutableTreeNode paletteNode = getNodeFor_In(type.getPaletteName(), root);
+		if (paletteNode == null)
+			return null;
+		DefaultMutableTreeNode typeNode = getNodeFor_In(type.getName(), paletteNode);
+		if (typeNode == null)
+			return null;
+		DefaultMutableTreeNode entityNode = getNodeFor_In(ent, typeNode);
+		if (entityNode == null)
+			return null;
+		Object[] nodeList = { root, paletteNode, typeNode, entityNode };
+		return new TreePath(nodeList);
 	}
 
 	static class MyTreeSelectionListener implements TreeSelectionListener {
