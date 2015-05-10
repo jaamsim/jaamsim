@@ -57,8 +57,11 @@ public class Unpack extends LinkedService {
 	@Override
 	public void startAction() {
 
+		// Determine the match value
+		Integer m = this.getNextMatchValue(getSimTime());
+
 		// Is there a container waiting to be unpacked?
-		if (container == null && waitQueue.getValue().getCount() == 0) {
+		if (container == null && waitQueue.getValue().getMatchCount(m) == 0) {
 			this.setBusy(false);
 			this.setPresentState();
 			return;
@@ -74,7 +77,7 @@ public class Unpack extends LinkedService {
 		if (container == null) {
 
 			// Remove the container from the queue
-			container = (EntityContainer)this.getNextEntity();
+			container = (EntityContainer)this.getNextEntityForMatch(m);
 			numberToRemove = this.getNumberToRemove();
 			numberRemoved = 0;
 

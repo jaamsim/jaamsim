@@ -66,12 +66,15 @@ public class Seize extends LinkedService {
 	@Override
 	public void startAction() {
 
+		// Determine the match value
+		Integer m = this.getNextMatchValue(getSimTime());
+
 		// Stop if the queue is empty, there are insufficient resources, or a threshold is closed
-		while (waitQueue.getValue().getCount() != 0 && this.checkResources() && this.isOpen()) {
+		while (waitQueue.getValue().getMatchCount(m) != 0 && this.checkResources() && this.isOpen()) {
 
 			// If sufficient units are available, then seize them and pass the entity to the next component
 			this.seizeResources();
-			DisplayEntity ent = this.getNextEntity();
+			DisplayEntity ent = this.getNextEntityForMatch(m);
 			this.sendToNextComponent(ent);
 		}
 		this.setBusy(false);

@@ -59,8 +59,11 @@ public class Server extends LinkedService {
 	@Override
 	public void startAction() {
 
+		// Determine the match value
+		Integer m = this.getNextMatchValue(getSimTime());
+
 		// Stop if the queue is empty or a threshold is closed
-		if (waitQueue.getValue().getCount() == 0 || !this.isOpen()) {
+		if (waitQueue.getValue().getMatchCount(m) == 0 || !this.isOpen()) {
 			servedEntity = null;
 			this.setBusy(false);
 			this.setPresentState();
@@ -68,7 +71,7 @@ public class Server extends LinkedService {
 		}
 
 		// Remove the first entity from the queue
-		servedEntity = this.getNextEntity();
+		servedEntity = this.getNextEntityForMatch(m);
 		this.moveToProcessPosition(servedEntity);
 
 		// Schedule the completion of service

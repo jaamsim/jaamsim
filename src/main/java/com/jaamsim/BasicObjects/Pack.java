@@ -118,17 +118,19 @@ public class Pack extends LinkedService {
 
 		// Are there sufficient entities in the queue to start packing?
 		if (!startedPacking) {
+			Integer m = this.getNextMatchValue(getSimTime());
 			numberToInsert = (int) numberOfEntities.getValue().getNextSample(this.getSimTime());
-			if (waitQueue.getValue().getCount() < numberToInsert) {
+			if (waitQueue.getValue().getMatchCount(m) < numberToInsert) {
 				this.setBusy(false);
 				this.setPresentState();
 				return;
 			}
 			startedPacking = true;
+			this.setMatchValue(m);
 		}
 
 		// Schedule the insertion of the next entity
-		packedEntity = this.getNextEntity();
+		packedEntity = this.getNextEntityForMatch(getMatchValue());
 		double dt = serviceTime.getValue().getNextSample(getSimTime());
 		this.scheduleProcess(dt, 5, endActionTarget);
 	}

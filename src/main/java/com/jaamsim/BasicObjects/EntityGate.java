@@ -61,15 +61,18 @@ public class EntityGate extends LinkedService {
 	@Override
 	public void startAction() {
 
+		// Determine the match value
+		Integer m = this.getNextMatchValue(getSimTime());
+
 		// Stop if the gate has closed or the queue has become empty
-		if (!this.isOpen() || waitQueue.getValue().getCount() == 0) {
+		if (!this.isOpen() || waitQueue.getValue().getMatchCount(m) == 0) {
 			this.setBusy(false);
 			this.setPresentState();
 			return;
 		}
 
 		// Schedule the release of the next entity
-		servedEntity = this.getNextEntity();
+		servedEntity = this.getNextEntityForMatch(m);
 		this.moveToProcessPosition(servedEntity);
 		this.scheduleProcess(releaseDelay.getValue(), 5, endActionTarget);
 	}
