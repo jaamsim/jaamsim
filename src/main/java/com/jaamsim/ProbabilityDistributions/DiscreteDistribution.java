@@ -17,6 +17,7 @@ package com.jaamsim.ProbabilityDistributions;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
@@ -42,6 +43,7 @@ public class DiscreteDistribution extends Distribution {
 	private final ValueListInput probabilityListInput;
 
 	private final MRG1999a rng = new MRG1999a();
+	private int[] sampleCount;  // number of times each index has been selected
 
 	{
 		valueListInput = new ValueListInput( "ValueList", "Key Inputs", null);
@@ -70,6 +72,7 @@ public class DiscreteDistribution extends Distribution {
 	public void earlyInit() {
 		super.earlyInit();
 		rng.setSeedStream(getStreamNumber(), getSubstreamNumber());
+		sampleCount = new int[probabilityListInput.getValue().size()];
 	}
 
 	@Override
@@ -87,9 +90,11 @@ public class DiscreteDistribution extends Distribution {
 		for( int i=0; i<probList.size(); i++) {
 			cumProb += probList.get(i);
 			if( rand <= cumProb ) {
+				sampleCount[i]++;
 				return valueListInput.getValue().get(i);
 			}
 		}
+		sampleCount[probList.size()-1]++;
 		return valueListInput.getValue().get( probList.size()-1 );
 	}
 
@@ -138,4 +143,15 @@ public class DiscreteDistribution extends Distribution {
 		double mean = getMeanValue();
 		return  Math.sqrt( sum - (mean * mean) );
 	}
+
+	@Output( name="SampleCount",
+			 description="The number of samples selected for each value.")
+	public DoubleVector getSampleCount(double simTime) {
+		DoubleVector ret = new DoubleVector(sampleCount.length);
+		for (int i=0; i<sampleCount.length; i++) {
+			ret.add(sampleCount[i]);
+		}
+		return ret;
+	}
+
 }
