@@ -17,6 +17,7 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.basicsim.EntityTarget;
@@ -33,18 +34,24 @@ import com.jaamsim.units.DistanceUnit;
 public abstract class LinkedService extends LinkedComponent implements ThresholdUser, QueueUser {
 
 	@Keyword(description = "The position of the entity being processed relative to the processor.",
-	         example = "Object1 ProcessPosition { 1.0 0.0 0.01 m }")
+	         example = "Server1 ProcessPosition { 1.0 0.0 0.01 m }")
 	protected final Vec3dInput processPosition;
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
 	         example = "Server1 WaitQueue { Queue1 }")
 	protected final EntityInput<Queue> waitQueue;
 
+	@Keyword(description = "An expression returning a dimensionless integer value that can be used to "
+			+ "determine which of the queued entities is eligible for processing.",
+	         example = "Server1 Match { this.obj.Attrib1 }")
+	protected final SampleExpInput match;
+
 	@Keyword(description = "A list of thresholds that must be satisified for the entity to operate.",
-			example = "EntityGenerator1 OperatingThresholdList { Server1 }")
+			example = "Server1 OperatingThresholdList { Server1 }")
 	protected final EntityListInput<Threshold> operatingThresholdList;
 
 	private boolean busy;
+	private Integer matchValue;
 	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
 
 	{
@@ -56,6 +63,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
 		this.addInput(waitQueue);
+
+		match = new SampleExpInput("Match", "Key Inputs", null);
+		match.setEntity(this);
+		this.addInput(match);
 
 		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
 		this.addInput( operatingThresholdList);
@@ -70,13 +81,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		if (!waitQueue.getHidden() && waitQueue.getValue() == null) {
 			throw new InputErrorException("The keyword WaitQueue must be set.");
 		}
-
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		this.setBusy(false);
+		matchValue = null;
 	}
 
 	@Override
@@ -99,12 +110,36 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	/**
 	 * Removes the next entity to be processed from the queue.
-	 * @return the next entity for processing.
+	 * If the specified match value is not null, then only the queued entities
+	 * with the same match value are eligible to be removed.
+	 * @param m - match value.
+	 * @return next entity for processing.
 	 */
-	protected DisplayEntity getNextEntity() {
-		DisplayEntity ent = waitQueue.getValue().removeFirst();
+	protected DisplayEntity getNextEntityForMatch(Integer m) {
+		DisplayEntity ent = waitQueue.getValue().removeFirstForMatch(m);
 		this.registerEntity(ent);
 		return ent;
+	}
+
+	/**
+	 * Returns a value which determines which of the entities in the queue are
+	 * eligible to be removed.
+	 * @param simTime - present simulation time in seconds.
+	 * @return match value.
+	 */
+	protected Integer getNextMatchValue(double simTime) {
+		matchValue = null;
+		if (match.getValue() != null)
+			matchValue = (int) match.getValue().getNextSample(simTime);
+		return matchValue;
+	}
+
+	protected void setMatchValue(Integer m) {
+		matchValue = m;
+	}
+
+	protected Integer getMatchValue() {
+		return matchValue;
 	}
 
 	@Override
@@ -208,6 +243,12 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	// ******************************************************************************************************
 	// OUTPUTS
 	// ******************************************************************************************************
+
+	@Output(name = "MatchValue",
+	 description = "The present value to be matched in the queue.")
+	public Integer getMatchValue(double simTime) {
+		return matchValue;
+	}
 
 	@Output(name = "Open",
 	 description = "Returns TRUE if all the thresholds specified by the OperatingThresholdList keyword are open.")

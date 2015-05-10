@@ -34,11 +34,11 @@ public class Combine extends LinkedService {
 	         example = "EntityAssemble1 WaitQueueList { Queue1 }")
 	private final EntityListInput<Queue> waitQueueList;
 
-	private Integer match;  // match value selected for entities to remove from the queues
 	private DisplayEntity processedEntity;	// the DisplayEntity being processed
 
 	{
 		waitQueue.setHidden(true);
+		match.setHidden(true);
 
 		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
@@ -97,13 +97,14 @@ public class Combine extends LinkedService {
 			this.setPresentState();
 			return;
 		}
-		match = m;
+		this.setMatchValue(m);
 
 		// Remove one entity from each queue
 		for (int i=queueList.size()-1; i>=0; i--) {
-			DisplayEntity ent = queueList.get(i).removeFirstForMatch(match);
+			DisplayEntity ent = queueList.get(i).removeFirstForMatch(m);
 			if (ent == null)
-				error("An entity with the specified match value %s was not found in %s.", match, queueList.get(i));
+				error("An entity with the specified match value %s was not found in %s.",
+						m, queueList.get(i));
 			this.registerEntity(ent);
 
 			// Destroy all the entities but the first

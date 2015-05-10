@@ -27,8 +27,6 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.Output;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 public class Assemble extends LinkedService {
@@ -58,10 +56,10 @@ public class Assemble extends LinkedService {
 
 	private DisplayEntity assembledEntity;	// the generated entity representing the assembled part
 	private int numberGenerated = 0;  // Number of entities generated so far
-	private Integer match;  // match value selected for entities to remove from the queues
 
 	{
 		waitQueue.setHidden(true);
+		match.setHidden(true);
 
 		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
@@ -107,7 +105,6 @@ public class Assemble extends LinkedService {
 
 		assembledEntity = null;
 		numberGenerated = 0;
-		match = null;
 	}
 
 	@Override
@@ -142,7 +139,7 @@ public class Assemble extends LinkedService {
 				this.setPresentState();
 				return;
 			}
-			match = m;
+			this.setMatchValue(m);
 		}
 		else {
 			if (!Queue.sufficientEntities(queueList, numberRequired.getValue(), null)) {
@@ -158,9 +155,10 @@ public class Assemble extends LinkedService {
 			int ind = Math.min(i, numberRequired.getValue().size()-1);
 			for (int n=0; n<numberRequired.getValue().get(ind); n++) {
 				DisplayEntity ent;
-				ent = que.removeFirstForMatch(match);
+				ent = que.removeFirstForMatch(getMatchValue());
 				if (ent == null)
-					error("An entity with the specified match value %s was not found in %s.", match, que);
+					error("An entity with the specified match value %s was not found in %s.",
+							getMatchValue(), que);
 				this.registerEntity(ent);
 				ent.kill();
 			}
@@ -191,17 +189,6 @@ public class Assemble extends LinkedService {
 
 		// Try to assemble another part
 		this.startAction();
-	}
-
-	// ******************************************************************************************************
-	// OUTPUT METHODS
-	// ******************************************************************************************************
-
-	@Output(name = "MatchValue",
-	 description = "The match value for the last object that was assembled.",
-	    unitType = DimensionlessUnit.class)
-	public double getMatchValue(double simTime) {
-		return match;
 	}
 
 }
