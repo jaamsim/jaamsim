@@ -127,12 +127,7 @@ private class OutputTable extends JTable {
 		}
 
 		OutputHandle output = (OutputHandle)entries.get(row);
-		String desc = new String(output.getDescription());
-		desc = desc.replaceAll("&", "&amp;");
-		desc = desc.replaceAll("<", "&lt;");
-		desc = desc.replaceAll(">", "&gt;");
-		desc = desc.replaceAll("\n", "<BR>");
-		return GUIFrame.formatOutputToolTip(output.getName(), desc);
+		return GUIFrame.formatOutputToolTip(output.getName(), output.getDescription());
 	}
 
 	@Override

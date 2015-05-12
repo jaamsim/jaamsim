@@ -2061,16 +2061,35 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	// ******************************************************************************************************
 
 	public static String formatToolTip(String name, String desc) {
-		return String.format("<html><p width=\"200px\"><b>%s</b><br>%s</p></html>", name, desc);
+		return String.format("<html><p width=\"200px\"><b>%s</b><br>%s</p></html>",
+				name, desc);
 	}
 
-	public static String formatKeywordToolTip(String key, String desc, String examp) {
+	public static String formatKeywordToolTip(String name, String description, String example) {
+
+		String desc = new String(description);
+		desc = desc.replaceAll("&", "&amp;");
+		desc = desc.replaceAll("<", "&lt;");
+		desc = desc.replaceAll(">", "&gt;");
+		desc = desc.replaceAll("\n", "<BR>");
+
+		String examp = new String(example);
+		examp = examp.replaceAll("\n", "<BR>");
+
 		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s<br><br><u>Example:</u><br>%s</p></html>",
-				key, desc, examp);
+				name, desc, examp);
 	}
 
-	public static String formatOutputToolTip(String key, String desc) {
-		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s</p></html>", key, desc);
+	public static String formatOutputToolTip(String name, String description) {
+
+		String desc = new String(description);
+		desc = desc.replaceAll("&", "&amp;");
+		desc = desc.replaceAll("<", "&lt;");
+		desc = desc.replaceAll(">", "&gt;");
+		desc = desc.replaceAll("\n", "<BR>");
+
+		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s</p></html>",
+				name, desc);
 	}
 
 }

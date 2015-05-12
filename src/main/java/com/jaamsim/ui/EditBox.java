@@ -194,16 +194,7 @@ public class EditBox extends FrameBox {
 				if (key == null)
 					return null;
 
-				String desc = new String(key.description());
-				desc = desc.replaceAll("&", "&amp;");
-				desc = desc.replaceAll("<", "&lt;");
-				desc = desc.replaceAll(">", "&gt;");
-				desc = desc.replaceAll("\n", "<BR>");
-
-				String examp = new String(key.example());
-				examp = examp.replaceAll("\n", "<BR>");
-
-				return GUIFrame.formatKeywordToolTip(in.getKeyword(), desc, examp);
+				return GUIFrame.formatKeywordToolTip(in.getKeyword(), key.description(), key.example());
 			}
 			catch (IllegalArgumentException e) {}
 			catch (IllegalAccessException e) {}
