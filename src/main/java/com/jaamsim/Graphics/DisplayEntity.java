@@ -109,30 +109,30 @@ public class DisplayEntity extends Entity {
 	private final HashMap<String, Tag> tagMap = new HashMap<>();
 
 	{
-		positionInput = new Vec3dInput("Position", "Basic Graphics", new Vec3d());
+		positionInput = new Vec3dInput("Position", "Graphics", new Vec3d());
 		positionInput.setUnitType(DistanceUnit.class);
 		this.addInput(positionInput);
 
-		alignmentInput = new Vec3dInput("Alignment", "Basic Graphics", new Vec3d());
+		alignmentInput = new Vec3dInput("Alignment", "Graphics", new Vec3d());
 		this.addInput(alignmentInput);
 
-		sizeInput = new Vec3dInput("Size", "Basic Graphics", new Vec3d(1.0d, 1.0d, 1.0d));
+		sizeInput = new Vec3dInput("Size", "Graphics", new Vec3d(1.0d, 1.0d, 1.0d));
 		sizeInput.setUnitType(DistanceUnit.class);
 		sizeInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(sizeInput);
 
-		orientationInput = new Vec3dInput("Orientation", "Basic Graphics", new Vec3d());
+		orientationInput = new Vec3dInput("Orientation", "Graphics", new Vec3d());
 		orientationInput.setUnitType(AngleUnit.class);
 		this.addInput(orientationInput);
 
-		regionInput = new EntityInput<>(Region.class, "Region", "Basic Graphics", null);
+		regionInput = new EntityInput<>(Region.class, "Region", "Graphics", null);
 		this.addInput(regionInput);
 
-		relativeEntity = new RelativeEntityInput("RelativeEntity", "Basic Graphics", null);
+		relativeEntity = new RelativeEntityInput("RelativeEntity", "Graphics", null);
 		relativeEntity.setEntity(this);
 		this.addInput(relativeEntity);
 
-		displayModelListInput = new EntityListInput<>( DisplayModel.class, "DisplayModel", "Basic Graphics", null);
+		displayModelListInput = new EntityListInput<>( DisplayModel.class, "DisplayModel", "Graphics", null);
 		this.addInput(displayModelListInput);
 		displayModelListInput.setUnique(false);
 
@@ -140,10 +140,10 @@ public class DisplayEntity extends Entity {
 		active.setHidden(true);
 		this.addInput(active);
 
-		show = new BooleanInput("Show", "Basic Graphics", true);
+		show = new BooleanInput("Show", "Graphics", true);
 		this.addInput(show);
 
-		movable = new BooleanInput("Movable", "Basic Graphics", true);
+		movable = new BooleanInput("Movable", "Graphics", true);
 		this.addInput(movable);
 	}
 

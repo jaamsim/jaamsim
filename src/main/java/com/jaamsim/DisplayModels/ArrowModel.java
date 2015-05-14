@@ -48,7 +48,7 @@ public class ArrowModel extends ScreenPointsModel {
 	}
 
 	{
-		arrowHeadSize = new Vec3dInput("ArrowSize", "Basic Graphics", new Vec3d(0.1d, 0.1d, 0.0d));
+		arrowHeadSize = new Vec3dInput("ArrowSize", "Graphics", new Vec3d(0.1d, 0.1d, 0.0d));
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		this.addInput(arrowHeadSize);
 	}
