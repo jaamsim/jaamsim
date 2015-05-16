@@ -97,11 +97,13 @@ public class Graph extends GraphBasics  {
 		this.addInput(numberOfPoints);
 
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType.setRequired(true);
 		this.addInput(unitType);
 
 		dataSource = new SampleExpListInput("DataSource", "Key Inputs", null);
 		dataSource.setUnitType(UserSpecifiedUnit.class);
 		dataSource.setEntity(this);
+		dataSource.setRequired(true);
 		this.addInput(dataSource);
 
 		ArrayList<Color4d> defLineColor = new ArrayList<>(0);
