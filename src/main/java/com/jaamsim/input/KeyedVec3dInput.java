@@ -93,7 +93,7 @@ public class KeyedVec3dInput extends Input<Vec3d> {
 
 	@Override
 	public String getDefaultString() {
-		return "{ }";
+		return "";
 	}
 
 }

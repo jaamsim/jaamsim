@@ -72,14 +72,8 @@ public class ValueListInput extends ListInput<DoubleVector> {
 
 	@Override
 	public String getDefaultString() {
-		if (defValue == null || defValue.size() == 0) {
-			StringBuilder tmp = new StringBuilder();
-			if (unitType != Unit.class) {
-				tmp.append(SEPARATOR);
-				tmp.append(Unit.getSIUnit(unitType));
-			}
-			return tmp.toString();
-		}
+		if (defValue == null || defValue.size() == 0)
+			return "";
 
 		StringBuilder tmp = new StringBuilder();
 		for (int i = 0; i < defValue.size(); i++) {
