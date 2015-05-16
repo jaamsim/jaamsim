@@ -69,6 +69,7 @@ implements SampleProvider {
 
 	{
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType.setRequired(true);
 		this.addInput(unitType);
 
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 0);
