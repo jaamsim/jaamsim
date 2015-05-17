@@ -84,6 +84,7 @@ public abstract class Input<T> {
 	private boolean isDef; // Is this input still the default value?
 	private String[] valueTokens; // value from .cfg file
 	private String defText; // special text to show in the default column of the Input Editor
+	private boolean isReqd;     // indicates whether this input must be provided by the user
 
 	public Input(String key, String cat, T def) {
 		keyword = key;
@@ -96,6 +97,7 @@ public abstract class Input<T> {
 		hidden = false;
 		valueTokens = null;
 		defText = null;
+		isReqd = false;
 	}
 
 	public void reset() {
@@ -188,6 +190,14 @@ public abstract class Input<T> {
 
 	public boolean isPromptReqd() {
 		return promptReqd;
+	}
+
+	public void setRequired(boolean bool) {
+		isReqd = bool;
+	}
+
+	public boolean isRequired() {
+		return isReqd;
 	}
 
 	public void setTokens(KeywordIndex kw) {

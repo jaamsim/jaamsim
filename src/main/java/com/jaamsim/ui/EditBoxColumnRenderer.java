@@ -60,6 +60,8 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 	}
 	else {
 		str = in.getValueString();
+		if (str.isEmpty() && in.isRequired())
+			str = EditBox.REQD;
 	}
 
 	// Pass along the keyword string, not the input itself
