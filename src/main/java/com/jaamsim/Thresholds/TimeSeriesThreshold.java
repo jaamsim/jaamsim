@@ -61,10 +61,12 @@ public class TimeSeriesThreshold extends Threshold {
 
 	{
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType.setRequired(true);
 		this.addInput(unitType);
 
 		timeSeries = new TimeSeriesInput("TimeSeries", "Key Inputs", null);
 		timeSeries.setUnitType(UserSpecifiedUnit.class);
+		timeSeries.setRequired(true);
 		this.addInput(timeSeries);
 
 		maxOpenLimit = new TimeSeriesInput("MaxOpenLimit", "Key Inputs", new TimeSeriesConstantDouble(Double.POSITIVE_INFINITY));
@@ -98,12 +100,6 @@ public class TimeSeriesThreshold extends Threshold {
 	@Override
 	public void validate() throws InputErrorException {
 		super.validate();
-
-		if (unitType.getValue() == null)
-			throw new InputErrorException( "UnitType must be specified first" );
-
-		if (timeSeries.getValue() == null)
-			throw new InputErrorException( "Missing TimeSeries" );
 
 		if( (maxOpenLimit.getValue().getMinValue() == Double.POSITIVE_INFINITY) &&
 				(minOpenLimit.getValue().getMaxValue() == Double.NEGATIVE_INFINITY) ) {

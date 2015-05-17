@@ -31,6 +31,7 @@ public class BooleanIndicator extends DisplayEntity {
 
 	{
 		boolProp = new OutputInput<>(Boolean.class, "OutputName", "Key Inputs", null);
+		boolProp.setRequired(true);
 		this.addInput(boolProp);
 
 		trueColor = new ColourInput("TrueColour", "Graphics", ColourInput.GREEN);

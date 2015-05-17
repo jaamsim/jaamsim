@@ -47,17 +47,13 @@ public class EntitlementSelector extends DisplayEntity implements SampleProvider
 	{
 		proportionList = new ValueListInput("ProportionList", "Key Inputs", null);
 		proportionList.setUnitType(DimensionlessUnit.class);
+		proportionList.setRequired(true);
 		this.addInput(proportionList);
 	}
 
 	@Override
 	public void validate() {
 		super.validate();
-
-		// The ProportionList keyword must be entered
-		if (proportionList.getValue() == null) {
-			throw new InputErrorException("The ProportionList keyword must be set");
-		}
 
 		// The entries in the ProportionList must sum to 1.0
 		if (Math.abs(proportionList.getValue().sum() - 1.0) > 1.0e-10) {

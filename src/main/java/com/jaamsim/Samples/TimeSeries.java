@@ -56,10 +56,12 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 
 	{
 		unitType = new UnitTypeInput( "UnitType", "Key Inputs", UserSpecifiedUnit.class );
+		unitType.setRequired(true);
 		this.addInput( unitType );
 
 		value = new TimeSeriesDataInput("Value", "Key Inputs", null);
 		value.setUnitType(UserSpecifiedUnit.class);
+		value.setRequired(true);
 		this.addInput(value);
 
 		cycleTime = new ValueInput( "CycleTime", "Key Inputs", Double.POSITIVE_INFINITY );
@@ -73,16 +75,10 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	public void validate() {
 		super.validate();
 
-		if( unitType.getValue() == null )
-			throw new InputErrorException( "UnitType must be specified first" );
-
 		if (value.getTickLength() != Simulation.getTickLength())
 			throw new InputErrorException("A new value was entered for the Simulation keyword TickLength " +
 					"after the TimeSeries data had been loaded.%n" +
 					"The configuration file must be saved and reloaded before the simulation can be executed.");
-
-		if( value.getValue() == null || value.getValue().ticksList.length == 0 )
-			throw new InputErrorException( "Time series Value must be specified" );
 
 		long[] ticksList = value.getValue().ticksList;
 		if (getTicks(cycleTime.getValue()) < ticksList[ticksList.length - 1])

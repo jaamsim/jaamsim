@@ -24,7 +24,6 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
@@ -53,6 +52,7 @@ public class ExpressionThreshold extends Threshold {
 
 		openCondition = new ExpressionInput("OpenCondition", "Key Inputs", null);
 		openCondition.setEntity(this);
+		openCondition.setRequired(true);
 		this.addInput(openCondition);
 
 		pendingOpenColour = new ColourInput("PendingOpenColour", "Graphics", ColourInput.YELLOW);
@@ -65,14 +65,6 @@ public class ExpressionThreshold extends Threshold {
 
 		showPendingStates = new BooleanInput("ShowPendingStates", "Graphics", true);
 		this.addInput(showPendingStates);
-	}
-
-	@Override
-	public void validate() throws InputErrorException {
-		super.validate();
-
-		if (openCondition == null)
-			throw new InputErrorException( "The keyword OpenCondition must be set." );
 	}
 
 	@Override
