@@ -19,6 +19,7 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
@@ -88,6 +89,7 @@ public class EntityGenerator extends LinkedService {
 
 		maxNumber = new IntegerInput("MaxNumber", "Key Inputs", null);
 		maxNumber.setValidRange(1, Integer.MAX_VALUE);
+		maxNumber.setDefaultText(Input.POSITIVE_INFINITY);
 		this.addInput(maxNumber);
 	}
 

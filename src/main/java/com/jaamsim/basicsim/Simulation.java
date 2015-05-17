@@ -178,6 +178,7 @@ public class Simulation extends Entity {
 
 		// GUI tab
 		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", "GUI", null);
+		displayedUnits.setDefaultText("SI Units");
 		displayedUnits.setPromptReqd(false);
 
 		realTime = new BooleanInput("RealTime", "GUI", false);

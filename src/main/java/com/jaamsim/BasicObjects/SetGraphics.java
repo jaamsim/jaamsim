@@ -41,6 +41,7 @@ public class SetGraphics extends LinkedComponent {
 
 	{
 		targetEntity = new EntityInput<>( DisplayEntity.class, "TargetEntity", "Key Inputs", null);
+		targetEntity.setDefaultText("This Entity");
 		this.addInput( targetEntity);
 
 		graphicsList = new EntityListInput<>( DisplayEntity.class, "GraphicsList", "Key Inputs", null);

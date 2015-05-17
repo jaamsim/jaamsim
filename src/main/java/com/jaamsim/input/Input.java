@@ -68,8 +68,8 @@ public abstract class Input<T> {
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
 
-	protected static final String POSITIVE_INFINITY = "Infinity";
-	protected static final String NEGATIVE_INFINITY = "-Infinity";
+	public static final String POSITIVE_INFINITY = "Infinity";
+	public static final String NEGATIVE_INFINITY = "-Infinity";
 	protected static final String SEPARATOR = "  ";
 
 	private final String keyword; // the preferred name for the input keyword

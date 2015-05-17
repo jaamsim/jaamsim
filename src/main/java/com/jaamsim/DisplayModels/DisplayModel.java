@@ -55,6 +55,7 @@ public abstract class DisplayModel extends Entity {
 
 	{
 		visibleViews = new EntityListInput<>(View.class, "VisibleViews", "Graphics", null);
+		visibleViews.setDefaultText("All Views");
 		this.addInput(visibleViews);
 
 		drawRange = new ValueListInput("DrawRange", "Graphics", defRange);
