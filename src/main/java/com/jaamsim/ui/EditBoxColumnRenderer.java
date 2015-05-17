@@ -49,8 +49,14 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 	String str;
 	if (column == 0)
 		str = in.getKeyword();
-	else if (column == 1){
-		str = in.getDefaultString();
+	else if (column == 1) {
+		if (in.getDefaultText() != null)
+			str = EditBox.formatEditorText(in.getDefaultText());
+		else {
+			str = in.getDefaultString();
+			if (str.isEmpty())
+				str = EditBox.NONE;
+		}
 	}
 	else {
 		str = in.getValueString();

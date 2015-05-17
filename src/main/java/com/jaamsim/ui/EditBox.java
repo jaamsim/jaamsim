@@ -76,6 +76,7 @@ public class EditBox extends FrameBox {
 
 	private static final int ROW_HEIGHT=20;
 	private static final int VALUE_COLUMN=2;
+	public static final String NONE = EditBox.formatEditorText("None");
 
 	private static EditBox myInstance;  // only one instance allowed to be open
 	private Entity currentEntity;
@@ -230,6 +231,10 @@ public class EditBox extends FrameBox {
 
 	Entity getCurrentEntity() {
 		return currentEntity;
+	}
+
+	public static String formatEditorText(String str) {
+		return String.format("<html><i><font color=\"gray\">%s</font></i></html>", str);
 	}
 
 /**

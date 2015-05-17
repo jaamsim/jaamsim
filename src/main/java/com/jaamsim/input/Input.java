@@ -83,6 +83,7 @@ public abstract class Input<T> {
 	private boolean hidden; // Hide this input from the EditBox
 	private boolean isDef; // Is this input still the default value?
 	private String[] valueTokens; // value from .cfg file
+	private String defText; // special text to show in the default column of the Input Editor
 
 	public Input(String key, String cat, T def) {
 		keyword = key;
@@ -94,6 +95,7 @@ public abstract class Input<T> {
 		isDef = true;
 		hidden = false;
 		valueTokens = null;
+		defText = null;
 	}
 
 	public void reset() {
@@ -137,6 +139,14 @@ public abstract class Input<T> {
 		return false;
 	}
 
+	public void setDefaultText(String str) {
+		defText = str;
+	}
+
+	public String getDefaultText() {
+		return defText;
+	}
+
 	public void setDefaultValue(T val) {
 		defValue = val;
 		value = val;
@@ -149,13 +159,7 @@ public abstract class Input<T> {
 	public String getDefaultString() {
 		if (defValue == null)
 			return "";
-
-		StringBuilder tmp = new StringBuilder(defValue.toString());
-
-		if (tmp.length() == 0)
-			return "";
-
-		return tmp.toString();
+		return defValue.toString();
 	}
 
 	public T getValue() {
