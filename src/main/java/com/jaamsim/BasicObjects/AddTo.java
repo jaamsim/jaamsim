@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 
 public class AddTo extends Pack {
@@ -31,17 +30,8 @@ public class AddTo extends Pack {
 		prototypeEntityContainer.setHidden(true);
 
 		containerQueue = new EntityInput<>(Queue.class, "ContainerQueue", "Key Inputs", null);
+		containerQueue.setRequired(true);
 		this.addInput(containerQueue);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the container queue has been specified
-		if (containerQueue.getValue() == null) {
-			throw new InputErrorException("The keyword ContainerQueue must be set.");
-		}
 	}
 
 	@Override

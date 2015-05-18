@@ -44,13 +44,6 @@ public class Server extends LinkedService {
 	public Server() {}
 
 	@Override
-	public void validate() {
-		super.validate();
-
-		serviceTime.validate();
-	}
-
-	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		servedEntity = null;

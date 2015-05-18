@@ -104,12 +104,6 @@ public class Queue extends LinkedComponent {
 		this.addInput(maxPerLine);
 	}
 
-	@Override
-	public void validate() {
-		super.validate();
-		priority.validate();
-	}
-
 	public Queue() {
 		itemList = new ArrayList<>();
 		queueLengthDist = new DoubleVector(10,10);

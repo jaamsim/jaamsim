@@ -76,8 +76,6 @@ public class Resource extends DisplayEntity {
 
 		if( capacity.getValue() instanceof Distribution )
 			throw new InputErrorException( "The Capacity keyword cannot accept a probability distribution.");
-
-		capacity.validate();
 	}
 
 	@Override

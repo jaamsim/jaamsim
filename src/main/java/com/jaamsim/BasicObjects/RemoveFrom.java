@@ -17,7 +17,6 @@ package com.jaamsim.BasicObjects;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -39,19 +38,8 @@ public class RemoveFrom extends Unpack {
 		this.addInput(numberOfEntities);
 
 		nextForContainers = new EntityInput<>(LinkedComponent.class, "NextForContainers", "Key Inputs", null);
+		nextForContainers.setRequired(true);
 		this.addInput(nextForContainers);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the waiting queue has been specified
-		if (nextForContainers.getValue() == null) {
-			throw new InputErrorException("The keyword NextForContainers must be set.");
-		}
-
-		numberOfEntities.validate();
 	}
 
 	@Override

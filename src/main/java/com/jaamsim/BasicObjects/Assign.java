@@ -42,6 +42,7 @@ public class Assign extends LinkedComponent {
 	{
 		assignmentList = new AssignmentListInput("AttributeAssignmentList", "Key Inputs", new ArrayList<ExpParser.Assignment>());
 		assignmentList.setEntity(this);
+		assignmentList.setRequired(true);
 		this.addInput(assignmentList);
 	}
 

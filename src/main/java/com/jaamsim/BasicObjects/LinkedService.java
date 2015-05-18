@@ -24,7 +24,6 @@ import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.Vec3dInput;
@@ -62,6 +61,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		this.addInput(processPosition);
 
 		waitQueue = new EntityInput<>(Queue.class, "WaitQueue", "Key Inputs", null);
+		waitQueue.setRequired(true);
 		this.addInput(waitQueue);
 
 		match = new SampleExpInput("Match", "Key Inputs", null);
@@ -73,15 +73,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	}
 
 	public LinkedService() {}
-
-	@Override
-	public void validate() {
-
-		// Confirm that the target queue has been specified
-		if (!waitQueue.getHidden() && waitQueue.getValue() == null) {
-			throw new InputErrorException("The keyword WaitQueue must be set.");
-		}
-	}
 
 	@Override
 	public void earlyInit() {

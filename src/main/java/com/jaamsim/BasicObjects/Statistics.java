@@ -19,7 +19,6 @@ import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -45,15 +44,8 @@ public class Statistics extends LinkedComponent {
 
 		sampleValue = new ExpressionInput("SampleValue", "Key Inputs", null);
 		sampleValue.setEntity(this);
+		sampleValue.setRequired(true);
 		this.addInput(sampleValue);
-	}
-
-	@Override
-	public void validate() throws InputErrorException {
-		super.validate();
-
-		if (sampleValue == null)
-			throw new InputErrorException( "The keyword Variable must be set." );
 	}
 
 	@Override

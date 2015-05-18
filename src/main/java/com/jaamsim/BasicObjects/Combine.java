@@ -20,7 +20,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.EntityListInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.TimeUnit;
 
@@ -47,21 +46,11 @@ public class Combine extends LinkedService {
 		this.addInput(serviceTime);
 
 		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", "Key Inputs", null);
+		waitQueueList.setRequired(true);
 		this.addInput(waitQueueList);
 	}
 
 	public Combine() {}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the waiting queues have been specified
-		if (waitQueueList.getValue() == null)
-			throw new InputErrorException("The keyword WaitQueueList must be set.");
-
-		serviceTime.validate();
-	}
 
 	@Override
 	public void earlyInit() {

@@ -78,6 +78,7 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		duration.setUnitType(TimeUnit.class);
 		duration.setEntity(this);
 		duration.setValidRange(0, Double.POSITIVE_INFINITY);
+		duration.setRequired(true);
 		this.addInput(duration);
 
 		ArrayList<Vec3d> defPoints =  new ArrayList<>();
@@ -124,13 +125,6 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 			}
 			return;
 		}
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		duration.validate();
 	}
 
 	@Override

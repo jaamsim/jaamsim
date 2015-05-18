@@ -18,7 +18,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Thresholds.SignalThreshold;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 
 public class EntitySignal extends LinkedComponent {
@@ -33,20 +32,11 @@ public class EntitySignal extends LinkedComponent {
 
 	{
 		targetSignalThreshold = new EntityInput<>( SignalThreshold.class, "TargetSignalThreshold", "Key Inputs", null);
+		targetSignalThreshold.setRequired(true);
 		this.addInput( targetSignalThreshold);
 
 		newState = new BooleanInput( "NewState", "Key Inputs", true);
 		this.addInput( newState);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the target threshold has been specified
-		if( targetSignalThreshold.getValue() == null ) {
-			throw new InputErrorException( "The keyword TargetThreshold must be set." );
-		}
 	}
 
 	@Override

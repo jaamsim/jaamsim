@@ -24,7 +24,6 @@ import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.TimeUnit;
@@ -68,6 +67,7 @@ public class Assemble extends LinkedService {
 		this.addInput(serviceTime);
 
 		waitQueueList = new EntityListInput<>(Queue.class, "WaitQueueList", "Key Inputs", null);
+		waitQueueList.setRequired(true);
 		this.addInput(waitQueueList);
 
 		IntegerVector def = new IntegerVector();
@@ -79,25 +79,11 @@ public class Assemble extends LinkedService {
 		this.addInput(matchRequired);
 
 		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		prototypeEntity.setRequired(true);
 		this.addInput(prototypeEntity);
 	}
 
 	public Assemble() {}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the waiting queues have been specified
-		if (waitQueueList.getValue() == null)
-			throw new InputErrorException("The keyword WaitQueueList must be set.");
-
-		// Confirm that prototype entity has been specified
-		if (prototypeEntity.getValue() == null)
-			throw new InputErrorException("The keyword PrototypeEntity must be set.");
-
-		serviceTime.validate();
-	}
 
 	@Override
 	public void earlyInit() {

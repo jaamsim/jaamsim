@@ -19,7 +19,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -45,6 +44,7 @@ public class SetGraphics extends LinkedComponent {
 		this.addInput( targetEntity);
 
 		graphicsList = new EntityListInput<>( DisplayEntity.class, "GraphicsList", "Key Inputs", null);
+		graphicsList.setRequired(true);
 		this.addInput( graphicsList);
 
 		choice = new SampleExpInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));
@@ -55,18 +55,6 @@ public class SetGraphics extends LinkedComponent {
 	}
 
 	public SetGraphics() {}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the GraphicList has been specified
-		if (graphicsList.getValue() == null || graphicsList.getValue().isEmpty()) {
-			throw new InputErrorException("The keyword GraphicsList must be set.");
-		}
-
-		choice.validate();
-	}
 
 	@Override
 	public void addEntity( DisplayEntity ent ) {

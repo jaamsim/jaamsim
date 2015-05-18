@@ -58,6 +58,7 @@ public abstract class LinkedComponent extends StateEntity {
 		this.addInput(testEntity);
 
 		nextComponent = new EntityInput<>(LinkedComponent.class, "NextComponent", "Key Inputs", null);
+		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
 
 		stateAssignment = new StringInput("StateAssignment", "Key Inputs", "");
@@ -77,11 +78,6 @@ public abstract class LinkedComponent extends StateEntity {
 	@Override
 	public void validate() {
 		super.validate();
-
-		// Confirm that the next entity in the chain has been specified
-		if (!nextComponent.getHidden() && nextComponent.getValue() == null) {
-			throw new InputErrorException("The keyword NextComponent must be set.");
-		}
 
 		// If a state is to be assigned, ensure that the prototype is a StateEntity
 		if (testEntity.getValue() != null && !stateAssignment.getValue().isEmpty()) {

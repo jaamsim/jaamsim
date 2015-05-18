@@ -29,6 +29,7 @@ public class Duplicate extends LinkedComponent {
 	{
 		targetComponentList = new EntityListInput<>( LinkedComponent.class, "TargetComponentList", "Key Inputs", null);
 		targetComponentList.setUnique(false);
+		targetComponentList.setRequired(true);
 		this.addInput( targetComponentList);
 	}
 

@@ -41,13 +41,6 @@ public class Unpack extends LinkedService {
 	public Unpack() {}
 
 	@Override
-	public void validate() {
-		super.validate();
-
-		serviceTime.validate();
-	}
-
-	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		container = null;

@@ -17,7 +17,6 @@ package com.jaamsim.BasicObjects;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.EntityListInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -37,30 +36,15 @@ public class Branch extends LinkedComponent {
 		nextComponent.setHidden(true);
 
 		nextComponentList = new EntityListInput<>(LinkedComponent.class, "NextComponentList", "Key Inputs", null);
+		nextComponentList.setRequired(true);
 		this.addInput(nextComponentList);
 
 		choice = new SampleExpInput("Choice", "Key Inputs", null);
 		choice.setUnitType(DimensionlessUnit.class );
 		choice.setEntity(this);
 		choice.setValidRange(1, Double.POSITIVE_INFINITY);
+		choice.setRequired(true);
 		this.addInput(choice);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that at least one next component has been specified
-		if( nextComponentList.getValue() == null ) {
-			throw new InputErrorException( "The keyword NextComponentList must be set." );
-		}
-
-		// Confirm that a choice input has been specified
-		if( choice.getValue() == null ) {
-			throw new InputErrorException( "The keyword Choice must be set." );
-		}
-
-		choice.validate();
 	}
 
 	@Override

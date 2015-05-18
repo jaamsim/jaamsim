@@ -20,7 +20,6 @@ import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -85,6 +84,7 @@ public class EntityGenerator extends LinkedService {
 		this.addInput(entitiesPerArrival);
 
 		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
+		prototypeEntity.setRequired(true);
 		this.addInput(prototypeEntity);
 
 		maxNumber = new IntegerInput("MaxNumber", "Key Inputs", null);
@@ -94,19 +94,6 @@ public class EntityGenerator extends LinkedService {
 	}
 
 	public EntityGenerator() {}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that prototype entity has been specified
-		if (prototypeEntity.getValue() == null) {
-			throw new InputErrorException("The keyword PrototypeEntity must be set.");
-		}
-
-		firstArrivalTime.validate();
-		interArrivalTime.validate();
-	}
 
 	@Override
 	public void earlyInit() {

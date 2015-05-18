@@ -19,7 +19,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -49,6 +48,7 @@ public class Pack extends LinkedService {
 
 	{
 		prototypeEntityContainer = new EntityInput<>(EntityContainer.class, "PrototypeEntityContainer", "Key Inputs", null);
+		prototypeEntityContainer.setRequired(true);
 		this.addInput(prototypeEntityContainer);
 
 		numberOfEntities = new SampleExpInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
@@ -62,19 +62,6 @@ public class Pack extends LinkedService {
 		serviceTime.setEntity(this);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(serviceTime);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that prototype entity has been specified
-		if (!prototypeEntityContainer.getHidden() && prototypeEntityContainer.getValue() == null) {
-			throw new InputErrorException("The keyword PrototypeEntityContainer must be set.");
-		}
-
-		numberOfEntities.validate();
-		serviceTime.validate();
 	}
 
 	@Override
