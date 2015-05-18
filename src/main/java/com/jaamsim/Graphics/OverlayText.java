@@ -36,26 +36,26 @@ public class OverlayText extends OverlayEntity {
 	@Keyword(description = "The fixed and variable text to be displayed.  If spaces are included, enclose the text in single quotes.  " +
 			"If variable text is to be displayed using the OutputName keyword, include the appropriate Java format in the text, " +
 			"e.g. %s, %.6f, %.6g",
-	         example = "OverlayText1 Format { 'Present speed = %.3f m/s' }")
+	         exampleList = {"'Present speed = %.3f m/s'"})
 	protected final StringInput formatText;
 
 	@Keyword(description = "The output value chain that returns the variable text to be displayed. " +
 			"If more than one output value is given, all outputs but the last should point to an entity output to query" +
 			" for the next output. The example returns the name of the product in a tank",
-	         example = "OverlayText1 OutputName { Tank1 Product Name }")
+	         exampleList = {"Tank1 Product Name"})
 	protected final OutputInput<Object> outputName;
 
 	@Keyword(description = "The unit inwhich to express the output value",
-	         example = "OverlayText1 Unit { m/s }")
+	         exampleList = {"m/s"})
 	protected final EntityInput<Unit> unit;
 
 	@Keyword(description = "The height of the font as displayed in the view window. Unit is in pixels.",
-	         example = "OverlayText1 TextHeight { 15 }")
+	         exampleList = {"15"})
 	private final IntegerInput textHeight;
 
 	@Keyword(description = "The text to display if there is any failure while formatting" +
 	                       "the dynamic text, or while reading the output's value.",
-	             example = "Text1 FailText { '' }")
+	         exampleList = {"'Input Error'"})
 	private final StringInput failText;
 
 	private String renderText;

@@ -40,53 +40,53 @@ public class Graph extends GraphBasics  {
 
 	@Keyword(description = "The number of data points that can be displayed on the graph.\n" +
 			" This parameter determines the resolution of the graph.",
-	         example = "Graph1 NumberOfPoints { 200 }")
+	         exampleList = {"200"})
 	protected final IntegerInput numberOfPoints;
 
 	@Keyword(description = "The unit type for the primary y-axis.",
-	         example = "Graph1 UnitType { DistanceUnit }")
+	         exampleList = {"DistanceUnit"})
 	private final UnitTypeInput unitType;
 
 	@Keyword(description = "One or more sources of data to be graphed on the primary y-axis.\n" +
 			"Each source is graphed as a separate line and is specified by an Expression. Also" +
 			"acceptable are: a constant value, a Probability Distribution, TimeSeries, or a " +
 			"Calculation Object.",
-     example = "Graph1 DataSource { { [Entity1].Output1 } { [Entity2].Output2 } }")
+	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
 	protected final SampleExpListInput dataSource;
 
 	@Keyword(description = "A list of colors for the line series to be displayed.\n" +
 			"Each color can be specified by either a color keyword or an RGB value.\n" +
 			"For multiple lines, each color must be enclosed in braces.\n" +
 			"If only one color is provided, it is used for all the lines.",
-	         example = "Graph1 LineColors { { red } { green } }")
+	         exampleList = {"{ red } { green }"})
 	protected final ColorListInput lineColorsList;
 
 	@Keyword(description = "A list of line widths (in pixels) for the line series to be displayed.\n" +
 			"If only one line width is provided, it is used for all the lines.",
-	         example = "Graph1 LineWidths { 2 1 }")
+	         exampleList = {"2 1"})
 	protected final ValueListInput lineWidths;
 
 	@Keyword(description = "The unit type for the secondary y-axis.",
-	         example = "Graph1 SecondaryUnitType { DistanceUnit }")
+	         exampleList = {"DistanceUnit"})
 	private final UnitTypeInput secondaryUnitType;
 
 	@Keyword(description = "One or more sources of data to be graphed on the secondary y-axis.\n" +
 			"Each source is graphed as a separate line and is specified by an Expression. Also" +
 			"acceptable are: a constant value, a Probability Distribution, TimeSeries, or a " +
 			"Calculation Object.",
-     example = "Graph1 SecondaryDataSource { { [Entity1].Output1 } { [Entity2].Output2 } }")
+	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
 	protected final SampleExpListInput secondaryDataSource;
 
 	@Keyword(description = "A list of colors for the secondary line series to be displayed.\n" +
 			"Each color can be specified by either a color keyword or an RGB value.\n" +
 			"For multiple lines, each color must be enclosed in braces.\n" +
 			"If only one color is provided, it is used for all the lines.",
-	         example = "Graph1 SecondaryLineColors { { red } { green } }")
+	         exampleList = {"{ red } { green }"})
 	protected final ColorListInput secondaryLineColorsList;
 
 	@Keyword(description = "A list of line widths (in pixels) for the seconardy line series to be displayed.\n" +
 			"If only one line width is provided, it is used for all the lines.",
-	         example = "Graph1 SecondaryLineWidths { 2 1 }")
+	         exampleList = {"2 1"})
 	protected final ValueListInput secondaryLineWidths;
 
 	{

@@ -52,27 +52,27 @@ import com.jaamsim.units.DistanceUnit;
  */
 public class DisplayEntity extends Entity {
 	@Keyword(description = "The point in the region at which the alignment point of the object is positioned.",
-	         example = "Object1 Position { -3.922 -1.830 0.000 m }")
+	         exampleList = {"-3.922 -1.830 0.000 m"})
 	protected final Vec3dInput positionInput;
 
 	@Keyword(description = "The size of the object in { x, y, z } coordinates. If only the x and y coordinates are given " +
 	                "then the z dimension is assumed to be zero.",
-	         example = "Object1 Size { 15 12 0 m }")
+	         exampleList = {"15 12 0 m"})
 	protected final Vec3dInput sizeInput;
 
 	@Keyword(description = "Euler angles defining the rotation of the object.",
-	         example = "Object1 Orientation { 0 0 90 deg }")
+			exampleList = {"0 0 90 deg"})
 	private final Vec3dInput orientationInput;
 
 	@Keyword(description = "The point within the object about which its Position keyword is defined, " +
 	                "expressed with respect to a unit box centered about { 0 0 0 }.",
-	         example = "Object1 Alignment { -0.5 -0.5 0.0 }")
+	         exampleList = {"-0.5 -0.5 0.0"})
 	protected final Vec3dInput alignmentInput;
 
 	@Keyword(description = "The name of the Region containing the object.  Applies an offset " +
 			        "to the Position of the object corresponding to the Region's " +
 			        "Position and Orientation values.",
-	         example ="Object1 Region { Region1 }")
+	         exampleList = {"Region1"})
 	protected final EntityInput<Region> regionInput;
 
 	private final Vec3d position = new Vec3d();
@@ -85,23 +85,23 @@ public class DisplayEntity extends Entity {
 
 	@Keyword(description = "The graphic representation of the object.  Accepts a list of objects where the distances defined in " +
 	                "LevelOfDetail dictate which DisplayModel entry is used.",
-	         example = "Object1 DisplayModel { Pixels }")
+	         exampleList = {"ColladaModel1"})
 	protected final EntityListInput<DisplayModel> displayModelListInput;
 
 	@Keyword(description = "The name of an object with respect to which the Position keyword is referenced.",
-	         example ="Object1Label RelativeEntity { Object1 }")
+	         exampleList = {"DisplayEntity1"})
 	protected final RelativeEntityInput relativeEntity;
 
 	@Keyword(description = "If TRUE, the object is displayed in the simulation view windows.",
-	         example = "Object1 Show { FALSE }")
+	         exampleList = {"FALSE"})
 	private final BooleanInput show;
 
 	@Keyword(description = "If TRUE, the object is active and used in simulation runs.",
-	         example = "Object1 Active { FALSE }")
+	         exampleList = {"FALSE"})
 	private final BooleanInput active;
 
 	@Keyword(description = "If TRUE, the object can be positioned interactively using the GUI.",
-	         example = "Object1 Movable { FALSE }")
+	         exampleList = {"FALSE"})
 	private final BooleanInput movable;
 
 	private ArrayList<DisplayModelBinding> modelBindings;

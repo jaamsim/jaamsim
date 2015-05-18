@@ -26,7 +26,7 @@ import com.jaamsim.input.Keyword;
 public class OverlayImage extends OverlayEntity {
 
 	@Keyword(description = "The size of the image. Value is in pixels",
-	         example = "OverlayImage1 ImageSize { 200 100 }")
+	         exampleList = {"200 100"})
 	private final IntegerListInput size;
 
 	{

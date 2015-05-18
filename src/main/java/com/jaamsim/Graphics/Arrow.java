@@ -33,32 +33,32 @@ import com.jaamsim.units.DistanceUnit;
 public class Arrow extends DisplayEntity implements HasScreenPoints {
 	@Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
                     "make up the arrow.  When two coordinates are given it is assumed that z = 0." ,
-	         example = "Arrow1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
+	         exampleList = {"{ 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m }"})
 	private final Vec3dListInput pointsInput;
 
 	@Keyword(description = "If TRUE, then a drop shadow appears for the arrow.",
-	         example = "Arrow1  DropShadow { TRUE }")
+	         exampleList = {"TRUE"})
 	private final BooleanInput dropShadow;
 
 	@Keyword(description = "The colour of the drop shadow, defined using a colour keyword or RGB values.",
-	         example = "Arrow1  DropShadowColour { blue }")
+	         exampleList = {"blue"})
 	private final ColourInput dropShadowColor;
 
 	@Keyword(description = "A set of { x, y, z } offsets in each direction of the drop shadow from the Arrow.",
-	         example = "Arrow1  DropShadowOffset { 0.1 0.1 0.0 m }")
+	         exampleList = {"0.1 0.1 0.0 m"})
 	private final Vec3dInput dropShadowOffset;
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",
-	         example = "Arrow1 Width { 1 }")
+	         exampleList = {"1"})
 	private final ValueInput width;
 
 	@Keyword(description = "A set of { x, y, z } numbers that define the size of the arrowhead " +
 	                "in those directions at the end of the connector.",
-	         example = "Arrow1 ArrowSize { 0.165 0.130 0.0 m }")
+	         exampleList = {"0.165 0.130 0.0 m"})
 	private final Vec3dInput arrowHeadSize;
 
 	@Keyword(description = "The colour of the arrow, defined using a colour keyword or RGB values.",
-	         example = "Arrow1 Color { red }")
+	         exampleList = {"red"})
 	private final ColourInput color;
 
 	private Object screenPointLock = new Object();
@@ -68,32 +68,32 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		ArrayList<Vec3d> defPoints =  new ArrayList<>();
 		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
 		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
-		pointsInput = new Vec3dListInput("Points", "Arrow Graphics", defPoints);
+		pointsInput = new Vec3dListInput("Points", "Graphics", defPoints);
 		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
 		pointsInput.setUnitType(DistanceUnit.class);
 		this.addInput(pointsInput);
 
-		width = new ValueInput("Width", "Arrow Graphics", 1.0d);
+		width = new ValueInput("Width", "Graphics", 1.0d);
 		width.setUnitType(DimensionlessUnit.class);
 		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(width);
 
-		arrowHeadSize = new Vec3dInput( "ArrowSize", "Arrow Graphics", new Vec3d(0.1d, 0.1d, 0.0d) );
+		arrowHeadSize = new Vec3dInput( "ArrowSize", "Graphics", new Vec3d(0.1d, 0.1d, 0.0d) );
 		arrowHeadSize.setUnitType(DistanceUnit.class);
 		this.addInput( arrowHeadSize );
 
-		color = new ColourInput("Color", "Arrow Graphics", ColourInput.BLACK);
+		color = new ColourInput("Color", "Graphics", ColourInput.BLACK);
 		this.addInput(color);
 		this.addSynonym(color, "Colour");
 
-		dropShadow = new BooleanInput( "DropShadow", "Arrow Graphics", false );
+		dropShadow = new BooleanInput( "DropShadow", "Graphics", false );
 		this.addInput( dropShadow );
 
-		dropShadowColor = new ColourInput("DropShadowColour", "Arrow Graphics", ColourInput.BLACK);
+		dropShadowColor = new ColourInput("DropShadowColour", "Graphics", ColourInput.BLACK);
 		this.addInput(dropShadowColor);
 		this.addSynonym(dropShadowColor, "DropShadowColor");
 
-		dropShadowOffset = new Vec3dInput( "DropShadowOffset", "Arrow Graphics", new Vec3d() );
+		dropShadowOffset = new Vec3dInput( "DropShadowOffset", "Graphics", new Vec3d() );
 		dropShadowOffset.setUnitType(DistanceUnit.class);
 		this.addInput( dropShadowOffset );
 	}

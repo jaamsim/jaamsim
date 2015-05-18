@@ -54,110 +54,110 @@ public abstract class GraphBasics extends DisplayEntity {
 	// Key Inputs category
 
 	@Keyword(description= "Text for the graph title.",
-	         example = "Graph1 Title { 'Title of the Graph' }")
+	         exampleList = {"'Title of the Graph'"})
 	private final StringInput title;
 
 	// X-Axis category
 
 	@Keyword(description = "Title of the x-axis.",
-	         example = "Graph1 XAxisTitle { 'Time (s)' }")
+	         exampleList = {"'Time (s)'"})
 	private final StringInput xAxisTitle;
 
 	@Keyword(description = "The unit to be used for the x-axis.",
-	         example = "Graph1 XAxisUnit { h }")
+	         exampleList = {"h"})
 	private final EntityInput<Unit> xAxisUnit;
 
 	@Keyword(description = "The minimum value for the x-axis.",
-	         example = "Graph1 XAxisStart { -48 h }")
+	         exampleList = {"-48 h"})
 	protected final ValueInput xAxisStart;
 
 	@Keyword(description = "The maximum value for the x-axis.",
-	         example = "Graph1 XAxisEnd { 8 h }")
+	         exampleList = {"8 h"})
 	protected final ValueInput xAxisEnd;
 
 	@Keyword(description = "The interval between x-axis labels.",
-	         example = "Graph1 XAxisInterval { 8 h }")
+	         exampleList = {"8 h"})
 	private final ValueInput xAxisInterval;
 
 	@Keyword(description = "The Java format to be used for the tick mark values on the x-axis.\n" +
 			"For example, the format %.1fs would dispaly the value 5 as 5.0s.",
-	         example = "Graph1 XAxisLabelFormat { %.1fs }")
+	         exampleList = {"%.1fs"})
 	private final FormatInput xAxisLabelFormat;
 
 	@Keyword(description = "A list of values between XAxisStart and XAxisEnd at which to insert vertical gridlines.",
-	         example = "Graph1 XLines { -48 -40 -32 -24 -16 -8 0 h }")
+	         exampleList = {"-48 -40 -32 -24 -16 -8 0 h"})
 	private final ValueListInput xLines;
 
 	@Keyword(description = "The color of the vertical gridlines (or a list corresponding to the colour of each " +
 	                "gridline defined in XLines), defined using a colour keyword or RGB values.",
-	         example = "Graph1 XLinesColor { gray76 }")
+	         exampleList = {"gray76"})
 	private final ColorListInput xLinesColor;
 
 	// Y-Axis category
 
 	@Keyword(description = "Title of the y-axis.",
-	         example = "Graph1 YAxisTitle { 'Water Height (m)' }")
+	         exampleList = {"'Water Height (m)'"})
 	private final StringInput yAxisTitle;
 
 	@Keyword(description = "The unit to be used for the y-axis.\n" +
 			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
 			"i.e. if the data has units of distance, then unit must be a distance unit such as meters.",
-	         example = "Graph1 YAxisUnit { t/h }")
+	         exampleList = {"t/h"})
 	private final EntityInput<Unit> yAxisUnit;
 
 	@Keyword(description = "The minimum value for the y-axis.",
-	         example = "Graph1 YAxisStart { 0 t/h }")
+	         exampleList = {"0 t/h"})
 	private final ValueInput yAxisStart;
 
 	@Keyword(description = "The maximum value for the y-axis.",
-	         example = "Graph1 YAxisEnd { 5 t/h }")
+	         exampleList = {"5 t/h"})
 	private final ValueInput yAxisEnd;
 
 	@Keyword(description = "The interval between y-axis labels.",
-	         example = "Graph1 YAxisInterval { 1 t/h }")
+	         exampleList = {"1 t/h"})
 	private final ValueInput yAxisInterval;
 
 	@Keyword(description  = "The Java format to be used for the tick mark values on the y-axis.\n" +
 			"For example, the format %.1f would dispaly the value 5 as 5.0.",
-	         example = "Graph1 YAxisLabelFormat { %.1f }")
+	         exampleList = {"%.1f"})
 	private final FormatInput yAxisLabelFormat;
 
 	@Keyword(description = "A list of values between YAxisStart and YAxisEnd at which to insert horizontal gridlines.",
-	         example ="Graph1 YLines { 0  0.5  1  1.5  2  2.5  3  t/h }")
+	         exampleList = {"0  0.5  1  1.5  2  2.5  3  t/h"})
 	private final ValueListInput yLines;
 
 	@Keyword(description = "The colour of the horizontal gridlines (or a list corresponding to the colour of each " +
                     "gridline defined in YLines), defined using a colour keyword or RGB values.",
-	         example = "Graph1 YLinesColor { gray76 }")
+	         exampleList = {"gray76"})
 	private final ColorListInput yLinesColor;
 
 	// Secondary Y-Axis category
 
 	@Keyword(description = "Title of the secondary y-axis.",
-	         example = "Graph1 SecondaryYAxisTitle { 'Water Height (m)' }")
+	         exampleList = {"'Water Height (m)'"})
 	private final StringInput secondaryYAxisTitle;
 
 	@Keyword(description = "The unit to be used for the secondary y-axis.\n" +
 			"The unit chosen must be consistent with the unit type for the DataSource value,\n" +
 			"i.e. if the data has units of distance, then unit must be a distance unit such as meters.",
-	         example = "Graph1 SecondaryYAxisUnit { m }")
+	         exampleList = {"m"})
 	private final EntityInput<Unit> secondaryYAxisUnit;
 
 	@Keyword(description = "The minimum value for the secondary y-axis.",
-	         example = "Graph1 SecondaryYAxisStart { 0 m }")
+	         exampleList = {"0 m"})
 	private final ValueInput secondaryYAxisStart;
 
 	@Keyword(description = "The maximum value for the secondary y-axis.",
-	         example = "Graph1 SecondaryYAxisEnd { 5 m }")
+	         exampleList = {"5 m"})
 	private final ValueInput secondaryYAxisEnd;
 
 	@Keyword(description = "The interval between secondary y-axis labels.",
-	         example = "Graph1 SecondaryYAxisInterval { 1 m }")
+	         exampleList = {"1 m"})
 	private final ValueInput secondaryYAxisInterval;
 
 	@Keyword(description  = "The Java format to be used for the tick mark values on the secondary y-axis.\n" +
 			"For example, the format %.1f would dispaly the value 5 as 5.0.",
-	         example = "Graph1 SecondaryYAxisLabelFormat { %.1f }")
+	         exampleList = {"%.1f"})
 	private final FormatInput secondaryYAxisLabelFormat;
 
 	{
