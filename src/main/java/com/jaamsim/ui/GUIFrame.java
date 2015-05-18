@@ -2065,7 +2065,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				name, desc);
 	}
 
-	public static String formatKeywordToolTip(String name, String description, String example) {
+	public static String formatKeywordToolTip(String className, String keyword,
+			String description, String example, String[] exampleList) {
 
 		String desc = new String(description);
 		desc = desc.replaceAll("&", "&amp;");
@@ -2073,11 +2074,30 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		desc = desc.replaceAll(">", "&gt;");
 		desc = desc.replaceAll("\n", "<BR>");
 
+		// Single example
 		String examp = new String(example);
-		examp = examp.replaceAll("\n", "<BR>");
+		if (!examp.isEmpty()) {
+			examp = examp.replaceAll("\n", "<BR>");
+		}
+		// List of examples
+		else {
+			StringBuilder sb = new StringBuilder();
+			for (int i=0; i<exampleList.length; i++) {
+				String item = exampleList[i];
+				item = item.replaceAll("&", "&amp;");
+				item = item.replaceAll("<", "&lt;");
+				item = item.replaceAll(">", "&gt;");
+				item = item.replaceAll("\n", "<BR>");
+				if (i > 0)
+					sb.append("<BR>");
+				sb.append(className).append("1  ").append(keyword).append("  {  ");
+				sb.append(item).append("  }");
+			}
+			examp = sb.toString();
+		}
 
-		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s<br><br><u>Example:</u><br>%s</p></html>",
-				name, desc, examp);
+		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s<br><br><u>Examples:</u><br>%s</p></html>",
+				keyword, desc, examp);
 	}
 
 	public static String formatOutputToolTip(String name, String description) {
