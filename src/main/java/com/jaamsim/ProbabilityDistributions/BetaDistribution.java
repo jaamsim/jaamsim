@@ -23,16 +23,16 @@ import com.jaamsim.units.UserSpecifiedUnit;
 
 public class BetaDistribution extends Distribution {
 	@Keyword(description = "The alpha tuning parameter.",
-	         example = "BetaDist1 AlphaParam { 5.0 }")
+	         exampleList = {"5.0"})
 	private final ValueInput alphaInput;
 
 	@Keyword(description = "The beta tuning parameter.",
-	         example = "BetaDist1 BetaParam { 5.0 }")
+	         exampleList = {"5.0"})
 	private final ValueInput betaInput;
 
 	@Keyword(description = "The scale parameter for the distribution.  This scales the " +
 	                       "value of the distribution so it return values between 0 and scale.",
-	         example = "BetaDist1 Scale { 3.0 h }")
+	         exampleList = {"3.0 h"})
 	private final ValueInput scaleInput;
 
 	private final MRG1999a rng = new MRG1999a();

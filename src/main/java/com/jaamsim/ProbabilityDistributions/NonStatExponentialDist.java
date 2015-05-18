@@ -28,7 +28,7 @@ import com.jaamsim.units.TimeUnit;
 public class NonStatExponentialDist extends Distribution {
 
 	@Keyword(description = "A time series containing the expected cumulative number of arrivals as a function of time.",
-			example = "NonStatExponentialDist1 ExpectedArrivals { TimeSeries1 }")
+			exampleList = {"TimeSeries1"})
 	private final TimeSeriesInput expectedArrivals;
 
 	private final MRG1999a rng = new MRG1999a();

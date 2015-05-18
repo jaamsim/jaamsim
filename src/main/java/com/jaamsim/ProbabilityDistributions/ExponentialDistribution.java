@@ -27,7 +27,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class ExponentialDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the exponential distribution.",
-	         example = "ExponentialDist1 Mean { 5.0 }")
+	         exampleList = {"5.0"})
 	private final ValueInput meanInput;
 
 	private final MRG1999a rng = new MRG1999a();

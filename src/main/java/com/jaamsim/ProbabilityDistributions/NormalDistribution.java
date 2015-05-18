@@ -28,11 +28,11 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class NormalDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the normal distribution (ignoring the MinValue and MaxValue keywords).",
-	         example = "NormalDist1 Mean { 5.0 }")
+	         exampleList = {"5.0"})
 	private final ValueInput meanInput;
 
 	@Keyword(description = "The standard deviation of the normal distribution (ignoring the MinValue and MaxValue keywords).",
-	         example = "NormalDist1 StandardDeviation { 2.0 }")
+	         exampleList = {"2.0"})
 	private final ValueInput standardDeviationInput;
 
 	private final MRG1999a rng1 = new MRG1999a();

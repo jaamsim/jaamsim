@@ -29,15 +29,15 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class WeibullDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Weibull distribution.",
-	         example = "WeibullDist1 Scale { 3.0 h }")
+	         exampleList = {"3.0 h"})
 	private final ValueInput scaleInput;
 
 	@Keyword(description = "The shape parameter for the Weibull distribution.  A decimal value > 0.0.",
-	         example = "WeibullDist-1 Shape { 1.0 }")
+	         exampleList = {"1.0"})
 	private final ValueInput shapeInput;
 
 	@Keyword(description = "The location parameter for the Weibull distribution.",
-	         example = "WeibullDist-1 Location { 5.0 h }")
+	         exampleList = {"5.0 h"})
 	private final ValueInput locationInput;
 
 	private final MRG1999a rng = new MRG1999a();

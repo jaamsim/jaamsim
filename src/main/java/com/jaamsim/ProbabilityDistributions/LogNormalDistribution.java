@@ -29,15 +29,15 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class LogNormalDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Log-Normal distribution.",
-	         example = "LogNormalDist1 Scale { 3.0 h }")
+	         exampleList = {"3.0 h"})
 	private final ValueInput scaleInput;
 
 	@Keyword(description = "The mean of the dimensionless normal distribution (not the mean of the lognormal).",
-	         example = "LogNormalDist1 NormalMean { 5.0 }")
+	         exampleList = {"5.0"})
 	private final ValueInput normalMeanInput;
 
 	@Keyword(description = "The standard deviation of the dimensionless normal distribution (not the standard deviation of the lognormal).",
-	         example = "LogNormalDist1 NormalStandardDeviation { 2.0 }")
+	         exampleList = {"2.0"})
 	private final ValueInput normalStandardDeviationInput;
 
 	private final MRG1999a rng1 = new MRG1999a();

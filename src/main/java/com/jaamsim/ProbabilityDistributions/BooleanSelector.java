@@ -23,11 +23,11 @@ import com.jaamsim.units.DimensionlessUnit;
 
 public class BooleanSelector extends DisplayEntity {
 	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
-	         example = "RandomSelector1 RandomSeed { 547 }")
+	         exampleList = {"547"})
 	private IntegerInput randomSeedInput;
 
 	@Keyword(description = "The probability of the Selector returning true.",
-	         example = "RandomSelector1 TrueProbability { 0.5 }")
+	         exampleList = {"0.5"})
 	private ValueInput trueProbInput;
 
 	private final MRG1999a rng = new MRG1999a();

@@ -28,13 +28,13 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class ErlangDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Erlang distribution.",
-	         example = "ErlangDist1 Mean { 5.0 }")
+	         exampleList = {"5.0"})
 	private final ValueInput meanInput;
 
 	@Keyword(description = "The shape parameter for the Erlang distribution.  An integer value >= 1.  " +
 			"Shape = 1 gives the Exponential distribution.  " +
 			"For Shape > 10 it is better to use the Gamma distribution.",
-	         example = "ErlangDist1 Shape { 2 }")
+	         exampleList = {"2"})
 	private final IntegerInput shapeInput;
 
 	private final MRG1999a rng = new MRG1999a();

@@ -35,11 +35,11 @@ public class DiscreteDistribution extends Distribution {
 	@Keyword(description = "The list of discrete values that can be returned by the distribution.  " +
 			"The values can be any positive or negative and can be listed in any order.  " +
 			"No interpolation is performed between these values.",
-	         example = "DiscreteDist1 ValueList { 6.2 10.1 }")
+	         exampleList = {"6.2 10.1"})
 	private final ValueListInput valueListInput;
 
 	@Keyword(description = "The list of probabilities corresponding to the discrete values in the ValueList.  Must sum to 1.0.",
-	         example = "DiscreteDist1 ProbabilityList { 0.3  0.7 }")
+	         exampleList = {"0.3  0.7"})
 	private final ValueListInput probabilityListInput;
 
 	private final MRG1999a rng = new MRG1999a();

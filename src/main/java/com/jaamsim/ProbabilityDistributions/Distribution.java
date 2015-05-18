@@ -44,19 +44,19 @@ public abstract class Distribution extends DisplayEntity
 implements SampleProvider {
 
 	@Keyword(description = "The unit type that the distribution returns values in.",
-	         example = "ProbDist1 UnitType { DistanceUnit }")
+	         exampleList = {"DistanceUnit"})
 	protected final UnitTypeInput unitType;
 
 	@Keyword(description = "Seed for the random number generator.  Must be an integer >= 0.",
-			 example = "ProbDist1 RandomSeed { 547 }")
+			 exampleList = {"547"})
 	private final IntegerInput randomSeedInput;
 
 	@Keyword(description = "Minimum value that can be returned.  Smaller values are rejected and resampled.",
-	         example = "ProbDist1 MinValue { 0.0 }")
+	         exampleList = {"0.0"})
 	protected final ValueInput minValueInput;
 
 	@Keyword(description = "Maximum value that can be returned.  Larger values are rejected and resampled.",
-	         example = "ProbDist1 MaxValue { 200.0 }")
+	         exampleList = {"200.0"})
 	protected final ValueInput maxValueInput;
 
 	private int sampleCount;
