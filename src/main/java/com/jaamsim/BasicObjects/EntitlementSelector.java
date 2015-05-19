@@ -36,7 +36,7 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class EntitlementSelector extends DisplayEntity implements SampleProvider {
 
 	@Keyword(description = "The list of probabilities on which to base the selection.  Must sum to 1.0.",
-	         example = "EntitlementSelector1 ProportionList { 0.3  0.7 }")
+	         exampleList = {"0.3  0.7"})
 	private final ValueListInput proportionList;
 
 	private int lastSample;  // the index that was selected most recently

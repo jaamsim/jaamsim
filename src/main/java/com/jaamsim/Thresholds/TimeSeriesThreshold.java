@@ -32,31 +32,31 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class TimeSeriesThreshold extends Threshold {
 
 	@Keyword(description = "The name of time series for which the threshold applies.",
-	         example = "Threshold1  TimeSeries { TimeSeries1 }")
+	         exampleList = {"TimeSeries1"})
 	private final TimeSeriesInput timeSeries;
 
 	@Keyword(description = "The limit over which the threshold is closed.  " +
 			"The limit must be specified after the time series and " +
 			"will use the same unit type as the threshold.",
-    example = "Threshold1  MaxOpenLimit { 2.0 m }")
+	         exampleList = {"2.0 m", "TimeSeries2"})
 	private final TimeSeriesInput maxOpenLimit;
 
 	@Keyword(description = "The limit under which the threshold is closed.  " +
 			"The limit must be specified after the time series and " +
 			"will use the same unit type as the threshold.",
-    example = "Threshold1  MinOpenLimit { 2.0 m }")
+	         exampleList = {"2.0 m", "TimeSeries3"})
 	private final TimeSeriesInput minOpenLimit;
 
 	@Keyword(description = "The amount of time that the threshold must remain within minOpenLimit and maxOpenLimit to be considered open.",
-            example = "Threshold1  LookAhead { 5.0 h }")
+	         exampleList = {"5.0 h"})
 	private final ValueInput lookAhead;
 
 	@Keyword(description = "The amount of time that the threshold adds on to every time series lookup.",
-           example = "Threshold1  Offset { 5.0 h }")
+	         exampleList = {"5.0 h"})
 	private final ValueInput offset;
 
 	@Keyword(description = "The unit type for the threshold (e.g. DistanceUnit, TimeUnit, MassUnit).",
-    example = "Threshold1  UnitType { DistanceUnit }")
+	         exampleList = {"DistanceUnit"})
 	private final UnitTypeInput unitType;
 
 	{

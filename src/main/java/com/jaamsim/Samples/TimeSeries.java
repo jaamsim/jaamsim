@@ -42,16 +42,17 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 					"value is the time series value for the given date and time\n" +
 					"units is the optional units for the value\n" +
 					"The date and times must be given in increasing order.",
-	         example = "TimeSeries1  Value { { '2010-01-01 00:00:00' 0.5 m } { '2010-01-01 03:00:00' 1.5 m } { '2010-01-01 06:00:00' 1.2 m } }")
+	         exampleList = {"{ 0 h 0.5 m } { 3 h 1.5 m } { 6 h 1.2 m }",
+							"{ '2010-01-01 00:00:00' 0.5 m } { '2010-01-01 03:00:00' 1.5 m } { '2010-01-01 06:00:00' 1.2 m }"})
 	private final TimeSeriesDataInput value;
 
 	@Keyword(description = "The unit type for the time series (e.g. DistanceUnit, TimeUnit, MassUnit).  " +
 			"If the UnitType keyword is specified, it must be specified before the Value keyword.",
-     example = "TimeSeries1  UnitType { DistanceUnit }")
+	         exampleList = {"DistanceUnit"})
 	private final UnitTypeInput unitType;
 
 	@Keyword(description = "Defines when the time series will repeat from the start.",
-            example = "TimeSeries1  CycleTime { 8760.0 h }")
+	         exampleList = {"8760.0 h"})
 	private final ValueInput cycleTime;
 
 	{

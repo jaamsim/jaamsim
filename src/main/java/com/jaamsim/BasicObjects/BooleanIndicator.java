@@ -14,19 +14,19 @@ public class BooleanIndicator extends DisplayEntity {
 	private final OutputInput<Boolean> boolProp;
 
 	@Keyword(description = "The colour of the indicator when the property is true",
-	         example = "BinLevel TrueColor { green }")
+	         exampleList = {"green"})
 	private final ColourInput trueColor;
 
 	@Keyword(description = "The colour of the indicator when the property is false",
-	         example = "BinLevel FalseColor { red }")
+	         exampleList = {"red"})
 	private final ColourInput falseColor;
 
 	@Keyword(description = "The string displayed by the Text output when the property is true.",
-	         example = "BooleanInd1 TrueText { 'True text' }")
+	         exampleList = {"'True text'"})
 	private final StringInput trueText;
 
 	@Keyword(description = "The string displayed by the Text output when the property is false.",
-	         example = "BooleanInd1 FalseText { 'False text' }")
+	         exampleList = {"'False text'"})
 	private final StringInput falseText;
 
 	{
