@@ -40,28 +40,28 @@ public class Queue extends LinkedComponent {
 	@Keyword(description = "The priority for positioning the received entity in the queue.\n" +
 			"Priority is integer valued and a lower numerical value indicates a higher priority.\n" +
 			"For example, priority 3 is higher than 4, and priorities 3, 3.2, and 3.8 are equivalent.",
-	         example = "Queue1 Priority { this.obj.Attrib1 }")
+	         exampleList = {"this.obj.Attrib1"})
 	private final SampleExpInput priority;
 
 	@Keyword(description = "An expression that returns a dimensionless integer value that can be used to "
 			+ "match entities in separate queues. The expression is evaluated when the entity "
 			+ "first arrives at the queue. Since Match is integer valued, a value of 3.2 for one "
 			+ "queue and 3.6 for another queue are considered to be equal.",
-	         example = "Queue1 Match { this.obj.Attrib1 }")
+	         exampleList = {"this.obj.Attrib1"})
 	private final SampleExpInput match;
 
 	@Keyword(description = "Determines the order in which entities are placed in the queue (FIFO or LIFO):\n" +
 			"TRUE = first in first out (FIFO) order (the default setting)," +
 			"FALSE = last in first out (LIFO) order.",
-	         example = "Queue1 FIFO { FALSE }")
+	         exampleList = {"FALSE"})
 	private final BooleanInput fifo;
 
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
-	         example = "Queue1 Spacing { 1 m }")
+	         exampleList = {"1 m"})
 	private final ValueInput spacing;
 
 	@Keyword(description = "The number of queuing entities in each row.",
-			example = "Queue1 MaxPerLine { 4 }")
+			exampleList = {"4"})
 	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
 	protected ArrayList<QueueEntry> itemList;

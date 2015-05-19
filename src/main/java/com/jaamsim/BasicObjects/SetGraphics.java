@@ -25,17 +25,17 @@ import com.jaamsim.units.DimensionlessUnit;
 public class SetGraphics extends LinkedComponent {
 
 	@Keyword(description = "The entity whose graphics are to be changed. Defaults to the entity that was received.",
-	         example = "SetGraphics1 TargetEntity{ Server1 }")
+	         exampleList = {"Server1"})
 	private final EntityInput<DisplayEntity> targetEntity;
 
 	@Keyword(description = "List of entities whose graphics can chosen for assignment to the target entity.",
-	         example = "SetGraphics1 GraphicsList{ DisplayEntity1 DisplayEntity2 }")
+	         exampleList = {"DisplayEntity1 DisplayEntity2"})
 	private final EntityListInput<DisplayEntity> graphicsList;
 
 	@Keyword(description = "A number that determines the choice of entities from the GraphicsList:\n" +
 			"     1 = first entity's graphics, 2 = second entity's graphics, etc.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
-	         example = "SetGraphics1 Choice { 2 }")
+	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
 	private final SampleExpInput choice;
 
 	{

@@ -33,20 +33,20 @@ import com.jaamsim.units.DistanceUnit;
 public abstract class LinkedService extends LinkedComponent implements ThresholdUser, QueueUser {
 
 	@Keyword(description = "The position of the entity being processed relative to the processor.",
-	         example = "Server1 ProcessPosition { 1.0 0.0 0.01 m }")
+	         exampleList = {"1.0 0.0 0.01 m"})
 	protected final Vec3dInput processPosition;
 
 	@Keyword(description = "The queue in which the waiting DisplayEntities will be placed.",
-	         example = "Server1 WaitQueue { Queue1 }")
+	         exampleList = {"Queue1"})
 	protected final EntityInput<Queue> waitQueue;
 
 	@Keyword(description = "An expression returning a dimensionless integer value that can be used to "
 			+ "determine which of the queued entities is eligible for processing.",
-	         example = "Server1 Match { this.obj.Attrib1 }")
+	         exampleList = {"this.obj.Attrib1" })
 	protected final SampleExpInput match;
 
 	@Keyword(description = "A list of thresholds that must be satisified for the entity to operate.",
-			example = "Server1 OperatingThresholdList { Server1 }")
+			exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
 	protected final EntityListInput<Threshold> operatingThresholdList;
 
 	private boolean busy;

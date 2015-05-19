@@ -29,15 +29,15 @@ import com.jaamsim.units.DistanceUnit;
 public class EntityContainer extends SimEntity {
 
 	@Keyword(description = "The position of the first entity in the container relative to the container.",
-	         example = "Object1 PositionOffset { 1.0 0.0 0.01 m }")
+	         exampleList = {"1.0 0.0 0.01 m"})
 	protected final Vec3dInput positionOffset;
 
 	@Keyword(description = "The amount of graphical space shown between entities in the container.",
-	         example = "Container1 Spacing { 1 m }")
+	         exampleList = {"1 m"})
 	private final ValueInput spacingInput;
 
 	@Keyword(description = "The number of entities in each row inside the container.",
-			example = "Queue1 MaxPerLine { 4 }")
+			exampleList = {"4"})
 	protected final IntegerInput maxPerLineInput;
 
 	private ArrayList<DisplayEntity> entityList;

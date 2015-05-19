@@ -31,26 +31,26 @@ import com.jaamsim.units.TimeUnit;
 public class Assemble extends LinkedService {
 
 	@Keyword(description = "The service time required to perform the assembly process.",
-	         example = "EntityAssemble1 ServiceTime { 3.0 h }")
+	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleExpInput serviceTime;
 
 	@Keyword(description = "A list of Queue objects in which to place the arriving sub-component entities.",
-	         example = "EntityAssemble1 WaitQueueList { Queue1 }")
+	         exampleList = {"Queue1 Queue2 Queue3"})
 	private final EntityListInput<Queue> waitQueueList;
 
 	@Keyword(description = "The number of entities required from each queue for the assembly process to begin. "
 			+ "The last value in the list is used if the number of queues is greater than the number of values.",
-	         example = "EntityAssemble1 NumberRequired { 1 2 1 }")
+	         exampleList = {"1 2 1"})
 	private final IntegerListInput numberRequired;
 
 	@Keyword(description = "If TRUE, the all entities used in the assembly process must have the same Match value. "
 			+ "The match value for an entity determined by the Match keyword for each queue. The value is calculated "
 			+ "when the entity first arrives at its queue.",
-	         example = "EntityAssemble1 MatchRequired { TRUE }")
+	         exampleList = {"TRUE"})
 	private final BooleanInput matchRequired;
 
 	@Keyword(description = "The prototype for entities representing the assembled part.",
-	         example = "EntityAssemble1 PrototypeEntity { Proto }")
+	         exampleList = {"Proto"})
 	private final EntityInput<DisplayEntity> prototypeEntity;
 
 	private DisplayEntity assembledEntity;	// the generated entity representing the assembled part

@@ -23,11 +23,11 @@ import com.jaamsim.units.DimensionlessUnit;
 public class RemoveFrom extends Unpack {
 
 	@Keyword(description = "The maximum number of entities to remove from the container.",
-	         example = "RemoveFrom1 NumberOfEntities { 2 }")
+	         exampleList = {"2", "DiscreteDistribution1", "this.attrib" })
 	private final SampleExpInput numberOfEntities;
 
 	@Keyword(description = "The next object to which the processed EntityContainer is passed.",
-			example = "RemoveFrom1 NextForContainers { Server1 }")
+			exampleList = {"Queue1"})
 	protected final EntityInput<LinkedComponent> nextForContainers;
 
 	{

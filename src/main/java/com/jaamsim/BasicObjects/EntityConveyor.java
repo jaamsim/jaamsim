@@ -36,20 +36,20 @@ import com.jaamsim.units.TimeUnit;
 public class EntityConveyor extends LinkedService implements HasScreenPoints {
 
 	@Keyword(description = "The travel time for the conveyor.",
-	         example = "Conveyor1 TravelTime { 10.0 s }")
+	         exampleList = {"10.0 s"})
 	private final ValueInput travelTimeInput;
 
     @Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
             "make up the arrow.  When two coordinates are given it is assumed that z = 0." ,
-             example = "Conveyor1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
+             exampleList = {"{ 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m }"})
 	private final Vec3dListInput pointsInput;
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",
-	         example = "Conveyor1 Width { 1 }")
+	         exampleList = {"1"})
 	private final ValueInput widthInput;
 
 	@Keyword(description = "The colour of the arrow, defined using a colour keyword or RGB values.",
-	         example = "Conveyor1 Color { red }")
+	         exampleList = {"red"})
 	private final ColourInput colorInput;
 
 	private final ArrayList<DisplayEntity> entityList;  // List of the entities being conveyed

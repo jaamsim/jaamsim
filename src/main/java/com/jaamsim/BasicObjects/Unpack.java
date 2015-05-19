@@ -22,7 +22,7 @@ import com.jaamsim.units.TimeUnit;
 public class Unpack extends LinkedService {
 
 	@Keyword(description = "The service time required to unpacking each entity.",
-	         example = "Pack1 ServiceTime { 3.0 h }")
+	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleExpInput serviceTime;
 
 	private int numberToRemove;   // Number of entities to remove from the present EntityContainer

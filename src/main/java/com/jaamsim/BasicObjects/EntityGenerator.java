@@ -33,27 +33,26 @@ public class EntityGenerator extends LinkedService {
 
 	@Keyword(description = "The arrival time for the first generated entity.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
-	         example = "EntityGenerator1 FirstArrivalTime { 1.0 h }")
+	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleExpInput firstArrivalTime;
 
 	@Keyword(description = "The inter-arrival time between generated entities.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
-	         example = "EntityGenerator1 InterArrivalTime { 1.5 h }")
+	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleExpInput interArrivalTime;
 
 	@Keyword(description = "The number of entities to be generated for each arrival.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
-	         example = "EntityGenerator1 EntitiesPerArrival { 3 }")
+	         exampleList = {"3", "TimeSeries1", "'1 + 2*[DiscreteDistribution1].Value'"})
 	private final SampleExpInput entitiesPerArrival;
 
 	@Keyword(description = "The prototype for entities to be generated.\n" +
 			"The generated entities will be copies of this entity.",
-	         example = "EntityGenerator1 PrototypeEntity { Ship }")
+	         exampleList = {"Proto"})
 	private final EntityInput<DisplayEntity> prototypeEntity;
 
-	@Keyword(description = "The maximum number of entities to be generated.\n" +
-			"Default is no limit.",
-	         example = "EntityGenerator1 MaxNumber { 3 }")
+	@Keyword(description = "The maximum number of entities to be generated.",
+	         exampleList = {"3"})
 	private final IntegerInput maxNumber;
 
 	private int numberGenerated = 0;  // Number of entities generated so far

@@ -34,16 +34,16 @@ public abstract class LinkedComponent extends StateEntity {
 
 	@Keyword(description = "The prototype for entities that will be received by this object.\n" +
 			"This input must be set if the expression 'this.obj' is used in the input to any keywords.",
-	         example = "Statistics1 TestEntity { Proto }")
+	         exampleList = {"Proto"})
 	protected final EntityInput<DisplayEntity> testEntity;
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
-			example = "EntityGenerator1 NextComponent { Server1 }")
+			exampleList = {"Queue1"})
 	protected final EntityInput<LinkedComponent> nextComponent;
 
 	@Keyword(description = "The state to be assigned to each entity on arrival at this object.\n" +
 			"No state is assigned if the entry is blank.",
-	         example = "Server1 StateAssignment { Service }")
+	         exampleList = {"Service"})
 	protected final StringInput stateAssignment;
 
 	private int numberAdded;     // Number of entities added to this component from upstream

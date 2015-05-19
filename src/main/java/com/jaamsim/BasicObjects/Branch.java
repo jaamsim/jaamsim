@@ -23,13 +23,13 @@ import com.jaamsim.units.DimensionlessUnit;
 public class Branch extends LinkedComponent {
 
 	@Keyword(description = "The list of possible next objects to which the processed DisplayEntity can be passed.",
-	         example = "Branch1 NextComponentList { Server1 Server2 }")
+	         exampleList = {"Queue1 Queue2"})
 	protected final EntityListInput<LinkedComponent> nextComponentList;
 
 	@Keyword(description = "A number that determines the choice of next component:\n" +
 			"     1 = first branch, 2 = second branch, etc.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
-	         example = "Branch1 Choice { 2 }")
+	         exampleList = {"2", "DiscreteDistribution1", "'indexOfMin([Queue1].QueueLength, [Queue2].QueueLength)'"})
 	private final SampleExpInput choice;
 
 	{

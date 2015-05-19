@@ -23,7 +23,7 @@ public class Duplicate extends LinkedComponent {
 
 	@Keyword(description = "The list of components that will receive the duplicated entities. " +
 			"One duplicated entity will be sent to each entry in the list.",
-	         example = "Branch1 TargetComponentList { Object1 Object2 }")
+	         exampleList = {"Assign1 Queue1"})
 	protected final EntityListInput<LinkedComponent> targetComponentList;
 
 	{

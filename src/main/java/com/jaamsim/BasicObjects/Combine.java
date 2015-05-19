@@ -26,11 +26,11 @@ import com.jaamsim.units.TimeUnit;
 public class Combine extends LinkedService {
 
 	@Keyword(description = "The service time required to perform the assembly process.",
-	         example = "EntityAssemble1 ServiceTime { 3.0 h }")
+	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleExpInput serviceTime;
 
 	@Keyword(description = "A list of Queue objects in which to place the arriving sub-component entities.",
-	         example = "EntityAssemble1 WaitQueueList { Queue1 }")
+	         exampleList = {"Queue1 Queue2 Queue3"})
 	private final EntityListInput<Queue> waitQueueList;
 
 	private DisplayEntity processedEntity;	// the DisplayEntity being processed

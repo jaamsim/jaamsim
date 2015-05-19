@@ -28,15 +28,15 @@ public class Pack extends LinkedService {
 
 	@Keyword(description = "The prototype for EntityContainers to be generated.\n" +
 			"The generated EntityContainers will be copies of this entity.",
-	         example = "Pack1 PrototypeEntityContainer { ProtoContainer }")
+	         exampleList = {"EntityContainer1"})
 	protected final EntityInput<EntityContainer> prototypeEntityContainer;
 
 	@Keyword(description = "The number of entities to pack into the container.",
-	         example = "Pack1 NumberOfEntities { 2 }")
+	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
 	private final SampleExpInput numberOfEntities;
 
 	@Keyword(description = "The service time required to pack each entity in the container.",
-	         example = "Pack1 ServiceTime { 3.0 h }")
+	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleExpInput serviceTime;
 
 	protected EntityContainer container;	// the generated EntityContainer

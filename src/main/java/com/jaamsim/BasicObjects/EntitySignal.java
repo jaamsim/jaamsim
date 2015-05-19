@@ -23,11 +23,11 @@ import com.jaamsim.input.Keyword;
 public class EntitySignal extends LinkedComponent {
 
 	@Keyword(description = "The Threshold controlled by this Signal.",
-	         example = "EntitySignal1 TargetSignalThreshold { SignalThreshold1 }")
+	         exampleList = {"SignalThreshold1"})
 	private final EntityInput<SignalThreshold> targetSignalThreshold;
 
 	@Keyword(description = "The new state for the target SignalThreshold: TRUE = Open, FALSE = Closed.",
-	         example = "EntitySignal1 NewState { FALSE }")
+	         exampleList = {"FALSE"})
 	private final BooleanInput newState;
 
 	{

@@ -31,7 +31,7 @@ public class Resource extends DisplayEntity {
 
 	@Keyword(description = "The number of equivalent resource units that are available.\n" +
 			"The input can be a constant value, a time series, or an expression.",
-	         example = "Resource1 Capacity { 3 }")
+	         exampleList = {"3", "TimeSeries1", "this.attrib1"})
 	private final SampleExpInput capacity;
 
 	private int unitsInUse;  // number of resource units that are being used at present

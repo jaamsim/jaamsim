@@ -42,26 +42,26 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 
 	@Keyword(description = "The delay time for the path.\n" +
 			"The input can be a constant value, a time series of values, or a probability distribution to be sampled.",
-	         example = "Delay1 Duration { 10.0 s }")
+	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
 	private final SampleExpInput duration;
 
     @Keyword(description = "A list of { x, y, z } coordinates defining the line segments that" +
             "make up the path.  When two coordinates are given it is assumed that z = 0." ,
-             example = "Delay1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
+             exampleList = {"{ 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m }"})
 	private final Vec3dListInput pointsInput;
 
 	@Keyword(description = "If TRUE, a delayed entity is moved along the " +
 			"specified path to indicate its progression through the delay.",
-	         example = "Delay1 Animation { TRUE }")
+	         exampleList = {"TRUE"})
 	private final BooleanInput animation;
 
 	@Keyword(description = "The width of the path in pixels.",
-	         example = "Delay1 Width { 1 }")
+	         exampleList = {"1"})
 	private final ValueInput widthInput;
 
 	@Keyword(description = "The colour of the path.\n" +
 			"The input can be a colour keyword or RGB value.",
-	         example = "Delay1 Color { red }")
+	         exampleList = {"red"})
 	private final ColourInput colorInput;
 
 	private final HashMap<Long, EntityDelayEntry> entityMap = new HashMap<>();  // List of the entities being handled

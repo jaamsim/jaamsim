@@ -26,11 +26,11 @@ import com.jaamsim.input.Keyword;
 public class Release extends LinkedComponent {
 
 	@Keyword(description = "The Resource(s) to be released.",
-	         example = "Release1 Resource { Resource1 Resource2 }")
+	         exampleList = {"Resource1 Resource2"})
 	private final EntityListInput<Resource> resourceList;
 
 	@Keyword(description = "The number of units to release from the Resource(s).",
-	         example = "Release1 NumberOfUnits { { 2 } { 1 } }")
+	         exampleList = {"{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
 	private final SampleExpListInput numberOfUnitsList;
 
 	{

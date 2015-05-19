@@ -31,7 +31,7 @@ import com.jaamsim.units.DimensionlessUnit;
 public class Statistics extends LinkedComponent {
 
 	@Keyword(description = "The variable for which statistics will be collected.",
-	         example = "Statistics1  SampleValue { 'this.obj.Attrib1' }")
+	         exampleList = {"'this.obj.attrib1'"})
 	private final ExpressionInput sampleValue;
 
 	private double minValue;

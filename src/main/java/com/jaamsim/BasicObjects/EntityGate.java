@@ -23,7 +23,7 @@ public class EntityGate extends LinkedService {
 
 	@Keyword(description = "The time delay before each queued entity is released.\n" +
 			"Entities arriving at an open gate are not delayed.",
-	         example = "EntityGate1 ReleaseDelay { 5.0 s }")
+	         exampleList = {"5.0 s"})
 	private final ValueInput releaseDelay;
 
 	private DisplayEntity servedEntity; // the entity about to be released from the queue

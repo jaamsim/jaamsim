@@ -23,7 +23,7 @@ import com.jaamsim.input.Keyword;
 public class AddTo extends Pack {
 
 	@Keyword(description = "The queue in which the waiting containers will be placed.",
-	         example = "AddTo1 ContainerQueue { Queue1 }")
+	         exampleList = {"Queue1"})
 	private final EntityInput<Queue> containerQueue;
 
 	{
