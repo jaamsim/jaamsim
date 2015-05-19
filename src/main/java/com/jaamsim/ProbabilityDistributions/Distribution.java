@@ -47,7 +47,10 @@ implements SampleProvider {
 	         exampleList = {"DistanceUnit"})
 	protected final UnitTypeInput unitType;
 
-	@Keyword(description = "Seed for the random number generator.  Must be an integer >= 0.",
+	@Keyword(description = "Seed for the random number generator.  Must be an integer >= 0. "
+			+ "The RandomSeed keyword works together with the GlobalSubstreamSeed for Simulation "
+			+ "to determine the random sequence. The GlobalSubsteamSeed keyword allows the user "
+			+ "to change all the random sequences in a model with a single input.",
 			 exampleList = {"547"})
 	private final IntegerInput randomSeedInput;
 
