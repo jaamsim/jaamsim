@@ -2096,7 +2096,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			examp = sb.toString();
 		}
 
-		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s<br><br><u>Examples:</u><br>%s</p></html>",
+		return String.format("<html><p width=\"350px\"><b>%s</b><br>%s<br><br><u>Examples:</u><br>%s</p></html>",
 				keyword, desc, examp);
 	}
 
