@@ -14,6 +14,8 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import java.util.Arrays;
+
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -44,6 +46,8 @@ public class DiscreteDistribution extends Distribution {
 
 	private final MRG1999a rng = new MRG1999a();
 	private int[] sampleCount;  // number of times each index has been selected
+	private double[] valueList;
+	private double[] cumProbList;
 
 	{
 		valueListInput = new ValueListInput( "ValueList", "Key Inputs", null);
@@ -72,7 +76,19 @@ public class DiscreteDistribution extends Distribution {
 	public void earlyInit() {
 		super.earlyInit();
 		rng.setSeedStream(getStreamNumber(), getSubstreamNumber());
-		sampleCount = new int[probabilityListInput.getValue().size()];
+		int n = probabilityListInput.getValue().size();
+		sampleCount = new int[n];
+
+		// Store the values and cumulative probabilities for binary searching
+		valueList = new double[n];
+		cumProbList = new double[n];
+		double total = 0.0d;
+		for (int i=0; i<n; i++) {
+			valueList[i] = valueListInput.getValue().get(i);
+			total += probabilityListInput.getValue().get(i);
+			cumProbList[i] = total;
+		}
+		cumProbList[n-1] = 1.0d;
 	}
 
 	@Override
@@ -85,17 +101,20 @@ public class DiscreteDistribution extends Distribution {
 	protected double getNextSample() {
 
 		double rand = rng.nextUniform();
-		double cumProb = 0.0;
-		DoubleVector probList = probabilityListInput.getValue();
-		for( int i=0; i<probList.size(); i++) {
-			cumProb += probList.get(i);
-			if( rand <= cumProb ) {
-				sampleCount[i]++;
-				return valueListInput.getValue().get(i);
-			}
-		}
-		sampleCount[probList.size()-1]++;
-		return valueListInput.getValue().get( probList.size()-1 );
+		int index = -1;
+
+		// Binary search the cumulative probabilities
+		int k = Arrays.binarySearch(cumProbList, rand);
+		if (k >= 0)
+			index = k;
+		else
+			index = -k - 1;
+
+		if (index < 0 || index >= valueList.length)
+			error("Bad index returned from binary search.");
+
+		sampleCount[index]++;
+		return valueList[index];
 	}
 
 	@Override
