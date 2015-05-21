@@ -52,10 +52,10 @@ public class Simulation extends Entity {
 	         example = "Simulation Duration { 8760 h }")
 	private static final ValueInput runDuration;
 
-	@Keyword(description = "The initialization period for the simulation run. The model will " +
-	                "run for the initialization period and then clear the statistics " +
-	                "and execute for the specified run duration. The total length of the " +
-	                "simulation run will be the sum of Initialization and Duration.",
+	@Keyword(description = "The initialization interval for the simulation run. The model will run "
+			+ "for the InitializationDuration interval and then clear the statistics and execute for the "
+			+ "specified RunDuration interval. The total length of the simulation run will be the sum of "
+			+ "the InitializationDuration and RunDuration inputs.",
 	         example = "Simulation Initialization { 720 h }")
 	private static final ValueInput initializationTime;
 
@@ -63,9 +63,9 @@ public class Simulation extends Entity {
 	         example = "Simulation PrintReport { TRUE }")
 	private static final BooleanInput printReport;
 
-	@Keyword(description = "The directory in which to place the output report.\n" +
-			"Defaults to the directory containing the configuration file for the run.",
-			example = "ReportGenerator1 ReportDirectory { 'c:\reports\' }")
+	@Keyword(description = "The directory in which to place the output report. Defaults to the "
+			+ "directory containing the configuration file for the run.",
+			example = "Simulation ReportDirectory { 'c:\reports\' }")
 	private static final DirInput reportDirectory;
 
 	@Keyword(description = "The length of time represented by one simulation tick.",
@@ -76,7 +76,10 @@ public class Simulation extends Entity {
 	         example = "Simulation ExitAtStop { TRUE }")
 	private static final BooleanInput exitAtStop;
 
-	@Keyword(description = "Global seed that sets the substream for each probability distribution.",
+	@Keyword(description = "Global seed that sets the substream for each probability distribution. "
+			+ "Must be an integer >= 0. GlobalSubstreamSeed works together with each probability "
+			+ "distribution's RandomSeed keyword to determine its random sequence. It allows the "
+			+ "user to change all the random sequences in a model with a single input.",
 	         example = "Simulation GlobalSubstreamSeed { 5 }")
 	private static final IntegerInput globalSeedInput;
 
@@ -130,9 +133,9 @@ public class Simulation extends Entity {
 	private static final ValueInput startTimeInput;
 
 	// Hidden keywords
-	@Keyword(description = "If the value is TRUE, then the input report file will be printed after loading the " +
-	                "configuration file.  The input report can always be generated when needed by selecting " +
-	                "\"Print Input Report\" under the File menu.",
+	@Keyword(description = "If the value is TRUE, then the input report file will be printed after "
+			+ "loading the configuration file.  The input report can always be generated when "
+			+ "needed by selecting \"Print Input Report\" under the File menu.",
 	         example = "Simulation PrintInputReport { TRUE }")
 	private static final BooleanInput printInputReport;
 
