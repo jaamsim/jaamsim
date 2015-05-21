@@ -83,8 +83,11 @@ public class SampleExpInput extends Input<SampleProvider> {
 		}
 	}
 
+	@Override
 	public void validate() {
+		super.validate();
 
+		if (value == null) return;
 		if (value instanceof SampleExpression) return;
 		if (value instanceof SampleConstant) return;
 

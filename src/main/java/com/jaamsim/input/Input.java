@@ -200,6 +200,11 @@ public abstract class Input<T> {
 		return isReqd;
 	}
 
+	public void validate() throws InputErrorException {
+		if (isReqd && isDef && !hidden)
+			throw new InputErrorException("An input must be provided for the keyword '%s'.", keyword);
+	}
+
 	public void setTokens(KeywordIndex kw) {
 		isDef = false;
 		if (kw.numArgs() > 1000) {

@@ -100,7 +100,12 @@ public class SampleExpListInput extends ListInput<ArrayList<SampleProvider>> {
 		return list;
 	}
 
+	@Override
 	public void validate() {
+		super.validate();
+
+		if (value == null)
+			return;
 
 		for (SampleProvider sp : value) {
 

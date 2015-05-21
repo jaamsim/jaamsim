@@ -174,8 +174,11 @@ public class Entity {
 		}
 	}
 
-	// This is defined for handlers only
-	public void validate() throws InputErrorException {}
+	public void validate() throws InputErrorException {
+		for (Input<?> in : inpList) {
+			in.validate();
+		}
+	}
 
 	/**
 	 * Initialises the entity prior to the start of the model run.
