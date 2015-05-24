@@ -15,6 +15,9 @@
 package com.jaamsim.BasicObjects;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
@@ -64,7 +67,9 @@ public class Queue extends LinkedComponent {
 			exampleList = {"4"})
 	protected final IntegerInput maxPerLine; // maximum items per sub line-up of queue
 
-	protected ArrayList<QueueEntry> itemList;
+	private final TreeSet<QueueEntry> itemSet;  // contains all the entities in queue order
+	private final HashMap<Integer, TreeSet<QueueEntry>> matchMap; // each TreeSet contains the queued entities for a given match value
+
 	private final ArrayList<QueueUser> userList;  // other objects that use this queue
 
 	//	Statistics
@@ -86,7 +91,7 @@ public class Queue extends LinkedComponent {
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(priority);
 
-		match = new SampleExpInput("Match", "Key Inputs", new SampleConstant(0));
+		match = new SampleExpInput("Match", "Key Inputs", null);
 		match.setUnitType(DimensionlessUnit.class);
 		match.setEntity(this);
 		this.addInput(match);
@@ -105,9 +110,10 @@ public class Queue extends LinkedComponent {
 	}
 
 	public Queue() {
-		itemList = new ArrayList<>();
+		itemSet = new TreeSet<>();
 		queueLengthDist = new DoubleVector(10,10);
 		userList = new ArrayList<>();
+		matchMap = new HashMap<>();
 	}
 
 	@Override
@@ -115,7 +121,8 @@ public class Queue extends LinkedComponent {
 		super.earlyInit();
 
 		// Clear the entries in the queue
-		itemList.clear();
+		itemSet.clear();
+		matchMap.clear();
 
 		// Clear statistics
 		this.clearStatistics();
@@ -131,11 +138,29 @@ public class Queue extends LinkedComponent {
 		}
 	}
 
-	private static class QueueEntry {
+	private static class QueueEntry implements Comparable<QueueEntry> {
 		DisplayEntity entity;
-		double timeAdded;
+		long entNum;
 		int priority;
-		int match;
+		Integer match;
+		double timeAdded;
+
+		public QueueEntry() {}
+
+		@Override
+		public int compareTo(QueueEntry entry) {
+			if (this.priority > entry.priority)
+				return 1;
+			else if (this.priority < entry.priority)
+				return -1;
+			else {
+				if (this.entNum > entry.entNum)
+					return 1;
+				else if (this.entNum < entry.entNum)
+					return -1;
+				return 0;
+			}
+		}
 	}
 
 	private final DoQueueChanged userUpdate = new DoQueueChanged(this);
@@ -167,32 +192,37 @@ public class Queue extends LinkedComponent {
 	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
 
-		// Determine the entity's priority and match values
-		int pri = (int) priority.getValue().getNextSample(getSimTime());
-		int mtch = (int) match.getValue().getNextSample(getSimTime());
+		// Update the queue statistics
+		int queueSize = itemSet.size();  // present number of entities in the queue
+		this.updateStatistics(queueSize, queueSize+1);
 
-		// Insert the entity in the correct position in the queue
-		// FIFO ordering
-		int pos = 0;
-		if (fifo.getValue()) {
-			for (int i=itemList.size()-1; i>=0; i--) {
-				if (itemList.get(i).priority <= pri) {
-					pos = i+1;
-					break;
-				}
+		// Build the entry for the entity
+		QueueEntry entry = new QueueEntry();
+		entry.entity = ent;
+		entry.entNum = this.getNumberAdded();
+		if (!fifo.getValue())
+			entry.entNum *= -1;
+		entry.priority = (int) priority.getValue().getNextSample(getSimTime());
+		entry.match = null;
+		if (match.getValue() != null)
+			entry.match = (int) match.getValue().getNextSample(getSimTime());
+		entry.timeAdded = this.getSimTime();
+
+		// Add the entity to the TreeSet of all the entities in the queue
+		itemSet.add(entry);
+
+		// Add the entity to the TreeSet of all the entities with this match value
+		if (entry.match != null) {
+			TreeSet<QueueEntry> matchSet = matchMap.get(entry.match);
+			if (matchSet == null) {
+				matchSet = new TreeSet<>();
+				matchSet.add(entry);
+				matchMap.put(entry.match, matchSet);
+			}
+			else {
+				matchSet.add(entry);
 			}
 		}
-		// LIFO ordering
-		else {
-			pos = itemList.size();
-			for (int i=0; i<itemList.size(); i++) {
-				if (itemList.get(i).priority >= pri) {
-					pos = i;
-					break;
-				}
-			}
-		}
-		this.add(pos, ent, pri, mtch);
 
 		// Notify the users of this queue
 		if (!userUpdateHandle.isScheduled())
@@ -200,58 +230,43 @@ public class Queue extends LinkedComponent {
 	}
 
 	/**
-	 * Inserts the specified element at the specified position in this Queue.
-	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
+	 * Removes a specified entity from the queue
 	 */
-	private void add(int i, DisplayEntity ent, int pri, int mtch) {
+	public DisplayEntity remove(QueueEntry entry) {
 
-		int queueSize = itemList.size();  // present number of entities in the queue
-		this.updateStatistics(queueSize, queueSize+1);
-
-		QueueEntry entry = new QueueEntry();
-		entry.entity = ent;
-		entry.timeAdded = this.getSimTime();
-		entry.priority = pri;
-		entry.match = mtch;
-		itemList.add(i, entry);
-	}
-
-	public void add(int i, DisplayEntity ent) {
-		int pri = (int) priority.getValue().getNextSample(getSimTime());
-		int mtch = (int) match.getValue().getNextSample(getSimTime());
-		this.add(i, ent, pri, mtch);
-	}
-
-	/**
-	 * Add an entity to the end of the queue
-	 */
-	public void addLast(DisplayEntity ent) {
-		int pri = (int) priority.getValue().getNextSample(getSimTime());
-		int mtch = (int) match.getValue().getNextSample(getSimTime());
-		this.add(itemList.size(), ent, pri, mtch);
-	}
-
-	/**
-	 * Removes the entity at the specified position in the queue
-	 */
-	public DisplayEntity remove(int i) {
-		if (i >= itemList.size() || i < 0)
-			error("Index: %d is beyond the end of the queue.", i);
-
-		int queueSize = itemList.size();  // present number of entities in the queue
+		int queueSize = itemSet.size();  // present number of entities in the queue
 		this.updateStatistics(queueSize, queueSize-1);
 
-		QueueEntry entry = itemList.remove(i);
-		DisplayEntity ent = entry.entity;
+		// Remove the entity from the TreeSet of all entities in the queue
+		boolean found = itemSet.remove(entry);
+		if (!found)
+			error("Cannot find the entry in itemSet.");
+
+		// Does the entry have a match value?
+		if (entry.match != null) {
+
+			// Remove the entity from the TreeSet for that match value
+			TreeSet<QueueEntry> matchSet = matchMap.get(entry.match);
+			if (matchSet == null)
+				error("Cannot find an entry in matchMap for match value: %s", entry.match);
+			found = matchSet.remove(entry);
+			if (!found)
+				error("Cannot find the entry in matchMap.");
+
+			// If there are no more entities for this match value, remove it from the HashMap of match values
+			if (matchSet.isEmpty())
+				matchMap.remove(entry.match);
+		}
+
 		this.incrementNumberProcessed();
-		return ent;
+		return entry.entity;
 	}
 
 	/**
 	 * Removes the first entity from the queue
 	 */
 	public DisplayEntity removeFirst() {
-		return this.remove(0);
+		return this.remove(itemSet.first());
 	}
 
 	/**
@@ -259,21 +274,21 @@ public class Queue extends LinkedComponent {
 	 * @return first entity in the queue.
 	 */
 	public DisplayEntity getFirst() {
-		return itemList.get(0).entity;
+		return itemSet.first().entity;
 	}
 
 	/**
-	 * Number of entities in the queue
+	 * Returns the number of entities in the queue
 	 */
 	public int getCount() {
-		return itemList.size();
+		return itemSet.size();
 	}
 
 	/**
 	 * Returns the number of seconds spent by the first object in the queue
 	 */
 	public double getQueueTime() {
-		return this.getSimTime() - itemList.get(0).timeAdded;
+		return this.getSimTime() - itemSet.first().timeAdded;
 	}
 
 	/**
@@ -283,16 +298,12 @@ public class Queue extends LinkedComponent {
 	 * @return number of entities that have this match value.
 	 */
 	public int getMatchCount(Integer m) {
-
 		if (m == null)
-			return getCount();
-
-		int ret = 0;
-		for (QueueEntry item : itemList) {
-			if (item.match == m)
-				ret++;
-		}
-		return ret;
+			return itemSet.size();
+		TreeSet<QueueEntry> matchSet = matchMap.get(m);
+		if (matchSet == null)
+			return 0;
+		return matchSet.size();
 	}
 
 	/**
@@ -307,11 +318,19 @@ public class Queue extends LinkedComponent {
 		if (m == null)
 			return this.removeFirst();
 
-		for (int i=0; i<itemList.size(); i++) {
-			if (itemList.get(i).match == m)
-				return this.remove(i);
+		TreeSet<QueueEntry> matchSet = matchMap.get(m);
+		if (matchSet == null)
+			return null;
+		return this.remove(matchSet.first());
+	}
+
+	public ArrayList<Integer> getUniqueMatchValues() {
+		ArrayList<Integer> ret = new ArrayList<>(matchMap.size());
+		Iterator<Integer> itr = matchMap.keySet().iterator();
+		while (itr.hasNext()) {
+			ret.add(itr.next());
 		}
-		return null;
+		return ret;
 	}
 
 	/**
@@ -324,18 +343,19 @@ public class Queue extends LinkedComponent {
 	 */
 	public static Integer selectMatchValue(ArrayList<Queue> queueList, IntegerVector numberList) {
 
-		// Find the shortest queue
+		// Find the queue with the fewest match values
 		Queue shortest = null;
 		int count = -1;
 		for (Queue que : queueList) {
-			if (que.getCount() > count) {
-				count = que.getCount();
+			int n = (int) que.getMatchValueCount(0.0);
+			if (n > count) {
+				count = n;
 				shortest = que;
 			}
 		}
 
 		// Return the first match value that has sufficient entities in each queue
-		for (int m : shortest.getMatchValues(0.0)) {
+		for (int m : shortest.getUniqueMatchValues()) {
 			if (Queue.sufficientEntities(queueList, numberList, m))
 				return m;
 		}
@@ -385,22 +405,26 @@ public class Queue extends LinkedComponent {
 		double maxWidth = 0;
 
 		// find widest vessel
-		if (itemList.size() >  maxPerLine.getValue()){
-			for (QueueEntry entry : itemList) {
-				 maxWidth = Math.max(maxWidth, entry.entity.getSize().y);
+		if (itemSet.size() >  maxPerLine.getValue()){
+			Iterator<QueueEntry> itr = itemSet.iterator();
+			while (itr.hasNext()) {
+				 maxWidth = Math.max(maxWidth, itr.next().entity.getSize().y);
 			 }
 		}
 
 		// update item locations
-		for (int i = 0; i < itemList.size(); i++) {
+		int i = 0;
+		Iterator<QueueEntry> itr = itemSet.iterator();
+		while (itr.hasNext()) {
+			DisplayEntity item = itr.next().entity;
 
 			// if new row is required, set reset distanceX and move distanceY up one row
+			i++;
 			if( i > 0 && i % maxPerLine.getValue() == 0 ){
 				 distanceX = 0.5d * qSize.x;
 				 distanceY += spacing.getValue() + maxWidth;
 			}
 
-			DisplayEntity item = itemList.get(i).entity;
 			// Rotate each transporter about its center so it points to the right direction
 			item.setOrientation(queueOrientation);
 			Vec3d itemSize = item.getSize();
@@ -428,8 +452,8 @@ public class Queue extends LinkedComponent {
 		double simTime = this.getSimTime();
 		startOfStatisticsCollection = simTime;
 		timeOfLastUpdate = simTime;
-		minElements = itemList.size();
-		maxElements = itemList.size();
+		minElements = itemSet.size();
+		maxElements = itemSet.size();
 		elementSeconds = 0.0;
 		squaredElementSeconds = 0.0;
 		queueLengthDist.clear();
@@ -464,16 +488,17 @@ public class Queue extends LinkedComponent {
 	 description = "The present number of entities in the queue.",
 	    unitType = DimensionlessUnit.class)
 	public double getQueueLength(double simTime) {
-		return itemList.size();
+		return itemSet.size();
 	}
 
 	@Output(name = "QueueTimes",
 	 description = "The waiting time for each entity in the queue.",
 	    unitType = TimeUnit.class)
 	public ArrayList<Double> getQueueTimes(double simTime) {
-		ArrayList<Double> ret = new ArrayList<>(itemList.size());
-		for (QueueEntry item : itemList) {
-			ret.add(simTime - item.timeAdded);
+		ArrayList<Double> ret = new ArrayList<>(itemSet.size());
+		Iterator<QueueEntry> itr = itemSet.iterator();
+		while (itr.hasNext()) {
+			ret.add(simTime - itr.next().timeAdded);
 		}
 		return ret;
 	}
@@ -483,8 +508,9 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class)
 	public ArrayList<Integer> getPriorityValues(double simTime) {
 		ArrayList<Integer> ret = new ArrayList<>();
-		for (QueueEntry item : itemList) {
-			ret.add(item.priority);
+		Iterator<QueueEntry> itr = itemSet.iterator();
+		while (itr.hasNext()) {
+			ret.add(itr.next().priority);
 		}
 		return ret;
 	}
@@ -494,11 +520,13 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class)
 	public ArrayList<Integer> getMatchValues(double simTime) {
 		ArrayList<Integer> ret = new ArrayList<>();
-		for (QueueEntry item : itemList) {
-			ret.add(item.match);
+		Iterator<QueueEntry> itr = itemSet.iterator();
+		while (itr.hasNext()) {
+			ret.add(itr.next().match);
 		}
 		return ret;
 	}
+
 
 	@Output(name = "QueueLengthAverage",
 	 description = "The average number of entities in the queue.",
@@ -506,7 +534,7 @@ public class Queue extends LinkedComponent {
 	  reportable = true)
 	public double getQueueLengthAverage(double simTime) {
 		double dt = simTime - timeOfLastUpdate;
-		int queueSize = itemList.size();
+		int queueSize = itemSet.size();
 		double totalTime = simTime - startOfStatisticsCollection;
 		if (totalTime > 0.0) {
 			return (elementSeconds + dt*queueSize)/totalTime;
@@ -520,7 +548,7 @@ public class Queue extends LinkedComponent {
 	  reportable = true)
 	public double getQueueLengthStandardDeviation(double simTime) {
 		double dt = simTime - timeOfLastUpdate;
-		int queueSize = itemList.size();
+		int queueSize = itemSet.size();
 		double mean = this.getQueueLengthAverage(simTime);
 		double totalTime = simTime - startOfStatisticsCollection;
 		if (totalTime > 0.0) {
@@ -556,7 +584,7 @@ public class Queue extends LinkedComponent {
 	public DoubleVector getQueueLengthDistribution(double simTime) {
 		DoubleVector ret = new DoubleVector(queueLengthDist);
 		double dt = simTime - timeOfLastUpdate;
-		int queueSize = itemList.size();
+		int queueSize = itemSet.size();
 		double totalTime = simTime - startOfStatisticsCollection;
 		if (totalTime > 0.0) {
 			if (ret.size() == 0)
@@ -582,8 +610,15 @@ public class Queue extends LinkedComponent {
 		if (n == 0)
 			return 0.0;
 		double dt = simTime - timeOfLastUpdate;
-		int queueSize = itemList.size();
+		int queueSize = itemSet.size();
 		return (elementSeconds + dt*queueSize)/n;
+	}
+
+	@Output(name = "MatchValueCount",
+	 description = "The present number of unique match values in the queue.",
+	    unitType = DimensionlessUnit.class)
+	public double getMatchValueCount(double simTime) {
+		return matchMap.size();
 	}
 
 }
