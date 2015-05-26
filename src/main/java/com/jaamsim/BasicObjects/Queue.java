@@ -70,6 +70,9 @@ public class Queue extends LinkedComponent {
 	private final TreeSet<QueueEntry> itemSet;  // contains all the entities in queue order
 	private final HashMap<Integer, TreeSet<QueueEntry>> matchMap; // each TreeSet contains the queued entities for a given match value
 
+	private Integer matchForMaxCount;  // match value with the largest number of entities
+	private int maxCount;     // largest number of entities for a given match value
+
 	private final ArrayList<QueueUser> userList;  // other objects that use this queue
 
 	//	Statistics
@@ -123,6 +126,9 @@ public class Queue extends LinkedComponent {
 		// Clear the entries in the queue
 		itemSet.clear();
 		matchMap.clear();
+
+		matchForMaxCount = null;
+		maxCount = -1;
 
 		// Clear statistics
 		this.clearStatistics();
@@ -211,8 +217,10 @@ public class Queue extends LinkedComponent {
 		// Add the entity to the TreeSet of all the entities in the queue
 		itemSet.add(entry);
 
-		// Add the entity to the TreeSet of all the entities with this match value
+		// Does the entry have a match value?
 		if (entry.match != null) {
+
+			// Add the entity to the TreeSet of all the entities with this match value
 			TreeSet<QueueEntry> matchSet = matchMap.get(entry.match);
 			if (matchSet == null) {
 				matchSet = new TreeSet<>();
@@ -221,6 +229,17 @@ public class Queue extends LinkedComponent {
 			}
 			else {
 				matchSet.add(entry);
+			}
+
+			// Update the maximum count
+			if (entry.match == matchForMaxCount) {
+				maxCount++;
+			}
+			else {
+				if (matchSet.size() > maxCount) {
+					matchForMaxCount = entry.match;
+					maxCount = matchSet.size();
+				}
 			}
 		}
 
@@ -256,6 +275,12 @@ public class Queue extends LinkedComponent {
 			// If there are no more entities for this match value, remove it from the HashMap of match values
 			if (matchSet.isEmpty())
 				matchMap.remove(entry.match);
+
+			// Update the maximum count
+			if (entry.match == matchForMaxCount) {
+				matchForMaxCount = null;
+				maxCount = -1;
+			}
 		}
 
 		this.incrementNumberProcessed();
@@ -334,6 +359,42 @@ public class Queue extends LinkedComponent {
 	}
 
 	/**
+	 * Returns the match value that has the largest number of entities in the queue.
+	 * @return match value with the most entities.
+	 */
+	public int getMatchForMax() {
+		if (matchForMaxCount == null)
+			this.setMaxCount();
+		return matchForMaxCount;
+	}
+
+	/**
+	 * Returns the number of entities in the longest match value queue.
+	 * @return number of entities in the longest match value queue.
+	 */
+	public int getMaxCount() {
+		if (matchForMaxCount == null)
+			this.setMaxCount();
+		return maxCount;
+	}
+
+	/**
+	 * Determines the longest queue for a give match value.
+	 */
+	private void setMaxCount() {
+		maxCount = -1;
+		Iterator<Integer> itr = matchMap.keySet().iterator();
+		while (itr.hasNext()) {
+			Integer m = itr.next();
+			int count = matchMap.get(m).size();
+			if (count > maxCount) {
+				maxCount = count;
+				matchForMaxCount = m;
+			}
+		}
+	}
+
+	/**
 	 * Returns a match value that has sufficient numbers of entities in each
 	 * queue. The first match value that satisfies the criterion is selected.
 	 * If the numberList is too short, then the last value is used.
@@ -342,6 +403,20 @@ public class Queue extends LinkedComponent {
 	 * @return match value.
 	 */
 	public static Integer selectMatchValue(ArrayList<Queue> queueList, IntegerVector numberList) {
+
+		// Check whether each queue has sufficient entities for any match value
+		int number;
+		for (int i=0; i<queueList.size(); i++) {
+			if (numberList == null) {
+				number = 1;
+			}
+			else {
+				int ind = Math.min(i, numberList.size()-1);
+				number = numberList.get(ind);
+			}
+			if (queueList.get(i).getMaxCount() < number)
+				return null;
+		}
 
 		// Find the queue with the fewest match values
 		Queue shortest = null;
