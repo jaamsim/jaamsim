@@ -23,6 +23,11 @@ import com.jaamsim.rng.MRG1999a;
 public class UniformDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
+	{
+		minValueInput.setDefaultValue(0.0d);
+		maxValueInput.setDefaultValue(1.0d);
+	}
+
 	public UniformDistribution() {}
 
 	@Override

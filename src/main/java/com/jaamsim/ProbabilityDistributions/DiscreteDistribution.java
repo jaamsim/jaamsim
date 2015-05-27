@@ -52,11 +52,13 @@ public class DiscreteDistribution extends Distribution {
 	{
 		valueListInput = new ValueListInput( "ValueList", "Key Inputs", null);
 		valueListInput.setUnitType(UserSpecifiedUnit.class);
+		valueListInput.setRequired(true);
 		this.addInput( valueListInput);
 
 		probabilityListInput = new ValueListInput( "ProbabilityList", "Key Inputs", null);
 		probabilityListInput.setUnitType(DimensionlessUnit.class);
 		probabilityListInput.setValidSum(1.0d, 0.001d);
+		probabilityListInput.setRequired(true);
 		this.addInput( probabilityListInput);
 	}
 

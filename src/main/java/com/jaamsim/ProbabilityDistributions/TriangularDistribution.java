@@ -34,6 +34,9 @@ public class TriangularDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
+		minValueInput.setDefaultValue(0.0d);
+		maxValueInput.setDefaultValue(2.0d);
+
 		modeInput = new ValueInput("Mode", "Key Inputs", 1.0d);
 		modeInput.setUnitType(UserSpecifiedUnit.class);
 		this.addInput(modeInput);

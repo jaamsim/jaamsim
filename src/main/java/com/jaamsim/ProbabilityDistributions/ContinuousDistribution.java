@@ -46,9 +46,11 @@ public class ContinuousDistribution extends Distribution {
 	{
 		valueListInput = new ValueListInput("ValueList", "Key Inputs", null);
 		valueListInput.setUnitType(UserSpecifiedUnit.class);
+		valueListInput.setRequired(true);
 		this.addInput( valueListInput);
 
 		cumulativeProbabilityListInput = new CumulativeProbInput("CumulativeProbabilityList", "Key Inputs", null);
+		cumulativeProbabilityListInput.setRequired(true);
 		this.addInput(cumulativeProbabilityListInput);
 	}
 
