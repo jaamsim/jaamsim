@@ -30,6 +30,7 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -48,7 +49,7 @@ implements SampleProvider {
 	protected final UnitTypeInput unitType;
 
 	@Keyword(description = "Seed for the random number generator.  Must be an integer >= 0. "
-			+ "The RandomSeed keyword works together with the GlobalSubstreamSeed for Simulation "
+			+ "The RandomSeed keyword works together with the GlobalSubstreamSeed keyword for Simulation "
 			+ "to determine the random sequence. The GlobalSubsteamSeed keyword allows the user "
 			+ "to change all the random sequences in a model with a single input.",
 			 exampleList = {"547"})
@@ -75,8 +76,10 @@ implements SampleProvider {
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
-		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 0);
+		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", -1);
 		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
+		randomSeedInput.setRequired(true);
+		randomSeedInput.setDefaultText(EditBox.NONE);
 		this.addInput(randomSeedInput);
 
 		minValueInput = new ValueInput("MinValue", "Key Inputs", Double.NEGATIVE_INFINITY);
