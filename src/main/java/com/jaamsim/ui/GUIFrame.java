@@ -257,6 +257,21 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			// Close all the view windows
 			RenderManager.clear();
 		}
+
+		@Override
+		public void windowActivated(WindowEvent e) {
+
+			// Re-open the view windows
+			for (int i=0; i<View.getAll().size(); i++) {
+				View v = View.getAll().get(i);
+				if (v != null && v.showWindow())
+					RenderManager.inst().createWindow(v);
+			}
+
+			// Re-open the tools
+			Simulation.showActiveTools();
+			FrameBox.reSelectEntity();
+		}
 	}
 
 	/**
@@ -1606,14 +1621,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (minimize)
 			gui.setExtendedState(JFrame.ICONIFIED);
 
-		// Show the Control Panel
-		gui.setVisible(true);
-		GUIFrame.calcWindowDefaults();
-
 		// Load the autoload file
 		InputAgent.setRecordEdits(false);
 		InputAgent.readResource("inputs/autoload.cfg");
 		gui.setTitle(Simulation.getModelName());
+
+		// Show the Control Panel
+		gui.setVisible(true);
+		GUIFrame.calcWindowDefaults();
 
 		// Resolve all input arguments against the current working directory
 		File user = new File(System.getProperty("user.dir"));
