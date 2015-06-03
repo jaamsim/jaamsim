@@ -65,9 +65,8 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		DragSource dragSource = new DragSource();
 		dragSource.createDefaultDragGestureRecognizer(tree, DnDConstants.ACTION_COPY, this);
 
-		top = EntityPallet.createTree();
+		top = new DefaultMutableTreeNode();
 		treeModel = new DefaultTreeModel(top);
-
 		tree.setModel(treeModel);
 		tree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
 
@@ -115,10 +114,10 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 		}
 	}
 
-	private static DefaultMutableTreeNode createTree() {
+	private void updateTree() {
 
 		// Create a tree that allows one selection at a time
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+		top.removeAllChildren();
 		HashMap<String, DefaultMutableTreeNode> paletteNodes = new HashMap<>();
 		for (ObjectType type : ObjectType.getAll()) {
 			if (!type.isDragAndDrop())
@@ -129,20 +128,21 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 			if (palNode == null) {
 				palNode = new DefaultMutableTreeNode(pName, true);
 				paletteNodes.put(pName, palNode);
-				root.add(palNode);
+				top.add(palNode);
 			}
 
 			DefaultMutableTreeNode classNode = new DefaultMutableTreeNode(type, true);
 			palNode.add(classNode);
 		}
-
-		return root;
+		treeModel.reload(top);
 	}
 
 	public synchronized static EntityPallet getInstance() {
 
-		if (myInstance == null)
+		if (myInstance == null) {
 			myInstance = new EntityPallet();
+			myInstance.updateTree();
+		}
 
 		return myInstance;
 	}
@@ -150,7 +150,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 	/**
 	 * Disposes the only instance of the entity pallet
 	 */
-	public static void clear() {
+	public synchronized static void clear() {
 		if (myInstance != null) {
 			myInstance.dispose();
 			myInstance = null;
