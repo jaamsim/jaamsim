@@ -2006,7 +2006,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 	/**
 	 * Shows the "Save Changes" dialog box
-	 * @return true for any response other than Cancel.
+	 * @return true for any response other than Cancel or Close.
 	 */
 	public static boolean showSaveChangesDialog() {
 
@@ -2026,10 +2026,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				options,
 				options[0]);
 
-		if (userOption == JOptionPane.YES_OPTION)
+		if (userOption == JOptionPane.YES_OPTION) {
 			GUIFrame.instance().save();
+			return true;
+		}
+		else if (userOption == JOptionPane.NO_OPTION)
+			return true;
 
-		return (userOption != JOptionPane.CANCEL_OPTION);
+		return false;
 	}
 
 	/**
