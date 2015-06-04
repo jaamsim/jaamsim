@@ -1915,17 +1915,18 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		this.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
 	}
 
-	void save() {
+	boolean save() {
 		LogBox.logLine("Saving...");
 		if( InputAgent.getConfigFile() != null ) {
 			setSaveFile(InputAgent.getConfigFile().getPath());
+			return true;
 		}
-		else {
-			saveAs();
-		}
+
+		boolean confirmed = saveAs();
+		return confirmed;
 	}
 
-	void saveAs() {
+	boolean saveAs() {
 		LogBox.logLine("Save As...");
 
 		Preferences prefs = Preferences.userRoot().node(getClass().getName());
@@ -1945,31 +1946,32 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// Show the file chooser and wait for selection
 		int returnVal = chooser.showSaveDialog(this);
 
-		// Load the selected file
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = chooser.getSelectedFile();
-			String filePath = file.getPath();
+		if (returnVal != JFileChooser.APPROVE_OPTION)
+			return false;
 
-			// Add the file extension ".cfg" if needed
-			filePath = filePath.trim();
-			if (file.getName().trim().indexOf(".") == -1) {
-				filePath = filePath.concat(".cfg");
-			}
+		File file = chooser.getSelectedFile();
+		String filePath = file.getPath();
 
-			// Confirm overwrite if file already exists
-			File temp = new File(filePath);
-			if (temp.exists()) {
-				boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
-				if (!confirmed) {
-					return;
-				}
-			}
-
-			// Save the configuration file
-			setSaveFile(filePath);
-
-			prefs.put(LAST_USED_FOLDER, file.getParent());
+		// Add the file extension ".cfg" if needed
+		filePath = filePath.trim();
+		if (file.getName().trim().indexOf(".") == -1) {
+			filePath = filePath.concat(".cfg");
 		}
+
+		// Confirm overwrite if file already exists
+		File temp = new File(filePath);
+		if (temp.exists()) {
+			boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
+			if (!confirmed) {
+				return false;
+			}
+		}
+
+		// Save the configuration file
+		setSaveFile(filePath);
+
+		prefs.put(LAST_USED_FOLDER, file.getParent());
+		return true;
 	}
 
 	// ******************************************************************************************************
@@ -2027,8 +2029,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				options[0]);
 
 		if (userOption == JOptionPane.YES_OPTION) {
-			GUIFrame.instance().save();
-			return true;
+			boolean confirmed = GUIFrame.instance().save();
+			return confirmed;
 		}
 		else if (userOption == JOptionPane.NO_OPTION)
 			return true;
