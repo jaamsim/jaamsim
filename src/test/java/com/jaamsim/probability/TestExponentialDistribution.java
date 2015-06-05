@@ -32,6 +32,7 @@ public class TestExponentialDistribution {
 		ExponentialDistribution dist = InputAgent.defineEntityWithUniqueName(ExponentialDistribution.class, "Dist", "-", true);
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Mean", "10.0");
+		InputAgent.applyArgs(dist, "RandomSeed", "0");
 		dist.validate();
 		dist.earlyInit();
 

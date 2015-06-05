@@ -19,6 +19,7 @@ public class TestBetaDistribution {
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "AlphaParam", "2.0");
 		InputAgent.applyArgs(dist, "BetaParam", "2.0");
+		InputAgent.applyArgs(dist, "RandomSeed", "0");
 		dist.validate();
 		dist.earlyInit();
 

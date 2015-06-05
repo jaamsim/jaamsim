@@ -33,6 +33,7 @@ public class TestLogLogisticDistribution {
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Scale", "10.0");
 		InputAgent.applyArgs(dist, "Shape", "4.0");
+		InputAgent.applyArgs(dist, "RandomSeed", "0");
 		dist.validate();
 		dist.earlyInit();
 

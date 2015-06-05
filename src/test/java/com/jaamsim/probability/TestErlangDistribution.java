@@ -33,6 +33,7 @@ public class TestErlangDistribution {
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Mean", "10.0");
 		InputAgent.applyArgs(dist, "Shape", "2");
+		InputAgent.applyArgs(dist, "RandomSeed", "0");
 		dist.validate();
 		dist.earlyInit();
 

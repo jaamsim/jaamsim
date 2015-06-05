@@ -33,6 +33,7 @@ public class TestWeibullDistribution {
 		InputAgent.applyArgs(dist, "UnitType", t.getName());
 		InputAgent.applyArgs(dist, "Scale", "10.0");
 		InputAgent.applyArgs(dist, "Shape", "2.0");
+		InputAgent.applyArgs(dist, "RandomSeed", "0");
 		dist.validate();
 		dist.earlyInit();
 
@@ -49,6 +50,7 @@ public class TestWeibullDistribution {
 		InputAgent.applyArgs(dist2, "Scale", "10.0");
 		InputAgent.applyArgs(dist2, "Shape", "2.0");
 		InputAgent.applyArgs(dist2, "Location", "100.0");
+		InputAgent.applyArgs(dist2, "RandomSeed", "0");
 		dist2.validate();
 		dist2.earlyInit();
 

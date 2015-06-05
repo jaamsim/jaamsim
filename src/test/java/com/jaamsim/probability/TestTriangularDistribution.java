@@ -34,6 +34,7 @@ public class TestTriangularDistribution {
 		InputAgent.applyArgs(dist, "MinValue", "2.0");
 		InputAgent.applyArgs(dist, "MaxValue", "5.0");
 		InputAgent.applyArgs(dist, "Mode", "4.0");
+		InputAgent.applyArgs(dist, "RandomSeed", "0");
 		dist.validate();
 		dist.earlyInit();
 
