@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import javax.media.opengl.GL2GL3;
-import javax.media.opengl.GLException;
+import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GLException;
 
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.AABB;

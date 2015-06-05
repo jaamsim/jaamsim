@@ -16,7 +16,7 @@ package com.jaamsim.render;
 
 import java.awt.Frame;
 
-import javax.media.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLCanvas;
 
 
 public class RenderFrame extends Frame {

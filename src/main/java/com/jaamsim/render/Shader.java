@@ -14,7 +14,7 @@
  */
 package com.jaamsim.render;
 
-import javax.media.opengl.GL2GL3;
+import com.jogamp.opengl.GL2GL3;
 
 /**
  * An easy to use wrapper around a shader, is created with filenames for vertex and fragment shader

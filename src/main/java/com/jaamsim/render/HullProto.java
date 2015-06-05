@@ -19,7 +19,7 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.media.opengl.GL2GL3;
+import com.jogamp.opengl.GL2GL3;
 
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
