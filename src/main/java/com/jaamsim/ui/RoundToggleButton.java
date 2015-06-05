@@ -39,7 +39,8 @@ class RoundToggleButton extends JToggleButton {
 		super(icon);
 	}
 
-	@Override public void updateUI() {
+	@Override
+	public void updateUI() {
 		super.updateUI();
 		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 		//setBackground(Color.BLACK);
@@ -49,14 +50,15 @@ class RoundToggleButton extends JToggleButton {
 		initShape();
 	}
 
-	@Override public Dimension getPreferredSize() {
+	@Override
+	public Dimension getPreferredSize() {
 		Icon icon = getIcon();
 		Insets i = getInsets();
 		int iw = Math.max(icon.getIconWidth(), icon.getIconHeight());
 		return new Dimension(iw + i.right + i.left, iw + i.top + i.bottom);
 	}
 
-	protected void initShape() {
+	private void initShape() {
 		if (!getBounds().equals(base)) {
 			Dimension s = getPreferredSize();
 			base = getBounds();
@@ -64,7 +66,8 @@ class RoundToggleButton extends JToggleButton {
 		}
 	}
 
-	@Override protected void paintBorder(Graphics g) {
+	@Override
+	protected void paintBorder(Graphics g) {
 		initShape();
 		Graphics2D g2 = (Graphics2D) g.create();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -73,7 +76,8 @@ class RoundToggleButton extends JToggleButton {
 		g2.dispose();
 	}
 
-	@Override public boolean contains(int x, int y) {
+	@Override
+	public boolean contains(int x, int y) {
 		initShape();
 		return shape == null ? false : shape.contains(x, y);
 	}
