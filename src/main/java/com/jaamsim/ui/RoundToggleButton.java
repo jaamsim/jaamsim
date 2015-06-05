@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 Ausenco Engineering Canada Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,8 @@
  * GNU General Public License for more details.
  */
 
-// Adapted from code posted on http://ateraimemo.com/Swing/RoundImageButton.html by "aterai" (TERAI Atshuhiro)
+// Adapted from CC0-licensed code posted by "aterai" (TERAI Atshuhiro)
+// on http://ateraimemo.com/Swing/RoundImageButton.html
 
 package com.jaamsim.ui;
 
