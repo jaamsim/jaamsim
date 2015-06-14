@@ -185,8 +185,9 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		}
 
 		// Find the time within the present cycle
-		long numberOfCycles = Math.round(ticks / getTicks(cycleTime.getValue()));
-		long ticksInCycle = ticks % getTicks(cycleTime.getValue());
+		final long cycleTicks = getTicks(cycleTime.getValue());
+		long numberOfCycles = ticks / cycleTicks;
+		long ticksInCycle = ticks % cycleTicks;
 
 		// If the time in the cycle is greater than the last time, return the last value
 		if (ticksInCycle >= ticksList[ticksList.length - 1]) {
