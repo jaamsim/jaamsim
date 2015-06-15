@@ -891,7 +891,7 @@ public class MeshData {
 			vec3Block.writeDouble(val.z);
 		}
 
-		DataBlock vec4Block = new DataBlock("Vec4ds", v2Interner.getMaxIndex() * 32);
+		DataBlock vec4Block = new DataBlock("Vec4ds", v4Interner.getMaxIndex() * 32);
 		vectorsBlock.addChildBlock(vec4Block);
 		for (int i = 0; i < v4Interner.getMaxIndex(); ++i) {
 			Vec4d val = v4Interner.getValueForIndex(i);
