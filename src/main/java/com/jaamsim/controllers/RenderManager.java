@@ -1360,6 +1360,7 @@ public class RenderManager implements DragSourceListener {
 				((DisplayEntity)ent).dragged(creationPoint);
 			}
 			catch (InputErrorException e) {}
+			this.focusWindow(windowID);
 		}
 	}
 
