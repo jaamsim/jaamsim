@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +35,7 @@ import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jaamsim.render.AnimCurve;
 import com.jaamsim.render.RenderException;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.xml.XmlNode;
@@ -140,6 +142,19 @@ public class ColParser {
 		public final ArrayList<LineSubGeo> lineSubGeos = new ArrayList<>();
 	}
 
+	private static class AnimSampler {
+		public String inputSource;
+		public String outputSource;
+		public String inTangentSource;
+		public String outTangentSource;
+		public String interpSource;
+	}
+
+	private static class AnimChannel {
+		public String target;
+		public AnimCurve curve;
+	}
+
 	private final URL _contextURL;
 
 	private final HashMap<String, Geometry> _geos = new HashMap<>();
@@ -149,6 +164,7 @@ public class ColParser {
 	private final HashMap<String, SceneNode> _namedNodes = new HashMap<>();
 	private final HashMap<String, VisualScene> _visualScenes = new HashMap<>();
 	private final HashMap<String, Controller> _controllers = new HashMap<>();
+	private final HashMap<String, AnimSampler> _samplers = new HashMap<>();
 
 	// This stack is used to track node loops
 	private final  Stack<SceneNode> _nodeStack = new Stack<>();
@@ -159,9 +175,12 @@ public class ColParser {
 	private final ArrayList<Effect> _loadedEffects = new ArrayList<>();
 	private final ArrayList<LineGeoEffectPair> _loadedLineGeos = new ArrayList<>();
 
-	private MeshData _finalData = new MeshData(keepRuntimeData);
+	private final ArrayList<AnimChannel> _animChannels = new ArrayList<>();
 
-	private HashMap<String, Vec4d[]> _dataSources = new HashMap<>();
+	private final MeshData _finalData = new MeshData(keepRuntimeData);
+
+	private final HashMap<String, Vec4d[]> _dataSources = new HashMap<>();
+	private final HashMap<String, String[]> _stringSources = new HashMap<>();
 
 	private XmlNode _colladaNode;
 	private XmlParser _parser;
@@ -203,6 +222,7 @@ public class ColParser {
 		processNodes();
 		processControllers();
 
+		processAnimations();
 		processVisualScenes();
 
 		processScene();
@@ -468,6 +488,72 @@ public class ColParser {
 		}
 
 		_controllers.put(id, cont);
+	}
+
+	private void processAnimations() {
+		XmlNode libAnims = _colladaNode.findChildTag("library_animations", false);
+		if (libAnims == null)
+			return; // No animations
+
+		for (XmlNode child : libAnims.children()) {
+			if (child.getTag().equals("animation")) {
+				processAnimation(child);
+			}
+		}
+	}
+
+	private void processAnimation(XmlNode animation) {
+		for (XmlNode child : animation.children()) {
+			if (child.getTag().equals("animation")) {
+				processAnimation(child); // Recurse through child animations
+			}
+			if (child.getTag().equals("sampler")) {
+				processSampler(child);
+
+			}
+			if (child.getTag().equals("channel")) {
+				processChannel(child);
+
+			}
+		}
+	}
+
+	private void processSampler(XmlNode samplerNode) {
+		AnimSampler sampler = new AnimSampler();
+		String id = samplerNode.getFragID();
+		for (XmlNode child : samplerNode.children()) {
+			if (!child.getTag().equals("input"))
+				continue;
+
+			String semantic = child.getAttrib("semantic");
+			String source = child.getAttrib("source");
+
+			if (semantic.equals("INPUT"))
+				sampler.inputSource = source;
+			if (semantic.equals("OUTPUT"))
+				sampler.outputSource = source;
+			if (semantic.equals("IN_TANGENT"))
+				sampler.inTangentSource = source;
+			if (semantic.equals("OUT_TANGENT"))
+				sampler.outTangentSource = source;
+			if (semantic.equals("INTERPOLATION"))
+				sampler.interpSource = source;
+		}
+		_samplers.put(id, sampler);
+	}
+
+	private void processChannel(XmlNode channelNode) {
+		String source = channelNode.getAttrib("source");
+		String target = channelNode.getAttrib("target");
+
+		parseAssert(source.charAt(0) == '#');
+		AnimSampler sampler = _samplers.get(source.substring(1));
+		parseAssert(sampler != null);
+
+		AnimChannel c = new AnimChannel();
+		c.curve = buildAnimCurve(sampler);
+		c.target = target;
+		_animChannels.add(c);
 	}
 
 	private void processImages() {
@@ -1518,27 +1604,26 @@ public class ColParser {
 		return smd;
 	}
 
+	private static class SourceInfo {
+		int stride;
+		int offset;
+		int count;
+		int dataCount;
+		Object dataArray;
+	}
+	private SourceInfo getInfoFromSource(String id, String arrayName) {
 
-	/**
-	 * Return a meaningful list of Vectors from data source 'id'
-	 * @param id
-	 * @return
-	 */
-	Vec4d[] getDataArrayFromSource(String id) {
-		// First check the cache
-		Vec4d[] cached = _dataSources.get(id);
-		if (cached != null) {
-			return cached;
-		}
+		SourceInfo ret = new SourceInfo();
+
 		// Okay, this source hasn't be accessed yet
 		XmlNode sourceNode = getNodeFromID(id);
 		if (sourceNode == null) { throw new ColException("Could not find node with id: " + id); }
 
-		XmlNode floatNode = sourceNode.findChildTag("float_array", false);
-		if (floatNode == null) { throw new ColException("No float array in source: " + id); }
+		XmlNode dataNode = sourceNode.findChildTag(arrayName, false);
+		if (dataNode == null) { throw new ColException("No float array in source: " + id); }
 
-		int floatCount = Integer.parseInt(floatNode.getAttrib("count"));
-		double[] values = (double[])floatNode.getContent();
+		ret.dataCount = Integer.parseInt(dataNode.getAttrib("count"));
+		ret.dataArray = dataNode.getContent();
 
 		XmlNode techCommon = sourceNode.findChildTag("technique_common", false);
 		if (techCommon == null) { throw new ColException("No technique_common in source: " + id); }
@@ -1546,16 +1631,49 @@ public class ColParser {
 		XmlNode accessor = techCommon.findChildTag("accessor", false);
 		if (accessor == null) { throw new ColException("No accessor in source: " + id); }
 
-		int stride = Integer.parseInt(accessor.getAttrib("stride"));
-		int count = Integer.parseInt(accessor.getAttrib("count"));
+		ret.stride = Integer.parseInt(accessor.getAttrib("stride"));
+		ret.count = Integer.parseInt(accessor.getAttrib("count"));
+		String offsetString = accessor.getAttrib("offset");
+		if (offsetString == null) {
+			ret.offset = 0;
+		} else {
+			ret.offset = Integer.parseInt(offsetString);
+		}
 
-		parseAssert(floatCount >= count * stride);
+		parseAssert(ret.dataCount >= ret.count * ret.stride);
 
-		Vec4d[] ret = new Vec4d[count];
+		return ret;
+	}
 
-		int valueOffset = 0;
-		for (int i = 0; i < count; ++i) {
-			switch(stride) {
+	/**
+	 * Return a meaningful list of Vectors from data source 'id'
+	 * @param id
+	 * @return
+	 */
+	private Vec4d[] getDataArrayFromSource(String id) {
+		// First check the cache
+		Vec4d[] cached = _dataSources.get(id);
+		if (cached != null) {
+			return cached;
+		}
+
+		SourceInfo info = getInfoFromSource(id, "float_array");
+
+		Vec4d[] ret = new Vec4d[info.count];
+
+		double[] values = null;
+		try {
+			values = (double[])info.dataArray;
+		} catch (ClassCastException ex) {
+			parseAssert(false);
+		}
+
+		int valueOffset = info.offset;
+		for (int i = 0; i < info.count; ++i) {
+			switch(info.stride) {
+			case 1:
+				ret[i] = new Vec4d(values[valueOffset], 0, 0, 1);
+				break;
 			case 2:
 				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], 0, 1);
 				break;
@@ -1566,11 +1684,64 @@ public class ColParser {
 				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], values[valueOffset+2], values[valueOffset+3]);
 				break;
 			}
-			valueOffset += stride;
+			valueOffset += info.stride;
 		}
 
 		_dataSources.put(id, ret);
 
+		return ret;
+	}
+
+	private String[] getStringArrayFromSource(String id) {
+		// First check the cache
+		String[] cached = _stringSources.get(id);
+		if (cached != null) {
+			return cached;
+		}
+
+		SourceInfo info = getInfoFromSource(id, "Name_array");
+
+		String[] ret = new String[info.count];
+
+		String[] values = null;
+		try {
+			values = (String[])info.dataArray;
+		} catch (ClassCastException ex) {
+			parseAssert(false);
+		}
+
+		int valueOffset = info.offset;
+		for (int i = 0; i < info.count; ++i) {
+
+			ret[i] = values[valueOffset];
+			valueOffset += info.stride;
+		}
+
+		_stringSources.put(id, ret);
+
+		return ret;
+	}
+
+	private AnimCurve buildAnimCurve(AnimSampler samp) {
+		AnimCurve.ColCurve colData = new AnimCurve.ColCurve();
+		colData.in =     getDataArrayFromSource(samp.inputSource);
+		colData.out =    getDataArrayFromSource(samp.outputSource);
+		colData.interp = getStringArrayFromSource(samp.interpSource);
+
+		if (samp.inTangentSource != null) {
+			colData.inTan =  getDataArrayFromSource(samp.inTangentSource);
+		}
+		if (samp.outTangentSource != null) {
+			colData.outTan = getDataArrayFromSource(samp.outTangentSource);
+		}
+
+		parseAssert(colData.in.length == colData.out.length);
+		parseAssert(colData.in.length == colData.interp.length);
+		parseAssert(colData.inTan == null  || colData.in.length == colData.inTan.length);
+		parseAssert(colData.outTan == null || colData.in.length == colData.outTan.length);
+
+		AnimCurve ret = AnimCurve.buildFromColCurve(colData);
+		parseAssert(ret != null);
 		return ret;
 	}
 
