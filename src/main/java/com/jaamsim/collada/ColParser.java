@@ -314,7 +314,12 @@ public class ColParser {
 
 		// Update the current transform
 		Mat4d currentMat = new Mat4d(parentMat);
-		currentMat.mult4(node.trans);
+		Mat4d nodeTrans = new Mat4d();
+		for (SceneTrans st : node.transforms) {
+			nodeTrans.mult4(st.toMat4d());
+		}
+
+		currentMat.mult4(nodeTrans);
 
 		for (GeoInstInfo geoInfo : node.subGeo) {
 			addGeoInst(geoInfo, currentMat);
@@ -958,21 +963,18 @@ public class ColParser {
 		// Build up the transformation matrix for this node
 		for (XmlNode child : node.children()) {
 			String childTag = child.getTag();
-			Mat4d mat = null;
+
 			if (childTag.equals("translate")) {
-				mat = transToMat(child);
+				sn.transforms.add(new TranslationTrans(child));
 			}
 			if (childTag.equals("rotate")) {
-				mat = rotToMat(child);
+				sn.transforms.add(new RotationTrans(child));
 			}
 			if (childTag.equals("scale")) {
-				mat = scaleToMat(child);
+				sn.transforms.add(new ScaleTrans(child));
 			}
 			if (childTag.equals("matrix")) {
-				mat = matToMat(child);
-			}
-			if (mat != null) {
-				sn.trans.mult4(mat);
+				sn.transforms.add(new MatrixTrans(child));
 			}
 		}
 
@@ -1016,7 +1018,8 @@ public class ColParser {
 
 		// Now we need to add in an extra scene not to accommodate the bind space matrix held in the controller
 		SceneNode sn = new SceneNode();
-		sn.trans.set4(cont.bindSpaceMat);
+
+		sn.transforms.add(new MatrixTrans(cont.bindSpaceMat));
 		sn.subGeo.add(instInfo);
 
 		return sn;
@@ -1083,46 +1086,6 @@ public class ColParser {
 				instInfo.usedTexSet = texSet;
 			}
 		}
-	}
-
-	private Mat4d transToMat(XmlNode transNode) {
-		double[] vals = (double[])transNode.getContent();
-		parseAssert(vals != null && vals.length >= 3);
-		Vec3d transVect = new Vec3d(vals[0], vals[1], vals[2]);
-		Mat4d ret = new Mat4d();
-		ret.setTranslate3(transVect);
-		return ret;
-	}
-
-	private Mat4d rotToMat(XmlNode rotNode) {
-		double[] vals = (double[])rotNode.getContent();
-		parseAssert(vals != null && vals.length >= 4);
-
-		Vec3d axis = new Vec3d(vals[0], vals[1], vals[2]);
-		double rads = (float)Math.toRadians(vals[3]);
-
-		Quaternion rot = new Quaternion();
-		rot.setAxisAngle(axis, rads);
-
-		Mat4d ret = new Mat4d();
-		ret.setRot3(rot);
-		return ret;
-	}
-
-	private Mat4d scaleToMat(XmlNode scaleNode) {
-		double[] vals = (double[])scaleNode.getContent();
-		parseAssert(vals != null && vals.length >= 3);
-		Vec3d scaleVect = new Vec3d(vals[0], vals[1], vals[2]);
-		Mat4d ret = new Mat4d();
-		ret.scaleCols3(scaleVect);
-		return ret;
-	}
-
-	private Mat4d matToMat(XmlNode scaleNode) {
-		double[] vals = (double[])scaleNode.getContent();
-		parseAssert(vals != null && vals.length >= 16);
-		Mat4d ret = new Mat4d(vals);
-		return ret;
 	}
 
 	private void parseMesh(XmlNode mesh, Geometry geoData) {
@@ -1784,6 +1747,98 @@ public class ColParser {
 	}
 
 	/**
+	 * Base class for scene node transforms
+	 * @author matt.chudleigh
+	 *
+	 */
+	private static abstract class SceneTrans {
+		public String sid;
+		public abstract Mat4d toMat4d();
+	}
+
+	private static class TranslationTrans extends SceneTrans {
+		Vec3d transVect;
+
+		public TranslationTrans(XmlNode transNode) {
+			sid = transNode.getAttrib("sid");
+			double[] vals = (double[])transNode.getContent();
+			parseAssert(vals != null && vals.length >= 3);
+			transVect = new Vec3d(vals[0], vals[1], vals[2]);
+		}
+
+		@Override
+		public Mat4d toMat4d() {
+			Mat4d ret = new Mat4d();
+			ret.setTranslate3(transVect);
+			return ret;
+		}
+	}
+
+	private static class RotationTrans extends SceneTrans {
+		Vec3d axis;
+		double angle;
+
+		public RotationTrans(XmlNode rotNode) {
+			sid = rotNode.getAttrib("sid");
+			double[] vals = (double[])rotNode.getContent();
+			parseAssert(vals != null && vals.length >= 4);
+
+			axis = new Vec3d(vals[0], vals[1], vals[2]);
+			angle = (float)Math.toRadians(vals[3]);
+		}
+
+		@Override
+		public Mat4d toMat4d() {
+
+			Quaternion rot = new Quaternion();
+			rot.setAxisAngle(axis, angle);
+
+			Mat4d ret = new Mat4d();
+			ret.setRot3(rot);
+			return ret;
+		}
+	}
+
+	private static class ScaleTrans extends SceneTrans {
+		Vec3d scale;
+
+		public ScaleTrans(XmlNode scaleNode) {
+			sid = scaleNode.getAttrib("sid");
+			double[] vals = (double[])scaleNode.getContent();
+			parseAssert(vals != null && vals.length >= 3);
+			scale = new Vec3d(vals[0], vals[1], vals[2]);
+		}
+
+		@Override
+		public Mat4d toMat4d() {
+
+			Mat4d ret = new Mat4d();
+			ret.scaleCols3(scale);
+			return ret;
+		}
+
+	}
+	private static class MatrixTrans extends SceneTrans {
+		Mat4d matrix;
+
+		public MatrixTrans(Mat4d mat) {
+			matrix = new Mat4d(mat);
+		}
+
+		public MatrixTrans(XmlNode matNode) {
+			sid = matNode.getAttrib("sid");
+			double[] vals = (double[])matNode.getContent();
+			parseAssert(vals != null && vals.length >= 16);
+			matrix = new Mat4d(vals);
+		}
+
+		@Override
+		public Mat4d toMat4d() {
+			return new Mat4d(matrix);
+		}
+	}
+
+	/**
 	 * SceneNode is basically a container for Collada "node" tags, this is needed to allow the system to walk the
 	 * node tree and properly honour the instance nodes.
 	 * @author matt.chudleigh
@@ -1791,7 +1846,7 @@ public class ColParser {
 	private static class SceneNode {
 
 		public String id;
-		public final Mat4d trans = new Mat4d();
+		public ArrayList<SceneTrans> transforms = new ArrayList<>();
 
 		public final ArrayList<SceneNode> subNodes = new ArrayList<>();
 		public final ArrayList<String> subInstanceNames = new ArrayList<>();
