@@ -33,11 +33,11 @@ public abstract class FluidFlowCalculation extends CalculationEntity {
 
 	@Keyword(description = "The source for the flow.",
 	      example = "FluidFlow1 Source { Tank1 }")
-	private final EntityInput<FluidComponent> sourceInput;
+	protected final EntityInput<FluidComponent> sourceInput;
 
 	@Keyword(description = "The destination for the flow.",
 	      example = "FluidFlow1 Destination { Tank1 }")
-	private final EntityInput<FluidComponent> destinationInput;
+	protected final EntityInput<FluidComponent> destinationInput;
 
 	private double flowRate;  // The volumetric flow rate (m3/s) for the route.
 	private double lastUpdateTime;  // The time at which the last update was performed.
