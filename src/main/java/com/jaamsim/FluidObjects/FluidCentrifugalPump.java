@@ -16,7 +16,6 @@ package com.jaamsim.FluidObjects;
 
 import com.jaamsim.CalculationObjects.DoubleCalculation;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.PressureUnit;
@@ -64,16 +63,7 @@ public class FluidCentrifugalPump extends FluidComponent {
 
 		speedControllerInput = new EntityInput<>( DoubleCalculation.class, "SpeedController", "Key Inputs", null);
 		this.addInput( speedControllerInput);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the SpeedController keyword has been set
-		if( speedControllerInput.getValue() == null ) {
-			throw new InputErrorException( "The SpeedController keyword must be set." );
-		}
+		speedControllerInput.setRequired(true);
 	}
 
 	/*
