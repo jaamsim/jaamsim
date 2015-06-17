@@ -21,7 +21,6 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.EntityListInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 
 public class Seize extends LinkedService {
@@ -40,6 +39,7 @@ public class Seize extends LinkedService {
 		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
 		resourceList.setRequired(true);
 		this.addInput(resourceList);
+		resourceList.setRequired(true);
 
 		ArrayList<SampleProvider> def = new ArrayList<>();
 		def.add(new SampleConstant(1));
@@ -47,16 +47,6 @@ public class Seize extends LinkedService {
 		numberOfUnitsList.setEntity(this);
 		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfUnitsList);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the resource has been specified
-		if (resourceList.getValue() == null) {
-			throw new InputErrorException("The keyword Resource must be set.");
-		}
 	}
 
 	@Override
