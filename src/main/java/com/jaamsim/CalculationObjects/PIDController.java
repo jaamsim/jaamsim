@@ -18,7 +18,6 @@ import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
@@ -96,11 +95,13 @@ public class PIDController extends DoubleCalculation {
 		setPoint.setUnitType(UserSpecifiedUnit.class);
 		setPoint.setEntity(this);
 		this.addInput( setPoint);
+		setPoint.setRequired(true);
 
 		processVariable = new SampleExpInput( "ProcessVariable", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
 		processVariable.setUnitType(UserSpecifiedUnit.class);
 		processVariable.setEntity(this);
 		this.addInput( processVariable);
+		processVariable.setRequired(true);
 
 		proportionalGain = new ValueInput( "ProportionalGain", "Key Inputs", 1.0d);
 		proportionalGain.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
@@ -144,19 +145,6 @@ public class PIDController extends DoubleCalculation {
 		return super.repeatableInputs()
 				&& ! (setPoint.getValue() instanceof Distribution)
 				&& ! (processVariable.getValue() instanceof Distribution);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the SetPoint keyword has been set
-		if( setPoint.getValue() == null )
-			throw new InputErrorException( "The SetPoint keyword must be set." );
-
-		// Confirm that the ProcessVariable keyword has been set
-		if( processVariable.getValue() == null )
-			throw new InputErrorException( "The ProcessVariable keyword must be set." );
 	}
 
 	@Override
