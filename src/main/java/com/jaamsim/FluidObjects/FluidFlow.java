@@ -33,23 +33,13 @@ public class FluidFlow extends FluidFlowCalculation {
 	private double destinationBaseInletPressure;  // The base pressure at the destination's inlet.
 	private double destinationTargetInletPressure;  // The desired inlet pressure at the destination's inlet.
 
-	public FluidFlow() {
-		routeList = new ArrayList<>();
+	{
+		sourceInput.setRequired(true);
+		destinationInput.setRequired(true);
 	}
 
-	@Override
-	public void validate() {
-		super.validate();
-
-		// Confirm that the source has been specified
-		if( this.getSource() == null ) {
-			throw new InputErrorException( "The keyword Source must be set." );
-		}
-
-		// Confirm that the destination has been specified
-		if( this.getDestination() == null ) {
-			throw new InputErrorException( "The keyword Destination must be set." );
-		}
+	public FluidFlow() {
+		routeList = new ArrayList<>();
 	}
 
 	@Override
