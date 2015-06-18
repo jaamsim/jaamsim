@@ -145,13 +145,19 @@ public class Queue extends LinkedComponent {
 	}
 
 	private static class QueueEntry implements Comparable<QueueEntry> {
-		DisplayEntity entity;
-		long entNum;
-		int priority;
-		Integer match;
-		double timeAdded;
+		final DisplayEntity entity;
+		final long entNum;
+		final int priority;
+		final Integer match;
+		final double timeAdded;
 
-		public QueueEntry() {}
+		public QueueEntry(DisplayEntity ent, long n, int pri, Integer m, double t) {
+			entity = ent;
+			entNum = n;
+			priority = pri;
+			match = m;
+			timeAdded = t;
+		}
 
 		@Override
 		public int compareTo(QueueEntry entry) {
@@ -203,16 +209,16 @@ public class Queue extends LinkedComponent {
 		this.updateStatistics(queueSize, queueSize+1);
 
 		// Build the entry for the entity
-		QueueEntry entry = new QueueEntry();
-		entry.entity = ent;
-		entry.entNum = this.getNumberAdded();
+		// Note that the match value logic relies on all Integer objects with
+		// the same int value having the same object reference
+		long n = this.getNumberAdded();
 		if (!fifo.getValue())
-			entry.entNum *= -1;
-		entry.priority = (int) priority.getValue().getNextSample(getSimTime());
-		entry.match = null;
+			n *= -1;
+		int pri = (int) priority.getValue().getNextSample(getSimTime());
+		Integer m = null;
 		if (match.getValue() != null)
-			entry.match = (int) match.getValue().getNextSample(getSimTime());
-		entry.timeAdded = this.getSimTime();
+			m = Integer.valueOf((int) match.getValue().getNextSample(getSimTime()));
+		QueueEntry entry = new QueueEntry(ent, n, pri, m, getSimTime());
 
 		// Add the entity to the TreeSet of all the entities in the queue
 		itemSet.add(entry);
