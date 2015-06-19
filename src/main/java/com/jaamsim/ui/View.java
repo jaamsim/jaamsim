@@ -43,378 +43,378 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.units.DistanceUnit;
 
 public class View extends Entity {
-private static final ArrayList<View> allInstances;
+	private static final ArrayList<View> allInstances;
 
-public static final int OMNI_VIEW_ID = -1;
-public static final int NO_VIEW_ID = 0;
-private static int nextID = 1;
+	public static final int OMNI_VIEW_ID = -1;
+	public static final int NO_VIEW_ID = 0;
+	private static int nextID = 1;
 
-private final int viewID;
+	private final int viewID;
 
-private boolean keepWindowOpen;  // used by GUIFrame to determine whether a window is open or closed
+	private boolean keepWindowOpen;  // used by GUIFrame to determine whether a window is open or closed
 
-@Keyword(description = "The Region this View is within.",
-         example = "View1 Region { Region1 }")
-private final EntityInput<Region> region;
+	@Keyword(description = "The Region this View is within.",
+	         example = "View1 Region { Region1 }")
+	private final EntityInput<Region> region;
 
-@Keyword(description = "The position the view is looking at.",
-         example = "View1 ViewCenter { 0 0 0 m }")
-private final Vec3dInput center;
+	@Keyword(description = "The position the view is looking at.",
+	         example = "View1 ViewCenter { 0 0 0 m }")
+	private final Vec3dInput center;
 
-@Keyword(description = "The position the view is looking from.",
-         example = "View1 ViewPosition { 0 0 50 m }")
-private final Vec3dInput position;
+	@Keyword(description = "The position the view is looking from.",
+	         example = "View1 ViewPosition { 0 0 50 m }")
+	private final Vec3dInput position;
 
-@Keyword(description = "The size of the window in pixels (width, height).",
-         example = "View1 WindowSize { 500 300 }")
-private final IntegerListInput windowSize;
+	@Keyword(description = "The size of the window in pixels (width, height).",
+	         example = "View1 WindowSize { 500 300 }")
+	private final IntegerListInput windowSize;
 
-@Keyword(description = "The position of the upper left corner of the window in pixels measured" +
-                "from the top left corner of the screen.",
-         example = "View1 WindowPosition { 220 110 }")
-private final IntegerListInput windowPos;
+	@Keyword(description = "The position of the upper left corner of the window in pixels measured" +
+	                "from the top left corner of the screen.",
+	         example = "View1 WindowPosition { 220 110 }")
+	private final IntegerListInput windowPos;
 
-@Keyword(description = "The text to place in the title bar of the window",
-         example = "View1 TilteBarText { 'An Example Title' }")
-private final StringInput titleBar;
+	@Keyword(description = "The text to place in the title bar of the window",
+	         example = "View1 TilteBarText { 'An Example Title' }")
+	private final StringInput titleBar;
 
-@Keyword(description = "A Boolean indicating whether the view should show a window" +
-                "after all inputs have been loaded",
-         example = "View1 ShowWindow { FALSE }")
-private final BooleanInput showWindow;
+	@Keyword(description = "A Boolean indicating whether the view should show a window" +
+	                "after all inputs have been loaded",
+	         example = "View1 ShowWindow { FALSE }")
+	private final BooleanInput showWindow;
 
-@Keyword(description = "A Boolean indicating whether the view position can be moved (panned or rotated)",
- example = "View1 Movable { FALSE }")
-private final BooleanInput movable;
+	@Keyword(description = "A Boolean indicating whether the view position can be moved (panned or rotated)",
+	 example = "View1 Movable { FALSE }")
+	private final BooleanInput movable;
 
-@Keyword(description = "The (optional) entity for this view to follow. Setting this input makes the view ignore ViewCenter " +
-                "and interprets ViewPosition as a relative offset to this entity.",
-         example = "View1 FollowEntity { Ship1 }")
-private final EntityInput<DisplayEntity> followEntityInput;
+	@Keyword(description = "The (optional) entity for this view to follow. Setting this input makes the view ignore ViewCenter " +
+	                "and interprets ViewPosition as a relative offset to this entity.",
+	         example = "View1 FollowEntity { Ship1 }")
+	private final EntityInput<DisplayEntity> followEntityInput;
 
-@Keyword(description = "The (optional) scripted curve for the view position to follow.",
- example = "View1 ScriptedViewPosition { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
-private final KeyedVec3dInput positionScriptInput;
+	@Keyword(description = "The (optional) scripted curve for the view position to follow.",
+	 example = "View1 ScriptedViewPosition { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
+	private final KeyedVec3dInput positionScriptInput;
 
-@Keyword(description = "The (optional) scripted curve for the view center to follow.",
-example = "View1 ScriptedViewCenter { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
-private final KeyedVec3dInput centerScriptInput;
+	@Keyword(description = "The (optional) scripted curve for the view center to follow.",
+	example = "View1 ScriptedViewCenter { { { 0 h } { 0 0 0 m } } { { 100 h } { 100 0 0 m } } }")
+	private final KeyedVec3dInput centerScriptInput;
 
-@Keyword(description = "The image file to use as the background for this view.",
-example = "View1 SkyboxImage { '/resources/images/sky_map_2048x1024.jpg' }")
-private final FileInput skyboxImage;
+	@Keyword(description = "The image file to use as the background for this view.",
+	example = "View1 SkyboxImage { '/resources/images/sky_map_2048x1024.jpg' }")
+	private final FileInput skyboxImage;
 
-private Object setLock = new Object();
+	private Object setLock = new Object();
 
-private double cachedSimTime = 0;
+	private double cachedSimTime = 0;
 
-static {
-	allInstances = new ArrayList<>();
-}
+	static {
+		allInstances = new ArrayList<>();
+	}
 
-{
-	region = new EntityInput<>(Region.class, "Region", "Graphics", null);
-	this.addInput(region);
+	{
+		region = new EntityInput<>(Region.class, "Region", "Graphics", null);
+		this.addInput(region);
 
-	center = new Vec3dInput("ViewCenter", "Graphics", new Vec3d());
-	center.setUnitType(DistanceUnit.class);
-	center.setPromptReqd(false);
-	this.addInput(center);
+		center = new Vec3dInput("ViewCenter", "Graphics", new Vec3d());
+		center.setUnitType(DistanceUnit.class);
+		center.setPromptReqd(false);
+		this.addInput(center);
 
-	position = new Vec3dInput("ViewPosition", "Graphics", new Vec3d(5.0d, -5.0d, 5.0d));
-	position.setUnitType(DistanceUnit.class);
-	position.setPromptReqd(false);
-	this.addInput(position);
+		position = new Vec3dInput("ViewPosition", "Graphics", new Vec3d(5.0d, -5.0d, 5.0d));
+		position.setUnitType(DistanceUnit.class);
+		position.setPromptReqd(false);
+		this.addInput(position);
 
-	IntegerVector defSize = new IntegerVector(2);
-	defSize.add(GUIFrame.VIEW_WIDTH);
-	defSize.add(GUIFrame.VIEW_HEIGHT);
-	windowSize = new IntegerListInput("WindowSize", "Graphics", defSize);
-	windowSize.setValidCount(2);
-	windowSize.setValidRange(1, 8192);
-	windowSize.setPromptReqd(false);
-	this.addInput(windowSize);
+		IntegerVector defSize = new IntegerVector(2);
+		defSize.add(GUIFrame.VIEW_WIDTH);
+		defSize.add(GUIFrame.VIEW_HEIGHT);
+		windowSize = new IntegerListInput("WindowSize", "Graphics", defSize);
+		windowSize.setValidCount(2);
+		windowSize.setValidRange(1, 8192);
+		windowSize.setPromptReqd(false);
+		this.addInput(windowSize);
 
-	IntegerVector defPos = new IntegerVector(2);
-	defPos.add(GUIFrame.COL2_START);
-	defPos.add(GUIFrame.TOP_START);
-	windowPos = new IntegerListInput("WindowPosition", "Graphics", defPos);
-	windowPos.setValidCount(2);
-	windowPos.setValidRange(-8192, 8192);
-	windowPos.setPromptReqd(false);
-	this.addInput(windowPos);
+		IntegerVector defPos = new IntegerVector(2);
+		defPos.add(GUIFrame.COL2_START);
+		defPos.add(GUIFrame.TOP_START);
+		windowPos = new IntegerListInput("WindowPosition", "Graphics", defPos);
+		windowPos.setValidCount(2);
+		windowPos.setValidRange(-8192, 8192);
+		windowPos.setPromptReqd(false);
+		this.addInput(windowPos);
 
-	titleBar = new StringInput("TitleBarText", "Graphics", null);
-	this.addInput(titleBar);
+		titleBar = new StringInput("TitleBarText", "Graphics", null);
+		this.addInput(titleBar);
 
-	showWindow = new BooleanInput("ShowWindow", "Graphics", false);
-	showWindow.setPromptReqd(false);
-	this.addInput(showWindow);
+		showWindow = new BooleanInput("ShowWindow", "Graphics", false);
+		showWindow.setPromptReqd(false);
+		this.addInput(showWindow);
 
-	movable = new BooleanInput("Movable", "Graphics", true);
-	this.addInput(movable);
+		movable = new BooleanInput("Movable", "Graphics", true);
+		this.addInput(movable);
 
-	followEntityInput = new EntityInput<>(DisplayEntity.class, "FollowEntity", "Graphics", null);
-	this.addInput(followEntityInput);
+		followEntityInput = new EntityInput<>(DisplayEntity.class, "FollowEntity", "Graphics", null);
+		this.addInput(followEntityInput);
 
-	positionScriptInput = new KeyedVec3dInput("ScriptedViewPosition", "Graphics");
-	positionScriptInput.setUnitType(DistanceUnit.class);
-	this.addInput(positionScriptInput);
+		positionScriptInput = new KeyedVec3dInput("ScriptedViewPosition", "Graphics");
+		positionScriptInput.setUnitType(DistanceUnit.class);
+		this.addInput(positionScriptInput);
 
-	centerScriptInput = new KeyedVec3dInput("ScriptedViewCenter", "Graphics");
-	centerScriptInput.setUnitType(DistanceUnit.class);
-	this.addInput(centerScriptInput);
+		centerScriptInput = new KeyedVec3dInput("ScriptedViewCenter", "Graphics");
+		centerScriptInput.setUnitType(DistanceUnit.class);
+		this.addInput(centerScriptInput);
 
-	skyboxImage = new FileInput("SkyboxImage", "Graphics", null);
-	this.addInput(skyboxImage);
+		skyboxImage = new FileInput("SkyboxImage", "Graphics", null);
+		this.addInput(skyboxImage);
 
-}
+	}
 
-public View() {
-	allInstances.add(this);
-	viewID = nextID++;
-}
+	public View() {
+		allInstances.add(this);
+		viewID = nextID++;
+	}
 
-public static ArrayList<View> getAll() {
-	return allInstances;
-}
-
-@Override
-public void kill() {
-	super.kill();
-	allInstances.remove(this);
-}
-
-
-private static class WindowSizePosUpdater implements Runnable {
-	private final IntegerVector pos;
-	private final IntegerVector size;
-	private final Frame window;
-
-	public WindowSizePosUpdater(Frame w, IntegerVector p, IntegerVector s) {
-		window = w;
-		pos = p;
-		size = s;
+	public static ArrayList<View> getAll() {
+		return allInstances;
 	}
 
 	@Override
-	public void run() {
-		if (pos != null)
-			window.setLocation(pos.get(0), pos.get(1));
-
-		if (size != null)
-			window.setSize(size.get(0), size.get(1));
+	public void kill() {
+		super.kill();
+		allInstances.remove(this);
 	}
 
-	void doUpdate() {
-		if (EventQueue.isDispatchThread()) {
-			this.run();
+
+	private static class WindowSizePosUpdater implements Runnable {
+		private final IntegerVector pos;
+		private final IntegerVector size;
+		private final Frame window;
+
+		public WindowSizePosUpdater(Frame w, IntegerVector p, IntegerVector s) {
+			window = w;
+			pos = p;
+			size = s;
+		}
+
+		@Override
+		public void run() {
+			if (pos != null)
+				window.setLocation(pos.get(0), pos.get(1));
+
+			if (size != null)
+				window.setSize(size.get(0), size.get(1));
+		}
+
+		void doUpdate() {
+			if (EventQueue.isDispatchThread()) {
+				this.run();
+				return;
+			}
+
+			try {
+				EventQueue.invokeAndWait(this);
+			}
+			catch (InvocationTargetException | InterruptedException e) {} //ignore
+		}
+	}
+
+	@Override
+	public void updateForInput( Input<?> in ) {
+		super.updateForInput( in );
+
+		if (in == windowPos) {
+			final Frame window = RenderManager.getOpenWindowForView(this);
+			if (window != null)
+				new WindowSizePosUpdater(window, windowPos.getValue(), null).doUpdate();
 			return;
 		}
-
-		try {
-			EventQueue.invokeAndWait(this);
+		if (in == windowSize) {
+			final Frame window = RenderManager.getOpenWindowForView(this);
+			if (window != null)
+				new WindowSizePosUpdater(window, null, windowSize.getValue()).doUpdate();
+			return;
 		}
-		catch (InvocationTargetException | InterruptedException e) {} //ignore
 	}
-}
 
-@Override
-public void updateForInput( Input<?> in ) {
-	super.updateForInput( in );
+	public Vec3d getGlobalPosition() {
+		synchronized (setLock) {
 
-	if (in == windowPos) {
-		final Frame window = RenderManager.getOpenWindowForView(this);
-		if (window != null)
-			new WindowSizePosUpdater(window, windowPos.getValue(), null).doUpdate();
-		return;
-	}
-	if (in == windowSize) {
-		final Frame window = RenderManager.getOpenWindowForView(this);
-		if (window != null)
-			new WindowSizePosUpdater(window, null, windowSize.getValue()).doUpdate();
-		return;
-	}
-}
+			// Check if this is following a script
+			if (positionScriptInput.hasKeys()) {
+				return positionScriptInput.getValueForTime(cachedSimTime);
+			}
 
-public Vec3d getGlobalPosition() {
-	synchronized (setLock) {
+			// Is this view following an entity?
+			DisplayEntity follow = followEntityInput.getValue();
+			if (follow != null) {
+				Vec3d ret = follow.getGlobalPosition();
+				ret.add3(position.getValue());
+				return ret;
+			}
 
-		// Check if this is following a script
-		if (positionScriptInput.hasKeys()) {
-			return positionScriptInput.getValueForTime(cachedSimTime);
-		}
-
-		// Is this view following an entity?
-		DisplayEntity follow = followEntityInput.getValue();
-		if (follow != null) {
-			Vec3d ret = follow.getGlobalPosition();
-			ret.add3(position.getValue());
+			Vec3d tmp = position.getValue();
+			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
+			if (region.getValue() != null) {
+				Transform regTrans = region.getValue().getRegionTrans();
+				regTrans.apply(ret, ret);
+			}
 			return ret;
 		}
-
-		Vec3d tmp = position.getValue();
-		Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
-		if (region.getValue() != null) {
-			Transform regTrans = region.getValue().getRegionTrans();
-			regTrans.apply(ret, ret);
-		}
-		return ret;
-	}
-}
-
-public Vec3d getGlobalCenter() {
-	synchronized (setLock) {
-
-		// Check if this is following a script
-		if (centerScriptInput.hasKeys()) {
-			return centerScriptInput.getValueForTime(cachedSimTime);
-		}
-
-		DisplayEntity follow = followEntityInput.getValue();
-		if (follow != null) {
-			return follow.getGlobalPosition();
-		}
-
-		Vec3d tmp = center.getValue();
-		Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
-		if (region.getValue() != null) {
-			Transform regTrans = region.getValue().getRegionTrans();
-			regTrans.apply(ret, ret);
-		}
-		return ret;
-	}
-}
-
-/**
- * updateCenterAndPos is used only by the mouse interaction code. It takes the camera view center and camera position in global
- * coordinates and sets the corresponding inputs (in region coordinates).
- * @param center - view center in world coordinates
- * @param pos - camera position in world coordinates
- */
-public void updateCenterAndPos(Vec3d center, Vec3d pos) {
-	synchronized (setLock){
-
-		if (isScripted())
-			return;
-
-		Vec3d tempPos = new Vec3d(pos);
-		Vec3d tempCent = new Vec3d(center);
-
-		if (region.getValue() != null) {
-			Transform regTrans = region.getValue().getRegionTrans();
-			regTrans.inverse(regTrans);
-			regTrans.multAndTrans(pos, tempPos);
-			regTrans.multAndTrans(center, tempCent);
-		}
-
-		// If this is following an entity, subtract that entity's position from the camera position (as it is interpreted as relative)
-
-		if (isFollowing()) {
-			tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
-		}
-
-		KeywordIndex kw = InputAgent.formatPointInputs(this.position.getKeyword(), tempPos, "m");
-		InputAgent.apply(this, kw);
-		kw = InputAgent.formatPointInputs(this.center.getKeyword(), tempCent, "m");
-		InputAgent.apply(this, kw);
-	}
-}
-
-public String getTitle() {
-	if (titleBar.getValue() != null)
-		return titleBar.getValue();
-    else
-	    return this.getName();
-}
-
-public boolean showWindow() {
-	return showWindow.getValue();
-}
-
-public Region getRegion() {
-	return region.getValue();
-}
-
-public void setRegion(Region reg) {
-	ArrayList<String> tokens = new ArrayList<>(1);
-	tokens.add(reg.getName());
-	KeywordIndex kw = new KeywordIndex(region.getKeyword(), tokens, null);
-	InputAgent.apply(this, kw);
-}
-
-public void setPosition(Vec3d pos) {
-	KeywordIndex kw = InputAgent.formatPointInputs(position.getKeyword(), pos, "m");
-	InputAgent.apply(this, kw);
-}
-
-public void setCenter(Vec3d cent) {
-	KeywordIndex kw = InputAgent.formatPointInputs(center.getKeyword(), cent, "m");
-	InputAgent.apply(this, kw);
-}
-
-public void setWindowPos(int x, int y, int width, int height) {
-	ArrayList<String> tokens = new ArrayList<>(2);
-	IntegerVector pos = windowPos.getValue();
-	if (pos.get(0) != x || pos.get(1) != y) {
-		tokens.add(String.format((Locale)null, "%d", x));
-		tokens.add(String.format((Locale)null, "%d", y));
-		KeywordIndex kw = new KeywordIndex(this.windowPos.getKeyword(), tokens, null);
-		InputAgent.apply(this, kw);
-		tokens.clear();
 	}
 
-	IntegerVector size = windowSize.getValue();
-	if (size.get(0) != width || size.get(1) != height) {
-		tokens.add(String.format((Locale)null, "%d", width));
-		tokens.add(String.format((Locale)null, "%d", height));
-		KeywordIndex kw = new KeywordIndex(this.windowSize.getKeyword(), tokens, null);
+	public Vec3d getGlobalCenter() {
+		synchronized (setLock) {
+
+			// Check if this is following a script
+			if (centerScriptInput.hasKeys()) {
+				return centerScriptInput.getValueForTime(cachedSimTime);
+			}
+
+			DisplayEntity follow = followEntityInput.getValue();
+			if (follow != null) {
+				return follow.getGlobalPosition();
+			}
+
+			Vec3d tmp = center.getValue();
+			Vec4d ret = new Vec4d(tmp.x, tmp.y, tmp.z, 1.0d);
+			if (region.getValue() != null) {
+				Transform regTrans = region.getValue().getRegionTrans();
+				regTrans.apply(ret, ret);
+			}
+			return ret;
+		}
+	}
+
+	/**
+	 * updateCenterAndPos is used only by the mouse interaction code. It takes the camera view center and camera position in global
+	 * coordinates and sets the corresponding inputs (in region coordinates).
+	 * @param center - view center in world coordinates
+	 * @param pos - camera position in world coordinates
+	 */
+	public void updateCenterAndPos(Vec3d center, Vec3d pos) {
+		synchronized (setLock){
+
+			if (isScripted())
+				return;
+
+			Vec3d tempPos = new Vec3d(pos);
+			Vec3d tempCent = new Vec3d(center);
+
+			if (region.getValue() != null) {
+				Transform regTrans = region.getValue().getRegionTrans();
+				regTrans.inverse(regTrans);
+				regTrans.multAndTrans(pos, tempPos);
+				regTrans.multAndTrans(center, tempCent);
+			}
+
+			// If this is following an entity, subtract that entity's position from the camera position (as it is interpreted as relative)
+
+			if (isFollowing()) {
+				tempPos.sub3(followEntityInput.getValue().getGlobalPosition(), tempPos);
+			}
+
+			KeywordIndex kw = InputAgent.formatPointInputs(this.position.getKeyword(), tempPos, "m");
+			InputAgent.apply(this, kw);
+			kw = InputAgent.formatPointInputs(this.center.getKeyword(), tempCent, "m");
+			InputAgent.apply(this, kw);
+		}
+	}
+
+	public String getTitle() {
+		if (titleBar.getValue() != null)
+			return titleBar.getValue();
+	    else
+		    return this.getName();
+	}
+
+	public boolean showWindow() {
+		return showWindow.getValue();
+	}
+
+	public Region getRegion() {
+		return region.getValue();
+	}
+
+	public void setRegion(Region reg) {
+		ArrayList<String> tokens = new ArrayList<>(1);
+		tokens.add(reg.getName());
+		KeywordIndex kw = new KeywordIndex(region.getKeyword(), tokens, null);
 		InputAgent.apply(this, kw);
 	}
-}
 
-public IntegerVector getWindowPos() {
-	return windowPos.getValue();
-}
-
-public IntegerVector getWindowSize() {
-	return windowSize.getValue();
-}
-
-public void setKeepWindowOpen(boolean b) {
-	keepWindowOpen = b;
-}
-
-public boolean getKeepWindowOpen() {
-	return keepWindowOpen;
-}
-
-public int getID() {
-	return viewID;
-}
-
-public boolean isMovable() {
-	return movable.getValue();
-}
-
-public boolean isFollowing() {
-	return followEntityInput.getValue() != null;
-}
-
-public boolean isScripted() {
-	return positionScriptInput.hasKeys() || centerScriptInput.hasKeys();
-}
-
-public URI getSkyboxTexture() {
-	URI file = skyboxImage.getValue();
-	if (file == null || file.toString().equals("")) {
-		return null;
+	public void setPosition(Vec3d pos) {
+		KeywordIndex kw = InputAgent.formatPointInputs(position.getKeyword(), pos, "m");
+		InputAgent.apply(this, kw);
 	}
-	return file;
-}
 
-public void update(double simTime) {
-	cachedSimTime = simTime;
-}
+	public void setCenter(Vec3d cent) {
+		KeywordIndex kw = InputAgent.formatPointInputs(center.getKeyword(), cent, "m");
+		InputAgent.apply(this, kw);
+	}
+
+	public void setWindowPos(int x, int y, int width, int height) {
+		ArrayList<String> tokens = new ArrayList<>(2);
+		IntegerVector pos = windowPos.getValue();
+		if (pos.get(0) != x || pos.get(1) != y) {
+			tokens.add(String.format((Locale)null, "%d", x));
+			tokens.add(String.format((Locale)null, "%d", y));
+			KeywordIndex kw = new KeywordIndex(this.windowPos.getKeyword(), tokens, null);
+			InputAgent.apply(this, kw);
+			tokens.clear();
+		}
+
+		IntegerVector size = windowSize.getValue();
+		if (size.get(0) != width || size.get(1) != height) {
+			tokens.add(String.format((Locale)null, "%d", width));
+			tokens.add(String.format((Locale)null, "%d", height));
+			KeywordIndex kw = new KeywordIndex(this.windowSize.getKeyword(), tokens, null);
+			InputAgent.apply(this, kw);
+		}
+	}
+
+	public IntegerVector getWindowPos() {
+		return windowPos.getValue();
+	}
+
+	public IntegerVector getWindowSize() {
+		return windowSize.getValue();
+	}
+
+	public void setKeepWindowOpen(boolean b) {
+		keepWindowOpen = b;
+	}
+
+	public boolean getKeepWindowOpen() {
+		return keepWindowOpen;
+	}
+
+	public int getID() {
+		return viewID;
+	}
+
+	public boolean isMovable() {
+		return movable.getValue();
+	}
+
+	public boolean isFollowing() {
+		return followEntityInput.getValue() != null;
+	}
+
+	public boolean isScripted() {
+		return positionScriptInput.hasKeys() || centerScriptInput.hasKeys();
+	}
+
+	public URI getSkyboxTexture() {
+		URI file = skyboxImage.getValue();
+		if (file == null || file.toString().equals("")) {
+			return null;
+		}
+		return file;
+	}
+
+	public void update(double simTime) {
+		cachedSimTime = simTime;
+	}
 
 }
