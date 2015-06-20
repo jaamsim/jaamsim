@@ -822,6 +822,10 @@ public class RenderManager implements DragSourceListener {
 		queueRedraw();
 	}
 
+	public boolean isEntitySelected() {
+		return (selectedEntity != null);
+	}
+
 	/**
 	 * This method gives the RenderManager a chance to handle mouse drags before the CameraControl
 	 * gets to handle it (note: this may need to be refactored into a proper event handling heirarchy)
@@ -1562,15 +1566,12 @@ public class RenderManager implements DragSourceListener {
 		}
 	}
 
-	/**
-	 * Delete the currently selected entity
-	 */
-	public void deleteSelected() {
-		if (selectedEntity == null) {
-			return;
-		}
-		selectedEntity.kill();
-		FrameBox.setSelectedEntity(null);
+	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		selectedEntity.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+	}
+
+	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		selectedEntity.handleKeyReleased(keyCode, keyChar, shift, control, alt);
 	}
 
 	public static void setDebugInfo(boolean showDebug) {

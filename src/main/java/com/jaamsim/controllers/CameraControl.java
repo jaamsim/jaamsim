@@ -495,10 +495,12 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	@Override
-	public void keyPressed(KeyEvent event) {
-		switch (event.getKeySymbol()) {
-		case KeyEvent.VK_DELETE:
-			RenderManager.inst().deleteSelected();
+	public void keyPressed(KeyEvent e) {
+
+		// If an entity has been selected, pass the key event to it
+		if (RenderManager.inst().isEntitySelected()) {
+			RenderManager.inst().handleKeyPressed(e.getKeyCode(), e.getKeyChar(),
+					e.isShiftDown(), e.isControlDown(), e.isAltDown());
 			return;
 		}
 
@@ -525,7 +527,7 @@ public class CameraControl implements WindowInteractionListener {
 		forward.scale3(inc);
 		left.scale3(inc);
 
-		int keyCode = event.getKeyCode();
+		int keyCode = e.getKeyCode();
 
 		if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
 			pos.add3(left);
@@ -538,7 +540,7 @@ public class CameraControl implements WindowInteractionListener {
 		}
 
 		else if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
-			if (event.isShiftDown()) {
+			if (e.isShiftDown()) {
 				pos.set3(pos.x, pos.y, pos.z+inc);
 				cent.set3(cent.x, cent.y, cent.z+inc);
 			}
@@ -549,7 +551,7 @@ public class CameraControl implements WindowInteractionListener {
 		}
 
 		else if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
-			if (event.isShiftDown()) {
+			if (e.isShiftDown()) {
 				pos.set3(pos.x, pos.y, pos.z-inc);
 				cent.set3(cent.x, cent.y, cent.z-inc);
 			}
@@ -566,7 +568,11 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	@Override
-	public void keyReleased(KeyEvent event) {
-		// Empty
+	public void keyReleased(KeyEvent e) {
+		if (RenderManager.inst().isEntitySelected()) {
+			RenderManager.inst().handleKeyReleased(e.getKeyCode(), e.getKeyChar(),
+					e.isShiftDown(), e.isControlDown(), e.isAltDown());
+			return;
+		}
 	}
 }

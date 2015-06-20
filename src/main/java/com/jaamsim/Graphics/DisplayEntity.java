@@ -22,6 +22,7 @@ import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
@@ -41,9 +42,11 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.render.RenderUtils;
+import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.AngleUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
+import com.jogamp.newt.event.KeyEvent;
 
 /**
  * Encapsulates the methods and data needed to display a simulation object in the 3D environment.
@@ -588,6 +591,47 @@ public class DisplayEntity extends Entity {
 
 	public boolean isMovable() {
 		return movable.getValue();
+	}
+
+	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		if (!isMovable())
+			return;
+		Vec3d pos = getPosition();
+		double inc = Simulation.getIncrementSize();
+		switch (keyCode) {
+
+			case KeyEvent.VK_LEFT:
+				setPosition(new Vec3d(pos.x-inc, pos.y, pos.z));
+				break;
+
+			case KeyEvent.VK_RIGHT:
+				setPosition(new Vec3d(pos.x+inc, pos.y, pos.z));
+				break;
+
+			case KeyEvent.VK_UP:
+				if (shift)
+					setPosition(new Vec3d(pos.x, pos.y, pos.z+inc));
+				else
+					setPosition(new Vec3d(pos.x, pos.y+inc, pos.z));
+				break;
+
+			case KeyEvent.VK_DOWN:
+				if (shift)
+					setPosition(new Vec3d(pos.x, pos.y, pos.z-inc));
+				else
+					setPosition(new Vec3d(pos.x, pos.y-inc, pos.z));
+				break;
+		}
+		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), getPosition(), "m");
+		InputAgent.apply(this, kw);
+	}
+
+	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		if (keyCode == KeyEvent.VK_DELETE) {
+			this.kill();
+			FrameBox.setSelectedEntity(null);
+			return;
+		}
 	}
 
 	/**
