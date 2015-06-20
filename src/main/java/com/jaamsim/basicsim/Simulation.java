@@ -36,6 +36,7 @@ import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.ObjectSelector;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
+import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
@@ -87,6 +88,10 @@ public class Simulation extends Entity {
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
 	         example = "Simulation DisplayedUnits { h kt }")
 	private static final EntityListInput<? extends Unit> displayedUnits;
+
+	@Keyword(description = "The distance moved by the selected entity when the an arrow key is pressed.",
+	         example = "Simulation IncrementSize { 1 cm }")
+	private static final ValueInput incrementSize;
 
 	@Keyword(description = "A Boolean to turn on or off real time in the simulation run",
 	         example = "Simulation RealTime { TRUE }")
@@ -187,6 +192,11 @@ public class Simulation extends Entity {
 		realTime = new BooleanInput("RealTime", "GUI", false);
 		realTime.setPromptReqd(false);
 
+		incrementSize = new ValueInput("IncrementSize", "GUI", 0.1d);
+		incrementSize.setUnitType(DistanceUnit.class);
+		incrementSize.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
+		incrementSize.setPromptReqd(false);
+
 		realTimeFactor = new IntegerInput("RealTimeFactor", "GUI", DEFAULT_REAL_TIME_FACTOR);
 		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
 		realTimeFactor.setPromptReqd(false);
@@ -241,6 +251,7 @@ public class Simulation extends Entity {
 
 		// GUI tab
 		this.addInput(displayedUnits);
+		this.addInput(incrementSize);
 		this.addInput(realTime);
 		this.addInput(realTimeFactor);
 		this.addInput(pauseTime);
@@ -491,6 +502,10 @@ public class Simulation extends Entity {
 	 */
 	public static double getInitializationTime() {
 		return initializationTime.getValue();
+	}
+
+	public static double getIncrementSize() {
+		return incrementSize.getValue();
 	}
 
 	static void updateRealTime() {

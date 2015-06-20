@@ -15,6 +15,7 @@
 
 package com.jaamsim.controllers;
 
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Plane;
@@ -498,8 +499,70 @@ public class CameraControl implements WindowInteractionListener {
 		switch (event.getKeySymbol()) {
 		case KeyEvent.VK_DELETE:
 			RenderManager.inst().deleteSelected();
-			break;
+			return;
 		}
+
+		// If no entity has been selected, the camera will handle the key event
+		Vec3d pos = _updateView.getGlobalPosition();
+		Vec3d cent = _updateView.getGlobalCenter();
+
+		// Construct a unit vector in the x-y plane in the direction of the view center
+		Vec3d forward = new Vec3d(cent);
+		forward.sub3(pos);
+		forward.z = 0.0d;
+		forward.normalize3();
+
+		// Trap the degenerate case where the camera look straight down on the x-y plane
+		// For this case the normalize3 method returns a unit vector in the z-direction
+		if (forward.z > 0.0)
+			forward.set3(1.0d, 0.0d, 0.0d);
+
+		// Construct a unit vector pointing to the left of the direction vector
+		Vec3d left = new Vec3d( -forward.y, forward.x, 0.0d);
+
+		// Scale the two vectors to the desired step size
+		double inc = Simulation.getIncrementSize();
+		forward.scale3(inc);
+		left.scale3(inc);
+
+		int keyCode = event.getKeyCode();
+
+		if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
+			pos.add3(left);
+			cent.add3(left);
+		}
+
+		else if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) {
+			pos.sub3(left);
+			cent.sub3(left);
+		}
+
+		else if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
+			if (event.isShiftDown()) {
+				pos.set3(pos.x, pos.y, pos.z+inc);
+				cent.set3(cent.x, cent.y, cent.z+inc);
+			}
+			else {
+				pos.add3(forward);
+				cent.add3(forward);
+			}
+		}
+
+		else if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
+			if (event.isShiftDown()) {
+				pos.set3(pos.x, pos.y, pos.z-inc);
+				cent.set3(cent.x, cent.y, cent.z-inc);
+			}
+			else {
+				pos.sub3(forward);
+				cent.sub3(forward);
+			}
+		}
+
+		else
+			return;
+
+		_updateView.updateCenterAndPos(cent, pos);
 	}
 
 	@Override
