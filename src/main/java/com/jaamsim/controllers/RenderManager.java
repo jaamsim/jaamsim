@@ -860,7 +860,6 @@ public class RenderManager implements DragSourceListener {
 		double currentDist = entityPlane.collisionDist(currentRay);
 		double lastDist = entityPlane.collisionDist(lastRay);
 
-		Mat4d transMat = selectedEntity.getTransMatrix(simTime);
 		Mat4d invTransMat = selectedEntity.getInvTransMatrix(simTime);
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
@@ -890,30 +889,9 @@ public class RenderManager implements DragSourceListener {
 		    dragHandleID >= RESIZE_NXNY_PICK_ID)
 			return handleResize(currentRay, lastRay, currentDist, lastDist);
 
-		if (dragHandleID == ROTATE_PICK_ID) {
-
-			Vec3d align = selectedEntity.getAlignment();
-
-			Vec4d rotateCenter = new Vec4d(align.x, align.y, align.z, 1.0d);
-			rotateCenter.mult4(transMat, rotateCenter);
-
-			Vec4d a = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			a.sub3(lastPoint, rotateCenter);
-			Vec4d b = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			b.sub3(currentPoint, rotateCenter);
-
-			Vec4d aCrossB = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			aCrossB.cross3(a, b);
-
-			double sinTheta = aCrossB.z / a.mag3() / b.mag3();
-			double theta = Math.asin(sinTheta);
-
-			Vec3d orient = selectedEntity.getOrientation();
-			orient.z += theta;
-			KeywordIndex kw = InputAgent.formatPointInputs("Orientation", orient, "rad");
-			InputAgent.apply(selectedEntity, kw);
-			return true;
-		}
+		// ROTATE
+		if (dragHandleID == ROTATE_PICK_ID)
+			return handleRotate(currentRay, lastRay, currentDist, lastDist);
 		if (dragHandleID == LINEDRAG_PICK_ID) {
 			// Dragging a line object
 
@@ -1130,6 +1108,38 @@ public class RenderManager implements DragSourceListener {
 		selectedEntity.setInputForGlobalPosition(pos);
 
 		KeywordIndex kw = InputAgent.formatPointInputs("Size", selectedEntity.getSize(), "m");
+		InputAgent.apply(selectedEntity, kw);
+		return true;
+	}
+
+	private boolean handleRotate(Ray currentRay, Ray lastRay, double currentDist, double lastDist) {
+
+		double simTime = FrameBox.ticksToSeconds(simTick);
+		Mat4d transMat = selectedEntity.getTransMatrix(simTime);
+
+		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
+		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
+		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
+
+		Vec3d align = selectedEntity.getAlignment();
+
+		Vec4d rotateCenter = new Vec4d(align.x, align.y, align.z, 1.0d);
+		rotateCenter.mult4(transMat, rotateCenter);
+
+		Vec4d a = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		a.sub3(lastPoint, rotateCenter);
+		Vec4d b = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		b.sub3(currentPoint, rotateCenter);
+
+		Vec4d aCrossB = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		aCrossB.cross3(a, b);
+
+		double sinTheta = aCrossB.z / a.mag3() / b.mag3();
+		double theta = Math.asin(sinTheta);
+
+		Vec3d orient = selectedEntity.getOrientation();
+		orient.z += theta;
+		KeywordIndex kw = InputAgent.formatPointInputs("Orientation", orient, "rad");
 		InputAgent.apply(selectedEntity, kw);
 		return true;
 	}
