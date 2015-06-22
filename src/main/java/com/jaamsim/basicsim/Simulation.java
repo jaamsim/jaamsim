@@ -533,6 +533,26 @@ public class Simulation extends Entity {
 
 	/**
 	 * Returns the nearest point on the snap grid to the given coordinate.
+	 * To avoid dithering, the new position must be at least one grid space
+	 * from the old position.
+	 * @param newPos - new coordinate for the object
+	 * @param oldPos - present coordinate for the object
+	 * @return newest snap grid point.
+	 */
+	public static Vec3d getSnapGridPosition(Vec3d newPos, Vec3d oldPos) {
+		double spacing = snapGridSpacing.getValue();
+		Vec3d ret = new Vec3d(newPos);
+		if (Math.abs(newPos.x - oldPos.x) < spacing)
+			ret.x = oldPos.x;
+		if (Math.abs(newPos.y - oldPos.y) < spacing)
+			ret.y = oldPos.y;
+		if (Math.abs(newPos.z - oldPos.z) < spacing)
+			ret.z = oldPos.z;
+		return Simulation.getSnapGridPosition(ret);
+	}
+
+	/**
+	 * Returns the nearest point on the snap grid to the given coordinate.
 	 * @param pos - position to be adjusted
 	 * @return nearest snap grid point.
 	 */

@@ -902,7 +902,7 @@ public class RenderManager implements DragSourceListener {
 			double zDiff = RenderUtils.getZDiff(dragCollisionPoint, currentRay, firstRay);
 			entPos.z += zDiff;
 			if (Simulation.isSnapToGrid())
-				entPos = Simulation.getSnapGridPosition(entPos);
+				entPos = Simulation.getSnapGridPosition(entPos, selectedEntity.getGlobalPosition());
 			selectedEntity.setInputForGlobalPosition(entPos);
 			return true;
 		}
@@ -925,7 +925,7 @@ public class RenderManager implements DragSourceListener {
 		Vec3d pos = new Vec3d(dragEntityPosition);
 		pos.add3(del);
 		if (Simulation.isSnapToGrid())
-			pos = Simulation.getSnapGridPosition(pos);
+			pos = Simulation.getSnapGridPosition(pos, selectedEntity.getGlobalPosition());
 		selectedEntity.setInputForGlobalPosition(pos);
 		return true;
 	}
