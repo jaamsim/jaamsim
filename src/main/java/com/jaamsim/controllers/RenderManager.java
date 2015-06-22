@@ -860,7 +860,6 @@ public class RenderManager implements DragSourceListener {
 		double currentDist = entityPlane.collisionDist(currentRay);
 		double lastDist = entityPlane.collisionDist(lastRay);
 
-		Vec3d size = selectedEntity.getSize();
 		Mat4d transMat = selectedEntity.getTransMatrix(simTime);
 		Mat4d invTransMat = selectedEntity.getInvTransMatrix(simTime);
 
@@ -886,95 +885,10 @@ public class RenderManager implements DragSourceListener {
 		if (dragHandleID == MOVE_PICK_ID)
 			return handleMove(currentRay, lastRay, currentDist, lastDist, dragInfo.shiftDown());
 
-		// Handle resize
+		// RESIZE
 		if (dragHandleID <= RESIZE_POSX_PICK_ID &&
-		    dragHandleID >= RESIZE_NXNY_PICK_ID) {
-
-			Vec3d pos = selectedEntity.getGlobalPosition();
-			Vec3d scale = selectedEntity.getSize();
-			Vec4d fixedPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-
-			if (dragHandleID == RESIZE_POSX_PICK_ID) {
-				//scale.x = 2*entSpaceCurrent.x() * size.x();
-				scale.x += entSpaceDelta.x * size.x;
-				fixedPoint = new Vec4d(-0.5,  0.0, 0.0, 1.0d);
-			}
-			if (dragHandleID == RESIZE_POSY_PICK_ID) {
-				scale.y += entSpaceDelta.y * size.y;
-				fixedPoint = new Vec4d( 0.0, -0.5, 0.0, 1.0d);
-			}
-			if (dragHandleID == RESIZE_NEGX_PICK_ID) {
-				scale.x -= entSpaceDelta.x * size.x;
-				fixedPoint = new Vec4d( 0.5,  0.0, 0.0, 1.0d);
-			}
-			if (dragHandleID == RESIZE_NEGY_PICK_ID) {
-				scale.y -= entSpaceDelta.y * size.y;
-				fixedPoint = new Vec4d( 0.0,  0.5, 0.0, 1.0d);
-			}
-
-			if (dragHandleID == RESIZE_PXPY_PICK_ID) {
-				scale.x += entSpaceDelta.x * size.x;
-				scale.y += entSpaceDelta.y * size.y;
-				fixedPoint = new Vec4d(-0.5, -0.5, 0.0, 1.0d);
-			}
-			if (dragHandleID == RESIZE_PXNY_PICK_ID) {
-				scale.x += entSpaceDelta.x * size.x;
-				scale.y -= entSpaceDelta.y * size.y;
-				fixedPoint = new Vec4d(-0.5,  0.5, 0.0, 1.0d);
-			}
-			if (dragHandleID == RESIZE_NXPY_PICK_ID) {
-				scale.x -= entSpaceDelta.x * size.x;
-				scale.y += entSpaceDelta.y * size.y;
-				fixedPoint = new Vec4d( 0.5, -0.5, 0.0, 1.0d);
-			}
-			if (dragHandleID == RESIZE_NXNY_PICK_ID) {
-				scale.x -= entSpaceDelta.x * size.x;
-				scale.y -= entSpaceDelta.y * size.y;
-				fixedPoint = new Vec4d( 0.5,  0.5, 0.0, 1.0d);
-			}
-
-			// Handle the case where the scale is pulled through itself. Fix the scale,
-			// and swap the currently selected handle
-			if (scale.x <= 0.00005) {
-				scale.x = 0.0001;
-				if (dragHandleID == RESIZE_POSX_PICK_ID) { dragHandleID = RESIZE_NEGX_PICK_ID; }
-				else if (dragHandleID == RESIZE_NEGX_PICK_ID) { dragHandleID = RESIZE_POSX_PICK_ID; }
-
-				else if (dragHandleID == RESIZE_PXPY_PICK_ID) { dragHandleID = RESIZE_NXPY_PICK_ID; }
-				else if (dragHandleID == RESIZE_PXNY_PICK_ID) { dragHandleID = RESIZE_NXNY_PICK_ID; }
-				else if (dragHandleID == RESIZE_NXPY_PICK_ID) { dragHandleID = RESIZE_PXPY_PICK_ID; }
-				else if (dragHandleID == RESIZE_NXNY_PICK_ID) { dragHandleID = RESIZE_PXNY_PICK_ID; }
-			}
-
-			if (scale.y <= 0.00005) {
-				scale.y = 0.0001;
-				if (dragHandleID == RESIZE_POSY_PICK_ID) { dragHandleID = RESIZE_NEGY_PICK_ID; }
-				else if (dragHandleID == RESIZE_NEGY_PICK_ID) { dragHandleID = RESIZE_POSY_PICK_ID; }
-
-				else if (dragHandleID == RESIZE_PXPY_PICK_ID) { dragHandleID = RESIZE_PXNY_PICK_ID; }
-				else if (dragHandleID == RESIZE_PXNY_PICK_ID) { dragHandleID = RESIZE_PXPY_PICK_ID; }
-				else if (dragHandleID == RESIZE_NXPY_PICK_ID) { dragHandleID = RESIZE_NXNY_PICK_ID; }
-				else if (dragHandleID == RESIZE_NXNY_PICK_ID) { dragHandleID = RESIZE_NXPY_PICK_ID; }
-			}
-
-			Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			oldFixed.mult4(transMat, fixedPoint);
-			selectedEntity.setSize(scale);
-			transMat = selectedEntity.getTransMatrix(simTime); // Get the new matrix
-
-			Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			newFixed.mult4(transMat, fixedPoint);
-
-			Vec4d posAdjust = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
-			posAdjust.sub3(oldFixed, newFixed);
-
-			pos.add3(posAdjust);
-			selectedEntity.setInputForGlobalPosition(pos);
-
-			KeywordIndex kw = InputAgent.formatPointInputs("Size", selectedEntity.getSize(), "m");
-			InputAgent.apply(selectedEntity, kw);
-			return true;
-		}
+		    dragHandleID >= RESIZE_NXNY_PICK_ID)
+			return handleResize(currentRay, lastRay, currentDist, lastDist);
 
 		if (dragHandleID == ROTATE_PICK_ID) {
 
@@ -1112,6 +1026,111 @@ public class RenderManager implements DragSourceListener {
 		Vec3d pos = selectedEntity.getGlobalPosition();
 		pos.add3(del);
 		selectedEntity.setInputForGlobalPosition(pos);
+		return true;
+	}
+
+	private boolean handleResize(Ray currentRay, Ray lastRay, double currentDist, double lastDist) {
+
+		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
+		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
+
+		double simTime = FrameBox.ticksToSeconds(simTick);
+		Vec3d size = selectedEntity.getSize();
+		Mat4d transMat = selectedEntity.getTransMatrix(simTime);
+		Mat4d invTransMat = selectedEntity.getInvTransMatrix(simTime);
+
+		Vec3d entSpaceCurrent = new Vec3d(); // entSpacePoint is the current point in model space
+		entSpaceCurrent.multAndTrans3(invTransMat, currentPoint);
+
+		Vec3d entSpaceLast = new Vec3d(); // entSpaceLast is the last point in model space
+		entSpaceLast.multAndTrans3(invTransMat, lastPoint);
+
+		Vec3d entSpaceDelta = new Vec3d();
+		entSpaceDelta.sub3(entSpaceCurrent, entSpaceLast);
+
+		Vec3d pos = selectedEntity.getGlobalPosition();
+		Vec3d scale = selectedEntity.getSize();
+		Vec4d fixedPoint = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+
+		if (dragHandleID == RESIZE_POSX_PICK_ID) {
+			//scale.x = 2*entSpaceCurrent.x() * size.x();
+			scale.x += entSpaceDelta.x * size.x;
+			fixedPoint = new Vec4d(-0.5,  0.0, 0.0, 1.0d);
+		}
+		if (dragHandleID == RESIZE_POSY_PICK_ID) {
+			scale.y += entSpaceDelta.y * size.y;
+			fixedPoint = new Vec4d( 0.0, -0.5, 0.0, 1.0d);
+		}
+		if (dragHandleID == RESIZE_NEGX_PICK_ID) {
+			scale.x -= entSpaceDelta.x * size.x;
+			fixedPoint = new Vec4d( 0.5,  0.0, 0.0, 1.0d);
+		}
+		if (dragHandleID == RESIZE_NEGY_PICK_ID) {
+			scale.y -= entSpaceDelta.y * size.y;
+			fixedPoint = new Vec4d( 0.0,  0.5, 0.0, 1.0d);
+		}
+
+		if (dragHandleID == RESIZE_PXPY_PICK_ID) {
+			scale.x += entSpaceDelta.x * size.x;
+			scale.y += entSpaceDelta.y * size.y;
+			fixedPoint = new Vec4d(-0.5, -0.5, 0.0, 1.0d);
+		}
+		if (dragHandleID == RESIZE_PXNY_PICK_ID) {
+			scale.x += entSpaceDelta.x * size.x;
+			scale.y -= entSpaceDelta.y * size.y;
+			fixedPoint = new Vec4d(-0.5,  0.5, 0.0, 1.0d);
+		}
+		if (dragHandleID == RESIZE_NXPY_PICK_ID) {
+			scale.x -= entSpaceDelta.x * size.x;
+			scale.y += entSpaceDelta.y * size.y;
+			fixedPoint = new Vec4d( 0.5, -0.5, 0.0, 1.0d);
+		}
+		if (dragHandleID == RESIZE_NXNY_PICK_ID) {
+			scale.x -= entSpaceDelta.x * size.x;
+			scale.y -= entSpaceDelta.y * size.y;
+			fixedPoint = new Vec4d( 0.5,  0.5, 0.0, 1.0d);
+		}
+
+		// Handle the case where the scale is pulled through itself. Fix the scale,
+		// and swap the currently selected handle
+		if (scale.x <= 0.00005) {
+			scale.x = 0.0001;
+			if (dragHandleID == RESIZE_POSX_PICK_ID) { dragHandleID = RESIZE_NEGX_PICK_ID; }
+			else if (dragHandleID == RESIZE_NEGX_PICK_ID) { dragHandleID = RESIZE_POSX_PICK_ID; }
+
+			else if (dragHandleID == RESIZE_PXPY_PICK_ID) { dragHandleID = RESIZE_NXPY_PICK_ID; }
+			else if (dragHandleID == RESIZE_PXNY_PICK_ID) { dragHandleID = RESIZE_NXNY_PICK_ID; }
+			else if (dragHandleID == RESIZE_NXPY_PICK_ID) { dragHandleID = RESIZE_PXPY_PICK_ID; }
+			else if (dragHandleID == RESIZE_NXNY_PICK_ID) { dragHandleID = RESIZE_PXNY_PICK_ID; }
+		}
+
+		if (scale.y <= 0.00005) {
+			scale.y = 0.0001;
+			if (dragHandleID == RESIZE_POSY_PICK_ID) { dragHandleID = RESIZE_NEGY_PICK_ID; }
+			else if (dragHandleID == RESIZE_NEGY_PICK_ID) { dragHandleID = RESIZE_POSY_PICK_ID; }
+
+			else if (dragHandleID == RESIZE_PXPY_PICK_ID) { dragHandleID = RESIZE_PXNY_PICK_ID; }
+			else if (dragHandleID == RESIZE_PXNY_PICK_ID) { dragHandleID = RESIZE_PXPY_PICK_ID; }
+			else if (dragHandleID == RESIZE_NXPY_PICK_ID) { dragHandleID = RESIZE_NXNY_PICK_ID; }
+			else if (dragHandleID == RESIZE_NXNY_PICK_ID) { dragHandleID = RESIZE_NXPY_PICK_ID; }
+		}
+
+		Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		oldFixed.mult4(transMat, fixedPoint);
+		selectedEntity.setSize(scale);
+		transMat = selectedEntity.getTransMatrix(simTime); // Get the new matrix
+
+		Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		newFixed.mult4(transMat, fixedPoint);
+
+		Vec4d posAdjust = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
+		posAdjust.sub3(oldFixed, newFixed);
+
+		pos.add3(posAdjust);
+		selectedEntity.setInputForGlobalPosition(pos);
+
+		KeywordIndex kw = InputAgent.formatPointInputs("Size", selectedEntity.getSize(), "m");
+		InputAgent.apply(selectedEntity, kw);
 		return true;
 	}
 
