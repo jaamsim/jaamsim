@@ -102,6 +102,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private JMenu windowList;
 	private JMenu optionMenu;
 	private JMenu helpMenu;
+	private static JCheckBoxMenuItem snapToGrid;
 	private static JCheckBoxMenuItem xyzAxis;
 	private static JCheckBoxMenuItem grid;
 	private JCheckBoxMenuItem alwaysTop;
@@ -614,7 +615,23 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		optionMenu = new JMenu( "Options" );
 		optionMenu.setMnemonic( 'O' );
 
-		// 1) "Show Axes" check box
+		// 1) "Snap to Grid" check box
+		snapToGrid = new JCheckBoxMenuItem( "Snap to Grid", false );
+		snapToGrid.setMnemonic( 'S' );
+		optionMenu.add( snapToGrid );
+		snapToGrid.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				ArrayList<String> arg = new ArrayList<>(1);
+				if (snapToGrid.isSelected())
+					arg.add("TRUE");
+				else
+					arg.add("FALSE");
+				InputAgent.apply(Simulation.getInstance(), new KeywordIndex("SnapToGrid", arg, null));
+			}
+		} );
+
+		// 2) "Show Axes" check box
 		xyzAxis = new JCheckBoxMenuItem( "Show Axes", true );
 		xyzAxis.setMnemonic( 'X' );
 		optionMenu.add( xyzAxis );
@@ -633,7 +650,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 
-		// 2) "Show Grid" check box
+		// 3) "Show Grid" check box
 		grid = new JCheckBoxMenuItem( "Show Grid", true );
 		grid.setMnemonic( 'G' );
 		optionMenu.add( grid );
@@ -652,7 +669,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 
-		// 3) "Always on top" check box
+		// 4) "Always on top" check box
 		alwaysTop = new JCheckBoxMenuItem( "Always on top", false );
 		alwaysTop.setMnemonic( 'A' );
 		optionMenu.add( alwaysTop );
@@ -668,7 +685,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		} );
 
-		// 4) "Graphics Debug Info" check box
+		// 5) "Graphics Debug Info" check box
 		graphicsDebug = new JCheckBoxMenuItem( "Graphics Debug Info", false );
 		graphicsDebug.setMnemonic( 'D' );
 		optionMenu.add( graphicsDebug );
