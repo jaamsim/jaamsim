@@ -45,6 +45,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.font.TessFont;
 import com.jaamsim.input.Input;
@@ -134,6 +135,7 @@ public class RenderManager implements DragSourceListener {
 
 	private long dragHandleID = 0;
 	private Vec3d dragCollisionPoint;
+	private Vec3d dragEntityPosition;
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
 	private ObjectType dndObjectType;
@@ -845,7 +847,7 @@ public class RenderManager implements DragSourceListener {
 			return true;
 
 		// Find the start and current world space positions
-
+		Ray firstRay = getRayForMouse(dragInfo.windowID, dragInfo.startX, dragInfo.startY);
 		Ray currentRay = getRayForMouse(dragInfo.windowID, dragInfo.x, dragInfo.y);
 		Ray lastRay = getRayForMouse(dragInfo.windowID,
 		                             dragInfo.x - dragInfo.dx,
@@ -857,6 +859,7 @@ public class RenderManager implements DragSourceListener {
 		Plane entityPlane = new Plane(); // Defaults to XY
 		entityPlane.transform(trans, entityPlane, new Vec3d()); // Transform the plane to world space
 
+		double firstDist = entityPlane.collisionDist(firstRay);
 		double currentDist = entityPlane.collisionDist(currentRay);
 		double lastDist = entityPlane.collisionDist(lastRay);
 
@@ -864,7 +867,7 @@ public class RenderManager implements DragSourceListener {
 
 		// MOVE
 		if (dragHandleID == MOVE_PICK_ID)
-			return handleMove(currentRay, lastRay, currentDist, lastDist, dragInfo.shiftDown());
+			return handleMove(currentRay, firstRay, currentDist, firstDist, dragInfo.shiftDown());
 
 		// RESIZE
 		if (dragHandleID <= RESIZE_POSX_PICK_ID &&
@@ -886,18 +889,20 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	//Moves the selected entity to a new position in space
-	private boolean handleMove(Ray currentRay, Ray lastRay, double currentDist, double lastDist, boolean shift) {
+	private boolean handleMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
 
 		// Trap degenerate cases
 		if (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
-			   lastDist < 0 ||    lastDist == Double.POSITIVE_INFINITY)
+		      firstDist < 0 ||   firstDist == Double.POSITIVE_INFINITY)
 			return true;
 
 		// Vertical move
 		if (shift) {
-			Vec3d entPos = selectedEntity.getGlobalPosition();
-			double zDiff = RenderUtils.getZDiff(dragCollisionPoint, currentRay, lastRay);
+			Vec3d entPos = new Vec3d(dragEntityPosition);
+			double zDiff = RenderUtils.getZDiff(dragCollisionPoint, currentRay, firstRay);
 			entPos.z += zDiff;
+			if (Simulation.isSnapToGrid())
+				entPos = Simulation.getSnapGridPosition(entPos);
 			selectedEntity.setInputForGlobalPosition(entPos);
 			return true;
 		}
@@ -905,20 +910,22 @@ public class RenderManager implements DragSourceListener {
 		// Horizontal move
 		Plane dragPlane = new Plane(new Vec3d(0, 0, 1), dragCollisionPoint.z); // XY plane at collision point
 		double cDist = dragPlane.collisionDist(currentRay);
-		double lDist = dragPlane.collisionDist(lastRay);
+		double lDist = dragPlane.collisionDist(firstRay);
 
 		if (cDist < 0 || cDist == Double.POSITIVE_INFINITY ||
 		    lDist < 0 || lDist == Double.POSITIVE_INFINITY)
 			return true;
 
 		Vec3d cPoint = currentRay.getPointAtDist(cDist);
-		Vec3d lPoint = lastRay.getPointAtDist(lDist);
+		Vec3d lPoint = firstRay.getPointAtDist(lDist);
 
 		Vec3d del = new Vec3d();
 		del.sub3(cPoint, lPoint);
 
-		Vec3d pos = selectedEntity.getGlobalPosition();
+		Vec3d pos = new Vec3d(dragEntityPosition);
 		pos.add3(del);
+		if (Simulation.isSnapToGrid())
+			pos = Simulation.getSnapGridPosition(pos);
 		selectedEntity.setInputForGlobalPosition(pos);
 		return true;
 	}
@@ -1300,6 +1307,7 @@ public class RenderManager implements DragSourceListener {
 		    (dragHandleID == 0 || dragHandleID == MOVE_PICK_ID)) {
 
 			// Use the entity collision point for dragging instead of the handle collision point
+			dragEntityPosition = selectedEntity.getGlobalPosition();
 			dragCollisionPoint = pickRay.getPointAtDist(entityDist);
 			dragHandleID = MOVE_PICK_ID;
 			return true;
@@ -1600,5 +1608,6 @@ public class RenderManager implements DragSourceListener {
 		s_instance.renderer.setDebugInfo(showDebug);
 		s_instance.queueRedraw();
 	}
+
 }
 

@@ -575,6 +575,8 @@ public class DisplayEntity extends Entity {
 	public void dragged(Vec3d distance) {
 		Vec3d newPos = this.getPosition();
 		newPos.add3(distance);
+		if (Simulation.isSnapToGrid())
+			newPos = Simulation.getSnapGridPosition(newPos);
 		this.setPosition(newPos);
 
 		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), newPos, "m");

@@ -28,6 +28,7 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
@@ -88,6 +89,14 @@ public class Simulation extends Entity {
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
 	         example = "Simulation DisplayedUnits { h kt }")
 	private static final EntityListInput<? extends Unit> displayedUnits;
+
+	@Keyword(description = "If TRUE, a dragged object will be positioned to the nearest grid point.",
+	         example = "Simulation SnapToGrid { TRUE }")
+	private static final BooleanInput snapToGrid;
+
+	@Keyword(description = "The distance between snap grid points.",
+	         example = "Simulation SnapGridSpacing { 1 m }")
+	private static final ValueInput snapGridSpacing;
 
 	@Keyword(description = "The distance moved by the selected entity when the an arrow key is pressed.",
 	         example = "Simulation IncrementSize { 1 cm }")
@@ -192,6 +201,14 @@ public class Simulation extends Entity {
 		realTime = new BooleanInput("RealTime", "GUI", false);
 		realTime.setPromptReqd(false);
 
+		snapToGrid = new BooleanInput("SnapToGrid", "GUI", false);
+		snapToGrid.setPromptReqd(false);
+
+		snapGridSpacing = new ValueInput("SnapGridSpacing", "GUI", 0.1d);
+		snapGridSpacing.setUnitType(DistanceUnit.class);
+		snapGridSpacing.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
+		snapGridSpacing.setPromptReqd(false);
+
 		incrementSize = new ValueInput("IncrementSize", "GUI", 0.1d);
 		incrementSize.setUnitType(DistanceUnit.class);
 		incrementSize.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
@@ -251,6 +268,8 @@ public class Simulation extends Entity {
 
 		// GUI tab
 		this.addInput(displayedUnits);
+		this.addInput(snapToGrid);
+		this.addInput(snapGridSpacing);
 		this.addInput(incrementSize);
 		this.addInput(realTime);
 		this.addInput(realTimeFactor);
@@ -506,6 +525,24 @@ public class Simulation extends Entity {
 
 	public static double getIncrementSize() {
 		return incrementSize.getValue();
+	}
+
+	public static boolean isSnapToGrid() {
+		return snapToGrid.getValue();
+	}
+
+	/**
+	 * Returns the nearest point on the snap grid to the given coordinate.
+	 * @param pos - position to be adjusted
+	 * @return nearest snap grid point.
+	 */
+	public static Vec3d getSnapGridPosition(Vec3d pos) {
+		double spacing = snapGridSpacing.getValue();
+		Vec3d ret = new Vec3d(pos);
+		ret.x = spacing*Math.rint(ret.x/spacing);
+		ret.y = spacing*Math.rint(ret.y/spacing);
+		ret.z = spacing*Math.rint(ret.z/spacing);
+		return ret;
 	}
 
 	static void updateRealTime() {
