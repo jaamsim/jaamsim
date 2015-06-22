@@ -863,14 +863,6 @@ public class RenderManager implements DragSourceListener {
 		Vec3d size = selectedEntity.getSize();
 		Mat4d transMat = selectedEntity.getTransMatrix(simTime);
 		Mat4d invTransMat = selectedEntity.getInvTransMatrix(simTime);
-		if (dragHandleID != MOVE_PICK_ID &&
-		    (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
-		        lastDist < 0 ||    lastDist == Double.POSITIVE_INFINITY))
-		{
-			// The plane is parallel or behind one of the rays...
-			// Moving uses a different plane, so we'll test that below
-			return true; // Just ignore it for now...
-		}
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
@@ -889,41 +881,10 @@ public class RenderManager implements DragSourceListener {
 		entSpaceDelta.sub3(entSpaceCurrent, entSpaceLast);
 
 		// Handle each handle by type...
-		if (dragHandleID == MOVE_PICK_ID) {
-			// We are dragging
 
-			// Dragging may not happen in the entity's XY plane, so we need to re-do some of the work above
-			Plane dragPlane = new Plane(new Vec3d(0, 0, 1), dragCollisionPoint.z); // XY plane at collistion point
-
-			if (dragInfo.shiftDown()) {
-				Vec3d entPos = selectedEntity.getGlobalPosition();
-
-				double zDiff = RenderUtils.getZDiff(dragCollisionPoint, currentRay, lastRay);
-
-				entPos.z += zDiff;
-				selectedEntity.setInputForGlobalPosition(entPos);
-
-				return true;
-			}
-
-			double cDist = dragPlane.collisionDist(currentRay);
-			double lDist = dragPlane.collisionDist(lastRay);
-
-			if (cDist < 0 || cDist == Double.POSITIVE_INFINITY ||
-			    lDist < 0 || lDist == Double.POSITIVE_INFINITY)
-				return true;
-
-			Vec3d cPoint = currentRay.getPointAtDist(cDist);
-			Vec3d lPoint = lastRay.getPointAtDist(lDist);
-
-			Vec3d del = new Vec3d();
-			del.sub3(cPoint, lPoint);
-
-			Vec3d pos = selectedEntity.getGlobalPosition();
-			pos.add3(del);
-			selectedEntity.setInputForGlobalPosition(pos);
-			return true;
-		}
+		// MOVE
+		if (dragHandleID == MOVE_PICK_ID)
+			return handleMove(currentRay, lastRay, currentDist, lastDist, dragInfo.shiftDown());
 
 		// Handle resize
 		if (dragHandleID <= RESIZE_POSX_PICK_ID &&
@@ -1114,6 +1075,44 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		return false;
+	}
+
+	//Moves the selected entity to a new position in space
+	private boolean handleMove(Ray currentRay, Ray lastRay, double currentDist, double lastDist, boolean shift) {
+
+		// Trap degenerate cases
+		if (currentDist < 0 || currentDist == Double.POSITIVE_INFINITY ||
+			   lastDist < 0 ||    lastDist == Double.POSITIVE_INFINITY)
+			return true;
+
+		// Vertical move
+		if (shift) {
+			Vec3d entPos = selectedEntity.getGlobalPosition();
+			double zDiff = RenderUtils.getZDiff(dragCollisionPoint, currentRay, lastRay);
+			entPos.z += zDiff;
+			selectedEntity.setInputForGlobalPosition(entPos);
+			return true;
+		}
+
+		// Horizontal move
+		Plane dragPlane = new Plane(new Vec3d(0, 0, 1), dragCollisionPoint.z); // XY plane at collision point
+		double cDist = dragPlane.collisionDist(currentRay);
+		double lDist = dragPlane.collisionDist(lastRay);
+
+		if (cDist < 0 || cDist == Double.POSITIVE_INFINITY ||
+		    lDist < 0 || lDist == Double.POSITIVE_INFINITY)
+			return true;
+
+		Vec3d cPoint = currentRay.getPointAtDist(cDist);
+		Vec3d lPoint = lastRay.getPointAtDist(lDist);
+
+		Vec3d del = new Vec3d();
+		del.sub3(cPoint, lPoint);
+
+		Vec3d pos = selectedEntity.getGlobalPosition();
+		pos.add3(del);
+		selectedEntity.setInputForGlobalPosition(pos);
+		return true;
 	}
 
 	private void splitLineEntity(int windowID, int x, int y) {
