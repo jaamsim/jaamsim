@@ -860,24 +860,6 @@ public class RenderManager implements DragSourceListener {
 		double currentDist = entityPlane.collisionDist(currentRay);
 		double lastDist = entityPlane.collisionDist(lastRay);
 
-		Mat4d invTransMat = selectedEntity.getInvTransMatrix(simTime);
-
-		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
-		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
-		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
-
-		Vec3d entSpaceCurrent = new Vec3d(); // entSpacePoint is the current point in model space
-		entSpaceCurrent.multAndTrans3(invTransMat, currentPoint);
-
-		Vec3d entSpaceLast = new Vec3d(); // entSpaceLast is the last point in model space
-		entSpaceLast.multAndTrans3(invTransMat, lastPoint);
-
-		Vec3d delta = new Vec3d();
-		delta.sub3(currentPoint, lastPoint);
-
-		Vec3d entSpaceDelta = new Vec3d();
-		entSpaceDelta.sub3(entSpaceCurrent, entSpaceLast);
-
 		// Handle each handle by type...
 
 		// MOVE
@@ -897,44 +879,8 @@ public class RenderManager implements DragSourceListener {
 		if (dragHandleID == LINEDRAG_PICK_ID)
 			return handleLineMove(currentRay, lastRay, currentDist, lastDist, dragInfo.shiftDown());
 
-		if (dragHandleID <= LINENODE_PICK_ID) {
-			int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
-			ArrayList<Vec3d> screenPoints = null;
-			if (selectedEntity instanceof HasScreenPoints) {
-				HasScreenPoints.PointsInfo[] pointInfos = ((HasScreenPoints)selectedEntity).getScreenPoints();
-				if (pointInfos != null && pointInfos.length != 0)
-					screenPoints = pointInfos[0].points;
-			}
-
-			// Note: screenPoints is not a defensive copy, but we'll put it back into itself
-			// in a second so everything should be safe
-			if (screenPoints == null || nodeIndex >= screenPoints.size()) {
-				// huh?
-				return false;
-			}
-			Vec3d point = screenPoints.get(nodeIndex);
-
-			if (dragInfo.shiftDown()) {
-				double zDiff = RenderUtils.getZDiff(point, currentRay, lastRay);
-				point.z += zDiff;
-			} else {
-				Plane pointPlane = new Plane(null, point.z);
-				Vec3d diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, lastRay);
-				point.x += diff.x;
-				point.y += diff.y;
-				point.z += 0;
-			}
-
-			Input<?> pointsInput = selectedEntity.getInput("Points");
-			assert(pointsInput != null);
-			if (pointsInput == null) {
-				return true;
-			}
-
-			KeywordIndex kw = InputAgent.formatPointsInputs("Points", screenPoints, new Vec3d());
-			InputAgent.apply(selectedEntity, kw);
-			return true;
-		}
+		if (dragHandleID <= LINENODE_PICK_ID)
+			return handleLineNodeMove(currentRay, lastRay, currentDist, lastDist, dragInfo.shiftDown());
 
 		return false;
 	}
@@ -1152,6 +1098,45 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		selectedEntity.dragged(delta);
+		return true;
+	}
+
+	private boolean handleLineNodeMove(Ray currentRay, Ray lastRay, double currentDist, double lastDist, boolean shift) {
+		int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
+		ArrayList<Vec3d> screenPoints = null;
+		if (selectedEntity instanceof HasScreenPoints) {
+			HasScreenPoints.PointsInfo[] pointInfos = ((HasScreenPoints)selectedEntity).getScreenPoints();
+			if (pointInfos != null && pointInfos.length != 0)
+				screenPoints = pointInfos[0].points;
+		}
+
+		// Note: screenPoints is not a defensive copy, but we'll put it back into itself
+		// in a second so everything should be safe
+		if (screenPoints == null || nodeIndex >= screenPoints.size()) {
+			// huh?
+			return false;
+		}
+		Vec3d point = screenPoints.get(nodeIndex);
+
+		if (shift) {
+			double zDiff = RenderUtils.getZDiff(point, currentRay, lastRay);
+			point.z += zDiff;
+		} else {
+			Plane pointPlane = new Plane(null, point.z);
+			Vec3d diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, lastRay);
+			point.x += diff.x;
+			point.y += diff.y;
+			point.z += 0;
+		}
+
+		Input<?> pointsInput = selectedEntity.getInput("Points");
+		assert(pointsInput != null);
+		if (pointsInput == null) {
+			return true;
+		}
+
+		KeywordIndex kw = InputAgent.formatPointsInputs("Points", screenPoints, new Vec3d());
+		InputAgent.apply(selectedEntity, kw);
 		return true;
 	}
 
