@@ -1314,6 +1314,7 @@ public class RenderManager implements DragSourceListener {
 		}
 		if (mouseHandleDist != Double.POSITIVE_INFINITY) {
 			// We hit a mouse handle
+			dragEntityPosition = selectedEntity.getGlobalPosition();
 			dragCollisionPoint = pickRay.getPointAtDist(mouseHandleDist);
 			return true;
 		}
