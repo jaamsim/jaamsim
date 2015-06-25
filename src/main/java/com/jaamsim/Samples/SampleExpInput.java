@@ -40,6 +40,8 @@ public class SampleExpInput extends Input<SampleProvider> {
 		unitType = u;
 		if (defValue instanceof SampleConstant)
 			((SampleConstant)defValue).setUnitType(unitType);
+		if (defValue instanceof TimeSeriesConstantDouble)
+			((TimeSeriesConstantDouble)defValue).setUnitType(unitType);
 	}
 
 	public void setEntity(Entity ent) {
