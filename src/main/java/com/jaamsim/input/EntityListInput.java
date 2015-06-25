@@ -24,6 +24,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	private boolean unique; // flag to determine if list must be unique or not
 	private boolean even;  // flag to determine if there must be an even number of entries
 	private boolean includeSubclasses;  // flag to determine if subclasses are valid
+	private boolean includeSelf; // flag to determine whether to include the calling entity in the entityList
 	private ArrayList<Class<? extends Entity>> validClasses; // list of valid classes (including subclasses).  if empty, then all classes are valid
 
 	public EntityListInput(Class<T> aClass, String key, String cat, ArrayList<T> def) {
@@ -32,6 +33,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		unique = true;
 		even = false;
 		includeSubclasses = true;
+		includeSelf = true;
 		validClasses = new ArrayList<>();
 	}
 
@@ -63,6 +65,10 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		this.includeSubclasses = bool;
 	}
 
+	public void setIncludeSelf(boolean bool) {
+		this.includeSelf = bool;
+	}
+
 	public void setValidClasses(ArrayList<Class<? extends Entity>> classes ) {
 		validClasses = classes;
 	}
@@ -81,6 +87,10 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 				if( each.getClass() != entClass ) {
 					continue;
 				}
+			}
+
+			if(each.getEditableInputs().contains( this ) && ! includeSelf ) {
+				continue;
 			}
 
 			list.add(each.getName());
