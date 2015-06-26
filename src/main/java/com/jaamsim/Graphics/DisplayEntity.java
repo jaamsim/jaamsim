@@ -600,31 +600,35 @@ public class DisplayEntity extends Entity {
 			return;
 		Vec3d pos = getPosition();
 		double inc = Simulation.getIncrementSize();
+		if (Simulation.isSnapToGrid())
+			inc = Math.max(inc, Simulation.getSnapGridSpacing());
 		switch (keyCode) {
 
 			case KeyEvent.VK_LEFT:
-				setPosition(new Vec3d(pos.x-inc, pos.y, pos.z));
+				pos.x -= inc;
 				break;
 
 			case KeyEvent.VK_RIGHT:
-				setPosition(new Vec3d(pos.x+inc, pos.y, pos.z));
+				pos.x +=inc;
 				break;
 
 			case KeyEvent.VK_UP:
 				if (shift)
-					setPosition(new Vec3d(pos.x, pos.y, pos.z+inc));
+					pos.z += inc;
 				else
-					setPosition(new Vec3d(pos.x, pos.y+inc, pos.z));
+					pos.y += inc;
 				break;
 
 			case KeyEvent.VK_DOWN:
 				if (shift)
-					setPosition(new Vec3d(pos.x, pos.y, pos.z-inc));
+					pos.z -= inc;
 				else
-					setPosition(new Vec3d(pos.x, pos.y-inc, pos.z));
+					pos.y -= inc;
 				break;
 		}
-		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), getPosition(), "m");
+		if (Simulation.isSnapToGrid())
+			pos = Simulation.getSnapGridPosition(pos);
+		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), pos, "m");
 		InputAgent.apply(this, kw);
 	}
 

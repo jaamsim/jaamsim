@@ -531,6 +531,10 @@ public class Simulation extends Entity {
 		return snapToGrid.getValue();
 	}
 
+	public static double getSnapGridSpacing() {
+		return snapGridSpacing.getValue();
+	}
+
 	/**
 	 * Returns the nearest point on the snap grid to the given coordinate.
 	 * To avoid dithering, the new position must be at least one grid space
