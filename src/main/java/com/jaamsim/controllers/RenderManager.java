@@ -47,7 +47,6 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.font.TessFont;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
@@ -790,9 +789,23 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	public Vec3d getRenderedStringSize(TessFontKey fontKey, double textHeight, String string) {
-		TessFont font = renderer.getTessFont(fontKey);
+		return renderer.getTessFont(fontKey).getStringSize(textHeight, string);
+	}
 
-		return font.getStringSize(textHeight, string);
+	public double getRenderedStringLength(TessFontKey fontKey, double textHeight, String string) {
+		return renderer.getTessFont(fontKey).getStringLength(textHeight, string);
+	}
+
+	/**
+	 * Returns the x-coordinate for a given insertion position in a string.
+	 * Insertion position i is the location prior to the i-th character in the string.
+	 *
+	 * @param i - insertion position
+	 * @return x coordinate of the insertion position relative to the beginning of the string.
+	 */
+	public double getOffsetForStringPosition(TessFontKey fontKey, double textHeight, String string, int i) {
+		StringBuilder sb = new StringBuilder(string);
+		return getRenderedStringLength(fontKey, textHeight, sb.substring(0, i).toString());
 	}
 
 	private void logException(Throwable t) {

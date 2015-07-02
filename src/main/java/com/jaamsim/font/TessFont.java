@@ -425,17 +425,18 @@ public synchronized int getGLBuffer(GL2GL3 gl) {
  * @return
  */
 public Vec3d getStringSize(double textHeight, String string) {
-	if (string == null) {
-		return new Vec3d(0, textHeight, 0);
-	}
-	double scaleFactor = textHeight / getNominalHeight();
-	double width = 0;
+	return new Vec3d(getStringLength(textHeight, string), textHeight, 0.0d);
+}
+
+public double getStringLength(double textHeight, String string) {
+	if (string == null)
+		return 0.0d;
+	double width = 0.0d;
 	for (int cp : RenderUtils.stringToCodePoints(string)) {
 		TessChar tc = getTessChar(cp);
 		width += tc.getAdvance();
 	}
-
-	return new Vec3d(width * scaleFactor, textHeight, 0.0d);
+	return width * textHeight / getNominalHeight();
 }
 
 public double getNominalHeight() {
