@@ -307,6 +307,12 @@ public class Text extends DisplayEntity {
 	}
 
 	@Override
+	public void handleMouseClicked(short count) {
+		if (count == 2)
+			editMode = true;
+	}
+
+	@Override
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
 
