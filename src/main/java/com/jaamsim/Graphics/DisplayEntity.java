@@ -640,6 +640,8 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
+	public void handleMouseClicked(short count) {}
+
 	/**
 	 * This method updates the DisplayEntity for changes in the given input
 	 */

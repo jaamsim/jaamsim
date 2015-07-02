@@ -57,7 +57,7 @@ public class MouseHandler extends MouseAdapter {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		_window.setMouseIn(true); // If we're clicked the mouse is in the window (some of the events seem to get dropped
-		_listener.mouseClicked(_windowID, e.getX(), e.getY(), e.getButton(), modsFromEvent(e));
+		_listener.mouseClicked(_windowID, e.getX(), e.getY(), e.getButton(), modsFromEvent(e), e.getClickCount());
 	}
 
 	@Override

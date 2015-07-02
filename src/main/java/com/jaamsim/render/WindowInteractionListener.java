@@ -70,7 +70,7 @@ public interface WindowInteractionListener extends KeyListener {
 	 * @param x
 	 * @param y
 	 */
-	public void mouseClicked(int windowID, int x, int y, int button, int modifiers);
+	public void mouseClicked(int windowID, int x, int y, int button, int modifiers, short count);
 
 	/**
 	 * Basic mouse motion

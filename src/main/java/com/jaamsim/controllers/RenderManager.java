@@ -565,7 +565,7 @@ public class RenderManager implements DragSourceListener {
 		} // synchronized (_popupLock)
 	}
 
-	public void handleSelection(int windowID) {
+	public void handleMouseClicked(int windowID, short count) {
 
 		List<PickData> picks = pickForMouse(windowID, false);
 
@@ -579,6 +579,7 @@ public class RenderManager implements DragSourceListener {
 					continue;
 				}
 				FrameBox.setSelectedEntity(ent);
+				ent.handleMouseClicked(count);
 				queueRedraw();
 				return;
 			}

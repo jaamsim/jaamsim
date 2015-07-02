@@ -294,7 +294,7 @@ public class CameraControl implements WindowInteractionListener {
 	}
 
 	@Override
-	public void mouseClicked(int windowID, int x, int y, int button, int modifiers) {
+	public void mouseClicked(int windowID, int x, int y, int button, int modifiers, short count) {
 		if (!RenderManager.isGood()) { return; }
 
 		RenderManager.inst().hideExistingPopups();
@@ -303,7 +303,7 @@ public class CameraControl implements WindowInteractionListener {
 			RenderManager.inst().popupMenu(windowID);
 		}
 		if (button == 1 && (modifiers & WindowInteractionListener.MOD_CTRL) == 0) {
-			RenderManager.inst().handleSelection(windowID);
+			RenderManager.inst().handleMouseClicked(windowID, count);
 		}
 	}
 
