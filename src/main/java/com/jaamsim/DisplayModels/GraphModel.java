@@ -528,11 +528,11 @@ public class GraphModel extends DisplayModel {
 				double yPos = graphOrigin.y + (i * yAxisInterval * graphSize.y )/yRange;
 
 				// Right justify the labels
-				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(labelFontKey,	labelHeight*xScaleFactor, text);
-				double xPos = graphOrigin.x - yAxisTickSize - yAxisLabelGap.getValue()*xScaleFactor - stringSize.x/2;
+				double stringLength = RenderManager.inst().getRenderedStringLength(labelFontKey, labelHeight*xScaleFactor, text);
+				double xPos = graphOrigin.x - yAxisTickSize - yAxisLabelGap.getValue()*xScaleFactor - stringLength/2;
 
 				// Save the left-most extent of the labels
-				minYLabelXPos = Math.min(minYLabelXPos, xPos - stringSize.x/2);
+				minYLabelXPos = Math.min(minYLabelXPos, xPos - stringLength/2);
 
 				Mat4d labelTrans = new Mat4d();
 				labelTrans.setTranslate3(new Vec3d(xPos, yPos, zBump));
@@ -591,11 +591,11 @@ public class GraphModel extends DisplayModel {
 				double yPos = graphOrigin.y + (i * secYAxisInterval * graphSize.y )/secYRange;
 
 				// Right justify the labels
-				Vec3d stringSize = RenderManager.inst().getRenderedStringSize(labelFontKey,	labelHeight*xScaleFactor, text);
-				double xPos = graphOrigin.x + graphSize.x + yAxisTickSize + yAxisLabelGap.getValue()*xScaleFactor + stringSize.x/2;
+				double stringLength = RenderManager.inst().getRenderedStringLength(labelFontKey, labelHeight*xScaleFactor, text);
+				double xPos = graphOrigin.x + graphSize.x + yAxisTickSize + yAxisLabelGap.getValue()*xScaleFactor + stringLength/2;
 
 				// Save the right-most extent of the labels
-				maxYLabelXPos = Math.max(maxYLabelXPos, xPos + stringSize.x/2);
+				maxYLabelXPos = Math.max(maxYLabelXPos, xPos + stringLength/2);
 
 				Mat4d labelTrans = new Mat4d();
 				labelTrans.setTranslate3(new Vec3d(xPos, yPos, zBump));
