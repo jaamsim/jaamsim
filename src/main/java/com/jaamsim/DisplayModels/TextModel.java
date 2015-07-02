@@ -35,10 +35,14 @@ import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.BillboardStringProxy;
 import com.jaamsim.render.DisplayModelBinding;
+import com.jaamsim.render.LineProxy;
 import com.jaamsim.render.OverlayStringProxy;
+import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
+import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.StringProxy;
 import com.jaamsim.render.TessFontKey;
 import com.jaamsim.render.VisibilityInfo;
@@ -170,6 +174,10 @@ public class TextModel extends DisplayModel {
 		private Vec3d dsOffsetCache;
 		private Color4d dsColorCache;
 
+		private boolean editModeCache;
+		private int insertPosCache;
+		private int numSelectedCache;
+
 		private VisibilityInfo viCache;
 
 
@@ -203,6 +211,10 @@ public class TextModel extends DisplayModel {
 			Color4d dsColor = dropShadowColor.getValue();
 			Vec3d dsOffset = dropShadowOffset.getValue();
 
+			boolean editMode = labelObservee.isEditMode();
+			int insertPos = labelObservee.getInsertPosition();
+			int numSelected = labelObservee.getNumberSelected();
+
 			VisibilityInfo vi = getVisibilityInfo();
 
 			boolean dirty = false;
@@ -215,6 +227,9 @@ public class TextModel extends DisplayModel {
 			dirty = dirty || dropShadowCache != ds;
 			dirty = dirty || dirty_col4d(dsColorCache, dsColor);
 			dirty = dirty || dirty_vec3d(dsOffsetCache, dsOffset);
+			dirty = dirty || editMode != editModeCache;
+			dirty = dirty || insertPos != insertPosCache;
+			dirty = dirty || numSelected != numSelectedCache;
 			dirty = dirty || !compare(viCache, vi);
 
 			textCache = text;
@@ -225,6 +240,9 @@ public class TextModel extends DisplayModel {
 			dropShadowCache = ds;
 			dsColorCache = dsColor;
 			dsOffsetCache = dsOffset;
+			editModeCache = editMode;
+			insertPosCache = insertPos;
+			numSelectedCache = numSelected;
 			viCache = vi;
 
 			if (cachedProxies != null && !dirty) {
@@ -242,8 +260,38 @@ public class TextModel extends DisplayModel {
 
 			cachedProxies = new ArrayList<>();
 
+			// If the text is being edited, show the selection and the text insertion mark
+			if (editMode) {
+				double length = RenderManager.inst().getRenderedStringLength(fk, height, text);
+
+				// Highlight the selected text
+				if (numSelected != 0) {
+					int startPos = Math.min(insertPos, insertPos + numSelected);
+					int endPos = Math.max(insertPos, insertPos + numSelected);
+					double start = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startPos) - 0.5d*length;
+					double end = RenderManager.inst().getOffsetForStringPosition(fk, height, text, endPos) - 0.5d*length;
+					double middle = 0.5d*(start + end);
+
+					Transform selectionTrans = new Transform(trans);
+					selectionTrans.addTrans(new Vec3d(middle, 0.0d, -0.01*height));
+					Vec3d scale = new Vec3d(end - start, height*1.5d, 0.0d);
+					cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, selectionTrans, scale,
+							ColourInput.LIGHT_GREY, false, 1, vi, labelObservee.getEntityNumber()));
+				}
+
+				// Show the text insertion mark
+				double insert = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos) - 0.5d*length;
+				ArrayList<Vec4d> points = new ArrayList<>();
+				points.add(new Vec4d(insert, -0.5d*height*1.5d, 0.01*height, 1.0d));
+				points.add(new Vec4d(insert,  0.5d*height*1.5d, 0.01*height, 1.0d));
+				RenderUtils.transformPointsLocal(trans, points, 0);
+				cachedProxies.add(new LineProxy(points, ColourInput.BLACK, 1, vi, labelObservee.getEntityNumber()));
+			}
+
+			// Show the text
 			cachedProxies.add(new StringProxy(text, fk, color, trans, height, vi, labelObservee.getEntityNumber()));
 
+			// Show the drop shadow
 			if (ds) {
 				Transform dsTrans = new Transform(trans);
 				Vec3d shadowTrans = new Vec3d(dsOffset);
@@ -253,6 +301,7 @@ public class TextModel extends DisplayModel {
 
 				cachedProxies.add(new StringProxy(text, fk, dsColor, dsTrans, height, vi, labelObservee.getEntityNumber()));
 			}
+
 			out.addAll(cachedProxies);
 		}
 	}
@@ -469,7 +518,6 @@ public class TextModel extends DisplayModel {
 			}
 
 			cachedProxies.add(new BillboardStringProxy(text, fk, color, height, pos, 0, 0, vi));
-
 			out.addAll(cachedProxies);
 		}
 

@@ -115,6 +115,11 @@ public double getScale() {
 	return _scale;
 }
 
+public void addTrans(Vec3d trans) {
+	_trans.add3(trans);
+	_matrixDirty = true;
+}
+
 /**
  * Calculated the 4x4 matrix corresponding to this transform
  * @param out - the 4x4 matrix
