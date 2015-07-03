@@ -313,6 +313,11 @@ public class Text extends DisplayEntity {
 	}
 
 	@Override
+	public void handleSelectionLost() {
+		acceptEdits();
+	}
+
+	@Override
 	public void updateGraphics(double simTime) {
 		super.updateGraphics(simTime);
 

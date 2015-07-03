@@ -128,6 +128,9 @@ public class FrameBox extends JFrame {
 		if (ent == selectedEntity)
 			return;
 
+		if (selectedEntity != null)
+			selectedEntity.handleSelectionLost();
+
 		selectedEntity = ent;
 		RenderManager.setSelection(ent);
 		valueUpdate();

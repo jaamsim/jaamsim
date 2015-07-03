@@ -577,6 +577,8 @@ public class Entity {
 		EventManager.waitTicks(waitLength, priority, false, handle);
 	}
 
+	public void handleSelectionLost() {}
+
 	// ******************************************************************************************************
 	// EDIT TABLE METHODS
 	// ******************************************************************************************************
