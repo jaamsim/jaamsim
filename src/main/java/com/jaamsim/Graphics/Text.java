@@ -14,6 +14,10 @@
  */
 package com.jaamsim.Graphics;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
 import com.jaamsim.controllers.RenderManager;
@@ -191,6 +195,7 @@ public class Text extends DisplayEntity {
 			return;
 		}
 
+		Clipboard clpbrd;
 		switch (keyCode) {
 
 			case KeyEvent.VK_DELETE:
@@ -256,6 +261,31 @@ public class Text extends DisplayEntity {
 				insertPos = editText.length();
 				numSelected = 0;
 				break;
+
+			case KeyEvent.VK_C:
+				if (control) {
+					clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+					int start = Math.min(insertPos, insertPos+numSelected);
+					int end = Math.max(insertPos, insertPos+numSelected);
+					StringBuilder sb = new StringBuilder(editText);
+					String copiedText = sb.substring(start, end).toString();
+					clpbrd.setContents(new StringSelection(copiedText), null);
+					break;
+				}
+
+			case KeyEvent.VK_V:
+				if (control) {
+					deleteSelection();
+					clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+					try {
+						String newText = (String)clpbrd.getData(DataFlavor.stringFlavor);
+						StringBuilder sb = new StringBuilder(editText);
+						editText = sb.insert(insertPos, newText).toString();
+						insertPos += newText.length();
+					}
+					catch (Throwable err) {}
+					break;
+				}
 
 			default:
 				if (keyChar == KeyEvent.VK_UNDEFINED)
