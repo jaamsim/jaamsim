@@ -134,18 +134,18 @@ public class Text extends DisplayEntity {
 			return formatText.getValue();
 
 		try {
-		OutputHandle out = outputName.getOutputHandle(simTime);
-		if( out == null )
-			return failText.getValue();
+			OutputHandle out = outputName.getOutputHandle(simTime);
+			if( out == null )
+				return failText.getValue();
 
-		if (out.isNumericValue()) {
-			double d = out.getValueAsDouble(simTime, 0.0d, unit.getValue());
-			return String.format(formatText.getValue(), d);
-		}
-		else {
-			Object o = out.getValue(simTime, out.getReturnType());
-			return String.format(formatText.getValue(), o);
-		}
+			if (out.isNumericValue()) {
+				double d = out.getValueAsDouble(simTime, 0.0d, unit.getValue());
+				return String.format(formatText.getValue(), d);
+			}
+			else {
+				Object o = out.getValue(simTime, out.getReturnType());
+				return String.format(formatText.getValue(), o);
+			}
 		}
 		catch (Throwable e) {
 			return failText.getValue();
