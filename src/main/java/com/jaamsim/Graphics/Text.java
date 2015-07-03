@@ -16,6 +16,7 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
+import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -27,6 +28,7 @@ import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
+import com.jogamp.newt.event.KeyEvent;
 
 /**
  * The "Text" object displays written text within the 3D model universe.  Both fixed and variable text can be displayed.
@@ -62,6 +64,11 @@ public class Text extends DisplayEntity {
 
 	protected String renderText = "";
 
+	private boolean editMode = false;  // true if the entity is being edited
+	private String editText = "";      // input text entered by the user
+	private int insertPos = 0;         // position in the string where new text will be inserted
+	private int numSelected = 0;       // number of characters selected (positive to the right of the insertion position)
+
 	{
 		formatText = new StringInput("Format", "Key Inputs", "");
 		this.addInput(formatText);
@@ -87,6 +94,13 @@ public class Text extends DisplayEntity {
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
+		if (in == formatText) {
+			editText = formatText.getValue();
+			insertPos = editText.length();
+			numSelected = 0;
+			return;
+		}
+
 		if (in == outputName) {
 			OutputHandle h = outputName.getOutputHandle(0.0);
 			if (h != null)
@@ -107,6 +121,11 @@ public class Text extends DisplayEntity {
 	}
 
 	public String getRenderText(double simTime) {
+
+		// If the object is selected, show the editable text
+		if (editMode)
+			return editText;
+
 		if( outputName.getValue() == null )
 			return formatText.getValue();
 
@@ -127,6 +146,134 @@ public class Text extends DisplayEntity {
 		catch (Throwable e) {
 			return failText.getValue();
 		}
+	}
+
+	private void deleteSelection() {
+		if (numSelected == 0)
+			return;
+		int start = Math.min(insertPos, insertPos+numSelected);
+		int end = Math.max(insertPos, insertPos+numSelected);
+		StringBuilder sb = new StringBuilder(editText);
+		editText = sb.delete(start, end).toString();
+		insertPos = start;
+		numSelected = 0;
+	}
+
+	private void setInsertPosition(int pos, boolean shift) {
+		if (shift)
+			numSelected -= pos - insertPos;
+		else
+			numSelected = 0;
+		insertPos = pos;
+	}
+
+	private void acceptEdits() {
+		ArrayList<String> args = new ArrayList<>();
+		args.add(editText);
+		InputAgent.apply(this, new KeywordIndex("Format", args, null));
+		editMode = false;
+		insertPos = editText.length();
+		numSelected = 0;
+	}
+
+	@Override
+	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+
+		if (keyCode == KeyEvent.VK_F2) {
+			editMode = true;
+			insertPos = editText.length();
+			numSelected = 0;
+			RenderManager.redraw();
+			return;
+		}
+		if (!editMode) {
+			super.handleKeyPressed(keyCode, keyChar, shift, control, alt);
+			return;
+		}
+
+		switch (keyCode) {
+
+			case KeyEvent.VK_DELETE:
+				if (numSelected == 0) {
+					if (insertPos == editText.length())
+						break;
+					StringBuilder sb = new StringBuilder(editText);
+					editText = sb.deleteCharAt(insertPos).toString();
+					break;
+				}
+				deleteSelection();
+				break;
+
+			case KeyEvent.VK_BACK_SPACE:
+				if (numSelected == 0) {
+					if (insertPos == 0)
+						break;
+					StringBuilder sb = new StringBuilder(editText);
+					editText = sb.deleteCharAt(insertPos-1).toString();
+					insertPos--;
+					break;
+				}
+				deleteSelection();
+				break;
+
+			case KeyEvent.VK_LEFT:
+				if (!shift && !(numSelected == 0)) {
+					if (numSelected < 0)
+						setInsertPosition(insertPos + numSelected, shift);
+					else
+						setInsertPosition(insertPos, shift);
+					break;
+				}
+				setInsertPosition(Math.max(0, insertPos-1), shift);
+				break;
+
+			case KeyEvent.VK_RIGHT:
+				if (!shift && !(numSelected == 0)) {
+					if (numSelected > 0)
+						setInsertPosition(insertPos + numSelected, shift);
+					else
+						setInsertPosition(insertPos, shift);
+					break;
+				}
+				setInsertPosition(Math.min(editText.length(), insertPos+1), shift);
+				break;
+
+			case KeyEvent.VK_HOME:
+				setInsertPosition(0, shift);
+				break;
+
+			case KeyEvent.VK_END:
+				setInsertPosition(editText.length(), shift);
+				break;
+
+			case KeyEvent.VK_ENTER:
+				acceptEdits();
+				break;
+
+			case KeyEvent.VK_ESCAPE:
+				editMode = false;
+				editText = formatText.getValue();
+				insertPos = editText.length();
+				numSelected = 0;
+				break;
+
+			default:
+				if (keyChar == KeyEvent.VK_UNDEFINED)
+					break;
+				deleteSelection();
+				StringBuilder sb = new StringBuilder(editText);
+				editText = sb.insert(insertPos, keyChar).toString();
+				insertPos++;
+				break;
+		}
+		RenderManager.redraw();
+	}
+
+	@Override
+	public void handleKeyReleased(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
+		if (editMode)
+			return;
+		super.handleKeyReleased(keyCode, keyChar, shift, control, alt);
 	}
 
 	@Override
@@ -151,6 +298,18 @@ public class Text extends DisplayEntity {
 
 	public double getTextHeight() {
 		return textHeight.getValue().doubleValue();
+	}
+
+	public boolean isEditMode() {
+		return editMode;
+	}
+
+	public int getInsertPosition() {
+		return insertPos;
+	}
+
+	public int getNumberSelected() {
+		return numSelected;
 	}
 
 }
