@@ -948,10 +948,9 @@ public class RenderManager implements DragSourceListener {
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
 		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
 
-		double simTime = FrameBox.ticksToSeconds(simTick);
 		Vec3d size = selectedEntity.getSize();
-		Mat4d transMat = selectedEntity.getTransMatrix(simTime);
-		Mat4d invTransMat = selectedEntity.getInvTransMatrix(simTime);
+		Mat4d transMat = selectedEntity.getTransMatrix();
+		Mat4d invTransMat = selectedEntity.getInvTransMatrix();
 
 		Vec3d entSpaceCurrent = new Vec3d(); // entSpacePoint is the current point in model space
 		entSpaceCurrent.multAndTrans3(invTransMat, currentPoint);
@@ -1032,7 +1031,7 @@ public class RenderManager implements DragSourceListener {
 		Vec4d oldFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		oldFixed.mult4(transMat, fixedPoint);
 		selectedEntity.setSize(scale);
-		transMat = selectedEntity.getTransMatrix(simTime); // Get the new matrix
+		transMat = selectedEntity.getTransMatrix(); // Get the new matrix
 
 		Vec4d newFixed = new Vec4d(0.0d, 0.0d, 0.0d, 1.0d);
 		newFixed.mult4(transMat, fixedPoint);
@@ -1050,8 +1049,7 @@ public class RenderManager implements DragSourceListener {
 
 	private boolean handleRotate(Ray currentRay, Ray lastRay, double currentDist, double lastDist) {
 
-		double simTime = FrameBox.ticksToSeconds(simTick);
-		Mat4d transMat = selectedEntity.getTransMatrix(simTime);
+		Mat4d transMat = selectedEntity.getTransMatrix();
 
 		// The points where the previous pick ended and current position. Collision is with the entity's XY plane
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);

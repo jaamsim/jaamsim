@@ -393,7 +393,7 @@ public class DisplayEntity extends Entity {
 	 * Returns the global transform with scale factor all rolled into a Matrix4d
 	 * @return
 	 */
-	public Mat4d getTransMatrix(double simTime) {
+	public Mat4d getTransMatrix() {
 		Transform trans = getGlobalTrans();
 		Mat4d ret = new Mat4d();
 		trans.getMat4d(ret);
@@ -405,7 +405,7 @@ public class DisplayEntity extends Entity {
 	 * Returns the inverse global transform with scale factor all rolled into a Matrix4d
 	 * @return
 	 */
-	public Mat4d getInvTransMatrix(double simTime) {
+	public Mat4d getInvTransMatrix() {
 		return RenderUtils.getInverseWithScale(getGlobalTrans(), size);
 	}
 
