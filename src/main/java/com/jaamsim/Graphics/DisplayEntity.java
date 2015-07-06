@@ -348,7 +348,7 @@ public class DisplayEntity extends Entity {
 	 * @return
 	 */
 	public Transform getGlobalTrans(double simTime) {
-		return getGlobalTransForSize(size, simTime);
+		return getGlobalTransForSize(size);
 	}
 
 	/**
@@ -358,7 +358,7 @@ public class DisplayEntity extends Entity {
 	 * @param simTime
 	 * @return
 	 */
-	public Transform getGlobalTransForSize(Vec3d sizeIn, double simTime) {
+	public Transform getGlobalTransForSize(Vec3d sizeIn) {
 		// Okay, this math may be hard to follow, this is effectively merging two TRS transforms,
 		// The first is a translation only transform from the alignment parameter
 		// Then a transform is built up based on position and orientation

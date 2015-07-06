@@ -205,7 +205,7 @@ public class TextModel extends DisplayModel {
 			TessFontKey fk = new TessFontKey(fontName.getChoice(), style);
 
 			Vec3d textSize = RenderManager.inst().getRenderedStringSize(fk, height, text);
-			Transform trans = labelObservee.getGlobalTransForSize(textSize, simTime);
+			Transform trans = labelObservee.getGlobalTransForSize(textSize);
 
 			boolean ds = dropShadow.getValue();
 			Color4d dsColor = dropShadowColor.getValue();
