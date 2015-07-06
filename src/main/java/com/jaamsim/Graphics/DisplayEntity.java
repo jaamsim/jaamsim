@@ -351,6 +351,10 @@ public class DisplayEntity extends Entity {
 		return getGlobalTransForSize(size);
 	}
 
+	public Transform getGlobalTrans() {
+		return getGlobalTransForSize(size);
+	}
+
 	/**
 	 *  Returns the equivalent global transform for this entity as if 'sizeIn' where the actual
 	 *  size.
