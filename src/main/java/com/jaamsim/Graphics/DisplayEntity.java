@@ -347,10 +347,6 @@ public class DisplayEntity extends Entity {
 	 * Returns the transform to global space including the region transform
 	 * @return
 	 */
-	public Transform getGlobalTrans(double simTime) {
-		return getGlobalTransForSize(size);
-	}
-
 	public Transform getGlobalTrans() {
 		return getGlobalTransForSize(size);
 	}
