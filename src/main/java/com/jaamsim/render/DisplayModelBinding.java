@@ -102,7 +102,7 @@ public abstract class DisplayModelBinding {
 		DisplayEntity de = (DisplayEntity)observee;
 		// Convert the points to world space
 
-		Transform trans = de.getGlobalTrans(simTime);
+		Transform trans = de.getGlobalTrans();
 		Vec3d scale = de.getSize();
 		scale.mul3(dm.getModelScale());
 
@@ -129,7 +129,7 @@ public abstract class DisplayModelBinding {
 		}
 
 		DisplayEntity de = (DisplayEntity)observee;
-		Transform trans = de.getGlobalTrans(simTime);
+		Transform trans = de.getGlobalTrans();
 		Vec3d scale = de.getSize();
 		scale.mul3(dm.getModelScale());
 

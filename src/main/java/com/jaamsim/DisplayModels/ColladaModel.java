@@ -176,7 +176,7 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 				scale = DisplayModel.ONES;
 				pickingID = 0;
 			} else {
-				trans = dispEnt.getGlobalTrans(simTime);
+				trans = dispEnt.getGlobalTrans();
 				scale = dispEnt.getSize();
 				scale.mul3(getModelScale());
 				pickingID = dispEnt.getEntityNumber();

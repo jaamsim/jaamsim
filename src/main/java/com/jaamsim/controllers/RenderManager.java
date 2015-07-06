@@ -867,8 +867,7 @@ public class RenderManager implements DragSourceListener {
 		                             dragInfo.x - dragInfo.dx,
 		                             dragInfo.y - dragInfo.dy);
 
-		double simTime = FrameBox.ticksToSeconds(simTick);
-		Transform trans = selectedEntity.getGlobalTrans(simTime);
+		Transform trans = selectedEntity.getGlobalTrans();
 
 		Plane entityPlane = new Plane(); // Defaults to XY
 		entityPlane.transform(trans, entityPlane, new Vec3d()); // Transform the plane to world space

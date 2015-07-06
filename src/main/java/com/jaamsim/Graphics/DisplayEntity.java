@@ -398,7 +398,7 @@ public class DisplayEntity extends Entity {
 	 * @return
 	 */
 	public Mat4d getTransMatrix(double simTime) {
-		Transform trans = getGlobalTrans(simTime);
+		Transform trans = getGlobalTrans();
 		Mat4d ret = new Mat4d();
 		trans.getMat4d(ret);
 		ret.scaleCols3(getSize());
@@ -410,7 +410,7 @@ public class DisplayEntity extends Entity {
 	 * @return
 	 */
 	public Mat4d getInvTransMatrix(double simTime) {
-		return RenderUtils.getInverseWithScale(getGlobalTrans(simTime), size);
+		return RenderUtils.getInverseWithScale(getGlobalTrans(), size);
 	}
 
 

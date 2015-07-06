@@ -697,7 +697,7 @@ public class GraphModel extends DisplayModel {
 
 			graphOrigin = new Vec3d( graphCenter.x - graphSize.x/2, graphCenter.y - graphSize.y/2, 0.0  );
 
-			objectTrans = graphObservee.getGlobalTrans(simTime);
+			objectTrans = graphObservee.getGlobalTrans();
 			objectScale = graphObservee.getSize();
 			objectScale.mul3(getModelScale());
 

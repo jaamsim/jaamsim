@@ -315,7 +315,7 @@ public class DisplayModelCompat extends DisplayModel {
 			if (dispEnt == null) {
 				return Transform.ident;
 			}
-			return dispEnt.getGlobalTrans(simTime);
+			return dispEnt.getGlobalTrans();
 		}
 		private Vec3d getScale() {
 			if (dispEnt == null) {
