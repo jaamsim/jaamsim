@@ -72,7 +72,7 @@ public abstract class Input<T> {
 	public static final String NEGATIVE_INFINITY = "-Infinity";
 	protected static final String SEPARATOR = "  ";
 
-	private final String keyword; // the preferred name for the input keyword
+	private String keyword; // the preferred name for the input keyword
 	private final String category;
 
 	protected T defValue;
@@ -131,6 +131,10 @@ public abstract class Input<T> {
 
 	public final String getKeyword() {
 		return keyword;
+	}
+	
+	public void setKeyword(String str) {
+		keyword = str;
 	}
 
 	public final String getCategory() {
