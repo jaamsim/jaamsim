@@ -148,6 +148,8 @@ public class ObjectSelector extends FrameBox {
 		if (myInstance == null)
 			myInstance = new ObjectSelector();
 
+		myInstance.treeView.getHorizontalScrollBar().getModel().setValue(0);
+
 		return myInstance;
 	}
 
