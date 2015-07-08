@@ -397,6 +397,23 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
+	 * Returns the transformation that converts a point in the global
+	 * coordinate system to the entity's coordinates.
+	 * <p>
+	 * The entity's coordinate system is centred on the entity's alignment point
+	 * and its axes are rotated by the entity's orientation angles. It is NOT
+	 * scaled by the entity's size, so the coordinates still have units of
+	 * metres. The effects of the RelativeEntity and Region inputs are included
+	 * in the transformation.
+	 * @return local coordinates for the point.
+	 */
+	public Transform getEntityTransForSize(Vec3d sizeIn) {
+		Transform trans = new Transform();
+		getGlobalTransForSize(sizeIn).inverse(trans);
+		return trans;
+	}
+
+	/**
 	 * Returns the global transform with scale factor all rolled into a Matrix4d
 	 * @return
 	 */
