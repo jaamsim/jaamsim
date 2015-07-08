@@ -823,6 +823,10 @@ public class RenderManager implements DragSourceListener {
 		return renderer.getTessFont(fontKey).getStringLength(textHeight, string);
 	}
 
+	public int getRenderedStringPosition(TessFontKey fontKey, double textHeight, String string, double x) {
+		return renderer.getTessFont(fontKey).getStringPosition(textHeight, string, x);
+	}
+
 	/**
 	 * Returns the x-coordinate for a given insertion position in a string.
 	 * Insertion position i is the location prior to the i-th character in the string.

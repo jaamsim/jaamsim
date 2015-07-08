@@ -439,6 +439,29 @@ public double getStringLength(double textHeight, String string) {
 	return width * textHeight / getNominalHeight();
 }
 
+/**
+ * Returns the index of the first character in the string whose x-coordinate
+ * is closest to the given value.
+ * @param textHeight - height of the text in metres
+ * @param string - given string
+ * @param x - x-coordinate whose index number is to be found
+ * @return index number in the string.
+ */
+public int getStringPosition(double textHeight, String string, double x) {
+	if (string == null)
+		return 0;
+	double scaledX = x / textHeight * getNominalHeight();
+	double width = 0.0d;
+	int[] cpList = RenderUtils.stringToCodePoints(string);
+	for (int i=0; i < cpList.length; i++) {
+		TessChar tc = getTessChar(cpList[i]);
+		if (width + 0.5d*tc.getAdvance() >= scaledX)
+			return i;
+		width += tc.getAdvance();
+	}
+	return cpList.length;
+}
+
 public double getNominalHeight() {
 	return _nominalHeight;
 }
