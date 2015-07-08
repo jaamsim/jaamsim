@@ -344,16 +344,23 @@ public class DisplayEntity extends Entity {
 	}
 
 	/**
-	 * Returns the transform to global space including the region transform
-	 * @return
+	 * Returns the transformation that converts a point in the entity's
+	 * coordinates to the global coordinate system.
+	 * <p>
+	 * The entity's coordinate system is centred on the entity's alignment point
+	 * and its axes are rotated by the entity's orientation angles. It is NOT
+	 * scaled by the entity's size, so the coordinates still have units of
+	 * metres. The effects of the RelativeEntity and Region inputs are included
+	 * in the transformation.
+	 * @return global coordinates for the point.
 	 */
 	public Transform getGlobalTrans() {
 		return getGlobalTransForSize(size);
 	}
 
 	/**
-	 *  Returns the equivalent global transform for this entity as if 'sizeIn' where the actual
-	 *  size.
+	 * Returns the equivalent global transform for this entity as if 'sizeIn' where the actual
+	 * size.
 	 * @param sizeIn
 	 * @param simTime
 	 * @return
@@ -365,7 +372,7 @@ public class DisplayEntity extends Entity {
 		// As size is a non-uniform scale it can not be represented by the jaamsim TRS Transform and therefore
 		// not actually included in this result, except to adjust the alignment
 
-		// Alignment and Size transformations
+		// Alignment transformations
 		Vec3d temp = new Vec3d(sizeIn);
 		temp.mul3(align);
 		temp.scale3(-1.0d);
@@ -376,10 +383,10 @@ public class DisplayEntity extends Entity {
 		rot.setEuler3(orient);
 		Transform ret = new Transform(null, rot, 1);
 
-		// Combine the alignment, size, and orientation tranformations
+		// Combine the alignment and orientation transformations
 		ret.merge(ret, alignTrans);
 
-		// Convert the alignment/size/orientation transformation to the global coordinate system
+		// Convert the alignment/orientation transformation to the global coordinate system
 		if (currentRegion != null)
 			ret.merge(currentRegion.getRegionTransForVectors(), ret);
 
