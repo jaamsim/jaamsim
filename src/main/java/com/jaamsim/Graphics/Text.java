@@ -208,6 +208,26 @@ public class Text extends DisplayEntity {
 		numSelected = start - end;
 	}
 
+	private void copyToClipboard() {
+		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+		int start = Math.min(insertPos, insertPos+numSelected);
+		int end = Math.max(insertPos, insertPos+numSelected);
+		StringBuilder sb = new StringBuilder(editText);
+		String copiedText = sb.substring(start, end).toString();
+		clpbrd.setContents(new StringSelection(copiedText), null);
+	}
+
+	private void pasteFromClipboard() {
+		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+		try {
+			String newText = (String)clpbrd.getData(DataFlavor.stringFlavor);
+			StringBuilder sb = new StringBuilder(editText);
+			editText = sb.insert(insertPos, newText).toString();
+			insertPos += newText.length();
+		}
+		catch (Throwable err) {}
+	}
+
 	@Override
 	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 
@@ -223,7 +243,6 @@ public class Text extends DisplayEntity {
 			return;
 		}
 
-		Clipboard clpbrd;
 		switch (keyCode) {
 
 			case KeyEvent.VK_DELETE:
@@ -292,26 +311,15 @@ public class Text extends DisplayEntity {
 
 			case KeyEvent.VK_C:
 				if (control) {
-					clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-					int start = Math.min(insertPos, insertPos+numSelected);
-					int end = Math.max(insertPos, insertPos+numSelected);
-					StringBuilder sb = new StringBuilder(editText);
-					String copiedText = sb.substring(start, end).toString();
-					clpbrd.setContents(new StringSelection(copiedText), null);
+					copyToClipboard();
 					break;
 				}
 
 			case KeyEvent.VK_V:
 				if (control) {
 					deleteSelection();
-					clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-					try {
-						String newText = (String)clpbrd.getData(DataFlavor.stringFlavor);
-						StringBuilder sb = new StringBuilder(editText);
-						editText = sb.insert(insertPos, newText).toString();
-						insertPos += newText.length();
-					}
-					catch (Throwable err) {}
+					pasteFromClipboard();
+					break;
 					break;
 				}
 
