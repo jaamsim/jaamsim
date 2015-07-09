@@ -30,6 +30,7 @@ import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.OutputInput;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
 import com.jogamp.newt.event.KeyEvent;
@@ -307,7 +308,7 @@ public class Text extends DisplayEntity {
 	}
 
 	@Override
-	public void handleMouseClicked(short count) {
+	public void handleMouseClicked(short count, Vec3d globalCoord) {
 		if (count == 2)
 			editMode = true;
 	}

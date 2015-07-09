@@ -303,7 +303,7 @@ public class CameraControl implements WindowInteractionListener {
 			RenderManager.inst().popupMenu(windowID);
 		}
 		if (button == 1 && (modifiers & WindowInteractionListener.MOD_CTRL) == 0) {
-			RenderManager.inst().handleMouseClicked(windowID, count);
+			RenderManager.inst().handleMouseClicked(windowID, x, y, count);
 		}
 	}
 

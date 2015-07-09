@@ -565,7 +565,7 @@ public class RenderManager implements DragSourceListener {
 		} // synchronized (_popupLock)
 	}
 
-	public void handleMouseClicked(int windowID, short count) {
+	public void handleMouseClicked(int windowID, int x, int y, short count) {
 
 		List<PickData> picks = pickForMouse(windowID, false);
 
@@ -579,7 +579,9 @@ public class RenderManager implements DragSourceListener {
 					continue;
 				}
 				FrameBox.setSelectedEntity(ent);
-				ent.handleMouseClicked(count);
+
+				Vec3d globalCoord = getGlobalPositionForMouseData(windowID, x, y, ent);
+				ent.handleMouseClicked(count, globalCoord);
 				queueRedraw();
 				return;
 			}
@@ -787,6 +789,30 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		return RenderUtils.getPickRayForPosition(mouseInfo.cameraInfo, x, y, mouseInfo.width, mouseInfo.height);
+	}
+
+	/**
+	 * Returns the global coordinates for the given entity corresponding
+	 * to given screen coordinates.
+	 * @param windowID - view window that clicked
+	 * @param x - horizontal raster coordinate
+	 * @param y - vertical raster coordinate
+	 * @param ent - entity whose local coordinates are returned
+	 * @return local coordinate for the mouse click
+	 */
+	public Vec3d getGlobalPositionForMouseData(int windowID, int x, int y, DisplayEntity ent) {
+
+		// Determine the plane in the global coordinate system that corresponds
+		// to the entity's local X-Y plane
+		Transform trans = ent.getGlobalTrans();
+		Plane entityPlane = new Plane(); // Defaults to XY
+		entityPlane.transform(trans, entityPlane, new Vec3d());
+
+		// Return the global coordinates for the point on the local X-Y plane
+		// that lines up with the screen coordinates
+		Ray mouseRay = getRayForMouse(windowID, x, y);
+		double mouseDist = entityPlane.collisionDist(mouseRay);
+		return mouseRay.getPointAtDist(mouseDist);
 	}
 
 	public Vec3d getRenderedStringSize(TessFontKey fontKey, double textHeight, String string) {

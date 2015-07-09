@@ -640,7 +640,8 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
-	public void handleMouseClicked(short count) {}
+	public void handleMouseClicked(short count, Vec3d globalCoord) {}
+
 
 	/**
 	 * This method updates the DisplayEntity for changes in the given input
