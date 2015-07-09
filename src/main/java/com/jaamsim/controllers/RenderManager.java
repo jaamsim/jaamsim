@@ -876,19 +876,14 @@ public class RenderManager implements DragSourceListener {
 	 * This method gives the RenderManager a chance to handle mouse drags before the CameraControl
 	 * gets to handle it (note: this may need to be refactored into a proper event handling heirarchy)
 	 * @param dragInfo
-	 * @return
+	 * @return true if the drag action was handled successfully.
 	 */
 	public boolean handleDrag(WindowInteractionListener.DragInfo dragInfo) {
 
-		// Quick outs
-		if (!dragInfo.controlDown())
-			return false;
-
-		if (dragHandleID == 0)
-			return true;
-
+		// If there is no object to move and the control is pressed then do nothing (return true)
+		// If control is not pressed then move the camera (return false)
 		if (selectedEntity == null || !selectedEntity.isMovable())
-			return true;
+			return dragInfo.controlDown();
 
 		// Find the start and current world space positions
 		Ray firstRay = getRayForMouse(dragInfo.windowID, dragInfo.startX, dragInfo.startY);
@@ -906,7 +901,19 @@ public class RenderManager implements DragSourceListener {
 		double currentDist = entityPlane.collisionDist(currentRay);
 		double lastDist = entityPlane.collisionDist(lastRay);
 
+		// If the Control key is not pressed, then the selected entity handles the drag action
+		if (!dragInfo.controlDown()) {
+			Vec3d firstPt = firstRay.getPointAtDist(firstDist);
+			Vec3d currentPt = currentRay.getPointAtDist(currentDist);
+			boolean ret = selectedEntity.handleDrag(currentPt, firstPt);
+			return ret;
+		}
+
 		// Handle each handle by type...
+
+		// Missed the selected entity and its handles
+		if (dragHandleID == 0)
+			return true;
 
 		// MOVE
 		if (dragHandleID == MOVE_PICK_ID)

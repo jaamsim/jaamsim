@@ -666,6 +666,9 @@ public class DisplayEntity extends Entity {
 
 	public void handleMouseClicked(short count, Vec3d globalCoord) {}
 
+	public boolean handleDrag(Vec3d currentPt, Vec3d firstPt) {
+		return false;
+	}
 
 	/**
 	 * This method updates the DisplayEntity for changes in the given input
