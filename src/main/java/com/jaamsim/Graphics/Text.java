@@ -20,6 +20,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
+import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
@@ -30,6 +31,7 @@ import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.OutputInput;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.Unit;
@@ -309,8 +311,27 @@ public class Text extends DisplayEntity {
 
 	@Override
 	public void handleMouseClicked(short count, Vec3d globalCoord) {
+		if (count > 2)
+			return;
+
+		// Double click starts edit mode
 		if (count == 2)
 			editMode = true;
+
+		// Set up the transformation from global coordinates to the entity's coordinates
+		double height = textHeight.getValue();
+		TextModel tm = (TextModel) displayModelListInput.getValue().get(0);
+		Vec3d textsize = RenderManager.inst().getRenderedStringSize(tm.getTessFontKey(), height, editText);
+		Transform trans = getEntityTransForSize(textsize);
+
+		// Calculate the entity's coordinates for the mouse click
+		Vec3d entityCoord = new Vec3d();
+		trans.multAndTrans(globalCoord, entityCoord);
+
+		// Position the insertion point where the text was clicked
+		double insert = entityCoord.x + 0.5d*textsize.x;
+		insertPos = RenderManager.inst().getRenderedStringPosition(tm.getTessFontKey(), height, editText, insert);
+		numSelected = 0;
 	}
 
 	@Override
