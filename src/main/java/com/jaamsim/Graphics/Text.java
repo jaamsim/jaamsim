@@ -183,6 +183,31 @@ public class Text extends DisplayEntity {
 		numSelected = 0;
 	}
 
+	private void selectPresentWord() {
+
+		// Find the end of the present word
+		int end = editText.length();
+		for (int i=insertPos; i<editText.length(); i++) {
+			if (editText.charAt(i) == ' ') {
+				end = i + 1;
+				break;
+			}
+		}
+
+		// Find the start of the present word
+		int start = 0;
+		for (int i=insertPos-1; i>=0; i--) {
+			if (editText.charAt(i) == ' ') {
+				start = i + 1;
+				break;
+			}
+		}
+
+		// Set the insert position and selection
+		insertPos = end;
+		numSelected = start - end;
+	}
+
 	@Override
 	public void handleKeyPressed(int keyCode, char keyChar, boolean shift, boolean control, boolean alt) {
 
@@ -332,6 +357,10 @@ public class Text extends DisplayEntity {
 		double insert = entityCoord.x + 0.5d*textsize.x;
 		insertPos = RenderManager.inst().getRenderedStringPosition(tm.getTessFontKey(), height, editText, insert);
 		numSelected = 0;
+
+		// Double click selects a whole word
+		if (count == 2)
+			selectPresentWord();
 	}
 
 	@Override
