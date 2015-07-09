@@ -320,6 +320,12 @@ public class Text extends DisplayEntity {
 					deleteSelection();
 					pasteFromClipboard();
 					break;
+				}
+
+			case KeyEvent.VK_X:
+				if (control) {
+					copyToClipboard();
+					deleteSelection();
 					break;
 				}
 
