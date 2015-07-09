@@ -14,7 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 -->
 <project name="jaamsim" basedir="." default="jar">
-  <property name="ver"           value="2015-26"/>
+  <property name="ver"           value="2015-27"/>
   <property name="src.dir"       location="src/main"/>
   <property name="res.dir"       location="src/main/resources"/>
   <property name="build.dir"     location="build"/>
