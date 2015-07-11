@@ -330,7 +330,7 @@ public class Text extends DisplayEntity {
 				}
 
 			default:
-				if (keyChar == KeyEvent.VK_UNDEFINED)
+				if (keyChar == KeyEvent.VK_UNDEFINED || control)
 					break;
 				deleteSelection();
 				StringBuilder sb = new StringBuilder(editText);
