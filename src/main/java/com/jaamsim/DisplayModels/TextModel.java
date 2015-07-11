@@ -263,27 +263,33 @@ public class TextModel extends DisplayModel {
 			// If the text is being edited, show the selection and the text insertion mark
 			if (editMode) {
 				double length = RenderManager.inst().getRenderedStringLength(fk, height, text);
+				double ycoord = 0.5*height*1.5d;
+				double zcoord = 0.01*height;
 
 				// Highlight the selected text
 				if (numSelected != 0) {
 					int startPos = Math.min(insertPos, insertPos + numSelected);
 					int endPos = Math.max(insertPos, insertPos + numSelected);
+
+					// Calculate the position of the selected text in metres relative to the centre of the string
 					double start = RenderManager.inst().getOffsetForStringPosition(fk, height, text, startPos) - 0.5d*length;
 					double end = RenderManager.inst().getOffsetForStringPosition(fk, height, text, endPos) - 0.5d*length;
-					double middle = 0.5d*(start + end);
 
-					Transform selectionTrans = new Transform(trans);
-					selectionTrans.addTrans(new Vec3d(middle, 0.0d, -0.01*height));
-					Vec3d scale = new Vec3d(end - start, height*1.5d, 0.0d);
-					cachedProxies.add(new PolygonProxy(RenderUtils.RECT_POINTS, selectionTrans, scale,
+					ArrayList<Vec4d> rect = new ArrayList<>();
+					rect.add(new Vec4d( start,  ycoord, -zcoord, 1.0d ));
+					rect.add(new Vec4d( start, -ycoord, -zcoord, 1.0d ));
+					rect.add(new Vec4d(   end, -ycoord, -zcoord, 1.0d ));
+					rect.add(new Vec4d(   end,  ycoord, -zcoord, 1.0d ));
+					Vec3d scale = new Vec3d(1.0d, 1.0d, 1.0d);
+					cachedProxies.add(new PolygonProxy(rect, trans, scale,
 							ColourInput.LIGHT_GREY, false, 1, vi, labelObservee.getEntityNumber()));
 				}
 
 				// Show the text insertion mark
 				double insert = RenderManager.inst().getOffsetForStringPosition(fk, height, text, insertPos) - 0.5d*length;
 				ArrayList<Vec4d> points = new ArrayList<>();
-				points.add(new Vec4d(insert, -0.5d*height*1.5d, 0.01*height, 1.0d));
-				points.add(new Vec4d(insert,  0.5d*height*1.5d, 0.01*height, 1.0d));
+				points.add(new Vec4d( insert, -ycoord, zcoord, 1.0d ));
+				points.add(new Vec4d( insert,  ycoord, zcoord, 1.0d ));
 				RenderUtils.transformPointsLocal(trans, points, 0);
 				cachedProxies.add(new LineProxy(points, ColourInput.BLACK, 1, vi, labelObservee.getEntityNumber()));
 			}
