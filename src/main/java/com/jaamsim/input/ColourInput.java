@@ -52,7 +52,6 @@ static {
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCount(kw, 1, 3);
 		value = Input.parseColour(kw);
 	}
 

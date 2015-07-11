@@ -1355,17 +1355,21 @@ public abstract class Input<T> {
 
 	public static Color4d parseColour(KeywordIndex kw) {
 
-		Input.assertCount(kw, 1, 3);
+		Input.assertCountRange(kw, 1, 4);
 
 		// Color names
-		if (kw.numArgs() == 1) {
+		if (kw.numArgs() <= 2) {
 			Color4d colAtt = ColourInput.getColorWithName(kw.getArg(0).toLowerCase());
-			if( colAtt == null ) {
+			if( colAtt == null )
 				throw new InputErrorException( "Color " + kw.getArg( 0 ) + " not found" );
-			}
-			else {
+
+			if (kw.numArgs() == 1)
 				return colAtt;
-			}
+
+			double a = Input.parseDouble(kw.getArg(1), 0.0d, 255.0d);
+			if (a > 1.0f)
+				a /= 255.0d;
+			return new Color4d(colAtt.r, colAtt.b, colAtt.g, a);
 		}
 
 		// RGB
@@ -1374,14 +1378,18 @@ public abstract class Input<T> {
 			double r = dbuf.get(0);
 			double g = dbuf.get(1);
 			double b = dbuf.get(2);
+			double a = 1.0d;
+			if (dbuf.size() == 4)
+				a = dbuf.get(3);
 
-			if (r > 1.0f || g > 1.0f || b > 1.0f) {
+			if (r > 1.0f || g > 1.0f || b > 1.0f || a > 1.0f) {
 				r /= 255.0d;
 				g /= 255.0d;
 				b /= 255.0d;
+				a /= 255.0d;
 			}
 
-			return new Color4d(r, g, b);
+			return new Color4d(r, g, b, a);
 		}
 	}
 
