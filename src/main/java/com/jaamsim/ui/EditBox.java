@@ -400,7 +400,7 @@ implements TableCellEditor, ActionListener {
 			}
 
 			Color4d col = ((ColourInput)input).getValue();
-			colorChooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b));
+			colorChooser.setColor(new Color((float)col.r, (float)col.g, (float)col.b, (float)col.a));
 			dialog.setLocationRelativeTo((Component)e.getSource());
 			dialog.setVisible(true);
 
@@ -412,8 +412,13 @@ implements TableCellEditor, ActionListener {
 		}
 		else {
 			Color color = colorChooser.getColor();
-			text.setText( String.format("%d %d %d", color.getRed(),
-					color.getGreen(), color.getBlue() ) );
+			if (color.getAlpha() == 255) {
+				text.setText( String.format("%d %d %d",
+						color.getRed(), color.getGreen(), color.getBlue() ) );
+				return;
+			}
+			text.setText( String.format("%d %d %d %d",
+					 color.getRed(),color.getGreen(), color.getBlue(), color.getAlpha() ) );
 		}
 	}
 
