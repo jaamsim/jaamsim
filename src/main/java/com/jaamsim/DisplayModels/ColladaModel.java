@@ -53,12 +53,13 @@ import com.jaamsim.ui.MenuItemEntity;
 
 public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
-	@Keyword(description = "The file containing the image to show, valid formats are: BMP, JPG, PNG, PCX, GIF.",
-	         example = "Ship3DModel ColladaFile { ..\\images\\CompanyIcon.png }")
+	@Keyword(description = "The file containing the 3d object to show, valid formats are: "
+			+ "DAE, OBJ, JSM, and JSB, or a compressed version of any of these files in ZIP format.",
+	         exampleList = {"..\\graphics\\ship.dae", "..\\graphics\\ship.dae.zip" })
 	private final FileInput colladaFile;
 
 	@Keyword(description = "A list of active actions and the entity output that drives them",
-	         example = "Ship3DModel Actions { { ContentAction Contents } { BoomAngleAction BoomAngle } }")
+	         exampleList = { "{ ContentAction Contents } { BoomAngleAction BoomAngle }" })
 	private final ActionListInput actions;
 
 	private static HashMap<URI, MeshProtoKey> _cachedKeys = new HashMap<>();
