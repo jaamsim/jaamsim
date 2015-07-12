@@ -1,15 +1,15 @@
-Define			DisplayModel			{ Pixels }
+Define			ShapeModel				{ Pixels }
 Pixels			Shape					{ PIXELS }
-Define			DisplayModel			{ Rectangle }
+Define			ShapeModel				{ Rectangle }
 Rectangle		Shape					{ RECTANGLE }
-Define				DisplayModel		{ Circle }
+Define				ShapeModel			{ Circle }
 Circle				Shape				{ CIRCLE }
-Define				DisplayModel		{ Arrow2D }
+Define				ShapeModel			{ Arrow2D }
 Arrow2D				Shape				{ ARROW2D }
-Define				DisplayModel		{ Triangle }
+Define				ShapeModel			{ Triangle }
 Triangle			Shape				{ TRIANGLE }
 
-Define				DisplayModel		{ BarGauge2D }
+Define				ShapeModel			{ BarGauge2D }
 BarGauge2D			Shape				{ BARGAUGE2D }
 
 Define				ColladaModel		{ CrossHairs }
