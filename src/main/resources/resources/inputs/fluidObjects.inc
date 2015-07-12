@@ -26,9 +26,9 @@ FluidCentrifugalPumpIconModel  ImageFile { '<res>/images/Pump-256.png' }   Trans
 
 Fluid                 DefaultDisplayModel 	{ FluidIconModel }
 FluidFlow             DefaultDisplayModel 	{ FluidFlowIconModel }
-FluidFixedFlow        DefaultDisplayModel 	{ ScreenPointsModelDefault }
+FluidFixedFlow        DefaultDisplayModel 	{ PolylineModelDefault }
 FluidTank             DefaultDisplayModel   { BarGauge2D }
-FluidPipe             DefaultDisplayModel 	{ ScreenPointsModelDefault }
+FluidPipe             DefaultDisplayModel 	{ PolylineModelDefault }
 FluidCentrifugalPump  DefaultDisplayModel 	{ FluidCentrifugalPumpIconModel }
 
 Fluid                Description { 'Defines a specific fluid and its properties.' }
