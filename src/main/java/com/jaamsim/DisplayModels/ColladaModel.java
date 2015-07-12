@@ -83,13 +83,13 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 	}
 
 	{
-		colladaFile = new FileInput( "ColladaFile", "DisplayModel", null );
+		colladaFile = new FileInput( "ColladaFile", "Key Inputs", null );
 		colladaFile.setFileType("3D");
 		colladaFile.setValidFileExtensions(validFileExtensions);
 		colladaFile.setValidFileDescriptions(validFileDescriptions);
 		this.addInput( colladaFile);
 
-		actions = new ActionListInput("Actions", "DisplayModel", new ArrayList<Action.Binding>());
+		actions = new ActionListInput("Actions", "Key Inputs", new ArrayList<Action.Binding>());
 		this.addInput(actions);
 	}
 

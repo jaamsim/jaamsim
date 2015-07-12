@@ -69,16 +69,16 @@ public class ImageModel extends DisplayModel {
 	}
 
 	{
-		imageFile = new FileInput( "ImageFile", "DisplayModel", null );
+		imageFile = new FileInput( "ImageFile", "Key Inputs", null );
 		imageFile.setFileType("Image");
 		imageFile.setValidFileExtensions(validFileExtensions);
 		imageFile.setValidFileDescriptions(validFileDescriptions);
 		this.addInput( imageFile);
 
-		transparent = new BooleanInput("Transparent", "DisplayModel", false);
+		transparent = new BooleanInput("Transparent", "Key Inputs", false);
 		this.addInput(transparent);
 
-		compressedTexture = new BooleanInput("CompressedTexture", "DisplayModel", false);
+		compressedTexture = new BooleanInput("CompressedTexture", "Key Inputs", false);
 		this.addInput(compressedTexture);
 
 	}
