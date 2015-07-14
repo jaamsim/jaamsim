@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
@@ -212,7 +213,7 @@ public class DisplayEntity extends Entity {
 		ArrayList<DisplayModel> displayModels = displayModelListInput.getValue();
 		if (displayModels != null && displayModels.size() > 0) {
 			DisplayModel dm0 = displayModels.get(0);
-			if (dm0 instanceof DisplayModelCompat || dm0 instanceof ImageModel || dm0 instanceof TextModel )
+			if (dm0 instanceof ShapeModel || dm0 instanceof ImageModel || dm0 instanceof TextModel )
 				alignBottom = false;
 		}
 

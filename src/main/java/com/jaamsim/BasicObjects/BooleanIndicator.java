@@ -1,7 +1,7 @@
 package com.jaamsim.BasicObjects;
 
+import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.DisplayModelCompat;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -58,10 +58,10 @@ public class BooleanIndicator extends DisplayEntity {
 			return;
 		Boolean b = boolProp.getOutputValue(time);
 		if (b.booleanValue()) {
-			setTagColour(DisplayModelCompat.TAG_CONTENTS, trueColor.getValue());
+			setTagColour(ShapeModel.TAG_CONTENTS, trueColor.getValue());
 		}
 		else {
-			setTagColour(DisplayModelCompat.TAG_CONTENTS, falseColor.getValue());
+			setTagColour(ShapeModel.TAG_CONTENTS, falseColor.getValue());
 		}
 	}
 

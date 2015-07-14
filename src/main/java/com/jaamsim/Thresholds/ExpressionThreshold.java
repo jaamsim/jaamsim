@@ -14,7 +14,7 @@
  */
 package com.jaamsim.Thresholds;
 
-import com.jaamsim.Graphics.DisplayModelCompat;
+import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
@@ -138,10 +138,10 @@ public class ExpressionThreshold extends Threshold {
 			col = pendingOpenColour.getValue();
 
 		// Display the threshold icon
-		setTagVisibility(DisplayModelCompat.TAG_CONTENTS, true);
-		setTagVisibility(DisplayModelCompat.TAG_OUTLINES, true);
-		setTagColour(DisplayModelCompat.TAG_CONTENTS, col);
-		setTagColour(DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK);
+		setTagVisibility(ShapeModel.TAG_CONTENTS, true);
+		setTagVisibility(ShapeModel.TAG_OUTLINES, true);
+		setTagColour(ShapeModel.TAG_CONTENTS, col);
+		setTagColour(ShapeModel.TAG_OUTLINES, ColourInput.BLACK);
 	}
 
 	@Override

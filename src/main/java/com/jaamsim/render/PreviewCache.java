@@ -26,9 +26,9 @@ import javax.imageio.ImageIO;
 
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.DisplayModelCompat;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
@@ -134,7 +134,7 @@ public class PreviewCache {
 			dm.getBinding(dummyEntity).collectProxies(0, proxies);
 
 			boolean isFlat = true;
-			if (dm instanceof DisplayModelCompat) {
+			if (dm instanceof ShapeModel) {
 				isFlat = true;
 			}
 			if (dm instanceof ColladaModel) {

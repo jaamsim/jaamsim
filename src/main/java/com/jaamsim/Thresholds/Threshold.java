@@ -16,7 +16,7 @@ package com.jaamsim.Thresholds;
 
 import java.util.ArrayList;
 
-import com.jaamsim.Graphics.DisplayModelCompat;
+import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
@@ -207,18 +207,18 @@ public class Threshold extends StateEntity {
 		Color4d col;
 		if (open) {
 			col = openColour.getValue();
-			setTagVisibility(DisplayModelCompat.TAG_CONTENTS, showWhenOpen.getValue());
-			setTagVisibility(DisplayModelCompat.TAG_OUTLINES, showWhenOpen.getValue());
+			setTagVisibility(ShapeModel.TAG_CONTENTS, showWhenOpen.getValue());
+			setTagVisibility(ShapeModel.TAG_OUTLINES, showWhenOpen.getValue());
 		}
 		else {
 			col = closedColour.getValue();
-			setTagVisibility(DisplayModelCompat.TAG_CONTENTS, showWhenClosed.getValue());
-			setTagVisibility(DisplayModelCompat.TAG_OUTLINES, showWhenClosed.getValue());
+			setTagVisibility(ShapeModel.TAG_CONTENTS, showWhenClosed.getValue());
+			setTagVisibility(ShapeModel.TAG_OUTLINES, showWhenClosed.getValue());
 
 		}
 
-		setTagColour( DisplayModelCompat.TAG_CONTENTS, col );
-		setTagColour( DisplayModelCompat.TAG_OUTLINES, ColourInput.BLACK );
+		setTagColour( ShapeModel.TAG_CONTENTS, col );
+		setTagColour( ShapeModel.TAG_OUTLINES, ColourInput.BLACK );
 	}
 
 	@Output(name = "Open",

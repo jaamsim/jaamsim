@@ -14,7 +14,7 @@
  */
 package com.jaamsim.FluidObjects;
 
-import com.jaamsim.Graphics.DisplayModelCompat;
+import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
@@ -117,10 +117,10 @@ public class FluidTank extends FluidComponent {
 
 		double ratio = Math.min( 1.0, fluidVolume / capacityInput.getValue() );
 
-		setTagSize(DisplayModelCompat.TAG_CONTENTS, ratio);
+		setTagSize(ShapeModel.TAG_CONTENTS, ratio);
 
 		if( this.getFluid() != null )
-			setTagColour(DisplayModelCompat.TAG_CONTENTS, this.getFluid().getColour());
+			setTagColour(ShapeModel.TAG_CONTENTS, this.getFluid().getColour());
 	}
 
 	@Output(name = "FluidVolume",
