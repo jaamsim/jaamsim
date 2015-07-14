@@ -1,6 +1,7 @@
 Define ObjectType {
                     ArrowModel
                     GraphModel
+                    PolylineModel
                     ScreenPointsModel
                     TextModel
                     ImageModel
@@ -10,6 +11,7 @@ Define ObjectType {
 
 ArrowModel             JavaClass { com.jaamsim.DisplayModels.ArrowModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
 GraphModel             JavaClass { com.jaamsim.DisplayModels.GraphModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
+PolylineModel          JavaClass { com.jaamsim.DisplayModels.PolylineModel            } Palette { 'Display Models' }    DragAndDrop { FALSE }
 ScreenPointsModel      JavaClass { com.jaamsim.DisplayModels.ScreenPointsModel        } Palette { 'Display Models' }    DragAndDrop { FALSE }
 TextModel              JavaClass { com.jaamsim.DisplayModels.TextModel                } Palette { 'Display Models' }    DragAndDrop { FALSE }
 ImageModel             JavaClass { com.jaamsim.DisplayModels.ImageModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
@@ -19,6 +21,7 @@ DisplayModel           JavaClass { com.jaamsim.Graphics.DisplayModelCompat      
 Define ColladaModel        { RegionModelDefault         }
 Define ArrowModel          { ArrowModelDefault          }
 Define GraphModel          { GraphModelDefault          }
+Define PolylineModel       { PolylineModelDefault       }
 Define ScreenPointsModel   { ScreenPointsModelDefault   }
 Define TextModel           { TextModelDefault           }
 
