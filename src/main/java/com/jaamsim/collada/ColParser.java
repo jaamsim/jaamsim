@@ -925,7 +925,7 @@ public class ColParser {
 		XmlNode bindMat = instCont.findChildTag("bind_material", false);
 
 		if (bindMat != null) {
-			addMatInfoToGetInst(bindMat, instInfo);
+			addMatInfoToGeoInst(bindMat, instInfo);
 		}
 
 		// Now we need to add in an extra scene not to accommodate the bind space matrix held in the controller
@@ -942,13 +942,13 @@ public class ColParser {
 		XmlNode bindMat = instGeo.findChildTag("bind_material", false);
 
 		if (bindMat != null) {
-			addMatInfoToGetInst(bindMat, instInfo);
+			addMatInfoToGeoInst(bindMat, instInfo);
 		}
 
 		return instInfo;
 	}
 
-	private void addMatInfoToGetInst(XmlNode bindMat, GeoInstInfo instInfo) {
+	private void addMatInfoToGeoInst(XmlNode bindMat, GeoInstInfo instInfo) {
 
 		XmlNode techCommon = bindMat.findChildTag("technique_common", false);
 		parseAssert(techCommon != null);
