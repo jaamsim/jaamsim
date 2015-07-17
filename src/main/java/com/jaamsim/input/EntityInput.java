@@ -24,12 +24,14 @@ public class EntityInput<T extends Entity> extends Input<T> {
 	private Class<T> entClass;
 	private Class<? extends T> entSubClass;  // a particular sub-class that can be set at runtime
 	private boolean includeSubclasses;  // flag to determine if subclasses are valid
+	private ArrayList<Class<? extends Entity>> invalidClasses; // list of invalid classes (including subclasses).  if empty, then all classes are valid
 
 	public EntityInput(Class<T> aClass, String key, String cat, T def) {
 		super(key, cat, def);
 		entClass = aClass;
 		entSubClass = aClass;
 		includeSubclasses = true;
+		invalidClasses = new ArrayList<>();
 	}
 
 	public void setSubClass(Class<? extends T> aClass) {
@@ -78,10 +80,21 @@ public class EntityInput<T extends Entity> extends Input<T> {
 			}
 		}
 
+		for( Class<? extends Entity> c : invalidClasses ) {
+			if( c.isAssignableFrom( ent.getClass() ) ) {
+				return false;
+			}
+		}
+
 		return true;
 	}
 
 	public void setIncludeSubclasses(boolean bool) {
 		this.includeSubclasses = bool;
 	}
+
+	public void setInvalidClasses(ArrayList<Class<? extends Entity>> classes ) {
+		invalidClasses = classes;
+	}
+
 }
