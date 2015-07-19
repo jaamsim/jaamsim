@@ -21,6 +21,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.ObjectSelector;
 
 public class EntityLabel extends TextBasics {
 
@@ -66,6 +67,7 @@ public class EntityLabel extends TextBasics {
 			InputAgent.renameEntity(this, newName + "_Label");
 
 			// Update the entries in the Object Selector
+			ObjectSelector.allowUpdate();
 			FrameBox.reSelectEntity();
 
 			super.acceptEdits();

@@ -141,6 +141,10 @@ public class ObjectSelector extends FrameBox {
 		}
 	}
 
+	public static void allowUpdate() {
+		myInstance.entSequence = 0;
+	}
+
 	/**
 	 * Returns the only instance of the Object Selector
 	 */
