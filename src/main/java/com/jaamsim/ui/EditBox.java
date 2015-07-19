@@ -120,8 +120,12 @@ public class EditBox extends FrameBox {
 
 	@Override
 	public void setEntity(Entity entity) {
-		if (entity == currentEntity)
+		if (entity == currentEntity) {
+			// Reset the title in case the entity's name has changed
+			if (currentEntity != null)
+				setTitle("Input Editor - " + currentEntity.getName());
 			return;
+		}
 
 		if (currentEntity != null) {
 			int idx = jTabbedFrame.getSelectedIndex();
