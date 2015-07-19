@@ -22,7 +22,7 @@ Define ColladaModel        { RegionModelDefault         }
 Define ArrowModel          { ArrowModelDefault          }
 Define GraphModel          { GraphModelDefault          }
 Define PolylineModel       { PolylineModelDefault       }
-Define TextModel           { TextModelDefault           }
+Define TextModel           { TextModelDefault  EntityLabelModel }
 
 RegionModelDefault ColladaFile { <res>/shapes/axis_text.dae }
 
@@ -34,6 +34,7 @@ Define ObjectType {
                     Region
                     DisplayEntity
                     Text
+                    EntityLabel
                     OverlayImage
                     OverlayText
                     OverlayClock
@@ -47,6 +48,7 @@ View                  JavaClass { com.jaamsim.ui.View                           
 Region                JavaClass { com.jaamsim.Graphics.Region                        } Palette { 'Graphics Objects' } DefaultDisplayModel { RegionModelDefault       } IconFile { '<res>/images/Region-24.png' } DefaultSize { 1.125000 1.1568242 1.1266404 m } DefaultAlignment { -0.4393409 -0.4410096 -0.4394292 }
 DisplayEntity         JavaClass { com.jaamsim.Graphics.DisplayEntity                 } Palette { 'Graphics Objects' }                                                  IconFile { '<res>/images/DisplayEntity-24.png' }
 Text                  JavaClass { com.jaamsim.Graphics.Text                          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
+EntityLabel           JavaClass { com.jaamsim.Graphics.EntityLabel                   } Palette { 'Graphics Objects' } DefaultDisplayModel { EntityLabelModel         } DragAndDrop { FALSE }
 OverlayImage          JavaClass { com.jaamsim.Graphics.OverlayImage                  } Palette { 'Graphics Objects' }
 OverlayText           JavaClass { com.jaamsim.Graphics.OverlayText                   } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
 OverlayClock          JavaClass { com.jaamsim.Graphics.OverlayClock                  } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
