@@ -376,7 +376,6 @@ public class ObjectSelector extends FrameBox {
 
 		@Override
 		public void treeNodesChanged( TreeModelEvent e ) {
-
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 			String newName = ((String)node.getUserObject()).trim();
 			try {
@@ -534,6 +533,7 @@ static class LabelMenuItem extends MenuItem {
 		double ypos = -0.15 - 0.5*ent.getSize().y;
 		InputAgent.apply(label, InputAgent.formatPointInputs("Position", new Vec3d(0.0, ypos, 0.0), "m"));
 		InputAgent.applyArgs(label, "TextHeight", "0.15", "m");
+		label.resizeForText();
 	}
 }
 

@@ -66,6 +66,9 @@ public class EntityLabel extends TextBasics {
 			InputAgent.renameEntity(targetEntity.getValue(), newName);
 			InputAgent.renameEntity(this, newName + "_Label");
 
+			// Resize the label so that it fits the text
+			this.resizeForText();
+
 			// Update the entries in the Object Selector
 			ObjectSelector.allowUpdate();
 			FrameBox.reSelectEntity();

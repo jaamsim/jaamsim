@@ -21,6 +21,7 @@ import java.awt.datatransfer.StringSelection;
 
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Transform;
@@ -326,6 +327,20 @@ public abstract class TextBasics extends DisplayEntity {
 
 	public double getTextHeight() {
 		return textHeight.getValue().doubleValue();
+	}
+
+	public Vec3d getTextSize() {
+		double height = textHeight.getValue();
+		TextModel tm = (TextModel) displayModelListInput.getValue().get(0);
+		return RenderManager.inst().getRenderedStringSize(tm.getTessFontKey(), height, savedText);
+		}
+
+	public void resizeForText() {
+		Vec3d textSize = getTextSize();
+		double length = textSize.x + textSize.y;
+		double height = 2.0 * textSize.y;
+		Vec3d newSize = new Vec3d(length, height, 0.0);
+		InputAgent.apply(this, InputAgent.formatPointInputs("Size", newSize, "m"));
 	}
 
 	public boolean isEditMode() {
