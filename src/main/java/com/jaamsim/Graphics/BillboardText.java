@@ -22,4 +22,9 @@ package com.jaamsim.Graphics;
  */
 public class BillboardText extends Text {
 
+	{
+		// Set the default text height to 10 pixels
+		textHeight.setDefaultValue(10.0);
+	}
+
 }
