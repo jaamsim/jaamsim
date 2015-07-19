@@ -42,10 +42,10 @@ import javax.swing.tree.TreeSelectionModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.Text;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
@@ -375,36 +375,16 @@ public class ObjectSelector extends FrameBox {
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 			String newName = ((String)node.getUserObject()).trim();
-
-			// Check that the entity was defined AFTER the RecordEdits command
-			if (!currentEntity.testFlag(Entity.FLAG_ADDED)) {
-				GUIFrame.showErrorDialog("Input Error",
-						"Cannot rename an entity that was defined before the RecordEdits command.");
-				node.setUserObject(currentEntity);
-				return;
+			try {
+				InputAgent.renameEntity(currentEntity, newName);
 			}
-
-			// Check that the new name is valid
-			if (newName.contains(" ") || newName.contains("\t") || newName.contains("{") || newName.contains("}")) {
-				GUIFrame.showErrorDialog("Input Error",
-						"Entity names cannot contain spaces, tabs, or braces ({}).");
-				node.setUserObject(currentEntity);
-				return;
+			catch (ErrorException err) {
+				GUIFrame.showErrorDialog("Input Error", err.getMessage());
 			}
-
-			// Check that the name has not been used already
-			Entity existingEnt = Input.tryParseEntity(newName, Entity.class);
-			if (existingEnt != null && existingEnt != currentEntity) {
-				GUIFrame.showErrorDialog("Input Error",
-						"Entity name: %s is already in use.", newName);
+			finally {
 				node.setUserObject(currentEntity);
-				return;
+				FrameBox.reSelectEntity();
 			}
-
-			// Rename the entity
-			currentEntity.setName(newName);
-			node.setUserObject(currentEntity);
-			FrameBox.setSelectedEntity(currentEntity);
 		}
 
 		@Override

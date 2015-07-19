@@ -510,6 +510,30 @@ public class InputAgent {
 		return ent;
 	}
 
+	/**
+	 * Assigns a new name to the given entity.
+	 * @param ent - entity to be renamed
+	 * @param newName - new name for the entity
+	 */
+	public static void renameEntity(Entity ent, String newName) {
+
+		// Check that the entity was defined AFTER the RecordEdits command
+		if (!ent.testFlag(Entity.FLAG_ADDED))
+			throw new ErrorException("Cannot rename an entity that was defined before the RecordEdits command.");
+
+		// Check that the new name is valid
+		if (newName.contains(" ") || newName.contains("\t") || newName.contains("{") || newName.contains("}"))
+			throw new ErrorException("Entity names cannot contain spaces, tabs, or braces ({}).");
+
+		// Check that the name has not been used already
+		Entity existingEnt = Input.tryParseEntity(newName, Entity.class);
+		if (existingEnt != null && existingEnt != ent)
+			throw new ErrorException("Entity name: %s is already in use.", newName);
+
+		// Rename the entity
+		ent.setName(newName);
+	}
+
 	public static void processKeywordRecord(ArrayList<String> record, ParseContext context) {
 		Entity ent = Input.tryParseEntity(record.get(0), Entity.class);
 		if (ent == null) {
