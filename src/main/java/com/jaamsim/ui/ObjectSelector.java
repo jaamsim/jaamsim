@@ -425,10 +425,7 @@ static class InputMenuItem extends MenuItem {
 
 	@Override
 	public void action() {
-		ArrayList<String> arg = new ArrayList<>(1);
-		arg.add("TRUE");
-		KeywordIndex kw = new KeywordIndex("ShowInputEditor", arg, null);
-		InputAgent.apply(Simulation.getInstance(), kw);
+		InputAgent.applyArgs(Simulation.getInstance(), "ShowInputEditor", "TRUE");
 		FrameBox.setSelectedEntity(ent);
 	}
 }
@@ -442,10 +439,7 @@ static class PropertyMenuItem extends MenuItem {
 
 	@Override
 	public void action() {
-		ArrayList<String> arg = new ArrayList<>(1);
-		arg.add("TRUE");
-		KeywordIndex kw = new KeywordIndex("ShowPropertyViewer", arg, null);
-		InputAgent.apply(Simulation.getInstance(), kw);
+		InputAgent.applyArgs(Simulation.getInstance(), "ShowPropertyViewer", "TRUE");
 		FrameBox.setSelectedEntity(ent);
 	}
 }
@@ -459,10 +453,7 @@ static class OutputMenuItem extends MenuItem {
 
 	@Override
 	public void action() {
-		ArrayList<String> arg = new ArrayList<>(1);
-		arg.add("TRUE");
-		KeywordIndex kw = new KeywordIndex("ShowOutputViewer", arg, null);
-		InputAgent.apply(Simulation.getInstance(), kw);
+		InputAgent.applyArgs(Simulation.getInstance(), "ShowOutputViewer", "TRUE");
 		FrameBox.setSelectedEntity(ent);
 	}
 }

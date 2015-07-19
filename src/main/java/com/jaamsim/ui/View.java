@@ -337,10 +337,7 @@ public class View extends Entity {
 	}
 
 	public void setRegion(Region reg) {
-		ArrayList<String> tokens = new ArrayList<>(1);
-		tokens.add(reg.getName());
-		KeywordIndex kw = new KeywordIndex(region.getKeyword(), tokens, null);
-		InputAgent.apply(this, kw);
+		InputAgent.applyArgs(this, region.getKeyword(), reg.getName());
 	}
 
 	public void setPosition(Vec3d pos) {

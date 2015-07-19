@@ -14,8 +14,6 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
-import java.util.ArrayList;
-
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
@@ -26,7 +24,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
@@ -139,10 +136,7 @@ implements SampleProvider {
 		}
 
 		// Set the random number seed next unused value
-		ArrayList<String> tokens = new ArrayList<>();
-		tokens.add(String.format("%s", seed+1));
-		KeywordIndex kw = new KeywordIndex("RandomSeed", tokens, null);
-		InputAgent.apply(this, kw);
+		InputAgent.applyArgs(this, "RandomSeed", String.format("%s", seed+1));
 	}
 
 	@Override

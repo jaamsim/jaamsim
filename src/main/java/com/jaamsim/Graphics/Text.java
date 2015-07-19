@@ -18,7 +18,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.controllers.RenderManager;
@@ -26,7 +25,6 @@ import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.OutputInput;
 import com.jaamsim.input.StringInput;
@@ -121,10 +119,7 @@ public class Text extends DisplayEntity {
 		super.setInputsForDragAndDrop();
 
 		// Set the displayed text to the entity's name
-		ArrayList<String> tokens = new ArrayList<>(1);
-		tokens.add(this.getName());
-		KeywordIndex kw = new KeywordIndex("Format", tokens, null);
-		InputAgent.apply(this, kw);
+		InputAgent.applyArgs(this, "Format", this.getName());
 	}
 
 	public String getRenderText(double simTime) {
@@ -175,9 +170,7 @@ public class Text extends DisplayEntity {
 	}
 
 	private void acceptEdits() {
-		ArrayList<String> args = new ArrayList<>();
-		args.add(editText);
-		InputAgent.apply(this, new KeywordIndex("Format", args, null));
+		InputAgent.applyArgs(this, "Format", editText);
 		editMode = false;
 		insertPos = editText.length();
 		numSelected = 0;

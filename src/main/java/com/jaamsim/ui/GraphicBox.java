@@ -50,7 +50,6 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
@@ -204,12 +203,7 @@ public class GraphicBox extends JDialog {
 			public void actionPerformed( ActionEvent e ) {
 				setEnabled(false); // Don't accept any interaction
 				DisplayModel dm = displayModelList.getSelectedValue();
-
-				ArrayList<String> tokens = new ArrayList<>(1);
-				tokens.add(dm.getName());
-
-				KeywordIndex kw = new KeywordIndex("DisplayModel", tokens, null);
-				InputAgent.apply(currentEntity, kw);
+				InputAgent.applyArgs(currentEntity, "DisplayModel", dm.getName());
 
 				if (!RenderManager.isGood()) {
 					myInstance.close();

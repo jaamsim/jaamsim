@@ -221,15 +221,8 @@ public class DisplayEntity extends Entity {
 			alignBottom = false;
 		}
 
-		if (alignBottom) {
-			ArrayList<String> tokens = new ArrayList<>();
-			tokens.add("0.0");
-			tokens.add("0.0");
-			tokens.add("-0.5");
-
-			KeywordIndex kw = new KeywordIndex("Alignment", tokens, null);
-			InputAgent.apply(this, kw);
-		}
+		if (alignBottom)
+			InputAgent.applyArgs(this, "Alignment", "0.0", "0.0", "-0.5");
 	}
 
 	/**
