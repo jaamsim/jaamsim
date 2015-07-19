@@ -40,7 +40,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.Text;
+import com.jaamsim.Graphics.EntityLabel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObjectType;
@@ -520,17 +520,16 @@ static class LabelMenuItem extends MenuItem {
 
 	@Override
 	public void action() {
-		Text label = InputAgent.defineEntityWithUniqueName(Text.class, "Text", "", true);
+		EntityLabel label = InputAgent.defineEntityWithUniqueName(EntityLabel.class, ent.getName() + "_Label", "", true);
+		InputAgent.applyArgs(label, "TargetEntity", ent.getName());
 
 		InputAgent.applyArgs(label, "RelativeEntity", ent.getName());
 		if (ent.getCurrentRegion() != null)
 			InputAgent.applyArgs(label, "Region", ent.getCurrentRegion().getName());
 
 		double ypos = -0.15 - 0.5*ent.getSize().y;
-		InputAgent.applyArgs(label, "Position", "0.0", Double.toString(ypos), "0.0", "m");
+		InputAgent.apply(label, InputAgent.formatPointInputs("Position", new Vec3d(0.0, ypos, 0.0), "m"));
 		InputAgent.applyArgs(label, "TextHeight", "0.15", "m");
-		InputAgent.applyArgs(label, "Format", "%s");
-		InputAgent.applyArgs(label, "OutputName", ent.getName(), "Name");
 
 		FrameBox.setSelectedEntity(label);
 	}
