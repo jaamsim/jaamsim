@@ -21,7 +21,7 @@ import java.util.Arrays;
 
 import com.jaamsim.Graphics.BillboardText;
 import com.jaamsim.Graphics.OverlayText;
-import com.jaamsim.Graphics.Text;
+import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.datatypes.IntegerVector;
@@ -144,7 +144,7 @@ public class TextModel extends DisplayModel {
 	public DisplayModelBinding getBinding(Entity ent) {
 		if (ent instanceof BillboardText) {
 			return new BillboardBinding(ent, this);
-		} else if (ent instanceof Text) {
+		} else if (ent instanceof TextBasics) {
 			return new Binding(ent, this);
 		} else if (ent instanceof OverlayText){
 			return new OverlayBinding(ent, this);
@@ -155,12 +155,12 @@ public class TextModel extends DisplayModel {
 
 	@Override
 	public boolean canDisplayEntity(Entity ent) {
-		return (ent instanceof Text) || (ent instanceof OverlayText);
+		return (ent instanceof TextBasics) || (ent instanceof OverlayText);
 	}
 
 	private class Binding extends DisplayModelBinding {
 
-		private Text labelObservee;
+		private TextBasics labelObservee;
 
 		private String textCache;
 		private Transform transCache;
@@ -186,7 +186,7 @@ public class TextModel extends DisplayModel {
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
 			try {
-				labelObservee = (Text)ent;
+				labelObservee = (TextBasics)ent;
 			} catch (ClassCastException e) {
 				// The observee is not a display entity
 				labelObservee = null;
