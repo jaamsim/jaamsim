@@ -57,6 +57,7 @@ public class InputAgent {
 	private static boolean recordEdits;       // TRUE if input changes are to be marked as edited.
 
 	private static final String INP_ERR_DEFINEUSED = "The name: %s has already been used and is a %s";
+	private static final String[] EARLY_KEYWORDS = {"AttributeDefinitionList", "UnitType", "UnitTypeList", "TickLength"};
 
 	private static File reportDir;
 
@@ -1009,7 +1010,6 @@ public class InputAgent {
 		}
 
 		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
-		final String earlyKeywords[] = {"AttributeDefinitionList", "UnitType", "TickLength"};
 		for (Entity ent : Entity.getAll()) {
 			if (!ent.testFlag(Entity.FLAG_EDITED))
 				continue;
@@ -1017,8 +1017,8 @@ public class InputAgent {
 				continue;
 
 			boolean blankLinePrinted = false;
-			for (int i = 0; i < earlyKeywords.length; i++) {
-				final Input<?> in = ent.getInput(earlyKeywords[i]);
+			for (int i = 0; i < EARLY_KEYWORDS.length; i++) {
+				final Input<?> in = ent.getInput(EARLY_KEYWORDS[i]);
 				if (in != null && in.isEdited()) {
 					if (!blankLinePrinted) {
 						file.format("%n");
@@ -1045,7 +1045,7 @@ public class InputAgent {
 			for (Input<?> in : ent.getEditableInputs()) {
 				if (in.isSynonym())
 					continue;
-				if (!in.isEdited() || matchesKey(in.getKeyword(), earlyKeywords))
+				if (!in.isEdited() || matchesKey(in.getKeyword(), EARLY_KEYWORDS))
 					continue;
 
 				// defer all inputs outside the Key Inputs category
