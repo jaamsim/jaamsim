@@ -24,30 +24,53 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 public class SampleExpListInput extends ListInput<ArrayList<SampleProvider>> {
 
-	private Class<? extends Unit> unitType = DimensionlessUnit.class;
+	private ArrayList<Class<? extends Unit>> unitTypeList;
 	private Entity thisEnt;
 	private double minValue = Double.NEGATIVE_INFINITY;
 	private double maxValue = Double.POSITIVE_INFINITY;
 
 	public SampleExpListInput(String key, String cat, ArrayList<SampleProvider> def) {
 		super(key, cat, def);
+		unitTypeList = new ArrayList<>();
+	}
+
+	public void setUnitTypeList(ArrayList<Class<? extends Unit>> utList) {
+
+		// Save the new unit types
+		unitTypeList = new ArrayList<>(utList);
+
+		// Set the units for the default value column in the Input Editor
+		if (defValue == null)
+			return;
+		for (int i=0; i<defValue.size(); i++) {
+			SampleProvider p = defValue.get(i);
+			if (p instanceof SampleConstant)
+				((SampleConstant) p).setUnitType(getUnitType(i));
+		}
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
-		if (u != unitType && unitType != UserSpecifiedUnit.class)
-			this.reset();
-		unitType = u;
+		ArrayList<Class<? extends Unit>> utList = new ArrayList<>(1);
+		utList.add(u);
+		this.setUnitTypeList(utList);
+	}
 
-		if (defValue == null)
-			return;
-		for (SampleProvider p : defValue) {
-			if (p instanceof SampleConstant)
-				((SampleConstant) p).setUnitType(unitType);
-		}
+	/**
+	 * Returns the unit type for the specified expression.
+	 * <p>
+	 * If the number of expressions exceeds the number of unit types
+	 * then the last unit type in the list is returned.
+	 * @param i - index of the expression
+	 * @return unit type for the expression
+	 */
+	public Class<? extends Unit> getUnitType(int i) {
+		if (unitTypeList.isEmpty())
+			return null;
+		int k = Math.min(i, unitTypeList.size()-1);
+		return unitTypeList.get(k);
 	}
 
 	public void setEntity(Entity ent) {
@@ -67,7 +90,7 @@ public class SampleExpListInput extends ListInput<ArrayList<SampleProvider>> {
 		for (int i = 0; i < subArgs.size(); i++) {
 			KeywordIndex subArg = subArgs.get(i);
 			try {
-				SampleProvider sp = Input.parseSampleExp(subArg, thisEnt, minValue, maxValue, unitType);
+				SampleProvider sp = Input.parseSampleExp(subArg, thisEnt, minValue, maxValue, getUnitType(i));
 				temp.add(sp);
 			}
 			catch (InputErrorException e) {
@@ -93,7 +116,7 @@ public class SampleExpListInput extends ListInput<ArrayList<SampleProvider>> {
 		ArrayList<String> list = new ArrayList<>();
 		for (Entity each : Entity.getClonesOfIterator(Entity.class, SampleProvider.class)) {
 			SampleProvider samp = (SampleProvider)each;
-			if (samp.getUnitType() == unitType)
+			if (unitTypeList.contains(samp.getUnitType()))
 				list.add(each.getName());
 		}
 		Collections.sort(list);
@@ -107,12 +130,13 @@ public class SampleExpListInput extends ListInput<ArrayList<SampleProvider>> {
 		if (value == null)
 			return;
 
-		for (SampleProvider sp : value) {
+		for (int i=0; i<value.size(); i++) {
+			SampleProvider sp = value.get(i);
 
 			if (sp instanceof SampleExpression) continue;
 			if (sp instanceof SampleConstant) continue;
 
-			Input.assertUnitsMatch(unitType, sp.getUnitType());
+			Input.assertUnitsMatch(sp.getUnitType(), getUnitType(i));
 
 			if (sp.getMinValue() < minValue)
 				throw new InputErrorException("The minimum value allowed for keyword: '%s' is: %s.\n" +
@@ -140,8 +164,8 @@ public class SampleExpListInput extends ListInput<ArrayList<SampleProvider>> {
 			tmp.append("{ ");
 			tmp.append(defValue.get(i));
 
-			if (defValue.get(i) instanceof SampleConstant && unitType != DimensionlessUnit.class)
-				tmp.append(SEPARATOR).append(Unit.getSIUnit(unitType));
+			if (defValue.get(i) instanceof SampleConstant && getUnitType(i) != DimensionlessUnit.class)
+				tmp.append(SEPARATOR).append(Unit.getSIUnit(getUnitType(i)));
 
 			tmp.append(" }");
 		}
