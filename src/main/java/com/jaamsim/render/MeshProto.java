@@ -22,9 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import com.jogamp.opengl.GL2GL3;
-import com.jogamp.opengl.GLException;
-
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
@@ -34,6 +31,8 @@ import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.ui.LogBox;
+import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GLException;
 
 /**
  * A basic wrapper around mesh data and the OpenGL calls that go with it
@@ -76,7 +75,6 @@ private static class ShaderInfo {
 	private int specColorVar;
 	private int ambientColorVar;
 	private int shininessVar;
-	private int maxNumBonesVar;
 
 	private int lightDirVar;
 	private int lightIntVar;
@@ -85,7 +83,6 @@ private static class ShaderInfo {
 	private int cVar;
 	private int fcVar;
 
-	private int boneMatricesVar;
 }
 
 private static ShaderInfo[] sInfos = new ShaderInfo[Renderer.NUM_MESH_SHADERS];
@@ -102,10 +99,6 @@ private static class SubMesh {
 	public int _texCoordBuffer;
 	public int _normalBuffer;
 	public int _indexBuffer;
-
-	public int _boneIndicesBuffer;
-	public int _boneWeightsBuffer;
-
 
 	public Vec3d _center;
 
@@ -155,27 +148,22 @@ private static class SubLine {
 	public HashMap<Integer, Integer> vaoMap = new HashMap<>();
 }
 
-private MeshData data;
-private ArrayList<SubMesh> _subMeshes;
-private ArrayList<SubLine> _subLines;
-private ArrayList<Material> _materials;
+private final MeshData data;
+private final ArrayList<SubMesh> _subMeshes;
+private final ArrayList<SubLine> _subLines;
+private final ArrayList<Material> _materials;
 
-private int[] usedShaders;
+private final int[] usedShaders;
 
 /**
  * The maximum distance a vertex is from the origin
  */
 private boolean _isLoadedGPU = false;
 
-private static int zeroBuffer = 0;
-private static int zeroBufferSize; // The size of the zero buffer in vertices
-
 private final boolean flattenBuffers;
-private final boolean useZeroBuffer;
 
-public MeshProto(MeshData data, boolean flattenBuffers, boolean useZeroBuffer) {
+public MeshProto(MeshData data, boolean flattenBuffers) {
 	this.flattenBuffers = flattenBuffers;
-	this.useZeroBuffer = useZeroBuffer;
 	this.data = data;
 	_subMeshes = new ArrayList<>();
 	_subLines = new ArrayList<>();
@@ -205,18 +193,6 @@ public void render(int contextID, Renderer renderer,
 
 	initUniforms(renderer, modelViewMat, cam.getProjMat4d(), viewMat, finalNorMat);
 
-	ArrayList<ArrayList<Mat4d>> poses = null;
-	if (actions != null) {
-		ArrayList<Armature> arms = data.getArmatures();
-		// Run the actions through all armatures attached to this mesh
-		poses = new ArrayList<>(arms.size());
-		for (int i = 0; i < arms.size(); ++i) {
-			Armature arm = arms.get(i);
-			ArrayList<Mat4d> pose = arm.getPose(actions);
-			poses.add(pose);
-		}
-	}
-
 	Vec3d dist = new Vec3d();
 
 	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
@@ -244,12 +220,7 @@ public void render(int contextID, Renderer renderer,
 			continue;
 		}
 
-		ArrayList<Mat4d> pose = null;
-		if (subInst.armatureIndex != -1 && poses != null) {
-			pose = poses.get(subInst.armatureIndex);
-		}
-
-		renderSubMesh(subMesh, subInst, contextID, renderer, pose, actions);
+		renderSubMesh(subMesh, subInst, contextID, renderer, actions);
 	}
 
 	Mat4d subModelViewMat = new Mat4d();
@@ -321,29 +292,12 @@ public void renderTransparent(int contextID, Renderer renderer,
 		transparents.add(ts);
 	}
 
-	ArrayList<ArrayList<Mat4d>> poses = null;
-	if (actions != null) {
-		ArrayList<Armature> arms = data.getArmatures();
-		// Run the actions through all armatures attached to this mesh
-		poses = new ArrayList<>(arms.size());
-		for (int i = 0; i < arms.size(); ++i) {
-			Armature arm = arms.get(i);
-			ArrayList<Mat4d> pose = arm.getPose(actions);
-			poses.add(pose);
-		}
-	}
-
 	initUniforms(renderer, modelViewMat, cam.getProjMat4d(), viewMat, finalNorMat);
 
 	Collections.sort(transparents);
 
 	for (TransSortable ts : transparents) {
-		ArrayList<Mat4d> pose = null;
-		if (ts.subInst.armatureIndex != -1 && poses != null) {
-			pose = poses.get(ts.subInst.armatureIndex);
-		}
-
-		renderSubMesh(ts.subMesh, ts.subInst, contextID, renderer, pose, actions);
+		renderSubMesh(ts.subMesh, ts.subInst, contextID, renderer, actions);
 	}
 }
 
@@ -414,26 +368,6 @@ private void setupVAOForSubMeshImp(int contextID, int shaderID, SubMesh sub, Ren
 		}
 	}
 
-	int boneIndicesVar = gl.glGetAttribLocation(progHandle, "boneIndices");
-	int boneWeightsVar = gl.glGetAttribLocation(progHandle, "boneWeights");
-
-	if (sub._boneIndicesBuffer != 0) {
-		// Indices
-		gl.glEnableVertexAttribArray(boneIndicesVar);
-
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneIndicesBuffer);
-		gl.glVertexAttribPointer(boneIndicesVar, 4, GL2GL3.GL_FLOAT, false, 0, 0);
-
-		// Weights
-		gl.glEnableVertexAttribArray(boneWeightsVar);
-
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneWeightsBuffer);
-		gl.glVertexAttribPointer(boneWeightsVar, 4, GL2GL3.GL_FLOAT, false, 0, 0);
-	} else {
-		gl.glVertexAttrib4f(boneIndicesVar, 0, 0, 0, 0);
-		gl.glVertexAttrib4f(boneWeightsVar, 0, 0, 0, 0);
-	}
-
 	int posVar = gl.glGetAttribLocation(progHandle, "position");
 	gl.glEnableVertexAttribArray(posVar);
 
@@ -456,7 +390,7 @@ private void setupVAOForSubMeshImp(int contextID, int shaderID, SubMesh sub, Ren
 }
 
 private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, int contextID,
-                           Renderer renderer, ArrayList<Mat4d> pose, ArrayList<Action.Queue> actions) {
+                           Renderer renderer, ArrayList<Action.Queue> actions) {
 
 	Material mat = _materials.get(subInst.materialIndex);
 	int shaderID = mat.shaderID;
@@ -513,18 +447,6 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
 			assert(false); // Unknown transparency type
 		}
 	}
-
-	// Build up the pose matrices
-	if (pose != null) {
-		float[] poseMatrices = new float[16*pose.size()];
-		for (int i = 0; i < pose.size(); ++i) {
-			int poseIndex = subInst.boneMapper[i];
-			RenderUtils.MarshalMat4dToArray(pose.get(poseIndex), poseMatrices, i*16);
-		}
-		gl.glUniformMatrix4fv(si.boneMatricesVar, pose.size(), false, poseMatrices, 0);
-	}
-
-	gl.glUniform1i(si.maxNumBonesVar, (pose == null) ? 0 : 4);
 
 	// Actually draw it
 	//gl.glPolygonMode(GL2GL3.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
@@ -669,8 +591,6 @@ public static void init(Renderer r, GL2GL3 gl) {
 		si.specColorVar = gl.glGetUniformLocation(si.meshProgHandle, "specColor");
 		si.shininessVar = gl.glGetUniformLocation(si.meshProgHandle, "shininess");
 		si.texVar = gl.glGetUniformLocation(si.meshProgHandle, "diffuseTex");
-		si.maxNumBonesVar = gl.glGetUniformLocation(si.meshProgHandle, "maxNumBones");
-		si.boneMatricesVar = gl.glGetUniformLocation(si.meshProgHandle, "boneMatrices");
 
 		si.lightDirVar = gl.glGetUniformLocation(si.meshProgHandle, "lightDir");
 		si.lightIntVar = gl.glGetUniformLocation(si.meshProgHandle, "lightIntensity");
@@ -700,7 +620,6 @@ public static void init(Renderer r, GL2GL3 gl) {
 private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData data) {
 
 	boolean hasTex = data.texCoords != null;
-	boolean hasBoneInfo = data.boneIndices != null;
 
 	SubMesh sub = new SubMesh(usedShaders);
 
@@ -713,24 +632,6 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 	if (hasTex) {
 		gl.glGenBuffers(1, is, 0);
 		sub._texCoordBuffer = is[0];
-	}
-
-	if (hasBoneInfo) {
-		gl.glGenBuffers(2, is, 0);
-		sub._boneIndicesBuffer = is[0];
-		sub._boneWeightsBuffer = is[1];
-	}
-	else {
-		if (useZeroBuffer) {
-			int numEntries = data.verts.size();
-			if (flattenBuffers) {
-				numEntries = data.indices.length;
-			}
-			setupZeroBuffer(numEntries, gl);
-
-			sub._boneIndicesBuffer = zeroBuffer;
-			sub._boneWeightsBuffer = zeroBuffer;
-		}
 	}
 
 	sub._center = data.staticHull.getAABBCenter();
@@ -786,53 +687,6 @@ private void loadGPUSubMesh(GL2GL3 gl, Renderer renderer, MeshData.SubMeshData d
 			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._texCoordBuffer);
 			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.texCoords.size() * 2 * 4, fb, GL2GL3.GL_STATIC_DRAW);
 			renderer.usingVRAM(data.texCoords.size() * 2 * 4);
-		}
-	}
-
-	if (hasBoneInfo) {
-		if (flattenBuffers) {
-			FloatBuffer fb = FloatBuffer.allocate(data.indices.length * 4); //
-			for (int ind : data.indices) {
-				RenderUtils.putPointXYZW(fb, data.boneIndices.get(ind));
-			}
-			fb.flip();
-
-			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneIndicesBuffer);
-			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.indices.length * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
-			renderer.usingVRAM(data.indices.length * 4 * 4);
-
-			fb = FloatBuffer.allocate(data.indices.length * 4); //
-			for (int ind : data.indices) {
-				RenderUtils.putPointXYZW(fb, data.boneWeights.get(ind));
-			}
-			fb.flip();
-
-			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneWeightsBuffer);
-			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.indices.length * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
-			renderer.usingVRAM(data.indices.length * 4 * 4);
-		}
-		else {
-			// Indices
-			FloatBuffer fb = FloatBuffer.allocate(data.boneIndices.size() * 4); //
-			for (Vec4d v : data.boneIndices) {
-				RenderUtils.putPointXYZW(fb, v);
-			}
-			fb.flip();
-
-			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneIndicesBuffer);
-			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.boneIndices.size() * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
-			renderer.usingVRAM(data.boneIndices.size() * 4 * 4);
-
-			// Weights
-			fb = FloatBuffer.allocate(data.boneWeights.size() * 4); //
-			for (Vec4d v : data.boneWeights) {
-				RenderUtils.putPointXYZW(fb, v);
-			}
-			fb.flip();
-
-			gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, sub._boneWeightsBuffer);
-			gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, data.boneWeights.size() * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
-			renderer.usingVRAM(data.boneWeights.size() * 4 * 4);
 		}
 	}
 
@@ -942,18 +796,16 @@ public void freeResources(GL2GL3 gl) {
 		bufs[0] = sub._vertexBuffer;
 		bufs[1] = sub._normalBuffer;
 		bufs[2] = sub._texCoordBuffer;
-		bufs[3] = sub._boneIndicesBuffer;
-		bufs[4] = sub._boneWeightsBuffer;
-		bufs[5] = sub._indexBuffer;
+		bufs[3] = sub._indexBuffer;
 
-		gl.glDeleteBuffers(6, bufs, 0);
+		gl.glDeleteBuffers(4, bufs, 0);
 
 	}
 
 	for (SubLine sub : _subLines) {
 		int[] bufs = new int[1];
 		bufs[0] = sub._vertexBuffer;
-		gl.glDeleteBuffers(6, bufs, 0);
+		gl.glDeleteBuffers(1, bufs, 0);
 	}
 
 	_subMeshes.clear();
@@ -974,31 +826,6 @@ public ArrayList<ConvexHull> getSubHulls(ArrayList<Action.Queue> actions) {
 
 public MeshData getRawData() {
 	return data;
-}
-
-private void setupZeroBuffer(int numEntries, GL2GL3 gl) {
-	if (numEntries <= zeroBufferSize) {
-		return; // The buffer is setup and large enough
-	}
-	if (zeroBuffer == 0) {
-		int[] is = new int[1];
-		gl.glGenBuffers(1, is, 0);
-		zeroBuffer = is[0];
-	}
-
-	// allocate a big block of zero floats
-	FloatBuffer fb = FloatBuffer.allocate(numEntries * 4);
-
-	for (int i = 0; i < numEntries * 4; ++i) {
-		fb.put(0.0f);
-	}
-	fb.flip();
-
-	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, zeroBuffer);
-	gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, numEntries * 4 * 4, fb, GL2GL3.GL_STATIC_DRAW);
-
-	gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
-
 }
 
 } // class MeshProto

@@ -34,7 +34,6 @@ import com.jaamsim.math.Vec3dInterner;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.math.Vec4dInterner;
 import com.jaamsim.render.Action;
-import com.jaamsim.render.Armature;
 import com.jaamsim.render.RenderException;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
@@ -87,12 +86,6 @@ public class MeshData {
 
 		public ConvexHull staticHull;
 
-		public ArrayList<Vec4d> boneIndices;
-		public ArrayList<Vec4d> boneWeights;
-
-		public ArrayList<ConvexHull> boneHulls;
-		public ConvexHull bonelessHull;
-
 		public boolean keepRuntimeData;
 	}
 
@@ -106,11 +99,8 @@ public class MeshData {
 	public static class SubMeshInstance {
 		public int subMeshIndex;
 		public int materialIndex;
-		public int armatureIndex;
 		private Mat4d transform;
 		private Mat4d normalTrans;
-		public int[] boneMapper;
-		public String[] boneNames;
 		public ArrayList<Action> actions;
 
 		public Mat4d getAnimatedTransform(ArrayList<Action.Queue> aqs) {
@@ -158,14 +148,12 @@ public class MeshData {
 		public Mat4d transform;
 	}
 
-	private ArrayList<SubMeshData> _subMeshesData = new ArrayList<>();
-	private ArrayList<SubLineData> _subLinesData = new ArrayList<>();
-	private ArrayList<Material> _materials = new ArrayList<>();
+	private final ArrayList<SubMeshData> _subMeshesData = new ArrayList<>();
+	private final ArrayList<SubLineData> _subLinesData = new ArrayList<>();
+	private final ArrayList<Material> _materials = new ArrayList<>();
 
-	private ArrayList<Armature> _armatures = new ArrayList<>();
-
-	private ArrayList<SubMeshInstance> _subMeshInstances = new ArrayList<>();
-	private ArrayList<SubLineInstance> _subLineInstances = new ArrayList<>();
+	private final ArrayList<SubMeshInstance> _subMeshInstances = new ArrayList<>();
+	private final ArrayList<SubLineInstance> _subLineInstances = new ArrayList<>();
 
 	private ConvexHull _staticHull;
 	// The AABB of this mesh with no transform applied
@@ -185,36 +173,13 @@ public class MeshData {
 		this.keepRuntimeData = keepRuntimeData;
 	}
 
-	public void addSubMeshInstance(int meshIndex, int matIndex, int armIndex, Mat4d mat, String[] boneNames, ArrayList<Action> actions) {
+	public void addSubMeshInstance(int meshIndex, int matIndex, Mat4d mat, String[] boneNames, ArrayList<Action> actions) {
 		Mat4d trans = new Mat4d(mat);
 		SubMeshInstance inst = new SubMeshInstance();
 		inst.subMeshIndex = meshIndex;
 		inst.materialIndex = matIndex;
-		inst.armatureIndex = armIndex;
 		inst.transform = trans;
-		inst.boneNames = boneNames;
 		inst.actions = actions;
-
-		if (boneNames != null) {
-			assert(armIndex != -1);
-			// Build up the mapping of armature bone indices into mesh bone indices
-			// (these will often be the same, but this is part of how blender binds meshes to armatures so let's just make sure)
-			inst.boneMapper = new int[boneNames.length];
-			Armature arm = _armatures.get(armIndex);
-			ArrayList<Armature.Bone> bones = arm.getAllBones();
-			for (int i = 0; i < boneNames.length; ++i) {
-				// Find this bone in the armature
-				boolean boneFound = false;
-				for (int j = 0; j < bones.size(); ++j) {
-					if (bones.get(j).getName().equals(boneNames[i])) {
-						inst.boneMapper[i] = j;
-						boneFound = true;
-						break;
-					}
-				}
-				assert(boneFound);
-			}
-		}
 
 		Mat4d normalMat = trans.inverse();
 		normalMat.transpose4();
@@ -275,10 +240,6 @@ public class MeshData {
 		}
 	}
 
-	public void addArmature(Armature arm) {
-		_armatures.add(arm);
-	}
-
 	// Returns a new index list with any zero area triangles removed
 	private int[] removeDegenerateTriangles(ArrayList<Vertex> vertices, int[] indices) {
 		assert(indices.length % 3 == 0);
@@ -326,16 +287,8 @@ public class MeshData {
 		sub.keepRuntimeData = keepRuntimeData;
 		_subMeshesData.add(sub);
 
-		boolean hasBoneInfo = vertices.size() > 0 && vertices.get(0).getBoneIndices() != null;
-
-		if (!hasBoneInfo) {
-			// If this mesh can not be animated, do an extra check and remove zero area triangles
-			// (for animated meshes, this is not safe as the triangles may not alway be zero area)
-			int[] goodIndices = removeDegenerateTriangles(vertices, indices);
-			sub.indices = goodIndices;
-		} else {
-			sub.indices = indices;
-		}
+		int[] goodIndices = removeDegenerateTriangles(vertices, indices);
+		sub.indices = goodIndices;
 
 		assert((sub.indices.length % 3) == 0);
 
@@ -348,69 +301,12 @@ public class MeshData {
 		if (hasTexCoords) {
 			sub.texCoords = new ArrayList<>(vertices.size());
 		}
-		if (hasBoneInfo) {
-			sub.boneIndices = new ArrayList<>(vertices.size());
-			sub.boneWeights = new ArrayList<>(vertices.size());
-		}
-		int maxBoneIndex = -1;
 		for (Vertex v : vertices) {
 			sub.verts.add(v3Interner.intern(v.getPos()));
 			sub.normals.add(v3Interner.intern(v.getNormal()));
 			if (hasTexCoords) {
 				sub.texCoords.add(v2Interner.intern(v.getTexCoord()));
 			}
-			if (hasBoneInfo) {
-				Vec4d boneIndices = v4Interner.intern(v.getBoneIndices());
-				Vec4d boneWeights = v4Interner.intern(v.getBoneWeights());
-				sub.boneIndices.add(boneIndices);
-				sub.boneWeights.add(boneWeights);
-
-				if (boneWeights.x > 0)
-					maxBoneIndex = Math.max(maxBoneIndex, (int)boneIndices.x);
-				if (boneWeights.y > 0)
-					maxBoneIndex = Math.max(maxBoneIndex, (int)boneIndices.y);
-				if (boneWeights.z > 0)
-					maxBoneIndex = Math.max(maxBoneIndex, (int)boneIndices.z);
-				if (boneWeights.w > 0)
-					maxBoneIndex = Math.max(maxBoneIndex, (int)boneIndices.w);
-			}
-		}
-
-		if (hasBoneInfo) {
-			// Generate the per-bone convex hulls
-			sub.boneHulls = new ArrayList<>(maxBoneIndex + 1);
-			for(int i = 0; i < maxBoneIndex + 1; ++i) {
-				ArrayList<Vec3d> boneVerts = new ArrayList<>();
-				// Scan all vertices, and if it is influenced by this bone, add it to the hull
-				for (Vertex v : vertices) {
-					Vec4d boneIndices = v.getBoneIndices();
-					Vec4d boneWeights = v.getBoneWeights();
-					boolean isInfluenced = false;
-					if (boneWeights.x > 0 && (int)boneIndices.x == i)
-						isInfluenced = true;
-					if (boneWeights.y > 0 && (int)boneIndices.y == i)
-						isInfluenced = true;
-					if (boneWeights.z > 0 && (int)boneIndices.z == i)
-						isInfluenced = true;
-					if (boneWeights.w > 0 && (int)boneIndices.w == i)
-						isInfluenced = true;
-					if (isInfluenced) {
-						boneVerts.add(v.getPos());
-					}
-				}
-
-				ConvexHull boneHull = ConvexHull.TryBuildHull(boneVerts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
-				sub.boneHulls.add(boneHull);
-			}
-			// Lastly, make a convex hull of any vertices that are influenced by no bones
-			ArrayList<Vec3d> bonelessVerts = new ArrayList<>();
-			for (Vertex v : vertices) {
-				Vec4d boneIndices = v.getBoneIndices();
-				if (boneIndices.x == -1) {
-					bonelessVerts.add(v.getPos());
-				}
-			}
-			sub.bonelessHull = ConvexHull.TryBuildHull(bonelessVerts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 		}
 
 		sub.staticHull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
@@ -465,15 +361,7 @@ public class MeshData {
 		_defaultBounds = _staticHull.getAABB(new Mat4d());
 
 		_actionDesc = new ArrayList<>();
-		// Add all the actions found in the armatures
-		for (Armature arm : _armatures) {
-			for (Action act : arm.getActions()) {
-				Action.Description desc = new Action.Description();
-				desc.name = act.name;
-				desc.duration = act.duration;
-				_actionDesc.add(desc);
-			}
-		}
+
 		// And sub meshes
 		for (SubMeshInstance subInst : _subMeshInstances) {
 			if (subInst.actions != null) {
@@ -545,36 +433,9 @@ public class MeshData {
 		ArrayList<Vec3d> hullPoints = new ArrayList<>();
 		Mat4d animatedTransform = subInst.getAnimatedTransform(actions);
 
-		if (actions == null || actions.size() == 0 || subInst.armatureIndex == -1) {
-			// This is an unanimated sub instance, just add the normal points
-			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
-			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
-			hullPoints.addAll(subPoints);
-		} else {
-			// We need to add each bone in it's animated position
-			Armature arm = _armatures.get(subInst.armatureIndex);
-			SubMeshData subMesh = _subMeshesData.get(subInst.subMeshIndex);
-			ArrayList<Mat4d> pose = arm.getPose(actions);
-			for (int bInstInd = 0; bInstInd < subMesh.boneHulls.size(); ++bInstInd) {
-				ConvexHull boneHull = subMesh.boneHulls.get(bInstInd);
-				Mat4d boneMat = null;
-
-				if (bInstInd < subInst.boneMapper.length)
-					boneMat = pose.get(subInst.boneMapper[bInstInd]);
-
-				for (Vec3d hullVect : boneHull.getVertices()) {
-					Vec3d temp = new Vec3d(hullVect);
-					temp.multAndTrans3(animatedTransform, temp);
-					if (boneMat != null)
-						temp.multAndTrans3(boneMat, temp);
-					hullPoints.add(temp);
-				}
-			}
-			// Add the boneless vertices
-			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).bonelessHull.getVertices();
-			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
-			hullPoints.addAll(subPoints);
-		}
+		List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
+		List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
+		hullPoints.addAll(subPoints);
 
 		return ConvexHull.TryBuildHull(hullPoints, MAX_HULL_ATTEMPTS, MAX_SUBINST_HULL_POINTS, null);
 	}
@@ -608,10 +469,6 @@ public class MeshData {
 
 	public ArrayList<Material> getMaterials() {
 		return _materials;
-	}
-
-	public ArrayList<Armature> getArmatures() {
-		return _armatures;
 	}
 
 	public int getNumTriangles() {
@@ -823,7 +680,7 @@ public class MeshData {
 			Mat4d trans = new Mat4d(cmMat);
 			trans.transpose4();
 
-			addSubMeshInstance(meshIndex, matIndex, -1, trans, null, null);
+			addSubMeshInstance(meshIndex, matIndex, trans, null, null);
 		}
 
 		DataBlock subLineInstBlock = topBlock.findChildByName("SubLineInstances");

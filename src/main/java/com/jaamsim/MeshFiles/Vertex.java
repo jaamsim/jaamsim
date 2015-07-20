@@ -27,12 +27,9 @@ import com.jaamsim.math.Vec4d;
  *
  */
 public class Vertex {
-	private Vec3d position;
-	private Vec3d normal;
-	private Vec2d texCoord;
-
-	private Vec4d boneIndices;
-	private Vec4d boneWeights;
+	private final Vec3d position;
+	private final Vec3d normal;
+	private final Vec2d texCoord;
 
 	private final int cachedHash;
 
@@ -40,8 +37,6 @@ public class Vertex {
 		this.position = position;
 		this.normal = normal;
 		this.texCoord = texCoord;
-		this.boneIndices = boneIndices;
-		this.boneWeights = boneWeights;
 
 		// If we have boneIndices we must also have boneWeights
 		assert((boneIndices==null) == (boneWeights==null));
@@ -70,15 +65,6 @@ public class Vertex {
 		return hash;
 	}
 
-	private static int hashVec4d(Vec4d v) {
-		int hash = 0;
-		hash ^= hashDouble(v.x);
-		hash ^= hashDouble(v.y) * 3;
-		hash ^= hashDouble(v.z) * 7;
-		hash ^= hashDouble(v.w) * 15;
-		return hash;
-	}
-
 	/** Calculate a hash of the Vertex contents */
 	private int hashVertex() {
 		int ret = 0;
@@ -89,10 +75,6 @@ public class Vertex {
 		if (texCoord != null)
 			ret ^= hashVec2d(texCoord) * 19;
 
-		if (boneIndices != null) {
-			ret ^= hashVec4d(boneIndices) * 23;
-			ret ^= hashVec4d(boneWeights) * 29;
-		}
 		return ret;
 	}
 
@@ -118,15 +100,6 @@ public class Vertex {
 			return false;
 		}
 
-		if ((boneIndices==null) != (ov.boneIndices==null)) {
-			return false;
-		}
-
-		if (boneIndices != null &&
-		    boneIndices != ov.boneIndices && !boneIndices.equals4(ov.boneIndices) &&
-		    boneWeights != ov.boneWeights && !boneWeights.equals4(ov.boneWeights)) {
-			return false;
-		}
 		return true;
 	}
 
@@ -145,11 +118,5 @@ public class Vertex {
 
 	public Vec2d getTexCoord() {
 		return texCoord;
-	}
-	public Vec4d getBoneIndices() {
-		return boneIndices;
-	}
-	public Vec4d getBoneWeights() {
-		return boneWeights;
 	}
 }

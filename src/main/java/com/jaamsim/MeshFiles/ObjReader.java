@@ -55,7 +55,7 @@ public class ObjReader {
 		}
 	}
 
-	private URL contentURL;
+	private final URL contentURL;
 	private MeshData data;
 
 	private static class FaceVert {
@@ -76,12 +76,12 @@ public class ObjReader {
 
 	private Material parsingMat;
 
-	private HashMap<String, Material> materialMap = new HashMap<>();
+	private final HashMap<String, Material> materialMap = new HashMap<>();
 
-	private ArrayList<Vec3d> vertices = new ArrayList<>();
-	private ArrayList<Vec2d> texCoords = new ArrayList<>();
-	private ArrayList<Vec3d> normals = new ArrayList<>();
-	private ArrayList<FaceVert> faces = new ArrayList<>();
+	private final ArrayList<Vec3d> vertices = new ArrayList<>();
+	private final ArrayList<Vec2d> texCoords = new ArrayList<>();
+	private final ArrayList<Vec3d> normals = new ArrayList<>();
+	private final ArrayList<FaceVert> faces = new ArrayList<>();
 
 	private String activeMat = null;
 
@@ -89,7 +89,7 @@ public class ObjReader {
 
 	private int lineNum = 0;
 
-	private HashMap<String, Integer> loadedMaterials = new HashMap<>();
+	private final HashMap<String, Integer> loadedMaterials = new HashMap<>();
 
 	public ObjReader(URL asset) {
 		contentURL = asset;
@@ -184,7 +184,7 @@ public class ObjReader {
 		int matIndex = getMaterialIndex(activeMat);
 
 		data.addSubMesh(map.getVertList(), vertIndices);
-		data.addSubMeshInstance(numLoadedMeshes++,  matIndex, -1, new Mat4d(), null, null);
+		data.addSubMeshInstance(numLoadedMeshes++,  matIndex, new Mat4d(), null, null);
 
 		faces.clear();
 	}

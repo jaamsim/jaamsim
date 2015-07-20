@@ -43,20 +43,6 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.jogamp.nativewindow.NativeWindowFactory;
-import com.jogamp.opengl.DebugGL4bc;
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2GL3;
-import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GL4bc;
-import com.jogamp.opengl.GLAnimatorControl;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLContext;
-import com.jogamp.opengl.GLEventListener;
-import com.jogamp.opengl.GLException;
-import com.jogamp.opengl.GLProfile;
-
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.font.OverlayString;
@@ -70,10 +56,23 @@ import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.util.ExceptionLogger;
 import com.jaamsim.ui.LogBox;
 import com.jogamp.common.util.VersionNumber;
+import com.jogamp.nativewindow.NativeWindowFactory;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.event.WindowListener;
 import com.jogamp.newt.event.WindowUpdateEvent;
 import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.DebugGL4bc;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.GL4bc;
+import com.jogamp.opengl.GLAnimatorControl;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.GLProfile;
 
 /**
  * The central renderer for JaamSim Renderer, Contains references to all context
@@ -106,7 +105,7 @@ public class Renderer implements GLAnimatorControl {
 	public static int NUM_MESH_SHADERS = 2; // Should be 2^(max_flag)
 
 	private EnumMap<ShaderHandle, Shader> shaders;
-	private Shader[] meshShaders = new Shader[NUM_MESH_SHADERS];
+	private final Shader[] meshShaders = new Shader[NUM_MESH_SHADERS];
 
 	private GLContext sharedContext = null;
 	Map<Integer, Integer> sharedVaoMap = new HashMap<>();
@@ -114,7 +113,7 @@ public class Renderer implements GLAnimatorControl {
 	GLWindow dummyWindow;
 	private GLCapabilities caps = null;
 
-	private TexCache texCache = new TexCache(this);
+	private final TexCache texCache = new TexCache(this);
 
 	// An initalization time flag specifying if the 'safest' graphical techniques should be used
 	private boolean safeGraphics;
@@ -140,8 +139,8 @@ public class Renderer implements GLAnimatorControl {
 
 	private final ExceptionLogger exceptionLogger;
 
-	private TessFontKey defaultFontKey = new TessFontKey(Font.SANS_SERIF, Font.PLAIN);
-	private TessFontKey defaultBoldFontKey = new TessFontKey(Font.SANS_SERIF, Font.BOLD);
+	private final TessFontKey defaultFontKey = new TessFontKey(Font.SANS_SERIF, Font.PLAIN);
+	private final TessFontKey defaultBoldFontKey = new TessFontKey(Font.SANS_SERIF, Font.BOLD);
 
 	private final Object sceneLock = new Object();
 	private ArrayList<RenderProxy> proxyScene = new ArrayList<>();
@@ -815,7 +814,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 		// Load the bad mesh proto
 		badData = MeshDataCache.getBadMesh();
-		badProto = new MeshProto(badData, safeGraphics, !safeGraphics);
+		badProto = new MeshProto(badData, safeGraphics);
 		badProto.loadGPUAssets(gl, this);
 
 		skybox = new Skybox();
@@ -844,7 +843,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		if (data == badData) {
 			proto = badProto;
 		} else {
-			proto = new MeshProto(data, safeGraphics, !safeGraphics);
+			proto = new MeshProto(data, safeGraphics);
 
 			assert (proto != null);
 			proto.loadGPUAssets(gl, this);
@@ -1036,7 +1035,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 
 	private class GLWindowListener implements WindowListener, ComponentListener {
 
-		private int windowID;
+		private final int windowID;
 		public GLWindowListener(int id) {
 			windowID = id;
 		}

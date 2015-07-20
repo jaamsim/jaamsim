@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.MeshFiles.MeshData;
 import com.jaamsim.math.AABB;
-import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.MathUtils;
@@ -33,21 +32,21 @@ import com.jaamsim.math.Vec4d;
 
 public class Mesh implements Renderable {
 
-private MeshProto _proto;
-private Transform _trans;
-private Vec3d _scale; // Allow for a non-uniform scale
+private final MeshProto _proto;
+private final Transform _trans;
+private final Vec3d _scale; // Allow for a non-uniform scale
 
-private long _pickingID;
-private VisibilityInfo _visInfo;
+private final long _pickingID;
+private final VisibilityInfo _visInfo;
 
-private ConvexHull _hull;
-private AABB _bounds;
+private final ConvexHull _hull;
+private final AABB _bounds;
 
-private Mat4d _modelMat;
-private Mat4d _normalMat;
-private ArrayList<ConvexHull> _subMeshHulls;
-private ArrayList<AABB> _subMeshBounds;
-private ArrayList<Action.Queue> _actions;
+private final Mat4d _modelMat;
+private final Mat4d _normalMat;
+private final ArrayList<ConvexHull> _subMeshHulls;
+private final ArrayList<AABB> _subMeshBounds;
+private final ArrayList<Action.Queue> _actions;
 private HullProto debugHull = null;
 
 public Mesh(MeshProto proto, Transform trans, Vec3d scale,
@@ -88,20 +87,6 @@ public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 
 	_proto.render(contextID, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
 
-	if (Renderer.debugDrawArmatures()) {
-		Mat4d modelViewMat = new Mat4d();
-		cam.getViewMat4d(modelViewMat);
-		modelViewMat.mult4(_modelMat);
-
-		MeshData md = _proto.getRawData();
-		for (Armature arm : md.getArmatures()) {
-			ArrayList<Mat4d> pose = null;
-			if (_actions != null) {
-				pose = arm.getPose(_actions);
-			}
-			DebugUtils.renderArmature(contextID, renderer, modelViewMat, arm, pose, new Color4d(1, 0, 0), cam);
-		}
-	}
 }
 
 @Override
@@ -155,64 +140,13 @@ public double getCollisionDist(Ray r, boolean precise)
 
 		Mat4d invMat = subMat.inverse();
 
-		ArrayList<Vec3d> vertices = null;
-		if (_actions == null || _actions.size() == 0 || subInst.armatureIndex == -1) {
-			// Not animated, just take the static vertices
-			vertices = subData.verts;
-		} else {
-			// This mesh is being animated by an armature, we need to work out the
-			// new vertex positions
-			ArrayList<Mat4d> pose = data.getArmatures().get(subInst.armatureIndex).getPose(_actions);
-
-			// Just renaming the matrix to make this code easier to read
-			Mat4d bindMat = animatedTransform;
-			Mat4d invBindMat = bindMat.inverse();
-
-			double[] weights = new double[4];
-			int[] indices = new int[4];
-
-			Vec3d bindSpaceVert = new Vec3d();
-			Vec3d temp = new Vec3d();
-
-			vertices = new ArrayList<>(subData.verts.size());
-			for (int i = 0; i < subData.verts.size(); ++i) {
-				Vec3d vert = subData.verts.get(i);
-				bindSpaceVert.multAndTrans3(bindMat, vert);
-
-				Vec4d rawWeights = subData.boneWeights.get(i);
-				Vec4d rawIndices = subData.boneIndices.get(i);
-				weights[0] = rawWeights.x; weights[1] = rawWeights.y; weights[2] = rawWeights.z; weights[3] = rawWeights.w;
-				indices[0] = (int)rawIndices.x; indices[1] = (int)rawIndices.y; indices[2] = (int)rawIndices.z; indices[3] = (int)rawIndices.w;
-
-				if (indices[0] == -1) {
-					// This vertex is not influenced by any bone
-					vertices.add(vert);
-					continue;
-				}
-				Vec4d animVert = new Vec4d();
-				animVert.w = 1;
-				for (int j = 0; j < 4; ++j) {
-					if (weights[j] == 0) continue;
-
-					// Add the influence of all the bones
-					Mat4d boneMat = pose.get(indices[j]);
-					temp.multAndTrans3(boneMat, bindSpaceVert);
-					temp.scale3(weights[j]);
-					animVert.add3(temp);
-				}
-				// Now convert this vertex back to instance space to be equivalent to the non-animated case
-				animVert.mult4(invBindMat, animVert);
-				vertices.add(animVert);
-			}
-		}
-
 		Ray localRay = r.transform(invMat);
 		Vec3d[] triVecs = new Vec3d[3];
 
 		for (int triInd = 0; triInd < subData.indices.length / 3; ++triInd) {
-			triVecs[0] = vertices.get(subData.indices[triInd*3+0]);
-			triVecs[1] = vertices.get(subData.indices[triInd*3+1]);
-			triVecs[2] = vertices.get(subData.indices[triInd*3+2]);
+			triVecs[0] = subData.verts.get(subData.indices[triInd*3+0]);
+			triVecs[1] = subData.verts.get(subData.indices[triInd*3+1]);
+			triVecs[2] = subData.verts.get(subData.indices[triInd*3+2]);
 			if ( triVecs[0].equals3(triVecs[1]) ||
 			     triVecs[1].equals3(triVecs[2]) ||
 			     triVecs[2].equals3(triVecs[0])) {

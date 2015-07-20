@@ -38,6 +38,8 @@ import com.jaamsim.ui.LogBox;
 import com.jaamsim.xml.XmlNode;
 import com.jaamsim.xml.XmlParser;
 
+
+// TODO: Delete this whole class, this is now deprecated
 public class MeshReader {
 
 	public static MeshData parse(URI asset) throws RenderException {
@@ -65,7 +67,7 @@ public class MeshReader {
 	}
 
 	private XmlParser _parser;
-	private URL contentURL;
+	private final URL contentURL;
 	private MeshData finalData;
 
 	private XmlNode _meshObjectNode;
@@ -406,8 +408,6 @@ public class MeshReader {
 			parseBone(child, arm, null);
 		}
 
-		finalData.addArmature(arm);
-
 		// Now parse the actions for this armature
 		for (XmlNode child : armNode.children()) {
 			if (!child.getTag().equals("Action")) {
@@ -471,7 +471,7 @@ public class MeshReader {
 			}
 		}
 
-		finalData.addSubMeshInstance(geoIndex, matIndex, armIndex, mat, boneNames, actions);
+		finalData.addSubMeshInstance(geoIndex, matIndex, mat, boneNames, actions);
 	}
 
 	private Mat4d nodeToMat4d(XmlNode node) {
