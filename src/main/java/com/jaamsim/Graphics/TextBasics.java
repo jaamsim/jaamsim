@@ -316,7 +316,8 @@ public abstract class TextBasics extends DisplayEntity {
 
 	@Override
 	public void handleSelectionLost() {
-		acceptEdits();
+		if (editMode)
+			acceptEdits();
 	}
 
 	public String getCachedText() {
