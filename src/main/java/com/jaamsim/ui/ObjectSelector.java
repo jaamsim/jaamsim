@@ -561,6 +561,7 @@ static class CenterInViewMenuItem extends MenuItem {
 		public JActionMenuItem(MenuItem item) {
 			super(item.menuName);
 			de = item;
+			this.setEnabled(item.enabled);
 			this.addActionListener(this);
 		}
 
@@ -601,7 +602,10 @@ static class CenterInViewMenuItem extends MenuItem {
 			if (RenderManager.isGood()) {
 				View v = RenderManager.inst().getActiveView();
 				if (v != null) {
-					list.add(new LabelMenuItem(dEnt));
+					LabelMenuItem item = new LabelMenuItem(dEnt);
+					if (dEnt instanceof EntityLabel || EntityLabel.getLabel(dEnt) != null)
+						item.enabled = false;
+					list.add(item);
 					list.add(new CenterInViewMenuItem(dEnt, v));
 				}
 			}

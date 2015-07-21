@@ -16,9 +16,11 @@ package com.jaamsim.ui;
 
 public abstract class MenuItem {
 	public String menuName;
+	public boolean enabled;
 
 	public MenuItem(String name) {
 		menuName = name;
+		enabled = true;
 	}
 
 	public abstract void action();

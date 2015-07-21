@@ -14,6 +14,7 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
@@ -37,6 +38,14 @@ public class EntityLabel extends TextBasics {
 	}
 
 	public EntityLabel() {}
+
+	public static EntityLabel getLabel(DisplayEntity ent) {
+		for (EntityLabel label : Entity.getClonesOf(EntityLabel.class)) {
+			if (label.getTarget() == ent)
+				return label;
+		}
+		return null;
+	}
 
 	@Override
 	public void updateForInput(Input<?> in) {
@@ -64,6 +73,10 @@ public class EntityLabel extends TextBasics {
 		catch (ErrorException e) {
 			super.cancelEdits();
 		}
+	}
+
+	private DisplayEntity getTarget() {
+		return targetEntity.getValue();
 	}
 
 }
