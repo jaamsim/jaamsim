@@ -380,6 +380,12 @@ public class ObjectSelector extends FrameBox {
 			String newName = ((String)node.getUserObject()).trim();
 			try {
 				InputAgent.renameEntity(currentEntity, newName);
+				if (currentEntity instanceof DisplayEntity) {
+					DisplayEntity dEnt = (DisplayEntity) currentEntity;
+					EntityLabel label = EntityLabel.getLabel(dEnt);
+					if (label != null)
+						label.updateForTargetNameChange();
+				}
 			}
 			catch (ErrorException err) {
 				GUIFrame.showErrorDialog("Input Error", err.getMessage());

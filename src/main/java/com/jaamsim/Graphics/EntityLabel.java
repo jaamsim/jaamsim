@@ -62,12 +62,8 @@ public class EntityLabel extends TextBasics {
 	public void acceptEdits() {
 		try {
 			// Rename both the target entity and the label
-			String newName = getEditText();
-			InputAgent.renameEntity(targetEntity.getValue(), newName);
-			InputAgent.renameEntity(this, newName + "_Label");
-
-			// Resize the label so that it fits the text
-			this.resizeForText();
+			InputAgent.renameEntity(targetEntity.getValue(), getEditText());
+			this.updateForTargetNameChange();
 
 			// Update the entries in the Object Selector
 			ObjectSelector.allowUpdate();
@@ -82,6 +78,13 @@ public class EntityLabel extends TextBasics {
 
 	private DisplayEntity getTarget() {
 		return targetEntity.getValue();
+	}
+
+	public void updateForTargetNameChange() {
+		String targetName = targetEntity.getValue().getName();
+		InputAgent.renameEntity(this, targetName + "_Label");
+		setSavedText(targetName);
+		this.resizeForText();
 	}
 
 }
