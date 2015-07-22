@@ -34,6 +34,7 @@ import com.jaamsim.math.Vec3dInterner;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.math.Vec4dInterner;
 import com.jaamsim.render.Action;
+import com.jaamsim.render.Action.Queue;
 import com.jaamsim.render.RenderException;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
@@ -108,12 +109,161 @@ public class MeshData {
 		public Mat4d transform;
 	}
 
+	public static class TransVal {
+		Mat4d transform;
+		Mat4d normalTrans;
+		public TransVal(Mat4d trans, Mat4d norm) {
+			transform = trans;
+			normalTrans = norm;
+		}
+	}
+
+	public static interface Trans {
+		public abstract boolean isStatic();
+		public abstract TransVal value(ArrayList<Action.Queue> actions);
+	}
+
+	public static class StaticTrans implements Trans{
+		private final Mat4d matrix;
+		private final Mat4d normalMat;
+		public StaticTrans(Mat4d mat) {
+			matrix = mat;
+			normalMat = matrix.inverse();
+			normalMat.transpose4();
+		}
+		@Override
+		public boolean isStatic() {
+			return true;
+		}
+		@Override
+		public TransVal value(ArrayList<Queue> actions) {
+			return new TransVal(matrix, normalMat);
+		}
+	}
+
+	public static class AnimTrans implements Trans{
+		private final Mat4d[] matrices;
+		private final Mat4d[] normalMats;
+		private final double[] times;
+		private final String actionName;
+		private final Mat4d staticMat;
+		private final Mat4d staticNormal;
+		public AnimTrans(double[] times, Mat4d[] mats, String actionName, Mat4d staticMat) {
+			matrices = mats;
+			this.times = times;
+			this.actionName = actionName;
+			normalMats = new Mat4d[mats.length];
+			for (int i = 0; i < mats.length; ++i) {
+				normalMats[i] = mats[i].inverse();
+				normalMats[i].transpose4();
+			}
+			this.staticMat = staticMat;
+			staticNormal = staticMat.inverse();
+			staticNormal.transpose4();
+		}
+		@Override
+		public boolean isStatic() {
+			return false;
+		}
+
+		@Override
+		public TransVal value(ArrayList<Queue> actions) {
+			if (actions == null) {
+				return new TransVal(staticMat, staticNormal);
+			}
+
+			// See if the current action is applicable
+			boolean found = false;
+			double time = 0;
+			for (Queue q : actions) {
+				if (q.name.equals(actionName)) {
+					found = true;
+					time = q.time;
+					break;
+				}
+			}
+			if (!found) {
+				return new TransVal(staticMat, staticNormal);
+			}
+			// The action applies, interpolate the value
+
+			// Check if we are past the ends
+			if (time <= times[0]) {
+				return new TransVal(matrices[0], normalMats[0]);
+			}
+			if (time >= times[times.length -1]) {
+				return new TransVal(matrices[times.length-1], normalMats[times.length-1]);
+			}
+
+			// Basic binary search for appropriate segment
+			int start = 0;
+			int end = times.length;
+			int test = end/2;
+			while ((end - start) > 1) {
+				double samp = times[test];
+
+				if (samp == time) { // perfect match
+					return new TransVal(matrices[test], normalMats[test]);
+				}
+
+				if (samp < time) {
+					start = test + 1;
+				} else {
+					end = test;
+				}
+			}
+
+			assert(end - start == 1);
+
+			// Linearly interpolate on the segment
+			double t0 = times[start];
+			double t1 = times[end];
+			assert(time >= t0);
+			assert(time <= t1);
+
+			double startScale = (time-t0)/(t1-t0);
+			double endScale = 1 - startScale;
+
+			Mat4d temp = new Mat4d();
+
+			Mat4d retTrans = new Mat4d(matrices[start]);
+			retTrans.scale4(startScale);
+			temp.set4(matrices[end]);
+			temp.scale4(endScale);
+			retTrans.add4(temp);
+
+			Mat4d retNorm = new Mat4d(normalMats[start]);
+			retNorm.scale4(startScale);
+			temp.set4(normalMats[end]);
+			temp.scale4(endScale);
+			retNorm.add4(temp);
+
+			return new TransVal(retTrans, retNorm);
+
+		}
+	}
+
+	public static class TreeInstance {
+		public int subMeshIndex;
+		public int materialIndex;
+	}
+
+	public static class TreeNode {
+		public Trans trans;
+		public ArrayList<TreeNode> children = new ArrayList<>();
+		public ArrayList<TreeInstance> meshInstances = new ArrayList<>();
+		public ArrayList<Integer> lineInstances = new ArrayList<>();
+	}
+
+
 	private final ArrayList<SubMeshData> _subMeshesData = new ArrayList<>();
 	private final ArrayList<SubLineData> _subLinesData = new ArrayList<>();
 	private final ArrayList<Material> _materials = new ArrayList<>();
 
 	private final ArrayList<StaticSubInstance> _subMeshInstances = new ArrayList<>();
 	private final ArrayList<SubLineInstance> _subLineInstances = new ArrayList<>();
+
+	private TreeNode treeRoot;
 
 	private ConvexHull _staticHull;
 	// The AABB of this mesh with no transform applied
@@ -144,6 +294,10 @@ public class MeshData {
 		normalMat.transpose4();
 		inst.normalTrans = normalMat;
 		_subMeshInstances.add(inst);
+	}
+
+	public void setTree(TreeNode rootNode) {
+		treeRoot = rootNode;
 	}
 
 	public void addSubLineInstance(int lineIndex, Mat4d mat) {
@@ -294,10 +448,48 @@ public class MeshData {
 		return _anyTransparent;
 	}
 
+	private void scanTreeForStaticEntries(TreeNode node, Mat4d trans) {
+		TransVal val = node.trans.value(null);
+
+		Mat4d transform = new Mat4d(trans);
+		transform.mult4(val.transform);
+
+		for (TreeInstance ti : node.meshInstances) {
+			addStaticSubInstance(ti.subMeshIndex, ti.materialIndex, transform, null);
+		}
+		node.meshInstances.clear();
+
+		for (Integer i : node.lineInstances) {
+			addSubLineInstance(i, transform);
+		}
+		node.lineInstances.clear();
+
+
+		for (TreeNode child : node.children) {
+			if (child.trans.isStatic()) {
+				scanTreeForStaticEntries(child, transform);
+			}
+		}
+		// Remove children that are now empty
+		ArrayList<TreeNode> newChildren = new ArrayList<>();
+		for (TreeNode child : node.children) {
+			if (child.children.size() != 0 || !child.trans.isStatic()) {
+				// Keep children that still have sub nodes or are not static
+				newChildren.add(child);
+			}
+		}
+		node.children = newChildren;
+	}
+
 	/**
 	 * Builds the convex hull of the current mesh based on all the existing sub meshes.
 	 */
 	public void finalizeData() {
+		// Pull all static information out of the root tree
+		if (treeRoot != null && treeRoot.trans.isStatic()) {
+			scanTreeForStaticEntries(treeRoot, new Mat4d());
+		}
+
 		ArrayList<Vec3d> totalHullPoints = new ArrayList<>();
 		// Collect all the points from the hulls of the individual sub meshes
 		for (StaticSubInstance subInst : _subMeshInstances) {

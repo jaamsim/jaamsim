@@ -425,6 +425,32 @@ public void scaleCols4(Vec4d v) {
 }
 
 /**
+ * Add the values of m to this
+ * @throws NullPointerException if v is null
+ */
+public void add4(Mat4d m) {
+	d00 += m.d00;
+	d01 += m.d01;
+	d02 += m.d02;
+	d03 += m.d03;
+
+	d10 += m.d10;
+	d11 += m.d11;
+	d12 += m.d12;
+	d13 += m.d13;
+
+	d20 += m.d20;
+	d21 += m.d21;
+	d22 += m.d22;
+	d23 += m.d23;
+
+	d30 += m.d30;
+	d31 += m.d31;
+	d32 += m.d32;
+	d33 += m.d33;
+}
+
+/**
  * Return the determinant of the matrix.
  */
 public double determinant() {

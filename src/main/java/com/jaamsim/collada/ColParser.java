@@ -302,27 +302,43 @@ public class ColParser {
 		globalMat.scale3(getScaleFactor());
 
 		VisualScene vs = _visualScenes.get(vsURL.substring(1));
+		MeshData.TreeNode treeRoot = new MeshData.TreeNode();
+		treeRoot.trans = new MeshData.StaticTrans(globalMat);
+
 		for (SceneNode sn : vs.nodes) {
-			visitNode(sn, globalMat);
+			treeRoot.children.add(buildMeshTree(sn));
 		}
+		_finalData.setTree(treeRoot);
 
 		_finalData.finalizeData();
 	}
 
-	private void visitNode(SceneNode node, Mat4d parentMat) {
+
+	private MeshData.TreeNode buildMeshTree(SceneNode node) {
 		_nodeStack.push(node);
 
-		// Update the current transform
-		Mat4d currentMat = new Mat4d(parentMat);
-		Mat4d nodeTrans = new Mat4d();
-		for (SceneTrans st : node.transforms) {
-			nodeTrans.mult4(st.toMat4d());
+		// Create a series of TreeNodes, one for each transform
+		MeshData.TreeNode ret = new MeshData.TreeNode();
+		MeshData.TreeNode leaf = ret;
+		if (node.transforms.size() == 0) {
+			// No transforms, fill in an identity transform in the output tree
+			ret.trans = new MeshData.StaticTrans(new Mat4d());
+		} else {
+			for (int i = 0; i < node.transforms.size(); ++i) {
+				// TODO: animated transforms here
+				leaf.trans = new MeshData.StaticTrans(node.transforms.get(i).toMat4d());
+
+				if (i < node.transforms.size()-1) {
+					// If this isn't the last node, create a new one for the next iteration
+					MeshData.TreeNode newNode = new MeshData.TreeNode();
+					leaf.children.add(newNode);
+					leaf = newNode;
+				}
+			}
 		}
 
-		currentMat.mult4(nodeTrans);
-
 		for (GeoInstInfo geoInfo : node.subGeo) {
-			addGeoInst(geoInfo, currentMat);
+			addGeoInstToTreeNode(geoInfo, leaf);
 		}
 
 		// Add instance_node
@@ -334,14 +350,18 @@ public class ColParser {
 
 			parseAssert(instNode != null);
 			node.subNodes.add(instNode);
+
+			leaf.children.add(buildMeshTree(instNode));
 		}
 
-		// Finally continue visiting the scene
+		// Finally add children
 		for (SceneNode nextNode : node.subNodes) {
-			visitNode(nextNode, currentMat);
+			leaf.children.add(buildMeshTree(nextNode));
 		}
 
 		_nodeStack.pop();
+
+		return ret;
 	}
 
 	private Effect geoBindingToEffect(Map<String, String> materialMap, String symbol) {
@@ -363,7 +383,7 @@ public class ColParser {
 		return effect;
 	}
 
-	private void addGeoInst(GeoInstInfo geoInfo, Mat4d mat) {
+	private void addGeoInstToTreeNode(GeoInstInfo geoInfo, MeshData.TreeNode node) {
 		parseAssert(geoInfo.geoName.charAt(0) == '#');
 		Geometry geo = _geos.get(geoInfo.geoName.substring(1));
 
@@ -409,7 +429,10 @@ public class ColParser {
 				                       effect.transColour);
 			}
 
-			_finalData.addStaticSubInstance(geoID, matID, mat, null);
+			MeshData.TreeInstance inst = new MeshData.TreeInstance();
+			inst.subMeshIndex = geoID;
+			inst.materialIndex = matID;
+			node.meshInstances.add(inst);
 		}
 
 		for (LineSubGeo subGeo : geo.lineSubGeos) {
@@ -426,7 +449,7 @@ public class ColParser {
 				_finalData.addSubLine(subGeo.verts,
 				                       effect.diffuse.color);
 			}
-			_finalData.addSubLineInstance(geoID, mat);
+			node.lineInstances.add(geoID);
 
 		}
 	}
