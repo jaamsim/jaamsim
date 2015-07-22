@@ -283,7 +283,7 @@ public class MeshData {
 		this.keepRuntimeData = keepRuntimeData;
 	}
 
-	public void addStaticSubInstance(int meshIndex, int matIndex, Mat4d mat, String[] boneNames) {
+	public void addStaticSubInstance(int meshIndex, int matIndex, Mat4d mat) {
 		Mat4d trans = new Mat4d(mat);
 		StaticSubInstance inst = new StaticSubInstance();
 		inst.subMeshIndex = meshIndex;
@@ -455,7 +455,7 @@ public class MeshData {
 		transform.mult4(val.transform);
 
 		for (TreeInstance ti : node.meshInstances) {
-			addStaticSubInstance(ti.subMeshIndex, ti.materialIndex, transform, null);
+			addStaticSubInstance(ti.subMeshIndex, ti.materialIndex, transform);
 		}
 		node.meshInstances.clear();
 
@@ -820,7 +820,7 @@ public class MeshData {
 			Mat4d trans = new Mat4d(cmMat);
 			trans.transpose4();
 
-			addStaticSubInstance(meshIndex, matIndex, trans, null);
+			addStaticSubInstance(meshIndex, matIndex, trans);
 		}
 
 		DataBlock subLineInstBlock = topBlock.findChildByName("SubLineInstances");
