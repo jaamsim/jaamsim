@@ -93,7 +93,7 @@ public class MeshWriter {
 			endTag("</Materials>");
 
 			startTag("<MeshInstances>");
-			for (MeshData.SubMeshInstance inst : data.getSubMeshInstances()) {
+			for (MeshData.StaticSubInstance inst : data.getSubMeshInstances()) {
 				writeMeshInstance(inst);
 			}
 			endTag("</MeshInstances>");
@@ -174,10 +174,10 @@ public class MeshWriter {
 		endTag("</Material>");
 	}
 
-	private void writeMeshInstance(MeshData.SubMeshInstance inst) throws IOException {
+	private void writeMeshInstance(MeshData.StaticSubInstance inst) throws IOException {
 		startTag(String.format("<MeshInstance geoIndex='%d' matIndex='%d'>", inst.subMeshIndex, inst.materialIndex));
 		startTag("<Matrix>");
-		double[] cmData = inst.getAnimatedTransform(null).toCMDataArray();
+		double[] cmData = inst.transform.toCMDataArray();
 		indent();
 		for (double d : cmData) {
 			out.write(String.format("%f ", d));

@@ -471,7 +471,7 @@ public class MeshReader {
 			}
 		}
 
-		finalData.addSubMeshInstance(geoIndex, matIndex, mat, boneNames, actions);
+		finalData.addStaticSubInstance(geoIndex, matIndex, mat, boneNames);
 	}
 
 	private Mat4d nodeToMat4d(XmlNode node) {

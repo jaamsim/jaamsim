@@ -119,7 +119,7 @@ public double getCollisionDist(Ray r, boolean precise)
 			continue;
 		}
 
-		MeshData.SubMeshInstance subInst = data.getSubMeshInstances().get(instInd);
+		MeshData.StaticSubInstance subInst = data.getSubMeshInstances().get(instInd);
 
 		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
 
@@ -133,10 +133,8 @@ public double getCollisionDist(Ray r, boolean precise)
 		}
 		// We have hit both the AABB and the convex hull for this sub instance, now do individual triangle collision
 
-		Mat4d animatedTransform = subInst.getAnimatedTransform(_actions);
-
 		Mat4d subMat = RenderUtils.mergeTransAndScale(_trans, _scale);
-		subMat.mult4(animatedTransform);
+		subMat.mult4(subInst.transform);
 
 		Mat4d invMat = subMat.inverse();
 

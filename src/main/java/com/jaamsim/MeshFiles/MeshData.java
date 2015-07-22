@@ -96,51 +96,11 @@ public class MeshData {
 		public ConvexHull hull;
 	}
 
-	public static class SubMeshInstance {
+	public static class StaticSubInstance {
 		public int subMeshIndex;
 		public int materialIndex;
-		private Mat4d transform;
-		private Mat4d normalTrans;
-		public ArrayList<Action> actions;
-
-		public Mat4d getAnimatedTransform(ArrayList<Action.Queue> aqs) {
-			if (aqs == null || aqs.size() == 0 || this.actions == null)
-				return transform;
-
-			// Find the first action in aqs that matches one in this.actions
-			for (Action.Queue aq : aqs) {
-				// Find this action
-				for (Action act : this.actions) {
-					if (aq.name.equals(act.name)) {
-						assert(act.channels.size() == 1);
-						return Action.getChannelMatAtTime(act.channels.get(0), aq.time);
-					}
-				}
-			}
-			// None of the actions apply to this sub instance
-			return transform;
-		}
-
-		public Mat4d getAnimatedNormalTransform(ArrayList<Action.Queue> aqs) {
-			if (aqs == null || aqs.size() == 0 || this.actions == null)
-				return normalTrans;
-
-			// Find the first action in aqs that matches one in this.actions
-			for (Action.Queue aq : aqs) {
-				// Find this action
-				for (Action act : this.actions) {
-					if (aq.name.equals(act.name)) {
-						assert(act.channels.size() == 1);
-						Mat4d trans = Action.getChannelMatAtTime(act.channels.get(0), aq.time);
-						Mat4d ret = trans.inverse();
-						ret.transpose4();
-						return ret;
-					}
-				}
-			}
-
-			return normalTrans;
-		}
+		public Mat4d transform;
+		public Mat4d normalTrans;
 	}
 
 	public static class SubLineInstance {
@@ -152,7 +112,7 @@ public class MeshData {
 	private final ArrayList<SubLineData> _subLinesData = new ArrayList<>();
 	private final ArrayList<Material> _materials = new ArrayList<>();
 
-	private final ArrayList<SubMeshInstance> _subMeshInstances = new ArrayList<>();
+	private final ArrayList<StaticSubInstance> _subMeshInstances = new ArrayList<>();
 	private final ArrayList<SubLineInstance> _subLineInstances = new ArrayList<>();
 
 	private ConvexHull _staticHull;
@@ -173,13 +133,12 @@ public class MeshData {
 		this.keepRuntimeData = keepRuntimeData;
 	}
 
-	public void addSubMeshInstance(int meshIndex, int matIndex, Mat4d mat, String[] boneNames, ArrayList<Action> actions) {
+	public void addStaticSubInstance(int meshIndex, int matIndex, Mat4d mat, String[] boneNames) {
 		Mat4d trans = new Mat4d(mat);
-		SubMeshInstance inst = new SubMeshInstance();
+		StaticSubInstance inst = new StaticSubInstance();
 		inst.subMeshIndex = meshIndex;
 		inst.materialIndex = matIndex;
 		inst.transform = trans;
-		inst.actions = actions;
 
 		Mat4d normalMat = trans.inverse();
 		normalMat.transpose4();
@@ -341,7 +300,7 @@ public class MeshData {
 	public void finalizeData() {
 		ArrayList<Vec3d> totalHullPoints = new ArrayList<>();
 		// Collect all the points from the hulls of the individual sub meshes
-		for (SubMeshInstance subInst : _subMeshInstances) {
+		for (StaticSubInstance subInst : _subMeshInstances) {
 
 			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
 			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(subInst.transform, pointsRef);
@@ -360,19 +319,8 @@ public class MeshData {
 		_staticHull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 		_defaultBounds = _staticHull.getAABB(new Mat4d());
 
+		// TODO: populate this list
 		_actionDesc = new ArrayList<>();
-
-		// And sub meshes
-		for (SubMeshInstance subInst : _subMeshInstances) {
-			if (subInst.actions != null) {
-				for (Action act : subInst.actions) {
-					Action.Description desc = new Action.Description();
-					desc.name = act.name;
-					desc.duration = act.duration;
-					_actionDesc.add(desc);
-				}
-			}
-		}
 
 		if (!keepRuntimeData) {
 			v2Interner = null; // Drop ref to the interner to free memory
@@ -386,7 +334,7 @@ public class MeshData {
 			return _staticHull;
 
 		ArrayList<ConvexHull> subInstHulls = new ArrayList<>(_subMeshInstances.size());
-		for (SubMeshInstance subInst : _subMeshInstances) {
+		for (StaticSubInstance subInst : _subMeshInstances) {
 			ConvexHull subHull = getSubInstHull(subInst, actions);
 			subInstHulls.add(subHull);
 		}
@@ -428,10 +376,10 @@ public class MeshData {
 		return _actionDesc;
 	}
 
-	private ConvexHull getSubInstHull(SubMeshInstance subInst, ArrayList<Action.Queue> actions) {
+	private ConvexHull getSubInstHull(StaticSubInstance subInst, ArrayList<Action.Queue> actions) {
 
 		ArrayList<Vec3d> hullPoints = new ArrayList<>();
-		Mat4d animatedTransform = subInst.getAnimatedTransform(actions);
+		Mat4d animatedTransform = subInst.transform;
 
 		List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
 		List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
@@ -444,7 +392,7 @@ public class MeshData {
 
 		ArrayList<ConvexHull> ret = new ArrayList<>(_subMeshInstances.size());
 
-		for (SubMeshInstance subInst : _subMeshInstances) {
+		for (StaticSubInstance subInst : _subMeshInstances) {
 
 			ConvexHull instHull = getSubInstHull(subInst, actions);
 			ret.add(instHull);
@@ -460,7 +408,7 @@ public class MeshData {
 		return _subLinesData;
 	}
 
-	public ArrayList<SubMeshInstance> getSubMeshInstances() {
+	public ArrayList<StaticSubInstance> getSubMeshInstances() {
 		return _subMeshInstances;
 	}
 	public ArrayList<SubLineInstance> getSubLineInstances() {
@@ -473,7 +421,7 @@ public class MeshData {
 
 	public int getNumTriangles() {
 		int numTriangles = 0;
-		for (SubMeshInstance inst : _subMeshInstances) {
+		for (StaticSubInstance inst : _subMeshInstances) {
 			SubMeshData data = _subMeshesData.get(inst.subMeshIndex);
 			numTriangles += data.indices.length / 3;
 		}
@@ -680,7 +628,7 @@ public class MeshData {
 			Mat4d trans = new Mat4d(cmMat);
 			trans.transpose4();
 
-			addSubMeshInstance(meshIndex, matIndex, trans, null, null);
+			addStaticSubInstance(meshIndex, matIndex, trans, null);
 		}
 
 		DataBlock subLineInstBlock = topBlock.findChildByName("SubLineInstances");
@@ -821,7 +769,7 @@ public class MeshData {
 
 		DataBlock subMInsts = new DataBlock("SubMeshInstances", 0);
 		topBlock.addChildBlock(subMInsts);
-		for (SubMeshInstance subInst : _subMeshInstances) {
+		for (StaticSubInstance subInst : _subMeshInstances) {
 			DataBlock staticSubInst = new DataBlock("StaticSubInstance", 0);
 			subMInsts.addChildBlock(staticSubInst);
 
@@ -893,7 +841,7 @@ public class MeshData {
 	 */
 	public int[] getUsedMeshShaders() {
 		ArrayList<Integer> shaderIDs = new ArrayList<>();
-		for (SubMeshInstance smi : _subMeshInstances) {
+		for (StaticSubInstance smi : _subMeshInstances) {
 			int shaderID = _materials.get(smi.materialIndex).getShaderID();
 
 			if (!shaderIDs.contains(shaderID))

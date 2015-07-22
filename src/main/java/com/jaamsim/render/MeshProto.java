@@ -52,7 +52,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 	public SubMesh subMesh;
 	public double dist;
 
-	public MeshData.SubMeshInstance subInst;
+	public MeshData.StaticSubInstance subInst;
 
 	@Override
 	public int compareTo(TransSortable o) {
@@ -196,7 +196,7 @@ public void render(int contextID, Renderer renderer,
 	Vec3d dist = new Vec3d();
 
 	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
-		MeshData.SubMeshInstance subInst = data.getSubMeshInstances().get(i);
+		MeshData.StaticSubInstance subInst = data.getSubMeshInstances().get(i);
 
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
 		Material mat = _materials.get(subInst.materialIndex);
@@ -266,7 +266,7 @@ public void renderTransparent(int contextID, Renderer renderer,
 
 	ArrayList<TransSortable> transparents = new ArrayList<>();
 	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
-		MeshData.SubMeshInstance subInst = data.getSubMeshInstances().get(i);
+		MeshData.StaticSubInstance subInst = data.getSubMeshInstances().get(i);
 
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
 		Material mat = _materials.get(subInst.materialIndex);
@@ -280,7 +280,7 @@ public void renderTransparent(int contextID, Renderer renderer,
 			continue;
 		}
 
-		subModelView.mult4(modelViewMat, subInst.getAnimatedTransform(actions));
+		subModelView.mult4(modelViewMat, subInst.transform);
 
 		Vec3d eyeCenter = new Vec3d();
 		eyeCenter.multAndTrans3(subModelView, subMesh._center);
@@ -389,7 +389,7 @@ private void setupVAOForSubMeshImp(int contextID, int shaderID, SubMesh sub, Ren
 
 }
 
-private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, int contextID,
+private void renderSubMesh(SubMesh subMesh, MeshData.StaticSubInstance subInst, int contextID,
                            Renderer renderer, ArrayList<Action.Queue> actions) {
 
 	Material mat = _materials.get(subInst.materialIndex);
@@ -410,8 +410,8 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
 
 	// Setup uniforms for this object
 
-	gl.glUniformMatrix4fv(si.bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.getAnimatedTransform(actions)), 0);
-	gl.glUniformMatrix4fv(si.bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.getAnimatedNormalTransform(actions)), 0);
+	gl.glUniformMatrix4fv(si.bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.transform), 0);
+	gl.glUniformMatrix4fv(si.bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.normalTrans), 0);
 
 	if (mat._texHandle != 0) {
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
