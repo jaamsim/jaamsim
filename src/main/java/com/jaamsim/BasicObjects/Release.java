@@ -22,6 +22,7 @@ import com.jaamsim.Samples.SampleExpListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.units.DimensionlessUnit;
 
 public class Release extends LinkedComponent {
 
@@ -43,6 +44,7 @@ public class Release extends LinkedComponent {
 		numberOfUnitsList = new SampleExpListInput("NumberOfUnits", "Key Inputs", def);
 		numberOfUnitsList.setEntity(this);
 		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
+		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
 		this.addInput( numberOfUnitsList);
 	}
 
