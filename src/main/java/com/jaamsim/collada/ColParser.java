@@ -290,6 +290,10 @@ public class ColParser {
 	}
 
 	private void processScene() {
+		for (AnimChannel chan : _animChannels) {
+			attachChannelToScene(chan);
+		}
+
 		XmlNode scene = _colladaNode.findChildTag("scene", false);
 		parseAssert(scene != null);
 
@@ -976,6 +980,7 @@ public class ColParser {
 	private SceneNode processNode(XmlNode node, SceneNode parent) {
 		SceneNode sn = new SceneNode();
 		sn.id = node.getFragID();
+		sn.sid = node.getAttrib("sid");
 
 		if (sn.id != null) _namedNodes.put(sn.id, sn);
 
@@ -1731,10 +1736,70 @@ public class ColParser {
 		return ret;
 	}
 
+	// Scan the scene, find the transform targeted and attach the AnimCurve to that transform
+	private void attachChannelToScene(AnimChannel ch) {
+		// Start by parsing the target
+		int dotInd = ch.target.indexOf('.');
+		if (dotInd == -1) dotInd = ch.target.length();
+		int braceInd = ch.target.indexOf('(');
+		if (braceInd == -1) braceInd = ch.target.length();
+
+		int targetInd = Math.min(dotInd, braceInd);
+		String target = ch.target.substring(targetInd);
+
+		String[] pathSegments = ch.target.substring(0, targetInd).split("/");
+		parseAssert(pathSegments.length > 0);
+
+		SceneNode rootNode = _namedNodes.get(pathSegments[0]);
+		Object currentNode = rootNode;
+		for (int i = 1; i < pathSegments.length; ++i) {
+			// Now scan the scene tree for the rest of the path
+			parseAssert(currentNode instanceof SceneNode);
+			SceneNode sn = (SceneNode)currentNode;
+
+			currentNode = findSubNodeBySID(sn, pathSegments[i]);
+			parseAssert(currentNode != null);
+		}
+		// We have now scanned the path and have the final node, use the target to find the actual curve to apply to
+		parseAssert(currentNode instanceof SceneTrans);
+		// The node at the end of the chain must be a transform
+		SceneTrans trans = (SceneTrans)currentNode;
+		trans.attachCurve(ch.curve, target);
+
+	}
+
+	// Perform a breadth first tree scan of this sn for any sub object or Transform with this sid
+	// This returns an Object, because valid results are both Transforms and SceneNodes. The caller
+	// will need to cast into the appropriate type
+	private Object findSubNodeBySID(SceneNode sn, String sid) {
+		if (sid.equals(sn.sid)) {
+			return sn;
+		}
+		// Start with the transforms
+		for (SceneTrans trans : sn.transforms) {
+			if (sid.equals(trans.sid)) {
+				return trans;
+			}
+		}
+		// Now the children
+		for (SceneNode child : sn.subNodes) {
+			if (sid.equals(child.sid)) {
+				return child;
+			}
+		}
+		// Now descend
+		for (SceneNode child : sn.subNodes) {
+			Object childRes = findSubNodeBySID(child, sid);
+			if (childRes != null) {
+				return childRes;
+			}
+		}
+		return null;
+	}
+
 	public MeshData getData() {
 		return _finalData;
 	}
-
 
 	/**
 	 * This data structure is useful for turning COLLADA data arrays into flat arrays to be processed.
@@ -1776,7 +1841,26 @@ public class ColParser {
 	 */
 	private static abstract class SceneTrans {
 		public String sid;
+		public AnimCurve[] attachedCurves;
 		public abstract Mat4d toMat4d();
+		public abstract void attachCurve(AnimCurve curve, String target);
+
+		protected boolean attachCommonCurves(AnimCurve curve, String tar) {
+			if (tar.equals(".X") || tar.equals("(0)")) {
+				attachedCurves[0] = curve;
+				return true;
+			}
+			if (tar.equals(".Y") || tar.equals("(1)")) {
+				attachedCurves[1] = curve;
+				return true;
+			}
+			if (tar.equals(".Z") || tar.equals("(2)")) {
+				attachedCurves[2] = curve;
+				return true;
+			}
+			return false;
+		}
+
 	}
 
 	private static class TranslationTrans extends SceneTrans {
@@ -1784,6 +1868,8 @@ public class ColParser {
 
 		public TranslationTrans(XmlNode transNode) {
 			sid = transNode.getAttrib("sid");
+			attachedCurves = new AnimCurve[3];
+
 			double[] vals = (double[])transNode.getContent();
 			parseAssert(vals != null && vals.length >= 3);
 			transVect = new Vec3d(vals[0], vals[1], vals[2]);
@@ -1795,6 +1881,15 @@ public class ColParser {
 			ret.setTranslate3(transVect);
 			return ret;
 		}
+
+		@Override
+		public void attachCurve(AnimCurve curve, String target) {
+			String tar = target.toUpperCase();
+			if (attachCommonCurves(curve, tar)) {
+				return;
+			}
+			parseAssert(false);
+		}
 	}
 
 	private static class RotationTrans extends SceneTrans {
@@ -1803,6 +1898,7 @@ public class ColParser {
 
 		public RotationTrans(XmlNode rotNode) {
 			sid = rotNode.getAttrib("sid");
+			attachedCurves = new AnimCurve[4];
 			double[] vals = (double[])rotNode.getContent();
 			parseAssert(vals != null && vals.length >= 4);
 
@@ -1820,6 +1916,19 @@ public class ColParser {
 			ret.setRot3(rot);
 			return ret;
 		}
+		@Override
+		public void attachCurve(AnimCurve curve, String target) {
+			String tar = target.toUpperCase();
+			if (attachCommonCurves(curve, tar)) {
+				return;
+			}
+			if (tar.equals(".ANGLE") || tar.equals("(3)")) {
+				attachedCurves[3] = curve;
+				return;
+			}
+			parseAssert(false);
+		}
+
 	}
 
 	private static class ScaleTrans extends SceneTrans {
@@ -1827,6 +1936,8 @@ public class ColParser {
 
 		public ScaleTrans(XmlNode scaleNode) {
 			sid = scaleNode.getAttrib("sid");
+			attachedCurves = new AnimCurve[3];
+
 			double[] vals = (double[])scaleNode.getContent();
 			parseAssert(vals != null && vals.length >= 3);
 			scale = new Vec3d(vals[0], vals[1], vals[2]);
@@ -1840,7 +1951,16 @@ public class ColParser {
 			return ret;
 		}
 
+		@Override
+		public void attachCurve(AnimCurve curve, String target) {
+			String tar = target.toUpperCase();
+			if (attachCommonCurves(curve, tar)) {
+				return;
+			}
+			parseAssert(false);
+		}
 	}
+
 	private static class MatrixTrans extends SceneTrans {
 		Mat4d matrix;
 
@@ -1859,6 +1979,12 @@ public class ColParser {
 		public Mat4d toMat4d() {
 			return new Mat4d(matrix);
 		}
+		@Override
+		public void attachCurve(AnimCurve curve, String target) {
+			// TODO: support this
+			throw new RenderException("Currently do not support animating matrices");
+
+		}
 	}
 
 	/**
@@ -1869,6 +1995,7 @@ public class ColParser {
 	private static class SceneNode {
 
 		public String id;
+		public String sid;
 		public ArrayList<SceneTrans> transforms = new ArrayList<>();
 
 		public final ArrayList<SceneNode> subNodes = new ArrayList<>();
