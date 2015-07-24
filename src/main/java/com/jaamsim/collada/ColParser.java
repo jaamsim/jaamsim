@@ -26,8 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.TreeSet;
 
 import com.jaamsim.MeshFiles.MeshData;
+import com.jaamsim.MeshFiles.MeshData.Trans;
 import com.jaamsim.MeshFiles.VertexMap;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -176,6 +178,8 @@ public class ColParser {
 	private final ArrayList<LineGeoEffectPair> _loadedLineGeos = new ArrayList<>();
 
 	private final ArrayList<AnimChannel> _animChannels = new ArrayList<>();
+
+	private final String currentActionName = "default";
 
 	private final MeshData _finalData = new MeshData(keepRuntimeData);
 
@@ -329,8 +333,7 @@ public class ColParser {
 			ret.trans = new MeshData.StaticTrans(new Mat4d());
 		} else {
 			for (int i = 0; i < node.transforms.size(); ++i) {
-				// TODO: animated transforms here
-				leaf.trans = new MeshData.StaticTrans(node.transforms.get(i).toMat4d());
+				leaf.trans = node.transforms.get(i).toMeshDataTrans(currentActionName);
 
 				if (i < node.transforms.size()-1) {
 					// If this isn't the last node, create a new one for the next iteration
@@ -1841,8 +1844,26 @@ public class ColParser {
 	 */
 	private static abstract class SceneTrans {
 		public String sid;
+		Vec3d commonVect;
+
 		public AnimCurve[] attachedCurves;
-		public abstract Mat4d toMat4d();
+		protected abstract Mat4d getStaticMat();
+		protected abstract MeshData.Trans toAnimatedTransform(String actionName);
+		public MeshData.Trans toMeshDataTrans(String actionName) {
+			boolean stat = true;
+			for (AnimCurve ac : attachedCurves) {
+				if (ac != null) {
+					stat = false;
+				}
+			}
+			// If there are no attached curves, we can output a static mesh
+			if (stat) {
+				return new MeshData.StaticTrans(getStaticMat());
+			}
+			return toAnimatedTransform(actionName);
+		}
+
+
 		public abstract void attachCurve(AnimCurve curve, String target);
 
 		protected boolean attachCommonCurves(AnimCurve curve, String tar) {
@@ -1861,10 +1882,43 @@ public class ColParser {
 			return false;
 		}
 
+		Vec3d getAnimatedVectAtTime(double time) {
+			Vec3d ret = new Vec3d(commonVect);
+			if (attachedCurves[0] != null) {
+				ret.x = attachedCurves[0].getValueForTime(time);
+			}
+			if (attachedCurves[1] != null) {
+				ret.y = attachedCurves[1].getValueForTime(time);
+			}
+			if (attachedCurves[2] != null) {
+				ret.z = attachedCurves[2].getValueForTime(time);
+			}
+			return ret;
+		}
+		protected double[] getKeyTimes() {
+			TreeSet<Double> times = new TreeSet<>();
+			for (AnimCurve ac : attachedCurves) {
+				if (ac != null) {
+					for (double time : ac.times) {
+						times.add(time);
+					}
+				}
+			}
+			double[] ret = new double[times.size()];
+			int index = 0;
+			for (Double time : times) {
+				ret[index++] = time;
+			}
+
+			// Sanity check
+			for (int i = 0; i < ret.length - 1; ++i) {
+				parseAssert(ret[0] < ret[1]);
+			}
+			return ret;
+		}
 	}
 
 	private static class TranslationTrans extends SceneTrans {
-		Vec3d transVect;
 
 		public TranslationTrans(XmlNode transNode) {
 			sid = transNode.getAttrib("sid");
@@ -1872,13 +1926,13 @@ public class ColParser {
 
 			double[] vals = (double[])transNode.getContent();
 			parseAssert(vals != null && vals.length >= 3);
-			transVect = new Vec3d(vals[0], vals[1], vals[2]);
+			commonVect = new Vec3d(vals[0], vals[1], vals[2]);
 		}
 
 		@Override
-		public Mat4d toMat4d() {
+		public Mat4d getStaticMat() {
 			Mat4d ret = new Mat4d();
-			ret.setTranslate3(transVect);
+			ret.setTranslate3(commonVect);
 			return ret;
 		}
 
@@ -1890,10 +1944,21 @@ public class ColParser {
 			}
 			parseAssert(false);
 		}
+
+		@Override
+		protected Trans toAnimatedTransform(String actionName) {
+			double[] times = getKeyTimes();
+			Mat4d[] mats = new Mat4d[times.length];
+			for (int i = 0; i < times.length; ++i) {
+				Vec3d animTranslation = getAnimatedVectAtTime(times[i]);
+				mats[i] = new Mat4d();
+				mats[i].setTranslate3(animTranslation);
+			}
+			return new MeshData.AnimTrans(times, mats, actionName, getStaticMat());
+		}
 	}
 
 	private static class RotationTrans extends SceneTrans {
-		Vec3d axis;
 		double angle;
 
 		public RotationTrans(XmlNode rotNode) {
@@ -1902,15 +1967,15 @@ public class ColParser {
 			double[] vals = (double[])rotNode.getContent();
 			parseAssert(vals != null && vals.length >= 4);
 
-			axis = new Vec3d(vals[0], vals[1], vals[2]);
+			commonVect = new Vec3d(vals[0], vals[1], vals[2]);
 			angle = (float)Math.toRadians(vals[3]);
 		}
 
 		@Override
-		public Mat4d toMat4d() {
+		public Mat4d getStaticMat() {
 
 			Quaternion rot = new Quaternion();
-			rot.setAxisAngle(axis, angle);
+			rot.setAxisAngle(commonVect, angle);
 
 			Mat4d ret = new Mat4d();
 			ret.setRot3(rot);
@@ -1929,10 +1994,29 @@ public class ColParser {
 			parseAssert(false);
 		}
 
+		@Override
+		protected Trans toAnimatedTransform(String actionName) {
+			// TODO: add more interpolation points to smooth rotation
+			double[] times = getKeyTimes();
+			Mat4d[] mats = new Mat4d[times.length];
+			for (int i = 0; i < times.length; ++i) {
+				double animAngle = angle;
+				if (attachedCurves[3] != null) {
+					animAngle = attachedCurves[3].getValueForTime(times[i]);
+				}
+
+				Vec3d animAxis = getAnimatedVectAtTime(times[i]);
+				Quaternion rot = new Quaternion();
+				rot.setAxisAngle(animAxis, animAngle);
+				mats[i] = new Mat4d();
+				mats[i].setRot3(rot);
+			}
+			return new MeshData.AnimTrans(times, mats, actionName, getStaticMat());
+		}
+
 	}
 
 	private static class ScaleTrans extends SceneTrans {
-		Vec3d scale;
 
 		public ScaleTrans(XmlNode scaleNode) {
 			sid = scaleNode.getAttrib("sid");
@@ -1940,14 +2024,16 @@ public class ColParser {
 
 			double[] vals = (double[])scaleNode.getContent();
 			parseAssert(vals != null && vals.length >= 3);
-			scale = new Vec3d(vals[0], vals[1], vals[2]);
+			commonVect = new Vec3d(vals[0], vals[1], vals[2]);
 		}
 
 		@Override
-		public Mat4d toMat4d() {
+		public Mat4d getStaticMat() {
 
 			Mat4d ret = new Mat4d();
-			ret.scaleCols3(scale);
+			ret.d00 = commonVect.x;
+			ret.d11 = commonVect.y;
+			ret.d22 = commonVect.z;
 			return ret;
 		}
 
@@ -1959,16 +2045,33 @@ public class ColParser {
 			}
 			parseAssert(false);
 		}
+
+		@Override
+		protected Trans toAnimatedTransform(String actionName) {
+			double[] times = getKeyTimes();
+			Mat4d[] mats = new Mat4d[times.length];
+			for (int i = 0; i < times.length; ++i) {
+				Vec3d animScale = getAnimatedVectAtTime(times[i]);
+				mats[i] = new Mat4d();
+				mats[i].d00 = animScale.x;
+				mats[i].d11 = animScale.y;
+				mats[i].d22 = animScale.z;
+			}
+			return new MeshData.AnimTrans(times, mats, actionName, getStaticMat());
+		}
+
 	}
 
 	private static class MatrixTrans extends SceneTrans {
 		Mat4d matrix;
 
 		public MatrixTrans(Mat4d mat) {
+			attachedCurves = new AnimCurve[0];
 			matrix = new Mat4d(mat);
 		}
 
 		public MatrixTrans(XmlNode matNode) {
+			attachedCurves = new AnimCurve[0];
 			sid = matNode.getAttrib("sid");
 			double[] vals = (double[])matNode.getContent();
 			parseAssert(vals != null && vals.length >= 16);
@@ -1976,14 +2079,17 @@ public class ColParser {
 		}
 
 		@Override
-		public Mat4d toMat4d() {
+		public Mat4d getStaticMat() {
 			return new Mat4d(matrix);
 		}
 		@Override
 		public void attachCurve(AnimCurve curve, String target) {
 			// TODO: support this
 			throw new RenderException("Currently do not support animating matrices");
-
+		}
+		@Override
+		protected Trans toAnimatedTransform(String actionName) {
+			throw new  RenderException("Do not support animated matrices");
 		}
 	}
 

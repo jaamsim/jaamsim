@@ -32,8 +32,8 @@ public class AnimCurve {
 		public String[] interp;
 	}
 
-	private double[] times;
-	private double[] values;
+	public double[] times;
+	public double[] values;
 
 	public static AnimCurve buildFromColCurve(ColCurve colData) {
 		ArrayList<Double> ts = new ArrayList<>();
@@ -107,8 +107,8 @@ public class AnimCurve {
 		// Basic binary search for appropriate segment
 		int start = 0;
 		int end = times.length;
-		int test = end/2;
 		while ((end - start) > 1) {
+			int test = (start + end)/2;
 			double samp = times[test];
 
 			if (samp == time) // perfect match
