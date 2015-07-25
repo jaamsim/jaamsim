@@ -34,6 +34,8 @@ class EndModelTarget extends ProcessTarget {
 			Entity.getAll().get(i).doEnd();
 		}
 
+		GUIFrame.instance().setClock(Simulation.getEndTime());
+
 		// Print the output report
 		if (Simulation.getPrintReport())
 			InputAgent.printReport(Simulation.getEndTime());
