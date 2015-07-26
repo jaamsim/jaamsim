@@ -68,6 +68,7 @@ public class PropertyBox extends FrameBox {
 		if (currentEntity == entity)
 			return;
 
+		int prevTab = jTabbedFrame.getSelectedIndex();
 		jTabbedFrame.removeAll();
 
 		currentEntity = entity;
@@ -86,6 +87,9 @@ public class PropertyBox extends FrameBox {
 			JScrollPane scroll = new JScrollPane(tab);
 
 			jTabbedFrame.addTab(cf.klass.getSimpleName(), scroll);
+		}
+		if(jTabbedFrame.getTabCount() > prevTab - 1) {
+			jTabbedFrame.setSelectedIndex(prevTab);
 		}
 	}
 
