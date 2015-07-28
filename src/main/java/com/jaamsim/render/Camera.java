@@ -53,7 +53,7 @@ static {
  */
 private CameraInfo _info;
 private double _aspectRatio;
-private Transform invTrans = new Transform();
+private final Transform invTrans = new Transform();
 
 private Mat4d _projMat;
 private boolean _projMatDirty = true;
@@ -257,6 +257,25 @@ public boolean collides(AABB aabb) {
 	return true;
 }
 
+// Transform the camera by 'camToBounds' then check collision
+public boolean collides(AABB aabb, Mat4d camToBounds) {
+	if (aabb.isEmpty()) {
+		return false;
+	}
+
+	updateFrustum();
+
+	Plane boundsPlane = new Plane();
+	for (Plane p : _frustum) {
+		boundsPlane.transform(camToBounds, p);
+		// Check if the AABB is completely outside any frustum plane
+		if (aabb.testToPlane(boundsPlane) == AABB.PlaneTestResult.NEGATIVE) {
+			return false;
+		}
+	}
+	return true;
+}
+
 /**
  * Update the stored frustum planes to account for the current parameters and transform
  */
@@ -299,7 +318,7 @@ private void updateFrustum() {
 
 	// Apply the current transform to the planes. Puts the planes in world space
 	for (Plane p : _frustum) {
-		p.transform(_info.trans, p, v);
+		p.transform(_info.trans.getMat4dRef(), p);
 	}
 
 	_frustumDirty = false;
@@ -313,7 +332,7 @@ CameraInfo getInfoRef() {
 	return _info;
 }
 
-private Vec3d centerTemp = new Vec3d();
+private final Vec3d centerTemp = new Vec3d();
 
 public double distToBounds(AABB bounds) {
 

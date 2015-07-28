@@ -144,7 +144,7 @@ public class RenderManager implements DragSourceListener {
 	// The video recorder to sample
 	private VideoRecorder recorder;
 
-	private PreviewCache previewCache = new PreviewCache();
+	private final PreviewCache previewCache = new PreviewCache();
 
 	// Below are special PickingIDs for resizing and dragging handles
 	public static final long MOVE_PICK_ID = -1;
@@ -807,7 +807,7 @@ public class RenderManager implements DragSourceListener {
 		// to the entity's local X-Y plane
 		Transform trans = ent.getGlobalTrans();
 		Plane entityPlane = new Plane(); // Defaults to XY
-		entityPlane.transform(trans, entityPlane, new Vec3d());
+		entityPlane.transform(trans, entityPlane);
 
 		// Return the global coordinates for the point on the local X-Y plane
 		// that lines up with the screen coordinates
@@ -896,7 +896,7 @@ public class RenderManager implements DragSourceListener {
 		Transform trans = selectedEntity.getGlobalTrans();
 
 		Plane entityPlane = new Plane(); // Defaults to XY
-		entityPlane.transform(trans, entityPlane, new Vec3d()); // Transform the plane to world space
+		entityPlane.transform(trans.getMat4dRef(), entityPlane); // Transform the plane to world space
 
 		double firstDist = entityPlane.collisionDist(firstRay);
 		double currentDist = entityPlane.collisionDist(currentRay);
