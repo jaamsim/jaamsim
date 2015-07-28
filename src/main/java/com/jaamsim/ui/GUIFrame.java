@@ -59,6 +59,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JWindow;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -2037,6 +2038,32 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		final String msg = String.format(fmt,  args);
 		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+	}
+
+	/**
+	 * Shows the Error Message dialog box from a non-Swing thread
+	 * @param title - text for the dialog box name
+	 * @param fmt - format string for the error message
+	 * @param args - inputs to the error message
+	 */
+	public static void invokeErrorDialog(String title, String fmt, Object... args) {
+		final String msg = String.format(fmt,  args);
+		SwingUtilities.invokeLater(new runnableError(title, msg));
+	}
+
+	private static class runnableError implements Runnable {
+		private final String title;
+		private final String message;
+
+		public runnableError(String t, String m) {
+			title = t;
+			message = m;
+		}
+
+		@Override
+		public void run() {
+			GUIFrame.showErrorDialog(title, message);
+		}
 	}
 
 	/**
