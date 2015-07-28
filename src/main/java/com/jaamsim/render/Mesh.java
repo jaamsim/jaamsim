@@ -43,9 +43,7 @@ private final ConvexHull _hull;
 private final AABB _bounds;
 
 private final Mat4d _modelMat;
-private final Mat4d _normalMat;
-private final ArrayList<ConvexHull> _subMeshHulls;
-private final ArrayList<AABB> _subMeshBounds;
+private final Mat4d _invModelMat;
 private final ArrayList<Action.Queue> _actions;
 private HullProto debugHull = null;
 
@@ -60,19 +58,10 @@ public Mesh(MeshProto proto, Transform trans, Vec3d scale,
 
 	_modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
 
-	_normalMat = RenderUtils.getInverseWithScale(_trans, _scale);
-	_normalMat.transpose4();
+	_invModelMat = RenderUtils.getInverseWithScale(_trans, _scale);
 
-	_subMeshHulls = _proto.getSubHulls(actions);
-
-	_hull = _proto.getHull(_actions, _subMeshHulls);
+	_hull = _proto.getHull(_actions);
 	_bounds = _hull.getAABB(_modelMat);
-
-	_subMeshBounds = new ArrayList<>(_subMeshHulls.size());
-	for (ConvexHull subHull : _subMeshHulls) {
-		AABB subBounds = subHull.getAABB(_modelMat);
-		_subMeshBounds.add(subBounds);
-	}
 
 	_pickingID = pickingID;
 }
@@ -85,7 +74,7 @@ public AABB getBoundsRef() {
 @Override
 public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 
-	_proto.render(contextID, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
+	_proto.render(contextID, renderer, _modelMat, _invModelMat, cam, _actions);
 
 }
 
@@ -113,32 +102,30 @@ public double getCollisionDist(Ray r, boolean precise)
 	MeshData data = _proto.getRawData();
 	// Check against all sub meshes
 	for (int instInd = 0; instInd < data.getSubMeshInstances().size(); ++instInd) {
-		AABB subBounds = _subMeshBounds.get(instInd);
+
+		MeshData.StaticSubInstance subInst = data.getSubMeshInstances().get(instInd);
+		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
+
+		Mat4d invModelMat = new Mat4d();
+		invModelMat.mult4(subInst.invTrans, _invModelMat);
+
+		Mat4d fullModelMat = new Mat4d();
+		fullModelMat.mult4(_modelMat, subInst.transform);
+
+		Ray localRay = r.transform(invModelMat);
+
 		// Rough collision to AABB
-		if (subBounds.collisionDist(r) < 0) {
+		if (subData.localBounds.collisionDist(localRay) < 0) {
 			continue;
 		}
 
-		MeshData.StaticSubInstance subInst = data.getSubMeshInstances().get(instInd);
-
-		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
-
-		Mat4d objMat = RenderUtils.mergeTransAndScale(_trans, _scale);
-		Mat4d invObjMat = objMat.inverse();
-
-		ConvexHull subInstHull = _subMeshHulls.get(instInd);
-		double subDist = subInstHull.collisionDistanceByMatrix(r, objMat, invObjMat);
+		ConvexHull subDataHull = subData.staticHull;
+		double subDist = subDataHull.collisionDistanceByMatrix(r, fullModelMat, invModelMat);
 		if (subDist < 0) {
 			continue;
 		}
+
 		// We have hit both the AABB and the convex hull for this sub instance, now do individual triangle collision
-
-		Mat4d subMat = RenderUtils.mergeTransAndScale(_trans, _scale);
-		subMat.mult4(subInst.transform);
-
-		Mat4d invMat = subMat.inverse();
-
-		Ray localRay = r.transform(invMat);
 		Vec3d[] triVecs = new Vec3d[3];
 
 		for (int triInd = 0; triInd < subData.indices.length / 3; ++triInd) {
@@ -154,7 +141,7 @@ public double getCollisionDist(Ray r, boolean precise)
 			if (triDist > 0) {
 				// We have collided, now we need to figure out the distance in original ray space, not the transformed ray space
 				Vec3d temp = localRay.getPointAtDist(triDist);
-				temp.multAndTrans3(subMat, temp); // Temp is the collision point in world space
+				temp.multAndTrans3(fullModelMat, temp); // Temp is the collision point in world space
 				temp.sub3(temp, r.getStartRef());
 
 				double newDist = temp.mag3();
@@ -172,11 +159,13 @@ public double getCollisionDist(Ray r, boolean precise)
 
 		MeshData.SubLineData subData = data.getSubLineData().get(subInst.subLineIndex);
 
-		Mat4d subMat = RenderUtils.mergeTransAndScale(_trans, _scale);
-		subMat.mult4(subInst.transform);
+		Mat4d invModelMat = new Mat4d();
+		invModelMat.mult4(subInst.invTrans, _invModelMat);
 
-		Mat4d invMat = subMat.inverse();
-		double subDist = subData.hull.collisionDistanceByMatrix(r, subMat, invMat);
+		Mat4d fullModelMat = new Mat4d();
+		fullModelMat.mult4(_modelMat, subInst.transform);
+
+		double subDist = subData.hull.collisionDistanceByMatrix(r, fullModelMat, invModelMat);
 		if (subDist < 0) {
 			continue;
 		}
@@ -185,7 +174,7 @@ public double getCollisionDist(Ray r, boolean precise)
 		Vec4d[] lineVerts = new Vec4d[subData.verts.size()];
 		for (int i = 0; i < lineVerts.length; ++i) {
 			lineVerts[i] = new Vec4d();
-			lineVerts[i].multAndTrans3(subMat, subData.verts.get(i));
+			lineVerts[i].multAndTrans3(fullModelMat, subData.verts.get(i));
 		}
 
 		double lineDist = MathUtils.collisionDistLines(rayMat, lineVerts, 0.01309); // Angle is 0.75 deg in radians
@@ -211,7 +200,7 @@ public boolean hasTransparent() {
 @Override
 public void renderTransparent(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 
-	_proto.renderTransparent(contextID, renderer, _modelMat, _normalMat, cam, _actions, _subMeshBounds);
+	_proto.renderTransparent(contextID, renderer, _modelMat, _invModelMat, cam, _actions);
 
 	// Debug render of the convex hull
 	if (Renderer.debugDrawHulls()) {

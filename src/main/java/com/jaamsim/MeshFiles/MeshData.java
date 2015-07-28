@@ -86,6 +86,7 @@ public class MeshData {
 		public int[] indices;
 
 		public ConvexHull staticHull;
+		public AABB localBounds;
 
 		public boolean keepRuntimeData;
 	}
@@ -101,12 +102,13 @@ public class MeshData {
 		public int subMeshIndex;
 		public int materialIndex;
 		public Mat4d transform;
-		public Mat4d normalTrans;
+		public Mat4d invTrans;
 	}
 
 	public static class SubLineInstance {
 		public int subLineIndex;
 		public Mat4d transform;
+		public Mat4d invTrans;
 	}
 
 	public static class TransVal {
@@ -290,9 +292,7 @@ public class MeshData {
 		inst.materialIndex = matIndex;
 		inst.transform = trans;
 
-		Mat4d normalMat = trans.inverse();
-		normalMat.transpose4();
-		inst.normalTrans = normalMat;
+		inst.invTrans = trans.inverse();
 		_subMeshInstances.add(inst);
 	}
 
@@ -305,6 +305,7 @@ public class MeshData {
 		SubLineInstance inst = new SubLineInstance();
 		inst.subLineIndex = lineIndex;
 		inst.transform = trans;
+		inst.invTrans = trans.inverse();
 
 		_subLineInstances.add(inst);
 	}
@@ -423,6 +424,7 @@ public class MeshData {
 		}
 
 		sub.staticHull = ConvexHull.TryBuildHull(sub.verts, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
+		sub.localBounds = sub.staticHull.getAABB(new Mat4d());
 	}
 
 	public void addSubLine(Vec3d[] vertices,
@@ -525,26 +527,16 @@ public class MeshData {
 		if (actions == null || actions.size() == 0)
 			return _staticHull;
 
-		ArrayList<ConvexHull> subInstHulls = new ArrayList<>(_subMeshInstances.size());
-		for (StaticSubInstance subInst : _subMeshInstances) {
-			ConvexHull subHull = getSubInstHull(subInst, actions);
-			subInstHulls.add(subHull);
-		}
-		return getHull(actions, subInstHulls);
-	}
-
-	// This is an optimization. Mesh needs a list of sub mesh hulls based on a pose. As it already has it calculated,
-	// it can be passed back to MeshData and save the effort of recalculating them. The other getHull() will do that
-	// calculation if it's needed.
-	public ConvexHull getHull(ArrayList<Action.Queue> actions, ArrayList<ConvexHull> subInstHulls) {
-		if (actions == null || actions.size() == 0)
-			return _staticHull;
-
 		// Otherwise, we need to calculate a new hull
 		ArrayList<Vec3d> hullPoints = new ArrayList<>();
 
-		for (ConvexHull subHull : subInstHulls) {
-			hullPoints.addAll(subHull.getVertices());
+		for (StaticSubInstance subInst : _subMeshInstances) {
+			Mat4d animatedTransform = subInst.transform;
+
+			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
+			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
+
+			hullPoints.addAll(subPoints);
 		}
 
 		// And the lines
@@ -566,31 +558,6 @@ public class MeshData {
 
 	public ArrayList<Action.Description> getActionDescriptions() {
 		return _actionDesc;
-	}
-
-	private ConvexHull getSubInstHull(StaticSubInstance subInst, ArrayList<Action.Queue> actions) {
-
-		ArrayList<Vec3d> hullPoints = new ArrayList<>();
-		Mat4d animatedTransform = subInst.transform;
-
-		List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
-		List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
-		hullPoints.addAll(subPoints);
-
-		return ConvexHull.TryBuildHull(hullPoints, MAX_HULL_ATTEMPTS, MAX_SUBINST_HULL_POINTS, null);
-	}
-
-	public ArrayList<ConvexHull> getSubHulls(ArrayList<Action.Queue> actions) {
-
-		ArrayList<ConvexHull> ret = new ArrayList<>(_subMeshInstances.size());
-
-		for (StaticSubInstance subInst : _subMeshInstances) {
-
-			ConvexHull instHull = getSubInstHull(subInst, actions);
-			ret.add(instHull);
-		}
-
-		return ret;
 	}
 
 	public ArrayList<SubMeshData> getSubMeshData() {
@@ -737,6 +704,7 @@ public class MeshData {
 			DataBlock hullBlock = subMeshBlock.findChildByName("ConvexHull");
 			if (hullBlock == null) throw new RenderException("Missing hull in submesh");
 			subData.staticHull = ConvexHull.fromDataBlock(hullBlock, vec3ds);
+			subData.localBounds = subData.staticHull.getAABB(new Mat4d());
 
 			_subMeshesData.add(subData);
 		}

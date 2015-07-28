@@ -174,15 +174,17 @@ public MeshProto(MeshData data, boolean flattenBuffers) {
 
 public void render(int contextID, Renderer renderer,
                    Mat4d modelMat,
-                   Mat4d normalMat,
+                   Mat4d invModelMat,
                    Camera cam,
-                   ArrayList<Action.Queue> actions,
-                   ArrayList<AABB> subInstBounds) {
+                   ArrayList<Action.Queue> actions) {
 
 	assert(_isLoadedGPU);
 
 	Mat4d viewMat = new Mat4d();
 	cam.getViewMat4d(viewMat);
+
+	Mat4d normalMat = new Mat4d(invModelMat);
+	normalMat.transpose4();
 
 	Mat4d finalNorMat = new Mat4d(); // The normal matrix in eye space
 	cam.getRotMat4d(finalNorMat);
@@ -193,10 +195,15 @@ public void render(int contextID, Renderer renderer,
 
 	initUniforms(renderer, modelViewMat, cam.getProjMat4d(), viewMat, finalNorMat);
 
-	Vec3d dist = new Vec3d();
+	Vec3d boundsMax = new Vec3d();
+	Vec3d boundsMin = new Vec3d();
+	Vec3d diff = new Vec3d();
 
 	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
 		MeshData.StaticSubInstance subInst = data.getSubMeshInstances().get(i);
+
+		Mat4d fullInvMat = new Mat4d();
+		fullInvMat.mult4(subInst.invTrans, invModelMat);
 
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
 		Material mat = _materials.get(subInst.materialIndex);
@@ -204,17 +211,23 @@ public void render(int contextID, Renderer renderer,
 			continue; // Render transparent submeshes after
 		}
 
-		AABB instBounds = subInstBounds.get(i);
-
-		if (!cam.collides(instBounds)) {
+		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
+		if (!cam.collides(subData.localBounds, fullInvMat)) {
 			continue;
 		}
 
-		// Work out distance to the camera
-		dist.set3(instBounds.center);
-		dist.sub3(cam.getTransformRef().getTransRef());
+		Mat4d fullModelViewMat = new Mat4d();
+		fullModelViewMat.mult4(modelViewMat, subInst.transform);
 
-		double apparentSize = 2 * instBounds.radius.mag3() / dist.mag3();
+		boundsMax.multAndTrans3(fullModelViewMat, subData.localBounds.maxPt);
+		boundsMin.multAndTrans3(fullModelViewMat, subData.localBounds.minPt);
+
+		diff.sub3(boundsMax, boundsMin);
+
+		double radius = diff.mag3();
+		double dist = Math.abs(boundsMax.z + boundsMin.z)/2.0;
+
+		double apparentSize = radius / dist;
 		if (apparentSize < 0.001) {
 			// This object is too small to draw
 			continue;
@@ -246,14 +259,16 @@ public void render(int contextID, Renderer renderer,
 
 public void renderTransparent(int contextID, Renderer renderer,
         Mat4d modelMat,
-        Mat4d normalMat,
+        Mat4d invModelMat,
         Camera cam,
-        ArrayList<Action.Queue> actions,
-        ArrayList<AABB> subInstBounds) {
+        ArrayList<Action.Queue> actions) {
 
 
 	Mat4d viewMat = new Mat4d();
 	cam.getViewMat4d(viewMat);
+
+	Mat4d normalMat = new Mat4d(invModelMat);
+	normalMat.transpose4();
 
 	Mat4d finalNorMat = new Mat4d(); // The normal matrix in eye space
 	cam.getRotMat4d(finalNorMat);
@@ -275,10 +290,15 @@ public void renderTransparent(int contextID, Renderer renderer,
 			continue; // Opaque sub meshes have been rendered
 		}
 
-		AABB instBounds = subInstBounds.get(i);
-		if (!cam.collides(instBounds)) {
+		Mat4d fullInvMat = new Mat4d();
+		fullInvMat.mult4(subInst.invTrans, invModelMat);
+
+		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
+		if (!cam.collides(subData.localBounds, fullInvMat)) {
 			continue;
 		}
+
+
 
 		subModelView.mult4(modelViewMat, subInst.transform);
 
@@ -410,8 +430,11 @@ private void renderSubMesh(SubMesh subMesh, MeshData.StaticSubInstance subInst, 
 
 	// Setup uniforms for this object
 
+	Mat4d normalTrans = new Mat4d(subInst.invTrans);
+	normalTrans.transpose4();
+
 	gl.glUniformMatrix4fv(si.bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.transform), 0);
-	gl.glUniformMatrix4fv(si.bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.normalTrans), 0);
+	gl.glUniformMatrix4fv(si.bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(normalTrans), 0);
 
 	if (mat._texHandle != 0) {
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
@@ -812,16 +835,12 @@ public void freeResources(GL2GL3 gl) {
 
 }
 
-public ConvexHull getHull(ArrayList<Action.Queue> actions, ArrayList<ConvexHull> subInstHulls) {
-	return data.getHull(actions, subInstHulls);
+public ConvexHull getHull(ArrayList<Action.Queue> actions) {
+	return data.getHull(actions);
 }
 
 public boolean hasTransparent() {
 	return data.hasTransparent();
-}
-
-public ArrayList<ConvexHull> getSubHulls(ArrayList<Action.Queue> actions) {
-	return data.getSubHulls(actions);
 }
 
 public MeshData getRawData() {
