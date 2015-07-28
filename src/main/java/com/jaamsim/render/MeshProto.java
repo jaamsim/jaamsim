@@ -211,8 +211,12 @@ public void render(int contextID, Renderer renderer,
 			continue; // Render transparent submeshes after
 		}
 
+		Mat4d camNormal = new Mat4d();
+		camNormal.mult4(modelMat, subInst.transform);
+		camNormal.transpose4();
+
 		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
-		if (!cam.collides(subData.localBounds, fullInvMat)) {
+		if (!cam.collides(subData.localBounds, fullInvMat, camNormal)) {
 			continue;
 		}
 
@@ -292,9 +296,13 @@ public void renderTransparent(int contextID, Renderer renderer,
 
 		Mat4d fullInvMat = new Mat4d();
 		fullInvMat.mult4(subInst.invTrans, invModelMat);
+		Mat4d camNormal = new Mat4d();
+		camNormal.mult4(modelMat, subInst.transform);
+		camNormal.transpose4();
+
 
 		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
-		if (!cam.collides(subData.localBounds, fullInvMat)) {
+		if (!cam.collides(subData.localBounds, fullInvMat, camNormal)) {
 			continue;
 		}
 

@@ -896,7 +896,7 @@ public class RenderManager implements DragSourceListener {
 		Transform trans = selectedEntity.getGlobalTrans();
 
 		Plane entityPlane = new Plane(); // Defaults to XY
-		entityPlane.transform(trans.getMat4dRef(), entityPlane); // Transform the plane to world space
+		entityPlane.transform(trans, entityPlane); // Transform the plane to world space
 
 		double firstDist = entityPlane.collisionDist(firstRay);
 		double currentDist = entityPlane.collisionDist(currentRay);

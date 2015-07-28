@@ -258,7 +258,7 @@ public boolean collides(AABB aabb) {
 }
 
 // Transform the camera by 'camToBounds' then check collision
-public boolean collides(AABB aabb, Mat4d camToBounds) {
+public boolean collides(AABB aabb, Mat4d camToBounds, Mat4d camNormal) {
 	if (aabb.isEmpty()) {
 		return false;
 	}
@@ -267,7 +267,7 @@ public boolean collides(AABB aabb, Mat4d camToBounds) {
 
 	Plane boundsPlane = new Plane();
 	for (Plane p : _frustum) {
-		boundsPlane.transform(camToBounds, p);
+		boundsPlane.transform(camToBounds, camNormal, p);
 		// Check if the AABB is completely outside any frustum plane
 		if (aabb.testToPlane(boundsPlane) == AABB.PlaneTestResult.NEGATIVE) {
 			return false;
@@ -318,7 +318,7 @@ private void updateFrustum() {
 
 	// Apply the current transform to the planes. Puts the planes in world space
 	for (Plane p : _frustum) {
-		p.transform(_info.trans.getMat4dRef(), p);
+		p.transform(_info.trans, p);
 	}
 
 	_frustumDirty = false;
