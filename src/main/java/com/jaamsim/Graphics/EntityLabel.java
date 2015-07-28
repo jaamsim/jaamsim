@@ -21,6 +21,7 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.ObjectSelector;
 
 public class EntityLabel extends TextBasics {
@@ -73,6 +74,7 @@ public class EntityLabel extends TextBasics {
 		}
 		catch (ErrorException e) {
 			super.cancelEdits();
+			GUIFrame.invokeErrorDialog("Input Error", e.getMessage());
 		}
 	}
 
