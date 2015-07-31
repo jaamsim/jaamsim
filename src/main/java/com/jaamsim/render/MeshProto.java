@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +53,7 @@ private static class TransSortable implements Comparable<TransSortable> {
 	public SubMesh subMesh;
 	public double dist;
 
-	public MeshData.StaticSubInstance subInst;
+	public MeshData.StaticMeshInstance subInst;
 
 	@Override
 	public int compareTo(TransSortable o) {
@@ -176,7 +177,7 @@ public void render(int contextID, Renderer renderer,
                    Mat4d modelMat,
                    Mat4d invModelMat,
                    Camera cam,
-                   ArrayList<Action.Queue> actions) {
+                   MeshData.Pose pose) {
 
 	assert(_isLoadedGPU);
 
@@ -195,69 +196,78 @@ public void render(int contextID, Renderer renderer,
 
 	initUniforms(renderer, modelViewMat, cam.getProjMat4d(), viewMat, finalNorMat);
 
+	for (MeshData.StaticMeshInstance subInst : data.getStaticMeshInstances()) {
+		renderOpaqueSubMesh(contextID, renderer, subInst.subMeshIndex, subInst.materialIndex, cam,
+		                    modelMat, invModelMat, modelViewMat,
+		                    subInst.transform, subInst.invTrans);
+	}
+
+	for (MeshData.AnimMeshInstance subInst : data.getAnimMeshInstances()) {
+		renderOpaqueSubMesh(contextID, renderer, subInst.meshIndex, subInst.materialIndex, cam,
+                modelMat, invModelMat, modelViewMat,
+                pose.transforms[subInst.nodeIndex], pose.invTransforms[subInst.nodeIndex]);
+	}
+
+	for (MeshData.StaticLineInstance subInst : data.getStaticLineInstances()) {
+
+		SubLine subLine = _subLines.get(subInst.lineIndex);
+		renderSubLine(subLine, contextID, renderer, modelMat, modelViewMat, subInst.transform, cam);
+	}
+
+	for (MeshData.AnimLineInstance subInst : data.getAnimLineInstances()) {
+
+		SubLine subLine = _subLines.get(subInst.lineIndex);
+		renderSubLine(subLine, contextID, renderer, modelMat, modelViewMat, pose.transforms[subInst.nodeIndex], cam);
+	}
+
+}
+
+private void renderOpaqueSubMesh(int contextID, Renderer renderer,
+                                int meshIndex, int matIndex,
+                                Camera cam,
+                                Mat4d modelMat, Mat4d invModelMat, Mat4d modelViewMat,
+                                Mat4d subTrans, Mat4d invSubTrans) {
+	Mat4d fullInvMat = new Mat4d();
+	fullInvMat.mult4(invSubTrans, invModelMat);
+
+	SubMesh subMesh = _subMeshes.get(meshIndex);
+	Material mat = _materials.get(matIndex);
+	if (mat._transType != MeshData.NO_TRANS) {
+		return; // Render transparent submeshes after
+	}
+
+	Mat4d camNormal = new Mat4d();
+	camNormal.mult4(modelMat, subTrans);
+	camNormal.transpose4();
+
+	MeshData.SubMeshData subData = data.getSubMeshData().get(meshIndex);
+	if (!cam.collides(subData.localBounds, fullInvMat, camNormal)) {
+		// Not in the view frustum
+		return;
+	}
+
+	Mat4d fullModelViewMat = new Mat4d();
+	fullModelViewMat.mult4(modelViewMat, subTrans);
+
 	Vec3d boundsMax = new Vec3d();
 	Vec3d boundsMin = new Vec3d();
 	Vec3d diff = new Vec3d();
 
-	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
-		MeshData.StaticSubInstance subInst = data.getSubMeshInstances().get(i);
+	boundsMax.multAndTrans3(fullModelViewMat, subData.localBounds.maxPt);
+	boundsMin.multAndTrans3(fullModelViewMat, subData.localBounds.minPt);
 
-		Mat4d fullInvMat = new Mat4d();
-		fullInvMat.mult4(subInst.invTrans, invModelMat);
+	diff.sub3(boundsMax, boundsMin);
 
-		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
-		Material mat = _materials.get(subInst.materialIndex);
-		if (mat._transType != MeshData.NO_TRANS) {
-			continue; // Render transparent submeshes after
-		}
+	double radius = diff.mag3();
+	double dist = Math.abs(boundsMax.z + boundsMin.z)/2.0;
 
-		Mat4d camNormal = new Mat4d();
-		camNormal.mult4(modelMat, subInst.transform);
-		camNormal.transpose4();
-
-		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
-		if (!cam.collides(subData.localBounds, fullInvMat, camNormal)) {
-			continue;
-		}
-
-		Mat4d fullModelViewMat = new Mat4d();
-		fullModelViewMat.mult4(modelViewMat, subInst.transform);
-
-		boundsMax.multAndTrans3(fullModelViewMat, subData.localBounds.maxPt);
-		boundsMin.multAndTrans3(fullModelViewMat, subData.localBounds.minPt);
-
-		diff.sub3(boundsMax, boundsMin);
-
-		double radius = diff.mag3();
-		double dist = Math.abs(boundsMax.z + boundsMin.z)/2.0;
-
-		double apparentSize = radius / dist;
-		if (apparentSize < 0.001) {
-			// This object is too small to draw
-			continue;
-		}
-
-		renderSubMesh(subMesh, subInst, contextID, renderer, actions);
+	double apparentSize = radius / dist;
+	if (apparentSize < 0.001) {
+		// This object is too small to draw
+		return;
 	}
 
-	Mat4d subModelViewMat = new Mat4d();
-	Mat4d subModelMat = new Mat4d();
-
-	for (MeshData.SubLineInstance subInst : data.getSubLineInstances()) {
-
-		subModelMat.mult4(modelMat, subInst.transform);
-
-		SubLine subLine = _subLines.get(subInst.subLineIndex);
-
-		AABB instBounds = subLine._hull.getAABB(subModelMat);
-		if (!cam.collides(instBounds)) {
-			continue;
-		}
-
-		subModelViewMat.mult4(modelViewMat, subInst.transform);
-
-		renderSubLine(subLine, contextID, renderer, subModelViewMat, cam);
-	}
+	renderSubMesh(subMesh, matIndex, subTrans, invSubTrans, contextID, renderer);
 
 }
 
@@ -265,7 +275,7 @@ public void renderTransparent(int contextID, Renderer renderer,
         Mat4d modelMat,
         Mat4d invModelMat,
         Camera cam,
-        ArrayList<Action.Queue> actions) {
+        MeshData.Pose pose) {
 
 
 	Mat4d viewMat = new Mat4d();
@@ -284,8 +294,7 @@ public void renderTransparent(int contextID, Renderer renderer,
 	Mat4d subModelView = new Mat4d();
 
 	ArrayList<TransSortable> transparents = new ArrayList<>();
-	for (int i = 0; i < data.getSubMeshInstances().size(); ++i) {
-		MeshData.StaticSubInstance subInst = data.getSubMeshInstances().get(i);
+	for (MeshData.StaticMeshInstance subInst : data.getStaticMeshInstances()) {
 
 		SubMesh subMesh = _subMeshes.get(subInst.subMeshIndex);
 		Material mat = _materials.get(subInst.materialIndex);
@@ -306,8 +315,6 @@ public void renderTransparent(int contextID, Renderer renderer,
 			continue;
 		}
 
-
-
 		subModelView.mult4(modelViewMat, subInst.transform);
 
 		Vec3d eyeCenter = new Vec3d();
@@ -320,12 +327,18 @@ public void renderTransparent(int contextID, Renderer renderer,
 		transparents.add(ts);
 	}
 
+	// TODO: Animated transparent meshes
+
 	initUniforms(renderer, modelViewMat, cam.getProjMat4d(), viewMat, finalNorMat);
 
 	Collections.sort(transparents);
 
 	for (TransSortable ts : transparents) {
-		renderSubMesh(ts.subMesh, ts.subInst, contextID, renderer, actions);
+
+		Mat4d subInstNorm = new Mat4d(ts.subInst.invTrans);
+		subInstNorm.transpose4();
+		renderSubMesh(ts.subMesh, ts.subInst.materialIndex, ts.subInst.transform,
+		              subInstNorm, contextID, renderer);
 	}
 }
 
@@ -343,6 +356,8 @@ private void initUniforms(Renderer renderer, Mat4d modelViewMat, Mat4d projMat, 
 	lightsDirFloats[4] = (float)lightsDirScratch[1].y;
 	lightsDirFloats[5] = (float)lightsDirScratch[1].z;
 
+	Mat4d invModelView = new Mat4d(normalMat);
+	invModelView.transpose4();
 
 	for (int i = 0; i < usedShaders.length; ++i) {
 		int shaderID = usedShaders[i];
@@ -417,10 +432,13 @@ private void setupVAOForSubMeshImp(int contextID, int shaderID, SubMesh sub, Ren
 
 }
 
-private void renderSubMesh(SubMesh subMesh, MeshData.StaticSubInstance subInst, int contextID,
-                           Renderer renderer, ArrayList<Action.Queue> actions) {
+private void renderSubMesh(SubMesh subMesh, int materialIndex,
+                           Mat4d subInstTrans,
+                           Mat4d subInstInvTrans,
+                           int contextID,
+                           Renderer renderer) {
 
-	Material mat = _materials.get(subInst.materialIndex);
+	Material mat = _materials.get(materialIndex);
 	int shaderID = mat.shaderID;
 
 	GL2GL3 gl = renderer.getGL();
@@ -437,12 +455,11 @@ private void renderSubMesh(SubMesh subMesh, MeshData.StaticSubInstance subInst, 
 	gl.glUseProgram(si.meshProgHandle);
 
 	// Setup uniforms for this object
+	Mat4d subInstNorm = new Mat4d(subInstInvTrans);
+	subInstNorm.transpose4();
 
-	Mat4d normalTrans = new Mat4d(subInst.invTrans);
-	normalTrans.transpose4();
-
-	gl.glUniformMatrix4fv(si.bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInst.transform), 0);
-	gl.glUniformMatrix4fv(si.bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(normalTrans), 0);
+	gl.glUniformMatrix4fv(si.bindSpaceMatVar, 1, false, RenderUtils.MarshalMat4d(subInstTrans), 0);
+	gl.glUniformMatrix4fv(si.bindSpaceNorMatVar, 1, false, RenderUtils.MarshalMat4d(subInstNorm), 0);
 
 	if (mat._texHandle != 0) {
 		gl.glActiveTexture(GL2GL3.GL_TEXTURE0);
@@ -520,8 +537,21 @@ private void setupVAOForSubLine(int contextID, SubLine sub, Renderer renderer) {
 
 }
 
-private void renderSubLine(SubLine sub, int contextID,
-        Renderer renderer, Mat4d modelViewMat, Camera cam) {
+private void renderSubLine(SubLine sub, int contextID, Renderer renderer,
+                           Mat4d modelMat, Mat4d modelViewMat, Mat4d subInstTrans, Camera cam) {
+
+	Mat4d subModelViewMat = new Mat4d();
+	Mat4d subModelMat = new Mat4d();
+
+	subModelMat.mult4(modelMat, subInstTrans);
+
+	AABB instBounds = sub._hull.getAABB(subModelMat);
+	if (!cam.collides(instBounds)) {
+		return;
+	}
+
+	subModelViewMat.mult4(modelViewMat, subInstTrans);
+
 
 	GL2GL3 gl = renderer.getGL();
 
@@ -537,7 +567,7 @@ private void renderSubLine(SubLine sub, int contextID,
 
 	Mat4d projMat = cam.getProjMat4d();
 
-	gl.glUniformMatrix4fv(sub._modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(modelViewMat), 0);
+	gl.glUniformMatrix4fv(sub._modelViewMatVar, 1, false, RenderUtils.MarshalMat4d(subModelViewMat), 0);
 	gl.glUniformMatrix4fv(sub._projMatVar, 1, false, RenderUtils.MarshalMat4d(projMat), 0);
 
 	gl.glUniform4fv(sub._colorVar, 1, sub._diffuseColor.toFloats(), 0);
@@ -843,8 +873,12 @@ public void freeResources(GL2GL3 gl) {
 
 }
 
-public ConvexHull getHull(ArrayList<Action.Queue> actions) {
-	return data.getHull(actions);
+public MeshData.Pose getPose(ArrayList<Action.Queue> actions) {
+	return data.getPose(actions);
+}
+
+public ConvexHull getHull(MeshData.Pose pose) {
+	return data.getHull(pose);
 }
 
 public boolean hasTransparent() {

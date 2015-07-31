@@ -128,7 +128,7 @@ public void setRotZAxis(double angle) {
 /**
  * Set this Quaternion from a rotation in axis-angle form.
  * @param axis the about which to rotate
- * @param angle the angle to rotate through
+ * @param angle the angle to rotate through in radians
  * @throws NullPointerException if axis is null
  */
 public void setAxisAngle(Vec3d axis, double angle) {

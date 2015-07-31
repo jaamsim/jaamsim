@@ -36,6 +36,7 @@ import com.jaamsim.input.ActionListInput;
 import com.jaamsim.input.FileInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.OutputHandle;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
@@ -154,7 +155,7 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 
 		private ArrayList<RenderProxy> cachedProxies;
 
-		private DisplayEntity dispEnt;
+		private final DisplayEntity dispEnt;
 
 		private Transform transCache;
 		private Vec3d scaleCache;
@@ -191,7 +192,11 @@ public class ColladaModel extends DisplayModel implements MenuItemEntity {
 			for (Action.Binding b : actions.getValue()) {
 				Action.Queue aq = new Action.Queue();
 				aq.name = b.actionName;
-				aq.time = dispEnt.getOutputHandle(b.outputName).getValueAsDouble(simTime, 0);
+				OutputHandle handle = dispEnt.getOutputHandle(b.outputName);
+				aq.time = 0;
+				if (handle != null) {
+					aq.time = handle.getValueAsDouble(simTime, 0);
+				}
 
 				aqList.add(aq);
 			}

@@ -574,4 +574,67 @@ public double[] toCMDataArray() {
 	return ret;
 }
 
+/**
+ * Debugging feature. Check that this matrix is very close to the identity matrix
+ * @return
+ */
+public boolean nearIdentity() {
+	return nearIdentityThresh(0.0001);
+}
+
+public boolean nearIdentityThresh(double threshold) {
+	boolean ret = true;
+	ret = ret && (Math.abs(d00 - 1) < threshold);
+	ret = ret && (Math.abs(d11 - 1) < threshold);
+	ret = ret && (Math.abs(d22 - 1) < threshold);
+	ret = ret && (Math.abs(d33 - 1) < threshold);
+
+	ret = ret && (Math.abs(d01 - 0) < threshold);
+	ret = ret && (Math.abs(d02 - 0) < threshold);
+	ret = ret && (Math.abs(d03 - 0) < threshold);
+
+	ret = ret && (Math.abs(d10 - 0) < threshold);
+	ret = ret && (Math.abs(d12 - 0) < threshold);
+	ret = ret && (Math.abs(d13 - 0) < threshold);
+
+	ret = ret && (Math.abs(d20 - 0) < threshold);
+	ret = ret && (Math.abs(d21 - 0) < threshold);
+	ret = ret && (Math.abs(d23 - 0) < threshold);
+
+	ret = ret && (Math.abs(d30 - 0) < threshold);
+	ret = ret && (Math.abs(d31 - 0) < threshold);
+	ret = ret && (Math.abs(d32 - 0) < threshold);
+
+	return ret;
+
+}
+
+/**
+ * Debugging feature. Check that this matrix is very close to the identity matrix
+ * @return
+ */
+public boolean nearIdentity3() {
+	return nearIdentityThresh3(0.0001);
+}
+
+public boolean nearIdentityThresh3(double threshold) {
+	boolean ret = true;
+	ret = ret && (Math.abs(d00 - 1) < threshold);
+	ret = ret && (Math.abs(d11 - 1) < threshold);
+	ret = ret && (Math.abs(d22 - 1) < threshold);
+
+	ret = ret && (Math.abs(d01 - 0) < threshold);
+	ret = ret && (Math.abs(d02 - 0) < threshold);
+
+	ret = ret && (Math.abs(d10 - 0) < threshold);
+	ret = ret && (Math.abs(d12 - 0) < threshold);
+
+	ret = ret && (Math.abs(d20 - 0) < threshold);
+	ret = ret && (Math.abs(d21 - 0) < threshold);
+
+
+	return ret;
+
+}
+
 }

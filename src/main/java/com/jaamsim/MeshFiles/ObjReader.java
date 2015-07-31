@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -184,7 +185,7 @@ public class ObjReader {
 		int matIndex = getMaterialIndex(activeMat);
 
 		data.addSubMesh(map.getVertList(), vertIndices);
-		data.addStaticSubInstance(numLoadedMeshes++,  matIndex, new Mat4d());
+		data.addStaticMeshInstance(numLoadedMeshes++,  matIndex, new Mat4d());
 
 		faces.clear();
 	}

@@ -436,9 +436,7 @@ public class ColParser {
 				                       effect.transColour);
 			}
 
-			MeshData.TreeInstance inst = new MeshData.TreeInstance();
-			inst.subMeshIndex = geoID;
-			inst.materialIndex = matID;
+			MeshData.AnimMeshInstance inst = new MeshData.AnimMeshInstance(geoID, matID);
 			node.meshInstances.add(inst);
 		}
 
@@ -456,7 +454,7 @@ public class ColParser {
 				_finalData.addSubLine(subGeo.verts,
 				                       effect.diffuse.color);
 			}
-			node.lineInstances.add(geoID);
+			node.lineInstances.add(new MeshData.AnimLineInstance(geoID));
 
 		}
 	}
@@ -1996,13 +1994,27 @@ public class ColParser {
 
 		@Override
 		protected Trans toAnimatedTransform(String actionName) {
-			// TODO: add more interpolation points to smooth rotation
-			double[] times = getKeyTimes();
+			double[] originalTimes = getKeyTimes();
+
+			// Add new sample points because linearly interpolating a rotation matrix usually does not work correctly
+			final int OVERSAMPLE = 4;
+			double[] times = new double[(originalTimes.length-1)*OVERSAMPLE + 1];
+			for (int i = 0; i < originalTimes.length - 1; ++i) {
+
+				double cur = originalTimes[i];
+				double next = originalTimes[i+1];
+				for (int j = 0; j < OVERSAMPLE; ++j) {
+					double scale = (double)j / (double)OVERSAMPLE;
+					times[i*OVERSAMPLE +j] = cur*(1-scale) + next*scale;
+				}
+			}
+			times[times.length-1] = originalTimes[originalTimes.length-1];
+
 			Mat4d[] mats = new Mat4d[times.length];
 			for (int i = 0; i < times.length; ++i) {
-				double animAngle = angle;
+				double animAngle = Math.toRadians(angle);
 				if (attachedCurves[3] != null) {
-					animAngle = attachedCurves[3].getValueForTime(times[i]);
+					animAngle = Math.toRadians(attachedCurves[3].getValueForTime(times[i]));
 				}
 
 				Vec3d animAxis = getAnimatedVectAtTime(times[i]);
@@ -2013,7 +2025,6 @@ public class ColParser {
 			}
 			return new MeshData.AnimTrans(times, mats, actionName, getStaticMat());
 		}
-
 	}
 
 	private static class ScaleTrans extends SceneTrans {

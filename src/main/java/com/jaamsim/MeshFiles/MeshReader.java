@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,6 +128,10 @@ public class MeshReader {
 		parseArmatures();
 
 		parseInstances();
+
+		MeshData.TreeNode emptyTree = new MeshData.TreeNode();
+		emptyTree.trans = new MeshData.StaticTrans(new Mat4d());
+		finalData.setTree(emptyTree);
 
 		finalData.finalizeData();
 	}
@@ -471,7 +476,7 @@ public class MeshReader {
 			}
 		}
 
-		finalData.addStaticSubInstance(geoIndex, matIndex, mat);
+		finalData.addStaticMeshInstance(geoIndex, matIndex, mat);
 	}
 
 	private Mat4d nodeToMat4d(XmlNode node) {

@@ -115,7 +115,7 @@ public class AnimCurve {
 				return values[test];
 
 			if (samp < time) {
-				start = test + 1;
+				start = test;
 			} else {
 				end = test;
 			}

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2012 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +29,6 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 
-//import javax.media.opengl.*;
-
 public class Mesh implements Renderable {
 
 private final MeshProto _proto;
@@ -44,7 +43,8 @@ private final AABB _bounds;
 
 private final Mat4d _modelMat;
 private final Mat4d _invModelMat;
-private final ArrayList<Action.Queue> _actions;
+//private final ArrayList<Action.Queue> _actions;
+private final MeshData.Pose pose;
 private HullProto debugHull = null;
 
 public Mesh(MeshProto proto, Transform trans, Vec3d scale,
@@ -54,13 +54,13 @@ public Mesh(MeshProto proto, Transform trans, Vec3d scale,
 	_proto = proto;
 	_scale = new Vec3d(scale);
 	_visInfo = visInfo;
-	_actions = actions;
 
 	_modelMat = RenderUtils.mergeTransAndScale(_trans, _scale);
 
 	_invModelMat = RenderUtils.getInverseWithScale(_trans, _scale);
 
-	_hull = _proto.getHull(_actions);
+	pose = _proto.getPose(actions);
+	_hull = _proto.getHull(pose);
 	_bounds = _hull.getAABB(_modelMat);
 
 	_pickingID = pickingID;
@@ -74,7 +74,7 @@ public AABB getBoundsRef() {
 @Override
 public void render(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 
-	_proto.render(contextID, renderer, _modelMat, _invModelMat, cam, _actions);
+	_proto.render(contextID, renderer, _modelMat, _invModelMat, cam, pose);
 
 }
 
@@ -101,9 +101,8 @@ public double getCollisionDist(Ray r, boolean precise)
 
 	MeshData data = _proto.getRawData();
 	// Check against all sub meshes
-	for (int instInd = 0; instInd < data.getSubMeshInstances().size(); ++instInd) {
+	for (MeshData.StaticMeshInstance subInst : data.getStaticMeshInstances()) {
 
-		MeshData.StaticSubInstance subInst = data.getSubMeshInstances().get(instInd);
 		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.subMeshIndex);
 
 		Mat4d invModelMat = new Mat4d();
@@ -154,10 +153,9 @@ public double getCollisionDist(Ray r, boolean precise)
 	}
 
 	// Now check against line components
-	for (int instInd = 0; instInd < data.getSubLineInstances().size(); ++instInd) {
-		MeshData.SubLineInstance subInst = data.getSubLineInstances().get(instInd);
+	for (MeshData.StaticLineInstance subInst : data.getStaticLineInstances()) {
 
-		MeshData.SubLineData subData = data.getSubLineData().get(subInst.subLineIndex);
+		MeshData.SubLineData subData = data.getSubLineData().get(subInst.lineIndex);
 
 		Mat4d invModelMat = new Mat4d();
 		invModelMat.mult4(subInst.invTrans, _invModelMat);
@@ -184,6 +182,8 @@ public double getCollisionDist(Ray r, boolean precise)
 		}
 	}
 
+	// TODO: check against animated sub objects
+
 	if (shortDistance == Double.POSITIVE_INFINITY) {
 		return -1; // We did not actually collide with anything
 	}
@@ -200,7 +200,7 @@ public boolean hasTransparent() {
 @Override
 public void renderTransparent(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
 
-	_proto.renderTransparent(contextID, renderer, _modelMat, _invModelMat, cam, _actions);
+	_proto.renderTransparent(contextID, renderer, _modelMat, _invModelMat, cam, pose);
 
 	// Debug render of the convex hull
 	if (Renderer.debugDrawHulls()) {

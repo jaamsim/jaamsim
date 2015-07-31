@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +35,6 @@ import com.jaamsim.math.Vec3dInterner;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.math.Vec4dInterner;
 import com.jaamsim.render.Action;
-import com.jaamsim.render.Action.Queue;
 import com.jaamsim.render.RenderException;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
@@ -98,25 +98,25 @@ public class MeshData {
 		public ConvexHull hull;
 	}
 
-	public static class StaticSubInstance {
+	public static class StaticMeshInstance {
 		public int subMeshIndex;
 		public int materialIndex;
 		public Mat4d transform;
 		public Mat4d invTrans;
 	}
 
-	public static class SubLineInstance {
-		public int subLineIndex;
+	public static class StaticLineInstance {
+		public int lineIndex;
 		public Mat4d transform;
 		public Mat4d invTrans;
 	}
 
 	public static class TransVal {
 		Mat4d transform;
-		Mat4d normalTrans;
-		public TransVal(Mat4d trans, Mat4d norm) {
+		Mat4d invTrans;
+		public TransVal(Mat4d trans, Mat4d inverse) {
 			transform = trans;
-			normalTrans = norm;
+			invTrans = inverse;
 		}
 	}
 
@@ -127,41 +127,38 @@ public class MeshData {
 
 	public static class StaticTrans implements Trans{
 		private final Mat4d matrix;
-		private final Mat4d normalMat;
+		private final Mat4d inverseMat;
 		public StaticTrans(Mat4d mat) {
 			matrix = mat;
-			normalMat = matrix.inverse();
-			normalMat.transpose4();
+			inverseMat = matrix.inverse();
 		}
 		@Override
 		public boolean isStatic() {
 			return true;
 		}
 		@Override
-		public TransVal value(ArrayList<Queue> actions) {
-			return new TransVal(matrix, normalMat);
+		public TransVal value(ArrayList<Action.Queue> actions) {
+			return new TransVal(matrix, inverseMat);
 		}
 	}
 
 	public static class AnimTrans implements Trans{
 		private final Mat4d[] matrices;
-		private final Mat4d[] normalMats;
+		private final Mat4d[] inverseMats;
 		private final double[] times;
 		private final String actionName;
 		private final Mat4d staticMat;
-		private final Mat4d staticNormal;
+		private final Mat4d staticInv;
 		public AnimTrans(double[] times, Mat4d[] mats, String actionName, Mat4d staticMat) {
 			matrices = mats;
 			this.times = times;
 			this.actionName = actionName;
-			normalMats = new Mat4d[mats.length];
+			inverseMats = new Mat4d[mats.length];
 			for (int i = 0; i < mats.length; ++i) {
-				normalMats[i] = mats[i].inverse();
-				normalMats[i].transpose4();
+				inverseMats[i] = mats[i].inverse();
 			}
 			this.staticMat = staticMat;
-			staticNormal = staticMat.inverse();
-			staticNormal.transpose4();
+			staticInv = staticMat.inverse();
 		}
 		@Override
 		public boolean isStatic() {
@@ -169,15 +166,15 @@ public class MeshData {
 		}
 
 		@Override
-		public TransVal value(ArrayList<Queue> actions) {
+		public TransVal value(ArrayList<Action.Queue> actions) {
 			if (actions == null) {
-				return new TransVal(staticMat, staticNormal);
+				return new TransVal(staticMat, staticInv);
 			}
 
 			// See if the current action is applicable
 			boolean found = false;
 			double time = 0;
-			for (Queue q : actions) {
+			for (Action.Queue q : actions) {
 				if (q.name.equals(actionName)) {
 					found = true;
 					time = q.time;
@@ -185,16 +182,16 @@ public class MeshData {
 				}
 			}
 			if (!found) {
-				return new TransVal(staticMat, staticNormal);
+				return new TransVal(staticMat, staticInv);
 			}
 			// The action applies, interpolate the value
 
 			// Check if we are past the ends
 			if (time <= times[0]) {
-				return new TransVal(matrices[0], normalMats[0]);
+				return new TransVal(matrices[0], inverseMats[0]);
 			}
 			if (time >= times[times.length -1]) {
-				return new TransVal(matrices[times.length-1], normalMats[times.length-1]);
+				return new TransVal(matrices[times.length-1], inverseMats[times.length-1]);
 			}
 
 			// Basic binary search for appropriate segment
@@ -205,11 +202,11 @@ public class MeshData {
 				double samp = times[test];
 
 				if (samp == time) { // perfect match
-					return new TransVal(matrices[test], normalMats[test]);
+					return new TransVal(matrices[test], inverseMats[test]);
 				}
 
 				if (samp < time) {
-					start = test + 1;
+					start = test;
 				} else {
 					end = test;
 				}
@@ -234,38 +231,71 @@ public class MeshData {
 			temp.scale4(endScale);
 			retTrans.add4(temp);
 
-			Mat4d retNorm = new Mat4d(normalMats[start]);
-			retNorm.scale4(startScale);
-			temp.set4(normalMats[end]);
+			Mat4d retInv = new Mat4d(inverseMats[start]);
+			retInv.scale4(startScale);
+			temp.set4(inverseMats[end]);
 			temp.scale4(endScale);
-			retNorm.add4(temp);
+			retInv.add4(temp);
 
-			return new TransVal(retTrans, retNorm);
+//			Mat4d test = new Mat4d();
+//			test.mult4(retTrans, retInv);
+//			assert(test.nearIdentity());
+
+			return new TransVal(retTrans, retInv);
 
 		}
 	}
 
-	public static class TreeInstance {
-		public int subMeshIndex;
+	public static class AnimMeshInstance {
+		public AnimMeshInstance(int meshIndex, int materialIndex) {
+			this.meshIndex = meshIndex;
+			this.materialIndex = materialIndex;
+
+		}
+		public int meshIndex;
 		public int materialIndex;
+		public int nodeIndex;
+	}
+	public static class AnimLineInstance {
+		public AnimLineInstance(int lineIndex) {
+			this.lineIndex = lineIndex;
+
+		}
+		public int lineIndex;
+		public int nodeIndex;
 	}
 
 	public static class TreeNode {
 		public Trans trans;
 		public ArrayList<TreeNode> children = new ArrayList<>();
-		public ArrayList<TreeInstance> meshInstances = new ArrayList<>();
-		public ArrayList<Integer> lineInstances = new ArrayList<>();
+		public ArrayList<AnimMeshInstance> meshInstances = new ArrayList<>();
+		public ArrayList<AnimLineInstance> lineInstances = new ArrayList<>();
+		public int nodeIndex;
 	}
 
+	private static class TreeWalker {
+		public void onNode(Mat4d trans, Mat4d invTrans, TreeNode node) {}
+		public void onMesh(Mat4d trans, Mat4d invTrans, TreeNode node, AnimMeshInstance inst) {}
+		public void onLine(Mat4d trans, Mat4d invTrans, TreeNode node, AnimLineInstance inst) {}
+	}
+
+	public static class Pose {
+		public Mat4d[] transforms;
+		public Mat4d[] invTransforms;
+	}
 
 	private final ArrayList<SubMeshData> _subMeshesData = new ArrayList<>();
 	private final ArrayList<SubLineData> _subLinesData = new ArrayList<>();
 	private final ArrayList<Material> _materials = new ArrayList<>();
 
-	private final ArrayList<StaticSubInstance> _subMeshInstances = new ArrayList<>();
-	private final ArrayList<SubLineInstance> _subLineInstances = new ArrayList<>();
+	private final ArrayList<StaticMeshInstance> _staticMeshInstances = new ArrayList<>();
+	private final ArrayList<StaticLineInstance> _staticLineInstances = new ArrayList<>();
+
+	private final ArrayList<AnimMeshInstance> _animMeshInstances = new ArrayList<>();
+	private final ArrayList<AnimLineInstance> _animLineInstances = new ArrayList<>();
 
 	private TreeNode treeRoot;
+	private int numTreeNodes;
 
 	private ConvexHull _staticHull;
 	// The AABB of this mesh with no transform applied
@@ -285,29 +315,29 @@ public class MeshData {
 		this.keepRuntimeData = keepRuntimeData;
 	}
 
-	public void addStaticSubInstance(int meshIndex, int matIndex, Mat4d mat) {
+	public void addStaticMeshInstance(int meshIndex, int matIndex, Mat4d mat) {
 		Mat4d trans = new Mat4d(mat);
-		StaticSubInstance inst = new StaticSubInstance();
+		StaticMeshInstance inst = new StaticMeshInstance();
 		inst.subMeshIndex = meshIndex;
 		inst.materialIndex = matIndex;
 		inst.transform = trans;
 
 		inst.invTrans = trans.inverse();
-		_subMeshInstances.add(inst);
+		_staticMeshInstances.add(inst);
 	}
 
 	public void setTree(TreeNode rootNode) {
 		treeRoot = rootNode;
 	}
 
-	public void addSubLineInstance(int lineIndex, Mat4d mat) {
+	public void addStaticLineInstance(int lineIndex, Mat4d mat) {
 		Mat4d trans = new Mat4d(mat);
-		SubLineInstance inst = new SubLineInstance();
-		inst.subLineIndex = lineIndex;
+		StaticLineInstance inst = new StaticLineInstance();
+		inst.lineIndex = lineIndex;
 		inst.transform = trans;
 		inst.invTrans = trans.inverse();
 
-		_subLineInstances.add(inst);
+		_staticLineInstances.add(inst);
 	}
 
 	public void addMaterial(URI colorTex,
@@ -456,13 +486,13 @@ public class MeshData {
 		Mat4d transform = new Mat4d(trans);
 		transform.mult4(val.transform);
 
-		for (TreeInstance ti : node.meshInstances) {
-			addStaticSubInstance(ti.subMeshIndex, ti.materialIndex, transform);
+		for (AnimMeshInstance ti : node.meshInstances) {
+			addStaticMeshInstance(ti.meshIndex, ti.materialIndex, transform);
 		}
 		node.meshInstances.clear();
 
-		for (Integer i : node.lineInstances) {
-			addSubLineInstance(i, transform);
+		for (AnimLineInstance li : node.lineInstances) {
+			addStaticLineInstance(li.lineIndex, transform);
 		}
 		node.lineInstances.clear();
 
@@ -483,6 +513,27 @@ public class MeshData {
 		node.children = newChildren;
 	}
 
+	private void walkTree(TreeWalker walker, TreeNode node, Mat4d trans, Mat4d inverse, ArrayList<Action.Queue> actions) {
+		Mat4d newTrans = new Mat4d();
+		Mat4d newInv = new Mat4d();
+		TransVal tv = node.trans.value(actions);
+		newTrans.mult4(trans, tv.transform);
+		newInv.mult4(tv.invTrans, inverse);
+
+		walker.onNode(newTrans, newInv, node);
+
+		for (AnimMeshInstance ti : node.meshInstances) {
+			walker.onMesh(newTrans, newInv, node, ti);
+		}
+
+		for (AnimLineInstance li : node.lineInstances) {
+			walker.onLine(newTrans, newInv, node, li);
+		}
+		for (TreeNode child : node.children) {
+			walkTree(walker, child, newTrans, newInv, actions);
+		}
+
+	}
 	/**
 	 * Builds the convex hull of the current mesh based on all the existing sub meshes.
 	 */
@@ -492,9 +543,9 @@ public class MeshData {
 			scanTreeForStaticEntries(treeRoot, new Mat4d());
 		}
 
-		ArrayList<Vec3d> totalHullPoints = new ArrayList<>();
+		final ArrayList<Vec3d> totalHullPoints = new ArrayList<>();
 		// Collect all the points from the hulls of the individual sub meshes
-		for (StaticSubInstance subInst : _subMeshInstances) {
+		for (StaticMeshInstance subInst : _staticMeshInstances) {
 
 			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
 			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(subInst.transform, pointsRef);
@@ -502,13 +553,47 @@ public class MeshData {
 			totalHullPoints.addAll(subPoints);
 		}
 		// And the lines
-		for (SubLineInstance subInst : _subLineInstances) {
+		for (StaticLineInstance subInst : _staticLineInstances) {
 
-			List<Vec3d> pointsRef = _subLinesData.get(subInst.subLineIndex).hull.getVertices();
+			List<Vec3d> pointsRef = _subLinesData.get(subInst.lineIndex).hull.getVertices();
 			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(subInst.transform, pointsRef);
 
 			totalHullPoints.addAll(subPoints);
 		}
+
+		// Now scan the non-static part of the tree
+		TreeWalker walker = new TreeWalker() {
+			public int nextIndex = 0;
+
+			@Override
+			public void onNode(Mat4d trans, Mat4d InvTrans, TreeNode node) {
+				node.nodeIndex = nextIndex++;
+
+				numTreeNodes = nextIndex;
+			}
+
+			@Override
+			public void onMesh(Mat4d trans, Mat4d InvTrans, TreeNode node, AnimMeshInstance inst) {
+				List<Vec3d> pointsRef = _subMeshesData.get(inst.meshIndex).staticHull.getVertices();
+				List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(trans, pointsRef);
+
+				totalHullPoints.addAll(subPoints);
+
+				inst.nodeIndex = node.nodeIndex;
+				_animMeshInstances.add(inst);
+			}
+
+			@Override
+			public void onLine(Mat4d trans, Mat4d InvTrans, TreeNode node, AnimLineInstance inst) {
+				List<Vec3d> pointsRef = _subLinesData.get(inst.lineIndex).hull.getVertices();
+				List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(trans, pointsRef);
+
+				totalHullPoints.addAll(subPoints);
+				inst.nodeIndex = node.nodeIndex;
+				_animLineInstances.add(inst);
+			}
+		};
+		walkTree(walker, treeRoot, new Mat4d(), new Mat4d(), null);
 
 		_staticHull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 		_defaultBounds = _staticHull.getAABB(new Mat4d());
@@ -523,33 +608,81 @@ public class MeshData {
 		}
 	}
 
-	public ConvexHull getHull(ArrayList<Action.Queue> actions) {
-		if (actions == null || actions.size() == 0)
+	public ConvexHull getHull(Pose pose) {
+		if (pose == null)
 			return _staticHull;
 
 		// Otherwise, we need to calculate a new hull
 		ArrayList<Vec3d> hullPoints = new ArrayList<>();
 
-		for (StaticSubInstance subInst : _subMeshInstances) {
-			Mat4d animatedTransform = subInst.transform;
+		for (StaticMeshInstance inst : _staticMeshInstances) {
 
-			List<Vec3d> pointsRef = _subMeshesData.get(subInst.subMeshIndex).staticHull.getVertices();
-			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
+			List<Vec3d> pointsRef = _subMeshesData.get(inst.subMeshIndex).staticHull.getVertices();
+			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(inst.transform, pointsRef);
 
 			hullPoints.addAll(subPoints);
 		}
 
-		// And the lines
-		for (SubLineInstance subInst : _subLineInstances) {
+		for (AnimMeshInstance inst : _animMeshInstances) {
+			Mat4d animatedTransform = pose.transforms[inst.nodeIndex];
 
-			List<Vec3d> pointsRef = _subLinesData.get(subInst.subLineIndex).hull.getVertices();
-			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(subInst.transform, pointsRef);
+			List<Vec3d> pointsRef = _subMeshesData.get(inst.meshIndex).staticHull.getVertices();
+			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
+
+			hullPoints.addAll(subPoints);
+
+		}
+
+		// And the lines
+		for (StaticLineInstance inst : _staticLineInstances) {
+
+			List<Vec3d> pointsRef = _subLinesData.get(inst.lineIndex).hull.getVertices();
+			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(inst.transform, pointsRef);
+
+			hullPoints.addAll(subPoints);
+		}
+
+		for (AnimLineInstance inst : _animLineInstances) {
+
+			Mat4d animatedTransform = pose.transforms[inst.nodeIndex];
+
+			List<Vec3d> pointsRef = _subLinesData.get(inst.lineIndex).hull.getVertices();
+			List<Vec3d> subPoints = RenderUtils.transformPointsWithTrans(animatedTransform, pointsRef);
 
 			hullPoints.addAll(subPoints);
 		}
 
 		ConvexHull ret = ConvexHull.TryBuildHull(hullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, null);
 		return ret;
+	}
+
+	public Pose getPose(ArrayList<Action.Queue> actions) {
+
+		final Pose ret = new Pose();
+		ret.transforms = new Mat4d[numTreeNodes];
+		ret.invTransforms = new Mat4d[numTreeNodes];
+
+		TreeWalker walker = new TreeWalker() {
+			@Override
+			public void onNode(Mat4d trans, Mat4d invTrans, TreeNode node) {
+				ret.transforms[node.nodeIndex] = trans;
+				ret.invTransforms[node.nodeIndex] = invTrans;
+
+//				// Debug
+//				Mat4d test = new Mat4d();
+//				test.mult4(trans, invTrans);
+//				assert(test.nearIdentityThresh3(0.01));
+//
+//				test.mult4(invTrans, trans);
+//				assert(test.nearIdentityThresh3(0.01));
+
+			}
+		};
+
+		walkTree(walker, treeRoot, new Mat4d(), new Mat4d(), actions);
+
+		return ret;
+
 	}
 
 	public AABB getDefaultBounds() {
@@ -567,11 +700,18 @@ public class MeshData {
 		return _subLinesData;
 	}
 
-	public ArrayList<StaticSubInstance> getSubMeshInstances() {
-		return _subMeshInstances;
+	public ArrayList<StaticMeshInstance> getStaticMeshInstances() {
+		return _staticMeshInstances;
 	}
-	public ArrayList<SubLineInstance> getSubLineInstances() {
-		return _subLineInstances;
+	public ArrayList<StaticLineInstance> getStaticLineInstances() {
+		return _staticLineInstances;
+	}
+
+	public ArrayList<AnimMeshInstance> getAnimMeshInstances() {
+		return _animMeshInstances;
+	}
+	public ArrayList<AnimLineInstance> getAnimLineInstances() {
+		return _animLineInstances;
 	}
 
 	public ArrayList<Material> getMaterials() {
@@ -580,8 +720,12 @@ public class MeshData {
 
 	public int getNumTriangles() {
 		int numTriangles = 0;
-		for (StaticSubInstance inst : _subMeshInstances) {
+		for (StaticMeshInstance inst : _staticMeshInstances) {
 			SubMeshData data = _subMeshesData.get(inst.subMeshIndex);
+			numTriangles += data.indices.length / 3;
+		}
+		for (AnimMeshInstance inst : _animMeshInstances) {
+			SubMeshData data = _subMeshesData.get(inst.meshIndex);
 			numTriangles += data.indices.length / 3;
 		}
 		return numTriangles;
@@ -596,7 +740,8 @@ public class MeshData {
 	}
 
 	public int getNumSubInstances() {
-		return _subMeshInstances.size() + _subLineInstances.size();
+		return _staticMeshInstances.size() + _staticLineInstances.size() +
+				_animMeshInstances.size() + _animLineInstances.size();
 	}
 	public int getNumSubMeshes() {
 		return _subMeshesData.size() + _subLinesData.size();
@@ -788,7 +933,7 @@ public class MeshData {
 			Mat4d trans = new Mat4d(cmMat);
 			trans.transpose4();
 
-			addStaticSubInstance(meshIndex, matIndex, trans);
+			addStaticMeshInstance(meshIndex, matIndex, trans);
 		}
 
 		DataBlock subLineInstBlock = topBlock.findChildByName("SubLineInstances");
@@ -808,7 +953,7 @@ public class MeshData {
 			Mat4d trans = new Mat4d(cmMat);
 			trans.transpose4();
 
-			addSubLineInstance(lineIndex, trans);
+			addStaticLineInstance(lineIndex, trans);
 		}
 
 		DataBlock hullBlock = topBlock.findChildByName("ConvexHull");
@@ -929,7 +1074,7 @@ public class MeshData {
 
 		DataBlock subMInsts = new DataBlock("SubMeshInstances", 0);
 		topBlock.addChildBlock(subMInsts);
-		for (StaticSubInstance subInst : _subMeshInstances) {
+		for (StaticMeshInstance subInst : _staticMeshInstances) {
 			DataBlock staticSubInst = new DataBlock("StaticSubInstance", 0);
 			subMInsts.addChildBlock(staticSubInst);
 
@@ -948,13 +1093,13 @@ public class MeshData {
 
 		DataBlock subLInsts = new DataBlock("SubLineInstances", 0);
 		topBlock.addChildBlock(subLInsts);
-		for (SubLineInstance subInst : _subLineInstances) {
+		for (StaticLineInstance subInst : _staticLineInstances) {
 			DataBlock subLineInst = new DataBlock("SubLineInstance", 0);
 			subLInsts.addChildBlock(subLineInst);
 
 			DataBlock indices = new DataBlock("Indices", 4);
 			subLineInst.addChildBlock(indices);
-			indices.writeInt(subInst.subLineIndex);
+			indices.writeInt(subInst.lineIndex);
 
 			DataBlock transBlock = new DataBlock("Transform", 128);
 			subLineInst.addChildBlock(transBlock);
@@ -963,6 +1108,8 @@ public class MeshData {
 				transBlock.writeDouble(transCMData[i]);
 			}
 		}
+
+		// TODO: animated instances
 
 		// Materials
 		DataBlock matsBlock = new DataBlock("Materials", 0);
@@ -1001,8 +1148,15 @@ public class MeshData {
 	 */
 	public int[] getUsedMeshShaders() {
 		ArrayList<Integer> shaderIDs = new ArrayList<>();
-		for (StaticSubInstance smi : _subMeshInstances) {
+		for (StaticMeshInstance smi : _staticMeshInstances) {
 			int shaderID = _materials.get(smi.materialIndex).getShaderID();
+
+			if (!shaderIDs.contains(shaderID))
+				shaderIDs.add(shaderID);
+		}
+
+		for (AnimMeshInstance ami : _animMeshInstances) {
+			int shaderID = _materials.get(ami.materialIndex).getShaderID();
 
 			if (!shaderIDs.contains(shaderID))
 				shaderIDs.add(shaderID);
