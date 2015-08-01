@@ -57,6 +57,10 @@ public class InputBox extends TextBasics {
 
 	@Override
 	public void acceptEdits() {
+		if (target.getValue() == null) {
+			super.acceptEdits();
+			return;
+		}
 		try {
 			ArrayList<String> tokens = new ArrayList<>();
 			Parser.tokenize(tokens, getEditText(), true);
