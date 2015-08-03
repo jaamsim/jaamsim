@@ -82,28 +82,26 @@ public class ShapeModel extends DisplayModel {
 		SAGMILL2D,
 		RECTANGLEWITHARROWS,
 	}
-	@Keyword(description = "The shape of a display model determines the appearance of the display model. The shape may be " +
-	                "one of the following: Pixels (for a square of 6x6 pixels), Truck2D, Ship2D, Icon (for a rectangle), " +
-	                "Circle.",
-	         example = "Ship3DModel Shape { CIRCLE }")
+	@Keyword(description = "The shape of a display model determines the appearance of the display model.",
+	         exampleList = { "CIRCLE" })
 	private final EnumInput<ValidShapes> shape;
 
 	@Keyword(description = "The colour for the filled part of the display model.",
-	         example = "Product2D FillColour { red }")
+	         exampleList = { "red" })
 	private final ColourInput fillColour;
 
 	@Keyword(description = "The colour for the outline part of the display model.",
-	         example = "Berth2D OutlineColour { magenta }")
+	         exampleList = { "magenta" })
 	private final ColourInput outlineColour;
 
 	@Keyword(description = "If the value is true, then the display model will have a solid fill. Otherwise, the display model " +
 	                "will appear as hollow.",
-	         example = "Berth2D Filled { FALSE }")
+	         exampleList = { "FALSE" })
 	private final BooleanInput filled;
 
 	@Keyword(description = "If the value is true, then the display model outline will be a bold line. Otherwise the outline " +
 	                "will be one pixel wide line.",
-	         example = "Berth2D Bold { TRUE }")
+	         exampleList = { "TRUE" })
 	private final BooleanInput bold;
 
 	static {
