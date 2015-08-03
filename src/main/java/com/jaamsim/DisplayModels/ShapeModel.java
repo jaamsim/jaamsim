@@ -165,6 +165,10 @@ public class ShapeModel extends DisplayModel {
 		private HashMap<String, Tag> tagsCache = emptyTagSet;
 		private ValidShapes shapeCache;
 		private VisibilityInfo viCache;
+		private Color4d fillColourCache;
+		private Color4d outlineColourCache;
+		private boolean filledCache;
+		private boolean boldCache;
 
 		public Binding(Entity ent, DisplayModel dm) {
 			super(ent, dm);
@@ -182,6 +186,10 @@ public class ShapeModel extends DisplayModel {
 			HashMap<String, Tag> tags = getTags();
 			VisibilityInfo vi = getVisibilityInfo();
 			ValidShapes sc = shape.getValue();
+			Color4d fc = fillColour.getValue();
+			Color4d oc =  outlineColour.getValue();
+			boolean fill = filled.getValue();
+			boolean bld = bold.getValue();
 
 			boolean dirty = false;
 
@@ -190,12 +198,20 @@ public class ShapeModel extends DisplayModel {
 			dirty = dirty || dirty_tags(tagsCache, tags);
 			dirty = dirty || !compare(shapeCache, sc);
 			dirty = dirty || !compare(viCache, vi);
+			dirty = dirty || fillColourCache != fc;
+			dirty = dirty || outlineColourCache != oc;
+			dirty = dirty || filledCache != fill;
+			dirty = dirty || boldCache != bld;
 
 			transCache = trans;
 			scaleCache = scale;
 			tagsCache = new HashMap<>(tags);
 			shapeCache = sc;
 			viCache = vi;
+			fillColourCache = fc;
+			outlineColourCache = oc;
+			filledCache = fill;
+			boldCache = bld;
 
 			if (cachedProxies != null && !dirty) {
 				// Nothing changed
@@ -269,13 +285,13 @@ public class ShapeModel extends DisplayModel {
 			// Gather some inputs
 			if (isTagVisible(ShapeModel.TAG_OUTLINES))
 			{
-				Color4d colour = getTagColor(ShapeModel.TAG_OUTLINES, outlineColour.getValue());
-				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, true, (bold.getValue() ? 2 : 1), getVisibilityInfo(), pickingID));
+				Color4d colour = getTagColor(ShapeModel.TAG_OUTLINES, outlineColourCache);
+				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, true, (boldCache ? 2 : 1), getVisibilityInfo(), pickingID));
 			}
 
-			if (filled.getValue() && isTagVisible(ShapeModel.TAG_CONTENTS))
+			if (filledCache && isTagVisible(ShapeModel.TAG_CONTENTS))
 			{
-				Color4d colour = getTagColor(ShapeModel.TAG_CONTENTS, fillColour.getValue());
+				Color4d colour = getTagColor(ShapeModel.TAG_CONTENTS, fillColourCache);
 				cachedProxies.add(new PolygonProxy(points, trans, scale, colour, false, 1, getVisibilityInfo(), pickingID));
 			}
 		}
