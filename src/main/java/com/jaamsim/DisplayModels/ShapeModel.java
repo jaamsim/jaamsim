@@ -101,11 +101,6 @@ public class ShapeModel extends DisplayModel {
 	         example = "Berth2D Filled { FALSE }")
 	private final BooleanInput filled;
 
-	@Keyword(description = "If the value is true, then the display model outline will be a dashed line. Otherwise, the outline " +
-	                "will be a solid line.",
-	         example = "StockpileLine2D Dashed { TRUE }")
-	private final BooleanInput dashed;
-
 	@Keyword(description = "If the value is true, then the display model outline will be a bold line. Otherwise the outline " +
 	                "will be one pixel wide line.",
 	         example = "Berth2D Bold { TRUE }")
@@ -138,9 +133,6 @@ public class ShapeModel extends DisplayModel {
 
 		filled = new BooleanInput("Filled", "Key Inputs", true);
 		this.addInput(filled);
-
-		dashed = new BooleanInput("Dashed", "Key Inputs", false);
-		this.addInput(dashed);
 
 		bold = new BooleanInput("Bold", "Key Inputs", false);
 		this.addInput(bold);
