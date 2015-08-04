@@ -111,44 +111,25 @@ public double getCollisionDist(Ray r, boolean precise)
 		Mat4d fullModelMat = new Mat4d();
 		fullModelMat.mult4(_modelMat, subInst.transform);
 
-		Ray localRay = r.transform(invModelMat);
-
-		// Rough collision to AABB
-		if (subData.localBounds.collisionDist(localRay) < 0) {
-			continue;
+		double subDist = collideSubMesh(subData, r, fullModelMat, invModelMat);
+		if (subDist < shortDistance) {
+			shortDistance = subDist;
 		}
+	}
+	for (MeshData.AnimMeshInstance animInst : data.getAnimMeshInstances()) {
 
-		ConvexHull subDataHull = subData.staticHull;
-		double subDist = subDataHull.collisionDistanceByMatrix(r, fullModelMat, invModelMat);
-		if (subDist < 0) {
-			continue;
-		}
+		MeshData.SubMeshData subData = data.getSubMeshData().get(animInst.meshIndex);
 
-		// We have hit both the AABB and the convex hull for this sub instance, now do individual triangle collision
-		Vec3d[] triVecs = new Vec3d[3];
+		Mat4d invModelMat = new Mat4d();
+		invModelMat.mult4(pose.invTransforms[animInst.nodeIndex], _invModelMat);
 
-		for (int triInd = 0; triInd < subData.indices.length / 3; ++triInd) {
-			triVecs[0] = subData.verts.get(subData.indices[triInd*3+0]);
-			triVecs[1] = subData.verts.get(subData.indices[triInd*3+1]);
-			triVecs[2] = subData.verts.get(subData.indices[triInd*3+2]);
-			if ( triVecs[0].equals3(triVecs[1]) ||
-			     triVecs[1].equals3(triVecs[2]) ||
-			     triVecs[2].equals3(triVecs[0])) {
-				continue;
-			}
-			double triDist = MathUtils.collisionDistPoly(localRay, triVecs);
-			if (triDist > 0) {
-				// We have collided, now we need to figure out the distance in original ray space, not the transformed ray space
-				Vec3d temp = localRay.getPointAtDist(triDist);
-				temp.multAndTrans3(fullModelMat, temp); // Temp is the collision point in world space
-				temp.sub3(temp, r.getStartRef());
+		Mat4d fullModelMat = new Mat4d();
+		fullModelMat.mult4(_modelMat, pose.transforms[animInst.nodeIndex]);
 
-				double newDist = temp.mag3();
 
-				if (newDist < shortDistance) {
-					shortDistance = newDist;
-				}
-			}
+		double subDist = collideSubMesh(subData, r, fullModelMat, invModelMat);
+		if (subDist < shortDistance) {
+			shortDistance = subDist;
 		}
 	}
 
@@ -163,26 +144,29 @@ public double getCollisionDist(Ray r, boolean precise)
 		Mat4d fullModelMat = new Mat4d();
 		fullModelMat.mult4(_modelMat, subInst.transform);
 
-		double subDist = subData.hull.collisionDistanceByMatrix(r, fullModelMat, invModelMat);
-		if (subDist < 0) {
-			continue;
-		}
-
-		Mat4d rayMat = MathUtils.RaySpace(r);
-		Vec4d[] lineVerts = new Vec4d[subData.verts.size()];
-		for (int i = 0; i < lineVerts.length; ++i) {
-			lineVerts[i] = new Vec4d();
-			lineVerts[i].multAndTrans3(fullModelMat, subData.verts.get(i));
-		}
-
-		double lineDist = MathUtils.collisionDistLines(rayMat, lineVerts, 0.01309); // Angle is 0.75 deg in radians
+		double lineDist = collideSubLine(subData, r, fullModelMat, invModelMat);
 
 		if (lineDist > 0 && lineDist < shortDistance) {
 			shortDistance = lineDist;
 		}
 	}
 
-	// TODO: check against animated sub objects
+	for (MeshData.AnimLineInstance animInst : data.getAnimLineInstances()) {
+
+		MeshData.SubLineData subData = data.getSubLineData().get(animInst.lineIndex);
+
+		Mat4d invModelMat = new Mat4d();
+		invModelMat.mult4(pose.invTransforms[animInst.nodeIndex], _invModelMat);
+
+		Mat4d fullModelMat = new Mat4d();
+		fullModelMat.mult4(_modelMat, pose.transforms[animInst.nodeIndex]);
+
+		double lineDist = collideSubLine(subData, r, fullModelMat, invModelMat);
+
+		if (lineDist > 0 && lineDist < shortDistance) {
+			shortDistance = lineDist;
+		}
+	}
 
 	if (shortDistance == Double.POSITIVE_INFINITY) {
 		return -1; // We did not actually collide with anything
@@ -190,6 +174,70 @@ public double getCollisionDist(Ray r, boolean precise)
 
 	return shortDistance;
 
+}
+
+private double collideSubMesh(MeshData.SubMeshData subData, Ray r, Mat4d modelMat, Mat4d invModelMat) {
+
+	Ray localRay = r.transform(invModelMat);
+
+	// Rough collision to AABB
+	if (subData.localBounds.collisionDist(localRay) < 0) {
+		return Double.POSITIVE_INFINITY;
+	}
+
+	ConvexHull subDataHull = subData.staticHull;
+	double subDist = subDataHull.collisionDistanceByMatrix(r, modelMat, invModelMat);
+	if (subDist < 0) {
+		return Double.POSITIVE_INFINITY;
+	}
+
+	// We have hit both the AABB and the convex hull for this sub instance, now do individual triangle collision
+	Vec3d[] triVecs = new Vec3d[3];
+
+	double shortDist = Double.POSITIVE_INFINITY;
+
+	for (int triInd = 0; triInd < subData.indices.length / 3; ++triInd) {
+		triVecs[0] = subData.verts.get(subData.indices[triInd*3+0]);
+		triVecs[1] = subData.verts.get(subData.indices[triInd*3+1]);
+		triVecs[2] = subData.verts.get(subData.indices[triInd*3+2]);
+		if ( triVecs[0].equals3(triVecs[1]) ||
+		     triVecs[1].equals3(triVecs[2]) ||
+		     triVecs[2].equals3(triVecs[0])) {
+			continue;
+		}
+		double triDist = MathUtils.collisionDistPoly(localRay, triVecs);
+		if (triDist > 0) {
+			// We have collided, now we need to figure out the distance in original ray space, not the transformed ray space
+			Vec3d temp = localRay.getPointAtDist(triDist);
+			temp.multAndTrans3(modelMat, temp); // Temp is the collision point in world space
+			temp.sub3(temp, r.getStartRef());
+
+			double newDist = temp.mag3();
+
+			if (newDist < shortDist) {
+				shortDist = newDist;
+			}
+		}
+	}
+
+	return shortDist;
+}
+
+private double collideSubLine(MeshData.SubLineData subData, Ray r, Mat4d modelMat, Mat4d invModelMat) {
+
+	double subDist = subData.hull.collisionDistanceByMatrix(r, modelMat, invModelMat);
+	if (subDist < 0) {
+		return Double.POSITIVE_INFINITY;
+	}
+
+	Mat4d rayMat = MathUtils.RaySpace(r);
+	Vec4d[] lineVerts = new Vec4d[subData.verts.size()];
+	for (int i = 0; i < lineVerts.length; ++i) {
+		lineVerts[i] = new Vec4d();
+		lineVerts[i].multAndTrans3(modelMat, subData.verts.get(i));
+	}
+
+	return MathUtils.collisionDistLines(rayMat, lineVerts, 0.01309); // Angle is 0.75 deg in radians
 }
 
 @Override
