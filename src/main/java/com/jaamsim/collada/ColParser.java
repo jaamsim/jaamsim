@@ -1720,6 +1720,9 @@ public class ColParser {
 		colData.out =    getDataArrayFromSource(samp.outputSource);
 		colData.interp = getStringArrayFromSource(samp.interpSource);
 
+		SourceInfo outInfo = getInfoFromSource(samp.outputSource, "float_array");
+		colData.numComponents = outInfo.stride;
+
 		if (samp.inTangentSource != null) {
 			colData.inTan =  getDataArrayFromSource(samp.inTangentSource);
 		}
@@ -1761,6 +1764,7 @@ public class ColParser {
 			currentNode = findSubNodeBySID(sn, pathSegments[i]);
 			parseAssert(currentNode != null);
 		}
+
 		// We have now scanned the path and have the final node, use the target to find the actual curve to apply to
 		parseAssert(currentNode instanceof SceneTrans);
 		// The node at the end of the chain must be a transform
@@ -1845,6 +1849,7 @@ public class ColParser {
 		Vec3d commonVect;
 
 		public AnimCurve[] attachedCurves;
+		public int[] attachedIndex;
 		protected abstract Mat4d getStaticMat();
 		protected abstract MeshData.Trans toAnimatedTransform(String actionName);
 		public MeshData.Trans toMeshDataTrans(String actionName) {
@@ -1867,14 +1872,17 @@ public class ColParser {
 		protected boolean attachCommonCurves(AnimCurve curve, String tar) {
 			if (tar.equals(".X") || tar.equals("(0)")) {
 				attachedCurves[0] = curve;
+				attachedIndex[0] = 0;
 				return true;
 			}
 			if (tar.equals(".Y") || tar.equals("(1)")) {
 				attachedCurves[1] = curve;
+				attachedIndex[1] = 0;
 				return true;
 			}
 			if (tar.equals(".Z") || tar.equals("(2)")) {
 				attachedCurves[2] = curve;
+				attachedIndex[2] = 0;
 				return true;
 			}
 			return false;
@@ -1883,13 +1891,13 @@ public class ColParser {
 		Vec3d getAnimatedVectAtTime(double time) {
 			Vec3d ret = new Vec3d(commonVect);
 			if (attachedCurves[0] != null) {
-				ret.x = attachedCurves[0].getValueForTime(time);
+				ret.x = attachedCurves[0].getValueForTime(time).getByInd(attachedIndex[0]);
 			}
 			if (attachedCurves[1] != null) {
-				ret.y = attachedCurves[1].getValueForTime(time);
+				ret.y = attachedCurves[1].getValueForTime(time).getByInd(attachedIndex[1]);
 			}
 			if (attachedCurves[2] != null) {
-				ret.z = attachedCurves[2].getValueForTime(time);
+				ret.z = attachedCurves[2].getValueForTime(time).getByInd(attachedIndex[2]);
 			}
 			return ret;
 		}
@@ -1921,6 +1929,7 @@ public class ColParser {
 		public TranslationTrans(XmlNode transNode) {
 			sid = transNode.getAttrib("sid");
 			attachedCurves = new AnimCurve[3];
+			attachedIndex = new int[3];
 
 			double[] vals = (double[])transNode.getContent();
 			parseAssert(vals != null && vals.length >= 3);
@@ -1938,6 +1947,15 @@ public class ColParser {
 		public void attachCurve(AnimCurve curve, String target) {
 			String tar = target.toUpperCase();
 			if (attachCommonCurves(curve, tar)) {
+				return;
+			}
+
+			if (target.equals("")) {
+				// For an empty target, attach to all curves
+				for (int i = 0; i < 3; ++i) {
+					attachedCurves[i] = curve;
+					attachedIndex[i] = i;
+				}
 				return;
 			}
 			parseAssert(false);
@@ -1962,6 +1980,7 @@ public class ColParser {
 		public RotationTrans(XmlNode rotNode) {
 			sid = rotNode.getAttrib("sid");
 			attachedCurves = new AnimCurve[4];
+			attachedIndex = new int[4];
 			double[] vals = (double[])rotNode.getContent();
 			parseAssert(vals != null && vals.length >= 4);
 
@@ -1989,6 +2008,15 @@ public class ColParser {
 				attachedCurves[3] = curve;
 				return;
 			}
+			if (target.equals("")) {
+				// For an empty target, attach to all curves
+				for (int i = 0; i < 4; ++i) {
+					attachedCurves[i] = curve;
+					attachedIndex[i] = i;
+				}
+				return;
+			}
+
 			parseAssert(false);
 		}
 
@@ -2014,7 +2042,7 @@ public class ColParser {
 			for (int i = 0; i < times.length; ++i) {
 				double animAngle = Math.toRadians(angle);
 				if (attachedCurves[3] != null) {
-					animAngle = Math.toRadians(attachedCurves[3].getValueForTime(times[i]));
+					animAngle = Math.toRadians(attachedCurves[3].getValueForTime(times[i]).getByInd(attachedIndex[3]));
 				}
 
 				Vec3d animAxis = getAnimatedVectAtTime(times[i]);
@@ -2032,6 +2060,7 @@ public class ColParser {
 		public ScaleTrans(XmlNode scaleNode) {
 			sid = scaleNode.getAttrib("sid");
 			attachedCurves = new AnimCurve[3];
+			attachedIndex = new int[3];
 
 			double[] vals = (double[])scaleNode.getContent();
 			parseAssert(vals != null && vals.length >= 3);
@@ -2052,6 +2081,14 @@ public class ColParser {
 		public void attachCurve(AnimCurve curve, String target) {
 			String tar = target.toUpperCase();
 			if (attachCommonCurves(curve, tar)) {
+				return;
+			}
+			if (target.equals("")) {
+				// For an empty target, attach to all curves
+				for (int i = 0; i < 3; ++i) {
+					attachedCurves[i] = curve;
+					attachedIndex[i] = i;
+				}
 				return;
 			}
 			parseAssert(false);
@@ -2078,6 +2115,7 @@ public class ColParser {
 
 		public MatrixTrans(Mat4d mat) {
 			attachedCurves = new AnimCurve[0];
+			attachedIndex = new int[0];
 			matrix = new Mat4d(mat);
 		}
 

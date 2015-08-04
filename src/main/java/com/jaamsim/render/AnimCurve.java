@@ -25,6 +25,7 @@ public class AnimCurve {
 
 	// A holder for collada curve information
 	public static class ColCurve {
+		public int numComponents;
 		public Vec4d[] in;
 		public Vec4d[] out;
 		public Vec4d[] inTan;
@@ -33,20 +34,24 @@ public class AnimCurve {
 	}
 
 	public double[] times;
-	public double[] values;
+	public Vec4d[] values;
+
+	// Cache the last value as this may be requested several times in a row
+	private Vec4d lastVal;
+	private double lastTime;
 
 	public static AnimCurve buildFromColCurve(ColCurve colData) {
 		ArrayList<Double> ts = new ArrayList<>();
-		ArrayList<Double> vs = new ArrayList<>();
+		ArrayList<Vec4d> vs = new ArrayList<>();
 
 		ts.add(colData.in[0].x);
-		vs.add(colData.out[0].x);
+		vs.add(colData.out[0]);
 
 		for (int i = 0; i < colData.in.length-1; ++i) {
 			String interp = colData.interp[i];
 			if (interp.equals("LINEAR")) {
 				ts.add(colData.in[i+1].x);
-				vs.add(colData.out[i+1].x);
+				vs.add(colData.out[i+1]);
 				continue;
 			}
 			if (interp.equals("BEZIER")) {
@@ -60,19 +65,31 @@ public class AnimCurve {
 				// Interpolate bezier as 4 linear segments (this may need to be improved at a later date)
 				for (double s = 0.25; s <=1; s+=0.25) {
 
-					// Calculate the bezier result, see the collada 1.4.1 spec (page 4-4) for the source of this algorithm
-					Vec2d p0 = new Vec2d(colData.in[i  ].x, colData.out[i  ].x);
-					Vec2d p1 = new Vec2d(colData.in[i+1].x, colData.out[i+1].x);
-					Vec2d c0 = colData.outTan[i];
-					Vec2d c1 = colData.inTan[i+1];
+					Vec4d val = new Vec4d();
+					double t = 0;
+
 					double oneMinS = 1 - s;
 					double coeffP0 = oneMinS*oneMinS*oneMinS;
 					double coeffC0 = 3*s*oneMinS*oneMinS;
 					double coeffC1 = 3*s*s*oneMinS;
 					double coeffP1 = s*s*s;
 
-					ts.add(coeffP0*p0.x + coeffC0*c0.x + coeffC1*c1.x + coeffP1*p1.x);
-					vs.add(coeffP0*p0.y + coeffC0*c0.y + coeffC1*c1.y + coeffP1*p1.y);
+					// Run the bezier solver for each component in the output vector
+					for (int compInd = 0; compInd < colData.numComponents; ++compInd) {
+
+						// Calculate the bezier result, see the collada 1.4.1 spec (page 4-4) for the source of this algorithm
+						Vec2d p0 = new Vec2d(colData.in[i  ].x,    colData.out[i  ].getByInd(compInd));
+						Vec2d p1 = new Vec2d(colData.in[i+1].x,    colData.out[i+1].getByInd(compInd));
+						Vec2d c0 = new Vec2d(colData.outTan[i].x,  colData.outTan[i].getByInd(compInd + 1));
+						Vec2d c1 = new Vec2d(colData.inTan[i+1].x, colData.inTan[i+1].getByInd(compInd + 1));
+
+						t = (coeffP0*p0.x + coeffC0*c0.x + coeffC1*c1.x + coeffP1*p1.x);
+
+						double v = coeffP0*p0.y + coeffC0*c0.y + coeffC1*c1.y + coeffP1*p1.y;
+						val.setByInd(compInd, v);
+					}
+					ts.add(t);
+					vs.add(val);
 				}
 				continue;
 			}
@@ -82,7 +99,7 @@ public class AnimCurve {
 
 		AnimCurve ret = new AnimCurve();
 		ret.times = new double[ts.size()];
-		ret.values = new double[vs.size()];
+		ret.values = new Vec4d[vs.size()];
 		assert(ts.size() == vs.size());
 
 		for (int i = 0; i < ts.size(); ++i) {
@@ -94,7 +111,11 @@ public class AnimCurve {
 	private AnimCurve() {
 	}
 
-	public double getValueForTime(double time) {
+	public Vec4d getValueForTime(double time) {
+		if (lastVal != null && lastTime == time) {
+			return lastVal;
+		}
+
 		// Check if we are past the ends
 		if (time <= times[0]) {
 			return values[0];
@@ -129,10 +150,21 @@ public class AnimCurve {
 		assert(time >= t0);
 		assert(time <= t1);
 
-		double v0 = values[start];
-		double v1 = values[end];
+		Vec4d v0 = values[start];
+		Vec4d v1 = values[end];
+		double scale = (time - t0)/(t1-t0);
 
-		double slope = (v1-v0)/(t1-t0);
-		return slope * (time - t0) + v0;
+		Vec4d ret = new Vec4d(v0);
+		ret.scale4(1-scale);
+
+		Vec4d temp = new Vec4d(v1);
+		temp.scale4(scale);
+
+		ret.add4(temp);
+
+		lastTime = time;
+		lastVal = ret;
+		return ret;
+
 	}
 }

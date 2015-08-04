@@ -359,4 +359,38 @@ public void mult4(Vec4d v, Mat4d m) {
 	this.z = _z;
 	this.w = _w;
 }
+
+public void setByInd(int index, double val) {
+	switch (index) {
+	case 0:
+		x = val;
+		return;
+	case 1:
+		y = val;
+		return;
+	case 2:
+		z = val;
+		return;
+	case 3:
+		w = val;
+		return;
+	}
+	assert(false);
+}
+
+public double getByInd(int index) {
+	switch (index) {
+	case 0:
+		return x;
+	case 1:
+		return y;
+	case 2:
+		return z;
+	case 3:
+		return w;
+	}
+	assert(false);
+	return 0;
+}
+
 }
