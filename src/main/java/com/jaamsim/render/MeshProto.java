@@ -53,7 +53,9 @@ private static class TransSortable implements Comparable<TransSortable> {
 	public SubMesh subMesh;
 	public double dist;
 
-	public MeshData.StaticMeshInstance subInst;
+	public int matIndex;
+	public Mat4d transform;
+	public Mat4d invTrans;
 
 	@Override
 	public int compareTo(TransSortable o) {
@@ -323,11 +325,48 @@ public void renderTransparent(int contextID, Renderer renderer,
 		TransSortable ts = new TransSortable();
 		ts.subMesh = subMesh;
 		ts.dist = eyeCenter.z;
-		ts.subInst = subInst;
+		ts.matIndex = subInst.materialIndex;
+		ts.transform = subInst.transform;
+		ts.invTrans = subInst.invTrans;
 		transparents.add(ts);
 	}
 
-	// TODO: Animated transparent meshes
+	for (MeshData.AnimMeshInstance subInst : data.getAnimMeshInstances()) {
+
+		SubMesh subMesh = _subMeshes.get(subInst.meshIndex);
+		Material mat = _materials.get(subInst.materialIndex);
+
+		if (mat._transType == MeshData.NO_TRANS) {
+			continue; // Opaque sub meshes have been rendered
+		}
+
+		Mat4d subTrans = pose.transforms[subInst.nodeIndex];
+		Mat4d invSubTrans = pose.invTransforms[subInst.nodeIndex];
+
+		Mat4d fullInvMat = new Mat4d();
+		fullInvMat.mult4(invSubTrans, invModelMat);
+		Mat4d camNormal = new Mat4d();
+		camNormal.mult4(modelMat, subTrans);
+		camNormal.transpose4();
+
+		MeshData.SubMeshData subData = data.getSubMeshData().get(subInst.meshIndex);
+		if (!cam.collides(subData.localBounds, fullInvMat, camNormal)) {
+			continue;
+		}
+
+		subModelView.mult4(modelViewMat, subTrans);
+
+		Vec3d eyeCenter = new Vec3d();
+		eyeCenter.multAndTrans3(subModelView, subMesh._center);
+
+		TransSortable ts = new TransSortable();
+		ts.subMesh = subMesh;
+		ts.dist = eyeCenter.z;
+		ts.matIndex = subInst.materialIndex;
+		ts.transform = subTrans;
+		ts.invTrans = invSubTrans;
+		transparents.add(ts);
+	}
 
 	initUniforms(renderer, modelViewMat, cam.getProjMat4d(), viewMat, finalNorMat);
 
@@ -335,9 +374,9 @@ public void renderTransparent(int contextID, Renderer renderer,
 
 	for (TransSortable ts : transparents) {
 
-		Mat4d subInstNorm = new Mat4d(ts.subInst.invTrans);
+		Mat4d subInstNorm = new Mat4d(ts.invTrans);
 		subInstNorm.transpose4();
-		renderSubMesh(ts.subMesh, ts.subInst.materialIndex, ts.subInst.transform,
+		renderSubMesh(ts.subMesh, ts.matIndex, ts.transform,
 		              subInstNorm, contextID, renderer);
 	}
 }
