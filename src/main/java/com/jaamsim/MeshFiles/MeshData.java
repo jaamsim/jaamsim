@@ -280,24 +280,27 @@ public class MeshData {
 			}
 			ArrayList<TreeNode> ret = new ArrayList<>();
 			Mat4d thisMat = trans.value(null).transform;
-			int i = 0;
-			while(i < children.size()) {
-				TreeNode child = children.get(i);
-				if (!child.trans.isStatic()) {
-					++i;
-					continue;
+			Mat4d thisInvMat = trans.value(null).invTrans;
+			for (TreeNode child : children) {
+				if (child.trans.isStatic()) {
+					Mat4d childMat = child.trans.value(null).transform;
+					Mat4d sibMat = new Mat4d();
+					sibMat.mult4(thisMat, childMat);
+					child.trans = new StaticTrans(sibMat);
+					ret.add(child);
+				} else {
+					// Merge the static parent into the animated child
+					AnimTrans at = (AnimTrans)child.trans;
+					for (int matInd = 0; matInd < at.matrices.length; ++matInd) {
+						at.matrices[matInd].mult4(thisMat, at.matrices[matInd]);
+						at.inverseMats[matInd].mult4(at.inverseMats[matInd], thisInvMat);
+					}
+					at.staticMat.mult4(thisMat, at.staticMat);
+					at.staticInv.mult4(at.staticInv, thisInvMat);
+					ret.add(child);
 				}
-				TreeNode sibling = new TreeNode();
-				Mat4d childMat = child.trans.value(null).transform;
-				Mat4d sibMat = new Mat4d();
-				sibMat.mult4(thisMat, childMat);
-				sibling.trans = new StaticTrans(sibMat);
-				sibling.children = child.children;
-				sibling.meshInstances = child.meshInstances;
-				sibling.lineInstances = child.lineInstances;
-				ret.add(sibling);
-				children.remove(i);
 			}
+			children.clear();
 			return ret;
 		}
 	}
