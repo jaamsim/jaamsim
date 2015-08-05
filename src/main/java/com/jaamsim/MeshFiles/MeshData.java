@@ -143,9 +143,9 @@ public class MeshData {
 	}
 
 	public static class AnimTrans implements Trans{
-		private final Mat4d[] matrices;
-		private final Mat4d[] inverseMats;
-		private final double[] times;
+		private Mat4d[] matrices;
+		private Mat4d[] inverseMats;
+		private double[] times;
 		private final String actionName;
 		private final Mat4d staticMat;
 		private final Mat4d staticInv;
@@ -243,6 +243,63 @@ public class MeshData {
 
 			return new TransVal(retTrans, retInv);
 
+		}
+
+		// Scan through the list of keys and remove any that are redundant
+		public int optimize() {
+			int discarded = 0;
+			ArrayList<Mat4d> keptMatrices = new ArrayList<>();
+			ArrayList<Mat4d> keptInverses = new ArrayList<>();
+			ArrayList<Double> keptTimes = new ArrayList<>();
+
+			// Keep the first value
+			keptMatrices.add(matrices[0]);
+			keptInverses.add(inverseMats[0]);
+			keptTimes.add(times[0]);
+
+			for (int i = 0; i < matrices.length-2; ++i) {
+				double t0 = times[i];
+				double t1 = times[i+2];
+				double checkTime = times[i+1];
+
+				Mat4d m0 = matrices[i];
+				Mat4d m1 = matrices[i+2];
+				Mat4d checkMat = matrices[i+1];
+
+				double s0 = (checkTime-t0)/(t1-t0);
+				double s1 = 1 - s0;
+
+				Mat4d val = new Mat4d(m0);
+				val.scale4(s0);
+				Mat4d temp = new Mat4d(m1);
+				temp.scale4(s1);
+				val.add4(temp);
+
+				if (!val.near4(checkMat)) {
+					// this matrix is different enough from the interpolated value that we need it
+					keptMatrices.add(matrices[i+1]);
+					keptInverses.add(inverseMats[i+1]);
+					keptTimes.add(times[i+1]);
+				} else {
+					++discarded;
+				}
+			}
+			// keep the last value
+			keptMatrices.add(matrices[matrices.length-1]);
+			keptInverses.add(inverseMats[inverseMats.length-1]);
+			keptTimes.add(times[times.length-1]);
+
+			// Finally rewrite the arrays
+			matrices = new Mat4d[keptMatrices.size()];
+			inverseMats = new Mat4d[keptMatrices.size()];
+			times = new double[keptMatrices.size()];
+			for (int i = 0; i < matrices.length; ++i) {
+				matrices[i] = keptMatrices.get(i);
+				inverseMats[i] = keptInverses.get(i);
+				times[i] = keptTimes.get(i);
+			}
+
+			return discarded;
 		}
 	}
 
@@ -623,12 +680,18 @@ public class MeshData {
 	 */
 	public void finalizeData() {
 		// Scan the tree to see if any animated transforms are effectively static
-		TreeWalker staticWalker = new TreeWalker() {
+		//TreeWalker staticWalker = new TreeWalker() {
+		class StaticWalker extends TreeWalker {
+			public int numMatricesRemoved = 0;
+			public int numMatricesRemaining = 0;
 			@Override
 			public void onNode(Mat4d trans, Mat4d invTrans, TreeNode node) {
 
 				if (node.trans instanceof AnimTrans) {
 					AnimTrans at = (AnimTrans)node.trans;
+					numMatricesRemoved += at.optimize();
+					numMatricesRemaining += at.matrices.length;
+
 					boolean isSame = true;
 					for (int i = 1; i < at.matrices.length; ++i) {
 						isSame = isSame && at.matrices[0].near4(at.matrices[i]);
@@ -640,10 +703,18 @@ public class MeshData {
 				}
 			}
 		};
+		StaticWalker staticWalker = new StaticWalker();
 
+		long statStart = System.nanoTime();
 		walkTree(staticWalker, treeRoot, new Mat4d(), new Mat4d(), null);
+		long statEnd = System.nanoTime();
+		double statMS = (statEnd - statStart) / 1000000.0;
 
-
+		// Annoying way to disable debugging while avoiding compiler warnings
+		boolean printDebug = false;
+		if (printDebug) {
+			System.out.printf("Matrices removed: %d remaining: %d in %fms\n", staticWalker.numMatricesRemoved, staticWalker.numMatricesRemaining, statMS);
+		}
 		// Pull all static information out of the root tree
 		if (treeRoot != null && treeRoot.trans.isStatic()) {
 			scanTreeForStaticEntries(treeRoot, new Mat4d());
@@ -713,8 +784,6 @@ public class MeshData {
 		walkTree(walker, treeRoot, new Mat4d(), new Mat4d(), null);
 		int optimTreeNodes = numTreeNodes;
 
-		// Annoying way to disable debugging while avoiding compiler warnings
-		boolean printDebug = false;
 		if (printDebug) {
 			System.out.printf("Tree optimization - nodes: %d, passes: %d in %fms\n", optimTreeNodes, numPasses, optMS);
 		}
