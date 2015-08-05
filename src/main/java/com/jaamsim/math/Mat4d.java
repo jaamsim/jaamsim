@@ -637,4 +637,26 @@ public boolean nearIdentityThresh3(double threshold) {
 
 }
 
+public boolean near4(Mat4d m) {
+	return MathUtils.near(d00, m.d00) &&
+	       MathUtils.near(d01, m.d01) &&
+	       MathUtils.near(d02, m.d02) &&
+	       MathUtils.near(d03, m.d03) &&
+
+	       MathUtils.near(d10, m.d10) &&
+	       MathUtils.near(d11, m.d11) &&
+	       MathUtils.near(d12, m.d12) &&
+	       MathUtils.near(d13, m.d13) &&
+
+	       MathUtils.near(d20, m.d20) &&
+	       MathUtils.near(d21, m.d21) &&
+	       MathUtils.near(d22, m.d22) &&
+	       MathUtils.near(d23, m.d23) &&
+
+	       MathUtils.near(d30, m.d30) &&
+	       MathUtils.near(d31, m.d31) &&
+	       MathUtils.near(d32, m.d32) &&
+	       MathUtils.near(d33, m.d33);
+}
+
 }

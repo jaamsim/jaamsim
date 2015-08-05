@@ -271,6 +271,35 @@ public class MeshData {
 		public ArrayList<AnimMeshInstance> meshInstances = new ArrayList<>();
 		public ArrayList<AnimLineInstance> lineInstances = new ArrayList<>();
 		public int nodeIndex;
+
+		// Return a list of siblings that are equivalent to this being children of this node.
+		// Part of constant coalescing.
+		public ArrayList<TreeNode> getEquivSiblings() {
+			if (!(trans.isStatic())) {
+				return null;
+			}
+			ArrayList<TreeNode> ret = new ArrayList<>();
+			Mat4d thisMat = trans.value(null).transform;
+			int i = 0;
+			while(i < children.size()) {
+				TreeNode child = children.get(i);
+				if (!child.trans.isStatic()) {
+					++i;
+					continue;
+				}
+				TreeNode sibling = new TreeNode();
+				Mat4d childMat = child.trans.value(null).transform;
+				Mat4d sibMat = new Mat4d();
+				sibMat.mult4(thisMat, childMat);
+				sibling.trans = new StaticTrans(sibMat);
+				sibling.children = child.children;
+				sibling.meshInstances = child.meshInstances;
+				sibling.lineInstances = child.lineInstances;
+				ret.add(sibling);
+				children.remove(i);
+			}
+			return ret;
+		}
 	}
 
 	private static class TreeWalker {
@@ -534,10 +563,84 @@ public class MeshData {
 		}
 
 	}
+
+	private boolean optimizeTree(TreeNode node) {
+		boolean changed = false;
+		for (TreeNode child : node.children) {
+			changed = changed || optimizeTree(child);
+		}
+
+		ArrayList<TreeNode> newChildren = new ArrayList<>();
+		int i = 0;
+		while (i < node.children.size()) {
+			TreeNode child = node.children.get(i);
+			ArrayList<TreeNode> newCs = child.getEquivSiblings();
+			if (newCs != null && newCs.size() != 0) {
+				changed = true;
+				newChildren.addAll(newCs);
+			}
+			if (  child.children.size() == 0 &&
+			      child.meshInstances.size() == 0 &&
+			      child.lineInstances.size() == 0) {
+				node.children.remove(i);
+				changed = true;
+			} else {
+				i++;
+			}
+		}
+		node.children.addAll(newChildren);
+
+		// Now scan all children to see if there are any siblings with identical transforms that can be merged
+		for (int indA = 0; indA < node.children.size()-1; ++indA) {
+			int indB = indA+1;
+			while (indB < node.children.size()) {
+				TreeNode nodeA = node.children.get(indA);
+				TreeNode nodeB = node.children.get(indB);
+				if (nodeA.trans.isStatic() && nodeB.trans.isStatic()) {
+					Mat4d aMat = nodeA.trans.value(null).transform;
+					Mat4d bMat = nodeB.trans.value(null).transform;
+					if (aMat.near4(bMat)) {
+						nodeA.children.addAll(nodeB.children);
+						nodeA.meshInstances.addAll(nodeB.meshInstances);
+						nodeA.lineInstances.addAll(nodeB.lineInstances);
+
+						node.children.remove(indB);
+						changed = true;
+						continue;
+					}
+				}
+				++indB;
+			}
+		}
+		return changed;
+	}
+
 	/**
 	 * Builds the convex hull of the current mesh based on all the existing sub meshes.
 	 */
 	public void finalizeData() {
+		// Scan the tree to see if any animated transforms are effectively static
+		TreeWalker staticWalker = new TreeWalker() {
+			@Override
+			public void onNode(Mat4d trans, Mat4d invTrans, TreeNode node) {
+
+				if (node.trans instanceof AnimTrans) {
+					AnimTrans at = (AnimTrans)node.trans;
+					boolean isSame = true;
+					for (int i = 1; i < at.matrices.length; ++i) {
+						isSame = isSame && at.matrices[0].near4(at.matrices[i]);
+					}
+					if (isSame) {
+						// All values are effectively the same
+						node.trans = new StaticTrans(at.matrices[0]);
+					}
+				}
+			}
+		};
+
+		walkTree(staticWalker, treeRoot, new Mat4d(), new Mat4d(), null);
+
+
 		// Pull all static information out of the root tree
 		if (treeRoot != null && treeRoot.trans.isStatic()) {
 			scanTreeForStaticEntries(treeRoot, new Mat4d());
@@ -593,7 +696,25 @@ public class MeshData {
 				_animLineInstances.add(inst);
 			}
 		};
+
+		long optStart = System.nanoTime();
+		boolean changed = true;
+		int numPasses = 0;
+		while (changed) {
+			changed = optimizeTree(treeRoot);
+			++numPasses;
+		}
+		long optEnd = System.nanoTime();
+		double optMS = (optEnd - optStart) / 1000000.0;
+
 		walkTree(walker, treeRoot, new Mat4d(), new Mat4d(), null);
+		int optimTreeNodes = numTreeNodes;
+
+		// Annoying way to disable debugging while avoiding compiler warnings
+		boolean printDebug = false;
+		if (printDebug) {
+			System.out.printf("Tree optimization - nodes: %d, passes: %d in %fms\n", optimTreeNodes, numPasses, optMS);
+		}
 
 		_staticHull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 		_defaultBounds = _staticHull.getAABB(new Mat4d());
