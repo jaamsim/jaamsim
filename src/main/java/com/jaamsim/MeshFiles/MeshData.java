@@ -220,8 +220,8 @@ public class MeshData {
 			assert(time >= t0);
 			assert(time <= t1);
 
-			double startScale = (time-t0)/(t1-t0);
-			double endScale = 1 - startScale;
+			double endScale = (time-t0)/(t1-t0);
+			double startScale = 1 - endScale;
 
 			Mat4d temp = new Mat4d();
 
