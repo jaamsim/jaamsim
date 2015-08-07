@@ -65,7 +65,7 @@ public void TestTransform() {
 	Vec3d temp = new Vec3d();
 	// Rotating P0 around the X axis should have no effect
 	Plane res = new Plane();
-	res.transform(tx,  p0, temp);
+	res.transform(tx,  p0);
 
 	assertTrue(p0.near(res));
 
@@ -74,13 +74,13 @@ public void TestTransform() {
 
 	// Rotation around the y axis should point the plane in the -Z direction
 	Plane expected = new Plane(new Vec4d(0, 0, -1, 1.0d), 23);
-	res.transform(ty, p0, temp);
+	res.transform(ty, p0);
 
 	assertTrue(expected.near(res));
 
 
 	// Now test self assignment
-	p0.transform(ty, p0, temp);
+	p0.transform(ty, p0);
 	assertTrue(expected.near(p0));
 }
 
