@@ -87,16 +87,6 @@ public class EditBox extends FrameBox {
 
 	private String lastCategory = null;
 
-	/**
-	 * Widths of columns in the table of keywords as modified by the user in an edit
-	 * session. When the EditBox is re-opened for the next edit (during the same session),
-	 * the last modified column widths are used.
-	 * <pre>
-	 * userColWidth[ 0 ] = user modified width of column 0 (keywords column)
-	 * userColWidth[ 1 ] = user modified width of column 1 (defaults units column)
-	 * userColWidth[ 2 ] = user modified width of column 2 (values column)
-	 */
-
 	private EditBox() {
 		super( "Input Editor" );
 		setDefaultCloseOperation(FrameBox.DISPOSE_ON_CLOSE);
@@ -826,6 +816,10 @@ private static class CategoryInputs {
 	}
 
 public static class EditTable extends JTable {
+	static int col1Width = 150;
+	static int col2Width = 100;
+	static int col3Width = 150;
+
 	private ColorEditor colorEditor;
 	private ListEditor listEditor;
 
@@ -840,9 +834,9 @@ public static class EditTable extends JTable {
 		this.setRowHeight(ROW_HEIGHT);
 		this.setRowSelectionAllowed(false);
 
-		getColumnModel().getColumn(0).setWidth(150);
-		getColumnModel().getColumn(1).setWidth(100);
-		getColumnModel().getColumn(2).setWidth(150);
+		getColumnModel().getColumn(0).setWidth(col1Width);
+		getColumnModel().getColumn(1).setWidth(col2Width);
+		getColumnModel().getColumn(2).setWidth(col3Width);
 
 		getColumnModel().getColumn(0).setCellRenderer(colRender);
 		getColumnModel().getColumn(1).setCellRenderer(colRender);
@@ -915,6 +909,10 @@ public static class EditTable extends JTable {
 
 	@Override
 	public void doLayout() {
+		col1Width = getColumnModel().getColumn(0).getWidth();
+		col2Width = getColumnModel().getColumn(1).getWidth();
+		col3Width = getColumnModel().getColumn(2).getWidth();
+
 		FrameBox.fitTableToLastColumn(this);
 	}
 }

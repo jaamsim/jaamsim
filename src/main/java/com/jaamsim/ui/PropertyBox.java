@@ -68,6 +68,7 @@ public class PropertyBox extends FrameBox {
 		if (currentEntity == entity)
 			return;
 
+		int prevTab = jTabbedFrame.getSelectedIndex();
 		jTabbedFrame.removeAll();
 
 		currentEntity = entity;
@@ -86,6 +87,9 @@ public class PropertyBox extends FrameBox {
 			JScrollPane scroll = new JScrollPane(tab);
 
 			jTabbedFrame.addTab(cf.klass.getSimpleName(), scroll);
+		}
+		if(jTabbedFrame.getTabCount() > prevTab - 1) {
+			jTabbedFrame.setSelectedIndex(prevTab);
 		}
 	}
 
@@ -173,14 +177,18 @@ private static class ClassFields implements Comparator<Field> {
 	}
 
 private static class PropertyTable extends JTable {
+	static int col1Width = 150;
+	static int col2Width = 100;
+	static int col3Width = 100;
+
 	PropertyTable(TableModel model) {
 		super(model);
 
 		setDefaultRenderer(Object.class, colRenderer);
 
-		getColumnModel().getColumn(0).setWidth(150);
-		getColumnModel().getColumn(1).setWidth(100);
-		getColumnModel().getColumn(2).setWidth(100);
+		getColumnModel().getColumn(0).setWidth(col1Width);
+		getColumnModel().getColumn(1).setWidth(col2Width);
+		getColumnModel().getColumn(2).setWidth(col3Width);
 
 		getTableHeader().setFont(FrameBox.boldFont);
 		getTableHeader().setReorderingAllowed(false);
@@ -188,6 +196,10 @@ private static class PropertyTable extends JTable {
 
 	@Override
 	public void doLayout() {
+		col1Width = getColumnModel().getColumn(0).getWidth();
+		col2Width = getColumnModel().getColumn(1).getWidth();
+		col3Width = getColumnModel().getColumn(2).getWidth();
+
 		FrameBox.fitTableToLastColumn(this);
 	}
 }
