@@ -1163,16 +1163,18 @@ public class RenderManager implements DragSourceListener {
 		}
 		Vec3d point = screenPoints.get(nodeIndex);
 
+		Vec3d diff = new Vec3d();
 		if (shift) {
-			double zDiff = RenderUtils.getZDiff(point, currentRay, lastRay);
-			point.z += zDiff;
+			diff.z = RenderUtils.getZDiff(point, currentRay, lastRay);
 		} else {
 			Plane pointPlane = new Plane(null, point.z);
-			Vec3d diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, lastRay);
-			point.x += diff.x;
-			point.y += diff.y;
-			point.z += 0;
+			diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, lastRay);
+			diff.z = 0.0d;
 		}
+
+		if (selectedEntity.getCurrentRegion() != null)
+			selectedEntity.getCurrentRegion().getInverseRegionTransForVectors().multAndTrans(diff, diff);
+		point.add3(diff);
 
 		Input<?> pointsInput = selectedEntity.getInput("Points");
 		assert(pointsInput != null);
