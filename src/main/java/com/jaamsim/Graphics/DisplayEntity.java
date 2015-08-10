@@ -556,6 +556,34 @@ public class DisplayEntity extends Entity {
 		setPosition(diff);
 	}
 
+	/**
+	 * Returns the transformation to global coordinates from the local
+	 * coordinate system determined by the entity's Region and RelativeEntity
+	 * inputs.
+	 * <p>
+	 * Note that this local coordinate system is centred on the position of
+	 * the RelativeEntity, not on the position of this entity.
+	 * @return transformation to global coordinates.
+	 */
+	public Transform getGlobalPositionTransform() {
+		Transform ret =  new Transform(null, null, 1.0d);
+
+		// Position is relative to another entity
+		DisplayEntity relEnt = this.getRelativeEntity();
+		if (relEnt != null) {
+			if (currentRegion != null)
+				ret = currentRegion.getRegionTransForVectors();
+			ret.getTransRef().add3(relEnt.getGlobalPosition());
+			return ret;
+		}
+
+		// Position is given in a local coordinate system
+		if (currentRegion != null)
+			ret = currentRegion.getRegionTrans();
+
+		return ret;
+	}
+
 	public ArrayList<DisplayModel> getDisplayModelList() {
 		return displayModelList;
 	}
