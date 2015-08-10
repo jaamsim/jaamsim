@@ -1198,14 +1198,21 @@ public class RenderManager implements DragSourceListener {
 		HasScreenPoints.PointsInfo[] pointInfos = hsp.getScreenPoints();
 		assert(pointInfos != null && pointInfos.length != 0);
 
+		Transform trans = null;
+		if (selectedEntity.getCurrentRegion() != null || selectedEntity.getRelativeEntity() != null)
+			trans = selectedEntity.getGlobalPositionTransform();
+
 		ArrayList<Vec3d> points = pointInfos[0].points;
+		ArrayList<Vec3d> globalPoints = new ArrayList<>(points);
+		if (trans != null)
+			globalPoints = (ArrayList<Vec3d>) RenderUtils.transformPointsWithTrans(trans.getMat4dRef(), globalPoints);
 
 		int splitInd = 0;
 		Vec4d nearPoint = null;
 		// Find a line segment we are near
 		for (;splitInd < points.size() - 1; ++splitInd) {
-			Vec4d a = new Vec4d(points.get(splitInd  ).x, points.get(splitInd  ).y, points.get(splitInd  ).z, 1.0d);
-			Vec4d b = new Vec4d(points.get(splitInd+1).x, points.get(splitInd+1).y, points.get(splitInd+1).z, 1.0d);
+			Vec4d a = new Vec4d(globalPoints.get(splitInd  ).x, globalPoints.get(splitInd  ).y, globalPoints.get(splitInd  ).z, 1.0d);
+			Vec4d b = new Vec4d(globalPoints.get(splitInd+1).x, globalPoints.get(splitInd+1).y, globalPoints.get(splitInd+1).z, 1.0d);
 
 			nearPoint = RenderUtils.rayClosePoint(rayMatrix, a, b);
 
@@ -1219,6 +1226,12 @@ public class RenderManager implements DragSourceListener {
 		if (splitInd == points.size() - 1) {
 			// No appropriate point was found
 			return;
+		}
+
+		if (trans != null) {
+			Transform invTrans = new Transform();
+			trans.inverse(invTrans);
+			invTrans.multAndTrans(nearPoint, nearPoint);
 		}
 
 		// If we are here, we have a segment to split, at index i
