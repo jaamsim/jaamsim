@@ -1266,10 +1266,18 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 
+		ArrayList<Vec3d> globalPoints = new ArrayList<>(points);
+
+		Transform trans = null;
+		if (selectedEntity.getCurrentRegion() != null || selectedEntity.getRelativeEntity() != null) {
+			trans = selectedEntity.getGlobalPositionTransform();
+			globalPoints = (ArrayList<Vec3d>) RenderUtils.transformPointsWithTrans(trans.getMat4dRef(), globalPoints);
+		}
+
 		int removeInd = 0;
 		// Find a line segment we are near
 		for ( ;removeInd < points.size(); ++removeInd) {
-			Vec4d p = new Vec4d(points.get(removeInd).x, points.get(removeInd).y, points.get(removeInd).z, 1.0d);
+			Vec4d p = new Vec4d(globalPoints.get(removeInd).x, globalPoints.get(removeInd).y, globalPoints.get(removeInd).z, 1.0d);
 
 			double rayAngle = RenderUtils.angleToRay(rayMatrix, p);
 
