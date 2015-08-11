@@ -524,7 +524,7 @@ public class DisplayEntity extends Entity {
 	 */
 	public Vec3d getLocalPosition(Vec3d pos) {
 
-		Vec3d localPos = pos;
+		Vec3d localPos = new Vec3d(pos);
 
 		// Position is relative to another entity
 		DisplayEntity ent = this.getRelativeEntity();
