@@ -42,7 +42,6 @@ import javax.swing.JPopupMenu;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.Region;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
@@ -1121,35 +1120,26 @@ public class RenderManager implements DragSourceListener {
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
 		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
 
+		ArrayList<Vec3d> screenPoints = null;
+		if (selectedEntity instanceof HasScreenPoints) {
+			HasScreenPoints.PointsInfo[] pointInfos = ((HasScreenPoints)selectedEntity).getScreenPoints();
+			if (pointInfos != null && pointInfos.length != 0)
+				screenPoints = pointInfos[0].points;
+		}
+		if (screenPoints == null || screenPoints.size() == 0) return true; // just ignore this
+
 		Vec3d delta = new Vec3d();
-		delta.sub3(currentPoint, lastPoint);
 
 		if (shift) {
-			ArrayList<Vec3d> screenPoints = null;
-			if (selectedEntity instanceof HasScreenPoints) {
-				HasScreenPoints.PointsInfo[] pointInfos = ((HasScreenPoints)selectedEntity).getScreenPoints();
-				if (pointInfos != null && pointInfos.length != 0)
-					screenPoints = pointInfos[0].points;
-			}
-			if (screenPoints == null || screenPoints.size() == 0) return true; // just ignore this
-			// Find the geometric median of the points
 			Vec4d medPoint = RenderUtils.getGeometricMedian(screenPoints);
-
-			double zDiff = RenderUtils.getZDiff(medPoint, currentRay, lastRay);
-			selectedEntity.dragged(new Vec3d(0, 0, zDiff));
-			return true;
+			delta.z = RenderUtils.getZDiff(medPoint, currentRay, lastRay);
 		}
-
-		Region reg = selectedEntity.getCurrentRegion();
-		if (reg != null) {
-			Transform regionInvTrans = reg.getRegionTrans();
-			regionInvTrans.inverse(regionInvTrans);
-
-			Vec3d localLast = new Vec3d();
-			regionInvTrans.multAndTrans(lastPoint, localLast);
-			Vec3d localCurr = new Vec3d();
-			regionInvTrans.multAndTrans(currentPoint, localCurr);
-			delta.sub3(localCurr, localLast);
+		else {
+			delta.sub3(currentPoint, lastPoint);
+			if (selectedEntity.getCurrentRegion() != null) {
+				Transform invTrans = selectedEntity.getCurrentRegion().getInverseRegionTransForVectors();
+				invTrans.multAndTrans(delta, delta);
+			}
 		}
 
 		selectedEntity.dragged(delta);
