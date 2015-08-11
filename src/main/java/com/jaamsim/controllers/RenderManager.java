@@ -1143,7 +1143,11 @@ public class RenderManager implements DragSourceListener {
 			}
 		}
 
-		selectedEntity.dragged(delta);
+		// Set the new position for the line
+		InputAgent.apply(selectedEntity, InputAgent.formatPointsInputs("Points", screenPoints, delta));
+
+		// Set the position of the entity to the coordinates of the first node
+		InputAgent.apply(selectedEntity, InputAgent.formatPointInputs("Position", screenPoints.get(0), "m"));
 		return true;
 	}
 
@@ -1186,6 +1190,10 @@ public class RenderManager implements DragSourceListener {
 		// Set the new position for the node
 		screenPoints.get(nodeIndex).set3(selectedEntity.getLocalPosition(point));
 		InputAgent.apply(selectedEntity, InputAgent.formatPointsInputs("Points", screenPoints, new Vec3d()));
+
+		// Set the position of the entity to the coordinates of the first node
+		if (nodeIndex == 0)
+			InputAgent.apply(selectedEntity, InputAgent.formatPointInputs("Position", screenPoints.get(0), "m"));
 		return true;
 	}
 
