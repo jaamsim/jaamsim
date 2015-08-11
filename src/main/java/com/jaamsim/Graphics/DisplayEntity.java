@@ -433,7 +433,18 @@ public class DisplayEntity extends Entity {
 	 * @return
 	 */
 	public Vec3d getGlobalPosition() {
-		Vec3d ret = getPosition();
+		return getGlobalPosition(getPosition());
+	}
+
+
+	/**
+	 * Convert the specified local coordinate to the global coordinate system
+	 * @param pos - a position in the entity's local coordinate system
+	 * @return
+	 */
+	public Vec3d getGlobalPosition(Vec3d pos) {
+
+		Vec3d ret = new Vec3d(pos);
 
 		// Position is relative to another entity
 		DisplayEntity ent = this.getRelativeEntity();
