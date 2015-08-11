@@ -931,8 +931,9 @@ public class RenderManager implements DragSourceListener {
 		if (dragHandleID == LINEDRAG_PICK_ID)
 			return handleLineMove(currentRay, lastRay, currentDist, lastDist, dragInfo.shiftDown());
 
+		// LINE NODE MOVE
 		if (dragHandleID <= LINENODE_PICK_ID)
-			return handleLineNodeMove(currentRay, lastRay, currentDist, lastDist, dragInfo.shiftDown());
+			return handleLineNodeMove(currentRay, firstRay, currentDist, firstDist, dragInfo.shiftDown());
 
 		return false;
 	}
@@ -1146,44 +1147,45 @@ public class RenderManager implements DragSourceListener {
 		return true;
 	}
 
-	private boolean handleLineNodeMove(Ray currentRay, Ray lastRay, double currentDist, double lastDist, boolean shift) {
+	private boolean handleLineNodeMove(Ray currentRay, Ray firstRay, double currentDist, double firstDist, boolean shift) {
+
 		int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
+
 		ArrayList<Vec3d> screenPoints = null;
 		if (selectedEntity instanceof HasScreenPoints) {
 			HasScreenPoints.PointsInfo[] pointInfos = ((HasScreenPoints)selectedEntity).getScreenPoints();
 			if (pointInfos != null && pointInfos.length != 0)
 				screenPoints = pointInfos[0].points;
 		}
-
-		// Note: screenPoints is not a defensive copy, but we'll put it back into itself
-		// in a second so everything should be safe
-		if (screenPoints == null || nodeIndex >= screenPoints.size()) {
-			// huh?
+		if (screenPoints == null || nodeIndex >= screenPoints.size())
 			return false;
-		}
-		Vec3d point = screenPoints.get(nodeIndex);
 
+		// Global mouse position on the node at the start of the move
+		Vec3d point = new Vec3d(dragCollisionPoint);
+
+		// New global mouse position at the end of the move
 		Vec3d diff = new Vec3d();
 		if (shift) {
-			diff.z = RenderUtils.getZDiff(point, currentRay, lastRay);
+			diff.z = RenderUtils.getZDiff(point, currentRay, firstRay);
 		} else {
 			Plane pointPlane = new Plane(null, point.z);
-			diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, lastRay);
+			diff = RenderUtils.getPlaneCollisionDiff(pointPlane, currentRay, firstRay);
 			diff.z = 0.0d;
 		}
-
-		if (selectedEntity.getCurrentRegion() != null)
-			selectedEntity.getCurrentRegion().getInverseRegionTransForVectors().multAndTrans(diff, diff);
 		point.add3(diff);
 
 		Input<?> pointsInput = selectedEntity.getInput("Points");
 		assert(pointsInput != null);
-		if (pointsInput == null) {
+		if (pointsInput == null)
 			return true;
-		}
 
-		KeywordIndex kw = InputAgent.formatPointsInputs("Points", screenPoints, new Vec3d());
-		InputAgent.apply(selectedEntity, kw);
+		// Align the node to snap grid
+		if (Simulation.isSnapToGrid())
+			point = Simulation.getSnapGridPosition(point, selectedEntity.getGlobalPosition(screenPoints.get(nodeIndex)));
+
+		// Set the new position for the node
+		screenPoints.get(nodeIndex).set3(selectedEntity.getLocalPosition(point));
+		InputAgent.apply(selectedEntity, InputAgent.formatPointsInputs("Points", screenPoints, new Vec3d()));
 		return true;
 	}
 
