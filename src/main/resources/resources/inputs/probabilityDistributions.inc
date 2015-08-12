@@ -9,7 +9,7 @@ Define ObjectType {
 					BetaDistribution
 					WeibullDistribution
 					LogNormalDistribution
-					LogLogisticsDistribution
+					LogLogisticDistribution
 					DiscreteDistribution
 					ContinuousDistribution
 					BooleanSelector
@@ -25,7 +25,7 @@ GammaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.GammaDistri
 BetaDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.BetaDistribution			} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 WeibullDistribution			JavaClass { com.jaamsim.ProbabilityDistributions.WeibullDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 LogNormalDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.LogNormalDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
-LogLogisticsDistribution	JavaClass { com.jaamsim.ProbabilityDistributions.LogLogisticDistribution	} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
+LogLogisticDistribution	    JavaClass { com.jaamsim.ProbabilityDistributions.LogLogisticDistribution	} Palette { 'Probability Distributions' } IconFile { '<res>/images/ErlangDist-24.png'     }
 DiscreteDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.DiscreteDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/DiscreteDist-24.png'   }
 ContinuousDistribution		JavaClass { com.jaamsim.ProbabilityDistributions.ContinuousDistribution		} Palette { 'Probability Distributions' } IconFile { '<res>/images/ContinuousDist-24.png' }
 BooleanSelector				JavaClass { com.jaamsim.ProbabilityDistributions.BooleanSelector			} Palette { 'Probability Distributions' } IconFile { '<res>/images/Selector-24.png'       }
@@ -64,7 +64,7 @@ GammaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 BetaDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 WeibullDistribution			DefaultDisplayModel { ProbabilityDistributionIconModel }
 LogNormalDistribution		DefaultDisplayModel { ProbabilityDistributionIconModel }
-LogLogisticsDistribution	DefaultDisplayModel { ProbabilityDistributionIconModel }
+LogLogisticDistribution	    DefaultDisplayModel { ProbabilityDistributionIconModel }
 DiscreteDistribution		DefaultDisplayModel { DiscreteDistributionIconModel    }
 ContinuousDistribution		DefaultDisplayModel { ContinuousDistributionIconModel  }
 BooleanSelector				DefaultDisplayModel { BooleanSelectorIconModel         }
@@ -79,7 +79,7 @@ GammaDistribution        Description { 'Generates random numbers from a gamma pr
 BetaDistribution        Description { 'Generates random numbers from a beta probability density function.' }
 WeibullDistribution      Description { 'Generates random numbers from a Weibull probability density function.' }
 LogNormalDistribution    Description { 'Generates random numbers from a log-normal probability density function.' }
-LogLogisticsDistribution Description { 'Generates random numbers from a log-logistical probability density function.' }
+LogLogisticDistribution  Description { 'Generates random numbers from a log-logistic probability density function.' }
 DiscreteDistribution     Description { 'Generates random numbers from a user-specified set of values and probabilities.' }
 ContinuousDistribution   Description { 'Generates random numbers from a user-specified probability density function.' }
 BooleanSelector          Description { 'Randomly selects true/false with a user-selectable probability of true.' }
