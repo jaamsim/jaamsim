@@ -69,6 +69,53 @@ public class AnimCurve {
 		return ret;
 	}
 
+	// Add bezier keys to allow for smooth interpolation on the parameter range (s0, s1)
+	// This does not insert the end points
+	public static void interpBezier(double s0, double s1, Vec4d p0, Vec4d p1, Vec4d c0, Vec4d c1, int numComponents, ArrayList<Double> ts, ArrayList<Vec4d> vs) {
+		if ((s1-s0)<= 1/16.0) {
+			return; // Do not divide a curve into more than 16 parts
+		}
+
+		double halfS = (s0 + s1)/2.0;
+		CurveVal startVal = solveBezier(s0, p0, p1, c0, c1, numComponents);
+		CurveVal endVal = solveBezier(s1, p0, p1, c0, c1, numComponents);
+		// Determine if this midpoint has value
+
+		boolean recurse = false;
+		for (double samp = 0.25; samp < 1; samp+=0.25) {
+			double sampS = s0 + samp*(s1-s0);
+			CurveVal sampVal = solveBezier(sampS, p0, p1, c0, c1, numComponents);
+
+			for (int i = 0; i < numComponents; ++i) {
+				double slope = (endVal.vals.getByInd(i) - startVal.vals.getByInd(i))/(endVal.time - startVal.time);
+				double sampSlope = (sampVal.vals.getByInd(i) - startVal.vals.getByInd(i))/(sampVal.time - startVal.time);
+
+				if (slope == 0) {
+					if (sampSlope != 0)
+						recurse = true;
+
+					continue;
+				}
+				double scaledSlope = sampSlope/slope;
+
+				if (Math.abs(scaledSlope-1) > 0.05) {
+					recurse = true;
+				}
+			}
+		}
+
+		if (!recurse) {
+			return;
+		}
+		// Otherwise recurse
+		interpBezier(s0, halfS, p0, p1, c0, c1, numComponents, ts, vs);
+
+		CurveVal midVal = solveBezier(halfS, p0, p1, c0, c1, numComponents);
+		ts.add(midVal.time);
+		vs.add(midVal.vals);
+
+		interpBezier(halfS, s1, p0, p1, c0, c1, numComponents, ts, vs);
+	}
 
 	public static AnimCurve buildFromColCurve(ColCurve colData) {
 		ArrayList<Double> ts = new ArrayList<>();
@@ -106,13 +153,13 @@ public class AnimCurve {
 				Vec4d c0 = colData.outTan[i];
 				Vec4d c1 = colData.inTan[i+1];
 
-				// Interpolate bezier as 4 linear segments (this may need to be improved at a later date)
-				for (double s = 0.25; s <=1; s+=0.25) {
+				interpBezier(0, 1, p0, p1, c0, c1, colData.numComponents, ts, vs);
 
-					CurveVal val = solveBezier(s, p0, p1, c0, c1, colData.numComponents);
-					ts.add(val.time);
-					vs.add(val.vals);
-				}
+				// Add the end point
+				CurveVal val = solveBezier(1, p0, p1, c0, c1, colData.numComponents);
+				ts.add(val.time);
+				vs.add(val.vals);
+
 				continue;
 			}
 			// Currently unsupported interpolation
