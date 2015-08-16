@@ -69,17 +69,7 @@ public class StateEntity extends DisplayEntity {
 	public void earlyInit() {
 		super.earlyInit();
 
-		lastStateCollectionTick = getSimTicks();
-
-		workingTicks = 0;
-		states.clear();
-
-		String initState = getInitialState().intern();
-		StateRecord init = new StateRecord(initState, isValidWorkingState(initState));
-		init.startTick = lastStateCollectionTick;
-		presentState = init;
-		states.put(init.name, init);
-		this.setGraphicsForState(initState);
+		this.initStateData();
 
 		if (testFlag(FLAG_GENERATED))
 			return;
@@ -96,6 +86,20 @@ public class StateEntity extends DisplayEntity {
 			String fileName = InputAgent.getReportFileName(InputAgent.getRunName() + "-" + this.getName() + ".trc");
 			stateReportFile = new FileEntity( fileName);
 		}
+	}
+
+	private void initStateData() {
+		lastStateCollectionTick = getSimTicks();
+		workingTicks = 0;
+		states.clear();
+
+		String initState = getInitialState().intern();
+		StateRecord init = new StateRecord(initState, isValidWorkingState(initState));
+		init.startTick = lastStateCollectionTick;
+		presentState = init;
+		states.put(init.name, init);
+
+		this.setGraphicsForState(initState);
 	}
 
 	public ArrayList<StateEntityListener> getStateListeners() {
@@ -159,6 +163,9 @@ public class StateEntity extends DisplayEntity {
 	 * Sets the state of this Entity to the given state.
 	 */
 	public final void setPresentState( String state ) {
+		if (presentState == null)
+			this.initStateData();
+
 		if (presentState.name.equals(state))
 			return;
 

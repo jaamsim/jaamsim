@@ -315,6 +315,9 @@ public class Entity {
 
 	/**
 	 * Creates an exact copy of the specified entity.
+	 * <p>
+	 * All the entity's inputs are copied to the new entity, but its internal
+	 * properties are left uninitialised.
 	 * @param ent - entity to be copied.
 	 * @param name - name of the copied entity.
 	 * @return - copied entity.

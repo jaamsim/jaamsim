@@ -48,6 +48,12 @@ public class Duplicate extends LinkedComponent {
 			sb.append(ent.getName()).append("_Dup").append(n);
 			DisplayEntity dup = Entity.fastCopy(ent, sb.toString());
 
+			// Set the state for the duplicated entity
+			if (dup instanceof SimEntity) {
+				String state = ((SimEntity)ent).getPresentState(getSimTime());
+				((SimEntity)dup).setPresentState(state);
+			}
+
 			// Send the duplicate to the target component
 			target.addEntity(dup);
 			n++;
