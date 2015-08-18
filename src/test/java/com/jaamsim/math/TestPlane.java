@@ -62,7 +62,6 @@ public void TestTransform() {
 	q.setRotXAxis(Math.PI);
 	Transform tx = new Transform(new Vec4d(0, 0, 0, 1.0d), q, 1);
 
-	Vec3d temp = new Vec3d();
 	// Rotating P0 around the X axis should have no effect
 	Plane res = new Plane();
 	res.transform(tx,  p0);
