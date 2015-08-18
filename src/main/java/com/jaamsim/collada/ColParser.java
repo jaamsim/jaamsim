@@ -1970,7 +1970,14 @@ public class ColParser {
 				mats[i] = new Mat4d();
 				mats[i].setTranslate3(animTranslation);
 			}
-			return new MeshData.AnimTrans(times, mats, actionName, getStaticMat());
+			double[][] timesArray = new double[1][];
+			timesArray[0] = times;
+			Mat4d[][] matsArray = new Mat4d[1][];
+			matsArray[0] = mats;
+			String[] names = new String[1];
+			names[0] = actionName;
+
+			return new MeshData.AnimTrans(timesArray, matsArray, names, getStaticMat());
 		}
 	}
 
@@ -2051,7 +2058,14 @@ public class ColParser {
 				mats[i] = new Mat4d();
 				mats[i].setRot3(rot);
 			}
-			return new MeshData.AnimTrans(times, mats, actionName, getStaticMat());
+			double[][] timesArray = new double[1][];
+			timesArray[0] = times;
+			Mat4d[][] matsArray = new Mat4d[1][];
+			matsArray[0] = mats;
+			String[] names = new String[1];
+			names[0] = actionName;
+
+			return new MeshData.AnimTrans(timesArray, matsArray, names, getStaticMat());
 		}
 	}
 
@@ -2105,7 +2119,13 @@ public class ColParser {
 				mats[i].d11 = animScale.y;
 				mats[i].d22 = animScale.z;
 			}
-			return new MeshData.AnimTrans(times, mats, actionName, getStaticMat());
+			double[][] timesArray = new double[1][];
+			timesArray[0] = times;
+			Mat4d[][] matsArray = new Mat4d[1][];
+			matsArray[0] = mats;
+			String[] names = new String[1];
+			names[0] = actionName;
+			return new MeshData.AnimTrans(timesArray, matsArray, names, getStaticMat());
 		}
 
 	}

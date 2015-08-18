@@ -142,67 +142,94 @@ public class MeshData {
 		}
 	}
 
+	private static class Act {
+		public Mat4d[] matrices;
+		public Mat4d[] invMatrices;
+		public double[] times;
+		public String name;
+	}
+
 	public static class AnimTrans implements Trans{
-		private Mat4d[] matrices;
-		private Mat4d[] inverseMats;
-		private double[] times;
-		private final String actionName;
-		private final Mat4d staticMat;
-		private final Mat4d staticInv;
-		public AnimTrans(double[] times, Mat4d[] mats, String actionName, Mat4d staticMat) {
-			matrices = mats;
-			this.times = times;
-			this.actionName = actionName;
-			inverseMats = new Mat4d[mats.length];
-			for (int i = 0; i < mats.length; ++i) {
-				inverseMats[i] = mats[i].inverse();
-			}
+		ArrayList<Act> actions = new ArrayList<>();
+		public Mat4d staticMat;
+		public Mat4d staticInv;
+
+		public AnimTrans(double[][] times, Mat4d[][] mats, String[] actionNames, Mat4d staticMat) {
+
 			this.staticMat = staticMat;
 			staticInv = staticMat.inverse();
+
+			assert(actionNames.length > 0);
+			assert(times.length == actionNames.length);
+			assert(mats.length == actionNames.length);
+
+			for (int i = 0; i < actionNames.length; ++i) {
+				// Build up the actions
+				Act act = new Act();
+				act.times = times[i];
+				act.matrices = mats[i];
+				act.name = actionNames[i];
+				act.invMatrices = new Mat4d[act.matrices.length];
+				for (int j = 0; j < act.matrices.length; ++j) {
+					act.invMatrices[j] = act.matrices[j].inverse();
+				}
+
+				actions.add(act);
+			}
 		}
+
 		@Override
 		public boolean isStatic() {
 			return false;
 		}
 
 		@Override
-		public TransVal value(ArrayList<Action.Queue> actions) {
-			if (actions == null) {
+		public TransVal value(ArrayList<Action.Queue> aqs) {
+			if (aqs == null) {
 				return new TransVal(staticMat, staticInv);
 			}
 
-			// See if the current action is applicable
-			boolean found = false;
+			// See which action is applicable
+			// For now, if more than one action is applicable on any scene node, priority is determined by the
+			// order of the action queues requested.
+
+			Act act = null; // The applicable actions
 			double time = 0;
-			for (Action.Queue q : actions) {
-				if (q.name.equals(actionName)) {
-					found = true;
-					time = q.time;
+			for (Action.Queue q : aqs) {
+				for (Act a : actions) {
+					if (q.name.equals(a.name)) {
+						act = a;
+						time = q.time;
+						break;
+					}
+				}
+
+				if (act != null) {
 					break;
 				}
 			}
-			if (!found) {
+			if (act == null) {
 				return new TransVal(staticMat, staticInv);
 			}
 			// The action applies, interpolate the value
 
 			// Check if we are past the ends
-			if (time <= times[0]) {
-				return new TransVal(matrices[0], inverseMats[0]);
+			if (time <= act.times[0]) {
+				return new TransVal(act.matrices[0], act.invMatrices[0]);
 			}
-			if (time >= times[times.length -1]) {
-				return new TransVal(matrices[times.length-1], inverseMats[times.length-1]);
+			if (time >= act.times[act.times.length -1]) {
+				return new TransVal(act.matrices[act.times.length-1], act.invMatrices[act.times.length-1]);
 			}
 
 			// Basic binary search for appropriate segment
 			int start = 0;
-			int end = times.length;
+			int end = act.times.length;
 			while ((end - start) > 1) {
 				int test = (start + end)/2;
-				double samp = times[test];
+				double samp = act.times[test];
 
 				if (samp == time) { // perfect match
-					return new TransVal(matrices[test], inverseMats[test]);
+					return new TransVal(act.matrices[test], act.invMatrices[test]);
 				}
 
 				if (samp < time) {
@@ -215,8 +242,8 @@ public class MeshData {
 			assert(end - start == 1);
 
 			// Linearly interpolate on the segment
-			double t0 = times[start];
-			double t1 = times[end];
+			double t0 = act.times[start];
+			double t1 = act.times[end];
 			assert(time >= t0);
 			assert(time <= t1);
 
@@ -225,15 +252,15 @@ public class MeshData {
 
 			Mat4d temp = new Mat4d();
 
-			Mat4d retTrans = new Mat4d(matrices[start]);
+			Mat4d retTrans = new Mat4d(act.matrices[start]);
 			retTrans.scale4(startScale);
-			temp.set4(matrices[end]);
+			temp.set4(act.matrices[end]);
 			temp.scale4(endScale);
 			retTrans.add4(temp);
 
-			Mat4d retInv = new Mat4d(inverseMats[start]);
+			Mat4d retInv = new Mat4d(act.invMatrices[start]);
 			retInv.scale4(startScale);
-			temp.set4(inverseMats[end]);
+			temp.set4(act.invMatrices[end]);
 			temp.scale4(endScale);
 			retInv.add4(temp);
 
@@ -248,55 +275,60 @@ public class MeshData {
 		// Scan through the list of keys and remove any that are redundant
 		public int optimize() {
 			int discarded = 0;
-			ArrayList<Mat4d> keptMatrices = new ArrayList<>();
-			ArrayList<Mat4d> keptInverses = new ArrayList<>();
-			ArrayList<Double> keptTimes = new ArrayList<>();
 
-			// Keep the first value
-			keptMatrices.add(matrices[0]);
-			keptInverses.add(inverseMats[0]);
-			keptTimes.add(times[0]);
+			for (Act act : actions) {
 
-			for (int i = 0; i < matrices.length-2; ++i) {
-				double t0 = times[i];
-				double t1 = times[i+2];
-				double checkTime = times[i+1];
+				ArrayList<Mat4d> keptMatrices = new ArrayList<>();
+				ArrayList<Mat4d> keptInverses = new ArrayList<>();
+				ArrayList<Double> keptTimes = new ArrayList<>();
 
-				Mat4d m0 = matrices[i];
-				Mat4d m1 = matrices[i+2];
-				Mat4d checkMat = matrices[i+1];
+				// Keep the first value
+				keptMatrices.add(act.matrices[0]);
+				keptInverses.add(act.invMatrices[0]);
+				keptTimes.add(act.times[0]);
 
-				double s0 = (checkTime-t0)/(t1-t0);
-				double s1 = 1 - s0;
+				for (int i = 0; i < act.matrices.length-2; ++i) {
+					double t0 = act.times[i];
+					double t1 = act.times[i+2];
+					double checkTime = act.times[i+1];
 
-				Mat4d val = new Mat4d(m0);
-				val.scale4(s0);
-				Mat4d temp = new Mat4d(m1);
-				temp.scale4(s1);
-				val.add4(temp);
+					Mat4d m0 = act.matrices[i];
+					Mat4d m1 = act.matrices[i+2];
+					Mat4d checkMat = act.matrices[i+1];
 
-				if (!val.near4(checkMat)) {
-					// this matrix is different enough from the interpolated value that we need it
-					keptMatrices.add(matrices[i+1]);
-					keptInverses.add(inverseMats[i+1]);
-					keptTimes.add(times[i+1]);
-				} else {
-					++discarded;
+					double s0 = (checkTime-t0)/(t1-t0);
+					double s1 = 1 - s0;
+
+					Mat4d val = new Mat4d(m0);
+					val.scale4(s0);
+					Mat4d temp = new Mat4d(m1);
+					temp.scale4(s1);
+					val.add4(temp);
+
+					if (!val.near4(checkMat)) {
+						// this matrix is different enough from the interpolated value that we need it
+						keptMatrices.add(act.matrices[i+1]);
+						keptInverses.add(act.invMatrices[i+1]);
+						keptTimes.add(act.times[i+1]);
+					} else {
+						++discarded;
+					}
 				}
-			}
-			// keep the last value
-			keptMatrices.add(matrices[matrices.length-1]);
-			keptInverses.add(inverseMats[inverseMats.length-1]);
-			keptTimes.add(times[times.length-1]);
+				// keep the last value
+				keptMatrices.add(act.matrices[act.matrices.length-1]);
+				keptInverses.add(act.invMatrices[act.invMatrices.length-1]);
+				keptTimes.add(act.times[act.times.length-1]);
 
-			// Finally rewrite the arrays
-			matrices = new Mat4d[keptMatrices.size()];
-			inverseMats = new Mat4d[keptMatrices.size()];
-			times = new double[keptMatrices.size()];
-			for (int i = 0; i < matrices.length; ++i) {
-				matrices[i] = keptMatrices.get(i);
-				inverseMats[i] = keptInverses.get(i);
-				times[i] = keptTimes.get(i);
+				// Finally rewrite the arrays
+				act.matrices = new Mat4d[keptMatrices.size()];
+				act.invMatrices = new Mat4d[keptMatrices.size()];
+				act.times = new double[keptMatrices.size()];
+				for (int i = 0; i < act.matrices.length; ++i) {
+					act.matrices[i] = keptMatrices.get(i);
+					act.invMatrices[i] = keptInverses.get(i);
+					act.times[i] = keptTimes.get(i);
+				}
+
 			}
 
 			return discarded;
@@ -348,10 +380,13 @@ public class MeshData {
 				} else {
 					// Merge the static parent into the animated child
 					AnimTrans at = (AnimTrans)child.trans;
-					for (int matInd = 0; matInd < at.matrices.length; ++matInd) {
-						at.matrices[matInd].mult4(thisMat, at.matrices[matInd]);
-						at.inverseMats[matInd].mult4(at.inverseMats[matInd], thisInvMat);
+					for (Act act : at.actions) {
+						for (int matInd = 0; matInd < act.matrices.length; ++matInd) {
+							act.matrices[matInd].mult4(thisMat, act.matrices[matInd]);
+							act.invMatrices[matInd].mult4(act.invMatrices[matInd], thisInvMat);
+						}
 					}
+
 					at.staticMat.mult4(thisMat, at.staticMat);
 					at.staticInv.mult4(at.staticInv, thisInvMat);
 					ret.add(child);
@@ -690,15 +725,20 @@ public class MeshData {
 				if (node.trans instanceof AnimTrans) {
 					AnimTrans at = (AnimTrans)node.trans;
 					numMatricesRemoved += at.optimize();
-					numMatricesRemaining += at.matrices.length;
-
-					boolean isSame = true;
-					for (int i = 1; i < at.matrices.length; ++i) {
-						isSame = isSame && at.matrices[0].near4(at.matrices[i]);
+					for (Act act : at.actions) {
+						numMatricesRemaining += act.matrices.length;
 					}
-					if (isSame) {
-						// All values are effectively the same
-						node.trans = new StaticTrans(at.matrices[0]);
+
+					Mat4d baseMat = at.actions.get(0).matrices[0];
+					boolean isSame = true;
+					for (Act act : at.actions) {
+						for (int i = 0; i < act.matrices.length; ++i) {
+							isSame = isSame && baseMat.near4(act.matrices[i]);
+						}
+						if (isSame) {
+							// All values are effectively the same
+							node.trans = new StaticTrans(baseMat);
+						}
 					}
 				}
 			}
