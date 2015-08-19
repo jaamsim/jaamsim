@@ -15,13 +15,13 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.ErrorException;
-import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
-import com.jaamsim.input.ExpressionInput;
+import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.input.UnitTypeInput;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Collects basic statistical information on the entities that are received.
@@ -30,9 +30,13 @@ import com.jaamsim.units.DimensionlessUnit;
  */
 public class Statistics extends LinkedComponent {
 
+	@Keyword(description = "The unit type for the variable whose statistic will be collected.",
+	         exampleList = {"DistanceUnit"})
+	private final UnitTypeInput unitType;
+
 	@Keyword(description = "The variable for which statistics will be collected.",
 	         exampleList = {"'this.obj.attrib1'"})
-	private final ExpressionInput sampleValue;
+	private final SampleExpInput sampleValue;
 
 	private double minValue;
 	private double maxValue;
@@ -42,10 +46,28 @@ public class Statistics extends LinkedComponent {
 	{
 		stateAssignment.setHidden(true);
 
-		sampleValue = new ExpressionInput("SampleValue", "Key Inputs", null);
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType.setRequired(true);
+		this.addInput(unitType);
+
+		sampleValue = new SampleExpInput("SampleValue", "Key Inputs", null);
+		sampleValue.setUnitType(UserSpecifiedUnit.class);
 		sampleValue.setEntity(this);
 		sampleValue.setRequired(true);
 		this.addInput(sampleValue);
+	}
+
+	public Statistics() {}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == unitType) {
+			Class<? extends Unit> ut = unitType.getUnitType();
+			sampleValue.setUnitType(ut);
+			return;
+		}
 	}
 
 	@Override
@@ -55,11 +77,11 @@ public class Statistics extends LinkedComponent {
 	}
 
 	@Override
-	public void addEntity( DisplayEntity ent ) {
+	public void addEntity(DisplayEntity ent) {
 		super.addEntity(ent);
 
 		// Update the statistics
-		double val = this.getVariableValue(this.getSimTime());
+		double val = sampleValue.getValue().getNextSample(getSimTime());
 		minValue = Math.min(minValue, val);
 		maxValue = Math.max(maxValue, val);
 		totalValue += val;
@@ -67,16 +89,6 @@ public class Statistics extends LinkedComponent {
 
 		// Pass the entity to the next component
 		this.sendToNextComponent(ent);
-	}
-
-	private double getVariableValue(double simTime) {
-		try {
-			// Evaluate the expression
-			double ret = ExpEvaluator.evaluateExpression(sampleValue.getValue(), simTime, this).value;
-			return ret;
-		} catch(ExpError e) {
-			throw new ErrorException(e);
-		}
 	}
 
 	/**
@@ -90,13 +102,18 @@ public class Statistics extends LinkedComponent {
 		totalSquaredValue = 0.0;
 	}
 
+	@Override
+	public Class<? extends Unit> getUserUnitType() {
+		return unitType.getUnitType();
+	}
+
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************
 
 	@Output(name = "SampleMinimum",
 	 description = "The smallest value that was recorded.",
-	    unitType = DimensionlessUnit.class,
+	    unitType = UserSpecifiedUnit.class,
 	  reportable = true)
 	public double getSampleMinimum(double simTime) {
 		return minValue;
@@ -104,7 +121,7 @@ public class Statistics extends LinkedComponent {
 
 	@Output(name = "SampleMaximum",
 	 description = "The largest value that was recorded.",
-	    unitType = DimensionlessUnit.class,
+	    unitType = UserSpecifiedUnit.class,
 	  reportable = true)
 	public double getSampleMaximum(double simTime) {
 		return maxValue;
@@ -112,7 +129,7 @@ public class Statistics extends LinkedComponent {
 
 	@Output(name = "SampleAverage",
 	 description = "The average of the values that were recorded.",
-	    unitType = DimensionlessUnit.class,
+	    unitType = UserSpecifiedUnit.class,
 	  reportable = true)
 	public double getSampleAverage(double simTime) {
 		return totalValue/this.getNumberAdded(simTime);
@@ -120,7 +137,7 @@ public class Statistics extends LinkedComponent {
 
 	@Output(name = "SampleStandardDeviation",
 	 description = "The standard deviation of the values that were recorded.",
-	    unitType = DimensionlessUnit.class,
+	    unitType = UserSpecifiedUnit.class,
 	  reportable = true)
 	public double getSampleStandardDeviation(double simTime) {
 		double num = this.getNumberAdded(simTime);
@@ -130,7 +147,7 @@ public class Statistics extends LinkedComponent {
 
 	@Output(name = "StandardDeviationOfTheMean",
 	 description = "The estimated standard deviation of the sample mean.",
-	    unitType = DimensionlessUnit.class,
+	    unitType = UserSpecifiedUnit.class,
 	  reportable = true)
 	public double getStandardDeviationOfTheMean(double simTime) {
 		double num = this.getNumberAdded(simTime);
