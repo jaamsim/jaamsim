@@ -316,7 +316,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// Read the autoload configuration file
 		InputAgent.clear();
 		InputAgent.setRecordEdits(false);
-		InputAgent.readResource("inputs/autoload.cfg");
+		InputAgent.readResource("<res>/inputs/autoload.cfg");
 	}
 
 	/**
@@ -1615,7 +1615,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Load the autoload file
 		InputAgent.setRecordEdits(false);
-		InputAgent.readResource("inputs/autoload.cfg");
+		InputAgent.readResource("<res>/inputs/autoload.cfg");
 		gui.setTitle(Simulation.getModelName());
 
 		// Show the Control Panel

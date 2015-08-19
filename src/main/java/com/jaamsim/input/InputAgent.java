@@ -1176,7 +1176,7 @@ public class InputAgent {
 	public static void loadDefault() {
 
 		// Read the default configuration file
-		InputAgent.readResource("inputs/default.cfg");
+		InputAgent.readResource("<res>/inputs/default.cfg");
 
 		// A RecordEdits marker in the default configuration must be ignored
 		InputAgent.setRecordEditsFound(false);
@@ -1284,6 +1284,7 @@ public class InputAgent {
 			// Resources folder in the Jar file
 			if (specPath.equals("res")) {
 				ret = new URI(resRoot.getScheme(), resRoot.getSchemeSpecificPart() + path.substring(closeBrace+2), null).normalize();
+
 			}
 		}
 		// 2) Normal file path
