@@ -243,7 +243,6 @@ public class InputAgent {
 	}
 
 	private static URI resRoot;
-	private static URI resPath;
 	private static final String res = "/resources/";
 
 	static {
@@ -253,8 +252,6 @@ public class InputAgent {
 			resRoot = InputAgent.class.getResource(res).toURI();
 		}
 		catch (URISyntaxException e) {}
-
-		resPath = URI.create(resRoot.toString());
 	}
 
 	private static void rethrowWrapped(Exception ex) {
@@ -269,7 +266,7 @@ public class InputAgent {
 			return;
 
 		try {
-			readStream(resRoot.toString(), resPath, res);
+			readStream(null, null, res);
 			GUIFrame.instance().setProgressText(null);
 		}
 		catch (URISyntaxException ex) {
@@ -1315,7 +1312,10 @@ public class InputAgent {
 
 		// Check that the file path includes the jail folder
 		if (jailPrefix != null && ret.toString().indexOf(jailPrefix) != 0) {
-			LogBox.format("Failed jail test: %s in jail: %s context: %s\n", ret.toString(), jailPrefix, context.toString());
+			LogBox.format("Failed jail test: %s\n"
+					+ "jail: %s\n"
+					+ "context: %s\n",
+					ret.toString(), jailPrefix, context.toString());
 			LogBox.getInstance().setVisible(true);
 			return null; // This resolved URI is not in our jail
 		}
