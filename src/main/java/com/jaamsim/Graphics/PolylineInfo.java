@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.render.HasScreenPoints.PointsInfo;
 
 public class PolylineInfo {
 	public ArrayList<Vec3d> points;
@@ -36,9 +35,9 @@ public class PolylineInfo {
 	@Override
 	public boolean equals(Object o) {
 		if (o == this) return true;
-		if (!(o instanceof PointsInfo)) return false;
+		if (!(o instanceof PolylineInfo)) return false;
 
-		PointsInfo pi = (PointsInfo)o;
+		PolylineInfo pi = (PolylineInfo)o;
 
 		return points != null && points.equals(pi.points) &&
 		       color != null && color.equals(pi.color) &&

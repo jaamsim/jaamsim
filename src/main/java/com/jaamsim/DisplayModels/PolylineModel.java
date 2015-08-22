@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.ColourInput;
@@ -50,10 +51,9 @@ public class PolylineModel extends DisplayModel {
 	protected class Binding extends DisplayModelBinding {
 
 		//private Segment _segmentObservee;
-		protected HasScreenPoints screenPointObservee;
 		protected DisplayEntity displayObservee;
 
-		private HasScreenPoints.PointsInfo[] pisCache;
+		private PolylineInfo[] pisCache;
 		private Transform transCache;
 		private VisibilityInfo viCache;
 
@@ -65,11 +65,9 @@ public class PolylineModel extends DisplayModel {
 			super(ent, dm);
 
 			try {
-				screenPointObservee = (HasScreenPoints)ent;
 				displayObservee = (DisplayEntity)ent;
 			} catch (ClassCastException e) {
 				// The observee is not a display entity
-				screenPointObservee = null;
 				displayObservee = null;
 			}
 		}
@@ -79,7 +77,7 @@ public class PolylineModel extends DisplayModel {
 		 */
 		protected void updateProxies(double simTime) {
 
-			HasScreenPoints.PointsInfo[] pis = screenPointObservee.getScreenPoints();
+			PolylineInfo[] pis = displayObservee.getScreenPoints();
 			if (pis == null || pis.length == 0)
 				return;
 
@@ -146,7 +144,7 @@ public class PolylineModel extends DisplayModel {
 			cachedProxies = new LineProxy[pis.length];
 
 			int proxyIndex = 0;
-			for (HasScreenPoints.PointsInfo pi : pis) {
+			for (PolylineInfo pi : pis) {
 				List<Vec4d> points = new ArrayList<>();
 
 				for (int i = 1; i < pi.points.size(); ++i) { // Skip the first point
@@ -168,7 +166,7 @@ public class PolylineModel extends DisplayModel {
 		@Override
 		public void collectProxies(double simTime, ArrayList<RenderProxy> out) {
 
-			if (displayObservee == null || screenPointObservee == null ||!displayObservee.getShow()) {
+			if (displayObservee == null ||!displayObservee.getShow()) {
 				return;
 			}
 
@@ -183,9 +181,8 @@ public class PolylineModel extends DisplayModel {
 		public void collectSelectionProxies(double simTime, ArrayList<RenderProxy> out) {
 
 			if (displayObservee == null ||
-			    screenPointObservee == null ||
 			    !displayObservee.getShow() ||
-			    !screenPointObservee.selectable()) {
+			    !displayObservee.selectable()) {
 				return;
 			}
 

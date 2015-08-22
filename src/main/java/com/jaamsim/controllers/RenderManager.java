@@ -42,6 +42,7 @@ import javax.swing.JPopupMenu;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
@@ -1123,7 +1124,7 @@ public class RenderManager implements DragSourceListener {
 
 		ArrayList<Vec3d> screenPoints = null;
 		if (selectedEntity instanceof HasScreenPoints) {
-			HasScreenPoints.PointsInfo[] pointInfos = ((HasScreenPoints)selectedEntity).getScreenPoints();
+			PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
 			if (pointInfos != null && pointInfos.length != 0)
 				screenPoints = pointInfos[0].points;
 		}
@@ -1157,7 +1158,7 @@ public class RenderManager implements DragSourceListener {
 
 		ArrayList<Vec3d> screenPoints = null;
 		if (selectedEntity instanceof HasScreenPoints) {
-			HasScreenPoints.PointsInfo[] pointInfos = ((HasScreenPoints)selectedEntity).getScreenPoints();
+			PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
 			if (pointInfos != null && pointInfos.length != 0)
 				screenPoints = pointInfos[0].points;
 		}
@@ -1202,10 +1203,7 @@ public class RenderManager implements DragSourceListener {
 
 		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
 
-		HasScreenPoints hsp = (HasScreenPoints)selectedEntity;
-		assert(hsp != null);
-
-		HasScreenPoints.PointsInfo[] pointInfos = hsp.getScreenPoints();
+		PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
 		assert(pointInfos != null && pointInfos.length != 0);
 
 		Transform trans = null;
@@ -1262,10 +1260,7 @@ public class RenderManager implements DragSourceListener {
 
 		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
 
-		HasScreenPoints hsp = (HasScreenPoints)selectedEntity;
-		assert(hsp != null);
-
-		HasScreenPoints.PointsInfo[] pointInfos = hsp.getScreenPoints();
+		PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
 		if (pointInfos == null || pointInfos.length == 0)
 			return;
 

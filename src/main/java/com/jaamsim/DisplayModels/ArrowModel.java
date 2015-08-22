@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jaamsim.Graphics.Arrow;
+import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Vec3dInput;
@@ -27,7 +28,6 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
-import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.render.PolygonProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.units.DistanceUnit;
@@ -81,7 +81,7 @@ public class ArrowModel extends PolylineModel {
 
 			Vec4d startPoint = selectionPoints.get(selectionPoints.size() - 1);
 			Vec4d fromPoint = selectionPoints.get(selectionPoints.size() - 2);
-			HasScreenPoints.PointsInfo[] pointInfos = screenPointObservee.getScreenPoints();
+			PolylineInfo[] pointInfos = displayObservee.getScreenPoints();
 			if (pointInfos == null || pointInfos.length == 0)
 				return;
 
