@@ -14,8 +14,6 @@
  */
 package com.jaamsim.Graphics;
 
-import java.util.ArrayList;
-
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
@@ -24,18 +22,12 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
-import com.jaamsim.input.Vec3dListInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
 public class Arrow extends DisplayEntity implements HasScreenPoints {
-	@Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
-                    "make up the arrow.  When two coordinates are given it is assumed that z = 0." ,
-	         exampleList = {"{ 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m }"})
-	private final Vec3dListInput pointsInput;
-
 	@Keyword(description = "If TRUE, then a drop shadow appears for the arrow.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput dropShadow;
@@ -65,14 +57,6 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 	private HasScreenPoints.PointsInfo[] cachedPointInfo;
 
 	{
-		ArrayList<Vec3d> defPoints =  new ArrayList<>();
-		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
-		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
-		pointsInput = new Vec3dListInput("Points", "Graphics", defPoints);
-		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
-		pointsInput.setUnitType(DistanceUnit.class);
-		this.addInput(pointsInput);
-
 		width = new ValueInput("Width", "Graphics", 1.0d);
 		width.setUnitType(DimensionlessUnit.class);
 		width.setValidRange(0.0d, Double.POSITIVE_INFINITY);

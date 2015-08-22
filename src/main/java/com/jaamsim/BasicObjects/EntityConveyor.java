@@ -23,11 +23,9 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.input.Vec3dListInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
-import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
@@ -38,11 +36,6 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 	@Keyword(description = "The travel time for the conveyor.",
 	         exampleList = {"10.0 s"})
 	private final ValueInput travelTimeInput;
-
-    @Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
-            "make up the arrow.  When two coordinates are given it is assumed that z = 0." ,
-             exampleList = {"{ 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m }"})
-	private final Vec3dListInput pointsInput;
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",
 	         exampleList = {"1"})
@@ -71,14 +64,6 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		travelTimeInput.setUnitType(TimeUnit.class);
 		this.addInput(travelTimeInput);
-
-		ArrayList<Vec3d> defPoints =  new ArrayList<>();
-		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
-		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
-		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);
-		pointsInput.setValidCountRange(2, Integer.MAX_VALUE );
-		pointsInput.setUnitType(DistanceUnit.class);
-		this.addInput(pointsInput);
 
 		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
 		widthInput.setUnitType(DimensionlessUnit.class);

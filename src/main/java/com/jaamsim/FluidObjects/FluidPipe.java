@@ -14,8 +14,6 @@
  */
 package com.jaamsim.FluidObjects;
 
-import java.util.ArrayList;
-
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -23,7 +21,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.input.Vec3dListInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
@@ -54,11 +51,6 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 			"The factor multiplies the dynamic pressure and is applied as a loss at the pipe outlet.",
 	         example = "Pipe1 PressureLossCoefficient { 0.5 }")
 	private final ValueInput pressureLossCoefficientInput;
-
-    @Keyword(description = "A list of points in { x, y, z } coordinates defining the line segments that" +
-            "make up the pipe.  When two coordinates are given it is assumed that z = 0." ,
-             example = "Pipe1  Points { { 6.7 2.2 m } { 4.9 2.2 m } { 4.9 3.4 m } }")
-	private final Vec3dListInput pointsInput;
 
 	@Keyword(description = "The width of the pipe segments in pixels.",
 	         example = "Pipe1 Width { 1 }")
@@ -93,14 +85,6 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 		pressureLossCoefficientInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
 		pressureLossCoefficientInput.setUnitType( DimensionlessUnit.class );
 		this.addInput( pressureLossCoefficientInput);
-
-		ArrayList<Vec3d> defPoints =  new ArrayList<>();
-		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
-		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
-		pointsInput = new Vec3dListInput("Points", "Key Inputs", defPoints);
-		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
-		pointsInput.setUnitType(DistanceUnit.class);
-		this.addInput(pointsInput);
 
 		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
 		widthInput.setValidRange(1.0d, Double.POSITIVE_INFINITY);

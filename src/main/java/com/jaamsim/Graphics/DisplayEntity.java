@@ -35,6 +35,7 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.RelativeEntityInput;
 import com.jaamsim.input.Vec3dInput;
+import com.jaamsim.input.Vec3dListInput;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Quaternion;
@@ -55,6 +56,7 @@ import com.jogamp.newt.event.KeyEvent;
  * components like the eventManager.
  */
 public class DisplayEntity extends Entity {
+
 	@Keyword(description = "The point in the region at which the alignment point of the object is positioned.",
 	         exampleList = {"-3.922 -1.830 0.000 m"})
 	protected final Vec3dInput positionInput;
@@ -72,6 +74,12 @@ public class DisplayEntity extends Entity {
 	                "expressed with respect to a unit box centered about { 0 0 0 }.",
 	         exampleList = {"-0.5 -0.5 0.0"})
 	protected final Vec3dInput alignmentInput;
+
+	@Keyword(description = "A list of points in { x, y, z } coordinates that define a polyline. "
+			+ "When two coordinates are given it is assumed that z = 0." ,
+             exampleList = {"{ 1.0 1.0 0.0 m } { 2.0 2.0 0.0 m } { 3.0 3.0 0.0 m }",
+			                "{ 1.0 1.0 m } { 2.0 2.0 m } { 3.0 3.0 m }"})
+	protected final Vec3dListInput pointsInput;
 
 	@Keyword(description = "The name of the Region containing the object.  Applies an offset " +
 			        "to the Position of the object corresponding to the Region's " +
@@ -128,6 +136,14 @@ public class DisplayEntity extends Entity {
 		orientationInput = new Vec3dInput("Orientation", "Graphics", new Vec3d());
 		orientationInput.setUnitType(AngleUnit.class);
 		this.addInput(orientationInput);
+
+		ArrayList<Vec3d> defPoints =  new ArrayList<>();
+		defPoints.add(new Vec3d(0.0d, 0.0d, 0.0d));
+		defPoints.add(new Vec3d(1.0d, 0.0d, 0.0d));
+		pointsInput = new Vec3dListInput("Points", "Graphics", defPoints);
+		pointsInput.setValidCountRange( 2, Integer.MAX_VALUE );
+		pointsInput.setUnitType(DistanceUnit.class);
+		this.addInput(pointsInput);
 
 		regionInput = new EntityInput<>(Region.class, "Region", "Graphics", null);
 		this.addInput(regionInput);
