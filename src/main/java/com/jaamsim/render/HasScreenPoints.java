@@ -8,6 +8,4 @@ public interface HasScreenPoints {
 
 	public PointsInfo[] getScreenPoints();
 
-	public boolean selectable();
-
 }
