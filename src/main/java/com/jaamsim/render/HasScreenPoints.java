@@ -6,6 +6,4 @@ public interface HasScreenPoints {
 
 	public static class PointsInfo extends PolylineInfo {}
 
-	public PointsInfo[] getScreenPoints();
-
 }
