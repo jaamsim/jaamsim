@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.TextModel;
@@ -187,6 +188,9 @@ public class DisplayEntity extends Entity {
 		// Set the default Alignment
 		alignmentInput.setDefaultValue(type.getDefaultAlignment());
 		this.setAlignment(type.getDefaultAlignment());
+
+		// Choose which set of keywords to show
+		this.setGraphicsKeywords();
 	}
 
 	@Override
@@ -205,6 +209,49 @@ public class DisplayEntity extends Entity {
 		this.setOrientation(orientationInput.getValue());
 		this.setDisplayModelList(displayModelListInput.getValue());
 		this.setRegion(regionInput.getValue());
+	}
+
+	private void showStandardGraphicsKeywords(boolean bool) {
+		positionInput.setHidden(!bool);
+		sizeInput.setHidden(!bool);
+		alignmentInput.setHidden(!bool);
+		orientationInput.setHidden(!bool);
+	}
+
+	private void showPolylineGraphicsKeywords(boolean bool) {
+		pointsInput.setHidden(!bool);
+	}
+
+	public boolean usePointsInput() {
+		ArrayList<DisplayModel> dmList = displayModelListInput.getValue();
+		if (dmList == null || dmList.isEmpty())
+			return false;
+		return dmList.get(0) instanceof PolylineModel;
+	}
+
+	private void setGraphicsKeywords() {
+
+		// No displaymodel
+		if (this instanceof OverlayEntity || displayModelListInput.getValue() == null) {
+			showStandardGraphicsKeywords(false);
+			showPolylineGraphicsKeywords(false);
+			regionInput.setHidden(true);
+			relativeEntity.setHidden(true);
+			show.setHidden(true);
+			movable.setHidden(true);
+			return;
+		}
+
+		// Polyline type displaymodel
+		if (usePointsInput()) {
+			showStandardGraphicsKeywords(false);
+			showPolylineGraphicsKeywords(true);
+			return;
+		}
+
+		// Standard displaymodel
+		showStandardGraphicsKeywords(true);
+		showPolylineGraphicsKeywords(false);
 	}
 
 	@Override
