@@ -42,7 +42,6 @@ import javax.swing.JPopupMenu;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
@@ -1122,11 +1121,9 @@ public class RenderManager implements DragSourceListener {
 		Vec3d currentPoint = currentRay.getPointAtDist(currentDist);
 		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
 
-		ArrayList<Vec3d> screenPoints = null;
-		PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
-		if (pointInfos != null && pointInfos.length != 0)
-			screenPoints = pointInfos[0].points;
-		if (screenPoints == null || screenPoints.size() == 0) return true; // just ignore this
+		ArrayList<Vec3d> screenPoints = selectedEntity.getPoints();
+		if (screenPoints == null || screenPoints.isEmpty())
+			return true;
 
 		Vec3d delta = new Vec3d();
 
@@ -1154,10 +1151,7 @@ public class RenderManager implements DragSourceListener {
 
 		int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
 
-		ArrayList<Vec3d> screenPoints = null;
-		PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
-		if (pointInfos != null && pointInfos.length != 0)
-			screenPoints = pointInfos[0].points;
+		ArrayList<Vec3d> screenPoints = selectedEntity.getPoints();
 		if (screenPoints == null || nodeIndex >= screenPoints.size())
 			return false;
 
@@ -1199,14 +1193,14 @@ public class RenderManager implements DragSourceListener {
 
 		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
 
-		PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
-		assert(pointInfos != null && pointInfos.length != 0);
+		ArrayList<Vec3d> points = selectedEntity.getPoints();
+		if (points == null || points.isEmpty())
+			return;
 
 		Transform trans = null;
 		if (selectedEntity.getCurrentRegion() != null || selectedEntity.getRelativeEntity() != null)
 			trans = selectedEntity.getGlobalPositionTransform();
 
-		ArrayList<Vec3d> points = pointInfos[0].points;
 		ArrayList<Vec3d> globalPoints = new ArrayList<>(points);
 		if (trans != null)
 			globalPoints = (ArrayList<Vec3d>) RenderUtils.transformPointsWithTrans(trans.getMat4dRef(), globalPoints);
@@ -1256,16 +1250,9 @@ public class RenderManager implements DragSourceListener {
 
 		Mat4d rayMatrix = MathUtils.RaySpace(currentRay);
 
-		PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
-		if (pointInfos == null || pointInfos.length == 0)
+		ArrayList<Vec3d> points = selectedEntity.getPoints();
+		if (points == null || points.size() <= 2)
 			return;
-
-		ArrayList<Vec3d> points = pointInfos[0].points;
-		// Find a point that is within the threshold
-
-		if (points.size() <= 2) {
-			return;
-		}
 
 		ArrayList<Vec3d> globalPoints = new ArrayList<>(points);
 
