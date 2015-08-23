@@ -134,6 +134,7 @@ public class RenderManager implements DragSourceListener {
 	private long dragHandleID = 0;
 	private Vec3d dragCollisionPoint;
 	private Vec3d dragEntityPosition;
+	private ArrayList<Vec3d> dragEntityPoints;
 
 	// The object type for drag-and-drop operation, if this is null, the user is not dragging
 	private ObjectType dndObjectType;
@@ -1160,10 +1161,10 @@ public class RenderManager implements DragSourceListener {
 		if (screenPoints == null || nodeIndex >= screenPoints.size())
 			return false;
 
-		// Global mouse position on the node at the start of the move
-		Vec3d point = new Vec3d(dragCollisionPoint);
+		// Global node position at the start of the move
+		Vec3d point = selectedEntity.getGlobalPosition(dragEntityPoints.get(nodeIndex));
 
-		// New global mouse position at the end of the move
+		// Global node position at the end of the move
 		Vec3d diff = new Vec3d();
 		if (shift) {
 			diff.z = RenderUtils.getZDiff(point, currentRay, firstRay);
@@ -1369,6 +1370,7 @@ public class RenderManager implements DragSourceListener {
 
 			// Use the entity collision point for dragging instead of the handle collision point
 			dragEntityPosition = selectedEntity.getGlobalPosition();
+			dragEntityPoints = selectedEntity.getPoints();
 			dragCollisionPoint = pickRay.getPointAtDist(entityDist);
 			dragHandleID = MOVE_PICK_ID;
 			return true;
@@ -1376,6 +1378,7 @@ public class RenderManager implements DragSourceListener {
 		if (mouseHandleDist != Double.POSITIVE_INFINITY) {
 			// We hit a mouse handle
 			dragEntityPosition = selectedEntity.getGlobalPosition();
+			dragEntityPoints = selectedEntity.getPoints();
 			dragCollisionPoint = pickRay.getPointAtDist(mouseHandleDist);
 			return true;
 		}

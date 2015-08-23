@@ -832,6 +832,12 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
+	public ArrayList<Vec3d> getPoints() {
+		synchronized(screenPointLock) {
+			return new ArrayList<>(pointsInput.getValue());
+		}
+	}
+
 	public boolean selectable() {
 		return true;
 	}
