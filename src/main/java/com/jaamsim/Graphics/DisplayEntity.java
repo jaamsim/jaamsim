@@ -777,6 +777,10 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
+	public boolean selectable() {
+		return true;
+	}
+
 	public final void setTagColour(String tagName, Color4d ca) {
 		Color4d cas[] = new Color4d[1] ;
 		cas[0] = ca;

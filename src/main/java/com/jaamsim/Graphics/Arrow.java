@@ -111,11 +111,6 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 		}
 	}
 
-	@Override
-	public boolean selectable() {
-		return true;
-	}
-
 	/**
 	 *  Inform simulation and editBox of new positions.
 	 */

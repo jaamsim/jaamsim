@@ -99,11 +99,6 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 		}
 	}
 
-	@Override
-	public boolean selectable() {
-		return true;
-	}
-
 	/**
 	 *  Inform simulation and editBox of new positions.
 	 */

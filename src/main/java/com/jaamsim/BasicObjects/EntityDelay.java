@@ -243,11 +243,6 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 		}
 	}
 
-	@Override
-	public boolean selectable() {
-		return true;
-	}
-
 	/**
 	 *  Inform simulation and editBox of new positions.
 	 */
