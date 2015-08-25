@@ -210,14 +210,9 @@ public class EntityConveyor extends LinkedService {
 	public PolylineInfo[] getScreenPoints() {
 		synchronized(screenPointLock) {
 			if (cachedPointInfo == null) {
+				int w = Math.max(1, widthInput.getValue().intValue());
 				cachedPointInfo = new PolylineInfo[1];
-				PolylineInfo pi = new PolylineInfo();
-				cachedPointInfo[0] = pi;
-
-				pi.points = pointsInput.getValue();
-				pi.color = colorInput.getValue();
-				pi.width = widthInput.getValue().intValue();
-				if (pi.width < 1) pi.width = 1;
+				cachedPointInfo[0] = new PolylineInfo(pointsInput.getValue(), colorInput.getValue(), w);
 			}
 			return cachedPointInfo;
 		}

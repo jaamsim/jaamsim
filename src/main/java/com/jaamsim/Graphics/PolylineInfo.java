@@ -20,11 +20,9 @@ import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Vec3d;
 
 public class PolylineInfo {
-	public ArrayList<Vec3d> points;
-	public Color4d color;
-	public int width; // Line width in pixels
-
-	public PolylineInfo() {}
+	public final ArrayList<Vec3d> points;
+	public final Color4d color;
+	public final int width; // Line width in pixels
 
 	public PolylineInfo(ArrayList<Vec3d> pts, Color4d col, int w) {
 		points = pts;

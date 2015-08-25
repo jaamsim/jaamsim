@@ -821,12 +821,7 @@ public class DisplayEntity extends Entity {
 		synchronized(screenPointLock) {
 			if (cachedPointInfo == null) {
 				cachedPointInfo = new PolylineInfo[1];
-				PolylineInfo pi = new PolylineInfo();
-				cachedPointInfo[0] = pi;
-
-				pi.points = pointsInput.getValue();
-				pi.color = null;
-				pi.width = -1;
+				cachedPointInfo[0] = new PolylineInfo(pointsInput.getValue(), null, -1);
 			}
 			return cachedPointInfo;
 		}
