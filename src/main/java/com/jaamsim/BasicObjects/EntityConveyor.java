@@ -51,9 +51,6 @@ public class EntityConveyor extends LinkedService implements HasScreenPoints {
 	private final ArrayList<Double> lengthList;  // Length of each segment of the conveyor
 	private final ArrayList<Double> cumLengthList;  // Total length to the end of each segment
 
-	private Object screenPointLock = new Object();
-	private HasScreenPoints.PointsInfo[] cachedPointInfo;
-
 	{
 		operatingThresholdList.setHidden(true);
 		waitQueue.setHidden(true);

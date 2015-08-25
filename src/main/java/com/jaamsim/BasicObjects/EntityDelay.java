@@ -63,9 +63,6 @@ public class EntityDelay extends LinkedComponent implements HasScreenPoints {
 	private final ArrayList<Double> lengthList;  // Length of each segment of the path
 	private final ArrayList<Double> cumLengthList;  // Total length to the end of each segment
 
-	private Object screenPointLock = new Object();
-	private HasScreenPoints.PointsInfo[] cachedPointInfo;
-
 	{
 		duration = new SampleExpInput("Duration", "Key Inputs", null);
 		duration.setUnitType(TimeUnit.class);

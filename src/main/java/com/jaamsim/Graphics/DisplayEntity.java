@@ -749,6 +749,32 @@ public class DisplayEntity extends Entity {
 		if (in == displayModelListInput) {
 			this.setDisplayModelList( displayModelListInput.getValue() );
 		}
+
+		// If Points were input, then use them to set the start and end coordinates
+		if( in == pointsInput ) {
+			synchronized(screenPointLock) {
+				cachedPointInfo = null;
+			}
+			return;
+		}
+	}
+
+	protected Object screenPointLock = new Object();
+	protected HasScreenPoints.PointsInfo[] cachedPointInfo;
+
+	public HasScreenPoints.PointsInfo[] getScreenPoints() {
+		synchronized(screenPointLock) {
+			if (cachedPointInfo == null) {
+				cachedPointInfo = new HasScreenPoints.PointsInfo[1];
+				HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
+				cachedPointInfo[0] = pi;
+
+				pi.points = pointsInput.getValue();
+				pi.color = null;
+				pi.width = -1;
+			}
+			return cachedPointInfo;
+		}
 	}
 
 	public final void setTagColour(String tagName, Color4d ca) {

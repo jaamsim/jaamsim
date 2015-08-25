@@ -46,9 +46,6 @@ public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoi
 	         example = "Pipe1 Colour { red }")
 	private final ColourInput colourInput;
 
-	private Object screenPointLock = new Object();
-	private HasScreenPoints.PointsInfo[] cachedPointInfo;
-
 	{
 		flowRateInput = new ValueInput( "FlowRate", "Key Inputs", 0.0d);
 		flowRateInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);

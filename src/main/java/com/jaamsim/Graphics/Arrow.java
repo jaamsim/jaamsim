@@ -53,9 +53,6 @@ public class Arrow extends DisplayEntity implements HasScreenPoints {
 	         exampleList = {"red"})
 	private final ColourInput color;
 
-	private Object screenPointLock = new Object();
-	private HasScreenPoints.PointsInfo[] cachedPointInfo;
-
 	{
 		width = new ValueInput("Width", "Graphics", 1.0d);
 		width.setUnitType(DimensionlessUnit.class);

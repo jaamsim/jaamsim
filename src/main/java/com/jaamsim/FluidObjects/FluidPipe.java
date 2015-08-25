@@ -62,9 +62,6 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 
 	private double darcyFrictionFactor;  // The Darcy Friction Factor for the pipe flow.
 
-	private Object screenPointLock = new Object();
-	private HasScreenPoints.PointsInfo[] cachedPointInfo;
-
 	{
 		lengthInput = new ValueInput( "Length", "Key Inputs", 1.0d);
 		lengthInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
