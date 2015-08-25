@@ -22,7 +22,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.VolumeFlowUnit;
 
@@ -33,7 +32,7 @@ import com.jaamsim.units.VolumeFlowUnit;
  * @author Harry King
  *
  */
-public class FluidFixedFlow extends FluidFlowCalculation implements HasScreenPoints {
+public class FluidFixedFlow extends FluidFlowCalculation {
 
 	@Keyword(description = "Volumetric flow rate.",
 	         example = "FluidFixedFlow1 FlowRate { 1.0 m3/s }")

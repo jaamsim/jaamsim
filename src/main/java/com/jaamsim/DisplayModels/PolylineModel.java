@@ -27,7 +27,6 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.DisplayModelBinding;
-import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.render.LineProxy;
 import com.jaamsim.render.PointProxy;
 import com.jaamsim.render.RenderProxy;
@@ -45,7 +44,7 @@ public class PolylineModel extends DisplayModel {
 
 	@Override
 	public boolean canDisplayEntity(Entity ent) {
-		return (ent instanceof HasScreenPoints) && (ent instanceof DisplayEntity);
+		return (ent instanceof DisplayEntity);
 	}
 
 	protected class Binding extends DisplayModelBinding {

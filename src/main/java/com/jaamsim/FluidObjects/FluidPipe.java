@@ -23,7 +23,6 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
@@ -32,7 +31,7 @@ import com.jaamsim.units.DistanceUnit;
  * @author Harry King
  *
  */
-public class FluidPipe extends FluidComponent implements HasScreenPoints {
+public class FluidPipe extends FluidComponent {
 
 	@Keyword(description = "The length of the pipe.",
 	         example = "Pipe1 Length { 10.0 m }")

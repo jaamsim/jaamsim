@@ -23,11 +23,10 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
-public class Arrow extends DisplayEntity implements HasScreenPoints {
+public class Arrow extends DisplayEntity {
 	@Keyword(description = "If TRUE, then a drop shadow appears for the arrow.",
 	         exampleList = {"TRUE"})
 	private final BooleanInput dropShadow;

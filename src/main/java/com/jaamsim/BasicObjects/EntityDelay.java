@@ -29,7 +29,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -37,7 +36,7 @@ import com.jaamsim.units.TimeUnit;
  * Moves one or more Entities along a path with a specified travel time. Entities can have different travel times, which
  * are represented as varying speeds.
  */
-public class EntityDelay extends LinkedComponent implements HasScreenPoints {
+public class EntityDelay extends LinkedComponent {
 
 	@Keyword(description = "The delay time for the path.\n" +
 			"The input can be a constant value, a time series of values, or a probability distribution to be sampled.",

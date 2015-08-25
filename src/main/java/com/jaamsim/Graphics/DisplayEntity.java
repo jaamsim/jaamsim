@@ -43,7 +43,6 @@ import com.jaamsim.math.Quaternion;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.DisplayModelBinding;
-import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.AngleUnit;
@@ -280,7 +279,7 @@ public class DisplayEntity extends Entity {
 				alignBottom = false;
 		}
 
-		if (this instanceof Graph || this instanceof HasScreenPoints || this instanceof Region) {
+		if (this instanceof Graph || this.usePointsInput() || this instanceof Region) {
 			alignBottom = false;
 		}
 

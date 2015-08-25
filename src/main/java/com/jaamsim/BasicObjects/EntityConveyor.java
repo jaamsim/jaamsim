@@ -25,14 +25,13 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
 /**
  * Moves one or more Entities along a path at a constant speed.
  */
-public class EntityConveyor extends LinkedService implements HasScreenPoints {
+public class EntityConveyor extends LinkedService {
 
 	@Keyword(description = "The travel time for the conveyor.",
 	         exampleList = {"10.0 s"})

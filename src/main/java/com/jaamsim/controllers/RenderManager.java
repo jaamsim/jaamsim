@@ -65,7 +65,6 @@ import com.jaamsim.render.Action;
 import com.jaamsim.render.CameraInfo;
 import com.jaamsim.render.DisplayModelBinding;
 import com.jaamsim.render.Future;
-import com.jaamsim.render.HasScreenPoints;
 import com.jaamsim.render.MeshDataCache;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.OffscreenTarget;
@@ -1123,11 +1122,9 @@ public class RenderManager implements DragSourceListener {
 		Vec3d lastPoint = lastRay.getPointAtDist(lastDist);
 
 		ArrayList<Vec3d> screenPoints = null;
-		if (selectedEntity instanceof HasScreenPoints) {
-			PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
-			if (pointInfos != null && pointInfos.length != 0)
-				screenPoints = pointInfos[0].points;
-		}
+		PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
+		if (pointInfos != null && pointInfos.length != 0)
+			screenPoints = pointInfos[0].points;
 		if (screenPoints == null || screenPoints.size() == 0) return true; // just ignore this
 
 		Vec3d delta = new Vec3d();
@@ -1157,11 +1154,9 @@ public class RenderManager implements DragSourceListener {
 		int nodeIndex = (int)(-1*(dragHandleID - LINENODE_PICK_ID));
 
 		ArrayList<Vec3d> screenPoints = null;
-		if (selectedEntity instanceof HasScreenPoints) {
-			PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
-			if (pointInfos != null && pointInfos.length != 0)
-				screenPoints = pointInfos[0].points;
-		}
+		PolylineInfo[] pointInfos = selectedEntity.getScreenPoints();
+		if (pointInfos != null && pointInfos.length != 0)
+			screenPoints = pointInfos[0].points;
 		if (screenPoints == null || nodeIndex >= screenPoints.size())
 			return false;
 
@@ -1323,7 +1318,7 @@ public class RenderManager implements DragSourceListener {
 
 		if (controlDown && altDown) {
 			// Check if we can split a line segment
-			if (selectedEntity != null && selectedEntity instanceof HasScreenPoints) {
+			if (selectedEntity != null) {
 				if ((modifiers & WindowInteractionListener.MOD_SHIFT) != 0) {
 					removeLineNode(windowID, x, y);
 				} else {
