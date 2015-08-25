@@ -114,7 +114,7 @@ public class PolylineModel extends DisplayModel {
 			nodePoints = new ArrayList<>();
 
 			// Cache the points in the first series for selection and editing
-			ArrayList<Vec3d> basePoints = pis[0].points;
+			ArrayList<Vec3d> basePoints = pis[0].getPoints();
 			if (basePoints == null || basePoints.size() < 2) {
 				cachedProxies = new LineProxy[0];
 				return;
@@ -146,9 +146,9 @@ public class PolylineModel extends DisplayModel {
 			for (PolylineInfo pi : pis) {
 				List<Vec4d> points = new ArrayList<>();
 
-				for (int i = 1; i < pi.points.size(); ++i) { // Skip the first point
-					Vec3d start = pi.points.get(i - 1);
-					Vec3d end = pi.points.get(i);
+				for (int i = 1; i < pi.getPoints().size(); ++i) { // Skip the first point
+					Vec3d start = pi.getPoints().get(i - 1);
+					Vec3d end = pi.getPoints().get(i);
 
 					points.add(new Vec4d(start.x, start.y, start.z, 1.0d));
 					points.add(new Vec4d(end.x, end.y, end.z, 1.0d));
@@ -158,7 +158,7 @@ public class PolylineModel extends DisplayModel {
 					RenderUtils.transformPointsLocal(trans, points, 0);
 				}
 
-				cachedProxies[proxyIndex++] = new LineProxy(points, pi.color, pi.width, vi, displayObservee.getEntityNumber());
+				cachedProxies[proxyIndex++] = new LineProxy(points, pi.getColor(), pi.getWidth(), vi, displayObservee.getEntityNumber());
 			}
 		}
 

@@ -85,7 +85,7 @@ public class ArrowModel extends PolylineModel {
 			if (pointInfos == null || pointInfos.length == 0)
 				return;
 
-			Color4d color = pointInfos[0].color;
+			Color4d color = pointInfos[0].getColor();
 
 			boolean dirty = false;
 
