@@ -14,6 +14,7 @@
  */
 package com.jaamsim.FluidObjects;
 
+import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -180,11 +181,11 @@ public class FluidPipe extends FluidComponent implements HasScreenPoints {
 	}
 
 	@Override
-	public HasScreenPoints.PointsInfo[] getScreenPoints() {
+	public PolylineInfo[] getScreenPoints() {
 		synchronized(screenPointLock) {
 			if (cachedPointInfo == null) {
-				cachedPointInfo = new HasScreenPoints.PointsInfo[1];
-				HasScreenPoints.PointsInfo pi = new HasScreenPoints.PointsInfo();
+				cachedPointInfo = new PolylineInfo[1];
+				PolylineInfo pi = new PolylineInfo();
 				cachedPointInfo[0] = pi;
 
 				pi.points = pointsInput.getValue();
