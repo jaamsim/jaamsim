@@ -14,7 +14,6 @@
  */
 package com.jaamsim.Graphics;
 
-import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
@@ -25,17 +24,6 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
 public class Arrow extends DisplayEntity {
-	@Keyword(description = "If TRUE, then a drop shadow appears for the arrow.",
-	         exampleList = {"TRUE"})
-	private final BooleanInput dropShadow;
-
-	@Keyword(description = "The colour of the drop shadow, defined using a colour keyword or RGB values.",
-	         exampleList = {"blue"})
-	private final ColourInput dropShadowColor;
-
-	@Keyword(description = "A set of { x, y, z } offsets in each direction of the drop shadow from the Arrow.",
-	         exampleList = {"0.1 0.1 0.0 m"})
-	private final Vec3dInput dropShadowOffset;
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",
 	         exampleList = {"1"})
@@ -63,17 +51,6 @@ public class Arrow extends DisplayEntity {
 		color = new ColourInput("Color", "Graphics", ColourInput.BLACK);
 		this.addInput(color);
 		this.addSynonym(color, "Colour");
-
-		dropShadow = new BooleanInput( "DropShadow", "Graphics", false );
-		this.addInput( dropShadow );
-
-		dropShadowColor = new ColourInput("DropShadowColour", "Graphics", ColourInput.BLACK);
-		this.addInput(dropShadowColor);
-		this.addSynonym(dropShadowColor, "DropShadowColor");
-
-		dropShadowOffset = new Vec3dInput( "DropShadowOffset", "Graphics", new Vec3d() );
-		dropShadowOffset.setUnitType(DistanceUnit.class);
-		this.addInput( dropShadowOffset );
 	}
 
 	public Arrow() {}
