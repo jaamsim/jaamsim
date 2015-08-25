@@ -24,9 +24,7 @@ import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
@@ -243,13 +241,4 @@ public class EntityDelay extends LinkedComponent {
 		}
 	}
 
-	/**
-	 *  Inform simulation and editBox of new positions.
-	 */
-	@Override
-	public void dragged(Vec3d dist) {
-		KeywordIndex kw = InputAgent.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
-		InputAgent.apply(this, kw);
-		super.dragged(dist);
-	}
 }

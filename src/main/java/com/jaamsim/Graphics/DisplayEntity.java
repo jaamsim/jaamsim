@@ -696,9 +696,18 @@ public class DisplayEntity extends Entity {
 		newPos.add3(distance);
 		if (Simulation.isSnapToGrid())
 			newPos = Simulation.getSnapGridPosition(newPos);
-		this.setPosition(newPos);
 
 		KeywordIndex kw = InputAgent.formatPointInputs(positionInput.getKeyword(), newPos, "m");
+		InputAgent.apply(this, kw);
+
+		if (!usePointsInput())
+			return;
+		ArrayList<Vec3d> points = pointsInput.getValue();
+		if (points == null || points.isEmpty())
+			return;
+		Vec3d dist = new Vec3d(newPos);
+		dist.sub3(points.get(0));
+		kw = InputAgent.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
 		InputAgent.apply(this, kw);
 	}
 

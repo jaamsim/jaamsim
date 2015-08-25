@@ -17,12 +17,9 @@ package com.jaamsim.FluidObjects;
 import com.jaamsim.Graphics.PolylineInfo;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
@@ -196,20 +193,11 @@ public class FluidPipe extends FluidComponent {
 		}
 	}
 
-	/**
-	 *  Inform simulation and editBox of new positions.
-	 */
-	@Override
-	public void dragged(Vec3d dist) {
-		KeywordIndex kw = InputAgent.formatPointsInputs(pointsInput.getKeyword(), pointsInput.getValue(), dist);
-		InputAgent.apply(this, kw);
-		super.dragged(dist);
-	}
-
 	@Output(name = "DarcyFrictionFactor",
 	 description = "The Darcy Friction Factor for the pipe.",
 	    unitType = DimensionlessUnit.class)
 	public double getDarcyFrictionFactor(double simTime) {
 		return darcyFrictionFactor;
 	}
+
 }
