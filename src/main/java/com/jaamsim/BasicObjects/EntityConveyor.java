@@ -202,7 +202,8 @@ public class EntityConveyor extends LinkedService {
 			double dist = (simTime - startTimeList.get(i)) / travelTimeInput.getValue() * totalLength;
 
 			// Set the position for the entity
-			each.setGlobalPosition(this.getPositionForDistance( dist));
+			Vec3d localPos = this.getPositionForDistance(dist);
+			each.setGlobalPosition(this.getGlobalPosition(localPos));
 		}
 	}
 

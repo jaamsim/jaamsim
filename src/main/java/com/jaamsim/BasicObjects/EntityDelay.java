@@ -220,7 +220,8 @@ public class EntityDelay extends LinkedComponent {
 			double dist = ( simTime - entry.startTime ) / entry.duration * totalLength;
 
 			// Set the position for the entity
-			entry.ent.setGlobalPosition(this.getPositionForDistance( dist));
+			Vec3d localPos = this.getPositionForDistance(dist);
+			entry.ent.setGlobalPosition(this.getGlobalPosition(localPos));
 		}
 	}
 
