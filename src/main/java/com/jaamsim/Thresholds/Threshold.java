@@ -128,8 +128,8 @@ public class Threshold extends StateEntity {
 
 		@Override
 		public void process() {
-			for (ThresholdUser each : users)
-				each.thresholdChanged();
+			for( int i = 0; i < users.size(); i++ )
+				users.get( i ).thresholdChanged();
 
 			users.clear();
 		}
