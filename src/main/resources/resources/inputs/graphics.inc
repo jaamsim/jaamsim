@@ -6,7 +6,6 @@ Define ObjectType {
                     ImageModel
                     ColladaModel
                     ShapeModel
-                    DisplayModel
                   }
 
 ArrowModel             JavaClass { com.jaamsim.DisplayModels.ArrowModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
@@ -16,7 +15,6 @@ TextModel              JavaClass { com.jaamsim.DisplayModels.TextModel          
 ImageModel             JavaClass { com.jaamsim.DisplayModels.ImageModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
 ColladaModel           JavaClass { com.jaamsim.DisplayModels.ColladaModel             } Palette { 'Display Models' }    DragAndDrop { FALSE }
 ShapeModel             JavaClass { com.jaamsim.DisplayModels.ShapeModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
-DisplayModel           JavaClass { com.jaamsim.Graphics.DisplayModelCompat            } Palette { 'Display Models' }    DragAndDrop { FALSE }
 
 Define ColladaModel        { RegionModelDefault         }
 Define ArrowModel          { ArrowModelDefault          }
