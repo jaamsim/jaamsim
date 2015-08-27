@@ -74,17 +74,22 @@ public class StateEntity extends DisplayEntity {
 		if (testFlag(FLAG_GENERATED))
 			return;
 
+		// Create state trace file if required
+		if (traceState.getValue()) {
+			String fileName = InputAgent.getReportFileName(InputAgent.getRunName() + "-" + this.getName() + ".trc");
+			stateReportFile = new FileEntity( fileName);
+		}
+	}
+
+	@Override
+	public void lateInit() {
+		super.lateInit();
+
 		stateListeners.clear();
 		for (Entity ent : Entity.getClonesOfIterator(Entity.class, StateEntityListener.class)) {
 			StateEntityListener sel = (StateEntityListener)ent;
 			if (sel.isWatching(this))
 				stateListeners.add(sel);
-		}
-
-		// Create state trace file if required
-		if (traceState.getValue()) {
-			String fileName = InputAgent.getReportFileName(InputAgent.getRunName() + "-" + this.getName() + ".trc");
-			stateReportFile = new FileEntity( fileName);
 		}
 	}
 
