@@ -219,9 +219,6 @@ public class StateEntity extends DisplayEntity {
 	 * @param next the state this Entity is currently in
 	 */
 	public void stateChanged(StateRecord prev, StateRecord next) {
-		for (StateEntityListener each : stateListeners) {
-			each.updateForStateChange(this, prev, next);
-		}
 
 		if (traceState.getValue()) {
 			long curTick = getSimTicks();
@@ -231,6 +228,10 @@ public class StateEntity extends DisplayEntity {
 			                       timeOfPrevStart, this.getName(),
 			                       prev.name, duration);
 			stateReportFile.flush();
+		}
+
+		for (StateEntityListener each : stateListeners) {
+			each.updateForStateChange(this, prev, next);
 		}
 	}
 
