@@ -617,6 +617,26 @@ public class ExpParser {
 			}
 		});
 
+		addFunction("choose", 2, -1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
+
+				for (int i = 2; i < args.length; ++ i) {
+					if (args[1].unitType != args[i].unitType)
+						throw new ExpError(source, pos, getUnitMismatchString(args[1].unitType, args[i].unitType));
+				}
+
+				int k = (int) args[0].value;
+				if (k < 1 || k >= args.length)
+					throw new ExpError(source, pos,
+							String.format("Invalid index: %s. Index must be between 1 and %s.", k, args.length-1));
+
+				return new ExpResult(args[k].value, args[k].unitType);
+			}
+		});
+
 		///////////////////////////////////////////////////
 		// Mathematical Constants
 		addFunction("E", 0, 0, new CallableFunc() {
