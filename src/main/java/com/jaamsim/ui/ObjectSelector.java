@@ -49,6 +49,7 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.Unit;
 
 public class ObjectSelector extends FrameBox {
 	private static ObjectSelector myInstance;
@@ -228,6 +229,10 @@ public class ObjectSelector extends FrameBox {
 
 				// The instance for TLS has already been added
 				if (ent == tls)
+					continue;
+
+				// Do not include the units or views
+				if (ent instanceof Unit || ent instanceof View)
 					continue;
 
 				// Skip an entity that is locked
