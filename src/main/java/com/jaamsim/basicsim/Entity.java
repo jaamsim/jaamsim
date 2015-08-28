@@ -92,6 +92,7 @@ public class Entity {
 		this.addInput(trace);
 
 		desc = new StringInput("Description", "Key Inputs", "");
+		desc.setHidden(true);
 		this.addInput(desc);
 
 		attributeDefinitionList = new AttributeDefinitionListInput(this, "AttributeDefinitionList",
