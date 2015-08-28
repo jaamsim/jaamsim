@@ -771,9 +771,7 @@ public class Entity {
 		return entityName;
 	}
 
-	@Output(name = "Description",
-	        description="A string describing this entity.")
-	public String getDescription(double simTime) {
+	public String getDescription() {
 		return desc.getValue();
 	}
 

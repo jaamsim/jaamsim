@@ -219,7 +219,7 @@ public class EntityPallet extends JFrame implements DragGestureListener {
 				return null;
 			}
 			ObjectType ot = (ObjectType)object;
-			return GUIFrame.formatToolTip(ot.getName(), ot.getDescription(0));
+			return GUIFrame.formatToolTip(ot.getName(), ot.getDescription());
 		}
 	}
 
