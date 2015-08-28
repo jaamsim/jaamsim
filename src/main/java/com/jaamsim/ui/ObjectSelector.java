@@ -188,6 +188,9 @@ public class ObjectSelector extends FrameBox {
 		// Clear the present tree
 		top.removeAllChildren();
 
+		// Add the instance for Simulation to the top of the tree as a single leaf node
+		top.add(new DefaultMutableTreeNode(Simulation.getInstance(), false));
+
 		// Create the tree structure for palettes and object types in the correct order
 		for (int i = 0; i < ObjectType.getAll().size(); i++) {
 			try {
@@ -213,6 +216,10 @@ public class ObjectSelector extends FrameBox {
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			try {
 				final Entity ent = Entity.getAll().get(i);
+
+				// The instance for Simulation has already been added
+				if (ent == Simulation.getInstance())
+					continue;
 
 				// Skip an entity that is locked
 				if (ent.testFlag(Entity.FLAG_LOCKED))
@@ -261,6 +268,11 @@ public class ObjectSelector extends FrameBox {
 		paletteEnum = top.children();
 		while (paletteEnum.hasMoreElements()) {
 			DefaultMutableTreeNode paletteNode = paletteEnum.nextElement();
+
+			// Do not remove any of the special nodes such as the instance for Simulation
+			if (!paletteNode.getAllowsChildren())
+				continue;
+
 			if (paletteNode.isLeaf())
 				nodesToRemove.add(paletteNode);
 		}
