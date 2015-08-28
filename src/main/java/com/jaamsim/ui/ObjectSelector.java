@@ -128,6 +128,10 @@ public class ObjectSelector extends FrameBox {
 				return;
 			}
 		}
+
+		// Entity not found in the tree
+		tree.setSelectionPath(null);
+		tree.setEditable(false);
 	}
 
 	@Override
