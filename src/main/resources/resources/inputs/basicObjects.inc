@@ -2,6 +2,7 @@ Define ObjectType {
                     Group
                     ScriptEntity
                     Output
+                    InputValue
                     BooleanIndicator
                     TimeSeries
                     TimeSeriesThreshold
@@ -9,6 +10,10 @@ Define ObjectType {
                     ExpressionLogger
                     EntitlementSelector
                     ExpressionEntity
+                  }
+
+Define TextModel  {
+                    InputValueModel
                   }
 
 Define ImageModel {
@@ -25,6 +30,7 @@ Group                   JavaClass { com.jaamsim.basicsim.Group                  
 ScriptEntity            JavaClass { com.jaamsim.basicsim.ScriptEntity                   } Palette { 'Basic Objects' } DragAndDrop { FALSE }
 Output                  JavaClass { com.jaamsim.basicsim.OutputMethod                   } Palette { 'Basic Objects' } DragAndDrop { FALSE }
 BooleanIndicator        JavaClass { com.jaamsim.BasicObjects.BooleanIndicator           } Palette { 'Basic Objects' } DefaultDisplayModel { Circle              } DragAndDrop { FALSE }
+InputValue              JavaClass { com.jaamsim.BasicObjects.InputValue                 } Palette { 'Basic Objects' } DefaultDisplayModel { InputValueModel     } IconFile { '<res>/images/Text-24.png'         }
 TimeSeries              JavaClass { com.jaamsim.Samples.TimeSeries                      } Palette { 'Basic Objects' } DefaultDisplayModel { TimeSeriesIconModel } IconFile { '<res>/images/TimeSeries-24.png'   }
 TimeSeriesThreshold     JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold          } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle           } IconFile { '<res>/images/Threshold-24.png'    } DefaultSize { 0.5 0.5 0.0 m }
 ExpressionThreshold     JavaClass { com.jaamsim.Thresholds.ExpressionThreshold          } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle           } IconFile { '<res>/images/Threshold-24.png'    } DefaultSize { 0.5 0.5 0.0 m }
@@ -35,6 +41,7 @@ ExpressionEntity        JavaClass { com.jaamsim.basicsim.ExpressionEntity       
 Group               Description { 'Collection of entities used as an convenience for specifying model inputs.' }
 ScriptEntity        Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
 Output              Description { '???' }
+InputValue          Description { 'Provides a way to enter a numerical value directly into the simulation model screen.' }
 BooleanIndicator    Description { 'Circular entity that changes color to indicate TRUE and FALSE' }
 TimeSeries          Description { 'Provides a floating point number that changes in simulated time following a series of input values.' }
 TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries for which an activity is permitted.' }
