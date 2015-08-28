@@ -191,6 +191,11 @@ public class ObjectSelector extends FrameBox {
 		// Add the instance for Simulation to the top of the tree as a single leaf node
 		top.add(new DefaultMutableTreeNode(Simulation.getInstance(), false));
 
+		// Add the instance for TLS if present
+		Entity tls = Entity.getNamedEntity("TLS");
+		if (tls != null)
+			top.add(new DefaultMutableTreeNode(tls, false));
+
 		// Create the tree structure for palettes and object types in the correct order
 		for (int i = 0; i < ObjectType.getAll().size(); i++) {
 			try {
@@ -219,6 +224,10 @@ public class ObjectSelector extends FrameBox {
 
 				// The instance for Simulation has already been added
 				if (ent == Simulation.getInstance())
+					continue;
+
+				// The instance for TLS has already been added
+				if (ent == tls)
 					continue;
 
 				// Skip an entity that is locked
