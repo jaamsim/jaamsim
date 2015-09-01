@@ -183,6 +183,7 @@ public class Simulation extends Entity {
 		printReport = new BooleanInput("PrintReport", "Key Inputs", false);
 
 		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
+		reportDirectory.setDefaultText("Configuration File Directory");
 
 		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
