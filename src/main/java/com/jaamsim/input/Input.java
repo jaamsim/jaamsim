@@ -132,7 +132,7 @@ public abstract class Input<T> {
 	public final String getKeyword() {
 		return keyword;
 	}
-	
+
 	public void setKeyword(String str) {
 		keyword = str;
 	}
@@ -1550,7 +1550,14 @@ public abstract class Input<T> {
 	 * menu in the Input Editor.
 	 */
 	public ArrayList<String> getValidOptions() {
-		return null;
+		if( defValue.getClass() == Boolean.class ) {
+			ArrayList<String> validOptions = new ArrayList<>();
+			validOptions.add("TRUE");
+			validOptions.add("FALSE");
+			return validOptions;
+		}
+		else
+			return null;
 	}
 
 	public String getDefaultStringForKeyInputs(Class<? extends Unit> unitType, String unitString) {
