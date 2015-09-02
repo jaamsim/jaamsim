@@ -804,6 +804,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				"When selected, the simulation runs at a fixed multiple of wall clock time."));
 		controlRealTime.setMargin( smallMargin );
 		controlRealTime.addActionListener(new RealTimeActionListener());
+
 		mainToolBar.addSeparator(separatorDim);
 		mainToolBar.add( controlRealTime );
 
@@ -825,6 +826,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		spinner.addChangeListener(new SpeedFactorListener());
 		spinner.setToolTipText(formatToolTip("Speed Multiplier (up/down key)",
 				"Target ratio of simulation time to wall clock time when Real Time mode is selected."));
+		spinner.setEnabled(false);
 		mainToolBar.add(Box.createRigidArea(gapDim));
 		mainToolBar.add( spinner );
 
