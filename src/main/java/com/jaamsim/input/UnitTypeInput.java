@@ -23,15 +23,24 @@ import com.jaamsim.units.Unit;
 
 public class UnitTypeInput extends Input<ObjectType> {
 	private Class<? extends Unit> unitType;
+	private Class<? extends Unit> defaultUnitType;
 
 	public UnitTypeInput(String key, String cat, Class<? extends Unit> ut) {
 		super(key, cat, ObjectType.getObjectTypeForClass(ut));
 		unitType = ut;
+		defaultUnitType = ut;
 	}
 
 	public void setDefaultValue(Class<? extends Unit> ut) {
 		this.setDefaultValue(ObjectType.getObjectTypeForClass(ut));
 		unitType = ut;
+		defaultUnitType = ut;
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		unitType = defaultUnitType;
 	}
 
 	@Override
