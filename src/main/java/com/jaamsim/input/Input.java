@@ -1550,7 +1550,7 @@ public abstract class Input<T> {
 	 * menu in the Input Editor.
 	 */
 	public ArrayList<String> getValidOptions() {
-		if( defValue.getClass() == Boolean.class ) {
+		if (defValue != null && defValue.getClass() == Boolean.class) {
 			ArrayList<String> validOptions = new ArrayList<>();
 			validOptions.add("TRUE");
 			validOptions.add("FALSE");
