@@ -76,7 +76,9 @@ public class SampleExpInput extends Input<SampleProvider> {
 	public void getValueTokens(ArrayList<String> toks) {
 		if (value == null) return;
 
-		if (value instanceof SampleExpression || value instanceof SampleConstant) {
+		if (value instanceof SampleExpression ||
+				value instanceof SampleConstant ||
+				value instanceof SampleOutput) {
 			super.getValueTokens(toks);
 			return;
 		}
