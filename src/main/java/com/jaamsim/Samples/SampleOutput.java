@@ -14,23 +14,35 @@
  */
 package com.jaamsim.Samples;
 
+import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.input.OutputChain;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.Unit;
 
 public class SampleOutput implements SampleProvider {
-	private OutputHandle out;
 
-	public SampleOutput(OutputHandle o) {
-		out = o;
+	private final OutputChain chain;
+	private final Class<? extends Unit> unitType;
+
+	public SampleOutput(OutputChain ch, Class<? extends Unit> ut) {
+		chain = ch;
+		unitType = ut;
 	}
 
 	@Override
 	public Class<? extends Unit> getUnitType() {
-		return out.getUnitType();
+		return unitType;
 	}
 
 	@Override
 	public double getNextSample(double simTime) {
+		OutputHandle out = chain.getOutputHandle(simTime);
+
+		if (out == null)
+			throw new ErrorException("Output is null.");
+		if (out.getUnitType() != unitType)
+			throw new ErrorException("Unit mismatch. Expected a %s, received a %s", unitType, out.getUnitType());
+
 		return out.getValueAsDouble(simTime, 0.0);
 	}
 
@@ -47,6 +59,11 @@ public class SampleOutput implements SampleProvider {
 	@Override
 	public double getMaxValue() {
 		return Double.POSITIVE_INFINITY;
+	}
+
+	@Override
+	public String toString() {
+		return chain.toString();
 	}
 
 }

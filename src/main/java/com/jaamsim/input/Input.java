@@ -1445,22 +1445,22 @@ public abstract class Input<T> {
 	public static SampleProvider parseSampleExp(KeywordIndex kw,
 			Entity thisEnt, double minValue, double maxValue, Class<? extends Unit> unitType) {
 
-		Input.assertCount(kw, 1, 2);
-
-		// If there are two inputs, it could be a number and its unit or an entity and its output
-		if (kw.numArgs() == 2) {
-
-			// A) Try an entity and its output
+		// If there are two or more inputs, it could be a chain of outputs
+		if (kw.numArgs() >= 2) {
 			try {
-				return Input.parseSampleOutput(kw, unitType);
+				return new SampleOutput(Input.parseOutputChain(kw), unitType);
 			}
-			catch (InputErrorException e) {}
+			catch (InputErrorException e) {
+				if (kw.numArgs() > 2 || unitType == null)
+					throw new InputErrorException(e.getMessage());
+			}
+		}
 
-			// B) Try a number and its unit
+		// If there are exactly two inputs, and it is not an output chain, then it must be a number and its unit
+		if (kw.numArgs() == 2) {
 			if (unitType == DimensionlessUnit.class)
 				throw new InputErrorException(INP_ERR_COUNT, 1, kw.argString());
-			DoubleVector tmp = null;
-			tmp = Input.parseDoubles(kw, minValue, maxValue, unitType);
+			DoubleVector tmp = Input.parseDoubles(kw, minValue, maxValue, unitType);
 			return new SampleConstant(unitType, tmp.get(0));
 		}
 
@@ -1503,36 +1503,6 @@ public abstract class Input<T> {
 		}
 		catch (ExpError e) {
 			throw new InputErrorException(e.toString());
-		}
-	}
-
-	public static SampleOutput parseSampleOutput(KeywordIndex kw, Class<? extends Unit> unitType) {
-
-		Input.assertCount(kw, 2);
-		try {
-			Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
-			if (ent instanceof ObjectType)
-				throw new InputErrorException("%s is the name of a class, not an instance",
-						ent.getName());
-
-			String outputName = kw.getArg(1);
-			if (!ent.hasOutput(outputName))
-				throw new InputErrorException("Output named %s not found for Entity %s",
-						outputName, ent.getName());
-
-			OutputHandle out = ent.getOutputHandle(outputName);
-			if (!out.isNumericValue())
-				throw new InputErrorException("Output named %s for Entity %s is not a numeric value.",
-						outputName, ent.getName());
-
-			if (unitType != UserSpecifiedUnit.class && out.getUnitType() != unitType)
-				throw new InputErrorException("Output named %s for Entity %s has unit type of %s. Expected %s",
-						outputName, ent.getName(), out.getUnitType(), unitType);
-
-			return new SampleOutput(out);
-		}
-		catch (InputErrorException e) {
-			throw new InputErrorException(e.getMessage());
 		}
 	}
 
