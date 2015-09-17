@@ -395,4 +395,13 @@ public class StateEntity extends DisplayEntity {
 		return ticks;
 	}
 
+	/**
+	 * Returns the number of hours the entity is in use.
+	 */
+	public double getWorkingHours() {
+		return getWorkingTicks() / Simulation.getSimTimeFactor();
+	}
+
+	public void setPresentState() {}
+
 }

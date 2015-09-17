@@ -206,7 +206,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		return true;
 	}
 
-	protected void setPresentState() {
+	@Override
+	public void setPresentState() {
 		if (this.isOpen()) {
 			if (this.isBusy()) {
 				this.setPresentState("Working");
