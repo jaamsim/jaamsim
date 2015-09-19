@@ -25,6 +25,9 @@ import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.Samples.SampleOutput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
+import com.jaamsim.StringProviders.StringProvider;
+import com.jaamsim.StringProviders.StringProvOutput;
+import com.jaamsim.StringProviders.StringProvSample;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.ObjectType;
@@ -1440,6 +1443,20 @@ public abstract class Input<T> {
 			throw new InputErrorException("The first output in an output chain must return an Entity");
 
 		return new OutputChain(ent, outputName, out, outputNameList);
+	}
+
+	public static StringProvider parseStringProvider(KeywordIndex kw, Entity thisEnt, Class<? extends Unit> unitType) {
+
+		// Try to parse the input as an OutputChain
+		try {
+			OutputChain chain = Input.parseOutputChain(kw);
+			return new StringProvOutput(chain, unitType);
+		}
+		catch (InputErrorException e) {}
+
+		// Parse the input as a SampleProvider
+		SampleProvider samp = Input.parseSampleExp(kw, thisEnt, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
+		return new StringProvSample(samp);
 	}
 
 	public static SampleProvider parseSampleExp(KeywordIndex kw,
