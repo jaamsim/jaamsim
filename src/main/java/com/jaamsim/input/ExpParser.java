@@ -89,6 +89,11 @@ public class ExpParser {
 		void setRootNode(ExpNode node) {
 			rootNode = node;
 		}
+
+		@Override
+		public String toString() {
+			return source;
+		}
 	}
 
 	private abstract static class ExpNode {

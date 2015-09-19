@@ -68,4 +68,9 @@ public class SampleExpression implements SampleProvider {
 		return Double.POSITIVE_INFINITY;
 	}
 
+	@Override
+	public String toString() {
+		return exp.toString();
+	}
+
 }
