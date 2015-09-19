@@ -55,7 +55,8 @@ public class OverlayClock extends OverlayText {
 
 	{
 		formatText.setHidden(true);
-		outputName.setHidden(true);
+		dataSource.setHidden(true);
+		unitType.setHidden(true);
 		unit.setHidden(true);
 
 		startingYear = new IntegerInput("StartingYear", "Key Inputs", 2000);
