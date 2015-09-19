@@ -14,13 +14,13 @@
  */
 package com.jaamsim.Graphics;
 
+import com.jaamsim.StringProviders.StringProvInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.OutputHandle;
-import com.jaamsim.input.OutputInput;
 import com.jaamsim.input.StringInput;
+import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.units.Unit;
 
 /**
@@ -36,18 +36,28 @@ public class Text extends TextBasics {
 	         exampleList = {"'Present speed = %.3f m/s'"})
 	protected final StringInput formatText;
 
-	@Keyword(description = "The output value chain that returns the variable text to be displayed. " +
-			"If more than one output value is given, all outputs but the last should point to an entity output to query" +
-			" for the next output. The example returns the name of the product in a tank",
-	         exampleList = {"Tank1 Product Name"})
-	protected final OutputInput<Object> outputName;
+	@Keyword(description = "The unit type for the numerical value to be displayed as "
+	                     + "variable text. Set to DimensionlessUnit if the variable text is "
+	                     + "non-numeric, such as the state of a Server.",
+	         exampleList = {"DistanceUnit", "DimensionlessUnit"})
+	protected final UnitTypeInput unitType;
 
 	@Keyword(description = "The unit in which to express the output value",
 	         exampleList = {"m/s"})
 	protected final EntityInput<Unit> unit;
 
-	@Keyword(description = "The text to display if there is any failure while formatting" +
-	                       "the dynamic text, or while reading the output's value.",
+	@Keyword(description = "An expression that returns the variable text to be displayed. "
+	                     + "The expression can return a number that will be formated as text, "
+	                     + "or it can return text directly, such as the state of a Server. "
+	                     + "An object that returns a number, such as a TimeSeries, can also "
+	                     + "be entered.",
+	         exampleList = {"[Queue1].AverageQueueTime", "[Server1].State",
+	                        "'[Queue1].QueueLength + [Queue2].QueueLength'",
+	                        "TimeSeries1"})
+	protected final StringProvInput dataSource;
+
+	@Keyword(description = "The text to display if there is any failure while formatting the "
+	                     + "variable text or while evaluating the expression.",
 	         exampleList = {"'Input Error'"})
 	private final StringInput failText;
 
@@ -57,11 +67,16 @@ public class Text extends TextBasics {
 		formatText = new StringInput("Format", "Key Inputs", "");
 		this.addInput(formatText);
 
-		outputName = new OutputInput<>(Object.class, "OutputName", "Key Inputs", null);
-		this.addInput(outputName);
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", null);
+		this.addInput(unitType);
 
 		unit = new EntityInput<>( Unit.class, "Unit", "Key Inputs", null);
+		unit.setSubClass(null);
 		this.addInput(unit);
+
+		dataSource = new StringProvInput("DataSource", "Key Inputs", null);
+		this.addInput(dataSource);
+		this.addSynonym(dataSource, "OutputName");
 
 		failText = new StringInput("FailText", "Key Inputs", "Input Error");
 		this.addInput(failText);
@@ -78,10 +93,10 @@ public class Text extends TextBasics {
 			return;
 		}
 
-		if (in == outputName) {
-			OutputHandle h = outputName.getOutputHandle(0.0);
-			if (h != null)
-				unit.setSubClass(h.getUnitType());
+		if (in == unitType) {
+			Class<? extends Unit> ut = unitType.getUnitType();
+			dataSource.setUnitType(ut);
+			unit.setSubClass(ut);
 			return;
 		}
 	}
@@ -106,22 +121,16 @@ public class Text extends TextBasics {
 		if (isEditMode())
 			return getEditText();
 
-		if( outputName.getValue() == null )
+		// Only static text is to be displayed
+		if( dataSource.getValue() == null )
 			return formatText.getValue();
 
+		// Dynamic text is to be displayed
 		try {
-			OutputHandle out = outputName.getOutputHandle(simTime);
-			if( out == null )
-				return failText.getValue();
-
-			if (out.isNumericValue()) {
-				double d = out.getValueAsDouble(simTime, 0.0d, unit.getValue());
-				return String.format(formatText.getValue(), d);
-			}
-			else {
-				Object o = out.getValue(simTime, out.getReturnType());
-				return String.format(formatText.getValue(), o);
-			}
+			double siFactor = 1.0d;
+			if (unit.getValue() != null)
+				siFactor = unit.getValue().getConversionFactorToSI();
+			return dataSource.getValue().getNextString(simTime, formatText.getValue(), siFactor);
 		}
 		catch (Throwable e) {
 			return failText.getValue();
