@@ -14,100 +14,29 @@
  */
 package com.jaamsim.input;
 
-import java.util.ArrayList;
-
-import com.jaamsim.basicsim.Entity;
-
-public class OutputInput<T> extends Input<String> {
+public class OutputInput<T> extends Input<OutputChain> {
 
 	private Class<T> klass;
-	private Entity ent;  // The Entity against which to apply the first Output name
-	private String outputName;  // The first Output name in the chain
-	private OutputHandle out;  // The OutputHandle for the first Output in the chain
-	private ArrayList<String> outputNameList;  // The names of the second, third, etc. Outputs in the chain.
 
-	public OutputInput(Class<T> klass, String key, String cat, String def) {
+	public OutputInput(Class<T> klass, String key, String cat, OutputChain def) {
 		super(key, cat, def);
 		this.klass = klass;
-		ent = null;
-		outputName = "";
-		out = null;
-		outputNameList = new ArrayList<>();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void copyFrom(Input<?> in) {
-		super.copyFrom(in);
-		OutputInput<T> inp = (OutputInput<T>) in;
-		ent = inp.ent;
-		outputName = inp.outputName;
-		out = inp.out;
-		outputNameList = inp.outputNameList;
 	}
 
 	@Override
 	public void parse(KeywordIndex kw) throws InputErrorException {
-
-		if (kw.numArgs() == 0) {
-			value = null;
-			ent = null;
-			outputName = "";
-			out = null;
-			outputNameList = new ArrayList<>();
-			return;
-		}
-
-		Input.assertCountRange(kw, 2, Integer.MAX_VALUE);
-		Entity tmp = Input.parseEntity(kw.getArg(0), Entity.class);
-		String outName = kw.getArg(1);
-		if (!tmp.hasOutput(outName)) {
-			throw new InputErrorException("Output named %s not found for Entity %s", outName, tmp.getName());
-		}
-
-		ent = tmp;
-		outputName = outName;
-		out = ent.getOutputHandle(outputName);
-
-		outputNameList = new ArrayList<>(kw.numArgs() - 2);
-		// grab any input strings after the first two, if there are any
-		for (int i = 2; i < kw.numArgs(); i++)
-			outputNameList.add(kw.getArg(i));
-
-		Class<?> retClass = out.getReturnType();
-		if( kw.numArgs() == 2 ) {
-			if ( klass != Object.class && !klass.isAssignableFrom(retClass) )
-				throw new InputErrorException("OutputInput class mismatch. Expected: %s, got: %s", klass.toString(), retClass.toString());
-		}
-		else {
-			if (!(Entity.class).isAssignableFrom(retClass))
-				throw new InputErrorException("OutputInput class mismatch. The first output in the output chain must return an Entity");
-		}
-
-		value = String.format("%s.%s", ent.getName(), outputName);
-		if( kw.numArgs() > 2 ) {
-			for( String name: outputNameList ) {
-				value += "." + name;
-			}
-		}
+		value = Input.parseOutputChain(kw);
 	}
 
 	public OutputHandle getOutputHandle(double simTime) {
-		OutputHandle o = out;
-		for( String name : outputNameList ) {
-			Entity e = o.getValue(simTime, Entity.class);
-			if( e == null || !e.hasOutput(name) )
-				return null;
-			o = e.getOutputHandle(name);
-		}
-		return o;
+		return value.getOutputHandle(simTime);
 	}
 
 	public T getOutputValue(double simTime) {
-		OutputHandle o = this.getOutputHandle(simTime);
-		if( o == null )
+		OutputHandle out = value.getOutputHandle(simTime);
+		if( out == null )
 			return null;
-		return o.getValue(simTime, klass);
+		return out.getValue(simTime, klass);
 	}
 
 	/**
@@ -117,19 +46,16 @@ public class OutputInput<T> extends Input<String> {
 	 * @return
 	 */
 	public double getOutputValueAsDouble(double simTime, double def) {
-		OutputHandle o = this.getOutputHandle(simTime);
-		if( o == null )
+		OutputHandle out = value.getOutputHandle(simTime);
+		if( out == null )
 			return def;
-		return o.getValueAsDouble(simTime, def);
+		return out.getValueAsDouble(simTime, def);
 	}
 
 	@Override
 	public void getValueTokens(java.util.ArrayList<String> toks) {
-		if (ent == null) return;
-		toks.add(ent.getName());
-		toks.add(outputName);
-		for (String name : outputNameList) {
-			toks.add(name);
-		}
+		if (value == null) return;
+
+		toks.add(value.toString());
 	}
 }
