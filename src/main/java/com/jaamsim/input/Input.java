@@ -1382,6 +1382,66 @@ public abstract class Input<T> {
 		}
 	}
 
+	public static OutputChain parseOutputChain(KeywordIndex kw) {
+		String entName = "";
+		String outputName = "";
+		ArrayList<String> outputNameList = new ArrayList<>();
+
+		// 1) Expression syntax
+		if (kw.numArgs() == 1) {
+			String exp = kw.getArg(0);
+			if (exp.charAt(0) != '[')
+				throw new InputErrorException("Left bracket not found");
+			int k = exp.indexOf(']');
+			if (k == -1)
+				throw new InputErrorException("Right bracket not found");
+			entName = exp.substring(1, k);
+
+			if (exp.charAt(k+1) != '.')
+				throw new InputErrorException("Missing period after the right bracket");
+
+			StringBuilder sb = new StringBuilder();
+			for (int i=k+2; i<exp.length(); i++) {
+				char ch = exp.charAt(i);
+				if (ch == '.') {
+					outputNameList.add(sb.toString());
+					sb = new StringBuilder();
+					continue;
+				}
+				sb.append(ch);
+			}
+			outputNameList.add(sb.toString());
+			outputName = outputNameList.remove(0);
+		}
+
+		// 2) Output syntax
+		else {
+			entName = kw.getArg(0);
+			outputName = kw.getArg(1);
+			for (int i=2; i<kw.numArgs(); i++) {
+				outputNameList.add(kw.getArg(i));
+			}
+		}
+
+		// Construct the OutputChain
+		Entity ent = Entity.getNamedEntity(entName);
+		if (ent == null)
+			throw new InputErrorException(INP_ERR_ENTNAME, entName);
+		if (ent instanceof ObjectType)
+			throw new InputErrorException("%s is the name of a class, not an instance",
+					ent.getName());
+
+		OutputHandle out = ent.getOutputHandle(outputName);
+		if (out == null)
+			throw new InputErrorException("Output named %s not found for Entity %s",
+					outputName, entName);
+
+		if (!outputNameList.isEmpty() && !(Entity.class).isAssignableFrom(out.getReturnType()))
+			throw new InputErrorException("The first output in an output chain must return an Entity");
+
+		return new OutputChain(ent, outputName, out, outputNameList);
+	}
+
 	public static SampleProvider parseSampleExp(KeywordIndex kw,
 			Entity thisEnt, double minValue, double maxValue, Class<? extends Unit> unitType) {
 
