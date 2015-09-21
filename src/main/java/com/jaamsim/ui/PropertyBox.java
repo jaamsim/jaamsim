@@ -39,6 +39,7 @@ public class PropertyBox extends FrameBox {
 	private static PropertyBox myInstance;  // only one instance allowed to be open
 	private Entity currentEntity;
 	private final JTabbedPane jTabbedFrame = new JTabbedPane();
+	private static int MAX_ARRAY_ENTRIES_TO_DISPLAY = 10;
 
 	public PropertyBox() {
 		super("Property Viewer");
@@ -169,7 +170,34 @@ private static class ClassFields implements Comparator<Field> {
 		if (value instanceof double[])
 			return Arrays.toString((double[])value);
 
+		if (value instanceof int[])
+			return Arrays.toString((int[])value);
+
+		if (value instanceof long[])
+			return Arrays.toString((long[])value);
+
 		try {
+			// ArrayLists must be converted to a String one element at a time
+			if (value instanceof ArrayList) {
+				@SuppressWarnings("unchecked")
+				ArrayList<Object> array = (ArrayList<Object>) value;
+				if (array.isEmpty())
+					return "[]";
+				StringBuilder sb = new StringBuilder();
+				sb.append("[");
+				sb.append(array.get(0).toString());
+				int n = Math.min(MAX_ARRAY_ENTRIES_TO_DISPLAY, array.size());
+				for (int i=1; i<n; i++) {
+					sb.append(", ");
+					sb.append(array.get(i).toString());
+				}
+				if (n < array.size())
+					sb.append(", ... ");
+				sb.append("]");
+				return sb.toString();
+			}
+
+			// Every other type of object
 			return value.toString();
 		}
 		catch (ConcurrentModificationException e) {
