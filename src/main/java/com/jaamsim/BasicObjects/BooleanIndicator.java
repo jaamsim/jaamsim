@@ -2,16 +2,18 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.OutputInput;
 import com.jaamsim.input.StringInput;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class BooleanIndicator extends DisplayEntity {
 
-	private final OutputInput<Boolean> boolProp;
+	@Keyword(description = "An expression returning a boolean value: zero = FALSE, non-zero = TRUE.",
+	         exampleList = {"'[Queue1].QueueLength > 2'", "[Server1].Working"})
+	private final SampleExpInput expInput;
 
 	@Keyword(description = "The colour of the indicator when the property is true",
 	         exampleList = {"green"})
@@ -30,9 +32,10 @@ public class BooleanIndicator extends DisplayEntity {
 	private final StringInput falseText;
 
 	{
-		boolProp = new OutputInput<>(Boolean.class, "OutputName", "Key Inputs", null);
-		boolProp.setRequired(true);
-		this.addInput(boolProp);
+		expInput = new SampleExpInput("OutputName", "Key Inputs", null);
+		expInput.setUnitType(DimensionlessUnit.class);
+		expInput.setRequired(true);
+		this.addInput(expInput);
 
 		trueColor = new ColourInput("TrueColour", "Graphics", ColourInput.GREEN);
 		this.addInput(trueColor);
@@ -53,30 +56,25 @@ public class BooleanIndicator extends DisplayEntity {
 	}
 
 	@Override
-	public void updateGraphics( double time ) {
-		if (boolProp.getValue() == null)
+	public void updateGraphics(double simTime) {
+		if (expInput.getValue() == null)
 			return;
-		Boolean b = boolProp.getOutputValue(time);
-		if (b.booleanValue()) {
+		if (expInput.getValue().getNextSample(simTime) != 0.0d)
 			setTagColour(ShapeModel.TAG_CONTENTS, trueColor.getValue());
-		}
-		else {
+		else
 			setTagColour(ShapeModel.TAG_CONTENTS, falseColor.getValue());
-		}
 	}
 
 	@Output(name = "Text",
 	 description = "If the property is true, then return TrueText.  If the property is false, then return FalseText.",
 	    unitType = DimensionlessUnit.class)
-	public String getText(double time) {
-		if (boolProp.getValue() == null)
+	public String getText(double simTime) {
+		if (expInput.getValue() == null)
 			return "";
-		Boolean b = boolProp.getOutputValue(time);
-		if (b.booleanValue()) {
+		if (expInput.getValue().getNextSample(simTime) != 0.0d)
 			return trueText.getValue();
-		}
-		else {
+		else
 			return falseText.getValue();
-		}
 	}
+
 }
