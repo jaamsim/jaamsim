@@ -23,9 +23,11 @@ import com.jaamsim.units.Unit;
 
 public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 	private ArrayList<Class<? extends Unit>> unitTypeList;
+	private ArrayList<Class<? extends Unit>> defaultUnitTypeList;
 
 	public UnitTypeListInput(String key, String cat, ArrayList<Class<? extends Unit>> utList) {
 		super(key, cat, null);
+		defaultUnitTypeList = new ArrayList<>(utList);
 		if (utList == null)
 			return;
 		ArrayList<ObjectType> otList = new ArrayList<>(utList.size());
@@ -53,6 +55,12 @@ public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 		if (unitTypeList == null)
 			return 0;
 		return unitTypeList.size();
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+		unitTypeList = defaultUnitTypeList;
 	}
 
 	@Override
