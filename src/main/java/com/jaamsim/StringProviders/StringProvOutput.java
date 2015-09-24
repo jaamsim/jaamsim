@@ -35,7 +35,7 @@ public class StringProvOutput implements StringProvider {
 		OutputHandle out = chain.getOutputHandle(simTime);
 
 		if (out == null)
-			throw new ErrorException("Output is null.");
+			throw new ErrorException("Expression cannot be evaluated: %s.", chain.toString());
 
 		if (out.isNumericValue()) {
 			if (out.getUnitType() != unitType && unitType != null)
