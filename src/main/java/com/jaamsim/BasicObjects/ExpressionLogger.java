@@ -21,7 +21,9 @@ import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.FileEntity;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -50,6 +52,18 @@ public class ExpressionLogger extends DisplayEntity {
 	         exampleList = { "24.0 h" })
 	private final ValueInput interval;
 
+	@Keyword(description = "If TRUE, entries are logged during the initialization period.",
+	         exampleList = { "FALSE" })
+	private final BooleanInput includeInitialization;
+
+	@Keyword(description = "The time for the first log entry.",
+	         exampleList = { "24.0 h" })
+	private final ValueInput startTime;
+
+	@Keyword(description = "The latest time at which to make an entry in the log.",
+	         exampleList = { "8760.0 h" })
+	private final ValueInput endTime;
+
 	{
 		unitTypeListInput = new UnitTypeListInput("UnitTypeList", "Key Inputs", null);
 		unitTypeListInput.setRequired(true);
@@ -66,6 +80,19 @@ public class ExpressionLogger extends DisplayEntity {
 		interval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		interval.setRequired(true);
 		this.addInput(interval);
+
+		includeInitialization = new BooleanInput("IncludeInitialization", "Key Inputs", true);
+		this.addInput(includeInitialization);
+
+		startTime = new ValueInput("StartTime", "Key Inputs", 0.0d);
+		startTime.setUnitType(TimeUnit.class);
+		startTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(startTime);
+
+		endTime = new ValueInput("EndTime", "Key Inputs", Double.POSITIVE_INFINITY);
+		endTime.setUnitType(TimeUnit.class);
+		endTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(endTime);
 	}
 
 	public ExpressionLogger() {}
@@ -123,7 +150,7 @@ public class ExpressionLogger extends DisplayEntity {
 	public void startUp() {
 		super.startUp();
 
-		this.startAction();
+		this.scheduleProcess(startTime.getValue(), 5, endActionTarget);
 	}
 
 	private void startAction() {
@@ -134,7 +161,18 @@ public class ExpressionLogger extends DisplayEntity {
 
 	private void endAction() {
 
+		// Stop the log if the end time has been reached
 		double simTime = getSimTime();
+		if (simTime > endTime.getValue())
+			return;
+
+		// Skip the log entry if the run is still initializing
+		if (!includeInitialization.getValue() && simTime < Simulation.getInitializationTime()) {
+			this.startAction();
+			return;
+		}
+
+		// Write the time for the log entry
 		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
 		file.format("%n%s", simTime/factor);
 
