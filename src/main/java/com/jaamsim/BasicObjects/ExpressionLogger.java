@@ -33,7 +33,6 @@ import com.jaamsim.units.UserSpecifiedUnit;
 
 public class ExpressionLogger extends DisplayEntity {
 	private FileEntity file;
-	private ArrayList<String> columnFormats;
 
 	@Keyword(description = "The unit types for the quantities being logged. "
 			+ "Use DimensionlessUnit for text entries.",
@@ -69,9 +68,7 @@ public class ExpressionLogger extends DisplayEntity {
 		this.addInput(interval);
 	}
 
-	public ExpressionLogger() {
-		columnFormats = new ArrayList<>();
-	}
+	public ExpressionLogger() {}
 
 	@Override
 	public void updateForInput(Input<?> in) {
@@ -87,8 +84,6 @@ public class ExpressionLogger extends DisplayEntity {
 	public void earlyInit() {
 		super.earlyInit();
 
-		columnFormats.clear();
-
 		// Close the file if it is already open
 		if (file != null) {
 			file.close();
@@ -102,25 +97,21 @@ public class ExpressionLogger extends DisplayEntity {
 		file = new FileEntity(tmp.toString());
 
 		// Write the header line
-		file.format("%n%20s", "SimTime");
+		file.format("%n%s", "SimTime");
 		ArrayList<String> toks = new ArrayList<>();
 		dataSource.getValueTokens(toks);
 		for (String str : toks) {
 			if (str.equals("{") || str.equals("}"))
 				continue;
-			int length = Math.max(20, str.length());
-			StringBuilder fmt = new StringBuilder();
-			fmt.append("\t%").append(length).append("s");
-			columnFormats.add(fmt.toString());
-			file.format(fmt.toString(), str);
+			file.format("\t%s", str);
 		}
 
 		// Write the units line
 		String unit = Unit.getDisplayedUnit(TimeUnit.class);
-		file.format("%n%20s", unit);
+		file.format("%n%s", unit);
 		for (int i=0; i<dataSource.getListSize(); i++) {
 			unit = Unit.getDisplayedUnit(dataSource.getUnitType(i));
-			file.format(columnFormats.get(i), unit);
+			file.format("\t%s", unit);
 		}
 
 		// Empty the output buffer
@@ -145,14 +136,14 @@ public class ExpressionLogger extends DisplayEntity {
 
 		double simTime = getSimTime();
 		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
-		file.format("%n%20s", simTime/factor);
+		file.format("%n%s", simTime/factor);
 
 		// Write the entry in the log file
 		try {
 			for (int i=0; i<dataSource.getListSize(); i++) {
 				StringProvider samp = dataSource.getValue().get(i);
 				factor = Unit.getDisplayedUnitFactor(dataSource.getUnitType(i));
-				file.format(columnFormats.get(i), samp.getNextString(simTime, "%s", factor));
+				file.format("\t%s", samp.getNextString(simTime, "%s", factor));
 			}
 		}
 		catch (Exception e) {
