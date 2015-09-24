@@ -17,8 +17,8 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleExpListInput;
-import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.StringProviders.StringProvListInput;
+import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.events.ProcessTarget;
@@ -35,7 +35,8 @@ public class ExpressionLogger extends DisplayEntity {
 	private FileEntity file;
 	private ArrayList<String> columnFormats;
 
-	@Keyword(description = "The unit types for the quantities being logged.",
+	@Keyword(description = "The unit types for the quantities being logged. "
+			+ "Use DimensionlessUnit for text entries.",
 	         exampleList = {"DistanceUnit  SpeedUnit"})
 	private final UnitTypeListInput unitTypeListInput;
 
@@ -44,7 +45,7 @@ public class ExpressionLogger extends DisplayEntity {
 			+ "a constant value, a Probability Distribution, TimeSeries, or a "
 			+ "Calculation Object.",
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
-	protected final SampleExpListInput dataSource;
+	protected final StringProvListInput dataSource;
 
 	@Keyword(description = "The interval between entries in the log file.",
 	         exampleList = { "24.0 h" })
@@ -55,7 +56,7 @@ public class ExpressionLogger extends DisplayEntity {
 		unitTypeListInput.setRequired(true);
 		this.addInput(unitTypeListInput);
 
-		dataSource = new SampleExpListInput("DataSource", "Key Inputs", null);
+		dataSource = new StringProvListInput("DataSource", "Key Inputs", null);
 		dataSource.setUnitType(UserSpecifiedUnit.class);
 		dataSource.setEntity(this);
 		dataSource.setRequired(true);
@@ -147,10 +148,15 @@ public class ExpressionLogger extends DisplayEntity {
 		file.format("%n%20s", simTime/factor);
 
 		// Write the entry in the log file
-		for (int i=0; i<dataSource.getListSize(); i++) {
-			SampleProvider samp = dataSource.getValue().get(i);
-			factor = Unit.getDisplayedUnitFactor(dataSource.getUnitType(i));
-			file.format(columnFormats.get(i), samp.getNextSample(simTime)/factor);
+		try {
+			for (int i=0; i<dataSource.getListSize(); i++) {
+				StringProvider samp = dataSource.getValue().get(i);
+				factor = Unit.getDisplayedUnitFactor(dataSource.getUnitType(i));
+				file.format(columnFormats.get(i), samp.getNextString(simTime, "%s", factor));
+			}
+		}
+		catch (Exception e) {
+			error(e.getMessage());
 		}
 
 		// Empty the output buffer
