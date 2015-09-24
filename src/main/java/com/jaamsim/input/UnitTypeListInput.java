@@ -24,12 +24,12 @@ import com.jaamsim.units.Unit;
 public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 	private ArrayList<Class<? extends Unit>> unitTypeList;
 
-	public <T extends Unit> UnitTypeListInput(String key, String cat, ArrayList<Class<T>> utList) {
+	public UnitTypeListInput(String key, String cat, ArrayList<Class<? extends Unit>> utList) {
 		super(key, cat, null);
 		if (utList == null)
 			return;
 		ArrayList<ObjectType> otList = new ArrayList<>(utList.size());
-		for (Class<T> ut : utList) {
+		for (Class<? extends Unit> ut : utList) {
 			otList.add(ObjectType.getObjectTypeForClass(ut));
 		}
 		setDefaultValue(otList);
