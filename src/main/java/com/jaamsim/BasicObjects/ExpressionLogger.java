@@ -24,17 +24,28 @@ import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.states.StateEntity;
+import com.jaamsim.states.StateEntityListener;
+import com.jaamsim.states.StateRecord;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
-public class ExpressionLogger extends DisplayEntity {
+public class ExpressionLogger extends DisplayEntity implements StateEntityListener {
 	private FileEntity file;
+
+	@Keyword(description = "A list of entities whose states will be traced. "
+			+ "An entry in the log file is made every time one of the entities changes state. "
+			+ "Each entity's state is written automatically to the log file - it is not necessary "
+			+ "to add an expression to the DataSource keyword's input.",
+	         exampleList = { "Server1 ExperssionThreshold1" })
+	private final EntityListInput<StateEntity> stateTraceList;
 
 	@Keyword(description = "The unit types for the quantities being logged. "
 			+ "Use DimensionlessUnit for text entries.",
@@ -65,20 +76,25 @@ public class ExpressionLogger extends DisplayEntity {
 	private final ValueInput endTime;
 
 	{
-		unitTypeListInput = new UnitTypeListInput("UnitTypeList", "Key Inputs", null);
-		unitTypeListInput.setRequired(true);
+		stateTraceList = new EntityListInput<>(StateEntity.class, "StateTraceList", "Key Inputs",
+				new ArrayList<StateEntity>());
+		this.addInput(stateTraceList);
+
+		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
+		unitTypeListInput = new UnitTypeListInput("UnitTypeList", "Key Inputs", defList);
+		unitTypeListInput.setDefaultText("None");
 		this.addInput(unitTypeListInput);
 
-		dataSource = new StringProvListInput("DataSource", "Key Inputs", null);
+		dataSource = new StringProvListInput("DataSource", "Key Inputs",
+				new ArrayList<StringProvider>());
 		dataSource.setUnitType(UserSpecifiedUnit.class);
 		dataSource.setEntity(this);
-		dataSource.setRequired(true);
+		dataSource.setDefaultText("None");
 		this.addInput(dataSource);
 
 		interval = new ValueInput("Interval", "Key Inputs", null);
 		interval.setUnitType(TimeUnit.class);
 		interval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
-		interval.setRequired(true);
 		this.addInput(interval);
 
 		includeInitialization = new BooleanInput("IncludeInitialization", "Key Inputs", true);
@@ -125,6 +141,11 @@ public class ExpressionLogger extends DisplayEntity {
 
 		// Write the header line
 		file.format("%n%s", "SimTime");
+
+		for (StateEntity ent : stateTraceList.getValue()) {
+			file.format("\t%s", ent.getName());
+		}
+
 		ArrayList<String> toks = new ArrayList<>();
 		dataSource.getValueTokens(toks);
 		for (String str : toks) {
@@ -136,6 +157,11 @@ public class ExpressionLogger extends DisplayEntity {
 		// Write the units line
 		String unit = Unit.getDisplayedUnit(TimeUnit.class);
 		file.format("%n%s", unit);
+
+		for (int i=0; i<stateTraceList.getValue().size(); i++) {
+			file.format("\tState");
+		}
+
 		for (int i=0; i<dataSource.getListSize(); i++) {
 			unit = Unit.getDisplayedUnit(dataSource.getUnitType(i));
 			file.format("\t%s", unit);
@@ -150,7 +176,8 @@ public class ExpressionLogger extends DisplayEntity {
 	public void startUp() {
 		super.startUp();
 
-		this.scheduleProcess(startTime.getValue(), 5, endActionTarget);
+		if (interval.getValue() != null)
+			this.scheduleProcess(startTime.getValue(), 5, endActionTarget);
 	}
 
 	private void startAction() {
@@ -166,30 +193,8 @@ public class ExpressionLogger extends DisplayEntity {
 		if (simTime > endTime.getValue())
 			return;
 
-		// Skip the log entry if the run is still initializing
-		if (!includeInitialization.getValue() && simTime < Simulation.getInitializationTime()) {
-			this.startAction();
-			return;
-		}
-
-		// Write the time for the log entry
-		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
-		file.format("%n%s", simTime/factor);
-
-		// Write the entry in the log file
-		try {
-			for (int i=0; i<dataSource.getListSize(); i++) {
-				StringProvider samp = dataSource.getValue().get(i);
-				factor = Unit.getDisplayedUnitFactor(dataSource.getUnitType(i));
-				file.format("\t%s", samp.getNextString(simTime, "%s", factor));
-			}
-		}
-		catch (Exception e) {
-			error(e.getMessage());
-		}
-
-		// Empty the output buffer
-		file.flush();
+		// Record the entry in the log
+		this.recordEntry(simTime);
 
 		// Get ready for the next entry
 		this.startAction();
@@ -206,6 +211,51 @@ public class ExpressionLogger extends DisplayEntity {
 		public void process() {
 			ent.endAction();
 		}
+	}
+
+	private void recordEntry(double simTime) {
+
+		// Skip the log entry if the run is still initializing
+		if (!includeInitialization.getValue() && simTime < Simulation.getInitializationTime())
+			return;
+
+		// Skip the log entry if it is outside the time range
+		if (simTime < startTime.getValue() || simTime > endTime.getValue())
+			return;
+
+		// Write the time for the log entry
+		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+		file.format("%n%s", simTime/factor);
+
+		// Write the state values
+		for (StateEntity ent : stateTraceList.getValue()) {
+			file.format("\t%s", ent.getPresentState(simTime));
+		}
+
+		// Write the expression values
+		try {
+			for (int i=0; i<dataSource.getListSize(); i++) {
+				StringProvider samp = dataSource.getValue().get(i);
+				factor = Unit.getDisplayedUnitFactor(dataSource.getUnitType(i));
+				file.format("\t%s", samp.getNextString(simTime, "%s", factor));
+			}
+		}
+		catch (Exception e) {
+			error(e.getMessage());
+		}
+
+		// Empty the output buffer
+		file.flush();
+	}
+
+	@Override
+	public boolean isWatching(StateEntity ent) {
+		return stateTraceList.getValue().contains(ent);
+	}
+
+	@Override
+	public void updateForStateChange(StateEntity ent, StateRecord prev, StateRecord next) {
+		this.recordEntry(getSimTime());
 	}
 
 }
