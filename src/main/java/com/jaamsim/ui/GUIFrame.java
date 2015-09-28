@@ -2090,7 +2090,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				options[0]);
 
 		if (userOption == JOptionPane.YES_OPTION) {
-			Simulation.setWindowVisible(LogBox.getInstance(), true);
+			InputAgent.applyArgs(Simulation.getInstance(), "ShowLogViewer", "TRUE");
 		}
 	}
 
