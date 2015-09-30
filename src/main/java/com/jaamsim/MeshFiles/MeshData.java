@@ -22,7 +22,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
@@ -185,7 +187,7 @@ public class MeshData {
 
 		@Override
 		public TransVal value(ArrayList<Action.Queue> aqs) {
-			if (aqs == null) {
+			if (aqs == null || aqs.size() == 0) {
 				return new TransVal(staticMat, staticInv);
 			}
 
@@ -715,7 +717,6 @@ public class MeshData {
 	 */
 	public void finalizeData() {
 		// Scan the tree to see if any animated transforms are effectively static
-		//TreeWalker staticWalker = new TreeWalker() {
 		class StaticWalker extends TreeWalker {
 			public int numMatricesRemoved = 0;
 			public int numMatricesRemaining = 0;
@@ -729,15 +730,14 @@ public class MeshData {
 						numMatricesRemaining += act.matrices.length;
 					}
 
-					Mat4d baseMat = at.actions.get(0).matrices[0];
 					boolean isSame = true;
 					for (Act act : at.actions) {
 						for (int i = 0; i < act.matrices.length; ++i) {
-							isSame = isSame && baseMat.near4(act.matrices[i]);
+							isSame = isSame && at.staticMat.near4(act.matrices[i]);
 						}
 						if (isSame) {
 							// All values are effectively the same
-							node.trans = new StaticTrans(baseMat);
+							node.trans = new StaticTrans(at.staticMat);
 						}
 					}
 				}
@@ -831,8 +831,35 @@ public class MeshData {
 		_staticHull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 		_defaultBounds = _staticHull.getAABB(new Mat4d());
 
-		// TODO: populate this list
+		final HashMap<String, Double> actionMap = new HashMap<>();
+		class ActionWalker extends TreeWalker {
+			@Override
+			public void onNode(Mat4d trans, Mat4d invTrans, TreeNode node) {
+
+				if (node.trans instanceof AnimTrans) {
+					AnimTrans at = (AnimTrans)node.trans;
+
+					for (Act act : at.actions) {
+						Double existingTime = actionMap.get(act.name);
+						double lastTime = act.times[act.times.length-1];
+						if (existingTime == null || lastTime > existingTime) {
+							actionMap.put(act.name, lastTime);
+						}
+					}
+				}
+			}
+		};
+
+		ActionWalker actionWalker = new ActionWalker();
+		walkTree(actionWalker, treeRoot, new Mat4d(), new Mat4d(), null);
+
 		_actionDesc = new ArrayList<>();
+		for (Map.Entry<String, Double> entry : actionMap.entrySet()) {
+			Action.Description desc = new Action.Description();
+			desc.name = entry.getKey();
+			desc.duration = entry.getValue();
+			_actionDesc.add(desc);
+		}
 
 		if (!keepRuntimeData) {
 			v2Interner = null; // Drop ref to the interner to free memory

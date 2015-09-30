@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
@@ -154,6 +155,7 @@ public class ColParser {
 
 	private static class AnimChannel {
 		public String target;
+		public String actionName;
 		public AnimCurve curve;
 	}
 
@@ -167,6 +169,7 @@ public class ColParser {
 	private final HashMap<String, VisualScene> _visualScenes = new HashMap<>();
 	private final HashMap<String, Controller> _controllers = new HashMap<>();
 	private final HashMap<String, AnimSampler> _samplers = new HashMap<>();
+	private final HashMap<String, ArrayList<String>> _animClips = new HashMap<>();
 
 	// This stack is used to track node loops
 	private final  Stack<SceneNode> _nodeStack = new Stack<>();
@@ -178,8 +181,6 @@ public class ColParser {
 	private final ArrayList<LineGeoEffectPair> _loadedLineGeos = new ArrayList<>();
 
 	private final ArrayList<AnimChannel> _animChannels = new ArrayList<>();
-
-	private final String currentActionName = "default";
 
 	private final MeshData _finalData = new MeshData(keepRuntimeData);
 
@@ -226,7 +227,9 @@ public class ColParser {
 		processNodes();
 		processControllers();
 
+		processAnimationClips();
 		processAnimations();
+
 		processVisualScenes();
 
 		processScene();
@@ -333,7 +336,7 @@ public class ColParser {
 			ret.trans = new MeshData.StaticTrans(new Mat4d());
 		} else {
 			for (int i = 0; i < node.transforms.size(); ++i) {
-				leaf.trans = node.transforms.get(i).toMeshDataTrans(currentActionName);
+				leaf.trans = node.transforms.get(i).toMeshDataTrans();
 
 				if (i < node.transforms.size()-1) {
 					// If this isn't the last node, create a new one for the next iteration
@@ -523,6 +526,37 @@ public class ColParser {
 		_controllers.put(id, cont);
 	}
 
+	private void processAnimationClips() {
+		XmlNode libClips = _colladaNode.findChildTag("library_animation_clips", false);
+		if (libClips == null)
+			return; // No animations
+
+		for (XmlNode child : libClips.children()) {
+			if (child.getTag().equals("animation_clip")) {
+				processAnimationClip(child);
+			}
+		}
+	}
+
+	private void processAnimationClip(XmlNode clipNode) {
+		String clipName = clipNode.getAttrib("name");
+		if (clipName == null) {
+			// Fall back to the ID if the name is not present
+			clipName = clipNode.getFragID();
+		}
+		if (clipName == null) {
+			return; // We can not identify this clip so act like it doesn't exist
+		}
+		ArrayList<String> instanceAnims = new ArrayList<>();
+		_animClips.put(clipName, instanceAnims);
+
+		for (XmlNode child : clipNode.children()) {
+			if (child.getTag().equals("instance_animation")) {
+				instanceAnims.add(child.getAttrib("url"));
+			}
+		}
+	}
+
 	private void processAnimations() {
 		XmlNode libAnims = _colladaNode.findChildTag("library_animations", false);
 		if (libAnims == null)
@@ -530,22 +564,33 @@ public class ColParser {
 
 		for (XmlNode child : libAnims.children()) {
 			if (child.getTag().equals("animation")) {
-				processAnimation(child);
+				processAnimation(child, "default");
 			}
 		}
 	}
 
-	private void processAnimation(XmlNode animation) {
+	private void processAnimation(XmlNode animation, String actionName) {
+		// See if this animation has been instanced in a clip, if so that clips name is the action name
+		String animID = animation.getFragID();
+
+		if (animID != null) {
+			for (Map.Entry<String, ArrayList<String>> entry : _animClips.entrySet()) {
+				if (entry.getValue().contains("#" + animID)) {
+					actionName = entry.getKey();
+				}
+			}
+		}
+
 		for (XmlNode child : animation.children()) {
 			if (child.getTag().equals("animation")) {
-				processAnimation(child); // Recurse through child animations
+				processAnimation(child, actionName); // Recurse through child animations
 			}
 			if (child.getTag().equals("sampler")) {
 				processSampler(child);
 
 			}
 			if (child.getTag().equals("channel")) {
-				processChannel(child);
+				processChannel(child, actionName);
 
 			}
 		}
@@ -575,7 +620,7 @@ public class ColParser {
 		_samplers.put(id, sampler);
 	}
 
-	private void processChannel(XmlNode channelNode) {
+	private void processChannel(XmlNode channelNode, String actionName) {
 		String source = channelNode.getAttrib("source");
 		String target = channelNode.getAttrib("target");
 
@@ -586,6 +631,7 @@ public class ColParser {
 		AnimChannel c = new AnimChannel();
 		c.curve = buildAnimCurve(sampler);
 		c.target = target;
+		c.actionName = actionName;
 		_animChannels.add(c);
 	}
 
@@ -1769,7 +1815,7 @@ public class ColParser {
 		parseAssert(currentNode instanceof SceneTrans);
 		// The node at the end of the chain must be a transform
 		SceneTrans trans = (SceneTrans)currentNode;
-		trans.attachCurve(ch.curve, target);
+		trans.attachCurve(ch.curve, target, ch.actionName);
 
 	}
 
@@ -1839,6 +1885,11 @@ public class ColParser {
 		public Integer usedTexSet = null;
 	}
 
+
+	private static class AnimAction {
+		public AnimCurve[] attachedCurves;
+		public int[] attachedIndex;
+	}
 	/**
 	 * Base class for scene node transforms
 	 * @author matt.chudleigh
@@ -1846,64 +1897,74 @@ public class ColParser {
 	 */
 	private static abstract class SceneTrans {
 		public String sid;
-		Vec3d commonVect;
+		protected Vec3d commonVect;
 
-		public AnimCurve[] attachedCurves;
-		public int[] attachedIndex;
+		protected HashMap<String, AnimAction> actions = new HashMap<>();
+
 		protected abstract Mat4d getStaticMat();
-		protected abstract MeshData.Trans toAnimatedTransform(String actionName);
-		public MeshData.Trans toMeshDataTrans(String actionName) {
+		protected abstract MeshData.Trans toAnimatedTransform();
+		public MeshData.Trans toMeshDataTrans() {
 			boolean stat = true;
-			for (AnimCurve ac : attachedCurves) {
-				if (ac != null) {
-					stat = false;
+			for (AnimAction act : actions.values()) {
+				for (AnimCurve ac : act.attachedCurves) {
+					if (ac != null) {
+						stat = false;
+					}
 				}
 			}
+
 			// If there are no attached curves, we can output a static mesh
 			if (stat) {
 				return new MeshData.StaticTrans(getStaticMat());
 			}
-			return toAnimatedTransform(actionName);
+			return toAnimatedTransform();
 		}
 
 
-		public abstract void attachCurve(AnimCurve curve, String target);
+		public abstract void attachCurve(AnimCurve curve, String target, String actionName);
 
-		protected boolean attachCommonCurves(AnimCurve curve, String tar) {
+		protected boolean attachCommonCurves(AnimCurve curve, String tar, String actionName) {
+			AnimAction act = actions.get(actionName);
 			if (tar.equals(".X") || tar.equals("(0)")) {
-				attachedCurves[0] = curve;
-				attachedIndex[0] = 0;
+				act.attachedCurves[0] = curve;
+				act.attachedIndex[0] = 0;
 				return true;
 			}
 			if (tar.equals(".Y") || tar.equals("(1)")) {
-				attachedCurves[1] = curve;
-				attachedIndex[1] = 0;
+				act.attachedCurves[1] = curve;
+				act.attachedIndex[1] = 0;
 				return true;
 			}
 			if (tar.equals(".Z") || tar.equals("(2)")) {
-				attachedCurves[2] = curve;
-				attachedIndex[2] = 0;
+				act.attachedCurves[2] = curve;
+				act.attachedIndex[2] = 0;
 				return true;
 			}
 			return false;
 		}
 
-		Vec3d getAnimatedVectAtTime(double time) {
+		protected Vec3d getAnimatedVectAtTime(double time, String actionName) {
 			Vec3d ret = new Vec3d(commonVect);
-			if (attachedCurves[0] != null) {
-				ret.x = attachedCurves[0].getValueForTime(time).getByInd(attachedIndex[0]);
+			AnimAction act = actions.get(actionName);
+			if (act == null) {
+				return ret;
 			}
-			if (attachedCurves[1] != null) {
-				ret.y = attachedCurves[1].getValueForTime(time).getByInd(attachedIndex[1]);
+
+			if (act.attachedCurves[0] != null) {
+				ret.x = act.attachedCurves[0].getValueForTime(time).getByInd(act.attachedIndex[0]);
 			}
-			if (attachedCurves[2] != null) {
-				ret.z = attachedCurves[2].getValueForTime(time).getByInd(attachedIndex[2]);
+			if (act.attachedCurves[1] != null) {
+				ret.y = act.attachedCurves[1].getValueForTime(time).getByInd(act.attachedIndex[1]);
+			}
+			if (act.attachedCurves[2] != null) {
+				ret.z = act.attachedCurves[2].getValueForTime(time).getByInd(act.attachedIndex[2]);
 			}
 			return ret;
 		}
-		protected double[] getKeyTimes() {
+		protected double[] getKeyTimes(String actionName) {
+			AnimAction act = actions.get(actionName);
 			TreeSet<Double> times = new TreeSet<>();
-			for (AnimCurve ac : attachedCurves) {
+			for (AnimCurve ac : act.attachedCurves) {
 				if (ac != null) {
 					for (double time : ac.times) {
 						times.add(time);
@@ -1928,8 +1989,6 @@ public class ColParser {
 
 		public TranslationTrans(XmlNode transNode) {
 			sid = transNode.getAttrib("sid");
-			attachedCurves = new AnimCurve[3];
-			attachedIndex = new int[3];
 
 			double[] vals = (double[])transNode.getContent();
 			parseAssert(vals != null && vals.length >= 3);
@@ -1944,17 +2003,26 @@ public class ColParser {
 		}
 
 		@Override
-		public void attachCurve(AnimCurve curve, String target) {
+		public void attachCurve(AnimCurve curve, String target, String actionName) {
+			AnimAction act = actions.get(actionName);
+			if (act == null) {
+				// First curve bound for this action
+				act = new AnimAction();
+				act.attachedCurves = new AnimCurve[3];
+				act.attachedIndex = new int[3];
+				actions.put(actionName, act);
+			}
+
 			String tar = target.toUpperCase();
-			if (attachCommonCurves(curve, tar)) {
+			if (attachCommonCurves(curve, tar, actionName)) {
 				return;
 			}
 
 			if (target.equals("")) {
 				// For an empty target, attach to all curves
 				for (int i = 0; i < 3; ++i) {
-					attachedCurves[i] = curve;
-					attachedIndex[i] = i;
+					act.attachedCurves[i] = curve;
+					act.attachedIndex[i] = i;
 				}
 				return;
 			}
@@ -1962,32 +2030,37 @@ public class ColParser {
 		}
 
 		@Override
-		protected Trans toAnimatedTransform(String actionName) {
-			double[] times = getKeyTimes();
-			Mat4d[] mats = new Mat4d[times.length];
-			for (int i = 0; i < times.length; ++i) {
-				Vec3d animTranslation = getAnimatedVectAtTime(times[i]);
-				mats[i] = new Mat4d();
-				mats[i].setTranslate3(animTranslation);
-			}
-			double[][] timesArray = new double[1][];
-			timesArray[0] = times;
-			Mat4d[][] matsArray = new Mat4d[1][];
-			matsArray[0] = mats;
-			String[] names = new String[1];
-			names[0] = actionName;
+		protected Trans toAnimatedTransform() {
+			Set<String> actionNames = actions.keySet();
+			double[][] timesArray = new double[actionNames.size()][];
+			Mat4d[][] matsArray = new Mat4d[actionNames.size()][];
+			String[] names = new String[actionNames.size()];
 
+			int actionInd = 0;
+			for (String actionName : actions.keySet()) {
+				double[] times = getKeyTimes(actionName);
+				Mat4d[] mats = new Mat4d[times.length];
+				for (int i = 0; i < times.length; ++i) {
+					Vec3d animTranslation = getAnimatedVectAtTime(times[i], actionName);
+					mats[i] = new Mat4d();
+					mats[i].setTranslate3(animTranslation);
+				}
+
+				timesArray[actionInd] = times;
+				matsArray[actionInd] = mats;
+				names[actionInd] = actionName;
+
+				++actionInd;
+			}
 			return new MeshData.AnimTrans(timesArray, matsArray, names, getStaticMat());
 		}
 	}
 
 	private static class RotationTrans extends SceneTrans {
-		double angle;
+		private final double angle;
 
 		public RotationTrans(XmlNode rotNode) {
 			sid = rotNode.getAttrib("sid");
-			attachedCurves = new AnimCurve[4];
-			attachedIndex = new int[4];
 			double[] vals = (double[])rotNode.getContent();
 			parseAssert(vals != null && vals.length >= 4);
 
@@ -2006,20 +2079,30 @@ public class ColParser {
 			return ret;
 		}
 		@Override
-		public void attachCurve(AnimCurve curve, String target) {
+		public void attachCurve(AnimCurve curve, String target, String actionName) {
+
+			AnimAction act = actions.get(actionName);
+			if (act == null) {
+				// First curve bound for this action
+				act = new AnimAction();
+				act.attachedCurves = new AnimCurve[4];
+				act.attachedIndex = new int[4];
+				actions.put(actionName, act);
+			}
+
 			String tar = target.toUpperCase();
-			if (attachCommonCurves(curve, tar)) {
+			if (attachCommonCurves(curve, tar, actionName)) {
 				return;
 			}
 			if (tar.equals(".ANGLE") || tar.equals("(3)")) {
-				attachedCurves[3] = curve;
+				act.attachedCurves[3] = curve;
 				return;
 			}
 			if (target.equals("")) {
 				// For an empty target, attach to all curves
 				for (int i = 0; i < 4; ++i) {
-					attachedCurves[i] = curve;
-					attachedIndex[i] = i;
+					act.attachedCurves[i] = curve;
+					act.attachedIndex[i] = i;
 				}
 				return;
 			}
@@ -2028,42 +2111,49 @@ public class ColParser {
 		}
 
 		@Override
-		protected Trans toAnimatedTransform(String actionName) {
-			double[] originalTimes = getKeyTimes();
+		protected Trans toAnimatedTransform() {
+			Set<String> actionNames = actions.keySet();
+			double[][] timesArray = new double[actionNames.size()][];
+			Mat4d[][] matsArray = new Mat4d[actionNames.size()][];
+			String[] names = new String[actionNames.size()];
 
-			// Add new sample points because linearly interpolating a rotation matrix usually does not work correctly
-			final int OVERSAMPLE = 4;
-			double[] times = new double[(originalTimes.length-1)*OVERSAMPLE + 1];
-			for (int i = 0; i < originalTimes.length - 1; ++i) {
+			int actionInd = 0;
+			for (String actionName : actions.keySet()) {
+				double[] originalTimes = getKeyTimes(actionName);
+				AnimAction act = actions.get(actionName);
 
-				double cur = originalTimes[i];
-				double next = originalTimes[i+1];
-				for (int j = 0; j < OVERSAMPLE; ++j) {
-					double scale = (double)j / (double)OVERSAMPLE;
-					times[i*OVERSAMPLE +j] = cur*(1-scale) + next*scale;
+				// Add new sample points because linearly interpolating a rotation matrix usually does not work correctly
+				final int OVERSAMPLE = 4;
+				double[] times = new double[(originalTimes.length-1)*OVERSAMPLE + 1];
+				for (int i = 0; i < originalTimes.length - 1; ++i) {
+
+					double cur = originalTimes[i];
+					double next = originalTimes[i+1];
+					for (int j = 0; j < OVERSAMPLE; ++j) {
+						double scale = (double)j / (double)OVERSAMPLE;
+						times[i*OVERSAMPLE +j] = cur*(1-scale) + next*scale;
+					}
 				}
-			}
-			times[times.length-1] = originalTimes[originalTimes.length-1];
+				times[times.length-1] = originalTimes[originalTimes.length-1];
 
-			Mat4d[] mats = new Mat4d[times.length];
-			for (int i = 0; i < times.length; ++i) {
-				double animAngle = Math.toRadians(angle);
-				if (attachedCurves[3] != null) {
-					animAngle = Math.toRadians(attachedCurves[3].getValueForTime(times[i]).getByInd(attachedIndex[3]));
+				Mat4d[] mats = new Mat4d[times.length];
+				for (int i = 0; i < times.length; ++i) {
+					double animAngle = Math.toRadians(angle);
+					if (act.attachedCurves[3] != null) {
+						animAngle = Math.toRadians(act.attachedCurves[3].getValueForTime(times[i]).getByInd(act.attachedIndex[3]));
+					}
+
+					Vec3d animAxis = getAnimatedVectAtTime(times[i], actionName);
+					Quaternion rot = new Quaternion();
+					rot.setAxisAngle(animAxis, animAngle);
+					mats[i] = new Mat4d();
+					mats[i].setRot3(rot);
 				}
+				timesArray[actionInd] = times;
+				matsArray[actionInd] = mats;
+				names[actionInd] = actionName;
 
-				Vec3d animAxis = getAnimatedVectAtTime(times[i]);
-				Quaternion rot = new Quaternion();
-				rot.setAxisAngle(animAxis, animAngle);
-				mats[i] = new Mat4d();
-				mats[i].setRot3(rot);
 			}
-			double[][] timesArray = new double[1][];
-			timesArray[0] = times;
-			Mat4d[][] matsArray = new Mat4d[1][];
-			matsArray[0] = mats;
-			String[] names = new String[1];
-			names[0] = actionName;
 
 			return new MeshData.AnimTrans(timesArray, matsArray, names, getStaticMat());
 		}
@@ -2073,8 +2163,6 @@ public class ColParser {
 
 		public ScaleTrans(XmlNode scaleNode) {
 			sid = scaleNode.getAttrib("sid");
-			attachedCurves = new AnimCurve[3];
-			attachedIndex = new int[3];
 
 			double[] vals = (double[])scaleNode.getContent();
 			parseAssert(vals != null && vals.length >= 3);
@@ -2092,16 +2180,25 @@ public class ColParser {
 		}
 
 		@Override
-		public void attachCurve(AnimCurve curve, String target) {
+		public void attachCurve(AnimCurve curve, String target, String actionName) {
+			AnimAction act = actions.get(actionName);
+			if (act == null) {
+				// First curve bound for this action
+				act = new AnimAction();
+				act.attachedCurves = new AnimCurve[3];
+				act.attachedIndex = new int[3];
+				actions.put(actionName, act);
+			}
+
 			String tar = target.toUpperCase();
-			if (attachCommonCurves(curve, tar)) {
+			if (attachCommonCurves(curve, tar, actionName)) {
 				return;
 			}
 			if (target.equals("")) {
 				// For an empty target, attach to all curves
 				for (int i = 0; i < 3; ++i) {
-					attachedCurves[i] = curve;
-					attachedIndex[i] = i;
+					act.attachedCurves[i] = curve;
+					act.attachedIndex[i] = i;
 				}
 				return;
 			}
@@ -2109,38 +2206,41 @@ public class ColParser {
 		}
 
 		@Override
-		protected Trans toAnimatedTransform(String actionName) {
-			double[] times = getKeyTimes();
-			Mat4d[] mats = new Mat4d[times.length];
-			for (int i = 0; i < times.length; ++i) {
-				Vec3d animScale = getAnimatedVectAtTime(times[i]);
-				mats[i] = new Mat4d();
-				mats[i].d00 = animScale.x;
-				mats[i].d11 = animScale.y;
-				mats[i].d22 = animScale.z;
+		protected Trans toAnimatedTransform() {
+
+			Set<String> actionNames = actions.keySet();
+			double[][] timesArray = new double[actionNames.size()][];
+			Mat4d[][] matsArray = new Mat4d[actionNames.size()][];
+			String[] names = new String[actionNames.size()];
+
+			int actionInd = 0;
+			for (String actionName : actions.keySet()) {
+				double[] times = getKeyTimes(actionName);
+				Mat4d[] mats = new Mat4d[times.length];
+				for (int i = 0; i < times.length; ++i) {
+					Vec3d animScale = getAnimatedVectAtTime(times[i], actionName);
+					mats[i] = new Mat4d();
+					mats[i].d00 = animScale.x;
+					mats[i].d11 = animScale.y;
+					mats[i].d22 = animScale.z;
+				}
+				timesArray[actionInd] = times;
+				matsArray[actionInd] = mats;
+				names[actionInd] = actionName;
 			}
-			double[][] timesArray = new double[1][];
-			timesArray[0] = times;
-			Mat4d[][] matsArray = new Mat4d[1][];
-			matsArray[0] = mats;
-			String[] names = new String[1];
-			names[0] = actionName;
 			return new MeshData.AnimTrans(timesArray, matsArray, names, getStaticMat());
 		}
 
 	}
 
 	private static class MatrixTrans extends SceneTrans {
-		Mat4d matrix;
+		private final Mat4d matrix;
 
 		public MatrixTrans(Mat4d mat) {
-			attachedCurves = new AnimCurve[0];
-			attachedIndex = new int[0];
 			matrix = new Mat4d(mat);
 		}
 
 		public MatrixTrans(XmlNode matNode) {
-			attachedCurves = new AnimCurve[0];
 			sid = matNode.getAttrib("sid");
 			double[] vals = (double[])matNode.getContent();
 			parseAssert(vals != null && vals.length >= 16);
@@ -2152,12 +2252,12 @@ public class ColParser {
 			return new Mat4d(matrix);
 		}
 		@Override
-		public void attachCurve(AnimCurve curve, String target) {
+		public void attachCurve(AnimCurve curve, String target, String actionName) {
 			// TODO: support this
 			throw new RenderException("Currently do not support animating matrices");
 		}
 		@Override
-		protected Trans toAnimatedTransform(String actionName) {
+		protected Trans toAnimatedTransform() {
 			throw new  RenderException("Do not support animated matrices");
 		}
 	}
