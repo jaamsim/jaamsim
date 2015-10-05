@@ -44,22 +44,22 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class ExpressionLogger extends DisplayEntity implements StateEntityListener {
 	private FileEntity file;
 
+	@Keyword(description = "An fixed interval at which entries will be written to the log file. "
+			+ "This input is optional if state tracing or value tracing is specified.",
+	         exampleList = { "24.0 h" })
+	private final ValueInput interval;
 
 	@Keyword(description = "The unit types for the quantities being logged. "
 			+ "Use DimensionlessUnit for text entries.",
 	         exampleList = {"DistanceUnit  SpeedUnit"})
 	private final UnitTypeListInput unitTypeListInput;
 
-	@Keyword(description = "One or more sources of data to be logged.\n"
+	@Keyword(description = "One or more sources of data to be logged. "
 			+ "Each source is specified by an Expression. Also acceptable are: "
 			+ "a constant value, a Probability Distribution, TimeSeries, or a "
 			+ "Calculation Object.",
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
 	protected final StringProvListInput dataSource;
-
-	@Keyword(description = "The interval between entries in the log file.",
-	         exampleList = { "24.0 h" })
-	private final ValueInput interval;
 
 	@Keyword(description = "If TRUE, entries are logged during the initialization period.",
 	         exampleList = { "FALSE" })
@@ -96,6 +96,10 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 	private final ArrayList<Double> lastValueList = new ArrayList<>();
 
 	{
+		interval = new ValueInput("Interval", "Key Inputs", null);
+		interval.setUnitType(TimeUnit.class);
+		interval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
+		this.addInput(interval);
 
 		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
 		unitTypeListInput = new UnitTypeListInput("UnitTypeList", "Key Inputs", defList);
@@ -108,11 +112,6 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 		dataSource.setEntity(this);
 		dataSource.setDefaultText("None");
 		this.addInput(dataSource);
-
-		interval = new ValueInput("Interval", "Key Inputs", null);
-		interval.setUnitType(TimeUnit.class);
-		interval.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
-		this.addInput(interval);
 
 		includeInitialization = new BooleanInput("IncludeInitialization", "Key Inputs", true);
 		this.addInput(includeInitialization);
