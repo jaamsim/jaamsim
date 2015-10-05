@@ -44,12 +44,6 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class ExpressionLogger extends DisplayEntity implements StateEntityListener {
 	private FileEntity file;
 
-	@Keyword(description = "A list of entities whose states will be traced. "
-			+ "An entry in the log file is made every time one of the entities changes state. "
-			+ "Each entity's state is written automatically to the log file - it is not necessary "
-			+ "to add an expression to the DataSource keyword's input.",
-	         exampleList = { "Server1 ExperssionThreshold1" })
-	private final EntityListInput<StateEntity> stateTraceList;
 
 	@Keyword(description = "The unit types for the quantities being logged. "
 			+ "Use DimensionlessUnit for text entries.",
@@ -79,6 +73,13 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 	         exampleList = { "8760.0 h" })
 	private final ValueInput endTime;
 
+	@Keyword(description = "A list of entities whose states will be traced. "
+			+ "An entry in the log file is made every time one of the entities changes state. "
+			+ "Each entity's state is written automatically to the log file - it is not necessary "
+			+ "to add an expression to the DataSource keyword's input.",
+	         exampleList = { "Server1 ExperssionThreshold1" })
+	private final EntityListInput<StateEntity> stateTraceList;
+
 	@Keyword(description = "The unit types for the values being traced. ",
 	         exampleList = {"DistanceUnit  SpeedUnit"})
 	private final UnitTypeListInput valueUnitTypeList;
@@ -95,9 +96,6 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 	private final ArrayList<Double> lastValueList = new ArrayList<>();
 
 	{
-		stateTraceList = new EntityListInput<>(StateEntity.class, "StateTraceList", "Key Inputs",
-				new ArrayList<StateEntity>());
-		this.addInput(stateTraceList);
 
 		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
 		unitTypeListInput = new UnitTypeListInput("UnitTypeList", "Key Inputs", defList);
@@ -128,6 +126,10 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 		endTime.setUnitType(TimeUnit.class);
 		endTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(endTime);
+
+		stateTraceList = new EntityListInput<>(StateEntity.class, "StateTraceList", "Tracing",
+				new ArrayList<StateEntity>());
+		this.addInput(stateTraceList);
 
 		ArrayList<Class<? extends Unit>> valDefList = new ArrayList<>();
 		valueUnitTypeList = new UnitTypeListInput("ValueUnitTypeList", "Tracing",
