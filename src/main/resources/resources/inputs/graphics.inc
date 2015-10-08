@@ -48,7 +48,7 @@ Region                JavaClass { com.jaamsim.Graphics.Region                   
 DisplayEntity         JavaClass { com.jaamsim.Graphics.DisplayEntity                 } Palette { 'Graphics Objects' }                                                  IconFile { '<res>/images/DisplayEntity-24.png' }
 Text                  JavaClass { com.jaamsim.Graphics.Text                          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
 EntityLabel           JavaClass { com.jaamsim.Graphics.EntityLabel                   } Palette { 'Graphics Objects' } DefaultDisplayModel { EntityLabelModel         } DragAndDrop { FALSE }
-InputBox              JavaClass { com.jaamsim.Graphics.InputBox                      } Palette { 'Graphics Objects' } DefaultDisplayModel { InputBoxModel            } IconFile { '<res>/images/Text-24.png' }
+InputBox              JavaClass { com.jaamsim.Graphics.InputBox                      } Palette { 'Graphics Objects' } DefaultDisplayModel { InputBoxModel            } IconFile { '<res>/images/InputValue-24.png' }
 OverlayImage          JavaClass { com.jaamsim.Graphics.OverlayImage                  } Palette { 'Graphics Objects' }
 OverlayText           JavaClass { com.jaamsim.Graphics.OverlayText                   } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
 OverlayClock          JavaClass { com.jaamsim.Graphics.OverlayClock                  } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         }
