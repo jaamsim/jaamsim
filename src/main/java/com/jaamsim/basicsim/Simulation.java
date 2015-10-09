@@ -925,7 +925,10 @@ public class Simulation extends Entity {
 	  reportable = true,
 	    sequence = 2)
 	public String getConfigFileName(double simTime) {
-		return InputAgent.getConfigFile().getPath();
+		if (InputAgent.getConfigFile() != null)
+			return InputAgent.getConfigFile().getPath();
+
+		return "";
 	}
 
 	@Output(name = "RunNumber",
