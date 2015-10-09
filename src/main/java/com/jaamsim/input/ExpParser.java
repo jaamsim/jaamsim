@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +50,7 @@ public class ExpParser {
 	}
 
 	public interface EvalContext {
-		public ExpResult getVariableValue(String[] names) throws ExpError;
+		public ExpResult getVariableValue(String[] names, ExpResult[] indices) throws ExpError;
 		public boolean eagerEval();
 	}
 
@@ -128,14 +129,24 @@ public class ExpParser {
 	}
 
 	public static class Variable extends ExpNode {
-		private String[] vals;
-		public Variable(ParseContext context, String[] vals, Expression exp, int pos) {
+		private final String[] vals;
+		private final ExpNode[] indexExps;
+		public Variable(ParseContext context, String[] vals, ExpNode[] indexExps, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.vals = vals;
+			this.indexExps = indexExps;
 		}
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
-			return ec.getVariableValue(vals);
+			if (indexExps == null)
+				return ec.getVariableValue(vals, null);
+
+			ExpResult[] indices = new ExpResult[indexExps.length];
+			for (int i = 0; i < indexExps.length; ++i) {
+				if (indexExps[i] != null)
+					indices[i] = indexExps[i].evaluate(ec);
+			}
+			return ec.getVariableValue(vals, indices);
 		}
 		@Override
 		void walk(ExpressionWalker w) throws ExpError {
@@ -145,7 +156,7 @@ public class ExpParser {
 
 	private static class UnaryOp extends ExpNode {
 		public ExpNode subExp;
-		private UnOpFunc func;
+		private final UnOpFunc func;
 		UnaryOp(ParseContext context, ExpNode subExp, UnOpFunc func, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.subExp = subExp;
@@ -253,9 +264,9 @@ public class ExpParser {
 	}
 
 	public static class FuncCall extends ExpNode {
-		private ArrayList<ExpNode> args;
-		private ArrayList<ExpResult> constResults;
-		private CallableFunc function;
+		private final ArrayList<ExpNode> args;
+		private final ArrayList<ExpResult> constResults;
+		private final CallableFunc function;
 		public FuncCall(ParseContext context, CallableFunc function, ArrayList<ExpNode> args, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.function = function;
@@ -1020,8 +1031,7 @@ public class ExpParser {
 		}
 		if (nextTok.type == ExpTokenizer.SQ_TYPE ||
 		    nextTok.value.equals("this")) {
-			String[] vals = parseIdentifier(nextTok, tokens, exp);
-			return new Variable(context, vals, exp, nextTok.pos);
+			return parseVariable(context, nextTok, tokens, exp, nextTok.pos);
 		}
 
 		// The next token must be a symbol
@@ -1144,4 +1154,51 @@ public class ExpParser {
 			ret[i] = vals.get(i);
 		return ret;
 	}
+
+	private static Variable parseVariable(ParseContext context, ExpTokenizer.Token firstName, TokenList tokens, Expression exp, int pos) throws ExpError {
+		ArrayList<String> vals = new ArrayList<>();
+		ArrayList<ExpNode> indexExps = new ArrayList<>();
+		vals.add(firstName.value.intern());
+		indexExps.add(null);
+		while (true) {
+
+			ExpTokenizer.Token peeked = tokens.peek();
+			if (peeked == null || peeked.type != ExpTokenizer.SYM_TYPE || !peeked.value.equals(".")) {
+				break;
+			}
+
+			// Next token is a '.' so parse another name
+
+			tokens.next(); // consume
+			ExpTokenizer.Token nextName = tokens.next();
+			if (nextName == null || nextName.type != ExpTokenizer.VAR_TYPE) {
+				throw new ExpError(exp.source, peeked.pos, "Expected Identifier after '.'");
+			}
+
+
+			vals.add(nextName.value.intern());
+
+			peeked = tokens.peek();
+			if (peeked != null && peeked.value.equals("(")) {
+				// Optional index
+				tokens.next(); // consume
+				indexExps.add(parseExp(context, tokens, 0, exp));
+				tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
+			} else {
+				indexExps.add(null);
+			}
+
+
+		}
+
+		assert(vals.size() == indexExps.size());
+		String[] namesArray = new String[vals.size()];
+		ExpNode[] indexArray = new ExpNode[indexExps.size()];
+		for (int i = 0; i < namesArray.length; i++) {
+			namesArray[i] = vals.get(i);
+			indexArray[i] = indexExps.get(i);
+		}
+		return new Variable(context, namesArray, indexArray, exp, pos);
+	}
+
 }

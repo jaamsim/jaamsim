@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,7 +130,7 @@ public class TestExpParser {
 	public void testParser() throws ExpError {
 		class EC implements ExpParser.EvalContext {
 			@Override
-			public ExpResult getVariableValue(String[] name) {
+			public ExpResult getVariableValue(String[] name, ExpResult[] indices) {
 				if (name[0].equals("foo")) return new ExpResult(4, DimensionlessUnit.class);
 				if (name[0].equals("bar")) return new ExpResult(3, DimensionlessUnit.class);
 				return new ExpResult(1, DimensionlessUnit.class);
@@ -315,7 +316,16 @@ public class TestExpParser {
 	public void testVariables() throws ExpError {
 		class EC implements ExpParser.EvalContext {
 			@Override
-			public ExpResult getVariableValue(String[] name) {
+			public ExpResult getVariableValue(String[] name, ExpResult[] indices) {
+				if (name.length > 0 && name[0].equals("ind")) {
+					double ret = 0;
+					for (int i = 0; i < indices.length; ++i) {
+						if (indices[i] != null)
+						ret += i * indices[i].value;
+					}
+					return new ExpResult(ret, DimensionlessUnit.class);
+				}
+
 				if (name.length < 1 || !name[0].equals("foo")) return new ExpResult(0, DimensionlessUnit.class);
 
 				if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return new ExpResult(4, DimensionlessUnit.class);
@@ -344,13 +354,21 @@ public class TestExpParser {
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
+		exp = ExpParser.parseExpression(pc, "[ind].stuff(1+4)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 5);
+
+		exp = ExpParser.parseExpression(pc, "[ind].stuff(5).things(42).nothing");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 89);
+
 		exp = ExpParser.parseExpression(pc, "[foo]");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == -1);
 
 		class ThisEC implements ExpParser.EvalContext {
 			@Override
-			public ExpResult getVariableValue(String[] name) {
+			public ExpResult getVariableValue(String[] name, ExpResult[] indices) {
 				if (name[0].equals("this")) return new ExpResult(42, DimensionlessUnit.class);
 
 				return new ExpResult(-1, DimensionlessUnit.class);
@@ -415,7 +433,7 @@ public class TestExpParser {
 
 		class EC implements ExpParser.EvalContext {
 			@Override
-			public ExpResult getVariableValue(String[] name) throws ExpError {
+			public ExpResult getVariableValue(String[] name, ExpResult[] indices) throws ExpError {
 				throw new ExpError(null, 0, "Variables not supported in test");
 			}
 			@Override
@@ -483,7 +501,7 @@ public class TestExpParser {
 
 		class EC implements ExpParser.EvalContext {
 			@Override
-			public ExpResult getVariableValue(String[] name) {
+			public ExpResult getVariableValue(String[] name, ExpResult[] indices) {
 				return new ExpResult(-1, DimensionlessUnit.class);
 			}
 			@Override

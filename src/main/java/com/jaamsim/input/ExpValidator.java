@@ -45,7 +45,7 @@ public class ExpValidator {
 
 	private static class EntityValidateContext implements ExpParser.EvalContext {
 
-		private Entity thisEnt;
+		private final Entity thisEnt;
 		public boolean undecidable = false;
 
 		public EntityValidateContext(Entity thisEnt) {
@@ -53,7 +53,7 @@ public class ExpValidator {
 		}
 
 		@Override
-		public ExpResult getVariableValue(String[] names) throws ExpError {
+		public ExpResult getVariableValue(String[] names, ExpResult[] indices) throws ExpError {
 
 			Entity ent = validateEntity(names, thisEnt);
 

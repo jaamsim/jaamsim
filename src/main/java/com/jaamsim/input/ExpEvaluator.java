@@ -102,8 +102,8 @@ public class ExpEvaluator {
 	private static class EntityEvalContext implements ExpParser.EvalContext {
 
 		// These are updated in updateContext() which must be called before any expression are evaluated
-		private double simTime;
-		private Entity thisEnt;
+		private final double simTime;
+		private final Entity thisEnt;
 
 		public EntityEvalContext(double simTime, Entity thisEnt) {
 			this.simTime = simTime;
@@ -111,7 +111,7 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public ExpResult getVariableValue(String[] names) throws ExpError {
+		public ExpResult getVariableValue(String[] names, ExpResult[] indices) throws ExpError {
 			Entity ent = getEntity(names, simTime, thisEnt);
 
 			String outputName = names[names.length-1];
