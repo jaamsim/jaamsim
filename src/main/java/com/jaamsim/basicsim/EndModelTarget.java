@@ -14,9 +14,7 @@
  */
 package com.jaamsim.basicsim;
 
-import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.input.InputAgent;
 import com.jaamsim.ui.GUIFrame;
 
 class EndModelTarget extends ProcessTarget {
@@ -29,24 +27,10 @@ class EndModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
-		EventManager.current().pause();
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity.getAll().get(i).doEnd();
-		}
-
 		GUIFrame.instance().setClock(Simulation.getEndTime());
+		Simulation.end();
 
-		// Print the output report
-		if (Simulation.getPrintReport())
-			InputAgent.printReport(Simulation.getEndTime());
-
-		InputAgent.logMessage("Made it to do end at");
-		// close warning/error trace file
-		InputAgent.closeLogFile();
-
-		if (Simulation.getExitAtStop() || InputAgent.getBatch())
+		if (Simulation.getExitAtStop())
 			GUIFrame.shutdown(0);
-
-		EventManager.current().pause();
 	}
 }

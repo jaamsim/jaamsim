@@ -458,6 +458,27 @@ public class Simulation extends Entity {
 		evt.resume(evt.secondsToNearestTick(Simulation.getPauseTime()));
 	}
 
+	public static void end() {
+
+		for (int i = 0; i < Entity.getAll().size(); i++) {
+			Entity.getAll().get(i).doEnd();
+		}
+
+		// Print the output report
+		if (printReport.getValue())
+			InputAgent.printReport(Simulation.getInstance().getSimTime());
+
+		// Close warning/error trace file
+		InputAgent.logMessage("Made it to do end at");
+		InputAgent.closeLogFile();
+
+		// Always terminate the run when in batch mode
+		if (InputAgent.getBatch())
+			GUIFrame.shutdown(0);
+
+		EventManager.current().pause();
+	}
+
 	public static int getSubstreamNumber() {
 		return globalSeedInput.getValue();
 	}
