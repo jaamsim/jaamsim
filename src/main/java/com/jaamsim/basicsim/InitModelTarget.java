@@ -55,5 +55,8 @@ public class InitModelTarget extends ProcessTarget {
 		// Schedule the end of the simulation run
 		double endTime = Simulation.getEndTime();
 		EventManager.scheduleSeconds(endTime, 5, false, new EndModelTarget(), null);
+
+		// Start checking the pause condition
+		Simulation.getInstance().doPauseCondition();
 	}
 }

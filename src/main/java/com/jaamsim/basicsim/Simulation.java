@@ -18,6 +18,8 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
+import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.DirInput;
@@ -37,6 +39,7 @@ import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.ObjectSelector;
 import com.jaamsim.ui.OutputBox;
 import com.jaamsim.ui.PropertyBox;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -60,6 +63,15 @@ public class Simulation extends Entity {
 			+ "the InitializationDuration and RunDuration inputs.",
 	         example = "Simulation Initialization { 720 h }")
 	private static final ValueInput initializationTime;
+
+	@Keyword(description = "An optional expression that pauses the run when TRUE is returned.",
+	         example = "Simulation PauseCondition { '[Queue1].QueueLength > 20'}")
+	private static final SampleExpInput pauseConditionInput;
+
+	@Keyword(description = "If TRUE, the simulation run will be terminated when the "
+			+ "PauseCondition expression returns TRUE.",
+	         example = "Simulation ExitAtPauseCondition { TRUE }")
+	private static final BooleanInput exitAtPauseCondition;
 
 	@Keyword(description = "Indicates whether an output report will be printed at the end of the simulation run.",
 	         example = "Simulation PrintReport { TRUE }")
@@ -180,6 +192,11 @@ public class Simulation extends Entity {
 		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
+		pauseConditionInput = new SampleExpInput("PauseCondition", "Key Inputs", null);
+		pauseConditionInput.setUnitType(DimensionlessUnit.class);
+
+		exitAtPauseCondition = new BooleanInput("ExitAtPauseCondition", "Key Inputs", false);
+
 		printReport = new BooleanInput("PrintReport", "Key Inputs", false);
 
 		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
@@ -261,6 +278,8 @@ public class Simulation extends Entity {
 		// Key Inputs tab
 		this.addInput(runDuration);
 		this.addInput(initializationTime);
+		this.addInput(pauseConditionInput);
+		this.addInput(exitAtPauseCondition);
 		this.addInput(printReport);
 		this.addInput(reportDirectory);
 		this.addInput(tickLengthInput);
@@ -556,6 +575,28 @@ public class Simulation extends Entity {
 	public static double getSnapGridSpacing() {
 		return snapGridSpacing.getValue();
 	}
+
+	public static boolean getExitAtPauseCondition() {
+		return exitAtPauseCondition.getValue();
+	}
+
+	public void doPauseCondition() {
+		if (pauseConditionInput != null)
+			EventManager.scheduleUntil(pauseModel, pauseCondition, null);
+	}
+
+	private final PauseModelTarget pauseModel = new PauseModelTarget();
+
+	class PauseConditional extends Conditional {
+		@Override
+		public boolean evaluate() {
+			if (pauseConditionInput.getValue() == null)
+				return false;
+			double simTime = Simulation.getInstance().getSimTime();
+			return pauseConditionInput.getValue().getNextSample(simTime) != 0.0d;
+		}
+	}
+	private final Conditional pauseCondition = new PauseConditional();
 
 	/**
 	 * Returns the nearest point on the snap grid to the given coordinate.
