@@ -73,6 +73,17 @@ public class Simulation extends Entity {
 	         example = "Simulation ExitAtPauseCondition { TRUE }")
 	private static final BooleanInput exitAtPauseCondition;
 
+	@Keyword(description = "Indicates whether to close the program on completion of the simulation run.",
+	         example = "Simulation ExitAtStop { TRUE }")
+	private static final BooleanInput exitAtStop;
+
+	@Keyword(description = "Global seed that sets the substream for each probability distribution. "
+			+ "Must be an integer >= 0. GlobalSubstreamSeed works together with each probability "
+			+ "distribution's RandomSeed keyword to determine its random sequence. It allows the "
+			+ "user to change all the random sequences in a model with a single input.",
+	         example = "Simulation GlobalSubstreamSeed { 5 }")
+	private static final IntegerInput globalSeedInput;
+
 	@Keyword(description = "Indicates whether an output report will be printed at the end of the simulation run.",
 	         example = "Simulation PrintReport { TRUE }")
 	private static final BooleanInput printReport;
@@ -85,17 +96,6 @@ public class Simulation extends Entity {
 	@Keyword(description = "The length of time represented by one simulation tick.",
 	         example = "Simulation TickLength { 1e-6 s }")
 	private static final ValueInput tickLengthInput;
-
-	@Keyword(description = "Indicates whether to close the program on completion of the simulation run.",
-	         example = "Simulation ExitAtStop { TRUE }")
-	private static final BooleanInput exitAtStop;
-
-	@Keyword(description = "Global seed that sets the substream for each probability distribution. "
-			+ "Must be an integer >= 0. GlobalSubstreamSeed works together with each probability "
-			+ "distribution's RandomSeed keyword to determine its random sequence. It allows the "
-			+ "user to change all the random sequences in a model with a single input.",
-	         example = "Simulation GlobalSubstreamSeed { 5 }")
-	private static final IntegerInput globalSeedInput;
 
 	// GUI tab
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
@@ -197,6 +197,11 @@ public class Simulation extends Entity {
 
 		exitAtPauseCondition = new BooleanInput("ExitAtPauseCondition", "Key Inputs", false);
 
+		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
+
+		globalSeedInput = new IntegerInput("GlobalSubstreamSeed", "Key Inputs", 0);
+		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
+
 		printReport = new BooleanInput("PrintReport", "Key Inputs", false);
 
 		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
@@ -205,11 +210,6 @@ public class Simulation extends Entity {
 		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
 		tickLengthInput.setValidRange(1e-9d, 5.0d);
-
-		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
-
-		globalSeedInput = new IntegerInput("GlobalSubstreamSeed", "Key Inputs", 0);
-		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
 
 		// GUI tab
 		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", "GUI", null);
@@ -280,11 +280,11 @@ public class Simulation extends Entity {
 		this.addInput(initializationTime);
 		this.addInput(pauseConditionInput);
 		this.addInput(exitAtPauseCondition);
+		this.addInput(exitAtStop);
+		this.addInput(globalSeedInput);
 		this.addInput(printReport);
 		this.addInput(reportDirectory);
 		this.addInput(tickLengthInput);
-		this.addInput(exitAtStop);
-		this.addInput(globalSeedInput);
 
 		// GUI tab
 		this.addInput(displayedUnits);
