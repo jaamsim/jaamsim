@@ -121,8 +121,6 @@ public class StateEntity extends DisplayEntity {
 		// Loop through the states
 		for (StateRecord st : this.getStateRecs()) {
 			long ticks = this.getTicksInState(st);
-			if (ticks == 0)
-				continue;
 
 			double hours = ticks / Simulation.getSimTimeFactor();
 			file.format("%s\tStateTime[%s, h]\t%f\n", this.getName(), st.name, hours);
