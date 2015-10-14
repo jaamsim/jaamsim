@@ -14,15 +14,36 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
+import com.jaamsim.input.Keyword;
+import com.jaamsim.input.StringListInput;
 import com.jaamsim.states.StateEntity;
 
 public class SimEntity extends StateEntity {
 
+	@Keyword(description = "A list of states that will always appear in the output report, "
+			+ "even if no time is recorded for this state.",
+	         exampleList = "Idle Working")
+	protected final StringListInput defaultStateList;
+
 	{
 		attributeDefinitionList.setHidden(false);
+
+		defaultStateList = new StringListInput("DefaultStateList", "Key Inputs", new ArrayList<String>());
+		this.addInput(defaultStateList);
 	}
 
 	public SimEntity() {}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		for (String state : defaultStateList.getValue()) {
+			this.addState(state);
+		}
+	}
 
 	@Override
 	public String getInitialState() {

@@ -313,6 +313,17 @@ public class StateEntity extends DisplayEntity {
 		return presentState.name;
 	}
 
+	public void addState(String str) {
+		if (states.get(str) != null)
+			return;
+		if (!isValidState(str))
+			error("Specified state: %s is not valid", str);
+
+		String state = str.intern();
+		StateRecord stateRec = new StateRecord(state, isValidWorkingState(state));
+		states.put(stateRec.name, stateRec);
+	}
+
 	public StateRecord getState(String state) {
 		return states.get(state);
 	}
