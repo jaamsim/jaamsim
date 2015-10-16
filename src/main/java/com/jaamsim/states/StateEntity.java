@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
@@ -430,6 +431,22 @@ public class StateEntity extends DisplayEntity {
 		long simTicks = FrameBox.secondsToTicks(simTime);
 		long ticks = getWorkingTicks(simTicks);
 		return FrameBox.ticksToSeconds(ticks);
+	}
+
+	@Output(name = "StateTimes",
+	 description = "The total time recorded for each state after the completion of "
+	             + "the initialisation period.",
+	    unitType = TimeUnit.class,
+	  reportable = true)
+	public LinkedHashMap<String, Double> getStateTimes(double simTime) {
+		long simTicks = FrameBox.secondsToTicks(simTime);
+		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(states.size());
+		for (StateRecord stateRec : this.getStateRecs()) {
+			long ticks = getTicksInState(simTicks, stateRec);
+			Double t = FrameBox.ticksToSeconds(ticks);
+			ret.put(stateRec.name, t);
+		}
+		return ret;
 	}
 
 }
