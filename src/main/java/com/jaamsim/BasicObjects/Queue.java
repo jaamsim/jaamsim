@@ -537,7 +537,9 @@ public class Queue extends LinkedComponent {
 		maxElements = itemSet.size();
 		elementSeconds = 0.0;
 		squaredElementSeconds = 0.0;
-		queueLengthDist.clear();
+		for (int i=0; i<queueLengthDist.size(); i++) {
+			queueLengthDist.set(i, 0.0d);
+		}
 	}
 
 	private void updateStatistics(int oldValue, int newValue) {
