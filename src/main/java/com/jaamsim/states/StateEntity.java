@@ -28,7 +28,9 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringKeyInput;
+import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.TimeUnit;
 
 public class StateEntity extends DisplayEntity {
 
@@ -301,16 +303,6 @@ public class StateEntity extends DisplayEntity {
 		}
 	}
 
-	@Output(name = "State",
-	        description = "The present model state of the object",
-	        unitType = DimensionlessUnit.class)
-	public String getPresentState(double time) {
-		if (presentState == null) {
-			return "";
-		}
-		return presentState.name;
-	}
-
 	public void addState(String str) {
 		if (states.get(str) != null)
 			return;
@@ -396,10 +388,10 @@ public class StateEntity extends DisplayEntity {
 		return state.completedCycleTicks;
 	}
 
-	public long getWorkingTicks() {
+	private long getWorkingTicks(long simTicks) {
 		long ticks = workingTicks;
 		if (presentState.working)
-			ticks += (getSimTicks() - lastStateCollectionTick);
+			ticks += (simTicks - lastStateCollectionTick);
 
 		return ticks;
 	}
@@ -408,9 +400,36 @@ public class StateEntity extends DisplayEntity {
 	 * Returns the number of hours the entity is in use.
 	 */
 	public double getWorkingHours() {
-		return getWorkingTicks() / Simulation.getSimTimeFactor();
+		return getWorkingTicks(getSimTicks()) / Simulation.getSimTimeFactor();
 	}
 
 	public void setPresentState() {}
+
+	@Output(name = "State",
+	 description = "The present state for the object.",
+	    unitType = DimensionlessUnit.class)
+	public String getPresentState(double simTime) {
+		if (presentState == null) {
+			return "";
+		}
+		return presentState.name;
+	}
+
+	@Output(name = "WorkingState",
+	 description = "Returns TRUE if the present state is one of the working states.")
+	public boolean isWorking(double simTime) {
+		return presentState.working;
+	}
+
+	@Output(name = "WorkingTime",
+	 description = "The total time recorded for the working states, including the "
+	             + "initialisation period. Breakdown events can be triggered by elapsed "
+	             + "working time instead of calendar time.",
+	    unitType = TimeUnit.class)
+	public double getWorkingTime(double simTime) {
+		long simTicks = FrameBox.secondsToTicks(simTime);
+		long ticks = getWorkingTicks(simTicks);
+		return FrameBox.ticksToSeconds(ticks);
+	}
 
 }
