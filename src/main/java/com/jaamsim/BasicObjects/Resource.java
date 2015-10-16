@@ -26,6 +26,7 @@ import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.units.TimeUnit;
 
 public class Resource extends DisplayEntity {
 
@@ -271,25 +272,16 @@ public class Resource extends DisplayEntity {
 		return maxUnitsInUse;
 	}
 
-	@Output(name = "UnitsInUseDistribution",
-	 description = "The fraction of time that the number of resource units in use was 0, 1, 2, etc.",
-	    unitType = DimensionlessUnit.class,
+	@Output(name = "UnitsInUseTimes",
+	 description = "The total time that the number of resource units in use was 0, 1, 2, etc.",
+	    unitType = TimeUnit.class,
 	  reportable = true)
 	public DoubleVector getUnitsInUseDistribution(double simTime) {
 		DoubleVector ret = new DoubleVector(unitsInUseDist);
 		double dt = simTime - timeOfLastUpdate;
-		double totalTime = simTime - startOfStatisticsCollection;
-		if( totalTime > 0.0 ) {
-			if( ret.size() == 0 )
-				ret.add(0.0);
-			ret.addAt(dt, unitsInUse);  // adds dt to the entry at index unitsInUse
-			for( int i=0; i<ret.size(); i++ ) {
-				ret.set(i, ret.get(i)/totalTime);
-			}
-		}
-		else {
-			ret.clear();
-		}
+		if(ret.size() == 0)
+			ret.add(0.0);
+		ret.addAt(dt, unitsInUse);  // adds dt to the entry at index unitsInUse
 		return ret;
 	}
 
