@@ -17,6 +17,7 @@ package com.jaamsim.ui;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -24,6 +25,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -170,24 +172,81 @@ private class OutputTableModel extends AbstractTableModel {
 			if (entry instanceof Class)
 				return "";
 			try {
-				OutputHandle o = (OutputHandle)entry;
-				if (o.isNumericValue()) {
-					double d = o.getValueAsDouble(simTime, Double.NaN);
-					Class<? extends Unit> ut = o.getUnitType();
-					if (ut == Unit.class || ut == DimensionlessUnit.class) {
-						return String.format("%g", d);
-					}
-					else {
-						return String.format("%g  %s",
-								d/Unit.getDisplayedUnitFactor(ut), Unit.getDisplayedUnit(ut));
-					}
+				StringBuilder sb = new StringBuilder();
+				String str;
+
+				// Determine the preferred unit
+				OutputHandle out = (OutputHandle)entry;
+				Class<? extends Unit> ut = out.getUnitType();
+				double factor = Unit.getDisplayedUnitFactor(ut);
+				String unitString = Unit.getDisplayedUnit(ut);
+
+				// Numeric outputs
+				if (out.isNumericValue()) {
+					double val = out.getValueAsDouble(simTime, Double.NaN);
+					str = String.format("%g", val/factor);
+					sb.append(str);
 				}
 
-				String s = o.getValue(simTime, o.getReturnType()).toString();
-				if (o.getUnitType() == Unit.class )
-					return s;
-				else
-					return s + "  " + Unit.getSIUnit(o.getUnitType());
+				// DoubleVector output
+				else if (out.getReturnType() == DoubleVector.class) {
+					sb.append("{");
+					DoubleVector vec = out.getValue(simTime, DoubleVector.class);
+					for (int i=0; i<vec.size(); i++) {
+						str = String.format("%g, ", vec.get(i));
+						sb.append(str);
+					}
+					sb.replace(sb.length()-2, sb.length()-1, "}");
+				}
+
+				// ArrayList output
+				else if (out.getReturnType() == ArrayList.class) {
+					sb.append("{");
+					ArrayList<Object> array = out.getValue(simTime, ArrayList.class);
+					for (int i=0; i<array.size(); i++) {
+						Object obj = array.get(i);
+						if (obj instanceof Double) {
+							double val = (Double)obj;
+							str = String.format("%g, ", val/factor);
+						}
+						else {
+							str = String.format("%s, ", obj);
+						}
+						sb.append(str);
+					}
+					sb.replace(sb.length()-2, sb.length()-1, "}");
+				}
+
+				// Keyed outputs
+				else if (out.getReturnType() == LinkedHashMap.class) {
+					sb.append("{");
+					LinkedHashMap<Object, Object> map = out.getValue(simTime, LinkedHashMap.class);
+					for (Object key : map.keySet()) {
+						Object obj = map.get(key);
+						if (obj instanceof Double) {
+							double val = (Double)obj;
+							str = String.format("%s=%g, ", key, val/factor);
+						}
+						else {
+							str = String.format("%s=%s, ", key, obj);
+						}
+						sb.append(str);
+					}
+					sb.replace(sb.length()-2, sb.length()-1, "}");
+				}
+
+				// All other outputs
+				else {
+					str = out.getValue(simTime, out.getReturnType()).toString();
+					sb.append(str);
+					unitString = Unit.getSIUnit(ut);  // other outputs are not converted to preferred units
+				}
+
+				// Append the appropriate unit
+				if (ut != Unit.class && ut != DimensionlessUnit.class)
+					sb.append("  ").append(unitString);
+
+				return sb.toString();
 			}
 			catch (Throwable e) {
 				return "";
