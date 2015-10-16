@@ -660,26 +660,17 @@ public class Queue extends LinkedComponent {
 		return maxElements;
 	}
 
-	@Output(name = "QueueLengthDistribution",
-	 description = "The fraction of time that the queue has length 0, 1, 2, etc.",
-	    unitType = DimensionlessUnit.class,
+	@Output(name = "QueueLengthTimes",
+	 description = "The total time that the queue has length 0, 1, 2, etc.",
+	    unitType = TimeUnit.class,
 	  reportable = true)
 	public DoubleVector getQueueLengthDistribution(double simTime) {
 		DoubleVector ret = new DoubleVector(queueLengthDist);
 		double dt = simTime - timeOfLastUpdate;
 		int queueSize = itemSet.size();
-		double totalTime = simTime - startOfStatisticsCollection;
-		if (totalTime > 0.0) {
-			if (ret.size() == 0)
-				ret.add(0.0);
-			ret.addAt(dt, queueSize);  // adds dt to the entry at index queueSize
-			for (int i = 0; i < ret.size(); i++) {
-				ret.set(i, ret.get(i)/totalTime);
-			}
-		}
-		else {
-			ret.clear();
-		}
+		if (ret.size() == 0)
+			ret.add(0.0);
+		ret.addAt(dt, queueSize);
 		return ret;
 	}
 
