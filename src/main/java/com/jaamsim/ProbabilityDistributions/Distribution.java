@@ -171,8 +171,10 @@ implements SampleProvider {
 	 * Returns the next sample from the probability distribution.
 	 */
 	@Output(name = "Value",
-	        description = "The last sampled value in the distribution.",
-	        unitType = UserSpecifiedUnit.class)
+	 description = "The last value sampled from the distribution. When used in an "
+	             + "expression, this output returns a new sample every time the expression "
+	             + "is evaluated.",
+	    unitType = UserSpecifiedUnit.class)
 	@Override
 	public final double getNextSample(double simTime) {
 		// If we are not in a model context, do not perturb the distribution by sampling,
