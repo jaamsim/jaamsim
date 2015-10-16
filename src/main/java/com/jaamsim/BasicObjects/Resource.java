@@ -171,7 +171,9 @@ public class Resource extends DisplayEntity {
 		squaredUnitSeconds = 0.0;
 		unitsSeized = 0;
 		unitsReleased = 0;
-		unitsInUseDist.clear();
+		for (int i=0; i<unitsInUseDist.size(); i++) {
+			unitsInUseDist.set(i, 0.0d);
+		}
 	}
 
 	public void updateStatistics( int oldValue, int newValue) {
