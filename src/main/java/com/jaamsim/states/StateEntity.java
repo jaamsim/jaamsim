@@ -114,30 +114,6 @@ public class StateEntity extends DisplayEntity {
 		return stateListeners;
 	}
 
-	@Override
-	public void printReport(FileEntity file, double simTime) {
-		super.printReport(file, simTime);
-
-		long totalTicks = 0;
-		long workingTicks = 0;
-
-		// Loop through the states
-		for (StateRecord st : this.getStateRecs()) {
-			long ticks = this.getTicksInState(st);
-
-			double hours = ticks / Simulation.getSimTimeFactor();
-			file.format("%s\tStateTime[%s, h]\t%f\n", this.getName(), st.name, hours);
-
-			totalTicks += ticks;
-			if (st.working)
-				workingTicks += ticks;
-		}
-
-		file.format("%s\tStateTime[%s, h]\t%f\n", this.getName(), "TotalTime", totalTicks / Simulation.getSimTimeFactor());
-		file.format("%s\tStateTime[%s, h]\t%f\n", this.getName(), "WorkingTime", workingTicks / Simulation.getSimTimeFactor());
-		file.format("%n");
-	}
-
 	/**
 	 * Get the name of the initial state this Entity will be initialized with.
 	 * @return
