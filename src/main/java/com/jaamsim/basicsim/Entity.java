@@ -16,8 +16,10 @@ package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
@@ -720,6 +722,9 @@ public class Entity {
 		return false;
 	}
 
+	private static final String OUTPUT_FORMAT = "%s\t%s\t%s\t%s%n";
+	private static final String LIST_OUTPUT_FORMAT = "%s\t%s[%s]\t%s\t%s%n";
+
 	/**
 	 * Writes the entry in the output report for this entity.
 	 * @param file - the file in which the outputs are written
@@ -728,42 +733,80 @@ public class Entity {
 	public void printReport(FileEntity file, double simTime) {
 
 		// Loop through the outputs
-		boolean linePrinted = false;
 		ArrayList<OutputHandle> handles = OutputHandle.getOutputHandleList(this);
-		for (OutputHandle o : handles) {
+		for (OutputHandle out : handles) {
 
 			// Should this output appear in the report?
-			if (!o.isReportable())
+			if (!out.isReportable())
 				continue;
 
-			// Is there a preferred unit in which to display the output?
-			Class<? extends Unit> ut = o.getUnitType();
-			String unitString = Unit.getDisplayedUnit(ut);
+			// Determine the preferred unit for this output
+			Class<? extends Unit> ut = out.getUnitType();
 			double factor = Unit.getDisplayedUnitFactor(ut);
+			String unitString = Unit.getDisplayedUnit(ut);
+			if (ut == Unit.class || ut == DimensionlessUnit.class)
+				unitString = "-";
 
-			// Is the output a number?
-			String s;
-			if (o.isNumericValue())
-				s = String.valueOf(o.getValueAsDouble(simTime, Double.NaN)/factor);
-			else {
-				unitString = Unit.getSIUnit(ut);  // lists of doubles are not converted to preferred units yet
-				s = o.getValue(simTime, o.getReturnType()).toString();
+			// Numerical output
+			if (out.isNumericValue()) {
+				double val = out.getValueAsDouble(simTime, Double.NaN)/factor;
+				file.format(OUTPUT_FORMAT,
+						this.getName(), out.getName(), val, unitString);
 			}
 
-			// Does the output require a unit to be shown?
-			linePrinted = true;
-			if (ut == Unit.class || ut == DimensionlessUnit.class) {
-				file.format("%s\tOutput[%s]\t%s%n",
-						this.getName(), o.getName(), s);
+			// DoubleVector output
+			else if (out.getReturnType() == DoubleVector.class) {
+				DoubleVector vec = out.getValue(simTime, DoubleVector.class);
+				for (int i=0; i<vec.size(); i++) {
+					double val = vec.get(i);
+					file.format(LIST_OUTPUT_FORMAT,
+							this.getName(), out.getName(), i, val/factor, unitString);
+				}
 			}
+
+			// ArrayList output
+			else if (out.getReturnType() == ArrayList.class) {
+				ArrayList<Object> array = out.getValue(simTime, ArrayList.class);
+				for (int i=0; i<array.size(); i++) {
+					Object obj = array.get(i);
+					if (obj instanceof Double) {
+						double val = (Double)obj;
+						file.format(LIST_OUTPUT_FORMAT,
+								this.getName(), out.getName(), i, val/factor, unitString);
+					}
+					else {
+						file.format(LIST_OUTPUT_FORMAT,
+							this.getName(), out.getName(), i, obj, unitString);
+					}
+				}
+			}
+
+			// Keyed output
+			else if (out.getReturnType() == LinkedHashMap.class) {
+				LinkedHashMap<Object, Object> map = out.getValue(simTime, LinkedHashMap.class);
+				for (Object key : map.keySet()) {
+					Object obj = map.get(key);
+					if (obj instanceof Double) {
+						double val = (Double)obj;
+						file.format(LIST_OUTPUT_FORMAT,
+								this.getName(), out.getName(), key, val/factor, unitString);
+					}
+					else {
+						file.format(LIST_OUTPUT_FORMAT,
+								this.getName(), out.getName(), key, obj, unitString);
+					}
+				}
+			}
+
+			// All other outputs
 			else {
-				file.format("%s\tOutput[%s, %s]\t%s%n",
-						this.getName(), o.getName(), unitString, s);
+				if (ut != Unit.class && ut != DimensionlessUnit.class)
+					unitString = Unit.getSIUnit(ut);  // other outputs are not converted to preferred units
+				String str = out.getValue(simTime, out.getReturnType()).toString();
+				file.format(OUTPUT_FORMAT,
+						this.getName(), out.getName(), str, unitString);
 			}
 		}
-
-		if (linePrinted)
-			file.format("%n");
 	}
 
 	@Output(name = "Name",
