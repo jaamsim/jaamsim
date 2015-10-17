@@ -152,7 +152,8 @@ public abstract class LinkedComponent extends StateEntity {
 	// ******************************************************************************************************
 
 	@Output(name = "obj",
-	 description = "The entity that was received most recently.")
+	 description = "The entity that was received most recently.",
+	    sequence = 0)
 	public DisplayEntity getReceivedEntity(double simTime) {
 		return receivedEntity;
 	}
@@ -160,7 +161,8 @@ public abstract class LinkedComponent extends StateEntity {
 	@Output(name = "NumberAdded",
 	 description = "The number of entities received from upstream.",
 	    unitType = DimensionlessUnit.class,
-	  reportable = true)
+	  reportable = true,
+	    sequence = 1)
 	public Double getNumberAdded(double simTime) {
 		return (double)numberAdded;
 	}
@@ -168,7 +170,8 @@ public abstract class LinkedComponent extends StateEntity {
 	@Output(name = "NumberProcessed",
 	 description = "The number of entities processed by this component.",
 	    unitType = DimensionlessUnit.class,
-	  reportable = true)
+	  reportable = true,
+	    sequence = 2)
 	public Double getNumberProcessed(double simTime) {
 		return (double)numberProcessed;
 	}
@@ -176,14 +179,15 @@ public abstract class LinkedComponent extends StateEntity {
 	@Output(name = "ProcessingRate",
 	 description = "The number of entities processed per unit time by this component.",
 	    unitType = RateUnit.class,
-	  reportable = true)
+	    sequence = 3)
 	public Double getProcessingRate( double simTime) {
 		return numberProcessed/simTime;
 	}
 
 	@Output(name = "ReleaseTime",
 	 description = "The time at which the last entity was released.",
-	    unitType = TimeUnit.class)
+	    unitType = TimeUnit.class,
+	    sequence = 4)
 	public Double getReleaseTime(double simTime) {
 		return releaseTime;
 	}
