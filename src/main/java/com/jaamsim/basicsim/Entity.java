@@ -809,12 +809,6 @@ public class Entity {
 		}
 	}
 
-	@Output(name = "Name",
-	        description="The unique input name for this entity.")
-	public String getNameOutput(double simTime) {
-		return entityName;
-	}
-
 	/**
 	 * Returns true if there are any outputs that will be printed to the output report.
 	 */
@@ -824,13 +818,6 @@ public class Entity {
 
 	public String getDescription() {
 		return desc.getValue();
-	}
-
-	@Output(name = "SimTime",
-	        description = "The present simulation time.",
-	        unitType = TimeUnit.class)
-	public double getSimTime(double simTime) {
-		return simTime;
 	}
 
 	private void addAttribute(String name, AttributeHandle h) {
@@ -872,10 +859,26 @@ public class Entity {
 		return ObjectType.getObjectTypeForClass(this.getClass());
 	}
 
+	@Output(name = "Name",
+	 description = "The unique input name for this entity.",
+	    sequence = 0)
+	public String getNameOutput(double simTime) {
+		return entityName;
+	}
+
 	@Output(name = "ObjectType",
-			description = "The class of objects that this entity belongs to.")
+	 description = "The class of objects that this entity belongs to.",
+	    sequence = 1)
 	public String getObjectTypeName(double simTime) {
 		return this.getObjectType().getName();
+	}
+
+	@Output(name = "SimTime",
+	 description = "The present simulation time.",
+	    unitType = TimeUnit.class,
+	    sequence = 2)
+	public double getSimTime(double simTime) {
+		return simTime;
 	}
 
 }
