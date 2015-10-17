@@ -223,14 +223,16 @@ public class Threshold extends StateEntity {
 
 	@Output(name = "Open",
 	 description = "If open, then return TRUE.  Otherwise, return FALSE.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	    sequence = 0)
 	public Boolean getOpen(double simTime) {
 		return open;
 	}
 
 	@Output(name = "OpenFraction",
 	 description = "The fraction of total simulation time that the threshold is open.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	    sequence = 1)
 	public double getOpenFraction(double simTime) {
 		long simTicks = FrameBox.secondsToTicks(simTime);
 		long openTicks = this.getTicksInState(simTicks, getState("Open"));
@@ -242,7 +244,8 @@ public class Threshold extends StateEntity {
 
 	@Output(name = "ClosedFraction",
 	 description = "The fraction of total simulation time that the threshold is closed.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	    sequence = 2)
 	public double getClosedFraction(double simTime) {
 		long simTicks = FrameBox.secondsToTicks(simTime);
 		long openTicks = this.getTicksInState(simTicks, getState("Open"));
