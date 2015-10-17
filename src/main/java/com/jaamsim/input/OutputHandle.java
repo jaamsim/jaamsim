@@ -74,6 +74,7 @@ public class OutputHandle {
 		public final String desc;
 		public final boolean reportable;
 		public final Class<? extends Unit> unitType;
+		public final int sequence;
 
 		public OutputStaticInfo(Method m, Output a) {
 			method = m;
@@ -81,6 +82,7 @@ public class OutputHandle {
 			reportable = a.reportable();
 			name = a.name().intern();
 			unitType = a.unitType();
+			sequence = a.sequence();
 		}
 	}
 
@@ -165,8 +167,14 @@ public class OutputHandle {
 			Class<?> class0 = hand0.getDeclaringClass();
 			Class<?> class1 = hand1.getDeclaringClass();
 
-			if (class0 == class1)
-				return 0;
+			if (class0 == class1) {
+				if (hand0.getSequence() == hand1.getSequence())
+					return 0;
+				else if (hand0.getSequence() < hand1.getSequence())
+					return -1;
+				else
+					return 1;
+			}
 
 			if (class0.isAssignableFrom(class1))
 				return -1;
@@ -339,6 +347,10 @@ public class OutputHandle {
 
 	public boolean isReportable() {
 		return outputInfo.reportable;
+	}
+
+	public int getSequence() {
+		return outputInfo.sequence;
 	}
 
 	// Lookup an outputs return type from the class and output name only

@@ -29,4 +29,5 @@ public @interface Output {
 	public String description() default "";
 	public Class<? extends Unit> unitType() default Unit.class;
 	public boolean reportable() default false;
+	public int sequence() default 100;  // determines the sequence in which outputs are listed
 }
