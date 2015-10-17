@@ -199,43 +199,49 @@ public class FluidComponent extends DisplayEntity {
 
 	@Output(name = "FlowArea",
 	 description = "The cross-sectional area of the component.",
-	    unitType = AreaUnit.class)
-	public double getFlowArea( double simTime ) {
+	    unitType = AreaUnit.class,
+	    sequence = 0)
+	public double getFlowArea(double simTime) {
 		return flowArea;
 	}
 
 	@Output(name = "Velocity",
 	 description = "The velocity of the fluid within the component.",
-	    unitType = SpeedUnit.class)
-	public double getVelocity( double simTime ) {
+	    unitType = SpeedUnit.class,
+	    sequence = 1)
+	public double getVelocity(double simTime) {
 		return velocity;
 	}
 
 	@Output(name = "ReynoldsNumber",
 	 description = "The Reynolds Number for the fluid within the component.  Equal to (velocity)(diameter)/(kinematic viscosity).",
-	    unitType = DimensionlessUnit.class)
-	public double getReynoldsNumber( double simTime ) {
+	    unitType = DimensionlessUnit.class,
+	    sequence = 2)
+	public double getReynoldsNumber(double simTime) {
 		return this.getReynoldsNumber();
 	}
 
 	@Output(name = "DynamicPressure",
 	 description = "The dynamic pressure of the fluid flow.  Equal to (0.5)(density)(velocity^2).",
-	    unitType = PressureUnit.class)
-	public double getDynamicPressure( double simTime ) {
+	    unitType = PressureUnit.class,
+	    sequence = 3)
+	public double getDynamicPressure(double simTime) {
 		return this.getDynamicPressure();
 	}
 
 	@Output(name = "InletPressure",
 	 description = "The static pressure at the component's inlet.",
-	    unitType = PressureUnit.class)
-	public double getInletPressure( double simTime ) {
+	    unitType = PressureUnit.class,
+	    sequence = 4)
+	public double getInletPressure(double simTime) {
 		return inletPressure;
 	}
 
 	@Output(name = "OutletPressure",
 	 description = "The static pressure at the component's outlet.",
-	    unitType = PressureUnit.class)
-	public double getOutletPressure( double simTime ) {
+	    unitType = PressureUnit.class,
+	    sequence = 5)
+	public double getOutletPressure(double simTime) {
 		return outletPressure;
 	}
 }
