@@ -237,13 +237,16 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	// ******************************************************************************************************
 
 	@Output(name = "MatchValue",
-	 description = "The present value to be matched in the queue.")
+	 description = "The present value to be matched in the queue.",
+	    sequence = 0)
 	public Integer getMatchValue(double simTime) {
 		return matchValue;
 	}
 
 	@Output(name = "Open",
-	 description = "Returns TRUE if all the thresholds specified by the OperatingThresholdList keyword are open.")
+	 description = "Returns TRUE if all the thresholds specified by the OperatingThresholdList "
+	             + "keyword are open.",
+	    sequence = 1)
 	public boolean getOpen(double simTime) {
 		for (Threshold thr : operatingThresholdList.getValue()) {
 			if (!thr.getOpen(simTime))
@@ -253,7 +256,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	}
 
 	@Output(name = "Working",
-	 description = "Returns TRUE if entities are being processed.")
+	 description = "Returns TRUE if entities are being processed.",
+	    sequence = 2)
 	public boolean isBusy(double simTime) {
 		return isBusy();
 	}
