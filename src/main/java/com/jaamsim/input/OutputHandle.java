@@ -175,6 +175,21 @@ public class OutputHandle {
 		}
 	}
 
+	/**
+	 * Returns true if any of the outputs for the specified class will be printed to the
+	 * output report.
+	 * @param klass - class whose outputs are to be checked.
+	 * @return true if any of the outputs are reportable.
+	 */
+	public static boolean isReportable(Class<? extends Entity> klass) {
+		ArrayList<OutputStaticInfo> list = getOutputInfoImp(klass);
+		for( OutputStaticInfo p : list ) {
+			if (p.reportable)
+				return true;
+		}
+		return false;
+	}
+
 	@SuppressWarnings("unchecked") // This suppresses the warning on the cast, which is effectively checked
 	public <T> T getValue(double simTime, Class<T> klass) {
 		if( outputInfo.method == null )

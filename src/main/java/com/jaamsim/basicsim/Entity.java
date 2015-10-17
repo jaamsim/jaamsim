@@ -761,6 +761,7 @@ public class Entity {
 						this.getName(), o.getName(), unitString, s);
 			}
 		}
+
 		if (linePrinted)
 			file.format("%n");
 	}
@@ -769,6 +770,13 @@ public class Entity {
 	        description="The unique input name for this entity.")
 	public String getNameOutput(double simTime) {
 		return entityName;
+	}
+
+	/**
+	 * Returns true if there are any outputs that will be printed to the output report.
+	 */
+	public boolean isReportable() {
+		return OutputHandle.isReportable(getClass());
 	}
 
 	public String getDescription() {
