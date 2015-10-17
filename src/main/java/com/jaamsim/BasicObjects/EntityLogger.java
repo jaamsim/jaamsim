@@ -16,6 +16,7 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.FileEntity;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.TimeUnit;
@@ -59,8 +60,9 @@ public class EntityLogger extends LinkedComponent {
 		logTime = this.getSimTime();
 		ent.printReport(file, logTime);
 
-		// Empty the output buffer
-		file.flush();
+		// If running in real time mode, empty the file buffer after each entity is logged
+		if (!InputAgent.getBatch() && Simulation.isRealTime())
+			file.flush();
 
 		// Send the entity to the next element in the chain
 		this.sendToNextComponent(ent);

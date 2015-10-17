@@ -656,6 +656,10 @@ public class Simulation extends Entity {
 		return printInputReport.getValue();
 	}
 
+	public static boolean isRealTime() {
+		return realTime.getValue();
+	}
+
 	public static void setWindowVisible(JFrame f, boolean visible) {
 		f.setVisible(visible);
 		if (visible)
