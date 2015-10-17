@@ -174,7 +174,8 @@ implements SampleProvider {
 	 description = "The last value sampled from the distribution. When used in an "
 	             + "expression, this output returns a new sample every time the expression "
 	             + "is evaluated.",
-	    unitType = UserSpecifiedUnit.class)
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 0)
 	@Override
 	public final double getNextSample(double simTime) {
 		// If we are not in a model context, do not perturb the distribution by sampling,
@@ -222,56 +223,66 @@ implements SampleProvider {
 	 */
 	protected abstract double getStandardDeviation();
 
-	@Output( name="CalculatedMean",
-			 description="The mean of the probability distribution calculated directly from the inputs.  " +
-					"It is NOT the mean of the sampled values.  The inputs for MinValue and MaxValue are ignored.",
-			 unitType=UserSpecifiedUnit.class)
+	@Output(name = "CalculatedMean",
+	 description = "The mean of the probability distribution calculated directly from the inputs. "
+	             + "It is NOT the mean of the sampled values. "
+	             + "The inputs for MinValue and MaxValue are ignored.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 1)
 	@Override
-	public double getMeanValue( double simTime ) {
+	public double getMeanValue(double simTime) {
 		return this.getMeanValue();
 	}
 
-	@Output( name="CalculatedStandardDeviation",
-			 description="The standard deviation of the probability distribution calculated directly from the inputs.  " +
-					"It is NOT the standard deviation of the sampled values.  The inputs for MinValue and MaxValue are ignored.",
-			 unitType=UserSpecifiedUnit.class)
-	public double getStandardDeviation( double simTime ) {
+	@Output(name = "CalculatedStandardDeviation",
+	 description = "The standard deviation of the probability distribution calculated directly "
+	             + "from the inputs. It is NOT the standard deviation of the sampled values. "
+	             + "The inputs for MinValue and MaxValue are ignored.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 2)
+	public double getStandardDeviation(double simTime) {
 		return this.getStandardDeviation();
 	}
 
-	@Output( name="NumberOfSamples",
-			 description="The number of times the probability distribution has been sampled.",
-			 unitType=DimensionlessUnit.class)
-	public int getNumberOfSamples( double simTime ) {
+	@Output(name = "NumberOfSamples",
+	 description = "The number of times the probability distribution has been sampled.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 3)
+	public int getNumberOfSamples(double simTime) {
 		return sampleCount;
 	}
 
-	@Output( name="SampleMean",
-			 description="The mean of the values sampled from the probability distribution.",
-			 unitType=UserSpecifiedUnit.class)
-	public double getSampleMean( double simTime ) {
+	@Output(name = "SampleMean",
+	 description = "The mean of the values sampled from the probability distribution.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 4)
+	public double getSampleMean(double simTime) {
 		return sampleSum / sampleCount;
 	}
 
-	@Output( name="SampleStandardDeviation",
-			 description="The standard deviation of the values sampled from the probability distribution.",
-			 unitType=UserSpecifiedUnit.class)
-	public double getSampleStandardDeviation( double simTime ) {
+	@Output(name = "SampleStandardDeviation",
+	 description = "The standard deviation of the values sampled from the probability "
+	             + "distribution.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 5)
+	public double getSampleStandardDeviation(double simTime) {
 		double sampleMean = sampleSum / sampleCount;
 		return Math.sqrt( sampleSquaredSum/sampleCount - sampleMean*sampleMean );
 	}
 
-	@Output( name="SampleMin",
-			 description="The minimum of the values sampled from the probability distribution.",
-			 unitType=UserSpecifiedUnit.class)
-	public double getSampleMin( double simTime ) {
+	@Output(name = "SampleMin",
+	 description = "The minimum of the values sampled from the probability distribution.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 6)
+	public double getSampleMin(double simTime) {
 		return sampleMin;
 	}
 
-	@Output( name="SampleMax",
-			 description="The maximum of the values sampled from the probability distribution.",
-			 unitType=UserSpecifiedUnit.class)
-	public double getSampleMax( double simTime ) {
+	@Output(name = "SampleMax",
+	 description = "The maximum of the values sampled from the probability distribution.",
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 7)
+	public double getSampleMax(double simTime) {
 		return sampleMax;
 	}
 }
