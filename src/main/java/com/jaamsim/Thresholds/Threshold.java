@@ -232,6 +232,7 @@ public class Threshold extends StateEntity {
 	@Output(name = "OpenFraction",
 	 description = "The fraction of total simulation time that the threshold is open.",
 	    unitType = DimensionlessUnit.class,
+	  reportable = true,
 	    sequence = 1)
 	public double getOpenFraction(double simTime) {
 		long simTicks = FrameBox.secondsToTicks(simTime);
