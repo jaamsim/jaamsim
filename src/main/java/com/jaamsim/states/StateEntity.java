@@ -384,7 +384,8 @@ public class StateEntity extends DisplayEntity {
 
 	@Output(name = "State",
 	 description = "The present state for the object.",
-	    unitType = DimensionlessUnit.class)
+	    unitType = DimensionlessUnit.class,
+	    sequence = 0)
 	public String getPresentState(double simTime) {
 		if (presentState == null) {
 			return "";
@@ -393,7 +394,8 @@ public class StateEntity extends DisplayEntity {
 	}
 
 	@Output(name = "WorkingState",
-	 description = "Returns TRUE if the present state is one of the working states.")
+	 description = "Returns TRUE if the present state is one of the working states.",
+	    sequence = 1)
 	public boolean isWorking(double simTime) {
 		return presentState.working;
 	}
@@ -402,7 +404,8 @@ public class StateEntity extends DisplayEntity {
 	 description = "The total time recorded for the working states, including the "
 	             + "initialisation period. Breakdown events can be triggered by elapsed "
 	             + "working time instead of calendar time.",
-	    unitType = TimeUnit.class)
+	    unitType = TimeUnit.class,
+	    sequence = 2)
 	public double getWorkingTime(double simTime) {
 		long simTicks = FrameBox.secondsToTicks(simTime);
 		long ticks = getWorkingTicks(simTicks);
@@ -413,7 +416,8 @@ public class StateEntity extends DisplayEntity {
 	 description = "The total time recorded for each state after the completion of "
 	             + "the initialisation period.",
 	    unitType = TimeUnit.class,
-	  reportable = true)
+	  reportable = true,
+	    sequence = 3)
 	public LinkedHashMap<String, Double> getStateTimes(double simTime) {
 		long simTicks = FrameBox.secondsToTicks(simTime);
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(states.size());
