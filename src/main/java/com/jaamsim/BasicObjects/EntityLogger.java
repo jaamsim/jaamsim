@@ -20,6 +20,7 @@ import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.TimeUnit;
+import com.jaamsim.units.Unit;
 
 public class EntityLogger extends LinkedComponent {
 	private FileEntity file;
@@ -61,6 +62,9 @@ public class EntityLogger extends LinkedComponent {
 		// Log the entity's outputs
 		file.format("%n");
 		logTime = this.getSimTime();
+		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
+		String unitString = Unit.getDisplayedUnit(TimeUnit.class);
+		file.format("%s\t%s\t%s\t%s%n", ent.getName(), "SimTime", logTime/factor, unitString);
 		ent.printReport(file, logTime);
 
 		// If running in real time mode, empty the file buffer after each entity is logged
