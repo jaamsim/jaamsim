@@ -1118,25 +1118,74 @@ public class InputAgent {
 		// Identify the classes that were used in the model
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
 		for (Entity ent : Entity.getAll()) {
+
 			if (ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
+
+			if (!ent.isReportable())
+				continue;
+
 			if (!newClasses.contains(ent.getClass()))
 				newClasses.add(ent.getClass());
 		}
 
+		// Sort the classes alphabetically by the names of their object types
+		Collections.sort(newClasses, new ClassComparator());
+
 		// Loop through the classes and identify the instances
 		for (Class<? extends Entity> newClass : newClasses) {
+			ArrayList<Entity> entList = new ArrayList<>();
 			for (Entity ent : Entity.getAll()) {
+
 				if (ent.testFlag(Entity.FLAG_GENERATED))
 					continue;
-				if (ent.getClass() != newClass)
-					continue;
+
+				if (ent.getClass() == newClass)
+					entList.add(ent);
+			}
+
+			// Sort the entities alphabetically by their names
+			Collections.sort(entList, new EntityComparator());
+
+			// Print a header for this class
+			if (newClass != Simulation.class)
+				file.format("*** %s ***%n%n", ObjectType.getObjectTypeForClass(newClass));
+
+			// Print each entity to the output report
+			for (Entity ent : entList) {
 				ent.printReport(file, simTime);
+				file.format("%n");
 			}
 		}
 
 		// Close the report file
 		file.close();
+	}
+
+	private static class ClassComparator implements Comparator<Class<? extends Entity>> {
+		@Override
+		public int compare(Class<? extends Entity> class0, Class<? extends Entity> class1) {
+
+			// Place the Simulation class in the first position
+			if (class0 == Simulation.class && class1 == Simulation.class)
+				return 0;
+			if (class0 == Simulation.class && class1 != Simulation.class)
+				return -1;
+			if (class0 != Simulation.class && class1 == Simulation.class)
+				return 1;
+
+			// Sort alphabetically by Object Type name
+			ObjectType ot0 = ObjectType.getObjectTypeForClass(class0);
+			ObjectType ot1 = ObjectType.getObjectTypeForClass(class1);
+			return ot0.getName().compareTo(ot1.getName());
+		}
+	}
+
+	private static class EntityComparator implements Comparator<Entity> {
+		@Override
+		public int compare(Entity ent0, Entity ent1) {
+			return ent0.getName().compareTo(ent1.getName());
+		}
 	}
 
 	/**
