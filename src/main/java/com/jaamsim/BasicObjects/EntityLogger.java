@@ -49,6 +49,9 @@ public class EntityLogger extends LinkedComponent {
 		tmp.append("-").append(this.getName());
 		tmp.append(".log");
 		file = new FileEntity(tmp.toString());
+
+		// Print the header information to the file
+		Simulation.getInstance().printReport(file, 0.0d);
 	}
 
 	@Override
