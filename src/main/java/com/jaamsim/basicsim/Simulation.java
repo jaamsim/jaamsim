@@ -15,6 +15,8 @@
 package com.jaamsim.basicsim;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.swing.JFrame;
 
@@ -31,6 +33,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.ui.AboutBox;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.EntityPallet;
 import com.jaamsim.ui.FrameBox;
@@ -690,9 +693,65 @@ public class Simulation extends Entity {
 		setWindowVisible(LogBox.getInstance(), false);
 	}
 
+	@Output(name = "Software Name",
+	 description = "The licensed name for the simulation software.",
+	  reportable = true,
+	    sequence = 0)
+	public String getSoftwareName(double simTime) {
+		return modelName;
+	}
+
+	@Output(name = "Software Version",
+	 description = "The release number for the simulation software.",
+	  reportable = true,
+	    sequence = 1)
+	public String getSoftwareVersion(double simTime) {
+		return AboutBox.version;
+	}
+
 	@Output(name = "Configuration File",
-			 description = "The present configuration file.")
+	 description = "The configuration file that has been loaded.",
+	  reportable = true,
+	    sequence = 2)
 	public String getConfigFileName(double simTime) {
 		return InputAgent.getConfigFile().getPath();
 	}
+
+	@Output(name = "Present Time and Date",
+	 description = "The present local time and date.",
+	  reportable = true,
+	    sequence = 3)
+	public String getPresentTime(double simTime) {
+		String timeStamp = new SimpleDateFormat("MMM dd, yyyy HH:mm").format(Calendar.getInstance().getTime());
+		return timeStamp;
+	}
+
+	@Output(name = "Initialization Duration",
+	 description = "The length of time the model was executed prior to the start of statistics "
+	             + "collection.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 4)
+	public double getInitializationDuration(double simTime) {
+		return initializationTime.getValue();
+	}
+
+	@Output(name = "Run Duration",
+	 description = "The length of time over which statistics were collected.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 5)
+	public double getRunDuration(double simTime) {
+		return runDuration.getValue();
+	}
+
+	@Output(name = "Present Simulation Time",
+	 description = "The value for the simulation clock at the present time.",
+	    unitType = TimeUnit.class,
+	  reportable = true,
+	    sequence = 6)
+	public double getPresentSimulationTime(double simTime) {
+		return simTime;
+	}
+
 }
