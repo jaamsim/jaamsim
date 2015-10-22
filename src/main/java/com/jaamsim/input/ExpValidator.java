@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +17,10 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
+
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -63,13 +67,25 @@ public class ExpValidator {
 				if (oh == null) {
 					throw new ExpError(null, 0, String.format("Could not find output '%s' on entity '%s'", outputName, ent.getName()));
 				}
-				Class<?> retType = oh.getReturnType();
-				if (    !OutputHandle.isNumericType(retType) &&
-				        retType != boolean.class &&
-				        retType != Boolean.class) {
-					throw new ExpError(null, 0, "Output: %s does not return a numeric type", names[1]);
+				if (indices[1] == null) {
+					Class<?> retType = oh.getReturnType();
+					if (    !OutputHandle.isNumericType(retType) &&
+					        retType != boolean.class &&
+					        retType != Boolean.class) {
+						throw new ExpError(null, 0, "Output: %s does not return a numeric type", names[1]);
+					}
+					return new ExpResult(0, oh.unitType);
+				} else {
+					// Indexed final output
+					if (oh.getReturnType() == DoubleVector.class) {
+						return new ExpResult(0, oh.unitType);
+					}
+					if (oh.getReturnType() == ArrayList.class) {
+						//TODO: find out if we can determine the contained class without an instance or if type erasure prevents that
+						return new ExpResult(0, oh.unitType);
+					}
+					throw new ExpError(null, 0, "Output: %s is not a known array type");
 				}
-				return new ExpResult(0, oh.unitType);
 			}
 
 			// We have a 'chained' output, so now we must do best effort evaluation

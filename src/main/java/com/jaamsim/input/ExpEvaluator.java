@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +17,10 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
+
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.units.Unit;
 
 /**
@@ -26,7 +30,7 @@ import com.jaamsim.units.Unit;
  */
 public class ExpEvaluator {
 
-	private static Entity getEntity(String[] names, double simTime, Entity thisEnt) throws ExpError {
+	private static Entity getEntity(String[] names, ExpResult[] indices, double simTime, Entity thisEnt) throws ExpError {
 
 		Entity ent;
 		if (names[0] == "this")
@@ -44,11 +48,31 @@ public class ExpEvaluator {
 			if (oh == null) {
 				throw new ExpError(null, 0, "Output '%s' not found on entity '%s'", outputName, ent.getName());
 			}
-			if (!Entity.class.isAssignableFrom(oh.getReturnType())) {
-				throw new ExpError(null, 0, "Output '%s' is not an entity output", outputName);
-			}
+			if (indices != null && indices[i] != null) {
+				// This output has a defined index, for now we only support array lists for indexed outputs
+				if (!ArrayList.class.isAssignableFrom(oh.getReturnType())) {
+					throw new ExpError(null, 0, "Output '%s' has an index and is not an ArrayList output", outputName);
+				}
 
-			ent = oh.getValue(simTime, Entity.class);
+				int index = (int)indices[i].value -1; // 1 based indexing
+				ArrayList<?> outList = oh.getValue(simTime, ArrayList.class);
+				if (index >= outList.size() || index < 0) {
+					throw new ExpError(null, 0, "Index (%d) is out of bounds for array at output: %s", index + 1, outputName);
+				}
+
+				Object val = outList.get(index);
+				if (!(val instanceof Entity)) {
+					throw new ExpError(null, 0, "Non entity type from output: %s index: %d",outputName,  index + 1);
+				}
+				ent = (Entity)val;
+
+			} else {
+				if (!Entity.class.isAssignableFrom(oh.getReturnType())) {
+					throw new ExpError(null, 0, "Output '%s' is not an entity output", outputName);
+				}
+
+				ent = oh.getValue(simTime, Entity.class);
+			}
 
 			if (ent == null) {
 				// Build up the entity chain
@@ -60,6 +84,9 @@ public class ExpEvaluator {
 
 				for(int j = 1; j <= i; ++j) {
 					b.append(".").append(names[j]);
+					if (indices != null && indices[j] != null) {
+						b.append("(").append((int)indices[j].value).append(")");
+					}
 				}
 
 				throw new ExpError(null, 0, "Null entity in expression chain: %s", b.toString());
@@ -112,15 +139,43 @@ public class ExpEvaluator {
 
 		@Override
 		public ExpResult getVariableValue(String[] names, ExpResult[] indices) throws ExpError {
-			Entity ent = getEntity(names, simTime, thisEnt);
+			Entity ent = getEntity(names, indices, simTime, thisEnt);
 
 			String outputName = names[names.length-1];
 			OutputHandle oh = ent.getOutputHandleInterned(outputName);
 			if (oh == null) {
 				throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", outputName, ent.getName());
 			}
-			return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
 
+			if (indices != null && indices[names.length-1] != null) {
+				int index = (int)indices[names.length-1].value -1; // 1 based indexing
+
+				if (ArrayList.class.isAssignableFrom(oh.getReturnType())) {
+					ArrayList<?> outList = oh.getValue(simTime, ArrayList.class);
+
+					if (index >= outList.size()  || index < 0) {
+						return new ExpResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
+					}
+					Double value = (Double)outList.get(index);
+					return new ExpResult(value, oh.unitType);
+				} else if(DoubleVector.class.isAssignableFrom(oh.getReturnType())) {
+					DoubleVector outList = oh.getValue(simTime, DoubleVector.class);
+
+					if (index >= outList.size() || index < 0) {
+						return new ExpResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
+					}
+
+					Double value = outList.get(index);
+					return new ExpResult(value, oh.unitType);
+
+				} else {
+					throw new ExpError(null, 0, "Output '%s' has an index and is not an array type output", names[names.length-1]);
+
+				}
+
+			} else {
+				return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
+			}
 		}
 
 		@Override
@@ -133,7 +188,7 @@ public class ExpEvaluator {
 	}
 
 	public static void runAssignment(ExpParser.Assignment assign, double simTime, Entity thisEnt) throws ExpError {
-		Entity assignmentEnt = getEntity(assign.destination, simTime, thisEnt);
+		Entity assignmentEnt = getEntity(assign.destination, null, simTime, thisEnt);
 
 		ExpResult result = evaluateExpression(assign.value, simTime, thisEnt);
 
