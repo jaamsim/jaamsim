@@ -27,9 +27,9 @@ import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.Samples.SampleOutput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
-import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.StringProviders.StringProvOutput;
 import com.jaamsim.StringProviders.StringProvSample;
+import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.ObjectType;
@@ -1401,10 +1401,12 @@ public abstract class Input<T> {
 			if (dbuf.size() == 4)
 				a = dbuf.get(3);
 
-			if (r > 1.0f || g > 1.0f || b > 1.0f || a > 1.0f) {
+			if (r > 1.0f || g > 1.0f || b > 1.0f) {
 				r /= 255.0d;
 				g /= 255.0d;
 				b /= 255.0d;
+			}
+			if (a > 1.0f) {
 				a /= 255.0d;
 			}
 
