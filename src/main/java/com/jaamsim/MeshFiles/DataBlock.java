@@ -20,6 +20,8 @@ package com.jaamsim.MeshFiles;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import com.jaamsim.math.Mat4d;
+
 /**
  * DataBlock is the base unit of data for the renderer binary format IO system
  * Blocks can be written to disk and can contain binary data, other blocks or a mixture of the two
@@ -35,7 +37,7 @@ public class DataBlock {
 		}
 	}
 
-	private String name;
+	private final String name;
 	private final byte[] data;
 	private int dataSize = 0;
 	private int readPos = 0;
@@ -158,6 +160,31 @@ public class DataBlock {
 		}
 	}
 
+	public void writeMat4d(Mat4d mat) {
+		checkWriteSize(8*16);
+
+		writeDouble(mat.d00);
+		writeDouble(mat.d01);
+		writeDouble(mat.d02);
+		writeDouble(mat.d03);
+
+		writeDouble(mat.d10);
+		writeDouble(mat.d11);
+		writeDouble(mat.d12);
+		writeDouble(mat.d13);
+
+		writeDouble(mat.d20);
+		writeDouble(mat.d21);
+		writeDouble(mat.d22);
+		writeDouble(mat.d23);
+
+		writeDouble(mat.d30);
+		writeDouble(mat.d31);
+		writeDouble(mat.d32);
+		writeDouble(mat.d33);
+
+	}
+
 	public byte readByte() {
 		checkReadSize(1);
 		return data[readPos++];
@@ -211,6 +238,31 @@ public class DataBlock {
 		}
 	}
 
+	public Mat4d readMat4d() {
+		Mat4d ret = new Mat4d();
+
+		ret.d00 = readDouble();
+		ret.d01 = readDouble();
+		ret.d02 = readDouble();
+		ret.d03 = readDouble();
+
+		ret.d10 = readDouble();
+		ret.d11 = readDouble();
+		ret.d12 = readDouble();
+		ret.d13 = readDouble();
+
+		ret.d20 = readDouble();
+		ret.d21 = readDouble();
+		ret.d22 = readDouble();
+		ret.d23 = readDouble();
+
+		ret.d30 = readDouble();
+		ret.d31 = readDouble();
+		ret.d32 = readDouble();
+		ret.d33 = readDouble();
+
+		return ret;
+	}
 	/**
 	 * Returns the first child with a matching name. Utility
 	 * @param name

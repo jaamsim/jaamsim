@@ -17,6 +17,7 @@
  */
 package com.jaamsim.MeshFiles;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.jaamsim.MeshFiles.DataBlock.Error;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.ConvexHull;
@@ -125,6 +127,7 @@ public class MeshData {
 	public static interface Trans {
 		public abstract boolean isStatic();
 		public abstract TransVal value(ArrayList<Action.Queue> actions);
+		public abstract void accept(TransVisitor visitor);
 	}
 
 	public static class StaticTrans implements Trans{
@@ -142,6 +145,11 @@ public class MeshData {
 		public TransVal value(ArrayList<Action.Queue> actions) {
 			return new TransVal(matrix, inverseMat);
 		}
+		@Override
+		public void accept(TransVisitor visitor) {
+			visitor.visitStatic(this);
+
+		}
 	}
 
 	private static class Act {
@@ -155,6 +163,12 @@ public class MeshData {
 		ArrayList<Act> actions = new ArrayList<>();
 		public Mat4d staticMat;
 		public Mat4d staticInv;
+
+		public AnimTrans(ArrayList<Act> actions, Mat4d staticMat) {
+			this.actions = actions;
+			this.staticMat = staticMat;
+			this.staticInv = staticMat.inverse();
+		}
 
 		public AnimTrans(double[][] times, Mat4d[][] mats, String[] actionNames, Mat4d staticMat) {
 
@@ -183,6 +197,11 @@ public class MeshData {
 		@Override
 		public boolean isStatic() {
 			return false;
+		}
+
+		@Override
+		public void accept(TransVisitor visitor) {
+			visitor.visitAnim(this);
 		}
 
 		@Override
@@ -335,6 +354,11 @@ public class MeshData {
 
 			return discarded;
 		}
+	}
+
+	private interface TransVisitor {
+		void visitStatic(StaticTrans trans);
+		void visitAnim(AnimTrans trans);
 	}
 
 	public static class AnimMeshInstance {
@@ -831,6 +855,16 @@ public class MeshData {
 		_staticHull = ConvexHull.TryBuildHull(totalHullPoints, MAX_HULL_ATTEMPTS, MAX_HULL_POINTS, v3Interner);
 		_defaultBounds = _staticHull.getAABB(new Mat4d());
 
+		populateActionList();
+
+		if (!keepRuntimeData) {
+			v2Interner = null; // Drop ref to the interner to free memory
+			v3Interner = null; // Drop ref to the interner to free memory
+			v4Interner = null; // Drop ref to the interner to free memory
+		}
+	}
+
+	private void populateActionList() {
 		final HashMap<String, Double> actionMap = new HashMap<>();
 		class ActionWalker extends TreeWalker {
 			@Override
@@ -861,11 +895,7 @@ public class MeshData {
 			_actionDesc.add(desc);
 		}
 
-		if (!keepRuntimeData) {
-			v2Interner = null; // Drop ref to the interner to free memory
-			v3Interner = null; // Drop ref to the interner to free memory
-			v4Interner = null; // Drop ref to the interner to free memory
-		}
+
 	}
 
 	public ConvexHull getHull(Pose pose) {
@@ -1216,6 +1246,88 @@ public class MeshData {
 			addStaticLineInstance(lineIndex, trans);
 		}
 
+		DataBlock animTreeBlock = topBlock.findChildByName("AnimTree");
+
+		ArrayList<TreeNode> nodes = new ArrayList<>();
+		if (animTreeBlock != null) {
+			ArrayList<int[]> childIndices = new ArrayList<>(); // Store child indices until after all nodes have been created
+
+			int nodeIndex = 0;
+			for (DataBlock child : animTreeBlock.getChildren()) {
+				int numChildren = child.readInt();
+				int[] childInds = new int[numChildren];
+				for (int i = 0; i < numChildren; ++i) {
+					childInds[i] = child.readInt();
+				}
+				childIndices.add(childInds);
+
+				TreeNode node = new TreeNode();
+				node.nodeIndex = nodeIndex;
+				nodes.add(node);
+				int numSubMeshes = child.readInt();
+				for (int i = 0; i < numSubMeshes; ++i) {
+					int meshInd = child.readInt();
+					int matInd = child.readInt();
+					AnimMeshInstance ami = new AnimMeshInstance(meshInd, matInd);
+					_animMeshInstances.add(ami);
+					ami.nodeIndex = nodeIndex;
+					node.meshInstances.add(ami);
+				}
+
+				int numSubLines = child.readInt();
+				for (int i = 0; i < numSubLines; ++i) {
+					int lineIndex = child.readInt();
+					AnimLineInstance ali = new AnimLineInstance(lineIndex);
+					_animLineInstances.add(ali);
+					ali.nodeIndex = nodeIndex;
+					node.lineInstances.add(ali);
+				}
+
+				DataBlock transBlock = child.findChildByName("StaticTrans");
+				if (transBlock != null) {
+					Mat4d transMat = transBlock.readMat4d();
+					StaticTrans st = new StaticTrans(transMat);
+					node.trans = st;
+				} else {
+					transBlock = child.findChildByName("AnimTrans");
+					if (transBlock == null)
+						throw new RenderException("TreeNode missing transform block");
+
+					Mat4d staticTrans = transBlock.readMat4d();
+					ArrayList<Act> actions = new ArrayList<>();
+					for (DataBlock actBlock : transBlock.getChildren()) {
+						if (!actBlock.getName().equals("Action"))
+							continue;
+
+						actions.add(readActionBlock(actBlock));
+					}
+
+					node.trans = new AnimTrans(actions, staticTrans);
+				}
+
+				nodeIndex++;
+			}
+
+			// Now that all nodes exist, populate child references from indices
+			for (int i = 0; i < nodes.size(); ++i) {
+				TreeNode node = nodes.get(i);
+				int[] childInds = childIndices.get(i);
+				for (int ci : childInds) {
+					node.children.add(nodes.get(ci));
+				}
+			}
+		}
+		// Set the tree root node
+		if (nodes.size() != 0) {
+			treeRoot = nodes.get(0);
+			numTreeNodes=  nodes.size();
+		} else {
+			treeRoot = new TreeNode();
+			treeRoot.nodeIndex = 0;
+			treeRoot.trans = new StaticTrans(new Mat4d());
+			numTreeNodes = 1;
+		}
+
 		DataBlock hullBlock = topBlock.findChildByName("ConvexHull");
 		if (hullBlock == null) throw new RenderException("Missing mesh convex hull");
 
@@ -1228,6 +1340,109 @@ public class MeshData {
 			v4Interner = null; // Drop ref to the interner to free memory
 		}
 
+		populateActionList();
+	}
+
+	private class ExportTransVisitor implements TransVisitor {
+
+		private DataBlock transBlock;
+		@Override
+		public void visitStatic(StaticTrans trans) {
+			transBlock = new DataBlock("StaticTrans", 16*8);
+
+			transBlock.writeMat4d(trans.matrix);
+		}
+
+		@Override
+		public void visitAnim(AnimTrans trans) {
+			transBlock = new DataBlock("AnimTrans", 16*8);
+			transBlock.writeMat4d(trans.staticMat);
+
+			for (Act act : trans.actions) {
+				transBlock.addChildBlock(getActionBlock(act));
+			}
+		}
+
+		public DataBlock getTransBlock() {
+			return transBlock;
+		}
+
+	}
+
+	private DataBlock getActionBlock(Act act) {
+
+		assert act.times.length == act.matrices.length;
+
+		byte[] nameBytes = null;
+		try {
+			nameBytes = act.name.getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new Error(e.getMessage());
+		}
+
+		int blockSize = nameBytes.length + 1 + 4 + act.times.length*(8 + 16*8);
+		DataBlock actBlock = new DataBlock("Action", blockSize);
+		actBlock.writeString(act.name);
+		actBlock.writeInt(act.times.length);
+		for (double time : act.times) {
+			actBlock.writeDouble(time);
+		}
+		for (Mat4d mat : act.matrices) {
+			actBlock.writeMat4d(mat);
+		}
+		return actBlock;
+	}
+
+	private Act readActionBlock(DataBlock actBlock) {
+
+		Act ret = new Act();
+		ret.name = actBlock.readString();
+		int numKeys = actBlock.readInt();
+		ret.times = new double[numKeys];
+		ret.matrices = new Mat4d[numKeys];
+		ret.invMatrices = new Mat4d[numKeys];
+
+		for (int i = 0; i < numKeys; ++i) {
+			ret.times[i] = actBlock.readDouble();
+		}
+
+		for (int i = 0; i < numKeys; ++i) {
+			ret.matrices[i] = actBlock.readMat4d();
+			ret.invMatrices[i] = ret.matrices[i].inverse();
+		}
+
+		return ret;
+	}
+
+	private DataBlock getTreeNodeBlock(TreeNode node) {
+		// The data segment consists of 3 lists of indices
+		int dataSize = 0;
+		dataSize += 4 + 4*node.children.size();
+		dataSize += 4 + 8*node.meshInstances.size();
+		dataSize += 4 + 4*node.lineInstances.size();
+
+		DataBlock nodeBlock = new DataBlock("TreeNode", dataSize);
+		ExportTransVisitor etv = new ExportTransVisitor();
+		node.trans.accept(etv);
+		nodeBlock.addChildBlock(etv.getTransBlock());
+
+		nodeBlock.writeInt(node.children.size());
+		for (TreeNode child : node.children) {
+			nodeBlock.writeInt(child.nodeIndex);
+		}
+
+		nodeBlock.writeInt(node.meshInstances.size());
+		for (AnimMeshInstance ami : node.meshInstances) {
+			nodeBlock.writeInt(ami.meshIndex);
+			nodeBlock.writeInt(ami.materialIndex);
+		}
+
+		nodeBlock.writeInt(node.lineInstances.size());
+		for (AnimLineInstance ali : node.lineInstances) {
+			nodeBlock.writeInt(ali.lineIndex);
+		}
+
+		return nodeBlock;
 	}
 
 	/**
@@ -1369,7 +1584,19 @@ public class MeshData {
 			}
 		}
 
-		// TODO: animated instances
+		final DataBlock animTreeBlock = new DataBlock("AnimTree", 0);
+		topBlock.addChildBlock(animTreeBlock);
+
+		class ExportWalker extends TreeWalker {
+			@Override
+			public void onNode(Mat4d trans, Mat4d invTrans, TreeNode node) {
+				DataBlock nodeBlock = getTreeNodeBlock(node);
+				animTreeBlock.addChildBlock(nodeBlock);
+			}
+		}
+		// Walk the tree in order, so that the nodes are exported in index order
+		walkTree(new ExportWalker(), treeRoot, new Mat4d(), new Mat4d(), null);
+
 
 		// Materials
 		DataBlock matsBlock = new DataBlock("Materials", 0);
