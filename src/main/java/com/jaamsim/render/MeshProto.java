@@ -537,6 +537,12 @@ private void renderSubMesh(SubMesh subMesh, MeshData.SubMeshInstance subInst, in
 	}
 	gl.glEnable(GL2GL3.GL_CULL_FACE);
 
+	// Reset the blend state
+	if (mat._transType != MeshData.NO_TRANS) {
+		gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
+		gl.glBlendFuncSeparate(GL2GL3.GL_SRC_ALPHA, GL2GL3.GL_ONE_MINUS_SRC_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
+	}
+
 	gl.glBindVertexArray(0);
 
 }

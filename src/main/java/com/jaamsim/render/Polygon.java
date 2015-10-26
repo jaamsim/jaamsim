@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.jogamp.opengl.GL2GL3;
-
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -32,6 +30,7 @@ import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
 import com.jaamsim.render.Renderer.ShaderHandle;
+import com.jogamp.opengl.GL2GL3;
 
 /**
  * A Renderable that draws convex (or relatively convex) polygons. Specifically it draw a triangle fan through all the
@@ -57,17 +56,17 @@ public class Polygon implements Renderable {
 	private static boolean _hasInitialized;
 
 	private final ArrayList<Vec3d> _points;
-	private VisibilityInfo _visInfo;
+	private final VisibilityInfo _visInfo;
 
 	private final float[] colour;
 	private final float[] hoverColour;
-	private boolean isOutline;
-	private double lineWidth; // only meaningful if (isOutline)
-	private long pickingID;
+	private final boolean isOutline;
+	private final double lineWidth; // only meaningful if (isOutline)
+	private final long pickingID;
 
-	private Transform trans;
+	private final Transform trans;
 
-	private AABB _bounds;
+	private final AABB _bounds;
 
 	FloatBuffer fb;
 
@@ -124,7 +123,7 @@ public class Polygon implements Renderable {
 
 	@Override
 	public void render(int contextID, Renderer renderer,
-			Camera cam, Ray pickRay) {
+	                   Camera cam, Ray pickRay) {
 		assert(_hasInitialized);
 
 		GL2GL3 gl = renderer.getGL();
@@ -135,6 +134,18 @@ public class Polygon implements Renderable {
 		float[] renderColour = colour;
 		if (pickRay != null && getCollisionDist(pickRay, false) > 0)
 			renderColour = hoverColour;
+
+		if (renderColour[3] != 1.0) {
+			// Transparent, render this on the transparent pass instead
+			return;
+		}
+
+		renderImp(contextID, renderer, cam, pickRay, gl, renderColour);
+	}
+
+	private void renderImp(int contextID, Renderer renderer,
+	                       Camera cam, Ray pickRay, GL2GL3 gl, float[] renderColour) {
+
 
 		if (!_VAOMap.containsKey(contextID)) {
 			setupVAO(contextID, renderer);
@@ -272,11 +283,27 @@ public class Polygon implements Renderable {
 
 	@Override
 	public boolean hasTransparent() {
-		return false;
+		// If either the colour, or hover colour have transparent parts, this could be tranparent
+		return (colour[3] != 1.0) || (hoverColour[3] != 1.0);
 	}
 
 	@Override
 	public void renderTransparent(int contextID, Renderer renderer, Camera cam, Ray pickRay) {
+		GL2GL3 gl = renderer.getGL();
+		if (_points.size() < 3) {
+			return; // Can't actually draw this polygon
+		}
+
+		float[] renderColour = colour;
+		if (pickRay != null && getCollisionDist(pickRay, false) > 0)
+			renderColour = hoverColour;
+
+		if (renderColour[3] == 1.0) {
+			// This is opaque
+			return;
+		}
+
+		renderImp(contextID, renderer, cam, pickRay, gl, renderColour);
 	}
 
 	@Override

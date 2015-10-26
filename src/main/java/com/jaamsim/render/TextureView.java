@@ -320,21 +320,10 @@ public class TextureView implements Renderable {
 		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_S, GL2GL3.GL_CLAMP_TO_EDGE);
 		gl.glTexParameteri(GL2GL3.GL_TEXTURE_2D, GL2GL3.GL_TEXTURE_WRAP_T, GL2GL3.GL_CLAMP_TO_EDGE);
 
-
-		if (_isTransparent) {
-			gl.glEnable(GL2GL3.GL_BLEND);
-			gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
-			gl.glBlendFuncSeparate(GL2GL3.GL_SRC_ALPHA, GL2GL3.GL_ONE_MINUS_SRC_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
-		}
-
 		// Draw
 		gl.glDisable(GL2GL3.GL_CULL_FACE);
 		gl.glDrawArrays(GL2GL3.GL_TRIANGLES, 0, 6);
 		gl.glEnable(GL2GL3.GL_CULL_FACE);
-
-		if (_isTransparent) {
-			gl.glDisable(GL2GL3.GL_BLEND);
-		}
 
 		gl.glBindVertexArray(0);
 

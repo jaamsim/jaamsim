@@ -30,8 +30,7 @@ void main()
     if (interpZ < 0)
         discard;
 
-    gl_FragColor.rgb = color.rgb;
-    gl_FragColor.a = 1;
+    gl_FragColor = color;
 
     gl_FragDepth = log(interpZ*C+1)*FC;
 }
