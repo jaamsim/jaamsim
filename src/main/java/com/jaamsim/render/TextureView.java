@@ -21,14 +21,13 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.jogamp.opengl.GL2GL3;
-
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Mat4d;
 import com.jaamsim.math.Ray;
 import com.jaamsim.math.Transform;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.math.Vec4d;
+import com.jogamp.opengl.GL2GL3;
 
 
 /**
@@ -38,17 +37,17 @@ import com.jaamsim.math.Vec4d;
  */
 public class TextureView implements Renderable {
 
-	private URI _imageURI;
-	private Transform _trans;
-	private Vec3d _scale;
-	private long _pickingID;
+	private final URI _imageURI;
+	private final Transform _trans;
+	private final Vec3d _scale;
+	private final long _pickingID;
 
-	private AABB _bounds;
+	private final AABB _bounds;
 
-	private boolean _isTransparent;
-	private boolean _isCompressed;
+	private final boolean _isTransparent;
+	private final boolean _isCompressed;
 
-	private VisibilityInfo _visInfo;
+	private final VisibilityInfo _visInfo;
 
 	// Initialize the very simple buffers needed to render this image
 	static private boolean staticInit = false;
@@ -56,8 +55,6 @@ public class TextureView implements Renderable {
 	static private int texCoordBuff;
 	static private int normalBuff;
 	static private HashMap<Integer, Integer> VAOMap = new HashMap<>();
-
-	static private int boneBuff;
 
 	static private int progHandle;
 	static private int projMatVar;
@@ -74,8 +71,6 @@ public class TextureView implements Renderable {
 	static private int specColorVar;
 	static private int ambientColorVar;
 	static private int shininessVar;
-
-	static private int maxNumBonesVar;
 
 	static private int cVar;
 	static private int fcVar;
@@ -120,12 +115,11 @@ public class TextureView implements Renderable {
 	private static void initStaticBuffers(Renderer r) {
 		GL2GL3 gl = r.getGL();
 
-		int[] buffs = new int[4];
-		gl.glGenBuffers(4, buffs, 0);
+		int[] buffs = new int[3];
+		gl.glGenBuffers(3, buffs, 0);
 		vertBuff = buffs[0];
 		texCoordBuff = buffs[1];
 		normalBuff = buffs[2];
-		boneBuff = buffs[3];
 
 		FloatBuffer verts = FloatBuffer.allocate(6*3); // 2 triangles * 3 coordinates
 		verts.put(-0.5f); verts.put(-0.5f); verts.put(0.0f);
@@ -163,17 +157,6 @@ public class TextureView implements Renderable {
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, normalBuff);
 		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, 6*3*4, normals, GL2GL3.GL_STATIC_DRAW);
 
-		FloatBuffer bones = FloatBuffer.allocate(6*4);
-		for (int i = 0; i < 6*4; ++i) {
-			bones.put(0.0f);
-		}
-
-		bones.flip();
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, boneBuff);
-		gl.glBufferData(GL2GL3.GL_ARRAY_BUFFER, 6*4*4, bones, GL2GL3.GL_STATIC_DRAW);
-
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
-
 		// Initialize the shader variables
 		progHandle = r.getMeshShader(Renderer.DIFF_TEX_FLAG).getProgramHandle();
 
@@ -191,8 +174,6 @@ public class TextureView implements Renderable {
 		specColorVar = gl.glGetUniformLocation(progHandle, "specColor");
 		ambientColorVar = gl.glGetUniformLocation(progHandle, "ambientColor");
 		shininessVar = gl.glGetUniformLocation(progHandle, "shininess");
-
-		maxNumBonesVar = gl.glGetUniformLocation(progHandle, "maxNumBones");
 
 		cVar = gl.glGetUniformLocation(progHandle, "C");
 		fcVar = gl.glGetUniformLocation(progHandle, "FC");
@@ -235,15 +216,6 @@ public class TextureView implements Renderable {
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, texCoordBuff);
 		gl.glVertexAttribPointer(texCoordVar, 2, GL2GL3.GL_FLOAT, false, 0, 0);
-
-		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, boneBuff);
-		int boneIndicesVar = gl.glGetAttribLocation(progHandle, "boneIndices");
-		gl.glEnableVertexAttribArray(boneIndicesVar);
-		gl.glVertexAttribPointer(boneIndicesVar, 4, GL2GL3.GL_FLOAT, false, 0, 0);
-
-		int boneWeightsVar = gl.glGetAttribLocation(progHandle, "boneWeights");
-		gl.glEnableVertexAttribArray(boneWeightsVar);
-		gl.glVertexAttribPointer(boneWeightsVar, 4, GL2GL3.GL_FLOAT, false, 0, 0);
 
 		gl.glBindBuffer(GL2GL3.GL_ARRAY_BUFFER, 0);
 
@@ -300,8 +272,6 @@ public class TextureView implements Renderable {
 		gl.glUniformMatrix4fv(normalMatVar, 1, false, RenderUtils.MarshalMat4d(normalMat), 0);
 		gl.glUniformMatrix4fv(bindSpaceMatVar, 1, false, identMat, 0);
 		gl.glUniformMatrix4fv(bindSpaceNorMatVar, 1, false, identMat, 0);
-
-		gl.glUniform1i(maxNumBonesVar, 0);
 
 		gl.glUniform1f(cVar, Camera.C);
 		gl.glUniform1f(fcVar, Camera.FC);
