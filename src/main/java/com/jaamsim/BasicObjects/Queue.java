@@ -150,13 +150,15 @@ public class Queue extends LinkedComponent {
 		final int priority;
 		final Integer match;
 		final double timeAdded;
+		final Vec3d orientation;
 
-		public QueueEntry(DisplayEntity ent, long n, int pri, Integer m, double t) {
+		public QueueEntry(DisplayEntity ent, long n, int pri, Integer m, double t, Vec3d orient) {
 			entity = ent;
 			entNum = n;
 			priority = pri;
 			match = m;
 			timeAdded = t;
+			orientation = orient;
 		}
 
 		@Override
@@ -218,7 +220,7 @@ public class Queue extends LinkedComponent {
 		Integer m = null;
 		if (match.getValue() != null)
 			m = Integer.valueOf((int) match.getValue().getNextSample(getSimTime()));
-		QueueEntry entry = new QueueEntry(ent, n, pri, m, getSimTime());
+		QueueEntry entry = new QueueEntry(ent, n, pri, m, getSimTime(), ent.getOrientation());
 
 		// Add the entity to the TreeSet of all the entities in the queue
 		itemSet.add(entry);
@@ -288,6 +290,9 @@ public class Queue extends LinkedComponent {
 				maxCount = -1;
 			}
 		}
+
+		// Reset the entity's orientation to its original value
+		entry.entity.setOrientation(entry.orientation);
 
 		this.incrementNumberProcessed();
 		return entry.entity;
