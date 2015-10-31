@@ -73,4 +73,8 @@ public class AttributeHandle extends OutputHandle {
 	public boolean isReportable() {
 		return true;
 	}
+	@Override
+	public int getSequence() {
+		return Integer.MAX_VALUE;
+	}
 }
