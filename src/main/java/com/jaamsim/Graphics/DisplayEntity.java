@@ -292,8 +292,16 @@ public class DisplayEntity extends Entity {
 	 */
 	@Override
 	public void kill() {
+
+		// Kill the label
+		EntityLabel label = EntityLabel.getLabel(this);
+		if (label != null)
+			label.kill();
+
+		// Kill the DisplayEntity
 		super.kill();
 
+		// Clear the properties
 		currentRegion = null;
 	}
 
