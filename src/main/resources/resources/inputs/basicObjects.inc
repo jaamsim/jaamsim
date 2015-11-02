@@ -10,6 +10,7 @@ Define ObjectType {
                     ExpressionLogger
                     EntitlementSelector
                     ExpressionEntity
+                    DowntimeEntity
                   }
 
 Define TextModel  {
@@ -20,11 +21,13 @@ Define ImageModel {
                     TimeSeriesIconModel
                     ExpLoggerIconModel
                     SelectorIconModel
+                    DowntimeIconModel
                   }
 
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png'   }  Transparent { TRUE }
 SelectorIconModel       ImageFile { '<res>/images/Selector-256.png'     }  Transparent { TRUE }
 ExpLoggerIconModel      ImageFile { '<res>/images/EntityLogger-256.png' }  Transparent { TRUE }
+DowntimeIconModel       ImageFile { '<res>/images/Downtime-256.png'     }  Transparent { TRUE }
 
 Group                   JavaClass { com.jaamsim.basicsim.Group                          } Palette { 'Basic Objects' } DragAndDrop { FALSE }
 ScriptEntity            JavaClass { com.jaamsim.basicsim.ScriptEntity                   } Palette { 'Basic Objects' } DragAndDrop { FALSE }
@@ -37,6 +40,7 @@ ExpressionThreshold     JavaClass { com.jaamsim.Thresholds.ExpressionThreshold  
 ExpressionLogger        JavaClass { com.jaamsim.BasicObjects.ExpressionLogger           } Palette { 'Basic Objects' } DefaultDisplayModel { ExpLoggerIconModel  } IconFile { '<res>/images/EntityLogger-24.png' }
 EntitlementSelector     JavaClass { com.jaamsim.BasicObjects.EntitlementSelector        } Palette { 'Basic Objects' } DefaultDisplayModel { SelectorIconModel   } IconFile { '<res>/images/Selector-24.png'     }
 ExpressionEntity        JavaClass { com.jaamsim.basicsim.ExpressionEntity               } Palette { 'Basic Objects' } DragAndDrop { FALSE }
+DowntimeEntity          JavaClass { com.jaamsim.BasicObjects.DowntimeEntity             } Palette { 'Basic Objects' } DefaultDisplayModel { DowntimeIconModel   } IconFile { '<res>/images/Downtime-24.png'     }
 
 Group               Description { 'Collection of entities used as an convenience for specifying model inputs.' }
 ScriptEntity        Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
@@ -48,3 +52,4 @@ TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries
 ExpressionThreshold Description { 'Specifies a logical condition for which an activity is permitted.' }
 ExpressionLogger    Description { 'Records the values for one or more expressions to a log file at regular intervals.' }
 EntitlementSelector Description { 'Selects an index on the basis of entitlement from a given set of proportions.' }
+DowntimeEntity      Description { 'Provides Breakdown and Maintenance controls.' }
