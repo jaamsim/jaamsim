@@ -54,7 +54,12 @@ public class EntityLabel extends TextBasics {
 		super.updateForInput(in);
 
 		if (in == targetEntity) {
-			setSavedText(targetEntity.getValue().getName());
+			DisplayEntity ent = targetEntity.getValue();
+			if (ent == null) {
+				setSavedText("ERROR");
+				return;
+			}
+			setSavedText(ent.getName());
 			return;
 		}
 	}
