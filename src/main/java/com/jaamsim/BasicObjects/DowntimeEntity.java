@@ -262,7 +262,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			// 2) Working time
 			else {
 				if (iatWorkingEntity.getValue().isWorking()) {
-					double workingSecs = iatWorkingEntity.getValue().getWorkingHours() * 3600.0d;
+					double workingSecs = iatWorkingEntity.getValue().getWorkingTime();
 					double waitSecs = secondsForNextFailure - workingSecs;
 					scheduleProcess(Math.max(waitSecs, 0.0), 5, scheduleDowntime, scheduleDowntimeHandle);
 				}
@@ -296,7 +296,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 				if (endDowntimeHandle.isScheduled())
 					return;
 
-				double workingSecs = durationWorkingEntity.getValue().getWorkingHours() * 3600.0d;
+				double workingSecs = durationWorkingEntity.getValue().getWorkingTime();
 				double waitSecs = secondsForNextRepair - workingSecs;
 				scheduleProcess(waitSecs, 5, endDowntime, endDowntimeHandle);
 			}
@@ -337,7 +337,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		}
 		// Working time based
 		else {
-			secondsForNextFailure = iatWorkingEntity.getValue().getWorkingHours() * 3600.0d + this.getNextDowntimeIAT();
+			secondsForNextFailure = iatWorkingEntity.getValue().getWorkingTime() + this.getNextDowntimeIAT();
 		}
 
 		// prepare all entities for the downtime event
@@ -355,7 +355,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private void startDowntime() {
 		setDown(true);
 
-		startTime = this.getCurrentTime();
+		startTime = this.getSimTime();
 		downtimePendings--;
 
 		// Determine the time when the downtime event will be over
@@ -367,10 +367,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		}
 		// Working time based
 		else {
-			secondsForNextRepair = durationWorkingEntity.getValue().getWorkingHours() * 3600.0d + downDuration;
+			secondsForNextRepair = durationWorkingEntity.getValue().getWorkingTime() + downDuration;
 		}
 
-		endTime = startTime + (downDuration/3600);
+		endTime = startTime + downDuration;
 
 		// Loop through all objects that this object is watching and trigger them to stop working.
 		for (DowntimeUser each : modelEntityList) {
@@ -460,7 +460,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		// 2) Working time
 		else {
 			if (iatWorkingEntity.getValue().isWorking()) {
-				double workingSecs = iatWorkingEntity.getValue().getWorkingHours() * 3600.0d;
+				double workingSecs = iatWorkingEntity.getValue().getWorkingTime();
 				double waitSecs = secondsForNextFailure - workingSecs;
 				return waitSecs;
 			}
@@ -475,6 +475,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	}
 
 	public double getEndTimeInHours() {
+		return endTime/3600.0;
+	}
+
+	public double getEndTime() {
 		return endTime;
 	}
 
@@ -482,13 +486,13 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			description = "The time that the current event started.",
 			unitType = TimeUnit.class)
 	public double getStartTime( double simTime ) {
-		return startTime*3600;
+		return startTime;
 	}
 
 	@Output(name = "EndTime",
 			description = "The time that the current event will finish.",
 			unitType = TimeUnit.class)
 	public double getEndTime( double simTime ) {
-		return endTime*3600;
+		return endTime;
 	}
 }
