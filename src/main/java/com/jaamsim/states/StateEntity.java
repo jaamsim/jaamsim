@@ -380,6 +380,14 @@ public class StateEntity extends DisplayEntity {
 		return getWorkingTicks(getSimTicks()) / Simulation.getSimTimeFactor();
 	}
 
+	/**
+	 * Returns the number of seconds that the entity has been in use.
+	 */
+	public double getWorkingTime() {
+		long ticks = getWorkingTicks(getSimTicks());
+		return FrameBox.ticksToSeconds(ticks);
+	}
+
 	public void setPresentState() {}
 
 	@Output(name = "State",
