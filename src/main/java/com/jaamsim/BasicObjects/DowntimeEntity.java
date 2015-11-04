@@ -210,14 +210,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		return "Working".equals(state);
 	}
 
-	public StateEntity getIATWorkingHoursEntity() {
-		return iatWorkingEntity.getValue();
-	}
-
-	public StateEntity getDurationWorkingHoursEntity() {
-		return durationWorkingEntity.getValue();
-	}
-
 	private static class EndDowntimeTarget extends EntityTarget<DowntimeEntity> {
 		EndDowntimeTarget(DowntimeEntity ent) {
 			super(ent, "endDowntime");
