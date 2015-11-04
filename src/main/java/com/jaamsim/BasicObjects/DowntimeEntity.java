@@ -474,10 +474,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		this.checkProcessNetwork();
 	}
 
-	public double getEndTimeInHours() {
-		return endTime/3600.0;
-	}
-
 	public double getEndTime() {
 		return endTime;
 	}
