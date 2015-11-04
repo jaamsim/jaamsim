@@ -374,7 +374,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		// Loop through all objects that this object is watching and trigger them to stop working.
 		for (DowntimeUser each : modelEntityList) {
-			each.startDowntime(this, downDuration);
+			each.startDowntime(this);
 		}
 
 		this.checkProcessNetwork();
