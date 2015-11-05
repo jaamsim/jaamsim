@@ -14,7 +14,7 @@
  */
 package com.jaamsim.BasicObjects;
 
-import com.jaamsim.basicsim.Entity;
+import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
@@ -23,7 +23,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 
-public class ExpressionEntity extends Entity {
+public class ExpressionEntity extends DisplayEntity {
 	@Keyword(description = "The variable for which statistics will be collected.",
 	         example = "Statistics1  SampleValue { 'this.obj.Attrib1' }")
 	private final ExpressionInput sampleValue;

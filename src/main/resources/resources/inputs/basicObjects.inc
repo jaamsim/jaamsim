@@ -21,12 +21,14 @@ Define ImageModel {
                     TimeSeriesIconModel
                     ExpLoggerIconModel
                     SelectorIconModel
+                    ExpressionEntityIconModel
                     DowntimeIconModel
                   }
 
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png'   }  Transparent { TRUE }
 SelectorIconModel       ImageFile { '<res>/images/Selector-256.png'     }  Transparent { TRUE }
 ExpLoggerIconModel      ImageFile { '<res>/images/EntityLogger-256.png' }  Transparent { TRUE }
+ExpressionEntityIconModel  ImageFile { '<res>/images/ExpressionEntity-256.png' }  Transparent { TRUE }
 DowntimeIconModel       ImageFile { '<res>/images/Downtime-256.png'     }  Transparent { TRUE }
 
 Group                   JavaClass { com.jaamsim.basicsim.Group                          } Palette { 'Basic Objects' } DragAndDrop { FALSE }
@@ -39,7 +41,7 @@ TimeSeriesThreshold     JavaClass { com.jaamsim.Thresholds.TimeSeriesThreshold  
 ExpressionThreshold     JavaClass { com.jaamsim.Thresholds.ExpressionThreshold          } Palette { 'Basic Objects' } DefaultDisplayModel { Rectangle           } IconFile { '<res>/images/Threshold-24.png'    } DefaultSize { 0.5 0.5 0.0 m }
 ExpressionLogger        JavaClass { com.jaamsim.BasicObjects.ExpressionLogger           } Palette { 'Basic Objects' } DefaultDisplayModel { ExpLoggerIconModel  } IconFile { '<res>/images/EntityLogger-24.png' }
 EntitlementSelector     JavaClass { com.jaamsim.BasicObjects.EntitlementSelector        } Palette { 'Basic Objects' } DefaultDisplayModel { SelectorIconModel   } IconFile { '<res>/images/Selector-24.png'     }
-ExpressionEntity        JavaClass { com.jaamsim.basicsim.ExpressionEntity               } Palette { 'Basic Objects' } DragAndDrop { FALSE }
+ExpressionEntity        JavaClass { com.jaamsim.BasicObjects.ExpressionEntity           } Palette { 'Basic Objects' } DefaultDisplayModel { ExpressionEntityIconModel   } IconFile { '<res>/images/ExpressionEntity-24.png' }
 DowntimeEntity          JavaClass { com.jaamsim.BasicObjects.DowntimeEntity             } Palette { 'Basic Objects' } DefaultDisplayModel { DowntimeIconModel   } IconFile { '<res>/images/Downtime-24.png'     }
 
 Group               Description { 'Collection of entities used as an convenience for specifying model inputs.' }
@@ -52,4 +54,5 @@ TimeSeriesThreshold Description { 'Specifies a range of values from a TimeSeries
 ExpressionThreshold Description { 'Specifies a logical condition for which an activity is permitted.' }
 ExpressionLogger    Description { 'Records the values for one or more expressions to a log file at regular intervals.' }
 EntitlementSelector Description { 'Selects an index on the basis of entitlement from a given set of proportions.' }
+ExpressionEntity    Description { 'Calculates the value for a specified expression.' }
 DowntimeEntity      Description { 'Provides Breakdown and Maintenance controls.' }
