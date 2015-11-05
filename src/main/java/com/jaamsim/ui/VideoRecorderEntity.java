@@ -137,7 +137,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 	public void startUp() {
 		super.startUp();
 
-		if (saveVideo.getValue())
+		if (saveVideo.getValue() || saveImages.getValue())
 			startProcess(new CaptureNetworkTarget(this));
 
 		this.hasRunStartup = true;
@@ -196,7 +196,7 @@ public class VideoRecorderEntity extends DisplayEntity {
 		                             saveImages.getValue(), saveVideo.getValue(), videoBGColor.getValue());
 
 		// Otherwise, start capturing
-		while (saveVideo.getValue()) {
+		while (saveVideo.getValue() || saveImages.getValue()) {
 
 			RenderManager.inst().blockOnScreenShot(recorder);
 			++numFramesWritten;
