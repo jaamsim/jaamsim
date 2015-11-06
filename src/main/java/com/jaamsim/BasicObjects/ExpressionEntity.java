@@ -15,22 +15,33 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.basicsim.ErrorException;
-import com.jaamsim.input.ExpError;
-import com.jaamsim.input.ExpEvaluator;
-import com.jaamsim.input.ExpressionInput;
+import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.units.DimensionlessUnit;
+import com.jaamsim.input.UnitTypeInput;
+import com.jaamsim.ui.FrameBox;
+import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
-public class ExpressionEntity extends DisplayEntity {
+public class ExpressionEntity extends DisplayEntity implements SampleProvider {
+
+	@Keyword(description = "The unit type for the returned expression values.",
+	         exampleList = {"DistanceUnit"})
+	protected final UnitTypeInput unitType;
 
 	@Keyword(description = "The expression to be evaluated.",
 	         exampleList = {"'[Queue1].QueueLength + [Queue2].QueueLength'"})
-	private final ExpressionInput sampleValue;
+	private final SampleExpInput sampleValue;
 
 	{
-		sampleValue = new ExpressionInput("Expression", "Key Inputs", null);
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType.setRequired(true);
+		this.addInput(unitType);
+
+		sampleValue = new SampleExpInput("Expression", "Key Inputs", null);
+		sampleValue.setUnitType(UserSpecifiedUnit.class);
 		sampleValue.setEntity(this);
 		sampleValue.setRequired(true);
 		this.addInput(sampleValue);
@@ -38,20 +49,53 @@ public class ExpressionEntity extends DisplayEntity {
 
 	public ExpressionEntity() {}
 
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == unitType) {
+			sampleValue.setUnitType(getUnitType());
+			FrameBox.reSelectEntity();  // Update the units in the Output Viewer
+			return;
+		}
+	}
+
+	@Override
+	public Class<? extends Unit> getUserUnitType() {
+		return unitType.getUnitType();
+	}
+
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return unitType.getUnitType();
+	}
+
+	@Override
+	public double getMeanValue(double simTime) {
+		return 0;
+	}
+
+	@Override
+	public double getMinValue() {
+		return Double.NEGATIVE_INFINITY;
+	}
+
+	@Override
+	public double getMaxValue() {
+		return Double.POSITIVE_INFINITY;
+	}
+
+	@Override
 	@Output(name = "Value",
 	 description = "The evaluated value of the expression.",
-	    unitType = DimensionlessUnit.class,
+	    unitType = UserSpecifiedUnit.class,
 	  reportable = true)
-	public double evaluateExpression(double simTime) {
+	public double getNextSample(double simTime) {
+
 		if (sampleValue.getValue() == null)
 			return 0.0d;
 
-		try {
-			// Evaluate the expression
-			double ret = ExpEvaluator.evaluateExpression(sampleValue.getValue(), simTime, this).value;
-			return ret;
-		} catch(ExpError e) {
-			throw new ErrorException(e);
-		}
+		return sampleValue.getValue().getNextSample(simTime);
 	}
+
 }
