@@ -28,6 +28,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
 public abstract class LinkedService extends LinkedComponent implements ThresholdUser, QueueUser {
@@ -65,6 +66,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		this.addInput(waitQueue);
 
 		match = new SampleExpInput("Match", "Key Inputs", null);
+		match.setUnitType(DimensionlessUnit.class);
 		match.setEntity(this);
 		this.addInput(match);
 
