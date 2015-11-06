@@ -15,6 +15,7 @@
 package com.jaamsim.Samples;
 
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpParser;
@@ -43,8 +44,11 @@ public class SampleExpression implements SampleProvider {
 		try {
 			ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime, thisEnt);
 			if (res.unitType != unitType)
-				thisEnt.error("Invalid unit returned by an expression. Received: %s, expected: %s",
-						res.unitType.getSimpleName(), unitType.getSimpleName(), "");
+				thisEnt.error("Invalid unit returned by an expression: '%s'%n"
+						+ "Received: %s, expected: %s",
+						exp, ObjectType.getObjectTypeForClass(res.unitType),
+						ObjectType.getObjectTypeForClass(unitType));
+
 			ret = res.value;
 		}
 		catch(ExpError e) {
