@@ -24,13 +24,15 @@ import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class ExpressionEntity extends DisplayEntity {
-	@Keyword(description = "The variable for which statistics will be collected.",
-	         example = "Statistics1  SampleValue { 'this.obj.Attrib1' }")
+
+	@Keyword(description = "The expression to be evaluated.",
+	         exampleList = {"'[Queue1].QueueLength + [Queue2].QueueLength'"})
 	private final ExpressionInput sampleValue;
 
 	{
 		sampleValue = new ExpressionInput("Expression", "Key Inputs", null);
 		sampleValue.setEntity(this);
+		sampleValue.setRequired(true);
 		this.addInput(sampleValue);
 	}
 
