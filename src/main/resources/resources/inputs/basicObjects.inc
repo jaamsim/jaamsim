@@ -12,6 +12,7 @@ Define ObjectType {
                     ExpressionEntity
                     DowntimeEntity
                     ValueSequence
+                    EventSchedule
                   }
 
 Define TextModel  {
@@ -25,6 +26,7 @@ Define ImageModel {
                     ExpressionEntityIconModel
                     DowntimeIconModel
                     ValueSequenceIconModel
+                    EventScheduleIconModel
                   }
 
 TimeSeriesIconModel     ImageFile { '<res>/images/TimeSeries-256.png'   }  Transparent { TRUE }
@@ -33,6 +35,7 @@ ExpLoggerIconModel      ImageFile { '<res>/images/EntityLogger-256.png' }  Trans
 ExpressionEntityIconModel  ImageFile { '<res>/images/ExpressionEntity-256.png' }  Transparent { TRUE }
 DowntimeIconModel       ImageFile { '<res>/images/Downtime-256.png'     }  Transparent { TRUE }
 ValueSequenceIconModel  ImageFile { '<res>/images/ValueSequence-256.png'}  Transparent { TRUE }
+EventScheduleIconModel  ImageFile { '<res>/images/EventSchedule-256.png'}  Transparent { TRUE }
 
 Group                   JavaClass { com.jaamsim.basicsim.Group                          } Palette { 'Basic Objects' } DragAndDrop { FALSE }
 ScriptEntity            JavaClass { com.jaamsim.basicsim.ScriptEntity                   } Palette { 'Basic Objects' } DragAndDrop { FALSE }
@@ -47,6 +50,7 @@ EntitlementSelector     JavaClass { com.jaamsim.BasicObjects.EntitlementSelector
 ExpressionEntity        JavaClass { com.jaamsim.BasicObjects.ExpressionEntity           } Palette { 'Basic Objects' } DefaultDisplayModel { ExpressionEntityIconModel   } IconFile { '<res>/images/ExpressionEntity-24.png' }
 DowntimeEntity          JavaClass { com.jaamsim.BasicObjects.DowntimeEntity             } Palette { 'Basic Objects' } DefaultDisplayModel { DowntimeIconModel   } IconFile { '<res>/images/Downtime-24.png'     }
 ValueSequence           JavaClass { com.jaamsim.BasicObjects.ValueSequence              } Palette { 'Basic Objects' } DefaultDisplayModel { ValueSequenceIconModel } IconFile { '<res>/images/ValueSequence-24.png' }
+EventSchedule           JavaClass { com.jaamsim.BasicObjects.EventSchedule              } Palette { 'Basic Objects' } DefaultDisplayModel { EventScheduleIconModel } IconFile { '<res>/images/EventSchedule-24.png' }
 
 Group               Description { 'Collection of entities used as an convenience for specifying model inputs.' }
 ScriptEntity        Description { 'Executes a series of commands in simulated time. Used primarily for recording videos.' }
@@ -61,3 +65,4 @@ EntitlementSelector Description { 'Selects an index on the basis of entitlement 
 ExpressionEntity    Description { 'Calculates the value for a specified expression.' }
 DowntimeEntity      Description { 'Provides Breakdown and Maintenance controls.' }
 ValueSequence       Description { 'Generates a repeating sequence of numerical values.' }
+EventSchedule       Description { 'Generates a sequence inter-arrival times from a list of event times.' }
