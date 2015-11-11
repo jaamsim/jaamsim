@@ -25,6 +25,7 @@ public class ValueListInput extends ListInput<DoubleVector> {
 	private double sumValue = Double.NaN;
 	private double sumTolerance = 1e-10d;
 	private int[] validCounts = null; // valid list sizes not including units
+	private int monotonic = 0;  // -1 = monotonically decreasing, +1 = monotonically increasing
 
 	public ValueListInput(String key, String cat, DoubleVector def) {
 		super(key, cat, def);
@@ -42,6 +43,7 @@ public class ValueListInput extends ListInput<DoubleVector> {
 		DoubleVector temp = Input.parseDoubles(kw, minValue, maxValue, unitType);
 		Input.assertCount(temp, validCounts);
 		Input.assertCountRange(temp, minCount, maxCount);
+		Input.assertMonotonic(temp, monotonic);
 		if (!Double.isNaN(sumValue))
 			Input.assertSumTolerance(temp, sumValue, sumTolerance);
 
@@ -68,6 +70,10 @@ public class ValueListInput extends ListInput<DoubleVector> {
 
 	public void setValidCounts(int... list) {
 		validCounts = list;
+	}
+
+	public void setMonotonic(int dir) {
+		monotonic = dir;
 	}
 
 	@Override

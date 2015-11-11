@@ -55,6 +55,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_TIME = "Expected a time value (hh:mm or hh:mm:ss), received: %s";
 	protected static final String INP_ERR_TIMEVALUE = "Expected a numeric value, 12 numeric values, or a probabilty distribution, received: %s";
 	protected static final String INP_ERR_BADSUM = "List must sum to %f, received:%f";
+	protected static final String INP_ERR_MONOTONIC = "List must %s monotonically. Values starting at index %s are %s s, %s s, ...";
 	protected static final String INP_ERR_BADCHOICE = "Expected one of %s, received: %s";
 	protected static final String INP_ERR_ELEMENT = "Error parsing element %d: %s";
 	protected static final String INP_ERR_ENTNAME = "Could not find an Entity named: %s";
@@ -400,6 +401,22 @@ public abstract class Input<T> {
 			return;
 
 		throw new InputErrorException(INP_ERR_BADSUM, sum, vec.sum());
+	}
+
+	public static void assertMonotonic(DoubleVector vec, int direction)
+	throws InputErrorException {
+		if (direction == 0)
+			return;
+
+		for (int i=1; i<vec.size(); i++) {
+			double diff = vec.get(i) - vec.get(i-1);
+
+			if (direction > 0 && diff < 0.0)
+				throw new InputErrorException(INP_ERR_MONOTONIC, "increase", i-1, vec.get(i-1), vec.get(i));
+
+			if (direction < 0 && diff > 0.0)
+				throw new InputErrorException(INP_ERR_MONOTONIC, "decrease", i-1, vec.get(i-1), vec.get(i));
+		}
 	}
 
 	public static <T> T parse(List<String> data, Class<T> aClass, String units, double minValue, double maxValue, int minCount, int maxCount, Class<? extends Unit> unitType) {
