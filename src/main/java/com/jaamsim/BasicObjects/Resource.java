@@ -224,7 +224,7 @@ public class Resource extends DisplayEntity {
 	 description = "The present number of resource units that are in use.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 2)
-	public double getUnitsInUse(double simTime) {
+	public int getUnitsInUse(double simTime) {
 		return unitsInUse;
 	}
 
