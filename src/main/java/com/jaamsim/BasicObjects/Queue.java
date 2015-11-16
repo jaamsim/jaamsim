@@ -433,7 +433,7 @@ public class Queue extends LinkedComponent {
 		Queue shortest = null;
 		int count = -1;
 		for (Queue que : queueList) {
-			int n = (int) que.getMatchValueCount(0.0);
+			int n = que.getMatchValueCount(0.0);
 			if (n > count) {
 				count = n;
 				shortest = que;
@@ -576,7 +576,7 @@ public class Queue extends LinkedComponent {
 	 description = "The present number of entities in the queue.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 0)
-	public double getQueueLength(double simTime) {
+	public int getQueueLength(double simTime) {
 		return itemSet.size();
 	}
 
@@ -656,7 +656,7 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
 	  sequence = 6)
-	public Integer getQueueLengthMinimum(double simTime) {
+	public int getQueueLengthMinimum(double simTime) {
 		return minElements;
 	}
 
@@ -665,7 +665,7 @@ public class Queue extends LinkedComponent {
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
 	  sequence = 7)
-	public Integer getQueueLengthMaximum(double simTime) {
+	public int getQueueLengthMaximum(double simTime) {
 		// An entity that is added to an empty queue and removed immediately
 		// does not count as a non-zero queue length
 		if (maxElements == 1 && queueLengthDist.get(1) == 0.0)
@@ -707,7 +707,7 @@ public class Queue extends LinkedComponent {
 	 description = "The present number of unique match values in the queue.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 10)
-	public double getMatchValueCount(double simTime) {
+	public int getMatchValueCount(double simTime) {
 		return matchMap.size();
 	}
 
