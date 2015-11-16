@@ -193,7 +193,7 @@ private class OutputTableModel extends AbstractTableModel {
 					sb.append("{");
 					DoubleVector vec = out.getValue(simTime, DoubleVector.class);
 					for (int i=0; i<vec.size(); i++) {
-						str = String.format("%g, ", vec.get(i));
+						str = String.format("%g, ", vec.get(i)/factor);
 						sb.append(str);
 					}
 					sb.replace(sb.length()-2, sb.length()-1, "}");
