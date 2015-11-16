@@ -241,7 +241,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	@Output(name = "MatchValue",
 	 description = "The present value to be matched in the queue.",
 	    sequence = 0)
-	public Integer getMatchValue(double simTime) {
+	public int getMatchValue(double simTime) {
 		return matchValue;
 	}
 
