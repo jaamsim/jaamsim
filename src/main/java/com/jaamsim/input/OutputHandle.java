@@ -221,18 +221,20 @@ public class OutputHandle {
 	}
 
 	public static boolean isNumericType(Class<?> rtype) {
-		if (rtype == Double.class) return true;
+
 		if (rtype == double.class) return true;
-		if (rtype == Float.class) return true;
-		if (rtype == float.class) return true;
-		if (rtype == Long.class) return true;
-		if (rtype == long.class) return true;
-		if (rtype == Integer.class) return true;
 		if (rtype == int.class) return true;
-		if (rtype == Short.class) return true;
+		if (rtype == long.class) return true;
+		if (rtype == float.class) return true;
 		if (rtype == short.class) return true;
-		if (rtype == Character.class) return true;
 		if (rtype == char.class) return true;
+
+		if (rtype == Double.class) return true;
+		if (rtype == Integer.class) return true;
+		if (rtype == Long.class) return true;
+		if (rtype == Float.class) return true;
+		if (rtype == Short.class) return true;
+		if (rtype == Character.class) return true;
 
 		return false;
 	}
@@ -264,13 +266,42 @@ public class OutputHandle {
 	 */
 	public double getValueAsDouble(double simTime, double def) {
 		Class<?> retType = this.getReturnType();
+
 		if (retType == double.class)
 			return this.getValue(simTime, double.class);
+
+		if (retType == int.class)
+			return this.getValue(simTime, int.class).doubleValue();
+
+		if (retType == boolean.class)
+			return this.getValue(simTime, boolean.class) ? 1.0d : 0.0d;
+
+		if (retType == float.class)
+			return this.getValue(simTime, float.class).doubleValue();
+
+		if (retType == long.class)
+			return this.getValue(simTime, long.class).doubleValue();
+
+		if (retType == short.class)
+			return this.getValue(simTime, short.class).doubleValue();
+
+		if (retType == char.class)
+			return this.getValue(simTime, char.class).charValue();
 
 		if (retType == Double.class) {
 			Double val = getValue(simTime, Double.class);
 			if (val == null) return def;
 			return val.doubleValue();
+		}
+		if (retType == Integer.class) {
+			Integer val = getValue(simTime, Integer.class);
+			if (val == null) return def;
+			return val.doubleValue();
+		}
+		if (retType == Boolean.class) {
+			Boolean val = getValue(simTime, Boolean.class);
+			if (val == null) return def;
+			return val.booleanValue() ? 1.0d : 0.0d;
 		}
 		if (retType == Float.class) {
 			Float val = getValue(simTime, Float.class);
@@ -279,11 +310,6 @@ public class OutputHandle {
 		}
 		if (retType == Long.class) {
 			Long val = getValue(simTime, Long.class);
-			if (val == null) return def;
-			return val.doubleValue();
-		}
-		if (retType == Integer.class) {
-			Integer val = getValue(simTime, Integer.class);
 			if (val == null) return def;
 			return val.doubleValue();
 		}
@@ -297,24 +323,6 @@ public class OutputHandle {
 			if (val == null) return def;
 			return val.charValue();
 		}
-		if (retType == Boolean.class) {
-			Boolean val = getValue(simTime, Boolean.class);
-			if (val == null) return def;
-			return val.booleanValue() ? 1.0d : 0.0d;
-		}
-
-		if (retType == float.class)
-			return this.getValue(simTime, float.class).doubleValue();
-		if (retType == int.class)
-			return this.getValue(simTime, int.class).doubleValue();
-		if (retType == long.class)
-			return this.getValue(simTime, long.class).doubleValue();
-		if (retType == short.class)
-			return this.getValue(simTime, short.class).doubleValue();
-		if (retType == char.class)
-			return this.getValue(simTime, char.class).charValue();
-		if (retType == boolean.class)
-			return this.getValue(simTime, boolean.class) ? 1.0d : 0.0d;
 
 		return def;
 	}
