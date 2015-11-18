@@ -180,7 +180,7 @@ public abstract class LinkedComponent extends StateEntity {
 	 description = "The number of entities processed per unit time by this component.",
 	    unitType = RateUnit.class,
 	    sequence = 3)
-	public Double getProcessingRate( double simTime) {
+	public double getProcessingRate( double simTime) {
 		return numberProcessed/simTime;
 	}
 
@@ -188,7 +188,7 @@ public abstract class LinkedComponent extends StateEntity {
 	 description = "The time at which the last entity was released.",
 	    unitType = TimeUnit.class,
 	    sequence = 4)
-	public Double getReleaseTime(double simTime) {
+	public double getReleaseTime(double simTime) {
 		return releaseTime;
 	}
 
