@@ -31,8 +31,10 @@ import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
+import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.input.RunNumberInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
@@ -107,6 +109,34 @@ public class Simulation extends Entity {
 	@Keyword(description = "The length of time represented by one simulation tick.",
 	         example = "Simulation TickLength { 1e-6 s }")
 	private static final ValueInput tickLengthInput;
+
+	// Multiple Runs tab
+	@Keyword(description = "Defines the number of run indices and the maximum value N for each "
+	                     + "index. When making multiple runs, each index will be iterated from "
+	                     + "1 to N starting with the last index. One run will be executed for "
+	                     + "every combination of the run index values. For example, if three run "
+	                     + "indices are defined with ranges of 3, 5, and 10, then at total of "
+	                     + "3*5*10 = 150 runs will be executed.",
+	             example = "Simulation RunIndexDefinitionList { 3 5 10 }")
+	private static final IntegerListInput runIndexDefinitionList;
+
+	@Keyword(description = "The first run number to be executed. The value can be entered as "
+	                     + "either an integer or as the equivalent combination of run indices. "
+	                     + "For example, if there are three run indices with ranges of "
+	                     + "3, 5, and 10, then run number 22 can be expressed as 1-3-2 because "
+	                     + "22 = (1-1)*5*10 + (3-1)*10 + 2.",
+	             example = "Simulation StartingRunNumber { 22 }\n"
+	                     + "Simulation StartingRunNumber { 1-3-2 }")
+	private static final RunNumberInput startingRunNumber;
+
+	@Keyword(description = "The last run number to be executed. The value can be entered as "
+	                     + "either an integer or as the equivalent combination of run indices. "
+	                     + "For example, if there are three run indices with ranges of "
+	                     + "3, 5, and 10, then run number 78 can be expressed as 2-3-8 because "
+	                     + "78 = (2-1)*5*10 + (3-1)*10 + 8.",
+	             example = "Simulation EndingRunNumber { 78 }\n"
+	                     + "Simulation EndingRunNumber { 2-3-8 }")
+	private static final RunNumberInput endingRunNumber;
 
 	// GUI tab
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
@@ -223,6 +253,15 @@ public class Simulation extends Entity {
 		tickLengthInput.setUnitType(TimeUnit.class);
 		tickLengthInput.setValidRange(1e-9d, 5.0d);
 
+		// Multiple Runs tab
+		IntegerVector defRangeList = new IntegerVector();
+		defRangeList.add(1);
+		runIndexDefinitionList = new IntegerListInput("RunIndexDefinitionList", "Multiple Runs", defRangeList);
+
+		startingRunNumber = new RunNumberInput("StartingRunNumber", "Multiple Runs", 1);
+
+		endingRunNumber = new RunNumberInput("EndingRunNumber", "Multiple Runs", 1);
+
 		// GUI tab
 		displayedUnits = new EntityListInput<>(Unit.class, "DisplayedUnits", "GUI", null);
 		displayedUnits.setDefaultText("SI Units");
@@ -297,6 +336,11 @@ public class Simulation extends Entity {
 		this.addInput(printReport);
 		this.addInput(reportDirectory);
 		this.addInput(tickLengthInput);
+
+		// Multiple Runs tab
+		this.addInput(runIndexDefinitionList);
+		this.addInput(startingRunNumber);
+		this.addInput(endingRunNumber);
 
 		// GUI tab
 		this.addInput(displayedUnits);
@@ -417,6 +461,10 @@ public class Simulation extends Entity {
 		exitAtStop.reset();
 
 		startTimeInput.reset();
+
+		runIndexDefinitionList.reset();
+		startingRunNumber.reset();
+		endingRunNumber.reset();
 
 		showModelBuilder.reset();
 		showObjectSelector.reset();
