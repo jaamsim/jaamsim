@@ -131,8 +131,13 @@ public class Queue extends LinkedComponent {
 		maxCount = -1;
 
 		// Clear statistics
+		startOfStatisticsCollection = 0.0;
+		timeOfLastUpdate = 0.0;
+		minElements = 0;
+		maxElements = 0;
+		elementSeconds = 0.0;
+		squaredElementSeconds = 0.0;
 		queueLengthDist.clear();
-		this.clearStatistics();
 
 		// Identify the objects that use this queue
 		userList.clear();

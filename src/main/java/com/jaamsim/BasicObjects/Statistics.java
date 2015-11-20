@@ -73,7 +73,10 @@ public class Statistics extends LinkedComponent {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		this.clearStatistics();
+		minValue = Double.POSITIVE_INFINITY;
+		maxValue = Double.NEGATIVE_INFINITY;
+		totalValue = 0.0;
+		totalSquaredValue = 0.0;
 	}
 
 	@Override

@@ -86,8 +86,15 @@ public class Resource extends DisplayEntity {
 		unitsInUse = 0;
 
 		// Clear statistics
+		startOfStatisticsCollection = 0.0;
+		timeOfLastUpdate = 0.0;
+		minUnitsInUse = 0;
+		maxUnitsInUse = 0;
+		unitSeconds = 0.0;
+		squaredUnitSeconds = 0.0;
+		unitsSeized = 0;
+		unitsReleased = 0;
 		unitsInUseDist.clear();
-		this.clearStatistics();
 
 		// Prepare a list of the Seize objects that use this resource
 		seizeList.clear();
