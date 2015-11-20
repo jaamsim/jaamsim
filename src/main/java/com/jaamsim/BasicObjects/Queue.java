@@ -131,6 +131,7 @@ public class Queue extends LinkedComponent {
 		maxCount = -1;
 
 		// Clear statistics
+		queueLengthDist.clear();
 		this.clearStatistics();
 
 		// Identify the objects that use this queue
