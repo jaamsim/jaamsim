@@ -91,11 +91,9 @@ public class Statistics extends LinkedComponent {
 		this.sendToNextComponent(ent);
 	}
 
-	/**
-	 * Clear queue statistics
-	 */
 	@Override
 	public void clearStatistics() {
+		super.clearStatistics();
 		minValue = Double.POSITIVE_INFINITY;
 		maxValue = Double.NEGATIVE_INFINITY;
 		totalValue = 0.0;

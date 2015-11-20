@@ -531,11 +531,9 @@ public class Queue extends LinkedComponent {
 	// STATISTICS
 	// *******************************************************************************************************
 
-	/**
-	 * Clear queue statistics
-	 */
 	@Override
 	public void clearStatistics() {
+		super.clearStatistics();
 		double simTime = this.getSimTime();
 		startOfStatisticsCollection = simTime;
 		timeOfLastUpdate = simTime;
