@@ -60,6 +60,7 @@ public class InputAgent {
 	private static final String[] EARLY_KEYWORDS = {"AttributeDefinitionList", "UnitType", "UnitTypeList", "TickLength"};
 
 	private static File reportDir;
+	private static FileEntity reportFile;     // file to which the output report will be written
 
 	static {
 		recordEditsFound = false;
@@ -67,6 +68,7 @@ public class InputAgent {
 		batchRun = false;
 		configFile = null;
 		reportDir = null;
+		reportFile = null;
 		lastTimeForTrace = -1.0d;
 	}
 
@@ -1110,10 +1112,12 @@ public class InputAgent {
 	public static void printReport(double simTime) {
 
 		// Create the report file
-		StringBuilder tmp = new StringBuilder("");
-		tmp.append(InputAgent.getReportFileName(InputAgent.getRunName()));
-		tmp.append(".rep");
-		FileEntity file = new FileEntity(tmp.toString());
+		if (reportFile == null) {
+			StringBuilder tmp = new StringBuilder("");
+			tmp.append(InputAgent.getReportFileName(InputAgent.getRunName()));
+			tmp.append(".rep");
+			reportFile = new FileEntity(tmp.toString());
+		}
 
 		// Identify the classes that were used in the model
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
@@ -1149,17 +1153,20 @@ public class InputAgent {
 
 			// Print a header for this class
 			if (newClass != Simulation.class)
-				file.format("*** %s ***%n%n", ObjectType.getObjectTypeForClass(newClass));
+				reportFile.format("*** %s ***%n%n", ObjectType.getObjectTypeForClass(newClass));
 
 			// Print each entity to the output report
 			for (Entity ent : entList) {
-				ent.printReport(file, simTime);
-				file.format("%n");
+				ent.printReport(reportFile, simTime);
+				reportFile.format("%n");
 			}
 		}
 
 		// Close the report file
-		file.close();
+		if (Simulation.isLastRun()) {
+			reportFile.close();
+			reportFile = null;
+		}
 	}
 
 	private static class ClassComparator implements Comparator<Class<? extends Entity>> {

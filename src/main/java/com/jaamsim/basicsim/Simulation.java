@@ -854,6 +854,10 @@ public class Simulation extends Entity {
 		return sb.toString();
 	}
 
+	public static boolean isMultipleRuns() {
+		return endingRunNumber.getValue() > startingRunNumber.getValue();
+	}
+
 	public static boolean isLastRun() {
 		return runNumber >= endingRunNumber.getValue();
 	}
