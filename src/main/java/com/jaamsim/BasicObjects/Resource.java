@@ -86,6 +86,7 @@ public class Resource extends DisplayEntity {
 		unitsInUse = 0;
 
 		// Clear statistics
+		unitsInUseDist.clear();
 		this.clearStatistics();
 
 		// Prepare a list of the Seize objects that use this resource
