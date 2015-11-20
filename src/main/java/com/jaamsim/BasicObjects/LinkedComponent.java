@@ -147,6 +147,13 @@ public abstract class LinkedComponent extends StateEntity {
 		numberProcessed++;
 	}
 
+	@Override
+	public void clearStatistics() {
+		super.clearStatistics();
+		numberAdded = 0;
+		numberProcessed = 0;
+	}
+
 	// ******************************************************************************************************
 	// OUTPUT METHODS
 	// ******************************************************************************************************
