@@ -28,9 +28,6 @@ class EndModelTarget extends ProcessTarget {
 	@Override
 	public void process() {
 		GUIFrame.instance().setClock(Simulation.getEndTime());
-		Simulation.end();
-
-		if (Simulation.getExitAtStop())
-			GUIFrame.shutdown(0);
+		Simulation.endRun();
 	}
 }

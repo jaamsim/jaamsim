@@ -550,12 +550,25 @@ public class Simulation extends Entity {
 		startTime = startTimeInput.getValue();
 		endTime = startTime + Simulation.getInitializationTime() + Simulation.getRunDuration();
 
+		Simulation.setRunNumber(startingRunNumber.getValue());
+		Simulation.startRun(evt);
+	}
+
+	/**
+	 * Starts a single simulation run.
+	 * @param evt - EventManager for the run.
+	 */
+	public static void startRun(EventManager evt) {
 		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(), null);
 		evt.resume(evt.secondsToNearestTick(Simulation.getPauseTime()));
 	}
 
-	public static void end() {
+	/**
+	 * Ends a single simulation run and if appropriate restarts the model for the next run.
+	 */
+	public static void endRun() {
 
+		// Execute the end of run method for each entity
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			Entity.getAll().get(i).doEnd();
 		}
@@ -564,12 +577,34 @@ public class Simulation extends Entity {
 		if (printReport.getValue())
 			InputAgent.printReport(Simulation.getInstance().getSimTime());
 
+		// Increment the run number and check for last run
+		if (Simulation.isLastRun()) {
+			Simulation.end();
+			return;
+		}
+
+		// Start the next run
+		Simulation.setRunNumber(runNumber + 1);
+		GUIFrame.instance().stopSimulation();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				GUIFrame.instance().startNextRun();
+			}
+		}).start();
+	}
+
+	/**
+	 * Ends a set of simulation runs.
+	 */
+	private static void end() {
+
 		// Close warning/error trace file
 		InputAgent.logMessage("Made it to do end at");
 		InputAgent.closeLogFile();
 
 		// Always terminate the run when in batch mode
-		if (InputAgent.getBatch())
+		if (InputAgent.getBatch() || exitAtStop.getValue())
 			GUIFrame.shutdown(0);
 
 		EventManager.current().pause();
@@ -817,6 +852,10 @@ public class Simulation extends Entity {
 			sb.append("-").append(indexList.get(i));
 		}
 		return sb.toString();
+	}
+
+	public static boolean isLastRun() {
+		return runNumber >= endingRunNumber.getValue();
 	}
 
 	@Output(name = "Software Name",
