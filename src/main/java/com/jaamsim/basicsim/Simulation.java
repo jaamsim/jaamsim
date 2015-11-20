@@ -217,6 +217,8 @@ public class Simulation extends Entity {
 	private static double timeScale; // the scale from discrete to continuous time
 	private static double startTime; // simulation time (seconds) for the start of the run (not necessarily zero)
 	private static double endTime;   // simulation time (seconds) for the end of the run
+	private static int runNumber;    // labels each run when multiple runs are being made
+	private static IntegerVector runIndexList;
 
 	private static Simulation myInstance;
 
@@ -323,6 +325,9 @@ public class Simulation extends Entity {
 		// Initialize basic model information
 		startTime = 0.0;
 		endTime = 8760.0*3600.0;
+		runNumber = 1;
+		runIndexList = new IntegerVector();
+		runIndexList.add(1);
 	}
 
 	{
@@ -400,6 +405,18 @@ public class Simulation extends Entity {
 
 		if (in == reportDirectory) {
 			InputAgent.setReportDirectory(reportDirectory.getDir());
+			return;
+		}
+
+		if (in == runIndexDefinitionList) {
+			Simulation.setRunNumber(runNumber);
+			startingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
+			endingRunNumber.setRunIndexRangeList(runIndexDefinitionList.getValue());
+			return;
+		}
+
+		if (in == startingRunNumber) {
+			Simulation.setRunNumber(startingRunNumber.getValue());
 			return;
 		}
 
@@ -748,6 +765,11 @@ public class Simulation extends Entity {
 		setWindowVisible(OutputBox.getInstance(), false);
 		setWindowVisible(PropertyBox.getInstance(), false);
 		setWindowVisible(LogBox.getInstance(), false);
+	}
+
+	private static void setRunNumber(int n) {
+		runNumber = n;
+		runIndexList = Simulation.getRunIndexList(n, runIndexDefinitionList.getValue());
 	}
 
 	/**
