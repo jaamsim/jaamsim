@@ -46,8 +46,8 @@ public abstract class LinkedComponent extends StateEntity {
 	         exampleList = {"Service"})
 	protected final StringInput stateAssignment;
 
-	private int numberAdded;     // Number of entities added to this component from upstream
-	private int numberProcessed; // Number of entities processed by this component
+	private long numberAdded;     // Number of entities added to this component from upstream
+	private long numberProcessed; // Number of entities processed by this component
 	private DisplayEntity receivedEntity; // Entity most recently received by this component
 	private double releaseTime = Double.NaN;
 
@@ -139,7 +139,7 @@ public abstract class LinkedComponent extends StateEntity {
 			nextComponent.getValue().addEntity(ent);
 	}
 
-	public int getNumberAdded() {
+	public long getNumberAdded() {
 		return numberAdded;
 	}
 
@@ -163,8 +163,8 @@ public abstract class LinkedComponent extends StateEntity {
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
 	    sequence = 1)
-	public Double getNumberAdded(double simTime) {
-		return (double)numberAdded;
+	public long getNumberAdded(double simTime) {
+		return numberAdded;
 	}
 
 	@Output(name = "NumberProcessed",
@@ -172,8 +172,8 @@ public abstract class LinkedComponent extends StateEntity {
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
 	    sequence = 2)
-	public Double getNumberProcessed(double simTime) {
-		return (double)numberProcessed;
+	public long getNumberProcessed(double simTime) {
+		return numberProcessed;
 	}
 
 	@Output(name = "ProcessingRate",

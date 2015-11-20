@@ -695,7 +695,7 @@ public class Queue extends LinkedComponent {
 	  reportable = true,
 	  sequence = 9)
 	public double getAverageQueueTime(double simTime) {
-		int n = this.getNumberAdded();
+		long n = this.getNumberAdded();
 		if (n == 0)
 			return 0.0;
 		double dt = simTime - timeOfLastUpdate;
