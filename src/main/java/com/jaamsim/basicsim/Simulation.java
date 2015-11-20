@@ -843,10 +843,29 @@ public class Simulation extends Entity {
 		return InputAgent.getConfigFile().getPath();
 	}
 
+	@Output(name = "RunNumber",
+	 description = "The counter used to indentify an individual simulation run when multiple runs "
+	             + "are being made.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 3)
+	public int getRunNumber(double simTime) {
+		return runNumber;
+	}
+
+	@Output(name = "RunIndex",
+	 description = "The list of run indices that correspond to the run number.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 4)
+	public IntegerVector getRunIndex(double simTime) {
+		return runIndexList;
+	}
+
 	@Output(name = "Present Time and Date",
 	 description = "The present local time and date.",
 	  reportable = true,
-	    sequence = 3)
+	    sequence = 5)
 	public String getPresentTime(double simTime) {
 		String timeStamp = new SimpleDateFormat("MMM dd, yyyy HH:mm").format(Calendar.getInstance().getTime());
 		return timeStamp;
@@ -857,7 +876,7 @@ public class Simulation extends Entity {
 	             + "collection.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 4)
+	    sequence = 6)
 	public double getInitializationDuration(double simTime) {
 		return initializationTime.getValue();
 	}
@@ -866,7 +885,7 @@ public class Simulation extends Entity {
 	 description = "The length of time over which statistics were collected.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 5)
+	    sequence = 7)
 	public double getRunDuration(double simTime) {
 		return runDuration.getValue();
 	}
@@ -875,7 +894,7 @@ public class Simulation extends Entity {
 	 description = "The value for the simulation clock at the present time.",
 	    unitType = TimeUnit.class,
 	  reportable = true,
-	    sequence = 6)
+	    sequence = 8)
 	public double getPresentSimulationTime(double simTime) {
 		return simTime;
 	}
