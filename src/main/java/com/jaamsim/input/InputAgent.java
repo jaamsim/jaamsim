@@ -1119,6 +1119,10 @@ public class InputAgent {
 			reportFile = new FileEntity(tmp.toString());
 		}
 
+		// Print run number header when multiple runs are to be performed
+		if (Simulation.isMultipleRuns())
+			reportFile.format("##### RUN %s #####%n%n", Simulation.getRunCode());
+
 		// Identify the classes that were used in the model
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
 		for (Entity ent : Entity.getAll()) {

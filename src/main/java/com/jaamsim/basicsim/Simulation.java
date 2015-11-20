@@ -854,6 +854,10 @@ public class Simulation extends Entity {
 		return sb.toString();
 	}
 
+	public static String getRunCode() {
+		return Simulation.getRunCode(runIndexList);
+	}
+
 	public static boolean isMultipleRuns() {
 		return endingRunNumber.getValue() > startingRunNumber.getValue();
 	}
