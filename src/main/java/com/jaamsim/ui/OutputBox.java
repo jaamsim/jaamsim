@@ -184,7 +184,12 @@ private class OutputTableModel extends AbstractTableModel {
 				// Numeric outputs
 				if (out.isNumericValue()) {
 					double val = out.getValueAsDouble(simTime, Double.NaN);
-					str = String.format("%g", val/factor);
+					if (out.getReturnType() == int.class || out.getReturnType() == long.class || out.getReturnType() == Integer.class) {
+						str = String.format("%.0f", val/factor);
+					}
+					else {
+						str = String.format("%g", val/factor);
+					}
 					sb.append(str);
 				}
 
