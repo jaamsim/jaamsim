@@ -20,6 +20,7 @@ import java.util.Calendar;
 
 import javax.swing.JFrame;
 
+import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpInput;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
@@ -80,12 +81,18 @@ public class Simulation extends Entity {
 	         example = "Simulation ExitAtStop { TRUE }")
 	private static final BooleanInput exitAtStop;
 
-	@Keyword(description = "Global seed that sets the substream for each probability distribution. "
-			+ "Must be an integer >= 0. GlobalSubstreamSeed works together with each probability "
-			+ "distribution's RandomSeed keyword to determine its random sequence. It allows the "
-			+ "user to change all the random sequences in a model with a single input.",
-	         example = "Simulation GlobalSubstreamSeed { 5 }")
-	private static final IntegerInput globalSeedInput;
+	@Keyword(description = "Global seed that sets the substream for each probability "
+	                     + "distribution. Must be an integer >= 0. GlobalSubstreamSeed works "
+	                     + "together with each probability distribution's RandomSeed keyword to "
+	                     + "determine its random sequence. It allows the user to change all the "
+	                     + "random sequences in a model with a single input. To run multiple "
+	                     + "replications, set the appropriate inputs under the Multiple Runs tab "
+	                     + "and then set the GlobalSubstreamSeed input to the run number or to "
+	                     + "one of the run indices.",
+	             example = "Simulation GlobalSubstreamSeed { 5 }\n"
+	                     + "Simulation GlobalSubstreamSeed { [Simulation].RunNumber }\n"
+	                     + "Simulation GlobalSubstreamSeed { [Simulation].RunIndex(3) }")
+	private static final SampleExpInput globalSeedInput;
 
 	@Keyword(description = "Indicates whether an output report will be printed at the end of the simulation run.",
 	         example = "Simulation PrintReport { TRUE }")
@@ -202,7 +209,8 @@ public class Simulation extends Entity {
 
 		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
 
-		globalSeedInput = new IntegerInput("GlobalSubstreamSeed", "Key Inputs", 0);
+		globalSeedInput = new SampleExpInput("GlobalSubstreamSeed", "Key Inputs", new SampleConstant(0));
+		globalSeedInput.setUnitType(DimensionlessUnit.class);
 		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
 
 		printReport = new BooleanInput("PrintReport", "Key Inputs", false);
@@ -502,7 +510,7 @@ public class Simulation extends Entity {
 	}
 
 	public static int getSubstreamNumber() {
-		return globalSeedInput.getValue();
+		return (int)globalSeedInput.getValue().getNextSample(0.0);
 	}
 
 	public static boolean getPrintReport() {
