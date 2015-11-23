@@ -2,15 +2,17 @@
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2002-2011 Ausenco Engineering Canada Inc.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.jaamsim.ui;
 
@@ -61,15 +63,17 @@ public class AboutBox extends FrameBox implements ActionListener {
 		getContentPane().add( lab );
 
 		StringBuilder msg = new StringBuilder(copyright).append("\n\n");
-		msg.append("This program is free software: you can redistribute it and/or modify\n");
-		msg.append("it under the terms of the GNU General Public License as published by\n");
-		msg.append("the Free Software Foundation, either version 3 of the License, or\n");
-		msg.append("(at your option) any later version.\n");
+		msg.append("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
+		msg.append("you may not use this file except in compliance with the License.\n");
+		msg.append("You may obtain a copy of the License at\n");
 		msg.append("\n");
-		msg.append("This program is distributed in the hope that it will be useful,\n");
-		msg.append("but WITHOUT ANY WARRANTY; without even the implied warranty of\n");
-		msg.append("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n");
-		msg.append("GNU General Public License for more details.");
+		msg.append("   http://www.apache.org/licenses/LICENSE-2.0\n");
+ 		msg.append("\n");
+		msg.append("Unless required by applicable law or agreed to in writing, software\n");
+		msg.append("distributed under the License is distributed on an \"AS IS\" BASIS,\n");
+		msg.append("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n");
+		msg.append("See the License for the specific language governing permissions and\n");
+		msg.append("limitations under the License.");
 
 		JTextArea area = new JTextArea(msg.toString());
 		area.setEditable(false);

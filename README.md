@@ -48,7 +48,7 @@ in build/jars/
 
 # License
 
-JaamSim is GPLv3
+JaamSim is Licensed under the Apache License, Version 2.0
 
 # Contact
 
@@ -56,4 +56,4 @@ For licensing and general inquiries:
 Dr. Harry King <harry.king@ausenco.com>
 
 If you have any problems building the source or technical inquiries:
-Harvey Harrison <harvey.harrison@ausenco.com>
+Harvey Harrison <harvey.harrison@gmail.com>
