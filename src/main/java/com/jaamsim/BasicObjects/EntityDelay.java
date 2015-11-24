@@ -131,6 +131,11 @@ public class EntityDelay extends LinkedComponent {
 		}
 	}
 
+	@Override
+	public String getInitialState() {
+		return "Idle";
+	}
+
 	private static class EntityDelayEntry {
 		DisplayEntity ent;
 		double startTime;
@@ -155,6 +160,9 @@ public class EntityDelay extends LinkedComponent {
 		}
 
 		this.scheduleProcess(dur, 5, new RemoveDisplayEntityTarget(this, ent));
+
+		// Set the present state to Working
+		this.setPresentState();
 	}
 
 	private static class RemoveDisplayEntityTarget extends EntityTarget<EntityDelay> {
@@ -179,6 +187,17 @@ public class EntityDelay extends LinkedComponent {
 
 		// Send the entity to the next component
 		this.sendToNextComponent(ent);
+		this.setPresentState();
+	}
+
+	@Override
+	public void setPresentState() {
+		if (this.getNumberInProgress() > 0) {
+			this.setPresentState("Working");
+		}
+		else {
+			this.setPresentState("Idle");
+		}
 	}
 
 	/**

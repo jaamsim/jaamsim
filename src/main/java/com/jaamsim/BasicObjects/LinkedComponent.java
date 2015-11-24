@@ -149,6 +149,10 @@ public abstract class LinkedComponent extends StateEntity {
 		numberProcessed++;
 	}
 
+	public long getNumberInProgress() {
+		return numberAdded - numberProcessed;
+	}
+
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
