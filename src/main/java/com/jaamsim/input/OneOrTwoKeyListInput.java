@@ -73,7 +73,33 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 		}
 
 		if( ent1 == null ) {
-			noKeyValue = Input.parseEntityList( input, valClass, true );
+			// If adding to the list
+			// The input is of the form: ++ <value1 value2 value3...>
+			if( kw.getArg( 0 ).equals( "++" ) ) {
+
+				ArrayList<V> addedValues = Input.parseEntityList( input.subList(1,input.size()), valClass, true );
+				for( V val : addedValues ) {
+					if( noKeyValue.contains( val ) )
+						throw new InputErrorException(INP_ERR_NOTUNIQUE, val.getName());
+					noKeyValue.add( val );
+				}
+			}
+			// If removing from the list
+			// The input is of the form: -- <value1 value2 value3...>
+			else if( kw.getArg( 0 ).equals( "--" ) ) {
+
+				ArrayList<V> removedValues = Input.parseEntityList( input.subList(1,input.size()), valClass, true );
+				for( V val : removedValues ) {
+					if( ! noKeyValue.contains( val ) )
+						InputAgent.logWarning( "Could not remove " + val + " from " + this.getKeyword() );
+					noKeyValue.remove( val );
+				}
+			}
+			// Otherwise, just set the list normally
+			// The input is of the form: <value1 value2 value3...>
+			else {
+				noKeyValue = Input.parseEntityList( input, valClass, true );
+			}
 			return;
 		}
 
@@ -103,18 +129,63 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 			list2 = Input.parseEntityList(input.subList(1, 2), key2Class, true);
 		}
 
-		// Determine the value
-		ArrayList<V> val = Input.parseEntityList( input.subList(numKeys,input.size()), valClass, true );
+		// If adding to the list
+		// The input is of the form: <Key1> ++ <value1 value2 value3...>
+		//                       or: <Key1> <Key2> ++ <value1 value2 value3...>
+		if( kw.getArg( numKeys ).equals( "++" ) ) {
 
-		// Set the value for the given keys
-		for( int i = 0; i < list.size(); i++ ) {
-			HashMap<K2,ArrayList<V>> h1 = hashMap.get( list.get( i ) );
-			if( h1 == null ) {
-				h1 = new HashMap<>();
-				hashMap.put( list.get( i ), h1 );
+			// Set the value for the given keys
+			for( int i = 0; i < list.size(); i++ ) {
+				HashMap<K2,ArrayList<V>> h1 = hashMap.get( list.get( i ) );
+				for( int j = 0; j < list2.size(); j++ ) {
+					ArrayList<V> values = new ArrayList<>( h1.get( list2.get( j ) ) );
+
+					ArrayList<V> addedValues = Input.parseEntityList( input.subList(numKeys+1,input.size()), valClass, true );
+					for( V val : addedValues ) {
+						if( values.contains( val ) )
+							throw new InputErrorException(INP_ERR_NOTUNIQUE, val.getName());
+						values.add( val );
+					}
+					h1.put( list2.get(j), values );
+				}
 			}
-			for( int j = 0; j < list2.size(); j++ ) {
-				h1.put( list2.get(j), val );
+		}
+		// If removing from the list
+		// The input is of the form: <Key1> -- <value1 value2 value3...>
+		//                       or: <Key1> <Key2> -- <value1 value2 value3...>
+		else if( kw.getArg( numKeys ).equals( "--" ) ) {
+
+			// Set the value for the given keys
+			for( int i = 0; i < list.size(); i++ ) {
+				HashMap<K2,ArrayList<V>> h1 = hashMap.get( list.get( i ) );
+				for( int j = 0; j < list2.size(); j++ ) {
+					ArrayList<V> values = new ArrayList<>( h1.get( list2.get( j ) ) );
+
+					ArrayList<V> removedValues = Input.parseEntityList( input.subList(numKeys+1,input.size()), valClass, true );
+					for( V val : removedValues ) {
+						if( ! values.contains( val ) )
+							InputAgent.logWarning( "Could not remove " + val + " from " + this.getKeyword() );
+						values.remove( val );
+					}
+					h1.put( list2.get(j), values );
+				}
+			}
+		}
+		// Otherwise, just set the list normally
+		else {
+			// Determine the value
+			ArrayList<V> val = Input.parseEntityList( input.subList(numKeys,input.size()), valClass, true );
+
+			// Set the value for the given keys
+			for( int i = 0; i < list.size(); i++ ) {
+				HashMap<K2,ArrayList<V>> h1 = hashMap.get( list.get( i ) );
+				if( h1 == null ) {
+					h1 = new HashMap<>();
+					hashMap.put( list.get( i ), h1 );
+				}
+				for( int j = 0; j < list2.size(); j++ ) {
+					h1.put( list2.get(j), val );
+				}
 			}
 		}
 	}
@@ -203,5 +274,10 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 		}
 		Collections.sort(list);
 		return list;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s %s", noKeyValue, hashMap);
 	}
 }
