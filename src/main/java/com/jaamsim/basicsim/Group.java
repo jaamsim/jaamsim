@@ -75,9 +75,46 @@ public class Group extends Entity {
 
 		@Override
 		public void parse(KeywordIndex kw) {
-			ArrayList<Entity> temp = Input.parseEntityList(kw, Entity.class, true);
-			list.clear();
-			list.addAll(temp);
+			// If adding to the list
+			if( kw.getArg( 0 ).equals( "++" ) ) {
+				ArrayList<String> input = new ArrayList<>(kw.numArgs()-1);
+				for (int i = 1; i < kw.numArgs(); i++)
+					input.add(kw.getArg(i));
+
+				ArrayList<Entity> addedValues = Input.parseEntityList(input, Entity.class, true);
+				for( Entity ent : addedValues ) {
+					if( list.contains( ent ) )
+						throw new InputErrorException(INP_ERR_NOTUNIQUE, ent.getName());
+					list.add( ent );
+
+					// set values of appended objects to the group values
+					if ( type != null ) {
+						for ( int j = 0; j < groupKeywordValues.size(); j++  ) {
+							KeywordIndex grpkw = groupKeywordValues.get(j);
+							InputAgent.apply(ent, grpkw);
+						}
+					}
+				}
+			}
+			// If removing from the list
+			else if( kw.getArg( 0 ).equals( "--" ) ) {
+				ArrayList<String> input = new ArrayList<>(kw.numArgs()-1);
+				for (int i = 1; i < kw.numArgs(); i++)
+					input.add(kw.getArg(i));
+
+				ArrayList<Entity> removedValues = Input.parseEntityList(input, Entity.class, true);
+				for( Entity ent : removedValues ) {
+					if( ! list.contains( ent ) )
+						InputAgent.logWarning( "Could not remove " + ent + " from " + this.getKeyword() );
+					list.remove( ent );
+				}
+			}
+			// Otherwise, just set the list normally
+			else {
+				ArrayList<Entity> temp = Input.parseEntityList(kw, Entity.class, true);
+				list.clear();
+				list.addAll(temp);
+			}
 			Group.this.checkType();
 		}
 	}
