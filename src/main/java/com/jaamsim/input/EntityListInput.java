@@ -42,11 +42,57 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCountRange(kw, minCount, maxCount);
-		if( even )
-			Input.assertCountEven(kw);
 
-		value = Input.parseEntityList(kw, entClass, unique);
+		// If adding to the list
+		if( kw.getArg( 0 ).equals( "++" ) ) {
+			ArrayList<String> input = new ArrayList<>(kw.numArgs()-1);
+			for (int i = 1; i < kw.numArgs(); i++)
+				input.add(kw.getArg(i));
+
+			Input.assertCountRange(input, 0, maxCount - value.size());
+			if( even ) {
+				if ((kw.numArgs() % 2) == 0)
+					throw new InputErrorException(INP_ERR_EVENCOUNT, kw.argString());
+			}
+
+			ArrayList<T> newValue = new ArrayList<>( value );
+			ArrayList<T> addedValues = Input.parseEntityList(input, entClass, unique);
+			for( T val : addedValues ) {
+				if( unique && newValue.contains( val ) )
+					throw new InputErrorException(INP_ERR_NOTUNIQUE, val.getName());
+				newValue.add( val );
+			}
+			value = newValue;
+		}
+		// If removing from the list
+		else if( kw.getArg( 0 ).equals( "--" ) ) {
+			ArrayList<String> input = new ArrayList<>(kw.numArgs()-1);
+			for (int i = 1; i < kw.numArgs(); i++)
+				input.add(kw.getArg(i));
+
+			Input.assertCountRange(input, 0, value.size() - minCount );
+			if( even ) {
+				if ((kw.numArgs() % 2) == 0)
+					throw new InputErrorException(INP_ERR_EVENCOUNT, kw.argString());
+			}
+
+			ArrayList<T> newValue = new ArrayList<>( value );
+			ArrayList<T> removedValues = Input.parseEntityList(input, entClass, unique);
+			for( T val : removedValues ) {
+				if( ! newValue.contains( val ) )
+					InputAgent.logWarning( "Could not remove " + val + " from " + this.getKeyword() );
+				newValue.remove( val );
+			}
+			value = newValue;
+		}
+		// Otherwise, just set the list normally
+		else {
+			Input.assertCountRange(kw, minCount, maxCount);
+			if( even )
+				Input.assertCountEven(kw);
+
+			value = Input.parseEntityList(kw, entClass, unique);
+		}
 	}
 
 	@Override
