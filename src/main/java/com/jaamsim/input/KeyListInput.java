@@ -68,17 +68,83 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends ListInput
 		}
 		catch (InputErrorException e) {
 			// A key was not provided.  Set the "no key" value
-			noKeyValue = Input.parseEntityList( input, valClass, true );
+
+			// If adding to the list
+			// The input is of the form: ++ <value1 value2 value3...>
+			if( kw.getArg( 0 ).equals( "++" ) ) {
+
+				ArrayList<V> addedValues = Input.parseEntityList( input.subList(1,input.size()), valClass, true );
+				for( V val : addedValues ) {
+					if( noKeyValue.contains( val ) )
+						throw new InputErrorException(INP_ERR_NOTUNIQUE, val.getName());
+					noKeyValue.add( val );
+				}
+			}
+			// If removing from the list
+			// The input is of the form: -- <value1 value2 value3...>
+			else if( kw.getArg( 0 ).equals( "--" ) ) {
+
+				ArrayList<V> removedValues = Input.parseEntityList( input.subList(1,input.size()), valClass, true );
+				for( V val : removedValues ) {
+					if( ! noKeyValue.contains( val ) )
+						InputAgent.logWarning( "Could not remove " + val + " from " + this.getKeyword() );
+					noKeyValue.remove( val );
+				}
+			}
+			// Otherwise, just set the list normally
+			// The input is of the form: <value1 value2 value3...>
+			else {
+				noKeyValue = Input.parseEntityList( input, valClass, true );
+			}
 			return;
 		}
 
-		// The input is of the form: <Key> <value1 value2 value3...>
-		// Determine the value
-		ArrayList<V> val = Input.parseEntityList( input.subList(1,input.size()), valClass, true );
+		// If adding to the list
+		// The input is of the form: <Key> ++ <value1 value2 value3...>
+		if( kw.getArg( 1 ).equals( "++" ) ) {
 
-		// Set the value for the given keys
-		for( int i = 0; i < list.size(); i++ ) {
-			hashMap.put( list.get(i), val );
+			// Set the value for the given keys
+			for( int i = 0; i < list.size(); i++ ) {
+				ArrayList<V> values = new ArrayList<>( hashMap.get( list.get( i ) ) );
+
+				ArrayList<V> addedValues = Input.parseEntityList( input.subList(2,input.size()), valClass, true );
+				for( V val : addedValues ) {
+					if( values.contains( val ) )
+						throw new InputErrorException(INP_ERR_NOTUNIQUE, val.getName());
+					values.add( val );
+				}
+
+				hashMap.put( list.get(i), values );
+			}
+		}
+		// If removing from the list
+		// The input is of the form: <Key> -- <value1 value2 value3...>
+		else if( kw.getArg( 1 ).equals( "--" ) ) {
+
+			// Set the value for the given keys
+			for( int i = 0; i < list.size(); i++ ) {
+				ArrayList<V> values = new ArrayList<>( hashMap.get( list.get( i ) ) );
+
+				ArrayList<V> removedValues = Input.parseEntityList( input.subList(2,input.size()), valClass, true );
+				for( V val : removedValues ) {
+					if( ! values.contains( val ) )
+						InputAgent.logWarning( "Could not remove " + val + " from " + this.getKeyword() );
+					values.remove( val );
+				}
+
+				hashMap.put( list.get(i), values );
+			}
+		}
+		// Otherwise, just set the list normally
+		// The input is of the form: <Key> <value1 value2 value3...>
+		else {
+			// Determine the value
+			ArrayList<V> val = Input.parseEntityList( input.subList(1,input.size()), valClass, true );
+
+			// Set the value for the given keys
+			for( int i = 0; i < list.size(); i++ ) {
+				hashMap.put( list.get(i), val );
+			}
 		}
 	}
 
@@ -137,5 +203,10 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends ListInput
 		}
 		Collections.sort(list);
 		return list;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s %s", noKeyValue, hashMap);
 	}
 }
