@@ -1242,18 +1242,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public void stopSimulation() {
 		if( getSimState() == SIM_STATE_RUNNING ||
 		    getSimState() == SIM_STATE_PAUSED ) {
-			currentEvt.pause();
-			currentEvt.clear();
+			Simulation.stop(currentEvt);
 			this.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
-
-			// kill all generated objects
-			for (int i = 0; i < Entity.getAll().size();) {
-				Entity ent = Entity.getAll().get(i);
-				if (ent.testFlag(Entity.FLAG_GENERATED))
-					ent.kill();
-				else
-					i++;
-			}
 		}
 		else
 			throw new ErrorException( "Invalid Simulation State for stop" );
@@ -1265,7 +1255,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public void startNextRun() {
 		Simulation.startRun(currentEvt);
 	}
-
 
 	/** model was executed, but no configuration performed */
 	public static final int SIM_STATE_LOADED = 0;

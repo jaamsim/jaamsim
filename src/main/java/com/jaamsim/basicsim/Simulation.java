@@ -612,6 +612,42 @@ public class Simulation extends Entity {
 		EventManager.current().pause();
 	}
 
+	/**
+	 * Stops and resets the simulation model.
+	 * @param evt - EventManager for the run.
+	 */
+	public static void stop(EventManager evt) {
+
+		// Stop the simulation and clear the event list
+		evt.pause();
+		evt.clear();
+
+		// Destroy the entities that were generated during the run
+		for (int i = 0; i < Entity.getAll().size();) {
+			Entity ent = Entity.getAll().get(i);
+			if (ent.testFlag(Entity.FLAG_GENERATED))
+				ent.kill();
+			else
+				i++;
+		}
+
+		// Re-initialise the model
+		for (int i = 0; i < Entity.getAll().size(); i++) {
+			// Try/catch is required because some earlyInit methods use simTime which is only
+			// available from a process thread
+			try {
+				Entity.getAll().get(i).earlyInit();
+			} catch (Exception e) {}
+		}
+
+		// Initialise each entity a second time
+		for (int i = 0; i < Entity.getAll().size(); i++) {
+			try {
+				Entity.getAll().get(i).lateInit();
+			} catch (Exception e) {}
+		}
+	}
+
 	public static int getSubstreamNumber() {
 		return (int)globalSeedInput.getValue().getNextSample(0.0);
 	}
