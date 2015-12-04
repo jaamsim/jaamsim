@@ -26,6 +26,7 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
@@ -99,7 +100,9 @@ public class StateEntity extends DisplayEntity {
 	}
 
 	private void initStateData() {
-		lastStateCollectionTick = getSimTicks();
+		lastStateCollectionTick = 0;
+		if (EventManager.hasCurrent())
+			lastStateCollectionTick = getSimTicks();
 		workingTicks = 0;
 		states.clear();
 
