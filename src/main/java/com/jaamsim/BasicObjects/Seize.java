@@ -129,6 +129,8 @@ public class Seize extends LinkedService {
 	 * @return = TRUE if the Resource is required.
 	 */
 	public boolean requiresResource(Resource res) {
+		if (resourceList.getValue() == null)
+			return false;
 		return resourceList.getValue().contains(res);
 	}
 
