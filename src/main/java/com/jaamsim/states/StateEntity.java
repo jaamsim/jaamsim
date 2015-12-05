@@ -394,7 +394,7 @@ public class StateEntity extends DisplayEntity {
 	    sequence = 0)
 	public String getPresentState(double simTime) {
 		if (presentState == null) {
-			return "";
+			return this.getInitialState();
 		}
 		return presentState.name;
 	}
@@ -403,6 +403,9 @@ public class StateEntity extends DisplayEntity {
 	 description = "Returns TRUE if the present state is one of the working states.",
 	    sequence = 1)
 	public boolean isWorking(double simTime) {
+		if (presentState == null) {
+			return this.isValidWorkingState(this.getInitialState());
+		}
 		return presentState.working;
 	}
 
@@ -413,6 +416,9 @@ public class StateEntity extends DisplayEntity {
 	    unitType = TimeUnit.class,
 	    sequence = 2)
 	public double getWorkingTime(double simTime) {
+		if (presentState == null) {
+			return 0.0;
+		}
 		long simTicks = FrameBox.secondsToTicks(simTime);
 		long ticks = getWorkingTicks(simTicks);
 		return FrameBox.ticksToSeconds(ticks);
