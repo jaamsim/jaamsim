@@ -766,7 +766,7 @@ public class MeshData {
 					}
 				}
 			}
-		};
+		}
 		StaticWalker staticWalker = new StaticWalker();
 
 		long statStart = System.nanoTime();
@@ -882,7 +882,7 @@ public class MeshData {
 					}
 				}
 			}
-		};
+		}
 
 		ActionWalker actionWalker = new ActionWalker();
 		walkTree(actionWalker, treeRoot, new Mat4d(), new Mat4d(), null);
