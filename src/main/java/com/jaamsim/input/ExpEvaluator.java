@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.units.Unit;
 
 /**
@@ -167,7 +168,15 @@ public class ExpEvaluator {
 
 					Double value = outList.get(index);
 					return new ExpResult(value, oh.unitType);
+				} else if(IntegerVector.class.isAssignableFrom(oh.getReturnType())) {
+					IntegerVector outList = oh.getValue(simTime, IntegerVector.class);
 
+					if (index >= outList.size() || index < 0) {
+						return new ExpResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
+					}
+
+					Integer value = outList.get(index);
+					return new ExpResult(value, oh.unitType);
 				} else {
 					throw new ExpError(null, 0, "Output '%s' has an index and is not an array type output", names[names.length-1]);
 

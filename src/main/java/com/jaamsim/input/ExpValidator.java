@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -77,7 +78,8 @@ public class ExpValidator {
 					return new ExpResult(0, oh.unitType);
 				} else {
 					// Indexed final output
-					if (oh.getReturnType() == DoubleVector.class) {
+					if (oh.getReturnType() == DoubleVector.class ||
+						oh.getReturnType() == IntegerVector.class) {
 						return new ExpResult(0, oh.unitType);
 					}
 					if (oh.getReturnType() == ArrayList.class) {
