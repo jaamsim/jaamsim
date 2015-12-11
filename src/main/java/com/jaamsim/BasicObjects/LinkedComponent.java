@@ -48,8 +48,10 @@ public abstract class LinkedComponent extends StateEntity {
 	         exampleList = {"Service"})
 	protected final StringInput stateAssignment;
 
-	private long numberAdded;     // Number of entities added to this component from upstream
-	private long numberProcessed; // Number of entities processed by this component
+	private long numberAdded;     // Number of entities added to this component from upstream after initialisation
+	private long numberProcessed; // Number of entities processed by this component after initialisation
+	private long initialNumberAdded;     // Number of entities added to this component from upstream during initialisation
+	private long initialNumberProcessed; // Number of entities processed by this component during initialisation
 	private DisplayEntity receivedEntity; // Entity most recently received by this component
 	private double releaseTime = Double.NaN;
 
@@ -94,6 +96,8 @@ public abstract class LinkedComponent extends StateEntity {
 		super.earlyInit();
 		numberAdded = 0;
 		numberProcessed = 0;
+		initialNumberAdded = 0;
+		initialNumberProcessed = 0;
 		receivedEntity = testEntity.getValue();
 		releaseTime = Double.NaN;
 	}
@@ -156,6 +160,8 @@ public abstract class LinkedComponent extends StateEntity {
 	@Override
 	public void clearStatistics() {
 		super.clearStatistics();
+		initialNumberAdded = numberAdded;
+		initialNumberProcessed = numberProcessed;
 		numberAdded = 0;
 		numberProcessed = 0;
 	}
@@ -172,7 +178,7 @@ public abstract class LinkedComponent extends StateEntity {
 	}
 
 	@Output(name = "NumberAdded",
-	 description = "The number of entities received from upstream.",
+	 description = "The number of entities received from upstream after the initialization period.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
 	    sequence = 1)
@@ -181,7 +187,7 @@ public abstract class LinkedComponent extends StateEntity {
 	}
 
 	@Output(name = "NumberProcessed",
-	 description = "The number of entities processed by this component.",
+	 description = "The number of entities processed by this component after the initialization period.",
 	    unitType = DimensionlessUnit.class,
 	  reportable = true,
 	    sequence = 2)
