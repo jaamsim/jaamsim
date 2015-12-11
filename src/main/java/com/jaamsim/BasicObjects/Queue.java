@@ -221,7 +221,7 @@ public class Queue extends LinkedComponent {
 		// Build the entry for the entity
 		// Note that the match value logic relies on all Integer objects with
 		// the same int value having the same object reference
-		long n = this.getNumberAdded();
+		long n = this.getTotalNumberAdded();
 		if (!fifo.getValue())
 			n *= -1;
 		int pri = (int) priority.getValue().getNextSample(getSimTime());
