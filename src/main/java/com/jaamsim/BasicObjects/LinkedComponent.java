@@ -145,6 +145,27 @@ public abstract class LinkedComponent extends StateEntity {
 			nextComponent.getValue().addEntity(ent);
 	}
 
+	/**
+	 * Returns the number of entities that have been received from upstream during the entire
+	 * simulation run, including the initialisation period.
+	 */
+	public long getTotalNumberAdded() {
+		return initialNumberAdded + numberAdded;
+	}
+
+	/**
+	 * Returns the number of entities that have been passed downstream during the entire
+	 * simulation run, including the initialisation period.
+	 */
+	public long getTotalNumberProcessed() {
+		return initialNumberProcessed + numberProcessed;
+	}
+
+	/**
+	 * Returns the number of entities that have been received from upstream after the
+	 * initialisation period.
+	 * @return
+	 */
 	public long getNumberAdded() {
 		return numberAdded;
 	}
