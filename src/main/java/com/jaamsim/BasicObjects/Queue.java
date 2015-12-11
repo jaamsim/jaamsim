@@ -231,7 +231,9 @@ public class Queue extends LinkedComponent {
 		QueueEntry entry = new QueueEntry(ent, n, pri, m, getSimTime(), ent.getOrientation());
 
 		// Add the entity to the TreeSet of all the entities in the queue
-		itemSet.add(entry);
+		boolean bool = itemSet.add(entry);
+		if (!bool)
+			error("Entity %s is already present in the queue.", ent);
 
 		// Does the entry have a match value?
 		if (entry.match != null) {
