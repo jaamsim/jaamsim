@@ -174,8 +174,12 @@ public abstract class LinkedComponent extends StateEntity {
 		numberProcessed++;
 	}
 
+	/**
+	 * Returns the number of entities that have been received but whose processing has not been
+	 * completed yet.
+	 */
 	public long getNumberInProgress() {
-		return numberAdded - numberProcessed;
+		return  initialNumberAdded + numberAdded - initialNumberProcessed - numberProcessed;
 	}
 
 	@Override
