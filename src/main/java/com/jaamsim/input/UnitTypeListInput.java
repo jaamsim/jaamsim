@@ -29,9 +29,9 @@ public class UnitTypeListInput extends ListInput<ArrayList<ObjectType>> {
 
 	public UnitTypeListInput(String key, String cat, ArrayList<Class<? extends Unit>> utList) {
 		super(key, cat, null);
-		defaultUnitTypeList = new ArrayList<>(utList);
 		if (utList == null)
 			return;
+		defaultUnitTypeList = new ArrayList<>(utList);
 		ArrayList<ObjectType> otList = new ArrayList<>(utList.size());
 		for (Class<? extends Unit> ut : utList) {
 			otList.add(ObjectType.getObjectTypeForClass(ut));
