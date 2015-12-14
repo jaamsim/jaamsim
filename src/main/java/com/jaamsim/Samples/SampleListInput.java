@@ -111,5 +111,6 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		for (int i = 0; i < value.size(); i++) {
 			toks.add(value.get(i).toString());
 		}
+		toks.add(Unit.getDisplayedUnit(unitType));
 	}
 }

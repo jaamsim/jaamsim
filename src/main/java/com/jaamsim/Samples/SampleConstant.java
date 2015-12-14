@@ -65,8 +65,6 @@ public class SampleConstant implements SampleProvider {
 	public String toString() {
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(val/Unit.getDisplayedUnitFactor(unitType));
-		if (unitType != Unit.class)
-			tmp.append("  ").append(Unit.getDisplayedUnit(unitType));
 		return tmp.toString();
 	}
 }
