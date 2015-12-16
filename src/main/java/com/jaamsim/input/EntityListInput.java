@@ -49,13 +49,18 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 			for (int i = 1; i < kw.numArgs(); i++)
 				input.add(kw.getArg(i));
 
-			Input.assertCountRange(input, 0, maxCount - value.size());
+			ArrayList<T> newValue;
+			if( value == null )
+				newValue = new ArrayList<>();
+			else
+				newValue = new ArrayList<>( value );
+
+			Input.assertCountRange(input, 0, maxCount - newValue.size());
 			if( even ) {
 				if ((kw.numArgs() % 2) == 0)
 					throw new InputErrorException(INP_ERR_EVENCOUNT, kw.argString());
 			}
 
-			ArrayList<T> newValue = new ArrayList<>( value );
 			ArrayList<T> addedValues = Input.parseEntityList(input, entClass, unique);
 			for( T val : addedValues ) {
 				if( unique && newValue.contains( val ) )

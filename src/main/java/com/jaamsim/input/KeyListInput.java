@@ -73,12 +73,20 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends ListInput
 			// The input is of the form: ++ <value1 value2 value3...>
 			if( kw.getArg( 0 ).equals( "++" ) ) {
 
+				ArrayList<V> newNoKeyValue;
+				if( noKeyValue == null )
+					newNoKeyValue = new ArrayList<>();
+				else
+					newNoKeyValue = new ArrayList<>( noKeyValue );
+
 				ArrayList<V> addedValues = Input.parseEntityList( input.subList(1,input.size()), valClass, true );
 				for( V val : addedValues ) {
-					if( noKeyValue.contains( val ) )
+					if( newNoKeyValue.contains( val ) )
 						throw new InputErrorException(INP_ERR_NOTUNIQUE, val.getName());
-					noKeyValue.add( val );
+					newNoKeyValue.add( val );
 				}
+
+				noKeyValue = newNoKeyValue;
 			}
 			// If removing from the list
 			// The input is of the form: -- <value1 value2 value3...>
@@ -105,7 +113,11 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends ListInput
 
 			// Set the value for the given keys
 			for( int i = 0; i < list.size(); i++ ) {
-				ArrayList<V> values = new ArrayList<>( hashMap.get( list.get( i ) ) );
+				ArrayList<V> values;
+				if( hashMap.get( list.get( i ) ) == null )
+					values = new ArrayList<>();
+				else
+					values = new ArrayList<>( hashMap.get( list.get( i ) ) );
 
 				ArrayList<V> addedValues = Input.parseEntityList( input.subList(2,input.size()), valClass, true );
 				for( V val : addedValues ) {

@@ -77,12 +77,20 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 			// The input is of the form: ++ <value1 value2 value3...>
 			if( kw.getArg( 0 ).equals( "++" ) ) {
 
+				ArrayList<V> newNoKeyValue;
+				if( noKeyValue == null )
+					newNoKeyValue = new ArrayList<>();
+				else
+					newNoKeyValue = new ArrayList<>( noKeyValue );
+
 				ArrayList<V> addedValues = Input.parseEntityList( input.subList(1,input.size()), valClass, true );
 				for( V val : addedValues ) {
-					if( noKeyValue.contains( val ) )
+					if( newNoKeyValue.contains( val ) )
 						throw new InputErrorException(INP_ERR_NOTUNIQUE, val.getName());
-					noKeyValue.add( val );
+					newNoKeyValue.add( val );
 				}
+
+				noKeyValue = newNoKeyValue;
 			}
 			// If removing from the list
 			// The input is of the form: -- <value1 value2 value3...>
@@ -138,7 +146,11 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 			for( int i = 0; i < list.size(); i++ ) {
 				HashMap<K2,ArrayList<V>> h1 = hashMap.get( list.get( i ) );
 				for( int j = 0; j < list2.size(); j++ ) {
-					ArrayList<V> values = new ArrayList<>( h1.get( list2.get( j ) ) );
+					ArrayList<V> values;
+					if( h1.get( list2.get( j ) ) == null )
+						values = new ArrayList<>();
+					else
+						values = new ArrayList<>( h1.get( list2.get( j ) ) );
 
 					ArrayList<V> addedValues = Input.parseEntityList( input.subList(numKeys+1,input.size()), valClass, true );
 					for( V val : addedValues ) {
