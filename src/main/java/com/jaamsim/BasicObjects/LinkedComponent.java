@@ -221,10 +221,18 @@ public abstract class LinkedComponent extends StateEntity {
 		return numberProcessed;
 	}
 
+	@Output(name = "NumberInProgress",
+	 description = "The number of entities that have been received but whose processing has not been completed yet.",
+	    unitType = DimensionlessUnit.class,
+	    sequence = 3)
+	public long getNumberInProgress(double simTime) {
+		return  this.getNumberInProgress();
+	}
+
 	@Output(name = "ProcessingRate",
 	 description = "The number of entities processed per unit time by this component after the initialization period.",
 	    unitType = RateUnit.class,
-	    sequence = 3)
+	    sequence = 4)
 	public double getProcessingRate(double simTime) {
 		double dur = simTime - Simulation.getInitializationTime();
 		if (dur <= 0.0)
@@ -235,7 +243,7 @@ public abstract class LinkedComponent extends StateEntity {
 	@Output(name = "ReleaseTime",
 	 description = "The time at which the last entity was released.",
 	    unitType = TimeUnit.class,
-	    sequence = 4)
+	    sequence = 5)
 	public double getReleaseTime(double simTime) {
 		return releaseTime;
 	}
