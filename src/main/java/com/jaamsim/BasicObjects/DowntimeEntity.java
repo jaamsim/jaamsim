@@ -140,6 +140,15 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		if( downtimeIATDistribution.getValue() != null && downtimeDurationDistribution.getValue() == null )
 			throw new InputErrorException("When DowntimeIATDistribution is set, DowntimeDurationDistribution must also be set.");
+
+		if( downtimeIATDistribution.getValue() != null ) {
+			if( downtimeIATDistribution.getValue().getMinValue() < 0 )
+				throw new InputErrorException("Interval values can not be less than 0.");
+		}
+		if( downtimeDurationDistribution.getValue() != null ) {
+			if( downtimeDurationDistribution.getValue().getMinValue() < 0 )
+				throw new InputErrorException("Duration values can not be less than 0.");
+		}
 	}
 
 	@Override
