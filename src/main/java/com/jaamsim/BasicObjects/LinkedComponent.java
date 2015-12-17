@@ -17,6 +17,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
@@ -221,11 +222,14 @@ public abstract class LinkedComponent extends StateEntity {
 	}
 
 	@Output(name = "ProcessingRate",
-	 description = "The number of entities processed per unit time by this component.",
+	 description = "The number of entities processed per unit time by this component after the initialization period.",
 	    unitType = RateUnit.class,
 	    sequence = 3)
-	public double getProcessingRate( double simTime) {
-		return numberProcessed/simTime;
+	public double getProcessingRate(double simTime) {
+		double dur = simTime - Simulation.getInitializationTime();
+		if (dur <= 0.0)
+			return 0.0;
+		return numberProcessed/dur;
 	}
 
 	@Output(name = "ReleaseTime",
