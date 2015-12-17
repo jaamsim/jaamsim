@@ -250,9 +250,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 	public void checkProcessNetwork() {
 
-		if( modelEntityList.size() == 0 )
-			return;
-
 		// Schedule the next downtime event
 		if( ! scheduleDowntimeHandle.isScheduled() ) {
 
