@@ -219,8 +219,6 @@ public class Queue extends LinkedComponent {
 		this.updateStatistics(queueSize, queueSize+1);
 
 		// Build the entry for the entity
-		// Note that the match value logic relies on all Integer objects with
-		// the same int value having the same object reference
 		long n = this.getTotalNumberAdded();
 		if (!fifo.getValue())
 			n *= -1;
@@ -250,7 +248,7 @@ public class Queue extends LinkedComponent {
 			}
 
 			// Update the maximum count
-			if (entry.match == matchForMaxCount) {
+			if (entry.match.equals(matchForMaxCount)) {
 				maxCount++;
 			}
 			else {
@@ -295,7 +293,7 @@ public class Queue extends LinkedComponent {
 				matchMap.remove(entry.match);
 
 			// Update the maximum count
-			if (entry.match == matchForMaxCount) {
+			if (entry.match.equals(matchForMaxCount)) {
 				matchForMaxCount = null;
 				maxCount = -1;
 			}
