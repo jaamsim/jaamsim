@@ -78,17 +78,17 @@ limitations under the License.
       <fileset dir="${res.dir}"/>
       <fileset file="LICENSE"/>
       <zipfileset src="jar/gluegen-rt.jar"     includes="jogamp/**/*,com/**/*"/>
-      <zipfileset src="jar/gluegen-rt-natives-windows-i586.jar"     includes="*.dll"    prefix="natives/windows-i586"/>
-      <zipfileset src="jar/gluegen-rt-natives-windows-amd64.jar"    includes="*.dll"    prefix="natives/windows-amd64"/>
-      <zipfileset src="jar/gluegen-rt-natives-linux-i586.jar"       includes="*.so"     prefix="natives/linux-i586"/>
-      <zipfileset src="jar/gluegen-rt-natives-linux-amd64.jar"      includes="*.so"     prefix="natives/linux-amd64"/>
-      <zipfileset src="jar/gluegen-rt-natives-macosx-universal.jar" includes="*.jnilib" prefix="natives/macosx-universal"/>
-      <zipfileset src="jar/jogl-all.jar"       includes="jogamp/**/*,com/**/*,newt/**/*"/>
-      <zipfileset src="jar/jogl-all-natives-windows-i586.jar"     includes="*.dll"    prefix="natives/windows-i586"/>
-      <zipfileset src="jar/jogl-all-natives-windows-amd64.jar"    includes="*.dll"    prefix="natives/windows-amd64"/>
-      <zipfileset src="jar/jogl-all-natives-linux-i586.jar"       includes="*.so"     prefix="natives/linux-i586"/>
-      <zipfileset src="jar/jogl-all-natives-linux-amd64.jar"      includes="*.so"     prefix="natives/linux-amd64"/>
-      <zipfileset src="jar/jogl-all-natives-macosx-universal.jar" includes="*.jnilib" prefix="natives/macosx-universal"/>
+      <zipfileset src="jar/gluegen-rt-natives-windows-i586.jar"     includes="natives/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-windows-amd64.jar"    includes="natives/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-linux-i586.jar"       includes="natives/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-linux-amd64.jar"      includes="natives/**/*"/>
+      <zipfileset src="jar/gluegen-rt-natives-macosx-universal.jar" includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all.jar"       includes="jogamp/**/*,com/**/*,newt/**/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-windows-i586.jar"     includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-windows-amd64.jar"    includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-linux-i586.jar"       includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-linux-amd64.jar"      includes="natives/**/*"/>
+      <zipfileset src="jar/jogl-all-natives-macosx-universal.jar" includes="natives/**/*"/>
     </jar>
   </target>
 </project>
