@@ -328,6 +328,26 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		}
 	}
 
+	private static final class PrepareForDowntimeTarget extends ProcessTarget {
+		private final DowntimeEntity ent;
+		private final DowntimeUser user;
+		
+		public PrepareForDowntimeTarget(DowntimeEntity e, DowntimeUser u) {
+			ent = e;
+			user = u;
+		}
+		
+		@Override
+		public void process() {
+			user.prepareForDowntime(ent);
+		}
+		
+		@Override
+		public String getDescription() {
+			return user.getName() + ".prepareForDowntime";
+		}		
+	}
+	
 	public void scheduleDowntime() {
 		downtimePendings++;
 
@@ -342,9 +362,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		}
 
 		// prepare all entities for the downtime event
-		for( DowntimeUser each : modelEntityList ) {
-			StateEntity ent = (StateEntity)each;
-			ent.startProcess("prepareForDowntime", this);
+		for (DowntimeUser each : modelEntityList) {
+			EventManager.startProcess(new PrepareForDowntimeTarget(this, each));
 		}
 
 		this.checkProcessNetwork();

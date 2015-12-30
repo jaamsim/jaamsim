@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import com.jaamsim.BasicObjects.DowntimeEntity;
 
 public interface DowntimeUser {
+	public String getName();
 	public ArrayList<DowntimeEntity> getMaintenanceEntities();
 	public ArrayList<DowntimeEntity> getBreakdownEntities();
 	public boolean canStartDowntime(DowntimeEntity down);
