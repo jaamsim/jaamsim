@@ -209,7 +209,7 @@ private class OutputTableModel extends AbstractTableModel {
 				// ArrayList output
 				else if (out.getReturnType() == ArrayList.class) {
 					sb.append("{");
-					ArrayList<Object> array = out.getValue(simTime, ArrayList.class);
+					ArrayList<?> array = out.getValue(simTime, ArrayList.class);
 					for (int i=0; i<array.size(); i++) {
 						Object obj = array.get(i);
 						if (obj instanceof Double) {
@@ -227,7 +227,7 @@ private class OutputTableModel extends AbstractTableModel {
 				// Keyed outputs
 				else if (out.getReturnType() == LinkedHashMap.class) {
 					sb.append("{");
-					LinkedHashMap<Object, Object> map = out.getValue(simTime, LinkedHashMap.class);
+					LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
 					for (Object key : map.keySet()) {
 						Object obj = map.get(key);
 						if (obj instanceof Double) {

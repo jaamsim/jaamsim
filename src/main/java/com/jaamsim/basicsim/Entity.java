@@ -768,7 +768,7 @@ public class Entity {
 
 			// ArrayList output
 			else if (out.getReturnType() == ArrayList.class) {
-				ArrayList<Object> array = out.getValue(simTime, ArrayList.class);
+				ArrayList<?> array = out.getValue(simTime, ArrayList.class);
 				for (int i=0; i<array.size(); i++) {
 					Object obj = array.get(i);
 					if (obj instanceof Double) {
@@ -785,7 +785,7 @@ public class Entity {
 
 			// Keyed output
 			else if (out.getReturnType() == LinkedHashMap.class) {
-				LinkedHashMap<Object, Object> map = out.getValue(simTime, LinkedHashMap.class);
+				LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
 				for (Object key : map.keySet()) {
 					Object obj = map.get(key);
 					if (obj instanceof Double) {
