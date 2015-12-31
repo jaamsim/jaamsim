@@ -577,7 +577,7 @@ public class Simulation extends Entity {
 
 		// Print the output report
 		if (printReport.getValue())
-			InputAgent.printReport(Simulation.getInstance().getSimTime());
+			InputAgent.printReport(EventManager.simSeconds());
 
 		// Increment the run number and check for last run
 		if (Simulation.isLastRun()) {
@@ -742,7 +742,7 @@ public class Simulation extends Entity {
 		public boolean evaluate() {
 			if (pauseConditionInput.getValue() == null)
 				return false;
-			double simTime = Simulation.getInstance().getSimTime();
+			double simTime = EventManager.simSeconds();
 			return pauseConditionInput.getValue().getNextSample(simTime) != 0.0d;
 		}
 	}
