@@ -200,7 +200,6 @@ public class BetaDistribution extends Distribution {
 		int n = 1;
 		double dPrev = 0.0;
 		double cPrev = hPrev;
-		double hN = hPrev;
 
 		while (n < maxIterations) {
 			final double a = 1.0;
@@ -217,7 +216,7 @@ public class BetaDistribution extends Distribution {
 
 			dN = 1 / dN;
 			final double deltaN = cN * dN;
-			hN = hPrev * deltaN;
+			final double hN = hPrev * deltaN;
 
 			if (Double.isInfinite(hN)) {
 				throw new RuntimeException("Fraction did not converge");
