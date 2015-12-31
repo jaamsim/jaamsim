@@ -1004,7 +1004,7 @@ public class ColParser {
 		Geometry geoData = new Geometry();
 
 		for (XmlNode meshNode : geoNode.children()) {
-			if (meshNode.getTag() == "mesh") {
+			if (meshNode.getTag().equals("mesh")) {
 				parseMesh(meshNode, geoData);
 			}
 		}
@@ -1531,7 +1531,7 @@ public class ColParser {
 		// Find the number of triangles, for this we will need to iterate over all the polygons
 		for (XmlNode n : subGeo.children()) {
 			// Note: we do not support 'ph' tags (polygons with holes)
-			if (n.getTag() != "p") {
+			if (!n.getTag().equals("p")) {
 				continue;
 			}
 			int[] ps = (int[])n.getContent();
@@ -1554,7 +1554,7 @@ public class ColParser {
 
 		for (XmlNode n : subGeo.children()) {
 			// Note: we do not support 'ph' tags (polygons with holes)
-			if (n.getTag() != "p") {
+			if (!n.getTag().equals("p")) {
 				continue;
 			}
 			int[] ps = (int[])n.getContent();
