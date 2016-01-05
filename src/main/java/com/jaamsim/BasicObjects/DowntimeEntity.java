@@ -30,7 +30,6 @@ import com.jaamsim.input.EnumInput;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.states.DowntimeUser;
 import com.jaamsim.states.StateEntity;
 import com.jaamsim.states.StateEntityListener;
@@ -44,10 +43,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		FORCED,
 		OPPORTUNISTIC }
 
-	@Keyword(description = "Before beginning the model run, sample the IAT distribution and aggregate the " +
-	                       "amount until it exceeds this amount of time.",
-	         example = "Downtime1 InitialIATOffset { 720 h }")
-	private static final ValueInput initialSampleOffset;
+	@Keyword(description = "The simulation time for the first downtime event.  " +
+	                       "The value may be a constant or a probability distribution.  " +
+	                       "If a value is not specified, the Interval keyword is sampled " +
+	                       "to determine the simulation time of the first downtime event.",
+	         exampleList = {"720 h", "UniformDistribution1" })
+	private final SampleInput firstDowntime;
 
 	@Keyword(description = "The object for which to track working time accumulated in order to schedule a downtime event in objects that have this" +
 	                       "DowntimeEntity defined in their 'DowntimeEntities' keyword.  If this keyword is not set, calendar time will be used to" +
@@ -90,14 +91,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private double startTime;        // The start time of the latest downtime event
 	private double endTime;          // the end time of the latest downtime event
 
-	static {
-		initialSampleOffset = new ValueInput("InitialIATOffset", "Key Inputs", 0.0d);
-		initialSampleOffset.setUnitType(TimeUnit.class);
-		initialSampleOffset.setValidRange(0.0d, Double.POSITIVE_INFINITY);
-	}
-
 	{
-		this.addInput(initialSampleOffset);
+		firstDowntime = new SampleInput("FirstDowntime", "Key Inputs", null);
+		firstDowntime.setUnitType(TimeUnit.class);
+		this.addInput(firstDowntime);
 
 		iatWorkingEntity = new EntityInput<>(StateEntity.class, "IntervalWorkingEntity", "Key Inputs", null);
 		this.addInput(iatWorkingEntity);
@@ -172,10 +169,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		super.lateInit();
 
 		// Determine the time for the first downtime event
-		secondsForNextFailure = getNextDowntimeIAT() - initialSampleOffset.getValue();
-		while (secondsForNextFailure < 0.0d) {
-			secondsForNextFailure += getNextDowntimeIAT();
-		}
+		if( firstDowntime.getValue() == null )
+			secondsForNextFailure = getNextDowntimeIAT();
+		else
+			secondsForNextFailure = firstDowntime.getValue().getNextSample(getSimTime());
 	}
 
 	@Override
