@@ -20,14 +20,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.jaamsim.DisplayModels.DisplayModel;
+import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.PolylineModel;
 import com.jaamsim.DisplayModels.ShapeModel;
-import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.TextModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
@@ -831,7 +832,7 @@ public class DisplayEntity extends Entity {
 		synchronized(screenPointLock) {
 			if (cachedPointInfo == null) {
 				cachedPointInfo = new PolylineInfo[1];
-				cachedPointInfo[0] = new PolylineInfo(pointsInput.getValue(), null, -1);
+				cachedPointInfo[0] = new PolylineInfo(pointsInput.getValue(), ColourInput.BLACK, 1);
 			}
 			return cachedPointInfo;
 		}
