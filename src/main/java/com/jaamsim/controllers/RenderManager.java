@@ -48,7 +48,6 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -1170,11 +1169,6 @@ public class RenderManager implements DragSourceListener {
 			diff.z = 0.0d;
 		}
 		point.add3(diff);
-
-		Input<?> pointsInput = selectedEntity.getInput("Points");
-		assert(pointsInput != null);
-		if (pointsInput == null)
-			return true;
 
 		// Align the node to snap grid
 		if (Simulation.isSnapToGrid())
