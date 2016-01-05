@@ -105,12 +105,14 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 		downtimeIATDistribution = new SampleInput("Interval", "Key Inputs", null);
 		downtimeIATDistribution.setUnitType( TimeUnit.class );
+		downtimeIATDistribution.setRequired(true);
 		this.addInput(downtimeIATDistribution);
 		this.addSynonym(downtimeIATDistribution, "IAT");
 		this.addSynonym(downtimeIATDistribution, "TimeBetweenFailures");
 
 		downtimeDurationDistribution = new SampleInput("Duration", "Key Inputs", null);
 		downtimeDurationDistribution.setUnitType(TimeUnit.class);
+		downtimeDurationDistribution.setRequired(true);
 		this.addInput(downtimeDurationDistribution);
 		this.addSynonym(downtimeDurationDistribution, "Duration");
 
