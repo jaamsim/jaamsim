@@ -77,6 +77,12 @@ public class EntityLogger extends LinkedComponent {
 		this.sendToNextComponent(ent);
 	}
 
+	@Override
+	public void doEnd() {
+		super.doEnd();
+		file.flush();
+	}
+
 	@Output(name = "LogTime",
 	 description = "The simulation time at which the last entity was logged.",
 	    unitType = TimeUnit.class)
