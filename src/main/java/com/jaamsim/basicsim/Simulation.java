@@ -896,6 +896,10 @@ public class Simulation extends Entity {
 		return Simulation.getRunCode(runIndexList);
 	}
 
+	public static String getRunHeader() {
+		return String.format("##### RUN %s #####", Simulation.getRunCode());
+	}
+
 	public static boolean isMultipleRuns() {
 		return endingRunNumber.getValue() > startingRunNumber.getValue();
 	}
