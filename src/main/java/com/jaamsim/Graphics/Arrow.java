@@ -63,23 +63,17 @@ public class Arrow extends DisplayEntity {
 
 		// If Points were input, then use them to set the start and end coordinates
 		if( in == pointsInput || in == color || in == width ) {
-			synchronized(screenPointLock) {
-				cachedPointInfo = null;
-			}
+			invalidateScreenPoints();
 			return;
 		}
 	}
 
 	@Override
-	public PolylineInfo[] getScreenPoints() {
-		synchronized(screenPointLock) {
-			if (cachedPointInfo == null) {
-				int w = Math.max(1, width.getValue().intValue());
-				cachedPointInfo = new PolylineInfo[1];
-				cachedPointInfo[0] = new PolylineInfo(pointsInput.getValue(), color.getValue(), w);
-			}
-			return cachedPointInfo;
-		}
+	public PolylineInfo[] buildScreenPoints() {
+		int w = Math.max(1, width.getValue().intValue());
+		PolylineInfo[] ret = new PolylineInfo[1];
+		ret[0] = new PolylineInfo(pointsInput.getValue(), color.getValue(), w);
+		return ret;
 	}
 
 	public Vec3d getArrowHeadSize() {

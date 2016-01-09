@@ -74,23 +74,16 @@ public class FluidFixedFlow extends FluidFlowCalculation {
 
 		// If Points were input, then use them to set the start and end coordinates
 		if( in == pointsInput || in == colourInput || in == widthInput ) {
-			synchronized(screenPointLock) {
-				cachedPointInfo = null;
-			}
+			invalidateScreenPoints();
 			return;
 		}
 	}
 
 	@Override
-	public PolylineInfo[] getScreenPoints() {
-		synchronized(screenPointLock) {
-			if (cachedPointInfo == null) {
-				int w = Math.max(1, widthInput.getValue().intValue());
-				cachedPointInfo = new PolylineInfo[1];
-				cachedPointInfo[0] = new PolylineInfo(pointsInput.getValue(), colourInput.getValue(), w);
-			}
-			return cachedPointInfo;
-		}
+	public PolylineInfo[] buildScreenPoints() {
+		int w = Math.max(1, widthInput.getValue().intValue());
+		PolylineInfo[] ret = new PolylineInfo[1];
+		ret[0] = new PolylineInfo(pointsInput.getValue(), colourInput.getValue(), w);
+		return ret;
 	}
-
 }

@@ -818,24 +818,32 @@ public class DisplayEntity extends Entity {
 
 		// If Points were input, then use them to set the start and end coordinates
 		if( in == pointsInput ) {
-			synchronized(screenPointLock) {
-				cachedPointInfo = null;
-			}
+			invalidateScreenPoints();
 			return;
 		}
 	}
 
-	protected Object screenPointLock = new Object();
-	protected PolylineInfo[] cachedPointInfo;
+	private final Object screenPointLock = new Object();
+	private PolylineInfo[] cachedPointInfo;
 
-	public PolylineInfo[] getScreenPoints() {
+	protected final void invalidateScreenPoints() {
 		synchronized(screenPointLock) {
-			if (cachedPointInfo == null) {
-				cachedPointInfo = new PolylineInfo[1];
-				cachedPointInfo[0] = new PolylineInfo(pointsInput.getValue(), ColourInput.BLACK, 1);
-			}
+			cachedPointInfo = null;
+		}
+	}
+
+	public final PolylineInfo[] getScreenPoints() {
+		synchronized(screenPointLock) {
+			if (cachedPointInfo == null)
+				cachedPointInfo = this.buildScreenPoints();
 			return cachedPointInfo;
 		}
+	}
+
+	public PolylineInfo[] buildScreenPoints() {
+		PolylineInfo[] ret = new PolylineInfo[1];
+		ret[0] = new PolylineInfo(pointsInput.getValue(), ColourInput.BLACK, 1);
+		return ret;
 	}
 
 	public ArrayList<Vec3d> getPoints() {

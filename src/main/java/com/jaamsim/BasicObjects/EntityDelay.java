@@ -102,9 +102,7 @@ public class EntityDelay extends LinkedComponent {
 
 		// If Points were input, then use them to set the start and end coordinates
 		if (in == pointsInput || in == colorInput || in == widthInput) {
-			synchronized(screenPointLock) {
-				cachedPointInfo = null;
-			}
+			invalidateScreenPoints();
 			return;
 		}
 	}
@@ -247,15 +245,10 @@ public class EntityDelay extends LinkedComponent {
 	}
 
 	@Override
-	public PolylineInfo[] getScreenPoints() {
-		synchronized(screenPointLock) {
-			if (cachedPointInfo == null) {
-				int w = Math.max(1, widthInput.getValue().intValue());
-				cachedPointInfo = new PolylineInfo[1];
-				cachedPointInfo[0] = new PolylineInfo(pointsInput.getValue(), colorInput.getValue(), w);
-			}
-			return cachedPointInfo;
-		}
+	public PolylineInfo[] buildScreenPoints() {
+		int w = Math.max(1, widthInput.getValue().intValue());
+		PolylineInfo[] ret = new PolylineInfo[1];
+		ret[0] = new PolylineInfo(pointsInput.getValue(), colorInput.getValue(), w);
+		return ret;
 	}
-
 }
