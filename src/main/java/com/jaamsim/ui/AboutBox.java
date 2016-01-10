@@ -35,7 +35,6 @@ public class AboutBox extends FrameBox implements ActionListener {
 	private static AboutBox instance;
 
 	public static final String version = "2015-50";
-	public static final String copyright = "Copyright (C) 2015 Ausenco Engineering Canada Inc.";
 
 	public AboutBox() {
 		super("About");
@@ -62,7 +61,7 @@ public class AboutBox extends FrameBox implements ActionListener {
 		layout.setConstraints( lab, constraints );
 		getContentPane().add( lab );
 
-		StringBuilder msg = new StringBuilder(copyright).append("\n\n");
+		StringBuilder msg = new StringBuilder("NOTICE:\n\n");
 		msg.append("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
 		msg.append("you may not use this file except in compliance with the License.\n");
 		msg.append("You may obtain a copy of the License at\n");
