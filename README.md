@@ -1,17 +1,13 @@
 # What is this?
 
-JaamSim is a discrete-event simulation environment developed by Ausenco 
-as the foundation of all our simulation applications. It 
-represents about 10 man-years of effort since 2002 and is under 
-continuous development to support our simulation projects. JaamSim is 
-used daily by our team of 19 simulation analysts and programmers. 
+JaamSim is a Java based discrete-event simulation environment developed since 2002 and includes: 
+- drag-and-drop user interface 
+- interactive 3D graphics 
+- input and output processing 
+- model development tools and editors. 
 
 Examples of our simulation models can be seen at: 
 www.youtube.com/user/javasimulation. 
-
-JaamSim is written in the Java programming language and includes a 
-drag-and-drop user interface, interactive 3D graphics, input and output 
-processing, and model development tools and editors. 
 
 The key feature that makes JaamSim different from commercial off-the-shelf 
 simulation software is that it allows a user to develop new palettes of 
@@ -53,7 +49,7 @@ JaamSim is Licensed under the Apache License, Version 2.0
 # Contact
 
 For licensing and general inquiries:
-Dr. Harry King <harry.king@ausenco.com>
+Dr. Harry King <d.harry.king@gmail.com>
 
 If you have any problems building the source or technical inquiries:
 Harvey Harrison <harvey.harrison@gmail.com>
