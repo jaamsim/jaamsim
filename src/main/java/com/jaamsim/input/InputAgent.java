@@ -38,6 +38,7 @@ import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
@@ -50,7 +51,7 @@ public class InputAgent {
 	private static int numWarnings = 0;
 	private static FileEntity logFile;
 
-	private static double lastTimeForTrace;
+	private static long lastTickForTrace;
 
 	private static File configFile;           // present configuration file
 	private static boolean batchRun;
@@ -71,7 +72,7 @@ public class InputAgent {
 		configFile = null;
 		reportDir = null;
 		reportFile = null;
-		lastTimeForTrace = -1.0d;
+		lastTickForTrace = -1l;
 	}
 
 	public static void clear() {
@@ -82,7 +83,7 @@ public class InputAgent {
 		sessionEdited = false;
 		configFile = null;
 		reportDir = null;
-		lastTimeForTrace = -1.0d;
+		lastTickForTrace = -1l;
 		setReportDirectory(null);
 	}
 
@@ -924,10 +925,10 @@ public class InputAgent {
 		String spacer = ind.toString();
 
 		// Print a TIME header every time time has advanced
-		double traceTime = ent.getCurrentTime();
-		if (lastTimeForTrace != traceTime) {
-			System.out.format(" \nTIME = %.5f\n", traceTime);
-			lastTimeForTrace = traceTime;
+		long traceTick = EventManager.simTicks();
+		if (lastTickForTrace != traceTick) {
+			System.out.format(" \nTIME = %.5f\n", EventManager.current().ticksToSeconds(traceTick));
+			lastTickForTrace = traceTick;
 		}
 
 		// Output the traces line(s)

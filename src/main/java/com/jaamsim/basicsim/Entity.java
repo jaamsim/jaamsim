@@ -648,7 +648,7 @@ public class Entity {
 	public void error( String meth, String text1, String text2 ) {
 		double time = 0.0d;
 		if (EventManager.hasCurrent())
-			time = getCurrentTime();
+			time = EventManager.simSeconds();
 		InputAgent.logError("Time:%.5f Entity:%s%n%s%n%s%n%s%n",
 		                    time, getName(),
 							meth, text1, text2);
@@ -664,7 +664,7 @@ public class Entity {
 	public void warning( String meth, String text1, String text2 ) {
 		double time = 0.0d;
 		if (EventManager.hasCurrent())
-			time = getCurrentTime();
+			time = EventManager.simSeconds();
 		InputAgent.logWarning("Time:%.5f Entity:%s%n%s%n%s%n%s%n",
 				time, getName(),
 				meth, text1, text2);
