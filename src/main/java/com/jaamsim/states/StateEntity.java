@@ -25,7 +25,6 @@ import java.util.LinkedHashMap;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.FileEntity;
-import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.InputAgent;
@@ -203,9 +202,10 @@ public class StateEntity extends DisplayEntity {
 	public void stateChanged(StateRecord prev, StateRecord next) {
 
 		if (traceState.getValue()) {
-			long curTick = getSimTicks();
-			double duration = (curTick - prev.getStartTick()) / Simulation.getSimTimeFactor();
-			double timeOfPrevStart = prev.getStartTick() / Simulation.getSimTimeFactor();
+			long curTick = EventManager.simTicks();
+			EventManager evt = EventManager.current();
+			double duration = evt.ticksToSeconds(curTick - prev.getStartTick());
+			double timeOfPrevStart = evt.ticksToSeconds(prev.getStartTick());
 			stateReportFile.format("%.5f  %s.setState( \"%s\" ) dt = %g\n",
 			                       timeOfPrevStart, this.getName(),
 			                       prev.name, duration);
