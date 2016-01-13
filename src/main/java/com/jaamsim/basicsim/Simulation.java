@@ -904,6 +904,10 @@ public class Simulation extends Entity {
 		return endingRunNumber.getValue() > startingRunNumber.getValue();
 	}
 
+	public static boolean isFirstRun() {
+		return runNumber == startingRunNumber.getValue();
+	}
+
 	public static boolean isLastRun() {
 		return runNumber >= endingRunNumber.getValue();
 	}
