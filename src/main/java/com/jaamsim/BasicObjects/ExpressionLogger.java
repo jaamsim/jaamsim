@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2015 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,16 +177,30 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 		super.earlyInit();
 
 		// Close the file if it is already open
-		if (file != null) {
+		if (file != null && Simulation.isFirstRun()) {
 			file.close();
 			file = null;
 		}
 
 		// Create the report file
-		StringBuilder tmp = new StringBuilder(InputAgent.getReportFileName(InputAgent.getRunName()));
-		tmp.append("-").append(this.getName());
-		tmp.append(".log");
-		file = new FileEntity(tmp.toString());
+		if (file == null) {
+			StringBuilder tmp = new StringBuilder(InputAgent.getReportFileName(InputAgent.getRunName()));
+			tmp.append("-").append(this.getName());
+			tmp.append(".log");
+			file = new FileEntity(tmp.toString());
+		}
+	}
+
+	@Override
+	public void startUp() {
+		super.startUp();
+
+		// Print run number header if multiple runs are to be performed
+		if (Simulation.isMultipleRuns()) {
+			if (!Simulation.isFirstRun())
+				file.format("%n%n");
+			file.format("%s%n", Simulation.getRunHeader());
+		}
 
 		// WRITE THE HEADER LINE
 		// a) Simulation time
@@ -238,12 +253,6 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 
 		// Empty the output buffer
 		file.flush();
-
-	}
-
-	@Override
-	public void startUp() {
-		super.startUp();
 
 		// Start tracing the expression values
 		if (valueTraceList.getListSize() > 0)
