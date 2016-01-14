@@ -219,10 +219,7 @@ public class Renderer implements GLAnimatorControl {
 			initSharedContext();
 
 			// Notify the main thread we're done
-			synchronized (initialized) {
-				initialized.set(true);
-				initialized.notifyAll();
-			}
+			initialized.set(true);
 
 		} catch (Exception e) {
 
