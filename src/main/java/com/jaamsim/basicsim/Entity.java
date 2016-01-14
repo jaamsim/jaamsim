@@ -273,11 +273,6 @@ public class Entity {
 		return EventManager.simSeconds();
 	}
 
-	public final double getCurrentTime() {
-		long ticks = getSimTicks();
-		return ticks / Simulation.getSimTimeFactor();
-	}
-
 	protected void addInput(Input<?> in) {
 		inpList.add(in);
 	}
@@ -441,40 +436,6 @@ public class Entity {
 		}
 	}
 
-	static long calculateDelayLength(double waitLength) {
-		return Math.round(waitLength * Simulation.getSimTimeFactor());
-	}
-
-	public double calculateDiscreteTime(double time) {
-		long discTime = calculateDelayLength(time);
-		return discTime / Simulation.getSimTimeFactor();
-	}
-
-	public double calculateEventTime(double waitLength) {
-		long eventTime = getSimTicks() + calculateDelayLength(waitLength);
-
-		if( eventTime < 0 ) {
-			eventTime = Long.MAX_VALUE;
-		}
-
-		return eventTime / Simulation.getSimTimeFactor();
-	}
-
-	public double calculateEventTimeBefore(double waitLength) {
-		long eventTime = getSimTicks() + (long)Math.floor(waitLength * Simulation.getSimTimeFactor());
-
-		if( eventTime < 0 ) {
-			eventTime = Long.MAX_VALUE;
-		}
-
-		return eventTime / Simulation.getSimTimeFactor();
-	}
-
-	public double calculateEventTimeAfter(double waitLength) {
-		long eventTime = getSimTicks() + (long)Math.ceil(waitLength * Simulation.getSimTimeFactor());
-		return eventTime / Simulation.getSimTimeFactor();
-	}
-
 	public final void startProcess(String methodName, Object... args) {
 		ProcessTarget t = new ReflectionTarget(this, methodName, args);
 		startProcess(t);
@@ -555,34 +516,6 @@ public class Entity {
 	 */
 	public final void simWaitTicks(long ticks, int priority, boolean fifo, EventHandle handle) {
 		EventManager.waitTicks(ticks, priority, fifo, handle);
-	}
-
-	/**
-	 * Wrapper of eventManager.scheduleWait(). Used as a syntax nicity for
-	 * calling the wait method.
-	 *
-	 * @param duration The duration to wait
-	 * @param priority The relative priority of the event scheduled
-	 */
-	public final void scheduleWait( double duration, int priority ) {
-		long waitLength = calculateDelayLength(duration);
-		if (waitLength == 0)
-			return;
-		EventManager.waitTicks(waitLength, priority, false, null);
-	}
-
-	/**
-	 * Wrapper of eventManager.scheduleWait(). Used as a syntax nicity for
-	 * calling the wait method.
-	 *
-	 * @param duration The duration to wait
-	 * @param priority The relative priority of the event scheduled
-	 */
-	public final void scheduleWait( double duration, int priority, EventHandle handle ) {
-		long waitLength = calculateDelayLength(duration);
-		if (waitLength == 0)
-			return;
-		EventManager.waitTicks(waitLength, priority, false, handle);
 	}
 
 	public void handleSelectionLost() {}

@@ -216,7 +216,6 @@ public class Simulation extends Entity {
 	         example = "This is placeholder example text")
 	private static final BooleanInput verifyEventsInput;
 
-	private static double timeScale; // the scale from discrete to continuous time
 	private static double startTime; // simulation time (seconds) for the start of the run (not necessarily zero)
 	private static double endTime;   // simulation time (seconds) for the end of the run
 	private static int runNumber;    // labels each run when multiple runs are being made
@@ -546,7 +545,6 @@ public class Simulation extends Entity {
 		}
 
 		evt.setTickLength(tickLengthInput.getValue());
-		setSimTimeScale(evt.secondsToNearestTick(3600.0d));
 
 		startTime = startTimeInput.getValue();
 		endTime = startTime + Simulation.getInitializationTime() + Simulation.getRunDuration();
@@ -661,18 +659,6 @@ public class Simulation extends Entity {
 
 	public static boolean verifyEvents() {
 		return verifyEventsInput.getValue();
-	}
-
-	static void setSimTimeScale(double scale) {
-		timeScale = scale;
-	}
-
-	public static double getSimTimeFactor() {
-		return timeScale;
-	}
-
-	public static double getEventTolerance() {
-		return (1.0d / getSimTimeFactor());
 	}
 
 	public static double getTickLength() {
