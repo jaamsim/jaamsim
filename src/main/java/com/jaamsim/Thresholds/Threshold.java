@@ -22,6 +22,7 @@ import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
@@ -29,7 +30,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.states.StateEntity;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class Threshold extends StateEntity {
@@ -237,7 +237,7 @@ public class Threshold extends StateEntity {
 	  reportable = true,
 	    sequence = 1)
 	public double getOpenFraction(double simTime) {
-		long simTicks = FrameBox.secondsToTicks(simTime);
+		long simTicks = EventManager.secsToNearestTick(simTime);
 		long openTicks = this.getTicksInState(simTicks, getState("Open"));
 		long closedTicks = this.getTicksInState(simTicks, getState("Closed"));
 		long totTicks = openTicks + closedTicks;
@@ -250,7 +250,7 @@ public class Threshold extends StateEntity {
 	    unitType = DimensionlessUnit.class,
 	    sequence = 2)
 	public double getClosedFraction(double simTime) {
-		long simTicks = FrameBox.secondsToTicks(simTime);
+		long simTicks = EventManager.secsToNearestTick(simTime);
 		long openTicks = this.getTicksInState(simTicks, getState("Open"));
 		long closedTicks = this.getTicksInState(simTicks, getState("Closed"));
 		long totTicks = openTicks + closedTicks;

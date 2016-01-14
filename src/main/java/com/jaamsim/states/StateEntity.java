@@ -31,7 +31,6 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringKeyInput;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -383,7 +382,7 @@ public class StateEntity extends DisplayEntity {
 	 */
 	public double getWorkingTime() {
 		long ticks = getWorkingTicks(getSimTicks());
-		return FrameBox.ticksToSeconds(ticks);
+		return EventManager.ticksToSecs(ticks);
 	}
 
 	public void setPresentState() {}
@@ -419,9 +418,9 @@ public class StateEntity extends DisplayEntity {
 		if (presentState == null) {
 			return 0.0;
 		}
-		long simTicks = FrameBox.secondsToTicks(simTime);
+		long simTicks = EventManager.secsToNearestTick(simTime);
 		long ticks = getWorkingTicks(simTicks);
-		return FrameBox.ticksToSeconds(ticks);
+		return EventManager.ticksToSecs(ticks);
 	}
 
 	@Output(name = "StateTimes",
@@ -431,11 +430,11 @@ public class StateEntity extends DisplayEntity {
 	  reportable = true,
 	    sequence = 3)
 	public LinkedHashMap<String, Double> getStateTimes(double simTime) {
-		long simTicks = FrameBox.secondsToTicks(simTime);
+		long simTicks = EventManager.secsToNearestTick(simTime);
 		LinkedHashMap<String, Double> ret = new LinkedHashMap<>(states.size());
 		for (StateRecord stateRec : this.getStateRecs()) {
 			long ticks = getTicksInState(simTicks, stateRec);
-			Double t = FrameBox.ticksToSeconds(ticks);
+			Double t = EventManager.ticksToSecs(ticks);
 			ret.put(stateRec.name, t);
 		}
 		return ret;

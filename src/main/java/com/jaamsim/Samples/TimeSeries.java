@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
@@ -27,7 +28,6 @@ import com.jaamsim.input.Output;
 import com.jaamsim.input.TimeSeriesDataInput;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -105,13 +105,13 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	}
 
 	private long getTicks(double simTime) {
-		return FrameBox.secondsToTicks(simTime);
+		return EventManager.secsToNearestTick(simTime);
 	}
 
 	private double getSimTime(long ticks) {
 		if (ticks == Long.MAX_VALUE)
 			return Double.POSITIVE_INFINITY;
-		return FrameBox.ticksToSeconds(ticks);
+		return EventManager.ticksToSecs(ticks);
 	}
 
 	/**

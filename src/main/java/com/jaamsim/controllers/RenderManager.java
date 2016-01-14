@@ -48,6 +48,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -318,7 +319,7 @@ public class RenderManager implements DragSourceListener {
 					continue;
 				}
 
-				double renderTime = FrameBox.ticksToSeconds(simTick);
+				double renderTime = EventManager.ticksToSecs(simTick);
 				redraw.set(false);
 
 				for (int i = 0; i < View.getAll().size(); i++) {

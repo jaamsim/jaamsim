@@ -547,7 +547,6 @@ public class Simulation extends Entity {
 
 		evt.setTickLength(tickLengthInput.getValue());
 		setSimTimeScale(evt.secondsToNearestTick(3600.0d));
-		FrameBox.setSecondsPerTick(tickLengthInput.getValue());
 
 		startTime = startTimeInput.getValue();
 		endTime = startTime + Simulation.getInitializationTime() + Simulation.getRunDuration();

@@ -18,6 +18,7 @@ package com.jaamsim.Thresholds;
 
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -26,7 +27,6 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.TimeSeriesInput;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -173,7 +173,7 @@ public class TimeSeriesThreshold extends Threshold {
 	 * @return TRUE if open, FALSE if closed
 	 */
 	public boolean isOpenAtTime(double simTime) {
-		return isOpenAtTicks(FrameBox.secondsToTicks(simTime));
+		return isOpenAtTicks(EventManager.secsToNearestTick(simTime));
 	}
 
 	/**
@@ -187,7 +187,7 @@ public class TimeSeriesThreshold extends Threshold {
 	private boolean isOpenAtTicks(long ticks) {
 
 		// Add offset from input
-		ticks += FrameBox.secondsToTicks(offset.getValue());
+		ticks += EventManager.secsToNearestTick(offset.getValue());
 		ticks = Math.max(ticks, 0);
 
 		long changeTime = ticks;
@@ -197,7 +197,7 @@ public class TimeSeriesThreshold extends Threshold {
 			return false;
 
 		// If there is no lookahead, then the threshold is open
-		long lookAheadInTicks = FrameBox.secondsToTicks(lookAhead.getValue());
+		long lookAheadInTicks = EventManager.secsToNearestTick(lookAhead.getValue());
 		if (lookAheadInTicks == 0)
 			return true;
 
@@ -235,14 +235,14 @@ public class TimeSeriesThreshold extends Threshold {
 			return 0;
 
 		// Add offset from input
-		ticks += FrameBox.secondsToTicks(offset.getValue());
+		ticks += EventManager.secsToNearestTick(offset.getValue());
 		ticks = Math.max(ticks, 0);
 
 		// Threshold is currently closed. Find the next open point
 		long openTime = -1;
 		long changeTime = ticks;
 		long maxTicksValueFromTimeSeries = this.getMaxTicksValueFromTimeSeries();
-		long lookAheadInTicks = FrameBox.secondsToTicks(lookAhead.getValue());
+		long lookAheadInTicks = EventManager.secsToNearestTick(lookAhead.getValue());
 		while( true ) {
 			changeTime = this.getNextChangeAfterTicks(changeTime);
 
@@ -324,13 +324,13 @@ public class TimeSeriesThreshold extends Threshold {
 			return 0;
 
 		// Add offset from input
-		ticks += FrameBox.secondsToTicks(offset.getValue());
+		ticks += EventManager.secsToNearestTick(offset.getValue());
 		ticks = Math.max(ticks, 0);
 
 		// Find the next change point after startTime
 		long changeTime = ticks;
 		long maxTicksValueFromTimeSeries = this.getMaxTicksValueFromTimeSeries();
-		long lookAheadInTicks = FrameBox.secondsToTicks(lookAhead.getValue());
+		long lookAheadInTicks = EventManager.secsToNearestTick(lookAhead.getValue());
 		while( true ) {
 			changeTime = this.getNextChangeAfterTicks(changeTime);
 
@@ -391,7 +391,7 @@ public class TimeSeriesThreshold extends Threshold {
 		// Error check that threshold limits remain consistent
 		if (minOpenLimitVal > maxOpenLimitVal)
 			error("MaxOpenLimit must be larger than MinOpenLimit. MaxOpenLimit: %s, MinOpenLimit: %s, time: %s",
-					maxOpenLimitVal, minOpenLimitVal, FrameBox.ticksToSeconds(ticks));
+					maxOpenLimitVal, minOpenLimitVal, EventManager.ticksToSecs(ticks));
 
 		return (value >= minOpenLimitVal) && (value <= maxOpenLimitVal);
 	}
