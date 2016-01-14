@@ -689,11 +689,6 @@ public final class EventManager {
 			throw new ThreadKilledException("Thread killed");
 	}
 
-	public static final long secondsToTicks(double secs) {
-		Process cur = Process.current();
-		return cur.evt().secondsToNearestTick(secs);
-	}
-
 	public static final double calcSimTime(double secs) {
 		EventManager evt = Process.current().evt();
 		long ticks = evt.secondsToNearestTick(secs) + evt.currentTick;
