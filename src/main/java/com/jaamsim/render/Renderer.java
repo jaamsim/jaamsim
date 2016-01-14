@@ -70,6 +70,7 @@ import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.GLDrawableFactory;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
@@ -110,7 +111,8 @@ public class Renderer implements GLAnimatorControl {
 	private GLContext sharedContext = null;
 	Map<Integer, Integer> sharedVaoMap = new HashMap<>();
 	int sharedContextID = getAssetID();
-	GLWindow dummyWindow;
+	GLAutoDrawable dummyDrawable;
+
 	private GLCapabilities caps = null;
 
 	private final TexCache texCache = new TexCache(this);
@@ -201,20 +203,12 @@ public class Renderer implements GLAnimatorControl {
 			caps.setNumSamples(4);
 			caps.setDepthBits(24);
 
-			// Create a dummy window
-			dummyWindow = GLWindow.create(caps);
-			dummyWindow.setSize(128, 128);
-			dummyWindow.setPosition(-2000, -2000);
+			final boolean createNewDevice = true;
+			dummyDrawable = GLDrawableFactory.getFactory(glp).createDummyAutoDrawable(null, createNewDevice, caps, null);
+			dummyDrawable.display(); // triggers GLContext object creation and native realization.
 
-			// This is unfortunately necessary due to JOGL's (newt's?) involved
-			// startup code
-			// I can not find a way to make a context valid without a visible window
-			dummyWindow.setVisible(true);
-
-			sharedContext = dummyWindow.getContext();
+			sharedContext = dummyDrawable.getContext();
 			assert (sharedContext != null);
-
-			dummyWindow.setVisible(false);
 
 //			long endNanos = System.nanoTime();
 //			long ms = (endNanos - startNanos) /1000000L;
@@ -281,9 +275,9 @@ public class Renderer implements GLAnimatorControl {
 
 
 					try {
-						dummyWindow.destroy();
+						dummyDrawable.destroy();
 						sharedContext.destroy();
-						dummyWindow = null;
+						dummyDrawable = null;
 						sharedContext = null;
 						openWindows.clear();
 
