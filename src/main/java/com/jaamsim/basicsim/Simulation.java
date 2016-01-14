@@ -722,7 +722,7 @@ public class Simulation extends Entity {
 
 	private final PauseModelTarget pauseModel = new PauseModelTarget();
 
-	class PauseConditional extends Conditional {
+	static class PauseConditional extends Conditional {
 		@Override
 		public boolean evaluate() {
 			if (pauseConditionInput.getValue() == null)
