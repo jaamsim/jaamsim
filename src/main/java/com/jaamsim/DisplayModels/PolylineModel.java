@@ -107,11 +107,6 @@ public class PolylineModel extends DisplayModel {
 
 			registerCacheMiss("Points");
 
-			if (pis.length == 0) {
-				cachedProxies = new LineProxy[0];
-				return;
-			}
-
 			selectionPoints = new ArrayList<>();
 			nodePoints = new ArrayList<>();
 
