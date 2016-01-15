@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.MeshFiles.MeshData;
@@ -88,16 +89,14 @@ public class Renderer implements GLAnimatorControl {
 		FONT, HULL, OVERLAY_FONT, OVERLAY_FLAT, DEBUG, SKYBOX
 	}
 
-	static private Object idLock = new Object();
-	static private int nextID = 1;
+	private static final AtomicInteger nextAssetID = new AtomicInteger(0);
+
 	/**
 	 * Get a system wide unique ID
 	 * @return
 	 */
 	public static int getAssetID() {
-		synchronized(idLock) {
-			return nextID++;
-		}
+		return nextAssetID.incrementAndGet();
 	}
 
 	private static boolean USE_DEBUG_GL = true;
