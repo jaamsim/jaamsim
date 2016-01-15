@@ -20,7 +20,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
 
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.ui.LogBox;
@@ -29,13 +28,8 @@ import com.jaamsim.ui.LogBox;
  * Class encapsulating file input/output methods and file access.
  */
 public class FileEntity {
-	public static int ALIGNMENT_LEFT = 0;
-	public static int ALIGNMENT_RIGHT = 1;
-
 	private File backingFileObject;
 	private BufferedWriter outputStream;
-
-	private DecimalFormat formatter;
 
 	public FileEntity(String fileName) {
 		this(fileName, false);
@@ -43,7 +37,6 @@ public class FileEntity {
 
 	public FileEntity(String fileName, boolean append) {
 		backingFileObject = new File( fileName);
-		formatter = new DecimalFormat( "##0.00" );
 
 		try {
 			backingFileObject.createNewFile();
@@ -85,120 +78,13 @@ public class FileEntity {
 		}
 	}
 
-	public void putString( String string ) {
-		write(string);
-	}
-
 	public void format(String format, Object... args) {
 		write(String.format(format, args));
-	}
-
-	/**
-	 * Prints the given string for the specified number of times.
-	 */
-	public void putString( String string, int count ) {
-		try {
-			for ( int i =0; i < count; i++ ) {
-				outputStream.write( string );
-			}
-		}
-		catch( IOException e ) {
-			return;
-		}
-	}
-
-	/**
-	 * Generic string writing method.  All other methods will wrap this class.
-	 */
-	private void putString( String string, int putLength, int alignment ) {
-		String spaces = "";
-
-		for( int i = 0; i < putLength - string.length(); i++ ) {
-			spaces = " " + spaces;
-		}
-		try {
-			if( alignment == ALIGNMENT_LEFT ) {
-				outputStream.write( string + spaces );
-			}
-			if( alignment == ALIGNMENT_RIGHT ) {
-				outputStream.write( spaces + string );
-			}
-			outputStream.flush();
-		}
-		catch( IOException e ) {
-			return;
-		}
-	}
-
-	public void putDoublePadRight( double putDouble, int decimalPlaces, int putLength ) {
-		StringBuilder pattern = new StringBuilder("##0");
-		if( decimalPlaces > 0 ) {
-			pattern.append(".");
-			for( int i = 0; i < decimalPlaces; i++ ) {
-				pattern.append("0");
-			}
-		}
-		formatter.applyPattern(pattern.toString());
-
-		putString( formatter.format( putDouble ), putLength, ALIGNMENT_RIGHT );
-	}
-
-	public void putDoubleWithDecimals( double putDouble, int decimalPlaces ) {
-		StringBuilder pattern = new StringBuilder("##0");
-		if( decimalPlaces > 0 ) {
-			pattern.append(".");
-			for( int i = 0; i < decimalPlaces; i++ ) {
-				pattern.append("0");
-			}
-		}
-		formatter.applyPattern(pattern.toString());
-
-		putString( formatter.format( putDouble ), formatter.format( putDouble ).length(), ALIGNMENT_LEFT );
-	}
-
-	public void putDoubleWithDecimalsTabs( double putDouble, int decimalPlaces, int tabs ) {
-		StringBuilder pattern = new StringBuilder("##0");
-		if( decimalPlaces > 0 ) {
-			pattern.append(".");
-			for( int i = 0; i < decimalPlaces; i++ ) {
-				pattern.append("0");
-			}
-		}
-		formatter.applyPattern(pattern.toString());
-
-		putString( formatter.format( putDouble ), formatter.format( putDouble ).length(), ALIGNMENT_LEFT );
-		putTabs( tabs );
 	}
 
 	public void newLine() {
 		try {
 			outputStream.newLine();
-		}
-		catch( IOException e ) {
-			return;
-		}
-	}
-
-	public void newLine( int numLines ) {
-		for( int i = 0; i < numLines; i++ ) {
-			newLine();
-		}
-	}
-
-	public void putTab() {
-		try {
-			outputStream.write( "\t" );
-		}
-		catch( IOException e ) {
-			return;
-		}
-	}
-
-	public void putTabs( int numTabs ) {
-		try {
-			for( int i = 0; i < numTabs; i++ ) {
-				outputStream.write( "\t" );
-			}
 		}
 		catch( IOException e ) {
 			return;
@@ -212,11 +98,6 @@ public class FileEntity {
 		catch( IOException e ) {
 			return;
 		}
-	}
-
-	public void putStringTabs( String input, int tabs ) {
-		putString( input );
-		putTabs( tabs );
 	}
 
 	/**

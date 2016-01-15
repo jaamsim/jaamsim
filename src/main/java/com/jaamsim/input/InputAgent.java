@@ -747,27 +747,27 @@ public class InputAgent {
 				if (hasinput) {
 					String entityName = ent.getName();
 					if ((count - 1) % 5 == 0) {
-						inputReportFile.putString("Define");
-						inputReportFile.putTab();
-						inputReportFile.putString(type.getName());
-						inputReportFile.putTab();
-						inputReportFile.putString("{ " + entityName);
-						inputReportFile.putTab();
+						inputReportFile.write("Define");
+						inputReportFile.write("\t");
+						inputReportFile.write(type.getName());
+						inputReportFile.write("\t");
+						inputReportFile.write("{ " + entityName);
+						inputReportFile.write("\t");
 					}
 					else if ((count - 1) % 5 == 4) {
-						inputReportFile.putString(entityName + " }");
+						inputReportFile.write(entityName + " }");
 						inputReportFile.newLine();
 					}
 					else {
-						inputReportFile.putString(entityName);
-						inputReportFile.putTab();
+						inputReportFile.write(entityName);
+						inputReportFile.write("\t");
 					}
 				}
 			}
 
 			if (!Entity.getInstanceIterator(each).hasNext()) {
 				if (count % 5 != 0) {
-					inputReportFile.putString(" }");
+					inputReportFile.write(" }");
 					inputReportFile.newLine();
 				}
 				inputReportFile.newLine();
@@ -783,7 +783,7 @@ public class InputAgent {
 
 			// Print the entity class name to the report (in the form of a comment)
 			if (cloneList.size() > 0) {
-				inputReportFile.putString("\" " + each.getSimpleName() + " \"");
+				inputReportFile.write("\" " + each.getSimpleName() + " \"");
 				inputReportFile.newLine();
 				inputReportFile.newLine(); // blank line below the class name heading
 			}
@@ -814,25 +814,25 @@ public class InputAgent {
 
 							if (!in.getCategory().contains("Graphics")) {
 								hasinput = true;
-								inputReportFile.putTab();
-								inputReportFile.putString(entityName);
-								inputReportFile.putTab();
-								inputReportFile.putString(in.getKeyword());
-								inputReportFile.putTab();
+								inputReportFile.write("\t");
+								inputReportFile.write(entityName);
+								inputReportFile.write("\t");
+								inputReportFile.write(in.getKeyword());
+								inputReportFile.write("\t");
 								if (in.getValueString().lastIndexOf("{") > 10) {
 									String[] item1Array;
 									item1Array = in.getValueString().trim().split(" }");
 
-									inputReportFile.putString("{ " + item1Array[0] + " }");
+									inputReportFile.write("{ " + item1Array[0] + " }");
 									for (int l = 1; l < (item1Array.length); l++) {
 										inputReportFile.newLine();
-										inputReportFile.putTabs(5);
-										inputReportFile.putString(item1Array[l] + " } ");
+										inputReportFile.write("\t\t\t\t\t");;
+										inputReportFile.write(item1Array[l] + " } ");
 									}
-									inputReportFile.putString("	}");
+									inputReportFile.write("	}");
 								}
 								else {
-									inputReportFile.putString("{ " + in.getValueString() + " }");
+									inputReportFile.write("{ " + in.getValueString() + " }");
 								}
 								inputReportFile.newLine();
 							}
