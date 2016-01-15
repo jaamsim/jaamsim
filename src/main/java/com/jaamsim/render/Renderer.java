@@ -587,9 +587,8 @@ public class Renderer implements GLAnimatorControl {
 		URL res = Renderer.class.getResource(file);
 
 		StringBuilder source = new StringBuilder();
-		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(res.openStream()));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(res.openStream()));
 
 			while (true) {
 				String line = reader.readLine();
@@ -598,7 +597,6 @@ public class Renderer implements GLAnimatorControl {
 				source.append(line).append("\n");
 			}
 			reader.close();
-			reader = null;
 		}
 		catch (IOException e) {}
 
