@@ -40,7 +40,6 @@ import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
 
 public class ShapeModel extends DisplayModel {
-	// IMPORTANT: If you add a tag here, make sure to add it to the validTags
 	public static final String TAG_CONTENTS = "CONTENTS";
 	public static final String TAG_CONTENTS2 = "CONTENTS2";
 	public static final String TAG_CAPACITY = "CAPACITY";
@@ -52,8 +51,6 @@ public class ShapeModel extends DisplayModel {
 	public static final String TAG_SECONDARY_LINES = "SECONDARY_LINES";
 	public static final String TAG_ARROW_DOWN = "ARROWS_DOWN";
 	public static final String TAG_ARROW_UP = "ARROWS_UP";
-
-	protected static final ArrayList<String> validTags;
 
 	enum ValidShapes {
 		PIXELS,
@@ -105,19 +102,6 @@ public class ShapeModel extends DisplayModel {
 	                "will be one pixel wide line.",
 	         exampleList = { "TRUE" })
 	private final BooleanInput bold;
-
-	static {
-		validTags = new ArrayList<>();
-		validTags.add(TAG_CONTENTS);
-		validTags.add(TAG_OUTLINES);
-		validTags.add(TAG_TRACKFILL);
-		validTags.add(TAG_BODY);
-		validTags.add(TAG_SERVICE);
-		validTags.add(TAG_LINES);
-		validTags.add(TAG_SECONDARY_LINES);
-		validTags.add(TAG_ARROW_DOWN);
-		validTags.add(TAG_ARROW_UP);
-	}
 
 	{
 		shape = new EnumInput<>(ValidShapes.class, "Shape", "Key Inputs", ValidShapes.CIRCLE);
