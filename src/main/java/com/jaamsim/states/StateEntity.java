@@ -368,6 +368,12 @@ public class StateEntity extends DisplayEntity {
 
 		return state.completedCycleTicks;
 	}
+	public long getInitTicks(StateRecord state) {
+		if (state == null)
+			return 0;
+
+		return state.initTicks;
+	}
 
 	private long getWorkingTicks(long simTicks) {
 		long ticks = workingTicks;
