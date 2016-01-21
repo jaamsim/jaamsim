@@ -19,12 +19,13 @@ limitations under the License.
   <property name="ver"           value="2015-50"/>
   <property name="src.dir"       location="src/main"/>
   <property name="res.dir"       location="src/main/resources"/>
+  <property name="make.dir"      location="make"/>
   <property name="build.dir"     location="build"/>
   <property name="jogl.lib"      location="jar/jogl-all.jar"/>
   <property name="gluegen.lib"   location="jar/gluegen-rt.jar"/>
   <property name="class.dir"     location="${build.dir}/classes"/>
   <property name="jars.dir"      location="${build.dir}/jars"/>
-  
+
   <target name="clean">
     <delete dir="${build.dir}"/>
   </target>
@@ -90,5 +91,25 @@ limitations under the License.
       <zipfileset src="jar/jogl-all-natives-linux-amd64.jar"      includes="natives/**/*"/>
       <zipfileset src="jar/jogl-all-natives-macosx-universal.jar" includes="natives/**/*"/>
     </jar>
+  </target>
+  <target name="exe" depends="jar">
+    <delete file="${jars.dir}/JS32.exe4j" quiet="true"/>
+    <copy file="${make.dir}/JS32.exe4j" toFile="${jars.dir}/JS32.exe4j">
+      <filterset>
+        <filter token="VERSION" value="${ver}"/>
+      </filterset>
+    </copy>
+    <delete file="${jars.dir}/JS64.exe4j" quiet="true"/>
+    <copy file="${make.dir}/JS64.exe4j" toFile="${jars.dir}/JS64.exe4j">
+      <filterset>
+        <filter token="VERSION" value="${ver}"/>
+      </filterset>
+    </copy>
+    <exec dir="${jars.dir}" executable="exe4jc">
+      <arg value="JS32.exe4j"/>
+    </exec>
+    <exec dir="${jars.dir}" executable="exe4jc">
+      <arg value="JS64.exe4j"/>
+    </exec>
   </target>
 </project>
