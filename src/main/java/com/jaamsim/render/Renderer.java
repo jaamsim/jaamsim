@@ -295,12 +295,11 @@ public class Renderer implements GLAnimatorControl {
 				updateRenderableScene();
 
 				// Run all render messages
-				RenderMessage message;
 				boolean moreMessages = false;
 				do {
 					// Only lock the queue while reading messages, release it while
 					// processing them
-					message = null;
+					RenderMessage message = null;
 					synchronized (renderMessages) {
 						if (!renderMessages.isEmpty()) {
 							message = renderMessages.remove();

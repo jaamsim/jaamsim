@@ -2271,7 +2271,7 @@ public class ColParser {
 
 		public String id;
 		public String sid;
-		public ArrayList<SceneTrans> transforms = new ArrayList<>();
+		public final ArrayList<SceneTrans> transforms = new ArrayList<>();
 
 		public final ArrayList<SceneNode> subNodes = new ArrayList<>();
 		public final ArrayList<String> subInstanceNames = new ArrayList<>();
