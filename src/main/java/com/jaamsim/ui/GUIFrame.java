@@ -192,10 +192,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		this.setIconImage(GUIFrame.getWindowIcon());
 
-		//Set window size and make visible
+		//Set window size
+		setResizable( true );  //FIXME should be false, but this causes the window to be sized
+		                       //      and positioned incorrectly in the Windows 7 Aero theme
 		pack();
 		setSize(DEFAULT_GUI_WIDTH, getPreferredSize().height);
-		setResizable( false );
 
 		controlStartResume.setSelected( false );
 		controlStartResume.setEnabled( false );
