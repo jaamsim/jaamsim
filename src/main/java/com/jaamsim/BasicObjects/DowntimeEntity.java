@@ -19,6 +19,7 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
@@ -442,6 +443,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 */
 	private double getDowntimeDuration() {
 		return downtimeDurationDistribution.getValue().getNextSample(getSimTime());
+	}
+
+	public SampleProvider getDowntimeDurationDistribution() {
+		return downtimeDurationDistribution.getValue();
 	}
 
 	public boolean isDown() {
