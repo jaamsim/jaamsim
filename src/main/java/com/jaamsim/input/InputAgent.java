@@ -826,7 +826,7 @@ public class InputAgent {
 									inputReportFile.write("{ " + item1Array[0] + " }");
 									for (int l = 1; l < (item1Array.length); l++) {
 										inputReportFile.newLine();
-										inputReportFile.write("\t\t\t\t\t");;
+										inputReportFile.write("\t\t\t\t\t");
 										inputReportFile.write(item1Array[l] + " } ");
 									}
 									inputReportFile.write("	}");
