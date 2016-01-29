@@ -506,6 +506,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		return endTime;
 	}
 
+	public ArrayList<DowntimeUser> getModelEntityList() {
+		return modelEntityList;
+	}
+
 	@Output(name = "StartTime",
 			description = "The time that the current event started.",
 			unitType = TimeUnit.class)
