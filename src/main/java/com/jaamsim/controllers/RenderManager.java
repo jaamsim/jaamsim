@@ -1542,6 +1542,18 @@ public class RenderManager implements DragSourceListener {
 	}
 
 	/**
+	 * Can this hardware perform off screen rendering. Note: this method returning true is necessary, but not sufficient to
+	 * support off screen rendering.
+	 * @return
+	 */
+	public static boolean canRenderOffscreen() {
+		if (!isGood()) return false;
+
+		RenderManager rman = RenderManager.inst();
+		return rman.renderer.isGL3Supported();
+	}
+
+	/**
 	 * Queue up an off screen rendering, this simply passes the call directly to the renderer
 	 * @param scene
 	 * @param camInfo

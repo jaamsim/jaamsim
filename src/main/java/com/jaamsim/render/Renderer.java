@@ -114,6 +114,8 @@ public class Renderer implements GLAnimatorControl {
 
 	private GLCapabilities caps = null;
 
+	private boolean gl3Supported;
+
 	private final TexCache texCache = new TexCache(this);
 
 	// An initalization time flag specifying if the 'safest' graphical techniques should be used
@@ -208,6 +210,13 @@ public class Renderer implements GLAnimatorControl {
 
 			sharedContext = dummyDrawable.getContext();
 			assert (sharedContext != null);
+
+			try {
+				GL3 gl3 = sharedContext.getGL().getGL3();
+				gl3Supported = gl3 != null;
+			} catch (GLException ex) {
+				gl3Supported = false;
+			}
 
 //			long endNanos = System.nanoTime();
 //			long ms = (endNanos - startNanos) /1000000L;
@@ -1328,6 +1337,10 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 		 return initialized.get() && !fatalError.get();
 	}
 
+	public boolean isGL3Supported() {
+		return gl3Supported;
+	}
+
 	public boolean hasFatalError() {
 		return fatalError.get();
 	}
@@ -1514,7 +1527,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			int height = message.height;
 
 			if (!target.isLoaded()) {
-				message.result.setFailed("Contexted not loaded. Is OpenGL 3 supported?");
+				message.result.setFailed("Context not loaded. Is OpenGL 3 supported?");
 				return;
 			}
 			assert(target.isLoaded());

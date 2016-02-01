@@ -18,6 +18,8 @@ package com.jaamsim.ui;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.controllers.VideoRecorder;
@@ -185,6 +187,11 @@ public class VideoRecorderEntity extends DisplayEntity {
 
 		if (!RenderManager.isGood()) {
 			RenderManager.initialize(false);
+		}
+
+		if (!RenderManager.canRenderOffscreen()) {
+			JOptionPane.showMessageDialog(null, "Your hardware does not support Video Recording.");
+			return;
 		}
 
 		int width = captureArea.getValue().get(0);
