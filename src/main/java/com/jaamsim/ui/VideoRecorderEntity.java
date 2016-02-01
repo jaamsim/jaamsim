@@ -200,8 +200,9 @@ public class VideoRecorderEntity extends DisplayEntity {
 		ArrayList<View> views = captureViews.getValue();
 
 		String videoFileName = String.format("%s_%s", InputAgent.getRunName(), videoName.getValue());
+		String fullVideoFile = InputAgent.getReportFileName(videoFileName); // getReportFileName() prepends the report directory onto a filename
 
-		VideoRecorder recorder = new VideoRecorder(views, videoFileName, width, height, captureFrames.getDefaultValue(),
+		VideoRecorder recorder = new VideoRecorder(views, fullVideoFile, width, height, captureFrames.getDefaultValue(),
 		                             saveImages.getValue(), saveVideo.getValue(), videoBGColor.getValue());
 
 		// Otherwise, start capturing
