@@ -84,6 +84,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private final ArrayList<DowntimeUser> modelEntityList;  // A list of model entities that have this downtime entity in its DowntimeEntities keyword
 	private boolean down;             // true for the duration of a downtime event
 	private int downtimePendings;    // number of queued downtime events
+	private double downtimePendingStartTime; // the simulation time in seconds at which the downtime pending started
 
 	private double secondsForNextFailure;    // The number of working seconds required before the next downtime event
 	private double secondsForNextRepair;    // The number of working seconds required before the downtime event ends
@@ -150,6 +151,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		down = false;
 		modelEntityList.clear();
 		downtimePendings = 0;
+		downtimePendingStartTime = 0.0;
 		startTime = 0;
 		endTime = 0;
 
@@ -350,6 +352,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 	public void scheduleDowntime() {
 		downtimePendings++;
+		if( downtimePendings == 1 )
+			downtimePendingStartTime = this.getSimTime();
 
 		// Determine the time the next downtime event is due
 		// Calendar time based
@@ -496,6 +500,10 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 	public double getEndTime() {
 		return endTime;
+	}
+
+	public double getDowntimePendingStartTime() {
+		return downtimePendingStartTime;
 	}
 
 	public ArrayList<DowntimeUser> getModelEntityList() {
