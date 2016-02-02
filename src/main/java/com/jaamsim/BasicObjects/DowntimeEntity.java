@@ -427,6 +427,13 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	}
 
 	/**
+	 * Return the expected time in seconds of the downtime duration
+	 */
+	public double getExpectedDowntimeDuration() {
+		return downtimeDurationDistribution.getValue().getMeanValue( getSimTime() );
+	}
+
+	/**
 	 * Return the time in seconds of the next downtime duration
 	 */
 	private double getDowntimeDuration() {
