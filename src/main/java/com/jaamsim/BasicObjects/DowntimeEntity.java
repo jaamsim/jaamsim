@@ -135,20 +135,12 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	public void validate()
 	throws InputErrorException {
 		super.validate();
-		if( downtimeIATDistribution.getValue() == null && downtimeDurationDistribution.getValue() != null )
-			throw new InputErrorException("When DowntimeDurationDistribution is set, DowntimeIATDistribution must also be set.");
 
-		if( downtimeIATDistribution.getValue() != null && downtimeDurationDistribution.getValue() == null )
-			throw new InputErrorException("When DowntimeIATDistribution is set, DowntimeDurationDistribution must also be set.");
+		if( downtimeIATDistribution.getValue().getMinValue() < 0 )
+			throw new InputErrorException("Interval values can not be less than 0.");
 
-		if( downtimeIATDistribution.getValue() != null ) {
-			if( downtimeIATDistribution.getValue().getMinValue() < 0 )
-				throw new InputErrorException("Interval values can not be less than 0.");
-		}
-		if( downtimeDurationDistribution.getValue() != null ) {
-			if( downtimeDurationDistribution.getValue().getMinValue() < 0 )
-				throw new InputErrorException("Duration values can not be less than 0.");
-		}
+		if( downtimeDurationDistribution.getValue().getMinValue() < 0 )
+			throw new InputErrorException("Duration values can not be less than 0.");
 	}
 
 	@Override
@@ -431,9 +423,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 * Return the time in seconds of the next downtime IAT
 	 */
 	private double getNextDowntimeIAT() {
-		if (downtimeIATDistribution.getValue() == null)
-			return 10e10d;
-
 		return downtimeIATDistribution.getValue().getNextSample(getSimTime());
 	}
 
@@ -441,10 +430,6 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	 * Return the time in seconds of the next downtime duration
 	 */
 	private double getDowntimeDuration() {
-		// If a distribution was specified, then select a duration randomly from the distribution
-		if (downtimeDurationDistribution.getValue() == null)
-			return 0.0d;
-
 		return downtimeDurationDistribution.getValue().getNextSample(getSimTime());
 	}
 
