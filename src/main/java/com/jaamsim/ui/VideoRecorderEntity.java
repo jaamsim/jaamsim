@@ -101,6 +101,8 @@ public class VideoRecorderEntity extends DisplayEntity {
 	private final EventHandle captureHandle = new EventHandle();
 
 	{
+		attributeDefinitionList.setHidden(true);
+
 		captureStartTime = new ValueInput("CaptureStartTime", "Key Inputs", 0.0d);
 		captureStartTime.setUnitType(TimeUnit.class);
 		captureStartTime.setValidRange(0, Double.POSITIVE_INFINITY);
@@ -116,14 +118,15 @@ public class VideoRecorderEntity extends DisplayEntity {
 		this.addInput(captureFrames);
 
 		IntegerVector defArea = new IntegerVector(2);
-		defArea.add(1000);
-		defArea.add(1000);
+		defArea.add(1920);
+		defArea.add(1080);
 		captureArea = new IntegerListInput("CaptureArea", "Key Inputs", defArea);
 		captureArea.setValidCount(2);
 		captureArea.setValidRange(0, 3000);
 		this.addInput(captureArea);
 
 		captureViews = new EntityListInput<>(View.class, "CaptureViews", "Key Inputs", new ArrayList<View>(0));
+		captureViews.setRequired(true);
 		this.addInput(captureViews);
 
 		videoBGColor = new ColourInput("VideoBackgroundColor", "Key Inputs", ColourInput.WHITE);
