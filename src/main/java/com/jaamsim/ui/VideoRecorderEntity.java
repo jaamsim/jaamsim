@@ -111,19 +111,9 @@ public class VideoRecorderEntity extends DisplayEntity {
 		captureInterval.setValidRange(0.1d, Double.POSITIVE_INFINITY);
 		this.addInput(captureInterval);
 
-		videoBGColor = new ColourInput("VideoBackgroundColor", "Key Inputs", ColourInput.WHITE);
-		this.addInput(videoBGColor);
-		this.addSynonym(videoBGColor, "Colour");
-
 		captureFrames = new IntegerInput("CaptureFrames", "Key Inputs", 0);
 		captureFrames.setValidRange(0, 30000);
 		this.addInput(captureFrames);
-
-		saveImages = new BooleanInput("SaveImages", "Key Inputs", false);
-		this.addInput(saveImages);
-
-		saveVideo = new BooleanInput("SaveVideo", "Key Inputs", false);
-		this.addInput(saveVideo);
 
 		IntegerVector defArea = new IntegerVector(2);
 		defArea.add(1000);
@@ -136,8 +126,18 @@ public class VideoRecorderEntity extends DisplayEntity {
 		captureViews = new EntityListInput<>(View.class, "CaptureViews", "Key Inputs", new ArrayList<View>(0));
 		this.addInput(captureViews);
 
+		videoBGColor = new ColourInput("VideoBackgroundColor", "Key Inputs", ColourInput.WHITE);
+		this.addInput(videoBGColor);
+		this.addSynonym(videoBGColor, "Colour");
+
 		videoName = new StringInput("VideoName", "Key Inputs", "");
 		this.addInput(videoName);
+
+		saveImages = new BooleanInput("SaveImages", "Key Inputs", false);
+		this.addInput(saveImages);
+
+		saveVideo = new BooleanInput("SaveVideo", "Key Inputs", false);
+		this.addInput(saveVideo);
 	}
 
 	@Override
