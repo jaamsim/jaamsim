@@ -60,7 +60,7 @@ public class EntityGenerator extends LinkedService {
 	private int numberGenerated = 0;  // Number of entities generated so far
 
 	{
-		testEntity.setHidden(true);
+		defaultEntity.setHidden(true);
 		stateAssignment.setHidden(true);
 		waitQueue.setHidden(true);
 		match.setHidden(true);

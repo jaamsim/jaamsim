@@ -31,7 +31,7 @@ public class EntityLogger extends LinkedComponent {
 
 	{
 		stateAssignment.setHidden(true);
-		testEntity.setHidden(true);
+		defaultEntity.setHidden(true);
 	}
 
 	public EntityLogger() {}

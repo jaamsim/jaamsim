@@ -35,10 +35,13 @@ import com.jaamsim.units.TimeUnit;
  */
 public abstract class LinkedComponent extends StateEntity {
 
-	@Keyword(description = "The prototype for entities that will be received by this object.\n" +
-			"This input must be set if the expression 'this.obj' is used in the input to any keywords.",
-	         exampleList = {"Proto"})
-	protected final EntityInput<DisplayEntity> testEntity;
+	@Keyword(description = "The default value for the output obj.\n"
+	                     + "Normally, obj is set to the last entity received by this object. "
+	                     + "Prior to receiving its first entity, obj is set to the object "
+	                     + "provided by DefaultEntity. If an input for DefaultEntity is not "
+	                     + "provided, then obj is set to null until the first entity is received.",
+	         exampleList = {"SimEntity1"})
+	protected final EntityInput<DisplayEntity> defaultEntity;
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 			exampleList = {"Queue1"})
@@ -59,8 +62,9 @@ public abstract class LinkedComponent extends StateEntity {
 	{
 		attributeDefinitionList.setHidden(false);
 
-		testEntity = new EntityInput<>(DisplayEntity.class, "TestEntity", "Key Inputs", null);
-		this.addInput(testEntity);
+		defaultEntity = new EntityInput<>(DisplayEntity.class, "DefaultEntity", "Key Inputs", null);
+		this.addInput(defaultEntity);
+		this.addSynonym(defaultEntity, "TestEntity");
 
 		nextComponent = new EntityInput<>(LinkedComponent.class, "NextComponent", "Key Inputs", null);
 		nextComponent.setRequired(true);
@@ -74,8 +78,8 @@ public abstract class LinkedComponent extends StateEntity {
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
 
-		if (in == testEntity) {
-			receivedEntity = testEntity.getValue();
+		if (in == defaultEntity) {
+			receivedEntity = defaultEntity.getValue();
 			return;
 		}
 	}
@@ -85,8 +89,8 @@ public abstract class LinkedComponent extends StateEntity {
 		super.validate();
 
 		// If a state is to be assigned, ensure that the prototype is a StateEntity
-		if (testEntity.getValue() != null && !stateAssignment.getValue().isEmpty()) {
-			if (!(testEntity.getValue() instanceof StateEntity)) {
+		if (defaultEntity.getValue() != null && !stateAssignment.getValue().isEmpty()) {
+			if (!(defaultEntity.getValue() instanceof StateEntity)) {
 				throw new InputErrorException("Only a SimEntity can be specified for the TestEntity keyword if a state is be be assigned.");
 			}
 		}
@@ -99,7 +103,7 @@ public abstract class LinkedComponent extends StateEntity {
 		numberProcessed = 0;
 		initialNumberAdded = 0;
 		initialNumberProcessed = 0;
-		receivedEntity = testEntity.getValue();
+		receivedEntity = defaultEntity.getValue();
 		releaseTime = Double.NaN;
 	}
 
