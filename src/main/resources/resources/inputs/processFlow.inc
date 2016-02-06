@@ -98,30 +98,30 @@ RemoveFrom              JavaClass { com.jaamsim.BasicObjects.RemoveFrom         
 EntityLogger            JavaClass { com.jaamsim.BasicObjects.EntityLogger         }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityLoggerIconModel    } IconFile { '<res>/images/EntityLogger-24.png'    }
 Statistics              JavaClass { com.jaamsim.BasicObjects.Statistics           }  Palette { 'Process Flow' }  DefaultDisplayModel { StatisticsIconModel      } IconFile { '<res>/images/Statistics-24.png'      }
 
-SimEntity          Description { 'A basic entity for use in a process flow type model.' }
-EntityGenerator    Description { 'Creates copies of a specified entity at specified intervals.' }
+SimEntity          Description { 'The basic entity for use in a process flow type model.' }
+EntityGenerator    Description { 'Creates copies of a prototype entity at specified intervals.' }
 EntitySink         Description { 'Destroys any entity it receives.' }
 Server             Description { 'Processes a received entity over a specified duration.' }
-Queue              Description { 'Stores received entities in first-in-first-out order until they are needed.' }
+Queue              Description { 'Stores received entities until they are needed.' }
 EntityConveyor     Description { 'Transports a received entity along a specified path at a fixed speed.' }
 EntityDelay        Description { 'Delays a received entity by a specified duration.' }
-Resource           Description { 'Set of identical resource units that be seized and released by various process.' }
+Resource           Description { 'Set of identical resource units that can be seized and released by various processes.' }
 Seize              Description { 'Seizes one or more units of a Resource.' }
 Release            Description { 'Releases one or more units of a Resource.' }
 Assign             Description { 'Assigns new values to attributes.' }
-Branch             Description { 'Directs received entities to an assortment of destinations.' }
-Duplicate          Description { 'Sends copies of the received entity to various destinations.' }
+Branch             Description { 'Directs a received entity to a selected destination.' }
+Duplicate          Description { 'Sends copies of the received entity to a set of destinations.' }
 Combine            Description { 'Matches entities from multiple queues. The entity from the first queue is passed on while the other entities are destroyed.' }
 SetGraphics        Description { 'Changes the appearance of the received entity.' }
-EntityGate         Description { 'Blocks received entities from progressing further until the Gate is opened by a Signal.' }
-EntitySignal       Description { 'On receipt of an entity, a specified Gate is opened or closed.' }
+EntityGate         Description { 'Blocks received entities from progressing further until the EntityGate is opened by one or more Thresholds.' }
+EntitySignal       Description { 'Opens or closes a specified SignalThreshold when an entity is received.' }
 SignalThreshold    Description { 'Threshold that is opened and closed directly by an EntitySignal object.' }
 Assemble           Description { 'Combines sub-components to create an assembled part.' }
-EntityContainer    Description { 'Can be used to hold multiple entities.' }
-Pack               Description { 'Insert entities to a new EntityContainer.' }
-Unpack             Description { 'Removes all the entities from an EntityContainer.' }
+EntityContainer    Description { 'An entity that can hold one or more other entities.' }
+Pack               Description { 'Inserts entities in a new EntityContainer.' }
+Unpack             Description { 'Removes all the entities from an EntityContainer which is subsequently destroyed.' }
 AddTo              Description { 'Add entities to an existing EntityContainer.' }
-RemoveFrom         Description { 'Removes some or all of the entities in an EntityContainer.' }
-EntityLogger       Description { 'Records the output and state data for a generated entity in an output log.' }
+RemoveFrom         Description { 'Removes some or all of the entities from an EntityContainer.' }
+EntityLogger       Description { 'Records the outputs and state data for a generated entity in an output log.' }
 Statistics         Description { 'Collects statistics from the received entities.' }
 
