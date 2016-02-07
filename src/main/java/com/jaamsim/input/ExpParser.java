@@ -595,6 +595,45 @@ public class ExpParser {
 			}
 		});
 
+		addFunction("ceil", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
+				return new ExpResult(Math.ceil(args[0].value), args[0].unitType);
+			}
+		});
+
+		addFunction("floor", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
+				return new ExpResult(Math.floor(args[0].value), args[0].unitType);
+			}
+		});
+
+		addFunction("signum", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
+				return new ExpResult(Math.signum(args[0].value), DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("sqrt", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
+				return new ExpResult(Math.sqrt(args[0].value), DimensionlessUnit.class);
+			}
+		});
+
+		addFunction("cbrt", 1, 1, new CallableFunc() {
+			@Override
+			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
+				if (args[0].unitType != DimensionlessUnit.class)
+					throw new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
+				return new ExpResult(Math.cbrt(args[0].value), DimensionlessUnit.class);
+			}
+		});
+
 		addFunction("indexOfMin", 2, -1, new CallableFunc() {
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
