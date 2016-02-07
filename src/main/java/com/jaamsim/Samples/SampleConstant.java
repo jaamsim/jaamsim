@@ -16,6 +16,7 @@
  */
 package com.jaamsim.Samples;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.units.Unit;
 
 public class SampleConstant implements SampleProvider {
@@ -65,6 +66,8 @@ public class SampleConstant implements SampleProvider {
 	public String toString() {
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(val/Unit.getDisplayedUnitFactor(unitType));
+		if (unitType != Unit.class)
+			tmp.append(Input.SEPARATOR).append(Unit.getDisplayedUnit(unitType));
 		return tmp.toString();
 	}
 }
