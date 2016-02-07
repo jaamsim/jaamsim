@@ -204,7 +204,10 @@ private class OutputTableModel extends AbstractTableModel {
 						str = String.format("%g, ", vec.get(i)/factor);
 						sb.append(str);
 					}
-					sb.replace(sb.length()-2, sb.length()-1, "}");
+					if (sb.length() > 1)
+						sb.replace(sb.length()-2, sb.length()-1, "}");
+					else
+						sb.append("}");
 				}
 
 				// ArrayList output
@@ -222,7 +225,10 @@ private class OutputTableModel extends AbstractTableModel {
 						}
 						sb.append(str);
 					}
-					sb.replace(sb.length()-2, sb.length()-1, "}");
+					if (sb.length() > 1)
+						sb.replace(sb.length()-2, sb.length()-1, "}");
+					else
+						sb.append("}");
 				}
 
 				// Keyed outputs
@@ -240,7 +246,10 @@ private class OutputTableModel extends AbstractTableModel {
 						}
 						sb.append(str);
 					}
-					sb.replace(sb.length()-2, sb.length()-1, "}");
+					if (sb.length() > 1)
+						sb.replace(sb.length()-2, sb.length()-1, "}");
+					else
+						sb.append("}");
 				}
 
 				// All other outputs
