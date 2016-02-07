@@ -28,6 +28,7 @@ import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -251,7 +252,7 @@ private class OutputTableModel extends AbstractTableModel {
 
 				// Append the appropriate unit
 				if (ut != Unit.class && ut != DimensionlessUnit.class)
-					sb.append("  ").append(unitString);
+					sb.append(Input.SEPARATOR).append(unitString);
 
 				return sb.toString();
 			}

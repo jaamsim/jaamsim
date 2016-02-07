@@ -884,7 +884,7 @@ public class InputAgent {
 		boolean beginLine = true;
 		for (int i = 0; i < tokens.size(); i++) {
 			if (!beginLine)
-				logFile.write("  ");
+				logFile.write(Input.SEPARATOR);
 			String tok = tokens.get(i);
 			logFile.write(tok);
 			beginLine = false;

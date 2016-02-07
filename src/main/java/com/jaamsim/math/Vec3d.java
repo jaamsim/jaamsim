@@ -16,6 +16,8 @@
  */
 package com.jaamsim.math;
 
+import com.jaamsim.input.Input;
+
 public class Vec3d extends Vec2d {
 
 public double z;
@@ -59,8 +61,8 @@ public Vec3d(double x, double y, double z) {
 public String toString() {
 	StringBuilder tmp = new StringBuilder();
 	tmp.append(x);
-	tmp.append("  ").append(y);
-	tmp.append("  ").append(z);
+	tmp.append(Input.SEPARATOR).append(y);
+	tmp.append(Input.SEPARATOR).append(z);
 	return tmp.toString();
 }
 

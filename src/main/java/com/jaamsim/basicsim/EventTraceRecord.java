@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
+import com.jaamsim.input.Input;
 
 class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 	private String eventManagerName;
@@ -69,7 +70,7 @@ class EventTraceRecord extends ArrayList<String> implements EventTraceListener {
 		StringBuilder rec = new StringBuilder();
 
 		for (int i = 0; i < traceLevel; i++) {
-			rec.append("  ");
+			rec.append(Input.SEPARATOR);
 		}
 		rec.append(record);
 		this.add(rec.toString());

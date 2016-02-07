@@ -76,7 +76,7 @@ public abstract class Input<T> {
 
 	public static final String POSITIVE_INFINITY = "Infinity";
 	public static final String NEGATIVE_INFINITY = "-Infinity";
-	protected static final String SEPARATOR = "  ";
+	public static final String SEPARATOR = "  ";
 
 	private String keyword; // the preferred name for the input keyword
 	private final String category;
@@ -249,7 +249,7 @@ public abstract class Input<T> {
 			String dat = tmp.get(i);
 			if (dat == null) continue;
 			if (i > 0)
-				sb.append("  ");
+				sb.append(Input.SEPARATOR);
 
 			if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
 				sb.append("'").append(dat).append("'");

@@ -47,7 +47,7 @@ public class KeywordIndex {
 		for (int i = start; i < end; i++) {
 			String dat = this.input.get(i);
 			if (i > start)
-				sb.append("  ");
+				sb.append(Input.SEPARATOR);
 
 			if (Parser.needsQuoting(dat) && !dat.equals("{") && !dat.equals("}"))
 				sb.append("'").append(dat).append("'");

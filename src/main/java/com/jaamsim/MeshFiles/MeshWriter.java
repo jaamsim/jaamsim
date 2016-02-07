@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.nio.charset.Charset;
 
+import com.jaamsim.input.Input;
 import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.LogBox;
@@ -52,7 +53,7 @@ public class MeshWriter {
 
 	private void indent() throws IOException {
 		for (int i = 0; i < indentLength; ++i) {
-			out.write("  ");
+			out.write(Input.SEPARATOR);
 		}
 	}
 
