@@ -254,6 +254,8 @@ private class OutputTableModel extends AbstractTableModel {
 
 				// All other outputs
 				else {
+					if (out.getValue(simTime, out.getReturnType()) == null)
+						return "null";
 					str = out.getValue(simTime, out.getReturnType()).toString();
 					sb.append(str);
 					unitString = Unit.getSIUnit(ut);  // other outputs are not converted to preferred units
