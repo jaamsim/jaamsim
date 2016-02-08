@@ -310,6 +310,8 @@ public class Queue extends LinkedComponent {
 	 * Removes the first entity from the queue
 	 */
 	public DisplayEntity removeFirst() {
+		if (itemSet.isEmpty())
+			error("Cannot remove an entity from an empty queue");
 		return this.remove(itemSet.first());
 	}
 
