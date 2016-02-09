@@ -414,6 +414,24 @@ public class Queue extends LinkedComponent {
 	}
 
 	/**
+	 * Returns the position of the specified entity in the queue.
+	 * Returns -1 if the entity is not found.
+	 * @param ent - entity in question
+	 * @return index of the entity in the queue.
+	 */
+	public int getPosition(DisplayEntity ent) {
+		int ret = 0;
+		Iterator<QueueEntry> itr = itemSet.iterator();
+		while (itr.hasNext()) {
+			if (itr.next().entity == ent)
+				return ret;
+
+			ret++;
+		}
+		return -1;
+	}
+
+	/**
 	 * Removes the first entity from the queue
 	 */
 	public DisplayEntity removeFirst() {
@@ -834,6 +852,22 @@ public class Queue extends LinkedComponent {
 	    sequence = 11)
 	public long getNumberReneged(double simTime) {
 		return numberReneged;
+	}
+
+	@Output(name = "QueuePosition",
+	 description = "The position in the queue for an entity undergoing the RenegeCondition test.\n"
+	             + "First in queue = 1, second in queue = 2, etc.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = false,
+	    sequence = 12)
+	public long getQueuePosition(double simTime) {
+		DisplayEntity objEnt = this.getReceivedEntity(simTime);
+		if (objEnt == null)
+			return -1;
+		int pos = this.getPosition(objEnt);
+		if (pos >= 0)
+			pos++;
+		return pos;
 	}
 
 }
