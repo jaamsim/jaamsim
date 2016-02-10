@@ -17,7 +17,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
@@ -26,14 +26,14 @@ public class RemoveFrom extends Unpack {
 
 	@Keyword(description = "The maximum number of entities to remove from the container.",
 	         exampleList = {"2", "DiscreteDistribution1", "this.attrib" })
-	private final SampleExpInput numberOfEntities;
+	private final SampleInput numberOfEntities;
 
 	@Keyword(description = "The next object to which the processed EntityContainer is passed.",
 			exampleList = {"Queue1"})
 	protected final EntityInput<LinkedComponent> nextForContainers;
 
 	{
-		numberOfEntities = new SampleExpInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
+		numberOfEntities = new SampleInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setEntity(this);
 		numberOfEntities.setValidRange(1, Double.POSITIVE_INFINITY);

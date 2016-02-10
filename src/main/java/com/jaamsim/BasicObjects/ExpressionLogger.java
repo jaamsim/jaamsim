@@ -20,7 +20,7 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleExpListInput;
+import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.StringProviders.StringProvider;
@@ -94,7 +94,7 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 			+ "Each source is specified by an Expression. Also acceptable are: "
 			+ "a constant value, a Probability Distribution, TimeSeries, or a Calculation Object.",
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
-	private final SampleExpListInput valueTraceList;
+	private final SampleListInput valueTraceList;
 
 	private final ArrayList<Double> lastValueList = new ArrayList<>();
 
@@ -139,7 +139,7 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 		valueUnitTypeList.setDefaultText("None");
 		this.addInput(valueUnitTypeList);
 
-		valueTraceList = new SampleExpListInput("ValueTraceList", "Tracing",
+		valueTraceList = new SampleListInput("ValueTraceList", "Tracing",
 				new ArrayList<SampleProvider>());
 		valueTraceList.setUnitType(UserSpecifiedUnit.class);
 		valueTraceList.setEntity(this);

@@ -23,7 +23,7 @@ import java.util.Calendar;
 import javax.swing.JFrame;
 
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
@@ -75,7 +75,7 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "An optional expression that pauses the run when TRUE is returned.",
 	         example = "Simulation PauseCondition { '[Queue1].QueueLength > 20'}")
-	private static final SampleExpInput pauseConditionInput;
+	private static final SampleInput pauseConditionInput;
 
 	@Keyword(description = "If TRUE, the simulation run will be terminated when the "
 			+ "PauseCondition expression returns TRUE.",
@@ -97,7 +97,7 @@ public class Simulation extends Entity {
 	             example = "Simulation GlobalSubstreamSeed { 5 }\n"
 	                     + "Simulation GlobalSubstreamSeed { [Simulation].RunNumber }\n"
 	                     + "Simulation GlobalSubstreamSeed { [Simulation].RunIndex(3) }")
-	private static final SampleExpInput globalSeedInput;
+	private static final SampleInput globalSeedInput;
 
 	@Keyword(description = "Indicates whether an output report will be printed at the end of the simulation run.",
 	         example = "Simulation PrintReport { TRUE }")
@@ -236,14 +236,14 @@ public class Simulation extends Entity {
 		initializationTime.setUnitType(TimeUnit.class);
 		initializationTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 
-		pauseConditionInput = new SampleExpInput("PauseCondition", "Key Inputs", null);
+		pauseConditionInput = new SampleInput("PauseCondition", "Key Inputs", null);
 		pauseConditionInput.setUnitType(DimensionlessUnit.class);
 
 		exitAtPauseCondition = new BooleanInput("ExitAtPauseCondition", "Key Inputs", false);
 
 		exitAtStop = new BooleanInput("ExitAtStop", "Key Inputs", false);
 
-		globalSeedInput = new SampleExpInput("GlobalSubstreamSeed", "Key Inputs", new SampleConstant(0));
+		globalSeedInput = new SampleInput("GlobalSubstreamSeed", "Key Inputs", new SampleConstant(0));
 		globalSeedInput.setUnitType(DimensionlessUnit.class);
 		globalSeedInput.setValidRange(0, Integer.MAX_VALUE);
 

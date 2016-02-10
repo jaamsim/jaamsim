@@ -18,7 +18,7 @@ package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueListInput;
@@ -42,7 +42,7 @@ public class Polynomial extends DoubleCalculation {
 	@Keyword(description = "The scale to apply to the input value.\n" +
 			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
 	         example = "Polynomial-1 Scale { 5.0 m }")
-	protected final SampleExpInput scale;
+	protected final SampleInput scale;
 
 	{
 		DoubleVector defList = new DoubleVector();
@@ -51,7 +51,7 @@ public class Polynomial extends DoubleCalculation {
 		coefficientList.setUnitType(DimensionlessUnit.class);
 		this.addInput( coefficientList);
 
-		scale = new SampleExpInput( "Scale", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 1.0d));
+		scale = new SampleInput( "Scale", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 1.0d));
 		scale.setUnitType(UserSpecifiedUnit.class);
 		scale.setEntity(this);
 		this.addInput( scale);

@@ -23,7 +23,7 @@ import java.util.TreeSet;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
@@ -46,14 +46,14 @@ public class Queue extends LinkedComponent {
 			"Priority is integer valued and a lower numerical value indicates a higher priority.\n" +
 			"For example, priority 3 is higher than 4, and priorities 3, 3.2, and 3.8 are equivalent.",
 	         exampleList = {"this.obj.Attrib1"})
-	private final SampleExpInput priority;
+	private final SampleInput priority;
 
 	@Keyword(description = "An expression that returns a dimensionless integer value that can be used to "
 			+ "match entities in separate queues. The expression is evaluated when the entity "
 			+ "first arrives at the queue. Since Match is integer valued, a value of 3.2 for one "
 			+ "queue and 3.6 for another queue are considered to be equal.",
 	         exampleList = {"this.obj.Attrib1"})
-	private final SampleExpInput match;
+	private final SampleInput match;
 
 	@Keyword(description = "Determines the order in which entities are placed in the queue (FIFO or LIFO):\n" +
 			"TRUE = first in first out (FIFO) order (the default setting)," +
@@ -90,13 +90,13 @@ public class Queue extends LinkedComponent {
 		defaultEntity.setHidden(true);
 		nextComponent.setHidden(true);
 
-		priority = new SampleExpInput("Priority", "Key Inputs", new SampleConstant(0));
+		priority = new SampleInput("Priority", "Key Inputs", new SampleConstant(0));
 		priority.setUnitType(DimensionlessUnit.class);
 		priority.setEntity(this);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(priority);
 
-		match = new SampleExpInput("Match", "Key Inputs", null);
+		match = new SampleInput("Match", "Key Inputs", null);
 		match.setUnitType(DimensionlessUnit.class);
 		match.setEntity(this);
 		this.addInput(match);

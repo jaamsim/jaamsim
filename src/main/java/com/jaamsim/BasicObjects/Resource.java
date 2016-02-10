@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.InputErrorException;
@@ -35,7 +35,7 @@ public class Resource extends DisplayEntity {
 	@Keyword(description = "The number of equivalent resource units that are available.\n" +
 			"The input can be a constant value, a time series, or an expression.",
 	         exampleList = {"3", "TimeSeries1", "this.attrib1"})
-	private final SampleExpInput capacity;
+	private final SampleInput capacity;
 
 	private int unitsInUse;  // number of resource units that are being used at present
 	private ArrayList<Seize> seizeList;  // Seize objects that require this resource
@@ -54,7 +54,7 @@ public class Resource extends DisplayEntity {
 	{
 		attributeDefinitionList.setHidden(false);
 
-		capacity = new SampleExpInput("Capacity", "Key Inputs", new SampleConstant(1.0));
+		capacity = new SampleInput("Capacity", "Key Inputs", new SampleConstant(1.0));
 		capacity.setUnitType(DimensionlessUnit.class);
 		capacity.setEntity(this);
 		capacity.setValidRange(0, Double.POSITIVE_INFINITY);

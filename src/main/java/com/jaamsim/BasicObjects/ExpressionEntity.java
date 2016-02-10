@@ -17,7 +17,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
@@ -35,14 +35,14 @@ public class ExpressionEntity extends DisplayEntity implements SampleProvider {
 
 	@Keyword(description = "The expression to be evaluated.",
 	         exampleList = {"'[Queue1].QueueLength + [Queue2].QueueLength'"})
-	private final SampleExpInput sampleValue;
+	private final SampleInput sampleValue;
 
 	{
 		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
-		sampleValue = new SampleExpInput("Expression", "Key Inputs", null);
+		sampleValue = new SampleInput("Expression", "Key Inputs", null);
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
 		sampleValue.setEntity(this);
 		sampleValue.setRequired(true);

@@ -18,7 +18,7 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
@@ -36,17 +36,17 @@ public class EntityGenerator extends LinkedService {
 	@Keyword(description = "The arrival time for the first generated entity.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
-	private final SampleExpInput firstArrivalTime;
+	private final SampleInput firstArrivalTime;
 
 	@Keyword(description = "The inter-arrival time between generated entities.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
-	private final SampleExpInput interArrivalTime;
+	private final SampleInput interArrivalTime;
 
 	@Keyword(description = "The number of entities to be generated for each arrival.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         exampleList = {"3", "TimeSeries1", "'1 + 2*[DiscreteDistribution1].Value'"})
-	private final SampleExpInput entitiesPerArrival;
+	private final SampleInput entitiesPerArrival;
 
 	@Keyword(description = "The prototype for entities to be generated.\n" +
 			"The generated entities will be copies of this entity.",
@@ -66,19 +66,19 @@ public class EntityGenerator extends LinkedService {
 		match.setHidden(true);
 		processPosition.setHidden(true);
 
-		firstArrivalTime = new SampleExpInput("FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		firstArrivalTime = new SampleInput("FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType(TimeUnit.class);
 		firstArrivalTime.setEntity(this);
 		firstArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(firstArrivalTime);
 
-		interArrivalTime = new SampleExpInput("InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
+		interArrivalTime = new SampleInput("InterArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
 		interArrivalTime.setUnitType(TimeUnit.class);
 		interArrivalTime.setEntity(this);
 		interArrivalTime.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(interArrivalTime);
 
-		entitiesPerArrival = new SampleExpInput("EntitiesPerArrival", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));
+		entitiesPerArrival = new SampleInput("EntitiesPerArrival", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));
 		entitiesPerArrival.setUnitType(DimensionlessUnit.class);
 		entitiesPerArrival.setEntity(this);
 		entitiesPerArrival.setValidRange(1, Double.POSITIVE_INFINITY);

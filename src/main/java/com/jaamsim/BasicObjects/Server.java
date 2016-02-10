@@ -18,7 +18,7 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.TimeUnit;
 
@@ -31,12 +31,12 @@ public class Server extends LinkedService {
 	@Keyword(description = "The service time required to process an entity.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
-	private final SampleExpInput serviceTime;
+	private final SampleInput serviceTime;
 
 	private DisplayEntity servedEntity;	// the DisplayEntity being server
 
 	{
-		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		serviceTime = new SampleInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);

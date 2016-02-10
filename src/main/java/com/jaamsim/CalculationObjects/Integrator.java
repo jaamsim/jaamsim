@@ -18,7 +18,7 @@ package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.FrameBox;
@@ -40,7 +40,7 @@ public class Integrator extends DoubleCalculation {
 	@Keyword(description = "The time scale for the integration:  integral = InitialValue + 1/IntegralTime * integral(x)\n" +
 			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
 	         example = "Integrator-1 IntegralTime { 5 s }")
-	protected final SampleExpInput integralTime;
+	protected final SampleInput integralTime;
 
 	private double lastUpdateTime;  // The time at which the last update was performed
 	private double integral; // The present value for the integral
@@ -52,7 +52,7 @@ public class Integrator extends DoubleCalculation {
 		initialValue.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( initialValue);
 
-		integralTime = new SampleExpInput( "IntegralTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
+		integralTime = new SampleInput( "IntegralTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
 		integralTime.setUnitType(TimeUnit.class);
 		integralTime.setEntity(this);
 		this.addInput( integralTime);

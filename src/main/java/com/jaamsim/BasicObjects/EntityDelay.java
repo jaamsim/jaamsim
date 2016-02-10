@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.PolylineInfo;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.ColourInput;
@@ -41,7 +41,7 @@ public class EntityDelay extends LinkedComponent {
 	@Keyword(description = "The delay time for the path.\n" +
 			"The input can be a constant value, a time series of values, or a probability distribution to be sampled.",
 	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
-	private final SampleExpInput duration;
+	private final SampleInput duration;
 
 	@Keyword(description = "If TRUE, a delayed entity is moved along the " +
 			"specified path to indicate its progression through the delay.",
@@ -64,7 +64,7 @@ public class EntityDelay extends LinkedComponent {
 	private final ArrayList<Double> cumLengthList;  // Total length to the end of each segment
 
 	{
-		duration = new SampleExpInput("Duration", "Key Inputs", null);
+		duration = new SampleInput("Duration", "Key Inputs", null);
 		duration.setUnitType(TimeUnit.class);
 		duration.setEntity(this);
 		duration.setValidRange(0, Double.POSITIVE_INFINITY);
