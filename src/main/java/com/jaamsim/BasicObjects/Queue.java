@@ -25,12 +25,15 @@ import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -61,6 +64,25 @@ public class Queue extends LinkedComponent {
 	         exampleList = {"FALSE"})
 	private final BooleanInput fifo;
 
+	@Keyword(description = "The time an entity will wait in the queue before deciding whether or "
+	                     + "not to renege. Evaluated when the entity first enters the queue.\n"
+	                     + "A constant value, a distribution to be sampled, a time series, or an "
+	                     + "expression can be entered.",
+	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
+	private final SampleInput renegeTime;
+
+	@Keyword(description = "A logical condition that determines whether an entity will renege "
+	                     + "after waiting for its RenegeTime value. Note that TRUE and FALSE are "
+	                     + "entered as 1 and 0, respectively.\n"
+	                     + "A constant value, a distribution to be sampled, a time series, or an "
+	                     + "expression can be entered.",
+	         exampleList = { "1", "'this.QueuePosition > 1'", "'this.QueuePostion > [Queue2].QueueLength'" })
+	private final SampleInput renegeCondition;
+
+	@Keyword(description = "The object to which an entity will be sent if it reneges.",
+	         exampleList = {"Branch1"})
+	protected final EntityInput<LinkedComponent> renegeDestination;
+
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
 	         exampleList = {"1 m"})
 	private final ValueInput spacing;
@@ -85,6 +107,7 @@ public class Queue extends LinkedComponent {
 	protected double elementSeconds;  // total time that entities have spent in the queue
 	protected double squaredElementSeconds;  // total time for the square of the number of elements in the queue
 	protected DoubleVector queueLengthDist;  // entry at position n is the total time the queue has had length n
+	protected long numberReneged;  // number of entities that reneged from the queue
 
 	{
 		defaultEntity.setHidden(true);
@@ -104,6 +127,21 @@ public class Queue extends LinkedComponent {
 		fifo = new BooleanInput("FIFO", "Key Inputs", true);
 		this.addInput(fifo);
 
+		renegeTime = new SampleInput("RenegeTime", "Key Inputs", null);
+		renegeTime.setUnitType(TimeUnit.class);
+		renegeTime.setEntity(this);
+		renegeTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(renegeTime);
+
+		renegeCondition = new SampleInput("RenegeCondition", "Key Inputs", new SampleConstant(1));
+		renegeCondition.setUnitType(DimensionlessUnit.class);
+		renegeCondition.setEntity(this);
+		renegeCondition.setValidRange(1.0d, Double.POSITIVE_INFINITY);
+		this.addInput(renegeCondition);
+
+		renegeDestination = new EntityInput<>(LinkedComponent.class, "RenegeDestination", "Key Inputs", null);
+		this.addInput(renegeDestination);
+
 		spacing = new ValueInput("Spacing", "Key Inputs", 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
 		spacing.setValidRange(0.0d, Double.POSITIVE_INFINITY);
@@ -119,6 +157,17 @@ public class Queue extends LinkedComponent {
 		queueLengthDist = new DoubleVector(10,10);
 		userList = new ArrayList<>();
 		matchMap = new HashMap<>();
+	}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == renegeTime) {
+			boolean bool = renegeTime.getValue() != null;
+			renegeDestination.setRequired(bool);
+			return;
+		}
 	}
 
 	@Override
@@ -140,6 +189,7 @@ public class Queue extends LinkedComponent {
 		elementSeconds = 0.0;
 		squaredElementSeconds = 0.0;
 		queueLengthDist.clear();
+		numberReneged = 0;
 
 		// Identify the objects that use this queue
 		userList.clear();
@@ -262,6 +312,53 @@ public class Queue extends LinkedComponent {
 		// Notify the users of this queue
 		if (!userUpdateHandle.isScheduled())
 			EventManager.scheduleTicks(0, 2, false, userUpdate, userUpdateHandle);
+
+		// Schedule the time to check the renege condition
+		if (renegeTime.getValue() != null) {
+			double dur = renegeTime.getValue().getNextSample(getSimTime());
+			this.scheduleProcess(dur, 5, new RenegeActionTarget(this, ent));
+		}
+	}
+
+	private static class RenegeActionTarget extends EntityTarget<Queue> {
+		private final DisplayEntity queuedEnt;
+
+		RenegeActionTarget(Queue q, DisplayEntity e) {
+			super(q, "renegeAction");
+			queuedEnt = e;
+		}
+
+		@Override
+		public void process() {
+			ent.renegeAction(queuedEnt);
+		}
+	}
+
+	public void renegeAction(DisplayEntity ent) {
+
+		// Do nothing if the entity has already left the queue
+		QueueEntry entry = this.getQueueEntry(ent);
+		if (entry == null)
+			return;
+
+		// Temporarily set the obj entity to the one that might renege
+		double simTime = this.getSimTime();
+		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
+		this.setReceivedEntity(ent);
+
+		// Check the condition for reneging
+		if (renegeCondition.getValue().getNextSample(simTime) == 0.0d) {
+			this.setReceivedEntity(oldEnt);
+			return;
+		}
+
+		// Reset the obj entity to the original one
+		this.setReceivedEntity(oldEnt);
+
+		// Remove the entity from the queue and send it to the renege destination
+		this.remove(entry);
+		numberReneged++;
+		renegeDestination.getValue().addEntity(ent);
 	}
 
 	/**
@@ -304,6 +401,16 @@ public class Queue extends LinkedComponent {
 
 		this.incrementNumberProcessed();
 		return entry.entity;
+	}
+
+	private QueueEntry getQueueEntry(DisplayEntity ent) {
+		Iterator<QueueEntry> itr = itemSet.iterator();
+		while (itr.hasNext()) {
+			QueueEntry entry = itr.next();
+			if (entry.entity == ent)
+				return entry;
+		}
+		return null;
 	}
 
 	/**
@@ -553,6 +660,7 @@ public class Queue extends LinkedComponent {
 		for (int i=0; i<queueLengthDist.size(); i++) {
 			queueLengthDist.set(i, 0.0d);
 		}
+		numberReneged = 0;
 	}
 
 	private void updateStatistics(int oldValue, int newValue) {
@@ -717,6 +825,15 @@ public class Queue extends LinkedComponent {
 	    sequence = 10)
 	public int getMatchValueCount(double simTime) {
 		return matchMap.size();
+	}
+
+	@Output(name = "NumberReneged",
+	 description = "The number of entities that reneged from the queue.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 11)
+	public long getNumberReneged(double simTime) {
+		return numberReneged;
 	}
 
 }
