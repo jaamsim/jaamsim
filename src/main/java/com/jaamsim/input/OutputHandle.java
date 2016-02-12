@@ -153,6 +153,11 @@ public class OutputHandle {
 			ret.add( e.getOutputHandle(p.name) );  // required to get the correct unit type for the output
 		}
 
+		// Add the custom outputs
+		for (String outputName : e.getCustomOutputNames()) {
+			ret.add(e.getOutputHandle(outputName));
+		}
+
 		// And the attributes
 		for (String attribName : e.getAttributeNames()) {
 			ret.add(e.getOutputHandle(attribName));

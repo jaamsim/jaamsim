@@ -29,11 +29,14 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.AttributeDefinitionListInput;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ExpressionHandle;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
+import com.jaamsim.input.NamedExpression;
+import com.jaamsim.input.NamedExpressionListInput;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.input.StringInput;
@@ -72,6 +75,7 @@ public class Entity {
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
 	private final HashMap<String, AttributeHandle> attributeMap = new HashMap<>();
+	private final HashMap<String, ExpressionHandle> customOutputMap = new HashMap<>();
 
 	private final BooleanInput trace;
 
@@ -84,6 +88,12 @@ public class Entity {
 			"this value will determine the attribute's unit type.",
 	         exampleList = {"{ A 20.0 s } { alpha 42 }"})
 	public final AttributeDefinitionListInput attributeDefinitionList;
+
+
+	@Keyword(description = "The list of user defined custom outputs for this entity.\n" +
+			" The output name is followed by an expression to be evaluated as the output and the unit type of the expression.",
+	         exampleList = {"{ TwiceSimTime '2*this.SimTime' TimeUnit } { CargoVolume 'this.Cargo/this.CargoDensity' VolumeUnit }"})
+	public final NamedExpressionListInput namedExpressionInput;
 
 	static {
 		allInstances = new ArrayList<>(100);
@@ -103,6 +113,12 @@ public class Entity {
 				"Key Inputs", new ArrayList<AttributeHandle>());
 		attributeDefinitionList.setHidden(false);
 		this.addInput(attributeDefinitionList);
+
+		namedExpressionInput = new NamedExpressionListInput(this, "CustomOuputList",
+				"Key Inputs", new ArrayList<NamedExpression>());
+		namedExpressionInput.setHidden(false);
+		this.addInput(namedExpressionInput);
+
 	}
 
 	/**
@@ -434,6 +450,19 @@ public class Entity {
 			FrameBox.reSelectEntity();
 			return;
 		}
+		if (in == namedExpressionInput) {
+			customOutputMap.clear();
+			for (NamedExpression ne : namedExpressionInput.getValue()) {
+				ExpressionHandle eh = new ExpressionHandle(this, ne.getExpression(), ne.getName());
+				eh.setUnitType(ne.getUnitType());
+				customOutputMap.put(ne.getName(), eh);
+			}
+
+			// Update the OutputBox
+			FrameBox.reSelectEntity();
+			return;
+		}
+
 	}
 
 	public final void startProcess(String methodName, Object... args) {
@@ -617,6 +646,9 @@ public class Entity {
 		if (hasAttribute(outputName))
 			return attributeMap.get(outputName);
 
+		if (customOutputMap.containsKey(outputName))
+			return customOutputMap.get(outputName);
+
 		if (hasOutput(outputName)) {
 			OutputHandle ret = new OutputHandle(this, outputName);
 			if (ret.getUnitType() == UserSpecifiedUnit.class)
@@ -637,6 +669,9 @@ public class Entity {
 		if (hasAttribute(outputName))
 			return attributeMap.get(outputName);
 
+		if (customOutputMap.containsKey(outputName))
+			return customOutputMap.get(outputName);
+
 		if (OutputHandle.hasOutputInterned(this.getClass(), outputName)) {
 			OutputHandle ret = new OutputHandle(this, outputName);
 			if (ret.getUnitType() == UserSpecifiedUnit.class)
@@ -652,6 +687,8 @@ public class Entity {
 		if (OutputHandle.hasOutput(this.getClass(), outputName))
 			return true;
 		if (attributeMap.containsKey(outputName))
+			return true;
+		if (customOutputMap.containsKey(outputName))
 			return true;
 
 		return false;
@@ -789,6 +826,15 @@ public class Entity {
 		}
 		return ret;
 	}
+
+	public ArrayList<String> getCustomOutputNames(){
+		ArrayList<String> ret = new ArrayList<>();
+		for (String name : customOutputMap.keySet()) {
+			ret.add(name);
+		}
+		return ret;
+	}
+
 
 	public ObjectType getObjectType() {
 		return ObjectType.getObjectTypeForClass(this.getClass());
