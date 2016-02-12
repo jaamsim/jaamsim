@@ -31,6 +31,7 @@ import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringKeyInput;
+import com.jaamsim.input.StringListInput;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -44,6 +45,10 @@ public class StateEntity extends DisplayEntity {
 	@Keyword(description = "If TRUE, a log file (.trc) will be printed with the time of every state change during the run.",
 	         example = "Object1  TraceState { TRUE }")
 	private final BooleanInput traceState;
+
+	@Keyword(description = "A list of states for which the entity is considered working.",
+		     exampleList = "'Transit - Seg1L' 'Transit - Seg1B'")
+	protected final StringListInput workingStateListInput;
 
 	private StateRecord presentState; // The present state of the entity
 	private final HashMap<String, StateRecord> states;
@@ -62,6 +67,9 @@ public class StateEntity extends DisplayEntity {
 		traceState = new BooleanInput("TraceState", "Key Inputs", false);
 		traceState.setHidden(true);
 		this.addInput(traceState);
+
+		workingStateListInput = new StringListInput("WorkingStateList", "Maintenance", new ArrayList<String>(0));
+		this.addInput(workingStateListInput);
 	}
 
 	public StateEntity() {
@@ -141,6 +149,10 @@ public class StateEntity extends DisplayEntity {
 	 * @return
 	 */
 	public boolean isValidWorkingState(String state) {
+
+		if( workingStateListInput.getValue().size() > 0 )
+			return workingStateListInput.getValue().contains( state );
+
 		return "Working".equals(state);
 	}
 
