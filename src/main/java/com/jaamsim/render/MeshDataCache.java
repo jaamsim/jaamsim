@@ -123,9 +123,8 @@ public class MeshDataCache {
 	 * @param key
 	 * @param notifier
 	 */
-	public static void loadMesh(final MeshProtoKey key, final AtomicBoolean notifier) {
-		assert(notifier != null);
-
+	public static void loadMesh(final MeshProtoKey key) {
+		final AtomicBoolean notifier = new AtomicBoolean();
 		synchronized (loadingMap) {
 			loadingMap.put(key, notifier);
 		}

@@ -1468,7 +1468,7 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// The mesh is not loaded and we are non-blocking, so trigger a mesh load and return
-		MeshDataCache.loadMesh(key, new AtomicBoolean());
+		MeshDataCache.loadMesh(key);
 		return null;
 	}
 
@@ -1478,7 +1478,7 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		// The mesh is not loaded and we are non-blocking, so trigger a mesh load and return
-		MeshDataCache.loadMesh(key, new AtomicBoolean());
+		MeshDataCache.loadMesh(key);
 		return null;
 	}
 
