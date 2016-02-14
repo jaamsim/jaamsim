@@ -30,8 +30,7 @@ import com.jaamsim.collada.ColParser;
 import com.jaamsim.ui.LogBox;
 
 public class MeshDataCache {
-	private static HashMap<MeshProtoKey, MeshData> dataMap = new HashMap<>();
-	private static Object mapLock = new Object();
+	private static final HashMap<MeshProtoKey, MeshData> dataMap = new HashMap<>();
 
 	private static final HashMap<MeshProtoKey, AtomicBoolean> loadingMap = new HashMap<>();
 
@@ -51,7 +50,7 @@ public class MeshDataCache {
 
 	// Fetch, or lazily initialize the mesh data
 	public static MeshData getMeshData(MeshProtoKey key) {
-		synchronized (mapLock) {
+		synchronized (dataMap) {
 			MeshData data = dataMap.get(key);
 			if (data != null) {
 				return data;
@@ -77,7 +76,9 @@ public class MeshDataCache {
 					} catch (InterruptedException ex) {}
 				}
 			}
-			return dataMap.get(key);
+			synchronized (dataMap) {
+				return dataMap.get(key);
+			}
 		}
 
 		// Release the lock long enough to load the model
@@ -106,14 +107,14 @@ public class MeshDataCache {
 			}
 		}
 
-		synchronized (mapLock) {
+		synchronized (dataMap) {
 			dataMap.put(key, data);
 		}
 		return data;
 	}
 
 	public static boolean isMeshLoaded(MeshProtoKey key) {
-		synchronized (mapLock) {
+		synchronized (dataMap) {
 			return dataMap.containsKey(key);
 		}
 	}
