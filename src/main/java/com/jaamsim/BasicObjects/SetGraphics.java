@@ -18,7 +18,7 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
@@ -38,7 +38,7 @@ public class SetGraphics extends LinkedComponent {
 			"     1 = first entity's graphics, 2 = second entity's graphics, etc.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
-	private final SampleExpInput choice;
+	private final SampleInput choice;
 
 	{
 		targetEntity = new EntityInput<>( DisplayEntity.class, "TargetEntity", "Key Inputs", null);
@@ -49,7 +49,7 @@ public class SetGraphics extends LinkedComponent {
 		graphicsList.setRequired(true);
 		this.addInput( graphicsList);
 
-		choice = new SampleExpInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));
+		choice = new SampleInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));
 		choice.setUnitType(DimensionlessUnit.class);
 		choice.setEntity(this);
 		choice.setValidRange(1, Double.POSITIVE_INFINITY);

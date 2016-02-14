@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpListInput;
+import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
@@ -34,7 +34,7 @@ public class Release extends LinkedComponent {
 
 	@Keyword(description = "The number of units to release from the Resource(s).",
 	         exampleList = {"{ 2 } { 1 }", "{ DiscreteDistribution1 } { 'this.obj.attrib1 + 1' }"})
-	private final SampleExpListInput numberOfUnitsList;
+	private final SampleListInput numberOfUnitsList;
 
 	{
 		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
@@ -43,7 +43,7 @@ public class Release extends LinkedComponent {
 
 		ArrayList<SampleProvider> def = new ArrayList<>();
 		def.add(new SampleConstant(1));
-		numberOfUnitsList = new SampleExpListInput("NumberOfUnits", "Key Inputs", def);
+		numberOfUnitsList = new SampleListInput("NumberOfUnits", "Key Inputs", def);
 		numberOfUnitsList.setEntity(this);
 		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
 		numberOfUnitsList.setUnitType(DimensionlessUnit.class);

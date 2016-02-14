@@ -1484,6 +1484,8 @@ public abstract class Input<T> {
 		catch (InputErrorException e) {}
 
 		// Parse the input as a SampleProvider
+		if (unitType == null)
+			throw new InputErrorException("A valid unit type must be defined before an expression returning a number can be entered.");
 		SampleProvider samp = Input.parseSampleExp(kw, thisEnt, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 		return new StringProvSample(samp);
 	}

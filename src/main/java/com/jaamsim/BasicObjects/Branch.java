@@ -17,7 +17,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
@@ -32,7 +32,7 @@ public class Branch extends LinkedComponent {
 			"     1 = first branch, 2 = second branch, etc.\n" +
 			"A constant value, a distribution to be sampled, or a time series can be entered.",
 	         exampleList = {"2", "DiscreteDistribution1", "'indexOfMin([Queue1].QueueLength, [Queue2].QueueLength)'"})
-	private final SampleExpInput choice;
+	private final SampleInput choice;
 
 	{
 		nextComponent.setHidden(true);
@@ -41,7 +41,7 @@ public class Branch extends LinkedComponent {
 		nextComponentList.setRequired(true);
 		this.addInput(nextComponentList);
 
-		choice = new SampleExpInput("Choice", "Key Inputs", null);
+		choice = new SampleInput("Choice", "Key Inputs", null);
 		choice.setUnitType(DimensionlessUnit.class );
 		choice.setEntity(this);
 		choice.setValidRange(1, Double.POSITIVE_INFINITY);

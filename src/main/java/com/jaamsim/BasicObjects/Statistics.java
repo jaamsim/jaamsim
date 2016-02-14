@@ -17,7 +17,7 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -38,7 +38,7 @@ public class Statistics extends LinkedComponent {
 
 	@Keyword(description = "The variable for which statistics will be collected.",
 	         exampleList = {"'this.obj.attrib1'"})
-	private final SampleExpInput sampleValue;
+	private final SampleInput sampleValue;
 
 	private double minValue;
 	private double maxValue;
@@ -52,7 +52,7 @@ public class Statistics extends LinkedComponent {
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
-		sampleValue = new SampleExpInput("SampleValue", "Key Inputs", null);
+		sampleValue = new SampleInput("SampleValue", "Key Inputs", null);
 		sampleValue.setUnitType(UserSpecifiedUnit.class);
 		sampleValue.setEntity(this);
 		sampleValue.setRequired(true);

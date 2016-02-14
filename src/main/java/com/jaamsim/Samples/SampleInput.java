@@ -20,16 +20,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
-import com.jaamsim.units.UserSpecifiedUnit;
 
 public class SampleInput extends Input<SampleProvider> {
-	private Class<? extends Unit> unitType = DimensionlessUnit.class;
+	private Class<? extends Unit> unitType;
+	private Entity thisEnt;
+	private double minValue = Double.NEGATIVE_INFINITY;
+	private double maxValue = Double.POSITIVE_INFINITY;
 
 	public SampleInput(String key, String cat, SampleProvider def) {
 		super(key, cat, def);
@@ -41,27 +41,23 @@ public class SampleInput extends Input<SampleProvider> {
 		unitType = u;
 		if (defValue instanceof SampleConstant)
 			((SampleConstant)defValue).setUnitType(unitType);
+		if (defValue instanceof TimeSeriesConstantDouble)
+			((TimeSeriesConstantDouble)defValue).setUnitType(unitType);
+	}
+
+	public void setEntity(Entity ent) {
+		thisEnt = ent;
+	}
+
+	public void setValidRange(double min, double max) {
+		minValue = min;
+		maxValue = max;
 	}
 
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		// Try to parse as a constant value
-		try {
-			DoubleVector tmp = Input.parseDoubles(kw, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
-			Input.assertCount(tmp, 1);
-			value = new SampleConstant(unitType, tmp.get(0));
-			return;
-		}
-		catch (InputErrorException e) {}
-
-		// If not a constant, try parsing a SampleProvider
-		Input.assertCount(kw, 1);
-		Entity ent = Input.parseEntity(kw.getArg(0), Entity.class);
-		SampleProvider s = Input.castImplements(ent, SampleProvider.class);
-		if( s.getUnitType() != UserSpecifiedUnit.class )
-			Input.assertUnitsMatch(unitType, s.getUnitType());
-		value = s;
+		value = Input.parseSampleExp(kw, thisEnt, minValue, maxValue, unitType);
 	}
 
 	@Override
@@ -76,11 +72,14 @@ public class SampleInput extends Input<SampleProvider> {
 		return list;
 	}
 
+
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
 		if (value == null) return;
 
-		if (value instanceof SampleConstant) {
+		if (value instanceof SampleExpression ||
+				value instanceof SampleConstant ||
+				value instanceof SampleOutput) {
 			super.getValueTokens(toks);
 			return;
 		}
@@ -89,7 +88,24 @@ public class SampleInput extends Input<SampleProvider> {
 		}
 	}
 
-	public void verifyUnit() {
-		Input.assertUnitsMatch( unitType, value.getUnitType());
+	@Override
+	public void validate() {
+		super.validate();
+
+		if (value == null) return;
+		if (value instanceof SampleExpression) return;
+		if (value instanceof SampleConstant) return;
+
+		Input.assertUnitsMatch(unitType, value.getUnitType());
+
+		if (value.getMinValue() < minValue)
+			throw new InputErrorException("The minimum value allowed for keyword: '%s' is: %s.\n" +
+					"The specified entity: '%s' can return values as small as: %s.",
+					this.getKeyword(), minValue, ((Entity)value).getName(), value.getMinValue());
+
+		if (value.getMaxValue() > maxValue)
+			throw new InputErrorException("The maximum value allowed for keyword: '%s' is: %s.\n" +
+					"The specified entity: '%s' can return values as large as: %s.",
+					this.getKeyword(), maxValue, ((Entity)value).getName(), value.getMaxValue());
 	}
 }

@@ -19,7 +19,7 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.basicsim.EntityTarget;
@@ -46,7 +46,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	@Keyword(description = "An expression returning a dimensionless integer value that can be used to "
 			+ "determine which of the queued entities is eligible for processing.",
 	         exampleList = {"this.obj.Attrib1" })
-	protected final SampleExpInput match;
+	protected final SampleInput match;
 
 	@Keyword(description = "A list of thresholds that must be satisified for the entity to operate.",
 			exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
@@ -67,7 +67,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		waitQueue.setRequired(true);
 		this.addInput(waitQueue);
 
-		match = new SampleExpInput("Match", "Key Inputs", null);
+		match = new SampleInput("Match", "Key Inputs", null);
 		match.setUnitType(DimensionlessUnit.class);
 		match.setEntity(this);
 		this.addInput(match);

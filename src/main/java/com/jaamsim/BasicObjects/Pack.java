@@ -18,7 +18,7 @@ package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
@@ -35,11 +35,11 @@ public class Pack extends LinkedService {
 
 	@Keyword(description = "The number of entities to pack into the container.",
 	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
-	private final SampleExpInput numberOfEntities;
+	private final SampleInput numberOfEntities;
 
 	@Keyword(description = "The service time required to pack each entity in the container.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
-	private final SampleExpInput serviceTime;
+	private final SampleInput serviceTime;
 
 	protected EntityContainer container;	// the generated EntityContainer
 	private int numberGenerated;  // Number of EntityContainers generated so far
@@ -53,13 +53,13 @@ public class Pack extends LinkedService {
 		prototypeEntityContainer.setRequired(true);
 		this.addInput(prototypeEntityContainer);
 
-		numberOfEntities = new SampleExpInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
+		numberOfEntities = new SampleInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setEntity(this);
 		numberOfEntities.setValidRange(1, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
-		serviceTime = new SampleExpInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
+		serviceTime = new SampleInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		serviceTime.setUnitType(TimeUnit.class);
 		serviceTime.setEntity(this);
 		serviceTime.setValidRange(0, Double.POSITIVE_INFINITY);
@@ -109,6 +109,8 @@ public class Pack extends LinkedService {
 		if (!startedPacking) {
 			Integer m = this.getNextMatchValue(getSimTime());
 			numberToInsert = (int) numberOfEntities.getValue().getNextSample(this.getSimTime());
+			if (numberToInsert < 1)
+				error("The NumberOfEntities input must be greater than zero. Received: %s", numberToInsert);
 			if (waitQueue.getValue().getMatchCount(m) < numberToInsert) {
 				this.setBusy(false);
 				this.setPresentState();

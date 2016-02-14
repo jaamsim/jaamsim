@@ -23,14 +23,17 @@ import java.util.TreeSet;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleConstant;
-import com.jaamsim.Samples.SampleExpInput;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -46,20 +49,39 @@ public class Queue extends LinkedComponent {
 			"Priority is integer valued and a lower numerical value indicates a higher priority.\n" +
 			"For example, priority 3 is higher than 4, and priorities 3, 3.2, and 3.8 are equivalent.",
 	         exampleList = {"this.obj.Attrib1"})
-	private final SampleExpInput priority;
+	private final SampleInput priority;
 
 	@Keyword(description = "An expression that returns a dimensionless integer value that can be used to "
 			+ "match entities in separate queues. The expression is evaluated when the entity "
 			+ "first arrives at the queue. Since Match is integer valued, a value of 3.2 for one "
 			+ "queue and 3.6 for another queue are considered to be equal.",
 	         exampleList = {"this.obj.Attrib1"})
-	private final SampleExpInput match;
+	private final SampleInput match;
 
 	@Keyword(description = "Determines the order in which entities are placed in the queue (FIFO or LIFO):\n" +
 			"TRUE = first in first out (FIFO) order (the default setting)," +
 			"FALSE = last in first out (LIFO) order.",
 	         exampleList = {"FALSE"})
 	private final BooleanInput fifo;
+
+	@Keyword(description = "The time an entity will wait in the queue before deciding whether or "
+	                     + "not to renege. Evaluated when the entity first enters the queue.\n"
+	                     + "A constant value, a distribution to be sampled, a time series, or an "
+	                     + "expression can be entered.",
+	         exampleList = { "3.0 h", "NormalDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
+	private final SampleInput renegeTime;
+
+	@Keyword(description = "A logical condition that determines whether an entity will renege "
+	                     + "after waiting for its RenegeTime value. Note that TRUE and FALSE are "
+	                     + "entered as 1 and 0, respectively.\n"
+	                     + "A constant value, a distribution to be sampled, a time series, or an "
+	                     + "expression can be entered.",
+	         exampleList = { "1", "'this.QueuePosition > 1'", "'this.QueuePostion > [Queue2].QueueLength'" })
+	private final SampleInput renegeCondition;
+
+	@Keyword(description = "The object to which an entity will be sent if it reneges.",
+	         exampleList = {"Branch1"})
+	protected final EntityInput<LinkedComponent> renegeDestination;
 
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
 	         exampleList = {"1 m"})
@@ -85,24 +107,40 @@ public class Queue extends LinkedComponent {
 	protected double elementSeconds;  // total time that entities have spent in the queue
 	protected double squaredElementSeconds;  // total time for the square of the number of elements in the queue
 	protected DoubleVector queueLengthDist;  // entry at position n is the total time the queue has had length n
+	protected long numberReneged;  // number of entities that reneged from the queue
 
 	{
 		defaultEntity.setHidden(true);
 		nextComponent.setHidden(true);
 
-		priority = new SampleExpInput("Priority", "Key Inputs", new SampleConstant(0));
+		priority = new SampleInput("Priority", "Key Inputs", new SampleConstant(0));
 		priority.setUnitType(DimensionlessUnit.class);
 		priority.setEntity(this);
 		priority.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(priority);
 
-		match = new SampleExpInput("Match", "Key Inputs", null);
+		match = new SampleInput("Match", "Key Inputs", null);
 		match.setUnitType(DimensionlessUnit.class);
 		match.setEntity(this);
 		this.addInput(match);
 
 		fifo = new BooleanInput("FIFO", "Key Inputs", true);
 		this.addInput(fifo);
+
+		renegeTime = new SampleInput("RenegeTime", "Key Inputs", null);
+		renegeTime.setUnitType(TimeUnit.class);
+		renegeTime.setEntity(this);
+		renegeTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		this.addInput(renegeTime);
+
+		renegeCondition = new SampleInput("RenegeCondition", "Key Inputs", new SampleConstant(1));
+		renegeCondition.setUnitType(DimensionlessUnit.class);
+		renegeCondition.setEntity(this);
+		renegeCondition.setValidRange(1.0d, Double.POSITIVE_INFINITY);
+		this.addInput(renegeCondition);
+
+		renegeDestination = new EntityInput<>(LinkedComponent.class, "RenegeDestination", "Key Inputs", null);
+		this.addInput(renegeDestination);
 
 		spacing = new ValueInput("Spacing", "Key Inputs", 0.0d);
 		spacing.setUnitType(DistanceUnit.class);
@@ -119,6 +157,17 @@ public class Queue extends LinkedComponent {
 		queueLengthDist = new DoubleVector(10,10);
 		userList = new ArrayList<>();
 		matchMap = new HashMap<>();
+	}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == renegeTime) {
+			boolean bool = renegeTime.getValue() != null;
+			renegeDestination.setRequired(bool);
+			return;
+		}
 	}
 
 	@Override
@@ -140,6 +189,7 @@ public class Queue extends LinkedComponent {
 		elementSeconds = 0.0;
 		squaredElementSeconds = 0.0;
 		queueLengthDist.clear();
+		numberReneged = 0;
 
 		// Identify the objects that use this queue
 		userList.clear();
@@ -262,6 +312,53 @@ public class Queue extends LinkedComponent {
 		// Notify the users of this queue
 		if (!userUpdateHandle.isScheduled())
 			EventManager.scheduleTicks(0, 2, false, userUpdate, userUpdateHandle);
+
+		// Schedule the time to check the renege condition
+		if (renegeTime.getValue() != null) {
+			double dur = renegeTime.getValue().getNextSample(getSimTime());
+			this.scheduleProcess(dur, 5, new RenegeActionTarget(this, ent));
+		}
+	}
+
+	private static class RenegeActionTarget extends EntityTarget<Queue> {
+		private final DisplayEntity queuedEnt;
+
+		RenegeActionTarget(Queue q, DisplayEntity e) {
+			super(q, "renegeAction");
+			queuedEnt = e;
+		}
+
+		@Override
+		public void process() {
+			ent.renegeAction(queuedEnt);
+		}
+	}
+
+	public void renegeAction(DisplayEntity ent) {
+
+		// Do nothing if the entity has already left the queue
+		QueueEntry entry = this.getQueueEntry(ent);
+		if (entry == null)
+			return;
+
+		// Temporarily set the obj entity to the one that might renege
+		double simTime = this.getSimTime();
+		DisplayEntity oldEnt = this.getReceivedEntity(simTime);
+		this.setReceivedEntity(ent);
+
+		// Check the condition for reneging
+		if (renegeCondition.getValue().getNextSample(simTime) == 0.0d) {
+			this.setReceivedEntity(oldEnt);
+			return;
+		}
+
+		// Reset the obj entity to the original one
+		this.setReceivedEntity(oldEnt);
+
+		// Remove the entity from the queue and send it to the renege destination
+		this.remove(entry);
+		numberReneged++;
+		renegeDestination.getValue().addEntity(ent);
 	}
 
 	/**
@@ -306,10 +403,40 @@ public class Queue extends LinkedComponent {
 		return entry.entity;
 	}
 
+	private QueueEntry getQueueEntry(DisplayEntity ent) {
+		Iterator<QueueEntry> itr = itemSet.iterator();
+		while (itr.hasNext()) {
+			QueueEntry entry = itr.next();
+			if (entry.entity == ent)
+				return entry;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the position of the specified entity in the queue.
+	 * Returns -1 if the entity is not found.
+	 * @param ent - entity in question
+	 * @return index of the entity in the queue.
+	 */
+	public int getPosition(DisplayEntity ent) {
+		int ret = 0;
+		Iterator<QueueEntry> itr = itemSet.iterator();
+		while (itr.hasNext()) {
+			if (itr.next().entity == ent)
+				return ret;
+
+			ret++;
+		}
+		return -1;
+	}
+
 	/**
 	 * Removes the first entity from the queue
 	 */
 	public DisplayEntity removeFirst() {
+		if (itemSet.isEmpty())
+			error("Cannot remove an entity from an empty queue");
 		return this.remove(itemSet.first());
 	}
 
@@ -551,6 +678,7 @@ public class Queue extends LinkedComponent {
 		for (int i=0; i<queueLengthDist.size(); i++) {
 			queueLengthDist.set(i, 0.0d);
 		}
+		numberReneged = 0;
 	}
 
 	private void updateStatistics(int oldValue, int newValue) {
@@ -715,6 +843,31 @@ public class Queue extends LinkedComponent {
 	    sequence = 10)
 	public int getMatchValueCount(double simTime) {
 		return matchMap.size();
+	}
+
+	@Output(name = "NumberReneged",
+	 description = "The number of entities that reneged from the queue.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = true,
+	    sequence = 11)
+	public long getNumberReneged(double simTime) {
+		return numberReneged;
+	}
+
+	@Output(name = "QueuePosition",
+	 description = "The position in the queue for an entity undergoing the RenegeCondition test.\n"
+	             + "First in queue = 1, second in queue = 2, etc.",
+	    unitType = DimensionlessUnit.class,
+	  reportable = false,
+	    sequence = 12)
+	public long getQueuePosition(double simTime) {
+		DisplayEntity objEnt = this.getReceivedEntity(simTime);
+		if (objEnt == null)
+			return -1;
+		int pos = this.getPosition(objEnt);
+		if (pos >= 0)
+			pos++;
+		return pos;
 	}
 
 }

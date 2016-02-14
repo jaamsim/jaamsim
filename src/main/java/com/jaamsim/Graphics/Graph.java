@@ -19,7 +19,7 @@ package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
 
-import com.jaamsim.Samples.SampleExpListInput;
+import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.ProcessTarget;
@@ -54,7 +54,7 @@ public class Graph extends GraphBasics  {
 			"acceptable are: a constant value, a Probability Distribution, TimeSeries, or a " +
 			"Calculation Object.",
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
-	protected final SampleExpListInput dataSource;
+	protected final SampleListInput dataSource;
 
 	@Keyword(description = "A list of colors for the line series to be displayed.\n" +
 			"Each color can be specified by either a color keyword or an RGB value.\n" +
@@ -77,7 +77,7 @@ public class Graph extends GraphBasics  {
 			"acceptable are: a constant value, a Probability Distribution, TimeSeries, or a " +
 			"Calculation Object.",
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
-	protected final SampleExpListInput secondaryDataSource;
+	protected final SampleListInput secondaryDataSource;
 
 	@Keyword(description = "A list of colors for the secondary line series to be displayed.\n" +
 			"Each color can be specified by either a color keyword or an RGB value.\n" +
@@ -102,7 +102,7 @@ public class Graph extends GraphBasics  {
 		unitType.setRequired(true);
 		this.addInput(unitType);
 
-		dataSource = new SampleExpListInput("DataSource", "Key Inputs", null);
+		dataSource = new SampleListInput("DataSource", "Key Inputs", null);
 		dataSource.setUnitType(UserSpecifiedUnit.class);
 		dataSource.setEntity(this);
 		dataSource.setRequired(true);
@@ -125,7 +125,7 @@ public class Graph extends GraphBasics  {
 		secondaryUnitType = new UnitTypeInput("SecondaryUnitType", "Key Inputs", UserSpecifiedUnit.class);
 		this.addInput(secondaryUnitType);
 
-		secondaryDataSource = new SampleExpListInput("SecondaryDataSource", "Key Inputs", null);
+		secondaryDataSource = new SampleListInput("SecondaryDataSource", "Key Inputs", null);
 		secondaryDataSource.setUnitType(UserSpecifiedUnit.class);
 		secondaryDataSource.setEntity(this);
 		this.addInput(secondaryDataSource);
@@ -241,7 +241,7 @@ public class Graph extends GraphBasics  {
 		populateSeriesInfo(secondarySeries, secondaryDataSource);
 	}
 
-	private void populateSeriesInfo(ArrayList<SeriesInfo> infos, SampleExpListInput data) {
+	private void populateSeriesInfo(ArrayList<SeriesInfo> infos, SampleListInput data) {
 		ArrayList<SampleProvider> sampList = data.getValue();
 		if( sampList == null )
 			return;
