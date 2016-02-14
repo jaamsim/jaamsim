@@ -510,74 +510,53 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// 3) "Model Builder" menu item
 		JMenuItem objectPalletMenuItem = new JMenuItem( "Model Builder" );
 		objectPalletMenuItem.setMnemonic( 'O' );
-		objectPalletMenuItem.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyArgs(Simulation.getInstance(), "ShowModelBuilder", "TRUE");
-			}
-		} );
+		objectPalletMenuItem.addActionListener(new SimulationMenuAction("ShowModelBuilder", "TRUE"));
 		viewMenu.add( objectPalletMenuItem );
 
 		// 4) "Object Selector" menu item
 		JMenuItem objectSelectorMenuItem = new JMenuItem( "Object Selector" );
 		objectSelectorMenuItem.setMnemonic( 'S' );
-		objectSelectorMenuItem.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyArgs(Simulation.getInstance(), "ShowObjectSelector", "TRUE");
-			}
-		} );
+		objectSelectorMenuItem.addActionListener(new SimulationMenuAction("ShowObjectSelector", "TRUE"));
 		viewMenu.add( objectSelectorMenuItem );
 
 		// 5) "Input Editor" menu item
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
 		inputEditorMenuItem.setMnemonic( 'I' );
-		inputEditorMenuItem.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyArgs(Simulation.getInstance(), "ShowInputEditor", "TRUE");
-			}
-		} );
+		inputEditorMenuItem.addActionListener(new SimulationMenuAction("ShowInputEditor", "TRUE"));
 		viewMenu.add( inputEditorMenuItem );
 
 		// 6) "Output Viewer" menu item
 		JMenuItem outputMenuItem = new JMenuItem( "Output Viewer" );
 		outputMenuItem.setMnemonic( 'U' );
-		outputMenuItem.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyArgs(Simulation.getInstance(), "ShowOutputViewer", "TRUE");
-			}
-		} );
+		outputMenuItem.addActionListener(new SimulationMenuAction("ShowOutputViewer", "TRUE"));
 		viewMenu.add( outputMenuItem );
 
 		// 7) "Property Viewer" menu item
 		JMenuItem propertiesMenuItem = new JMenuItem( "Property Viewer" );
 		propertiesMenuItem.setMnemonic( 'P' );
-		propertiesMenuItem.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyArgs(Simulation.getInstance(), "ShowPropertyViewer", "TRUE");
-			}
-		} );
+		propertiesMenuItem.addActionListener(new SimulationMenuAction("ShowPropertyViewer", "TRUE"));
 		viewMenu.add( propertiesMenuItem );
 
 		// 8) "Log Viewer" menu item
 		JMenuItem logMenuItem = new JMenuItem( "Log Viewer" );
 		logMenuItem.setMnemonic( 'L' );
-		logMenuItem.addActionListener( new ActionListener() {
-
-			@Override
-			public void actionPerformed( ActionEvent event ) {
-				InputAgent.applyArgs(Simulation.getInstance(), "ShowLogViewer", "TRUE");
-			}
-		} );
+		logMenuItem.addActionListener(new SimulationMenuAction("ShowLogViewer", "TRUE"));
 		viewMenu.add( logMenuItem );
+	}
+
+	private final class SimulationMenuAction implements ActionListener {
+		final String keyword;
+		final String args;
+
+		SimulationMenuAction(String k, String a) {
+			keyword = k;
+			args = a;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			InputAgent.applyArgs(Simulation.getInstance(), keyword, args);
+		}
 	}
 
 	/**
