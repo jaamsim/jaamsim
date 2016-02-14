@@ -186,7 +186,7 @@ public double mag() {
 
 private void _norm(Quaternion q) {
 	double mag = _dot4(q, q);
-	if (mag < Constants.EPSILON) { // The quaternion is of length 0, simply return an identity
+	if (MathUtils.isSmall(mag)) { // The quaternion is of length 0, simply return an identity
 		this.x = 0.0d; this.y = 0.0d; this.z = 0.0d; this.w = 1.0d;
 		return;
 	}
@@ -295,7 +295,7 @@ public void slerp(Quaternion q, double weight, Quaternion res) {
 	double theta = Math.acos(cosTheta);
 	double sinTheta = Math.sin(theta);
 
-	if (sinTheta < Constants.EPSILON) {
+	if (MathUtils.isSmall(sinTheta)) {
 		// TODO: some kind of decent default as the two quaternions are nearly opposite
 		throw new IllegalArgumentException("Cannot slerp two opposite quaternions");
 	}

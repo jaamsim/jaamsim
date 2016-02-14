@@ -26,10 +26,16 @@ import com.jaamsim.render.RenderUtils;
  *
  */
 public class MathUtils {
+	final static double EPSILON = 0.000000001; // one billionth
+
+
+public static final boolean isSmall(double a) {
+	return a < EPSILON;
+}
 
 public static boolean near(double a, double b) {
 	double diff = Math.abs(a - b);
-	return diff < Constants.EPSILON;
+	return isSmall(diff);
 }
 
 /**
