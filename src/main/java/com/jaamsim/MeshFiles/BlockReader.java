@@ -26,9 +26,10 @@ public class BlockReader {
 
 	private static final boolean CHECK_PAYLOAD_CRC = false;
 
-	public static DataBlock readBlockFromURI(URI fileURI) throws Exception {
-		InputStream inStream = fileURI.toURL().openStream();
-		return readBlock(inStream);
+	public static final MeshData parse(URI asset) throws Exception {
+		InputStream inStream = asset.toURL().openStream();
+		DataBlock block = readBlock(inStream);
+		return new MeshData(false, block, asset.toURL());
 	}
 
 	public static DataBlock readBlock(InputStream in) {
