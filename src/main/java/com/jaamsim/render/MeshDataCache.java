@@ -33,8 +33,7 @@ public class MeshDataCache {
 	private static HashMap<MeshProtoKey, MeshData> dataMap = new HashMap<>();
 	private static Object mapLock = new Object();
 
-	private static HashMap<MeshProtoKey, AtomicBoolean> loadingMap = new HashMap<>();
-	private static Object loadingLock = new Object();
+	private static final HashMap<MeshProtoKey, AtomicBoolean> loadingMap = new HashMap<>();
 
 	private static HashSet<MeshProtoKey> badMeshSet = new HashSet<>();
 	private static Object badMeshLock = new Object();
@@ -65,7 +64,7 @@ public class MeshDataCache {
 		}
 
 		AtomicBoolean loadingFlag = null;
-		synchronized (loadingLock) {
+		synchronized (loadingMap) {
 			loadingFlag = loadingMap.get(key);
 		}
 
@@ -127,7 +126,7 @@ public class MeshDataCache {
 	public static void loadMesh(final MeshProtoKey key, final AtomicBoolean notifier) {
 		assert(notifier != null);
 
-		synchronized (loadingLock) {
+		synchronized (loadingMap) {
 			loadingMap.put(key, notifier);
 		}
 
