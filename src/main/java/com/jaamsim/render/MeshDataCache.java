@@ -34,8 +34,7 @@ public class MeshDataCache {
 
 	private static final HashMap<MeshProtoKey, AtomicBoolean> loadingMap = new HashMap<>();
 
-	private static HashSet<MeshProtoKey> badMeshSet = new HashSet<>();
-	private static Object badMeshLock = new Object();
+	private static final HashSet<MeshProtoKey> badMeshSet = new HashSet<>();
 	private static MeshData badMesh = null;
 
 	public static final MeshProtoKey BAD_MESH_KEY;
@@ -56,7 +55,7 @@ public class MeshDataCache {
 				return data;
 			}
 		}
-		synchronized (badMeshLock) {
+		synchronized (badMeshSet) {
 			if (badMeshSet.contains(key)) {
 				return getBadMesh();
 			}
@@ -101,7 +100,7 @@ public class MeshDataCache {
 			}
 		} catch (Exception ex) {
 			LogBox.formatRenderLog("Could not load mesh: %s \n Error: %s\n", key.getURI().toString(), ex.getMessage());
-			synchronized (badMeshLock) {
+			synchronized (badMeshSet) {
 				badMeshSet.add(key);
 				return getBadMesh();
 			}
