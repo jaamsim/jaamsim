@@ -175,7 +175,11 @@ public final class EventManager {
 			t.process();
 
 			// Notify the event manager that the process has been completed
-			if (trcListener != null) trcListener.traceProcessEnd(this, currentTick);
+			if (trcListener != null) {
+				cur.beginCallbacks();
+				trcListener.traceProcessEnd(this, currentTick);
+				cur.endCallbacks();
+			}
 			if (cur.hasNext()) {
 				cur.wakeNextProcess();
 				return false;
@@ -239,7 +243,11 @@ public final class EventManager {
 					// Remove the event from the future events
 					Event nextEvent = nextNode.head;
 					ProcessTarget nextTarget = nextEvent.target;
-					if (trcListener != null) trcListener.traceEvent(this, currentTick, nextNode.schedTick, nextNode.priority, nextTarget);
+					if (trcListener != null) {
+						cur.beginCallbacks();
+						trcListener.traceEvent(this, currentTick, nextNode.schedTick, nextNode.priority, nextTarget);
+						cur.endCallbacks();
+					}
 
 					removeEvent(nextEvent);
 
@@ -441,7 +449,11 @@ public final class EventManager {
 				handle.event = evt;
 			}
 
-			if (trcListener != null) trcListener.traceWait(this, currentTick, nextEventTime, priority, t);
+			if (trcListener != null) {
+				cur.beginCallbacks();
+				trcListener.traceWait(this, currentTick, nextEventTime, priority, t);
+				cur.endCallbacks();
+			}
 			node.addEvent(evt, fifo);
 			captureProcess(cur);
 		}
@@ -491,7 +503,11 @@ public final class EventManager {
 				handle.event = evt;
 			}
 			condEvents.add(evt);
-			if (trcListener != null) trcListener.traceWaitUntil(this, currentTick);
+			if (trcListener != null) {
+				cur.beginCallbacks();
+				trcListener.traceWaitUntil(this, currentTick);
+				cur.endCallbacks();
+			}
 			captureProcess(cur);
 		}
 	}
@@ -511,7 +527,11 @@ public final class EventManager {
 				handle.event = evt;
 			}
 			condEvents.add(evt);
-			if (trcListener != null) trcListener.traceWaitUntil(this, currentTick);
+			if (trcListener != null) {
+				cur.beginCallbacks();
+				trcListener.traceWaitUntil(this, currentTick);
+				cur.endCallbacks();
+			}
 		}
 	}
 
@@ -525,7 +545,11 @@ public final class EventManager {
 		// Notify the eventManager that a new process has been started
 		synchronized (lockObject) {
 			cur.checkCallback();
-			if (trcListener != null) trcListener.traceProcessStart(this, t, currentTick);
+			if (trcListener != null) {
+				cur.beginCallbacks();
+				trcListener.traceProcessStart(this, t, currentTick);
+				cur.endCallbacks();
+			}
 			// Transfer control to the new process
 			newProcess.wake();
 			threadWait(cur);
@@ -592,7 +616,11 @@ public final class EventManager {
 			if (handle == null || handle.event == null)
 				return;
 
-			if (trcListener != null) trcKill(handle.event);
+			if (trcListener != null) {
+				cur.beginCallbacks();
+				trcKill(handle.event);
+				cur.endCallbacks();
+			}
 			ProcessTarget t = rem(handle);
 
 			t.kill();
@@ -630,7 +658,11 @@ public final class EventManager {
 			if (handle == null || handle.event == null)
 				return;
 
-			if (trcListener != null) trcInterrupt(handle.event);
+			if (trcListener != null) {
+				cur.beginCallbacks();
+				trcInterrupt(handle.event);
+				cur.endCallbacks();
+			}
 			ProcessTarget t = rem(handle);
 
 			Process proc = t.getProcess();
@@ -721,7 +753,8 @@ public final class EventManager {
 					throw new ProcessError("Tried to schedule using an EventHandle already in use");
 				handle.event = evt;
 			}
-			if (trcListener != null) trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
+			if (trcListener != null)
+				trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
 			node.addEvent(evt, fifo);
 		}
 	}
@@ -770,7 +803,11 @@ public final class EventManager {
 				throw new ProcessError("Tried to schedule using an EventHandle already in use");
 			handle.event = evt;
 		}
-		if (trcListener != null) trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
+		if (trcListener != null) {
+			cur.beginCallbacks();
+			trcListener.traceSchedProcess(this, currentTick, schedTick, eventPriority, t);
+			cur.endCallbacks();
+		}
 		node.addEvent(evt, fifo);
 	}
 
