@@ -50,7 +50,7 @@ final class Process extends Thread {
 
 	private boolean dieFlag;
 	private boolean activeFlag;
-	private boolean condWait;
+	private boolean inUserCallback;
 
 	// Initialize the storage for the pooled Processes
 	static {
@@ -140,7 +140,7 @@ final class Process extends Thread {
 		target = targ;
 		activeFlag = false;
 		dieFlag = false;
-		condWait = false;
+		inUserCallback = false;
 	}
 
 	// Pull a process from the pool and have it attempt to execute events from the
@@ -252,16 +252,16 @@ final class Process extends Thread {
 		hasNext = (nextProcess != null);
 	}
 
-	final void begCondWait() {
-		condWait = true;
+	final void beginCallbacks() {
+		inUserCallback = true;
 	}
 
-	final void endCondWait() {
-		condWait = false;
+	final void endCallbacks() {
+		inUserCallback = false;
 	}
 
-	final void checkCondWait() {
-		if (condWait)
-			throw new ProcessError("Event Control attempted from inside a Conditional callback");
+	final void checkCallback() {
+		if (inUserCallback)
+			throw new ProcessError("Event Control attempted from inside a user callback");
 	}
 }

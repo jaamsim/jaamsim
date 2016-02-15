@@ -293,7 +293,8 @@ public final class EventManager {
 	}
 
 	private void evaluateConditions(Process cur) {
-		cur.begCondWait();
+		// Protecting the conditional evaluate() callbacks and the traceWaitUntilEnded callback
+		cur.beginCallbacks();
 		try {
 			for (int i = 0; i < condEvents.size();) {
 				ConditionalEvent c = condEvents.get(i);
@@ -322,7 +323,7 @@ public final class EventManager {
 			errListener.handleError(this, e, currentTick);
 		}
 
-		cur.endCondWait();
+		cur.endCallbacks();
 	}
 
 	/**
@@ -426,7 +427,7 @@ public final class EventManager {
 	 */
 	private void waitTicks(Process cur, long ticks, int priority, boolean fifo, EventHandle handle) {
 		synchronized (lockObject) {
-			cur.checkCondWait();
+			cur.checkCallback();
 			long nextEventTime = calculateEventTime(ticks);
 			WaitTarget t = new WaitTarget(cur);
 			EventNode node = getEventNode(nextEventTime, priority);
@@ -481,7 +482,7 @@ public final class EventManager {
 	 */
 	private void waitUntil(Process cur, Conditional cond, EventHandle handle) {
 		synchronized (lockObject) {
-			cur.checkCondWait();
+			cur.checkCallback();
 			WaitTarget t = new WaitTarget(cur);
 			ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 			if (handle != null) {
@@ -502,7 +503,7 @@ public final class EventManager {
 
 	private void schedUntil(Process cur, ProcessTarget t, Conditional cond, EventHandle handle) {
 		synchronized (lockObject) {
-			cur.checkCondWait();
+			cur.checkCallback();
 			ConditionalEvent evt = new ConditionalEvent(cond, t, handle);
 			if (handle != null) {
 				if (handle.isScheduled())
@@ -523,7 +524,7 @@ public final class EventManager {
 		Process newProcess = Process.allocate(this, cur, t);
 		// Notify the eventManager that a new process has been started
 		synchronized (lockObject) {
-			cur.checkCondWait();
+			cur.checkCallback();
 			if (trcListener != null) trcListener.traceProcessStart(this, t, currentTick);
 			// Transfer control to the new process
 			newProcess.wake();
@@ -585,7 +586,7 @@ public final class EventManager {
 	 */
 	private void killEvent(Process cur, EventHandle handle) {
 		synchronized (lockObject) {
-			cur.checkCondWait();
+			cur.checkCallback();
 
 			// no handle given, or Handle was not scheduled, nothing to do
 			if (handle == null || handle.event == null)
@@ -623,7 +624,7 @@ public final class EventManager {
 	 */
 	private void interruptEvent(Process cur, EventHandle handle) {
 		synchronized (lockObject) {
-			cur.checkCondWait();
+			cur.checkCallback();
 
 			// no handle given, or Handle was not scheduled, nothing to do
 			if (handle == null || handle.event == null)
@@ -757,7 +758,7 @@ public final class EventManager {
 	}
 
 	private void scheduleTicks(Process cur, long waitLength, int eventPriority, boolean fifo, ProcessTarget t, EventHandle handle) {
-		cur.checkCondWait();
+		cur.checkCallback();
 		long schedTick = calculateEventTime(waitLength);
 		EventNode node = getEventNode(schedTick, eventPriority);
 		Event evt = getEvent();
