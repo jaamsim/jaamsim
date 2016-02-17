@@ -1453,6 +1453,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		COL1_WIDTH = 220;
 		COL2_WIDTH = Math.min(520, (winSize.width - COL1_WIDTH) / 2);
 		COL3_WIDTH = Math.min(420, winSize.width - COL1_WIDTH - COL2_WIDTH);
+		VIEW_WIDTH = COL2_WIDTH + COL3_WIDTH;
 
 		COL1_START = GUIFrame.instance().getX();
 		COL2_START = COL1_START + COL1_WIDTH;
@@ -1460,15 +1461,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		HALF_TOP = (winSize.height - guiSize.height) / 2;
 		HALF_BOTTOM = (winSize.height - guiSize.height - HALF_TOP);
-
-		TOP_START = guiSize.height;
-		BOTTOM_START = TOP_START + HALF_TOP;
-
 		LOWER_HEIGHT = (winSize.height - guiSize.height) / 3;
-		LOWER_START = winSize.height - LOWER_HEIGHT;
+		VIEW_HEIGHT = winSize.height - guiSize.height - LOWER_HEIGHT;
 
-		VIEW_WIDTH = COL2_WIDTH + COL3_WIDTH;
-		VIEW_HEIGHT = winSize.height - TOP_START - LOWER_HEIGHT;
+		TOP_START = GUIFrame.instance().getY() + guiSize.height;
+		BOTTOM_START = TOP_START + HALF_TOP;
+		LOWER_START = TOP_START + VIEW_HEIGHT;
 	}
 
 	/**
