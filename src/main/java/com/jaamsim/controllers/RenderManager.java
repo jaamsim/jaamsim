@@ -77,10 +77,10 @@ import com.jaamsim.render.TessFontKey;
 import com.jaamsim.render.TexCache;
 import com.jaamsim.render.WindowInteractionListener;
 import com.jaamsim.render.util.ExceptionLogger;
+import com.jaamsim.ui.ContextMenu;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
-import com.jaamsim.ui.ObjectSelector;
 import com.jaamsim.ui.View;
 
 /**
@@ -541,7 +541,7 @@ public class RenderManager implements DragSourceListener {
 			if (ents.size() == 0) { return; } // Nothing to show
 
 			if (ents.size() == 1) {
-				ObjectSelector.populateMenu(menu, ents.get(0), menuX, menuY);
+				ContextMenu.populateMenu(menu, ents.get(0), menuX, menuY);
 			}
 			else {
 				// Several entities, let the user pick the interesting entity first
@@ -552,7 +552,7 @@ public class RenderManager implements DragSourceListener {
 						@Override
 						public void actionPerformed( ActionEvent event ) {
 							menu.removeAll();
-							ObjectSelector.populateMenu(menu, de, menuX, menuY);
+							ContextMenu.populateMenu(menu, de, menuX, menuY);
 							menu.show(awtFrame, menuX, menuY);
 						}
 					} );
