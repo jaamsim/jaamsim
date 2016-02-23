@@ -38,7 +38,7 @@ public class FluidCentrifugalPump extends FluidComponent {
 	         example = "Pump1 MaxPressure { 1.0 Pa }")
 	private final ValueInput maxPressureInput;
 
-	@Keyword(description = "Maximum static pressure loss speed for the pump (at maximum flow rate).",
+	@Keyword(description = "Maximum static pressure loss for the pump (at maximum flow rate).",
 	         example = "Pump1 MaxPressureLoss { 1.0 Pa }")
 	private final ValueInput maxPressureLossInput;
 
