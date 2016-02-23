@@ -24,7 +24,6 @@ import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.ListInput;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
@@ -165,10 +164,6 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 
 			tmp.append("{ ");
 			tmp.append(defValue.get(i));
-
-			if (defValue.get(i) instanceof SampleConstant && getUnitType(i) != DimensionlessUnit.class)
-				tmp.append(SEPARATOR).append(Unit.getSIUnit(getUnitType(i)));
-
 			tmp.append(" }");
 		}
 
