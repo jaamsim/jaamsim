@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +17,12 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
+import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.AngleUnit;
@@ -29,67 +35,105 @@ import com.jaamsim.units.UserSpecifiedUnit;
  * @author Harry King
  *
  */
-public abstract class WaveGenerator extends DoubleCalculation {
+public abstract class WaveGenerator extends DisplayEntity implements SampleProvider {
 
-	@Keyword(description = "Amplitude of the generated wave",
-	         example = "Wave1 Amplitude { 2.0 }")
+	@Keyword(description = "The unit type for the value returned by the wave.",
+			exampleList = {"DistanceUnit"})
+	protected final UnitTypeInput unitType;
+
+	@Keyword(description = "Amplitude of the generated wave.",
+	         exampleList = {"2.0"})
 	private final ValueInput amplitude;
 
-	@Keyword(description = "Period of the generated wave",
-	         example = "Wave1 Period { 2 s }")
+	@Keyword(description = "Period of the generated wave.",
+			exampleList = {"2 s"})
 	private final ValueInput period;
 
-	@Keyword(description = "Initial phase angle of the generated wave",
-	         example = "Wave1 PhaseAngle { 45 deg }")
+	@Keyword(description = "Initial phase angle of the generated wave.",
+			exampleList = {"45 deg"})
 	private final ValueInput phaseAngle;
 
-	@Keyword(description = "Offset added to the output of the generated wave",
-	         example = "Wave1 Offset { 2.0 }")
+	@Keyword(description = "Offset added to the output of the generated wave.",
+			exampleList = {"2.0"})
 	private final ValueInput offset;
 
 	{
-		inputValue.setHidden(true);
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType.setRequired(true);
+		this.addInput(unitType);
 
-		amplitude = new ValueInput( "Amplitude", "Key Inputs", 1.0d);
-		amplitude.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
+		amplitude = new ValueInput("Amplitude", "Key Inputs", 1.0d);
+		amplitude.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		amplitude.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( amplitude);
+		this.addInput(amplitude);
 
 		period = new ValueInput("Period", "Key Inputs", 1.0d);
 		period.setUnitType(TimeUnit.class);
 		period.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		this.addInput(period);
 
-		phaseAngle = new ValueInput( "PhaseAngle", "Key Inputs", 0.0d);
-		phaseAngle.setUnitType( AngleUnit.class );
-		this.addInput( phaseAngle);
+		phaseAngle = new ValueInput("PhaseAngle", "Key Inputs", 0.0d);
+		phaseAngle.setUnitType(AngleUnit.class);
+		this.addInput(phaseAngle);
 
-		offset = new ValueInput( "Offset", "Key Inputs", 0.0d);
+		offset = new ValueInput("Offset", "Key Inputs", 0.0d);
 		offset.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( offset);
-	}
-
-
-	@Override
-	protected void setUnitType(Class<? extends Unit> ut) {
-		super.setUnitType(ut);
-		amplitude.setUnitType(ut);
-		offset.setUnitType(ut);
-		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
+		this.addInput(offset);
 	}
 
 	@Override
-	public double calculateValue(double simTime) {
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
 
-		// Calculate the present phase angle
-		double angle = 2.0 * Math.PI * simTime / period.getValue() + phaseAngle.getValue();
+		if (in == unitType) {
+			amplitude.setUnitType(unitType.getUnitType());
+			offset.setUnitType(unitType.getUnitType());
+			FrameBox.reSelectEntity();  // Update the units in the Output Viewer
+			return;
+		}
+	}
 
-		// Set the output value for the wave
-		return amplitude.getValue() * this.getSignal( angle )  +  offset.getValue();
+	@Override
+	public Class<? extends Unit> getUnitType() {
+		return unitType.getUnitType();
+	}
+
+	@Override
+	public Class<? extends Unit> getUserUnitType() {
+		return unitType.getUnitType();
 	}
 
 	/*
 	 * Calculate the current dimensionless signal for the wave.
 	 */
-	protected abstract double getSignal( double angle );
+	protected abstract double getSignal(double angle);
+
+	@Override
+	@Output(name = "Value",
+	 description = "The present value for the wave.",
+	    unitType = UserSpecifiedUnit.class)
+	public double getNextSample(double simTime) {
+
+		// Calculate the present phase angle
+		double angle = 2.0*Math.PI * simTime/period.getValue() + phaseAngle.getValue();
+
+		// Set the output value for the wave
+		return amplitude.getValue() * this.getSignal(angle)  +  offset.getValue();
+	}
+
+	@Override
+	public double getMeanValue(double simTime) {
+		return offset.getValue();
+	}
+
+	@Override
+	public double getMinValue() {
+		return offset.getValue() - amplitude.getValue();
+	}
+
+	@Override
+	public double getMaxValue() {
+		return offset.getValue() + amplitude.getValue();
+	}
+
 }

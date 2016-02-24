@@ -23,8 +23,11 @@ package com.jaamsim.CalculationObjects;
  */
 public class SineWave extends WaveGenerator {
 
+	public SineWave() {}
+
 	@Override
-	protected double getSignal( double angle ) {
-		return Math.sin( angle );
+	protected double getSignal(double angle) {
+		return Math.sin(angle);
 	}
+
 }

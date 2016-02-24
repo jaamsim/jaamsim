@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +17,17 @@
  */
 package com.jaamsim.CalculationObjects;
 
+import java.util.ArrayList;
+
+import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleListInput;
-import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.Samples.SampleProvider;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
+import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
@@ -31,36 +39,64 @@ import com.jaamsim.units.UserSpecifiedUnit;
  * @author Harry King
  *
  */
-public class WeightedSum extends DoubleCalculation {
+public class WeightedSum extends DisplayEntity implements SampleProvider {
 
-	@Keyword(description = "The list of inputs to the weighted sum.\n" +
-			"The inputs can be any entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
-	         example = "WeightedSum-1 InputValueList { Calc-1  Calc-2 }")
+	@Keyword(description = "The unit type for the inputs to the weighted sum and for the value "
+	                     + "returned.",
+	         exampleList = {"DistanceUnit"})
+	protected final UnitTypeInput unitType;
+
+	@Keyword(description = "The list of inputs to the weighted sum. All inputs must have the "
+	                     + "same unit type.\n"
+	                     + "The inputs can be any entity that returns a number, such as an "
+	                     + "expression, a CalculationObject, a ProbabilityDistribution, or a "
+	                     + "TimeSeries.",
+	         exampleList = {"{ 1 m } { TimeSeries1 } {'2[m] * [Queue1].QueueLength'}"})
 	private final SampleListInput inputValueList;
 
-	@Keyword(description = "The list of multaplicative factors to be applied to the value provide by the inputs.",
-	         example = "WeightedSum1 CoefficientList { 2.0  1.5 }")
+	@Keyword(description = "The list of dimensionless coefficients to be applied to the input "
+	                     + "values. If left blank, the input values are simply added without "
+	                     + "applying any coefficients.",
+	         exampleList = {"2.0  1.5"})
 	private final ValueListInput coefficientList;
 
 	{
-		inputValue.setHidden(true);
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
+		unitType.setRequired(true);
+		this.addInput(unitType);
 
-		inputValueList = new SampleListInput( "InputValueList", "Key Inputs", null);
+		ArrayList<SampleProvider> def = new ArrayList<>();
+ 		def.add(new SampleConstant(0.0));
+ 		inputValueList = new SampleListInput("InputValueList", "Key Inputs", def);
 		inputValueList.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( inputValueList);
+		this.addInput(inputValueList);
 
-		DoubleVector defList = new DoubleVector();
-		defList.add(1.0);
-		coefficientList = new ValueListInput( "CoefficientList", "Key Inputs", defList);
+		coefficientList = new ValueListInput("CoefficientList", "Key Inputs", null);
 		coefficientList.setUnitType(DimensionlessUnit.class);
-		this.addInput( coefficientList);
+		this.addInput(coefficientList);
+	}
+
+	public WeightedSum() {}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == unitType) {
+			inputValueList.setUnitType(unitType.getUnitType());
+			FrameBox.reSelectEntity();  // Update the units in the Output Viewer
+			return;
+		}
 	}
 
 	@Override
-	protected void setUnitType(Class<? extends Unit> ut) {
-		super.setUnitType(ut);
-		inputValueList.setUnitType(ut);
-		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
+	public Class<? extends Unit> getUnitType() {
+		return unitType.getUnitType();
+	}
+
+	@Override
+	public Class<? extends Unit> getUserUnitType() {
+		return unitType.getUnitType();
 	}
 
 	@Override
@@ -68,21 +104,51 @@ public class WeightedSum extends DoubleCalculation {
 		super.validate();
 
 		// Confirm that the number of entries in the CoeffientList matches the EntityList
-		if( coefficientList.getValue().size() != inputValueList.getValue().size() ) {
-			throw new InputErrorException( "The number of entries for CoefficientList and EntityList must be equal" );
+		if (coefficientList.getValue() != null
+				&& coefficientList.getValue().size() != inputValueList.getValue().size()) {
+			throw new InputErrorException("If set, the number of entries for CoefficientList "
+					+ "must match the entries for InputValueList");
 		}
 	}
 
 	@Override
-	protected double calculateValue(double simTime) {
+	@Output(name = "Value",
+	 description = "The calculated value for the weighted sum.",
+	    unitType = UserSpecifiedUnit.class)
+	public double getNextSample(double simTime) {
 		double val = 0.0;
 
-		// Calculate the weighted sum
-		for(int i=0; i<inputValueList.getValue().size(); i++ ) {
-			val += coefficientList.getValue().get(i) * inputValueList.getValue().get(i).getNextSample(simTime);
+		// Calculate the unweighted sum of the inputs
+		if (coefficientList.getValue() == null) {
+			for (int i=0; i<inputValueList.getValue().size(); i++) {
+				val += inputValueList.getValue().get(i).getNextSample(simTime);
+			}
+		}
+
+		// Calculate the weighted sum of the inputs
+		else {
+			for (int i=0; i<inputValueList.getValue().size(); i++) {
+				val += coefficientList.getValue().get(i)
+						* inputValueList.getValue().get(i).getNextSample(simTime);
+			}
 		}
 
 		return val;
+	}
+
+	@Override
+	public double getMeanValue(double simTime) {
+		return 0;
+	}
+
+	@Override
+	public double getMinValue() {
+		return Double.NEGATIVE_INFINITY;
+	}
+
+	@Override
+	public double getMaxValue() {
+		return Double.POSITIVE_INFINITY;
 	}
 
 }

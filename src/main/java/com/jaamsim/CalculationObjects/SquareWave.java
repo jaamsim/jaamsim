@@ -23,13 +23,16 @@ package com.jaamsim.CalculationObjects;
  */
 public class SquareWave extends WaveGenerator {
 
+	public SquareWave() {}
+
 	@Override
-	protected double getSignal( double angle ) {
-		if( Math.IEEEremainder( angle, 2.0*Math.PI) >= 0.0 ) {
+	protected double getSignal(double angle) {
+		if( Math.IEEEremainder(angle, 2.0*Math.PI) >= 0.0) {
 			return 1.0;
 		}
 		else {
 			return -1.0;
 		}
 	}
+
 }
