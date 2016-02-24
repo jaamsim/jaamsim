@@ -45,7 +45,7 @@ public static final void tokenize(ArrayList<String> tokens, String rec, boolean 
 	// Records can be divided into two pieces, the contents portion and possibly
 	// a commented portion, the division point is the first " character, if no
 	// quoting in a record, the entire line is contents for tokenizing
-	final int cIndex = rec.indexOf("\"");
+	final int cIndex = rec.indexOf('\"');
 	final int endOfRec = cIndex == -1 ? rec.length() : cIndex;
 
 	int tokStart = -1;

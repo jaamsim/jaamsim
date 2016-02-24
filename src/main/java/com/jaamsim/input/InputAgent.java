@@ -147,7 +147,7 @@ public class InputAgent {
 			return "";
 
 		String name = InputAgent.getConfigFile().getName();
-		int index = name.lastIndexOf( "." );
+		int index = name.lastIndexOf('.');
 		if( index == -1 )
 			return name;
 
@@ -819,7 +819,7 @@ public class InputAgent {
 								inputReportFile.write("\t");
 								inputReportFile.write(in.getKeyword());
 								inputReportFile.write("\t");
-								if (in.getValueString().lastIndexOf("{") > 10) {
+								if (in.getValueString().lastIndexOf('{') > 10) {
 									String[] item1Array;
 									item1Array = in.getValueString().trim().split(" }");
 

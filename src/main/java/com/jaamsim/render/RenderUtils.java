@@ -490,7 +490,7 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 	}
 
 	private static boolean isValidExtension(String fileName) {
-		int idx = fileName.lastIndexOf(".");
+		int idx = fileName.lastIndexOf('.');
 		if (idx < 0)
 			return false;
 

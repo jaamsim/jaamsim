@@ -242,7 +242,7 @@ public class ContextMenu {
 
 					// Add the file extension ".jsb" if needed
 					filePath = filePath.trim();
-					if (filePath.indexOf(".") == -1)
+					if (filePath.indexOf('.') == -1)
 						filePath = filePath.concat(".jsb");
 
 					// Confirm overwrite if file already exists

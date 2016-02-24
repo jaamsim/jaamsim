@@ -1887,7 +1887,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Add the file extension ".cfg" if needed
 		filePath = filePath.trim();
-		if (file.getName().trim().indexOf(".") == -1) {
+		if (file.getName().trim().indexOf('.') == -1) {
 			filePath = filePath.concat(".cfg");
 		}
 

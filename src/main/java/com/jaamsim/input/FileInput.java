@@ -132,7 +132,7 @@ public class FileInput extends Input<URI> {
 
 	private String getFileExtention(URI u) {
 		String name = u.toString();
-		int idx = name.lastIndexOf(".");
+		int idx = name.lastIndexOf('.');
 		if (idx < 0)
 			return "";
 

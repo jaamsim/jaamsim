@@ -681,7 +681,7 @@ public abstract class Input<T> {
 		double value = 0.0d;
 
 		// check for hh:mm:ss or hh:mm
-		if (data.indexOf(":") > -1) {
+		if (data.indexOf(':') > -1) {
 			String[] splitDouble = data.split( ":" );
 			if (splitDouble.length != 2 && splitDouble.length != 3)
 				throw new InputErrorException(INP_ERR_TIME, data);
@@ -798,7 +798,7 @@ public abstract class Input<T> {
 		}
 
 		if (isextendfull.matcher(input).matches()) {
-			int len = input.indexOf(".");
+			int len = input.indexOf('.');
 			int hh = Integer.parseInt(input.substring(0, len - 6));
 			int mm = Integer.parseInt(input.substring(len - 5, len - 3));
 			int ss = Integer.parseInt(input.substring(len - 2, len));
