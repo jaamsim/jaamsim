@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +17,12 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
 import com.jaamsim.input.ValueInput;
-import com.jaamsim.ui.FrameBox;
-import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -32,52 +30,57 @@ import com.jaamsim.units.UserSpecifiedUnit;
 /**
  * The PIDController simulates a Proportional-Integral-Differential type Controller.
  * Error = SetPoint - ProcessVariable
- * Output = ScaleCoefficient * ProportionalGain * [ Error + (Integral/IntegralTime) + (DerivativeTime*Derivative) ]
+ * Output =  (ProportionalGain / ProcessVariableScale) * [ Error + (Integral/IntegralTime) + (DerivativeTime*Derivative) ]
  * @author Harry King
  *
  */
 public class PIDController extends DoubleCalculation {
 
-	@Keyword(description = "The unit type for the set point and the process variable.",
-	         example = "PIDController-1 SetPointUnitType { DistanceUnit }")
-	private final UnitTypeInput setPointUnitType;
-
-	@Keyword(description = "The set point for the PID controller.\n" +
-			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
-	         example = "PIDController-1 SetPoint { Calc-1 }")
+	@Keyword(description = "The set point for the PID controller. The unit type for the set point "
+	                     + "is given by the UnitType keyword.\n"
+	                     + "The input can be a number or an entity that returns a number, such as "
+	                     + "a CalculationObject, an Expression, a ProbabilityDistribution, or a "
+	                     + "TimeSeries.",
+	         exampleList = {"1.2 m", "TimeSeries1", "'1[m] + 2*[TimeSeries1].Value'"})
 	private final SampleInput setPoint;
 
-	@Keyword(description = "The process variable feedback to the PID controller.\n" +
-			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
-	         example = "PIDController-1 ProcessVariable { Calc-1 }")
+	@Keyword(description = "The process variable feedback to the PID controller. The unit type "
+	                     + "for the process variable is given by the UnitType keyword.\n"
+	                     + "The input can be a number or an entity that returns a number, such as "
+	                     + "a CalculationObject, an Expression, a ProbabilityDistribution, or a "
+	                     + "TimeSeries.",
+	         exampleList = {"Process", "'1[m] + [Process].Value'"})
 	private final SampleInput processVariable;
 
-	@Keyword(description = "The scale coefficient applied to the output signal.\n" +
-			"This coefficient converts from the units for the setpoint and process variable to the units for the " +
-			"manipulated variable. The units for the scale coefficient are the ratio of the manipulated variable's unit type " +
-			"and the set point's unit type. At present, this input should be entered in the appropriate SI unit, but " +
-			"with no unit shown explicitly.",
-	         example = "PIDController-1 ScaleConversionCoefficient { 1.0 }")
-	private final ValueInput scaleConversionCoefficient;
+	@Keyword(description = "A constant with the same unit type as the process variable and the "
+	                     + "set point. The difference between the process variable and the set "
+	                     + "point is divided by this quantity to make a dimensionless variable.",
+	         exampleList = {"1.0 kg"})
+	private final ValueInput processVariableScale;
 
-	@Keyword(description = "The coefficient applied to the proportional feedback loop.",
-	         example = "PIDController-1 ProportionalGain { 1.0 }")
+	@Keyword(description = "The unit type for the output from the PID controller.",
+	         exampleList = {"DistanceUnit"})
+	protected final UnitTypeInput outputUnitType;
+
+	@Keyword(description = "The coefficient applied to the proportional feedback loop. "
+	                     + "Its unit type must be the same as the controller's output.",
+	         exampleList = {"1.3 m"})
 	private final ValueInput proportionalGain;
 
-	@Keyword(description = "The coefficient applied to the integral feedback loop.",
-	         example = "PIDController-1 IntegralTime { 1.0 s }")
+	@Keyword(description = "The time scale applied to the integral feedback loop.",
+	         exampleList = {"1.0 s"})
 	private final ValueInput integralTime;
 
-	@Keyword(description = "The coefficient applied to the differential feedback loop.",
-	         example = "PIDController-1 DerivativeTime { 1.0 s }")
+	@Keyword(description = "The time scale applied to the differential feedback loop.",
+	         exampleList = {"1.0 s"})
 	private final ValueInput derivativeTime;
 
 	@Keyword(description = "The lower limit for the output signal.",
-	         example = "PIDController-1 OutputLow { 0.0 }")
+	         exampleList = {"0.0 m"})
 	private final ValueInput outputLow;
 
 	@Keyword(description = "The upper limit for the output signal.",
-	         example = "PIDController-1 OutputHigh { 1.0 }")
+	         exampleList = {"1.0 m"})
 	private final ValueInput outputHigh;
 
 	private double lastUpdateTime;  // The time at which the last update was performed
@@ -88,56 +91,72 @@ public class PIDController extends DoubleCalculation {
 	{
 		inputValue.setHidden(true);
 
-		setPointUnitType = new UnitTypeInput( "SetPointUnitType", "Key Inputs", UserSpecifiedUnit.class);
-		this.addInput(setPointUnitType);
-
-		setPoint = new SampleInput( "SetPoint", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
+		setPoint = new SampleInput("SetPoint", "Key Inputs", null);
 		setPoint.setUnitType(UserSpecifiedUnit.class);
 		setPoint.setEntity(this);
-		this.addInput( setPoint);
 		setPoint.setRequired(true);
+		this.addInput(setPoint);
 
-		processVariable = new SampleInput( "ProcessVariable", "Key Inputs", new SampleConstant(UserSpecifiedUnit.class, 0.0d));
+		processVariable = new SampleInput("ProcessVariable", "Key Inputs", null);
 		processVariable.setUnitType(UserSpecifiedUnit.class);
 		processVariable.setEntity(this);
-		this.addInput( processVariable);
 		processVariable.setRequired(true);
+		this.addInput(processVariable);
 
-		proportionalGain = new ValueInput( "ProportionalGain", "Key Inputs", 1.0d);
-		proportionalGain.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		proportionalGain.setUnitType(DimensionlessUnit.class);
-		this.addInput( proportionalGain);
+		processVariableScale = new ValueInput("ProcessVariableScale", "Key Inputs", 1.0d);
+		processVariableScale.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		processVariableScale.setUnitType(UserSpecifiedUnit.class);
+		this.addInput(processVariableScale);
 
-		scaleConversionCoefficient = new ValueInput( "ScaleConversionCoefficient", "Key Inputs", 1.0d);
-		scaleConversionCoefficient.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		scaleConversionCoefficient.setUnitType(DimensionlessUnit.class);
-		this.addInput( scaleConversionCoefficient);
+		outputUnitType = new UnitTypeInput("OutputUnitType", "Key Inputs", UserSpecifiedUnit.class);
+		outputUnitType.setRequired(true);
+		this.addInput(outputUnitType);
 
-		integralTime = new ValueInput( "IntegralTime", "Key Inputs", 1.0d);
-		integralTime.setValidRange( 1.0e-10, Double.POSITIVE_INFINITY);
-		integralTime.setUnitType( TimeUnit.class );
-		this.addInput( integralTime);
+		proportionalGain = new ValueInput("ProportionalGain", "Key Inputs", 1.0d);
+		proportionalGain.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		proportionalGain.setUnitType(UserSpecifiedUnit.class);
+		this.addInput(proportionalGain);
 
-		derivativeTime = new ValueInput( "DerivativeTime", "Key Inputs", 0.0d);
-		derivativeTime.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		derivativeTime.setUnitType( TimeUnit.class );
-		this.addInput( derivativeTime);
+		integralTime = new ValueInput("IntegralTime", "Key Inputs", 1.0d);
+		integralTime.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
+		integralTime.setUnitType(TimeUnit.class );
+		this.addInput(integralTime);
 
-		outputLow = new ValueInput( "OutputLow", "Key Inputs", Double.NEGATIVE_INFINITY);
+		derivativeTime = new ValueInput("DerivativeTime", "Key Inputs", 1.0d);
+		derivativeTime.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		derivativeTime.setUnitType(TimeUnit.class );
+		this.addInput(derivativeTime);
+
+		outputLow = new ValueInput("OutputLow", "Key Inputs", Double.NEGATIVE_INFINITY);
 		outputLow.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( outputLow);
+		this.addInput(outputLow);
 
-		outputHigh = new ValueInput( "OutputHigh", "Key Inputs", Double.POSITIVE_INFINITY);
+		outputHigh = new ValueInput("OutputHigh", "Key Inputs", Double.POSITIVE_INFINITY);
 		outputHigh.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( outputHigh);
+		this.addInput(outputHigh);
 	}
+
+	public PIDController() {}
 
 	@Override
 	public void updateForInput( Input<?> in ) {
 		super.updateForInput( in );
 
-		if (in == setPointUnitType)
-			this.setSPUnitType(setPointUnitType.getUnitType());
+		if (in == outputUnitType) {
+			outUnitType = outputUnitType.getUnitType();
+			outputLow.setUnitType(outUnitType);
+			outputHigh.setUnitType(outUnitType);
+			proportionalGain.setUnitType(outUnitType);
+			return;
+		}
+	}
+
+	@Override
+	protected void setUnitType(Class<? extends Unit> ut) {
+		super.setUnitType(ut);
+		setPoint.setUnitType(ut);
+		processVariable.setUnitType(ut);
+		processVariableScale.setUnitType(ut);
 	}
 
 	@Override
@@ -145,47 +164,38 @@ public class PIDController extends DoubleCalculation {
 		super.earlyInit();
 		lastError = 0.0;
 		integral = 0.0;
+		derivative = 0.0;
 		lastUpdateTime = 0.0;
 	}
 
-	@Override
-	protected void setUnitType(Class<? extends Unit> ut) {
-		super.setUnitType(ut);
-		outputLow.setUnitType(ut);
-		outputHigh.setUnitType(ut);
-		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
-	}
-
-	private void setSPUnitType(Class<? extends Unit> ut) {
-		setPoint.setUnitType(ut);
-		processVariable.setUnitType(ut);
-		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
+	public double getError(double simTime) {
+		return setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
 	}
 
 	@Override
 	protected double calculateValue(double simTime, double inputVal, double lastTime, double lastInputVal, double lastVal) {
 
 		// Calculate the elapsed time
-		double dt = simTime - lastUpdateTime;
+		double dt = simTime - lastTime;
 
 		// Calculate the error signal
-		double error = setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
+		double error = this.getError(simTime);
 
 		// Calculate integral and differential terms
-		double intgrl = integral + error * dt;
+		double intgrl = integral + error*dt;
 		double deriv = 0.0;
-		if( dt > 0.0 )
-			deriv = ( error - lastError ) / dt;
+		if (dt > 0.0)
+			deriv = (error - lastError)/dt;
 
 		// Calculate the output value
 		double val = error;
 		val += intgrl / integralTime.getValue();
 		val += derivativeTime.getValue() * deriv;
-		val *= scaleConversionCoefficient.getValue() * proportionalGain.getValue();
+		val *= proportionalGain.getValue() / processVariableScale.getValue();
 
 		// Condition the output value
-		val = Math.max( val, outputLow.getValue());
-		val = Math.min( val, outputHigh.getValue());
+		val = Math.max(val, outputLow.getValue());
+		val = Math.min(val, outputHigh.getValue());
 
 		return val;
 	}
@@ -194,40 +204,37 @@ public class PIDController extends DoubleCalculation {
 	public void update(double simTime) {
 		super.update(simTime);
 		double dt = simTime - lastUpdateTime;
-		double error = setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
+		double error = this.getError(simTime);
 		integral += error * dt;
 		lastError = error;
 		lastUpdateTime = simTime;
 		return;
 	}
 
-	@Output(name = "Error",
-	 description = "The value for SetPoint - ProcessVariable.")
-	public double getError( double simTime ) {
-		return setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
-	}
-
 	@Output(name = "ProportionalValue",
 	 description = "The proportional component of the output value.",
-	    unitType = UserSpecifiedUnit.class)
-	public double getProportionalValue( double simTime ) {
-		double error = setPoint.getValue().getNextSample(simTime) - processVariable.getValue().getNextSample(simTime);
-		return scaleConversionCoefficient.getValue() * proportionalGain.getValue() * error;
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 0)
+	public double getProportionalValue(double simTime) {
+		return this.getError(simTime) * proportionalGain.getValue() / processVariableScale.getValue();
 	}
 
 	@Output(name = "IntegralValue",
 	 description = "The integral component of the output value.",
-	    unitType = UserSpecifiedUnit.class)
-	public double getIntegralValue( double simTime ) {
-		return scaleConversionCoefficient.getValue() * proportionalGain.getValue()
-				* integral / integralTime.getValue();
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 1)
+	public double getIntegralValue(double simTime) {
+		return integral / integralTime.getValue()
+				* proportionalGain.getValue() / processVariableScale.getValue();
 	}
 
 	@Output(name = "DerivativeValue",
 	 description = "The derivative component of the output value.",
-	    unitType = UserSpecifiedUnit.class)
-	public double getDifferentialValue( double simTime ) {
-		return scaleConversionCoefficient.getValue() * proportionalGain.getValue()
-				* derivativeTime.getValue() * derivative;
+	    unitType = UserSpecifiedUnit.class,
+	    sequence = 2)
+	public double getDifferentialValue(double simTime) {
+		return derivativeTime.getValue() * derivative
+				* proportionalGain.getValue()/ processVariableScale.getValue();
 	}
+
 }
