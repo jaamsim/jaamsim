@@ -37,7 +37,7 @@ import com.jaamsim.math.Vec3d;
 
 public class ContextMenu {
 
-	public ContextMenu() {}
+	private ContextMenu() {}
 
 	/**
 	 * Adds menu items to the right click (context) menu for the specified entity.
