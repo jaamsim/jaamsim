@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +31,7 @@ import com.jaamsim.input.Keyword;
 public class MovingAverage extends DoubleCalculation {
 
 	@Keyword(description = "The number of input values over which to average.",
-	         example = "MovingAverage-1 NumberOfSamples { 10 }")
+	         exampleList = {"10"})
 	private final IntegerInput numberOfSamples;
 
 	private double[] samples;  // The previous input values over which to average
@@ -39,15 +40,17 @@ public class MovingAverage extends DoubleCalculation {
 	private double average;  // The present value for the moving average
 
 	{
-		numberOfSamples = new IntegerInput( "NumberOfSamples", "Key Inputs", 1);
-		numberOfSamples.setValidRange( 1, Integer.MAX_VALUE);
-		this.addInput( numberOfSamples);
+		numberOfSamples = new IntegerInput("NumberOfSamples", "Key Inputs", 1);
+		numberOfSamples.setValidRange(1, Integer.MAX_VALUE);
+		this.addInput(numberOfSamples);
 	}
+
+	public MovingAverage() {}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		samples = new double[ numberOfSamples.getValue() ];
+		samples = new double[numberOfSamples.getValue()];
 		index = 0;
 		n = numberOfSamples.getValue();
 		average = 0.0;
@@ -55,7 +58,7 @@ public class MovingAverage extends DoubleCalculation {
 
 	@Override
 	public double calculateValue(double simTime, double inputVal, double lastTime, double lastInputVal, double lastVal) {
-		return average;
+		return average + (inputVal - samples[index])/n;
 	}
 
 	@Override
@@ -67,13 +70,13 @@ public class MovingAverage extends DoubleCalculation {
 
 		// Set the index to the next oldest value
 		index++;
-		if( index >= n ) {
+		if (index >= n) {
 			index = 0;
 		}
 
 		// Calculate the average value
 		double val = 0.0;
-		for( int i=0; i<n; i++) {
+		for (int i=0; i<n; i++) {
 			val += samples[i];
 		}
 		average = val/n;
