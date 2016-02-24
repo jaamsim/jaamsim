@@ -316,7 +316,9 @@ public class Queue extends LinkedComponent {
 		// Schedule the time to check the renege condition
 		if (renegeTime.getValue() != null) {
 			double dur = renegeTime.getValue().getNextSample(getSimTime());
-			this.scheduleProcess(dur, 5, new RenegeActionTarget(this, ent));
+			// Schedule the renege tests in FIFO order so that if two or more entities are added to
+			// the queue at the same time, the one nearest the front of the queue is tested first
+			EventManager.scheduleSeconds(dur, 5, true, new RenegeActionTarget(this, ent), null);
 		}
 	}
 
