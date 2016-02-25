@@ -60,6 +60,7 @@ public class DiscreteDistribution extends Distribution {
 		probabilityListInput = new ValueListInput( "ProbabilityList", "Key Inputs", null);
 		probabilityListInput.setUnitType(DimensionlessUnit.class);
 		probabilityListInput.setValidSum(1.0d, 0.001d);
+		probabilityListInput.setValidRange(0.0d, 1.0d);
 		probabilityListInput.setRequired(true);
 		this.addInput( probabilityListInput);
 	}
