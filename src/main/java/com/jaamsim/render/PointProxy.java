@@ -24,12 +24,14 @@ import com.jaamsim.math.Vec4d;
 
 public class PointProxy implements RenderProxy {
 
-	private List<Vec4d> _points;
-	private Color4d _colour;
+	private final List<Vec4d> _points;
+	private final Color4d _colour;
 	private Color4d _hoverColour;
-	private double _pointWidth;
-	private long _pickingID;
-	private VisibilityInfo _visInfo;
+	private final double _pointWidth;
+	private final long _pickingID;
+	private final VisibilityInfo _visInfo;
+
+	private double _collisionAngle = 0.008727; // 0.5 degrees in radians
 
 	private DebugPoints cached;
 
@@ -50,6 +52,7 @@ public class PointProxy implements RenderProxy {
 	public void collectRenderables(Renderer r, ArrayList<Renderable> outList) {
 		if (cached == null) {
 			cached = new DebugPoints(_points, _colour, _hoverColour, _pointWidth, _visInfo, _pickingID);
+			cached.setCollisionAngle(_collisionAngle);
 		}
 
 		outList.add(cached);
@@ -61,4 +64,7 @@ public class PointProxy implements RenderProxy {
 		// None
 	}
 
+	public void setCollisionAngle(double angleRad) {
+		_collisionAngle = angleRad;
+	}
 }

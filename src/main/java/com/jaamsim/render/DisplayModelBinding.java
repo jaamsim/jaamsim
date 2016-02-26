@@ -150,6 +150,8 @@ public abstract class DisplayModelBinding {
 			pl.add(handlePoints.get(i));
 			PointProxy point = new PointProxy(pl, ColourInput.GREEN, 8, getVisibilityInfo(), RenderManager.RESIZE_POSX_PICK_ID - i);
 			point.setHoverColour(ColourInput.LIGHT_GREY);
+			point.setCollisionAngle(0.004363); // 0.25 degrees in radians
+
 			out.add(point);
 		}
 

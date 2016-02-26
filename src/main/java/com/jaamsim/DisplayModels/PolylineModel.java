@@ -211,6 +211,8 @@ public class PolylineModel extends DisplayModel {
 		pl.add(new Vec4d(p));
 		PointProxy pp = new PointProxy(pl, col, 8, getVisibilityInfo(), pickID);
 		pp.setHoverColour(hovCol);
+		pp.setCollisionAngle(0.004363); // 0.25 degrees in radians
+
 		out.add(pp);
 	}
 }
