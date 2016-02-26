@@ -114,7 +114,7 @@ public class Entity {
 		attributeDefinitionList.setHidden(false);
 		this.addInput(attributeDefinitionList);
 
-		namedExpressionInput = new NamedExpressionListInput(this, "CustomOuputList",
+		namedExpressionInput = new NamedExpressionListInput(this, "CustomOutputList",
 				"Key Inputs", new ArrayList<NamedExpression>());
 		namedExpressionInput.setHidden(false);
 		this.addInput(namedExpressionInput);
