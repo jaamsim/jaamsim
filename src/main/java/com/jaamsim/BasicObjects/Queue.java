@@ -465,6 +465,13 @@ public class Queue extends LinkedComponent {
 	}
 
 	/**
+	 * Returns the priority value for the first object in the queue
+	 */
+	public int getFirstPriority() {
+		return itemSet.first().priority;
+	}
+
+	/**
 	 * Returns the number of times that the specified match value appears in
 	 * the queue. If the match value is null, then every entity is counted.
 	 * @param m - value to be matched.

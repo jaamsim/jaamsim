@@ -142,17 +142,22 @@ public class Resource extends DisplayEntity {
 
 		// Notify the Seize object(s) that can use the released units
 		int cap = (int) capacity.getValue().getNextSample(this.getSimTime());
-		while( cap > unitsInUse ) {
+		while (cap > unitsInUse) {
 
-			// Pick the Seize object that has waited the longest
+			// Pick the Seize object whose first entity has the highest priority or,
+			// in case of a tie, whose first entity has waited the longest
 			Seize selection = null;
-			double maxTime = 0;
-			for(Seize s : seizeList) {
+			double maxWait = 0.0;
+			int minPri = Integer.MAX_VALUE;
+			for (Seize s : seizeList) {
 				Queue que = s.getQueue();
-				if( que.getCount() > 0 ) {
-					if( selection == null || que.getQueueTime() > maxTime ) {
+				if (que.getCount() > 0) {
+					int pri = que.getFirstPriority();
+					double wait = que.getQueueTime();
+					if (selection == null || pri < minPri || (pri == minPri && wait > maxWait)) {
 						selection = s;
-						maxTime = que.getQueueTime();
+						minPri = pri;
+						maxWait = wait;
 					}
 				}
 			}
