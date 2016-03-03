@@ -16,7 +16,6 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Input;
@@ -87,7 +86,6 @@ public class PIDController extends DoubleCalculation {
 	private double derivative;  // The derivative of the error signal
 
 	{
-		controllerRequired = true;
 		inputValue.setHidden(true);
 
 		setPointUnitType = new UnitTypeInput( "SetPointUnitType", "Key Inputs", UserSpecifiedUnit.class);
@@ -143,13 +141,6 @@ public class PIDController extends DoubleCalculation {
 	}
 
 	@Override
-	protected boolean repeatableInputs() {
-		return super.repeatableInputs()
-				&& ! (setPoint.getValue() instanceof Distribution)
-				&& ! (processVariable.getValue() instanceof Distribution);
-	}
-
-	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		lastError = 0.0;
@@ -172,7 +163,7 @@ public class PIDController extends DoubleCalculation {
 	}
 
 	@Override
-	protected double calculateValue(double simTime) {
+	protected double calculateValue(double simTime, double inputVal, double lastTime, double lastInputVal, double lastVal) {
 
 		// Calculate the elapsed time
 		double dt = simTime - lastUpdateTime;

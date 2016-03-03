@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +19,6 @@ package com.jaamsim.CalculationObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.input.EntityInput;
-import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.DimensionlessUnit;
@@ -30,40 +30,34 @@ import com.jaamsim.units.DimensionlessUnit;
  */
 public abstract class CalculationEntity extends DisplayEntity {
 
-	@Keyword(description = "The Controller that controls the updating of the calculation.\n" +
-			"If a Controller is not specified, the calculation is performed asynchronously, on demand.",
-	         example = "Calculation1 Controller { PLC1 }")
-	private final EntityInput<Controller> controller;
+	@Keyword(description = "The Controller object that signals the updating of the calculation.",
+	         exampleList = {"Controller1"})
+	protected final EntityInput<Controller> controller;
 
-	@Keyword(description = "The sequence number used by the Controller to determine the order in which calculations are performed." +
-			"  A calculation with a lower value is executed before the ones with higher values.",
-	         example = "Calculation1 SequenceNumber { 2.1 }")
+	@Keyword(description = "The sequence number used by the Controller to determine the order "
+	                     + "in which calculations are performed. A calculation with a lower value "
+	                     + "is executed before one with a higher value.",
+	         exampleList = {"2.1"})
 	private final ValueInput sequenceNumber;
 
-	protected boolean calculationInProgress = false;  // TRUE if a value calculation has been started, but not completed yet
-	protected boolean controllerRequired = false;  // TRUE if the Controller keyword must be set
-
 	{
-		controller = new EntityInput<>( Controller.class, "Controller", "Key Inputs", null);
-		this.addInput( controller);
+		controller = new EntityInput<>(Controller.class, "Controller", "Key Inputs", null);
+		controller.setRequired(true);
+		this.addInput(controller);
 
-		sequenceNumber = new ValueInput( "SequenceNumber", "Key Inputs", 0.0);
+		sequenceNumber = new ValueInput("SequenceNumber", "Key Inputs", 0.0);
 		sequenceNumber.setValidRange(0.0d, Double.POSITIVE_INFINITY);
 		sequenceNumber.setUnitType(DimensionlessUnit.class);
-		this.addInput( sequenceNumber);
-	}
-
-	@Override
-	public void validate() {
-		super.validate();
-		if( controllerRequired && controller.getValue() == null )
-			throw new InputErrorException( "The keyword Controller must be set." );
+		this.addInput(sequenceNumber);
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		calculationInProgress = false;
+	}
+
+	public Controller getController() {
+		return controller.getValue();
 	}
 
 	public double getSequenceNumber() {
@@ -74,8 +68,4 @@ public abstract class CalculationEntity extends DisplayEntity {
 	 * Calculate the current value for this object.
 	 */
 	public abstract void update(double simTime);
-
-	public Controller getController() {
-		return controller.getValue();
-	}
 }

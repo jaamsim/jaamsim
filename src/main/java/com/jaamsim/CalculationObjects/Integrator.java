@@ -16,7 +16,6 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
@@ -46,8 +45,6 @@ public class Integrator extends DoubleCalculation {
 	private double integral; // The present value for the integral
 
 	{
-		controllerRequired = true;
-
 		initialValue = new ValueInput( "InitialValue", "Key Inputs", 0.0d);
 		initialValue.setUnitType(UserSpecifiedUnit.class);
 		this.addInput( initialValue);
@@ -56,12 +53,6 @@ public class Integrator extends DoubleCalculation {
 		integralTime.setUnitType(TimeUnit.class);
 		integralTime.setEntity(this);
 		this.addInput( integralTime);
-	}
-
-	@Override
-	protected boolean repeatableInputs() {
-		return super.repeatableInputs()
-				&& ! (integralTime.getValue() instanceof Distribution);
 	}
 
 	@Override
@@ -79,7 +70,7 @@ public class Integrator extends DoubleCalculation {
 	}
 
 	@Override
-	protected double calculateValue(double simTime) {
+	protected double calculateValue(double simTime, double inputVal, double lastTime, double lastInputVal, double lastVal) {
 		double dt = simTime - lastUpdateTime;
 		double scale = integralTime.getValue().getNextSample(simTime);
 		return ( integral + this.getInputValue(simTime) * dt )/scale  +  initialValue.getValue();

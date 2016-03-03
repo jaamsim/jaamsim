@@ -39,8 +39,6 @@ public class MovingAverage extends DoubleCalculation {
 	private double average;  // The present value for the moving average
 
 	{
-		controllerRequired = true;
-
 		numberOfSamples = new IntegerInput( "NumberOfSamples", "Key Inputs", 1);
 		numberOfSamples.setValidRange( 1, Integer.MAX_VALUE);
 		this.addInput( numberOfSamples);
@@ -56,7 +54,7 @@ public class MovingAverage extends DoubleCalculation {
 	}
 
 	@Override
-	public double calculateValue(double simTime) {
+	public double calculateValue(double simTime, double inputVal, double lastTime, double lastInputVal, double lastVal) {
 		return average;
 	}
 

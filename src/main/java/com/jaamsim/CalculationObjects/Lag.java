@@ -38,8 +38,6 @@ public class Lag extends DoubleCalculation {
 	private double presentValue;  // The present output value
 
 	{
-		controllerRequired = true;
-
 		lagTime = new ValueInput( "LagTime", "Key Inputs", 1.0d);
 		lagTime.setValidRange(1.0e-10, Double.POSITIVE_INFINITY);
 		lagTime.setUnitType(TimeUnit.class);
@@ -55,7 +53,7 @@ public class Lag extends DoubleCalculation {
 	}
 
 	@Override
-	public double calculateValue(double simTime) {
+	public double calculateValue(double simTime, double inputVal, double lastTime, double lastInputVal, double lastVal) {
 		double dt = simTime - lastUpdateTime;
 		double error = this.getInputValue(simTime) - presentValue;
 		return ( integral + error*dt ) / lagTime.getValue();
@@ -67,7 +65,7 @@ public class Lag extends DoubleCalculation {
 		double dt = simTime - lastUpdateTime;
 		double error = this.getInputValue(simTime) - presentValue;
 		integral += error * dt;
-		presentValue = this.getValue();
+		presentValue = this.getLastValue();
 		lastUpdateTime = simTime;
 	}
 

@@ -16,7 +16,6 @@
  */
 package com.jaamsim.CalculationObjects;
 
-import com.jaamsim.ProbabilityDistributions.Distribution;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
@@ -38,18 +37,10 @@ public class Differentiator extends DoubleCalculation {
 	private double lastInputValue;  // The input value for the last update
 
 	{
-		controllerRequired = true;
-
 		derivativeTime = new SampleInput( "DerivativeTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0) );
 		derivativeTime.setUnitType(TimeUnit.class);
 		derivativeTime.setEntity(this);
 		this.addInput( derivativeTime);
-	}
-
-	@Override
-	protected boolean repeatableInputs() {
-		return super.repeatableInputs()
-				&& ! (derivativeTime.getValue() instanceof Distribution);
 	}
 
 	@Override
@@ -58,7 +49,7 @@ public class Differentiator extends DoubleCalculation {
 	}
 
 	@Override
-	protected double calculateValue(double simTime) {
+	protected double calculateValue(double simTime, double inputVal, double lastTime, double lastInputVal, double lastVal) {
 
 		// Calculate the elapsed time
 		double dt = simTime - lastUpdateTime;

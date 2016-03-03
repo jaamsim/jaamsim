@@ -73,7 +73,7 @@ public class FluidCentrifugalPump extends FluidComponent {
 	 */
 	@Override
 	public double calcOutletPressure( double inletPres, double flowAccel ) {
-		double speedFactor = speedControllerInput.getValue().getValue();
+		double speedFactor = speedControllerInput.getValue().getLastValue();
 		speedFactor = Math.max(speedFactor, 0.0);
 		speedFactor = Math.min(speedFactor, 1.0);
 		double flowFactor = this.getFluidFlow().getFlowRate() / maxFlowRateInput.getValue();
