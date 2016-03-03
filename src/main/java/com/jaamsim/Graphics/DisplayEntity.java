@@ -410,6 +410,14 @@ public class DisplayEntity extends Entity {
 		return relativeEntity.getValue();
 	}
 
+	public ArrayList<String> getRelativeEntityOptions() {
+		return relativeEntity.getValidOptions();
+	}
+
+	public ArrayList<String> getRegionOptions() {
+		return regionInput.getValidOptions();
+	}
+
 	/**
 	 * Returns the transformation that converts a point in the entity's
 	 * coordinates to the global coordinate system.

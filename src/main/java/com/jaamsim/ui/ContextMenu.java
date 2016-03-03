@@ -19,10 +19,13 @@ package com.jaamsim.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.DisplayModels.ColladaModel;
@@ -188,7 +191,77 @@ public class ContextMenu {
 		}
 		menu.add( addLabelMenuItem );
 
-		// 3) Centre in View
+		// 3) Set RelativeEntity
+		JMenu setRelativeEntityMenu = new JMenu( "Set RelativeEntity" );
+		ArrayList<String> entNameList = new ArrayList<>();
+		entNameList.add("<None>");
+		entNameList.addAll(ent.getRelativeEntityOptions());
+		String presentEntName = "<None>";
+		if (ent.getRelativeEntity() != null) {
+			presentEntName = ent.getRelativeEntity().getName();
+		}
+		for (final String entName : entNameList) {
+			JRadioButtonMenuItem item = new JRadioButtonMenuItem(entName);
+			if (entName.equals(presentEntName)) {
+				item.setSelected(true);
+			}
+			item.addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					Vec3d pos = ent.getGlobalPosition();
+					if (entName.equals("<None>")) {
+						InputAgent.applyArgs(ent, "RelativeEntity");
+					}
+					else {
+						InputAgent.applyArgs(ent, "RelativeEntity", entName);
+					}
+					ent.setInputForGlobalPosition(pos);
+				}
+			} );
+			setRelativeEntityMenu.add(item);
+		}
+		if (ent instanceof EntityLabel	|| ent.testFlag(Entity.FLAG_GENERATED)) {
+			setRelativeEntityMenu.setEnabled(false);
+		}
+		menu.add( setRelativeEntityMenu );
+
+		// 4) Set Region
+		JMenu setRegionMenu = new JMenu( "Set Region" );
+		ArrayList<String> regionNameList = new ArrayList<>();
+		regionNameList.add("<None>");
+		regionNameList.addAll(ent.getRegionOptions());
+		String presentRegionName = "<None>";
+		if (ent.getCurrentRegion() != null) {
+			presentRegionName = ent.getCurrentRegion().getName();
+		}
+		for (final String regionName : regionNameList) {
+			JRadioButtonMenuItem item = new JRadioButtonMenuItem(regionName);
+			if (regionName.equals(presentRegionName)) {
+				item.setSelected(true);
+			}
+			item.addActionListener( new ActionListener() {
+
+				@Override
+				public void actionPerformed( ActionEvent event ) {
+					Vec3d pos = ent.getGlobalPosition();
+					if (regionName.equals("<None>")) {
+						InputAgent.applyArgs(ent, "Region");
+					}
+					else {
+						InputAgent.applyArgs(ent, "Region", regionName);
+					}
+					ent.setInputForGlobalPosition(pos);
+				}
+			} );
+			setRegionMenu.add(item);
+		}
+		if (ent instanceof EntityLabel	|| ent.testFlag(Entity.FLAG_GENERATED)) {
+			setRegionMenu.setEnabled(false);
+		}
+		menu.add( setRegionMenu );
+
+		// 5) Centre in View
 		JMenuItem centerInViewMenuItem = new JMenuItem( "Center in View" );
 		final View v = RenderManager.inst().getActiveView();
 		centerInViewMenuItem.addActionListener( new ActionListener() {
