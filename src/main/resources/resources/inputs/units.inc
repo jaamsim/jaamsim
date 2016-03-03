@@ -330,13 +330,17 @@ mm2    ConversionFactorToSI { 1.0e-6    }  Description { 'Square Millimeters' }
 " Rate units
 " ======================================================================================================================================================
 
-Define RateUnit  { /s  /h  /d  /w  /y }
+Define RateUnit  { /s  /min  /h  /d  /w  /y  /ms  /us  /ns }
 
 /s     ConversionFactorToSI { 1          }  Description { 'Per Second' }
+/min   ConversionFactorToSI { 1 60       }  Description { 'Per Minute' }
 /h     ConversionFactorToSI { 1 3600     }  Description { 'Per Hour' }
 /d     ConversionFactorToSI { 1 86400    }  Description { 'Per Day' }
 /w     ConversionFactorToSI { 1 604800   }  Description { 'Per Week' }
 /y     ConversionFactorToSI { 1 31536000 }  Description { 'Per Year' }
+/ms    ConversionFactorToSI { 1.0e3      }  Description { 'Per Millisecond' }
+/us    ConversionFactorToSI { 1.0e6      }  Description { 'Per Microsecond' }
+/ns    ConversionFactorToSI { 1.0e9      }  Description { 'Per Nanosecond' }
 
 " ======================================================================================================================================================
 " Displayed Units
