@@ -40,12 +40,14 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -230,8 +232,12 @@ public class EditBox extends FrameBox {
  * Handles inputs that are edited in place.
  *
  */
-public static class StringEditor extends CellEditor implements TableCellEditor {
+public static class StringEditor extends CellEditor {
 	private final JTextField text;
+	private int row;
+	private int col;
+	private JTable table;
+	private String retryString;
 
 	public StringEditor(JTable table) {
 		super(table);
@@ -242,8 +248,17 @@ public static class StringEditor extends CellEditor implements TableCellEditor {
 	public Component getTableCellEditorComponent(JTable table,
 			Object value, boolean isSelected, int row, int column) {
 
+		this.row = row;
+		this.col = column;
+		this.table = table;
+
 		input = (Input<?>)value;
-		text.setText( input.getValueString() );
+		String val = input.getValueString();
+		if (retryString != null) {
+			val = retryString;
+			retryString = null;
+		}
+		text.setText( val );
 		return text;
 	}
 
@@ -251,6 +266,22 @@ public static class StringEditor extends CellEditor implements TableCellEditor {
 	public String getValue() {
 		return text.getText();
 	}
+	@Override
+	public boolean canRetry() {
+		return true;
+	}
+	@Override
+	public int getRow() { return row; }
+	@Override
+	public int getCol() { return col; }
+	@Override
+	public JTable getTable() { return table; }
+
+	@Override
+	public void setRetry(String retryString) {
+		this.retryString = retryString;
+	}
+
 }
 
 /**
@@ -258,7 +289,7 @@ public static class StringEditor extends CellEditor implements TableCellEditor {
  *
  */
 public static class FileEditor extends CellEditor
-implements TableCellEditor, ActionListener {
+implements ActionListener {
 
 	private final JPanel jPanel;
 	private final JTextField text;
@@ -357,7 +388,7 @@ implements TableCellEditor, ActionListener {
  *
  */
 public static class ColorEditor extends CellEditor
-implements TableCellEditor, ActionListener {
+implements ActionListener {
 
 	private final JPanel jPanel;
 	private final JTextField text;
@@ -452,9 +483,15 @@ implements TableCellEditor, ActionListener {
  *
  */
 public static class DropDownMenuEditor extends CellEditor
-implements TableCellEditor, ActionListener {
+implements ActionListener {
 
 	private final JComboBox<String> dropDown;
+
+	private int row;
+	private int col;
+	private JTable table;
+	private String retryString;
+	private boolean retrying;
 
 	public DropDownMenuEditor(JTable table, ArrayList<String> aList) {
 		super(table);
@@ -480,7 +517,7 @@ implements TableCellEditor, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		// If combo box is edited, this method invokes twice
-		if(e.getActionCommand().equals("comboBoxChanged"))
+		if(e.getActionCommand().equals("comboBoxChanged") && !retrying)
 			stopCellEditing();
 	}
 
@@ -488,10 +525,22 @@ implements TableCellEditor, ActionListener {
 	public Component getTableCellEditorComponent(JTable table,
 			Object value, boolean isSelected, int row, int column) {
 
+		this.row = row;
+		this.col = column;
+		this.table = table;
+
 		input = (Input<?>)value;
 		String text = input.getValueString();
 
+		if (retryString != null) {
+			text = retryString;
+			retrying = true;
+		}
+		retryString = null;
+
 		dropDown.setSelectedItem(text);
+		retrying = false;
+
 		return dropDown;
 	}
 
@@ -499,6 +548,23 @@ implements TableCellEditor, ActionListener {
 	public String getValue() {
 		return (String)dropDown.getSelectedItem();
 	}
+
+	@Override
+	public boolean canRetry() {
+		return true;
+	}
+	@Override
+	public int getRow() { return row; }
+	@Override
+	public int getCol() { return col; }
+	@Override
+	public JTable getTable() { return table; }
+
+	@Override
+	public void setRetry(String retryString) {
+		this.retryString = retryString;
+	}
+
 }
 
 /**
@@ -506,7 +572,7 @@ implements TableCellEditor, ActionListener {
  *
  */
 public static class ListEditor extends CellEditor
-implements TableCellEditor, ActionListener {
+implements ActionListener {
 
 	private final JPanel jPanel;
 	private final JTextField text;
@@ -688,7 +754,7 @@ public static class CheckBoxMouseAdapter extends MouseAdapter {
 	}
 }
 
-public static class CellEditor extends AbstractCellEditor {
+public static abstract class CellEditor extends AbstractCellEditor implements TableCellEditor {
 	protected final JTable propTable;
 	protected Input<?> input;
 
@@ -705,6 +771,20 @@ public static class CellEditor extends AbstractCellEditor {
 	public String getValue() {
 		return "";
 	}
+
+	public boolean canRetry() {
+		return false;
+	}
+	// If canRetry() returns true, the following must also be overridden
+	public int getRow() { return 0; }
+	public int getCol() { return 0; }
+	public JTable getTable() { return null; }
+
+	public void setRetry(String retryString) {}
+
+	@Override
+	public abstract Component getTableCellEditorComponent(JTable table, Object value,
+			boolean isSelected, int row, int column);
 }
 
 public static class CellListener implements CellEditorListener {
@@ -718,13 +798,15 @@ public static class CellListener implements CellEditorListener {
 		CellEditor editor = (CellEditor)evt.getSource();
 		Input<?> in = (Input<?>)editor.getCellEditorValue();
 
+		final String newValue = editor.getValue();
+
 		// The value has not changed
-		if ( in.getValueString().equals(editor.getValue()) )
+		if ( in.getValueString().equals(newValue) )
 			return;
 
 		// Adjust the user's entry to standardise the syntax
 		try {
-			String str = editor.getValue().trim();
+			String str = newValue.trim();
 			Class<?> klass = in.getClass();
 
 			// Add single quotes to String inputs
@@ -741,6 +823,30 @@ public static class CellListener implements CellEditorListener {
 			InputAgent.processKeyword(EditBox.getInstance().getCurrentEntity(), kw);
 		}
 		catch (InputErrorException exep) {
+			if (editor.canRetry()) {
+				String errorString = String.format("Input error:\n%s\n Do you want to continue editing, or reset the input?", exep.getMessage());
+				String[] options = { "Edit", "Reset" };
+				int reply = JOptionPane.showOptionDialog(null, errorString, "Input Error", JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+				if (reply == JOptionPane.OK_OPTION) {
+					// Any editor that supports retry should implement the following
+					final int row = editor.getRow();
+					final int col = editor.getCol();
+					final EditTable table = (EditTable)editor.getTable();
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							table.setRetry(newValue, row, col);
+							table.editCellAt(row, col);
+						}
+					});
+
+				} else {
+					FrameBox.valueUpdate();
+				}
+				return;
+			}
+
 			GUIFrame.showErrorDialog("Input Error",
 					"%s\n" + "Value will be cleared.", exep.getMessage());
 
@@ -830,6 +936,10 @@ public static class EditTable extends JTable {
 	private ColorEditor colorEditor;
 	private ListEditor listEditor;
 
+	private String retryString;
+	private int retryRow;
+	private int retryCol;
+
 	@Override
 	public boolean isCellEditable( int row, int column ) {
 		return ( column == VALUE_COLUMN ); // Only Value column is editable
@@ -857,30 +967,32 @@ public static class EditTable extends JTable {
 	public TableCellEditor getCellEditor(int row, int col) {
 		Input<?> in = (Input<?>)this.getValueAt(row, col);
 
+		CellEditor ret;
+
+		ArrayList<String> array = in.getValidOptions();
+
 		// 1) Colour input
 		if(in instanceof ColourInput) {
 			if(colorEditor == null) {
 				colorEditor = new ColorEditor(this);
 			}
-			return colorEditor;
+			ret = colorEditor;
 		}
 
 		// 2) File input
-		if(in instanceof FileInput) {
+		else if(in instanceof FileInput) {
 			FileEditor fileEditor = new FileEditor(this);
 			fileEditor.setFileInput((FileInput)in);
-			return fileEditor;
+			ret = fileEditor;
 		}
 
 		// 3) Normal text
-		ArrayList<String> array = in.getValidOptions();
-		if(array == null) {
-			StringEditor stringEditor = new StringEditor(this);
-			return stringEditor;
+		else if(array == null) {
+			ret = new StringEditor(this);
 		}
 
 		// 4) Multiple selections from a List
-		if(in instanceof ListInput) {
+		else if(in instanceof ListInput) {
 			if(listEditor == null) {
 				listEditor = new ListEditor(this);
 				if(in instanceof StringListInput) {
@@ -889,11 +1001,20 @@ public static class EditTable extends JTable {
 				}
 			}
 			listEditor.setListData(array);
-			return listEditor;
+			ret = listEditor;
 		}
 
 		// 5) Single selection from a drop down box
-		return new DropDownMenuEditor(this, array);
+		else {
+			ret = new DropDownMenuEditor(this, array);
+		}
+
+		// If the user is going to retry a failed edit, update the editor with the old value
+		if (ret.canRetry() && retryString != null && row == retryRow && col == retryCol ) {
+			ret.setRetry(retryString);
+		}
+		retryString = null;
+		return ret;
 	}
 
 	@Override
@@ -921,6 +1042,12 @@ public static class EditTable extends JTable {
 		col3Width = getColumnModel().getColumn(2).getWidth();
 
 		FrameBox.fitTableToLastColumn(this);
+	}
+
+	public void setRetry(String rs, int row, int col) {
+		retryString = rs;
+		retryRow = row;
+		retryCol = col;
 	}
 }
 
