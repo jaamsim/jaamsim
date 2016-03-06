@@ -9,6 +9,7 @@ Define ObjectType {
 					MovingAverage
 					SineWave
 					SquareWave
+					UnitDelay
                     }
 
 Controller              JavaClass { com.jaamsim.CalculationObjects.Controller          } Palette { 'Calculation Objects' } IconFile { '<res>/images/Controller-24.png'     }
@@ -21,6 +22,7 @@ Lag                     JavaClass { com.jaamsim.CalculationObjects.Lag          
 MovingAverage           JavaClass { com.jaamsim.CalculationObjects.MovingAverage       } Palette { 'Calculation Objects' } IconFile { '<res>/images/AVG-24.png'            }
 SineWave                JavaClass { com.jaamsim.CalculationObjects.SineWave            } Palette { 'Calculation Objects' } IconFile { '<res>/images/SineWave-24.png'       }
 SquareWave              JavaClass { com.jaamsim.CalculationObjects.SquareWave          } Palette { 'Calculation Objects' } IconFile { '<res>/images/SquareWave-24.png'     }
+UnitDelay               JavaClass { com.jaamsim.CalculationObjects.UnitDelay           } Palette { 'Calculation Objects' } IconFile { '<res>/images/UnitDelay-24.png'      }
 
 Define	ImageModel {
 			ControllerIconModel
@@ -33,6 +35,7 @@ Define	ImageModel {
 			MovingAverageIconModel
 			SineWaveIconModel
 			SquareWaveIconModel
+			UnitDelayIconModel
 		}
 
 ControllerIconModel      ImageFile { '<res>/images/Controller-256.png' }      Transparent { TRUE }
@@ -45,6 +48,7 @@ LagIconModel             ImageFile { '<res>/images/LAG-256.png' }             Tr
 MovingAverageIconModel   ImageFile { '<res>/images/AVG-256.png' }             Transparent { TRUE }
 SineWaveIconModel        ImageFile { '<res>/images/SineWave-256.png' }        Transparent { TRUE }
 SquareWaveIconModel      ImageFile { '<res>/images/SquareWave-256.png' }      Transparent { TRUE }
+UnitDelayIconModel       ImageFile { '<res>/images/UnitDelay-256.png' }       Transparent { TRUE }
 
 Controller              DefaultDisplayModel 	{ ControllerIconModel }
 WeightedSum             DefaultDisplayModel 	{ WeightedSumIconModel }
@@ -56,6 +60,7 @@ Lag                     DefaultDisplayModel 	{ LagIconModel }
 MovingAverage           DefaultDisplayModel 	{ MovingAverageIconModel }
 SineWave                DefaultDisplayModel 	{ SineWaveIconModel }
 SquareWave              DefaultDisplayModel 	{ SquareWaveIconModel }
+UnitDelay               DefaultDisplayModel 	{ UnitDelayIconModel }
 
 Controller       Description { 'Signals the updating of each component in the specified sequence.' }
 WeightedSum      Description { 'Calculates the weighted sum of the input values.' }
@@ -67,3 +72,4 @@ Lag              Description { 'Calculates the LAG operation for the input value
 MovingAverage    Description { 'Calculates a moving average of the input value over a specified range of time.' }
 SineWave         Description { 'Generates a sinusoidal wave.' }
 SquareWave       Description { 'Generates a square wave.' }
+UnitDelay        Description { 'Delays the input value by one Controller time step.' }
