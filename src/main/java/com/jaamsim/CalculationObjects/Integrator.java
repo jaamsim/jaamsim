@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +20,7 @@ package com.jaamsim.CalculationObjects;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
-import com.jaamsim.ui.FrameBox;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -33,55 +33,43 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class Integrator extends DoubleCalculation {
 
 	@Keyword(description = "The initial value for the integral at time = 0.",
-	         example = "Integrator-1 InitialValue { 5.5 }")
-	private final ValueInput initialValue;
-
-	@Keyword(description = "The time scale for the integration:  integral = InitialValue + 1/IntegralTime * integral(x)\n" +
-			"The input can be a number or an entity that returns a number, such as a CalculationObject, ProbabilityDistribution, or a TimeSeries.",
-	         example = "Integrator-1 IntegralTime { 5 s }")
-	protected final SampleInput integralTime;
-
-	private double lastUpdateTime;  // The time at which the last update was performed
-	private double integral; // The present value for the integral
+	         exampleList = {"5.5 m/s", "[InputValue1].Value"})
+	private final SampleInput initialValue;
 
 	{
-		initialValue = new ValueInput( "InitialValue", "Key Inputs", 0.0d);
+		initialValue = new SampleInput("InitialValue", "Key Inputs", new SampleConstant(0.0));
+		initialValue.setEntity(this);
 		initialValue.setUnitType(UserSpecifiedUnit.class);
-		this.addInput( initialValue);
-
-		integralTime = new SampleInput( "IntegralTime", "Key Inputs", new SampleConstant(TimeUnit.class, 1.0));
-		integralTime.setUnitType(TimeUnit.class);
-		integralTime.setEntity(this);
-		this.addInput( integralTime);
+		this.addInput(initialValue);
 	}
+
+	public Integrator() {}
 
 	@Override
 	protected void setUnitType(Class<? extends Unit> ut) {
 		super.setUnitType(ut);
-		initialValue.setUnitType(ut);
-		FrameBox.reSelectEntity();  // Update the units in the Output Viewer
+
+		outUnitType = Unit.getMultUnitType(ut, TimeUnit.class);
+		if (outUnitType == null)
+			outUnitType = DimensionlessUnit.class;
+		initialValue.setUnitType(outUnitType);
 	}
 
 	@Override
-	public void earlyInit() {
-		super.earlyInit();
-		lastUpdateTime = 0.0;
-		integral = 0.0;
+	public double getInitialValue() {
+		return initialValue.getValue().getNextSample(getSimTime());
 	}
 
 	@Override
 	protected double calculateValue(double simTime, double inputVal, double lastTime, double lastInputVal, double lastVal) {
-		double dt = simTime - lastUpdateTime;
-		double scale = integralTime.getValue().getNextSample(simTime);
-		return ( integral + this.getInputValue(simTime) * dt )/scale  +  initialValue.getValue();
-	}
 
-	@Override
-	public void update(double simTime) {
-		super.update(simTime);
-		double dt = simTime - lastUpdateTime;
-		integral += this.getInputValue(simTime) * dt;
-		lastUpdateTime = simTime;
+		// Calculate the elapsed time
+		double dt = simTime - lastTime;
+		if (dt <= 0.0)
+			return lastVal;
+
+		// Calculate the integral
+		return lastVal + 0.5*(lastInputVal + inputVal)*dt;
 	}
 
 }
