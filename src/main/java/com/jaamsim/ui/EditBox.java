@@ -234,10 +234,6 @@ public class EditBox extends FrameBox {
  */
 public static class StringEditor extends CellEditor {
 	private final JTextField text;
-	private int row;
-	private int col;
-	private JTable table;
-	private String retryString;
 
 	public StringEditor(JTable table) {
 		super(table);
@@ -248,9 +244,7 @@ public static class StringEditor extends CellEditor {
 	public Component getTableCellEditorComponent(JTable table,
 			Object value, boolean isSelected, int row, int column) {
 
-		this.row = row;
-		this.col = column;
-		this.table = table;
+		setTableInfo(table, row, column);
 
 		input = (Input<?>)value;
 		String val = input.getValueString();
@@ -269,17 +263,6 @@ public static class StringEditor extends CellEditor {
 	@Override
 	public boolean canRetry() {
 		return true;
-	}
-	@Override
-	public int getRow() { return row; }
-	@Override
-	public int getCol() { return col; }
-	@Override
-	public JTable getTable() { return table; }
-
-	@Override
-	public void setRetry(String retryString) {
-		this.retryString = retryString;
 	}
 
 }
@@ -363,6 +346,8 @@ implements ActionListener {
 	@Override
 	public Component getTableCellEditorComponent(JTable table,
 			Object value, boolean isSelected, int row, int column) {
+
+		setTableInfo(table, row, column);
 
 		// set the value
 		input = (FileInput)value;
@@ -459,6 +444,8 @@ implements ActionListener {
 	public Component getTableCellEditorComponent(JTable table,
 			Object value, boolean isSelected, int row, int column) {
 
+		setTableInfo(table, row, column);
+
 		// set the value
 		input = (ColourInput)value;
 		text.setText( input.getValueString() );
@@ -487,10 +474,6 @@ implements ActionListener {
 
 	private final JComboBox<String> dropDown;
 
-	private int row;
-	private int col;
-	private JTable table;
-	private String retryString;
 	private boolean retrying;
 
 	public DropDownMenuEditor(JTable table, ArrayList<String> aList) {
@@ -525,9 +508,7 @@ implements ActionListener {
 	public Component getTableCellEditorComponent(JTable table,
 			Object value, boolean isSelected, int row, int column) {
 
-		this.row = row;
-		this.col = column;
-		this.table = table;
+		setTableInfo(table, row, column);
 
 		input = (Input<?>)value;
 		String text = input.getValueString();
@@ -552,17 +533,6 @@ implements ActionListener {
 	@Override
 	public boolean canRetry() {
 		return true;
-	}
-	@Override
-	public int getRow() { return row; }
-	@Override
-	public int getCol() { return col; }
-	@Override
-	public JTable getTable() { return table; }
-
-	@Override
-	public void setRetry(String retryString) {
-		this.retryString = retryString;
 	}
 
 }
@@ -690,6 +660,8 @@ implements ActionListener {
 	public Component getTableCellEditorComponent(JTable table,
 			Object value, boolean isSelected, int row, int column) {
 
+		setTableInfo(table, row, column);
+
 		input = (Input<?>)value;
 		text.setText( input.getValueString() );
 
@@ -758,6 +730,11 @@ public static abstract class CellEditor extends AbstractCellEditor implements Ta
 	protected final JTable propTable;
 	protected Input<?> input;
 
+	private int row;
+	private int col;
+	private JTable table;
+	protected String retryString;
+
 	public CellEditor(JTable table) {
 		propTable = table;
 		this.addCellEditorListener(new CellListener());
@@ -775,16 +752,23 @@ public static abstract class CellEditor extends AbstractCellEditor implements Ta
 	public boolean canRetry() {
 		return false;
 	}
-	// If canRetry() returns true, the following must also be overridden
-	public int getRow() { return 0; }
-	public int getCol() { return 0; }
-	public JTable getTable() { return null; }
 
-	public void setRetry(String retryString) {}
+	final public int getRow() { return row; }
+	final public int getCol() { return col; }
+	final public JTable getTable() { return table; }
+
+	final public void setRetry(String retryString) {
+		this.retryString = retryString;
+	}
 
 	@Override
 	public abstract Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column);
+	protected void setTableInfo(JTable table, int row, int col) {
+		this.table = table;
+		this.row = row;
+		this.col = col;
+	}
 }
 
 public static class CellListener implements CellEditorListener {
