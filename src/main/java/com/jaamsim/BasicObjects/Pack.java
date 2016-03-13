@@ -23,6 +23,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
+import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 
@@ -101,6 +102,10 @@ public class Pack extends LinkedService {
 			container = this.getNextContainer();
 			numberInserted = 0;
 
+			// Set the state for the container and its contents
+			if (!stateAssignment.getValue().isEmpty())
+				container.setPresentState(stateAssignment.getValue());
+
 			// Position the container over the pack object
 			this.moveToProcessPosition(container);
 		}
@@ -120,8 +125,12 @@ public class Pack extends LinkedService {
 			this.setMatchValue(m);
 		}
 
-		// Schedule the insertion of the next entity
+		// Select the next entity to pack and set its state
 		packedEntity = this.getNextEntityForMatch(getMatchValue());
+		if (!stateAssignment.getValue().isEmpty() && packedEntity instanceof StateEntity)
+			((StateEntity)packedEntity).setPresentState(stateAssignment.getValue());
+
+		// Schedule the insertion of the next entity
 		double dt = serviceTime.getValue().getNextSample(getSimTime());
 		this.scheduleProcess(dt, 5, endActionTarget);
 	}
