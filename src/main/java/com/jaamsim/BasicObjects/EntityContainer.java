@@ -25,6 +25,8 @@ import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.states.StateEntity;
+import com.jaamsim.states.StateRecord;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
@@ -80,6 +82,17 @@ public class EntityContainer extends SimEntity {
 
 	public int getCount() {
 		return entityList.size();
+	}
+
+	@Override
+	public void stateChanged(StateRecord prev, StateRecord next) {
+		super.stateChanged(prev, next);
+
+		// Set the states for the entities carried by the EntityContainer to the new state
+		for (DisplayEntity ent : entityList) {
+			if (ent instanceof StateEntity)
+				((StateEntity)ent).setPresentState(next.name);
+		}
 	}
 
 	@Override
