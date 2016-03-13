@@ -49,6 +49,7 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.EventManager;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
 import com.jaamsim.input.KeywordIndex;
@@ -545,6 +546,7 @@ public class RenderManager implements DragSourceListener {
 			}
 			else {
 				// Several entities, let the user pick the interesting entity first
+				Collections.sort(ents, Input.uiSortOrder);
 				for (final DisplayEntity de : ents) {
 					JMenuItem thisItem = new JMenuItem(de.getName());
 					thisItem.addActionListener( new ActionListener() {
