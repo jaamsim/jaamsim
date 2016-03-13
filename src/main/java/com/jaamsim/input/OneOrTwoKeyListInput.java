@@ -284,7 +284,7 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 
 			list.add(each.getName());
 		}
-		Collections.sort(list);
+		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
 

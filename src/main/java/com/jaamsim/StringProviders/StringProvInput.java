@@ -60,7 +60,7 @@ public class StringProvInput extends Input<StringProvider> {
 			if (sp.getUnitType() == unitType)
 				list.add(each.getName());
 		}
-		Collections.sort(list);
+		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
 

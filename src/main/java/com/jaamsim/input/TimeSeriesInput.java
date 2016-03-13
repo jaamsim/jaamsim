@@ -73,7 +73,7 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 			if (tsp.getUnitType() == unitType)
 				list.add(each.getName());
 		}
-		Collections.sort(list);
+		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
 

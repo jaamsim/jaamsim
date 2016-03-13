@@ -102,7 +102,7 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 			if (unitTypeList.contains(samp.getUnitType()))
 				list.add(each.getName());
 		}
-		Collections.sort(list);
+		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
 

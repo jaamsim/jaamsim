@@ -68,7 +68,7 @@ public class SampleInput extends Input<SampleProvider> {
 			if (sp.getUnitType() == unitType)
 				list.add(each.getName());
 		}
-		Collections.sort(list);
+		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
 

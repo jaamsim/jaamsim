@@ -67,7 +67,7 @@ public class EntityInput<T extends Entity> extends Input<T> {
 
 			list.add(each.getName());
 		}
-		Collections.sort(list);
+		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
 

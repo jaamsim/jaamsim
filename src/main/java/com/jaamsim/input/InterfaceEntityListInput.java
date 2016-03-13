@@ -67,7 +67,7 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 
 			list.add(each.getName());
 		}
-		Collections.sort(list);
+		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
 

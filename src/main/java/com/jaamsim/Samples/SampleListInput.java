@@ -120,7 +120,7 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 			if (unitTypeList.contains(samp.getUnitType()))
 				list.add(each.getName());
 		}
-		Collections.sort(list);
+		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
 

@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -38,6 +39,7 @@ import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.ui.NaturalOrderComparator;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
@@ -91,6 +93,8 @@ public abstract class Input<T> {
 	private String[] valueTokens; // value from .cfg file
 	private String defText; // special text to show in the default column of the Input Editor
 	private boolean isReqd;     // indicates whether this input must be provided by the user
+
+	public static final Comparator<Object> uiSortOrder = new NaturalOrderComparator();
 
 	public Input(String key, String cat, T def) {
 		keyword = key;

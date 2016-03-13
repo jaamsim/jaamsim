@@ -213,7 +213,7 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends ListInput
 
 			list.add(each.getName());
 		}
-		Collections.sort(list);
+		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
 

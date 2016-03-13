@@ -71,7 +71,7 @@ public class RelativeEntityInput extends EntityInput<DisplayEntity> {
 
 			list.add(each.getName());
 		}
-		Collections.sort(list);
+		Collections.sort(list, Input.uiSortOrder);
 		return list;
 	}
 
