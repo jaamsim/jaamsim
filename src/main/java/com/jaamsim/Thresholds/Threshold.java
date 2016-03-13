@@ -35,19 +35,19 @@ import com.jaamsim.units.DimensionlessUnit;
 public class Threshold extends StateEntity {
 
 	@Keyword(description = "The colour of the threshold graphic when the threshold is open.",
-	         example = "Threshold1  OpenColour { green }")
+	         exampleList = { "green" })
 	private final ColourInput openColour;
 
 	@Keyword(description = "The colour of the threshold graphic when the threshold is closed.",
-			example = "Threshold1  ClosedColour { red }")
+	         exampleList = { "red" })
 	private final ColourInput closedColour;
 
 	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is open.",
-	         example = "Threshold1 ShowWhenOpen { FALSE }")
+	         exampleList = { "FALSE" })
 	private final BooleanInput showWhenOpen;
 
 	@Keyword(description = "A Boolean value.  If TRUE, the threshold is displayed when it is closed.",
-	         example = "Threshold1 ShowWhenClosed { FALSE }")
+	         exampleList = { "FALSE" })
 	private final BooleanInput showWhenClosed;
 
 	private final ArrayList<ThresholdUser> userList;
@@ -55,13 +55,13 @@ public class Threshold extends StateEntity {
 	private boolean open;
 
 	{
-		openColour = new ColourInput( "OpenColour", "Graphics", ColourInput.GREEN );
-		this.addInput( openColour );
-		this.addSynonym( openColour, "OpenColor" );
+		openColour = new ColourInput("OpenColour", "Graphics", ColourInput.GREEN);
+		this.addInput(openColour);
+		this.addSynonym(openColour, "OpenColor");
 
-		closedColour = new ColourInput( "ClosedColour", "Graphics", ColourInput.RED );
-		this.addInput( closedColour );
-		this.addSynonym( closedColour, "ClosedColor" );
+		closedColour = new ColourInput("ClosedColour", "Graphics", ColourInput.RED);
+		this.addInput(closedColour);
+		this.addSynonym(closedColour, "ClosedColor");
 
 		showWhenOpen = new BooleanInput("ShowWhenOpen", "Graphics", true);
 		this.addInput(showWhenOpen);
