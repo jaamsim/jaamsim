@@ -519,6 +519,10 @@ public class InputAgent {
 	 */
 	public static void renameEntity(Entity ent, String newName) {
 
+		// If the name has not changed, do nothing
+		if (ent.getName().equals(newName))
+			return;
+
 		// Check that the entity was defined AFTER the RecordEdits command
 		if (!ent.testFlag(Entity.FLAG_ADDED))
 			throw new ErrorException("Cannot rename an entity that was defined before the RecordEdits command.");
