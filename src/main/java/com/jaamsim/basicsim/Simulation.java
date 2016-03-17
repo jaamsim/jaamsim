@@ -374,6 +374,10 @@ public class Simulation extends Entity {
 		traceEventsInput.setHidden(true);
 		verifyEventsInput.setHidden(true);
 		printInputReport.setHidden(true);
+
+		// Set the entity corresponding to "this" for keywords that can accept an expression
+		pauseConditionInput.setEntity(Simulation.getInstance());
+		globalSeedInput.setEntity(Simulation.getInstance());
 	}
 
 	public Simulation() {}
