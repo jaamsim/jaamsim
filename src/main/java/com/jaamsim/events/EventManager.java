@@ -61,7 +61,7 @@ public final class EventManager {
 
 	private volatile boolean executeRealTime;  // TRUE if the simulation is to be executed in Real Time mode
 	private volatile boolean rebaseRealTime;   // TRUE if the time keeping for Real Time model needs re-basing
-	private volatile int realTimeFactor;       // target ratio of elapsed simulation time to elapsed wall clock time
+	private volatile double realTimeFactor;    // target ratio of elapsed simulation time to elapsed wall clock time
 
 	private EventTimeListener timelistener;
 	private EventErrorListener errListener;
@@ -651,7 +651,7 @@ public final class EventManager {
 		}
 	}
 
-	public void setExecuteRealTime(boolean useRealTime, int factor) {
+	public void setExecuteRealTime(boolean useRealTime, double factor) {
 		executeRealTime = useRealTime;
 		realTimeFactor = factor;
 		if (useRealTime)

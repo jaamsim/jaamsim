@@ -32,7 +32,6 @@ import com.jaamsim.input.DirInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
@@ -163,11 +162,11 @@ public class Simulation extends Entity {
 
 	@Keyword(description = "The real time speed up factor",
 	         example = "Simulation RealTimeFactor { 1200 }")
-	private static final IntegerInput realTimeFactor;
+	private static final ValueInput realTimeFactor;
 
-	public static final int DEFAULT_REAL_TIME_FACTOR = 1;
-	public static final int MIN_REAL_TIME_FACTOR = 1;
-	public static final int MAX_REAL_TIME_FACTOR= 1000000;
+	public static final double DEFAULT_REAL_TIME_FACTOR = 1;
+	public static final double MIN_REAL_TIME_FACTOR = 1e-6;
+	public static final double MAX_REAL_TIME_FACTOR = 1e6;
 
 	@Keyword(description = "The time at which the simulation will be paused.",
 	         example = "Simulation PauseTime { 200 h }")
@@ -286,7 +285,7 @@ public class Simulation extends Entity {
 		incrementSize.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		incrementSize.setPromptReqd(false);
 
-		realTimeFactor = new IntegerInput("RealTimeFactor", "GUI", DEFAULT_REAL_TIME_FACTOR);
+		realTimeFactor = new ValueInput("RealTimeFactor", "GUI", DEFAULT_REAL_TIME_FACTOR);
 		realTimeFactor.setValidRange(MIN_REAL_TIME_FACTOR, MAX_REAL_TIME_FACTOR);
 		realTimeFactor.setPromptReqd(false);
 

@@ -795,6 +795,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				   Simulation.MIN_REAL_TIME_FACTOR, Simulation.MAX_REAL_TIME_FACTOR, 1);
 		spinner = new JSpinner(numberModel);
 
+		// show up to 6 decimal places
+		JSpinner.NumberEditor numberEditor = new JSpinner.NumberEditor(spinner,"0.######");
+		spinner.setEditor(numberEditor);
+
 		// make sure spinner TextField is no wider than 9 digits
 		int diff =
 			((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().getPreferredSize().width -
@@ -1161,7 +1165,15 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * @param val - the speed up factor to write.
 	 */
 	public void setSpeedUp( double val ) {
-		speedUpDisplay.setText(String.format("%,.0f", val));
+		if (val == 0.0) {
+			speedUpDisplay.setText("-");
+		}
+		else if (val >= 0.99) {
+			speedUpDisplay.setText(String.format("%,.0f", val));
+		}
+		else {
+			speedUpDisplay.setText(String.format("%,.6f", val));
+		}
 	}
 
 	/**
@@ -1365,7 +1377,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	/**
 	 * updates RealTime button and Spinner
 	 */
-	public void updateForRealTime(boolean executeRT, int factorRT) {
+	public void updateForRealTime(boolean executeRT, double factorRT) {
 		currentEvt.setExecuteRealTime(executeRT, factorRT);
 		controlRealTime.setSelected(executeRT);
 		spinner.setValue(factorRT);
@@ -1637,7 +1649,15 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		@Override
 		public void stateChanged( ChangeEvent e ) {
-			String str = String.format("%d", ((JSpinner)e.getSource()).getValue());
+			Double val = (Double)((JSpinner)e.getSource()).getValue();
+
+			String str;
+			if (val.doubleValue() >= 1.0) {
+				str = String.format("%.0f", val);
+			}
+			else {
+				str = String.format("%.6f", val);
+			}
 			InputAgent.applyArgs(Simulation.getInstance(), "RealTimeFactor", str);
 		}
 	}
@@ -1647,18 +1667,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * previous value will be value / 2
 	 */
 	public static class SpinnerModel extends SpinnerNumberModel {
-		private int value;
-		public SpinnerModel( int val, int min, int max, int stepSize) {
+		private double value;
+		public SpinnerModel( double val, double min, double max, double stepSize) {
 			super(val, min, max, stepSize);
 		}
 
 		@Override
 		public Object getPreviousValue() {
-			value = this.getNumber().intValue() / 2;
+			value = this.getNumber().doubleValue() / 2.0;
+			if (value >= 1.0)
+				value = Math.floor(value);
 
 			// Avoid going beyond limit
-			Integer min = (Integer)this.getMinimum();
-			if (min.intValue() > value) {
+			Double min = (Double)this.getMinimum();
+			if (min.doubleValue() > value) {
 				return min;
 			}
 			return value;
@@ -1666,11 +1688,13 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		@Override
 		public Object getNextValue() {
-			value = this.getNumber().intValue() * 2;
+			value = this.getNumber().doubleValue() * 2.0;
+			if (value >= 1.0)
+				value = Math.floor(value);
 
 			// Avoid going beyond limit
-			Integer max = (Integer)this.getMaximum();
-			if (max.intValue() < value) {
+			Double max = (Double)this.getMaximum();
+			if (max.doubleValue() < value) {
 				return max;
 			}
 			return value;
