@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -166,30 +167,47 @@ public class ContextMenu {
 		}
 		menu.add( changeGraphicsMenuItem );
 
-		// 2) Add Label
-		JMenuItem addLabelMenuItem = new JMenuItem( "Add Label" );
-		addLabelMenuItem.addActionListener( new ActionListener() {
+		// 2) Show Label
+		final EntityLabel label = EntityLabel.getLabel(ent);
+		boolean bool = label != null && label.getShow();
+		final JMenuItem showLabelMenuItem = new JCheckBoxMenuItem( "Show Label", bool );
+		showLabelMenuItem.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				EntityLabel label = InputAgent.defineEntityWithUniqueName(EntityLabel.class, ent.getName() + "_Label", "", true);
-				InputAgent.applyArgs(label, "TargetEntity", ent.getName());
+				if (showLabelMenuItem.isSelected()) {
 
-				InputAgent.applyArgs(label, "RelativeEntity", ent.getName());
-				if (ent.getCurrentRegion() != null)
-					InputAgent.applyArgs(label, "Region", ent.getCurrentRegion().getName());
+					// If required, create the EntityLabel object
+					if (label == null) {
+						EntityLabel newLabel = InputAgent.defineEntityWithUniqueName(EntityLabel.class, ent.getName() + "_Label", "", true);
+						InputAgent.applyArgs(newLabel, "TargetEntity", ent.getName());
 
-				double ypos = -0.15 - 0.5*ent.getSize().y;
-				InputAgent.apply(label, InputAgent.formatPointInputs("Position", new Vec3d(0.0, ypos, 0.0), "m"));
-				InputAgent.applyArgs(label, "TextHeight", "0.15", "m");
-				label.resizeForText();
+						InputAgent.applyArgs(newLabel, "RelativeEntity", ent.getName());
+						if (ent.getCurrentRegion() != null)
+							InputAgent.applyArgs(newLabel, "Region", ent.getCurrentRegion().getName());
+
+						double ypos = -0.15 - 0.5*ent.getSize().y;
+						InputAgent.apply(newLabel, InputAgent.formatPointInputs("Position", new Vec3d(0.0, ypos, 0.0), "m"));
+						InputAgent.applyArgs(newLabel, "TextHeight", "0.15", "m");
+						newLabel.resizeForText();
+						return;
+					}
+
+					// Show the label
+					InputAgent.applyArgs(label, "Show", "TRUE");
+				}
+				else {
+
+					// Hide the label if it already exists
+					if (label != null)
+						InputAgent.applyArgs(label, "Show", "FALSE");
+				}
 			}
 		} );
-		if (ent instanceof EntityLabel || EntityLabel.getLabel(ent) != null
-				|| ent.testFlag(Entity.FLAG_GENERATED)) {
-			addLabelMenuItem.setEnabled(false);
+		if (ent instanceof EntityLabel || ent.testFlag(Entity.FLAG_GENERATED)) {
+			showLabelMenuItem.setEnabled(false);
 		}
-		menu.add( addLabelMenuItem );
+		menu.add( showLabelMenuItem );
 
 		// 3) Set RelativeEntity
 		JMenu setRelativeEntityMenu = new JMenu( "Set RelativeEntity" );
