@@ -74,8 +74,8 @@ public class Entity {
 
 	private final ArrayList<Input<?>> inpList = new ArrayList<>();
 
-	private final HashMap<String, AttributeHandle> attributeMap = new HashMap<>();
-	private final HashMap<String, ExpressionHandle> customOutputMap = new HashMap<>();
+	private final HashMap<String, AttributeHandle> attributeMap = new LinkedHashMap<>();
+	private final HashMap<String, ExpressionHandle> customOutputMap = new LinkedHashMap<>();
 
 	private final BooleanInput trace;
 
