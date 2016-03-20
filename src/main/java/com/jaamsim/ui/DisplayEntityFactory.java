@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +30,7 @@ import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.AABB;
+import com.jaamsim.math.Vec2d;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.render.MeshProtoKey;
 import com.jaamsim.render.RenderUtils;
@@ -195,9 +197,12 @@ public class DisplayEntityFactory extends Entity {
 		// Assign the ImageModel to the new DisplayEntity
 		InputAgent.applyArgs(de, "DisplayModel", dm.getName());
 
-		// Set the DisplayEntity's position, size, and alignment
-		InputAgent.applyArgs(de, "Position", "0", "0", "0", "m");
-		InputAgent.applyArgs(de, "Alignment", "0", "0", "0");
-		InputAgent.applyArgs(de, "Size", "1", "1", "0", "m");
+		// Set the x-dimension of the image to maintain its aspect ratio
+		Vec3d size = new Vec3d(1.0, 1.0, 0.0);
+		Vec2d imageDims = RenderManager.inst().getImageDims(f.toURI());
+		if (imageDims != null)
+			size.x = imageDims.x / imageDims.y;
+		KeywordIndex kw = InputAgent.formatPointInputs("Size", size, "m");
+		InputAgent.apply(de, kw);
 	}
 }
