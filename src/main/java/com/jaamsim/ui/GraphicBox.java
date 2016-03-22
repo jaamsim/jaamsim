@@ -93,14 +93,17 @@ public class GraphicBox extends JDialog {
 		};
 		this.addWindowListener( windowListener );
 
+		// Preview Area
 		previewLabel = new JLabel("", JLabel.CENTER);
+		previewLabel.setBorder(new EmptyBorder(10, 10, 20, 10));
 		getContentPane().add(previewLabel, "West");
 
+		// DisplayModel List
 		JScrollPane scrollPane = new JScrollPane(displayModelList);
-		scrollPane.setBorder(new EmptyBorder(5, 0, 44, 10));
+		scrollPane.setBorder(new EmptyBorder(10, 10, 20, 10));
 		getContentPane().add(scrollPane, "East");
 
-		// Update the previewLabel according to the selected DisplayModel
+		// Update the preview area according to the selected DisplayModel
 		displayModelList.addListSelectionListener(   new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -298,6 +301,7 @@ public class GraphicBox extends JDialog {
 				myInstance.close();
 			}
 		} );
+
 		// CheckBoxes
 		JPanel checkBoxPanel = new JPanel(new BorderLayout());
 		useModelSize = new JCheckBox("Use Display Model Size");
