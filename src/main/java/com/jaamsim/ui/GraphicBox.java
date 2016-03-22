@@ -298,15 +298,20 @@ public class GraphicBox extends JDialog {
 				myInstance.close();
 			}
 		} );
+		// CheckBoxes
+		JPanel checkBoxPanel = new JPanel(new BorderLayout());
 		useModelSize = new JCheckBox("Use Display Model Size");
 		useModelSize.setSelected(true);
 		useModelPosition = new JCheckBox("Keep Model Position");
 		useModelPosition.setSelected(false);
+		checkBoxPanel.add(useModelSize, BorderLayout.PAGE_START);
+		checkBoxPanel.add(useModelPosition, BorderLayout.PAGE_END);
+
+		// Button Panel
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout( new FlowLayout(FlowLayout.RIGHT) );
-		buttonPanel.add(useModelSize);
-		buttonPanel.add(useModelPosition);
+		buttonPanel.setLayout( new FlowLayout(FlowLayout.CENTER) );
 		buttonPanel.add(importButton);
+		buttonPanel.add(checkBoxPanel);
 		buttonPanel.add(acceptButton);
 		buttonPanel.add(cancelButton);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
