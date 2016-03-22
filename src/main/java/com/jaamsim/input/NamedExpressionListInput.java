@@ -61,7 +61,7 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 					throw new InputErrorException("Expreesion name is the same as existing output name: %s", name);
 				}
 
-				Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(), subArg.getArg(1));
+				Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(ent), subArg.getArg(1));
 
 				// Test whether the expression can be evaluated
 				ExpValidator.validateExpression(exp, ent, null);

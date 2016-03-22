@@ -43,15 +43,21 @@ public class ExpParser {
 		Class<? extends Unit> unitType;
 	}
 
+	public interface VarResolver {
+		public ExpResult resolve(EvalContext ec, ExpResult[] indices) throws ExpError;
+	}
+
 	public interface ParseContext {
 		public UnitData getUnitByName(String name);
 		public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a, Class<? extends Unit> b);
 		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num, Class<? extends Unit> denom);
+
+		public VarResolver getVarResolver(String[] names, boolean[] hasIndices) throws ExpError;
 	}
 
 	public interface EvalContext {
-		public ExpResult getVariableValue(String[] names, ExpResult[] indices) throws ExpError;
-		public boolean eagerEval();
+		//public ExpResult getVariableValue(String[] names, ExpResult[] indices) throws ExpError;
+		//public boolean eagerEval();
 	}
 
 	private interface ExpressionWalker {
@@ -129,24 +135,30 @@ public class ExpParser {
 	}
 
 	public static class Variable extends ExpNode {
-		private final String[] vals;
+		//private final String[] vals;
 		private final ExpNode[] indexExps;
-		public Variable(ParseContext context, String[] vals, ExpNode[] indexExps, Expression exp, int pos) {
+		private final VarResolver resolver;
+		public Variable(ParseContext context, String[] vals, ExpNode[] indexExps, Expression exp, int pos) throws ExpError {
 			super(context, exp, pos);
-			this.vals = vals;
+			boolean[] hasIndices = new boolean[indexExps.length];
+			for (int i = 0; i < indexExps.length; ++i) {
+				hasIndices[i] = indexExps[i] != null;
+			}
+			this.resolver = context.getVarResolver(vals, hasIndices);
 			this.indexExps = indexExps;
 		}
+
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			if (indexExps == null)
-				return ec.getVariableValue(vals, null);
+				return resolver.resolve(ec, null);
 
 			ExpResult[] indices = new ExpResult[indexExps.length];
 			for (int i = 0; i < indexExps.length; ++i) {
 				if (indexExps[i] != null)
 					indices[i] = indexExps[i].evaluate(ec);
 			}
-			return ec.getVariableValue(vals, indices);
+			return resolver.resolve(ec, indices);
 		}
 		@Override
 		void walk(ExpressionWalker w) throws ExpError {
@@ -225,28 +237,11 @@ public class ExpParser {
 		}
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
-			if (ec.eagerEval())
-				return eagerEval(ec);
-			else
-				return lazyEval(ec);
-		}
-
-		private ExpResult lazyEval(EvalContext ec) throws ExpError {
 			ExpResult condRes = constCondRes != null ? constCondRes : condExp.evaluate(ec);
 			if (condRes.value == 0)
 				return constFalseRes != null ? constFalseRes : falseExp.evaluate(ec);
 			else
 				return constTrueRes != null ? constTrueRes : trueExp.evaluate(ec);
-		}
-
-		private ExpResult eagerEval(EvalContext ec) throws ExpError {
-			ExpResult  condRes =  constCondRes != null ?  constCondRes :  condExp.evaluate(ec);
-			ExpResult  trueRes =  constTrueRes != null ?  constTrueRes :  trueExp.evaluate(ec);
-			ExpResult falseRes = constFalseRes != null ? constFalseRes : falseExp.evaluate(ec);
-			if (condRes.value == 0)
-				return falseRes;
-			else
-				return trueRes;
 		}
 
 		@Override

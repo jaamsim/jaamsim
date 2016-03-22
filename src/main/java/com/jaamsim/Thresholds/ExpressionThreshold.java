@@ -121,7 +121,7 @@ public class ExpressionThreshold extends Threshold {
 		try {
 			// Evaluate the open condition (0 = false, non-zero = true)
 			boolean openCond = ExpEvaluator.evaluateExpression(openCondition.getValue(),
-					simTime, this).value != 0;
+					simTime).value != 0;
 
 			// If the open condition is satisfied or there is no close condition, then we are done
 			if (openCond || closeCondition.getValue() == null)
@@ -129,7 +129,7 @@ public class ExpressionThreshold extends Threshold {
 
 			// If the close condition is satisfied, then the threshold is closed
 			boolean closeCond = ExpEvaluator.evaluateExpression(closeCondition.getValue(),
-					simTime, this).value != 0;
+					simTime).value != 0;
 			if (closeCond)
 				return false;
 

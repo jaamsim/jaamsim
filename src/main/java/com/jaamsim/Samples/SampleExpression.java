@@ -44,7 +44,7 @@ public class SampleExpression implements SampleProvider {
 	public double getNextSample(double simTime) {
 		double ret = 0.0;
 		try {
-			ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime, thisEnt);
+			ExpResult res = ExpEvaluator.evaluateExpression(exp, simTime);
 			if (res.unitType != unitType)
 				thisEnt.error("Invalid unit returned by an expression: '%s'%n"
 						+ "Received: %s, expected: %s",

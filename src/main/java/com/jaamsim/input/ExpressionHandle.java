@@ -46,7 +46,7 @@ public class ExpressionHandle extends OutputHandle {
 
 	private double evaluateExp(double simTime) {
 		try {
-			ExpResult er = ExpEvaluator.evaluateExpression(exp, simTime, ent);
+			ExpResult er = ExpEvaluator.evaluateExpression(exp, simTime);
 			if (er.unitType != unitType) {
 				throw new ErrorException(String.format("Unit Type mismatch in custom output. Entity: %s Expression: '%s' Exected %s, got %s.",
 						ent.getName(), exp.source, unitType.getSimpleName(), er.unitType.getSimpleName()));

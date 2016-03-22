@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
+import com.jaamsim.input.ExpParser.VarResolver;
 import com.jaamsim.units.Unit;
 
 /**
@@ -31,17 +32,10 @@ import com.jaamsim.units.Unit;
  */
 public class ExpEvaluator {
 
-	private static Entity getEntity(String[] names, ExpResult[] indices, double simTime, Entity thisEnt) throws ExpError {
+	private static Entity getEntity(Entity rootEnt, String[] names, ExpResult[] indices, double simTime) throws ExpError {
 
-		Entity ent;
-		if (names[0] == "this")
-			ent = thisEnt;
-		else
-			ent = Entity.getNamedEntity(names[0]);
+		Entity ent = rootEnt;
 
-		if (ent == null) {
-			throw new ExpError(null, 0, "Could not find entity: %s", names[0]);
-		}
 		// Run the output chain up to the second last name
 		for(int i = 1; i < names.length-1; ++i) {
 			String outputName = names[i];
@@ -98,6 +92,12 @@ public class ExpEvaluator {
 
 	private static class EntityParseContext implements ExpParser.ParseContext {
 
+		private final Entity thisEnt;
+
+		public EntityParseContext(Entity thisEnt) {
+			this.thisEnt = thisEnt;
+		}
+
 		@Override
 		public ExpParser.UnitData getUnitByName(String name) {
 			Unit unit = Input.tryParseUnit(name, Unit.class);
@@ -123,24 +123,49 @@ public class ExpEvaluator {
 				Class<? extends Unit> denom) {
 			return Unit.getDivUnitType(num, denom);
 		}
+
+
+		@Override
+		public VarResolver getVarResolver(String[] names, boolean[] hasIndices) throws ExpError {
+
+			if (names.length == 1) {
+				throw new ExpError(null, 0, "You must specify an output or attribute for entity: %s", names[0]);
+			}
+
+			Entity rootEnt;
+			if (names[0] == "this")
+				rootEnt = thisEnt;
+			else {
+				rootEnt = Entity.getNamedEntity(names[0]);
+			}
+
+			if (rootEnt == null) {
+				throw new ExpError(null, 0, "Could not find entity: %s", names[0]);
+			}
+
+			return new EntityResolver(rootEnt, names);
+		}
+
 	}
 
-	private static EntityParseContext EC = new EntityParseContext();
+	private static class EntityResolver implements ExpParser.VarResolver {
 
-	private static class EntityEvalContext implements ExpParser.EvalContext {
+		private final Entity rootEnt;
+		private final String[] names;
 
-		// These are updated in updateContext() which must be called before any expression are evaluated
-		private final double simTime;
-		private final Entity thisEnt;
-
-		public EntityEvalContext(double simTime, Entity thisEnt) {
-			this.simTime = simTime;
-			this.thisEnt = thisEnt;
+		public EntityResolver(Entity rootEnt, String[] names) {
+			this.rootEnt = rootEnt;
+			this.names = names;
 		}
 
 		@Override
-		public ExpResult getVariableValue(String[] names, ExpResult[] indices) throws ExpError {
-			Entity ent = getEntity(names, indices, simTime, thisEnt);
+		public ExpResult resolve(ExpParser.EvalContext ec, ExpResult[] indices) throws ExpError {
+
+			EntityEvalContext eec = (EntityEvalContext)ec;
+
+			double simTime = eec.simTime;
+
+			Entity ent = getEntity(rootEnt, names, indices, simTime);
 
 			String outputName = names[names.length-1];
 			OutputHandle oh = ent.getOutputHandleInterned(outputName);
@@ -179,27 +204,47 @@ public class ExpEvaluator {
 					return new ExpResult(value, oh.unitType);
 				} else {
 					throw new ExpError(null, 0, "Output '%s' has an index and is not an array type output", names[names.length-1]);
-
 				}
-
 			} else {
 				return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
 			}
+
 		}
 
-		@Override
-		public boolean eagerEval() {
-			return false;
+	}
+
+	private static class EntityEvalContext implements ExpParser.EvalContext {
+
+		// These are updated in updateContext() which must be called before any expression are evaluated
+		private final double simTime;
+		//private final Entity thisEnt;
+
+		public EntityEvalContext(double simTime) {
+			this.simTime = simTime;
+			//this.thisEnt = thisEnt;
 		}
 	}
-	public static ExpParser.ParseContext getParseContext() {
-		return EC;
+
+	public static ExpParser.ParseContext getParseContext(Entity thisEnt) {
+		return new EntityParseContext(thisEnt);
 	}
 
 	public static void runAssignment(ExpParser.Assignment assign, double simTime, Entity thisEnt) throws ExpError {
-		Entity assignmentEnt = getEntity(assign.destination, null, simTime, thisEnt);
 
-		ExpResult result = evaluateExpression(assign.value, simTime, thisEnt);
+		Entity rootEnt;
+		if (assign.destination[0] == "this")
+			rootEnt = thisEnt;
+		else {
+			rootEnt = Entity.getNamedEntity(assign.destination[0]);
+		}
+
+		if (rootEnt == null) {
+			throw new ExpError(null, 0, "Could not find entity: %s", assign.destination[0]);
+		}
+
+		Entity assignmentEnt = getEntity(rootEnt, assign.destination, null, simTime);
+
+		ExpResult result = evaluateExpression(assign.value, simTime);
 
 		String attribName = assign.destination[assign.destination.length-1];
 		if (!assignmentEnt.hasAttribute(attribName)) {
@@ -208,9 +253,9 @@ public class ExpEvaluator {
 		assignmentEnt.setAttribute(attribName, result.value, result.unitType);
 	}
 
-	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime, Entity thisEnt) throws ExpError
+	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime) throws ExpError
 	{
-		EntityEvalContext evalContext = new EntityEvalContext(simTime, thisEnt);
+		EntityEvalContext evalContext = new EntityEvalContext(simTime);
 		return exp.evaluate(evalContext);
 	}
 }

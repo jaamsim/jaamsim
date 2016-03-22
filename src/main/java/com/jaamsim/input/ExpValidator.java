@@ -33,9 +33,6 @@ import com.jaamsim.units.Unit;
 public class ExpValidator {
 
 	private static Entity validateEntity(String[] names, Entity thisEnt) throws ExpError {
-		if (names.length == 1) {
-			throw new ExpError(null, 0, "You must specify an output or attribute for entity: %s", names[0]);
-		}
 		Entity ent;
 		if (names[0] == "this")
 			ent = thisEnt;
@@ -120,10 +117,6 @@ public class ExpValidator {
 			throw new ExpError(null, 0, "Validator logic error");
 		}
 
-		@Override
-		public boolean eagerEval() {
-			return true;
-		}
 	}
 
 	public static void validateAssignment(ExpParser.Assignment assign, Entity thisEnt) throws ExpError {
