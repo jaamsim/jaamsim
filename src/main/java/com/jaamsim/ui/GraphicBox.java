@@ -289,6 +289,15 @@ public class GraphicBox extends JDialog {
 				myInstance.close();
 			}
 		} );
+
+		// Cancel button
+		JButton cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed( ActionEvent e ) {
+				myInstance.close();
+			}
+		} );
 		useModelSize = new JCheckBox("Use Display Model Size");
 		useModelSize.setSelected(true);
 		useModelPosition = new JCheckBox("Keep Model Position");
@@ -299,6 +308,7 @@ public class GraphicBox extends JDialog {
 		buttonPanel.add(useModelPosition);
 		buttonPanel.add(importButton);
 		buttonPanel.add(acceptButton);
+		buttonPanel.add(cancelButton);
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		this.pack();
 	}
