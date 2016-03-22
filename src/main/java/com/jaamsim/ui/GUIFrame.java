@@ -433,16 +433,29 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		fileMenu.add( saveConfigurationAsMenuItem );
 
 		// 5) "Import..." menu item
-		JMenuItem importGraphicsMenuItem = new JMenuItem( "Import..." );
+		JMenu importGraphicsMenuItem = new JMenu( "Import..." );
 		importGraphicsMenuItem.setMnemonic( 'I' );
-		importGraphicsMenuItem.addActionListener( new ActionListener() {
+
+		JMenuItem importImages = new JMenuItem( "Images..." );
+		importImages.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed( ActionEvent event ) {
-				DisplayEntityFactory.importGraphics(GUIFrame.this);
-
+				DisplayEntityFactory.importImages(GUIFrame.this);
 			}
 		} );
+		importGraphicsMenuItem.add( importImages );
+
+		JMenuItem import3D = new JMenuItem( "3D Assets..." );
+		import3D.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed( ActionEvent event ) {
+				DisplayEntityFactory.import3D(GUIFrame.this);
+			}
+		} );
+		importGraphicsMenuItem.add( import3D );
+
 		fileMenu.add( importGraphicsMenuItem );
 
 		// 6) "Print Input Report" menu item

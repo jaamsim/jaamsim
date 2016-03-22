@@ -46,11 +46,41 @@ public class DisplayEntityFactory extends Entity {
 	private static File lastDir; // Last directory selected by the file chooser
 
 	/**
+	 * Opens a FileDialog for selecting images to import.
+	 *
+	 * @param gui - the Control Panel.
+	 */
+	public static void importImages(GUIFrame gui) {
+
+		// Create a file chooser
+		final JFileChooser chooser = new JFileChooser(lastDir);
+		chooser.setMultiSelectionEnabled(true);
+
+		// Set the file extension filters
+		chooser.setAcceptAllFileFilterUsed(false);
+		FileNameExtensionFilter[] imgFilters = ImageModel.getFileNameExtensionFilters();
+		for (int i = 0; i < imgFilters.length; i++) {
+			chooser.addChoosableFileFilter(imgFilters[i]);
+		}
+		chooser.setFileFilter(imgFilters[0]);
+
+		// Show the file chooser and wait for selection
+		int returnVal = chooser.showDialog(gui, "Import Images");
+
+		// Create the selected graphics files
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File[] files = chooser.getSelectedFiles();
+            lastDir = chooser.getCurrentDirectory();
+            DisplayEntityFactory.importImageFiles(files);
+        }
+	}
+
+	/**
 	 * Opens a FileDialog for selecting 3D assets to import.
 	 *
 	 * @param gui - the Control Panel.
 	 */
-	public static void importGraphics(GUIFrame gui) {
+	public static void import3D(GUIFrame gui) {
 
 		// Create a file chooser
 		final JFileChooser chooser = new JFileChooser(lastDir);
@@ -59,39 +89,51 @@ public class DisplayEntityFactory extends Entity {
 		// Set the file extension filters
 		chooser.setAcceptAllFileFilterUsed(false);
 		FileNameExtensionFilter[] colFilters = ColladaModel.getFileNameExtensionFilters();
-		FileNameExtensionFilter[] imgFilters = ImageModel.getFileNameExtensionFilters();
 		chooser.addChoosableFileFilter(colFilters[0]);
-		chooser.addChoosableFileFilter(imgFilters[0]);
-		for (int i = 1; i < colFilters.length; i++)
+		for (int i = 1; i < colFilters.length; i++) {
 			chooser.addChoosableFileFilter(colFilters[i]);
-		for (int i = 1; i < imgFilters.length; i++)
-			chooser.addChoosableFileFilter(imgFilters[i]);
-
+		}
 		chooser.setFileFilter(colFilters[0]);
 
 		// Show the file chooser and wait for selection
-		int returnVal = chooser.showDialog(gui, "Import");
+		int returnVal = chooser.showDialog(gui, "Import 3D Assets");
 
 		// Create the selected graphics files
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
             File[] files = chooser.getSelectedFiles();
             lastDir = chooser.getCurrentDirectory();
-            DisplayEntityFactory.setGraphicsFiles(files);
+            DisplayEntityFactory.import3DFiles(files);
         }
 	}
 
 	/**
-	 * Creates a new thread for creating the 3D assets.
+	 * Creates a new thread for creating the imported images.
 	 *
-	 * @param files - the 3D asset and/or image files.
+	 * @param files - the image files to import
 	 */
-	private static void setGraphicsFiles(File[] files) {
+	private static void importImageFiles(File[] files) {
 
 		final File[] chosenfiles = files;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				DisplayEntityFactory.createGraphics(chosenfiles);
+				DisplayEntityFactory.createImages(chosenfiles);
+			}
+		}).start();
+	}
+
+	/**
+	 * Creates a new thread for creating the 3D assets.
+	 *
+	 * @param files - the 3D asset files to import
+	 */
+	private static void import3DFiles(File[] files) {
+
+		final File[] chosenfiles = files;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				DisplayEntityFactory.create3DAssets(chosenfiles);
 			}
 		}).start();
 	}
@@ -99,9 +141,14 @@ public class DisplayEntityFactory extends Entity {
 	/**
 	 * Loops through the specified files and creates a new DisplayEntity for each one.
 	 *
-	 * @param files - the 3D asset and/or image files.
+	 * @param files - the image files
 	 */
-	private static void createGraphics(File[] files) {
+	private static void createImages(File[] files) {
+
+		if (!RenderManager.isGood()) {
+			GUIFrame.invokeErrorDialog("Runtime Error",	"The renderer is not ready.");
+			return;
+		}
 
 		// Loop through the graphics files
 		for (File f : files) {
@@ -110,99 +157,107 @@ public class DisplayEntityFactory extends Entity {
 			String fileName = f.getName();
 			int i = fileName.lastIndexOf('.');
 			if (i <= 0 || i >= fileName.length() - 1) {
-				LogBox.format("File name: %s is invalid.", f.getName());
-				LogBox.getInstance().setVisible(true);
+				GUIFrame.invokeErrorDialog("Input Error",
+						"File name: %s is invalid.", f.getName());
 				continue;
 			}
 			String extension = fileName.substring(i+1).toLowerCase();
+			if (!ImageModel.isValidExtension(extension)) {
+				GUIFrame.invokeErrorDialog("Input Error",
+						"The extension for file: %s is invalid for an image.", fileName);
+				continue;
+			}
 
 			// Set the entity name
 			String entityName = fileName.substring(0, i);
-			entityName = entityName.replaceAll(" ", ""); // Space is not allowed for Entity Name
+			entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
 
-			// Create a 3D asset
-			if (ColladaModel.isValidExtension(extension)) {
-				DisplayEntityFactory.createEntityFromColladaFile(entityName, f);
-				continue;
-			}
+			// Create the ImageModel
+			String modelName = entityName + "-model";
+			ImageModel dm = InputAgent.defineEntityWithUniqueName(ImageModel.class, modelName, "", true);
 
-			// Create an image
-			if (ImageModel.isValidExtension(extension)) {
-				DisplayEntityFactory.createEntityFromImageFile(entityName, f);
-				continue;
-			}
+			// Load the image to the ImageModel
+			InputAgent.applyArgs(dm, "ImageFile", f.getPath());
 
-			// Trap an invalid file extension
-			LogBox.format("The extension for file: %s is invalid for both a 3D asset and a image.", fileName);
-			LogBox.getInstance().setVisible(true);
+			// Create the DisplayEntity
+			DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
+
+			// Assign the ImageModel to the new DisplayEntity
+			InputAgent.applyArgs(de, "DisplayModel", dm.getName());
+
+			// Set the x-dimension of the image to maintain its aspect ratio
+			Vec3d size = new Vec3d(1.0, 1.0, 0.0);
+			Vec2d imageDims = RenderManager.inst().getImageDims(f.toURI());
+			if (imageDims != null)
+				size.x = imageDims.x / imageDims.y;
+			KeywordIndex kw = InputAgent.formatPointInputs("Size", size, "m");
+			InputAgent.apply(de, kw);
 		}
 	}
 
 	/**
-	 * Creates a DisplayEntity with 3D graphics from the specified file.
+	 * Loops through the specified files and creates a new DisplayEntity for each one.
 	 *
-	 * @param entityName - the name for the new entity.
-	 * @param f - the file containing the 3D content.
+	 * @param files - the 3D asset and/or image files.
 	 */
-	private static void createEntityFromColladaFile(String entityName, File f) {
+	private static void create3DAssets(File[] files) {
 
-		// Create the ColladaModel
-		String modelName = entityName + "-model";
-		ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, "", true);
+		if (!RenderManager.isGood()) {
+			GUIFrame.invokeErrorDialog("Runtime Error",	"The renderer is not ready.");
+			return;
+		}
 
-		// Load the 3D content to the ColladaModel
-		InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
+		// Loop through the graphics files
+		for (File f : files) {
 
-		// Create the DisplayEntity
-		DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
+			// Determine the file name and extension
+			String fileName = f.getName();
+			int i = fileName.lastIndexOf('.');
+			if (i <= 0 || i >= fileName.length() - 1) {
+				GUIFrame.invokeErrorDialog("Input Error",
+						"File name: %s is invalid.", f.getName());
+				continue;
+			}
+			String extension = fileName.substring(i+1).toLowerCase();
+			if (!ColladaModel.isValidExtension(extension)) {
+				GUIFrame.invokeErrorDialog("Input Error",
+						"The extension for file: %s is invalid for a 3D asset.", fileName);
+				continue;
+			}
 
-		// Assign the ColladaModel to the new DisplayEntity
-		InputAgent.applyArgs(de, "DisplayModel", dm.getName());
+			// Set the entity name
+			String entityName = fileName.substring(0, i);
+			entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
 
-		// Calculate the DisplayEntity's size and position from the ColladaModel
-		MeshProtoKey meshKey = RenderUtils.FileNameToMeshProtoKey(f.toURI());
-		AABB modelBounds = RenderManager.inst().getMeshBounds(meshKey, true);
-		Vec3d entityPos = modelBounds.center;
-		Vec3d modelSize = new Vec3d(modelBounds.radius);
-		modelSize.scale3(2);
+			// Create the ColladaModel
+			String modelName = entityName + "-model";
+			ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, "", true);
 
-		// Set the DisplayEntity's position, size, and alignment
-		KeywordIndex kw;
-		kw = InputAgent.formatPointInputs("Position", entityPos, "m");
-		InputAgent.apply(de, kw);
-		kw = InputAgent.formatPointInputs("Alignment", new Vec3d(), null);
-		InputAgent.apply(de, kw);
-		kw = InputAgent.formatPointInputs("Size", modelSize, "m");
-		InputAgent.apply(de, kw);
+			// Load the 3D content to the ColladaModel
+			InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
+
+			// Create the DisplayEntity
+			DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
+
+			// Assign the ColladaModel to the new DisplayEntity
+			InputAgent.applyArgs(de, "DisplayModel", dm.getName());
+
+			// Calculate the DisplayEntity's size and position from the ColladaModel
+			MeshProtoKey meshKey = RenderUtils.FileNameToMeshProtoKey(f.toURI());
+			AABB modelBounds = RenderManager.inst().getMeshBounds(meshKey, true);
+			Vec3d entityPos = modelBounds.center;
+			Vec3d modelSize = new Vec3d(modelBounds.radius);
+			modelSize.scale3(2);
+
+			// Set the DisplayEntity's position, size, and alignment
+			KeywordIndex kw;
+			kw = InputAgent.formatPointInputs("Position", entityPos, "m");
+			InputAgent.apply(de, kw);
+			kw = InputAgent.formatPointInputs("Alignment", new Vec3d(), null);
+			InputAgent.apply(de, kw);
+			kw = InputAgent.formatPointInputs("Size", modelSize, "m");
+			InputAgent.apply(de, kw);
+		}
 	}
 
-	/**
-	 * Creates a DisplayEntity with a image from the specified file.
-	 *
-	 * @param entityName - the name for the new entity.
-	 * @param f - the file containing the image.
-	 */
-	private static void createEntityFromImageFile(String entityName, File f) {
-
-		// Create the ImageModel
-		String modelName = entityName + "-model";
-		ImageModel dm = InputAgent.defineEntityWithUniqueName(ImageModel.class, modelName, "", true);
-
-		// Load the image to the ImageModel
-		InputAgent.applyArgs(dm, "ImageFile", f.getPath());
-
-		// Create the DisplayEntity
-		DisplayEntity de = InputAgent.defineEntityWithUniqueName(DisplayEntity.class, entityName, "", true);
-
-		// Assign the ImageModel to the new DisplayEntity
-		InputAgent.applyArgs(de, "DisplayModel", dm.getName());
-
-		// Set the x-dimension of the image to maintain its aspect ratio
-		Vec3d size = new Vec3d(1.0, 1.0, 0.0);
-		Vec2d imageDims = RenderManager.inst().getImageDims(f.toURI());
-		if (imageDims != null)
-			size.x = imageDims.x / imageDims.y;
-		KeywordIndex kw = InputAgent.formatPointInputs("Size", size, "m");
-		InputAgent.apply(de, kw);
-	}
 }
