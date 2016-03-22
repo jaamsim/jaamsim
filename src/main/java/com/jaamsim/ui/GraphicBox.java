@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2011 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 KMA Technologies
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +29,7 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 
 import javax.swing.ImageIcon;
@@ -51,6 +53,7 @@ import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.math.AABB;
 import com.jaamsim.math.Vec2d;
@@ -191,8 +194,8 @@ public class GraphicBox extends JDialog {
 					myInstance.refresh();
 					FrameBox.valueUpdate();
 
-					// Scroll to selection and ensure it is visible
-					int index = displayModelList.getModel().getSize() - 1;
+					// Scroll to the new DisplayModel and ensure it is visible
+					int index = GraphicBox.this.getListIndex(dm);
 					displayModelList.setSelectedIndex(index);
 					displayModelList.ensureIndexIsVisible(index);
 				}
@@ -319,22 +322,33 @@ public class GraphicBox extends JDialog {
 	}
 
 	private void refresh() {
-		DisplayModel entDisplayModel = currentEntity.getDisplayModelList().get(0);
 
+		// Prepare a sorted array of all the DisplayModels
 		ArrayList<DisplayModel> models = Entity.getClonesOf(DisplayModel.class);
-		// Populate JList with all the DisplayModels
+		Collections.sort(models, Input.uiSortOrder);
+
+		// Populate the JList with all the ImageModels and ColladaModels
 		DisplayModel[] displayModels = new DisplayModel[models.size()];
-		int index = 0;
 		int i = 0;
 		for (DisplayModel each : models) {
-			if(entDisplayModel == each) {
-				index = i;
-			}
-			displayModels[i++] = each;
+			if (each instanceof ImageModel || each instanceof ColladaModel)
+				displayModels[i++] = each;
 		}
 		displayModelList.setListData(displayModels);
 		displayModelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		// Select the present DisplayModel
+		int index = this.getListIndex(currentEntity.getDisplayModelList().get(0));
 		displayModelList.setSelectedIndex(index);
 		displayModelList.ensureIndexIsVisible(index);
+	}
+
+	private int getListIndex(DisplayModel dm) {
+		for (int i=0; i<displayModelList.getModel().getSize(); i++) {
+			if (displayModelList.getModel().getElementAt(i) == dm) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }
