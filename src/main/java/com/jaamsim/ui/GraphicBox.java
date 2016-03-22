@@ -135,7 +135,7 @@ public class GraphicBox extends JDialog {
 			}
 		} );
 
-		// Import and Accept buttons
+		// Import button
 		JButton importButton = new JButton("Import");
 		importButton.addActionListener( new ActionListener() {
 			@Override
@@ -150,9 +150,17 @@ public class GraphicBox extends JDialog {
 
 				// Set the file extension filters
 				chooser.setAcceptAllFileFilterUsed(false);
-				for (FileNameExtensionFilter filter : ColladaModel.getFileNameExtensionFilters()) {
-					chooser.addChoosableFileFilter(filter);
+				FileNameExtensionFilter[] colFilters = ColladaModel.getFileNameExtensionFilters();
+				FileNameExtensionFilter[] imgFilters = ImageModel.getFileNameExtensionFilters();
+				chooser.addChoosableFileFilter(colFilters[0]);
+				chooser.addChoosableFileFilter(imgFilters[0]);
+				for (int i = 1; i < colFilters.length; i++) {
+					chooser.addChoosableFileFilter(colFilters[i]);
 				}
+				for (int i = 1; i < imgFilters.length; i++) {
+					chooser.addChoosableFileFilter(imgFilters[i]);
+				}
+				chooser.setFileFilter(colFilters[0]);
 
 				// Show the file chooser and wait for selection
 				int returnVal = chooser.showDialog(null, "Import");
@@ -166,29 +174,32 @@ public class GraphicBox extends JDialog {
 					String fileName = f.getName();
 					int i = fileName.lastIndexOf('.');
 					if (i <= 0 || i >= fileName.length() - 1) {
-						LogBox.format("File name: %s is invalid.", f.getName());
-						LogBox.getInstance().setVisible(true);
+						GUIFrame.invokeErrorDialog("Input Error",
+								"File name: %s is invalid.", f.getName());
 						return;
 					}
 					String extension = fileName.substring(i+1).toLowerCase();
 
 					// Set the entity name
 					String entityName = fileName.substring(0, i);
-					entityName = entityName.replaceAll(" ", ""); // Space is not allowed for Entity Name
-
-					// Check for a valid extension
-					if (!ColladaModel.isValidExtension(extension)) {
-						LogBox.format("File name: %s is invalid.", f.getName());
-						LogBox.getInstance().setVisible(true);
-						return;
-					}
-
-					// Create the ColladaModel
+					entityName = entityName.replaceAll(" ", "_"); // Space is not allowed for Entity Name
 					String modelName = entityName + "-model";
-					ColladaModel dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, "", true);
 
-					// Load the 3D content to the ColladaModel
-					InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
+					// Create the DisplayModel
+					DisplayModel dm = null;
+					if (ColladaModel.isValidExtension(extension)) {
+						dm = InputAgent.defineEntityWithUniqueName(ColladaModel.class, modelName, "", true);
+						InputAgent.applyArgs(dm, "ColladaFile", f.getPath());
+					}
+					else if (ImageModel.isValidExtension(extension)) {
+						dm = InputAgent.defineEntityWithUniqueName(ImageModel.class, modelName, "", true);
+						InputAgent.applyArgs(dm, "ImageFile", f.getPath());
+					}
+					else {
+						GUIFrame.invokeErrorDialog("Input Error",
+								"The extension for file: %s is invalid for both an image and "
+								+ "a 3D asset.", fileName);
+					}
 
 					 // Add the new DisplayModel to the List
 					myInstance.refresh();
@@ -202,6 +213,7 @@ public class GraphicBox extends JDialog {
 			}
 		} );
 
+		// Accept button
 		JButton acceptButton = new JButton("Accept");
 		acceptButton.addActionListener( new ActionListener() {
 			@Override
