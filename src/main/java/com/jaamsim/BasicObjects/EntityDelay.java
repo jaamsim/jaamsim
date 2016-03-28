@@ -64,6 +64,8 @@ public class EntityDelay extends LinkedComponent {
 	private final ArrayList<Double> cumLengthList;  // Total length to the end of each segment
 
 	{
+		stateGraphics.setHidden(false);
+
 		duration = new SampleInput("Duration", "Key Inputs", null);
 		duration.setUnitType(TimeUnit.class);
 		duration.setEntity(this);
