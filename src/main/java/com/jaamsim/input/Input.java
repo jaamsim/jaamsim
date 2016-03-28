@@ -1550,7 +1550,6 @@ public abstract class Input<T> {
 		// 3) Try parsing an expression
 		try {
 			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt), kw.getArg(0));
-			ExpValidator.validateExpression(exp, thisEnt, unitType);
 			return new SampleExpression(exp, thisEnt, unitType);
 		}
 		catch (ExpError e) {

@@ -23,6 +23,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ExpParser.VarResolver;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 /**
@@ -209,6 +210,74 @@ public class ExpEvaluator {
 				return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
 			}
 
+		}
+
+		@Override
+		public ExpValResult validate(boolean[] hasIndices) {
+
+			if (names.length == 2) {
+				String outputName = names[1];
+				OutputHandle oh = rootEnt.getOutputHandleInterned(outputName);
+				if (oh == null) {
+					ExpError error = new ExpError(null, 0, String.format("Could not find output '%s' on entity '%s'",
+							outputName, rootEnt.getName()));
+					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+				}
+				if (!hasIndices[1]) {
+					Class<?> retType = oh.getReturnType();
+					if (    !OutputHandle.isNumericType(retType) &&
+					        retType != boolean.class &&
+					        retType != Boolean.class) {
+						ExpError error = new ExpError(null, 0, "Output: %s does not return a numeric type", names[1]);
+						return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					}
+					return new ExpValResult(ExpValResult.State.VALID, oh.unitType, (ExpError)null);
+				} else {
+					// Indexed final output
+					if (oh.getReturnType() == DoubleVector.class ||
+						oh.getReturnType() == IntegerVector.class) {
+						return new ExpValResult(ExpValResult.State.VALID, oh.unitType, (ExpError)null);
+					}
+					if (oh.getReturnType() == ArrayList.class) {
+						//TODO: find out if we can determine the contained class without an instance or if type erasure prevents that
+						return new ExpValResult(ExpValResult.State.VALID, oh.unitType, (ExpError)null);
+					}
+					ExpError error = new ExpError(null, 0, "Output: %s is not a known array type");
+					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+				}
+			}
+
+			// We have a 'chained' output, so now we must do best effort evaluation
+			// The only failures we can detect from here out are unit errors and using an existing output in an invalid
+			// way. Typos are not detectable because entities may have outputs from descendant classes or attributes
+
+			Class<?> klass = rootEnt.getClass();
+			for (int i = 1; i < names.length; ++i) {
+				Class<? extends Unit> unitType = OutputHandle.getStaticOutputUnitType(klass, names[i]);
+				klass = OutputHandle.getStaticOutputType(klass, names[i]);
+				if (klass == null) {
+					// Undecidable
+					return new ExpValResult(ExpValResult.State.UNDECIDABLE, DimensionlessUnit.class, (ExpError)null);
+				}
+
+				if (i == names.length - 1) {
+					// Last name in the chain, check that the type is numeric
+					if (!OutputHandle.isNumericType(klass)) {
+						ExpError error = new ExpError(null, 0, "Output: '%s' does not return a numeric type", names[i]);
+						return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					}
+					//return new ExpResult(0, unitType);
+					return new ExpValResult(ExpValResult.State.VALID, unitType, (ExpError)null);
+				} else {
+					if (!Entity.class.isAssignableFrom(klass)) {
+						ExpError error = new ExpError(null, 0, "Output: '%s' must output an entity type", names[i]);
+						return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					}
+				}
+			}
+			// We should never get here
+			ExpError error = new ExpError(null, 0, "Validator logic error");
+			return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
 		}
 
 	}

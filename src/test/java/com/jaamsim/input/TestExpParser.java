@@ -23,7 +23,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.UnitData;
+import com.jaamsim.input.ExpParser.VarResolver;
 import com.jaamsim.units.AreaUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -32,6 +34,28 @@ import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
 
 public class TestExpParser {
+
+	private static class DummyResolver implements ExpParser.VarResolver {
+
+		private final String name;
+		public DummyResolver(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
+				throws ExpError {
+			if (name.equals("foo")) return new ExpResult(4, DimensionlessUnit.class);
+			if (name.equals("bar")) return new ExpResult(3, DimensionlessUnit.class);
+			return new ExpResult(1, DimensionlessUnit.class);
+		}
+
+		@Override
+		public ExpValResult validate(boolean[] hasIndices) {
+			return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+		}
+
+	}
 
 	private static class PC implements ExpParser.ParseContext {
 		@Override
@@ -48,10 +72,18 @@ public class TestExpParser {
 				Class<? extends Unit> denom) {
 			return DimensionlessUnit.class;
 		}
+		@Override
+		public VarResolver getVarResolver(String[] names, boolean[] hasIndices)
+				throws ExpError {
+			return new DummyResolver(names[0]);
+		}
 	}
 
 	static PC pc = new PC();
 
+	private static class EC implements ExpParser.EvalContext {
+	}
+	static EC ec = new EC();
 
 	private static void testToken(ExpTokenizer.Token tok, int type, String val) {
 		assertTrue(tok.type == type);
@@ -128,17 +160,6 @@ public class TestExpParser {
 
 	@Test
 	public void testParser() throws ExpError {
-		class EC implements ExpParser.EvalContext {
-			@Override
-			public ExpResult getVariableValue(String[] name, ExpResult[] indices) {
-				if (name[0].equals("foo")) return new ExpResult(4, DimensionlessUnit.class);
-				if (name[0].equals("bar")) return new ExpResult(3, DimensionlessUnit.class);
-				return new ExpResult(1, DimensionlessUnit.class);
-			}
-			@Override
-			public boolean eagerEval() { return true; }
-		}
-		EC ec = new EC();
 
 		ExpParser.Expression exp = ExpParser.parseExpression(pc, "2*5 + 3*5*(3-1)+2");
 		double val = exp.evaluate(ec).value;
@@ -312,79 +333,104 @@ public class TestExpParser {
 
 	}
 
+	private static class TestVariableResolver implements ExpParser.VarResolver {
+
+		private final String[] name;
+		public TestVariableResolver(String[] n) {
+			this.name = n;
+		}
+
+		@Override
+		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
+				throws ExpError {
+			if (name.length > 0 && name[0].equals("ind")) {
+				double ret = 0;
+				for (int i = 0; i < indices.length; ++i) {
+					if (indices[i] != null)
+					ret += i * indices[i].value;
+				}
+				return new ExpResult(ret, DimensionlessUnit.class);
+			}
+
+			if (name.length >= 1 && name[0].equals("this")) return new ExpResult(42, DimensionlessUnit.class);
+
+			if (name.length < 1 || !name[0].equals("foo")) return new ExpResult(0, DimensionlessUnit.class);
+
+			if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return new ExpResult(4, DimensionlessUnit.class);
+			if (name.length >= 2 && name[1].equals("bonk")) return new ExpResult(5, DimensionlessUnit.class);
+
+			return new ExpResult(-1, DimensionlessUnit.class);
+		}
+
+		@Override
+		public ExpValResult validate(boolean[] hasIndices) {
+			return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+		}
+	}
+
+	private static class VariableTestPC extends PC {
+		@Override
+		public VarResolver getVarResolver(String[] names, boolean[] hasIndices)
+				throws ExpError {
+			return new TestVariableResolver(names);
+		}
+
+	}
+
 	@Test
 	public void testVariables() throws ExpError {
-		class EC implements ExpParser.EvalContext {
-			@Override
-			public ExpResult getVariableValue(String[] name, ExpResult[] indices) {
-				if (name.length > 0 && name[0].equals("ind")) {
-					double ret = 0;
-					for (int i = 0; i < indices.length; ++i) {
-						if (indices[i] != null)
-						ret += i * indices[i].value;
-					}
-					return new ExpResult(ret, DimensionlessUnit.class);
-				}
+		VariableTestPC vtpc = new VariableTestPC();
 
-				if (name.length < 1 || !name[0].equals("foo")) return new ExpResult(0, DimensionlessUnit.class);
-
-				if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return new ExpResult(4, DimensionlessUnit.class);
-				if (name.length >= 2 && name[1].equals("bonk")) return new ExpResult(5, DimensionlessUnit.class);
-
-				return new ExpResult(-1, DimensionlessUnit.class);
-			}
-			@Override
-			public boolean eagerEval() { return true; }
-		}
-		EC ec = new EC();
-
-		ExpParser.Expression exp = ExpParser.parseExpression(pc, "[foo].bar.baz");
+		ExpParser.Expression exp = ExpParser.parseExpression(vtpc, "[foo].bar.baz");
 		double val = exp.evaluate(ec).value;
 		assertTrue(val == 4);
 
-		exp = ExpParser.parseExpression(pc, "[foo].bar.baz*4");
+		exp = ExpParser.parseExpression(vtpc, "[foo].bar.baz*4");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 16);
 
-		exp = ExpParser.parseExpression(pc, "[foo].bonk");
+		exp = ExpParser.parseExpression(vtpc, "[foo].bonk");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 5);
 
-		exp = ExpParser.parseExpression(pc, "[bob].is.your.uncle");
+		exp = ExpParser.parseExpression(vtpc, "[bob].is.your.uncle");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 0);
 
-		exp = ExpParser.parseExpression(pc, "[ind].stuff(1+4)");
+		exp = ExpParser.parseExpression(vtpc, "[ind].stuff(1+4)");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 5);
 
-		exp = ExpParser.parseExpression(pc, "[ind].stuff(5).things(42).nothing");
+		exp = ExpParser.parseExpression(vtpc, "[ind].stuff(5).things(42).nothing");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 89);
 
-		exp = ExpParser.parseExpression(pc, "[foo]");
+		exp = ExpParser.parseExpression(vtpc, "[foo]");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == -1);
 
-		class ThisEC implements ExpParser.EvalContext {
-			@Override
-			public ExpResult getVariableValue(String[] name, ExpResult[] indices) {
-				if (name[0].equals("this")) return new ExpResult(42, DimensionlessUnit.class);
-
-				return new ExpResult(-1, DimensionlessUnit.class);
-			}
-			@Override
-			public boolean eagerEval() { return true; }
-		}
-		ThisEC tec = new ThisEC();
-
-		exp = ExpParser.parseExpression(pc, "this.stuff");
-		val = exp.evaluate(tec).value;
+		exp = ExpParser.parseExpression(vtpc, "this.stuff");
+		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 	}
 
 	@Test
 	public void testUnits() throws ExpError {
+		class ErrorResolver implements ExpParser.VarResolver {
+
+			private final ExpError error = new ExpError(null, 0, "Variables not supported in test");
+			@Override
+			public ExpResult resolve(EvalContext ec, ExpResult[] indices)
+					throws ExpError {
+				throw error;
+			}
+
+			@Override
+			public ExpValResult validate(boolean[] hasIndices) {
+				return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+			}
+		}
+
 		class UnitPC implements ExpParser.ParseContext {
 			@Override
 			public UnitData getUnitByName(String name) {
@@ -427,19 +473,14 @@ public class TestExpParser {
 					Class<? extends Unit> denom) {
 				return Unit.getDivUnitType(num, denom);
 			}
+			@Override
+			public VarResolver getVarResolver(String[] names,
+					boolean[] hasIndices) throws ExpError {
+				return new ErrorResolver();
+			}
 
 		}
 		UnitPC upc = new UnitPC();
-
-		class EC implements ExpParser.EvalContext {
-			@Override
-			public ExpResult getVariableValue(String[] name, ExpResult[] indices) throws ExpError {
-				throw new ExpError(null, 0, "Variables not supported in test");
-			}
-			@Override
-			public boolean eagerEval() { return true; }
-		}
-		EC ec = new EC();
 
 		ExpParser.Expression exp = ExpParser.parseExpression(upc, "1[km] + 1[m]");
 		ExpResult res = exp.evaluate(ec);
@@ -498,16 +539,6 @@ public class TestExpParser {
 
 	@Test
 	public void testAssignment() throws ExpError {
-
-		class EC implements ExpParser.EvalContext {
-			@Override
-			public ExpResult getVariableValue(String[] name, ExpResult[] indices) {
-				return new ExpResult(-1, DimensionlessUnit.class);
-			}
-			@Override
-			public boolean eagerEval() { return true; }
-		}
-		EC ec = new EC();
 
 		ExpParser.Assignment assign = ExpParser.parseAssignment(pc, "[foo].bar = 40 + 2");
 

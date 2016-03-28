@@ -63,10 +63,6 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 
 				Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(ent), subArg.getArg(1));
 
-				// Test whether the expression can be evaluated
-				ExpValidator.validateExpression(exp, ent, null);
-
-
 				Class<? extends Unit> unitType = DimensionlessUnit.class;
 				if (subArg.numArgs() == 3) {
 					ObjectType t = Input.parseEntity(subArg.getArg(2), ObjectType.class);

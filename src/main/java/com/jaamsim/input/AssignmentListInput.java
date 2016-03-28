@@ -47,7 +47,6 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 			try {
 				// Parse the assignment expression
 				ExpParser.Assignment ass = ExpParser.parseAssignment(ExpEvaluator.getParseContext(thisEnt), subArg.getArg(0));
-				ExpValidator.validateAssignment(ass, thisEnt);
 
 				// Save the data for this assignment
 				temp.add(ass);
