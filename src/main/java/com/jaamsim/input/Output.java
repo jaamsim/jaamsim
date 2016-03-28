@@ -21,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -29,7 +30,7 @@ public @interface Output {
 
 	public String name();
 	public String description() default "";
-	public Class<? extends Unit> unitType() default Unit.class;
+	public Class<? extends Unit> unitType() default DimensionlessUnit.class;
 	public boolean reportable() default false;
 	public int sequence() default 100;  // determines the sequence in which outputs are listed
 }
