@@ -226,6 +226,9 @@ public class OutputHandle {
 	public boolean isNumericValue() {
 		return isNumericType(this.getReturnType());
 	}
+	public boolean canCache() {
+		return true;
+	}
 
 	public static boolean isNumericType(Class<?> rtype) {
 

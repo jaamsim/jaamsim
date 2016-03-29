@@ -87,5 +87,10 @@ public class ExpressionHandle extends OutputHandle {
 	public int getSequence() {
 		return Integer.MAX_VALUE;
 	}
+	@Override
+	public boolean canCache() {
+		return false;
+	}
+
 }
 

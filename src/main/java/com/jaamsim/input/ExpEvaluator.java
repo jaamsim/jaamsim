@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
+import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.VarResolver;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -144,9 +145,39 @@ public class ExpEvaluator {
 				throw new ExpError(null, 0, "Could not find entity: %s", names[0]);
 			}
 
+			// Special case, if this is a simple output and we can cache the output handle, use an optimized resolver
+			if (names.length == 2) {
+				OutputHandle oh = rootEnt.getOutputHandleInterned(names[1]);
+				if (oh.canCache() && !hasIndices[1]) {
+					return new CachedResolver(oh);
+				}
+			}
+
 			return new EntityResolver(rootEnt, names);
 		}
 
+	}
+
+	private static class CachedResolver implements ExpParser.VarResolver {
+
+		private final OutputHandle handle;
+
+		public CachedResolver(OutputHandle oh) {
+			handle = oh;
+		}
+
+		@Override
+		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
+				throws ExpError {
+			EntityEvalContext eec = (EntityEvalContext)ec;
+			double val = handle.getValueAsDouble(eec.simTime, 0);
+			return new ExpResult(val, handle.getUnitType());
+		}
+
+		@Override
+		public ExpValResult validate(boolean[] hasIndices) {
+			return new ExpValResult(ExpValResult.State.VALID, handle.getUnitType(), (ExpError)null);
+		}
 	}
 
 	private static class EntityResolver implements ExpParser.VarResolver {

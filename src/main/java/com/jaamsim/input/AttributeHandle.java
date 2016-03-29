@@ -19,7 +19,7 @@ package com.jaamsim.input;
 import com.jaamsim.basicsim.Entity;
 
 public class AttributeHandle extends OutputHandle {
-	private String attributeName;
+	private final String attributeName;
 	private double initialValue;
 	private double value;
 
@@ -79,4 +79,9 @@ public class AttributeHandle extends OutputHandle {
 	public int getSequence() {
 		return Integer.MAX_VALUE;
 	}
+	@Override
+	public boolean canCache() {
+		return false;
+	}
+
 }
