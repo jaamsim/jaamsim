@@ -127,6 +127,11 @@ public class ExpParser {
 			this.exp = exp;
 		}
 		abstract void walk(ExpressionWalker w) throws ExpError;
+		// Get a version of this node that skips runtime checks if safe to do so,
+		// otherwise return null
+		public ExpNode getNoCheckVer() {
+			return null;
+		}
 	}
 
 	private static class Constant extends ExpNode {
@@ -194,7 +199,8 @@ public class ExpParser {
 
 	private static class UnaryOp extends ExpNode {
 		public ExpNode subExp;
-		private final UnOpFunc func;
+		protected final UnOpFunc func;
+		public boolean canSkipRuntimeChecks = false;
 		UnaryOp(ParseContext context, ExpNode subExp, UnOpFunc func, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.subExp = subExp;
@@ -210,7 +216,11 @@ public class ExpParser {
 
 		@Override
 		public ExpValResult validate() {
-			return func.validate(context, subExp.validate());
+			ExpValResult res = func.validate(context, subExp.validate());
+			if (res.state == ExpValResult.State.VALID)
+				canSkipRuntimeChecks = true;
+
+			return res;
 		}
 
 		@Override
@@ -221,6 +231,27 @@ public class ExpParser {
 
 			w.visit(this);
 		}
+
+		@Override
+		public ExpNode getNoCheckVer() {
+			if (canSkipRuntimeChecks)
+				return new UnaryOpNoChecks(this);
+			else
+				return null;
+		}
+	}
+
+	private static class UnaryOpNoChecks extends UnaryOp {
+		UnaryOpNoChecks(UnaryOp uo) {
+			super(uo.context, uo.subExp, uo.func, uo.exp, uo.tokenPos);
+		}
+
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			ExpResult subExpVal = subExp.evaluate(ec);
+			return func.apply(context, subExpVal);
+		}
+
 	}
 
 	// Utility function, take the const option if it's not null, otherwise evaluate the expression node
@@ -241,8 +272,9 @@ public class ExpParser {
 		public ExpNode rSubExp;
 		public ExpResult lConstVal;
 		public ExpResult rConstVal;
+		public boolean canSkipRuntimeChecks = false;
 
-		private final BinOpFunc func;
+		protected final BinOpFunc func;
 		BinaryOp(ParseContext context, ExpNode lSubExp, ExpNode rSubExp, BinOpFunc func, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.lSubExp = lSubExp;
@@ -263,7 +295,11 @@ public class ExpParser {
 			ExpValResult lRes = validateOrConst(lConstVal, lSubExp);
 			ExpValResult rRes = validateOrConst(rConstVal, rSubExp);
 
-			return func.validate(context, lRes, rRes, exp.source, tokenPos);
+			ExpValResult res = func.validate(context, lRes, rRes, exp.source, tokenPos);
+			if (res.state == ExpValResult.State.VALID)
+				canSkipRuntimeChecks = true;
+
+			return res;
 		}
 
 		@Override
@@ -276,7 +312,31 @@ public class ExpParser {
 
 			w.visit(this);
 		}
+		@Override
+		public ExpNode getNoCheckVer() {
+			if (canSkipRuntimeChecks)
+				return new BinaryOpNoChecks(this);
+			else
+				return null;
+		}
 	}
+
+	private static class BinaryOpNoChecks extends BinaryOp {
+		BinaryOpNoChecks(BinaryOp bo) {
+			super(bo.context, bo.lSubExp, bo.rSubExp, bo.func, bo.exp, bo.tokenPos);
+			this.lConstVal = bo.lConstVal;
+			this.rConstVal = bo.rConstVal;
+		}
+
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			ExpResult lRes = evalOrConst(ec, lConstVal, lSubExp);
+			ExpResult rRes = evalOrConst(ec, rConstVal, rSubExp);
+			return func.apply(context, lRes, rRes, exp.source, tokenPos);
+		}
+
+	}
+
 
 	public static class Conditional extends ExpNode {
 		private ExpNode condExp;
@@ -352,9 +412,10 @@ public class ExpParser {
 	}
 
 	public static class FuncCall extends ExpNode {
-		private final ArrayList<ExpNode> args;
-		private final ArrayList<ExpResult> constResults;
-		private final CallableFunc function;
+		protected final ArrayList<ExpNode> args;
+		protected ArrayList<ExpResult> constResults;
+		protected final CallableFunc function;
+		private boolean canSkipRuntimeChecks = false;
 		public FuncCall(ParseContext context, CallableFunc function, ArrayList<ExpNode> args, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.function = function;
@@ -383,7 +444,10 @@ public class ExpParser {
 				argVals[i] = validateOrConst(constArg, args.get(i));
 			}
 
-			return function.validate(context, argVals, exp.source, tokenPos);
+			ExpValResult res = function.validate(context, argVals, exp.source, tokenPos);
+			if (res.state == ExpValResult.State.VALID)
+				canSkipRuntimeChecks = true;
+			return res;
 		}
 		@Override
 		void walk(ExpressionWalker w) throws ExpError {
@@ -397,6 +461,32 @@ public class ExpParser {
 
 			w.visit(this);
 		}
+		@Override
+		public ExpNode getNoCheckVer() {
+			if (canSkipRuntimeChecks)
+				return new FuncCallNoChecks(this);
+			else
+				return null;
+		}
+	}
+
+	private static class FuncCallNoChecks extends FuncCall {
+		FuncCallNoChecks(FuncCall fc) {
+			super(fc.context, fc.function, fc.args, fc.exp, fc.tokenPos);
+
+			this.constResults = fc.constResults;
+		}
+
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			ExpResult[] argVals = new ExpResult[args.size()];
+			for (int i = 0; i < args.size(); ++i) {
+				ExpResult constArg = constResults.get(i);
+				argVals[i] = constArg != null ? constArg : args.get(i).evaluate(ec);
+			}
+			return function.call(context, argVals, exp.source, tokenPos);
+		}
+
 	}
 
 	public static class Assignment {
@@ -1559,6 +1649,24 @@ public class ExpParser {
 
 	private static ConstOptimizer CONST_OP = new ConstOptimizer();
 
+	private static class RuntimeCheckOptimizer implements ExpressionWalker {
+
+		@Override
+		public void visit(ExpNode exp) throws ExpError {
+			// N/A
+		}
+
+		@Override
+		public ExpNode updateRef(ExpNode exp) throws ExpError {
+			ExpNode noCheckVer = exp.getNoCheckVer();
+			if (noCheckVer != null)
+				return noCheckVer;
+			else
+				return exp;
+		}
+	}
+	private static RuntimeCheckOptimizer RTC_OP = new RuntimeCheckOptimizer();
+
 	/**
 	 * The main entry point to the expression parsing system, will either return a valid
 	 * expression that can be evaluated, or throw an error.
@@ -1592,6 +1700,12 @@ public class ExpParser {
 			// We received at least one error while validating.
 			throw valRes.errors.get(0);
 		}
+
+		// Now that validation is complete, we can run the optimizer that removes runtime checks on validated nodes
+		expNode.walk(RTC_OP);
+		expNode = RTC_OP.updateRef(expNode); // Give the top level node a chance to optimize
+		ret.setRootNode(expNode);
+
 		return ret;
 	}
 
