@@ -50,6 +50,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
+import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.controllers.RenderManager;
@@ -362,7 +363,8 @@ public class GraphicBox extends JDialog {
 		DisplayModel[] displayModels = new DisplayModel[models.size()];
 		int i = 0;
 		for (DisplayModel each : models) {
-			if (each instanceof ImageModel || each instanceof ColladaModel)
+			if (each instanceof ImageModel || each instanceof ColladaModel
+					|| each instanceof ShapeModel)
 				displayModels[i++] = each;
 		}
 		displayModelList.setListData(displayModels);
