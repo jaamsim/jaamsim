@@ -254,24 +254,9 @@ public class ExpParser {
 
 	}
 
-	// Utility function, take the const option if it's not null, otherwise evaluate the expression node
-	private static ExpResult evalOrConst(EvalContext ec, ExpResult constOption, ExpNode evalOption) throws ExpError {
-		if (constOption != null)
-			return constOption;
-		return evalOption.evaluate(ec);
-	}
-
-	private static ExpValResult validateOrConst(ExpResult constOption, ExpNode evalOption) {
-		if (constOption != null)
-			return new ExpValResult(ExpValResult.State.VALID, constOption.unitType, (ExpError)null);
-		return evalOption.validate();
-	}
-
 	private static class BinaryOp extends ExpNode {
 		public ExpNode lSubExp;
 		public ExpNode rSubExp;
-		public ExpResult lConstVal;
-		public ExpResult rConstVal;
 		public boolean canSkipRuntimeChecks = false;
 
 		protected final BinOpFunc func;
@@ -284,16 +269,16 @@ public class ExpParser {
 
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
-			ExpResult lRes = evalOrConst(ec, lConstVal, lSubExp);
-			ExpResult rRes = evalOrConst(ec, rConstVal, rSubExp);
+			ExpResult lRes = lSubExp.evaluate(ec);
+			ExpResult rRes = rSubExp.evaluate(ec);
 			func.checkUnits(context, lRes, rRes, exp.source, tokenPos);
 			return func.apply(context, lRes, rRes, exp.source, tokenPos);
 		}
 
 		@Override
 		public ExpValResult validate() {
-			ExpValResult lRes = validateOrConst(lConstVal, lSubExp);
-			ExpValResult rRes = validateOrConst(rConstVal, rSubExp);
+			ExpValResult lRes = lSubExp.validate();
+			ExpValResult rRes = rSubExp.validate();
 
 			ExpValResult res = func.validate(context, lRes, rRes, exp.source, tokenPos);
 			if (res.state == ExpValResult.State.VALID)
@@ -324,14 +309,12 @@ public class ExpParser {
 	private static class BinaryOpNoChecks extends BinaryOp {
 		BinaryOpNoChecks(BinaryOp bo) {
 			super(bo.context, bo.lSubExp, bo.rSubExp, bo.func, bo.exp, bo.tokenPos);
-			this.lConstVal = bo.lConstVal;
-			this.rConstVal = bo.rConstVal;
 		}
 
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
-			ExpResult lRes = evalOrConst(ec, lConstVal, lSubExp);
-			ExpResult rRes = evalOrConst(ec, rConstVal, rSubExp);
+			ExpResult lRes = lSubExp.evaluate(ec);
+			ExpResult rRes = rSubExp.evaluate(ec);
 			return func.apply(context, lRes, rRes, exp.source, tokenPos);
 		}
 
@@ -342,9 +325,6 @@ public class ExpParser {
 		private ExpNode condExp;
 		private ExpNode trueExp;
 		private ExpNode falseExp;
-		private ExpResult constCondRes;
-		private ExpResult constTrueRes;
-		private ExpResult constFalseRes;
 		public Conditional(ParseContext context, ExpNode c, ExpNode t, ExpNode f, Expression exp, int pos) {
 			super(context, exp, pos);
 			condExp = c;
@@ -353,18 +333,18 @@ public class ExpParser {
 		}
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
-			ExpResult condRes = evalOrConst(ec, constCondRes, condExp); //constCondRes != null ? constCondRes : condExp.evaluate(ec);
+			ExpResult condRes = condExp.evaluate(ec); //constCondRes != null ? constCondRes : condExp.evaluate(ec);
 			if (condRes.value == 0)
-				return evalOrConst(ec, constFalseRes, falseExp);
+				return falseExp.evaluate(ec);
 			else
-				return evalOrConst(ec, constTrueRes, trueExp);
+				return trueExp.evaluate(ec);
 		}
 
 		@Override
 		public ExpValResult validate() {
-			ExpValResult condRes = validateOrConst( constCondRes, condExp);
-			ExpValResult trueRes = validateOrConst(constTrueRes, trueExp);
-			ExpValResult falseRes = validateOrConst(constFalseRes, falseExp);
+			ExpValResult condRes = condExp.validate();
+			ExpValResult trueRes = trueExp.validate();
+			ExpValResult falseRes = falseExp.validate();
 
 			ExpValResult.State state;
 			if (	condRes.state  == ExpValResult.State.ERROR ||
@@ -413,25 +393,19 @@ public class ExpParser {
 
 	public static class FuncCall extends ExpNode {
 		protected final ArrayList<ExpNode> args;
-		protected ArrayList<ExpResult> constResults;
 		protected final CallableFunc function;
 		private boolean canSkipRuntimeChecks = false;
 		public FuncCall(ParseContext context, CallableFunc function, ArrayList<ExpNode> args, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.function = function;
 			this.args = args;
-			constResults = new ArrayList<>(args.size());
-			for (int i = 0; i < args.size(); ++i) {
-				constResults.add(null);
-			}
 		}
 
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			ExpResult[] argVals = new ExpResult[args.size()];
 			for (int i = 0; i < args.size(); ++i) {
-				ExpResult constArg = constResults.get(i);
-				argVals[i] = constArg != null ? constArg : args.get(i).evaluate(ec);
+				argVals[i] = args.get(i).evaluate(ec);
 			}
 			function.checkUnits(context, argVals, exp.source, tokenPos);
 			return function.call(context, argVals, exp.source, tokenPos);
@@ -440,8 +414,7 @@ public class ExpParser {
 		public ExpValResult validate() {
 			ExpValResult[] argVals = new ExpValResult[args.size()];
 			for (int i = 0; i < args.size(); ++i) {
-				ExpResult constArg = constResults.get(i);
-				argVals[i] = validateOrConst(constArg, args.get(i));
+				argVals[i] = args.get(i).validate();
 			}
 
 			ExpValResult res = function.validate(context, argVals, exp.source, tokenPos);
@@ -473,16 +446,13 @@ public class ExpParser {
 	private static class FuncCallNoChecks extends FuncCall {
 		FuncCallNoChecks(FuncCall fc) {
 			super(fc.context, fc.function, fc.args, fc.exp, fc.tokenPos);
-
-			this.constResults = fc.constResults;
 		}
 
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			ExpResult[] argVals = new ExpResult[args.size()];
 			for (int i = 0; i < args.size(); ++i) {
-				ExpResult constArg = constResults.get(i);
-				argVals[i] = constArg != null ? constArg : args.get(i).evaluate(ec);
+				argVals[i] = args.get(i).evaluate(ec);
 			}
 			return function.call(context, argVals, exp.source, tokenPos);
 		}
@@ -1586,40 +1556,7 @@ public class ExpParser {
 
 		@Override
 		public void visit(ExpNode exp) throws ExpError {
-			// Note: Below we are passing 'null' as an EvalContext, this is not typically
-			// acceptable, but is 'safe enough' when we know the expression is a constant
-
-			if (exp instanceof BinaryOp) {
-				BinaryOp bo = (BinaryOp)exp;
-				if (bo.lSubExp instanceof Constant) {
-					// Just the left is a constant, store it in the binop
-					bo.lConstVal = bo.lSubExp.evaluate(null);
-				}
-				if (bo.rSubExp instanceof Constant) {
-					// Just the right is a constant, store it in the binop
-					bo.rConstVal = bo.rSubExp.evaluate(null);
-				}
-			}
-			if (exp instanceof Conditional) {
-				Conditional cond = (Conditional)exp;
-				if (cond.condExp instanceof Constant) {
-					cond.constCondRes = cond.condExp.evaluate(null);
-				}
-				if (cond.trueExp instanceof Constant) {
-					cond.constTrueRes = cond.trueExp.evaluate(null);
-				}
-				if (cond.falseExp instanceof Constant) {
-					cond.constFalseRes = cond.falseExp.evaluate(null);
-				}
-			}
-			if (exp instanceof FuncCall) {
-				FuncCall fc = (FuncCall)exp;
-				for (int i = 0; i < fc.args.size(); ++i) {
-					if (fc.args.get(i) instanceof Constant) {
-						fc.constResults.set(i, fc.args.get(i).evaluate(null));
-					}
-				}
-			}
+			// N/A
 		}
 
 		/**
@@ -1627,6 +1564,8 @@ public class ExpParser {
 		 */
 		@Override
 		public ExpNode updateRef(ExpNode origNode) throws ExpError {
+			// Note: Below we are passing 'null' as an EvalContext, this is not typically
+			// acceptable, but is 'safe enough' when we know the expression is a constant
 			if (origNode instanceof UnaryOp) {
 				UnaryOp uo = (UnaryOp)origNode;
 				if (uo.subExp instanceof Constant) {
