@@ -1619,6 +1619,28 @@ public class ExpParser {
 	}
 	private static RuntimeCheckOptimizer RTC_OP = new RuntimeCheckOptimizer();
 
+	private static ExpNode optimizeAndValidateExpression(String input, ExpNode expNode) throws ExpError {
+		expNode.walk(CONST_OP);
+		expNode = CONST_OP.updateRef(expNode); // Finally, give the entire expression a chance to optimize itself into a constant
+
+		// Run the validation
+		ExpValResult valRes = expNode.validate();
+		if (valRes.state == ExpValResult.State.ERROR) {
+			if (valRes.errors.size() == 0) {
+				throw new ExpError(input, 0, "An unknown expression error occurred. This is probably a bug. Please inform the developers.");
+			}
+
+			// We received at least one error while validating.
+			throw valRes.errors.get(0);
+		}
+
+		// Now that validation is complete, we can run the optimizer that removes runtime checks on validated nodes
+		expNode.walk(RTC_OP);
+		expNode = RTC_OP.updateRef(expNode); // Give the top level node a chance to optimize
+
+		return expNode;
+	}
+
 	/**
 	 * The main entry point to the expression parsing system, will either return a valid
 	 * expression that can be evaluated, or throw an error.
@@ -1638,24 +1660,8 @@ public class ExpParser {
 			throw new ExpError(input, peeked.pos, "Unexpected additional values");
 		}
 
-		expNode.walk(CONST_OP);
-		expNode = CONST_OP.updateRef(expNode); // Finally, give the entire expression a chance to optimize itself into a constant
-		ret.setRootNode(expNode);
+		expNode = optimizeAndValidateExpression(input, expNode);
 
-		// Run the validation
-		ExpValResult valRes = expNode.validate();
-		if (valRes.state == ExpValResult.State.ERROR) {
-			if (valRes.errors.size() == 0) {
-				throw new ExpError(input, 0, "An unknown expression error occurred. This is probably a bug. Please inform the developers.");
-			}
-
-			// We received at least one error while validating.
-			throw valRes.errors.get(0);
-		}
-
-		// Now that validation is complete, we can run the optimizer that removes runtime checks on validated nodes
-		expNode.walk(RTC_OP);
-		expNode = RTC_OP.updateRef(expNode); // Give the top level node a chance to optimize
 		ret.setRootNode(expNode);
 
 		return ret;
@@ -1736,8 +1742,7 @@ public class ExpParser {
 
 		ExpNode expNode = parseExp(context, tokens, 0, ret.value);
 
-		expNode.walk(CONST_OP);
-		expNode = CONST_OP.updateRef(expNode); // Finally, give the entire expression a chance to optimize itself into a constant
+		expNode = optimizeAndValidateExpression(input, expNode);
 
 		ret.value.setRootNode(expNode);
 
