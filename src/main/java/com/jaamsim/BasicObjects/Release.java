@@ -23,6 +23,7 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleListInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.input.EntityListInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -45,9 +46,15 @@ public class Release extends LinkedComponent {
 		def.add(new SampleConstant(1));
 		numberOfUnitsList = new SampleListInput("NumberOfUnits", "Key Inputs", def);
 		numberOfUnitsList.setEntity(this);
-		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
+		numberOfUnitsList.setValidRange(1, Double.POSITIVE_INFINITY);
 		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
 		this.addInput( numberOfUnitsList);
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+		Input.validateInputSize(resourceList, numberOfUnitsList);
 	}
 
 	@Override
