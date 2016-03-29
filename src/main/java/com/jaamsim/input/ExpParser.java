@@ -1582,6 +1582,19 @@ public class ExpParser {
 					return new Constant(bo.context, val, origNode.exp, bo.tokenPos);
 				}
 			}
+			if (origNode instanceof FuncCall) {
+				FuncCall fc = (FuncCall)origNode;
+				boolean constArgs = true;
+				for (int i = 0; i < fc.args.size(); ++i) {
+					if (!(fc.args.get(i) instanceof Constant)) {
+						constArgs = false;
+					}
+				}
+				if (constArgs) {
+					ExpResult val = fc.evaluate(null);
+					return new Constant(fc.context, val, origNode.exp, fc.tokenPos);
+				}
+			}
 			return origNode;
 		}
 	}
