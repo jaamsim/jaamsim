@@ -201,6 +201,10 @@ public class EntityConveyor extends LinkedService {
 			// Calculate the distance travelled by this entity
 			double dist = (simTime - startTimeList.get(i)) / travelTimeInput.getValue() * totalLength;
 
+			// 0/0 NaNs have been spotted here, just zero them
+			if (Double.isNaN(dist))
+				dist = 0.0;
+
 			// Set the position for the entity
 			Vec3d localPos = this.getPositionForDistance(dist);
 			each.setGlobalPosition(this.getGlobalPosition(localPos));
