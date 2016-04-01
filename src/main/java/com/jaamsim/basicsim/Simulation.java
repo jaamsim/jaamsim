@@ -469,30 +469,13 @@ public class Simulation extends Entity {
 	}
 
 	public static void clear() {
-		initializationTime.reset();
-		runDuration.reset();
-		pauseTime.reset();
-		tickLengthInput.reset();
-		traceEventsInput.reset();
-		verifyEventsInput.reset();
-		printInputReport.reset();
-		realTimeFactor.reset();
-		realTime.reset();
+
+		// Reset all Simulation inputs to their default values
+		for (Input<?> inp : Simulation.getInstance().getEditableInputs()) {
+			inp.reset();
+		}
+
 		updateRealTime();
-		exitAtStop.reset();
-
-		startTimeInput.reset();
-
-		runIndexDefinitionList.reset();
-		startingRunNumber.reset();
-		endingRunNumber.reset();
-
-		showModelBuilder.reset();
-		showObjectSelector.reset();
-		showInputEditor.reset();
-		showOutputViewer.reset();
-		showPropertyViewer.reset();
-		showLogViewer.reset();
 
 		// Initialize basic model information
 		startTime = 0.0;
