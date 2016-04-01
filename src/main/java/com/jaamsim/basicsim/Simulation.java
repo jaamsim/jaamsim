@@ -18,12 +18,14 @@ package com.jaamsim.basicsim;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.swing.JFrame;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
@@ -36,6 +38,7 @@ import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.RunNumberInput;
+import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
@@ -51,6 +54,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Simulation provides the basic structure for the Entity model lifetime of earlyInit,
@@ -109,6 +113,19 @@ public class Simulation extends Entity {
 	                     + "directory containing the configuration file for the run.",
 	             example = "Simulation ReportDirectory { 'c:\reports\' }")
 	private static final DirInput reportDirectory;
+
+	@Keyword(description = "The unit types for the selected outputs for the simulation run. "
+	                     + "Use DimensionlessUnit for a text output.",
+	             example = "Simulation UnitTypeList { DistanceUnit  SpeedUnit }")
+	private static final UnitTypeListInput unitTypeList;
+
+	@Keyword(description = "One or more selected outputs to be printed at the end of each "
+	                     + "simulation run. Each output is specified by an expression. In script "
+	                     + "mode (-s tag), the selected outputs are printed to the command line "
+	                     + "(standard out). Otherwise, they are printed to the file "
+	                     + "<configuration file name>.dat.",
+	             example = "Simulation RunOutputList { { [Entity1].Out1 } { [Entity2].Out2 } }")
+	protected static final StringProvListInput runOutputList;
 
 	@Keyword(description = "The length of time represented by one simulation tick.",
 	             example = "Simulation TickLength { 1e-6 s }")
@@ -258,6 +275,14 @@ public class Simulation extends Entity {
 		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
 		reportDirectory.setDefaultText("Configuration File Directory");
 
+		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
+		unitTypeList = new UnitTypeListInput("UnitTypeList", "Key Inputs", defList);
+		unitTypeList.setDefaultText("None");
+
+		runOutputList = new StringProvListInput("RunOutputList", "Key Inputs", null);
+		runOutputList.setUnitType(UserSpecifiedUnit.class);
+		runOutputList.setDefaultText("None");
+
 		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
 		tickLengthInput.setValidRange(1e-9d, 5.0d);
@@ -347,6 +372,8 @@ public class Simulation extends Entity {
 		this.addInput(globalSeedInput);
 		this.addInput(printReport);
 		this.addInput(reportDirectory);
+		this.addInput(unitTypeList);
+		this.addInput(runOutputList);
 		this.addInput(tickLengthInput);
 
 		// Multiple Runs tab
@@ -384,6 +411,7 @@ public class Simulation extends Entity {
 		// Set the entity corresponding to "this" for keywords that can accept an expression
 		pauseConditionInput.setEntity(Simulation.getInstance());
 		globalSeedInput.setEntity(Simulation.getInstance());
+		runOutputList.setEntity(Simulation.getInstance());
 	}
 
 	public Simulation() {}
@@ -416,6 +444,11 @@ public class Simulation extends Entity {
 
 		if (in == reportDirectory) {
 			InputAgent.setReportDirectory(reportDirectory.getDir());
+			return;
+		}
+
+		if (in == unitTypeList) {
+			runOutputList.setUnitTypeList(unitTypeList.getUnitTypeList());
 			return;
 		}
 
