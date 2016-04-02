@@ -1538,12 +1538,19 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		boolean batch = false;
 		boolean minimize = false;
 		boolean quiet = false;
+		boolean scriptMode = false;
 
 		for (String each : args) {
 			// Batch mode
 			if (each.equalsIgnoreCase("-b") ||
 			    each.equalsIgnoreCase("-batch")) {
 				batch = true;
+				continue;
+			}
+			// Script mode (command line I/O)
+			if (each.equalsIgnoreCase("-s") ||
+			    each.equalsIgnoreCase("-script")) {
+				scriptMode = true;
 				continue;
 			}
 			// z-buffer offset
@@ -1572,6 +1579,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			// Not a program directive, add to list of config files
 			configFiles.add(each);
 		}
+
+		InputAgent.setScriptMode(scriptMode);
 
 		if (!batch) {
 			// Begin initializing the rendering system
