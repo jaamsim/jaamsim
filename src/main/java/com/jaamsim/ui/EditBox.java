@@ -57,6 +57,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import com.jaamsim.Samples.SampleListInput;
+import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.ExpressionInput;
@@ -556,6 +558,7 @@ implements ActionListener {
 	private CheckBoxMouseAdapter checkBoxMouseAdapter;
 	private int i;
 	private boolean caseSensitive;
+	private boolean innerBraces;
 
 	public ListEditor(JTable table) {
 		super(table);
@@ -572,6 +575,7 @@ implements ActionListener {
 		listButton.setContentAreaFilled(false);
 		jPanel.add(listButton, BorderLayout.EAST);
 		caseSensitive = true;
+		innerBraces = false;
 	}
 
 	@Override
@@ -585,14 +589,17 @@ implements ActionListener {
 		// OK button
 		if("OK".equals(e.getActionCommand())) {
 			dialog.setVisible(false);
-			String value = "";
+			StringBuilder sb = new StringBuilder();
 			for(int i = 0; i < list.getModel().getSize(); i++) {
 				if(!list.getModel().getElementAt(i).isSelected())
 					continue;
-				value = String.format("%s%s ", value,
-					list.getModel().getElementAt(i).getText());
+				String str = list.getModel().getElementAt(i).getText();
+				if (innerBraces)
+					sb.append("{ ").append(str).append(" } ");
+				else
+					sb.append(str).append(" ");
 			}
-			text.setText(String.format(" %s", value));
+			text.setText(sb.toString());
 		}
 
 		if(! "button".equals(e.getActionCommand())) {
@@ -681,6 +688,10 @@ implements ActionListener {
 
 	public void setCaseSensitive(boolean bool) {
 		caseSensitive = bool;
+	}
+
+	public void setInnerBraces(boolean bool) {
+		innerBraces = bool;
 	}
 }
 
@@ -982,6 +993,9 @@ public static class EditTable extends JTable {
 				if(in instanceof StringListInput) {
 					listEditor.setCaseSensitive(
 							((StringListInput)(in)).getCaseSensitive() );
+				}
+				if (in instanceof SampleListInput || in instanceof StringProvListInput) {
+					listEditor.setInnerBraces(true);
 				}
 			}
 			listEditor.setListData(array);
