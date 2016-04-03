@@ -322,6 +322,12 @@ public class InputAgent {
 			return false;
 		}
 
+		InputAgent.readBufferedStream(buf, resolved, root);
+		return true;
+	}
+
+	public static final void readBufferedStream(BufferedReader buf, URI resolved, String root) {
+
 		try {
 			ArrayList<String> record = new ArrayList<>();
 			int braceDepth = 0;
@@ -383,8 +389,6 @@ public class InputAgent {
 			// Make best effort to ensure it closes
 			try { buf.close(); } catch (IOException e2) {}
 		}
-
-		return true;
 	}
 
 	private static void processIncludeRecord(ParseContext pc, ArrayList<String> record) throws URISyntaxException {
