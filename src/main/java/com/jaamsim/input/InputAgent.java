@@ -611,7 +611,7 @@ public class InputAgent {
 		String inputTraceFileName = InputAgent.getRunName() + ".log";
 		// Initializing the tracing for the model
 		try {
-			System.out.println( "Creating trace file" );
+			LogBox.logLine( "Creating trace file" );
 
 			URI confURI = file.toURI();
 			URI logURI = confURI.resolve(new URI(null, inputTraceFileName, null)); // The new URI here effectively escapes the file name
