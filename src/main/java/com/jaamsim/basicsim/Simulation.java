@@ -602,6 +602,11 @@ public class Simulation extends Entity {
 		if (printReport.getValue())
 			InputAgent.printReport(EventManager.simSeconds());
 
+		// Print the selected outputs
+		if (runOutputList != null) {
+			InputAgent.printRunOutputs(EventManager.simSeconds());
+		}
+
 		// Increment the run number and check for last run
 		if (Simulation.isLastRun()) {
 			Simulation.end();
@@ -723,6 +728,10 @@ public class Simulation extends Entity {
 	 */
 	public static double getInitializationTime() {
 		return initializationTime.getValue();
+	}
+
+	public static StringProvListInput getRunOutputList() {
+		return runOutputList;
 	}
 
 	public static double getIncrementSize() {
