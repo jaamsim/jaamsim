@@ -148,6 +148,9 @@ public class ExpEvaluator {
 			// Special case, if this is a simple output and we can cache the output handle, use an optimized resolver
 			if (names.length == 2) {
 				OutputHandle oh = rootEnt.getOutputHandleInterned(names[1]);
+				if (oh == null) {
+					throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", names[1], names[0]);
+				}
 				if (oh.canCache() && !hasIndices[1]) {
 					return new CachedResolver(oh);
 				}
