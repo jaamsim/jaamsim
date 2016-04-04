@@ -46,7 +46,8 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 			Input.assertCount(subArg, 1);
 			try {
 				// Parse the assignment expression
-				ExpParser.Assignment ass = ExpParser.parseAssignment(ExpEvaluator.getParseContext(thisEnt), subArg.getArg(0));
+				String assignmentString = subArg.getArg(0);
+				ExpParser.Assignment ass = ExpParser.parseAssignment(ExpEvaluator.getParseContext(thisEnt, assignmentString), assignmentString);
 
 				// Save the data for this assignment
 				temp.add(ass);

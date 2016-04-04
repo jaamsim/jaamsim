@@ -37,7 +37,6 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.datatypes.BooleanVector;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
-import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.math.Color4d;
 import com.jaamsim.ui.NaturalOrderComparator;
 import com.jaamsim.units.DimensionlessUnit;
@@ -1549,8 +1548,8 @@ public abstract class Input<T> {
 
 		// 3) Try parsing an expression
 		try {
-			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt), kw.getArg(0));
-			return new SampleExpression(exp, thisEnt, unitType);
+			String expString = kw.getArg(0);
+			return new SampleExpression(expString, thisEnt, unitType);
 		}
 		catch (ExpError e) {
 			throw new InputErrorException(e.toString());

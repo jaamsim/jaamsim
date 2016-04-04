@@ -18,6 +18,8 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
@@ -92,12 +94,37 @@ public class ExpEvaluator {
 		return ent;
 	}
 
-	private static class EntityParseContext implements ExpParser.ParseContext {
+	public static class EntityParseContext implements ExpParser.ParseContext {
 
+		private final String source;
 		private final Entity thisEnt;
 
-		public EntityParseContext(Entity thisEnt) {
+		private final HashMap<Entity, String> entityReferences = new HashMap<>();
+
+		private void addEntityReference(Entity ent) {
+			entityReferences.put(ent, ent.getName());
+		}
+
+		// Return a version of the expression string updated for an entities that have changed their names
+		// since the expression was parsed
+		public String getUpdatedSource() {
+			String ret = source;
+			for (Map.Entry<Entity, String> entEntry : entityReferences.entrySet()) {
+				Entity ent = entEntry.getKey();
+				String oldName = entEntry.getValue();
+				if (ent.getName().equals(oldName)) {
+					// This name did not change
+					continue;
+				}
+				String newName = ent.getName();
+				ret = ret.replace("["+oldName+"]", "["+newName+"]");
+			}
+			return ret;
+		}
+
+		public EntityParseContext(Entity thisEnt, String source) {
 			this.thisEnt = thisEnt;
+			this.source = source;
 		}
 
 		@Override
@@ -111,6 +138,7 @@ public class ExpEvaluator {
 			ret.scaleFactor = unit.getConversionFactorToSI();
 			ret.unitType = unit.getClass();
 
+			addEntityReference(unit);
 			return ret;
 		}
 
@@ -139,6 +167,9 @@ public class ExpEvaluator {
 				rootEnt = thisEnt;
 			else {
 				rootEnt = Entity.getNamedEntity(names[0]);
+				if (rootEnt != null) {
+					addEntityReference(rootEnt);
+				}
 			}
 
 			if (rootEnt == null) {
@@ -318,18 +349,15 @@ public class ExpEvaluator {
 
 	private static class EntityEvalContext implements ExpParser.EvalContext {
 
-		// These are updated in updateContext() which must be called before any expression are evaluated
 		private final double simTime;
-		//private final Entity thisEnt;
 
 		public EntityEvalContext(double simTime) {
 			this.simTime = simTime;
-			//this.thisEnt = thisEnt;
 		}
 	}
 
-	public static ExpParser.ParseContext getParseContext(Entity thisEnt) {
-		return new EntityParseContext(thisEnt);
+	public static EntityParseContext getParseContext(Entity thisEnt, String source) {
+		return new EntityParseContext(thisEnt, source);
 	}
 
 	public static void runAssignment(ExpParser.Assignment assign, double simTime, Entity thisEnt) throws ExpError {

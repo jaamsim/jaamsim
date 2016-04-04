@@ -58,10 +58,11 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 				// Parse the expression name
 				String name = subArg.getArg(0);
 				if (OutputHandle.hasOutput(ent.getClass(), name)) {
-					throw new InputErrorException("Expreesion name is the same as existing output name: %s", name);
+					throw new InputErrorException("Expression name is the same as existing output name: %s", name);
 				}
 
-				Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(ent), subArg.getArg(1));
+				String expString = subArg.getArg(1);
+				Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(ent, expString), expString);
 
 				Class<? extends Unit> unitType = DimensionlessUnit.class;
 				if (subArg.numArgs() == 3) {

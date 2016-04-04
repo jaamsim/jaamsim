@@ -28,11 +28,13 @@ public class SampleExpression implements SampleProvider {
 	private final ExpParser.Expression exp;
 	private final Entity thisEnt;
 	private final Class<? extends Unit> unitType;
+	private final ExpEvaluator.EntityParseContext parseContext;
 
-	public SampleExpression(ExpParser.Expression e, Entity ent, Class<? extends Unit> ut) {
-		exp = e;
+	public SampleExpression(String expString, Entity ent, Class<? extends Unit> ut) throws ExpError {
 		thisEnt = ent;
 		unitType = ut;
+		parseContext = ExpEvaluator.getParseContext(thisEnt, expString);
+		exp = ExpParser.parseExpression(parseContext, expString);
 	}
 
 	@Override
@@ -74,9 +76,13 @@ public class SampleExpression implements SampleProvider {
 		return Double.POSITIVE_INFINITY;
 	}
 
+	public String getExpressionString() {
+		return parseContext.getUpdatedSource();
+	}
+
 	@Override
 	public String toString() {
-		return exp.toString();
+		return getExpressionString();
 	}
 
 }

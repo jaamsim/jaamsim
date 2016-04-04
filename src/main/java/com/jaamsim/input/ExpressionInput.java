@@ -36,7 +36,8 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 	throws InputErrorException {
 		Input.assertCount(kw, 1);
 		try {
-			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt), kw.getArg(0));
+			String expString = kw.getArg(0);
+			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt, expString), expString);
 
 			// Save the expression
 			value = exp;
