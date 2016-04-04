@@ -18,12 +18,14 @@ package com.jaamsim.basicsim;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.swing.JFrame;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.StringProviders.StringProvListInput;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
@@ -36,6 +38,7 @@ import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.RunNumberInput;
+import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.AboutBox;
@@ -51,6 +54,7 @@ import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 import com.jaamsim.units.TimeUnit;
 import com.jaamsim.units.Unit;
+import com.jaamsim.units.UserSpecifiedUnit;
 
 /**
  * Simulation provides the basic structure for the Entity model lifetime of earlyInit,
@@ -62,27 +66,29 @@ public class Simulation extends Entity {
 
 	// Key Inputs tab
 	@Keyword(description = "The duration of the simulation run in which all statistics will be recorded.",
-	         example = "Simulation Duration { 8760 h }")
+	             example = "Simulation Duration { 8760 h }")
 	private static final ValueInput runDuration;
 
-	@Keyword(description = "The initialization interval for the simulation run. The model will run "
-			+ "for the InitializationDuration interval and then clear the statistics and execute for the "
-			+ "specified RunDuration interval. The total length of the simulation run will be the sum of "
-			+ "the InitializationDuration and RunDuration inputs.",
-	         example = "Simulation Initialization { 720 h }")
+	@Keyword(description = "The initialization interval for the simulation run. The model will "
+	                     + "run for the InitializationDuration interval and then clear the "
+	                     + "statistics and execute for the specified RunDuration interval. "
+	                     + "The total length of the simulation run will be the sum of the "
+	                     + "InitializationDuration and RunDuration inputs.",
+	             example = "Simulation Initialization { 720 h }")
 	private static final ValueInput initializationTime;
 
 	@Keyword(description = "An optional expression that pauses the run when TRUE is returned.",
-	         example = "Simulation PauseCondition { '[Queue1].QueueLength > 20'}")
+	             example = "Simulation PauseCondition { '[Queue1].QueueLength > 20'}")
 	private static final SampleInput pauseConditionInput;
 
 	@Keyword(description = "If TRUE, the simulation run will be terminated when the "
-			+ "PauseCondition expression returns TRUE.",
-	         example = "Simulation ExitAtPauseCondition { TRUE }")
+	                     + "PauseCondition expression returns TRUE.",
+	             example = "Simulation ExitAtPauseCondition { TRUE }")
 	private static final BooleanInput exitAtPauseCondition;
 
-	@Keyword(description = "Indicates whether to close the program on completion of the simulation run.",
-	         example = "Simulation ExitAtStop { TRUE }")
+	@Keyword(description = "If TRUE, the program is closed on completion of the simulation run. "
+	                     + "Otherwise, the run is paused.",
+	             example = "Simulation ExitAtStop { TRUE }")
 	private static final BooleanInput exitAtStop;
 
 	@Keyword(description = "Global seed that sets the substream for each probability "
@@ -98,17 +104,31 @@ public class Simulation extends Entity {
 	                     + "Simulation GlobalSubstreamSeed { [Simulation].RunIndex(3) }")
 	private static final SampleInput globalSeedInput;
 
-	@Keyword(description = "Indicates whether an output report will be printed at the end of the simulation run.",
-	         example = "Simulation PrintReport { TRUE }")
+	@Keyword(description = "If TRUE, a full output report is printed to the file "
+	                     + "<configuration file name>.rep at the end of the simulation run.",
+	             example = "Simulation PrintReport { TRUE }")
 	private static final BooleanInput printReport;
 
 	@Keyword(description = "The directory in which to place the output report. Defaults to the "
-			+ "directory containing the configuration file for the run.",
-			example = "Simulation ReportDirectory { 'c:\reports\' }")
+	                     + "directory containing the configuration file for the run.",
+	             example = "Simulation ReportDirectory { 'c:\reports\' }")
 	private static final DirInput reportDirectory;
 
+	@Keyword(description = "The unit types for the selected outputs for the simulation run. "
+	                     + "Use DimensionlessUnit for a text output.",
+	             example = "Simulation UnitTypeList { DistanceUnit  SpeedUnit }")
+	private static final UnitTypeListInput unitTypeList;
+
+	@Keyword(description = "One or more selected outputs to be printed at the end of each "
+	                     + "simulation run. Each output is specified by an expression. In script "
+	                     + "mode (-s tag), the selected outputs are printed to the command line "
+	                     + "(standard out). Otherwise, they are printed to the file "
+	                     + "<configuration file name>.dat.",
+	             example = "Simulation RunOutputList { { [Entity1].Out1 } { [Entity2].Out2 } }")
+	protected static final StringProvListInput runOutputList;
+
 	@Keyword(description = "The length of time represented by one simulation tick.",
-	         example = "Simulation TickLength { 1e-6 s }")
+	             example = "Simulation TickLength { 1e-6 s }")
 	private static final ValueInput tickLengthInput;
 
 	// Multiple Runs tab
@@ -141,27 +161,31 @@ public class Simulation extends Entity {
 
 	// GUI tab
 	@Keyword(description = "An optional list of units to be used for displaying model outputs.",
-	         example = "Simulation DisplayedUnits { h kt }")
+	             example = "Simulation DisplayedUnits { h kt }")
 	private static final EntityListInput<? extends Unit> displayedUnits;
 
-	@Keyword(description = "If TRUE, a dragged object will be positioned to the nearest grid point.",
-	         example = "Simulation SnapToGrid { TRUE }")
+	@Keyword(description = "If TRUE, a dragged object will be positioned to the nearest grid "
+	                     + "point.",
+	             example = "Simulation SnapToGrid { TRUE }")
 	private static final BooleanInput snapToGrid;
 
 	@Keyword(description = "The distance between snap grid points.",
-	         example = "Simulation SnapGridSpacing { 1 m }")
+	             example = "Simulation SnapGridSpacing { 1 m }")
 	private static final ValueInput snapGridSpacing;
 
-	@Keyword(description = "The distance moved by the selected entity when the an arrow key is pressed.",
-	         example = "Simulation IncrementSize { 1 cm }")
+	@Keyword(description = "The distance moved by the selected entity when the an arrow key is "
+	                     + "pressed.",
+	             example = "Simulation IncrementSize { 1 cm }")
 	private static final ValueInput incrementSize;
 
-	@Keyword(description = "A Boolean to turn on or off real time in the simulation run",
-	         example = "Simulation RealTime { TRUE }")
+	@Keyword(description = "If TRUE, the simulation is executed a constant multiple of real time. "
+	                     + "Otherwise, the run is executed as fast as possible, limited only by "
+	                     + "processor speed.",
+	             example = "Simulation RealTime { TRUE }")
 	private static final BooleanInput realTime;
 
-	@Keyword(description = "The real time speed up factor",
-	         example = "Simulation RealTimeFactor { 1200 }")
+	@Keyword(description = "The ratio of elapsed simulation simulation time to elapsed real time.",
+	             example = "Simulation RealTimeFactor { 1200 }")
 	private static final ValueInput realTimeFactor;
 
 	public static final double DEFAULT_REAL_TIME_FACTOR = 1;
@@ -169,50 +193,50 @@ public class Simulation extends Entity {
 	public static final double MAX_REAL_TIME_FACTOR = 1e6;
 
 	@Keyword(description = "The time at which the simulation will be paused.",
-	         example = "Simulation PauseTime { 200 h }")
+	             example = "Simulation PauseTime { 200 h }")
 	private static final ValueInput pauseTime;
 
-	@Keyword(description = "Indicates whether the Model Builder tool should be shown on startup.",
-	         example = "Simulation ShowModelBuilder { TRUE }")
+	@Keyword(description = "If TRUE, the Model Builder tool is shown on startup.",
+	             example = "Simulation ShowModelBuilder { TRUE }")
 	private static final BooleanInput showModelBuilder;
 
-	@Keyword(description = "Indicates whether the Object Selector tool should be shown on startup.",
-	         example = "Simulation ShowObjectSelector { TRUE }")
+	@Keyword(description = "If TRUE, the Object Selector tool is shown on startup.",
+	             example = "Simulation ShowObjectSelector { TRUE }")
 	private static final BooleanInput showObjectSelector;
 
-	@Keyword(description = "Indicates whether the Input Editor tool should be shown on startup.",
-	         example = "Simulation ShowInputEditor { TRUE }")
+	@Keyword(description = "If TRUE, the Input Editor tool is shown on startup.",
+	             example = "Simulation ShowInputEditor { TRUE }")
 	private static final BooleanInput showInputEditor;
 
-	@Keyword(description = "Indicates whether the Output Viewer tool should be shown on startup.",
-	         example = "Simulation ShowOutputViewer { TRUE }")
+	@Keyword(description = "If TRUE, the Output Viewer tool is shown on startup.",
+	             example = "Simulation ShowOutputViewer { TRUE }")
 	private static final BooleanInput showOutputViewer;
 
-	@Keyword(description = "Indicates whether the Output Viewer tool should be shown on startup.",
-	         example = "Simulation ShowPropertyViewer { TRUE }")
+	@Keyword(description = "If TRUE, the Output Viewer tool is shown on startup.",
+	             example = "Simulation ShowPropertyViewer { TRUE }")
 	private static final BooleanInput showPropertyViewer;
 
-	@Keyword(description = "Indicates whether the Log Viewer tool should be shown on startup.",
-	         example = "Simulation ShowLogViewer { TRUE }")
+	@Keyword(description = "If TRUE, the Log Viewer tool is shown on startup.",
+	             example = "Simulation ShowLogViewer { TRUE }")
 	private static final BooleanInput showLogViewer;
 
 	@Keyword(description = "Time at which the simulation run is started (hh:mm).",
-	         example = "Simulation StartTime { 2160 h }")
+	             example = "Simulation StartTime { 2160 h }")
 	private static final ValueInput startTimeInput;
 
 	// Hidden keywords
-	@Keyword(description = "If the value is TRUE, then the input report file will be printed after "
-			+ "loading the configuration file.  The input report can always be generated when "
-			+ "needed by selecting \"Print Input Report\" under the File menu.",
-	         example = "Simulation PrintInputReport { TRUE }")
+	@Keyword(description = "If TRUE, then the input report file will be printed after loading "
+	                     + "the configuration file.  The input report can always be generated "
+	                     + "when needed by selecting \"Print Input Report\" under the File menu.",
+	             example = "Simulation PrintInputReport { TRUE }")
 	private static final BooleanInput printInputReport;
 
 	@Keyword(description = "This is placeholder description text",
-	         example = "This is placeholder example text")
+	             example = "This is placeholder example text")
 	private static final BooleanInput traceEventsInput;
 
 	@Keyword(description = "This is placeholder description text",
-	         example = "This is placeholder example text")
+	             example = "This is placeholder example text")
 	private static final BooleanInput verifyEventsInput;
 
 	private static double startTime; // simulation time (seconds) for the start of the run (not necessarily zero)
@@ -250,6 +274,14 @@ public class Simulation extends Entity {
 
 		reportDirectory = new DirInput("ReportDirectory", "Key Inputs", null);
 		reportDirectory.setDefaultText("Configuration File Directory");
+
+		ArrayList<Class<? extends Unit>> defList = new ArrayList<>();
+		unitTypeList = new UnitTypeListInput("UnitTypeList", "Key Inputs", defList);
+		unitTypeList.setDefaultText("None");
+
+		runOutputList = new StringProvListInput("RunOutputList", "Key Inputs", null);
+		runOutputList.setUnitType(UserSpecifiedUnit.class);
+		runOutputList.setDefaultText("None");
 
 		tickLengthInput = new ValueInput("TickLength", "Key Inputs", 1e-6d);
 		tickLengthInput.setUnitType(TimeUnit.class);
@@ -340,6 +372,8 @@ public class Simulation extends Entity {
 		this.addInput(globalSeedInput);
 		this.addInput(printReport);
 		this.addInput(reportDirectory);
+		this.addInput(unitTypeList);
+		this.addInput(runOutputList);
 		this.addInput(tickLengthInput);
 
 		// Multiple Runs tab
@@ -377,6 +411,7 @@ public class Simulation extends Entity {
 		// Set the entity corresponding to "this" for keywords that can accept an expression
 		pauseConditionInput.setEntity(Simulation.getInstance());
 		globalSeedInput.setEntity(Simulation.getInstance());
+		runOutputList.setEntity(Simulation.getInstance());
 	}
 
 	public Simulation() {}
@@ -409,6 +444,11 @@ public class Simulation extends Entity {
 
 		if (in == reportDirectory) {
 			InputAgent.setReportDirectory(reportDirectory.getDir());
+			return;
+		}
+
+		if (in == unitTypeList) {
+			runOutputList.setUnitTypeList(unitTypeList.getUnitTypeList());
 			return;
 		}
 
@@ -469,30 +509,13 @@ public class Simulation extends Entity {
 	}
 
 	public static void clear() {
-		initializationTime.reset();
-		runDuration.reset();
-		pauseTime.reset();
-		tickLengthInput.reset();
-		traceEventsInput.reset();
-		verifyEventsInput.reset();
-		printInputReport.reset();
-		realTimeFactor.reset();
-		realTime.reset();
+
+		// Reset all Simulation inputs to their default values
+		for (Input<?> inp : Simulation.getInstance().getEditableInputs()) {
+			inp.reset();
+		}
+
 		updateRealTime();
-		exitAtStop.reset();
-
-		startTimeInput.reset();
-
-		runIndexDefinitionList.reset();
-		startingRunNumber.reset();
-		endingRunNumber.reset();
-
-		showModelBuilder.reset();
-		showObjectSelector.reset();
-		showInputEditor.reset();
-		showOutputViewer.reset();
-		showPropertyViewer.reset();
-		showLogViewer.reset();
 
 		// Initialize basic model information
 		startTime = 0.0;
@@ -578,6 +601,11 @@ public class Simulation extends Entity {
 		// Print the output report
 		if (printReport.getValue())
 			InputAgent.printReport(EventManager.simSeconds());
+
+		// Print the selected outputs
+		if (runOutputList != null) {
+			InputAgent.printRunOutputs(EventManager.simSeconds());
+		}
 
 		// Increment the run number and check for last run
 		if (Simulation.isLastRun()) {
@@ -700,6 +728,10 @@ public class Simulation extends Entity {
 	 */
 	public static double getInitializationTime() {
 		return initializationTime.getValue();
+	}
+
+	public static StringProvListInput getRunOutputList() {
+		return runOutputList;
 	}
 
 	public static double getIncrementSize() {

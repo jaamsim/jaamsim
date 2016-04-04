@@ -50,7 +50,7 @@ public class EntityGate extends LinkedService {
 
 		// If the gate is closed or other entities are already queued, then add the entity to the queue
 		Queue queue = waitQueue.getValue();
-		if (queue.getCount() > 0 || !this.isOpen()) {
+		if (!queue.isEmpty() || !this.isOpen()) {
 			queue.addEntity(ent);
 			return;
 		}

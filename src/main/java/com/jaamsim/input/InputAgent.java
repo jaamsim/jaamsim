@@ -18,10 +18,12 @@ package com.jaamsim.input;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,6 +34,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.FileEntity;
@@ -43,6 +46,7 @@ import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
+import com.jaamsim.units.Unit;
 
 public class InputAgent {
 	private static final String recordEditsMarker = "RecordEdits";
@@ -55,6 +59,7 @@ public class InputAgent {
 
 	private static File configFile;           // present configuration file
 	private static boolean batchRun;
+	private static boolean scriptMode;        // TRUE if script mode (command line) is specified
 	private static boolean sessionEdited;     // TRUE if any inputs have been changed after loading a configuration file
 	private static boolean recordEditsFound;  // TRUE if the "RecordEdits" marker is found in the configuration file
 	private static boolean recordEdits;       // TRUE if input changes are to be marked as edited.
@@ -64,6 +69,7 @@ public class InputAgent {
 
 	private static File reportDir;
 	private static FileEntity reportFile;     // file to which the output report will be written
+	private static PrintStream outStream;  // location where the selected outputs will be written
 
 	static {
 		recordEditsFound = false;
@@ -72,6 +78,7 @@ public class InputAgent {
 		configFile = null;
 		reportDir = null;
 		reportFile = null;
+		outStream = null;
 		lastTickForTrace = -1l;
 	}
 
@@ -222,6 +229,14 @@ public class InputAgent {
 		return batchRun;
 	}
 
+	public static void setScriptMode(boolean bool) {
+		scriptMode = bool;
+	}
+
+	public static boolean isScriptMode() {
+		return scriptMode;
+	}
+
 	private static int getBraceDepth(ArrayList<String> tokens, int startingBraceDepth, int startingIndex) {
 		int braceDepth = startingBraceDepth;
 		for (int i = startingIndex; i < tokens.size(); i++) {
@@ -307,6 +322,12 @@ public class InputAgent {
 			return false;
 		}
 
+		InputAgent.readBufferedStream(buf, resolved, root);
+		return true;
+	}
+
+	public static final void readBufferedStream(BufferedReader buf, URI resolved, String root) {
+
 		try {
 			ArrayList<String> record = new ArrayList<>();
 			int braceDepth = 0;
@@ -368,8 +389,6 @@ public class InputAgent {
 			// Make best effort to ensure it closes
 			try { buf.close(); } catch (IOException e2) {}
 		}
-
-		return true;
 	}
 
 	private static void processIncludeRecord(ParseContext pc, ArrayList<String> record) throws URISyntaxException {
@@ -602,7 +621,7 @@ public class InputAgent {
 		String inputTraceFileName = InputAgent.getRunName() + ".log";
 		// Initializing the tracing for the model
 		try {
-			System.out.println( "Creating trace file" );
+			LogBox.logLine( "Creating trace file" );
 
 			URI confURI = file.toURI();
 			URI logURI = confURI.resolve(new URI(null, inputTraceFileName, null)); // The new URI here effectively escapes the file name
@@ -1110,6 +1129,85 @@ public class InputAgent {
 	static void writeInputOnFile_ForEntity(FileEntity file, Entity ent, Input<?> in) {
 		file.format("%s %s { %s }%n",
 		            ent.getName(), in.getKeyword(), in.getValueString());
+	}
+
+	/**
+	 * Prints selected outputs for the simulation run to stdout or a file.
+	 * @param simTime - simulation time at which the outputs are printed.
+	 */
+	public static void printRunOutputs(double simTime) {
+
+		// Set up the custom outputs
+		if (outStream == null) {
+
+			// Select either standard out or a file for the outputs
+			outStream = System.out;
+			if (!InputAgent.isScriptMode()) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(InputAgent.getReportFileName(InputAgent.getRunName()));
+				sb.append(".dat");
+				try {
+					outStream = new PrintStream(sb.toString());
+				}
+				catch (FileNotFoundException e) {
+					throw new InputErrorException(
+							"FileNotFoundException thrown trying to open PrintStream: " + e );
+				}
+				catch (SecurityException e) {
+					throw new InputErrorException(
+							"SecurityException thrown trying to open PrintStream: " + e );
+				}
+			}
+
+			// Write the header line for the expressions
+			StringBuilder sb = new StringBuilder();
+			ArrayList<String> toks = new ArrayList<>();
+			Simulation.getRunOutputList().getValueTokens(toks);
+			boolean first = true;
+			for (String str : toks) {
+				if (str.equals("{") || str.equals("}"))
+					continue;
+				if (first)
+					first = false;
+				else
+					sb.append("\t");
+				sb.append(str);
+			}
+			outStream.println(sb.toString());
+
+			// Write the header line for the units
+			sb = new StringBuilder();
+			for (int i=0; i<Simulation.getRunOutputList().getListSize(); i++) {
+				Class<? extends Unit> ut = Simulation.getRunOutputList().getUnitType(i);
+				String unit = Unit.getDisplayedUnit(ut);
+				if (i > 0)
+					sb.append("\t");
+				sb.append(unit);
+			}
+			outStream.println(sb.toString());
+		}
+
+		// Write the selected outputs
+		try {
+			StringBuilder sb = new StringBuilder();
+			for (int i=0; i<Simulation.getRunOutputList().getListSize(); i++) {
+				StringProvider samp = Simulation.getRunOutputList().getValue().get(i);
+				Class<? extends Unit> ut = Simulation.getRunOutputList().getUnitType(i);
+				double factor = Unit.getDisplayedUnitFactor(ut);
+				String str = samp.getNextString(simTime, "%s", factor);
+				if (i > 0)
+					sb.append("\t");
+				sb.append(str);
+			}
+			outStream.println(sb.toString());
+		}
+		catch (Exception e) {
+			LogBox.logLine(e.getMessage());
+		}
+
+		// Terminate the outputs
+		if (Simulation.isLastRun())
+			outStream.close();
 	}
 
 	/**

@@ -35,7 +35,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -1538,12 +1540,19 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		boolean batch = false;
 		boolean minimize = false;
 		boolean quiet = false;
+		boolean scriptMode = false;
 
 		for (String each : args) {
 			// Batch mode
 			if (each.equalsIgnoreCase("-b") ||
 			    each.equalsIgnoreCase("-batch")) {
 				batch = true;
+				continue;
+			}
+			// Script mode (command line I/O)
+			if (each.equalsIgnoreCase("-s") ||
+			    each.equalsIgnoreCase("-script")) {
+				scriptMode = true;
 				continue;
 			}
 			// z-buffer offset
@@ -1572,6 +1581,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			// Not a program directive, add to list of config files
 			configFiles.add(each);
 		}
+
+		InputAgent.setScriptMode(scriptMode);
 
 		if (!batch) {
 			// Begin initializing the rendering system
@@ -1624,8 +1635,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			}
 		}
 
+		// If in script mode, load a configuration file from standard in
+		if (scriptMode) {
+			BufferedReader buf = new BufferedReader(new InputStreamReader(System.in));
+			InputAgent.readBufferedStream(buf, null, "");
+		}
+
 		// If no configuration files were specified on the command line, then load the default configuration file
-		if( configFiles.size() == 0 ) {
+		if (configFiles.size() == 0 && !scriptMode) {
 			InputAgent.setRecordEdits(true);
 			InputAgent.loadDefault();
 			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);

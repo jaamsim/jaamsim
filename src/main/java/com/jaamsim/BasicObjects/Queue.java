@@ -458,6 +458,13 @@ public class Queue extends LinkedComponent {
 	}
 
 	/**
+	 * Returns true if the queue is empty
+	 */
+	public boolean isEmpty() {
+		return itemSet.isEmpty();
+	}
+
+	/**
 	 * Returns the number of seconds spent by the first object in the queue
 	 */
 	public double getQueueTime() {

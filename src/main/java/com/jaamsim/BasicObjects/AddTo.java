@@ -63,7 +63,7 @@ public class AddTo extends Pack {
 	public void startAction() {
 
 		// Is there a container waiting to be filled?
-		if (container == null && containerQueue.getValue().getCount() == 0) {
+		if (container == null && containerQueue.getValue().isEmpty()) {
 			this.setBusy(false);
 			this.setPresentState();
 			return;

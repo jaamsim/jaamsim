@@ -84,8 +84,6 @@ public class LogBox extends FrameBox {
 			logBuilder.append(logLine + "\n");
 		}
 
-		System.out.println(logLine);
-
 		// Append to the existing log area if it exists
 		if (myInstance != null) {
 			SwingUtilities.invokeLater(new Runnable() {
