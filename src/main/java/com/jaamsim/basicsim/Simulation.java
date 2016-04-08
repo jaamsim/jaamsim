@@ -603,7 +603,7 @@ public class Simulation extends Entity {
 			InputAgent.printReport(EventManager.simSeconds());
 
 		// Print the selected outputs
-		if (runOutputList != null) {
+		if (runOutputList.getValue() != null) {
 			InputAgent.printRunOutputs(EventManager.simSeconds());
 		}
 
