@@ -187,11 +187,22 @@ private static class ClassFields implements Comparator<Field> {
 					return "[]";
 				StringBuilder sb = new StringBuilder();
 				sb.append("[");
-				sb.append(array.get(0).toString());
+				if (array.get(0) == null) {
+					sb.append("null");
+				}
+				else {
+					sb.append(array.get(0).toString());
+				}
+
 				int n = Math.min(MAX_ARRAY_ENTRIES_TO_DISPLAY, array.size());
 				for (int i=1; i<n; i++) {
 					sb.append(", ");
-					sb.append(array.get(i).toString());
+					if (array.get(i) == null) {
+						sb.append("null");
+					}
+					else {
+						sb.append(array.get(i).toString());
+					}
 				}
 				if (n < array.size())
 					sb.append(", ... ");
