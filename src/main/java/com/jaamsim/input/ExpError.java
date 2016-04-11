@@ -32,21 +32,23 @@ public class ExpError extends Exception {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.getMessage()).append("\n");
 
 		if (source == null)
-			return sb.toString();
+			return super.getMessage();
 
-		// Otherwise, append the source expression and an 'arrow' pointing at the error
+		StringBuilder sb = new StringBuilder();
+		sb.append("<html>");
+		sb.append(super.getMessage()).append("<br><br>");
+
+		// Append the source expression and an 'arrow' pointing at the error
 		String src = source.replaceAll("%", "%%");
-		sb.append(src).append("\n");
+		sb.append("<pre><font color=\"red\">").append(src).append("<br>");
 
 		for (int i = 0; i < pos; ++i) {
 			sb.append(" ");
 		}
 
-		sb.append("^\n");
+		sb.append("<b>^</b></font></pre></html>");
 
 		return sb.toString();
 	}
