@@ -72,25 +72,18 @@ public class SampleInput extends Input<SampleProvider> {
 		return list;
 	}
 
-
 	@Override
 	public void getValueTokens(ArrayList<String> toks) {
 		if (value == null) return;
 
-
-		if (value instanceof SampleExpression) {
-			SampleExpression se = (SampleExpression)value;
-			toks.add(se.getExpressionString());
-			return;
-		}
-		if (	value instanceof SampleConstant ||
-				value instanceof SampleOutput) {
+		// Preserve the exact text for a constant value input
+		if (value instanceof SampleConstant) {
 			super.getValueTokens(toks);
 			return;
 		}
-		else {
-			toks.add(((Entity)value).getName());
-		}
+
+		// All other inputs can be built from scratch
+		toks.add(value.toString());
 	}
 
 	@Override

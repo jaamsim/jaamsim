@@ -16,12 +16,15 @@
  */
 package com.jaamsim.input;
 
+import java.util.ArrayList;
+
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpParser.Expression;
 import com.jaamsim.ui.LogBox;
 
 public class ExpressionInput extends Input<ExpParser.Expression> {
 	private Entity thisEnt;
+	private ExpEvaluator.EntityParseContext parseContext;
 
 	public ExpressionInput(String key, String cat, ExpParser.Expression def) {
 		super(key, cat, def);
@@ -37,15 +40,24 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 		Input.assertCount(kw, 1);
 		try {
 			String expString = kw.getArg(0);
-			Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(thisEnt, expString), expString);
+
+			ExpEvaluator.EntityParseContext pc = ExpEvaluator.getParseContext(thisEnt, expString);
+			Expression exp = ExpParser.parseExpression(pc, expString);
 
 			// Save the expression
+			parseContext = pc;
 			value = exp;
 
 		} catch (ExpError e) {
 			LogBox.logException(e);
 			throw new InputErrorException(e.toString());
 		}
+	}
+
+	@Override
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
+		toks.add(parseContext.getUpdatedSource());
 	}
 
 }

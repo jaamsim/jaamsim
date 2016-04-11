@@ -106,4 +106,15 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 		return list;
 	}
 
+	@Override
+	public void getValueTokens(ArrayList<String> toks) {
+		if (value == null) return;
+
+		for (int i = 0; i < value.size(); i++) {
+			toks.add("{");
+			toks.add(value.get(i).toString());
+			toks.add("}");
+		}
+	}
+
 }

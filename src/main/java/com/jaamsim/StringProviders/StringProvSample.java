@@ -35,4 +35,8 @@ public class StringProvSample implements StringProvider {
 		return samp.toString();
 	}
 
+	public SampleProvider getSampleProvider() {
+		return samp;
+	}
+
 }

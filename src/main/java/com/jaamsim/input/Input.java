@@ -38,6 +38,7 @@ import com.jaamsim.datatypes.BooleanVector;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.math.Color4d;
+import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.NaturalOrderComparator;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -244,7 +245,14 @@ public abstract class Input<T> {
 		if (isDefault()) return "";
 
 		ArrayList<String> tmp = new ArrayList<>();
-		getValueTokens(tmp);
+		try {
+			getValueTokens(tmp);
+		} catch (Exception e) {
+			LogBox.format("Error in input, value has been cleared. Keyword: %s",
+					this.getKeyword());
+			LogBox.logException(e);
+			this.reset();
+		}
 		if (tmp.size() == 0) return "";
 
 		StringBuilder sb = new StringBuilder();
