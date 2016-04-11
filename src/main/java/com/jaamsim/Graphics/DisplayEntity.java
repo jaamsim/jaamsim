@@ -297,9 +297,11 @@ public class DisplayEntity extends Entity {
 	public void kill() {
 
 		// Kill the label
-		EntityLabel label = EntityLabel.getLabel(this);
-		if (label != null)
-			label.kill();
+		if (! this.testFlag(FLAG_GENERATED)) {
+			EntityLabel label = EntityLabel.getLabel(this);
+			if (label != null)
+				label.kill();
+		}
 
 		// Kill the DisplayEntity
 		super.kill();
