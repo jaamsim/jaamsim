@@ -18,9 +18,11 @@ package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.ui.EditBox;
@@ -36,6 +38,7 @@ public class BooleanSelector extends DisplayEntity {
 	private ValueInput trueProbInput;
 
 	private final MRG1999a rng = new MRG1999a();
+	private boolean lastValue;
 
 	{
 		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", -1);
@@ -73,6 +76,7 @@ public class BooleanSelector extends DisplayEntity {
 	public void earlyInit() {
 		super.earlyInit();
 		rng.setSeedStream(getStreamNumber(), Distribution.getSubstreamNumber());
+		lastValue = false;
 	}
 
 	protected int getStreamNumber() {
@@ -81,9 +85,23 @@ public class BooleanSelector extends DisplayEntity {
 
 	public boolean getNextValue() {
 		double samp = rng.nextUniform();
-		if (samp < trueProbInput.getValue())
-			return true;
-		else
-			return false;
+		lastValue = samp < trueProbInput.getValue();
+		return lastValue;
+	}
+
+	@Output(name = "Value",
+	 description = "The last value sampled from the distribution. When used in an "
+	             + "expression, this output returns a new sample every time the expression "
+	             + "is evaluated.")
+	public boolean getNextValue(double simTime) {
+
+		// If we are not in a model context, do not perturb the distribution by sampling,
+		// instead simply return the last sampled value
+		if (!EventManager.hasCurrent()) {
+			return lastValue;
+		}
+
+		// Select the next sample
+		return this.getNextValue();
 	}
 }
