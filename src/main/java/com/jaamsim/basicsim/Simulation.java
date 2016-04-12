@@ -508,6 +508,9 @@ public class Simulation extends Entity {
 		}
 	}
 
+	/**
+	 * Clears the Simulation prior to loading a new model
+	 */
 	public static void clear() {
 
 		// Reset all Simulation inputs to their default values
@@ -530,6 +533,9 @@ public class Simulation extends Entity {
 			Entity ent = Entity.getAll().get(Entity.getAll().size()-1);
 			ent.kill();
 		}
+
+		// Reset the run number and run indices
+		Simulation.setRunNumber(1);
 	}
 
 	/**
