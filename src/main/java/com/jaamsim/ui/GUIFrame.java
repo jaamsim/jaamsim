@@ -295,7 +295,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	/**
-	 * Clears the simulation and user interface for a new run
+	 * Clears the simulation and user interface prior to loading a new model
 	 */
 	public void clear() {
 		currentEvt.clear();
@@ -1260,6 +1260,13 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 */
 	public void startNextRun() {
 		Simulation.startRun(currentEvt);
+	}
+
+	/**
+	 * Stops the present simulation run when multiple runs are to be executed.
+	 */
+	public void stopRun() {
+		Simulation.stopRun(currentEvt);
 	}
 
 	/** model was executed, but no configuration performed */

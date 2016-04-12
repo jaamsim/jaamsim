@@ -621,7 +621,7 @@ public class Simulation extends Entity {
 
 		// Start the next run
 		Simulation.setRunNumber(runNumber + 1);
-		GUIFrame.instance().stopSimulation();
+		GUIFrame.instance().stopRun();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -647,10 +647,26 @@ public class Simulation extends Entity {
 	}
 
 	/**
-	 * Stops and resets the simulation model.
+	 * Stops and resets the simulation model to zero simulation time.
 	 * @param evt - EventManager for the run.
 	 */
 	public static void stop(EventManager evt) {
+
+		// Stop the present simulation run
+		Simulation.stopRun(evt);
+
+		// Reset the run number and run indices
+		Simulation.setRunNumber(startingRunNumber.getValue());
+
+		// Close the output reports
+		InputAgent.stop();
+	}
+
+	/**
+	 * Stops the present simulation run when multiple runs are to be executed.
+	 * @param evt - EventManager for the run.
+	 */
+	public static void stopRun(EventManager evt) {
 
 		// Stop the simulation and clear the event list
 		evt.pause();
