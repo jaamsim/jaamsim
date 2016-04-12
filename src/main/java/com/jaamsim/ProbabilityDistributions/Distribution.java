@@ -136,6 +136,9 @@ implements SampleProvider {
 		for (Distribution dist : Entity.getClonesOfIterator(Distribution.class)) {
 			seed = Math.max(seed, dist.getStreamNumber());
 		}
+		for (BooleanSelector bs : Entity.getClonesOfIterator(BooleanSelector.class)) {
+			seed = Math.max(seed, bs.getStreamNumber());
+		}
 
 		// Set the random number seed next unused value
 		InputAgent.applyArgs(this, "RandomSeed", String.format("%s", seed+1));

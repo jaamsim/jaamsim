@@ -17,14 +17,17 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.basicsim.Entity;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
+import com.jaamsim.ui.EditBox;
 import com.jaamsim.units.DimensionlessUnit;
 
 public class BooleanSelector extends DisplayEntity {
-	@Keyword(description = "Seed for the random number generator.  Must be an integer > 0.",
+	@Keyword(description = "Seed for the random number generator.  Must be an integer >= 0.",
 	         exampleList = {"547"})
 	private IntegerInput randomSeedInput;
 
@@ -35,8 +38,10 @@ public class BooleanSelector extends DisplayEntity {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
-		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", 1);
-		randomSeedInput.setValidRange(1, Integer.MAX_VALUE);
+		randomSeedInput = new IntegerInput("RandomSeed", "Key Inputs", -1);
+		randomSeedInput.setValidRange(0, Integer.MAX_VALUE);
+		randomSeedInput.setRequired(true);
+		randomSeedInput.setDefaultText(EditBox.NONE);
 		this.addInput(randomSeedInput);
 
 		trueProbInput = new ValueInput("TrueProbability", "Key Inputs", 1.0d);
@@ -48,9 +53,30 @@ public class BooleanSelector extends DisplayEntity {
 	public BooleanSelector() {}
 
 	@Override
+	public void setInputsForDragAndDrop() {
+		super.setInputsForDragAndDrop();
+
+		// Find the largest seed used so far
+		int seed = 0;
+		for (Distribution dist : Entity.getClonesOfIterator(Distribution.class)) {
+			seed = Math.max(seed, dist.getStreamNumber());
+		}
+		for (BooleanSelector bs : Entity.getClonesOfIterator(BooleanSelector.class)) {
+			seed = Math.max(seed, bs.getStreamNumber());
+		}
+
+		// Set the random number seed next unused value
+		InputAgent.applyArgs(this, "RandomSeed", String.format("%s", seed+1));
+	}
+
+	@Override
 	public void earlyInit() {
 		super.earlyInit();
-		rng.setSeedStream(randomSeedInput.getValue(), Distribution.getSubstreamNumber());
+		rng.setSeedStream(getStreamNumber(), Distribution.getSubstreamNumber());
+	}
+
+	protected int getStreamNumber() {
+		return randomSeedInput.getValue();
 	}
 
 	public boolean getNextValue() {
