@@ -82,6 +82,9 @@ public class InputAgent {
 		lastTickForTrace = -1l;
 	}
 
+	/**
+	 * Clears the InputAgent prior to loading a new model.
+	 */
 	public static void clear() {
 		logFile = null;
 		numErrors = 0;
@@ -92,6 +95,22 @@ public class InputAgent {
 		reportDir = null;
 		lastTickForTrace = -1l;
 		setReportDirectory(null);
+		stop();
+	}
+
+	/**
+	 * Resets the InputAgent when a run is stopped and reset to zero simulation time.
+	 */
+	public static void stop() {
+
+		if (reportFile != null) {
+			reportFile.close();
+			reportFile = null;
+		}
+		if (outStream != null) {
+			outStream.close();
+			outStream = null;
+		}
 	}
 
 	private static String getReportDirectory() {
@@ -1206,8 +1225,10 @@ public class InputAgent {
 		}
 
 		// Terminate the outputs
-		if (Simulation.isLastRun())
+		if (Simulation.isLastRun()) {
 			outStream.close();
+			outStream = null;
+		}
 	}
 
 	/**
