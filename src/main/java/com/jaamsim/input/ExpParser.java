@@ -60,6 +60,7 @@ public class ExpParser {
 		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num, Class<? extends Unit> denom);
 
 		public VarResolver getVarResolver(String[] names, boolean[] hasIndices) throws ExpError;
+		public void validateAssignmentDest(String[] destination) throws ExpError;
 	}
 
 	public interface EvalContext {
@@ -1730,6 +1731,7 @@ public class ExpParser {
 		}
 
 		String[] destination = parseIdentifier(nextTok, tokens, new Expression(input));
+		context.validateAssignmentDest(destination);
 
 		nextTok = tokens.next();
 		if (nextTok == null || nextTok.type != ExpTokenizer.SYM_TYPE || !nextTok.value.equals("=")) {

@@ -77,6 +77,12 @@ public class TestExpParser {
 				throws ExpError {
 			return new DummyResolver(names[0]);
 		}
+		@Override
+		public void validateAssignmentDest(String[] destination)
+				throws ExpError {
+			// N/A
+
+		}
 	}
 
 	static PC pc = new PC();
@@ -477,6 +483,12 @@ public class TestExpParser {
 			public VarResolver getVarResolver(String[] names,
 					boolean[] hasIndices) throws ExpError {
 				return new ErrorResolver();
+			}
+			@Override
+			public void validateAssignmentDest(String[] destination)
+					throws ExpError {
+				// N/A
+
 			}
 
 		}

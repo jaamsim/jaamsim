@@ -194,6 +194,22 @@ public class ExpEvaluator {
 			return new EntityResolver(rootEnt, names);
 		}
 
+		@Override
+		public void validateAssignmentDest(String[] destination) throws ExpError {
+			Entity rootEnt;
+			if (destination[0] == "this")
+				rootEnt = thisEnt;
+			else {
+				rootEnt = Entity.getNamedEntity(destination[0]);
+				if (rootEnt != null)
+					addEntityReference(rootEnt);
+			}
+
+			if (rootEnt == null) {
+				throw new ExpError(null, 0, "Could not find entity: %s", destination[0]);
+			}
+		}
+
 	}
 
 	private static class CachedResolver implements ExpParser.VarResolver {
