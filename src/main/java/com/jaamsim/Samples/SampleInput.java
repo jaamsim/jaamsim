@@ -65,7 +65,7 @@ public class SampleInput extends Input<SampleProvider> {
 		ArrayList<String> list = new ArrayList<>();
 		for (Entity each : Entity.getClonesOfIterator(Entity.class, SampleProvider.class)) {
 			SampleProvider sp = (SampleProvider)each;
-			if (sp.getUnitType() == unitType)
+			if (sp.getUnitType() == unitType && sp != thisEnt)
 				list.add(each.getName());
 		}
 		Collections.sort(list, Input.uiSortOrder);
