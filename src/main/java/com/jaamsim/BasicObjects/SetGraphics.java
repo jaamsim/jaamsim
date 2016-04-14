@@ -16,9 +16,14 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.OverlayEntity;
+import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Keyword;
@@ -47,6 +52,10 @@ public class SetGraphics extends LinkedComponent {
 
 		graphicsList = new EntityListInput<>( DisplayEntity.class, "GraphicsList", "Key Inputs", null);
 		graphicsList.setRequired(true);
+		ArrayList<Class<? extends Entity>> list = new ArrayList<>();
+		list.add(TextBasics.class);
+		list.add(OverlayEntity.class);
+		graphicsList.setInvalidClasses(list);
 		this.addInput( graphicsList);
 
 		choice = new SampleInput("Choice", "Key Inputs", new SampleConstant(DimensionlessUnit.class, 1.0));

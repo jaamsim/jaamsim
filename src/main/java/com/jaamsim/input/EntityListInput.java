@@ -28,6 +28,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	private boolean includeSubclasses;  // flag to determine if subclasses are valid
 	private boolean includeSelf; // flag to determine whether to include the calling entity in the entityList
 	private ArrayList<Class<? extends Entity>> validClasses; // list of valid classes (including subclasses).  if empty, then all classes are valid
+	private ArrayList<Class<? extends Entity>> invalidClasses; // list of invalid classes (including subclasses).
 
 	public EntityListInput(Class<T> aClass, String key, String cat, ArrayList<T> def) {
 		super(key, cat, def);
@@ -37,6 +38,7 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		includeSubclasses = true;
 		includeSelf = true;
 		validClasses = new ArrayList<>();
+		invalidClasses = new ArrayList<>();
 	}
 
 	@Override
@@ -183,6 +185,13 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 	}
 
 	public boolean isValidClass( Entity ent ) {
+
+		for (Class<? extends Entity> c : invalidClasses) {
+			if (c.isAssignableFrom( ent.getClass() )) {
+				return false;
+			}
+		}
+
 		if( validClasses.size() == 0 )
 			return true;
 
@@ -194,4 +203,9 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 
 		return false;
 	}
+
+	public void setInvalidClasses(ArrayList<Class<? extends Entity>> classes) {
+		invalidClasses = classes;
+	}
+
 }
