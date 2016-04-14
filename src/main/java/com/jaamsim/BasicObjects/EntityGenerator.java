@@ -16,7 +16,11 @@
  */
 package com.jaamsim.BasicObjects;
 
+import java.util.ArrayList;
+
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Graphics.OverlayEntity;
+import com.jaamsim.Graphics.TextBasics;
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
@@ -86,6 +90,10 @@ public class EntityGenerator extends LinkedService {
 
 		prototypeEntity = new EntityInput<>(DisplayEntity.class, "PrototypeEntity", "Key Inputs", null);
 		prototypeEntity.setRequired(true);
+		ArrayList<Class<? extends Entity>> list = new ArrayList<>();
+		list.add(TextBasics.class);
+		list.add(OverlayEntity.class);
+		prototypeEntity.setInvalidClasses(list);
 		this.addInput(prototypeEntity);
 
 		maxNumber = new IntegerInput("MaxNumber", "Key Inputs", null);
