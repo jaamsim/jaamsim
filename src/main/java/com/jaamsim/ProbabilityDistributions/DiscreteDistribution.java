@@ -133,7 +133,7 @@ public class DiscreteDistribution extends Distribution {
 				}
 			}
 		}
-		return Math.max(ret, minValueInput.getValue());
+		return Math.max(ret, super.getMinValue());
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class DiscreteDistribution extends Distribution {
 				}
 			}
 		}
-		return Math.min(ret,  maxValueInput.getValue());
+		return Math.min(ret, super.getMaxValue());
 	}
 
 	@Override

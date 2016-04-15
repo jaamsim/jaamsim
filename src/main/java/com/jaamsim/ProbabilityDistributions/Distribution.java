@@ -18,6 +18,8 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Simulation;
@@ -29,7 +31,6 @@ import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.UnitTypeInput;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.ui.FrameBox;
 import com.jaamsim.units.DimensionlessUnit;
@@ -56,12 +57,12 @@ implements SampleProvider {
 	private final IntegerInput randomSeedInput;
 
 	@Keyword(description = "Minimum value that can be returned.  Smaller values are rejected and resampled.",
-	         exampleList = {"0.0"})
-	protected final ValueInput minValueInput;
+	         exampleList = {"0.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	protected final SampleInput minValueInput;
 
 	@Keyword(description = "Maximum value that can be returned.  Larger values are rejected and resampled.",
-	         exampleList = {"200.0"})
-	protected final ValueInput maxValueInput;
+	         exampleList = {"200.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	protected final SampleInput maxValueInput;
 
 	private int sampleCount;
 	private double sampleSum;
@@ -82,12 +83,16 @@ implements SampleProvider {
 		randomSeedInput.setDefaultText(EditBox.NONE);
 		this.addInput(randomSeedInput);
 
-		minValueInput = new ValueInput("MinValue", "Key Inputs", Double.NEGATIVE_INFINITY);
+		SampleConstant negInf = new SampleConstant(Double.NEGATIVE_INFINITY);
+		minValueInput = new SampleInput("MinValue", "Key Inputs", negInf);
 		minValueInput.setUnitType(UserSpecifiedUnit.class);
+		minValueInput.setEntity(this);
 		this.addInput(minValueInput);
 
-		maxValueInput = new ValueInput("MaxValue", "Key Inputs", Double.POSITIVE_INFINITY);
+		SampleConstant posInf = new SampleConstant(Double.POSITIVE_INFINITY);
+		maxValueInput = new SampleInput("MaxValue", "Key Inputs", posInf);
 		maxValueInput.setUnitType(UserSpecifiedUnit.class);
+		maxValueInput.setEntity(this);
 		this.addInput(maxValueInput);
 	}
 
@@ -98,7 +103,7 @@ implements SampleProvider {
 		super.validate();
 
 		// The maximum value must be greater than the minimum value
-		if( maxValueInput.getValue() <= minValueInput.getValue() ) {
+		if( this.getMaxValue() <= this.getMinValue() ) {
 			throw new InputErrorException( "The input for MaxValue must be greater than that for MinValue.");
 		}
 	}
@@ -192,11 +197,13 @@ implements SampleProvider {
 
 		// Loop until the select sample falls within the desired min and max values
 		double nextSample;
+		double minVal = this.minValueInput.getValue().getNextSample(simTime);
+		double maxVal = this.maxValueInput.getValue().getNextSample(simTime);
 		do {
 			nextSample = this.getSample(simTime);
 		}
-		while (nextSample < this.minValueInput.getValue() ||
-		       nextSample > this.maxValueInput.getValue());
+		while (nextSample < minVal ||
+		       nextSample > maxVal);
 
 		lastSample = nextSample;
 
@@ -211,12 +218,12 @@ implements SampleProvider {
 
 	@Override
 	public double getMinValue() {
-		return minValueInput.getValue();
+		return minValueInput.getValue().getMinValue();
 	}
 
 	@Override
 	public double getMaxValue() {
-		return maxValueInput.getValue();
+		return maxValueInput.getValue().getMaxValue();
 	}
 
 	/**

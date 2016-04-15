@@ -17,6 +17,7 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Gamma;
@@ -41,7 +42,7 @@ public class BetaDistribution extends Distribution {
 	private final MRG1999a rng = new MRG1999a();
 
 	{
-		minValueInput.setDefaultValue(0.0);
+		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
 		alphaInput = new ValueInput("AlphaParam", "Key Inputs", 1.0d);
 		alphaInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);

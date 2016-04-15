@@ -100,12 +100,12 @@ public class ContinuousDistribution extends Distribution {
 
 	@Override
 	public double getMinValue() {
-		return Math.max( valueListInput.getValue().get(0), minValueInput.getValue());
+		return Math.max( valueListInput.getValue().get(0), super.getMinValue());
 	}
 
 	@Override
 	public double getMaxValue() {
-		return Math.min( valueListInput.getValue().lastElement(), maxValueInput.getValue());
+		return Math.min( valueListInput.getValue().lastElement(), super.getMaxValue());
 	}
 
 	@Override
