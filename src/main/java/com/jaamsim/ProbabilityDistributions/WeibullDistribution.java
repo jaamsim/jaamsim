@@ -18,8 +18,8 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.math.Gamma;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
@@ -33,34 +33,37 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class WeibullDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Weibull distribution.",
-	         exampleList = {"3.0 h"})
-	private final ValueInput scaleInput;
+	         exampleList = {"3.0 h", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput scaleInput;
 
 	@Keyword(description = "The shape parameter for the Weibull distribution.  A decimal value > 0.0.",
-	         exampleList = {"1.0"})
-	private final ValueInput shapeInput;
+	         exampleList = {"1.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput shapeInput;
 
 	@Keyword(description = "The location parameter for the Weibull distribution.",
-	         exampleList = {"5.0 h"})
-	private final ValueInput locationInput;
+	         exampleList = {"5.0 h", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput locationInput;
 
 	private final MRG1999a rng = new MRG1999a();
 
 	{
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
-		scaleInput = new ValueInput("Scale", "Key Inputs", 1.0d);
-		scaleInput.setValidRange( 0.0d, Double.POSITIVE_INFINITY);
-		scaleInput.setUnitType( UserSpecifiedUnit.class );
+		scaleInput = new SampleInput("Scale", "Key Inputs", new SampleConstant(1.0d));
+		scaleInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		scaleInput.setUnitType(UserSpecifiedUnit.class);
+		scaleInput.setEntity(this);
 		this.addInput(scaleInput);
 
-		locationInput = new ValueInput("Location", "Key Inputs", 0.0d);
-		locationInput.setUnitType( UserSpecifiedUnit.class );
+		locationInput = new SampleInput("Location", "Key Inputs", new SampleConstant(0.0d));
+		locationInput.setUnitType(UserSpecifiedUnit.class);
+		locationInput.setEntity(this);
 		this.addInput(locationInput);
 
-		shapeInput = new ValueInput("Shape", "Key Inputs", 1.0d);
-		shapeInput.setValidRange( 1.0e-10d, Double.POSITIVE_INFINITY);
-		shapeInput.setUnitType( DimensionlessUnit.class );
+		shapeInput = new SampleInput("Shape", "Key Inputs", new SampleConstant(1.0d));
+		shapeInput.setValidRange(1.0e-10d, Double.POSITIVE_INFINITY);
+		shapeInput.setUnitType(DimensionlessUnit.class);
+		shapeInput.setEntity(this);
 		this.addInput(shapeInput);
 	}
 
@@ -82,22 +85,27 @@ public class WeibullDistribution extends Distribution {
 	@Override
 	protected double getSample(double simTime) {
 
+		double scale = scaleInput.getValue().getNextSample(simTime);
+		double shape = shapeInput.getValue().getNextSample(simTime);
+		double loc = locationInput.getValue().getNextSample(simTime);
+
 		// Inverse transform method
-		return  scaleInput.getValue() * Math.pow( - Math.log( rng.nextUniform() ), 1.0/shapeInput.getValue() ) + locationInput.getValue();
+		return  scale * Math.pow( - Math.log(rng.nextUniform()), 1.0/shape ) + loc;
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double shape = shapeInput.getValue();
-		double scale = scaleInput.getValue();
-		double loc = locationInput.getValue();
+		double scale = scaleInput.getValue().getNextSample(simTime);
+		double shape = shapeInput.getValue().getNextSample(simTime);
+		double loc = locationInput.getValue().getNextSample(simTime);
 		return scale/shape * Gamma.gamma(1.0/shape) + loc;
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double shape = shapeInput.getValue();
-		double scale = scaleInput.getValue();
+		double scale = scaleInput.getValue().getNextSample(simTime);
+		double shape = shapeInput.getValue().getNextSample(simTime);
 		return scale/shape * Math.sqrt( 2.0*shape*Gamma.gamma(2.0/shape) - Math.pow(Gamma.gamma(1.0/shape), 2.0) );
 	}
+
 }
