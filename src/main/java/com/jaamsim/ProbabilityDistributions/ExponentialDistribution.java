@@ -18,8 +18,8 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -31,17 +31,18 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class ExponentialDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the exponential distribution.",
-	         exampleList = {"5.0"})
-	private final ValueInput meanInput;
+	         exampleList = {"5.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput meanInput;
 
 	private final MRG1999a rng = new MRG1999a();
 
 	{
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
-		meanInput = new ValueInput("Mean", "Key Inputs", 1.0d);
+		meanInput = new SampleInput("Mean", "Key Inputs", new SampleConstant(1.0d));
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		meanInput.setEntity(this);
 		this.addInput(meanInput);
 	}
 
@@ -63,16 +64,17 @@ public class ExponentialDistribution extends Distribution {
 	protected double getSample(double simTime) {
 
 		// Inverse transform method
-		return (-meanInput.getValue() * Math.log(rng.nextUniform()));
+		double mean = meanInput.getValue().getNextSample(simTime);
+		return (-mean * Math.log(rng.nextUniform()));
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		return meanInput.getValue();
+		return meanInput.getValue().getNextSample(simTime);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		return meanInput.getValue();
+		return meanInput.getValue().getNextSample(simTime);
 	}
 }
