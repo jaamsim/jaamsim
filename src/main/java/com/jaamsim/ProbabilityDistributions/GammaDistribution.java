@@ -18,8 +18,8 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -34,12 +34,12 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class GammaDistribution extends Distribution {
 
 	@Keyword(description = "The mean of the Gamma distribution.",
-	         exampleList = {"5.0"})
-	private final ValueInput meanInput;
+	         exampleList = {"5.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput meanInput;
 
 	@Keyword(description = "The shape parameter for the Gamma distribution.  A decimal value > 0.0.",
-	         exampleList = {"2.0"})
-	private final ValueInput shapeInput;
+	         exampleList = {"2.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput shapeInput;
 
 	private final MRG1999a rng1 = new MRG1999a();
 	private final MRG1999a rng2 = new MRG1999a();
@@ -47,14 +47,16 @@ public class GammaDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
-		meanInput = new ValueInput("Mean", "Key Inputs", 1.0d);
+		meanInput = new SampleInput("Mean", "Key Inputs", new SampleConstant(1.0d));
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		meanInput.setEntity(this);
 		this.addInput(meanInput);
 
-		shapeInput = new ValueInput("Shape", "Key Inputs", 1.0);
+		shapeInput = new SampleInput("Shape", "Key Inputs", new SampleConstant(1.0d));
 		shapeInput.setUnitType(DimensionlessUnit.class);
 		shapeInput.setValidRange( 1.0e-10d, Integer.MAX_VALUE);
+		shapeInput.setEntity(this);
 		this.addInput(shapeInput);
 	}
 
@@ -77,23 +79,25 @@ public class GammaDistribution extends Distribution {
 	@Override
 	protected double getSample(double simTime) {
 		double u2, b, sample;
+		double mean = meanInput.getValue().getNextSample(simTime);
+		double shape = shapeInput.getValue().getNextSample(simTime);
 
 		// Case 1 - Shape parameter < 1
-		if( shapeInput.getValue() < 1.0 ) {
+		if( shape < 1.0 ) {
 			double threshold;
-			b = 1.0 + ( shapeInput.getValue() / Math.E );
+			b = 1.0 + ( shape / Math.E );
 			do {
 				double p = b * rng2.nextUniform();
 				u2 = rng1.nextUniform();
 
 				if( p <= 1.0 ) {
-					sample = Math.pow( p, 1.0/shapeInput.getValue() );
+					sample = Math.pow( p, 1.0/shape );
 					threshold = Math.exp( - sample );
 				}
 
 				else {
-					sample = - Math.log( ( b - p ) / shapeInput.getValue() );
-					threshold = Math.pow( sample, shapeInput.getValue() - 1.0 );
+					sample = - Math.log( ( b - p ) / shape );
+					threshold = Math.pow( sample, shape - 1.0 );
 				}
 			} while ( u2 > threshold );
 		}
@@ -101,31 +105,34 @@ public class GammaDistribution extends Distribution {
 		// Case 2 - Shape parameter >= 1
 		else {
 			double u1, w, z;
-			double a = 1.0 / Math.sqrt( ( 2.0 * shapeInput.getValue() ) - 1.0 );
-			b = shapeInput.getValue() - Math.log( 4.0 );
-			double q = shapeInput.getValue() + ( 1.0 / a );
+			double a = 1.0 / Math.sqrt( ( 2.0 * shape ) - 1.0 );
+			b = shape - Math.log( 4.0 );
+			double q = shape + ( 1.0 / a );
 			double d = 1.0 + Math.log( 4.5 );
 			do {
 				u1 = rng1.nextUniform();
 				u2 = rng2.nextUniform();
 				double v = a * Math.log( u1 / ( 1.0 - u1 ) );
-				sample = shapeInput.getValue() * Math.exp( v );
+				sample = shape * Math.exp( v );
 				z = u1 * u1 * u2;
 				w = b + q*v - sample;
 			} while( ( w + d - 4.5*z < 0.0 ) && ( w < Math.log(z) ) );
 		}
 
 		// Scale the sample by the desired mean value
-		return sample * meanInput.getValue() / shapeInput.getValue();
+		return sample * mean / shape;
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		return meanInput.getValue();
+		return meanInput.getValue().getNextSample(simTime);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		return meanInput.getValue() / Math.sqrt( shapeInput.getValue() );
+		double mean = meanInput.getValue().getNextSample(simTime);
+		double shape = shapeInput.getValue().getNextSample(simTime);
+		return mean / Math.sqrt(shape);
 	}
+
 }
