@@ -18,9 +18,9 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -32,8 +32,8 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class ErlangDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Erlang distribution.",
-	         exampleList = {"5.0"})
-	private final ValueInput meanInput;
+	         exampleList = {"5.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput meanInput;
 
 	@Keyword(description = "The shape parameter for the Erlang distribution.  An integer value >= 1.  " +
 			"Shape = 1 gives the Exponential distribution.  " +
@@ -46,9 +46,10 @@ public class ErlangDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
-		meanInput = new ValueInput("Mean", "Key Inputs", 1.0d);
+		meanInput = new SampleInput("Mean", "Key Inputs", new SampleConstant(1.0d));
 		meanInput.setUnitType(UserSpecifiedUnit.class);
 		meanInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		meanInput.setEntity(this);
 		this.addInput(meanInput);
 
 		shapeInput = new IntegerInput("Shape", "Key Inputs", 1);
@@ -81,16 +82,19 @@ public class ErlangDistribution extends Distribution {
 		}
 
 		// Inverse transform method
-		return (- meanInput.getValue() / shapeInput.getValue() * Math.log( u ));
+		double mean = meanInput.getValue().getNextSample(simTime);
+		return (- mean / shapeInput.getValue() * Math.log( u ));
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		return meanInput.getValue();
+		return meanInput.getValue().getNextSample(simTime);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		return meanInput.getValue() / Math.sqrt( shapeInput.getValue() );
+		double mean = meanInput.getValue().getNextSample(simTime);
+		return mean / Math.sqrt( shapeInput.getValue() );
 	}
+
 }
