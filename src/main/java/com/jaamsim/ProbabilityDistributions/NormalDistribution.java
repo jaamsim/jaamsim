@@ -17,8 +17,9 @@
  */
 package com.jaamsim.ProbabilityDistributions;
 
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
@@ -30,25 +31,30 @@ import com.jaamsim.units.UserSpecifiedUnit;
  */
 public class NormalDistribution extends Distribution {
 
-	@Keyword(description = "The mean of the normal distribution (ignoring the MinValue and MaxValue keywords).",
-	         exampleList = {"5.0"})
-	private final ValueInput meanInput;
+	@Keyword(description = "The mean of the normal distribution (ignoring the MinValue and "
+	                     + "MaxValue keywords).",
+	         exampleList = {"5.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput meanInput;
 
-	@Keyword(description = "The standard deviation of the normal distribution (ignoring the MinValue and MaxValue keywords).",
-	         exampleList = {"2.0"})
-	private final ValueInput standardDeviationInput;
+	@Keyword(description = "The standard deviation of the normal distribution (ignoring the "
+	                     + "MinValue and MaxValue keywords).",
+	         exampleList = {"2.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput standardDeviationInput;
 
 	private final MRG1999a rng1 = new MRG1999a();
 	private final MRG1999a rng2 = new MRG1999a();
 
 	{
-		meanInput = new ValueInput("Mean", "Key Inputs", 0.0d);
+		meanInput = new SampleInput("Mean", "Key Inputs", new SampleConstant(0.0d));
 		meanInput.setUnitType(UserSpecifiedUnit.class);
+		meanInput.setEntity(this);
 		this.addInput(meanInput);
 
-		standardDeviationInput = new ValueInput("StandardDeviation", "Key Inputs", 1.0d);
+		standardDeviationInput = new SampleInput("StandardDeviation", "Key Inputs",
+				new SampleConstant(1.0d));
 		standardDeviationInput.setUnitType(UserSpecifiedUnit.class);
 		standardDeviationInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		standardDeviationInput.setEntity(this);
 		this.addInput(standardDeviationInput);
 	}
 
@@ -85,16 +91,18 @@ public class NormalDistribution extends Distribution {
 		sample = v1 * Math.sqrt( -2.0 * Math.log( w ) / w );
 
 		// Adjust for the desired mode and standard deviation
-		return meanInput.getValue() + ( sample * standardDeviationInput.getValue() );
+		double mean = meanInput.getValue().getNextSample(simTime);
+		double sdev = standardDeviationInput.getValue().getNextSample(simTime);
+		return mean + sample*sdev;
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		return meanInput.getValue();
+		return meanInput.getValue().getNextSample(simTime);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		return  standardDeviationInput.getValue();
+		return  standardDeviationInput.getValue().getNextSample(simTime);
 	}
 }
