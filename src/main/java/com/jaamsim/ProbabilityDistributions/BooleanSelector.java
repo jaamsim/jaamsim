@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +18,14 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.ui.EditBox;
 import com.jaamsim.units.DimensionlessUnit;
@@ -34,8 +36,8 @@ public class BooleanSelector extends DisplayEntity {
 	private IntegerInput randomSeedInput;
 
 	@Keyword(description = "The probability of the Selector returning true.",
-	         exampleList = {"0.5"})
-	private ValueInput trueProbInput;
+	         exampleList = {"0.5", "InputValue1", "'2 * [InputValue1].Value'"})
+	private SampleInput trueProbInput;
 
 	private final MRG1999a rng = new MRG1999a();
 	private boolean lastValue;
@@ -47,9 +49,10 @@ public class BooleanSelector extends DisplayEntity {
 		randomSeedInput.setDefaultText(EditBox.NONE);
 		this.addInput(randomSeedInput);
 
-		trueProbInput = new ValueInput("TrueProbability", "Key Inputs", 1.0d);
+		trueProbInput = new SampleInput("TrueProbability", "Key Inputs", new SampleConstant(1.0d));
 		trueProbInput.setUnitType(DimensionlessUnit.class);
 		trueProbInput.setValidRange(0.0d, 1.0d);
+		trueProbInput.setEntity(this);
 		this.addInput(trueProbInput);
 	}
 
@@ -85,7 +88,8 @@ public class BooleanSelector extends DisplayEntity {
 
 	public boolean getNextValue() {
 		double samp = rng.nextUniform();
-		lastValue = samp < trueProbInput.getValue();
+		double prob = trueProbInput.getValue().getNextSample(0);
+		lastValue = samp < prob;
 		return lastValue;
 	}
 
@@ -102,6 +106,9 @@ public class BooleanSelector extends DisplayEntity {
 		}
 
 		// Select the next sample
-		return this.getNextValue();
+		double samp = rng.nextUniform();
+		double prob = trueProbInput.getValue().getNextSample(simTime);
+		lastValue = samp < prob;
+		return lastValue;
 	}
 }
