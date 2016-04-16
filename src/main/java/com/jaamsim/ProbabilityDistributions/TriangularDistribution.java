@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +73,7 @@ public class TriangularDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextSample() {
+	protected double getSample(double simTime) {
 
 		double sample;
 		double min = this.getMinValue();
@@ -98,12 +99,12 @@ public class TriangularDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getMeanValue() {
+	protected double getMean(double simTime) {
 		return ( ( this.getMinValue() + modeInput.getValue() + this.getMaxValue() ) / 3.0 );
 	}
 
 	@Override
-	protected double getStandardDeviation() {
+	protected double getStandardDev(double simTime) {
 		double a = this.getMinValue();
 		double b = this.getMaxValue();
 		double m = modeInput.getValue();

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +82,7 @@ public class ContinuousDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextSample() {
+	protected double getSample(double simTime) {
 
 		double rand = rng.nextUniform();
 		DoubleVector cumList = cumulativeProbabilityListInput.getValue();
@@ -108,7 +109,7 @@ public class ContinuousDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getMeanValue() {
+	protected double getMean(double simTime) {
 		double sum = 0.0;
 		DoubleVector cumList = cumulativeProbabilityListInput.getValue();
 		DoubleVector valueList = valueListInput.getValue();
@@ -119,7 +120,7 @@ public class ContinuousDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getStandardDeviation() {
+	protected double getStandardDev(double simTime) {
 		double sum = 0.0;
 		DoubleVector cumList = cumulativeProbabilityListInput.getValue();
 		DoubleVector valueList = valueListInput.getValue();
@@ -129,7 +130,7 @@ public class ContinuousDistribution extends Distribution {
 			sum += ( cumList.get(i) - cumList.get(i-1) ) * ( val*val + val*lastVal + lastVal*lastVal );
 		}
 
-		double mean = getMeanValue();
+		double mean = getMean(simTime);
 		return  Math.sqrt( sum/3.0 - (mean * mean) );
 	}
 }

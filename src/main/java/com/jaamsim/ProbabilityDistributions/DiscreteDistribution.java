@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +104,7 @@ public class DiscreteDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextSample() {
+	protected double getSample(double simTime) {
 
 		double rand = rng.nextUniform();
 		int index = -1;
@@ -149,7 +150,7 @@ public class DiscreteDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getMeanValue() {
+	protected double getMean(double simTime) {
 		double ret = 0.0;
 		for( int i=0; i<probabilityListInput.getValue().size(); i++) {
 			ret += probabilityListInput.getValue().get(i) * valueListInput.getValue().get(i);
@@ -158,13 +159,13 @@ public class DiscreteDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getStandardDeviation() {
+	protected double getStandardDev(double simTime) {
 		double sum = 0.0;
 		for( int i=0; i<probabilityListInput.getValue().size(); i++) {
 			double val = valueListInput.getValue().get(i);
 			sum += probabilityListInput.getValue().get(i) * val * val;
 		}
-		double mean = getMeanValue();
+		double mean = getMean(simTime);
 		return  Math.sqrt( sum - (mean * mean) );
 	}
 

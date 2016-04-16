@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,7 +153,7 @@ implements SampleProvider {
 	/**
 	 * Select the next sample from the probability distribution.
 	 */
-	protected abstract double getNextSample();
+	protected abstract double getSample(double simTime);
 
 	@Override
 	public Class<? extends Unit> getUnitType() {
@@ -192,7 +193,7 @@ implements SampleProvider {
 		// Loop until the select sample falls within the desired min and max values
 		double nextSample;
 		do {
-			nextSample = this.getNextSample();
+			nextSample = this.getSample(simTime);
 		}
 		while (nextSample < this.minValueInput.getValue() ||
 		       nextSample > this.maxValueInput.getValue());
@@ -221,12 +222,12 @@ implements SampleProvider {
 	/**
 	 * Returns the mean value for the distribution calculated from the inputs.  It is NOT the mean of the sampled values.
 	 */
-	protected abstract double getMeanValue();
+	protected abstract double getMean(double simTime);
 
 	/**
 	 * Returns the standard deviation for the distribution calculated from the inputs.  It is NOT the standard deviation of the sampled values.
 	 */
-	protected abstract double getStandardDeviation();
+	protected abstract double getStandardDev(double simTime);
 
 	@Output(name = "CalculatedMean",
 	 description = "The mean of the probability distribution calculated directly from the inputs. "
@@ -236,7 +237,7 @@ implements SampleProvider {
 	    sequence = 1)
 	@Override
 	public double getMeanValue(double simTime) {
-		return this.getMeanValue();
+		return this.getMean(simTime);
 	}
 
 	@Output(name = "CalculatedStandardDeviation",
@@ -246,7 +247,7 @@ implements SampleProvider {
 	    unitType = UserSpecifiedUnit.class,
 	    sequence = 2)
 	public double getStandardDeviation(double simTime) {
-		return this.getStandardDeviation();
+		return this.getStandardDev(simTime);
 	}
 
 	@Output(name = "NumberOfSamples",

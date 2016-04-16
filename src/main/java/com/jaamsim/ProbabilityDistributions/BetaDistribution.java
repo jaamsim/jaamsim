@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +72,7 @@ public class BetaDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextSample() {
+	protected double getSample(double simTime) {
 		// Effectively calculate the inverse CDF
 		double val = rng.nextUniform();
 
@@ -107,7 +108,7 @@ public class BetaDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getMeanValue() {
+	protected double getMean(double simTime) {
 		double alpha = alphaInput.getValue();
 		double beta = betaInput.getValue();
 
@@ -115,7 +116,7 @@ public class BetaDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getStandardDeviation() {
+	protected double getStandardDev(double simTime) {
 		double alpha = alphaInput.getValue();
 		double beta = betaInput.getValue();
 

@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +40,7 @@ public class UniformDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextSample() {
+	protected double getSample(double simTime) {
 
 		// Select the sample from a uniform distribution between the min and max values
 		double min = this.getMinValue();
@@ -48,12 +49,12 @@ public class UniformDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getMeanValue() {
+	protected double getMean(double simTime) {
 		return ( 0.5 * ( this.getMinValue() + this.getMaxValue() ) );
 	}
 
 	@Override
-	protected double getStandardDeviation() {
+	protected double getStandardDev(double simTime) {
 		return (  0.5 * ( this.getMaxValue() - this.getMinValue() ) / Math.sqrt(3.0) );
 	}
 }

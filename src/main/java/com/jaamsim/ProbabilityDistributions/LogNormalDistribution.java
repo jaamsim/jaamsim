@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +81,7 @@ public class LogNormalDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextSample() {
+	protected double getSample(double simTime) {
 
 		// Loop until we have a random x-y coordinate in the unit circle
 		double w, v1, v2, sample;
@@ -102,14 +103,14 @@ public class LogNormalDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getMeanValue() {
+	protected double getMean(double simTime) {
 		double sd = normalStandardDeviationInput.getValue();
 		return scaleInput.getValue() * Math.exp( normalMeanInput.getValue() + sd*sd/2.0 );
 	}
 
 	@Override
-	protected double getStandardDeviation() {
+	protected double getStandardDev(double simTime) {
 		double sd = normalStandardDeviationInput.getValue();
-		return this.getMeanValue() * Math.sqrt( Math.exp( sd*sd ) - 1.0 );
+		return this.getMean(simTime) * Math.sqrt( Math.exp( sd*sd ) - 1.0 );
 	}
 }

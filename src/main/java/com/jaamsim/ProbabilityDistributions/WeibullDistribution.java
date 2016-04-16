@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,14 +79,14 @@ public class WeibullDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getNextSample() {
+	protected double getSample(double simTime) {
 
 		// Inverse transform method
 		return  scaleInput.getValue() * Math.pow( - Math.log( rng.nextUniform() ), 1.0/shapeInput.getValue() ) + locationInput.getValue();
 	}
 
 	@Override
-	protected double getMeanValue() {
+	protected double getMean(double simTime) {
 		double shape = shapeInput.getValue();
 		double scale = scaleInput.getValue();
 		double loc = locationInput.getValue();
@@ -93,7 +94,7 @@ public class WeibullDistribution extends Distribution {
 	}
 
 	@Override
-	protected double getStandardDeviation() {
+	protected double getStandardDev(double simTime) {
 		double shape = shapeInput.getValue();
 		double scale = scaleInput.getValue();
 		return scale/shape * Math.sqrt( 2.0*shape*Gamma.gamma(2.0/shape) - Math.pow(Gamma.gamma(1.0/shape), 2.0) );
