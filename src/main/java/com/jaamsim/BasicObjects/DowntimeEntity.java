@@ -82,7 +82,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	         example = "DowntimeEntity1 Concurrent { FALSE }")
 	protected final BooleanInput concurrent;
 
-	private final ArrayList<DowntimeUser> modelEntityList;  // A list of model entities that have this downtime entity in its DowntimeEntities keyword
+	private final ArrayList<DowntimeUser> downtimeUserList;  // entities that use this downtime entity
 	private boolean down;             // true for the duration of a downtime event
 	private int downtimePendings;    // number of queued downtime events
 	private double downtimePendingStartTime; // the simulation time in seconds at which the downtime pending started
@@ -130,7 +130,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	}
 
 	public DowntimeEntity(){
-		modelEntityList = new ArrayList<>();
+		downtimeUserList = new ArrayList<>();
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		super.earlyInit();
 
 		down = false;
-		modelEntityList.clear();
+		downtimeUserList.clear();
 		downtimePendings = 0;
 		downtimePendingStartTime = 0.0;
 		startTime = 0;
@@ -166,7 +166,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 
 			DowntimeUser du = (DowntimeUser)each;
 			if( du.getMaintenanceEntities().contains(this) || du.getBreakdownEntities().contains(this) )
-				modelEntityList.add(du);
+				downtimeUserList.add(du);
 		}
 	}
 
@@ -317,7 +317,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 				boolean allEntitiesCanStart = true;
 
 				// If immediate option is selected, don't have to wait for entities to get ready
-				for( DowntimeUser each : modelEntityList ) {
+				for (DowntimeUser each : downtimeUserList) {
 					if( ! each.canStartDowntime(this) ) {
 						allEntitiesCanStart = false;
 						break;
@@ -367,7 +367,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		}
 
 		// prepare all entities for the downtime event
-		for (DowntimeUser each : modelEntityList) {
+		for (DowntimeUser each : downtimeUserList) {
 			EventManager.startProcess(new PrepareForDowntimeTarget(this, each));
 		}
 
@@ -375,7 +375,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	}
 
 	/**
-	 * When enough working hours have been accumulated by WorkingEntity, trigger all entities in modelEntityList to perform downtime
+	 * When enough working hours have been accumulated by WorkingEntity, trigger all entities in downtimeUserList to perform downtime
 	 */
 	private void startDowntime() {
 		setDown(true);
@@ -398,7 +398,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		endTime = startTime + downDuration;
 
 		// Loop through all objects that this object is watching and trigger them to stop working.
-		for (DowntimeUser each : modelEntityList) {
+		for (DowntimeUser each : downtimeUserList) {
 			each.startDowntime(this);
 		}
 
@@ -417,7 +417,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		setDown(false);
 
 		// Loop through all objects that this object is watching and try to restart them.
-		for( DowntimeUser each : modelEntityList ) {
+		for (DowntimeUser each : downtimeUserList) {
 			each.endDowntime(this);
 		}
 
@@ -482,7 +482,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		if (durationWorkingEntity.getValue() == ent)
 			return true;
 
-		if( modelEntityList.contains(ent) )
+		if (downtimeUserList.contains(ent))
 			return true;
 
 		return false;
@@ -525,8 +525,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		return downtimePendingStartTime;
 	}
 
-	public ArrayList<DowntimeUser> getModelEntityList() {
-		return modelEntityList;
+	public ArrayList<DowntimeUser> getDowntimeUserList() {
+		return downtimeUserList;
 	}
 
 	@Output(name = "StartTime",
