@@ -18,8 +18,8 @@
 package com.jaamsim.ProbabilityDistributions;
 
 import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.rng.MRG1999a;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -33,16 +33,16 @@ import com.jaamsim.units.UserSpecifiedUnit;
 public class LogNormalDistribution extends Distribution {
 
 	@Keyword(description = "The scale parameter for the Log-Normal distribution.",
-	         exampleList = {"3.0 h"})
-	private final ValueInput scaleInput;
+	         exampleList = {"3.0 h", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput scaleInput;
 
 	@Keyword(description = "The mean of the dimensionless normal distribution (not the mean of the lognormal).",
-	         exampleList = {"5.0"})
-	private final ValueInput normalMeanInput;
+	         exampleList = {"5.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput normalMeanInput;
 
 	@Keyword(description = "The standard deviation of the dimensionless normal distribution (not the standard deviation of the lognormal).",
-	         exampleList = {"2.0"})
-	private final ValueInput normalStandardDeviationInput;
+	         exampleList = {"2.0", "InputValue1", "'2 * [InputValue1].Value'"})
+	private final SampleInput normalStandardDeviationInput;
 
 	private final MRG1999a rng1 = new MRG1999a();
 	private final MRG1999a rng2 = new MRG1999a();
@@ -50,18 +50,22 @@ public class LogNormalDistribution extends Distribution {
 	{
 		minValueInput.setDefaultValue(new SampleConstant(0.0d));
 
-		scaleInput = new ValueInput("Scale", "Key Inputs", 1.0d);
-		scaleInput.setValidRange( 0.0, Double.POSITIVE_INFINITY);
-		scaleInput.setUnitType( UserSpecifiedUnit.class );
+		scaleInput = new SampleInput("Scale", "Key Inputs", new SampleConstant(1.0d));
+		scaleInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		scaleInput.setUnitType(UserSpecifiedUnit.class);
+		scaleInput.setEntity(this);
 		this.addInput(scaleInput);
 
-		normalMeanInput = new ValueInput("NormalMean", "Key Inputs", 0.0d);
+		normalMeanInput = new SampleInput("NormalMean", "Key Inputs", new SampleConstant(0.0d));
 		normalMeanInput.setUnitType(DimensionlessUnit.class);
+		normalMeanInput.setEntity(this);
 		this.addInput(normalMeanInput);
 
-		normalStandardDeviationInput = new ValueInput("NormalStandardDeviation", "Key Inputs", 1.0d);
+		normalStandardDeviationInput = new SampleInput("NormalStandardDeviation", "Key Inputs",
+				new SampleConstant(1.0d));
 		normalStandardDeviationInput.setUnitType(DimensionlessUnit.class);
 		normalStandardDeviationInput.setValidRange(0.0d, Double.POSITIVE_INFINITY);
+		normalStandardDeviationInput.setEntity(this);
 		this.addInput(normalStandardDeviationInput);
 	}
 
@@ -97,21 +101,27 @@ public class LogNormalDistribution extends Distribution {
 		sample = v1 * Math.sqrt( -2.0 * Math.log( w ) / w );
 
 		// Adjust for the desired mode and standard deviation
-		sample = normalMeanInput.getValue() + ( sample * normalStandardDeviationInput.getValue() );
+		double mean = normalMeanInput.getValue().getNextSample(simTime);
+		double sd = normalStandardDeviationInput.getValue().getNextSample(simTime);
+		sample = mean + sample*sd;
 
 		// Convert to lognormal
-		return scaleInput.getValue() * Math.exp( sample );
+		double scale = scaleInput.getValue().getNextSample(simTime);
+		return scale * Math.exp(sample);
 	}
 
 	@Override
 	protected double getMean(double simTime) {
-		double sd = normalStandardDeviationInput.getValue();
-		return scaleInput.getValue() * Math.exp( normalMeanInput.getValue() + sd*sd/2.0 );
+		double mean = normalMeanInput.getValue().getNextSample(simTime);
+		double sd = normalStandardDeviationInput.getValue().getNextSample(simTime);
+		double scale = scaleInput.getValue().getNextSample(simTime);
+		return scale * Math.exp(mean + sd*sd/2.0);
 	}
 
 	@Override
 	protected double getStandardDev(double simTime) {
-		double sd = normalStandardDeviationInput.getValue();
-		return this.getMean(simTime) * Math.sqrt( Math.exp( sd*sd ) - 1.0 );
+		double sd = normalStandardDeviationInput.getValue().getNextSample(simTime);
+		return this.getMean(simTime) * Math.sqrt( Math.exp(sd*sd) - 1.0 );
 	}
+
 }
