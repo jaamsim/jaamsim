@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,42 +45,54 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		FORCED,
 		OPPORTUNISTIC }
 
-	@Keyword(description = "The simulation time for the first downtime event.  " +
-	                       "The value may be a constant or a probability distribution.  " +
-	                       "If a value is not specified, the Interval keyword is sampled " +
-	                       "to determine the simulation time of the first downtime event.",
+	@Keyword(description = "The calendar or working time for the first planned or unplanned "
+	                     + "maintenance event. If an input is not provided, the first maintenance "
+	                     + "event is determined by the input for the Interval keyword. A number, "
+	                     + "an object that returns a number, or an expression can be entered.",
 	         exampleList = {"720 h", "UniformDistribution1" })
 	private final SampleInput firstDowntime;
 
-	@Keyword(description = "The object for which to track working time accumulated in order to schedule a downtime event in objects that have this" +
-	                       "DowntimeEntity defined in their 'DowntimeEntities' keyword.  If this keyword is not set, calendar time will be used to" +
-	                       "determine the IAT.",
-	         exampleList = { "Object1" })
+	@Keyword(description = "The object whose working time determines the occurrence of the "
+	                     + "planned or unplanned maintenance events. Calendar time is used if "
+	                     + "the input is left blank.",
+	         exampleList = {"Object1"})
 	private final EntityInput<StateEntity> iatWorkingEntity;
 
-	@Keyword(description = "The object for which to track working time accumulated in order to complete a downtime event in objects that have this" +
-	                       "DowntimeEntity defined in their 'DowntimeEntities' keyword.  If this keyword is not set, calendar time will be used to" +
-	                       "determine when the downtime will be over.",
-	example = "DowntimeEntity1 DurationWorkingEntity { Object1 }")
+	@Keyword(description = "The object whose working time determines the completion of the "
+	                     + "planned or unplanned maintenance activity. Calendar time is used if "
+	                     + "the input is left blank.",
+	         exampleList = {"Object1"})
 	private final EntityInput<StateEntity> durationWorkingEntity;
 
-	@Keyword(description = "A SampleProvider for the duration of breakdowns.",
-			 exampleList = {"8 h ", "DurationTimeSeries", "DurationDistribution" })
-	private final SampleInput downtimeDurationDistribution;
-
-	@Keyword(description = "A SampleProvider for the time between breakdowns.",
-			 exampleList = {"168 h", "IntervalTimeSeries", "IntervalDistribution" })
+	@Keyword(description = "The calendar or working time between the start of the last planned or "
+	                     + "unplanned maintenance activity and the start of the next maintenance "
+	                     + "activity. A number, an expression, or an object that returns a number "
+	                     + "can be entered.",
+	         exampleList = {"168 h", "IntervalValueSequence", "IntervalDistribution" })
 	private final SampleInput downtimeIATDistribution;
 
-	@Keyword(description = "The severity level for the downtime events. The value must be one of the following:\n " +
-             "- IMMEDIATE\n" +
-             "- FORCED\n" +
-             "- OPPORTUNISTIC",
-             example = "DowntimeEntity1 Type { FORCED }")
+	@Keyword(description = "The calendar or working time required to complete the planned or "
+	                     + "unplanned maintenance activity. A number, an expression, or an object "
+	                     + "that returns a number can be entered.",
+	         exampleList = {"8 h ", "DurationValueSequence", "DurationDistribution" })
+	private final SampleInput downtimeDurationDistribution;
+
+	@Keyword(description = "The severity level for the downtime events. The input must be one of "
+	                     + "the following:\n"
+	                     + "- IMMEDIATE (interrupts the present task and starts maintenance "
+	                     +   "without delay)\n"
+	                     + "- FORCED (completes the present task before starting maintenance)\n"
+	                     + "- OPPORTUNISTIC (completes the present task and any waiting tasks "
+	                     +   "before starting maintenance)\n"
+	                     + "Planned maintenace normally uses the OPPORTUNISTIC setting, while "
+	                     + "unplanned maintenance (breakdowns) normally uses the IMMEDIATE "
+	                     + "setting.",
+	         exampleList = {"FORCED"})
 	private final EnumInput<DowntimeTypes> type;
 
-	@Keyword(description = "If TRUE, the downtime event will occur in parallel with a present downtime event.",
-	         example = "DowntimeEntity1 Concurrent { FALSE }")
+	@Keyword(description = "If TRUE, the downtime event can occur in parallel with another "
+	                     + "downtime event.",
+	         exampleList = {"FALSE"})
 	protected final BooleanInput concurrent;
 
 	private final ArrayList<DowntimeUser> downtimeUserList;  // entities that use this downtime entity
