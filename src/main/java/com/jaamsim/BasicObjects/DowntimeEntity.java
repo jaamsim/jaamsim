@@ -132,7 +132,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 		this.addSynonym(downtimeDurationDistribution, "TimeToRepair");
 
 		type = new EnumInput<> (DowntimeTypes.class, "Type", "Key Inputs", null);
-		type.setRequired(true);
+		type.setHidden(true);
 		this.addInput(type);
 
 		concurrent = new BooleanInput("Concurrent", "Key Inputs", false);
