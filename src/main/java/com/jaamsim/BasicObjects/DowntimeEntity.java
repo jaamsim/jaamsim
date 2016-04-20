@@ -107,6 +107,8 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	private double endTime;          // the end time of the latest downtime event
 
 	{
+		workingStateListInput.setHidden(true);
+
 		firstDowntime = new SampleInput("FirstDowntime", "Key Inputs", null);
 		firstDowntime.setUnitType(TimeUnit.class);
 		this.addInput(firstDowntime);
