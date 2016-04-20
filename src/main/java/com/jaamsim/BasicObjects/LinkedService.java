@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +55,40 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
 	protected final EntityListInput<Threshold> operatingThresholdList;
 
+	@Keyword(description = "A list of DowntimeEntities representing planned maintenance that "
+	                     + "must be performed immediately, interrupting any work underway at "
+	                     + "present.",
+	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	protected final EntityListInput<DowntimeEntity> immediateMaintenanceList;
+
+	@Keyword(description = "A list of DowntimeEntities representing planned maintenance that "
+	                     + "must begin as soon as task underway at present is finished.",
+	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	protected final EntityListInput<DowntimeEntity> forcedMaintenanceList;
+
+	@Keyword(description = "A list of DowntimeEntities representing planned maintenance that "
+	                     + "can wait until task underway at present is finished and the queue "
+	                     + "of tasks is empty.",
+	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	protected final EntityListInput<DowntimeEntity> opportunisticMaintenanceList;
+
+	@Keyword(description = "A list of DowntimeEntities representing unplanned maintenance that "
+	                     + "must be performed immediately, interrupting any work underway at "
+	                     + "present.",
+	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	protected final EntityListInput<DowntimeEntity> immediateBreakdownList;
+
+	@Keyword(description = "A list of DowntimeEntities representing unplanned maintenance that "
+	                     + "must begin as soon as task underway at present is finished.",
+	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	protected final EntityListInput<DowntimeEntity> forcedBreakdownList;
+
+	@Keyword(description = "A list of DowntimeEntities representing unplanned maintenance that "
+	                     + "can wait until task underway at present is finished and the queue "
+	                     + "of tasks is empty.",
+	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
+	protected final EntityListInput<DowntimeEntity> opportunisticBreakdownList;
+
 	private boolean busy;
 	private Integer matchValue;
 	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
@@ -76,6 +111,30 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
 		this.addInput(operatingThresholdList);
+
+		immediateMaintenanceList =  new EntityListInput<>(DowntimeEntity.class,
+				"ImmediateMaintenanceList", "Maintenance", new ArrayList<DowntimeEntity>());
+		this.addInput(immediateMaintenanceList);
+
+		forcedMaintenanceList =  new EntityListInput<>(DowntimeEntity.class,
+				"ForcedMaintenanceList", "Maintenance", new ArrayList<DowntimeEntity>());
+		this.addInput(forcedMaintenanceList);
+
+		opportunisticMaintenanceList =  new EntityListInput<>(DowntimeEntity.class,
+				"OpportunisticMaintenanceList", "Maintenance", new ArrayList<DowntimeEntity>());
+		this.addInput(opportunisticMaintenanceList);
+
+		immediateBreakdownList =  new EntityListInput<>(DowntimeEntity.class,
+				"ImmediateBreakdownList", "Maintenance", new ArrayList<DowntimeEntity>());
+		this.addInput(immediateBreakdownList);
+
+		forcedBreakdownList =  new EntityListInput<>(DowntimeEntity.class,
+				"ForcedBreakdownList", "Maintenance", new ArrayList<DowntimeEntity>());
+		this.addInput(forcedBreakdownList);
+
+		opportunisticBreakdownList =  new EntityListInput<>(DowntimeEntity.class,
+				"OpportunisticBreakdownList", "Maintenance", new ArrayList<DowntimeEntity>());
+		this.addInput(opportunisticBreakdownList);
 	}
 
 	public LinkedService() {}
