@@ -48,11 +48,12 @@ public class BooleanIndicator extends DisplayEntity {
 	private final StringInput falseText;
 
 	{
-		expInput = new SampleInput("OutputName", "Key Inputs", null);
+		expInput = new SampleInput("DataSource", "Key Inputs", null);
 		expInput.setUnitType(DimensionlessUnit.class);
 		expInput.setEntity(this);
 		expInput.setRequired(true);
 		this.addInput(expInput);
+		this.addSynonym(expInput, "OutputName");
 
 		trueColor = new ColourInput("TrueColour", "Graphics", ColourInput.GREEN);
 		this.addInput(trueColor);
