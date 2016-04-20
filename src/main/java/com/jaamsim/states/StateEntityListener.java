@@ -18,6 +18,19 @@ package com.jaamsim.states;
 
 
 public interface StateEntityListener {
+
+	/**
+	 * Returns true if this object is monitoring the specified entity's state.
+	 * @param ent - the specified entity
+	 * @return true if the specified entity is being monitored
+	 */
 	public boolean isWatching(StateEntity ent);
+
+	/**
+	 * Indicates that the specified entity has changed state.
+	 * @param ent - the specified entity
+	 * @param prev - old state for the specified entity
+	 * @param next - new state for the specified entity
+	 */
 	public void updateForStateChange(StateEntity ent, StateRecord prev, StateRecord next);
 }

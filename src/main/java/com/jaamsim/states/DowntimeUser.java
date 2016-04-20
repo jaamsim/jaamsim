@@ -24,8 +24,30 @@ public interface DowntimeUser {
 	public String getName();
 	public ArrayList<DowntimeEntity> getMaintenanceEntities();
 	public ArrayList<DowntimeEntity> getBreakdownEntities();
+
+	/**
+	 * Returns true if the specified maintenance activity can be started.
+	 * @param down - planned or unplanned maintenance activity
+	 * @return
+	 */
 	public boolean canStartDowntime(DowntimeEntity down);
+
+	/**
+	 * Notifies the entity that the specified maintenance activity is about to begin and that
+	 * any work in progress should be halted.
+	 * @param down - planned or unplanned maintenance activity
+	 */
 	public void prepareForDowntime(DowntimeEntity down);
+
+	/**
+	 * Notifies the entity that the specified maintenance activity has started.
+	 * @param down - planned or unplanned maintenance activity
+	 */
 	public void startDowntime(DowntimeEntity down);
+
+	/**
+	 * Notifies the entity that the specified maintenance activity has ended.
+	 * @param down - planned or unplanned maintenance activity
+	 */
 	public void endDowntime(DowntimeEntity down);
 }
