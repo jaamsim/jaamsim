@@ -61,6 +61,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.JWindow;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
@@ -1591,7 +1592,26 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		InputAgent.setScriptMode(scriptMode);
 
+		// If not running in batch mode, create the splash screen
+		JWindow splashScreen = null;
 		if (!batch) {
+			URL splashImage = GUIFrame.class.getResource("/resources/images/splashscreen.png");
+			ImageIcon imageIcon = new ImageIcon(splashImage);
+			Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+			int splashX = (screen.width - imageIcon.getIconWidth()) / 2;
+			int splashY = (screen.height - imageIcon.getIconHeight()) / 2;
+
+			// Set the window's bounds, centering the window
+			splashScreen = new JWindow();
+			splashScreen.setAlwaysOnTop(true);
+			splashScreen.setBounds(splashX, splashY, imageIcon.getIconWidth(), imageIcon.getIconHeight());
+
+			// Build the splash screen
+			splashScreen.getContentPane().add(new JLabel(imageIcon));
+
+			// Display it
+			splashScreen.setVisible(true);
+
 			// Begin initializing the rendering system
 			RenderManager.initialize(SAFE_GRAPHICS);
 		}
@@ -1638,6 +1658,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			Throwable t = gui.configure(loadFile);
 			if (t != null) {
+				// Hide the splash screen
+				if (splashScreen != null) {
+					splashScreen.dispose();
+					splashScreen = null;
+				}
 				handleConfigError(t, loadFile);
 			}
 		}
@@ -1673,6 +1698,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				GUIFrame.shutdown(0);
 			Simulation.start(evt);
 			return;
+		}
+
+		// Hide the splash screen
+		if (splashScreen != null) {
+			splashScreen.dispose();
+			splashScreen = null;
 		}
 
 		// Bring the Control Panel to the front (along with any open Tools)
