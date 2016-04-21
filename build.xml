@@ -105,6 +105,8 @@ limitations under the License.
         <filter token="VERSION" value="${ver}"/>
       </filterset>
     </copy>
+    <delete file="${jars.dir}/JaamSim-48px.ico" quiet="true"/>
+    <copy file="${make.dir}/JaamSim-48px.ico" toFile="${jars.dir}/JaamSim-48px.ico"/>
     <exec dir="${jars.dir}" executable="exe4jc">
       <arg value="JS32.exe4j"/>
     </exec>

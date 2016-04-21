@@ -20,7 +20,7 @@ limitations under the License.
       <principalLanguage id="en" customLocalizationFile="" />
     </languages>
   </application>
-  <executable name="JaamSim@VERSION@_x86" type="2" iconSet="true" executableDir="." redirectStderr="false" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" amd64="false">
+  <executable name="JaamSim@VERSION@_x86" type="2" iconSet="true" iconFile="./JaamSim-48px.ico" executableDir="." redirectStderr="false" stderrFile="error.log" redirectStdout="false" stdoutFile="output.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" amd64="false">
     <messageSet />
     <versionInfo include="false" />
   </executable>
