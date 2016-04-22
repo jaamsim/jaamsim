@@ -34,17 +34,62 @@ public class StringListInput extends ListInput<ArrayList<String>> {
 	@Override
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
-		Input.assertCountRange(kw, minCount, maxCount);
-		if (validOptions != null) {
-			value = Input.parseStrings(kw, validOptions, caseSensitive);
-			return;
-		}
 
-		ArrayList<String> tmp = new ArrayList<>(kw.numArgs());
-		for (int i = 0; i < kw.numArgs(); i++) {
-			tmp.add(kw.getArg(i));
+		// If adding to the list
+		if (kw.getArg( 0 ).equals( "++" )) {
+			ArrayList<String> input = new ArrayList<>(kw.numArgs()-1);
+			for (int i = 1; i < kw.numArgs(); i++) {
+				if (validOptions == null)
+					input.add(kw.getArg(i));
+				else
+					input.add(Input.parseString(kw.getArg(i), validOptions, caseSensitive));
+			}
+
+			ArrayList<String> newValue;
+			if (value == null)
+				newValue = new ArrayList<>();
+			else
+				newValue = new ArrayList<>( value );
+
+			Input.assertCountRange(input, 0, maxCount - newValue.size());
+
+			newValue.addAll( input );
+			value = newValue;
 		}
-		value = tmp;
+		// If removing from the list
+		else if (kw.getArg( 0 ).equals( "--" )) {
+			ArrayList<String> input = new ArrayList<>(kw.numArgs()-1);
+			for (int i = 1; i < kw.numArgs(); i++) {
+				if (validOptions == null)
+					input.add(kw.getArg(i));
+				else
+					input.add(Input.parseString(kw.getArg(i), validOptions, caseSensitive));
+			}
+
+			Input.assertCountRange(input, 0, value.size() - minCount );
+
+			ArrayList<String> newValue = new ArrayList<>( value );
+			for (String val : input) {
+				if (! newValue.contains( val ))
+					InputAgent.logWarning( "Could not remove " + val + " from " + this.getKeyword() );
+				newValue.remove( val );
+			}
+			value = newValue;
+		}
+		// Otherwise, just set the list normally
+		else {
+			Input.assertCountRange(kw, minCount, maxCount);
+			if (validOptions != null) {
+				value = Input.parseStrings(kw, validOptions, caseSensitive);
+				return;
+			}
+
+			ArrayList<String> tmp = new ArrayList<>(kw.numArgs());
+			for (int i = 0; i < kw.numArgs(); i++) {
+				tmp.add(kw.getArg(i));
+			}
+			value = tmp;
+		}
 	}
 
 	@Override
