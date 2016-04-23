@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,12 +55,19 @@ public class Server extends LinkedService {
 	@Override
 	public void startAction() {
 
+		// Stop if there is a forced downtime activity about to begin
+		if (forcedDowntimePending) {
+			forcedDowntimePending = false;
+			this.setBusy(false);
+			this.setPresentState();
+			return;
+		}
+
 		// Determine the match value
 		Integer m = this.getNextMatchValue(getSimTime());
 
 		// Stop if the queue is empty or a threshold is closed
 		if (waitQueue.getValue().getMatchCount(m) == 0 || !this.isOpen()) {
-			servedEntity = null;
 			this.setBusy(false);
 			this.setPresentState();
 			return;
@@ -70,8 +78,9 @@ public class Server extends LinkedService {
 		this.moveToProcessPosition(servedEntity);
 
 		// Schedule the completion of service
-		double dt = serviceTime.getValue().getNextSample(getSimTime());
-		this.scheduleProcess(dt, 5, endActionTarget);
+		startTime = this.getSimTime();
+		duration = serviceTime.getValue().getNextSample(startTime);
+		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
 	}
 
 	@Override
@@ -79,6 +88,7 @@ public class Server extends LinkedService {
 
 		// Send the entity to the next component in the chain
 		this.sendToNextComponent(servedEntity);
+		servedEntity = null;
 
 		// Remove the next entity from the queue and start processing
 		this.startAction();
