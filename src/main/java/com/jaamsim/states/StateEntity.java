@@ -405,6 +405,22 @@ public class StateEntity extends DisplayEntity {
 
 	public void setPresentState() {}
 
+	/**
+	 * Returns the elapsed time in seconds after the completion of the initialisation period
+	 * that the entity has been in the specified state.
+	 * @param simTime - present simulation time
+	 * @param state - string representing the state
+	 * @return
+	 */
+	public double getTimeInState(double simTime, String state) {
+		long simTicks = EventManager.secsToNearestTick(simTime);
+		StateRecord rec = states.get(state.intern());
+		if (rec == null)
+			return 0.0;
+		long ticks = getTicksInState(simTicks, rec);
+		return EventManager.ticksToSecs(ticks);
+	}
+
 	@Output(name = "State",
 	 description = "The present state for the object.",
 	    unitType = DimensionlessUnit.class,
