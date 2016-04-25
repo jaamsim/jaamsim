@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +53,14 @@ public class Unpack extends LinkedService {
 	@Override
 	public void startAction() {
 
+		// Stop if there is a forced downtime activity about to begin
+		if (forcedDowntimePending && container == null) {
+			forcedDowntimePending = false;
+			this.setBusy(false);
+			this.setPresentState();
+			return;
+		}
+
 		// Determine the match value
 		Integer m = this.getNextMatchValue(getSimTime());
 
@@ -81,10 +90,11 @@ public class Unpack extends LinkedService {
 		}
 
 		// Schedule the removal of the next entity
-		double dt = 0.0;
+		startTime = this.getSimTime();
+		duration = 0.0;
 		if (numberRemoved < numberToRemove && container.getCount() > 0)
-			dt = serviceTime.getValue().getNextSample(getSimTime());
-		this.scheduleProcess(dt, 5, endActionTarget);
+			duration = serviceTime.getValue().getNextSample(startTime);
+		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
 	}
 
 	protected void disposeContainer(EntityContainer c) {
