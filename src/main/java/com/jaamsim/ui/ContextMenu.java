@@ -44,6 +44,10 @@ public class ContextMenu {
 
 	private ContextMenu() {}
 
+	static {
+		addCustomMenuHandler(new ExportColladaModelHandler());
+	}
+
 	public static final void addCustomMenuHandler(ContextMenuItem i) {
 		synchronized (menuItems) {
 			menuItems.add(i);
@@ -154,7 +158,6 @@ public class ContextMenu {
 		// 5) Delete
 		JMenuItem deleteMenuItem = new JMenuItem( "Delete" );
 		deleteMenuItem.addActionListener( new ActionListener() {
-
 			@Override
 			public void actionPerformed( ActionEvent event ) {
 				ent.kill();
@@ -166,11 +169,6 @@ public class ContextMenu {
 		// DisplayEntity menu items
 		if (ent instanceof DisplayEntity) {
 			ContextMenu.populateDisplayEntityMenu(menu, (DisplayEntity)ent, x, y);
-		}
-
-		// ColladaModel menu items
-		if (ent instanceof ColladaModel) {
-			ContextMenu.populateColladaModelMenu(menu, (ColladaModel)ent, x, y);
 		}
 
 		synchronized (menuItems) {
@@ -334,57 +332,61 @@ public class ContextMenu {
 		menu.add( centerInViewMenuItem );
 	}
 
-	public static void populateColladaModelMenu(JPopupMenu menu, final ColladaModel model, final int x, final int y) {
+	private static class ExportColladaModelHandler implements ContextMenuItem {
+		@Override
+		public String getMenuText() {
+			return "Export 3D Binary File (*.jsb)";
+		}
 
-		//1) Export Binary
-		JMenuItem exportBinaryMenuItem = new JMenuItem( "Export 3D Binary File (*.jsb)" );
-		exportBinaryMenuItem.addActionListener( new ActionListener() {
+		@Override
+		public boolean supportsEntity(Entity ent) {
+			if (ent instanceof ColladaModel)
+				return true;
+			return false;
+		}
 
-			@Override
-			public void actionPerformed( ActionEvent event ) {
+		@Override
+		public void performAction(Entity ent, int x, int y) {
+			ColladaModel model = (ColladaModel)ent;
+			// Create a file chooser
+			File colFile = new File(model.getColladaFile());
+			final JFileChooser chooser = new JFileChooser(colFile);
 
-				// Create a file chooser
-				File colFile = new File(model.getColladaFile());
-				final JFileChooser chooser = new JFileChooser(colFile);
+			// Set the file extension filters
+			chooser.setAcceptAllFileFilterUsed(true);
+			FileNameExtensionFilter jsbFilter = new FileNameExtensionFilter("JaamSim 3D Binary Files (*.jsb)", "JSB");
+			chooser.addChoosableFileFilter(jsbFilter);
+			chooser.setFileFilter(jsbFilter);
 
-				// Set the file extension filters
-				chooser.setAcceptAllFileFilterUsed(true);
-				FileNameExtensionFilter jsbFilter = new FileNameExtensionFilter("JaamSim 3D Binary Files (*.jsb)", "JSB");
-				chooser.addChoosableFileFilter(jsbFilter);
-				chooser.setFileFilter(jsbFilter);
+			// Set the default name for the binary file
+			String defName = colFile.getName().concat(".jsb");
+			chooser.setSelectedFile(new File(defName));
 
-				// Set the default name for the binary file
-				String defName = colFile.getName().concat(".jsb");
-				chooser.setSelectedFile(new File(defName));
+			// Show the file chooser and wait for selection
+			int returnVal = chooser.showDialog(null, "Export");
 
-				// Show the file chooser and wait for selection
-				int returnVal = chooser.showDialog(null, "Export");
+			// Create the selected graphics files
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+	            File file = chooser.getSelectedFile();
+				String filePath = file.getPath();
 
-				// Create the selected graphics files
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-		            File file = chooser.getSelectedFile();
-					String filePath = file.getPath();
+				// Add the file extension ".jsb" if needed
+				filePath = filePath.trim();
+				if (filePath.indexOf('.') == -1)
+					filePath = filePath.concat(".jsb");
 
-					// Add the file extension ".jsb" if needed
-					filePath = filePath.trim();
-					if (filePath.indexOf('.') == -1)
-						filePath = filePath.concat(".jsb");
-
-					// Confirm overwrite if file already exists
-					File temp = new File(filePath);
-					if (temp.exists()) {
-						boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
-						if (!confirmed) {
-							return;
-						}
+				// Confirm overwrite if file already exists
+				File temp = new File(filePath);
+				if (temp.exists()) {
+					boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
+					if (!confirmed) {
+						return;
 					}
+				}
 
-					// Export the JSB file
-		            model.exportBinaryMesh(temp.getPath());
-		        }
+				// Export the JSB file
+	            model.exportBinaryMesh(temp.getPath());
 			}
-		});
-		menu.add( exportBinaryMenuItem );
+		}
 	}
-
 }
