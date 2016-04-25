@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,6 +91,14 @@ public class Pack extends LinkedService {
 	@Override
 	public void startAction() {
 
+		// Stop if there is a forced downtime activity about to begin
+		if (forcedDowntimePending && container == null) {
+			forcedDowntimePending = false;
+			this.setBusy(false);
+			this.setPresentState();
+			return;
+		}
+
 		// Do any of the thresholds stop the generator?
 		if (!this.isOpen()) {
 			this.setBusy(false);
@@ -134,8 +143,9 @@ public class Pack extends LinkedService {
 		this.moveToProcessPosition(packedEntity);
 
 		// Schedule the insertion of the next entity
-		double dt = serviceTime.getValue().getNextSample(getSimTime());
-		this.scheduleProcess(dt, 5, endActionTarget);
+		startTime = this.getSimTime();
+		duration = serviceTime.getValue().getNextSample(startTime);
+		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
 	}
 
 	@Override
