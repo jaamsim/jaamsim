@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.jaamsim.Graphics.DisplayEntity;
@@ -48,6 +49,9 @@ import com.jaamsim.render.MeshProxy;
 import com.jaamsim.render.RenderProxy;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.VisibilityInfo;
+import com.jaamsim.ui.ContextMenu;
+import com.jaamsim.ui.ContextMenuItem;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 
 public class ColladaModel extends DisplayModel {
@@ -349,4 +353,65 @@ public class ColladaModel extends DisplayModel {
 
 	}
 
+	static {
+		ContextMenu.addCustomMenuHandler(new ExportColladaModelHandler());
+	}
+
+	private static class ExportColladaModelHandler implements ContextMenuItem {
+		@Override
+		public String getMenuText() {
+			return "Export 3D Binary File (*.jsb)";
+		}
+
+		@Override
+		public boolean supportsEntity(Entity ent) {
+			if (ent instanceof ColladaModel)
+				return true;
+			return false;
+		}
+
+		@Override
+		public void performAction(Entity ent, int x, int y) {
+			ColladaModel model = (ColladaModel)ent;
+			// Create a file chooser
+			File colFile = new File(model.getColladaFile());
+			final JFileChooser chooser = new JFileChooser(colFile);
+
+			// Set the file extension filters
+			chooser.setAcceptAllFileFilterUsed(true);
+			FileNameExtensionFilter jsbFilter = new FileNameExtensionFilter("JaamSim 3D Binary Files (*.jsb)", "JSB");
+			chooser.addChoosableFileFilter(jsbFilter);
+			chooser.setFileFilter(jsbFilter);
+
+			// Set the default name for the binary file
+			String defName = colFile.getName().concat(".jsb");
+			chooser.setSelectedFile(new File(defName));
+
+			// Show the file chooser and wait for selection
+			int returnVal = chooser.showDialog(null, "Export");
+
+			// Create the selected graphics files
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+	            File file = chooser.getSelectedFile();
+				String filePath = file.getPath();
+
+				// Add the file extension ".jsb" if needed
+				filePath = filePath.trim();
+				if (filePath.indexOf('.') == -1)
+					filePath = filePath.concat(".jsb");
+
+				// Confirm overwrite if file already exists
+				File temp = new File(filePath);
+				if (temp.exists()) {
+					boolean confirmed = GUIFrame.showSaveAsDialog(file.getName());
+					if (!confirmed) {
+						return;
+					}
+				}
+
+				// Export the JSB file
+	            model.exportBinaryMesh(temp.getPath());
+			}
+		}
+	}
 }
