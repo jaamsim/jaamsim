@@ -40,8 +40,36 @@ import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.math.Vec3d;
 
 public class ContextMenu {
+	private static final ArrayList<ContextMenuItem> menuItems = new ArrayList<>();
 
 	private ContextMenu() {}
+
+	public static final void addCustomMenuHandler(ContextMenuItem i) {
+		synchronized (menuItems) {
+			menuItems.add(i);
+		}
+	}
+
+	private static class UIMenuItem extends JMenuItem implements ActionListener {
+		final ContextMenuItem i;
+		final Entity ent;
+		final int x;
+		final int y;
+
+		UIMenuItem(ContextMenuItem i, Entity ent, int x, int y) {
+			super(i.getMenuText());
+			this.i = i;
+			this.ent = ent;
+			this.x = x;
+			this.y = y;
+			this.addActionListener(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			i.performAction(ent, x, y);
+		}
+	}
 
 	/**
 	 * Adds menu items to the right click (context) menu for the specified entity.
@@ -51,7 +79,6 @@ public class ContextMenu {
 	 * @param y - screen coordinate for the menu
 	 */
 	public static void populateMenu(JPopupMenu menu, final Entity ent, final int x, final int y) {
-
 		// 1) Input Editor
 		JMenuItem inputEditorMenuItem = new JMenuItem( "Input Editor" );
 		inputEditorMenuItem.addActionListener( new ActionListener() {
@@ -144,6 +171,13 @@ public class ContextMenu {
 		// ColladaModel menu items
 		if (ent instanceof ColladaModel) {
 			ContextMenu.populateColladaModelMenu(menu, (ColladaModel)ent, x, y);
+		}
+
+		synchronized (menuItems) {
+			for (ContextMenuItem each : menuItems) {
+				if (each.supportsEntity(ent))
+					menu.add(new UIMenuItem(each, ent, x, y));
+			}
 		}
 	}
 
