@@ -43,13 +43,15 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	         exampleList = {"Queue1"})
 	protected final EntityInput<Queue> waitQueue;
 
-	@Keyword(description = "An expression returning a dimensionless integer value that can be used to "
-			+ "determine which of the queued entities is eligible for processing.",
-	         exampleList = {"this.obj.Attrib1" })
+	@Keyword(description = "An expression returning a dimensionless integer value that can be "
+	                     + "used to determine which of the queued entities is eligible for "
+	                     + "processing.",
+	         exampleList = {"this.obj.Attrib1"})
 	protected final SampleInput match;
 
-	@Keyword(description = "A list of thresholds that must be satisified for the entity to operate.",
-			exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
+	@Keyword(description = "A list of thresholds that must be satisified for the entity to "
+	                     + "operate.",
+	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
 	protected final EntityListInput<Threshold> operatingThresholdList;
 
 	private boolean busy;
@@ -73,7 +75,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		this.addInput(match);
 
 		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
-		this.addInput( operatingThresholdList);
+		this.addInput(operatingThresholdList);
 	}
 
 	public LinkedService() {}
@@ -102,6 +104,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// Add the entity to the queue
 		waitQueue.getValue().addEntity(ent);
 	}
+
+	// ********************************************************************************************
+	// SELECTING AN ENTITY FROM THE WAIT QUEUE
+	// ********************************************************************************************
 
 	/**
 	 * Removes the next entity to be processed from the queue.
@@ -137,6 +143,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		return matchValue;
 	}
 
+	// ********************************************************************************************
+	// WAIT QUEUE
+	// ********************************************************************************************
+
 	@Override
 	public ArrayList<Queue> getQueues() {
 		ArrayList<Queue> ret = new ArrayList<>();
@@ -156,6 +166,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		}
 	}
 
+	// ********************************************************************************************
+	// PROCESSING ENTITIES
+	// ********************************************************************************************
+
+	/**
+	 * EndActionTarget
+	 */
 	private static class EndActionTarget extends EntityTarget<LinkedService> {
 		EndActionTarget(LinkedService ent) {
 			super(ent, "endAction");
@@ -175,9 +192,19 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		busy = bool;
 	}
 
+	/**
+	 * Starts the processing of an entity.
+	 */
 	public abstract void startAction();
 
+	/**
+	 * Completes the processing of an entity.
+	 */
 	public abstract void endAction();
+
+	// ********************************************************************************************
+	// THRESHOLDS
+	// ********************************************************************************************
 
 	@Override
 	public ArrayList<Threshold> getThresholds() {
@@ -197,6 +224,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			this.setPresentState();
 		}
 	}
+
+	// ********************************************************************************************
+	// PRESENT STATE
+	// ********************************************************************************************
 
 	/**
 	 * Tests whether all the thresholds are open.
@@ -230,15 +261,19 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		}
 	}
 
+	// ********************************************************************************************
+	// GRAPHICS
+	// ********************************************************************************************
+
 	protected final void moveToProcessPosition(DisplayEntity ent) {
 		Vec3d pos = this.getGlobalPosition();
 		pos.add3(processPosition.getValue());
 		ent.setGlobalPosition(pos);
 	}
 
-	// ******************************************************************************************************
+	// ********************************************************************************************
 	// OUTPUTS
-	// ******************************************************************************************************
+	// ********************************************************************************************
 
 	@Output(name = "MatchValue",
 	 description = "The present value to be matched in the queue.",
