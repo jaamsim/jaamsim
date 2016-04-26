@@ -23,6 +23,7 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -572,4 +573,27 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	public double getEndTime(double simTime) {
 		return endTime;
 	}
+
+	@Output(name = "CalculatedDowntimeRatio",
+	 description = "The value calculated directly from model inputs for:\n"
+	             + "(avg. downtime duration)/(avg. downtime interval)",
+	    sequence = 3)
+	public double getCalculatedDowntimeRatio(double simTime) {
+		double dur = downtimeDurationDistribution.getValue().getMeanValue(simTime);
+		double iat = downtimeIATDistribution.getValue().getMeanValue(simTime);
+		return dur/iat;
+	}
+
+	@Output(name = "Availability",
+	 description = "The fraction of calendar time (excluding the initialisation period) during "
+	             + "which this type of downtime did not occur.",
+	    sequence = 4)
+	public double getAvailability(double simTime) {
+		double total = simTime;
+		if (simTime > Simulation.getInitializationTime())
+			total -= Simulation.getInitializationTime();
+		double down = this.getTimeInState(simTime, "Downtime");
+		return 1.0d - down/total;
+	}
+
 }
