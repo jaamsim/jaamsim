@@ -116,6 +116,8 @@ public class LogBox extends FrameBox {
 
 		String stackTrace = sw.toString();
 		logLine(stackTrace);
+
+		System.err.println(stackTrace);
 	}
 
 	public static void renderLogException(Throwable ex) {

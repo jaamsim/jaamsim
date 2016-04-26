@@ -950,6 +950,7 @@ public class InputAgent {
 	public static void logMessage(String fmt, Object... args) {
 		String msg = String.format(fmt, args);
 		LogBox.logLine(msg);
+		System.err.println(msg);
 
 		if (logFile == null)
 			return;
