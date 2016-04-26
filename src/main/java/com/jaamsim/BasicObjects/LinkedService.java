@@ -24,6 +24,7 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -564,6 +565,57 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	    sequence = 4)
 	public boolean isBreakdown(double simTime) {
 		return isBreakdown();
+	}
+
+	@Output(name = "Utilisation",
+	 description = "The fraction of calendar time (excluding the initialisation period) that "
+	             + "this object is in the Working state.",
+	  reportable = true,
+	    sequence = 5)
+	public double getUtilisation(double simTime) {
+		double total = simTime;
+		if (simTime > Simulation.getInitializationTime())
+			total -= Simulation.getInitializationTime();
+		double working = this.getTimeInState(simTime, "Working");
+		return working/total;
+	}
+
+	@Output(name = "Commitment",
+	 description = "The fraction of calendar time (excluding the initialisation period) that "
+	             + "this object is in any state other than Idle.",
+	  reportable = true,
+	    sequence = 6)
+	public double getCommitment(double simTime) {
+		double total = simTime;
+		if (simTime > Simulation.getInitializationTime())
+			total -= Simulation.getInitializationTime();
+		double idle = this.getTimeInState(simTime, "Idle");
+		return 1.0d - idle/total;
+	}
+
+	@Output(name = "Availability",
+	 description = "The fraction of calendar time (excluding the initialisation period) that "
+	             + "this object is in any state other than Maintenance or Breakdown.",
+	  reportable = true,
+	    sequence = 7)
+	public double getAvailability(double simTime) {
+		double total = simTime;
+		if (simTime > Simulation.getInitializationTime())
+			total -= Simulation.getInitializationTime();
+		double maintenance = this.getTimeInState(simTime, "Maintenance");
+		double breakdown = this.getTimeInState(simTime, "Breakdown");
+		return 1.0d - (maintenance + breakdown)/total;
+	}
+
+	@Output(name = "Reliability",
+	 description = "The ratio of Working time to the sum of Working time and Breakdown time. "
+	             + "All times exclude the initialisation period.",
+	  reportable = true,
+	    sequence = 8)
+	public double getReliability(double simTime) {
+		double working = this.getTimeInState(simTime, "Working");
+		double breakdown = this.getTimeInState(simTime, "Breakdown");
+		return working / (working + breakdown);
 	}
 
 }
