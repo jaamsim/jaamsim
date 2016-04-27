@@ -28,6 +28,7 @@ import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
+import com.jaamsim.states.StateEntity;
 import com.jaamsim.units.TimeUnit;
 
 public class Assemble extends LinkedService {
@@ -159,6 +160,10 @@ public class Assemble extends LinkedService {
 		sb.append(this.getName()).append("_").append(numberGenerated);
 		assembledEntity = Entity.fastCopy(proto, sb.toString());
 		assembledEntity.earlyInit();
+
+		// Set the state for the assembled part
+		if (!stateAssignment.getValue().isEmpty() && assembledEntity instanceof StateEntity)
+			((StateEntity)assembledEntity).setPresentState(stateAssignment.getValue());
 
 		// Position the assembled part relative to the Assemble object
 		this.moveToProcessPosition(assembledEntity);
