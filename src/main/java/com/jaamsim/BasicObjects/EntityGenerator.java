@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +70,8 @@ public class EntityGenerator extends LinkedService {
 		waitQueue.setHidden(true);
 		match.setHidden(true);
 		processPosition.setHidden(true);
+		opportunisticMaintenanceList.setHidden(true);
+		opportunisticBreakdownList.setHidden(true);
 
 		firstArrivalTime = new SampleInput("FirstArrivalTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
 		firstArrivalTime.setUnitType(TimeUnit.class);
@@ -128,6 +131,14 @@ public class EntityGenerator extends LinkedService {
 	@Override
 	public void startAction() {
 
+		// Stop if there is a forced downtime activity about to begin
+		if (forcedDowntimePending) {
+			forcedDowntimePending = false;
+			this.setBusy(false);
+			this.setPresentState();
+			return;
+		}
+
 		// Stop if the gate is closed or the last entity been generated
 		if (!this.isOpen() || (maxNumber.getValue() != null && numberGenerated >= maxNumber.getValue())) {
 			this.setBusy(false);
@@ -136,12 +147,12 @@ public class EntityGenerator extends LinkedService {
 		}
 
 		// Schedule the next entity to be generated
-		double dt;
+		startTime = this.getSimTime();
 		if (numberGenerated == 0)
-			dt = firstArrivalTime.getValue().getNextSample(getSimTime());
+			duration = firstArrivalTime.getValue().getNextSample(startTime);
 		else
-			dt = interArrivalTime.getValue().getNextSample(getSimTime());
-		this.scheduleProcess(dt, 5, endActionTarget);
+			duration = interArrivalTime.getValue().getNextSample(startTime);
+		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
 	}
 
 	@Override
