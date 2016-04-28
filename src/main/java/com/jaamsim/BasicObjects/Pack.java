@@ -130,6 +130,9 @@ public class Pack extends LinkedService {
 		if (!stateAssignment.getValue().isEmpty() && packedEntity instanceof StateEntity)
 			((StateEntity)packedEntity).setPresentState(stateAssignment.getValue());
 
+		// Move the entity into position for processing
+		this.moveToProcessPosition(packedEntity);
+
 		// Schedule the insertion of the next entity
 		double dt = serviceTime.getValue().getNextSample(getSimTime());
 		this.scheduleProcess(dt, 5, endActionTarget);
