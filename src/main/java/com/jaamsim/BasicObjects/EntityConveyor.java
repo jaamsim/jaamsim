@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +57,8 @@ public class EntityConveyor extends LinkedService {
 		waitQueue.setHidden(true);
 		match.setHidden(true);
 		processPosition.setHidden(true);
+		forcedMaintenanceList.setHidden(true);
+		forcedBreakdownList.setHidden(true);
 
 		travelTimeInput = new ValueInput("TravelTime", "Key Inputs", 0.0d);
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
@@ -111,7 +114,7 @@ public class EntityConveyor extends LinkedService {
 		startTimeList.add(this.getSimTime());
 
 		// If necessary, wake up the conveyor
-		if (!this.isBusy()) {
+		if (this.isIdle()) {
 			this.setBusy(true);
 			this.setPresentState();
 			this.startAction();
@@ -124,7 +127,7 @@ public class EntityConveyor extends LinkedService {
 		// Schedule the next entity to reach the end of the conveyor
 		double dt = startTimeList.get(0) + travelTimeInput.getValue() - this.getSimTime();
 		dt = Math.max(dt, 0);  // Round-off to the nearest tick can cause a negative value
-		this.scheduleProcess(dt, 5, endActionTarget);
+		this.scheduleProcess(dt, 5, endActionTarget, endActionHandle);
 	}
 
 	@Override
@@ -147,6 +150,34 @@ public class EntityConveyor extends LinkedService {
 		// Schedule the next entity to reach the end of the conveyor
 		this.startAction();
 	}
+
+	@Override
+	protected void restartAction() {
+
+		// Is the server unused, but available to start work?
+		if (this.isIdle() && !entityList.isEmpty()) {
+
+			// Adjust the start time for each entity to account for the delay
+			double stopDur = this.getSimTime() - stopWorkTime;
+			for (int i = 0; i < entityList.size(); i++) {
+				double t = Math.min(stopWorkTime, startTimeList.get(i));
+				startTimeList.set(i, t + stopDur);
+			}
+
+			// Restart the conveyor
+			this.setBusy(true);
+			this.setPresentState();
+			this.startAction();
+			return;
+		}
+
+		// If the server cannot start work or is already working, then record the state change
+		this.setPresentState();
+	}
+
+	// ********************************************************************************************
+	// GRAPHICS
+	// ********************************************************************************************
 
 	/**
 	 * Return the position coordinates for a given distance along the conveyor.
@@ -194,12 +225,17 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	public void updateGraphics(double simTime) {
 
+		double t = simTime;
+		if (!this.isBusy())
+			t = stopWorkTime;
+
 		// Loop through the entities on the conveyor
 		for (int i = 0; i < entityList.size(); i++) {
 			DisplayEntity each = entityList.get(i);
 
 			// Calculate the distance travelled by this entity
-			double dist = (simTime - startTimeList.get(i)) / travelTimeInput.getValue() * totalLength;
+			double dur = Math.max(0.0, t - startTimeList.get(i));
+			double dist = dur / travelTimeInput.getValue() * totalLength;
 
 			// 0/0 NaNs have been spotted here, just zero them
 			if (Double.isNaN(dist))
