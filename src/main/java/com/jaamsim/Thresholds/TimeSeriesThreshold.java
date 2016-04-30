@@ -33,27 +33,35 @@ import com.jaamsim.units.UserSpecifiedUnit;
 
 public class TimeSeriesThreshold extends Threshold {
 
-	@Keyword(description = "The name of time series for which the threshold applies.",
+	@Keyword(description = "The TimeSeries object whose values are to be tested.",
 	         exampleList = {"TimeSeries1"})
 	private final TimeSeriesInput timeSeries;
 
-	@Keyword(description = "The limit over which the threshold is closed.  " +
-			"The limit must be specified after the time series and " +
-			"will use the same unit type as the threshold.",
+	@Keyword(description = "The largest TimeSeries value for which the threshold is open. "
+	                     + "The threshold is closed for TimeSeries values greater than "
+	                     + "MaxOpenLimit.",
 	         exampleList = {"2.0 m", "TimeSeries2"})
 	private final TimeSeriesInput maxOpenLimit;
 
-	@Keyword(description = "The limit under which the threshold is closed.  " +
-			"The limit must be specified after the time series and " +
-			"will use the same unit type as the threshold.",
+	@Keyword(description = "The smallest TimeSeries value for which the threshold is open. "
+	                     + "The threshold is closed for TimeSeries values smaller than "
+	                     + "MinOpenLimit.",
 	         exampleList = {"2.0 m", "TimeSeries3"})
 	private final TimeSeriesInput minOpenLimit;
 
-	@Keyword(description = "The amount of time that the threshold must remain within minOpenLimit and maxOpenLimit to be considered open.",
+	@Keyword(description = "The length of time over which the TimeSeries values must be "
+	                     + ">= MinOpenLimit and <= MaxOpenLimit.\n"
+	                     + "The threshold is open if the TimeSeries values x(t) satisfy "
+	                     + "MinOpenLimit <= x(t) <= MaxOpenLimit for simulation times t from "
+	                     + "(SimTime + Offset) to (SimTime + Offset + LookAhead).",
 	         exampleList = {"5.0 h"})
 	private final ValueInput lookAhead;
 
-	@Keyword(description = "The amount of time that the threshold adds on to every time series lookup.",
+	@Keyword(description = "The amount of time that the threshold adds on to every time series "
+	                     + "lookup.\n"
+	                     + "The threshold is open if the TimeSeries values x(t) satisfy "
+	                     + "MinOpenLimit <= x(t) <= MaxOpenLimit for simulation times t from "
+	                     + "(SimTime + Offset) to (SimTime + Offset + LookAhead).",
 	         exampleList = {"5.0 h"})
 	private final ValueInput offset;
 
