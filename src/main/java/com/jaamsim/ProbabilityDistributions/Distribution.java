@@ -102,9 +102,9 @@ implements SampleProvider {
 	public void validate() {
 		super.validate();
 
-		// The maximum value must be greater than the minimum value
-		if( this.getMaxValue() <= this.getMinValue() ) {
-			throw new InputErrorException( "The input for MaxValue must be greater than that for MinValue.");
+		// The maximum value must be greater than or equal to the minimum value
+		if( this.getMaxValue() < this.getMinValue() ) {
+			throw new InputErrorException( "The input for MaxValue must be greater than or equal to the input for MinValue.");
 		}
 	}
 
