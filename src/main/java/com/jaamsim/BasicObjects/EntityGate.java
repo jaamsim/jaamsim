@@ -1,6 +1,7 @@
 /*
  * JaamSim Discrete Event Simulation
  * Copyright (C) 2014 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2016 JaamSim Software Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +51,10 @@ public class EntityGate extends LinkedService {
 	@Override
 	public void addEntity(DisplayEntity ent) {
 
-		// If the gate is closed or other entities are already queued, then add the entity to the queue
+		// If the gate is closed, in maintenance or breakdown, or other entities are already
+		// queued, then add the entity to the queue
 		Queue queue = waitQueue.getValue();
-		if (!queue.isEmpty() || !this.isOpen()) {
+		if (!queue.isEmpty() || !this.isIdle()) {
 			queue.addEntity(ent);
 			return;
 		}
@@ -64,6 +66,14 @@ public class EntityGate extends LinkedService {
 
 	@Override
 	public void startAction() {
+
+		// Stop if there is a forced downtime activity about to begin
+		if (forcedDowntimePending) {
+			forcedDowntimePending = false;
+			this.setBusy(false);
+			this.setPresentState();
+			return;
+		}
 
 		// Determine the match value
 		Integer m = this.getNextMatchValue(getSimTime());
@@ -80,8 +90,9 @@ public class EntityGate extends LinkedService {
 		this.moveToProcessPosition(servedEntity);
 
 		// Schedule the release of the next entity
-		double dt = releaseDelay.getValue().getNextSample(this.getSimTime());
-		this.scheduleProcess(dt, 5, endActionTarget);
+		startTime = this.getSimTime();
+		duration = releaseDelay.getValue().getNextSample(startTime);
+		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
 	}
 
 	/**
