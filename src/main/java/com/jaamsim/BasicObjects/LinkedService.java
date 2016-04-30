@@ -24,6 +24,8 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.Thresholds.Threshold;
 import com.jaamsim.Thresholds.ThresholdUser;
 import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.events.EventHandle;
+import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.EntityListInput;
@@ -31,10 +33,11 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.math.Vec3d;
+import com.jaamsim.states.DowntimeUser;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
 
-public abstract class LinkedService extends LinkedComponent implements ThresholdUser, QueueUser {
+public abstract class LinkedService extends LinkedComponent implements ThresholdUser, QueueUser, DowntimeUser {
 
 	@Keyword(description = "The position of the entity being processed relative to the processor.",
 	         exampleList = {"1.0 0.0 0.01 m"})
@@ -89,9 +92,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	         exampleList = {"DowntimeEntity1 DowntimeEntity2 DowntimeEntity3"})
 	protected final EntityListInput<DowntimeEntity> opportunisticBreakdownList;
 
-	private boolean busy;
+	private boolean busy;  // indicates that entities are being processed
 	private Integer matchValue;
-	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
+	protected double startTime;  // start of service time for the present entity
+	protected double duration;  // service time for the present entity
+	protected boolean forcedDowntimePending;
+	private boolean processKilled;  // indicates that processing of an entity has been interrupted
+	protected double stopWorkTime;  // last time at which the busy state was set to false
 
 	{
 		stateGraphics.setHidden(false);
@@ -144,6 +151,11 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		super.earlyInit();
 		this.setBusy(false);
 		matchValue = null;
+		startTime = 0.0;
+		duration = 0.0;
+		forcedDowntimePending = false;
+		processKilled = false;
+		stopWorkTime = 0.0;
 	}
 
 	@Override
@@ -216,13 +228,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	@Override
 	public void queueChanged() {
-
-		// If necessary, wake up the server
-		if (this.isIdle()) {
-			this.setBusy(true);
-			this.setPresentState();
-			this.startAction();
-		}
+		this.restartAction();
 	}
 
 	// ********************************************************************************************
@@ -242,12 +248,20 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			ent.endAction();
 		}
 	}
+	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
+	protected final EventHandle endActionHandle = new EventHandle();
 
 	protected boolean isBusy() {
 		return busy;
 	}
 
 	protected void setBusy(boolean bool) {
+		if (bool == busy)
+			return;
+
+		if (!bool)
+			stopWorkTime = this.getSimTime();
+
 		busy = bool;
 	}
 
@@ -261,6 +275,55 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 */
 	public abstract void endAction();
 
+	/**
+	 * Interrupts processing of an entity.
+	 */
+	protected void stopAction() {
+
+		// Is processing underway?
+		if (endActionHandle.isScheduled()) {
+
+			// Interrupt the process
+			EventManager.killEvent(endActionHandle);
+			processKilled = true;
+
+			// Update the state
+			this.setBusy(false);
+			this.setPresentState();
+		}
+
+		// If the server is not processing entities, then record the state change
+		this.setPresentState();
+	}
+
+	/**
+	 * Checks whether processing can be resumed or restarted.
+	 */
+	protected void restartAction() {
+
+		// Is the server unused, but available to start work?
+		if (this.isIdle()) {
+			this.setBusy(true);
+			this.setPresentState();
+
+			// If work has been interrupted by a breakdown or other event, then resume work
+			if (processKilled) {
+				processKilled = false;
+				duration -= stopWorkTime - startTime;
+				startTime = this.getSimTime();
+				this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+				return;
+			}
+
+			// Otherwise, start work on a new entity
+			this.startAction();
+			return;
+		}
+
+		// If the server cannot start work or is already working, then record the state change
+		this.setPresentState();
+	}
+
 	// ********************************************************************************************
 	// THRESHOLDS
 	// ********************************************************************************************
@@ -272,16 +335,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	@Override
 	public void thresholdChanged() {
-
-		// If necessary, restart processing
-		if (this.isIdle()) {
-			this.setBusy(true);
-			this.setPresentState();
-			this.startAction();
-		}
-		else {
-			this.setPresentState();
-		}
+		this.restartAction();
 	}
 
 	// ********************************************************************************************
@@ -385,6 +439,77 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// Not processing entities because there is nothing to do (Idle)
 		this.setPresentState("Idle");
 		return;
+	}
+
+	// ********************************************************************************************
+	// MAINTENANCE AND BREAKDOWNS
+	// ********************************************************************************************
+
+	@Override
+	public ArrayList<DowntimeEntity> getMaintenanceEntities() {
+		ArrayList<DowntimeEntity> ret = new ArrayList<>();
+		ret.addAll(immediateMaintenanceList.getValue());
+		ret.addAll(forcedMaintenanceList.getValue());
+		ret.addAll(opportunisticMaintenanceList.getValue());
+		return ret;
+	}
+
+	@Override
+	public ArrayList<DowntimeEntity> getBreakdownEntities() {
+		ArrayList<DowntimeEntity> ret = new ArrayList<>();
+		ret.addAll(immediateBreakdownList.getValue());
+		ret.addAll(forcedBreakdownList.getValue());
+		ret.addAll(opportunisticBreakdownList.getValue());
+		return ret;
+	}
+
+	public boolean isImmediateDowntime(DowntimeEntity down) {
+		return immediateMaintenanceList.getValue().contains(down)
+				|| immediateBreakdownList.getValue().contains(down);
+	}
+
+	public boolean isForcedDowntime(DowntimeEntity down) {
+		return forcedMaintenanceList.getValue().contains(down)
+				|| forcedBreakdownList.getValue().contains(down);
+	}
+
+	public boolean isOpportunisticDowntime(DowntimeEntity down) {
+		return opportunisticMaintenanceList.getValue().contains(down)
+				|| opportunisticBreakdownList.getValue().contains(down);
+	}
+
+	@Override
+	public boolean canStartDowntime(DowntimeEntity down) {
+
+		// Downtime can only start from the Idle state, that is:
+		// - any work in progress must have been interrupted,
+		// - there can be no other maintenance or breakdown activities in progress, and
+		// - all the thresholds must be open
+		return isIdle();
+	}
+
+	@Override
+	public void prepareForDowntime(DowntimeEntity down) {
+
+		// If an immediate downtime, interrupt the present activity
+		if (isImmediateDowntime(down)) {
+			this.stopAction();
+			return;
+		}
+
+		// If a forced downtime, then set the flag to stop further processing
+		if (isForcedDowntime(down) && this.isBusy())
+			forcedDowntimePending = true;
+	}
+
+	@Override
+	public void startDowntime(DowntimeEntity down) {
+		this.setPresentState();
+	}
+
+	@Override
+	public void endDowntime(DowntimeEntity down) {
+		this.restartAction();
 	}
 
 	// ********************************************************************************************
