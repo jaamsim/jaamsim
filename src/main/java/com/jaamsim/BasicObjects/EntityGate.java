@@ -17,23 +17,25 @@
 package com.jaamsim.BasicObjects;
 
 import com.jaamsim.Graphics.DisplayEntity;
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.Keyword;
-import com.jaamsim.input.ValueInput;
 import com.jaamsim.units.TimeUnit;
 
 public class EntityGate extends LinkedService {
 
 	@Keyword(description = "The time delay before each queued entity is released.\n" +
 			"Entities arriving at an open gate are not delayed.",
-	         exampleList = {"5.0 s"})
-	private final ValueInput releaseDelay;
+	         exampleList = {"3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'"})
+	private final SampleInput releaseDelay;
 
 	private DisplayEntity servedEntity; // the entity about to be released from the queue
 
 	{
-		releaseDelay = new ValueInput("ReleaseDelay", "Key Inputs", 0.0);
+		releaseDelay = new SampleInput("ReleaseDelay", "Key Inputs", new SampleConstant(0.0));
 		releaseDelay.setUnitType(TimeUnit.class);
 		releaseDelay.setValidRange(0.0, Double.POSITIVE_INFINITY);
+		releaseDelay.setEntity(this);
 		this.addInput(releaseDelay);
 	}
 
@@ -73,10 +75,13 @@ public class EntityGate extends LinkedService {
 			return;
 		}
 
-		// Schedule the release of the next entity
+		// Select the next entity to release
 		servedEntity = this.getNextEntityForMatch(m);
 		this.moveToProcessPosition(servedEntity);
-		this.scheduleProcess(releaseDelay.getValue(), 5, endActionTarget);
+
+		// Schedule the release of the next entity
+		double dt = releaseDelay.getValue().getNextSample(this.getSimTime());
+		this.scheduleProcess(dt, 5, endActionTarget);
 	}
 
 	/**
