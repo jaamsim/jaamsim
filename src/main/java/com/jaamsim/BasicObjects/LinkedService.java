@@ -218,7 +218,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	public void queueChanged() {
 
 		// If necessary, wake up the server
-		if (!this.isBusy() && this.isOpen()) {
+		if (this.isIdle()) {
 			this.setBusy(true);
 			this.setPresentState();
 			this.startAction();
@@ -274,7 +274,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	public void thresholdChanged() {
 
 		// If necessary, restart processing
-		if (this.isOpen() && !this.isBusy()) {
+		if (this.isIdle()) {
 			this.setBusy(true);
 			this.setPresentState();
 			this.startAction();
@@ -300,24 +300,91 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		return true;
 	}
 
+	private boolean isMaintenance() {
+		for (DowntimeEntity de : immediateMaintenanceList.getValue()) {
+			if (de.isDown())
+				return true;
+		}
+		for (DowntimeEntity de : forcedMaintenanceList.getValue()) {
+			if (de.isDown())
+				return true;
+		}
+		for (DowntimeEntity de : opportunisticMaintenanceList.getValue()) {
+			if (de.isDown())
+				return true;
+		}
+		return false;
+	}
+
+	private boolean isBreakdown() {
+		for (DowntimeEntity de : immediateBreakdownList.getValue()) {
+			if (de.isDown())
+				return true;
+		}
+		for (DowntimeEntity de : forcedBreakdownList.getValue()) {
+			if (de.isDown())
+				return true;
+		}
+		for (DowntimeEntity de : opportunisticBreakdownList.getValue()) {
+			if (de.isDown())
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Tests whether the LinkedService is available for work.
+	 * <p>
+	 * A LinkedService has three mutually exclusive states: Busy, Idle, and UnableToWork.
+	 * @return true if the LinkedService is available for work
+	 */
+	public boolean isIdle() {
+		return !isBusy() && isOpen() && !isMaintenance() && !isBreakdown();
+	}
+
+	/**
+	 * Tests whether the LinkedService is not processing entities because something has prevented
+	 * it from working.
+	 * <p>
+	 * A LinkedService has three mutually exclusive states: Busy, Idle, and UnableToWork.
+	 * @return true if the LinkedService is not working because it is prevented from doing so
+	 */
+	public boolean isUnableToWork() {
+		return !isBusy() && (!isOpen() || isMaintenance() || isBreakdown());
+	}
+
 	@Override
 	public void setPresentState() {
-		if (this.isOpen()) {
-			if (this.isBusy()) {
+
+		// Processing entities (Busy)
+		if (this.isBusy()) {
+			if (this.isOpen()) {
 				this.setPresentState("Working");
+				return;
 			}
 			else {
-				this.setPresentState("Idle");
-			}
-		}
-		else {
-			if (this.isBusy()) {
 				this.setPresentState("Clearing_while_Stopped");
-			}
-			else {
-				this.setPresentState("Stopped");
+				return;
 			}
 		}
+
+		// Not processing entities because something has prevented it from working (UnableToWork)
+		if (!this.isOpen()) {
+			this.setPresentState("Stopped");
+			return;
+		}
+		if (this.isMaintenance()) {
+			this.setPresentState("Maintenance");
+			return;
+		}
+		if (this.isBreakdown()) {
+			this.setPresentState("Breakdown");
+			return;
+		}
+
+		// Not processing entities because there is nothing to do (Idle)
+		this.setPresentState("Idle");
+		return;
 	}
 
 	// ********************************************************************************************
@@ -358,6 +425,20 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	    sequence = 2)
 	public boolean isBusy(double simTime) {
 		return isBusy();
+	}
+
+	@Output(name = "Maintenance",
+	 description = "Returns TRUE if maintenance is being performed.",
+	    sequence = 3)
+	public boolean isMaintenance(double simTime) {
+		return isMaintenance();
+	}
+
+	@Output(name = "Breakdown",
+	 description = "Returns TRUE if a breakdown is being repaired.",
+	    sequence = 4)
+	public boolean isBreakdown(double simTime) {
+		return isBreakdown();
 	}
 
 }
