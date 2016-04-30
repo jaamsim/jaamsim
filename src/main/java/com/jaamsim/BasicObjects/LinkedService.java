@@ -54,8 +54,18 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	         exampleList = {"this.obj.Attrib1"})
 	protected final SampleInput match;
 
-	@Keyword(description = "A list of thresholds that must be satisified for the entity to "
-	                     + "operate.",
+	@Keyword(description = "A list of thresholds that must be satisified for the object to "
+	                     + "operate. Operation is stopped immediately when one of the thresholds "
+	                     + "closes. If a threshold closes part way though processing an entity, "
+	                     + "the work is considered to be partly done and the remainder is "
+	                     + "completed once the threshold re-opens.",
+	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
+	protected final EntityListInput<Threshold> immediateThresholdList;
+
+	@Keyword(description = "A list of thresholds that must be satisified for the object to "
+	                     + "operate. If a threshold closes part way though processing an entity, "
+	                     + "the remaining work is completed and the entity is released before the "
+	                     + "object is closed.",
 	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
 	protected final EntityListInput<Threshold> operatingThresholdList;
 
@@ -116,6 +126,9 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		match.setUnitType(DimensionlessUnit.class);
 		match.setEntity(this);
 		this.addInput(match);
+
+		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", "Key Inputs", new ArrayList<Threshold>());
+		this.addInput(immediateThresholdList);
 
 		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
 		this.addInput(operatingThresholdList);
@@ -331,12 +344,30 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	@Override
 	public ArrayList<Threshold> getThresholds() {
-		return operatingThresholdList.getValue();
+		ArrayList<Threshold> ret = new ArrayList<>(operatingThresholdList.getValue());
+		ret.addAll(immediateThresholdList.getValue());
+		return ret;
 	}
 
 	@Override
 	public void thresholdChanged() {
+
+		// If an immediate closure, interrupt the present activity
+		if (isImmediateThresholdClosure()) {
+			this.stopAction();
+			return;
+		}
+
+		// Otherwise, check whether processing can be restarted
 		this.restartAction();
+	}
+
+	public boolean isImmediateThresholdClosure() {
+		for (Threshold thresh : immediateThresholdList.getValue()) {
+			if (!thresh.isOpen())
+				return true;
+		}
+		return false;
 	}
 
 	// ********************************************************************************************
@@ -348,6 +379,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * @return true if all the thresholds are open.
 	 */
 	public boolean isOpen() {
+		for (Threshold thr : immediateThresholdList.getValue()) {
+			if (!thr.isOpen())
+				return false;
+		}
 		for (Threshold thr : operatingThresholdList.getValue()) {
 			if (!thr.isOpen())
 				return false;
