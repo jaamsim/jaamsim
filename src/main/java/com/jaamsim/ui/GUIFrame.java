@@ -2084,14 +2084,14 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 */
 	public static void invokeErrorDialog(String title, String fmt, Object... args) {
 		final String msg = String.format(fmt,  args);
-		SwingUtilities.invokeLater(new runnableError(title, msg));
+		SwingUtilities.invokeLater(new RunnableError(title, msg));
 	}
 
-	private static class runnableError implements Runnable {
+	private static class RunnableError implements Runnable {
 		private final String title;
 		private final String message;
 
-		public runnableError(String t, String m) {
+		public RunnableError(String t, String m) {
 			title = t;
 			message = m;
 		}
