@@ -19,6 +19,7 @@ package com.jaamsim.BasicObjects;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import com.jaamsim.Graphics.DisplayEntity;
@@ -545,13 +546,11 @@ public class Queue extends LinkedComponent {
 	 */
 	private void setMaxCount() {
 		maxCount = -1;
-		Iterator<Integer> itr = matchMap.keySet().iterator();
-		while (itr.hasNext()) {
-			Integer m = itr.next();
-			int count = matchMap.get(m).size();
+		for (Entry<Integer, TreeSet<QueueEntry>> each : matchMap.entrySet()) {
+			int count = each.getValue().size();
 			if (count > maxCount) {
 				maxCount = count;
-				matchForMaxCount = m;
+				matchForMaxCount = each.getKey();
 			}
 		}
 	}
