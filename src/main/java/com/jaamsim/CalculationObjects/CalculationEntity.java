@@ -51,11 +51,6 @@ public abstract class CalculationEntity extends DisplayEntity {
 		this.addInput(sequenceNumber);
 	}
 
-	@Override
-	public void earlyInit() {
-		super.earlyInit();
-	}
-
 	public Controller getController() {
 		return controller.getValue();
 	}
