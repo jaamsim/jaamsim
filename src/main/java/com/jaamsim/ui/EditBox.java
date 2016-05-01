@@ -772,9 +772,6 @@ public static abstract class CellEditor extends AbstractCellEditor implements Ta
 		this.retryString = retryString;
 	}
 
-	@Override
-	public abstract Component getTableCellEditorComponent(JTable table, Object value,
-			boolean isSelected, int row, int column);
 	protected void setTableInfo(JTable table, int row, int col) {
 		this.table = table;
 		this.row = row;
