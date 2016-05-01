@@ -560,7 +560,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		viewMenu.add( logMenuItem );
 	}
 
-	private final class SimulationMenuAction implements ActionListener {
+	private static final class SimulationMenuAction implements ActionListener {
 		final String keyword;
 		final String args;
 
