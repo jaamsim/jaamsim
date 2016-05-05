@@ -38,4 +38,5 @@ void main()
     texCoords.y = (atan(interpPos.z / length(interpPos.xy)) + (PI/2)) / (PI);
 
     gl_FragColor = texture2D(tex, texCoords);
+    gl_FragColor.a = 1.0;
 }

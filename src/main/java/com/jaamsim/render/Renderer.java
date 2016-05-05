@@ -1561,6 +1561,9 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 			gl.glEnable(GL2GL3.GL_DEPTH_TEST);
 			gl.glDepthFunc(GL2GL3.GL_LEQUAL);
 
+			gl.glBlendEquationSeparate(GL2GL3.GL_FUNC_ADD, GL2GL3.GL_MAX);
+			gl.glBlendFuncSeparate(GL2GL3.GL_SRC_ALPHA, GL2GL3.GL_ONE_MINUS_SRC_ALPHA, GL2GL3.GL_ONE, GL2GL3.GL_ONE);
+
 			allowDelayedTextures = false;
 
 			PerfInfo perfInfo = new PerfInfo();

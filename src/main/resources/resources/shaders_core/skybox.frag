@@ -38,4 +38,5 @@ void main()
     texCoords.y = (atan(interpPos.z / length(interpPos.xy)) + (PI/2)) / (PI);
 
     outColor = texture(tex, texCoords);
+    outColor.a = 1.0
 }
