@@ -111,21 +111,17 @@ public class Assemble extends LinkedService {
 	* Process DisplayEntities from the Queue
 	*/
 	@Override
-	public void startAction() {
+	protected boolean startProcessing(double simTime) {
 
 		// Stop if there is a forced downtime activity about to begin
 		if (forcedDowntimePending) {
 			forcedDowntimePending = false;
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+			return false;
 		}
 
 		// Do any of the thresholds stop the generator?
 		if (!this.isOpen()) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+			return false;
 		}
 
 		// Do the queues have enough entities?
@@ -133,17 +129,13 @@ public class Assemble extends LinkedService {
 		if (matchRequired.getValue()) {
 			Integer m = Queue.selectMatchValue(queueList, numberRequired.getValue());
 			if (m == null) {
-				this.setBusy(false);
-				this.setPresentState();
-				return;
+				return false;
 			}
 			this.setMatchValue(m);
 		}
 		else {
 			if (!Queue.sufficientEntities(queueList, numberRequired.getValue(), null)) {
-				this.setBusy(false);
-				this.setPresentState();
-				return;
+				return false;
 			}
 		}
 
@@ -176,22 +168,20 @@ public class Assemble extends LinkedService {
 
 		// Position the assembled part relative to the Assemble object
 		this.moveToProcessPosition(assembledEntity);
-
-		// Schedule the completion of processing
-		startTime = this.getSimTime();
-		duration = serviceTime.getValue().getNextSample(startTime);
-		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+		return true;
 	}
 
 	@Override
-	public void endAction() {
+	protected void endProcessing(double simTime) {
 
 		// Send the assembled part to the next element in the chain
 		this.sendToNextComponent(assembledEntity);
 		assembledEntity = null;
+	}
 
-		// Try to assemble another part
-		this.startAction();
+	@Override
+	protected double getProcessingTime(double simTime) {
+		return serviceTime.getValue().getNextSample(simTime);
 	}
 
 }
