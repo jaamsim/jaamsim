@@ -85,7 +85,6 @@ public class Seize extends LinkedService {
 			DisplayEntity ent = this.getNextEntityForMatch(m);
 			this.sendToNextComponent(ent);
 		}
-		this.setBusy(false);
 		return false;
 	}
 
