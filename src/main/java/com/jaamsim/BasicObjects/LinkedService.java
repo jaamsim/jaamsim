@@ -107,7 +107,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	private Integer matchValue;
 	private double startTime;  // start of service time for the present entity
 	private double duration;  // service time for the present entity
-	protected boolean forcedDowntimePending;
+	private boolean forcedDowntimePending;
 	private boolean processKilled;  // indicates that processing of an entity has been interrupted
 	private double stopWorkTime;  // last time at which the busy state was set to false
 
