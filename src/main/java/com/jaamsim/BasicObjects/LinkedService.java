@@ -363,10 +363,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			// If work has been interrupted by a breakdown or other event, then resume work
 			if (processKilled) {
 				processKilled = false;
-				duration -= stopWorkTime - startTime;
-				startTime = this.getSimTime();
-				this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
-				return;
+				boolean bool = this.updateForStoppage(startTime, stopWorkTime, getSimTime());
+				if (bool) {
+					duration -= stopWorkTime - startTime;
+					startTime = this.getSimTime();
+					this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+					return;
+				}
 			}
 
 			// Otherwise, start work on a new entity
@@ -376,6 +379,18 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		// If the server cannot start work or is already working, then record the state change
 		this.setPresentState();
+	}
+
+	/**
+	 * Performs any special processing required for this sub-class of LinkedService
+	 * @param startWork - simulation time at which the process was started
+	 * @param stopWork - simulation time at which the process was interrupted
+	 * @param resumeWork - simulation time at which the process is to be resumed
+	 * @return whether the original process should be resumed (true)
+	 *         or a new process should be started (false)
+	 */
+	protected boolean updateForStoppage(double startWork, double stopWork, double resumeWork) {
+		return true;
 	}
 
 	// ********************************************************************************************
