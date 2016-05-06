@@ -300,6 +300,12 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			return;
 		}
 
+		// Set the state
+		if (!isBusy()) {
+			this.setBusy(true);
+			this.setPresentState();
+		}
+
 		// Schedule the completion of service
 		startTime = simTime;
 		duration = this.getProcessingTime(simTime);
@@ -365,14 +371,14 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		// Is the server unused, but available to start work?
 		if (this.isIdle()) {
-			this.setBusy(true);
-			this.setPresentState();
 
 			// If work has been interrupted by a breakdown or other event, then resume work
 			if (processKilled) {
 				processKilled = false;
 				boolean bool = this.updateForStoppage(startTime, stopWorkTime, getSimTime());
 				if (bool) {
+					this.setBusy(true);
+					this.setPresentState();
 					duration -= stopWorkTime - startTime;
 					startTime = this.getSimTime();
 					this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);

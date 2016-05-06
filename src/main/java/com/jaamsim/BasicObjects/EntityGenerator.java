@@ -123,8 +123,6 @@ public class EntityGenerator extends LinkedService {
 		super.startUp();
 
 		// Start generating entities
-		this.setBusy(true);
-		this.setPresentState();
 		this.startAction();
 	}
 
