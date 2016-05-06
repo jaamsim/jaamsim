@@ -147,27 +147,15 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	@Override
-	protected void restartAction() {
+	protected boolean updateForStoppage(double startWork, double stopWork, double resumeWork) {
 
-		// Is the conveyor stopped with one or more entities?
-		if (this.isIdle() && !entityList.isEmpty()) {
-
-			// Adjust the start time for each entity to account for the delay
-			double stopDur = this.getSimTime() - stopWorkTime;
-			for (int i = 0; i < entityList.size(); i++) {
-				double t = Math.min(stopWorkTime, startTimeList.get(i));
-				startTimeList.set(i, t + stopDur);
-			}
-
-			// Restart the conveyor
-			this.setBusy(true);
-			this.setPresentState();
-			this.startAction();
-			return;
+		// Adjust the start time for each entity to account for the delay
+		double stopDur = resumeWork - stopWork;
+		for (int i = 0; i < entityList.size(); i++) {
+			double t = Math.min(stopWork, startTimeList.get(i));
+			startTimeList.set(i, t + stopDur);
 		}
-
-		// If the server cannot start work or is already working, then record the state change
-		this.setPresentState();
+		return false;
 	}
 
 	// ********************************************************************************************
