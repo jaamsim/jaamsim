@@ -129,39 +129,23 @@ public class EntityGenerator extends LinkedService {
 	}
 
 	@Override
-	public void startAction() {
+	protected boolean startProcessing(double simTime) {
 
 		// Stop if there is a forced downtime activity about to begin
 		if (forcedDowntimePending) {
 			forcedDowntimePending = false;
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+			return false;
 		}
 
 		// Stop if the gate is closed or the last entity been generated
-		if (!this.isOpen() || (maxNumber.getValue() != null && numberGenerated >= maxNumber.getValue())) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
-		}
-
-		// Schedule the next entity to be generated
-		startTime = this.getSimTime();
-		if (numberGenerated == 0)
-			duration = firstArrivalTime.getValue().getNextSample(startTime);
-		else
-			duration = interArrivalTime.getValue().getNextSample(startTime);
-		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+		return this.isOpen() && (maxNumber.getValue() == null || numberGenerated < maxNumber.getValue());
 	}
 
 	@Override
-	public void endAction() {
+	protected void endProcessing(double simTime) {
 
 		// Do any of the thresholds stop the generator?
 		if (!this.isOpen()) {
-			this.setBusy(false);
-			this.setPresentState();
 			return;
 		}
 
@@ -178,9 +162,16 @@ public class EntityGenerator extends LinkedService {
 			// Send the entity to the next element in the chain
 			this.sendToNextComponent(ent);
 		}
+	}
 
-		// Try to generate another entity
-		this.startAction();
+	@Override
+	protected double getProcessingTime(double simTime) {
+
+		// Use a separate input for the first arrival time
+		if (numberGenerated == 0)
+			return firstArrivalTime.getValue().getNextSample(simTime);
+
+		return interArrivalTime.getValue().getNextSample(simTime);
 	}
 
 	@Override
