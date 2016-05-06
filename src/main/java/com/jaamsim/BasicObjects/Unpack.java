@@ -51,14 +51,12 @@ public class Unpack extends LinkedService {
 	}
 
 	@Override
-	public void startAction() {
+	protected boolean startProcessing(double simTime) {
 
 		// Stop if there is a forced downtime activity about to begin
 		if (forcedDowntimePending && container == null) {
 			forcedDowntimePending = false;
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+			return false;
 		}
 
 		// Determine the match value
@@ -66,16 +64,12 @@ public class Unpack extends LinkedService {
 
 		// Is there a container waiting to be unpacked?
 		if (container == null && waitQueue.getValue().getMatchCount(m) == 0) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+			return false;
 		}
 
 		// Do any of the thresholds stop the generator?
 		if (!this.isOpen()) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+			return false;
 		}
 
 		if (container == null) {
@@ -89,12 +83,7 @@ public class Unpack extends LinkedService {
 			this.moveToProcessPosition(container);
 		}
 
-		// Schedule the removal of the next entity
-		startTime = this.getSimTime();
-		duration = 0.0;
-		if (numberRemoved < numberToRemove && container.getCount() > 0)
-			duration = serviceTime.getValue().getNextSample(startTime);
-		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+		return true;
 	}
 
 	protected void disposeContainer(EntityContainer c) {
@@ -106,7 +95,7 @@ public class Unpack extends LinkedService {
 	}
 
 	@Override
-	public void endAction() {
+	protected void endProcessing(double simTime) {
 
 		// Remove the next entity from the container
 		if (numberRemoved < numberToRemove && container.getCount() > 0) {
@@ -119,9 +108,14 @@ public class Unpack extends LinkedService {
 			this.disposeContainer(container);
 			container = null;
 		}
+	}
 
-		// Continue the process
-		this.startAction();
+	@Override
+	protected double getProcessingTime(double simTime) {
+		double dur = 0.0;
+		if (numberRemoved < numberToRemove && container.getCount() > 0)
+			dur = serviceTime.getValue().getNextSample(simTime);
+		return dur;
 	}
 
 }
