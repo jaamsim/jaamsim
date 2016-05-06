@@ -53,12 +53,6 @@ public class Unpack extends LinkedService {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// Stop if there is a forced downtime activity about to begin
-		if (forcedDowntimePending) {
-			forcedDowntimePending = false;
-			return false;
-		}
-
 		// Determine the match value
 		Integer m = this.getNextMatchValue(getSimTime());
 

@@ -91,12 +91,6 @@ public class Pack extends LinkedService {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// Stop if there is a forced downtime activity about to begin
-		if (forcedDowntimePending) {
-			forcedDowntimePending = false;
-			return false;
-		}
-
 		// Do any of the thresholds stop the generator?
 		if (!this.isOpen()) {
 			return false;

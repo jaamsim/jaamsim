@@ -292,6 +292,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 */
 	protected final void startAction() {
 
+		// Stop if there is a forced downtime activity about to begin
+		if (forcedDowntimePending) {
+			forcedDowntimePending = false;
+			this.stopAction();
+			return;
+		}
+
 		// Perform any special processing for this sub-class of LinkedService
 		double simTime = this.getSimTime();
 		boolean bool = this.startProcessing(simTime);

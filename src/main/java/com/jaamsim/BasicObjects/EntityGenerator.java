@@ -129,12 +129,6 @@ public class EntityGenerator extends LinkedService {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// Stop if there is a forced downtime activity about to begin
-		if (forcedDowntimePending) {
-			forcedDowntimePending = false;
-			return false;
-		}
-
 		// Stop if the gate is closed or the last entity been generated
 		return this.isOpen() && (maxNumber.getValue() == null || numberGenerated < maxNumber.getValue());
 	}
