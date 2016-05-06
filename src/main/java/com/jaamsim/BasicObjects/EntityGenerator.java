@@ -129,8 +129,8 @@ public class EntityGenerator extends LinkedService {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// Stop if the gate is closed or the last entity been generated
-		return this.isOpen() && (maxNumber.getValue() == null || numberGenerated < maxNumber.getValue());
+		// Stop if the last entity been generated
+		return (maxNumber.getValue() == null || numberGenerated < maxNumber.getValue());
 	}
 
 	@Override

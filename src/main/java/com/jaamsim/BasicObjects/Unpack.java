@@ -61,11 +61,6 @@ public class Unpack extends LinkedService {
 			return false;
 		}
 
-		// Do any of the thresholds stop the generator?
-		if (!this.isOpen()) {
-			return false;
-		}
-
 		if (container == null) {
 
 			// Remove the container from the queue

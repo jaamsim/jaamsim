@@ -113,11 +113,6 @@ public class Assemble extends LinkedService {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// Do any of the thresholds stop the generator?
-		if (!this.isOpen()) {
-			return false;
-		}
-
 		// Do the queues have enough entities?
 		ArrayList<Queue> queueList = waitQueueList.getValue();
 		if (matchRequired.getValue()) {

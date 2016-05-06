@@ -91,11 +91,6 @@ public class Pack extends LinkedService {
 	@Override
 	protected boolean startProcessing(double simTime) {
 
-		// Do any of the thresholds stop the generator?
-		if (!this.isOpen()) {
-			return false;
-		}
-
 		// If necessary, get a new container
 		if (container == null) {
 			container = this.getNextContainer();

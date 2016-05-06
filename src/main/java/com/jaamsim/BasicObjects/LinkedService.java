@@ -299,6 +299,12 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			return;
 		}
 
+		// Stop if any of the thresholds are closed
+		if (!this.isOpen()) {
+			this.stopAction();
+			return;
+		}
+
 		// Perform any special processing for this sub-class of LinkedService
 		double simTime = this.getSimTime();
 		boolean bool = this.startProcessing(simTime);

@@ -58,8 +58,8 @@ public class Server extends LinkedService {
 		// Determine the match value
 		Integer m = this.getNextMatchValue(getSimTime());
 
-		// Stop if the queue is empty or a threshold is closed
-		if (waitQueue.getValue().getMatchCount(m) == 0 || !this.isOpen()) {
+		// Stop if the queue is empty
+		if (waitQueue.getValue().getMatchCount(m) == 0) {
 			return false;
 		}
 

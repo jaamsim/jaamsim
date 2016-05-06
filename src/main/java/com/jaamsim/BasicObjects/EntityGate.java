@@ -70,8 +70,8 @@ public class EntityGate extends LinkedService {
 		// Determine the match value
 		Integer m = this.getNextMatchValue(getSimTime());
 
-		// Stop if the gate has closed or the queue has become empty
-		if (!this.isOpen() || waitQueue.getValue().getMatchCount(m) == 0) {
+		// Stop if the queue has become empty
+		if (waitQueue.getValue().getMatchCount(m) == 0) {
 			return false;
 		}
 
