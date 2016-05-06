@@ -265,11 +265,11 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	private final ProcessTarget endActionTarget = new EndActionTarget(this);
 	private final EventHandle endActionHandle = new EventHandle();
 
-	protected boolean isBusy() {
+	protected final boolean isBusy() {
 		return busy;
 	}
 
-	protected void setBusy(boolean bool) {
+	private void setBusy(boolean bool) {
 		if (bool == busy)
 			return;
 
