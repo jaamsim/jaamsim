@@ -444,7 +444,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		this.restartAction();
 	}
 
-	public boolean isImmediateThresholdClosure() {
+	private boolean isImmediateThresholdClosure() {
 		for (Threshold thresh : immediateThresholdList.getValue()) {
 			if (!thresh.isOpen())
 				return true;
@@ -460,7 +460,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * Tests whether all the thresholds are open.
 	 * @return true if all the thresholds are open.
 	 */
-	public boolean isOpen() {
+	protected final boolean isOpen() {
 		for (Threshold thr : immediateThresholdList.getValue()) {
 			if (!thr.isOpen())
 				return false;
