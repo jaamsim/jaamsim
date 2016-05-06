@@ -54,7 +54,7 @@ public class Unpack extends LinkedService {
 	protected boolean startProcessing(double simTime) {
 
 		// Stop if there is a forced downtime activity about to begin
-		if (forcedDowntimePending && container == null) {
+		if (forcedDowntimePending) {
 			forcedDowntimePending = false;
 			return false;
 		}
