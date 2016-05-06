@@ -210,7 +210,7 @@ public class EntityConveyor extends LinkedService {
 
 		double t = simTime;
 		if (!this.isBusy())
-			t = stopWorkTime;
+			t = this.getStopWorkTime();
 
 		// Loop through the entities on the conveyor
 		for (int i = 0; i < entityList.size(); i++) {

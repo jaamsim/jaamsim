@@ -109,7 +109,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	private double duration;  // service time for the present entity
 	protected boolean forcedDowntimePending;
 	private boolean processKilled;  // indicates that processing of an entity has been interrupted
-	protected double stopWorkTime;  // last time at which the busy state was set to false
+	private double stopWorkTime;  // last time at which the busy state was set to false
 
 	{
 		stateGraphics.setHidden(false);
@@ -277,6 +277,14 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			stopWorkTime = this.getSimTime();
 
 		busy = bool;
+	}
+
+	/**
+	 * Returns the last time at which processing was finished or was halted for any reason
+	 * @return last time processing stopped
+	 */
+	protected double getStopWorkTime() {
+		return stopWorkTime;
 	}
 
 	/**
