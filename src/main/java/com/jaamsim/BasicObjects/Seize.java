@@ -39,6 +39,13 @@ public class Seize extends LinkedService {
 
 	{
 		processPosition.setHidden(true);
+		workingStateListInput.setHidden(true);
+		immediateMaintenanceList.setHidden(true);
+		forcedMaintenanceList.setHidden(true);
+		opportunisticMaintenanceList.setHidden(true);
+		immediateBreakdownList.setHidden(true);
+		forcedBreakdownList.setHidden(true);
+		opportunisticBreakdownList.setHidden(true);
 
 		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
 		resourceList.setRequired(true);
