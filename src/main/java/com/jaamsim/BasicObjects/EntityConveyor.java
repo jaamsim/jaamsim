@@ -122,16 +122,12 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	@Override
-	public void startAction() {
-
-		// Schedule the next entity to reach the end of the conveyor
-		double dt = startTimeList.get(0) + travelTimeInput.getValue() - this.getSimTime();
-		dt = Math.max(dt, 0);  // Round-off to the nearest tick can cause a negative value
-		this.scheduleProcess(dt, 5, endActionTarget, endActionHandle);
+	protected boolean startProcessing(double simTime) {
+		return !entityList.isEmpty();
 	}
 
 	@Override
-	public void endAction() {
+	protected void endProcessing(double simTime) {
 
 		// Remove the entity from the conveyor
 		DisplayEntity ent = entityList.remove(0);
@@ -139,22 +135,21 @@ public class EntityConveyor extends LinkedService {
 
 		// Send the entity to the next component
 		this.sendToNextComponent(ent);
+	}
 
-		// Stop if the conveyor is empty
-		if (entityList.isEmpty()) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
-		}
+	@Override
+	protected double getProcessingTime(double simTime) {
 
-		// Schedule the next entity to reach the end of the conveyor
-		this.startAction();
+		// Calculate time for the next entity to reach the end of the conveyor
+		double dur = startTimeList.get(0) + travelTimeInput.getValue() - simTime;
+		dur = Math.max(dur, 0);  // Round-off to the nearest tick can cause a negative value
+		return dur;
 	}
 
 	@Override
 	protected void restartAction() {
 
-		// Is the server unused, but available to start work?
+		// Is the conveyor stopped with one or more entities?
 		if (this.isIdle() && !entityList.isEmpty()) {
 
 			// Adjust the start time for each entity to account for the delay
