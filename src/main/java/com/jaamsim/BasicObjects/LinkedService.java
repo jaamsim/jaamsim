@@ -294,19 +294,14 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 */
 	protected void stopAction() {
 
-		// Is processing underway?
+		// Interrupt processing, if underway
 		if (endActionHandle.isScheduled()) {
-
-			// Interrupt the process
 			EventManager.killEvent(endActionHandle);
 			processKilled = true;
-
-			// Update the state
-			this.setBusy(false);
-			this.setPresentState();
 		}
 
-		// If the server is not processing entities, then record the state change
+		// Update the state
+		this.setBusy(false);
 		this.setPresentState();
 	}
 
