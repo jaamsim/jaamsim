@@ -105,8 +105,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	private boolean busy;  // indicates that entities are being processed
 	private Integer matchValue;
-	protected double startTime;  // start of service time for the present entity
-	protected double duration;  // service time for the present entity
+	private double startTime;  // start of service time for the present entity
+	private double duration;  // service time for the present entity
 	protected boolean forcedDowntimePending;
 	private boolean processKilled;  // indicates that processing of an entity has been interrupted
 	protected double stopWorkTime;  // last time at which the busy state was set to false
@@ -262,8 +262,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			ent.endAction();
 		}
 	}
-	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
-	protected final EventHandle endActionHandle = new EventHandle();
+	private final ProcessTarget endActionTarget = new EndActionTarget(this);
+	private final EventHandle endActionHandle = new EventHandle();
 
 	protected boolean isBusy() {
 		return busy;
@@ -282,7 +282,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	/**
 	 * Starts the processing of an entity.
 	 */
-	protected void startAction() {
+	protected final void startAction() {
 
 		// Perform any special processing for this sub-class of LinkedService
 		double simTime = this.getSimTime();
@@ -301,7 +301,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	/**
 	 * Completes the processing of an entity.
 	 */
-	protected void endAction() {
+	private void endAction() {
 
 		// Perform any special processing required for this sub-class of LinkedService
 		this.endProcessing(this.getSimTime());
@@ -337,7 +337,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	/**
 	 * Interrupts processing of an entity.
 	 */
-	protected void stopAction() {
+	private void stopAction() {
 
 		// Interrupt processing, if underway
 		if (endActionHandle.isScheduled()) {
@@ -353,7 +353,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	/**
 	 * Checks whether processing can be resumed or restarted.
 	 */
-	protected void restartAction() {
+	private void restartAction() {
 
 		// Is the server unused, but available to start work?
 		if (this.isIdle()) {
