@@ -68,14 +68,14 @@ public class Seize extends LinkedService {
 
 	@Override
 	public void queueChanged() {
-		this.startAction();
+		this.startProcessing(getSimTime());
 	}
 
 	@Override
-	public void startAction() {
+	protected boolean startProcessing(double simTime) {
 
 		// Determine the match value
-		Integer m = this.getNextMatchValue(getSimTime());
+		Integer m = this.getNextMatchValue(simTime);
 
 		// Stop if the queue is empty, there are insufficient resources, or a threshold is closed
 		while (this.isReadyToStart()) {
@@ -86,11 +86,7 @@ public class Seize extends LinkedService {
 			this.sendToNextComponent(ent);
 		}
 		this.setBusy(false);
-	}
-
-	@Override
-	public void endAction() {
-		// not required
+		return false;
 	}
 
 	public boolean isReadyToStart() {
