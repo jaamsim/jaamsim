@@ -282,12 +282,57 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	/**
 	 * Starts the processing of an entity.
 	 */
-	public abstract void startAction();
+	protected void startAction() {
+
+		// Perform any special processing for this sub-class of LinkedService
+		double simTime = this.getSimTime();
+		boolean bool = this.startProcessing(simTime);
+		if (!bool) {
+			this.stopAction();
+			return;
+		}
+
+		// Schedule the completion of service
+		startTime = simTime;
+		duration = this.getProcessingTime(simTime);
+		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+	}
 
 	/**
 	 * Completes the processing of an entity.
 	 */
-	public abstract void endAction();
+	protected void endAction() {
+
+		// Perform any special processing required for this sub-class of LinkedService
+		this.endProcessing(this.getSimTime());
+
+		// Process the next entity
+		this.startAction();
+	}
+
+	/**
+	 * Performs any special processing required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 * @return true if processing can continue
+	 */
+	protected boolean startProcessing(double simTime) {
+		return true;
+	}
+
+	/**
+	 * Returns the time required to complete the processing of an entity
+	 * @param simTime - present simulation time
+	 * @return duration required for processing
+	 */
+	protected double getProcessingTime(double simTime) {
+		return 0.0;
+	}
+
+	/**
+	 * Performs any special processing required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 */
+	protected void endProcessing(double simTime) {}
 
 	/**
 	 * Interrupts processing of an entity.
