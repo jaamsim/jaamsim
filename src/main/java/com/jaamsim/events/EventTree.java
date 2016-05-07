@@ -126,7 +126,7 @@ class EventTree {
 		EventNode parent = getScratch(1);
 		if (parent == null || !parent.red) return; // cases 1 and 2
 
-		EventNode gp = getScratch(2);
+		final EventNode gp = getScratch(2);
 		if (gp == null) return;
 
 		EventNode uncle = (gp.left == parent ? gp.right : gp.left);
@@ -142,13 +142,13 @@ class EventTree {
 		}
 
 		// case 4
-		if (n == parent.right && gp != null && parent == gp.left) {
+		if (n == parent.right && parent == gp.left) {
 			// Right child of a left parent, rotate left at parent
 			parent.rotateLeft(gp);
 			parent = n;
 			n = n.left;
 		}
-		else if (n == parent.left && gp != null && parent == gp.right) {
+		else if (n == parent.left && parent == gp.right) {
 			// left child of right parent, rotate right at parent
 			parent.rotateRight(gp);
 			parent = n;
