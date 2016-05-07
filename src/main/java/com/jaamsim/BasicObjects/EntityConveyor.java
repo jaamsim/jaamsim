@@ -184,6 +184,10 @@ public class EntityConveyor extends LinkedService {
 
 			// Set the new travel time
 			presentTravelTime = newTime;
+
+			// Adjust the time at which the next entity will reach the end of the conveyor
+			// (required when an entity is added to a conveyor that already has entities in flight)
+			this.resetProcess();
 		}
 	}
 

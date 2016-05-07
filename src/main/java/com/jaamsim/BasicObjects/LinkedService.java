@@ -420,6 +420,20 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		return true;
 	}
 
+	/**
+	 * Revises the time for the next event by stopping the present process and starting a new one.
+	 */
+	protected final void resetProcess() {
+
+		// Is processing underway
+		if (endActionHandle.isScheduled()) {
+
+			// Stop the present process and starts a new one
+			EventManager.killEvent(endActionHandle);
+			this.startAction();
+		}
+	}
+
 	// ********************************************************************************************
 	// THRESHOLDS
 	// ********************************************************************************************
