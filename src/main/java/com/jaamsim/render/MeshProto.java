@@ -395,9 +395,6 @@ private void initUniforms(Renderer renderer, Mat4d modelViewMat, Mat4d projMat, 
 	lightsDirFloats[4] = (float)lightsDirScratch[1].y;
 	lightsDirFloats[5] = (float)lightsDirScratch[1].z;
 
-	Mat4d invModelView = new Mat4d(normalMat);
-	invModelView.transpose4();
-
 	for (int i = 0; i < usedShaders.length; ++i) {
 		int shaderID = usedShaders[i];
 		ShaderInfo si = sInfos[shaderID];
