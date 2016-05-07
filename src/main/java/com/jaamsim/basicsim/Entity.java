@@ -19,6 +19,7 @@ package com.jaamsim.basicsim;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.jaamsim.datatypes.DoubleVector;
@@ -756,16 +757,16 @@ public class Entity {
 			// Keyed output
 			else if (out.getReturnType() == LinkedHashMap.class) {
 				LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
-				for (Object key : map.keySet()) {
-					Object obj = map.get(key);
+				for (Entry<?, ?> mapEntry : map.entrySet()) {
+					Object obj = mapEntry.getValue();
 					if (obj instanceof Double) {
 						double val = (Double)obj;
 						file.format(LIST_OUTPUT_FORMAT,
-								this.getName(), out.getName(), key, val/factor, unitString);
+								this.getName(), out.getName(), mapEntry.getKey(), val/factor, unitString);
 					}
 					else {
 						file.format(LIST_OUTPUT_FORMAT,
-								this.getName(), out.getName(), key, obj, unitString);
+								this.getName(), out.getName(), mapEntry.getKey(), obj, unitString);
 					}
 				}
 			}
