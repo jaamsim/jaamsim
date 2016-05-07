@@ -65,48 +65,37 @@ public class EntityGate extends LinkedService {
 	}
 
 	@Override
-	public void startAction() {
-
-		// Stop if there is a forced downtime activity about to begin
-		if (forcedDowntimePending) {
-			forcedDowntimePending = false;
-			this.setBusy(false);
-			this.setPresentState();
-			return;
-		}
+	protected boolean startProcessing(double simTime) {
 
 		// Determine the match value
 		Integer m = this.getNextMatchValue(getSimTime());
 
-		// Stop if the gate has closed or the queue has become empty
-		if (!this.isOpen() || waitQueue.getValue().getMatchCount(m) == 0) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+		// Stop if the queue has become empty
+		if (waitQueue.getValue().getMatchCount(m) == 0) {
+			return false;
 		}
 
 		// Select the next entity to release
 		servedEntity = this.getNextEntityForMatch(m);
 		this.moveToProcessPosition(servedEntity);
 
-		// Schedule the release of the next entity
-		startTime = this.getSimTime();
-		duration = releaseDelay.getValue().getNextSample(startTime);
-		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+		return true;
 	}
 
 	/**
 	 * Loop recursively through the queued entities, releasing them one by one.
 	 */
 	@Override
-	public void endAction() {
+	protected void endProcessing(double simTime) {
 
 		// Release the first element in the queue and send to the next component
 		this.sendToNextComponent(servedEntity);
 		servedEntity = null;
+	}
 
-		// Try to release another entity
-		this.startAction();
+	@Override
+	protected double getProcessingTime(double simTime) {
+		return releaseDelay.getValue().getNextSample(simTime);
 	}
 
 }

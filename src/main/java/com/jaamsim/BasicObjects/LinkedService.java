@@ -105,11 +105,11 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	private boolean busy;  // indicates that entities are being processed
 	private Integer matchValue;
-	protected double startTime;  // start of service time for the present entity
-	protected double duration;  // service time for the present entity
-	protected boolean forcedDowntimePending;
+	private double startTime;  // start of service time for the present entity
+	private double duration;  // service time for the present entity
+	private boolean forcedDowntimePending;
 	private boolean processKilled;  // indicates that processing of an entity has been interrupted
-	protected double stopWorkTime;  // last time at which the busy state was set to false
+	private double stopWorkTime;  // last time at which the busy state was set to false
 
 	{
 		stateGraphics.setHidden(false);
@@ -262,14 +262,14 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			ent.endAction();
 		}
 	}
-	protected final ProcessTarget endActionTarget = new EndActionTarget(this);
-	protected final EventHandle endActionHandle = new EventHandle();
+	private final ProcessTarget endActionTarget = new EndActionTarget(this);
+	private final EventHandle endActionHandle = new EventHandle();
 
-	protected boolean isBusy() {
+	protected final boolean isBusy() {
 		return busy;
 	}
 
-	protected void setBusy(boolean bool) {
+	private void setBusy(boolean bool) {
 		if (bool == busy)
 			return;
 
@@ -280,53 +280,123 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	}
 
 	/**
+	 * Returns the last time at which processing was finished or was halted for any reason
+	 * @return last time processing stopped
+	 */
+	protected double getStopWorkTime() {
+		return stopWorkTime;
+	}
+
+	/**
 	 * Starts the processing of an entity.
 	 */
-	public abstract void startAction();
+	protected final void startAction() {
+
+		// Stop if there is a forced downtime activity about to begin
+		if (forcedDowntimePending) {
+			forcedDowntimePending = false;
+			this.stopAction();
+			return;
+		}
+
+		// Stop if any of the thresholds are closed
+		if (!this.isOpen()) {
+			this.stopAction();
+			return;
+		}
+
+		// Perform any special processing for this sub-class of LinkedService
+		double simTime = this.getSimTime();
+		boolean bool = this.startProcessing(simTime);
+		if (!bool) {
+			this.stopAction();
+			return;
+		}
+
+		// Set the state
+		if (!isBusy()) {
+			this.setBusy(true);
+			this.setPresentState();
+		}
+
+		// Schedule the completion of service
+		startTime = simTime;
+		duration = this.getProcessingTime(simTime);
+		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+	}
 
 	/**
 	 * Completes the processing of an entity.
 	 */
-	public abstract void endAction();
+	private void endAction() {
+
+		// Perform any special processing required for this sub-class of LinkedService
+		this.endProcessing(this.getSimTime());
+
+		// Process the next entity
+		this.startAction();
+	}
+
+	/**
+	 * Performs any special processing required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 * @return true if processing can continue
+	 */
+	protected boolean startProcessing(double simTime) {
+		return true;
+	}
+
+	/**
+	 * Returns the time required to complete the processing of an entity
+	 * @param simTime - present simulation time
+	 * @return duration required for processing
+	 */
+	protected double getProcessingTime(double simTime) {
+		return 0.0;
+	}
+
+	/**
+	 * Performs any special processing required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 */
+	protected void endProcessing(double simTime) {}
 
 	/**
 	 * Interrupts processing of an entity.
 	 */
-	protected void stopAction() {
+	private void stopAction() {
 
-		// Is processing underway?
+		// Interrupt processing, if underway
 		if (endActionHandle.isScheduled()) {
-
-			// Interrupt the process
 			EventManager.killEvent(endActionHandle);
 			processKilled = true;
-
-			// Update the state
-			this.setBusy(false);
-			this.setPresentState();
 		}
 
-		// If the server is not processing entities, then record the state change
+		// Update the state
+		this.setBusy(false);
 		this.setPresentState();
 	}
 
 	/**
 	 * Checks whether processing can be resumed or restarted.
 	 */
-	protected void restartAction() {
+	private void restartAction() {
 
 		// Is the server unused, but available to start work?
 		if (this.isIdle()) {
-			this.setBusy(true);
-			this.setPresentState();
 
 			// If work has been interrupted by a breakdown or other event, then resume work
 			if (processKilled) {
 				processKilled = false;
-				duration -= stopWorkTime - startTime;
-				startTime = this.getSimTime();
-				this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
-				return;
+				boolean bool = this.updateForStoppage(startTime, stopWorkTime, getSimTime());
+				if (bool) {
+					this.setBusy(true);
+					this.setPresentState();
+					duration -= stopWorkTime - startTime;
+					startTime = this.getSimTime();
+					this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+					return;
+				}
 			}
 
 			// Otherwise, start work on a new entity
@@ -336,6 +406,18 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		// If the server cannot start work or is already working, then record the state change
 		this.setPresentState();
+	}
+
+	/**
+	 * Performs any special processing required for this sub-class of LinkedService
+	 * @param startWork - simulation time at which the process was started
+	 * @param stopWork - simulation time at which the process was interrupted
+	 * @param resumeWork - simulation time at which the process is to be resumed
+	 * @return whether the original process should be resumed (true)
+	 *         or a new process should be started (false)
+	 */
+	protected boolean updateForStoppage(double startWork, double stopWork, double resumeWork) {
+		return true;
 	}
 
 	// ********************************************************************************************
@@ -362,7 +444,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		this.restartAction();
 	}
 
-	public boolean isImmediateThresholdClosure() {
+	private boolean isImmediateThresholdClosure() {
 		for (Threshold thresh : immediateThresholdList.getValue()) {
 			if (!thresh.isOpen())
 				return true;
@@ -378,7 +460,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * Tests whether all the thresholds are open.
 	 * @return true if all the thresholds are open.
 	 */
-	public boolean isOpen() {
+	protected final boolean isOpen() {
 		for (Threshold thr : immediateThresholdList.getValue()) {
 			if (!thr.isOpen())
 				return false;

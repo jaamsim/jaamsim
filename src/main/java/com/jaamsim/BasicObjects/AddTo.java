@@ -60,16 +60,14 @@ public class AddTo extends Pack {
 	}
 
 	@Override
-	public void startAction() {
+	protected boolean startProcessing(double simTime) {
 
 		// Is there a container waiting to be filled?
 		if (container == null && containerQueue.getValue().isEmpty()) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+			return false;
 		}
 
-		super.startAction();
+		return super.startProcessing(simTime);
 	}
 
 }

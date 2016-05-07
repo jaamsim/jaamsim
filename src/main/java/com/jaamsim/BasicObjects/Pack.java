@@ -89,22 +89,7 @@ public class Pack extends LinkedService {
 	}
 
 	@Override
-	public void startAction() {
-
-		// Stop if there is a forced downtime activity about to begin
-		if (forcedDowntimePending && container == null) {
-			forcedDowntimePending = false;
-			this.setBusy(false);
-			this.setPresentState();
-			return;
-		}
-
-		// Do any of the thresholds stop the generator?
-		if (!this.isOpen()) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
-		}
+	protected boolean startProcessing(double simTime) {
 
 		// If necessary, get a new container
 		if (container == null) {
@@ -126,9 +111,7 @@ public class Pack extends LinkedService {
 			if (numberToInsert < 1)
 				error("The NumberOfEntities input must be greater than zero. Received: %s", numberToInsert);
 			if (waitQueue.getValue().getMatchCount(m) < numberToInsert) {
-				this.setBusy(false);
-				this.setPresentState();
-				return;
+				return false;
 			}
 			startedPacking = true;
 			this.setMatchValue(m);
@@ -141,15 +124,11 @@ public class Pack extends LinkedService {
 
 		// Move the entity into position for processing
 		this.moveToProcessPosition(packedEntity);
-
-		// Schedule the insertion of the next entity
-		startTime = this.getSimTime();
-		duration = serviceTime.getValue().getNextSample(startTime);
-		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+		return true;
 	}
 
 	@Override
-	public void endAction() {
+	protected void endProcessing(double simTime) {
 
 		// Remove the next entity from the queue and pack the container
 		container.addEntity(packedEntity);
@@ -163,9 +142,11 @@ public class Pack extends LinkedService {
 			numberInserted = 0;
 			startedPacking = false;
 		}
+	}
 
-		// Insert the next entity
-		this.startAction();
+	@Override
+	protected double getProcessingTime(double simTime) {
+		return serviceTime.getValue().getNextSample(simTime);
 	}
 
 	@Output(name = "Container",

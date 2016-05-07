@@ -72,30 +72,13 @@ public class Combine extends LinkedService {
 	}
 
 	@Override
-	public void startAction() {
-
-		// Stop if there is a forced downtime activity about to begin
-		if (forcedDowntimePending) {
-			forcedDowntimePending = false;
-			this.setBusy(false);
-			this.setPresentState();
-			return;
-		}
-
-		// Do any of the thresholds stop the generator?
-		if (!this.isOpen()) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
-		}
+	protected boolean startProcessing(double simTime) {
 
 		// Do the queues have enough entities?
 		ArrayList<Queue> queueList = waitQueueList.getValue();
 		Integer m = Queue.selectMatchValue(queueList, null);
 		if (m == null) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+			return false;
 		}
 		this.setMatchValue(m);
 
@@ -117,21 +100,20 @@ public class Combine extends LinkedService {
 		// Position the processed entity relative to the Assemble object
 		this.moveToProcessPosition(processedEntity);
 
-		// Schedule the completion of processing
-		startTime = this.getSimTime();
-		duration = serviceTime.getValue().getNextSample(startTime);
-		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+		return true;
 	}
 
 	@Override
-	public void endAction() {
+	protected void endProcessing(double simTime) {
 
 		// Send the first entity to the next element in the chain
 		this.sendToNextComponent(processedEntity);
 		processedEntity = null;
+	}
 
-		// Try to combine another set of entities
-		this.startAction();
+	@Override
+	protected double getProcessingTime(double simTime) {
+		return serviceTime.getValue().getNextSample(simTime);
 	}
 
 }

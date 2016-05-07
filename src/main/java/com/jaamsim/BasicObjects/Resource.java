@@ -195,7 +195,7 @@ public class Resource extends DisplayEntity {
 				return;
 
 			// Seize the resource
-			selection.startAction();
+			selection.startProcessing(getSimTime());
 
 			// Is additional capacity available?
 			if (cap <= unitsInUse)

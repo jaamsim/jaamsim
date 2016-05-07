@@ -53,45 +53,33 @@ public class Server extends LinkedService {
 	}
 
 	@Override
-	public void startAction() {
-
-		// Stop if there is a forced downtime activity about to begin
-		if (forcedDowntimePending) {
-			forcedDowntimePending = false;
-			this.setBusy(false);
-			this.setPresentState();
-			return;
-		}
+	protected boolean startProcessing(double simTime) {
 
 		// Determine the match value
 		Integer m = this.getNextMatchValue(getSimTime());
 
-		// Stop if the queue is empty or a threshold is closed
-		if (waitQueue.getValue().getMatchCount(m) == 0 || !this.isOpen()) {
-			this.setBusy(false);
-			this.setPresentState();
-			return;
+		// Stop if the queue is empty
+		if (waitQueue.getValue().getMatchCount(m) == 0) {
+			return false;
 		}
 
 		// Remove the first entity from the queue
 		servedEntity = this.getNextEntityForMatch(m);
 		this.moveToProcessPosition(servedEntity);
-
-		// Schedule the completion of service
-		startTime = this.getSimTime();
-		duration = serviceTime.getValue().getNextSample(startTime);
-		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+		return true;
 	}
 
 	@Override
-	public void endAction() {
+	protected void endProcessing(double simTime) {
 
 		// Send the entity to the next component in the chain
 		this.sendToNextComponent(servedEntity);
 		servedEntity = null;
+	}
 
-		// Remove the next entity from the queue and start processing
-		this.startAction();
+	@Override
+	protected double getProcessingTime(double simTime) {
+		return serviceTime.getValue().getNextSample(simTime);
 	}
 
 }

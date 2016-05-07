@@ -39,6 +39,13 @@ public class Seize extends LinkedService {
 
 	{
 		processPosition.setHidden(true);
+		workingStateListInput.setHidden(true);
+		immediateMaintenanceList.setHidden(true);
+		forcedMaintenanceList.setHidden(true);
+		opportunisticMaintenanceList.setHidden(true);
+		immediateBreakdownList.setHidden(true);
+		forcedBreakdownList.setHidden(true);
+		opportunisticBreakdownList.setHidden(true);
 
 		resourceList = new EntityListInput<>(Resource.class, "Resource", "Key Inputs", null);
 		resourceList.setRequired(true);
@@ -61,14 +68,14 @@ public class Seize extends LinkedService {
 
 	@Override
 	public void queueChanged() {
-		this.startAction();
+		this.startProcessing(getSimTime());
 	}
 
 	@Override
-	public void startAction() {
+	protected boolean startProcessing(double simTime) {
 
 		// Determine the match value
-		Integer m = this.getNextMatchValue(getSimTime());
+		Integer m = this.getNextMatchValue(simTime);
 
 		// Stop if the queue is empty, there are insufficient resources, or a threshold is closed
 		while (this.isReadyToStart()) {
@@ -78,12 +85,7 @@ public class Seize extends LinkedService {
 			DisplayEntity ent = this.getNextEntityForMatch(m);
 			this.sendToNextComponent(ent);
 		}
-		this.setBusy(false);
-	}
-
-	@Override
-	public void endAction() {
-		// not required
+		return false;
 	}
 
 	public boolean isReadyToStart() {
