@@ -21,6 +21,8 @@ import java.util.ArrayList;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Graphics.PolylineInfo;
+import com.jaamsim.Samples.SampleConstant;
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
@@ -36,7 +38,7 @@ public class EntityConveyor extends LinkedService {
 
 	@Keyword(description = "The travel time for the conveyor.",
 	         exampleList = {"10.0 s"})
-	private final ValueInput travelTimeInput;
+	private final SampleInput travelTimeInput;
 
 	@Keyword(description = "The width of the Arrow line segments in pixels.",
 	         exampleList = {"1"})
@@ -51,6 +53,7 @@ public class EntityConveyor extends LinkedService {
 	private double totalLength;  // Graphical length of the conveyor
 	private final ArrayList<Double> lengthList;  // Length of each segment of the conveyor
 	private final ArrayList<Double> cumLengthList;  // Total length to the end of each segment
+	private double presentTravelTime;
 
 	{
 		operatingThresholdList.setHidden(true);
@@ -60,9 +63,10 @@ public class EntityConveyor extends LinkedService {
 		forcedMaintenanceList.setHidden(true);
 		forcedBreakdownList.setHidden(true);
 
-		travelTimeInput = new ValueInput("TravelTime", "Key Inputs", 0.0d);
+		travelTimeInput = new SampleInput("TravelTime", "Key Inputs", new SampleConstant(0.0d));
 		travelTimeInput.setValidRange(0.0, Double.POSITIVE_INFINITY);
 		travelTimeInput.setUnitType(TimeUnit.class);
+		travelTimeInput.setEntity(this);
 		this.addInput(travelTimeInput);
 
 		widthInput = new ValueInput("Width", "Key Inputs", 1.0d);
@@ -85,6 +89,8 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
+
+		presentTravelTime = travelTimeInput.getValue().getNextSample(0.0);
 
 		entityList.clear();
 		startTimeList.clear();
@@ -109,9 +115,13 @@ public class EntityConveyor extends LinkedService {
 	public void addEntity(DisplayEntity ent ) {
 		super.addEntity(ent);
 
+		// Update the travel time
+		double simTime = this.getSimTime();
+		this.updateTravelTime(simTime);
+
 		// Add the entity to the conveyor
 		entityList.add(ent);
-		startTimeList.add(this.getSimTime());
+		startTimeList.add(simTime);
 
 		// If necessary, wake up the conveyor
 		if (this.isIdle()) {
@@ -131,6 +141,9 @@ public class EntityConveyor extends LinkedService {
 		DisplayEntity ent = entityList.remove(0);
 		startTimeList.remove(0);
 
+		// Update the travel time
+		this.updateTravelTime(simTime);
+
 		// Send the entity to the next component
 		this.sendToNextComponent(ent);
 	}
@@ -139,7 +152,7 @@ public class EntityConveyor extends LinkedService {
 	protected double getProcessingTime(double simTime) {
 
 		// Calculate time for the next entity to reach the end of the conveyor
-		double dur = startTimeList.get(0) + travelTimeInput.getValue() - simTime;
+		double dur = startTimeList.get(0) + presentTravelTime - simTime;
 		dur = Math.max(dur, 0);  // Round-off to the nearest tick can cause a negative value
 		return dur;
 	}
@@ -154,6 +167,24 @@ public class EntityConveyor extends LinkedService {
 			startTimeList.set(i, t + stopDur);
 		}
 		return false;
+	}
+
+	private void updateTravelTime(double simTime) {
+
+		// Has the travel time changed?
+		double newTime = travelTimeInput.getValue().getNextSample(simTime);
+		if (newTime != presentTravelTime) {
+
+			// Adjust the start time for each entity to account for the new travel time
+			double factor = newTime/presentTravelTime;
+			for (int i = 0; i < entityList.size(); i++) {
+				double dt = simTime - startTimeList.get(i);
+				startTimeList.set(i, simTime - dt*factor);
+			}
+
+			// Set the new travel time
+			presentTravelTime = newTime;
+		}
 	}
 
 	// ********************************************************************************************
@@ -216,7 +247,7 @@ public class EntityConveyor extends LinkedService {
 
 			// Calculate the distance travelled by this entity
 			double dur = Math.max(0.0, t - startTimeList.get(i));
-			double dist = dur / travelTimeInput.getValue() * totalLength;
+			double dist = dur / presentTravelTime * totalLength;
 
 			// 0/0 NaNs have been spotted here, just zero them
 			if (Double.isNaN(dist))
