@@ -269,7 +269,7 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 		this.scheduleProcess(interval.getValue(), 5, endActionTarget);
 	}
 
-	private void endAction() {
+	final void endAction() {
 
 		// Stop the log if the end time has been reached
 		double simTime = getSimTime();
@@ -357,7 +357,7 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 	/**
 	 * Returns true if any of the traced expressions have changed their values.
 	 */
-	private boolean valueChanged() {
+	final boolean valueChanged() {
 		boolean ret = false;
 		double simTime = getSimTime();
 		try {
@@ -392,13 +392,18 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 		EventManager.scheduleUntil(doValueTrace, valueChanged, null);
 	}
 
-	class ValueChangedConditional extends Conditional {
+	static class ValueChangedConditional extends Conditional {
+		private final ExpressionLogger ent;
+
+		ValueChangedConditional(ExpressionLogger ent) {
+			this.ent = ent;
+		}
 		@Override
 		public boolean evaluate() {
-			return ExpressionLogger.this.valueChanged();
+			return ent.valueChanged();
 		}
 	}
-	private final Conditional valueChanged = new ValueChangedConditional();
+	private final Conditional valueChanged = new ValueChangedConditional(this);
 
 	class DoValueTraceTarget extends ProcessTarget {
 		@Override

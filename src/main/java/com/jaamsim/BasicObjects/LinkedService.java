@@ -328,7 +328,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	/**
 	 * Completes the processing of an entity.
 	 */
-	private void endAction() {
+	final void endAction() {
 
 		// Perform any special processing required for this sub-class of LinkedService
 		this.endProcessing(this.getSimTime());

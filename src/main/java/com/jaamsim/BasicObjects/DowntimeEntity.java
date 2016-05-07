@@ -438,7 +438,7 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 			setPresentState("Working");
 	}
 
-	private void endDowntime() {
+	final void endDowntime() {
 		setDown(false);
 
 		// Loop through all objects that this object is watching and try to restart them.
