@@ -20,6 +20,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -235,14 +236,14 @@ private class OutputTableModel extends AbstractTableModel {
 				else if (out.getReturnType() == LinkedHashMap.class) {
 					sb.append("{");
 					LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
-					for (Object key : map.keySet()) {
-						Object obj = map.get(key);
+					for (Entry<?, ?> mapEntry : map.entrySet()) {
+						Object obj = mapEntry.getValue();
 						if (obj instanceof Double) {
 							double val = (Double)obj;
-							str = String.format("%s=%g, ", key, val/factor);
+							str = String.format("%s=%g, ", mapEntry.getKey(), val/factor);
 						}
 						else {
-							str = String.format("%s=%s, ", key, obj);
+							str = String.format("%s=%s, ", mapEntry.getKey(), obj);
 						}
 						sb.append(str);
 					}
