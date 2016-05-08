@@ -354,18 +354,19 @@ public class GraphicBox extends JDialog {
 	}
 
 	private void refresh() {
-
 		// Prepare a sorted array of all the DisplayModels
-		ArrayList<DisplayModel> models = Entity.getClonesOf(DisplayModel.class);
+		ArrayList<DisplayModel> models = new ArrayList<>();
+		for (DisplayModel each : Entity.getClonesOfIterator(DisplayModel.class)) {
+			if (each instanceof ImageModel ||
+			    each instanceof ColladaModel ||
+			    each instanceof ShapeModel)
+				models.add(each);
+		}
 		Collections.sort(models, Input.uiSortOrder);
 
-		// Populate the JList with all the ImageModels and ColladaModels
 		DisplayModel[] displayModels = new DisplayModel[models.size()];
-		int i = 0;
-		for (DisplayModel each : models) {
-			if (each instanceof ImageModel || each instanceof ColladaModel
-					|| each instanceof ShapeModel)
-				displayModels[i++] = each;
+		for (int i = 0; i < models.size(); i++) {
+			displayModels[i] = models.get(i);
 		}
 		displayModelList.setListData(displayModels);
 		displayModelList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
