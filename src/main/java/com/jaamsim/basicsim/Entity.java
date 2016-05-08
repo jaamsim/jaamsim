@@ -144,14 +144,6 @@ public class Entity {
 		}
 	}
 
-	public static <T extends Entity> ArrayList<T> getInstancesOf(Class<T> proto) {
-		ArrayList<T> instanceList = new ArrayList<>();
-		for (T each : getInstanceIterator(proto)) {
-			instanceList.add(each);
-		}
-		return instanceList;
-	}
-
 	public static <T extends Entity> InstanceIterable<T> getInstanceIterator(Class<T> proto){
 		return new InstanceIterable<>(proto);
 	}
@@ -167,14 +159,6 @@ public class Entity {
 	 */
 	public static <T extends Entity> ClonesOfIterableInterface<T> getClonesOfIterator(Class<T> proto, Class<?> iface){
 		return new ClonesOfIterableInterface<>(proto, iface);
-	}
-
-	public static <T extends Entity> ArrayList<T> getClonesOf(Class<T> proto) {
-		ArrayList<T> cloneList = new ArrayList<>();
-		for (T each : getClonesOfIterator(proto)) {
-			cloneList.add(each);
-		}
-		return cloneList;
 	}
 
 	public static Entity idToEntity(long id) {
