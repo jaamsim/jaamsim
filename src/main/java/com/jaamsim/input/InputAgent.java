@@ -821,7 +821,10 @@ public class InputAgent {
 
 			// Get the list of instances for this entity class
 			// sort the list alphabetically
-			ArrayList<? extends Entity> cloneList = Entity.getInstancesOf(each);
+			ArrayList<Entity> cloneList = new ArrayList<>();
+			for (Entity ent : Entity.getInstanceIterator(each)) {
+				cloneList.add(ent);
+			}
 
 			// Print the entity class name to the report (in the form of a comment)
 			if (cloneList.size() > 0) {
