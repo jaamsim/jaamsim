@@ -44,7 +44,7 @@ public class EntityLabel extends TextBasics {
 	public EntityLabel() {}
 
 	public static EntityLabel getLabel(DisplayEntity ent) {
-		for (EntityLabel label : Entity.getClonesOf(EntityLabel.class)) {
+		for (EntityLabel label : Entity.getClonesOfIterator(EntityLabel.class)) {
 			if (label.getTarget() == ent)
 				return label;
 		}
