@@ -1208,22 +1208,22 @@ public class InputAgent {
 		}
 
 		// Write the selected outputs
-		try {
-			StringBuilder sb = new StringBuilder();
-			for (int i=0; i<Simulation.getRunOutputList().getListSize(); i++) {
-				StringProvider samp = Simulation.getRunOutputList().getValue().get(i);
-				Class<? extends Unit> ut = Simulation.getRunOutputList().getUnitType(i);
-				double factor = Unit.getDisplayedUnitFactor(ut);
-				String str = samp.getNextString(simTime, "%s", factor);
-				if (i > 0)
-					sb.append("\t");
-				sb.append(str);
+		StringBuilder sb = new StringBuilder();
+		for (int i=0; i<Simulation.getRunOutputList().getListSize(); i++) {
+			StringProvider samp = Simulation.getRunOutputList().getValue().get(i);
+			Class<? extends Unit> ut = Simulation.getRunOutputList().getUnitType(i);
+			double factor = Unit.getDisplayedUnitFactor(ut);
+			String str;
+			try {
+				str = samp.getNextString(simTime, "%s", factor);
+			} catch (Exception e) {
+				str = e.getMessage();
 			}
-			outStream.println(sb.toString());
+			if (i > 0)
+				sb.append("\t");
+			sb.append(str);
 		}
-		catch (Exception e) {
-			LogBox.logLine(e.getMessage());
-		}
+		outStream.println(sb.toString());
 
 		// Terminate the outputs
 		if (Simulation.isLastRun()) {
