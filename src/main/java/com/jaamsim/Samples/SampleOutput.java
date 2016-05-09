@@ -17,6 +17,7 @@
 package com.jaamsim.Samples;
 
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.OutputChain;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.Unit;
@@ -43,7 +44,9 @@ public class SampleOutput implements SampleProvider {
 		if (out == null)
 			throw new ErrorException("Output is null.");
 		if (out.getUnitType() != unitType)
-			throw new ErrorException("Unit mismatch. Expected a %s, received a %s", unitType, out.getUnitType());
+			throw new ErrorException("Unit mismatch. Expected a %s, received a %s",
+					ObjectType.getObjectTypeForClass(unitType),
+					ObjectType.getObjectTypeForClass(out.getUnitType()));
 
 		return out.getValueAsDouble(simTime, 0.0);
 	}
