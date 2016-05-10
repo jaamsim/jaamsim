@@ -1425,7 +1425,7 @@ public abstract class Input<T> {
 		}
 	}
 
-	public static OutputChain parseOutputChain(KeywordIndex kw) {
+	public static OutputChain parseOutputChain(KeywordIndex kw, Class<? extends Unit> unitType) {
 		String entName = "";
 		String outputName = "";
 		ArrayList<String> outputNameList = new ArrayList<>();
@@ -1482,6 +1482,11 @@ public abstract class Input<T> {
 		if (!outputNameList.isEmpty() && !(Entity.class).isAssignableFrom(out.getReturnType()))
 			throw new InputErrorException("The first output in an output chain must return an Entity");
 
+		if (outputNameList.isEmpty() && out.isNumericValue() && out.getUnitType() != unitType)
+			throw new InputErrorException("Unit mismatch. Expected a %s, received a %s",
+					ObjectType.getObjectTypeForClass(unitType),
+					ObjectType.getObjectTypeForClass(out.getUnitType()));
+
 		return new OutputChain(ent, outputName, out, outputNameList);
 	}
 
@@ -1489,7 +1494,7 @@ public abstract class Input<T> {
 
 		// Try to parse the input as an OutputChain
 		try {
-			OutputChain chain = Input.parseOutputChain(kw);
+			OutputChain chain = Input.parseOutputChain(kw, unitType);
 			return new StringProvOutput(chain, unitType);
 		}
 		catch (InputErrorException e) {}
@@ -1507,7 +1512,7 @@ public abstract class Input<T> {
 		// If there are two or more inputs, it could be a chain of outputs
 		if (kw.numArgs() >= 2) {
 			try {
-				return new SampleOutput(Input.parseOutputChain(kw), unitType);
+				return new SampleOutput(Input.parseOutputChain(kw, unitType), unitType);
 			}
 			catch (InputErrorException e) {
 				if (kw.numArgs() > 2 || unitType == null)
