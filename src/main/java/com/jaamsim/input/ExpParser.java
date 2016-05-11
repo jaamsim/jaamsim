@@ -82,6 +82,8 @@ public class ExpParser {
 	public static class Expression {
 		public final String source;
 
+		public ExpValResult validationResult;
+
 		private final ArrayList<Thread> executingThreads = new ArrayList<>();
 
 		private ExpNode rootNode;
@@ -1620,7 +1622,7 @@ public class ExpParser {
 	}
 	private static RuntimeCheckOptimizer RTC_OP = new RuntimeCheckOptimizer();
 
-	private static ExpNode optimizeAndValidateExpression(String input, ExpNode expNode) throws ExpError {
+	private static ExpNode optimizeAndValidateExpression(String input, ExpNode expNode, Expression exp) throws ExpError {
 		expNode.walk(CONST_OP);
 		expNode = CONST_OP.updateRef(expNode); // Finally, give the entire expression a chance to optimize itself into a constant
 
@@ -1639,8 +1641,11 @@ public class ExpParser {
 		expNode.walk(RTC_OP);
 		expNode = RTC_OP.updateRef(expNode); // Give the top level node a chance to optimize
 
+		exp.validationResult = valRes;
+
 		return expNode;
 	}
+
 
 	/**
 	 * The main entry point to the expression parsing system, will either return a valid
@@ -1661,7 +1666,7 @@ public class ExpParser {
 			throw new ExpError(input, peeked.pos, "Unexpected additional values");
 		}
 
-		expNode = optimizeAndValidateExpression(input, expNode);
+		expNode = optimizeAndValidateExpression(input, expNode, ret);
 
 		ret.setRootNode(expNode);
 
@@ -1744,7 +1749,7 @@ public class ExpParser {
 
 		ExpNode expNode = parseExp(context, tokens, 0, ret.value);
 
-		expNode = optimizeAndValidateExpression(input, expNode);
+		expNode = optimizeAndValidateExpression(input, expNode, ret.value);
 
 		ret.value.setRootNode(expNode);
 
