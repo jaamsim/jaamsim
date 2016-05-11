@@ -93,6 +93,7 @@ public abstract class Input<T> {
 	private String[] valueTokens; // value from .cfg file
 	private String defText; // special text to show in the default column of the Input Editor
 	private boolean isReqd;     // indicates whether this input must be provided by the user
+	private boolean isValid;  // if false, the input is no longer valid and must be re-entered
 
 	public static final Comparator<Object> uiSortOrder = new NaturalOrderComparator();
 
@@ -108,6 +109,7 @@ public abstract class Input<T> {
 		valueTokens = null;
 		defText = null;
 		isReqd = false;
+		isValid = true;
 	}
 
 	public void reset() {
@@ -115,6 +117,7 @@ public abstract class Input<T> {
 		valueTokens = null;
 		edited = false;
 		isDef = true;
+		isValid = true;
 	}
 
 	/**
@@ -212,6 +215,14 @@ public abstract class Input<T> {
 
 	public boolean isRequired() {
 		return isReqd;
+	}
+
+	public void setValid(boolean bool) {
+		isValid = bool;
+	}
+
+	public boolean isValid() {
+		return isValid;
 	}
 
 	public void validate() throws InputErrorException {
