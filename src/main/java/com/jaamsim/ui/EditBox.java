@@ -797,7 +797,7 @@ public static class CellListener implements CellEditorListener {
 		final String newValue = editor.getValue();
 
 		// The value has not changed
-		if ( in.getValueString().equals(newValue) )
+		if ( in.getValueString().equals(newValue) && in.isValid() )
 			return;
 
 		// Adjust the user's entry to standardise the syntax
