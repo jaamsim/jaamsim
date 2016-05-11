@@ -62,6 +62,8 @@ public Component getTableCellRendererComponent(JTable table, Object value,
 	}
 	else {
 		str = in.getValueString();
+		if (!in.isValid())
+			str = EditBox.formatErrorText(str);
 		if (str.isEmpty() && in.isRequired())
 			str = EditBox.REQD;
 	}

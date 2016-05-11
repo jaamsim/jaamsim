@@ -230,6 +230,10 @@ public class EditBox extends FrameBox {
 		return String.format("<html><i><font color=\"gray\">%s</font></i></html>", str);
 	}
 
+	public static String formatErrorText(String str) {
+		return String.format("<html><font color=\"red\">%s</font></html>", str);
+	}
+
 /**
  * Handles inputs that are edited in place.
  *
