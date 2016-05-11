@@ -30,8 +30,11 @@ public class ValueInput extends Input<Double> {
 	}
 
 	public void setUnitType(Class<? extends Unit> units) {
-		if (units != unitType)
-			this.reset();
+
+		if (units == unitType)
+			return;
+
+		this.setValid(false);
 		unitType = units;
 	}
 
@@ -41,6 +44,7 @@ public class ValueInput extends Input<Double> {
 		DoubleVector temp = Input.parseDoubles(kw, minValue, maxValue, unitType);
 		Input.assertCount(temp, 1);
 		value = Double.valueOf(temp.get(0));
+		this.setValid(true);
 	}
 
 	public void setValidRange(double min, double max) {
