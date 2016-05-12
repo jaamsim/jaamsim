@@ -150,7 +150,7 @@ public class ExpParser {
 
 		@Override
 		public ExpValResult validate() {
-			return new ExpValResult(ExpValResult.State.VALID, val.unitType, (ExpError)null);
+			return ExpValResult.makeValidRes(val.unitType);
 		}
 
 		@Override
@@ -349,35 +349,36 @@ public class ExpParser {
 			ExpValResult trueRes = trueExp.validate();
 			ExpValResult falseRes = falseExp.validate();
 
-			ExpValResult.State state;
 			if (	condRes.state  == ExpValResult.State.ERROR ||
 					trueRes.state  == ExpValResult.State.ERROR ||
-					falseRes.state == ExpValResult.State.ERROR)
-				state = ExpValResult.State.ERROR;
+					falseRes.state == ExpValResult.State.ERROR) {
+				// Error state, merge all returned errors
+				ArrayList<ExpError> errors = new ArrayList<>();
+				if (condRes.errors != null)
+					errors.addAll(condRes.errors);
+				if (trueRes.errors != null)
+					errors.addAll(trueRes.errors);
+				if (falseRes.errors != null)
+					errors.addAll(falseRes.errors);
+				return ExpValResult.makeErrorRes(errors);
+			}
 			else if (	condRes.state  == ExpValResult.State.UNDECIDABLE ||
 						trueRes.state  == ExpValResult.State.UNDECIDABLE ||
-						falseRes.state == ExpValResult.State.UNDECIDABLE)
-				state = ExpValResult.State.UNDECIDABLE;
-			else
-				state = ExpValResult.State.VALID;
+						falseRes.state == ExpValResult.State.UNDECIDABLE) {
+				return ExpValResult.makeUndecidableRes();
+			}
 
-			ArrayList<ExpError> errors = new ArrayList<>();
-			errors.addAll(condRes.errors);
-			errors.addAll(trueRes.errors);
-			errors.addAll(falseRes.errors);
+			// All valid case
 
 			// Check that both sides of the branch return the same unit types
-			if (	trueRes.state  == ExpValResult.State.VALID &&
-					falseRes.state == ExpValResult.State.VALID) {
-				if (trueRes.unitType != falseRes.unitType) {
-					state = ExpValResult.State.ERROR;
-					ExpError unitError = new ExpError(exp.source, tokenPos,
-							"Unit mismatch in conditional. True branch is %s, false branch is %s",
-							trueRes.unitType.getSimpleName(), falseRes.unitType.getSimpleName());
-					errors.add(0, unitError);
-				}
+			if (trueRes.unitType != falseRes.unitType) {
+
+				ExpError unitError = new ExpError(exp.source, tokenPos,
+						"Unit mismatch in conditional. True branch is %s, false branch is %s",
+						trueRes.unitType.getSimpleName(), falseRes.unitType.getSimpleName());
+				return ExpValResult.makeErrorRes(unitError);
 			}
-			return new ExpValResult(state, trueRes.unitType, errors);
+			return ExpValResult.makeValidRes(trueRes.unitType);
 		}
 
 		@Override
@@ -552,14 +553,17 @@ public class ExpParser {
 		if (	lval.state == ExpValResult.State.ERROR ||
 				rval.state == ExpValResult.State.ERROR) {
 			// Propagate the error, no further checking
-			ArrayList<ExpError> errors = new ArrayList<>(lval.errors);
-			errors.addAll(rval.errors);
-			return new ExpValResult(ExpValResult.State.ERROR, lval.unitType, errors);
+			ArrayList<ExpError> errors = new ArrayList<>();
+			if (lval.errors != null)
+				errors.addAll(lval.errors);
+			if (rval.errors != null)
+				errors.addAll(rval.errors);
+			return ExpValResult.makeErrorRes(errors);
 		}
 
 		if (	lval.state == ExpValResult.State.UNDECIDABLE ||
 				rval.state == ExpValResult.State.UNDECIDABLE) {
-			return new ExpValResult(ExpValResult.State.UNDECIDABLE, lval.unitType, (ExpError)null);
+			return ExpValResult.makeUndecidableRes();
 		}
 
 		return null;
@@ -572,15 +576,16 @@ public class ExpParser {
 				// We have an error, merge all error results and return
 				ArrayList<ExpError> errors = new ArrayList<>();
 				for (ExpValResult errVal : args) {
-					errors.addAll(errVal.errors);
+					if (errVal.errors != null)
+						errors.addAll(errVal.errors);
 				}
-				return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, errors);
+				return ExpValResult.makeErrorRes(errors);
 			}
 		}
 		for (ExpValResult val : args) {
 			if (val.state == ExpValResult.State.UNDECIDABLE) {
 				// At least one value in undecidable, propagate it
-				return new ExpValResult(ExpValResult.State.UNDECIDABLE, DimensionlessUnit.class, (ExpError)null);
+				return ExpValResult.makeUndecidableRes();
 			}
 		}
 		return null;
@@ -599,10 +604,11 @@ public class ExpParser {
 		// Both sub values should be valid here
 		if (lval.unitType != rval.unitType) {
 			ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-			return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+			return ExpValResult.makeErrorRes(error);
+
 		}
 
-		return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+		return ExpValResult.makeValidRes(DimensionlessUnit.class);
 	}
 
 	// Validate with all args using the same units, and a new result returning 'newType' unit type
@@ -614,10 +620,11 @@ public class ExpParser {
 		for (int i = 1; i < args.length; ++ i) {
 			if (args[0].unitType != args[i].unitType) {
 				ExpError error = new ExpError(source, pos, getUnitMismatchString(args[0].unitType, args[i].unitType));
-				return new ExpValResult(ExpValResult.State.ERROR, args[0].unitType, error);
+				return ExpValResult.makeErrorRes(error);
+
 			}
 		}
-		return new ExpValResult(ExpValResult.State.VALID, newType, (ExpError)null);
+		return ExpValResult.makeValidRes(newType);
 	}
 
 	// Check that a single argument is not an error and is a dimensionless unit
@@ -627,21 +634,21 @@ public class ExpParser {
 			return arg;
 		if (arg.unitType != DimensionlessUnit.class) {
 			ExpError error = new ExpError(source, pos, getUnitMismatchString(arg.unitType, DimensionlessUnit.class));
-			return new ExpValResult(ExpValResult.State.ERROR, arg.unitType, error);
+			return ExpValResult.makeErrorRes(error);
 		}
-		return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+		return ExpValResult.makeValidRes(DimensionlessUnit.class);
 	}
 
-	// Check that a single argument is not an error and is a dimensionless unit
+	// Check that a single argument is not an error and is a dimensionless unit or angle unit
 	private static ExpValResult validateSingleArgDimensionlessOrAngle(ParseContext context, ExpValResult arg, String source, int pos) {
 		if (	arg.state == ExpValResult.State.ERROR ||
 				arg.state == ExpValResult.State.UNDECIDABLE)
 			return arg;
 		if (arg.unitType != DimensionlessUnit.class && arg.unitType != AngleUnit.class) {
 			ExpError error = new ExpError(source, pos, getUnitMismatchString(arg.unitType, AngleUnit.class));
-			return new ExpValResult(ExpValResult.State.ERROR, arg.unitType, error);
+			return ExpValResult.makeErrorRes(error);
 		}
-		return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+		return ExpValResult.makeValidRes(arg.unitType);
 	}
 
 
@@ -691,7 +698,11 @@ public class ExpParser {
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult val) {
-				return new ExpValResult(val.state, DimensionlessUnit.class, val.errors);
+				// If the sub expression result was valid, make it dimensionless, otherwise return the sub expression result
+				if (val.state == ExpValResult.State.VALID)
+					return ExpValResult.makeValidRes(DimensionlessUnit.class);
+				else
+					return val;
 			}
 			@Override
 			public void checkUnits(ParseContext context, ExpResult val)
@@ -722,9 +733,9 @@ public class ExpParser {
 
 				if (lval.unitType != rval.unitType) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, lval.unitType, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, lval.unitType, (ExpError)null);
+				return ExpValResult.makeValidRes(lval.unitType);
 			}
 		});
 
@@ -748,9 +759,9 @@ public class ExpParser {
 
 				if (lval.unitType != rval.unitType) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, lval.unitType, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, lval.unitType, (ExpError)null);
+				return ExpValResult.makeValidRes(lval.unitType);
 			}
 		});
 
@@ -777,9 +788,9 @@ public class ExpParser {
 				Class<? extends Unit> newType = context.multUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, newType, (ExpError)null);
+				return ExpValResult.makeValidRes(newType);
 			}
 		});
 
@@ -807,9 +818,9 @@ public class ExpParser {
 				Class<? extends Unit> newType = context.divUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, newType, (ExpError)null);
+				return ExpValResult.makeValidRes(newType);
 			}
 		});
 
@@ -836,9 +847,9 @@ public class ExpParser {
 				if (	lval.unitType != DimensionlessUnit.class ||
 						rval.unitType != DimensionlessUnit.class) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+				return ExpValResult.makeValidRes(DimensionlessUnit.class);
 			}
 		});
 
@@ -862,9 +873,9 @@ public class ExpParser {
 
 				if (lval.unitType != rval.unitType) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, lval.unitType, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, lval.unitType, (ExpError)null);
+				return ExpValResult.makeValidRes(lval.unitType);
 			}
 		});
 
@@ -1122,7 +1133,10 @@ public class ExpParser {
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return new ExpValResult(args[0].state, DimensionlessUnit.class, args[0].errors);
+				if (args[0].state == ExpValResult.State.VALID)
+					return ExpValResult.makeValidRes(DimensionlessUnit.class);
+				else
+					return args[0];
 			}
 		});
 
@@ -1247,16 +1261,16 @@ public class ExpParser {
 
 				if (args[0].unitType != DimensionlessUnit.class) {
 					ExpError error = new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
 
 				for (int i = 2; i < args.length; ++ i) {
 					if (args[1].unitType != args[i].unitType) {
 						ExpError error = new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
-						return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+						return ExpValResult.makeErrorRes(error);
 					}
 				}
-				return new ExpValResult(ExpValResult.State.VALID, args[1].unitType, (ExpError)null);
+				return ExpValResult.makeValidRes(args[1].unitType);
 			}
 		});
 
@@ -1274,7 +1288,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+				return ExpValResult.makeValidRes(DimensionlessUnit.class);
 			}
 		});
 
@@ -1290,7 +1304,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+				return ExpValResult.makeValidRes(DimensionlessUnit.class);
 			}
 		});
 
@@ -1421,14 +1435,14 @@ public class ExpParser {
 
 				if (args[0].unitType != DimensionlessUnit.class) {
 					ExpError error = new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
 				if (args[1].unitType != DimensionlessUnit.class) {
 					ExpError error = new ExpError(source, pos, getInvalidUnitString(args[1].unitType, DimensionlessUnit.class));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
 
-				return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+				return ExpValResult.makeValidRes(DimensionlessUnit.class);
 			}
 		});
 

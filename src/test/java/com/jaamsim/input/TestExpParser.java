@@ -52,7 +52,7 @@ public class TestExpParser {
 
 		@Override
 		public ExpValResult validate(boolean[] hasIndices) {
-			return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+			return ExpValResult.makeValidRes(DimensionlessUnit.class);
 		}
 
 	}
@@ -370,7 +370,7 @@ public class TestExpParser {
 
 		@Override
 		public ExpValResult validate(boolean[] hasIndices) {
-			return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+			return ExpValResult.makeValidRes(DimensionlessUnit.class);
 		}
 	}
 
@@ -433,7 +433,8 @@ public class TestExpParser {
 
 			@Override
 			public ExpValResult validate(boolean[] hasIndices) {
-				return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+				return ExpValResult.makeErrorRes(error);
+
 			}
 		}
 
