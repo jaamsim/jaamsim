@@ -224,7 +224,7 @@ public class ExpEvaluator {
 				throws ExpError {
 			EntityEvalContext eec = (EntityEvalContext)ec;
 			double val = handle.getValueAsDouble(eec.simTime, 0);
-			return new ExpResult(val, handle.getUnitType());
+			return ExpResult.makeNumResult(val, handle.getUnitType());
 		}
 
 		@Override
@@ -265,33 +265,33 @@ public class ExpEvaluator {
 					ArrayList<?> outList = oh.getValue(simTime, ArrayList.class);
 
 					if (index >= outList.size()  || index < 0) {
-						return new ExpResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
+						return ExpResult.makeNumResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
 					}
 					Double value = (Double)outList.get(index);
-					return new ExpResult(value, oh.unitType);
+					return ExpResult.makeNumResult(value, oh.unitType);
 				} else if(DoubleVector.class.isAssignableFrom(oh.getReturnType())) {
 					DoubleVector outList = oh.getValue(simTime, DoubleVector.class);
 
 					if (index >= outList.size() || index < 0) {
-						return new ExpResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
+						return ExpResult.makeNumResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
 					}
 
 					Double value = outList.get(index);
-					return new ExpResult(value, oh.unitType);
+					return ExpResult.makeNumResult(value, oh.unitType);
 				} else if(IntegerVector.class.isAssignableFrom(oh.getReturnType())) {
 					IntegerVector outList = oh.getValue(simTime, IntegerVector.class);
 
 					if (index >= outList.size() || index < 0) {
-						return new ExpResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
+						return ExpResult.makeNumResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
 					}
 
 					Integer value = outList.get(index);
-					return new ExpResult(value, oh.unitType);
+					return ExpResult.makeNumResult(value, oh.unitType);
 				} else {
 					throw new ExpError(null, 0, "Output '%s' has an index and is not an array type output", names[names.length-1]);
 				}
 			} else {
-				return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
+				return ExpResult.makeNumResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
 			}
 
 		}
@@ -350,7 +350,6 @@ public class ExpEvaluator {
 						ExpError error = new ExpError(null, 0, "Output: '%s' does not return a numeric type", names[i]);
 						return ExpValResult.makeErrorRes(error);
 					}
-					//return new ExpResult(0, unitType);
 					return ExpValResult.makeValidRes(unitType);
 				} else {
 					if (!Entity.class.isAssignableFrom(klass)) {

@@ -16,14 +16,36 @@
  */
 package com.jaamsim.input;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.Unit;
 
 public class ExpResult {
+	public final ExpResType type;
+
 	public final double value;
 	public final Class<? extends Unit> unitType;
 
-	public ExpResult(double val, Class<? extends Unit> ut) {
+	public final String stringVal;
+	public final Entity entVal;
+
+	public static ExpResult makeNumResult(double val, Class<? extends Unit> ut) {
+		return new ExpResult(ExpResType.NUMBER, val, ut, null, null);
+	}
+
+	public static ExpResult makeStringResult(String str) {
+		return new ExpResult(ExpResType.STRING, 0, null, str, null);
+	}
+
+	public static ExpResult makeEntityResult(Entity ent) {
+		return new ExpResult(ExpResType.ENTITY, 0, null, null, ent);
+	}
+
+	private ExpResult(ExpResType type, double val, Class<? extends Unit> ut, String str, Entity ent) {
+		this.type = type;
 		value = val;
 		unitType = ut;
+
+		stringVal = str;
+		entVal = ent;
 	}
 }

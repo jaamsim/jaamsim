@@ -45,9 +45,9 @@ public class TestExpParser {
 		@Override
 		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
 				throws ExpError {
-			if (name.equals("foo")) return new ExpResult(4, DimensionlessUnit.class);
-			if (name.equals("bar")) return new ExpResult(3, DimensionlessUnit.class);
-			return new ExpResult(1, DimensionlessUnit.class);
+			if (name.equals("foo")) return ExpResult.makeNumResult(4, DimensionlessUnit.class);
+			if (name.equals("bar")) return ExpResult.makeNumResult(3, DimensionlessUnit.class);
+			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
 		}
 
 		@Override
@@ -355,17 +355,17 @@ public class TestExpParser {
 					if (indices[i] != null)
 					ret += i * indices[i].value;
 				}
-				return new ExpResult(ret, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(ret, DimensionlessUnit.class);
 			}
 
-			if (name.length >= 1 && name[0].equals("this")) return new ExpResult(42, DimensionlessUnit.class);
+			if (name.length >= 1 && name[0].equals("this")) return ExpResult.makeNumResult(42, DimensionlessUnit.class);
 
-			if (name.length < 1 || !name[0].equals("foo")) return new ExpResult(0, DimensionlessUnit.class);
+			if (name.length < 1 || !name[0].equals("foo")) return ExpResult.makeNumResult(0, DimensionlessUnit.class);
 
-			if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return new ExpResult(4, DimensionlessUnit.class);
-			if (name.length >= 2 && name[1].equals("bonk")) return new ExpResult(5, DimensionlessUnit.class);
+			if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return ExpResult.makeNumResult(4, DimensionlessUnit.class);
+			if (name.length >= 2 && name[1].equals("bonk")) return ExpResult.makeNumResult(5, DimensionlessUnit.class);
 
-			return new ExpResult(-1, DimensionlessUnit.class);
+			return ExpResult.makeNumResult(-1, DimensionlessUnit.class);
 		}
 
 		@Override
