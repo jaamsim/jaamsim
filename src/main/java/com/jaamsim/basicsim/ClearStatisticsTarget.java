@@ -30,7 +30,7 @@ public class ClearStatisticsTarget extends ProcessTarget {
 	public void process() {
 
 		// Reset the statistics for each entity in the model
-		for (Entity ent : Entity.getAll()) {
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 			ent.clearStatistics();
 		}
 

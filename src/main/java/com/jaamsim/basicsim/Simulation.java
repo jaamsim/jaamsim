@@ -418,9 +418,9 @@ public class Simulation extends Entity {
 
 	public static Simulation getInstance() {
 		if (myInstance == null) {
-			for (Entity ent : Entity.getAll()) {
-				if (ent instanceof Simulation ) {
-					myInstance = (Simulation) ent;
+			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+				if (ent instanceof Simulation) {
+					myInstance = (Simulation)ent;
 					break;
 				}
 			}
@@ -546,15 +546,15 @@ public class Simulation extends Entity {
 	 */
 	public static void start(EventManager evt) {
 		// Validate each entity based on inputs only
-		for (int i = 0; i < Entity.getAll().size(); i++) {
+		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
 			try {
-				Entity.getAll().get(i).validate();
+				each.validate();
 			}
 			catch (Throwable e) {
-				LogBox.format("%s: Validation error- %s", Entity.getAll().get(i).getName(), e.getMessage());
+				LogBox.format("%s: Validation error- %s", each.getName(), e.getMessage());
 				GUIFrame.showErrorDialog("Input Error Detected During Validation",
 				                         "%s: %-70s",
-				                         Entity.getAll().get(i).getName(), e.getMessage());
+				                         each.getName(), e.getMessage());
 
 				GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
 				return;
@@ -600,8 +600,8 @@ public class Simulation extends Entity {
 	public static void endRun() {
 
 		// Execute the end of run method for each entity
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity.getAll().get(i).doEnd();
+		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+			each.doEnd();
 		}
 
 		// Print the output report
@@ -682,18 +682,18 @@ public class Simulation extends Entity {
 		}
 
 		// Re-initialise the model
-		for (int i = 0; i < Entity.getAll().size(); i++) {
+		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
 			// Try/catch is required because some earlyInit methods use simTime which is only
 			// available from a process thread
 			try {
-				Entity.getAll().get(i).earlyInit();
+				each.earlyInit();
 			} catch (Exception e) {}
 		}
 
 		// Initialise each entity a second time
-		for (int i = 0; i < Entity.getAll().size(); i++) {
+		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
 			try {
-				Entity.getAll().get(i).lateInit();
+				each.lateInit();
 			} catch (Exception e) {}
 		}
 	}

@@ -31,19 +31,19 @@ public class InitModelTarget extends ProcessTarget {
 	public void process() {
 
 		// Initialise each entity
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity.getAll().get(i).earlyInit();
+		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+			each.earlyInit();
 		}
 
 		// Initialise each entity a second time
-		for (int i = 0; i < Entity.getAll().size(); i++) {
-			Entity.getAll().get(i).lateInit();
+		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+			each.lateInit();
 		}
 
 		// Start each entity
 		double startTime = Simulation.getStartTime();
-		for (int i = Entity.getAll().size() - 1; i >= 0; i--) {
-			EventManager.scheduleSeconds(startTime, 0, false, new StartUpTarget(Entity.getAll().get(i)), null);
+		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
+			EventManager.scheduleSeconds(startTime, 0, true, new StartUpTarget(each), null);
 		}
 
 		// Schedule the initialisation period

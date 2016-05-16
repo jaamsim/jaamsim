@@ -821,7 +821,10 @@ public class InputAgent {
 
 			// Get the list of instances for this entity class
 			// sort the list alphabetically
-			ArrayList<? extends Entity> cloneList = Entity.getInstancesOf(each);
+			ArrayList<Entity> cloneList = new ArrayList<>();
+			for (Entity ent : Entity.getInstanceIterator(each)) {
+				cloneList.add(ent);
+			}
 
 			// Print the entity class name to the report (in the form of a comment)
 			if (cloneList.size() > 0) {
@@ -1046,7 +1049,7 @@ public class InputAgent {
 
 		// Determine all the new classes that were created
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
-		for (Entity ent : Entity.getAll()) {
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 			if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
 
@@ -1066,7 +1069,7 @@ public class InputAgent {
 			file.format("Define %s {", o.getName());
 
 			// Print the new instances that were defined
-			for (Entity ent : Entity.getAll()) {
+			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 				if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 					continue;
 
@@ -1079,7 +1082,7 @@ public class InputAgent {
 		}
 
 		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
-		for (Entity ent : Entity.getAll()) {
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 			if (!ent.testFlag(Entity.FLAG_EDITED))
 				continue;
 			if (ent.testFlag(Entity.FLAG_GENERATED))
@@ -1101,7 +1104,7 @@ public class InputAgent {
 		// 4) WRITE THE INPUTS FOR KEYWORDS THAT WERE EDITED
 
 		// Identify the entities whose inputs were edited
-		for (Entity ent : Entity.getAll()) {
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 			if (!ent.testFlag(Entity.FLAG_EDITED))
 				continue;
 			if (ent.testFlag(Entity.FLAG_GENERATED))
@@ -1252,7 +1255,7 @@ public class InputAgent {
 
 		// Identify the classes that were used in the model
 		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
-		for (Entity ent : Entity.getAll()) {
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 
 			if (ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
@@ -1270,7 +1273,7 @@ public class InputAgent {
 		// Loop through the classes and identify the instances
 		for (Class<? extends Entity> newClass : newClasses) {
 			ArrayList<Entity> entList = new ArrayList<>();
-			for (Entity ent : Entity.getAll()) {
+			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 
 				if (ent.testFlag(Entity.FLAG_GENERATED))
 					continue;

@@ -81,7 +81,7 @@ public class Threshold extends StateEntity {
 		open = true;
 
 		userList.clear();
-		for (Entity each : Entity.getAll()) {
+		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
 			if (each instanceof ThresholdUser) {
 				ThresholdUser tu = (ThresholdUser)each;
 				if (tu.getThresholds().contains(this))
