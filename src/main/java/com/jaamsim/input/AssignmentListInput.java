@@ -57,7 +57,7 @@ public class AssignmentListInput extends ListInput<ArrayList<ExpParser.Assignmen
 				temp.add(ass);
 
 			} catch (ExpError e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 

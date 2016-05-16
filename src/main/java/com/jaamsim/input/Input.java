@@ -574,7 +574,7 @@ public abstract class Input<T> {
 				boolean element = Input.parseBoolean(kw.getArg(i));
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -589,7 +589,7 @@ public abstract class Input<T> {
 				boolean element = Input.parseBoolean(input.get(i));
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -605,7 +605,7 @@ public abstract class Input<T> {
 				Color4d element = Input.parseColour(subArgs.get(i));
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -669,7 +669,7 @@ public abstract class Input<T> {
 				int element = Input.parseInteger(input.get(i), minValue, maxValue);
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -684,7 +684,7 @@ public abstract class Input<T> {
 				int element = Input.parseInteger(kw.getArg(i), minValue, maxValue);
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -977,7 +977,7 @@ public abstract class Input<T> {
 				double element = Input.parseDouble(input.get(i), minValue, maxValue, factor);
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -1041,7 +1041,7 @@ public abstract class Input<T> {
 				}
 			} catch (InputErrorException e) {
 				if (includeIndex && numDoubles > 1)
-					throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+					throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 				else
 					throw e;
 			}
@@ -1104,7 +1104,7 @@ public abstract class Input<T> {
 				if (numDoubles == 1)
 					throw e;
 				else
-					throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+					throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -1177,7 +1177,7 @@ public abstract class Input<T> {
 				String element = Input.parseString(kw.getArg(i), validList);
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -1353,7 +1353,7 @@ public abstract class Input<T> {
 				ArrayList<T> element = Input.parseEntityList(subArgs.get(i), aClass, unique);
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
