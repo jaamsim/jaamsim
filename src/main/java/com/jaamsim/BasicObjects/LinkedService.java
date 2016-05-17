@@ -54,7 +54,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	         exampleList = {"this.obj.Attrib1"})
 	protected final SampleInput match;
 
-	@Keyword(description = "A list of thresholds that must be satisified for the object to "
+	@Keyword(description = "A list of thresholds that must be satisfied for the object to "
 	                     + "operate. Operation is stopped immediately when one of the thresholds "
 	                     + "closes. If a threshold closes part way though processing an entity, "
 	                     + "the work is considered to be partly done and the remainder is "
@@ -62,7 +62,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
 	protected final EntityListInput<Threshold> immediateThresholdList;
 
-	@Keyword(description = "A list of thresholds that must be satisified for the object to "
+	@Keyword(description = "A list of thresholds that must be satisfied for the object to "
 	                     + "operate. If a threshold closes part way though processing an entity, "
 	                     + "the remaining work is completed and the entity is released before the "
 	                     + "object is closed.",
