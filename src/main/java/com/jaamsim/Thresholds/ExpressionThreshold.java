@@ -84,6 +84,8 @@ public class ExpressionThreshold extends Threshold {
 		this.addInput(showPendingStates);
 	}
 
+	public ExpressionThreshold() {}
+
 	@Override
     public void startUp() {
 		super.startUp();
