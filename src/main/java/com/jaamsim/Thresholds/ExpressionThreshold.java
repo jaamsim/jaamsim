@@ -27,6 +27,7 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
@@ -85,6 +86,16 @@ public class ExpressionThreshold extends Threshold {
 	}
 
 	public ExpressionThreshold() {}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == openCondition || in == closeCondition) {
+			this.setInitialOpenValue(this.getOpenConditionValue(0.0));
+			return;
+		}
+	}
 
 	@Override
     public void startUp() {
