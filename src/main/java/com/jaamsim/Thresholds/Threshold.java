@@ -53,6 +53,7 @@ public class Threshold extends StateEntity {
 	private final ArrayList<ThresholdUser> userList;
 
 	private boolean open;
+	private boolean initialOpenValue;
 
 	{
 		openColour = new ColourInput("OpenColour", "Graphics", ColourInput.GREEN);
@@ -72,13 +73,15 @@ public class Threshold extends StateEntity {
 
 	public Threshold() {
 		userList = new ArrayList<>();
+		initialOpenValue = true;
+		open = true;
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		thresholdChangedTarget.users.clear();
-		open = true;
+		open = initialOpenValue;
 
 		userList.clear();
 		for (Entity each : Entity.getAll()) {
@@ -90,9 +93,16 @@ public class Threshold extends StateEntity {
 		}
 	}
 
+	public void setInitialOpenValue(boolean bool) {
+		initialOpenValue = bool;
+	}
+
 	@Override
 	public String getInitialState() {
-		return "Open";
+		if (initialOpenValue)
+			return "Open";
+		else
+			return "Closed";
 	}
 
 	@Override
