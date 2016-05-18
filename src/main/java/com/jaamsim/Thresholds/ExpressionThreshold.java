@@ -145,6 +145,10 @@ public class ExpressionThreshold extends Threshold {
 	@Override
 	public boolean isOpen() {
 
+		// If called from the user interface, return the saved state
+		if (!EventManager.hasCurrent())
+			return super.isOpen();
+
 		// Determine the state implied by the OpenCondition and CloseCondition expressions
 		boolean ret = this.getOpenConditionValue(getSimTime());
 
