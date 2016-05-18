@@ -98,7 +98,7 @@ public class ExpressionThreshold extends Threshold {
 	}
 
 	@Override
-    public void startUp() {
+	public void startUp() {
 		super.startUp();
 
 		doOpenClose();
