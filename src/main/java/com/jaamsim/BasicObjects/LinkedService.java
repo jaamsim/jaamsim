@@ -667,14 +667,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	@Output(name = "Open",
 	 description = "Returns TRUE if all the thresholds specified by the OperatingThresholdList "
-	             + "keyword are open.",
+	             + "and ImmediateThresholdList keywords are open.",
 	    sequence = 1)
 	public boolean getOpen(double simTime) {
-		for (Threshold thr : operatingThresholdList.getValue()) {
-			if (!thr.getOpen(simTime))
-				return false;
-		}
-		return true;
+		return isOpen();
 	}
 
 	@Output(name = "Working",
