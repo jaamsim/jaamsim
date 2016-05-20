@@ -817,6 +817,7 @@ public static class CellListener implements CellEditorListener {
 			// Parse the keyword inputs
 			KeywordIndex kw = new KeywordIndex(in.getKeyword(), tokens, null);
 			InputAgent.processKeyword(EditBox.getInstance().getCurrentEntity(), kw);
+			in.setValid(true);
 		}
 		catch (InputErrorException exep) {
 			if (editor.canRetry()) {
@@ -829,11 +830,15 @@ public static class CellListener implements CellEditorListener {
 					final int row = editor.getRow();
 					final int col = editor.getCol();
 					final EditTable table = (EditTable)editor.getTable();
+					final Input<?> inp = in;
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
+							boolean bool = inp.isValid();
+							inp.setValid(true); //FIXME required for DropDownMenuEditor
 							table.setRetry(newValue, row, col);
 							table.editCellAt(row, col);
+							inp.setValid(bool);
 						}
 					});
 
