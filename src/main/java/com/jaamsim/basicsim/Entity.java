@@ -597,6 +597,12 @@ public class Entity {
 		this.trace( 1, text );
 	}
 
+	/**
+	 * Throws an ErrorException for this entity with the specified message.
+	 * @param fmt - format string for the error message
+	 * @param args - objects used by the format string
+	 * @throws ErrorException
+	 */
 	public void error(String fmt, Object... args)
 	throws ErrorException {
 		final StringBuilder sb = new StringBuilder(this.getName());
