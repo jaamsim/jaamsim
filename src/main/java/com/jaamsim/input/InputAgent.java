@@ -947,6 +947,11 @@ public class InputAgent {
 		InputAgent.logError("%s", msg);
 	}
 
+	/**
+	 * Writes an error or warning message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format for the message
+	 * @param args - objects to be printed in the message
+	 */
 	public static void logMessage(String fmt, Object... args) {
 		String msg = String.format(fmt, args);
 		LogBox.logLine(msg);
@@ -983,18 +988,33 @@ public class InputAgent {
 		System.out.flush();
 	}
 
+	/**
+	 * Writes a warning message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format string for the warning message
+	 * @param args - objects used by the format string
+	 */
 	public static void logWarning(String fmt, Object... args) {
 		numWarnings++;
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(wrnPrefix, msg);
 	}
 
+	/**
+	 * Writes an error message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format string for the error message
+	 * @param args - objects used by the format string
+	 */
 	public static void logError(String fmt, Object... args) {
 		numErrors++;
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(errPrefix, msg);
 	}
 
+	/**
+	 * Writes a input error message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format string for the error message
+	 * @param args - objects used by the format string
+	 */
 	public static void logInpError(String fmt, Object... args) {
 		numErrors++;
 		String msg = String.format(fmt, args);
