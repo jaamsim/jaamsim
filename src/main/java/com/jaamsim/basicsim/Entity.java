@@ -606,34 +606,6 @@ public class Entity {
 	}
 
 	/**
-	 * Print an error message.
-	 */
-	public void error( String meth, String text1, String text2 ) {
-		double time = 0.0d;
-		if (EventManager.hasCurrent())
-			time = EventManager.simSeconds();
-		InputAgent.logError("Time:%.5f Entity:%s%n%s%n%s%n%s%n",
-		                    time, getName(),
-							meth, text1, text2);
-
-		// We don't want the model to keep executing, throw an exception and let
-		// the higher layers figure out if we should terminate the run or not.
-		throw new ErrorException("ERROR: %s", getName());
-	}
-
-	/**
-	 * Print a warning message.
-	 */
-	public void warning( String meth, String text1, String text2 ) {
-		double time = 0.0d;
-		if (EventManager.hasCurrent())
-			time = EventManager.simSeconds();
-		InputAgent.logWarning("Time:%.5f Entity:%s%n%s%n%s%n%s%n",
-				time, getName(),
-				meth, text1, text2);
-	}
-
-	/**
 	 * Returns a user specific unit type. This is needed for entity types like distributions that may change the unit type
 	 * that is returned at runtime.
 	 * @return
