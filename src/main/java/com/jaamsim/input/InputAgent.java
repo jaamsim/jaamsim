@@ -639,11 +639,12 @@ public class InputAgent {
 
 		String inputTraceFileName = InputAgent.getRunName() + ".log";
 		// Initializing the tracing for the model
+		URI logURI = null;
 		try {
 			LogBox.logLine( "Creating trace file" );
 
 			URI confURI = file.toURI();
-			URI logURI = confURI.resolve(new URI(null, inputTraceFileName, null)); // The new URI here effectively escapes the file name
+			logURI = confURI.resolve(new URI(null, inputTraceFileName, null)); // The new URI here effectively escapes the file name
 
 			// Set and open the input trace file name
 			logFile = new FileEntity( logURI.getPath());
@@ -663,7 +664,8 @@ public class InputAgent {
 			if (InputAgent.numWarnings == 0 && InputAgent.numErrors == 0) {
 				logFile.close();
 				logFile.delete();
-				logFile = new FileEntity( inputTraceFileName);
+				if (logURI != null)
+					logFile = new FileEntity( logURI.getPath() );
 			}
 		}
 
