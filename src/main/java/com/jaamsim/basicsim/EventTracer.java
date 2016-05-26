@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.EventTraceListener;
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.ui.LogBox;
+import com.jaamsim.input.InputAgent;
 
 class EventTracer implements EventTraceListener {
 	private BufferedReader eventVerifyReader;
@@ -43,7 +43,7 @@ class EventTracer implements EventTraceListener {
 		}
 		catch (FileNotFoundException e) {}
 		if (eventVerifyReader == null)
-			LogBox.logLine("Unable to open an event verification file.");
+			InputAgent.logMessage("Unable to open an event verification file.");
 
 		reader = new EventTraceRecord();
 	}

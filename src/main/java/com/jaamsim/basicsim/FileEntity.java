@@ -21,8 +21,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.InputErrorException;
-import com.jaamsim.ui.LogBox;
 
 /**
  * Class encapsulating file input/output methods and file access.
@@ -63,7 +63,7 @@ public class FileEntity {
 		}
 		catch( IOException e ) {
 			outputStream = null;
-			LogBox.logLine( "Unable to close FileEntity: " + backingFileObject.getName() );
+			InputAgent.logMessage( "Unable to close FileEntity: " + backingFileObject.getName() );
 		}
 	}
 

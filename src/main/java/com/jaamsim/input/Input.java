@@ -259,7 +259,7 @@ public abstract class Input<T> {
 		try {
 			getValueTokens(tmp);
 		} catch (Exception e) {
-			LogBox.format("Error in input, value has been cleared. Keyword: %s",
+			InputAgent.logMessage("Error in input, value has been cleared. Keyword: %s",
 					this.getKeyword());
 			LogBox.logException(e);
 			this.reset();

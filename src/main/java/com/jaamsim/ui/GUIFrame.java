@@ -1908,7 +1908,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 	static void handleConfigError(Throwable t, File file) {
 		if (t instanceof InputErrorException) {
-			LogBox.logLine("Input Error: " + t.getMessage());
+			InputAgent.logMessage("Input Error: %s", t.getMessage());
 			GUIFrame.showErrorOptionDialog("Input Error",
 			                         "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
 			                         "Open '%s' with Log Viewer?",
@@ -1916,7 +1916,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			return;
 		}
 
-		LogBox.format("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
+		InputAgent.logMessage("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
 		GUIFrame.showErrorDialog("Fatal Error",
 		                         "A fatal error has occured while loading the file '%s':\n\n%s",
 		                         file.getName(), t.getMessage());

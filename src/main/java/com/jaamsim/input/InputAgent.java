@@ -1519,11 +1519,10 @@ public class InputAgent {
 
 		// Check that the file path includes the jail folder
 		if (jailPrefix != null && ret.toString().indexOf(jailPrefix) != 0) {
-			LogBox.format("Failed jail test: %s\n"
+			InputAgent.logMessage("Failed jail test: %s\n"
 					+ "jail: %s\n"
 					+ "context: %s\n",
 					ret.toString(), jailPrefix, context.toString());
-			LogBox.getInstance().setVisible(true);
 			return null; // This resolved URI is not in our jail
 		}
 
