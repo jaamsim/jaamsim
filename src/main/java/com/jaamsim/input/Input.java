@@ -38,7 +38,6 @@ import com.jaamsim.datatypes.BooleanVector;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.NaturalOrderComparator;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -261,7 +260,7 @@ public abstract class Input<T> {
 		} catch (Exception e) {
 			InputAgent.logMessage("Error in input, value has been cleared. Keyword: %s",
 					this.getKeyword());
-			LogBox.logException(e);
+			InputAgent.logStackTrace(e);
 			this.reset();
 		}
 		if (tmp.size() == 0) return "";
