@@ -965,6 +965,16 @@ public class InputAgent {
 		logFile.flush();
 	}
 
+	/**
+	 * Writes a stack trace to standard error, the Log Viewer, and the Log File.
+	 * @param e - exception to be traced
+	 */
+	public static void logStackTrace(Throwable t) {
+		for (StackTraceElement each : t.getStackTrace()) {
+			InputAgent.logMessage(each.toString());
+		}
+	}
+
 	public static void trace(int indent, Entity ent, String meth, String... text) {
 		// Create an indent string to space the lines
 		StringBuilder ind = new StringBuilder("");
