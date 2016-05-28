@@ -46,6 +46,15 @@ public class ExpressionThreshold extends Threshold {
 	         exampleList = { "'[Queue1].QueueLength < 2'" })
 	private final ExpressionInput closeCondition;
 
+	@Keyword(description = "The initial state for the ExpressionThreshold: "
+	                     + "TRUE = Open, FALSE = Closed.\n"
+	                     + "This input is only relevant when the CloseCondition input is used "
+	                     + "and both the OpenCondition and CloseCondition are FALSE at the "
+	                     + "start of the simulation run. Otherwise, the the initial state is "
+	                     + "determined explicitly by the OpenCondition and CloseCondition.",
+	         exampleList = { "TRUE" })
+	private final BooleanInput initialOpenValue;
+
 	@Keyword(description = "The colour of the ExpressionThreshold graphic when the threshold "
 	                     + "condition is open, but the gate is still closed.",
 	         exampleList = { "yellow" })
@@ -72,6 +81,9 @@ public class ExpressionThreshold extends Threshold {
 		closeCondition = new ExpressionInput("CloseCondition", "Key Inputs", null);
 		closeCondition.setEntity(this);
 		this.addInput(closeCondition);
+
+		initialOpenValue = new BooleanInput("InitialOpenValue", "Key Inputs", false);
+		this.addInput(initialOpenValue);
 
 		pendingOpenColour = new ColourInput("PendingOpenColour", "Graphics", ColourInput.YELLOW);
 		this.addInput(pendingOpenColour);
