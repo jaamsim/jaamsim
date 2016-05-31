@@ -573,40 +573,18 @@ public class Entity {
 		this.trace( 1, text );
 	}
 
+	/**
+	 * Throws an ErrorException for this entity with the specified message.
+	 * @param fmt - format string for the error message
+	 * @param args - objects used by the format string
+	 * @throws ErrorException
+	 */
 	public void error(String fmt, Object... args)
 	throws ErrorException {
 		final StringBuilder sb = new StringBuilder(this.getName());
 		sb.append(": ");
 		sb.append(String.format(fmt, args));
 		throw new ErrorException(sb.toString());
-	}
-
-	/**
-	 * Print an error message.
-	 */
-	public void error( String meth, String text1, String text2 ) {
-		double time = 0.0d;
-		if (EventManager.hasCurrent())
-			time = EventManager.simSeconds();
-		InputAgent.logError("Time:%.5f Entity:%s%n%s%n%s%n%s%n",
-		                    time, getName(),
-							meth, text1, text2);
-
-		// We don't want the model to keep executing, throw an exception and let
-		// the higher layers figure out if we should terminate the run or not.
-		throw new ErrorException("ERROR: %s", getName());
-	}
-
-	/**
-	 * Print a warning message.
-	 */
-	public void warning( String meth, String text1, String text2 ) {
-		double time = 0.0d;
-		if (EventManager.hasCurrent())
-			time = EventManager.simSeconds();
-		InputAgent.logWarning("Time:%.5f Entity:%s%n%s%n%s%n%s%n",
-				time, getName(),
-				meth, text1, text2);
 	}
 
 	/**

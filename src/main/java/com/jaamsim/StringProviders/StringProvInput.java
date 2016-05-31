@@ -39,8 +39,11 @@ public class StringProvInput extends Input<StringProvider> {
 	}
 
 	public void setUnitType(Class<? extends Unit> ut) {
-		if (ut != unitType)
-			this.reset();
+
+		if (ut == unitType)
+			return;
+
+		this.setValid(false);
 		unitType = ut;
 	}
 
@@ -51,6 +54,7 @@ public class StringProvInput extends Input<StringProvider> {
 	@Override
 	public void parse(KeywordIndex kw) throws InputErrorException {
 		value = Input.parseStringProvider(kw, thisEnt, unitType);
+		this.setValid(true);
 	}
 
 	@Override

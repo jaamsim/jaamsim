@@ -38,7 +38,6 @@ import com.jaamsim.datatypes.BooleanVector;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.ui.LogBox;
 import com.jaamsim.ui.NaturalOrderComparator;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -93,6 +92,7 @@ public abstract class Input<T> {
 	private String[] valueTokens; // value from .cfg file
 	private String defText; // special text to show in the default column of the Input Editor
 	private boolean isReqd;     // indicates whether this input must be provided by the user
+	private boolean isValid;  // if false, the input is no longer valid and must be re-entered
 
 	public static final Comparator<Object> uiSortOrder = new NaturalOrderComparator();
 
@@ -108,6 +108,7 @@ public abstract class Input<T> {
 		valueTokens = null;
 		defText = null;
 		isReqd = false;
+		isValid = true;
 	}
 
 	public void reset() {
@@ -115,6 +116,7 @@ public abstract class Input<T> {
 		valueTokens = null;
 		edited = false;
 		isDef = true;
+		isValid = true;
 	}
 
 	/**
@@ -214,6 +216,14 @@ public abstract class Input<T> {
 		return isReqd;
 	}
 
+	public void setValid(boolean bool) {
+		isValid = bool;
+	}
+
+	public boolean isValid() {
+		return isValid;
+	}
+
 	public void validate() throws InputErrorException {
 		if (isReqd && isDef && !hidden)
 			throw new InputErrorException("An input must be provided for the keyword '%s'.", keyword);
@@ -248,9 +258,9 @@ public abstract class Input<T> {
 		try {
 			getValueTokens(tmp);
 		} catch (Exception e) {
-			LogBox.format("Error in input, value has been cleared. Keyword: %s",
+			InputAgent.logMessage("Error in input, value has been cleared. Keyword: %s",
 					this.getKeyword());
-			LogBox.logException(e);
+			InputAgent.logStackTrace(e);
 			this.reset();
 		}
 		if (tmp.size() == 0) return "";
@@ -563,7 +573,7 @@ public abstract class Input<T> {
 				boolean element = Input.parseBoolean(kw.getArg(i));
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -578,7 +588,7 @@ public abstract class Input<T> {
 				boolean element = Input.parseBoolean(input.get(i));
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -594,7 +604,7 @@ public abstract class Input<T> {
 				Color4d element = Input.parseColour(subArgs.get(i));
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -658,7 +668,7 @@ public abstract class Input<T> {
 				int element = Input.parseInteger(input.get(i), minValue, maxValue);
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -673,7 +683,7 @@ public abstract class Input<T> {
 				int element = Input.parseInteger(kw.getArg(i), minValue, maxValue);
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -966,7 +976,7 @@ public abstract class Input<T> {
 				double element = Input.parseDouble(input.get(i), minValue, maxValue, factor);
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -1030,7 +1040,7 @@ public abstract class Input<T> {
 				}
 			} catch (InputErrorException e) {
 				if (includeIndex && numDoubles > 1)
-					throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+					throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 				else
 					throw e;
 			}
@@ -1093,7 +1103,7 @@ public abstract class Input<T> {
 				if (numDoubles == 1)
 					throw e;
 				else
-					throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+					throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -1166,7 +1176,7 @@ public abstract class Input<T> {
 				String element = Input.parseString(kw.getArg(i), validList);
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -1342,7 +1352,7 @@ public abstract class Input<T> {
 				ArrayList<T> element = Input.parseEntityList(subArgs.get(i), aClass, unique);
 				temp.add(element);
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		return temp;
@@ -1425,7 +1435,7 @@ public abstract class Input<T> {
 		}
 	}
 
-	public static OutputChain parseOutputChain(KeywordIndex kw) {
+	public static OutputChain parseOutputChain(KeywordIndex kw, Class<? extends Unit> unitType) {
 		String entName = "";
 		String outputName = "";
 		ArrayList<String> outputNameList = new ArrayList<>();
@@ -1482,6 +1492,11 @@ public abstract class Input<T> {
 		if (!outputNameList.isEmpty() && !(Entity.class).isAssignableFrom(out.getReturnType()))
 			throw new InputErrorException("The first output in an output chain must return an Entity");
 
+		if (outputNameList.isEmpty() && out.isNumericValue() && out.getUnitType() != unitType)
+			throw new InputErrorException("Unit mismatch. Expected a %s, received a %s",
+					ObjectType.getObjectTypeForClass(unitType),
+					ObjectType.getObjectTypeForClass(out.getUnitType()));
+
 		return new OutputChain(ent, outputName, out, outputNameList);
 	}
 
@@ -1489,7 +1504,7 @@ public abstract class Input<T> {
 
 		// Try to parse the input as an OutputChain
 		try {
-			OutputChain chain = Input.parseOutputChain(kw);
+			OutputChain chain = Input.parseOutputChain(kw, unitType);
 			return new StringProvOutput(chain, unitType);
 		}
 		catch (InputErrorException e) {}
@@ -1507,7 +1522,7 @@ public abstract class Input<T> {
 		// If there are two or more inputs, it could be a chain of outputs
 		if (kw.numArgs() >= 2) {
 			try {
-				return new SampleOutput(Input.parseOutputChain(kw), unitType);
+				return new SampleOutput(Input.parseOutputChain(kw, unitType), unitType);
 			}
 			catch (InputErrorException e) {
 				if (kw.numArgs() > 2 || unitType == null)

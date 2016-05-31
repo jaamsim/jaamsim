@@ -17,6 +17,7 @@
 package com.jaamsim.Graphics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.jaamsim.DisplayModels.DisplayModel;
@@ -859,6 +860,50 @@ public class DisplayEntity extends Entity {
 	public ArrayList<Vec3d> getPoints() {
 		synchronized(screenPointLock) {
 			return new ArrayList<>(pointsInput.getValue());
+		}
+	}
+
+	/**
+	 * Returns the local coordinates for a specified fractional distance along a polyline.
+	 * @param frac - fraction of the total graphical length of the polyline
+	 * @return local coordinates for the specified position
+	 */
+	public Vec3d getPositionOnPolyline(double frac) {
+		synchronized(screenPointLock) {
+
+			// Calculate the graphical length of each polyline segment
+			int n = pointsInput.getValue().size();
+			double[] cumLengthList = new double[n];
+			cumLengthList[0] = 0.0;
+			for (int i = 1; i < n; i++) {
+				Vec3d vec = new Vec3d();
+				vec.sub3(pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
+				cumLengthList[i] = cumLengthList[i-1] + vec.mag3();
+			}
+
+			// Find the insertion point by binary search
+			double dist = frac * cumLengthList[n-1];
+			int k = Arrays.binarySearch(cumLengthList, dist);
+
+			// Exact match
+			if (k >= 0)
+				return pointsInput.getValue().get(k);
+
+			// Error condition
+			if (k == -1)
+				error("Unable to find position in polyline using binary search.");
+
+			// Insertion index = -k-1
+			int index = -k - 1;
+
+			// Interpolate the final position between the two points
+			double fracInSegment = (dist - cumLengthList[index-1]) /
+			                       (cumLengthList[index] - cumLengthList[index-1]);
+			Vec3d vec = new Vec3d();
+			vec.interpolate3(pointsInput.getValue().get(index-1),
+			                 pointsInput.getValue().get(index),
+			                 fracInSegment);
+			return vec;
 		}
 	}
 

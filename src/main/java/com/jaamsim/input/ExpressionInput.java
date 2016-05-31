@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpParser.Expression;
-import com.jaamsim.ui.LogBox;
 
 public class ExpressionInput extends Input<ExpParser.Expression> {
 	private Entity thisEnt;
@@ -49,7 +48,7 @@ public class ExpressionInput extends Input<ExpParser.Expression> {
 			value = exp;
 
 		} catch (ExpError e) {
-			LogBox.logException(e);
+			InputAgent.logStackTrace(e);
 			throw new InputErrorException(e.toString());
 		}
 	}

@@ -37,9 +37,13 @@ public class SampleInput extends Input<SampleProvider> {
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
-		if (u != unitType)
-			this.reset();
+
+		if (u == unitType)
+			return;
+
 		unitType = u;
+		this.setValid(false);
+
 		if (defValue instanceof SampleConstant)
 			((SampleConstant)defValue).setUnitType(unitType);
 		if (defValue instanceof TimeSeriesConstantDouble)
@@ -59,6 +63,7 @@ public class SampleInput extends Input<SampleProvider> {
 	public void parse(KeywordIndex kw)
 	throws InputErrorException {
 		value = Input.parseSampleExp(kw, thisEnt, minValue, maxValue, unitType);
+		this.setValid(true);
 	}
 
 	@Override

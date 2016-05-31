@@ -137,7 +137,7 @@ public class Queue extends LinkedComponent {
 		renegeCondition = new SampleInput("RenegeCondition", "Key Inputs", new SampleConstant(1));
 		renegeCondition.setUnitType(DimensionlessUnit.class);
 		renegeCondition.setEntity(this);
-		renegeCondition.setValidRange(1.0d, Double.POSITIVE_INFINITY);
+		renegeCondition.setValidRange(0.0d, 1.0d);
 		this.addInput(renegeCondition);
 
 		renegeDestination = new EntityInput<>(LinkedComponent.class, "RenegeDestination", "Key Inputs", null);

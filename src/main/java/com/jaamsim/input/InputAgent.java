@@ -639,11 +639,12 @@ public class InputAgent {
 
 		String inputTraceFileName = InputAgent.getRunName() + ".log";
 		// Initializing the tracing for the model
+		URI logURI = null;
 		try {
 			LogBox.logLine( "Creating trace file" );
 
 			URI confURI = file.toURI();
-			URI logURI = confURI.resolve(new URI(null, inputTraceFileName, null)); // The new URI here effectively escapes the file name
+			logURI = confURI.resolve(new URI(null, inputTraceFileName, null)); // The new URI here effectively escapes the file name
 
 			// Set and open the input trace file name
 			logFile = new FileEntity( logURI.getPath());
@@ -663,7 +664,8 @@ public class InputAgent {
 			if (InputAgent.numWarnings == 0 && InputAgent.numErrors == 0) {
 				logFile.close();
 				logFile.delete();
-				logFile = new FileEntity( inputTraceFileName);
+				if (logURI != null)
+					logFile = new FileEntity( logURI.getPath() );
 			}
 		}
 
@@ -950,6 +952,11 @@ public class InputAgent {
 		InputAgent.logError("%s", msg);
 	}
 
+	/**
+	 * Writes an error or warning message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format for the message
+	 * @param args - objects to be printed in the message
+	 */
 	public static void logMessage(String fmt, Object... args) {
 		String msg = String.format(fmt, args);
 		LogBox.logLine(msg);
@@ -961,6 +968,16 @@ public class InputAgent {
 		logFile.write(msg);
 		logFile.newLine();
 		logFile.flush();
+	}
+
+	/**
+	 * Writes a stack trace to standard error, the Log Viewer, and the Log File.
+	 * @param e - exception to be traced
+	 */
+	public static void logStackTrace(Throwable t) {
+		for (StackTraceElement each : t.getStackTrace()) {
+			InputAgent.logMessage(each.toString());
+		}
 	}
 
 	public static void trace(int indent, Entity ent, String meth, String... text) {
@@ -986,18 +1003,33 @@ public class InputAgent {
 		System.out.flush();
 	}
 
+	/**
+	 * Writes a warning message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format string for the warning message
+	 * @param args - objects used by the format string
+	 */
 	public static void logWarning(String fmt, Object... args) {
 		numWarnings++;
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(wrnPrefix, msg);
 	}
 
+	/**
+	 * Writes an error message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format string for the error message
+	 * @param args - objects used by the format string
+	 */
 	public static void logError(String fmt, Object... args) {
 		numErrors++;
 		String msg = String.format(fmt, args);
 		InputAgent.logMessage(errPrefix, msg);
 	}
 
+	/**
+	 * Writes a input error message to standard error, the Log Viewer, and the Log File.
+	 * @param fmt - format string for the error message
+	 * @param args - objects used by the format string
+	 */
 	public static void logInpError(String fmt, Object... args) {
 		numErrors++;
 		String msg = String.format(fmt, args);
@@ -1211,22 +1243,22 @@ public class InputAgent {
 		}
 
 		// Write the selected outputs
-		try {
-			StringBuilder sb = new StringBuilder();
-			for (int i=0; i<Simulation.getRunOutputList().getListSize(); i++) {
-				StringProvider samp = Simulation.getRunOutputList().getValue().get(i);
-				Class<? extends Unit> ut = Simulation.getRunOutputList().getUnitType(i);
-				double factor = Unit.getDisplayedUnitFactor(ut);
-				String str = samp.getNextString(simTime, "%s", factor);
-				if (i > 0)
-					sb.append("\t");
-				sb.append(str);
+		StringBuilder sb = new StringBuilder();
+		for (int i=0; i<Simulation.getRunOutputList().getListSize(); i++) {
+			StringProvider samp = Simulation.getRunOutputList().getValue().get(i);
+			Class<? extends Unit> ut = Simulation.getRunOutputList().getUnitType(i);
+			double factor = Unit.getDisplayedUnitFactor(ut);
+			String str;
+			try {
+				str = samp.getNextString(simTime, "%s", factor);
+			} catch (Exception e) {
+				str = e.getMessage();
 			}
-			outStream.println(sb.toString());
+			if (i > 0)
+				sb.append("\t");
+			sb.append(str);
 		}
-		catch (Exception e) {
-			LogBox.logLine(e.getMessage());
-		}
+		outStream.println(sb.toString());
 
 		// Terminate the outputs
 		if (Simulation.isLastRun()) {
@@ -1502,11 +1534,10 @@ public class InputAgent {
 
 		// Check that the file path includes the jail folder
 		if (jailPrefix != null && ret.toString().indexOf(jailPrefix) != 0) {
-			LogBox.format("Failed jail test: %s\n"
+			InputAgent.logMessage("Failed jail test: %s\n"
 					+ "jail: %s\n"
 					+ "context: %s\n",
 					ret.toString(), jailPrefix, context.toString());
-			LogBox.getInstance().setVisible(true);
 			return null; // This resolved URI is not in our jail
 		}
 

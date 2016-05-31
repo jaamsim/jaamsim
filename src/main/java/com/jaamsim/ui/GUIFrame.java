@@ -1815,8 +1815,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			InputAgent.logMessage("Out of Memory use the -Xmx flag during execution for more memory");
 			InputAgent.logMessage("Further debug information:");
 			InputAgent.logMessage("Error: %s", e.getMessage());
-			for (StackTraceElement each : e.getStackTrace())
-				InputAgent.logMessage(each.toString());
+			InputAgent.logStackTrace(t);
 			GUIFrame.shutdown(1);
 			return;
 		}
@@ -1824,8 +1823,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			double curSec = evt.ticksToSeconds(currentTick);
 			InputAgent.logMessage("EXCEPTION AT TIME: %f s", curSec);
 			InputAgent.logMessage("Error: %s", t.getMessage());
-			for (StackTraceElement each : t.getStackTrace())
-				InputAgent.logMessage(each.toString());
+			InputAgent.logStackTrace(t);
 		}
 
 		GUIFrame.showErrorDialog("Runtime Error",
@@ -1908,7 +1906,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 	static void handleConfigError(Throwable t, File file) {
 		if (t instanceof InputErrorException) {
-			LogBox.logLine("Input Error: " + t.getMessage());
+			InputAgent.logMessage("Input Error: %s", t.getMessage());
 			GUIFrame.showErrorOptionDialog("Input Error",
 			                         "Input errors were detected while loading file: '%s'\n\n%s\n\n" +
 			                         "Open '%s' with Log Viewer?",
@@ -1916,7 +1914,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			return;
 		}
 
-		LogBox.format("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
+		InputAgent.logMessage("Fatal Error while loading file '%s': %s\n", file.getName(), t.getMessage());
 		GUIFrame.showErrorDialog("Fatal Error",
 		                         "A fatal error has occured while loading the file '%s':\n\n%s",
 		                         file.getName(), t.getMessage());

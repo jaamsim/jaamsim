@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.ExpParser.Expression;
-import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -75,10 +74,10 @@ public class NamedExpressionListInput extends ListInput<ArrayList<NamedExpressio
 				temp.add(ne);
 
 			} catch (ExpError e) {
-				LogBox.logException(e);
+				InputAgent.logStackTrace(e);
 				throw new InputErrorException(e.toString());
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 

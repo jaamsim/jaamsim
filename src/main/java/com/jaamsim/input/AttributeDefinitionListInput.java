@@ -82,7 +82,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				temp.add(h);
 
 			} catch (InputErrorException e) {
-				throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 

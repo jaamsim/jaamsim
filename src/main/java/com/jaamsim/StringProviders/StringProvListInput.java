@@ -38,7 +38,12 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 	}
 
 	public void setUnitTypeList(ArrayList<Class<? extends Unit>> utList) {
+
+		if (utList.equals(unitTypeList))
+			return;
+
 		unitTypeList = new ArrayList<>(utList);
+		this.setValid(false);
 	}
 
 	public void setUnitType(Class<? extends Unit> u) {
@@ -88,10 +93,11 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 				if (subArgs.size() == 1)
 					throw new InputErrorException(e.getMessage());
 				else
-					throw new InputErrorException(INP_ERR_ELEMENT, i, e.getMessage());
+					throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
 		value = temp;
+		this.setValid(true);
 	}
 
 	@Override

@@ -17,6 +17,7 @@
 package com.jaamsim.StringProviders;
 
 import com.jaamsim.basicsim.ErrorException;
+import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.input.OutputChain;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.Unit;
@@ -42,7 +43,8 @@ public class StringProvOutput implements StringProvider {
 		if (out.isNumericValue()) {
 			if (out.getUnitType() != unitType && unitType != null)
 				throw new ErrorException("Unit mismatch. Expected a %s, received a %s",
-						unitType, out.getUnitType());
+						ObjectType.getObjectTypeForClass(unitType),
+						ObjectType.getObjectTypeForClass(out.getUnitType()));
 			double d = out.getValueAsDouble(simTime, 0.0d);
 			return String.format(fmt, d/siFactor);
 		}

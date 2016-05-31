@@ -27,6 +27,7 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.ExpError;
 import com.jaamsim.input.ExpEvaluator;
 import com.jaamsim.input.ExpressionInput;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.math.Color4d;
@@ -45,6 +46,15 @@ public class ExpressionThreshold extends Threshold {
 	         exampleList = { "'[Queue1].QueueLength < 2'" })
 	private final ExpressionInput closeCondition;
 
+	@Keyword(description = "The initial state for the ExpressionThreshold: "
+	                     + "TRUE = Open, FALSE = Closed.\n"
+	                     + "This input is only relevant when the CloseCondition input is used "
+	                     + "and both the OpenCondition and CloseCondition are FALSE at the "
+	                     + "start of the simulation run. Otherwise, the the initial state is "
+	                     + "determined explicitly by the OpenCondition and CloseCondition.",
+	         exampleList = { "TRUE" })
+	private final BooleanInput initialOpenValue;
+
 	@Keyword(description = "The colour of the ExpressionThreshold graphic when the threshold "
 	                     + "condition is open, but the gate is still closed.",
 	         exampleList = { "yellow" })
@@ -60,6 +70,8 @@ public class ExpressionThreshold extends Threshold {
 	         exampleList = { "FALSE" })
 	private final BooleanInput showPendingStates;
 
+	private boolean lastOpenValue; // state of the threshold that was calculated on-demand
+
 	{
 		attributeDefinitionList.setHidden(false);
 
@@ -71,6 +83,9 @@ public class ExpressionThreshold extends Threshold {
 		closeCondition = new ExpressionInput("CloseCondition", "Key Inputs", null);
 		closeCondition.setEntity(this);
 		this.addInput(closeCondition);
+
+		initialOpenValue = new BooleanInput("InitialOpenValue", "Key Inputs", false);
+		this.addInput(initialOpenValue);
 
 		pendingOpenColour = new ColourInput("PendingOpenColour", "Graphics", ColourInput.YELLOW);
 		this.addInput(pendingOpenColour);
@@ -84,8 +99,28 @@ public class ExpressionThreshold extends Threshold {
 		this.addInput(showPendingStates);
 	}
 
+	public ExpressionThreshold() {}
+
 	@Override
-    public void startUp() {
+	public void earlyInit() {
+		super.earlyInit();
+		lastOpenValue = initialOpenValue.getValue();
+		lastOpenValue = this.getOpenConditionValue(0.0);
+	}
+
+	@Override
+	public void updateForInput(Input<?> in) {
+		super.updateForInput(in);
+
+		if (in == openCondition || in == closeCondition || in == initialOpenValue) {
+			lastOpenValue = initialOpenValue.getValue();
+			this.setInitialOpenValue(this.getOpenConditionValue(0.0));
+			return;
+		}
+	}
+
+	@Override
+	public void startUp() {
 		super.startUp();
 
 		doOpenClose();
@@ -119,22 +154,39 @@ public class ExpressionThreshold extends Threshold {
 	 */
 	private boolean getOpenConditionValue(double simTime) {
 		try {
+			if (openCondition.getValue() == null)
+				return super.isOpen();
+
 			// Evaluate the open condition (0 = false, non-zero = true)
 			boolean openCond = ExpEvaluator.evaluateExpression(openCondition.getValue(),
 					simTime).value != 0;
 
 			// If the open condition is satisfied or there is no close condition, then we are done
-			if (openCond || closeCondition.getValue() == null)
-				return openCond;
+			boolean ret;
+			if (openCond || closeCondition.getValue() == null) {
+				ret = openCond;
+			}
 
-			// If the close condition is satisfied, then the threshold is closed
-			boolean closeCond = ExpEvaluator.evaluateExpression(closeCondition.getValue(),
-					simTime).value != 0;
-			if (closeCond)
-				return false;
+			// The open condition is false
+			else {
 
-			// If the open and close conditions are both false, then the state is unchanged
-			return super.isOpen();
+				// If the close condition is satisfied, then the threshold is closed
+				boolean closeCond = ExpEvaluator.evaluateExpression(closeCondition.getValue(),
+						simTime).value != 0;
+				if (closeCond) {
+					ret = false;
+				}
+
+				// If the open and close conditions are both false, then the state is unchanged
+				else {
+					ret = lastOpenValue;
+				}
+			}
+
+			// Save the threshold's last state (unless called by the UI thread)
+			if (EventManager.hasCurrent())
+				lastOpenValue = ret;
+			return ret;
 		}
 		catch(ExpError e) {
 			error("%s", e.getMessage());
@@ -144,6 +196,10 @@ public class ExpressionThreshold extends Threshold {
 
 	@Override
 	public boolean isOpen() {
+
+		// If called from the user interface, return the saved state
+		if (!EventManager.hasCurrent())
+			return super.isOpen();
 
 		// Determine the state implied by the OpenCondition and CloseCondition expressions
 		boolean ret = this.getOpenConditionValue(getSimTime());

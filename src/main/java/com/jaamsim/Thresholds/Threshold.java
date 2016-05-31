@@ -53,6 +53,7 @@ public class Threshold extends StateEntity {
 	private final ArrayList<ThresholdUser> userList;
 
 	private boolean open;
+	private boolean initialOpenValue;
 
 	{
 		openColour = new ColourInput("OpenColour", "Graphics", ColourInput.GREEN);
@@ -72,13 +73,15 @@ public class Threshold extends StateEntity {
 
 	public Threshold() {
 		userList = new ArrayList<>();
+		initialOpenValue = true;
+		open = true;
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		thresholdChangedTarget.users.clear();
-		open = true;
+		open = initialOpenValue;
 
 		userList.clear();
 		for (Entity each : Entity.getClonesOfIterator(Entity.class)) {
@@ -90,31 +93,23 @@ public class Threshold extends StateEntity {
 		}
 	}
 
-	/**
-	 * Get the name of the initial state this Entity will be initialized with.
-	 * @return
-	 */
-	@Override
-	public String getInitialState() {
-		return "Open";
+	public void setInitialOpenValue(boolean bool) {
+		initialOpenValue = bool;
 	}
 
-	/**
-	 * Tests the given state name to see if it is valid for this Entity.
-	 * @param state
-	 * @return
-	 */
+	@Override
+	public String getInitialState() {
+		if (initialOpenValue)
+			return "Open";
+		else
+			return "Closed";
+	}
+
 	@Override
 	public boolean isValidState(String state) {
 		return "Open".equals(state) || "Closed".equals(state);
 	}
 
-	/**
-	 * Tests the given state name to see if it is counted as working hours when in
-	 * that state..
-	 * @param state
-	 * @return
-	 */
 	@Override
 	public boolean isValidWorkingState(String state) {
 		return "Open".equals(state);

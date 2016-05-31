@@ -40,19 +40,16 @@ public class EntityConveyor extends LinkedService {
 	         exampleList = {"10.0 s"})
 	private final SampleInput travelTimeInput;
 
-	@Keyword(description = "The width of the Arrow line segments in pixels.",
+	@Keyword(description = "The width of the conveyor in pixels.",
 	         exampleList = {"1"})
 	private final ValueInput widthInput;
 
-	@Keyword(description = "The colour of the arrow, defined using a colour keyword or RGB values.",
+	@Keyword(description = "The colour of the conveyor.",
 	         exampleList = {"red"})
 	private final ColourInput colorInput;
 
 	private final ArrayList<DisplayEntity> entityList;  // List of the entities being conveyed
 	private final ArrayList<Double> startTimeList;  // List of times at which the entities entered the conveyor
-	private double totalLength;  // Graphical length of the conveyor
-	private final ArrayList<Double> lengthList;  // Length of each segment of the conveyor
-	private final ArrayList<Double> cumLengthList;  // Total length to the end of each segment
 	private double presentTravelTime;
 
 	{
@@ -82,33 +79,14 @@ public class EntityConveyor extends LinkedService {
 	public EntityConveyor() {
 		entityList = new ArrayList<>();
 		startTimeList = new ArrayList<>();
-		lengthList = new ArrayList<>();
-		cumLengthList = new ArrayList<>();
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
-
 		presentTravelTime = travelTimeInput.getValue().getNextSample(0.0);
-
 		entityList.clear();
 		startTimeList.clear();
-
-	    // Initialize the segment length data
-		lengthList.clear();
-		cumLengthList.clear();
-		totalLength = 0.0;
-		for (int i = 1; i < pointsInput.getValue().size(); i++) {
-			// Get length between points
-			Vec3d vec = new Vec3d();
-			vec.sub3(pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
-			double length = vec.mag3();
-
-			lengthList.add(length);
-			totalLength += length;
-			cumLengthList.add(totalLength);
-		}
 	}
 
 	@Override
@@ -195,38 +173,6 @@ public class EntityConveyor extends LinkedService {
 	// GRAPHICS
 	// ********************************************************************************************
 
-	/**
-	 * Return the position coordinates for a given distance along the conveyor.
-	 * @param dist = distance along the conveyor.
-	 * @return position coordinates
-	 */
-	private Vec3d getPositionForDistance(double dist) {
-
-		// Find the present segment
-		int seg = 0;
-		for (int i = 0; i < cumLengthList.size(); i++) {
-			if (dist <= cumLengthList.get(i)) {
-				seg = i;
-				break;
-			}
-		}
-
-		// Interpolate between the start and end of the segment
-		double frac = 0.0;
-		if (seg == 0) {
-			frac = dist / lengthList.get(0);
-		}
-		else {
-			frac = ( dist - cumLengthList.get(seg-1) ) / lengthList.get(seg);
-		}
-		if (frac < 0.0)  frac = 0.0;
-		else if (frac > 1.0)  frac = 1.0;
-
-		Vec3d vec = new Vec3d();
-		vec.interpolate3(pointsInput.getValue().get(seg), pointsInput.getValue().get(seg+1), frac);
-		return vec;
-	}
-
 	@Override
 	public void updateForInput(Input<?> in) {
 		super.updateForInput(in);
@@ -251,14 +197,14 @@ public class EntityConveyor extends LinkedService {
 
 			// Calculate the distance travelled by this entity
 			double dur = Math.max(0.0, t - startTimeList.get(i));
-			double dist = dur / presentTravelTime * totalLength;
+			double frac = dur/presentTravelTime;
 
 			// 0/0 NaNs have been spotted here, just zero them
-			if (Double.isNaN(dist))
-				dist = 0.0;
+			if (Double.isNaN(frac))
+				frac = 0.0;
 
 			// Set the position for the entity
-			Vec3d localPos = this.getPositionForDistance(dist);
+			Vec3d localPos = this.getPositionOnPolyline(frac);
 			each.setGlobalPosition(this.getGlobalPosition(localPos));
 		}
 	}

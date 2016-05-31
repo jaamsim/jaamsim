@@ -27,7 +27,6 @@ import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
-import com.jaamsim.input.IntegerInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.units.DimensionlessUnit;
@@ -59,8 +58,8 @@ public class EntityGenerator extends LinkedService {
 	private final EntityInput<DisplayEntity> prototypeEntity;
 
 	@Keyword(description = "The maximum number of entities to be generated.",
-	         exampleList = {"3"})
-	private final IntegerInput maxNumber;
+	         exampleList = {"3", "InputValue1", "[InputValue1].Value"})
+	private final SampleInput maxNumber;
 
 	private int numberGenerated = 0;  // Number of entities generated so far
 
@@ -99,8 +98,10 @@ public class EntityGenerator extends LinkedService {
 		prototypeEntity.setInvalidClasses(list);
 		this.addInput(prototypeEntity);
 
-		maxNumber = new IntegerInput("MaxNumber", "Key Inputs", null);
-		maxNumber.setValidRange(1, Integer.MAX_VALUE);
+		maxNumber = new SampleInput("MaxNumber", "Key Inputs", null);
+		maxNumber.setUnitType(DimensionlessUnit.class);
+		maxNumber.setEntity(this);
+		maxNumber.setValidRange(1, Double.POSITIVE_INFINITY);
 		maxNumber.setDefaultText(Input.POSITIVE_INFINITY);
 		this.addInput(maxNumber);
 	}
@@ -130,7 +131,8 @@ public class EntityGenerator extends LinkedService {
 	protected boolean startProcessing(double simTime) {
 
 		// Stop if the last entity been generated
-		return (maxNumber.getValue() == null || numberGenerated < maxNumber.getValue());
+		return (maxNumber.getValue() == null
+				|| numberGenerated < maxNumber.getValue().getNextSample(simTime));
 	}
 
 	@Override
