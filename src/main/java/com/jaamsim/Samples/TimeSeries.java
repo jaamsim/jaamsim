@@ -34,42 +34,43 @@ import com.jaamsim.units.UserSpecifiedUnit;
 
 public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 
-	@Keyword(description = "A list of time series records with format { 'YYYY-MM-DD hh:mm:ss' value units }, where\n" +
-					"YYYY is the year\n" +
-					"MM is the month (01-12)\n" +
-					"DD is the day of the month\n" +
-					"hh is the hour of day (00-23)\n" +
-					"mm is the minutes (00-59)\n" +
-					"ss is the seconds (00-59)\n" +
-					"value is the time series value for the given date and time\n" +
-					"units is the optional units for the value\n" +
-					"The date and times must be given in increasing order.",
-	         exampleList = {"{ 0 h 0.5 m } { 3 h 1.5 m } { 6 h 1.2 m }",
-							"{ '2010-01-01 00:00:00' 0.5 m } { '2010-01-01 03:00:00' 1.5 m } { '2010-01-01 06:00:00' 1.2 m }"})
-	private final TimeSeriesDataInput value;
-
-	@Keyword(description = "The unit type for the time series (e.g. DistanceUnit, TimeUnit, MassUnit).  " +
-			"If the UnitType keyword is specified, it must be specified before the Value keyword.",
-	         exampleList = {"DistanceUnit"})
+	@Keyword(description = "The unit type for the time series. The UnitType input must be "
+	                     + "specified before the Value input.",
+	         exampleList = {"DistanceUnit", "MassUnit", "DimensionlessUnit"})
 	private final UnitTypeInput unitType;
 
-	@Keyword(description = "Defines when the time series will repeat from the start.",
+	@Keyword(description = "A list of time series records with format { time value }, where: "
+	                     + "'time' is the time stamp for the record and 'value' is the time "
+	                     + "series value. Records are entered in order of increasing simulation "
+	                     + "time. The appropriate units should be included with both the time "
+	                     + "and value inputs.\n\n"
+	                     + "The first time stamp MUST be zero simulation time or "
+	                     + "January 1 00:00:00 of an arbitray year. If a non-zero year is "
+	                     + "entered, e.g. '2010-01-01 00:00:00', then the TimeSeries considers "
+	                     + "this date to be time zero of the simulation and all other timestamps "
+	                     + "are offset accordingly.",
+	         exampleList = {"{ 0 h 1 } { 3 h 0 }",
+	                        "{ 0 h 0.5 m } { 3 h 1.5 m }",
+	                        "{ '2010-01-01 00:00:00' 0.5 m } { '2010-01-01 03:00:00' 1.5 m }"} )
+	private final TimeSeriesDataInput value;
+
+	@Keyword(description = "The time at which the time series will repeat from the start.",
 	         exampleList = {"8760.0 h"})
 	private final ValueInput cycleTime;
 
 	{
-		unitType = new UnitTypeInput( "UnitType", "Key Inputs", UserSpecifiedUnit.class );
+		unitType = new UnitTypeInput("UnitType", "Key Inputs", UserSpecifiedUnit.class);
 		unitType.setRequired(true);
-		this.addInput( unitType );
+		this.addInput(unitType);
 
 		value = new TimeSeriesDataInput("Value", "Key Inputs", null);
 		value.setUnitType(UserSpecifiedUnit.class);
 		value.setRequired(true);
 		this.addInput(value);
 
-		cycleTime = new ValueInput( "CycleTime", "Key Inputs", Double.POSITIVE_INFINITY );
+		cycleTime = new ValueInput("CycleTime", "Key Inputs", Double.POSITIVE_INFINITY);
 		cycleTime.setUnitType(TimeUnit.class);
-		this.addInput( cycleTime );
+		this.addInput(cycleTime);
 	}
 
 	public TimeSeries() { }
