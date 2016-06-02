@@ -141,7 +141,7 @@ public class FrameBox extends JFrame {
 	public void setEntity(Entity ent) {}
 	public void updateValues(double simTime) {}
 
-	private static class UIUpdater  implements Runnable {
+	private static class UIUpdater implements Runnable {
 
 		@Override
 		public void run() {

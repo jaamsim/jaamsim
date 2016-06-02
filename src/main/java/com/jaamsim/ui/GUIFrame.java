@@ -1112,14 +1112,15 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 *
 	 * @param simTime - the present simulation time in seconds.
 	 */
-	public void setClock(double simTime) {
+	void setClock(double simTime) {
 
 		// Set the simulation time display
 		String unit = Unit.getDisplayedUnit(TimeUnit.class);
 		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
 		clockDisplay.setText(String.format("%,.2f  %s", simTime/factor, unit));
 
-		if (getSimState() != SIM_STATE_RUNNING)
+		// Still update progress if paused at end of run to show 100%
+		if (getSimState() < SIM_STATE_RUNNING)
 			return;
 
 		// Set the run progress bar display

@@ -17,7 +17,6 @@
 package com.jaamsim.basicsim;
 
 import com.jaamsim.events.ProcessTarget;
-import com.jaamsim.ui.GUIFrame;
 
 class EndModelTarget extends ProcessTarget {
 	EndModelTarget() {}
@@ -29,7 +28,6 @@ class EndModelTarget extends ProcessTarget {
 
 	@Override
 	public void process() {
-		GUIFrame.instance().setClock(Simulation.getEndTime());
 		Simulation.endRun();
 	}
 }
