@@ -305,7 +305,6 @@ public class InputAgent {
 
 		try {
 			readStream(null, null, res);
-			GUIFrame.instance().setProgressText(null);
 		}
 		catch (URISyntaxException ex) {
 			rethrowWrapped(ex);
@@ -314,8 +313,6 @@ public class InputAgent {
 	}
 
 	public static final boolean readStream(String root, URI path, String file) throws URISyntaxException {
-		String shortName = file.substring(file.lastIndexOf('/') + 1, file.length());
-		GUIFrame.instance().setProgressText(shortName);
 		URI resolved = getFileURI(path, file, root);
 
 		URL url = null;

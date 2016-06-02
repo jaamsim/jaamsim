@@ -1179,15 +1179,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	/**
-	 * Write the given text on the Control Panel's progress bar.
-	 *
-	 * @param txt - the text to write.
-	 */
-	public void setProgressText( String txt ) {
-		progressBar.setString( txt );
-	}
-
-	/**
 	 * Write the given value on the Control Panel's speed up factor box.
 	 *
 	 * @param val - the speed up factor to write.
@@ -1924,7 +1915,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			LogBox.logLine("Configuration File Loaded - errors found");
 
 		// show the present state in the user interface
-		this.setProgressText(null);
 		this.setProgress(0);
 		this.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
 		this.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
