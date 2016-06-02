@@ -181,7 +181,7 @@ public class RenderManager implements DragSourceListener {
 		}, "RenderManagerThread");
 		managerThread.start();
 
-		GUIFrame.getRateLimiter().registerCallback(new Runnable() {
+		GUIFrame.registerCallback(new Runnable() {
 			@Override
 			public void run() {
 				synchronized(redraw) {

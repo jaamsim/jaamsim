@@ -211,18 +211,25 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	public static synchronized GUIFrame instance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new GUIFrame();
+			GUIFrame.registerCallback(new Runnable() {
+				@Override
+				public void run() {
+					SwingUtilities.invokeLater(new UIUpdater());
+				}
+			});
+		}
 
 		return instance;
 	}
 
-	public static final void updateUI() {
-		rateLimiter.queueUpdate();
+	public static final void registerCallback(Runnable r) {
+		rateLimiter.registerCallback(r);
 	}
 
-	public static final RateLimiter getRateLimiter() {
-		return rateLimiter;
+	public static final void updateUI() {
+		rateLimiter.queueUpdate();
 	}
 
 	/**
@@ -1798,9 +1805,26 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		System.exit(errorCode);
 	}
 
+	private static volatile long simTicks;
+
+	private static class UIUpdater implements Runnable {
+		@Override
+		public void run() {
+			double callBackTime = EventManager.ticksToSecs(simTicks);
+
+			GUIFrame.instance().setClock(callBackTime);
+			FrameBox.updateEntityValues(callBackTime);
+		}
+	}
+
 	@Override
 	public void tickUpdate(long tick) {
-		FrameBox.timeUpdate(tick);
+		if (tick == simTicks)
+			return;
+
+		simTicks = tick;
+		RenderManager.updateTime(tick);
+		GUIFrame.updateUI();
 	}
 
 	@Override
