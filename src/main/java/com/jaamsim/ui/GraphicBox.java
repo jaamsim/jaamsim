@@ -207,7 +207,7 @@ public class GraphicBox extends JDialog {
 
 					 // Add the new DisplayModel to the List
 					myInstance.refresh();
-					FrameBox.valueUpdate();
+					GUIFrame.updateUI();
 
 					// Scroll to the new DisplayModel and ensure it is visible
 					int index = GraphicBox.this.getListIndex(dm);
@@ -289,7 +289,7 @@ public class GraphicBox extends JDialog {
 					                     String.format(loc, "%.6f", entityPos.z), "m");
 					InputAgent.applyArgs(currentEntity, "Alignment", "0", "0", "0");
 				}
-				FrameBox.valueUpdate();
+				GUIFrame.updateUI();
 				myInstance.close();
 			}
 		} );

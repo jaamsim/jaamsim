@@ -843,7 +843,7 @@ public static class CellListener implements CellEditorListener {
 					});
 
 				} else {
-					FrameBox.valueUpdate();
+					GUIFrame.updateUI();
 				}
 				return;
 			}
@@ -851,7 +851,7 @@ public static class CellListener implements CellEditorListener {
 			GUIFrame.showErrorDialog("Input Error",
 					"%s\n" + "Value will be cleared.", exep.getMessage());
 
-			FrameBox.valueUpdate();
+			GUIFrame.updateUI();
 			return;
 
 		}
@@ -861,7 +861,7 @@ public static class CellListener implements CellEditorListener {
 private static class TabListener implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		FrameBox.valueUpdate();
+		GUIFrame.updateUI();
 	}
 }
 

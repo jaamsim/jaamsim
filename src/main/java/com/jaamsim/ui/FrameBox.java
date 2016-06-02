@@ -117,12 +117,12 @@ public class FrameBox extends JFrame {
 
 		selectedEntity = ent;
 		RenderManager.setSelection(ent);
-		valueUpdate();
+		GUIFrame.updateUI();
 	}
 
 	// This is equivalent to calling setSelectedEntity again with the same entity as used previously
 	public static final void reSelectEntity() {
-		valueUpdate();
+		GUIFrame.updateUI();
 	}
 
 	public static final void timeUpdate(long tick) {
@@ -131,11 +131,7 @@ public class FrameBox extends JFrame {
 
 		simTicks = tick;
 		RenderManager.updateTime(tick);
-		valueUpdate();
-	}
-
-	public static final void valueUpdate() {
-		GUIFrame.getRateLimiter().queueUpdate();
+		GUIFrame.updateUI();
 	}
 
 	public void setEntity(Entity ent) {}
@@ -157,7 +153,7 @@ public class FrameBox extends JFrame {
 				}
 				catch (IndexOutOfBoundsException e) {
 					// reschedule and try again
-					valueUpdate();
+					GUIFrame.updateUI();
 					return;
 				}
 			}

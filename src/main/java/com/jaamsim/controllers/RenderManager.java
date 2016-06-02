@@ -202,17 +202,13 @@ public class RenderManager implements DragSourceListener {
 			return;
 
 		RenderManager.inst().simTick = simTick;
-		RenderManager.inst().queueRedraw();
+		GUIFrame.updateUI();
 	}
 
 	public static final void redraw() {
 		if (!isGood()) return;
 
-		inst().queueRedraw();
-	}
-
-	private void queueRedraw() {
-		GUIFrame.getRateLimiter().queueUpdate();
+		GUIFrame.updateUI();
 	}
 
 	public void createWindow(View view) {
@@ -243,7 +239,7 @@ public class RenderManager implements DragSourceListener {
 		windowControls.put(windowID, control);
 		windowToViewMap.put(windowID, view);
 
-		queueRedraw();
+		GUIFrame.updateUI();
 	}
 
 	public static final void clear() {
@@ -585,14 +581,14 @@ public class RenderManager implements DragSourceListener {
 
 				Vec3d globalCoord = getGlobalPositionForMouseData(windowID, x, y, ent);
 				ent.handleMouseClicked(count, globalCoord);
-				queueRedraw();
+				GUIFrame.updateUI();
 				return;
 			}
 		}
 
 		// If no entity is found, set the selected entity to the view window
 		FrameBox.setSelectedEntity(windowToViewMap.get(windowID));
-		queueRedraw();
+		GUIFrame.updateUI();
 	}
 
 	/**
@@ -868,7 +864,7 @@ public class RenderManager implements DragSourceListener {
 		else
 			selectedEntity = null;
 
-		queueRedraw();
+		GUIFrame.updateUI();
 	}
 
 	public boolean isEntitySelected() {
@@ -1410,7 +1406,7 @@ public class RenderManager implements DragSourceListener {
 
 		Vec3d xyPlanePoint = currentRay.getPointAtDist(dist);
 		GUIFrame.instance().showLocatorPosition(xyPlanePoint);
-		queueRedraw();
+		GUIFrame.updateUI();
 	}
 
 
@@ -1640,7 +1636,7 @@ public class RenderManager implements DragSourceListener {
 		synchronized (screenshot) {
 			screenshot.set(true);
 			this.recorder = recorder;
-			queueRedraw();
+			GUIFrame.updateUI();
 			while (screenshot.get()) {
 				try {
 					screenshot.wait();
@@ -1669,7 +1665,7 @@ public class RenderManager implements DragSourceListener {
 			return;
 		}
 		s_instance.renderer.setDebugInfo(showDebug);
-		s_instance.queueRedraw();
+		GUIFrame.updateUI();
 	}
 
 }

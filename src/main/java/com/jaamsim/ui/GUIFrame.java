@@ -217,6 +217,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		return instance;
 	}
 
+	public static final void updateUI() {
+		rateLimiter.queueUpdate();
+	}
+
 	public static final RateLimiter getRateLimiter() {
 		return rateLimiter;
 	}

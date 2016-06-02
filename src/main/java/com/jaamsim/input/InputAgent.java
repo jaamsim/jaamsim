@@ -43,7 +43,6 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.Unit;
@@ -703,7 +702,7 @@ public class InputAgent {
 		}
 
 		InputAgent.apply(ent, in, kw);
-		FrameBox.valueUpdate();
+		GUIFrame.updateUI();
 	}
 
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
@@ -734,7 +733,7 @@ public class InputAgent {
 		Input<?> input = entity.getInput( key.keyword );
 		if (input != null) {
 			InputAgent.apply(entity, input, key);
-			FrameBox.valueUpdate();
+			GUIFrame.updateUI();
 			return;
 		}
 

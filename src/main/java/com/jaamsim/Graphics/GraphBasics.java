@@ -29,7 +29,7 @@ import com.jaamsim.input.StringInput;
 import com.jaamsim.input.ValueInput;
 import com.jaamsim.input.ValueListInput;
 import com.jaamsim.math.Color4d;
-import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.units.Unit;
 import com.jaamsim.units.UserSpecifiedUnit;
 
@@ -286,7 +286,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		xAxisEnd.setUnitType(unitType);
 		xAxisInterval.setUnitType(unitType);
 		xLines.setUnitType(unitType);
-		FrameBox.valueUpdate();  // show the new units in the Input Editor
+		GUIFrame.updateUI();  // show the new units in the Input Editor
 	}
 
 	protected void setYAxisUnit(Class<? extends Unit> unitType) {
@@ -295,7 +295,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		yAxisEnd.setUnitType(unitType);
 		yAxisInterval.setUnitType(unitType);
 		yLines.setUnitType(unitType);
-		FrameBox.valueUpdate();  // show the new units in the Input Editor
+		GUIFrame.updateUI();  // show the new units in the Input Editor
 	}
 
 	protected void setSecondaryYAxisUnit(Class<? extends Unit> unitType) {
@@ -303,7 +303,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		secondaryYAxisStart.setUnitType(unitType);
 		secondaryYAxisEnd.setUnitType(unitType);
 		secondaryYAxisInterval.setUnitType(unitType);
-		FrameBox.valueUpdate();  // show the new units in the Input Editor
+		GUIFrame.updateUI();  // show the new units in the Input Editor
 	}
 
 	public String getTitle() {
