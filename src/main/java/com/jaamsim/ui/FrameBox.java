@@ -144,18 +144,21 @@ public class FrameBox extends JFrame {
 			double callBackTime = EventManager.ticksToSecs(simTicks);
 
 			GUIFrame.instance().setClock(callBackTime);
+			FrameBox.updateEntityValues(callBackTime);
+		}
+	}
 
-			for (int i = 0; i < allInstances.size(); i++) {
-				try {
-					FrameBox each = allInstances.get(i);
-					each.setEntity(selectedEntity);
-					each.updateValues(callBackTime);
-				}
-				catch (IndexOutOfBoundsException e) {
-					// reschedule and try again
-					GUIFrame.updateUI();
-					return;
-				}
+	static void updateEntityValues(double callBackTime) {
+		for (int i = 0; i < allInstances.size(); i++) {
+			try {
+				FrameBox each = allInstances.get(i);
+				each.setEntity(selectedEntity);
+				each.updateValues(callBackTime);
+			}
+			catch (IndexOutOfBoundsException e) {
+				// reschedule and try again
+				GUIFrame.updateUI();
+				return;
 			}
 		}
 	}
