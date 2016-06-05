@@ -556,7 +556,7 @@ public class Simulation extends Entity {
 				                         "%s: %-70s",
 				                         each.getName(), e.getMessage());
 
-				GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+				GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
 				return;
 			}
 		}

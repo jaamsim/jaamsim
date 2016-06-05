@@ -1286,12 +1286,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		currentEvt = e;
 	}
 
+	public static void updateForSimState(int state) {
+		GUIFrame inst = GUIFrame.getInstance();
+		if (inst == null)
+			return;
+
+		inst.updateForSimulationState(state);
+	}
+
 	/**
 	 * Sets the state of the simulation run to the given state value.
 	 *
 	 * @param state - an index that designates the state of the simulation run.
 	 */
-	public void updateForSimulationState(int state) {
+	void updateForSimulationState(int state) {
 		simState = state;
 
 		switch( getSimState() ) {
