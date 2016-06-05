@@ -826,11 +826,11 @@ public class Simulation extends Entity {
 	}
 
 	static void updateRealTime() {
-		GUIFrame.instance().updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
+		GUIFrame.updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
 	}
 
 	static void updatePauseTime() {
-		GUIFrame.instance().updateForPauseTime(pauseTime.getValueString());
+		GUIFrame.updateForPauseTime(pauseTime.getValueString());
 	}
 
 	public static void setModelName(String newModelName) {

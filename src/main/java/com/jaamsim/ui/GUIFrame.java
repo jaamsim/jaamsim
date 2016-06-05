@@ -210,6 +210,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		JPopupMenu.setDefaultLightWeightPopupEnabled( false );
 	}
 
+	private static synchronized GUIFrame getInstance() {
+		return instance;
+	}
+
 	public static synchronized GUIFrame instance() {
 		if (instance == null) {
 			instance = new GUIFrame();
@@ -852,7 +856,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			@Override
 			protected void processFocusEvent(FocusEvent fe) {
 				if (fe.getID() == FocusEvent.FOCUS_LOST) {
-					GUIFrame.instance.setPauseTime(this.getText());
+					GUIFrame.this.setPauseTime(this.getText());
 				}
 				else if (fe.getID() == FocusEvent.FOCUS_GAINED) {
 					pauseTime.selectAll();
@@ -870,7 +874,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		pauseTime.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				GUIFrame.instance.setPauseTime(pauseTime.getText());
+				GUIFrame.this.setPauseTime(pauseTime.getText());
 				controlStartResume.grabFocus();
 			}
 		});
@@ -1386,10 +1390,18 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		fileMenu.setEnabled( true );
 	}
 
+	public static synchronized void updateForRealTime(boolean executeRT, double factorRT) {
+		GUIFrame inst = GUIFrame.getInstance();
+		if (inst == null)
+			return;
+
+		inst.updateForRT(executeRT, factorRT);
+	}
+
 	/**
 	 * updates RealTime button and Spinner
 	 */
-	public void updateForRealTime(boolean executeRT, double factorRT) {
+	private void updateForRT(boolean executeRT, double factorRT) {
 		currentEvt.setExecuteRealTime(executeRT, factorRT);
 		controlRealTime.setSelected(executeRT);
 		spinner.setValue(factorRT);
@@ -1399,10 +1411,18 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			spinner.setEnabled(false);
 	}
 
+	public static void updateForPauseTime(String str) {
+		GUIFrame inst = GUIFrame.getInstance();
+		if (inst == null)
+			return;
+
+		inst.updateForPT(str);
+	}
+
 	/**
 	 * updates PauseTime entry
 	 */
-	public void updateForPauseTime(String str) {
+	private void updateForPT(String str) {
 		pauseTime.setText(str);
 	}
 
