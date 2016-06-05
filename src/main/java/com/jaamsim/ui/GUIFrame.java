@@ -1649,21 +1649,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		gui.updateForSimulationState(SIM_STATE_LOADED);
 		evt.setTimeListener(gui);
 		evt.setErrorListener(gui);
+		if (minimize)
+			gui.setExtendedState(JFrame.ICONIFIED);
 
 		LogBox.logLine("Simulation Environment Loaded");
 
 		if (batch)
 			InputAgent.setBatch(true);
 
-		if (minimize)
-			gui.setExtendedState(JFrame.ICONIFIED);
-
 		// Load the autoload file
 		InputAgent.setRecordEdits(false);
 		InputAgent.readResource("<res>/inputs/autoload.cfg");
-		gui.setTitle(Simulation.getModelName());
 
 		// Show the Control Panel
+		gui.setTitle(Simulation.getModelName());
 		gui.setVisible(true);
 		gui.calcWindowDefaults();
 
@@ -1701,7 +1700,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (configFiles.size() == 0 && !scriptMode) {
 			InputAgent.setRecordEdits(true);
 			InputAgent.loadDefault();
-			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+			GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
 
 		// Show the view windows
