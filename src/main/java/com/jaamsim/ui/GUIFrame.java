@@ -220,7 +220,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			GUIFrame.registerCallback(new Runnable() {
 				@Override
 				public void run() {
-					SwingUtilities.invokeLater(new UIUpdater());
+					SwingUtilities.invokeLater(new UIUpdater(instance));
 				}
 			});
 		}
@@ -302,7 +302,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	void close() {
 		// check for unsaved changes
 		if (InputAgent.isSessionEdited()) {
-			boolean confirmed = GUIFrame.showSaveChangesDialog();
+			boolean confirmed = GUIFrame.showSaveChangesDialog(this);
 			if (!confirmed)
 				return;
 		}
@@ -342,7 +342,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	/**
 	 * Sets up the Control Panel's menu bar.
 	 */
-	public void initializeMenus() {
+	private void initializeMenus() {
 
 		// Set up the individual menus
 		this.initializeFileMenu();
@@ -388,7 +388,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
-					boolean confirmed = GUIFrame.showSaveChangesDialog();
+					boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
 					if (!confirmed) {
 						return;
 					}
@@ -414,7 +414,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
-					boolean confirmed = GUIFrame.showSaveChangesDialog();
+					boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
 					if (!confirmed) {
 						return;
 					}
@@ -1805,11 +1805,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	private static volatile long simTicks;
 
 	private static class UIUpdater implements Runnable {
+		private final GUIFrame frame;
+
+		UIUpdater(GUIFrame gui) {
+			frame = gui;
+		}
+
 		@Override
 		public void run() {
 			double callBackTime = EventManager.ticksToSecs(simTicks);
 
-			GUIFrame.instance().setClock(callBackTime);
+			frame.setClock(callBackTime);
 			FrameBox.updateEntityValues(callBackTime);
 		}
 	}
@@ -2058,7 +2064,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * Shows the "Save Changes" dialog box
 	 * @return true for any response other than Cancel or Close.
 	 */
-	public static boolean showSaveChangesDialog() {
+	public static boolean showSaveChangesDialog(GUIFrame gui) {
 
 		String message;
 		if (InputAgent.getConfigFile() == null)
@@ -2077,7 +2083,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				options[0]);
 
 		if (userOption == JOptionPane.YES_OPTION) {
-			boolean confirmed = GUIFrame.instance().save();
+			boolean confirmed = gui.save();
 			return confirmed;
 		}
 		else if (userOption == JOptionPane.NO_OPTION)
