@@ -658,11 +658,11 @@ public class Queue extends LinkedComponent {
 			DisplayEntity item = itr.next().entity;
 
 			// if new row is required, set reset distanceX and move distanceY up one row
-			i++;
 			if( i > 0 && i % maxPerLine.getValue() == 0 ){
 				 distanceX = 0.5d * qSize.x;
 				 distanceY += spacing.getValue() + maxWidth;
 			}
+			i++;
 
 			// Rotate each transporter about its center so it points to the right direction
 			item.setOrientation(queueOrientation);
