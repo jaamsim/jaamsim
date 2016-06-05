@@ -1490,8 +1490,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * Sets variables used to determine the position and size of various
 	 * windows based on the size of the computer display being used.
 	 */
-	private static void calcWindowDefaults() {
-		Dimension guiSize = GUIFrame.instance().getSize();
+	private void calcWindowDefaults() {
+		Dimension guiSize = this.getSize();
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
 		COL1_WIDTH = 220;
@@ -1499,7 +1499,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		COL3_WIDTH = Math.min(420, winSize.width - COL1_WIDTH - COL2_WIDTH);
 		VIEW_WIDTH = COL2_WIDTH + COL3_WIDTH;
 
-		COL1_START = GUIFrame.instance().getX();
+		COL1_START = this.getX();
 		COL2_START = COL1_START + COL1_WIDTH;
 		COL3_START = COL2_START + COL2_WIDTH;
 
@@ -1508,7 +1508,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		LOWER_HEIGHT = (winSize.height - guiSize.height) / 3;
 		VIEW_HEIGHT = winSize.height - guiSize.height - LOWER_HEIGHT;
 
-		TOP_START = GUIFrame.instance().getY() + guiSize.height;
+		TOP_START = this.getY() + guiSize.height;
 		BOTTOM_START = TOP_START + HALF_TOP;
 		LOWER_START = TOP_START + VIEW_HEIGHT;
 	}
@@ -1650,7 +1650,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		// Show the Control Panel
 		gui.setVisible(true);
-		GUIFrame.calcWindowDefaults();
+		gui.calcWindowDefaults();
 
 		// Resolve all input arguments against the current working directory
 		File user = new File(System.getProperty("user.dir"));
