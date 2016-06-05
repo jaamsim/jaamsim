@@ -1602,7 +1602,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			    each.equalsIgnoreCase("-headless")) {
 				headless = true;
 				batch = true;
-				quiet = true;
 				continue;
 			}
 			// Do not open default windows
@@ -1690,7 +1689,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			else
 				loadFile = new File(user, configFiles.get(i));
 
-			Throwable t = gui.configure(loadFile);
+			Throwable t = GUIFrame.configure(loadFile);
 			if (t != null) {
 				// Hide the splash screen
 				if (splashScreen != null) {
@@ -1920,7 +1919,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				public void run() {
 					InputAgent.setRecordEdits(false);
 					gui1.clear();
-					Throwable ret = gui1.configure(chosenfile);
+					Throwable ret = GUIFrame.configure(chosenfile);
 					if (ret != null)
 						handleConfigError(ret, chosenfile);
 
@@ -1935,9 +1934,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
         }
 	}
 
-	Throwable configure(File file) {
+	static Throwable configure(File file) {
 		InputAgent.setConfigFile(file);
-		this.updateForSimulationState(GUIFrame.SIM_STATE_UNCONFIGURED);
+		GUIFrame.updateForSimState(GUIFrame.SIM_STATE_UNCONFIGURED);
 
 		Throwable ret = null;
 		try {
@@ -1953,11 +1952,13 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			LogBox.logLine("Configuration File Loaded - errors found");
 
 		// show the present state in the user interface
-		this.setProgress(0);
-		this.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
-		this.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
-		this.enableSave(InputAgent.getRecordEditsFound());
-
+		GUIFrame gui = GUIFrame.getInstance();
+		if (gui != null) {
+			gui.setProgress(0);
+			gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
+			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+			gui.enableSave(InputAgent.getRecordEditsFound());
+		}
 		return ret;
 	}
 
