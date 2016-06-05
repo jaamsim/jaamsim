@@ -1640,9 +1640,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			// Display it
 			splashScreen.setVisible(true);
-
-			// Begin initializing the rendering system
-			RenderManager.initialize(SAFE_GRAPHICS);
 		}
 
 		// create a graphic simulation
@@ -1656,6 +1653,10 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			gui.updateForSimulationState(SIM_STATE_LOADED);
 			evt.setTimeListener(gui);
 			evt.setErrorListener(gui);
+
+			// Begin initializing the rendering system
+			RenderManager.initialize(SAFE_GRAPHICS);
+
 			if (minimize)
 				gui.setExtendedState(JFrame.ICONIFIED);
 		}
