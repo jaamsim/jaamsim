@@ -210,21 +210,18 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		JPopupMenu.setDefaultLightWeightPopupEnabled( false );
 	}
 
-	private static synchronized GUIFrame getInstance() {
+	public static synchronized GUIFrame getInstance() {
 		return instance;
 	}
 
-	public static synchronized GUIFrame instance() {
-		if (instance == null) {
-			instance = new GUIFrame();
-			GUIFrame.registerCallback(new Runnable() {
-				@Override
-				public void run() {
-					SwingUtilities.invokeLater(new UIUpdater(instance));
-				}
-			});
-		}
-
+	private static synchronized GUIFrame createInstance() {
+		instance = new GUIFrame();
+		GUIFrame.registerCallback(new Runnable() {
+			@Override
+			public void run() {
+				SwingUtilities.invokeLater(new UIUpdater(instance));
+			}
+		});
 		return instance;
 	}
 
@@ -1644,7 +1641,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		LogBox.logLine("Loading Simulation Environment ... ");
 
 		EventManager evt = new EventManager("DefaultEventManager");
-		GUIFrame gui = GUIFrame.instance();
+		GUIFrame gui = GUIFrame.createInstance();
 		gui.setEventManager(evt);
 		gui.updateForSimulationState(SIM_STATE_LOADED);
 		evt.setTimeListener(gui);
