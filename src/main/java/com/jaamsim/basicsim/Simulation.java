@@ -474,35 +474,41 @@ public class Simulation extends Entity {
 		}
 
 		if (in == showModelBuilder) {
-			setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
 			return;
 		}
 
 		if (in == showObjectSelector) {
-			setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
 			return;
 		}
 
 		if (in == showInputEditor) {
-			setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
 			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showOutputViewer) {
-			setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
 			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showPropertyViewer) {
-			setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
 			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showLogViewer) {
-			setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
 			FrameBox.reSelectEntity();
 			return;
 		}
@@ -875,6 +881,8 @@ public class Simulation extends Entity {
 	 * Closes all the Tools windows temporarily.
 	 */
 	public static void closeAllTools() {
+		if (GUIFrame.getInstance() == null)
+			return;
 		setWindowVisible(EntityPallet.getInstance(), false);
 		setWindowVisible(ObjectSelector.getInstance(), false);
 		setWindowVisible(EditBox.getInstance(), false);

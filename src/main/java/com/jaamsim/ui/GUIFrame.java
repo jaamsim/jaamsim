@@ -1570,6 +1570,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		boolean minimize = false;
 		boolean quiet = false;
 		boolean scriptMode = false;
+		boolean headless = false;
 
 		for (String each : args) {
 			// Batch mode
@@ -1596,14 +1597,22 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				minimize = true;
 				continue;
 			}
+			// Minimize model window
+			if (each.equalsIgnoreCase("-h") ||
+			    each.equalsIgnoreCase("-headless")) {
+				headless = true;
+				batch = true;
+				quiet = true;
+				continue;
+			}
 			// Do not open default windows
 			if (each.equalsIgnoreCase("-q") ||
-					each.equalsIgnoreCase("-quiet")) {
+			    each.equalsIgnoreCase("-quiet")) {
 				quiet = true;
 				continue;
 			}
 			if (each.equalsIgnoreCase("-sg") ||
-					each.equalsIgnoreCase("-safe_graphics")) {
+			    each.equalsIgnoreCase("-safe_graphics")) {
 				SAFE_GRAPHICS = true;
 				continue;
 			}
@@ -1641,13 +1650,16 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		LogBox.logLine("Loading Simulation Environment ... ");
 
 		EventManager evt = new EventManager("DefaultEventManager");
-		GUIFrame gui = GUIFrame.createInstance();
-		gui.setEventManager(evt);
-		gui.updateForSimulationState(SIM_STATE_LOADED);
-		evt.setTimeListener(gui);
-		evt.setErrorListener(gui);
-		if (minimize)
-			gui.setExtendedState(JFrame.ICONIFIED);
+		GUIFrame gui = null;
+		if (!headless) {
+			gui = GUIFrame.createInstance();
+			gui.setEventManager(evt);
+			gui.updateForSimulationState(SIM_STATE_LOADED);
+			evt.setTimeListener(gui);
+			evt.setErrorListener(gui);
+			if (minimize)
+				gui.setExtendedState(JFrame.ICONIFIED);
+		}
 
 		LogBox.logLine("Simulation Environment Loaded");
 
@@ -1659,9 +1671,11 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		InputAgent.readResource("<res>/inputs/autoload.cfg");
 
 		// Show the Control Panel
-		gui.setTitle(Simulation.getModelName());
-		gui.setVisible(true);
-		gui.calcWindowDefaults();
+		if (gui != null) {
+			gui.setTitle(Simulation.getModelName());
+			gui.setVisible(true);
+			gui.calcWindowDefaults();
+		}
 
 		// Resolve all input arguments against the current working directory
 		File user = new File(System.getProperty("user.dir"));
@@ -1727,7 +1741,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 
 		// Bring the Control Panel to the front (along with any open Tools)
-		gui.toFront();
+		if (gui != null)
+			gui.toFront();
 
 		// Set the selected entity to the Simulation object
 		FrameBox.setSelectedEntity(Simulation.getInstance());
