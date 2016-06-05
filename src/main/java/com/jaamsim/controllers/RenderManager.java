@@ -1405,8 +1405,7 @@ public class RenderManager implements DragSourceListener {
 		}
 
 		Vec3d xyPlanePoint = currentRay.getPointAtDist(dist);
-		GUIFrame.instance().showLocatorPosition(xyPlanePoint);
-		GUIFrame.updateUI();
+		GUIFrame.showLocatorPosition(xyPlanePoint);
 	}
 
 

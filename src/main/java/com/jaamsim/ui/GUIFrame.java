@@ -1469,8 +1469,15 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		clipboard.setContents( stringSelection, null );
 	}
 
-	public void showLocatorPosition(Vec3d pos) {
+	public static void showLocatorPosition(Vec3d pos) {
+		GUIFrame inst = GUIFrame.getInstance();
+		if (inst == null)
+			return;
 
+		inst.showLocator(pos);
+	}
+
+	private void showLocator(Vec3d pos) {
 		if( pos == null ) {
 			locatorPos.setText( "-" );
 			return;
