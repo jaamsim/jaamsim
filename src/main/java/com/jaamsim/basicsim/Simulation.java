@@ -589,7 +589,7 @@ public class Simulation extends Entity {
 	 * Starts a single simulation run.
 	 * @param evt - EventManager for the run.
 	 */
-	public static void startRun(EventManager evt) {
+	private static void startRun(EventManager evt) {
 		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(), null);
 		evt.resume(evt.secondsToNearestTick(Simulation.getPauseTime()));
 	}
@@ -620,12 +620,13 @@ public class Simulation extends Entity {
 		}
 
 		// Start the next run
+		final EventManager currentEvt = EventManager.current();
 		Simulation.setRunNumber(runNumber + 1);
-		GUIFrame.instance().stopRun();
+		Simulation.stopRun(currentEvt);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				GUIFrame.instance().startNextRun();
+				Simulation.startRun(currentEvt);
 			}
 		}).start();
 	}
@@ -666,7 +667,7 @@ public class Simulation extends Entity {
 	 * Stops the present simulation run when multiple runs are to be executed.
 	 * @param evt - EventManager for the run.
 	 */
-	public static void stopRun(EventManager evt) {
+	private static void stopRun(EventManager evt) {
 
 		// Stop the simulation and clear the event list
 		evt.pause();

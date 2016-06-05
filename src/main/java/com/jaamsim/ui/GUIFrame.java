@@ -1259,20 +1259,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			throw new ErrorException( "Invalid Simulation State for stop" );
 	}
 
-	/**
-	 * Restarts the simulation model when multiple runs are to be performed.
-	 */
-	public void startNextRun() {
-		Simulation.startRun(currentEvt);
-	}
-
-	/**
-	 * Stops the present simulation run when multiple runs are to be executed.
-	 */
-	public void stopRun() {
-		Simulation.stopRun(currentEvt);
-	}
-
 	/** model was executed, but no configuration performed */
 	public static final int SIM_STATE_LOADED = 0;
 	/** essential model elements created, no configuration performed */
