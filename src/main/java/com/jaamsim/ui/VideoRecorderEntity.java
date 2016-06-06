@@ -243,7 +243,5 @@ public class VideoRecorderEntity extends DisplayEntity {
 		}
 
 		recorder.freeResources();
-		recorder = null;
 	}
-
 }

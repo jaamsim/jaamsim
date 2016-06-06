@@ -143,7 +143,7 @@ public class PreviewCache {
 			}
 
 
-			Transform camTrans = new Transform();
+			Transform camTrans;
 			if (!isFlat) {
 				// If this model is 3D, switch to an isometric view
 				Quaternion cameraRot = new Quaternion();
