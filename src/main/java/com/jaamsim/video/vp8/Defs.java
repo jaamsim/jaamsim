@@ -33,7 +33,7 @@ public class Defs {
 	public static final int DCT_EOB  = 11;
 
 
-	public static final int DC_Q_LOOKUP[] =
+	static final int DC_Q_LOOKUP[] =
 		{
 			  4,    5,    6,    7,    8,    9,   10,   10,
 			 11,   12,   13,   14,   15,   16,   17,   17,
@@ -53,7 +53,7 @@ public class Defs {
 			138,  140,  143,  145,  148,  151,  154,  157
 		};
 
-	public static final int AC_Q_LOOKUP[] =
+	static final int AC_Q_LOOKUP[] =
 		{
 			  4,    5,    6,    7,    8,    9,   10,   11,
 			 12,   13,   14,   15,   16,   17,   18,   19,
@@ -91,7 +91,7 @@ public class Defs {
 	public static final int B_HD_PRED = 8;
 	public static final int B_HU_PRED = 9;
 
-	public static final int B_MODE_PROBS[][][] =
+	static final int B_MODE_PROBS[][][] =
 		{
 		 { /* above mode 0 */
 		   { /* left mode 0 */ 231, 120,  48,  89, 115, 113, 120, 152, 112},
@@ -215,24 +215,24 @@ public class Defs {
 		 }
 		};
 
-	public static final int KF_Y_MODE_PROBS[] = { 145, 156, 163, 128};
-	public static final int KF_UV_MODE_PROBS[] = { 142, 114, 183};
+	static final int KF_Y_MODE_PROBS[] = { 145, 156, 163, 128};
+	static final int KF_UV_MODE_PROBS[] = { 142, 114, 183};
 
 
-	public static final int[] ZIGZAG = { 0, 1, 4, 8, 5, 2, 3, 6, 9, 12, 13, 10, 7, 11, 14, 15 };
-	public static final int[] BANDS = { 0, 1, 2, 3, 6, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7 };
+	static final int[] ZIGZAG = { 0, 1, 4, 8, 5, 2, 3, 6, 9, 12, 13, 10, 7, 11, 14, 15 };
+	static final int[] BANDS = { 0, 1, 2, 3, 6, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7 };
 
-	public static final int[] BLOCK_TO_LEFT_ENT  =  { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8 };
-	public static final int[] BLOCK_TO_ABOVE_ENT  = { 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 4, 5, 4, 5, 6, 7, 6, 7, 8 };
+	static final int[] BLOCK_TO_LEFT_ENT  =  { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8 };
+	static final int[] BLOCK_TO_ABOVE_ENT  = { 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 4, 5, 4, 5, 6, 7, 6, 7, 8 };
 
-	public static final int[] CAT1_PROBS = { 159 };
-	public static final int[] CAT2_PROBS = { 165, 145 };
-	public static final int[] CAT3_PROBS = { 173, 148, 140 };
-	public static final int[] CAT4_PROBS = { 176, 155, 140, 135 };
-	public static final int[] CAT5_PROBS = { 180, 157, 141, 134, 130 };
-	public static final int[] CAT6_PROBS = { 254, 254, 243, 230, 196, 177, 153, 140, 133, 130, 129 };
+	static final int[] CAT1_PROBS = { 159 };
+	static final int[] CAT2_PROBS = { 165, 145 };
+	static final int[] CAT3_PROBS = { 173, 148, 140 };
+	static final int[] CAT4_PROBS = { 176, 155, 140, 135 };
+	static final int[] CAT5_PROBS = { 180, 157, 141, 134, 130 };
+	static final int[] CAT6_PROBS = { 254, 254, 243, 230, 196, 177, 153, 140, 133, 130, 129 };
 
-	public static final int TOKEN_TREE[] =
+	static final int TOKEN_TREE[] =
 		   {
 		    -DCT_EOB, 2,               /* eob = "0"   */
 		     -DCT_0, 4,                /* 0   = "10"  */
@@ -250,22 +250,22 @@ public class Defs {
 		                                  cat6 = "1111111" */
 		   };
 
-	public static final int[] DCT_EOB_VAL = { 0 };
-	public static final int[] DCT_0_VAL = { 1,0 };
-	public static final int[] DCT_1_VAL = { 1,1,0 };
-	public static final int[] DCT_2_VAL = { 1,1,1,0,0 };
-	public static final int[] DCT_3_VAL = { 1,1,1,0,1,0 };
-	public static final int[] DCT_4_VAL = { 1,1,1,0,1,1 };
+	static final int[] DCT_EOB_VAL = { 0 };
+	static final int[] DCT_0_VAL = { 1,0 };
+	static final int[] DCT_1_VAL = { 1,1,0 };
+	static final int[] DCT_2_VAL = { 1,1,1,0,0 };
+	static final int[] DCT_3_VAL = { 1,1,1,0,1,0 };
+	static final int[] DCT_4_VAL = { 1,1,1,0,1,1 };
 
-	public static final int[] DCT_CAT1_VAL = { 1,1,1,1,0,0 };
-	public static final int[] DCT_CAT2_VAL = { 1,1,1,1,0,1 };
-	public static final int[] DCT_CAT3_VAL = { 1,1,1,1,1,0,0 };
-	public static final int[] DCT_CAT4_VAL = { 1,1,1,1,1,0,1 };
-	public static final int[] DCT_CAT5_VAL = { 1,1,1,1,1,1,0 };
-	public static final int[] DCT_CAT6_VAL = { 1,1,1,1,1,1,1 };
+	static final int[] DCT_CAT1_VAL = { 1,1,1,1,0,0 };
+	static final int[] DCT_CAT2_VAL = { 1,1,1,1,0,1 };
+	static final int[] DCT_CAT3_VAL = { 1,1,1,1,1,0,0 };
+	static final int[] DCT_CAT4_VAL = { 1,1,1,1,1,0,1 };
+	static final int[] DCT_CAT5_VAL = { 1,1,1,1,1,1,0 };
+	static final int[] DCT_CAT6_VAL = { 1,1,1,1,1,1,1 };
 
 
-	public static final int KF_Y_MODE_TREE[] =
+	static final int KF_Y_MODE_TREE[] =
 		{
 		 -B_PRED, 2,
 		 4, 6,
@@ -273,14 +273,14 @@ public class Defs {
 		 -H_PRED, -TM_PRED
 		};
 
-	public static final int UV_MODE_TREE[] =
+	static final int UV_MODE_TREE[] =
 		{
 		 -DC_PRED, 2,
 		 -V_PRED, 4,
 		 -H_PRED, -TM_PRED
 		};
 
-	public static final int B_MODE_TREE[] =
+	static final int B_MODE_TREE[] =
 		{
 		 -B_DC_PRED, 2,
 		 -B_TM_PRED, 4,
@@ -293,7 +293,7 @@ public class Defs {
 		 -B_HD_PRED, -B_HU_PRED
 		};
 
-	public static final int MV_ENTROPY_UPATE_PROBS[][] =
+	static final int MV_ENTROPY_UPATE_PROBS[][] =
 		{
 		   {
 			   237,
