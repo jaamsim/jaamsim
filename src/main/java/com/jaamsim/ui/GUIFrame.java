@@ -1828,7 +1828,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		System.exit(errorCode);
 	}
 
-	private static volatile long simTicks;
+	volatile long simTicks;
 
 	private static class UIUpdater implements Runnable {
 		private final GUIFrame frame;
@@ -1839,7 +1839,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 		@Override
 		public void run() {
-			double callBackTime = EventManager.ticksToSecs(simTicks);
+			double callBackTime = EventManager.ticksToSecs(frame.simTicks);
 
 			frame.setClock(callBackTime);
 			FrameBox.updateEntityValues(callBackTime);
