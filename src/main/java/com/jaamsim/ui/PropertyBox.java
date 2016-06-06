@@ -119,7 +119,7 @@ public class PropertyBox extends FrameBox {
 private static class TabListener implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		FrameBox.valueUpdate();
+		GUIFrame.updateUI();
 	}
 }
 

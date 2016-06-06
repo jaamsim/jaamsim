@@ -210,15 +210,27 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		JPopupMenu.setDefaultLightWeightPopupEnabled( false );
 	}
 
-	public static synchronized GUIFrame instance() {
-		if (instance == null)
-			instance = new GUIFrame();
-
+	public static synchronized GUIFrame getInstance() {
 		return instance;
 	}
 
-	public static final RateLimiter getRateLimiter() {
-		return rateLimiter;
+	private static synchronized GUIFrame createInstance() {
+		instance = new GUIFrame();
+		GUIFrame.registerCallback(new Runnable() {
+			@Override
+			public void run() {
+				SwingUtilities.invokeLater(new UIUpdater(instance));
+			}
+		});
+		return instance;
+	}
+
+	public static final void registerCallback(Runnable r) {
+		rateLimiter.registerCallback(r);
+	}
+
+	public static final void updateUI() {
+		rateLimiter.queueUpdate();
 	}
 
 	/**
@@ -287,7 +299,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	void close() {
 		// check for unsaved changes
 		if (InputAgent.isSessionEdited()) {
-			boolean confirmed = GUIFrame.showSaveChangesDialog();
+			boolean confirmed = GUIFrame.showSaveChangesDialog(this);
 			if (!confirmed)
 				return;
 		}
@@ -327,7 +339,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	/**
 	 * Sets up the Control Panel's menu bar.
 	 */
-	public void initializeMenus() {
+	private void initializeMenus() {
 
 		// Set up the individual menus
 		this.initializeFileMenu();
@@ -373,7 +385,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
-					boolean confirmed = GUIFrame.showSaveChangesDialog();
+					boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
 					if (!confirmed) {
 						return;
 					}
@@ -399,7 +411,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 				// check for unsaved changes
 				if (InputAgent.isSessionEdited()) {
-					boolean confirmed = GUIFrame.showSaveChangesDialog();
+					boolean confirmed = GUIFrame.showSaveChangesDialog(GUIFrame.this);
 					if (!confirmed) {
 						return;
 					}
@@ -841,7 +853,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			@Override
 			protected void processFocusEvent(FocusEvent fe) {
 				if (fe.getID() == FocusEvent.FOCUS_LOST) {
-					GUIFrame.instance.setPauseTime(this.getText());
+					GUIFrame.this.setPauseTime(this.getText());
 				}
 				else if (fe.getID() == FocusEvent.FOCUS_GAINED) {
 					pauseTime.selectAll();
@@ -859,7 +871,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		pauseTime.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				GUIFrame.instance.setPauseTime(pauseTime.getText());
+				GUIFrame.this.setPauseTime(pauseTime.getText());
 				controlStartResume.grabFocus();
 			}
 		});
@@ -1112,14 +1124,15 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 *
 	 * @param simTime - the present simulation time in seconds.
 	 */
-	public void setClock(double simTime) {
+	void setClock(double simTime) {
 
 		// Set the simulation time display
 		String unit = Unit.getDisplayedUnit(TimeUnit.class);
 		double factor = Unit.getDisplayedUnitFactor(TimeUnit.class);
 		clockDisplay.setText(String.format("%,.2f  %s", simTime/factor, unit));
 
-		if (getSimState() != SIM_STATE_RUNNING)
+		// Still update progress if paused at end of run to show 100%
+		if (getSimState() < SIM_STATE_RUNNING)
 			return;
 
 		// Set the run progress bar display
@@ -1164,15 +1177,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			String title = String.format("%d%% %s - %s", val, Simulation.getModelName(), InputAgent.getRunName());
 			setTitle(title);
 		}
-	}
-
-	/**
-	 * Write the given text on the Control Panel's progress bar.
-	 *
-	 * @param txt - the text to write.
-	 */
-	public void setProgressText( String txt ) {
-		progressBar.setString( txt );
 	}
 
 	/**
@@ -1256,20 +1260,6 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			throw new ErrorException( "Invalid Simulation State for stop" );
 	}
 
-	/**
-	 * Restarts the simulation model when multiple runs are to be performed.
-	 */
-	public void startNextRun() {
-		Simulation.startRun(currentEvt);
-	}
-
-	/**
-	 * Stops the present simulation run when multiple runs are to be executed.
-	 */
-	public void stopRun() {
-		Simulation.stopRun(currentEvt);
-	}
-
 	/** model was executed, but no configuration performed */
 	public static final int SIM_STATE_LOADED = 0;
 	/** essential model elements created, no configuration performed */
@@ -1293,12 +1283,20 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		currentEvt = e;
 	}
 
+	public static void updateForSimState(int state) {
+		GUIFrame inst = GUIFrame.getInstance();
+		if (inst == null)
+			return;
+
+		inst.updateForSimulationState(state);
+	}
+
 	/**
 	 * Sets the state of the simulation run to the given state value.
 	 *
 	 * @param state - an index that designates the state of the simulation run.
 	 */
-	public void updateForSimulationState(int state) {
+	void updateForSimulationState(int state) {
 		simState = state;
 
 		switch( getSimState() ) {
@@ -1397,10 +1395,18 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		fileMenu.setEnabled( true );
 	}
 
+	public static synchronized void updateForRealTime(boolean executeRT, double factorRT) {
+		GUIFrame inst = GUIFrame.getInstance();
+		if (inst == null)
+			return;
+
+		inst.updateForRT(executeRT, factorRT);
+	}
+
 	/**
 	 * updates RealTime button and Spinner
 	 */
-	public void updateForRealTime(boolean executeRT, double factorRT) {
+	private void updateForRT(boolean executeRT, double factorRT) {
 		currentEvt.setExecuteRealTime(executeRT, factorRT);
 		controlRealTime.setSelected(executeRT);
 		spinner.setValue(factorRT);
@@ -1410,10 +1416,18 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			spinner.setEnabled(false);
 	}
 
+	public static void updateForPauseTime(String str) {
+		GUIFrame inst = GUIFrame.getInstance();
+		if (inst == null)
+			return;
+
+		inst.updateForPT(str);
+	}
+
 	/**
 	 * updates PauseTime entry
 	 */
-	public void updateForPauseTime(String str) {
+	private void updateForPT(String str) {
 		pauseTime.setText(str);
 	}
 
@@ -1460,8 +1474,15 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		clipboard.setContents( stringSelection, null );
 	}
 
-	public void showLocatorPosition(Vec3d pos) {
+	public static void showLocatorPosition(Vec3d pos) {
+		GUIFrame inst = GUIFrame.getInstance();
+		if (inst == null)
+			return;
 
+		inst.showLocator(pos);
+	}
+
+	private void showLocator(Vec3d pos) {
 		if( pos == null ) {
 			locatorPos.setText( "-" );
 			return;
@@ -1481,8 +1502,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * Sets variables used to determine the position and size of various
 	 * windows based on the size of the computer display being used.
 	 */
-	private static void calcWindowDefaults() {
-		Dimension guiSize = GUIFrame.instance().getSize();
+	private void calcWindowDefaults() {
+		Dimension guiSize = this.getSize();
 		Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
 		COL1_WIDTH = 220;
@@ -1490,7 +1511,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		COL3_WIDTH = Math.min(420, winSize.width - COL1_WIDTH - COL2_WIDTH);
 		VIEW_WIDTH = COL2_WIDTH + COL3_WIDTH;
 
-		COL1_START = GUIFrame.instance().getX();
+		COL1_START = this.getX();
 		COL2_START = COL1_START + COL1_WIDTH;
 		COL3_START = COL2_START + COL2_WIDTH;
 
@@ -1499,7 +1520,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		LOWER_HEIGHT = (winSize.height - guiSize.height) / 3;
 		VIEW_HEIGHT = winSize.height - guiSize.height - LOWER_HEIGHT;
 
-		TOP_START = GUIFrame.instance().getY() + guiSize.height;
+		TOP_START = this.getY() + guiSize.height;
 		BOTTOM_START = TOP_START + HALF_TOP;
 		LOWER_START = TOP_START + VIEW_HEIGHT;
 	}
@@ -1549,6 +1570,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		boolean minimize = false;
 		boolean quiet = false;
 		boolean scriptMode = false;
+		boolean headless = false;
 
 		for (String each : args) {
 			// Batch mode
@@ -1575,14 +1597,21 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				minimize = true;
 				continue;
 			}
+			// Minimize model window
+			if (each.equalsIgnoreCase("-h") ||
+			    each.equalsIgnoreCase("-headless")) {
+				headless = true;
+				batch = true;
+				continue;
+			}
 			// Do not open default windows
 			if (each.equalsIgnoreCase("-q") ||
-					each.equalsIgnoreCase("-quiet")) {
+			    each.equalsIgnoreCase("-quiet")) {
 				quiet = true;
 				continue;
 			}
 			if (each.equalsIgnoreCase("-sg") ||
-					each.equalsIgnoreCase("-safe_graphics")) {
+			    each.equalsIgnoreCase("-safe_graphics")) {
 				SAFE_GRAPHICS = true;
 				continue;
 			}
@@ -1611,37 +1640,42 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 
 			// Display it
 			splashScreen.setVisible(true);
-
-			// Begin initializing the rendering system
-			RenderManager.initialize(SAFE_GRAPHICS);
 		}
 
 		// create a graphic simulation
 		LogBox.logLine("Loading Simulation Environment ... ");
 
 		EventManager evt = new EventManager("DefaultEventManager");
-		GUIFrame gui = GUIFrame.instance();
-		gui.setEventManager(evt);
-		gui.updateForSimulationState(SIM_STATE_LOADED);
-		evt.setTimeListener(gui);
-		evt.setErrorListener(gui);
+		GUIFrame gui = null;
+		if (!headless) {
+			gui = GUIFrame.createInstance();
+			gui.setEventManager(evt);
+			gui.updateForSimulationState(SIM_STATE_LOADED);
+			evt.setTimeListener(gui);
+			evt.setErrorListener(gui);
+
+			// Begin initializing the rendering system
+			RenderManager.initialize(SAFE_GRAPHICS);
+
+			if (minimize)
+				gui.setExtendedState(JFrame.ICONIFIED);
+		}
 
 		LogBox.logLine("Simulation Environment Loaded");
 
 		if (batch)
 			InputAgent.setBatch(true);
 
-		if (minimize)
-			gui.setExtendedState(JFrame.ICONIFIED);
-
 		// Load the autoload file
 		InputAgent.setRecordEdits(false);
 		InputAgent.readResource("<res>/inputs/autoload.cfg");
-		gui.setTitle(Simulation.getModelName());
 
 		// Show the Control Panel
-		gui.setVisible(true);
-		GUIFrame.calcWindowDefaults();
+		if (gui != null) {
+			gui.setTitle(Simulation.getModelName());
+			gui.setVisible(true);
+			gui.calcWindowDefaults();
+		}
 
 		// Resolve all input arguments against the current working directory
 		File user = new File(System.getProperty("user.dir"));
@@ -1656,7 +1690,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			else
 				loadFile = new File(user, configFiles.get(i));
 
-			Throwable t = gui.configure(loadFile);
+			Throwable t = GUIFrame.configure(loadFile);
 			if (t != null) {
 				// Hide the splash screen
 				if (splashScreen != null) {
@@ -1677,7 +1711,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		if (configFiles.size() == 0 && !scriptMode) {
 			InputAgent.setRecordEdits(true);
 			InputAgent.loadDefault();
-			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+			GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
 		}
 
 		// Show the view windows
@@ -1707,7 +1741,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		}
 
 		// Bring the Control Panel to the front (along with any open Tools)
-		gui.toFront();
+		if (gui != null)
+			gui.toFront();
 
 		// Set the selected entity to the Simulation object
 		FrameBox.setSelectedEntity(Simulation.getInstance());
@@ -1793,9 +1828,32 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		System.exit(errorCode);
 	}
 
+	private static volatile long simTicks;
+
+	private static class UIUpdater implements Runnable {
+		private final GUIFrame frame;
+
+		UIUpdater(GUIFrame gui) {
+			frame = gui;
+		}
+
+		@Override
+		public void run() {
+			double callBackTime = EventManager.ticksToSecs(simTicks);
+
+			frame.setClock(callBackTime);
+			FrameBox.updateEntityValues(callBackTime);
+		}
+	}
+
 	@Override
 	public void tickUpdate(long tick) {
-		FrameBox.timeUpdate(tick);
+		if (tick == simTicks)
+			return;
+
+		simTicks = tick;
+		RenderManager.updateTime(tick);
+		GUIFrame.updateUI();
 	}
 
 	@Override
@@ -1862,7 +1920,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				public void run() {
 					InputAgent.setRecordEdits(false);
 					gui1.clear();
-					Throwable ret = gui1.configure(chosenfile);
+					Throwable ret = GUIFrame.configure(chosenfile);
 					if (ret != null)
 						handleConfigError(ret, chosenfile);
 
@@ -1877,9 +1935,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
         }
 	}
 
-	Throwable configure(File file) {
+	static Throwable configure(File file) {
 		InputAgent.setConfigFile(file);
-		this.updateForSimulationState(GUIFrame.SIM_STATE_UNCONFIGURED);
+		GUIFrame.updateForSimState(GUIFrame.SIM_STATE_UNCONFIGURED);
 
 		Throwable ret = null;
 		try {
@@ -1895,12 +1953,13 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			LogBox.logLine("Configuration File Loaded - errors found");
 
 		// show the present state in the user interface
-		this.setProgressText(null);
-		this.setProgress(0);
-		this.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
-		this.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
-		this.enableSave(InputAgent.getRecordEditsFound());
-
+		GUIFrame gui = GUIFrame.getInstance();
+		if (gui != null) {
+			gui.setProgress(0);
+			gui.setTitle( Simulation.getModelName() + " - " + InputAgent.getRunName() );
+			gui.updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+			gui.enableSave(InputAgent.getRecordEditsFound());
+		}
 		return ret;
 	}
 
@@ -2033,7 +2092,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	 * Shows the "Save Changes" dialog box
 	 * @return true for any response other than Cancel or Close.
 	 */
-	public static boolean showSaveChangesDialog() {
+	public static boolean showSaveChangesDialog(GUIFrame gui) {
 
 		String message;
 		if (InputAgent.getConfigFile() == null)
@@ -2052,7 +2111,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				options[0]);
 
 		if (userOption == JOptionPane.YES_OPTION) {
-			boolean confirmed = GUIFrame.instance().save();
+			boolean confirmed = gui.save();
 			return confirmed;
 		}
 		else if (userOption == JOptionPane.NO_OPTION)

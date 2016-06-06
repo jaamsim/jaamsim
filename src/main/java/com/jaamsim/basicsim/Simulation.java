@@ -474,35 +474,41 @@ public class Simulation extends Entity {
 		}
 
 		if (in == showModelBuilder) {
-			setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(EntityPallet.getInstance(), showModelBuilder.getValue());
 			return;
 		}
 
 		if (in == showObjectSelector) {
-			setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(ObjectSelector.getInstance(), showObjectSelector.getValue());
 			return;
 		}
 
 		if (in == showInputEditor) {
-			setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(EditBox.getInstance(), showInputEditor.getValue());
 			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showOutputViewer) {
-			setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(OutputBox.getInstance(), showOutputViewer.getValue());
 			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showPropertyViewer) {
-			setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(PropertyBox.getInstance(), showPropertyViewer.getValue());
 			FrameBox.reSelectEntity();
 			return;
 		}
 
 		if (in == showLogViewer) {
-			setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
+			if (GUIFrame.getInstance() != null)
+				setWindowVisible(LogBox.getInstance(), showLogViewer.getValue());
 			FrameBox.reSelectEntity();
 			return;
 		}
@@ -556,7 +562,7 @@ public class Simulation extends Entity {
 				                         "%s: %-70s",
 				                         each.getName(), e.getMessage());
 
-				GUIFrame.instance().updateForSimulationState(GUIFrame.SIM_STATE_CONFIGURED);
+				GUIFrame.updateForSimState(GUIFrame.SIM_STATE_CONFIGURED);
 				return;
 			}
 		}
@@ -589,7 +595,7 @@ public class Simulation extends Entity {
 	 * Starts a single simulation run.
 	 * @param evt - EventManager for the run.
 	 */
-	public static void startRun(EventManager evt) {
+	private static void startRun(EventManager evt) {
 		evt.scheduleProcessExternal(0, 0, false, new InitModelTarget(), null);
 		evt.resume(evt.secondsToNearestTick(Simulation.getPauseTime()));
 	}
@@ -620,12 +626,13 @@ public class Simulation extends Entity {
 		}
 
 		// Start the next run
+		final EventManager currentEvt = EventManager.current();
 		Simulation.setRunNumber(runNumber + 1);
-		GUIFrame.instance().stopRun();
+		Simulation.stopRun(currentEvt);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				GUIFrame.instance().startNextRun();
+				Simulation.startRun(currentEvt);
 			}
 		}).start();
 	}
@@ -666,7 +673,7 @@ public class Simulation extends Entity {
 	 * Stops the present simulation run when multiple runs are to be executed.
 	 * @param evt - EventManager for the run.
 	 */
-	public static void stopRun(EventManager evt) {
+	private static void stopRun(EventManager evt) {
 
 		// Stop the simulation and clear the event list
 		evt.pause();
@@ -825,11 +832,11 @@ public class Simulation extends Entity {
 	}
 
 	static void updateRealTime() {
-		GUIFrame.instance().updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
+		GUIFrame.updateForRealTime(realTime.getValue(), realTimeFactor.getValue());
 	}
 
 	static void updatePauseTime() {
-		GUIFrame.instance().updateForPauseTime(pauseTime.getValueString());
+		GUIFrame.updateForPauseTime(pauseTime.getValueString());
 	}
 
 	public static void setModelName(String newModelName) {
@@ -874,6 +881,8 @@ public class Simulation extends Entity {
 	 * Closes all the Tools windows temporarily.
 	 */
 	public static void closeAllTools() {
+		if (GUIFrame.getInstance() == null)
+			return;
 		setWindowVisible(EntityPallet.getInstance(), false);
 		setWindowVisible(ObjectSelector.getInstance(), false);
 		setWindowVisible(EditBox.getInstance(), false);

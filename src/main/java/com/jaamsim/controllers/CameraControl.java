@@ -30,7 +30,7 @@ import com.jaamsim.render.CameraInfo;
 import com.jaamsim.render.RenderUtils;
 import com.jaamsim.render.Renderer;
 import com.jaamsim.render.WindowInteractionListener;
-import com.jaamsim.ui.FrameBox;
+import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.View;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.MouseEvent;
@@ -452,7 +452,7 @@ public class CameraControl implements WindowInteractionListener {
 
 		_updateView.updateCenterAndPos(viewCenter, viewPos);
 
-		FrameBox.valueUpdate();
+		GUIFrame.updateUI();
 	}
 
 	@Override

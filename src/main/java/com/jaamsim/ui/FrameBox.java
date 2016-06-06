@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -33,7 +32,6 @@ import javax.swing.table.TableColumnModel;
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.controllers.RenderManager;
-import com.jaamsim.events.EventManager;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.KeywordIndex;
 
@@ -42,26 +40,16 @@ public class FrameBox extends JFrame {
 	private static final ArrayList<FrameBox> allInstances;
 
 	private static volatile Entity selectedEntity;
-	private static volatile long simTicks;
 
 	protected static final Color TABLE_SELECT = new Color(255, 250, 180);
 
 	protected static final Font boldFont;
 	protected static final TableCellRenderer colRenderer;
 
-	private static final UIUpdater uiUpdater = new UIUpdater();
-
 	static {
 		allInstances = new ArrayList<>();
 
 		boldFont = UIManager.getDefaults().getFont("TabbedPane.font").deriveFont(Font.BOLD);
-
-		GUIFrame.getRateLimiter().registerCallback(new Runnable() {
-			@Override
-			public void run() {
-				SwingUtilities.invokeLater(uiUpdater);
-			}
-		});
 
 		colRenderer = new DefaultCellRenderer();
 	}
@@ -117,49 +105,28 @@ public class FrameBox extends JFrame {
 
 		selectedEntity = ent;
 		RenderManager.setSelection(ent);
-		valueUpdate();
+		GUIFrame.updateUI();
 	}
 
 	// This is equivalent to calling setSelectedEntity again with the same entity as used previously
 	public static final void reSelectEntity() {
-		valueUpdate();
-	}
-
-	public static final void timeUpdate(long tick) {
-		if (tick == simTicks)
-			return;
-
-		simTicks = tick;
-		RenderManager.updateTime(tick);
-		valueUpdate();
-	}
-
-	public static final void valueUpdate() {
-		GUIFrame.getRateLimiter().queueUpdate();
+		GUIFrame.updateUI();
 	}
 
 	public void setEntity(Entity ent) {}
 	public void updateValues(double simTime) {}
 
-	private static class UIUpdater  implements Runnable {
-
-		@Override
-		public void run() {
-			double callBackTime = EventManager.ticksToSecs(simTicks);
-
-			GUIFrame.instance().setClock(callBackTime);
-
-			for (int i = 0; i < allInstances.size(); i++) {
-				try {
-					FrameBox each = allInstances.get(i);
-					each.setEntity(selectedEntity);
-					each.updateValues(callBackTime);
-				}
-				catch (IndexOutOfBoundsException e) {
-					// reschedule and try again
-					valueUpdate();
-					return;
-				}
+	static void updateEntityValues(double callBackTime) {
+		for (int i = 0; i < allInstances.size(); i++) {
+			try {
+				FrameBox each = allInstances.get(i);
+				each.setEntity(selectedEntity);
+				each.updateValues(callBackTime);
+			}
+			catch (IndexOutOfBoundsException e) {
+				// reschedule and try again
+				GUIFrame.updateUI();
+				return;
 			}
 		}
 	}

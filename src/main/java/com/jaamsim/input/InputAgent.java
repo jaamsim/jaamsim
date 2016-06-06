@@ -43,7 +43,6 @@ import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.math.Vec3d;
-import com.jaamsim.ui.FrameBox;
 import com.jaamsim.ui.GUIFrame;
 import com.jaamsim.ui.LogBox;
 import com.jaamsim.units.Unit;
@@ -306,7 +305,6 @@ public class InputAgent {
 
 		try {
 			readStream(null, null, res);
-			GUIFrame.instance().setProgressText(null);
 		}
 		catch (URISyntaxException ex) {
 			rethrowWrapped(ex);
@@ -315,8 +313,6 @@ public class InputAgent {
 	}
 
 	public static final boolean readStream(String root, URI path, String file) throws URISyntaxException {
-		String shortName = file.substring(file.lastIndexOf('/') + 1, file.length());
-		GUIFrame.instance().setProgressText(shortName);
 		URI resolved = getFileURI(path, file, root);
 
 		URL url = null;
@@ -703,7 +699,7 @@ public class InputAgent {
 		}
 
 		InputAgent.apply(ent, in, kw);
-		FrameBox.valueUpdate();
+		GUIFrame.updateUI();
 	}
 
 	public static final void apply(Entity ent, Input<?> in, KeywordIndex kw) {
@@ -734,7 +730,7 @@ public class InputAgent {
 		Input<?> input = entity.getInput( key.keyword );
 		if (input != null) {
 			InputAgent.apply(entity, input, key);
-			FrameBox.valueUpdate();
+			GUIFrame.updateUI();
 			return;
 		}
 

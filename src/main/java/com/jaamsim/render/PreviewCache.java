@@ -28,8 +28,8 @@ import javax.imageio.ImageIO;
 
 import com.jaamsim.DisplayModels.ColladaModel;
 import com.jaamsim.DisplayModels.DisplayModel;
-import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.DisplayModels.ImageModel;
+import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.controllers.RenderManager;
 import com.jaamsim.math.Quaternion;
@@ -48,8 +48,7 @@ public class PreviewCache {
 	public PreviewCache() {
 		_imageCache = new HashMap<>();
 
-
-		if (GUIFrame.instance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
+		if (GUIFrame.getInstance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
 			dummyEntity = new DisplayEntity();
 			dummyEntity.kill();
 		}
@@ -106,7 +105,7 @@ public class PreviewCache {
 			// This will all need to be refactored soonish.
 
 			if (dummyEntity == null) {
-				if (GUIFrame.instance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
+				if (GUIFrame.getInstance().getSimState() != GUIFrame.SIM_STATE_RUNNING) {
 					dummyEntity = new DisplayEntity();
 					dummyEntity.kill();
 				} else {
