@@ -677,12 +677,12 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		graphicsDebug = new JCheckBoxMenuItem( "Graphics Debug Info", false );
 		graphicsDebug.setMnemonic( 'D' );
 		optionMenu.add( graphicsDebug );
-		graphicsDebug.addActionListener( new ActionListener() {
+		graphicsDebug.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed( ActionEvent e ) {
-				RenderManager.setDebugInfo(graphicsDebug.getState());
+			public void actionPerformed(ActionEvent e) {
+				RenderManager.setDebugInfo(((JCheckBoxMenuItem)e.getSource()).getState());
 			}
-		} );
+		});
 	}
 
 	/**
