@@ -23,6 +23,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import com.jaamsim.input.InputAgent;
+
 public class LogBox extends FrameBox {
 
 	private static LogBox myInstance;
@@ -121,6 +123,11 @@ public class LogBox extends FrameBox {
 	}
 
 	public static void renderLogException(Throwable ex) {
+
+		// Suppress renderer error messages when in batch mode
+		if (InputAgent.getBatch())
+			return;
+
 		logException(ex);
 	}
 
