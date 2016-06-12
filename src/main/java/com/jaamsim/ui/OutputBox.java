@@ -269,7 +269,8 @@ private class OutputTableModel extends AbstractTableModel {
 				return sb.toString();
 			}
 			catch (Throwable e) {
-				return "";
+				LogBox.logException(e);
+				return "Cannot evaluate - see Log Viewer for details";
 			}
 		default:
 			assert false;
