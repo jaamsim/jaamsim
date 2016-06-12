@@ -195,7 +195,12 @@ public class ColladaModel extends DisplayModel {
 				OutputHandle handle = dispEnt.getOutputHandle(b.outputName);
 				aq.time = 0;
 				if (handle != null) {
-					aq.time = handle.getValueAsDouble(simTime, 0);
+					try {
+						aq.time = handle.getValueAsDouble(simTime, 0);
+					}
+					catch (Throwable e) {
+						LogBox.logException(e);
+					}
 				}
 
 				aqList.add(aq);
