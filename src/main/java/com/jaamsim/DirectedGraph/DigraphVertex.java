@@ -17,6 +17,9 @@
 package com.jaamsim.DirectedGraph;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
 public class DigraphVertex {
 
@@ -24,12 +27,15 @@ public class DigraphVertex {
 	private Digraph graph;  // directed graph containing this vertex
 	private ArrayList<DigraphEdge> inList;  // edges that enter the vertex
 	private ArrayList<DigraphEdge> outList; // edges that leave the vertex
+	private HashMap<DigraphVertex, ArrayList<DigraphPath>> pathListMap; // paths from this vertex
+	private static final Comparator<DigraphPath> pathSortOrder = new DigraphPathComparator();
 
 	public DigraphVertex(String str, Digraph grph) {
 		name = str;
 		graph = grph;
 		inList = new ArrayList<>();
 		outList = new ArrayList<>();
+		pathListMap = null;
 	}
 
 	public void init() {
@@ -39,6 +45,7 @@ public class DigraphVertex {
 	public void clear() {
 		inList.clear();
 		outList.clear();
+		pathListMap = null;
 	}
 
 	public void kill() {
@@ -81,6 +88,40 @@ public class DigraphVertex {
 
 	public Digraph getDigraph() {
 		return graph;
+	}
+
+	/**
+	 * Returns a sorted list of paths that start at this vertex and end at the specified sink.
+	 * @param sink - vertex at the end of each path (must be a sink)
+	 * @return sorted list of paths
+	 */
+	public ArrayList<DigraphPath> getPathsToSink(DigraphVertex sink) {
+		if (pathListMap == null)
+			this.populatePathListMap();
+		return pathListMap.get(sink);
+	}
+
+	private void populatePathListMap() {
+		pathListMap = new HashMap<>();
+
+		// Prepare a list of paths sorted by sink and weight
+		ArrayList<DigraphPath> pathList = Digraph.findAllPathsFromVertex(this);
+		if (pathList.isEmpty())
+			return;
+		Collections.sort(pathList, pathSortOrder);
+
+		// Add a separate list of paths to the hashmap for each sink
+		DigraphVertex sink = pathList.get(0).getLastVertex();
+		ArrayList<DigraphPath> list = new ArrayList<>();
+		for (DigraphPath path : pathList) {
+			if (path.getLastVertex() != sink) {
+				pathListMap.put(sink, list);
+				sink = path.getLastVertex();
+				list = new ArrayList<>();
+			}
+			list.add(path);
+		}
+		pathListMap.put(sink, list);
 	}
 
 	@Override
