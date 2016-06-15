@@ -516,13 +516,11 @@ public class RenderManager implements DragSourceListener {
 			for (PickData pd : picks) {
 				if (!pd.isEntity) { continue; }
 				Entity ent = Entity.idToEntity(pd.id);
-				if (ent == null) { continue; }
-				if (!(ent instanceof DisplayEntity)) { continue; }
-
-				DisplayEntity de = (DisplayEntity)ent;
-				if (!de.isMovable()) { continue; }  // only a movable DisplayEntity responds to a right-click
-
-				ents.add(de);
+				if (ent instanceof DisplayEntity) {
+					DisplayEntity de = (DisplayEntity)ent;
+					if (de.isMovable()) // only a movable DisplayEntity responds to a right-click
+						ents.add(de);
+				}
 			}
 
 			if (!mouseInfo.mouseInWindow) {
