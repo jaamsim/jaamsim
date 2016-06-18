@@ -443,8 +443,7 @@ public class Entity {
 	}
 
 	public final void startProcess(String methodName, Object... args) {
-		ProcessTarget t = new ReflectionTarget(this, methodName, args);
-		startProcess(t);
+		EventManager.startProcess(new ReflectionTarget(this, methodName, args));
 	}
 
 	public final void startProcess(ProcessTarget t) {
@@ -453,6 +452,10 @@ public class Entity {
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t) {
 		EventManager.scheduleSeconds(secs, priority, false, t, null);
+	}
+
+	public final void scheduleProcess(double secs, int priority, String methodName, Object... args) {
+		EventManager.scheduleSeconds(secs, priority, false, new ReflectionTarget(this, methodName, args), null);
 	}
 
 	public final void scheduleProcess(double secs, int priority, ProcessTarget t, EventHandle handle) {
@@ -469,6 +472,10 @@ public class Entity {
 
 	public final void scheduleProcessTicks(long ticks, int priority, ProcessTarget t) {
 		EventManager.scheduleTicks(ticks, priority, false, t, null);
+	}
+
+	public final void scheduleProcessTicks(long ticks, int priority, String methodName, Object... args) {
+		EventManager.scheduleTicks(ticks, priority, false, new ReflectionTarget(this, methodName, args), null);
 	}
 
 	public final void waitUntil(Conditional cond, EventHandle handle) {
