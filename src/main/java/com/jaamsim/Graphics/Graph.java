@@ -308,6 +308,7 @@ public class Graph extends GraphBasics  {
 	private void setupSeriesData(SeriesInfo info, double xLength, double xInterval) {
 
 		info.numPoints = 0;
+		info.indexOfLastEntry = -1;
 
 		for( int i = 0; i * xInterval < xAxisEnd.getValue(); i++ ) {
 			double t = i * xInterval;
@@ -381,16 +382,17 @@ public class Graph extends GraphBasics  {
 
 		double t = getSimTime() + xAxisEnd.getValue();
 		double presentValue = this.getCurrentValue(t, info);
-		if (info.numPoints < info.yValues.length) {
-			info.xValues[info.numPoints] = t;
-			info.yValues[info.numPoints] = presentValue;
-			info.numPoints++;
+
+		info.indexOfLastEntry++;
+		if (info.indexOfLastEntry == info.yValues.length) {
+			info.indexOfLastEntry = 0;
 		}
-		else {
-			System.arraycopy(info.xValues, 1, info.xValues, 0, info.xValues.length - 1);
-			System.arraycopy(info.yValues, 1, info.yValues, 0, info.yValues.length - 1);
-			info.xValues[info.xValues.length - 1] = t;
-			info.yValues[info.yValues.length - 1] = presentValue;
+
+		info.xValues[info.indexOfLastEntry] = t;
+		info.yValues[info.indexOfLastEntry] = presentValue;
+
+		if (info.numPoints < info.yValues.length) {
+			info.numPoints++;
 		}
 	}
 
