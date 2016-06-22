@@ -1301,8 +1301,9 @@ public class InputAgent {
 				newClasses.add(ent.getClass());
 		}
 
-		// Sort the classes alphabetically by the names of their object types
-		Collections.sort(newClasses, new ClassComparator());
+		// Sort the classes by the names of their object types, except for Simulation
+		// which is first on the list
+		Collections.sort(newClasses, uiClassSortOrder);
 
 		// Loop through the classes and identify the instances
 		for (Class<? extends Entity> newClass : newClasses) {
@@ -1317,7 +1318,7 @@ public class InputAgent {
 			}
 
 			// Sort the entities alphabetically by their names
-			Collections.sort(entList, new EntityComparator());
+			Collections.sort(entList, Input.uiSortOrder);
 
 			// Print a header for this class
 			if (newClass != Simulation.class)
@@ -1352,16 +1353,10 @@ public class InputAgent {
 			// Sort alphabetically by Object Type name
 			ObjectType ot0 = ObjectType.getObjectTypeForClass(class0);
 			ObjectType ot1 = ObjectType.getObjectTypeForClass(class1);
-			return ot0.getName().compareTo(ot1.getName());
+			return Input.uiSortOrder.compare(ot0, ot1);
 		}
 	}
-
-	private static class EntityComparator implements Comparator<Entity> {
-		@Override
-		public int compare(Entity ent0, Entity ent1) {
-			return ent0.getName().compareTo(ent1.getName());
-		}
-	}
+	public static final Comparator<Class<? extends Entity>> uiClassSortOrder = new ClassComparator();
 
 	/**
 	 * Returns the relative file path for the specified URI.
