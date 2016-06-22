@@ -1109,15 +1109,21 @@ public class InputAgent {
 			file.format("}%n");
 		}
 
-		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-			if (!ent.testFlag(Entity.FLAG_EDITED))
-				continue;
-			if (ent.testFlag(Entity.FLAG_GENERATED))
-				continue;
 
+		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
+
+		// Loop through the early keywords
+		for (int i = 0; i < EARLY_KEYWORDS.length; i++) {
+
+			// Loop through the entities
 			boolean blankLinePrinted = false;
-			for (int i = 0; i < EARLY_KEYWORDS.length; i++) {
+			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+				if (!ent.testFlag(Entity.FLAG_EDITED))
+					continue;
+				if (ent.testFlag(Entity.FLAG_GENERATED))
+					continue;
+
+				// Print an entry for each entity that used this keyword
 				final Input<?> in = ent.getInput(EARLY_KEYWORDS[i]);
 				if (in != null && in.isEdited()) {
 					if (!blankLinePrinted) {
@@ -1129,7 +1135,7 @@ public class InputAgent {
 			}
 		}
 
-		// 4) WRITE THE INPUTS FOR KEYWORDS THAT WERE EDITED
+		// 4) WRITE THE INPUTS FOR THE REMAINING KEYWORDS
 
 		// Identify the entities whose inputs were edited
 		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
