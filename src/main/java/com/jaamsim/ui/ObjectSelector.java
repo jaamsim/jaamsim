@@ -62,6 +62,8 @@ public class ObjectSelector extends FrameBox {
 
 	private long entSequence;
 
+	private int MAX_GENERATED_ENTITIES = 10000;
+
 	public ObjectSelector() {
 		super( "Object Selector" );
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -222,6 +224,7 @@ public class ObjectSelector extends FrameBox {
 		}
 
 		// Prepare a sorted list of entities
+		int numGenerated = 0;
 		ArrayList<Entity> entityList = new ArrayList<>();
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			try {
@@ -242,6 +245,13 @@ public class ObjectSelector extends FrameBox {
 				// Skip an entity that is locked
 				if (ent.testFlag(Entity.FLAG_LOCKED))
 					continue;
+
+				// Apply an upper bound on the number of generated entities to display
+				if (ent.testFlag(Entity.FLAG_GENERATED)) {
+					if (numGenerated > MAX_GENERATED_ENTITIES)
+						continue;
+					numGenerated++;
+				}
 
 				entityList.add(ent);
 			}
