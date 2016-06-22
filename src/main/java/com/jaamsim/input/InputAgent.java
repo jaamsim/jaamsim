@@ -1075,15 +1075,22 @@ public class InputAgent {
 
 		// 2) WRITE THE DEFINITION STATEMENTS FOR NEW OBJECTS
 
-		// Determine all the new classes that were created
-		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
+		// Prepare a sorted list of all the entities that were added to the model
+		ArrayList<Entity> newEntities = new ArrayList<>();
 		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
 			if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
 				continue;
+			newEntities.add(ent);
+		}
+		Collections.sort(newEntities, Input.uiSortOrder);
 
+		// Prepare a sorted list of all the new classes that were created
+		ArrayList<Class<? extends Entity>> newClasses = new ArrayList<>();
+		for (Entity ent : newEntities) {
 			if (!newClasses.contains(ent.getClass()))
 				newClasses.add(ent.getClass());
 		}
+		Collections.sort(newClasses, uiClassSortOrder);
 
 		// Add a blank line before the first object definition
 		if( !newClasses.isEmpty() )
@@ -1097,10 +1104,7 @@ public class InputAgent {
 			file.format("Define %s {", o.getName());
 
 			// Print the new instances that were defined
-			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-				if (!ent.testFlag(Entity.FLAG_ADDED) || ent.testFlag(Entity.FLAG_GENERATED))
-					continue;
-
+			for (Entity ent : newEntities) {
 				if (ent.getClass() == newClass)
 					file.format(" %s ", ent.getName());
 
@@ -1112,16 +1116,21 @@ public class InputAgent {
 
 		// 3) WRITE THE INPUTS FOR SPECIAL KEYWORDS THAT MUST COME BEFORE THE OTHERS
 
+		// Prepare a sorted list of all the entities that were edited
+		ArrayList<Entity> entityList = new ArrayList<>();
+		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+			if (!ent.testFlag(Entity.FLAG_EDITED) || ent.testFlag(Entity.FLAG_GENERATED))
+				continue;
+			entityList.add(ent);
+		}
+		Collections.sort(entityList, uiEntitySortOrder);
+
 		// Loop through the early keywords
 		for (int i = 0; i < EARLY_KEYWORDS.length; i++) {
 
 			// Loop through the entities
 			boolean blankLinePrinted = false;
-			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-				if (!ent.testFlag(Entity.FLAG_EDITED))
-					continue;
-				if (ent.testFlag(Entity.FLAG_GENERATED))
-					continue;
+			for (Entity ent : entityList) {
 
 				// Print an entry for each entity that used this keyword
 				final Input<?> in = ent.getInput(EARLY_KEYWORDS[i]);
@@ -1138,12 +1147,7 @@ public class InputAgent {
 		// 4) WRITE THE INPUTS FOR THE REMAINING KEYWORDS
 
 		// Identify the entities whose inputs were edited
-		for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
-			if (!ent.testFlag(Entity.FLAG_EDITED))
-				continue;
-			if (ent.testFlag(Entity.FLAG_GENERATED))
-				continue;
-
+		for (Entity ent : entityList) {
 			file.format("%n");
 
 			ArrayList<Input<?>> deferredInputs = new ArrayList<>();
@@ -1357,6 +1361,26 @@ public class InputAgent {
 		}
 	}
 	public static final Comparator<Class<? extends Entity>> uiClassSortOrder = new ClassComparator();
+
+	private static class EntityComparator implements Comparator<Entity> {
+		@Override
+		public int compare(Entity ent0, Entity ent1) {
+
+			// Place the Simulation entity in the first position
+			Class<? extends Entity> class0 = ent0.getClass();
+			Class<? extends Entity> class1 = ent1.getClass();
+			if (class0 == Simulation.class && class1 == Simulation.class)
+				return 0;
+			if (class0 == Simulation.class && class1 != Simulation.class)
+				return -1;
+			if (class0 != Simulation.class && class1 == Simulation.class)
+				return 1;
+
+			// Otherwise, sort in natural order
+			return Input.uiSortOrder.compare(ent0, ent1);
+		}
+	}
+	public static final Comparator<Entity> uiEntitySortOrder = new EntityComparator();
 
 	/**
 	 * Returns the relative file path for the specified URI.
