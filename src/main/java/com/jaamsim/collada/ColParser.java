@@ -1369,7 +1369,11 @@ public class ColParser {
 			throw new ColException("No 'p' child in 'lines' in mesh.");
 
 		int[] ps = (int[])pNode.getContent();
-		parseAssert(ps.length >= count * 2 * smd.stride);
+
+		if (ps.length < count * 2 * smd.stride) {
+			// Collada error, there is not enough indices for the apparent count, but we will play along all the same
+			count = ps.length / (2 * smd.stride);
+		}
 
 		smd.posDesc.indices = new int[count*2];
 		for (int i = 0; i < count * 2; ++i) {
