@@ -829,6 +829,12 @@ public class ColParser {
 
 		if (opaque == null) {
 			opaque = "A_ONE";
+			if (alpha == 0.0) {
+				// This model did not specify a transparency mode and has an alpha of 0
+				// This should lead to a completely transparent material, but this is an encountered bug
+				// in sketchup exported models, so we will assume they want it to be opaque
+				alpha = 1.0;
+			}
 		}
 
 		// There is a ton of conditions for us to handle transparency
