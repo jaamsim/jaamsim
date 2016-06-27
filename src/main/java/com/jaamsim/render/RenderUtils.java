@@ -524,8 +524,13 @@ static void putPointXYZW(FloatBuffer fb, Vec4d v) {
 
 					// This zipEntry is a collada file, no need to look
 					// any further
+
+					// Abuse URI a bit to URI-encode the filename
+					URI encEntryURI = new URI(null, entryName, null);
+					String encEntry = encEntryURI.getRawSchemeSpecificPart();
+
 					meshURL = new URL("jar:" + meshURL + "!/"
-							+ entryName);
+							+ encEntry);
 					break;
 				}
 			}
