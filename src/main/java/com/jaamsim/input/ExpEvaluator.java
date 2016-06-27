@@ -324,7 +324,7 @@ public class ExpEvaluator {
 					}
 					if (oh.getReturnType() == ArrayList.class) {
 						//TODO: find out if we can determine the contained class without an instance or if type erasure prevents that
-						return ExpValResult.makeValidRes(oh.getUnitType());
+						return ExpValResult.makeUndecidableRes();
 					}
 					ExpError error = new ExpError(null, 0, "Output: %s is not a known array type");
 					return ExpValResult.makeErrorRes(error);

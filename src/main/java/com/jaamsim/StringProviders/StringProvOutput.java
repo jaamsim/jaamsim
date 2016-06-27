@@ -49,7 +49,7 @@ public class StringProvOutput implements StringProvider {
 			return String.format(fmt, d/siFactor);
 		}
 		else {
-			Object obj = out.getValue(simTime, out.getReturnType());
+			Object obj = out.getValue(simTime, Object.class);
 			return String.format(fmt, obj);
 		}
 	}
