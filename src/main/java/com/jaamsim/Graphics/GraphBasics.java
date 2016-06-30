@@ -42,6 +42,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		public double[] yValues;
 		public double[] xValues;
 		public int numPoints; // number of points to be graphed
+		public int indexOfLastEntry; // index in the arrays for the last graph point in the series
 		public SampleProvider samp; // The source of the data for the series
 		public double lineWidth;
 		public Color4d lineColour;

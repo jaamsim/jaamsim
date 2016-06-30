@@ -63,6 +63,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	protected final EntityListInput<Threshold> immediateThresholdList;
 
 	@Keyword(description = "A list of thresholds that must be satisfied for the object to "
+	                     + "operate. Operation is stopped immediately when one of the thresholds "
+	                     + "closes. If a threshold closes part way though processing an entity, "
+	                     + "the work is interrupted and the entity is released.",
+	         exampleList = {"ExpressionThreshold1 TimeSeriesThreshold1 SignalThreshold1"})
+	protected final EntityListInput<Threshold> immediateReleaseThresholdList;
+
+	@Keyword(description = "A list of thresholds that must be satisfied for the object to "
 	                     + "operate. If a threshold closes part way though processing an entity, "
 	                     + "the remaining work is completed and the entity is released before the "
 	                     + "object is closed.",
@@ -129,6 +136,9 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		immediateThresholdList = new EntityListInput<>(Threshold.class, "ImmediateThresholdList", "Key Inputs", new ArrayList<Threshold>());
 		this.addInput(immediateThresholdList);
+
+		immediateReleaseThresholdList = new EntityListInput<>(Threshold.class, "ImmediateReleaseThresholdList", "Key Inputs", new ArrayList<Threshold>());
+		this.addInput(immediateReleaseThresholdList);
 
 		operatingThresholdList = new EntityListInput<>(Threshold.class, "OperatingThresholdList", "Key Inputs", new ArrayList<Threshold>());
 		this.addInput(operatingThresholdList);
@@ -362,7 +372,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	protected void endProcessing(double simTime) {}
 
 	/**
-	 * Interrupts processing of an entity.
+	 * Interrupts processing of an entity and holds it.
 	 */
 	private void stopAction() {
 
@@ -375,6 +385,17 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// Update the state
 		this.setBusy(false);
 		this.setPresentState();
+	}
+
+	/**
+	 * Interrupts processing of an entity and releases it.
+	 */
+	private void interruptAction() {
+
+		// Interrupt processing, if underway
+		if (endActionHandle.isScheduled()) {
+			EventManager.interruptEvent(endActionHandle);
+		}
 	}
 
 	/**
@@ -442,13 +463,20 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	public ArrayList<Threshold> getThresholds() {
 		ArrayList<Threshold> ret = new ArrayList<>(operatingThresholdList.getValue());
 		ret.addAll(immediateThresholdList.getValue());
+		ret.addAll(immediateReleaseThresholdList.getValue());
 		return ret;
 	}
 
 	@Override
 	public void thresholdChanged() {
 
-		// If an immediate closure, interrupt the present activity
+		// If an interrupt closure, interrupt the present activity and release the entity
+		if (isImmediateReleaseThresholdClosure()) {
+			this.interruptAction();
+			return;
+		}
+
+		// If an immediate closure, interrupt the present activity and hold the entity
 		if (isImmediateThresholdClosure()) {
 			this.stopAction();
 			return;
@@ -466,6 +494,14 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		return false;
 	}
 
+	private boolean isImmediateReleaseThresholdClosure() {
+		for (Threshold thresh : immediateReleaseThresholdList.getValue()) {
+			if (!thresh.isOpen())
+				return true;
+		}
+		return false;
+	}
+
 	// ********************************************************************************************
 	// PRESENT STATE
 	// ********************************************************************************************
@@ -476,6 +512,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 */
 	protected final boolean isOpen() {
 		for (Threshold thr : immediateThresholdList.getValue()) {
+			if (!thr.isOpen())
+				return false;
+		}
+		for (Threshold thr : immediateReleaseThresholdList.getValue()) {
 			if (!thr.isOpen())
 				return false;
 		}

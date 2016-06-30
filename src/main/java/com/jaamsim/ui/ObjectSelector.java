@@ -23,6 +23,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 
 import javax.swing.JFrame;
@@ -44,6 +46,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
 import com.jaamsim.units.Unit;
 
@@ -58,6 +61,8 @@ public class ObjectSelector extends FrameBox {
 	public static Entity currentEntity;
 
 	private long entSequence;
+
+	private int MAX_GENERATED_ENTITIES = 10000;
 
 	public ObjectSelector() {
 		super( "Object Selector" );
@@ -218,7 +223,9 @@ public class ObjectSelector extends FrameBox {
 			catch (IndexOutOfBoundsException e) {}
 		}
 
-		// Loop through the entities in the model
+		// Prepare a sorted list of entities
+		int numGenerated = 0;
+		ArrayList<Entity> entityList = new ArrayList<>();
 		for (int i = 0; i < Entity.getAll().size(); i++) {
 			try {
 				final Entity ent = Entity.getAll().get(i);
@@ -239,12 +246,33 @@ public class ObjectSelector extends FrameBox {
 				if (ent.testFlag(Entity.FLAG_LOCKED))
 					continue;
 
+				// Apply an upper bound on the number of generated entities to display
+				if (ent.testFlag(Entity.FLAG_GENERATED)) {
+					if (numGenerated > MAX_GENERATED_ENTITIES)
+						continue;
+					numGenerated++;
+				}
+
+				entityList.add(ent);
+			}
+			catch (IndexOutOfBoundsException e) {}
+		}
+		try {
+			Collections.sort(entityList, selectorSortOrder);
+		}
+		catch (Throwable t) {}
+
+		// Loop through the entities in the model
+		for (int i=0; i<entityList.size(); i++) {
+			try {
+				final Entity ent = entityList.get(i);
+
 				// Determine the object type for this entity
 				final ObjectType type = ent.getObjectType();
 				if (type == null)
 					continue;
 
-				// Find the pallete node for this entity
+				// Find the palette node for this entity
 				DefaultMutableTreeNode paletteNode = getNodeFor_In(type.getPaletteName(), top);
 				if (paletteNode == null)
 					continue;
@@ -332,6 +360,24 @@ public class ObjectSelector extends FrameBox {
 			tree.expandPath(new TreePath(nodeList));
 		}
 	}
+
+	private static class EntityComparator implements Comparator<Entity> {
+		@Override
+		public int compare(Entity ent0, Entity ent1) {
+
+			// Put any null entities at the end of the list
+			if (ent0 == null && ent1 == null)
+				return 0;
+			if (ent0 != null && ent1 == null)
+				return -1;
+			if (ent0 == null && ent1 != null)
+				return 1;
+
+			// Otherwise, sort in natural order
+			return Input.uiSortOrder.compare(ent0, ent1);
+		}
+	}
+	private static final Comparator<Entity> selectorSortOrder = new EntityComparator();
 
 	/**
 	 * Returns a tree node for the specified userObject in the specified parent.
