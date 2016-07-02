@@ -83,8 +83,8 @@ public abstract class GraphBasics extends DisplayEntity {
 	private final ValueInput xAxisInterval;
 
 	@Keyword(description = "The Java format to be used for the tick mark values on the x-axis.\n" +
-			"For example, the format %.1fs would dispaly the value 5 as 5.0s.",
-	         exampleList = {"%.1fs"})
+			"For example, the format %.1f would dispaly the value 5 as 5.0.",
+	         exampleList = {"%.1f"})
 	private final FormatInput xAxisLabelFormat;
 
 	@Keyword(description = "A list of values between XAxisStart and XAxisEnd at which to insert vertical gridlines.",
@@ -192,7 +192,7 @@ public abstract class GraphBasics extends DisplayEntity {
 		xAxisInterval.setValidRange(1.0e-6, Double.POSITIVE_INFINITY);
 		this.addInput(xAxisInterval);
 
-		xAxisLabelFormat = new FormatInput("XAxisLabelFormat", "X-Axis", "%.0fs");
+		xAxisLabelFormat = new FormatInput("XAxisLabelFormat", "X-Axis", "%.0f");
 		this.addInput(xAxisLabelFormat);
 
 		DoubleVector defXLines = new DoubleVector();
