@@ -54,6 +54,12 @@ public class DirInput extends StringInput {
 		dir = temp;
 	}
 
+	@Override
+	public void reset() {
+		super.reset();
+		dir = null;
+	}
+
 	public File getDir() {
 		if (dir == null) {
 			return null;
