@@ -109,179 +109,179 @@ public class OutputBox extends FrameBox {
 		super.dispose();
 	}
 
-private class OutputTable extends JTable {
-	public OutputTable(TableModel model) {
-		super(model);
+	private class OutputTable extends JTable {
+		public OutputTable(TableModel model) {
+			super(model);
 
-		setDefaultRenderer(Object.class, colRenderer);
+			setDefaultRenderer(Object.class, colRenderer);
 
-		getColumnModel().getColumn(0).setWidth(150);
-		getColumnModel().getColumn(1).setWidth(100);
+			getColumnModel().getColumn(0).setWidth(150);
+			getColumnModel().getColumn(1).setWidth(100);
 
-		this.getTableHeader().setFont(FrameBox.boldFont);
-		this.getTableHeader().setReorderingAllowed(false);
-	}
-
-	@Override
-	public String getToolTipText(MouseEvent event) {
-		Point p = event.getPoint();
-		int row = rowAtPoint(p);
-		if (currentEntity == null ||
-		    row >= entries.size() ||
-		    entries.get(row) instanceof Class) {
-			return null;
+			this.getTableHeader().setFont(FrameBox.boldFont);
+			this.getTableHeader().setReorderingAllowed(false);
 		}
 
-		OutputHandle output = (OutputHandle)entries.get(row);
-		return GUIFrame.formatOutputToolTip(output.getName(), output.getDescription());
-	}
+		@Override
+		public String getToolTipText(MouseEvent event) {
+			Point p = event.getPoint();
+			int row = rowAtPoint(p);
+			if (currentEntity == null ||
+			    row >= entries.size() ||
+			    entries.get(row) instanceof Class) {
+				return null;
+			}
 
-	@Override
-	public void doLayout() {
-		FrameBox.fitTableToLastColumn(this);
-	}
-}
-
-private class OutputTableModel extends AbstractTableModel {
-	double simTime = 0.0d;
-	@Override
-	public int getColumnCount() {
-		return 2;
-	}
-
-	@Override
-	public String getColumnName(int column) {
-		switch (column) {
-		case 0: return "Output";
-		case 1: return "Value";
+			OutputHandle output = (OutputHandle)entries.get(row);
+			return GUIFrame.formatOutputToolTip(output.getName(), output.getDescription());
 		}
 
-		return "Unknown";
+		@Override
+		public void doLayout() {
+			FrameBox.fitTableToLastColumn(this);
+		}
 	}
 
-	@Override
-	public int getRowCount() {
-		return entries.size();
-	}
+	private class OutputTableModel extends AbstractTableModel {
+		double simTime = 0.0d;
+		@Override
+		public int getColumnCount() {
+			return 2;
+		}
 
-	@Override
-	public Object getValueAt(int row, int col) {
-		Object entry = entries.get(row);
-		switch (col) {
-		case 0:
-			if (entry instanceof Class)
-				return String.format("<HTML><B>%s</B></HTML>", ((Class<?>)entry).getSimpleName());
-			return String.format("    %s", ((OutputHandle)entry).getName());
-		case 1:
-			if (entry instanceof Class)
-				return "";
-			try {
-				StringBuilder sb = new StringBuilder();
-				String str;
+		@Override
+		public String getColumnName(int column) {
+			switch (column) {
+			case 0: return "Output";
+			case 1: return "Value";
+			}
 
-				// Determine the preferred unit
-				OutputHandle out = (OutputHandle)entry;
-				Class<? extends Unit> ut = out.getUnitType();
-				double factor = Unit.getDisplayedUnitFactor(ut);
-				String unitString = Unit.getDisplayedUnit(ut);
+			return "Unknown";
+		}
 
-				// Numeric outputs
-				if (out.isNumericValue()) {
-					double val = out.getValueAsDouble(simTime, Double.NaN);
-					if (out.getReturnType() == int.class || out.getReturnType() == long.class || out.getReturnType() == Integer.class) {
-						str = String.format("%.0f", val/factor);
+		@Override
+		public int getRowCount() {
+			return entries.size();
+		}
+
+		@Override
+		public Object getValueAt(int row, int col) {
+			Object entry = entries.get(row);
+			switch (col) {
+			case 0:
+				if (entry instanceof Class)
+					return String.format("<HTML><B>%s</B></HTML>", ((Class<?>)entry).getSimpleName());
+				return String.format("    %s", ((OutputHandle)entry).getName());
+			case 1:
+				if (entry instanceof Class)
+					return "";
+				try {
+					StringBuilder sb = new StringBuilder();
+					String str;
+
+					// Determine the preferred unit
+					OutputHandle out = (OutputHandle)entry;
+					Class<? extends Unit> ut = out.getUnitType();
+					double factor = Unit.getDisplayedUnitFactor(ut);
+					String unitString = Unit.getDisplayedUnit(ut);
+
+					// Numeric outputs
+					if (out.isNumericValue()) {
+						double val = out.getValueAsDouble(simTime, Double.NaN);
+						if (out.getReturnType() == int.class || out.getReturnType() == long.class || out.getReturnType() == Integer.class) {
+							str = String.format("%.0f", val/factor);
+						}
+						else {
+							str = String.format("%g", val/factor);
+						}
+						sb.append(str);
 					}
+
+					// DoubleVector output
+					else if (out.getReturnType() == DoubleVector.class) {
+						sb.append("{");
+						DoubleVector vec = out.getValue(simTime, DoubleVector.class);
+						for (int i=0; i<vec.size(); i++) {
+							str = String.format("%g, ", vec.get(i)/factor);
+							sb.append(str);
+						}
+						if (sb.length() > 1)
+							sb.replace(sb.length()-2, sb.length()-1, "}");
+						else
+							sb.append("}");
+					}
+
+					// ArrayList output
+					else if (out.getReturnType() == ArrayList.class) {
+						sb.append("{");
+						ArrayList<?> array = out.getValue(simTime, ArrayList.class);
+						for (int i=0; i<array.size(); i++) {
+							Object obj = array.get(i);
+							if (obj instanceof Double) {
+								double val = (Double)obj;
+								str = String.format("%g, ", val/factor);
+							}
+							else {
+								str = String.format("%s, ", obj);
+							}
+							sb.append(str);
+						}
+						if (sb.length() > 1)
+							sb.replace(sb.length()-2, sb.length()-1, "}");
+						else
+							sb.append("}");
+					}
+
+					// Keyed outputs
+					else if (out.getReturnType() == LinkedHashMap.class) {
+						sb.append("{");
+						LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
+						for (Entry<?, ?> mapEntry : map.entrySet()) {
+							Object obj = mapEntry.getValue();
+							if (obj instanceof Double) {
+								double val = (Double)obj;
+								str = String.format("%s=%g, ", mapEntry.getKey(), val/factor);
+							}
+							else {
+								str = String.format("%s=%s, ", mapEntry.getKey(), obj);
+							}
+							sb.append(str);
+						}
+						if (sb.length() > 1)
+							sb.replace(sb.length()-2, sb.length()-1, "}");
+						else
+							sb.append("}");
+					}
+
+					// All other outputs
 					else {
-						str = String.format("%g", val/factor);
-					}
-					sb.append(str);
-				}
-
-				// DoubleVector output
-				else if (out.getReturnType() == DoubleVector.class) {
-					sb.append("{");
-					DoubleVector vec = out.getValue(simTime, DoubleVector.class);
-					for (int i=0; i<vec.size(); i++) {
-						str = String.format("%g, ", vec.get(i)/factor);
+						if (out.getValue(simTime, out.getReturnType()) == null)
+							return "null";
+						str = out.getValue(simTime, out.getReturnType()).toString();
 						sb.append(str);
+						unitString = Unit.getSIUnit(ut);  // other outputs are not converted to preferred units
 					}
-					if (sb.length() > 1)
-						sb.replace(sb.length()-2, sb.length()-1, "}");
-					else
-						sb.append("}");
+
+					// Append the appropriate unit
+					if (ut != Unit.class && ut != DimensionlessUnit.class)
+						sb.append(Input.SEPARATOR).append(unitString);
+
+					return sb.toString();
 				}
-
-				// ArrayList output
-				else if (out.getReturnType() == ArrayList.class) {
-					sb.append("{");
-					ArrayList<?> array = out.getValue(simTime, ArrayList.class);
-					for (int i=0; i<array.size(); i++) {
-						Object obj = array.get(i);
-						if (obj instanceof Double) {
-							double val = (Double)obj;
-							str = String.format("%g, ", val/factor);
-						}
-						else {
-							str = String.format("%s, ", obj);
-						}
-						sb.append(str);
-					}
-					if (sb.length() > 1)
-						sb.replace(sb.length()-2, sb.length()-1, "}");
-					else
-						sb.append("}");
+				catch (Throwable e) {
+					LogBox.logException(e);
+					return "Cannot evaluate - see Log Viewer for details";
 				}
-
-				// Keyed outputs
-				else if (out.getReturnType() == LinkedHashMap.class) {
-					sb.append("{");
-					LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
-					for (Entry<?, ?> mapEntry : map.entrySet()) {
-						Object obj = mapEntry.getValue();
-						if (obj instanceof Double) {
-							double val = (Double)obj;
-							str = String.format("%s=%g, ", mapEntry.getKey(), val/factor);
-						}
-						else {
-							str = String.format("%s=%s, ", mapEntry.getKey(), obj);
-						}
-						sb.append(str);
-					}
-					if (sb.length() > 1)
-						sb.replace(sb.length()-2, sb.length()-1, "}");
-					else
-						sb.append("}");
-				}
-
-				// All other outputs
-				else {
-					if (out.getValue(simTime, out.getReturnType()) == null)
-						return "null";
-					str = out.getValue(simTime, out.getReturnType()).toString();
-					sb.append(str);
-					unitString = Unit.getSIUnit(ut);  // other outputs are not converted to preferred units
-				}
-
-				// Append the appropriate unit
-				if (ut != Unit.class && ut != DimensionlessUnit.class)
-					sb.append(Input.SEPARATOR).append(unitString);
-
-				return sb.toString();
+			default:
+				assert false;
+				return null;
 			}
-			catch (Throwable e) {
-				LogBox.logException(e);
-				return "Cannot evaluate - see Log Viewer for details";
-			}
-		default:
-			assert false;
-			return null;
+		}
+
+		@Override
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			return false;
 		}
 	}
-
-	@Override
-	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return false;
-	}
-}
 
 }
