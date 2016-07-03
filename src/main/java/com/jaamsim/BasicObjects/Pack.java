@@ -108,8 +108,7 @@ public class Pack extends LinkedService {
 		if (!startedPacking) {
 			Integer m = this.getNextMatchValue(getSimTime());
 			numberToInsert = (int) numberOfEntities.getValue().getNextSample(this.getSimTime());
-			if (numberToInsert < 1)
-				error("The NumberOfEntities input must be greater than zero. Received: %s", numberToInsert);
+			numberToInsert = Math.max(1, numberToInsert);
 			if (waitQueue.getValue().getMatchCount(m) < numberToInsert) {
 				return false;
 			}
