@@ -19,8 +19,6 @@ package com.jaamsim.ui;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -28,8 +26,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.input.Input;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
@@ -176,95 +174,31 @@ public class OutputBox extends FrameBox {
 				if (entry instanceof Class)
 					return "";
 				try {
-					StringBuilder sb = new StringBuilder();
-					String str;
-
 					// Determine the preferred unit
 					OutputHandle out = (OutputHandle)entry;
 					Class<? extends Unit> ut = out.getUnitType();
 					double factor = Unit.getDisplayedUnitFactor(ut);
-					String unitString = Unit.getDisplayedUnit(ut);
 
-					// Numeric outputs
+					// Select the appropriate format
+					String fmt = "%s";
 					if (out.isNumericValue()) {
-						double val = out.getValueAsDouble(simTime, Double.NaN);
-						if (out.getReturnType() == int.class || out.getReturnType() == long.class || out.getReturnType() == Integer.class) {
-							str = String.format("%.0f", val/factor);
+						if (out.isIntegerValue() && out.getUnitType() == DimensionlessUnit.class) {
+							fmt = "%.0f";
 						}
 						else {
-							str = String.format("%g", val/factor);
+							fmt = "%g";
 						}
-						sb.append(str);
 					}
 
-					// DoubleVector output
-					else if (out.getReturnType() == DoubleVector.class) {
-						sb.append("{");
-						DoubleVector vec = out.getValue(simTime, DoubleVector.class);
-						for (int i=0; i<vec.size(); i++) {
-							str = String.format("%g, ", vec.get(i)/factor);
-							sb.append(str);
-						}
-						if (sb.length() > 1)
-							sb.replace(sb.length()-2, sb.length()-1, "}");
-						else
-							sb.append("}");
-					}
-
-					// ArrayList output
-					else if (out.getReturnType() == ArrayList.class) {
-						sb.append("{");
-						ArrayList<?> array = out.getValue(simTime, ArrayList.class);
-						for (int i=0; i<array.size(); i++) {
-							Object obj = array.get(i);
-							if (obj instanceof Double) {
-								double val = (Double)obj;
-								str = String.format("%g, ", val/factor);
-							}
-							else {
-								str = String.format("%s, ", obj);
-							}
-							sb.append(str);
-						}
-						if (sb.length() > 1)
-							sb.replace(sb.length()-2, sb.length()-1, "}");
-						else
-							sb.append("}");
-					}
-
-					// Keyed outputs
-					else if (out.getReturnType() == LinkedHashMap.class) {
-						sb.append("{");
-						LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
-						for (Entry<?, ?> mapEntry : map.entrySet()) {
-							Object obj = mapEntry.getValue();
-							if (obj instanceof Double) {
-								double val = (Double)obj;
-								str = String.format("%s=%g, ", mapEntry.getKey(), val/factor);
-							}
-							else {
-								str = String.format("%s=%s, ", mapEntry.getKey(), obj);
-							}
-							sb.append(str);
-						}
-						if (sb.length() > 1)
-							sb.replace(sb.length()-2, sb.length()-1, "}");
-						else
-							sb.append("}");
-					}
-
-					// All other outputs
-					else {
-						if (out.getValue(simTime, out.getReturnType()) == null)
-							return "null";
-						str = out.getValue(simTime, out.getReturnType()).toString();
-						sb.append(str);
-						unitString = Unit.getSIUnit(ut);  // other outputs are not converted to preferred units
-					}
+					// Evaluate the output
+					StringBuilder sb = new StringBuilder();
+					sb.append(InputAgent.getValueAsString((OutputHandle)entry, simTime, fmt, "%g", factor));
 
 					// Append the appropriate unit
-					if (ut != Unit.class && ut != DimensionlessUnit.class)
+					if (ut != Unit.class && ut != DimensionlessUnit.class) {
+						String unitString = Unit.getDisplayedUnit(ut);
 						sb.append(Input.SEPARATOR).append(unitString);
+					}
 
 					return sb.toString();
 				}
