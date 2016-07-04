@@ -1536,6 +1536,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 				RenderManager.inst().createWindow(v);
 		}
 
+		// Set the initial state for the "Snap to Grid" check box
+		snapToGrid.setSelected(Simulation.isSnapToGrid());
+
 		// Set the initial state for the "Show Axes" check box
 		DisplayEntity ent = (DisplayEntity) Entity.getNamedEntity("XYZ-Axis");
 		if (ent == null) {
