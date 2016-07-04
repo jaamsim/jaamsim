@@ -1407,6 +1407,15 @@ public class InputAgent {
 			return String.format(fmt, val/factor);
 		}
 
+		// Vec3d outputs
+		if (retType == Vec3d.class) {
+			Vec3d vec = out.getValue(simTime, Vec3d.class);
+			sb.append(vec.x/factor);
+			sb.append(Input.SEPARATOR).append(vec.y/factor);
+			sb.append(Input.SEPARATOR).append(vec.z/factor);
+			return String.format(fmt, sb.toString());
+		}
+
 		// DoubleVector output
 		if (retType == DoubleVector.class) {
 			sb.append("{");
