@@ -45,7 +45,9 @@ public class MovingAverage extends DoubleCalculation {
 		this.addInput(numberOfSamples);
 	}
 
-	public MovingAverage() {}
+	public MovingAverage() {
+		samples = new double[1];
+	}
 
 	@Override
 	public void earlyInit() {

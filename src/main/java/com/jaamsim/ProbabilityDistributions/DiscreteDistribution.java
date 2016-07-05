@@ -66,7 +66,11 @@ public class DiscreteDistribution extends Distribution {
 		this.addInput( probabilityListInput);
 	}
 
-	public DiscreteDistribution() {}
+	public DiscreteDistribution() {
+		sampleCount = new int[0];
+		valueList = new double[0];
+		cumProbList = new double[0];
+	}
 
 	@Override
 	public void validate() {
@@ -125,6 +129,8 @@ public class DiscreteDistribution extends Distribution {
 
 	@Override
 	public double getMinValue() {
+		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
+			return Double.NaN;
 		double ret = Double.POSITIVE_INFINITY;
 		for( int i = 0; i < probabilityListInput.getValue().size(); i++ ) {
 			if( probabilityListInput.getValue().get(i) > 0.0 ) {
@@ -138,6 +144,8 @@ public class DiscreteDistribution extends Distribution {
 
 	@Override
 	public double getMaxValue() {
+		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
+			return Double.NaN;
 		double ret = Double.NEGATIVE_INFINITY;
 		for( int i = 0; i < probabilityListInput.getValue().size(); i++ ) {
 			if( probabilityListInput.getValue().get(i) > 0.0 ) {
@@ -151,6 +159,8 @@ public class DiscreteDistribution extends Distribution {
 
 	@Override
 	protected double getMean(double simTime) {
+		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
+			return Double.NaN;
 		double ret = 0.0;
 		for( int i=0; i<probabilityListInput.getValue().size(); i++) {
 			ret += probabilityListInput.getValue().get(i) * valueListInput.getValue().get(i);
@@ -160,6 +170,8 @@ public class DiscreteDistribution extends Distribution {
 
 	@Override
 	protected double getStandardDev(double simTime) {
+		if (probabilityListInput.getValue() == null || valueListInput.getValue() == null)
+			return Double.NaN;
 		double sum = 0.0;
 		for( int i=0; i<probabilityListInput.getValue().size(); i++) {
 			double val = valueListInput.getValue().get(i);

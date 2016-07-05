@@ -114,6 +114,8 @@ public class ContinuousDistribution extends Distribution {
 		double sum = 0.0;
 		DoubleVector cumList = cumulativeProbabilityListInput.getValue();
 		DoubleVector valueList = valueListInput.getValue();
+		if (cumList == null || valueList == null)
+			return Double.NaN;
 		for( int i=1; i<cumList.size(); i++) {
 			sum += ( cumList.get(i) - cumList.get(i-1) ) * ( valueList.get(i) + valueList.get(i-1) );
 		}
@@ -125,6 +127,8 @@ public class ContinuousDistribution extends Distribution {
 		double sum = 0.0;
 		DoubleVector cumList = cumulativeProbabilityListInput.getValue();
 		DoubleVector valueList = valueListInput.getValue();
+		if (cumList == null || valueList == null)
+			return Double.NaN;
 		for( int i=1; i<cumList.size(); i++) {
 			double val = valueList.get(i);
 			double lastVal = valueList.get(i-1);
