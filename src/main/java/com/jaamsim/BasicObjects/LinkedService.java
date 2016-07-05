@@ -120,6 +120,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	{
 		stateGraphics.setHidden(false);
+		workingStateListInput.setHidden(false);
 
 		processPosition = new Vec3dInput("ProcessPosition", "Key Inputs", new Vec3d(0.0d, 0.0d, 0.01d));
 		processPosition.setUnitType(DistanceUnit.class);
