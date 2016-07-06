@@ -871,18 +871,11 @@ public class DisplayEntity extends Entity {
 	public Vec3d getPositionOnPolyline(double frac) {
 		synchronized(screenPointLock) {
 
-			// Calculate the graphical length of each polyline segment
-			int n = pointsInput.getValue().size();
-			double[] cumLengthList = new double[n];
-			cumLengthList[0] = 0.0;
-			for (int i = 1; i < n; i++) {
-				Vec3d vec = new Vec3d();
-				vec.sub3(pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
-				cumLengthList[i] = cumLengthList[i-1] + vec.mag3();
-			}
+			// Calculate the cumulative graphical lengths along the polyline
+			double[] cumLengthList = this.getCumulativeLengths();
 
 			// Find the insertion point by binary search
-			double dist = frac * cumLengthList[n-1];
+			double dist = frac * cumLengthList[cumLengthList.length-1];
 			int k = Arrays.binarySearch(cumLengthList, dist);
 
 			// Exact match
@@ -905,6 +898,22 @@ public class DisplayEntity extends Entity {
 			                 fracInSegment);
 			return vec;
 		}
+	}
+
+	/**
+	 * Returns the cumulative graphics lengths for the nodes along the polyline.
+	 * @return array of cumulative graphical lengths
+	 */
+	private double[] getCumulativeLengths() {
+		int n = pointsInput.getValue().size();
+		double[] cumLengthList = new double[n];
+		cumLengthList[0] = 0.0;
+		for (int i = 1; i < n; i++) {
+			Vec3d vec = new Vec3d();
+			vec.sub3(pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
+			cumLengthList[i] = cumLengthList[i-1] + vec.mag3();
+		}
+		return cumLengthList;
 	}
 
 	public boolean selectable() {
