@@ -53,3 +53,22 @@ Dr. Harry King <d.harry.king@gmail.com>
 
 If you have any problems building the source or technical inquiries:
 Harvey Harrison <harvey.harrison@gmail.com>
+
+# Citing JaamSim
+
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.57118.svg)](http://dx.doi.org/10.5281/zenodo.57118)
+
+Please Cite JaamSim as the following, replacing the version with the version used in your paper.
+
+JaamSim Development Team (2016). JaamSim: Discrete-Event Simulation Software. Version 2016-14. URL http://jaamsim.com. doi:10.5281/zenodo.57118
+
+BibText entry:
+
+@Manual{,
+    title = {JaamSim: Discrete-Event Simulation Software},
+    author = {{JaamSim Development Team}},
+    year = {2016},
+    note = {Version 2016-14},
+    url = {http://jaamsim.com},
+    doi = {10.5281/zenodo.57118}
+  }
