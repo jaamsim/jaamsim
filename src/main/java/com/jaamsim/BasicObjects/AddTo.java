@@ -70,4 +70,10 @@ public class AddTo extends Pack {
 		return super.startProcessing(simTime);
 	}
 
+	@Override
+	protected int getNumberToInsert(double simTime) {
+		int ret = (int)numberOfEntities.getValue().getNextSample(simTime);
+		return ret;
+	}
+
 }
