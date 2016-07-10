@@ -106,7 +106,7 @@ public class Pack extends LinkedService {
 
 		// Are there sufficient entities in the queue to start packing?
 		if (!startedPacking) {
-			Integer m = this.getNextMatchValue(getSimTime());
+			Integer m = this.getNextMatchValue(simTime);
 			numberToInsert = this.getNumberToInsert(simTime);
 			if (waitQueue.getValue().getMatchCount(m) < numberToInsert) {
 				return false;
