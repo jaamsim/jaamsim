@@ -27,6 +27,7 @@ import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -34,6 +35,8 @@ import com.jaamsim.input.BooleanInput;
 import com.jaamsim.input.EntityListInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
+import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.IntegerListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.UnitTypeListInput;
 import com.jaamsim.input.ValueInput;
@@ -96,6 +99,11 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 	         exampleList = {"{ [Entity1].Output1 } { [Entity2].Output2 }"})
 	private final SampleListInput valueTraceList;
 
+	@Keyword(description = "The number of decimal places to show for each value in valueTraceList."
+			+ "  If only one number is given, then that number of decimal places is used for all values.",
+	         exampleList = "1 1")
+	private final IntegerListInput valuePrecisionList;
+
 	private final ArrayList<Double> lastValueList = new ArrayList<>();
 
 	{
@@ -145,6 +153,9 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 		valueTraceList.setEntity(this);
 		valueTraceList.setDefaultText("None");
 		this.addInput(valueTraceList);
+
+		valuePrecisionList = new IntegerListInput("ValuePrecisionList", "Tracing", new IntegerVector());
+		this.addInput(valuePrecisionList);
 	}
 
 	public ExpressionLogger() {}
@@ -169,6 +180,16 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 		if (in == unitTypeListInput) {
 			dataSource.setUnitTypeList(unitTypeListInput.getUnitTypeList());
 			return;
+		}
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+		if (valuePrecisionList.getValue().size() > 1) {
+			if (valuePrecisionList.getValue().size() != valueTraceList.getValue().size()) {
+				throw new InputErrorException( "There must be the same number of entries in ValueTraceList and ValuePrecisionList" );
+			}
 		}
 	}
 
@@ -323,7 +344,18 @@ public class ExpressionLogger extends DisplayEntity implements StateEntityListen
 			for (int i=0; i<valueTraceList.getListSize(); i++) {
 				double val = valueTraceList.getValue().get(i).getNextSample(simTime);
 				factor = Unit.getDisplayedUnitFactor(valueTraceList.getUnitType(i));
-				file.format("\t%s", val/factor);
+
+				if (valuePrecisionList.getValue().size() == 1) {
+					int precision = valuePrecisionList.getValue().get(0);
+					file.format("\t%."+precision+"f", val/factor );
+				}
+				else if (valuePrecisionList.getValue().size() > 1) {
+					int precision = valuePrecisionList.getValue().get(i);
+					file.format("\t%."+precision+"f", val/factor );
+				}
+				else {
+					file.format("\t%s", val/factor);
+				}
 
 				// Update the last recorded values for the traced expressions
 				lastValueList.set(i, val);
