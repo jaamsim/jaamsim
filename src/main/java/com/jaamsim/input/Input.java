@@ -231,11 +231,6 @@ public abstract class Input<T> {
 
 	public void setTokens(KeywordIndex kw) {
 		isDef = false;
-		if (kw.numArgs() > 1000) {
-			valueTokens = null;
-			return;
-		}
-
 		valueTokens = kw.getArgArray();
 	}
 
