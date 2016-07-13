@@ -16,29 +16,31 @@ public class ExpValResult {
 	public final ArrayList<ExpError> errors;
 
 	public final Class<? extends Unit> unitType;
+	public final ExpResType type;
 
-	public static ExpValResult makeValidRes(Class<? extends Unit> ut)
+	public static ExpValResult makeValidRes(ExpResType t, Class<? extends Unit> ut)
 	{
-		return new ExpValResult(State.VALID, ut, null);
+		return new ExpValResult(State.VALID, t, ut, null);
 	}
 
 	public static ExpValResult makeUndecidableRes()
 	{
-		return new ExpValResult(State.UNDECIDABLE, DimensionlessUnit.class, null);
+		return new ExpValResult(State.UNDECIDABLE, null, DimensionlessUnit.class, null);
 	}
 
 	public static ExpValResult makeErrorRes(ArrayList<ExpError> es) {
-		return new ExpValResult(State.ERROR, DimensionlessUnit.class, es);
+		return new ExpValResult(State.ERROR, null, DimensionlessUnit.class, es);
 	}
 
 	public static ExpValResult makeErrorRes(ExpError error) {
 		ArrayList<ExpError> es = new ArrayList<>(1);
-		return new ExpValResult(State.ERROR, DimensionlessUnit.class, es);
+		return new ExpValResult(State.ERROR, null, DimensionlessUnit.class, es);
 	}
 
-	private ExpValResult(State s, Class<? extends Unit> ut, ArrayList<ExpError> es) {
+	private ExpValResult(State s, ExpResType t, Class<? extends Unit> ut, ArrayList<ExpError> es) {
 		state = s;
 		unitType = ut;
+		type = t;
 
 		if (es == null)
 			errors = new ArrayList<>();

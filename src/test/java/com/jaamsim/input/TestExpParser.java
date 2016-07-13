@@ -52,7 +52,7 @@ public class TestExpParser {
 
 		@Override
 		public ExpValResult validate(boolean[] hasIndices) {
-			return ExpValResult.makeValidRes(DimensionlessUnit.class);
+			return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 		}
 
 	}
@@ -370,7 +370,7 @@ public class TestExpParser {
 
 		@Override
 		public ExpValResult validate(boolean[] hasIndices) {
-			return ExpValResult.makeValidRes(DimensionlessUnit.class);
+			return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 		}
 	}
 

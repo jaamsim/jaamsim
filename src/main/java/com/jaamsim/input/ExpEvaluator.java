@@ -186,7 +186,13 @@ public class ExpEvaluator {
 					throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", names[1], names[0]);
 				}
 				if (oh.canCache() && !hasIndices[1]) {
-					return new CachedResolver(oh);
+					Class<?> retType = oh.getReturnType();
+					if (    OutputHandle.isNumericType(retType) ||
+					        retType == boolean.class ||
+					        retType == Boolean.class) {
+						// This output is cache-able and has a numeric output, use an optimized resolver
+						return new CachedResolver(oh);
+					}
 				}
 			}
 
@@ -229,7 +235,7 @@ public class ExpEvaluator {
 
 		@Override
 		public ExpValResult validate(boolean[] hasIndices) {
-			return ExpValResult.makeValidRes(handle.getUnitType());
+			return ExpValResult.makeValidRes(ExpResType.NUMBER, handle.getUnitType());
 		}
 	}
 
@@ -315,12 +321,12 @@ public class ExpEvaluator {
 						ExpError error = new ExpError(null, 0, "Output: %s does not return a numeric type", names[1]);
 						return ExpValResult.makeErrorRes(error);
 					}
-					return ExpValResult.makeValidRes(oh.getUnitType());
+					return ExpValResult.makeValidRes(ExpResType.NUMBER, oh.getUnitType());
 				} else {
 					// Indexed final output
 					if (oh.getReturnType() == DoubleVector.class ||
 						oh.getReturnType() == IntegerVector.class) {
-						return ExpValResult.makeValidRes(oh.getUnitType());
+						return ExpValResult.makeValidRes(ExpResType.NUMBER, oh.getUnitType());
 					}
 					if (oh.getReturnType() == ArrayList.class) {
 						//TODO: find out if we can determine the contained class without an instance or if type erasure prevents that
@@ -350,7 +356,7 @@ public class ExpEvaluator {
 						ExpError error = new ExpError(null, 0, "Output: '%s' does not return a numeric type", names[i]);
 						return ExpValResult.makeErrorRes(error);
 					}
-					return ExpValResult.makeValidRes(unitType);
+					return ExpValResult.makeValidRes(ExpResType.NUMBER, unitType);
 				} else {
 					if (!Entity.class.isAssignableFrom(klass)) {
 						ExpError error = new ExpError(null, 0, "Output: '%s' must output an entity type", names[i]);
