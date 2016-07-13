@@ -1922,6 +1922,10 @@ public class ExpParser {
 		if (nextTok.type == ExpTokenizer.NUM_TYPE) {
 			return parseConstant(context, nextTok.value, tokens, exp, nextTok.pos);
 		}
+		if (nextTok.type == ExpTokenizer.DSQ_TYPE) {
+			// Return a literal string constant
+			return new Constant(context, ExpResult.makeStringResult(nextTok.value), exp, nextTok.pos);
+		}
 		if (nextTok.type == ExpTokenizer.VAR_TYPE &&
 		    !nextTok.value.equals("this")) {
 			return parseFuncCall(context, nextTok.value, tokens, exp, nextTok.pos);
@@ -1971,7 +1975,6 @@ public class ExpParser {
 
 		return new Constant(context, ExpResult.makeNumResult(Double.parseDouble(constant)*mult, ut), exp, pos);
 	}
-
 
 	private static ExpNode parseFuncCall(ParseContext context, String funcName, TokenList tokens, Expression exp, int pos) throws ExpError {
 

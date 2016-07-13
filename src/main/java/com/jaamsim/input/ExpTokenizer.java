@@ -24,6 +24,7 @@ public class ExpTokenizer {
 	public static final int NUM_TYPE = 1;
 	public static final int SYM_TYPE = 2;
 	public static final int SQ_TYPE = 3; // Square quoted tokens
+	public static final int DSQ_TYPE = 4; // Double Square quoted tokens
 
 	public static class Token {
 		public int type;
@@ -124,12 +125,19 @@ public class ExpTokenizer {
 		return pos;
 	}
 
+
 	private static int getSQToken(ArrayList<Token> res, int startPos, String input) throws ExpError {
-		Token newTok = new Token();
-		newTok.type = SQ_TYPE;
-		newTok.pos = startPos;
+
+		boolean isDoubleQuoted = false;
 
 		int closePos = startPos + 1;
+
+		if (input.length() > startPos+1 && input.charAt(startPos+1) == '[') {
+			// This is double square quoted token
+			isDoubleQuoted = true;
+			closePos += 1;
+		}
+
 		while (closePos < input.length()) {
 			char c = input.charAt(closePos);
 			if (c == '[')
@@ -144,9 +152,26 @@ public class ExpTokenizer {
 			throw new ExpError(input, startPos, "No closing square brace for brace");
 		}
 
+		if (isDoubleQuoted) {
+			// Check for the second closing brace
+			if ((closePos+1) == input.length() || input.charAt(closePos+1) != ']') {
+				throw new ExpError(input, startPos, "No closing double brace for double square brace string");
+			}
+			Token newTok = new Token();
+			newTok.pos = startPos + 1;
+			newTok.type = DSQ_TYPE;
+			newTok.value = input.substring(startPos + 2, closePos);
+			res.add(newTok);
+			return closePos + 2;
+		}
+
+		Token newTok = new Token();
+		newTok.pos = startPos;
+		newTok.type = SQ_TYPE;
 		newTok.value = input.substring(startPos + 1, closePos);
 		res.add(newTok);
 		return closePos + 1;
+
 	}
 
 	// TODO: Should this include 'f' or 'd' as in the java convention? Also, should we support hex?

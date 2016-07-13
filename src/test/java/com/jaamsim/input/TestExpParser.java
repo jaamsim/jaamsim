@@ -162,6 +162,13 @@ public class TestExpParser {
 		testToken(tokens.get(5), ExpTokenizer.SYM_TYPE, "&");
 		testToken(tokens.get(6), ExpTokenizer.SYM_TYPE, "|");
 
+		tokens = ExpTokenizer.tokenize("[[blarg]][foo][[bar]] 42");
+		assertTrue(tokens.size() == 4);
+		testToken(tokens.get(0), ExpTokenizer.DSQ_TYPE, "blarg");
+		testToken(tokens.get(1), ExpTokenizer.SQ_TYPE, "foo");
+		testToken(tokens.get(2), ExpTokenizer.DSQ_TYPE, "bar");
+		testToken(tokens.get(3), ExpTokenizer.NUM_TYPE, "42");
+
 	}
 
 	@Test
@@ -418,6 +425,14 @@ public class TestExpParser {
 		exp = ExpParser.parseExpression(vtpc, "this.stuff");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
+	}
+
+	@Test
+	public void testString() throws ExpError {
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "[[stringly]]");
+		ExpResult res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("stringly"));
 	}
 
 	@Test
