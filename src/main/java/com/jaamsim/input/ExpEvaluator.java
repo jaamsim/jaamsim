@@ -26,6 +26,7 @@ import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ExpParser.EvalContext;
 import com.jaamsim.input.ExpParser.VarResolver;
+import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
 /**
@@ -161,9 +162,8 @@ public class ExpEvaluator {
 		@Override
 		public VarResolver getVarResolver(String[] names, boolean[] hasIndices) throws ExpError {
 
-			if (names.length == 1) {
-				throw new ExpError(null, 0, "You must specify an output or attribute for entity: %s", names[0]);
-			}
+			assert(names.length != 0);
+			assert(!hasIndices[0]);
 
 			Entity rootEnt;
 			if (names[0] == "this")
@@ -179,6 +179,11 @@ public class ExpEvaluator {
 				throw new ExpError(null, 0, "Could not find entity: %s", names[0]);
 			}
 
+			// The directly named case
+			if (names.length == 1) {
+				return new DirectResolver(rootEnt);
+			}
+
 			// Special case, if this is a simple output and we can cache the output handle, use an optimized resolver
 			if (names.length == 2) {
 				OutputHandle oh = rootEnt.getOutputHandleInterned(names[1]);
@@ -186,13 +191,7 @@ public class ExpEvaluator {
 					throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", names[1], names[0]);
 				}
 				if (oh.canCache() && !hasIndices[1]) {
-					Class<?> retType = oh.getReturnType();
-					if (    OutputHandle.isNumericType(retType) ||
-					        retType == boolean.class ||
-					        retType == Boolean.class) {
-						// This output is cache-able and has a numeric output, use an optimized resolver
-						return new CachedResolver(oh);
-					}
+					return new CachedResolver(oh);
 				}
 			}
 
@@ -217,25 +216,82 @@ public class ExpEvaluator {
 
 	}
 
+	// DirectResolver are for direct access to entities
+	private static class DirectResolver implements ExpParser.VarResolver {
+
+		Entity res;
+		public DirectResolver(Entity ent) {
+			res = ent;
+		}
+		@Override
+		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
+				throws ExpError {
+			return ExpResult.makeEntityResult(res);
+		}
+
+		@Override
+		public ExpValResult validate(boolean[] hasIndices) {
+			// This should already be checked to not have indices
+
+			return ExpValResult.makeValidRes(ExpResType.ENTITY, DimensionlessUnit.class);
+		}
+
+	}
+
 	private static class CachedResolver implements ExpParser.VarResolver {
 
 		private final OutputHandle handle;
+		private final ExpResType type;
 
-		public CachedResolver(OutputHandle oh) {
+		public CachedResolver(OutputHandle oh) throws ExpError {
 			handle = oh;
+			Class<?> retType = oh.getReturnType();
+			if (retType == String.class) {
+				type = ExpResType.STRING;
+			} else if (Entity.class.isAssignableFrom(retType)){
+				type = ExpResType.ENTITY;
+			} else if (OutputHandle.isNumericType(retType) ||
+			           retType == boolean.class ||
+			           retType == Boolean.class) {
+				type = ExpResType.NUMBER;
+			} else {
+				throw new ExpError(null, 0, "Output '%s' on entity '%s does not return a type compatible with the expression engine'",
+						oh.getName(), oh.ent.getName());
+			}
 		}
 
 		@Override
 		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
 				throws ExpError {
 			EntityEvalContext eec = (EntityEvalContext)ec;
-			double val = handle.getValueAsDouble(eec.simTime, 0);
-			return ExpResult.makeNumResult(val, handle.getUnitType());
+			switch (type) {
+			case NUMBER:
+				double val = handle.getValueAsDouble(eec.simTime, 0);
+				return ExpResult.makeNumResult(val, handle.getUnitType());
+			case ENTITY:
+				return ExpResult.makeEntityResult(handle.getValue(eec.simTime, Entity.class));
+			case STRING:
+				return ExpResult.makeStringResult(handle.getValue(eec.simTime, String.class));
+			default:
+				assert(false);
+				return ExpResult.makeNumResult(handle.getValueAsDouble(eec.simTime, 0), handle.getUnitType());
+			}
 		}
 
 		@Override
 		public ExpValResult validate(boolean[] hasIndices) {
-			return ExpValResult.makeValidRes(ExpResType.NUMBER, handle.getUnitType());
+			switch (type) {
+			case NUMBER:
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, handle.getUnitType());
+			case ENTITY:
+				return ExpValResult.makeValidRes(ExpResType.ENTITY, DimensionlessUnit.class);
+			case STRING:
+				return ExpValResult.makeValidRes(ExpResType.STRING, DimensionlessUnit.class);
+			default:
+				// This should not be reachable
+				assert(false);
+				return ExpValResult.makeUndecidableRes();
+			}
 		}
 	}
 
@@ -297,8 +353,43 @@ public class ExpEvaluator {
 					throw new ExpError(null, 0, "Output '%s' has an index and is not an array type output", names[names.length-1]);
 				}
 			} else {
-				return ExpResult.makeNumResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
+				Class<?> retType = oh.getReturnType();
+				if (retType == ExpResult.class) {
+					// This is already an expression, so return it
+					return oh.getValue(simTime, ExpResult.class);
+				}
+				if (retType == String.class) {
+					return ExpResult.makeStringResult(oh.getValue(simTime, String.class));
+				}
+				if (Entity.class.isAssignableFrom(retType)) {
+					return ExpResult.makeEntityResult(oh.getValue(simTime, Entity.class));
+				}
+				if (    OutputHandle.isNumericType(retType) ||
+				        retType == boolean.class ||
+				        retType == Boolean.class) {
+					return ExpResult.makeNumResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
+				}
+				throw new ExpError(null, 0, "Output %s, on entity %s does not return a type compatible with expressions.", oh.getName(), oh.ent.getName());
 			}
+
+		}
+
+		private ExpValResult validateFinalClass(Class<?> retType, Class<? extends Unit> unitType) {
+			if (    OutputHandle.isNumericType(retType) ||
+			        retType != boolean.class ||
+			        retType != Boolean.class) {
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, unitType);
+			} else if (retType == String.class) {
+				return ExpValResult.makeValidRes(ExpResType.STRING, DimensionlessUnit.class);
+			} else if (Entity.class.isAssignableFrom(retType)) {
+				return ExpValResult.makeValidRes(ExpResType.ENTITY, DimensionlessUnit.class);
+			} else if (retType == ExpResult.class) {
+				// This is another expression, so do the checks at runtime
+				return ExpValResult.makeUndecidableRes();
+			}
+
+			ExpError error = new ExpError(null, 0, "Output: %s does not return a numeric type", names[1]);
+			return ExpValResult.makeErrorRes(error);
 
 		}
 
@@ -315,13 +406,8 @@ public class ExpEvaluator {
 				}
 				if (!hasIndices[1]) {
 					Class<?> retType = oh.getReturnType();
-					if (    !OutputHandle.isNumericType(retType) &&
-					        retType != boolean.class &&
-					        retType != Boolean.class) {
-						ExpError error = new ExpError(null, 0, "Output: %s does not return a numeric type", names[1]);
-						return ExpValResult.makeErrorRes(error);
-					}
-					return ExpValResult.makeValidRes(ExpResType.NUMBER, oh.getUnitType());
+					return validateFinalClass(retType, oh.getUnitType());
+
 				} else {
 					// Indexed final output
 					if (oh.getReturnType() == DoubleVector.class ||
@@ -351,12 +437,8 @@ public class ExpEvaluator {
 				}
 
 				if (i == names.length - 1) {
-					// Last name in the chain, check that the type is numeric
-					if (!OutputHandle.isNumericType(klass)) {
-						ExpError error = new ExpError(null, 0, "Output: '%s' does not return a numeric type", names[i]);
-						return ExpValResult.makeErrorRes(error);
-					}
-					return ExpValResult.makeValidRes(ExpResType.NUMBER, unitType);
+					// Last name in the chain, check that the type is a valid value type
+					return validateFinalClass(klass, unitType);
 				} else {
 					if (!Entity.class.isAssignableFrom(klass)) {
 						ExpError error = new ExpError(null, 0, "Output: '%s' must output an entity type", names[i]);
