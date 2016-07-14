@@ -34,6 +34,7 @@ public class ExpValResult {
 
 	public static ExpValResult makeErrorRes(ExpError error) {
 		ArrayList<ExpError> es = new ArrayList<>(1);
+		es.add(error);
 		return new ExpValResult(State.ERROR, null, DimensionlessUnit.class, es);
 	}
 
