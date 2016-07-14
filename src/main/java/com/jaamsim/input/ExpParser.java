@@ -786,14 +786,23 @@ public class ExpParser {
 			@Override
 			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
-				checkBothNumbers(lval, rval, source, pos);
 
-				if (lval.unitType != rval.unitType) {
+				boolean bothNumbers = (lval.type==ExpResType.NUMBER) && (rval.type==ExpResType.NUMBER);
+				boolean bothStrings = (lval.type==ExpResType.STRING) && (rval.type==ExpResType.STRING);
+				if (!bothNumbers && !bothStrings) {
+					throw new ExpError(source, pos, "Operator '+' requires two numbers or two strings");
+				}
+
+				if (bothNumbers && lval.unitType != rval.unitType) {
 					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
 				}
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
+				if (lval.type == ExpResType.STRING && rval.type == ExpResType.STRING) {
+					return ExpResult.makeStringResult(lval.stringVal.concat(rval.stringVal));
+				}
+
 				return ExpResult.makeNumResult(lval.value + rval.value, lval.unitType);
 			}
 			@Override
@@ -802,11 +811,18 @@ public class ExpParser {
 				if (mergedErrors != null)
 					return mergedErrors;
 
-				ExpValResult numRes = validateBothNumbers(lval, rval, source, pos);
-				if (numRes != null) {
-					return numRes;
+				boolean bothNumbers = (lval.type==ExpResType.NUMBER) && (rval.type==ExpResType.NUMBER);
+				boolean bothStrings = (lval.type==ExpResType.STRING) && (rval.type==ExpResType.STRING);
+				if (!bothNumbers && !bothStrings) {
+					ExpError err = new ExpError(source, pos, "Operator '+' requires two numbers or two strings");
+					return ExpValResult.makeErrorRes(err);
 				}
 
+				if (bothStrings) {
+					return ExpValResult.makeValidRes(ExpResType.STRING, DimensionlessUnit.class);
+				}
+
+				// Both numbers
 				if (lval.unitType != rval.unitType) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
 					return ExpValResult.makeErrorRes(error);
