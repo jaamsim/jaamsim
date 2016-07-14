@@ -29,6 +29,7 @@ import javax.swing.table.TableModel;
 
 import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
+import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.DimensionlessUnit;
@@ -252,7 +253,24 @@ private class OutputTableModel extends AbstractTableModel {
 					else
 						sb.append("}");
 				}
-
+				else if (out.getReturnType() == ExpResult.class) {
+					ExpResult result = out.getValue(simTime, ExpResult.class);
+					switch (result.type) {
+					case STRING:
+						sb.append(result.stringVal);
+						break;
+					case ENTITY:
+						sb.append("[").append(result.entVal.getName()).append("]");
+						break;
+					case NUMBER:
+						sb.append(String.format("%g", result.value/factor));
+						break;
+					default:
+						assert(false);
+						sb.append("???");
+						break;
+					}
+				}
 				// All other outputs
 				else {
 					if (out.getValue(simTime, out.getReturnType()) == null)
