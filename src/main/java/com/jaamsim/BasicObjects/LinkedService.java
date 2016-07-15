@@ -303,6 +303,12 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 */
 	protected final void startAction() {
 
+		// An interrupted process must be restarted before a new process can be started
+		// (Required to avoid a bug caused by an new entity triggering startAction at the same
+		// time as an ImmediateThreshold opens)
+		if (processKilled)
+			return;
+
 		// Stop if there is a forced downtime activity about to begin
 		if (forcedDowntimePending) {
 			forcedDowntimePending = false;
