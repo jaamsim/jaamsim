@@ -360,6 +360,53 @@ public class TimeSeriesThreshold extends Threshold {
 	}
 
 	/**
+	 * Return the time in seconds during which the threshold is open
+	 * from the given start time to the given end time
+	 * @param startTime - simulation start time in seconds
+	 * @param endTime - simulation end time in seconds
+	 * @return the time in seconds that the threshold is open
+	 */
+	public double calcOpenTimeFromTimeToTime(double startTime, double endTime) {
+
+		// If the series is always outside the limits, the threshold is closed forever
+		if (isAlwaysClosed())
+			return 0;
+
+		// If the series is always within the limits, the threshold is open forever
+		if (this.isAlwaysOpen())
+			return endTime - startTime;
+
+		long ticks = EventManager.secsToNearestTick(startTime);
+		long endTicks = EventManager.secsToNearestTick(endTime);
+		long openTicks = 0;
+
+		boolean done = false;
+		while (! done) {
+			if (this.isOpenAtTicks(ticks)) {
+				long tempTicks = this.calcOpenTicksFromTicks(ticks);
+				if (ticks + tempTicks >= endTicks) {
+					openTicks += Math.min( tempTicks, endTicks - ticks);
+					done = true;
+				}
+				else {
+					openTicks += tempTicks;
+					ticks += tempTicks;
+				}
+			}
+			else {
+				long tempTicks = this.calcClosedTicksFromTicks(ticks);
+				if (ticks + tempTicks >= endTicks) {
+					done = true;
+				}
+				else {
+					ticks += tempTicks;
+				}
+			}
+		}
+		return EventManager.ticksToSecs(openTicks);
+	}
+
+	/**
 	 * Returns the next time that one of the parameters TimeSeries, MaxOpenLimit, or MinOpenLimit
 	 * will change, after the given time.
 	 * @param ticks - simulation time in clock ticks.

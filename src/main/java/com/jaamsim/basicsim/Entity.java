@@ -17,6 +17,8 @@
 package com.jaamsim.basicsim;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -218,14 +220,20 @@ public class Entity {
 	 */
 	public void setInputsForDragAndDrop() {}
 
+	private static class EntityComparator implements Comparator<Entity> {
+		@Override
+        public int compare(Entity e1, Entity e2) {
+			return Long.compare(e1.getEntityNumber(), e2.getEntityNumber());
+        }
+     }
+
+	private static final EntityComparator entityComparator = new EntityComparator();
+
 	public void kill() {
 		synchronized (allInstances) {
-			for (int i = 0; i < allInstances.size(); i++) {
-				if (allInstances.get(i) == this) {
-					allInstances.remove(i);
-					break;
-				}
-			}
+			int index = Collections.binarySearch(allInstances, this, entityComparator);
+			if (index >= 0)
+				allInstances.remove(index);
 		}
 		if (!testFlag(FLAG_GENERATED)) {
 			synchronized (namedEntities) {
