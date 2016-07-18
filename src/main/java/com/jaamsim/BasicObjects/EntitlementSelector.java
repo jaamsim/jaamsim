@@ -53,6 +53,11 @@ public class EntitlementSelector extends DisplayEntity implements SampleProvider
 		this.addInput(proportionList);
 	}
 
+	public EntitlementSelector() {
+		sampleCount = new int[0];
+		sampleDifference = new double[0];
+	}
+
 	@Override
 	public void validate() {
 		super.validate();

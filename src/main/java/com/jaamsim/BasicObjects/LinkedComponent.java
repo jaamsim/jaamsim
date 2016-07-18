@@ -61,6 +61,7 @@ public abstract class LinkedComponent extends StateEntity {
 
 	{
 		attributeDefinitionList.setHidden(false);
+		workingStateListInput.setHidden(true);
 
 		defaultEntity = new EntityInput<>(DisplayEntity.class, "DefaultEntity", "Key Inputs", null);
 		this.addInput(defaultEntity);

@@ -579,6 +579,9 @@ public class DowntimeEntity extends StateEntity implements StateEntityListener {
 	             + "(avg. downtime duration)/(avg. downtime interval)",
 	    sequence = 3)
 	public double getCalculatedDowntimeRatio(double simTime) {
+		if (downtimeDurationDistribution.getValue() == null
+				|| downtimeIATDistribution.getValue() == null)
+			return Double.NaN;
 		double dur = downtimeDurationDistribution.getValue().getMeanValue(simTime);
 		double iat = downtimeIATDistribution.getValue().getMeanValue(simTime);
 		return dur/iat;

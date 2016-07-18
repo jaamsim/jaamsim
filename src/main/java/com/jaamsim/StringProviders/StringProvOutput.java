@@ -18,6 +18,7 @@ package com.jaamsim.StringProviders;
 
 import com.jaamsim.basicsim.ErrorException;
 import com.jaamsim.basicsim.ObjectType;
+import com.jaamsim.input.InputAgent;
 import com.jaamsim.input.OutputChain;
 import com.jaamsim.input.OutputHandle;
 import com.jaamsim.units.Unit;
@@ -33,25 +34,20 @@ public class StringProvOutput implements StringProvider {
 	}
 
 	@Override
-	public String getNextString(double simTime, String fmt, double siFactor) {
+	public String getNextString(double simTime, String fmt, double factor) {
 
 		OutputHandle out = chain.getOutputHandle(simTime);
 
 		if (out == null)
 			throw new ErrorException("Expression cannot be evaluated: %s.", chain.toString());
 
-		if (out.isNumericValue()) {
-			if (out.getUnitType() != unitType && unitType != null)
-				throw new ErrorException("Unit mismatch. Expected a %s, received a %s",
-						ObjectType.getObjectTypeForClass(unitType),
-						ObjectType.getObjectTypeForClass(out.getUnitType()));
-			double d = out.getValueAsDouble(simTime, 0.0d);
-			return String.format(fmt, d/siFactor);
+		if (out.isNumericValue() && out.getUnitType() != unitType && unitType != null) {
+			throw new ErrorException("Unit mismatch. Expected a %s, received a %s",
+					ObjectType.getObjectTypeForClass(unitType),
+					ObjectType.getObjectTypeForClass(out.getUnitType()));
 		}
-		else {
-			Object obj = out.getValue(simTime, out.getReturnType());
-			return String.format(fmt, obj);
-		}
+
+		return InputAgent.getValueAsString(out, simTime, fmt, "%s", factor);
 	}
 
 	@Override

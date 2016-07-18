@@ -223,11 +223,16 @@ public class OutputHandle {
 		return ret;
 	}
 
+	public boolean canCache() {
+		return true;
+	}
+
 	public boolean isNumericValue() {
 		return isNumericType(this.getReturnType());
 	}
-	public boolean canCache() {
-		return true;
+
+	public boolean isIntegerValue() {
+		return isIntegerType(this.getReturnType());
 	}
 
 	public static boolean isNumericType(Class<?> rtype) {
@@ -245,6 +250,17 @@ public class OutputHandle {
 		if (rtype == Float.class) return true;
 		if (rtype == Short.class) return true;
 		if (rtype == Character.class) return true;
+
+		return false;
+	}
+
+	public static boolean isIntegerType(Class<?> rtype) {
+
+		if (rtype == int.class) return true;
+		if (rtype == long.class) return true;
+
+		if (rtype == Integer.class) return true;
+		if (rtype == Long.class) return true;
 
 		return false;
 	}

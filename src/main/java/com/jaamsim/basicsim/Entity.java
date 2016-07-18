@@ -813,7 +813,10 @@ public class Entity {
 	 description = "The class of objects that this entity belongs to.",
 	    sequence = 1)
 	public String getObjectTypeName(double simTime) {
-		return this.getObjectType().getName();
+		ObjectType ot = this.getObjectType();
+		if (ot == null)
+			return null;
+		return ot.getName();
 	}
 
 	@Output(name = "SimTime",

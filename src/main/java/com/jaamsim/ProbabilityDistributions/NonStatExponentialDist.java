@@ -77,6 +77,8 @@ public class NonStatExponentialDist extends Distribution {
 
 	@Override
 	protected double getMean(double simTime) {
+		if (expectedArrivals.getValue() == null)
+			return Double.NaN;
 		double arrivals = expectedArrivals.getValue().getMaxValue();
 		double dt = EventManager.ticksToSecs( expectedArrivals.getValue().getMaxTicksValue() );
 		return dt/arrivals;

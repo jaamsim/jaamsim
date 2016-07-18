@@ -120,6 +120,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	{
 		stateGraphics.setHidden(false);
+		workingStateListInput.setHidden(false);
 
 		processPosition = new Vec3dInput("ProcessPosition", "Key Inputs", new Vec3d(0.0d, 0.0d, 0.01d));
 		processPosition.setUnitType(DistanceUnit.class);
@@ -301,6 +302,12 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * Starts the processing of an entity.
 	 */
 	protected final void startAction() {
+
+		// An interrupted process must be restarted before a new process can be started
+		// (Required to avoid a bug caused by an new entity triggering startAction at the same
+		// time as an ImmediateThreshold opens)
+		if (processKilled)
+			return;
 
 		// Stop if there is a forced downtime activity about to begin
 		if (forcedDowntimePending) {

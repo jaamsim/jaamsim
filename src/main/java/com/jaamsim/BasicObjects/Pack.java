@@ -37,7 +37,7 @@ public class Pack extends LinkedService {
 
 	@Keyword(description = "The number of entities to pack into the container.",
 	         exampleList = {"2", "DiscreteDistribution1", "'1 + [TimeSeries1].PresentValue'"})
-	private final SampleInput numberOfEntities;
+	protected final SampleInput numberOfEntities;
 
 	@Keyword(description = "The service time required to pack each entity in the container.",
 	         exampleList = { "3.0 h", "ExponentialDistribution1", "'1[s] + 0.5*[TimeSeries1].PresentValue'" })
@@ -58,7 +58,7 @@ public class Pack extends LinkedService {
 		numberOfEntities = new SampleInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
 		numberOfEntities.setUnitType(DimensionlessUnit.class);
 		numberOfEntities.setEntity(this);
-		numberOfEntities.setValidRange(1, Double.POSITIVE_INFINITY);
+		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
 		serviceTime = new SampleInput("ServiceTime", "Key Inputs", new SampleConstant(TimeUnit.class, 0.0));
@@ -106,10 +106,8 @@ public class Pack extends LinkedService {
 
 		// Are there sufficient entities in the queue to start packing?
 		if (!startedPacking) {
-			Integer m = this.getNextMatchValue(getSimTime());
-			numberToInsert = (int) numberOfEntities.getValue().getNextSample(this.getSimTime());
-			if (numberToInsert < 1)
-				error("The NumberOfEntities input must be greater than zero. Received: %s", numberToInsert);
+			Integer m = this.getNextMatchValue(simTime);
+			numberToInsert = this.getNumberToInsert(simTime);
 			if (waitQueue.getValue().getMatchCount(m) < numberToInsert) {
 				return false;
 			}
@@ -118,12 +116,14 @@ public class Pack extends LinkedService {
 		}
 
 		// Select the next entity to pack and set its state
-		packedEntity = this.getNextEntityForMatch(getMatchValue());
-		if (!stateAssignment.getValue().isEmpty() && packedEntity instanceof StateEntity)
-			((StateEntity)packedEntity).setPresentState(stateAssignment.getValue());
+		if (numberInserted < numberToInsert) {
+			packedEntity = this.getNextEntityForMatch(getMatchValue());
+			if (!stateAssignment.getValue().isEmpty() && packedEntity instanceof StateEntity)
+				((StateEntity)packedEntity).setPresentState(stateAssignment.getValue());
 
-		// Move the entity into position for processing
-		this.moveToProcessPosition(packedEntity);
+			// Move the entity into position for processing
+			this.moveToProcessPosition(packedEntity);
+		}
 		return true;
 	}
 
@@ -131,17 +131,25 @@ public class Pack extends LinkedService {
 	protected void endProcessing(double simTime) {
 
 		// Remove the next entity from the queue and pack the container
-		container.addEntity(packedEntity);
-		packedEntity = null;
-		numberInserted++;
+		if (packedEntity != null) {
+			container.addEntity(packedEntity);
+			packedEntity = null;
+			numberInserted++;
+		}
 
 		// If the container is full, send it to the next component
-		if (numberInserted == numberToInsert) {
+		if (numberInserted >= numberToInsert) {
 			this.sendToNextComponent(container);
 			container = null;
 			numberInserted = 0;
 			startedPacking = false;
 		}
+	}
+
+	protected int getNumberToInsert(double simTime) {
+		int ret = (int)numberOfEntities.getValue().getNextSample(simTime);
+		ret = Math.max(ret, 1);
+		return ret;
 	}
 
 	@Override

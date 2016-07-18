@@ -363,6 +363,11 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 		return valueLow + (ticks - ticksLow)*(valueHigh - valueLow)/(ticksHigh - ticksLow);
 	}
 
+	@Override
+	public final double getNextSample(double simTime) {
+		return getValue(getTSPointForTicks(getTicks(simTime)));
+	}
+
 	// ******************************************************************************************************
 	// OUTPUTS
 	// ******************************************************************************************************
@@ -370,9 +375,10 @@ public class TimeSeries extends DisplayEntity implements TimeSeriesProvider {
 	@Output(name = "PresentValue",
 	        description = "The time series value for the present time.",
 	        unitType = UserSpecifiedUnit.class)
-	@Override
-	public final double getNextSample(double simTime) {
-		return getValue(getTSPointForTicks(getTicks(simTime)));
+	public final double getPresentValue(double simTime) {
+		if (value.getValue() == null)
+			return Double.NaN;
+		return this.getNextSample(simTime);
 	}
 
 }

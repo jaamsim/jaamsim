@@ -31,6 +31,7 @@ public class SimEntity extends StateEntity {
 
 	{
 		attributeDefinitionList.setHidden(false);
+		workingStateListInput.setHidden(true);
 
 		defaultStateList = new StringListInput("DefaultStateList", "Key Inputs", new ArrayList<String>());
 		this.addInput(defaultStateList);

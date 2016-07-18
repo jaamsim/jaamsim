@@ -36,20 +36,25 @@ public class FileEntity {
 	}
 
 	public FileEntity(String fileName, boolean append) {
-		backingFileObject = new File( fileName);
+		backingFileObject = new File(fileName);
 
 		try {
 			backingFileObject.createNewFile();
-			outputStream = new BufferedWriter( new FileWriter( backingFileObject, append ) );
+			outputStream = new BufferedWriter( new FileWriter(backingFileObject, append) );
 		}
-		catch( IOException e ) {
-			throw new InputErrorException( "IOException thrown trying to open FileEntity: " + e );
+		catch (IOException e) {
+			throw new InputErrorException("IOException thrown trying to open FileEntity %s%n%s",
+					fileName, e.getMessage());
 		}
-		catch( IllegalArgumentException e ) {
-			throw new InputErrorException( "IllegalArgumentException thrown trying to open FileEntity (Should not happen): " + e );
+		catch (IllegalArgumentException e) {
+			throw new InputErrorException("IllegalArgumentException thrown trying to open "
+					+ "FileEntity %s (Should not happen)%n%s",
+					fileName, e.getMessage());
 		}
-		catch( SecurityException e ) {
-			throw new InputErrorException( "SecurityException thrown trying to open FileEntity: " + e );
+		catch (SecurityException e) {
+			throw new InputErrorException("SecurityException thrown trying to open "
+					+ "FileEntity %s%n%s",
+					fileName, e.getMessage());
 		}
 	}
 

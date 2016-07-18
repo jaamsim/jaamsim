@@ -31,8 +31,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
@@ -41,6 +43,7 @@ import com.jaamsim.basicsim.FileEntity;
 import com.jaamsim.basicsim.Group;
 import com.jaamsim.basicsim.ObjectType;
 import com.jaamsim.basicsim.Simulation;
+import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.ui.GUIFrame;
@@ -1381,6 +1384,101 @@ public class InputAgent {
 		}
 	}
 	public static final Comparator<Entity> uiEntitySortOrder = new EntityComparator();
+
+	/**
+	 * Returns a formated string for the specified output.
+	 * @param out - output
+	 * @param simTime - present simulation time
+	 * @param fmt - format string (may contain additional text)
+	 * @param floatFmt - format string for floating point numbers within an array
+	 * @param factor - divisor to be applied to a numerical value
+	 * @return formated string for the output
+	 */
+	public static String getValueAsString(OutputHandle out, double simTime, String fmt, String floatFmt, double factor) {
+		StringBuilder sb = new StringBuilder();
+		String str;
+		String COMMA_SEPARATOR = ", ";
+
+		Class<?> retType = out.getReturnType();
+
+		// Numeric outputs
+		if (out.isNumericValue()) {
+			double val = out.getValueAsDouble(simTime, Double.NaN);
+			return String.format(fmt, val/factor);
+		}
+
+		// Vec3d outputs
+		if (retType == Vec3d.class) {
+			Vec3d vec = out.getValue(simTime, Vec3d.class);
+			sb.append(vec.x/factor);
+			sb.append(Input.SEPARATOR).append(vec.y/factor);
+			sb.append(Input.SEPARATOR).append(vec.z/factor);
+			return String.format(fmt, sb.toString());
+		}
+
+		// DoubleVector output
+		if (retType == DoubleVector.class) {
+			sb.append("{");
+			DoubleVector vec = out.getValue(simTime, DoubleVector.class);
+			for (int i=0; i<vec.size(); i++) {
+				str = String.format(floatFmt, vec.get(i)/factor);
+				sb.append(str);
+				if (i < vec.size()-1) {
+					sb.append(COMMA_SEPARATOR);
+				}
+			}
+			sb.append("}");
+			return String.format(fmt, sb.toString());
+		}
+
+		// ArrayList output
+		if (retType == ArrayList.class) {
+			sb.append("{");
+			ArrayList<?> array = out.getValue(simTime, ArrayList.class);
+			for (int i=0; i<array.size(); i++) {
+				Object obj = array.get(i);
+				if (obj instanceof Double) {
+					double val = (Double)obj;
+					str = String.format(floatFmt, val/factor);
+				}
+				else {
+					str = String.format("%s", obj);
+				}
+				sb.append(str);
+				if (i < array.size()-1) {
+					sb.append(COMMA_SEPARATOR);
+				}
+			}
+			sb.append("}");
+			return String.format(fmt, sb.toString());
+		}
+
+		// Keyed outputs
+		if (retType == LinkedHashMap.class) {
+			sb.append("{");
+			LinkedHashMap<?, ?> map = out.getValue(simTime, LinkedHashMap.class);
+			for (Entry<?, ?> mapEntry : map.entrySet()) {
+				sb.append(String.format("%s=", mapEntry.getKey()));
+				Object obj = mapEntry.getValue();
+				if (obj instanceof Double) {
+					double val = (Double)obj;
+					str = String.format(floatFmt, val/factor);
+				}
+				else {
+					str = String.format("%s", obj);
+				}
+				sb.append(str).append(COMMA_SEPARATOR);
+			}
+			if (sb.length() > 1)
+				sb.replace(sb.length()-2, sb.length()-1, "}");
+			else
+				sb.append("}");
+			return String.format(fmt, sb.toString());
+		}
+
+		// All other outputs
+		return String.format(fmt, out.getValue(simTime, retType));
+	}
 
 	/**
 	 * Returns the relative file path for the specified URI.
