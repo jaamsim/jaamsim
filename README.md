@@ -7,7 +7,7 @@ JaamSim is a Java based discrete-event simulation environment developed since 20
 - model development tools and editors. 
 
 Examples of our simulation models can be seen at: 
-www.youtube.com/user/javasimulation. 
+www.youtube.com/c/jaamsim. 
 
 The key feature that makes JaamSim different from commercial off-the-shelf 
 simulation software is that it allows a user to develop new palettes of 
