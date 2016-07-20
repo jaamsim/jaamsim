@@ -685,7 +685,7 @@ public class ExpParser {
 	}
 
 	// Check that a single argument is not an error and is a dimensionless unit or angle unit
-	private static ExpValResult validateSingleArgDimensionlessOrAngle(ParseContext context, ExpValResult arg, String source, int pos) {
+	private static ExpValResult validateTrigFunction(ParseContext context, ExpValResult arg, String source, int pos) {
 		if (	arg.state == ExpValResult.State.ERROR ||
 				arg.state == ExpValResult.State.UNDECIDABLE)
 			return arg;
@@ -694,10 +694,10 @@ public class ExpParser {
 			return ExpValResult.makeErrorRes(error);
 		}
 		if (arg.unitType != DimensionlessUnit.class && arg.unitType != AngleUnit.class) {
-			ExpError error = new ExpError(source, pos, getUnitMismatchString(arg.unitType, AngleUnit.class));
+			ExpError error = new ExpError(source, pos, getUnitMismatchString(arg.unitType, DimensionlessUnit.class));
 			return ExpValResult.makeErrorRes(error);
 		}
-		return ExpValResult.makeValidRes(ExpResType.NUMBER, arg.unitType);
+		return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 	}
 
 
@@ -1475,7 +1475,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateSingleArgDimensionlessOrAngle(context, args[0], source, pos);
+				return validateTrigFunction(context, args[0], source, pos);
 			}
 		});
 
@@ -1492,7 +1492,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateSingleArgDimensionlessOrAngle(context, args[0], source, pos);
+				return validateTrigFunction(context, args[0], source, pos);
 			}
 		});
 
@@ -1509,7 +1509,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateSingleArgDimensionlessOrAngle(context, args[0], source, pos);
+				return validateTrigFunction(context, args[0], source, pos);
 			}
 		});
 
