@@ -203,11 +203,13 @@ public class ExpParser {
 	private static class UnaryOp extends ExpNode {
 		public ExpNode subExp;
 		protected final UnOpFunc func;
+		public String name;
 		public boolean canSkipRuntimeChecks = false;
-		UnaryOp(ParseContext context, ExpNode subExp, UnOpFunc func, Expression exp, int pos) {
+		UnaryOp(String name, ParseContext context, ExpNode subExp, UnOpFunc func, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.subExp = subExp;
 			this.func = func;
+			this.name = name;
 		}
 
 		@Override
@@ -242,11 +244,15 @@ public class ExpParser {
 			else
 				return null;
 		}
+		@Override
+		public String toString() {
+			return "UnaryOp: " + name;
+		}
 	}
 
 	private static class UnaryOpNoChecks extends UnaryOp {
 		UnaryOpNoChecks(UnaryOp uo) {
-			super(uo.context, uo.subExp, uo.func, uo.exp, uo.tokenPos);
+			super(uo.name, uo.context, uo.subExp, uo.func, uo.exp, uo.tokenPos);
 		}
 
 		@Override
@@ -261,13 +267,15 @@ public class ExpParser {
 		public ExpNode lSubExp;
 		public ExpNode rSubExp;
 		public boolean canSkipRuntimeChecks = false;
+		public String name;
 
 		protected final BinOpFunc func;
-		BinaryOp(ParseContext context, ExpNode lSubExp, ExpNode rSubExp, BinOpFunc func, Expression exp, int pos) {
+		BinaryOp(String name, ParseContext context, ExpNode lSubExp, ExpNode rSubExp, BinOpFunc func, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.lSubExp = lSubExp;
 			this.rSubExp = rSubExp;
 			this.func = func;
+			this.name = name;
 		}
 
 		@Override
@@ -307,11 +315,15 @@ public class ExpParser {
 			else
 				return null;
 		}
+		@Override
+		public String toString() {
+			return "BinaryOp: " + name;
+		}
 	}
 
 	private static class BinaryOpNoChecks extends BinaryOp {
 		BinaryOpNoChecks(BinaryOp bo) {
-			super(bo.context, bo.lSubExp, bo.rSubExp, bo.func, bo.exp, bo.tokenPos);
+			super(bo.name, bo.context, bo.lSubExp, bo.rSubExp, bo.func, bo.exp, bo.tokenPos);
 		}
 
 		@Override
@@ -402,16 +414,22 @@ public class ExpParser {
 
 			w.visit(this);
 		}
+		@Override
+		public String toString() {
+			return "Conditional";
+		}
 	}
 
 	public static class FuncCall extends ExpNode {
 		protected final ArrayList<ExpNode> args;
 		protected final CallableFunc function;
 		private boolean canSkipRuntimeChecks = false;
-		public FuncCall(ParseContext context, CallableFunc function, ArrayList<ExpNode> args, Expression exp, int pos) {
+		private String name;
+		public FuncCall(String name, ParseContext context, CallableFunc function, ArrayList<ExpNode> args, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.function = function;
 			this.args = args;
+			this.name = name;
 		}
 
 		@Override
@@ -454,11 +472,15 @@ public class ExpParser {
 			else
 				return null;
 		}
+		@Override
+		public String toString() {
+			return "Function: " + name;
+		}
 	}
 
 	private static class FuncCallNoChecks extends FuncCall {
 		FuncCallNoChecks(FuncCall fc) {
-			super(fc.context, fc.function, fc.args, fc.exp, fc.tokenPos);
+			super(fc.name, fc.context, fc.function, fc.args, fc.exp, fc.tokenPos);
 		}
 
 		@Override
@@ -1879,7 +1901,7 @@ public class ExpParser {
 		ExpNode rhs = parseExp(context, tokens, binOp.bindingPower + assocMod, exp);
 		//currentPower = oe.bindingPower;
 
-		return new BinaryOp(context, lhs, rhs, binOp.function, exp, pos);
+		return new BinaryOp(binOp.symbol, context, lhs, rhs, binOp.function, exp, pos);
 	}
 
 	private static ExpNode handleConditional(ParseContext context, TokenList tokens, ExpNode lhs, Expression exp, int pos) throws ExpError {
@@ -1963,7 +1985,7 @@ public class ExpParser {
 		UnaryOpEntry oe = getUnaryOp(nextTok.value);
 		if (oe != null) {
 			ExpNode expNode = parseExp(context, tokens, oe.bindingPower, exp);
-			return new UnaryOp(context, expNode, oe.function, exp, nextTok.pos);
+			return new UnaryOp(oe.symbol, context, expNode, oe.function, exp, nextTok.pos);
 		}
 
 		// We're all out of tricks here, this is an unknown expression
@@ -2043,7 +2065,7 @@ public class ExpParser {
 							funcName, fe.numMaxArgs, arguments.size());
 		}
 
-		return new FuncCall(context, fe.function, arguments, exp, pos);
+		return new FuncCall(fe.name, context, fe.function, arguments, exp, pos);
 	}
 
 	private static String[] parseIdentifier(ExpTokenizer.Token firstName, TokenList tokens, Expression exp) throws ExpError {
