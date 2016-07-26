@@ -322,8 +322,48 @@ public class ExpEvaluator {
 
 			if (indices != null && indices[names.length-1] != null) {
 				int index = (int)indices[names.length-1].value -1; // 1 based indexing
+				ExpResult indResult = indices[names.length-1];
+
+				if (Map.class.isAssignableFrom(oh.getReturnType())) {
+					// This is a map class, let's just try to index it and see what happens
+					Map<?,?> map = oh.getValue(simTime, Map.class);
+					Object key;
+					switch (indResult.type) {
+					case ENTITY:
+						key = indResult.entVal;
+						break;
+					case NUMBER:
+						key = new Double(indResult.value);
+						break;
+					case STRING:
+						key = indResult.stringVal;
+						break;
+					default:
+						assert(false);
+						key = null;
+						break;
+					}
+					Object val = map.get(key);
+					if (val == null) {
+						throw new ExpError(null, 0, "Empty result indexing output: '%s'", names[names.length-1]);
+					}
+					// Try to cast this back into something we understand
+					if (String.class.isAssignableFrom(val.getClass())) {
+						return ExpResult.makeStringResult((String)val);
+					}
+					if (Entity.class.isAssignableFrom(val.getClass())) {
+						return ExpResult.makeEntityResult((Entity)val);
+					}
+					if (Double.class.isAssignableFrom(val.getClass())) {
+						return ExpResult.makeNumResult((Double)val, oh.unitType);
+					}
+					throw new ExpError(null, 0, "Output '%s' returned an unknown type: %s", names[names.length-1], val.getClass().getSimpleName());
+				}
 
 				if (ArrayList.class.isAssignableFrom(oh.getReturnType())) {
+					if (indResult.type != ExpResType.NUMBER) {
+						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", names[names.length-1]);
+					}
 					ArrayList<?> outList = oh.getValue(simTime, ArrayList.class);
 
 					if (index >= outList.size()  || index < 0) {
@@ -332,6 +372,9 @@ public class ExpEvaluator {
 					Double value = (Double)outList.get(index);
 					return ExpResult.makeNumResult(value, oh.unitType);
 				} else if(DoubleVector.class.isAssignableFrom(oh.getReturnType())) {
+					if (indResult.type != ExpResType.NUMBER) {
+						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", names[names.length-1]);
+					}
 					DoubleVector outList = oh.getValue(simTime, DoubleVector.class);
 
 					if (index >= outList.size() || index < 0) {
@@ -341,6 +384,9 @@ public class ExpEvaluator {
 					Double value = outList.get(index);
 					return ExpResult.makeNumResult(value, oh.unitType);
 				} else if(IntegerVector.class.isAssignableFrom(oh.getReturnType())) {
+					if (indResult.type != ExpResType.NUMBER) {
+						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", names[names.length-1]);
+					}
 					IntegerVector outList = oh.getValue(simTime, IntegerVector.class);
 
 					if (index >= outList.size() || index < 0) {
@@ -416,6 +462,10 @@ public class ExpEvaluator {
 					}
 					if (oh.getReturnType() == ArrayList.class) {
 						//TODO: find out if we can determine the contained class without an instance or if type erasure prevents that
+						return ExpValResult.makeUndecidableRes();
+					}
+					// Maps are completely unpredictable currently
+					if (Map.class.isAssignableFrom(oh.getReturnType())) {
 						return ExpValResult.makeUndecidableRes();
 					}
 					ExpError error = new ExpError(null, 0, "Output: %s is not a known array type");
