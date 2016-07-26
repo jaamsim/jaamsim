@@ -424,7 +424,7 @@ public class ExpParser {
 		protected final ArrayList<ExpNode> args;
 		protected final CallableFunc function;
 		private boolean canSkipRuntimeChecks = false;
-		private String name;
+		private final String name;
 		public FuncCall(String name, ParseContext context, CallableFunc function, ArrayList<ExpNode> args, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.function = function;
@@ -1037,18 +1037,69 @@ public class ExpParser {
 			@Override
 			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
-				checkBothNumbers(lval, rval, source, pos);
-				if (lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
+
+				// Check that the types are the same
+				if (lval.type != rval.type) {
+					throw new ExpError(source, pos, "Can not compare different types. LHS: %s, RHS: %s",
+							ExpValResult.typeString(lval.type),
+							ExpValResult.typeString(rval.type));
+				}
+				if (lval.type == ExpResType.NUMBER) {
+					// Also check that the unit types are the same
+					if (lval.unitType != rval.unitType) {
+						throw new ExpError(source, pos, "Can not compare different unit types. LHS: %s, RHS: %s",
+								lval.unitType.getSimpleName(),
+								rval.unitType.getSimpleName());
+					}
 				}
 			}
+
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return ExpResult.makeNumResult(lval.value == rval.value ? 1 : 0, DimensionlessUnit.class);
+				boolean equal;
+				switch(lval.type) {
+				case ENTITY:
+					equal = lval.entVal == rval.entVal;
+					break;
+				case STRING:
+					equal = lval.stringVal.equals(rval.stringVal);
+					break;
+				case NUMBER:
+					equal = lval.value == rval.value;
+					break;
+				default:
+					assert(false);
+					equal = false;
+				}
+				return ExpResult.makeNumResult(equal ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
-				return validateComparison(context, lval, rval, source, pos);
+
+				// Propagate errors
+				ExpValResult mergedErrors = mergeBinaryErrors(lval, rval);
+				if (mergedErrors != null) {
+					return mergedErrors;
+				}
+
+				// Otherwise, check that the types are the same
+				if (lval.type != rval.type) {
+					ExpError err = new ExpError(source, pos, "Can not compare different types. LHS: %s, RHS: %s",
+							ExpValResult.typeString(lval.type),
+							ExpValResult.typeString(rval.type));
+					return ExpValResult.makeErrorRes(err);
+				}
+
+				if (lval.type == ExpResType.NUMBER) {
+					// Also check that the unit types are the same
+					if (lval.unitType != rval.unitType) {
+						ExpError err = new ExpError(source, pos, "Can not compare different unit types. LHS: %s, RHS: %s",
+								lval.unitType.getSimpleName(),
+								rval.unitType.getSimpleName());
+						return ExpValResult.makeErrorRes(err);
+					}
+				}
+				return ExpValResult.makeValidRes(lval.type, lval.unitType);
 			}
 		});
 

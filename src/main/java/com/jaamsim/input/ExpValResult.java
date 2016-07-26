@@ -18,6 +18,20 @@ public class ExpValResult {
 	public final Class<? extends Unit> unitType;
 	public final ExpResType type;
 
+	public static String typeString(ExpResType res) {
+		switch(res) {
+		case ENTITY:
+			return "entity";
+		case NUMBER:
+			return "number";
+		case STRING:
+			return "string";
+		default:
+			assert(false);
+			return "unknown type";
+		}
+	}
+
 	public static ExpValResult makeValidRes(ExpResType t, Class<? extends Unit> ut)
 	{
 		return new ExpValResult(State.VALID, t, ut, null);
