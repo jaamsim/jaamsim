@@ -2192,6 +2192,15 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	// TOOL TIPS
 	// ******************************************************************************************************
 
+	private static final String html_replace(String str) {
+		String desc = str;
+		desc = desc.replaceAll("&", "&amp;");
+		desc = desc.replaceAll("<", "&lt;");
+		desc = desc.replaceAll(">", "&gt;");
+		desc = desc.replaceAll("\n", "<BR>");
+		return desc;
+	}
+
 	public static String formatToolTip(String name, String desc) {
 		return String.format("<html><p width=\"200px\"><b>%s</b><br>%s</p></html>",
 				name, desc);
@@ -2200,11 +2209,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	public static String formatKeywordToolTip(String className, String keyword,
 			String description, String example, String[] exampleList) {
 
-		String desc = new String(description);
-		desc = desc.replaceAll("&", "&amp;");
-		desc = desc.replaceAll("<", "&lt;");
-		desc = desc.replaceAll(">", "&gt;");
-		desc = desc.replaceAll("\n", "<BR>");
+		String desc = html_replace(description);
 
 		// Single example
 		String examp = new String(example);
@@ -2215,11 +2220,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		else {
 			StringBuilder sb = new StringBuilder();
 			for (int i=0; i<exampleList.length; i++) {
-				String item = exampleList[i];
-				item = item.replaceAll("&", "&amp;");
-				item = item.replaceAll("<", "&lt;");
-				item = item.replaceAll(">", "&gt;");
-				item = item.replaceAll("\n", "<BR>");
+				String item = html_replace(exampleList[i]);
 				if (i > 0)
 					sb.append("<BR>");
 				sb.append(className).append("1  ").append(keyword).append("  {  ");
@@ -2233,15 +2234,8 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	}
 
 	public static String formatOutputToolTip(String name, String description) {
-
-		String desc = new String(description);
-		desc = desc.replaceAll("&", "&amp;");
-		desc = desc.replaceAll("<", "&lt;");
-		desc = desc.replaceAll(">", "&gt;");
-		desc = desc.replaceAll("\n", "<BR>");
-
+		String desc = html_replace(description);
 		return String.format("<html><p width=\"250px\"><b>%s</b><br>%s</p></html>",
 				name, desc);
 	}
-
 }
