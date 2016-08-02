@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.prefs.Preferences;
+import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -2191,13 +2192,17 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 	// ******************************************************************************************************
 	// TOOL TIPS
 	// ******************************************************************************************************
+	private static final Pattern amp = Pattern.compile("&");
+	private static final Pattern lt = Pattern.compile("<");
+	private static final Pattern gt = Pattern.compile(">");
+	private static final Pattern br = Pattern.compile("\n");
 
 	private static final String html_replace(String str) {
 		String desc = str;
-		desc = desc.replaceAll("&", "&amp;");
-		desc = desc.replaceAll("<", "&lt;");
-		desc = desc.replaceAll(">", "&gt;");
-		desc = desc.replaceAll("\n", "<BR>");
+		desc = amp.matcher(desc).replaceAll("&amp;");
+		desc = lt.matcher(desc).replaceAll("&lt;");
+		desc = gt.matcher(desc).replaceAll("&gt;");
+		desc = br.matcher(desc).replaceAll("<BR>");
 		return desc;
 	}
 
