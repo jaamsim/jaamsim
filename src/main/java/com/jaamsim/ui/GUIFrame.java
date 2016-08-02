@@ -2212,9 +2212,9 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		String desc = html_replace(description);
 
 		// Single example
-		String examp = new String(example);
-		if (!examp.isEmpty()) {
-			examp = examp.replaceAll("\n", "<BR>");
+		String examp;
+		if (!example.isEmpty()) {
+			examp = html_replace(example);
 		}
 		// List of examples
 		else {
