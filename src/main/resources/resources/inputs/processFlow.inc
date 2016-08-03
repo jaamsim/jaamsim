@@ -71,32 +71,32 @@ RemoveFromIconModel     ImageFile { '<res>/images/RemoveFrom-256.png'   }  Trans
 EntityLoggerIconModel   ImageFile { '<res>/images/EntityLogger-256.png' }  Transparent { TRUE }
 StatisticsIconModel     ImageFile { '<res>/images/Statistics-256.png'   }  Transparent { TRUE }
 
-SimEntity               JavaClass { com.jaamsim.BasicObjects.SimEntity            }  Palette { 'Process Flow' }  DefaultDisplayModel { Sphere                   } IconFile { '<res>/images/SimEntity-24.png'       } DefaultSize { 0.5 0.5 0.5 m }
-EntityGenerator         JavaClass { com.jaamsim.BasicObjects.EntityGenerator      }  Palette { 'Process Flow' }  DefaultDisplayModel { SourceIconModel          } IconFile { '<res>/images/Source-24.png'          }
-EntitySink              JavaClass { com.jaamsim.BasicObjects.EntitySink           }  Palette { 'Process Flow' }  DefaultDisplayModel { SinkIconModel            } IconFile { '<res>/images/Sink-24.png'            }
-Server                  JavaClass { com.jaamsim.BasicObjects.Server               }  Palette { 'Process Flow' }  DefaultDisplayModel { ServerIconModel          } IconFile { '<res>/images/Server-24.png'          }
-Queue                   JavaClass { com.jaamsim.BasicObjects.Queue                }  Palette { 'Process Flow' }  DefaultDisplayModel { Triangle                 } IconFile { '<res>/images/Queue-24.png'           } DefaultSize { 0.5 0.5 0.0 m }
-EntityConveyor          JavaClass { com.jaamsim.BasicObjects.EntityConveyor       }  Palette { 'Process Flow' }  DefaultDisplayModel { PolylineModelDefault     } IconFile { '<res>/images/Line-24.png'            }
-EntityDelay             JavaClass { com.jaamsim.BasicObjects.EntityDelay          }  Palette { 'Process Flow' }  DefaultDisplayModel { PolylineModelDefault     } IconFile { '<res>/images/Line-24.png'            }
-Resource                JavaClass { com.jaamsim.BasicObjects.Resource             }  Palette { 'Process Flow' }  DefaultDisplayModel { ResourceIconModel        } IconFile { '<res>/images/Resource-24.png'        }
-Seize                   JavaClass { com.jaamsim.BasicObjects.Seize                }  Palette { 'Process Flow' }  DefaultDisplayModel { SeizeIconModel           } IconFile { '<res>/images/Seize-24.png'           }
-Release                 JavaClass { com.jaamsim.BasicObjects.Release              }  Palette { 'Process Flow' }  DefaultDisplayModel { ReleaseIconModel         } IconFile { '<res>/images/Release-24.png'         }
-Assign                  JavaClass { com.jaamsim.BasicObjects.Assign               }  Palette { 'Process Flow' }  DefaultDisplayModel { AssignModel              } IconFile { '<res>/images/Assign-24.png'          }
-Branch                  JavaClass { com.jaamsim.BasicObjects.Branch               }  Palette { 'Process Flow' }  DefaultDisplayModel { BranchIconModel          } IconFile { '<res>/images/Branch-24.png'          }
-Duplicate               JavaClass { com.jaamsim.BasicObjects.Duplicate            }  Palette { 'Process Flow' }  DefaultDisplayModel { DuplicateIconModel       } IconFile { '<res>/images/Duplicate-24.png'       }
-Combine                 JavaClass { com.jaamsim.BasicObjects.Combine              }  Palette { 'Process Flow' }  DefaultDisplayModel { CombineIconModel         } IconFile { '<res>/images/Combine-24.png'         }
-SetGraphics             JavaClass { com.jaamsim.BasicObjects.SetGraphics          }  Palette { 'Process Flow' }  DefaultDisplayModel { SetGraphicsIconModel     } IconFile { '<res>/images/SetGraphics-24.png'     }
-EntityGate              JavaClass { com.jaamsim.BasicObjects.EntityGate           }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityGateIconModel      } IconFile { '<res>/images/Gate-24.png'            }
-EntitySignal            JavaClass { com.jaamsim.BasicObjects.EntitySignal         }  Palette { 'Process Flow' }  DefaultDisplayModel { EntitySignalIconModel    } IconFile { '<res>/images/Signal-24.png'          }
+SimEntity               JavaClass { com.jaamsim.ProcessFlow.SimEntity             }  Palette { 'Process Flow' }  DefaultDisplayModel { Sphere                   } IconFile { '<res>/images/SimEntity-24.png'       } DefaultSize { 0.5 0.5 0.5 m }
+EntityGenerator         JavaClass { com.jaamsim.ProcessFlow.EntityGenerator       }  Palette { 'Process Flow' }  DefaultDisplayModel { SourceIconModel          } IconFile { '<res>/images/Source-24.png'          }
+EntitySink              JavaClass { com.jaamsim.ProcessFlow.EntitySink            }  Palette { 'Process Flow' }  DefaultDisplayModel { SinkIconModel            } IconFile { '<res>/images/Sink-24.png'            }
+Server                  JavaClass { com.jaamsim.ProcessFlow.Server                }  Palette { 'Process Flow' }  DefaultDisplayModel { ServerIconModel          } IconFile { '<res>/images/Server-24.png'          }
+Queue                   JavaClass { com.jaamsim.ProcessFlow.Queue                 }  Palette { 'Process Flow' }  DefaultDisplayModel { Triangle                 } IconFile { '<res>/images/Queue-24.png'           } DefaultSize { 0.5 0.5 0.0 m }
+EntityConveyor          JavaClass { com.jaamsim.ProcessFlow.EntityConveyor        }  Palette { 'Process Flow' }  DefaultDisplayModel { PolylineModelDefault     } IconFile { '<res>/images/Line-24.png'            }
+EntityDelay             JavaClass { com.jaamsim.ProcessFlow.EntityDelay           }  Palette { 'Process Flow' }  DefaultDisplayModel { PolylineModelDefault     } IconFile { '<res>/images/Line-24.png'            }
+Resource                JavaClass { com.jaamsim.ProcessFlow.Resource              }  Palette { 'Process Flow' }  DefaultDisplayModel { ResourceIconModel        } IconFile { '<res>/images/Resource-24.png'        }
+Seize                   JavaClass { com.jaamsim.ProcessFlow.Seize                 }  Palette { 'Process Flow' }  DefaultDisplayModel { SeizeIconModel           } IconFile { '<res>/images/Seize-24.png'           }
+Release                 JavaClass { com.jaamsim.ProcessFlow.Release               }  Palette { 'Process Flow' }  DefaultDisplayModel { ReleaseIconModel         } IconFile { '<res>/images/Release-24.png'         }
+Assign                  JavaClass { com.jaamsim.ProcessFlow.Assign                }  Palette { 'Process Flow' }  DefaultDisplayModel { AssignModel              } IconFile { '<res>/images/Assign-24.png'          }
+Branch                  JavaClass { com.jaamsim.ProcessFlow.Branch                }  Palette { 'Process Flow' }  DefaultDisplayModel { BranchIconModel          } IconFile { '<res>/images/Branch-24.png'          }
+Duplicate               JavaClass { com.jaamsim.ProcessFlow.Duplicate             }  Palette { 'Process Flow' }  DefaultDisplayModel { DuplicateIconModel       } IconFile { '<res>/images/Duplicate-24.png'       }
+Combine                 JavaClass { com.jaamsim.ProcessFlow.Combine               }  Palette { 'Process Flow' }  DefaultDisplayModel { CombineIconModel         } IconFile { '<res>/images/Combine-24.png'         }
+SetGraphics             JavaClass { com.jaamsim.ProcessFlow.SetGraphics           }  Palette { 'Process Flow' }  DefaultDisplayModel { SetGraphicsIconModel     } IconFile { '<res>/images/SetGraphics-24.png'     }
+EntityGate              JavaClass { com.jaamsim.ProcessFlow.EntityGate            }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityGateIconModel      } IconFile { '<res>/images/Gate-24.png'            }
+EntitySignal            JavaClass { com.jaamsim.ProcessFlow.EntitySignal          }  Palette { 'Process Flow' }  DefaultDisplayModel { EntitySignalIconModel    } IconFile { '<res>/images/Signal-24.png'          }
 SignalThreshold         JavaClass { com.jaamsim.Thresholds.SignalThreshold        }  Palette { 'Process Flow' }  DefaultDisplayModel { Rectangle                } IconFile { '<res>/images/Threshold-24.png'       }
-Assemble                JavaClass { com.jaamsim.BasicObjects.Assemble             }  Palette { 'Process Flow' }  DefaultDisplayModel { AssembleIconModel        } IconFile { '<res>/images/Assemble-24.png'        }
-EntityContainer         JavaClass { com.jaamsim.BasicObjects.EntityContainer      }  Palette { 'Process Flow' }  DefaultDisplayModel { Rectangle                } IconFile { '<res>/images/EntityContainer-24.png' }
-Pack                    JavaClass { com.jaamsim.BasicObjects.Pack                 }  Palette { 'Process Flow' }  DefaultDisplayModel { PackIconModel            } IconFile { '<res>/images/Pack-24.png'            }
-Unpack                  JavaClass { com.jaamsim.BasicObjects.Unpack               }  Palette { 'Process Flow' }  DefaultDisplayModel { UnpackIconModel          } IconFile { '<res>/images/Unpack-24.png'          }
-AddTo                   JavaClass { com.jaamsim.BasicObjects.AddTo                }  Palette { 'Process Flow' }  DefaultDisplayModel { AddToIconModel           } IconFile { '<res>/images/AddTo-24.png'           }
-RemoveFrom              JavaClass { com.jaamsim.BasicObjects.RemoveFrom           }  Palette { 'Process Flow' }  DefaultDisplayModel { RemoveFromIconModel      } IconFile { '<res>/images/RemoveFrom-24.png'      }
-EntityLogger            JavaClass { com.jaamsim.BasicObjects.EntityLogger         }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityLoggerIconModel    } IconFile { '<res>/images/EntityLogger-24.png'    }
-Statistics              JavaClass { com.jaamsim.BasicObjects.Statistics           }  Palette { 'Process Flow' }  DefaultDisplayModel { StatisticsIconModel      } IconFile { '<res>/images/Statistics-24.png'      }
+Assemble                JavaClass { com.jaamsim.ProcessFlow.Assemble              }  Palette { 'Process Flow' }  DefaultDisplayModel { AssembleIconModel        } IconFile { '<res>/images/Assemble-24.png'        }
+EntityContainer         JavaClass { com.jaamsim.ProcessFlow.EntityContainer       }  Palette { 'Process Flow' }  DefaultDisplayModel { Rectangle                } IconFile { '<res>/images/EntityContainer-24.png' }
+Pack                    JavaClass { com.jaamsim.ProcessFlow.Pack                  }  Palette { 'Process Flow' }  DefaultDisplayModel { PackIconModel            } IconFile { '<res>/images/Pack-24.png'            }
+Unpack                  JavaClass { com.jaamsim.ProcessFlow.Unpack                }  Palette { 'Process Flow' }  DefaultDisplayModel { UnpackIconModel          } IconFile { '<res>/images/Unpack-24.png'          }
+AddTo                   JavaClass { com.jaamsim.ProcessFlow.AddTo                 }  Palette { 'Process Flow' }  DefaultDisplayModel { AddToIconModel           } IconFile { '<res>/images/AddTo-24.png'           }
+RemoveFrom              JavaClass { com.jaamsim.ProcessFlow.RemoveFrom            }  Palette { 'Process Flow' }  DefaultDisplayModel { RemoveFromIconModel      } IconFile { '<res>/images/RemoveFrom-24.png'      }
+EntityLogger            JavaClass { com.jaamsim.ProcessFlow.EntityLogger          }  Palette { 'Process Flow' }  DefaultDisplayModel { EntityLoggerIconModel    } IconFile { '<res>/images/EntityLogger-24.png'    }
+Statistics              JavaClass { com.jaamsim.ProcessFlow.Statistics            }  Palette { 'Process Flow' }  DefaultDisplayModel { StatisticsIconModel      } IconFile { '<res>/images/Statistics-24.png'      }
 
 SimEntity          Description { 'The basic entity for use in a process flow type model.' }
 EntityGenerator    Description { 'Creates copies of a prototype entity at specified intervals.' }
