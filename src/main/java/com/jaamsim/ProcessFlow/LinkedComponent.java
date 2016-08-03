@@ -33,7 +33,7 @@ import com.jaamsim.units.TimeUnit;
  * LinkedComponents are used to form a chain of components that process DisplayEntities that pass through the system.
  * Sub-classes for EntityGenerator, Server, and EntitySink.
  */
-public abstract class LinkedComponent extends StateEntity {
+public abstract class LinkedComponent extends StateEntity implements Linkable {
 
 	@Keyword(description = "The default value for the output obj.\n"
 	                     + "Normally, obj is set to the last entity received by this object. "
@@ -118,10 +118,7 @@ public abstract class LinkedComponent extends StateEntity {
 		return true;
 	}
 
-	/**
-	 * Receives the specified entity from an upstream component.
-	 * @param ent - the entity received from upstream.
-	 */
+	@Override
 	public void addEntity(DisplayEntity ent) {
 		this.registerEntity(ent);
 	}
