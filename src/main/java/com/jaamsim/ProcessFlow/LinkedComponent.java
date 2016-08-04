@@ -21,6 +21,7 @@ import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringInput;
@@ -45,7 +46,7 @@ public abstract class LinkedComponent extends StateEntity implements Linkable {
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 			exampleList = {"Queue1"})
-	protected final EntityInput<LinkedComponent> nextComponent;
+	protected final InterfaceEntityInput<Linkable> nextComponent;
 
 	@Keyword(description = "The state to be assigned to each entity on arrival at this object.\n" +
 			"No state is assigned if the entry is blank.",
@@ -67,7 +68,7 @@ public abstract class LinkedComponent extends StateEntity implements Linkable {
 		this.addInput(defaultEntity);
 		this.addSynonym(defaultEntity, "TestEntity");
 
-		nextComponent = new EntityInput<>(LinkedComponent.class, "NextComponent", "Key Inputs", null);
+		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", "Key Inputs", null);
 		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
 
