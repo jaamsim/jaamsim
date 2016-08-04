@@ -1353,6 +1353,21 @@ public abstract class Input<T> {
 		return temp;
 	}
 
+	public static <T> T parseInterfaceEntity(String choice, Class<T> aClass) {
+
+		Entity ent = Entity.getNamedEntity(choice);
+		if (ent == null) {
+			throw new InputErrorException(INP_ERR_ENTNAME, choice);
+		}
+
+		T temp = Input.castImplements(ent, aClass);
+		if (temp == null) {
+			throw new InputErrorException(INP_ERR_ENTCLASS, aClass.getSimpleName(), choice, ent.getClass().getSimpleName());
+		}
+
+		return temp;
+	}
+
 	public static <T> ArrayList<T> parseInterfaceEntityList(KeywordIndex kw, Class<T> aClass, boolean unique)
 	throws InputErrorException {
 		ArrayList<T> temp = new ArrayList<>(kw.numArgs());
