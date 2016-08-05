@@ -81,7 +81,10 @@ public class Entity {
 	private final HashMap<String, AttributeHandle> attributeMap = new LinkedHashMap<>();
 	private final HashMap<String, ExpressionHandle> customOutputMap = new LinkedHashMap<>();
 
-	private final BooleanInput trace;
+	@Keyword(description = "Provides the programmer with a detailed trace of the logic executed "
+	                     + "by the entity. Trace information is sent to standard out.",
+	         exampleList = {"TRUE"})
+	protected final BooleanInput trace;
 
 	@Keyword(description = "A free form string describing the Entity",
 	         exampleList = {"'A very useful entity'"})
