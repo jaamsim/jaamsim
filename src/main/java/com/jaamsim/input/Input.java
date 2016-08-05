@@ -134,6 +134,7 @@ public abstract class Input<T> {
 		valueTokens = inp.valueTokens;
 		isDef = false;
 		edited = true;
+		isValid = true;
 	}
 
 	@Override
