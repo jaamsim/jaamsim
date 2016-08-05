@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
@@ -324,9 +325,11 @@ public class Entity {
 	 * @return - copied entity.
 	 */
 	public static <T extends Entity> T fastCopy(T ent, String name) {
+
 		// Create the new entity
 		@SuppressWarnings("unchecked")
 		T ret = (T)InputAgent.generateEntityWithName(ent.getClass(), name);
+
 		// Loop through the original entity's inputs
 		ArrayList<Input<?>> orig = ent.getEditableInputs();
 		for (int i = 0; i < orig.size(); i++) {
@@ -336,9 +339,18 @@ public class Entity {
 			if (sourceInput.isDefault() || sourceInput.isSynonym())
 				continue;
 
-			// Assign the value to the copied entity's input
+			// Get the matching input for the new entity
 			Input<?> targetInput = ret.getEditableInputs().get(i);
+
+			// SampleInputs need to know their entity for "this" to work correctly
+			if (sourceInput instanceof SampleInput) {
+				((SampleInput)targetInput).setEntity(ret);
+			}
+
+			// Assign the value to the copied entity's input
 			targetInput.copyFrom(sourceInput);
+
+			// Further processing related to this input
 			ret.updateForInput(targetInput);
 		}
 		return ret;
