@@ -55,7 +55,7 @@ public class Seize extends LinkedService {
 		def.add(new SampleConstant(1));
 		numberOfUnitsList = new SampleListInput("NumberOfUnits", "Key Inputs", def);
 		numberOfUnitsList.setEntity(this);
-		numberOfUnitsList.setValidRange(1, Double.POSITIVE_INFINITY);
+		numberOfUnitsList.setValidRange(0, Double.POSITIVE_INFINITY);
 		numberOfUnitsList.setUnitType(DimensionlessUnit.class);
 		this.addInput(numberOfUnitsList);
 	}
