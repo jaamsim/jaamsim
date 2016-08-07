@@ -41,10 +41,10 @@ public class SampleExpression implements SampleProvider {
 			// We know the returned unit type with certainty, so we can check it against what we expect
 			Class<? extends Unit> expUnitType = exp.validationResult.unitType;
 			if (expUnitType != unitType) {
-				throw new InputErrorException(String.format("Invalid unit returned by an expression: '%s'%n"
+				throw new InputErrorException("Invalid unit returned by an expression: '%s'%n"
 						+ "Received: %s, expected: %s",
 						exp, ObjectType.getObjectTypeForClass(expUnitType),
-						ObjectType.getObjectTypeForClass(unitType)));
+						ObjectType.getObjectTypeForClass(unitType));
 
 			}
 		}
