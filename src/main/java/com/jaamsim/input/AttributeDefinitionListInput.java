@@ -30,7 +30,7 @@ import com.jaamsim.units.Unit;
  */
 public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeHandle>> {
 
-	private Entity ent;
+	private final Entity ent;
 
 	public AttributeDefinitionListInput(Entity e, String key, String cat, ArrayList<AttributeHandle> def) {
 		super(key, cat, def);
@@ -77,8 +77,9 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				if (h == null)
 					h = new AttributeHandle(ent, name);
 				h.setUnitType(unitType);
-				h.setInitialValue(val);
-				h.setValue(val);
+				ExpResult expVal = ExpResult.makeNumResult(val, unitType);
+				h.setInitialValue(expVal);
+				h.setValue(expVal);
 				temp.add(h);
 
 			} catch (InputErrorException e) {
@@ -100,7 +101,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 			AttributeHandle hNew = new AttributeHandle(ent, h.getName());
 			hNew.setUnitType(h.getUnitType());
 			hNew.setInitialValue(h.getInitialValue());
-			hNew.setValue(h.getValueAsDouble(0.0d, 0.0d));
+			hNew.setValue(h.getValue(0.0d, ExpResult.class));
 			value.add(hNew);
 		}
 	}
@@ -129,7 +130,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 			tmp.append(h.getName());
 			tmp.append(SEPARATOR);
 
-			double val = h.getInitialValue();
+			double val = h.getInitialValue().value;
 			String unitString = Unit.getSIUnit(h.getUnitType());
 
 			// Check for a preferred unit

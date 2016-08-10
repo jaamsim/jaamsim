@@ -537,7 +537,7 @@ public class ExpEvaluator {
 		if (!assignmentEnt.hasAttribute(attribName)) {
 			throw new ExpError(null, 0, "Entity '%s' does not have attribute '%s'", assignmentEnt, attribName);
 		}
-		assignmentEnt.setAttribute(attribName, result.value, result.unitType);
+		assignmentEnt.setAttribute(attribName, result);
 	}
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime) throws ExpError

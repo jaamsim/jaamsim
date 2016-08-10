@@ -48,4 +48,26 @@ public class ExpResult {
 		stringVal = str;
 		entVal = ent;
 	}
+
+	public <T> T getValue(double simTime, Class<T> klass) {
+		// Make a best effort to return the type
+		if (klass.isAssignableFrom(ExpResult.class))
+			return klass.cast(this);
+
+		if (type == ExpResType.STRING && klass.isAssignableFrom(String.class)) {
+			return klass.cast(stringVal);
+		}
+
+		if (type == ExpResType.ENTITY && klass.isAssignableFrom(Entity.class)) {
+			return klass.cast(entVal);
+		}
+
+		if (klass.equals(double.class) || klass.equals(Double.class)) {
+			if (type == ExpResType.NUMBER)
+			return klass.cast(value);
+		}
+
+		return null;
+	}
+
 }

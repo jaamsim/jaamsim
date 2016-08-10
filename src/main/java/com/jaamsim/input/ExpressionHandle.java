@@ -35,23 +35,8 @@ public class ExpressionHandle extends OutputHandle {
 	public <T> T getValue(double simTime, Class<T> klass) {
 		// Make a best effort to return the type
 		ExpResult res = evaluateExp(simTime);
-		if (klass.isAssignableFrom(ExpResult.class))
-			return klass.cast(res);
 
-		if (res.type == ExpResType.STRING && klass.isAssignableFrom(String.class)) {
-			return klass.cast(res.stringVal);
-		}
-
-		if (res.type == ExpResType.ENTITY && klass.isAssignableFrom(Entity.class)) {
-			return klass.cast(res.entVal);
-		}
-
-		if (klass.equals(double.class) || klass.equals(Double.class)) {
-			if (res.type == ExpResType.NUMBER)
-			return klass.cast(res.value);
-		}
-
-		return null;
+		return res.getValue(simTime, klass);
 	}
 
 	@Override

@@ -20,23 +20,23 @@ import com.jaamsim.basicsim.Entity;
 
 public class AttributeHandle extends OutputHandle {
 	private final String attributeName;
-	private double initialValue;
-	private double value;
+	private ExpResult initialValue;
+	private ExpResult value;
 
 	public AttributeHandle(Entity e, String outputName) {
 		super(e);
 		this.attributeName = outputName;
 	}
 
-	public void setInitialValue(double val) {
+	public void setInitialValue(ExpResult val) {
 		initialValue = val;
 	}
 
-	public double getInitialValue() {
+	public ExpResult getInitialValue() {
 		return initialValue;
 	}
 
-	public void setValue(double val) {
+	public void setValue(ExpResult val) {
 		value = val;
 	}
 
@@ -45,19 +45,23 @@ public class AttributeHandle extends OutputHandle {
 		if (!ent.hasAttribute(attributeName)) {
 			return null;
 		}
-		if (!double.class.equals(klass)) {
+		if (value == null) {
 			return null;
 		}
-		return klass.cast(value);
+		return value.getValue(simTime, klass);
 	}
+
 	@Override
 	public double getValueAsDouble(double simTime, double def) {
-		return value;
+		if (value.type == ExpResType.NUMBER)
+			return value.value;
+		else
+			return def;
 	}
 
 	@Override
 	public Class<?> getReturnType() {
-		return double.class;
+		return ExpResult.class;
 	}
 	@Override
 	public Class<?> getDeclaringClass() {
