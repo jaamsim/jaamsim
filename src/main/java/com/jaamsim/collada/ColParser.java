@@ -195,7 +195,8 @@ public class ColParser {
 
 	private final MeshData _finalData = new MeshData(keepRuntimeData);
 
-	private final HashMap<String, Vec4d[]> _dataSources = new HashMap<>();
+	private final HashMap<String, Vec4d[]> _vec4dSources = new HashMap<>();
+	private final HashMap<String, double[][]> _dataSources = new HashMap<>();
 	private final HashMap<String, String[]> _stringSources = new HashMap<>();
 
 	private XmlNode _colladaNode;
@@ -1221,7 +1222,7 @@ public class ColParser {
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
 		LineSubGeo lsg = new LineSubGeo(numVerts);
 
-		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
+		Vec4d[] posData = getVec4dArrayFromSource(smd.posDesc.source);
 
 		lsg.materialSymbol = subGeo.getAttrib("material");
 		if (lsg.materialSymbol == null) {
@@ -1292,11 +1293,11 @@ public class ColParser {
 		// Now the SubMeshDesc should be fully populated, and we can actually produce the final triangle arrays
 		FaceSubGeo fsg = new FaceSubGeo(numVerts);
 
-		Vec4d[] posData = getDataArrayFromSource(smd.posDesc.source);
+		Vec4d[] posData = getVec4dArrayFromSource(smd.posDesc.source);
 
 		Vec4d[] normData = null;
 		if (hasNormal) {
-			normData = getDataArrayFromSource(smd.normDesc.source);
+			normData = getVec4dArrayFromSource(smd.normDesc.source);
 		}
 
 		boolean hasTexCoords = false;
@@ -1307,7 +1308,7 @@ public class ColParser {
 			texSetDesc = smd.texCoordMap.get(smd.usedTexSet);
 			if (texSetDesc != null) {
 				hasTexCoords = true;
-				texCoordData = getDataArrayFromSource(texSetDesc.source);
+				texCoordData = getVec4dArrayFromSource(texSetDesc.source);
 			}
 		}
 
@@ -1715,16 +1716,50 @@ public class ColParser {
 	 * @param id
 	 * @return
 	 */
-	private Vec4d[] getDataArrayFromSource(String id) {
+	private Vec4d[] getVec4dArrayFromSource(String id) {
+		Vec4d[] cached = _vec4dSources.get(id);
+		if (cached != null)
+			return cached;
+
+		double[][] data = getDataArrayFromSource(id);
+
+		// convert to vec4ds
+		Vec4d[] ret = new Vec4d[data.length];
+
+		for (int i = 0; i < data.length; ++i) {
+			double[] ds = data[i];
+			switch (ds.length) {
+			case 1:
+				ret[i] = new Vec4d(ds[0], 0, 0, 1);
+				break;
+			case 2:
+				ret[i] = new Vec4d(ds[0], ds[1], 0, 1);
+				break;
+			case 3:
+				ret[i] = new Vec4d(ds[0], ds[1], ds[2], 1);
+				break;
+			case 4:
+				ret[i] = new Vec4d(ds[0], ds[1], ds[2], ds[3]);
+				break;
+			default:
+				throw new RenderException(String.format("Invalid number of elements in data Vector: %d", ds.length));
+			}
+		}
+		_vec4dSources.put(id, ret);
+		return ret;
+	}
+
+	private double[][] getDataArrayFromSource(String id) {
+
 		// First check the cache
-		Vec4d[] cached = _dataSources.get(id);
+		double[][] cached = _dataSources.get(id);
 		if (cached != null) {
 			return cached;
 		}
 
 		SourceInfo info = getInfoFromSource(id, "float_array");
 
-		Vec4d[] ret = new Vec4d[info.count];
+		double[][] ret = new double[info.count][];
 
 		double[] values = null;
 		try {
@@ -1735,20 +1770,11 @@ public class ColParser {
 
 		int valueOffset = info.offset;
 		for (int i = 0; i < info.count; ++i) {
-			switch(info.stride) {
-			case 1:
-				ret[i] = new Vec4d(values[valueOffset], 0, 0, 1);
-				break;
-			case 2:
-				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], 0, 1);
-				break;
-			case 3:
-				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], values[valueOffset+2], 1);
-				break;
-			case 4:
-				ret[i] = new Vec4d(values[valueOffset], values[valueOffset+1], values[valueOffset+2], values[valueOffset+3]);
-				break;
+			ret[i] = new double[info.stride];
+			for (int j = 0; j < info.stride; j++) {
+				ret[i][j] = values[valueOffset + j];
 			}
+
 			valueOffset += info.stride;
 		}
 
@@ -1789,18 +1815,18 @@ public class ColParser {
 
 	private AnimCurve buildAnimCurve(AnimSampler samp) {
 		AnimCurve.ColCurve colData = new AnimCurve.ColCurve();
-		colData.in =     getDataArrayFromSource(samp.inputSource);
-		colData.out =    getDataArrayFromSource(samp.outputSource);
+		colData.in =     getVec4dArrayFromSource(samp.inputSource);
+		colData.out =    getVec4dArrayFromSource(samp.outputSource);
 		colData.interp = getStringArrayFromSource(samp.interpSource);
 
 		SourceInfo outInfo = getInfoFromSource(samp.outputSource, "float_array");
 		colData.numComponents = outInfo.stride;
 
 		if (samp.inTangentSource != null) {
-			colData.inTan =  getDataArrayFromSource(samp.inTangentSource);
+			colData.inTan =  getVec4dArrayFromSource(samp.inTangentSource);
 		}
 		if (samp.outTangentSource != null) {
-			colData.outTan = getDataArrayFromSource(samp.outTangentSource);
+			colData.outTan = getVec4dArrayFromSource(samp.outTangentSource);
 		}
 
 		parseAssert(colData.in.length == colData.out.length);
