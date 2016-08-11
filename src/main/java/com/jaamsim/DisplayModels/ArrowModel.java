@@ -79,11 +79,11 @@ public class ArrowModel extends PolylineModel {
 				arrowObservee = (Arrow)observee;
 		}
 
-		private void updateHead() {
+		private void updateHead(double simTime) {
 
 			Vec4d startPoint = selectionPoints.get(selectionPoints.size() - 1);
 			Vec4d fromPoint = selectionPoints.get(selectionPoints.size() - 2);
-			PolylineInfo[] pointInfos = displayObservee.getScreenPoints();
+			PolylineInfo[] pointInfos = displayObservee.getScreenPoints(simTime);
 			if (pointInfos == null || pointInfos.length == 0)
 				return;
 
@@ -146,7 +146,7 @@ public class ArrowModel extends PolylineModel {
 			}
 
 			updateProxies(simTime);
-			updateHead();
+			updateHead(simTime);
 
 			super.collectProxies(simTime, out);
 

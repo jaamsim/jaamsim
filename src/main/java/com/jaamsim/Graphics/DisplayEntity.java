@@ -843,15 +843,15 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
-	public final PolylineInfo[] getScreenPoints() {
+	public final PolylineInfo[] getScreenPoints(double simTime) {
 		synchronized(screenPointLock) {
 			if (cachedPointInfo == null)
-				cachedPointInfo = this.buildScreenPoints();
+				cachedPointInfo = this.buildScreenPoints(simTime);
 			return cachedPointInfo;
 		}
 	}
 
-	public PolylineInfo[] buildScreenPoints() {
+	public PolylineInfo[] buildScreenPoints(double simTime) {
 		PolylineInfo[] ret = new PolylineInfo[1];
 		ret[0] = new PolylineInfo(pointsInput.getValue(), ColourInput.BLACK, 1);
 		return ret;

@@ -78,7 +78,7 @@ public class PolylineModel extends DisplayModel {
 		 */
 		protected void updateProxies(double simTime) {
 
-			PolylineInfo[] pis = displayObservee.getScreenPoints();
+			PolylineInfo[] pis = displayObservee.getScreenPoints(simTime);
 			if (pis == null || pis.length == 0)
 				return;
 

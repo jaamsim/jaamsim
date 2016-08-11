@@ -210,7 +210,7 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	@Override
-	public PolylineInfo[] buildScreenPoints() {
+	public PolylineInfo[] buildScreenPoints(double simTime) {
 		int w = Math.max(1, widthInput.getValue().intValue());
 		PolylineInfo[] ret = new PolylineInfo[1];
 		ret[0] = new PolylineInfo(pointsInput.getValue(), colorInput.getValue(), w);
