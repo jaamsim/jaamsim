@@ -884,18 +884,21 @@ public class DisplayEntity extends Entity {
 
 			// Error condition
 			if (k == -1)
-				error("Unable to find position in polyline using binary search.");
+				return new Vec3d();
 
 			// Insertion index = -k-1
 			int index = -k - 1;
 
 			// Interpolate the final position between the two points
+			if (index == cumLengthList.length) {
+				return new Vec3d(pointsInput.getValue().get(index-1));
+			}
 			double fracInSegment = (dist - cumLengthList[index-1]) /
-			                       (cumLengthList[index] - cumLengthList[index-1]);
+					(cumLengthList[index] - cumLengthList[index-1]);
 			Vec3d vec = new Vec3d();
 			vec.interpolate3(pointsInput.getValue().get(index-1),
-			                 pointsInput.getValue().get(index),
-			                 fracInSegment);
+					pointsInput.getValue().get(index),
+					fracInSegment);
 			return vec;
 		}
 	}
