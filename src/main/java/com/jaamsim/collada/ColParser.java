@@ -1815,18 +1815,24 @@ public class ColParser {
 
 	private AnimCurve buildAnimCurve(AnimSampler samp) {
 		AnimCurve.ColCurve colData = new AnimCurve.ColCurve();
-		colData.in =     getVec4dArrayFromSource(samp.inputSource);
-		colData.out =    getVec4dArrayFromSource(samp.outputSource);
+
+		double[][] inTemp = getDataArrayFromSource(samp.inputSource);
+		colData.in = new double[inTemp.length];
+		for (int i = 0; i < inTemp.length; ++i) {
+			colData.in[i] = inTemp[i][0];
+		}
+
+		colData.out =    getDataArrayFromSource(samp.outputSource);
 		colData.interp = getStringArrayFromSource(samp.interpSource);
 
 		SourceInfo outInfo = getInfoFromSource(samp.outputSource, "float_array");
 		colData.numComponents = outInfo.stride;
 
 		if (samp.inTangentSource != null) {
-			colData.inTan =  getVec4dArrayFromSource(samp.inTangentSource);
+			colData.inTan =  getDataArrayFromSource(samp.inTangentSource);
 		}
 		if (samp.outTangentSource != null) {
-			colData.outTan = getVec4dArrayFromSource(samp.outTangentSource);
+			colData.outTan = getDataArrayFromSource(samp.outTangentSource);
 		}
 
 		parseAssert(colData.in.length == colData.out.length);
@@ -2009,13 +2015,13 @@ public class ColParser {
 			}
 
 			if (act.attachedCurves[0] != null) {
-				ret.x = act.attachedCurves[0].getValueForTime(time).getByInd(act.attachedIndex[0]);
+				ret.x = act.attachedCurves[0].getValueForTime(time)[act.attachedIndex[0]];
 			}
 			if (act.attachedCurves[1] != null) {
-				ret.y = act.attachedCurves[1].getValueForTime(time).getByInd(act.attachedIndex[1]);
+				ret.y = act.attachedCurves[1].getValueForTime(time)[act.attachedIndex[1]];
 			}
 			if (act.attachedCurves[2] != null) {
-				ret.z = act.attachedCurves[2].getValueForTime(time).getByInd(act.attachedIndex[2]);
+				ret.z = act.attachedCurves[2].getValueForTime(time)[act.attachedIndex[2]];
 			}
 			return ret;
 		}
@@ -2199,7 +2205,7 @@ public class ColParser {
 				for (int i = 0; i < times.length; ++i) {
 					double animAngle = Math.toRadians(angle);
 					if (act.attachedCurves[3] != null) {
-						animAngle = Math.toRadians(act.attachedCurves[3].getValueForTime(times[i]).getByInd(act.attachedIndex[3]));
+						animAngle = Math.toRadians(act.attachedCurves[3].getValueForTime(times[i])[act.attachedIndex[3]]);
 					}
 
 					Vec3d animAxis = getAnimatedVectAtTime(times[i], actionName);
