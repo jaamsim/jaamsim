@@ -154,9 +154,11 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	protected double getProcessingTime(double simTime) {
 
-		// Calculate time for the next entity to reach the end of the conveyor
-		double dur = startTimeList.get(0) + presentTravelTime - simTime;
+		// Calculate the time for the first entity to reach the end of the conveyor
+		double dt = simTime - this.getLastUpdateTime();
+		double dur = (1.0d - entryList.get(0).position)*presentTravelTime - dt;
 		dur = Math.max(dur, 0);  // Round-off to the nearest tick can cause a negative value
+		if (traceFlag) trace(1, "getProcessingTime = " + dur);
 		return dur;
 	}
 
@@ -188,11 +190,9 @@ public class EntityConveyor extends LinkedService {
 		double newTime = travelTimeInput.getValue().getNextSample(simTime);
 		if (newTime != presentTravelTime) {
 
-			// Adjust the start time for each entity to account for the new travel time
-			double factor = newTime/presentTravelTime;
-			for (int i = 0; i < entityList.size(); i++) {
-				double dt = simTime - startTimeList.get(i);
-				startTimeList.set(i, simTime - dt*factor);
+			if (traceFlag) {
+				trace(1, "updateTravelTime");
+				traceLine(1, "newTime=%.6f, presentTravelTime=%.6f", newTime, presentTravelTime);
 			}
 
 			// Set the new travel time
@@ -222,25 +222,15 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	public void updateGraphics(double simTime) {
 
-		double t = simTime;
-		if (!this.isBusy())
-			t = this.getStopWorkTime();
+		if (!this.isBusy() || presentTravelTime == 0.0d)
+			return;
 
-		// Loop through the entities on the conveyor
-		for (int i = 0; i < entityList.size(); i++) {
-			DisplayEntity each = entityList.get(i);
-
-			// Calculate the distance travelled by this entity
-			double dur = Math.max(0.0, t - startTimeList.get(i));
-			double frac = dur/presentTravelTime;
-
-			// 0/0 NaNs have been spotted here, just zero them
-			if (Double.isNaN(frac))
-				frac = 0.0;
-
-			// Set the position for the entity
-			Vec3d localPos = this.getPositionOnPolyline(frac);
-			each.setGlobalPosition(this.getGlobalPosition(localPos));
+		// Move each entity on the conveyor to its present position
+		double frac = (simTime - this.getLastUpdateTime())/presentTravelTime;
+		for (int i=0; i<entryList.size(); i++) {
+			ConveyorEntry entry = entryList.get(i);
+			Vec3d localPos = this.getPositionOnPolyline(entry.position + frac);
+			entry.entity.setGlobalPosition(this.getGlobalPosition(localPos));
 		}
 	}
 
