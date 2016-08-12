@@ -604,6 +604,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		return false;
 	}
 
+	public boolean isAvailable() {
+		return isOpen() && !isMaintenance() && !isBreakdown();
+	}
+
 	/**
 	 * Tests whether the LinkedService is available for work.
 	 * <p>
@@ -611,7 +615,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * @return true if the LinkedService is available for work
 	 */
 	public boolean isIdle() {
-		return !isBusy() && isOpen() && !isMaintenance() && !isBreakdown();
+		return !isBusy() && isAvailable();
 	}
 
 	/**
@@ -622,7 +626,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * @return true if the LinkedService is not working because it is prevented from doing so
 	 */
 	public boolean isUnableToWork() {
-		return !isBusy() && (!isOpen() || isMaintenance() || isBreakdown());
+		return !isBusy() && !isAvailable();
 	}
 
 	@Override
