@@ -27,6 +27,7 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -110,9 +111,12 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	public void addEntity(DisplayEntity ent ) {
 		super.addEntity(ent);
+		double simTime = this.getSimTime();
+
+		// Update the positions of the entities on the conveyor
+		this.updateProgress(simTime, this.getLastUpdateTime());
 
 		// Update the travel time
-		double simTime = this.getSimTime();
 		this.updateTravelTime(simTime);
 
 		// Add the entity to the conveyor
@@ -154,6 +158,28 @@ public class EntityConveyor extends LinkedService {
 		double dur = startTimeList.get(0) + presentTravelTime - simTime;
 		dur = Math.max(dur, 0);  // Round-off to the nearest tick can cause a negative value
 		return dur;
+	}
+
+	@Override
+	public void updateProgress(double simTime, double lastTime) {
+		super.updateProgress(simTime, lastTime);
+		if (traceFlag) trace(1, "updateProgress");
+
+		// Is the conveyor in operation?
+		if (!this.isBusy() || presentTravelTime == 0.0d)
+			return;
+
+		// Calculate the fractional distance travelled since the last update
+		double frac = (simTime - lastTime)/presentTravelTime;
+		if (MathUtils.near(frac, 0.0d))
+			return;
+
+		// Increment the positions of the entities on the conveyor
+		if (traceFlag) traceLine(1, "BEFORE - entryList=%s", entryList);
+		for (ConveyorEntry entry : entryList) {
+			entry.position += frac;
+		}
+		if (traceFlag) traceLine(1, "AFTER - entryList=%s", entryList);
 	}
 
 	private void updateTravelTime(double simTime) {
