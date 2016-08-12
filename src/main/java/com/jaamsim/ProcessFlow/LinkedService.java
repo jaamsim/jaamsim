@@ -115,6 +115,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	private Integer matchValue;
 	private double startTime;  // start of service time for the present entity
 	private double duration;  // service time for the present entity
+	private double lastUpdateTime;
 	private boolean forcedDowntimePending;
 	private boolean stopped;  // set to true if unable to work
 	private double stopWorkTime;  // last time at which the busy state was set to false
@@ -180,6 +181,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		matchValue = null;
 		startTime = 0.0;
 		duration = 0.0;
+		lastUpdateTime = 0.0d;
 		forcedDowntimePending = false;
 		stopped = false;
 		stopWorkTime = 0.0;
@@ -289,6 +291,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		busy = bool;
 	}
 
+	protected final double getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+
 	/**
 	 * Returns the last time at which processing was finished or was halted for any reason
 	 * @return last time processing stopped
@@ -324,6 +330,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// No progress is made during a stoppage
 		if (stopped) {
 			stopped = false;
+			lastUpdateTime = simTime;
+			if (traceFlag) traceLine(0, "stopped=%s, stopWorkTime=%.6f", stopped, stopWorkTime);
 		}
 
 		// Start a new process
@@ -359,9 +367,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 */
 	final void endAction() {
 		if (traceFlag) trace(0, "endAction");
+		double simTime = this.getSimTime();
+
+		// Update the progress that has been made
+		this.updateProgress(simTime, lastUpdateTime);
 
 		// Perform any special processing required for this sub-class of LinkedService
-		this.endProcessing(this.getSimTime());
+		this.endProcessing(simTime);
 		processCompleted = true;
 
 		// Process the next entity
@@ -393,6 +405,15 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	protected void endProcessing(double simTime) {}
 
 	/**
+	 * Performs any progress tracking that is required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 * @param lastTime - last time that the update was performed
+	 */
+	protected void updateProgress(double simTime, double lastTime) {
+		lastUpdateTime = simTime;
+	}
+
+	/**
 	 * Interrupts processing of an entity and holds it.
 	 */
 	private void stopAction() {
@@ -407,6 +428,9 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		if (endActionHandle.isScheduled()) {
 			EventManager.killEvent(endActionHandle);
 		}
+
+		// Update the service for any partial progress that has been made
+		this.updateProgress(simTime, lastUpdateTime);
 
 		// Update the state
 		this.setBusy(false);
@@ -475,11 +499,19 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
 		}
 
+		// Set the present process to completed
+		processCompleted = true;
+
 		// Is processing underway
 		if (endActionHandle.isScheduled()) {
 
-			// Stop the present process and starts a new one
+			// Stop the present process
 			EventManager.killEvent(endActionHandle);
+
+			// Update the progress that has been made
+			this.updateProgress(this.getSimTime(), lastUpdateTime);
+
+			// Start a new process
 			this.startAction();
 		}
 	}
