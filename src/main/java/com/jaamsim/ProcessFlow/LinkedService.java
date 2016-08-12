@@ -296,14 +296,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	}
 
 	/**
-	 * Returns the last time at which processing was finished or was halted for any reason
-	 * @return last time processing stopped
-	 */
-	protected double getStopWorkTime() {
-		return stopWorkTime;
-	}
-
-	/**
 	 * Starts the processing of an entity.
 	 */
 	protected final void startAction() {
