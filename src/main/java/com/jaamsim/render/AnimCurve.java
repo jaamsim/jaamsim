@@ -30,6 +30,8 @@ public class AnimCurve {
 		public String[] interp;
 	}
 
+	public int numComponents;
+
 	public double[] times;
 	public double[][] values;
 
@@ -166,6 +168,7 @@ public class AnimCurve {
 		}
 
 		AnimCurve ret = new AnimCurve();
+		ret.numComponents = colData.numComponents;
 		ret.times = new double[ts.size()];
 		ret.values = new double[vs.size()][];
 		assert(ts.size() == vs.size());

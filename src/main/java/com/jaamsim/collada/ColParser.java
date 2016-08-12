@@ -2047,6 +2047,23 @@ public class ColParser {
 			}
 			return ret;
 		}
+
+		// Return a list of times with (oversample-1) additional points interspersed in each gap
+		protected double[] oversampleTime(double[] originalTimes, int oversample) {
+			double[] times = new double[(originalTimes.length-1)*oversample + 1];
+			for (int i = 0; i < originalTimes.length - 1; ++i) {
+
+				double cur = originalTimes[i];
+				double next = originalTimes[i+1];
+				for (int j = 0; j < oversample; ++j) {
+					double scale = (double)j / (double)oversample;
+					times[i*oversample +j] = cur*(1-scale) + next*scale;
+				}
+			}
+			times[times.length-1] = originalTimes[originalTimes.length-1];
+
+			return times;
+		}
 	}
 
 	private static class TranslationTrans extends SceneTrans {
@@ -2188,18 +2205,7 @@ public class ColParser {
 				AnimAction act = eachAction.getValue();
 
 				// Add new sample points because linearly interpolating a rotation matrix usually does not work correctly
-				final int OVERSAMPLE = 4;
-				double[] times = new double[(originalTimes.length-1)*OVERSAMPLE + 1];
-				for (int i = 0; i < originalTimes.length - 1; ++i) {
-
-					double cur = originalTimes[i];
-					double next = originalTimes[i+1];
-					for (int j = 0; j < OVERSAMPLE; ++j) {
-						double scale = (double)j / (double)OVERSAMPLE;
-						times[i*OVERSAMPLE +j] = cur*(1-scale) + next*scale;
-					}
-				}
-				times[times.length-1] = originalTimes[originalTimes.length-1];
+				double[] times = oversampleTime(originalTimes, 4);
 
 				Mat4d[] mats = new Mat4d[times.length];
 				for (int i = 0; i < times.length; ++i) {
@@ -2319,12 +2325,48 @@ public class ColParser {
 		}
 		@Override
 		public void attachCurve(AnimCurve curve, String target, String actionName) {
-			// TODO: support this
-			throw new RenderException("Currently do not support animating matrices");
+			if (!target.equals("") || curve.numComponents != 16) {
+				throw new RenderException("Currently only support animating whole matrices");
+			}
+			AnimAction act = actions.get(actionName);
+			if (act != null) {
+				// TODO warn we are over-writing an action here
+			}
+
+			// We only support whole matrix animation and single curve per action currently, so the last curve
+			// bound to an action will dominate
+			act = new AnimAction();
+			act.attachedCurves = new AnimCurve[1];
+			act.attachedCurves[0] = curve;
+			actions.put(actionName, act);
 		}
 		@Override
 		protected Trans toAnimatedTransform() {
-			throw new  RenderException("Do not support animated matrices");
+			Set<String> actionNames = actions.keySet();
+			double[][] timesArray = new double[actionNames.size()][];
+			Mat4d[][] matsArray = new Mat4d[actionNames.size()][];
+			String[] names = new String[actionNames.size()];
+
+			int actionInd = 0;
+			for (Entry<String, AnimAction> eachAction : actions.entrySet()) {
+				String actionName = eachAction.getKey();
+				AnimAction act = eachAction.getValue();
+
+				double[] times = getKeyTimes(actionName);
+				Mat4d[] mats = new Mat4d[times.length];
+				// Fill in the mats
+				for (int i = 0; i < times.length; ++i) {
+					double[] matVals = act.attachedCurves[0].getValueForTime(times[i]);
+					mats[i] = new Mat4d(matVals);
+				}
+
+				names[actionInd] = actionName;
+				timesArray[actionInd] = times;
+				matsArray[actionInd] = mats;
+				actionInd++;
+			}
+
+			return new MeshData.AnimTrans(timesArray, matsArray, names, getStaticMat());
 		}
 	}
 
