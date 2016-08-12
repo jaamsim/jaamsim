@@ -285,18 +285,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	private final ProcessTarget endActionTarget = new EndActionTarget(this);
 	private final EventHandle endActionHandle = new EventHandle();
 
-	protected final boolean isBusy() {
-		return busy;
-	}
-
-	private void setBusy(boolean bool) {
-		busy = bool;
-	}
-
-	protected final double getLastUpdateTime() {
-		return lastUpdateTime;
-	}
-
 	/**
 	 * Starts the processing of an entity.
 	 */
@@ -381,39 +369,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	}
 
 	/**
-	 * Performs any special processing required for this sub-class of LinkedService
-	 * @param simTime - present simulation time
-	 * @return true if processing can continue
-	 */
-	protected boolean startProcessing(double simTime) {
-		return true;
-	}
-
-	/**
-	 * Returns the time required to complete the processing of an entity
-	 * @param simTime - present simulation time
-	 * @return duration required for processing
-	 */
-	protected double getProcessingTime(double simTime) {
-		return 0.0;
-	}
-
-	/**
-	 * Performs any special processing required for this sub-class of LinkedService
-	 * @param simTime - present simulation time
-	 */
-	protected void endProcessing(double simTime) {}
-
-	/**
-	 * Performs any progress tracking that is required for this sub-class of LinkedService
-	 * @param simTime - present simulation time
-	 * @param lastTime - last time that the update was performed
-	 */
-	protected void updateProgress(double simTime, double lastTime) {
-		lastUpdateTime = simTime;
-	}
-
-	/**
 	 * Interrupts processing of an entity and holds it.
 	 */
 	private void stopAction() {
@@ -460,6 +415,47 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		if (endActionHandle.isScheduled()) {
 			EventManager.interruptEvent(endActionHandle);
 		}
+	}
+
+	/**
+	 * Performs any special processing required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 * @return true if processing can continue
+	 */
+	protected boolean startProcessing(double simTime) {
+		return true;
+	}
+
+	/**
+	 * Returns the time required to complete the processing of an entity
+	 * @param simTime - present simulation time
+	 * @return duration required for processing
+	 */
+	protected double getProcessingTime(double simTime) {
+		return 0.0;
+	}
+
+	/**
+	 * Performs any special processing required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 */
+	protected void endProcessing(double simTime) {}
+
+	/**
+	 * Performs any progress tracking that is required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 * @param lastTime - last time that the update was performed
+	 */
+	protected void updateProgress(double simTime, double lastTime) {
+		lastUpdateTime = simTime;
+	}
+
+	/**
+	 * Returns the time at which the last update was performed.
+	 * @return time for the last update
+	 */
+	protected final double getLastUpdateTime() {
+		return lastUpdateTime;
 	}
 
 	// ********************************************************************************************
@@ -519,6 +515,14 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	// ********************************************************************************************
 	// PRESENT STATE
 	// ********************************************************************************************
+
+	private void setBusy(boolean bool) {
+		busy = bool;
+	}
+
+	protected final boolean isBusy() {
+		return busy;
+	}
 
 	/**
 	 * Tests whether all the thresholds are open.
