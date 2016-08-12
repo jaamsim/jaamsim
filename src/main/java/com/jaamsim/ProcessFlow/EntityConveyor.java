@@ -50,8 +50,6 @@ public class EntityConveyor extends LinkedService {
 	private final ColourInput colorInput;
 
 	private final ArrayList<ConveyorEntry> entryList;  // List of the entities being conveyed
-	private final ArrayList<DisplayEntity> entityList;  // List of the entities being conveyed
-	private final ArrayList<Double> startTimeList;  // List of times at which the entities entered the conveyor
 	private double presentTravelTime;
 
 	{
@@ -80,8 +78,6 @@ public class EntityConveyor extends LinkedService {
 
 	public EntityConveyor() {
 		entryList = new ArrayList<>();
-		entityList = new ArrayList<>();
-		startTimeList = new ArrayList<>();
 	}
 
 	@Override
@@ -89,8 +85,6 @@ public class EntityConveyor extends LinkedService {
 		super.earlyInit();
 		presentTravelTime = travelTimeInput.getValue().getNextSample(0.0);
 		entryList.clear();
-		entityList.clear();
-		startTimeList.clear();
 	}
 
 	private static class ConveyorEntry {
@@ -122,8 +116,6 @@ public class EntityConveyor extends LinkedService {
 		// Add the entity to the conveyor
 		ConveyorEntry entry = new ConveyorEntry(ent, 0.0d);
 		entryList.add(entry);
-		entityList.add(ent);
-		startTimeList.add(simTime);
 
 		// If necessary, wake up the conveyor
 		if (this.isIdle()) {
@@ -141,8 +133,6 @@ public class EntityConveyor extends LinkedService {
 
 		// Remove the entity from the conveyor
 		DisplayEntity ent = entryList.remove(0).entity;
-		ent = entityList.remove(0);
-		startTimeList.remove(0);
 
 		// Update the travel time
 		this.updateTravelTime(simTime);
