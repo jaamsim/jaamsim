@@ -48,6 +48,7 @@ public class EntityConveyor extends LinkedService {
 	         exampleList = {"red"})
 	private final ColourInput colorInput;
 
+	private final ArrayList<ConveyorEntry> entryList;  // List of the entities being conveyed
 	private final ArrayList<DisplayEntity> entityList;  // List of the entities being conveyed
 	private final ArrayList<Double> startTimeList;  // List of times at which the entities entered the conveyor
 	private double presentTravelTime;
@@ -77,6 +78,7 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	public EntityConveyor() {
+		entryList = new ArrayList<>();
 		entityList = new ArrayList<>();
 		startTimeList = new ArrayList<>();
 	}
@@ -85,8 +87,24 @@ public class EntityConveyor extends LinkedService {
 	public void earlyInit() {
 		super.earlyInit();
 		presentTravelTime = travelTimeInput.getValue().getNextSample(0.0);
+		entryList.clear();
 		entityList.clear();
 		startTimeList.clear();
+	}
+
+	private static class ConveyorEntry {
+		final DisplayEntity entity;
+		double position;
+
+		public ConveyorEntry(DisplayEntity ent, double pos) {
+			entity = ent;
+			position = pos;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("(%s, %.6f)", entity, position);
+		}
 	}
 
 	@Override
@@ -98,6 +116,8 @@ public class EntityConveyor extends LinkedService {
 		this.updateTravelTime(simTime);
 
 		// Add the entity to the conveyor
+		ConveyorEntry entry = new ConveyorEntry(ent, 0.0d);
+		entryList.add(entry);
 		entityList.add(ent);
 		startTimeList.add(simTime);
 
@@ -109,14 +129,15 @@ public class EntityConveyor extends LinkedService {
 
 	@Override
 	protected boolean startProcessing(double simTime) {
-		return !entityList.isEmpty();
+		return !entryList.isEmpty();
 	}
 
 	@Override
 	protected void endProcessing(double simTime) {
 
 		// Remove the entity from the conveyor
-		DisplayEntity ent = entityList.remove(0);
+		DisplayEntity ent = entryList.remove(0).entity;
+		ent = entityList.remove(0);
 		startTimeList.remove(0);
 
 		// Update the travel time
