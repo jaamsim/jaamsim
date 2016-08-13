@@ -117,7 +117,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	private long endTicks;  // planned simulation time in ticks at the next event
 	private double lastUpdateTime;
 	private boolean forcedDowntimePending;
-	private boolean stopped;  // set to true if unable to work
 	private boolean processCompleted;  // indicates that the last processing loop was completed
 
 	{
@@ -182,7 +181,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		endTicks = 0L;
 		lastUpdateTime = 0.0d;
 		forcedDowntimePending = false;
-		stopped = false;
 		processCompleted = true;
 	}
 
@@ -307,12 +305,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			return;
 		}
 
-		// No progress is made during a stoppage
-		if (stopped) {
-			stopped = false;
-			lastUpdateTime = simTime;
-			if (traceFlag) traceLine(0, "stopped=%s", stopped);
-		}
+		// Set the last update time in case processing is restarting after a stoppage
+		lastUpdateTime = simTime;
 
 		// Start a new process
 		if (processCompleted) {
@@ -380,12 +374,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// Update the state
 		this.setBusy(false);
 		this.setPresentState();
-
-		// Has work stopped because of a threshold, maintenance or a breakdown?
-		if (this.isUnableToWork() && !stopped) {
-			stopped = true;
-			if (traceFlag) traceLine(0, "stopped=%s", stopped);
-		}
 	}
 
 	/**
