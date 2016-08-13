@@ -328,11 +328,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			duration = this.getProcessingTime(simTime);
 		}
 
-		// Resume the process that was interrupted
-		else {
-			duration -= stopWorkTime - startTime;
-		}
-
 		// Set the state
 		if (!isBusy()) {
 			this.setBusy(true);
@@ -448,6 +443,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 */
 	protected void updateProgress(double simTime, double lastTime) {
 		lastUpdateTime = simTime;
+		if (this.isBusy()) {
+			duration -= simTime - lastTime;
+		}
+		if (traceFlag) {
+			trace(1, "updateProgress",
+					"lastUpdateTime=%.6f, duration=%.6f", lastUpdateTime, duration);
+		}
 	}
 
 	/**

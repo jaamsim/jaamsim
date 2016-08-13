@@ -153,7 +153,6 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	public void updateProgress(double simTime, double lastTime) {
 		super.updateProgress(simTime, lastTime);
-		if (traceFlag) trace(1, "updateProgress");
 
 		// Is the conveyor in operation?
 		if (!this.isBusy() || presentTravelTime == 0.0d)
