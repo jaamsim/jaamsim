@@ -42,9 +42,9 @@ public class CameraControl implements WindowInteractionListener {
 	private static final double ROT_SCALE_X = 0.005;
 	private static final double ROT_SCALE_Z = 0.005;
 
-	private Renderer _renderer;
+	private final Renderer _renderer;
 	private int _windowID;
-	private View _updateView;
+	private final View _updateView;
 
 	private final Vec3d POI = new Vec3d();
 
@@ -312,6 +312,7 @@ public class CameraControl implements WindowInteractionListener {
 	@Override
 	public void mouseMoved(int windowID, int x, int y) {
 		if (!RenderManager.isGood()) { return; }
+		RenderManager.redraw();
 
 		RenderManager.inst().mouseMoved(windowID, x, y);
 	}
