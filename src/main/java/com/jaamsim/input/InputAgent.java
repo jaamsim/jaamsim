@@ -979,14 +979,7 @@ public class InputAgent {
 		}
 	}
 
-	public static void trace(int indent, Entity ent, String text) {
-
-		// Create an indent string to space the lines
-		StringBuilder ind = new StringBuilder("");
-		for (int i = 0; i < indent; i++)
-			ind.append("   ");
-		String spacer = ind.toString();
-
+	public static final void trace(int indent, Entity ent, String text) {
 		// Print a TIME header every time time has advanced
 		long traceTick = EventManager.simTicks();
 		if (lastTickForTrace != traceTick) {
@@ -994,16 +987,17 @@ public class InputAgent {
 			lastTickForTrace = traceTick;
 		}
 
-		// Include the entity name in the trace
-		if (ent != null) {
-			System.out.format("%s%s.%s\n", spacer, ent, text);
-		}
+		// Create an indent string to space the lines
+		StringBuilder str = new StringBuilder("");
+		for (int i = 0; i < indent; i++)
+			str.append("   ");
 
-		// Output only the specified line of text
-		else {
-			System.out.format("%s%s\n", spacer, text);
-		}
+		// Append the Entity name if provided
+		if (ent != null)
+			str.append(ent.toString()).append(".");
 
+		str.append(text);
+		System.out.println(str.toString());
 		System.out.flush();
 	}
 
