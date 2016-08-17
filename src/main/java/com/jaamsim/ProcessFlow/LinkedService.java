@@ -479,18 +479,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	}
 
 	/**
-	 * Performs any special processing required for this sub-class of LinkedService
-	 * @param startWork - simulation time at which the process was started
-	 * @param stopWork - simulation time at which the process was interrupted
-	 * @param resumeWork - simulation time at which the process is to be resumed
-	 * @return whether the original process should be resumed (true)
-	 *         or a new process should be started (false)
-	 */
-	protected boolean updateForStoppage(double startWork, double stopWork, double resumeWork) {
-		return true;
-	}
-
-	/**
 	 * Revises the time for the next event by stopping the present process and starting a new one.
 	 */
 	protected final void resetProcess() {
