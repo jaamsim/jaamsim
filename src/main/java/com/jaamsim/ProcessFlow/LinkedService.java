@@ -260,7 +260,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	@Override
 	public void queueChanged() {
 		if (traceFlag) trace(0, "queueChanged");
-		this.restartAction();
+		this.startAction();
 	}
 
 	// ********************************************************************************************
@@ -301,20 +301,22 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	protected final void startAction() {
 		if (traceFlag) {
 			trace(0, "startAction");
-			traceLine(1, "forcedDowntimePending=%s", forcedDowntimePending);
+			traceLine(1, "endActionHandle.isScheduled=%s, isAvailable=%s, forcedDowntimePending=%s",
+					endActionHandle.isScheduled(), this.isAvailable(), forcedDowntimePending);
 		}
 
 		double simTime = this.getSimTime();
 
-		// Stop if there is a forced downtime activity about to begin
-		if (forcedDowntimePending) {
-			forcedDowntimePending = false;
-			this.stopAction();
+		// Is the process loop is already working?
+		if (endActionHandle.isScheduled()) {
+			this.setPresentState();
 			return;
 		}
 
-		// Stop if any of the thresholds are closed
-		if (!this.isOpen()) {
+		// Stop if any of the thresholds, maintenance, or breakdowns close the operation
+		// or if a forced downtime is about to begin
+		if (!this.isAvailable() || forcedDowntimePending) {
+			forcedDowntimePending = false;
 			this.stopAction();
 			return;
 		}
@@ -452,25 +454,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	}
 
 	/**
-	 * Checks whether processing can be resumed or restarted.
-	 */
-	private void restartAction() {
-		if (traceFlag) {
-			trace(0, "restartAction");
-			traceLine(1, "isIdle=%s", isIdle());
-		}
-
-		// Is the server unused, but available to start work?
-		if (this.isIdle()) {
-			this.startAction();
-			return;
-		}
-
-		// If the server cannot start work or is already working, then record the state change
-		this.setPresentState();
-	}
-
-	/**
 	 * Revises the time for the next event by stopping the present process and starting a new one.
 	 */
 	protected final void resetProcess() {
@@ -529,7 +512,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		}
 
 		// Otherwise, check whether processing can be restarted
-		this.restartAction();
+		this.startAction();
 	}
 
 	private boolean isImmediateThresholdClosure() {
@@ -738,7 +721,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	@Override
 	public void endDowntime(DowntimeEntity down) {
 		if (traceFlag) trace(0, "endDowntime(%s)", down);
-		this.restartAction();
+		this.startAction();
 	}
 
 	// ********************************************************************************************

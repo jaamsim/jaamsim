@@ -118,9 +118,7 @@ public class EntityConveyor extends LinkedService {
 		entryList.add(entry);
 
 		// If necessary, wake up the conveyor
-		if (this.isIdle()) {
-			this.startAction();
-		}
+		this.startAction();
 	}
 
 	@Override
