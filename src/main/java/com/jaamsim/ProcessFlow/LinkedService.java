@@ -191,6 +191,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	@Override
 	public void addEntity(DisplayEntity ent) {
+		if (traceFlag) trace(0, "addEntity(%s)", ent);
 
 		// If there is no queue, then process the entity immediately
 		if (waitQueue.getValue() == null) {
@@ -254,6 +255,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	@Override
 	public void queueChanged() {
+		if (traceFlag) trace(0, "queueChanged");
 		this.restartAction();
 	}
 
@@ -303,6 +305,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * Starts the processing of an entity.
 	 */
 	protected final void startAction() {
+		if (traceFlag) {
+			trace(0, "startAction");
+			traceLine(1, "forcedDowntimePending=%s", forcedDowntimePending);
+		}
 
 		// An interrupted process must be restarted before a new process can be started
 		// (Required to avoid a bug caused by an new entity triggering startAction at the same
@@ -340,6 +346,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// Schedule the completion of service
 		startTime = simTime;
 		duration = this.getProcessingTime(simTime);
+		if (traceFlag) traceLine(1, "startTime=%.6f, duration=%.6f", startTime, duration);
 		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
 	}
 
@@ -347,6 +354,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * Completes the processing of an entity.
 	 */
 	final void endAction() {
+		if (traceFlag) trace(0, "endAction");
 
 		// Perform any special processing required for this sub-class of LinkedService
 		this.endProcessing(this.getSimTime());
@@ -383,6 +391,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * Interrupts processing of an entity and holds it.
 	 */
 	private void stopAction() {
+		if (traceFlag) {
+			trace(0, "stopAction");
+			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
+		}
 
 		// Interrupt processing, if underway
 		if (endActionHandle.isScheduled()) {
@@ -399,6 +411,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * Interrupts processing of an entity and releases it.
 	 */
 	private void interruptAction() {
+		if (traceFlag) {
+			trace(0, "interruptAction");
+			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
+		}
 
 		// Interrupt processing, if underway
 		if (endActionHandle.isScheduled()) {
@@ -410,6 +426,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * Checks whether processing can be resumed or restarted.
 	 */
 	private void restartAction() {
+		if (traceFlag) {
+			trace(0, "restartAction");
+			traceLine(1, "isIdle=%s", isIdle());
+		}
 
 		// Is the server unused, but available to start work?
 		if (this.isIdle()) {
@@ -423,6 +443,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 					this.setPresentState();
 					duration -= stopWorkTime - startTime;
 					startTime = this.getSimTime();
+					if (traceFlag) traceLine(1, "startTime=%.6f, duration=%.6f",
+							startTime, duration);
 					this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
 					return;
 				}
@@ -453,6 +475,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	 * Revises the time for the next event by stopping the present process and starting a new one.
 	 */
 	protected final void resetProcess() {
+		if (traceFlag) {
+			trace(0, "resetProcess");
+			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
+		}
 
 		// Is processing underway
 		if (endActionHandle.isScheduled()) {
@@ -477,6 +503,11 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	@Override
 	public void thresholdChanged() {
+		if (traceFlag) {
+			trace(0, "thresholdChanged");
+			traceLine(1, "isImmediateReleaseThresholdClosure=%s, isImmediateThresholdClosure=%s",
+				isImmediateReleaseThresholdClosure(), isImmediateThresholdClosure());
+		}
 
 		// If an interrupt closure, interrupt the present activity and release the entity
 		if (isImmediateReleaseThresholdClosure()) {
@@ -670,6 +701,11 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	@Override
 	public void prepareForDowntime(DowntimeEntity down) {
+		if (traceFlag) {
+			trace(0, "prepareForDowntime(%s)", down);
+			traceLine(1, "isImmediateDowntime=%s, isForcedDowntime=%s, isBusy=%s",
+				isImmediateDowntime(down), isForcedDowntime(down), isBusy());
+		}
 
 		// If an immediate downtime, interrupt the present activity
 		if (isImmediateDowntime(down)) {
@@ -684,11 +720,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	@Override
 	public void startDowntime(DowntimeEntity down) {
+		if (traceFlag) trace(0, "startDowntime(%s)", down);
 		this.setPresentState();
 	}
 
 	@Override
 	public void endDowntime(DowntimeEntity down) {
+		if (traceFlag) trace(0, "endDowntime(%s)", down);
 		this.restartAction();
 	}
 
