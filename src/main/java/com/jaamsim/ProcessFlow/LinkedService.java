@@ -429,8 +429,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			duration -= simTime - lastTime;
 		}
 		if (traceFlag) {
-			trace(1, "updateProgress",
-					"lastUpdateTime=%.6f, duration=%.6f", lastUpdateTime, duration);
+			trace(1, "updateProgress");
+			traceLine(2, "lastUpdateTime=%.6f, duration=%.6f", lastUpdateTime, duration);
 		}
 	}
 
