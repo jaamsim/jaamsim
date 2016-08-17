@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.BasicObjects;
+package com.jaamsim.ProcessFlow;
 
 import java.util.ArrayList;
 
@@ -27,6 +27,7 @@ import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.ValueInput;
+import com.jaamsim.math.MathUtils;
 import com.jaamsim.math.Vec3d;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.TimeUnit;
@@ -48,8 +49,7 @@ public class EntityConveyor extends LinkedService {
 	         exampleList = {"red"})
 	private final ColourInput colorInput;
 
-	private final ArrayList<DisplayEntity> entityList;  // List of the entities being conveyed
-	private final ArrayList<Double> startTimeList;  // List of times at which the entities entered the conveyor
+	private final ArrayList<ConveyorEntry> entryList;  // List of the entities being conveyed
 	private double presentTravelTime;
 
 	{
@@ -77,47 +77,60 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	public EntityConveyor() {
-		entityList = new ArrayList<>();
-		startTimeList = new ArrayList<>();
+		entryList = new ArrayList<>();
 	}
 
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
 		presentTravelTime = travelTimeInput.getValue().getNextSample(0.0);
-		entityList.clear();
-		startTimeList.clear();
+		entryList.clear();
+	}
+
+	private static class ConveyorEntry {
+		final DisplayEntity entity;
+		double position;
+
+		public ConveyorEntry(DisplayEntity ent, double pos) {
+			entity = ent;
+			position = pos;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("(%s, %.6f)", entity, position);
+		}
 	}
 
 	@Override
 	public void addEntity(DisplayEntity ent ) {
 		super.addEntity(ent);
+		double simTime = this.getSimTime();
+
+		// Update the positions of the entities on the conveyor
+		this.updateProgress(simTime, this.getLastUpdateTime());
 
 		// Update the travel time
-		double simTime = this.getSimTime();
 		this.updateTravelTime(simTime);
 
 		// Add the entity to the conveyor
-		entityList.add(ent);
-		startTimeList.add(simTime);
+		ConveyorEntry entry = new ConveyorEntry(ent, 0.0d);
+		entryList.add(entry);
 
 		// If necessary, wake up the conveyor
-		if (this.isIdle()) {
-			this.startAction();
-		}
+		this.startAction();
 	}
 
 	@Override
 	protected boolean startProcessing(double simTime) {
-		return !entityList.isEmpty();
+		return !entryList.isEmpty();
 	}
 
 	@Override
 	protected void endProcessing(double simTime) {
 
 		// Remove the entity from the conveyor
-		DisplayEntity ent = entityList.remove(0);
-		startTimeList.remove(0);
+		DisplayEntity ent = entryList.remove(0).entity;
 
 		// Update the travel time
 		this.updateTravelTime(simTime);
@@ -129,22 +142,33 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	protected double getProcessingTime(double simTime) {
 
-		// Calculate time for the next entity to reach the end of the conveyor
-		double dur = startTimeList.get(0) + presentTravelTime - simTime;
+		// Calculate the time for the first entity to reach the end of the conveyor
+		double dt = simTime - this.getLastUpdateTime();
+		double dur = (1.0d - entryList.get(0).position)*presentTravelTime - dt;
 		dur = Math.max(dur, 0);  // Round-off to the nearest tick can cause a negative value
+		if (traceFlag) trace(1, "getProcessingTime = %.6f", dur);
 		return dur;
 	}
 
 	@Override
-	protected boolean updateForStoppage(double startWork, double stopWork, double resumeWork) {
+	public void updateProgress(double simTime, double lastTime) {
+		super.updateProgress(simTime, lastTime);
 
-		// Adjust the start time for each entity to account for the delay
-		double stopDur = resumeWork - stopWork;
-		for (int i = 0; i < entityList.size(); i++) {
-			double t = Math.min(stopWork, startTimeList.get(i));
-			startTimeList.set(i, t + stopDur);
+		// Is the conveyor in operation?
+		if (!this.isBusy() || presentTravelTime == 0.0d)
+			return;
+
+		// Calculate the fractional distance travelled since the last update
+		double frac = (simTime - lastTime)/presentTravelTime;
+		if (MathUtils.near(frac, 0.0d))
+			return;
+
+		// Increment the positions of the entities on the conveyor
+		if (traceFlag) traceLine(2, "BEFORE - entryList=%s", entryList);
+		for (ConveyorEntry entry : entryList) {
+			entry.position += frac;
 		}
-		return false;
+		if (traceFlag) traceLine(2, "AFTER - entryList=%s", entryList);
 	}
 
 	private void updateTravelTime(double simTime) {
@@ -153,11 +177,9 @@ public class EntityConveyor extends LinkedService {
 		double newTime = travelTimeInput.getValue().getNextSample(simTime);
 		if (newTime != presentTravelTime) {
 
-			// Adjust the start time for each entity to account for the new travel time
-			double factor = newTime/presentTravelTime;
-			for (int i = 0; i < entityList.size(); i++) {
-				double dt = simTime - startTimeList.get(i);
-				startTimeList.set(i, simTime - dt*factor);
+			if (traceFlag) {
+				trace(1, "updateTravelTime");
+				traceLine(2, "newTime=%.6f, presentTravelTime=%.6f", newTime, presentTravelTime);
 			}
 
 			// Set the new travel time
@@ -187,30 +209,20 @@ public class EntityConveyor extends LinkedService {
 	@Override
 	public void updateGraphics(double simTime) {
 
-		double t = simTime;
-		if (!this.isBusy())
-			t = this.getStopWorkTime();
+		if (!this.isBusy() || presentTravelTime == 0.0d)
+			return;
 
-		// Loop through the entities on the conveyor
-		for (int i = 0; i < entityList.size(); i++) {
-			DisplayEntity each = entityList.get(i);
-
-			// Calculate the distance travelled by this entity
-			double dur = Math.max(0.0, t - startTimeList.get(i));
-			double frac = dur/presentTravelTime;
-
-			// 0/0 NaNs have been spotted here, just zero them
-			if (Double.isNaN(frac))
-				frac = 0.0;
-
-			// Set the position for the entity
-			Vec3d localPos = this.getPositionOnPolyline(frac);
-			each.setGlobalPosition(this.getGlobalPosition(localPos));
+		// Move each entity on the conveyor to its present position
+		double frac = (simTime - this.getLastUpdateTime())/presentTravelTime;
+		for (int i=0; i<entryList.size(); i++) {
+			ConveyorEntry entry = entryList.get(i);
+			Vec3d localPos = this.getPositionOnPolyline(entry.position + frac);
+			entry.entity.setGlobalPosition(this.getGlobalPosition(localPos));
 		}
 	}
 
 	@Override
-	public PolylineInfo[] buildScreenPoints() {
+	public PolylineInfo[] buildScreenPoints(double simTime) {
 		int w = Math.max(1, widthInput.getValue().intValue());
 		PolylineInfo[] ret = new PolylineInfo[1];
 		ret[0] = new PolylineInfo(pointsInput.getValue(), colorInput.getValue(), w);

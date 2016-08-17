@@ -56,4 +56,9 @@ public class PolylineInfo {
 		return width;
 	}
 
+	@Override
+	public String toString() {
+		return points.toString();
+	}
+
 }

@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.BasicObjects;
+package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Simulation;
 import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputErrorException;
+import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.StringInput;
@@ -33,7 +34,7 @@ import com.jaamsim.units.TimeUnit;
  * LinkedComponents are used to form a chain of components that process DisplayEntities that pass through the system.
  * Sub-classes for EntityGenerator, Server, and EntitySink.
  */
-public abstract class LinkedComponent extends StateEntity {
+public abstract class LinkedComponent extends StateEntity implements Linkable {
 
 	@Keyword(description = "The default value for the output obj.\n"
 	                     + "Normally, obj is set to the last entity received by this object. "
@@ -45,7 +46,7 @@ public abstract class LinkedComponent extends StateEntity {
 
 	@Keyword(description = "The next object to which the processed DisplayEntity is passed.",
 			exampleList = {"Queue1"})
-	protected final EntityInput<LinkedComponent> nextComponent;
+	protected final InterfaceEntityInput<Linkable> nextComponent;
 
 	@Keyword(description = "The state to be assigned to each entity on arrival at this object.\n" +
 			"No state is assigned if the entry is blank.",
@@ -67,7 +68,7 @@ public abstract class LinkedComponent extends StateEntity {
 		this.addInput(defaultEntity);
 		this.addSynonym(defaultEntity, "TestEntity");
 
-		nextComponent = new EntityInput<>(LinkedComponent.class, "NextComponent", "Key Inputs", null);
+		nextComponent = new InterfaceEntityInput<>(Linkable.class, "NextComponent", "Key Inputs", null);
 		nextComponent.setRequired(true);
 		this.addInput(nextComponent);
 
@@ -118,10 +119,7 @@ public abstract class LinkedComponent extends StateEntity {
 		return true;
 	}
 
-	/**
-	 * Receives the specified entity from an upstream component.
-	 * @param ent - the entity received from upstream.
-	 */
+	@Override
 	public void addEntity(DisplayEntity ent) {
 		this.registerEntity(ent);
 	}

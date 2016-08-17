@@ -1,6 +1,6 @@
 /*
  * JaamSim Discrete Event Simulation
- * Copyright (C) 2013 Ausenco Engineering Canada Inc.
+ * Copyright (C) 2015 Ausenco Engineering Canada Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jaamsim.BasicObjects;
+package com.jaamsim.ProcessFlow;
 
-import com.jaamsim.Graphics.DisplayEntity;
+import java.util.ArrayList;
 
-/**
- * EntitySink kills the DisplayEntities sent to it.
- */
-public class EntitySink extends LinkedComponent {
+public interface QueueUser {
 
-	{
-		nextComponent.setHidden(true);
-		defaultEntity.setHidden(true);
-		stateAssignment.setHidden(true);
-	}
+	/**
+	 * Returns a list of the Queues used by this object.
+	 * @return the Queue list.
+	 */
+	public abstract ArrayList<Queue> getQueues();
 
-	@Override
-	public void addEntity( DisplayEntity ent ) {
-		super.addEntity(ent);
-
-		// Only increments the number process when there is no next entity
-		this.sendToNextComponent(ent);
-
-		// Kill the added entity
-		ent.kill();
-	}
+	/**
+	 * Called whenever an entity is added to one of the Queues used
+	 * by this object.
+	 */
+	public abstract void queueChanged();
 
 }

@@ -979,7 +979,8 @@ public class InputAgent {
 		}
 	}
 
-	public static void trace(int indent, Entity ent, String meth, String... text) {
+	public static void trace(int indent, Entity ent, String text) {
+
 		// Create an indent string to space the lines
 		StringBuilder ind = new StringBuilder("");
 		for (int i = 0; i < indent; i++)
@@ -989,14 +990,18 @@ public class InputAgent {
 		// Print a TIME header every time time has advanced
 		long traceTick = EventManager.simTicks();
 		if (lastTickForTrace != traceTick) {
-			System.out.format(" \nTIME = %.5f\n", EventManager.current().ticksToSeconds(traceTick));
+			System.out.format(" \nTIME = %.6f\n", EventManager.current().ticksToSeconds(traceTick));
 			lastTickForTrace = traceTick;
 		}
 
-		// Output the traces line(s)
-		System.out.format("%s%s %s\n", spacer, ent.getName(), meth);
-		for (String line : text) {
-			System.out.format("%s%s\n", spacer, line);
+		// Include the entity name in the trace
+		if (ent != null) {
+			System.out.format("%s%s.%s\n", spacer, ent, text);
+		}
+
+		// Output only the specified line of text
+		else {
+			System.out.format("%s%s\n", spacer, text);
 		}
 
 		System.out.flush();

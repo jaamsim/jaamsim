@@ -134,6 +134,7 @@ public abstract class Input<T> {
 		valueTokens = inp.valueTokens;
 		isDef = false;
 		edited = true;
+		isValid = true;
 	}
 
 	@Override
@@ -1350,6 +1351,21 @@ public abstract class Input<T> {
 				throw new InputErrorException(INP_ERR_ELEMENT, i+1, e.getMessage());
 			}
 		}
+		return temp;
+	}
+
+	public static <T> T parseInterfaceEntity(String choice, Class<T> aClass) {
+
+		Entity ent = Entity.getNamedEntity(choice);
+		if (ent == null) {
+			throw new InputErrorException(INP_ERR_ENTNAME, choice);
+		}
+
+		T temp = Input.castImplements(ent, aClass);
+		if (temp == null) {
+			throw new InputErrorException(INP_ERR_ENTCLASS, aClass.getSimpleName(), choice, ent.getClass().getSimpleName());
+		}
+
 		return temp;
 	}
 

@@ -843,15 +843,15 @@ public class DisplayEntity extends Entity {
 		}
 	}
 
-	public final PolylineInfo[] getScreenPoints() {
+	public final PolylineInfo[] getScreenPoints(double simTime) {
 		synchronized(screenPointLock) {
 			if (cachedPointInfo == null)
-				cachedPointInfo = this.buildScreenPoints();
+				cachedPointInfo = this.buildScreenPoints(simTime);
 			return cachedPointInfo;
 		}
 	}
 
-	public PolylineInfo[] buildScreenPoints() {
+	public PolylineInfo[] buildScreenPoints(double simTime) {
 		PolylineInfo[] ret = new PolylineInfo[1];
 		ret[0] = new PolylineInfo(pointsInput.getValue(), ColourInput.BLACK, 1);
 		return ret;
@@ -871,18 +871,11 @@ public class DisplayEntity extends Entity {
 	public Vec3d getPositionOnPolyline(double frac) {
 		synchronized(screenPointLock) {
 
-			// Calculate the graphical length of each polyline segment
-			int n = pointsInput.getValue().size();
-			double[] cumLengthList = new double[n];
-			cumLengthList[0] = 0.0;
-			for (int i = 1; i < n; i++) {
-				Vec3d vec = new Vec3d();
-				vec.sub3(pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
-				cumLengthList[i] = cumLengthList[i-1] + vec.mag3();
-			}
+			// Calculate the cumulative graphical lengths along the polyline
+			double[] cumLengthList = this.getCumulativeLengths();
 
 			// Find the insertion point by binary search
-			double dist = frac * cumLengthList[n-1];
+			double dist = frac * cumLengthList[cumLengthList.length-1];
 			int k = Arrays.binarySearch(cumLengthList, dist);
 
 			// Exact match
@@ -891,20 +884,106 @@ public class DisplayEntity extends Entity {
 
 			// Error condition
 			if (k == -1)
-				error("Unable to find position in polyline using binary search.");
+				return new Vec3d();
 
 			// Insertion index = -k-1
 			int index = -k - 1;
 
 			// Interpolate the final position between the two points
+			if (index == cumLengthList.length) {
+				return new Vec3d(pointsInput.getValue().get(index-1));
+			}
 			double fracInSegment = (dist - cumLengthList[index-1]) /
-			                       (cumLengthList[index] - cumLengthList[index-1]);
+					(cumLengthList[index] - cumLengthList[index-1]);
 			Vec3d vec = new Vec3d();
 			vec.interpolate3(pointsInput.getValue().get(index-1),
-			                 pointsInput.getValue().get(index),
-			                 fracInSegment);
+					pointsInput.getValue().get(index),
+					fracInSegment);
 			return vec;
 		}
+	}
+
+	/**
+	 * Returns the local coordinates for a sub-section of the polyline specified by a first and
+	 * last fractional distance.
+	 * @param frac0 - fractional distance for the start of the sub-polyline
+	 * @param frac1 - fractional distance for the end of the sub-polyline
+	 * @return array of local coordinates for the sub-polyline
+	 */
+	public ArrayList<Vec3d> getSubPolyline(double frac0, double frac1) {
+		synchronized(screenPointLock) {
+			ArrayList<Vec3d> ret = new ArrayList<>();
+
+			// Calculate the cumulative graphical lengths along the polyline
+			double[] cumLengthList = this.getCumulativeLengths();
+
+			// Find the insertion point for the first distance using binary search
+			double dist0 = frac0 * cumLengthList[cumLengthList.length-1];
+			int k = Arrays.binarySearch(cumLengthList, dist0);
+			if (k == -1)
+				error("Unable to find position in polyline using binary search.");
+
+			// Interpolate the position of the first node
+			int index;
+			if (k >= 0) {
+				ret.add(pointsInput.getValue().get(k));
+				index = k + 1;
+				if (index == cumLengthList.length)
+					return ret;
+			}
+			else {
+				Vec3d vec;
+				index = -k - 1;
+				if (index == cumLengthList.length) {
+					vec = new Vec3d(pointsInput.getValue().get(index-1));
+				}
+				else {
+					double fracInSegment = (dist0 - cumLengthList[index-1]) /
+							(cumLengthList[index] - cumLengthList[index-1]);
+					vec = new Vec3d();
+					vec.interpolate3(pointsInput.getValue().get(index-1),
+							pointsInput.getValue().get(index),
+							fracInSegment);
+				}
+				ret.add(vec);
+			}
+
+			// Loop through the indices following the insertion point
+			double dist1 = frac1 * cumLengthList[cumLengthList.length-1];
+			while (index < cumLengthList.length && cumLengthList[index] < dist1) {
+				ret.add(pointsInput.getValue().get(index));
+				index++;
+			}
+			if (index == cumLengthList.length)
+				return ret;
+
+			// Interpolate the position of the last node
+			Vec3d vec = new Vec3d();
+			double fracInSegment = (dist1 - cumLengthList[index-1]) /
+	                (cumLengthList[index] - cumLengthList[index-1]);
+			vec.interpolate3(pointsInput.getValue().get(index-1),
+	                 pointsInput.getValue().get(index),
+	                 fracInSegment);
+			ret.add(vec);
+
+			return ret;
+		}
+	}
+
+	/**
+	 * Returns the cumulative graphics lengths for the nodes along the polyline.
+	 * @return array of cumulative graphical lengths
+	 */
+	private double[] getCumulativeLengths() {
+		int n = pointsInput.getValue().size();
+		double[] cumLengthList = new double[n];
+		cumLengthList[0] = 0.0;
+		for (int i = 1; i < n; i++) {
+			Vec3d vec = new Vec3d();
+			vec.sub3(pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
+			cumLengthList[i] = cumLengthList[i-1] + vec.mag3();
+		}
+		return cumLengthList;
 	}
 
 	public boolean selectable() {

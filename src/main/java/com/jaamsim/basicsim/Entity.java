@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.jaamsim.Samples.SampleInput;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.events.Conditional;
 import com.jaamsim.events.EventHandle;
@@ -80,7 +81,10 @@ public class Entity {
 	private final HashMap<String, AttributeHandle> attributeMap = new LinkedHashMap<>();
 	private final HashMap<String, ExpressionHandle> customOutputMap = new LinkedHashMap<>();
 
-	private final BooleanInput trace;
+	@Keyword(description = "Provides the programmer with a detailed trace of the logic executed "
+	                     + "by the entity. Trace information is sent to standard out.",
+	         exampleList = {"TRUE"})
+	protected final BooleanInput trace;
 
 	@Keyword(description = "A free form string describing the Entity",
 	         exampleList = {"'A very useful entity'"})
@@ -324,9 +328,11 @@ public class Entity {
 	 * @return - copied entity.
 	 */
 	public static <T extends Entity> T fastCopy(T ent, String name) {
+
 		// Create the new entity
 		@SuppressWarnings("unchecked")
 		T ret = (T)InputAgent.generateEntityWithName(ent.getClass(), name);
+
 		// Loop through the original entity's inputs
 		ArrayList<Input<?>> orig = ent.getEditableInputs();
 		for (int i = 0; i < orig.size(); i++) {
@@ -336,9 +342,18 @@ public class Entity {
 			if (sourceInput.isDefault() || sourceInput.isSynonym())
 				continue;
 
-			// Assign the value to the copied entity's input
+			// Get the matching input for the new entity
 			Input<?> targetInput = ret.getEditableInputs().get(i);
+
+			// SampleInputs need to know their entity for "this" to work correctly
+			if (sourceInput instanceof SampleInput) {
+				((SampleInput)targetInput).setEntity(ret);
+			}
+
+			// Assign the value to the copied entity's input
 			targetInput.copyFrom(sourceInput);
+
+			// Further processing related to this input
 			ret.updateForInput(targetInput);
 		}
 		return ret;
@@ -554,38 +569,25 @@ public class Entity {
 	// ******************************************************************************************************
 
 	/**
-	 * Track the given subroutine.
+	 * Prints a trace statement for the given subroutine.
+	 * The entity name is included in the output.
+	 * @param indent - number of tabs with which to indent the text
+	 * @param fmt - format string for the trace data (include the method name)
+	 * @param args - trace data
 	 */
-	public void trace(String meth) {
-		if (traceFlag) InputAgent.trace(0, this, meth);
+	public void trace(int indent, String fmt, Object... args) {
+		InputAgent.trace(indent, this, String.format(fmt, args));
 	}
 
 	/**
-	 * Track the given subroutine.
+	 * Prints an additional line of trace info.
+	 * The entity name is NOT included in the output
+	 * @param indent - number of tabs with which to indent the text
+	 * @param fmt - format string for the trace data
+	 * @param args - trace data
 	 */
-	public void trace(int level, String meth) {
-		if (traceFlag) InputAgent.trace(level, this, meth);
-	}
-
-	/**
-	 * Track the given subroutine (one line of text).
-	 */
-	public void trace(String meth, String text1) {
-		if (traceFlag) InputAgent.trace(0, this, meth, text1);
-	}
-
-	/**
-	 * Track the given subroutine (two lines of text).
-	 */
-	public void trace(String meth, String text1, String text2) {
-		if (traceFlag) InputAgent.trace(0, this, meth, text1, text2);
-	}
-
-	/**
-	 * Print an addition line of tracing.
-	 */
-	public void traceLine(String text) {
-		this.trace( 1, text );
+	public void traceLine(int indent, String fmt, Object... args) {
+		InputAgent.trace(indent, null, String.format(fmt, args));
 	}
 
 	/**

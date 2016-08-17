@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import com.jaamsim.DisplayModels.ShapeModel;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.basicsim.EntityTarget;
 import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
@@ -148,6 +147,8 @@ public class Threshold extends StateEntity {
 		if (open == bool)
 			return;
 
+		if (traceFlag) trace(0, "setOpen(%s)", bool);
+
 		open = bool;
 		if (open)
 			setPresentState("Open");
@@ -160,42 +161,6 @@ public class Threshold extends StateEntity {
 		}
 		if (!thresholdChangedTarget.users.isEmpty() && !thresholdChangedHandle.isScheduled())
 			this.scheduleProcessTicks(0, 2, false, thresholdChangedTarget, thresholdChangedHandle);
-	}
-
-	private static class DoOpenTarget extends EntityTarget<Threshold> {
-		public DoOpenTarget(Threshold ent, String method) {
-			super(ent, method);
-		}
-
-		@Override
-		public void process() {
-			ent.doOpen();
-		}
-	}
-
-	public final ProcessTarget doOpen = new DoOpenTarget(this, "doOpen");
-
-	public void doOpen() {
-		this.trace( "open" );
-		this.setOpen( true );
-	}
-
-	private static class DoCloseTarget extends EntityTarget<Threshold> {
-		public DoCloseTarget(Threshold ent, String method) {
-			super(ent, method);
-		}
-
-		@Override
-		public void process() {
-			ent.doClose();
-		}
-	}
-
-	public final ProcessTarget doClose = new DoCloseTarget(this, "doClose");
-
-	public void doClose() {
-		this.trace( "close" );
-		this.setOpen( false );
 	}
 
 	@Override
