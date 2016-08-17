@@ -115,6 +115,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	private Integer matchValue;
 	private double startTime;  // start of service time for the present entity
 	private double duration;  // service time for the present entity
+	private long endTicks;  // planned simulation time in ticks at the next event
 	private double lastUpdateTime;
 	private boolean forcedDowntimePending;
 	private boolean stopped;  // set to true if unable to work
@@ -181,6 +182,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		matchValue = null;
 		startTime = 0.0;
 		duration = 0.0;
+		endTicks = 0L;
 		lastUpdateTime = 0.0d;
 		forcedDowntimePending = false;
 		stopped = false;
@@ -352,6 +354,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// Schedule the completion of service
 		startTime = simTime;
 		processCompleted = false;
+		endTicks = EventManager.calcSimTicks(duration);
 		if (traceFlag) traceLine(1, "startTime=%.6f, duration=%.6f", startTime, duration);
 		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
 	}
@@ -366,9 +369,12 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// Update the progress that has been made
 		this.updateProgress(simTime, lastUpdateTime);
 
-		// Perform any special processing required for this sub-class of LinkedService
-		this.endProcessing(simTime);
-		processCompleted = true;
+		// If the process ended normally or if there was an immediate release type threshold
+		// closure, then perform the special processing for this sub-class of LinkedService
+		if (this.getSimTicks() == endTicks || this.isImmediateReleaseThresholdClosure()) {
+			this.endProcessing(simTime);
+			processCompleted = true;
+		}
 
 		// Process the next entity
 		this.startAction();
@@ -465,17 +471,9 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// Set the present process to completed
 		processCompleted = true;
 
-		// Is processing underway
+		// End the present process prematurely
 		if (endActionHandle.isScheduled()) {
-
-			// Stop the present process
-			EventManager.killEvent(endActionHandle);
-
-			// Update the progress that has been made
-			this.updateProgress(this.getSimTime(), lastUpdateTime);
-
-			// Start a new process
-			this.startAction();
+			EventManager.interruptEvent(endActionHandle);
 		}
 	}
 
