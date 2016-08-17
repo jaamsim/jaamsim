@@ -137,6 +137,12 @@ public class EntityConveyor extends LinkedService {
 
 	@Override
 	protected boolean updateForStoppage(double startWork, double stopWork, double resumeWork) {
+		if (traceFlag) {
+			trace(0, "updateForStoppage");
+			traceLine(1, "startWork=%.6f, stopWork=%.6f, resumeWork=%.6f",
+					startWork, stopWork, resumeWork);
+			traceLine(1, "startTimeList=%s", startTimeList);
+		}
 
 		// Adjust the start time for each entity to account for the delay
 		double stopDur = resumeWork - stopWork;
@@ -144,6 +150,8 @@ public class EntityConveyor extends LinkedService {
 			double t = Math.min(stopWork, startTimeList.get(i));
 			startTimeList.set(i, t + stopDur);
 		}
+
+		if (traceFlag) traceLine(1, "startTimeList=%s", startTimeList);
 		return false;
 	}
 
