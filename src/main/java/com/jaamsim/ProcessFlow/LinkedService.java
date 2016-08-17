@@ -116,6 +116,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	private double startTime;  // start of service time for the present entity
 	private double duration;  // service time for the present entity
 	private boolean forcedDowntimePending;
+	private boolean stopped;  // set to true if unable to work
 	private boolean processKilled;  // indicates that processing of an entity has been interrupted
 	private double stopWorkTime;  // last time at which the busy state was set to false
 
@@ -180,6 +181,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		startTime = 0.0;
 		duration = 0.0;
 		forcedDowntimePending = false;
+		stopped = false;
 		processKilled = false;
 		stopWorkTime = 0.0;
 	}
@@ -284,12 +286,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	}
 
 	private void setBusy(boolean bool) {
-		if (bool == busy)
-			return;
-
-		if (!bool)
-			stopWorkTime = this.getSimTime();
-
 		busy = bool;
 	}
 
@@ -396,6 +392,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
 		}
 
+		double simTime = this.getSimTime();
+
 		// Interrupt processing, if underway
 		if (endActionHandle.isScheduled()) {
 			EventManager.killEvent(endActionHandle);
@@ -405,6 +403,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// Update the state
 		this.setBusy(false);
 		this.setPresentState();
+
+		// Has work stopped because of a threshold, maintenance or a breakdown?
+		if (this.isUnableToWork() && !stopped) {
+			stopWorkTime = simTime;
+			stopped = true;
+			if (traceFlag) traceLine(0, "stopped=%s, stopWorkTime=%.6f", stopped, stopWorkTime);
+		}
 	}
 
 	/**
