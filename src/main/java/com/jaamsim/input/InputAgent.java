@@ -979,7 +979,7 @@ public class InputAgent {
 		}
 	}
 
-	public static final void trace(int indent, Entity ent, String text) {
+	public static final void trace(int indent, Entity ent, String fmt, Object... args) {
 		// Print a TIME header every time time has advanced
 		long traceTick = EventManager.simTicks();
 		if (lastTickForTrace != traceTick) {
@@ -996,7 +996,7 @@ public class InputAgent {
 		if (ent != null)
 			str.append(ent.toString()).append(".");
 
-		str.append(text);
+		str.append(String.format(fmt, args));
 		System.out.println(str.toString());
 		System.out.flush();
 	}

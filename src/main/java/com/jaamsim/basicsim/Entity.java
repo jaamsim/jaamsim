@@ -576,7 +576,7 @@ public class Entity {
 	 * @param args - trace data
 	 */
 	public void trace(int indent, String fmt, Object... args) {
-		InputAgent.trace(indent, this, String.format(fmt, args));
+		InputAgent.trace(indent, this, fmt, args);
 	}
 
 	/**
@@ -587,7 +587,7 @@ public class Entity {
 	 * @param args - trace data
 	 */
 	public void traceLine(int indent, String fmt, Object... args) {
-		InputAgent.trace(indent, null, String.format(fmt, args));
+		InputAgent.trace(indent, null, fmt, args);
 	}
 
 	/**
