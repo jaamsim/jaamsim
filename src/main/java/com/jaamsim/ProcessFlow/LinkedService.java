@@ -117,8 +117,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	private double duration;  // service time for the present entity
 	private boolean forcedDowntimePending;
 	private boolean stopped;  // set to true if unable to work
-	private boolean processKilled;  // indicates that processing of an entity has been interrupted
 	private double stopWorkTime;  // last time at which the busy state was set to false
+	private boolean processCompleted;  // indicates that the last processing loop was completed
 
 	{
 		stateGraphics.setHidden(false);
@@ -182,8 +182,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		duration = 0.0;
 		forcedDowntimePending = false;
 		stopped = false;
-		processKilled = false;
 		stopWorkTime = 0.0;
+		processCompleted = true;
 	}
 
 	@Override
@@ -306,11 +306,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			traceLine(1, "forcedDowntimePending=%s", forcedDowntimePending);
 		}
 
-		// An interrupted process must be restarted before a new process can be started
-		// (Required to avoid a bug caused by an new entity triggering startAction at the same
-		// time as an ImmediateThreshold opens)
-		if (processKilled)
-			return;
+		double simTime = this.getSimTime();
 
 		// Stop if there is a forced downtime activity about to begin
 		if (forcedDowntimePending) {
@@ -325,12 +321,24 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 			return;
 		}
 
-		// Perform any special processing for this sub-class of LinkedService
-		double simTime = this.getSimTime();
-		boolean bool = this.startProcessing(simTime);
-		if (!bool) {
-			this.stopAction();
-			return;
+		// No progress is made during a stoppage
+		if (stopped) {
+			stopped = false;
+		}
+
+		// Start a new process
+		if (processCompleted) {
+			boolean bool = this.startProcessing(simTime);
+			if (!bool) {
+				this.stopAction();
+				return;
+			}
+			duration = this.getProcessingTime(simTime);
+		}
+
+		// Resume the process that was interrupted
+		else {
+			duration -= stopWorkTime - startTime;
 		}
 
 		// Set the state
@@ -341,7 +349,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		// Schedule the completion of service
 		startTime = simTime;
-		duration = this.getProcessingTime(simTime);
+		processCompleted = false;
 		if (traceFlag) traceLine(1, "startTime=%.6f, duration=%.6f", startTime, duration);
 		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
 	}
@@ -354,6 +362,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		// Perform any special processing required for this sub-class of LinkedService
 		this.endProcessing(this.getSimTime());
+		processCompleted = true;
 
 		// Process the next entity
 		this.startAction();
@@ -397,7 +406,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		// Interrupt processing, if underway
 		if (endActionHandle.isScheduled()) {
 			EventManager.killEvent(endActionHandle);
-			processKilled = true;
 		}
 
 		// Update the state
@@ -438,24 +446,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		// Is the server unused, but available to start work?
 		if (this.isIdle()) {
-
-			// If work has been interrupted by a breakdown or other event, then resume work
-			if (processKilled) {
-				processKilled = false;
-				boolean bool = this.updateForStoppage(startTime, stopWorkTime, getSimTime());
-				if (bool) {
-					this.setBusy(true);
-					this.setPresentState();
-					duration -= stopWorkTime - startTime;
-					startTime = this.getSimTime();
-					if (traceFlag) traceLine(1, "startTime=%.6f, duration=%.6f",
-							startTime, duration);
-					this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
-					return;
-				}
-			}
-
-			// Otherwise, start work on a new entity
 			this.startAction();
 			return;
 		}
