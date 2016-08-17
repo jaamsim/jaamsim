@@ -113,13 +113,11 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 	private boolean busy;  // indicates that entities are being processed
 	private Integer matchValue;
-	private double startTime;  // start of service time for the present entity
 	private double duration;  // service time for the present entity
 	private long endTicks;  // planned simulation time in ticks at the next event
 	private double lastUpdateTime;
 	private boolean forcedDowntimePending;
 	private boolean stopped;  // set to true if unable to work
-	private double stopWorkTime;  // last time at which the busy state was set to false
 	private boolean processCompleted;  // indicates that the last processing loop was completed
 
 	{
@@ -180,13 +178,11 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		super.earlyInit();
 		this.setBusy(false);
 		matchValue = null;
-		startTime = 0.0;
 		duration = 0.0;
 		endTicks = 0L;
 		lastUpdateTime = 0.0d;
 		forcedDowntimePending = false;
 		stopped = false;
-		stopWorkTime = 0.0;
 		processCompleted = true;
 	}
 
@@ -315,7 +311,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		if (stopped) {
 			stopped = false;
 			lastUpdateTime = simTime;
-			if (traceFlag) traceLine(0, "stopped=%s, stopWorkTime=%.6f", stopped, stopWorkTime);
+			if (traceFlag) traceLine(0, "stopped=%s", stopped);
 		}
 
 		// Start a new process
@@ -335,10 +331,9 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		}
 
 		// Schedule the completion of service
-		startTime = simTime;
 		processCompleted = false;
 		endTicks = EventManager.calcSimTicks(duration);
-		if (traceFlag) traceLine(1, "startTime=%.6f, duration=%.6f", startTime, duration);
+		if (traceFlag) traceLine(1, "duration=%.6f", duration);
 		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
 	}
 
@@ -388,9 +383,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		// Has work stopped because of a threshold, maintenance or a breakdown?
 		if (this.isUnableToWork() && !stopped) {
-			stopWorkTime = simTime;
 			stopped = true;
-			if (traceFlag) traceLine(0, "stopped=%s, stopWorkTime=%.6f", stopped, stopWorkTime);
+			if (traceFlag) traceLine(0, "stopped=%s", stopped);
 		}
 	}
 
