@@ -566,38 +566,25 @@ public class Entity {
 	// ******************************************************************************************************
 
 	/**
-	 * Track the given subroutine.
+	 * Prints a trace statement for the given subroutine.
+	 * The entity name is included in the output.
+	 * @param indent - number of tabs with which to indent the text
+	 * @param fmt - format string for the trace data (include the method name)
+	 * @param args - trace data
 	 */
-	public void trace(String meth) {
-		if (traceFlag) InputAgent.trace(0, this, meth);
+	public void trace(int indent, String fmt, Object... args) {
+		InputAgent.trace(indent, this, String.format(fmt, args));
 	}
 
 	/**
-	 * Track the given subroutine.
+	 * Prints an additional line of trace info.
+	 * The entity name is NOT included in the output
+	 * @param indent - number of tabs with which to indent the text
+	 * @param fmt - format string for the trace data
+	 * @param args - trace data
 	 */
-	public void trace(int level, String meth) {
-		if (traceFlag) InputAgent.trace(level, this, meth);
-	}
-
-	/**
-	 * Track the given subroutine (one line of text).
-	 */
-	public void trace(String meth, String text1) {
-		if (traceFlag) InputAgent.trace(0, this, meth, text1);
-	}
-
-	/**
-	 * Track the given subroutine (two lines of text).
-	 */
-	public void trace(String meth, String text1, String text2) {
-		if (traceFlag) InputAgent.trace(0, this, meth, text1, text2);
-	}
-
-	/**
-	 * Print an addition line of tracing.
-	 */
-	public void traceLine(String text) {
-		this.trace( 1, text );
+	public void traceLine(int indent, String fmt, Object... args) {
+		InputAgent.trace(indent, null, String.format(fmt, args));
 	}
 
 	/**
