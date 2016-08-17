@@ -445,21 +445,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	}
 
 	/**
-	 * Interrupts processing of an entity and releases it.
-	 */
-	private void interruptAction() {
-		if (traceFlag) {
-			trace(0, "interruptAction");
-			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
-		}
-
-		// Interrupt processing, if underway
-		if (endActionHandle.isScheduled()) {
-			EventManager.interruptEvent(endActionHandle);
-		}
-	}
-
-	/**
 	 * Revises the time for the next event by stopping the present process and starting a new one.
 	 */
 	protected final void resetProcess() {
@@ -499,7 +484,9 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		// If an interrupt closure, interrupt the present activity and release the entity
 		if (isImmediateReleaseThresholdClosure()) {
-			this.interruptAction();
+			if (endActionHandle.isScheduled()) {
+				EventManager.interruptEvent(endActionHandle);
+			}
 			return;
 		}
 
