@@ -185,7 +185,7 @@ public class EntityDelay extends LinkedComponent {
 			double frac = ( simTime - entry.startTime ) / entry.duration;
 
 			// Set the position for the entity
-			Vec3d localPos = this.getPositionOnPolyline(frac);
+			Vec3d localPos = this.getPositionOnPolyline(simTime, frac);
 			entry.ent.setGlobalPosition(this.getGlobalPosition(localPos));
 		}
 	}
