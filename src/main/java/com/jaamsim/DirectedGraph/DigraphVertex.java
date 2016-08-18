@@ -25,17 +25,23 @@ public class DigraphVertex {
 
 	private String name;
 	private Digraph graph;  // directed graph containing this vertex
+	private DigraphUser user;  // higher-level object using the directed graph
 	private ArrayList<DigraphEdge> inList;  // edges that enter the vertex
 	private ArrayList<DigraphEdge> outList; // edges that leave the vertex
 	private HashMap<DigraphVertex, ArrayList<DigraphPath>> pathListMap; // paths from this vertex
 	private static final Comparator<DigraphPath> pathSortOrder = new DigraphPathComparator();
 
-	public DigraphVertex(String str, Digraph grph) {
+	public DigraphVertex(String str, Digraph grph, DigraphUser u) {
 		name = str;
 		graph = grph;
+		user = u;
 		inList = new ArrayList<>();
 		outList = new ArrayList<>();
 		pathListMap = null;
+	}
+
+	public DigraphVertex(String str, Digraph grph) {
+		this(str, grph, null);
 	}
 
 	public void init() {
@@ -50,6 +56,7 @@ public class DigraphVertex {
 
 	public void kill() {
 		name = null;
+		user = null;
 		graph = null;
 		this.clear();
 	}
@@ -88,6 +95,10 @@ public class DigraphVertex {
 
 	public Digraph getDigraph() {
 		return graph;
+	}
+
+	public DigraphUser getUser() {
+		return user;
 	}
 
 	/**

@@ -22,12 +22,18 @@ public class DigraphEdge {
 	private DigraphVertex head;  // vertex at the end of the edge
 	private double weight;  // weight assigned to this edge
 	private Digraph graph;  // directed graph containing this edge
+	private DigraphUser user;  // higher-level object using the directed graph
 
-	public DigraphEdge(DigraphVertex vertex1, DigraphVertex vertex2, double wght, Digraph grph) {
+	public DigraphEdge(DigraphVertex vertex1, DigraphVertex vertex2, double wght, Digraph grph, DigraphUser u) {
 		tail = vertex1;
 		head = vertex2;
 		weight = wght;
 		graph = grph;
+		user = u;
+	}
+
+	public DigraphEdge(DigraphVertex vertex1, DigraphVertex vertex2, double wght, Digraph grph) {
+		this(vertex1, vertex2, wght, grph, null);
 	}
 
 	public void init() {
@@ -42,6 +48,7 @@ public class DigraphEdge {
 	}
 
 	public void kill() {
+		user = null;
 		graph = null;
 		this.clear();
 	}
@@ -76,6 +83,10 @@ public class DigraphEdge {
 
 	public Digraph getDigraph() {
 		return graph;
+	}
+
+	public DigraphUser getUser() {
+		return user;
 	}
 
 	@Override
