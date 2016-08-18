@@ -24,13 +24,13 @@ import com.jaamsim.math.Vec4d;
 
 public class LineProxy implements RenderProxy {
 
-	private List<Vec4d> _lineSegments;
-	private Color4d _colour;
+	private final List<Vec4d> _lineSegments;
+	private final Color4d _colour;
 	private Color4d _hoverColour;
-	private double _lineWidth;
-	private long _pickingID;
+	private final double _lineWidth;
+	private final long _pickingID;
 	private DebugLine _cachedLine;
-	private VisibilityInfo _visInfo;
+	private final VisibilityInfo _visInfo;
 
 	public LineProxy(List<Vec4d> lineSegments, Color4d colour, double lineWidth, VisibilityInfo visInfo, long pickingID) {
 		_lineSegments = lineSegments;
@@ -39,8 +39,6 @@ public class LineProxy implements RenderProxy {
 		_lineWidth = lineWidth;
 		_pickingID = pickingID;
 		_visInfo = visInfo;
-
-		assert(lineSegments.size() >= 2);
 	}
 
 	public void setHoverColour(Color4d hoverColour) {
@@ -49,6 +47,9 @@ public class LineProxy implements RenderProxy {
 
 	@Override
 	public void collectRenderables(Renderer r, ArrayList<Renderable> outList) {
+
+		if (_lineSegments == null || _lineSegments.size() < 2)
+			return;
 
 		if (_cachedLine == null) {
 			_cachedLine = new DebugLine(_lineSegments, _colour, _hoverColour, _lineWidth, _visInfo, _pickingID);
