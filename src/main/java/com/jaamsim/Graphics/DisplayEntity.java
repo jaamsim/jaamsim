@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.jaamsim.DisplayModels.ArrowModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.PolylineModel;
@@ -39,6 +40,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.RelativeEntityInput;
+import com.jaamsim.input.StringChoiceInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.input.Vec3dListInput;
 import com.jaamsim.math.Color4d;
@@ -60,6 +62,11 @@ import com.jogamp.newt.event.KeyEvent;
  * components like the eventManager.
  */
 public class DisplayEntity extends Entity {
+
+	protected static final String LINEAR_CURVE = "Linear";
+	protected static final String BEZIER_CURVE = "Bezier";
+	protected static final String SPLINE_CURVE = "Spline";
+
 
 	@Keyword(description = "The point in the region at which the alignment point of the object is positioned.",
 	         exampleList = {"-3.922 -1.830 0.000 m"})
@@ -90,6 +97,10 @@ public class DisplayEntity extends Entity {
 			        "Position and Orientation values.",
 	         exampleList = {"Region1"})
 	protected final EntityInput<Region> regionInput;
+
+	@Keyword(description = "The type of curve interpolation used for line type entities.",
+	         exampleList = {"Linear"})
+protected final StringChoiceInput curveTypeInput;
 
 	private final Vec3d position = new Vec3d();
 	private final Vec3d size = new Vec3d(1.0d, 1.0d, 1.0d);
@@ -151,6 +162,12 @@ public class DisplayEntity extends Entity {
 
 		regionInput = new EntityInput<>(Region.class, "Region", "Graphics", null);
 		this.addInput(regionInput);
+
+		curveTypeInput = new StringChoiceInput("CurveType", "Graphics", 0);
+		curveTypeInput.addChoice(LINEAR_CURVE);
+		curveTypeInput.addChoice(BEZIER_CURVE);
+		curveTypeInput.addChoice(SPLINE_CURVE);
+		this.addInput(curveTypeInput);
 
 		relativeEntity = new RelativeEntityInput("RelativeEntity", "Graphics", null);
 		relativeEntity.setEntity(this);
@@ -223,13 +240,17 @@ public class DisplayEntity extends Entity {
 
 	private void showPolylineGraphicsKeywords(boolean bool) {
 		pointsInput.setHidden(!bool);
+		curveTypeInput.setHidden(!bool);
 	}
 
 	public boolean usePointsInput() {
 		ArrayList<DisplayModel> dmList = displayModelListInput.getValue();
 		if (dmList == null || dmList.isEmpty())
 			return false;
-		return dmList.get(0) instanceof PolylineModel;
+		boolean isPoly = dmList.get(0) instanceof PolylineModel;
+		boolean isArrow = dmList.get(0) instanceof ArrowModel;
+
+		return isPoly || isArrow;
 	}
 
 	private void setGraphicsKeywords() {
@@ -828,7 +849,7 @@ public class DisplayEntity extends Entity {
 		}
 
 		// If Points were input, then use them to set the start and end coordinates
-		if( in == pointsInput ) {
+		if( in == pointsInput || in == curveTypeInput) {
 			invalidateScreenPoints();
 			return;
 		}
@@ -853,7 +874,7 @@ public class DisplayEntity extends Entity {
 
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(pointsInput.getValue(), ColourInput.BLACK, 1);
+		ret[0] = new PolylineInfo(pointsInput.getValue(), getCurveType(), ColourInput.BLACK, 1);
 		return ret;
 	}
 
@@ -988,6 +1009,21 @@ public class DisplayEntity extends Entity {
 
 	public boolean selectable() {
 		return true;
+	}
+
+	protected PolylineInfo.CurveType getCurveType() {
+		if (curveTypeInput.getChoice().equals(LINEAR_CURVE)) {
+			return PolylineInfo.CurveType.LINEAR;
+		}
+		if (curveTypeInput.getChoice().equals(BEZIER_CURVE)) {
+			return PolylineInfo.CurveType.BEZIER;
+		}
+		if (curveTypeInput.getChoice().equals(SPLINE_CURVE)) {
+			return PolylineInfo.CurveType.SPLINE;
+		}
+		// Error case, should not be possible
+		assert(false);
+		return PolylineInfo.CurveType.LINEAR;
 	}
 
 	public final void setTagColour(String tagName, Color4d ca) {

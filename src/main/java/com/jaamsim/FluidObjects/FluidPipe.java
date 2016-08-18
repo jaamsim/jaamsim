@@ -180,7 +180,7 @@ public class FluidPipe extends FluidComponent {
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		int w = Math.max(1, widthInput.getValue().intValue());
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(pointsInput.getValue(), colourInput.getValue(), w);
+		ret[0] = new PolylineInfo(pointsInput.getValue(), getCurveType(), colourInput.getValue(), w);
 		return ret;
 	}
 
