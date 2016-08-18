@@ -86,6 +86,38 @@ public class DigraphPath {
 		return ret;
 	}
 
+	/**
+	 * Returns a list of the entities that own the vertices and edges in the path.
+	 * @return list of owners
+	 */
+	public ArrayList<DigraphUser> getUserPath() {
+		ArrayList<DigraphUser> ret = new ArrayList<>();
+		if (edgeList.isEmpty())
+			return ret;
+
+		// First vertex in the path
+		DigraphUser user = edgeList.get(0).getTail().getUser();
+		ret.add(user);
+
+		// Loop through the full set of edges
+		for (DigraphEdge edge : edgeList) {
+
+			// User for the edge
+			if (edge.getUser() != user) {
+				user = edge.getUser();
+				ret.add(user);
+			}
+
+			// User for the edge's head vertex
+			if (edge.getHead().getUser() != user) {
+				user = edge.getHead().getUser();
+				ret.add(user);
+			}
+		}
+
+		return ret;
+	}
+
 	@Override
 	public String toString() {
 		if (edgeList.isEmpty())
