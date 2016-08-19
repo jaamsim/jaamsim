@@ -669,6 +669,71 @@ public class ExpParser {
 		return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 	}
 
+	private static void checkTypedComparison(ParseContext context, ExpResult lval,
+			ExpResult rval, String source, int pos) throws ExpError {
+
+		// Check that the types are the same
+		if (lval.type != rval.type) {
+			throw new ExpError(source, pos, "Can not compare different types. LHS: %s, RHS: %s",
+					ExpValResult.typeString(lval.type),
+					ExpValResult.typeString(rval.type));
+		}
+		if (lval.type == ExpResType.NUMBER) {
+			// Also check that the unit types are the same
+			if (lval.unitType != rval.unitType) {
+				throw new ExpError(source, pos, "Can not compare different unit types. LHS: %s, RHS: %s",
+						lval.unitType.getSimpleName(),
+						rval.unitType.getSimpleName());
+			}
+		}
+	}
+	private static boolean evaluteTypedEquality(ExpResult lval, ExpResult rval) {
+		boolean equal;
+		switch(lval.type) {
+		case ENTITY:
+			equal = lval.entVal == rval.entVal;
+			break;
+		case STRING:
+			equal = lval.stringVal.equals(rval.stringVal);
+			break;
+		case NUMBER:
+			equal = lval.value == rval.value;
+			break;
+		default:
+			assert(false);
+			equal = false;
+		}
+		return equal;
+	}
+
+	private static ExpValResult validateTypedComparison(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
+		// Propagate errors
+		ExpValResult mergedErrors = mergeBinaryErrors(lval, rval);
+		if (mergedErrors != null) {
+			return mergedErrors;
+		}
+
+		// Otherwise, check that the types are the same
+		if (lval.type != rval.type) {
+			ExpError err = new ExpError(source, pos, "Can not compare different types. LHS: %s, RHS: %s",
+					ExpValResult.typeString(lval.type),
+					ExpValResult.typeString(rval.type));
+			return ExpValResult.makeErrorRes(err);
+		}
+
+		if (lval.type == ExpResType.NUMBER) {
+			// Also check that the unit types are the same
+			if (lval.unitType != rval.unitType) {
+				ExpError err = new ExpError(source, pos, "Can not compare different unit types. LHS: %s, RHS: %s",
+						lval.unitType.getSimpleName(),
+						rval.unitType.getSimpleName());
+				return ExpValResult.makeErrorRes(err);
+			}
+		}
+		return ExpValResult.makeValidRes(lval.type, lval.unitType);
+
+	}
+
 	// Validate with all args using the same units, and a new result returning 'newType' unit type
 	private static ExpValResult validateSameUnits(ParseContext context, ExpValResult[] args, String source, int pos, Class<? extends Unit> newType) {
 		ExpValResult mergedErrors = mergeMultipleErrors(args);
@@ -1037,69 +1102,17 @@ public class ExpParser {
 			@Override
 			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
-
-				// Check that the types are the same
-				if (lval.type != rval.type) {
-					throw new ExpError(source, pos, "Can not compare different types. LHS: %s, RHS: %s",
-							ExpValResult.typeString(lval.type),
-							ExpValResult.typeString(rval.type));
-				}
-				if (lval.type == ExpResType.NUMBER) {
-					// Also check that the unit types are the same
-					if (lval.unitType != rval.unitType) {
-						throw new ExpError(source, pos, "Can not compare different unit types. LHS: %s, RHS: %s",
-								lval.unitType.getSimpleName(),
-								rval.unitType.getSimpleName());
-					}
-				}
+				checkTypedComparison(context, lval, rval, source, pos);
 			}
 
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				boolean equal;
-				switch(lval.type) {
-				case ENTITY:
-					equal = lval.entVal == rval.entVal;
-					break;
-				case STRING:
-					equal = lval.stringVal.equals(rval.stringVal);
-					break;
-				case NUMBER:
-					equal = lval.value == rval.value;
-					break;
-				default:
-					assert(false);
-					equal = false;
-				}
+				boolean equal = evaluteTypedEquality(lval, rval);
 				return ExpResult.makeNumResult(equal ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
-
-				// Propagate errors
-				ExpValResult mergedErrors = mergeBinaryErrors(lval, rval);
-				if (mergedErrors != null) {
-					return mergedErrors;
-				}
-
-				// Otherwise, check that the types are the same
-				if (lval.type != rval.type) {
-					ExpError err = new ExpError(source, pos, "Can not compare different types. LHS: %s, RHS: %s",
-							ExpValResult.typeString(lval.type),
-							ExpValResult.typeString(rval.type));
-					return ExpValResult.makeErrorRes(err);
-				}
-
-				if (lval.type == ExpResType.NUMBER) {
-					// Also check that the unit types are the same
-					if (lval.unitType != rval.unitType) {
-						ExpError err = new ExpError(source, pos, "Can not compare different unit types. LHS: %s, RHS: %s",
-								lval.unitType.getSimpleName(),
-								rval.unitType.getSimpleName());
-						return ExpValResult.makeErrorRes(err);
-					}
-				}
-				return ExpValResult.makeValidRes(lval.type, lval.unitType);
+				return validateTypedComparison(context, lval, rval, source, pos);
 			}
 		});
 
@@ -1107,18 +1120,16 @@ public class ExpParser {
 			@Override
 			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
-				checkBothNumbers(lval, rval, source, pos);
-				if (lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-				}
+				checkTypedComparison(context, lval, rval, source, pos);
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return ExpResult.makeNumResult(lval.value != rval.value ? 1 : 0, DimensionlessUnit.class);
+				boolean equal = evaluteTypedEquality(lval, rval);
+				return ExpResult.makeNumResult(!equal ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
-				return validateComparison(context, lval, rval, source, pos);
+				return validateTypedComparison(context, lval, rval, source, pos);
 			}
 		});
 
