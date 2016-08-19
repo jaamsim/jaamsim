@@ -51,18 +51,6 @@ public class OutputHandle {
 		unitType = outputInfo.unitType;
 	}
 
-	/**
-	 * A custom constructor for an interned string parameter
-	 * @param e
-	 * @param outputName
-	 * @param dummy
-	 */
-	public OutputHandle(Entity e, String outputName, int dummy) {
-		ent = e;
-		outputInfo = OutputHandle.getOutputInfoInterned(e.getClass(), outputName);
-		unitType = outputInfo.unitType;
-	}
-
 	protected OutputHandle(Entity e) {
 		ent = e;
 	}
