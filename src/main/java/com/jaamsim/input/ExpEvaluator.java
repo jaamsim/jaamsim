@@ -66,15 +66,25 @@ public class ExpEvaluator {
 				ent = (Entity)val;
 
 			} else {
-				if (!Entity.class.isAssignableFrom(oh.getReturnType())) {
+				if (Entity.class.isAssignableFrom(oh.getReturnType())) {
+					ent = oh.getValue(simTime, Entity.class);
+				}
+				else if (ExpResult.class.isAssignableFrom(oh.getReturnType())) {
+					ExpResult res = oh.getValue(simTime, ExpResult.class);
+					if (res.type == ExpResType.ENTITY) {
+						ent = res.entVal;
+					} else {
+						throw new ExpError(null, 0, "Output '%s' did not resolve to an entity value", outputName);
+					}
+				}
+				else {
 					throw new ExpError(null, 0, "Output '%s' is not an entity output", outputName);
 				}
 
-				ent = oh.getValue(simTime, Entity.class);
 			}
 
 			if (ent == null) {
-				// Build up the entity chain
+				// Build up the entity chain for the error report
 				StringBuilder b = new StringBuilder();
 				if (names[0].equals("this"))
 					b.append("this");
