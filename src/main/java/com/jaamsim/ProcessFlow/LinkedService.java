@@ -175,6 +175,7 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	@Override
 	public void earlyInit() {
 		super.earlyInit();
+
 		this.setBusy(false);
 		matchValue = null;
 		duration = 0.0;
@@ -182,6 +183,13 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		lastUpdateTime = 0.0d;
 		forcedDowntimePending = false;
 		processCompleted = true;
+
+		this.addState("Idle");
+		this.addState("Working");
+		this.addState("Stopped");
+		this.addState("Clearing_while_Stopped");
+		this.addState("Maintenance");
+		this.addState("Breakdown");
 	}
 
 	@Override
