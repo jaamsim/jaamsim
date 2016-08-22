@@ -66,15 +66,25 @@ public class ExpEvaluator {
 				ent = (Entity)val;
 
 			} else {
-				if (!Entity.class.isAssignableFrom(oh.getReturnType())) {
+				if (Entity.class.isAssignableFrom(oh.getReturnType())) {
+					ent = oh.getValue(simTime, Entity.class);
+				}
+				else if (ExpResult.class.isAssignableFrom(oh.getReturnType())) {
+					ExpResult res = oh.getValue(simTime, ExpResult.class);
+					if (res.type == ExpResType.ENTITY) {
+						ent = res.entVal;
+					} else {
+						throw new ExpError(null, 0, "Output '%s' did not resolve to an entity value", outputName);
+					}
+				}
+				else {
 					throw new ExpError(null, 0, "Output '%s' is not an entity output", outputName);
 				}
 
-				ent = oh.getValue(simTime, Entity.class);
 			}
 
 			if (ent == null) {
-				// Build up the entity chain
+				// Build up the entity chain for the error report
 				StringBuilder b = new StringBuilder();
 				if (names[0].equals("this"))
 					b.append("this");
@@ -162,9 +172,8 @@ public class ExpEvaluator {
 		@Override
 		public VarResolver getVarResolver(String[] names, boolean[] hasIndices) throws ExpError {
 
-			if (names.length == 1) {
-				throw new ExpError(null, 0, "You must specify an output or attribute for entity: %s", names[0]);
-			}
+			assert(names.length != 0);
+			assert(!hasIndices[0]);
 
 			Entity rootEnt;
 			if (names[0] == "this")
@@ -178,6 +187,11 @@ public class ExpEvaluator {
 
 			if (rootEnt == null) {
 				throw new ExpError(null, 0, "Could not find entity: %s", names[0]);
+			}
+
+			// The directly named case
+			if (names.length == 1) {
+				return new DirectResolver(rootEnt);
 			}
 
 			// Special case, if this is a simple output and we can cache the output handle, use an optimized resolver
@@ -212,25 +226,82 @@ public class ExpEvaluator {
 
 	}
 
+	// DirectResolver are for direct access to entities
+	private static class DirectResolver implements ExpParser.VarResolver {
+
+		Entity res;
+		public DirectResolver(Entity ent) {
+			res = ent;
+		}
+		@Override
+		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
+				throws ExpError {
+			return ExpResult.makeEntityResult(res);
+		}
+
+		@Override
+		public ExpValResult validate(boolean[] hasIndices) {
+			// This should already be checked to not have indices
+
+			return ExpValResult.makeValidRes(ExpResType.ENTITY, DimensionlessUnit.class);
+		}
+
+	}
+
 	private static class CachedResolver implements ExpParser.VarResolver {
 
 		private final OutputHandle handle;
+		private final ExpResType type;
 
-		public CachedResolver(OutputHandle oh) {
+		public CachedResolver(OutputHandle oh) throws ExpError {
 			handle = oh;
+			Class<?> retType = oh.getReturnType();
+			if (retType == String.class) {
+				type = ExpResType.STRING;
+			} else if (Entity.class.isAssignableFrom(retType)){
+				type = ExpResType.ENTITY;
+			} else if (OutputHandle.isNumericType(retType) ||
+			           retType == boolean.class ||
+			           retType == Boolean.class) {
+				type = ExpResType.NUMBER;
+			} else {
+				throw new ExpError(null, 0, "Output '%s' on entity '%s does not return a type compatible with the expression engine'",
+						oh.getName(), oh.ent.getName());
+			}
 		}
 
 		@Override
 		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
 				throws ExpError {
 			EntityEvalContext eec = (EntityEvalContext)ec;
-			double val = handle.getValueAsDouble(eec.simTime, 0);
-			return new ExpResult(val, handle.getUnitType());
+			switch (type) {
+			case NUMBER:
+				double val = handle.getValueAsDouble(eec.simTime, 0);
+				return ExpResult.makeNumResult(val, handle.getUnitType());
+			case ENTITY:
+				return ExpResult.makeEntityResult(handle.getValue(eec.simTime, Entity.class));
+			case STRING:
+				return ExpResult.makeStringResult(handle.getValue(eec.simTime, String.class));
+			default:
+				assert(false);
+				return ExpResult.makeNumResult(handle.getValueAsDouble(eec.simTime, 0), handle.getUnitType());
+			}
 		}
 
 		@Override
 		public ExpValResult validate(boolean[] hasIndices) {
-			return new ExpValResult(ExpValResult.State.VALID, handle.getUnitType(), (ExpError)null);
+			switch (type) {
+			case NUMBER:
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, handle.getUnitType());
+			case ENTITY:
+				return ExpValResult.makeValidRes(ExpResType.ENTITY, DimensionlessUnit.class);
+			case STRING:
+				return ExpValResult.makeValidRes(ExpResType.STRING, DimensionlessUnit.class);
+			default:
+				// This should not be reachable
+				assert(false);
+				return ExpValResult.makeUndecidableRes();
+			}
 		}
 	}
 
@@ -261,39 +332,120 @@ public class ExpEvaluator {
 
 			if (indices != null && indices[names.length-1] != null) {
 				int index = (int)indices[names.length-1].value -1; // 1 based indexing
+				ExpResult indResult = indices[names.length-1];
+
+				if (Map.class.isAssignableFrom(oh.getReturnType())) {
+					// This is a map class, let's just try to index it and see what happens
+					Map<?,?> map = oh.getValue(simTime, Map.class);
+					Object key;
+					switch (indResult.type) {
+					case ENTITY:
+						key = indResult.entVal;
+						break;
+					case NUMBER:
+						key = new Double(indResult.value);
+						break;
+					case STRING:
+						key = indResult.stringVal;
+						break;
+					default:
+						assert(false);
+						key = null;
+						break;
+					}
+					Object val = map.get(key);
+					if (val == null) {
+						throw new ExpError(null, 0, "Empty result indexing output: '%s'", names[names.length-1]);
+					}
+					// Try to cast this back into something we understand
+					if (String.class.isAssignableFrom(val.getClass())) {
+						return ExpResult.makeStringResult((String)val);
+					}
+					if (Entity.class.isAssignableFrom(val.getClass())) {
+						return ExpResult.makeEntityResult((Entity)val);
+					}
+					if (Double.class.isAssignableFrom(val.getClass())) {
+						return ExpResult.makeNumResult((Double)val, oh.unitType);
+					}
+					throw new ExpError(null, 0, "Output '%s' returned an unknown type: %s", names[names.length-1], val.getClass().getSimpleName());
+				}
 
 				if (ArrayList.class.isAssignableFrom(oh.getReturnType())) {
+					if (indResult.type != ExpResType.NUMBER) {
+						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", names[names.length-1]);
+					}
 					ArrayList<?> outList = oh.getValue(simTime, ArrayList.class);
 
 					if (index >= outList.size()  || index < 0) {
-						return new ExpResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
+						return ExpResult.makeNumResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
 					}
 					Double value = (Double)outList.get(index);
-					return new ExpResult(value, oh.unitType);
+					return ExpResult.makeNumResult(value, oh.unitType);
 				} else if(DoubleVector.class.isAssignableFrom(oh.getReturnType())) {
+					if (indResult.type != ExpResType.NUMBER) {
+						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", names[names.length-1]);
+					}
 					DoubleVector outList = oh.getValue(simTime, DoubleVector.class);
 
 					if (index >= outList.size() || index < 0) {
-						return new ExpResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
+						return ExpResult.makeNumResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
 					}
 
 					Double value = outList.get(index);
-					return new ExpResult(value, oh.unitType);
+					return ExpResult.makeNumResult(value, oh.unitType);
 				} else if(IntegerVector.class.isAssignableFrom(oh.getReturnType())) {
+					if (indResult.type != ExpResType.NUMBER) {
+						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", names[names.length-1]);
+					}
 					IntegerVector outList = oh.getValue(simTime, IntegerVector.class);
 
 					if (index >= outList.size() || index < 0) {
-						return new ExpResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
+						return ExpResult.makeNumResult(0, oh.unitType); // TODO: Is this how we want to handle this case?
 					}
 
 					Integer value = outList.get(index);
-					return new ExpResult(value, oh.unitType);
+					return ExpResult.makeNumResult(value, oh.unitType);
 				} else {
 					throw new ExpError(null, 0, "Output '%s' has an index and is not an array type output", names[names.length-1]);
 				}
 			} else {
-				return new ExpResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
+				Class<?> retType = oh.getReturnType();
+				if (retType == ExpResult.class) {
+					// This is already an expression, so return it
+					return oh.getValue(simTime, ExpResult.class);
+				}
+				if (retType == String.class) {
+					return ExpResult.makeStringResult(oh.getValue(simTime, String.class));
+				}
+				if (Entity.class.isAssignableFrom(retType)) {
+					return ExpResult.makeEntityResult(oh.getValue(simTime, Entity.class));
+				}
+				if (    OutputHandle.isNumericType(retType) ||
+				        retType == boolean.class ||
+				        retType == Boolean.class) {
+					return ExpResult.makeNumResult(oh.getValueAsDouble(simTime, 0), oh.unitType);
+				}
+				throw new ExpError(null, 0, "Output %s, on entity %s does not return a type compatible with expressions.", oh.getName(), oh.ent.getName());
 			}
+
+		}
+
+		private ExpValResult validateFinalClass(Class<?> retType, Class<? extends Unit> unitType) {
+			if (    OutputHandle.isNumericType(retType) ||
+			        retType != boolean.class ||
+			        retType != Boolean.class) {
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, unitType);
+			} else if (retType == String.class) {
+				return ExpValResult.makeValidRes(ExpResType.STRING, DimensionlessUnit.class);
+			} else if (Entity.class.isAssignableFrom(retType)) {
+				return ExpValResult.makeValidRes(ExpResType.ENTITY, DimensionlessUnit.class);
+			} else if (retType == ExpResult.class) {
+				// This is another expression, so do the checks at runtime
+				return ExpValResult.makeUndecidableRes();
+			}
+
+			ExpError error = new ExpError(null, 0, "Output: %s does not return a numeric type", names[1]);
+			return ExpValResult.makeErrorRes(error);
 
 		}
 
@@ -306,29 +458,28 @@ public class ExpEvaluator {
 				if (oh == null) {
 					ExpError error = new ExpError(null, 0, String.format("Could not find output '%s' on entity '%s'",
 							outputName, rootEnt.getName()));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
 				if (!hasIndices[1]) {
 					Class<?> retType = oh.getReturnType();
-					if (    !OutputHandle.isNumericType(retType) &&
-					        retType != boolean.class &&
-					        retType != Boolean.class) {
-						ExpError error = new ExpError(null, 0, "Output: %s does not return a numeric type", names[1]);
-						return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
-					}
-					return new ExpValResult(ExpValResult.State.VALID, oh.unitType, (ExpError)null);
+					return validateFinalClass(retType, oh.getUnitType());
+
 				} else {
 					// Indexed final output
 					if (oh.getReturnType() == DoubleVector.class ||
 						oh.getReturnType() == IntegerVector.class) {
-						return new ExpValResult(ExpValResult.State.VALID, oh.unitType, (ExpError)null);
+						return ExpValResult.makeValidRes(ExpResType.NUMBER, oh.getUnitType());
 					}
 					if (oh.getReturnType() == ArrayList.class) {
 						//TODO: find out if we can determine the contained class without an instance or if type erasure prevents that
-						return new ExpValResult(ExpValResult.State.VALID, oh.unitType, (ExpError)null);
+						return ExpValResult.makeUndecidableRes();
+					}
+					// Maps are completely unpredictable currently
+					if (Map.class.isAssignableFrom(oh.getReturnType())) {
+						return ExpValResult.makeUndecidableRes();
 					}
 					ExpError error = new ExpError(null, 0, "Output: %s is not a known array type");
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
 			}
 
@@ -342,27 +493,22 @@ public class ExpEvaluator {
 				klass = OutputHandle.getStaticOutputType(klass, names[i]);
 				if (klass == null) {
 					// Undecidable
-					return new ExpValResult(ExpValResult.State.UNDECIDABLE, DimensionlessUnit.class, (ExpError)null);
+					return ExpValResult.makeUndecidableRes();
 				}
 
 				if (i == names.length - 1) {
-					// Last name in the chain, check that the type is numeric
-					if (!OutputHandle.isNumericType(klass)) {
-						ExpError error = new ExpError(null, 0, "Output: '%s' does not return a numeric type", names[i]);
-						return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
-					}
-					//return new ExpResult(0, unitType);
-					return new ExpValResult(ExpValResult.State.VALID, unitType, (ExpError)null);
+					// Last name in the chain, check that the type is a valid value type
+					return validateFinalClass(klass, unitType);
 				} else {
 					if (!Entity.class.isAssignableFrom(klass)) {
 						ExpError error = new ExpError(null, 0, "Output: '%s' must output an entity type", names[i]);
-						return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+						return ExpValResult.makeErrorRes(error);
 					}
 				}
 			}
 			// We should never get here
 			ExpError error = new ExpError(null, 0, "Validator logic error");
-			return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+			return ExpValResult.makeErrorRes(error);
 		}
 
 	}
@@ -401,7 +547,7 @@ public class ExpEvaluator {
 		if (!assignmentEnt.hasAttribute(attribName)) {
 			throw new ExpError(null, 0, "Entity '%s' does not have attribute '%s'", assignmentEnt, attribName);
 		}
-		assignmentEnt.setAttribute(attribName, result.value, result.unitType);
+		assignmentEnt.setAttribute(attribName, result);
 	}
 
 	public static ExpResult evaluateExpression(ExpParser.Expression exp, double simTime) throws ExpError

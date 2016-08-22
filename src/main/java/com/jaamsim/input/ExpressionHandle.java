@@ -33,25 +33,29 @@ public class ExpressionHandle extends OutputHandle {
 
 	@Override
 	public <T> T getValue(double simTime, Class<T> klass) {
-		if (!double.class.equals(klass) || Double.class.equals(klass)) {
-			return null;
-		}
-		return klass.cast(evaluateExp(simTime));
+		// Make a best effort to return the type
+		ExpResult res = evaluateExp(simTime);
+
+		return res.getValue(simTime, klass);
 	}
 
 	@Override
 	public double getValueAsDouble(double simTime, double def) {
-		return evaluateExp(simTime);
+		ExpResult res = evaluateExp(simTime);
+		if (res.type == ExpResType.NUMBER)
+			return res.value;
+
+		return def;
 	}
 
-	private double evaluateExp(double simTime) {
+	private ExpResult evaluateExp(double simTime) {
 		try {
 			ExpResult er = ExpEvaluator.evaluateExpression(exp, simTime);
-			if (er.unitType != unitType) {
-				throw new ErrorException(String.format("Unit Type mismatch in custom output. Entity: %s Expression: '%s' Exected %s, got %s.",
+			if (er.type == ExpResType.NUMBER && er.unitType != unitType) {
+				throw new ErrorException(String.format("Unit Type mismatch in custom output. Entity: %s Expression: '%s' Expected %s, got %s.",
 						ent.getName(), exp.source, unitType.getSimpleName(), er.unitType.getSimpleName()));
 			}
-			return er.value;
+			return er;
 		}
 		catch (ExpError ex) {
 			throw new ErrorException(ex);
@@ -60,7 +64,7 @@ public class ExpressionHandle extends OutputHandle {
 
 	@Override
 	public Class<?> getReturnType() {
-		return double.class;
+		return ExpResult.class;
 	}
 
 	@Override

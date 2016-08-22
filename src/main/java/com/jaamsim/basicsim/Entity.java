@@ -33,6 +33,8 @@ import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.AttributeDefinitionListInput;
 import com.jaamsim.input.AttributeHandle;
 import com.jaamsim.input.BooleanInput;
+import com.jaamsim.input.ExpResType;
+import com.jaamsim.input.ExpResult;
 import com.jaamsim.input.ExpressionHandle;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.InputAgent;
@@ -779,14 +781,14 @@ public class Entity {
 		return h.getUnitType();
 	}
 
-	public void setAttribute(String name, double value, Class<? extends Unit> ut) {
+	public void setAttribute(String name, ExpResult value) {
 		AttributeHandle h = attributeMap.get(name);
 		if (h == null)
 			this.error("Invalid attribute name: %s", name);
 
-		if (h.getUnitType() != ut)
+		if (value.type == ExpResType.NUMBER && h.getUnitType() != value.unitType)
 			this.error("Invalid unit returned by an expression. Received: %s, expected: %s",
-					ut.getSimpleName(), h.getUnitType().getSimpleName(), "");
+					value.unitType.getSimpleName(), h.getUnitType().getSimpleName(), "");
 
 		h.setValue(value);
 	}

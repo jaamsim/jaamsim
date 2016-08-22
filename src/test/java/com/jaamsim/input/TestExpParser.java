@@ -45,14 +45,14 @@ public class TestExpParser {
 		@Override
 		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
 				throws ExpError {
-			if (name.equals("foo")) return new ExpResult(4, DimensionlessUnit.class);
-			if (name.equals("bar")) return new ExpResult(3, DimensionlessUnit.class);
-			return new ExpResult(1, DimensionlessUnit.class);
+			if (name.equals("foo")) return ExpResult.makeNumResult(4, DimensionlessUnit.class);
+			if (name.equals("bar")) return ExpResult.makeNumResult(3, DimensionlessUnit.class);
+			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
 		}
 
 		@Override
 		public ExpValResult validate(boolean[] hasIndices) {
-			return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+			return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 		}
 
 	}
@@ -161,6 +161,13 @@ public class TestExpParser {
 		testToken(tokens.get(4), ExpTokenizer.SYM_TYPE, "=");
 		testToken(tokens.get(5), ExpTokenizer.SYM_TYPE, "&");
 		testToken(tokens.get(6), ExpTokenizer.SYM_TYPE, "|");
+
+		tokens = ExpTokenizer.tokenize("[[blarg]][foo][[bar]] 42");
+		assertTrue(tokens.size() == 4);
+		testToken(tokens.get(0), ExpTokenizer.DSQ_TYPE, "blarg");
+		testToken(tokens.get(1), ExpTokenizer.SQ_TYPE, "foo");
+		testToken(tokens.get(2), ExpTokenizer.DSQ_TYPE, "bar");
+		testToken(tokens.get(3), ExpTokenizer.NUM_TYPE, "42");
 
 	}
 
@@ -355,22 +362,22 @@ public class TestExpParser {
 					if (indices[i] != null)
 					ret += i * indices[i].value;
 				}
-				return new ExpResult(ret, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(ret, DimensionlessUnit.class);
 			}
 
-			if (name.length >= 1 && name[0].equals("this")) return new ExpResult(42, DimensionlessUnit.class);
+			if (name.length >= 1 && name[0].equals("this")) return ExpResult.makeNumResult(42, DimensionlessUnit.class);
 
-			if (name.length < 1 || !name[0].equals("foo")) return new ExpResult(0, DimensionlessUnit.class);
+			if (name.length < 1 || !name[0].equals("foo")) return ExpResult.makeNumResult(0, DimensionlessUnit.class);
 
-			if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return new ExpResult(4, DimensionlessUnit.class);
-			if (name.length >= 2 && name[1].equals("bonk")) return new ExpResult(5, DimensionlessUnit.class);
+			if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return ExpResult.makeNumResult(4, DimensionlessUnit.class);
+			if (name.length >= 2 && name[1].equals("bonk")) return ExpResult.makeNumResult(5, DimensionlessUnit.class);
 
-			return new ExpResult(-1, DimensionlessUnit.class);
+			return ExpResult.makeNumResult(-1, DimensionlessUnit.class);
 		}
 
 		@Override
 		public ExpValResult validate(boolean[] hasIndices) {
-			return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+			return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 		}
 	}
 
@@ -421,6 +428,19 @@ public class TestExpParser {
 	}
 
 	@Test
+	public void testString() throws ExpError {
+		ExpParser.Expression exp = ExpParser.parseExpression(pc, "[[stringly]]");
+		ExpResult res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("stringly"));
+
+		exp = ExpParser.parseExpression(pc, "[[stri]] + [[ngly]]");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("stringly"));
+	}
+
+	@Test
 	public void testUnits() throws ExpError {
 		class ErrorResolver implements ExpParser.VarResolver {
 
@@ -433,7 +453,8 @@ public class TestExpParser {
 
 			@Override
 			public ExpValResult validate(boolean[] hasIndices) {
-				return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+				return ExpValResult.makeErrorRes(error);
+
 			}
 		}
 

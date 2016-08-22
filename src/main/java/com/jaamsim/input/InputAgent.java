@@ -1475,6 +1475,25 @@ public class InputAgent {
 			return String.format(fmt, sb.toString());
 		}
 
+		if (out.getReturnType() == ExpResult.class) {
+			ExpResult result = out.getValue(simTime, ExpResult.class);
+			switch (result.type) {
+			case STRING:
+				sb.append(result.stringVal);
+				break;
+			case ENTITY:
+				sb.append("[").append(result.entVal.getName()).append("]");
+				break;
+			case NUMBER:
+				sb.append(String.format("%g", result.value/factor));
+				break;
+			default:
+				assert(false);
+				sb.append("???");
+				break;
+			}
+			return String.format(fmt, sb.toString());
+		}
 		// All other outputs
 		return String.format(fmt, out.getValue(simTime, retType));
 	}

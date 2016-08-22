@@ -72,6 +72,7 @@ public abstract class Input<T> {
 	protected static final String INP_ERR_UNITUNSPECIFIED = "Unit type has not been specified";
 	protected static final String INP_ERR_NOTSUBCLASS = "Expected a subclass of %s, got %s";
 	protected static final String INP_ERR_BADDATE = "Expected a valid RFC8601 datetime, got: %s";
+	protected static final String INP_ERR_BADEXP = "Error parsing expression: %s";
 	protected static final String INP_VAL_LISTSET = "Values found for %s without %s being set";
 	protected static final String INP_VAL_LISTSIZE = "%s and %s must be of equal size";
 

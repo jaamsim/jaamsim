@@ -27,13 +27,13 @@ import com.jaamsim.units.Unit;
 public class ExpParser {
 
 	public interface UnOpFunc {
-		public void checkUnits(ParseContext context, ExpResult val) throws ExpError;
+		public void checkTypeAndUnits(ParseContext context, ExpResult val, String source, int pos) throws ExpError;
 		public ExpResult apply(ParseContext context, ExpResult val) throws ExpError;
-		public ExpValResult validate(ParseContext context, ExpValResult val);
+		public ExpValResult validate(ParseContext context, ExpValResult val, String source, int pos);
 	}
 
 	public interface BinOpFunc {
-		public void checkUnits(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError;
+		public void checkTypeAndUnits(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError;
 		public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError;
 		public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos);
 	}
@@ -150,7 +150,7 @@ public class ExpParser {
 
 		@Override
 		public ExpValResult validate() {
-			return new ExpValResult(ExpValResult.State.VALID, val.unitType, (ExpError)null);
+			return ExpValResult.makeValidRes(val.type, val.unitType);
 		}
 
 		@Override
@@ -203,23 +203,25 @@ public class ExpParser {
 	private static class UnaryOp extends ExpNode {
 		public ExpNode subExp;
 		protected final UnOpFunc func;
+		public String name;
 		public boolean canSkipRuntimeChecks = false;
-		UnaryOp(ParseContext context, ExpNode subExp, UnOpFunc func, Expression exp, int pos) {
+		UnaryOp(String name, ParseContext context, ExpNode subExp, UnOpFunc func, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.subExp = subExp;
 			this.func = func;
+			this.name = name;
 		}
 
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			ExpResult subExpVal = subExp.evaluate(ec);
-			func.checkUnits(context, subExpVal);
+			func.checkTypeAndUnits(context, subExpVal, exp.source, tokenPos);
 			return func.apply(context, subExpVal);
 		}
 
 		@Override
 		public ExpValResult validate() {
-			ExpValResult res = func.validate(context, subExp.validate());
+			ExpValResult res = func.validate(context, subExp.validate(), exp.source, tokenPos);
 			if (res.state == ExpValResult.State.VALID)
 				canSkipRuntimeChecks = true;
 
@@ -242,11 +244,15 @@ public class ExpParser {
 			else
 				return null;
 		}
+		@Override
+		public String toString() {
+			return "UnaryOp: " + name;
+		}
 	}
 
 	private static class UnaryOpNoChecks extends UnaryOp {
 		UnaryOpNoChecks(UnaryOp uo) {
-			super(uo.context, uo.subExp, uo.func, uo.exp, uo.tokenPos);
+			super(uo.name, uo.context, uo.subExp, uo.func, uo.exp, uo.tokenPos);
 		}
 
 		@Override
@@ -261,20 +267,22 @@ public class ExpParser {
 		public ExpNode lSubExp;
 		public ExpNode rSubExp;
 		public boolean canSkipRuntimeChecks = false;
+		public String name;
 
 		protected final BinOpFunc func;
-		BinaryOp(ParseContext context, ExpNode lSubExp, ExpNode rSubExp, BinOpFunc func, Expression exp, int pos) {
+		BinaryOp(String name, ParseContext context, ExpNode lSubExp, ExpNode rSubExp, BinOpFunc func, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.lSubExp = lSubExp;
 			this.rSubExp = rSubExp;
 			this.func = func;
+			this.name = name;
 		}
 
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			ExpResult lRes = lSubExp.evaluate(ec);
 			ExpResult rRes = rSubExp.evaluate(ec);
-			func.checkUnits(context, lRes, rRes, exp.source, tokenPos);
+			func.checkTypeAndUnits(context, lRes, rRes, exp.source, tokenPos);
 			return func.apply(context, lRes, rRes, exp.source, tokenPos);
 		}
 
@@ -307,11 +315,15 @@ public class ExpParser {
 			else
 				return null;
 		}
+		@Override
+		public String toString() {
+			return "BinaryOp: " + name;
+		}
 	}
 
 	private static class BinaryOpNoChecks extends BinaryOp {
 		BinaryOpNoChecks(BinaryOp bo) {
-			super(bo.context, bo.lSubExp, bo.rSubExp, bo.func, bo.exp, bo.tokenPos);
+			super(bo.name, bo.context, bo.lSubExp, bo.rSubExp, bo.func, bo.exp, bo.tokenPos);
 		}
 
 		@Override
@@ -349,35 +361,45 @@ public class ExpParser {
 			ExpValResult trueRes = trueExp.validate();
 			ExpValResult falseRes = falseExp.validate();
 
-			ExpValResult.State state;
 			if (	condRes.state  == ExpValResult.State.ERROR ||
 					trueRes.state  == ExpValResult.State.ERROR ||
-					falseRes.state == ExpValResult.State.ERROR)
-				state = ExpValResult.State.ERROR;
+					falseRes.state == ExpValResult.State.ERROR) {
+				// Error state, merge all returned errors
+				ArrayList<ExpError> errors = new ArrayList<>();
+				if (condRes.errors != null)
+					errors.addAll(condRes.errors);
+				if (trueRes.errors != null)
+					errors.addAll(trueRes.errors);
+				if (falseRes.errors != null)
+					errors.addAll(falseRes.errors);
+				return ExpValResult.makeErrorRes(errors);
+			}
 			else if (	condRes.state  == ExpValResult.State.UNDECIDABLE ||
 						trueRes.state  == ExpValResult.State.UNDECIDABLE ||
-						falseRes.state == ExpValResult.State.UNDECIDABLE)
-				state = ExpValResult.State.UNDECIDABLE;
-			else
-				state = ExpValResult.State.VALID;
+						falseRes.state == ExpValResult.State.UNDECIDABLE) {
+				return ExpValResult.makeUndecidableRes();
+			}
 
-			ArrayList<ExpError> errors = new ArrayList<>();
-			errors.addAll(condRes.errors);
-			errors.addAll(trueRes.errors);
-			errors.addAll(falseRes.errors);
+			// All valid case
+
+			// Check that both sides of the branch return the same type
+			if (trueRes.type != falseRes.type) {
+
+				ExpError typeError = new ExpError(exp.source, tokenPos,
+						"Type mismatch in conditional. True branch is %s, false branch is %s",
+						trueRes.type.toString(), falseRes.type.toString());
+				return ExpValResult.makeErrorRes(typeError);
+			}
 
 			// Check that both sides of the branch return the same unit types
-			if (	trueRes.state  == ExpValResult.State.VALID &&
-					falseRes.state == ExpValResult.State.VALID) {
-				if (trueRes.unitType != falseRes.unitType) {
-					state = ExpValResult.State.ERROR;
-					ExpError unitError = new ExpError(exp.source, tokenPos,
-							"Unit mismatch in conditional. True branch is %s, false branch is %s",
-							trueRes.unitType.getSimpleName(), falseRes.unitType.getSimpleName());
-					errors.add(0, unitError);
-				}
+			if (trueRes.unitType != falseRes.unitType) {
+
+				ExpError unitError = new ExpError(exp.source, tokenPos,
+						"Unit mismatch in conditional. True branch is %s, false branch is %s",
+						trueRes.unitType.getSimpleName(), falseRes.unitType.getSimpleName());
+				return ExpValResult.makeErrorRes(unitError);
 			}
-			return new ExpValResult(state, trueRes.unitType, errors);
+			return ExpValResult.makeValidRes(trueRes.type, trueRes.unitType);
 		}
 
 		@Override
@@ -392,16 +414,22 @@ public class ExpParser {
 
 			w.visit(this);
 		}
+		@Override
+		public String toString() {
+			return "Conditional";
+		}
 	}
 
 	public static class FuncCall extends ExpNode {
 		protected final ArrayList<ExpNode> args;
 		protected final CallableFunc function;
 		private boolean canSkipRuntimeChecks = false;
-		public FuncCall(ParseContext context, CallableFunc function, ArrayList<ExpNode> args, Expression exp, int pos) {
+		private final String name;
+		public FuncCall(String name, ParseContext context, CallableFunc function, ArrayList<ExpNode> args, Expression exp, int pos) {
 			super(context, exp, pos);
 			this.function = function;
 			this.args = args;
+			this.name = name;
 		}
 
 		@Override
@@ -444,11 +472,15 @@ public class ExpParser {
 			else
 				return null;
 		}
+		@Override
+		public String toString() {
+			return "Function: " + name;
+		}
 	}
 
 	private static class FuncCallNoChecks extends FuncCall {
 		FuncCallNoChecks(FuncCall fc) {
-			super(fc.context, fc.function, fc.args, fc.exp, fc.tokenPos);
+			super(fc.name, fc.context, fc.function, fc.args, fc.exp, fc.tokenPos);
 		}
 
 		@Override
@@ -552,14 +584,17 @@ public class ExpParser {
 		if (	lval.state == ExpValResult.State.ERROR ||
 				rval.state == ExpValResult.State.ERROR) {
 			// Propagate the error, no further checking
-			ArrayList<ExpError> errors = new ArrayList<>(lval.errors);
-			errors.addAll(rval.errors);
-			return new ExpValResult(ExpValResult.State.ERROR, lval.unitType, errors);
+			ArrayList<ExpError> errors = new ArrayList<>();
+			if (lval.errors != null)
+				errors.addAll(lval.errors);
+			if (rval.errors != null)
+				errors.addAll(rval.errors);
+			return ExpValResult.makeErrorRes(errors);
 		}
 
 		if (	lval.state == ExpValResult.State.UNDECIDABLE ||
 				rval.state == ExpValResult.State.UNDECIDABLE) {
-			return new ExpValResult(ExpValResult.State.UNDECIDABLE, lval.unitType, (ExpError)null);
+			return ExpValResult.makeUndecidableRes();
 		}
 
 		return null;
@@ -572,19 +607,43 @@ public class ExpParser {
 				// We have an error, merge all error results and return
 				ArrayList<ExpError> errors = new ArrayList<>();
 				for (ExpValResult errVal : args) {
-					errors.addAll(errVal.errors);
+					if (errVal.errors != null)
+						errors.addAll(errVal.errors);
 				}
-				return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, errors);
+				return ExpValResult.makeErrorRes(errors);
 			}
 		}
 		for (ExpValResult val : args) {
 			if (val.state == ExpValResult.State.UNDECIDABLE) {
 				// At least one value in undecidable, propagate it
-				return new ExpValResult(ExpValResult.State.UNDECIDABLE, DimensionlessUnit.class, (ExpError)null);
+				return ExpValResult.makeUndecidableRes();
 			}
 		}
 		return null;
 
+	}
+
+	private static void checkBothNumbers(ExpResult lval, ExpResult rval, String source, int pos)
+	throws ExpError {
+		if (lval.type != ExpResType.NUMBER) {
+			throw new ExpError(source, pos, "Left operand must be a number");
+		}
+		if (rval.type != ExpResType.NUMBER) {
+			throw new ExpError(source, pos, "Right operand must be a number");
+		}
+	}
+
+	private static ExpValResult validateBothNumbers(ExpValResult lval, ExpValResult rval, String source, int pos) {
+		if (lval.type != ExpResType.NUMBER) {
+			ExpError error = new ExpError(source, pos, "Left operand must be a number");
+			return ExpValResult.makeErrorRes(error);
+		}
+		if (rval.type != ExpResType.NUMBER) {
+			ExpError error = new ExpError(source, pos, "Right operand must be a number");
+			return ExpValResult.makeErrorRes(error);
+		}
+
+		return null;
 	}
 
 	private static ExpValResult validateComparison(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -596,13 +655,83 @@ public class ExpParser {
 			return mergedErrors;
 		}
 
+		ExpValResult numRes = validateBothNumbers(lval, rval, source, pos);
+		if (numRes != null) {
+			return numRes;
+		}
+
 		// Both sub values should be valid here
 		if (lval.unitType != rval.unitType) {
 			ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-			return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+			return ExpValResult.makeErrorRes(error);
 		}
 
-		return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+		return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
+	}
+
+	private static void checkTypedComparison(ParseContext context, ExpResult lval,
+			ExpResult rval, String source, int pos) throws ExpError {
+
+		// Check that the types are the same
+		if (lval.type != rval.type) {
+			throw new ExpError(source, pos, "Can not compare different types. LHS: %s, RHS: %s",
+					ExpValResult.typeString(lval.type),
+					ExpValResult.typeString(rval.type));
+		}
+		if (lval.type == ExpResType.NUMBER) {
+			// Also check that the unit types are the same
+			if (lval.unitType != rval.unitType) {
+				throw new ExpError(source, pos, "Can not compare different unit types. LHS: %s, RHS: %s",
+						lval.unitType.getSimpleName(),
+						rval.unitType.getSimpleName());
+			}
+		}
+	}
+	private static boolean evaluteTypedEquality(ExpResult lval, ExpResult rval) {
+		boolean equal;
+		switch(lval.type) {
+		case ENTITY:
+			equal = lval.entVal == rval.entVal;
+			break;
+		case STRING:
+			equal = lval.stringVal.equals(rval.stringVal);
+			break;
+		case NUMBER:
+			equal = lval.value == rval.value;
+			break;
+		default:
+			assert(false);
+			equal = false;
+		}
+		return equal;
+	}
+
+	private static ExpValResult validateTypedComparison(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
+		// Propagate errors
+		ExpValResult mergedErrors = mergeBinaryErrors(lval, rval);
+		if (mergedErrors != null) {
+			return mergedErrors;
+		}
+
+		// Otherwise, check that the types are the same
+		if (lval.type != rval.type) {
+			ExpError err = new ExpError(source, pos, "Can not compare different types. LHS: %s, RHS: %s",
+					ExpValResult.typeString(lval.type),
+					ExpValResult.typeString(rval.type));
+			return ExpValResult.makeErrorRes(err);
+		}
+
+		if (lval.type == ExpResType.NUMBER) {
+			// Also check that the unit types are the same
+			if (lval.unitType != rval.unitType) {
+				ExpError err = new ExpError(source, pos, "Can not compare different unit types. LHS: %s, RHS: %s",
+						lval.unitType.getSimpleName(),
+						rval.unitType.getSimpleName());
+				return ExpValResult.makeErrorRes(err);
+			}
+		}
+		return ExpValResult.makeValidRes(lval.type, lval.unitType);
+
 	}
 
 	// Validate with all args using the same units, and a new result returning 'newType' unit type
@@ -612,12 +741,18 @@ public class ExpParser {
 			return mergedErrors;
 
 		for (int i = 1; i < args.length; ++ i) {
+			if (args[i].type != ExpResType.NUMBER) {
+				ExpError error = new ExpError(source, pos, String.format("Argument %d must be a number", i+1));
+				return ExpValResult.makeErrorRes(error);
+			}
+
 			if (args[0].unitType != args[i].unitType) {
 				ExpError error = new ExpError(source, pos, getUnitMismatchString(args[0].unitType, args[i].unitType));
-				return new ExpValResult(ExpValResult.State.ERROR, args[0].unitType, error);
+				return ExpValResult.makeErrorRes(error);
+
 			}
 		}
-		return new ExpValResult(ExpValResult.State.VALID, newType, (ExpError)null);
+		return ExpValResult.makeValidRes(ExpResType.NUMBER, newType);
 	}
 
 	// Check that a single argument is not an error and is a dimensionless unit
@@ -625,23 +760,31 @@ public class ExpParser {
 		if (	arg.state == ExpValResult.State.ERROR ||
 				arg.state == ExpValResult.State.UNDECIDABLE)
 			return arg;
+		if (arg.type != ExpResType.NUMBER) {
+			ExpError error = new ExpError(source, pos, "Argument must be a number");
+			return ExpValResult.makeErrorRes(error);
+		}
 		if (arg.unitType != DimensionlessUnit.class) {
 			ExpError error = new ExpError(source, pos, getUnitMismatchString(arg.unitType, DimensionlessUnit.class));
-			return new ExpValResult(ExpValResult.State.ERROR, arg.unitType, error);
+			return ExpValResult.makeErrorRes(error);
 		}
-		return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+		return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 	}
 
-	// Check that a single argument is not an error and is a dimensionless unit
-	private static ExpValResult validateSingleArgDimensionlessOrAngle(ParseContext context, ExpValResult arg, String source, int pos) {
+	// Check that a single argument is not an error and is a dimensionless unit or angle unit
+	private static ExpValResult validateTrigFunction(ParseContext context, ExpValResult arg, String source, int pos) {
 		if (	arg.state == ExpValResult.State.ERROR ||
 				arg.state == ExpValResult.State.UNDECIDABLE)
 			return arg;
-		if (arg.unitType != DimensionlessUnit.class && arg.unitType != AngleUnit.class) {
-			ExpError error = new ExpError(source, pos, getUnitMismatchString(arg.unitType, AngleUnit.class));
-			return new ExpValResult(ExpValResult.State.ERROR, arg.unitType, error);
+		if (arg.type != ExpResType.NUMBER) {
+			ExpError error = new ExpError(source, pos, "Argument must be a number");
+			return ExpValResult.makeErrorRes(error);
 		}
-		return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+		if (arg.unitType != DimensionlessUnit.class && arg.unitType != AngleUnit.class) {
+			ExpError error = new ExpError(source, pos, getUnitMismatchString(arg.unitType, DimensionlessUnit.class));
+			return ExpValResult.makeErrorRes(error);
+		}
+		return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 	}
 
 
@@ -655,48 +798,72 @@ public class ExpParser {
 		addUnaryOp("-", 50, new UnOpFunc() {
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult val){
-				return new ExpResult(-val.value, val.unitType);
+				return ExpResult.makeNumResult(-val.value, val.unitType);
 			}
 			@Override
-			public ExpValResult validate(ParseContext context, ExpValResult val) {
+			public ExpValResult validate(ParseContext context, ExpValResult val, String source, int pos) {
+				if (val.state == ExpValResult.State.VALID && val.type != ExpResType.NUMBER) {
+					ExpError err = new ExpError(source, pos, "Unary negation only applies to numbers");
+					return ExpValResult.makeErrorRes(err);
+				}
 				return val;
 			}
 			@Override
-			public void checkUnits(ParseContext context, ExpResult val)
+			public void checkTypeAndUnits(ParseContext context, ExpResult val, String source, int pos)
 					throws ExpError {
-				// N/A
+				if (val.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Unary negation only applies to numbers");
+				}
 			}
 		});
 
 		addUnaryOp("+", 50, new UnOpFunc() {
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult val){
-				return new ExpResult(val.value, val.unitType);
+				return ExpResult.makeNumResult(val.value, val.unitType);
 			}
 			@Override
-			public ExpValResult validate(ParseContext context, ExpValResult val) {
+			public ExpValResult validate(ParseContext context, ExpValResult val, String source, int pos) {
+				if (val.state == ExpValResult.State.VALID && val.type != ExpResType.NUMBER) {
+					ExpError err = new ExpError(source, pos, "Unary positive only applies to numbers");
+					return ExpValResult.makeErrorRes(err);
+				}
 				return val;
 			}
 			@Override
-			public void checkUnits(ParseContext context, ExpResult val)
+			public void checkTypeAndUnits(ParseContext context, ExpResult val, String source, int pos)
 					throws ExpError {
-				// N/A
+				if (val.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Unary positive only applies to numbers");
+				}
 			}
 		});
 
 		addUnaryOp("!", 50, new UnOpFunc() {
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult val){
-				return new ExpResult(val.value == 0 ? 1 : 0, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(val.value == 0 ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
-			public ExpValResult validate(ParseContext context, ExpValResult val) {
-				return new ExpValResult(val.state, DimensionlessUnit.class, val.errors);
+			public ExpValResult validate(ParseContext context, ExpValResult val, String source, int pos) {
+				// If the sub expression result was valid, make it dimensionless, otherwise return the sub expression result
+				if (val.state == ExpValResult.State.VALID) {
+					if (val.type == ExpResType.NUMBER)
+						return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
+
+					// The expression is valid, but not a number
+					ExpError error = new ExpError(source, pos, "Argument must be a number");
+					return ExpValResult.makeErrorRes(error);
+				} else {
+					return val;
+				}
 			}
 			@Override
-			public void checkUnits(ParseContext context, ExpResult val)
+			public void checkTypeAndUnits(ParseContext context, ExpResult val, String source, int pos)
 					throws ExpError {
-				// N/A
+				if (val.type != ExpResType.NUMBER) {
+					throw new ExpError(source, pos, "Unary not only applies to numbers");
+				}
 			}
 		});
 
@@ -704,15 +871,26 @@ public class ExpParser {
 		// Binary operators
 		addBinaryOp("+", 20, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
-				if (lval.unitType != rval.unitType) {
+
+				boolean bothNumbers = (lval.type==ExpResType.NUMBER) && (rval.type==ExpResType.NUMBER);
+				boolean bothStrings = (lval.type==ExpResType.STRING) && (rval.type==ExpResType.STRING);
+				if (!bothNumbers && !bothStrings) {
+					throw new ExpError(source, pos, "Operator '+' requires two numbers or two strings");
+				}
+
+				if (bothNumbers && lval.unitType != rval.unitType) {
 					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
 				}
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return new ExpResult(lval.value + rval.value, lval.unitType);
+				if (lval.type == ExpResType.STRING && rval.type == ExpResType.STRING) {
+					return ExpResult.makeStringResult(lval.stringVal.concat(rval.stringVal));
+				}
+
+				return ExpResult.makeNumResult(lval.value + rval.value, lval.unitType);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -720,25 +898,40 @@ public class ExpParser {
 				if (mergedErrors != null)
 					return mergedErrors;
 
+				boolean bothNumbers = (lval.type==ExpResType.NUMBER) && (rval.type==ExpResType.NUMBER);
+				boolean bothStrings = (lval.type==ExpResType.STRING) && (rval.type==ExpResType.STRING);
+				if (!bothNumbers && !bothStrings) {
+					ExpError err = new ExpError(source, pos, "Operator '+' requires two numbers or two strings");
+					return ExpValResult.makeErrorRes(err);
+				}
+
+				if (bothStrings) {
+					return ExpValResult.makeValidRes(ExpResType.STRING, DimensionlessUnit.class);
+				}
+
+				// Both numbers
 				if (lval.unitType != rval.unitType) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, lval.unitType, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, lval.unitType, (ExpError)null);
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, lval.unitType);
 			}
 		});
 
 		addBinaryOp("-", 20, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
+
+				checkBothNumbers(lval, rval, source, pos);
+
 				if (lval.unitType != rval.unitType) {
 					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
 				}
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source,int pos) throws ExpError {
-				return new ExpResult(lval.value - rval.value, lval.unitType);
+				return ExpResult.makeNumResult(lval.value - rval.value, lval.unitType);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -746,18 +939,26 @@ public class ExpParser {
 				if (mergedErrors != null)
 					return mergedErrors;
 
+				ExpValResult numRes = validateBothNumbers(lval, rval, source, pos);
+				if (numRes != null) {
+					return numRes;
+				}
+
 				if (lval.unitType != rval.unitType) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, lval.unitType, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, lval.unitType, (ExpError)null);
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, lval.unitType);
 			}
 		});
 
 		addBinaryOp("*", 30, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
+
+				checkBothNumbers(lval, rval, source, pos);
+
 				Class<? extends Unit> newType = context.multUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
 					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
@@ -766,7 +967,7 @@ public class ExpParser {
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				Class<? extends Unit> newType = context.multUnitTypes(lval.unitType, rval.unitType);
-				return new ExpResult(lval.value * rval.value, newType);
+				return ExpResult.makeNumResult(lval.value * rval.value, newType);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -774,19 +975,27 @@ public class ExpParser {
 				if (mergedErrors != null)
 					return mergedErrors;
 
+				ExpValResult numRes = validateBothNumbers(lval, rval, source, pos);
+				if (numRes != null) {
+					return numRes;
+				}
+
 				Class<? extends Unit> newType = context.multUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, newType, (ExpError)null);
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, newType);
 			}
 		});
 
 		addBinaryOp("/", 30, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
+
+				checkBothNumbers(lval, rval, source, pos);
+
 				Class<? extends Unit> newType = context.divUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
 					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
@@ -795,7 +1004,7 @@ public class ExpParser {
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
 				Class<? extends Unit> newType = context.divUnitTypes(lval.unitType, rval.unitType);
-				return new ExpResult(lval.value / rval.value, newType);
+				return ExpResult.makeNumResult(lval.value / rval.value, newType);
 			}
 
 			@Override
@@ -804,19 +1013,27 @@ public class ExpParser {
 				if (mergedErrors != null)
 					return mergedErrors;
 
+				ExpValResult numRes = validateBothNumbers(lval, rval, source, pos);
+				if (numRes != null) {
+					return numRes;
+				}
+
 				Class<? extends Unit> newType = context.divUnitTypes(lval.unitType, rval.unitType);
 				if (newType == null) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, newType, (ExpError)null);
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, newType);
 			}
 		});
 
 		addBinaryOp("^", 40, true, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
+
+				checkBothNumbers(lval, rval, source, pos);
+
 				if (lval.unitType != DimensionlessUnit.class ||
 				    rval.unitType != DimensionlessUnit.class) {
 
@@ -825,7 +1042,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return new ExpResult(Math.pow(lval.value, rval.value), DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.pow(lval.value, rval.value), DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -833,26 +1050,34 @@ public class ExpParser {
 				if (mergedErrors != null)
 					return mergedErrors;
 
+				ExpValResult numRes = validateBothNumbers(lval, rval, source, pos);
+				if (numRes != null) {
+					return numRes;
+				}
+
 				if (	lval.unitType != DimensionlessUnit.class ||
 						rval.unitType != DimensionlessUnit.class) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 			}
 		});
 
 		addBinaryOp("%", 30, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
+
+				checkBothNumbers(lval, rval, source, pos);
+
 				if (lval.unitType != rval.unitType) {
 					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
 				}
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return new ExpResult(lval.value % rval.value, lval.unitType);
+				return ExpResult.makeNumResult(lval.value % rval.value, lval.unitType);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -860,59 +1085,63 @@ public class ExpParser {
 				if (mergedErrors != null)
 					return mergedErrors;
 
+				ExpValResult numRes = validateBothNumbers(lval, rval, source, pos);
+				if (numRes != null) {
+					return numRes;
+				}
+
 				if (lval.unitType != rval.unitType) {
 					ExpError error = new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-					return new ExpValResult(ExpValResult.State.ERROR, lval.unitType, error);
+					return ExpValResult.makeErrorRes(error);
 				}
-				return new ExpValResult(ExpValResult.State.VALID, lval.unitType, (ExpError)null);
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, lval.unitType);
 			}
 		});
 
 		addBinaryOp("==", 10, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
-				if (lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-				}
+				checkTypedComparison(context, lval, rval, source, pos);
 			}
+
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return new ExpResult(lval.value == rval.value ? 1 : 0, DimensionlessUnit.class);
+				boolean equal = evaluteTypedEquality(lval, rval);
+				return ExpResult.makeNumResult(equal ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
-				return validateComparison(context, lval, rval, source, pos);
+				return validateTypedComparison(context, lval, rval, source, pos);
 			}
 		});
 
 		addBinaryOp("!=", 10, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
-				if (lval.unitType != rval.unitType) {
-					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
-				}
+				checkTypedComparison(context, lval, rval, source, pos);
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return new ExpResult(lval.value != rval.value ? 1 : 0, DimensionlessUnit.class);
+				boolean equal = evaluteTypedEquality(lval, rval);
+				return ExpResult.makeNumResult(!equal ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
-				return validateComparison(context, lval, rval, source, pos);
+				return validateTypedComparison(context, lval, rval, source, pos);
 			}
 		});
 
 		addBinaryOp("&&", 8, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
-				// N/A
+				checkBothNumbers(lval, rval, source, pos);
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos){
-				return new ExpResult((lval.value!=0) && (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
+				return ExpResult.makeNumResult((lval.value!=0) && (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -922,13 +1151,13 @@ public class ExpParser {
 
 		addBinaryOp("||", 6, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
-				// N/A
+				checkBothNumbers(lval, rval, source, pos);
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos){
-				return new ExpResult((lval.value!=0) || (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
+				return ExpResult.makeNumResult((lval.value!=0) || (rval.value!=0) ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -938,15 +1167,16 @@ public class ExpParser {
 
 		addBinaryOp("<", 12, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
+				checkBothNumbers(lval, rval, source, pos);
 				if (lval.unitType != rval.unitType) {
 					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
 				}
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return new ExpResult(lval.value < rval.value ? 1 : 0, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(lval.value < rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -956,15 +1186,16 @@ public class ExpParser {
 
 		addBinaryOp("<=", 12, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
+				checkBothNumbers(lval, rval, source, pos);
 				if (lval.unitType != rval.unitType) {
 					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
 				}
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return new ExpResult(lval.value <= rval.value ? 1 : 0, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(lval.value <= rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -974,15 +1205,16 @@ public class ExpParser {
 
 		addBinaryOp(">", 12, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
+				checkBothNumbers(lval, rval, source, pos);
 				if (lval.unitType != rval.unitType) {
 					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
 				}
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return new ExpResult(lval.value > rval.value ? 1 : 0, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(lval.value > rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -992,15 +1224,16 @@ public class ExpParser {
 
 		addBinaryOp(">=", 12, false, new BinOpFunc() {
 			@Override
-			public void checkUnits(ParseContext context, ExpResult lval,
+			public void checkTypeAndUnits(ParseContext context, ExpResult lval,
 					ExpResult rval, String source, int pos) throws ExpError {
+				checkBothNumbers(lval, rval, source, pos);
 				if (lval.unitType != rval.unitType) {
 					throw new ExpError(source, pos, getUnitMismatchString(lval.unitType, rval.unitType));
 				}
 			}
 			@Override
 			public ExpResult apply(ParseContext context, ExpResult lval, ExpResult rval, String source, int pos) throws ExpError {
-				return new ExpResult(lval.value >= rval.value ? 1 : 0, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(lval.value >= rval.value ? 1 : 0, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult lval, ExpValResult rval, String source, int pos) {
@@ -1070,7 +1303,7 @@ public class ExpParser {
 
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
-				return new ExpResult(Math.abs(args[0].value), args[0].unitType);
+				return ExpResult.makeNumResult(Math.abs(args[0].value), args[0].unitType);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1086,7 +1319,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
-				return new ExpResult(Math.ceil(args[0].value), args[0].unitType);
+				return ExpResult.makeNumResult(Math.ceil(args[0].value), args[0].unitType);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1102,7 +1335,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
-				return new ExpResult(Math.floor(args[0].value), args[0].unitType);
+				return ExpResult.makeNumResult(Math.floor(args[0].value), args[0].unitType);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1118,11 +1351,19 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) {
-				return new ExpResult(Math.signum(args[0].value), DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.signum(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return new ExpValResult(args[0].state, DimensionlessUnit.class, args[0].errors);
+				if (args[0].state == ExpValResult.State.VALID) {
+					if (args[0].type == ExpResType.NUMBER) {
+						return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
+					}
+					ExpError err = new ExpError(source, pos, "First parameter must be a number");
+					return ExpValResult.makeErrorRes(err);
+				} else {
+					return args[0];
+				}
 			}
 		});
 
@@ -1135,7 +1376,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.sqrt(args[0].value), DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.sqrt(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1152,7 +1393,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.cbrt(args[0].value), DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.cbrt(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1180,7 +1421,7 @@ public class ExpParser {
 						index = i;
 					}
 				}
-				return new ExpResult(index + 1, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(index + 1, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1208,7 +1449,7 @@ public class ExpParser {
 						index = i;
 					}
 				}
-				return new ExpResult(index + 1, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(index + 1, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1236,7 +1477,7 @@ public class ExpParser {
 					throw new ExpError(source, pos,
 							String.format("Invalid index: %s. Index must be between 1 and %s.", k, args.length-1));
 
-				return new ExpResult(args[k].value, args[k].unitType);
+				return ExpResult.makeNumResult(args[k].value, args[k].unitType);
 			}
 
 			@Override
@@ -1245,18 +1486,27 @@ public class ExpParser {
 				if (mergedErrors != null)
 					return mergedErrors;
 
+				if (args[0].type != ExpResType.NUMBER) {
+					ExpError error = new ExpError(source, pos, "Parameter must be a number");
+					return ExpValResult.makeErrorRes(error);
+				}
 				if (args[0].unitType != DimensionlessUnit.class) {
 					ExpError error = new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
 
 				for (int i = 2; i < args.length; ++ i) {
+					if (args[i].type != ExpResType.NUMBER) {
+						ExpError error = new ExpError(source, pos, String.format("Parameter #%d must be a number", i+1));
+						return ExpValResult.makeErrorRes(error);
+					}
+					// TODO: allow choose to return non-number types
 					if (args[1].unitType != args[i].unitType) {
 						ExpError error = new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
-						return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+						return ExpValResult.makeErrorRes(error);
 					}
 				}
-				return new ExpValResult(ExpValResult.State.VALID, args[1].unitType, (ExpError)null);
+				return ExpValResult.makeValidRes(args[1].type, args[1].unitType);
 			}
 		});
 
@@ -1270,11 +1520,11 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.E, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.E, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 			}
 		});
 
@@ -1286,11 +1536,11 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.PI, DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.PI, DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 			}
 		});
 
@@ -1305,11 +1555,11 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.sin(args[0].value), DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.sin(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateSingleArgDimensionlessOrAngle(context, args[0], source, pos);
+				return validateTrigFunction(context, args[0], source, pos);
 			}
 		});
 
@@ -1322,11 +1572,11 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.cos(args[0].value), DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.cos(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateSingleArgDimensionlessOrAngle(context, args[0], source, pos);
+				return validateTrigFunction(context, args[0], source, pos);
 			}
 		});
 
@@ -1339,11 +1589,11 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.tan(args[0].value), DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.tan(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
-				return validateSingleArgDimensionlessOrAngle(context, args[0], source, pos);
+				return validateTrigFunction(context, args[0], source, pos);
 			}
 		});
 
@@ -1358,7 +1608,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.asin(args[0].value), AngleUnit.class);
+				return ExpResult.makeNumResult(Math.asin(args[0].value), AngleUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1375,7 +1625,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.acos(args[0].value), AngleUnit.class);
+				return ExpResult.makeNumResult(Math.acos(args[0].value), AngleUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1392,7 +1642,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.atan(args[0].value), AngleUnit.class);
+				return ExpResult.makeNumResult(Math.atan(args[0].value), AngleUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1411,7 +1661,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.atan2(args[0].value, args[1].value), AngleUnit.class);
+				return ExpResult.makeNumResult(Math.atan2(args[0].value, args[1].value), AngleUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1419,16 +1669,21 @@ public class ExpParser {
 				if (mergedErrors != null)
 					return mergedErrors;
 
+				if (args[0].type != ExpResType.NUMBER || args[1].type != ExpResType.NUMBER ) {
+					ExpError error = new ExpError(source, pos, "Both parameters must be numbers");
+					return ExpValResult.makeErrorRes(error);
+				}
+
 				if (args[0].unitType != DimensionlessUnit.class) {
 					ExpError error = new ExpError(source, pos, getInvalidUnitString(args[0].unitType, DimensionlessUnit.class));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
 				if (args[1].unitType != DimensionlessUnit.class) {
 					ExpError error = new ExpError(source, pos, getInvalidUnitString(args[1].unitType, DimensionlessUnit.class));
-					return new ExpValResult(ExpValResult.State.ERROR, DimensionlessUnit.class, error);
+					return ExpValResult.makeErrorRes(error);
 				}
 
-				return new ExpValResult(ExpValResult.State.VALID, DimensionlessUnit.class, (ExpError)null);
+				return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 			}
 		});
 
@@ -1443,7 +1698,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.exp(args[0].value), DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.exp(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1460,7 +1715,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.log(args[0].value), DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.log(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1477,7 +1732,7 @@ public class ExpParser {
 			}
 			@Override
 			public ExpResult call(ParseContext context, ExpResult[] args, String source, int pos) throws ExpError {
-				return new ExpResult(Math.log10(args[0].value), DimensionlessUnit.class);
+				return ExpResult.makeNumResult(Math.log10(args[0].value), DimensionlessUnit.class);
 			}
 			@Override
 			public ExpValResult validate(ParseContext context, ExpValResult[] args, String source, int pos) {
@@ -1708,7 +1963,7 @@ public class ExpParser {
 		ExpNode rhs = parseExp(context, tokens, binOp.bindingPower + assocMod, exp);
 		//currentPower = oe.bindingPower;
 
-		return new BinaryOp(context, lhs, rhs, binOp.function, exp, pos);
+		return new BinaryOp(binOp.symbol, context, lhs, rhs, binOp.function, exp, pos);
 	}
 
 	private static ExpNode handleConditional(ParseContext context, TokenList tokens, ExpNode lhs, Expression exp, int pos) throws ExpError {
@@ -1767,6 +2022,10 @@ public class ExpParser {
 		if (nextTok.type == ExpTokenizer.NUM_TYPE) {
 			return parseConstant(context, nextTok.value, tokens, exp, nextTok.pos);
 		}
+		if (nextTok.type == ExpTokenizer.DSQ_TYPE) {
+			// Return a literal string constant
+			return new Constant(context, ExpResult.makeStringResult(nextTok.value), exp, nextTok.pos);
+		}
 		if (nextTok.type == ExpTokenizer.VAR_TYPE &&
 		    !nextTok.value.equals("this")) {
 			return parseFuncCall(context, nextTok.value, tokens, exp, nextTok.pos);
@@ -1788,7 +2047,7 @@ public class ExpParser {
 		UnaryOpEntry oe = getUnaryOp(nextTok.value);
 		if (oe != null) {
 			ExpNode expNode = parseExp(context, tokens, oe.bindingPower, exp);
-			return new UnaryOp(context, expNode, oe.function, exp, nextTok.pos);
+			return new UnaryOp(oe.symbol, context, expNode, oe.function, exp, nextTok.pos);
 		}
 
 		// We're all out of tricks here, this is an unknown expression
@@ -1814,9 +2073,8 @@ public class ExpParser {
 			ut = unit.unitType;
 		}
 
-		return new Constant(context, new ExpResult(Double.parseDouble(constant)*mult, ut), exp, pos);
+		return new Constant(context, ExpResult.makeNumResult(Double.parseDouble(constant)*mult, ut), exp, pos);
 	}
-
 
 	private static ExpNode parseFuncCall(ParseContext context, String funcName, TokenList tokens, Expression exp, int pos) throws ExpError {
 
@@ -1869,7 +2127,7 @@ public class ExpParser {
 							funcName, fe.numMaxArgs, arguments.size());
 		}
 
-		return new FuncCall(context, fe.function, arguments, exp, pos);
+		return new FuncCall(fe.name, context, fe.function, arguments, exp, pos);
 	}
 
 	private static String[] parseIdentifier(ExpTokenizer.Token firstName, TokenList tokens, Expression exp) throws ExpError {

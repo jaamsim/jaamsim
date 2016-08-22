@@ -30,7 +30,7 @@ import com.jaamsim.units.Unit;
  */
 public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeHandle>> {
 
-	private Entity ent;
+	private final Entity ent;
 
 	public AttributeDefinitionListInput(Entity e, String key, String cat, ArrayList<AttributeHandle> def) {
 		super(key, cat, def);
@@ -55,21 +55,38 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 					throw new InputErrorException("Attribute name is the same as existing output name: %s", name);
 				}
 
-				// Parse the unit type
-				double factor = 1.0;
+				ExpResult expVal;
 				Class<? extends Unit> unitType = DimensionlessUnit.class;
-				if (subArg.numArgs() == 3) {
-					Unit unit = Input.parseUnit(subArg.getArg(2));
-					unitType = unit.getClass();
-					factor = unit.getConversionFactorToSI();
-				}
 
-				// Parse the initial value
-				double val;
-				try {
-					val = factor * Double.valueOf(subArg.getArg(1));
-				} catch (Exception e) {
-					throw new InputErrorException(INP_ERR_DOUBLE, subArg.getArg(1));
+				if (subArg.numArgs() == 2) {
+					// parse this as an expression
+					String expString = subArg.getArg(1);
+					try {
+						ExpParser.Expression exp = ExpParser.parseExpression(ExpEvaluator.getParseContext(ent, expString), expString);
+						expVal = ExpEvaluator.evaluateExpression(exp, 0);
+						if (expVal.type == ExpResType.NUMBER) {
+							unitType = expVal.unitType;
+						}
+					} catch (Exception e) {
+						throw new InputErrorException(INP_ERR_BADEXP, e.getMessage());
+					}
+				} else {
+					// Parse the unit type
+					double factor = 1.0;
+					if (subArg.numArgs() == 3) {
+						Unit unit = Input.parseUnit(subArg.getArg(2));
+						unitType = unit.getClass();
+						factor = unit.getConversionFactorToSI();
+					}
+
+					// Parse the initial value
+					double val;
+					try {
+						val = factor * Double.valueOf(subArg.getArg(1));
+					} catch (Exception e) {
+						throw new InputErrorException(INP_ERR_DOUBLE, subArg.getArg(1));
+					}
+					expVal = ExpResult.makeNumResult(val, unitType);
 				}
 
 				// Save the data for this attribute
@@ -77,8 +94,8 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 				if (h == null)
 					h = new AttributeHandle(ent, name);
 				h.setUnitType(unitType);
-				h.setInitialValue(val);
-				h.setValue(val);
+				h.setInitialValue(expVal);
+				h.setValue(expVal);
 				temp.add(h);
 
 			} catch (InputErrorException e) {
@@ -100,7 +117,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 			AttributeHandle hNew = new AttributeHandle(ent, h.getName());
 			hNew.setUnitType(h.getUnitType());
 			hNew.setInitialValue(h.getInitialValue());
-			hNew.setValue(h.getValueAsDouble(0.0d, 0.0d));
+			hNew.setValue(h.getValue(0.0d, ExpResult.class));
 			value.add(hNew);
 		}
 	}
@@ -129,7 +146,7 @@ public class AttributeDefinitionListInput extends ListInput<ArrayList<AttributeH
 			tmp.append(h.getName());
 			tmp.append(SEPARATOR);
 
-			double val = h.getInitialValue();
+			double val = h.getInitialValue().value;
 			String unitString = Unit.getSIUnit(h.getUnitType());
 
 			// Check for a preferred unit
