@@ -103,31 +103,41 @@ public class PolylineInfo {
 		ret.add(ps.get(ps.size()-1));
 		return ret;
 	}
+
 	private static ArrayList<Vec3d> getSplinePoints(ArrayList<Vec3d> ps) {
+		// This spline fitting algorithm is a bit of a custom creation. It is loosely based on the finte differences method described
+		// in this article: https://en.wikipedia.org/wiki/Cubic_Hermite_spline (assuming it hasn't changed since).
+		// The major changes are:
+		// * All segments are solved in Bezier form (this is more stylist than a change in algorithm)
+		// * The end two segments are quadratic Bezier curves (not cubic) and as such the end tangent is un-constrained.
+		// * The internal control points are scaled down proportional to segment length to avoid kinks and self intersection within a segment
+
+		// If there's too few points, just return the existing line
+		if (ps.size() <= 2) {
+			return ps;
+		}
+
 		// The number of segments between each control point
 		final int NUM_SEGMENTS = 16;
 
+		Vec3d temp = new Vec3d();
+
+		// Generate tangents for internal points only
 		ArrayList<Vec3d> tangents = new ArrayList<>();
-		for (int i = 0; i < ps.size(); ++i) {
-			if (i == 0) {
-				Vec3d tan = new Vec3d(ps.get(1));
-				tan.sub3(ps.get(0));
-				tan.scale3(1.0/3.0);
-				tangents.add(tan);
-				continue;
-			}
-			if (i == ps.size()-1) {
-				Vec3d tan = new Vec3d(ps.get(ps.size()-1));
-				tan.sub3(ps.get(ps.size()-2));
-				tan.scale3(1.0/3.0);
-				tangents.add(tan);
-				continue;
-			}
+		for (int i = 1; i < ps.size()-1; ++i) {
 			Vec3d pMin = ps.get(i-1);
+			Vec3d p = ps.get(i);
 			Vec3d pPlus = ps.get(i+1);
-			Vec3d tan = new Vec3d(pPlus);
-			tan.sub3(pMin);
-			tan.scale3(1.0/6.0);
+
+			temp.sub3(p, pMin);
+			double l0 = temp.mag3();
+
+			temp.sub3(p, pPlus);
+			double l1 = temp.mag3();
+
+			Vec3d tan = new Vec3d();
+			tan.sub3(pPlus, pMin);
+			tan.scale3(1.0/(l0 + l1));
 			tangents.add(tan);
 		}
 
@@ -135,21 +145,67 @@ public class PolylineInfo {
 
 		ArrayList<Vec3d> ret = new ArrayList<>();
 
-		for (int i = 1; i < ps.size(); ++i) {
+		Vec3d scaledTanTemp = new Vec3d();
+		Vec3d segDiffTemp = new Vec3d();
+
+		// Start with a quadratic segment
+		{
+			Vec3d p0 = ps.get(0);
+			Vec3d p1 = ps.get(1);
+
+			segDiffTemp.sub3(p0, p1);
+			double segLength = segDiffTemp.mag3();
+
+			Vec3d c = new Vec3d(p1);
+			scaledTanTemp.scale3(segLength/2.0, tangents.get(0));
+			c.sub3(scaledTanTemp);
+
+			for (int t = 0; t < NUM_SEGMENTS; ++t) {
+				Vec3d curvePoint = solveQuadraticBezier(t*tInc, p0, p1, c);
+				ret.add(curvePoint);
+			}
+		}
+
+		// Internal segments are cubic
+		for (int i = 2; i < ps.size()-1; ++i) {
 			Vec3d p0 = ps.get(i-1);
 			Vec3d p1 = ps.get(i);
 
+			segDiffTemp.sub3(p0, p1);
+			double segLength = segDiffTemp.mag3();
+
 			Vec3d c0 = new Vec3d(p0);
-			c0.add3(tangents.get(i-1));
+			scaledTanTemp.scale3(segLength/3.0, tangents.get(i-2));
+			c0.add3(scaledTanTemp);
 
 			Vec3d c1 = new Vec3d(p1);
-			c1.sub3(tangents.get(i));
+			scaledTanTemp.scale3(segLength/3.0, tangents.get(i-1));
+			c1.sub3(scaledTanTemp);
 
 			for (int t = 0; t < NUM_SEGMENTS; ++t) {
 				Vec3d curvePoint = solveCubicBezier(t*tInc, p0, p1, c0, c1);
 				ret.add(curvePoint);
 			}
 		}
+
+		// End with another quadratic segment
+		{
+			Vec3d p0 = ps.get(ps.size()-2);
+			Vec3d p1 = ps.get(ps.size()-1);
+
+			segDiffTemp.sub3(p0, p1);
+			double segLength = segDiffTemp.mag3();
+
+			Vec3d c = new Vec3d(p0);
+			scaledTanTemp.scale3(segLength/2.0, tangents.get(tangents.size()-1));
+			c.add3(scaledTanTemp);
+
+			for (int t = 0; t < NUM_SEGMENTS; ++t) {
+				Vec3d curvePoint = solveQuadraticBezier(t*tInc, p0, p1, c);
+				ret.add(curvePoint);
+			}
+		}
+
 		ret.add(ps.get(ps.size()-1));
 
 		return ret;
@@ -197,6 +253,33 @@ public class PolylineInfo {
 		ret.add3(lp1);
 		ret.add3(lc0);
 		ret.add3(lc1);
+
+		return ret;
+
+	}
+
+	// Solve a quadratic bezier with an explicit control point
+	private static Vec3d solveQuadraticBezier(double s, Vec3d p0, Vec3d p1, Vec3d c) {
+
+		double oneMinS = 1 - s;
+
+		double coeffP0 = oneMinS*oneMinS;
+		double coeffC = 2*s*oneMinS;
+		double coeffP1 = s*s;
+
+		Vec3d lp0 = new Vec3d(p0);
+		lp0.scale3(coeffP0);
+
+		Vec3d lp1 = new Vec3d(p1);
+		lp1.scale3(coeffP1);
+
+		Vec3d lc = new Vec3d(c);
+		lc.scale3(coeffC);
+
+		Vec3d ret = new Vec3d();
+		ret.add3(lp0);
+		ret.add3(lp1);
+		ret.add3(lc);
 
 		return ret;
 
