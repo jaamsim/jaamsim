@@ -78,11 +78,11 @@ public class OutputHandle {
 
 	// Note: this method will not include attributes in the list. For a complete list use
 	// Entity.hasOutput()
-	public static Boolean hasOutput(Class<? extends Entity> klass, String outputName) {
+	public static boolean hasOutput(Class<? extends Entity> klass, String outputName) {
 		return OutputHandle.getOutputInfo(klass, outputName) != null;
 	}
 
-	public static Boolean hasOutputInterned(Class<? extends Entity> klass, String outputName) {
+	public static boolean hasOutputInterned(Class<? extends Entity> klass, String outputName) {
 		return OutputHandle.getOutputInfoInterned(klass, outputName) != null;
 	}
 
