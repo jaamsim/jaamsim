@@ -343,7 +343,7 @@ public class ExpEvaluator {
 						key = indResult.entVal;
 						break;
 					case NUMBER:
-						key = new Double(indResult.value);
+						key = Double.valueOf(indResult.value);
 						break;
 					case STRING:
 						key = indResult.stringVal;
