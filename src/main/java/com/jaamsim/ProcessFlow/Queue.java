@@ -749,8 +749,8 @@ public class Queue extends LinkedComponent {
 	 description = "The Priority expression value for each entity in the queue.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 2)
-	public ArrayList<Integer> getPriorityValues(double simTime) {
-		ArrayList<Integer> ret = new ArrayList<>();
+	public IntegerVector getPriorityValues(double simTime) {
+		IntegerVector ret = new IntegerVector(itemSet.size());
 		Iterator<QueueEntry> itr = itemSet.iterator();
 		while (itr.hasNext()) {
 			ret.add(itr.next().priority);
@@ -762,8 +762,8 @@ public class Queue extends LinkedComponent {
 	 description = "The Match expression value for each entity in the queue.",
 	    unitType = DimensionlessUnit.class,
 	    sequence = 3)
-	public ArrayList<Integer> getMatchValues(double simTime) {
-		ArrayList<Integer> ret = new ArrayList<>();
+	public IntegerVector getMatchValues(double simTime) {
+		IntegerVector ret = new IntegerVector(itemSet.size());
 		Iterator<QueueEntry> itr = itemSet.iterator();
 		while (itr.hasNext()) {
 			ret.add(itr.next().match);
