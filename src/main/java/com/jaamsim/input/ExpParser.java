@@ -730,7 +730,7 @@ public class ExpParser {
 				return ExpValResult.makeErrorRes(err);
 			}
 		}
-		return ExpValResult.makeValidRes(lval.type, lval.unitType);
+		return ExpValResult.makeValidRes(lval.type, DimensionlessUnit.class);
 
 	}
 
