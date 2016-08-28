@@ -1032,9 +1032,7 @@ public class ColParser {
 	}
 
 	private SceneNode processNode(XmlNode node, SceneNode parent) {
-		SceneNode sn = new SceneNode();
-		sn.id = node.getFragID();
-		sn.sid = node.getAttrib("sid");
+		SceneNode sn = new SceneNode(node.getFragID(), node.getAttrib("sid"));
 
 		if (sn.id != null) _namedNodes.put(sn.id, sn);
 
@@ -1099,7 +1097,7 @@ public class ColParser {
 		}
 
 		// Now we need to add in an extra scene not to accommodate the bind space matrix held in the controller
-		SceneNode sn = new SceneNode();
+		SceneNode sn = new SceneNode(null, null);
 
 		sn.transforms.add(new MatrixTrans(cont.bindSpaceMat));
 		sn.subGeo.add(instInfo);
@@ -1907,8 +1905,13 @@ public class ColParser {
 	 *
 	 */
 	private static abstract class SceneTrans {
-		public String sid;
-		protected Vec3d commonVect;
+		public final String sid;
+		protected final Vec3d commonVect;
+
+		protected SceneTrans(String sid) {
+			this.sid = sid;
+			commonVect = new Vec3d();
+		}
 
 		protected HashMap<String, AnimAction> actions = new HashMap<>();
 
@@ -1999,11 +2002,11 @@ public class ColParser {
 	private static class TranslationTrans extends SceneTrans {
 
 		public TranslationTrans(XmlNode transNode) {
-			sid = transNode.getAttrib("sid");
+			super(transNode.getAttrib("sid"));
 
 			double[] vals = (double[])transNode.getContent();
 			parseAssert(vals != null && vals.length >= 3);
-			commonVect = new Vec3d(vals[0], vals[1], vals[2]);
+			commonVect.set3(vals[0], vals[1], vals[2]);
 		}
 
 		@Override
@@ -2071,11 +2074,11 @@ public class ColParser {
 		private final double angle;
 
 		public RotationTrans(XmlNode rotNode) {
-			sid = rotNode.getAttrib("sid");
+			super(rotNode.getAttrib("sid"));
 			double[] vals = (double[])rotNode.getContent();
 			parseAssert(vals != null && vals.length >= 4);
 
-			commonVect = new Vec3d(vals[0], vals[1], vals[2]);
+			commonVect.set3(vals[0], vals[1], vals[2]);
 			angle = (float)Math.toRadians(vals[3]);
 		}
 
@@ -2174,11 +2177,11 @@ public class ColParser {
 	private static class ScaleTrans extends SceneTrans {
 
 		public ScaleTrans(XmlNode scaleNode) {
-			sid = scaleNode.getAttrib("sid");
+			super(scaleNode.getAttrib("sid"));
 
 			double[] vals = (double[])scaleNode.getContent();
 			parseAssert(vals != null && vals.length >= 3);
-			commonVect = new Vec3d(vals[0], vals[1], vals[2]);
+			commonVect.set3(vals[0], vals[1], vals[2]);
 		}
 
 		@Override
@@ -2249,11 +2252,12 @@ public class ColParser {
 		private final Mat4d matrix;
 
 		public MatrixTrans(Mat4d mat) {
+			super(null);
 			matrix = new Mat4d(mat);
 		}
 
 		public MatrixTrans(XmlNode matNode) {
-			sid = matNode.getAttrib("sid");
+			super(matNode.getAttrib("sid"));
 			double[] vals = (double[])matNode.getContent();
 			parseAssert(vals != null && vals.length >= 16);
 			matrix = new Mat4d(vals);
@@ -2280,14 +2284,18 @@ public class ColParser {
 	 * @author matt.chudleigh
 	 */
 	private static class SceneNode {
-
-		public String id;
-		public String sid;
+		public final String id;
+		public final String sid;
 		public final ArrayList<SceneTrans> transforms = new ArrayList<>();
 
 		public final ArrayList<SceneNode> subNodes = new ArrayList<>();
 		public final ArrayList<String> subInstanceNames = new ArrayList<>();
 		public final ArrayList<GeoInstInfo> subGeo = new ArrayList<>();
+
+		SceneNode(String id, String sid) {
+			this.id = id;
+			this.sid = sid;
+		}
 	}
 
 	/**
