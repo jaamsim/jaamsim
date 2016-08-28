@@ -149,8 +149,8 @@ public class Renderer implements GLAnimatorControl {
 	private ArrayList<RenderProxy> proxyScene = new ArrayList<>();
 
 	private boolean allowDelayedTextures;
-	private double sceneTimeMS;
-	private double loopTimeMS;
+	private long sceneTimeNS;
+	private long loopTimeNS;
 
 	private final Object settingsLock = new Object();
 	private boolean showDebugInfo = false;
@@ -350,7 +350,7 @@ public class Renderer implements GLAnimatorControl {
 				}
 
 				long loopEnd = System.nanoTime();
-				loopTimeMS = (loopEnd - lastLoopEnd) / 1000000;
+				loopTimeNS = (loopEnd - lastLoopEnd);
 				lastLoopEnd = loopEnd;
 
 				try {
@@ -922,8 +922,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 				proxy.collectOverlayRenderables(this, currentOverlay);
 			}
 
-			long sceneTime = System.nanoTime() - sceneStart;
-			sceneTimeMS = sceneTime / 1000000.0;
+			sceneTimeNS = System.nanoTime() - sceneStart;
 		}
 	}
 
@@ -1220,8 +1219,8 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 					perf.append( String.format( "Objects Culled: %s", pi.objectsCulled) );
 					perf.append( String.format( "   VRAM (MB): %.0f", usedVRAM/(1024.0*1024.0)) );
 					perf.append( String.format( "   Frame time (ms): %.3f", lastFrameNanos/1000000.0) );
-					perf.append( String.format( "   SceneTime (ms): %.3f", sceneTimeMS) );
-					perf.append( String.format( "   Loop Time (ms): %.3f", loopTimeMS) );
+					perf.append( String.format( "   SceneTime (ms): %.3f", sceneTimeNS/1000000.0) );
+					perf.append( String.format( "   Loop Time (ms): %.3f", loopTimeNS/1000000.0) );
 
 					TessFont defFont = getTessFont(defaultBoldFontKey);
 					OverlayString os = new OverlayString(defFont, perf.toString(), ColourInput.BLACK,
