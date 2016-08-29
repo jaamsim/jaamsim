@@ -72,7 +72,7 @@ public class Arrow extends DisplayEntity {
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		int w = Math.max(1, width.getValue().intValue());
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(pointsInput.getValue(), color.getValue(), w);
+		ret[0] = new PolylineInfo(pointsInput.getValue(), getCurveType(), color.getValue(), w);
 		return ret;
 	}
 

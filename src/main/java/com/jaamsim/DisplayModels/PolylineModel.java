@@ -143,9 +143,10 @@ public class PolylineModel extends DisplayModel {
 			for (PolylineInfo pi : pis) {
 				List<Vec4d> points = new ArrayList<>();
 
-				for (int i = 1; i < pi.getPoints().size(); ++i) { // Skip the first point
-					Vec3d start = pi.getPoints().get(i - 1);
-					Vec3d end = pi.getPoints().get(i);
+				ArrayList<Vec3d> curvePoints = pi.getCurvePoints();
+				for (int i = 1; i < curvePoints.size(); ++i) { // Skip the first point
+					Vec3d start = curvePoints.get(i - 1);
+					Vec3d end = curvePoints.get(i);
 
 					points.add(new Vec4d(start.x, start.y, start.z, 1.0d));
 					points.add(new Vec4d(end.x, end.y, end.z, 1.0d));

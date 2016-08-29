@@ -68,8 +68,8 @@ public class ArrowModel extends PolylineModel {
 
 		private RenderProxy cachedProxy = null;
 
-		private Vec4d startCache;
-		private Vec4d fromCache;
+		private Vec3d startCache;
+		private Vec3d fromCache;
 		private Color4d colorCache;
 		private Vec3d arrowSizeCache;
 
@@ -81,11 +81,14 @@ public class ArrowModel extends PolylineModel {
 
 		private void updateHead(double simTime) {
 
-			Vec4d startPoint = selectionPoints.get(selectionPoints.size() - 1);
-			Vec4d fromPoint = selectionPoints.get(selectionPoints.size() - 2);
 			PolylineInfo[] pointInfos = displayObservee.getScreenPoints(simTime);
+
 			if (pointInfos == null || pointInfos.length == 0)
 				return;
+
+			ArrayList<Vec3d> curvePoints = pointInfos[0].getCurvePoints();
+			Vec3d startPoint = curvePoints.get(curvePoints.size() - 1);
+			Vec3d fromPoint = curvePoints.get(curvePoints.size() - 2);
 
 			Color4d color = pointInfos[0].getColor();
 
@@ -97,8 +100,8 @@ public class ArrowModel extends PolylineModel {
 			else
 				arrowSize = arrowHeadSize.getValue();
 
-			dirty = dirty || dirty_vec4d(startCache, startPoint);
-			dirty = dirty || dirty_vec4d(fromCache, fromPoint);
+			dirty = dirty || dirty_vec3d(startCache, startPoint);
+			dirty = dirty || dirty_vec3d(fromCache, fromPoint);
 			dirty = dirty || dirty_col4d(colorCache, color);
 			dirty = dirty || dirty_vec3d(arrowSizeCache, arrowSize);
 

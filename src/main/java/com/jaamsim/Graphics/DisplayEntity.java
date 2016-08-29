@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.jaamsim.DisplayModels.ArrowModel;
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.DisplayModels.ImageModel;
 import com.jaamsim.DisplayModels.PolylineModel;
@@ -39,6 +40,7 @@ import com.jaamsim.input.Keyword;
 import com.jaamsim.input.KeywordIndex;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.RelativeEntityInput;
+import com.jaamsim.input.StringChoiceInput;
 import com.jaamsim.input.Vec3dInput;
 import com.jaamsim.input.Vec3dListInput;
 import com.jaamsim.math.Color4d;
@@ -60,6 +62,11 @@ import com.jogamp.newt.event.KeyEvent;
  * components like the eventManager.
  */
 public class DisplayEntity extends Entity {
+
+	protected static final String LINEAR_CURVE = "Linear";
+	protected static final String BEZIER_CURVE = "Bezier";
+	protected static final String SPLINE_CURVE = "Spline";
+
 
 	@Keyword(description = "The point in the region at which the alignment point of the object is positioned.",
 	         exampleList = {"-3.922 -1.830 0.000 m"})
@@ -90,6 +97,10 @@ public class DisplayEntity extends Entity {
 			        "Position and Orientation values.",
 	         exampleList = {"Region1"})
 	protected final EntityInput<Region> regionInput;
+
+	@Keyword(description = "The type of curve interpolation used for line type entities.",
+	         exampleList = {"Linear"})
+protected final StringChoiceInput curveTypeInput;
 
 	private final Vec3d position = new Vec3d();
 	private final Vec3d size = new Vec3d(1.0d, 1.0d, 1.0d);
@@ -151,6 +162,12 @@ public class DisplayEntity extends Entity {
 
 		regionInput = new EntityInput<>(Region.class, "Region", "Graphics", null);
 		this.addInput(regionInput);
+
+		curveTypeInput = new StringChoiceInput("CurveType", "Graphics", 0);
+		curveTypeInput.addChoice(LINEAR_CURVE);
+		curveTypeInput.addChoice(BEZIER_CURVE);
+		curveTypeInput.addChoice(SPLINE_CURVE);
+		this.addInput(curveTypeInput);
 
 		relativeEntity = new RelativeEntityInput("RelativeEntity", "Graphics", null);
 		relativeEntity.setEntity(this);
@@ -223,13 +240,17 @@ public class DisplayEntity extends Entity {
 
 	private void showPolylineGraphicsKeywords(boolean bool) {
 		pointsInput.setHidden(!bool);
+		curveTypeInput.setHidden(!bool);
 	}
 
 	public boolean usePointsInput() {
 		ArrayList<DisplayModel> dmList = displayModelListInput.getValue();
 		if (dmList == null || dmList.isEmpty())
 			return false;
-		return dmList.get(0) instanceof PolylineModel;
+		boolean isPoly = dmList.get(0) instanceof PolylineModel;
+		boolean isArrow = dmList.get(0) instanceof ArrowModel;
+
+		return isPoly || isArrow;
 	}
 
 	private void setGraphicsKeywords() {
@@ -828,7 +849,7 @@ public class DisplayEntity extends Entity {
 		}
 
 		// If Points were input, then use them to set the start and end coordinates
-		if( in == pointsInput ) {
+		if( in == pointsInput || in == curveTypeInput) {
 			invalidateScreenPoints();
 			return;
 		}
@@ -853,7 +874,7 @@ public class DisplayEntity extends Entity {
 
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(pointsInput.getValue(), ColourInput.BLACK, 1);
+		ret[0] = new PolylineInfo(pointsInput.getValue(), getCurveType(), ColourInput.BLACK, 1);
 		return ret;
 	}
 
@@ -868,39 +889,38 @@ public class DisplayEntity extends Entity {
 	 * @param frac - fraction of the total graphical length of the polyline
 	 * @return local coordinates for the specified position
 	 */
-	public Vec3d getPositionOnPolyline(double frac) {
-		synchronized(screenPointLock) {
+	public Vec3d getPositionOnPolyline(double simTime, double frac) {
+		ArrayList<Vec3d> curvePoints = getScreenPoints(simTime)[0].getCurvePoints();
 
-			// Calculate the cumulative graphical lengths along the polyline
-			double[] cumLengthList = this.getCumulativeLengths();
+		// Calculate the cumulative graphical lengths along the polyline
+		double[] cumLengthList = this.getCumulativeLengths(simTime);
 
-			// Find the insertion point by binary search
-			double dist = frac * cumLengthList[cumLengthList.length-1];
-			int k = Arrays.binarySearch(cumLengthList, dist);
+		// Find the insertion point by binary search
+		double dist = frac * cumLengthList[cumLengthList.length-1];
+		int k = Arrays.binarySearch(cumLengthList, dist);
 
-			// Exact match
-			if (k >= 0)
-				return pointsInput.getValue().get(k);
+		// Exact match
+		if (k >= 0)
+			return curvePoints.get(k);
 
-			// Error condition
-			if (k == -1)
-				return new Vec3d();
+		// Error condition
+		if (k == -1)
+			return new Vec3d();
 
-			// Insertion index = -k-1
-			int index = -k - 1;
+		// Insertion index = -k-1
+		int index = -k - 1;
 
-			// Interpolate the final position between the two points
-			if (index == cumLengthList.length) {
-				return new Vec3d(pointsInput.getValue().get(index-1));
-			}
-			double fracInSegment = (dist - cumLengthList[index-1]) /
-					(cumLengthList[index] - cumLengthList[index-1]);
-			Vec3d vec = new Vec3d();
-			vec.interpolate3(pointsInput.getValue().get(index-1),
-					pointsInput.getValue().get(index),
-					fracInSegment);
-			return vec;
+		// Interpolate the final position between the two points
+		if (index == cumLengthList.length) {
+			return new Vec3d(curvePoints.get(index-1));
 		}
+		double fracInSegment = (dist - cumLengthList[index-1]) /
+				(cumLengthList[index] - cumLengthList[index-1]);
+		Vec3d vec = new Vec3d();
+		vec.interpolate3(curvePoints.get(index-1),
+				curvePoints.get(index),
+				fracInSegment);
+		return vec;
 	}
 
 	/**
@@ -910,77 +930,80 @@ public class DisplayEntity extends Entity {
 	 * @param frac1 - fractional distance for the end of the sub-polyline
 	 * @return array of local coordinates for the sub-polyline
 	 */
-	public ArrayList<Vec3d> getSubPolyline(double frac0, double frac1) {
-		synchronized(screenPointLock) {
-			ArrayList<Vec3d> ret = new ArrayList<>();
+	public ArrayList<Vec3d> getSubPolyline(double simTime, double frac0, double frac1) {
 
-			// Calculate the cumulative graphical lengths along the polyline
-			double[] cumLengthList = this.getCumulativeLengths();
+		ArrayList<Vec3d> curvePoints = getScreenPoints(simTime)[0].getCurvePoints();
 
-			// Find the insertion point for the first distance using binary search
-			double dist0 = frac0 * cumLengthList[cumLengthList.length-1];
-			int k = Arrays.binarySearch(cumLengthList, dist0);
-			if (k == -1)
-				error("Unable to find position in polyline using binary search.");
+		ArrayList<Vec3d> ret = new ArrayList<>();
 
-			// Interpolate the position of the first node
-			int index;
-			if (k >= 0) {
-				ret.add(pointsInput.getValue().get(k));
-				index = k + 1;
-				if (index == cumLengthList.length)
-					return ret;
-			}
-			else {
-				Vec3d vec;
-				index = -k - 1;
-				if (index == cumLengthList.length) {
-					vec = new Vec3d(pointsInput.getValue().get(index-1));
-				}
-				else {
-					double fracInSegment = (dist0 - cumLengthList[index-1]) /
-							(cumLengthList[index] - cumLengthList[index-1]);
-					vec = new Vec3d();
-					vec.interpolate3(pointsInput.getValue().get(index-1),
-							pointsInput.getValue().get(index),
-							fracInSegment);
-				}
-				ret.add(vec);
-			}
+		// Calculate the cumulative graphical lengths along the polyline
+		double[] cumLengthList = this.getCumulativeLengths(simTime);
 
-			// Loop through the indices following the insertion point
-			double dist1 = frac1 * cumLengthList[cumLengthList.length-1];
-			while (index < cumLengthList.length && cumLengthList[index] < dist1) {
-				ret.add(pointsInput.getValue().get(index));
-				index++;
-			}
+		// Find the insertion point for the first distance using binary search
+		double dist0 = frac0 * cumLengthList[cumLengthList.length-1];
+		int k = Arrays.binarySearch(cumLengthList, dist0);
+		if (k == -1)
+			error("Unable to find position in polyline using binary search.");
+
+		// Interpolate the position of the first node
+		int index;
+		if (k >= 0) {
+			ret.add(curvePoints.get(k));
+			index = k + 1;
 			if (index == cumLengthList.length)
 				return ret;
-
-			// Interpolate the position of the last node
-			Vec3d vec = new Vec3d();
-			double fracInSegment = (dist1 - cumLengthList[index-1]) /
-	                (cumLengthList[index] - cumLengthList[index-1]);
-			vec.interpolate3(pointsInput.getValue().get(index-1),
-	                 pointsInput.getValue().get(index),
-	                 fracInSegment);
-			ret.add(vec);
-
-			return ret;
 		}
+		else {
+			Vec3d vec;
+			index = -k - 1;
+			if (index == cumLengthList.length) {
+				vec = new Vec3d(curvePoints.get(index-1));
+			}
+			else {
+				double fracInSegment = (dist0 - cumLengthList[index-1]) /
+						(cumLengthList[index] - cumLengthList[index-1]);
+				vec = new Vec3d();
+				vec.interpolate3(curvePoints.get(index-1),
+						curvePoints.get(index),
+						fracInSegment);
+			}
+			ret.add(vec);
+		}
+
+		// Loop through the indices following the insertion point
+		double dist1 = frac1 * cumLengthList[cumLengthList.length-1];
+		while (index < cumLengthList.length && cumLengthList[index] < dist1) {
+			ret.add(curvePoints.get(index));
+			index++;
+		}
+		if (index == cumLengthList.length)
+			return ret;
+
+		// Interpolate the position of the last node
+		Vec3d vec = new Vec3d();
+		double fracInSegment = (dist1 - cumLengthList[index-1]) /
+                (cumLengthList[index] - cumLengthList[index-1]);
+		vec.interpolate3(curvePoints.get(index-1),
+                 curvePoints.get(index),
+                 fracInSegment);
+		ret.add(vec);
+
+		return ret;
 	}
 
 	/**
 	 * Returns the cumulative graphics lengths for the nodes along the polyline.
 	 * @return array of cumulative graphical lengths
 	 */
-	private double[] getCumulativeLengths() {
-		int n = pointsInput.getValue().size();
+	private double[] getCumulativeLengths(double simTime) {
+		ArrayList<Vec3d> curvePoints = getScreenPoints(simTime)[0].getCurvePoints();
+
+		int n = curvePoints.size();
 		double[] cumLengthList = new double[n];
 		cumLengthList[0] = 0.0;
 		for (int i = 1; i < n; i++) {
 			Vec3d vec = new Vec3d();
-			vec.sub3(pointsInput.getValue().get(i), pointsInput.getValue().get(i-1));
+			vec.sub3(curvePoints.get(i), curvePoints.get(i-1));
 			cumLengthList[i] = cumLengthList[i-1] + vec.mag3();
 		}
 		return cumLengthList;
@@ -988,6 +1011,21 @@ public class DisplayEntity extends Entity {
 
 	public boolean selectable() {
 		return true;
+	}
+
+	protected PolylineInfo.CurveType getCurveType() {
+		if (curveTypeInput.getChoice().equals(LINEAR_CURVE)) {
+			return PolylineInfo.CurveType.LINEAR;
+		}
+		if (curveTypeInput.getChoice().equals(BEZIER_CURVE)) {
+			return PolylineInfo.CurveType.BEZIER;
+		}
+		if (curveTypeInput.getChoice().equals(SPLINE_CURVE)) {
+			return PolylineInfo.CurveType.SPLINE;
+		}
+		// Error case, should not be possible
+		assert(false);
+		return PolylineInfo.CurveType.LINEAR;
 	}
 
 	public final void setTagColour(String tagName, Color4d ca) {

@@ -185,7 +185,7 @@ public class EntityDelay extends LinkedComponent {
 			double frac = ( simTime - entry.startTime ) / entry.duration;
 
 			// Set the position for the entity
-			Vec3d localPos = this.getPositionOnPolyline(frac);
+			Vec3d localPos = this.getPositionOnPolyline(simTime, frac);
 			entry.ent.setGlobalPosition(this.getGlobalPosition(localPos));
 		}
 	}
@@ -194,7 +194,7 @@ public class EntityDelay extends LinkedComponent {
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		int w = Math.max(1, widthInput.getValue().intValue());
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(pointsInput.getValue(), colorInput.getValue(), w);
+		ret[0] = new PolylineInfo(pointsInput.getValue(), getCurveType(), colorInput.getValue(), w);
 		return ret;
 	}
 }

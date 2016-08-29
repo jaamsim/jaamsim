@@ -216,7 +216,7 @@ public class EntityConveyor extends LinkedService {
 		double frac = (simTime - this.getLastUpdateTime())/presentTravelTime;
 		for (int i=0; i<entryList.size(); i++) {
 			ConveyorEntry entry = entryList.get(i);
-			Vec3d localPos = this.getPositionOnPolyline(entry.position + frac);
+			Vec3d localPos = this.getPositionOnPolyline(simTime, entry.position + frac);
 			entry.entity.setGlobalPosition(this.getGlobalPosition(localPos));
 		}
 	}
@@ -225,7 +225,7 @@ public class EntityConveyor extends LinkedService {
 	public PolylineInfo[] buildScreenPoints(double simTime) {
 		int w = Math.max(1, widthInput.getValue().intValue());
 		PolylineInfo[] ret = new PolylineInfo[1];
-		ret[0] = new PolylineInfo(pointsInput.getValue(), colorInput.getValue(), w);
+		ret[0] = new PolylineInfo(pointsInput.getValue(), getCurveType(), colorInput.getValue(), w);
 		return ret;
 	}
 }
