@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import com.jaamsim.math.Color4d;
 import com.jaamsim.math.Mat4d;
@@ -318,6 +319,7 @@ public class ObjReader {
 		}
 	}
 
+	private static final Pattern whitespace = Pattern.compile("\\s+");
 	private void parseMaterial(String[] tokens) {
 		parseAssert(tokens.length == 2);
 		String mtlFile = tokens[1];
@@ -332,7 +334,7 @@ public class ObjReader {
 
 				if (line.isEmpty() || line.charAt(0) == '#') continue;
 
-				String[] mtlTokens = line.trim().split("\\s+");
+				String[] mtlTokens = whitespace.split(line.trim());
 				parseMTLLine(mtlTokens);
 			}
 

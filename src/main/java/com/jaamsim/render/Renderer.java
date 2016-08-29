@@ -43,6 +43,7 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 import com.jaamsim.DisplayModels.DisplayModel;
 import com.jaamsim.MeshFiles.MeshData;
@@ -646,6 +647,7 @@ private String getMeshShaderDefines(int i) {
 	return defines.toString();
 }
 
+private static final Pattern definespat = Pattern.compile("@DEFINES@");
 /**
  * Create and compile all the shaders
  */
@@ -684,7 +686,7 @@ private void initShaders(GL2GL3 gl) throws RenderException {
 	for (int i = 0; i < NUM_MESH_SHADERS; ++i) {
 		String defines = getMeshShaderDefines(i);
 
-		String definedFragSrc = meshFragSrc.replaceAll("@DEFINES@", defines);
+		String definedFragSrc = definespat.matcher(meshFragSrc).replaceAll(defines);
 
 		Shader s = new Shader(meshVertSrc, definedFragSrc, gl);
 		if (!s.isGood()) {
@@ -754,7 +756,7 @@ private void initCoreShaders(GL2GL3 gl, String version) throws RenderException {
 	for (int i = 0; i < NUM_MESH_SHADERS; ++i) {
 		String defines = getMeshShaderDefines(i);
 
-		String definedFragSrc = meshFragSrc.replaceAll("@DEFINES@", defines);
+		String definedFragSrc = definespat.matcher(meshFragSrc).replaceAll(defines);
 		Shader s = new Shader(meshVertSrc, definedFragSrc, gl);
 		if (!s.isGood()) {
 			String failure = s.getFailureLog();
