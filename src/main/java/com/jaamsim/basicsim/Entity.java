@@ -743,6 +743,12 @@ public class Entity {
 					}
 				}
 			}
+			// Expression based custom outputs
+			else if (out.getReturnType() == ExpResult.class) {
+				String val = InputAgent.getValueAsString(out, simTime, "%s", "%g", factor);
+				file.format(OUTPUT_FORMAT,
+						this.getName(), out.getName(), val, unitString);
+			}
 
 			// All other outputs
 			else {
