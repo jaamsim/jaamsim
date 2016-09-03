@@ -251,6 +251,15 @@ public class Entity {
 		}
 
 		setFlag(FLAG_DEAD);
+
+		// Remove any references to the deleted entity from the inputs to other entities
+		if (!testFlag(FLAG_GENERATED)) {
+			for (Entity ent : Entity.getClonesOfIterator(Entity.class)) {
+				for (Input<?> in : ent.getEditableInputs()) {
+					in.removeReferences(this);
+				}
+			}
+		}
 	}
 
 	/**

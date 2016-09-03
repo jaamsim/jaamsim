@@ -138,6 +138,12 @@ public abstract class Input<T> {
 		isValid = true;
 	}
 
+	/**
+	 * Deletes any use of the specified entity from this input.
+	 * @param ent - entity whose references are to be deleted
+	 */
+	public void removeReferences(Entity ent) {}
+
 	@Override
 	public String toString() {
 		return String.format("%s", value);
