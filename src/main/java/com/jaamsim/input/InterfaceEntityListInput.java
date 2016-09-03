@@ -101,4 +101,12 @@ public class InterfaceEntityListInput<T> extends ListInput<ArrayList<T>> {
 			toks.add(((Entity)value.get(i)).getName());
 		}
 	}
+
+	@Override
+	public void removeReferences(Entity ent) {
+		if (value == null)
+			return;
+		value.removeAll(Collections.singleton(ent));
+	}
+
 }
