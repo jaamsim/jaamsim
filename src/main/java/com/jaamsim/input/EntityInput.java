@@ -102,4 +102,11 @@ public class EntityInput<T extends Entity> extends Input<T> {
 		invalidClasses = classes;
 	}
 
+	@Override
+	public void removeReferences(Entity ent) {
+		if (value == ent) {
+			this.reset();
+		}
+	}
+
 }
