@@ -186,4 +186,11 @@ public class SampleListInput extends ListInput<ArrayList<SampleProvider>> {
 		return tmp.toString();
 	}
 
+	@Override
+	public void removeReferences(Entity ent) {
+		if (value == null)
+			return;
+		value.removeAll(Collections.singleton(ent));
+	}
+
 }

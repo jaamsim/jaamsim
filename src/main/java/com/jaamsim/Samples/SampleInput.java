@@ -136,4 +136,12 @@ public class SampleInput extends Input<SampleProvider> {
 					"The specified entity: '%s' can return values as large as: %s.",
 					this.getKeyword(), maxValue, ((Entity)value).getName(), value.getMaxValue());
 	}
+
+	@Override
+	public void removeReferences(Entity ent) {
+		if (value == ent) {
+			this.reset();
+		}
+	}
+
 }
