@@ -83,4 +83,17 @@ public class StringProvInput extends Input<StringProvider> {
 		toks.add(value.toString());
 	}
 
+	@Override
+	public void removeReferences(Entity ent) {
+		if (value == null)
+			return;
+
+		if (value instanceof StringProvSample) {
+			StringProvSample spsamp = (StringProvSample) value;
+			if (spsamp.getSampleProvider() == ent) {
+				this.reset();
+			}
+		}
+	}
+
 }
