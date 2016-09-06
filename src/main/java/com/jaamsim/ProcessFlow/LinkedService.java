@@ -187,7 +187,6 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 		this.addState("Idle");
 		this.addState("Working");
 		this.addState("Stopped");
-		this.addState("Clearing_while_Stopped");
 		this.addState("Maintenance");
 		this.addState("Breakdown");
 	}
@@ -598,14 +597,8 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 
 		// Processing entities (Busy)
 		if (this.isBusy()) {
-			if (this.isOpen()) {
-				this.setPresentState("Working");
-				return;
-			}
-			else {
-				this.setPresentState("Clearing_while_Stopped");
-				return;
-			}
+			this.setPresentState("Working");
+			return;
 		}
 
 		// Not processing entities because something has prevented it from working (UnableToWork)
