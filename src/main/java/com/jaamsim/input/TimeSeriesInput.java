@@ -89,4 +89,12 @@ public class TimeSeriesInput extends Input<TimeSeriesProvider> {
 			toks.add(((Entity)value).getName());
 		}
 	}
+
+	@Override
+	public void removeReferences(Entity ent) {
+		if (value == ent) {
+			this.reset();
+		}
+	}
+
 }

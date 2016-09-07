@@ -57,4 +57,11 @@ public class InterfaceEntityInput<T> extends Input<T> {
 		toks.add(value.toString());
 	}
 
+	@Override
+	public void removeReferences(Entity ent) {
+		if (value == ent) {
+			this.reset();
+		}
+	}
+
 }

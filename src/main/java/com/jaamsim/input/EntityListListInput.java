@@ -17,6 +17,7 @@
 package com.jaamsim.input;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.jaamsim.basicsim.Entity;
 
@@ -87,4 +88,15 @@ public class EntityListListInput<T extends Entity> extends ListInput<ArrayList<A
 		}
 		return tmp.toString();
 	}
+
+	@Override
+	public void removeReferences(Entity ent) {
+		if (value == null)
+			return;
+
+		for (ArrayList<T> list : value) {
+			list.removeAll(Collections.singleton(ent));
+		}
+	}
+
 }

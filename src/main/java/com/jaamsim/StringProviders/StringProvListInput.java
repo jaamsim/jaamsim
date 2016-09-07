@@ -123,4 +123,21 @@ public class StringProvListInput extends ListInput<ArrayList<StringProvider>> {
 		}
 	}
 
+	@Override
+	public void removeReferences(Entity ent) {
+		if (value == null)
+			return;
+
+		ArrayList<StringProvider> list = new ArrayList<>();
+		for (StringProvider samp : value) {
+			if (samp instanceof StringProvSample) {
+				StringProvSample spsamp = (StringProvSample) samp;
+				if (spsamp.getSampleProvider() == ent) {
+					list.add(samp);
+				}
+			}
+		}
+		value.removeAll(list);
+	}
+
 }

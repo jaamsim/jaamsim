@@ -208,4 +208,11 @@ public class EntityListInput<T extends Entity> extends ListInput<ArrayList<T>> {
 		invalidClasses = classes;
 	}
 
+	@Override
+	public void removeReferences(Entity ent) {
+		if (value == null)
+			return;
+		value.removeAll(Collections.singleton(ent));
+	}
+
 }

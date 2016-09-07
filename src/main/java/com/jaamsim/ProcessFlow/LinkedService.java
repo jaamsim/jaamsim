@@ -667,11 +667,10 @@ public abstract class LinkedService extends LinkedComponent implements Threshold
 	@Override
 	public boolean canStartDowntime(DowntimeEntity down) {
 
-		// Downtime can only start from the Idle state, that is:
-		// - any work in progress must have been interrupted,
-		// - there can be no other maintenance or breakdown activities in progress, and
-		// - all the thresholds must be open
-		return isIdle();
+		// Downtime can start when any work in progress has been interrupted and there are no
+		// other maintenance or breakdown activities that are being performed. It is okay to start
+		// downtime when one or more thresholds are closed.
+		return !isBusy() && !isMaintenance() && !isBreakdown();
 	}
 
 	@Override
