@@ -136,7 +136,7 @@ public class Device extends StateUserEntity {
 		double simTime = this.getSimTime();
 
 		// Update the progress that has been made
-		this.updateProgress(simTime, lastUpdateTime);
+		this.updateProgress();
 
 		// If the process ended normally or if there was an immediate release type threshold
 		// closure, then perform the special processing for this sub-class of LinkedService
@@ -152,17 +152,14 @@ public class Device extends StateUserEntity {
 	}
 
 	/**
-	 * Performs any progress tracking that is required for this sub-class of LinkedService
-	 * @param simTime - present simulation time
-	 * @param lastTime - last time that the update was performed
+	 * Updates the process calculations at the end of the time step.
 	 */
-	protected void updateProgress(double simTime, double lastTime) {
-		if (traceFlag) {
-			trace(1, "updateProgress");
-			traceLine(2, "lastUpdateTime=%.6f, duration=%.6f", lastUpdateTime, duration);
-		}
+	protected final void updateProgress() {
+		if (traceFlag) trace(1, "updateProgress");
+		double simTime = this.getSimTime();
+
 		if (this.isBusy()) {
-			double dt = simTime - lastTime;
+			double dt = simTime - lastUpdateTime;
 			duration -= dt;
 			this.updateProgress(dt);
 		}
@@ -178,15 +175,13 @@ public class Device extends StateUserEntity {
 			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
 		}
 
-		double simTime = this.getSimTime();
-
 		// Interrupt processing, if underway
 		if (endActionHandle.isScheduled()) {
 			EventManager.killEvent(endActionHandle);
 		}
 
 		// Update the service for any partial progress that has been made
-		this.updateProgress(simTime, lastUpdateTime);
+		this.updateProgress();
 
 		// Update the state
 		this.setBusy(false);

@@ -108,7 +108,7 @@ public class EntityConveyor extends LinkedService {
 		double simTime = this.getSimTime();
 
 		// Update the positions of the entities on the conveyor
-		this.updateProgress(simTime, this.getLastUpdateTime());
+		this.updateProgress();
 
 		// Update the travel time
 		this.updateTravelTime(simTime);
