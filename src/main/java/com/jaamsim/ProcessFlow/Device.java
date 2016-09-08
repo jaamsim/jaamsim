@@ -121,6 +121,11 @@ public class Device extends StateUserEntity {
 		endTicks = EventManager.calcSimTicks(duration);
 		if (traceFlag) traceLine(1, "duration=%.6f", duration);
 		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+
+		// Notify other processes that are dependent on this one
+		if (this.isNewStepReqd(stepCompleted)) {
+			this.processChanged();
+		}
 	}
 
 	/**
@@ -166,6 +171,9 @@ public class Device extends StateUserEntity {
 		// Update the state
 		this.setBusy(false);
 		this.setPresentState();
+
+		// Notify other processes that are dependent on this one
+		this.processChanged();
 	}
 
 	/**
@@ -225,6 +233,11 @@ public class Device extends StateUserEntity {
 			traceLine(2, "lastUpdateTime=%.6f, duration=%.6f", lastUpdateTime, duration);
 		}
 	}
+
+	/**
+	 * Alerts other processes that the present process has changed.
+	 */
+	protected void processChanged() {}
 
 	/**
 	 * Determines whether to start a new time step or to complete the present one.
