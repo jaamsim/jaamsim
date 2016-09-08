@@ -118,7 +118,7 @@ public class EntityConveyor extends LinkedService {
 		entryList.add(entry);
 
 		// If necessary, wake up the conveyor
-		this.startAction();
+		this.startStep();
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	@Override
-	protected double getProcessingTime(double simTime) {
+	protected double getStepDuration(double simTime) {
 
 		// Calculate the time for the first entity to reach the end of the conveyor
 		double dt = simTime - this.getLastUpdateTime();

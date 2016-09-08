@@ -48,17 +48,17 @@ public class Device extends StateUserEntity {
 	/**
 	 * Starts the next time step for the process.
 	 */
-	protected final void startAction() {
+	protected final void startStep() {
 		if (traceFlag) {
-			trace(0, "startAction");
+			trace(0, "startStep");
 			traceLine(1, "endActionHandle.isScheduled=%s, isAvailable=%s, forcedDowntimePending=%s",
-					endActionHandle.isScheduled(), this.isAvailable(), forcedDowntimePending);
+					endStepHandle.isScheduled(), this.isAvailable(), forcedDowntimePending);
 		}
 
 		double simTime = this.getSimTime();
 
 		// Is the process loop is already working?
-		if (endActionHandle.isScheduled()) {
+		if (endStepHandle.isScheduled()) {
 			this.setPresentState();
 			return;
 		}
@@ -67,7 +67,7 @@ public class Device extends StateUserEntity {
 		// or if a forced downtime is about to begin
 		if (!this.isAvailable() || forcedDowntimePending) {
 			forcedDowntimePending = false;
-			this.stopAction();
+			this.stopProcessing();
 			return;
 		}
 
@@ -78,10 +78,10 @@ public class Device extends StateUserEntity {
 		if (this.isNewStepReqd(stepCompleted)) {
 			boolean bool = this.startProcessing(simTime);
 			if (!bool) {
-				this.stopAction();
+				this.stopProcessing();
 				return;
 			}
-			duration = this.getProcessingTime(simTime);
+			duration = this.getStepDuration(simTime);
 		}
 
 		// Trap errors
@@ -100,7 +100,7 @@ public class Device extends StateUserEntity {
 		stepCompleted = false;
 		endTicks = EventManager.calcSimTicks(duration);
 		if (traceFlag) traceLine(1, "duration=%.6f", duration);
-		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+		this.scheduleProcess(duration, 5, endStepTarget, endStepHandle);
 
 		// Notify other processes that are dependent on this one
 		if (this.isNewStepReqd(stepCompleted)) {
@@ -111,24 +111,24 @@ public class Device extends StateUserEntity {
 	/**
 	 * EndActionTarget
 	 */
-	private static class EndActionTarget extends EntityTarget<Device> {
-		EndActionTarget(Device ent) {
-			super(ent, "endAction");
+	private static class EndStepTarget extends EntityTarget<Device> {
+		EndStepTarget(Device ent) {
+			super(ent, "endStep");
 		}
 
 		@Override
 		public void process() {
-			ent.endAction();
+			ent.endStep();
 		}
 	}
-	private final ProcessTarget endActionTarget = new EndActionTarget(this);
-	private final EventHandle endActionHandle = new EventHandle();
+	private final ProcessTarget endStepTarget = new EndStepTarget(this);
+	private final EventHandle endStepHandle = new EventHandle();
 
 	/**
 	 * Completes the processing of an entity.
 	 */
-	final void endAction() {
-		if (traceFlag) trace(0, "endAction");
+	final void endStep() {
+		if (traceFlag) trace(0, "endStep");
 		double simTime = this.getSimTime();
 
 		// Update the process for the time that has elapsed
@@ -144,7 +144,7 @@ public class Device extends StateUserEntity {
 		}
 
 		// Start the next time step
-		this.startAction();
+		this.startStep();
 	}
 
 	/**
@@ -165,15 +165,15 @@ public class Device extends StateUserEntity {
 	/**
 	 * Halts further processing.
 	 */
-	private void stopAction() {
+	private void stopProcessing() {
 		if (traceFlag) {
-			trace(0, "stopAction");
-			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
+			trace(0, "stopProcessing");
+			traceLine(1, "endActionHandle.isScheduled()=%s", endStepHandle.isScheduled());
 		}
 
 		// If the process is working, kill the next scheduled update
-		if (endActionHandle.isScheduled()) {
-			EventManager.killEvent(endActionHandle);
+		if (endStepHandle.isScheduled()) {
+			EventManager.killEvent(endStepHandle);
 		}
 
 		// Update the service for any partial progress that has been made
@@ -198,13 +198,13 @@ public class Device extends StateUserEntity {
 		if (traceFlag) trace(0, "unscheduledUpdate");
 
 		// If the process is working, perform its next update immediately
-		if (endActionHandle.isScheduled()) {
-			EventManager.interruptEvent(endActionHandle);
+		if (endStepHandle.isScheduled()) {
+			EventManager.interruptEvent(endStepHandle);
 			return;
 		}
 
 		// If the process is stopped, then restart it
-		this.startAction();
+		this.startStep();
 	}
 
 	/**
@@ -241,15 +241,15 @@ public class Device extends StateUserEntity {
 	protected final void resetProcess() {
 		if (traceFlag) {
 			trace(0, "resetProcess");
-			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
+			traceLine(1, "endActionHandle.isScheduled()=%s", endStepHandle.isScheduled());
 		}
 
 		// Set the present process to completed
 		stepCompleted = true;
 
 		// End the present process prematurely
-		if (endActionHandle.isScheduled()) {
-			EventManager.interruptEvent(endActionHandle);
+		if (endStepHandle.isScheduled()) {
+			EventManager.interruptEvent(endStepHandle);
 		}
 	}
 
@@ -267,7 +267,7 @@ public class Device extends StateUserEntity {
 	 * @param simTime - present simulation time
 	 * @return time step duration
 	 */
-	protected double getProcessingTime(double simTime) {
+	protected double getStepDuration(double simTime) {
 		return 0.0;
 	}
 
@@ -335,20 +335,20 @@ public class Device extends StateUserEntity {
 
 		// If an interrupt closure, interrupt the present activity and release the entity
 		if (isImmediateReleaseThresholdClosure()) {
-			if (endActionHandle.isScheduled()) {
-				EventManager.interruptEvent(endActionHandle);
+			if (endStepHandle.isScheduled()) {
+				EventManager.interruptEvent(endStepHandle);
 			}
 			return;
 		}
 
 		// If an immediate closure, interrupt the present activity and hold the entity
 		if (isImmediateThresholdClosure()) {
-			this.stopAction();
+			this.stopProcessing();
 			return;
 		}
 
 		// Otherwise, check whether processing can be restarted
-		this.startAction();
+		this.startStep();
 	}
 
 	// ********************************************************************************************
@@ -374,7 +374,7 @@ public class Device extends StateUserEntity {
 
 		// If an immediate downtime, interrupt the present activity
 		if (isImmediateDowntime(down)) {
-			this.stopAction();
+			this.stopProcessing();
 			return;
 		}
 
@@ -392,7 +392,7 @@ public class Device extends StateUserEntity {
 	@Override
 	public void endDowntime(DowntimeEntity down) {
 		if (traceFlag) trace(0, "endDowntime(%s)", down);
-		this.startAction();
+		this.startStep();
 	}
 
 }

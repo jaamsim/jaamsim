@@ -140,7 +140,7 @@ public abstract class LinkedService extends LinkedDevice implements QueueUser {
 	@Override
 	public void queueChanged() {
 		if (traceFlag) trace(0, "queueChanged");
-		this.startAction();
+		this.startStep();
 	}
 
 	// ********************************************************************************************

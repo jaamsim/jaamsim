@@ -94,7 +94,7 @@ public class EntityGate extends LinkedService {
 	}
 
 	@Override
-	protected double getProcessingTime(double simTime) {
+	protected double getStepDuration(double simTime) {
 		return releaseDelay.getValue().getNextSample(simTime);
 	}
 
