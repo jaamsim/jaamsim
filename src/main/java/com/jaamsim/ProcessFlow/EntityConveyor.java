@@ -151,15 +151,13 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	@Override
-	public void updateProgress(double simTime, double lastTime) {
-		super.updateProgress(simTime, lastTime);
+	public void updateProgress(double dt) {
 
-		// Is the conveyor in operation?
-		if (!this.isBusy() || presentTravelTime == 0.0d)
+		if (presentTravelTime == 0.0d)
 			return;
 
 		// Calculate the fractional distance travelled since the last update
-		double frac = (simTime - lastTime)/presentTravelTime;
+		double frac = dt/presentTravelTime;
 		if (MathUtils.near(frac, 0.0d))
 			return;
 
