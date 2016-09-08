@@ -104,6 +104,12 @@ public class Device extends StateUserEntity {
 			duration = this.getProcessingTime(simTime);
 		}
 
+		// Trap errors
+		if (Double.isNaN(duration))
+			error("Cannot calculate duration");
+		if (duration == Double.POSITIVE_INFINITY)
+			error("Infinite duration");
+
 		// Set the state
 		if (!isBusy()) {
 			this.setBusy(true);
