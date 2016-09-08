@@ -50,22 +50,6 @@ public class Device extends StateUserEntity {
 	// ********************************************************************************************
 
 	/**
-	 * EndActionTarget
-	 */
-	private static class EndActionTarget extends EntityTarget<Device> {
-		EndActionTarget(Device ent) {
-			super(ent, "endAction");
-		}
-
-		@Override
-		public void process() {
-			ent.endAction();
-		}
-	}
-	private final ProcessTarget endActionTarget = new EndActionTarget(this);
-	private final EventHandle endActionHandle = new EventHandle();
-
-	/**
 	 * Starts the processing of an entity.
 	 */
 	protected final void startAction() {
@@ -127,6 +111,22 @@ public class Device extends StateUserEntity {
 			this.processChanged();
 		}
 	}
+
+	/**
+	 * EndActionTarget
+	 */
+	private static class EndActionTarget extends EntityTarget<Device> {
+		EndActionTarget(Device ent) {
+			super(ent, "endAction");
+		}
+
+		@Override
+		public void process() {
+			ent.endAction();
+		}
+	}
+	private final ProcessTarget endActionTarget = new EndActionTarget(this);
+	private final EventHandle endActionHandle = new EventHandle();
 
 	/**
 	 * Completes the processing of an entity.
