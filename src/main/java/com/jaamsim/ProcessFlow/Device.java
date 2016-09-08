@@ -152,6 +152,24 @@ public class Device extends StateUserEntity {
 	}
 
 	/**
+	 * Performs any progress tracking that is required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 * @param lastTime - last time that the update was performed
+	 */
+	protected void updateProgress(double simTime, double lastTime) {
+		if (traceFlag) {
+			trace(1, "updateProgress");
+			traceLine(2, "lastUpdateTime=%.6f, duration=%.6f", lastUpdateTime, duration);
+		}
+		if (this.isBusy()) {
+			double dt = simTime - lastTime;
+			duration -= dt;
+			this.updateProgress(dt);
+		}
+		lastUpdateTime = simTime;
+	}
+
+	/**
 	 * Interrupts processing of an entity and holds it.
 	 */
 	private void stopAction() {
@@ -215,6 +233,12 @@ public class Device extends StateUserEntity {
 	}
 
 	/**
+	 * Performs the process calculations at the end of the time step.
+	 * @param dt - elapsed simulation time
+	 */
+	protected void updateProgress(double dt) {}
+
+	/**
 	 * Performs any special processing required for this sub-class of LinkedService
 	 * @param simTime - present simulation time
 	 */
@@ -229,22 +253,6 @@ public class Device extends StateUserEntity {
 	protected boolean processStep(double simTime) {
 		this.endProcessing(simTime);
 		return true;
-	}
-
-	/**
-	 * Performs any progress tracking that is required for this sub-class of LinkedService
-	 * @param simTime - present simulation time
-	 * @param lastTime - last time that the update was performed
-	 */
-	protected void updateProgress(double simTime, double lastTime) {
-		lastUpdateTime = simTime;
-		if (this.isBusy()) {
-			duration -= simTime - lastTime;
-		}
-		if (traceFlag) {
-			trace(1, "updateProgress");
-			traceLine(2, "lastUpdateTime=%.6f, duration=%.6f", lastUpdateTime, duration);
-		}
 	}
 
 	/**
