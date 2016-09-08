@@ -141,8 +141,10 @@ public class Device extends StateUserEntity {
 		// If the process ended normally or if there was an immediate release type threshold
 		// closure, then perform the special processing for this sub-class of LinkedService
 		if (this.getSimTicks() == endTicks || this.isImmediateReleaseThresholdClosure()) {
-			this.endProcessing(simTime);
 			stepCompleted = true;
+			boolean bool = this.processStep(simTime);
+			if (!bool)
+				return;
 		}
 
 		// Process the next entity
@@ -217,6 +219,17 @@ public class Device extends StateUserEntity {
 	 * @param simTime - present simulation time
 	 */
 	protected void endProcessing(double simTime) {}
+
+	/**
+	 * Performs any calculations related to the state of the process and returns a boolean to
+	 * specify whether to start a new time step.
+	 * @param simTime - present simulation time
+	 * @return indicates whether to start a new time step
+	 */
+	protected boolean processStep(double simTime) {
+		this.endProcessing(simTime);
+		return true;
+	}
 
 	/**
 	 * Performs any progress tracking that is required for this sub-class of LinkedService
