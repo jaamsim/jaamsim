@@ -195,6 +195,51 @@ public class Device extends StateUserEntity {
 	}
 
 	/**
+	 * Interrupts the present time step for the process so that a new one can be started based on
+	 * new conditions.
+	 */
+	public void unscheduledUpdate() {
+		if (traceFlag) trace(0, "unscheduledUpdate");
+
+		// If the process is working, perform its next update immediately
+		if (endActionHandle.isScheduled()) {
+			EventManager.interruptEvent(endActionHandle);
+			return;
+		}
+
+		// If the process is stopped, then restart it
+		this.startAction();
+	}
+
+	/**
+	 * Schedules an update
+	 */
+	public void performUnscheduledUpdate() {
+		if (traceFlag) trace(1, "performUnscheduledUpdate");
+
+		if (!unscheduledUpdateHandle.isScheduled()) {
+			EventManager.scheduleTicks(0, 2, false, unscheduledUpdateTarget,
+					unscheduledUpdateHandle);
+		}
+	}
+
+	/**
+	 * ProcessTarget for the unscheduledUpdate method
+	 */
+	private static class UnscheduledUpdateTarget extends EntityTarget<Device> {
+		UnscheduledUpdateTarget(Device ent) {
+			super(ent, "unscheduledUpdate");
+		}
+
+		@Override
+		public void process() {
+			ent.unscheduledUpdate();
+		}
+	}
+	private final ProcessTarget unscheduledUpdateTarget = new UnscheduledUpdateTarget(this);
+	private final EventHandle unscheduledUpdateHandle = new EventHandle();
+
+	/**
 	 * Revises the time for the next event by stopping the present process and starting a new one.
 	 */
 	protected final void resetProcess() {
