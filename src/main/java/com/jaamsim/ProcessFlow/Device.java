@@ -183,6 +183,9 @@ public class Device extends StateUserEntity {
 		// Update the service for any partial progress that has been made
 		this.updateProgress();
 
+		// Set the process to its stopped condition
+		this.setProcessStopped();
+
 		// Update the state
 		this.setBusy(false);
 		this.setPresentState();
@@ -263,6 +266,11 @@ public class Device extends StateUserEntity {
 	protected boolean isNewStepReqd(boolean completed) {
 		return completed;
 	}
+
+	/**
+	 * Set the process to its stopped condition.
+	 */
+	protected void setProcessStopped() {}
 
 	/**
 	 * Returns the time at which the last update was performed.
