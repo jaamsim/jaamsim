@@ -95,7 +95,7 @@ public class Device extends StateUserEntity {
 		lastUpdateTime = simTime;
 
 		// Start a new process
-		if (processCompleted) {
+		if (this.isNewStepReqd(processCompleted)) {
 			boolean bool = this.startProcessing(simTime);
 			if (!bool) {
 				this.stopAction();
@@ -218,6 +218,15 @@ public class Device extends StateUserEntity {
 			trace(1, "updateProgress");
 			traceLine(2, "lastUpdateTime=%.6f, duration=%.6f", lastUpdateTime, duration);
 		}
+	}
+
+	/**
+	 * Determines whether to start a new time step or to complete the present one.
+	 * @param completed - indicate whether the present time step duration was completed in full
+	 * @return whether to start a new time step
+	 */
+	protected boolean isNewStepReqd(boolean completed) {
+		return completed;
 	}
 
 	/**
