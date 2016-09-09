@@ -27,6 +27,7 @@ import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleExpression;
 import com.jaamsim.Samples.SampleProvider;
 import com.jaamsim.Samples.TimeSeriesConstantDouble;
+import com.jaamsim.StringProviders.StringProvExpression;
 import com.jaamsim.StringProviders.StringProvSample;
 import com.jaamsim.StringProviders.StringProvider;
 import com.jaamsim.basicsim.Entity;
@@ -1453,9 +1454,17 @@ public abstract class Input<T> {
 
 	public static StringProvider parseStringProvider(KeywordIndex kw, Entity thisEnt, Class<? extends Unit> unitType) {
 
+		// Parse the input as a StringProvExpression
+		if (kw.numArgs() == 1) {
+			try {
+				return new StringProvExpression(kw.getArg(0), thisEnt, unitType);
+			} catch (ExpError e) {}
+		}
+
 		// Parse the input as a SampleProvider
-		if (unitType == null)
+		if (unitType == null) {
 			throw new InputErrorException("A valid unit type must be defined before an expression returning a number can be entered.");
+		}
 		SampleProvider samp = Input.parseSampleExp(kw, thisEnt, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType);
 		return new StringProvSample(samp);
 	}
