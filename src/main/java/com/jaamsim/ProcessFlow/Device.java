@@ -48,7 +48,7 @@ public class Device extends StateUserEntity {
 	/**
 	 * Starts the next time step for the process.
 	 */
-	protected final void startStep() {
+	public final void startStep() {
 		if (traceFlag) {
 			trace(0, "startStep");
 			traceLine(1, "endActionHandle.isScheduled=%s, isAvailable=%s, forcedDowntimePending=%s",
@@ -165,7 +165,7 @@ public class Device extends StateUserEntity {
 	/**
 	 * Halts further processing.
 	 */
-	private void stopProcessing() {
+	public final void stopProcessing() {
 		if (traceFlag) {
 			trace(0, "stopProcessing");
 			traceLine(1, "endActionHandle.isScheduled()=%s", endStepHandle.isScheduled());
@@ -194,7 +194,7 @@ public class Device extends StateUserEntity {
 	 * Interrupts the present time step for the process so that a new one can be started based on
 	 * new conditions.
 	 */
-	public void unscheduledUpdate() {
+	final void unscheduledUpdate() {
 		if (traceFlag) trace(0, "unscheduledUpdate");
 
 		// If the process is working, perform its next update immediately
@@ -210,7 +210,7 @@ public class Device extends StateUserEntity {
 	/**
 	 * Schedules an update
 	 */
-	public void performUnscheduledUpdate() {
+	protected final void performUnscheduledUpdate() {
 		if (traceFlag) trace(1, "performUnscheduledUpdate");
 
 		if (!unscheduledUpdateHandle.isScheduled()) {
