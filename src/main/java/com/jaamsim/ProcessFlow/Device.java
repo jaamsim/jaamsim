@@ -321,6 +321,14 @@ public class Device extends StateUserEntity {
 		return lastUpdateTime;
 	}
 
+	protected final void setStepCompleted(boolean bool) {
+		stepCompleted = bool;
+	}
+
+	protected final boolean isStepCompleted() {
+		return stepCompleted;
+	}
+
 	// ********************************************************************************************
 	// THRESHOLDS
 	// ********************************************************************************************
