@@ -45,12 +45,8 @@ public class Device extends StateUserEntity {
 		stepCompleted = true;
 	}
 
-	// ********************************************************************************************
-	// PROCESSING ENTITIES
-	// ********************************************************************************************
-
 	/**
-	 * Starts the processing of an entity.
+	 * Starts the next time step for the process.
 	 */
 	protected final void startAction() {
 		if (traceFlag) {
@@ -78,7 +74,7 @@ public class Device extends StateUserEntity {
 		// Set the last update time in case processing is restarting after a stoppage
 		lastUpdateTime = simTime;
 
-		// Start a new process
+		// Start the next time step
 		if (this.isNewStepReqd(stepCompleted)) {
 			boolean bool = this.startProcessing(simTime);
 			if (!bool) {
@@ -100,7 +96,7 @@ public class Device extends StateUserEntity {
 			this.setPresentState();
 		}
 
-		// Schedule the completion of service
+		// Schedule the completion of the time step
 		stepCompleted = false;
 		endTicks = EventManager.calcSimTicks(duration);
 		if (traceFlag) traceLine(1, "duration=%.6f", duration);
@@ -135,11 +131,11 @@ public class Device extends StateUserEntity {
 		if (traceFlag) trace(0, "endAction");
 		double simTime = this.getSimTime();
 
-		// Update the progress that has been made
+		// Update the process for the time that has elapsed
 		this.updateProgress();
 
-		// If the process ended normally or if there was an immediate release type threshold
-		// closure, then perform the special processing for this sub-class of LinkedService
+		// If the full step was completed or if there was an immediate release type threshold
+		// closure, then determine whether to change state and/or to continue to the next step
 		if (this.getSimTicks() == endTicks || this.isImmediateReleaseThresholdClosure()) {
 			stepCompleted = true;
 			boolean bool = this.processStep(simTime);
@@ -147,7 +143,7 @@ public class Device extends StateUserEntity {
 				return;
 		}
 
-		// Process the next entity
+		// Start the next time step
 		this.startAction();
 	}
 
@@ -167,7 +163,7 @@ public class Device extends StateUserEntity {
 	}
 
 	/**
-	 * Interrupts processing of an entity and holds it.
+	 * Halts further processing.
 	 */
 	private void stopAction() {
 		if (traceFlag) {
@@ -175,7 +171,7 @@ public class Device extends StateUserEntity {
 			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
 		}
 
-		// Interrupt processing, if underway
+		// If the process is working, kill the next scheduled update
 		if (endActionHandle.isScheduled()) {
 			EventManager.killEvent(endActionHandle);
 		}
@@ -258,18 +254,18 @@ public class Device extends StateUserEntity {
 	}
 
 	/**
-	 * Performs any special processing required for this sub-class of LinkedService
+	 * Performs the process calculations at the start of a new process time step.
 	 * @param simTime - present simulation time
-	 * @return true if processing can continue
+	 * @return indicates whether to continue processing
 	 */
 	protected boolean startProcessing(double simTime) {
 		return true;
 	}
 
 	/**
-	 * Returns the time required to complete the processing of an entity
+	 * Returns the duration of the next process time step.
 	 * @param simTime - present simulation time
-	 * @return duration required for processing
+	 * @return time step duration
 	 */
 	protected double getProcessingTime(double simTime) {
 		return 0.0;
