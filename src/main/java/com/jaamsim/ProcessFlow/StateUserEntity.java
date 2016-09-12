@@ -153,7 +153,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return ret;
 	}
 
-	protected boolean isImmediateThresholdClosure() {
+	public boolean isImmediateThresholdClosure() {
 		for (Threshold thresh : immediateThresholdList.getValue()) {
 			if (!thresh.isOpen())
 				return true;
@@ -161,7 +161,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return false;
 	}
 
-	protected boolean isImmediateReleaseThresholdClosure() {
+	public boolean isImmediateReleaseThresholdClosure() {
 		for (Threshold thresh : immediateReleaseThresholdList.getValue()) {
 			if (!thresh.isOpen())
 				return true;
@@ -177,7 +177,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		busy = bool;
 	}
 
-	protected final boolean isBusy() {
+	public final boolean isBusy() {
 		return busy;
 	}
 
@@ -185,7 +185,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 	 * Tests whether all the thresholds are open.
 	 * @return true if all the thresholds are open.
 	 */
-	protected final boolean isOpen() {
+	public final boolean isOpen() {
 		for (Threshold thr : immediateThresholdList.getValue()) {
 			if (!thr.isOpen())
 				return false;
@@ -201,7 +201,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return true;
 	}
 
-	protected boolean isMaintenance() {
+	public boolean isMaintenance() {
 		for (DowntimeEntity de : immediateMaintenanceList.getValue()) {
 			if (de.isDown())
 				return true;
@@ -217,7 +217,7 @@ public abstract class StateUserEntity extends StateEntity implements ThresholdUs
 		return false;
 	}
 
-	protected boolean isBreakdown() {
+	public boolean isBreakdown() {
 		for (DowntimeEntity de : immediateBreakdownList.getValue()) {
 			if (de.isDown())
 				return true;
