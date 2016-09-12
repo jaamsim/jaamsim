@@ -25,10 +25,10 @@ import com.jaamsim.events.ProcessTarget;
 
 public class Device extends StateUserEntity {
 
-	private double duration;  // service time for the present entity
-	private long endTicks;  // planned simulation time in ticks at the next event
-	private double lastUpdateTime;
-	private boolean forcedDowntimePending;
+	private double lastUpdateTime; // simulation time at which the process was updated last
+	private double duration; // calculated duration of the process time step
+	private long endTicks;  // planned simulation time in ticks at the end of the next process step
+	private boolean forcedDowntimePending;  // indicates that a forced downtime event is ready
 	private boolean stepCompleted;  // indicates that the last process time step was completed
 
 	public Device() {}
