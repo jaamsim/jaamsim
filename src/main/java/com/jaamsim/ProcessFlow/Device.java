@@ -29,7 +29,7 @@ public class Device extends StateUserEntity {
 	private long endTicks;  // planned simulation time in ticks at the next event
 	private double lastUpdateTime;
 	private boolean forcedDowntimePending;
-	private boolean processCompleted;  // indicates that the last processing loop was completed
+	private boolean stepCompleted;  // indicates that the last process time step was completed
 
 	public Device() {}
 
@@ -42,7 +42,7 @@ public class Device extends StateUserEntity {
 		endTicks = 0L;
 		lastUpdateTime = 0.0d;
 		forcedDowntimePending = false;
-		processCompleted = true;
+		stepCompleted = true;
 	}
 
 	// ********************************************************************************************
@@ -95,7 +95,7 @@ public class Device extends StateUserEntity {
 		lastUpdateTime = simTime;
 
 		// Start a new process
-		if (this.isNewStepReqd(processCompleted)) {
+		if (this.isNewStepReqd(stepCompleted)) {
 			boolean bool = this.startProcessing(simTime);
 			if (!bool) {
 				this.stopAction();
@@ -111,7 +111,7 @@ public class Device extends StateUserEntity {
 		}
 
 		// Schedule the completion of service
-		processCompleted = false;
+		stepCompleted = false;
 		endTicks = EventManager.calcSimTicks(duration);
 		if (traceFlag) traceLine(1, "duration=%.6f", duration);
 		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
@@ -131,7 +131,7 @@ public class Device extends StateUserEntity {
 		// closure, then perform the special processing for this sub-class of LinkedService
 		if (this.getSimTicks() == endTicks || this.isImmediateReleaseThresholdClosure()) {
 			this.endProcessing(simTime);
-			processCompleted = true;
+			stepCompleted = true;
 		}
 
 		// Process the next entity
@@ -172,7 +172,7 @@ public class Device extends StateUserEntity {
 		}
 
 		// Set the present process to completed
-		processCompleted = true;
+		stepCompleted = true;
 
 		// End the present process prematurely
 		if (endActionHandle.isScheduled()) {
