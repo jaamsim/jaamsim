@@ -1,0 +1,305 @@
+/*
+ * JaamSim Discrete Event Simulation
+ * Copyright (C) 2016 JaamSim Software Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.jaamsim.ProcessFlow;
+
+
+import com.jaamsim.BasicObjects.DowntimeEntity;
+import com.jaamsim.basicsim.EntityTarget;
+import com.jaamsim.events.EventHandle;
+import com.jaamsim.events.EventManager;
+import com.jaamsim.events.ProcessTarget;
+
+public class Device extends StateUserEntity {
+
+	private double duration;  // service time for the present entity
+	private long endTicks;  // planned simulation time in ticks at the next event
+	private double lastUpdateTime;
+	private boolean forcedDowntimePending;
+	private boolean processCompleted;  // indicates that the last processing loop was completed
+
+	public Device() {}
+
+	@Override
+	public void earlyInit() {
+		super.earlyInit();
+
+		this.setBusy(false);
+		duration = 0.0;
+		endTicks = 0L;
+		lastUpdateTime = 0.0d;
+		forcedDowntimePending = false;
+		processCompleted = true;
+	}
+
+	// ********************************************************************************************
+	// PROCESSING ENTITIES
+	// ********************************************************************************************
+
+	/**
+	 * EndActionTarget
+	 */
+	private static class EndActionTarget extends EntityTarget<Device> {
+		EndActionTarget(Device ent) {
+			super(ent, "endAction");
+		}
+
+		@Override
+		public void process() {
+			ent.endAction();
+		}
+	}
+	private final ProcessTarget endActionTarget = new EndActionTarget(this);
+	private final EventHandle endActionHandle = new EventHandle();
+
+	/**
+	 * Starts the processing of an entity.
+	 */
+	protected final void startAction() {
+		if (traceFlag) {
+			trace(0, "startAction");
+			traceLine(1, "endActionHandle.isScheduled=%s, isAvailable=%s, forcedDowntimePending=%s",
+					endActionHandle.isScheduled(), this.isAvailable(), forcedDowntimePending);
+		}
+
+		double simTime = this.getSimTime();
+
+		// Is the process loop is already working?
+		if (endActionHandle.isScheduled()) {
+			this.setPresentState();
+			return;
+		}
+
+		// Stop if any of the thresholds, maintenance, or breakdowns close the operation
+		// or if a forced downtime is about to begin
+		if (!this.isAvailable() || forcedDowntimePending) {
+			forcedDowntimePending = false;
+			this.stopAction();
+			return;
+		}
+
+		// Set the last update time in case processing is restarting after a stoppage
+		lastUpdateTime = simTime;
+
+		// Start a new process
+		if (processCompleted) {
+			boolean bool = this.startProcessing(simTime);
+			if (!bool) {
+				this.stopAction();
+				return;
+			}
+			duration = this.getProcessingTime(simTime);
+		}
+
+		// Set the state
+		if (!isBusy()) {
+			this.setBusy(true);
+			this.setPresentState();
+		}
+
+		// Schedule the completion of service
+		processCompleted = false;
+		endTicks = EventManager.calcSimTicks(duration);
+		if (traceFlag) traceLine(1, "duration=%.6f", duration);
+		this.scheduleProcess(duration, 5, endActionTarget, endActionHandle);
+	}
+
+	/**
+	 * Completes the processing of an entity.
+	 */
+	final void endAction() {
+		if (traceFlag) trace(0, "endAction");
+		double simTime = this.getSimTime();
+
+		// Update the progress that has been made
+		this.updateProgress(simTime, lastUpdateTime);
+
+		// If the process ended normally or if there was an immediate release type threshold
+		// closure, then perform the special processing for this sub-class of LinkedService
+		if (this.getSimTicks() == endTicks || this.isImmediateReleaseThresholdClosure()) {
+			this.endProcessing(simTime);
+			processCompleted = true;
+		}
+
+		// Process the next entity
+		this.startAction();
+	}
+
+	/**
+	 * Interrupts processing of an entity and holds it.
+	 */
+	private void stopAction() {
+		if (traceFlag) {
+			trace(0, "stopAction");
+			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
+		}
+
+		double simTime = this.getSimTime();
+
+		// Interrupt processing, if underway
+		if (endActionHandle.isScheduled()) {
+			EventManager.killEvent(endActionHandle);
+		}
+
+		// Update the service for any partial progress that has been made
+		this.updateProgress(simTime, lastUpdateTime);
+
+		// Update the state
+		this.setBusy(false);
+		this.setPresentState();
+	}
+
+	/**
+	 * Revises the time for the next event by stopping the present process and starting a new one.
+	 */
+	protected final void resetProcess() {
+		if (traceFlag) {
+			trace(0, "resetProcess");
+			traceLine(1, "endActionHandle.isScheduled()=%s", endActionHandle.isScheduled());
+		}
+
+		// Set the present process to completed
+		processCompleted = true;
+
+		// End the present process prematurely
+		if (endActionHandle.isScheduled()) {
+			EventManager.interruptEvent(endActionHandle);
+		}
+	}
+
+	/**
+	 * Performs any special processing required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 * @return true if processing can continue
+	 */
+	protected boolean startProcessing(double simTime) {
+		return true;
+	}
+
+	/**
+	 * Returns the time required to complete the processing of an entity
+	 * @param simTime - present simulation time
+	 * @return duration required for processing
+	 */
+	protected double getProcessingTime(double simTime) {
+		return 0.0;
+	}
+
+	/**
+	 * Performs any special processing required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 */
+	protected void endProcessing(double simTime) {}
+
+	/**
+	 * Performs any progress tracking that is required for this sub-class of LinkedService
+	 * @param simTime - present simulation time
+	 * @param lastTime - last time that the update was performed
+	 */
+	protected void updateProgress(double simTime, double lastTime) {
+		lastUpdateTime = simTime;
+		if (this.isBusy()) {
+			duration -= simTime - lastTime;
+		}
+		if (traceFlag) {
+			trace(1, "updateProgress");
+			traceLine(2, "lastUpdateTime=%.6f, duration=%.6f", lastUpdateTime, duration);
+		}
+	}
+
+	/**
+	 * Returns the time at which the last update was performed.
+	 * @return time for the last update
+	 */
+	protected final double getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+
+	// ********************************************************************************************
+	// THRESHOLDS
+	// ********************************************************************************************
+
+	@Override
+	public void thresholdChanged() {
+		if (traceFlag) {
+			trace(0, "thresholdChanged");
+			traceLine(1, "isImmediateReleaseThresholdClosure=%s, isImmediateThresholdClosure=%s",
+				isImmediateReleaseThresholdClosure(), isImmediateThresholdClosure());
+		}
+
+		// If an interrupt closure, interrupt the present activity and release the entity
+		if (isImmediateReleaseThresholdClosure()) {
+			if (endActionHandle.isScheduled()) {
+				EventManager.interruptEvent(endActionHandle);
+			}
+			return;
+		}
+
+		// If an immediate closure, interrupt the present activity and hold the entity
+		if (isImmediateThresholdClosure()) {
+			this.stopAction();
+			return;
+		}
+
+		// Otherwise, check whether processing can be restarted
+		this.startAction();
+	}
+
+	// ********************************************************************************************
+	// MAINTENANCE AND BREAKDOWNS
+	// ********************************************************************************************
+
+	@Override
+	public boolean canStartDowntime(DowntimeEntity down) {
+
+		// Downtime can start when any work in progress has been interrupted and there are no
+		// other maintenance or breakdown activities that are being performed. It is okay to start
+		// downtime when one or more thresholds are closed.
+		return !isBusy() && !isMaintenance() && !isBreakdown();
+	}
+
+	@Override
+	public void prepareForDowntime(DowntimeEntity down) {
+		if (traceFlag) {
+			trace(0, "prepareForDowntime(%s)", down);
+			traceLine(1, "isImmediateDowntime=%s, isForcedDowntime=%s, isBusy=%s",
+				isImmediateDowntime(down), isForcedDowntime(down), isBusy());
+		}
+
+		// If an immediate downtime, interrupt the present activity
+		if (isImmediateDowntime(down)) {
+			this.stopAction();
+			return;
+		}
+
+		// If a forced downtime, then set the flag to stop further processing
+		if (isForcedDowntime(down) && this.isBusy())
+			forcedDowntimePending = true;
+	}
+
+	@Override
+	public void startDowntime(DowntimeEntity down) {
+		if (traceFlag) trace(0, "startDowntime(%s)", down);
+		this.setPresentState();
+	}
+
+	@Override
+	public void endDowntime(DowntimeEntity down) {
+		if (traceFlag) trace(0, "endDowntime(%s)", down);
+		this.startAction();
+	}
+
+}
