@@ -808,13 +808,12 @@ public class InputAgent {
 				}
 			}
 
-			if (!Entity.getInstanceIterator(each).hasNext()) {
-				if (count % 5 != 0) {
-					inputReportFile.write(" }");
-					inputReportFile.newLine();
-				}
+			if (count % 5 != 0) {
+				inputReportFile.write(" }");
 				inputReportFile.newLine();
 			}
+			if (count > 0)
+				inputReportFile.newLine();
 		}
 
 		for (ObjectType type : ObjectType.getAll()) {
