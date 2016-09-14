@@ -17,6 +17,7 @@
 package com.jaamsim.FluidObjects;
 
 import com.jaamsim.DisplayModels.ShapeModel;
+import com.jaamsim.input.ColourInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
@@ -123,6 +124,8 @@ public class FluidTank extends FluidComponent {
 
 		if( this.getFluid() != null )
 			setTagColour(ShapeModel.TAG_CONTENTS, this.getFluid().getColour());
+		else
+			setTagColour(ShapeModel.TAG_CONTENTS, ColourInput.getColorWithName("black"));
 	}
 
 	@Output(name = "FluidVolume",
