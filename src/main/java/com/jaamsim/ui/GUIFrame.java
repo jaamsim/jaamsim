@@ -335,6 +335,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		InputAgent.clear();
 		InputAgent.setRecordEdits(false);
 		InputAgent.readResource("<res>/inputs/autoload.cfg");
+		InputAgent.setPreDefinedEntityCount( Entity.getAll().get( Entity.getAll().size() - 1 ).getEntityNumber());
 	}
 
 	/**
@@ -1675,6 +1676,7 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 		// Load the autoload file
 		InputAgent.setRecordEdits(false);
 		InputAgent.readResource("<res>/inputs/autoload.cfg");
+		InputAgent.setPreDefinedEntityCount( Entity.getAll().get( Entity.getAll().size() - 1 ).getEntityNumber());
 
 		// Show the Control Panel
 		if (gui != null) {

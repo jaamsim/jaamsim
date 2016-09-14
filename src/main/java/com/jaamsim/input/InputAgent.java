@@ -73,6 +73,8 @@ public class InputAgent {
 	private static FileEntity reportFile;     // file to which the output report will be written
 	private static PrintStream outStream;  // location where the selected outputs will be written
 
+	private static long preDefinedEntityCount; // Number of Entities after loading autoload.cfg
+
 	static {
 		recordEditsFound = false;
 		sessionEdited = false;
@@ -113,6 +115,10 @@ public class InputAgent {
 			outStream.close();
 			outStream = null;
 		}
+	}
+
+	public static void setPreDefinedEntityCount(long count) {
+		preDefinedEntityCount = count;
 	}
 
 	private static String getReportDirectory() {
@@ -774,6 +780,9 @@ public class InputAgent {
 			// Loop through the instances for this entity class
 			int count = 0;
 			for (Entity ent : Entity.getInstanceIterator(each)) {
+				if (ent.getEntityNumber() <= preDefinedEntityCount)
+					continue;
+
 				boolean hasinput = false;
 
 				for (Input<?> in : ent.getEditableInputs()) {
@@ -823,6 +832,9 @@ public class InputAgent {
 			// sort the list alphabetically
 			ArrayList<Entity> cloneList = new ArrayList<>();
 			for (Entity ent : Entity.getInstanceIterator(each)) {
+				if (ent.getEntityNumber() <= preDefinedEntityCount)
+					continue;
+
 				cloneList.add(ent);
 			}
 
