@@ -856,7 +856,8 @@ public class InputAgent {
 						continue;
 
 					// If the keyword has been used, then add a record to the report
-					if (in.getValueString().length() == 0)
+					String valueString = in.getValueString();
+					if (valueString.length() == 0)
 						continue;
 
 					if (! in.getCategory().contains("Key Inputs"))
@@ -868,9 +869,9 @@ public class InputAgent {
 					inputReportFile.write("\t");
 					inputReportFile.write(in.getKeyword());
 					inputReportFile.write("\t");
-					if (in.getValueString().lastIndexOf('{') > 10) {
+					if (valueString.lastIndexOf('{') > 10) {
 						String[] item1Array;
-						item1Array = in.getValueString().trim().split(" }");
+						item1Array = valueString.trim().split(" }");
 
 						inputReportFile.write("{ " + item1Array[0] + " }");
 						for (int l = 1; l < (item1Array.length); l++) {
@@ -881,7 +882,7 @@ public class InputAgent {
 						inputReportFile.write("	}");
 					}
 					else {
-						inputReportFile.write("{ " + in.getValueString() + " }");
+						inputReportFile.write("{ " + valueString + " }");
 					}
 					inputReportFile.newLine();
 				}
@@ -893,7 +894,8 @@ public class InputAgent {
 						continue;
 
 					// If the keyword has been used, then add a record to the report
-					if (in.getValueString().length() == 0)
+					String valueString = in.getValueString();
+					if (valueString.length() == 0)
 						continue;
 
 					if (in.getCategory().contains("Key Inputs"))
@@ -908,9 +910,9 @@ public class InputAgent {
 					inputReportFile.write("\t");
 					inputReportFile.write(in.getKeyword());
 					inputReportFile.write("\t");
-					if (in.getValueString().lastIndexOf('{') > 10) {
+					if (valueString.lastIndexOf('{') > 10) {
 						String[] item1Array;
-						item1Array = in.getValueString().trim().split(" }");
+						item1Array = valueString.trim().split(" }");
 
 						inputReportFile.write("{ " + item1Array[0] + " }");
 						for (int l = 1; l < (item1Array.length); l++) {
@@ -921,7 +923,7 @@ public class InputAgent {
 						inputReportFile.write("	}");
 					}
 					else {
-						inputReportFile.write("{ " + in.getValueString() + " }");
+						inputReportFile.write("{ " + valueString + " }");
 					}
 					inputReportFile.newLine();
 				}
