@@ -1658,11 +1658,13 @@ public class GUIFrame extends JFrame implements EventTimeListener, EventErrorLis
 			evt.setTimeListener(gui);
 			evt.setErrorListener(gui);
 
-			// Begin initializing the rendering system
-			RenderManager.initialize(SAFE_GRAPHICS);
-
 			if (minimize)
 				gui.setExtendedState(JFrame.ICONIFIED);
+		}
+
+		if (!batch && !headless) {
+			// Begin initializing the rendering system
+			RenderManager.initialize(SAFE_GRAPHICS);
 		}
 
 		LogBox.logLine("Simulation Environment Loaded");
