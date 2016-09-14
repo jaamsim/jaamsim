@@ -888,7 +888,7 @@ public class InputAgent {
 				}
 
 				// Loop through the editable keywords
-				// (except for Key Inputs and Graphics) for this instance
+				// (except for Key Inputs) for this instance
 				for (Input<?> in : ent.getEditableInputs()) {
 					if (in.isSynonym())
 						continue;
@@ -899,9 +899,6 @@ public class InputAgent {
 						continue;
 
 					if (in.getCategory().contains("Key Inputs"))
-						continue;
-
-					if (in.getCategory().contains("Graphics"))
 						continue;
 
 					hasinput = true;
