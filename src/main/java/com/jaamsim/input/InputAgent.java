@@ -783,37 +783,24 @@ public class InputAgent {
 				if (ent.getEntityNumber() <= preDefinedEntityCount)
 					continue;
 
-				boolean hasinput = false;
+				count++;
 
-				for (Input<?> in : ent.getEditableInputs()) {
-					if (in.isSynonym())
-						continue;
-					// If the keyword has been used, then add a record to the report
-					if (in.getValueString().length() != 0) {
-						hasinput = true;
-						count++;
-						break;
-					}
+				String entityName = ent.getName();
+				if ((count - 1) % 5 == 0) {
+					inputReportFile.write("Define");
+					inputReportFile.write("\t");
+					inputReportFile.write(type.getName());
+					inputReportFile.write("\t");
+					inputReportFile.write("{ " + entityName);
+					inputReportFile.write("\t");
 				}
-
-				if (hasinput) {
-					String entityName = ent.getName();
-					if ((count - 1) % 5 == 0) {
-						inputReportFile.write("Define");
-						inputReportFile.write("\t");
-						inputReportFile.write(type.getName());
-						inputReportFile.write("\t");
-						inputReportFile.write("{ " + entityName);
-						inputReportFile.write("\t");
-					}
-					else if ((count - 1) % 5 == 4) {
-						inputReportFile.write(entityName + " }");
-						inputReportFile.newLine();
-					}
-					else {
-						inputReportFile.write(entityName);
-						inputReportFile.write("\t");
-					}
+				else if ((count - 1) % 5 == 4) {
+					inputReportFile.write(entityName + " }");
+					inputReportFile.newLine();
+				}
+				else {
+					inputReportFile.write(entityName);
+					inputReportFile.write("\t");
 				}
 			}
 
