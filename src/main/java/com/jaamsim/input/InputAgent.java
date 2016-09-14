@@ -773,8 +773,44 @@ public class InputAgent {
 		FileEntity inputReportFile = new FileEntity( inputReportFileName);
 		inputReportFile.flush();
 
+		ArrayList<ObjectType> objectTypes = new ArrayList<>();
+		for (ObjectType type : ObjectType.getAll())
+			objectTypes.add( type );
+
+		// Sort ObjectTypes by Units, Simulation, and then alphabetically by palette name
+		Collections.sort(objectTypes, new Comparator<ObjectType>() {
+			@Override
+			public int compare(ObjectType a, ObjectType b) {
+
+				// Put Unit classes first
+				if (Unit.class.isAssignableFrom(a.getJavaClass())) {
+					if (Unit.class.isAssignableFrom(b.getJavaClass()))
+						return 0;
+					else
+						return -1;
+				}
+				if (Unit.class.isAssignableFrom(b.getJavaClass())) {
+						return 1;
+				}
+
+				// Put Simulation classes second
+				if (Simulation.class.isAssignableFrom(a.getJavaClass())) {
+					if (Simulation.class.isAssignableFrom(b.getJavaClass()))
+						return 0;
+					else
+						return -1;
+				}
+				if (Simulation.class.isAssignableFrom(b.getJavaClass())) {
+						return 1;
+				}
+
+				// Sort the rest alphabetically by palette name
+				return a.getPaletteName().compareTo(b.getPaletteName());
+			}
+		});
+
 		// Loop through the entity classes printing Define statements
-		for (ObjectType type : ObjectType.getAll()) {
+		for (ObjectType type : objectTypes) {
 			Class<? extends Entity> each = type.getJavaClass();
 
 			// Loop through the instances for this entity class
@@ -812,7 +848,7 @@ public class InputAgent {
 				inputReportFile.newLine();
 		}
 
-		for (ObjectType type : ObjectType.getAll()) {
+		for (ObjectType type : objectTypes) {
 			Class<? extends Entity> each = type.getJavaClass();
 
 			// Get the list of instances for this entity class
