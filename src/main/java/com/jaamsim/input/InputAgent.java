@@ -843,49 +843,92 @@ public class InputAgent {
 			for (int j = 0; j < cloneList.size(); j++) {
 
 				// Make sure the clone is an instance of the class (and not an instance of a subclass)
-				if (cloneList.get(j).getClass() == each) {
-					Entity ent = cloneList.get(j);
-					String entityName = ent.getName();
-					boolean hasinput = false;
+				if (cloneList.get(j).getClass() != each)
+					continue;
 
-					// Loop through the editable keywords for this instance
-					for (Input<?> in : ent.getEditableInputs()) {
-						if (in.isSynonym())
-							continue;
+				Entity ent = cloneList.get(j);
+				String entityName = ent.getName();
+				boolean hasinput = false;
 
-						// If the keyword has been used, then add a record to the report
-						if (in.getValueString().length() != 0) {
+				// Loop through the editable Key Inputs for this instance
+				for (Input<?> in : ent.getEditableInputs()) {
+					if (in.isSynonym())
+						continue;
 
-							if (!in.getCategory().contains("Graphics")) {
-								hasinput = true;
-								inputReportFile.write("\t");
-								inputReportFile.write(entityName);
-								inputReportFile.write("\t");
-								inputReportFile.write(in.getKeyword());
-								inputReportFile.write("\t");
-								if (in.getValueString().lastIndexOf('{') > 10) {
-									String[] item1Array;
-									item1Array = in.getValueString().trim().split(" }");
+					// If the keyword has been used, then add a record to the report
+					if (in.getValueString().length() == 0)
+						continue;
 
-									inputReportFile.write("{ " + item1Array[0] + " }");
-									for (int l = 1; l < (item1Array.length); l++) {
-										inputReportFile.newLine();
-										inputReportFile.write("\t\t\t\t\t");
-										inputReportFile.write(item1Array[l] + " } ");
-									}
-									inputReportFile.write("	}");
-								}
-								else {
-									inputReportFile.write("{ " + in.getValueString() + " }");
-								}
-								inputReportFile.newLine();
-							}
+					if (! in.getCategory().contains("Key Inputs"))
+						continue;
+
+					hasinput = true;
+					inputReportFile.write("\t");
+					inputReportFile.write(entityName);
+					inputReportFile.write("\t");
+					inputReportFile.write(in.getKeyword());
+					inputReportFile.write("\t");
+					if (in.getValueString().lastIndexOf('{') > 10) {
+						String[] item1Array;
+						item1Array = in.getValueString().trim().split(" }");
+
+						inputReportFile.write("{ " + item1Array[0] + " }");
+						for (int l = 1; l < (item1Array.length); l++) {
+							inputReportFile.newLine();
+							inputReportFile.write("\t\t\t\t\t");
+							inputReportFile.write(item1Array[l] + " } ");
 						}
+						inputReportFile.write("	}");
 					}
-					// Put a blank line after each instance
-					if (hasinput) {
-						inputReportFile.newLine();
+					else {
+						inputReportFile.write("{ " + in.getValueString() + " }");
 					}
+					inputReportFile.newLine();
+				}
+
+				// Loop through the editable keywords
+				// (except for Key Inputs and Graphics) for this instance
+				for (Input<?> in : ent.getEditableInputs()) {
+					if (in.isSynonym())
+						continue;
+
+					// If the keyword has been used, then add a record to the report
+					if (in.getValueString().length() == 0)
+						continue;
+
+					if (in.getCategory().contains("Key Inputs"))
+						continue;
+
+					if (in.getCategory().contains("Graphics"))
+						continue;
+
+					hasinput = true;
+					inputReportFile.write("\t");
+					inputReportFile.write(entityName);
+					inputReportFile.write("\t");
+					inputReportFile.write(in.getKeyword());
+					inputReportFile.write("\t");
+					if (in.getValueString().lastIndexOf('{') > 10) {
+						String[] item1Array;
+						item1Array = in.getValueString().trim().split(" }");
+
+						inputReportFile.write("{ " + item1Array[0] + " }");
+						for (int l = 1; l < (item1Array.length); l++) {
+							inputReportFile.newLine();
+							inputReportFile.write("\t\t\t\t\t");
+							inputReportFile.write(item1Array[l] + " } ");
+						}
+						inputReportFile.write("	}");
+					}
+					else {
+						inputReportFile.write("{ " + in.getValueString() + " }");
+					}
+					inputReportFile.newLine();
+				}
+
+				// Put a blank line after each instance
+				if (hasinput) {
+					inputReportFile.newLine();
 				}
 			}
 		}
