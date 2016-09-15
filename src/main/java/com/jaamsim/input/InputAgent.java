@@ -855,8 +855,11 @@ public class InputAgent {
 			// sort the list alphabetically
 			ArrayList<Entity> cloneList = new ArrayList<>();
 			for (Entity ent : Entity.getInstanceIterator(each)) {
-				if (ent.getEntityNumber() <= preDefinedEntityCount)
-					continue;
+				if (ent.getEntityNumber() <= preDefinedEntityCount) {
+					if (! (ent instanceof Simulation) ) {
+						continue;
+					}
+				}
 
 				cloneList.add(ent);
 			}
