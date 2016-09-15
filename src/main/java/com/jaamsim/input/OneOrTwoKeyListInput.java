@@ -208,6 +208,14 @@ public class OneOrTwoKeyListInput<K1 extends Entity, K2 extends Entity, V extend
 
 		String[] args = kw.getArgArray();
 
+		// If there are previous inputs and existing or new keys
+		if (args.length > 0) {
+			if (valueTokens != null && hashMap.keySet().size() > 0) {
+				this.appendTokens(args);
+				return;
+			}
+		}
+
 		// Consider the following input cases:
 		// Object1 Keyword1 { Key1 ++ Entity1 ...
 		// Object1 Keyword1 { Key1 Key2 ++ Entity1 ...

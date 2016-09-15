@@ -131,6 +131,23 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		}
 	}
 
+	@Override
+	public void setTokens(KeywordIndex kw) {
+		isDef = false;
+
+		String[] args = kw.getArgArray();
+
+		// If there are previous inputs and existing or new keys
+		if (args.length > 0) {
+			if (valueTokens != null && hashMap.keySet().size() > 0) {
+				this.appendTokens(args);
+				return;
+			}
+		}
+
+		valueTokens = args;
+	}
+
 	public void setValidRange(double min, double max) {
 		minValue = min;
 		maxValue = max;
