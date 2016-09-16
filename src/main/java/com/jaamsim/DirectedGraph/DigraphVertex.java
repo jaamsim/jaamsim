@@ -44,7 +44,7 @@ public class DigraphVertex {
 		this(str, grph, null);
 	}
 
-	public void init() {
+	public void initForUnitTest() {
 		graph.addVertex(this);
 	}
 

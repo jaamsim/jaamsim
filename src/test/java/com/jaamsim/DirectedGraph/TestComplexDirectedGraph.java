@@ -48,24 +48,24 @@ public class TestComplexDirectedGraph {
 		DigraphEdge edge2_8 = new DigraphEdge(vert2, vert8, 3.0, graph);
 		DigraphEdge edge5_6 = new DigraphEdge(vert5, vert6, 1.0, graph);
 
-		vert1.init();
-		vert2.init();
-		vert3.init();
-		vert4.init();
-		vert5.init();
-		vert6.init();
-		vert7.init();
-		vert8.init();
+		vert1.initForUnitTest();
+		vert2.initForUnitTest();
+		vert3.initForUnitTest();
+		vert4.initForUnitTest();
+		vert5.initForUnitTest();
+		vert6.initForUnitTest();
+		vert7.initForUnitTest();
+		vert8.initForUnitTest();
 
-		edge1_2.init();
-		edge4_2.init();
-		edge4_5.init();
-		edge7_5.init();
-		edge7_8.init();
-		edge2_3.init();
-		edge2_6.init();
-		edge2_8.init();
-		edge5_6.init();
+		edge1_2.initForUnitTest();
+		edge4_2.initForUnitTest();
+		edge4_5.initForUnitTest();
+		edge7_5.initForUnitTest();
+		edge7_8.initForUnitTest();
+		edge2_3.initForUnitTest();
+		edge2_6.initForUnitTest();
+		edge2_8.initForUnitTest();
+		edge5_6.initForUnitTest();
 
 		graph.init();
 
