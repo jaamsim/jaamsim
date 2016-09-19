@@ -704,9 +704,15 @@ public class Entity {
 
 			// Numerical output
 			if (out.isNumericValue()) {
-				double val = out.getValueAsDouble(simTime, Double.NaN)/factor;
-				file.format(OUTPUT_FORMAT,
-						this.getName(), out.getName(), val, unitString);
+				try {
+					double val = out.getValueAsDouble(simTime, Double.NaN)/factor;
+					file.format(OUTPUT_FORMAT,
+							this.getName(), out.getName(), val, unitString);
+				}
+				catch (Exception e) {
+					file.format(OUTPUT_FORMAT,
+							this.getName(), out.getName(), Double.NaN, unitString);
+				}
 			}
 
 			// DoubleVector output
