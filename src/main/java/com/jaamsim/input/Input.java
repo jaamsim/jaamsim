@@ -619,13 +619,25 @@ public abstract class Input<T> {
 			}
 			catch (InputErrorException e) {}
 
-			// If not a constant, try parsing a SampleProvider
-			Input.assertCount(data, 1);
-			Entity ent = Input.parseEntity(data.get(0), Entity.class);
-			SampleProvider s = Input.castImplements(ent, SampleProvider.class);
-			if( s.getUnitType() != UserSpecifiedUnit.class )
-				Input.assertUnitsMatch(unitType, s.getUnitType());
-			return aClass.cast(s);
+			// Try parsing a SampleProvider
+			try {
+				Input.assertCount(data, 1);
+				Entity ent = Input.parseEntity(data.get(0), Entity.class);
+				SampleProvider s = Input.castImplements(ent, SampleProvider.class);
+				if( s.getUnitType() != UserSpecifiedUnit.class )
+					Input.assertUnitsMatch(unitType, s.getUnitType());
+				return aClass.cast(s);
+			}
+			catch (InputErrorException e) {}
+
+			// Try parsing an expression
+			try {
+				String expString = data.get(0);
+				return aClass.cast( new SampleExpression(expString, thisEnt, unitType) );
+			}
+			catch (ExpError e) {
+				throw new InputErrorException(e.toString());
+			}
 		}
 
 		if( aClass == IntegerVector.class ) {
