@@ -25,7 +25,7 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.datatypes.DoubleVector;
 import com.jaamsim.datatypes.IntegerVector;
 import com.jaamsim.input.ExpParser.EvalContext;
-import com.jaamsim.input.ExpParser.VarResolver;
+import com.jaamsim.input.ExpParser.OutputResolver;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.Unit;
 
@@ -168,46 +168,6 @@ public class ExpEvaluator {
 			return Unit.getDivUnitType(num, denom);
 		}
 
-
-		@Override
-		public VarResolver getVarResolver(String[] names, boolean[] hasIndices) throws ExpError {
-
-			assert(names.length != 0);
-			assert(!hasIndices[0]);
-
-			Entity rootEnt;
-			if (names[0] == "this")
-				rootEnt = thisEnt;
-			else {
-				rootEnt = Entity.getNamedEntity(names[0]);
-				if (rootEnt != null) {
-					addEntityReference(rootEnt);
-				}
-			}
-
-			if (rootEnt == null) {
-				throw new ExpError(null, 0, "Could not find entity: %s", names[0]);
-			}
-
-			// The directly named case
-			if (names.length == 1) {
-				return new DirectResolver(rootEnt);
-			}
-
-			// Special case, if this is a simple output and we can cache the output handle, use an optimized resolver
-			if (names.length == 2) {
-				OutputHandle oh = rootEnt.getOutputHandleInterned(names[1]);
-				if (oh == null) {
-					throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", names[1], names[0]);
-				}
-				if (oh.canCache() && !hasIndices[1]) {
-					return new CachedResolver(oh);
-				}
-			}
-
-			return new EntityResolver(rootEnt, names);
-		}
-
 		@Override
 		public void validateAssignmentDest(String[] destination) throws ExpError {
 			Entity rootEnt;
@@ -224,38 +184,66 @@ public class ExpEvaluator {
 			}
 		}
 
+		@Override
+		public ExpResult getValFromName(String name) throws ExpError {
+			Entity ent;
+			if (name.equals("this"))
+				ent = thisEnt;
+			else {
+				ent = Entity.getNamedEntity(name);
+				if (ent != null) {
+					addEntityReference(ent);
+				}
+			}
+
+			if (ent == null) {
+				throw new ExpError(null, 0, "Could not find entity: %s", name);
+			}
+
+			return ExpResult.makeEntityResult(ent);
+		}
+
+		@Override
+		public OutputResolver getOutputResolver(String name) throws ExpError {
+			return new EntityResolver(name);
+		}
+
+		@Override
+		public OutputResolver getConstOutputResolver(ExpResult constEnt, String name) throws ExpError {
+			return new CachedResolver(constEnt, name);
+		}
+
 	}
 
-	// DirectResolver are for direct access to entities
-	private static class DirectResolver implements ExpParser.VarResolver {
+	private static class CachedResolver implements ExpParser.OutputResolver {
 
-		Entity res;
-		public DirectResolver(Entity ent) {
-			res = ent;
-		}
-		@Override
-		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
-				throws ExpError {
-			return ExpResult.makeEntityResult(res);
-		}
-
-		@Override
-		public ExpValResult validate(boolean[] hasIndices) {
-			// This should already be checked to not have indices
-
-			return ExpValResult.makeValidRes(ExpResType.ENTITY, DimensionlessUnit.class);
-		}
-
-	}
-
-	private static class CachedResolver implements ExpParser.VarResolver {
+		private Entity ent;
+		private String outputName;
 
 		private final OutputHandle handle;
 		private final ExpResType type;
 
-		public CachedResolver(OutputHandle oh) throws ExpError {
+		public CachedResolver(ExpResult constEnt, String name) throws ExpError {
+
+			if (constEnt.type != ExpResType.ENTITY) {
+				throw new ExpError(null, 0, "Can not index a non-entity type");
+			}
+
+			outputName = name.intern();
+
+			ent = constEnt.entVal;
+
+			OutputHandle oh = ent.getOutputHandleInterned(outputName);
+			if (oh == null || !oh.canCache()) {
+				handle = null;
+				type = null;
+				return;
+			}
+
 			handle = oh;
+
 			Class<?> retType = oh.getReturnType();
+
 			if (retType == String.class) {
 				type = ExpResType.STRING;
 			} else if (Entity.class.isAssignableFrom(retType)){
@@ -270,9 +258,39 @@ public class ExpEvaluator {
 			}
 		}
 
+		private ExpResult resolveNoCache(EvalContext ec, ExpResult index) throws ExpError {
+			EntityEvalContext eec = (EntityEvalContext)ec;
+
+			OutputHandle oh = ent.getOutputHandleInterned(outputName);
+
+			Class<?> retType = oh.getReturnType();
+			if (retType == ExpResult.class) {
+				// This is already an expression, so return it
+				return oh.getValue(eec.simTime, ExpResult.class);
+			}
+			if (retType == String.class) {
+				return ExpResult.makeStringResult(oh.getValue(eec.simTime, String.class));
+			}
+			if (Entity.class.isAssignableFrom(retType)) {
+				return ExpResult.makeEntityResult(oh.getValue(eec.simTime, Entity.class));
+			}
+			if (    OutputHandle.isNumericType(retType) ||
+			        retType == boolean.class ||
+			        retType == Boolean.class) {
+				return ExpResult.makeNumResult(oh.getValueAsDouble(eec.simTime, 0), oh.getUnitType());
+			}
+			throw new ExpError(null, 0, "Output %s, on entity %s does not return a type compatible with expressions.", oh.getName(), oh.ent.getName());
+
+		}
+
 		@Override
-		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
+		public ExpResult resolve(EvalContext ec, ExpResult ent, ExpResult index)
 				throws ExpError {
+			if (handle == null) {
+				// There is no cached output handle, so we need to do the output lookup at runtime
+				return resolveNoCache(ec, index);
+			}
+
 			EntityEvalContext eec = (EntityEvalContext)ec;
 			switch (type) {
 			case NUMBER:
@@ -289,50 +307,51 @@ public class ExpEvaluator {
 		}
 
 		@Override
-		public ExpValResult validate(boolean[] hasIndices) {
-			switch (type) {
-			case NUMBER:
-				return ExpValResult.makeValidRes(ExpResType.NUMBER, handle.getUnitType());
-			case ENTITY:
-				return ExpValResult.makeValidRes(ExpResType.ENTITY, DimensionlessUnit.class);
-			case STRING:
-				return ExpValResult.makeValidRes(ExpResType.STRING, DimensionlessUnit.class);
-			default:
-				// This should not be reachable
-				assert(false);
+		public ExpValResult validate(ExpValResult entValRes,
+				ExpValResult indValRes) {
+			if (handle == null) {
+				// There is no cached output handle, so we can not decide
 				return ExpValResult.makeUndecidableRes();
 			}
+
+			Class<? extends Unit> ut = DimensionlessUnit.class;
+			if (type == ExpResType.NUMBER)
+				ut = handle.getUnitType();
+
+			return ExpValResult.makeValidRes(type, ut);
+
 		}
+
 	}
 
-	private static class EntityResolver implements ExpParser.VarResolver {
+	private static class EntityResolver implements ExpParser.OutputResolver {
 
-		private final Entity rootEnt;
-		private final String[] names;
+		private final String outputName;
 
-		public EntityResolver(Entity rootEnt, String[] names) {
-			this.rootEnt = rootEnt;
-			this.names = names;
+		public EntityResolver(String name) {
+			outputName = name.intern();
 		}
 
 		@Override
-		public ExpResult resolve(ExpParser.EvalContext ec, ExpResult[] indices) throws ExpError {
+		public ExpResult resolve(EvalContext ec, ExpResult entRes, ExpResult indResult) throws ExpError {
 
 			EntityEvalContext eec = (EntityEvalContext)ec;
 
 			double simTime = eec.simTime;
 
-			Entity ent = getEntity(rootEnt, names, indices, simTime);
+			if (entRes.type != ExpResType.ENTITY) {
+				throw new ExpError(null, 0, "Can not look up output on non-entity type");
+			}
 
-			String outputName = names[names.length-1];
+			Entity ent = entRes.entVal;
+
 			OutputHandle oh = ent.getOutputHandleInterned(outputName);
 			if (oh == null) {
 				throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", outputName, ent.getName());
 			}
 
-			if (indices != null && indices[names.length-1] != null) {
-				int index = (int)indices[names.length-1].value -1; // 1 based indexing
-				ExpResult indResult = indices[names.length-1];
+			if (indResult != null) {
+				int index = (int)indResult.value -1; // 1 based indexing
 
 				if (Map.class.isAssignableFrom(oh.getReturnType())) {
 					// This is a map class, let's just try to index it and see what happens
@@ -355,7 +374,7 @@ public class ExpEvaluator {
 					}
 					Object val = map.get(key);
 					if (val == null) {
-						throw new ExpError(null, 0, "Empty result indexing output: '%s'", names[names.length-1]);
+						throw new ExpError(null, 0, "Empty result indexing output: '%s'", outputName);
 					}
 					// Try to cast this back into something we understand
 					if (String.class.isAssignableFrom(val.getClass())) {
@@ -367,12 +386,12 @@ public class ExpEvaluator {
 					if (Double.class.isAssignableFrom(val.getClass())) {
 						return ExpResult.makeNumResult((Double)val, oh.unitType);
 					}
-					throw new ExpError(null, 0, "Output '%s' returned an unknown type: %s", names[names.length-1], val.getClass().getSimpleName());
+					throw new ExpError(null, 0, "Output '%s' returned an unknown type: %s", outputName, val.getClass().getSimpleName());
 				}
 
 				if (ArrayList.class.isAssignableFrom(oh.getReturnType())) {
 					if (indResult.type != ExpResType.NUMBER) {
-						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", names[names.length-1]);
+						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", outputName);
 					}
 					ArrayList<?> outList = oh.getValue(simTime, ArrayList.class);
 
@@ -383,7 +402,7 @@ public class ExpEvaluator {
 					return ExpResult.makeNumResult(value, oh.unitType);
 				} else if(DoubleVector.class.isAssignableFrom(oh.getReturnType())) {
 					if (indResult.type != ExpResType.NUMBER) {
-						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", names[names.length-1]);
+						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", outputName);
 					}
 					DoubleVector outList = oh.getValue(simTime, DoubleVector.class);
 
@@ -395,7 +414,7 @@ public class ExpEvaluator {
 					return ExpResult.makeNumResult(value, oh.unitType);
 				} else if(IntegerVector.class.isAssignableFrom(oh.getReturnType())) {
 					if (indResult.type != ExpResType.NUMBER) {
-						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", names[names.length-1]);
+						throw new ExpError(null, 0, "Output '%s' is not being indexed by a number", outputName);
 					}
 					IntegerVector outList = oh.getValue(simTime, IntegerVector.class);
 
@@ -406,7 +425,7 @@ public class ExpEvaluator {
 					Integer value = outList.get(index);
 					return ExpResult.makeNumResult(value, oh.unitType);
 				} else {
-					throw new ExpError(null, 0, "Output '%s' has an index and is not an array type output", names[names.length-1]);
+					throw new ExpError(null, 0, "Output '%s' has an index and is not an array type output", outputName);
 				}
 			} else {
 				Class<?> retType = oh.getReturnType();
@@ -430,85 +449,14 @@ public class ExpEvaluator {
 
 		}
 
-		private ExpValResult validateFinalClass(Class<?> retType, Class<? extends Unit> unitType) {
-			if (    OutputHandle.isNumericType(retType) ||
-			        retType != boolean.class ||
-			        retType != Boolean.class) {
-				return ExpValResult.makeValidRes(ExpResType.NUMBER, unitType);
-			} else if (retType == String.class) {
-				return ExpValResult.makeValidRes(ExpResType.STRING, DimensionlessUnit.class);
-			} else if (Entity.class.isAssignableFrom(retType)) {
-				return ExpValResult.makeValidRes(ExpResType.ENTITY, DimensionlessUnit.class);
-			} else if (retType == ExpResult.class) {
-				// This is another expression, so do the checks at runtime
-				return ExpValResult.makeUndecidableRes();
-			}
-
-			ExpError error = new ExpError(null, 0, "Output: %s does not return a numeric type", names[1]);
-			return ExpValResult.makeErrorRes(error);
-
-		}
-
 		@Override
-		public ExpValResult validate(boolean[] hasIndices) {
+		public ExpValResult validate(ExpValResult entValRes, ExpValResult indValRes) {
 
-			if (names.length == 2) {
-				String outputName = names[1];
-				OutputHandle oh = rootEnt.getOutputHandleInterned(outputName);
-				if (oh == null) {
-					ExpError error = new ExpError(null, 0, String.format("Could not find output '%s' on entity '%s'",
-							outputName, rootEnt.getName()));
-					return ExpValResult.makeErrorRes(error);
-				}
-				if (!hasIndices[1]) {
-					Class<?> retType = oh.getReturnType();
-					return validateFinalClass(retType, oh.getUnitType());
-
-				} else {
-					// Indexed final output
-					if (oh.getReturnType() == DoubleVector.class ||
-						oh.getReturnType() == IntegerVector.class) {
-						return ExpValResult.makeValidRes(ExpResType.NUMBER, oh.getUnitType());
-					}
-					if (oh.getReturnType() == ArrayList.class) {
-						//TODO: find out if we can determine the contained class without an instance or if type erasure prevents that
-						return ExpValResult.makeUndecidableRes();
-					}
-					// Maps are completely unpredictable currently
-					if (Map.class.isAssignableFrom(oh.getReturnType())) {
-						return ExpValResult.makeUndecidableRes();
-					}
-					ExpError error = new ExpError(null, 0, "Output: %s is not a known array type");
-					return ExpValResult.makeErrorRes(error);
-				}
+			if (entValRes.type != ExpResType.ENTITY) {
+				return ExpValResult.makeErrorRes(new ExpError(null, 0, "Can not evalutate output on non-entity type"));
 			}
 
-			// We have a 'chained' output, so now we must do best effort evaluation
-			// The only failures we can detect from here out are unit errors and using an existing output in an invalid
-			// way. Typos are not detectable because entities may have outputs from descendant classes or attributes
-
-			Class<?> klass = rootEnt.getClass();
-			for (int i = 1; i < names.length; ++i) {
-				Class<? extends Unit> unitType = OutputHandle.getStaticOutputUnitType(klass, names[i]);
-				klass = OutputHandle.getStaticOutputType(klass, names[i]);
-				if (klass == null) {
-					// Undecidable
-					return ExpValResult.makeUndecidableRes();
-				}
-
-				if (i == names.length - 1) {
-					// Last name in the chain, check that the type is a valid value type
-					return validateFinalClass(klass, unitType);
-				} else {
-					if (!Entity.class.isAssignableFrom(klass)) {
-						ExpError error = new ExpError(null, 0, "Output: '%s' must output an entity type", names[i]);
-						return ExpValResult.makeErrorRes(error);
-					}
-				}
-			}
-			// We should never get here
-			ExpError error = new ExpError(null, 0, "Validator logic error");
-			return ExpValResult.makeErrorRes(error);
+			return ExpValResult.makeUndecidableRes();
 		}
 
 	}
