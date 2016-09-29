@@ -124,7 +124,7 @@ public class EntityGenerator extends LinkedService {
 		super.startUp();
 
 		// Start generating entities
-		this.startAction();
+		this.startStep();
 	}
 
 	@Override
@@ -159,7 +159,7 @@ public class EntityGenerator extends LinkedService {
 	}
 
 	@Override
-	protected double getProcessingTime(double simTime) {
+	protected double getStepDuration(double simTime) {
 
 		// Use a separate input for the first arrival time
 		if (numberGenerated == 0)

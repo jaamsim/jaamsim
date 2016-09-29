@@ -100,7 +100,7 @@ public class Unpack extends LinkedService {
 	}
 
 	@Override
-	protected double getProcessingTime(double simTime) {
+	protected double getStepDuration(double simTime) {
 		double dur = 0.0;
 		if (numberRemoved < numberToRemove && container.getCount() > 0)
 			dur = serviceTime.getValue().getNextSample(simTime);

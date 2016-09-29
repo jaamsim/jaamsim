@@ -78,7 +78,7 @@ public class Server extends LinkedService {
 	}
 
 	@Override
-	protected double getProcessingTime(double simTime) {
+	protected double getStepDuration(double simTime) {
 		return serviceTime.getValue().getNextSample(simTime);
 	}
 

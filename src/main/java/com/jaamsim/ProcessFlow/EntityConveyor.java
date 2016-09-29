@@ -108,7 +108,7 @@ public class EntityConveyor extends LinkedService {
 		double simTime = this.getSimTime();
 
 		// Update the positions of the entities on the conveyor
-		this.updateProgress(simTime, this.getLastUpdateTime());
+		this.updateProgress();
 
 		// Update the travel time
 		this.updateTravelTime(simTime);
@@ -118,7 +118,7 @@ public class EntityConveyor extends LinkedService {
 		entryList.add(entry);
 
 		// If necessary, wake up the conveyor
-		this.startAction();
+		this.startStep();
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	@Override
-	protected double getProcessingTime(double simTime) {
+	protected double getStepDuration(double simTime) {
 
 		// Calculate the time for the first entity to reach the end of the conveyor
 		double dt = simTime - this.getLastUpdateTime();
@@ -151,15 +151,13 @@ public class EntityConveyor extends LinkedService {
 	}
 
 	@Override
-	public void updateProgress(double simTime, double lastTime) {
-		super.updateProgress(simTime, lastTime);
+	public void updateProgress(double dt) {
 
-		// Is the conveyor in operation?
-		if (!this.isBusy() || presentTravelTime == 0.0d)
+		if (presentTravelTime == 0.0d)
 			return;
 
 		// Calculate the fractional distance travelled since the last update
-		double frac = (simTime - lastTime)/presentTravelTime;
+		double frac = dt/presentTravelTime;
 		if (MathUtils.near(frac, 0.0d))
 			return;
 
