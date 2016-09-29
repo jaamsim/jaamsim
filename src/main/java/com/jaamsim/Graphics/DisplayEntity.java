@@ -919,7 +919,7 @@ protected final StringChoiceInput curveTypeInput;
 	 * @return local coordinates for the specified position
 	 */
 	public Vec3d getPositionOnPolyline(double simTime, double frac) {
-		ArrayList<Vec3d> curvePoints = getScreenPoints(simTime)[0].getCurvePoints();
+		ArrayList<Vec3d> curvePoints = this.getCurvePoints();
 
 		// Calculate the cumulative graphical lengths along the polyline
 		double[] cumLengthList = this.getCumulativeLengths(simTime);
@@ -961,7 +961,7 @@ protected final StringChoiceInput curveTypeInput;
 	 */
 	public ArrayList<Vec3d> getSubPolyline(double simTime, double frac0, double frac1) {
 
-		ArrayList<Vec3d> curvePoints = getScreenPoints(simTime)[0].getCurvePoints();
+		ArrayList<Vec3d> curvePoints = this.getCurvePoints();
 
 		ArrayList<Vec3d> ret = new ArrayList<>();
 
@@ -1025,7 +1025,7 @@ protected final StringChoiceInput curveTypeInput;
 	 * @return array of cumulative graphical lengths
 	 */
 	private double[] getCumulativeLengths(double simTime) {
-		ArrayList<Vec3d> curvePoints = getScreenPoints(simTime)[0].getCurvePoints();
+		ArrayList<Vec3d> curvePoints = this.getCurvePoints();
 
 		int n = curvePoints.size();
 		double[] cumLengthList = new double[n];
