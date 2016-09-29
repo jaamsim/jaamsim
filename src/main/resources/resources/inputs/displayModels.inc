@@ -1,23 +1,53 @@
-Define			ShapeModel				{ Pixels }
-Pixels			Shape					{ PIXELS }
-Define			ShapeModel				{ Rectangle }
-Rectangle		Shape					{ RECTANGLE }
-Define				ShapeModel			{ Circle }
-Circle				Shape				{ CIRCLE }
-Define				ShapeModel			{ Arrow2D }
-Arrow2D				Shape				{ ARROW2D }
-Define				ShapeModel			{ Triangle }
-Triangle			Shape				{ TRIANGLE }
+Define ObjectType {
+                    ArrowModel
+                    GraphModel
+                    PolylineModel
+                    TextModel
+                    ImageModel
+                    ColladaModel
+                    ShapeModel
+                  }
 
-Define				ShapeModel			{ BarGauge2D }
-BarGauge2D			Shape				{ BARGAUGE2D }
+ArrowModel      JavaClass { com.jaamsim.DisplayModels.ArrowModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
+GraphModel      JavaClass { com.jaamsim.DisplayModels.GraphModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
+PolylineModel   JavaClass { com.jaamsim.DisplayModels.PolylineModel            } Palette { 'Display Models' }    DragAndDrop { FALSE }
+TextModel       JavaClass { com.jaamsim.DisplayModels.TextModel                } Palette { 'Display Models' }    DragAndDrop { FALSE }
+ImageModel      JavaClass { com.jaamsim.DisplayModels.ImageModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
+ColladaModel    JavaClass { com.jaamsim.DisplayModels.ColladaModel             } Palette { 'Display Models' }    DragAndDrop { FALSE }
+ShapeModel      JavaClass { com.jaamsim.DisplayModels.ShapeModel               } Palette { 'Display Models' }    DragAndDrop { FALSE }
 
-Define				ColladaModel		{ CrossHairs }
-CrossHairs			ColladaFile			{ '<res>/shapes/CrossHairs.dae' }
+Define ShapeModel {
+                    Pixels
+                    Rectangle
+                    Circle
+                    Arrow2D
+                    Triangle
+                    BarGauge2D
+                  }
 
-Define		ColladaModel	{ Cube }
-Cube		ColladaFile		{ '<res>/shapes/cube.dae' }
-DisplayEntity	DefaultDisplayModel { Cube }
+Pixels          Shape { PIXELS     }
+Rectangle       Shape { RECTANGLE  }
+Circle          Shape { CIRCLE     }
+Arrow2D         Shape { ARROW2D    }
+Triangle        Shape { TRIANGLE   }
+BarGauge2D      Shape { BARGAUGE2D }
 
-Define		ColladaModel	{ Sphere }
-Sphere		ColladaFile		{ '<res>/shapes/Sphere.dae' }
+Define ColladaModel {
+                      Cube
+                      Sphere
+                      CrossHairs
+                      RegionModelDefault
+                    }
+
+Cube               ColladaFile { '<res>/shapes/cube.dae'       }
+Sphere             ColladaFile { '<res>/shapes/Sphere.dae'     }
+CrossHairs         ColladaFile { '<res>/shapes/CrossHairs.dae' }
+RegionModelDefault ColladaFile { <res>/shapes/axis_text.dae }
+
+Define ArrowModel     { ArrowModelDefault          }
+Define GraphModel     { GraphModelDefault          }
+Define PolylineModel  { PolylineModelDefault       }
+Define TextModel      { TextModelDefault  EntityLabelModel  InputBoxModel }
+
+Define  ImageModel { VideoRecorderIconModel }
+VideoRecorderIconModel ImageFile { '<res>/images/VideoRecorder-256.png' }
