@@ -857,10 +857,12 @@ protected final StringChoiceInput curveTypeInput;
 
 	private final Object screenPointLock = new Object();
 	private PolylineInfo[] cachedPointInfo;
+	private ArrayList<Vec3d> cachedCurvePoints;
 
 	protected final void invalidateScreenPoints() {
 		synchronized(screenPointLock) {
 			cachedPointInfo = null;
+			cachedCurvePoints = null;
 		}
 	}
 
@@ -882,6 +884,33 @@ protected final StringChoiceInput curveTypeInput;
 		synchronized(screenPointLock) {
 			return new ArrayList<>(pointsInput.getValue());
 		}
+	}
+
+	public ArrayList<Vec3d> getCurvePoints() {
+		synchronized(screenPointLock) {
+			if (cachedCurvePoints == null)
+				cachedCurvePoints = this.buildCurvePoints();
+			return cachedCurvePoints;
+		}
+	}
+
+	private ArrayList<Vec3d> buildCurvePoints() {
+		ArrayList<Vec3d> ret = null;
+		switch (this.getCurveType()) {
+		case LINEAR:
+			ret = getPoints();
+			break;
+		case BEZIER:
+			ret = PolylineInfo.getBezierPoints(getPoints());
+			break;
+		case SPLINE:
+			ret = PolylineInfo.getSplinePoints(getPoints());
+			break;
+		default:
+			assert(false);
+			error("Invalid CurveType");
+		}
+		return ret;
 	}
 
 	/**
