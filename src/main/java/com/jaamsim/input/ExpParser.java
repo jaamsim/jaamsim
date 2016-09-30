@@ -50,8 +50,8 @@ public class ExpParser {
 	}
 
 	public interface OutputResolver {
-		public ExpResult resolve(EvalContext ec, ExpResult ent, ExpResult index) throws ExpError;
-		public ExpValResult validate(ExpValResult entValRes, ExpValResult indValRes);
+		public ExpResult resolve(EvalContext ec, ExpResult ent) throws ExpError;
+		public ExpValResult validate(ExpValResult entValRes);
 	}
 
 	public interface ParseContext {
@@ -163,19 +163,17 @@ public class ExpParser {
 
 	public static class ResolveOutput extends ExpNode {
 		public ExpNode entNode;
-		public ExpNode index;
 		public String outputName;
 
 		private final OutputResolver resolver;
 
-		public ResolveOutput(ParseContext context, String outputName, ExpNode entNode, ExpNode index, Expression exp, int pos) throws ExpError {
+		public ResolveOutput(ParseContext context, String outputName, ExpNode entNode, Expression exp, int pos) throws ExpError {
 			super(context, exp, pos);
 
 			this.entNode = entNode;
-			this.index = index;
 			this.outputName = outputName;
 
-			if (entNode instanceof Constant && index == null) {
+			if (entNode instanceof Constant) {
 				this.resolver = context.getConstOutputResolver(entNode.evaluate(null), outputName);
 			} else {
 				this.resolver = context.getOutputResolver(outputName);
@@ -185,34 +183,18 @@ public class ExpParser {
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
 			ExpResult ent = entNode.evaluate(ec);
-			ExpResult indResult = null;
-			if (index != null)
-				indResult = index.evaluate(ec);
 
-			return resolver.resolve(ec, ent, indResult);
+			return resolver.resolve(ec, ent);
 		}
 		@Override
 		public ExpValResult validate() {
 			ExpValResult entValRes = entNode.validate();
-			ExpValResult indValRes = null;
-			if (index != null)
-				indValRes = index.validate();
 
-			if (entValRes.state == ExpValResult.State.ERROR) {
+			if (    entValRes.state == ExpValResult.State.ERROR ||
+			        entValRes.state == ExpValResult.State.UNDECIDABLE) {
 				return entValRes;
 			}
-			if (indValRes != null && indValRes.state == ExpValResult.State.ERROR) {
-				return indValRes;
-			}
-
-			if (entValRes.state == ExpValResult.State.UNDECIDABLE) {
-				return entValRes;
-			}
-			if (indValRes != null && indValRes.state == ExpValResult.State.UNDECIDABLE) {
-				return indValRes;
-			}
-
-			return resolver.validate(entValRes, indValRes);
+			return resolver.validate(entValRes);
 		}
 
 		@Override
@@ -220,10 +202,64 @@ public class ExpParser {
 			entNode.walk(w);
 			entNode = w.updateRef(entNode);
 
-			if (index != null) {
-				index.walk(w);
-				index = w.updateRef(index);
+			w.visit(this);
+		}
+	}
+
+	private static class IndexCollection extends ExpNode {
+		public ExpNode collection;
+		public ExpNode index;
+
+		public IndexCollection(ParseContext context, ExpNode collection, ExpNode index, Expression exp, int pos) throws ExpError {
+			super(context, exp, pos);
+
+			this.collection = collection;
+			this.index = index;
+		}
+
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			ExpResult colRes = collection.evaluate(ec);
+			ExpResult indRes = index.evaluate(ec);
+
+			if (colRes.type != ExpResType.COLLECTION) {
+				throw new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection type.");
 			}
+			return colRes.colVal.index(indRes);
+		}
+		@Override
+		public ExpValResult validate() {
+			ExpValResult colValRes = collection.validate();
+			ExpValResult indValRes = index.validate();
+
+			if (colValRes.state == ExpValResult.State.ERROR) {
+				return colValRes;
+			}
+			if (indValRes.state == ExpValResult.State.ERROR) {
+				return indValRes;
+			}
+			if (colValRes.state == ExpValResult.State.UNDECIDABLE) {
+				return colValRes;
+			}
+			if (indValRes.state == ExpValResult.State.UNDECIDABLE) {
+				return indValRes;
+			}
+
+			if (colValRes.type != ExpResType.COLLECTION) {
+				return ExpValResult.makeErrorRes(new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection type."));
+			}
+
+			// TODO: validate collection types
+			return ExpValResult.makeUndecidableRes();
+		}
+
+		@Override
+		void walk(ExpressionWalker w) throws ExpError {
+			collection.walk(w);
+			collection = w.updateRef(collection);
+
+			index.walk(w);
+			index = w.updateRef(index);
 
 			w.visit(this);
 		}
@@ -2195,8 +2231,6 @@ public class ExpParser {
 				break;
 			}
 
-			int outputPos = peeked.pos;
-
 			// Next token is a '.' so parse a ResolveOutput node
 
 			tokens.next(); // consume
@@ -2205,19 +2239,17 @@ public class ExpParser {
 				throw new ExpError(exp.source, peeked.pos, "Expected Identifier after '.'");
 			}
 
-
-			ExpNode indexExp = null;
+			curExp = new ResolveOutput(context, outputName.value, curExp, exp, peeked.pos);
 
 			peeked = tokens.peek();
 			if (peeked != null && peeked.value.equals("(")) {
 				// Optional index
 				tokens.next(); // consume
-				indexExp = parseExp(context, tokens, 0, exp);
+				ExpNode indexExp = parseExp(context, tokens, 0, exp);
 				tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
+
+				curExp = new IndexCollection(context, curExp, indexExp, exp, peeked.pos);
 			}
-
-			curExp = new ResolveOutput(context, outputName.value, curExp, indexExp, exp, outputPos);
-
 		}
 
 		return curExp;
