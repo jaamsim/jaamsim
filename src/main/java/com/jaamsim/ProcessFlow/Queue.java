@@ -33,9 +33,9 @@ import com.jaamsim.events.EventHandle;
 import com.jaamsim.events.EventManager;
 import com.jaamsim.events.ProcessTarget;
 import com.jaamsim.input.BooleanInput;
-import com.jaamsim.input.EntityInput;
 import com.jaamsim.input.Input;
 import com.jaamsim.input.IntegerInput;
+import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.input.Output;
 import com.jaamsim.input.ValueInput;
@@ -82,7 +82,7 @@ public class Queue extends LinkedComponent {
 
 	@Keyword(description = "The object to which an entity will be sent if it reneges.",
 	         exampleList = {"Branch1"})
-	protected final EntityInput<LinkedComponent> renegeDestination;
+	protected final InterfaceEntityInput<Linkable> renegeDestination;
 
 	@Keyword(description = "The amount of graphical space shown between DisplayEntity objects in the queue.",
 	         exampleList = {"1 m"})
@@ -140,7 +140,7 @@ public class Queue extends LinkedComponent {
 		renegeCondition.setValidRange(0.0d, 1.0d);
 		this.addInput(renegeCondition);
 
-		renegeDestination = new EntityInput<>(LinkedComponent.class, "RenegeDestination", "Key Inputs", null);
+		renegeDestination = new InterfaceEntityInput<>(Linkable.class, "RenegeDestination", "Key Inputs", null);
 		this.addInput(renegeDestination);
 
 		spacing = new ValueInput("Spacing", "Key Inputs", 0.0d);

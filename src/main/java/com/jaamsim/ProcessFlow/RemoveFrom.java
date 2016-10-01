@@ -18,7 +18,7 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Samples.SampleConstant;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.input.EntityInput;
+import com.jaamsim.input.InterfaceEntityInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -30,7 +30,7 @@ public class RemoveFrom extends Unpack {
 
 	@Keyword(description = "The next object to which the processed EntityContainer is passed.",
 			exampleList = {"Queue1"})
-	protected final EntityInput<LinkedComponent> nextForContainers;
+	protected final InterfaceEntityInput<Linkable> nextForContainers;
 
 	{
 		numberOfEntities = new SampleInput("NumberOfEntities", "Key Inputs", new SampleConstant(1.0));
@@ -39,7 +39,7 @@ public class RemoveFrom extends Unpack {
 		numberOfEntities.setValidRange(0, Double.POSITIVE_INFINITY);
 		this.addInput(numberOfEntities);
 
-		nextForContainers = new EntityInput<>(LinkedComponent.class, "NextForContainers", "Key Inputs", null);
+		nextForContainers = new InterfaceEntityInput<>(Linkable.class, "NextForContainers", "Key Inputs", null);
 		nextForContainers.setRequired(true);
 		this.addInput(nextForContainers);
 	}

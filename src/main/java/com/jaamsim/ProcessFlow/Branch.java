@@ -18,7 +18,7 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.Samples.SampleInput;
-import com.jaamsim.input.EntityListInput;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 import com.jaamsim.units.DimensionlessUnit;
 
@@ -26,7 +26,7 @@ public class Branch extends LinkedComponent {
 
 	@Keyword(description = "The list of possible next objects to which the processed DisplayEntity can be passed.",
 	         exampleList = {"Queue1 Queue2"})
-	protected final EntityListInput<LinkedComponent> nextComponentList;
+	protected final InterfaceEntityListInput<Linkable> nextComponentList;
 
 	@Keyword(description = "A number that determines the choice of next component:\n" +
 			"     1 = first branch, 2 = second branch, etc.\n" +
@@ -37,7 +37,7 @@ public class Branch extends LinkedComponent {
 	{
 		nextComponent.setHidden(true);
 
-		nextComponentList = new EntityListInput<>(LinkedComponent.class, "NextComponentList", "Key Inputs", null);
+		nextComponentList = new InterfaceEntityListInput<>(Linkable.class, "NextComponentList", "Key Inputs", null);
 		nextComponentList.setRequired(true);
 		this.addInput(nextComponentList);
 

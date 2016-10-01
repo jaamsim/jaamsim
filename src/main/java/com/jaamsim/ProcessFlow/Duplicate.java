@@ -18,7 +18,7 @@ package com.jaamsim.ProcessFlow;
 
 import com.jaamsim.Graphics.DisplayEntity;
 import com.jaamsim.basicsim.Entity;
-import com.jaamsim.input.EntityListInput;
+import com.jaamsim.input.InterfaceEntityListInput;
 import com.jaamsim.input.Keyword;
 
 public class Duplicate extends LinkedComponent {
@@ -26,10 +26,10 @@ public class Duplicate extends LinkedComponent {
 	@Keyword(description = "The list of components that will receive the duplicated entities. " +
 			"One duplicated entity will be sent to each entry in the list.",
 	         exampleList = {"Assign1 Queue1"})
-	protected final EntityListInput<LinkedComponent> targetComponentList;
+	protected final InterfaceEntityListInput<Linkable> targetComponentList;
 
 	{
-		targetComponentList = new EntityListInput<>( LinkedComponent.class, "TargetComponentList", "Key Inputs", null);
+		targetComponentList = new InterfaceEntityListInput<>( Linkable.class, "TargetComponentList", "Key Inputs", null);
 		targetComponentList.setUnique(false);
 		targetComponentList.setRequired(true);
 		this.addInput( targetComponentList);
@@ -43,7 +43,7 @@ public class Duplicate extends LinkedComponent {
 
 		// Make the duplicates and send them to the targets
 		int n = 1;
-		for (LinkedComponent target : targetComponentList.getValue()) {
+		for (Linkable target : targetComponentList.getValue()) {
 
 			// Create the duplicated entity
 			StringBuilder sb = new StringBuilder();
