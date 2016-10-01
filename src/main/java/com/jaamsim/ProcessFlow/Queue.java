@@ -766,7 +766,10 @@ public class Queue extends LinkedComponent {
 		IntegerVector ret = new IntegerVector(itemSet.size());
 		Iterator<QueueEntry> itr = itemSet.iterator();
 		while (itr.hasNext()) {
-			ret.add(itr.next().match);
+			Integer val = itr.next().match;
+			if (val != null) {
+				ret.add(val);
+			}
 		}
 		return ret;
 	}
