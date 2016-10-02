@@ -17,7 +17,7 @@ Define ObjectType {
 
 View                  JavaClass { com.jaamsim.ui.View                                } Palette { 'Graphics Objects' }                                           DragAndDrop { FALSE }
 Region                JavaClass { com.jaamsim.Graphics.Region                        } Palette { 'Graphics Objects' } DefaultDisplayModel { RegionModelDefault       } IconFile { '<res>/images/Region-24.png' } DefaultSize { 1.125000 1.1568242 1.1266404 m } DefaultAlignment { -0.4393409 -0.4410096 -0.4394292 }
-DisplayEntity         JavaClass { com.jaamsim.Graphics.DisplayEntity                 } Palette { 'Graphics Objects' }                                                  IconFile { '<res>/images/DisplayEntity-24.png' }
+DisplayEntity         JavaClass { com.jaamsim.Graphics.DisplayEntity                 } Palette { 'Graphics Objects' } DefaultDisplayModel { Cube                     } IconFile { '<res>/images/DisplayEntity-24.png' }
 Text                  JavaClass { com.jaamsim.Graphics.Text                          } Palette { 'Graphics Objects' } DefaultDisplayModel { TextModelDefault         } IconFile { '<res>/images/Text-24.png' }
 EntityLabel           JavaClass { com.jaamsim.Graphics.EntityLabel                   } Palette { 'Graphics Objects' } DefaultDisplayModel { EntityLabelModel         } DragAndDrop { FALSE }
 InputBox              JavaClass { com.jaamsim.Graphics.InputBox                      } Palette { 'Graphics Objects' } DefaultDisplayModel { InputBoxModel            } IconFile { '<res>/images/InputValue-24.png' }
