@@ -450,7 +450,7 @@ public abstract class Input<T> {
 			if( units != null )
 				return aClass.cast( Input.parseDouble( data, minValue, maxValue, units) );
 			else{
-				DoubleVector tmp = Input.parseDoubles( data, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType );
+				DoubleVector tmp = Input.parseDoubles(data, minValue, maxValue, unitType);
 				Input.assertCount(tmp, 1);
 				return aClass.cast( tmp.get(0));
 			}
@@ -467,7 +467,8 @@ public abstract class Input<T> {
 				return aClass.cast( value );
 			}
 			else {
-				DoubleVector tmp = Input.parseDoubles( data, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unitType );
+				DoubleVector tmp = Input.parseDoubles(data, minValue, maxValue, unitType);
+				Input.assertCountRange(tmp, minCount, maxCount);
 				return aClass.cast( tmp );
 			}
 		}
@@ -934,7 +935,7 @@ public abstract class Input<T> {
 	/**
 	 * Convert the given String to a double including a unit conversion, if necessary
 	 */
-	public static double parseDouble(List<String> input, double minValue, double maxValue, String defaultUnitString)
+	private static double parseDouble(List<String> input, double minValue, double maxValue, String defaultUnitString)
 	throws InputErrorException {
 		Input.assertCountRange(input, 1, 2);
 
@@ -1114,7 +1115,7 @@ public abstract class Input<T> {
 	/**
 	 * Convert the given input to a DoubleVector including a unit conversion, if necessary
 	 */
-	public static DoubleVector parseDoubleVector(List<String> data, double minValue, double maxValue, String defaultUnitString)
+	private static DoubleVector parseDoubleVector(List<String> data, double minValue, double maxValue, String defaultUnitString)
 	throws InputErrorException {
 		// If there is more than one value, and the last one is not a number, then assume it is a unit
 		String unitString = data.get( data.size()-1 );
