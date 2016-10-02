@@ -58,14 +58,8 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		noKeyValue = inp.noKeyValue;
 	}
 
-	private String unitString = "";
-	public void setUnits(String units) {
-		unitString = units;
-	}
-
 	public void setUnitType(Class<? extends Unit> units) {
 		unitType = units;
-		unitString = null;
 	}
 
 	@Override
@@ -87,7 +81,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			noKeyValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
+			noKeyValue = Input.parse( input, valClass, minValue, maxValue, minCount, maxCount, unitType );
 			return;
 		}
 
@@ -97,7 +91,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 		ArrayList<K2> list2 = Input.parseEntityList(input.subList(1, 2), key2Class, true);
 
 		// Determine the value
-		V val = Input.parse( input.subList(2,input.size()), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
+		V val = Input.parse( input.subList(2,input.size()), valClass, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {
@@ -153,7 +147,7 @@ public class TwoKeyInput<K1 extends Entity, K2 extends Entity, V> extends Input<
 
 	@Override
 	public String getDefaultString() {
-		return getDefaultStringForKeyInputs(unitType, unitString);
+		return getDefaultStringForKeyInputs(unitType);
 	}
 
 	@Override

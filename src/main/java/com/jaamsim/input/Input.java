@@ -444,33 +444,18 @@ public abstract class Input<T> {
 		}
 	}
 
-	public static <T> T parse(List<String> data, Class<T> aClass, String units, double minValue, double maxValue, int minCount, int maxCount, Class<? extends Unit> unitType) {
+	public static <T> T parse(List<String> data, Class<T> aClass, double minValue, double maxValue, int minCount, int maxCount, Class<? extends Unit> unitType) {
 
 		if( aClass == Double.class ) {
-			if( units != null )
-				return aClass.cast( Input.parseDouble( data, minValue, maxValue, units) );
-			else{
-				DoubleVector tmp = Input.parseDoubles(data, minValue, maxValue, unitType);
-				Input.assertCount(tmp, 1);
-				return aClass.cast( tmp.get(0));
-			}
+			DoubleVector tmp = Input.parseDoubles(data, minValue, maxValue, unitType);
+			Input.assertCount(tmp, 1);
+			return aClass.cast( tmp.get(0));
 		}
 
 		if( aClass == DoubleVector.class ) {
-			if( units != null ){
-				DoubleVector value = Input.parseDoubleVector( data, minValue, maxValue, units);
-				if (value.size() < minCount || value.size() > maxCount) {
-					if (maxCount == Integer.MAX_VALUE)
-						throw new InputErrorException(INP_ERR_RANGECOUNTMIN, minCount, data);
-					throw new InputErrorException(INP_ERR_RANGECOUNT, minCount, maxCount, data);
-				}
-				return aClass.cast( value );
-			}
-			else {
-				DoubleVector tmp = Input.parseDoubles(data, minValue, maxValue, unitType);
-				Input.assertCountRange(tmp, minCount, maxCount);
-				return aClass.cast( tmp );
-			}
+			DoubleVector tmp = Input.parseDoubles(data, minValue, maxValue, unitType);
+			Input.assertCountRange(tmp, minCount, maxCount);
+			return aClass.cast( tmp );
 		}
 
 		if( Entity.class.isAssignableFrom(aClass) ) {
@@ -933,41 +918,6 @@ public abstract class Input<T> {
 	}
 
 	/**
-	 * Convert the given String to a double including a unit conversion, if necessary
-	 */
-	private static double parseDouble(List<String> input, double minValue, double maxValue, String defaultUnitString)
-	throws InputErrorException {
-		Input.assertCountRange(input, 1, 2);
-
-		// Warn if the default unit is assumed by the input data
-		if( input.size() == 1 && defaultUnitString.length() > 0 )
-			InputAgent.logWarning( "Missing units.  Assuming %s.", defaultUnitString );
-
-		// If there are two values, then assume the last one is a unit
-		double conversionFactor = 1.0;
-		if( input.size() == 2 ) {
-
-			// Determine the units
-			Unit unit = Input.parseUnit( input.get(1) );
-
-			// Determine the default units
-			Unit defaultUnit = Input.tryParseUnit( defaultUnitString, Unit.class );
-			if( defaultUnit == null ) {
-				throw new InputErrorException( "Could not determine default units " + defaultUnitString );
-			}
-
-			if (defaultUnit.getClass() != unit.getClass())
-				throw new InputErrorException( "Cannot convert from %s to %s", defaultUnit.getName(), unit.getName());
-
-			// Determine the conversion factor from units to default units
-			conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
-		}
-
-		// Parse and convert the value
-		return Input.parseDouble( input.get(0), minValue, maxValue, conversionFactor);
-	}
-
-	/**
 	 * Convert the given input to a DoubleVector and apply the given conversion factor
 	 */
 	public static DoubleVector parseDoubleVector(List<String> input, double minValue, double maxValue, double factor)
@@ -1110,46 +1060,6 @@ public abstract class Input<T> {
 			}
 		}
 		return temp;
-	}
-
-	/**
-	 * Convert the given input to a DoubleVector including a unit conversion, if necessary
-	 */
-	private static DoubleVector parseDoubleVector(List<String> data, double minValue, double maxValue, String defaultUnitString)
-	throws InputErrorException {
-		// If there is more than one value, and the last one is not a number, then assume it is a unit
-		String unitString = data.get( data.size()-1 );
-		if( data.size() > 1 && !Input.isDouble(unitString) ) {
-
-			// Determine the units
-			Unit unit = Input.parseUnit(unitString);
-
-			// Determine the default units
-			Unit defaultUnit = Input.tryParseUnit( defaultUnitString, Unit.class );
-			if( defaultUnit == null ) {
-				throw new InputErrorException( "Could not determine default units " + defaultUnitString );
-			}
-
-			if (defaultUnit.getClass() != unit.getClass())
-				throw new InputErrorException( "Cannot convert from %s to %s", defaultUnit.getName(), unit.getName());
-
-			// Determine the conversion factor to the default units
-			double conversionFactor = unit.getConversionFactorToUnit( defaultUnit );
-
-			// grab all but the final argument (the unit)
-			ArrayList<String> numericData = new ArrayList<>(data.size() - 1);
-			for (int i = 0; i < data.size() -1; i++)
-				numericData.add(data.get(i));
-
-			return Input.parseDoubleVector( numericData, minValue, maxValue, conversionFactor);
-		}
-		else {
-			if( defaultUnitString.length() > 0 )
-				InputAgent.logWarning( "Missing units.  Assuming %s.", defaultUnitString );
-		}
-
-		// Parse and convert the values
-		return Input.parseDoubleVector( data, minValue, maxValue, 1.0d);
 	}
 
 	public static String parseString(String input, ArrayList<String> validList)
@@ -1606,7 +1516,7 @@ public abstract class Input<T> {
 			return null;
 	}
 
-	public String getDefaultStringForKeyInputs(Class<? extends Unit> unitType, String unitString) {
+	public String getDefaultStringForKeyInputs(Class<? extends Unit> unitType) {
 
 		if (defValue == null)
 			return "";
@@ -1659,14 +1569,8 @@ public abstract class Input<T> {
 			return "?????";
 		}
 
-		if (unitString==null) {
-			tmp.append(SEPARATOR);
-			tmp.append(Unit.getSIUnit(unitType));
-		}
-		else {
-			tmp.append(SEPARATOR);
-			tmp.append(unitString);
-		}
+		tmp.append(SEPARATOR);
+		tmp.append(Unit.getSIUnit(unitType));
 		return tmp.toString();
 	}
 }

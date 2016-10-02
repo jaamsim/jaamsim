@@ -60,14 +60,8 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		noKeyValue = inp.noKeyValue;
 	}
 
-	private String unitString = "";
-	public void setUnits(String units) {
-		unitString = units;
-	}
-
 	public void setUnitType(Class<? extends Unit> units) {
 		unitType = units;
-		unitString = null;
 	}
 
 	@Override
@@ -89,7 +83,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 			ent2 = Input.tryParseEntity( input.get( 1 ), Entity.class );
 		}
 		if( ent1 == null || ent2 == null ) {
-			noKeyValue = Input.parse( input, valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
+			noKeyValue = Input.parse( input, valClass, minValue, maxValue, minCount, maxCount, unitType );
 			return;
 		}
 
@@ -115,7 +109,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 		}
 
 		// Determine the value
-		V val = Input.parse( input.subList(numKeys,input.size()), valClass, unitString, minValue, maxValue, minCount, maxCount, unitType );
+		V val = Input.parse( input.subList(numKeys,input.size()), valClass, minValue, maxValue, minCount, maxCount, unitType );
 
 		// Set the value for the given keys
 		for( int i = 0; i < list.size(); i++ ) {
@@ -204,7 +198,7 @@ public class TwoOrThreeKeyInput<K1 extends Entity, K2 extends Entity, K3 extends
 
 	@Override
 	public String getDefaultString() {
-		return getDefaultStringForKeyInputs(unitType, unitString);
+		return getDefaultStringForKeyInputs(unitType);
 	}
 
 	@Override
