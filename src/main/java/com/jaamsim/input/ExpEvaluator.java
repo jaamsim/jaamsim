@@ -273,6 +273,10 @@ public class ExpEvaluator {
 
 			OutputHandle oh = constEnt.entVal.getOutputHandle(name);
 
+			if (oh == null) {
+				throw new ExpError(null, 0, "Could not find output '%s' on entity '%s'", name, constEnt.entVal.getName());
+			}
+
 			if (oh.canCache()) {
 				return new CachedResolver(oh);
 			} else {
