@@ -49,9 +49,9 @@ public class ExpParser {
 		Class<? extends Unit> unitType;
 	}
 
-	public interface VarResolver {
-		public ExpResult resolve(EvalContext ec, ExpResult[] indices) throws ExpError;
-		public ExpValResult	validate(boolean[] hasIndices);
+	public interface OutputResolver {
+		public ExpResult resolve(EvalContext ec, ExpResult ent) throws ExpError;
+		public ExpValResult validate(ExpValResult entValRes);
 	}
 
 	public interface ParseContext {
@@ -59,7 +59,9 @@ public class ExpParser {
 		public Class<? extends Unit> multUnitTypes(Class<? extends Unit> a, Class<? extends Unit> b);
 		public Class<? extends Unit> divUnitTypes(Class<? extends Unit> num, Class<? extends Unit> denom);
 
-		public VarResolver getVarResolver(String[] names, boolean[] hasIndices) throws ExpError;
+		public ExpResult getValFromName(String name) throws ExpError;
+		public OutputResolver getOutputResolver(String name) throws ExpError;
+		public OutputResolver getConstOutputResolver(ExpResult constEnt, String name) throws ExpError;
 		public void validateAssignmentDest(String[] destination) throws ExpError;
 	}
 
@@ -159,46 +161,110 @@ public class ExpParser {
 		}
 	}
 
-	public static class Variable extends ExpNode {
-		//private final String[] vals;
-		private final ExpNode[] indexExps;
-		private final VarResolver resolver;
-		public Variable(ParseContext context, String[] vals, ExpNode[] indexExps, Expression exp, int pos) throws ExpError {
+	public static class ResolveOutput extends ExpNode {
+		public ExpNode entNode;
+		public String outputName;
+
+		private final OutputResolver resolver;
+
+		public ResolveOutput(ParseContext context, String outputName, ExpNode entNode, Expression exp, int pos) throws ExpError {
 			super(context, exp, pos);
-			boolean[] hasIndices = new boolean[indexExps.length];
-			for (int i = 0; i < indexExps.length; ++i) {
-				hasIndices[i] = indexExps[i] != null;
+
+			this.entNode = entNode;
+			this.outputName = outputName;
+
+			if (entNode instanceof Constant) {
+				this.resolver = context.getConstOutputResolver(entNode.evaluate(null), outputName);
+			} else {
+				this.resolver = context.getOutputResolver(outputName);
 			}
-			this.resolver = context.getVarResolver(vals, hasIndices);
-			this.indexExps = indexExps;
 		}
 
 		@Override
 		public ExpResult evaluate(EvalContext ec) throws ExpError {
-			if (indexExps == null)
-				return resolver.resolve(ec, null);
+			ExpResult ent = entNode.evaluate(ec);
 
-			ExpResult[] indices = new ExpResult[indexExps.length];
-			for (int i = 0; i < indexExps.length; ++i) {
-				if (indexExps[i] != null)
-					indices[i] = indexExps[i].evaluate(ec);
-			}
-			return resolver.resolve(ec, indices);
+			return resolver.resolve(ec, ent);
 		}
 		@Override
 		public ExpValResult validate() {
-			boolean[] hasIndices = new boolean[indexExps.length];
-			for (int i = 0; i < indexExps.length; ++i) {
-				hasIndices[i] = indexExps[i] != null;
+			ExpValResult entValRes = entNode.validate();
+
+			if (    entValRes.state == ExpValResult.State.ERROR ||
+			        entValRes.state == ExpValResult.State.UNDECIDABLE) {
+				return entValRes;
 			}
-			return resolver.validate(hasIndices);
+			return resolver.validate(entValRes);
 		}
 
 		@Override
 		void walk(ExpressionWalker w) throws ExpError {
+			entNode.walk(w);
+			entNode = w.updateRef(entNode);
+
 			w.visit(this);
 		}
 	}
+
+	private static class IndexCollection extends ExpNode {
+		public ExpNode collection;
+		public ExpNode index;
+
+		public IndexCollection(ParseContext context, ExpNode collection, ExpNode index, Expression exp, int pos) throws ExpError {
+			super(context, exp, pos);
+
+			this.collection = collection;
+			this.index = index;
+		}
+
+		@Override
+		public ExpResult evaluate(EvalContext ec) throws ExpError {
+			ExpResult colRes = collection.evaluate(ec);
+			ExpResult indRes = index.evaluate(ec);
+
+			if (colRes.type != ExpResType.COLLECTION) {
+				throw new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection type.");
+			}
+			return colRes.colVal.index(indRes);
+		}
+		@Override
+		public ExpValResult validate() {
+			ExpValResult colValRes = collection.validate();
+			ExpValResult indValRes = index.validate();
+
+			if (colValRes.state == ExpValResult.State.ERROR) {
+				return colValRes;
+			}
+			if (indValRes.state == ExpValResult.State.ERROR) {
+				return indValRes;
+			}
+			if (colValRes.state == ExpValResult.State.UNDECIDABLE) {
+				return colValRes;
+			}
+			if (indValRes.state == ExpValResult.State.UNDECIDABLE) {
+				return indValRes;
+			}
+
+			if (colValRes.type != ExpResType.COLLECTION) {
+				return ExpValResult.makeErrorRes(new ExpError(exp.source, tokenPos, "Expression does not evaluate to a collection type."));
+			}
+
+			// TODO: validate collection types
+			return ExpValResult.makeUndecidableRes();
+		}
+
+		@Override
+		void walk(ExpressionWalker w) throws ExpError {
+			collection.walk(w);
+			collection = w.updateRef(collection);
+
+			index.walk(w);
+			index = w.updateRef(index);
+
+			w.visit(this);
+		}
+	}
+
 
 	private static class UnaryOp extends ExpNode {
 		public ExpNode subExp;
@@ -2155,11 +2221,9 @@ public class ExpParser {
 		return ret;
 	}
 
-	private static Variable parseVariable(ParseContext context, ExpTokenizer.Token firstName, TokenList tokens, Expression exp, int pos) throws ExpError {
-		ArrayList<String> vals = new ArrayList<>();
-		ArrayList<ExpNode> indexExps = new ArrayList<>();
-		vals.add(firstName.value.intern());
-		indexExps.add(null);
+	private static ExpNode parseVariable(ParseContext context, ExpTokenizer.Token firstName, TokenList tokens, Expression exp, int pos) throws ExpError {
+
+		ExpNode curExp = new Constant(context, context.getValFromName(firstName.value), exp, pos);
 		while (true) {
 
 			ExpTokenizer.Token peeked = tokens.peek();
@@ -2167,38 +2231,28 @@ public class ExpParser {
 				break;
 			}
 
-			// Next token is a '.' so parse another name
+			// Next token is a '.' so parse a ResolveOutput node
 
 			tokens.next(); // consume
-			ExpTokenizer.Token nextName = tokens.next();
-			if (nextName == null || nextName.type != ExpTokenizer.VAR_TYPE) {
+			ExpTokenizer.Token outputName = tokens.next();
+			if (outputName == null || outputName.type != ExpTokenizer.VAR_TYPE) {
 				throw new ExpError(exp.source, peeked.pos, "Expected Identifier after '.'");
 			}
 
-
-			vals.add(nextName.value.intern());
+			curExp = new ResolveOutput(context, outputName.value, curExp, exp, peeked.pos);
 
 			peeked = tokens.peek();
 			if (peeked != null && peeked.value.equals("(")) {
 				// Optional index
 				tokens.next(); // consume
-				indexExps.add(parseExp(context, tokens, 0, exp));
+				ExpNode indexExp = parseExp(context, tokens, 0, exp);
 				tokens.expect(ExpTokenizer.SYM_TYPE, ")", exp.source);
-			} else {
-				indexExps.add(null);
+
+				curExp = new IndexCollection(context, curExp, indexExp, exp, peeked.pos);
 			}
-
-
 		}
 
-		assert(vals.size() == indexExps.size());
-		String[] namesArray = new String[vals.size()];
-		ExpNode[] indexArray = new ExpNode[indexExps.size()];
-		for (int i = 0; i < namesArray.length; i++) {
-			namesArray[i] = vals.get(i);
-			indexArray[i] = indexExps.get(i);
-		}
-		return new Variable(context, namesArray, indexArray, exp, pos);
+		return curExp;
 	}
 
 }

@@ -20,12 +20,14 @@ package com.jaamsim.input;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.Test;
 
+import com.jaamsim.basicsim.Entity;
 import com.jaamsim.input.ExpParser.EvalContext;
+import com.jaamsim.input.ExpParser.OutputResolver;
 import com.jaamsim.input.ExpParser.UnitData;
-import com.jaamsim.input.ExpParser.VarResolver;
 import com.jaamsim.units.AreaUnit;
 import com.jaamsim.units.DimensionlessUnit;
 import com.jaamsim.units.DistanceUnit;
@@ -35,7 +37,7 @@ import com.jaamsim.units.Unit;
 
 public class TestExpParser {
 
-	private static class DummyResolver implements ExpParser.VarResolver {
+	private static class DummyResolver implements ExpParser.OutputResolver {
 
 		private final String name;
 		public DummyResolver(String name) {
@@ -43,7 +45,7 @@ public class TestExpParser {
 		}
 
 		@Override
-		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
+		public ExpResult resolve(EvalContext ec, ExpResult ent)
 				throws ExpError {
 			if (name.equals("foo")) return ExpResult.makeNumResult(4, DimensionlessUnit.class);
 			if (name.equals("bar")) return ExpResult.makeNumResult(3, DimensionlessUnit.class);
@@ -51,7 +53,7 @@ public class TestExpParser {
 		}
 
 		@Override
-		public ExpValResult validate(boolean[] hasIndices) {
+		public ExpValResult validate(ExpValResult entValRes) {
 			return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
 		}
 
@@ -73,16 +75,50 @@ public class TestExpParser {
 			return DimensionlessUnit.class;
 		}
 		@Override
-		public VarResolver getVarResolver(String[] names, boolean[] hasIndices)
-				throws ExpError {
-			return new DummyResolver(names[0]);
-		}
-		@Override
 		public void validateAssignmentDest(String[] destination)
 				throws ExpError {
 			// N/A
 
 		}
+		@Override
+		public ExpResult getValFromName(String name) throws ExpError {
+			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
+		}
+
+		@Override
+		public OutputResolver getOutputResolver(String name) throws ExpError {
+			return new DummyResolver(name);
+		}
+		@Override
+		public OutputResolver getConstOutputResolver(ExpResult constEnt,
+				String name) throws ExpError {
+			return new DummyResolver(name);
+		}
+	}
+
+	static Entity mapEnt = new Entity();
+	static Entity arrayEnt = new Entity();
+	static Entity dummyEnt = new Entity();
+	static HashMap<Double, Double> map0 = new HashMap<>();
+	static HashMap<String, Double> map1 = new HashMap<>();
+	static HashMap<Entity, Entity> entMap = new HashMap<>();
+
+	static Entity[] entArray = { dummyEnt };
+	static double[] doubleArray = { 1.0, 2.0, 3.0, 42.0 };
+	static int[] intArray = { 1, 2, 3, 42 };
+
+	static String[] stringArray = { "foo", "bar" };
+
+	{
+		map0.put(1.0, 1.0);
+		map0.put(2.0, 42.0);
+
+		map1.put("one", 1.0);
+		map1.put("two", 2.0);
+		map1.put("everything", 42.0);
+
+		entMap.put(dummyEnt, dummyEnt);
+
 	}
 
 	static PC pc = new PC();
@@ -206,7 +242,7 @@ public class TestExpParser {
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 
-		exp = ExpParser.parseExpression(pc, "[foo]*[bar]");
+		exp = ExpParser.parseExpression(pc, "[foo].foo*[bar].bar");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 12);
 
@@ -218,7 +254,7 @@ public class TestExpParser {
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 256);
 
-		exp = ExpParser.parseExpression(pc, "1 + 2^2*4 + 2*[foo]");
+		exp = ExpParser.parseExpression(pc, "1 + 2^2*4 + 2*[foo].foo");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 25);
 
@@ -346,46 +382,76 @@ public class TestExpParser {
 
 	}
 
-	private static class TestVariableResolver implements ExpParser.VarResolver {
+	private static class TestVariableResolver implements ExpParser.OutputResolver {
 
-		private final String[] name;
-		public TestVariableResolver(String[] n) {
+		private final String name;
+		public TestVariableResolver(String n) {
 			this.name = n;
 		}
 
 		@Override
-		public ExpResult resolve(EvalContext ec, ExpResult[] indices)
+		public ExpResult resolve(EvalContext ec, ExpResult ent)
 				throws ExpError {
-			if (name.length > 0 && name[0].equals("ind")) {
-				double ret = 0;
-				for (int i = 0; i < indices.length; ++i) {
-					if (indices[i] != null)
-					ret += i * indices[i].value;
+			if (ent.type == ExpResType.ENTITY && ent.entVal == mapEnt) {
+				if (name.equals("map0")) {
+					return ExpCollections.getCollection(map0, DimensionlessUnit.class);
 				}
-				return ExpResult.makeNumResult(ret, DimensionlessUnit.class);
+				if (name.equals("map1")) {
+					return ExpCollections.getCollection(map1, DimensionlessUnit.class);
+				}
+				if (name.equals("entMap")) {
+					return ExpCollections.getCollection(entMap, DimensionlessUnit.class);
+				}
 			}
 
-			if (name.length >= 1 && name[0].equals("this")) return ExpResult.makeNumResult(42, DimensionlessUnit.class);
+			if (ent.type == ExpResType.ENTITY && ent.entVal == arrayEnt) {
+				if (name.equals("intArray")) {
+					return ExpCollections.getCollection(intArray, DimensionlessUnit.class);
+				}
+				if (name.equals("doubleArray")) {
+					return ExpCollections.getCollection(doubleArray, DimensionlessUnit.class);
+				}
+				if (name.equals("entArray")) {
+					return ExpCollections.getCollection(entArray, DimensionlessUnit.class);
+				}
+				if (name.equals("stringArray")) {
+					return ExpCollections.getCollection(stringArray, DimensionlessUnit.class);
+				}
+			}
 
-			if (name.length < 1 || !name[0].equals("foo")) return ExpResult.makeNumResult(0, DimensionlessUnit.class);
-
-			if (name.length >= 3 && name[1].equals("bar") && name[2].equals("baz")) return ExpResult.makeNumResult(4, DimensionlessUnit.class);
-			if (name.length >= 2 && name[1].equals("bonk")) return ExpResult.makeNumResult(5, DimensionlessUnit.class);
-
-			return ExpResult.makeNumResult(-1, DimensionlessUnit.class);
+			return ExpResult.makeNumResult(1, DimensionlessUnit.class);
 		}
 
 		@Override
-		public ExpValResult validate(boolean[] hasIndices) {
-			return ExpValResult.makeValidRes(ExpResType.NUMBER, DimensionlessUnit.class);
+		public ExpValResult validate(ExpValResult entValRes) {
+			return ExpValResult.makeUndecidableRes();
 		}
-	}
+}
 
 	private static class VariableTestPC extends PC {
+
 		@Override
-		public VarResolver getVarResolver(String[] names, boolean[] hasIndices)
-				throws ExpError {
-			return new TestVariableResolver(names);
+		public OutputResolver getOutputResolver(String name) throws ExpError {
+			return new TestVariableResolver(name);
+		}
+		@Override
+		public OutputResolver getConstOutputResolver(ExpResult constEnt,
+				String name) throws ExpError {
+			return new TestVariableResolver(name);
+		}
+
+		@Override
+		public ExpResult getValFromName(String name) throws ExpError {
+			if (name.equals("Maps")) {
+				return ExpResult.makeEntityResult(mapEnt);
+			}
+			if (name.equals("Arrays")) {
+				return ExpResult.makeEntityResult(arrayEnt);
+			}
+			if (name.equals("Dummy")) {
+				return ExpResult.makeEntityResult(dummyEnt);
+			}
+			return ExpResult.makeNumResult(0, DimensionlessUnit.class);
 		}
 
 	}
@@ -394,37 +460,42 @@ public class TestExpParser {
 	public void testVariables() throws ExpError {
 		VariableTestPC vtpc = new VariableTestPC();
 
-		ExpParser.Expression exp = ExpParser.parseExpression(vtpc, "[foo].bar.baz");
+		ExpParser.Expression exp = ExpParser.parseExpression(vtpc, "[Maps].map0(1)");
 		double val = exp.evaluate(ec).value;
-		assertTrue(val == 4);
+		assertTrue(val == 1);
 
-		exp = ExpParser.parseExpression(vtpc, "[foo].bar.baz*4");
-		val = exp.evaluate(ec).value;
-		assertTrue(val == 16);
-
-		exp = ExpParser.parseExpression(vtpc, "[foo].bonk");
-		val = exp.evaluate(ec).value;
-		assertTrue(val == 5);
-
-		exp = ExpParser.parseExpression(vtpc, "[bob].is.your.uncle");
-		val = exp.evaluate(ec).value;
-		assertTrue(val == 0);
-
-		exp = ExpParser.parseExpression(vtpc, "[ind].stuff(1+4)");
-		val = exp.evaluate(ec).value;
-		assertTrue(val == 5);
-
-		exp = ExpParser.parseExpression(vtpc, "[ind].stuff(5).things(42).nothing");
-		val = exp.evaluate(ec).value;
-		assertTrue(val == 89);
-
-		exp = ExpParser.parseExpression(vtpc, "[foo]");
-		val = exp.evaluate(ec).value;
-		assertTrue(val == -1);
-
-		exp = ExpParser.parseExpression(vtpc, "this.stuff");
+		exp = ExpParser.parseExpression(vtpc, "[Maps].map0(2)");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
+
+		exp = ExpParser.parseExpression(vtpc, "[Maps].map1([[two]])");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 2);
+
+		exp = ExpParser.parseExpression(vtpc, "[Maps].map1([[everything]])");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 42);
+
+		exp = ExpParser.parseExpression(vtpc, "[Maps].entMap([Dummy])");
+		ExpResult res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.ENTITY && res.entVal == dummyEnt);
+
+		exp = ExpParser.parseExpression(vtpc, "[Arrays].doubleArray(4)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 42);
+
+		exp = ExpParser.parseExpression(vtpc, "[Arrays].intArray(4)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 42);
+
+		exp = ExpParser.parseExpression(vtpc, "[Arrays].entArray(1)");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.ENTITY && res.entVal == dummyEnt);
+
+		exp = ExpParser.parseExpression(vtpc, "[Arrays].stringArray(2)");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING && res.stringVal.equals("bar"));
+
 	}
 
 	@Test
@@ -442,19 +513,18 @@ public class TestExpParser {
 
 	@Test
 	public void testUnits() throws ExpError {
-		class ErrorResolver implements ExpParser.VarResolver {
+		class ErrorResolver implements ExpParser.OutputResolver {
 
 			private final ExpError error = new ExpError(null, 0, "Variables not supported in test");
+
 			@Override
-			public ExpResult resolve(EvalContext ec, ExpResult[] indices)
-					throws ExpError {
+			public ExpResult resolve(EvalContext ec, ExpResult ent) throws ExpError {
 				throw error;
 			}
 
 			@Override
-			public ExpValResult validate(boolean[] hasIndices) {
+			public ExpValResult validate(ExpValResult entValRes) {
 				return ExpValResult.makeErrorRes(error);
-
 			}
 		}
 
@@ -501,8 +571,8 @@ public class TestExpParser {
 				return Unit.getDivUnitType(num, denom);
 			}
 			@Override
-			public VarResolver getVarResolver(String[] names,
-					boolean[] hasIndices) throws ExpError {
+			public OutputResolver getOutputResolver(String name)
+					throws ExpError {
 				return new ErrorResolver();
 			}
 			@Override
@@ -510,6 +580,15 @@ public class TestExpParser {
 					throws ExpError {
 				// N/A
 
+			}
+			@Override
+			public ExpResult getValFromName(String name) throws ExpError {
+				return null;
+			}
+			@Override
+			public OutputResolver getConstOutputResolver(ExpResult constEnt,
+					String name) throws ExpError {
+				return new ErrorResolver();
 			}
 
 		}

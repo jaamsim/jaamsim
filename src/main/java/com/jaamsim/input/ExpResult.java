@@ -20,6 +20,11 @@ import com.jaamsim.basicsim.Entity;
 import com.jaamsim.units.Unit;
 
 public class ExpResult {
+
+	public interface Collection {
+		public ExpResult index(ExpResult index) throws ExpError;
+	}
+
 	public final ExpResType type;
 
 	public final double value;
@@ -27,26 +32,32 @@ public class ExpResult {
 
 	public final String stringVal;
 	public final Entity entVal;
+	public final Collection colVal;
 
 	public static ExpResult makeNumResult(double val, Class<? extends Unit> ut) {
-		return new ExpResult(ExpResType.NUMBER, val, ut, null, null);
+		return new ExpResult(ExpResType.NUMBER, val, ut, null, null, null);
 	}
 
 	public static ExpResult makeStringResult(String str) {
-		return new ExpResult(ExpResType.STRING, 0, null, str, null);
+		return new ExpResult(ExpResType.STRING, 0, null, str, null, null);
 	}
 
 	public static ExpResult makeEntityResult(Entity ent) {
-		return new ExpResult(ExpResType.ENTITY, 0, null, null, ent);
+		return new ExpResult(ExpResType.ENTITY, 0, null, null, ent, null);
 	}
 
-	private ExpResult(ExpResType type, double val, Class<? extends Unit> ut, String str, Entity ent) {
+	public static ExpResult makeCollectionResult(Collection col) {
+		return new ExpResult(ExpResType.COLLECTION, 0, null, null, null, col);
+	}
+
+	private ExpResult(ExpResType type, double val, Class<? extends Unit> ut, String str, Entity ent, Collection col) {
 		this.type = type;
 		value = val;
 		unitType = ut;
 
 		stringVal = str;
 		entVal = ent;
+		colVal = col;
 	}
 
 	public <T> T getValue(double simTime, Class<T> klass) {

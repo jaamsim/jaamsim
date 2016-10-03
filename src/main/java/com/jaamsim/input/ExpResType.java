@@ -4,5 +4,6 @@ public enum ExpResType {
 
 	NUMBER,
 	STRING,
-	ENTITY
+	ENTITY,
+	COLLECTION
 }
