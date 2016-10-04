@@ -32,13 +32,6 @@ import com.jaamsim.render.RenderUtils;
  *
  */
 public class ConvexHull {
-
-	public static long filterTime;
-	public static long buildTime;
-	public static long finalizeTime;
-	public static long sortTime;
-
-
 	private ArrayList<Vec3d> _verts;
 
 	private boolean _isDegenerate = false;
@@ -47,9 +40,7 @@ public class ConvexHull {
 
 	public static ConvexHull TryBuildHull(ArrayList<Vec3d> verts, int numAttempts, int maxNumPoints, Vec3dInterner interner) {
 
-		long filterStart = System.nanoTime();
 		ArrayList<Vec3d> baseVerts = removeDoubles(verts);
-		filterTime += System.nanoTime() - filterStart;
 
 		assert(numAttempts > 0);
 
@@ -79,8 +70,6 @@ public class ConvexHull {
 
 		assert(seed >= 0);
 		assert(seed < 1);
-
-		long buildStart = System.nanoTime();
 
 		if (baseVerts.size() < 3) {
 			// This mesh is too small, so just create an empty Hull... or should we throw?
@@ -275,9 +264,6 @@ public class ConvexHull {
 
 		} // End of main loop
 
-		long finalizeStart = System.nanoTime();
-		buildTime += finalizeStart - buildStart;
-
 		// Now that we have all the faces we can create a real subset of points we care about
 		ArrayList<Vec3d> realVerts = new ArrayList<>();
 		for (TempHullFace tf : tempFaces) {
@@ -309,9 +295,6 @@ public class ConvexHull {
 
 		// swap out our vertex list to the real one
 		_verts = realVerts;
-
-		finalizeTime += System.nanoTime() - finalizeStart;
-
 	} // End of ConvexHull() Constructor
 
 	private ConvexHull() {
@@ -348,11 +331,7 @@ public class ConvexHull {
 
 		final ArrayList<Vec3d> copy = new ArrayList<>(orig);
 
-		long sortStart = System.nanoTime();
-
 		Collections.sort(copy, COMP);
-
-		sortTime += System.nanoTime() - sortStart;
 
 		ret.add(copy.get(0));
 		int outIndex = 0; // An updated index of the last element of the returned set, this may be
