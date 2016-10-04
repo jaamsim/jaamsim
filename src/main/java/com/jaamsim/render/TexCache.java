@@ -36,10 +36,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import com.jogamp.opengl.GL2GL3;
-import com.jogamp.opengl.GLException;
 
 import com.jaamsim.ui.LogBox;
+import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLExtensions;
 
 /**
@@ -91,7 +91,7 @@ public class TexCache {
 
 	private final EntryLoaderRunner entryLoader = new EntryLoaderRunner();
 
-	private Renderer _renderer;
+	private final Renderer _renderer;
 
 	public static final URI BAD_TEXTURE;
 	private int badTextureID = -1;
