@@ -661,10 +661,8 @@ public class RenderManager implements DragSourceListener {
 			if (!p0.isEntity && p1.isEntity) {
 				return 1;
 			}
-			if (p0.size == p1.size) {
-				return 0;
-			}
-			return (p0.size < p1.size) ? -1 : 1;
+
+			return Double.compare(p0.size, p1.size);
 		}
 
 	}
