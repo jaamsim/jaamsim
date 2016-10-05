@@ -857,10 +857,12 @@ protected final StringChoiceInput curveTypeInput;
 
 	private final Object screenPointLock = new Object();
 	private PolylineInfo[] cachedPointInfo;
+	private ArrayList<Vec3d> cachedCurvePoints;
 
 	protected final void invalidateScreenPoints() {
 		synchronized(screenPointLock) {
 			cachedPointInfo = null;
+			cachedCurvePoints = null;
 		}
 	}
 
@@ -884,13 +886,40 @@ protected final StringChoiceInput curveTypeInput;
 		}
 	}
 
+	public ArrayList<Vec3d> getCurvePoints() {
+		synchronized(screenPointLock) {
+			if (cachedCurvePoints == null)
+				cachedCurvePoints = this.buildCurvePoints();
+			return cachedCurvePoints;
+		}
+	}
+
+	private ArrayList<Vec3d> buildCurvePoints() {
+		ArrayList<Vec3d> ret = null;
+		switch (this.getCurveType()) {
+		case LINEAR:
+			ret = getPoints();
+			break;
+		case BEZIER:
+			ret = PolylineInfo.getBezierPoints(getPoints());
+			break;
+		case SPLINE:
+			ret = PolylineInfo.getSplinePoints(getPoints());
+			break;
+		default:
+			assert(false);
+			error("Invalid CurveType");
+		}
+		return ret;
+	}
+
 	/**
 	 * Returns the local coordinates for a specified fractional distance along a polyline.
 	 * @param frac - fraction of the total graphical length of the polyline
 	 * @return local coordinates for the specified position
 	 */
 	public Vec3d getPositionOnPolyline(double simTime, double frac) {
-		ArrayList<Vec3d> curvePoints = getScreenPoints(simTime)[0].getCurvePoints();
+		ArrayList<Vec3d> curvePoints = this.getCurvePoints();
 
 		// Calculate the cumulative graphical lengths along the polyline
 		double[] cumLengthList = this.getCumulativeLengths(simTime);
@@ -932,7 +961,7 @@ protected final StringChoiceInput curveTypeInput;
 	 */
 	public ArrayList<Vec3d> getSubPolyline(double simTime, double frac0, double frac1) {
 
-		ArrayList<Vec3d> curvePoints = getScreenPoints(simTime)[0].getCurvePoints();
+		ArrayList<Vec3d> curvePoints = this.getCurvePoints();
 
 		ArrayList<Vec3d> ret = new ArrayList<>();
 
@@ -996,7 +1025,7 @@ protected final StringChoiceInput curveTypeInput;
 	 * @return array of cumulative graphical lengths
 	 */
 	private double[] getCumulativeLengths(double simTime) {
-		ArrayList<Vec3d> curvePoints = getScreenPoints(simTime)[0].getCurvePoints();
+		ArrayList<Vec3d> curvePoints = this.getCurvePoints();
 
 		int n = curvePoints.size();
 		double[] cumLengthList = new double[n];

@@ -90,7 +90,7 @@ public class PolylineInfo {
 		return points.toString();
 	}
 
-	private static ArrayList<Vec3d> getBezierPoints(ArrayList<Vec3d> ps) {
+	public static ArrayList<Vec3d> getBezierPoints(ArrayList<Vec3d> ps) {
 		ArrayList<Vec3d> ret = new ArrayList<>();
 
 		// The total number of segments in this curve
@@ -104,7 +104,7 @@ public class PolylineInfo {
 		return ret;
 	}
 
-	private static ArrayList<Vec3d> getSplinePoints(ArrayList<Vec3d> ps) {
+	public static ArrayList<Vec3d> getSplinePoints(ArrayList<Vec3d> ps) {
 		// This spline fitting algorithm is a bit of a custom creation. It is loosely based on the finte differences method described
 		// in this article: https://en.wikipedia.org/wiki/Cubic_Hermite_spline (assuming it hasn't changed since).
 		// The major changes are:
