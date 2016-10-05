@@ -161,6 +161,27 @@ public class KeyListInput<K1 extends Entity, V extends Entity> extends ListInput
 	}
 
 	@Override
+	public void setTokens(KeywordIndex kw) {
+		isDef = false;
+
+		String[] args = kw.getArgArray();
+
+		// Consider the following input cases:
+		// Object1 Keyword1 { Key1 ++ Entity1 ...
+		// Object1 Keyword1 { { Key1 ++ Entity1 ...
+		if (args.length >= 3) {
+			if (args[1].equals( "++" ) || args[1].equals( "--" ) ||
+				args[2].equals( "++" ) || args[2].equals( "--" )) {
+
+				this.appendTokens(args);
+				return;
+			}
+		}
+
+		valueTokens = args;
+	}
+
+	@Override
 	public ArrayList<V> getValue() {
 		return null;
 	}
