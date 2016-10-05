@@ -101,6 +101,7 @@ public class TestExpParser {
 	static Entity dummyEnt = new Entity();
 	static HashMap<Double, Double> map0 = new HashMap<>();
 	static HashMap<String, Double> map1 = new HashMap<>();
+	static HashMap<String, Double> distanceMap = new HashMap<>();
 	static HashMap<Entity, Entity> entMap = new HashMap<>();
 
 	static Entity[] entArray = { dummyEnt };
@@ -116,6 +117,10 @@ public class TestExpParser {
 		map1.put("one", 1.0);
 		map1.put("two", 2.0);
 		map1.put("everything", 42.0);
+
+		distanceMap.put("near", 1.0);
+		distanceMap.put("far", 42000.0);
+		distanceMap.put("middling", 4.0);
 
 		entMap.put(dummyEnt, dummyEnt);
 
@@ -402,6 +407,9 @@ public class TestExpParser {
 				if (name.equals("entMap")) {
 					return ExpCollections.getCollection(entMap, DimensionlessUnit.class);
 				}
+				if (name.equals("distances")) {
+					return ExpCollections.getCollection(distanceMap, DistanceUnit.class);
+				}
 			}
 
 			if (ent.type == ExpResType.ENTITY && ent.entVal == arrayEnt) {
@@ -484,6 +492,22 @@ public class TestExpParser {
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
 
+		exp = ExpParser.parseExpression(vtpc, "maxCol([Arrays].doubleArray)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 42);
+
+		exp = ExpParser.parseExpression(vtpc, "indexOfMaxCol([Arrays].doubleArray)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 4);
+
+		exp = ExpParser.parseExpression(vtpc, "minCol([Arrays].intArray)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 1);
+
+		exp = ExpParser.parseExpression(vtpc, "indexOfMinCol([Arrays].intArray)");
+		val = exp.evaluate(ec).value;
+		assertTrue(val == 1);
+
 		exp = ExpParser.parseExpression(vtpc, "[Arrays].intArray(4)");
 		val = exp.evaluate(ec).value;
 		assertTrue(val == 42);
@@ -495,6 +519,17 @@ public class TestExpParser {
 		exp = ExpParser.parseExpression(vtpc, "[Arrays].stringArray(2)");
 		res = exp.evaluate(ec);
 		assertTrue(res.type == ExpResType.STRING && res.stringVal.equals("bar"));
+
+		exp = ExpParser.parseExpression(vtpc, "maxCol([Maps].distances)");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.NUMBER);
+		assertTrue(res.unitType == DistanceUnit.class);
+		assertTrue(res.value == 42000.0);
+
+		exp = ExpParser.parseExpression(vtpc, "indexOfMaxCol([Maps].distances)");
+		res = exp.evaluate(ec);
+		assertTrue(res.type == ExpResType.STRING);
+		assertTrue(res.stringVal.equals("far"));
 
 	}
 
