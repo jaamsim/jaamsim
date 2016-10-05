@@ -88,8 +88,8 @@ public abstract class Input<T> {
 	private boolean edited; // indicates if input has been edited for this entity
 	private boolean promptReqd; // indicates whether to prompt the user to save the configuration file
 	private boolean hidden; // Hide this input from the EditBox
-	private boolean isDef; // Is this input still the default value?
-	private String[] valueTokens; // value from .cfg file
+	protected boolean isDef; // Is this input still the default value?
+	protected String[] valueTokens; // value from .cfg file
 	private String defText; // special text to show in the default column of the Input Editor
 	private boolean isReqd;     // indicates whether this input must be provided by the user
 	private boolean isValid;  // if false, the input is no longer valid and must be re-entered
@@ -239,6 +239,73 @@ public abstract class Input<T> {
 	public void setTokens(KeywordIndex kw) {
 		isDef = false;
 		valueTokens = kw.getArgArray();
+	}
+
+	/**
+	 * Add the given tokens to the present value tokens
+	 */
+	public void addTokens(String[] args) {
+
+		// Create an array sized for the addition of new tokens
+		String[] newValueTokens;
+		if (valueTokens == null) {
+			newValueTokens = new String[args.length - 1];
+
+			// Copy the new tokens into the array
+			System.arraycopy(args, 1, newValueTokens, 0, args.length - 1);
+		}
+		else {
+			newValueTokens = new String[valueTokens.length + args.length - 1];
+
+			// Copy the old tokens into the array
+			System.arraycopy(valueTokens, 0, newValueTokens, 0, valueTokens.length);
+
+			// Copy the new tokens into the array
+			System.arraycopy(args, 1, newValueTokens, valueTokens.length, args.length - 1);
+		}
+
+		valueTokens = newValueTokens;
+	}
+
+	/**
+	 * Remove the given tokens from the present value tokens
+	 * @return - true if all the tokens were successfully removed
+	 */
+	public boolean removeTokens(String[] args) {
+
+		int newSize = valueTokens.length - (args.length - 1);
+		if( newSize >= 0 ) {
+
+			// Create an array sized for the removal of tokens
+			String[] newValueTokens = new String[newSize];
+			int index = 0;
+
+			// Loop through the original tokens
+			for (int i = 0; i < valueTokens.length; i++ ) {
+
+				// Determine if this token is to be kept
+				boolean keep = true;
+				for (int j = 1; j < args.length; j++) {
+					if (args[j].equals(valueTokens[i])) {
+						keep = false;
+						break;
+					}
+				}
+
+				// If the token is to be kept, add it to the array
+				if (keep) {
+					newValueTokens[index] = valueTokens[i];
+					index++;
+				}
+			}
+
+			// If the correct number of items were kept, reset valueTokens
+			if (index == newSize) {
+				valueTokens = newValueTokens;
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isDefault() {

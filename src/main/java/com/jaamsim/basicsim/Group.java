@@ -117,6 +117,32 @@ public class Group extends Entity {
 			}
 			Group.this.checkType();
 		}
+
+		@Override
+		public void setTokens(KeywordIndex kw) {
+			isDef = false;
+
+			String[] args = kw.getArgArray();
+			if (args.length > 0) {
+
+				// Consider the following input case:
+				// Group1 List { ++ Entity1 ...
+				if (args[0].equals( "++" )) {
+
+					this.addTokens(args);
+					return;
+				}
+
+				// Consider the following input case:
+				// Group1 List { -- Entity1 ...
+				if (args[0].equals( "--" )) {
+					if (this.removeTokens(args))
+						return;
+				}
+			}
+
+			valueTokens = args;
+		}
 	}
 
 	private class GroupAppendListInput extends Input<String> {
